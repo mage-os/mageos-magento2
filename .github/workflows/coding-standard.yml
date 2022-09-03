@@ -1,0 +1,16 @@
+name: Coding Standard
+
+on:
+  pull_request:
+    branches:
+      - 2.4-develop
+
+permissions:
+  contents: read
+
+jobs:
+  coding-standard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Coding Standard
+        uses: graycoreio/github-actions-magento2/coding-standard@main
