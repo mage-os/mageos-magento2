@@ -5,7 +5,15 @@ jobs:
   semantic-version:
     runs-on: ubuntu-latest
     steps:
-      - run: git clone git@github.com:magento/magento-semver.git
+      - name: Check out Semver
+        uses: actions/checkout@v3
+        with:
+          repository: magento/magento-semver.git
+          path: magento-semver
+      - name: Check out MageOS
+        uses: actions/checkout@v3
+        with:
+          path: mageos-magento2
       - run: cd magento-semver && composer install
       - run: bin/svc compare --help
 
