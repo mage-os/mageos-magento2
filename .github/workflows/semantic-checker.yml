@@ -32,7 +32,7 @@ jobs:
       - name: Install Composer Cache
         uses: actions/cache@v3
         with:
-          path: ${{ env.composer_cache_dir }}
+          path: echo "${{ env.composer_cache_dir }}"
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-composer-
