@@ -16,8 +16,6 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-composer-
-      - name: Install Composer
-        uses: php-actions/composer@v6
       - name: Check out Semver
         uses: actions/checkout@v3
         with:
@@ -27,6 +25,10 @@ jobs:
         uses: actions/checkout@v3
         with:
           path: mageos-magento2
+      - name: Install Composer
+        uses: php-actions/composer@v6
+        with:
+          command: help
       - run: cd magento-semver && composer install
       - run: bin/svc compare --help
 
