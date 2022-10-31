@@ -30,5 +30,5 @@ jobs:
         with:
           command: help
       - run: cd magento-semver && composer install
-      - run: bin/svc compare --help
+      - run: magento-semver/bin/svc compare --help
 
