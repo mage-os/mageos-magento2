@@ -5,15 +5,16 @@ jobs:
   semantic-version:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out Semver
+      - name: Check out Semamtic Version Checker tool
         uses: actions/checkout@v3
         with:
           repository: magento/magento-semver
           path: magento-semver
-      - name: Check out MageOS
+      - name: Check out MageOS 2.4-develop
         uses: actions/checkout@v3
         with:
           path: mageos-magento2
+          # Change this to compare new code to other branches
           ref: 2.4-develop
       - name: Check out new changes
         uses: actions/checkout@v3
@@ -22,7 +23,7 @@ jobs:
       - name: Get Composer Cache Directory
         id: composer-cache
         run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
+          echo "{dir}={$(composer config cache-files-dir)} >> $GITHUB_OUTPUT"
       - name: Install Composer Cache
         uses: actions/cache@v3
         with:
@@ -34,6 +35,13 @@ jobs:
         uses: php-actions/composer@v6
         with:
           command: help
-      - run: cd magento-semver && composer install
-      - run: magento-semver/bin/svc compare mageos-magento2 this-change
+      - name: Install Semamtic Version Checker
+        run: cd magento-semver && composer install
+      - name: Run Semantic Version Checker (SVC)
+        run: magento-semver/bin/svc compare mageos-magento2 this-change
+      - name: Upload SVC output file
+        uses: actions/upload-artifact@v3
+        with:
+          name: svc-log-file
+          path: svc.log
 
