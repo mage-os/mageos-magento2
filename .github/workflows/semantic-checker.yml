@@ -5,20 +5,26 @@ jobs:
   semantic-version:
     runs-on: ubuntu-latest
     steps:
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "::set-output name=dir::$(composer config cache-files-dir)"
       - name: Install Composer Cache
-        uses: actions/cache
+        uses: actions/cache@v3
         with:
-          path: /tmp/composer-cache
-          key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
       - name: Install Composer
-        uses: php-actions/composer
+        uses: php-actions/composer@v6
       - name: Check out Semver
-        uses: actions/checkout
+        uses: actions/checkout@v3
         with:
           repository: magento/magento-semver
           path: magento-semver
       - name: Check out MageOS
-        uses: actions/checkout
+        uses: actions/checkout@v3
         with:
           path: mageos-magento2
       - run: cd magento-semver && composer install
