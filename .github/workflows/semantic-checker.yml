@@ -1,0 +1,11 @@
+name: MageOS Semantic Checker
+run-name: ${{ github.actor }} is checking the semantic version
+on: [push]
+jobs:
+  semantic-version:
+    runs-on: ubuntu-latest
+    steps:
+      - run: git clone git@github.com:magento/magento-semver.git
+      - run: cd magento-semver && composer install
+      - run: bin/svc compare --help
+
