@@ -10,17 +10,17 @@ jobs:
         with:
           repository: magento/magento-semver
           path: magento-semver
-      - name: Check out MageOS - $GITHUB_BASE_REF
+      - name: Check out MageOS - ${{ github.base_ref }}
         uses: actions/checkout@v3
         with:
           path: mageos-magento2
           # Change this to compare new code to other branches
-          ref: $GITHUB_BASE_REF
-      - name: Check out new changes - $GITHUB_HEAD_REF
+          ref: ${{ github.base_ref }}
+      - name: Check out new changes - ${{ github.head_ref }}
         uses: actions/checkout@v3
         with:
           path: this-change
-          ref: $GITHUB_HEAD_REF
+          ref: ${{ github.head_ref }}
       - name: Install Composer
         uses: php-actions/composer@v6
         with:
