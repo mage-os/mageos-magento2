@@ -1,6 +1,6 @@
 name: MageOS Semantic Checker
 run-name: ${{ github.actor }} is checking the semantic version
-on: [push]
+on: [pull_request]
 jobs:
   semantic-version:
     runs-on: ubuntu-latest
@@ -10,16 +10,17 @@ jobs:
         with:
           repository: magento/magento-semver
           path: magento-semver
-      - name: Check out MageOS 2.4-develop
+      - name: Check out MageOS - $GITHUB_BASE_REF
         uses: actions/checkout@v3
         with:
           path: mageos-magento2
           # Change this to compare new code to other branches
-          ref: 2.4-develop
-      - name: Check out new changes
+          ref: $GITHUB_BASE_REF
+      - name: Check out new changes - $GITHUB_HEAD_REF
         uses: actions/checkout@v3
         with:
           path: this-change
+          ref: $GITHUB_HEAD_REF
       - name: Install Composer
         uses: php-actions/composer@v6
         with:
