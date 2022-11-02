@@ -3,5 +3,5 @@ run-name: ${{ github.actor }} is checking the semantic version...
 on: [pull_request]
 jobs:
   call-semantic-version:
-    uses: lefte/mageos-infrastructure/.github/workflows/semantic-checker.yml@feature/github-actions-semantic-version-checker
+    uses: mage-os/infrastructure/.github/workflows/semantic-checker.yml@main
 
