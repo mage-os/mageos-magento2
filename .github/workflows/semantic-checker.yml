@@ -38,7 +38,7 @@ jobs:
         id: composer-cache
         run: |
           cd magento-semver &&
-          echo "{composer_cache_dir}={$(composer config cache-files-dir)} >> $GITHUB_OUTPUT"
+          echo "composer_cache_dir=$(composer config cache-files-dir) >> $GITHUB_OUTPUT"
       - name: Install Composer Cache
         uses: actions/cache@v3
         with:
