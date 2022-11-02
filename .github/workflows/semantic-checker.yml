@@ -8,7 +8,7 @@ jobs:
       - name: Environment Debugging Output
         run: |
           echo "Event_path: ${GITHUB_EVENT_PATH}"
-          echo "Event: ${{ github.event.pull_request }}"
+          echo "Event: ${{ toJSON(github.event.pull_request) }}"
       # TODO: Add pull request labels
       # - name: Clean up labels
       #   uses: andymckay/labeler@master
@@ -38,7 +38,7 @@ jobs:
         id: composer-cache
         run: |
           cd magento-semver &&
-          echo "composer_cache_dir=$(composer config cache-files-dir) >> $GITHUB_OUTPUT"
+          echo "composer_cache_dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
       - name: Install Composer Cache
         uses: actions/cache@v3
         with:
