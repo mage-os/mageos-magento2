@@ -23,7 +23,7 @@ jobs:
       - name: Check out new changes - ${{ github.head_ref }}
         uses: actions/checkout@v3
         with:
-          repository: ${{ github_event_path.repository.head.repo.full_name }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
           path: this-change
           ref: ${{ github.head_ref }}
       - name: Install Composer
