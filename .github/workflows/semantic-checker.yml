@@ -8,19 +8,23 @@ jobs:
       - name: Environment Debugging Output
         run: |
           echo "Event_path: ${GITHUB_EVENT_PATH}"
-          echo "Event: ${{ github.event }}"
+          echo "Event: ${{ github.event.pull_request }}"
+      # TODO: Add pull request labels
+      # - name: Clean up labels
+      #   uses: andymckay/labeler@master
+      #   with:
+      #     remove-labels: "svc"
       - name: Check out Semamtic Version Checker tool
         uses: actions/checkout@v3
         with:
-          repository: magento/magento-semver
+          repository: mage-os/mirror-magento-semver
           path: magento-semver
-      - name: Check out MageOS - ${{ github.base_ref }}
+      - name: Check out base branch - ${{ github.base_ref }}
         uses: actions/checkout@v3
         with:
-          path: mageos-magento2
-          # Change this to compare new code to other branches
+          path: base-branch
           ref: ${{ github.base_ref }}
-      - name: Check out new changes - ${{ github.head_ref }}
+      - name: Check out new changes - ${{ github.event.pull_request.head.repo.full_name }} / ${{ github.head_ref }}
         uses: actions/checkout@v3
         with:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
@@ -38,17 +42,22 @@ jobs:
       - name: Install Composer Cache
         uses: actions/cache@v3
         with:
-          path: echo "${{ steps.composer-cache.outputs.composer_cache_dir }}"
+          path: ${{ steps.composer-cache.outputs.composer_cache_dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-composer-
       - name: Install Semamtic Version Checker
         run: cd magento-semver && composer install
       - name: Run Semantic Version Checker (SVC)
-        run: magento-semver/bin/svc compare mageos-magento2 this-change
+        run: magento-semver/bin/svc compare base-branch this-change
       - name: Upload SVC output file
         uses: actions/upload-artifact@v3
         with:
           name: svc-log-file
           path: svc.log
+      # TODO: Add pull request labels
+      # - name: Add labels
+      #   uses: andymckay/labeler@master
+      #   with:
+      #     add-labels: "svc"
 
