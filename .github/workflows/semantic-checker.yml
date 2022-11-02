@@ -5,6 +5,10 @@ jobs:
   semantic-version:
     runs-on: ubuntu-latest
     steps:
+      - name: Environment Debugging Output
+        run: |
+          echo "Event_path: ${GITHUB_EVENT_PATH}"
+          echo "Event: ${{ github.event }}"
       - name: Check out Semamtic Version Checker tool
         uses: actions/checkout@v3
         with:
@@ -16,10 +20,6 @@ jobs:
           path: mageos-magento2
           # Change this to compare new code to other branches
           ref: ${{ github.base_ref }}
-      - name: Environment Output
-        run: |
-          echo "Event_path: ${GITHUB_EVENT_PATH}"
-          echo "Event: ${GITHUB_EVENT}"
       - name: Check out new changes - ${{ github.head_ref }}
         uses: actions/checkout@v3
         with:
