@@ -9,7 +9,7 @@ jobs:
   merge-from-mirror:
     uses: mage-os/infrastructure/.github/workflows/merge-upstream-changes.yml@main
     with:
-      upstream: https://github.com/mage-os/mageos-magento2.git
+      upstream: https://github.com/mage-os/mirror-magento2.git
       matrix: '{ branch: ["2.4-develop"] }'
     secrets:
       DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
