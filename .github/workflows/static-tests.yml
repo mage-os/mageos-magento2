@@ -1,0 +1,65 @@
+name: Static Magento Tests
+
+on:
+  push:
+    branches: [2.4-develop]
+  pull_request:
+    branches: [2.4-develop]
+
+jobs:
+  compute_matrix:
+    name: '🧮 Compute the Matrix'
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.supported-version.outputs.matrix }}
+    steps:
+      - uses: graycoreio/github-actions-magento2/supported-version@main
+        id: supported-version
+        with:
+          kind: latest
+      - run: echo ${{ steps.supported-version.outputs.matrix }}
+
+  qa:
+    name: '🤖 - Quality Assurance'
+    runs-on: ubuntu-latest
+    needs: compute_matrix
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.compute_matrix.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v3
+        name: '⬇️ Checkout Code'
+
+      - uses: graycoreio/github-actions-magento2/setup-magento@main
+        name: '🛠 Setup Magento'
+        id: setup-magento
+        with:
+          php-version: ${{ matrix.php }}
+          magento_version: ${{ matrix.magento }}
+          mode: store
+          coverage: xDebug
+
+      - name: '🚛 Install Dependencies'
+        run: composer install
+        working-directory: ${{ steps.setup-magento.outputs.path }}
+        shell: bash
+        env:
+          COMPOSER_CACHE_DIR: ${{ steps.composer-cache.outputs.dir }}
+
+      - name: '👀 Get Changed Files'
+        uses: jitterbit/get-changed-files@v1
+        id: changed-files
+        with:
+          format: space-delimited
+
+      - name: '🧠 PHP Mess Detector'
+        shell: bash
+        working-directory: ${{ steps.setup-magento.outputs.path }}
+        run: |
+          for changed_file in ${{ steps.changed-files.outputs.added_modified }}; do
+            if [[ $file == *.php ]]
+              php vendor/bin/phpmd ${changed_file} github dev/tests/static/testsuite/Magento/Test/Php/_files/phpmd/ruleset.xml
+            else
+              echo "Skip for file: ${changed_file}"
+            fi
+          done
