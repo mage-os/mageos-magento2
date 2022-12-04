@@ -48,6 +48,7 @@ jobs:
 
       - name: '👀 Get Changed Files'
         uses: jitterbit/get-changed-files@v1
+        continue-on-error: true
         id: changed-files
         with:
           format: space-delimited
