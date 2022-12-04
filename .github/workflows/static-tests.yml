@@ -58,7 +58,7 @@ jobs:
         working-directory: ${{ steps.setup-magento.outputs.path }}
         run: |
           for changed_file in ${{ steps.changed-files.outputs.added_modified }}; do
-            if [[ $file == *.php ]]
+            if [[ ${changed_file} == *.php ]]
             then
               php vendor/bin/phpmd ${changed_file} github dev/tests/static/testsuite/Magento/Test/Php/_files/phpmd/ruleset.xml
             else
