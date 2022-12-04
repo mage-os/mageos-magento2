@@ -56,10 +56,4 @@ class Authentication extends CoreAuthentication
 
         $this->_openActions[] = ImsCallback::ACTION_NAME;
     }
-
-    private function unusedMethod()
-    {
-        
-        return 'unused';
-    }
 }
