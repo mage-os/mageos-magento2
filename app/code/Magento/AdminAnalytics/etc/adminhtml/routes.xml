@@ -11,4 +11,5 @@
             <module name="Magento_AdminAnalytics" />
         </route>
     </router>
+    
 </config>
