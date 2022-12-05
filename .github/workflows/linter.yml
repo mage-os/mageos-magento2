@@ -1,0 +1,38 @@
+name: Linter
+
+on:
+  pull_request:
+    paths:
+      - '*.yml'
+      - '*.yaml'
+      - '*.xml'
+      - '*.php'
+
+jobs:
+  linter:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # Check out the repository
+      - uses: actions/checkout@v2
+
+        # Install the required version of Node.js
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12'
+
+        # Install the YAML, XML, and PHP linters
+      - run: npm install -g yaml-linter xml-linter php-linter
+
+        # Run the YAML Linter
+      - name: 🚀 Run YAML Linter
+        run: yaml-linter app/code/**/*.yml
+
+        # Run the XML Linter
+      - name: 🚀 Run XML Linter
+        run: xml-linter app/code/**/*.xml
+
+        # Run the PHP Linter
+      - name: 🚀 Run PHP Linter
+        run: php-linter app/code/**/*.php
