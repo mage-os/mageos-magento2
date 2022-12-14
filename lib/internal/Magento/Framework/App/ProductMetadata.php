@@ -25,7 +25,7 @@ class ProductMetadata implements ProductMetadataInterface
     /**
      * Magento product name
      */
-    const PRODUCT_NAME  = 'Magento';
+    const PRODUCT_NAME  = 'Mage-OS';
 
     /**
      * Magento version cache key
