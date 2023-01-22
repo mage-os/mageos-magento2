@@ -10,9 +10,10 @@ use Magento\Framework\Escaper;
 /** @var Escaper $escaper */
 /** @var Copyright $block */
 ?>
+<?= $escaper->escapeHtml(__('Thank you for choosing Mage-OS.')); ?>
 <a class="link-copyright"
    href="https://mage-os.org/"
    target="_blank"
    title="<?= $escaper->escapeHtmlAttr(__('Mage-OS')); ?>">
+    <?= $escaper->escapeHtml(__('Learn more about Mage-OS.')); ?>
 </a>
-<?= $escaper->escapeHtml(__('Mage-OS %1.', date('Y'))); ?>
