@@ -26,7 +26,7 @@
                 <arguments>
                     <argument name="show_part" xsi:type="string">logo</argument>
                     <argument name="edition" translate="true" xsi:type="string">Community Edition</argument>
-                    <argument name="logo_image_src" xsi:type="string">images/magento-icon.svg</argument>
+                    <argument name="logo_image_src" xsi:type="string">images/mage-os-icon.svg</argument>
                 </arguments>
             </block>
             <block class="Magento\Backend\Block\GlobalSearch" name="global.search" as="search" after="logo" aclResource="Magento_Backend::global_search"/>
