@@ -59,7 +59,7 @@ if (php_sapi_name() === 'cli-server') {
         $route = preg_replace('#pub/errors/default/#', 'errors/default/', $route, 1);
     }
 
-    $magentoPackagePubDir = __DIR__."/../pub";
+    $magentoPackagePubDir = __DIR__."/pub";
 
     if (strpos($route, 'media/') === 0 ||
         strpos($route, 'opt/') === 0 ||

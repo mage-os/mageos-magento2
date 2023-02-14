@@ -9,7 +9,8 @@
     "config": {
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
-            "magento/*": true
+            "magento/*": true,
+            "php-http/discovery": true
         },
         "preferred-install": "dist",
         "sort-packages": true
