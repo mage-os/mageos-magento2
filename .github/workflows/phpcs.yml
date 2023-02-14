@@ -42,50 +42,58 @@ inputs:
     description: "The minimum severity required to display an error"
 
 jobs:
-  using: composite
-  steps:
-    - name: Checkout Project
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
-        path: project
+  php:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version:
+          - "7.3"
+          - "7.4"
+          - "8.0"
+          - "8.1"
+          - "8.2"
+        dependencies:
+          - "lowest"
+          - "highest"
+        exclude:
+          - php-version: "8.1"
+            dependencies: "lowest"
+    name: Tests with PHP ${{ matrix.php-version }} and ${{ matrix.dependencies }} dependencies
 
-    - name: Create Standard Directory
-      shell: bash
-      run: mkdir standard
+    steps:
+      - name: Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
 
-    - name: Set PHP Version
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: ${{ inputs.php_version }}
-        tools: composer:v${{ inputs.composer_version }}
-        coverage: none
-      env:
-        COMPOSER_TOKEN: ${{ secrets.GIT_HUB_TOKEN }}
+      - uses: actions/checkout@v2
 
-    - name: Install Coding Standard
-      shell: bash
-      working-directory: standard
-      run: composer require "magento/magento-coding-standard:${{ inputs.version || '*' }}"
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          ini-file: development
+        env:
+          COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Register Coding Standard
-      shell: bash
-      working-directory: standard
-      run: vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/standard/vendor/magento/magento-coding-standard,${{ github.workspace }}/standard/vendor/phpcompatibility/php-compatibility
+      - name: Install dependencies
+        run: npm install
 
-    - name: Get Changed Files
-      shell: bash
-      working-directory: project
-      id: changed-files
-      run: echo "files=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | xargs)" >> $GITHUB_OUTPUT
-      if: github.event_name == 'pull_request'
+      - name: Validate composer
+        run: composer validate
 
-    - name: Coding Standard Check
-      shell: bash
-      run: |
-        ../standard/vendor/bin/phpcs --standard=Magento2 \
-        $([ -n "${{ inputs.severity }}" ] && echo "--severity=${{ inputs.severity }}") \
-        $([ -n "${{ inputs.warning_severity }}" ] && echo "--warning-severity=${{ inputs.warning_severity }}") \
-        $([ -n "${{ inputs.error_severity }}" ] && echo "--error-severity=${{ inputs.error_severity }}") \
-        ${{ github.event_name == 'pull_request' && steps.changed-files.outputs.files || inputs.path }}
-      working-directory: project
+      - name: Composer install
+        uses: "ramsey/composer-install@v1"
+        with:
+          dependency-versions: "${{ matrix.dependencies }}"
+          composer-options: "${{ matrix.composer-options }}"
+
+      - name: Run unit tests suite
+        run: vendor/bin/phpunit
+
+      - name: Run code style suite
+        run: vendor/bin/phpcs --standard=Magento2 Magento2/Helpers Magento2/Sniffs Magento2/Rector Magento2Framework/Sniffs
+
+      - name: Run framework suite
+        run: vendor/bin/phpcs --standard=Magento2Framework Magento2/Helpers Magento2/Sniffs Magento2/Rector Magento2Framework/Sniffs
