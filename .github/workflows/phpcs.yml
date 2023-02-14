@@ -20,16 +20,15 @@ jobs:
         severity:
           required: false
           default: "8"
-          description: "The minimum severity required to display an error or warning (default: 5)"
+
         warning_severity:
           required: false
           default: "5"
-          description: "The minimum severity required to display a warning"
 
         error_severity:
           required: false
           default: "5"
-          description: "The minimum severity required to display an error"
+
         path:
           required: true
           default: 'app/code'
