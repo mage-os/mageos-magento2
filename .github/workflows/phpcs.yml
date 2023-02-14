@@ -6,6 +6,20 @@ on: [push, pull_request]
 jobs:
   php:
     runs-on: ubuntu-latest
+    inputs:
+      severity:
+        required: false
+        default: "8"
+      warning_severity:
+        required: false
+        default: "5"
+      error_severity:
+        required: false
+        default: "5"
+      path:
+        required: true
+        default: 'app/code'
+
     strategy:
       fail-fast: false
       matrix:
@@ -17,21 +31,6 @@ jobs:
         dependencies:
           - "lowest"
           - "highest"
-        severity:
-          required: false
-          default: "8"
-
-        warning_severity:
-          required: false
-          default: "5"
-
-        error_severity:
-          required: false
-          default: "5"
-
-        path:
-          required: true
-          default: 'app/code'
         exclude:
           - php-version: "8.1"
             dependencies: "lowest"
@@ -56,10 +55,10 @@ jobs:
         shell: bash
         run: |
           ../standard/vendor/bin/phpcs --standard=Magento2 \
-          $([ -n "${{ matrix.severity.default }}" ] && echo "--severity=${{ matrix.severity.default }}") \
-          $([ -n "${{ matrix.warning_severity.default }}" ] && echo "--warning-severity=${{ matrix.warning_severity.default }}") \
-          $([ -n "${{ matrix.error_severity.default }}" ] && echo "--error-severity=${{ matrix.error_severity.default }}") \
-          ${{ github.event_name == 'pull_request' && steps.changed-files.outputs.files || matrix.path.default }}
+          $([ -n "${{ inputs.severity.default }}" ] && echo "--severity=${{ inputs.severity.default }}") \
+          $([ -n "${{ inputs.warning_severity.default }}" ] && echo "--warning-severity=${{ inputs.warning_severity.default }}") \
+          $([ -n "${{ inputs.error_severity.default }}" ] && echo "--error-severity=${{ inputs.error_severity.default }}") \
+          ${{ github.event_name == 'pull_request' && steps.changed-files.outputs.files || inputs.path.default }}
           working-directory: project
 
   static:
