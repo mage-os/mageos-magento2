@@ -1,0 +1,93 @@
+name: "Coding Standard"
+author: "Graycore"
+description: "A Github Action that runs the Magento Coding Standard."
+
+on:
+  push:
+    branches: [ 2.4-develop, develop, phpcs_test ]
+  pull_request:
+    branches: [ 2.4-develop, develop, phpcs_test ]
+
+inputs:
+  php_version:
+    required: true
+    default: "8.1"
+    description: "PHP version used to do the coding standard check."
+
+  composer_version:
+    required: true
+    default: "2"
+    description: "The version of composer to use."
+
+  path:
+    required: true
+    default: 'app/code'
+    description: "The directory (relative to the project root) in which the coding standard will be checked. Used when the event is not a pull request."
+
+  version:
+    required: false
+    description: "The version of the coding standard to use. If not provided, will use the latest version."
+
+  severity:
+    required: false
+    default: ""
+    description: "The minimum severity required to display an error or warning (default: 5)"
+
+  warning_severity:
+    required: false
+    default: ""
+    description: "The minimum severity required to display a warning"
+
+  error_severity:
+    required: false
+    default: ""
+    description: "The minimum severity required to display an error"
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout Project
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        path: project
+
+    - name: Create Standard Directory
+      shell: bash
+      run: mkdir standard
+
+    - name: Set PHP Version
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ inputs.php_version }}
+        tools: composer:v${{ inputs.composer_version }}
+        coverage: none
+      env:
+        COMPOSER_TOKEN: ${{ secrets.GIT_HUB_TOKEN }}
+
+    - name: Install Coding Standard
+      shell: bash
+      working-directory: standard
+      run: composer require "magento/magento-coding-standard:${{ inputs.version || '*' }}"
+
+    - name: Register Coding Standard
+      shell: bash
+      working-directory: standard
+      run: vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/standard/vendor/magento/magento-coding-standard,${{ github.workspace }}/standard/vendor/phpcompatibility/php-compatibility
+
+    - name: Get Changed Files
+      shell: bash
+      working-directory: project
+      id: changed-files
+      run: echo "files=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | xargs)" >> $GITHUB_OUTPUT
+      if: github.event_name == 'pull_request'
+
+    - name: Coding Standard Check
+      shell: bash
+      run: |
+        ../standard/vendor/bin/phpcs --standard=Magento2 \
+        $([ -n "${{ inputs.severity }}" ] && echo "--severity=${{ inputs.severity }}") \
+        $([ -n "${{ inputs.warning_severity }}" ] && echo "--warning-severity=${{ inputs.warning_severity }}") \
+        $([ -n "${{ inputs.error_severity }}" ] && echo "--error-severity=${{ inputs.error_severity }}") \
+        ${{ github.event_name == 'pull_request' && steps.changed-files.outputs.files || inputs.path }}
+      working-directory: project
