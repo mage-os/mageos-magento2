@@ -2,9 +2,55 @@ name: ExtDN M2 Coding Standard
 on: [push, pull_request]
 
 jobs:
+  php:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version:
+          - "7.3"
+          - "7.4"
+          - "8.0"
+          - "8.1"
+        dependencies:
+          - "lowest"
+          - "highest"
+        exclude:
+          - php-version: "8.1"
+            dependencies: "lowest"
+    name: Tests with PHP ${{ matrix.php-version }} and ${{ matrix.dependencies }} dependencies
+    steps:
+      - name: Run code style suite
+        run: vendor/bin/phpcs --standard=Magento2 Magento2/Helpers Magento2/Sniffs Magento2/Rector Magento2Framework/Sniffs
+
+      - name: Install Coding Standards
+        shell: bash
+        working-directory: standard
+        run: composer require "magento/magento-coding-standard:${{ inputs.version || '*' }}"
+
+      - name: Get Changed Files
+        shell: bash
+        working-directory: standard
+        id: changed-files
+        run: echo "files=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | xargs)" >> $GITHUB_OUTPUT
+        if: github.event_name == 'pull_request'
+
+      - name: Coding Standard Check
+        shell: bash
+        run: |
+          ../standard/vendor/bin/phpcs --standard=Magento2 \
+          $([ -n "${{ inputs.severity }}" ] && echo "--severity=${{ inputs.severity }}") \
+          $([ -n "${{ inputs.warning_severity }}" ] && echo "--warning-severity=${{ inputs.warning_severity }}") \
+          $([ -n "${{ inputs.error_severity }}" ] && echo "--error-severity=${{ inputs.error_severity }}") \
+          ${{ github.event_name == 'pull_request' && steps.changed-files.outputs.files || inputs.path }}
+          working-directory: project
+
+
+
   static:
     name: M2 Coding Standard
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: extdn/github-actions-m2/magento-coding-standard@master
+
