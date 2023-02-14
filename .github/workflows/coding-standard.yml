@@ -1,9 +1,11 @@
 name: Coding Standard
 
 on:
+  push:
+    branches: [ 2.4-develop, develop, phpcs_test ]
   pull_request:
-    branches:
-      - 2.4-develop
+    branches: [ 2.4-develop, develop, phpcs_test ]
+
 
 permissions:
   contents: read
