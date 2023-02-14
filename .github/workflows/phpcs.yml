@@ -1,25 +1,7 @@
 name: ExtDN M2 Coding Standard
 on: [push, pull_request]
 
-inputs:
-  php_version:
-    required: true
-    default: "8.1"
 
-  severity:
-    required: false
-    default: "8"
-    description: "The minimum severity required to display an error or warning (default: 5)"
-
-  warning_severity:
-    required: false
-    default: "5"
-    description: "The minimum severity required to display a warning"
-
-  error_severity:
-    required: false
-    default: "5"
-    description: "The minimum severity required to display an error"
 
 jobs:
   php:
@@ -35,6 +17,22 @@ jobs:
         dependencies:
           - "lowest"
           - "highest"
+        severity:
+          required: false
+          default: "8"
+          description: "The minimum severity required to display an error or warning (default: 5)"
+        warning_severity:
+          required: false
+          default: "5"
+          description: "The minimum severity required to display a warning"
+
+        error_severity:
+          required: false
+          default: "5"
+          description: "The minimum severity required to display an error"
+        path:
+          required: true
+          default: 'app/code'
         exclude:
           - php-version: "8.1"
             dependencies: "lowest"
@@ -59,13 +57,11 @@ jobs:
         shell: bash
         run: |
           ../standard/vendor/bin/phpcs --standard=Magento2 \
-          $([ -n "${{ inputs.severity }}" ] && echo "--severity=${{ inputs.severity }}") \
-          $([ -n "${{ inputs.warning_severity }}" ] && echo "--warning-severity=${{ inputs.warning_severity }}") \
-          $([ -n "${{ inputs.error_severity }}" ] && echo "--error-severity=${{ inputs.error_severity }}") \
-          ${{ github.event_name == 'pull_request' && steps.changed-files.outputs.files || inputs.path }}
+          $([ -n "${{ matrix.severity.default }}" ] && echo "--severity=${{ matrix.severity.default }}") \
+          $([ -n "${{ matrix.warning_severity.default }}" ] && echo "--warning-severity=${{ matrix.warning_severity.default }}") \
+          $([ -n "${{ matrix.error_severity.default }}" ] && echo "--error-severity=${{ matrix.error_severity.default }}") \
+          ${{ github.event_name == 'pull_request' && steps.changed-files.outputs.files || matrix.path.default }}
           working-directory: project
-
-
 
   static:
     name: M2 Coding Standard
