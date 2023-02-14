@@ -1,6 +1,4 @@
 name: "Coding Standard"
-author: "Graycore"
-description: "A Github Action that runs the Magento Coding Standard."
 
 on:
   push:
