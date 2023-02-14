@@ -1,6 +1,26 @@
 name: ExtDN M2 Coding Standard
 on: [push, pull_request]
 
+inputs:
+  php_version:
+    required: true
+    default: "8.1"
+
+  severity:
+    required: false
+    default: "8"
+    description: "The minimum severity required to display an error or warning (default: 5)"
+
+  warning_severity:
+    required: false
+    default: "5"
+    description: "The minimum severity required to display a warning"
+
+  error_severity:
+    required: false
+    default: "5"
+    description: "The minimum severity required to display an error"
+
 jobs:
   php:
     runs-on: ubuntu-latest
@@ -20,13 +40,13 @@ jobs:
             dependencies: "lowest"
     name: Tests with PHP ${{ matrix.php-version }} and ${{ matrix.dependencies }} dependencies
     steps:
-      - name: Run code style suite
-        run: vendor/bin/phpcs --standard=Magento2 Magento2/Helpers Magento2/Sniffs Magento2/Rector Magento2Framework/Sniffs
-
       - name: Install Coding Standards
         shell: bash
         working-directory: standard
         run: composer require "magento/magento-coding-standard:${{ inputs.version || '*' }}"
+
+      - name: Run code style suite
+        run: ../standard/vendor/bin/phpcs --standard=Magento2
 
       - name: Get Changed Files
         shell: bash
