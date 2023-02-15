@@ -1,4 +1,4 @@
-name: Coding Standard
+name: M2 Coding Testing
 
 on:
   push:
@@ -16,3 +16,6 @@ jobs:
     steps:
       - name: Run Coding Standard
         uses: graycoreio/github-actions-magento2/coding-standard@main
+        with:
+          version: 25 # Optional, will use the latest if omitted.
+          path: app/code # Optional, will be used when event is not a pull request.
