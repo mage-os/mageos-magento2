@@ -19,7 +19,7 @@ class Index extends \Magento\Framework\App\Action\Action implements HttpGetActio
      */
     public function execute()
     {
-        echo "123 333";
+        echo "123 333 ";
 
 
         echo "11 121 d dsd d2 test 11"
