@@ -2,23 +2,24 @@ name: ExtDN M2 Coding Standard
 on: [push, pull_request]
 
 
+inputs:
+  - severity:
+      required: false
+      default: 8
+  - warning-severity:
+      required: false
+      default: 5
+  - error-severity:
+      required: false
+      default: 5
+  - path:
+      required: true
+      default: 'app/code'
 
 jobs:
   php:
     runs-on: ubuntu-latest
-    inputs:
-      severity:
-        required: false
-        default: "8"
-      warning_severity:
-        required: false
-        default: "5"
-      error_severity:
-        required: false
-        default: "5"
-      path:
-        required: true
-        default: 'app/code'
+
     strategy:
       fail-fast: false
       matrix:
