@@ -1,6 +1,14 @@
 name: ExtDN M2 Coding Standard
 on: [push, pull_request]
 
+items:
+  - things:
+      thing1: huey
+      things2: dewey
+      thing3: louie
+  - other things:
+      key: value
+
 inputs:
   severity:
     required: false
