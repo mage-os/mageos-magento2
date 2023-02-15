@@ -19,7 +19,6 @@ jobs:
       path:
         required: true
         default: 'app/code'
-
     strategy:
       fail-fast: false
       matrix:
