@@ -17,8 +17,9 @@ jobs:
       - name: Run Coding Standard
         uses: graycoreio/github-actions-magento2/coding-standard@main
         with:
+          ref: ${{ github.event.pull_request.head.sha }}
           version: 25 # Optional, will use the latest if omitted.
-          path: echo "files=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | xargs)" >> $GITHUB_OUTPUT # Optional, will be used when event is not a pull request.
+          path: $(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} # Optional, will be used when event is not a pull request.
 
       - name: Get Changed Files
         shell: bash
