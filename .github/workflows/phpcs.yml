@@ -16,6 +16,5 @@ jobs:
           path: app/code # you may customize glob as needed
 
       - name: Coding Standard Check
-        shell: bash
-        run: ../standard/vendor/bin/phpcs --standard=Magento2 ${{ github.event_name == 'pull_request' && steps.changed-files.outputs.files}}
+        run: ../standard/vendor/bin/phpcs --standard=Magento2
         working-directory: project
