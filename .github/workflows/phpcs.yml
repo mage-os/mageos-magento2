@@ -15,3 +15,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
           path: app/code # you may customize glob as needed
 
+      - name: Coding Standard Check
+        shall: bash
+        run: --standard=Magento2 ${{ github.event_name == 'pull_request' && steps.changed-files.outputs.files}}
+        working-directory: project
