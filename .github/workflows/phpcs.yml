@@ -12,12 +12,6 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-          files: "*.php" # you may customize glob as needed
-          phpcs_path: ../standard/vendor/bin/phpcs
-          standard: Magento2
-
-      - uses: thenabeel/action-phpcs@v8
-        with:
-          files: "*.php" # you may customize glob as needed
-          phpcs_path: php phpcs.phar
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: app/code # you may customize glob as needed
           standard: Magento2
