@@ -14,4 +14,4 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
           path: app/code # you may customize glob as needed
-          standard: Magento2
+
