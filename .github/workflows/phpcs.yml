@@ -17,5 +17,5 @@ jobs:
 
       - name: Coding Standard Check
         shell: bash
-        run: --standard=Magento2 ${{ github.event_name == 'pull_request' && steps.changed-files.outputs.files}}
+        run: ../standard/vendor/bin/phpcs --standard=Magento2 ${{ github.event_name == 'pull_request' && steps.changed-files.outputs.files}}
         working-directory: project
