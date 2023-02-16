@@ -1,77 +1,28 @@
-name: ExtDN M2 Coding Standard
-on: [push, pull_request]
+name: "CI"
 
-items:
-  - things:
-      thing1: huey
-      things2: dewey
-      thing3: louie
-  - other things:
-      key: value
-
-inputs:
-  severity:
-    required: false
-    default: 8
-  warning-severity:
-    required: false
-    default: 5
-  error-severity:
-    required: false
-    default: 5
-  path:
-    required: true
-    default: 'app/code'
+on:
+  pull_request:
+    paths:
+      - "**.php"
+      - ".github/workflows/phpcs.yml"
 
 jobs:
-  php:
-    runs-on: ubuntu-latest
-
-    strategy:
-      fail-fast: false
-      matrix:
-        php-version:
-          - "7.3"
-          - "7.4"
-          - "8.0"
-          - "8.1"
-        dependencies:
-          - "lowest"
-          - "highest"
-        exclude:
-          - php-version: "8.1"
-            dependencies: "lowest"
-    name: Tests with PHP ${{ matrix.php-version }} and ${{ matrix.dependencies }} dependencies
-    steps:
-      - name: Install Coding Standards
-        shell: bash
-        working-directory: standard
-        run: composer require "magento/magento-coding-standard:${{ inputs.version || '*' }}"
-
-      - name: Run code style suite
-        run: ../standard/vendor/bin/phpcs --standard=Magento2
-
-      - name: Get Changed Files
-        shell: bash
-        working-directory: standard
-        id: changed-files
-        run: echo "files=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | xargs)" >> $GITHUB_OUTPUT
-        if: github.event_name == 'pull_request'
-
-      - name: Coding Standard Check
-        shell: bash
-        run: |
-          ../standard/vendor/bin/phpcs --standard=Magento2 \
-          $([ -n "${{ inputs.severity.default }}" ] && echo "--severity=${{ inputs.severity.default }}") \
-          $([ -n "${{ inputs.warning_severity.default }}" ] && echo "--warning-severity=${{ inputs.warning_severity.default }}") \
-          $([ -n "${{ inputs.error_severity.default }}" ] && echo "--error-severity=${{ inputs.error_severity.default }}") \
-          ${{ github.event_name == 'pull_request' && steps.changed-files.outputs.files || inputs.path.default }}
-          working-directory: project
-
-  static:
-    name: M2 Coding Standard
+  phpcs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: extdn/github-actions-m2/magento-coding-standard@master
+        with:
+          fetch-depth: 0 # important!
 
+      # we may use whatever way to install phpcs, just specify the path on the next step
+      # however, curl seems to be the fastest
+      - name: Install PHP_CodeSniffer
+        run: |
+          curl -OL https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar
+          php phpcs.phar --version
+
+      - uses: thenabeel/action-phpcs@v8
+        with:
+          files: "**.php" # you may customize glob as needed
+          phpcs_path: php phpcs.phar
+          standard: Magento2
