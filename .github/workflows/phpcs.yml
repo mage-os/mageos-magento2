@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        run: ../standard/vendor/bin/phpcs --standard=Magento2
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
