@@ -22,7 +22,8 @@ class Index extends \Magento\Framework\App\Action\Action implements HttpGetActio
         echo "Testf 11";
 
 
-        echo "11 121 d dsd d2cdfdd  d testdd 11"
+        echo "11 121 d dsd d2cdfdd  d testdd 11";
+        echo "dd";
         $resultRedirect = $this->resultRedirectFactory->create();
         return $resultRedirect->setPath('/');
     }
