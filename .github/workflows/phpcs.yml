@@ -13,5 +13,7 @@ jobs:
         with:
           # checkout full tree
           fetch-depth: 0
+          PATTERNS: '*.php'
+          RELATIVE: 'app/code'
       - run: |
           git diff ${{github.event.before}} ${{github.sha}}
