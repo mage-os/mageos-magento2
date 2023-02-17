@@ -12,34 +12,34 @@ on:
         default: "8.1"
         description: "PHP version used to do the coding standard check."
 
-        composer_version:
-          required: true
-          default: "2"
-          description: "The version of composer to use."
+      composer_version:
+        required: true
+        default: "2"
+        description: "The version of composer to use."
 
-        path:
-          required: true
-          default: 'app/code'
-          description: "The directory (relative to the project root) in which the coding standard will be checked. Used when the event is not a pull request."
+      path:
+        required: true
+        default: 'app/code'
+        description: "The directory (relative to the project root) in which the coding standard will be checked. Used when the event is not a pull request."
 
-        version:
-          required: false
-          description: "The version of the coding standard to use. If not provided, will use the latest version."
+      version:
+        required: false
+        description: "The version of the coding standard to use. If not provided, will use the latest version."
 
-        severity:
-          required: false
-          default: ""
-          description: "The minimum severity required to display an error or warning (default: 5)"
+      severity:
+        required: false
+        default: "8"
+        description: "The minimum severity required to display an error or warning (default: 5)"
 
-        warning_severity:
-          required: false
-          default: ""
-          description: "The minimum severity required to display a warning"
+      warning_severity:
+        required: false
+        default: "8"
+        description: "The minimum severity required to display a warning"
 
-        error_severity:
-          required: false
-          default: ""
-          description: "The minimum severity required to display an error"
+      error_severity:
+        required: false
+        default: "8"
+        description: "The minimum severity required to display an error"
 
 permissions:
   contents: read
