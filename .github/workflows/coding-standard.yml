@@ -1,4 +1,4 @@
-name: M2 Coding Testing
+name: M2 test Coding Testing
 
 on:
   push:
@@ -56,13 +56,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Run Coding Standard
-        uses: graycoreio/github-actions-magento2/coding-standard@main
-        with:
-          path: app/code # Optional, will be used when event is not a pull request.
-
-      - name: Get Changed Files
-        shell: bash
-        working-directory: standard
-        id: changed-files
-        run: echo "files=$(git diff ${{github.event.before}} ${{github.sha}} | xargs)" >> $GITHUB_OUTPUT
-
+        uses: './coding-standard'
