@@ -62,4 +62,4 @@ runs:
     - name: Coding Standard Check
       shell: bash
       run: ../standard/vendor/bin/phpcs --standard=Magento2 ${{ github.event_name == 'push' && steps.changed-files.outputs.files  }}
-      working-directory: app/code
+      working-directory: project
