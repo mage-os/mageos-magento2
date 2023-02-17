@@ -31,6 +31,17 @@ runs:
         fetch-depth: 0
         path: project
 
+    - name: Create Standard Directory
+      shell: bash
+      run: mkdir standard
+
+    - name: Set PHP Version
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ inputs.php_version }}
+        tools: composer:v${{ inputs.composer_version }}
+        coverage: none
+
     - name: Install Coding Standard
       shell: bash
       working-directory: standard
@@ -39,16 +50,9 @@ runs:
     - name: Register Coding Standard
       shell: bash
       working-directory: standard
-      run: vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/standard/vendor/magento/magento-coding-standard,${{ github.workspace }}/standard/vendor/phpcompatibility/php-compatibility
-
-    - name: Get Changed Files
-      shell: bash
-      working-directory: project
-      id: changed-files
-      run: echo "files=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | xargs)" >> $GITHUB_OUTPUT
-      if: github.event_name == 'pull_request'
+      run: ../standard/vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/standard/vendor/magento/magento-coding-standard,${{ github.workspace }}/standard/vendor/phpcompatibility/php-compatibility
 
     - name: Coding Standard Check
       shell: bash
-      run: ../standard/vendor/bin/phpcs --standard=Magento2 ${{ github.event_name == 'pull_request' && steps.changed-files.outputs.files || inputs.path }}
+      run: ../standard/vendor/bin/phpcs --standard=Magento2 ${{ github.event_name == 'push' && steps.changed-files.outputs.files  }}
       working-directory: project
