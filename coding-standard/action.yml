@@ -50,9 +50,9 @@ runs:
     - name: Register Coding Standard
       shell: bash
       working-directory: standard
-      run: ../standard/vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/standard/vendor/magento/magento-coding-standard,${{ github.workspace }}/standard/vendor/phpcompatibility/php-compatibility
+      run: vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/standard/vendor/magento/magento-coding-standard,${{ github.workspace }}/standard/vendor/phpcompatibility/php-compatibility
 
     - name: Coding Standard Check
       shell: bash
-      run: ../standard/vendor/bin/phpcs --standard=Magento2 ${{ github.event_name == 'push' && steps.changed-files.outputs.files  }}
+      run: vendor/bin/phpcs --standard=Magento2 ${{ github.event_name == 'push' && steps.changed-files.outputs.files  }}
       working-directory: 'app/code'
