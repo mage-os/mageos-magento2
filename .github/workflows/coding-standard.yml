@@ -5,7 +5,41 @@ on:
     branches: [ 2.4-develop, develop, phpcs_test ]
   pull_request:
     branches: [ 2.4-develop, develop, phpcs_test ]
+  workflow_call:
+    inputs:
+      php_version:
+        required: true
+        default: "8.1"
+        description: "PHP version used to do the coding standard check."
 
+        composer_version:
+          required: true
+          default: "2"
+          description: "The version of composer to use."
+
+        path:
+          required: true
+          default: 'app/code'
+          description: "The directory (relative to the project root) in which the coding standard will be checked. Used when the event is not a pull request."
+
+        version:
+          required: false
+          description: "The version of the coding standard to use. If not provided, will use the latest version."
+
+        severity:
+          required: false
+          default: ""
+          description: "The minimum severity required to display an error or warning (default: 5)"
+
+        warning_severity:
+          required: false
+          default: ""
+          description: "The minimum severity required to display a warning"
+
+        error_severity:
+          required: false
+          default: ""
+          description: "The minimum severity required to display an error"
 
 permissions:
   contents: read
@@ -17,11 +51,11 @@ jobs:
       - name: Run Coding Standard
         uses: graycoreio/github-actions-magento2/coding-standard@main
         with:
-          path: $(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }}) # Optional, will be used when event is not a pull request.
+          path: app/code # Optional, will be used when event is not a pull request.
 
       - name: Get Changed Files
         shell: bash
         working-directory: standard
         id: changed-files
-        run: echo "files=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | xargs)" >> $GITHUB_OUTPUT
+        run: echo "files=$(git diff ${{github.event.before}} ${{github.sha}} | xargs)" >> $GITHUB_OUTPUT
 
