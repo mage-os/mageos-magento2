@@ -2,12 +2,9 @@ name: "Code Inspection"
 on:
   push:
     branches: [ 2.4-develop, develop, phpcs_test ]
-    paths:
-      - app/code
   pull_request:
     branches: [ 2.4-develop, develop, phpcs_test ]
-    paths:
-      - app/code
+
 jobs:
   build:
     runs-on: ubuntu-latest
