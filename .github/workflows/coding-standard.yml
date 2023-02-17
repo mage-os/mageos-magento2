@@ -56,4 +56,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Run Coding Standard
-        uses: './coding-standard'
+      - uses: actions/checkout@v3
+      - uses: './coding-standard'
