@@ -6,6 +6,16 @@ on:
     branches: [ 2.4-develop, develop, phpcs_test ]
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          # checkout full tree
+          fetch-depth: 0
+      - run: |
+          git diff ${{github.event.before}} ${{github.sha}}
   phpcs:
     runs-on: ubuntu-latest
     steps:
