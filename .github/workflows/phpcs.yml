@@ -2,8 +2,12 @@ name: "Code Inspection"
 on:
   push:
     branches: [ 2.4-develop, develop, phpcs_test ]
+    paths:
+      - app/code
   pull_request:
     branches: [ 2.4-develop, develop, phpcs_test ]
+    paths:
+      - app/code
 
 jobs:
   build:
@@ -13,6 +17,6 @@ jobs:
         with:
           # checkout full tree
           fetch-depth: 0
-        path: app/code
+          path: app/code
       - run: |
           git diff ${{github.event.before}} ${{github.sha}}
