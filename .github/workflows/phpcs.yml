@@ -16,5 +16,4 @@ jobs:
           PATTERNS: '*.php'
           RELATIVE: 'app/code'
       - run: |
-          ../standard/vendor/bin/phpcs --standard=Magento2 \
-          git diff ${{github.event.before}} ${{github.sha}}
+          ../standard/vendor/bin/phpcs --standard=Magento2 git diff ${{github.event.before}} ${{github.sha}}
