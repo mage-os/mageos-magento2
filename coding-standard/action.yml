@@ -15,12 +15,27 @@ inputs:
 
   path:
     required: true
-    default: 'app/code'
+    default: "app/code"
     description: "The directory (relative to the project root) in which the coding standard will be checked. Used when the event is not a pull request."
 
   version:
     required: false
     description: "The version of the coding standard to use. If not provided, will use the latest version."
+
+  severity:
+    required: false
+    default: "5"
+    description: "The minimum severity required to display an error or warning (default: 5)"
+
+  warning_severity:
+    required: false
+    default: "5"
+    description: "The minimum severity required to display a warning"
+
+  error_severity:
+    required: false
+    default: "5"
+    description: "The minimum severity required to display an error"
 
 runs:
   using: composite
@@ -29,7 +44,7 @@ runs:
       uses: actions/checkout@v3
       with:
         fetch-depth: 0
-        path: project
+        path: app/code
 
     - name: Create Standard Directory
       shell: bash
