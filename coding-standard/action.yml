@@ -71,8 +71,7 @@ runs:
     - name: Get Changed Files -TJ Actions
       id: change-files
       uses: tj-actions/changed-files@v35
-      with:
-        files: app/code/
+
 
     - name: List All Changed Files
       shell: bash
