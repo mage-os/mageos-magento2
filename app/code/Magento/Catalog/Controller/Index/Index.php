@@ -20,6 +20,8 @@ class Index extends \Magento\Framework\App\Action\Action implements HttpGetActio
      */
     public function execute()
     {
+        echo "Ds ds" ;
+
         $resultRedirect = $this->resultRedirectFactory->create();
         return $resultRedirect->setPath('/');
     }
