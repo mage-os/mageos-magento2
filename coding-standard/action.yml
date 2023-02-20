@@ -77,7 +77,7 @@ runs:
       working-directory: project
       run: |
         for file in ${{ steps.change-files.outputs.all_changed_files }}; do
-          echo "$file was changed"
+          php ../.github/standard/vendor/bin/phpcs --standard=Magento2 file
         done
 
     - name: Coding Standard Check
