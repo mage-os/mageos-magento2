@@ -76,5 +76,5 @@ runs:
 
     - name: Coding Standard Check
       shell: bash
-      run: ../.github/standard/vendor/bin/phpcs --standard=Magento2 ${{ github.event_name == 'push' && steps.changed-files.outputs.files || inputs.path }}
+      run: ../.github/standard/vendor/bin/phpcs --standard=Magento2 "app/code"
       working-directory: project
