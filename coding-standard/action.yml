@@ -20,6 +20,7 @@ inputs:
 
   version:
     required: false
+    default: "31"
     description: "The version of the coding standard to use. If not provided, will use the latest version."
 
   severity:
@@ -57,10 +58,15 @@ runs:
         tools: composer:v${{ inputs.composer_version }}
         coverage: none
 
+    - name: Install GraphQL Dependency
+      shell: bash
+      working-directory: standard
+      run: composer require "webonyx/graphql-php:^15.0"
+
     - name: Install Coding Standard
       shell: bash
       working-directory: standard
-      run: composer require "magento/magento-coding-standard:${{ inputs.version || '*' }}"
+      run: composer require "magento/magento-coding-standard:31"
 
     - name: Register Coding Standard
       shell: bash
