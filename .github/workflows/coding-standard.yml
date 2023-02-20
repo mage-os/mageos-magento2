@@ -1,4 +1,4 @@
-name: M2 test Coding Testing
+name: M2 Coding Testing
 
 on:
   push:
@@ -55,8 +55,5 @@ jobs:
   coding-standard:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: './coding-standard'
-        with:
-          version: ${{ github.event.inputs.version || '*' }}
-          path: ${{ github.event.inputs.path }}
+      - name: Run Coding Standard
+        uses: graycoreio/github-actions-magento2/coding-standard@main
