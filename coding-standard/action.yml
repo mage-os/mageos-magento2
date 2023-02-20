@@ -67,7 +67,14 @@ runs:
       working-directory: standard
       run: ../.github/standard/vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/standard/vendor/magento/magento-coding-standard,${{ github.workspace }}/standard/vendor/phpcompatibility/php-compatibility
 
+    - name: Get Changed Files
+      shell: bash
+      working-directory: project
+      id: changed-files
+      run: echo "files=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | xargs)" >> $GITHUB_OUTPUT
+      if: github.event_name == 'push'
+
     - name: Coding Standard Check
       shell: bash
-      run: ../.github/standard/vendor/bin/phpcs --standard=Magento2 ${{ inputs.path }}
+      run: ../.github/standard/vendor/bin/phpcs --standard=Magento2 ${{ github.event_name == 'push' && steps.changed-files.outputs.files || inputs.path }}
       working-directory: project
