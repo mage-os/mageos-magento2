@@ -75,10 +75,6 @@ runs:
 
     - name: Coding Standard Check
       shell: bash
-      run: |
-        ../.github/standard/vendor/bin/phpcs --standard=Magento2 \
-        $([ -n "${{ inputs.severity }}" ] && echo "--severity=${{ inputs.severity }}") \
-        $([ -n "${{ inputs.warning_severity }}" ] && echo "--warning-severity=${{ inputs.warning_severity }}") \
-        $([ -n "${{ inputs.error_severity }}" ] && echo "--error-severity=${{ inputs.error_severity }}") \
-       "app/code"
+      run: ../.github/standard/vendor/bin/phpcs --standard=Magento2  ${{ github.event.push.base.sha }} ${{ github.sha }}
+
 
