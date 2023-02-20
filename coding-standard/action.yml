@@ -69,5 +69,5 @@ runs:
 
     - name: Coding Standard Check
       shell: bash
-      run: ../.github/standard/vendor/bin/phpcs --standard=Magento2  ${{ github.event.push.base.sha }} ${{ github.sha }}
+      run: ../.github/standard/vendor/bin/phpcs --standard=Magento2 ${{ inputs.path }}
       working-directory: project
