@@ -73,20 +73,13 @@ runs:
       uses: tj-actions/changed-files@v35
 
     - name: List All Changed Files
+      shell: bash
+      working-directory: project
       run: |
         for file in ${{ steps.change-files.outputs.all_changed_files }}; do
           echo "$file was changed"
         done
 
-    - name: Get changed files
-      id: change-files
-      uses:
-
-          - name: List all changed files
-            run: |
-              for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
-                echo "$file was changed"
-              done
     - name: Get Changed Files
       shell: bash
       working-directory: project
