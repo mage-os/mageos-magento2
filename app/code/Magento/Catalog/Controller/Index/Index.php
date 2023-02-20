@@ -23,7 +23,7 @@ class Index extends \Magento\Framework\App\Action\Action implements HttpGetActio
 
         echo "Test   sds f 11";
         echo "dsdsd  ds ds"
-        echo "11 121 d dsd d2cdfdd  d testdd 11";
+        echo "11 121 d ddsd d2cdfdd  d testdd 11";
         echo "dd";
         echo "dsds";
 
