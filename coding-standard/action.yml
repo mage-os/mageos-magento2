@@ -44,6 +44,7 @@ runs:
       uses: actions/checkout@v3
       with:
         fetch-depth: 0
+        working-directory: project
 
     - name: Create Standard Directory
       shell: bash
@@ -76,5 +77,6 @@ runs:
     - name: Coding Standard Check
       shell: bash
       run: vendor/bin/phpcs --standard=Magento2  ${{ github.event.push.base.sha }} ${{ github.sha }}
+      working-directory: project
 
 
