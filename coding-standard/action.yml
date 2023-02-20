@@ -80,7 +80,3 @@ runs:
           php ../.github/standard/vendor/bin/phpcs --standard=Magento2 $file
         done
 
-    - name: Coding Standard Check
-      shell: bash
-      run: php ../.github/standard/vendor/bin/phpcs --standard=Magento2 ${{github.event.before}} ${{github.sha}}
-      working-directory: project
