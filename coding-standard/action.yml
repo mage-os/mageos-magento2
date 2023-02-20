@@ -68,11 +68,30 @@ runs:
       working-directory: standard
       run: ../.github/standard/vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/standard/vendor/magento/magento-coding-standard,${{ github.workspace }}/standard/vendor/phpcompatibility/php-compatibility
 
+    - name: Get Changed Files -TJ Actions
+      id: change-files
+      uses: tj-actions/changed-files@v35
+
+    - name: List All Changed Files
+      run: |
+        for file in ${{ steps.change-files.outputs.all_changed_files }}; do
+          echo "$file was changed"
+        done
+
+    - name: Get changed files
+      id: change-files
+      uses:
+
+          - name: List all changed files
+            run: |
+              for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+                echo "$file was changed"
+              done
     - name: Get Changed Files
       shell: bash
       working-directory: project
       id: changed-files
-      run: echo "files=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.push.base.sha }} ${{ github.sha }} | xargs)" >> $GITHUB_OUTPUT
+      run: php echo "files=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.push.base.sha }} ${{ github.sha }} | xargs)" >> $GITHUB_OUTPUT
       if: github.event_name == 'push'
 
     - name: Coding Standard Check
