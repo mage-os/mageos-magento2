@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<ruleset name="MageOs">
+    <description>Coding standard based on Magento2 with some modifications.</description>
+
+    <!-- Include the whole Magento2 Standard -->
+    <rule ref="Magento2"/>
+</ruleset>
