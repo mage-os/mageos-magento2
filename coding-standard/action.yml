@@ -78,6 +78,6 @@ runs:
       working-directory: project
       run: |
         for file in ${{ steps.change-files.outputs.all_changed_files }}; do
-          php ../.github/standard/vendor/bin/phpcs --standard=ruleset.xml $file
+          php ../.github/standard/vendor/bin/phpcs --standard=MageOs $file
         done
 
