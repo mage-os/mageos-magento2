@@ -113,12 +113,15 @@ runs:
       run: ../.github/standard/vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/standard/vendor/magento/magento-coding-standard,${{ github.workspace }}/standard/vendor/phpcompatibility/php-compatibility
 
     - name: Validate composer.json and composer.lock
+      shell: bash
       run: composer validate
 
     - name: Install dependencies
+      shell: bash
       run: composer install --prefer-dist --no-progress --no-suggest
 
     - name: run checks
+      shell: bash
       run: composer check
 
 
