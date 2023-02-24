@@ -41,7 +41,7 @@ inputs:
 
 jobs:
   test:
-    name: PHP ${{ matrix.php-versions }} Test ${{ matrix.composer-flags }}
+    name: PHP ${{ inputs.php-version }} Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -69,7 +69,8 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.1
+          php-version: ${{ inputs.php_version }}
+          tools: composer:v${{ inputs.composer_version }}
           coverage: none
 
       - name: Install dependencies
