@@ -41,15 +41,19 @@ inputs:
 
 jobs:
   test:
-    name: PHP ${{ inputs.php_version }} Test
+    name: PHP "8.1" Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout Project
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          path: project
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ inputs.php_version }}
+          php-version: "8.1"
           coverage: none
 
       - name: Validate composer.json and composer.lock
