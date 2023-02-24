@@ -120,9 +120,9 @@ runs:
       shell: bash
       run: composer validate
 
-    - name: run checks
+    - name: Run test suite
       shell: bash
-      run: composer check
+      run: composer test
 
     - name: run checks
       shell: bash
