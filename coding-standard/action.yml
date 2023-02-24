@@ -112,6 +112,16 @@ runs:
       working-directory: standard
       run: ../.github/standard/vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/standard/vendor/magento/magento-coding-standard,${{ github.workspace }}/standard/vendor/phpcompatibility/php-compatibility
 
+    - name: Validate composer.json and composer.lock
+      run: composer validate
+
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress --no-suggest
+
+    - name: run checks
+      run: composer check
+
+
     - name: Get Changed Files -TJ Actions
       id: change-files
       uses: tj-actions/changed-files@v35
