@@ -73,8 +73,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ inputs.php_version }}
-          tools: composer:v${{ inputs.composer_version }}
+          php-version: "8.1"
           coverage: none
 
       - name: Install dependencies
