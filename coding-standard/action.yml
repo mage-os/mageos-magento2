@@ -41,7 +41,7 @@ inputs:
 
 jobs:
   test:
-    name: PHP ${{ inputs.php-version }} Test
+    name: PHP ${{ inputs.php_version }} Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -49,7 +49,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ inputs.php-version }}
+          php-version: ${{ inputs.php_version }}
           coverage: none
 
       - name: Validate composer.json and composer.lock
