@@ -77,14 +77,21 @@ runs:
       shell: bash
       working-directory: project
       id: changed-lines
-      run: echo "files=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.push.base.sha }} ${{ github.sha }} | xargs)" >> $GITHUB_OUTPUT
+      run: echo "files=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.push.base.sha }} ${{ github.sha }} | xargs)" >> ${{GITHUB_OUTPUT}}
       if: github.event_name == 'push'
+
+    - name: get lines
+      shell: bash
+      id: lines
+      run: echo $(git diff --name-only --diff-filter=ACMRT ${{ github.event.push.base.sha }} ${{ github.sha }} | xargs)
+
 
     - name: List All Changed Files
       shell: bash
       working-directory: project
       run: |
         for file in ${{ steps.change-files.outputs.all_changed_files }}; do
+          echo steps.changed-files.outputs.files
           php ../.github/standard/vendor/bin/phpcs --standard=MageOs $GITHUB_OUTPUT
         done
 
