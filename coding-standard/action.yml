@@ -83,7 +83,7 @@ runs:
     - name: get lines
       shell: bash
       id: lines
-      run: echo "$(git diff --name-only HEAD^ HEAD)"
+      run: echo "$(git diff app/code HEAD^ HEAD)"
 
 
     - name: List All Changed Files
