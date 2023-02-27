@@ -91,7 +91,7 @@ runs:
       working-directory: project
       run: |
         for file in ${{ steps.change-files.outputs.all_changed_files }}; do
-          echo ${{steps.changed-lines.outputs.files}}
-          php ../.github/standard/vendor/bin/phpcs --standard=MageOs $(git diff $file > mater.patch)
+          $(git diff $file > mater.patch)
+          php ../.github/standard/vendor/bin/phpcs --standard=MageOs mater.patch
         done
 
