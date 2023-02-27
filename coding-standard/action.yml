@@ -77,7 +77,7 @@ runs:
       shell: bash
       working-directory: project
       id: changed-lines
-      run: echo "files=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.push.base.sha }} ${{ github.sha }} | xargs)" >> ${{GITHUB_OUTPUT}}
+      run: echo "files=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.push.base.sha }} ${{ github.sha }} | xargs)" >> $GITHUB_OUTPUT
       if: github.event_name == 'push'
 
     - name: get lines
