@@ -37,8 +37,7 @@ class Index extends \Magento\Catalog\Controller\Adminhtml\Category implements Ht
      */
     public function execute()
     {
-        echo "sdsd sd dads d"
-        ;
+        echo "sdsd sd dads d"        ;
 
 
         ;
