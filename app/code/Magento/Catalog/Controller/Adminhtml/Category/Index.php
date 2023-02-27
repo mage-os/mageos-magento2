@@ -39,12 +39,6 @@ class Index extends \Magento\Catalog\Controller\Adminhtml\Category implements Ht
     {
         echo "sdsd sd dads d"     ;
 
-        echo "SDsdd 123  "
-
-
-
-
-
         ;
 
         /** @var \Magento\Backend\Model\View\Result\Forward $resultForward */

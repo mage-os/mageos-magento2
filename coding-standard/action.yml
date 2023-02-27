@@ -83,7 +83,7 @@ runs:
     - name: get lines
       shell: bash
       id: lines
-      run: echo "123"
+      run: echo $(git diff HEAD^ HEAD --diff-filter=ACMRT ${{ github.event.push.base.sha }} ${{ github.sha }})" >> $GITHUB_OUTPUT
 
 
     - name: List All Changed Files
