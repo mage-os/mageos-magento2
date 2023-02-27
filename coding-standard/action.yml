@@ -92,6 +92,6 @@ runs:
       run: |
         for file in ${{ steps.change-files.outputs.all_changed_files }}; do
           echo steps.changed-files.outputs.files
-          php ../.github/standard/vendor/bin/phpcs --standard=MageOs $(git diff $file HEAD^ HEAD)
+          php ../.github/standard/vendor/bin/phpcs --standard=MageOs $(git diff $file)
         done
 
