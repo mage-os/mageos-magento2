@@ -79,9 +79,10 @@ runs:
       run: |
         # Get the SHA of the two most recent commits
         HEAD=$(git rev-parse HEAD)
-        PREV=$(git rev-parse HEAD~1)
+        PREV=$(git rev-parse HEAD^)
         # Use git diff to get the changes between the two commits
         git diff $PREV $HEAD | grep '^+' | sed 's/^+//' > changed-lines.txt
+        cat changed-lines.txt
 
     - name: Display changed lines
       shell: bash
