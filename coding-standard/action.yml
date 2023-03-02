@@ -79,6 +79,6 @@ runs:
       run: |
         git diff --unified=0 HEAD^ HEAD | grep -v '^@@' | sed 's/^[-+ ]*//g' > changed_files.txt
         cat changed_files.txt
-        php ../.github/standard/vendor/bin/phpcs --standard="Magento" changed_files.txt
+        php ../.github/standard/vendor/bin/phpcs --standard="MageOs" changed_files.txt
 
 
