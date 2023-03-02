@@ -43,6 +43,7 @@ class Index extends \Magento\Catalog\Controller\Adminhtml\Category implements Ht
            echo "d"
            echo "11"
            echo ""
+           echo "ddd"
 
         echo "test 1        ";
 
