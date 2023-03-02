@@ -78,6 +78,7 @@ runs:
       working-directory: project
       run: |
         git diff --unified=0 HEAD^ HEAD | grep -v '^@@' | sed 's/^[-+ ]*//g' > ${{ github.workspace }}/standard/changed_files.txt
-        php ../.github/standard/vendor/bin/phpcs --standard=MageOs app/code/Magento/Catalog/Controller/Adminhtml/Category/Index.php
+        php ../.github/standard/vendor/bin/phpcs --standard=PSR1 ${{ github.workspace }}/standard/changed_files.txt
+        echo ${{ github.workspace }}/standard/changed_files.txt
 
 
