@@ -46,6 +46,8 @@ class Index extends \Magento\Catalog\Controller\Adminhtml\Category implements Ht
            echo "ddd";
            echo "Sdd ssasas";
            echo "sdsdsd";
+
+           echo "dsdsdsd  "
            while
            testee
 
