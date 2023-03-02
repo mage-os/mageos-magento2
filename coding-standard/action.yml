@@ -77,8 +77,8 @@ runs:
       shell: bash
       working-directory: project
       run: |
-        git diff --unified=0 HEAD^ HEAD | grep -v '^@@' | sed 's/^[-+ ]*//g' > changed_files.txt
+        git diff --unified=0 HEAD^ HEAD | grep -v '^@@' | sed 's/^[-+ ]*//g' > ${{ github.workspace }}/standard/changed_files.txt
         cat changed_files.txt
-        php ../.github/standard/vendor/bin/phpcs --standard="MageOs" changed_files.txt
+        echo php ../.github/standard/vendor/bin/phpcs --standard="MageOs" ${{ github.workspace }}/standard/changed_files.txt
 
 
