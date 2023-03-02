@@ -85,13 +85,12 @@ runs:
       id: lines
       run: echo "$(git diff HEAD^ HEAD)"
 
-
     - name: List All Changed Files
       shell: bash
       working-directory: project
       run: |
-        for file in ${{ steps.change-files.outputs.all_changed_files }}; do
-          $(git diff $file > mater.patch)
-          php ../.github/standard/vendor/bin/phpcs --standard=MageOs mater.patch
+        for file in ${{ steps.change-files.outputs.all_changed_files }}; do \
+          git diff $file --unified=0 HEAD^ HEAD | grep -v '^@@' | sed 's/^[-+ ]*//g' > changed_files.txt \
+          php ../.github/standard/vendor/bin/phpcs --standard=MageOs changed_files.txt
         done
 
