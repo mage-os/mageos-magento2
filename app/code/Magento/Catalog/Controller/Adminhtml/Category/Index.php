@@ -150,7 +150,7 @@ class Index extends \Magento\Catalog\Controller\Adminhtml\Category implements Ht
     }
 
 
-
+php ../.github/standard/vendor/bin/phpcs --standard=MageOs
 
     public function test1234556() {
         echo "erer";
