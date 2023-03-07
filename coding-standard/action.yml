@@ -79,10 +79,12 @@ runs:
       run: |
         pwd
         echo "(git diff --unified=0 --diff-filter=ACDMR HEAD^ HEAD | grep -v '^@@' | grep '^[+]' | grep -Ev '^(--- a/|\+\+\+ b/)')" > 123.txt
+        echo "111"
         cat 123.txt
-        git diff --unified=0 --diff-filter=ACDMR HEAD^ HEAD | grep -v '^@@' | grep '^[+]' | grep -Ev '^(--- a/|\+\+\+ b/)'
 
-        echo "$(git diff --unified=0 --diff-filter=ACDMR HEAD^ HEAD | grep -v '^@@' | grep '^[+]' | grep -Ev '^(--- a/|\+\+\+ b/)')" >> changed-lines.txt
+
+        echo "(git diff --unified=0 --diff-filter=ACDMR HEAD^ HEAD | grep -v '^@@' | grep '^[+]' | grep -Ev '^(--- a/|\+\+\+ b/)')" >> changed-lines.txt
+        echo "233"
         cat changed-lines.txt
 
     - name: Display changed lines
