@@ -67,7 +67,6 @@ jobs:
 
 
       - name: List All Changed Files
-        shell: bash
         run: |
           pwd
           echo "$(git diff --unified=0 --diff-filter=ACDMR HEAD^ HEAD | grep -v '^@@' | grep '^[+]' | grep -Ev '^(--- a/|\+\+\+ b/)')" > changed-lines.txt
