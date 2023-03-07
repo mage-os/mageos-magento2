@@ -68,7 +68,6 @@ jobs:
 
       - name: List All Changed Files
         shell: bash
-        working-directory: project
         run: |
           echo "$(git diff --unified=0 --diff-filter=ACDMR HEAD^ HEAD | grep -v '^@@' | grep '^[+]' | grep -Ev '^(--- a/|\+\+\+ b/)')" > changed-lines.txt
           echo "233"
