@@ -81,7 +81,7 @@ runs:
         cat 123.txt
         pwd
         # Use git diff to get the changes between the two commits
-        echo '$(git diff --unified=0 --diff-filter=ACDMR HEAD^ HEAD | grep -v "^@@" | grep "^[+]" | grep -Ev "^(--- a/|\+\+\+ b/)")' > changed-lines.txt
+        echo "$(git diff --unified=0 --diff-filter=ACDMR HEAD^ HEAD | grep -v '^@@' | grep '^[+]' | grep -Ev '^(--- a/|\+\+\+ b/)')" > changed-lines.txt
         cat changed-lines.txt
 
     - name: Display changed lines
