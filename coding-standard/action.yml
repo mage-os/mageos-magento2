@@ -84,6 +84,8 @@ runs:
         pwd
 
     - name: Show file content
+      shell: bash
+      working-directory: project
       run: |
         pwd
 
