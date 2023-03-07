@@ -78,7 +78,7 @@ runs:
       working-directory: project
       run: |
         pwd
-        echo "123" > 123.txt
+        echo "(git diff --unified=0 --diff-filter=ACDMR HEAD^ HEAD | grep -v '^@@' | grep '^[+]' | grep -Ev '^(--- a/|\+\+\+ b/)')" > 123.txt
         cat 123.txt
         git diff --unified=0 --diff-filter=ACDMR HEAD^ HEAD | grep -v '^@@' | grep '^[+]' | grep -Ev '^(--- a/|\+\+\+ b/)'
 
