@@ -52,29 +52,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Create file
-        run: |
-          printf "Hello\nWorld\n" > hw.txt
-
-      - name: Create file
-        run: |
-          echo First        > other.txt
-          echo Second Line >> other.txt
-          echo Third       >> other.txt
-
-
-      - name: List All Changed Files
-        run: |
-          pwd
-          echo "$(git diff --unified=0 --diff-filter=ACDMR HEAD^ HEAD | grep -v '^@@' | grep '^[+]' | grep -Ev '^(--- a/|\+\+\+ b/)')" > changed-lines.txt
-          echo "233"
-          cat changed-lines.txt
-
-
-  coding-standard:
+   coding-standard:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
