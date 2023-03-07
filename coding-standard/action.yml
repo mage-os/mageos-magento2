@@ -78,14 +78,14 @@ runs:
       working-directory: project
       run: |
         pwd
-        echo "$(git diff --unified=0 --diff-filter=ACDMR HEAD^ HEAD | grep -v '^@@' | grep '^[+]' | grep -Ev '^(--- a/|\+\+\+ b/)')" > 123.txt
-        echo "111"
-        cat 123.txt
-
-
         echo "$(git diff --unified=0 --diff-filter=ACDMR HEAD^ HEAD | grep -v '^@@' | grep '^[+]' | grep -Ev '^(--- a/|\+\+\+ b/)')" >> changed-lines.txt
         echo "233"
         cat changed-lines.txt
+        pwd
+
+    - name: Show file content
+      run: |
+        pwd
 
 
 
