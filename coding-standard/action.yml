@@ -78,7 +78,7 @@ runs:
       run: |
         for file in ${{ steps.change-files.outputs.all_changed_files }}; do
           echo "<?php" > changed-lines.php
-          git diff --unified=0 --diff-filter=ACDMR $file | grep -v '^@@' | grep '^[+]' | grep -Ev '^(--- a/|\+\+\+ b/)
+          git diff --unified=0 --diff-filter=ACDMR $file | grep -v '^@@' | grep '^[+]' | grep -Ev '^(--- a/|\+\+\+ b/)'
           echo "$(git diff --unified=0 --diff-filter=ACDMR $file | grep -v '^@@' | grep '^[+]' | grep -Ev '^(--- a/|\+\+\+ b/)')" > changed-lines.php
           cat changed-lines.php
         done
