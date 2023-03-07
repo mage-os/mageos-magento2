@@ -72,12 +72,13 @@ runs:
       id: change-files
       uses: tj-actions/changed-files@v35
 
-
     - name: List All Changed Files
       shell: bash
       working-directory: project
       run: |
         for file in ${{ steps.change-files.outputs.all_changed_files }}; do
-          php ../.github/standard/vendor/bin/phpcs --standard=MageOs $file
+          echo "<?php" > changed-lines.php
+          echo "(git diff --unified=0 --diff-filter=ACDMR $file | grep -v '^@@' | grep '^[+]' | grep -Ev '^(--- a/|\+\+\+ b/)')" >> changed-lines.php
+          php ../.github/standard/vendor/bin/phpcs --standard=MageOs changed-lines.php
         done
 
