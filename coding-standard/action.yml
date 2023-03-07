@@ -87,8 +87,7 @@ runs:
         echo "233"
         cat changed-lines.txt
 
-    - name: Display changed lines
-      shell: bash
-      run: cat changed-lines.txt
+
+
 
 
