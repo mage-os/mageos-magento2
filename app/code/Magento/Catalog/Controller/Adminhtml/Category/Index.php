@@ -255,8 +255,7 @@ class Index extends \Magento\Catalog\Controller\Adminhtml\Category implements Ht
         echo "sdsdasd sdsd 1111";
     }
 
-    public function 124() {
-        echo "'ff";
-}
-
+    public function test11() {
+        echo """";
+    }
 }
