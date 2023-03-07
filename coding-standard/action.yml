@@ -38,14 +38,13 @@ inputs:
     default: "5"
     description: "The minimum severity required to display an error"
 
-
 runs:
   using: composite
   steps:
     - name: Checkout Project
       uses: actions/checkout@v3
       with:
-        fetch-depth: 2
+        fetch-depth: 0
         path: project
 
     - name: Create Standard Directory
@@ -73,23 +72,12 @@ runs:
       id: change-files
       uses: tj-actions/changed-files@v35
 
+
     - name: List All Changed Files
       shell: bash
       working-directory: project
       run: |
-        pwd
-        echo "$(git diff --unified=0 --diff-filter=ACDMR HEAD^ HEAD | grep -v '^@@' | grep '^[+]' | grep -Ev '^(--- a/|\+\+\+ b/)')" >> changed-lines.txt
-        echo "233"
-        cat changed-lines.txt
-        pwd
-
-    - name: Show file content
-      shell: bash
-      working-directory: project
-      run: |
-        pwd
-
-
-
-
+        for file in ${{ steps.change-files.outputs.all_changed_files }}; do
+          php ../.github/standard/vendor/bin/phpcs --standard=MageOs $file
+        done
 
