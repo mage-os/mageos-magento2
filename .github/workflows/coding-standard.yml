@@ -52,6 +52,27 @@ permissions:
   contents: read
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create file
+        run: |
+          printf "Hello\nWorld\n" > hw.txt
+
+      - name: Create file
+        run: |
+          echo First        > other.txt
+          echo Second Line >> other.txt
+          echo Third       >> other.txt
+
+
+      - name: Show file content
+        run: |
+          pwd
+          ls -la
+          cat hw.txt
+          cat other.txt
+
   coding-standard:
     runs-on: ubuntu-latest
     steps:
