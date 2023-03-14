@@ -61,7 +61,10 @@ runs:
     - name: Install Coding Standard
       shell: bash
       working-directory: standard
-      run: composer require "magento/magento-coding-standard"
+      run: |
+        composer require "magento/magento-coding-standard"
+        composer require "digitalrevolution/php-codesniffer-baseline"
+
 
     - name: Register Coding Standard
       shell: bash
