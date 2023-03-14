@@ -78,6 +78,16 @@ runs:
             echo "changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | xargs)" >> $GITHUB_OUTPUT
         fi
 
+    - name: List changed files
+      shell: bash
+      run: |
+          for file in ${{ steps.changed-new-files.outputs.changed_files }}; do
+              git checkout HEAD~1 $file
+              php ../.github/standard/vendor/bin/phpcs --standard=MageOs --report=code $file
+              cp $file $GITHUB_WORKSPACE/file.txt
+              cat $GITHUB_WORKSPACE/file.txt
+          done
+
     - name: List All Changed Files
       shell: bash
       working-directory: project
