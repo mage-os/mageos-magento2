@@ -68,35 +68,24 @@ runs:
       working-directory: standard
       run: ../.github/standard/vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/standard/vendor/magento/magento-coding-standard,${{ github.workspace }}/standard/vendor/phpcompatibility/php-compatibility
 
-    - name: Get changed files
-      shell: bash
-      id: changed-new-files
-      run: |
-        if ${{ github.event_name == 'pull_request' }}; then
-            echo "changed_files=$(git diff --name-only -r HEAD^1 HEAD | xargs)" >> $GITHUB_OUTPUT
-        else
-            echo "changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | xargs)" >> $GITHUB_OUTPUT
-        fi
+    - name: Get Changed Files -TJ Actions
+      id: change-files
+      uses: tj-actions/changed-files@v35
 
-    - name: List changed files
-      shell: bash
-      run: |
-          for file in ${{ steps.changed-new-files.outputs.changed_files }}; do
-              git checkout HEAD~1 $file
-              php ../.github/standard/vendor/bin/phpcs --standard=MageOs --report=code $file
-              cp $file $GITHUB_WORKSPACE/file.txt
-              cat $GITHUB_WORKSPACE/file.txt
-          done
-
-    - name: List All Changed Files
+    - name: List Old Changes
       shell: bash
       working-directory: project
       run: |
-        for file in ${{ steps.changed-new-files.outputs.changed_files }}; do
+        for file in ${{ steps.change-files.outputs.all_changed_files }}; do
           git checkout HEAD~1 $file
           php ../.github/standard/vendor/bin/phpcs --standard=MageOs --report=code $file
         done
-        for file in ${{ steps.changed-new-files.outputs.changed_files }}; do
+
+    - name: List New Changes
+      shell: bash
+      working-directory: project
+      run: |
+        for file in ${{ steps.change-files.outputs.all_changed_files }}; do
           git checkout HEAD $file
           php ../.github/standard/vendor/bin/phpcs --standard=MageOs --report=code $file
         done
