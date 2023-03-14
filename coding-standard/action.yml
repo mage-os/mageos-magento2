@@ -78,8 +78,9 @@ runs:
       run: |
         for file in ${{ steps.change-files.outputs.all_changed_files }}; do
           git checkout HEAD~1 $file
-          ../.github/standard/vendor/bin/phpcs --report=code $file
-          cp $file $GITHUB_WORKSPACE/file.txt
-          cat $GITHUB_WORKSPACE/file.txt
+          ../.github/standard/vendor/bin/phpcs --standard=MageOs --report-file=phpcs.baseline_old.xml --report=code $file
         done
-
+        for file in ${{ steps.change-files.outputs.all_changed_files }}; do
+          git checkout HEAD $file
+          ../.github/standard/vendor/bin/phpcs --standard=MageOs --report-file=phpcs.baseline_new.xml --report=code $file
+        done
