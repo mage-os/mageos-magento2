@@ -68,10 +68,6 @@ runs:
       working-directory: standard
       run: ../.github/standard/vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/standard/vendor/magento/magento-coding-standard,${{ github.workspace }}/standard/vendor/phpcompatibility/php-compatibility
 
-    - name: Get Changed Files -TJ Actions
-      id: change-files
-      uses: tj-actions/changed-files@v35
-
     - name: List All Changed Files
       shell: bash
       working-directory: project
