@@ -43,7 +43,7 @@ class Index extends \Magento\Catalog\Controller\Adminhtml\Category implements Ht
         return $resultForward->forward('edit');
     }
 
-   public funciton test11() {
+    public funciton test11() {
           echo "sdsdd";
-}
+    }
 }
