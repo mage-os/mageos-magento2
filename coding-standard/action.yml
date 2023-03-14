@@ -63,6 +63,7 @@ runs:
       working-directory: standard
       run: |
         composer require "magento/magento-coding-standard"
+        composer config --no-plugins allow-plugins.digitalrevolution/php-codesniffer-baseline true
         composer require --dev "digitalrevolution/php-codesniffer-baseline"
 
 
