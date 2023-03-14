@@ -77,9 +77,9 @@ runs:
       working-directory: project
       run: |
         for file in ${{ steps.change-files.outputs.all_changed_files }}; do
-          echo "<?php" > changed-lines.php
-          git diff --unified=0 --diff-filter=ACDMR $file | grep -v '^@@' | grep '^[+]' | grep -Ev '^(--- a/|\+\+\+ b/)'
-          echo "$(git diff --unified=0 --diff-filter=ACDMR $file | grep -v '^@@' | grep '^[+]' | grep -Ev '^(--- a/|\+\+\+ b/)')" > changed-lines.php
-          cat changed-lines.php
+          git checkout HEAD~1 $file
+          ../.github/standard/vendor/bin/phpcs --report=code $file
+          cp $file $GITHUB_WORKSPACE/file.txt
+          cat $GITHUB_WORKSPACE/file.txt
         done
 
