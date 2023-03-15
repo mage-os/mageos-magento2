@@ -82,8 +82,8 @@ runs:
       run: |
         for file in ${{ steps.change-files.outputs.all_changed_files }}; do
           git checkout HEAD~1 $file
-          php ../.github/standard/vendor/bin/phpcs $file --report=xml --standard=MageOs --report-file=$GITHUB_WORKSPACE/phpcs.baseline_old.xml
-          cat $GITHUB_WORKSPACE/phpcs.baseline_old.xml
+          cat $file
+          php ../.github/standard/vendor/bin/phpcs $file --report=xml --standard=MageOs
         done
 
     - name: List New Changes
@@ -92,6 +92,7 @@ runs:
       run: |
         for file in ${{ steps.change-files.outputs.all_changed_files }}; do
           git checkout HEAD $file
-          php ../.github/standard/vendor/bin/phpcs $file --report=xml --standard=MageOs --report-file=$GITHUB_WORKSPACE/phpcs.baseline_new.xml
-          cat $GITHUB_WORKSPACE/phpcs.baseline_new.xml
+          cat $file
+          php ../.github/standard/vendor/bin/phpcs $file --report=xml --standard=MageOs
+
         done
