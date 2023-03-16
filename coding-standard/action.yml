@@ -83,7 +83,7 @@ runs:
         for file in ${{ steps.change-files.outputs.all_changed_files }}; do
           git checkout HEAD~1 $file
           cat $file
-          php ../.github/standard/vendor/bin/phpcs --standard=MageOs $file --report=xml --report-file=phpcs.baseline_old.xml
+          echo $(php ../.github/standard/vendor/bin/phpcs --standard=MageOs $file --report=xml) >> phpcs.baseline_old.xml
           cat phpcs.baseline_old.xml
         done
 
