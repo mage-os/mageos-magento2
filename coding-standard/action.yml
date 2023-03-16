@@ -76,6 +76,42 @@ runs:
       id: change-files
       uses: tj-actions/changed-files@v35
 
+    - name: Get list of changed files
+      id: get_files
+      shell: bash
+      working-directory: project
+      run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+          git diff --name-only "${{ github.base_ref }}...${{ github.head_ref }}" > files_changed.txt
+          elif [ "${{ github.event_name }}" = "push" ]; then
+          git diff --name-only "${{ github.event.before }}"..."${{ github.sha }}" > files_changed.txt
+          fi
+
+    - name: Filter PHP files
+      id: filter_files
+      shell: bash
+      working-directory: project
+      run: |
+          grep '\.php$' files_changed.txt > files_php.txt
+
+    - name: Get list of changed lines
+      id: get_lines
+      shell: bash
+      working-directory: project
+      run: |
+          while read file; do
+            git diff -U0 "$file" | sed -n '/^@@/,/^diff/p' | tail -n +3 | grep -v '^[-+]' | cut -c2- > "${file}.lines"
+          done < files_php.txt
+
+    - name: Run PHPCS on changed lines
+      id: run_phpcs
+      shell: bash
+      working-directory: project
+      run: |
+        while read file; do
+          php ../.github/standard/vendor/bin/phpcs --standard=PSR2 --sniffs=PSR1.Files.SideEffects "$file" --lines=$(cat "${file}.lines" | tr '\n' ',')
+        done < files_php.txt
+
     - name: List Old Changes
       shell: bash
       working-directory: project
