@@ -82,18 +82,11 @@ runs:
       run: |
         for file in ${{ steps.change-files.outputs.all_changed_files }}; do
           git checkout HEAD~1 $file
-          cat $file
           echo $(php ../.github/standard/vendor/bin/phpcs --standard=MageOs $file --report=xml) >> phpcs.baseline_old.xml
           cat phpcs.baseline_old.xml
-        done
-
-    - name: List New Changes
-      shell: bash
-      working-directory: project
-      run: |
-        for file in ${{ steps.change-files.outputs.all_changed_files }}; do
           git checkout HEAD $file
-          cat $file
-          php ../.github/standard/vendor/bin/phpcs $file --report=xml --standard=MageOs
-
+          echo $(php ../.github/standard/vendor/bin/phpcs $file --report=xml --standard=MageOs) >> phpcs.baseline_new.xml
+          cat phpcs.baseline_new.xml
         done
+
+
