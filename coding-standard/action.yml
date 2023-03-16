@@ -93,13 +93,14 @@ runs:
       working-directory: project
       run: |
           grep '\.php$' files_changed.txt > files_php.txt
+          cat files_php.txt
 
     - name: Get list of changed lines
       id: get_lines
       shell: bash
       working-directory: project
       run: |
-          while read file; do
+          while read ${{steps.filter_files}}; do
             git diff -U0 "$file" | sed -n '/^@@/,/^diff/p' | tail -n +3 | grep -v '^[-+]' | cut -c2- > "${file}.lines"
           done < files_php.txt
 
