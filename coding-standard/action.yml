@@ -60,7 +60,7 @@ runs:
 
     - name: Install Coding Standard
       shell: bash
-      working-directory: standard
+      working-directory: project
       run: |
         composer require "magento/magento-coding-standard"
         composer config --no-plugins allow-plugins.digitalrevolution/php-codesniffer-baseline true
@@ -69,7 +69,7 @@ runs:
 
     - name: Register Coding Standard
       shell: bash
-      working-directory: standard
+      working-directory: project
       run: vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/standard/vendor/magento/magento-coding-standard,${{ github.workspace }}/standard/vendor/phpcompatibility/php-compatibility
 
     - name: Get Changed Files -TJ Actions
@@ -89,7 +89,7 @@ runs:
 
     - name: List out files and Run
       shell: bash
-      working-directory: standard
+      working-directory: project
       run: |
         cat ${{ github.workspace }}/file_lists.txt
         echo $(vendor/bin/phpcs --standard=MageOs --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/file_lists.txt --report=xml) >> phpcs.baseline.xml
