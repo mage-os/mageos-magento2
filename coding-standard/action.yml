@@ -70,60 +70,27 @@ runs:
     - name: Register Coding Standard
       shell: bash
       working-directory: standard
-      run: ../.github/standard/vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/standard/vendor/magento/magento-coding-standard,${{ github.workspace }}/standard/vendor/phpcompatibility/php-compatibility
+      run: vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/standard/vendor/magento/magento-coding-standard,${{ github.workspace }}/standard/vendor/phpcompatibility/php-compatibility
 
     - name: Get Changed Files -TJ Actions
       id: change-files
       uses: tj-actions/changed-files@v35
 
-    - name: Get list of changed files
-      id: get_files
+    - name: List out old changes
       shell: bash
       working-directory: project
       run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-          echo 'file_changed=$(git diff --name-only ${{ github.base_ref }} ${{ github.head_ref }})' > files_changed.txt
-          elif [ "${{ github.event_name }}" = "push" ]; then
-        echo 'file_changed=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})' > files_changed.txt
-          fi
-
-    - name: Filter PHP files
-      id: filter_files
-      shell: bash
-      working-directory: project
-      run: |
-          grep '\.php$' files_changed.txt > files_php.txt
-
-    - name: Get list of changed lines
-      id: get_lines
-      shell: bash
-      working-directory: project
-      run: |
-        for file in ${{ steps.get_files.outputs.file_changed }}; do
-            git diff -U0 "$file" | sed -n '/^@@/,/^diff/p' | tail -n +3 | grep -v '^[-+]' | cut -c2- > "${file}.lines"
-          done < files_php_new.txt
-          cat files_php_new.txt
-
-    - name: Run PHPCS on changed lines
-      id: run_phpcs
-      shell: bash
-      working-directory: project
-      run: |
-        while read file; do
-          php ../.github/standard/vendor/bin/phpcs --standard=PSR2 --sniffs=PSR1.Files.SideEffects "$file" --lines=$(cat "${file}.lines" | tr '\n' ',')
-        done < files_php.txt
-
-    - name: List Old Changes
-      shell: bash
-      working-directory: project
-      run: |
+        git checkout ${{ github.event.pull_request.base.ref }}
         for file in ${{ steps.change-files.outputs.all_changed_files }}; do
-          git checkout HEAD~1 $file
-          echo $(php ../.github/standard/vendor/bin/phpcs --standard=MageOs $file --report=xml) >> phpcs.baseline_old.xml
-          cat phpcs.baseline_old.xml
-          git checkout HEAD $file
-          echo $(php ../.github/standard/vendor/bin/phpcs $file --report=xml --standard=MageOs) >> phpcs.baseline_new.xml
-          cat phpcs.baseline_new.xml
+           echo $file >> file_lists.txt
         done
+
+    - name: List out files and Run
+      shell: bash
+      working-directory: standard
+      run: |
+        cat file_lists.txt
+        php vendor/bin/phpcs --standard=MageOs --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=file_lists.txt --report=xml >> phpcs.baseline.xml
+
 
 
