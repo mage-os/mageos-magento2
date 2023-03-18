@@ -92,6 +92,7 @@ runs:
       run: |
         cat ${{ github.workspace }}/file_lists.txt
         vendor/bin/phpcs --standard=MageOs --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/file_lists.txt --report=xml >> phpcs.baseline.xml
+        cat phpcs.baseline.xml
 
 
 
