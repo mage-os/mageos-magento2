@@ -84,6 +84,7 @@ runs:
         for file in ${{ steps.change-files.outputs.all_changed_files }}; do
            echo $file >> file_lists.txt
         done
+        cat file_lists.txt
 
     - name: List out files and Run
       shell: bash
