@@ -82,15 +82,15 @@ runs:
       run: |
         git checkout ${{ github.event.pull_request.base.ref }}
         for file in ${{ steps.change-files.outputs.all_changed_files }}; do
-           echo $file >> file_lists.txt
+           echo $file >> ${{ github.workspace }}/file_lists.txt
         done
-        cat file_lists.txt
+        cat ${{ github.workspace }}/file_lists.txt
 
     - name: List out files and Run
       shell: bash
       working-directory: standard
       run: |
-        cat file_lists.txt
+        cat ${{ github.workspace }}/file_lists.txt
         php vendor/bin/phpcs --standard=MageOs --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=file_lists.txt --report=xml >> phpcs.baseline.xml
 
 
