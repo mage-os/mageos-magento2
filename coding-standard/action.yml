@@ -87,5 +87,5 @@ runs:
       working-directory: standard
       run: |
         cat ${{ github.workspace }}/file_lists.txt
-        php vendor/bin/phpcs --standard=Magento2 --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/file_lists.txt --report-file=phpcs.baseline.xml
+        php vendor/bin/phpcs --standard=Magento2 --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/file_lists.txt --report-file=phpcs.baseline_old.xml
         cat phpcs.baseline.xml
