@@ -80,13 +80,11 @@ runs:
 
     - name: List out old changes
       shell: bash
-      id: before-files
       working-directory: project
       run: |
         git checkout ${{ github.event.pull_request.base.ref }}
         for file in ${{ steps.change-files.outputs.all_changed_files }}; do
            echo $file >> ${{ github.workspace }}/file_lists.txt
-           cat $file;
         done
         cat ${{ github.workspace }}/file_lists.txt
 
@@ -95,7 +93,7 @@ runs:
       working-directory: standard
       run: |
         cat ${{ github.workspace }}/file_lists.txt
-        echo $(vendor/bin/phpcs --standard=MageOs --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/file_lists.txt --report=xml) >> phpcs.baseline.xml
+        vendor/bin/phpcs --standard=MageOs --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/file_lists.txt --report=xml >> phpcs.baseline.xml
         cat phpcs.baseline.xml
 
 
