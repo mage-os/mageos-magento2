@@ -69,7 +69,7 @@ runs:
 
     - name: Register Coding Standard
       shell: bash
-      working-directory: project
+      working-directory: standard
       run: vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/standard/vendor/magento/magento-coding-standard,${{ github.workspace }}/standard/vendor/phpcompatibility/php-compatibility
 
     - name: Get Changed Files -TJ Actions
@@ -80,16 +80,19 @@ runs:
 
     - name: List out old changes
       shell: bash
+      id: before-files
       working-directory: project
       run: |
         git checkout ${{ github.event.pull_request.base.ref }}
         for file in ${{ steps.change-files.outputs.all_changed_files }}; do
            echo $file >> ${{ github.workspace }}/file_lists.txt
+           cat $file;
         done
+        cat ${{ github.workspace }}/file_lists.txt
 
     - name: List out files and Run
       shell: bash
-      working-directory: project
+      working-directory: standard
       run: |
         cat ${{ github.workspace }}/file_lists.txt
         echo $(vendor/bin/phpcs --standard=MageOs --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/file_lists.txt --report=xml) >> phpcs.baseline.xml
