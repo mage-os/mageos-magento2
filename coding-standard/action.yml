@@ -60,7 +60,7 @@ runs:
 
     - name: Install Coding Standard
       shell: bash
-      working-directory: project
+      working-directory: standard
       run: |
         composer require "magento/magento-coding-standard"
         composer config --no-plugins allow-plugins.digitalrevolution/php-codesniffer-baseline true
