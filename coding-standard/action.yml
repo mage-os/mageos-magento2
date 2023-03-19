@@ -79,6 +79,7 @@ runs:
       run: |
         git checkout ${{ github.event.pull_request.base.ref }}
         for file in ${{ steps.change-files.outputs.all_changed_files }}; do
+           cat $file
            echo $file >> ${{ github.workspace }}/file_lists.txt
         done
 
