@@ -47,10 +47,6 @@ runs:
         fetch-depth: 0
         path: standard
 
-    - name: Create Standard Directory
-      shell: bash
-      run: mkdir standard
-
     - name: Set PHP Version
       uses: shivammathur/setup-php@v2
       with:
