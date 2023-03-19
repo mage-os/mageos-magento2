@@ -45,7 +45,7 @@ runs:
       uses: actions/checkout@v3
       with:
         fetch-depth: 0
-        path: project
+        path: standard
 
     - name: Create Standard Directory
       shell: bash
@@ -79,7 +79,7 @@ runs:
 
     - name: List out old changes
       shell: bash
-      working-directory: project
+      working-directory: standard
       run: |
         git checkout ${{ github.event.pull_request.base.ref }}
         for file in ${{ steps.change-files.outputs.all_changed_files }}; do
