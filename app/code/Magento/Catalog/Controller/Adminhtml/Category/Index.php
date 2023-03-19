@@ -90,6 +90,10 @@ public function test12344() {
     echo "1 2" 3;
         echo "21212";
     }
+public function test12344() {
+    echo "1 2" 3;
+        echo "21212";
+    }
 
 public function test12344() {
     echo "1 2" 3;
