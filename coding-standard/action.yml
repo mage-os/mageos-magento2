@@ -75,6 +75,8 @@ runs:
     - name: Get Changed Files -TJ Actions
       id: change-files
       uses: tj-actions/changed-files@v35
+      with:
+        files: app/**
 
     - name: List out old changes
       shell: bash
@@ -84,15 +86,10 @@ runs:
         for file in ${{ steps.change-files.outputs.all_changed_files }}; do
            echo $file >> ${{ github.workspace }}/file_lists.txt
         done
-        cat ${{ github.workspace }}/file_lists.txt
 
     - name: List out files and Run
       shell: bash
       working-directory: standard
       run: |
         cat ${{ github.workspace }}/file_lists.txt
-        vendor/bin/phpcs --standard=MageOs --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/file_lists.txt --report=xml >> phpcs.baseline.xml
-        cat phpcs.baseline.xml
-
-
-
+        php vendor/bin/phpcs --standard=MageOs --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/file_lists.txt --report=xml
