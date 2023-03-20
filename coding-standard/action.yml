@@ -86,7 +86,12 @@ runs:
       shell: bash
       id: changed-file-list
       run:  |
-        git checkout ${{ github.base_ref }}
+        if ${{ github.event_name == 'pull_request' }}; then
+          git checkout ${{ github.event.pull_request.base.ref }}
+        else
+          git checkout ${{ github.event.before }}
+        fi
+
         for file in ${{ steps.changed-new-files.outputs.changed_files }}; do
           cat $file
           echo $file >> ${{ github.workspace }}/file_lists.txt
