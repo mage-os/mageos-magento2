@@ -91,8 +91,7 @@ runs:
         for file in ${{ steps.changed-new-files.outputs.changed_files }}; do
           echo $file >> ${{ github.workspace }}/file_lists.txt
         done
-        grep '\.php$' ${{ github.workspace }}/file_lists.txt > ${{ github.workspace }}/files_php.txt
-        cat ${{ github.workspace }}/files_php.txt
+        cat ${{ github.workspace }}/file_lists.txt
 
     - name: List out changed files
       shell: bash
@@ -104,11 +103,11 @@ runs:
           git checkout ${{ github.event.after }}
         fi
 
-        for file in ${{ steps.changed-new-files.outputs.changed_files }}; do
+        for file in ${{ steps.changed-new-files.outputs.latest-files }}; do
+          cat $file
           echo $file >> ${{ github.workspace }}/file_lists.txt
         done
-        grep '\.php$' ${{ github.workspace }}/file_lists.txt > ${{ github.workspace }}/files_php.txt
-        cat ${{ github.workspace }}/files_php.txt
+        cat ${{ github.workspace }}/file_lists.txt
 
     - name: List out files and Run
       shell: bash
