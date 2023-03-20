@@ -68,10 +68,6 @@ runs:
       working-directory: standard
       run: vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/standard/vendor/magento/magento-coding-standard,${{ github.workspace }}/standard/vendor/phpcompatibility/php-compatibility
 
-    - name: Get Changed Files -TJ Actions
-      id: change-files
-      uses: tj-actions/changed-files@v35
-
     - name: Get changed files
       shell: bash
       id: changed-new-files
@@ -84,7 +80,7 @@ runs:
 
     - name: List out changed files
       shell: bash
-      id: changed-file-list
+      id: previous-commit-files
       run:  |
         if ${{ github.event_name == 'pull_request' }}; then
           git checkout ${{ github.event.pull_request.base.ref }}
@@ -93,20 +89,27 @@ runs:
         fi
 
         for file in ${{ steps.changed-new-files.outputs.changed_files }}; do
+          echo $file >> ${{ github.workspace }}/file_lists.txt
+        done
+        grep '\.php$' ${{ github.workspace }}/file_lists.txt > ${{ github.workspace }}/files_php.txt
+        cat ${{ github.workspace }}/files_php.txt
+
+    - name: List out changed files
+      shell: bash
+      id: latest-files
+      run:  |
+        if ${{ github.event_name == 'pull_request' }}; then
+          git checkout ${{ github.event.pull_request.head.ref }}
+        else
+          git checkout ${{ github.event.after }}
+        fi
+
+        for file in ${{ steps.changed-new-files.outputs.latest-files }}; do
           cat $file
           echo $file >> ${{ github.workspace }}/file_lists.txt
         done
-        cat ${{ github.workspace }}/file_lists.txt
-
-    - name: List out old changes
-      shell: bash
-      working-directory: standard
-      run: |
-        git checkout ${{ github.event.pull_request.base.ref }}
-        for file in ${{ steps.change-files.outputs.all_changed_files }}; do
-           cat $file
-           echo $file >> ${{ github.workspace }}/file_lists.txt
-        done
+        grep '\.php$' ${{ github.workspace }}/file_lists.txt > ${{ github.workspace }}/files_php.txt
+        cat ${{ github.workspace }}/files_php.txt
 
     - name: List out files and Run
       shell: bash
