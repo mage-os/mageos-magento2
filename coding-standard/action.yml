@@ -72,6 +72,26 @@ runs:
       id: change-files
       uses: tj-actions/changed-files@v35
 
+    - name: Get changed files
+      shell: bash
+      id: changed-new-files
+      run: |
+        if ${{ github.event_name == 'pull_request' }}; then
+          echo "changed_files=$(git diff --name-only -r HEAD^1 HEAD | xargs)" >> $GITHUB_OUTPUT
+        else
+          echo "changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | xargs)" >> $GITHUB_OUTPUT
+        fi
+
+    - name: List out changed files
+      shell: bash
+      id: changed-file-list
+      run:  |
+        git checkout ${{ github.base_ref }}
+        for file in ${{ steps.changed-new-files.outputs.changed_files }}; do
+          cat $file
+          echo $file >> ${{ github.workspace }}/file_lists.txt
+        done
+        cat ${{ github.workspace }}/file_lists.txt
 
     - name: List out old changes
       shell: bash
