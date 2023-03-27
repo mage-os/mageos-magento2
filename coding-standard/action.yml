@@ -78,7 +78,7 @@ runs:
           echo "changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | xargs)" >> $GITHUB_OUTPUT
         fi
 
-    - name: List out changed files
+    - name: List out old files
       shell: bash
       id: previous-commit-files
       run:  |
@@ -93,6 +93,14 @@ runs:
         done
         cat ${{ github.workspace }}/file_lists.txt
 
+    - name: List new changes and Run
+      shell: bash
+      working-directory: standard
+      run: |
+        grep -i "\.php$" ${{ github.workspace }}/file_lists.txt > ${{ github.workspace }}/file_php_old.txt
+        echo $(php vendor/bin/phpcs --standard=Magento2 --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/file_php_old.txt) > ${{ github.workspace }}/phpcs-old.xml
+        cat ${{ github.workspace }}/phpcs-old.xml
+
     - name: List out changed files
       shell: bash
       id: latest-files
@@ -103,16 +111,14 @@ runs:
           git checkout ${{ github.event.after }}
         fi
 
-        for file in ${{ steps.changed-new-files.outputs.latest-files }}; do
-          cat $file
+        for file in ${{ steps.changed-new-files.outputs.changed_files }}; do
           echo $file >> ${{ github.workspace }}/file_lists.txt
         done
-        cat ${{ github.workspace }}/file_lists.txt
 
-    - name: List out files and Run
+    - name: List new changes and Run
       shell: bash
       working-directory: standard
       run: |
-        cat ${{ github.workspace }}/file_lists.txt
-        php vendor/bin/phpcs --standard=Magento2 --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/file_lists.txt --report-file=phpcs.baseline_old.xml
-        cat phpcs.baseline_old.xml
+        grep -i "\.php$" ${{ github.workspace }}/file_lists.txt > ${{ github.workspace }}/file_php_new.txt
+        echo $(php vendor/bin/phpcs --standard=Magento2 --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/file_php_new.txt) > ${{ github.workspace }}/phpcs-new.xml
+        cat ${{ github.workspace }}/phpcs-new.xml
