@@ -70,6 +70,7 @@ runs:
 
     - name: Get changed files
       shell: bash
+      working-directory: standard
       id: changed-new-files
       run: |
         if ${{ github.event_name == 'pull_request' }}; then
@@ -78,10 +79,11 @@ runs:
           echo "changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | xargs)" >> $GITHUB_OUTPUT
         fi
 
-    - name: List out old files
+    - name: List out changed files
       shell: bash
+      working-directory: standard
       id: previous-commit-files
-      run:  |
+      run: |
         if ${{ github.event_name == 'pull_request' }}; then
           git checkout ${{ github.event.pull_request.base.ref }}
         else
@@ -89,22 +91,24 @@ runs:
         fi
 
         for file in ${{ steps.changed-new-files.outputs.changed_files }}; do
-          echo $file >> ${{ github.workspace }}/file_lists.txt
+          echo $file >> ${{ github.workspace }}/file_lists_old.txt
         done
-        cat ${{ github.workspace }}/file_lists.txt
+        cat ${{ github.workspace }}/file_lists_old.txt
 
-    - name: List new changes and Run
+    - name: List out files and Run
       shell: bash
+      id: phpcs_before
       working-directory: standard
       run: |
-        grep -i "\.php$" ${{ github.workspace }}/file_lists.txt > ${{ github.workspace }}/file_php_old.txt
-        echo $(php vendor/bin/phpcs --standard=Magento2 --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/file_php_old.txt) > ${{ github.workspace }}/phpcs-old.xml
-        cat ${{ github.workspace }}/phpcs-old.xml
+        grep -i "\.php$" ${{ github.workspace }}/file_lists_old.txt > ${{ github.workspace }}/file_php_old.txt
+        echo $(php vendor/bin/phpcs --standard=Magento2 --report-file=phpcs.baseline.xml --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/file_php_old.txt) > ${{ github.workspace }}/phpcs1.xml
+        cat ${{ github.workspace }}/phpcs1.xml
 
     - name: List out changed files
       shell: bash
+      working-directory: standard
       id: latest-files
-      run:  |
+      run: |
         if ${{ github.event_name == 'pull_request' }}; then
           git checkout ${{ github.event.pull_request.head.ref }}
         else
@@ -112,13 +116,15 @@ runs:
         fi
 
         for file in ${{ steps.changed-new-files.outputs.changed_files }}; do
-          echo $file >> ${{ github.workspace }}/file_lists.txt
+          echo $file >> ${{ github.workspace }}/file_lists_new.txt
         done
 
-    - name: List new changes and Run
+
+    - name: List out files and Run
       shell: bash
+      id: phpcs_after
       working-directory: standard
       run: |
-        grep -i "\.php$" ${{ github.workspace }}/file_lists.txt > ${{ github.workspace }}/file_php_new.txt
-        echo $(php vendor/bin/phpcs --standard=Magento2 --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/file_php_new.txt) > ${{ github.workspace }}/phpcs-new.xml
-        cat ${{ github.workspace }}/phpcs-new.xml
+        grep -i "\.php$" ${{ github.workspace }}/file_lists_new.txt > ${{ github.workspace }}/file_php_new.txt
+        echo $(php vendor/bin/phpcs --standard=Magento2 --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/file_php_new.txt) > ${{ github.workspace }}/phpcs2.xml
+        cat ${{ github.workspace }}/phpcs2.xml
