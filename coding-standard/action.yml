@@ -126,5 +126,4 @@ runs:
       working-directory: standard
       run: |
         grep -i "\.php$" ${{ github.workspace }}/file_lists_new.txt > ${{ github.workspace }}/file_php_new.txt
-        echo $(php vendor/bin/phpcs --standard=Magento2 --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/file_php_new.txt) > ${{ github.workspace }}/phpcs2.xml
-        cat ${{ github.workspace }}/phpcs2.xml
+        php vendor/bin/phpcs --standard=Magento2 --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/file_php_new.txt

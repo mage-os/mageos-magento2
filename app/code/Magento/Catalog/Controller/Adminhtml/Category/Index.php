@@ -65,4 +65,8 @@ class Index extends \Magento\Catalog\Controller\Adminhtml\Category implements Ht
     public function test66456() {
         echo "dsdasd";
     }
+
+    public function test6 6456() {
+        echo "dsdasd";
+    }
 }
