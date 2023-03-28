@@ -50,6 +50,9 @@ class Index extends \Magento\Catalog\Controller\Adminhtml\Category implements Ht
     public function test1234() {
         echo "dsdasd";
     }
+    public function test123456() {
+        echo "dsdasd";
+    }
     public function test() {
         echo "dsdasd";
     }
@@ -66,7 +69,7 @@ class Index extends \Magento\Catalog\Controller\Adminhtml\Category implements Ht
         echo "dsdasd";
     }
 
-    public function test6 6456() {
+    public function test66456() {
         echo "dsdasd";
     }
 }
