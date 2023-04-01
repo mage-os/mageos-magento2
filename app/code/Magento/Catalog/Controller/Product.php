@@ -35,4 +35,10 @@ abstract class Product extends \Magento\Framework\App\Action\Action implements V
         "1";
 
     }
+
+    public function testingphpCS123() {
+        echo
+        "1";
+
+    }
 }
