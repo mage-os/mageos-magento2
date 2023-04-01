@@ -76,6 +76,7 @@ runs:
         write_output_files: true
 
     - name: Verify the contents of the .github/outputs/added_files.txt file
+      shell: bash
       run: |
           cat .github/outputs/added_files.txt
 
