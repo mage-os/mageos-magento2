@@ -31,6 +31,7 @@ abstract class Product extends \Magento\Framework\App\Action\Action implements V
     }
 
     protected function _testProduct() {
+        echo "11";
         return true ;
     }
 }

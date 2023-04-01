@@ -69,18 +69,13 @@ runs:
       working-directory: standard
       run: vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/standard/vendor/magento/magento-coding-standard,${{ github.workspace }}/standard/vendor/phpcompatibility/php-compatibility
 
-    - name: Get File list which were changed
+    - name: Get changed files
       shell: bash
+      id: changed-files
       working-directory: standard
-      id: changed-new-files
-      run: |
-        if ${{ github.event_name == 'pull_request' }}; then
-          echo "changed_files=$(git diff --name-only -r HEAD^1 HEAD | xargs)" >> $GITHUB_OUTPUT
-        else
-          echo "changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | xargs)" >> $GITHUB_OUTPUT
-        fi
+      uses: tj-actions/changed-files@v35
 
-    - name: Get all changed files - Before Merge
+    - name: Checkout - Before Merge
       shell: bash
       working-directory: standard
       id: previous-commit-files
@@ -91,12 +86,12 @@ runs:
           git checkout ${{ github.event.before }}
         fi
 
-        for file in ${{ steps.changed-new-files.outputs.changed_files }}; do
+        for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
           echo $file >> ${{ github.workspace }}/file_lists_old.txt
         done
         cat ${{ github.workspace }}/file_lists_old.txt
 
-    - name: Execute phpcs on changed files - first time
+    - name: Execute phpcs on changed files - Before Merge
       shell: bash
       id: phpcs_before
       working-directory: standard
@@ -104,7 +99,7 @@ runs:
         grep -i "\.php$" ${{ github.workspace }}/file_lists_old.txt > ${{ github.workspace }}/file_php_old.txt
         echo $(php vendor/bin/phpcs --standard=Magento2 --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/file_php_old.txt) > ${{ github.workspace }}/phpcs_old.xml
 
-    - name: Get all changed files - After Merge
+    - name: Checkout - After Merge
       shell: bash
       working-directory: standard
       id: latest-files
@@ -115,7 +110,7 @@ runs:
           git checkout ${{ github.event.after }}
         fi
 
-        for file in ${{ steps.changed-new-files.outputs.changed_files }}; do
+        for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
           echo $file >> ${{ github.workspace }}/file_lists_new.txt
         done
 
