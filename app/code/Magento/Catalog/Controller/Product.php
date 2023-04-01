@@ -30,5 +30,7 @@ abstract class Product extends \Magento\Framework\App\Action\Action implements V
         return $product->initProduct($productId, $this, $params);
 
         echo "111";
+
+        echo "12121";
     }
 }

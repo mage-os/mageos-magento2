@@ -78,7 +78,7 @@ runs:
     - name: Verify the contents of the .github/outputs/added_files.txt file
       shell: bash
       run: |
-        cat ${{ github.workspace }}/outputs/all_modified_files.txt
+        cat .github/outputs/all_modified_files.txt
 
     - name: Checkout - Before Merge
       shell: bash
