@@ -29,10 +29,6 @@ abstract class Product extends \Magento\Framework\App\Action\Action implements V
         $product = $this->_objectManager->get(\Magento\Catalog\Helper\Product::class);
         return $product->initProduct($productId, $this, $params);
 
-        echo "111";
-
-        echo "12121";
-        echo "12 121";
 
 
 
