@@ -43,7 +43,5 @@ abstract class Product extends \Magento\Framework\App\Action\Action implements V
     }
 
     public function testingphp23() {
-        echo         "1";
-
-    }
+        echo         "1";    }
 }
