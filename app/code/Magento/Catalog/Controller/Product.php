@@ -33,5 +33,6 @@ abstract class Product extends \Magento\Framework\App\Action\Action implements V
     public function testingphpCS() {
         echo
         "1";
+
     }
 }
