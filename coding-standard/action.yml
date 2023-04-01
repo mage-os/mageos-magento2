@@ -72,6 +72,13 @@ runs:
     - name: Get changed files
       id: changed-files
       uses: tj-actions/changed-files@v35
+      with:
+        write_output_files : true
+
+    - name: Verify the contents of the .github/outputs/added_files.txt file
+      shell: bash
+      run: |
+        cat ${{ github.workspace }}/outputs/all_modified_files.txt
 
     - name: Checkout - Before Merge
       shell: bash
