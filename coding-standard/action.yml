@@ -70,9 +70,7 @@ runs:
       run: vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/standard/vendor/magento/magento-coding-standard,${{ github.workspace }}/standard/vendor/phpcompatibility/php-compatibility
 
     - name: Get changed files
-      shell: bash
       id: changed-files
-      working-directory: standard
       uses: tj-actions/changed-files@v35
 
     - name: Checkout - Before Merge
