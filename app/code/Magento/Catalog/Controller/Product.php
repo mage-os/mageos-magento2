@@ -29,20 +29,4 @@ abstract class Product extends \Magento\Framework\App\Action\Action implements V
         $product = $this->_objectManager->get(\Magento\Catalog\Helper\Product::class);
         return $product->initProduct($productId, $this, $params);
     }
-
-    public function testingphpCS() {
-        echo
-        "1";
-
-    }
-
-    public function testingphpCS123() {
-        echo
-        "1";
-
-    }
-
-    public function testingphp23() {
-        echo         "1";
-    }
 }
