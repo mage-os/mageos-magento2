@@ -78,7 +78,8 @@ runs:
     - name: Verify the contents of the .github/outputs/added_files.txt file
       shell: bash
       run: |
-        cat .github/outputs/all_modified_files.txt
+        sed 's/ /\n/g' .github/outputs/all_modified_files.txt > .github/outputs/modified_files.txt
+        cat .github/outputs/modified_files.txt
 
     - name: Checkout - Before Merge
       shell: bash
@@ -94,14 +95,13 @@ runs:
         for file in ${{ steps.changed-files.outputs.all_modified_files }}; do
           echo $file >> ${{ github.workspace }}/file_lists_old.txt
         done
-        cat ${{ github.workspace }}/file_lists_old.txt
 
     - name: Execute phpcs on changed files - Before Merge
       shell: bash
       id: phpcs_before
       working-directory: standard
       run: |
-        grep -i "\.php$" ${{ github.workspace }}/file_lists_old.txt > ${{ github.workspace }}/file_php_old.txt
+        grep -i "\.php$" .github/outputs/all_modified_files.txt > ${{ github.workspace }}/file_php_old.txt
         echo $(php vendor/bin/phpcs --standard=Magento2 --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/file_php_old.txt) > ${{ github.workspace }}/phpcs_old.xml
 
     - name: Checkout - After Merge
