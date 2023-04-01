@@ -69,6 +69,16 @@ runs:
       working-directory: standard
       run: vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/standard/vendor/magento/magento-coding-standard,${{ github.workspace }}/standard/vendor/phpcompatibility/php-compatibility
 
+    - name: Get changed files and write the outputs to a txt file
+      id: changed-files-write-output-files-txt
+      uses: ./
+      with:
+        write_output_files: true
+
+    - name: Verify the contents of the .github/outputs/added_files.txt file
+      run: |
+          cat .github/outputs/added_files.txt
+
     - name: Get changed files
       id: changed-files
       uses: tj-actions/changed-files@v35
