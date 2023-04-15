@@ -5,12 +5,12 @@ description: "A Github Action that runs the Magento Coding Standard."
 inputs:
   php_version:
     required: true
-    default: "8.1"
+    default: "7.4"
     description: "PHP version used to do the coding standard check."
 
   composer_version:
     required: true
-    default: "2"
+    default: "1"
     description: "The version of composer to use."
 
   path:
@@ -63,7 +63,6 @@ runs:
         composer config --no-plugins allow-plugins.digitalrevolution/php-codesniffer-baseline true
         composer require --dev "digitalrevolution/php-codesniffer-baseline"
 
-
     - name: Register Coding Standard
       shell: bash
       working-directory: standard
@@ -84,16 +83,12 @@ runs:
           git checkout ${{ github.event.before }}
         fi
 
-        for file in ${{ steps.changed-files.outputs.all_modified_files }}; do
-          echo $file >> ${{ github.workspace }}/file_lists_old.txt
-        done
-
     - name: Filter php files and execute phpcs - Before Merge
       shell: bash
       id: phpcs_before
       working-directory: standard
       run: |
-        grep -i "\.php$" ${{ github.workspace }}/file_lists_old.txt > ${{ github.workspace }}/file_php_old.txt
+        grep -i "\.php$" ${{ steps.changed-files.outputs.all_modified_files }} > ${{ github.workspace }}/file_php_old.txt
         echo $(php vendor/bin/phpcs --standard=Magento2 --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/file_php_old.txt) > ${{ github.workspace }}/phpcs_old.xml
 
     - name: Checkout - After Merge
@@ -107,14 +102,10 @@ runs:
           git checkout ${{ github.event.after }}
         fi
 
-        for file in ${{ steps.changed-files.outputs.all_modified_files }}; do
-          echo $file >> ${{ github.workspace }}/file_lists_new.txt
-        done
-
     - name: Filter php files and execute phpcs - After Merge
       shell: bash
       id: phpcs_after
       working-directory: standard
       run: |
-        grep -i "\.php$" ${{ github.workspace }}/file_lists_new.txt > ${{ github.workspace }}/file_php_new.txt
+        grep -i "\.php$" ${{ steps.changed-files.outputs.all_modified_files }} > ${{ github.workspace }}/file_php_new.txt
         php vendor/bin/phpcs --standard=Magento2 --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/file_php_new.txt
