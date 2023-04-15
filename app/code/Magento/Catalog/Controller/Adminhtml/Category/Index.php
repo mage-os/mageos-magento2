@@ -41,4 +41,8 @@ class Index extends \Magento\Catalog\Controller\Adminhtml\Category implements Ht
         $resultForward = $this->resultForwardFactory->create();
         return $resultForward->forward('edit');
     }
+
+    public function test() {
+
+    }
 }

@@ -51,9 +51,75 @@ on:
 permissions:
   contents: read
 
-jobs:
-  coding-standard:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: './coding-standard'
+runs:
+  using: composite
+  steps:
+    - name: Checkout Project
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        path: standard
+
+    - name: Set PHP Version
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ inputs.php_version }}
+        tools: composer:v${{ inputs.composer_version }}
+        coverage: none
+
+    - name: Install Coding Standard && Codesniffer baseline
+      shell: bash
+      working-directory: standard
+      run: |
+        composer require "magento/magento-coding-standard"
+        composer config --no-plugins allow-plugins.digitalrevolution/php-codesniffer-baseline true
+        composer require --dev "digitalrevolution/php-codesniffer-baseline"
+
+
+    - name: Register Coding Standard
+      shell: bash
+      working-directory: standard
+      run: vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/standard/vendor/magento/magento-coding-standard,${{ github.workspace }}/standard/vendor/phpcompatibility/php-compatibility
+
+    - name: Get all changed files
+      id: changed-files
+      uses: tj-actions/changed-files@v35
+
+    - name: Checkout - Before Merge
+      shell: bash
+      working-directory: standard
+      id: previous-commit-files
+      run: |
+        if ${{ github.event_name == 'pull_request' }}; then
+          git checkout ${{ github.event.pull_request.base.ref }}
+        else
+          git checkout ${{ github.event.before }}
+        fi
+
+    - name: Filter php files and execute phpcs - Before Merge
+      shell: bash
+      id: phpcs_before
+      working-directory: standard
+      run: |
+        grep -i "\.php$" ${{ steps.changed-files.outputs.all_modified_files }} > ${{ github.workspace }}/file_php_old.txt
+        echo $(php vendor/bin/phpcs --standard=Magento2 --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/file_php_old.txt) > ${{ github.workspace }}/phpcs_old.xml
+
+    - name: Checkout - After Merge
+      shell: bash
+      working-directory: standard
+      id: latest-files
+      run: |
+        if ${{ github.event_name == 'pull_request' }}; then
+          git checkout ${{ github.event.pull_request.head.ref }}
+        else
+          git checkout ${{ github.event.after }}
+        fi
+
+    - name: Filter php files and execute phpcs - After Merge
+      shell: bash
+      id: phpcs_after
+      working-directory: standard
+      run: |
+        grep -i "\.php$" ${{ steps.changed-files.outputs.all_modified_files }} > ${{ github.workspace }}/file_php_new.txt
+        php vendor/bin/phpcs --standard=Magento2 --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/file_php_new.txt
+
