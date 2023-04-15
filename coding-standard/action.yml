@@ -102,6 +102,7 @@ runs:
           git checkout ${{ github.event.after }}
         fi
 
+
     - name: Filter php files and execute phpcs - After Merge
       shell: bash
       id: phpcs_after
