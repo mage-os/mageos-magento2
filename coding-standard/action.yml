@@ -82,7 +82,7 @@ runs:
         else
           git checkout ${{ github.event.before }}
         fi
-        cat ${{ steps.changed-files.outputs.all_modified_files }}
+        cat ${{ steps.changed-files.outputs.all_changed_files }}
 
         for file in ${{ steps.changed-files.outputs.all_modified_files }}; do
           echo $file >> ${{ github.workspace }}/file_lists_old.txt
