@@ -44,5 +44,6 @@ class Index extends \Magento\Catalog\Controller\Adminhtml\Category implements Ht
 
     public function test() {
         return 111;
+
     }
 }
