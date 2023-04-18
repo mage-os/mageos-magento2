@@ -82,6 +82,7 @@ runs:
         else
           git checkout ${{ github.event.before }}
         fi
+        cat ${{ steps.changed-files.outputs.all_modified_files }}
 
         for file in ${{ steps.changed-files.outputs.all_modified_files }}; do
           echo $file >> ${{ github.workspace }}/file_lists_old.txt
@@ -105,7 +106,7 @@ runs:
         else
           git checkout ${{ github.event.after }}
         fi
-        cat ${{ steps.changed-files.outputs.all_modified_files }}
+
 
     - name: Filter php files and execute phpcs - After Merge
       shell: bash
