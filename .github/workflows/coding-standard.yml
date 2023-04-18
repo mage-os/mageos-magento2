@@ -2,9 +2,9 @@ name: M2 Coding Testing
 
 on:
   push:
-    branches: [ 2.4-develop, develop, phpcs_test ]
+    branches: [ 2.4-develop, develop, phpcs_baseline ]
   pull_request:
-    branches: [ 2.4-develop, develop, phpcs_test ]
+    branches: [ 2.4-develop, develop, phpcs_baseline ]
   workflow_call:
     inputs:
       php_version:
