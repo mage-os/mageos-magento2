@@ -10,7 +10,7 @@ inputs:
 
   composer_version:
     required: true
-    default: "1"
+    default: "2"
     description: "The version of composer to use."
 
   path:
