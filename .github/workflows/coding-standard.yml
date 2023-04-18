@@ -2,21 +2,21 @@ name: M2 Coding Testing
 
 on:
   push:
-    branches: [ 2.4-develop, develop, phpcs_baseline ]
+    branches: [ 2.4-develop, develop, phpcs_test ]
   pull_request:
-    branches: [ 2.4-develop, develop, phpcs_baseline ]
+    branches: [ 2.4-develop, develop, phpcs_test ]
   workflow_call:
     inputs:
       php_version:
         type: string
         required: true
-        default: "8.0"
+        default: "8.1"
         description: "PHP version used to do the coding standard check."
 
       composer_version:
         type: string
         required: true
-        default: "1"
+        default: "2"
         description: "The version of composer to use."
 
       path:
@@ -55,8 +55,8 @@ jobs:
   coding-standard:
     runs-on: ubuntu-latest
     steps:
-      - name: Run Coding Standard
-        uses: graycoreio/github-actions-magento2/coding-standard@main
       - uses: actions/checkout@v3
       - uses: './coding-standard'
-
+        with:
+          version: ${{ github.event.inputs.version || '*' }}
+          path: ${{ github.event.inputs.path }}
