@@ -112,13 +112,12 @@ runs:
           echo $file >> ${{ github.workspace }}/file_lists_new.txt
         done
 
-
     - name: Filter php files and execute phpcs - After Merge
       shell: bash
       id: phpcs_after
       working-directory: standard
       run: |
-        grep -i "\.php$" ${{ github.workspace }}/file_lists_old.txt > ${{ github.workspace }}/file_php_old.txt
-        grep -i "\.phtml$" ${{ github.workspace }}/file_lists_old.txt >> ${{ github.workspace }}/file_php_old.txt
+        grep -i "\.php$" ${{ github.workspace }}/file_lists_new.txt > ${{ github.workspace }}/file_php_new.txt
+        grep -i "\.phtml$" ${{ github.workspace }}/file_lists_new.txt >> ${{ github.workspace }}/file_php_new.txt
 
         php vendor/bin/phpcs --standard=Magento2 --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/file_php_new.txt
