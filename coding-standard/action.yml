@@ -99,7 +99,6 @@ runs:
         $([ -n "${{ inputs.severity }}" ] && echo "--severity=${{ inputs.severity }}") \
         $([ -n "${{ inputs.warning_severity }}" ] && echo "--warning-severity=${{ inputs.warning_severity }}") \
         $([ -n "${{ inputs.error_severity }}" ] && echo "--error-severity=${{ inputs.error_severity }}") \
-        ${{ github.event_name == 'pull_request' && steps.changed-files.outputs.files || inputs.path }} \
         --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/file_php_old.txt) > ${{ github.workspace }}/phpcs_old.xml
 
     - name: Checkout - After Merge
@@ -125,4 +124,8 @@ runs:
         grep -i "\.php$" ${{ github.workspace }}/file_lists_new.txt > ${{ github.workspace }}/file_php_new.txt
         grep -i "\.phtml$" ${{ github.workspace }}/file_lists_new.txt >> ${{ github.workspace }}/file_php_new.txt
 
-        php vendor/bin/phpcs --standard=Magento2 --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/file_php_new.txt
+        php vendor/bin/phpcs --standard=Magento2 \
+        $([ -n "${{ inputs.severity }}" ] && echo "--severity=${{ inputs.severity }}") \
+        $([ -n "${{ inputs.warning_severity }}" ] && echo "--warning-severity=${{ inputs.warning_severity }}") \
+        $([ -n "${{ inputs.error_severity }}" ] && echo "--error-severity=${{ inputs.error_severity }}") \
+        --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/file_php_new.txt

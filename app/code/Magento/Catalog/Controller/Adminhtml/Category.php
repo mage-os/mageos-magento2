@@ -222,5 +222,7 @@ abstract class Category extends \Magento\Backend\App\Action
     public function test1() {
         echo "Sdsdsd";
         echo "asdd sdas d";
+        echo "sdsdd";
+        echo "111";
     }
 }
