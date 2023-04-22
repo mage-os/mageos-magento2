@@ -38,6 +38,11 @@ inputs:
     default: "5"
     description: "The minimum severity required to display an error"
 
+  baseline_version:
+    required: false
+    default: "1.1.2"
+    description: "The version of the phpcs baseline to use. if not required it uses default one"
+
 runs:
   using: composite
   steps:
@@ -59,9 +64,9 @@ runs:
       working-directory: standard
       run: |
         git config --global advice.detachedHead false
-        composer require "magento/magento-coding-standard"
+        composer require "magento/magento-coding-standard:${{ inputs.version || '*' }}"
         composer config --no-plugins allow-plugins.digitalrevolution/php-codesniffer-baseline true
-        composer require --dev "digitalrevolution/php-codesniffer-baseline"
+        composer require --dev "digitalrevolution/php-codesniffer-baseline:${{ inputs.baseline_version }}"
 
     - name: Register Coding Standard
       shell: bash
