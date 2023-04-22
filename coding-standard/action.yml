@@ -92,7 +92,9 @@ runs:
       id: phpcs_before
       working-directory: standard
       run: |
-        grep -i "\.php|\.phtml$" ${{ github.workspace }}/file_lists_old.txt > ${{ github.workspace }}/file_php_old.txt
+        grep -i "\.php$" ${{ github.workspace }}/file_lists_old.txt > ${{ github.workspace }}/file_php_old.txt
+        grep -i "\.phtml$" ${{ github.workspace }}/file_lists_old.txt >> ${{ github.workspace }}/file_php_old.txt
+
         echo $(php vendor/bin/phpcs --standard=Magento2 --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/file_php_old.txt) > ${{ github.workspace }}/phpcs_old.xml
 
     - name: Checkout - After Merge
@@ -116,5 +118,7 @@ runs:
       id: phpcs_after
       working-directory: standard
       run: |
-        grep -i "\.php$" ${{ github.workspace }}/file_lists_new.txt > ${{ github.workspace }}/file_php_new.txt
+        grep -i "\.php$" ${{ github.workspace }}/file_lists_old.txt > ${{ github.workspace }}/file_php_old.txt
+        grep -i "\.phtml$" ${{ github.workspace }}/file_lists_old.txt >> ${{ github.workspace }}/file_php_old.txt
+
         php vendor/bin/phpcs --standard=Magento2 --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/file_php_new.txt
