@@ -80,7 +80,7 @@ jobs:
           git config --global advice.detachedHead false
           composer require "magento/magento-coding-standard:${{ inputs.version || '*' }}"
           composer config --no-plugins allow-plugins.digitalrevolution/php-codesniffer-baseline true
-          composer require --dev "digitalrevolution/php-codesniffer-baseline:${{ inputs.baseline_version }}"
+          composer require --dev "digitalrevolution/php-codesniffer-baseline:${{ inputs.baseline_version || '^1.0' }}"
 
       - name: Register Coding Standard
         shell: bash
