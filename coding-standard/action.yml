@@ -86,7 +86,7 @@ runs:
       uses: tj-actions/changed-files@v35
       with:
         files: |
-          ./*.php
+          ${{ github.workspace }}/**/*.php
 
     - name: Checkout - Before Merge
       shell: bash
