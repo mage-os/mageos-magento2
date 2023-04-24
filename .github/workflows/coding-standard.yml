@@ -60,6 +60,10 @@ jobs:
   coding-standard:
     runs-on: ubuntu-latest
     steps:
+      - name: Create directory
+        shell: bash
+        run: mkdir standard
+
       - name: Checkout Project
         uses: actions/checkout@v3
         with:
