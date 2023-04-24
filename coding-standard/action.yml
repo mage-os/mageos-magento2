@@ -54,6 +54,10 @@ inputs:
 runs:
   using: composite
   steps:
+    - name Create project Directory
+    - shell: bash
+      run: mkdir project
+
     - name: Checkout Project
       uses: actions/checkout@v3
       with:
@@ -79,7 +83,7 @@ runs:
     - name: Register Coding Standard
       shell: bash
       working-directory: project
-      run: vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/standard/vendor/magento/magento-coding-standard,${{ github.workspace }}/standard/vendor/phpcompatibility/php-compatibility
+      run: vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/project/vendor/magento/magento-coding-standard,${{ github.workspace }}/project/vendor/phpcompatibility/php-compatibility
 
     - name: Get all changed files
       id: changed-files
