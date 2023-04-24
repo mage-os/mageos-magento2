@@ -121,6 +121,7 @@ jobs:
           $([ -n "${{ inputs.warning_severity }}" ] && echo "--warning-severity=${{ inputs.warning_severity }}") \
           $([ -n "${{ inputs.error_severity }}" ] && echo "--error-severity=${{ inputs.error_severity }}") \
           --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/phpcs_files.txt) > ${{ github.workspace }}/phpcs_commit_before.xml
+          cat ${{ github.workspace }}/phpcs_commit_before.xml
 
       - name: Checkout - After Merge
         shell: bash
@@ -136,8 +137,9 @@ jobs:
         shell: bash
         id: phpcs_after
         run: |
-          php vendor/bin/phpcs --standard=Magento2 \
+          echo $(php vendor/bin/phpcs --standard=Magento2 \
           $([ -n "${{ inputs.severity }}" ] && echo "--severity=${{ inputs.severity }}") \
           $([ -n "${{ inputs.warning_severity }}" ] && echo "--warning-severity=${{ inputs.warning_severity }}") \
           $([ -n "${{ inputs.error_severity }}" ] && echo "--error-severity=${{ inputs.error_severity }}") \
-          --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/phpcs_files.txt
+          --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/phpcs_files.txt) > ${{ github.workspace }}/phpcs_commit_after.xml
+          cat ${{ github.workspace }}/phpcs_commit_after.xml
