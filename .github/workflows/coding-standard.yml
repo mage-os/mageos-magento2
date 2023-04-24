@@ -97,6 +97,7 @@ jobs:
 
       - name: Checkout - Before Merge
         shell: bash
+        working-directory: project
         id: previous-commit-files
         run: |
           if ${{ github.event_name == 'pull_request' }}; then
@@ -111,6 +112,7 @@ jobs:
 
       - name: Filter php,phtml files and execute phpcs - Before Merge
         shell: bash
+        working-directory: project
         id: phpcs_before
         run: |
           grep -i "\.php$" ${{ github.workspace }}/file_lists_old.txt > ${{ github.workspace }}/phpcs_files.txt
@@ -125,6 +127,7 @@ jobs:
 
       - name: Checkout - After Merge
         shell: bash
+        working-directory: project
         id: latest-files
         run: |
           if ${{ github.event_name == 'pull_request' }}; then
@@ -135,6 +138,7 @@ jobs:
 
       - name: Filter (php, phtml) files and execute phpcs - After Merge
         shell: bash
+        working-directory: project
         id: phpcs_after
         run: |
           echo $(php vendor/bin/phpcs --standard=Magento2 \
