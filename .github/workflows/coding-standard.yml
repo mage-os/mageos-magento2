@@ -48,6 +48,10 @@ on:
         default: "8"
         description: "The minimum severity required to display an error"
 
+      baseline_version:
+        required: false
+        default: "1.1.2"
+        description: "The version of the phpcs baseline to use. if not required it uses default one"
 permissions:
   contents: read
 
