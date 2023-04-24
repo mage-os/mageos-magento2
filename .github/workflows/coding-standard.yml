@@ -87,6 +87,11 @@ jobs:
         working-directory: standard
         run: vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/standard/vendor/magento/magento-coding-standard,${{ github.workspace }}/standard/vendor/phpcompatibility/php-compatibility
 
+
+      - name: Checkout project
+        working-directory: standard
+        uses: actions/checkout@v2
+
       - name: Get all changed files
         id: changed-files
         uses: tj-actions/changed-files@v35
