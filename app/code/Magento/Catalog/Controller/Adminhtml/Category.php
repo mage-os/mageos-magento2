@@ -227,6 +227,11 @@ abstract class Category extends \Magento\Backend\App\Action
 
         echo "sds s dadd ";
         echo "sdsdad";
+        echo "sdsdd";
+        echo "111";
+
+        echo "sds s dadd ";
+        echo "sdsdad";
 
         echo "SDASdasd";
 
