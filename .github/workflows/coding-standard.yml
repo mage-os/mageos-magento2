@@ -97,7 +97,6 @@ jobs:
 
       - name: Checkout - Before Merge
         shell: bash
-        working-directory: project
         id: previous-commit-files
         run: |
           if ${{ github.event_name == 'pull_request' }}; then
@@ -113,7 +112,6 @@ jobs:
       - name: Filter php,phtml files and execute phpcs - Before Merge
         shell: bash
         id: phpcs_before
-        working-directory: project
         run: |
           grep -i "\.php$" ${{ github.workspace }}/file_lists_old.txt > ${{ github.workspace }}/file_php_old.txt
           grep -i "\.phtml$" ${{ github.workspace }}/file_lists_old.txt >> ${{ github.workspace }}/file_php_old.txt
