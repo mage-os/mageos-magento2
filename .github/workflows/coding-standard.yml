@@ -124,7 +124,6 @@ jobs:
 
       - name: Checkout - After Merge
         shell: bash
-        working-directory: project
         id: latest-files
         run: |
           if ${{ github.event_name == 'pull_request' }}; then
@@ -137,10 +136,9 @@ jobs:
             echo $file >> ${{ github.workspace }}/file_lists_new.txt
           done
 
-      - name: Filter php, phtml files and execute phpcs - After Merge
+      - name: Filter (php, phtml) files and execute phpcs - After Merge
         shell: bash
         id: phpcs_after
-        working-directory: project
         run: |
           grep -i "\.php$" ${{ github.workspace }}/file_lists_new.txt > ${{ github.workspace }}/file_php_new.txt
           grep -i "\.phtml$" ${{ github.workspace }}/file_lists_new.txt >> ${{ github.workspace }}/file_php_new.txt
