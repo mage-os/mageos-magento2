@@ -54,15 +54,11 @@ inputs:
 runs:
   using: composite
   steps:
-    - name Create project Directory
-    - shell: bash
-      run: mkdir project
-
     - name: Checkout Project
       uses: actions/checkout@v3
       with:
         fetch-depth: 0
-        path: project
+        path: standard
 
     - name: Set PHP Version
       uses: shivammathur/setup-php@v2
@@ -73,7 +69,7 @@ runs:
 
     - name: Install Coding Standard && Codesniffer baseline
       shell: bash
-      working-directory: project
+      working-directory: standard
       run: |
         git config --global advice.detachedHead false
         composer require "magento/magento-coding-standard:${{ inputs.version || '*' }}"
@@ -82,8 +78,8 @@ runs:
 
     - name: Register Coding Standard
       shell: bash
-      working-directory: project
-      run: vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/project/vendor/magento/magento-coding-standard,${{ github.workspace }}/project/vendor/phpcompatibility/php-compatibility
+      working-directory: standard
+      run: vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/standard/vendor/magento/magento-coding-standard,${{ github.workspace }}/standard/vendor/phpcompatibility/php-compatibility
 
     - name: Get all changed files
       id: changed-files
@@ -91,7 +87,7 @@ runs:
 
     - name: Checkout - Before Merge
       shell: bash
-      working-directory: project
+      working-directory: standard
       id: previous-commit-files
       run: |
         if ${{ github.event_name == 'pull_request' }}; then
@@ -107,7 +103,7 @@ runs:
     - name: Filter php files and execute phpcs - Before Merge
       shell: bash
       id: phpcs_before
-      working-directory: project
+      working-directory: standard
       run: |
         grep -i "\.php$" ${{ github.workspace }}/file_lists_old.txt > ${{ github.workspace }}/file_php_old.txt
         grep -i "\.phtml$" ${{ github.workspace }}/file_lists_old.txt >> ${{ github.workspace }}/file_php_old.txt
@@ -120,7 +116,7 @@ runs:
 
     - name: Checkout - After Merge
       shell: bash
-      working-directory: project
+      working-directory: standard
       id: latest-files
       run: |
         if ${{ github.event_name == 'pull_request' }}; then
@@ -136,7 +132,7 @@ runs:
     - name: Filter php files and execute phpcs - After Merge
       shell: bash
       id: phpcs_after
-      working-directory: project
+      working-directory: standard
       run: |
         grep -i "\.php$" ${{ github.workspace }}/file_lists_new.txt > ${{ github.workspace }}/file_php_new.txt
         grep -i "\.phtml$" ${{ github.workspace }}/file_lists_new.txt >> ${{ github.workspace }}/file_php_new.txt
