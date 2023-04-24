@@ -55,5 +55,16 @@ jobs:
   coding-standard:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: './coding-standard'
+      - name: Checkout Project
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          path: standard
+
+      - name: Set PHP Version
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ inputs.php_version }}
+          tools: composer:v${{ inputs.composer_version }}
+          coverage: none
+
