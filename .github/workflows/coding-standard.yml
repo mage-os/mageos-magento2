@@ -89,7 +89,6 @@ jobs:
 
 
       - name: Checkout project
-        working-directory: standard
         uses: actions/checkout@v2
 
       - name: Get all changed files
