@@ -121,7 +121,7 @@ jobs:
           $([ -n "${{ inputs.severity }}" ] && echo "--severity=${{ inputs.severity }}") \
           $([ -n "${{ inputs.warning_severity }}" ] && echo "--warning-severity=${{ inputs.warning_severity }}") \
           $([ -n "${{ inputs.error_severity }}" ] && echo "--error-severity=${{ inputs.error_severity }}") \
-          --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/file_php_old.txt) > ${{ github.workspace }}/phpcs_commit_before.xml
+          --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/phpcs_files.txt) > ${{ github.workspace }}/phpcs_commit_before.xml
 
       - name: Checkout - After Merge
         shell: bash
