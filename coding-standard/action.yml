@@ -85,7 +85,7 @@ runs:
       id: changed-files
       uses: tj-actions/changed-files@v35
       with:
-        files: ../../app/*.{php,phtml}
+        files: /*.{php,phtml}
 
     - name: Checkout - Before Merge
       shell: bash
