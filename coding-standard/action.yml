@@ -86,7 +86,7 @@ runs:
       uses: tj-actions/changed-files@v35
       with:
         files: |
-          **/*.php
+          ./*.php
 
     - name: Checkout - Before Merge
       shell: bash
