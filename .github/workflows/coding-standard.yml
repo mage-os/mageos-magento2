@@ -111,6 +111,7 @@ jobs:
 
       - name: Filter php,phtml files and execute phpcs - Before Merge
         shell: bash
+        working-directory: project
         id: phpcs_before
         run: |
           grep -i "\.php$" ${{ github.workspace }}/file_lists_old.txt > ${{ github.workspace }}/phpcs_files.txt
@@ -120,7 +121,7 @@ jobs:
           $([ -n "${{ inputs.severity }}" ] && echo "--severity=${{ inputs.severity }}") \
           $([ -n "${{ inputs.warning_severity }}" ] && echo "--warning-severity=${{ inputs.warning_severity }}") \
           $([ -n "${{ inputs.error_severity }}" ] && echo "--error-severity=${{ inputs.error_severity }}") \
-          --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/file_php_old.txt) > ${{ github.workspace }}/phpcs_old.xml
+          --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/file_php_old.txt) > ${{ github.workspace }}/phpcs_commit_before.xml
 
       - name: Checkout - After Merge
         shell: bash
@@ -134,6 +135,7 @@ jobs:
 
       - name: Filter (php, phtml) files and execute phpcs - After Merge
         shell: bash
+        working-directory: project
         id: phpcs_after
         run: |
           php vendor/bin/phpcs --standard=Magento2 \
