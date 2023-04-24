@@ -111,7 +111,6 @@ jobs:
 
       - name: Filter php,phtml files and execute phpcs - Before Merge
         shell: bash
-        working-directory: project
         id: phpcs_before
         run: |
           grep -i "\.php$" ${{ github.workspace }}/file_lists_old.txt > ${{ github.workspace }}/phpcs_files.txt
@@ -135,7 +134,6 @@ jobs:
 
       - name: Filter (php, phtml) files and execute phpcs - After Merge
         shell: bash
-        working-directory: project
         id: phpcs_after
         run: |
           php vendor/bin/phpcs --standard=Magento2 \
