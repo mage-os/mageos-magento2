@@ -130,9 +130,6 @@ runs:
       id: phpcs_after
       working-directory: standard
       run: |
-        grep -i "\.php$" ${{ github.workspace }}/file_lists_new.txt > ${{ github.workspace }}/file_php_new.txt
-        grep -i "\.phtml$" ${{ github.workspace }}/file_lists_new.txt >> ${{ github.workspace }}/file_php_new.txt
-
         php vendor/bin/phpcs --standard=Magento2 \
         $([ -n "${{ inputs.severity }}" ] && echo "--severity=${{ inputs.severity }}") \
         $([ -n "${{ inputs.warning_severity }}" ] && echo "--warning-severity=${{ inputs.warning_severity }}") \
