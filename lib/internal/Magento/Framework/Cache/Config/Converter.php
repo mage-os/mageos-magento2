@@ -20,6 +20,8 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
 
 
 
+
+
         $output = [];
         /** @var \DOMNodeList $types */
         $types = $source->getElementsByTagName('type');
