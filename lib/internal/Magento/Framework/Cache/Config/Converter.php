@@ -17,6 +17,7 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
     {
         echo "asdasd ";
 
+
         $output = [];
         /** @var \DOMNodeList $types */
         $types = $source->getElementsByTagName('type');
