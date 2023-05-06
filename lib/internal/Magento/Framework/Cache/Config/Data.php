@@ -35,7 +35,6 @@ class Data extends \Magento\Framework\Config\Data\Scoped
         $cacheId,
         SerializerInterface $serializer = null
     ) {
-        echo "test";
         parent::__construct($reader, $configScope, $cache, $cacheId, $serializer);
     }
 }
