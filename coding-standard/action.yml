@@ -1,5 +1,5 @@
-name: "Coding Standard"
-author: "Graycore"
+name: "M2 Coding Standard"
+author: "Mage OS"
 description: "A Github Action that runs the Magento Coding Standard."
 
 inputs:
@@ -95,10 +95,11 @@ runs:
         else
           git checkout ${{ github.event.before }}
         fi
-
+        sed 's/ /\n/g' ${{ steps.changed-files.outputs.all_modified_files }}
         for file in ${{ steps.changed-files.outputs.all_modified_files }}; do
           echo $file >> ${{ github.workspace }}/file_lists.txt
         done
+        cat ${{ steps.changed-files.outputs.all_modified_files }}
         cat ${{ github.workspace }}/file_lists.txt
 
     - name: Filter php files and execute phpcs - Before Merge
@@ -106,8 +107,7 @@ runs:
       id: phpcs_before
       working-directory: standard
       run: |
-        grep -i "\.php$" ${{ github.workspace }}/file_lists.txt > ${{ github.workspace }}/phpcs_files.txt
-        grep -i "\.phtml$" ${{ github.workspace }}/file_lists.txt >> ${{ github.workspace }}/phpcs_files.txt
+        grep -iE "\.php|\.phtml" ${{ github.workspace }}/file_lists.txt > ${{ github.workspace }}/phpcs_files.txt
 
         echo $(php vendor/bin/phpcs --standard=Magento2 \
         $([ -n "${{ inputs.severity }}" ] && echo "--severity=${{ inputs.severity }}") \
@@ -126,11 +126,6 @@ runs:
           git checkout ${{ github.event.after }}
         fi
 
-    - name: Filter php files and execute phpcs - After Merge
-      shell: bash
-      id: phpcs_after
-      working-directory: standard
-      run: |
         php vendor/bin/phpcs --standard=Magento2 \
         $([ -n "${{ inputs.severity }}" ] && echo "--severity=${{ inputs.severity }}") \
         $([ -n "${{ inputs.warning_severity }}" ] && echo "--warning-severity=${{ inputs.warning_severity }}") \
