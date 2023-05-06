@@ -95,7 +95,6 @@ runs:
       run: |
         sed "s/ /\n/g" ${{ github.workspace }}/modified_files.txt > ${{ github.workspace }}/newline_file.txt
         grep -iE "\.php|\.phtml" ${{ github.workspace }}/newline_file.txt > ${{ github.workspace }}/phpcs_files.txt
-        cat ${{ github.workspace }}/phpcs_files.txt
 
     - name: Checkout - Before Merge
       shell: bash
@@ -113,9 +112,6 @@ runs:
       id: phpcs_before
       working-directory: standard
       run: |
-
-        grep -iE "\.php|\.phtml" ${{ github.workspace }}/modified_files.txt > ${{ github.workspace }}/phpcs_files.txt
-
         echo $(php vendor/bin/phpcs --standard=Magento2 \
         $([ -n "${{ inputs.severity }}" ] && echo "--severity=${{ inputs.severity }}") \
         $([ -n "${{ inputs.warning_severity }}" ] && echo "--warning-severity=${{ inputs.warning_severity }}") \
@@ -132,7 +128,6 @@ runs:
         else
           git checkout ${{ github.event.after }}
         fi
-
         php vendor/bin/phpcs --standard=Magento2 \
         $([ -n "${{ inputs.severity }}" ] && echo "--severity=${{ inputs.severity }}") \
         $([ -n "${{ inputs.warning_severity }}" ] && echo "--warning-severity=${{ inputs.warning_severity }}") \
