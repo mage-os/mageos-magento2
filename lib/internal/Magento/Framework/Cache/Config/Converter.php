@@ -19,6 +19,7 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
         echo "sdasdd sd";
 
 
+
         $output = [];
         /** @var \DOMNodeList $types */
         $types = $source->getElementsByTagName('type');

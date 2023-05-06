@@ -88,12 +88,6 @@ runs:
         write_output_files: true
         output_dir: ${{ github.workspace }}
 
-    - name: Verify the contents of the modified_files.txt file
-      shell: bash
-      working-directory: standard
-      run: |
-          cat ${{ github.workspace }}/modified_files.txt
-
     - name: Checkout - Before Merge
       shell: bash
       working-directory: standard
@@ -104,25 +98,21 @@ runs:
         else
           git checkout ${{ github.event.before }}
         fi
-        for file in ${{ steps.changed-files.outputs.all_modified_files }}; do
-          echo $file >> ${{ github.workspace }}/file_lists.txt
-        done
-        cat ${{ github.workspace }}/file_lists.txt
 
     - name: Filter php files and execute phpcs - Before Merge
       shell: bash
       id: phpcs_before
       working-directory: standard
       run: |
-        grep -iE "\.php|\.phtml" ${{ github.workspace }}/file_lists.txt > ${{ github.workspace }}/phpcs_files.txt
+        grep -iE "\.php|\.phtml" ${{ github.workspace }}/modified_files.txt > ${{ github.workspace }}/phpcs_files.txt
 
         echo $(php vendor/bin/phpcs --standard=Magento2 \
         $([ -n "${{ inputs.severity }}" ] && echo "--severity=${{ inputs.severity }}") \
         $([ -n "${{ inputs.warning_severity }}" ] && echo "--warning-severity=${{ inputs.warning_severity }}") \
         $([ -n "${{ inputs.error_severity }}" ] && echo "--error-severity=${{ inputs.error_severity }}") \
-        --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ steps.changed-files.outputs.all_modified_files }}) > ${{ github.workspace }}/phpcs_old.xml
+        --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/phpcs_files.txt) > ${{ github.workspace }}/phpcs_old.xml
 
-    - name: Checkout - After Merge
+    - name: Checkout after Merge and execute phpcs
       shell: bash
       working-directory: standard
       id: latest-files
