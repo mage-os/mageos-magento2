@@ -38,8 +38,6 @@ class Data extends \Magento\Framework\Config\Data\Scoped
         echo "test";
         echo "test";
 
-
-
         parent::__construct($reader, $configScope, $cache, $cacheId, $serializer);
     }
 }

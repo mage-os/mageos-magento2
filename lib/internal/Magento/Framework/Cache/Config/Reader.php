@@ -48,6 +48,7 @@ class Reader extends Filesystem
         $defaultScope = Area::AREA_GLOBAL
     ) {
         echo "sdd sd";
+
         echo "asdas";
 
 
