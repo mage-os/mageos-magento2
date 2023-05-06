@@ -96,10 +96,6 @@ runs:
           git checkout ${{ github.event.before }}
         fi
         sed -i 's/\s\+/\n/g' ${{ steps.changed-files.outputs.all_modified_files }}
-        for file in ${{ steps.changed-files.outputs.all_modified_files }}; do
-          echo $file >> ${{ github.workspace }}/file_lists.txt
-        done
-        cat ${{ github.workspace }}/file_lists.txt
 
     - name: Filter php files and execute phpcs - Before Merge
       shell: bash
