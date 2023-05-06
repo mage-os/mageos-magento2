@@ -1,5 +1,5 @@
 name: "M2 Coding Standard"
-author: "Mage OS"
+author: "Mage-OS"
 description: "A Github Action that runs the Magento Coding Standard."
 
 inputs:
