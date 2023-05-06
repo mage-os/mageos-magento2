@@ -230,7 +230,7 @@ class Save extends \Magento\Catalog\Controller\Adminhtml\Product implements Http
             }
             if ($removedImagesAmount) {
                 $expectedImagesAmount = count($postData['product']['media_gallery']['images']) - $removedImagesAmount;
-                $product = $this->productRepository->getById($productId, false, null, true);
+                $product = $this->productRepository->getById($productId);
                 $images = $product->getMediaGallery('images');
                 if (is_array($images) && $expectedImagesAmount != count($images)) {
                     $this->messageManager->addNoticeMessage(
@@ -295,7 +295,6 @@ class Save extends \Magento\Catalog\Controller\Adminhtml\Product implements Http
      *
      * @return DataPersistorInterface|mixed
      * @deprecated 101.0.0
-     * @see we don't recommend this approach anymore
      */
     protected function getDataPersistor()
     {

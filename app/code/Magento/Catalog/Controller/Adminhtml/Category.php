@@ -218,38 +218,4 @@ abstract class Category extends \Magento\Backend\App\Action
         $inputFilter = new FilterInput($dateFieldFilters, [], $postData);
         return $inputFilter->getUnescaped();
     }
-
-    public function test1() {
-        echo "Sdsdsd";
-        echo "asdd sdas d";
-        echo "sdsdd";
-        echo "111";
-        echo "Sdsdsd";
-        echo "asdd sdas d";
-        echo "sdsdd";
-        echo "111";
-
-        echo "asdd sdas d";
-        echo "sdsdd";
-        echo "111";
-
-        echo "asdd sdas d";
-        echo "sdsdd";
-        echo "111";
-        echo "sds s dadd ";
-        echo "sdsdad";
-        echo "sdsdd";
-        echo "111";
-
-        echo "sds s dadd ";
-        echo "sdsdad";
-
-        echo "SDASdasd";
-
-        echo "S e  dsds";
-        echo  "sdd sdad sd ";
-
-        echo "asdasd  ds ";
-
-    }
 }

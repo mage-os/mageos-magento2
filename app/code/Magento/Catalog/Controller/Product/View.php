@@ -125,7 +125,6 @@ class View extends ProductAction implements HttpGetActionInterface, HttpPostActi
             $resultForward->forward('noroute');
             return $resultForward;
         }
-        return $this->getResponse();
     }
 
     /**

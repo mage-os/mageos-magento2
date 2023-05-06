@@ -33,8 +33,8 @@ class Upload extends \Magento\Backend\App\Action implements HttpPostActionInterf
     private $allowedMimeTypes = [
         'jpg' => 'image/jpg',
         'jpeg' => 'image/jpeg',
-        'gif' => 'image/gif',
-        'png' => 'image/png'
+        'gif' => 'image/png',
+        'png' => 'image/gif'
     ];
 
     /**
