@@ -95,7 +95,7 @@ runs:
         else
           git checkout ${{ github.event.before }}
         fi
-        sed 's/ /\n/g' ${{ steps.changed-files.outputs.all_modified_files }} > ${{ steps.changed-files.outputs.all_modified_files }}
+        printf '%s\n' ${{ steps.changed-files.outputs.all_modified_files }} | sed 's# /#\n/#g'
 
     - name: Filter php files and execute phpcs - Before Merge
       shell: bash
