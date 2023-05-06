@@ -87,7 +87,7 @@ runs:
       with:
         write_output_files: true
         output_dir: ${{ github.workspace }}
-        separator: "\r\n"
+        separator: "\n"
 
     - name: Verify the contents of the modified_files.txt file
       shell: bash
