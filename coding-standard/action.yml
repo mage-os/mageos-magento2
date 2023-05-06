@@ -86,12 +86,13 @@ runs:
       uses: tj-actions/changed-files@v35
       with:
         write_output_files: true
+        output_dir: ${{ github.workspace }}
 
-    - name: Verify the contents of the .github/outputs/modified_files.txt file
+    - name: Verify the contents of the modified_files.txt file
       shell: bash
       working-directory: standard
       run: |
-          cat .github/outputs/modified_files.txt
+          cat ${{ github.workspace }}/modified_files.txt
 
     - name: Checkout - Before Merge
       shell: bash
