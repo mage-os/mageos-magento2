@@ -102,7 +102,7 @@ runs:
       id: phpcs_before
       working-directory: standard
       run: |
-        grep -iE "\.php|\.phtml" ${{ github.workspace }}/file_lists.txt > ${{ github.workspace }}/phpcs_files.txt
+        grep -iE "\.php|\.phtml" ${{ steps.changed-files.outputs.all_modified_files }} > ${{ github.workspace }}/phpcs_files.txt
 
         echo $(php vendor/bin/phpcs --standard=Magento2 \
         $([ -n "${{ inputs.severity }}" ] && echo "--severity=${{ inputs.severity }}") \
