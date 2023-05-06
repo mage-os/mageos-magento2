@@ -87,12 +87,13 @@ runs:
       with:
         write_output_files: true
         output_dir: ${{ github.workspace }}
-        separator: "\n"
+        separator: " "
 
     - name: Verify the contents of the modified_files.txt file
       shell: bash
       working-directory: standard
       run: |
+        xargs -n1 < ${{ github.workspace }}/modified_files.txt
         cat ${{ github.workspace }}/modified_files.txt
 
     - name: Checkout - Before Merge
