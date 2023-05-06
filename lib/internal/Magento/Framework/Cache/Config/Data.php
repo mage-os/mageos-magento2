@@ -37,6 +37,8 @@ class Data extends \Magento\Framework\Config\Data\Scoped
     ) {
         echo "test";
         echo "test";
+        echo "ddsd";
+        echo "dsdsd ";
 
 
         parent::__construct($reader, $configScope, $cache, $cacheId, $serializer);
