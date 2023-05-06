@@ -52,6 +52,9 @@ class Reader extends Filesystem
         echo "sdd sd";
         echo "asdas";
         echo "Asdd ad";
+        echo "sdd sd";
+        echo "asdas";
+        echo "Asdd ad"
 
 
         parent::__construct(
