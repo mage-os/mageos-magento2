@@ -87,6 +87,7 @@ runs:
       with:
         write_output_files: true
         output_dir: ${{ github.workspace }}
+        separator: '\r\n'
 
     - name: Verify the contents of the modified_files.txt file
       shell: bash
@@ -110,6 +111,7 @@ runs:
       id: phpcs_before
       working-directory: standard
       run: |
+
         grep -iE "\.php|\.phtml" ${{ github.workspace }}/modified_files.txt > ${{ github.workspace }}/phpcs_files.txt
 
         echo $(php vendor/bin/phpcs --standard=Magento2 \
