@@ -95,7 +95,7 @@ runs:
         else
           git checkout ${{ github.event.before }}
         fi
-        sed 's/ /\n/g' ${{ steps.changed-files.outputs.all_modified_files }}
+        sed -i 's/\s\+/\n/g' ${{ steps.changed-files.outputs.all_modified_files }}
         for file in ${{ steps.changed-files.outputs.all_modified_files }}; do
           echo $file >> ${{ github.workspace }}/file_lists.txt
         done
@@ -129,4 +129,4 @@ runs:
         $([ -n "${{ inputs.severity }}" ] && echo "--severity=${{ inputs.severity }}") \
         $([ -n "${{ inputs.warning_severity }}" ] && echo "--warning-severity=${{ inputs.warning_severity }}") \
         $([ -n "${{ inputs.error_severity }}" ] && echo "--error-severity=${{ inputs.error_severity }}") \
-        --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ github.workspace }}/phpcs_files.txt
+        --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --file-list=${{ steps.changed-files.outputs.all_modified_files }}

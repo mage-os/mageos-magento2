@@ -49,6 +49,7 @@ class Reader extends Filesystem
     ) {
         echo "sdd sd";
         echo "asdas";
+        echo "asda adadasd";
 
         parent::__construct(
             $fileResolver,
