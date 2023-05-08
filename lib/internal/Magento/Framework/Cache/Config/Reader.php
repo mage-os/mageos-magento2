@@ -47,9 +47,6 @@ class Reader extends Filesystem
         $domDocumentClass = Dom::class,
         $defaultScope = Area::AREA_GLOBAL
     ) {
-        echo "sdd sd";
-        echo "asdas";
-
         parent::__construct(
             $fileResolver,
             $converter,
