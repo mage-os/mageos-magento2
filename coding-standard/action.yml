@@ -95,6 +95,7 @@ runs:
       run: |
         sed "s/ /\n/g" ${{ github.workspace }}/modified_files.txt > ${{ github.workspace }}/newline_file.txt
         grep -iE "\.php|\.phtml" ${{ github.workspace }}/newline_file.txt > ${{ github.workspace }}/phpcs_files.txt
+        cat ${{ github.workspace }}/phpcs_files.txt
 
     - name: Checkout - Before Merge
       shell: bash
