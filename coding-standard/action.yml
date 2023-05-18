@@ -118,6 +118,7 @@ runs:
         $([ -n "${{ inputs.warning_severity }}" ] && echo "--warning-severity=${{ inputs.warning_severity }}") \
         $([ -n "${{ inputs.error_severity }}" ] && echo "--error-severity=${{ inputs.error_severity }}") \
         --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --report-file=${{ github.workspace }}/phpcs.baseline.xml --file-list=${{ github.workspace }}/phpcs_files.txt
+        cat ${{ github.workspace }}/phpcs.baseline.xml
 
     - name: Checkout after Merge and execute phpcs
       shell: bash
