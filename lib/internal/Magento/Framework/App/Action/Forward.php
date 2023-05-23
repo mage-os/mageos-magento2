@@ -37,6 +37,7 @@ class Forward extends AbstractAction
         echo "1";
         echo "sdsd sds ";
 
+
         $this->_request->setDispatched(false);
         return $this->_response;
     }
