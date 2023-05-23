@@ -112,7 +112,7 @@ jobs:
         id: phpcs_before
         run: |
           php vendor/bin/phpcs -vv --standard=Magento2 \
-          --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --report-file=${{ github.workspace }}/phpcs.baseline.xml --file-list=${{ github.workspace }}/phpcs_files.txt
+          --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --report-file=${{ github.workspace }}/phpcs.baseline.xml --file-list=${{ github.workspace }}/phpcs_files.txt || /bin/true
           ls -al ${{ github.workspace }}
           head ${{ github.workspace }}/phpcs.baseline.xml
 
