@@ -75,7 +75,7 @@ jobs:
       - name: Set PHP Version
         uses: shivammathur/setup-php@v2
         with:
-          php-version: v${{ inputs.php_version }}
+          php-version: ${{ inputs.php_version }}
           tools: composer:v${{ inputs.composer_version }}
           coverage: none
 
