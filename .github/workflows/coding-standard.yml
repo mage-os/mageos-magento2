@@ -62,6 +62,10 @@ jobs:
   coding-standard:
     runs-on: ubuntu-latest
     steps:
+      - name: Create directory
+        shell: bash
+        run: mkdir standard
+
       - name: Checkout Project
         uses: actions/checkout@v3
         with:
@@ -90,10 +94,10 @@ jobs:
         run: vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/standard/vendor/magento/magento-coding-standard,${{ github.workspace }}/standard/vendor/phpcompatibility/php-compatibility
 
       - name: Checkout codebase for tj-actions
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          path: standard
+          path: project
 
       - name: Get all changed files
         id: changed-files
