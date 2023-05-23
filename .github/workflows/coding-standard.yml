@@ -62,15 +62,10 @@ jobs:
   coding-standard:
     runs-on: ubuntu-latest
     steps:
-      - name: Create directory
-        shell: bash
-        run: mkdir standard
-
       - name: Checkout Project
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0
-          path: standard
+          fetch-depth: 0hde
 
       - name: Set PHP Version
         uses: shivammathur/setup-php@v2
@@ -81,7 +76,6 @@ jobs:
 
       - name: Install Coding Standard && Codesniffer baseline
         shell: bash
-        working-directory: standard
         run: |
           git config --global --add safe.directory ${{ github.workspace }}
           git config --global advice.detachedHead false
@@ -91,8 +85,7 @@ jobs:
 
       - name: Register Coding Standard
         shell: bash
-        working-directory: standard
-        run: vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/standard/vendor/magento/magento-coding-standard,${{ github.workspace }}/standard/vendor/phpcompatibility/php-compatibility
+        run: vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/vendor/magento/magento-coding-standard,${{ github.workspace }}/vendor/phpcompatibility/php-compatibility
 
       - name: Get all changed files
         id: changed-files
@@ -104,7 +97,6 @@ jobs:
 
       - name: Verify the contents of the modified_files.txt file
         shell: bash
-        working-directory: standard
         run: |
           sed "s/ /\n/g" ${{ github.workspace }}/modified_files.txt > ${{ github.workspace }}/newline_file.txt
           grep -iE "\.php|\.phtml" ${{ github.workspace }}/newline_file.txt > ${{ github.workspace }}/phpcs_files.txt
@@ -112,7 +104,6 @@ jobs:
 
       - name: Checkout - Before Merge
         shell: bash
-        working-directory: standard
         id: previous-commit-files
         run: |
           if ${{ github.event_name == 'pull_request' }}; then
@@ -124,7 +115,6 @@ jobs:
       - name: Filter php files and execute phpcs - Before Merge
         shell: bash
         id: phpcs_before
-        working-directory: standard
         run: |
           php vendor/bin/phpcs --standard=Magento2 \
           $([ -n "${{ inputs.severity }}" ] && echo "--severity=${{ inputs.severity }}") \
@@ -135,7 +125,6 @@ jobs:
 
       - name: Checkout after Merge and execute phpcs
         shell: bash
-        working-directory: standard
         id: latest-files
         run: |
           if ${{ github.event_name == 'pull_request' }}; then
