@@ -117,7 +117,8 @@ jobs:
         run: |
           php vendor/bin/phpcs --standard=Magento2 \
           --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --report-file=${{ github.workspace }}/phpcs.baseline.xml --file-list=${{ github.workspace }}/phpcs_files.txt
-          cat ${{ github.workspace }}/phpcs.baseline.xml
+          ls
+
 
       - name: Checkout after Merge and execute phpcs
         shell: bash
