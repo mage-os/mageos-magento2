@@ -92,7 +92,7 @@ jobs:
       - name: Register Coding Standard
         shell: bash
         working-directory: standard
-        run: vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/standard/vendor/magento/magento-coding-standard,${{ github.workspace }}/standard/vendor/phpcompatibility/php-compatibility
+        run: vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/vendor/magento/magento-coding-standard,${{ github.workspace }}/vendor/phpcompatibility/php-compatibility
 
       - name: Checkout codebase for tj-actions
         uses: actions/checkout@v3
