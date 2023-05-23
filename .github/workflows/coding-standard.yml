@@ -91,6 +91,9 @@ jobs:
 
       - name: Checkout codebase for tj-actions
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          path: standard
 
       - name: Get all changed files
         id: changed-files
