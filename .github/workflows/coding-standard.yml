@@ -54,10 +54,6 @@ on:
         default: "^1.1.2"
         description: "version of phpcs baseline"
 
-
-permissions:
-  contents: read
-
 jobs:
   coding-standard:
     runs-on: ubuntu-latest
