@@ -107,7 +107,6 @@ jobs:
 
       - name: Verify the contents of the modified_files.txt file
         shell: bash
-        working-directory: standard
         run: |
           sed "s/ /\n/g" ${{ github.workspace }}/modified_files.txt > ${{ github.workspace }}/newline_file.txt
           grep -iE "\.php|\.phtml" ${{ github.workspace }}/newline_file.txt > ${{ github.workspace }}/phpcs_files.txt

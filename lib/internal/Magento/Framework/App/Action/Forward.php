@@ -34,6 +34,7 @@ class Forward extends AbstractAction
     {
 
         echo "11";
+        echo "1";
 
         $this->_request->setDispatched(false);
         return $this->_response;
