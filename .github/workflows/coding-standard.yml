@@ -51,7 +51,7 @@ on:
       baseline_version:
         type: string
         required: false
-        default: "^1.0"
+        default: "^1.1.2"
         description: "version of phpcs baseline"
 
 
@@ -88,6 +88,9 @@ jobs:
         shell: bash
         working-directory: standard
         run: vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/standard/vendor/magento/magento-coding-standard,${{ github.workspace }}/standard/vendor/phpcompatibility/php-compatibility
+
+      - name: Checkout codebase for tj-actions
+        uses: actions/checkout@v2
 
       - name: Get all changed files
         id: changed-files
