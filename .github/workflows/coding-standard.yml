@@ -96,6 +96,9 @@ jobs:
 
       - name: Checkout codebase for tj-actions
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          path: standard
 
       - name: Get all changed files
         id: changed-files
@@ -107,6 +110,7 @@ jobs:
 
       - name: Verify the contents of the modified_files.txt file
         shell: bash
+        working-directory: standard
         run: |
           sed "s/ /\n/g" ${{ github.workspace }}/modified_files.txt > ${{ github.workspace }}/newline_file.txt
           grep -iE "\.php|\.phtml" ${{ github.workspace }}/newline_file.txt > ${{ github.workspace }}/phpcs_files.txt
@@ -114,6 +118,7 @@ jobs:
 
       - name: Checkout - Before Merge
         shell: bash
+        working-directory: standard
         id: previous-commit-files
         run: |
           if ${{ github.event_name == 'pull_request' }}; then
