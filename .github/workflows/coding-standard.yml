@@ -92,14 +92,14 @@ jobs:
       - name: Register Coding Standard
         shell: bash
         working-directory: standard
-        run: vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/vendor/standard/magento/magento-coding-standard,${{ github.workspace }}/vendor/standard/phpcompatibility/php-compatibility
+        run: vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/standard/vendor/magento/magento-coding-standard,${{ github.workspace }}/standard/vendor/phpcompatibility/php-compatibility
 
       - name: Get all changed files
         id: changed-files
         uses: tj-actions/changed-files@v35
         with:
           write_output_files: true
-          output_dir: ${{ github.workspace }}/standard
+          output_dir: ${{ github.workspace }}
           separator: " "
 
       - name: Verify the contents of the modified_files.txt file

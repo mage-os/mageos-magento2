@@ -34,8 +34,7 @@ class Forward extends AbstractAction
     {
 
         echo "11";
-
-        echo "sddd";
+       echo "sddd";
 
 
         echo "1";
