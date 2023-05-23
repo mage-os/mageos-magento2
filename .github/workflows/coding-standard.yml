@@ -48,6 +48,12 @@ on:
         default: "8"
         description: "The minimum severity required to display an error"
 
+      baseline_version:
+        type: string
+        required: false
+        default: "1.1.2"
+        description: "The version of the phpcs baseline to use. if not required it uses default one"
+
 permissions:
   contents: read
 
@@ -55,5 +61,85 @@ jobs:
   coding-standard:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: './coding-standard'
+      - name: Checkout Project
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          path: standard
+
+      - name: Set PHP Version
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ inputs.php_version }}
+          tools: composer:v${{ inputs.composer_version }}
+          coverage: none
+
+      - name: Install Coding Standard && Codesniffer baseline
+        shell: bash
+        working-directory: standard
+        run: |
+          git config --global advice.detachedHead false
+          composer require "magento/magento-coding-standard:${{ inputs.version || '*' }}"
+          composer config --no-plugins allow-plugins.digitalrevolution/php-codesniffer-baseline true
+          composer require --dev "digitalrevolution/php-codesniffer-baseline:${{ inputs.baseline_version }}"
+
+      - name: Register Coding Standard
+        shell: bash
+        working-directory: standard
+        run: vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/standard/vendor/magento/magento-coding-standard,${{ github.workspace }}/standard/vendor/phpcompatibility/php-compatibility
+
+      - name: Get all changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v35
+        with:
+          write_output_files: true
+          output_dir: ${{ github.workspace }}
+          separator: " "
+
+      - name: Verify the contents of the modified_files.txt file
+        shell: bash
+        working-directory: standard
+        run: |
+          sed "s/ /\n/g" ${{ github.workspace }}/modified_files.txt > ${{ github.workspace }}/newline_file.txt
+          grep -iE "\.php|\.phtml" ${{ github.workspace }}/newline_file.txt > ${{ github.workspace }}/phpcs_files.txt
+          cat ${{ github.workspace }}/phpcs_files.txt
+
+      - name: Checkout - Before Merge
+        shell: bash
+        working-directory: standard
+        id: previous-commit-files
+        run: |
+          if ${{ github.event_name == 'pull_request' }}; then
+            git checkout ${{ github.event.pull_request.base.ref }}
+          else
+            git checkout ${{ github.event.before }}
+          fi
+
+      - name: Filter php files and execute phpcs - Before Merge
+        shell: bash
+        id: phpcs_before
+        working-directory: standard
+        run: |
+          php vendor/bin/phpcs --standard=Magento2 \
+          $([ -n "${{ inputs.severity }}" ] && echo "--severity=${{ inputs.severity }}") \
+          $([ -n "${{ inputs.warning_severity }}" ] && echo "--warning-severity=${{ inputs.warning_severity }}") \
+          $([ -n "${{ inputs.error_severity }}" ] && echo "--error-severity=${{ inputs.error_severity }}") \
+          --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --report-file=${{ github.workspace }}/phpcs.baseline.xml --file-list=${{ github.workspace }}/phpcs_files.txt
+          cat ${{ github.workspace }}/phpcs.baseline.xml
+
+      - name: Checkout after Merge and execute phpcs
+        shell: bash
+        working-directory: standard
+        id: latest-files
+        run: |
+          if ${{ github.event_name == 'pull_request' }}; then
+            git checkout ${{ github.event.pull_request.head.ref }}
+          else
+            git checkout ${{ github.event.after }}
+          fi
+          php vendor/bin/phpcs --standard=Magento2 \
+          $([ -n "${{ inputs.severity }}" ] && echo "--severity=${{ inputs.severity }}") \
+          $([ -n "${{ inputs.warning_severity }}" ] && echo "--warning-severity=${{ inputs.warning_severity }}") \
+          $([ -n "${{ inputs.error_severity }}" ] && echo "--error-severity=${{ inputs.error_severity }}") \
+          --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --report-file=${{ github.workspace }}/phpcs.baseline.xml --file-list=${{ github.workspace }}/phpcs_files.txt
+

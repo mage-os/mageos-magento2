@@ -24,13 +24,7 @@ class Forward extends AbstractAction
      */
     public function dispatch(RequestInterface $request)
     {
-        echo "11 d
-        echo "dddd dd d";
-        d";
-
-
         return $this->execute();
-
     }
 
     /**
