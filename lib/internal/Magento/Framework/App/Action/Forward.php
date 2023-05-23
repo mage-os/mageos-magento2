@@ -30,6 +30,7 @@ class Forward extends AbstractAction
     /**
      * @inheritdoc
      */
+
     public function execute()
     {
 

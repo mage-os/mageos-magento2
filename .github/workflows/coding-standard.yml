@@ -60,7 +60,6 @@ permissions:
 
 jobs:
   coding-standard:
-    runs-on: ubuntu-latest
     steps:
       - name: Create directory
         shell: bash
