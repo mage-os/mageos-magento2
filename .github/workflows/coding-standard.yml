@@ -114,7 +114,6 @@ jobs:
 
       - name: Checkout - Before Merge
         shell: bash
-        working-directory: standard
         id: previous-commit-files
         run: |
           if ${{ github.event_name == 'pull_request' }}; then
@@ -126,7 +125,6 @@ jobs:
       - name: Filter php files and execute phpcs - Before Merge
         shell: bash
         id: phpcs_before
-        working-directory: standard
         run: |
           php vendor/bin/phpcs --standard=Magento2 \
           $([ -n "${{ inputs.severity }}" ] && echo "--severity=${{ inputs.severity }}") \
@@ -137,7 +135,6 @@ jobs:
 
       - name: Checkout after Merge and execute phpcs
         shell: bash
-        working-directory: standard
         id: latest-files
         run: |
           if ${{ github.event_name == 'pull_request' }}; then
