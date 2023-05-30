@@ -66,8 +66,7 @@ on:
   pull_request:
     branches: [ 2.4-develop, develop, phpcs_baseline ]
 
-jobs:
-  runs:
+runs:
     using: "composite"
     steps:
       - name: Checkout Project
