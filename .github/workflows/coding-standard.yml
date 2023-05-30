@@ -1,4 +1,6 @@
 name: M2 Coding Testing
+author: "Mage-OS"
+description: "A Github Action that runs the Magento Coding Standard."
 
 on:
   workflow_dispatch:
@@ -67,7 +69,7 @@ on:
     branches: [ 2.4-develop, develop, phpcs_baseline ]
 
 runs:
-    using: "composite"
+    using: composite
     steps:
       - name: Checkout Project
         uses: actions/checkout@v3
