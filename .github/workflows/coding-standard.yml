@@ -1,11 +1,17 @@
 name: M2 Coding Testing
 
 on:
-  push:
-    branches: [ 2.4-develop, develop, phpcs_baseline ]
-  pull_request:
-    branches: [ 2.4-develop, develop, phpcs_baseline ]
   workflow_dispatch:
+    inputs:
+      flutter_version:
+        description: 'Framework version'
+        required: true
+        default: '2.5.3'
+      publish_artifacts:
+        description: 'Publish artifacts'
+        required: true
+        default: 'true'
+  workflow_call:
     inputs:
       php_version:
         type: string
@@ -53,6 +59,10 @@ on:
         required: false
         default: "^1.1.2"
         description: "version of phpcs baseline"
+  push:
+    branches: [ 2.4-develop, develop, phpcs_baseline ]
+  pull_request:
+    branches: [ 2.4-develop, develop, phpcs_baseline ]
 
 jobs:
   coding-standard:
@@ -73,7 +83,7 @@ jobs:
       - name: Install Coding Standard && Codesniffer baseline
         shell: bash
         run: |
-          echo ${{ inputs.path }}
+          echo '${{ github.event.inputs.flutter_version }}'
           echo ${{ github.event.inputs.path }}
           git config --global advice.detachedHead false
           composer require "magento/magento-coding-standard: ${{ github.event.inputs.version || '*' }}"
