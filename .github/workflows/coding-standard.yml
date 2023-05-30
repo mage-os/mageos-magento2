@@ -65,6 +65,17 @@ on:
         description: "version of phpcs baseline"
   push:
     branches: [ 2.4-develop, develop, phpcs_baseline ]
+    inputs:
+      flutter_version:
+        type: string
+        description: 'Framework version'
+        required: false
+        default: '2.5.3'
+      publish_artifacts:
+        type: string
+        description: 'Publish artifacts'
+        required: false
+        default: 'true'
   pull_request:
     branches: [ 2.4-develop, develop, phpcs_baseline ]
 
