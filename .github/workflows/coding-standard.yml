@@ -4,12 +4,14 @@ on:
   workflow_dispatch:
     inputs:
       flutter_version:
+        type: string
         description: 'Framework version'
-        required: true
+        required: false
         default: '2.5.3'
       publish_artifacts:
+        type: string
         description: 'Publish artifacts'
-        required: true
+        required: false
         default: 'true'
   workflow_call:
     inputs:
@@ -65,8 +67,8 @@ on:
     branches: [ 2.4-develop, develop, phpcs_baseline ]
 
 jobs:
-  coding-standard:
-    runs-on: ubuntu-latest
+  runs:
+    using: "composite"
     steps:
       - name: Checkout Project
         uses: actions/checkout@v3
