@@ -68,13 +68,17 @@ on:
   pull_request:
     branches: [ 2.4-develop, develop, phpcs_baseline ]
 
-runs:
-    using: composite
+permissions:
+  contents: read
+
+jobs:
+  coding-standard:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Project
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0hde
+          fetch-depth: 0
 
       - name: Set PHP Version
         uses: shivammathur/setup-php@v2
