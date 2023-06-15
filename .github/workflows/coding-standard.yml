@@ -13,4 +13,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Run Coding Standard
-        uses: graycoreio/github-actions-magento2/coding-standard@main
+        uses: mage-os/github-actions/coding-standard@main
