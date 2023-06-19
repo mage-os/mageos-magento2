@@ -24,10 +24,9 @@ jobs:
   coding-standard:
     runs-on: ubuntu-latest
     steps:
-      - uses: inputs
-
       - name: Checkout Project
         uses: actions/checkout@v3
+      - uses: inputs
         with:
           fetch-depth: 0
 
