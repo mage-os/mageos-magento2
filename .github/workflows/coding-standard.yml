@@ -19,5 +19,5 @@ jobs:
       - name: Install Coding Standard && Codesniffer baseline
         shell: bash
         run: |
-          echo "Passed input: ${{ inputs.env_name }}}
+          echo "Passed input: ${{ inputs.env_name }}"
 
