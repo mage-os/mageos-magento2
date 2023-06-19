@@ -50,6 +50,6 @@ inputs:
     description: "version of phpcs baseline"
 
 runs:
-  using: "composite"
+  using: composite
   steps:
     - uses: actions/checkout@v3
