@@ -51,3 +51,5 @@ inputs:
 
 runs:
   using: "composite"
+  steps:
+    - uses: actions/checkout@v3
