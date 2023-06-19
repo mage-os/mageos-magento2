@@ -24,9 +24,7 @@ jobs:
   coding-standard:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - id: input_var
-        uses: actions/coding-standard-inputs
+      - uses: ./.github/workflows/inputs
 
       - name: Checkout Project
         uses: actions/checkout@v3

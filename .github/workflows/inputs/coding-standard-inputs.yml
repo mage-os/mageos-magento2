@@ -48,3 +48,6 @@ inputs:
     required: false
     default: "^1.1.2"
     description: "version of phpcs baseline"
+
+runs:
+  using: "composite"
