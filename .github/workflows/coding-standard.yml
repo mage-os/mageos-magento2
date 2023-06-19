@@ -26,7 +26,7 @@ jobs:
     steps:
       - name: Input variables
         uses: actions/checkout@v2
-      - uses: /.github/workflows/inputs
+      - uses: ./.github/workflows/inputs
 
       - name: Checkout Project
         uses: actions/checkout@v3
