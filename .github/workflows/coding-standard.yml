@@ -149,4 +149,3 @@ jobs:
           $([ -n "${{ inputs.warning_severity }}" ] && echo "--warning-severity=${{ github.event.inputs.warning_severity }}") \
           $([ -n "${{ inputs.error_severity }}" ] && echo "--error-severity=${{ github.event.inputs.error_severity }}") \
           --file-list=${{ github.workspace }}/phpcs_files.txt
-
