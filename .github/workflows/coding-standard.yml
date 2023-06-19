@@ -24,9 +24,12 @@ jobs:
   coding-standard:
     runs-on: ubuntu-latest
     steps:
+      - name: Input variables
+        uses: actions/checkout@v2
+      - uses: /.github/workflows/inputs
+
       - name: Checkout Project
         uses: actions/checkout@v3
-      - uses: inputs
         with:
           fetch-depth: 0
 
