@@ -56,6 +56,7 @@ class Reader extends \Magento\Framework\Config\Reader\Filesystem
      */
     public function read($scope = null)
     {
+
         return $scope !== 'primary' ? parent::read($scope) : [];
     }
 }
