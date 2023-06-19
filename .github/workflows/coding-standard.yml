@@ -20,6 +20,7 @@ on:
 permissions:
   contents: read
 
+
 jobs:
   coding-standard:
     runs-on: ubuntu-latest
