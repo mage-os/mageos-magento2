@@ -55,7 +55,6 @@ jobs:
   coding-standard:
     runs-on: ubuntu-latest
     steps:
-      - uses:
       - uses: ../coding-standard-baseline
         with:
           php_version: 8.1 # Optional, will be used for Php version
