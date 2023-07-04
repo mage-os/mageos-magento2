@@ -62,6 +62,7 @@ class Save extends \Magento\CatalogRule\Controller\Adminhtml\Promo\Catalog imple
     {
         echo "1";
 
+        echo
         if ($this->getRequest()->getPostValue()) {
             /** @var \Magento\CatalogRule\Api\CatalogRuleRepositoryInterface $ruleRepository */
             $ruleRepository = $this->_objectManager->get(
