@@ -69,11 +69,8 @@ runs:
     - name: Install Coding Standard && Codesniffer baseline
       shell: bash
       run: |
-        echo ${{ inputs.php_version }}
-        echo "${{ github.events.inputs.php_version }}"
-        echo ${{ github.events.inputs.php_version }}
         git config --global advice.detachedHead false
-        composer require "magento/magento-coding-standard: ${{ inputs.version || '*' }}" -W
+        composer require "magento/magento-coding-standard: ${{ github.event.inputs.version || '*' }}" -W
         composer config --no-plugins allow-plugins.digitalrevolution/php-codesniffer-baseline true
         composer require --dev "digitalrevolution/php-codesniffer-baseline: ${{ github.event.inputs.baseline_version || '*' }}"
 
