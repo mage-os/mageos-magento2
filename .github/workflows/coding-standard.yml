@@ -55,7 +55,8 @@ jobs:
   coding-standard:
     runs-on: ubuntu-latest
     steps:
-      - uses: ../coding-standard-baseline
+      - uses: actions/checkout@v3
+      - uses: "../coding-standard-baseline"
         with:
           php_version: 8.1 # Optional, will be used for Php version
           composer_version: 2
