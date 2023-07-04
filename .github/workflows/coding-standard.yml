@@ -1,6 +1,10 @@
-name: M2 Coding Standard
+name: M2 Coding Testing
 
 on:
+  push:
+    branches: [ 2.4-develop, develop, phpcs_baseline ]
+  pull_request:
+    branches: [ 2.4-develop, develop, phpcs_baseline ]
   workflow_call:
     inputs:
       php_version:
@@ -44,100 +48,20 @@ on:
         default: "8"
         description: "The minimum severity required to display an error"
 
-      baseline_version:
-        type: string
-        required: false
-        default: "^1.1.2"
-        description: "version of phpcs baseline"
-
-  push:
-    branches: [ 2.4-develop, develop, phpcs_baseline ]
-
-  pull_request:
-    branches: [ 2.4-develop, develop, phpcs_baseline ]
-
 permissions:
   contents: read
-
 
 jobs:
   coding-standard:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Project
-        uses: actions/checkout@v3
+      - uses: '../coding-standard-baseline'
         with:
-          fetch-depth: 0
-
-      - name: Set PHP Version
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ inputs.php_version }}
-          tools: composer:v${{ inputs.composer_version }}
-          coverage: none
-
-      - name: Install Coding Standard && Codesniffer baseline
-        shell: bash
-        run: |
-          echo "${{ github.events.inputs.flutter_version }}"
-          echo ${{ github.events.inputs.php_version }}
-          git config --global advice.detachedHead false
-          composer require "magento/magento-coding-standard: ${{ inputs.version || '*' }}"
-          composer config --no-plugins allow-plugins.digitalrevolution/php-codesniffer-baseline true
-          composer require --dev "digitalrevolution/php-codesniffer-baseline: ${{ github.event.inputs.baseline_version || '*' }}"
-
-      - name: Register Coding Standard
-        shell: bash
-        run: vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/vendor/magento/magento-coding-standard,${{ github.workspace }}/vendor/phpcompatibility/php-compatibility
-
-      - name: Get all changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v35
-        with:
-          write_output_files: true
-          output_dir: ${{ github.workspace }}
-          separator: " "
-
-      - name: Verify the contents of the modified_files.txt file
-        shell: bash
-        run: |
-          sed "s/ /\n/g" ${{ github.workspace }}/modified_files.txt > ${{ github.workspace }}/newline_file.txt
-          grep -iE "\.php|\.phtml" ${{ github.workspace }}/newline_file.txt > ${{ github.workspace }}/phpcs_files.txt
-          cat ${{ github.workspace }}/phpcs_files.txt
-
-      - name: Checkout - Before Merge
-        shell: bash
-        id: previous-commit-files
-        run: |
-          if ${{ github.event_name == 'pull_request' }}; then
-            git checkout ${{ github.event.pull_request.base.ref }}
-          else
-            git checkout ${{ github.event.before }}
-          fi
-
-      - name: Filter php files and execute phpcs - Before Merge
-        shell: bash
-        id: phpcs_before
-        run: |
-          php vendor/bin/phpcs --standard=Magento2 \
-          $([ -n "${{ inputs.severity }}" ] && echo "--severity=${{ github.event.inputs.severity }}") \
-          $([ -n "${{ inputs.warning_severity }}" ] && echo "--warning-severity=${{ github.event.inputs.warning_severity }}") \
-          $([ -n "${{ inputs.error_severity }}" ] && echo "--error-severity=${{ github.event.inputs.error_severity }}") \
-          --report=\\DR\\CodeSnifferBaseline\\Reports\\Baseline --report-file=${{ github.workspace }}/phpcs.baseline.xml --file-list=${{ github.workspace }}/phpcs_files.txt || /bin/true
-          ls -al ${{ github.workspace }}
-          head ${{ github.workspace }}/phpcs.baseline.xml
-
-      - name: Checkout after Merge and execute phpcs
-        shell: bash
-        id: latest-files
-        run: |
-          if ${{ github.event_name == 'pull_request' }}; then
-            git checkout ${{ github.event.pull_request.head.ref }}
-          else
-            git checkout ${{ github.event.after }}
-          fi
-          php vendor/bin/phpcs --standard=Magento2 \
-          $([ -n "${{ inputs.severity }}" ] && echo "--severity=${{ github.event.inputs.severity }}") \
-          $([ -n "${{ inputs.warning_severity }}" ] && echo "--warning-severity=${{ github.event.inputs.warning_severity }}") \
-          $([ -n "${{ inputs.error_severity }}" ] && echo "--error-severity=${{ github.event.inputs.error_severity }}") \
-          --file-list=${{ github.workspace }}/phpcs_files.txt
+          php_version: 8.1 # Optional, will be used for Php version
+          composer_version: 2
+          version: 25 # Optional, will use the latest if omitted.
+          path: app/code # Optional, will be used when event is not a pull request.
+          severity: 8 # Optional, will use phpcs default of 5 if not specified.
+          warning_severity: 4 # Optional, will use warning severity value if not specified.
+          error_severity: 7 # Optional, will use error severity value if not specified.
+          baseline_version: 1.1.2 # Optional, will use for php codesniffer baseline version
