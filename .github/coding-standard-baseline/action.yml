@@ -79,8 +79,7 @@ runs:
       run: vendor/bin/phpcs --config-set installed_paths ${{ github.workspace }}/vendor/magento/magento-coding-standard,${{ github.workspace }}/vendor/phpcompatibility/php-compatibility
 
     - name: Get all changed files
-      id: changed-files
-      uses: tj-actions/changed-files@v35
+      uses: tj-actions/changed-files@v37
       with:
         write_output_files: true
         output_dir: ${{ github.workspace }}
@@ -91,11 +90,9 @@ runs:
       run: |
         sed "s/ /\n/g" ${{ github.workspace }}/modified_files.txt > ${{ github.workspace }}/newline_file.txt
         grep -iE "\.php|\.phtml" ${{ github.workspace }}/newline_file.txt > ${{ github.workspace }}/phpcs_files.txt
-        cat ${{ github.workspace }}/phpcs_files.txt
 
     - name: Checkout - Before Merge
       shell: bash
-      id: previous-commit-files
       run: |
         if ${{ github.event_name == 'pull_request' }}; then
           git checkout ${{ github.event.pull_request.base.ref }}
@@ -105,7 +102,6 @@ runs:
 
     - name: Filter php files and execute phpcs - Before Merge
       shell: bash
-      id: phpcs_before
       run: |
         php vendor/bin/phpcs --standard=Magento2 \
         $([ -n "${{ inputs.severity }}" ] && echo "--severity=${{ inputs.severity }}") \
@@ -115,7 +111,6 @@ runs:
 
     - name: Checkout after Merge and execute phpcs
       shell: bash
-      id: latest-files
       run: |
         if ${{ github.event_name == 'pull_request' }}; then
           git checkout ${{ github.event.pull_request.head.ref }}

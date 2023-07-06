@@ -55,6 +55,7 @@ jobs:
   coding-standard:
     runs-on: ubuntu-latest
     steps:
+      - name: Run Coding Standard Baseline
       - uses: actions/checkout@v1
       - uses: './.github/coding-standard-baseline'
         with:
