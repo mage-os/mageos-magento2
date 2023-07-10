@@ -9,6 +9,7 @@
     <body>
         <referenceBlock name="adminhtml.system.backup.container">
             <block class="Magento\Backend\Block\Widget\Grid" name="adminhtml.system.backup.grid" as="grid">
+
                 <arguments>
                     <argument name="id" xsi:type="string">backupsGrid</argument>
                     <argument name="dataSource" xsi:type="object" shared="false">Magento\Backup\Model\Fs\Collection</argument>
