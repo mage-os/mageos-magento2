@@ -12,3 +12,4 @@ permissions:
 jobs:
   run-unit-tests:
     uses: adamzero1/mage-os-infrastructure/.github/workflows/unit-tests.yml@nx-unit-testing
+    
