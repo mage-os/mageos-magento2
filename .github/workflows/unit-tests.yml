@@ -10,5 +10,5 @@ permissions:
 
 jobs:
   run-unit-tests:
-    uses: mage-os/infrastructure/.github/workflows/unit-tests.yml
+    uses: mage-os/infrastructure/.github/workflows/unit-tests.yml@main
 
