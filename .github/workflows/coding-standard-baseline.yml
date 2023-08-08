@@ -1,0 +1,67 @@
+name: M2 Coding Testing
+
+on:
+  push:
+    branches: [ 2.4-develop, develop, phpcs_baseline ]
+  pull_request:
+    branches: [ 2.4-develop, develop, phpcs_baseline ]
+  workflow_call:
+    inputs:
+      php_version:
+        type: string
+        required: true
+        default: "8.1"
+        description: "PHP version used to do the coding standard check."
+
+      composer_version:
+        type: string
+        required: true
+        default: "2"
+        description: "The version of composer to use."
+
+      path:
+        type: string
+        required: true
+        default: 'app/code'
+        description: "The directory (relative to the project root) in which the coding standard will be checked. Used when the event is not a pull request."
+
+      version:
+        type: string
+        required: false
+        description: "The version of the coding standard to use. If not provided, will use the latest version."
+
+      severity:
+        type: string
+        required: false
+        default: "8"
+        description: "The minimum severity required to display an error or warning (default: 5)"
+
+      warning_severity:
+        type: string
+        required: false
+        default: "8"
+        description: "The minimum severity required to display a warning"
+
+      error_severity:
+        type: string
+        required: false
+        default: "8"
+        description: "The minimum severity required to display an error"
+
+permissions:
+  contents: read
+
+jobs:
+  coding-standard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: mage-os/github-actions/coding-standard-baseline@main
+        with:
+          php_version: "8.1" # Optional, will be used for Php version
+          composer_version: "2"
+          version: "31" # Optional, will use the latest if omitted.
+          severity: "8" # Optional, will use phpcs default of 5 if not specified.
+          warning_severity: "4" # Optional, will use warning severity value if not specified.
+          error_severity: "7" # Optional, will use error severity value if not specified.
+          baseline_version: "1.1.2" # Optional, will use for php codesniffer baseline version
