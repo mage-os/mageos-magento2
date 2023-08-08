@@ -1,10 +1,10 @@
-name: M2 Coding Testing
+name: Coding Standard With Baseline
 
 on:
   push:
     branches: [ 2.4-develop, develop, codingstandard_baseline_integration ]
   pull_request:
-    branches: [ 2.4-develop, develop, codingstandard_baseline_integration ]
+    branches: [ 2.4-develop, develop]
   workflow_call:
     inputs:
       php_version:
@@ -55,13 +55,6 @@ jobs:
   coding-standard:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: mage-os/github-actions/coding-standard-baseline@main
-        with:
-          php_version: "8.1" # Optional, will be used for Php version
-          composer_version: "2"
-          version: "31" # Optional, will use the latest if omitted.
-          severity: "8" # Optional, will use phpcs default of 5 if not specified.
-          warning_severity: "4" # Optional, will use warning severity value if not specified.
-          error_severity: "7" # Optional, will use error severity value if not specified.
-          baseline_version: "1.1.2" # Optional, will use for php codesniffer baseline version
+      - name: Run Coding Standard
+        uses: mage-os/github-actions/coding-standard-baseline@main
+
