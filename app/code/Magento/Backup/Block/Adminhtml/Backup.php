@@ -29,8 +29,6 @@ class Backup extends \Magento\Backend\Block\Template
     protected function _prepareLayout()
     {
         parent::_prepareLayout();
-        echo "1";
-        echo "22";
 
         $this->getToolbar()->addChild(
             'createSnapshotButton',
