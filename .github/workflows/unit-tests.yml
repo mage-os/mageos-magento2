@@ -1,0 +1,13 @@
+name: Unit Tests
+run-name: ${{ github.actor }} is running Unit Tests
+on:
+  pull_request:
+    branches:
+      - 2.4-develop
+
+permissions:
+  contents: write
+
+jobs:
+  run-unit-tests:
+    uses: mage-os/infrastructure/.github/workflows/unit-tests.yml@main
