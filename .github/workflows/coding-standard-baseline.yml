@@ -1,8 +1,7 @@
 name: Coding Standard With Baseline
 on:
   pull_request:
-    branches:
-      - 2.4-develop
+
 permissions:
   contents: read
 jobs:
@@ -10,5 +9,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Run Coding Standard Baseline
-        uses: mage-os/github-actions/coding-standard-baseline@main
+        uses: Tjitse-E/github-actions/coding-standard-baseline@fix/phpcs-baseline-action-v2
 
