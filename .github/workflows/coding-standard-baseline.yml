@@ -9,4 +9,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Run Coding Standard Baseline
-        uses: Tjitse-E/github-actions/coding-standard-baseline@fix/phpcs-baseline-action-v3
+        uses: Tjitse-E/github-actions/coding-standard-baseline@fix/phpcs-baseline-action-v2
