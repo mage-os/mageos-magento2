@@ -10,4 +10,3 @@ jobs:
     steps:
       - name: Run Coding Standard Baseline
         uses: Tjitse-E/github-actions/coding-standard-baseline@fix/phpcs-baseline-action-v3
-
