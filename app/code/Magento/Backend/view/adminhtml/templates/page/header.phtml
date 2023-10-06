@@ -12,7 +12,7 @@ use Magento\Framework\Escaper;
 /** @var Header $block */
 $part = $block->getShowPart();
 ?>
-<?php if ($part === 'logo') : ?>
+<?php if ($part === 'logo'): ?>
     <?php $edition = $block->hasEdition()
         ? 'data-edition="' . $escaper->escapeHtml($block->getEdition()) . '"'
         : ''; ?>
