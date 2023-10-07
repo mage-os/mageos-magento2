@@ -30,7 +30,7 @@ class Director extends \Magento\Backend\Model\Menu\AbstractDirector
     {
         $command = $this->_commandFactory->create($data['type'], ['data' => $data]);
         if (isset($this->_messagePatterns[$data['type']])) {
-            $logger->info(
+            $logger->debug(
                 sprintf($this->_messagePatterns[$data['type']], $command->getId())
             );
         }
