@@ -40,7 +40,7 @@ class EnableSegmentation implements SchemaPatchInterface
         $this->schemaSetup->startSetup();
         $setup = $this->schemaSetup;
 
-        $storeSelect = $setup->getConnection()->select()->from($setup->getTable('store'))->where('store_id > 0');
+        $storeSelect = $setup->getConnection()->select()->from($setup->getTable('store'));
         foreach ($setup->getConnection()->fetchAll($storeSelect) as $store) {
             $indexTable = $setup->getTable('catalog_category_product_index') .
                 '_' .
@@ -54,7 +54,7 @@ class EnableSegmentation implements SchemaPatchInterface
                     )
                 );
             }
-            if (!$setup->getConnection()->isTableExists($indexTable . '_replica')) {
+            if ($store['store_id'] > 0 && !$setup->getConnection()->isTableExists($indexTable . '_replica')) {
                 $setup->getConnection()->createTable(
                     $setup->getConnection()->createTableByDdl(
                         $setup->getTable('catalog_category_product_index'),
