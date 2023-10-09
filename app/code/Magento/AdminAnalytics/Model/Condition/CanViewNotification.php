@@ -50,6 +50,7 @@ class CanViewNotification implements VisibilityConditionInterface
     /**
      * @param Logger $viewerLogger
      * @param CacheInterface $cacheStorage
+     * @param ScopeConfigInterface|null $scopeConfig
      */
     public function __construct(
         Logger $viewerLogger,
