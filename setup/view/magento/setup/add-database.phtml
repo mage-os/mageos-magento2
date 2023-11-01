@@ -1,0 +1,381 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<div class="nav-bar-outer-actions">
+    <div class="outer-actions-inner-wrap">
+        <div class="btn-wrap btn-wrap-triangle-right btn-wrap-next">
+            <button
+                type="button"
+                class="btn btn-prime"
+                ng-click="testConnection()"
+            >Next
+            </button>
+        </div>
+        <div class="btn-wrap btn-wrap-triangle-left btn-wrap-prev">
+            <button
+                type="button"
+                class="btn"
+                ng-click="previousState()"
+            >Back
+            </button>
+        </div>
+    </div>
+</div>
+
+<h2 class="page-sub-title">{{$state.current.header}}</h2>
+<p>
+    <span class="field-note">This step is crucial as it establishes the connection between your Mage-OS store and its underlying MySQL database, where all your store data will be housed</span>
+</p>
+
+<div
+    class="message message-success"
+    ng-show="testConnection.result.success && testConnection.pressed"
+>
+    <span class="message-text">Test connection successful.</span>
+</div>
+<div
+    class="message message-error"
+    ng-show="testConnection.result.success === false && testConnection.result !== undefined"
+>
+    <span class="message-text">{{testConnection.result.error}}</span>
+</div>
+<div
+    class="message message-error"
+    ng-show="testConnection.failed !== undefined"
+>
+    <span class="message-text">{{testConnection.failed}}</span>
+</div>
+
+<form
+    novalidate
+    name="database"
+    role="form"
+    autocomplete="off"
+>
+
+    <?php
+    /* Hide "Create database" option
+
+    <fieldset class="form-fieldset">
+
+        <legend class="form-legend-light">
+            Did you want to use an existing or create a new database?
+        </legend>
+
+        <div class="form-row">
+            <input
+                id="useExistingDb"
+                class="form-el-radio"
+                type="radio"
+                name="useExistingDb"
+                ng-model="db.useExistingDb"
+                value="1"
+                >
+            <label class="form-label" for="useExistingDb">
+                Use my existing database
+            </label>
+        </div>
+
+        <div class="form-row">
+            <input
+                id="useNotExistingDb"
+                class="form-el-radio"
+                type="radio"
+                name="useExistingDb"
+                ng-model="db.useExistingDb"
+                value="0"
+                >
+            <label class="form-label" for="useNotExistingDb">
+                Create a database for me
+            </label>
+        </div>
+
+    </fieldset>
+
+    */
+    ?>
+
+    <fieldset class="form-fieldset">
+
+        <?php
+        /* Hide "Create database" option
+
+        <legend class="form-legend" ng-if="db.useExistingDb==1">
+            Use my existing database
+        </legend>
+        <legend class="form-legend" ng-if="db.useExistingDb==0">
+            Create a database for me
+        </legend>
+
+        */
+        ?>
+
+        <div
+            class="row form-row"
+            ng-class="{'has-error': database.dbHost.$invalid && database.submitted}"
+        >
+            <div class="col-m-5">
+                <label class="form-label required" for="dbHost">
+                    Database Server Host
+                </label>
+            </div>
+            <div class="col-m-5">
+                <input
+                    id="dbHost"
+                    class="form-el-input"
+                    tooltip-placement="right"
+                    tooltip="Name and location of the server that hosts your store's database."
+                    tooltip-trigger="focus"
+                    tooltip-append-to-body="true"
+                    type="text"
+                    name="dbHost"
+                    ng-model="db.host"
+                    ng-class="{'invalid': database.dbHost.$invalid && database.submitted}"
+                    required
+                />
+                <p>
+            <span class="field-note">
+                Specify the hostname or IP address of the server where your MySQL database resides.
+            </span>
+                </p>
+                <div class="error-container">
+            <span ng-show="database.dbHost.$error.required">
+                You must enter a valid host name. Please check the syntax and try again.
+            </span>
+                </div>
+            </div>
+        </div>
+
+        <div
+            class="row form-row"
+            ng-class="{'has-error': database.dbUser.$invalid && database.submitted}"
+        >
+            <div class="col-m-5">
+                <label class="form-label required" for="dbUser">
+                    Database Server Username
+                </label>
+            </div>
+            <div class="col-m-5">
+                <?php
+                /* Hide "Create database" option
+
+                ng-switch="db.useExistingDb"
+
+                <input
+                    id="dbUser"
+                    ng-switch-when="1"
+                    tooltip-placement="right"
+                    tooltip="Sign-in credentials for your store's database on the database server (does not need to be admin-level credentials)."
+                    tooltip-trigger="focus"
+                    tooltip-append-to-body="true"
+                    class="form-el-input"
+                    type="text"
+                    name="dbUser"
+                    ng-model="db.user"
+                    required
+                    >
+                */
+                ?>
+                <input
+                    id="dbUser"
+                    tooltip-placement="right"
+                    tooltip="Sign-in credentials for your store's database on the database server (does not need to be admin-level credentials)."
+                    tooltip-trigger="focus"
+                    tooltip-append-to-body="true"
+                    class="form-el-input"
+                    ng-class="{'invalid': database.dbUser.$invalid && database.submitted}"
+                    type="text"
+                    name="dbUser"
+                    ng-model="db.user"
+                    required
+                />
+                <p>
+            <span class="field-note">
+                This is the MySQL user with privileges to access and manage the specified database. In this context, it's "magento".
+            </span>
+                </p>
+                <div class="error-container">
+            <span ng-show="database.dbUser.$error.required">
+                Please enter a username to continue.
+            </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row form-row">
+            <div class="col-m-5">
+                <label class="form-label" for="dbPassword">
+                    Database Server Password
+                </label>
+            </div>
+            <div class="col-m-5" ng-switch="db.useExistingDb">
+                <input
+                    id="dbPassword"
+                    class="form-el-input"
+                    ng-switch-when="1"
+                    tooltip-placement="right"
+                    tooltip="Sign-in credentials for your store's database on the database server (does not need to be admin-level credentials)."
+                    tooltip-trigger="focus"
+                    tooltip-append-to-body="true"
+                    type="password"
+                    name="dbPassword"
+                    ng-model="db.password"
+                    placeholder="(not always necessary)"
+                />
+
+                <p>
+            <span class="field-note">
+                Ensure you enter the correct password for the database user. It should be kept secure, and you should ensure that you use a strong, unique password for database security.
+            </span>
+                </p>
+
+                <input
+                    id="dbPassword"
+                    class="form-el-input"
+                    ng-switch-when="0"
+                    tooltip-placement="right"
+                    tooltip="Administrator credentials to sign in to the server that will host your store's database."
+                    tooltip-trigger="focus"
+                    tooltip-append-to-body="true"
+                    type="password"
+                    name="dbPassword"
+                    ng-model="db.password"
+                    placeholder="(not always necessary)"
+                >
+            </div>
+        </div>
+
+        <div class="row form-row" ng-if="db.useExistingDb">
+            <div class="col-m-5">
+                <label class="form-label required" for="dbname">
+                    Database Name
+                </label>
+            </div>
+            <div class="col-m-5">
+                <input
+                    id="dbname"
+                    class="form-el-input"
+                    tooltip-placement="right"
+                    tooltip="Enter the name of your store's database."
+                    tooltip-trigger="focus"
+                    tooltip-append-to-body="true"
+                    ng-class="{'invalid': database.dbname.$invalid && database.submitted}"
+                    type="text"
+                    name="dbname"
+                    ng-model="db.name"
+                    required
+                />
+                <p>
+            <span class="field-note">
+                The specific database in MySQL where Mage-OS data tables will be created and managed. Here, it appears to be named "magento"
+            </span>
+                </p>
+                <div class="error-container">
+            <span ng-show="database.dbname.$error.required">
+                You must enter a valid database name. Please check the syntax and try again.
+            </span>
+                </div>
+            </div>
+        </div>
+
+        <?php
+        /* Hide "Create database" option
+
+        <div class="row form-row" ng-if="db.useExistingDb==0">
+            <div class="col-m-5">
+                <label class="form-label required" for="dbNewName">
+                    New Database Name
+                </label>
+            </div>
+            <div class="col-m-5">
+                <input
+                    id="dbNewName"
+                    class="form-el-input"
+                    tooltip-placement="right"
+                    tooltip="Create sign-in credentials for your store's database."
+                    tooltip-trigger="focus"
+                    tooltip-append-to-body="true"
+                    type="text"
+                    name="dbNewName"
+                    ng-model="db.newName"
+                    required
+                    >
+            </div>
+        </div>
+
+        */
+        ?>
+
+        <?php
+        /* Hide "Create database" option
+        <div class="row form-row">
+            <div class="col-m-offset-3 col-m-5">
+                <button
+                    class="btn btn-secondary"
+                    type="button"
+                    ng-click="testConnection()"
+                    >
+                    Test Connection and Authentication
+                </button>
+            </div>
+            <div class="col-m-5">
+                <div
+                    class="check-result-message"
+                    ng-show="testConnection.result.success && testConnection.pressed"
+                    >
+                    <span class="icon-success-round"></span>
+                    <span class="check-result-text">Test connection successful.</span>
+                </div>
+                <div
+                    class="check-result-message"
+                    ng-show="testConnection.result.success === false && testConnection.result !== undefined"
+                    >
+                    <span class="icon-failed-round"></span>
+                    <span class="check-result-text">{{testConnection.result.error}}</span>
+                </div>
+                <div
+                    class="check-result-message"
+                    ng-show="testConnection.result.success === undefined && testConnection.result !== undefined"
+                    >
+                    <span class="icon-failed-round"></span>
+                    <span class="check-result-text">Unknown Database Server Host.</span>
+                </div>
+            </div>
+        </div>
+        */
+        ?>
+
+        <div class="row form-row">
+            <div class="col-m-5">
+                <label class="form-label" for="dbTablePrefix">
+                    Table prefix
+                </label>
+            </div>
+            <div class="col-m-5">
+                <input
+                    id="dbTablePrefix"
+                    class="form-el-input"
+                    tooltip-placement="right"
+                    tooltip="Enter a prefix for database tables created in this installation. Use letters, numbers or underscores, and begin with a letter (Ex: ‘mg1_’). Table prefix length can't be more than 5 characters."
+                    tooltip-trigger="focus"
+                    tooltip-append-to-body="true"
+                    type="text"
+                    name="dbTablePrefix"
+                    ng-model="db.tablePrefix"
+                    placeholder="(optional)"
+                />
+                <p>
+            <span class="field-note">
+                Input a prefix if you want each table name in the database to start with this prefix. For example, using a prefix "mg_" would name the tables like "mg_tablename"
+            </span>
+                </p>
+            </div>
+        </div>
+    </fieldset>
+</form>

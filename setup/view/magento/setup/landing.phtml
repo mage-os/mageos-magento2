@@ -1,0 +1,27 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+// @codingStandardsIgnoreFile
+?>
+<section class="page-landing">
+    <img class="logo" src="<?= $this->basePath() ?>/pub/images/mageos/logo.svg" alt="Mage-OS"/>
+    <p class="text-version">
+        <?= 'Version' . ' ' . $this->version ?>
+    </p>
+    <p class="text-welcome">
+        Welcome to MageOS Web Installer, your online store headquarters.
+        <br>
+        Click 'Agree and Set Up MageOS' or read <a href="https://devdocs.mage-os.org/docs/main" target="_blank">Getting Started</a> to learn more.
+    </p>
+    <p class="text-terms">
+        <!-- TODO: need to add link to terms and agreement -->
+        <a href="" ng-click="previousState()">Terms & Agreement</a>
+    </p>
+    <button
+        type="button"
+        class="btn btn-large btn-prime btn-submit"
+        ng-click="nextState()"
+        >Agree and Install MageOS</button>
+</section>
