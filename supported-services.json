@@ -8,25 +8,19 @@
             2.2
         ],
         "database": [
-            "mariadb:10.6",
             "mysql:8.0"
         ],
         "search": [
-            "elasticsearch:8.4",
-            "elasticsearch:7.17",
-            "opensearch:2.5"
+          "elasticsearch:7.17"
         ],
         "message_queue": [
-            null,
-            "rabbitmq:3.9"
+            null
         ],
         "cache": [
-            null,
             "redis:7.0"
         ],
         "http_cache": [
-            null,
-            "varnish:7.1"
+            null
         ]
     }
 }
