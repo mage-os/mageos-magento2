@@ -17,7 +17,6 @@ use Magento\Catalog\Model\Indexer\Category\Product\TableMaintainer;
  * Category resource collection
  *
  * @api
- * @author      Magento Core Team <core@magentocommerce.com>
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @since 100.0.2
  */
