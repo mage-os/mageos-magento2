@@ -14,13 +14,13 @@
           "elasticsearch:7.17"
         ],
         "message_queue": [
-            null
+            "rabbitmq:3.9"
         ],
         "cache": [
             "redis:7.0"
         ],
         "http_cache": [
-            null
+            "varnish:7.1"
         ]
     }
 }
