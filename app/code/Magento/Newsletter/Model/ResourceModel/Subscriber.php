@@ -121,6 +121,11 @@ class Subscriber extends AbstractDb
      */
     public function loadBySubscriberEmail(string $email, int $websiteId): array
     {
+    
+    
+    
+    
+    
         $storeIds = $this->storeManager->getWebsite($websiteId)->getStoreIds();
         $select = $this->connection->select()
             ->from($this->getMainTable())
