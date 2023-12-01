@@ -54,7 +54,7 @@ class EnableSegmentation implements SchemaPatchInterface
                     )
                 );
             }
-            if ($store['store_id'] > 0 && !$setup->getConnection()->isTableExists($indexTable . '_replica')) {
+            if (!$setup->getConnection()->isTableExists($indexTable . '_replica')) {
                 $setup->getConnection()->createTable(
                     $setup->getConnection()->createTableByDdl(
                         $setup->getTable('catalog_category_product_index'),
