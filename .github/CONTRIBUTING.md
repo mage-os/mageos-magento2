@@ -2,7 +2,7 @@
 
 Contributions to the Mage-OS Magento 2 codebase are done using the fork & pull model.
 This contribution model has contributors maintaining their own fork of the Mage-OS Magento 2 repository.
-The forked repository is then used to submit a request to the base repository to “pull” a set of changes.
+The forked repository is then used to submit a request to the base repository to "pull" a set of changes.
 For more information on pull requests please refer to [GitHub Help](https://help.github.com/articles/about-pull-requests/).
 
 Contributions can take the form of new components or features, changes to existing features, tests, documentation (such as developer guides, user guides, examples, or specifications), bug fixes or optimizations.
