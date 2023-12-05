@@ -187,7 +187,7 @@ abstract class AbstractAction implements ResetAfterRequestInterface
      */
     protected function reindex()
     {
-        foreach ($this->storeManager->getStores() as $store) {
+        foreach ($this->storeManager->getStores(true) as $store) {
             if ($this->getPathFromCategoryId($store->getRootCategoryId())) {
                 $this->setCurrentStore($store);
                 $this->reindexRootCategory($store);
@@ -286,7 +286,7 @@ abstract class AbstractAction implements ResetAfterRequestInterface
                     ['path']
                 )->where(
                     'entity_id = ?',
-                    $categoryId
+                    $categoryId == 0 ? 1 : $categoryId
                 )
             );
         }
@@ -324,10 +324,6 @@ abstract class AbstractAction implements ResetAfterRequestInterface
                 'ccp.category_id = cc.entity_id',
                 []
             )->joinInner(
-                ['cpw' => $this->getTable('catalog_product_website')],
-                'cpw.product_id = ccp.product_id',
-                []
-            )->joinInner(
                 ['cpe' => $this->getTable('catalog_product_entity')],
                 'ccp.product_id = cpe.entity_id',
                 []
@@ -356,11 +352,6 @@ abstract class AbstractAction implements ResetAfterRequestInterface
                 $store->getId(),
                 []
             )->where(
-                'cc.path LIKE ' . $this->connection->quote($rootPath . '/%')
-            )->where(
-                'cpw.website_id = ?',
-                $store->getWebsiteId()
-            )->where(
                 $this->connection->getIfNullSql('cpss.value', 'cpsd.value') . ' = ?',
                 \Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED
             )->where(
@@ -382,6 +373,19 @@ abstract class AbstractAction implements ResetAfterRequestInterface
                     ),
                 ]
             );
+
+            if ($store->getId() != 0) {
+                $select->joinInner(
+                    ['cpw' => $this->getTable('catalog_product_website')],
+                    'cpw.product_id = ccp.product_id',
+                    []
+                )->where(
+                    'cpw.website_id = ?',
+                    $store->getWebsiteId()
+                )->where(
+                    'cc.path LIKE ' . $this->connection->quote($rootPath . '/%')
+                );
+            }
 
             $this->addFilteringByChildProductsToSelect($select, $store);
 
@@ -533,6 +537,7 @@ abstract class AbstractAction implements ResetAfterRequestInterface
         $visibilityAttributeId = $this->config->getAttribute(Product::ENTITY, 'visibility')->getId();
         $rootCatIds = explode('/', $this->getPathFromCategoryId($store->getRootCategoryId()));
         array_pop($rootCatIds);
+        $rootCatIds = $rootCatIds ?: [1];
 
         $temporaryTreeTable = $this->makeTempCategoryTreeIndex();
 
@@ -563,10 +568,6 @@ abstract class AbstractAction implements ResetAfterRequestInterface
         )->joinInner(
             ['cpe' => $this->getTable('catalog_product_entity')],
             'ccp.product_id = cpe.entity_id',
-            []
-        )->joinInner(
-            ['cpw' => $this->getTable('catalog_product_website')],
-            'cpw.product_id = ccp.product_id',
             []
         )->joinInner(
             ['cpsd' => $this->getTable('catalog_product_entity_int')],
@@ -603,9 +604,6 @@ abstract class AbstractAction implements ResetAfterRequestInterface
             $store->getId(),
             []
         )->where(
-            'cpw.website_id = ?',
-            $store->getWebsiteId()
-        )->where(
             $this->connection->getIfNullSql('cpss.value', 'cpsd.value') . ' = ?',
             \Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED
         )->where(
@@ -630,6 +628,17 @@ abstract class AbstractAction implements ResetAfterRequestInterface
                 'visibility' => new \Zend_Db_Expr($this->connection->getIfNullSql('cpvs.value', 'cpvd.value')),
             ]
         );
+
+        if ($store->getId() != 0) {
+            $select->joinInner(
+                ['cpw' => $this->getTable('catalog_product_website')],
+                'cpw.product_id = ccp.product_id',
+                []
+            )->where(
+                'cpw.website_id = ?',
+                $store->getWebsiteId()
+            );
+        }
 
         $this->addFilteringByChildProductsToSelect($select, $store);
 
@@ -819,10 +828,6 @@ abstract class AbstractAction implements ResetAfterRequestInterface
                 ['cp' => $this->getTable('catalog_product_entity')],
                 []
             )->joinInner(
-                ['cpw' => $this->getTable('catalog_product_website')],
-                'cpw.product_id = cp.entity_id',
-                []
-            )->joinInner(
                 ['cpsd' => $this->getTable('catalog_product_entity_int')],
                 'cpsd.' . $linkField . ' = cp.' . $linkField . ' AND cpsd.store_id = 0' .
                 ' AND cpsd.attribute_id = ' .
@@ -851,9 +856,6 @@ abstract class AbstractAction implements ResetAfterRequestInterface
                 'ccp.product_id = cp.entity_id',
                 []
             )->where(
-                'cpw.website_id = ?',
-                $store->getWebsiteId()
-            )->where(
                 $this->connection->getIfNullSql('cpss.value', 'cpsd.value') . ' = ?',
                 \Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED
             )->where(
@@ -881,6 +883,17 @@ abstract class AbstractAction implements ResetAfterRequestInterface
                     ),
                 ]
             );
+
+            if ($store->getId() != 0) {
+                $select->joinInner(
+                    ['cpw' => $this->getTable('catalog_product_website')],
+                    'cpw.product_id = ccp.product_id',
+                    []
+                )->where(
+                    'cpw.website_id = ?',
+                    $store->getWebsiteId()
+                );
+            }
 
             $this->productsSelects[$store->getId()] = $select;
         }
