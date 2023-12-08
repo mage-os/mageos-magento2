@@ -87,6 +87,35 @@ class ConfigOptionsListConstants
     public const INPUT_KEY_CACHE_HOSTS = 'http-cache-hosts';
     /**#@-*/
 
+    public const INPUT_KEY_OPENSEARCH_HOST = 'opensearch-host';
+
+    public const INPUT_KEY_OPENSEARCH_POST = 'opensearch-port';
+
+    public const INPUT_KEY_OPENSEARCH_INDEX_PREFIX = 'opensearch-index-prefix';
+
+    public const INPUT_KEY_OPENSEARCH_ENABLE_BASIC_AUTH = 'opensearch-enable-auth';
+    public const INPUT_KEY_OPENSEARCH_BASIC_AUTH_USERNAME = 'opensearch-username';
+    public const INPUT_KEY_OPENSEARCH_BASIC_AUTH_PASSWORD = 'opensearch-password';
+
+    public const INPUT_KEY_OPENSEARCH_INDEX_TIMEOUT = 15;
+
+
+
+    public const INPUT_KEY_ES_HOST = 'elasticsearch-host';
+
+
+    public const INPUT_KEY_SEARCH_ENGINE = 'search-engine';
+
+    public const INPUT_KEY_ES_NOSQL_DB = 'search-engine';
+    public const INPUT_KEY_ES_PORT = 'elasticsearch-port';
+
+    public const INPUT_KEY_ES_INDEX_PREFIX = 'elasticsearch-index-prefix';
+    public const INPUT_KEY_ES_ENABLE_BASIC_AUTH = 'elasticsearch-enable-auth';
+    public const INPUT_KEY_ES_BASIC_AUTH_USERNAME = 'elasticsearch-username';
+    public const INPUT_KEY_ES_BASIC_AUTH_PASSWORD = 'elasticsearch-password';
+    public const INPUT_KEY_ES_TIMEOUT = 'elasticsearch-timeout';
+
+
     /**#@+
      * Input keys for cache configuration
      */
@@ -105,6 +134,11 @@ class ConfigOptionsListConstants
     public const SESSION_SAVE_DB = 'db';
     public const SESSION_SAVE_REDIS = 'redis';
     /**#@-*/
+
+    public const NOSQL_DB_OPENSEARCH = 'opensearch';
+
+    public const NOSQL_DB_ELASTICSEARCH = 'elasticsearch';
+
 
     /**
      * Array Key for session save method

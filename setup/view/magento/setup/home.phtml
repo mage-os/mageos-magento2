@@ -1,0 +1,21 @@
+<h2 class="page-sub-title">Installation Complete</h2>
+<div class="mage-os info">
+    <p>If you are seeing this message it means your Mage-OS has been successfully installed but it is not fully secured. It is recommended to block access to <strong>setup/*</strong> URL </p>
+    <p>For <strong>NGINX</strong> you need to add following configuration</p>
+    <div class="preformatted">
+        <pre>
+        location ~* ^/setup {
+            deny all;
+            return 403;
+        }</pre>
+    </div>
+    <p>For <strong>Apache</strong> you need to add following configuration</p>
+    <div class="preformatted">
+        <pre>
+        &lt;Directory "path_to_magento_root/setup"&gt;
+            Order Deny,Allow
+            Deny from all
+        &lt;/Directory&gt;</pre>
+    </div>
+    <p>Make sure to replace <strong>path_to_magento_root</strong> with the actual path to your Magento root directory.</p>
+</div>

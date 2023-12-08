@@ -135,7 +135,6 @@ class CategoriesFixture extends Fixture
                     ->setName($this->getCategoryName($parentCategory, $nestingLevel, $i))
                     ->setParentId($parentCategory->getId())
                     ->setLevel($parentCategory->getLevel() + 1)
-                    ->setPosition($i)
                     ->setAvailableSortBy('name')
                     ->setIsAnchor($nestingLevel <= 2)
                     ->setDefaultSortBy('name')

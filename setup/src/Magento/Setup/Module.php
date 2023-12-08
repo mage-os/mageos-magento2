@@ -24,7 +24,8 @@ class Module implements
     ConfigProviderInterface
 {
     /**
-     * @inheritDoc
+     * @param \Laminas\EventManager\EventInterface $e
+     * @return void
      */
     public function onBootstrap(EventInterface $e)
     {
@@ -68,16 +69,17 @@ class Module implements
     }
 
     /**
-     * @inheritDoc
+     * @return array|\Traversable
      */
     public function getConfig()
     {
-        // phpcs:disable
-        $result = array_merge_recursive(
+        return array_merge_recursive(
             include __DIR__ . '/../../../config/module.config.php',
+            include __DIR__ . '/../../../config/router.config.php',
             include __DIR__ . '/../../../config/di.config.php',
+            include __DIR__ . '/../../../config/states.install.config.php',
+            include __DIR__ . '/../../../config/states.home.config.php',
+            include __DIR__ . '/../../../config/states.enable.config.php',
         );
-        // phpcs:enable
-        return $result;
     }
 }

@@ -1,0 +1,291 @@
+<?php
+/**
+ * Copyright © Mage-OS, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+?>
+<div class="nav-bar-outer-actions">
+    <div class="outer-actions-inner-wrap">
+        <div class="btn-wrap btn-wrap-triangle-right btn-wrap-next">
+            <button
+                type="button"
+                class="btn btn-prime"
+                ng-click="testEsConnection()"
+            >Next
+            </button>
+        </div>
+        <div class="btn-wrap btn-wrap-triangle-left btn-wrap-prev">
+            <button
+                type="button"
+                class="btn"
+                ng-click="previousState()"
+            >Back
+            </button>
+        </div>
+    </div>
+</div>
+
+<h2 class="page-sub-title">{{$state.current.header}}</h2>
+<p>
+    <span class="field-note">This section allows you to configure a NoSQL database for specific functionalities within Mage-OS. NoSQL databases can offer performance benefits and scalability for certain data types and operations</span>
+</p>
+
+<div
+    class="message message-success"
+    ng-show="testEsConnection.result.success && testEsConnection.pressed"
+>
+    <span class="message-text">Test connection successful.</span>
+</div>
+<div
+    class="message message-error"
+    ng-show="testEsConnection.result.success === false && testEsConnection.result !== undefined"
+>
+    <span class="message-text">{{testEsConnection.result.error}}</span>
+</div>
+<div
+    class="message message-error"
+    ng-show="testEsConnection.failed !== undefined"
+>
+    <span class="message-text">{{testEsConnection.failed}}</span>
+</div>
+
+<form
+    novalidate
+    name="elasticsearch"
+    role="form"
+    autocomplete="off"
+>
+    <div class="row form-row">
+        <div class="col-m-4">
+            <label class="form-label required">
+                No SQL Database:
+            </label>
+        </div>
+        <div class="col-m-8">
+            <select
+                    name="session"
+                    class="form-el-select"
+                    ng-model="es.nosqldb"
+                    ng-class="{'invalid': es.nosqldb.$invalid && es.submitted}"
+                    tooltip-placement="right"
+                    tooltip-html-unsafe="Select the type of the NoSQL Database used in your project."
+                    tooltip-trigger="focus"
+                    tooltip-append-to-body="true"
+            >
+                <?php foreach ($this->nosqldb as $value):?>
+                    <?= "<option value=\"" . $value . "\">" . ucfirst($value) . "</option>" ?>
+                <?php endforeach; ?>
+            </select>
+            <p>
+                <span class="field-note">
+                    This section allows you to configure a NoSQL database for specific functionalities within Mage-OS.
+                </span>
+            </p>
+        </div>
+    </div>
+
+    <fieldset class="form-fieldset">
+
+        <div
+            class="row form-row"
+            ng-class="{'has-error': es.hostname.$invalid && es.submitted}"
+        >
+            <div class="col-m-4">
+                <label class="form-label required" for="hostname">
+                    NoSQL Database Server Hostname
+                </label>
+            </div>
+            <div class="col-m-8">
+                <input
+                    id="hostname"
+                    class="form-el-input"
+                    tooltip-placement="right"
+                    tooltip="Location of the server that hosts your NoSQL database."
+                    tooltip-trigger="focus"
+                    tooltip-append-to-body="true"
+                    type="text"
+                    name="hostname"
+                    ng-model="es.hostname"
+                    ng-class="{'invalid': elasticsearch.hostname.$invalid && elasticsearch.submitted}"
+                    required
+                >
+                <p>
+                    <span class="field-note">
+                         The server address or hostname where your NoSQL database (in this case, OpenSearch) is running
+                    </span>
+                </p>
+                <div class="error-container">
+            <span ng-show="es.hostname.$error.required">
+                You must enter a valid host name. Please check the syntax and try again.
+            </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row form-row">
+            <div class="col-m-4">
+                <label class="form-label required" for="port">
+                    NoSQL Database Server Port
+                </label>
+            </div>
+            <div class="col-m-8">
+                <input
+                    id="port"
+                    class="form-el-input"
+                    tooltip-placement="right"
+                    tooltip="Dedicated Port on your NoSQL server used to connect to NoSQL database"
+                    tooltip-trigger="focus"
+                    tooltip-append-to-body="true"
+                    type="text"
+                    name="port"
+                    ng-model="es.port"
+                    placeholder="(9200 - default port)"
+                    required
+                >
+                <p>
+                    <span class="field-note">
+                         The port number on which the NoSQL database listens
+                    </span>
+                </p>
+                <div class="error-container">
+            <span ng-show="es.port.$error.required">
+                You must enter a valid Port. Please check the syntax and try again.
+            </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row form-row">
+            <div class="col-m-4">
+                <label class="form-label required" for="prefix">
+                    NoSQL Database Index Prefix
+                </label>
+            </div>
+            <div class="col-m-8">
+                <input
+                    id="prefix"
+                    class="form-el-input"
+                    tooltip-placement="right"
+                    tooltip="Prefix used to create NoSQL indices"
+                    tooltip-trigger="focus"
+                    tooltip-append-to-body="true"
+                    ng-class="{'invalid': elasticsearch.prefix.$invalid && elasticsearch.submitted}"
+                    type="text"
+                    name="prefix"
+                    ng-model="es.prefix"
+                    required
+                >
+                <p>
+                    <span class="field-note">
+                         A prefix added to the index names in the NoSQL database. Useful to differentiate multiple Mage-OS installations using the same NoSQL server.
+                    </span>
+                </p>
+                <div class="error-container">
+            <span ng-show="elasticsearch.prefix.$error.required">
+                You must enter a valid prefix name. Please check the syntax and try again.
+            </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row form-row">
+            <div class="col-m-4">
+                <label class="form-label" for="timeout">
+                    NoSQL Database Connection Timeout
+                </label>
+            </div>
+            <div class="col-m-8">
+                <input
+                    id="timeout"
+                    class="form-el-input"
+                    tooltip-placement="right"
+                    tooltip="Enter a prefix for database tables created in this installation. Use letters, numbers or underscores, and begin with a letter (Ex: ‘mg1_’). Table prefix length can't be more than 5 characters."
+                    tooltip-trigger="focus"
+                    tooltip-append-to-body="true"
+                    type="text"
+                    name="timeout"
+                    ng-model="es.timeout"
+                    placeholder="(optional)"
+                >
+                <p>
+                    <span class="field-note">
+                         The maximum number of seconds Mage-OS will wait for a response from the NoSQL database before timing out
+                    </span>
+                </p>
+            </div>
+        </div>
+
+
+        <div class="row form-row">
+            <div class="col-m-4">
+                <label class="form-label">
+                    NoSQL Database HTTP Auth
+                </label>
+            </div>
+            <div class="col-m-8">
+                <div class="form-row">
+                    <input
+                        id="httpsFront"
+                        class="form-el-checkbox"
+                        type="checkbox"
+                        ng-model="es.enableAuth"
+                        ng-checked="es.enableAuth"
+                        name="enableAuth"
+                    >
+                    <label class="form-label" for="httpsFront">
+                        Yes <br />
+                        <span class="legend-note">
+                             Authentication credentials for accessing the NoSQL database, if it's protected by HTTP authentication
+                        </span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row form-row" ng-show="useBasicAuth()">
+            <div class="col-m-4">
+                <label class="form-label" for="username">
+                    NoSQL Auth HTTP Username
+                </label>
+            </div>
+            <div class="col-m-8">
+                <input
+                    id="username"
+                    class="form-el-input"
+                    tooltip-placement="right"
+                    tooltip="Enter a prefix for database tables created in this installation. Use letters, numbers or underscores, and begin with a letter (Ex: ‘mg1_’). Table prefix length can't be more than 5 characters."
+                    tooltip-trigger="focus"
+                    tooltip-append-to-body="true"
+                    type="text"
+                    name="username"
+                    ng-model="es.username"
+                >
+            </div>
+        </div>
+
+
+        <div class="row form-row" ng-show="useBasicAuth()">
+            <div class="col-m-4">
+                <label class="form-label" for="password">
+                    NoSQL Auth HTTP Password
+                </label>
+            </div>
+            <div class="col-m-8">
+                <input
+                    id="password"
+                    class="form-el-input"
+                    tooltip-placement="right"
+                    tooltip="Enter a prefix for database tables created in this installation. Use letters, numbers or underscores, and begin with a letter (Ex: ‘mg1_’). Table prefix length can't be more than 5 characters."
+                    tooltip-trigger="focus"
+                    tooltip-append-to-body="true"
+                    type="text"
+                    name="password"
+                    ng-model="es.password"
+                >
+            </div>
+        </div>
+    </fieldset>
+</form>

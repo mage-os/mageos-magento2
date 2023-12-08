@@ -37,7 +37,10 @@ class CryptKeyGenerator implements CryptKeyGeneratorInterface
      */
     public function generate()
     {
-        return $this->getRandomString();
+        // md5() here is not for cryptographic use. It used for generate encryption key itself
+        // and do not encrypt any passwords
+        // phpcs:ignore Magento2.Security.InsecureFunction
+        return md5($this->getRandomString());
     }
 
     /**
@@ -48,7 +51,6 @@ class CryptKeyGenerator implements CryptKeyGeneratorInterface
      */
     private function getRandomString()
     {
-        return ConfigOptionsListConstants::STORE_KEY_ENCODED_RANDOM_STRING_PREFIX .
-            $this->random->getRandomBytes(ConfigOptionsListConstants::STORE_KEY_RANDOM_STRING_SIZE);
+        return $this->random->getRandomString(ConfigOptionsListConstants::STORE_KEY_RANDOM_STRING_SIZE);
     }
 }

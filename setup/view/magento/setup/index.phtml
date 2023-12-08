@@ -4,77 +4,19 @@
  * See COPYING.txt for license details.
  */
 ?>
-<!--[if !IE]><!-->
-<html lang="en">
-<!--<![endif]-->
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Mage-OS</title>
-    <link href="<?= /** @noEscape */ $basePath ?>/pub/styles/setup.css"
-          media="screen"
-          rel="stylesheet"
-          type="text/css" />
-    <script src="<?= /** @noEscape */ $basePath ?>/pub/scripts/main.js"></script>
-    <link
-        rel="icon"
-        type="image/x-icon"
-        href="<?= /** @noEscape */ $basePath ?>/pub/images/favicon/favicon.ico"
-        sizes="16x16">
-    <link
-        rel="icon"
-        type="image/png"
-        href="<?= /** @noEscape */ $basePath ?>/pub/images/favicon/favicon-96x96.png"
-        sizes="96x96">
-    <link
-        rel="icon"
-        type="image/png"
-        href="<?= /** @noEscape */ $basePath ?>/pub/images/favicon/favicon-32x32.png"
-        sizes="32x32">
-    <link
-        rel="icon"
-        type="image/png"
-        href="<?= /** @noEscape */ $basePath ?>/pub/images/favicon/favicon-16x16.png"
-        sizes="16x16">
-    <style>
-        a.white-space-pre-line {
-            white-space: pre-line;
-        }
-    </style>
-</head>
-<body>
-<div class="container">
-    <main class="page-content">
-        <section data-section="landing" class="page-landing">
-            <img class="logo" src="<?= /** @noEscape */ $basePath ?>/pub/images/mage-os-logo.svg" alt="Mage-OS"/>
-            <?php // phpcs:disable Magento2.Functions.DiscouragedFunction ?>
-            <p class="text-version">Version <?= /** @noEscape */ htmlspecialchars($version, ENT_COMPAT) ?></p>
-            <?php // phpcs:enable Magento2.Functions.DiscouragedFunction ?>
-            <p class="text-welcome">
-                Welcome to Magento Admin, your online store headquarters.
-                <br>
-                <?php // phpcs:disable Generic.Files.LineLength ?>
-                Please review <a href="javascript:showSection('license')">Terms & Agreement</a>
-                and read <a href="https://experienceleague.adobe.com/docs/commerce-operations/installation-guide/advanced.html" target="_blank">Getting Started</a>
-                to learn how to install Magento using the command line.
-                <?php // phpcs:enable Generic.Files.LineLength ?>
-            </p>
-        </section>
-        <section data-section="license" class="row page-license" style="display: none">
-            <div class="col-m-offset-2 col-m-8 col-xs-12">
-                <div class="license-text">
-                    <?php // phpcs:disable Magento2.Functions.DiscouragedFunction ?>
-                    <?= /** @noEscape */ nl2br(htmlspecialchars($license, ENT_COMPAT)) ?>
-                    <?php // phpcs:enable Magento2.Functions.DiscouragedFunction ?>
-                </div>
-                <div class="page-license-footer">
-                    <div class="btn-wrap-triangle-left">
-                        <button type="button" class="btn" onclick="showSection('landing')">Go Back</button>
-                    </div>
-                </div>
+
+<div class="{{$state.current.type == 'install' && !$state.current.wrapper ?  'container' : 'page-wrapper'}}">
+    <div ng-include="'index.php/navigation/header-bar'"></div>
+    <main id="anchor-content" class="page-content">
+        <?= $this->render('navigation/menu.phtml') ?>
+        <div
+            id="main"
+            class="{{class}}"
+            ng-controller="mainController"
+        >
+            <div ui-view="root">
+                <div ui-view></div>
             </div>
-        </section>
+        </div>
     </main>
 </div>
-</body>
-</html>

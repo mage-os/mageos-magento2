@@ -48,6 +48,7 @@ class Application
             $serviceManager->get('Request'),
             $serviceManager->get('Response')
         );
+
         $application->bootstrap($listeners);
         return $application;
     }
