@@ -484,7 +484,9 @@ class ImageMagick extends AbstractAdapter
         if (!empty($font)) {
             if (method_exists($image, 'setFont')) {
                 $image->setFont($font);
-            } elseif (method_exists($draw, 'setFont')) {
+            }
+
+            if (method_exists($draw, 'setFont')) {
                 $draw->setFont($font);
             }
         }
