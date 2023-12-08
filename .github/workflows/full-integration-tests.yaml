@@ -6,7 +6,7 @@ on:
 jobs:
   call-workflow:
     name: calling full integration test suite
-    uses: mage-os/github-actions/.github/workflows/full-integration-tests.yaml@main
+    uses: vpodorozh/github-actions/.github/workflows/full-integration-tests.yaml@integration-tests-workflow-improvement
     secrets: inherit
     with:
       repository: ${{ github.repository }}
