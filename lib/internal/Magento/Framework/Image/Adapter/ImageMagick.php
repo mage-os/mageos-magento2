@@ -502,7 +502,7 @@ class ImageMagick extends AbstractAdapter
         $draw->annotation(0, $metrics['ascender'], $text);
 
         $height = abs($metrics['ascender']) + abs($metrics['descender']);
-        $image->newImage($metrics['textWidth'], $height, $background);
+        $image->newImage($metrics['textWidth'], (int) $height, $background);
         $this->_fileType = IMAGETYPE_PNG;
         $image->setImageFormat('png');
         $image->drawImage($draw);
