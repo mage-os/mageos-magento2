@@ -267,7 +267,13 @@ class ImageMagick extends AbstractAdapter
         // compatibility with GD2 adapter
         $angle = 360 - $angle;
         $pixel = new \ImagickPixel();
-        $pixel->setColor("rgb(" . $this->imageBackgroundColor . ")");
+
+        if (preg_match('/^s?rgb\((\d+),(\d+),(\d+)\)$/', $this->imageBackgroundColor, $matches)) {
+            $pixel->setColor('rgb(' . $matches[1] . ',' . $matches[2] . ',' . $matches[3] . ')');
+        } else {
+            $pixel->setColor("rgb(" . $this->imageBackgroundColor . ")");
+        }
+
 
         $this->_imageHandler->rotateImage($pixel, $angle);
         $this->refreshImageDimensions();
