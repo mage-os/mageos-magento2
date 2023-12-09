@@ -148,65 +148,44 @@ sub vcl_hash {
 }
 
 sub vcl_backend_response {
-
+	# Serve stale content for three days after object expiration
+	# Perform asynchronous revalidation while stale content is served
     set beresp.grace = 3d;
 
+    # All text-based content can be parsed as ESI
     if (beresp.http.content-type ~ "text") {
         set beresp.do_esi = true;
     }
 
+    # Allow GZIP compression on all JavaScript files and all text-based content
     if (bereq.url ~ "\.js$" || beresp.http.content-type ~ "text") {
         set beresp.do_gzip = true;
     }
 
+    # Add debug headers
     if (beresp.http.X-Magento-Debug) {
         set beresp.http.X-Magento-Cache-Control = beresp.http.Cache-Control;
     }
 
-    # cache only successfully responses and 404s that are not marked as private
-    if (beresp.status != 200 &&
-            beresp.status != 404 &&
-            beresp.http.Cache-Control ~ "private") {
+    # Only cache HTTP 200 and HTTP 404 responses
+    if (beresp.status != 200 && beresp.status != 404) {
+        set beresp.ttl = 120s;
         set beresp.uncacheable = true;
-        set beresp.ttl = 86400s;
         return (deliver);
     }
 
-    # validate if we need to cache it and prevent from setting cookie
-    if (beresp.ttl > 0s && (bereq.method == "GET" || bereq.method == "HEAD")) {
-        # Collapse beresp.http.set-cookie in order to merge multiple set-cookie headers
-        # Although it is not recommended to collapse set-cookie header,
-        # it is safe to do it here as the set-cookie header is removed below
-        std.collect(beresp.http.set-cookie);
-        # Do not cache the response under current cache key (hash),
-        # if the response has X-Magento-Vary but the request does not.
-        if ((bereq.url !~ "/graphql" || !bereq.http.X-Magento-Cache-Id)
-         && bereq.http.cookie !~ "X-Magento-Vary="
-         && beresp.http.set-cookie ~ "X-Magento-Vary=") {
-           set beresp.ttl = 0s;
-           set beresp.uncacheable = true;
-        }
-        unset beresp.http.set-cookie;
+    # Don't cache if the request cache ID doesn't match the response cache ID for graphql requests
+    if (bereq.url ~ "/graphql" && bereq.http.X-Magento-Cache-Id && bereq.http.X-Magento-Cache-Id != beresp.http.X-Magento-Cache-Id) {
+       set beresp.ttl = 120s;
+       set beresp.uncacheable = true;
+       return (deliver);
     }
 
-   # If page is not cacheable then bypass varnish for 2 minutes as Hit-For-Pass
-   if (beresp.ttl <= 0s ||
-       beresp.http.Surrogate-control ~ "no-store" ||
-       (!beresp.http.Surrogate-Control &&
-       beresp.http.Cache-Control ~ "no-cache|no-store") ||
-       beresp.http.Vary == "*") {
-        # Mark as Hit-For-Pass for the next 2 minutes
-        set beresp.ttl = 120s;
-        set beresp.uncacheable = true;
-   }
-
-   # If the cache key in the Magento response doesn't match the one that was sent in the request, don't cache under the request's key
-   if (bereq.url ~ "/graphql" && bereq.http.X-Magento-Cache-Id && bereq.http.X-Magento-Cache-Id != beresp.http.X-Magento-Cache-Id) {
-      set beresp.ttl = 0s;
-      set beresp.uncacheable = true;
-   }
-
-    return (deliver);
+    # Remove the Set-Cookie header for cacheable content
+    # Only for HTTP GET & HTTP HEAD requests
+    if (beresp.ttl > 0s && (bereq.method == "GET" || bereq.method == "HEAD")) {
+        unset beresp.http.Set-Cookie;
+    }
 }
 
 sub vcl_deliver {
