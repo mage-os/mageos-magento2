@@ -128,33 +128,22 @@ sub vcl_hash {
         hash_data(regsub(req.http.cookie, "^.*?X-Magento-Vary=([^;]+);*.*$", "\1"));
     }
 
-    # To make sure http users don't see ssl warning
-    if (req.http./* {{ ssl_offloaded_header }} */) {
-        hash_data(req.http./* {{ ssl_offloaded_header }} */);
-    }
+    hash_data(req.http./* {{ ssl_offloaded_header }} */);
+
     /* {{ design_exceptions_code }} */
 
     if (req.url ~ "/graphql") {
-        call process_graphql_headers;
-    }
-}
+        if (req.http.X-Magento-Cache-Id) {
+            hash_data(req.http.X-Magento-Cache-Id);
 
-sub process_graphql_headers {
-    if (req.http.X-Magento-Cache-Id) {
-        hash_data(req.http.X-Magento-Cache-Id);
-
-        # When the frontend stops sending the auth token, make sure users stop getting results cached for logged-in users
-        if (req.http.Authorization ~ "^Bearer") {
-            hash_data("Authorized");
+            # When the frontend stops sending the auth token, make sure users stop getting results cached for logged-in users
+            if (req.http.Authorization ~ "^Bearer") {
+                hash_data("Authorized");
+            }
+        } else {
+            hash_data(req.http.Store);
+            hash_data(req.http.Content-Currency);
         }
-    }
-
-    if (req.http.Store) {
-        hash_data(req.http.Store);
-    }
-
-    if (req.http.Content-Currency) {
-        hash_data(req.http.Content-Currency);
     }
 }
 
