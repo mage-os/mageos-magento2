@@ -216,24 +216,3 @@ sub vcl_deliver {
     unset resp.http.Via;
     unset resp.http.Link;
 }
-
-sub vcl_hit {
-    if (obj.ttl >= 0s) {
-        # Hit within TTL period
-        return (deliver);
-    }
-    if (std.healthy(req.backend_hint)) {
-        if (obj.ttl + /* {{ grace_period }} */s > 0s) {
-            # Hit after TTL expiration, but within grace period
-            set req.http.grace = "normal (healthy server)";
-            return (deliver);
-        } else {
-            # Hit after TTL and grace expiration
-            return (restart);
-        }
-    } else {
-        # server is not healthy, retrieve from cache
-        set req.http.grace = "unlimited (unhealthy server)";
-        return (deliver);
-    }
-}
