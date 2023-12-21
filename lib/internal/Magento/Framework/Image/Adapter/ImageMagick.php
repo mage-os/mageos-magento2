@@ -268,8 +268,8 @@ class ImageMagick extends AbstractAdapter
         $angle = 360 - $angle;
         $pixel = new \ImagickPixel();
 
-        if (preg_match('/^s?rgb\((\d+),(\d+),(\d+)\)$/', $this->imageBackgroundColor, $matches)) {
-            $pixel->setColor('rgb(' . $matches[1] . ',' . $matches[2] . ',' . $matches[3] . ')');
+        if (preg_match('/^(s?rgb)\((\d+),(\d+),(\d+)\)$/', $this->imageBackgroundColor, $matches)) {
+            $pixel->setColor(sprintf("%s(%s,%s,%s)", $matches[1], $matches[2], $matches[3], $matches[4]));
         } else {
             $pixel->setColor("rgb(" . $this->imageBackgroundColor . ")");
         }
