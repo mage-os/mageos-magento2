@@ -40,7 +40,7 @@ class EnableSegmentation implements SchemaPatchInterface
         $this->schemaSetup->startSetup();
         $setup = $this->schemaSetup;
 
-        $storeSelect = $setup->getConnection()->select()->from($setup->getTable('store'));
+        $storeSelect = $setup->getConnection()->select()->from($setup->getTable('store'))->where('store_id > 0');
         foreach ($setup->getConnection()->fetchAll($storeSelect) as $store) {
             $indexTable = $setup->getTable('catalog_category_product_index') .
                 '_' .
