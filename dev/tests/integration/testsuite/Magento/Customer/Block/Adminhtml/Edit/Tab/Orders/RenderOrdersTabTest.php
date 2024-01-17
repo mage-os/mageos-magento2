@@ -247,18 +247,8 @@ class RenderOrdersTabTest extends TestCase
             "//td[contains(@class, '%s') and contains(text(), '%s')]",
         ]);
         $elementXPathTemplate = implode('', $elementPaths);
-
-        // Replace NBSP and NNBSP symbols with a regular space
-        // Some ICU library versions use NBSP symbol before AM/PM during time rendering
-        // These symbols are not getting processed correctly in Xpath search
-        $html = preg_replace("/\s/u", ' ', $html);
-
         foreach ($columnsData as $columnName => $columnValue) {
             $preparedXPath = sprintf($elementXPathTemplate, $columnName, $columnValue);
-
-            // Replace NBSP and NNBSP symbols with a regular space
-            $preparedXPath = preg_replace("/\s/u", ' ', $preparedXPath);
-
             $this->assertEquals(
                 1,
                 Xpath::getElementsCountForXpath($preparedXPath, $html),
