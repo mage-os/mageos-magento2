@@ -83,16 +83,7 @@ abstract class AbstractItemTest extends TestCase
             Xpath::getElementsCountForXpath($productNameXPath, $html),
             'The block\'s rendered value does not contain expected product name.'
         );
-
-        // Replace NBSP and NNBSP symbols with a regular space
-        // Some ICU library versions use NBSP symbol before AM/PM during time rendering
-        // These symbols are not getting processed correctly in Xpath search
-        $html = preg_replace("/\s/u", ' ', $html);
-
         foreach ($optionsXPath as $option) {
-            // Replace NBSP and NNBSP symbols with a regular space
-            $option['xpath'] = preg_replace("/\s/u", ' ', $option['xpath']);
-
             $this->assertEquals(
                 1,
                 Xpath::getElementsCountForXpath($option['xpath'], $html),
