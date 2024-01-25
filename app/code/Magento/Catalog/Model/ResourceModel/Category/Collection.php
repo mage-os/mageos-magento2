@@ -11,7 +11,6 @@ use Magento\CatalogUrlRewrite\Model\CategoryUrlRewriteGenerator;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DB\Select;
 use Magento\Store\Model\ScopeInterface;
-use Magento\Catalog\Model\Indexer\Category\Product\TableMaintainer;
 
 /**
  * Category resource collection
@@ -77,11 +76,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Collection\Abstrac
     private $catalogProductVisibility;
 
     /**
-     * @var TableMaintainer
-     */
-    private $tableMaintainer;
-
-    /**
      * Constructor
      * @param \Magento\Framework\Data\Collection\EntityFactory $entityFactory
      * @param \Psr\Log\LoggerInterface $logger
@@ -130,7 +124,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Collection\Abstrac
             \Magento\Framework\App\ObjectManager::getInstance()->get(ScopeConfigInterface::class);
         $this->catalogProductVisibility = $catalogProductVisibility ?:
             \Magento\Framework\App\ObjectManager::getInstance()->get(Visibility::class);
-        $this->tableMaintainer = \Magento\Framework\App\ObjectManager::getInstance()->get(TableMaintainer::class);
     }
 
     /**
@@ -347,7 +340,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Collection\Abstrac
             foreach ($anchor as $item) {
                 $productsCount = isset($categoryProductsCount[$item->getId()])
                     ? (int)$categoryProductsCount[$item->getId()]
-                    : 0;
+                    : $this->getProductsCountFromCategoryTable($item, $websiteId);
                 $item->setProductCount($productsCount);
             }
         }
@@ -527,6 +520,45 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Collection\Abstrac
     }
 
     /**
+     * Get products count using catalog_category_entity table
+     *
+     * @param Category $item
+     * @param string $websiteId
+     * @return int
+     */
+    private function getProductsCountFromCategoryTable(Category $item, string $websiteId): int
+    {
+        $productCount = 0;
+
+        if ($item->getAllChildren()) {
+            $bind = ['entity_id' => $item->getId(), 'c_path' => $item->getPath() . '/%'];
+            $select = $this->_conn->select();
+            $select->from(
+                ['main_table' => $this->getProductTable()],
+                new \Zend_Db_Expr('COUNT(DISTINCT main_table.product_id)')
+            )->joinInner(
+                ['e' => $this->getTable('catalog_category_entity')],
+                'main_table.category_id=e.entity_id',
+                []
+            )->where(
+                '(e.entity_id = :entity_id OR e.path LIKE :c_path)'
+            );
+            if ($websiteId) {
+                $select->join(
+                    ['w' => $this->getProductWebsiteTable()],
+                    'main_table.product_id = w.product_id',
+                    []
+                )->where(
+                    'w.website_id = ?',
+                    $websiteId
+                );
+            }
+            $productCount = (int)$this->_conn->fetchOne($select, $bind);
+        }
+        return $productCount;
+    }
+
+    /**
      * Get query for retrieve count of products per category
      *
      * @param array $categoryIds
@@ -535,7 +567,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Collection\Abstrac
      */
     private function getProductsCountQuery(array $categoryIds, $addVisibilityFilter = true): Select
     {
-        $categoryTable = $this->tableMaintainer->getMainTable($this->getProductStoreId());
+        $categoryTable = $this->_resource->getTableName('catalog_category_product_index');
         $select = $this->_conn->select()
             ->from(
                 ['cat_index' => $categoryTable],
