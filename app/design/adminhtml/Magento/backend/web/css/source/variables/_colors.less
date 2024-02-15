@@ -7,13 +7,26 @@
 //  Variables -> Colors
 //  _____________________________________________
 
+@color-mageos-orange: #f37121;
+@color-mageos-orange-dark: #f56a14;
+@color-mageos-orange-light: #ff9234;
+@color-mageos-orange-bright: #ffe49d;
+@color-mageos-purple: #8716e0;
+@color-mageos-purple-light: #cb5bff;
+@color-mageos-rose: #f9425a;
+@color-mageos-dark: #1a202c;
+@color-mageos-gray: #4a5568;
+@color-mageos-gray-light: #7d8592;
+@color-mageos-stroke: #dde0e5;
+@color-mageos-offwhite: #f7fafc;
+
 @color-brown-dark: #4a3f39;
 @color-brown-darker: #41362f;
 @color-very-dark-gray-black: #303030;
 @color-very-dark-gray-black2: #35302c;
 @color-very-dark-grayish-orange: #373330;
 @color-black4-almost: #403934;
-@color-very-dark-gray2: #555;
+@color-very-dark-gray2: @color-mageos-gray;
 @color-very-dark-brownie: #5b5652;
 @color-brownie: #514943;
 @color-brownie-almost: #524d49;
@@ -33,13 +46,14 @@
 @color-gray75: #bfbfbf;
 @color-lighter-grayish: #cacaca;
 @color-lighter-grayish-almost: #c3bbb1;
-@color-light-gray: #ddd;
+@color-light-gray: @color-mageos-offwhite;
 @color-light-gray0: #d0d0d0;
 @color-gray83: #d4d4d4;
 @color-gray84: #d6d6d6;
 @color-gray85: #d9d9d9;
+@color-gray89: darken(@color-mageos-offwhite, 5%);
 @color-gray-brown: #dad1c8;
-@color-lighter-gray: #e9e9e9;
+@color-lighter-gray: darken(@color-mageos-offwhite, 5%);
 @color-gray98: #fafafa;
 @color-very-light-gray: #fcfcfc;
 @color-ivory: #f7f3eb;
@@ -48,17 +62,20 @@
 @color-lazy-sun: #fffbbb;
 @color-lazy-sunny: #fff1ad;
 
+@color-blue-dark: #123;
 @color-blue-pure: #007bdb;
 @color-blue-dodger: #008bdb;
-@color-blue-clear-sky: #e0f6fe;
+@color-blue-clear-sky: @color-lighter-gray;
+@color-blue-ice: saturate(lighten(@color-blue-dark, 74%), 25%);
 
+@color-green-dark: #264;
 @color-green-apple: #79a22e;
 @color-apricot: #ee7d7d;
 
 @color-pink: #fcc;
 @color-pink-light: #f5d6c7;
-@color-phoenix: #eb5202;
-@color-light-phoenix: #ef672f;
+@color-phoenix: @color-mageos-orange;
+@color-light-phoenix: @color-mageos-orange-bright;
 @color-phoenix-brown: #b84002;
 @color-phoenix-brown-almost: #ba4000;
 @color-phoenix-brownie: #ae3d01;
@@ -74,4 +91,4 @@
 @primary__color: @color-phoenix;
 @success__color: @color-green-apple;
 @text__color: @color-brown-darker;
-@border__color: @color-gray89;
+@border__color: @color-mageos-stroke;

@@ -41,6 +41,8 @@ class DbTest extends \Magento\TestFramework\Indexer\TestCase
      */
     public function testBackupAndRollbackIncludesCustomTriggers()
     {
+        $this->markTestIncomplete('PR: https://github.com/mage-os/mageos-magento-zend-db/pull/1 needs to be merged first.');
+
         $helper = Bootstrap::getObjectManager()->get(Data::class);
         $time = time();
         /** BackupInterface $backupManager */
