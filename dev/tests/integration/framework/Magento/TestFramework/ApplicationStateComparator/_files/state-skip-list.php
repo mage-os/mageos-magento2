@@ -522,8 +522,6 @@ return [
         Magento\GroupedProduct\Model\ResourceModel\Indexer\Stock\Grouped::class => null,
         Magento\Elasticsearch\Model\Adapter\BatchDataMapper\DataMapperResolver::class => null,
         Magento\Elasticsearch\Model\Adapter\Elasticsearch::class => null,
-        Magento\Elasticsearch7\Model\Client\Elasticsearch::class => null,
-        Magento\Elasticsearch\Model\Adapter\BatchDataMapper\ProductDataMapper::class => null,
         Magento\Tax\Model\TaxClass\Source\Product::class => null,
         Magento\Framework\View\TemplateEnginePool::class => null,
         Magento\Framework\View\Element\Template\File\Resolver::class => null,
@@ -546,6 +544,22 @@ return [
         Magento\Framework\MessageQueue\Topology\Config\QueueConfigItem::class => null,
         Magento\Framework\MessageQueue\Topology\Config\QueueConfigItem\DataMapper::class => null,
         // phpcs:enable Generic.Files.LineLength.TooLong
+    ],
+    'placeOrder' => [
+        Magento\Elasticsearch7\Model\Client\Elasticsearch::class => null,
+        Magento\Elasticsearch\Model\Adapter\BatchDataMapper\ProductDataMapper::class => null,
+    ],
+    'updateCustomerAddress' => [
+        Magento\Framework\Session\SaveHandler\Redis\Config::class => null,
+        Magento\Framework\Session\SaveHandler\Redis\Logger::class => null,
+    ],
+    'updateCustomerEmail' => [
+        Magento\Framework\Session\SaveHandler\Redis\Config::class => null,
+        Magento\Framework\Session\SaveHandler\Redis\Logger::class => null,
+    ],
+    'updateCustomer' => [
+        Magento\Framework\Session\SaveHandler\Redis\Config::class => null,
+        Magento\Framework\Session\SaveHandler\Redis\Logger::class => null,
     ],
     '' => [
     ],
