@@ -76,7 +76,7 @@ class ChangeParentStockStatus
      * @param int $productId
      * @return void
      */
-    private function processStockForParent(int $productId): void
+    public function processStockForParent(int $productId): void
     {
         $criteria = $this->criteriaInterfaceFactory->create();
         $criteria->setScopeFilter($this->stockConfiguration->getDefaultScopeId());

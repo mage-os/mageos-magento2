@@ -53,5 +53,9 @@ class ParentItemProcessor implements ParentItemProcessorInterface
     public function process(Product $product)
     {
         $this->changeParentStockStatus->execute([$product->getId()]);
+
+        if ($product->getTypeId() === Configurable::TYPE_CODE) {
+            $this->changeParentStockStatus->processStockForParent((int) $product->getId());
+        }
     }
 }
