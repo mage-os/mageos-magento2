@@ -46,11 +46,15 @@ class UserExpirationTest extends TestCase
         $timeZone = Bootstrap::getObjectManager()->get(TimezoneInterface::class);
         $localeResolver->setLocale($locale);
         $initialExpirationDate = $timeZone->date()->modify('+10 day');
-        $expireDate = $timeZone->formatDateTime(
-            $initialExpirationDate,
+
+        $formatter = new \IntlDateFormatter(
+            $locale,
             \IntlDateFormatter::MEDIUM,
-            \IntlDateFormatter::MEDIUM
+            \IntlDateFormatter::MEDIUM,
+            $timeZone->getConfigTimezone()
         );
+        $expireDate = $formatter->format($initialExpirationDate);
+
         $userExpirationFactory = Bootstrap::getObjectManager()->get(UserExpirationFactory::class);
         $userExpiration = $userExpirationFactory->create();
         $userExpiration->setExpiresAt($expireDate);
