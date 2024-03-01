@@ -75,8 +75,7 @@ class Rows
         array $entityIds,
         bool $useTempTable = false
     ): ActionRows {
-        $indexer = $this->indexerRegistry->get(FulltextIndexer::INDEXER_ID);
-        if (!empty($entityIds) && $indexer->isScheduled()) {
+        if (!empty($entityIds)) {
             $productIds = [];
 
             foreach ($this->storeManager->getStores() as $store) {
@@ -86,7 +85,12 @@ class Rows
 
             $productIds = array_merge([], ...$productIds);
             if (!empty($productIds)) {
-                $indexer->getView()->getChangelog()->addList($productIds);
+                $indexer = $this->indexerRegistry->get(FulltextIndexer::INDEXER_ID);
+                if ($indexer->isScheduled()) {
+                    $indexer->getView()->getChangelog()->addList($productIds);
+                } else {
+                    $indexer->reindexList($productIds);
+                }
             }
         }
 
