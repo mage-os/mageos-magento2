@@ -9,7 +9,7 @@ namespace Magento\CatalogSearch\Model\Layer\Filter;
 /**
  * Test class for \Magento\CatalogSearch\Model\Layer\Filter\Category.
  *
- * @magentoDbIsolation enabled
+ * @magentoDbIsolation disabled
  * @magentoAppIsolation enabled
  * @magentoDataFixture Magento/Catalog/_files/categories.php
  */
@@ -100,9 +100,6 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('Category', $this->_model->getName());
     }
 
-    /**
-     * @magentoDbIsolation disabled
-     */
     public function testGetItems()
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
@@ -137,8 +134,6 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
 
     /**
      * Check that only children category of current category are aggregated
-     *
-     * @magentoDbIsolation disabled
      */
     public function testCategoryAggregation(): void
     {
