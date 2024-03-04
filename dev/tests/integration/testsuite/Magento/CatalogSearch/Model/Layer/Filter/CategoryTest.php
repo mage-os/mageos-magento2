@@ -15,7 +15,7 @@ namespace Magento\CatalogSearch\Model\Layer\Filter;
  */
 class CategoryTest extends \PHPUnit\Framework\TestCase
 {
-    const CURRENT_CATEGORY_FILTER = 'current_category_filter';
+    private const CURRENT_CATEGORY_FILTER = 'current_category_filter';
 
     /**
      * @var \Magento\CatalogSearch\Model\Layer\Filter\Category
