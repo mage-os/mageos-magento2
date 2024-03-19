@@ -1,5 +1,5 @@
-# VCL version 5.0 is not supported so it should be 4.0 even though actually used Varnish version is 6
-vcl 4.0;
+# The VCL version is not related to the version of Varnish. Use VCL version 4.1 to enforce the use of Varnish 6 or later
+vcl 4.1;
 
 import std;
 # The minimal Varnish version is 6.0
@@ -23,8 +23,31 @@ acl purge {
 }
 
 sub vcl_recv {
-    if (req.restarts > 0) {
-        set req.hash_always_miss = true;
+    # Remove empty query string parameters
+    # e.g.: www.example.com/index.html?
+    if (req.url ~ "\?$") {
+        set req.url = regsub(req.url, "\?$", "");
+    }
+
+    # Remove port number from host header
+    set req.http.Host = regsub(req.http.Host, ":[0-9]+", "");
+
+    # Sorts query string parameters alphabetically for cache normalization purposes
+    set req.url = std.querysort(req.url);
+
+    # Remove the proxy header to mitigate the httpoxy vulnerability
+    # See https://httpoxy.org/
+    unset req.http.proxy;
+
+    # Add X-Forwarded-Proto header when using https
+    if (!req.http.X-Forwarded-Proto && (std.port(server.ip) == 443 || std.port(server.ip) == 8443)) {
+        set req.http.X-Forwarded-Proto = "https";
+    }
+
+    # Reduce grace to the configured setting if the backend is healthy
+    # In case of an unhealthy backend, the original grace is used
+    if (std.healthy(req.backend_hint)) {
+        set req.http.grace = /* {{ grace_period }} */s;
     }
 
     if (req.method == "PURGE") {
@@ -35,7 +58,7 @@ sub vcl_recv {
         # has been added to the response in your backend server config. This is used, for example, by the
         # capistrano-magento2 gem for purging old content from varnish during it's deploy routine.
         if (!req.http.X-Magento-Tags-Pattern && !req.http.X-Pool) {
-            return (synth(400, "X-Magento-Tags-Pattern or X-Pool header required"));
+            return (purge);
         }
         if (req.http.X-Magento-Tags-Pattern) {
           ban("obj.http.X-Magento-Tags ~ " + req.http.X-Magento-Tags-Pattern);
@@ -50,10 +73,10 @@ sub vcl_recv {
         req.method != "HEAD" &&
         req.method != "PUT" &&
         req.method != "POST" &&
+        req.method != "PATCH" &&
         req.method != "TRACE" &&
         req.method != "OPTIONS" &&
         req.method != "DELETE") {
-          /* Non-RFC2616 or CONNECT which is weird. */
           return (pipe);
     }
 
@@ -72,18 +95,12 @@ sub vcl_recv {
         return (pass);
     }
 
-    # Set initial grace period usage status
-    set req.http.grace = "none";
-
-    # normalize url in case of leading HTTP scheme and domain
-    set req.url = regsub(req.url, "^http[s]?://", "");
-
-    # collect all cookies
+    # Collapse multiple cookie headers into one
     std.collect(req.http.Cookie);
 
     # Remove all marketing get parameters to minimize the cache objects
-    if (req.url ~ "(\?|&)(gclid|cx|ie|cof|siteurl|zanpid|origin|fbclid|mc_[a-z]+|utm_[a-z]+|_bta_[a-z]+)=") {
-        set req.url = regsuball(req.url, "(gclid|cx|ie|cof|siteurl|zanpid|origin|fbclid|mc_[a-z]+|utm_[a-z]+|_bta_[a-z]+)=[-_A-z0-9+()%.]+&?", "");
+    if (req.url ~ "(\?|&)(gclid|cx|_kx|ie|cof|siteurl|zanpid|origin|fbclid|mc_[a-z]+|utm_[a-z]+|_bta_[a-z]+)=") {
+        set req.url = regsuball(req.url, "(gclid|cx|_kx|ie|cof|siteurl|zanpid|origin|fbclid|mc_[a-z]+|utm_[a-z]+|_bta_[a-z]+)=[-_A-z0-9+()%.]+&?", "");
         set req.url = regsub(req.url, "[?|&]+$", "");
     }
 
@@ -111,33 +128,22 @@ sub vcl_hash {
         hash_data(regsub(req.http.cookie, "^.*?X-Magento-Vary=([^;]+);*.*$", "\1"));
     }
 
-    # To make sure http users don't see ssl warning
-    if (req.http./* {{ ssl_offloaded_header }} */) {
-        hash_data(req.http./* {{ ssl_offloaded_header }} */);
-    }
+    hash_data(req.http./* {{ ssl_offloaded_header }} */);
+
     /* {{ design_exceptions_code }} */
 
     if (req.url ~ "/graphql") {
-        call process_graphql_headers;
-    }
-}
+        if (req.http.X-Magento-Cache-Id) {
+            hash_data(req.http.X-Magento-Cache-Id);
 
-sub process_graphql_headers {
-    if (req.http.X-Magento-Cache-Id) {
-        hash_data(req.http.X-Magento-Cache-Id);
-
-        # When the frontend stops sending the auth token, make sure users stop getting results cached for logged-in users
-        if (req.http.Authorization ~ "^Bearer") {
-            hash_data("Authorized");
+            # When the frontend stops sending the auth token, make sure users stop getting results cached for logged-in users
+            if (req.http.Authorization ~ "^Bearer") {
+                hash_data("Authorized");
+            }
+        } else {
+            hash_data(req.http.Store);
+            hash_data(req.http.Content-Currency);
         }
-    }
-
-    if (req.http.Store) {
-        hash_data(req.http.Store);
-    }
-
-    if (req.http.Content-Currency) {
-        hash_data(req.http.Content-Currency);
     }
 }
 
