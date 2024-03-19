@@ -67,8 +67,10 @@ if ((int)$settings->get('TESTS_PARALLEL_RUN') !== 1) {
  * @param string $pathToCommittedTestModules
  * @param string $pathToInstalledMagentoInstanceModules
  */
-function executeRegisteringOfDeleteTestModulesOnShutdown($pathToCommittedTestModules, $pathToInstalledMagentoInstanceModules)
-{
+function executeRegisteringOfDeleteTestModulesOnShutdown(
+    $pathToCommittedTestModules,
+    $pathToInstalledMagentoInstanceModules
+) {
     register_shutdown_function(
         'deleteTestModules',
         $pathToCommittedTestModules,
