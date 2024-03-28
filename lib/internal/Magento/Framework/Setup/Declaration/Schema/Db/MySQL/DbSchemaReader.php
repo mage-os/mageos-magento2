@@ -21,7 +21,7 @@ class DbSchemaReader implements DbSchemaReaderInterface
     /**
      * Table type in information_schema.TABLES which allows to identify only tables and ignore views
      */
-    const MYSQL_TABLE_TYPE = 'BASE TABLE';
+    protected const MYSQL_TABLE_TYPE = 'BASE TABLE';
 
     /**
      * @var ResourceConnection
@@ -98,7 +98,9 @@ class DbSchemaReader implements DbSchemaReaderInterface
                     'nullable' => new Expression('IF(IS_NULLABLE="YES", true, false)'),
                     'definition' => 'COLUMN_TYPE',
                     'extra' => 'EXTRA',
-                    'comment' => new Expression('IF(COLUMN_COMMENT="", NULL, COLUMN_COMMENT)')
+                    'comment' => new Expression('IF(COLUMN_COMMENT="", NULL, COLUMN_COMMENT)'),
+                    'charset' => 'CHARACTER_SET_NAME',
+                    'collation' => 'COLLATION_NAME'
                 ]
             )
             ->where('TABLE_SCHEMA = ?', $dbName)
