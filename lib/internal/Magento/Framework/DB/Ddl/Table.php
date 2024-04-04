@@ -235,7 +235,7 @@ class Table
      *
      * @var array
      */
-    protected $_options = ['type' => 'INNODB', 'charset' => 'utf8', 'collate' => 'utf8_general_ci'];
+    protected $_options = ['type' => 'INNODB', 'charset' => 'utf8mb4', 'collate' => 'utf8mb4_general_ci'];
 
     /**
      * Set table name
