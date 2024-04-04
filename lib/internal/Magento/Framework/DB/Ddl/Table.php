@@ -6,6 +6,8 @@
 namespace Magento\Framework\DB\Ddl;
 
 use Magento\Framework\DB\Adapter\AdapterInterface;
+use Magento\Framework\Setup\Declaration\Schema\Dto\Factories\Table as DtoTable;
+use Magento\Framework\App\ObjectManager;
 
 /**
  * Data Definition for table
@@ -235,7 +237,23 @@ class Table
      *
      * @var array
      */
-    protected $_options = ['type' => 'INNODB', 'charset' => 'utf8mb4', 'collate' => 'utf8mb4_general_ci'];
+    protected $_options = ['type' => 'INNODB', 'charset' => 'utf8', 'collate' => 'utf8_general_ci'];
+
+    /**
+     * @var DtoTable
+     */
+    protected DtoTable $DtoTable;
+
+    /***
+     * constructor
+     *
+     * @param DtoTable|null $DtoTable $DtoTable
+     */
+    public function __construct(
+        DtoTable $DtoTable = null
+    ) {
+        $this->DtoTable = $DtoTable ?: ObjectManager::getInstance()->get(DtoTable::class);
+    }
 
     /**
      * Set table name
@@ -636,15 +654,28 @@ class Table
     /**
      * Retrieve table option value by option name
      *
-     * Return null if option does not exits
+     * Return null if option does not exist
      *
      * @param string $key
      * @return null|string
+     * @throws \ReflectionException
      */
     public function getOption($key)
     {
         if (!isset($this->_options[$key])) {
             return null;
+        }
+        if (strtolower($key) == 'charset') {
+            $refClass = new \ReflectionClass(DtoTable::class);
+            $refMethod = $refClass->getMethod('getDefaultCharset');
+            $refMethod->setAccessible(true);
+            return $refMethod->invoke($this->DtoTable);
+        }
+        if (strtolower($key) == 'collate') {
+            $refClass = new \ReflectionClass(DtoTable::class);
+            $refMethod = $refClass->getMethod('getDefaultCollation');
+            $refMethod->setAccessible(true);
+            return $refMethod->invoke($this->DtoTable);
         }
         return $this->_options[$key];
     }
