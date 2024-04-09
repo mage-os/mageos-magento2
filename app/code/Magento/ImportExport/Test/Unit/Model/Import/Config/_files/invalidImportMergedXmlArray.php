@@ -51,7 +51,8 @@ return [
         '<?xml version="1.0"?><config><entity name="test_name" label="test_label" model="34afwer" ' .
         'behaviorModel="test" /></config>',
         [
-            "Element 'entity', attribute 'model': '34afwer' is not a valid value of the atomic type 'modelName'.\n" .
+            "Element 'entity', attribute 'model': [facet 'pattern'] The value '34afwer'" .
+            " is not accepted by the pattern '([\\\\]?[a-zA-Z_][a-zA-Z0-9_]*)+'.\n" .
             "Line: 1\nThe xml was: \n0:<?xml version=\"1.0\"?>\n1:<config><entity name=\"test_name\" " .
             "label=\"test_label\" model=\"34afwer\" behaviorModel=\"test\"/></config>\n2:\n"
         ],
@@ -60,8 +61,9 @@ return [
         '<?xml version="1.0"?><config><entity name="test_name" label="test_label" model="test" behaviorModel="666" />' .
         '</config>',
         [
-            "Element 'entity', attribute 'behaviorModel': '666' is not a valid value of the atomic type " .
-            "'modelName'.\nLine: 1\nThe xml was: \n0:<?xml version=\"1.0\"?>\n1:<config><entity " .
+            "Element 'entity', attribute 'behaviorModel': [facet 'pattern'] The value '666'" .
+            " is not accepted by the pattern '([\\\\]?[a-zA-Z_][a-zA-Z0-9_]*)+'.\n" .
+            "Line: 1\nThe xml was: \n0:<?xml version=\"1.0\"?>\n1:<config><entity " .
             "name=\"test_name\" label=\"test_label\" model=\"test\" behaviorModel=\"666\"/></config>\n2:\n"
         ],
     ]
