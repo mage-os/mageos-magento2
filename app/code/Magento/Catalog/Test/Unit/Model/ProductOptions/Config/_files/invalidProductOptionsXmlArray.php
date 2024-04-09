@@ -44,7 +44,8 @@ return [
         '<?xml version="1.0"?><config><option name="name_one" renderer="123true"><inputType name="name_one"/>' .
         '</option></config>',
         [
-            "Element 'option', attribute 'renderer': [facet 'pattern'] The value '123true' is not accepted by the pattern '([\\\]?[a-zA-Z_][a-zA-Z0-9_]*)+'.\n" .
+            "Element 'option', attribute 'renderer': [facet 'pattern'] The value '123true' is not accepted " .
+            "by the pattern '([\\\]?[a-zA-Z_][a-zA-Z0-9_]*)+'.\n" .
             "Line: 1\nThe xml was: \n0:<?xml version=\"1.0\"?>\n1:<config><option name=\"name_one\" " .
             "renderer=\"123true\"><inputType name=\"name_one\"/></option></config>\n2:\n"
         ],

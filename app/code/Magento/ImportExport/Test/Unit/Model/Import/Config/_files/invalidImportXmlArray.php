@@ -24,7 +24,8 @@ return [
     'entity_with_invalid_model_value' => [
         '<?xml version="1.0"?><config><entity name="some_name" model="12345"/></config>',
         [
-            "Element 'entity', attribute 'model': [facet 'pattern'] The value '12345' is not accepted by the pattern '([\\\\]?[a-zA-Z_][a-zA-Z0-9_]*)+'.\n" .
+            "Element 'entity', attribute 'model': [facet 'pattern'] The value '12345' is not accepted " .
+            "by the pattern '([\\\\]?[a-zA-Z_][a-zA-Z0-9_]*)+'.\n" .
             "Line: 1\nThe xml was: \n0:<?xml version=\"1.0\"?>\n1:<config><entity name=\"some_name\"" .
             " model=\"12345\"/></config>\n2:\n"
         ],
