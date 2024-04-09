@@ -106,14 +106,14 @@ class XsdTest extends TestCase
                     <consumer name="consumer5" queue="queue4"/>
                 </config>',
                 [
-                    "Element 'consumer', attribute 'handler': 'handlerClass_One1::handlerMethod1' is not a valid value of the atomic type 'handlerType'.The xml was: \n" .
+                    "Element 'consumer', attribute 'handler': [facet 'pattern'] The value 'handlerClass_One1::handlerMethod1' is not accepted by the pattern '[a-zA-Z0-9\\\\]+::[a-zA-Z0-9]+'.The xml was: \n" .
                     "0:<?xml version=\"1.0\"?>\n1:<config xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"urn:magento:framework-message-queue:etc/consumer.xsd\">\n" .
                     "2:                    <consumer name=\"consumer1\" queue=\"queue1\" handler=\"handlerClass_One1::handlerMethod1\" consumerInstance=\"consumerClass1\" connection=\"amqp\" maxMessages=\"100\" maxIdleTime=\"500\" sleep=\"2\" onlySpawnWhenMessageAvailable=\"true\"/>\n" .
                     "3:                    <consumer name=\"consumer2\" queue=\"queue2\" handler=\"handlerClassOne2::handler_Method2\" consumerInstance=\"consumerClass2\" connection=\"db\"/>\n" .
                     "4:                    <consumer name=\"consumer3\" queue=\"queue3\" handler=\"handlerClassThree::handlerMethodThree\" consumerInstance=\"consumerClass3\"/>\n" .
                     "5:                    <consumer name=\"consumer4\" queue=\"queue4\" handler=\"handlerClassFour::handlerMethodFour\"/>\n" .
                     "6:                    <consumer name=\"consumer5\" queue=\"queue4\"/>\n7:                </config>\n8:\n",
-                    "Element 'consumer', attribute 'handler': 'handlerClassOne2::handler_Method2' is not a valid value of the atomic type 'handlerType'.The xml was: \n" .
+                    "Element 'consumer', attribute 'handler': [facet 'pattern'] The value 'handlerClassOne2::handler_Method2' is not accepted by the pattern '[a-zA-Z0-9\\\\]+::[a-zA-Z0-9]+'.The xml was: \n" .
                     "0:<?xml version=\"1.0\"?>\n1:<config xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"urn:magento:framework-message-queue:etc/consumer.xsd\">\n" .
                     "2:                    <consumer name=\"consumer1\" queue=\"queue1\" handler=\"handlerClass_One1::handlerMethod1\" consumerInstance=\"consumerClass1\" connection=\"amqp\" maxMessages=\"100\" maxIdleTime=\"500\" sleep=\"2\" onlySpawnWhenMessageAvailable=\"true\"/>\n" .
                     "3:                    <consumer name=\"consumer2\" queue=\"queue2\" handler=\"handlerClassOne2::handler_Method2\" consumerInstance=\"consumerClass2\" connection=\"db\"/>\n" .
@@ -280,13 +280,15 @@ class XsdTest extends TestCase
                     </broker>
                 </config>',
                 [
-                    "Element 'queue', attribute 'handler': 'handlerClass_One1::handlerMethod1' is not a valid value of the atomic type 'handlerType'.The xml was: \n" .
+                    "Element 'queue', attribute 'handler': [facet 'pattern'] The value " .
+                    "'handlerClass_One1::handlerMethod1' is not accepted by the pattern '[a-zA-Z0-9\\\\]+::[a-zA-Z0-9]+'.The xml was: \n" .
                     "0:<?xml version=\"1.0\"?>\n1:<config xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"urn:magento:framework-message-queue:etc/queue.xsd\">\n" .
                     "2:                    <broker topic=\"asd\">\n" .
                     "3:                        <queue name=\"queue1\" consumer=\"consumer1\" handler=\"handlerClass_One1::handlerMethod1\" consumerInstance=\"consumerClass1\" maxMessages=\"5\"/>\n" .
                     "4:                        <queue name=\"queue2\" consumer=\"consumer2\" handler=\"handlerClassOne2::handler_Method2\" consumerInstance=\"consumerClass2\" maxMessages=\"5\"/>\n" .
                     "5:                    </broker>\n6:                </config>\n7:\n",
-                    "Element 'queue', attribute 'handler': 'handlerClassOne2::handler_Method2' is not a valid value of the atomic type 'handlerType'.The xml was: \n" .
+                    "Element 'queue', attribute 'handler': [facet 'pattern'] The value " .
+                    "'handlerClassOne2::handler_Method2' is not accepted by the pattern '[a-zA-Z0-9\\\\]+::[a-zA-Z0-9]+'.The xml was: \n" .
                     "0:<?xml version=\"1.0\"?>\n1:<config xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"urn:magento:framework-message-queue:etc/queue.xsd\">\n" .
                     "2:                    <broker topic=\"asd\">\n" .
                     "3:                        <queue name=\"queue1\" consumer=\"consumer1\" handler=\"handlerClass_One1::handlerMethod1\" consumerInstance=\"consumerClass1\" maxMessages=\"5\"/>\n" .
@@ -302,13 +304,15 @@ class XsdTest extends TestCase
                     </broker>
                 </config>',
                 [
-                    "Element 'queue', attribute 'consumerInstance': 'consumer_Class1' is not a valid value of the atomic type 'instanceType'.The xml was: \n" .
+                    "Element 'queue', attribute 'consumerInstance': [facet 'pattern'] The value 'consumer_Class1' " .
+                    "is not accepted by the pattern '[a-zA-Z0-9\\\\]+'.The xml was: \n" .
                     "0:<?xml version=\"1.0\"?>\n1:<config xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"urn:magento:framework-message-queue:etc/queue.xsd\">\n" .
                     "2:                     <broker topic=\"asd\">\n" .
                     "3:                        <queue name=\"queue1\" consumer=\"consumer1\" handler=\"handlerClassOne1::handlerMethod1\" consumerInstance=\"consumer_Class1\" maxMessages=\"5\"/>\n" .
                     "4:                        <queue name=\"queue2\" consumer=\"consumer2\" handler=\"handlerClassOne2::handlerMethod2\" consumerInstance=\"consumerClass_2\" maxMessages=\"5\"/>\n" .
                     "5:                    </broker>\n6:                </config>\n7:\n",
-                    "Element 'queue', attribute 'consumerInstance': 'consumerClass_2' is not a valid value of the atomic type 'instanceType'.The xml was: \n" .
+                    "Element 'queue', attribute 'consumerInstance': [facet 'pattern'] The value 'consumerClass_2' " .
+                    "is not accepted by the pattern '[a-zA-Z0-9\\\\]+'.The xml was: \n" .
                     "0:<?xml version=\"1.0\"?>\n1:<config xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"urn:magento:framework-message-queue:etc/queue.xsd\">\n" .
                     "2:                     <broker topic=\"asd\">\n" .
                     "3:                        <queue name=\"queue1\" consumer=\"consumer1\" handler=\"handlerClassOne1::handlerMethod1\" consumerInstance=\"consumer_Class1\" maxMessages=\"5\"/>\n" .
