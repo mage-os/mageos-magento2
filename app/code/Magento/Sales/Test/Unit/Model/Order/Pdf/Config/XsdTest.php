@@ -188,7 +188,8 @@ class XsdTest extends TestCase
             'non-valid empty renderer class name' => [
                 '<config><renderers><page type="p1"><renderer product_type="prt1"/></page></renderers></config>',
                 [
-                    "Element 'renderer': '' is not a valid value of the atomic type 'classNameType'.The xml was: \n" .
+                    "Element 'renderer': [facet 'pattern'] The value '' is not accepted by the pattern " .
+                    "'[A-Z][a-zA-Z\d]*(\\\\[A-Z][a-zA-Z\d]*)*'.The xml was: \n" .
                     "0:<?xml version=\"1.0\"?>\n1:<config><renderers><page type=\"p1\"><renderer " .
                     "product_type=\"prt1\"/></page></renderers></config>\n2:\n"
                 ],
@@ -256,8 +257,9 @@ class XsdTest extends TestCase
                 '<config><totals><total name="i1"><title>Title</title><source_field>foo</source_field>' .
                 '<model>a model</model></total></totals></config>',
                 [
-                    "Element 'model': 'a model' is not a valid value of the atomic type 'classNameType'.The xml " .
-                    "was: \n0:<?xml version=\"1.0\"?>\n1:<config><totals><total name=\"i1\"><title>Title</title>" .
+                    "Element 'model': [facet 'pattern'] The value 'a model' is not accepted by the pattern " .
+                    "'[A-Z][a-zA-Z\d]*(\\\\[A-Z][a-zA-Z\d]*)*'.The xml was: \n" .
+                    "0:<?xml version=\"1.0\"?>\n1:<config><totals><total name=\"i1\"><title>Title</title>" .
                     "<source_field>foo</source_field><model>a model</model></total></totals></config>\n2:\n"
                 ],
             ],
