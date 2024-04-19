@@ -92,8 +92,8 @@
         <actionGroup ref="GoToShipmentIntoOrderActionGroup" stepKey="goToShipment"/>
         <grabTextFrom selector="{{AdminShipmentItemsSection.itemQtyInvoiced('1')}}" stepKey="grabInvoicedItemQty"/>
         <assertEquals stepKey="assertInvoicedItemsQty">
-			<actualResult type="const">$grabInvoicedItemQty</actualResult>
-			<expectedResult type="string">5</expectedResult>
+            <actualResult type="const">$grabInvoicedItemQty</actualResult>
+            <expectedResult type="string">5</expectedResult>
         </assertEquals>
     </test>
 </tests>
