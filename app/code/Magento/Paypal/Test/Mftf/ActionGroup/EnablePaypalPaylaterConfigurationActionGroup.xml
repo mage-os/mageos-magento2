@@ -11,6 +11,10 @@
         <annotations>
             <description>Enable Paypal Paylater Solution For Paypal Express Checkout</description>
         </annotations>
+        <click selector="{{PayPalExpressCheckoutConfigSection.configureBtn('us')}}" stepKey="configureButtonClicked"/>
+        <selectOption selector ="{{PayPalExpressCheckoutConfigSection.enablePayLater('us')}}" userInput="Yes" stepKey="enablepaylaterExp"/>
+        <waitForPageLoad stepKey="waitForAdvisePageLoad"/>
+        <click selector="{{PayPalExpressCheckoutConfigSection.payLaterConfigDropDown('us')}}" stepKey="advertisePaylateClickedr"/>
         <waitForPageLoad stepKey="waitForadvisepaylaterdropdown"/>
         <selectOption selector ="{{PayPalExpressCheckoutConfigSection.enablePayLaterIn('us')}}" userInput="Yes" stepKey="enablepaypallater"/>
         <waitForElementClickable selector="{{PayPalCheckoutCartConfigSection.expandcheckoutcartpage('us')}}" stepKey="waitForcheckoutcartpageclickable"/>
