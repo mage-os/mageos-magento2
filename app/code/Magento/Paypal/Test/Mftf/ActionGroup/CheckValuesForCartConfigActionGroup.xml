@@ -1,0 +1,21 @@
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="CheckValuesForCartConfigActionGroup" >
+        <annotations>
+            <description>Check the default Dropdown Values Available in Checkout Cart Page.</description>
+        </annotations>
+        <selectOption selector ="{{PayPalCheckoutCartConfigSection.display('us')}}" userInput="Yes" stepKey="enableDisplayforPaylaterCartpage"/>
+        <seeOptionIsSelected selector="{{PayPalCheckoutCartConfigSection.position('us')}}" userInput="Header (center)" stepKey="seeSelectedPosition"/>
+        <seeOptionIsSelected selector="{{PayPalCheckoutCartConfigSection.stylelayout('us')}}" userInput="Text" stepKey="seeSelectedStylelayout"/>
+        <seeOptionIsSelected selector="{{PayPalCheckoutCartConfigSection.logotype('us')}}" userInput="Primary" stepKey="seeSelectedlogotype"/>
+        <seeOptionIsSelected selector="{{PayPalCheckoutCartConfigSection.logoposition('us')}}" userInput="Left" stepKey="seeSelectedlogoposition"/>
+        <seeOptionIsSelected selector="{{PayPalCheckoutCartConfigSection.textcolor('us')}}" userInput="Black" stepKey="seeSelectedtextcolor"/>
+    </actionGroup>
+</actionGroups>

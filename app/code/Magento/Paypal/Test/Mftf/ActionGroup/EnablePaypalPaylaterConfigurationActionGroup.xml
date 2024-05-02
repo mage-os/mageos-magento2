@@ -1,0 +1,19 @@
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="EnablePaypalPaylaterConfigurationActionGroup" >
+        <annotations>
+            <description>Enable Paypal Paylater Solution For Paypal Express Checkout</description>
+        </annotations>
+        <waitForPageLoad stepKey="waitForadvisepaylaterdropdown"/>
+        <selectOption selector ="{{PayPalExpressCheckoutConfigSection.enablePayLaterIn('us')}}" userInput="Yes" stepKey="enablepaypallater"/>
+        <waitForElementClickable selector="{{PayPalCheckoutCartConfigSection.expandcheckoutcartpage('us')}}" stepKey="waitForcheckoutcartpageclickable"/>
+        <click selector="{{PayPalCheckoutCartConfigSection.expandcheckoutcartpage('us')}}" stepKey="clickCheckoutCart"/>
+    </actionGroup>
+</actionGroups>
