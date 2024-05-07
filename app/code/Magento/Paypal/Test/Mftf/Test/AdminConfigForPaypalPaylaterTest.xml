@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminConfigForPaypalPaylaterTest">
+        <annotations>
+            <features value="PayPal"/>
+            <stories value="Payment methods"/>
+            <title value="Default configuration for Paypal pay later"/>
+            <description value="Paypal Pay Later Message should display on Admin Cart Page configuration"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="AC-5644"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <actionGroup ref="AdminPayPalExpressCheckoutEnableActionGroup" stepKey="ConfigPayPalExpress">
+                <argument name="credentials" value="SamplePaypalExpressConfig2"/>
+            </actionGroup>
+        </before>
+        <after>
+            <magentoCLI command="config:set payment/paypal_express/active 0" stepKey="disablePayPalExpress"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="amOnLogoutPage"/>
+        </after>
+        <!--Enable Paylater For Paypal Express Checkout  -->
+        <amOnPage url="{{AdminConfigPaymentMethodsPage.url}}" stepKey="navigateToPaymentConfigurationPage"/>
+        <waitForElementClickable selector="{{PayPalExpressCheckoutConfigSection.configureBtn('us')}}" stepKey="waitForConfigureButtonClickable"/>
+        <click selector="{{PayPalExpressCheckoutConfigSection.configureBtn('us')}}" stepKey="configureButtonClicked"/>
+        <selectOption selector ="{{PayPalExpressCheckoutConfigSection.enablePayLater('us')}}" userInput="Yes" stepKey="enablePaylaterExp"/>
+        <waitForPageLoad stepKey="waitForAdvisePageLoad"/>
+        <click selector="{{PayPalExpressCheckoutConfigSection.payLaterConfigDropDown('us')}}" stepKey="advertisePaylater"/>
+        <actionGroup ref="EnablePaypalPaylaterConfigurationActionGroup" stepKey="enablePaypalPaylaterSolution">
+        </actionGroup>
+        <!--Check default values selected in dropdown -->
+        <actionGroup ref="CheckValuesForAdminCartConfigActionGroup" stepKey="checkValuesForAdminCartConfiguration">
+        </actionGroup>
+        <!--Click on Save configure Button -->
+        <actionGroup ref="AdminSaveConfigActionGroup" stepKey="saveAdminConfiguration">
+        </actionGroup>
+    </test>
+</tests>
