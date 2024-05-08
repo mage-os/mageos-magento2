@@ -10,10 +10,11 @@
         <before>
             <!-- Login -->
             <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
-            <actionGroup ref="EnablePaypalPaylaterConfigurationActionGroup" stepKey="enablePaypalPaylaterSolution">
+            <actionGroup ref="AdminPayPalExpressCheckoutEnableActionGroup" stepKey="ConfigPayPalExpress">
+                <argument name="credentials" value="SamplePaypalExpressConfig2"/>
             </actionGroup>
-            <!--Check default values selected in dropdown -->
-            <actionGroup ref="CheckValuesForCartConfigActionGroup" stepKey="checkValuesForCartConfiguration">
+            <!--Enable Paylater Solution On Admin Cart Page -->
+            <actionGroup ref="EnablePaypalPaylaterConfigurationActionGroup" stepKey="enablePaylaterOnAdminCartConfiguration">
             </actionGroup>
             <!--Click on Save configure Button -->
             <actionGroup ref="AdminSaveConfigActionGroup" stepKey="saveAdminConfiguration">
@@ -21,12 +22,14 @@
         </before>
         <after>
             <!-- Cleanup Paypal configurations -->
+            <magentoCLI command="config:set payment/paypal_express/active 0" stepKey="disablePayPalExpress"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="amOnLogoutPage"/>
             <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanFullPageCache">
                 <argument name="tags" value="config full_page"/>
             </actionGroup>
         </after>
         <include>
-            <group name="paypalPaylater"/>
+            <group name="paypalPayLater"/>
         </include>
     </suite>
 </suites>

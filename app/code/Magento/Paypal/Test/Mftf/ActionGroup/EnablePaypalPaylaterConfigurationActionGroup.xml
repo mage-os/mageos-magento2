@@ -19,7 +19,13 @@
         <click selector="{{PayPalExpressCheckoutConfigSection.payLaterConfigDropDown('us')}}" stepKey="advertisePaylateToClicked"/>
         <waitForPageLoad stepKey="waitForadvisepaylaterdropdown"/>
         <selectOption selector ="{{PayPalExpressCheckoutConfigSection.enablePayLaterIn('us')}}" userInput="Yes" stepKey="enablePaypalLater"/>
-        <waitForElementClickable selector="{{PayPalCheckoutCartConfigSection.expandcheckoutcartpage('us')}}" stepKey="waitForCheckoutCartpageClickable"/>
-        <click selector="{{PayPalCheckoutCartConfigSection.expandcheckoutcartpage('us')}}" stepKey="clickCheckoutCart"/>
+        <waitForElementClickable selector="{{PayPalCheckoutCartConfigSection.expandCheckoutCartPage('us')}}" stepKey="waitForCheckoutCartpageClickable"/>
+        <click selector="{{PayPalCheckoutCartConfigSection.expandCheckoutCartPage('us')}}" stepKey="clickCheckoutCart"/>
+        <selectOption selector ="{{PayPalCheckoutCartConfigSection.display('us')}}" userInput="Yes" stepKey="enableDisplayforPaylaterCartpage"/>
+        <seeOptionIsSelected selector="{{PayPalCheckoutCartConfigSection.position('us')}}" userInput="Header (center)" stepKey="seeSelectedPosition"/>
+        <seeOptionIsSelected selector="{{PayPalCheckoutCartConfigSection.styleLayout('us')}}" userInput="Text" stepKey="seeSelectedStyleLayout"/>
+        <seeOptionIsSelected selector="{{PayPalCheckoutCartConfigSection.logoType('us')}}" userInput="Primary" stepKey="seeSelectedLogoType"/>
+        <seeOptionIsSelected selector="{{PayPalCheckoutCartConfigSection.logoPosition('us')}}" userInput="Left" stepKey="seeSelectedLogoPosition"/>
+        <seeOptionIsSelected selector="{{PayPalCheckoutCartConfigSection.textColor('us')}}" userInput="Black" stepKey="seeSelectedTextColor"/>
     </actionGroup>
 </actionGroups>
