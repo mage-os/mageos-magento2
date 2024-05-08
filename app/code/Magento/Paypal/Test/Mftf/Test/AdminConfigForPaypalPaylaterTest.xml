@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminConfigForPaypalPaylaterTest">
+        <annotations>
+            <features value="PayPal"/>
+            <stories value="Payment methods"/>
+            <title value="Default configuration for paypalpaylater"/>
+            <description value="Paypal Pay Later Message should display on Admin Cart Page configuration"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="AC-5644"/>
+            <group value="paypalPayLater"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+        </before>
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="amOnLogoutPage"/>
+        </after>
+        <!-- Navigate to StoreFront -->
+        <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToStoreFront"/>
+    </test>
+</tests>
