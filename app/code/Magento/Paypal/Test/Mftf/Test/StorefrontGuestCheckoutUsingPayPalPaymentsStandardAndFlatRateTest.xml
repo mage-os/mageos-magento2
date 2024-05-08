@@ -17,7 +17,7 @@
             <testCaseId value="AC-5185"/>
             <group value="paypalStandard"/>
             <group value="3rd_party_integration" />
-<!--            <group value="pr_exclude"/>-->
+            <group value="pr_exclude"/>
         </annotations>
         <before>
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
