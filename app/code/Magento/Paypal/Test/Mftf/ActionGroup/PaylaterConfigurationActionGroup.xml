@@ -6,10 +6,16 @@
 -->
 <actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
-    <actionGroup name="EnablePaypalPaylaterConfigurationActionGroup" >
+    <actionGroup name="PaylaterConfigurationActionGroup" >
         <annotations>
             <description>Enable Paypal Paylater Solution For Paypal Express Checkout</description>
         </annotations>
+        <amOnPage url="{{AdminConfigPaymentMethodsPage.url}}" stepKey="navigateToPaymentConfigurationPage"/>
+        <waitForElementClickable selector="{{PayPalExpressCheckoutConfigSection.configureBtn('us')}}" stepKey="waitForConfigureButtonClickable"/>
+        <click selector="{{PayPalExpressCheckoutConfigSection.configureBtn('us')}}" stepKey="configureButtonClicked"/>
+        <selectOption selector ="{{PayPalExpressCheckoutConfigSection.enablePayLater('us')}}" userInput="Yes" stepKey="enablePaylaterExp"/>
+        <waitForPageLoad stepKey="waitForAdvisePageLoad"/>
+        <click selector="{{PayPalExpressCheckoutConfigSection.payLaterConfigDropDown('us')}}" stepKey="advertisePaylater"/>
         <waitForPageLoad stepKey="waitForAdvisePaylaterDropdown"/>
         <selectOption selector ="{{PayPalExpressCheckoutConfigSection.enablePayLaterIn('us')}}" userInput="Yes" stepKey="enablePaypalLater"/>
         <waitForElementClickable selector="{{PayPalCheckoutCartConfigSection.expandCheckoutCartPage('us')}}" stepKey="waitForCheckoutCartPageClickable"/>
