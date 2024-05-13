@@ -27,13 +27,10 @@
             <magentoCLI command="cache:flush" stepKey="cleanCache"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="amOnLogoutPage"/>
         </after>
-        <actionGroup ref="PaylaterConfigurationActionGroup" stepKey="enablePaypalPaylaterSolution">
-        </actionGroup>
+        <actionGroup ref="PaylaterConfigurationActionGroup" stepKey="enablePaypalPaylaterSolution"/>
         <!--Check default values selected in dropdown -->
-        <actionGroup ref="CheckValuesForAdminCartConfigActionGroup" stepKey="checkValuesForAdminCartConfiguration">
-        </actionGroup>
+        <actionGroup ref="CheckValuesForAdminCartConfigActionGroup" stepKey="checkValuesForAdminCartConfiguration"/>
         <!--Click on Save configure Button -->
-        <actionGroup ref="AdminSaveConfigActionGroup" stepKey="saveAdminConfiguration">
-        </actionGroup>
+        <actionGroup ref="AdminSaveConfigActionGroup" stepKey="saveAdminConfiguration"/>
     </test>
 </tests>
