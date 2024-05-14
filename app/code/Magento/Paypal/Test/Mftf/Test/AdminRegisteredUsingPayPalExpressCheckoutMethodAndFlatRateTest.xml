@@ -35,45 +35,45 @@
             </actionGroup>
             <!-- Changing PayPal Express Checkout Basic Settings -->
             <magentoCLI command="config:set {{StorefrontPaypalExpressSalePaymentActionOptionConfigData.path}} {{StorefrontPaypalExpressSalePaymentActionOptionConfigData.value}}" stepKey="changePaymentAction"/>
-            <!--Login to storefront as previously created customer-->
-            <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer">
-                <argument name="Customer" value="$$createCustomer$$"/>
-            </actionGroup>
-            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
-                <argument name="indices" value=""/>
-            </actionGroup>
-            <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache">
-                <argument name="tags" value=""/>
-            </actionGroup>
-            <actionGroup ref="StorefrontOpenProductEntityPageActionGroup" stepKey="amOnProductPage">
-                <argument name="product" value="$createProduct$"/>
-            </actionGroup>
-            <actionGroup ref="AddProductWithQtyToCartFromStorefrontProductPageActionGroup" stepKey="addProductToCart">
-                <argument name="productName" value="$$createProduct.name$$"/>
-                <argument name="productQty" value="2"/>
-            </actionGroup>
-            <!-- Go to Checkout -->
-            <actionGroup ref="OpenStoreFrontCheckoutShippingPageActionGroup" stepKey="goToCheckoutPage"/>
-            <actionGroup ref="StorefrontSetShippingMethodActionGroup" stepKey="selectFlatRate">
-                <argument name="shippingMethodName" value="Flat Rate"/>
-            </actionGroup>
-            <!-- Go to Order review -->
-            <actionGroup ref="StorefrontCheckoutClickNextOnShippingStepActionGroup" stepKey="goToCheckoutPaymentPage"/>
-            <waitForElementClickable selector="{{StorefrontCheckoutPaymentMethodSection.checkPaymentMethodByName('PayPal Express Checkout')}}" stepKey="waitForPayPalExpressCheckoutIsPresent"/>
-            <click selector="{{StorefrontCheckoutPaymentMethodSection.checkPaymentMethodByName('PayPal Express Checkout')}}" stepKey="clickPayPalExpressCheckout"/>
-            <waitForPageLoad stepKey="waitForPaypalExpressCheckoutToBeLoaded"/>
-            <!-- Click on Paypal paypal button-->
-            <actionGroup ref="SwitchToPayPalGroupBtnActionGroup" stepKey="clickPayPalBtn"/>
-            <!--Login to Paypal in-context-->
-            <actionGroup ref="StorefrontLoginToPayPalPaymentAccountTwoStepActionGroup" stepKey="LoginToPayPal"/>
-            <actionGroup ref="StorefrontPaypalSwitchBackToMagentoFromCheckoutPageActionGroup" stepKey="confirmPaymentAndGoBackToMagento"/>
-            <!-- See order successful Page instead of Order Review Page -->
-            <waitForElement selector="{{CheckoutSuccessMainSection.successTitle}}" stepKey="waitForLoadSuccessPageTitle"/>
-            <waitForElement selector="{{CheckoutSuccessMainSection.success}}" stepKey="waitForLoadSuccessPage"/>
-            <!--Grab order number-->
-            <waitForElementVisible selector="{{CheckoutSuccessMainSection.orderLink}}" stepKey="waitForOrderNumberToBeGrabbed"/>
-            <grabTextFrom selector="{{CheckoutSuccessMainSection.orderLink}}" stepKey="grabOrderNumber"/>
         </before>
+        <!--Login to storefront as previously created customer-->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+            <argument name="indices" value=""/>
+        </actionGroup>
+        <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache">
+            <argument name="tags" value=""/>
+        </actionGroup>
+        <actionGroup ref="StorefrontOpenProductEntityPageActionGroup" stepKey="amOnProductPage">
+            <argument name="product" value="$createProduct$"/>
+        </actionGroup>
+        <actionGroup ref="AddProductWithQtyToCartFromStorefrontProductPageActionGroup" stepKey="addProductToCart">
+            <argument name="productName" value="$$createProduct.name$$"/>
+            <argument name="productQty" value="2"/>
+        </actionGroup>
+        <!-- Go to Checkout -->
+        <actionGroup ref="OpenStoreFrontCheckoutShippingPageActionGroup" stepKey="goToCheckoutPage"/>
+        <actionGroup ref="StorefrontSetShippingMethodActionGroup" stepKey="selectFlatRate">
+            <argument name="shippingMethodName" value="Flat Rate"/>
+        </actionGroup>
+        <!-- Go to Order review -->
+        <actionGroup ref="StorefrontCheckoutClickNextOnShippingStepActionGroup" stepKey="goToCheckoutPaymentPage"/>
+        <waitForElementClickable selector="{{StorefrontCheckoutPaymentMethodSection.checkPaymentMethodByName('PayPal Express Checkout')}}" stepKey="waitForPayPalExpressCheckoutIsPresent"/>
+        <click selector="{{StorefrontCheckoutPaymentMethodSection.checkPaymentMethodByName('PayPal Express Checkout')}}" stepKey="clickPayPalExpressCheckout"/>
+        <waitForPageLoad stepKey="waitForPaypalExpressCheckoutToBeLoaded"/>
+        <!-- Click on Paypal paypal button-->
+        <actionGroup ref="SwitchToPayPalGroupBtnActionGroup" stepKey="clickPayPalBtn"/>
+        <!--Login to Paypal in-context-->
+        <actionGroup ref="StorefrontLoginToPayPalPaymentAccountTwoStepActionGroup" stepKey="LoginToPayPal"/>
+        <actionGroup ref="StorefrontPaypalSwitchBackToMagentoFromCheckoutPageActionGroup" stepKey="confirmPaymentAndGoBackToMagento"/>
+        <!-- See order successful Page instead of Order Review Page -->
+        <waitForElement selector="{{CheckoutSuccessMainSection.successTitle}}" stepKey="waitForLoadSuccessPageTitle"/>
+        <waitForElement selector="{{CheckoutSuccessMainSection.success}}" stepKey="waitForLoadSuccessPage"/>
+        <!--Grab order number-->
+        <waitForElementVisible selector="{{CheckoutSuccessMainSection.orderLink}}" stepKey="waitForOrderNumberToBeGrabbed"/>
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderLink}}" stepKey="grabOrderNumber"/>
             <!--Go to admin sales page and open the order id-->
             <actionGroup ref="OpenOrderByIdActionGroup" stepKey="openOrder">
                 <argument name="orderId" value="{$grabOrderNumber}"/>
