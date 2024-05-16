@@ -22,11 +22,19 @@ class OptionValueProvider
     private $connection;
 
     /**
-     * @param ResourceConnection $connection
+     * @var \Magento\Store\Model\StoreManagerInterface
      */
-    public function __construct(ResourceConnection $connection)
-    {
+    private $storeManager;
+    /**
+     * @param ResourceConnection $connection
+     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+     */
+    public function __construct(
+        ResourceConnection $connection,
+        \Magento\Store\Model\StoreManagerInterface $storeManager
+    ) {
         $this->connection = $connection->getConnection();
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -37,11 +45,13 @@ class OptionValueProvider
      */
     public function get(int $optionId): ?string
     {
+        $storeId = $this->storeManager->getStore()->getId();
         $select = $this->connection->select()
-            ->from($this->connection->getTableName('eav_attribute_option_value'), 'value')
+            ->from($this->connection->getTableName('eav_attribute_option_value'), ['store_id', 'value'])
             ->where('option_id = ?', $optionId);
 
-        $result = $this->connection->fetchOne($select);
+        $records = $this->connection->fetchAssoc($select);
+        $result = $records[$storeId]['value'];
 
         if ($result !== false) {
             return $result;
