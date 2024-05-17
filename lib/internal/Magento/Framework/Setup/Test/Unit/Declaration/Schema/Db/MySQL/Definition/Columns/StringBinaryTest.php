@@ -89,12 +89,6 @@ class StringBinaryTest extends TestCase
             ->method('getLength')
             ->willReturn(50);
         $column->expects($this->any())
-            ->method('getCollation')
-            ->willReturn('utf8mb4_general_ci');
-        $column->expects($this->any())
-            ->method('getCharset')
-            ->willReturn('utf8mb4');
-        $column->expects($this->any())
             ->method('getDefault')
             ->willReturn('test');
         $adapterMock = $this->getMockBuilder(AdapterInterface::class)
