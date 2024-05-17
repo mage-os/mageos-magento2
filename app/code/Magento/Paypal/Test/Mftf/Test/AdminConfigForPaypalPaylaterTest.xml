@@ -15,6 +15,7 @@
             <description value="Paypal Pay Later Message should display on Admin Cart Page configuration"/>
             <severity value="CRITICAL"/>
             <testCaseId value="AC-5644"/>
+            <group value="pr_exclude"/>
         </annotations>
         <before>
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
