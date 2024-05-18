@@ -3054,7 +3054,7 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface, Rese
     public function startSetup()
     {
         $this->rawQuery("SET SQL_MODE=''");
-        $this->rawQuery("SET @OLD_FOREIGN_KEY_CHECKS=@@GLOBAL.FOREIGN_KEY_CHECKS, GLOBAL FOREIGN_KEY_CHECKS=0");
+        $this->rawQuery("SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0");
         $this->rawQuery("SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO'");
 
         return $this;
@@ -3068,7 +3068,7 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface, Rese
     public function endSetup()
     {
         $this->rawQuery("SET SQL_MODE=IFNULL(@OLD_SQL_MODE,'')");
-        $this->rawQuery("SET GLOBAL FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS=0, 0, 1)");
+        $this->rawQuery("SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS=0, 0, 1)");
 
         return $this;
     }
