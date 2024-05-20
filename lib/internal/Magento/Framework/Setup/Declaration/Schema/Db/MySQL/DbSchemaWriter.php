@@ -60,6 +60,11 @@ class DbSchemaWriter implements DbSchemaWriterInterface
     private $dryRunLogger;
 
     /**
+     * @var string|null
+     */
+    private ?string $addForeignKeyStatement = null;
+
+    /**
      * @param ResourceConnection $resourceConnection
      * @param StatementFactory   $statementFactory
      * @param DryRunLogger       $dryRunLogger
@@ -288,6 +293,11 @@ class DbSchemaWriter implements DbSchemaWriterInterface
                     )
                 );
             } else {
+                $varcharPrimaryKeyTable = ['sales_order_status_state','sales_order_status_label','weee_tax'];
+                if(in_array($statement->getTableName(), $varcharPrimaryKeyTable)) {
+                    $statementsSql = $this->removeConstraint($statementsSql);
+                }
+
                 $adapter->query(
                     sprintf(
                         $this->statementDirectives[$statement->getType()],
@@ -295,6 +305,12 @@ class DbSchemaWriter implements DbSchemaWriterInterface
                         implode(", ", $statementsSql)
                     )
                 );
+                if($this->addForeignKeyStatement !== null) {
+                    $adapter->query(
+                        sprintf('ALTER TABLE  %s %s', $statement->getTableName(),$this->addForeignKeyStatement )
+                    );
+                    $this->addForeignKeyStatement = null;
+                }
                 //Do post update, like SQL DML operations or etc...
                 foreach ($statement->getTriggers() as $trigger) {
                     call_user_func($trigger);
@@ -324,5 +340,25 @@ class DbSchemaWriter implements DbSchemaWriterInterface
             return 1;
         }
 
+    }
+
+    /***
+     * Removal of adding foreign key
+     * @param $statementsSql
+     * @return array
+     */
+    private function removeConstraint($statementsSql): array
+    {
+        $sqlStmtWithoutAddingConstraint = [];
+        if(count($statementsSql)) {
+            foreach ($statementsSql as $tinySQL) {
+                if (!preg_match("/(?=.*\bADD CONSTRAINT\b)(?=.*\bFOREIGN KEY\b).*/i", $tinySQL)) {
+                    $sqlStmtWithoutAddingConstraint[] = $tinySQL;
+                } else {
+                    $this->addForeignKeyStatement = $tinySQL;
+                }
+            }
+        }
+        return $sqlStmtWithoutAddingConstraint;
     }
 }
