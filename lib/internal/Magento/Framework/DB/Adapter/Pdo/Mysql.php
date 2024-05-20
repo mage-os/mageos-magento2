@@ -32,7 +32,6 @@ use Magento\Framework\Stdlib\DateTime;
 use Magento\Framework\Stdlib\StringUtils;
 use Zend_Db_Adapter_Exception;
 use Zend_Db_Statement_Exception;
-use Magento\Framework\DB\Adapter\SqlVersionProvider;
 
 // @codingStandardsIgnoreStart
 
@@ -259,7 +258,6 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface, Rese
      * @param DateTime $dateTime
      * @param LoggerInterface $logger
      * @param SelectFactory $selectFactory
-     * @param SqlVersionProvider|null $sqlVersionProvider
      * @param array $config
      * @param SerializerInterface|null $serializer
      */
@@ -269,15 +267,13 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface, Rese
         LoggerInterface $logger,
         SelectFactory $selectFactory,
         array $config = [],
-        SerializerInterface $serializer = null,
-        SqlVersionProvider $sqlVersionProvider=null
+        SerializerInterface $serializer = null
     ) {
         $this->pid = getmypid();
         $this->string = $string;
         $this->dateTime = $dateTime;
         $this->logger = $logger;
         $this->selectFactory = $selectFactory;
-        $this->sqlVersionProvider = $sqlVersionProvider ?: ObjectManager::getInstance()->get(SqlVersionProvider::class);
         $this->serializer = $serializer ?: ObjectManager::getInstance()->get(SerializerInterface::class);
         $this->exceptionMap = [
             // SQLSTATE[HY000]: General error: 2006 MySQL server has gone away
@@ -3054,14 +3050,11 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface, Rese
      * Run additional environment before setup
      *
      * @return $this
-     * @throws ConnectionException
      */
     public function startSetup()
     {
         $this->rawQuery("SET SQL_MODE=''");
-        if(!$this->isMariaDB106()) {
-            $this->rawQuery("SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0");
-        }
+        $this->rawQuery("SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0");
         $this->rawQuery("SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO'");
 
         return $this;
@@ -3071,14 +3064,12 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface, Rese
      * Run additional environment after setup
      *
      * @return $this
-     * @throws ConnectionException
      */
     public function endSetup()
     {
         $this->rawQuery("SET SQL_MODE=IFNULL(@OLD_SQL_MODE,'')");
-        if(!$this->isMariaDB106()) {
-            $this->rawQuery("SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS=0, 0, 1)");
-        }
+        $this->rawQuery("SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS=0, 0, 1)");
+
         return $this;
     }
 
@@ -4258,19 +4249,4 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface, Rese
     {
         return [];
     }
-
-     /**
-      * Check if MariaDB version is 10.6+
-      *
-      * @return bool
-      * @throws ConnectionException
-      */
-     public function isMariaDB106(): bool
-     {
-         $sqlVersion = $this->sqlVersionProvider->getSqlVersion();
-         if (str_contains($sqlVersion, SqlVersionProvider::MARIA_DB_10_6_VERSION)) {
-             return true;
-         }
-         return false;
-     }
 }
