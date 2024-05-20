@@ -13,13 +13,13 @@
         <arguments>
             <argument name="countryCode" type="string" defaultValue="us"/>
         </arguments>
-        <waitForElementClickable selector="{{PayPalCheckoutCartConfigSection.expandCheckoutCartPage(countryCode)}}" stepKey="waitForCheckoutCartPageClickable"/>
-        <click selector="{{PayPalCheckoutCartConfigSection.expandCheckoutCartPage(countryCode)}}" stepKey="clickCheckoutCart"/>
-        <selectOption selector ="{{PayPalCheckoutCartConfigSection.display(countryCode)}}" userInput="Yes" stepKey="enableDisplayforPaylaterCartPage"/>
-        <seeOptionIsSelected selector="{{PayPalCheckoutCartConfigSection.position(countryCode)}}" userInput="Header (center)" stepKey="seeSelectedPosition"/>
-        <seeOptionIsSelected selector="{{PayPalCheckoutCartConfigSection.styleLayout(countryCode)}}" userInput="Text" stepKey="seeSelectedStyleLayout"/>
-        <seeOptionIsSelected selector="{{PayPalCheckoutCartConfigSection.logoType(countryCode)}}" userInput="Primary" stepKey="seeSelectedLogoType"/>
-        <seeOptionIsSelected selector="{{PayPalCheckoutCartConfigSection.logoPosition(countryCode)}}" userInput="Left" stepKey="seeSelectedLogoPosition"/>
-        <seeOptionIsSelected selector="{{PayPalCheckoutCartConfigSection.textColor(countryCode)}}" userInput="Black" stepKey="seeSelectedTextColor"/>
+        <waitForElementClickable selector="{{AdminPaypalCheckoutCartPageConfigSection.expandCheckoutCartPage(countryCode)}}" stepKey="waitForCheckoutCartPageClickable"/>
+        <click selector="{{AdminPaypalCheckoutCartPageConfigSection.expandCheckoutCartPage(countryCode)}}" stepKey="clickCheckoutCart"/>
+        <selectOption selector ="{{AdminPaypalCheckoutCartPageConfigSection.display(countryCode)}}" userInput="Yes" stepKey="enableDisplayforPaylaterCartPage"/>
+        <seeOptionIsSelected selector="{{AdminPaypalCheckoutCartPageConfigSection.position(countryCode)}}" userInput="Header (center)" stepKey="seeSelectedPosition"/>
+        <seeOptionIsSelected selector="{{AdminPaypalCheckoutCartPageConfigSection.styleLayout(countryCode)}}" userInput="Text" stepKey="seeSelectedStyleLayout"/>
+        <seeOptionIsSelected selector="{{AdminPaypalCheckoutCartPageConfigSection.logoType(countryCode)}}" userInput="Primary" stepKey="seeSelectedLogoType"/>
+        <seeOptionIsSelected selector="{{AdminPaypalCheckoutCartPageConfigSection.logoPosition(countryCode)}}" userInput="Left" stepKey="seeSelectedLogoPosition"/>
+        <seeOptionIsSelected selector="{{AdminPaypalCheckoutCartPageConfigSection.textColor(countryCode)}}" userInput="Black" stepKey="seeSelectedTextColor"/>
     </actionGroup>
 </actionGroups>
