@@ -51,11 +51,12 @@ class OptionValueProvider
             ->where('option_id = ?', $optionId);
 
         $records = $this->connection->fetchAssoc($select);
-        $result = $records[$storeId]['value'];
-
-        if ($result !== false) {
-            return $result;
+        if (!empty($records)) {
+            return $records[$storeId]['value'];
         }
+//        if ($result !== false) {
+//            return $result;
+//        }
 
         return null;
     }
