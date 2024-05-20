@@ -15,6 +15,7 @@
             <description value="Paypal Pay Later Message should display on Admin Cart Page configuration"/>
             <severity value="CRITICAL"/>
             <testCaseId value="AC-5644"/>
+            <group value="3rd_party_integration"/>
             <group value="pr_exclude"/>
         </annotations>
         <before>
@@ -28,9 +29,9 @@
             <magentoCLI command="cache:flush" stepKey="cleanCache"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="amOnLogoutPage"/>
         </after>
-        <actionGroup ref="PaylaterConfigurationActionGroup" stepKey="enablePaypalPaylaterSolution"/>
+        <actionGroup ref="AdminConfigurePaypalPaylaterEnableActionGroup" stepKey="enablePaypalPaylaterSolution"/>
         <!--Check default values selected in dropdown -->
-        <actionGroup ref="CheckValuesForAdminCartConfigActionGroup" stepKey="checkValuesForAdminCartConfiguration"/>
+        <actionGroup ref="AssertAdminConfigForDefaultValuesInPaylaterCartPageActionGroup" stepKey="checkValuesForAdminCartConfiguration"/>
         <!--Click on Save configure Button -->
         <actionGroup ref="AdminSaveConfigActionGroup" stepKey="saveAdminConfiguration"/>
     </test>
