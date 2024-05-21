@@ -294,7 +294,7 @@ class DbSchemaWriter implements DbSchemaWriterInterface
                 );
             } else {
                 $varcharPrimaryKeyTable = ['sales_order_status_state','sales_order_status_label','weee_tax'];
-                if(in_array($statement->getTableName(), $varcharPrimaryKeyTable)) {
+                if (in_array($statement->getTableName(), $varcharPrimaryKeyTable)) {
                     $statementsSql = $this->removeConstraint($statementsSql);
                 }
 
@@ -305,9 +305,9 @@ class DbSchemaWriter implements DbSchemaWriterInterface
                         implode(", ", $statementsSql)
                     )
                 );
-                if($this->addForeignKeyStatement !== null) {
+                if ($this->addForeignKeyStatement !== null) {
                     $adapter->query(
-                        sprintf('ALTER TABLE  %s %s', $statement->getTableName(),$this->addForeignKeyStatement )
+                        sprintf('ALTER TABLE  %s %s', $statement->getTableName(), $this->addForeignKeyStatement)
                     );
                     $this->addForeignKeyStatement = null;
                 }
@@ -339,18 +339,18 @@ class DbSchemaWriter implements DbSchemaWriterInterface
         } else {
             return 1;
         }
-
     }
 
     /***
      * Removal of adding foreign key
-     * @param $statementsSql
+     *
+     * @param array $statementsSql
      * @return array
      */
     private function removeConstraint($statementsSql): array
     {
         $sqlStmtWithoutAddingConstraint = [];
-        if(count($statementsSql)) {
+        if (count($statementsSql)) {
             foreach ($statementsSql as $tinySQL) {
                 if (!preg_match("/(?=.*\bADD CONSTRAINT\b)(?=.*\bFOREIGN KEY\b).*/i", $tinySQL)) {
                     $sqlStmtWithoutAddingConstraint[] = $tinySQL;
