@@ -70,9 +70,7 @@
         <!--Login to Paypal in-context-->
         <actionGroup ref="StorefrontLoginToPayPalPaymentAccountTwoStepActionGroup" stepKey="LoginToPayPal"/>
         <!--Verify Buyer shipping address -->
-        <actionGroup ref="StorefrontAssertOrderDetailsOnPayPalPageActionGroup" stepKey="assertOrderDetails">
-            <argument name="shippingAddress" value="7700 West Parmer Lane, Austin, TX 78729"/>
-        </actionGroup>
+        <waitForText selector="{{PayPalPaymentSection.shippingAddress}}" userInput="7700 West Parmer Lane, Austin, TX 78729" stepKey="assertShippingAddress"/>
         <actionGroup ref="StorefrontPaypalSwitchBackToMagentoFromCheckoutPageActionGroup" stepKey="confirmPaymentAndGoBackToMagento"/>
         <!-- See order successful Page instead of Order Review Page -->
         <waitForElement selector="{{CheckoutSuccessMainSection.successTitle}}" stepKey="waitForLoadSuccessPageTitle"/>
