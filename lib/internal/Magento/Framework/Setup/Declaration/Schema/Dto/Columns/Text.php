@@ -25,12 +25,12 @@ class Text extends Column implements
     /**
      * @var string|null
      */
-    protected $charset;
+    private $charset;
 
     /**
      * @var string|null
      */
-    protected $collation;
+    private $collation;
 
     /**
      * Constructor.

@@ -37,12 +37,12 @@ class StringBinary extends Column implements
     /**
      * @var string|null
      */
-    protected $charset;
+    private $charset;
 
     /**
      * @var string|null
      */
-    protected $collation;
+    private $collation;
 
     /**
      * Constructor.
@@ -142,7 +142,7 @@ class StringBinary extends Column implements
             'length' => $this->getLength(),
             'comment' => $this->getComment()
         ];
-        if ($this->getType() == "varchar") {
+        if ($this->getType() === 'varchar') {
             $param['collation'] = $this->getCollation();
             $param['charset'] = $this->getCharset();
         }

@@ -21,7 +21,7 @@ class DbSchemaReader implements DbSchemaReaderInterface
     /**
      * Table type in information_schema.TABLES which allows to identify only tables and ignore views
      */
-    protected const MYSQL_TABLE_TYPE = 'BASE TABLE';
+    public const MYSQL_TABLE_TYPE = 'BASE TABLE';
 
     /**
      * @var ResourceConnection

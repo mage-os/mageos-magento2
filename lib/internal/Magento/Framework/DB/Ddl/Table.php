@@ -242,7 +242,7 @@ class Table
     /**
      * @var DtoTable
      */
-    protected DtoTable $DtoTable;
+    private DtoTable $DtoTable;
 
     /***
      * constructor
