@@ -99,8 +99,6 @@
         <actionGroup ref="AdminOpenOrderCommentsHistoryActionGroup" stepKey="clickOnCommentsHistoryAfterSubmittingInvoice"/>
         <waitForText selector="{{AdminOrderCommentsTabSection.orderCommentsWithType('Captured amount')}}" userInput="Captured amount of $128.00 online. Transaction ID: &quot;{$grabLastTransactionIDForCaptured}&quot;" stepKey="seeOrderHistoryNotesAfterSubmittingInvoice"/>
         <after>
-            <!-- delete category and product -->
-            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
             <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
             <!--  Disable PayPal Express Checkout and Basic setting change -->
             <actionGroup ref="AdminPayPalExpressCheckoutDisableActionGroup" stepKey="configPaypalExpressCheckoutDisable"/>
