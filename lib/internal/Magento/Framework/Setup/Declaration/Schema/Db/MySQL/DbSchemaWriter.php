@@ -348,7 +348,7 @@ class DbSchemaWriter implements DbSchemaWriterInterface
      * @param array $statementsSql
      * @return array
      */
-    private function removeConstraint($statementsSql): array
+    private function removeConstraint(array $statementsSql): array
     {
         $sqlStmtWithoutAddingConstraint = [];
         if (count($statementsSql)) {
