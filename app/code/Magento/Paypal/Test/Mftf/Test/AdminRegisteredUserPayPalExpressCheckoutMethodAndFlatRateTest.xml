@@ -8,22 +8,20 @@
 
 <tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
-    <test name="AdminRegisteredUsingPayPalExpressCheckoutMethodAndFlatRateTest">
+    <test name="AdminRegisteredUserPayPalExpressCheckoutMethodAndFlatRateTest">
         <annotations>
             <features value="PayPal"/>
-            <stories value="Checkout Using PayPalExpress Checkout With Payment Action Is Sale"/>
-            <title value="Checkout Using PayPalExpress Checkout Method And Flat Rate"/>
-            <description value="Create Order Using PayPalExpress Checkout With Payment Action Is Sale."/>
-            <severity value="MAJOR"/>
+            <stories value="Checkout User PayPalExpress Checkout With Payment Action Is Sale"/>
+            <title value="Checkout User PayPalExpress Checkout Method And Flat Rate"/>
+            <description value="Create Order User PayPalExpress Checkout With Payment Action Is Sale."/>
+            <severity value="CRITICAL"/>
             <testCaseId value="AC-6147"/>
             <group value="3rd_party_integration"/>
         </annotations>
         <before>
-            <!-- Create Category and Product -->
-            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <!-- Create Product -->
             <createData entity="_defaultProduct" stepKey="createProduct">
                 <field key="price">10</field>
-                <requiredEntity createDataKey="createCategory"/>
             </createData>
             <!-- Create Customer -->
             <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
@@ -43,8 +41,8 @@
         <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
             <argument name="indices" value=""/>
         </actionGroup>
-        <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache">
-            <argument name="tags" value=""/>
+        <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanInvalidatedCaches">
+            <argument name="tags" value="full_page"/>
         </actionGroup>
         <actionGroup ref="StorefrontOpenProductEntityPageActionGroup" stepKey="amOnProductPage">
             <argument name="product" value="$createProduct$"/>
@@ -60,13 +58,21 @@
         </actionGroup>
         <!-- Go to Order review -->
         <actionGroup ref="StorefrontCheckoutClickNextOnShippingStepActionGroup" stepKey="goToCheckoutPaymentPage"/>
-        <waitForElementClickable selector="{{StorefrontCheckoutPaymentMethodSection.checkPaymentMethodByName('PayPal Express Checkout')}}" stepKey="waitForPayPalExpressCheckoutIsPresent"/>
-        <click selector="{{StorefrontCheckoutPaymentMethodSection.checkPaymentMethodByName('PayPal Express Checkout')}}" stepKey="clickPayPalExpressCheckout"/>
-        <waitForPageLoad stepKey="waitForPaypalExpressCheckoutToBeLoaded"/>
+        <actionGroup ref="VerifyCheckoutPaymentOrderSummaryActionGroup" stepKey="verifyCheckoutPaymentOrderSummary">
+            <argument name="orderSummarySubTotal" value="$20.00"/>
+            <argument name="orderSummaryShippingTotal" value="$10.00"/>
+            <argument name="orderSummaryTotal" value="$30.00"/>
+        </actionGroup>
+        <!-- Select  Paypal paypal radio button-->
+        <actionGroup ref="AdminSelectPayPalExpressCheckoutPaymentActionGroup" stepKey="selectPayPalExpressCheckout"/>
         <!-- Click on Paypal paypal button-->
         <actionGroup ref="SwitchToPayPalGroupBtnActionGroup" stepKey="clickPayPalBtn"/>
         <!--Login to Paypal in-context-->
         <actionGroup ref="StorefrontLoginToPayPalPaymentAccountTwoStepActionGroup" stepKey="LoginToPayPal"/>
+        <!--Verify Buyer shipping address -->
+        <actionGroup ref="StorefrontAssertOrderDetailsOnPayPalPageActionGroup" stepKey="assertOrderDetails">
+            <argument name="shippingAddress" value="7700 West Parmer Lane, Austin, TX 78729"/>
+        </actionGroup>
         <actionGroup ref="StorefrontPaypalSwitchBackToMagentoFromCheckoutPageActionGroup" stepKey="confirmPaymentAndGoBackToMagento"/>
         <!-- See order successful Page instead of Order Review Page -->
         <waitForElement selector="{{CheckoutSuccessMainSection.successTitle}}" stepKey="waitForLoadSuccessPageTitle"/>
@@ -74,21 +80,26 @@
         <!--Grab order number-->
         <waitForElementVisible selector="{{CheckoutSuccessMainSection.orderLink}}" stepKey="waitForOrderNumberToBeGrabbed"/>
         <grabTextFrom selector="{{CheckoutSuccessMainSection.orderLink}}" stepKey="grabOrderNumber"/>
-            <!--Go to admin sales page and open the order id-->
-            <actionGroup ref="OpenOrderByIdActionGroup" stepKey="openOrder">
+        <!--Go to admin sales page and open the order id-->
+        <actionGroup ref="OpenOrderByIdActionGroup" stepKey="openOrder">
                 <argument name="orderId" value="{$grabOrderNumber}"/>
-            </actionGroup>
-            <!--Assert the total-->
-            <waitForText selector="{{AdminOrderTotalSection.grandTotal}}" userInput="$30.00" stepKey="checkGrandTotal"/>
-            <!--Grab the transaction id-->
-            <waitForElementVisible selector="{{AdminOrderDetailsInformationSection.paymentInformationField('Last Transaction ID')}}" stepKey="waitForTransactionIDFieldToBeAppeared"/>
-            <grabTextFrom selector="{{AdminOrderDetailsInformationSection.paymentInformationField('Last Transaction ID')}}" stepKey="grabTransactionID"/>
-            <!--Open comment history tab and assert the comment-->
-            <actionGroup ref="AdminOpenOrderCommentsHistoryActionGroup" stepKey="clickOnCommentsHistory"/>
-            <waitForText selector="{{AdminOrderCommentsTabSection.orderCommentsWithType('Ordered amount')}}" userInput="Ordered amount of $30.00 Transaction ID: &quot;{$grabTransactionID}&quot;" stepKey="seeOrderHistoryNotes"/>
-            <waitForText selector="{{AdminOrderCommentsTabSection.orderStatus}}" userInput="Processing" stepKey="assertOrderStatusInCommentsHistorySection"/>
-            <!-- Open Invoice and check -->
-            <actionGroup ref="AdminOpenInvoiceFromOrderPageActionGroup" stepKey="openInvoiceFromOrder"/>
+        </actionGroup>
+        <!--Assert the total-->
+        <waitForText selector="{{AdminOrderTotalSection.grandTotal}}" userInput="$30.00" stepKey="checkGrandTotal"/>
+        <!--Grab the transaction id-->
+        <waitForElementVisible selector="{{AdminOrderDetailsInformationSection.paymentInformationField('Last Transaction ID')}}" stepKey="waitForTransactionIDFieldToBeAppeared"/>
+        <grabTextFrom selector="{{AdminOrderDetailsInformationSection.paymentInformationField('Last Transaction ID')}}" stepKey="grabTransactionID"/>
+        <!--Open comment history tab and assert the comment-->
+        <actionGroup ref="AdminOpenOrderCommentsHistoryActionGroup" stepKey="clickOnCommentsHistory"/>
+        <waitForText selector="{{AdminOrderCommentsTabSection.orderCommentsWithType('Captured amount')}}" userInput="Captured amount of $30.00 online. Transaction ID: &quot;{$grabLastTransactionID}&quot;" stepKey="seeOrderHistoryNotes"/>
+        <waitForText selector="{{AdminOrderCommentsTabSection.orderStatus}}" userInput="Processing" stepKey="assertOrderStatusInCommentsHistorySection"/>
+        <!-- Open Invoice and check -->
+        <actionGroup ref="AdminOpenInvoiceFromOrderPageActionGroup" stepKey="openInvoiceFromOrder"/>
+        <waitForElementVisible selector="{{AdminOrderDetailsInformationSection.paymentInformationField('Last Transaction ID')}}" stepKey="waitForLastTransactionIDFieldToBeAppearedAfterSubmittingInvoice"/>
+        <grabTextFrom selector="{{AdminOrderDetailsInformationSection.paymentInformationField('Last Transaction ID')}}" stepKey="grabLastTransactionIDForCaptured"/>
+        <!--Open the comment history tab and assert the comment-->
+        <actionGroup ref="AdminOpenOrderCommentsHistoryActionGroup" stepKey="clickOnCommentsHistoryAfterSubmittingInvoice"/>
+        <waitForText selector="{{AdminOrderCommentsTabSection.orderCommentsWithType('Captured amount')}}" userInput="Captured amount of $128.00 online. Transaction ID: &quot;{$grabLastTransactionIDForCaptured}&quot;" stepKey="seeOrderHistoryNotesAfterSubmittingInvoice"/>
         <after>
             <!-- delete category and product -->
             <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>

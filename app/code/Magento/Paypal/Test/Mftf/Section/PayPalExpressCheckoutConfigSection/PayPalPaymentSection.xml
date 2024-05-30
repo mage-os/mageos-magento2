@@ -26,5 +26,6 @@
         <element name="paypalCart" type="text" selector="#transactionCart"/>
         <element name="productNamePosition" type="text" selector=".itemName"/>
         <element name="orderTotalOnPaypalCheckout" type="text" selector="//div[@id='cart']//span[contains(text(),'$')]"/>
+        <element name="shippingAddress" type="text" selector="//div[@data-testid='shipping-address']/p[@data-testid='ship-to-address']"/>
     </section>
 </sections>
