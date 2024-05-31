@@ -13,7 +13,7 @@
             <description>Configuration for Payments Advanced and Paypal credit Sample PayPal credentials</description>
         </annotations>
         <arguments>
-            <argument name="credentials" defaultValue="SamplePaypalPaymentsAdvancedConfig2"/>
+            <argument name="credentials" defaultValue="SamplePaypalPaymentsAdvancedConfig"/>
             <argument name="countryCode" type="string" defaultValue="us"/>
         </arguments>
         <scrollTo selector="{{AdminConfigPaymentsAdvancedSection.partner(countryCode)}}" stepKey="scrollToBottom"/>

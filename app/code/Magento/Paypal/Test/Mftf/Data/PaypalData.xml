@@ -224,7 +224,7 @@
         <data key="paypal_express_merchantID">54Z2EE6T7PRB4</data>
     </entity>
     <!-- configuration used for paypal PaymentsAdvanced-->
-    <entity name="SamplePaypalPaymentsAdvancedConfig2" type="payflow_advanced_config">
+    <entity name="SamplePaypalPaymentsAdvancedConfig" type="payflow_advanced_config">
         <data key="payflow_advanced_partner">PayPal</data>
         <data key="payflow_advanced_user">mpilink</data>
         <data key="payflow_advanced_vendor">mpilink</data>

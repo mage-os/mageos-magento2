@@ -25,7 +25,7 @@
         <seeElement selector="{{AdminConfigPaymentsAdvancedSection.paymentsAdvanced(countryCode)}}" stepKey="assertPaymentAdvanced"/>
         <seeElement selector="{{AdminConfigPaymentsAdvancedSection.paymentsPro(countryCode)}}" stepKey="assertPaymentsPro"/>
         <seeElement selector="{{AdminConfigPaymentsAdvancedSection.paymentsStandard(countryCode)}}" stepKey="assertPaymentStandard"/>
-        <wait time="10" stepKey="waitForConfigurebtnForPaymentsAdvanced"/>
+        <waitForElementClickable selector="{{AdminConfigPaymentsAdvancedSection.paymentsAdvanced(countryCode)}}" stepKey="waitToClickPaymentAdvanced"/>
         <click selector="{{AdminConfigPaymentsAdvancedSection.paymentsAdvanced(countryCode)}}" stepKey="clickPaymentAdvanced"/>
     </actionGroup>
 </actionGroups>

@@ -27,7 +27,7 @@
         </before>
         <after>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
-            <magentoCLI command="config:set paypal/general/merchant_country US" stepKey="setMerchantCountryAsUS"/>
+            <magentoCLI command="config:set paypal/general/merchant_country 0" stepKey="setMerchantCountryAsUS"/>
             <magentoCLI command="config:set payment/payflow_advanced/active 0" stepKey="disablePaymentsAdvanced"/>
             <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
             <deleteData createDataKey="simpleProduct" stepKey="deleteProduct"/>
@@ -41,8 +41,13 @@
         <actionGroup ref="AdminEnablePaymentAdvancedConfigurationActionGroup" stepKey="enablePaymentsAdvanced"/>
         <!--Save Configuration-->
         <actionGroup ref="AdminSaveConfigActionGroup" stepKey="saveConfigs"/>
-        <magentoCLI command="indexer:reindex" stepKey="performReindex"/>
-        <magentoCLI command="cache:flush" stepKey="cleanCache"/>
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+            <argument name="indices" value=""/>
+        </actionGroup>
+        <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanCache">
+            <argument name="tags" value="config full_page"/>
+        </actionGroup>
+
         <!--Login to storefront as guest customer-->
         <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToStoreFront"/>
         <waitForPageLoad stepKey="waitForProductPage"/>
