@@ -14,7 +14,7 @@
                 <argument name="credentials" value="SamplePaypalExpressConfig2"/>
             </actionGroup>
             <!--Enable Paylater Solution On Admin Cart Page -->
-            <actionGroup ref="EnablePaypalPaylaterConfigurationActionGroup" stepKey="enablePaylaterOnAdminCartConfiguration">
+            <actionGroup ref="AdminEnablePaypalPaylaterConfigurationActionGroup" stepKey="enablePaylaterOnAdminCartConfiguration">
             </actionGroup>
             <!--Click on Save configure Button -->
             <actionGroup ref="AdminSaveConfigActionGroup" stepKey="saveAdminConfiguration">
