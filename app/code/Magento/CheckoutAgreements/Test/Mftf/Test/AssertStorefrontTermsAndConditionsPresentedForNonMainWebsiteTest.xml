@@ -102,7 +102,7 @@
         <waitForElement selector="{{StorefrontCheckoutAgreementsSection.checkoutAgreementButton(enableTextTerm.checkboxText)}}" stepKey="seeTermTextInCheckoutIsPresent"/>
         <waitForElementClickable selector="{{StorefrontCheckoutAgreementsSection.checkoutAgreementButton}}" stepKey="waitForTermsAndConditionsLinkToBeClickable"/>
         <click selector="{{StorefrontCheckoutAgreementsSection.checkoutAgreementButton}}" stepKey="ClickOnTermsAndConditionsLink"/>
-        <waitForText selector="{{StorefrontCheckoutAgreementsSection.contentArea}}" userInput="{{enableTextTerm.content}}" stepKey="verifyTextMessage"/>
+        <waitForElement selector="{{StorefrontCheckoutAgreementsSection.contentArea(enableTextTerm.content)}}" stepKey="verifyTextMessage"/>
         <waitForElementClickable selector="{{StorefrontCheckoutAgreementsSection.close}}" stepKey="waitForCloseToBeClickable"/>
         <click selector="{{StorefrontCheckoutAgreementsSection.close}}" stepKey="ClickOnClose"/>
         <!-- Check check-box for Terms and Condition-->
