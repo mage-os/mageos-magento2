@@ -657,8 +657,7 @@ class Table
      * Return null if option does not exist
      *
      * @param string $key
-     * @return null|string
-     * @throws \ReflectionException
+     * @return mixed|string|null
      */
     public function getOption($key)
     {
@@ -666,16 +665,10 @@ class Table
             return null;
         }
         if (strtolower($key) == 'charset') {
-            $refClass = new \ReflectionClass(DtoTable::class);
-            $refMethod = $refClass->getMethod('getDefaultCharset');
-            $refMethod->setAccessible(true);
-            return $refMethod->invoke($this->DtoTable);
+            return $this->DtoTable->getDefaultCharset();
         }
         if (strtolower($key) == 'collate') {
-            $refClass = new \ReflectionClass(DtoTable::class);
-            $refMethod = $refClass->getMethod('getDefaultCollation');
-            $refMethod->setAccessible(true);
-            return $refMethod->invoke($this->DtoTable);
+            return $this->DtoTable->getDefaultCollation();
         }
         return $this->_options[$key];
     }

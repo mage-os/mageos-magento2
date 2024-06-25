@@ -65,6 +65,15 @@ class DbSchemaWriter implements DbSchemaWriterInterface
      */
     private ?string $addForeignKeyStatement = null;
 
+    /***
+     * @var array
+     */
+    private array $varcharPrimaryKeyTable = [
+        'sales_order_status_state',
+        'sales_order_status_label',
+        'weee_tax'
+    ];
+
     /**
      * @param ResourceConnection $resourceConnection
      * @param StatementFactory   $statementFactory
@@ -294,8 +303,7 @@ class DbSchemaWriter implements DbSchemaWriterInterface
                     )
                 );
             } else {
-                $varcharPrimaryKeyTable = ['sales_order_status_state','sales_order_status_label','weee_tax'];
-                if (in_array($statement->getTableName(), $varcharPrimaryKeyTable)) {
+                if (in_array($statement->getTableName(), $this->varcharPrimaryKeyTable)) {
                     $statementsSql = $this->removeConstraint($statementsSql);
                 }
 

@@ -122,7 +122,7 @@ class Table implements FactoryInterface
      *
      * @return string
      */
-    private function getDefaultCharset(): string
+    public function getDefaultCharset(): string
     {
         if ($this->sqlVersionProvider->isMysqlGte8029()) {
             return self::$defaultCharset['mysql_8_29'];
@@ -137,7 +137,7 @@ class Table implements FactoryInterface
      *
      * @return string
      */
-    private function getDefaultCollation(): string
+    public function getDefaultCollation(): string
     {
         if ($this->sqlVersionProvider->isMysqlGte8029()) {
             return self::$defaultCollation['mysql_8_29'];
