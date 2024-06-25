@@ -15,5 +15,6 @@
         <element name="checkoutAgreementCheckboxcheck" type="checkbox" selector="//span[text()='{{agreementname}}']/../../../input[@type='checkbox']" parameterized="true"/>
         <element name="contentArea" type="text" selector="//div[@class='modals-wrapper']//aside[@class='modal-popup agreements-modal modal-slide _inner-scroll _show']//div[@class='checkout-agreements-item-content' and contains(text(), '{{contentText}}')]" parameterized="true"/>
         <element name="close" type="button" selector="//div[@class='modals-wrapper']//aside[@class='modal-popup agreements-modal modal-slide _inner-scroll _show']//footer//span"/>
+        <element name="defaultPaymentAgreementCheckboxCheck" type="checkbox" selector="//div[@class='payment-method _active']//span[text()='{{agreementName}}']/../../../input[@type='checkbox']" parameterized="true"/>
     </section>
 </sections>
