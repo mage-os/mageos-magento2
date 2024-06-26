@@ -58,7 +58,7 @@ class ByStockItemTest extends \PHPUnit\Framework\TestCase
      * Test saving of stock item by product data via product model (deprecated)
      *
      * @magentoDataFixture Magento/Catalog/_files/product_simple.php
-     * @magentoDbIsolation disabled
+     * @magentoDbIsolation enabled
      */
     public function testSave()
     {

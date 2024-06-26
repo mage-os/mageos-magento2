@@ -20,6 +20,9 @@ use Magento\Framework\Filesystem\Driver\File;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Unit Test for \Magento\Framework\Filesystem\Directory\PathValidator
+ */
 class PathValidatorTest extends TestCase
 {
     /**

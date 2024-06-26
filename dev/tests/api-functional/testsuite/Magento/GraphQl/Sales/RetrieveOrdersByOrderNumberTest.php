@@ -470,7 +470,7 @@ QUERY;
   customer {
     orders(
       sort: {
-        sort_field: CREATED_AT,
+        sort_field: NUMBER,
         sort_direction: DESC
       }
     ) {
