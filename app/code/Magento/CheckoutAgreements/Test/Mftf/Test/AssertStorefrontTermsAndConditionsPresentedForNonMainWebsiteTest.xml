@@ -108,7 +108,7 @@
         <!-- Check check-box for Terms and Condition-->
         <scrollTo selector="{{StorefrontCheckoutAgreementsSection.defaultPaymentAgreementCheckboxCheck(enableTextTerm.checkboxText)}}" stepKey="scrollToAgreementCheckBox"/>
         <waitForElementClickable selector="{{StorefrontCheckoutAgreementsSection.defaultPaymentAgreementCheckboxCheck(enableTextTerm.checkboxText)}}" stepKey="waitForCheckBoxToBeClickable"/>
-        <checkOption selector="{{StorefrontCheckoutAgreementsSection.defaultPaymentAgreementCheckboxCheck(enableTextTerm.checkboxText)}}" stepKey="checkAgreement"/>
+        <selectOption selector="{{StorefrontCheckoutAgreementsSection.defaultPaymentAgreementCheckboxCheck(enableTextTerm.checkboxText)}}" stepKey="checkAgreement"/>
         <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="placeOrder"/>
         <waitForText selector="{{CheckoutSuccessMainSection.successTitle}}" userInput="Thank you for your purchase!" stepKey="waitForLoadSuccessPage"/>
     </test>
