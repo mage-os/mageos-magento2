@@ -239,18 +239,18 @@ class Table
      */
     protected $_options = ['type' => 'INNODB', 'charset' => 'utf8', 'collate' => 'utf8_general_ci'];
 
-    /**
-     * @var DtoTable
+    /***
+     * @var DtoTable|mixed|null
      */
-    private DtoTable $DtoTable;
+    private ?DtoTable $DtoTable;
 
     /***
      * constructor
      *
-     * @param DtoTable|null $DtoTable $DtoTable
+     * @param DtoTable|null $DtoTable
      */
     public function __construct(
-        DtoTable $DtoTable = null
+        ?DtoTable $DtoTable = null
     ) {
         $this->DtoTable = $DtoTable ?: ObjectManager::getInstance()->get(DtoTable::class);
     }
