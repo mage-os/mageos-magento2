@@ -657,7 +657,7 @@ class Table
      * Return null if option does not exist
      *
      * @param string $key
-     * @return mixed|string|null
+     * @return null|string
      */
     public function getOption($key)
     {
