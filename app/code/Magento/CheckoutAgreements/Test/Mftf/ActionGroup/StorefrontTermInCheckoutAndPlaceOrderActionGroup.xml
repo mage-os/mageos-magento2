@@ -14,6 +14,8 @@
         </arguments>
         <!--Check if agreement is present on checkout and select it-->
         <scrollTo selector="{{StorefrontCheckoutAgreementsSection.checkoutAgreementBlock}}" stepKey="scrollToCheckoutAgreementBlock"/>
+        <waitForElementClickable selector="{{StorefrontCheckoutAgreementsSection.checkoutAgreementBlock}}" stepKey="waitForCheckoutAgreementBlockToBeClickable"/>
+        <click selector="{{StorefrontCheckoutAgreementsSection.checkoutAgreementBlock}}" stepKey="clickCheckoutAgreementBlock"/>
         <waitForElementClickable selector="{{StorefrontCheckoutAgreementsSection.checkoutAgreementCheckbox}}" stepKey="waitForCheckAgreementToBeClickable"/>
         <selectOption selector="{{StorefrontCheckoutAgreementsSection.checkoutAgreementCheckboxInput}}" userInput="{{termCheckboxText}}" stepKey="checkAgreement"/>
         <!--Checkout select Check/Money Order payment-->
