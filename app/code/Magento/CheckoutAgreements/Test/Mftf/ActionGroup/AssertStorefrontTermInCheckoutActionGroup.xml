@@ -13,6 +13,8 @@
             <argument name="termCheckboxText" type="string"/>
         </arguments>
         <!--Check if agreement is present on checkout and select it-->
+        <scrollTo selector=".checkout-agreements-block" stepKey="scrollToCheckoutAgreementBlock"/>
+        <click selector=".checkout-agreements-block" stepKey="waitForCheckoutAgreementBlockToBeClickable"/>
         <waitForText selector="{{StorefrontCheckoutAgreementsSection.checkoutAgreementButton}}" userInput="{{termCheckboxText}}" stepKey="seeTermInCheckout"/>
         <waitForElementClickable selector="{{StorefrontCheckoutAgreementsSection.checkoutAgreementCheckbox}}" stepKey="waitForCheckAgreementToBeClickable"/>
         <selectOption selector="{{StorefrontCheckoutAgreementsSection.checkoutAgreementCheckbox}}" userInput="{{termCheckboxText}}" stepKey="checkAgreement"/>
