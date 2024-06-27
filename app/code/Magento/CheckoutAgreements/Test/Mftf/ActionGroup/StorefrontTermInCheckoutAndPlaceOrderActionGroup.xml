@@ -13,19 +13,12 @@
             <argument name="termCheckboxText" type="string"/>
         </arguments>
         <!--Check if agreement is present on checkout and select it-->
-        <scrollTo selector=".checkout-agreements-block" stepKey="scrollToCheckoutAgreementBlock"/>
-        <click selector=".checkout-agreements-block" stepKey="waitForCheckoutAgreementBlockToBeClickable"/>
-        <waitForText selector="{{StorefrontCheckoutAgreementsSection.checkoutAgreementButton}}" userInput="{{termCheckboxText}}" stepKey="seeTermInCheckout"/>
+        <scrollTo selector="{{StorefrontCheckoutAgreementsSection.checkoutAgreementBlock}}" stepKey="scrollToCheckoutAgreementBlock"/>
         <waitForElementClickable selector="{{StorefrontCheckoutAgreementsSection.checkoutAgreementCheckbox}}" stepKey="waitForCheckAgreementToBeClickable"/>
         <selectOption selector="{{StorefrontCheckoutAgreementsSection.checkoutAgreementCheckboxInput}}" userInput="{{termCheckboxText}}" stepKey="checkAgreement"/>
-
         <!--Checkout select Check/Money Order payment-->
-        <waitForPageLoad stepKey="waitForPaymentPageRendering"/>
-        <waitForPageLoad stepKey="waitForPaymentRendering"/>
-        <conditionalClick selector="{{StorefrontCheckoutPaymentMethodSection.checkPaymentMethodByName('Check / Money order')}}" dependentSelector="{{StorefrontCheckoutPaymentMethodSection.checkPaymentMethodByName('Check / Money order')}}" visible="true" stepKey="selectCheckmoPaymentMethod"/>
-        <waitForPageLoad stepKey="waitForLoadingMaskAfterPaymentMethodSelection"/>
-
-        <!--Click Place Order button-->
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <waitForElementClickable selector="{{CheckoutPaymentSection.placeOrder}}" stepKey="waitForPlaceOrderButtonClickable"/>
         <click selector="{{CheckoutPaymentSection.placeOrder}}" stepKey="clickPlaceOrder"/>
         <waitForPageLoad stepKey="waitForOrderPlaced"/>
     </actionGroup>
