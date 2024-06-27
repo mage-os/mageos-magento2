@@ -108,5 +108,8 @@
         <actionGroup ref="AssertStorefrontTermInCheckoutActionGroup" stepKey="assertTermInCheckoutAndPlaceOrder">
             <argument name="termCheckboxText" value="{{enableTextTerm.checkboxText}}"/>
         </actionGroup>
+        <!--See success messages-->
+        <waitForText selector="{{CheckoutSuccessMainSection.successTitle}}" userInput="Thank you for your purchase!" stepKey="seeSuccessTitle"/>
+        <waitForText selector="{{CheckoutSuccessMainSection.orderNumberText}}" userInput="Your order # is: " stepKey="seeOrderNumber"/>
     </test>
 </tests>
