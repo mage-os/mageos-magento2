@@ -105,7 +105,7 @@
         <waitForElement selector="{{StorefrontCheckoutAgreementsSection.contentArea(enableTextTerm.content)}}" stepKey="verifyTextMessage"/>
         <waitForElementClickable selector="{{StorefrontCheckoutAgreementsSection.close}}" stepKey="waitForCloseToBeClickable"/>
         <click selector="{{StorefrontCheckoutAgreementsSection.close}}" stepKey="ClickOnClose"/>
-        <actionGroup ref="AssertStorefrontTermInCheckoutActionGroup" stepKey="assertTermInCheckoutAndPlaceOrder">
+        <actionGroup ref="StorefrontTermInCheckoutAndPlaceOrderActionGroup" stepKey="assertTermInCheckoutAndPlaceOrder">
             <argument name="termCheckboxText" value="{{enableTextTerm.checkboxText}}"/>
         </actionGroup>
         <!--See success messages-->
