@@ -127,7 +127,13 @@
     <entity name="Payer">
         <data key="firstName">Alex</data>
     </entity>
-
+    <!-- configuration used for paypal PaymentsAdvanced-->
+    <entity name="SamplePaypalPaymentsAdvancedConfig" type="payflow_advanced_config">
+        <data key="payflow_advanced_partner">PayPal</data>
+        <data key="payflow_advanced_user">mpilink</data>
+        <data key="payflow_advanced_vendor">mpilink</data>
+        <data key="payflow_advanced_password">1234_1234L!</data>
+    </entity>
     <!-- configuration used for paypal payflow pro -->
     <entity name="EnablePaypalPayflowProWithVault" type="custom_paypal_payflow_pro_config_state">
         <requiredEntity type="enable_paypal_payflow">EnablePaypalPayflowProMethod</requiredEntity>
