@@ -12,7 +12,7 @@
     <actionGroup name="AdminSelectPaypalStandardPaymentInPaymentPageGuestCheckoutActionGroup">
         <waitForElementClickable selector="{{CheckoutPaymentSection.PayPalPaymentRadio}}" stepKey="waitForPayPalRadioButton"/>
         <click selector="{{CheckoutPaymentSection.PayPalPaymentRadio}}" stepKey="selectPaypalPayment"/>
-        <waitForElementClickable selector="{{CheckoutPaymentSection.ContinuePayPalBtn1}}" stepKey="waitForPayPalBtn"/>
-        <click selector="{{CheckoutPaymentSection.ContinuePayPalBtn1}}" stepKey="clickPayPalBtn"/>
+        <waitForElementClickable selector="{{CheckoutPaymentSection.ContinuePayPalBtn}}" stepKey="waitForPayPalBtn"/>
+        <click selector="{{CheckoutPaymentSection.ContinuePayPalBtn}}" stepKey="clickPayPalBtn"/>
     </actionGroup>
 </actionGroups>
