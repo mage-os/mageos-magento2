@@ -669,4 +669,11 @@
         <data key="uses_per_coupon">2</data>
         <data key="simple_free_shipping">0</data>
     </entity>
+    <entity name="CustomSalesRuleWithNoCouponCode" type="SalesRule">
+        <data key="name" unique="suffix">SalesRule</data>
+        <data key="websites">Main Website</data>
+        <data key="customerGroups">'NOT LOGGED IN', 'General', 'Wholesale', 'Retailer'</data>
+        <data key="apply">Percent of product price discount</data>
+        <data key="discountAmount">10</data>
+    </entity>
 </entities>
