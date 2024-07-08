@@ -2,7 +2,7 @@ name: Coding Standard With Baseline
 on:
   pull_request:
     branches:
-      - 2.4-develop
+      - *
 permissions:
   contents: read
 jobs:

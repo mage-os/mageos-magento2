@@ -3,7 +3,7 @@ run-name: ${{ github.actor }} is running Integration Tests
 on:
   pull_request:
     branches:
-      - 2.4-develop
+      - *
 
 permissions:
   contents: write
