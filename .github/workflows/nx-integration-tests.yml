@@ -2,8 +2,7 @@ name: Integration Tests (Using Nx)
 run-name: ${{ github.actor }} is running Integration Tests
 on:
   pull_request:
-    branches:
-      - *
+    branches: ["**"]
 
 permissions:
   contents: write
