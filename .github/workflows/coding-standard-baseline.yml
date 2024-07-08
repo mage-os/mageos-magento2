@@ -1,8 +1,7 @@
 name: Coding Standard With Baseline
 on:
   pull_request:
-    branches:
-      - *
+    branches: ["**"]
 permissions:
   contents: read
 jobs:
