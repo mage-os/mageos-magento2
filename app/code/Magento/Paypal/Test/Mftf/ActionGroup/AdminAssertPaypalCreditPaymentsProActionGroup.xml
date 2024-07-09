@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminAssertPaypalCreditPaymentsProActionGroup">
+        <annotations>
+            <description>Configuration for Payments Advanced and Paypal credit Sample PayPal credentials</description>
+        </annotations>
+        <arguments>
+            <argument name="credentials" defaultValue="SamplePaypalPaymentsProConfig"/>
+            <argument name="countryCode" type="string" defaultValue="us"/>
+        </arguments>
+        <scrollTo selector="{{PayPalPaymentsProConfigSection.partner(countryCode)}}" stepKey="scrollToBottom"/>
+        <waitForElementVisible selector="{{PayPalPaymentsProConfigSection.partner(countryCode)}}" stepKey="waitForPartner"/>
+        <fillField selector ="{{PayPalPaymentsProConfigSection.partner(countryCode)}}" userInput="{{credentials.paypal_paymentspro_parner}}" stepKey="inputPartner"/>
+        <waitForElementVisible selector="{{PayPalPaymentsProConfigSection.vendor(countryCode)}}" stepKey="waitForVendor"/>
+        <fillField selector ="{{PayPalPaymentsProConfigSection.vendor(countryCode)}}" userInput="{{credentials.paypal_paymentspro_vendor}}" stepKey="inputVendor"/>
+        <waitForElementVisible selector="{{PayPalPaymentsProConfigSection.user(countryCode)}}" stepKey="waitForUser"/>
+        <fillField selector ="{{PayPalPaymentsProConfigSection.user(countryCode)}}" userInput="{{credentials.paypal_paymentspro_user}}" stepKey="inputUser"/>
+        <waitForElementVisible selector="{{PayPalPaymentsProConfigSection.password(countryCode)}}" stepKey="waitForPassword"/>
+        <fillField selector ="{{PayPalPaymentsProConfigSection.password(countryCode)}}" userInput="{{credentials.paypal_paymentspro_password}}" stepKey="inputPassword"/>
+        <selectOption selector="{{PayPalPaymentsProConfigSection.testMode(countryCode)}}" userInput="Yes" stepKey="enableTestMode"/>
+        <waitForElementNotVisible selector ="{{AdminConfigPaymentsProPaypalCreditSection.enabledPaypalCredit(countryCode)}}" stepKey="dontSeePaypalCredit"/>
+        <waitForPageLoad stepKey="waitPageLoadForEnableSolution"/>
+        <selectOption selector ="{{PayPalPaymentsProConfigSection.enableSolution(countryCode)}}" userInput="Yes" stepKey="enableSolution"/>
+        <waitForElementNotVisible selector ="{{AdminConfigPaymentsProPaypalCreditSection.paypalSolution(countryCode)}}" stepKey="assertEnabledSolutions"/>
+        <waitForElementNotVisible selector ="{{AdminConfigPaymentsProPaypalCreditSection.paypalCredit(countryCode)}}" stepKey="enablePaypalCredit"/>
+        <waitForElementVisible selector ="{{AdminConfigPaymentsProPaypalCreditSection.sortOrder(countryCode)}}" stepKey="assertSortOrderPaypalCredit"/>
+        <click selector="{{AdminConfigSection.saveButton}}" stepKey="saveConfiguration"/>
+        <magentoCLI command="indexer:reindex" stepKey="performReindex"/>
+        <magentoCLI command="cache:flush" stepKey="cleanCache"/>
+    </actionGroup>
+</actionGroups>
