@@ -110,6 +110,7 @@
             <word>overriden</word>
         </item>
         <item>
+            <component type="module" name="Magento_Deploy" />
             <path>app/code/Magento/Deploy/Setup/Patch/Schema/SetCollation.php</path>
             <word>TargetRule</word>
         </item>
