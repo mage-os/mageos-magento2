@@ -28,7 +28,6 @@
         <word>overriden</word>
         <word>retrive</word>
         <word>retreive</word>
-        <word>twig</word>
     </words>
     <whitelist>
         <item>
@@ -108,11 +107,6 @@
         <item>
             <path>lib/web/jquery</path>
             <word>overriden</word>
-        </item>
-        <item>
-            <component type="module" name="Magento_Deploy" />
-            <path>app/code/Magento/Deploy/Setup/Patch/Schema/SetCollation.php</path>
-            <word>TargetRule</word>
         </item>
     </whitelist>
 </config>
