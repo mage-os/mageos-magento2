@@ -62,8 +62,21 @@
         <actionGroup ref="StorefrontCheckoutClickNextOnShippingStepActionGroup" stepKey="goToCheckoutPaymentPage"/>
         <waitForPageLoad stepKey="waitForLoadingPaypalPaymentPage"/>
         <!-- Assert Paypal Pro and Paypal Credit Payment method -->
-        <seeElement selector="{{AdminConfigPaymentsProPaypalCreditSection.payFlowEdition}}" stepKey="assertPayflowEdition"/>
-        <seeElement selector="{{AdminConfigPaymentsProPaypalCreditSection.payFlowExpress}}" stepKey="assertPayflowExpress"/>
-        <seeElement selector="{{AdminConfigPaymentsProPaypalCreditSection.creditCardPayflow}}" stepKey="assertCreditCardPayflowPro"/>
+        <waitForElementVisible selector="{{AdminConfigPaymentsProPaypalCreditSection.payFlowEdition}}" stepKey="assertPayflowEdition"/>
+        <waitForElementVisible selector="{{AdminConfigPaymentsProPaypalCreditSection.payFlowExpress}}" stepKey="assertPayflowExpress"/>
+        <waitForElementVisible selector="{{AdminConfigPaymentsProPaypalCreditSection.creditCardPayflow}}" stepKey="assertCreditCardPayflowPro"/>
+        <magentoCLI command="config:set payment/payflow_express_bml/active 0" stepKey="disablePayPalCredit"/>
+        <magentoCLI command="config:set payment/payflowpro_cc_vault/active 1" stepKey="enablePayPalVault"/>
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+            <argument name="indices" value=""/>
+        </actionGroup>
+        <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanCache">
+            <argument name="tags" value="config full_page"/>
+        </actionGroup>
+        <!-- Refresh page -->
+        <reloadPage stepKey="refreshPage"/>
+        <waitForElementVisible selector="{{AdminConfigPaymentsProPaypalCreditSection.payFlowEdition}}" stepKey="seePayflowEditionPayment"/>
+        <waitForElementNotVisible selector="{{AdminConfigPaymentsProPaypalCreditSection.payFlowExpress}}" stepKey="dontSeePaypalCreditPayment"/>
+        <waitForElementVisible selector="{{AdminConfigPaymentsProPaypalCreditSection.creditCardPayflow}}" stepKey="seeCreditcardPayment"/>
     </test>
 </tests>
