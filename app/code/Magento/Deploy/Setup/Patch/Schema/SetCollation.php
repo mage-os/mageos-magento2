@@ -38,10 +38,8 @@ class SetCollation implements SchemaPatchInterface
         $setup = $this->schemaSetup;
 
         if ($setup->getConnection()->isTableExists('cache')) {
-            $setup->run("
-                         ALTER TABLE `cache` MODIFY COLUMN `id` varchar(200),
-                         DEFAULT CHARSET=utf8mb4, DEFAULT COLLATE=utf8mb4_general_ci
-                        ");
+            $setup->run("ALTER TABLE `cache` MODIFY COLUMN `id` varchar(200),
+                         DEFAULT CHARSET=utf8mb4, DEFAULT COLLATE=utf8mb4_general_ci");
         }
         if ($setup->getConnection()->isTableExists('cache_tag')) {
             $setup->run("ALTER TABLE `cache_tag` MODIFY COLUMN `tag` varchar(100),
@@ -67,7 +65,7 @@ class SetCollation implements SchemaPatchInterface
                          varchar(255),DEFAULT CHARSET=utf8mb4, DEFAULT COLLATE=utf8mb4_general_ci");
         }
 
-        //changelog tables
+        //set utf8mb4 for the below tables
         $clTable = [
             'catalog_category_product_cl',
             'catalog_product_attribute_cl',

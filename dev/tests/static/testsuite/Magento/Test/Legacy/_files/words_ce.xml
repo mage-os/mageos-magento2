@@ -108,5 +108,9 @@
             <path>lib/web/jquery</path>
             <word>overriden</word>
         </item>
+        <item>
+            <path>app/code/Magento/Deploy/Setup/Patch/Schema/SetCollation.php</path>
+            <word>TargetRule</word>
+        </item>
     </whitelist>
 </config>
