@@ -240,7 +240,7 @@ class Table
     protected $_options = ['type' => 'INNODB', 'charset' => 'utf8', 'collate' => 'utf8_general_ci'];
 
     /***
-     * @var DtoTable|mixed|null
+     * @var DtoTable|null
      */
     private ?DtoTable $DtoTable;
 

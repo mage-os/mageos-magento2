@@ -29,6 +29,8 @@ class SetCollation implements SchemaPatchInterface
 
     /**
      * @inheritdoc
+     *
+     * @return void
      */
     public function apply()
     {
