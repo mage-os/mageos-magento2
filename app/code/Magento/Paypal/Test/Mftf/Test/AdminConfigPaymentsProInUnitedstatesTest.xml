@@ -34,9 +34,15 @@
             <deleteData createDataKey="simpleCategory" stepKey="deleteCategory"/>
         </after>
         <!--Admin navigate to payment configuration page and assert no other paypal payment is enabled-->
-        <actionGroup ref="AdminConfigForPaymentsProPaypalCreditActionGroup" stepKey="configPaymentsPro"/>
+        <actionGroup ref="AdminClearForPaymentsProPaypalCreditActionGroup" stepKey="configPaymentsPro"/>
         <!--Enable Payment Pro and Paypal Credit-->
         <actionGroup ref="AdminAssertPaypalCreditPaymentsProActionGroup" stepKey="enablePaymentsPro"/>
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="performReindex">
+            <argument name="indices" value=""/>
+        </actionGroup>
+        <actionGroup ref="CliCacheCleanActionGroup" stepKey="performCleanCache">
+            <argument name="tags" value="config full_page"/>
+        </actionGroup>
         <!--Login to storefront as guest customer-->
         <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToStoreFront"/>
         <waitForPageLoad stepKey="waitForProductPage"/>

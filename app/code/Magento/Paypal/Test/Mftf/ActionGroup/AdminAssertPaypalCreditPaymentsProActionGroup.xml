@@ -31,7 +31,5 @@
         <waitForElementNotVisible selector ="{{AdminConfigPaymentsProPaypalCreditSection.paypalSolution(countryCode)}}" stepKey="assertEnabledSolutions"/>
         <waitForElementNotVisible selector ="{{AdminConfigPaymentsProPaypalCreditSection.paypalCredit(countryCode)}}" stepKey="enablePaypalCredit"/>
         <click selector="{{AdminConfigSection.saveButton}}" stepKey="saveConfiguration"/>
-        <magentoCLI command="indexer:reindex" stepKey="performReindex"/>
-        <magentoCLI command="cache:flush" stepKey="cleanCache"/>
     </actionGroup>
 </actionGroups>

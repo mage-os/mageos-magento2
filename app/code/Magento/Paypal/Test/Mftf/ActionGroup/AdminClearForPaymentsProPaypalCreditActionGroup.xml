@@ -8,7 +8,7 @@
 
 <actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
-    <actionGroup name="AdminConfigForPaymentsProPaypalCreditActionGroup">
+    <actionGroup name="AdminClearForPaymentsProPaypalCreditActionGroup">
         <annotations>
             <description>Goes to the 'Configuration' page for 'Payment Methods'. Fills in the provided Sample PayPal credentials and other details. Clicks on Save.</description>
         </annotations>
@@ -22,8 +22,8 @@
         <waitForElementVisible selector="{{AdminConfigPaymentsProPaypalCreditSection.otherPaypalLink(countryCode)}}" stepKey="assertPayinAllLink"/>
         <waitForElementVisible selector="{{AdminConfigPaymentsProPaypalCreditSection.paypalPaymentGatewayLink(countryCode)}}" stepKey="assertPaypalPaymentGateway"/>
         <scrollTo selector="{{AdminConfigPaymentsProPaypalCreditSection.otherPaypalLink(countryCode)}}" stepKey="scrollPayinAll"/>
-        <waitForElementClickable selector="{{AdminConfigPaymentsProPaypalCreditSection.paymentsPro(countryCode)}}" stepKey="waitForPaymentProToBeClickable"/>
-        <click selector="{{AdminConfigPaymentsProPaypalCreditSection.paymentsPro(countryCode)}}" stepKey="clickPaymentPro"/>
+        <waitForElementClickable selector="{{PayPalPaymentsProConfigSection.configureBtn(countryCode)}}" stepKey="waitForPaymentProToBeClickable"/>
+        <click selector="{{PayPalPaymentsProConfigSection.configureBtn(countryCode)}}" stepKey="clickPaymentPro"/>
         <waitForPageLoad stepKey="waitForPaymethodConfigPageLoad"/>
         <clearField selector="{{PayPalPaymentsProConfigSection.partner(countryCode)}}" stepKey="clearInputPartnerField"/>
         <clearField selector="{{PayPalPaymentsProConfigSection.vendor(countryCode)}}" stepKey="clearInputVendorField"/>
