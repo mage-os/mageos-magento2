@@ -644,6 +644,15 @@ class Installer
                     'Data Version'
                 )->setComment('Module versions registry');
             $connection->createTable($table);
+        } else {
+            // Update collation to utf8mb4
+            $getTableSchema = $connection->getCreateTable($setup->getTable('setup_module'));
+            if(str_contains($getTableSchema, "utf8mb3")){
+                $sql = "ALTER TABLE `setup_module` MODIFY COLUMN `module` varchar(50),
+                        MODIFY COLUMN `schema_version` varchar(50), MODIFY COLUMN `data_version` varchar(50),
+                        DEFAULT CHARSET=utf8mb4, DEFAULT COLLATE=utf8mb4_general_ci";
+                $connection->query($sql);
+            }
         }
     }
 
@@ -703,6 +712,14 @@ class Installer
                 'Database Sessions Storage'
             );
             $connection->createTable($table);
+        } else {
+            // Update collation to utf8mb4
+            $getTableSchema = $connection->getCreateTable($setup->getTable('session'));
+            if(str_contains($getTableSchema, "utf8mb3")){
+                $sql = "ALTER TABLE `session` MODIFY COLUMN `session_id` varchar(255),
+                        DEFAULT CHARSET=utf8mb4, DEFAULT COLLATE=utf8mb4_general_ci";
+                $connection->query($sql);
+            }
         }
     }
 
@@ -758,6 +775,14 @@ class Installer
                 'Caches'
             );
             $connection->createTable($table);
+        } else {
+            // Update collation to utf8mb4
+            $getTableSchema = $connection->getCreateTable($setup->getTable('cache'));
+            if(str_contains($getTableSchema, "utf8mb3")){
+                $sql = "ALTER TABLE `cache` MODIFY COLUMN `id` varchar(200),
+                        DEFAULT CHARSET=utf8mb4, DEFAULT COLLATE=utf8mb4_general_ci";
+                $connection->query($sql);
+            }
         }
     }
 
@@ -795,6 +820,15 @@ class Installer
                 'Tag Caches'
             );
             $connection->createTable($table);
+        } else {
+            // Update collation to utf8mb4
+            $getTableSchema = $connection->getCreateTable($setup->getTable('cache_tag'));
+            if(str_contains($getTableSchema, "utf8mb3")){
+                $sql = "ALTER TABLE `cache_tag` MODIFY COLUMN `tag` varchar(100),
+                        MODIFY COLUMN `cache_id` varchar(200), DEFAULT CHARSET=utf8mb4,
+                        DEFAULT COLLATE=utf8mb4_general_ci";
+                $connection->query($sql);
+            }
         }
     }
 
@@ -853,6 +887,14 @@ class Installer
             $connection->createTable($table);
         } else {
             $this->updateColumnType($connection, $tableName, 'flag_data', 'mediumtext');
+            // Update collation to utf8mb4
+            $getTableSchema = $connection->getCreateTable($tableName);
+            if(str_contains($getTableSchema, "utf8mb3")){
+                $sql = "ALTER TABLE `flag` MODIFY COLUMN `flag_code` varchar(255),
+                        MODIFY COLUMN `flag_data` mediumtext,DEFAULT CHARSET=utf8mb4,
+                        DEFAULT COLLATE=utf8mb4_general_ci";
+                $connection->query($sql);
+            }
         }
     }
 

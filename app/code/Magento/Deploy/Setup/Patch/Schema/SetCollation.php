@@ -38,53 +38,53 @@ class SetCollation implements SchemaPatchInterface
         $setup = $this->schemaSetup;
 
         if ($setup->getConnection()->isTableExists('cache')) {
-            $setup->run("ALTER TABLE `cache` MODIFY COLUMN `id` varchar(200),
-                         DEFAULT CHARSET=utf8mb4, DEFAULT COLLATE=utf8mb4_general_ci");
+//            $setup->run("ALTER TABLE `cache` MODIFY COLUMN `id` varchar(200),
+//                         DEFAULT CHARSET=utf8mb4, DEFAULT COLLATE=utf8mb4_general_ci");
         }
         if ($setup->getConnection()->isTableExists('cache_tag')) {
-            $setup->run("ALTER TABLE `cache_tag` MODIFY COLUMN `tag` varchar(100),
-                         MODIFY COLUMN `cache_id` varchar(200), DEFAULT CHARSET=utf8mb4,
-                         DEFAULT COLLATE=utf8mb4_general_ci");
+//            $setup->run("ALTER TABLE `cache_tag` MODIFY COLUMN `tag` varchar(100),
+//                         MODIFY COLUMN `cache_id` varchar(200), DEFAULT CHARSET=utf8mb4,
+//                         DEFAULT COLLATE=utf8mb4_general_ci");
         }
         if ($setup->getConnection()->isTableExists('flag')) {
-            $setup->run("ALTER TABLE `flag` MODIFY COLUMN `flag_code` varchar(255),
-                         MODIFY COLUMN `flag_data` mediumtext,DEFAULT CHARSET=utf8mb4,
-                         DEFAULT COLLATE=utf8mb4_general_ci");
+//            $setup->run("ALTER TABLE `flag` MODIFY COLUMN `flag_code` varchar(255),
+//                         MODIFY COLUMN `flag_data` mediumtext,DEFAULT CHARSET=utf8mb4,
+//                         DEFAULT COLLATE=utf8mb4_general_ci");
         }
         if ($setup->getConnection()->isTableExists('session')) {
-            $setup->run("ALTER TABLE `session` MODIFY COLUMN `session_id` varchar(255),
-                         DEFAULT CHARSET=utf8mb4, DEFAULT COLLATE=utf8mb4_general_ci");
+//            $setup->run("ALTER TABLE `session` MODIFY COLUMN `session_id` varchar(255),
+//                         DEFAULT CHARSET=utf8mb4, DEFAULT COLLATE=utf8mb4_general_ci");
         }
         if ($setup->getConnection()->isTableExists('setup_module')) {
-            $setup->run("ALTER TABLE `setup_module` MODIFY COLUMN `module` varchar(50),
-                         MODIFY COLUMN `schema_version` varchar(50), MODIFY COLUMN `data_version` varchar(50),
-                         DEFAULT CHARSET=utf8mb4, DEFAULT COLLATE=utf8mb4_general_ci");
+//            $setup->run("ALTER TABLE `setup_module` MODIFY COLUMN `module` varchar(50),
+//                         MODIFY COLUMN `schema_version` varchar(50), MODIFY COLUMN `data_version` varchar(50),
+//                         DEFAULT CHARSET=utf8mb4, DEFAULT COLLATE=utf8mb4_general_ci");
         }
         if ($setup->getConnection()->isTableExists('design_config_grid_flat')) {
-            $setup->run("ALTER TABLE `design_config_grid_flat` MODIFY COLUMN `theme_theme_id`
-                         varchar(255),DEFAULT CHARSET=utf8mb4, DEFAULT COLLATE=utf8mb4_general_ci");
+//            $setup->run("ALTER TABLE `design_config_grid_flat` MODIFY COLUMN `theme_theme_id`
+//                         varchar(255),DEFAULT CHARSET=utf8mb4, DEFAULT COLLATE=utf8mb4_general_ci");
         }
 
         //set utf8mb4 for the below tables
         $clTable = [
             'catalog_category_product_cl',
-            'catalog_product_attribute_cl',
-            'catalog_product_category_cl',
-            'catalog_product_price_cl',
-            'cataloginventory_stock_cl',
-            'catalogrule_product_cl',
-            'catalogrule_rule_cl',
-            'catalogsearch_fulltext_cl',
-            'customer_dummy_cl',
-            'design_config_dummy_cl',
-            'salesrule_rule_cl',
-            'targetrule_product_rule_cl',
-            'targetrule_rule_product_cl'
+//            'catalog_product_attribute_cl',
+//            'catalog_product_category_cl',
+//            'catalog_product_price_cl',
+//            'cataloginventory_stock_cl',
+//            'catalogrule_product_cl',
+//            'catalogrule_rule_cl',
+//            'catalogsearch_fulltext_cl',
+//            'customer_dummy_cl',
+//            'design_config_dummy_cl',
+//            'salesrule_rule_cl',
+//            'targetrule_product_rule_cl',
+//            'targetrule_rule_product_cl'
         ];
 
         foreach ($clTable as $table) {
             if ($setup->getConnection()->isTableExists($table)) {
-                $setup->run("ALTER TABLE $table DEFAULT CHARSET=utf8mb4, DEFAULT COLLATE=utf8mb4_general_ci");
+//                $setup->run("ALTER TABLE $table DEFAULT CHARSET=utf8mb4, DEFAULT COLLATE=utf8mb4_general_ci");
             }
         }
 
