@@ -14,6 +14,4 @@ return [
     'lib/internal/Magento/Framework/Encryption/Test/Unit/CryptTest.php',
     'setup/src/Zend/Mvc/Controller/LazyControllerAbstractFactory.php',
     'app/code/Magento/CatalogInventory/Block/Adminhtml/Form/Field/Stock.php',
-    'app/code/Magento/Deploy/Setup/Patch/Schema/SetCollation.php',
-    'dev/tools/Magento/Tools/DatabaseCompare/etc/b2b/config.php',
 ];
