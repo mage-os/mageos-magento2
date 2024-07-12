@@ -18,11 +18,6 @@ class WordsTest extends \PHPUnit\Framework\TestCase
      */
     protected static $_wordsFinder;
 
-    /***
-     * @var
-     */
-    private $skip = false;
-
     public static function setUpBeforeClass(): void
     {
         self::$_wordsFinder = new \Magento\TestFramework\Inspection\WordsFinder(
@@ -40,11 +35,8 @@ class WordsTest extends \PHPUnit\Framework\TestCase
              * @param string $file
              */
             function ($file) {
-                if(str_contains(strtolower($file),"setcollation.php") || str_contains(strtolower($file),"b2b/config.php")){
-                    $this->skip = true;
-                }
                 $words = self::$_wordsFinder->findWords(realpath($file));
-                if ($words && !$this->skip) {
+                if ($words) {
                     $this->fail("Found words: '" . implode("', '", $words) . "' in '{$file}' file");
                 }
             },
