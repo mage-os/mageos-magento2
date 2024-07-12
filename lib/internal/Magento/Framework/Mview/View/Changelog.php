@@ -63,6 +63,21 @@ class Changelog implements ChangelogInterface
      */
     private $additionalColumnsProcessorFactory;
 
+    /***
+     * Charset for cl tables
+     */
+    private const CHARSET = 'utf8mb4';
+
+    /***
+     * Collation for cl tables
+     */
+    private const COLLATION = 'utf8mb4_general_ci';
+
+    /***
+     * Old Charset for cl tables
+     */
+    private const OLDCHARSET = 'utf8mb3';
+
     /**
      * @param \Magento\Framework\App\ResourceConnection $resource
      * @param Config $mviewConfig
@@ -130,6 +145,15 @@ class Changelog implements ChangelogInterface
             }
 
             $this->connection->createTable($table);
+        } else {
+            // change the charset to utf8mb4
+            $getTableSchema = $this->connection->getCreateTable($changelogTableName);
+            if(str_contains($getTableSchema, self::OLDCHARSET)) {
+                $this->connection->query(
+                    sprintf('ALTER TABLE %s DEFAULT CHARSET=%s, DEFAULT COLLATE=%s',
+                             $changelogTableName, self::CHARSET, self::COLLATION)
+                    );
+            }
         }
     }
 
