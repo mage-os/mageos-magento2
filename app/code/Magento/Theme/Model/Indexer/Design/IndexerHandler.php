@@ -24,6 +24,26 @@ class IndexerHandler extends Grid
      */
     private $flatScopeResolver;
 
+    /***
+     * Charset for flat table
+     */
+    private const CHARSET = 'utf8mb4';
+
+    /***
+     * Collation for flat table
+     */
+    private const COLLATION = 'utf8mb4_general_ci';
+
+    /***
+     * Old Charset for flat table
+     */
+    private const OLDCHARSET = 'utf8mb3';
+
+    /***
+     * table design_config_grid_flat
+     */
+    private const DESIGN_CONFIG_GRID_FLAT = "design_config_grid_flat";
+
     /**
      * @param IndexStructureInterface $indexStructure
      * @param ResourceConnection $resource
@@ -67,6 +87,21 @@ class IndexerHandler extends Grid
 
         if ($this->connection->isTableExists($tableName)) {
             $this->connection->delete($tableName);
+            // change the charset to utf8mb4
+            if ($tableName === self::DESIGN_CONFIG_GRID_FLAT) {
+                $getTableSchema = $this->connection->getCreateTable($tableName);
+                if (str_contains($getTableSchema, self::OLDCHARSET)) {
+                    $this->connection->query(
+                        sprintf(
+                            'ALTER TABLE `%s` MODIFY COLUMN `theme_theme_id` varchar(255),
+                             DEFAULT CHARSET=%s, DEFAULT COLLATE=%s',
+                            $tableName,
+                            self::CHARSET,
+                            self::COLLATION
+                        )
+                    );
+                }
+            }
         } else {
             $this->indexStructure->create($this->getIndexName(), $this->fields, $dimensions);
         }
