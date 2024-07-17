@@ -7,7 +7,7 @@
 -->
 <actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
-    <actionGroup name="AdminViewAuthorizationTransactionsInOrderActionGroup" extends="AdminViewTransactionsInOrderActionGroup">
+    <actionGroup name="AdminViewAuthorizationTransactionsInOrderActionGroup" extends="AdminAssertTransactionIdOfVoidOrderActionGroup">
         <annotations>
             <description>Click the Transactions button on the Order Details page and validate authorization transaction</description>
         </annotations>
