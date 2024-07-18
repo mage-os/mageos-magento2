@@ -735,7 +735,7 @@ class Installer
             $connection->createTable($table);
         } else {
             // change the charset to utf8mb4
-            $getTableSchema = $connection->getCreateTable($setup->getTable('session'));
+            $getTableSchema = $connection->getCreateTable($setup->getTable('session')) ?? '';
             if (str_contains($getTableSchema, self::OLDCHARSET)) {
                 $connection->query(
                     sprintf(
@@ -804,7 +804,7 @@ class Installer
             $connection->createTable($table);
         } else {
             // change the charset to utf8mb4
-            $getTableSchema = $connection->getCreateTable($setup->getTable('cache'));
+            $getTableSchema = $connection->getCreateTable($setup->getTable('cache')) ?? '';
             if (str_contains($getTableSchema, self::OLDCHARSET)) {
                 $connection->query(
                     sprintf(
@@ -855,7 +855,7 @@ class Installer
             $connection->createTable($table);
         } else {
             // change the charset to utf8mb4
-            $getTableSchema = $connection->getCreateTable($setup->getTable('cache_tag'));
+            $getTableSchema = $connection->getCreateTable($setup->getTable('cache_tag')) ?? '';
             if (str_contains($getTableSchema, self::OLDCHARSET)) {
                 $connection->query(
                     sprintf(
@@ -926,7 +926,7 @@ class Installer
         } else {
             $this->updateColumnType($connection, $tableName, 'flag_data', 'mediumtext');
             // change the charset to utf8mb4
-            $getTableSchema = $connection->getCreateTable($tableName);
+            $getTableSchema = $connection->getCreateTable($tableName) ?? '';
             if (str_contains($getTableSchema, self::OLDCHARSET)) {
                 $connection->query(
                     sprintf(

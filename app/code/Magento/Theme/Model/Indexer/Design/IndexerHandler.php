@@ -16,6 +16,7 @@ use Magento\Framework\Indexer\SaveHandler\IndexerInterface;
 use Magento\Framework\Indexer\ScopeResolver\FlatScopeResolver;
 use Magento\Framework\Indexer\ScopeResolver\IndexScopeResolver;
 use Magento\Framework\Search\Request\Dimension;
+use Magento\Framework\DB\Adapter\Pdo\Mysql;
 
 class IndexerHandler extends Grid
 {
@@ -44,6 +45,11 @@ class IndexerHandler extends Grid
      */
     private const DESIGN_CONFIG_GRID_FLAT = "design_config_grid_flat";
 
+    /***
+     * @var Mysql
+     */
+    private $mysqlAdapter;
+
     /**
      * @param IndexStructureInterface $indexStructure
      * @param ResourceConnection $resource
@@ -59,6 +65,7 @@ class IndexerHandler extends Grid
         Batch $batch,
         IndexScopeResolver $indexScopeResolver,
         FlatScopeResolver $flatScopeResolver,
+        Mysql $mysqlAdapter,
         array $data,
         $batchSize = 100
     ) {
@@ -71,7 +78,7 @@ class IndexerHandler extends Grid
             $data,
             $batchSize
         );
-
+        $this->mysqlAdapter = $mysqlAdapter;
         $this->flatScopeResolver = $flatScopeResolver;
     }
 
@@ -89,7 +96,7 @@ class IndexerHandler extends Grid
             $this->connection->delete($tableName);
             // change the charset to utf8mb4
             if ($tableName === self::DESIGN_CONFIG_GRID_FLAT) {
-                $getTableSchema = $this->connection->getCreateTable($tableName);
+                $getTableSchema = $this->mysqlAdapter->getCreateTable($tableName) ?? '';
                 if (str_contains($getTableSchema, self::OLDCHARSET)) {
                     $this->connection->query(
                         sprintf(

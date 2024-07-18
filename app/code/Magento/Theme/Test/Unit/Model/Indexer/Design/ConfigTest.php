@@ -29,6 +29,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Theme\Model\Indexer\Design\IndexerHandler;
 use Magento\Framework\DB\Adapter\AdapterInterface;
+use Magento\Framework\DB\Adapter\Pdo\Mysql;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -92,6 +93,11 @@ class ConfigTest extends TestCase
      */
     private $collectionFactory;
 
+    /***
+     * @var Mysql
+     */
+    private $mysqlAdapter;
+
     protected function setUp(): void
     {
         $this->indexerStructure = $this->getMockBuilder(IndexStructureInterface::class)
@@ -132,6 +138,9 @@ class ConfigTest extends TestCase
             ->getMock();
         $this->indexerFieldset = $this->getMockBuilder(FieldsetInterface::class)
             ->getMockForAbstractClass();
+        $this->mysqlAdapter = $this->getMockBuilder(Mysql::class)
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     /**
@@ -168,6 +177,7 @@ class ConfigTest extends TestCase
             $this->batch,
             $this->indexScopeResolver,
             $this->flatScopeResolver,
+            $this->mysqlAdapter,
             [
                 'fieldsets' => [],
                 'indexer_id' => DesignConfig::DESIGN_CONFIG_GRID_INDEXER_ID
