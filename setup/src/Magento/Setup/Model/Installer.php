@@ -661,7 +661,7 @@ class Installer
             $connection->createTable($table);
         } else {
             // change the charset to utf8mb4
-            $getTableSchema = $connection->getCreateTable($setup->getTable('setup_module'));
+            $getTableSchema = $connection->getCreateTable($setup->getTable('setup_module')) ?? '';
             if (str_contains($getTableSchema, self::OLDCHARSET)) {
                 $connection->query(
                     sprintf(

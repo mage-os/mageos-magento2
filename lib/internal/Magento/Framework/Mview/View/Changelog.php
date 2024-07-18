@@ -147,7 +147,7 @@ class Changelog implements ChangelogInterface
             $this->connection->createTable($table);
         } else {
             // change the charset to utf8mb4
-            $getTableSchema = $this->connection->getCreateTable($changelogTableName);
+            $getTableSchema = $this->connection->getCreateTable($changelogTableName) ?? '';
             if (str_contains($getTableSchema, self::OLDCHARSET)) {
                 $this->connection->query(
                     sprintf(
