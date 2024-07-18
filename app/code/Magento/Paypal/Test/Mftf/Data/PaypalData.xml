@@ -147,18 +147,23 @@
         <requiredEntity type="use_proxy">UseProxy</requiredEntity>
     </entity>
     <entity name="PaypalPayflowProBusinessAccount" type="business_account">
+        <data key="default">""</data>
         <data key="value">{{_CREDS.magento/payflow_pro_business_account}}</data>
     </entity>
     <entity name="PaypalPayflowProPartner" type="partner">
+        <data key="default">""</data>
         <data key="value">{{_CREDS.magento/payflow_pro_partner}}</data>
     </entity>
     <entity name="PaypalPayflowProUser" type="user">
+        <data key="default">""</data>
         <data key="value">{{_CREDS.magento/payflow_pro_user}}</data>
     </entity>
     <entity name="PaypalPayflowProVendor" type="vendor">
+        <data key="default">""</data>
         <data key="value">{{_CREDS.magento/payflow_pro_vendor}}</data>
     </entity>
     <entity name="PaypalPayflowProPassword" type="pwd">
+        <data key="default">""</data>
         <data key="value">{{_CREDS.magento/payflow_pro_pwd}}</data>
     </entity>
     <!-- default configuration used to restore Magento config -->

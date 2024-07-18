@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminConfigurationForPaymentsProThroughCLIActionGroup">
+        <annotations>
+            <description>Configuring payments pro solution through CLI Command</description>
+        </annotations>
+        <arguments>
+            <argument name="credentials" defaultValue="_CREDS"/>
+        </arguments>
+        <magentoCLI command="config:set payment/payflowpro/partner {{credentials.magento/payflow_pro_partner}}" stepKey="enterInputPartner"/>
+        <magentoCLI command="config:set payment/payflowpro/vendor {{credentials.magento/payflow_pro_vendor}}" stepKey="enterInputForVendor"/>
+        <magentoCLI command="config:set payment/payflowpro/user {{credentials.magento/payflow_pro_user}}" stepKey="enterInputForUser"/>
+        <magentoCLI command="config:set payment/payflowpro/pwd {{credentials.magento/payflow_pro_pwd}}" stepKey="enterInputForPassword"/>
+        <magentoCLI command="config:set payment/payflowpro/sandbox_flag 1" stepKey="enableSandboxMode"/>
+        <magentoCLI command="config:set payment/paypal_payment_pro/active 1" stepKey="enablePaymentsPro"/>
+        <magentoCLI command="config:set payment/payflow_express_bml/active 1" stepKey="enablePayPalCredit"/>
+        <magentoCLI command="config:set payment/payflowpro_cc_vault/active 1" stepKey="enablePayPalVault"/>
+    </actionGroup>
+</actionGroups>
