@@ -5,6 +5,8 @@
  */
 namespace Magento\NewRelicReporting\Model;
 
+use Magento\Framework\App\State;
+use Magento\Framework\App\ObjectManager;
 use Throwable;
 
 /**
@@ -15,6 +17,26 @@ use Throwable;
 class NewRelicWrapper
 {
     private const NEWRELIC_APPNAME = 'newrelic.appname';
+
+    /**
+     * @var Config
+     */
+    private $config;
+
+    /**
+     * @var State
+     */
+    private $state;
+
+    /**
+     * @param ?Config $config
+     * @param ?State $state
+     */
+    public function __construct(?Config $config = null, ?State $state = null)
+    {
+        $this->config = $config ?? ObjectManager::getInstance()->get(Config::class);
+        $this->state = $state ?? ObjectManager::getInstance()->get(State::class);
+    }
 
     /**
      * Wrapper for 'newrelic_add_custom_parameter' function
@@ -79,7 +101,8 @@ class NewRelicWrapper
     public function startBackgroundTransaction()
     {
         if ($this->isExtensionInstalled()) {
-            newrelic_start_transaction(ini_get(self::NEWRELIC_APPNAME));
+            $name = $this->getCurrentAppName();
+            newrelic_start_transaction($name);
             newrelic_background_job();
         }
     }
@@ -105,5 +128,22 @@ class NewRelicWrapper
     public function isExtensionInstalled()
     {
         return extension_loaded('newrelic');
+    }
+
+    /**
+     * Get current App name for NR transactions
+     *
+     * @return string
+     */
+    public function getCurrentAppName()
+    {
+        if ($this->config->isSeparateApps() &&
+            $this->config->getNewRelicAppName() &&
+            $this->config->isNewRelicEnabled()) {
+            $code = $this->state->getAreaCode();
+            $current = $this->config->getNewRelicAppName();
+            return $current . ';' . $current . '_' . $code;
+        }
+        return ini_get(self::NEWRELIC_APPNAME);
     }
 }
