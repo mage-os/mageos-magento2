@@ -8,9 +8,9 @@
 
 <actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
-    <actionGroup name="AdminConfigurationForPaymentsProThroughCLIActionGroup">
+    <actionGroup name="AdminConfigPaypalPaymentsProActionGroup">
         <annotations>
-            <description>Configuring payments pro solution through CLI Command</description>
+            <description>Configure paypal payment pro solution</description>
         </annotations>
         <arguments>
             <argument name="credentials" defaultValue="_CREDS"/>

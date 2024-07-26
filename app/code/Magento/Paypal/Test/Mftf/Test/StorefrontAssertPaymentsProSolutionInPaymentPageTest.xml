@@ -12,7 +12,7 @@
             <features value="PayPal"/>
             <stories value="Payment methods"/>
             <title value="Check configuration for Payments Pro in Unites States For Paymentspro"/>
-            <description value="Check payments pro option's enablement and disablement based on the configuration setting For Payments Pro in backend"/>
+            <description value="Check payments pro option's enablement based on the configuration setting For Payments Pro in backend"/>
             <severity value="MAJOR"/>
             <testCaseId value="AC-4790"/>
             <group value="3rd_party_integration"/>
@@ -25,21 +25,21 @@
                 <requiredEntity createDataKey="simpleCategory"/>
             </createData>
             <magentoCLI command="config:set paypal/general/merchant_country US" stepKey="setMerchantCountry"/>
+            <!--Admin navigate to payment configuration page and assert no other paypal payment is enabled-->
+            <actionGroup ref="AdminClearForPaypalPaymentsProActionGroup" stepKey="clearPaymentsProExistingData"/>
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
         </before>
         <after>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
             <magentoCLI command="config:set paypal/general/merchant_country US" stepKey="setMerchantCountryAsUS"/>
-            <actionGroup ref="AdminClearForPaymentsProThroughCLICommandActionGroup" stepKey="clearPaymentsProData"/>
+            <actionGroup ref="AdminClearForPaypalPaymentsProActionGroup" stepKey="clearPaymentsProData"/>
             <magentoCLI command="config:set payment/paypal_payment_pro/active 0" stepKey="disablePayPalPaymentsPro"/>
             <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
             <deleteData createDataKey="simpleProduct" stepKey="deleteProduct"/>
             <deleteData createDataKey="simpleCategory" stepKey="deleteCategory"/>
         </after>
-        <!--Admin navigate to payment configuration page and assert no other paypal payment is enabled-->
-        <actionGroup ref="AdminClearForPaymentsProThroughCLICommandActionGroup" stepKey="clearPaymentsProExistingData"/>
         <!--Enable Payment Pro through CLI Command-->
-        <actionGroup ref="AdminConfigurationForPaymentsProThroughCLIActionGroup" stepKey="configurePaymentsPro"/>
+        <actionGroup ref="AdminConfigPaypalPaymentsProActionGroup" stepKey="configurePaymentsPro"/>
         <actionGroup ref="CliIndexerReindexActionGroup" stepKey="performReindex">
             <argument name="indices" value=""/>
         </actionGroup>
@@ -71,9 +71,9 @@
         <actionGroup ref="StorefrontCheckoutClickNextOnShippingStepActionGroup" stepKey="goToCheckoutPaymentPage"/>
         <waitForPageLoad stepKey="waitForLoadingPaypalPaymentPage"/>
         <!-- Assert Paypal Payment Pro In Storefront Payment method Page-->
-        <waitForElementVisible selector="{{AdminConfigPaymentsProPaypalCreditSection.payFlowEdition}}" stepKey="assertPayflowEdition"/>
-        <waitForElementVisible selector="{{AdminConfigPaymentsProPaypalCreditSection.payFlowExpress}}" stepKey="assertPayflowExpress"/>
-        <waitForElementVisible selector="{{AdminConfigPaymentsProPaypalCreditSection.creditCardPayflow}}" stepKey="assertCreditCardPayflowPro"/>
+        <waitForElementVisible selector="{{AdminConfigPaypalPaymentsProSection.payFlowEdition}}" stepKey="assertPayflowEdition"/>
+        <waitForElementVisible selector="{{AdminConfigPaypalPaymentsProSection.payFlowExpress}}" stepKey="assertPayflowExpress"/>
+        <waitForElementVisible selector="{{AdminConfigPaypalPaymentsProSection.creditCardPayflow}}" stepKey="assertCreditCardPayflowPro"/>
         <magentoCLI command="config:set payment/payflow_express_bml/active 0" stepKey="disablePayPalCredit"/>
         <magentoCLI command="config:set payment/payflowpro_cc_vault/active 1" stepKey="enablePayPalVault"/>
         <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
@@ -84,8 +84,8 @@
         </actionGroup>
         <!-- Refresh page -->
         <reloadPage stepKey="refreshPage"/>
-        <waitForElementVisible selector="{{AdminConfigPaymentsProPaypalCreditSection.payFlowEdition}}" stepKey="seePayflowEditionPayment"/>
-        <waitForElementNotVisible selector="{{AdminConfigPaymentsProPaypalCreditSection.payFlowExpress}}" stepKey="dontSeePaypalCreditPayment"/>
-        <waitForElementVisible selector="{{AdminConfigPaymentsProPaypalCreditSection.creditCardPayflow}}" stepKey="seeCreditcardPayment"/>
+        <waitForElementVisible selector="{{AdminConfigPaypalPaymentsProSection.payFlowEdition}}" stepKey="seePayflowEditionPayment"/>
+        <waitForElementNotVisible selector="{{AdminConfigPaypalPaymentsProSection.payFlowExpress}}" stepKey="dontSeePaypalCreditPayment"/>
+        <waitForElementVisible selector="{{AdminConfigPaypalPaymentsProSection.creditCardPayflow}}" stepKey="seeCreditcardPayment"/>
     </test>
 </tests>

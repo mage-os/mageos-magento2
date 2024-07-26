@@ -8,7 +8,7 @@
 
 <actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
-    <actionGroup name="AdminClearForPaymentsProThroughCLICommandActionGroup">
+    <actionGroup name="AdminClearForPaypalPaymentsProActionGroup">
         <annotations>
             <description>Check No Other Paypal Payment Solution Exist and If Exist then Clear the Credentials</description>
         </annotations>
