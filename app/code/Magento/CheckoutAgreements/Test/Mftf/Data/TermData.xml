@@ -68,6 +68,7 @@
     <entity name="disableTermsAndConditions" type="term">
         <data key="path">checkout/options/enable_agreements</data>
         <data key="value">0</data>
+    </entity>    
     <entity name="termAndCondition" type="term">
         <data key="name" unique="suffix">Test Condition</data>
         <data key="isActive">Enabled</data>
