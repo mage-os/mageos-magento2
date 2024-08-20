@@ -216,7 +216,7 @@
         <comment userInput="Admin creates category." stepKey="adminCreatesCategoryComment" before="navigateToCategoryPage"/>
         <actionGroup ref="AdminOpenCategoryPageActionGroup" stepKey="navigateToCategoryPage"/>
         <!--Create category under Default Category-->
-        <click selector="{{AdminCategorySidebarTreeSection.expandCategoryByName('Default Category')}}" stepKey="clickDefaultCategory"/>
+        <click selector="{{AdminCategorySidebarTreeSection.categoryInTree(_defaultCategory.name)}}" stepKey="clickDefaultCategory"/>
         <actionGroup ref="CheckCategoryNameIsRequiredFieldActionGroup" stepKey="checkCategoryNameIsRequired"/>
         <actionGroup ref="CreateCategoryActionGroup" stepKey="createCategory">
             <argument name="categoryEntity" value="_defaultCategory"/>
