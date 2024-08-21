@@ -19,6 +19,16 @@
         <before>
             <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
             <createData entity="SimpleProduct" stepKey="simpleProduct"/>
+            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="runIndexCronJobs1">
+                <argument name="indices" value=""/>
+            </actionGroup>
+            <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanCache1">
+                <argument name="tags" value="config full_page"/>
+            </actionGroup>
+            <!--  Verify Product On Storefront Page -->
+            <actionGroup ref="StorefrontOpenProductEntityPageActionGroup" stepKey="goToProductOnStorefront">
+                <argument name="product" value="$$simpleProduct$$"/>
+            </actionGroup>
             <magentoCLI command="config:set paypal/general/merchant_country US" stepKey="setMerchantCountry"/>
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
         </before>
@@ -31,9 +41,11 @@
         </after>
         <amOnPage url="{{AdminConfigPaymentMethodsPage.url}}" stepKey="navigateToPaymentConfigurationPage"/>
         <waitForPageLoad stepKey="waitForConfigPageLoad"/>
+        <!--Assert Section Available in Other Paypal Payment Solution Link-->
         <conditionalClick selector="{{OtherPayPalPaymentsConfigSection.expandTab1('us')}}" dependentSelector="{{OtherPayPalPaymentsConfigSection.expandedTab('us')}}" visible="false" stepKey="clickOtherPayPalPaymentsSection"/>
         <conditionalClick selector="{{PayPalPaymentsProConfigSection.paypalAllInOnePaymentSolutions('us')}}" dependentSelector="{{PayPalPaymentsProConfigSection.paypalAllInOnePaymentSolutions('us')}}" visible="true" stepKey="clickPayPalPaymentsSection"/>
-        <waitForElementNotVisible selector="{{PayPalPaymentsProConfigSection.closeButton('us')}}" stepKey="assertPayLink"/>
+        <waitForElementNotVisible selector="{{PayPalPaymentsProConfigSection.closeButton('us')}}" stepKey="assertPaymentsProConfigBtn"/>
+        <actionGroup ref="AdminAssertOtherPaypalPaymentSolutionActionGroup" stepKey="AssertOtherPaypalPaymentSolutionLink"/>
         <actionGroup ref="AdminAssetForPayallInOneActionGroup" stepKey="AssertPayAllInOneLink"/>
         <!--Clear paypal details config related data-->
         <actionGroup ref="AdminClearPaymentsProActionGroup" stepKey="clearExistingDataForPaymentsPro"/>
@@ -47,6 +59,7 @@
         <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanCache">
             <argument name="tags" value="config full_page"/>
         </actionGroup>
+        <waitForElementNotVisible selector="{{PayPalPaymentsProConfigSection.closeButton('us')}}" stepKey="assertConfigureBtnNotVisible"/>
         <!--Login to storefront as guest customer-->
         <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToStoreFront"/>
         <waitForPageLoad stepKey="waitForProductPage"/>
@@ -54,8 +67,6 @@
         <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="addSimpleProductToCart">
             <argument name="product" value="$simpleProduct$"/>
         </actionGroup>
-        <!--Go to cart page-->
-        <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="gotoCart"/>
         <!--Open cart page and proceed to checkout-->
         <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="goToCheckoutCartPage"/>
         <actionGroup ref="StorefrontClickProceedToCheckoutActionGroup" stepKey="clickProceedToCheckout"/>
@@ -88,6 +99,7 @@
         <waitForElementVisible selector="{{PayPalPaymentsProConfigSection.sortOrder('us')}}" stepKey="assertSortOrderFieldIsDisappeared"/>
         <seeOptionIsSelected selector="{{PayPalPaymentsProConfigSection.enableVault('us')}}" userInput="Yes" stepKey="seeValultIsSetAsNo"/>
         <actionGroup ref="AdminSaveConfigActionGroup" stepKey="saveConfiguration"/>
+        <waitForElementVisible selector="{{PayPalPaymentsProConfigSection.configureBtn('us')}}" stepKey="assertConfigureVisible"/>
         <actionGroup ref="StorefrontNavigateToGuestCheckoutReviewAndPaymentsPageActionGroup" stepKey="goToStoreFrontCheckoutPageToAssertPaypalPaymentMethodIsDisappeared"/>
         <dontSee selector="{{StorefrontCheckoutPaymentMethodSection.checkPaymentMethodByName('PayPal Express Checkout Payflow Edition')}}" stepKey="assertPayPalPaymentIsAbsent"/>
         <!--Set Paypal Credit to No and assert the status-->
@@ -95,6 +107,7 @@
         <magentoCLI command="config:set payment/payflow_express_bml/active 0" stepKey="disablePayPalCreditPaymentMethod"/>
         <amOnPage url="{{AdminConfigPaymentMethodsPage.url}}" stepKey="navigateToPaymentConfigurationPageAfterEnablingPaypal"/>
         <waitForPageLoad stepKey="waitForPaymentMethodPageToLoadAfterEnabling"/>
+        <waitForElementNotVisible selector="{{PayPalPaymentsProConfigSection.closeButton('us')}}" stepKey="assertConfigeBtnNotVisible"/>
         <waitForElementClickable selector="{{PayPalPaymentsProConfigSection.configureBtn('us')}}" stepKey="waitForClickPayPalConfigureBtnToAssertStatusAfterEnabling"/>
         <click selector="{{PayPalPaymentsProConfigSection.configureBtn('us')}}" stepKey="clickPayPalConfigureBtnToAssertStatusAfterEnabling"/>
         <waitForElementVisible selector="{{PayPalPaymentsProConfigSection.disabledEnableSolution('us')}}" stepKey="assertGreenTickMarkForEnableThisSolutionDropdown"/>

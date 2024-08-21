@@ -27,5 +27,17 @@
         <clearField selector="{{PayPalPaymentsProConfigSection.user(countryCode)}}" stepKey="clearInputUsereField"/>
         <clearField selector="{{PayPalPaymentsProConfigSection.password(countryCode)}}" stepKey="clearInputPasswordField"/>
         <selectOption selector="{{PayPalPaymentsProConfigSection.testMode(countryCode)}}" userInput="No" stepKey="disableTestMode"/>
+        <assertElementContainsAttribute stepKey="seeEnablePaymentsProSolutionIsDisabled">
+            <expectedResult selector="{{PayPalPaymentsProConfigSection.enableSolution(countryCode)}}" attribute="disabled" type="string"></expectedResult>
+        </assertElementContainsAttribute>
+        <seeOptionIsSelected selector="{{PayPalPaymentsProConfigSection.enableSolution(countryCode)}}" userInput="No" stepKey="seeEnableThisSolutionIsSetAsNo"/>
+        <assertElementContainsAttribute stepKey="seeEnablePaypalCreditIsDisabled">
+            <expectedResult selector="{{PayPalPaymentsProConfigSection.enablePaypalCredit(countryCode)}}" attribute="disabled" type="string"></expectedResult>
+        </assertElementContainsAttribute>
+        <seeOptionIsSelected selector="{{PayPalPaymentsProConfigSection.enablePaypalCredit(countryCode)}}" userInput="No" stepKey="seePaypalCreditIsSetAsNo" after="seeEnablePaypalCreditIsDisabled"/>
+        <assertElementContainsAttribute stepKey="seeEnableVaultIsDisabled">
+            <expectedResult selector="{{PayPalPaymentsProConfigSection.enableVault(countryCode)}}" attribute="disabled" type="string"></expectedResult>
+        </assertElementContainsAttribute>
+        <seeOptionIsSelected selector="{{PayPalPaymentsProConfigSection.enableVault(countryCode)}}" userInput="No" stepKey="seeValultIsSetAsNo" after="seeEnableVaultIsDisabled"/>
     </actionGroup>
 </actionGroups>
