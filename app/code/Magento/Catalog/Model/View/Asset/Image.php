@@ -11,7 +11,7 @@ use Magento\Catalog\Model\Config\CatalogMediaConfig;
 use Magento\Catalog\Model\Product\Image\ConvertImageMiscParamsToReadableFormat;
 use Magento\Catalog\Model\Product\Media\ConfigInterface;
 use Magento\Framework\App\ObjectManager;
-use Magento\Framework\Encryption\Encryptor;
+use Magento\Framework\Config\ConfigOptionsListConstants;
 use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\View\Asset\ContextInterface;
@@ -260,29 +260,52 @@ class Image implements LocalInterface
     }
 
     /**
-     * Retrieve part of path based on misc params
-     *
-     * @return string
-     */
-    private function getMiscPath()
-    {
-        return $this->encryptor->hash(
-            implode('_', $this->convertToReadableFormat($this->miscParams)),
-            Encryptor::HASH_VERSION_MD5
-        );
-    }
-
-    /**
-     * Generate path from image info
+     * Generate path from image info.
      *
      * @return string
      */
     private function getImageInfo()
     {
-        $path = $this->getModule()
-            . DIRECTORY_SEPARATOR . $this->getMiscPath()
-            . DIRECTORY_SEPARATOR . $this->getFilePath();
-        return preg_replace('|\Q'. DIRECTORY_SEPARATOR . '\E+|', DIRECTORY_SEPARATOR, $path);
+        $data = implode('_', $this->convertToReadableFormat($this->miscParams));
+
+        $pathTemplate = $this->getModule()
+            . DIRECTORY_SEPARATOR . "%s" . DIRECTORY_SEPARATOR
+            . $this->getFilePath();
+
+        // New paths are generated without dependency on
+        // an encryption key.
+        $hashBasedPath = preg_replace(
+            '|\Q' . DIRECTORY_SEPARATOR . '\E+|',
+            DIRECTORY_SEPARATOR,
+            sprintf($pathTemplate, hash('md5', $data))
+        );
+
+        if (is_readable($this->context->getPath() . DIRECTORY_SEPARATOR . $hashBasedPath)) {
+            return $hashBasedPath;
+        }
+
+        // This loop is intended to preserve backward compatibility and keep
+        // existing encryption key based media gallery cache valid
+        // even if an encryption key was changed.
+        foreach (preg_split('/\s+/s', $this->encryptor->exportKeys()) as $key) {
+            if (str_starts_with($key, ConfigOptionsListConstants::STORE_KEY_ENCODED_RANDOM_STRING_PREFIX)) {
+                $key = base64_decode(
+                    substr($key, strlen(ConfigOptionsListConstants::STORE_KEY_ENCODED_RANDOM_STRING_PREFIX))
+                );
+            }
+
+            $keyBasedPath = preg_replace(
+                '|\Q' . DIRECTORY_SEPARATOR . '\E+|',
+                DIRECTORY_SEPARATOR,
+                sprintf($pathTemplate, hash_hmac("md5", $data, $key))
+            );
+
+            if (is_readable($this->context->getPath() . DIRECTORY_SEPARATOR . $keyBasedPath)) {
+                return $keyBasedPath;
+            }
+        }
+
+        return $hashBasedPath;
     }
 
     /**
