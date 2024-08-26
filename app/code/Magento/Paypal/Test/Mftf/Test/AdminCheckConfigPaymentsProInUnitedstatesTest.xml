@@ -59,7 +59,7 @@
         <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanCache">
             <argument name="tags" value="config full_page"/>
         </actionGroup>
-        <waitForElementNotVisible selector="{{PayPalPaymentsProConfigSection.closeButton('us')}}" stepKey="assertConfigureBtnNotVisible"/>
+        <waitForElementNotVisible selector="{{PayPalPaymentsProConfigSection.closeButton('us')}}" stepKey="assertConfigureBtnIsDisabled"/>
         <!--Login to storefront as guest customer-->
         <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToStoreFront"/>
         <waitForPageLoad stepKey="waitForProductPage"/>
@@ -118,7 +118,7 @@
         <seeOptionIsSelected selector="{{PayPalPaymentsProConfigSection.enablePaypalCredit('us')}}" userInput="No" stepKey="seeEnablePaypalCreditIsSetAsNo"/>
         <waitForElementNotVisible selector="{{PayPalPaymentsProConfigSection.disabledPaypalCredit('us')}}" stepKey="assertGreenTickMarkAbsentForPaypalCreditDropdown"/>
         <waitForElementVisible selector="{{PayPalPaymentsProConfigSection.disabledVault('us')}}" stepKey="assertGreenTickMarkForEnableVaultDropdown"/>
-        <waitForElementVisible selector="{{PayPalPaymentsProConfigSection.closeButton('us')}}" stepKey="assertConfigBtnNotToBeVisible"/>
+        <waitForElementVisible selector="{{PayPalPaymentsProConfigSection.closeButton('us')}}" stepKey="assertConfigBtnIsDisabled"/>
         <!--Go to checkout page and assert paypal express checkout Payflow Edition and Credit Card option is present-->
         <actionGroup ref="StorefrontNavigateToGuestCheckoutReviewAndPaymentsPageActionGroup" stepKey= "goToStoreFrontCheckoutPageToAssertPaypalPaymentMethodIsPresent"/>
         <waitForElementVisible selector="{{StorefrontCheckoutPaymentMethodSection.checkPaymentMethodByName('PayPal Express Checkout Payflow Edition')}}" stepKey="assertPayPalExpressPayflowEdition"/>
