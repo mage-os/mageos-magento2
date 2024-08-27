@@ -127,6 +127,7 @@ class StaticFieldTest extends TestCase
      * @param bool $isComplexType
      * @param string $complexType
      * @param bool $isSortable
+     * @param bool $isSuggestible
      * @param bool $isTextType
      * @param string $fieldName
      * @param string $compositeFieldName
@@ -145,6 +146,7 @@ class StaticFieldTest extends TestCase
         bool $isComplexType,
         string $complexType,
         bool $isSortable,
+        bool $isSuggestible,
         bool $isTextType,
         string $fieldName,
         string $compositeFieldName,
@@ -196,7 +198,7 @@ class StaticFieldTest extends TestCase
 
         $attributeMock = $this->getMockBuilder(AttributeAdapter::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['isComplexType', 'getAttributeCode', 'isSortable', 'isTextType'])
+            ->onlyMethods(['isComplexType', 'getAttributeCode', 'isSortable', 'isTextType', 'isSuggestible'])
             ->getMock();
         $attributeMock->expects($this->any())
             ->method('isComplexType')
@@ -204,6 +206,9 @@ class StaticFieldTest extends TestCase
         $attributeMock->expects($this->any())
             ->method('isSortable')
             ->willReturn($isSortable);
+        $attributeMock->expects($this->any())
+            ->method('isSuggestible')
+            ->willReturn($isSuggestible);
         $attributeMock->expects($this->any())
             ->method('isTextType')
             ->willReturn($isTextType);
@@ -254,6 +259,7 @@ class StaticFieldTest extends TestCase
                 true,
                 'text',
                 false,
+                false,
                 true,
                 'category_ids',
                 'category_ids_value',
@@ -268,9 +274,11 @@ class StaticFieldTest extends TestCase
                                 'index' => 'not_analyzed',
                             ],
                         ],
+                        'suggestible' => false,
                     ],
                     'category_ids_value' => [
                         'type' => 'string',
+                        'suggestible' => false,
                     ],
                     'store_id' => [
                         'type' => 'string',
@@ -284,6 +292,7 @@ class StaticFieldTest extends TestCase
                 false,
                 false,
                 'select',
+                true,
                 true,
                 false,
                 'attr_code_value',
@@ -300,6 +309,7 @@ class StaticFieldTest extends TestCase
                                 'normalizer' => 'folding',
                             ],
                         ],
+                        'suggestible' => true,
                     ],
                     'store_id' => [
                         'type' => 'string',
@@ -315,6 +325,7 @@ class StaticFieldTest extends TestCase
                 'text',
                 false,
                 true,
+                true,
                 'attr_code',
                 '',
                 '',
@@ -328,6 +339,7 @@ class StaticFieldTest extends TestCase
                                 'index' => 'not_analyzed',
                             ],
                         ],
+                        'suggestible' => true,
                     ],
                     'store_id' => [
                         'type' => 'string',
@@ -343,6 +355,7 @@ class StaticFieldTest extends TestCase
                 'text',
                 false,
                 false,
+                false,
                 'attr_code',
                 '',
                 '',
@@ -350,6 +363,7 @@ class StaticFieldTest extends TestCase
                     'attr_code' => [
                         'type' => 'text',
                         'index' => false,
+                        'suggestible' => false,
                     ],
                     'store_id' => [
                         'type' => 'string',
@@ -365,6 +379,7 @@ class StaticFieldTest extends TestCase
                 'text',
                 true,
                 false,
+                false,
                 'attr_code',
                 '',
                 'sort_attr_code',
@@ -379,6 +394,7 @@ class StaticFieldTest extends TestCase
                                 'normalizer' => 'folding',
                             ],
                         ],
+                        'suggestible' => false,
                     ],
                     'store_id' => [
                         'type' => 'string',
@@ -392,6 +408,7 @@ class StaticFieldTest extends TestCase
                 false,
                 false,
                 'text',
+                false,
                 false,
                 false,
                 'price',
