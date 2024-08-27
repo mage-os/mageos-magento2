@@ -61,6 +61,16 @@ class AttributeAdapter
     }
 
     /**
+     * Check if attribute value can be suggested.
+     *
+     * @return bool
+     */
+    public function isSuggestible(): bool
+    {
+        return $this->getAttribute()->getIsSearchable();
+    }
+
+    /**
      * Check if attribute is need to index always.
      *
      * @return bool

@@ -282,7 +282,8 @@ class Suggestions implements SuggestedQueriesInterface
     private function getSuggestFields()
     {
         $fields = array_filter($this->fieldProvider->getFields(), function ($field) {
-            return (($field['type'] ?? null) === 'text') && (($field['index'] ?? null) !== false);
+            return (($field['type'] ?? null) === 'text') && (($field['index'] ?? null) !== false)
+                && (($field['suggestible'] ?? null) !== false);
         });
 
         return array_keys($fields);
