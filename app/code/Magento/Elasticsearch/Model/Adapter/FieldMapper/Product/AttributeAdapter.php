@@ -67,7 +67,7 @@ class AttributeAdapter
      */
     public function isSuggestible(): bool
     {
-        return $this->getAttribute()->getIsSearchable();
+        return (boolean)$this->getAttribute()->getIsSearchable();
     }
 
     /**
