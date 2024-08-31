@@ -169,8 +169,6 @@ class StaticField implements FieldProviderInterface
             ];
         }
 
-        $fieldMapping[$fieldName]['suggestible'] = $attributeAdapter->isSuggestible();
-
         if ($attributeAdapter->isTextType()) {
             $keywordFieldName = FieldTypeConverterInterface::INTERNAL_DATA_TYPE_KEYWORD;
             $index = $this->indexTypeConverter->convert(
@@ -209,7 +207,6 @@ class StaticField implements FieldProviderInterface
                     'normalizer' => 'folding',
                 ];
             }
-            $fieldMapping[$childFieldName]['suggestible'] = $attributeAdapter->isSuggestible();
         }
 
         return $fieldMapping;
