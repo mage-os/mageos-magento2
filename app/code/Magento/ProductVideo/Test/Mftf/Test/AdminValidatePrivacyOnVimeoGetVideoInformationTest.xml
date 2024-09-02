@@ -18,10 +18,6 @@
             <testCaseId value="MC-42471"/>
             <useCaseId value="MC-42105"/>
             <group value="productVideo"/>
-            <group value="pr_exclude"/>
-            <skip>
-                <issueId value="AC-12714"/>
-            </skip>
         </annotations>
         <before>
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
@@ -37,6 +33,6 @@
         </actionGroup>
         <actionGroup ref="AdminGetVideoInformationActionGroup" stepKey="clickOnGetVideoInformation"/>
         <waitForElementVisible selector="{{AdminConfirmationModalSection.message}}" stepKey="waitForWarningMessage"/>
-        <see selector="{{AdminConfirmationModalSection.message}}" userInput='Because of its privacy settings, this video cannot be played here.' stepKey="seeAdminWarningMessage"/>
+        <see selector="{{AdminConfirmationModalSection.message}}" userInput='Video not found or Because of its privacy settings, this video cannot be played here.' stepKey="seeAdminWarningMessage"/>
     </test>
 </tests>

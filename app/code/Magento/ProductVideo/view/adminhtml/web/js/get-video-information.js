@@ -564,7 +564,7 @@ define([
                          * @private
                          */
                         error: function () {
-                            self._onRequestError($.mage.__('Video not found'));
+                            self._onRequestError($.mage.__('Video not found or Because of its privacy settings, this video cannot be played here.'));
                         }
                     });
                 }
