@@ -13,10 +13,6 @@
         <element name="applyDiscountCodeHeader" type="select" selector="//strong[text()='Apply Discount Code']"/>
         <element name="discountCodeField" type="input" selector=".control #coupon_code"/>
         <element name="applyDiscount" type="button" selector="//button//span[text()='Apply Discount']"/>
-        <element name="gitCardHeader" type="select" selector="//strong[@id='block-giftcard-heading']"/>
-        <element name="giftCardField" type="input" selector="//input[@id='giftcard-code']"/>
-        <element name="addGiftCard" type="button" selector="//span[text()='Add Gift Card']"/>
-        <element name="giftCardStatus" type="select" selector="//span[text()='Check Gift Card status and balance']"/>
         <element name="grandTotal" type="text" selector="//td[@data-th='Grand Total']//strong"/>
     </section>
 </sections>

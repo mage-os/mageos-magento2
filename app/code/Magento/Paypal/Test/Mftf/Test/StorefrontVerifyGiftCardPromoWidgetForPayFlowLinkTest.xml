@@ -30,11 +30,6 @@
                 <argument name="couponCode" value="CatPriceRule.coupon_code"/>
             </actionGroup>
             <createData entity="GiftCardCodePool" stepKey="createCodePool"/>
-            <actionGroup ref="AddGiftCardAccountActionGroup" stepKey="addGiftCardAccount">
-                <argument name="website" value="Main Website" />
-                <argument name="balanceAmount" value="50" />
-            </actionGroup>
-            <grabTextFrom selector="{{AdminGiftCardAccountGridSection.giftCardCode}}" stepKey="giftCardAccountCode"/>
             <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
                 <argument name="indices" value=""/>
             </actionGroup>
@@ -44,10 +39,6 @@
         </before>
         <after>
             <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
-            <!-- Delete gift card account -->
-            <actionGroup ref="DeleteGiftCardAccountActionGroup" stepKey="deleteGiftCardAccount">
-                <argument name="giftCardAccountCode" value="$giftCardAccountCode"/>
-            </actionGroup>
             <actionGroup ref="DeleteCartPriceRuleByName" stepKey="deleteCartPriceRule">
                 <argument name="ruleName" value="{{CatPriceRule.name}}"/>
             </actionGroup>
@@ -78,17 +69,7 @@
         <click selector="{{StorefrontPayPalOrderReviewSection.applyDiscount}}" stepKey="clickApplyDiscount"/>
         <waitForPageLoad stepKey="waitForCouponToBeApplied"/>
         <waitForElement selector="{{StorefrontPayPalOrderReviewSection.grandTotal('$95.00')}}" stepKey="assertTotalAfterDiscountApplied"/>
-
-
-        <waitForElementClickable selector="{{StorefrontPayPalOrderReviewSection.gitCardHeader}}" stepKey="waitForGiftCardHeaderToBeClickable"/>
-        <click selector="{{StorefrontPayPalOrderReviewSection.gitCardHeader}}" stepKey="clickGiftCardHeader"/>
-        <waitForElementVisible selector="{{StorefrontPayPalOrderReviewSection.giftCardField}}" stepKey="waitForGiftCodeFieldToBeVisible"/>
-        <fillField selector="{{StorefrontPayPalOrderReviewSection.giftCardField}}" userInput="$giftCardAccountCode" stepKey="fillGiftCodeField"/>
-        <waitForElementClickable selector="{{StorefrontPayPalOrderReviewSection.addGiftCard}}" stepKey="waitForAddGiftCardToBeClickable"/>
-        <click selector="{{StorefrontPayPalOrderReviewSection.addGiftCard}}" stepKey="clickAddGiftCard"/>
-        <waitForPageLoad stepKey="waitForCouponToBeApplied2"/>
-        <waitForElement selector="{{StorefrontPayPalOrderReviewSection.grandTotal('$55.00')}}" stepKey="assertTotalAfterGiftCardApplied"/>
         <!--SubmitOrder-->
-        <actionGroup ref="StorefrontPlaceOrderOnOrderReviewPageActionGroup" stepKey="clickPlaceOrderBtn"/>
+        <actionGroup ref="StorefrontPlaceOrderOnOrderReviewPageActionGroup" stepKey="clickPlaceOrderBtn" after="assertTotalAfterGiftCardApplied"/>
     </test>
 </tests>
