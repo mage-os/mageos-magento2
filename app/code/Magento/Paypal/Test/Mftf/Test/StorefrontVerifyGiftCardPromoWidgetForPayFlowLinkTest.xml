@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontVerifyGiftCardPromoWidgetForPayFlowLinkTest">
+        <annotations>
+            <features value="payFlow link"/>
+            <stories value="Storefront Gift Card and Promo Codes"/>
+            <title value="Verify that Apply gift cards or promo codes widget is shown on order review page"/>
+            <description value="Verify that Apply gift cards or promo codes widget is shown on order review page for PayFlow Link (Includes Express Checkout)"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="AC-4378"/>
+        </annotations>
+        <before>
+            <createData entity="simpleProductWithoutCategory" stepKey="createProduct">
+                <field key="price">100.00</field>
+            </createData>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+            <actionGroup ref="AdminEnablePayPalPayFlowLinkActionGroup" stepKey="ConfigPayPalPayFlowLink">
+                <argument name="credentials" value="SamplePaypalPaymentsFlowLinkConfig"/>
+            </actionGroup>
+            <!-- Create cart price rule -->
+            <actionGroup ref="AdminCreateCartPriceRuleWithCouponCodeActionGroup" stepKey="createCartPriceRule">
+                <argument name="ruleName" value="CatPriceRule"/>
+                <argument name="couponCode" value="CatPriceRule.coupon_code"/>
+            </actionGroup>
+            <createData entity="GiftCardCodePool" stepKey="createCodePool"/>
+            <actionGroup ref="AddGiftCardAccountActionGroup" stepKey="addGiftCardAccount">
+                <argument name="website" value="Main Website" />
+                <argument name="balanceAmount" value="50" />
+            </actionGroup>
+            <grabTextFrom selector="{{AdminGiftCardAccountGridSection.giftCardCode}}" stepKey="giftCardAccountCode"/>
+            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+                <argument name="indices" value=""/>
+            </actionGroup>
+            <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanCache">
+                <argument name="tags" value="config full_page"/>
+            </actionGroup>
+        </before>
+        <after>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <!-- Delete gift card account -->
+            <actionGroup ref="DeleteGiftCardAccountActionGroup" stepKey="deleteGiftCardAccount">
+                <argument name="giftCardAccountCode" value="$giftCardAccountCode"/>
+            </actionGroup>
+            <actionGroup ref="DeleteCartPriceRuleByName" stepKey="deleteCartPriceRule">
+                <argument name="ruleName" value="{{CatPriceRule.name}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminDisablePayPalPayFlowLinkActionGroup" stepKey="disablePayPalPayFlow"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <actionGroup ref="StorefrontAddSimpleProductWithQtyActionGroup" stepKey="addSimpleProductToCart">
+            <argument name="product" value="$$createProduct$$"/>
+            <argument name="quantity" value="1"/>
+        </actionGroup>
+        <!--Go to shopping cart-->
+        <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="openShoppingCartPage"/>
+        <waitForElementVisible selector="{{CheckoutPaymentSection.checkoutWithPaypal}}" stepKey="waitForPayPalBtn"/>
+        <click selector="{{CheckoutPaymentSection.checkoutWithPaypal}}" stepKey="clickPayPalBtn"/>
+        <!--Login to Paypal in-context-->
+        <actionGroup ref="StorefrontLoginToPayPalPaymentAccountTwoStepActionGroup" stepKey="LoginToPayPal"/>
+        <waitForElementClickable selector="{{CheckoutPaymentSection.reviewOrder}}" stepKey="waitForReviewOrderButtonToBeClickable"/>
+        <click selector="{{CheckoutPaymentSection.reviewOrder}}" stepKey="clickReviewOrderButton"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <!--Click PayPal button and go back to Magento site-->
+        <actionGroup ref="StorefrontPaypalSwitchBackToMagentoFromCheckoutPageActionGroup" stepKey="goBackToMagentoSite"/>
+        <actionGroup ref="StorefrontSelectShippingMethodOnOrderReviewPageActionGroup" stepKey="selectShippingMethod"/>
+        <waitForElementClickable selector="{{StorefrontPayPalOrderReviewSection.applyDiscountCodeHeader}}" stepKey="waitForDiscountHeaderToBeClickable"/>
+        <click selector="{{StorefrontPayPalOrderReviewSection.applyDiscountCodeHeader}}" stepKey="clickDiscountHeader"/>
+        <waitForElementVisible selector="{{StorefrontPayPalOrderReviewSection.discountCodeField}}" stepKey="waitForDiscountCodeFieldToBeVisible"/>
+        <fillField selector="{{StorefrontPayPalOrderReviewSection.discountCodeField}}" userInput="{{CatPriceRule.coupon_code}}" stepKey="fillDiscountCodeField"/>
+        <waitForElementClickable selector="{{StorefrontPayPalOrderReviewSection.applyDiscount}}" stepKey="waitForApplyDiscountToBeClickable"/>
+        <click selector="{{StorefrontPayPalOrderReviewSection.applyDiscount}}" stepKey="clickApplyDiscount"/>
+        <waitForPageLoad stepKey="waitForCouponToBeApplied"/>
+        <waitForElement selector="{{StorefrontPayPalOrderReviewSection.grandTotal('$95.00')}}" stepKey="assertTotalAfterDiscountApplied"/>
+
+
+        <waitForElementClickable selector="{{StorefrontPayPalOrderReviewSection.gitCardHeader}}" stepKey="waitForGiftCardHeaderToBeClickable"/>
+        <click selector="{{StorefrontPayPalOrderReviewSection.gitCardHeader}}" stepKey="clickGiftCardHeader"/>
+        <waitForElementVisible selector="{{StorefrontPayPalOrderReviewSection.giftCardField}}" stepKey="waitForGiftCodeFieldToBeVisible"/>
+        <fillField selector="{{StorefrontPayPalOrderReviewSection.giftCardField}}" userInput="$giftCardAccountCode" stepKey="fillGiftCodeField"/>
+        <waitForElementClickable selector="{{StorefrontPayPalOrderReviewSection.addGiftCard}}" stepKey="waitForAddGiftCardToBeClickable"/>
+        <click selector="{{StorefrontPayPalOrderReviewSection.addGiftCard}}" stepKey="clickAddGiftCard"/>
+        <waitForPageLoad stepKey="waitForCouponToBeApplied2"/>
+        <waitForElement selector="{{StorefrontPayPalOrderReviewSection.grandTotal('$55.00')}}" stepKey="assertTotalAfterGiftCardApplied"/>
+        <!--SubmitOrder-->
+        <actionGroup ref="StorefrontPlaceOrderOnOrderReviewPageActionGroup" stepKey="clickPlaceOrderBtn"/>
+    </test>
+</tests>
