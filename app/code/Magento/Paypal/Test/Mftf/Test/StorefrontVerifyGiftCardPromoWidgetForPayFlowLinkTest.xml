@@ -29,7 +29,6 @@
                 <argument name="ruleName" value="CatPriceRule"/>
                 <argument name="couponCode" value="CatPriceRule.coupon_code"/>
             </actionGroup>
-            <createData entity="GiftCardCodePool" stepKey="createCodePool"/>
             <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
                 <argument name="indices" value=""/>
             </actionGroup>
