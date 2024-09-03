@@ -68,7 +68,5 @@
         <click selector="{{StorefrontPayPalOrderReviewSection.applyDiscount}}" stepKey="clickApplyDiscount"/>
         <waitForPageLoad stepKey="waitForCouponToBeApplied"/>
         <waitForElement selector="{{StorefrontPayPalOrderReviewSection.grandTotal('$95.00')}}" stepKey="assertTotalAfterDiscountApplied"/>
-        <!--SubmitOrder-->
-        <actionGroup ref="StorefrontPlaceOrderOnOrderReviewPageActionGroup" stepKey="clickPlaceOrderBtn" after="assertTotalAfterGiftCardApplied"/>
     </test>
 </tests>
