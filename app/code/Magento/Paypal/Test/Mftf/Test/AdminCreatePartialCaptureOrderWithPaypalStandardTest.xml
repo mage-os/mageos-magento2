@@ -82,7 +82,6 @@
         <waitForPageLoad stepKey="waitPageToBeLoaded" after="clickUpdateQtyAfterUpdatingInvoiceBtn"/>
         <seeOptionIsSelected userInput="Capture Online" selector="{{AdminInvoiceTotalSection.amount}}" stepKey="seeOptionType" after="waitPageToBeLoaded"/>
         <actionGroup ref="AdminInvoiceClickSubmitActionGroup" stepKey="clickSubmitInvoice"/>
-
         <actionGroup ref="AdminOrderViewCheckStatusActionGroup" stepKey="checkOrderStatus">
             <argument name="status" value="Processing"/>
         </actionGroup>
@@ -91,6 +90,10 @@
         <click selector="{{AdminOrderDetailsOrderViewSection.invoices}}" stepKey="openInvoicesTab"/>
         <!--Check Invoice Section -->
         <waitForElementVisible selector="{{AdminOrderDetailsMainActionsSection.invoiceTabContent}}" stepKey="waitForInvoiceSectionContentToBeAppeared"/>
+        <waitForElementClickable selector="{{AdminOrderDetailsOrderViewSection.information}}" stepKey="waitForClickOrderInformation"/>
+        <click selector="{{AdminOrderDetailsOrderViewSection.information}}" stepKey="clickInformation"/>
+        <waitForPageLoad stepKey="waitForOrderInformationTabLoadingMask"/>
+
         <waitForElementVisible selector="{{AdminOrderDetailsInformationSection.paymentInformationField('Last Transaction ID')}}" stepKey="waitForLastTransactionIDFieldToBeAppearedAfterSubmittingInvoice"/>
         <grabTextFrom selector="{{AdminOrderDetailsInformationSection.paymentInformationField('Last Transaction ID')}}" stepKey="grabLastTransactionIDForCaptured"/>
         <!--Open the comment history tab and assert the comment-->
