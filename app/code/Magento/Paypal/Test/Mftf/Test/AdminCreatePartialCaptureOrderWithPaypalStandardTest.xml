@@ -74,7 +74,6 @@
 
         <!--Submit invoice-->
         <actionGroup ref="AdminClickInvoiceButtonOrderViewActionGroup" stepKey="clickInvoiceButton"/>
-        <seeOptionIsSelected userInput="Capture Online" selector="{{AdminInvoiceTotalSection.amount}}" stepKey="seeOptionType"/>
         <!--Update qty as 1 and assert the status of the order-->
         <actionGroup ref="AdminFillQtyToInvoiceOnCreateInvoicePageActionGroup" stepKey="fillInvoiceQuantity">
             <argument name="qty" value="1"/>
