@@ -300,26 +300,6 @@ class EditPost extends AbstractAccount implements CsrfAwareActionInterface, Http
     }
 
     /**
-     * Convert comma-separated list of attributes to delete into array
-     *
-     * @param string $attribute
-     * @return array
-     */
-    private function prepareAttributesToDelete(string $attribute) : array
-    {
-        $result = [];
-        if ($attribute !== "") {
-            if (str_contains($attribute, ',')) {
-                $result = explode(',', $attribute);
-            } else {
-                $result[] = $attribute;
-            }
-            $result = array_unique($result);
-        }
-        return $result;
-    }
-
-    /**
      * Adds a complex success message if email confirmation is required
      *
      * @param CustomerInterface $outdatedCustomer
