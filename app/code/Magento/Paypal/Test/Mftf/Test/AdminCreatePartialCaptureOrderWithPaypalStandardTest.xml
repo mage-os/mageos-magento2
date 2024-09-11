@@ -64,14 +64,12 @@
             <!-- Logout-->
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
         </after>
-
         <waitForElementVisible selector="{{CheckoutSuccessMainSection.orderNumber}}" stepKey="waitForOrderNumberToBeGrabbed"/>
         <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber}}" stepKey="grabOrderNumber"/>
         <!-- Go to order page -->
         <actionGroup ref="OpenOrderByIdActionGroup" stepKey="openFirstOrderPage">
             <argument name="orderId" value="{$grabOrderNumber}"/>
         </actionGroup>
-
         <!--Submit invoice-->
         <actionGroup ref="AdminClickInvoiceButtonOrderViewActionGroup" stepKey="clickInvoiceButton"/>
         <!--Update qty as 1 and assert the status of the order-->
