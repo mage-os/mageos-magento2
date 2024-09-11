@@ -40,5 +40,9 @@ class TestPreparedSubscriber implements PreparedSubscriber
             $testObj->markTestSkipped($skipConfig['skipMessage']);
         }
         Magento::setTestPrepared(true);
+        Magento::setCurrentEventObject($event);
+
+        $phpUnit = $objectManager->create(PhpUnit::class);
+        $phpUnit->startTest($testObj);
     }
 }
