@@ -127,7 +127,8 @@ abstract class AbstractDataFixture
                     'Unable to apply fixture: ' . $this->getFixtureReference($fixture),
                     $fixture['test']['class'],
                     $fixture['test']['method'],
-                    $exception
+                    $exception,
+                    $test
                 );
             }
             $this->_appliedFixtures[] = $fixture;
@@ -157,7 +158,8 @@ abstract class AbstractDataFixture
                     'Unable to revert fixture: ' . $this->getFixtureReference($fixture),
                     $fixture['test']['class'],
                     $fixture['test']['method'],
-                    $exception
+                    $exception,
+                    $test
                 );
             }
         }

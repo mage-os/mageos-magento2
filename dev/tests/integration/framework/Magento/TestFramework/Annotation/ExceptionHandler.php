@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\TestFramework\Annotation;
 
 use PHPUnit\Framework\Exception;
+use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionException;
 
@@ -20,13 +21,15 @@ class ExceptionHandler
      * @param string $testClass
      * @param string|null $testMethod
      * @param \Throwable|null $previous
+     * @param TestCase|null $test
      * @return void
      */
     public static function handle(
         string $message,
         string $testClass,
         string $testMethod = null,
-        \Throwable $previous = null
+        \Throwable $previous = null,
+        TestCase $test = null
     ): void {
         try {
             $reflected = new ReflectionClass($testClass);
@@ -72,7 +75,7 @@ class ExceptionHandler
                     . $exception->getTraceAsString();
             } while ($exception = $exception->getPrevious());
         }
-        throw new Exception(
+        $exception = new Exception(
             sprintf(
                 "%s\n#0 %s%s",
                 $message,
@@ -82,5 +85,14 @@ class ExceptionHandler
             0,
             $previous
         );
+        if ($test) {
+            \PHPUnit\Event\Facade::emitter()->testErrored(
+                $test->valueObjectForEvents(),
+                \PHPUnit\Event\Code\ThrowableBuilder::from($exception),
+            );
+            $test::fail($exception->getMessage());
+        } else {
+            throw $exception;
+        }
     }
 }

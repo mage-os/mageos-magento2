@@ -26,11 +26,11 @@ class TestPreprationStartedSubscriber implements PreparationStartedSubscriber
         $className = $event->test()->className();
         $methodName = $event->test()->methodName();
 
-//        $testObj = $objectManager->create($className, ['name' => $methodName]);
-//
-//        Magento::setCurrentEventObject($event);
-//
-//        $phpUnit = $objectManager->create(PhpUnit::class);
-//        $phpUnit->startTest($testObj);
+        $testObj = $objectManager->create($className, ['name' => $methodName]);
+
+        Magento::setCurrentEventObject($event);
+
+        $phpUnit = $objectManager->create(PhpUnit::class);
+        $phpUnit->startTest($testObj);
     }
 }
