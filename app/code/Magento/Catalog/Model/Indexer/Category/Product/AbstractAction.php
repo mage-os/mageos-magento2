@@ -18,6 +18,7 @@ use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\ObjectManager\ResetAfterRequestInterface;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\Store;
+use Magento\Catalog\Model\Product\Visibility;
 
 // phpcs:disable Magento2.Classes.AbstractApi
 /**
@@ -137,12 +138,18 @@ abstract class AbstractAction implements ResetAfterRequestInterface
     private $currentStore;
 
     /**
+     * @var Visibility
+     */
+    private $visibility;
+
+    /**
      * @param ResourceConnection $resource
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Magento\Catalog\Model\Config $config
      * @param QueryGenerator $queryGenerator
      * @param MetadataPool|null $metadataPool
      * @param TableMaintainer|null $tableMaintainer
+     * @param Visibility|null $visibility
      */
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resource,
@@ -150,7 +157,8 @@ abstract class AbstractAction implements ResetAfterRequestInterface
         \Magento\Catalog\Model\Config $config,
         QueryGenerator $queryGenerator = null,
         MetadataPool $metadataPool = null,
-        TableMaintainer $tableMaintainer = null
+        TableMaintainer $tableMaintainer = null,
+        Visibility $visibility = null
     ) {
         $this->resource = $resource;
         $this->connection = $resource->getConnection();
@@ -159,6 +167,7 @@ abstract class AbstractAction implements ResetAfterRequestInterface
         $this->queryGenerator = $queryGenerator ?: ObjectManager::getInstance()->get(QueryGenerator::class);
         $this->metadataPool = $metadataPool ?: ObjectManager::getInstance()->get(MetadataPool::class);
         $this->tableMaintainer = $tableMaintainer ?: ObjectManager::getInstance()->get(TableMaintainer::class);
+        $this->visibility = $visibility ?: ObjectManager::getInstance()->get(Visibility::class);
     }
 
     /**
@@ -374,11 +383,7 @@ abstract class AbstractAction implements ResetAfterRequestInterface
                 \Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED
             )->where(
                 $this->connection->getIfNullSql('cpvs.value', 'cpvd.value') . ' IN (?)',
-                [
-                    \Magento\Catalog\Model\Product\Visibility::VISIBILITY_IN_CATALOG,
-                    \Magento\Catalog\Model\Product\Visibility::VISIBILITY_IN_SEARCH,
-                    \Magento\Catalog\Model\Product\Visibility::VISIBILITY_BOTH
-                ]
+                $this->visibility->getVisibleInSiteIds()
             )->columns(
                 [
                     'category_id' => 'cc.entity_id',
@@ -626,11 +631,7 @@ abstract class AbstractAction implements ResetAfterRequestInterface
             \Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED
         )->where(
             $this->connection->getIfNullSql('cpvs.value', 'cpvd.value') . ' IN (?)',
-            [
-                \Magento\Catalog\Model\Product\Visibility::VISIBILITY_IN_CATALOG,
-                \Magento\Catalog\Model\Product\Visibility::VISIBILITY_IN_SEARCH,
-                \Magento\Catalog\Model\Product\Visibility::VISIBILITY_BOTH
-            ]
+            $this->visibility->getVisibleInSiteIds()
         )->where(
             $this->connection->getIfNullSql('ccas.value', 'ccad.value') . ' = ?',
             1
@@ -871,11 +872,7 @@ abstract class AbstractAction implements ResetAfterRequestInterface
                 \Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED
             )->where(
                 $this->connection->getIfNullSql('cpvs.value', 'cpvd.value') . ' IN (?)',
-                [
-                    \Magento\Catalog\Model\Product\Visibility::VISIBILITY_IN_CATALOG,
-                    \Magento\Catalog\Model\Product\Visibility::VISIBILITY_IN_SEARCH,
-                    \Magento\Catalog\Model\Product\Visibility::VISIBILITY_BOTH
-                ]
+                $this->visibility->getVisibleInSiteIds()
             )->group(
                 'cp.entity_id'
             )->columns(

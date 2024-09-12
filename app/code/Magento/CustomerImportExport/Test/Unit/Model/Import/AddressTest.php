@@ -455,6 +455,23 @@ class AddressTest extends TestCase
     }
 
     /**
+     * @dataProvider validateRowForUpdateDataProvider
+     *
+     * @param array $rowData
+     * @param array $errors
+     * @param boolean $isValid
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function testValidateRowForUpdateGlobalCustomer(array $rowData, array $errors, $isValid = false)
+    {
+        if ($isValid) {
+            $this->assertTrue($this->_model->validateRow($rowData, 0));
+        } else {
+            $this->assertFalse($this->_model->validateRow($rowData, 0));
+        }
+    }
+
+    /**
      * Test Address::validateRow()
      * with 2 rows with identical PKs in case when add/update behavior is performed
      *
