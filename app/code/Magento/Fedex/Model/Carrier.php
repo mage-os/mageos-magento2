@@ -937,15 +937,14 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
         return $this->retrieveAccessToken($apiKey, $secretKey);
     }
 
-
     /**
      * Make the call to get the access token
      *
-     * @param $apiKey
-     * @param $secretKey
+     * @param string|null $apiKey
+     * @param string|null $secretKey
      * @return string|null
      */
-    private function retrieveAccessToken($apiKey, $secretKey): string|null
+    private function retrieveAccessToken(?string $apiKey, ?string $secretKey): string|null
     {
         if (!$apiKey || !$secretKey) {
             $this->_debug(__('Authentication keys are missing.'));
@@ -977,7 +976,7 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
      *
      * @return string|null
      */
-    private function _getTrackingApiAccessToken(): string|null
+    private function getTrackingApiAccessToken(): string|null
     {
         $trackingApiKey = $this->getConfigData('tracking_api_key') ?? null;
         $trackingSecretKey = $this->getConfigData('tracking_api_secret_key') ?? null;
@@ -1034,8 +1033,8 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
      */
     protected function _getTrackingInformation($tracking): void
     {
-        if ($this->getConfigData('enable_tracking_api')) {
-            $accessToken = $this->_getTrackingApiAccessToken();
+        if ($this->getConfigData('enabled_tracking_api')) {
+            $accessToken = $this->getTrackingApiAccessToken();
         } else {
             $accessToken = $this->_getAccessToken();
         }
