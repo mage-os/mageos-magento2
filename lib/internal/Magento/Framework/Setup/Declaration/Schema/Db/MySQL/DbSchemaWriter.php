@@ -16,6 +16,7 @@ use Magento\Framework\Setup\Declaration\Schema\Dto\Column;
 use Magento\Framework\Setup\Declaration\Schema\Dto\Constraint;
 use Magento\Framework\Setup\Declaration\Schema\Dto\Constraints\Reference;
 use Magento\Framework\Setup\Declaration\Schema\DryRunLogger;
+use Magento\Framework\Setup\Declaration\Schema\Dto\Factories\Table as DtoFactoriesTable;
 
 /**
  * @inheritdoc
@@ -74,21 +75,29 @@ class DbSchemaWriter implements DbSchemaWriterInterface
         'weee_tax'
     ];
 
-    /**
+    /***
+     * @var DtoFactoriesTable
+     */
+    private $columnConfig;
+
+    /***
      * @param ResourceConnection $resourceConnection
-     * @param StatementFactory   $statementFactory
-     * @param DryRunLogger       $dryRunLogger
-     * @param array              $tableOptions
+     * @param StatementFactory $statementFactory
+     * @param DryRunLogger $dryRunLogger
+     * @param DtoFactoriesTable $dtoFactoriesTable
+     * @param array $tableOptions
      */
     public function __construct(
         ResourceConnection $resourceConnection,
         StatementFactory $statementFactory,
         DryRunLogger $dryRunLogger,
+        DtoFactoriesTable $dtoFactoriesTable,
         array $tableOptions = []
     ) {
         $this->resourceConnection = $resourceConnection;
         $this->statementFactory = $statementFactory;
         $this->dryRunLogger = $dryRunLogger;
+        $this->columnConfig = $dtoFactoriesTable;
         $this->tableOptions = array_replace($this->tableOptions, $tableOptions);
     }
 
@@ -217,6 +226,19 @@ class DbSchemaWriter implements DbSchemaWriterInterface
      */
     public function modifyColumn($columnName, $resource, $tableName, $columnDefinition)
     {
+
+        $keywords = ["varchar", "char", "text"];
+        foreach ($keywords as $word) {
+            if (str_contains($columnDefinition, $word)) {
+                $charset = $this->columnConfig->getDefaultCharset();
+                $collate = $this->columnConfig->getDefaultCollation();
+                $position = strpos($columnDefinition, ' ', (strpos($columnDefinition, ' ')) + 1);
+                $string = " CHARACTER SET " . $charset . " COLLATE" . $collate;
+                $columnDefinition = $this->insertString($columnDefinition, $string, $position);
+                break;
+            }
+        }
+
         $sql = sprintf(
             'MODIFY COLUMN %s',
             $columnDefinition
@@ -369,5 +391,21 @@ class DbSchemaWriter implements DbSchemaWriterInterface
             }
         }
         return $sqlStmtWithoutAddingConstraint;
+    }
+
+    /***
+     * @param $originalString
+     * @param $stringToInsert
+     * @param $insertPosition
+     * @return string
+     */
+    private function insertString($originalString, $stringToInsert, $insertPosition): string
+    {
+        // Ensure the position is within the bounds of the original string
+        if ($insertPosition < 0 || $insertPosition > strlen($originalString)) {
+            return $originalString;
+        }
+        // Insert the string at the specified position
+        return substr($originalString, 0, $insertPosition). $stringToInsert . substr($originalString, $insertPosition);
     }
 }
