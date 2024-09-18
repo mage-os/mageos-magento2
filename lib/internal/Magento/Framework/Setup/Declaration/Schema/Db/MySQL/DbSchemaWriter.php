@@ -226,19 +226,13 @@ class DbSchemaWriter implements DbSchemaWriterInterface
      */
     public function modifyColumn($columnName, $resource, $tableName, $columnDefinition)
     {
-
-        $keywords = ["varchar", "char", "text"];
-        foreach ($keywords as $word) {
-            if (str_contains($columnDefinition, $word)) {
-                $charset = $this->columnConfig->getDefaultCharset();
-                $collate = $this->columnConfig->getDefaultCollation();
-                $position = strpos($columnDefinition, ' ', (strpos($columnDefinition, ' ')) + 1);
-                $string = " CHARACTER SET " . $charset . " COLLATE" . $collate;
-                $columnDefinition = $this->insertString($columnDefinition, $string, $position);
+        $columnTypes = ["varchar", "char", "text"];
+        foreach ($columnTypes as $type) {
+            if (str_contains($columnDefinition, $type)) {
+                $columnDefinition = $this->applyCharsetAndCollation($columnDefinition);
                 break;
             }
         }
-
         $sql = sprintf(
             'MODIFY COLUMN %s',
             $columnDefinition
@@ -394,18 +388,21 @@ class DbSchemaWriter implements DbSchemaWriterInterface
     }
 
     /***
-     * @param $originalString
-     * @param $stringToInsert
-     * @param $insertPosition
+     * Adding charset and collation at column level
+     * after column name and column type
+     *
+     * @param $columnDefinition
      * @return string
      */
-    private function insertString($originalString, $stringToInsert, $insertPosition): string
+    private function applyCharsetAndCollation($columnDefinition): string
     {
-        // Ensure the position is within the bounds of the original string
-        if ($insertPosition < 0 || $insertPosition > strlen($originalString)) {
-            return $originalString;
+        if(!empty($columnDefinition)) {
+            $charset = $this->columnConfig->getDefaultCharset();
+            $collate = $this->columnConfig->getDefaultCollation();
+            $columnLevelConfig = "CHARACTER SET " . $charset . " COLLATE " . $collate;
+            $columnsAttribute  = explode(" ", $columnDefinition);
+            array_splice($columnsAttribute, 2, 0, $columnLevelConfig);
+            return implode(" ", $columnsAttribute);
         }
-        // Insert the string at the specified position
-        return substr($originalString, 0, $insertPosition). $stringToInsert . substr($originalString, $insertPosition);
     }
 }
