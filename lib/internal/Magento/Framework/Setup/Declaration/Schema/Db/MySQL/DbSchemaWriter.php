@@ -226,7 +226,7 @@ class DbSchemaWriter implements DbSchemaWriterInterface
      */
     public function modifyColumn($columnName, $resource, $tableName, $columnDefinition)
     {
-        $columnTypes = ["varchar", "char", "text"];
+        $columnTypes = ['varchar', 'char', 'text'];
         foreach ($columnTypes as $type) {
             if (str_contains($columnDefinition, $type)) {
                 $columnDefinition = $this->applyCharsetAndCollation($columnDefinition);
@@ -398,8 +398,8 @@ class DbSchemaWriter implements DbSchemaWriterInterface
         if (!empty($columnDefinition)) {
             $charset = $this->columnConfig->getDefaultCharset();
             $collate = $this->columnConfig->getDefaultCollation();
-            $columnLevelConfig = "CHARACTER SET " . $charset . " COLLATE " . $collate;
-            $columnsAttribute  = explode(" ", $columnDefinition);
+            $columnLevelConfig = 'CHARACTER SET ' . $charset . ' COLLATE ' . $collate;
+            $columnsAttribute  = explode(' ', $columnDefinition);
             array_splice($columnsAttribute, 2, 0, $columnLevelConfig);
             return implode(" ", $columnsAttribute);
         }
