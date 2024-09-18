@@ -17,6 +17,7 @@ use Throwable;
 class NewRelicWrapper
 {
     private const NEWRELIC_APPNAME = 'newrelic.appname';
+    private const NEWRELIC_AUTO_INSTRUMENT = 'newrelic.browser_monitoring.auto_instrument';
 
     /**
      * @var Config
@@ -128,6 +129,60 @@ class NewRelicWrapper
     public function isExtensionInstalled()
     {
         return extension_loaded('newrelic');
+    }
+
+    /**
+     * Checks whether automatic injection of the browser monitoring is enabled
+     *
+     * @return bool
+     */
+    public function isAutoInstrumentEnabled(): bool
+    {
+        return $this->isExtensionInstalled() && ini_get(self::NEWRELIC_AUTO_INSTRUMENT);
+    }
+
+    /**
+     * Wrapper for 'newrelic_disable_autorum'
+     *
+     * @return bool|null
+     */
+    public function disableAutorum(): ?bool
+    {
+        if (!$this->isExtensionInstalled()) {
+            return null;
+        }
+
+        return newrelic_disable_autorum();
+    }
+
+    /**
+     * Wrapper for 'newrelic_get_browser_timing_header'
+     *
+     * @param bool $includeTags
+     * @return string|null
+     */
+    public function getBrowserTimingHeader(bool $includeTags = true): ?string
+    {
+        if (!$this->isExtensionInstalled()) {
+            return null;
+        }
+
+        return newrelic_get_browser_timing_header($includeTags);
+    }
+
+    /**
+     * Wrapper for 'newrelic_get_browser_timing_footer'
+     *
+     * @param bool $includeTags
+     * @return string|null
+     */
+    public function getBrowserTimingFooter(bool $includeTags = true): ?string
+    {
+        if (!$this->isExtensionInstalled()) {
+            return null;
+        }
+
+        return newrelic_get_browser_timing_footer($includeTags);
     }
 
     /**
