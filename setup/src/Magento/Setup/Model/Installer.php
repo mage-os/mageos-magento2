@@ -274,6 +274,11 @@ class Installer
      */
     private const OLDCHARSET = 'utf8mb3';
 
+    /***
+     * charset and collation for column level
+     */
+    private const COLUMN_ENCODING = " CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci";
+
     /**
      * Constructor
      *
@@ -665,10 +670,14 @@ class Installer
             if (str_contains($getTableSchema, self::OLDCHARSET)) {
                 $connection->query(
                     sprintf(
-                        'ALTER TABLE `%s` MODIFY COLUMN `module` varchar(50),
-                        MODIFY COLUMN `schema_version` varchar(50), MODIFY COLUMN `data_version` varchar(50),
+                        'ALTER TABLE `%s` MODIFY COLUMN `module` varchar(50) %s,
+                        MODIFY COLUMN `schema_version` varchar(50) %s,
+                        MODIFY COLUMN `data_version` varchar(50) %s,
                         DEFAULT CHARSET=%s, DEFAULT COLLATE=%s',
                         $setup->getTable('setup_module'),
+                        self::COLUMN_ENCODING,
+                        self::COLUMN_ENCODING,
+                        self::COLUMN_ENCODING,
                         self::CHARSET,
                         self::COLLATION
                     )
@@ -739,9 +748,10 @@ class Installer
             if (str_contains($getTableSchema, self::OLDCHARSET)) {
                 $connection->query(
                     sprintf(
-                        'ALTER TABLE `%s` MODIFY COLUMN `session_id` varchar(255),
+                        'ALTER TABLE `%s` MODIFY COLUMN `session_id` varchar(255) %s ,
                              DEFAULT CHARSET=%s, DEFAULT COLLATE=%s',
                         $setup->getTable('session'),
+                        self::COLUMN_ENCODING,
                         self::CHARSET,
                         self::COLLATION
                     )
@@ -808,9 +818,10 @@ class Installer
             if (str_contains($getTableSchema, self::OLDCHARSET)) {
                 $connection->query(
                     sprintf(
-                        'ALTER TABLE `%s` MODIFY COLUMN `id` varchar(200),
+                        'ALTER TABLE `%s` MODIFY COLUMN `id` varchar(200) %s,
                              DEFAULT CHARSET=%s, DEFAULT COLLATE=%s',
                         $setup->getTable('cache'),
+                        self::COLUMN_ENCODING,
                         self::CHARSET,
                         self::COLLATION
                     )
@@ -859,9 +870,11 @@ class Installer
             if (str_contains($getTableSchema, self::OLDCHARSET)) {
                 $connection->query(
                     sprintf(
-                        'ALTER TABLE `%s` MODIFY COLUMN `tag` varchar(100),
-                             MODIFY COLUMN `cache_id` varchar(200), DEFAULT CHARSET=%s, DEFAULT COLLATE=%s',
+                        'ALTER TABLE `%s` MODIFY COLUMN `tag` varchar(100) %s,
+                             MODIFY COLUMN `cache_id` varchar(200) %s, DEFAULT CHARSET=%s, DEFAULT COLLATE=%s',
                         $setup->getTable('cache_tag'),
+                        self::COLUMN_ENCODING,
+                        self::COLUMN_ENCODING,
                         self::CHARSET,
                         self::COLLATION
                     )
@@ -930,9 +943,11 @@ class Installer
             if (str_contains($getTableSchema, self::OLDCHARSET)) {
                 $connection->query(
                     sprintf(
-                        'ALTER TABLE `%s` MODIFY COLUMN `flag_code` varchar(255),
-                        MODIFY COLUMN `flag_data` mediumtext, DEFAULT CHARSET=%s, DEFAULT COLLATE=%s',
+                        'ALTER TABLE `%s` MODIFY COLUMN `flag_code` varchar(255) %s,
+                        MODIFY COLUMN `flag_data` mediumtext %s, DEFAULT CHARSET=%s, DEFAULT COLLATE=%s',
                         $setup->getTable('flag'),
+                        self::COLUMN_ENCODING,
+                        self::COLUMN_ENCODING,
                         self::CHARSET,
                         self::COLLATION
                     )

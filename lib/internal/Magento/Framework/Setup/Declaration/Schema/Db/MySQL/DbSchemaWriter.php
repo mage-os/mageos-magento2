@@ -388,15 +388,14 @@ class DbSchemaWriter implements DbSchemaWriterInterface
     }
 
     /***
-     * Adding charset and collation at column level
-     * after column name and column type
+     * Adding charset and collation at column level after column name and column type
      *
-     * @param $columnDefinition
+     * @param string $columnDefinition
      * @return string
      */
-    private function applyCharsetAndCollation($columnDefinition): string
+    private function applyCharsetAndCollation(string $columnDefinition): string
     {
-        if(!empty($columnDefinition)) {
+        if (!empty($columnDefinition)) {
             $charset = $this->columnConfig->getDefaultCharset();
             $collate = $this->columnConfig->getDefaultCollation();
             $columnLevelConfig = "CHARACTER SET " . $charset . " COLLATE " . $collate;
