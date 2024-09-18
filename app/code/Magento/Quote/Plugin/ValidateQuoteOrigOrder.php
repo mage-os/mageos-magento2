@@ -45,8 +45,7 @@ class ValidateQuoteOrigOrder
         CartRepositoryInterface $cartRepository,
         CartInterface $quote
     ): void {
-        if ($quote->getOrigOrderId()) {
-            $orderId = $quote->getOrigOrderId();
+        if ($orderId = $quote->getOrigOrderId()) {
             $order = $this->orderRepository->get($orderId);
             $orderCustomer = (int)$order->getCustomerId();
             if ($quote->getCustomerId() !== $orderCustomer) {
