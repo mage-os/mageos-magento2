@@ -17,6 +17,8 @@
         </arguments>
         <amOnPage url="{{AdminConfigPaymentMethodsPage.url}}" stepKey="navigateToPaymentConfigurationPage"/>
         <waitForPageLoad stepKey="waitForPageLoad1"/>
+        <!-- Because of in-product messaging in Payment Services extension, Paypal config is within the Additional Payment Solutions we need to uncollapse -->
+        <conditionalClick selector="{{OtherPaymentsSolutionsSection.expandedTab(countryCode)}}" stepKey="clickPayPalTabConfigure" dependentSelector="{{PayPalExpressCheckoutConfigSection.configureBtn(countryCode)}}" visible="false" before="clickPayPalConfigureBtn"/>
         <click selector="{{PayPalExpressCheckoutConfigSection.configureBtn(countryCode)}}" stepKey="clickPayPalConfigureBtn"/>
         <selectOption selector="{{PayPalExpressCheckoutConfigSection.enablePayLater(countryCode)}}" userInput="Yes" stepKey="enablePayLater"/>
         <waitForText selector="{{PayPalExpressCheckoutConfigSection.verifyPaylaterText(countryCode)}}" userInput="Advertise PayPal Pay Later" stepKey="verifyAdvertisePayPalPayLaterText"/>
