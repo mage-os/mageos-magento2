@@ -44,6 +44,11 @@ class IndexerHandler extends Grid
      */
     private const DESIGN_CONFIG_GRID_FLAT = "design_config_grid_flat";
 
+    /***
+     * charset and collation for column level
+     */
+    private const COLUMN_ENCODING = " CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci";
+
     /**
      * @param IndexStructureInterface $indexStructure
      * @param ResourceConnection $resource
@@ -93,9 +98,10 @@ class IndexerHandler extends Grid
                 if (str_contains($collation, self::OLDCHARSET)) {
                     $this->connection->query(
                         sprintf(
-                            'ALTER TABLE `%s` MODIFY COLUMN `theme_theme_id` varchar(255),
+                            'ALTER TABLE `%s` MODIFY COLUMN `theme_theme_id` varchar(255) %s,
                              DEFAULT CHARSET=%s, DEFAULT COLLATE=%s',
                             $tableName,
+                            self::COLUMN_ENCODING,
                             self::CHARSET,
                             self::COLLATION
                         )
