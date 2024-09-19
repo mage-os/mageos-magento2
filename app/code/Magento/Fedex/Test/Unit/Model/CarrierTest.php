@@ -250,6 +250,7 @@ class CarrierTest extends TestCase
     /**
      * @return void
      * @throws LocalizedException
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testRequestToShipmentSuccess(): void
     {
