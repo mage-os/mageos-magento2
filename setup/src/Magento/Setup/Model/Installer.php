@@ -277,7 +277,7 @@ class Installer
     /***
      * charset and collation for column level
      */
-    private const COLUMN_ENCODING = ""; //CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci";
+    private const COLUMN_ENCODING = " CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci";
 
     /**
      * Constructor

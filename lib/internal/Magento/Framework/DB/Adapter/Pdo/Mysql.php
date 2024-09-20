@@ -144,6 +144,11 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface, Rese
      */
     private $isMysql8Engine;
 
+    /***
+     * const for column type
+     */
+    private const COLUMN_TYPE = ['varchar', 'char', 'text', 'mediumtext', 'longtext'];
+
     /**
      * MySQL column - Table DDL type pairs
      *
@@ -257,7 +262,7 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface, Rese
      * @var string
      */
     private $mysqlversion;
-    
+
     /**
      * Constructor
      *
@@ -2427,6 +2432,19 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface, Rese
                 $this->quoteIdentifier($columnData['COLUMN_NAME']),
                 $columnDefinition
             );
+        }
+
+        if(count($definition)) {
+            foreach ($definition as $index => $columnDefinition) {
+                $type = explode(' ', trim($columnDefinition));
+                $pattern = '/\b(' . implode('|', array_map('preg_quote', self::COLUMN_TYPE)) . ')\b/i';
+                if (preg_match($pattern, $type[1]) === 1) {
+                    $charsets = 'CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci';
+                    $columnsAttribute = explode(' ', trim($columnDefinition));
+                    array_splice($columnsAttribute, 2, 0, $charsets);
+                    $definition[$index] = implode(' ', $columnsAttribute);
+                }
+            }
         }
 
         // PRIMARY KEY
