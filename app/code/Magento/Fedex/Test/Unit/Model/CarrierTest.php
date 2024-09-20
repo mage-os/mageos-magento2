@@ -410,6 +410,8 @@ class CarrierTest extends TestCase
     }
 
     /**
+     * Callback function, emulates getValue function for tracking api flow
+     *
      * @param string $path
      * @return int|string|null
      */
