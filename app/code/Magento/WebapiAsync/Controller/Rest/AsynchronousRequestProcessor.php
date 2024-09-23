@@ -17,6 +17,8 @@ use Magento\AsynchronousOperations\Model\ConfigInterface as WebApiAsyncConfig;
 use Magento\Framework\Reflection\DataObjectProcessor;
 use Magento\AsynchronousOperations\Api\Data\AsyncResponseInterfaceFactory;
 use Magento\AsynchronousOperations\Api\Data\AsyncResponseInterface;
+use Magento\Framework\Webapi\Rest\Request;
+use Magento\Framework\Webapi\Exception;
 
 /**
  * Responsible for dispatching single and bulk requests.
@@ -25,8 +27,8 @@ use Magento\AsynchronousOperations\Api\Data\AsyncResponseInterface;
  */
 class AsynchronousRequestProcessor implements RequestProcessorInterface
 {
-    const PROCESSOR_PATH = "/^\\/async(\\/V.+)/";
-    const BULK_PROCESSOR_PATH = "/^\\/async\/bulk(\\/V.+)/";
+    public const PROCESSOR_PATH = "/^\\/async(\\/V.+)/";
+    public const BULK_PROCESSOR_PATH = "/^\\/async\/bulk(\\/V.+)/";
 
     /**
      * @var \Magento\Framework\Webapi\Rest\Response
@@ -87,9 +89,9 @@ class AsynchronousRequestProcessor implements RequestProcessorInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function process(\Magento\Framework\Webapi\Rest\Request $request)
+    public function process(Request $request)
     {
         $path = $request->getPathInfo();
         $path = preg_replace($this->processorPath, "$1", $path);
@@ -119,7 +121,10 @@ class AsynchronousRequestProcessor implements RequestProcessorInterface
     }
 
     /**
+     * Get topic name from webapi_async_config services config array by route url and http method
+     *
      * @param \Magento\Framework\Webapi\Rest\Request $request
+     *
      * @return string
      */
     private function getTopicName($request)
@@ -133,29 +138,58 @@ class AsynchronousRequestProcessor implements RequestProcessorInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function canProcess(\Magento\Framework\Webapi\Rest\Request $request)
+    public function canProcess(Request $request)
     {
-        if ($request->getHttpMethod() === \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_GET) {
+        if ($request->getHttpMethod() === Request::HTTP_METHOD_GET) {
             return false;
         }
 
         if (preg_match($this->processorPath, $request->getPathInfo()) === 1) {
+            return $this->checkSelfResourceRequest($request);
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if current request is bulk request
+     *
+     * @param Request $request
+     * @return bool
+     */
+    public function isBulk(Request $request)
+    {
+        if (preg_match(self::BULK_PROCESSOR_PATH, $request->getPathInfo()) === 1) {
             return true;
         }
         return false;
     }
 
     /**
-     * @param \Magento\Framework\Webapi\Rest\Request $request
+     * Check if current request is self resource request
+     *
+     * @param Request $request
      * @return bool
+     *
+     * @throws Exception
      */
-    public function isBulk(\Magento\Framework\Webapi\Rest\Request $request)
+    private function checkSelfResourceRequest(Request $request): bool
     {
-        if (preg_match(self::BULK_PROCESSOR_PATH, $request->getPathInfo()) === 1) {
-            return true;
+        $path = preg_replace($this->processorPath, "$1", $request->getPathInfo());
+        $request->setPathInfo(
+            $path
+        );
+
+        $route = $this->inputParamsResolver->getRoute();
+        $aclResources = $route->getAclResources();
+
+        // We do not process self resource requests asynchronously
+        if (in_array('self', $aclResources, true)) {
+            return false;
         }
-        return false;
+
+        return true;
     }
 }
