@@ -85,11 +85,13 @@ class Rows
                 $productIds[] = $this->getProductIdsFromIndex($indexTable, $entityIds);
             }
 
-            $productIds = array_merge([], ...$productIds);
+            $productIds = array_unique(array_merge([], ...$productIds));
             if (!empty($productIds)) {
                 $indexer = $this->indexerRegistry->get(FulltextIndexer::INDEXER_ID);
                 if ($indexer->isScheduled()) {
                     $indexer->getView()->getChangelog()->addList($productIds);
+                } else {
+                    $indexer->reindexList($productIds);
                 }
             }
         }
