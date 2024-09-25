@@ -90,8 +90,6 @@ class Rows
                 $indexer = $this->indexerRegistry->get(FulltextIndexer::INDEXER_ID);
                 if ($indexer->isScheduled()) {
                     $indexer->getView()->getChangelog()->addList($productIds);
-                } else {
-                    $indexer->reindexList($productIds);
                 }
             }
         }
