@@ -943,7 +943,7 @@ class Installer
             if (str_contains($getTableSchema, self::OLDCHARSET)) {
                 $connection->query(
                     sprintf(
-                        'ALTER TABLE `%s` MODIFY COLUMN `flag_code` varchar(255) %s,
+                        'ALTER TABLE `%s` MODIFY COLUMN `flag_code` varchar(255) %s NOT NULL,
                         MODIFY COLUMN `flag_data` mediumtext %s, DEFAULT CHARSET=%s, DEFAULT COLLATE=%s',
                         $setup->getTable('flag'),
                         self::COLUMN_ENCODING,
