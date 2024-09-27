@@ -9,4 +9,7 @@
     <event name="customer_login">
         <observer name="customer_log_login" instance="Magento\Customer\Observer\LogLastLoginAtObserver" />
     </event>
+    <event name="customer_customer_authenticated">
+        <observer name="customer_unlock" instance="Magento\Customer\Observer\CustomerLoginSuccessObserver" />
+    </event>
 </config>
