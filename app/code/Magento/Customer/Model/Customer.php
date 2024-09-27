@@ -1415,5 +1415,9 @@ class Customer extends \Magento\Framework\Model\AbstractModel implements ResetAf
     public function _resetState(): void
     {
         $this->_errors = [];
+        $this->_origData = null;
+        $this->storedData = [];
+        $this->_data = [];
+
     }
 }
