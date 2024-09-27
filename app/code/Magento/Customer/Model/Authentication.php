@@ -14,7 +14,7 @@ use Magento\Framework\Exception\InvalidEmailOrPasswordException;
 use Magento\Framework\Exception\State\UserLockedException;
 
 /**
- * Class Authentication
+ * Class Authentication model
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Authentication implements AuthenticationInterface
@@ -22,12 +22,12 @@ class Authentication implements AuthenticationInterface
     /**
      * Configuration path to customer lockout threshold
      */
-    const LOCKOUT_THRESHOLD_PATH = 'customer/password/lockout_threshold';
+    public const LOCKOUT_THRESHOLD_PATH = 'customer/password/lockout_threshold';
 
     /**
      * Configuration path to customer max login failures number
      */
-    const MAX_FAILURES_PATH = 'customer/password/lockout_failures';
+    public const MAX_FAILURES_PATH = 'customer/password/lockout_failures';
 
     /**
      * @var CustomerRegistry

@@ -1418,6 +1418,5 @@ class Customer extends \Magento\Framework\Model\AbstractModel implements ResetAf
         $this->_origData = null;
         $this->storedData = [];
         $this->_data = [];
-
     }
 }
