@@ -98,7 +98,7 @@ class IndexerHandler extends Grid
                 if (str_contains($collation, self::OLDCHARSET)) {
                     $this->connection->query(
                         sprintf(
-                            'ALTER TABLE `%s` MODIFY COLUMN `theme_theme_id` varchar(255) %s,
+                            'ALTER TABLE `%s` MODIFY COLUMN `theme_theme_id` varchar(255) %s `COMMENT \'Theme_theme_id\'`,
                              DEFAULT CHARSET=%s, DEFAULT COLLATE=%s',
                             $tableName,
                             self::COLUMN_ENCODING,
