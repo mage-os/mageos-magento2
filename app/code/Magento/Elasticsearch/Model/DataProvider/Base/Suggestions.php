@@ -9,6 +9,7 @@ use Elasticsearch\Common\Exceptions\BadRequest400Exception;
 use Exception;
 use Magento\AdvancedSearch\Model\SuggestedQueriesInterface;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory;
+use Magento\Elasticsearch\Model\Adapter\FieldMapper\Product\FieldProviderInterface;
 use Magento\Elasticsearch\Model\Adapter\FieldMapperInterface;
 use Magento\Elasticsearch\Model\Config;
 use Magento\Elasticsearch\SearchAdapter\ConnectionManager;
@@ -58,6 +59,11 @@ class Suggestions implements SuggestedQueriesInterface
     private $storeManager;
 
     /**
+     * @var FieldProviderInterface
+     */
+    private $fieldProvider;
+
+    /**
      * @var CollectionFactory
      */
     private $productAttributeCollectionFactory;
@@ -93,10 +99,11 @@ class Suggestions implements SuggestedQueriesInterface
      * @param ConnectionManager $connectionManager
      * @param SearchIndexNameResolver $searchIndexNameResolver
      * @param StoreManager $storeManager
-     * @param CollectionFactory $productAttributeCollectionFactory
-     * @param FieldMapperInterface $fieldMapper
+     * @param FieldProviderInterface $fieldProvider
      * @param LoggerInterface|null $logger
      * @param GetSuggestionFrequencyInterface|null $getSuggestionFrequency
+     * @param CollectionFactory|null $productAttributeCollectionFactory
+     * @param FieldMapperInterface|null $fieldMapper
      * @param array $responseErrorExceptionList
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
@@ -107,10 +114,11 @@ class Suggestions implements SuggestedQueriesInterface
         ConnectionManager $connectionManager,
         SearchIndexNameResolver $searchIndexNameResolver,
         StoreManager $storeManager,
-        CollectionFactory $productAttributeCollectionFactory,
-        FieldMapperInterface $fieldMapper,
+        FieldProviderInterface $fieldProvider,
         LoggerInterface $logger = null,
         ?GetSuggestionFrequencyInterface $getSuggestionFrequency = null,
+        ?CollectionFactory $productAttributeCollectionFactory = null,
+        ?FieldMapperInterface $fieldMapper = null,
         array $responseErrorExceptionList = []
     ) {
         $this->queryResultFactory = $queryResultFactory;
@@ -119,11 +127,13 @@ class Suggestions implements SuggestedQueriesInterface
         $this->config = $config;
         $this->searchIndexNameResolver = $searchIndexNameResolver;
         $this->storeManager = $storeManager;
-        $this->productAttributeCollectionFactory = $productAttributeCollectionFactory;
-        $this->fieldMapper = $fieldMapper;
         $this->logger = $logger ?: ObjectManager::getInstance()->get(LoggerInterface::class);
         $this->getSuggestionFrequency = $getSuggestionFrequency ?:
             ObjectManager::getInstance()->get(GetSuggestionFrequencyInterface::class);
+        $this->productAttributeCollectionFactory = $productAttributeCollectionFactory ?:
+            ObjectManager::getInstance()->get(CollectionFactory::class);
+        $this->fieldMapper = $fieldMapper ?:
+            ObjectManager::getInstance()->get(FieldMapperInterface::class);
         $this->responseErrorExceptionList = array_merge($this->responseErrorExceptionList, $responseErrorExceptionList);
     }
 
