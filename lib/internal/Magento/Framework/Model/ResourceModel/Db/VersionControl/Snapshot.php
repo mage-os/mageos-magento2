@@ -39,11 +39,11 @@ class Snapshot implements ResetAfterRequestInterface
     /**
      * Register snapshot of entity data, for tracking changes
      *
-     * @param \Magento\Framework\DataObject $entity
+     * @param DataObject $entity
      * @return void
      * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
-    public function registerSnapshot(\Magento\Framework\DataObject $entity)
+    public function registerSnapshot(DataObject $entity)
     {
         $metaData = $this->metadata->getFields($entity);
         $filteredData = array_intersect_key($entity->getData(), $metaData);
@@ -72,10 +72,10 @@ class Snapshot implements ResetAfterRequestInterface
     /**
      * Check is current entity has changes, by comparing current object state with stored snapshot
      *
-     * @param \Magento\Framework\DataObject $entity
+     * @param DataObject $entity
      * @return bool
      */
-    public function isModified(\Magento\Framework\DataObject $entity)
+    public function isModified(DataObject $entity): bool
     {
         if (!$entity->getId()) {
             return true;
@@ -86,7 +86,14 @@ class Snapshot implements ResetAfterRequestInterface
             return true;
         }
         foreach ($this->snapshotData[$entityClass][$entity->getId()] as $field => $value) {
-            if ($entity->getDataByKey($field) != $value) {
+            $entityValue = $entity->getDataByKey($field);
+            if (is_array($entityValue) && is_string($value)) {
+                $decodedValue = json_decode($value, true);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    $value = $decodedValue;
+                }
+            }
+            if ($entityValue != $value) {
                 return true;
             }
         }
@@ -97,9 +104,9 @@ class Snapshot implements ResetAfterRequestInterface
     /**
      * Clear snapshot data
      *
-     * @param \Magento\Framework\DataObject|null $entity
+     * @param DataObject|null $entity
      */
-    public function clear(\Magento\Framework\DataObject $entity = null)
+    public function clear(DataObject $entity = null)
     {
         if ($entity !== null) {
             $this->snapshotData[get_class($entity)] = [];
