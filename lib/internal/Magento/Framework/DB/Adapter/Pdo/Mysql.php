@@ -150,6 +150,16 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface, Rese
     private const COLUMN_TYPE = ['varchar', 'char', 'text', 'mediumtext', 'longtext'];
 
     /**
+     * const for charset
+     */
+    private const CHARSET = "utf8mb4";
+
+    /**
+     * const for collation
+     */
+    private const COLLATION = "utf8mb4_general_ci";
+
+    /**
      * MySQL column - Table DDL type pairs
      *
      * @var array
@@ -1258,7 +1268,11 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface, Rese
         if (is_array($definition)) {
             $definition = $this->_getColumnDefinition($definition);
         }
-
+        // Add charset and collation for DBC failures
+        if(!empty($definition)) {
+            $type = explode(' ', trim($definition));
+            $definition = $this->applyCharsetAndCollation($type[0], $definition, 1);
+        }
         $sql = sprintf(
             'ALTER TABLE %s MODIFY COLUMN %s %s',
             $this->quoteIdentifier($tableName),
@@ -2433,20 +2447,13 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface, Rese
                 $columnDefinition
             );
         }
-
+        // Adding charset and collation for DBC failures
         if(count($definition)) {
             foreach ($definition as $index => $columnDefinition) {
                 $type = explode(' ', trim($columnDefinition));
-                $pattern = '/\b(' . implode('|', array_map('preg_quote', self::COLUMN_TYPE)) . ')\b/i';
-                if (preg_match($pattern, $type[1]) === 1) {
-                    $charsets = 'CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci';
-                    $columnsAttribute = explode(' ', trim($columnDefinition));
-                    array_splice($columnsAttribute, 2, 0, $charsets);
-                    $definition[$index] = implode(' ', $columnsAttribute);
-                }
+                $definition[$index] = $this->applyCharsetAndCollation($type[1], $columnDefinition, 2);
             }
         }
-
         // PRIMARY KEY
         if (!empty($primary)) {
             asort($primary, SORT_NUMERIC);
@@ -4300,5 +4307,25 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface, Rese
     public function __debugInfo()
     {
         return [];
+    }
+
+    /***
+     * Adding charset and collation for DBC failures
+     *
+     * @param $columnType
+     * @param $definition
+     * @param $position
+     * @return string
+     */
+    private function applyCharsetAndCollation($columnType, $definition, $position) : string
+    {
+        $pattern = '/\b(' . implode('|', array_map('preg_quote', self::COLUMN_TYPE)) . ')\b/i';
+        if (preg_match($pattern, $columnType) === 1) {
+            $charsets = 'CHARACTER SET ' . self::CHARSET. ' COLLATE ' . self::COLLATION;
+            $columnsAttribute = explode(' ', trim($definition));
+            array_splice($columnsAttribute, $position, 0, $charsets);
+            return implode(' ', $columnsAttribute);
+        }
+        return $definition;
     }
 }

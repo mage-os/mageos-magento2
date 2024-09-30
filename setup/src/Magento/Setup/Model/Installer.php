@@ -275,9 +275,10 @@ class Installer
     private const OLDCHARSET = 'utf8mb3';
 
     /***
-     * charset and collation for column level
+     * Charset and collation for column level
+     * Adding charset and collation for DBC failures
      */
-    private const COLUMN_ENCODING = " CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci";
+    private const COLUMN_ENCODING = " CHARACTER SET ".self::CHARSET." COLLATE ".self::COLLATION;
 
     /**
      * Constructor

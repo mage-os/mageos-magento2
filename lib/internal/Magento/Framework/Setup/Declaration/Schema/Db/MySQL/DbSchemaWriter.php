@@ -396,7 +396,7 @@ class DbSchemaWriter implements DbSchemaWriterInterface
     }
 
     /***
-     * Adding charset and collation at column level after column name and column type
+     * Adding charset and collation for DBC failures
      *
      * @param string $columnDefinition
      * @return string
