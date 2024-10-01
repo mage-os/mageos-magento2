@@ -60,6 +60,7 @@ use Magento\Setup\Validator\DbValidator;
 use Magento\Store\Model\Store;
 use Magento\RemoteStorage\Setup\ConfigOptionsList as RemoteStorageValidator;
 use ReflectionException;
+use Magento\Framework\Setup\Declaration\Schema\Dto\Factories\Table as DtoFactoriesTable;
 
 /**
  * Class Installer contains the logic to install Magento application.
@@ -260,25 +261,14 @@ class Installer
     private $triggerCleaner;
 
     /***
-     * Charset for cl tables
-     */
-    private const CHARSET = 'utf8mb4';
-
-    /***
-     * Collation for cl tables
-     */
-    private const COLLATION = 'utf8mb4_general_ci';
-
-    /***
      * Old Charset for cl tables
      */
     private const OLDCHARSET = 'utf8mb3';
 
     /***
-     * Charset and collation for column level
-     * Adding charset and collation for DBC failures
+     * @var DtoFactoriesTable
      */
-    private const COLUMN_ENCODING = " CHARACTER SET ".self::CHARSET." COLLATE ".self::COLLATION;
+    private $columnConfig;
 
     /**
      * Constructor
@@ -304,6 +294,7 @@ class Installer
      * @param State $sampleDataState
      * @param ComponentRegistrar $componentRegistrar
      * @param PhpReadinessCheck $phpReadinessCheck
+     * @param DtoFactoriesTable $dtoFactoriesTable
      * @throws Exception
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
@@ -328,7 +319,8 @@ class Installer
         DataSetupFactory $dataSetupFactory,
         State $sampleDataState,
         ComponentRegistrar $componentRegistrar,
-        PhpReadinessCheck $phpReadinessCheck
+        PhpReadinessCheck $phpReadinessCheck,
+        DtoFactoriesTable $dtoFactoriesTable
     ) {
         $this->filePermissions = $filePermissions;
         $this->deploymentConfigWriter = $deploymentConfigWriter;
@@ -359,6 +351,7 @@ class Installer
          * from that ObjectManager gets reset as different steps in the installer will write to the deployment config.
          */
         $this->firstDeploymentConfig = ObjectManager::getInstance()->get(DeploymentConfig::class);
+        $this->columnConfig = $dtoFactoriesTable;
     }
 
     /**
@@ -669,6 +662,9 @@ class Installer
             // change the charset to utf8mb4
             $getTableSchema = $connection->getCreateTable($setup->getTable('setup_module')) ?? '';
             if (str_contains($getTableSchema, self::OLDCHARSET)) {
+                $charset = $this->columnConfig->getDefaultCharset();
+                $collate = $this->columnConfig->getDefaultCollation();
+                $columnEncoding = " CHARACTER SET ".$charset." COLLATE ".$collate;
                 $connection->query(
                     sprintf(
                         'ALTER TABLE `%s` MODIFY COLUMN `module` varchar(50) %s,
@@ -676,11 +672,11 @@ class Installer
                         MODIFY COLUMN `data_version` varchar(50) %s,
                         DEFAULT CHARSET=%s, DEFAULT COLLATE=%s',
                         $setup->getTable('setup_module'),
-                        self::COLUMN_ENCODING,
-                        self::COLUMN_ENCODING,
-                        self::COLUMN_ENCODING,
-                        self::CHARSET,
-                        self::COLLATION
+                        $columnEncoding,
+                        $columnEncoding,
+                        $columnEncoding,
+                        $charset,
+                        $collate
                     )
                 );
             }
@@ -747,14 +743,17 @@ class Installer
             // change the charset to utf8mb4
             $getTableSchema = $connection->getCreateTable($setup->getTable('session')) ?? '';
             if (str_contains($getTableSchema, self::OLDCHARSET)) {
+                $charset = $this->columnConfig->getDefaultCharset();
+                $collate = $this->columnConfig->getDefaultCollation();
+                $columnEncoding = " CHARACTER SET ".$charset." COLLATE ".$collate;
                 $connection->query(
                     sprintf(
                         'ALTER TABLE `%s` MODIFY COLUMN `session_id` varchar(255) %s ,
                              DEFAULT CHARSET=%s, DEFAULT COLLATE=%s',
                         $setup->getTable('session'),
-                        self::COLUMN_ENCODING,
-                        self::CHARSET,
-                        self::COLLATION
+                        $columnEncoding,
+                        $charset,
+                        $collate
                     )
                 );
             }
@@ -817,14 +816,17 @@ class Installer
             // change the charset to utf8mb4
             $getTableSchema = $connection->getCreateTable($setup->getTable('cache')) ?? '';
             if (str_contains($getTableSchema, self::OLDCHARSET)) {
+                $charset = $this->columnConfig->getDefaultCharset();
+                $collate = $this->columnConfig->getDefaultCollation();
+                $columnEncoding = " CHARACTER SET ".$charset." COLLATE ".$collate;
                 $connection->query(
                     sprintf(
                         'ALTER TABLE `%s` MODIFY COLUMN `id` varchar(200) %s,
                              DEFAULT CHARSET=%s, DEFAULT COLLATE=%s',
                         $setup->getTable('cache'),
-                        self::COLUMN_ENCODING,
-                        self::CHARSET,
-                        self::COLLATION
+                        $columnEncoding,
+                        $charset,
+                        $collate
                     )
                 );
             }
@@ -869,15 +871,18 @@ class Installer
             // change the charset to utf8mb4
             $getTableSchema = $connection->getCreateTable($setup->getTable('cache_tag')) ?? '';
             if (str_contains($getTableSchema, self::OLDCHARSET)) {
+                $charset = $this->columnConfig->getDefaultCharset();
+                $collate = $this->columnConfig->getDefaultCollation();
+                $columnEncoding = " CHARACTER SET ".$charset." COLLATE ".$collate;
                 $connection->query(
                     sprintf(
                         'ALTER TABLE `%s` MODIFY COLUMN `tag` varchar(100) %s,
                              MODIFY COLUMN `cache_id` varchar(200) %s, DEFAULT CHARSET=%s, DEFAULT COLLATE=%s',
                         $setup->getTable('cache_tag'),
-                        self::COLUMN_ENCODING,
-                        self::COLUMN_ENCODING,
-                        self::CHARSET,
-                        self::COLLATION
+                        $columnEncoding,
+                        $columnEncoding,
+                        $charset,
+                        $collate
                     )
                 );
             }
@@ -942,15 +947,18 @@ class Installer
             // change the charset to utf8mb4
             $getTableSchema = $connection->getCreateTable($tableName) ?? '';
             if (str_contains($getTableSchema, self::OLDCHARSET)) {
+                $charset = $this->columnConfig->getDefaultCharset();
+                $collate = $this->columnConfig->getDefaultCollation();
+                $columnEncoding = " CHARACTER SET ".$charset." COLLATE ".$collate;
                 $connection->query(
                     sprintf(
                         'ALTER TABLE `%s` MODIFY COLUMN `flag_code` varchar(255) %s NOT NULL,
                         MODIFY COLUMN `flag_data` mediumtext %s, DEFAULT CHARSET=%s, DEFAULT COLLATE=%s',
                         $setup->getTable('flag'),
-                        self::COLUMN_ENCODING,
-                        self::COLUMN_ENCODING,
-                        self::CHARSET,
-                        self::COLLATION
+                        $columnEncoding,
+                        $columnEncoding,
+                        $charset,
+                        $collate
                     )
                 );
             }
