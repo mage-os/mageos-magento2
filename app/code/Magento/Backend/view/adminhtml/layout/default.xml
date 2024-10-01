@@ -25,7 +25,7 @@
                 <arguments>
                     <argument name="show_part" xsi:type="string">logo</argument>
                     <argument name="edition" translate="true" xsi:type="string">Community Edition</argument>
-                    <argument name="logo_image_src" xsi:type="string">images/magento-icon.svg</argument>
+                    <argument name="logo_image_src" xsi:type="string">images/mage-os-icon.svg</argument>
                 </arguments>
             </block>
             <block class="Magento\Backend\Block\GlobalSearch" name="global.search" as="search" after="logo" aclResource="Magento_Backend::global_search"/>
@@ -62,12 +62,12 @@
                     <block class="Magento\Backend\Block\Page\Footer" name="version" as="version" />
                     <block class="Magento\Framework\View\Element\Template" name="privacyPolicy" as="privacyPolicy" template="Magento_Backend::page/privacyPolicy.phtml">
                         <arguments>
-                            <argument name="privacypolicy_url" xsi:type="string">https://www.adobe.com/privacy/policy.html</argument>
+                            <argument name="privacypolicy_url" xsi:type="string">https://mage-os.org/privacy-policy</argument>
                         </arguments>
                     </block>
                     <block class="Magento\Framework\View\Element\Template" name="report" as="report" template="Magento_Backend::page/report.phtml">
                         <arguments>
-                            <argument name="bugreport_url" xsi:type="string">https://github.com/magento/magento2/issues</argument>
+                            <argument name="bugreport_url" xsi:type="string">https://github.com/mage-os/mageos-magento2/issues</argument>
                         </arguments>
                     </block>
                 </container>

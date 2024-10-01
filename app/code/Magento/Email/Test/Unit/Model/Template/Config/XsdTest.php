@@ -143,8 +143,9 @@ class XsdTest extends TestCase
             'node "template" with invalid attribute "area"' => [
                 '<config><template id="test" label="Test" file="test.txt" type="text" module="Module" area="invalid"/></config>',
                 [
-                    "Element 'template', attribute 'area': 'invalid' is not a valid value of the atomic type " .
-                    "'areaType'.The xml was: \n0:<?xml version=\"1.0\"?>\n1:<config><template id=\"test\" " .
+                    "Element 'template', attribute 'area': [facet 'enumeration'] The value 'invalid' is not " .
+                    "an element of the set {'frontend', 'adminhtml'}.The xml was: \n" .
+                    "0:<?xml version=\"1.0\"?>\n1:<config><template id=\"test\" " .
                     "label=\"Test\" file=\"test.txt\" type=\"text\" module=\"Module\" area=\"invalid\"/>" .
                     "</config>\n2:\n",
                 ],

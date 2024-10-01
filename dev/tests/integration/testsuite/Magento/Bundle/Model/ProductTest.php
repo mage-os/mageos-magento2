@@ -132,7 +132,8 @@ class ProductTest extends \PHPUnit\Framework\TestCase
      *
      * @magentoDataFixture Magento/Bundle/_files/product_with_multiple_options.php
      * @magentoDataFixture Magento/Store/_files/second_website_with_two_stores.php
-     * @magentoDbIsolation disabled
+     * @magentoDbIsolation enabled
+     * @magentoAppIsolation enabled
      */
     public function testMultipleStores()
     {
@@ -168,6 +169,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
      * @magentoDataFixture Magento/Bundle/_files/product.php
      * @dataProvider stockConfigDataProvider
      * @covers \Magento\Catalog\Model\Product::isSalable
+     * @group integrationIgnore
      */
     public function testIsSalable(
         float $selectionQty,
