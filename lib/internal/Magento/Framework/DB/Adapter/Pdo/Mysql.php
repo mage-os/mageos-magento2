@@ -276,25 +276,25 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface, Rese
      * @param DateTime $dateTime
      * @param LoggerInterface $logger
      * @param SelectFactory $selectFactory
-     * @param DtoFactoriesTable $dtoFactoriesTable
      * @param array $config
      * @param SerializerInterface|null $serializer
+     * @param DtoFactoriesTable|null $dtoFactoriesTable
      */
     public function __construct(
         StringUtils $string,
         DateTime $dateTime,
         LoggerInterface $logger,
         SelectFactory $selectFactory,
-        DtoFactoriesTable $dtoFactoriesTable,
         array $config = [],
-        SerializerInterface $serializer = null
+        SerializerInterface $serializer = null,
+        ?DtoFactoriesTable $dtoFactoriesTable = null
     ) {
         $this->pid = getmypid();
         $this->string = $string;
         $this->dateTime = $dateTime;
         $this->logger = $logger;
         $this->selectFactory = $selectFactory;
-        $this->columnConfig = $dtoFactoriesTable;
+        $this->columnConfig = $dtoFactoriesTable ?: ObjectManager::getInstance()->get(DtoFactoriesTable::class);
         $this->serializer = $serializer ?: ObjectManager::getInstance()->get(SerializerInterface::class);
         $this->exceptionMap = [
             // SQLSTATE[HY000]: General error: 2006 MySQL server has gone away

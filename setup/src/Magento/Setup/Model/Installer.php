@@ -294,7 +294,7 @@ class Installer
      * @param State $sampleDataState
      * @param ComponentRegistrar $componentRegistrar
      * @param PhpReadinessCheck $phpReadinessCheck
-     * @param DtoFactoriesTable $dtoFactoriesTable
+     * @param DtoFactoriesTable|null $dtoFactoriesTable
      * @throws Exception
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
@@ -320,7 +320,7 @@ class Installer
         State $sampleDataState,
         ComponentRegistrar $componentRegistrar,
         PhpReadinessCheck $phpReadinessCheck,
-        DtoFactoriesTable $dtoFactoriesTable
+        ?DtoFactoriesTable $dtoFactoriesTable = null
     ) {
         $this->filePermissions = $filePermissions;
         $this->deploymentConfigWriter = $deploymentConfigWriter;
@@ -351,7 +351,7 @@ class Installer
          * from that ObjectManager gets reset as different steps in the installer will write to the deployment config.
          */
         $this->firstDeploymentConfig = ObjectManager::getInstance()->get(DeploymentConfig::class);
-        $this->columnConfig = $dtoFactoriesTable;
+        $this->columnConfig = $dtoFactoriesTable ?: ObjectManager::getInstance()->get(DtoFactoriesTable::class);;
     }
 
     /**
