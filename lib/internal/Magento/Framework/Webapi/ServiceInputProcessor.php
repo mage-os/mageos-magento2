@@ -333,10 +333,10 @@ class ServiceInputProcessor implements ServicePayloadConverterInterface, ResetAf
                             )
                         );
                     }
-                    if (is_string($setterValue) && $this->containsXSS($setterValue)) {
+                    if (is_string($setterValue) && $this->validateParamsValue($setterValue)) {
                         throw new InputException(
                             new Phrase(
-                                '"%field_name" contains potentially harmful content.',
+                                '"%field_name" does not contains valid value.',
                                 ['field_name' => $propertyName]
                             )
                         );
@@ -362,7 +362,7 @@ class ServiceInputProcessor implements ServicePayloadConverterInterface, ResetAf
      * @param string $value
      * @return bool
      */
-    private function containsXSS(string $value)
+    private function validateParamsValue(string $value)
     {
         // Check for <script> tags or any common XSS vectors
         return preg_match('/<script\b[^>]*>(.*?)<\/script>/is', $value) ||
