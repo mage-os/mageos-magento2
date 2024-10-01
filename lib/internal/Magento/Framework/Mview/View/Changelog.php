@@ -12,6 +12,7 @@ use Magento\Framework\DB\Sql\Expression;
 use Magento\Framework\Exception\RuntimeException;
 use Magento\Framework\Mview\Config;
 use Magento\Framework\Mview\View\AdditionalColumnsProcessor\ProcessorFactory;
+use Magento\Framework\Setup\Declaration\Schema\Dto\Factories\Table as DtoFactoriesTable;
 use Magento\Framework\Phrase;
 
 /**
@@ -64,36 +65,34 @@ class Changelog implements ChangelogInterface
     private $additionalColumnsProcessorFactory;
 
     /***
-     * Charset for cl tables
-     */
-    private const CHARSET = 'utf8mb4';
-
-    /***
-     * Collation for cl tables
-     */
-    private const COLLATION = 'utf8mb4_general_ci';
-
-    /***
      * Old Charset for cl tables
      */
     private const OLDCHARSET = 'utf8mb3';
+
+    /***
+     * @var DtoFactoriesTable|null
+     */
+    private $columnConfig;
 
     /**
      * @param \Magento\Framework\App\ResourceConnection $resource
      * @param Config $mviewConfig
      * @param ProcessorFactory $additionalColumnsProcessorFactory
+     * @param DtoFactoriesTable|null $dtoFactoriesTable
      * @throws ConnectionException
      */
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resource,
         Config $mviewConfig,
-        ProcessorFactory $additionalColumnsProcessorFactory
+        ProcessorFactory $additionalColumnsProcessorFactory,
+        ?DtoFactoriesTable $dtoFactoriesTable = null
     ) {
         $this->connection = $resource->getConnection();
         $this->resource = $resource;
         $this->checkConnection();
         $this->mviewConfig = $mviewConfig;
         $this->additionalColumnsProcessorFactory = $additionalColumnsProcessorFactory;
+        $this->columnConfig = $dtoFactoriesTable ?: ObjectManager::getInstance()->get(DtoFactoriesTable::class);
     }
 
     /**
@@ -149,12 +148,14 @@ class Changelog implements ChangelogInterface
             // change the charset to utf8mb4
             $getTableSchema = $this->connection->getCreateTable($changelogTableName) ?? '';
             if (str_contains($getTableSchema, self::OLDCHARSET)) {
+                $charset = $this->columnConfig->getDefaultCharset();
+                $collate = $this->columnConfig->getDefaultCollation();
                 $this->connection->query(
                     sprintf(
                         'ALTER TABLE %s DEFAULT CHARSET=%s, DEFAULT COLLATE=%s',
                         $changelogTableName,
-                        self::CHARSET,
-                        self::COLLATION
+                        $charset,
+                        $collate
                     )
                 );
             }

@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace Magento\Theme\Model\Indexer\Design;
 
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Indexer\IndexStructureInterface;
 use Magento\Framework\Indexer\SaveHandler\Batch;
@@ -16,6 +17,7 @@ use Magento\Framework\Indexer\SaveHandler\IndexerInterface;
 use Magento\Framework\Indexer\ScopeResolver\FlatScopeResolver;
 use Magento\Framework\Indexer\ScopeResolver\IndexScopeResolver;
 use Magento\Framework\Search\Request\Dimension;
+use Magento\Framework\Setup\Declaration\Schema\Dto\Factories\Table as DtoFactoriesTable;
 
 class IndexerHandler extends Grid
 {
@@ -23,16 +25,6 @@ class IndexerHandler extends Grid
      * @var FlatScopeResolver
      */
     private $flatScopeResolver;
-
-    /***
-     * Charset for flat table
-     */
-    private const CHARSET = 'utf8mb4';
-
-    /***
-     * Collation for flat table
-     */
-    private const COLLATION = 'utf8mb4_general_ci';
 
     /***
      * Old Charset for flat table
@@ -45,9 +37,9 @@ class IndexerHandler extends Grid
     private const DESIGN_CONFIG_GRID_FLAT = "design_config_grid_flat";
 
     /***
-     * charset and collation for column level
+     * @var DtoFactoriesTable
      */
-    private const COLUMN_ENCODING = " CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci";
+    private $columnConfig;
 
     /**
      * @param IndexStructureInterface $indexStructure
@@ -57,6 +49,7 @@ class IndexerHandler extends Grid
      * @param FlatScopeResolver $flatScopeResolver
      * @param array $data
      * @param int $batchSize
+     * @param DtoFactoriesTable|null $dtoFactoriesTable
      */
     public function __construct(
         IndexStructureInterface $indexStructure,
@@ -65,7 +58,8 @@ class IndexerHandler extends Grid
         IndexScopeResolver $indexScopeResolver,
         FlatScopeResolver $flatScopeResolver,
         array $data,
-        $batchSize = 100
+        $batchSize = 100,
+        ?DtoFactoriesTable $dtoFactoriesTable = null
     ) {
         parent::__construct(
             $indexStructure,
@@ -77,6 +71,7 @@ class IndexerHandler extends Grid
             $batchSize
         );
         $this->flatScopeResolver = $flatScopeResolver;
+        $this->columnConfig = $dtoFactoriesTable ?: ObjectManager::getInstance()->get(DtoFactoriesTable::class);
     }
 
     /**
@@ -96,15 +91,18 @@ class IndexerHandler extends Grid
                 $getTableSchema = $this->connection->showTableStatus($tableName);
                 $collation = $getTableSchema['Collation'] ?? '';
                 if (str_contains($collation, self::OLDCHARSET)) {
+                    $charset = $this->columnConfig->getDefaultCharset();
+                    $collate = $this->columnConfig->getDefaultCollation();
+                    $columnEncoding = " CHARACTER SET ".$charset." COLLATE ".$collate;
                     $this->connection->query(
                         sprintf(
                             'ALTER TABLE `%s` MODIFY COLUMN `theme_theme_id` varchar(255) %s %s,
                              DEFAULT CHARSET=%s, DEFAULT COLLATE=%s',
                             $tableName,
-                            self::COLUMN_ENCODING,
+                            $columnEncoding,
                             "COMMENT 'Theme_theme_id'",
-                            self::CHARSET,
-                            self::COLLATION
+                            $charset,
+                            $collate
                         )
                     );
                 }
