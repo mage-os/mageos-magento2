@@ -75,7 +75,7 @@ class Snapshot implements ResetAfterRequestInterface
      * @param DataObject $entity
      * @return bool
      */
-    public function isModified(DataObject $entity): bool
+    public function isModified(DataObject $entity)
     {
         if (!$entity->getId()) {
             return true;
