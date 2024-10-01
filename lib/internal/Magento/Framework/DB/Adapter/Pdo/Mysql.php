@@ -151,16 +151,6 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface, Rese
     private const COLUMN_TYPE = ['varchar', 'char', 'text', 'mediumtext', 'longtext'];
 
     /**
-     * const for charset
-     */
-    private const CHARSET = "utf8mb4";
-
-    /**
-     * const for collation
-     */
-    private const COLLATION = "utf8mb4_general_ci";
-
-    /**
      * MySQL column - Table DDL type pairs
      *
      * @var array
