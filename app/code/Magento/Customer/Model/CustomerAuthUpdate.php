@@ -7,7 +7,6 @@
 namespace Magento\Customer\Model;
 
 use Magento\Customer\Model\ResourceModel\Customer as CustomerResourceModel;
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Exception\NoSuchEntityException;
 
 /**
@@ -33,16 +32,16 @@ class CustomerAuthUpdate
     /**
      * @param CustomerRegistry $customerRegistry
      * @param CustomerResourceModel $customerResourceModel
-     * @param CustomerFactory|null $customerFactory
+     * @param CustomerFactory $customerFactory
      */
     public function __construct(
         CustomerRegistry $customerRegistry,
         CustomerResourceModel $customerResourceModel,
-        CustomerFactory $customerFactory = null
+        CustomerFactory $customerFactory
     ) {
         $this->customerRegistry = $customerRegistry;
         $this->customerResourceModel = $customerResourceModel;
-        $this->customerFactory = $customerFactory ?: ObjectManager::getInstance()->get(CustomerFactory::class);
+        $this->customerFactory = $customerFactory;
     }
 
     /**
