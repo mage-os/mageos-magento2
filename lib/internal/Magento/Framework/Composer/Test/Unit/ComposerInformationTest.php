@@ -111,7 +111,7 @@ class ComposerInformationTest extends TestCase
     /**
      * @return array
      */
-    public function isMagentoRootDataProvider()
+    public static function isMagentoRootDataProvider()
     {
         return [
             ['mage-os/magento2ce', true],

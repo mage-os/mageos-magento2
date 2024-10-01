@@ -136,7 +136,7 @@ class CurrencyTest extends TestCase
      *
      * @return array
      */
-    public function getOutputFormatDataProvider(): array
+    public static function getOutputFormatDataProvider(): array
     {
         return [
             'en_US:USD' => ['en_US', 'USD', '$%s'],
@@ -199,7 +199,7 @@ class CurrencyTest extends TestCase
      *
      * @return array
      */
-    public function getFormatTxtNumberFormatterDataProvider(): array
+    public static function getFormatTxtNumberFormatterDataProvider(): array
     {
         return [
             ['en_US', 'USD', '9999', [], '$9,999.00'],
@@ -268,7 +268,7 @@ class CurrencyTest extends TestCase
      *
      * @return array
      */
-    public function getFormatTxtZendCurrencyDataProvider(): array
+    public static function getFormatTxtZendCurrencyDataProvider(): array
     {
         return [
             ['9999', ['display' => Currency::USE_SYMBOL, 'foo' => 'bar'], '$9,999.00'],
