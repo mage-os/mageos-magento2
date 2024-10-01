@@ -32,6 +32,7 @@ use Magento\Framework\Stdlib\DateTime;
 use Magento\Framework\Stdlib\StringUtils;
 use Zend_Db_Adapter_Exception;
 use Zend_Db_Statement_Exception;
+use Magento\Framework\Setup\Declaration\Schema\Dto\Factories\Table as DtoFactoriesTable;
 
 // @codingStandardsIgnoreStart
 
@@ -273,6 +274,11 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface, Rese
      */
     private $mysqlversion;
 
+    /***
+     * @var DtoFactoriesTable
+     */
+    private $columnConfig;
+
     /**
      * Constructor
      *
@@ -280,6 +286,7 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface, Rese
      * @param DateTime $dateTime
      * @param LoggerInterface $logger
      * @param SelectFactory $selectFactory
+     * @param DtoFactoriesTable $dtoFactoriesTable
      * @param array $config
      * @param SerializerInterface|null $serializer
      */
@@ -288,6 +295,7 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface, Rese
         DateTime $dateTime,
         LoggerInterface $logger,
         SelectFactory $selectFactory,
+        DtoFactoriesTable $dtoFactoriesTable,
         array $config = [],
         SerializerInterface $serializer = null
     ) {
@@ -296,6 +304,7 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface, Rese
         $this->dateTime = $dateTime;
         $this->logger = $logger;
         $this->selectFactory = $selectFactory;
+        $this->columnConfig = $dtoFactoriesTable;
         $this->serializer = $serializer ?: ObjectManager::getInstance()->get(SerializerInterface::class);
         $this->exceptionMap = [
             // SQLSTATE[HY000]: General error: 2006 MySQL server has gone away
@@ -4321,7 +4330,9 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface, Rese
     {
         $pattern = '/\b(' . implode('|', array_map('preg_quote', self::COLUMN_TYPE)) . ')\b/i';
         if (preg_match($pattern, $columnType) === 1) {
-            $charsets = 'CHARACTER SET ' . self::CHARSET. ' COLLATE ' . self::COLLATION;
+            $charset = $this->columnConfig->getDefaultCharset();
+            $collate = $this->columnConfig->getDefaultCollation();
+            $charsets = 'CHARACTER SET ' . $charset. ' COLLATE ' . $collate;
             $columnsAttribute = explode(' ', trim($definition));
             array_splice($columnsAttribute, $position, 0, $charsets);
             return implode(' ', $columnsAttribute);
