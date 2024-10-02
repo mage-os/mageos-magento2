@@ -70,7 +70,7 @@ class DesignPathValidatorPluginTest extends TestCase
             ->willReturn([$path => $path]);
 
         $designConfig = $this->createMock(DesignConfigInterface::class);
-        $extensionAttributes = $this->createMock(DesignConfigDataCallableMockInterface::class);
+        $extensionAttributes = $this->createStub(DesignConfigExtensionInterface::class);
         $designConfig->expects($this->once())
             ->method('getExtensionAttributes')
             ->willReturn($extensionAttributes);
@@ -111,7 +111,7 @@ class DesignPathValidatorPluginTest extends TestCase
             ->willReturn([]);
 
         $designConfig = $this->createMock(DesignConfigInterface::class);
-        $extensionAttributes = $this->createMock(DesignConfigDataCallableMockInterface::class);
+        $extensionAttributes = $this->createStub(DesignConfigExtensionInterface::class);
         $designConfig->expects($this->once())
             ->method('getExtensionAttributes')
             ->willReturn($extensionAttributes);
@@ -126,13 +126,4 @@ class DesignPathValidatorPluginTest extends TestCase
 
         $this->plugin->aroundValidate($pathValidator, $proceed, $path);
     }
-}
-
-// @codingStandardsIgnoreStart
-interface DesignConfigDataCallableMockInterface
-{
-    /**
-     * @return \Magento\Theme\Api\Data\DesignConfigDataInterface[]|null
-     */
-    public function getDesignConfigData();
 }
