@@ -70,7 +70,10 @@ class DesignPathValidatorPluginTest extends TestCase
             ->willReturn([$path => $path]);
 
         $designConfig = $this->createMock(DesignConfigInterface::class);
-        $extensionAttributes = $this->createMock(DesignConfigExtensionInterface::class);
+        $extensionAttributes = $this->getMockBuilder(DesignConfigExtensionInterface::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getDesignConfigData', 'setDesignConfigData'])
+            ->getMock();
         $designConfig->expects($this->once())
             ->method('getExtensionAttributes')
             ->willReturn($extensionAttributes);

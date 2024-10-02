@@ -275,7 +275,8 @@ class ConfigFactoryTest extends TestCase
         $this->assertSame($this->designConfig, $this->factory->create($scope, $scopeId, $data));
     }
 
-    public function testBypassSettingLockedConfig() {
+    public function testBypassSettingLockedConfig()
+    {
         $scope = 'default';
         $scopeId = 0;
         $data = [
