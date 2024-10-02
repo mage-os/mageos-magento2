@@ -70,7 +70,9 @@ class SaveDownloadableOrderItemObserverTest extends \PHPUnit\Framework\TestCase
 
         /** Save order item to trigger observers */
         $orderItemRepository = $this->objectManager->get(ItemRepository::class);
-        $orderItem->setUpdatedAt(date('Y-m-d H:i:s'));
+        $updateDate = new \DateTime();
+        $updateDate->modify('+5 minute');
+        $orderItem->setUpdatedAt($updateDate->format('Y-m-d H:i:s'));
         $orderItemRepository->save($orderItem);
 
         $this->assertOrderItemLinkStatus((int)$orderItem->getId(), Item::LINK_STATUS_AVAILABLE);
