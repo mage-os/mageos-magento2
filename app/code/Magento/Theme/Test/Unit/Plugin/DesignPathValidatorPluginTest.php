@@ -14,12 +14,12 @@ use Magento\Framework\Exception\ValidatorException;
 use Magento\Theme\Api\Data\DesignConfigExtensionInterface;
 use Magento\Theme\Api\Data\DesignConfigInterface;
 use Magento\Theme\Model\DesignConfigRepository;
-use Magento\Theme\Plugin\ValidateDesignConfig;
+use Magento\Theme\Plugin\DesignPathValidatorPlugin;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class ValidateDesignConfigTest extends TestCase
+class DesignPathValidatorPluginTest extends TestCase
 {
     /**
      * @var Structure|MockObject
@@ -32,7 +32,7 @@ class ValidateDesignConfigTest extends TestCase
     private $designConfigRepository;
 
     /**
-     * @var ValidateDesignConfig
+     * @var DesignPathValidatorPlugin
      */
     private $plugin;
 
@@ -40,7 +40,7 @@ class ValidateDesignConfigTest extends TestCase
     {
         $this->structure = $this->createMock(Structure::class);
         $this->designConfigRepository = $this->createMock(DesignConfigRepository::class);
-        $this->plugin = new ValidateDesignConfig($this->structure, $this->designConfigRepository);
+        $this->plugin = new DesignPathValidatorPlugin($this->structure, $this->designConfigRepository);
     }
 
     /**

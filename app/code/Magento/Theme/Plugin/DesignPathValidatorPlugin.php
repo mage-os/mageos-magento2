@@ -13,7 +13,7 @@ use Magento\Config\Model\Config\Structure\Element\Field;
 use Magento\Framework\Exception\ValidatorException;
 use Magento\Theme\Model\DesignConfigRepository;
 
-class ValidateDesignConfig
+class DesignPathValidatorPlugin
 {
     /**
      * @param Structure $structure
