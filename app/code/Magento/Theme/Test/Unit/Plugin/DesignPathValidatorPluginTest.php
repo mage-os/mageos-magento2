@@ -70,7 +70,12 @@ class DesignPathValidatorPluginTest extends TestCase
             ->willReturn([$path => $path]);
 
         $designConfig = $this->createMock(DesignConfigInterface::class);
-        $extensionAttributes = $this->createStub(DesignConfigExtensionInterface::class);
+        $extensionAttributes = $this->createConfiguredStub(
+            DesignConfigExtensionInterface::class,
+            [
+                'getDesignConfigData' => []
+            ]
+        );
         $designConfig->expects($this->once())
             ->method('getExtensionAttributes')
             ->willReturn($extensionAttributes);
@@ -111,7 +116,12 @@ class DesignPathValidatorPluginTest extends TestCase
             ->willReturn([]);
 
         $designConfig = $this->createMock(DesignConfigInterface::class);
-        $extensionAttributes = $this->createStub(DesignConfigExtensionInterface::class);
+        $extensionAttributes = $this->createConfiguredStub(
+            DesignConfigExtensionInterface::class,
+            [
+                'getDesignConfigData' => []
+            ]
+        );
         $designConfig->expects($this->once())
             ->method('getExtensionAttributes')
             ->willReturn($extensionAttributes);
