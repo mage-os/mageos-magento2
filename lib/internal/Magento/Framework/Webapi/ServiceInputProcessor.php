@@ -357,16 +357,14 @@ class ServiceInputProcessor implements ServicePayloadConverterInterface, ResetAf
     }
 
     /**
-     * Check if input value contains any XSS vector
+     * Validate input param value
      *
      * @param string $value
      * @return bool
      */
     private function validateParamsValue(string $value)
     {
-        // Check for <script> tags or any common XSS vectors
-        return preg_match('/<script\b[^>]*>(.*?)<\/script>/is', $value) ||
-            preg_match('/[<>]/', $value);
+        return preg_match('/<script\b[^>]*>(.*?)<\/script>/is', $value);
     }
 
     /**
