@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Theme\Test\Unit\Model\Data\Design;
 
+use Magento\Config\Model\Config\Reader\Source\Deployed\SettingChecker;
 use Magento\Framework\App\ScopeValidatorInterface;
 use Magento\Store\Api\Data\WebsiteInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -51,6 +52,11 @@ class ConfigFactoryTest extends TestCase
 
     /** @var WebsiteInterface|MockObject */
     protected $website;
+
+    /**
+     * @var SettingChecker|MockObject
+     */
+    private $settingChecker;
 
     protected function setUp(): void
     {
@@ -99,6 +105,9 @@ class ConfigFactoryTest extends TestCase
             ->getMockForAbstractClass();
         $this->website = $this->getMockBuilder(WebsiteInterface::class)
             ->getMockForAbstractClass();
+        $this->settingChecker = $this->getMockBuilder(SettingChecker::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->factory = new ConfigFactory(
             $this->designConfigFactory,
@@ -106,7 +115,8 @@ class ConfigFactoryTest extends TestCase
             $this->designConfigDataFactory,
             $this->configExtensionFactory,
             $this->scopeValidator,
-            $this->storeManager
+            $this->storeManager,
+            $this->settingChecker
         );
     }
 
@@ -158,14 +168,18 @@ class ConfigFactoryTest extends TestCase
                     return null;
                 }
             });
-            $this->designConfigData->expects($this->exactly(2))
-                ->method('setFieldConfig')
-                ->willReturnCallback(function ($config) {
-                    if ($config['path'] == 'design/header/default_title' ||
-                        $config['path']== 'design/head/default_description') {
-                        return null;
-                    }
-                });
+        $this->designConfigData->expects($this->exactly(2))
+            ->method('setFieldConfig')
+            ->willReturnCallback(function ($config) {
+                if ($config['path'] == 'design/header/default_title' ||
+                    $config['path'] == 'design/head/default_description') {
+                    return null;
+                }
+            });
+        $this->settingChecker->expects($this->once())
+            ->method('isReadOnly')
+            ->with('design/header/default_title', 'default', 0)
+            ->willReturn(false);
         $this->designConfigData->expects($this->once())
             ->method('setValue')
             ->with('value');
@@ -242,9 +256,89 @@ class ConfigFactoryTest extends TestCase
                     return null;
                 }
             });
+        $this->settingChecker->expects($this->once())
+            ->method('isReadOnly')
+            ->with('design/header/default_title', 'default', 0)
+            ->willReturn(false);
         $this->designConfigData->expects($this->once())
             ->method('setValue')
             ->with('value');
+        $this->configExtensionFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($this->designConfigExtension);
+        $this->designConfigExtension->expects($this->once())
+            ->method('setDesignConfigData')
+            ->with([$this->designConfigData, $this->designConfigData]);
+        $this->designConfig->expects($this->once())
+            ->method('setExtensionAttributes')
+            ->with($this->designConfigExtension);
+        $this->assertSame($this->designConfig, $this->factory->create($scope, $scopeId, $data));
+    }
+
+    public function testBypassSettingLockedConfig() {
+        $scope = 'default';
+        $scopeId = 0;
+        $data = [
+            'header_default_title' => 'value'
+        ];
+        $metadata = [
+            'header_default_title' => [
+                'path' => 'design/header/default_title',
+                'fieldset' => 'head'
+            ],
+            'head_default_description' => [
+                'path' => 'design/head/default_description',
+                'fieldset' => 'head'
+            ],
+        ];
+
+        $this->scopeValidator->expects($this->once())
+            ->method('isValidScope')
+            ->with($scope, $scopeId)
+            ->willReturn(true);
+        $this->storeManager->expects($this->once())
+            ->method('isSingleStoreMode')
+            ->willReturn(true);
+        $this->storeManager->expects($this->once())
+            ->method('getWebsites')
+            ->willReturn([$this->website]);
+        $this->website->expects($this->once())
+            ->method('getId')
+            ->willReturn(1);
+
+        $this->designConfigFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($this->designConfig);
+        $this->designConfig->expects($this->once())
+            ->method('setScope')
+            ->willReturn('websites');
+        $this->designConfig->expects($this->once())
+            ->method('setScopeId')
+            ->willReturn(1);
+        $this->metadataProvider->expects($this->once())
+            ->method('get')
+            ->willReturn($metadata);
+        $this->designConfigDataFactory->expects($this->exactly(2))
+            ->method('create')
+            ->willReturn($this->designConfigData);
+        $this->designConfigData->expects($this->exactly(2))
+            ->method('setPath')
+            ->willReturnCallback(function ($arg1) {
+                if ($arg1 == 'design/header/default_title' && $arg1 == 'design/head/default_description') {
+                    return null;
+                }
+            });
+        $this->designConfigData->expects($this->exactly(2))
+            ->method('setFieldConfig')
+            ->willReturnCallback(function ($arg1) {
+                if ($arg1 == 'design/header/default_title' && $arg1 == 'design/head/default_description') {
+                    return null;
+                }
+            });
+        $this->settingChecker->expects($this->once())
+            ->method('isReadOnly')
+            ->with('design/header/default_title', 'default', 0)
+            ->willReturn(true);
         $this->configExtensionFactory->expects($this->once())
             ->method('create')
             ->willReturn($this->designConfigExtension);
