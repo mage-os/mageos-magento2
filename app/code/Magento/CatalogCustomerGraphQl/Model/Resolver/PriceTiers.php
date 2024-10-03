@@ -182,7 +182,7 @@ class PriceTiers implements ResolverInterface, ResetAfterRequestInterface
             "discount" => $discount,
             "quantity" => $tierPrice->getQty(),
             "final_price" => [
-                "value" => $tierPrice->getValue() * $tierPrice->getQty(),
+                "value" => $tierPrice->getValue(),
                 "currency" => $currencyCode
             ]
         ];
