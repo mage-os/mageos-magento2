@@ -123,7 +123,7 @@ class Fulltext implements
         IndexSwitcherInterface $indexSwitcher,
         StateFactory $indexScopeStateFactory,
         DimensionProviderInterface $dimensionProvider,
-        array $data,
+        array $data = [],
         ProcessManager $processManager = null,
         ?int $batchSize = null,
         ?DeploymentConfig $deploymentConfig = null
