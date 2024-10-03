@@ -6,13 +6,20 @@
 namespace Magento\Framework\Model\ResourceModel\Db\VersionControl;
 
 use Magento\Framework\DataObject;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\ObjectManager\ResetAfterRequestInterface;
+use Magento\Framework\Serialize\SerializerInterface;
 
 /**
  * Class Snapshot register snapshot of entity data, for tracking changes
  */
 class Snapshot implements ResetAfterRequestInterface
 {
+    /**
+     * @var SerializerInterface
+     */
+    private SerializerInterface $serializer;
+
     /**
      * Array of snapshots of entities data
      *
@@ -29,11 +36,14 @@ class Snapshot implements ResetAfterRequestInterface
      * Initialization
      *
      * @param Metadata $metadata
+     * @param SerializerInterface $serializer
      */
     public function __construct(
-        Metadata $metadata
+        Metadata $metadata,
+        SerializerInterface $serializer
     ) {
         $this->metadata = $metadata;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -41,7 +51,7 @@ class Snapshot implements ResetAfterRequestInterface
      *
      * @param DataObject $entity
      * @return void
-     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     * @throws LocalizedException
      */
     public function registerSnapshot(DataObject $entity)
     {
@@ -88,9 +98,10 @@ class Snapshot implements ResetAfterRequestInterface
         foreach ($this->snapshotData[$entityClass][$entity->getId()] as $field => $value) {
             $entityValue = $entity->getDataByKey($field);
             if (is_array($entityValue) && is_string($value)) {
-                $decodedValue = json_decode($value, true);
-                if (json_last_error() === JSON_ERROR_NONE) {
-                    $value = $decodedValue;
+                try {
+                    $value = $this->serializer->unserialize($value);
+                } catch (\InvalidArgumentException) {
+                    return true;
                 }
             }
             if ($entityValue != $value) {
