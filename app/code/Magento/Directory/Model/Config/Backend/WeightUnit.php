@@ -5,12 +5,12 @@
  */
 namespace Magento\Directory\Model\Config\Backend;
 
-use LocalizedException;
 use Magento\Directory\Model\Config\Source\WeightUnit as Source;
 use Magento\Framework\App\Cache\TypeListInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Config\Value;
 use Magento\Framework\Data\Collection\AbstractDb;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
 use Magento\Framework\Registry;
@@ -27,11 +27,10 @@ class WeightUnit extends Value
 
     /**
      * @param Source $source
-     * @param Context $contesxt
+     * @param Context $context
      * @param Registry $registry
      * @param ScopeConfigInterface $config
      * @param TypeListInterface $cacheTypeList
-     * @param CookieLifetimeValidator $configValidator
      * @param AbstractResource $resource
      * @param AbstractDb $resourceCollection
      * @param array $data
@@ -70,7 +69,7 @@ class WeightUnit extends Value
 
     /**
      * Get available options for weight unit
-     * 
+     *
      * @return array
      */
     private function getOptions()
