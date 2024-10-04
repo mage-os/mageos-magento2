@@ -10,8 +10,8 @@ namespace Magento\Theme\Test\Unit\Plugin;
 use Magento\Config\Model\Config\PathValidator;
 use Magento\Config\Model\Config\Structure;
 use Magento\Config\Model\Config\Structure\Element\Field;
+use Magento\Framework\DataObject;
 use Magento\Framework\Exception\ValidatorException;
-use Magento\Theme\Api\Data\DesignConfigExtensionInterface;
 use Magento\Theme\Api\Data\DesignConfigInterface;
 use Magento\Theme\Model\DesignConfigRepository;
 use Magento\Theme\Plugin\DesignPathValidatorPlugin;
@@ -57,10 +57,12 @@ class DesignPathValidatorPluginTest extends TestCase
         $path = 'design/header/default_title';
 
         $field = $this->createMock(Field::class);
+        $designConfig = $this->createMock(DesignConfigInterface::class);
+        $extensionAttributes = $this->createMock(DataObject::class);
+
         $field->expects($this->exactly(2))
             ->method('getConfigPath')
             ->willReturn($path);
-
         $this->structure->expects($this->once())
             ->method('getElementByConfigPath')
             ->with($path)
@@ -68,21 +70,14 @@ class DesignPathValidatorPluginTest extends TestCase
         $this->structure->expects($this->once())
             ->method('getFieldPaths')
             ->willReturn([$path => $path]);
-
-        $designConfig = $this->createMock(DesignConfigInterface::class);
-        $extensionAttributes = $this->createConfiguredStub(
-            DesignConfigExtensionInterface::class,
-            [
-                'getDesignConfigData' => []
-            ]
-        );
         $designConfig->expects($this->once())
             ->method('getExtensionAttributes')
             ->willReturn($extensionAttributes);
         $extensionAttributes->expects($this->once())
-            ->method('getDesignConfigData')
-            ->willReturn([]);
-
+            ->method('__call')
+            ->with(
+                $this->equalTo('getDesignConfigData')
+            )->willReturn([]);
         $this->designConfigRepository->expects($this->once())
             ->method('getByScope')
             ->with('default', null)
@@ -102,6 +97,9 @@ class DesignPathValidatorPluginTest extends TestCase
         $this->expectException(ValidatorException::class);
 
         $pathValidator = $this->createMock(PathValidator::class);
+        $designConfig = $this->createMock(DesignConfigInterface::class);
+        $extensionAttributes = $this->createMock(DataObject::class);
+
         $proceed = function ($path) {
             return true;
         };
@@ -114,21 +112,14 @@ class DesignPathValidatorPluginTest extends TestCase
         $this->structure->expects($this->once())
             ->method('getFieldPaths')
             ->willReturn([]);
-
-        $designConfig = $this->createMock(DesignConfigInterface::class);
-        $extensionAttributes = $this->createConfiguredStub(
-            DesignConfigExtensionInterface::class,
-            [
-                'getDesignConfigData' => []
-            ]
-        );
         $designConfig->expects($this->once())
             ->method('getExtensionAttributes')
             ->willReturn($extensionAttributes);
         $extensionAttributes->expects($this->once())
-            ->method('getDesignConfigData')
-            ->willReturn([]);
-
+            ->method('__call')
+            ->with(
+                $this->equalTo('getDesignConfigData')
+            )->willReturn([]);
         $this->designConfigRepository->expects($this->once())
             ->method('getByScope')
             ->with('default', null)
