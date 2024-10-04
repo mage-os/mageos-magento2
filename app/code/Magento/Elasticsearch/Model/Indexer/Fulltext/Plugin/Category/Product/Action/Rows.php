@@ -91,7 +91,7 @@ class Rows
                 if ($indexer->isScheduled()) {
                     $indexer->getView()->getChangelog()->addList($productIds);
                 } else {
-                    $indexer->reindexList($productIds);
+                    $indexer->invalidate();
                 }
             }
         }
