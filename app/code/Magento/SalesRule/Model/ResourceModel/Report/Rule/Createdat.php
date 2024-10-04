@@ -8,8 +8,6 @@ namespace Magento\SalesRule\Model\ResourceModel\Report\Rule;
 
 /**
  * Rule report resource model with aggregation by created at
- *
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Createdat extends \Magento\Reports\Model\ResourceModel\Report\AbstractReport
 {
@@ -102,7 +100,12 @@ class Createdat extends \Magento\Reports\Model\ResourceModel\Report\AbstractRepo
                     ) . ' + ' . $connection->getIfNullSql(
                         'base_tax_amount - ' . $connection->getIfNullSql('base_tax_canceled', 0),
                         0
-                    ) . ')
+                    ) . ' + ' . $connection->getIfNullSql(
+                        'base_discount_tax_compensation_amount - '
+                        . $connection->getIfNullSql('base_discount_tax_compensation_refunded', 0),
+                        0
+                    ) . ' - ' . $connection->getIfNullSql('ABS(base_shipping_discount_tax_compensation_amnt)', 0)
+                    . ')
                         * base_to_global_rate)',
                     0
                 ),
@@ -135,7 +138,13 @@ class Createdat extends \Magento\Reports\Model\ResourceModel\Report\AbstractRepo
                     ) . ' + ' . $connection->getIfNullSql(
                         'base_tax_invoiced - ' . $connection->getIfNullSql('base_tax_refunded', 0),
                         0
-                    ) . ') * base_to_global_rate)',
+                    ) . ' + ' . $connection->getIfNullSql(
+                        'base_discount_tax_compensation_invoiced - '
+                        . $connection->getIfNullSql('base_discount_tax_compensation_refunded', 0),
+                        0
+                    ) . ' - ' . $connection->getIfNullSql('ABS(base_shipping_discount_tax_compensation_amnt)', 0)
+                    . ')
+                    * base_to_global_rate)',
                     0
                 ),
             ];
