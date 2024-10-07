@@ -7,6 +7,7 @@ namespace Magento\SalesRule\Model\Quote;
 
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Event\ManagerInterface;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Quote\Api\Data\AddressInterface;
 use Magento\Quote\Api\Data\ShippingAssignmentInterface;
@@ -128,6 +129,7 @@ class Discount extends AbstractTotal
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @throws \Zend_Db_Select_Exception|NoSuchEntityException
      */
     public function collect(
         Quote $quote,
@@ -135,64 +137,26 @@ class Discount extends AbstractTotal
         Total $total
     ) {
         parent::collect($quote, $shippingAssignment, $total);
-        $store = $this->storeManager->getStore($quote->getStoreId());
-        /** @var Address $address */
-        $address = $shippingAssignment->getShipping()->getAddress();
-        if ($quote->currentPaymentWasSet()) {
-            $address->setPaymentMethod($quote->getPayment()->getMethod());
-        }
-        $this->calculator->reset($address);
-        $itemsAggregate = [];
-        foreach ($shippingAssignment->getItems() as $item) {
-            $itemId = $item->getId();
-            $itemsAggregate[$itemId] = $item;
-        }
-        $items = [];
-        foreach ($quote->getAllAddresses() as $quoteAddress) {
-            foreach ($quoteAddress->getAllItems() as $item) {
-                $items[] = $item;
-            }
-        }
+        $this->addressDiscountAggregator = [];
+
+        $address = $this->getAddress($shippingAssignment, $quote);
+        $itemsAggregate = $this->getShippingItems($shippingAssignment);
+        $items = $this->extractQuoteItems($quote, $address);
+
         if (!$items || !$itemsAggregate) {
             return $this;
         }
-        $eventArgs = [
-            'website_id' => $store->getWebsiteId(),
-            'customer_group_id' => $quote->getCustomerGroupId(),
-            'coupon_code' => $quote->getCouponCode(),
-        ];
-        $address->setDiscountDescription([]);
-        $address->getExtensionAttributes()->setDiscounts([]);
-        $this->addressDiscountAggregator = [];
-        $address->setCartFixedRules([]);
+        $store = $this->storeManager->getStore($quote->getStoreId());
+
         $quote->setCartFixedRules([]);
-        foreach ($items as $item) {
-            $item->setAppliedRuleIds(null);
-            if ($item->getExtensionAttributes()) {
-                $item->getExtensionAttributes()->setDiscounts(null);
-            }
-            $item->setDiscountAmount(0);
-            $item->setBaseDiscountAmount(0);
-            $item->setDiscountPercent(0);
-            if ($item->getChildren() && $item->isChildrenCalculated()) {
-                foreach ($item->getChildren() as $child) {
-                    $child->setDiscountAmount(0);
-                    $child->setBaseDiscountAmount(0);
-                    $child->setDiscountPercent(0);
-                }
-            }
-            $item->getAddress()->setBaseDiscountAmount(0);
-        }
         $this->calculator->initFromQuote($quote);
         $this->calculator->initTotals($items, $address);
-        $items = $this->calculator->sortItemsByPriority($items, $address);
+
         $itemsToApplyRules = $items;
-        $rules = $this->calculator->getRules($address);
-        $totalDiscount = [];
-        $address->setBaseDiscountAmount(0);
+
         /** @var Rule $rule */
-        foreach ($rules as $rule) {
-            /** @var Item $item */
+        foreach ($this->calculator->getRules($address) as $rule) {
+            $totalDiscount = 0;
             foreach ($itemsToApplyRules as $key => $item) {
                 if ($item->getNoDiscount() || !$this->calculator->canApplyDiscount($item) || $item->getParentItem()) {
                     continue;
@@ -212,8 +176,15 @@ class Discount extends AbstractTotal
                         break;
                 }
 
-                $eventArgs['item'] = $item;
-                $this->eventManager->dispatch('sales_quote_address_discount_item', $eventArgs);
+                $this->eventManager->dispatch(
+                    'sales_quote_address_discount_item',
+                    [
+                        'website_id' => $store->getWebsiteId(),
+                        'customer_group_id' => $quote->getCustomerGroupId(),
+                        'coupon_code' => $quote->getCouponCode(),
+                        'item' => $item
+                    ]
+                );
 
                 $this->calculator->process($item, $rule);
                 $appliedRuleIds = $item->getAppliedRuleIds() ? explode(',', $item->getAppliedRuleIds()) : [];
@@ -221,9 +192,9 @@ class Discount extends AbstractTotal
                     unset($itemsToApplyRules[$key]);
                 }
 
-                $totalDiscount[$item->getId()] = $item->getBaseDiscountAmount();
+                $totalDiscount += $this->getAggregatedItemBaseDiscount($item);
             }
-            $address->setBaseDiscountAmount(array_sum(array_values($totalDiscount)));
+            $address->setBaseDiscountAmount($totalDiscount);
         }
         $this->calculator->initTotals($items, $address);
         foreach ($items as $item) {
@@ -269,6 +240,104 @@ class Discount extends AbstractTotal
         $total->addTotalAmount($this->getCode(), -$item->getDiscountAmount());
         $total->addBaseTotalAmount($this->getCode(), -$item->getBaseDiscountAmount());
         return $this;
+    }
+
+    /**
+     * Get quote items
+     *
+     * @param Quote $quote
+     * @param AddressInterface $address
+     * @return Address\Item[]
+     * @throws \Zend_Db_Select_Exception
+     */
+    private function extractQuoteItems(Quote $quote, AddressInterface $address): array
+    {
+        $items = [];
+        foreach ($quote->getAllAddresses() as $quoteAddress) {
+            foreach ($quoteAddress->getAllItems() as $item) {
+                $item->setAppliedRuleIds(null);
+                if ($item->getExtensionAttributes()) {
+                    $item->getExtensionAttributes()->setDiscounts(null);
+                }
+                $item->setDiscountAmount(0);
+                $item->setBaseDiscountAmount(0);
+                $item->setDiscountPercent(0);
+                if ($item->getChildren() && $item->isChildrenCalculated()) {
+                    foreach ($item->getChildren() as $child) {
+                        $child->setDiscountAmount(0);
+                        $child->setBaseDiscountAmount(0);
+                        $child->setDiscountPercent(0);
+                    }
+                }
+                $item->getAddress()->setBaseDiscountAmount(0);
+                $items[] = $item;
+            }
+        }
+
+        if ($items) {
+            $items = $this->calculator->sortItemsByPriority($items, $address);
+        }
+
+        return $items;
+    }
+
+    /**
+     * Get shipping items
+     *
+     * @param ShippingAssignmentInterface $shippingAssignment
+     * @return array
+     */
+    private function getShippingItems(ShippingAssignmentInterface $shippingAssignment): array
+    {
+        $itemsAggregate = [];
+        foreach ($shippingAssignment->getItems() as $item) {
+            $itemId = $item->getId();
+            $itemsAggregate[$itemId] = $item;
+        }
+
+        return $itemsAggregate;
+    }
+
+    /**
+     * Prepare quote address
+     *
+     * @param ShippingAssignmentInterface $shippingAssignment
+     * @param Quote $quote
+     * @return AddressInterface
+     */
+    private function getAddress(ShippingAssignmentInterface $shippingAssignment, Quote $quote): AddressInterface
+    {
+        $address = $shippingAssignment->getShipping()->getAddress();
+        if ($quote->currentPaymentWasSet()) {
+            $address->setPaymentMethod($quote->getPayment()->getMethod());
+        }
+
+        $this->calculator->reset($address);
+        $address->setDiscountDescription([]);
+        $address->getExtensionAttributes()->setDiscounts([]);
+        $address->setCartFixedRules([]);
+        $address->setBaseDiscountAmount(0);
+        return $address;
+    }
+
+    /**
+     * Calculate quote item base discount
+     *
+     * @param Item $item
+     * @return float
+     */
+    private function getAggregatedItemBaseDiscount(Item $item): float
+    {
+        $baseDiscount = 0;
+        if ($item->getChildren() && $item->isChildrenCalculated()) {
+            foreach ($item->getChildren() as $child) {
+                $baseDiscount += $child->getBaseDiscountAmount();
+            }
+        } else {
+            $baseDiscount = $item->getBaseDiscountAmount();
+        }
+
+        return $baseDiscount;
     }
 
     /**
