@@ -74,7 +74,7 @@
         <actionGroup ref="StorefrontCheckoutClickNextOnShippingStepActionGroup" stepKey="clickNextOnShippingStep"/>
         <!--Assert the created terms and conditions-->
         <!--<conditionalClick selector="{{StorefrontCheckoutPaymentMethodSection.checkPaymentMethodByName('Credit Card (Payflow Link)')}}" dependentSelector="{{StorefrontCheckoutPaymentMethodSection.checkPaymentMethodByName('Credit Card (Payflow Link)')}}" visible="true" after="clickNextOnShippingStep" stepKey="selectCreditCardPaymentMethod"/>-->
-        <waitForText selector="{{StorefrontCheckoutAgreementsSection.checkoutAgreementLink}}" userInput="{{newHtmlTerm.checkboxText}}" after="selectCreditCardPaymentMethod" stepKey="seeTermInCheckout"/>
+        <waitForText selector="{{StorefrontCheckoutAgreementsSection.checkoutAgreementLink('Credit Card (Payflow Link)')}}" userInput="{{newHtmlTerm.checkboxText}}" after="selectCreditCardPaymentMethod" stepKey="seeTermInCheckout"/>
         <waitForElementClickable selector="{{StorefrontCheckoutAgreementsSection.checkoutAgreement(enabledHtmlTerm.checkboxText)}}" stepKey="waitToClickOnHTMLTerm"/>
         <click selector="{{StorefrontCheckoutAgreementsSection.checkoutAgreement(enabledHtmlTerm.checkboxText)}}" stepKey="clickOnHTMLTerm"/>
         <waitForElement selector="{{StorefrontCheckoutAgreementsSection.contentArea(newHtmlAutomaticallyTerm.content)}}" stepKey="verifyAutomaticTermContentTextMessage"/>
