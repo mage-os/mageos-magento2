@@ -16,3 +16,13 @@ jobs:
       repository: ${{ github.repository }}
       pr_head: ${{ github.event.pull_request.head.sha }}
       pr_base: ${{ github.event.pull_request.base.ref }}
+
+  wait-for-result:
+    name: Wait For Result
+    needs: call-workflow
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Wait"
+        shell: bash
+        run: |
+          echo "got result"
