@@ -164,7 +164,7 @@ class ConfigFactoryTest extends TestCase
         $this->designConfigData->expects($this->exactly(2))
             ->method('setPath')
             ->willReturnCallback(function ($arg1) {
-                if ($arg1 == 'design/header/default_title' && $arg1 == 'design/head/default_description') {
+                if ($arg1 == 'design/header/default_title' || $arg1 == 'design/head/default_description') {
                     return null;
                 }
             });
@@ -245,14 +245,14 @@ class ConfigFactoryTest extends TestCase
         $this->designConfigData->expects($this->exactly(2))
             ->method('setPath')
             ->willReturnCallback(function ($arg1) {
-                if ($arg1 == 'design/header/default_title' && $arg1 == 'design/head/default_description') {
+                if ($arg1 == 'design/header/default_title' || $arg1 == 'design/head/default_description') {
                     return null;
                 }
             });
         $this->designConfigData->expects($this->exactly(2))
             ->method('setFieldConfig')
             ->willReturnCallback(function ($arg1) {
-                if ($arg1 == 'design/header/default_title' && $arg1 == 'design/head/default_description') {
+                if ($arg1 == 'design/header/default_title' || $arg1 == 'design/head/default_description') {
                     return null;
                 }
             });
@@ -325,14 +325,14 @@ class ConfigFactoryTest extends TestCase
         $this->designConfigData->expects($this->exactly(2))
             ->method('setPath')
             ->willReturnCallback(function ($arg1) {
-                if ($arg1 == 'design/header/default_title' && $arg1 == 'design/head/default_description') {
+                if ($arg1 == 'design/header/default_title' || $arg1 == 'design/head/default_description') {
                     return null;
                 }
             });
         $this->designConfigData->expects($this->exactly(2))
             ->method('setFieldConfig')
             ->willReturnCallback(function ($arg1) {
-                if ($arg1 == 'design/header/default_title' && $arg1 == 'design/head/default_description') {
+                if ($arg1 == 'design/header/default_title' || $arg1 == 'design/head/default_description') {
                     return null;
                 }
             });
