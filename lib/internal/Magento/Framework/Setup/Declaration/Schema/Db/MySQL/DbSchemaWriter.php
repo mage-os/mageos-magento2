@@ -8,6 +8,10 @@ declare(strict_types=1);
 namespace Magento\Framework\Setup\Declaration\Schema\Db\MySQL;
 
 use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\DB\Adapter\ConnectionException;
+use Magento\Framework\DB\Adapter\SqlVersionProvider;
+use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Setup\Declaration\Schema\Db\DbSchemaWriterInterface;
 use Magento\Framework\Setup\Declaration\Schema\Db\Statement;
 use Magento\Framework\Setup\Declaration\Schema\Db\StatementAggregator;
@@ -20,6 +24,8 @@ use Magento\Framework\Setup\Declaration\Schema\Dto\Factories\Table as DtoFactori
 
 /**
  * @inheritdoc
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class DbSchemaWriter implements DbSchemaWriterInterface
 {
@@ -62,45 +68,39 @@ class DbSchemaWriter implements DbSchemaWriterInterface
     private $dryRunLogger;
 
     /**
-     * @var string|null
+     * @var SqlVersionProvider
      */
-    private ?string $addForeignKeyStatement = null;
-
-    /***
-     * @var array
-     */
-    private array $varcharPrimaryKeyTable = [
-        'sales_order_status_state',
-        'sales_order_status_label',
-        'weee_tax'
-    ];
+    private $sqlVersionProvider;
 
     /***
      * @var DtoFactoriesTable
      */
-    private $columnConfig;
+    private DtoFactoriesTable $columnConfig;
 
     private const COLUMN_TYPE = ['varchar', 'char', 'text', 'mediumtext', 'longtext'];
 
-    /***
+    /**
      * @param ResourceConnection $resourceConnection
      * @param StatementFactory $statementFactory
      * @param DryRunLogger $dryRunLogger
-     * @param DtoFactoriesTable $dtoFactoriesTable
+     * @param SqlVersionProvider $sqlVersionProvider
+     * @param DtoFactoriesTable|null $dtoFactoriesTable
      * @param array $tableOptions
      */
     public function __construct(
         ResourceConnection $resourceConnection,
         StatementFactory $statementFactory,
         DryRunLogger $dryRunLogger,
-        DtoFactoriesTable $dtoFactoriesTable,
+        SqlVersionProvider $sqlVersionProvider,
+        ?DtoFactoriesTable $dtoFactoriesTable = null,
         array $tableOptions = []
     ) {
         $this->resourceConnection = $resourceConnection;
         $this->statementFactory = $statementFactory;
         $this->dryRunLogger = $dryRunLogger;
-        $this->columnConfig = $dtoFactoriesTable;
+        $this->columnConfig = $dtoFactoriesTable ?: ObjectManager::getInstance()->get(DtoFactoriesTable::class);
         $this->tableOptions = array_replace($this->tableOptions, $tableOptions);
+        $this->sqlVersionProvider = $sqlVersionProvider;
     }
 
     /**
@@ -310,15 +310,14 @@ class DbSchemaWriter implements DbSchemaWriterInterface
             $statementsSql = [];
             $statement = null;
 
-            /**
-             * @var Statement $statement
-             */
-            foreach ($statementBank as $statement) {
-                $statementsSql[] = $statement->getStatement();
-            }
-            $adapter = $this->resourceConnection->getConnection($statement->getResource());
-
             if ($dryRun) {
+                /**
+                 * @var Statement $statement
+                 */
+                foreach ($statementBank as $statement) {
+                    $statementsSql[] = $statement->getStatement();
+                }
+                $adapter = $this->resourceConnection->getConnection($statement->getResource());
                 $this->dryRunLogger->log(
                     sprintf(
                         $this->statementDirectives[$statement->getType()],
@@ -327,23 +326,8 @@ class DbSchemaWriter implements DbSchemaWriterInterface
                     )
                 );
             } else {
-                if (in_array($statement->getTableName(), $this->varcharPrimaryKeyTable)) {
-                    $statementsSql = $this->removeConstraint($statementsSql);
-                }
-
-                $adapter->query(
-                    sprintf(
-                        $this->statementDirectives[$statement->getType()],
-                        $adapter->quoteIdentifier($statement->getTableName()),
-                        implode(", ", $statementsSql)
-                    )
-                );
-                if ($this->addForeignKeyStatement !== null) {
-                    $adapter->query(
-                        sprintf('ALTER TABLE  %s %s', $statement->getTableName(), $this->addForeignKeyStatement)
-                    );
-                    $this->addForeignKeyStatement = null;
-                }
+                $this->doQuery($statementBank);
+                $statement = end($statementBank);
                 //Do post update, like SQL DML operations or etc...
                 foreach ($statement->getTriggers() as $trigger) {
                     call_user_func($trigger);
@@ -353,11 +337,80 @@ class DbSchemaWriter implements DbSchemaWriterInterface
     }
 
     /**
+     * Check if we can concatenate sql into one statement
+     *
+     * Due to issues with some versions of MariaBD such statements
+     * may produce errors, e.g. with foreign key definition with column modification
+     *
+     * @return bool
+     * @throws ConnectionException
+     */
+    private function isNeedToSplitSql() : bool
+    {
+        return str_contains($this->sqlVersionProvider->getSqlVersion(), SqlVersionProvider::MARIA_DB_10_4_VERSION) ||
+            str_contains($this->sqlVersionProvider->getSqlVersion(), SqlVersionProvider::MARIA_DB_10_6_VERSION);
+    }
+
+    /**
+     * Perform queries based on statements
+     *
+     * @param Statement[] $statementBank
+     * @return void
+     * @throws ConnectionException
+     */
+    private function doQuery(
+        array $statementBank
+    ) : void {
+        if (empty($statementBank)) {
+            return;
+        }
+
+        $statement = null;
+        $statementsSql = [];
+        foreach ($statementBank as $statement) {
+            $statementsSql[] = $statement->getStatement();
+        }
+        $adapter = $this->resourceConnection->getConnection($statement->getResource());
+
+        if ($this->isNeedToSplitSql()) {
+            $preparedStatements = $this->getPreparedStatements($statementBank);
+
+            if (!empty($preparedStatements['canBeCombinedStatements'])) {
+                $adapter->query(
+                    sprintf(
+                        $this->statementDirectives[$statement->getType()],
+                        $adapter->quoteIdentifier($statement->getTableName()),
+                        implode(", ", $preparedStatements['canBeCombinedStatements'])
+                    )
+                );
+            }
+            foreach ($preparedStatements['separatedStatements'] as $separatedStatement) {
+                $adapter->query(
+                    sprintf(
+                        $this->statementDirectives[$statement->getType()],
+                        $adapter->quoteIdentifier($statement->getTableName()),
+                        $separatedStatement
+                    )
+                );
+            }
+        } else {
+            $adapter->query(
+                sprintf(
+                    $this->statementDirectives[$statement->getType()],
+                    $adapter->quoteIdentifier($statement->getTableName()),
+                    implode(", ", $statementsSql)
+                )
+            );
+        }
+    }
+
+    /**
      * Retrieve next value for AUTO_INCREMENT column.
      *
      * @param string $tableName
      * @param string $resource
      * @return int
+     * @throws \Zend_Db_Statement_Exception
      */
     private function getNextAutoIncrementValue(string $tableName, string $resource): int
     {
@@ -374,25 +427,58 @@ class DbSchemaWriter implements DbSchemaWriterInterface
         }
     }
 
-    /***
-     * Removal of adding foreign key
+    /**
+     * Prepare list of modified columns from statement
      *
-     * @param array $statementsSql
+     * @param array $statementBank
      * @return array
      */
-    private function removeConstraint(array $statementsSql): array
+    private function getModifiedColumns(array $statementBank) : array
     {
-        $sqlStmtWithoutAddingConstraint = [];
-        if (count($statementsSql)) {
-            foreach ($statementsSql as $tinySQL) {
-                if (!preg_match("/(?=.*\bADD CONSTRAINT\b)(?=.*\bFOREIGN KEY\b).*/i", $tinySQL)) {
-                    $sqlStmtWithoutAddingConstraint[] = $tinySQL;
-                } else {
-                    $this->addForeignKeyStatement = $tinySQL;
-                }
+        $columns = [];
+        foreach ($statementBank as $statement) {
+            if ($statement->getType() === 'alter'
+                && str_contains($statement->getStatement(), 'MODIFY COLUMN')) {
+                $columns[] = $statement->getName();
             }
         }
-        return $sqlStmtWithoutAddingConstraint;
+        return $columns;
+    }
+
+    /**
+     * Separate statements that can't be executed as one statement
+     *
+     * @param array $statementBank
+     * @return array
+     */
+    private function getPreparedStatements(array $statementBank) : array
+    {
+        $statementsSql = [];
+        foreach ($statementBank as $statement) {
+            $statementsSql[] = $statement->getStatement();
+        }
+        $result = ['separatedStatements' => [], 'canBeCombinedStatements' => []];
+        $modifiedColumns = $this->getModifiedColumns($statementBank);
+
+        foreach ($statementsSql as $statementSql) {
+            if (str_contains($statementSql, 'FOREIGN KEY')) {
+                $isThisColumnModified = false;
+                foreach ($modifiedColumns as $modifiedColumn) {
+                    if (str_contains($statementSql, '`' . $modifiedColumn . '`')) {
+                        $isThisColumnModified = true;
+                        break;
+                    }
+                }
+                if ($isThisColumnModified) {
+                    $result['separatedStatements'][] = $statementSql;
+                } else {
+                    $result['canBeCombinedStatements'][] = $statementSql;
+                }
+            } else {
+                $result['canBeCombinedStatements'][] = $statementSql;
+            }
+        }
+        return $result;
     }
 
     /***
@@ -403,14 +489,12 @@ class DbSchemaWriter implements DbSchemaWriterInterface
      */
     private function applyCharsetAndCollation(string $columnDefinition): string
     {
-        if (!empty($columnDefinition)) {
-            $charset = $this->columnConfig->getDefaultCharset();
-            $collate = $this->columnConfig->getDefaultCollation();
-            $columnLevelConfig = 'CHARACTER SET ' . $charset . ' COLLATE ' . $collate;
-            $columnsAttribute  = explode(' ', $columnDefinition);
-            array_splice($columnsAttribute, 2, 0, $columnLevelConfig);
-            return implode(" ", $columnsAttribute);
-        }
+        $charset = $this->columnConfig->getDefaultCharset();
+        $collate = $this->columnConfig->getDefaultCollation();
+        $columnLevelConfig = 'CHARACTER SET ' . $charset . ' COLLATE ' . $collate;
+        $columnsAttribute  = explode(' ', $columnDefinition);
+        array_splice($columnsAttribute, 2, 0, $columnLevelConfig);
+        return implode(" ", $columnsAttribute);
     }
 
     /***
@@ -422,10 +506,8 @@ class DbSchemaWriter implements DbSchemaWriterInterface
      */
     private function isColumnExists(string $definition, array $columntypes): bool
     {
-        if (!empty($definition)) {
-            $type = explode(' ', $definition);
-            $pattern = '/\b(' . implode('|', array_map('preg_quote', $columntypes)) . ')\b/i';
-            return preg_match($pattern, $type[1]) === 1;
-        }
+        $type = explode(' ', $definition);
+        $pattern = '/\b(' . implode('|', array_map('preg_quote', $columntypes)) . ')\b/i';
+        return preg_match($pattern, $type[1]) === 1;
     }
 }
