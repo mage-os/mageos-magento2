@@ -18,67 +18,7 @@
             <group value="paypalPayflowLink"/>
             <group value="3rd_party_integration"/>
         </annotations>
-        <before>
-            <!-- Enable Terms And Condition-->
-            <!--<magentoCLI command="config:set checkout/options/enable_agreements 1" stepKey="setEnableTermsOnCheckout"/>
-            &lt;!&ndash;Create a simple product&ndash;&gt;
-            <createData entity="SimpleProduct" stepKey="createSimpleProduct"/>
-            &lt;!&ndash;Create a US Customer&ndash;&gt;
-            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
-            &lt;!&ndash;Login to admin&ndash;&gt;
-            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
-            &lt;!&ndash;Create terms and conditions&ndash;&gt;
-            <actionGroup ref="AdminTermsConditionsOpenNewTermPageActionGroup" stepKey="openNewTerm"/>
-            <actionGroup ref="AdminTermsConditionsFillTermEditFormActionGroup" stepKey="fillNewTerm">
-                <argument name="term" value="newHtmlTerm"/>
-            </actionGroup>
-            <actionGroup ref="AdminTermsConditionsSaveTermActionGroup" stepKey="saveNewTerm"/>
-            <actionGroup ref="AdminTermsConditionsOpenNewTermPageActionGroup" stepKey="openNewHTMLTerm"/>
-            <actionGroup ref="AdminTermsConditionsFillTermEditFormActionGroup" stepKey="fillNewHTMLTerm">
-                <argument name="term" value="newHtmlAutomaticallyTerm"/>
-            </actionGroup>
-            <actionGroup ref="AdminTermsConditionsSaveTermActionGroup" stepKey="saveNewHTMLTerm"/>
-            &lt;!&ndash;Clear cache and reindex&ndash;&gt;
-            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
-                <argument name="indices" value=""/>
-            </actionGroup>
-            <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanCache">
-                <argument name="tags" value="config full_page"/>
-            </actionGroup>-->
-        </before>
-        <after>
-            <!--Admin delete terms and condition-->
-            <!--<actionGroup ref="AdminTermsConditionsOpenGridActionGroup" stepKey="openTermsGridToDelete"/>
-            <actionGroup ref="AdminDeleteAllTermConditionsActionGroup" stepKey="deleteAllTerms"/>
-            &lt;!&ndash;Delete created product&ndash;&gt;
-            <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
-            &lt;!&ndash; Delete created customer &ndash;&gt;
-            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
-            &lt;!&ndash;Logout&ndash;&gt;
-            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>-->
-        </after>
-        <!--Login to storefront and open created simple product-->
-        <!--<actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
-            <argument name="Customer" value="$createCustomer$" />
-        </actionGroup>
-        <actionGroup ref="StorefrontOpenProductEntityPageActionGroup" stepKey="goToProductOnStorefront">
-            <argument name="product" value="$$createSimpleProduct$$"/>
-        </actionGroup>
-        &lt;!&ndash; Add product to cart and then select shipping method on checkout page&ndash;&gt;
-        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addToCartFromStorefrontProductPage">
-            <argument name="productName" value="$createSimpleProduct.name$"/>
-        </actionGroup>
-        <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="goToCheckoutCartPage"/>
-        <actionGroup ref="StorefrontClickProceedToCheckoutActionGroup" stepKey="clickProceedToCheckout"/>
-        <actionGroup ref="StorefrontSetShippingMethodActionGroup" stepKey="selectFlatrate">
-            <argument name="shippingMethodName" value="Flat Rate"/>
-        </actionGroup>
-        <actionGroup ref="StorefrontCheckoutClickNextOnShippingStepActionGroup" stepKey="clickNextOnShippingStep"/>-->
         <!-- Checkout select Credit Card (Payflow link)-->
         <conditionalClick selector="{{StorefrontCheckoutPaymentMethodSection.checkPaymentMethodByName('Credit Card (Payflow Link)')}}" dependentSelector="{{StorefrontCheckoutPaymentMethodSection.checkPaymentMethodByName('Credit Card (Payflow Link)')}}" visible="true" after="clickNextOnShippingStep" stepKey="selectCreditCardPaymentMethod"/>
-        <!--<waitForText selector="{{StorefrontCheckoutAgreementsSection.checkoutAgreementLink}}" userInput="{{newHtmlTerm.checkboxText}}" stepKey="seeTermInCheckout"/>
-        <waitForElementClickable selector="{{StorefrontCheckoutAgreementsSection.checkoutAgreement(enabledHtmlTerm.checkboxText)}}" stepKey="waitToClickOnHTMLTerm"/>
-        <click selector="{{StorefrontCheckoutAgreementsSection.checkoutAgreement(enabledHtmlTerm.checkboxText)}}" stepKey="clickOnHTMLTerm"/>
-        <waitForElement selector="{{StorefrontCheckoutAgreementsSection.contentArea(newHtmlAutomaticallyTerm.content)}}" stepKey="verifyAutomaticTermContentTextMessage"/>-->
     </test>
 </tests>
