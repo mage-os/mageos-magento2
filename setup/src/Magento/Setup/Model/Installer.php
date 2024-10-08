@@ -663,23 +663,11 @@ class Installer
             // change the charset to utf8mb4
             $getTableSchema = $connection->getCreateTable($setup->getTable('setup_module')) ?? '';
             if (str_contains($getTableSchema, self::OLDCHARSET)) {
-                $charset = $this->columnConfig->getDefaultCharset();
-                $collate = $this->columnConfig->getDefaultCollation();
-                $columnEncoding = " CHARACTER SET ".$charset." COLLATE ".$collate;
-                $connection->query(
-                    sprintf(
-                        'ALTER TABLE `%s` MODIFY COLUMN `module` varchar(50) %s,
-                        MODIFY COLUMN `schema_version` varchar(50) %s,
-                        MODIFY COLUMN `data_version` varchar(50) %s,
-                        DEFAULT CHARSET=%s, DEFAULT COLLATE=%s',
-                        $setup->getTable('setup_module'),
-                        $columnEncoding,
-                        $columnEncoding,
-                        $columnEncoding,
-                        $charset,
-                        $collate
-                    )
-                );
+                $tableName = $setup->getTable('setup_module');
+                $columns = ['module' => ['varchar(50)',''],
+                            'schema_version' => ['varchar(50)',''],
+                            'data_version' => ['varchar(50)','']];
+                $this->updateDBTable($tableName, $columns, $connection);
             }
         }
     }
@@ -744,19 +732,9 @@ class Installer
             // change the charset to utf8mb4
             $getTableSchema = $connection->getCreateTable($setup->getTable('session')) ?? '';
             if (str_contains($getTableSchema, self::OLDCHARSET)) {
-                $charset = $this->columnConfig->getDefaultCharset();
-                $collate = $this->columnConfig->getDefaultCollation();
-                $columnEncoding = " CHARACTER SET ".$charset." COLLATE ".$collate;
-                $connection->query(
-                    sprintf(
-                        'ALTER TABLE `%s` MODIFY COLUMN `session_id` varchar(255) %s ,
-                             DEFAULT CHARSET=%s, DEFAULT COLLATE=%s',
-                        $setup->getTable('session'),
-                        $columnEncoding,
-                        $charset,
-                        $collate
-                    )
-                );
+                $tableName = $setup->getTable('session');
+                $columns = ['session_id' => ['varchar(255)','']];
+                $this->updateDBTable($tableName, $columns, $connection);
             }
         }
     }
@@ -817,19 +795,9 @@ class Installer
             // change the charset to utf8mb4
             $getTableSchema = $connection->getCreateTable($setup->getTable('cache')) ?? '';
             if (str_contains($getTableSchema, self::OLDCHARSET)) {
-                $charset = $this->columnConfig->getDefaultCharset();
-                $collate = $this->columnConfig->getDefaultCollation();
-                $columnEncoding = " CHARACTER SET ".$charset." COLLATE ".$collate;
-                $connection->query(
-                    sprintf(
-                        'ALTER TABLE `%s` MODIFY COLUMN `id` varchar(200) %s,
-                             DEFAULT CHARSET=%s, DEFAULT COLLATE=%s',
-                        $setup->getTable('cache'),
-                        $columnEncoding,
-                        $charset,
-                        $collate
-                    )
-                );
+                $tableName = $setup->getTable('cache');
+                $columns = ['id' => ['varchar(200)','']];
+                $this->updateDBTable($tableName, $columns, $connection);
             }
         }
     }
@@ -872,20 +840,9 @@ class Installer
             // change the charset to utf8mb4
             $getTableSchema = $connection->getCreateTable($setup->getTable('cache_tag')) ?? '';
             if (str_contains($getTableSchema, self::OLDCHARSET)) {
-                $charset = $this->columnConfig->getDefaultCharset();
-                $collate = $this->columnConfig->getDefaultCollation();
-                $columnEncoding = " CHARACTER SET ".$charset." COLLATE ".$collate;
-                $connection->query(
-                    sprintf(
-                        'ALTER TABLE `%s` MODIFY COLUMN `tag` varchar(100) %s,
-                             MODIFY COLUMN `cache_id` varchar(200) %s, DEFAULT CHARSET=%s, DEFAULT COLLATE=%s',
-                        $setup->getTable('cache_tag'),
-                        $columnEncoding,
-                        $columnEncoding,
-                        $charset,
-                        $collate
-                    )
-                );
+                $tableName = $setup->getTable('cache_tag');
+                $columns = ['tag' => ['varchar(100)',''],'cache_id' => ['varchar(200)','']];
+                $this->updateDBTable($tableName, $columns, $connection);
             }
         }
     }
@@ -948,20 +905,8 @@ class Installer
             // change the charset to utf8mb4
             $getTableSchema = $connection->getCreateTable($tableName) ?? '';
             if (str_contains($getTableSchema, self::OLDCHARSET)) {
-                $charset = $this->columnConfig->getDefaultCharset();
-                $collate = $this->columnConfig->getDefaultCollation();
-                $columnEncoding = " CHARACTER SET ".$charset." COLLATE ".$collate;
-                $connection->query(
-                    sprintf(
-                        'ALTER TABLE `%s` MODIFY COLUMN `flag_code` varchar(255) %s NOT NULL,
-                        MODIFY COLUMN `flag_data` mediumtext %s, DEFAULT CHARSET=%s, DEFAULT COLLATE=%s',
-                        $setup->getTable('flag'),
-                        $columnEncoding,
-                        $columnEncoding,
-                        $charset,
-                        $collate
-                    )
-                );
+                $columns = ['flag_code' => ['varchar(255)','NOT NULL'],'flag_data' => ['mediumtext','']];
+                $this->updateDBTable($tableName, $columns, $connection);
             }
         }
     }
@@ -1936,5 +1881,26 @@ class Installer
         } catch (\Exception $e) {
             $this->log->log(__("Indexing Error: ".$e->getMessage()));
         }
+    }
+
+    /**
+     * Add column attribute and update table
+     *
+     * @param string $tableName
+     * @param array $columns
+     * @param AdapterInterface $connection
+     * @return void
+     */
+    private function updateDBTable(string $tableName, array $columns, $connection) : void
+    {
+        $charset = $this->columnConfig->getDefaultCharset();
+        $collate = $this->columnConfig->getDefaultCollation();
+        $encoding = " CHARACTER SET ".$charset." COLLATE ".$collate;
+        $qry = sprintf('ALTER TABLE %s ', $tableName);
+        foreach ($columns as $key => $prop) {
+            $qry .= "MODIFY COLUMN `$key` $prop[0] $encoding $prop[1], ";
+        }
+        $qry .= sprintf('DEFAULT CHARSET=%s, DEFAULT COLLATE=%s', $charset, $collate);
+        $connection->query($qry);
     }
 }
