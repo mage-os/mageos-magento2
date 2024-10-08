@@ -351,7 +351,8 @@ class Installer
          * from that ObjectManager gets reset as different steps in the installer will write to the deployment config.
          */
         $this->firstDeploymentConfig = ObjectManager::getInstance()->get(DeploymentConfig::class);
-        $this->columnConfig = $dtoFactoriesTable ?: ObjectManager::getInstance()->get(DtoFactoriesTable::class);;
+        $this->columnConfig = $dtoFactoriesTable ?: ObjectManager::getInstance()->get(DtoFactoriesTable::class);
+        ;
     }
 
     /**
