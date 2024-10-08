@@ -222,9 +222,11 @@ class Discount extends AbstractTotal
                 }
 
                 if ($item->getChildren() && $item->isChildrenCalculated()) {
+                    $childTotal = 0;
                     foreach ($item->getChildren() as $child) {
-                        $totalDiscount[$item->getId()] += $child->getBaseDiscountAmount();
+                        $childTotal += $child->getBaseDiscountAmount();
                     }
+                    $totalDiscount[$item->getId()] = $childTotal;
                 } else {
                     $totalDiscount[$item->getId()] = $item->getBaseDiscountAmount();
                 }
