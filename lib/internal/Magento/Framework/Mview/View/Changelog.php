@@ -17,6 +17,8 @@ use Magento\Framework\Phrase;
 
 /**
  * Class Changelog for manipulations with the mview_state table.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Changelog implements ChangelogInterface
 {

@@ -1268,7 +1268,7 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface, Rese
             $definition = $this->_getColumnDefinition($definition);
         }
         // Add charset and collation for DBC failures
-        if(!empty($definition)) {
+        if (!empty($definition)) {
             $type = explode(' ', trim($definition));
             $definition = $this->applyCharsetAndCollation($type[0], $definition, 1);
         }
@@ -2447,7 +2447,7 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface, Rese
             );
         }
         // Adding charset and collation for DBC failures
-        if(count($definition)) {
+        if (count($definition)) {
             foreach ($definition as $index => $columnDefinition) {
                 $type = explode(' ', trim($columnDefinition));
                 $definition[$index] = $this->applyCharsetAndCollation($type[1], $columnDefinition, 2);
@@ -4311,9 +4311,9 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface, Rese
     /***
      * Adding charset and collation for DBC failures
      *
-     * @param $columnType
-     * @param $definition
-     * @param $position
+     * @param string $columnType
+     * @param string $definition
+     * @param int $position
      * @return string
      */
     private function applyCharsetAndCollation($columnType, $definition, $position) : string
