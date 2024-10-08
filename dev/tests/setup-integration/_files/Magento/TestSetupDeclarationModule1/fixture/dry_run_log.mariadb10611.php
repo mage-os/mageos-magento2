@@ -37,10 +37,10 @@ CREATE TABLE `test_table` (
 `date` date NULL , 
 `timestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP , 
 `datetime` datetime NULL DEFAULT 0  , 
-`longtext` longtext NULL , 
-`mediumtext` mediumtext NULL , 
-`varchar` varchar(254) NULL  , 
-`char` char(255) NULL  , 
+`longtext` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL , 
+`mediumtext` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL , 
+`varchar` varchar(254) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL  , 
+`char` char(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL  , 
 `mediumblob` mediumblob NULL , 
 `blob` blob NULL , 
 `boolean` BOOLEAN NULL  , 
@@ -51,7 +51,7 @@ INDEX `TEST_TABLE_TINYINT_BIGINT` (`tinyint`,`bigint`)
 
 CREATE TABLE `patch_list` (
 `patch_id` int  NOT NULL  AUTO_INCREMENT COMMENT "Patch Auto Increment", 
-`patch_name` varchar(1024) NOT NULL  COMMENT "Patch Class Name", 
+`patch_name` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL  COMMENT "Patch Class Name", 
 CONSTRAINT  PRIMARY KEY (`patch_id`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_general_ci COMMENT="List of data/schema patches"
 
