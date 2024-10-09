@@ -8,12 +8,12 @@ declare(strict_types=1);
 return [
     'test_table_one' => 'CREATE TABLE `test_table_one` (
   `smallint` smallint NOT NULL AUTO_INCREMENT,
-  `varchar` varchar(254) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `varchar` varchar(254) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`smallint`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci',
     'test_table_two' => 'CREATE TABLE `test_table_two` (
   `smallint` smallint NOT NULL AUTO_INCREMENT,
-  `varchar` varchar(254) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `varchar` varchar(254) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`smallint`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci',
     'reference_table' => 'CREATE TABLE `reference_table` (
