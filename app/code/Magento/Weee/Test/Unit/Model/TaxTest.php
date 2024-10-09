@@ -339,7 +339,7 @@ class TaxTest extends TestCase
             ->onlyMethods(['getTypeId'])
             ->addMethods(['getPriceType'])
             ->getMock();
-        $product->expects($this->once())->method('getTypeId')->willReturn('bundle');
+        $product->expects($this->any())->method('getTypeId')->willReturn('bundle');
         $product->expects($this->once())->method('getPriceType')->willReturn(0);
         $weeeDataHelper = $this->getMockBuilder(DataObject::class)
             ->disableOriginalConstructor()

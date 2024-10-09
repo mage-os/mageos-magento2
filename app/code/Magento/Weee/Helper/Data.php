@@ -352,7 +352,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper implements Reset
     protected function getRecursiveNumericAmount($item, $functionName)
     {
         if ($item instanceof QuoteAbstractItem || $item instanceof OrderItem) {
-            if ($item->getHasChildren() && $item->isChildrenCalculated()) {
+            if ($item->getHasChildren()) {
                 $result = 0;
                 $children = $item instanceof OrderItem ? $item->getChildrenItems() : $item->getChildren();
                 foreach ($children as $child) {
@@ -382,7 +382,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper implements Reset
     public function getApplied($item)
     {
         if ($item instanceof QuoteAbstractItem) {
-            if ($item->getHasChildren() && $item->isChildrenCalculated()) {
+            if ($item->getHasChildren()) {
                 $result = [];
                 foreach ($item->getChildren() as $child) {
                     $childData = $this->getApplied($child);
