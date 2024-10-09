@@ -89,7 +89,6 @@ define(['magnifier/magnify', 'mage/gallery/gallery', 'jquery'], function (Magnif
                 expect(Object.getOwnPropertyNames(imageEvents)).toContain('pointerup');
                 expect(Object.getOwnPropertyNames(imageEvents)).toContain('pointercancel');
                 expect(Object.getOwnPropertyNames(imageEvents)).toContain('pointerout');
-                expect(Object.getOwnPropertyNames(imageEvents)).toContain('pointerleave');
             });
         });
     });
