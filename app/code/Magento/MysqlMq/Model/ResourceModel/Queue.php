@@ -167,25 +167,14 @@ class Queue extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      *
      * @return void
      */
-    public function deleteMarkedMessages()
+    public function deleteMarkedMessages(): void
     {
         $connection = $this->getConnection();
 
         $select = $connection->select()
             ->from(['queue_message_status' => $this->getMessageStatusTable()], ['message_id'])
-            ->where('status <> ?', QueueManagement::MESSAGE_STATUS_TO_BE_DELETED)
-            ->distinct();
-        $messageIds = $connection->fetchCol($select);
-
-        if ($messageIds) {
-            $condition = count($messageIds) > 0 ? ['id NOT IN (?)' => $messageIds] : null;
-            $connection->delete($this->getMessageTable(), $condition);
-        } else {
-            $select = $connection->select()
-                ->from(['queue_message_status' => $this->getMessageStatusTable()], ['message_id'])
-                ->where('status = ?', QueueManagement::MESSAGE_STATUS_TO_BE_DELETED);
-            $connection->delete($this->getMessageTable(), 'id IN (' . $select->assemble() . ')');
-        }
+            ->where('status = ?', QueueManagement::MESSAGE_STATUS_TO_BE_DELETED);
+        $connection->delete($this->getMessageTable(), 'id IN (' . $select->assemble() . ')');
     }
 
     /**
