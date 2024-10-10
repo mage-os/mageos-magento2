@@ -163,7 +163,7 @@ class Queue extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     }
 
     /**
-     * Delete messages if there is no queue whrere the message is not in status TO BE DELETED
+     * Delete messages if there is no queue where the message is not in status TO BE DELETED
      *
      * @return void
      */
@@ -177,8 +177,15 @@ class Queue extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             ->distinct();
         $messageIds = $connection->fetchCol($select);
 
-        $condition = count($messageIds) > 0 ? ['id NOT IN (?)' => $messageIds] : null;
-        $connection->delete($this->getMessageTable(), $condition);
+        if ($messageIds) {
+            $condition = count($messageIds) > 0 ? ['id NOT IN (?)' => $messageIds] : null;
+            $connection->delete($this->getMessageTable(), $condition);
+        } else {
+            $select = $connection->select()
+                ->from(['queue_message_status' => $this->getMessageStatusTable()], ['message_id'])
+                ->where('status = ?', QueueManagement::MESSAGE_STATUS_TO_BE_DELETED);
+            $connection->delete($this->getMessageTable(), 'id IN (' . $select->assemble() . ')');
+        }
     }
 
     /**
