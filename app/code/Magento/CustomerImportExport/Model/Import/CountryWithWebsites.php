@@ -33,7 +33,7 @@ class CountryWithWebsites
     /**
      * @var array
      */
-    private $allowedCountries = [];
+    private $allowedCountries;
 
     /**
      * @var StoreManagerInterface
@@ -72,6 +72,7 @@ class CountryWithWebsites
     {
         if (!$this->allowedCountries) {
             $websiteIds = [];
+            $allowedCountries = [];
 
             foreach ($this->storeManager->getWebsites() as $website) {
                 $countries = $this->allowedCountriesReader
