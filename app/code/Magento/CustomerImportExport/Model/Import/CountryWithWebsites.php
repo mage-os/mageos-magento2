@@ -33,7 +33,7 @@ class CountryWithWebsites
     /**
      * @var array
      */
-    private $allowedCountries;
+    private $allowedCountries = [];
 
     /**
      * @var StoreManagerInterface
