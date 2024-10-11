@@ -18,6 +18,10 @@
             <testCaseId value="MC-42471"/>
             <useCaseId value="MC-42105"/>
             <group value="productVideo"/>
+            <skip>
+                <issueId value="DEPRECATED">This test is deprecated due to changes in Vimeo's API or privacy settings handling.</issueId>
+            </skip>
+            <group value="pr_exclude"/>
         </annotations>
         <before>
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
