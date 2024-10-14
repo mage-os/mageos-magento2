@@ -171,10 +171,12 @@ class QueueTest extends TestCase
 
     /**
      * Test for getMessages method.
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      *
      * @return void
      */
-    public function testGetMessages()
+    public function testGetMessages(): void
     {
         $limit = 100;
         $queueName = 'queueName0';
