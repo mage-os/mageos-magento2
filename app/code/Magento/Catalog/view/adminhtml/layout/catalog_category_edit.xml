@@ -9,8 +9,8 @@
     <update handle="styles"/>
     <head>
         <css src="jquery/uppy/dist/uppy.fileupload-ui.css"/>
-        <css src="Magento_Catalog::css/styles.css" />
-        <link src="Magento_Catalog::js/edit-tree.js"/>2
+        <css src="Magento_Catalog::css/styles.css"/>
+        <link src="Magento_Catalog::js/edit-tree.js"/>
     </head>
     <update handle="editor"/>
     <body>
