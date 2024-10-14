@@ -393,7 +393,7 @@ class Tree extends AbstractCategory
         $item['store'] = (int)$this->getStore()->getId();
         $item['path'] = $node->getData('path');
         if(!$node->getIsActive()){
-            $item['li_attr'] = ['class' => 'disabled-category'];
+            $item['a_attr'] = ['class' => 'disabled-category'];
         }
         $item['cls'] = 'folder ' . ($node->getIsActive() ? 'active-category' : 'no-active-category');
         //$item['allowDrop'] = ($level<3) ? true : false;
