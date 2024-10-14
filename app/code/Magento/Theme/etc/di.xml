@@ -334,5 +334,9 @@
     <type name="Magento\Config\Console\Command\LocaleEmulator">
         <plugin name="themeForLocaleEmulator" type="Magento\Theme\Plugin\LocaleEmulator"/>
     </type>
-
+    <type name="Magento\Config\Console\Command\ConfigSet\ProcessorFacade">
+        <arguments>
+            <argument name="pathValidator" xsi:type="object">Magento\Theme\Model\Config\PathValidator</argument>
+        </arguments>
+    </type>
 </config>

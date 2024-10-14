@@ -41,7 +41,4 @@
             </argument>
         </arguments>
     </type>
-    <type name="Magento\Config\Model\Config\PathValidator">
-        <plugin name="validate_design_paths_plugin" type="Magento\Theme\Plugin\DesignPathValidatorPlugin"/>
-    </type>
 </config>
