@@ -66,6 +66,9 @@ class Validator
 
         foreach ($elements as $name => $data) {
             $templateId = $data['value'];
+            if (!$templateId) {
+                continue;
+            }
             $text = $this->getTemplateText($templateId, $designConfig);
             // Check if template body has a reference to the same config path
             if (preg_match_all(Template::CONSTRUCTION_TEMPLATE_PATTERN, $text, $constructions, PREG_SET_ORDER)) {
