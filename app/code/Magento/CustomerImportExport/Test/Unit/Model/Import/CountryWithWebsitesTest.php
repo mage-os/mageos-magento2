@@ -16,15 +16,38 @@ use Magento\Customer\Model\Config\Share as CustomerShareConfig;
 use Magento\Store\Api\Data\WebsiteInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Directory\Model\ResourceModel\Country\Collection as CountryCollection;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class CountryWithWebsitesTest extends TestCase
 {
+    /**
+     * @var CountryCollectionFactory|MockObject
+     */
     private $countriesFactoryMock;
+
+    /**
+     * @var AllowedCountries|MockObject
+     */
     private $allowedCountriesReaderMock;
+
+    /**
+     * @var StoreManagerInterface|MockObject
+     */
     private $storeManagerMock;
+
+    /**
+     * @var CustomerShareConfig|MockObject
+     */
     private $shareConfigMock;
+
+    /**
+     * @var CountryWithWebsites
+     */
     private $countryWithWebsites;
 
+    /**
+     * @inheritDoc
+     */
     protected function setUp(): void
     {
         $this->countriesFactoryMock = $this->createMock(CountryCollectionFactory::class);
@@ -40,6 +63,12 @@ class CountryWithWebsitesTest extends TestCase
         );
     }
 
+    /**
+     * Tests method returns allowed countries for specified website
+     *
+     * @return void
+     * @throws \PHPUnit\Framework\MockObject\Exception
+     */
     public function testGetCountiesPerWebsite()
     {
         $websiteMock = $this->createMock(WebsiteInterface::class);
