@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Unit\Plugin\Data;
+namespace Magento\Theme\Test\Unit\Plugin\Data;
 
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
