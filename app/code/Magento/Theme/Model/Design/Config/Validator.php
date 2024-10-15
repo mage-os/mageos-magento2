@@ -50,19 +50,7 @@ class Validator
      */
     public function validate(DesignConfigInterface $designConfig)
     {
-        /** @var DesignConfigDataInterface[] $designConfigData */
-        $designConfigData = $designConfig->getExtensionAttributes()->getDesignConfigData();
-        $elements = [];
-        foreach ($designConfigData as $designElement) {
-            if (!in_array($designElement->getFieldConfig()['field'], $this->fields)) {
-                continue;
-            }
-            /* Save mapping between field names and config paths */
-            $elements[$designElement->getFieldConfig()['field']] = [
-                'config_path' => $designElement->getPath(),
-                'value' => $designElement->getValue()
-            ];
-        }
+        $elements = $this->getElements($designConfig);
 
         foreach ($elements as $name => $data) {
             $templateId = $data['value'];
@@ -87,6 +75,30 @@ class Validator
                 }
             }
         }
+    }
+
+    /**
+     * Get elements from design configuration
+     *
+     * @param DesignConfigInterface $designConfig
+     * @return array
+     */
+    private function getElements(DesignConfigInterface $designConfig)
+    {
+        /** @var DesignConfigDataInterface[] $designConfigData */
+        $designConfigData = $designConfig->getExtensionAttributes()->getDesignConfigData();
+        $elements = [];
+        foreach ($designConfigData as $designElement) {
+            if (!in_array($designElement->getFieldConfig()['field'], $this->fields)) {
+                continue;
+            }
+            /* Save mapping between field names and config paths */
+            $elements[$designElement->getFieldConfig()['field']] = [
+                'config_path' => $designElement->getPath(),
+                'value' => $designElement->getValue()
+            ];
+        }
+        return $elements;
     }
 
     /**
