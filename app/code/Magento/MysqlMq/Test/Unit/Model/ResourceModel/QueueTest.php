@@ -293,7 +293,8 @@ class QueueTest extends TestCase
             ->method('assemble')
             ->willReturn(
                 'SELECT message_id FROM queue_message_status WHERE status = ' .
-                QueueManagement::MESSAGE_STATUS_TO_BE_DELETED);
+                QueueManagement::MESSAGE_STATUS_TO_BE_DELETED
+            );
 
         $connection->expects($this->once())->method('delete')
             ->with(
