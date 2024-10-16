@@ -31,7 +31,6 @@ class TreeBlockTest extends AbstractBackendController
         $layout = $this->_objectManager->get(LayoutInterface::class);
         $categoryTree = $layout->getBlock('category.tree');
         $blockHtml = $categoryTree->toHtml();
-        $this->assertStringContainsString('disabled-category', $blockHtml);
+        $this->assertStringContainsString('no-active-category', $blockHtml);
     }
-
 }
