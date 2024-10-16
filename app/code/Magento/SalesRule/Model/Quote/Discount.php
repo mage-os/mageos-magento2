@@ -238,8 +238,9 @@ class Discount extends AbstractTotal
                     $this->eventManager->dispatch('sales_quote_address_discount_item', $eventArgs);
                     $this->aggregateItemDiscount($child, $total);
                 }
+            } else {
+                $this->aggregateItemDiscount($item, $total);
             }
-            $this->aggregateItemDiscount($item, $total);
             if ($item->getExtensionAttributes()) {
                 $this->aggregateDiscountPerRule($item, $address);
             }
