@@ -40,10 +40,10 @@ class Version
      * @param ScopeConfigInterface $scopeConfig
      */
     public function __construct(
-        private readonly CookieManagerInterface $cookieManager,
-        private readonly CookieMetadataFactory $cookieMetadataFactory,
-        private readonly Http $request,
-        private readonly ScopeConfigInterface $scopeConfig
+        protected readonly CookieManagerInterface $cookieManager,
+        protected readonly CookieMetadataFactory $cookieMetadataFactory,
+        protected readonly Http $request,
+        protected readonly ScopeConfigInterface $scopeConfig
     ) {
     }
 
