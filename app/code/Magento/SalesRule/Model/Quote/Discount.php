@@ -221,7 +221,15 @@ class Discount extends AbstractTotal
                     unset($itemsToApplyRules[$key]);
                 }
 
-                $totalDiscount[$item->getId()] = $item->getBaseDiscountAmount();
+                if ($item->getChildren() && $item->isChildrenCalculated()) {
+                    $childTotal = 0;
+                    foreach ($item->getChildren() as $child) {
+                        $childTotal += $child->getBaseDiscountAmount();
+                    }
+                    $totalDiscount[$item->getId()] = $childTotal;
+                } else {
+                    $totalDiscount[$item->getId()] = $item->getBaseDiscountAmount();
+                }
             }
             $address->setBaseDiscountAmount(array_sum(array_values($totalDiscount)));
         }
