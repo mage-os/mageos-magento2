@@ -144,7 +144,7 @@ class DiCompileCommand extends Command
     /**
      * @inheritdoc
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $errors = $this->checkEnvironment();
         if ($errors) {

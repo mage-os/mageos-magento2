@@ -118,7 +118,7 @@ class ImagesResizeCommand extends Command
      * @param InputInterface $input
      * @param OutputInterface $output
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->skipHiddenImages = $input->getOption(self::SKIP_HIDDEN_IMAGES);
         $result = $input->getOption(self::ASYNC_RESIZE) ?

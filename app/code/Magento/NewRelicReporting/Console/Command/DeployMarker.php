@@ -73,7 +73,7 @@ class DeployMarker extends Command
     /**
      * @inheritdoc
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->deploymentsFactory->create()->setDeployment(
             $input->getArgument('message'),

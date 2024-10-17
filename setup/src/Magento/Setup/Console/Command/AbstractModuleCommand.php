@@ -75,7 +75,7 @@ abstract class AbstractModuleCommand extends AbstractSetupCommand
      * @param OutputInterface $output
      * @return void
      */
-    protected function cleanup(InputInterface $input, OutputInterface $output)
+    protected function cleanup(InputInterface $input, OutputInterface $output): void
     {
         /** @var \Magento\Framework\App\Cache $cache */
         $cache = $this->objectManager->get(\Magento\Framework\App\Cache::class);

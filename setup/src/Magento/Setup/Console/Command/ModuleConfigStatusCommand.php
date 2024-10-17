@@ -69,7 +69,7 @@ class ModuleConfigStatusCommand extends Command
     /**
      * @inheritdoc
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         try {
             // the config as currently in app/etc/config.php

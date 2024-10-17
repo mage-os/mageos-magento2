@@ -152,7 +152,7 @@ class DiInfoCommand extends Command
      * @param InputInterface $input
      * @param OutputInterface $output
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $className = $input->getArgument(self::CLASS_NAME);
         $output->setDecorated(true);

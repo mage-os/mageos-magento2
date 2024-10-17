@@ -62,7 +62,7 @@ class TemplateHintsStatusCommand extends Command
      * @inheritdoc
      * @throws \InvalidArgumentException
      */
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->reinitableConfig->reinit();
         $templateHintsStatus =

@@ -41,7 +41,7 @@ class UninstallCommand extends AbstractSetupCommand
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $helper = $this->getHelper('question');
         $question = new ConfirmationQuestion('Are you sure you want to uninstall Magento?[y/N]', false);
