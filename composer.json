@@ -16,6 +16,16 @@
         "preferred-install": "dist",
         "sort-packages": true
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:magento-gl/magento2-functional-testing-framework.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:magento-gl/composer.git"
+        }
+    ],
     "require": {
         "php": "~8.1.0||~8.2.0||~8.3.0",
         "ext-bcmath": "*",
@@ -68,7 +78,7 @@
         "laminas/laminas-validator": "^2.23",
         "league/flysystem": "^3.0",
         "league/flysystem-aws-s3-v3": "^3.0",
-        "magento/composer": "^1.10.0-beta1",
+        "magento/composer": "dev-AC-13251",
         "magento/composer-dependency-version-audit-plugin": "^0.1",
         "magento/magento-composer-installer": ">=0.4.0",
         "magento/zend-cache": "^1.16",
@@ -82,13 +92,13 @@
         "phpseclib/phpseclib": "^3.0",
         "psr/log": "^2 || ^3",
         "ramsey/uuid": "^4.2",
-        "symfony/console": "^6.4",
+        "symfony/console": "^7.0",
         "symfony/intl": "^6.4",
         "symfony/process": "^6.4",
         "symfony/string": "^6.4",
         "tedivm/jshrink": "^1.4",
         "tubalmartin/cssmin": "^4.1",
-        "web-token/jwt-framework": "^3.1",
+        "web-token/jwt-framework": "^4.0",
         "webonyx/graphql-php": "^15.0",
         "wikimedia/less.php": "^5.0"
     },
@@ -99,7 +109,7 @@
         "friendsofphp/php-cs-fixer": "^3.22",
         "lusitanian/oauth": "^0.8",
         "magento/magento-coding-standard": "*",
-        "magento/magento2-functional-testing-framework": "^4.8",
+        "magento/magento2-functional-testing-framework": "dev-AC-13244",
         "pdepend/pdepend": "^2.10",
         "phpmd/phpmd": "^2.12",
         "phpstan/phpstan": "^1.9",
