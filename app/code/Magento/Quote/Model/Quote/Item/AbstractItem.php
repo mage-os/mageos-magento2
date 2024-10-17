@@ -678,9 +678,7 @@ abstract class AbstractItem extends \Magento\Framework\Model\AbstractExtensibleM
             foreach ($children as $child) {
                 $totalDiscountAmount += $child->getDiscountAmount();
             }
-        } else {
-            $totalDiscountAmount = $this->getDiscountAmount();
         }
-        return $totalDiscountAmount;
+        return $totalDiscountAmount + $this->getDiscountAmount();
     }
 }

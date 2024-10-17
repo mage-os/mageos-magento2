@@ -141,6 +141,9 @@ class CartFixed extends AbstractDiscount
             $baseDiscountAmount = min($baseItemPrice * $qty, $baseDiscountAmount);
             if ($ruleItemsCount <= 1) {
                 $this->deltaPriceRound->reset($discountType);
+                if ($baseDiscountAmount > $availableDiscountAmount) {
+                    $baseDiscountAmount = $availableDiscountAmount;
+                }
             } else {
                 $this->validator->decrementRuleItemTotalsCount($rule->getId());
             }
