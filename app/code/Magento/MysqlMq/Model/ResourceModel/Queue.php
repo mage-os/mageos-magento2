@@ -173,9 +173,12 @@ class Queue extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 
         $select = $connection->select()
             ->from(['queue_message_status' => $this->getMessageStatusTable()], ['message_id'])
-            ->where('status <> ?', QueueManagement::MESSAGE_STATUS_TO_BE_DELETED)
+            ->where('status = ?', QueueManagement::MESSAGE_STATUS_TO_BE_DELETED)
             ->distinct();
-        $connection->delete($this->getMessageTable(), 'id NOT IN (' . $select->assemble() . ')');
+        $messageIds = $connection->fetchCol($select);
+        foreach (array_chunk($messageIds, 10000) as $messageIdsChunk) {
+            $connection->delete($this->getMessageTable(), ['id IN (?)' => $messageIdsChunk]);
+        }
     }
 
     /**
