@@ -7,6 +7,7 @@ namespace Magento\MysqlMq\Model\ResourceModel;
 
 use Magento\Framework\DB\Select;
 use Magento\Framework\DB\Sql\Expression;
+use Magento\Framework\Model\ResourceModel\Db\Context;
 use Magento\MysqlMq\Model\QueueManagement;
 
 /**
@@ -14,6 +15,31 @@ use Magento\MysqlMq\Model\QueueManagement;
  */
 class Queue extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
+    /**
+     *
+     */
+    private const CHUNK_SIZE = 10000;
+
+    /**
+     * @var int|mixed
+     */
+    private int $chunkSize;
+
+    /**
+     * @param Context $context
+     * @param null $connectionName
+     * @param int|null $chunkSize
+     */
+    public function __construct(Context $context, $connectionName = null, int $chunkSize = null)
+    {
+        parent::__construct($context, $connectionName);
+        if ($chunkSize) {
+            $this->chunkSize = $chunkSize;
+        } else {
+            $this->chunkSize = self::CHUNK_SIZE;
+        }
+    }
+
     /**
      * Model initialization
      *
@@ -170,13 +196,20 @@ class Queue extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     public function deleteMarkedMessages(): void
     {
         $connection = $this->getConnection();
-
         $select = $connection->select()
             ->from(['queue_message_status' => $this->getMessageStatusTable()], ['message_id'])
-            ->where('status = ?', QueueManagement::MESSAGE_STATUS_TO_BE_DELETED)
+            ->joinLeft(
+                ['message_status2' => $this->getMessageStatusTable()],
+                'queue_message_status.message_id = message_status2.message_id AND message_status2.status <> ' .
+                QueueManagement::MESSAGE_STATUS_TO_BE_DELETED,
+                []
+            )
+            ->where('queue_message_status.status = ?', QueueManagement::MESSAGE_STATUS_TO_BE_DELETED)
+            ->where('message_status2.message_id IS NULL')
             ->distinct();
+
         $messageIds = $connection->fetchCol($select);
-        foreach (array_chunk($messageIds, 10000) as $messageIdsChunk) {
+        foreach (array_chunk($messageIds, $this->chunkSize) as $messageIdsChunk) {
             $connection->delete($this->getMessageTable(), ['id IN (?)' => $messageIdsChunk]);
         }
     }

@@ -286,21 +286,15 @@ class QueueTest extends TestCase
         $select->expects($this->once())
             ->method('from')->with(['queue_message_status' => $tableNames[0]], ['message_id'])->willReturnSelf();
         $select->expects($this->once())->method('where')
-            ->with('status <> ?', QueueManagement::MESSAGE_STATUS_TO_BE_DELETED)
+            ->with('status = ?', QueueManagement::MESSAGE_STATUS_TO_BE_DELETED)
             ->willReturnSelf();
         $select->expects($this->once())->method('distinct')->willReturnSelf();
-        $select->expects($this->once())
-            ->method('assemble')
-            ->willReturn(
-                'SELECT message_id FROM queue_message_status WHERE status = ' .
-                QueueManagement::MESSAGE_STATUS_TO_BE_DELETED
-            );
+        $connection->expects($this->once())->method('fetchCol')->with($select)->willReturn([1, 2]);
 
         $connection->expects($this->once())->method('delete')
             ->with(
                 $tableNames[1],
-                'id NOT IN (SELECT message_id FROM queue_message_status WHERE status = ' .
-                QueueManagement::MESSAGE_STATUS_TO_BE_DELETED . ')'
+                ['id IN (?)' => [1,2]]
             )->willReturn(2);
         $this->queue->deleteMarkedMessages();
     }
