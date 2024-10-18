@@ -42,7 +42,7 @@
             <argument name="qty" value="1"/>
         </actionGroup>
         <actionGroup ref="AdminClickUpdateQtysButtonOnCreateInvoicePageActionGroup" stepKey="clickUpdateQtyAfterUpdatingInvoiceBtn"/>
-        <actionGroup ref="AdminInvoiceClickSubmitActionGroup" stepKey="clickOn  SubmitInvoice"/>
+        <actionGroup ref="AdminInvoiceClickSubmitActionGroup" stepKey="clickOnSubmitInvoice"/>
         <actionGroup ref="AdminOrderViewCheckStatusActionGroup" stepKey="checkOrderStatus">
             <argument name="status" value="Processing"/>
         </actionGroup>
