@@ -82,6 +82,7 @@ type CustomerOrder @doc(description: "Contains details about each of the custome
     is_virtual: Boolean! @doc(description: "`TRUE` if the order is virtual") @resolver(class: "Magento\\SalesGraphQl\\Model\\Resolver\\OrderIsVirtual")
     available_actions: [OrderActionType!]! @doc(description: "List of available order actions.") @resolver(class: "\\Magento\\SalesGraphQl\\Model\\Resolver\\OrderAvailableActions")
     customer_info: OrderCustomerInfo! @doc(description: "Returns customer information from order.") @resolver(class: "Magento\\SalesGraphQl\\Model\\Resolver\\OrderCustomerInfo")
+    order_status_change_date: String! @doc(description: "The date the order status was last updated.") @resolver(class: "Magento\\SalesGraphQl\\Model\\Resolver\\OrderStatusChangeDate")
 }
 
 type OrderCustomerInfo {
