@@ -1,5 +1,9 @@
 <?php
 /************************************************************************
+ *
+ *  ADOBE CONFIDENTIAL
+ *  ___________________
+ *
  *  Copyright 2024 Adobe
  *  All Rights Reserved.
  *
@@ -15,54 +19,28 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Quote\Model\Cart\Data;
+namespace Magento\Quote\Api;
 
-use Magento\Quote\Api\ErrorInterface;
-
-/**
- * DTO represents error item
- */
-class Error implements ErrorInterface
+interface ErrorInterface
 {
-    /**
-     * @param string $message
-     * @param string $code
-     * @param int $cartItemPosition
-     */
-    public function __construct(
-        private readonly string $message,
-        private readonly string $code,
-        private readonly int $cartItemPosition
-    ) {
-    }
-
-    /**
-     * Get error message
-     *
-     * @return string
-     */
-    public function getMessage(): string
-    {
-        return $this->message;
-    }
-
     /**
      * Get error code
      *
      * @return string
      */
-    public function getCode(): string
-    {
-        return $this->code;
-    }
+    public function getCode(): string;
 
     /**
      * Get cart item position
      *
      * @return int
      */
-    public function getCartItemPosition(): int
-    {
-        return $this->cartItemPosition;
-    }
+    public function getCartItemPosition(): int;
+
+    /**
+     * Get error message
+     *
+     * @return string
+     */
+    public function getMessage(): string;
 }
