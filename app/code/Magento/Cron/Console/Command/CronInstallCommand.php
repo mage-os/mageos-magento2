@@ -71,7 +71,7 @@ class CronInstallCommand extends Command
      * @return int|null
      * @throws LocalizedException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if ($this->crontabManager->getTasks() && !$input->getOption('force')) {
             $output->writeln('<error>Crontab has already been generated and saved</error>');

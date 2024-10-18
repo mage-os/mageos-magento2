@@ -139,7 +139,7 @@ class SensitiveConfigSetCommand extends Command
     /**
      * @inheritdoc
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if ($this->changeDetector->hasChanges(System::CONFIG_TYPE)) {
             $output->writeln(

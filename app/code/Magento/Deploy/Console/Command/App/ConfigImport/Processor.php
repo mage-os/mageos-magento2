@@ -107,7 +107,7 @@ class Processor
      * @return void
      * @throws RuntimeException is thrown when import has failed
      */
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         try {
             $importers = $this->configImporterPool->getImporters();

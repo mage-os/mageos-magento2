@@ -64,7 +64,7 @@ class DatabaseTemplateCompatibilityCommand extends Command
     /**
      * @inheritDoc
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $collection = $this->templateCollection->create();
         $collection->load();
