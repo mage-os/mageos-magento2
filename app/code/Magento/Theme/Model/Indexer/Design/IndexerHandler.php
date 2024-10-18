@@ -29,7 +29,7 @@ class IndexerHandler extends Grid
     /***
      * Old Charset for flat table
      */
-    private const OLDCHARSET = 'utf8mb3';
+    private const OLDCHARSET = 'utf8|utf8mb3';
 
     /***
      * table design_config_grid_flat
@@ -88,9 +88,8 @@ class IndexerHandler extends Grid
             $this->connection->delete($tableName);
             // change the charset to utf8mb4
             if ($tableName === self::DESIGN_CONFIG_GRID_FLAT) {
-                $getTableSchema = $this->connection->showTableStatus($tableName);
-                $collation = $getTableSchema['Collation'] ?? '';
-                if (str_contains($collation, self::OLDCHARSET)) {
+                $getTableSchema = $this->connection->getCreateTable($tableName) ?? '';
+                if (preg_match('/\b('. self::OLDCHARSET .')\b/', $getTableSchema)) {
                     $charset = $this->columnConfig->getDefaultCharset();
                     $collate = $this->columnConfig->getDefaultCollation();
                     $columnEncoding = " CHARACTER SET ".$charset." COLLATE ".$collate;

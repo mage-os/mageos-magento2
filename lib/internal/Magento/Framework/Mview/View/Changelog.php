@@ -69,7 +69,7 @@ class Changelog implements ChangelogInterface
     /***
      * Old Charset for cl tables
      */
-    private const OLDCHARSET = 'utf8mb3';
+    private const OLDCHARSET = 'utf8|utf8mb3';
 
     /***
      * @var DtoFactoriesTable|null
@@ -149,7 +149,7 @@ class Changelog implements ChangelogInterface
         } else {
             // change the charset to utf8mb4
             $getTableSchema = $this->connection->getCreateTable($changelogTableName) ?? '';
-            if (str_contains($getTableSchema, self::OLDCHARSET)) {
+            if (preg_match('/\b('. self::OLDCHARSET .')\b/', $getTableSchema)) {
                 $charset = $this->columnConfig->getDefaultCharset();
                 $collate = $this->columnConfig->getDefaultCollation();
                 $this->connection->query(

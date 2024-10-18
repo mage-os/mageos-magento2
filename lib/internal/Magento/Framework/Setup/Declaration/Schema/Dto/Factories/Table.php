@@ -48,7 +48,7 @@ class Table implements FactoryInterface
      * @var array|string[]
      */
     private static array $defaultCharset = [
-        '10.4.' => 'utf8',
+        '10.4.' => 'utf8mb4',
         '10.6.' => 'utf8mb4',
         '11.4.' => 'utf8mb4',
         'mysql_8_29' => 'utf8mb4',
@@ -59,7 +59,7 @@ class Table implements FactoryInterface
      * @var array|string[]
      */
     private static array $defaultCollation = [
-        '10.4.' => 'utf8_general_ci',
+        '10.4.' => 'utf8mb4_general_ci',
         '10.6.' => 'utf8mb4_general_ci',
         '11.4.' => 'utf8mb4_general_ci',
         'mysql_8_29' => 'utf8mb4_general_ci',

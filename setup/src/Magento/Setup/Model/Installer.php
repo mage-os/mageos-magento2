@@ -263,7 +263,7 @@ class Installer
     /***
      * Old Charset for cl tables
      */
-    private const OLDCHARSET = 'utf8mb3';
+    private const OLDCHARSET = 'utf8|utf8mb3';
 
     /***
      * @var DtoFactoriesTable
@@ -662,7 +662,7 @@ class Installer
         } else {
             // change the charset to utf8mb4
             $getTableSchema = $connection->getCreateTable($setup->getTable('setup_module')) ?? '';
-            if (str_contains($getTableSchema, self::OLDCHARSET)) {
+            if (preg_match('/\b('. self::OLDCHARSET .')\b/', $getTableSchema)) {
                 $tableName = $setup->getTable('setup_module');
                 $columns = ['module' => ['varchar(50)',''],
                             'schema_version' => ['varchar(50)',''],
@@ -731,7 +731,7 @@ class Installer
         } else {
             // change the charset to utf8mb4
             $getTableSchema = $connection->getCreateTable($setup->getTable('session')) ?? '';
-            if (str_contains($getTableSchema, self::OLDCHARSET)) {
+            if (preg_match('/\b('. self::OLDCHARSET .')\b/', $getTableSchema)) {
                 $tableName = $setup->getTable('session');
                 $columns = ['session_id' => ['varchar(255)','']];
                 $this->updateDBTable($tableName, $columns, $connection);
@@ -794,7 +794,7 @@ class Installer
         } else {
             // change the charset to utf8mb4
             $getTableSchema = $connection->getCreateTable($setup->getTable('cache')) ?? '';
-            if (str_contains($getTableSchema, self::OLDCHARSET)) {
+            if (preg_match('/\b('. self::OLDCHARSET .')\b/', $getTableSchema)) {
                 $tableName = $setup->getTable('cache');
                 $columns = ['id' => ['varchar(200)','']];
                 $this->updateDBTable($tableName, $columns, $connection);
@@ -839,7 +839,7 @@ class Installer
         } else {
             // change the charset to utf8mb4
             $getTableSchema = $connection->getCreateTable($setup->getTable('cache_tag')) ?? '';
-            if (str_contains($getTableSchema, self::OLDCHARSET)) {
+            if (preg_match('/\b('. self::OLDCHARSET .')\b/', $getTableSchema)) {
                 $tableName = $setup->getTable('cache_tag');
                 $columns = ['tag' => ['varchar(100)',''],'cache_id' => ['varchar(200)','']];
                 $this->updateDBTable($tableName, $columns, $connection);
@@ -904,7 +904,7 @@ class Installer
             $this->updateColumnType($connection, $tableName, 'flag_data', 'mediumtext');
             // change the charset to utf8mb4
             $getTableSchema = $connection->getCreateTable($tableName) ?? '';
-            if (str_contains($getTableSchema, self::OLDCHARSET)) {
+            if (preg_match('/\b('. self::OLDCHARSET .')\b/', $getTableSchema)) {
                 $columns = ['flag_code' => ['varchar(255)','NOT NULL'],'flag_data' => ['mediumtext','']];
                 $this->updateDBTable($tableName, $columns, $connection);
             }
