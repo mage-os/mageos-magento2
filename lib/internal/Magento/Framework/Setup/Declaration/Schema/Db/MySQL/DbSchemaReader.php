@@ -54,6 +54,15 @@ class DbSchemaReader implements DbSchemaReaderInterface
     {
         $adapter = $this->resourceConnection->getConnection($resource);
         $dbName = $this->resourceConnection->getSchemaName($resource);
+        $collationNameColumn = 'charset_applicability.collation_name';
+
+        /* In case of mariadb>=11.4 check if column FULL_COLLATION_NAME is exist */
+        if($adapter->tableColumnExists('COLLATION_CHARACTER_SET_APPLICABILITY',
+                                      'FULL_COLLATION_NAME',
+                                      'information_schema')){
+            $collationNameColumn = 'charset_applicability.full_collation_name';
+        }
+
         $stmt = $adapter->select()
             ->from(
                 ['i_tables' => 'information_schema.TABLES'],
@@ -65,7 +74,7 @@ class DbSchemaReader implements DbSchemaReaderInterface
             )
             ->joinInner(
                 ['charset_applicability' => 'information_schema.COLLATION_CHARACTER_SET_APPLICABILITY'],
-                'i_tables.table_collation = charset_applicability.collation_name',
+                'i_tables.table_collation = '.$collationNameColumn,
                 [
                     'charset' => 'charset_applicability.CHARACTER_SET_NAME'
                 ]
