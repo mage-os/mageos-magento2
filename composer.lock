@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c670d2837f35e0c86c7abffed527a57c",
+    "content-hash": "9cd48bb5f445822fdf925a3b5922d323",
     "packages": [
         {
             "name": "2tvenom/cborencode",
@@ -107,16 +107,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.324.3",
+            "version": "3.324.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "018a692622175ad65ebefa3f6645e4e6208a11fe"
+                "reference": "052c5d429ccd8775f7eed2855c2ca8cae2be52cb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/018a692622175ad65ebefa3f6645e4e6208a11fe",
-                "reference": "018a692622175ad65ebefa3f6645e4e6208a11fe",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/052c5d429ccd8775f7eed2855c2ca8cae2be52cb",
+                "reference": "052c5d429ccd8775f7eed2855c2ca8cae2be52cb",
                 "shasum": ""
             },
             "require": {
@@ -199,9 +199,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.324.3"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.324.5"
             },
-            "time": "2024-10-15T18:29:08+00:00"
+            "time": "2024-10-17T18:12:04+00:00"
         },
         {
             "name": "bacon/bacon-qr-code",
@@ -1292,6 +1292,51 @@
             "time": "2024-08-09T14:30:48+00:00"
         },
         {
+            "name": "duosecurity/duo_api_php",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/duosecurity/duo_api_php.git",
+                "reference": "292c64e3891f586941c1de21773b2f93508f8fb2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/duosecurity/duo_api_php/zipball/292c64e3891f586941c1de21773b2f93508f8fb2",
+                "reference": "292c64e3891f586941c1de21773b2f93508f8fb2",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": ">=8.0"
+            },
+            "require-dev": {
+                "php-coveralls/php-coveralls": "dev-master",
+                "phpunit/phpunit": "~9",
+                "squizlabs/php_codesniffer": "2.*"
+            },
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "DuoAPI\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "description": "A PHP implementation of the Duo API.",
+            "homepage": "https://duo.com/",
+            "support": {
+                "email": "support@duosecurity.com",
+                "issues": "https://github.com/duosecurity/duo_api_php/issues",
+                "source": "https://github.com/duosecurity/duo_api_php/tree/master"
+            },
+            "time": "2024-02-02T15:59:18+00:00"
+        },
+        {
             "name": "duosecurity/duo_universal_php",
             "version": "1.0.2",
             "source": {
@@ -1934,16 +1979,16 @@
         },
         {
             "name": "guzzlehttp/promises",
-            "version": "2.0.3",
+            "version": "2.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/promises.git",
-                "reference": "6ea8dd08867a2a42619d65c3deb2c0fcbf81c8f8"
+                "reference": "f9c436286ab2892c7db7be8c8da4ef61ccf7b455"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/promises/zipball/6ea8dd08867a2a42619d65c3deb2c0fcbf81c8f8",
-                "reference": "6ea8dd08867a2a42619d65c3deb2c0fcbf81c8f8",
+                "url": "https://api.github.com/repos/guzzle/promises/zipball/f9c436286ab2892c7db7be8c8da4ef61ccf7b455",
+                "reference": "f9c436286ab2892c7db7be8c8da4ef61ccf7b455",
                 "shasum": ""
             },
             "require": {
@@ -1997,7 +2042,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/promises/issues",
-                "source": "https://github.com/guzzle/promises/tree/2.0.3"
+                "source": "https://github.com/guzzle/promises/tree/2.0.4"
             },
             "funding": [
                 {
@@ -2013,7 +2058,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-07-18T10:29:17+00:00"
+            "time": "2024-10-17T10:06:22+00:00"
         },
         {
             "name": "guzzlehttp/psr7",
@@ -2886,38 +2931,38 @@
         },
         {
             "name": "laminas/laminas-filter",
-            "version": "2.37.0",
+            "version": "2.38.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-filter.git",
-                "reference": "27dda1e60547bc000b876e24808f47932df2f4ac"
+                "reference": "3037168c2db8af3088aca8826bdf7e249fd24ce3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-filter/zipball/27dda1e60547bc000b876e24808f47932df2f4ac",
-                "reference": "27dda1e60547bc000b876e24808f47932df2f4ac",
+                "url": "https://api.github.com/repos/laminas/laminas-filter/zipball/3037168c2db8af3088aca8826bdf7e249fd24ce3",
+                "reference": "3037168c2db8af3088aca8826bdf7e249fd24ce3",
                 "shasum": ""
             },
             "require": {
                 "ext-mbstring": "*",
                 "laminas/laminas-servicemanager": "^3.21.0",
-                "laminas/laminas-stdlib": "^3.13.0",
-                "php": "~8.1.0 || ~8.2.0 || ~8.3.0"
+                "laminas/laminas-stdlib": "^3.19.0",
+                "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0"
             },
             "conflict": {
                 "laminas/laminas-validator": "<2.10.1",
                 "zendframework/zend-filter": "*"
             },
             "require-dev": {
-                "laminas/laminas-coding-standard": "~2.5.0",
-                "laminas/laminas-crypt": "^3.11",
-                "laminas/laminas-i18n": "^2.26.0",
-                "laminas/laminas-uri": "^2.11",
+                "laminas/laminas-coding-standard": "~3.0",
+                "laminas/laminas-crypt": "^3.12",
+                "laminas/laminas-i18n": "^2.28.1",
+                "laminas/laminas-uri": "^2.12",
                 "pear/archive_tar": "^1.5.0",
-                "phpunit/phpunit": "^10.5.20",
+                "phpunit/phpunit": "^10.5.36",
                 "psalm/plugin-phpunit": "^0.19.0",
                 "psr/http-factory": "^1.1.0",
-                "vimeo/psalm": "^5.24.0"
+                "vimeo/psalm": "^5.26.1"
             },
             "suggest": {
                 "laminas/laminas-crypt": "Laminas\\Crypt component, for encryption filters",
@@ -2961,20 +3006,20 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2024-08-12T09:23:23+00:00"
+            "time": "2024-10-17T20:43:05+00:00"
         },
         {
             "name": "laminas/laminas-http",
-            "version": "2.19.0",
+            "version": "2.20.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-http.git",
-                "reference": "26dd6d1177e25d970058863c2afed12bb9dbff4d"
+                "reference": "a66bfb65c698aad6ee9f10df42cb5902f2c3dec8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-http/zipball/26dd6d1177e25d970058863c2afed12bb9dbff4d",
-                "reference": "26dd6d1177e25d970058863c2afed12bb9dbff4d",
+                "url": "https://api.github.com/repos/laminas/laminas-http/zipball/a66bfb65c698aad6ee9f10df42cb5902f2c3dec8",
+                "reference": "a66bfb65c698aad6ee9f10df42cb5902f2c3dec8",
                 "shasum": ""
             },
             "require": {
@@ -2982,7 +3027,7 @@
                 "laminas/laminas-stdlib": "^3.6",
                 "laminas/laminas-uri": "^2.11",
                 "laminas/laminas-validator": "^2.15",
-                "php": "~8.1.0 || ~8.2.0 || ~8.3.0"
+                "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0"
             },
             "conflict": {
                 "zendframework/zend-http": "*"
@@ -2990,7 +3035,7 @@
             "require-dev": {
                 "ext-curl": "*",
                 "laminas/laminas-coding-standard": "~2.4.0",
-                "phpunit/phpunit": "^9.5.25"
+                "phpunit/phpunit": "^9.6.21"
             },
             "suggest": {
                 "paragonie/certainty": "For automated management of cacert.pem"
@@ -3026,7 +3071,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2023-11-02T16:27:41+00:00"
+            "time": "2024-10-18T07:35:59+00:00"
         },
         {
             "name": "laminas/laminas-i18n",
@@ -4974,7 +5019,7 @@
         },
         {
             "name": "magento/module-re-captcha-admin-ui",
-            "version": "dev-develop",
+            "version": "dev-AC10982",
             "dist": {
                 "type": "path",
                 "url": "./ext/magento/security-package/ReCaptchaAdminUi",
@@ -5006,7 +5051,7 @@
         },
         {
             "name": "magento/module-re-captcha-checkout",
-            "version": "dev-develop",
+            "version": "dev-AC10982",
             "dist": {
                 "type": "path",
                 "url": "./ext/magento/security-package/ReCaptchaCheckout",
@@ -5042,7 +5087,7 @@
         },
         {
             "name": "magento/module-re-captcha-checkout-sales-rule",
-            "version": "dev-develop",
+            "version": "dev-AC10982",
             "dist": {
                 "type": "path",
                 "url": "./ext/magento/security-package/ReCaptchaCheckoutSalesRule",
@@ -5079,7 +5124,7 @@
         },
         {
             "name": "magento/module-re-captcha-contact",
-            "version": "dev-develop",
+            "version": "dev-AC10982",
             "dist": {
                 "type": "path",
                 "url": "./ext/magento/security-package/ReCaptchaContact",
@@ -5109,7 +5154,7 @@
         },
         {
             "name": "magento/module-re-captcha-customer",
-            "version": "dev-develop",
+            "version": "dev-AC10982",
             "dist": {
                 "type": "path",
                 "url": "./ext/magento/security-package/ReCaptchaCustomer",
@@ -5142,7 +5187,7 @@
         },
         {
             "name": "magento/module-re-captcha-frontend-ui",
-            "version": "dev-develop",
+            "version": "dev-AC10982",
             "dist": {
                 "type": "path",
                 "url": "./ext/magento/security-package/ReCaptchaFrontendUi",
@@ -5173,7 +5218,7 @@
         },
         {
             "name": "magento/module-re-captcha-migration",
-            "version": "dev-develop",
+            "version": "dev-AC10982",
             "dist": {
                 "type": "path",
                 "url": "./ext/magento/security-package/ReCaptchaMigration",
@@ -5203,7 +5248,7 @@
         },
         {
             "name": "magento/module-re-captcha-newsletter",
-            "version": "dev-develop",
+            "version": "dev-AC10982",
             "dist": {
                 "type": "path",
                 "url": "./ext/magento/security-package/ReCaptchaNewsletter",
@@ -5235,7 +5280,7 @@
         },
         {
             "name": "magento/module-re-captcha-paypal",
-            "version": "dev-develop",
+            "version": "dev-AC10982",
             "dist": {
                 "type": "path",
                 "url": "./ext/magento/security-package/ReCaptchaPaypal",
@@ -5271,7 +5316,7 @@
         },
         {
             "name": "magento/module-re-captcha-resend-confirmation-email",
-            "version": "dev-develop",
+            "version": "dev-AC10982",
             "dist": {
                 "type": "path",
                 "url": "./ext/magento/security-package/ReCaptchaResendConfirmationEmail",
@@ -5304,7 +5349,7 @@
         },
         {
             "name": "magento/module-re-captcha-review",
-            "version": "dev-develop",
+            "version": "dev-AC10982",
             "dist": {
                 "type": "path",
                 "url": "./ext/magento/security-package/ReCaptchaReview",
@@ -5336,7 +5381,7 @@
         },
         {
             "name": "magento/module-re-captcha-send-friend",
-            "version": "dev-develop",
+            "version": "dev-AC10982",
             "dist": {
                 "type": "path",
                 "url": "./ext/magento/security-package/ReCaptchaSendFriend",
@@ -5368,7 +5413,7 @@
         },
         {
             "name": "magento/module-re-captcha-store-pickup",
-            "version": "dev-develop",
+            "version": "dev-AC10982",
             "dist": {
                 "type": "path",
                 "url": "./ext/magento/security-package/ReCaptchaStorePickup",
@@ -5402,7 +5447,7 @@
         },
         {
             "name": "magento/module-re-captcha-ui",
-            "version": "dev-develop",
+            "version": "dev-AC10982",
             "dist": {
                 "type": "path",
                 "url": "./ext/magento/security-package/ReCaptchaUi",
@@ -5438,7 +5483,7 @@
         },
         {
             "name": "magento/module-re-captcha-user",
-            "version": "dev-develop",
+            "version": "dev-AC10982",
             "dist": {
                 "type": "path",
                 "url": "./ext/magento/security-package/ReCaptchaUser",
@@ -5469,7 +5514,7 @@
         },
         {
             "name": "magento/module-re-captcha-validation",
-            "version": "dev-develop",
+            "version": "dev-AC10982",
             "dist": {
                 "type": "path",
                 "url": "./ext/magento/security-package/ReCaptchaValidation",
@@ -5500,7 +5545,7 @@
         },
         {
             "name": "magento/module-re-captcha-validation-api",
-            "version": "dev-develop",
+            "version": "dev-AC10982",
             "dist": {
                 "type": "path",
                 "url": "./ext/magento/security-package/ReCaptchaValidationApi",
@@ -5529,7 +5574,7 @@
         },
         {
             "name": "magento/module-re-captcha-version-2-checkbox",
-            "version": "dev-develop",
+            "version": "dev-AC10982",
             "dist": {
                 "type": "path",
                 "url": "./ext/magento/security-package/ReCaptchaVersion2Checkbox",
@@ -5566,7 +5611,7 @@
         },
         {
             "name": "magento/module-re-captcha-version-2-invisible",
-            "version": "dev-develop",
+            "version": "dev-AC10982",
             "dist": {
                 "type": "path",
                 "url": "./ext/magento/security-package/ReCaptchaVersion2Invisible",
@@ -5603,7 +5648,7 @@
         },
         {
             "name": "magento/module-re-captcha-version-3-invisible",
-            "version": "dev-develop",
+            "version": "dev-AC10982",
             "dist": {
                 "type": "path",
                 "url": "./ext/magento/security-package/ReCaptchaVersion3Invisible",
@@ -5640,7 +5685,7 @@
         },
         {
             "name": "magento/module-re-captcha-webapi-api",
-            "version": "dev-develop",
+            "version": "dev-AC10982",
             "dist": {
                 "type": "path",
                 "url": "./ext/magento/security-package/ReCaptchaWebapiApi",
@@ -5670,7 +5715,7 @@
         },
         {
             "name": "magento/module-re-captcha-webapi-graph-ql",
-            "version": "dev-develop",
+            "version": "dev-AC10982",
             "dist": {
                 "type": "path",
                 "url": "./ext/magento/security-package/ReCaptchaWebapiGraphQl",
@@ -5704,7 +5749,7 @@
         },
         {
             "name": "magento/module-re-captcha-webapi-rest",
-            "version": "dev-develop",
+            "version": "dev-AC10982",
             "dist": {
                 "type": "path",
                 "url": "./ext/magento/security-package/ReCaptchaWebapiRest",
@@ -5737,7 +5782,7 @@
         },
         {
             "name": "magento/module-re-captcha-webapi-ui",
-            "version": "dev-develop",
+            "version": "dev-AC10982",
             "dist": {
                 "type": "path",
                 "url": "./ext/magento/security-package/ReCaptchaWebapiUi",
@@ -5767,7 +5812,7 @@
         },
         {
             "name": "magento/module-securitytxt",
-            "version": "dev-develop",
+            "version": "dev-AC10982",
             "dist": {
                 "type": "path",
                 "url": "./ext/magento/security-package/Securitytxt",
@@ -5805,7 +5850,7 @@
         },
         {
             "name": "magento/module-two-factor-auth",
-            "version": "dev-develop",
+            "version": "dev-AC10982",
             "dist": {
                 "type": "path",
                 "url": "./ext/magento/security-package/TwoFactorAuth",
@@ -11457,16 +11502,16 @@
         },
         {
             "name": "webonyx/graphql-php",
-            "version": "v15.14.2",
+            "version": "v15.14.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webonyx/graphql-php.git",
-                "reference": "3bc2778fa16a8a127767240ca91ef51236cb0f58"
+                "reference": "fac6205e957c9fbe0145606bc82a32973db1a339"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webonyx/graphql-php/zipball/3bc2778fa16a8a127767240ca91ef51236cb0f58",
-                "reference": "3bc2778fa16a8a127767240ca91ef51236cb0f58",
+                "url": "https://api.github.com/repos/webonyx/graphql-php/zipball/fac6205e957c9fbe0145606bc82a32973db1a339",
+                "reference": "fac6205e957c9fbe0145606bc82a32973db1a339",
                 "shasum": ""
             },
             "require": {
@@ -11519,7 +11564,7 @@
             ],
             "support": {
                 "issues": "https://github.com/webonyx/graphql-php/issues",
-                "source": "https://github.com/webonyx/graphql-php/tree/v15.14.2"
+                "source": "https://github.com/webonyx/graphql-php/tree/v15.14.3"
             },
             "funding": [
                 {
@@ -11527,7 +11572,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2024-10-08T08:43:03+00:00"
+            "time": "2024-10-17T13:03:37+00:00"
         },
         {
             "name": "wikimedia/less.php",
@@ -13836,16 +13881,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.12.6",
+            "version": "1.12.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "dc4d2f145a88ea7141ae698effd64d9df46527ae"
+                "reference": "dc2b9976bd8b0f84ec9b0e50cc35378551de7af0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/dc4d2f145a88ea7141ae698effd64d9df46527ae",
-                "reference": "dc4d2f145a88ea7141ae698effd64d9df46527ae",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/dc2b9976bd8b0f84ec9b0e50cc35378551de7af0",
+                "reference": "dc2b9976bd8b0f84ec9b0e50cc35378551de7af0",
                 "shasum": ""
             },
             "require": {
@@ -13890,7 +13935,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-10-06T15:03:59+00:00"
+            "time": "2024-10-18T11:12:07+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -14852,16 +14897,16 @@
         },
         {
             "name": "rector/rector",
-            "version": "1.2.7",
+            "version": "1.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "5b33bdd871895276e2c18e5410a4a57df9233ee0"
+                "reference": "05755bf43617449c08ee8e50fb840c85ad3b1240"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/5b33bdd871895276e2c18e5410a4a57df9233ee0",
-                "reference": "5b33bdd871895276e2c18e5410a4a57df9233ee0",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/05755bf43617449c08ee8e50fb840c85ad3b1240",
+                "reference": "05755bf43617449c08ee8e50fb840c85ad3b1240",
                 "shasum": ""
             },
             "require": {
@@ -14899,7 +14944,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rectorphp/rector/issues",
-                "source": "https://github.com/rectorphp/rector/tree/1.2.7"
+                "source": "https://github.com/rectorphp/rector/tree/1.2.8"
             },
             "funding": [
                 {
@@ -14907,7 +14952,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-10-12T11:12:46+00:00"
+            "time": "2024-10-18T11:54:27+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -15079,16 +15124,16 @@
         },
         {
             "name": "sebastian/comparator",
-            "version": "5.0.2",
+            "version": "5.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/comparator.git",
-                "reference": "2d3e04c3b4c1e84a5e7382221ad8883c8fbc4f53"
+                "reference": "a18251eb0b7a2dcd2f7aa3d6078b18545ef0558e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/comparator/zipball/2d3e04c3b4c1e84a5e7382221ad8883c8fbc4f53",
-                "reference": "2d3e04c3b4c1e84a5e7382221ad8883c8fbc4f53",
+                "url": "https://api.github.com/repos/sebastianbergmann/comparator/zipball/a18251eb0b7a2dcd2f7aa3d6078b18545ef0558e",
+                "reference": "a18251eb0b7a2dcd2f7aa3d6078b18545ef0558e",
                 "shasum": ""
             },
             "require": {
@@ -15099,7 +15144,7 @@
                 "sebastian/exporter": "^5.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^10.4"
+                "phpunit/phpunit": "^10.5"
             },
             "type": "library",
             "extra": {
@@ -15144,7 +15189,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/comparator/issues",
                 "security": "https://github.com/sebastianbergmann/comparator/security/policy",
-                "source": "https://github.com/sebastianbergmann/comparator/tree/5.0.2"
+                "source": "https://github.com/sebastianbergmann/comparator/tree/5.0.3"
             },
             "funding": [
                 {
@@ -15152,7 +15197,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-08-12T06:03:08+00:00"
+            "time": "2024-10-18T14:56:07+00:00"
         },
         {
             "name": "sebastian/complexity",
@@ -16288,6 +16333,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "duosecurity/duo_api_php": 20,
         "magento/security-package": 20
     },
     "prefer-stable": true,
