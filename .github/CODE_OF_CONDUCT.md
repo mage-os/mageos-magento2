@@ -1,4 +1,4 @@
-# Magento Code of Conduct
+# Mage-OS Code of Conduct
 
 ## Our Pledge
 

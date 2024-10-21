@@ -12,7 +12,7 @@
 @login-box__max-width: 45rem;
 @login-box__min-height: 30rem;
 @login-box__shadow: 0 5px 30px 0 rgba(0, 0, 0, 1);
-@login-page__background-color: @color-very-dark-grayish-orange;
+@login-page__background-color: @color-blue-dark;
 
 //
 //  Admin user auth pages layout
@@ -38,6 +38,7 @@
         .lib-vendor-prefix-flex-shrink(0);
         background-color: @login-box__background-color;
         border: @login-box__border;
+        border-radius: 16px;
         box-shadow: @login-box__shadow;
         display: block;
         float: none;
@@ -45,7 +46,7 @@
         max-width: @login-box__max-width;
         min-height: @login-box__min-height;
         min-width: 0;
-        padding: 40px 80px 50px;
+        padding: 40px 75px 50px;
         position: relative;
         width: 100%;
         z-index: 1;
@@ -66,7 +67,7 @@
     .admin__legend {
         color: @color-phoenix;
         font-size: 2.6rem;
-        font-weight: @font-weight__light;
+        font-weight: @font-weight__regular;
         line-height: @line-height__s;
         margin: -1rem 0 2.5rem;
     }

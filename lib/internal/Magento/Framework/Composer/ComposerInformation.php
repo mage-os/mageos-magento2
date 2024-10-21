@@ -116,7 +116,7 @@ class ComposerInformation
             foreach ($packages as $package) {
                 if ($package instanceof CompletePackageInterface) {
                     $packageName = $package->getPrettyName();
-                    if ($packageName === 'magento/product-community-edition') {
+                    if ($packageName === 'mage-os/product-community-edition') {
                         $phpRequirementLink = $package->getRequires()['php'];
                         if ($phpRequirementLink instanceof Link) {
                             $requiredPhpVersion = $phpRequirementLink->getPrettyConstraint();
@@ -261,7 +261,7 @@ class ComposerInformation
      */
     public function isSystemPackage($packageName = '')
     {
-        if (preg_match('/magento\/product-.*?-edition/', $packageName) == 1) {
+        if (preg_match('/mage-os\/product-.*?-edition/', $packageName) == 1) {
             return true;
         }
         return false;
@@ -276,7 +276,7 @@ class ComposerInformation
     {
         $rootPackage = $this->getComposer()->getPackage();
 
-        return (boolean)preg_match('/magento\/magento2...?/', $rootPackage->getName());
+        return (boolean)preg_match('/mage-os\/magento2...?/', $rootPackage->getName());
     }
 
     /**

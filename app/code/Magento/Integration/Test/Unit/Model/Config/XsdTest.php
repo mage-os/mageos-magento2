@@ -349,8 +349,9 @@ class XsdTest extends TestCase
                     </integration>
                 </integrations>',
                 [
-                    "Element 'integration', attribute 'name': '' is not a valid value of the atomic type " .
-                    "'integrationNameType'.The xml was: \n0:<?xml version=\"1.0\"?>\n1:<integrations>\n" .
+                    "Element 'integration', attribute 'name': [facet 'minLength'] The value '' has a " .
+                    "length of '0'; this underruns the allowed minimum length of '2'.The xml was: \n" .
+                    "0:<?xml version=\"1.0\"?>\n1:<integrations>\n" .
                     "2:                    <integration name=\"\">\n3:                        <email>" .
                     "test-integration1@magento.com</email>\n4:                        <endpoint_url>" .
                     "http://endpoint.url</endpoint_url>\n5:                        <identity_link_url>" .
@@ -368,7 +369,8 @@ class XsdTest extends TestCase
                     </integration>
                 </integrations>',
                 [
-                    "Element 'email': 'invalid' is not a valid value of the atomic type 'emailType'.The xml was: \n" .
+                    "Element 'email': [facet 'pattern'] The value 'invalid' is not accepted by " .
+                    "the pattern '[^@]+@[^\.]+\..+'.The xml was: \n" .
                     "0:<?xml version=\"1.0\"?>\n1:<integrations>\n2:                    <integration " .
                     "name=\"TestIntegration1\">\n3:                        <email>invalid</email>\n" .
                     "4:                        <endpoint_url>http://endpoint.url</endpoint_url>\n" .

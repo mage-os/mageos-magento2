@@ -26,17 +26,14 @@ return [
     ],
     'attributes_with_type_modelName_and_invalid_value' => [
         '<?xml version="1.0"?><config><entity name="Name/one" model="model_one" '
-            . 'entityAttributeFilterType="model_one"/><entityType entity="Name/one" name="name_one" model="1"/>'
-            . ' <fileFormat name="name_one" model="1model"/></config>',
+        . 'entityAttributeFilterType="model_one"/><entityType entity="Name/one" name="name_one" model="1"/>'
+        . ' <fileFormat name="name_one" model="1model"/></config>',
         [
-            "Element 'entityType', attribute 'model': '1' is not a valid value of the atomic type 'modelName'.\n" .
-            "Line: 1\nThe xml was: \n0:<?xml version=\"1.0\"?>\n1:<config><entity name=\"Name/one\" " .
-            "model=\"model_one\" entityAttributeFilterType=\"model_one\"/><entityType entity=\"Name/one\" " .
-            "name=\"name_one\" model=\"1\"/> <fileFormat name=\"name_one\" model=\"1model\"/></config>\n2:\n",
-            "Element 'fileFormat', attribute 'model': '1model' is not a valid value of the atomic type 'modelName'.\n" .
-            "Line: 1\nThe xml was: \n0:<?xml version=\"1.0\"?>\n1:<config><entity name=\"Name/one\" " .
-            "model=\"model_one\" entityAttributeFilterType=\"model_one\"/><entityType entity=\"Name/one\" " .
-            "name=\"name_one\" model=\"1\"/> <fileFormat name=\"name_one\" model=\"1model\"/></config>\n2:\n"
+            "Element 'fileFormat', attribute 'model': [facet 'pattern'] The value '1model'" .
+            " is not accepted by the pattern '([\\\\]?[a-zA-Z_][a-zA-Z0-9_]*)+'.\n" .
+            "Line: 1\nThe xml was: \n0:<?xml version=\"1.0\"?>\n1:<config><entity name=\"Name/one\"" .
+            " model=\"model_one\" entityAttributeFilterType=\"model_one\"/><entityType entity=\"Name/one\"" .
+            " name=\"name_one\" model=\"1\"/> <fileFormat name=\"name_one\" model=\"1model\"/></config>\n2:\n"
         ],
     ],
     'productType_node_with_required_attribute' => [

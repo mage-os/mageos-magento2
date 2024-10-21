@@ -24,7 +24,7 @@
         <move element="logo" destination="login.header" before="-"/>
         <referenceBlock name="logo">
             <arguments>
-                <argument name="logo_image_src" xsi:type="string">images/magento-logo.svg</argument>
+                <argument name="logo_image_src" xsi:type="string">images/mage-os-logo.svg</argument>
             </arguments>
         </referenceBlock>
 

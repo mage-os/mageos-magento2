@@ -8,6 +8,8 @@ declare(strict_types=1);
 namespace Magento\AdminAnalytics\Model\Condition;
 
 use Magento\AdminAnalytics\Model\ResourceModel\Viewer\Logger;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\View\Layout\Condition\VisibilityConditionInterface;
 use Magento\Framework\App\CacheInterface;
 
@@ -41,15 +43,23 @@ class CanViewNotification implements VisibilityConditionInterface
     private $cacheStorage;
 
     /**
+     * @var ScopeConfigInterface
+     */
+    private $scopeConfig;
+
+    /**
      * @param Logger $viewerLogger
      * @param CacheInterface $cacheStorage
+     * @param ScopeConfigInterface|null $scopeConfig
      */
     public function __construct(
         Logger $viewerLogger,
-        CacheInterface $cacheStorage
+        CacheInterface $cacheStorage,
+        ScopeConfigInterface $scopeConfig = null
     ) {
         $this->viewerLogger = $viewerLogger;
         $this->cacheStorage = $cacheStorage;
+        $this->scopeConfig = $scopeConfig ?? ObjectManager::getInstance()->get(ScopeConfigInterface::class);
     }
 
     /**
@@ -62,7 +72,7 @@ class CanViewNotification implements VisibilityConditionInterface
     {
         $cacheKey = self::$cachePrefix;
         $value = $this->cacheStorage->load($cacheKey);
-        if ($value !== 'log-exists') {
+        if ($this->scopeConfig->isSetFlag('admin/usage/enabled') && $value !== 'log-exists') {
             $logExists = $this->viewerLogger->checkLogExists();
             if ($logExists) {
                 $this->cacheStorage->save('log-exists', $cacheKey);
