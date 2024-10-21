@@ -57,9 +57,11 @@ class DbSchemaReader implements DbSchemaReaderInterface
         $collationNameColumn = 'charset_applicability.collation_name';
 
         /* In case of mariadb>=11.4 check if column FULL_COLLATION_NAME is exist */
-        if($adapter->tableColumnExists('COLLATION_CHARACTER_SET_APPLICABILITY',
-                                      'FULL_COLLATION_NAME',
-                                      'information_schema')){
+        if ($adapter->tableColumnExists(
+            'COLLATION_CHARACTER_SET_APPLICABILITY',
+            'FULL_COLLATION_NAME',
+            'information_schema'
+        )) {
             $collationNameColumn = 'charset_applicability.full_collation_name';
         }
 
