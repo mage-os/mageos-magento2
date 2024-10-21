@@ -3,6 +3,8 @@
 //  * See COPYING.txt for license details.
 //  */
 
+@color-grey: #aaa;
+
 //
 //  Catalog product grid
 //  ---------------------------------------------
@@ -71,7 +73,7 @@
 
 .catalog-category-edit,
 .catalog-category-add {
-    //  TODO: refactor trees
+    //TODO refactor trees
     .x-tree.tree-wrapper {
         overflow-x: auto;
     }
@@ -128,6 +130,6 @@
 
 .jstree-children {
     .not-active-category {
-        color: #aaaaaa;
+        color: @color-grey;
     }
 }
