@@ -49,6 +49,6 @@ class TreeBlockTest extends AbstractBackendController
         $this->assertCount(1, $categoryTreeArray);
         $this->assertArrayHasKey('a_attr', $categoryTreeArray[0]);
         $this->assertArrayHasKey('class', $categoryTreeArray[0]['a_attr']);
-        $this->assertStringContainsString('no-active-category', $categoryTreeArray[0]['a_attr']['class']);
+        $this->assertStringContainsString('not-active-category', $categoryTreeArray[0]['a_attr']['class']);
     }
 }
