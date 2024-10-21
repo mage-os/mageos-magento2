@@ -173,7 +173,7 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
      * @param string $columnName
      * @return string
      */
-    public function checkifcolumnexist($tableName, $columnName)
+    public function checkifcolumnexist($tableName, $columnName) : ?string
     {
         $connection = $this->resourceConnection->getConnection();
         $tableName = $this->resourceConnection->getTableName($tableName);
