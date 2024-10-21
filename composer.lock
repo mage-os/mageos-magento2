@@ -10923,12 +10923,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:magento-gl/magento2-functional-testing-framework.git",
-                "reference": "9748de41e201120806000aaef5e7c86a144e25fc"
+                "reference": "53a86e2de586b9c9e38d59f04f21bdf3c445f9d3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-gl/magento2-functional-testing-framework/zipball/9748de41e201120806000aaef5e7c86a144e25fc",
-                "reference": "9748de41e201120806000aaef5e7c86a144e25fc",
+                "url": "https://api.github.com/repos/magento-gl/magento2-functional-testing-framework/zipball/53a86e2de586b9c9e38d59f04f21bdf3c445f9d3",
+                "reference": "53a86e2de586b9c9e38d59f04f21bdf3c445f9d3",
                 "shasum": ""
             },
             "require": {
@@ -11028,7 +11028,7 @@
             "support": {
                 "source": "https://github.com/magento-gl/magento2-functional-testing-framework/tree/AC-13244"
             },
-            "time": "2024-10-16T10:44:31+00:00"
+            "time": "2024-10-21T14:06:35+00:00"
         },
         {
             "name": "magento/php-compatibility-fork",
