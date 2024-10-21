@@ -108,8 +108,15 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
                         continue;
                     }
                     $name = $this->getAttributeValue($subscription, 'name');
-                    $column = $this->getAttributeValue($subscription, 'entity_column');
-                    $column = $this->checkifcolumnexist($name, $column);
+                    $configColumn = $this->getAttributeValue($subscription, 'entity_column');
+                    $column = $this->checkifcolumnexist($name, $configColumn);
+
+                    if (empty($column)) {
+                        throw new \InvalidArgumentException(
+                            'Column ' . $configColumn . ' does not exist in table ' . $name
+                        );
+                    }
+
                     $subscriptionModel = $this->getAttributeValue($subscription, 'subscription_model');
 
                     if (!empty($subscriptionModel)
@@ -173,7 +180,7 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
      * @param string $columnName
      * @return string
      */
-    public function checkifcolumnexist($tableName, $columnName) : ?string
+    public function checkifcolumnexist($tableName, $columnName) : string
     {
         $connection = $this->resourceConnection->getConnection();
         $tableName = $this->resourceConnection->getTableName($tableName);
@@ -181,5 +188,7 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
         if (!$connection->isTableExists($tableName) || $connection->tableColumnExists($tableName, $columnName)) {
             return $columnName;
         }
+
+        return '';
     }
 }
