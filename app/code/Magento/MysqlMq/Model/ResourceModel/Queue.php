@@ -27,7 +27,7 @@ class Queue extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 
     /**
      * @param Context $context
-     * @param null $connectionName
+     * @param string|null $connectionName
      * @param int|null $chunkSize
      */
     public function __construct(Context $context, $connectionName = null, int $chunkSize = null)

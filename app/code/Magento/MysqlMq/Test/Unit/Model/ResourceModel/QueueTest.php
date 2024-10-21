@@ -285,8 +285,15 @@ class QueueTest extends TestCase
         $connection->expects($this->once())->method('select')->willReturn($select);
         $select->expects($this->once())
             ->method('from')->with(['queue_message_status' => $tableNames[0]], ['message_id'])->willReturnSelf();
-        $select->expects($this->once())->method('where')
-            ->with('status = ?', QueueManagement::MESSAGE_STATUS_TO_BE_DELETED)
+        $select->expects($this->once())->method('joinLeft')
+            ->with(
+                ['message_status2' => 'queue_message_status'],
+                'queue_message_status.message_id = message_status2.message_id AND message_status2.status <> ' .
+                QueueManagement::MESSAGE_STATUS_TO_BE_DELETED,
+                []
+            )
+            ->willReturnSelf();
+        $select->expects($this->exactly(2))->method('where')
             ->willReturnSelf();
         $select->expects($this->once())->method('distinct')->willReturnSelf();
         $connection->expects($this->once())->method('fetchCol')->with($select)->willReturn([1, 2]);
