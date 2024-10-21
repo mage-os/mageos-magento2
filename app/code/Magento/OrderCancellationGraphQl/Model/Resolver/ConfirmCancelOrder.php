@@ -18,34 +18,30 @@ namespace Magento\OrderCancellationGraphQl\Model\Resolver;
 
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\GraphQl\Config\Element\Field;
-use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
-use Magento\OrderCancellation\Model\CancelOrder as CancelOrderAction;
+use Magento\OrderCancellationGraphQl\Model\ConfirmCancelOrder as ConfirmCancelOrderGuest;
 use Magento\OrderCancellationGraphQl\Model\Validator\ValidateOrder;
-use Magento\OrderCancellationGraphQl\Model\Validator\ValidateRequest;
+use Magento\OrderCancellationGraphQl\Model\Validator\ValidateConfirmRequest;
 use Magento\Sales\Api\OrderRepositoryInterface;
-use Magento\SalesGraphQl\Model\Formatter\Order as OrderFormatter;
 
 /**
- * Cancels an order
+ * Cancels a guest order on confirmation
  */
-class CancelOrder implements ResolverInterface
+class ConfirmCancelOrder implements ResolverInterface
 {
     /**
-     * CancelOrder Constructor
+     * ConfirmCancelOrder Constructor
      *
-     * @param ValidateRequest $validateRequest
-     * @param OrderFormatter $orderFormatter
+     * @param ValidateConfirmRequest $validateRequest
      * @param OrderRepositoryInterface $orderRepository
-     * @param CancelOrderAction $cancelOrderAction
+     * @param ConfirmCancelOrderGuest $confirmCancelOrder
      * @param ValidateOrder $validateOrder
      */
     public function __construct(
-        private readonly ValidateRequest          $validateRequest,
-        private readonly OrderFormatter           $orderFormatter,
+        private readonly ValidateConfirmRequest   $validateRequest,
         private readonly OrderRepositoryInterface $orderRepository,
-        private readonly CancelOrderAction        $cancelOrderAction,
+        private readonly ConfirmCancelOrderGuest  $confirmCancelOrder,
         private readonly ValidateOrder            $validateOrder
     ) {
     }
@@ -59,27 +55,24 @@ class CancelOrder implements ResolverInterface
         ResolveInfo $info,
         array $value = null,
         array $args = null
-    ) {
-        $this->validateRequest->execute($context, $args['input'] ?? []);
+    ): array {
+        $this->validateRequest->execute($args['input'] ?? []);
 
         try {
             $order = $this->orderRepository->get($args['input']['order_id']);
 
-            if ((int)$order->getCustomerId() !== $context->getUserId()) {
-                throw new GraphQlAuthorizationException(__('Current user is not authorized to cancel this order'));
+            if (!$order->getCustomerIsGuest()) {
+                return [
+                    'error' => __('Current user is not authorized to cancel this order')
+                ];
             }
 
             $errors = $this->validateOrder->execute($order);
-            if ($errors) {
+            if (!empty($errors)) {
                 return $errors;
             }
 
-            $order = $this->cancelOrderAction->execute($order, $args['input']['reason']);
-
-            return [
-                'order' => $this->orderFormatter->format($order)
-            ];
-
+            return $this->confirmCancelOrder->execute($order, $args['input']);
         } catch (LocalizedException $e) {
             return [
                 'error' => __($e->getMessage())
