@@ -89,7 +89,8 @@ class IndexerHandler extends Grid
             // change the charset to utf8mb4
             if ($tableName === self::DESIGN_CONFIG_GRID_FLAT) {
                 $getTableSchema = $this->connection->showTableStatus($tableName) ?? '';
-                if (isset($getTableSchema['Collation']) && preg_match('/\b('. SELF::OLDCOLLATION .')\b/', $getTableSchema['Collation'])) {
+                if (isset($getTableSchema['Collation']) &&
+                    preg_match('/\b('. self::OLDCOLLATION .')\b/', $getTableSchema['Collation'])) {
                     $charset = $this->columnConfig->getDefaultCharset();
                     $collate = $this->columnConfig->getDefaultCollation();
                     $columnEncoding = " CHARACTER SET ".$charset." COLLATE ".$collate;
