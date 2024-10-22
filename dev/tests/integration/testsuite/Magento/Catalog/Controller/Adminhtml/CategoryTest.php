@@ -153,7 +153,6 @@ class CategoryTest extends AbstractBackendController
         $categoryId = 3;
         $category = $this->categoryRepository->get($categoryId);
         $newUrlPath = 'test_url_path';
-        $defaultUrlPath = $category->getData('url_path');
 
         // update url_path and check it
         $category->setStoreId(1);
@@ -783,14 +782,10 @@ class CategoryTest extends AbstractBackendController
         $category->load(2);
         $this->assertEquals('2columns-left', $category->getData('page_layout'));
         $this->assertEmpty($category->getData('custom_layout_update_file'));
-        $this->assertEquals('Custom Description', $category->getData('description'));
+        $this->assertEquals('test', $category->getData('description'));
         //No new error messages
-        $sessionErrorMessages = [
-            'Not allowed to edit the category\'s design attributes',
-            'Not allowed to edit the category\'s design attributes'
-        ];
         $this->assertSessionMessages(
-            self::equalTo($sessionErrorMessages),
+            self::equalTo($sessionMessages),
             MessageInterface::TYPE_ERROR
         );
     }

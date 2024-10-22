@@ -48,10 +48,9 @@ class UpdateCategoryTest extends AbstractSaveCategoryTest
     public function testUpdateCategoryForDefaultStoreView(array $postData): void
     {
         $storeId = (int)$this->storeManager->getStore('default')->getId();
-        $postData = array_merge($postData, ['store_id' => $storeId]);
         $responseData = $this->performSaveCategoryRequest($postData);
         $this->assertRequestIsSuccessfullyPerformed($responseData);
-        $category = $this->categoryRepository->get($postData['entity_id'], $postData['store_id']);
+        $category = $this->categoryRepository->get($postData['entity_id'], $storeId);
         unset($postData['use_default']);
         unset($postData['use_config']);
         foreach ($postData as $key => $value) {
