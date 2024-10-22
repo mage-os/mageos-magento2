@@ -35,7 +35,7 @@
             <column name="query_text"/>
             <column name="store_id"/>
         </constraint>
-        <index referenceId="SEARCH_QUERY_QUERY_TEXT_STORE_ID_POPULARITY" indexType="btree">
+        <index referenceId="SEARCH_QUERY_QUERY_TEXT_STORE_ID_POPULARITY" indexType="btree" disabled="true">
             <column name="query_text"/>
             <column name="store_id"/>
             <column name="popularity"/>
@@ -44,6 +44,12 @@
             <column name="is_processed"/>
         </index>
         <index referenceId="SEARCH_QUERY_STORE_ID_NUM_RESULTS_POPULARITY" indexType="btree">
+            <column name="store_id"/>
+            <column name="num_results"/>
+            <column name="popularity"/>
+        </index>
+        <index referenceId="SEARCH_QUERY_QUERY_TEXT_STORE_ID_NUM_RESULTS_POPULARITY" indexType="btree">
+            <column name="query_text"/>
             <column name="store_id"/>
             <column name="num_results"/>
             <column name="popularity"/>
