@@ -67,11 +67,11 @@
         <waitForElementClickable selector="{{CheckoutPaymentSection.PayPalExpressCheckoutPayFlowEdition}}" stepKey="waitForPayPalRadioButton"/>
         <click selector="{{CheckoutPaymentSection.PayPalExpressCheckoutPayFlowEdition}}" stepKey="selectPayPalExpressCheckoutPayFlowEdition"/>
         <!-- Verify both manual and automatic are present -->
-        <waitForText selector="{{StorefrontCheckoutAgreementsSection.manualCheckoutAgreementLink('agreement_paypal_express')}}" userInput="{{newHtmlTerm.checkboxText}}" stepKey="seeManualTermTextInCheckoutIsPresent"/>
-        <waitForText selector="{{StorefrontCheckoutAgreementsSection.automaticCheckoutAgreementLink('agreement_paypal_express')}}" userInput="{{newHtmlAutomaticallyTerm.checkboxText}}" stepKey="seeAutomaticTermTextInCheckoutIsPresent"/>
+        <waitForText selector="{{StorefrontCheckoutAgreementsSection.manualCheckoutAgreementLink('agreement_payflow_express')}}" userInput="{{newHtmlTerm.checkboxText}}" stepKey="seeManualTermTextInCheckoutIsPresent"/>
+        <waitForText selector="{{StorefrontCheckoutAgreementsSection.automaticCheckoutAgreementLink('agreement_payflow_express')}}" userInput="{{newHtmlAutomaticallyTerm.checkboxText}}" stepKey="seeAutomaticTermTextInCheckoutIsPresent"/>
         <!-- open manual terms and conditions and verify content messages-->
-        <waitForElementClickable selector="{{StorefrontCheckoutAgreementsSection.manualCheckoutAgreementLink('agreement_paypal_express')}}" stepKey="waitForManualTermTextInCheckoutIsClickable"/>
-        <click selector="{{StorefrontCheckoutAgreementsSection.manualCheckoutAgreementLink('agreement_paypal_express')}}" stepKey="clickManualTermTextInCheckout"/>
+        <waitForElementClickable selector="{{StorefrontCheckoutAgreementsSection.manualCheckoutAgreementLink('agreement_payflow_express')}}" stepKey="waitForManualTermTextInCheckoutIsClickable"/>
+        <click selector="{{StorefrontCheckoutAgreementsSection.manualCheckoutAgreementLink('agreement_payflow_express')}}" stepKey="clickManualTermTextInCheckout"/>
         <waitForElement selector="{{StorefrontCheckoutAgreementsSection.contentArea(newHtmlTerm.content)}}" stepKey="verifyManualTermContentTextMessage"/>
         <waitForElementClickable selector="{{StorefrontCheckoutAgreementsSection.agreementClose}}" stepKey="waitForCloseToBeClickable"/>
         <click selector="{{StorefrontCheckoutAgreementsSection.agreementClose}}" stepKey="ClickOnClose"/>
