@@ -76,8 +76,8 @@
         <waitForElementClickable selector="{{StorefrontCheckoutAgreementsSection.agreementClose}}" stepKey="waitForCloseToBeClickable"/>
         <click selector="{{StorefrontCheckoutAgreementsSection.agreementClose}}" stepKey="ClickOnClose"/>
         <!-- open automatic terms and conditions and verify content messages-->
-        <waitForElementClickable selector="{{StorefrontCheckoutAgreementsSection.automaticCheckoutAgreementLink('agreement_paypal_express')}}" stepKey="waitForAutomaticTermTextInCheckoutIsClickable"/>
-        <click selector="{{StorefrontCheckoutAgreementsSection.automaticCheckoutAgreementLink('agreement_paypal_express')}}" stepKey="clickAutomaticTermTextInCheckoutIsClickable"/>
+        <waitForElementClickable selector="{{StorefrontCheckoutAgreementsSection.automaticCheckoutAgreementLink('agreement_payflow_express')}}" stepKey="waitForAutomaticTermTextInCheckoutIsClickable"/>
+        <click selector="{{StorefrontCheckoutAgreementsSection.automaticCheckoutAgreementLink('agreement_payflow_express')}}" stepKey="clickAutomaticTermTextInCheckoutIsClickable"/>
         <waitForElement selector="{{StorefrontCheckoutAgreementsSection.contentArea(newHtmlAutomaticallyTerm.content)}}" stepKey="verifyAutomaticTermContentTextMessage"/>
     </test>
 </tests>
