@@ -10,7 +10,7 @@
        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
     <test name="AdminEmailTemplateForStoredXSSTest">
         <annotations>
-            <features value="Email template for stored XSS"/>
+            <features value="Email"/>
             <stories value="Email template for stored XSS"/>
             <title value="Email template with stored XSS should be escaped"/>
             <description value="Admin creates a email template with stored XSS and it should not appear in template preview"/>
