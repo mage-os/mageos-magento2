@@ -567,45 +567,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Collection\Abstrac
     }
 
     /**
-     * Get products count using catalog_category_entity table
-     *
-     * @param Category $item
-     * @param string $websiteId
-     * @return int
-     */
-    private function getProductsCountFromCategoryTable(Category $item, string $websiteId): int
-    {
-        $productCount = 0;
-
-        if ($item->getAllChildren()) {
-            $bind = ['entity_id' => $item->getId(), 'c_path' => $item->getPath() . '/%'];
-            $select = $this->_conn->select();
-            $select->from(
-                ['main_table' => $this->getProductTable()],
-                new \Zend_Db_Expr('COUNT(DISTINCT main_table.product_id)')
-            )->joinInner(
-                ['e' => $this->getTable('catalog_category_entity')],
-                'main_table.category_id=e.entity_id',
-                []
-            )->where(
-                '(e.entity_id = :entity_id OR e.path LIKE :c_path)'
-            );
-            if ($websiteId) {
-                $select->join(
-                    ['w' => $this->getProductWebsiteTable()],
-                    'main_table.product_id = w.product_id',
-                    []
-                )->where(
-                    'w.website_id = ?',
-                    $websiteId
-                );
-            }
-            $productCount = (int)$this->_conn->fetchOne($select, $bind);
-        }
-        return $productCount;
-    }
-
-    /**
      * Get query for retrieve count of products per category
      *
      * @param array $categoryIds
