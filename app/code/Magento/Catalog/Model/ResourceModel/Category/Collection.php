@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2011 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Catalog\Model\ResourceModel\Category;
 
@@ -337,36 +337,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Collection\Abstrac
             $categoryIds = array_keys($anchor);
             $countSelect = $this->getProductsCountQuery($categoryIds, (bool)$websiteId);
             $categoryProductsCount = $this->_conn->fetchPairs($countSelect);
-
-            $subSelect = clone $this->_conn->select();
-            $subSelect->from(['ce2' => $this->getTable('catalog_category_entity')], 'ce2.entity_id')
-                ->where("ce2.path LIKE CONCAT(ce.path, '/%')");
-
-            $select = clone $this->_conn->select();
-            $select->from(['ce' => $this->getTable(
-                'catalog_category_entity')],
-                'ce.entity_id'
-            );
-            $joinCondition =  new \Zend_Db_Expr("ce.entity_id=cp.category_id OR cp.category_id IN ({$subSelect})");
-            $select->joinLeft([
-                'cp' => $this->getProductTable()],
-                $joinCondition,
-                'COUNT(DISTINCT cp.product_id) AS product_count'
-            );
-            if ($websiteId) {
-                $select->join(
-                    ['w' => $this->getProductWebsiteTable()],
-                    'cp.product_id = w.product_id',
-                    []
-                )->where(
-                    'w.website_id = ?',
-                    $websiteId
-                );
-            }
-            $select->where('ce.entity_id IN(?)', $categoryIds);
-            $select->group('ce.entity_id');
-
-            $countFromCategoryTable = $this->_conn->fetchPairs($select);
+            $countFromCategoryTable = $this->getCountFromCategoryTable($categoryIds, (int)$websiteId);
 
             foreach ($anchor as $item) {
                 $productsCount = 0;
@@ -379,6 +350,48 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Collection\Abstrac
             }
         }
         return $this;
+    }
+
+    /**
+     * Get products number for each category with bulk query
+     *
+     * @param array $categoryIds
+     * @param int $websiteId
+     * @return array
+     */
+    private function getCountFromCategoryTable(
+        array $categoryIds,
+        int $websiteId
+    ) : array {
+        $subSelect = clone $this->_conn->select();
+        $subSelect->from(['ce2' => $this->getTable('catalog_category_entity')], 'ce2.entity_id')
+            ->where("ce2.path LIKE CONCAT(ce.path, '/%')");
+
+        $select = clone $this->_conn->select();
+        $select->from(
+            ['ce' => $this->getTable('catalog_category_entity')],
+            'ce.entity_id'
+        );
+        $joinCondition =  new \Zend_Db_Expr("ce.entity_id=cp.category_id OR cp.category_id IN ({$subSelect})");
+        $select->joinLeft(
+            ['cp' => $this->getProductTable()],
+            $joinCondition,
+            'COUNT(DISTINCT cp.product_id) AS product_count'
+        );
+        if ($websiteId) {
+            $select->join(
+                ['w' => $this->getProductWebsiteTable()],
+                'cp.product_id = w.product_id',
+                []
+            )->where(
+                'w.website_id = ?',
+                $websiteId
+            );
+        }
+        $select->where('ce.entity_id IN(?)', $categoryIds);
+        $select->group('ce.entity_id');
+
+        return $this->_conn->fetchPairs($select);
     }
 
     /**
