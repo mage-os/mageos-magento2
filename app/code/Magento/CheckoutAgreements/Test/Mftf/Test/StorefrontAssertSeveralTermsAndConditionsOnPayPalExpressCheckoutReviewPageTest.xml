@@ -23,7 +23,7 @@
         <before>
             <actionGroup ref="AdminLoginActionGroup" stepKey="adminLogin"/>
             <createData entity="SimpleProduct" stepKey="createSimpleProduct"/>
-            <actionGroup ref="AdminEnableTermsAndConditionsConfigurationActionGroup" stepKey="enableTermsAndConditions"/>
+            <actionGroup ref="AdminEnableTermsAndConditionsConfigurationActionGroup" stepKey="EnableTermsAndConditions"/>
             <createData entity="Simple_US_Customer_NY" stepKey="createCustomer"/>
         </before>
         <after>
