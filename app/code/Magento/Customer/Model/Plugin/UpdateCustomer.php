@@ -64,7 +64,7 @@ class UpdateCustomer
         ) {
             $customer = $this->getUpdatedCustomer($customerRepository->getById($customerId), $customer);
         } elseif ($customerId && in_array($userType, [UserContextInterface::USER_TYPE_ADMIN,
-                UserContextInterface::USER_TYPE_INTEGRATION], true)
+                    UserContextInterface::USER_TYPE_INTEGRATION], true)
         ) {
             $customer = $this->getUpdatedCustomer($customerRepository->getById($customerId), $customer);
         }
