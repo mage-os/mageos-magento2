@@ -3,6 +3,8 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+declare(strict_types=1);
+
 namespace Magento\Directory\Model\Config\Backend;
 
 use Magento\Directory\Model\Config\Source\WeightUnit as Source;
@@ -64,6 +66,7 @@ class WeightUnit extends Value
                 throw new LocalizedException(__('There was an error save new configuration value.'));
             }
         }
+
         return parent::beforeSave();
     }
 
@@ -75,6 +78,7 @@ class WeightUnit extends Value
     private function getOptions()
     {
         $options = $this->source->toOptionArray();
+
         return array_column($options, 'value');
     }
 }
