@@ -10,9 +10,9 @@
     <test name="AdminSetManageStockConfigForAllTypesOfProductsTest">
         <annotations>
             <stories value="Selecting Manage Stock To Yes During Product Creation"/>
-            <title value="Product Status is updated to Out Of Stock when Manage Stock is set No in configuration"/>
+            <title value="Managing Out of Stock Product When Manage Stock is set No"/>
             <description value="Customer shouldn't be able to see add to cart button in the storefront if product is Out Of Stock"/>
-            <testCaseId value="AC-4167"/>
+            <testCaseId value="AC-4980"/>
             <severity value="MAJOR"/>
             <group value="catalog"/>
         </annotations>
