@@ -65,7 +65,6 @@
         <!-- Select Shipping Method-->
         <actionGroup ref="StorefrontSetShippingMethodActionGroup" stepKey="selectFlatRateShippingMethod"/>
         <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="selectPaymentMethod"/>
-
         <!--Click next button to open payment section-->
         <actionGroup ref="StorefrontGuestCheckoutProceedToPaymentStepActionGroup" stepKey="clickNext"/>
 
