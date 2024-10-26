@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2013 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -63,11 +63,9 @@ class FrontNameResolverTest extends TestCase
             ->with(ConfigOptionsList::CONFIG_PATH_BACKEND_FRONTNAME)
             ->willReturn($this->_defaultFrontName);
         $this->uri = $this->createMock(Uri::class);
-
         $this->request = $this->createMock(Http::class);
-
         $this->configMock = $this->createMock(Config::class);
-        $this->scopeConfigMock = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
         $this->model = new FrontNameResolver(
             $this->configMock,
             $deploymentConfigMock,
@@ -111,6 +109,7 @@ class FrontNameResolverTest extends TestCase
     /**
      * @param string $url
      * @param string|null $host
+     * @param bool $isHttps
      * @param string $useCustomAdminUrl
      * @param string $customAdminUrl
      * @param bool $expectedValue
@@ -121,12 +120,12 @@ class FrontNameResolverTest extends TestCase
     public function testIsHostBackend(
         string $url,
         ?string $host,
+        bool $isHttps,
         string $useCustomAdminUrl,
         string $customAdminUrl,
         bool $expectedValue
     ): void {
-        $this->scopeConfigMock->expects($this->exactly(2))
-            ->method('getValue')
+        $this->scopeConfigMock->method('getValue')
             ->willReturnMap(
                 [
                     [Store::XML_PATH_UNSECURE_BASE_URL, ScopeInterface::SCOPE_STORE, null, $url],
@@ -145,41 +144,42 @@ class FrontNameResolverTest extends TestCase
                 ]
             );
 
-        $this->request->expects($this->any())
+        $this->request->expects($this->atLeastOnce())
             ->method('getServer')
-            ->willReturn($host);
+            ->willReturnMap(
+                [
+                    ['HTTP_HOST', null, $host],
+                    ['REQUEST_SCHEME', null, $isHttps ? 'https' : 'http'],
+                ]
+            );
 
         $urlParts = [];
-        $this->uri->expects($this->once())
-            ->method('parse')
+        $this->uri->method('parse')
             ->willReturnCallback(
                 function ($url) use (&$urlParts) {
                     $urlParts = parse_url($url);
                 }
             );
-        $this->uri->expects($this->once())
-            ->method('getScheme')
+        $this->uri->method('getScheme')
             ->willReturnCallback(
                 function () use (&$urlParts) {
                     return array_key_exists('scheme', $urlParts) ? $urlParts['scheme'] : '';
                 }
             );
-        $this->uri->expects($this->once())
-            ->method('getHost')
+        $this->uri->method('getHost')
             ->willReturnCallback(
                 function () use (&$urlParts) {
                     return array_key_exists('host', $urlParts) ? $urlParts['host'] : '';
                 }
             );
-        $this->uri->expects($this->once())
-            ->method('getPort')
+        $this->uri->method('getPort')
             ->willReturnCallback(
                 function () use (&$urlParts) {
                     return array_key_exists('port', $urlParts) ? $urlParts['port'] : '';
                 }
             );
 
-        $this->assertEquals($this->model->isHostBackend(), $expectedValue);
+        $this->assertEquals($expectedValue, $this->model->isHostBackend());
     }
 
     /**
@@ -208,6 +208,7 @@ class FrontNameResolverTest extends TestCase
             'withoutPort' => [
                 'url' => 'http://magento2.loc/',
                 'host' => 'magento2.loc',
+                'isHttps' => false,
                 'useCustomAdminUrl' => '0',
                 'customAdminUrl' => '',
                 'expectedValue' => true
@@ -215,6 +216,7 @@ class FrontNameResolverTest extends TestCase
             'withPort' => [
                 'url' => 'http://magento2.loc:8080/',
                 'host' => 'magento2.loc:8080',
+                'isHttps' => false,
                 'useCustomAdminUrl' => '0',
                 'customAdminUrl' => '',
                 'expectedValue' => true
@@ -222,13 +224,15 @@ class FrontNameResolverTest extends TestCase
             'withStandartPortInUrlWithoutPortInHost' => [
                 'url' => 'http://magento2.loc:80/',
                 'host' => 'magento2.loc',
+                'isHttps' => false,
                 'useCustomAdminUrl' => '0',
                 'customAdminUrl' => '',
                 'expectedValue' => true
             ],
             'withoutStandartPortInUrlWithPortInHost' => [
                 'url' => 'https://magento2.loc/',
-                'host' => 'magento2.loc:443',
+                'host' => 'magento2.loc',
+                'isHttps' => true,
                 'useCustomAdminUrl' => '0',
                 'customAdminUrl' => '',
                 'expectedValue' => true
@@ -236,6 +240,7 @@ class FrontNameResolverTest extends TestCase
             'differentHosts' => [
                 'url' => 'http://m2.loc/',
                 'host' => 'magento2.loc',
+                'isHttps' => false,
                 'useCustomAdminUrl' => '0',
                 'customAdminUrl' => '',
                 'expectedValue' => false
@@ -243,6 +248,7 @@ class FrontNameResolverTest extends TestCase
             'differentPortsOnOneHost' => [
                 'url' => 'http://magento2.loc/',
                 'host' => 'magento2.loc:8080',
+                'isHttps' => false,
                 'useCustomAdminUrl' => '0',
                 'customAdminUrl' => '',
                 'expectedValue' => false
@@ -250,6 +256,7 @@ class FrontNameResolverTest extends TestCase
             'withCustomAdminUrl' => [
                 'url' => 'http://magento2.loc/',
                 'host' => 'myhost.loc',
+                'isHttps' => true,
                 'useCustomAdminUrl' => '1',
                 'customAdminUrl' => 'https://myhost.loc/',
                 'expectedValue' => true
@@ -257,6 +264,7 @@ class FrontNameResolverTest extends TestCase
             'withCustomAdminUrlWrongHost' => [
                 'url' => 'http://magento2.loc/',
                 'host' => 'SomeOtherHost.loc',
+                'isHttps' => false,
                 'useCustomAdminUrl' => '1',
                 'customAdminUrl' => 'https://myhost.loc/',
                 'expectedValue' => false
@@ -264,6 +272,7 @@ class FrontNameResolverTest extends TestCase
             'withEmptyHost' => [
                 'url' => 'http://magento2.loc/',
                 'host' => null,
+                'isHttps' => false,
                 'useCustomAdminUrl' => '0',
                 'customAdminUrl' => '',
                 'expectedValue' => false
