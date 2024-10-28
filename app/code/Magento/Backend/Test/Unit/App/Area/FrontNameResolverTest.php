@@ -231,7 +231,7 @@ class FrontNameResolverTest extends TestCase
             ],
             'withoutStandartPortInUrlWithPortInHost' => [
                 'url' => 'https://magento2.loc/',
-                'host' => 'magento2.loc',
+                'host' => 'magento2.loc:443',
                 'isHttps' => true,
                 'useCustomAdminUrl' => '0',
                 'customAdminUrl' => '',
