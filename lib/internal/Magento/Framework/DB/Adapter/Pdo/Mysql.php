@@ -1270,7 +1270,7 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface, Rese
         // Add charset and collation for DBC failures
         if (!empty($definition)) {
             $type = explode(' ', trim($definition));
-            $definition = $this->applyCharsetAndCollation($type[0], $definition, 1);
+            $definition = $this->setDefaultCharsetAndCollation($type[0], $definition, 1);
         }
         $sql = sprintf(
             'ALTER TABLE %s MODIFY COLUMN %s %s',
@@ -2450,7 +2450,7 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface, Rese
         if (count($definition)) {
             foreach ($definition as $index => $columnDefinition) {
                 $type = explode(' ', trim($columnDefinition));
-                $definition[$index] = $this->applyCharsetAndCollation($type[1], $columnDefinition, 2);
+                $definition[$index] = $this->setDefaultCharsetAndCollation($type[1], $columnDefinition, 2);
             }
         }
         // PRIMARY KEY
@@ -4309,14 +4309,14 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface, Rese
     }
 
     /***
-     * Adding charset and collation for DBC failures
+     * Set default collation & charset (e.g.,utf8mb4_general_ci & utf8mb4) for tables
      *
      * @param string $columnType
      * @param string $definition
      * @param int $position
      * @return string
      */
-    private function applyCharsetAndCollation($columnType, $definition, $position) : string
+    private function setDefaultCharsetAndCollation($columnType, $definition, $position) : string
     {
         $pattern = '/\b(' . implode('|', array_map('preg_quote', self::COLUMN_TYPE)) . ')\b/i';
         if (preg_match($pattern, $columnType) === 1) {

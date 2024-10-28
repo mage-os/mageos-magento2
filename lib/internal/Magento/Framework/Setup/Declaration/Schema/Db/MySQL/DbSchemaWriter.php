@@ -112,7 +112,7 @@ class DbSchemaWriter implements DbSchemaWriterInterface
             foreach ($definition as $index => $value) {
                 if ($this->isColumnExists($value, self::COLUMN_TYPE)) {
                     if (str_contains($index, 'column')) {
-                        $definition[$index] = $this->applyCharsetAndCollation($value);
+                        $definition[$index] = $this->setDefaultCharsetAndCollation($value);
                     }
                 }
             }
@@ -238,7 +238,7 @@ class DbSchemaWriter implements DbSchemaWriterInterface
     public function modifyColumn($columnName, $resource, $tableName, $columnDefinition)
     {
         if ($this->isColumnExists($columnDefinition, self::COLUMN_TYPE)) {
-            $columnDefinition = $this->applyCharsetAndCollation($columnDefinition);
+            $columnDefinition = $this->setDefaultCharsetAndCollation($columnDefinition);
         }
 
         $sql = sprintf(
@@ -483,12 +483,12 @@ class DbSchemaWriter implements DbSchemaWriterInterface
     }
 
     /***
-     * Adding charset and collation for DBC failures
+     * Set default collation & charset (e.g.,utf8mb4_general_ci & utf8mb4) for tables
      *
      * @param string $columnDefinition
      * @return string
      */
-    private function applyCharsetAndCollation(string $columnDefinition): string
+    private function setDefaultCharsetAndCollation(string $columnDefinition): string
     {
         $charset = $this->columnConfig->getDefaultCharset();
         $collate = $this->columnConfig->getDefaultCollation();

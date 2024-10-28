@@ -667,7 +667,7 @@ class Installer
                 $columns = ['module' => ['varchar(50)',''],
                             'schema_version' => ['varchar(50)',''],
                             'data_version' => ['varchar(50)','']];
-                $this->setColumnCollationAndCharset($tableName, $columns, $connection);
+                $this->setDefaultCharsetAndCollation($tableName, $columns, $connection);
             }
         }
     }
@@ -734,7 +734,7 @@ class Installer
             if (preg_match('/\b('. self::OLDCHARSET .')\b/', $getTableSchema)) {
                 $tableName = $setup->getTable('session');
                 $columns = ['session_id' => ['varchar(255)','']];
-                $this->setColumnCollationAndCharset($tableName, $columns, $connection);
+                $this->setDefaultCharsetAndCollation($tableName, $columns, $connection);
             }
         }
     }
@@ -797,7 +797,7 @@ class Installer
             if (preg_match('/\b('. self::OLDCHARSET .')\b/', $getTableSchema)) {
                 $tableName = $setup->getTable('cache');
                 $columns = ['id' => ['varchar(200)','']];
-                $this->setColumnCollationAndCharset($tableName, $columns, $connection);
+                $this->setDefaultCharsetAndCollation($tableName, $columns, $connection);
             }
         }
     }
@@ -842,7 +842,7 @@ class Installer
             if (preg_match('/\b('. self::OLDCHARSET .')\b/', $getTableSchema)) {
                 $tableName = $setup->getTable('cache_tag');
                 $columns = ['tag' => ['varchar(100)',''],'cache_id' => ['varchar(200)','']];
-                $this->setColumnCollationAndCharset($tableName, $columns, $connection);
+                $this->setDefaultCharsetAndCollation($tableName, $columns, $connection);
             }
         }
     }
@@ -906,7 +906,7 @@ class Installer
             $getTableSchema = $connection->getCreateTable($tableName) ?? '';
             if (preg_match('/\b('. self::OLDCHARSET .')\b/', $getTableSchema)) {
                 $columns = ['flag_code' => ['varchar(255)','NOT NULL'],'flag_data' => ['mediumtext','']];
-                $this->setColumnCollationAndCharset($tableName, $columns, $connection);
+                $this->setDefaultCharsetAndCollation($tableName, $columns, $connection);
             }
         }
     }
@@ -1884,14 +1884,14 @@ class Installer
     }
 
     /**
-     * Add column attribute and update table
+     * Set default collation & charset (e.g.,utf8mb4_general_ci & utf8mb4) for core setup tables
      *
      * @param string $tableName
      * @param array $columns
      * @param AdapterInterface $connection
      * @return void
      */
-    private function setColumnCollationAndCharset(string $tableName, array $columns, $connection) : void
+    private function setDefaultCharsetAndCollation(string $tableName, array $columns, $connection) : void
     {
         $charset = $this->columnConfig->getDefaultCharset();
         $collate = $this->columnConfig->getDefaultCollation();
