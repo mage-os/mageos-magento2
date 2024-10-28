@@ -186,4 +186,37 @@ class IdentifierTest extends TestCase
             $this->model->getValue()
         );
     }
+
+    /**
+     * Test get identifier value with marketing parameters.
+     *
+     * @return void
+     */
+    public function testGetValueWithMarketingParameters(): void
+    {
+        $this->requestMock->expects($this->any())
+            ->method('isSecure')
+            ->willReturn(true);
+
+        $this->requestMock->expects($this->any())
+            ->method('getUriString')
+            ->willReturn('http://example.com/path1/?abc=123&gclid=456&utm_source=abc');
+
+        $this->contextMock->expects($this->any())
+            ->method('getVaryString')
+            ->willReturn(self::VARY);
+
+        $this->assertEquals(
+            sha1(
+                json_encode(
+                    [
+                        true,
+                        'http://example.com/path1/?abc=123',
+                        self::VARY
+                    ]
+                )
+            ),
+            $this->model->getValue()
+        );
+    }
 }
