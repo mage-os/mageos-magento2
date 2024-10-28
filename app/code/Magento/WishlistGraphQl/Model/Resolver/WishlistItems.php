@@ -61,6 +61,10 @@ class WishlistItems implements ResolverInterface
         /** @var Wishlist $wishlist */
         $wishlist = $value['model'];
 
+        if ($context->getExtensionAttributes()->getStore() instanceof StoreInterface) {
+            $args['store_id'] = $context->getExtensionAttributes()->getStore()->getStoreId();
+        }
+
         /** @var WishlistItemCollection $wishlistItemCollection */
         $wishlistItemsCollection = $this->getWishListItems($wishlist, $args);
         $wishlistItems = $wishlistItemsCollection->getItems();
@@ -100,12 +104,15 @@ class WishlistItems implements ResolverInterface
 
         /** @var WishlistItemCollection $wishlistItemCollection */
         $wishlistItemCollection = $this->wishlistItemCollectionFactory->create();
-        $wishlistItemCollection
-            ->addWishlistFilter($wishlist)
-            ->addStoreFilter(array_map(function (StoreInterface $store) {
+        $wishlistItemCollection->addWishlistFilter($wishlist);
+        if (isset($args['store_id'])) {
+            $wishlistItemCollection->addStoreFilter($args['store_id']);
+        } else {
+            $wishlistItemCollection->addStoreFilter(array_map(function (StoreInterface $store) {
                 return $store->getId();
-            }, $this->storeManager->getStores()))
-            ->setVisibilityFilter();
+            }, $this->storeManager->getStores()));
+        }
+        $wishlistItemCollection->setVisibilityFilter();
         if ($currentPage > 0) {
             $wishlistItemCollection->setCurPage($currentPage);
         }
