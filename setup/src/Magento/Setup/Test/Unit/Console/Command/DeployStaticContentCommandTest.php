@@ -11,6 +11,7 @@ use Magento\Deploy\Console\ConsoleLogger;
 use Magento\Deploy\Console\ConsoleLoggerFactory;
 use Magento\Deploy\Console\DeployStaticOptions;
 use Magento\Deploy\Console\InputValidator;
+use Magento\Deploy\Process\TimeoutException;
 use Magento\Deploy\Service\DeployStaticContent;
 use Magento\Framework\App\State;
 use Magento\Framework\Console\Cli;
@@ -120,7 +121,7 @@ class DeployStaticContentCommandTest extends TestCase
     /**
      * @return array
      */
-    public function executeDataProvider()
+    public static function executeDataProvider()
     {
         return [
             'No options' => [
@@ -155,7 +156,7 @@ class DeployStaticContentCommandTest extends TestCase
             ->willReturn($this->deployService);
         $this->deployService->expects($this->once())
             ->method('deploy')
-            ->willThrowException(new \RuntimeException());
+            ->willThrowException(new TimeoutException());
 
         $tester = new CommandTester($this->command);
         $exitCode = $tester->execute([]);
@@ -180,7 +181,7 @@ class DeployStaticContentCommandTest extends TestCase
     /**
      * @return array
      */
-    public function executionInNonProductionModeDataProvider()
+    public static function executionInNonProductionModeDataProvider()
     {
         return [
             [State::MODE_DEFAULT],
