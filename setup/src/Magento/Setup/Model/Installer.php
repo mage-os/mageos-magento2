@@ -660,7 +660,7 @@ class Installer
                 )->setComment('Module versions registry');
             $connection->createTable($table);
         } else {
-            // change the charset to utf8mb4
+            // Set default collation to utf8mb4 for MySQL
             $getTableSchema = $connection->getCreateTable($setup->getTable('setup_module')) ?? '';
             if (preg_match('/\b('. self::OLDCHARSET .')\b/', $getTableSchema)) {
                 $tableName = $setup->getTable('setup_module');
@@ -729,7 +729,7 @@ class Installer
             );
             $connection->createTable($table);
         } else {
-            // change the charset to utf8mb4
+            // Set default collation to utf8mb4 for MySQL
             $getTableSchema = $connection->getCreateTable($setup->getTable('session')) ?? '';
             if (preg_match('/\b('. self::OLDCHARSET .')\b/', $getTableSchema)) {
                 $tableName = $setup->getTable('session');
@@ -837,7 +837,7 @@ class Installer
             );
             $connection->createTable($table);
         } else {
-            // change the charset to utf8mb4
+            // Set default collation to utf8mb4 for MySQL
             $getTableSchema = $connection->getCreateTable($setup->getTable('cache_tag')) ?? '';
             if (preg_match('/\b('. self::OLDCHARSET .')\b/', $getTableSchema)) {
                 $tableName = $setup->getTable('cache_tag');
@@ -1884,7 +1884,7 @@ class Installer
     }
 
     /**
-     * Set default collation & charset (e.g.,utf8mb4_general_ci & utf8mb4) for core setup tables
+     * Set default collation & charset (e.g. utf8mb4_general_ci and utf8mb4) for core setup tables
      *
      * @param string $tableName
      * @param array $columns

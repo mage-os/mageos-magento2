@@ -1267,7 +1267,7 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface, Rese
         if (is_array($definition)) {
             $definition = $this->_getColumnDefinition($definition);
         }
-        // Add charset and collation for DBC failures
+        // Set default collation to utf8mb4 for MySQL
         if (!empty($definition)) {
             $type = explode(' ', trim($definition));
             $definition = $this->setDefaultCharsetAndCollation($type[0], $definition, 1);
@@ -2446,7 +2446,7 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface, Rese
                 $columnDefinition
             );
         }
-        // Adding charset and collation for DBC failures
+        // Set default collation to utf8mb4 for MySQL
         if (count($definition)) {
             foreach ($definition as $index => $columnDefinition) {
                 $type = explode(' ', trim($columnDefinition));
@@ -4309,7 +4309,7 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface, Rese
     }
 
     /***
-     * Set default collation & charset (e.g.,utf8mb4_general_ci & utf8mb4) for tables
+     * Set default collation & charset (e.g.utf8mb4_general_ci and utf8mb4) for tables
      *
      * @param string $columnType
      * @param string $definition

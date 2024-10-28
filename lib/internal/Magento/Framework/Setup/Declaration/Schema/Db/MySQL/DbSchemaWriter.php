@@ -482,8 +482,8 @@ class DbSchemaWriter implements DbSchemaWriterInterface
         return $result;
     }
 
-    /***
-     * Set default collation & charset (e.g.,utf8mb4_general_ci & utf8mb4) for tables
+    /**
+     * Set default collation & charset (e.g. utf8mb4_general_ci and utf8mb4) for tables
      *
      * @param string $columnDefinition
      * @return string
@@ -498,7 +498,7 @@ class DbSchemaWriter implements DbSchemaWriterInterface
         return implode(" ", $columnsAttribute);
     }
 
-    /***
+    /**
      * Checks if any column of type varchar,char or text (mediumtext/longtext)
      *
      * @param string $definition
