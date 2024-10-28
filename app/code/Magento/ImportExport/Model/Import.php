@@ -904,7 +904,7 @@ class Import extends AbstractModel
                     $this->_varDirectory->writeFile($copyFile, $content);
                 }
             } catch (FileSystemException $e) {
-                throw new LocalizedException(__('Source file coping failed'));
+                throw new LocalizedException(__('Source file copying failed'));
             }
             $this->importHistoryModel->addReport($copyName);
         }

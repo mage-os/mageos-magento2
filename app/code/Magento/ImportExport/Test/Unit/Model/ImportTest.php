@@ -1011,7 +1011,7 @@ class ImportTest extends AbstractImportTestCase
     public function testCreateHistoryReportThrowException()
     {
         $this->expectException(LocalizedException::class);
-        $this->expectExceptionMessage('Source file coping failed');
+        $this->expectExceptionMessage('Source file copying failed');
         $sourceFileRelative = null;
         $entity = '';
         $extension = '';
