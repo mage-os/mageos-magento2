@@ -17,6 +17,15 @@ class Identifier implements IdentifierInterface
      * Pattern detect marketing parameters
      */
     public const PATTERN_MARKETING_PARAMETERS = [
+        '/&?gad_source\=[^&]+/',
+        '/&?gbraid\=[^&]+/',
+        '/&?wbraid\=[^&]+/',
+        '/&?_gl\=[^&]+/',
+        '/&?dclid\=[^&]+/',
+        '/&?gclsrc\=[^&]+/',
+        '/&?srsltid\=[^&]+/',
+        '/&?msclkid\=[^&]+/',
+        '/&?_kx\=[^&]+/',
         '/&?gclid\=[^&]+/',
         '/&?cx\=[^&]+/',
         '/&?ie\=[^&]+/',
