@@ -3,7 +3,7 @@
  * Copyright 2024 Adobe
  * All Rights Reserved.
  */
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Magento\WishlistGraphQl\Test\Unit\Model\Resolver;
 
@@ -58,7 +58,10 @@ class WishlistItemsTest extends TestCase
         $store = $this->createMock(StoreInterface::class);
         $store->expects($this->once())->method('getId')->willReturn($storeId);
 
-        $extensionAttributes = $this->createMock(ContextExtensionInterface::class);
+        $extensionAttributes = $this->getMockBuilder(ContextExtensionInterface::class)
+            ->disableOriginalConstructor()
+            ->addMethods(['getStore'])
+            ->getMock();
         $extensionAttributes->expects($this->exactly(2))
             ->method('getStore')
             ->willReturn($store);
