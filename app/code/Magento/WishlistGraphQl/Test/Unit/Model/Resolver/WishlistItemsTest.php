@@ -3,7 +3,7 @@
  * Copyright 2024 Adobe
  * All Rights Reserved.
  */
-declare (strict_types = 1);
+declare(strict_types = 1);
 
 namespace Magento\WishlistGraphQl\Test\Unit\Model\Resolver;
 
