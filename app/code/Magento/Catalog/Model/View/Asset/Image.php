@@ -299,6 +299,10 @@ class Image implements LocalInterface
         // even if an encryption key was changed.
         $keys = explode("\n", $this->encryptor->exportKeys());
 
+        if (count($keys) === 1) {
+            return $this->generatePath($data, $this->decodeKey($keys[0]));
+        }
+
         foreach ($keys as $key) {
             $key = $this->decodeKey($key);
 
