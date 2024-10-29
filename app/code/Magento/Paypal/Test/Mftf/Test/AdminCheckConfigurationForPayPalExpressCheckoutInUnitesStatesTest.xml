@@ -69,7 +69,7 @@
         <amOnPage url="{{AdminConfigPaymentMethodsPage.url}}" stepKey="navigateToPaymentConfigurationPageAfterDisablingPayPalExpressCheckout"/>
         <waitForPageLoad stepKey="waitForPaymentMethodPageToLoad"/>
         <!-- Because of in-product messaging in Payment Services extension, Paypal config is within the Additional Payment Solutions we need to uncollapse -->
-        <conditionalClick selector="{{OtherPayPalPaymentsConfigSection.expandedTab(countryCode)}}" stepKey="clickPayPalTabConfigure" dependentSelector="{{PayPalExpressCheckoutConfigSection.configureBtn(countryCode)}}" visible="false"/>
+        <conditionalClick selector="{{OtherPayPalPaymentsConfigSection.expandedTab('us')}}" stepKey="clickPayPalTabConfigure" dependentSelector="{{PayPalExpressCheckoutConfigSection.configureBtn('us')}}" visible="false"/>
         <waitForElementClickable selector="{{PayPalExpressCheckoutConfigSection.configureBtn('us')}}" stepKey="waitForClickPayPalConfigureBtnToAssertStatus"/>
         <click selector="{{PayPalExpressCheckoutConfigSection.configureBtn('us')}}" stepKey="clickPayPalConfigureBtnToAssertStatus"/>
         <waitForElementVisible selector="{{PayPalExpressCheckoutConfigSection.merchantID('us')}}" stepKey="assertMerchantIDFieldIsDisappeared"/>
