@@ -141,11 +141,11 @@ class FrontNameResolver implements FrontNameResolverInterface
             return false;
         }
 
-        $configuredPort = $this->uri->getPort() ?: ($this->standardPorts[$this->uri->getScheme()] ?? '');
+        $configuredPort = $this->uri->getPort() ?: ($this->standardPorts[$this->uri->getScheme()] ?? '80');
         $configuredHost = $this->uri->getHost() . ':' . $configuredPort;
         $host = $this->request->getServer('HTTP_HOST');
         if (!str_contains($host, ':')) {
-            $host .= ':' . ($this->standardPorts[$this->request->getServer('REQUEST_SCHEME')] ?? '');
+            $host .= ':' . ($this->standardPorts[$this->request->getServer('REQUEST_SCHEME')] ?? '80');
         }
 
         return strcasecmp($configuredHost, $host) === 0;
