@@ -286,17 +286,9 @@ class Image implements LocalInterface
         $mediaDirectory = $this->fileSystem->getDirectoryRead(DirectoryList::MEDIA);
         $data = implode('_', $this->convertToReadableFormat($this->miscParams));
 
-        $pathTemplate = $this->getModule()
-            . DIRECTORY_SEPARATOR . "%s" . DIRECTORY_SEPARATOR
-            . $this->getFilePath();
-
         // New paths are generated without dependency on
         // an encryption key.
-        $hashBasedPath = preg_replace(
-            '|\Q' . DIRECTORY_SEPARATOR . '\E+|',
-            DIRECTORY_SEPARATOR,
-            sprintf($pathTemplate, hash(self::HASH_ALGORITHM, $data))
-        );
+        $hashBasedPath = $this->generatePath($data);
 
         if ($mediaDirectory->isExist($this->context->getPath() . DIRECTORY_SEPARATOR . $hashBasedPath)) {
             return $hashBasedPath;
@@ -306,19 +298,15 @@ class Image implements LocalInterface
         // existing encryption key based media gallery cache valid
         // even if an encryption key was changed.
         $keys = explode("\n", $this->encryptor->exportKeys());
-        foreach ($keys as $key) {
-            if (str_starts_with($key, ConfigOptionsListConstants::STORE_KEY_ENCODED_RANDOM_STRING_PREFIX)) {
-                // phpcs:disable Magento2.Functions.DiscouragedFunction
-                $key = base64_decode(
-                    substr($key, strlen(ConfigOptionsListConstants::STORE_KEY_ENCODED_RANDOM_STRING_PREFIX))
-                );
-            }
 
-            $keyBasedPath = preg_replace(
-                '|\Q' . DIRECTORY_SEPARATOR . '\E+|',
-                DIRECTORY_SEPARATOR,
-                sprintf($pathTemplate, hash_hmac(self::HASH_ALGORITHM, $data, $key))
-            );
+        if (count($keys) === 1) {
+            return $this->generatePath($data, $this->decodeKey($keys[0]));
+        }
+
+        foreach ($keys as $key) {
+            $key = $this->decodeKey($key);
+
+            $keyBasedPath = $this->generatePath($data, $key);
 
             if ($mediaDirectory->isExist($this->context->getPath() . DIRECTORY_SEPARATOR . $keyBasedPath)) {
                 return $keyBasedPath;
@@ -329,12 +317,53 @@ class Image implements LocalInterface
     }
 
     /**
+     * Generate path based on data and key, If key is not provided, the path is generated without it
+     *
+     * @param string $data
+     * @param string|null $key
+     * @return string
+     */
+    private function generatePath(string $data, ?string $key = null): string
+    {
+        $pathTemplate = $this->getModule()
+            . DIRECTORY_SEPARATOR . "%s" . DIRECTORY_SEPARATOR
+            . $this->getFilePath();
+
+        $hash = $key ? hash_hmac(self::HASH_ALGORITHM, $data, $key) : hash(self::HASH_ALGORITHM, $data);
+
+        return preg_replace(
+            '|\Q' . DIRECTORY_SEPARATOR . '\E+|',
+            DIRECTORY_SEPARATOR,
+            sprintf($pathTemplate, $hash)
+        );
+    }
+
+    /**
+     * Decode key if it was base64 encoded
+     *
+     * @param string $key
+     *
+     * @return string
+     */
+    private function decodeKey(string $key): string
+    {
+        if (str_starts_with($key, ConfigOptionsListConstants::STORE_KEY_ENCODED_RANDOM_STRING_PREFIX)) {
+            // phpcs:disable Magento2.Functions.DiscouragedFunction
+            return base64_decode(
+                substr($key, strlen(ConfigOptionsListConstants::STORE_KEY_ENCODED_RANDOM_STRING_PREFIX))
+            );
+        }
+
+        return $key;
+    }
+
+    /**
      * Converting bool into a string representation
      *
      * @param array $miscParams
      * @return array
      */
-    private function convertToReadableFormat(array $miscParams)
+    private function convertToReadableFormat(array $miscParams): array
     {
         return $this->convertImageMiscParamsToReadableFormat->convertImageMiscParamsToReadableFormat($miscParams);
     }
