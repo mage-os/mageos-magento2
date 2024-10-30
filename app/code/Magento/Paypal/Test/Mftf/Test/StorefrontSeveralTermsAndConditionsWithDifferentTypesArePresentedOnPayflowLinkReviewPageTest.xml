@@ -17,6 +17,7 @@
             <testCaseId value="AC-5204"/>
             <group value="paypalPayflowLink"/>
             <group value="3rd_party_integration"/>
+            <group value="pr_exclude"/>
         </annotations>
         <!-- Checkout select Credit Card (Payflow link)-->
         <conditionalClick selector="{{StorefrontCheckoutPaymentMethodSection.checkPaymentMethodByName('Credit Card (Payflow Link)')}}" dependentSelector="{{StorefrontCheckoutPaymentMethodSection.checkPaymentMethodByName('Credit Card (Payflow Link)')}}" visible="true" after="clickNextOnShippingStep" stepKey="selectCreditCardPaymentMethod"/>
