@@ -78,6 +78,6 @@
     <entity name="sizeAttribute" type="attribute">
         <data key="default_label" unique="suffix">Size</data>
         <data key="input_type">Dropdown</data>
-        <data key="attribute_code">size</data>
+        <data key="attribute_code" unique="suffix">size</data>
     </entity>
 </entities>
