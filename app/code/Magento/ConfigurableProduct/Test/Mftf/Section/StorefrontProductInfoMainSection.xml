@@ -26,5 +26,6 @@
         <element name="tierPriceExcludingPrice" type="text" selector=".item [data-label='Excl. Tax']"/>
         <element name="tierPriceContainsExcludingTax" type="text" selector=".item .price"/>
         <element name="productSwatchText" type="text" selector="//div[@class='swatch-option text' and contains(text(),'{{swatchName}}')]" parameterized="true"/>
+        <element name="dropDownOption" type="select" selector="//*[@class='super-attribute-select']/option[text()='{{dropDownOption}}']" parameterized="true"/>
     </section>
 </sections>
