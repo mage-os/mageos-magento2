@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminSelectValueForVisibleOnStorefrontActionGroup">
+        <annotations>
+            <description>Admin Select Yes for visible on Storefront on product attribute page.</description>
+        </annotations>
+        <arguments>
+            <argument name="catalogPagesValue" type="string" defaultValue="Yes"/>
+        </arguments>
+        <waitForElementClickable selector="{{StorefrontPropertiesSection.StoreFrontPropertiesTab}}" stepKey="waitForStorefrontPropertiesTabToBeClickable"/>
+        <click selector="{{StorefrontPropertiesSection.StoreFrontPropertiesTab}}" stepKey="clickStorefrontPropertiesTab"/>
+        <waitForElement selector="{{StorefrontPropertiesSection.visibleOnCatalogPagesOnStorefront}}" stepKey="waitForVisibleOnCatalogElement"/>
+        <selectOption selector="{{StorefrontPropertiesSection.visibleOnCatalogPagesOnStorefront}}" userInput="{{catalogPagesValue}}" stepKey="enableVisibleOnStorefront"/>
+    </actionGroup>
+</actionGroups>
