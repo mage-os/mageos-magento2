@@ -33,25 +33,40 @@ class DefaultConfigProvider implements \Magento\Framework\Data\Wysiwyg\ConfigPro
     {
         $config->addData([
             'tinymce' => [
-                'toolbar' => ' blocks | formatselect | bold italic underline | alignleft aligncenter alignright | '
-                    . 'bullist numlist | link table charmap',
+                'toolbar' => 'blocks | fontfamily fontsizeinput lineheight | forecolor backcolor | '
+                    . 'bold italic underline | alignleft aligncenter alignright alignjustify | '
+                    . 'bullist numlist | link image',
                 'plugins' => implode(
                     ' ',
                     [
-                        'advlist',
+                        'anchor',
                         'autolink',
-                        'lists',
-                        'link',
                         'charmap',
-                        'media',
-                        'table',
                         'code',
+                        'codesample',
+                        'directionality',
+                        'emoticons',
                         'help',
-                        'table'
+                        'image',
+                        'link',
+                        'lists',
+                        'media',
+                        'nonbreaking',
+                        'preview',
+                        'table',
+                        'visualblocks',
+                        'visualchars',
+                        'advlist',
                     ]
                 ),
-                'content_css' => $this->assetRepo->getUrl('mage/adminhtml/wysiwyg/tiny_mce/themes/ui.css')
-            ]
+                'content_css' => $this->assetRepo->getUrl('mage/adminhtml/wysiwyg/tiny_mce/themes/ui.css'),
+            ],
+            'settings' => [
+                'menubar' => 'edit insert view format table help',
+                'statusbar' => false,
+                'image_advtab' => true,
+                'promotion' => false,
+            ],
         ]);
         return $config;
     }
