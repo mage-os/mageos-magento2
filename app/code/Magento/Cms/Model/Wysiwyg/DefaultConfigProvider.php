@@ -34,8 +34,8 @@ class DefaultConfigProvider implements \Magento\Framework\Data\Wysiwyg\ConfigPro
         $config->addData([
             'tinymce' => [
                 'toolbar' => 'blocks | fontfamily fontsizeinput lineheight | forecolor backcolor | '
-                    . 'bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | '
-                    . 'bullist numlist outdent indent | link table image | charmap emoticons',
+                    . 'bold italic underline | alignleft aligncenter alignright alignjustify | '
+                    . 'bullist numlist | link image',
                 'plugins' => implode(
                     ' ',
                     [
@@ -62,7 +62,8 @@ class DefaultConfigProvider implements \Magento\Framework\Data\Wysiwyg\ConfigPro
                 'content_css' => $this->assetRepo->getUrl('mage/adminhtml/wysiwyg/tiny_mce/themes/ui.css'),
             ],
             'settings' => [
-                'menubar' => true,
+                'menubar' => 'edit insert view format table help',
+                'statusbar' => false,
                 'image_advtab' => true,
                 'promotion' => false,
             ],
