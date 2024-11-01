@@ -13,7 +13,7 @@
             <description>Adds size option to a new Attribute on the Configurable Product creation/edit page.</description>
         </annotations>
         <arguments>
-            <argument name="position" defaultValue="0"/>
+            <argument name="position" type="string" defaultValue="0"/>
             <argument name="size" type="string" defaultValue="S"/>
         </arguments>
         <!--Add option 1 to attribute-->
