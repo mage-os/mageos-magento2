@@ -17,7 +17,7 @@
             <severity value="MAJOR"/>
             <testCaseId value="AC-4428"/>
             <group value="paypalPayflowProWithOutValut"/>
-            <group value="3rd_party_integration" />
+            <group value="3rd_party_integration"/>
 <!--            <group value="pr_exclude" />-->
         </annotations>
         <before>
@@ -25,6 +25,24 @@
             <createData entity="SimpleProduct" stepKey="createSimpleProduct"/>
             <actionGroup ref="AdminEnableTermsAndConditionsConfigurationActionGroup" stepKey="EnableTermsAndConditions"/>
             <createData entity="Simple_US_Customer_NY" stepKey="createCustomer"/>
+             <!-- create manual term -->
+            <actionGroup ref="AdminTermsConditionsOpenNewTermPageActionGroup" stepKey="openNewTermForManualTerm"/>
+            <actionGroup ref="AdminTermsConditionsFillTermEditFormActionGroup" stepKey="createManualTerm">
+               <argument name="term" value="newHtmlTerm"/>
+            </actionGroup>
+            <actionGroup ref="AdminTermsConditionsSaveTermActionGroup" stepKey="saveManualTerm"/>
+            <!-- create automatic term -->
+            <actionGroup ref="AdminTermsConditionsOpenNewTermPageActionGroup" stepKey="openNewTermForAutomaticTerm"/>
+            <actionGroup ref="AdminTermsConditionsFillTermEditFormActionGroup" stepKey="createAutomaticTerm">
+               <argument name="term" value="newHtmlAutomaticallyTerm"/>
+            </actionGroup>
+            <actionGroup ref="AdminTermsConditionsSaveTermActionGroup" stepKey="saveAutomaticTerm"/>
+            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+               <argument name="indices" value=""/>
+            </actionGroup>
+           <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanCache">
+               <argument name="tags" value="config full_page"/>
+           </actionGroup>
         </before>
         <after>
             <!--Delete created data-->
@@ -34,26 +52,8 @@
             <actionGroup ref="AdminDisableTermsAndConditionsConfigurationActionGroup" stepKey="disableTermsAndConditions"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
         </after>
-        <!-- create manual term -->
-        <actionGroup ref="AdminTermsConditionsOpenNewTermPageActionGroup" stepKey="openNewTermForManualTerm"/>
-        <actionGroup ref="AdminTermsConditionsFillTermEditFormActionGroup" stepKey="createManualTerm">
-            <argument name="term" value="newHtmlTerm"/>
-        </actionGroup>
-        <actionGroup ref="AdminTermsConditionsSaveTermActionGroup" stepKey="saveManualTerm"/>
-        <!-- create automatic term -->
-        <actionGroup ref="AdminTermsConditionsOpenNewTermPageActionGroup" stepKey="openNewTermForAutomaticTerm"/>
-        <actionGroup ref="AdminTermsConditionsFillTermEditFormActionGroup" stepKey="createAutomaticTerm">
-            <argument name="term" value="newHtmlAutomaticallyTerm"/>
-        </actionGroup>
-        <actionGroup ref="AdminTermsConditionsSaveTermActionGroup" stepKey="saveAutomaticTerm"/>
-        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
-            <argument name="indices" value=""/>
-        </actionGroup>
-        <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanCache">
-            <argument name="tags" value="config full_page"/>
-        </actionGroup>
         <!-- Login as customer -->
-        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="storefrontCustomerLogin">
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="storeFrontCustomerLogin">
             <argument name="Customer" value="$$createCustomer$$"/>
         </actionGroup>
         <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="addProductToCart">
