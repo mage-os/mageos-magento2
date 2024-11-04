@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2013 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Wishlist\Model\ResourceModel\Item\Collection;
@@ -124,6 +124,8 @@ class Grid extends \Magento\Wishlist\Model\ResourceModel\Item\Collection
                 $item->setProductName($product->getName());
                 $item->setName($product->getName());
                 $item->setPrice($product->getPrice());
+            } else {
+                $this->removeItemByKey($item->getId());
             }
         }
 
