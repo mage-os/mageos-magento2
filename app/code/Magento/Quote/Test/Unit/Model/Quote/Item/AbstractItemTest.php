@@ -82,6 +82,7 @@ class AbstractItemTest extends TestCase
         $testCase->getMockForAbstractItem($childTwoDiscountAmount);
 
         $valueHasNoEffect = 0;
+        $parentDiscountAmount = 10;
 
         $data = [
             'no_children' => [
@@ -97,10 +98,10 @@ class AbstractItemTest extends TestCase
                 10,
             ],
             'one_kid' => [
-                $childOneDiscountAmount,
+                $childOneDiscountAmount + $parentDiscountAmount,
                 [$childOneItemMock],
                 true,
-                $valueHasNoEffect,
+                $parentDiscountAmount,
             ],
             'two_kids' => [
                 $childOneDiscountAmount + $childTwoDiscountAmount,
