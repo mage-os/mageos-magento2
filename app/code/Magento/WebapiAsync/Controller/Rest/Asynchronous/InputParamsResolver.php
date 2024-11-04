@@ -261,10 +261,11 @@ class InputParamsResolver
                 }
             }
         }
-         if (!empty($paramOverriders)) {
-            $message = 'The current request does not expect the next parameters: '
-                . implode(', ', $paramOverriders);
-            throw new \UnexpectedValueException(__($message)->__toString());
+
+        if (!empty($paramOverriders)) {
+             $message = 'The current request does not expect the next parameters: '
+                 . implode(', ', $paramOverriders);
+             throw new \UnexpectedValueException(__($message)->__toString());
         }
     }
 }

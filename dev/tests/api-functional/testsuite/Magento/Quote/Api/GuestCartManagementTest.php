@@ -354,7 +354,9 @@ class GuestCartManagementTest extends WebapiAbstract
     public function testAssignCustomerByGuestUser()
     {
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('You don\'t have the correct permissions to assign the customer to the cart.');
+        $this->expectExceptionMessage(
+            '{"message":"\"%fieldName\" is required. Enter and try again.","parameters":{"fieldName":"customerId"}}'
+        );
 
         /** @var $quote \Magento\Quote\Model\Quote */
         $quote = $this->objectManager->create(\Magento\Quote\Model\Quote::class)->load('test01', 'reserved_order_id');
