@@ -12,6 +12,8 @@ use Magento\CatalogUrlRewrite\Model\ProductScopeRewriteGenerator;
 class UrlRewriteContext implements \Magento\Framework\Data\OptionSourceInterface
 {
     /**
+     * Selectable options for URL rewrite context
+     *
      * @return array
      */
     public function toOptionArray()
