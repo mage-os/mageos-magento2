@@ -50,7 +50,8 @@ class AbstractItemTest extends TestCase
         $this->assertEquals($expectedDiscountAmount, $totalDiscountAmount);
     }
 
-    protected function getMockForAbstractItem($childDiscountAmount) {
+    protected function getMockForAbstractItem($childDiscountAmount)
+    {
         $childItemMock = $this->getMockForAbstractClass(
             AbstractItem::class,
             [],
