@@ -137,15 +137,18 @@ class FrontNameResolver implements FrontNameResolverInterface
             }
         }
         $this->uri->parse($backendUrl);
-        if (!$this->uri->getHost()) {
+        $configuredHost = $this->uri->getHost();
+        if (!$configuredHost) {
             return false;
         }
 
-        $configuredPort = $this->uri->getPort() ?: ($this->standardPorts[$this->uri->getScheme()] ?? '80');
-        $configuredHost = $this->uri->getHost() . ':' . $configuredPort;
-        $host = $this->request->getServer('HTTP_HOST');
-        if (!str_contains($host, ':')) {
-            $host .= ':' . ($this->standardPorts[$this->request->getServer('REQUEST_SCHEME')] ?? '80');
+        $configuredPort = $this->uri->getPort() ?: ($this->standardPorts[$this->uri->getScheme()] ?? null);
+        $uri = ($this->request->isSecure() ? 'https' : 'http') . '://' . $this->request->getServer('HTTP_HOST');
+        $this->uri->parse($uri);
+        $host = $this->uri->getHost();
+        if ($configuredPort) {
+            $configuredHost .= ':' . $configuredPort;
+            $host .= ':' . ($this->uri->getPort() ?: $this->standardPorts[$this->uri->getScheme()]);
         }
 
         return strcasecmp($configuredHost, $host) === 0;

@@ -62,7 +62,7 @@ class FrontNameResolverTest extends TestCase
             ->method('get')
             ->with(ConfigOptionsList::CONFIG_PATH_BACKEND_FRONTNAME)
             ->willReturn($this->_defaultFrontName);
-        $this->uri = $this->createMock(Uri::class);
+        $this->uri = $this->createPartialMock(Uri::class, ['parse']);
         $this->request = $this->createMock(Http::class);
         $this->configMock = $this->createMock(Config::class);
         $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
@@ -149,34 +149,16 @@ class FrontNameResolverTest extends TestCase
             ->willReturnMap(
                 [
                     ['HTTP_HOST', null, $host],
-                    ['REQUEST_SCHEME', null, $isHttps ? 'https' : 'http'],
                 ]
             );
+        $this->request->method('isSecure')
+            ->willReturn($isHttps);
 
-        $urlParts = [];
         $this->uri->method('parse')
             ->willReturnCallback(
-                function ($url) use (&$urlParts) {
-                    $urlParts = parse_url($url);
-                }
-            );
-        $this->uri->method('getScheme')
-            ->willReturnCallback(
-                function () use (&$urlParts) {
-                    return array_key_exists('scheme', $urlParts) ? $urlParts['scheme'] : '';
-                }
-            );
-        $this->uri->method('getHost')
-            ->willReturnCallback(
-                function () use (&$urlParts) {
-                    return array_key_exists('host', $urlParts) ? $urlParts['host'] : '';
-                }
-            );
-        $this->uri->method('getPort')
-            ->willReturnCallback(
-                function () use (&$urlParts) {
-                    return array_key_exists('port', $urlParts) ? $urlParts['port'] : '';
-                }
+                fn ($url) => $this->uri->setScheme(parse_url($url, PHP_URL_SCHEME))
+                    ->setHost(parse_url($url, PHP_URL_HOST))
+                    ->setPort(parse_url($url, PHP_URL_PORT))
             );
 
         $this->assertEquals($expectedValue, $this->model->isHostBackend());
@@ -192,11 +174,8 @@ class FrontNameResolverTest extends TestCase
         $this->request->expects($this->any())
             ->method('getServer')
             ->willReturn('magento2.loc');
-        $this->uri->expects($this->once())
-            ->method('getHost')
-            ->willReturn(null);
 
-        $this->assertEquals($this->model->isHostBackend(), false);
+        $this->assertFalse($this->model->isHostBackend());
     }
 
     /**
