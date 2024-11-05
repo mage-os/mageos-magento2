@@ -163,6 +163,7 @@ class CustomerManagement
             $customerAddress->setPostcode($billingAddress->getPostcode());
             $customerAddress->setTelephone($billingAddress->getTelephone());
             $customerAddress->setCountryId($billingAddress->getCountryId());
+            $customerAddress->setCustomAttributes($billingAddress->getCustomAttributes());
             $addresses[] = $customerAddress;
         }
         if ($quote->getShippingAddress()->getCustomerAddressId()) {
