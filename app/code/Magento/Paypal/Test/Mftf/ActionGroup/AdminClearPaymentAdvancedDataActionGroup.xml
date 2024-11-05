@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminClearPaymentAdvancedDataActionGroup">
+        <annotations>
+            <description>Admin goes to payments advanced configuration and clears provided Sample PayPal credentials</description>
+        </annotations>
+        <arguments>
+            <argument name="countryCode" type="string" defaultValue="us"/>
+        </arguments>
+        <waitForPageLoad stepKey="waitForPageLoad1"/>
+        <clearField selector ="{{AdminConfigPaymentsAdvancedSection.email(countryCode)}}" stepKey="clearInputEmailField"/>
+        <clearField selector ="{{AdminConfigPaymentsAdvancedSection.partner(countryCode)}}" stepKey="clearInputPartnerField"/>
+        <clearField selector ="{{AdminConfigPaymentsAdvancedSection.vendor(countryCode)}}" stepKey="clearInputVendorField"/>
+        <clearField selector ="{{AdminConfigPaymentsAdvancedSection.user(countryCode)}}" stepKey="clearInputUsereField"/>
+        <clearField selector ="{{AdminConfigPaymentsAdvancedSection.password(countryCode)}}" stepKey="clearInputPasswordField"/>
+        <selectOption selector ="{{AdminConfigPaymentsAdvancedSection.testMode(countryCode)}}" userInput="No" stepKey="disableTestMode"/>
+        <dontSeeElement selector ="{{AdminConfigPaymentsAdvancedSection.enabledSolution(countryCode)}}" stepKey="enabledSolutions"/>
+        <dontSeeElement selector ="{{AdminConfigPaymentsAdvancedSection.enabledPaypalCredit(countryCode)}}" stepKey="disabledPaypalCredit"/>
+    </actionGroup>
+</actionGroups>
