@@ -125,7 +125,7 @@ class InterceptionConfigurationBuilderTest extends TestCase
     /**
      * @return array
      */
-    public function getInterceptionConfigurationDataProvider()
+    public static function getInterceptionConfigurationDataProvider()
     {
         return [
             [null],
