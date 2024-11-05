@@ -268,6 +268,7 @@ class CustomerManagementTest extends TestCase
     {
         $this->expectException(ValidatorException::class);
         $this->quoteAddressMock->method('getStreet')->willReturn(['test']);
+        $this->quoteAddressMock->method('getCustomAttributes')->willReturn(['test']);
         $this->customerAddressFactoryMock->method('create')
             ->willReturn($this->customerAddressMock);
         $addressMock = $this->getMockBuilder(Address::class)
