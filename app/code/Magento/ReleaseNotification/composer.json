@@ -1,27 +1,31 @@
 {
-    "name": "magento/module-release-notification",
-    "description": "N/A",
-    "require": {
-        "php": "~8.1.0||~8.2.0||~8.3.0",
-        "magento/module-user": "*",
-        "magento/module-backend": "*",
-        "magento/module-ui": "*",
-        "magento/framework": "*"
-    },
-    "suggest": {
-        "magento/module-config": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-release-notification",
+  "description": "N/A",
+  "require": {
+    "php": "~8.1.0||~8.2.0||~8.3.0",
+    "mage-os/module-user": "1.0.5",
+    "mage-os/module-backend": "1.0.5",
+    "mage-os/module-ui": "1.0.5",
+    "mage-os/framework": "1.0.5"
+  },
+  "suggest": {
+    "mage-os/module-config": "1.0.5"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\ReleaseNotification\\": ""
-        }
+    "psr-4": {
+      "Magento\\ReleaseNotification\\": ""
     }
+  },
+  "version": "1.0.5",
+  "replace": {
+    "magento/module-release-notification": "100.4.5"
+  }
 }

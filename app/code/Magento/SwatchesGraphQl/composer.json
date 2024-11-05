@@ -1,27 +1,31 @@
 {
-    "name": "magento/module-swatches-graph-ql",
-    "description": "N/A",
-    "type": "magento2-module",
-    "require": {
-        "php": "~8.1.0||~8.2.0||~8.3.0",
-        "magento/framework": "*",
-        "magento/module-swatches": "*",
-        "magento/module-catalog": "*",
-        "magento/module-catalog-graph-ql": "*"
-    },
-    "suggest": {
-        "magento/module-configurable-product-graph-ql": "*"
-    },
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-swatches-graph-ql",
+  "description": "N/A",
+  "type": "magento2-module",
+  "require": {
+    "php": "~8.1.0||~8.2.0||~8.3.0",
+    "mage-os/framework": "1.0.5",
+    "mage-os/module-swatches": "1.0.5",
+    "mage-os/module-catalog": "1.0.5",
+    "mage-os/module-catalog-graph-ql": "1.0.5"
+  },
+  "suggest": {
+    "mage-os/module-configurable-product-graph-ql": "1.0.5"
+  },
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\SwatchesGraphQl\\": ""
-        }
+    "psr-4": {
+      "Magento\\SwatchesGraphQl\\": ""
     }
+  },
+  "version": "1.0.5",
+  "replace": {
+    "magento/module-swatches-graph-ql": "100.4.5"
+  }
 }

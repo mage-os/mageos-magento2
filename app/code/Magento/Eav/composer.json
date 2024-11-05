@@ -1,29 +1,33 @@
 {
-    "name": "magento/module-eav",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.1.0||~8.2.0||~8.3.0",
-        "magento/framework": "*",
-        "magento/module-backend": "*",
-        "magento/module-catalog": "*",
-        "magento/module-config": "*",
-        "magento/module-media-storage": "*",
-        "magento/module-store": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-eav",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.1.0||~8.2.0||~8.3.0",
+    "mage-os/framework": "1.0.5",
+    "mage-os/module-backend": "1.0.5",
+    "mage-os/module-catalog": "1.0.5",
+    "mage-os/module-config": "1.0.5",
+    "mage-os/module-media-storage": "1.0.5",
+    "mage-os/module-store": "1.0.5"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\Eav\\": ""
-        }
+    "psr-4": {
+      "Magento\\Eav\\": ""
     }
+  },
+  "version": "1.0.5",
+  "replace": {
+    "magento/module-eav": "102.1.7"
+  }
 }

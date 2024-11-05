@@ -1,29 +1,33 @@
 {
-    "name": "magento/module-tax-import-export",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.1.0||~8.2.0||~8.3.0",
-        "magento/framework": "*",
-        "magento/module-backend": "*",
-        "magento/module-directory": "*",
-        "magento/module-store": "*",
-        "magento/module-tax": "*",
-        "magento/module-ui": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-tax-import-export",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.1.0||~8.2.0||~8.3.0",
+    "mage-os/framework": "1.0.5",
+    "mage-os/module-backend": "1.0.5",
+    "mage-os/module-directory": "1.0.5",
+    "mage-os/module-store": "1.0.5",
+    "mage-os/module-tax": "1.0.5",
+    "mage-os/module-ui": "1.0.5"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\TaxImportExport\\": ""
-        }
+    "psr-4": {
+      "Magento\\TaxImportExport\\": ""
     }
+  },
+  "version": "1.0.5",
+  "replace": {
+    "magento/module-tax-import-export": "100.4.6-p2"
+  }
 }

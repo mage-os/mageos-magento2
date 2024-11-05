@@ -1,26 +1,30 @@
 {
-    "name": "magento/module-customer-downloadable-graph-ql",
-    "description": "N/A",
-    "type": "magento2-module",
-    "require": {
-        "php": "~8.1.0||~8.2.0||~8.3.0",
-        "magento/module-downloadable-graph-ql": "*",
-        "magento/module-graph-ql": "*",
-        "magento/framework": "*"
-    },
-    "suggest": {
-        "magento/module-catalog-graph-ql": "*"
-    },
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-customer-downloadable-graph-ql",
+  "description": "N/A",
+  "type": "magento2-module",
+  "require": {
+    "php": "~8.1.0||~8.2.0||~8.3.0",
+    "mage-os/module-downloadable-graph-ql": "1.0.5",
+    "mage-os/module-graph-ql": "1.0.5",
+    "mage-os/framework": "1.0.5"
+  },
+  "suggest": {
+    "mage-os/module-catalog-graph-ql": "1.0.5"
+  },
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\CustomerDownloadableGraphQl\\": ""
-        }
+    "psr-4": {
+      "Magento\\CustomerDownloadableGraphQl\\": ""
     }
+  },
+  "version": "1.0.5",
+  "replace": {
+    "magento/module-customer-downloadable-graph-ql": "100.4.3"
+  }
 }

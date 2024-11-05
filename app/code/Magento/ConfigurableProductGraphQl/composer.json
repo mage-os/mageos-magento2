@@ -1,28 +1,32 @@
 {
-    "name": "magento/module-configurable-product-graph-ql",
-    "description": "N/A",
-    "type": "magento2-module",
-    "require": {
-        "php": "~8.1.0||~8.2.0||~8.3.0",
-        "magento/module-catalog": "*",
-        "magento/module-configurable-product": "*",
-        "magento/module-graph-ql": "*",
-        "magento/module-catalog-graph-ql": "*",
-        "magento/module-quote": "*",
-        "magento/module-quote-graph-ql": "*",
-        "magento/module-catalog-inventory": "*",
-        "magento/framework": "*"
-    },
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-configurable-product-graph-ql",
+  "description": "N/A",
+  "type": "magento2-module",
+  "require": {
+    "php": "~8.1.0||~8.2.0||~8.3.0",
+    "mage-os/module-catalog": "1.0.5",
+    "mage-os/module-configurable-product": "1.0.5",
+    "mage-os/module-graph-ql": "1.0.5",
+    "mage-os/module-catalog-graph-ql": "1.0.5",
+    "mage-os/module-quote": "1.0.5",
+    "mage-os/module-quote-graph-ql": "1.0.5",
+    "mage-os/module-catalog-inventory": "1.0.5",
+    "mage-os/framework": "1.0.5"
+  },
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\ConfigurableProductGraphQl\\": ""
-        }
+    "psr-4": {
+      "Magento\\ConfigurableProductGraphQl\\": ""
     }
+  },
+  "version": "1.0.5",
+  "replace": {
+    "magento/module-configurable-product-graph-ql": "100.4.7"
+  }
 }

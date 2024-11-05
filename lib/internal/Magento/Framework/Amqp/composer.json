@@ -1,25 +1,29 @@
 {
-    "name": "magento/framework-amqp",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
+  "name": "mage-os/framework-amqp",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "type": "magento2-library",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "require": {
+    "mage-os/framework": "1.0.5",
+    "php": "~8.1.0||~8.2.0||~8.3.0",
+    "php-amqplib/php-amqplib": "~3.2.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Magento\\Framework\\Amqp\\": ""
     },
-    "type": "magento2-library",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
-    ],
-    "require": {
-        "magento/framework": "*",
-        "php": "~8.1.0||~8.2.0||~8.3.0",
-        "php-amqplib/php-amqplib": "~3.2.0"
-    },
-    "autoload": {
-        "psr-4": {
-            "Magento\\Framework\\Amqp\\": ""
-        },
-        "files": [
-            "registration.php"
-        ]
-    }
+    "files": [
+      "registration.php"
+    ]
+  },
+  "version": "1.0.5",
+  "replace": {
+    "magento/framework-amqp": "100.4.5"
+  }
 }

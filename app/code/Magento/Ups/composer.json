@@ -1,34 +1,38 @@
 {
-    "name": "magento/module-ups",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.1.0||~8.2.0||~8.3.0",
-        "magento/framework": "*",
-        "magento/module-backend": "*",
-        "magento/module-catalog-inventory": "*",
-        "magento/module-directory": "*",
-        "magento/module-quote": "*",
-        "magento/module-sales": "*",
-        "magento/module-shipping": "*",
-        "magento/module-store": "*"
-    },
-    "suggest": {
-        "magento/module-config": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-ups",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.1.0||~8.2.0||~8.3.0",
+    "mage-os/framework": "1.0.5",
+    "mage-os/module-backend": "1.0.5",
+    "mage-os/module-catalog-inventory": "1.0.5",
+    "mage-os/module-directory": "1.0.5",
+    "mage-os/module-quote": "1.0.5",
+    "mage-os/module-sales": "1.0.5",
+    "mage-os/module-shipping": "1.0.5",
+    "mage-os/module-store": "1.0.5"
+  },
+  "suggest": {
+    "mage-os/module-config": "1.0.5"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\Ups\\": ""
-        }
+    "psr-4": {
+      "Magento\\Ups\\": ""
     }
+  },
+  "version": "1.0.5",
+  "replace": {
+    "magento/module-ups": "100.4.7-p1"
+  }
 }

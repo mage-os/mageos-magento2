@@ -1,5 +1,5 @@
 {
-  "name": "magento/module-application-performance-monitor",
+  "name": "mage-os/module-application-performance-monitor",
   "license": "OSL-3.0",
   "type": "magento2-module",
   "description": "Performance Monitor for Application",
@@ -13,6 +13,10 @@
   },
   "require": {
     "php": "~8.1.0||~8.2.0||~8.3.0",
-    "magento/framework": "*"
+    "mage-os/framework": "1.0.5"
+  },
+  "version": "1.0.5",
+  "replace": {
+    "magento/module-application-performance-monitor": "100.4.0"
   }
 }

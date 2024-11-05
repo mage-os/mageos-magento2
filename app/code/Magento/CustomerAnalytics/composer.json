@@ -1,23 +1,27 @@
 {
-    "name": "magento/module-customer-analytics",
-    "description": "N/A",
-    "require": {
-        "php": "~8.1.0||~8.2.0||~8.3.0",
-        "magento/framework": "*",
-        "magento/module-customer": "*",
-        "magento/module-analytics": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-customer-analytics",
+  "description": "N/A",
+  "require": {
+    "php": "~8.1.0||~8.2.0||~8.3.0",
+    "mage-os/framework": "1.0.5",
+    "mage-os/module-customer": "1.0.5",
+    "mage-os/module-analytics": "1.0.5"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\CustomerAnalytics\\": ""
-        }
+    "psr-4": {
+      "Magento\\CustomerAnalytics\\": ""
     }
+  },
+  "version": "1.0.5",
+  "replace": {
+    "magento/module-customer-analytics": "100.4.4"
+  }
 }

@@ -1,23 +1,27 @@
 {
-    "name": "magento/module-compare-list-graph-ql",
-    "description": "N/A",
-    "type": "magento2-module",
-    "require": {
-        "php": "~8.1.0||~8.2.0||~8.3.0",
-        "magento/framework": "*",
-        "magento/module-catalog": "*",
-        "magento/module-customer": "*"
-    },
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-compare-list-graph-ql",
+  "description": "N/A",
+  "type": "magento2-module",
+  "require": {
+    "php": "~8.1.0||~8.2.0||~8.3.0",
+    "mage-os/framework": "1.0.5",
+    "mage-os/module-catalog": "1.0.5",
+    "mage-os/module-customer": "1.0.5"
+  },
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\CompareListGraphQl\\": ""
-        }
+    "psr-4": {
+      "Magento\\CompareListGraphQl\\": ""
     }
+  },
+  "version": "1.0.5",
+  "replace": {
+    "magento/module-compare-list-graph-ql": "100.4.3"
+  }
 }
