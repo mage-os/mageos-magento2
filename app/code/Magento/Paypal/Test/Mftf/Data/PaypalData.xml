@@ -258,4 +258,10 @@
         <data key="path">payment/wps_express/active</data>
         <data key="value">0</data>
     </entity>
+    <entity name="SamplePaypalPaymentsAdvancedConfig" type="payflow_advanced_config">
+        <data key="payflow_advanced_partner">PayPal</data>
+        <data key="payflow_advanced_user">mpilink</data>
+        <data key="payflow_advanced_vendor">mpilink</data>
+        <data key="payflow_advanced_password">1234_1234L!</data>
+    </entity>
 </entities>
