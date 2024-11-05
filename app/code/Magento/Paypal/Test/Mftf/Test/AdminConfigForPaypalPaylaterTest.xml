@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminConfigForPaypalPaylaterTest">
+        <annotations>
+            <features value="PayPal"/>
+            <stories value="Payment methods"/>
+            <title value="Default configuration for Paypal pay later"/>
+            <description value="Paypal Pay Later Message should display on Admin Cart Page configuration"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="AC-5644"/>
+            <group value="pr_exclude"/>
+            <group value="3rd_party_integration"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <actionGroup ref="AdminPayPalExpressCheckoutEnableActionGroup" stepKey="ConfigPayPalExpress">
+                <argument name="credentials" value="SamplePaypalExpressConfig2"/>
+            </actionGroup>
+        </before>
+        <after>
+            <magentoCLI command="config:set payment/paypal_express/active 0" stepKey="disablePayPalExpress"/>
+            <magentoCLI command="cache:flush" stepKey="cleanCache"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="amOnLogoutPage"/>
+        </after>
+        <actionGroup ref="AdminConfigurePaypalPaylaterEnableActionGroup" stepKey="enablePaypalPaylaterSolution"/>
+        <!--Check default values selected in dropdown -->
+        <actionGroup ref="AssertAdminConfigForDefaultValuesInPaylaterCartPageActionGroup" stepKey="checkValuesForAdminCartConfiguration"/>
+        <!--Click on Save configure Button -->
+        <actionGroup ref="AdminSaveConfigActionGroup" stepKey="saveAdminConfiguration"/>
+    </test>
+</tests>
