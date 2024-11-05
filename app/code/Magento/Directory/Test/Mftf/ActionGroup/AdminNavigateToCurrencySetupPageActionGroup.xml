@@ -13,5 +13,6 @@
             <description>Go to the currency setup admin configuration page.</description>
         </annotations>
         <amOnPage url="{{AdminCurrencySetupPage.url}}" stepKey="goToCurrencySetupPage"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
     </actionGroup>
 </actionGroups>
