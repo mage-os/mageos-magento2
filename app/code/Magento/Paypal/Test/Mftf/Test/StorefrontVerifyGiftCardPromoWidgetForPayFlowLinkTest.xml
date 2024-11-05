@@ -44,7 +44,7 @@
             <actionGroup ref="AdminDisablePayPalPayFlowLinkActionGroup" stepKey="disablePayPalPayFlow"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
         </after>
-        <actionGroup ref="StorefrontAddSimpleProductWithQtyActionGroup" stepKey="addSimpleProductToCart">
+        <actionGroup ref="StorefrontAddSimpleProductWithQtyActionGroup" stepKey="addSimpleProductToCart" before="waitForGiftCardHeaderToBeClickable">
             <argument name="product" value="$$createProduct$$"/>
             <argument name="quantity" value="1"/>
         </actionGroup>
