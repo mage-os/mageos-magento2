@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2016 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Catalog\Model\Product\Price;
@@ -134,17 +134,16 @@ class PricePersistence
     public function update(array $prices)
     {
         array_walk($prices, function (&$price) {
-            return $price['attribute_id'] = $this->getAttributeId();
+            return $price['attribute_id'] = (int)$this->getAttributeId();
         });
+
         $connection = $this->attributeResource->getConnection();
         $connection->beginTransaction();
         try {
             foreach (array_chunk($prices, $this->itemsPerOperation) as $pricesBunch) {
-                $this->attributeResource->getConnection()->insertOnDuplicate(
-                    $this->attributeResource->getTable($this->table),
-                    $pricesBunch,
-                    ['value']
-                );
+                $existingPrices = $this->getExistingPrices($pricesBunch);
+                $pricesBunch = $this->doUpdate($pricesBunch, $existingPrices);
+                $this->doInsert($pricesBunch);
             }
             $connection->commit();
         } catch (\Exception $e) {
@@ -152,6 +151,85 @@ class PricePersistence
             throw new CouldNotSaveException(
                 __('Could not save Prices.'),
                 $e
+            );
+        }
+    }
+
+    /**
+     * Get prices that will need update
+     *
+     * @param array $priceBunch
+     * @return array
+     */
+    private function getExistingPrices(array $priceBunch): array
+    {
+        $linkField = $this->getEntityLinkField();
+        $connection = $this->attributeResource->getConnection();
+
+        return $connection->fetchAll(
+            $connection->select()
+                ->from($this->attributeResource->getTable($this->table))
+                ->where('attribute_id = ?', $this->getAttributeId())
+                ->where('store_id IN (?)', array_unique(array_column($priceBunch, 'store_id')))
+                ->where($linkField . ' IN (?)', array_unique(array_column($priceBunch, $linkField)))
+        );
+    }
+
+    /**
+     * Update existing prices
+     *
+     * @param array $priceBunches
+     * @param array $existingPrices
+     * @return array
+     */
+    private function doUpdate(array $priceBunches, array $existingPrices): array
+    {
+        $updateData = [];
+        $linkField = $this->getEntityLinkField();
+        foreach ($existingPrices as $existingPrice) {
+            foreach ($priceBunches as $key => $price) {
+                if ($price[$linkField] == $existingPrice[$linkField] &&
+                    $price['store_id'] == $existingPrice['store_id'] &&
+                    $existingPrice['attribute_id'] == $price['attribute_id']
+                ) {
+                    $priceBunches[$key]['value_id'] = $existingPrice['value_id'];
+                    $uniqueKey = $price[$linkField].$price['attribute_id'].$price['store_id'];
+                    $updateData[$uniqueKey] = $priceBunches[$key];
+                }
+            }
+        }
+        if (!empty($updateData)) {
+            foreach ($updateData as $row) {
+                $this->attributeResource->getConnection()->update(
+                    $this->attributeResource->getTable($this->table),
+                    ['value' => $row['value']],
+                    ['value_id = ?' => (int)$row['value_id']]
+                );
+            }
+        }
+        return $priceBunches;
+    }
+
+    /**
+     * Insert new prices
+     *
+     * @param array $priceBunches
+     * @return void
+     */
+    private function doInsert(array $priceBunches): void
+    {
+        $insertData = [];
+        $linkField = $this->getEntityLinkField();
+        foreach ($priceBunches as $price) {
+            if (!isset($price['value_id'])) {
+                $uniqueKey = $price[$linkField].$price['attribute_id'].$price['store_id'];
+                $insertData[$uniqueKey] = $price;
+            }
+        }
+        if (!empty($insertData)) {
+            $this->attributeResource->getConnection()->insertMultiple(
+                $this->attributeResource->getTable($this->table),
+                $insertData
             );
         }
     }
