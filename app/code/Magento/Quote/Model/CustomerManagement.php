@@ -158,7 +158,8 @@ class CustomerManagement
             $addresses[] = $this->customerAddressRepository->getById(
                 $quote->getShippingAddress()->getCustomerAddressId()
             );
-        } else {
+        }
+        if (empty($addresses) && $quote->getCustomerIsGuest()) {
             $billingAddress = $quote->getBillingAddress();
             $customerAddress = $this->customerAddressFactory->create();
             $customerAddress->setFirstname($billingAddress->getFirstname());
@@ -171,7 +172,6 @@ class CustomerManagement
             $customerAddress->setCustomAttributes($billingAddress->getCustomAttributes());
             $addresses[] = $customerAddress;
         }
-
         foreach ($addresses as $address) {
             $validator = $this->validatorFactory->createValidator('customer_address', 'save');
             $addressModel = $this->addressFactory->create();
