@@ -39,7 +39,7 @@
         </actionGroup>
 
         <click selector="{{AdminSearchSynonymsNewSection.resetButton}}" stepKey="clickResetButton"/>
-
+        <waitForPageLoad stepKey="waitForPageLoaded"/>
         <grabValueFrom selector="{{AdminSearchSynonymsNewSection.scope}}" stepKey="grabScopeValue"/>
         <assertEquals stepKey="assertScopeDefaultValue">
             <expectedResult type="string">0:0</expectedResult>
