@@ -139,6 +139,9 @@ class Save extends \Magento\Catalog\Controller\Adminhtml\Product implements Http
                 }
 
                 $originalSku = $product->getSku();
+                if($originalSku == 0){
+                    throw new \Magento\Framework\Exception\LocalizedException(__("SKU cannot be zero."));                                 
+                }
                 $canSaveCustomOptions = $product->getCanSaveCustomOptions();
                 $product->save();
                 $this->handleImageRemoveError($data, $product->getId());
