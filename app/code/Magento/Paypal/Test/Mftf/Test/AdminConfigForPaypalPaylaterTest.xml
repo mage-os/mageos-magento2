@@ -16,6 +16,8 @@
             <severity value="CRITICAL"/>
             <testCaseId value="AC-5644"/>
             <group value="paypalPayLater"/>
+            <group value="3rd_party_integration"/>
+            <group value="pr_exclude"/>
         </annotations>
         <before>
             <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
