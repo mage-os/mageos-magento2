@@ -17,7 +17,7 @@
             <severity value="MAJOR"/>
             <features value="Shipping"/>
             <group value="3rd_party_integration"/>
-<!--            <group value="pr_exclude"/>-->
+            <!--            <group value="pr_exclude"/>-->
         </annotations>
         <before>
             <!--Login as Admin-->
@@ -55,7 +55,7 @@
             <!--delete product-->
             <deleteData createDataKey="createSimpleProduct" stepKey="deleteProduct"/>
             <!--Configure UPS shipping method with enable for checkout = No-->
-            <actionGroup ref="AdminDisableUPSActionGroup" stepKey="disableUPSShippingMethod"/>
+            <actionGroup ref="AdminUPSDisableActionGroup" stepKey="disableUPSShippingMethod"/>
             <!--Logout Admin-->
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdminToRollBackConfig"/>
         </after>
