@@ -232,12 +232,14 @@ class ProductScopeRewriteGenerator
         $mergeDataProvider->merge(array_merge(...$this->generateCanonicalUrls($product, $storeId)));
 
         $categories = [];
-        foreach ($productCategories as $category) {
-            if (!$this->isCategoryProperForGenerating($category, $storeId)) {
-                continue;
-            }
+        if ($this->isCategoryRewritesEnabled()) {
+            foreach ($productCategories as $category) {
+                if (!$this->isCategoryProperForGenerating($category, $storeId)) {
+                    continue;
+                }
 
-            $categories[] = $this->getCategoryWithOverriddenUrlKey($storeId, $category);
+                $categories[] = $this->getCategoryWithOverriddenUrlKey($storeId, $category);
+            }
         }
         $productCategories = $this->objectRegistryFactory->create(['entities' => $categories]);
 
