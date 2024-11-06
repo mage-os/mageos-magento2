@@ -114,7 +114,7 @@ class CustomerManagementTest extends TestCase
         );
         $this->quoteMock = $this->getMockBuilder(Quote::class)
             ->addMethods(['getPasswordHash'])
-            ->onlyMethods(['getId', 'getCustomer', 'getBillingAddress', 'getShippingAddress', 'setCustomer'])
+            ->onlyMethods(['getId', 'getCustomer', 'getBillingAddress', 'getShippingAddress', 'setCustomer', 'getCustomerIsGuest'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->quoteAddressMock = $this->createMock(Address::class);
@@ -267,6 +267,7 @@ class CustomerManagementTest extends TestCase
     public function testValidateAddressesNotSavedInAddressBook()
     {
         $this->expectException(ValidatorException::class);
+        $this->quoteMock->method('getCustomerIsGuest')->willReturn(true);
         $this->quoteAddressMock->method('getStreet')->willReturn(['test']);
         $this->quoteAddressMock->method('getCustomAttributes')->willReturn(['test']);
         $this->customerAddressFactoryMock->method('create')
