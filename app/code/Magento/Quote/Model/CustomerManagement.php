@@ -153,6 +153,11 @@ class CustomerManagement
             $addresses[] = $this->customerAddressRepository->getById(
                 $quote->getBillingAddress()->getCustomerAddressId()
             );
+        }
+        if ($quote->getShippingAddress()->getCustomerAddressId()) {
+            $addresses[] = $this->customerAddressRepository->getById(
+                $quote->getShippingAddress()->getCustomerAddressId()
+            );
         } else {
             $billingAddress = $quote->getBillingAddress();
             $customerAddress = $this->customerAddressFactory->create();
@@ -165,11 +170,6 @@ class CustomerManagement
             $customerAddress->setCountryId($billingAddress->getCountryId());
             $customerAddress->setCustomAttributes($billingAddress->getCustomAttributes());
             $addresses[] = $customerAddress;
-        }
-        if ($quote->getShippingAddress()->getCustomerAddressId()) {
-            $addresses[] = $this->customerAddressRepository->getById(
-                $quote->getShippingAddress()->getCustomerAddressId()
-            );
         }
 
         foreach ($addresses as $address) {
