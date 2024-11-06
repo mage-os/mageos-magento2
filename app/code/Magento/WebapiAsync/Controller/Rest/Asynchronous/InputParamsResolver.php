@@ -26,6 +26,8 @@ use Magento\Webapi\Controller\Rest\Router\Route;
 
 /**
  * This class is responsible for retrieving resolved input data
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class InputParamsResolver
 {
@@ -160,7 +162,7 @@ class InputParamsResolver
         $inputData = $this->request->getRequestData();
 
         $httpMethod = $this->request->getHttpMethod();
-        if ($httpMethod == RestRequest::HTTP_METHOD_DELETE) {
+        if ($httpMethod === RestRequest::HTTP_METHOD_DELETE) {
             $requestBodyParams = $this->request->getBodyParams();
             $inputData = array_merge($requestBodyParams, $inputData);
         }
