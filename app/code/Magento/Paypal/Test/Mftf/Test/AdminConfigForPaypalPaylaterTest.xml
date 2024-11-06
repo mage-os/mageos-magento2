@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  /**
-  * Copyright 2024 Adobe
+   * Copyright 2024 Adobe
   * All Rights Reserved.
   */
 -->
@@ -11,28 +11,21 @@
         <annotations>
             <features value="PayPal"/>
             <stories value="Payment methods"/>
-            <title value="Default configuration for Paypal pay later"/>
+            <title value="Default configuration for paypalpaylater"/>
             <description value="Paypal Pay Later Message should display on Admin Cart Page configuration"/>
             <severity value="CRITICAL"/>
             <testCaseId value="AC-5644"/>
-            <group value="pr_exclude"/>
+            <group value="paypalPayLater"/>
             <group value="3rd_party_integration"/>
+            <group value="pr_exclude"/>
         </annotations>
         <before>
-            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
-            <actionGroup ref="AdminPayPalExpressCheckoutEnableActionGroup" stepKey="ConfigPayPalExpress">
-                <argument name="credentials" value="SamplePaypalExpressConfig2"/>
-            </actionGroup>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
         </before>
         <after>
-            <magentoCLI command="config:set payment/paypal_express/active 0" stepKey="disablePayPalExpress"/>
-            <magentoCLI command="cache:flush" stepKey="cleanCache"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="amOnLogoutPage"/>
         </after>
-        <actionGroup ref="AdminConfigurePaypalPaylaterEnableActionGroup" stepKey="enablePaypalPaylaterSolution"/>
-        <!--Check default values selected in dropdown -->
-        <actionGroup ref="AssertAdminConfigForDefaultValuesInPaylaterCartPageActionGroup" stepKey="checkValuesForAdminCartConfiguration"/>
-        <!--Click on Save configure Button -->
-        <actionGroup ref="AdminSaveConfigActionGroup" stepKey="saveAdminConfiguration"/>
+        <!-- Navigate to StoreFront -->
+        <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToStoreFront"/>
     </test>
 </tests>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+   * Copyright 2024 Adobe
+  * All Rights Reserved.
+  */
+-->
+<suites xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Suite/etc/suiteSchema.xsd">
+    <suite name="ConfigurePaypalPaylaterSuite">
+        <before>
+            <!-- Login -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+            <actionGroup ref="AdminPayPalExpressCheckoutEnableActionGroup" stepKey="ConfigPayPalExpress">
+                <argument name="credentials" value="SamplePaypalExpressConfig2"/>
+            </actionGroup>
+            <!--Enable Paylater Solution On Admin Cart Page -->
+            <actionGroup ref="AdminEnablePaypalPaylaterConfigurationActionGroup" stepKey="enablePaylaterOnAdminCartConfiguration">
+            </actionGroup>
+            <!--Click on Save configure Button -->
+            <actionGroup ref="AdminSaveConfigActionGroup" stepKey="saveAdminConfiguration">
+            </actionGroup>
+        </before>
+        <after>
+            <!-- Cleanup Paypal configurations -->
+            <magentoCLI command="config:set payment/paypal_express/active 0" stepKey="disablePayPalExpress"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="amOnLogoutPage"/>
+            <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanFullPageCache">
+                <argument name="tags" value="config full_page"/>
+            </actionGroup>
+        </after>
+        <include>
+            <group name="paypalPayLater"/>
+        </include>
+    </suite>
+</suites>

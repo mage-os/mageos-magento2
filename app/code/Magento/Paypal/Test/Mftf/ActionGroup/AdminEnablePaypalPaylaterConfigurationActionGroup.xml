@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+   * Copyright 2024 Adobe
+  * All Rights Reserved.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminEnablePaypalPaylaterConfigurationActionGroup" >
+        <annotations>
+            <description>Enable Paypal Paylater Solution For Paypal Express Checkout</description>
+        </annotations>
+        <waitForElementClickable selector="{{PayPalExpressCheckoutConfigSection.configureBtn('us')}}" stepKey="waitForConfigureButtonToClickable"/>
+        <click selector="{{PayPalExpressCheckoutConfigSection.configureBtn('us')}}" stepKey="configureButtonClicked"/>
+        <selectOption selector ="{{PayPalExpressCheckoutConfigSection.enablePayLater('us')}}" userInput="Yes" stepKey="enablepaylaterExp"/>
+        <waitForPageLoad stepKey="waitForAdvisePageLoad"/>
+        <waitForElementClickable selector="{{PayPalExpressCheckoutConfigSection.payLaterConfigDropDown('us')}}" stepKey="waitForPayLaterDropdownClickable"/>
+        <click selector="{{PayPalExpressCheckoutConfigSection.payLaterConfigDropDown('us')}}" stepKey="advertisePaylateToClicked"/>
+        <waitForPageLoad stepKey="waitForAdvisePaylaterDropdown"/>
+        <selectOption selector ="{{PayPalExpressCheckoutConfigSection.enablePayLaterIn('us')}}" userInput="Yes" stepKey="enablePaypalLater"/>
+        <waitForElementClickable selector="{{AdminConfigPaypalCartPagePaylaterSection.expandCheckoutCartPage('us')}}" stepKey="waitForCheckoutCartpageClickable"/>
+        <click selector="{{AdminConfigPaypalCartPagePaylaterSection.expandCheckoutCartPage('us')}}" stepKey="clickCheckoutCart"/>
+        <selectOption selector ="{{AdminConfigPaypalCartPagePaylaterSection.display('us')}}" userInput="Yes" stepKey="enableDisplayforPaylaterCartpage"/>
+        <seeOptionIsSelected selector="{{AdminConfigPaypalCartPagePaylaterSection.position('us')}}" userInput="Header (center)" stepKey="seeSelectedPosition"/>
+        <seeOptionIsSelected selector="{{AdminConfigPaypalCartPagePaylaterSection.styleLayout('us')}}" userInput="Text" stepKey="seeSelectedStyleLayout"/>
+        <seeOptionIsSelected selector="{{AdminConfigPaypalCartPagePaylaterSection.logoType('us')}}" userInput="Primary" stepKey="seeSelectedLogoType"/>
+        <seeOptionIsSelected selector="{{AdminConfigPaypalCartPagePaylaterSection.logoPosition('us')}}" userInput="Left" stepKey="seeSelectedLogoPosition"/>
+        <seeOptionIsSelected selector="{{AdminConfigPaypalCartPagePaylaterSection.textColor('us')}}" userInput="Black" stepKey="seeSelectedTextColor"/>
+    </actionGroup>
+</actionGroups>
