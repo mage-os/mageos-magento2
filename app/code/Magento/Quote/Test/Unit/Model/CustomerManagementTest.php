@@ -114,7 +114,8 @@ class CustomerManagementTest extends TestCase
         );
         $this->quoteMock = $this->getMockBuilder(Quote::class)
             ->addMethods(['getPasswordHash'])
-            ->onlyMethods(['getId', 'getCustomer', 'getBillingAddress', 'getShippingAddress', 'setCustomer', 'getCustomerIsGuest'])
+            ->onlyMethods(['getId', 'getCustomer', 'getBillingAddress', 'getShippingAddress', 'setCustomer',
+                'getCustomerIsGuest'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->quoteAddressMock = $this->createMock(Address::class);
