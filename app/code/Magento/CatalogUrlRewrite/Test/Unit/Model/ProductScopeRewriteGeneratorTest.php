@@ -239,6 +239,7 @@ class ProductScopeRewriteGeneratorTest extends TestCase
             ->willReturn([]);
 
         $this->categoryRepositoryMock->expects($this->once())->method('get')->willReturn($this->categoryMock);
+        $this->configMock->expects($this->any())->method('getValue')->willReturn('1');
 
         $this->assertEquals(
             ['category-1_1' => $canonical],
