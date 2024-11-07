@@ -10,6 +10,7 @@ use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductAttributeRepositoryInterface;
 use Magento\Catalog\Model\ProductIdLocatorInterface;
 use Magento\Catalog\Model\ResourceModel\Attribute;
+use Magento\Catalog\Model\ResourceModel\Product\Price\BasePriceFactory;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\Exception\CouldNotDeleteException;
@@ -88,6 +89,7 @@ class PricePersistence
      * @param MetadataPool $metadataPool
      * @param string $attributeCode
      * @param DateTime|null $dateTime
+     * @param BasePriceFactory|null $basePriceFactory
      */
     public function __construct(
         Attribute $attributeResource,
@@ -95,7 +97,8 @@ class PricePersistence
         ProductIdLocatorInterface $productIdLocator,
         MetadataPool $metadataPool,
         $attributeCode = '',
-        ?DateTime $dateTime = null
+        ?DateTime $dateTime = null,
+        private ?BasePriceFactory $basePriceFactory = null
     ) {
         $this->attributeResource = $attributeResource;
         $this->attributeRepository = $attributeRepository;
@@ -104,6 +107,8 @@ class PricePersistence
         $this->metadataPool = $metadataPool;
         $this->dateTime = $dateTime ?: ObjectManager::getInstance()
             ->get(DateTime::class);
+        $this->basePriceFactory = $this->basePriceFactory ?: ObjectManager::getInstance()
+            ->get(BasePriceFactory::class);
     }
 
     /**
@@ -137,99 +142,13 @@ class PricePersistence
             return $price['attribute_id'] = (int)$this->getAttributeId();
         });
 
-        $connection = $this->attributeResource->getConnection();
-        $connection->beginTransaction();
+        $basePrice = $this->basePriceFactory->create(['attributeId' => (int)$this->getAttributeId()]);
         try {
-            foreach (array_chunk($prices, $this->itemsPerOperation) as $pricesBunch) {
-                $existingPrices = $this->getExistingPrices($pricesBunch);
-                $pricesBunch = $this->doUpdate($pricesBunch, $existingPrices);
-                $this->doInsert($pricesBunch);
-            }
-            $connection->commit();
+            $basePrice->update($prices);
         } catch (\Exception $e) {
-            $connection->rollBack();
             throw new CouldNotSaveException(
                 __('Could not save Prices.'),
                 $e
-            );
-        }
-    }
-
-    /**
-     * Get prices that will need update
-     *
-     * @param array $priceBunch
-     * @return array
-     */
-    private function getExistingPrices(array $priceBunch): array
-    {
-        $linkField = $this->getEntityLinkField();
-        $connection = $this->attributeResource->getConnection();
-
-        return $connection->fetchAll(
-            $connection->select()
-                ->from($this->attributeResource->getTable($this->table))
-                ->where('attribute_id = ?', $this->getAttributeId())
-                ->where('store_id IN (?)', array_unique(array_column($priceBunch, 'store_id')))
-                ->where($linkField . ' IN (?)', array_unique(array_column($priceBunch, $linkField)))
-        );
-    }
-
-    /**
-     * Update existing prices
-     *
-     * @param array $priceBunches
-     * @param array $existingPrices
-     * @return array
-     */
-    private function doUpdate(array $priceBunches, array $existingPrices): array
-    {
-        $updateData = [];
-        $linkField = $this->getEntityLinkField();
-        foreach ($existingPrices as $existingPrice) {
-            foreach ($priceBunches as $key => $price) {
-                if ($price[$linkField] == $existingPrice[$linkField] &&
-                    $price['store_id'] == $existingPrice['store_id'] &&
-                    $existingPrice['attribute_id'] == $price['attribute_id']
-                ) {
-                    $priceBunches[$key]['value_id'] = $existingPrice['value_id'];
-                    $uniqueKey = $price[$linkField].$price['attribute_id'].$price['store_id'];
-                    $updateData[$uniqueKey] = $priceBunches[$key];
-                }
-            }
-        }
-        if (!empty($updateData)) {
-            foreach ($updateData as $row) {
-                $this->attributeResource->getConnection()->update(
-                    $this->attributeResource->getTable($this->table),
-                    ['value' => $row['value']],
-                    ['value_id = ?' => (int)$row['value_id']]
-                );
-            }
-        }
-        return $priceBunches;
-    }
-
-    /**
-     * Insert new prices
-     *
-     * @param array $priceBunches
-     * @return void
-     */
-    private function doInsert(array $priceBunches): void
-    {
-        $insertData = [];
-        $linkField = $this->getEntityLinkField();
-        foreach ($priceBunches as $price) {
-            if (!isset($price['value_id'])) {
-                $uniqueKey = $price[$linkField].$price['attribute_id'].$price['store_id'];
-                $insertData[$uniqueKey] = $price;
-            }
-        }
-        if (!empty($insertData)) {
-            $this->attributeResource->getConnection()->insertMultiple(
-                $this->attributeResource->getTable($this->table),
-                $insertData
             );
         }
     }
