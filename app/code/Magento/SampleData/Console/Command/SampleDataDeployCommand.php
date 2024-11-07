@@ -91,7 +91,7 @@ class SampleDataDeployCommand extends Command
             $baseDir = $this->filesystem->getDirectoryRead(DirectoryList::ROOT)->getAbsolutePath();
             $commonArgs = ['--working-dir' => $baseDir, '--no-progress' => 1];
             if ($input->getOption(self::OPTION_NO_UPDATE)) {
-                $commonArgs['--no-update'] = 1;
+                $commonArgs['--no-update'] = true;
             }
             $packages = [];
             foreach ($sampleDataPackages as $name => $version) {

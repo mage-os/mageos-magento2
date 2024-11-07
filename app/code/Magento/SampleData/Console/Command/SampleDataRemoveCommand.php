@@ -92,7 +92,7 @@ class SampleDataRemoveCommand extends Command
             $baseDir = $this->filesystem->getDirectoryRead(DirectoryList::ROOT)->getAbsolutePath();
             $commonArgs = ['--working-dir' => $baseDir, '--no-interaction' => 1, '--no-progress' => 1];
             if ($input->getOption(self::OPTION_NO_UPDATE)) {
-                $commonArgs['--no-update'] = 1;
+                $commonArgs['--no-update'] = true;
             }
             $packages = array_keys($sampleDataPackages);
             $arguments = array_merge(['command' => 'remove', 'packages' => $packages], $commonArgs);
