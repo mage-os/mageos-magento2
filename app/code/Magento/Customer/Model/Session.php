@@ -332,10 +332,8 @@ class Session extends \Magento\Framework\Session\SessionManager
      */
     public function getCustomerId()
     {
-        if ($this->storage->getData('customer_id')) {
-            return $this->storage->getData('customer_id');
-        }
-        return null;
+        $customerId = $this->storage->getData('customer_id');
+        return ($customerId && $this->checkCustomerId($customerId)) ? $customerId : null;
     }
 
     /**
