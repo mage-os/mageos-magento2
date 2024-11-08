@@ -5,6 +5,7 @@
 
 /*eslint max-nested-callbacks: 0*/
 define(['Magento_Ui/js/form/adapter/buttons'], function (uiFormSelectors) {
+    'use strict';
     describe('UI Form Selectors Module', function () {
 
         it('should define reset, save, and saveAndContinue selectors', function () {
