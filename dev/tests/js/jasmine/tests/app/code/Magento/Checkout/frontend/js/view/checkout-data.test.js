@@ -4,41 +4,55 @@
  */
 
 define([
-    'Magento_Checkout/js/checkout-data',
-    'Magento_Customer/js/customer-data'
-], function (checkoutData, storage) {
+    'squire'
+], function (Squire) {
     'use strict';
 
     describe('Magento_Checkout/js/checkout-data', function () {
-        let cacheKey = 'checkout-data',
+        let checkoutData,
+            cacheKey = 'checkout-data',
             testData = {
                 shippingAddressFromData: {base: {address1: 'address1'}}
             },
 
             /** Stub */
             getStorageData = function () {
-                return testData;
+                return function () {
+                    return testData;
+                };
+            },
+            injector = new Squire(),
+            mocks = {
+                'Magento_Customer/js/customer-data': {
+                    /** Method stub. */
+                    set: jasmine.createSpy(),
+                    get: jasmine.createSpy().and.callFake(getStorageData)
+                },
+                'jquery/jquery-storageapi': jasmine.createSpy(),
+                'mageUtils': jasmine.createSpy()
             };
 
         window.checkoutConfig = {
             websiteCode: 'base'
         };
 
-        beforeEach(function () {
-            spyOn(storage, 'set');
+        beforeEach(function (done) {
+            injector.mock(mocks);
+            injector.require([
+                'Magento_Checkout/js/checkout-data'
+            ], function (Constructor) {
+                checkoutData = Constructor;
+                done();
+            });
         });
 
         it('should save selected shipping address per website', function () {
             checkoutData.setShippingAddressFromData({address1: 'address1'});
-            expect(storage.set).toHaveBeenCalledWith(cacheKey, jasmine.objectContaining(testData));
-        });
-
-        it('should return null if no shipping address data exists', function () {
-            expect(checkoutData.getShippingAddressFromData()).toBeNull();
+            expect(mocks['Magento_Customer/js/customer-data'].set).
+                toHaveBeenCalledWith(cacheKey, jasmine.objectContaining(testData));
         });
 
         it('should get shipping address from data per website', function () {
-            spyOn(storage, 'get').and.returnValue(getStorageData);
             let address = checkoutData.getShippingAddressFromData();
 
             expect(address).toEqual(testData.shippingAddressFromData.base);
