@@ -2,6 +2,12 @@
  * Copyright 2015 Adobe
  * All Rights Reserved.
  */
+
+/**
+ * Checkout adapter for customer data storage
+ *
+ * @api
+ */
 define([
     'jquery',
     'Magento_Customer/js/customer-data',
