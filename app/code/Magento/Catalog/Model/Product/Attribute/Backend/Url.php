@@ -28,8 +28,7 @@ class Url extends AbstractBackend
     }
 
     /**
-     * Set Attribute instance
-     * Rewrite for redefine attribute scope
+     * Set Attribute instance, Rewrite for redefine attribute scope
      *
      * @param Attribute $attribute
      * @return $this

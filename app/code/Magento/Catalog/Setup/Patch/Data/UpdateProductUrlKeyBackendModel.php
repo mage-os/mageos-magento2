@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Setup\Patch\Data;
 
+use Magento\Catalog\Model\Product\Attribute\Backend\Url;
 use Magento\Eav\Setup\EavSetupFactory;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\Patch\DataPatchInterface;
@@ -65,7 +66,7 @@ class UpdateProductUrlKeyBackendModel implements DataPatchInterface, PatchVersio
             \Magento\Catalog\Model\Product::ENTITY,
             'url_key',
             [
-                'backend_model' => 'Magento\Catalog\Model\Product\Attribute\Backend\Url'
+                'backend_model' => Url::class
             ]
         );
         return $this;
