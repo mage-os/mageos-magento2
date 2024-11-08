@@ -47,17 +47,20 @@
             <argument name="attributeType" value="{{sizeAttribute.input_type}}"/>
         </actionGroup>
         <!--Add option S, M and L to attribute and save-->
-        <click selector="{{AdminNewAttributePanel.addOption}}" after="fillAttributeProperties" stepKey="clickAddOptionSSize"/>
-        <actionGroup ref="AdminAddOptionsToSizeAttributeActionGroup" stepKey="addSSizeOption">
+        <waitForElementClickable selector="{{AdminNewAttributePanel.addOption}" stepKey="waitToClickOnAddOptionButton" after="fillAttributeProperties"/>
+        <click selector="{{AdminNewAttributePanel.addOption}}" after="waitToClickOnAddOptionButton" stepKey="clickAddOptionSSize"/>
+        <actionGroup ref="AdminAddOptionsToSizeAttributeActionGroup" stepKey="addSSizeOption" after="clickAddOptionSSize">
             <argument name="position" value="0"/>
             <argument name="size" value="S"/>
         </actionGroup>
-        <click selector="{{AdminNewAttributePanel.addOption}}" stepKey="clickAddOptionForMSize" after="clickAddOptionSSize"/>
-        <actionGroup ref="AdminAddOptionsToSizeAttributeActionGroup" stepKey="addMSizeOption">
+        <waitForElementClickable selector="{{AdminNewAttributePanel.addOption}" stepKey="waitToClickAddOptionForMSize" after="addSSizeOption"/>
+        <click selector="{{AdminNewAttributePanel.addOption}}" stepKey="clickAddOptionForMSize" after="waitToClickAddOptionForMSize"/>
+        <actionGroup ref="AdminAddOptionsToSizeAttributeActionGroup" stepKey="addMSizeOption" after="clickAddOptionForMSize">
             <argument name="position" value="1"/>
             <argument name="size" value="M"/>
         </actionGroup>
-        <click selector="{{AdminNewAttributePanel.addOption}}" stepKey="clickAddOptionForLSize" after="clickAddOptionForMSize" />
+        <waitForElementClickable selector="{{AdminNewAttributePanel.addOption}" stepKey="waitToClickAddOptionForLSize" after="addMSizeOption"/>
+        <click selector="{{AdminNewAttributePanel.addOption}}" stepKey="clickAddOptionForLSize" after="waitToClickAddOptionForLSize" />
         <actionGroup ref="AdminAddOptionsToSizeAttributeActionGroup" stepKey="addLSizeOption" after="clickAddOptionForLSize">
             <argument name="position" value="2"/>
             <argument name="size" value="L"/>
