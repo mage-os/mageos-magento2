@@ -1,12 +1,6 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
- */
-
-/**
- * Checkout adapter for customer data storage
- *
- * @api
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 define([
     'jquery',
@@ -87,9 +81,13 @@ define([
          * @param {Object} data
          */
         setShippingAddressFromData: function (data) {
-            var obj = getData();
+            let obj = getData(),
+                websiteCode = window.checkoutConfig.websiteCode;
 
-            obj.shippingAddressFromData = utils.filterFormData(data);
+            if (!obj.shippingAddressFromData) {
+                obj.shippingAddressFromData = {};
+            }
+            obj.shippingAddressFromData[websiteCode] = utils.filterFormData(data);
             saveData(obj);
         },
 
@@ -99,7 +97,13 @@ define([
          * @return {*}
          */
         getShippingAddressFromData: function () {
-            return getData().shippingAddressFromData;
+            let websiteCode = window.checkoutConfig.websiteCode;
+
+            if (!getData().shippingAddressFromData) {
+                return null;
+            }
+
+            return getData().shippingAddressFromData[websiteCode];
         },
 
         /**
