@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright 2024 Adobe
+  * All Rights Reserved.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateConfigurableProductWithOutOfStockChildOnAdditionalStockTest">
+        <annotations>
+            <stories value="Configurable Product"/>
+            <title value="Configurable Product with 'Out of Stock' Child on Additional Stock."/>
+            <description value="Admin create configurable product with size attribute and set out of stock of one of the simple products and assert it in storefront."/>
+            <severity value="MAJOR"/>
+            <testCaseId value="AC-4359"/>
+        </annotations>
+        <actionGroup ref="AdminCreateOptionsForAttributeMultiStockActionGroup" stepKey="generateVariations" after="fillProductForm">
+            <argument name="attributeCode" value="{{sizeAttribute.attribute_code}}"/>
+            <argument name="sourceCode" value="$source.source[source_code]$"/>
+        </actionGroup>
+    </test>
+</tests>
