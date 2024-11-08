@@ -8,17 +8,16 @@ declare(strict_types=1);
 namespace Magento\Catalog\Test\Unit\Model\Product\Price;
 
 use Magento\Catalog\Api\Data\ProductAttributeInterface;
-use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductAttributeRepositoryInterface;
 use Magento\Catalog\Model\Product\Price\PricePersistence;
 use Magento\Catalog\Model\Product\Type;
 use Magento\Catalog\Model\ProductIdLocatorInterface;
 use Magento\Catalog\Model\ResourceModel\Attribute;
+use Magento\Catalog\Model\ResourceModel\Product\Price\BasePrice;
+use Magento\Catalog\Model\ResourceModel\Product\Price\BasePriceFactory;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
-use Magento\Framework\EntityManager\EntityMetadataInterface;
 use Magento\Framework\EntityManager\MetadataPool;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -58,6 +57,11 @@ class PricePersistenceTest extends TestCase
     private $metadataPool;
 
     /**
+     * @var BasePriceFactory|MockObject
+     */
+    private $basePriceFactory;
+
+    /**
      * @var PricePersistence
      */
     private $model;
@@ -91,16 +95,18 @@ class PricePersistenceTest extends TestCase
         $this->productAttribute = $this->getMockBuilder(ProductAttributeInterface::class)
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
+        $this->basePriceFactory = $this->getMockBuilder(BasePriceFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $objectManager = new ObjectManager($this);
-        $this->model = $objectManager->getObject(
-            PricePersistence::class,
-            [
-                'attributeResource' => $this->attributeResource,
-                'attributeRepository' => $this->attributeRepository,
-                'productIdLocator' => $this->productIdLocator,
-                'metadataPool' => $this->metadataPool,
-            ]
+        $this->model = new PricePersistence(
+            $this->attributeResource,
+            $this->attributeRepository,
+            $this->productIdLocator,
+            $this->metadataPool,
+            'price',
+            null,
+            $this->basePriceFactory
         );
     }
 
@@ -160,7 +166,7 @@ class PricePersistenceTest extends TestCase
      */
     public function testUpdate()
     {
-        $attributeId = 77;
+        $attributeId = 5;
         $prices = [
             [
                 'store_id' => 1,
@@ -173,38 +179,14 @@ class PricePersistenceTest extends TestCase
                 'value' => 20
             ]
         ];
-
-        $metadataEntity = $this->createMock(EntityMetadataInterface::class);
-        $select = $this->createMock(Select::class);
-
-        $metadataEntity->expects($this->atLeastOnce())->method('getLinkField')->willReturn('row_id');
-        $select->expects($this->once())->method('from')->with('catalog_product_entity_decimal')->willReturnSelf();
-        $select->expects($this->atLeastOnce())->method('where')->willReturnSelf();
-
-        $this->metadataPool->expects($this->atLeastOnce())
-            ->method('getMetadata')
-            ->with(ProductInterface::class)
-            ->willReturn($metadataEntity);
+        $basePrice = $this->createMock(BasePrice::class);
+        $basePrice->expects($this->once())
+            ->method('update');
         $this->attributeRepository->expects($this->once())->method('get')->willReturn($this->productAttribute);
         $this->productAttribute->expects($this->once())->method('getAttributeId')->willReturn($attributeId);
-        $this->attributeResource->expects($this->atLeastOnce())->method('getConnection')->willReturn($this->connection);
-        $this->connection->expects($this->once())->method('beginTransaction')->willReturnSelf();
-        $this->connection->expects($this->atLeastOnce())->method('select')->willReturn($select);
-        $this->connection->expects($this->atLeastOnce())
-            ->method('fetchAll')
-            ->willReturn(
-                [
-                    ['value_id' => 1, 'row_id' => 1, 'attribute_id' => 77, 'store_id' => 1, 'value' => 10]
-                ]
-            );
-        $this->connection->expects($this->once())->method('update')->willReturn(1);
-        $this->connection->expects($this->once())->method('insertMultiple')->willReturn(1);
-        $this->attributeResource
-            ->expects($this->atLeastOnce())
-            ->method('getTable')
-            ->with('catalog_product_entity_decimal')
-            ->willReturn('catalog_product_entity_decimal');
-        $this->connection->expects($this->once())->method('commit')->willReturnSelf();
+        $this->basePriceFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($basePrice);
         $this->model->update($prices);
     }
 
@@ -223,36 +205,15 @@ class PricePersistenceTest extends TestCase
                 'value' => 15
             ]
         ];
-        $metadataEntity = $this->createMock(EntityMetadataInterface::class);
-        $select = $this->createMock(Select::class);
-
-        $metadataEntity->expects($this->atLeastOnce())->method('getLinkField')->willReturn('row_id');
-        $select->expects($this->once())->method('from')->with('catalog_product_entity_decimal')->willReturnSelf();
-        $select->expects($this->atLeastOnce())->method('where')->willReturnSelf();
-
-        $this->metadataPool->expects($this->atLeastOnce())
-            ->method('getMetadata')
-            ->with(ProductInterface::class)
-            ->willReturn($metadataEntity);
+        $basePrice = $this->createMock(BasePrice::class);
+        $basePrice->expects($this->once())
+            ->method('update')
+            ->willThrowException(new \Exception());
         $this->attributeRepository->expects($this->once())->method('get')->willReturn($this->productAttribute);
         $this->productAttribute->expects($this->once())->method('getAttributeId')->willReturn($attributeId);
-        $this->attributeResource->expects($this->atLeastOnce())->method('getConnection')->willReturn($this->connection);
-        $this->connection->expects($this->once())->method('beginTransaction')->willReturnSelf();
-        $this->connection->expects($this->atLeastOnce())->method('select')->willReturn($select);
-        $this->connection->expects($this->atLeastOnce())
-            ->method('fetchAll')
-            ->willReturn(
-                [
-                    ['value_id' => 1, 'row_id' => 1, 'attribute_id' => 77, 'store_id' => 1, 'value' => 10]
-                ]
-            );
-        $this->attributeResource
-            ->expects($this->exactly(2))
-            ->method('getTable')
-            ->with('catalog_product_entity_decimal')
-            ->willReturn('catalog_product_entity_decimal');
-        $this->connection->expects($this->once())->method('commit')->willThrowException(new \Exception());
-        $this->connection->expects($this->once())->method('rollback')->willReturnSelf();
+        $this->basePriceFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($basePrice);
         $this->model->update($prices);
     }
 
