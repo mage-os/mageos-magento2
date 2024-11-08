@@ -1,9 +1,10 @@
 <?php
-declare(strict_types=1);
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2021 Adobe
+ * All Rights Reserved.
  */
+declare(strict_types=1);
+
 namespace Magento\Framework\App\Test\Unit\Console\CommandLoader;
 
 use Magento\Framework\Console\CommandLoader\Aggregate;
