@@ -1,8 +1,9 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2011 Adobe
+ * All Rights Reserved.
  */
+
 declare(strict_types=1);
 
 namespace Magento\Store\App\Request;
@@ -44,6 +45,11 @@ class StorePathInfoValidator
     private $storeCodeValidator;
 
     /**
+     * @var array
+     */
+    private array $validatedStoreCodes = [];
+
+    /**
      * @param ScopeConfigInterface $config
      * @param StoreRepositoryInterface $storeRepository
      * @param PathInfo $pathInfo
@@ -79,17 +85,25 @@ class StorePathInfoValidator
             $pathInfo = $this->pathInfo->getPathInfo($request->getRequestUri(), $request->getBaseUrl());
         }
         $storeCode = $this->getStoreCode($pathInfo);
+
         if (empty($storeCode) || $storeCode === Store::ADMIN_CODE || !$this->storeCodeValidator->isValid($storeCode)) {
             return null;
+        }
+
+        if (array_key_exists($storeCode, $this->validatedStoreCodes)) {
+            return $this->validatedStoreCodes[$storeCode];
         }
 
         try {
             $this->storeRepository->getActiveStoreByCode($storeCode);
 
+            $this->validatedStoreCodes[$storeCode] = $storeCode;
             return $storeCode;
         } catch (NoSuchEntityException $e) {
+            $this->validatedStoreCodes[$storeCode] = null;
             return null;
         } catch (StoreIsInactiveException $e) {
+            $this->validatedStoreCodes[$storeCode] = null;
             return null;
         }
     }
