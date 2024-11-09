@@ -12,6 +12,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\App\Request\PathInfo;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\ObjectManager\ResetAfterRequestInterface;
 use Magento\Store\Api\StoreRepositoryInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreIsInactiveException;
@@ -20,7 +21,7 @@ use Magento\Store\Model\Validation\StoreCodeValidator;
 /**
  * Gets the store from the path if valid
  */
-class StorePathInfoValidator
+class StorePathInfoValidator implements ResetAfterRequestInterface
 {
     /**
      * Store Config
@@ -118,5 +119,13 @@ class StorePathInfoValidator
     {
         $pathParts = explode('/', ltrim($pathInfo, '/'), 2);
         return current($pathParts);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function _resetState(): void
+    {
+        $this->validatedStoreCodes = [];
     }
 }
