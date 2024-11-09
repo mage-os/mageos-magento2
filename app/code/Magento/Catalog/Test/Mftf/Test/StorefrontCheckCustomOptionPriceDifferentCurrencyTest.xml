@@ -51,6 +51,12 @@
         <actionGroup ref="AssertStorefrontCustomOptionCheckboxByPriceActionGroup" stepKey="checkPriceProductOptionUSD">
             <argument name="price" value="12.3"/>
         </actionGroup>
+         <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindexConfig">
+            <argument name="indices" value=""/>
+        </actionGroup>
+        <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanFullPageCache">
+            <argument name="tags" value="config full_page"/>
+        </actionGroup>
         <actionGroup ref="StorefrontSwitchCurrencyActionGroup" stepKey="switchEURCurrency">
             <argument name="currency" value="EUR"/>
         </actionGroup>
