@@ -13,7 +13,7 @@
             <title value="Different Images for category"/>
             <description value="Different images can be set for category on different store view level"/>
             <severity value="MAJOR"/>
-            <testCaseId value="AC-4022"/>
+            <testCaseId value="AC-4134"/>
             <group value="catalog"/>
         </annotations>
         <before>
