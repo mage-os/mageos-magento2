@@ -5,46 +5,50 @@
   * See COPYING.txt for license details.
   */
 -->
+
 <tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
-    <test name="StorefrontVerifyGiftCardPromoWidgetForPayFlowLinkTest">
+    <test name="StorefrontApplyGiftsCardsAndCouponCodesInWidgetIsShownOnOrderReviewPageForPayflowLinkTest">
         <annotations>
-            <features value="payFlow link"/>
-            <stories value="Storefront Gift Card and Promo Codes"/>
-            <title value="Verify that Apply gift cards or promo codes widget is shown on order review page"/>
-            <description value="Verify that Apply gift cards or promo codes widget is shown on order review page for PayFlow Link (Includes Express Checkout)"/>
+            <features value="Payments"/>
+            <stories value="Payflow Link"/>
+            <title value="Apply gift cards and promo codes widget are shown on Order review page for Payflow Link"/>
+            <description value="As a guest, apply coupon and gift card while placing an order through paypal payflow Link"/>
             <severity value="MAJOR"/>
             <testCaseId value="AC-4378"/>
         </annotations>
         <before>
+            <!--Create simple product-->
             <createData entity="simpleProductWithoutCategory" stepKey="createProduct">
                 <field key="price">100.00</field>
             </createData>
-            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
-            <actionGroup ref="AdminEnablePayPalPayFlowLinkActionGroup" stepKey="ConfigPayPalPayFlowLink">
-                <argument name="credentials" value="SamplePaypalPaymentsFlowLinkConfig"/>
-            </actionGroup>
-            <!-- Create cart price rule -->
-            <actionGroup ref="AdminCreateCartPriceRuleWithCouponCodeActionGroup" stepKey="createCartPriceRule">
-                <argument name="ruleName" value="CatPriceRule"/>
-                <argument name="couponCode" value="CatPriceRule.coupon_code"/>
-            </actionGroup>
-            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
-                <argument name="indices" value=""/>
-            </actionGroup>
-            <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanCache">
-                <argument name="tags" value="config full_page"/>
-            </actionGroup>
+            <!--Create cart price rule and coupon-->
+            <createData entity="ActiveSalesRuleForNotLoggedIn" stepKey="createCartPriceRule"/>
+            <createData entity="SimpleSalesRuleCoupon" stepKey="createCouponForCartPriceRule">
+                <requiredEntity createDataKey="createCartPriceRule"/>
+            </createData>
+            <!--Create a customer-->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+            <!--Login to admin site-->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
         </before>
         <after>
-            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
-            <actionGroup ref="DeleteCartPriceRuleByName" stepKey="deleteCartPriceRule">
-                <argument name="ruleName" value="{{CatPriceRule.name}}"/>
-            </actionGroup>
-            <actionGroup ref="AdminDisablePayPalPayFlowLinkActionGroup" stepKey="disablePayPalPayFlow"/>
+            <!--Delete created product-->
+            <deleteData createDataKey="createSimpleProduct1" stepKey="deleteSimpleProduct"/>
+            <!--Delete created cart price rule-->
+            <deleteData createDataKey="createCartPriceRule" stepKey="deleteCartPriceRule"/>
+            <!--Delete created customer-->
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <!--Logout from admin site-->
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
         </after>
-        <actionGroup ref="StorefrontAddSimpleProductWithQtyActionGroup" stepKey="addSimpleProductToCart" before="waitForGiftCardHeaderToBeClickable">
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+            <argument name="indices" value=""/>
+        </actionGroup>
+        <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanCache">
+            <argument name="tags" value="config full_page"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontAddSimpleProductWithQtyActionGroup" stepKey="addSimpleProductToCart">
             <argument name="product" value="$$createProduct$$"/>
             <argument name="quantity" value="1"/>
         </actionGroup>
@@ -52,8 +56,6 @@
         <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="openShoppingCartPage"/>
         <waitForElementVisible selector="{{CheckoutPaymentSection.checkoutWithPaypal}}" stepKey="waitForPayPalBtn"/>
         <click selector="{{CheckoutPaymentSection.checkoutWithPaypal}}" stepKey="clickPayPalBtn"/>
-        <!--Login to Paypal in-context-->
-        <actionGroup ref="StorefrontLoginToPayPalPaymentAccountTwoStepActionGroup" stepKey="LoginToPayPal"/>
         <waitForElementClickable selector="{{CheckoutPaymentSection.reviewOrder}}" stepKey="waitForReviewOrderButtonToBeClickable"/>
         <click selector="{{CheckoutPaymentSection.reviewOrder}}" stepKey="clickReviewOrderButton"/>
         <waitForPageLoad stepKey="waitForPageLoad"/>
@@ -66,5 +68,7 @@
         <click selector="{{StorefrontPayPalOrderReviewSection.applyDiscount}}" stepKey="clickApplyDiscount"/>
         <waitForPageLoad stepKey="waitForCouponToBeApplied"/>
         <waitForElement selector="{{StorefrontPayPalOrderReviewSection.grandTotal('$95.00')}}" stepKey="assertTotalAfterDiscountApplied"/>
+        <!--Place an order-->
+        <actionGroup ref="ClickPlaceOrderActionGroup" after="assertTotalAfterGiftCardApplied" stepKey="clickOnPlaceOrder"/>
     </test>
 </tests>

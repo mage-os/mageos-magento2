@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontApplyGiftsCardsAndCouponCodesInWidgetIsShownOnOrderReviewPageForPayflowLinkTest">
+        <annotations>
+            <features value="Payments"/>
+            <stories value="Payflow link"/>
+            <title value="Apply gift cards or promo codes widget is shown on Order review page for Payflow link"/>
+            <description value="As a guest, apply coupon and gift card while placing an order through paypal payflow link"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="AC-4378"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminEnablePayPalPayFlowLinkActionGroup" stepKey="ConfigPayPalPayFlowLink" after="createGiftCardAccount">
+                <argument name="credentials" value="SamplePaypalPaymentsFlowLinkConfig"/>
+            </actionGroup>
+        </before>
+        <after>
+            <actionGroup ref="AdminDisablePayPalPayFlowLinkActionGroup" stepKey="disablePayPalPayFlow" after="deleteGiftCardAccount"/>
+        </after>
+        <!--Login to Paypal in-context-->
+        <actionGroup ref="StorefrontLoginToPayPalPaymentAccountTwoStepActionGroup" stepKey="LoginToPayPal" after="clickPayPalBtn"/>
+    </test>
+</tests>
