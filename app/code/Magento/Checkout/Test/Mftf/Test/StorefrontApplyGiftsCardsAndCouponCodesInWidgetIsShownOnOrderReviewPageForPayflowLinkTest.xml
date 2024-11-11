@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  /**
-  * Copyright © Magento, Inc. All rights reserved.
-  * See COPYING.txt for license details.
+  * Copyright 2024 Adobe
+  * All Rights Reserved.
   */
 -->
 
@@ -22,21 +22,21 @@
             <createData entity="simpleProductWithoutCategory" stepKey="createProduct">
                 <field key="price">100.00</field>
             </createData>
-            <!--Create cart price rule and coupon-->
-            <createData entity="ActiveSalesRuleForNotLoggedIn" stepKey="createCartPriceRule"/>
-            <createData entity="SimpleSalesRuleCoupon" stepKey="createCouponForCartPriceRule">
-                <requiredEntity createDataKey="createCartPriceRule"/>
-            </createData>
             <!--Create a customer-->
             <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
             <!--Login to admin site-->
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!--Create cart price rule and coupon-->
+            <actionGroup ref="AdminCreateCartPriceRuleWithCouponCodeActionGroup" stepKey="createCartPriceRule">
+                <argument name="ruleName" value="CatPriceRule"/>
+                <argument name="couponCode" value="CatPriceRule.coupon_code"/>
+            </actionGroup>
         </before>
         <after>
             <!--Delete created product-->
-            <deleteData createDataKey="createSimpleProduct1" stepKey="deleteSimpleProduct"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteSimpleProduct"/>
             <!--Delete created cart price rule-->
-            <deleteData createDataKey="createCartPriceRule" stepKey="deleteCartPriceRule"/>
+            <actionGroup ref="AdminCartPriceRuleDeleteAllActionGroup" stepKey="deleteAllCartPriceRules"/>
             <!--Delete created customer-->
             <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
             <!--Logout from admin site-->
@@ -53,7 +53,5 @@
         <waitForElementClickable selector="{{CheckoutPaymentSection.reviewOrder}}" stepKey="waitForReviewOrderButtonToBeClickable"/>
         <click selector="{{CheckoutPaymentSection.reviewOrder}}" stepKey="clickReviewOrderButton"/>
         <waitForPageLoad stepKey="waitForPageLoad"/>
-        <!--Place an order-->
-        <actionGroup ref="ClickPlaceOrderActionGroup" after="assertTotalAfterGiftCardApplied" stepKey="clickOnPlaceOrder"/>
     </test>
 </tests>

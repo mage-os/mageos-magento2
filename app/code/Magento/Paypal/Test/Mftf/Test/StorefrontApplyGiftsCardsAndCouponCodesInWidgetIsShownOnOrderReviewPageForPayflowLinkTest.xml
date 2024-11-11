@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  /**
-  * Copyright © Magento, Inc. All rights reserved.
-  * See COPYING.txt for license details.
+  * Copyright 2024 Adobe
+  * All Rights Reserved.
   */
 -->
 
@@ -18,12 +18,12 @@
             <testCaseId value="AC-4378"/>
         </annotations>
         <before>
-            <actionGroup ref="AdminEnablePayPalPayFlowLinkActionGroup" stepKey="ConfigPayPalPayFlowLink" after="createGiftCardAccount">
+            <actionGroup ref="AdminEnablePayPalPayFlowLinkActionGroup" stepKey="ConfigPayPalPayFlowLink" after="createCartPriceRule">
                 <argument name="credentials" value="SamplePaypalPaymentsFlowLinkConfig"/>
             </actionGroup>
         </before>
         <after>
-            <actionGroup ref="AdminDisablePayPalPayFlowLinkActionGroup" stepKey="disablePayPalPayFlow" after="deleteGiftCardAccount"/>
+            <actionGroup ref="AdminDisablePayPalPayFlowLinkActionGroup" stepKey="disablePayPalPayFlow" after="deleteCustomer"/>
         </after>
         <!--Login to Paypal in-context-->
         <actionGroup ref="StorefrontLoginToPayPalPaymentAccountTwoStepActionGroup" stepKey="LoginToPayPal" after="clickPayPalBtn"/>
