@@ -11,9 +11,9 @@ use Magento\Catalog\Model\Product\Attribute\Backend\Url;
 use Magento\Eav\Setup\EavSetupFactory;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\Patch\DataPatchInterface;
-use Magento\Framework\Setup\Patch\PatchVersionInterface;
+use Magento\Framework\Setup\Patch\PatchRevertableInterface;
 
-class UpdateProductUrlKeyBackendModel implements DataPatchInterface, PatchVersionInterface
+class UpdateProductUrlKeyBackendModel implements DataPatchInterface, PatchRevertableInterface
 {
     /**
      * @var ModuleDataSetupInterface
@@ -42,9 +42,7 @@ class UpdateProductUrlKeyBackendModel implements DataPatchInterface, PatchVersio
      */
     public static function getDependencies()
     {
-        return [
-            UpdateProductUrlKey::class
-        ];
+        return [];
     }
 
     /**
@@ -75,8 +73,17 @@ class UpdateProductUrlKeyBackendModel implements DataPatchInterface, PatchVersio
     /**
      * @inheritDoc
      */
-    public static function getVersion()
+    public function revert()
     {
-        return '2.4.7';
+        $eavSetup = $this->eavSetupFactory->create(['setup' => $this->moduleDataSetup]);
+
+        $eavSetup->updateAttribute(
+            \Magento\Catalog\Model\Product::ENTITY,
+            'url_key',
+            [
+                'backend_model' => ''
+            ]
+        );
+        return $this;
     }
 }
