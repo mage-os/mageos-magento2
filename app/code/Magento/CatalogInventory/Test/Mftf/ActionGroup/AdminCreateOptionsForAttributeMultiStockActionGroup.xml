@@ -29,7 +29,7 @@
         <waitForElementClickable selector="{{AdminGridRow.checkboxByValue(sourceCode)}}" stepKey="waitToSelectSource" after="clickOnApplyFilters"/>
         <click selector="{{AdminGridRow.checkboxByValue(sourceCode)}}" stepKey="selectSource" after="clickOnApplyFilters"/>
         <waitForElementClickable selector="{{AdminConfigurableProductAssignSourcesSlideOut.done}}" stepKey="waitToClickOnDone" after="selectSource"/>
-        <click selector="{{AdminConfigurableProductAssignSourcesSlideOut.done}}" stepKey="done" after="clickOnDone"/>
+        <click selector="{{AdminConfigurableProductAssignSourcesSlideOut.done}}" stepKey="done" after="waitToClickOnDone"/>
         <fillField selector="{{AdminConfigurableProductAssignSourcesSlideOut.quantityPerSourceForMultiMode}}" userInput="{{sourceQty}}" stepKey="fillQuantity" after="done"/>
     </actionGroup>
 </actionGroups>
