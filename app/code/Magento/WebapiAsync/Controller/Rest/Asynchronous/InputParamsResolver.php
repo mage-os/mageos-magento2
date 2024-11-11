@@ -132,12 +132,12 @@ class InputParamsResolver
         $routeServiceMethod = $route->getServiceMethod();
         $this->inputArraySizeLimitValue->set($route->getInputArraySizeLimit());
 
+        $this->validateParameters($routeServiceClass, $routeServiceMethod, array_keys($route->getParameters()));
+
         foreach ($inputData as $key => $singleEntityParams) {
             if (!is_array($singleEntityParams)) {
                 continue;
             }
-
-            $this->validateParameters($routeServiceClass, $routeServiceMethod, array_keys($route->getParameters()));
 
             $webapiResolvedParams[$key] = $this->resolveBulkItemParams(
                 $singleEntityParams,
