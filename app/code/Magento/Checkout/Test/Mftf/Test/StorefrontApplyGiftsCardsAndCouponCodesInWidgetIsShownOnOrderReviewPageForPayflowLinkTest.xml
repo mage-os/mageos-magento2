@@ -42,12 +42,6 @@
             <!--Logout from admin site-->
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
         </after>
-        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
-            <argument name="indices" value=""/>
-        </actionGroup>
-        <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanCache">
-            <argument name="tags" value="config full_page"/>
-        </actionGroup>
         <actionGroup ref="StorefrontAddSimpleProductWithQtyActionGroup" stepKey="addSimpleProductToCart">
             <argument name="product" value="$$createProduct$$"/>
             <argument name="quantity" value="1"/>
@@ -59,15 +53,6 @@
         <waitForElementClickable selector="{{CheckoutPaymentSection.reviewOrder}}" stepKey="waitForReviewOrderButtonToBeClickable"/>
         <click selector="{{CheckoutPaymentSection.reviewOrder}}" stepKey="clickReviewOrderButton"/>
         <waitForPageLoad stepKey="waitForPageLoad"/>
-        <actionGroup ref="StorefrontSelectShippingMethodOnOrderReviewPageActionGroup" stepKey="selectShippingMethod"/>
-        <waitForElementClickable selector="{{StorefrontPayPalOrderReviewSection.applyDiscountCodeHeader}}" stepKey="waitForDiscountHeaderToBeClickable"/>
-        <click selector="{{StorefrontPayPalOrderReviewSection.applyDiscountCodeHeader}}" stepKey="clickDiscountHeader"/>
-        <waitForElementVisible selector="{{StorefrontPayPalOrderReviewSection.discountCodeField}}" stepKey="waitForDiscountCodeFieldToBeVisible"/>
-        <fillField selector="{{StorefrontPayPalOrderReviewSection.discountCodeField}}" userInput="{{CatPriceRule.coupon_code}}" stepKey="fillDiscountCodeField"/>
-        <waitForElementClickable selector="{{StorefrontPayPalOrderReviewSection.applyDiscount}}" stepKey="waitForApplyDiscountToBeClickable"/>
-        <click selector="{{StorefrontPayPalOrderReviewSection.applyDiscount}}" stepKey="clickApplyDiscount"/>
-        <waitForPageLoad stepKey="waitForCouponToBeApplied"/>
-        <waitForElement selector="{{StorefrontPayPalOrderReviewSection.grandTotal('$95.00')}}" stepKey="assertTotalAfterDiscountApplied"/>
         <!--Place an order-->
         <actionGroup ref="ClickPlaceOrderActionGroup" after="assertTotalAfterGiftCardApplied" stepKey="clickOnPlaceOrder"/>
     </test>

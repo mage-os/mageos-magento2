@@ -27,5 +27,14 @@
         </after>
         <!--Login to Paypal in-context-->
         <actionGroup ref="StorefrontLoginToPayPalPaymentAccountTwoStepActionGroup" stepKey="LoginToPayPal" after="clickPayPalBtn"/>
+        <actionGroup ref="StorefrontSelectShippingMethodOnOrderReviewPageActionGroup" stepKey="selectShippingMethod" after="waitForPageLoad"/>
+        <waitForElementClickable selector="{{StorefrontPayPalOrderReviewSection.applyDiscountCodeHeader}}" stepKey="waitForDiscountHeaderToBeClickable" after="selectShippingMethod"/>
+        <click selector="{{StorefrontPayPalOrderReviewSection.applyDiscountCodeHeader}}" stepKey="clickDiscountHeader" after="waitForDiscountHeaderToBeClickable"/>
+        <waitForElementVisible selector="{{StorefrontPayPalOrderReviewSection.discountCodeField}}" stepKey="waitForDiscountCodeFieldToBeVisible" after="clickDiscountHeader"/>
+        <fillField selector="{{StorefrontPayPalOrderReviewSection.discountCodeField}}" userInput="{{CatPriceRule.coupon_code}}" stepKey="fillDiscountCodeField" after="waitForDiscountCodeFieldToBeVisible"/>
+        <waitForElementClickable selector="{{StorefrontPayPalOrderReviewSection.applyDiscount}}" stepKey="waitForApplyDiscountToBeClickable" after="fillDiscountCodeField"/>
+        <click selector="{{StorefrontPayPalOrderReviewSection.applyDiscount}}" stepKey="clickApplyDiscount" after="waitForApplyDiscountToBeClickable"/>
+        <waitForPageLoad stepKey="waitForCouponToBeApplied" after="clickApplyDiscount"/>
+        <waitForElement selector="{{StorefrontPayPalOrderReviewSection.grandTotal('$95.00')}}" stepKey="assertTotalAfterDiscountApplied" after="waitForCouponToBeApplied"/>
     </test>
 </tests>
