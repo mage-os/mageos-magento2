@@ -626,6 +626,13 @@ define([
             },
             $.mage.__('Please enter a number greater than 0, without comma in this field.')
         ],
+        'validate-nonempty-number-greater-than-zero': [
+            function (value) {
+                return !isNaN(utils.parseNumber(value))
+                    && value > 0 && (/^\s*-?\d+([,.]\d+)*\s*%?\s*$/).test(value);
+            },
+            $.mage.__('Please enter a number greater than 0, without comma in this field.')
+        ],
         'validate-css-length': [
             function (value) {
                 if (value !== '') {
