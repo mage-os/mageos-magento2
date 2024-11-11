@@ -126,7 +126,6 @@
         <actionGroup ref="StorefrontNavigateCategoryPageActionGroup" stepKey="navigateToCategoryPage2">
             <argument name="category" value="$createCategory$"/>
         </actionGroup>
-        <waitForElementVisible selector="{{StorefrontCategoryMainSection.imageSource(ProductImage.fileName)}}" stepKey="seeImage1"/>
         <!--assert in NL-->
         <actionGroup ref="StorefrontSwitchStoreViewActionGroup" stepKey="switchToNLStoreView1">
             <argument name="storeView" value="customStoreNLNotUnique"/>
@@ -142,6 +141,11 @@
             <argument name="storeView" value="customStoreEN"/>
         </actionGroup>
         <waitForElementVisible selector="{{StorefrontCategoryMainSection.imageSource(ProductImage.fileName)}}" stepKey="seeImage4"/>
+        <!--assert in default-->
+        <actionGroup ref="StorefrontSwitchStoreViewActionGroup" stepKey="switchToDFStoreView1">
+            <argument name="storeView" value="_defaultStore"/>
+        </actionGroup>
+        <waitForElementVisible selector="{{StorefrontCategoryMainSection.imageSource(ProductImage.fileName)}}" stepKey="seeImage1"/>
         <!--edit images again for store views 2nd time-->
         <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="goToAdminCategoryPage3">
             <argument name="id" value="$createCategory.id$"/>
@@ -201,7 +205,6 @@
         <actionGroup ref="StorefrontNavigateCategoryPageActionGroup" stepKey="navigateToCategoryPage3">
             <argument name="category" value="$createCategory$"/>
         </actionGroup>
-        <waitForElementVisible selector="{{StorefrontCategoryMainSection.imageSource(AdobeThumbImage.fileName)}}" stepKey="seeImage5"/>
         <!--assert in NL-->
         <actionGroup ref="StorefrontSwitchStoreViewActionGroup" stepKey="switchToNLStoreView2">
             <argument name="storeView" value="customStoreNLNotUnique"/>
@@ -217,6 +220,11 @@
             <argument name="storeView" value="customStoreEN"/>
         </actionGroup>
         <waitForElementVisible selector="{{StorefrontCategoryMainSection.imageSource(MagentoImage.fileName)}}" stepKey="seeImage7"/>
+        <!--assert in default-->
+        <actionGroup ref="StorefrontSwitchStoreViewActionGroup" stepKey="switchToDFStoreView2">
+            <argument name="storeView" value="_defaultStore"/>
+        </actionGroup>
+        <waitForElementVisible selector="{{StorefrontCategoryMainSection.imageSource(AdobeThumbImage.fileName)}}" stepKey="seeImage5"/>
         <!--edit images again for store views for 3rd time-->
         <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="goToAdminCategoryPage5">
             <argument name="id" value="$createCategory.id$"/>
@@ -259,7 +267,6 @@
         <actionGroup ref="StorefrontNavigateCategoryPageActionGroup" stepKey="navigateToCategoryPage4">
             <argument name="category" value="$createCategory$"/>
         </actionGroup>
-        <dontSee selector="{{StorefrontCategoryMainSection.categoryImage}}" stepKey="dontSeeImage2"/>
         <!--assert in NL-->
         <actionGroup ref="StorefrontSwitchStoreViewActionGroup" stepKey="switchToNLStoreView3">
             <argument name="storeView" value="customStoreNLNotUnique"/>
@@ -275,6 +282,12 @@
             <argument name="storeView" value="customStoreEN"/>
         </actionGroup>
         <waitForElementVisible selector="{{StorefrontCategoryMainSection.imageSource(MagentoImage.fileName)}}" stepKey="seeImage9"/>
+        <!--assert in default-->
+        <actionGroup ref="StorefrontSwitchStoreViewActionGroup" stepKey="switchToDFStoreView3">
+            <argument name="storeView" value="_defaultStore"/>
+        </actionGroup>
+        <dontSee selector="{{StorefrontCategoryMainSection.categoryImage}}" stepKey="dontSeeImage2"/>
+
     </test>
 </tests>
 
