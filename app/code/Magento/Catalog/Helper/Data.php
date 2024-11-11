@@ -22,6 +22,7 @@ use Magento\Tax\Model\Config;
  *
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.CookieAndSessionMisuse)
  * @since 100.0.2
  */
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
@@ -412,6 +413,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * Checks configuration for URL scope
+     *
      * @return bool
      */
     public function isUrlScopeWebsite(): bool
