@@ -5,13 +5,13 @@
   * All Rights Reserved.
   */
 -->
+
 <actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
-    <actionGroup name="AdminNavigateToCurrencySetupPageActionGroup">
+    <actionGroup name="StorefrontLoginToPayPalStandardPaymentGuestCheckoutActionGroup" extends="StorefrontLoginToPayPalPaymentAccountTwoStepActionGroup">
         <annotations>
-            <description>Go to the currency setup admin configuration page.</description>
+            <description>remove click btn which is not coming when we login with paypal standard payment enabled</description>
         </annotations>
-        <amOnPage url="{{AdminCurrencySetupPage.url}}" stepKey="goToCurrencySetupPage"/>
-        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <remove keyForRemoval="clickNext"/>
     </actionGroup>
 </actionGroups>
