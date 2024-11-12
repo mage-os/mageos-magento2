@@ -18,8 +18,9 @@
         </arguments>
         <amOnPage url="{{AdminConfigPaymentMethodsPage.url}}" stepKey="navigateToPaymentConfigurationPage"/>
         <waitForPageLoad stepKey="waitForConfigPageLoad"/>
-        <waitForElementVisible selector="{{OtherPayPalPaymentsConfigSection.expandTab(countryCode)}}" stepKey="waitForOtherPayPalPaymentsSection"/>
-        <conditionalClick selector="{{OtherPayPalPaymentsConfigSection.expandTab(countryCode)}}" dependentSelector="{{OtherPayPalPaymentsConfigSection.expandedTab(countryCode)}}" visible="false" stepKey="expandOtherPaypalConfigButton"/>
+        <waitForElementClickable selector="{{OtherPayPalPaymentsConfigSection.expandTab(countryCode)}}" stepKey="waitForConfigureButtonToBeClicked"/>
+        <click selector ="{{OtherPayPalPaymentsConfigSection.expandTab(countryCode)}}" stepKey="expandOtherPaypalConfigButton"/>
+        <scrollTo selector="{{PayPalPaymentsProConfigSection.paymentsAdvanced(countryCode)}}" stepKey="scrollToConfigure"/>
         <waitForElementClickable selector="{{PayPalPaymentsProConfigSection.configureBtn(countryCode)}}" stepKey="waitForPayPalPaymentsProConfigureBtn"/>
         <click selector ="{{PayPalPaymentsProConfigSection.configureBtn(countryCode)}}" stepKey="clickPayPalPaymentsProConfigureBtn"/>
         <scrollTo selector="{{PayPalPaymentsProConfigSection.partner(countryCode)}}" stepKey="scrollToBottom"/>
