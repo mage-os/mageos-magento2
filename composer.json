@@ -73,7 +73,7 @@
         "magento/composer": "^1.10.0-beta1",
         "magento/composer-dependency-version-audit-plugin": "^0.1",
         "magento/magento-composer-installer": ">=0.4.0",
-        "magento/security-package": "dev-develop",
+        "magento/security-package": "dev-AC10982",
         "magento/zend-cache": "^1.16",
         "magento/zend-db": "^1.16",
         "magento/zend-pdf": "^1.16",
