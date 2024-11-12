@@ -10,7 +10,7 @@ use Magento\CatalogInventory\Api\StockStatusCriteriaInterface;
 use Magento\Framework\Data\AbstractCriteria;
 
 /**
- * Class StockStatusCriteria
+ * Class StockStatusCriteria Resource model
  */
 class StockStatusCriteria extends AbstractCriteria implements StockStatusCriteriaInterface
 {

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2021 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\CatalogInventory\Model\ResourceModel\Stock\Item;
@@ -10,7 +10,7 @@ use Magento\CatalogInventory\Api\StockItemCriteriaInterface;
 use Magento\Framework\Data\AbstractCriteria;
 
 /**
- * Class StockItemCriteria
+ * Class StockItemCriteria Resource model
  */
 class StockItemCriteria extends AbstractCriteria implements StockItemCriteriaInterface
 {

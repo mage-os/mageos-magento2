@@ -15,7 +15,7 @@ use Magento\CatalogInventory\Api\StockRegistryInterface;
 use Magento\CatalogInventory\Model\Spi\StockRegistryProviderInterface;
 
 /**
- * Class StockRegistry
+ * Class Catalog StockRegistry
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
@@ -68,6 +68,8 @@ class StockRegistry implements StockRegistryInterface
     }
 
     /**
+     * Get Stock data
+     *
      * @param int $scopeId
      * @return \Magento\CatalogInventory\Api\Data\StockInterface
      */
@@ -78,6 +80,8 @@ class StockRegistry implements StockRegistryInterface
     }
 
     /**
+     * Get Stock Item data
+     *
      * @param int $productId
      * @param int $scopeId
      * @return StockItemInterface
@@ -89,6 +93,8 @@ class StockRegistry implements StockRegistryInterface
     }
 
     /**
+     * Get Stock Item By SKU
+     *
      * @param string $productSku
      * @param int $scopeId
      * @return StockItemInterface
@@ -102,6 +108,8 @@ class StockRegistry implements StockRegistryInterface
     }
 
     /**
+     * Get Stock status
+     *
      * @param int $productId
      * @param int $scopeId
      * @return \Magento\CatalogInventory\Api\Data\StockStatusInterface
@@ -113,6 +121,8 @@ class StockRegistry implements StockRegistryInterface
     }
 
     /**
+     * Get Stock status by SKU
+     *
      * @param string $productSku
      * @param int $scopeId
      * @return \Magento\CatalogInventory\Api\Data\StockStatusInterface
@@ -127,6 +137,7 @@ class StockRegistry implements StockRegistryInterface
 
     /**
      * Retrieve Product stock status
+     *
      * @param int $productId
      * @param int $scopeId
      * @return int
@@ -139,6 +150,8 @@ class StockRegistry implements StockRegistryInterface
     }
 
     /**
+     * Get Product Stock status by SKU
+     *
      * @param string $productSku
      * @param null $scopeId
      * @return int
@@ -182,6 +195,8 @@ class StockRegistry implements StockRegistryInterface
     }
 
     /**
+     * Resolve the Product Id
+     *
      * @param string $productSku
      * @return int
      * @throws \Magento\Framework\Exception\NoSuchEntityException
