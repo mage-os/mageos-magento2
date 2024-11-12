@@ -1,14 +1,13 @@
 <?php
-
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2024 Adobe
+ * All Rights Reserved.
  */
-
 declare(strict_types=1);
 
 namespace Magento\GraphQl\Controller;
 
+use Exception;
 use Magento\Framework\App\Area;
 use Magento\Framework\App\AreaList;
 use Magento\Framework\App\FrontControllerInterface;
@@ -24,6 +23,8 @@ use Magento\Framework\GraphQl\Query\QueryParser;
 use Magento\Framework\GraphQl\Query\QueryProcessor;
 use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\Framework\GraphQl\Schema\SchemaGeneratorInterface;
+use Magento\Framework\GraphQl\Exception\GraphQlAuthenticationException;
+use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Framework\Webapi\Response;
 use Magento\GraphQl\Helper\Query\Logger\LogData;
@@ -184,7 +185,7 @@ class GraphQl implements FrontControllerInterface
         $statusCode = 200;
         $jsonResult = $this->jsonFactory->create();
         $data = $this->getDataFromRequest($request);
-        $result = [];
+        $result = ['errors' => []];
 
         $schema = null;
         $query = $data['query'] ?? '';
@@ -205,8 +206,14 @@ class GraphQl implements FrontControllerInterface
                 $this->contextFactory->create(),
                 $data['variables'] ?? []
             );
-        } catch (\Exception $error) {
-            $result['errors'] = isset($result['errors']) ? $result['errors'] : [];
+            $statusCode = $this->getHttpResponseCode($result);
+        } catch (GraphQlAuthenticationException $error) {
+            $result['errors'][] = $this->graphQlError->create($error);
+            $statusCode = 401;
+        } catch (GraphQlAuthorizationException $error) {
+            $result['errors'][] = $this->graphQlError->create($error);
+            $statusCode = 403;
+        } catch (Exception $error) {
             $result['errors'][] = $this->graphQlError->create($error);
             $statusCode = ExceptionFormatter::HTTP_GRAPH_QL_SCHEMA_ERROR_STATUS;
         }
@@ -216,7 +223,7 @@ class GraphQl implements FrontControllerInterface
         $jsonResult->renderResult($this->httpResponse);
 
         // log information about the query, unless it is an introspection query
-        if (strpos($query, 'IntrospectionQuery') === false) {
+        if (!str_contains($query, 'IntrospectionQuery')) {
             $queryInformation = $this->logDataHelper->getLogData($request, $data, $schema, $this->httpResponse);
             $this->loggerPool->execute($queryInformation);
         }
@@ -246,5 +253,31 @@ class GraphQl implements FrontControllerInterface
         }
 
         return $data;
+    }
+
+    /**
+     * Retrieve http response code based on the error categories
+     *
+     * @param array $result
+     * @return int
+     */
+    private function getHttpResponseCode(array $result): int
+    {
+        if (empty($result['errors'])) {
+            return 200;
+        }
+        foreach ($result['errors'] as $error) {
+            if (!isset($error['extensions']['category'])) {
+                continue;
+            }
+            switch ($error['extensions']['category']) {
+                case GraphQlAuthenticationException::EXCEPTION_CATEGORY:
+                    return 401;
+                case GraphQlAuthorizationException::EXCEPTION_CATEGORY:
+                    return 403;
+            }
+        }
+
+        return 200;
     }
 }

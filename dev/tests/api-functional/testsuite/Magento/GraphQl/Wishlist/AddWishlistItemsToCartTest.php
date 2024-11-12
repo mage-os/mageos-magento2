@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2024 Adobe
+ * All Rights Reserved.
  */
 declare (strict_types = 1);
 
@@ -115,7 +115,10 @@ class AddWishlistItemsToCartTest extends GraphQlAbstract
     public function testAddItemsToCartForInvalidUser(): void
     {
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage("The account sign-in was incorrect or your account is disabled temporarily. Please wait and try again later.");
+        $this->expectExceptionMessage(
+            'The account sign-in was incorrect or your account is disabled temporarily. '
+            . 'Please wait and try again later.'
+        );
 
         $wishlist = $this->getWishlist();
         $customerWishlist = $wishlist['customer']['wishlists'][0];
@@ -145,7 +148,7 @@ class AddWishlistItemsToCartTest extends GraphQlAbstract
 
         $query = $this->getQuery($wishlistId, $itemId);
 
-        $this->graphQlMutation($query, [], '', ['Authorization' => 'Bearer test_token']);
+        $this->graphQlMutation($query);
     }
 
     /**
@@ -206,12 +209,14 @@ class AddWishlistItemsToCartTest extends GraphQlAbstract
         $query = $this->getQuery($customerWishlist['id'], $itemId);
         $this->graphQlMutation($query, [], '', $this->getHeaderMap());
     }
-     /** Add all items from customer's wishlist to cart
-     *
-     * @magentoApiDataFixture Magento/GraphQl/Catalog/_files/simple_product.php
-     * @magentoConfigFixture wishlist/general/active 1
-     * @magentoApiDataFixture Magento/Wishlist/_files/wishlist_with_simple_product.php
-     */
+
+     /**
+      * Add all items from customer's wishlist to cart
+      *
+      * @magentoApiDataFixture Magento/GraphQl/Catalog/_files/simple_product.php
+      * @magentoConfigFixture wishlist/general/active 1
+      * @magentoApiDataFixture Magento/Wishlist/_files/wishlist_with_simple_product.php
+      */
     public function testAddAllWishlistItemsToCart(): void
     {
         $wishlist = $this->getWishlist();
@@ -437,6 +442,4 @@ MUTATION;
 }
 QUERY;
     }
-
-
 }

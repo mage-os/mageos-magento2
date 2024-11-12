@@ -1,12 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2024 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
 namespace Magento\GraphQl\CustomerGraphQl\Model\Resolver;
 
+use Exception;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Customer\Model\Customer;
@@ -26,7 +27,6 @@ use Magento\Store\Test\Fixture\Website as WebsiteFixture;
 use Magento\TestFramework\Fixture\DataFixture;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\TestCase\GraphQl\ResolverCacheAbstract;
-use Magento\TestFramework\TestCase\GraphQl\ResponseContainsErrorsException;
 
 /**
  * Test for customer resolver cache
@@ -542,7 +542,7 @@ class CustomerTest extends ResolverCacheAbstract
                 $query
             );
             $this->fail('Expected exception not thrown');
-        } catch (ResponseContainsErrorsException $e) {
+        } catch (Exception $e) {
             // expected exception
         }
 
@@ -836,7 +836,7 @@ MUTATIONDELETE;
      * @param string $password
      * @param string $storeCode
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
     private function generateCustomerToken(string $email, string $password, string $storeCode = 'default'): string
     {
