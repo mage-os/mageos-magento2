@@ -20,7 +20,7 @@
         <click selector="{{AdminConfigurableProductAssignSourcesSlideOut.assignSources}}" stepKey="clickOnAssignSources" after="waitToClickAssignSource"/>
         <conditionalClick selector="{{AdminGridFilterControls.clearSources}}" dependentSelector="{{AdminGridFilterControls.clearSources}}" visible="true" stepKey="clickClearFilters" after="clickOnAssignSources"/>
         <waitForPageLoad stepKey="waitForPageLoad" after="clickClearFilters"/>
-        <waitForElementClickable selector="{{AdminGridFilterControls.filters}}" stepKey="waitToClickFilter" after="waitForFilters"/>
+        <waitForElementClickable selector="{{AdminGridFilterControls.filters}}" stepKey="waitToClickFilter" after="waitForPageLoad"/>
         <click selector="{{AdminGridFilterControls.filters}}" stepKey="clickOnFilters" after="waitToClickFilter"/>
         <waitForElementVisible selector="{{AdminManageSourcesGridFilterControls.code}}" stepKey="waitToClickSourceCode" after="clickOnFilters"/>
         <fillField userInput="{{sourceCode}}" selector="{{AdminManageSourcesGridFilterControls.code}}" stepKey="fillSourceCodeField" after="waitToClickSourceCode"/>
