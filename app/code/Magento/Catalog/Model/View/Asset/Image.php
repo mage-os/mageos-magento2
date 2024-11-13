@@ -11,14 +11,11 @@ use Magento\Catalog\Model\Config\CatalogMediaConfig;
 use Magento\Catalog\Model\Product\Image\ConvertImageMiscParamsToReadableFormat;
 use Magento\Catalog\Model\Product\Media\ConfigInterface;
 use Magento\Framework\App\ObjectManager;
-use Magento\Framework\Config\ConfigOptionsListConstants;
 use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Filesystem;
 use Magento\Framework\View\Asset\ContextInterface;
 use Magento\Framework\View\Asset\LocalInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use Magento\Framework\App\Filesystem\DirectoryList;
 
 /**
  * A locally available image file asset that can be referred with a file path
@@ -92,11 +89,6 @@ class Image implements LocalInterface
     private $convertImageMiscParamsToReadableFormat;
 
     /**
-     * @var Filesystem|null
-     */
-    private ?Filesystem $fileSystem;
-
-    /**
      * Image constructor.
      *
      * @param ConfigInterface $mediaConfig
@@ -108,7 +100,6 @@ class Image implements LocalInterface
      * @param CatalogMediaConfig $catalogMediaConfig
      * @param StoreManagerInterface $storeManager
      * @param ConvertImageMiscParamsToReadableFormat $convertImageMiscParamsToReadableFormat
-     * @param Filesystem|null $fileSystem
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
@@ -121,8 +112,7 @@ class Image implements LocalInterface
         ImageHelper $imageHelper = null,
         CatalogMediaConfig $catalogMediaConfig = null,
         StoreManagerInterface $storeManager = null,
-        ?ConvertImageMiscParamsToReadableFormat $convertImageMiscParamsToReadableFormat = null,
-        ?Filesystem $fileSystem = null
+        ?ConvertImageMiscParamsToReadableFormat $convertImageMiscParamsToReadableFormat = null
     ) {
         if (isset($miscParams['image_type'])) {
             $this->sourceContentType = $miscParams['image_type'];
@@ -142,7 +132,6 @@ class Image implements LocalInterface
         $this->mediaFormatUrl = $catalogMediaConfig->getMediaUrlFormat();
         $this->convertImageMiscParamsToReadableFormat = $convertImageMiscParamsToReadableFormat ?:
             ObjectManager::getInstance()->get(ConvertImageMiscParamsToReadableFormat::class);
-        $this->fileSystem = $fileSystem ?: ObjectManager::getInstance()->get(Filesystem::class);
     }
 
     /**
@@ -283,49 +272,21 @@ class Image implements LocalInterface
      */
     private function getImageInfo()
     {
-        $mediaDirectory = $this->fileSystem->getDirectoryRead(DirectoryList::MEDIA);
         $data = implode('_', $this->convertToReadableFormat($this->miscParams));
 
         $pathTemplate = $this->getModule()
             . DIRECTORY_SEPARATOR . "%s" . DIRECTORY_SEPARATOR
             . $this->getFilePath();
 
-        // New paths are generated without dependency on
-        // an encryption key.
-        $hashBasedPath = preg_replace(
+        /**
+         * New paths are generated without dependency on
+         * an encryption key.
+         */
+        return preg_replace(
             '|\Q' . DIRECTORY_SEPARATOR . '\E+|',
             DIRECTORY_SEPARATOR,
             sprintf($pathTemplate, hash(self::HASH_ALGORITHM, $data))
         );
-
-        if ($mediaDirectory->isExist($this->context->getPath() . DIRECTORY_SEPARATOR . $hashBasedPath)) {
-            return $hashBasedPath;
-        }
-
-        // This loop is intended to preserve backward compatibility and keep
-        // existing encryption key based media gallery cache valid
-        // even if an encryption key was changed.
-        $keys = explode("\n", $this->encryptor->exportKeys());
-        foreach ($keys as $key) {
-            if (str_starts_with($key, ConfigOptionsListConstants::STORE_KEY_ENCODED_RANDOM_STRING_PREFIX)) {
-                // phpcs:disable Magento2.Functions.DiscouragedFunction
-                $key = base64_decode(
-                    substr($key, strlen(ConfigOptionsListConstants::STORE_KEY_ENCODED_RANDOM_STRING_PREFIX))
-                );
-            }
-
-            $keyBasedPath = preg_replace(
-                '|\Q' . DIRECTORY_SEPARATOR . '\E+|',
-                DIRECTORY_SEPARATOR,
-                sprintf($pathTemplate, hash_hmac(self::HASH_ALGORITHM, $data, $key))
-            );
-
-            if ($mediaDirectory->isExist($this->context->getPath() . DIRECTORY_SEPARATOR . $keyBasedPath)) {
-                return $keyBasedPath;
-            }
-        }
-
-        return $hashBasedPath;
     }
 
     /**

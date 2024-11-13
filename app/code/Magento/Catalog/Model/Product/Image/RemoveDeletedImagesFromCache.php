@@ -22,6 +22,11 @@ use Magento\Framework\View\ConfigInterface;
 class RemoveDeletedImagesFromCache
 {
     /**
+     * Current hashing algorithm
+     */
+    private const HASH_ALGORITHM = 'md5';
+
+    /**
      * @var ConfigInterface
      */
     private ConfigInterface $presentationConfig;
@@ -103,10 +108,10 @@ class RemoveDeletedImagesFromCache
                 unset($imageMiscParams['image_type']);
             }
 
-            $cacheId = $this->encryptor->hash(
+            $cacheId = hash(
+                self::HASH_ALGORITHM,
                 implode('_', $this->convertImageMiscParamsToReadableFormat
-                    ->convertImageMiscParamsToReadableFormat($imageMiscParams)),
-                Encryptor::HASH_VERSION_MD5
+                ->convertImageMiscParamsToReadableFormat($imageMiscParams))
             );
 
             foreach ($files as $filePath) {
