@@ -69,7 +69,7 @@ class Directory implements \Magento\Setup\Module\Di\Code\Reader\ClassesScannerIn
         $this->validator = $validator;
         $this->generationDir = $generationDir;
 
-        set_error_handler([$this, 'errorHandler'], E_STRICT);
+        set_error_handler([$this, 'errorHandler'], E_NOTICE);
     }
 
     /**
