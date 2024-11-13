@@ -68,14 +68,9 @@ class Compare
      */
     public function compare(Item $target, Item $compared)
     {
-        if ($target->getSku() !== null && $target->getSku() === $compared->getSku()) {
-            return true;
-        }
-
         if ($target->getProductId() != $compared->getProductId()) {
             return false;
         }
-
         $targetOptionByCode = $target->getOptionsByCode();
         $comparedOptionsByCode = $compared->getOptionsByCode();
         if (!$target->compareOptions($targetOptionByCode, $comparedOptionsByCode)) {
