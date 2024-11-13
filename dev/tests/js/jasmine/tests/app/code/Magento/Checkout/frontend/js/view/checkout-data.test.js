@@ -33,7 +33,7 @@ define([
             };
 
         window.checkoutConfig = {
-            websiteCode: 'base'
+            storeCode: 'base'
         };
 
         beforeEach(function (done) {

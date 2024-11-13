@@ -88,12 +88,12 @@ define([
          */
         setShippingAddressFromData: function (data) {
             let obj = getData(),
-                websiteCode = window.checkoutConfig.websiteCode;
+                storeCode = window.checkoutConfig.storeCode;
 
             if (!obj.shippingAddressFromData) {
                 obj.shippingAddressFromData = {};
             }
-            obj.shippingAddressFromData[websiteCode] = utils.filterFormData(data);
+            obj.shippingAddressFromData[storeCode] = utils.filterFormData(data);
             saveData(obj);
         },
 
@@ -103,13 +103,13 @@ define([
          * @return {*}
          */
         getShippingAddressFromData: function () {
-            let websiteCode = window.checkoutConfig.websiteCode;
+            let storeCode = window.checkoutConfig.storeCode;
 
             if (!getData().shippingAddressFromData) {
                 return null;
             }
 
-            return getData().shippingAddressFromData[websiteCode];
+            return getData().shippingAddressFromData[storeCode];
         },
 
         /**
