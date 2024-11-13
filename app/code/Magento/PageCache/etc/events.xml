@@ -53,6 +53,7 @@
     </event>
     <event name="customer_login">
         <observer name="FlushFormKey" instance="Magento\PageCache\Observer\FlushFormKey"/>
+        <observer name="magento_all_pagecache" instance="Magento\PageCache\Observer\FlushAllCache" />
     </event>
     <event name="customer_logout">
         <observer name="FlushFormKey" instance="Magento\PageCache\Observer\FlushFormKey"/>
