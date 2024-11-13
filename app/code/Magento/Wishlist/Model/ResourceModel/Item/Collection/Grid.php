@@ -192,7 +192,7 @@ class Grid extends \Magento\Wishlist\Model\ResourceModel\Item\Collection
     /**
      * @inheritdoc
      */
-    public function getSize()
+   /* public function getSize()
     {
         $this->load();
         if ($this->_totalRecords === null) {
@@ -200,5 +200,5 @@ class Grid extends \Magento\Wishlist\Model\ResourceModel\Item\Collection
         }
 
         return (int)$this->_totalRecords;
-    }
+    }*/
 }
