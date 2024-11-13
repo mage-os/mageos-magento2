@@ -16,6 +16,8 @@
             <description value="As a guest, apply coupon and gift card while placing an order through paypal payflow link"/>
             <severity value="MAJOR"/>
             <testCaseId value="AC-4378"/>
+            <group value="3rd_party_integration"/>
+            <group value="pr_exclude"/>
         </annotations>
         <before>
             <actionGroup ref="AdminEnablePayPalPayFlowLinkActionGroup" stepKey="ConfigPayPalPayFlowLink" after="createCartPriceRule">
