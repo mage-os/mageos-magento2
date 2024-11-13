@@ -4,53 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4eceee4ec38b312e0dfd9c98244d2678",
+    "content-hash": "7204625d99f7f9df1a3c1c7c5645f21f",
     "packages": [
-        {
-            "name": "2tvenom/cborencode",
-            "version": "1.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/2tvenom/CBOREncode.git",
-                "reference": "42aedccb861d01fc0554782348cc08f8ebf22332"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/2tvenom/CBOREncode/zipball/42aedccb861d01fc0554782348cc08f8ebf22332",
-                "reference": "42aedccb861d01fc0554782348cc08f8ebf22332",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.4.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "CBOR": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "PHP"
-            ],
-            "authors": [
-                {
-                    "name": "Pavel <Ven> Gulbin",
-                    "email": "2tvenom@gmail.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "CBOR encoder for PHP",
-            "homepage": "https://github.com/2tvenom/CBOREncode",
-            "keywords": [
-                "cbor"
-            ],
-            "support": {
-                "issues": "https://github.com/2tvenom/CBOREncode/issues",
-                "source": "https://github.com/2tvenom/CBOREncode/tree/1.0.2"
-            },
-            "time": "2020-10-27T07:22:41+00:00"
-        },
         {
             "name": "aws/aws-crt-php",
             "version": "v1.2.6",
@@ -204,60 +159,6 @@
             "time": "2024-09-05T18:04:31+00:00"
         },
         {
-            "name": "bacon/bacon-qr-code",
-            "version": "2.0.8",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Bacon/BaconQrCode.git",
-                "reference": "8674e51bb65af933a5ffaf1c308a660387c35c22"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Bacon/BaconQrCode/zipball/8674e51bb65af933a5ffaf1c308a660387c35c22",
-                "reference": "8674e51bb65af933a5ffaf1c308a660387c35c22",
-                "shasum": ""
-            },
-            "require": {
-                "dasprid/enum": "^1.0.3",
-                "ext-iconv": "*",
-                "php": "^7.1 || ^8.0"
-            },
-            "require-dev": {
-                "phly/keep-a-changelog": "^2.1",
-                "phpunit/phpunit": "^7 | ^8 | ^9",
-                "spatie/phpunit-snapshot-assertions": "^4.2.9",
-                "squizlabs/php_codesniffer": "^3.4"
-            },
-            "suggest": {
-                "ext-imagick": "to generate QR code images"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "BaconQrCode\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-2-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Ben Scholzen 'DASPRiD'",
-                    "email": "mail@dasprids.de",
-                    "homepage": "https://dasprids.de/",
-                    "role": "Developer"
-                }
-            ],
-            "description": "BaconQrCode is a QR code generator for PHP.",
-            "homepage": "https://github.com/Bacon/BaconQrCode",
-            "support": {
-                "issues": "https://github.com/Bacon/BaconQrCode/issues",
-                "source": "https://github.com/Bacon/BaconQrCode/tree/2.0.8"
-            },
-            "time": "2022-12-07T17:46:57+00:00"
-        },
-        {
             "name": "brick/math",
             "version": "0.12.1",
             "source": {
@@ -365,65 +266,6 @@
                 }
             ],
             "time": "2024-05-10T17:15:19+00:00"
-        },
-        {
-            "name": "christian-riesen/base32",
-            "version": "1.6.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/ChristianRiesen/base32.git",
-                "reference": "2e82dab3baa008e24a505649b0d583c31d31e894"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/ChristianRiesen/base32/zipball/2e82dab3baa008e24a505649b0d583c31d31e894",
-                "reference": "2e82dab3baa008e24a505649b0d583c31d31e894",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.2 || ^8.0"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^2.17",
-                "phpstan/phpstan": "^0.12",
-                "phpunit/phpunit": "^8.5.13 || ^9.5"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Base32\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Christian Riesen",
-                    "email": "chris.riesen@gmail.com",
-                    "homepage": "http://christianriesen.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Base32 encoder/decoder according to RFC 4648",
-            "homepage": "https://github.com/ChristianRiesen/base32",
-            "keywords": [
-                "base32",
-                "decode",
-                "encode",
-                "rfc4648"
-            ],
-            "support": {
-                "issues": "https://github.com/ChristianRiesen/base32/issues",
-                "source": "https://github.com/ChristianRiesen/base32/tree/1.6.0"
-            },
-            "time": "2021-02-26T10:19:33+00:00"
         },
         {
             "name": "colinmollenhour/cache-backend-file",
@@ -1242,67 +1084,17 @@
             "time": "2024-05-06T16:37:16+00:00"
         },
         {
-            "name": "dasprid/enum",
-            "version": "1.0.6",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/DASPRiD/Enum.git",
-                "reference": "8dfd07c6d2cf31c8da90c53b83c026c7696dda90"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/DASPRiD/Enum/zipball/8dfd07c6d2cf31c8da90c53b83c026c7696dda90",
-                "reference": "8dfd07c6d2cf31c8da90c53b83c026c7696dda90",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.1 <9.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^7 || ^8 || ^9 || ^10 || ^11",
-                "squizlabs/php_codesniffer": "*"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "DASPRiD\\Enum\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-2-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Ben Scholzen 'DASPRiD'",
-                    "email": "mail@dasprids.de",
-                    "homepage": "https://dasprids.de/",
-                    "role": "Developer"
-                }
-            ],
-            "description": "PHP 7.1 enum implementation",
-            "keywords": [
-                "enum",
-                "map"
-            ],
-            "support": {
-                "issues": "https://github.com/DASPRiD/Enum/issues",
-                "source": "https://github.com/DASPRiD/Enum/tree/1.0.6"
-            },
-            "time": "2024-08-09T14:30:48+00:00"
-        },
-        {
             "name": "duosecurity/duo_api_php",
-            "version": "dev-master",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/duosecurity/duo_api_php.git",
-                "reference": "292c64e3891f586941c1de21773b2f93508f8fb2"
+                "reference": "1589f2782f428ebbd7f4fc91265e934b1b6daef9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/duosecurity/duo_api_php/zipball/292c64e3891f586941c1de21773b2f93508f8fb2",
-                "reference": "292c64e3891f586941c1de21773b2f93508f8fb2",
+                "url": "https://api.github.com/repos/duosecurity/duo_api_php/zipball/1589f2782f428ebbd7f4fc91265e934b1b6daef9",
+                "reference": "1589f2782f428ebbd7f4fc91265e934b1b6daef9",
                 "shasum": ""
             },
             "require": {
@@ -1314,13 +1106,7 @@
                 "phpunit/phpunit": "~9",
                 "squizlabs/php_codesniffer": "2.*"
             },
-            "default-branch": true,
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.1.x-dev"
-                }
-            },
             "autoload": {
                 "psr-4": {
                     "DuoAPI\\": "src/"
@@ -1331,10 +1117,9 @@
             "homepage": "https://duo.com/",
             "support": {
                 "email": "support@duosecurity.com",
-                "issues": "https://github.com/duosecurity/duo_api_php/issues",
-                "source": "https://github.com/duosecurity/duo_api_php/tree/master"
+                "source": "https://github.com/duosecurity/duo_api_php/tree/1.1.0"
             },
-            "time": "2024-02-02T15:59:18+00:00"
+            "time": "2023-06-09T17:55:59+00:00"
         },
         {
             "name": "duosecurity/duo_universal_php",
@@ -1442,81 +1227,6 @@
                 "source": "https://github.com/elastic/elasticsearch-php/tree/v7.17.2"
             },
             "time": "2023-04-21T15:31:12+00:00"
-        },
-        {
-            "name": "endroid/qr-code",
-            "version": "4.8.5",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/endroid/qr-code.git",
-                "reference": "0db25b506a8411a5e1644ebaa67123a6eb7b6a77"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/endroid/qr-code/zipball/0db25b506a8411a5e1644ebaa67123a6eb7b6a77",
-                "reference": "0db25b506a8411a5e1644ebaa67123a6eb7b6a77",
-                "shasum": ""
-            },
-            "require": {
-                "bacon/bacon-qr-code": "^2.0.5",
-                "php": "^8.1"
-            },
-            "conflict": {
-                "khanamiryan/qrcode-detector-decoder": "^1.0.6"
-            },
-            "require-dev": {
-                "endroid/quality": "dev-master",
-                "ext-gd": "*",
-                "khanamiryan/qrcode-detector-decoder": "^1.0.4||^2.0.2",
-                "setasign/fpdf": "^1.8.2"
-            },
-            "suggest": {
-                "ext-gd": "Enables you to write PNG images",
-                "khanamiryan/qrcode-detector-decoder": "Enables you to use the image validator",
-                "roave/security-advisories": "Makes sure package versions with known security issues are not installed",
-                "setasign/fpdf": "Enables you to use the PDF writer"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "4.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Endroid\\QrCode\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jeroen van den Enden",
-                    "email": "info@endroid.nl"
-                }
-            ],
-            "description": "Endroid QR Code",
-            "homepage": "https://github.com/endroid/qr-code",
-            "keywords": [
-                "code",
-                "endroid",
-                "php",
-                "qr",
-                "qrcode"
-            ],
-            "support": {
-                "issues": "https://github.com/endroid/qr-code/issues",
-                "source": "https://github.com/endroid/qr-code/tree/4.8.5"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/endroid",
-                    "type": "github"
-                }
-            ],
-            "time": "2023-09-29T14:03:20+00:00"
         },
         {
             "name": "ezimuel/guzzlestreams",
@@ -1751,58 +1461,6 @@
                 "source": "https://github.com/firebase/php-jwt/tree/v6.10.1"
             },
             "time": "2024-05-18T18:05:11+00:00"
-        },
-        {
-            "name": "google/recaptcha",
-            "version": "1.3.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/google/recaptcha.git",
-                "reference": "d59a801e98a4e9174814a6d71bbc268dff1202df"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/google/recaptcha/zipball/d59a801e98a4e9174814a6d71bbc268dff1202df",
-                "reference": "d59a801e98a4e9174814a6d71bbc268dff1202df",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.14",
-                "php-coveralls/php-coveralls": "^2.5",
-                "phpunit/phpunit": "^10"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.3.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "ReCaptcha\\": "src/ReCaptcha"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "Client library for reCAPTCHA, a free service that protects websites from spam and abuse.",
-            "homepage": "https://www.google.com/recaptcha/",
-            "keywords": [
-                "Abuse",
-                "captcha",
-                "recaptcha",
-                "spam"
-            ],
-            "support": {
-                "forum": "https://groups.google.com/forum/#!forum/recaptcha",
-                "issues": "https://github.com/google/recaptcha/issues",
-                "source": "https://github.com/google/recaptcha"
-            },
-            "time": "2023-02-18T17:41:46+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -4971,923 +4629,6 @@
             "time": "2022-12-01T15:21:32+00:00"
         },
         {
-            "name": "magento/module-re-captcha-admin-ui",
-            "version": "dev-AC10982",
-            "dist": {
-                "type": "path",
-                "url": "./ext/magento/security-package/ReCaptchaAdminUi",
-                "reference": "b0a17f31c6628dcac39e36cb4a3f44022251266f"
-            },
-            "require": {
-                "magento/framework": "*",
-                "magento/module-config": "*",
-                "magento/module-re-captcha-ui": "*",
-                "magento/module-store": "*",
-                "php": "~8.1.0||~8.2.0||~8.3.0"
-            },
-            "type": "magento2-module",
-            "autoload": {
-                "files": [
-                    "registration.php"
-                ],
-                "psr-4": {
-                    "Magento\\ReCaptchaAdminUi\\": ""
-                }
-            },
-            "license": [
-                "OSL-3.0"
-            ],
-            "description": "Google reCAPTCHA integration for Magento2",
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "magento/module-re-captcha-checkout",
-            "version": "dev-AC10982",
-            "dist": {
-                "type": "path",
-                "url": "./ext/magento/security-package/ReCaptchaCheckout",
-                "reference": "8e9231a6ebc8dd2c8562c0b2fbc494c2649df5a0"
-            },
-            "require": {
-                "magento/framework": "*",
-                "magento/module-checkout": "*",
-                "magento/module-re-captcha-admin-ui": "*",
-                "magento/module-re-captcha-frontend-ui": "*",
-                "magento/module-re-captcha-ui": "*",
-                "magento/module-re-captcha-validation-api": "*",
-                "magento/module-re-captcha-webapi-api": "*",
-                "magento/module-re-captcha-webapi-ui": "*",
-                "php": "~8.1.0||~8.2.0||~8.3.0"
-            },
-            "type": "magento2-module",
-            "autoload": {
-                "files": [
-                    "registration.php"
-                ],
-                "psr-4": {
-                    "Magento\\ReCaptchaCheckout\\": ""
-                }
-            },
-            "license": [
-                "OSL-3.0"
-            ],
-            "description": "Google reCAPTCHA integration for Magento2",
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "magento/module-re-captcha-checkout-sales-rule",
-            "version": "dev-AC10982",
-            "dist": {
-                "type": "path",
-                "url": "./ext/magento/security-package/ReCaptchaCheckoutSalesRule",
-                "reference": "58ce937e8e0ac64bc9f0050f5891551f22bf42a4"
-            },
-            "require": {
-                "magento/framework": "*",
-                "magento/module-checkout": "*",
-                "magento/module-re-captcha-admin-ui": "*",
-                "magento/module-re-captcha-frontend-ui": "*",
-                "magento/module-re-captcha-ui": "*",
-                "magento/module-re-captcha-validation-api": "*",
-                "magento/module-re-captcha-webapi-api": "*",
-                "magento/module-re-captcha-webapi-ui": "*",
-                "magento/module-sales-rule": "*",
-                "php": "~8.1.0||~8.2.0||~8.3.0"
-            },
-            "type": "magento2-module",
-            "autoload": {
-                "files": [
-                    "registration.php"
-                ],
-                "psr-4": {
-                    "Magento\\ReCaptchaCheckoutSalesRule\\": ""
-                }
-            },
-            "license": [
-                "OSL-3.0"
-            ],
-            "description": "Google ReCaptcha integration for Magento2 coupons",
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "magento/module-re-captcha-contact",
-            "version": "dev-AC10982",
-            "dist": {
-                "type": "path",
-                "url": "./ext/magento/security-package/ReCaptchaContact",
-                "reference": "016fd1e89e7dbc7369c5800b458ee3f6e90e6bc1"
-            },
-            "require": {
-                "magento/framework": "*",
-                "magento/module-re-captcha-ui": "*",
-                "php": "~8.1.0||~8.2.0||~8.3.0"
-            },
-            "type": "magento2-module",
-            "autoload": {
-                "files": [
-                    "registration.php"
-                ],
-                "psr-4": {
-                    "Magento\\ReCaptchaContact\\": ""
-                }
-            },
-            "license": [
-                "OSL-3.0"
-            ],
-            "description": "Google reCAPTCHA integration for Magento2",
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "magento/module-re-captcha-customer",
-            "version": "dev-AC10982",
-            "dist": {
-                "type": "path",
-                "url": "./ext/magento/security-package/ReCaptchaCustomer",
-                "reference": "bbdb257ca1b1a0075a34364d4b7641986e09c52e"
-            },
-            "require": {
-                "magento/framework": "*",
-                "magento/module-customer": "*",
-                "magento/module-re-captcha-ui": "*",
-                "magento/module-re-captcha-validation-api": "*",
-                "magento/module-re-captcha-webapi-api": "*",
-                "php": "~8.1.0||~8.2.0||~8.3.0"
-            },
-            "type": "magento2-module",
-            "autoload": {
-                "files": [
-                    "registration.php"
-                ],
-                "psr-4": {
-                    "Magento\\ReCaptchaCustomer\\": ""
-                }
-            },
-            "license": [
-                "OSL-3.0"
-            ],
-            "description": "Google reCAPTCHA integration for Magento2",
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "magento/module-re-captcha-frontend-ui",
-            "version": "dev-AC10982",
-            "dist": {
-                "type": "path",
-                "url": "./ext/magento/security-package/ReCaptchaFrontendUi",
-                "reference": "32569c2afed014a0df6fc170f907bb17afd48a01"
-            },
-            "require": {
-                "magento/framework": "*",
-                "magento/module-re-captcha-ui": "*",
-                "magento/module-store": "*",
-                "php": "~8.1.0||~8.2.0||~8.3.0"
-            },
-            "type": "magento2-module",
-            "autoload": {
-                "files": [
-                    "registration.php"
-                ],
-                "psr-4": {
-                    "Magento\\ReCaptchaFrontendUi\\": ""
-                }
-            },
-            "license": [
-                "OSL-3.0"
-            ],
-            "description": "Google reCAPTCHA integration for Magento2",
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "magento/module-re-captcha-migration",
-            "version": "dev-AC10982",
-            "dist": {
-                "type": "path",
-                "url": "./ext/magento/security-package/ReCaptchaMigration",
-                "reference": "f307616ecfbcbcd23641df6f6b38ac579f999d1e"
-            },
-            "require": {
-                "magento/framework": "*",
-                "magento/module-config": "*",
-                "php": "~8.1.0||~8.2.0||~8.3.0"
-            },
-            "type": "magento2-module",
-            "autoload": {
-                "files": [
-                    "registration.php"
-                ],
-                "psr-4": {
-                    "Magento\\ReCaptchaMigration\\": ""
-                }
-            },
-            "license": [
-                "OSL-3.0"
-            ],
-            "description": "Google reCAPTCHA config migration for Magento2",
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "magento/module-re-captcha-newsletter",
-            "version": "dev-AC10982",
-            "dist": {
-                "type": "path",
-                "url": "./ext/magento/security-package/ReCaptchaNewsletter",
-                "reference": "5868d1d626c171414ef9a837c8f0d6cb1fbe7cc0"
-            },
-            "require": {
-                "magento/framework": "*",
-                "magento/module-re-captcha-ui": "*",
-                "magento/module-re-captcha-validation-api": "*",
-                "magento/module-re-captcha-webapi-api": "*",
-                "php": "~8.1.0||~8.2.0||~8.3.0"
-            },
-            "type": "magento2-module",
-            "autoload": {
-                "files": [
-                    "registration.php"
-                ],
-                "psr-4": {
-                    "Magento\\ReCaptchaNewsletter\\": ""
-                }
-            },
-            "license": [
-                "OSL-3.0"
-            ],
-            "description": "Google reCAPTCHA integration for Magento2",
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "magento/module-re-captcha-paypal",
-            "version": "dev-AC10982",
-            "dist": {
-                "type": "path",
-                "url": "./ext/magento/security-package/ReCaptchaPaypal",
-                "reference": "0f5824c6b8fd504ef40b049780e391c64adc313d"
-            },
-            "require": {
-                "magento/framework": "*",
-                "magento/module-checkout": "*",
-                "magento/module-paypal": "*",
-                "magento/module-quote": "*",
-                "magento/module-re-captcha-checkout": "*",
-                "magento/module-re-captcha-ui": "*",
-                "magento/module-re-captcha-validation-api": "*",
-                "magento/module-re-captcha-webapi-api": "*",
-                "php": "~8.1.0||~8.2.0||~8.3.0"
-            },
-            "type": "magento2-module",
-            "autoload": {
-                "files": [
-                    "registration.php"
-                ],
-                "psr-4": {
-                    "Magento\\ReCaptchaPaypal\\": ""
-                }
-            },
-            "license": [
-                "OSL-3.0"
-            ],
-            "description": "Google reCaptcha integration for Magento2 PayPal PayflowPro payment form",
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "magento/module-re-captcha-resend-confirmation-email",
-            "version": "dev-AC10982",
-            "dist": {
-                "type": "path",
-                "url": "./ext/magento/security-package/ReCaptchaResendConfirmationEmail",
-                "reference": "20d82a7fefe77069230f7d4a9f90dca40f02949e"
-            },
-            "require": {
-                "magento/framework": "*",
-                "magento/module-customer-graph-ql": "*",
-                "magento/module-re-captcha-ui": "*",
-                "magento/module-re-captcha-validation-api": "*",
-                "magento/module-re-captcha-webapi-api": "*",
-                "php": "~8.1.0||~8.2.0||~8.3.0"
-            },
-            "type": "magento2-module",
-            "autoload": {
-                "files": [
-                    "registration.php"
-                ],
-                "psr-4": {
-                    "Magento\\ReCaptchaResendConfirmationEmail\\": ""
-                }
-            },
-            "license": [
-                "OSL-3.0"
-            ],
-            "description": "Google reCAPTCHA integration for Magento2",
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "magento/module-re-captcha-review",
-            "version": "dev-AC10982",
-            "dist": {
-                "type": "path",
-                "url": "./ext/magento/security-package/ReCaptchaReview",
-                "reference": "9daa858b3be866a320e9ce0c22ed124e7ea32d80"
-            },
-            "require": {
-                "magento/framework": "*",
-                "magento/module-re-captcha-ui": "*",
-                "magento/module-re-captcha-validation-api": "*",
-                "magento/module-re-captcha-webapi-api": "*",
-                "php": "~8.1.0||~8.2.0||~8.3.0"
-            },
-            "type": "magento2-module",
-            "autoload": {
-                "files": [
-                    "registration.php"
-                ],
-                "psr-4": {
-                    "Magento\\ReCaptchaReview\\": ""
-                }
-            },
-            "license": [
-                "OSL-3.0"
-            ],
-            "description": "Google reCAPTCHA integration for Magento2",
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "magento/module-re-captcha-send-friend",
-            "version": "dev-AC10982",
-            "dist": {
-                "type": "path",
-                "url": "./ext/magento/security-package/ReCaptchaSendFriend",
-                "reference": "867c8101804ed0cee0bb2aa4d58aa66a80d96d76"
-            },
-            "require": {
-                "magento/framework": "*",
-                "magento/module-re-captcha-ui": "*",
-                "magento/module-re-captcha-validation-api": "*",
-                "magento/module-re-captcha-webapi-api": "*",
-                "php": "~8.1.0||~8.2.0||~8.3.0"
-            },
-            "type": "magento2-module",
-            "autoload": {
-                "files": [
-                    "registration.php"
-                ],
-                "psr-4": {
-                    "Magento\\ReCaptchaSendFriend\\": ""
-                }
-            },
-            "license": [
-                "OSL-3.0"
-            ],
-            "description": "Google reCAPTCHA integration for Magento2",
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "magento/module-re-captcha-store-pickup",
-            "version": "dev-AC10982",
-            "dist": {
-                "type": "path",
-                "url": "./ext/magento/security-package/ReCaptchaStorePickup",
-                "reference": "331da9a805876e85e54ba2f9b4a8117635fd74b5"
-            },
-            "require": {
-                "magento/framework": "*",
-                "magento/module-checkout": "*",
-                "magento/module-re-captcha-ui": "*",
-                "php": "~8.1.0||~8.2.0||~8.3.0"
-            },
-            "suggest": {
-                "magento/module-inventory-in-store-pickup-frontend": "*"
-            },
-            "type": "magento2-module",
-            "autoload": {
-                "files": [
-                    "registration.php"
-                ],
-                "psr-4": {
-                    "Magento\\ReCaptchaStorePickup\\": ""
-                }
-            },
-            "license": [
-                "OSL-3.0"
-            ],
-            "description": "Google reCaptcha integration for Magento2 Inventory Store Pickup shipping form",
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "magento/module-re-captcha-ui",
-            "version": "dev-AC10982",
-            "dist": {
-                "type": "path",
-                "url": "./ext/magento/security-package/ReCaptchaUi",
-                "reference": "dbad13c0e719a8e26330b01c1ff18966c7385830"
-            },
-            "require": {
-                "magento/framework": "*",
-                "magento/module-re-captcha-validation-api": "*",
-                "php": "~8.1.0||~8.2.0||~8.3.0"
-            },
-            "type": "magento2-module",
-            "autoload": {
-                "files": [
-                    "registration.php"
-                ],
-                "psr-4": {
-                    "Magento\\ReCaptchaUi\\": ""
-                }
-            },
-            "license": [
-                "OSL-3.0"
-            ],
-            "authors": [
-                {
-                    "name": "Riccardo Tempesta",
-                    "email": "riccardo.tempesta@magespecialist.it"
-                }
-            ],
-            "description": "Google reCAPTCHA integration for Magento2",
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "magento/module-re-captcha-user",
-            "version": "dev-AC10982",
-            "dist": {
-                "type": "path",
-                "url": "./ext/magento/security-package/ReCaptchaUser",
-                "reference": "a0dd00a72955319e4f4dcbada5b1b1fa5f60e4ec"
-            },
-            "require": {
-                "magento/framework": "*",
-                "magento/module-re-captcha-ui": "*",
-                "magento/module-re-captcha-validation-api": "*",
-                "php": "~8.1.0||~8.2.0||~8.3.0"
-            },
-            "type": "magento2-module",
-            "autoload": {
-                "files": [
-                    "registration.php"
-                ],
-                "psr-4": {
-                    "Magento\\ReCaptchaUser\\": ""
-                }
-            },
-            "license": [
-                "OSL-3.0"
-            ],
-            "description": "Google reCAPTCHA integration for Magento2",
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "magento/module-re-captcha-validation",
-            "version": "dev-AC10982",
-            "dist": {
-                "type": "path",
-                "url": "./ext/magento/security-package/ReCaptchaValidation",
-                "reference": "855abd0e07f0104b359894a77f49784b9c503068"
-            },
-            "require": {
-                "google/recaptcha": "^1.2",
-                "magento/framework": "*",
-                "magento/module-re-captcha-validation-api": "*",
-                "php": "~8.1.0||~8.2.0||~8.3.0"
-            },
-            "type": "magento2-module",
-            "autoload": {
-                "files": [
-                    "registration.php"
-                ],
-                "psr-4": {
-                    "Magento\\ReCaptchaValidation\\": ""
-                }
-            },
-            "license": [
-                "OSL-3.0"
-            ],
-            "description": "Google reCAPTCHA integration for Magento2",
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "magento/module-re-captcha-validation-api",
-            "version": "dev-AC10982",
-            "dist": {
-                "type": "path",
-                "url": "./ext/magento/security-package/ReCaptchaValidationApi",
-                "reference": "98ebc294154da9089cd2fabe9a609ef9fa487b5e"
-            },
-            "require": {
-                "magento/framework": "*",
-                "php": "~8.1.0||~8.2.0||~8.3.0"
-            },
-            "type": "magento2-module",
-            "autoload": {
-                "files": [
-                    "registration.php"
-                ],
-                "psr-4": {
-                    "Magento\\ReCaptchaValidationApi\\": ""
-                }
-            },
-            "license": [
-                "OSL-3.0"
-            ],
-            "description": "Google reCAPTCHA integration for Magento2",
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "magento/module-re-captcha-version-2-checkbox",
-            "version": "dev-AC10982",
-            "dist": {
-                "type": "path",
-                "url": "./ext/magento/security-package/ReCaptchaVersion2Checkbox",
-                "reference": "509eb61bd9e23e7b3d3c589342a1037eb24256c2"
-            },
-            "require": {
-                "magento/framework": "*",
-                "magento/module-re-captcha-ui": "*",
-                "magento/module-re-captcha-validation-api": "*",
-                "magento/module-re-captcha-webapi-graph-ql": "*",
-                "magento/module-store": "*",
-                "php": "~8.1.0||~8.2.0||~8.3.0"
-            },
-            "suggest": {
-                "magento/module-config": "*",
-                "magento/module-re-captcha-admin-ui": "*"
-            },
-            "type": "magento2-module",
-            "autoload": {
-                "files": [
-                    "registration.php"
-                ],
-                "psr-4": {
-                    "Magento\\ReCaptchaVersion2Checkbox\\": ""
-                }
-            },
-            "license": [
-                "OSL-3.0"
-            ],
-            "description": "Google reCAPTCHA integration for Magento2",
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "magento/module-re-captcha-version-2-invisible",
-            "version": "dev-AC10982",
-            "dist": {
-                "type": "path",
-                "url": "./ext/magento/security-package/ReCaptchaVersion2Invisible",
-                "reference": "4d71ba25666842728dcc1d27fe406de0c919b392"
-            },
-            "require": {
-                "magento/framework": "*",
-                "magento/module-re-captcha-ui": "*",
-                "magento/module-re-captcha-validation-api": "*",
-                "magento/module-re-captcha-webapi-graph-ql": "*",
-                "magento/module-store": "*",
-                "php": "~8.1.0||~8.2.0||~8.3.0"
-            },
-            "suggest": {
-                "magento/module-config": "*",
-                "magento/module-re-captcha-admin-ui": "*"
-            },
-            "type": "magento2-module",
-            "autoload": {
-                "files": [
-                    "registration.php"
-                ],
-                "psr-4": {
-                    "Magento\\ReCaptchaVersion2Invisible\\": ""
-                }
-            },
-            "license": [
-                "OSL-3.0"
-            ],
-            "description": "Google reCAPTCHA integration for Magento2",
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "magento/module-re-captcha-version-3-invisible",
-            "version": "dev-AC10982",
-            "dist": {
-                "type": "path",
-                "url": "./ext/magento/security-package/ReCaptchaVersion3Invisible",
-                "reference": "a42268852632c2ea4d0060074209da9575df641b"
-            },
-            "require": {
-                "magento/framework": "*",
-                "magento/module-re-captcha-ui": "*",
-                "magento/module-re-captcha-validation-api": "*",
-                "magento/module-re-captcha-webapi-graph-ql": "*",
-                "magento/module-store": "*",
-                "php": "~8.1.0||~8.2.0||~8.3.0"
-            },
-            "suggest": {
-                "magento/module-config": "*",
-                "magento/module-re-captcha-admin-ui": "*"
-            },
-            "type": "magento2-module",
-            "autoload": {
-                "files": [
-                    "registration.php"
-                ],
-                "psr-4": {
-                    "Magento\\ReCaptchaVersion3Invisible\\": ""
-                }
-            },
-            "license": [
-                "OSL-3.0"
-            ],
-            "description": "Google reCAPTCHA integration for Magento2",
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "magento/module-re-captcha-webapi-api",
-            "version": "dev-AC10982",
-            "dist": {
-                "type": "path",
-                "url": "./ext/magento/security-package/ReCaptchaWebapiApi",
-                "reference": "fb39b9b647e1e0b3b85767ddca7e40eab54efd3a"
-            },
-            "require": {
-                "magento/framework": "*",
-                "magento/module-re-captcha-validation-api": "*",
-                "php": "~8.1.0||~8.2.0||~8.3.0"
-            },
-            "type": "magento2-module",
-            "autoload": {
-                "files": [
-                    "registration.php"
-                ],
-                "psr-4": {
-                    "Magento\\ReCaptchaWebapiApi\\": ""
-                }
-            },
-            "license": [
-                "OSL-3.0"
-            ],
-            "description": "Google reCAPTCHA integration for Magento2",
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "magento/module-re-captcha-webapi-graph-ql",
-            "version": "dev-AC10982",
-            "dist": {
-                "type": "path",
-                "url": "./ext/magento/security-package/ReCaptchaWebapiGraphQl",
-                "reference": "bd3a4f238b4fa1d67f481140e87a022721f21874"
-            },
-            "require": {
-                "magento/framework": "*",
-                "magento/module-authorization": "*",
-                "magento/module-re-captcha-frontend-ui": "*",
-                "magento/module-re-captcha-validation-api": "*",
-                "magento/module-re-captcha-version-3-invisible": "*",
-                "magento/module-re-captcha-webapi-api": "*",
-                "php": "~8.1.0||~8.2.0||~8.3.0"
-            },
-            "type": "magento2-module",
-            "autoload": {
-                "files": [
-                    "registration.php"
-                ],
-                "psr-4": {
-                    "Magento\\ReCaptchaWebapiGraphQl\\": ""
-                }
-            },
-            "license": [
-                "OSL-3.0"
-            ],
-            "description": "Google reCAPTCHA integration for Magento2",
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "magento/module-re-captcha-webapi-rest",
-            "version": "dev-AC10982",
-            "dist": {
-                "type": "path",
-                "url": "./ext/magento/security-package/ReCaptchaWebapiRest",
-                "reference": "14cf4a68667e1465ce0598e84bf17989ea9c1403"
-            },
-            "require": {
-                "magento/framework": "*",
-                "magento/module-authorization": "*",
-                "magento/module-re-captcha-validation-api": "*",
-                "magento/module-re-captcha-webapi-api": "*",
-                "magento/module-webapi": "*",
-                "php": "~8.1.0||~8.2.0||~8.3.0"
-            },
-            "type": "magento2-module",
-            "autoload": {
-                "files": [
-                    "registration.php"
-                ],
-                "psr-4": {
-                    "Magento\\ReCaptchaWebapiRest\\": ""
-                }
-            },
-            "license": [
-                "OSL-3.0"
-            ],
-            "description": "Google reCAPTCHA integration for Magento2",
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "magento/module-re-captcha-webapi-ui",
-            "version": "dev-AC10982",
-            "dist": {
-                "type": "path",
-                "url": "./ext/magento/security-package/ReCaptchaWebapiUi",
-                "reference": "4ccb1d7a82d8ec03a2ce9151bae4cd2445e08e71"
-            },
-            "require": {
-                "magento/framework": "*",
-                "magento/module-re-captcha-frontend-ui": "*",
-                "php": "~8.1.0||~8.2.0||~8.3.0"
-            },
-            "type": "magento2-module",
-            "autoload": {
-                "files": [
-                    "registration.php"
-                ],
-                "psr-4": {
-                    "Magento\\ReCaptchaWebapiUi\\": ""
-                }
-            },
-            "license": [
-                "OSL-3.0"
-            ],
-            "description": "Google reCAPTCHA integration for Magento2",
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "magento/module-securitytxt",
-            "version": "dev-AC10982",
-            "dist": {
-                "type": "path",
-                "url": "./ext/magento/security-package/Securitytxt",
-                "reference": "72c3ea3d912725b76ba656b32259d60d43acb1f7"
-            },
-            "require": {
-                "magento/framework": "*",
-                "magento/module-config": "*",
-                "magento/module-store": "*",
-                "php": "~8.1.0||~8.2.0||~8.3.0"
-            },
-            "type": "magento2-module",
-            "autoload": {
-                "files": [
-                    "registration.php"
-                ],
-                "psr-4": {
-                    "Magento\\Securitytxt\\": ""
-                }
-            },
-            "license": [
-                "OSL-3.0",
-                "AFL-3.0"
-            ],
-            "authors": [
-                {
-                    "name": "Kalpesh Mehta",
-                    "email": "k@lpe.sh"
-                }
-            ],
-            "description": "Security.txt file for Magento 2 websites",
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "magento/module-two-factor-auth",
-            "version": "dev-AC10982",
-            "dist": {
-                "type": "path",
-                "url": "./ext/magento/security-package/TwoFactorAuth",
-                "reference": "4821ec7cde4a83f3c38a6e5a1cfec7ccdf95e7e8"
-            },
-            "require": {
-                "2tvenom/cborencode": "^1.0",
-                "christian-riesen/base32": "^1.3",
-                "duosecurity/duo_api_php": "dev-master",
-                "duosecurity/duo_universal_php": "^1.0",
-                "endroid/qr-code": "^4.3.5",
-                "magento/framework": "*",
-                "magento/magento-composer-installer": "*",
-                "magento/module-authorization": "*",
-                "magento/module-backend": "*",
-                "magento/module-config": "*",
-                "magento/module-integration": "*",
-                "magento/module-store": "*",
-                "magento/module-ui": "*",
-                "magento/module-user": "*",
-                "php": "~8.1.0||~8.2.0||~8.3.0",
-                "spomky-labs/otphp": "^11.2"
-            },
-            "type": "magento2-module",
-            "autoload": {
-                "files": [
-                    "registration.php"
-                ],
-                "psr-4": {
-                    "Magento\\TwoFactorAuth\\": ""
-                }
-            },
-            "license": [
-                "OSL-3.0"
-            ],
-            "description": "Two Factor Authentication module for Magento2",
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "magento/security-package",
-            "version": "dev-AC10982",
-            "dist": {
-                "type": "path",
-                "url": "./ext/magento/security-package/_metapackage",
-                "reference": "8985d52776a2f5f6d1c6828045aae6fb3fd59a96"
-            },
-            "require": {
-                "google/recaptcha": "^1.2",
-                "magento/module-re-captcha-admin-ui": "*",
-                "magento/module-re-captcha-checkout": "*",
-                "magento/module-re-captcha-checkout-sales-rule": "*",
-                "magento/module-re-captcha-contact": "*",
-                "magento/module-re-captcha-customer": "*",
-                "magento/module-re-captcha-frontend-ui": "*",
-                "magento/module-re-captcha-migration": "*",
-                "magento/module-re-captcha-newsletter": "*",
-                "magento/module-re-captcha-paypal": "*",
-                "magento/module-re-captcha-resend-confirmation-email": "*",
-                "magento/module-re-captcha-review": "*",
-                "magento/module-re-captcha-send-friend": "*",
-                "magento/module-re-captcha-store-pickup": "*",
-                "magento/module-re-captcha-ui": "*",
-                "magento/module-re-captcha-user": "*",
-                "magento/module-re-captcha-validation": "*",
-                "magento/module-re-captcha-validation-api": "*",
-                "magento/module-re-captcha-version-2-checkbox": "*",
-                "magento/module-re-captcha-version-2-invisible": "*",
-                "magento/module-re-captcha-version-3-invisible": "*",
-                "magento/module-re-captcha-webapi-api": "*",
-                "magento/module-re-captcha-webapi-graph-ql": "*",
-                "magento/module-re-captcha-webapi-rest": "*",
-                "magento/module-re-captcha-webapi-ui": "*",
-                "magento/module-securitytxt": "*",
-                "magento/module-two-factor-auth": "*"
-            },
-            "type": "metapackage",
-            "description": "Magento Security Package",
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
             "name": "magento/zend-cache",
             "version": "1.16.0",
             "source": {
@@ -8105,88 +6846,6 @@
                 }
             ],
             "time": "2021-12-08T20:36:59+00:00"
-        },
-        {
-            "name": "spomky-labs/otphp",
-            "version": "11.3.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Spomky-Labs/otphp.git",
-                "reference": "2d8ccb5fc992b9cc65ef321fa4f00fefdb3f4b33"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Spomky-Labs/otphp/zipball/2d8ccb5fc992b9cc65ef321fa4f00fefdb3f4b33",
-                "reference": "2d8ccb5fc992b9cc65ef321fa4f00fefdb3f4b33",
-                "shasum": ""
-            },
-            "require": {
-                "ext-mbstring": "*",
-                "paragonie/constant_time_encoding": "^2.0 || ^3.0",
-                "php": ">=8.1",
-                "psr/clock": "^1.0",
-                "symfony/deprecation-contracts": "^3.2"
-            },
-            "require-dev": {
-                "ekino/phpstan-banned-code": "^1.0",
-                "infection/infection": "^0.26|^0.27|^0.28|^0.29",
-                "php-parallel-lint/php-parallel-lint": "^1.3",
-                "phpstan/phpstan": "^1.0",
-                "phpstan/phpstan-deprecation-rules": "^1.0",
-                "phpstan/phpstan-phpunit": "^1.0",
-                "phpstan/phpstan-strict-rules": "^1.0",
-                "phpunit/phpunit": "^9.5.26|^10.0|^11.0",
-                "qossmic/deptrac-shim": "^1.0",
-                "rector/rector": "^1.0",
-                "symfony/phpunit-bridge": "^6.1|^7.0",
-                "symplify/easy-coding-standard": "^12.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "OTPHP\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Florent Morselli",
-                    "homepage": "https://github.com/Spomky"
-                },
-                {
-                    "name": "All contributors",
-                    "homepage": "https://github.com/Spomky-Labs/otphp/contributors"
-                }
-            ],
-            "description": "A PHP library for generating one time passwords according to RFC 4226 (HOTP Algorithm) and the RFC 6238 (TOTP Algorithm) and compatible with Google Authenticator",
-            "homepage": "https://github.com/Spomky-Labs/otphp",
-            "keywords": [
-                "FreeOTP",
-                "RFC 4226",
-                "RFC 6238",
-                "google authenticator",
-                "hotp",
-                "otp",
-                "totp"
-            ],
-            "support": {
-                "issues": "https://github.com/Spomky-Labs/otphp/issues",
-                "source": "https://github.com/Spomky-Labs/otphp/tree/11.3.0"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/Spomky",
-                    "type": "github"
-                },
-                {
-                    "url": "https://www.patreon.com/FlorentMorselli",
-                    "type": "patreon"
-                }
-            ],
-            "time": "2024-06-12T11:22:32+00:00"
         },
         {
             "name": "spomky-labs/pki-framework",
@@ -15503,6 +14162,88 @@
             "time": "2023-02-07T11:34:05+00:00"
         },
         {
+            "name": "spomky-labs/otphp",
+            "version": "11.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Spomky-Labs/otphp.git",
+                "reference": "2d8ccb5fc992b9cc65ef321fa4f00fefdb3f4b33"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Spomky-Labs/otphp/zipball/2d8ccb5fc992b9cc65ef321fa4f00fefdb3f4b33",
+                "reference": "2d8ccb5fc992b9cc65ef321fa4f00fefdb3f4b33",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "paragonie/constant_time_encoding": "^2.0 || ^3.0",
+                "php": ">=8.1",
+                "psr/clock": "^1.0",
+                "symfony/deprecation-contracts": "^3.2"
+            },
+            "require-dev": {
+                "ekino/phpstan-banned-code": "^1.0",
+                "infection/infection": "^0.26|^0.27|^0.28|^0.29",
+                "php-parallel-lint/php-parallel-lint": "^1.3",
+                "phpstan/phpstan": "^1.0",
+                "phpstan/phpstan-deprecation-rules": "^1.0",
+                "phpstan/phpstan-phpunit": "^1.0",
+                "phpstan/phpstan-strict-rules": "^1.0",
+                "phpunit/phpunit": "^9.5.26|^10.0|^11.0",
+                "qossmic/deptrac-shim": "^1.0",
+                "rector/rector": "^1.0",
+                "symfony/phpunit-bridge": "^6.1|^7.0",
+                "symplify/easy-coding-standard": "^12.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "OTPHP\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Florent Morselli",
+                    "homepage": "https://github.com/Spomky"
+                },
+                {
+                    "name": "All contributors",
+                    "homepage": "https://github.com/Spomky-Labs/otphp/contributors"
+                }
+            ],
+            "description": "A PHP library for generating one time passwords according to RFC 4226 (HOTP Algorithm) and the RFC 6238 (TOTP Algorithm) and compatible with Google Authenticator",
+            "homepage": "https://github.com/Spomky-Labs/otphp",
+            "keywords": [
+                "FreeOTP",
+                "RFC 4226",
+                "RFC 6238",
+                "google authenticator",
+                "hotp",
+                "otp",
+                "totp"
+            ],
+            "support": {
+                "issues": "https://github.com/Spomky-Labs/otphp/issues",
+                "source": "https://github.com/Spomky-Labs/otphp/tree/11.3.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/Spomky",
+                    "type": "github"
+                },
+                {
+                    "url": "https://www.patreon.com/FlorentMorselli",
+                    "type": "patreon"
+                }
+            ],
+            "time": "2024-06-12T11:22:32+00:00"
+        },
+        {
             "name": "squizlabs/php_codesniffer",
             "version": "3.10.2",
             "source": {
@@ -15963,10 +14704,9 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "stability-flags": {
-        "duosecurity/duo_api_php": 20,
-        "magento/security-package": 20
+        "magento/composer": 10
     },
     "prefer-stable": true,
     "prefer-lowest": false,

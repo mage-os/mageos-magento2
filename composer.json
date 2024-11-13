@@ -40,7 +40,7 @@
         "colinmollenhour/credis": "^1.15",
         "colinmollenhour/php-redis-session-abstract": "^2.0",
         "composer/composer": "^2.0, !=2.2.16",
-        "duosecurity/duo_api_php": "dev-master",
+        "duosecurity/duo_api_php": "1.1",
         "duosecurity/duo_universal_php": "^1.0",
         "elasticsearch/elasticsearch": "~7.17.0 || ~8.5.0",
         "ezyang/htmlpurifier": "^4.17",
@@ -73,7 +73,6 @@
         "magento/composer": "^1.10.0-beta1",
         "magento/composer-dependency-version-audit-plugin": "^0.1",
         "magento/magento-composer-installer": ">=0.4.0",
-        "magento/security-package": "dev-AC10982",
         "magento/zend-cache": "^1.16",
         "magento/zend-db": "^1.16",
         "magento/zend-pdf": "^1.16",
@@ -403,12 +402,5 @@
             "Magento\\PhpStan\\": "dev/tests/static/framework/Magento/PhpStan/"
         }
     },
-    "prefer-stable": true,
-    "minimum-stability": "dev",
-    "repositories": {
-        "ext": {
-            "type": "path",
-            "url": "./ext/*/*/*"
-        }
-    }
+    "prefer-stable": true
 }
