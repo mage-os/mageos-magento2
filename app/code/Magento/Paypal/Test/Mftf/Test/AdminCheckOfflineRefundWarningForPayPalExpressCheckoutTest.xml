@@ -10,8 +10,8 @@
     <test name="AdminCheckOfflineRefundWarningForPayPalExpressCheckoutTest">
         <annotations>
             <features value="PayPal"/>
-            <stories value="Paypal express checkout configuration"/>
-            <title value="Paypal Express Checkout configuration with valid credentials"/>
+            <stories value="Checking offline refund warning while refunding with credit memo"/>
+            <title value="Admin verify refund warning message"/>
             <description value="Admin Checking offline refund warning for PayPal Express Checkout orders"/>
             <severity value="CRITICAL"/>
             <testCaseId value="AC-4375"/>
