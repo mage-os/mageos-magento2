@@ -10,7 +10,6 @@ namespace Magento\Catalog\Model\Product\Image;
 use Magento\Catalog\Helper\Image;
 use Magento\Catalog\Model\Product\Media\Config;
 use Magento\Framework\App\Filesystem\DirectoryList;
-use Magento\Framework\Encryption\Encryptor;
 use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\WriteInterface;

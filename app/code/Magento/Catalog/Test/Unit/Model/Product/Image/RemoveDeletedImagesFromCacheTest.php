@@ -171,10 +171,6 @@ class RemoveDeletedImagesFromCacheTest extends TestCase
             ->method('convertImageMiscParamsToReadableFormat')
             ->willReturn($data['convertImageParamsToReadableFormat']);
 
-        $this->encryptor->expects($this->once())
-            ->method('hash')
-            ->willReturn('85b0304775df23c13f08dd2c1f9c4c28');
-
         $this->mediaConfig->expects($this->once())
             ->method('getBaseMediaPath')
             ->willReturn('catalog/product');
