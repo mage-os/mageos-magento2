@@ -16,6 +16,7 @@
         <waitForElementVisible selector="{{CheckoutShippingSection.updateAddress}}" stepKey="waitForUpdateButton"/>
         <waitForElementClickable selector="{{CheckoutShippingSection.updateAddress}}" stepKey="waitForUpdateButtonClickable"/>
         <click selector="{{CheckoutShippingSection.updateAddress}}" stepKey="clickUpdateButton"/>
+        <waitForElementVisible selector="{{CheckoutShippingSection.editActiveAddressButton}}" stepKey="waitForEditButton"/>
         <waitForPageLoad stepKey="waitForAddressSaved"/>
     </actionGroup>
 </actionGroups>
