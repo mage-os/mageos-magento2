@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+   * Copyright 2024 Adobe
+  * All Rights Reserved.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminAssertDefaultValuesInPayflowPaylaterHomePageActionGroup">
+        <annotations>
+            <description>Check the default Dropdown Values Available in Home Page.</description>
+        </annotations>
+        <arguments>
+            <argument name="countryCode" type="string" defaultValue="us"/>
+        </arguments>
+        <waitForElementClickable selector="{{AdminEnablePaylaterSection.expandPayflowHomePage(countryCode)}}" stepKey="waitForCheckoutCartPageClickable"/>
+        <click selector="{{AdminEnablePaylaterSection.expandPayflowHomePage(countryCode)}}" stepKey="clickCheckoutCart"/>
+        <selectOption selector ="{{AdminEnablePaylaterSection.displayPayflow(countryCode)}}" userInput="Yes" stepKey="enableDisplayforPaylaterCartPage"/>
+        <selectOption selector="{{AdminEnablePaylaterSection.positionPayflow(countryCode)}}" userInput="Header (center)" stepKey="selectDefaultPosition"/>
+        <!--Verify Default Option was Selected correctly-->
+        <seeOptionIsSelected selector="{{AdminEnablePaylaterSection.positionPayflow(countryCode)}}" userInput="Header (center)" stepKey="seeSelectedPosition"/>
+        <seeOptionIsSelected selector="{{AdminEnablePaylaterSection.styleLayoutPayflow(countryCode)}}" userInput="Flex" stepKey="seeSelectedStyleLayout"/>
+        <seeOptionIsSelected selector="{{AdminEnablePaylaterSection.ratioPayflow(countryCode)}}" userInput="1x1" stepKey="seeSelectedRatio"/>
+        <seeOptionIsSelected selector="{{AdminEnablePaylaterSection.colorPayflow(countryCode)}}" userInput="Blue" stepKey="seeSelectedColor"/>
+    </actionGroup>
+</actionGroups>
