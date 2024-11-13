@@ -188,4 +188,17 @@ class Grid extends \Magento\Wishlist\Model\ResourceModel\Item\Collection
     {
         return parent::addFieldToFilter('main_table.' . $field, $condition);
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function getSize()
+    {
+        $this->load();
+        if ($this->_totalRecords === null) {
+            $this->_totalRecords = count($this->getItems());
+        }
+
+        return (int)$this->_totalRecords;
+    }
 }
