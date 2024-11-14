@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace integration\testsuite\Magento\Quote\Model\Quote\Item;
+namespace Magento\Quote\Model\Quote\Item;
 
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -16,7 +16,6 @@ use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\Data\ProductCustomOptionInterface;
 use Magento\Catalog\Model\Product\Option;
 use Magento\Quote\Model\Quote;
-use Magento\Quote\Model\Quote\Item\Compare;
 use Magento\TestFramework\Helper\Bootstrap;
 use PHPUnit\Framework\TestCase;
 
