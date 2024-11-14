@@ -46,18 +46,18 @@
         <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToStoreFront"/>
         <!--Switching to iFrame-->
         <switchToIFrame selector="{{AdminPaypalStandardConfigSection.payPalFrame}}" stepKey="switchToPaypalIFrame"/>
-        <seeElement selector="{{AdminPaypalStandardConfigSection.paypalPaylaterMessage}}"  stepKey="verifyPayLaterMessage"/>
+        <waitForElementVisible selector="{{AdminPaypalStandardConfigSection.paypalPaylaterMessage}}"  stepKey="verifyPayLaterMessage"/>
         <switchToIFrame stepKey="switchBackMainIframe"/>
+        <magentoCLI command="config:set payment/paypal_paylater/homepage_display 0" stepKey="disableDisplayOnHomePageForPayflow"/>
+        <magentoCLI command="config:set payment/paypal_paylater/enabled 0" stepKey="disablePaypalPayLaterForPayflow"/>
         <magentoCLI command="config:set payment/paypal_paylater/experience_active 0" stepKey="disablePaypalExpLater"/>
         <magentoCLI command="config:set {{DisablePaymentAdvancedSolution.path}} {{DisablePaymentAdvancedSolution.value}}" stepKey="disablePaymentAdvancedSolution"/>
         <!--Enable Payflow-->
-        <actionGroup ref="AdminPayPalPayflowProWithValutActionGroup" stepKey="enablePayflowPro"/>
+        <actionGroup ref="AdminConfigPayflowThroughCliActionGroup" stepKey= "enablePayflowProThroughCLI"/>
+        <!-- Enable Paylater and Assert Default Values Present in Home PAge-->
         <magentoCLI command="config:set payment/paypal_paylater/experience_active 1" stepKey="enablePaypalExpLaterForPayflow"/>
-        <!--Enable Pay Later in Admin Product Page -->
-        <actionGroup ref="AdminEnablePayflowPaylaterForHomePageActionGroup" stepKey="enablePaypaPayflowPaylaterSolution"/>
-        <!--Check default values selected in dropdown  -->
-        <actionGroup ref="AdminAssertDefaultValuesInPayflowPaylaterHomePageActionGroup" stepKey="verifyDefaultPayflowValuesFromDropDown"/>
-        <!--Click on Save configure Button -->
-        <actionGroup ref="AdminSaveConfigActionGroup" stepKey="saveAdminConfig"/>
+        <magentoCLI command="config:set payment/paypal_paylater/enabled 1" stepKey="enablePaypalPayLaterForPayflow"/>
+        <magentoCLI command="config:set payment/paypal_paylater/homepage_display 1" stepKey="enableDisplayOnHomePageForPayflow"/>
+        <actionGroup ref="AdminAssertDefaultValuesInPayflowPaylaterHomePageActionGroup" stepKey= "assertDefaultValuesInHomePage"/>
     </test>
 </tests>
