@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <!--
- /**
-   * Copyright 2024 Adobe
-  * All Rights Reserved.
-  */
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
     <event name="core_layout_render_element">
@@ -53,7 +53,6 @@
     </event>
     <event name="customer_login">
         <observer name="FlushFormKey" instance="Magento\PageCache\Observer\FlushFormKey"/>
-        <observer name="magento_all_pagecache" instance="Magento\PageCache\Observer\FlushAllCache" />
     </event>
     <event name="customer_logout">
         <observer name="FlushFormKey" instance="Magento\PageCache\Observer\FlushFormKey"/>
