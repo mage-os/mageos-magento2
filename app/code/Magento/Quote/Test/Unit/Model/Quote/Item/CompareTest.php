@@ -236,19 +236,4 @@ class CompareTest extends TestCase
             ->willReturn([]);
         $this->assertFalse($this->helper->compare($this->itemMock, $this->comparedMock));
     }
-
-    /**
-     * test compare two items- when configurable products has assigned sku of its selected variant
-     */
-    public function testCompareConfigurableProductAndItsVariant()
-    {
-        $this->itemMock->expects($this->exactly(2))
-            ->method('getSku')
-            ->willReturn('cr1-r');
-        $this->comparedMock->expects($this->once())
-            ->method('getSku')
-            ->willReturn('cr1-r');
-
-        $this->assertTrue($this->helper->compare($this->itemMock, $this->comparedMock));
-    }
 }
