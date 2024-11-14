@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2024 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 declare(strict_types=1);
 
@@ -191,7 +191,7 @@ class GetCustomerCartTest extends GraphQlAbstract
     public function testGetCustomerCartAfterTokenRevoked()
     {
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('User token has been revoked');
+        $this->expectExceptionMessage('The request is allowed for logged in customer');
 
         $customerCartQuery = $this->getCustomerCartQuery();
         $headers = $this->getHeaderMap();
