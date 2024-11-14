@@ -8,6 +8,7 @@ namespace Magento\ConfigurableProduct\Block\Adminhtml\Product\Edit\Tab\Variation
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\Locator\LocatorInterface;
 use Magento\Catalog\Model\Product;
+use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Framework\Exception\NoSuchEntityException;
 
 /**
@@ -243,6 +244,28 @@ class Matrix extends \Magento\Backend\Block\Template
     }
 
     /**
+     * Retrieves attributes that are used for configurable product variations
+     *
+     * @return array
+     */
+    private function getVariantAttributeComposition(): array
+    {
+        $variants = [];
+        foreach ($this->_getAssociatedProducts() as $product) {
+            /* @var $attribute AbstractAttribute */
+            foreach ($this->getUsedAttributes() as $attribute) {
+                $variants[$product->getId()][$attribute->getAttributeCode()] =
+                [
+                    'value_id' => $product->getData($attribute->getAttributeCode()),
+                    'attribute' => $attribute
+                ];
+            }
+        }
+
+        return $variants;
+    }
+
+    /**
      * Retrieve actual list of associated products (i.e. if product contains variations matrix form data
      * - previously saved in database relations are not considered)
      *
@@ -330,6 +353,121 @@ class Matrix extends \Magento\Backend\Block\Template
         }
 
         return $this->productAttributes;
+    }
+
+    /**
+     * Get configurable product existing setup
+     *
+     * @return array
+     */
+    public function getExistingVariantConfiguration(): array
+    {
+        $productMatrix = $attributes = [];
+        $variants = $this->getVariantAttributeComposition();
+        foreach ($this->getAssociatedProducts() as $product) {
+            $childProductOptions = [];
+            foreach ($variants[$product->getId()] as $attributeComposition) {
+                $childProductOptions[] = $this->buildChildProductOption($attributeComposition);
+
+                /** @var AbstractAttribute $attribute */
+                $attribute = $attributeComposition['attribute'];
+                if (!isset($attributes[$attribute->getAttributeId()])) {
+                    $attributes[$attribute->getAttributeId()] = $this->buildAttributeDetails($attribute);
+                }
+                $variationOption = [
+                    'attribute_code' => $attribute->getAttributeCode(),
+                    'attribute_label' => $attribute->getStoreLabel(0),
+                    'id' => $attributeComposition['value_id'],
+                    'label' => $this->extractAttributeValueLabel(
+                        $attribute,
+                        $attributeComposition['value_id']
+                    ),
+                    'value' => $attributeComposition['value_id'],
+                    '__disableTmpl' => true,
+                ];
+                $attributes[$attribute->getAttributeId()]['chosen'][] = $variationOption;
+            }
+            $productMatrix[] = $this->buildChildProductDetails($product, $childProductOptions);
+        }
+        return [
+            'product_matrix' => $productMatrix,
+            'attributes' => array_values($attributes)
+        ];
+    }
+
+    /**
+     * Prepare attribute details for child product configuration
+     *
+     * @param AbstractAttribute $attribute
+     * @return array
+     */
+    private function buildAttributeDetails(AbstractAttribute $attribute): array
+    {
+        $configurableAttributes = $this->getAttributes();
+        $details = [
+            'code' => $attribute->getAttributeCode(),
+            'label' => $attribute->getStoreLabel(),
+            'id' => $attribute->getAttributeId(),
+            'position' => $configurableAttributes[$attribute->getAttributeId()]['position'],
+            'chosen' => [],
+            '__disableTmpl' => true
+        ];
+
+        foreach ($attribute->getOptions() as $option) {
+            if (!empty($option['value'])) {
+                $details['options'][] = [
+                    'attribute_code' => $attribute->getAttributeCode(),
+                    'attribute_label' => $attribute->getStoreLabel(0),
+                    'id' => $option['value'],
+                    'label' => $option['label'],
+                    'value' => $option['value'],
+                    '__disableTmpl' => true,
+                ];
+            }
+        }
+
+        return $details;
+    }
+
+    /**
+     * Generate configurable product child option
+     *
+     * @param array $attributeDetails
+     * @return array
+     */
+    private function buildChildProductOption(array $attributeDetails): array
+    {
+        $label = $this->extractAttributeValueLabel(
+            $attributeDetails['attribute'],
+            $attributeDetails['value_id']
+        );
+
+        return [
+            'attribute_code' => $attributeDetails['attribute']->getAttributeCode(),
+            'attribute_label' => $attributeDetails['attribute']->getStoreLabel(0),
+            'id' => $attributeDetails['value_id'],
+            'label' => $label,
+            'value' => $attributeDetails['value_id'],
+            '__disableTmpl' => true,
+        ];
+    }
+
+    /**
+     * Get label for a specific value of an attribute.
+     *
+     * @param $attribute
+     * @param int $valueId
+     * @return string
+     */
+    private function extractAttributeValueLabel($attribute, int $valueId): string
+    {
+        foreach ($attribute->getOptions() as $attributeOption) {
+            if ($attributeOption->getValue() == $valueId) {
+                return $attributeOption->getLabel();
+            }
+        }
+
+        return '';
     }
 
     /**
@@ -442,5 +580,30 @@ class Matrix extends \Magento\Backend\Block\Template
         $attributes[$attribute->getAttributeId()]['chosen'][] = $variationOption;
 
         return [$attributes, $variationOptions];
+    }
+
+    /**
+     * Create child product details
+     *
+     * @param Product $product
+     * @param array $childProductOptions
+     * @return array
+     */
+    private function buildChildProductDetails(Product $product, array $childProductOptions): array
+    {
+        return [
+            'productId' => $product->getId(),
+            'images' => [
+                'preview' => $this->image->init($product, 'product_thumbnail_image')->getUrl()
+            ],
+            'sku' => $product->getSku(),
+            'name' => $product->getName(),
+            'quantity' => $this->getProductStockQty($product),
+            'price' => $product->getPrice(),
+            'options' => $childProductOptions,
+            'weight' => $product->getWeight(),
+            'status' => $product->getStatus(),
+            '__disableTmpl' => true,
+        ];
     }
 }

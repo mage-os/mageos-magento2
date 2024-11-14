@@ -10,8 +10,11 @@
 <?php
 /** @var \Magento\Framework\Json\Helper\Data $jsonHelper */
 $jsonHelper = $block->getData('jsonHelper');
-$productMatrix = $block->getProductMatrix();
-$attributes = $block->getProductAttributes();
+$variantConfiguration = $block->getExistingVariantConfiguration();
+/*$productMatrix = $variantConfiguration['product_matrix'];
+$attributes = $variantConfiguration['attributes'];*/
+$productMatrix = [];
+$attributes = [];
 $currencySymbol = $block->getCurrencySymbol();
 ?>
 <div class="<?= /* @noEscape */ $block->getData('config/dataScope') ?>"

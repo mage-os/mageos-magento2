@@ -95,12 +95,18 @@ class Composite extends AbstractModifier
             $productId = $model->getId();
             $data[$productId]['affect_configurable_product_attributes'] = '1';
 
+            $variantConfiguration = $this->associatedProducts->getExistingVariantConfiguration();
             if ($productTypeId === ConfigurableType::TYPE_CODE) {
-                $data[$productId]['configurable-matrix'] = $this->associatedProducts->getProductMatrix();
-                $data[$productId]['attributes'] = $this->associatedProducts->getProductAttributesIds();
-                $data[$productId]['attribute_codes'] = $this->associatedProducts->getProductAttributesCodes();
+                //$data[$productId]['configurable-matrix'] = $this->associatedProducts->getProductMatrix();
+                $data[$productId]['configurable-matrix'] = $variantConfiguration['product_matrix'];
+                //$data[$productId]['attributes'] = $this->associatedProducts->getProductAttributesIds();
+                $data[$productId]['attributes'] = $variantConfiguration['attributes'];
+                //$data[$productId]['attribute_codes'] = $this->associatedProducts->getProductAttributesCodes();
+                foreach ($variantConfiguration['attributes'] as $attribute) {
+                    $data[$productId]['attribute_codes'][] = $attribute['code'];
+                }
                 $data[$productId]['product']['configurable_attributes_data'] =
-                    $this->associatedProducts->getConfigurableAttributesData();
+                    $this->associatedProducts->getConfigurableAttributesData($variantConfiguration['attributes']);
             }
         }
 
