@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Swatches\Helper;
 
@@ -584,6 +584,7 @@ class Data
      *
      * @return \Magento\Framework\EntityManager\MetadataPool
      * @deprecated
+     * @see Nothing
      */
     protected function getMetadataPool()
     {

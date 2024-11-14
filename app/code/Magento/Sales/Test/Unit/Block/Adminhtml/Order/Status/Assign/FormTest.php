@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -66,6 +66,8 @@ class FormTest extends TestCase
 
     /**
      * @return void
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     public function testToHtml(): void
     {
@@ -107,7 +109,10 @@ class FormTest extends TestCase
                         return null;
                     } elseif ($arg1 === 'is_default' && $arg2 === 'checkbox' && $arg3['name'] === 'is_default') {
                         return null;
-                    } elseif ($arg1 === 'visible_on_front' && $arg2 === 'checkbox' && $arg3['name'] === 'visible_on_front') {
+                    } elseif ($arg1 === 'visible_on_front'
+                        && $arg2 === 'checkbox'
+                        && $arg3['name'] === 'visible_on_front'
+                    ) {
                         return null;
                     }
                 }
