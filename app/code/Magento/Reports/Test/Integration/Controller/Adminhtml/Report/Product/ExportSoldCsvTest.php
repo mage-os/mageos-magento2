@@ -14,7 +14,7 @@ use Magento\TestFramework\TestCase\AbstractBackendController;
  */
 class ExportSoldCsvTest extends AbstractBackendController
 {
-    public function testExecute()
+    public function testExecute() : void
     {
         $this->dispatch('backend/reports/report_product/exportSoldCsv');
         $this->assertEquals(302, $this->getResponse()->getHttpResponseCode());

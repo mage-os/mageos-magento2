@@ -14,7 +14,7 @@ use Magento\TestFramework\TestCase\AbstractBackendController;
  */
 class ExportSoldExcelTest extends AbstractBackendController
 {
-    public function testExecute()
+    public function testExecute() : void
     {
         $this->dispatch('backend/reports/report_product/exportSoldExcel');
         $this->assertEquals(302, $this->getResponse()->getHttpResponseCode());
