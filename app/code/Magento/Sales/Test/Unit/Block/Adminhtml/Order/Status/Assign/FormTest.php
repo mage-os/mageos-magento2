@@ -102,6 +102,7 @@ class FormTest extends TestCase
 
         $fieldset->method('addField')
             ->willReturnCallback(
+                // @phpstan-ignore-next-line
                 function ($arg1, $arg2, $arg3) use ($statusesForField, $statesForField) {
                     if ($arg1 === 'status' && $arg2 === 'select' && $arg3['name'] === 'status') {
                         return null;

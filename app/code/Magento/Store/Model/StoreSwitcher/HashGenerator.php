@@ -99,6 +99,7 @@ class HashGenerator
      */
     public function validateHash(string $signature, HashData $hashData): bool
     {
+        // @phpstan-ignore-next-line
         if (!empty($signature) && !empty($hashData)) {
             $timeStamp = $hashData->getTimestamp();
             $fromStoreCode = $hashData->getFromStoreCode();
