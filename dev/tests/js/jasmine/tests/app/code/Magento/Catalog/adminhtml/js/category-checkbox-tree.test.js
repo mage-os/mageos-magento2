@@ -303,7 +303,6 @@ define([
             $ajaxMock = jasmine.createSpy('ajaxMock');
             $ajaxOriginal = $.ajax;
             $.ajax = $ajaxMock;
-            $ajaxOriginal = $.ajax;
             return waitUntil(function (resolve) {
                 $tree.on('loaded.jstree', function () {
                     resolve();
