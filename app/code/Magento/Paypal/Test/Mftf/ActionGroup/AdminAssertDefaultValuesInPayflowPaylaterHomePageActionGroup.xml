@@ -14,8 +14,6 @@
         <arguments>
             <argument name="countryCode" type="string" defaultValue="us"/>
         </arguments>
-
-
         <amOnPage url="{{AdminConfigPaymentMethodsPage.url}}" stepKey="navigateToPaymentConfigurationPage"/>
         <waitForPageLoad stepKey="waitForConfigPageLoad"/>
         <waitForElementVisible selector="{{OtherPayPalPaymentsConfigSection.expandTab(countryCode)}}" stepKey="waitForOtherPayPalPaymentsSection"/>
@@ -23,18 +21,11 @@
         <waitForElementVisible selector="{{PayPalPayflowProConfigSection.paymentGateway(countryCode)}}" stepKey="waitForPayPalPaymentsProConfigureBtn"/>
         <scrollTo selector="{{PayPalPayflowProConfigSection.paymentGateway(countryCode)}}" stepKey="scrollToConfigure"/>
         <click selector ="{{PayPalPayflowProConfigSection.configureBtn(countryCode)}}" stepKey="clickPayPalPaymentsProConfigureBtn"/>
-
         <waitForPageLoad stepKey="waitForAdvisepaylaterExpand"/>
         <waitForElementClickable selector ="{{AdminEnablePaylaterSection.payflowAdvisePaylaterBtn(countryCode)}}" stepKey="waitForClickPayPalPaymentsAdvisepaylatereBtn"/>
         <click selector ="{{AdminEnablePaylaterSection.payflowAdvisePaylaterBtn(countryCode)}}" stepKey="clickPayPalPaymentsAdvisepaylatereBtn"/>
-
-
-
-
-
         <waitForElementClickable selector="{{AdminEnablePaylaterSection.expandPayflowHomePage(countryCode)}}" stepKey="waitForCheckoutCartPageClickable"/>
         <click selector="{{AdminEnablePaylaterSection.expandPayflowHomePage(countryCode)}}" stepKey="clickCheckoutCart"/>
-
         <!--Verify Default Option was Selected correctly-->
         <seeOptionIsSelected selector="{{AdminEnablePaylaterSection.positionPayflow(countryCode)}}" userInput="Header (center)" stepKey="seeSelectedPosition"/>
         <seeOptionIsSelected selector="{{AdminEnablePaylaterSection.styleLayoutPayflow(countryCode)}}" userInput="Flex" stepKey="seeSelectedStyleLayout"/>

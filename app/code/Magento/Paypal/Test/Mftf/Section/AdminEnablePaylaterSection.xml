@@ -9,11 +9,7 @@
           xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
     <section name="AdminEnablePaylaterSection">
         <element name="advisepaylaterBtn" type="button" selector="#payment_{{countryCode}}_paypal_group_all_in_one_payflow_advanced_required_settings_advanced_advertise_paylater-head" parameterized="true" />
-        <element name="payLaterConfigDropDown" type="button" selector="#payment_{{countryCode}}_paypal_group_all_in_one_payflow_advanced_required_settings_advanced_advertise_paylater_paylater_enabled" parameterized="true"/>
-        <element name="enablePaypalexp" type="input" selector="#payment_{{countryCode}}_paypal_group_all_in_one_payflow_advanced_required_settings_enable_paypal_paylater_experience" parameterized="true" />
         <element name="payflowAdvisePaylaterBtn" type="button" selector="#payment_{{countryCode}}_paypal_payment_gateways_paypal_payflowpro_with_express_checkout_paypal_payflow_required_paypal_payflow_advertise_paylater-head" parameterized="true" />
-        <element name="payflowPayLaterConfigDropDown" type="button" selector="#payment_{{countryCode}}_paypal_payment_gateways_paypal_payflowpro_with_express_checkout_paypal_payflow_required_paypal_payflow_advertise_paylater_paylater_enabled" parameterized="true"/>
-        <element name="payflowEnablePaypalexp" type="input" selector="#payment_{{countryCode}}_paypal_payment_gateways_paypal_payflowpro_with_express_checkout_paypal_payflow_required_enable_paypal_paylater_experience" parameterized="true" />
         <element name="expandHomePage" type="button" selector="#payment_{{countryCode}}_paypal_group_all_in_one_payflow_advanced_required_settings_advanced_advertise_paylater_advanced_settings_paylater_homepage-head" parameterized="true"/>
         <element name="display" type="input" selector="#payment_{{countryCode}}_paypal_group_all_in_one_payflow_advanced_required_settings_advanced_advertise_paylater_advanced_settings_paylater_homepage_paylater_homepage_display" parameterized="true"/>
         <element name="position" type="input" selector="#payment_{{countryCode}}_paypal_group_all_in_one_payflow_advanced_required_settings_advanced_advertise_paylater_advanced_settings_paylater_homepage_paylater_homepage_position" parameterized="true"/>

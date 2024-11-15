@@ -14,6 +14,16 @@
         <arguments>
             <argument name="countryCode" type="string" defaultValue="us"/>
         </arguments>
+
+        <amOnPage url="{{AdminConfigPaymentMethodsPage.url}}" stepKey="navigateToPaymentConfigurationPage"/>
+        <waitForPageLoad stepKey="waitForConfigPageLoad"/>
+        <waitForElementVisible selector="{{OtherPayPalPaymentsConfigSection.expandTab(countryCode)}}" stepKey="waitForOtherPayPalPaymentsSection"/>
+        <conditionalClick selector="{{OtherPayPalPaymentsConfigSection.expandTab(countryCode)}}" dependentSelector="{{OtherPayPalPaymentsConfigSection.expandedTab(countryCode)}}" visible="false" stepKey="expandOtherPaypalConfigButton"/>
+        <waitForElementClickable selector="{{PayPalPaymentsProConfigSection.paymentsAdvanced(countryCode)}}" stepKey="waitForPayPalPaymentsAdvancedConfigureBtn"/>
+        <click selector ="{{PayPalPaymentsProConfigSection.paymentsAdvanced(countryCode)}}" stepKey="clickPayPalPaymentsAdvancedConfigureBtn"/>
+        <waitForPageLoad stepKey="waitForAdvisepaylaterExpand"/>
+        <waitForElementClickable selector ="{{AdminEnablePaylaterSection.advisepaylaterBtn(countryCode)}}" stepKey="waitForClickPayPalPaymentsAdvisepaylatereBtn"/>
+        <click selector ="{{AdminEnablePaylaterSection.advisepaylaterBtn(countryCode)}}" stepKey="clickPayPalPaymentsAdvisepaylatereBtn"/>
         <waitForElementClickable selector="{{AdminEnablePaylaterSection.expandHomePage(countryCode)}}" stepKey="waitForCheckoutCartPageClickable"/>
         <click selector="{{AdminEnablePaylaterSection.expandHomePage(countryCode)}}" stepKey="clickCheckoutCart"/>
         <selectOption selector ="{{AdminEnablePaylaterSection.display(countryCode)}}" userInput="Yes" stepKey="enableDisplayforPaylaterCartPage"/>

@@ -22,7 +22,6 @@
             <!-- US Customer is created -->
             <createData entity="Simple_US_CA_Customer" stepKey="createCustomer"/>
             <actionGroup ref="AdminConfigPaymentAdvancedThroughCLIActionGroup" stepKey="configPayPalExpress"/>
-            <magentoCLI command="config:set payment/paypal_paylater/experience_active 1" stepKey="enablePaypalExpLater"/>
         </before>
         <after>
             <magentoCLI command="config:set payment/paypal_paylater/experience_active 0" stepKey="disablePaypalExpLaterForPayflow"/>
@@ -32,12 +31,12 @@
             <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="amOnLogoutPage"/>
         </after>
-        <!--Enable Pay Later in Admin Product Page -->
-        <actionGroup ref="AdminEnablePaylaterForHomePageActionGroup" stepKey="enablePaypalPaylaterSolution"/>
+        <!--Enable Pay Later in Admin Home Page -->
+        <magentoCLI command="config:set payment/paypal_paylater/experience_active 1" stepKey="enablePaypalExpLater"/>
+        <magentoCLI command="config:set payment/paypal_paylater/enabled 1" stepKey="enablePaypalPayLaterForenablePaypalExpLaterForPaymentAdvanced"/>
+        <magentoCLI command="config:set payment/paypal_paylater/homepage_display 1" stepKey="enableDisplayOnHomePageForenablePaypalExpLaterForPaymentAdvanced"/>
         <!--Check default values selected in dropdown  -->
         <actionGroup ref="AdminAssertDefaultValuesInPaylaterHomePageActionGroup" stepKey="verifyDefaultValuesFromDropDown"/>
-        <!--Click on Save configure Button -->
-        <actionGroup ref="AdminSaveConfigActionGroup" stepKey="saveAdminConfiguration"/>
         <!-- Login as customer -->
         <actionGroup ref="LoginToStorefrontActionGroup" stepKey="storefrontCustomerLogin">
             <argument name="Customer" value="$$createCustomer$$"/>
@@ -53,8 +52,8 @@
         <magentoCLI command="config:set payment/paypal_paylater/experience_active 0" stepKey="disablePaypalExpLater"/>
         <magentoCLI command="config:set {{DisablePaymentAdvancedSolution.path}} {{DisablePaymentAdvancedSolution.value}}" stepKey="disablePaymentAdvancedSolution"/>
         <!--Enable Payflow-->
-        <actionGroup ref="AdminConfigPayflowThroughCliActionGroup" stepKey= "enablePayflowProThroughCLI"/>
-        <!-- Enable Paylater and Assert Default Values Present in Home PAge-->
+        <actionGroup ref="AdminConfigPayflowThroughCliActionGroup" stepKey= "enablePayflowProSolution"/>
+        <!-- Enable Paylater and Assert Default Values in Homepage -->
         <magentoCLI command="config:set payment/paypal_paylater/experience_active 1" stepKey="enablePaypalExpLaterForPayflow"/>
         <magentoCLI command="config:set payment/paypal_paylater/enabled 1" stepKey="enablePaypalPayLaterForPayflow"/>
         <magentoCLI command="config:set payment/paypal_paylater/homepage_display 1" stepKey="enableDisplayOnHomePageForPayflow"/>
