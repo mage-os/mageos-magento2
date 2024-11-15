@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2016 Adobe
+ * All Rights Reserved.
  */
 
 /** @var $block \Magento\ConfigurableProduct\Block\Adminhtml\Product\Edit\Tab\Variations\Config\Matrix */
@@ -10,11 +10,6 @@
 <?php
 /** @var \Magento\Framework\Json\Helper\Data $jsonHelper */
 $jsonHelper = $block->getData('jsonHelper');
-$variantConfiguration = $block->getExistingVariantConfiguration();
-/*$productMatrix = $variantConfiguration['product_matrix'];
-$attributes = $variantConfiguration['attributes'];*/
-$productMatrix = [];
-$attributes = [];
 $currencySymbol = $block->getCurrencySymbol();
 ?>
 <div class="<?= /* @noEscape */ $block->getData('config/dataScope') ?>"
@@ -61,9 +56,9 @@ $currencySymbol = $block->getCurrencySymbol();
                         "wizardModalButtonName": "<?= /* @noEscape */ $block->getForm()
                         ?>.configurable.configurable_products_button_set.create_configurable_products_button",
                         "wizardModalButtonTitle": "<?= $block->escapeHtml(__('Edit Configurations')) ?>",
-                        "productAttributes":<?=/* @noEscape */ $jsonHelper->jsonEncode($attributes)?>,
+                        "productAttributes":<?=/* @noEscape */ $jsonHelper->jsonEncode($block->getProductAttributes())?>,
                         "productUrl": "<?= /* @noEscape */ $block->getUrl('catalog/product/edit', ['id' => '%id%']) ?>",
-                        "variations": <?= /* @noEscape */ $jsonHelper->jsonEncode($productMatrix) ?>,
+                        "variations": <?= /* @noEscape */ $jsonHelper->jsonEncode($block->getProductMatrix()) ?>,
                         "currencySymbol": "<?= /* @noEscape */ $currencySymbol ?>",
                         "attributeSetCreationUrl": "<?= /* @noEscape */ $block->getUrl('*/product_set/save') ?>"
                     }
