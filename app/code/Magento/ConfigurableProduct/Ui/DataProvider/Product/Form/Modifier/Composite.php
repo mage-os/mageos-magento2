@@ -52,7 +52,7 @@ class Composite extends AbstractModifier
      * @param LocatorInterface $locator
      * @param ObjectManagerInterface $objectManager
      * @param AssociatedProducts $associatedProducts
-     * @param AllowedProductTypes $allowedProductTypes,
+     * @param AllowedProductTypes $allowedProductTypes
      * @param array $modifiers
      */
     public function __construct(
@@ -83,7 +83,7 @@ class Composite extends AbstractModifier
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function modifyData(array $data)
     {
@@ -111,7 +111,7 @@ class Composite extends AbstractModifier
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function modifyMeta(array $meta)
     {

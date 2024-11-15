@@ -255,10 +255,14 @@ class Matrix extends \Magento\Backend\Block\Template
             /* @var $attribute AbstractAttribute */
             foreach ($this->getUsedAttributes() as $attribute) {
                 $variants[$product->getId()][$attribute->getAttributeCode()] =
-                [
-                    'value_id' => $product->getData($attribute->getAttributeCode()),
-                    'attribute' => $attribute
-                ];
+                    [
+                        'value_id' => $product->getData($attribute->getAttributeCode()),
+                        'label' => $this->extractAttributeValueLabel(
+                            $attribute,
+                            $product->getData($attribute->getAttributeCode())
+                        ),
+                        'attribute' => $attribute
+                    ];
             }
         }
 
@@ -415,11 +419,11 @@ class Matrix extends \Magento\Backend\Block\Template
     /**
      * Get label for a specific value of an attribute.
      *
-     * @param $attribute
+     * @param AbstractAttribute $attribute
      * @param int $valueId
      * @return string
      */
-    private function extractAttributeValueLabel($attribute, int $valueId): string
+    private function extractAttributeValueLabel(AbstractAttribute $attribute, int $valueId): string
     {
         foreach ($attribute->getOptions() as $attributeOption) {
             if ($attributeOption->getValue() == $valueId) {
@@ -455,10 +459,7 @@ class Matrix extends \Magento\Backend\Block\Template
                     'attribute_code' => $attribute->getAttributeCode(),
                     'attribute_label' => $attribute->getStoreLabel(0),
                     'id' => $attributeComposition['value_id'],
-                    'label' => $this->extractAttributeValueLabel(
-                        $attribute,
-                        $attributeComposition['value_id']
-                    ),
+                    'label' => $attributeComposition['label'],
                     'value' => $attributeComposition['value_id'],
                     '__disableTmpl' => true,
                 ];

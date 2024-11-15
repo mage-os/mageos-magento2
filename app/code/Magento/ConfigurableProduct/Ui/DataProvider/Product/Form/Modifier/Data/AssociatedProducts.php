@@ -231,6 +231,7 @@ class AssociatedProducts
     {
         $productMatrix = $attributes = [];
         $variants = $this->getVariantAttributeComposition();
+        $productIds = [];
         foreach ($this->getAssociatedProducts() as $product) {
             $childProductOptions = [];
             $productIds[] = $product->getId();
@@ -246,12 +247,8 @@ class AssociatedProducts
                     'attribute_code' => $attribute->getAttributeCode(),
                     'attribute_label' => $attribute->getStoreLabel(0),
                     'id' => $attributeComposition['value_id'],
-                    'label' => $this->extractAttributeValueLabel(
-                        $attribute,
-                        $attributeComposition['value_id']
-                    ),
-                    'value' => $attributeComposition['value_id'],
-                    '__disableTmpl' => true,
+                    'label' => $attributeComposition['label'],
+                    'value' => $attributeComposition['value_id']
                 ];
                 $attributes[$attribute->getAttributeId()]['chosen'][] = $variationOption;
             }
@@ -408,8 +405,7 @@ class AssociatedProducts
             'label' => $attribute->getStoreLabel(),
             'id' => $attribute->getAttributeId(),
             'position' => $configurableAttributes[$attribute->getAttributeId()]['position'],
-            'chosen' => [],
-            '__disableTmpl' => true
+            'chosen' => []
         ];
 
         foreach ($attribute->getOptions() as $option) {
@@ -419,8 +415,7 @@ class AssociatedProducts
                     'attribute_label' => $attribute->getStoreLabel(0),
                     'id' => $option['value'],
                     'label' => $option['label'],
-                    'value' => $option['value'],
-                    '__disableTmpl' => true,
+                    'value' => $option['value']
                 ];
             }
         }
@@ -436,29 +431,23 @@ class AssociatedProducts
      */
     private function buildChildProductOption(array $attributeDetails): array
     {
-        $label = $this->extractAttributeValueLabel(
-            $attributeDetails['attribute'],
-            $attributeDetails['value_id']
-        );
-
         return [
             'attribute_code' => $attributeDetails['attribute']->getAttributeCode(),
             'attribute_label' => $attributeDetails['attribute']->getStoreLabel(0),
             'id' => $attributeDetails['value_id'],
-            'label' => $label,
-            'value' => $attributeDetails['value_id'],
-            '__disableTmpl' => true,
+            'label' => $attributeDetails['value_id'],
+            'value' => $attributeDetails['value_id']
         ];
     }
 
     /**
      * Get label for a specific value of an attribute.
      *
-     * @param $attribute
+     * @param AbstractAttribute $attribute
      * @param int $valueId
      * @return string
      */
-    private function extractAttributeValueLabel($attribute, int $valueId): string
+    private function extractAttributeValueLabel(AbstractAttribute $attribute, int $valueId): string
     {
         foreach ($attribute->getOptions() as $attributeOption) {
             if ($attributeOption->getValue() == $valueId) {
@@ -468,7 +457,6 @@ class AssociatedProducts
 
         return '';
     }
-
 
     /**
      * Create child product details
@@ -483,10 +471,9 @@ class AssociatedProducts
         $currency = $this->localeCurrency->getCurrency($this->locator->getBaseCurrencyCode());
         return [
             'id' => $product->getId(),
-            'product_link' => '<a href="' . $this->urlBuilder->getUrl(
-                    'catalog/product/edit',
-                    ['id' => $product->getId()]
-                ) . '" target="_blank">' . $this->escaper->escapeHtml($product->getName()) . '</a>',
+            'product_link' => '<a href="' .
+                $this->urlBuilder->getUrl('catalog/product/edit', ['id' => $product->getId()])
+                . '" target="_blank">' . $this->escaper->escapeHtml($product->getName()) . '</a>',
             'sku' => $product->getSku(),
             'name' => $product->getName(),
             'qty' => $this->getProductStockQty($product),
@@ -518,6 +505,10 @@ class AssociatedProducts
                 $variants[$product->getId()][$attribute->getAttributeCode()] =
                     [
                         'value_id' => $product->getData($attribute->getAttributeCode()),
+                        'label' => $this->extractAttributeValueLabel(
+                            $attribute,
+                            $product->getData($attribute->getAttributeCode())
+                        ),
                         'attribute' => $attribute
                     ];
             }
