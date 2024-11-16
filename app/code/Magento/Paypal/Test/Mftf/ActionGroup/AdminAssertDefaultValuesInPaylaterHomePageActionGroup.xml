@@ -14,7 +14,6 @@
         <arguments>
             <argument name="countryCode" type="string" defaultValue="us"/>
         </arguments>
-
         <amOnPage url="{{AdminConfigPaymentMethodsPage.url}}" stepKey="navigateToPaymentConfigurationPage"/>
         <waitForPageLoad stepKey="waitForConfigPageLoad"/>
         <waitForElementVisible selector="{{OtherPayPalPaymentsConfigSection.expandTab(countryCode)}}" stepKey="waitForOtherPayPalPaymentsSection"/>
