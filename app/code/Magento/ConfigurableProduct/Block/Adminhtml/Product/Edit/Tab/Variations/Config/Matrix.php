@@ -401,16 +401,11 @@ class Matrix extends \Magento\Backend\Block\Template
      */
     private function buildChildProductOption(array $attributeDetails): array
     {
-        $label = $this->extractAttributeValueLabel(
-            $attributeDetails['attribute'],
-            $attributeDetails['value_id']
-        );
-
         return [
             'attribute_code' => $attributeDetails['attribute']->getAttributeCode(),
             'attribute_label' => $attributeDetails['attribute']->getStoreLabel(0),
             'id' => $attributeDetails['value_id'],
-            'label' => $label,
+            'label' => $attributeDetails['label'],
             'value' => $attributeDetails['value_id'],
             '__disableTmpl' => true,
         ];
