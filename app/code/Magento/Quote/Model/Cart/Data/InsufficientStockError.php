@@ -1,5 +1,9 @@
 <?php
 /************************************************************************
+ *
+ *  ADOBE CONFIDENTIAL
+ *  ___________________
+ *
  *  Copyright 2024 Adobe
  *  All Rights Reserved.
  *
@@ -17,52 +21,36 @@ declare(strict_types=1);
 
 namespace Magento\Quote\Model\Cart\Data;
 
-use Magento\Quote\Api\ErrorInterface;
-
-/**
- * DTO represents error item
- */
-class Error implements ErrorInterface
+class InsufficientStockError extends Error
 {
+    /**
+     * @var float
+     */
+    private float $quantity;
+
     /**
      * @param string $message
      * @param string $code
      * @param int $cartItemPosition
+     * @param float $quantity
      */
     public function __construct(
-        private readonly string $message,
-        private readonly string $code,
-        private readonly int $cartItemPosition
+        string $message,
+        string $code,
+        int $cartItemPosition,
+        float $quantity
     ) {
+        $this->quantity = $quantity;
+        parent::__construct($message, $code, $cartItemPosition);
     }
 
     /**
-     * Get error message
+     * Get Stock quantity
      *
-     * @return string
+     * @return float
      */
-    public function getMessage(): string
+    public function getQuantity(): float
     {
-        return $this->message;
-    }
-
-    /**
-     * Get error code
-     *
-     * @return string
-     */
-    public function getCode(): string
-    {
-        return $this->code;
-    }
-
-    /**
-     * Get cart item position
-     *
-     * @return int
-     */
-    public function getCartItemPosition(): int
-    {
-        return $this->cartItemPosition;
+        return $this->quantity;
     }
 }
