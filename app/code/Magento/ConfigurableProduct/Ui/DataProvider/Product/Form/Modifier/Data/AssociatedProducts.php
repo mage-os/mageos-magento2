@@ -228,92 +228,6 @@ class AssociatedProducts
         return $result;
     }
 
-    protected function prepareVariations2(): array
-    {
-        $variations = $this->getVariations();
-        $productMatrix = [];
-        $attributes = [];
-        $productIds = [];
-        if ($variations) {
-            $usedProductAttributes = $this->getUsedAttributes();
-            $productByUsedAttributes = $this->getAssociatedProducts();
-            $currency = $this->localeCurrency->getCurrency($this->locator->getBaseCurrencyCode());
-            $configurableAttributes = $this->getAttributes();
-            foreach ($variations as $variation) {
-                $attributeValues = [];
-                foreach ($usedProductAttributes as $attribute) {
-                    $attributeValues[$attribute->getAttributeCode()] = $variation[$attribute->getId()]['value'];
-                }
-                $key = implode('-', $attributeValues);
-                if (isset($productByUsedAttributes[$key])) {
-                    $product = $productByUsedAttributes[$key];
-                    $price = $product->getPrice();
-                    $variationOptions = [];
-                    foreach ($usedProductAttributes as $attribute) {
-                        if (!isset($attributes[$attribute->getAttributeId()])) {
-                            $attributes[$attribute->getAttributeId()] = [
-                                'code' => $attribute->getAttributeCode(),
-                                'label' => $attribute->getStoreLabel(),
-                                'id' => $attribute->getAttributeId(),
-                                'position' => $configurableAttributes[$attribute->getAttributeId()]['position'],
-                                'chosen' => [],
-                            ];
-                            $options = $attribute->usesSource() ? $attribute->getSource()->getAllOptions() : [];
-                            foreach ($options as $option) {
-                                if (!empty($option['value'])) {
-                                    $attributes[$attribute->getAttributeId()]['options'][$option['value']] = [
-                                        'attribute_code' => $attribute->getAttributeCode(),
-                                        'attribute_label' => $attribute->getStoreLabel(0),
-                                        'id' => $option['value'],
-                                        'label' => $option['label'],
-                                        'value' => $option['value'],
-                                    ];
-                                }
-                            }
-                        }
-                        $optionId = $variation[$attribute->getId()]['value'];
-                        $variationOption = [
-                            'attribute_code' => $attribute->getAttributeCode(),
-                            'attribute_label' => $attribute->getStoreLabel(0),
-                            'id' => $optionId,
-                            'label' => $variation[$attribute->getId()]['label'],
-                            'value' => $optionId,
-                        ];
-                        $variationOptions[] = $variationOption;
-                        $attributes[$attribute->getAttributeId()]['chosen'][$optionId] = $variationOption;
-                    }
-
-                    $productMatrix[] = [
-                        'id' => $product->getId(),
-                        'product_link' => '<a href="' . $this->urlBuilder->getUrl(
-                                'catalog/product/edit',
-                                ['id' => $product->getId()]
-                            ) . '" target="_blank">' . $this->escaper->escapeHtml($product->getName()) . '</a>',
-                        'sku' => $product->getSku(),
-                        'name' => $product->getName(),
-                        'qty' => $this->getProductStockQty($product),
-                        'price' => $price,
-                        'price_string' => $currency->toCurrency(sprintf("%f", $price)),
-                        'price_currency' => $this->locator->getStore()->getBaseCurrency()->getCurrencySymbol(),
-                        'configurable_attribute' => $this->getJsonConfigurableAttributes($variationOptions),
-                        'weight' => $product->getWeight(),
-                        'status' => $product->getStatus(),
-                        'variationKey' => $this->getVariationKey($variationOptions),
-                        'canEdit' => 0,
-                        'newProduct' => 0,
-                        'attributes' => $this->getTextAttributes($variationOptions),
-                        'thumbnail_image' => $this->imageHelper->init($product, 'product_thumbnail_image')->getUrl(),
-                    ];
-                    $productIds[] = $product->getId();
-                }
-            }
-        }
-
-        return $productMatrix;
-        //$this->productMatrix = $productMatrix;
-        //$this->productIds = $productIds;
-    }
-
     /**
      * Prepare variations
      *
@@ -349,7 +263,7 @@ class AssociatedProducts
             $productMatrix[] = $this->buildChildProductDetails($product, $childProductOptions);
         }
 
-        $this->productMatrix = $this->prepareVariations2();
+        $this->productMatrix = $productMatrix;
         $this->productIds = $productIds;
         $this->productAttributes = array_values($attributes);
     }
