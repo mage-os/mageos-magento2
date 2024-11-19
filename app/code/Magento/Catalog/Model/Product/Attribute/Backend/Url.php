@@ -53,7 +53,7 @@ class Url extends AbstractBackend
         if ($this->config->getValue(
             ProductScopeRewriteGenerator::URL_REWRITE_SCOPE_CONFIG_PATH,
             ScopeInterface::SCOPE_STORE
-        )) {
+        ) == ProductScopeRewriteGenerator::WEBSITE_URL_REWRITE_SCOPE) {
             $attribute->setIsGlobal(ScopedAttributeInterface::SCOPE_WEBSITE);
         } else {
             $attribute->setIsGlobal(ScopedAttributeInterface::SCOPE_STORE);
