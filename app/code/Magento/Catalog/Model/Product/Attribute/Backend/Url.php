@@ -7,24 +7,26 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Model\Product\Attribute\Backend;
 
-use Magento\Catalog\Helper\Data;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
+use Magento\CatalogUrlRewrite\Model\ProductScopeRewriteGenerator;
 use Magento\Eav\Model\Entity\Attribute\Backend\AbstractBackend;
 use Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Store\Model\ScopeInterface;
 
 class Url extends AbstractBackend
 {
     /**
-     * @var Data
+     * @var ScopeConfigInterface
      */
-    private Data $helper;
+    private ScopeConfigInterface $config;
 
     /**
-     * @param Data $helper
+     * @param ScopeConfigInterface $config
      */
-    public function __construct(Data $helper)
+    public function __construct(ScopeConfigInterface $config)
     {
-        $this->helper = $helper;
+        $this->config = $config;
     }
 
     /**
@@ -48,7 +50,10 @@ class Url extends AbstractBackend
      */
     private function setScope(Attribute $attribute): void
     {
-        if ($this->helper->isUrlScopeWebsite()) {
+        if ($this->config->getValue(
+            ProductScopeRewriteGenerator::URL_REWRITE_SCOPE_CONFIG_PATH,
+            ScopeInterface::SCOPE_STORE
+        )) {
             $attribute->setIsGlobal(ScopedAttributeInterface::SCOPE_WEBSITE);
         } else {
             $attribute->setIsGlobal(ScopedAttributeInterface::SCOPE_STORE);

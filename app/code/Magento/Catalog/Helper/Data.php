@@ -7,7 +7,6 @@ namespace Magento\Catalog\Helper;
 
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
-use Magento\CatalogUrlRewrite\Model\ProductScopeRewriteGenerator;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -410,19 +409,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function isPriceGlobal()
     {
         return $this->getPriceScope() == self::PRICE_SCOPE_GLOBAL;
-    }
-
-    /**
-     * Checks configuration for URL scope
-     *
-     * @return bool
-     */
-    public function isUrlScopeWebsite(): bool
-    {
-        return $this->scopeConfig->getValue(
-            ProductScopeRewriteGenerator::URL_REWRITE_SCOPE_CONFIG_PATH,
-            ScopeInterface::SCOPE_STORE
-        ) == ProductScopeRewriteGenerator::WEBSITE_URL_REWRITE_SCOPE;
     }
 
     /**
