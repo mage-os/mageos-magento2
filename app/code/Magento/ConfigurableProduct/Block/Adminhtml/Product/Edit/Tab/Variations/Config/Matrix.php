@@ -89,7 +89,7 @@ class Matrix extends \Magento\Backend\Block\Template
         LocatorInterface $locator,
         array $data = []
     ) {
-        parent::__construct($context, $data);
+        parent::__construct($context, $data, $data['jsonHelper'] ?? null, $data['directoryHelper'] ?? null);
         $this->_configurableType = $configurableType;
         $this->stockRegistry = $stockRegistry;
         $this->variationMatrix = $variationMatrix;
@@ -278,7 +278,7 @@ class Matrix extends \Magento\Backend\Block\Template
     protected function _getAssociatedProducts()
     {
         $product = $this->getProduct();
-        $ids = $this->getProduct()->getAssociatedProductIds();
+        $ids = $product->getAssociatedProductIds();
         if ($ids === null) {
             // form data overrides any relations stored in database
             return $this->_configurableType->getUsedProducts($product);
@@ -378,13 +378,13 @@ class Matrix extends \Magento\Backend\Block\Template
         ];
 
         foreach ($attribute->getOptions() as $option) {
-            if (!empty($option['value'])) {
+            if ($option->getValue()) {
                 $details['options'][] = [
                     'attribute_code' => $attribute->getAttributeCode(),
                     'attribute_label' => $attribute->getStoreLabel(0),
-                    'id' => $option['value'],
-                    'label' => $option['label'],
-                    'value' => $option['value'],
+                    'id' => $option->getValue(),
+                    'label' => $option->getLabel(),
+                    'value' => $option->getValue(),
                     '__disableTmpl' => true,
                 ];
             }
@@ -415,10 +415,10 @@ class Matrix extends \Magento\Backend\Block\Template
      * Get label for a specific value of an attribute.
      *
      * @param AbstractAttribute $attribute
-     * @param int $valueId
+     * @param mixed $valueId
      * @return string
      */
-    private function extractAttributeValueLabel(AbstractAttribute $attribute, int $valueId): string
+    private function extractAttributeValueLabel(AbstractAttribute $attribute, mixed $valueId): string
     {
         foreach ($attribute->getOptions() as $attributeOption) {
             if ($attributeOption->getValue() == $valueId) {
