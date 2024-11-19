@@ -23,8 +23,9 @@ class UniqueValidator implements UniqueValidationInterface
         $entityLinkField,
         array $entityIds
     ) {
-        if (isset($entityIds[0])) {
-            return $entityIds[0] == $object->getData($entityLinkField);
+        if ($entityIds) {
+            // check for current and future updates
+            return in_array($object->getData($entityLinkField), $entityIds);
         }
         return true;
     }
