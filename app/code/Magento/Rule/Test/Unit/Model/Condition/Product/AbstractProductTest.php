@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2011 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -11,12 +11,20 @@ use Magento\Catalog\Model\ProductCategoryList;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Catalog\Model\ResourceModel\Product;
 use Magento\Eav\Model\Config;
+use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Eav\Model\Entity\Attribute\Source\AbstractSource;
+use Magento\Eav\Model\Entity\Attribute\Source\Table;
 use Magento\Eav\Model\Entity\Type;
+use Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\Collection as AttributeOptionCollection;
+use Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\CollectionFactory;
+use Magento\Eav\Model\ResourceModel\Entity\Attribute\OptionFactory;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\Collection;
 use Magento\Framework\DataObject;
 use Magento\Framework\Model\AbstractModel;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Rule\Model\Condition\Product\AbstractProduct;
+use Magento\Store\Api\Data\StoreInterface;
+use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -61,10 +69,16 @@ class AbstractProductTest extends TestCase
     private $productCategoryListProperty;
 
     /**
+     * @var ObjectManager
+     */
+    protected $objectManager;
+
+    /**
      * @inheritdoc
      */
     protected function setUp(): void
     {
+        $this->objectManager = new ObjectManager($this);
         $this->_condition = $this->getMockForAbstractClass(
             AbstractProduct::class,
             [],
@@ -353,15 +367,22 @@ class AbstractProductTest extends TestCase
             $this->_condition->setData($key, $value);
         }
 
-        $attrObjectSourceMock = $this->getMockBuilder(AbstractSource::class)
-            ->onlyMethods(['getAllOptions'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $attrObjectSourceMock
-            ->expects((null === $expectedAttrObjSourceAllOptionsParam) ? $this->never() : $this->once())
-            ->method('getAllOptions')
-            ->with($expectedAttrObjSourceAllOptionsParam)
-            ->willReturn($attrObjectSourceAllOptionsValue);
+        if ($attributeObjectFrontendInput == 'select') {
+            $attrObjectSourceMock = $this->verifySelectAllOptions(
+                $attrObjectSourceAllOptionsValue,
+                $expectedAttrObjSourceAllOptionsParam
+            );
+        } else {
+            $attrObjectSourceMock = $this->getMockBuilder(AbstractSource::class)
+                ->onlyMethods(['getAllOptions'])
+                ->disableOriginalConstructor()
+                ->getMock();
+            $attrObjectSourceMock
+                ->expects((null === $expectedAttrObjSourceAllOptionsParam) ? $this->never() : $this->once())
+                ->method('getAllOptions')
+                ->with($expectedAttrObjSourceAllOptionsParam)
+                ->willReturn($attrObjectSourceAllOptionsValue);
+        }
 
         $attributeObjectMock = $this->getMockBuilder(Attribute::class)
             ->addMethods(['getAllOptions'])
@@ -427,6 +448,117 @@ class AbstractProductTest extends TestCase
     }
 
     /**
+     * Test to verify all select value options
+     *
+     * @param array $attrObjectSourceAllOptionsValue
+     * @param bool $expectedAttrObjSourceAllOptionsParam
+     * @return Table
+     */
+    private function verifySelectAllOptions(
+        array $attrObjectSourceAllOptionsValue,
+        bool $expectedAttrObjSourceAllOptionsParam
+    ): Table {
+        $collectionFactory = $this->getMockBuilder(CollectionFactory::class)
+            ->addMethods(
+                [
+                    'setPositionOrder',
+                    'setAttributeFilter',
+                    'addFieldToFilter',
+                    'setStoreFilter',
+                    'load',
+                    'toOptionArray'
+                ]
+            )
+            ->onlyMethods(['create'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $attributeOptionCollectionMock = $this->getMockBuilder(AttributeOptionCollection::class)
+            ->onlyMethods(['toOptionArray'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $attrOptionFactory = $this->createPartialMock(
+            OptionFactory::class,
+            ['create']
+        );
+
+        $abstractAttributeMock = $this->getMockBuilder(AbstractAttribute::class)
+            ->addMethods(['getStoreId'])
+            ->onlyMethods(
+                [
+                    'getFrontend', 'getAttributeCode', '__wakeup',
+                    'getId', 'getIsRequired', 'getEntity', 'getBackend'
+                ]
+            )
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
+
+        $attrObjectSourceMock = $this->objectManager->getObject(
+            Table::class,
+            [
+                'attrOptionCollectionFactory' => $collectionFactory,
+                'attrOptionFactory' => $attrOptionFactory
+            ]
+        );
+        $attrObjectSourceMock->setAttribute($abstractAttributeMock);
+
+        $storeManagerMock = $this->getMockForAbstractClass(StoreManagerInterface::class);
+        $storeMock = $this->getMockForAbstractClass(StoreInterface::class);
+
+        $this->objectManager->setBackwardCompatibleProperty(
+            $attrObjectSourceMock,
+            'storeManager',
+            $storeManagerMock
+        );
+
+        $storeId = '1';
+        $attributeId = '42';
+
+        $abstractAttributeMock->expects($this->any())->method('getStoreId')->willReturn(null);
+
+        $storeManagerMock->expects($this->any())->method('getStore')->willReturn($storeMock);
+        $storeMock->expects($this->any())->method('getId')->willReturn($storeId);
+
+        $abstractAttributeMock->expects($this->any())->method('getId')->willReturn($attributeId);
+
+        $collectionFactory->expects($this->once())
+            ->method('create')
+            ->willReturnSelf();
+        $collectionFactory->expects($this->once())
+            ->method('setPositionOrder')
+            ->willReturnSelf();
+        $collectionFactory->expects($this->once())
+            ->method('setAttributeFilter')
+            ->with($attributeId)
+            ->willReturnSelf();
+        $collectionFactory->expects($this->once())
+            ->method('setStoreFilter')
+            ->with($storeId)
+            ->willReturnSelf();
+        $collectionFactory->expects($this->once())
+            ->method('load')
+            ->willReturn($attributeOptionCollectionMock);
+        $options = [
+            ['value' => '16', 'label' => 'default sv black'],
+            ['value' => '17', 'label' => 'default sv white']
+        ];
+        $optionsDefault = [['value' => '16', 'label' => 'black'], ['value' => '17', 'label' => 'white']];
+        $attributeOptionCollectionMock->expects($this->any())
+            ->method('toOptionArray')
+            ->willReturnMap(
+                [
+                    ['value', $options],
+                    ['default_value', $optionsDefault]
+                ]
+            );
+
+        $allOptionsValue = $attrObjectSourceMock->getAllOptions($expectedAttrObjSourceAllOptionsParam, true);
+        $this->assertEquals($attrObjectSourceAllOptionsValue, $allOptionsValue);
+        return $attrObjectSourceMock;
+    }
+
+    /**
      * Data provider for prepare value options
      *
      * @return array
@@ -439,7 +571,7 @@ class AbstractProductTest extends TestCase
                 [
                     'value_select_options' => ['key' => 'value'],
                     'value_option' => ['k' => 'v'],
-                ], null, null, null, null, ['key' => 'value'], ['k' => 'v'],
+                ], null, null, null, null, ['key' => 'value'], ['k' => 'v']
             ],
             [
                 ['attribute' => 'attribute_set_id'],
@@ -540,21 +672,21 @@ class AbstractProductTest extends TestCase
                 [],
                 'select',
                 [
-                    ['value' => 'value7', 'label' => 'Label for value 7'],
-                    ['value' => 'value8', 'label' => 'Label for value 8'],
-                    ['value' => 'default', 'label' => 'Default Option']
+                    ['label' => ' ', 'value' => ''],
+                    ['value' => '16', 'label' => 'black'],
+                    ['value' => '17', 'label' => 'white']
                 ],
                 null,
                 true,
                 [
-                    ['value' => 'value7', 'label' => 'Label for value 7'],
-                    ['value' => 'value8', 'label' => 'Label for value 8'],
-                    ['value' => 'default', 'label' => 'Default Option']
+                    ['label' => ' ', 'value' => ''],
+                    ['value' => '16', 'label' => 'black'],
+                    ['value' => '17', 'label' => 'white']
                 ],
                 [
-                    'value7' => 'Label for value 7',
-                    'value8' => 'Label for value 8',
-                    'default' => 'Default Option'
+                    '' => ' ',
+                    '16' => 'black',
+                    '17' => 'white'
                 ],
             ]
         ];
