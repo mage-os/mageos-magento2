@@ -1,14 +1,13 @@
 <?php
 /**
- * Copyright 2014 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Mview\Config;
 
 use Magento\Framework\Mview\View\AdditionalColumnsProcessor\DefaultProcessor;
 use Magento\Framework\Mview\View\ChangelogBatchWalker;
 use Magento\Framework\Mview\View\SubscriptionInterface;
-use Magento\Framework\App\ResourceConnection;
 
 class Converter implements \Magento\Framework\Config\ConverterInterface
 {
@@ -23,21 +22,13 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
     private $defaultIterator;
 
     /**
-     * @var ResourceConnection
-     */
-    private $resourceConnection;
-
-    /**
-     * @param ResourceConnection $resourceConnection
      * @param string $defaultProcessor
      * @param string $defaultIterator
      */
     public function __construct(
-        ResourceConnection $resourceConnection,
         string $defaultProcessor = DefaultProcessor::class,
         string $defaultIterator = ChangelogBatchWalker::class
     ) {
-        $this->resourceConnection = $resourceConnection;
         $this->defaultProcessor = $defaultProcessor;
         $this->defaultIterator = $defaultIterator;
     }
@@ -108,15 +99,7 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
                         continue;
                     }
                     $name = $this->getAttributeValue($subscription, 'name');
-                    $configColumn = $this->getAttributeValue($subscription, 'entity_column');
-                    $column = $this->checkifcolumnexist($name, $configColumn);
-
-                    if (empty($column)) {
-                        throw new \InvalidArgumentException(
-                            'Column ' . $configColumn . ' does not exist in table ' . $name
-                        );
-                    }
-
+                    $column = $this->getAttributeValue($subscription, 'entity_column');
                     $subscriptionModel = $this->getAttributeValue($subscription, 'subscription_model');
 
                     if (!empty($subscriptionModel)
@@ -171,24 +154,5 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
         }
 
         return $additionalColumns;
-    }
-
-    /**
-     * Check if column exists in table, otherwise return primary key column
-     *
-     * @param string $tableName
-     * @param string $columnName
-     * @return string
-     */
-    public function checkifcolumnexist($tableName, $columnName) : string
-    {
-        $connection = $this->resourceConnection->getConnection();
-        $tableName = $this->resourceConnection->getTableName($tableName);
-
-        if (!$connection->isTableExists($tableName) || $connection->tableColumnExists($tableName, $columnName)) {
-            return $columnName;
-        }
-
-        return '';
     }
 }
