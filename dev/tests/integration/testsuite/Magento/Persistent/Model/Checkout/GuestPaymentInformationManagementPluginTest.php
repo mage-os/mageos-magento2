@@ -132,7 +132,7 @@ class GuestPaymentInformationManagementPluginTest extends \PHPUnit\Framework\Tes
      */
     public function testBeforeSavePaymentInformationAndPlaceOrder()
     {
-        $guestEmail = 'guest@example.com';
+        $guestEmail = 'customer@example.com';
 
         //Retrieve customer from repository
         /** @var \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository */
