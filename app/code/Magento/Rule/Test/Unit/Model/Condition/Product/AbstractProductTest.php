@@ -461,12 +461,8 @@ class AbstractProductTest extends TestCase
         $collectionFactory = $this->getMockBuilder(CollectionFactory::class)
             ->addMethods(
                 [
-                    'setPositionOrder',
-                    'setAttributeFilter',
-                    'addFieldToFilter',
-                    'setStoreFilter',
-                    'load',
-                    'toOptionArray'
+                    'setPositionOrder', 'setAttributeFilter', 'addFieldToFilter',
+                    'setStoreFilter', 'load', 'toOptionArray'
                 ]
             )
             ->onlyMethods(['create'])
@@ -478,10 +474,7 @@ class AbstractProductTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $attrOptionFactory = $this->createPartialMock(
-            OptionFactory::class,
-            ['create']
-        );
+        $attrOptionFactory = $this->createPartialMock(OptionFactory::class, ['create']);
 
         $abstractAttributeMock = $this->getMockBuilder(AbstractAttribute::class)
             ->addMethods(['getStoreId'])
@@ -539,10 +532,7 @@ class AbstractProductTest extends TestCase
         $collectionFactory->expects($this->once())
             ->method('load')
             ->willReturn($attributeOptionCollectionMock);
-        $options = [
-            ['value' => '16', 'label' => 'default sv black'],
-            ['value' => '17', 'label' => 'default sv white']
-        ];
+        $options = [['value' => '16', 'label' => 'default sv black'], ['value' => '17', 'label' => 'default sv white']];
         $optionsDefault = [['value' => '16', 'label' => 'black'], ['value' => '17', 'label' => 'white']];
         $attributeOptionCollectionMock->expects($this->any())
             ->method('toOptionArray')
