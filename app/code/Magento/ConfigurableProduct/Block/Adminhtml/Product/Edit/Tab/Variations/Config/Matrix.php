@@ -440,7 +440,7 @@ class Matrix extends \Magento\Backend\Block\Template
     {
         $productMatrix = $attributes = [];
         $variants = $this->getVariantAttributeComposition();
-        foreach ($this->getAssociatedProducts() as $product) {
+        foreach (array_reverse($this->getAssociatedProducts()) as $product) {
             $childProductOptions = [];
             foreach ($variants[$product->getId()] as $attributeComposition) {
                 $childProductOptions[] = $this->buildChildProductOption($attributeComposition);

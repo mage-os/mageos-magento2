@@ -239,7 +239,7 @@ class AssociatedProducts
         $productMatrix = $attributes = [];
         $variants = $this->getVariantAttributeComposition();
         $productIds = [];
-        foreach (array_reverse($this->getAssociatedProducts()) as $product) {
+        foreach ($this->getAssociatedProducts() as $product) {
             $childProductOptions = [];
             $productIds[] = $product->getId();
             foreach ($variants[$product->getId()] as $attributeComposition) {
@@ -453,10 +453,10 @@ class AssociatedProducts
      * Get label for a specific value of an attribute.
      *
      * @param AbstractAttribute $attribute
-     * @param int $valueId
+     * @param mixed $valueId
      * @return string
      */
-    private function extractAttributeValueLabel(AbstractAttribute $attribute, int $valueId): string
+    private function extractAttributeValueLabel(AbstractAttribute $attribute, mixed $valueId): string
     {
         foreach ($attribute->getOptions() as $attributeOption) {
             if ($attributeOption->getValue() == $valueId) {

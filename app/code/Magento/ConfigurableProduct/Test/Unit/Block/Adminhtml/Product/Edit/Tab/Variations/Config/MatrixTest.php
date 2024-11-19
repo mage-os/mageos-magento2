@@ -30,6 +30,9 @@ use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class MatrixTest extends TestCase
 {
     /**
@@ -199,6 +202,7 @@ class MatrixTest extends TestCase
     /**
      * @return void
      * @throws Exception
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testGetProductMatrix(): void
     {
