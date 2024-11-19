@@ -14,32 +14,6 @@ use Magento\Framework\Serialize\Serializer\Json;
 class Identifier implements IdentifierInterface
 {
     /**
-     * Pattern detect marketing parameters
-     */
-    public const PATTERN_MARKETING_PARAMETERS = [
-        '/&?gad_source\=[^&]+/',
-        '/&?gbraid\=[^&]+/',
-        '/&?wbraid\=[^&]+/',
-        '/&?_gl\=[^&]+/',
-        '/&?dclid\=[^&]+/',
-        '/&?gclsrc\=[^&]+/',
-        '/&?srsltid\=[^&]+/',
-        '/&?msclkid\=[^&]+/',
-        '/&?_kx\=[^&]+/',
-        '/&?gclid\=[^&]+/',
-        '/&?cx\=[^&]+/',
-        '/&?ie\=[^&]+/',
-        '/&?cof\=[^&]+/',
-        '/&?siteurl\=[^&]+/',
-        '/&?zanpid\=[^&]+/',
-        '/&?origin\=[^&]+/',
-        '/&?fbclid\=[^&]+/',
-        '/&?mc_(.*?)\=[^&]+/',
-        '/&?utm_(.*?)\=[^&]+/',
-        '/&?_bta_(.*?)\=[^&]+/',
-    ];
-
-    /**
      * @var \Magento\Framework\App\Request\Http
      */
     protected $request;
@@ -76,8 +50,8 @@ class Identifier implements IdentifierInterface
      */
     public function getValue()
     {
-        $pattern = self::PATTERN_MARKETING_PARAMETERS;
-        $replace = array_fill(0, count(self::PATTERN_MARKETING_PARAMETERS), '');
+        $pattern = $this->getMarketingParameterPatterns();
+        $replace = array_fill(0, count($pattern), '');
         $data = [
             $this->request->isSecure(),
             preg_replace($pattern, $replace, (string)$this->request->getUriString()),
@@ -86,5 +60,37 @@ class Identifier implements IdentifierInterface
         ];
 
         return sha1($this->serializer->serialize($data));
+    }
+
+    /**
+     * Pattern detect marketing parameters
+     *
+     *
+     * @return array
+     */
+    public function getMarketingParameterPatterns(): array
+    {
+        return [
+            '/&?gad_source\=[^&]+/',
+            '/&?gbraid\=[^&]+/',
+            '/&?wbraid\=[^&]+/',
+            '/&?_gl\=[^&]+/',
+            '/&?dclid\=[^&]+/',
+            '/&?gclsrc\=[^&]+/',
+            '/&?srsltid\=[^&]+/',
+            '/&?msclkid\=[^&]+/',
+            '/&?_kx\=[^&]+/',
+            '/&?gclid\=[^&]+/',
+            '/&?cx\=[^&]+/',
+            '/&?ie\=[^&]+/',
+            '/&?cof\=[^&]+/',
+            '/&?siteurl\=[^&]+/',
+            '/&?zanpid\=[^&]+/',
+            '/&?origin\=[^&]+/',
+            '/&?fbclid\=[^&]+/',
+            '/&?mc_(.*?)\=[^&]+/',
+            '/&?utm_(.*?)\=[^&]+/',
+            '/&?_bta_(.*?)\=[^&]+/',
+        ];
     }
 }
