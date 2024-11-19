@@ -58,7 +58,7 @@ define([
             this.exportDataLink = 'data.' + this.prefixName + '.' + this.elementName + suffixName;
             this.exports.value = this.provider + ':' + this.exportDataLink;
         },
-        
+
         /**
          * Get HTML array from data scope.
          *
