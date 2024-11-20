@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2011 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Helper;
 
@@ -21,37 +21,36 @@ use Magento\Tax\Model\Config;
  *
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.CookieAndSessionMisuse)
  * @since 100.0.2
  */
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
-    public const PRICE_SCOPE_GLOBAL = 0;
+    const PRICE_SCOPE_GLOBAL = 0;
 
-    public const PRICE_SCOPE_WEBSITE = 1;
+    const PRICE_SCOPE_WEBSITE = 1;
 
-    public const XML_PATH_PRICE_SCOPE = 'catalog/price/scope';
+    const XML_PATH_PRICE_SCOPE = 'catalog/price/scope';
 
-    public const CONFIG_USE_STATIC_URLS = 'cms/wysiwyg/use_static_urls_in_catalog';
+    const CONFIG_USE_STATIC_URLS = 'cms/wysiwyg/use_static_urls_in_catalog';
 
     /**
      * @deprecated
      * @see \Magento\Catalog\Helper\Output::isDirectivesExists
      */
-    public const CONFIG_PARSE_URL_DIRECTIVES = 'catalog/frontend/parse_url_directives';
+    const CONFIG_PARSE_URL_DIRECTIVES = 'catalog/frontend/parse_url_directives';
 
-    public const XML_PATH_DISPLAY_PRODUCT_COUNT = 'catalog/layered_navigation/display_product_count';
+    const XML_PATH_DISPLAY_PRODUCT_COUNT = 'catalog/layered_navigation/display_product_count';
 
     /**
      * Cache context
      */
-    public const CONTEXT_CATALOG_SORT_DIRECTION = 'catalog_sort_direction';
+    const CONTEXT_CATALOG_SORT_DIRECTION = 'catalog_sort_direction';
 
-    public const CONTEXT_CATALOG_SORT_ORDER = 'catalog_sort_order';
+    const CONTEXT_CATALOG_SORT_ORDER = 'catalog_sort_order';
 
-    public const CONTEXT_CATALOG_DISPLAY_MODE = 'catalog_mode';
+    const CONTEXT_CATALOG_DISPLAY_MODE = 'catalog_mode';
 
-    public const CONTEXT_CATALOG_LIMIT = 'catalog_limit';
+    const CONTEXT_CATALOG_LIMIT = 'catalog_limit';
 
     /**
      * Breadcrumb Path cache
@@ -68,16 +67,22 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     protected $_storeId;
 
     /**
+     * Core registry
+     *
      * @var \Magento\Framework\Registry
      */
     protected $_coreRegistry;
 
     /**
+     * Catalog product
+     *
      * @var Product
      */
     protected $_catalogProduct;
 
     /**
+     * Catalog category
+     *
      * @var Category
      */
     protected $_catalogCategory;
@@ -93,36 +98,50 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     protected $_templateFilterModel;
 
     /**
+     * Catalog session
+     *
      * @var \Magento\Catalog\Model\Session
      */
     protected $_catalogSession;
 
     /**
+     * Store manager
+     *
      * @var \Magento\Store\Model\StoreManagerInterface
      */
     protected $_storeManager;
 
     /**
+     * Template filter factory
+     *
      * @var \Magento\Catalog\Model\Template\Filter\Factory
      */
     protected $_templateFilterFactory;
 
     /**
+     * Tax class key factory
+     *
      * @var \Magento\Tax\Api\Data\TaxClassKeyInterfaceFactory
      */
     protected $_taxClassKeyFactory;
 
     /**
+     * Tax helper
+     *
      * @var \Magento\Tax\Model\Config
      */
     protected $_taxConfig;
 
     /**
+     * Quote details factory
+     *
      * @var \Magento\Tax\Api\Data\QuoteDetailsInterfaceFactory
      */
     protected $_quoteDetailsFactory;
 
     /**
+     * Quote details item factory
+     *
      * @var \Magento\Tax\Api\Data\QuoteDetailsItemInterfaceFactory
      */
     protected $_quoteDetailsItemFactory;
@@ -133,11 +152,15 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     protected $_customerSession;
 
     /**
+     * Tax calculation service interface
+     *
      * @var \Magento\Tax\Api\TaxCalculationInterface
      */
     protected $_taxCalculationService;
 
     /**
+     * Price currency
+     *
      * @var PriceCurrencyInterface
      */
     protected $priceCurrency;
