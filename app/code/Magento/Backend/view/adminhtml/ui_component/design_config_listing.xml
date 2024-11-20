@@ -16,5 +16,10 @@
                 <label translate="true">Theme Name</label>
             </settings>
         </column>
+        <column name="short_description" sortOrder="45">
+            <settings>
+                <label translate="true">Short Description</label>
+            </settings>
+        </column>
     </columns>
 </listing>

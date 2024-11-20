@@ -9,6 +9,7 @@ use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\Api\Search\ReportingInterface;
 use Magento\Framework\Api\Search\SearchCriteriaBuilder;
 use Magento\Framework\App\RequestInterface;
+use Magento\Framework\App\ResourceConnection;
 use Magento\Store\Model\StoreManagerInterface;
 
 /**
@@ -26,6 +27,11 @@ class DataProvider extends \Magento\Framework\View\Element\UiComponent\DataProvi
     protected $storeManager;
 
     /**
+     * @var ResourceConnection
+     */
+    private $resourceConnection;
+
+    /**
      * @param string $name
      * @param string $primaryFieldName
      * @param string $requestFieldName
@@ -34,6 +40,7 @@ class DataProvider extends \Magento\Framework\View\Element\UiComponent\DataProvi
      * @param RequestInterface $request
      * @param FilterBuilder $filterBuilder
      * @param StoreManagerInterface $storeManager
+     * @param ResourceConnection $resourceConnection
      * @param array $meta
      * @param array $data
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -47,6 +54,7 @@ class DataProvider extends \Magento\Framework\View\Element\UiComponent\DataProvi
         RequestInterface $request,
         FilterBuilder $filterBuilder,
         StoreManagerInterface $storeManager,
+        ResourceConnection $resourceConnection,
         array $meta = [],
         array $data = []
     ) {
@@ -62,6 +70,7 @@ class DataProvider extends \Magento\Framework\View\Element\UiComponent\DataProvi
             $data
         );
         $this->storeManager = $storeManager;
+        $this->resourceConnection = $resourceConnection;
     }
 
     /**
@@ -90,8 +99,37 @@ class DataProvider extends \Magento\Framework\View\Element\UiComponent\DataProvi
         $data = parent::getData();
         foreach ($data['items'] as & $item) {
             $item += ['default' => __('Global')];
+
+            $scope = ($item['store_id']) ? 'stores' : (($item['store_website_id']) ? 'websites' : 'default');
+            $scopeId = (int) $item['store_website_id'] ?? 0;
+            $themeId = (int) $item['theme_theme_id'] ?? 0;
+            $usingDefaultTheme = $this->isUsingDefaultTheme($scopeId, $themeId, $scope);
+            $item += ['short_description' => $usingDefaultTheme ? __('Using Default Theme') : ''];
         }
 
         return $data;
+    }
+
+    /**
+     * Check if theme used is default theme
+     *
+     * @param int $scopeId
+     * @param int $themeId
+     * @param string $scope
+     * @return bool
+     */
+    private function isUsingDefaultTheme(int $scopeId, int $themeId, string $scope): bool
+    {
+        $connection = $this->resourceConnection->getConnection();
+        $configId = $connection->fetchOne(
+            $connection->select()->from(
+                $connection->getTableName('core_config_data'),
+                ['config_id']
+            )->where('value = ?', $themeId)
+            ->where('scope_id = ?', $scopeId)
+            ->where('path = ?', 'design/theme/theme_id')
+            ->where('scope = ?', $scope)
+        );
+        return !$configId;
     }
 }
