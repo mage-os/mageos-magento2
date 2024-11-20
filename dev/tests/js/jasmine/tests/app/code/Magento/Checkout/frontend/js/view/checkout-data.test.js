@@ -57,5 +57,17 @@ define([
 
             expect(address).toEqual(testData.shippingAddressFromData.base);
         });
+
+        it('should save new customer shipping address per website', function () {
+            checkoutData.setNewCustomerShippingAddress({address1: 'address1'});
+            expect(mocks['Magento_Customer/js/customer-data'].set).
+                toHaveBeenCalledWith(cacheKey, jasmine.objectContaining(testData));
+        });
+
+        it('should get new customer shipping address from data per website', function () {
+            let address = checkoutData.getNewCustomerShippingAddress();
+
+            expect(address).toEqual(testData.shippingAddressFromData.base);
+        });
     });
 });

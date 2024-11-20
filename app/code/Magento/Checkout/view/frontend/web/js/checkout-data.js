@@ -17,6 +17,7 @@ define([
     'use strict';
 
     var cacheKey = 'checkout-data',
+        storeCode = window.checkoutConfig.storeCode,
 
         /**
          * @param {Object} data
@@ -57,6 +58,20 @@ define([
             }
 
             return data;
+        },
+        getShippingAddressByStore = function (shippingAddressObj) {
+            if (!shippingAddressObj) {
+                return null;
+            }
+
+            return shippingAddressObj[storeCode];
+        },
+        setShippingAddressByStore = function (shippingAddressObj, data) {
+            if (!shippingAddressObj) {
+                shippingAddressObj = {};
+            }
+            shippingAddressObj[storeCode] = utils.filterFormData(data);
+            return shippingAddressObj;
         };
 
     return {
@@ -87,13 +102,9 @@ define([
          * @param {Object} data
          */
         setShippingAddressFromData: function (data) {
-            let obj = getData(),
-                storeCode = window.checkoutConfig.storeCode;
+            let obj = getData();
 
-            if (!obj.shippingAddressFromData) {
-                obj.shippingAddressFromData = {};
-            }
-            obj.shippingAddressFromData[storeCode] = utils.filterFormData(data);
+            obj.shippingAddressFromData = setShippingAddressByStore(obj.shippingAddressFromData, data);
             saveData(obj);
         },
 
@@ -103,13 +114,7 @@ define([
          * @return {*}
          */
         getShippingAddressFromData: function () {
-            let storeCode = window.checkoutConfig.storeCode;
-
-            if (!getData().shippingAddressFromData) {
-                return null;
-            }
-
-            return getData().shippingAddressFromData[storeCode];
+            return getShippingAddressByStore(getData().shippingAddressFromData);
         },
 
         /**
@@ -120,7 +125,7 @@ define([
         setNewCustomerShippingAddress: function (data) {
             var obj = getData();
 
-            obj.newCustomerShippingAddress = data;
+            obj.newCustomerShippingAddress = setShippingAddressByStore(obj.newCustomerShippingAddress, data);
             saveData(obj);
         },
 
@@ -130,7 +135,7 @@ define([
          * @return {*}
          */
         getNewCustomerShippingAddress: function () {
-            return getData().newCustomerShippingAddress;
+            return getShippingAddressByStore(getData().newCustomerShippingAddress);
         },
 
         /**
