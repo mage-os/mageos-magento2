@@ -65,7 +65,6 @@ class Identifier implements IdentifierInterface
     /**
      * Pattern detect marketing parameters
      *
-     *
      * @return array
      */
     public function getMarketingParameterPatterns(): array

@@ -8,7 +8,10 @@ declare(strict_types=1);
 namespace Magento\PageCache\Test\Unit\Model\App\Request\Http;
 
 use Magento\Framework\App\Http\Context;
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\App\PageCache\Identifier;
 use Magento\Framework\App\Request\Http as HttpRequest;
+use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\PageCache\Model\App\Request\Http\IdentifierForSave;
 use Magento\PageCache\Model\App\Request\Http\IdentifierStoreReader;
@@ -47,6 +50,11 @@ class IdentifierForSaveTest extends TestCase
     private $identifierStoreReader;
 
     /**
+     * @var Identifier
+     */
+    private $identifierMock;
+
+    /**
      * @inheritdoc
      */
     protected function setUp(): void
@@ -74,6 +82,16 @@ class IdentifierForSaveTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->identifierMock = $this->getMockBuilder(Identifier::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $objectManagerMock = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        $objectManagerMock->expects($this->once())
+            ->method('get')
+            ->willReturn($this->identifierMock);
+        ObjectManager::setInstance($objectManagerMock);
+
         $this->model = new IdentifierForSave(
             $this->requestMock,
             $this->contextMock,
@@ -90,6 +108,10 @@ class IdentifierForSaveTest extends TestCase
      */
     public function testGetValue(): void
     {
+        $this->identifierMock->expects($this->once())
+            ->method('getMarketingParameterPatterns')
+            ->willReturn($this->getpattern());
+
         $this->requestMock->expects($this->any())
             ->method('isSecure')
             ->willReturn(true);
@@ -129,6 +151,10 @@ class IdentifierForSaveTest extends TestCase
      */
     public function testGetValueWithMarketingParameters(): void
     {
+        $this->identifierMock->expects($this->any())
+            ->method('getMarketingParameterPatterns')
+            ->willReturn($this->getPattern());
+
         $this->requestMock->expects($this->any())
             ->method('isSecure')
             ->willReturn(true);
@@ -159,5 +185,34 @@ class IdentifierForSaveTest extends TestCase
             ),
             $this->model->getValue()
         );
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getPattern(): array
+    {
+        return [
+            '/&?gad_source\=[^&]+/',
+            '/&?gbraid\=[^&]+/',
+            '/&?wbraid\=[^&]+/',
+            '/&?_gl\=[^&]+/',
+            '/&?dclid\=[^&]+/',
+            '/&?gclsrc\=[^&]+/',
+            '/&?srsltid\=[^&]+/',
+            '/&?msclkid\=[^&]+/',
+            '/&?_kx\=[^&]+/',
+            '/&?gclid\=[^&]+/',
+            '/&?cx\=[^&]+/',
+            '/&?ie\=[^&]+/',
+            '/&?cof\=[^&]+/',
+            '/&?siteurl\=[^&]+/',
+            '/&?zanpid\=[^&]+/',
+            '/&?origin\=[^&]+/',
+            '/&?fbclid\=[^&]+/',
+            '/&?mc_(.*?)\=[^&]+/',
+            '/&?utm_(.*?)\=[^&]+/',
+            '/&?_bta_(.*?)\=[^&]+/',
+        ];
     }
 }
