@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2024 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Theme\Ui\Component\Design\Config;
 
@@ -96,6 +96,8 @@ class DataProvider extends \Magento\Framework\View\Element\UiComponent\DataProvi
                     ->create()
             );
         }
+
+        $themeConfigData = $this->getCoreConfigData();
         $data = parent::getData();
         foreach ($data['items'] as & $item) {
             $item += ['default' => __('Global')];
@@ -103,33 +105,29 @@ class DataProvider extends \Magento\Framework\View\Element\UiComponent\DataProvi
             $scope = ($item['store_id']) ? 'stores' : (($item['store_website_id']) ? 'websites' : 'default');
             $scopeId = (int) $item['store_website_id'] ?? 0;
             $themeId = (int) $item['theme_theme_id'] ?? 0;
-            $usingDefaultTheme = $this->isUsingDefaultTheme($scopeId, $themeId, $scope);
-            $item += ['short_description' => $usingDefaultTheme ? __('Using Default Theme') : ''];
+
+            $criteria = ['scope' => $scope, 'scope_id' => $scopeId, 'value' => $themeId];
+            $configData = array_filter($themeConfigData, function ($themeConfig) use ($criteria) {
+                return array_intersect_assoc($criteria, $themeConfig) === $criteria;
+            });
+
+            $item += ['short_description' => !$configData ? __('Using Default Theme') : ''];
         }
 
         return $data;
     }
 
     /**
-     * Check if theme used is default theme
+     * Get the core config data related to theme
      *
-     * @param int $scopeId
-     * @param int $themeId
-     * @param string $scope
-     * @return bool
+     * @return array
      */
-    private function isUsingDefaultTheme(int $scopeId, int $themeId, string $scope): bool
+    private function getCoreConfigData(): array
     {
         $connection = $this->resourceConnection->getConnection();
-        $configId = $connection->fetchOne(
-            $connection->select()->from(
-                $connection->getTableName('core_config_data'),
-                ['config_id']
-            )->where('value = ?', $themeId)
-            ->where('scope_id = ?', $scopeId)
-            ->where('path = ?', 'design/theme/theme_id')
-            ->where('scope = ?', $scope)
+        return $connection->fetchAll(
+            $connection->select()->from($connection->getTableName('core_config_data'))
+                ->where('path = ?', 'design/theme/theme_id')
         );
-        return !$configId;
     }
 }
