@@ -133,9 +133,7 @@ class CartFixed extends AbstractDiscount
                         $qty,
                         $baseItemPrice,
                         $baseItemDiscountAmount,
-                        //$baseRuleTotals - $ruleTotals['base_items_discount_amount'],
-                        //$baseRuleTotals - $address->getBaseDiscountAmount(),
-                        $baseRuleTotals,
+                        $baseRuleTotals - $address->getBaseDiscountAmount(),
                         $discountType
                     );
             }
