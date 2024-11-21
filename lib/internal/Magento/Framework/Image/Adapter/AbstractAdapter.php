@@ -562,13 +562,13 @@ abstract class AbstractAdapter implements AdapterInterface
             }
         }
 
-        $frameWidth = (float)$frameWidth;
-        $frameHeight = (float)$frameHeight;
-
         // define coordinates of image inside new frame
         $srcX = 0;
         $srcY = 0;
         list($dstWidth, $dstHeight) = $this->_checkAspectRatio($frameWidth, $frameHeight);
+
+        $frameWidth = (float)$frameWidth;
+        $frameHeight = (float)$frameHeight;
 
         // define position in center
         // TODO: add positions option
