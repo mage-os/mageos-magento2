@@ -594,8 +594,8 @@ abstract class AbstractAdapter implements AdapterInterface
     /**
      * Check aspect ratio
      *
-     * @param int $frameWidth
-     * @param int $frameHeight
+     * @param int|float $frameWidth
+     * @param int|float $frameHeight
      * @return int[]
      */
     protected function _checkAspectRatio($frameWidth, $frameHeight)
