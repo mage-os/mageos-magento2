@@ -653,30 +653,30 @@ class AbstractProductTest extends TestCase
                 [],
                 'select',
                 [
-                    ['label' => ' ', 'value' => ''],
-                    ['value' => '16', 'label' => 'black'],
-                    ['value' => '17', 'label' => 'white']
+                    ['value' => '', 'label' => ' '],
+                    ['value' => 'value7', 'label' => 'Label for value 7'],
+                    ['value' => 'value8', 'label' => 'Label for value 8'],
                 ],
                 null,
                 true,
                 [
-                    ['label' => ' ', 'value' => ''],
-                    ['value' => '16', 'label' => 'black'],
-                    ['value' => '17', 'label' => 'white']
+                    ['value' => '', 'label' => ' '],
+                    ['value' => 'value7', 'label' => 'Label for value 7'],
+                    ['value' => 'value8', 'label' => 'Label for value 8'],
                 ],
                 [
                     '' => ' ',
-                    '16' => 'black',
-                    '17' => 'white'
+                    'value7' => 'Label for value 7',
+                    'value8' => 'Label for value 8',
                 ],
                 [
-                    ['value' => '16', 'label' => 'default sv black'],
-                    ['value' => '17', 'label' => 'default sv white']
+                    ['value' => 'value7', 'label' => 'Label for default sv value 7'],
+                    ['value' => 'value8', 'label' => 'Label for default sv value 8'],
                 ],
                 [
-                    ['value' => '16', 'label' => 'black'],
-                    ['value' => '17', 'label' => 'white']
-                ],
+                    ['value' => 'value7', 'label' => 'Label for value 7'],
+                    ['value' => 'value8', 'label' => 'Label for value 8'],
+                ]
             ]
         ];
     }
