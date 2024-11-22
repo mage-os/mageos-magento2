@@ -230,7 +230,7 @@ class DownloadTest extends TestCase
      * Data provider to test possible invalid filenames
      * @return array
      */
-    public function invalidFileDataProvider()
+    public static function invalidFileDataProvider()
     {
         return [
             'Relative file name' => ['../.htaccess'],
