@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\RelatedProductGraphQl\Model;
+namespace Magento\RelatedProductGraphQl\Model\ResourceModel;
 
 use Magento\Catalog\Model\ResourceModel\Product\Link;
 use Magento\Framework\App\ResourceConnection;

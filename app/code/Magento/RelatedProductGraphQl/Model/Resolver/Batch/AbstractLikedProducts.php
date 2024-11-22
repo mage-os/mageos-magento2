@@ -19,7 +19,7 @@ use Magento\Framework\GraphQl\Query\Resolver\BatchResolverInterface;
 use Magento\Framework\GraphQl\Query\Resolver\BatchResponse;
 use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\RelatedProductGraphQl\Model\DataProvider\RelatedProductDataProvider;
-use Magento\RelatedProductGraphQl\Model\RelatedProductsByStoreId;
+use Magento\RelatedProductGraphQl\Model\ResourceModel\RelatedProductsByStoreId;
 
 /**
  * Resolve linked product lists.
