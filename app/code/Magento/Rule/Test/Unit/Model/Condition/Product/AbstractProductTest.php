@@ -536,7 +536,7 @@ class AbstractProductTest extends TestCase
                 [
                     'value_select_options' => ['key' => 'value'],
                     'value_option' => ['k' => 'v'],
-                ], null, null, null, null, ['key' => 'value'], ['k' => 'v']
+                ], null, null, null, null, ['key' => 'value'], ['k' => 'v'],
             ],
             [
                 ['attribute' => 'attribute_set_id'],
