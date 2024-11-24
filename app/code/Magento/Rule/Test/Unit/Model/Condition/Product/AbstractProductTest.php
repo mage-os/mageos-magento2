@@ -463,8 +463,14 @@ class AbstractProductTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $storeId = '1';
+        $storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)->getMock();
+        $storeMock = $this->getMockBuilder(StoreInterface::class)->getMock();
+        $storeMock->expects($this->atLeastOnce())->method('getId')->willReturn($storeId);
+        $storeManagerMock->expects($this->atLeastOnce())->method('getStore')->willReturn($storeMock);
         $attrOptionFactory = $this->createPartialMock(OptionFactory::class, ['create']);
 
+        $attributeId = '42';
         $abstractAttributeMock = $this->getMockBuilder(AbstractAttribute::class)
             ->addMethods(['getStoreId'])
             ->onlyMethods(
@@ -475,21 +481,7 @@ class AbstractProductTest extends TestCase
             )
             ->disableOriginalConstructor()
             ->getMock();
-
-        $storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)->getMock();
-        $storeMock = $this->getMockBuilder(StoreInterface::class)->getMock();
-
-        $attrObjectSourceMock = new Table($collectionFactory, $attrOptionFactory, $storeManagerMock);
-        $attrObjectSourceMock->setAttribute($abstractAttributeMock);
-
-        $storeId = '1';
-        $attributeId = '42';
-
         $abstractAttributeMock->expects($this->atLeastOnce())->method('getStoreId')->willReturn(null);
-
-        $storeManagerMock->expects($this->atLeastOnce())->method('getStore')->willReturn($storeMock);
-        $storeMock->expects($this->atLeastOnce())->method('getId')->willReturn($storeId);
-
         $abstractAttributeMock->expects($this->atLeastOnce())->method('getId')->willReturn($attributeId);
 
         $collectionFactory->expects($this->once())
@@ -518,6 +510,8 @@ class AbstractProductTest extends TestCase
                 ]
             );
 
+        $attrObjectSourceMock = new Table($collectionFactory, $attrOptionFactory, $storeManagerMock);
+        $attrObjectSourceMock->setAttribute($abstractAttributeMock);
         $allOptionsValue = $attrObjectSourceMock->getAllOptions($expectedAttrObjSourceAllOptionsParam, true);
         $this->assertEquals($attrObjectSourceAllOptionsValue, $allOptionsValue);
         return $attrObjectSourceMock;
