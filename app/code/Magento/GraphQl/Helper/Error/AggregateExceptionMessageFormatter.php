@@ -14,6 +14,7 @@ use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Framework\Phrase;
+use Magento\QuoteGraphQl\Model\ErrorMapper;
 
 /**
  * Class for formatting internally-thrown errors if they match allowed exception types or using a default message if not
@@ -55,10 +56,19 @@ class AggregateExceptionMessageFormatter
     ): ClientAware {
         foreach ($this->messageFormatters as $formatter) {
             $formatted = $formatter->getFormatted($e, $messagePrefix, $field, $context, $info);
+            if ($formatted && !$e->getCode() && ($errorId = ErrorMapper::getErrorMessageId($e->getMessage()))) {
+                $exceptionType = get_class($e);
+                $formatted = new $exceptionType(
+                    __($e->getMessage()),
+                    $e,
+                    $errorId
+                );
+            }
             if ($formatted) {
                 return $formatted;
             }
         }
-        return new GraphQlInputException($defaultMessage, $e);
+        $message = $e->getCode() ? __($e->getMessage()) : $defaultMessage;
+        return new GraphQlInputException($message, $e, $e->getCode());
     }
 }

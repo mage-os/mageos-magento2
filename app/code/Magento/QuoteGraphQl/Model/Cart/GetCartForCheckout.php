@@ -63,7 +63,11 @@ class GetCartForCheckout
 
         if (null === $customerId || 0 === $customerId) {
             if (!$cart->getCustomerEmail()) {
-                throw new GraphQlInputException(__("Guest email for cart is missing."));
+                throw new GraphQlInputException(
+                    __("Guest email for cart is missing."),
+                    null,
+                    ErrorMapper::getErrorMessageId('Guest email for cart is missing')
+                );
             }
             $cart->setCheckoutMethod(CartManagementInterface::METHOD_GUEST);
         }

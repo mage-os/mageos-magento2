@@ -21,6 +21,7 @@ use Magento\Quote\Api\ShipmentEstimationInterface;
 use Magento\Quote\Model\MaskedQuoteIdToQuoteIdInterface;
 use Magento\Quote\Model\Quote\AddressFactory;
 use Magento\Quote\Model\Cart\ShippingMethodConverter;
+use Magento\QuoteGraphQl\Model\ErrorMapper;
 use Magento\QuoteGraphQl\Model\FormatMoneyTypeData;
 
 /**
@@ -64,7 +65,9 @@ class EstimateShippingMethods implements ResolverInterface
                     [
                         'masked_id' => $args['input']['cart_id']
                     ]
-                )
+                ),
+                $ex,
+                ErrorMapper::getErrorMessageId('Could not find a cart with ID')
             );
         }
         return $this->getAvailableShippingMethodsForAddress($args['input']['address'], $cart);

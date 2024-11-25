@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2019 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -18,6 +18,7 @@ use Magento\Quote\Api\CartItemRepositoryInterface;
 use Magento\Quote\Model\MaskedQuoteIdToQuoteId;
 use Magento\QuoteGraphQl\Model\Cart\GetCartForUser;
 use Magento\Framework\GraphQl\Query\Resolver\ArgumentsProcessorInterface;
+use Magento\QuoteGraphQl\Model\ErrorMapper;
 
 /**
  * @inheritdoc
@@ -76,7 +77,9 @@ class RemoveItemFromCart implements ResolverInterface
             $cartId = $this->maskedQuoteIdToQuoteId->execute($maskedCartId);
         } catch (NoSuchEntityException $exception) {
             throw new GraphQlNoSuchEntityException(
-                __('Could not find a cart with ID "%masked_cart_id"', ['masked_cart_id' => $maskedCartId])
+                __('Could not find a cart with ID "%masked_cart_id"', ['masked_cart_id' => $maskedCartId]),
+                $exception,
+                ErrorMapper::getErrorMessageId('Could not find a cart with ID')
             );
         }
 

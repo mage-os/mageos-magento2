@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -14,6 +14,7 @@ use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Model\MaskedQuoteIdToQuoteIdInterface;
 use Magento\Quote\Model\Quote;
+use Magento\QuoteGraphQl\Model\ErrorMapper;
 
 /**
  * Get cart
@@ -78,12 +79,18 @@ class GetCartForUser
             $cart = $this->cartRepository->get($cartId);
         } catch (NoSuchEntityException $exception) {
             throw new GraphQlNoSuchEntityException(
-                __('Could not find a cart with ID "%masked_cart_id"', ['masked_cart_id' => $cartHash])
+                __('Could not find a cart with ID "%masked_cart_id"', ['masked_cart_id' => $cartHash]),
+                $exception,
+                ErrorMapper::getErrorMessageId('Could not find a cart with ID')
             );
         }
 
         if (false === (bool)$this->isActive->execute($cart)) {
-            throw new GraphQlNoSuchEntityException(__('The cart isn\'t active.'));
+            throw new GraphQlNoSuchEntityException(
+                __('The cart isn\'t active.'),
+                null,
+                ErrorMapper::getErrorMessageId('The cart isn\'t active')
+            );
         }
 
         $cart = $this->updateCartCurrency->execute($cart, $storeId);
