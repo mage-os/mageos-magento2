@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2019 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -112,7 +112,6 @@ class PlaceOrderTest extends GraphQlAbstract
         self::assertArrayHasKey('number', $response['placeOrder']['orderV2']);
         self::assertEquals($reservedOrderId, $response['placeOrder']['order']['order_number']);
         self::assertEquals($reservedOrderId, $response['placeOrder']['orderV2']['number']);
-        self::assertEmpty(count($response['placeOrder']['errors']));
         $orderIncrementId = $response['placeOrder']['order']['order_number'];
         $order = $this->orderFactory->create();
         $order->loadByIncrementId($orderIncrementId);
@@ -485,10 +484,6 @@ mutation {
     }
     orderV2 {
       number
-    }
-    errors {
-      message
-      code
     }
   }
 }

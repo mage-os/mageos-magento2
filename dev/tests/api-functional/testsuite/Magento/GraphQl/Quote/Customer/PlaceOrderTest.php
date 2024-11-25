@@ -448,10 +448,6 @@ mutation {
     order {
       order_number
     }
-    errors {
-      message
-      code
-    }
   }
 }
 QUERY;

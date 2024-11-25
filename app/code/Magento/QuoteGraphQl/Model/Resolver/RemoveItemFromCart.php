@@ -28,39 +28,47 @@ class RemoveItemFromCart implements ResolverInterface
     /**
      * @var GetCartForUser
      */
-    private $getCartForUser;
+    private GetCartForUser $getCartForUser;
 
     /**
      * @var CartItemRepositoryInterface
      */
-    private $cartItemRepository;
+    private CartItemRepositoryInterface $cartItemRepository;
 
     /**
      * @var MaskedQuoteIdToQuoteId
      */
-    private $maskedQuoteIdToQuoteId;
+    private MaskedQuoteIdToQuoteId $maskedQuoteIdToQuoteId;
 
     /**
      * @var ArgumentsProcessorInterface
      */
-    private $argsSelection;
+    private ArgumentsProcessorInterface $argsSelection;
+
+    /**
+     * @var ErrorMapper
+     */
+    private ErrorMapper $errorMapper;
 
     /**
      * @param GetCartForUser $getCartForUser
      * @param CartItemRepositoryInterface $cartItemRepository
      * @param MaskedQuoteIdToQuoteId $maskedQuoteIdToQuoteId
      * @param ArgumentsProcessorInterface $argsSelection
+     * @param ErrorMapper $errorMapper
      */
     public function __construct(
         GetCartForUser $getCartForUser,
         CartItemRepositoryInterface $cartItemRepository,
         MaskedQuoteIdToQuoteId $maskedQuoteIdToQuoteId,
-        ArgumentsProcessorInterface $argsSelection
+        ArgumentsProcessorInterface $argsSelection,
+        ErrorMapper $errorMapper
     ) {
         $this->getCartForUser = $getCartForUser;
         $this->cartItemRepository = $cartItemRepository;
         $this->maskedQuoteIdToQuoteId = $maskedQuoteIdToQuoteId;
         $this->argsSelection = $argsSelection;
+        $this->errorMapper = $errorMapper;
     }
 
     /**
@@ -79,7 +87,7 @@ class RemoveItemFromCart implements ResolverInterface
             throw new GraphQlNoSuchEntityException(
                 __('Could not find a cart with ID "%masked_cart_id"', ['masked_cart_id' => $maskedCartId]),
                 $exception,
-                ErrorMapper::getErrorMessageId('Could not find a cart with ID')
+                $this->errorMapper->getErrorMessageId('Could not find a cart with ID')
             );
         }
 

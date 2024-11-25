@@ -24,39 +24,47 @@ class GetCartForUser
     /**
      * @var MaskedQuoteIdToQuoteIdInterface
      */
-    private $maskedQuoteIdToQuoteId;
+    private MaskedQuoteIdToQuoteIdInterface $maskedQuoteIdToQuoteId;
 
     /**
      * @var CartRepositoryInterface
      */
-    private $cartRepository;
+    private CartRepositoryInterface $cartRepository;
 
     /**
      * @var IsActive
      */
-    private $isActive;
+    private IsActive $isActive;
 
     /**
      * @var UpdateCartCurrency
      */
-    private $updateCartCurrency;
+    private UpdateCartCurrency $updateCartCurrency;
+
+    /**
+     * @var ErrorMapper
+     */
+    private ErrorMapper $errorMapper;
 
     /**
      * @param MaskedQuoteIdToQuoteIdInterface $maskedQuoteIdToQuoteId
      * @param CartRepositoryInterface $cartRepository
      * @param IsActive $isActive
      * @param UpdateCartCurrency $updateCartCurrency
+     * @param ErrorMapper $errorMapper
      */
     public function __construct(
         MaskedQuoteIdToQuoteIdInterface $maskedQuoteIdToQuoteId,
         CartRepositoryInterface $cartRepository,
         IsActive $isActive,
-        UpdateCartCurrency $updateCartCurrency
+        UpdateCartCurrency $updateCartCurrency,
+        ErrorMapper $errorMapper
     ) {
         $this->maskedQuoteIdToQuoteId = $maskedQuoteIdToQuoteId;
         $this->cartRepository = $cartRepository;
         $this->isActive = $isActive;
         $this->updateCartCurrency = $updateCartCurrency;
+        $this->errorMapper = $errorMapper;
     }
 
     /**
@@ -81,7 +89,7 @@ class GetCartForUser
             throw new GraphQlNoSuchEntityException(
                 __('Could not find a cart with ID "%masked_cart_id"', ['masked_cart_id' => $cartHash]),
                 $exception,
-                ErrorMapper::getErrorMessageId('Could not find a cart with ID')
+                $this->errorMapper->getErrorMessageId('Could not find a cart with ID')
             );
         }
 
@@ -89,7 +97,7 @@ class GetCartForUser
             throw new GraphQlNoSuchEntityException(
                 __('The cart isn\'t active.'),
                 null,
-                ErrorMapper::getErrorMessageId('The cart isn\'t active')
+                $this->errorMapper->getErrorMessageId('The cart isn\'t active')
             );
         }
 

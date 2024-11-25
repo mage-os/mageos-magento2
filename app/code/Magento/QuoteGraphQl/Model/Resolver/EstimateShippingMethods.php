@@ -38,6 +38,7 @@ class EstimateShippingMethods implements ResolverInterface
      * @param ExtensibleDataObjectConverter $dataObjectConverter
      * @param ShippingMethodConverter $shippingMethodConverter
      * @param FormatMoneyTypeData $formatMoneyTypeData
+     * @param ErrorMapper $errorMapper
      */
     public function __construct(
         private MaskedQuoteIdToQuoteIdInterface $maskedQuoteIdToQuoteId,
@@ -47,6 +48,7 @@ class EstimateShippingMethods implements ResolverInterface
         private ExtensibleDataObjectConverter $dataObjectConverter,
         private ShippingMethodConverter $shippingMethodConverter,
         private FormatMoneyTypeData $formatMoneyTypeData,
+        private ErrorMapper $errorMapper
     ) {
     }
 
@@ -67,7 +69,7 @@ class EstimateShippingMethods implements ResolverInterface
                     ]
                 ),
                 $ex,
-                ErrorMapper::getErrorMessageId('Could not find a cart with ID')
+                $this->errorMapper->getErrorMessageId('Could not find a cart with ID')
             );
         }
         return $this->getAvailableShippingMethodsForAddress($args['input']['address'], $cart);

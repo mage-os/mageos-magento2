@@ -38,10 +38,6 @@ class GraphQlNoSuchEntityException extends NoSuchEntityException implements Clie
     public function __construct(Phrase $phrase, \Exception $cause = null, $code = 0, $isSafe = true)
     {
         $this->isSafe = $isSafe;
-        if ($cause && !$code && $cause->getCode()) {
-            $code = $cause->getCode();
-
-        }
         parent::__construct($phrase, $cause, $code);
     }
 

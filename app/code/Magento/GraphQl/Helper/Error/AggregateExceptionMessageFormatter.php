@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2021 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -14,7 +14,6 @@ use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Framework\Phrase;
-use Magento\QuoteGraphQl\Model\ErrorMapper;
 
 /**
  * Class for formatting internally-thrown errors if they match allowed exception types or using a default message if not
@@ -24,7 +23,7 @@ class AggregateExceptionMessageFormatter
     /**
      * @var ExceptionMessageFormatterInterface[]
      */
-    private $messageFormatters;
+    private array $messageFormatters;
 
     /**
      * @param ExceptionMessageFormatterInterface[] $messageFormatters
@@ -55,19 +54,11 @@ class AggregateExceptionMessageFormatter
         ResolveInfo $info
     ): ClientAware {
         foreach ($this->messageFormatters as $formatter) {
-            $formatted = $formatter->getFormatted($e, $messagePrefix, $field, $context, $info);
-            if ($formatted && !$e->getCode() && ($errorId = ErrorMapper::getErrorMessageId($e->getMessage()))) {
-                $exceptionType = get_class($e);
-                $formatted = new $exceptionType(
-                    __($e->getMessage()),
-                    $e,
-                    $errorId
-                );
-            }
-            if ($formatted) {
+            if ($formatted = $formatter->getFormatted($e, $messagePrefix, $field, $context, $info)) {
                 return $formatted;
             }
         }
+
         $message = $e->getCode() ? __($e->getMessage()) : $defaultMessage;
         return new GraphQlInputException($message, $e, $e->getCode());
     }

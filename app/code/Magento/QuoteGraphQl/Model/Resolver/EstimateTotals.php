@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2023 Adobe
+ * Copyright 2024 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -33,13 +33,15 @@ class EstimateTotals implements ResolverInterface
      * @param AddressFactory $addressFactory
      * @param TotalsInformationManagementInterface $totalsInformationManagement
      * @param TotalsInformationInterfaceFactory $totalsInformationFactory
+     * @param ErrorMapper $errorMapper
      */
     public function __construct(
         private readonly MaskedQuoteIdToQuoteIdInterface $maskedQuoteIdToQuoteId,
         private readonly CartRepositoryInterface $cartRepository,
         private readonly AddressFactory $addressFactory,
         private readonly TotalsInformationManagementInterface $totalsInformationManagement,
-        private readonly TotalsInformationInterfaceFactory $totalsInformationFactory
+        private readonly TotalsInformationInterfaceFactory $totalsInformationFactory,
+        private readonly ErrorMapper $errorMapper
     ) {
     }
 
@@ -65,7 +67,7 @@ class EstimateTotals implements ResolverInterface
                     ]
                 ),
                 $exception,
-                ErrorMapper::getErrorMessageId('Could not find a cart with ID')
+                $this->errorMapper->getErrorMessageId('Could not find a cart with ID')
             );
         }
 

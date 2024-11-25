@@ -77,7 +77,7 @@ class ErrorMapper
      * @param string $message
      * @return int
      */
-    public static function getErrorMessageId(string $message): int
+    public function getErrorMessageId(string $message): int
     {
         $code = self::ERROR_UNDEFINED_ID;
 
