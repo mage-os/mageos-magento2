@@ -268,10 +268,6 @@ class PlaceOrderWithPaymentsAdvancedTest extends TestCase
     order {
       order_number
     }
-    errors {
-      message
-      code
-    }
   }
 }
 QUERY;

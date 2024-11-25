@@ -136,10 +136,6 @@ class PlaceOrderWithPayflowLinkTest extends TestCase
       order {
         order_number
       }
-      errors {
-        message
-        code
-      }
     }
 }
 QUERY;
@@ -244,10 +240,6 @@ QUERY;
     placeOrder(input: {cart_id: "$cartId"}) {
       order {
         order_number
-      }
-      errors {
-        message
-        code
       }
     }
 }
