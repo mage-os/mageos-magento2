@@ -2056,10 +2056,8 @@ class Create extends \Magento\Framework\DataObject implements \Magento\Checkout\
     private function beforeSubmit(Quote $quote)
     {
         $orderData = [];
-        if ($this->getSession()->getReordered() || $this->getSession()->getOrder()->getId()) {
+        if ($this->getSession()->getOrder()->getId()) {
             $oldOrder = $this->getSession()->getOrder();
-            $oldOrder = $oldOrder->getId() ?
-                $oldOrder : $this->orderRepositoryInterface->get($this->getSession()->getReordered());
             $originalId = $oldOrder->getOriginalIncrementId();
             if (!$originalId) {
                 $originalId = $oldOrder->getIncrementId();
@@ -2086,16 +2084,12 @@ class Create extends \Magento\Framework\DataObject implements \Magento\Checkout\
      */
     private function afterSubmit(Order $order)
     {
-        if ($this->getSession()->getReordered() || $this->getSession()->getOrder()->getId()) {
+        if ($this->getSession()->getOrder()->getId()) {
             $oldOrder = $this->getSession()->getOrder();
-            $oldOrder = $oldOrder->getId() ?
-                $oldOrder : $this->orderRepositoryInterface->get($this->getSession()->getReordered());
             $oldOrder->setRelationChildId($order->getId());
             $oldOrder->setRelationChildRealId($order->getIncrementId());
             $oldOrder->save();
-            if ($this->getSession()->getOrder()->getId()) {
-                $this->orderManagement->cancel($oldOrder->getEntityId());
-            }
+            $this->orderManagement->cancel($oldOrder->getEntityId());
             $order->save();
         }
     }
@@ -2352,3 +2346,4 @@ class Create extends \Magento\Framework\DataObject implements \Magento\Checkout\
         }
     }
 }
+
