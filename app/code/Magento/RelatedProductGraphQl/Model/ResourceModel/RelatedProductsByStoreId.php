@@ -67,6 +67,6 @@ class RelatedProductsByStoreId
         }
         return !empty($linkedStoreProductIds) ?
             array_column($linkedStoreProductIds, 'linked_product_id')
-            : $linkedProductIds;
+            :[];
     }
 }
