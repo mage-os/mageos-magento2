@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright 2024 Adobe
+  * All Rights Reserved.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminSaveProductWith2ORMorePagesOfCustomOptionsTest">
+        <annotations>
+            <features value="Create product"/>
+            <stories value="Save product with 2 or more pages of custom options"/>
+            <title value="Admin should be able to Save product with 2 or more pages of custom options"/>
+            <description value="Admin save product with 2 or more pages of custom options"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="AC-4158"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
+        </after>
+        <actionGroup ref="AdminOpenProductIndexPageActionGroup" stepKey="navigateToProductIndex"/>
+        <actionGroup ref="GoToCreateProductPageActionGroup" stepKey="goToCreateProduct">
+            <argument name="product" value="SimpleProduct"/>
+        </actionGroup>
+        <actionGroup ref="FillMainProductFormNoWeightActionGroup" stepKey="fillProductForm">
+            <argument name="product" value="SimpleProduct"/>
+        </actionGroup>
+        <click selector="{{AdminProductCustomizableOptionsSection.customizableOptions}}" stepKey="openCustomizableOptions"/>
+        <waitForPageLoad stepKey="waitForCustomOptionsOpen"/>
+        <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions">
+            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
+            <argument name="firstOption" value="ProductOptionValueDropdown1"/>
+            <argument name="secondOption" value="ProductOptionValueDropdown2"/>
+            <argument name="thirdOption" value="ProductOptionValueDropdown3"/>
+            <argument name="fourthOption" value="ProductOptionValueDropdown3"/>
+            <argument name="fifthOption" value="ProductOptionValueDropdown3"/>
+            <argument name="sixthOption" value="ProductOptionValueDropdown3"/>
+            <argument name="seventhOption" value="ProductOptionValueDropdown3"/>
+            <argument name="eighthOption" value="ProductOptionValueDropdown3"/>
+            <argument name="ninthOption" value="ProductOptionValueDropdown3"/>
+            <argument name="tenthOption" value="ProductOptionValueDropdown3"/>
+            <argument name="eleventhOption" value="ProductOptionValueDropdown3"/>
+            <argument name="twelfthOption" value="ProductOptionValueDropdown3"/>
+            <argument name="thirteenthOption" value="ProductOptionValueDropdown3"/>
+            <argument name="fourteenthOption" value="ProductOptionValueDropdown3"/>
+            <argument name="fifteenthOption" value="ProductOptionValueDropdown3"/>
+            <argument name="sixteenthOption" value="ProductOptionValueDropdown3"/>
+            <argument name="seventeenthOption" value="ProductOptionValueDropdown3"/>
+            <argument name="eighteenthOption" value="ProductOptionValueDropdown3"/>
+            <argument name="nineteenthOption" value="ProductOptionValueDropdown3"/>
+            <argument name="twentiethOption" value="ProductOptionValueDropdown3"/>
+            <argument name="twentyfirstOption" value="ProductOptionValueDropdown3"/>
+            <argument name="twentytwoOption" value="ProductOptionValueDropdown3"/>
+        </actionGroup>
+        <actionGroup ref="AdminProductFormSaveActionGroup" stepKey="clickSaveButton"/>
+        <waitForElementVisible selector="{{AdminProductMessagesSection.successMessage}}" stepKey="seeProductSavedMessage"/>
+        <actionGroup ref="ReloadPageActionGroup" stepKey="reloadPage"/>
+        <actionGroup ref="AdminProductFormSaveActionGroup" stepKey="clickSaveButtonAgain"/>
+        <seeElement selector="{{AdminCategoryMessagesSection.SuccessMessage}}" stepKey="messageYouSavedTheProductIsShownAgain"/>
+    </test>
+</tests>
