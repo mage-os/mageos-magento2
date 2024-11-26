@@ -94,7 +94,7 @@ class GraphQlInputException extends LocalizedException implements AggregateExcep
      */
     public function getExtensions(): array
     {
-        $extensions['category'] = $this->getCategory();
-        return $extensions;
+        $exceptionCategory['category'] = $this->getCategory();
+        return $exceptionCategory;
     }
 }
