@@ -56,8 +56,8 @@
         <waitForElementClickable selector="{{AdminPaypalProductPageConfigSection.expandCatalogProductPage('us')}}" stepKey="waitForCatalogPageClickable"/>
         <click selector="{{AdminPaypalProductPageConfigSection.expandCatalogProductPage('us')}}" stepKey="clickCatalog"/>
         <click selector="{{AdminPaypalProductPageConfigSection.styleLayout('us')}}"  stepKey="clickOnPosition"/>
-        <see selector="{{AdminPaypalProductPageConfigSection.styleLayout('us')}}" userInput="Text" stepKey="seeTextStyleLayout"/>
-        <see selector="{{AdminPaypalProductPageConfigSection.styleLayout('us')}}" userInput="Flex" stepKey="seeFlexStyleLayout"/>
+        <waitForText selector="{{AdminPaypalProductPageConfigSection.styleLayout('us')}}" userInput="Text" stepKey="seeTextStyleLayout"/>
+        <waitForText selector="{{AdminPaypalProductPageConfigSection.styleLayout('us')}}" userInput="Flex" stepKey="seeFlexStyleLayout"/>
         <selectOption selector="{{AdminPaypalProductPageConfigSection.styleLayout('us')}}" userInput="Text" stepKey="setTextInStyleLayout"/>
         <waitForPageLoad stepKey="waitForFiltersReset"/>
         <waitForElementVisible selector="{{AdminPaypalProductPageConfigSection.logoType('us')}}"  stepKey="seeLogoType"/>
@@ -65,10 +65,10 @@
         <waitForElementVisible selector="{{AdminPaypalProductPageConfigSection.textColor('us')}}"  stepKey="seeTextColor"/>
         <waitForElementVisible selector="{{AdminPaypalProductPageConfigSection.textSize('us')}}"  stepKey="seeTextSize"/>
         <click selector="{{AdminPaypalProductPageConfigSection.logoType('us')}}"  stepKey="ClickOnLogoType"/>
-        <see selector="{{AdminPaypalProductPageConfigSection.logoType('us')}}" userInput="Primary" stepKey="seePrimaryLogoType"/>
-        <see selector="{{AdminPaypalProductPageConfigSection.logoType('us')}}" userInput="Alternative" stepKey="seeAlternativeLogoType"/>
-        <see selector="{{AdminPaypalProductPageConfigSection.logoType('us')}}" userInput="Inline" stepKey="seeInlineLogoType"/>
-        <see selector="{{AdminPaypalProductPageConfigSection.logoType('us')}}" userInput="None" stepKey="seeLogoTypeAsNone"/>
+        <waitForText selector="{{AdminPaypalProductPageConfigSection.logoType('us')}}" userInput="Primary" stepKey="seePrimaryLogoType"/>
+        <waitForText selector="{{AdminPaypalProductPageConfigSection.logoType('us')}}" userInput="Alternative" stepKey="seeAlternativeLogoType"/>
+        <waitForText selector="{{AdminPaypalProductPageConfigSection.logoType('us')}}" userInput="Inline" stepKey="seeInlineLogoType"/>
+        <waitForText selector="{{AdminPaypalProductPageConfigSection.logoType('us')}}" userInput="None" stepKey="seeLogoTypeAsNone"/>
         <selectOption selector="{{AdminPaypalProductPageConfigSection.logoType('us')}}" userInput="Inline" stepKey="setInlineInLogoType"/>
         <waitForElementVisible selector="{{AdminPaypalProductPageConfigSection.textColor('us')}}"  stepKey="assertTextColor"/>
         <waitForElementVisible selector="{{AdminPaypalProductPageConfigSection.textSize('us')}}"  stepKey="assertTextSize"/>
