@@ -12,7 +12,6 @@ use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Catalog\Model\ResourceModel\Product;
 use Magento\Eav\Model\Config;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
-use Magento\Eav\Model\Entity\Attribute\Source\AbstractSource;
 use Magento\Eav\Model\Entity\Attribute\Source\Table;
 use Magento\Eav\Model\Entity\Type;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\Collection as AttributeOptionCollection;
@@ -448,12 +447,6 @@ class AbstractProductTest extends TestCase
         array $optionsDefault
     ): Table {
         $collectionFactory = $this->getMockBuilder(CollectionFactory::class)
-            /*->addMethods(
-                [
-                    'setPositionOrder', 'setAttributeFilter', 'addFieldToFilter',
-                    'setStoreFilter', 'load', 'toOptionArray'
-                ]
-            )*/
             ->onlyMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
