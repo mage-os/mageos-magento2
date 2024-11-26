@@ -17,6 +17,7 @@ use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\GraphQl\Helper\Error\AggregateExceptionMessageFormatter;
 use Magento\QuoteGraphQl\Model\Cart\GetCartForCheckout;
 use Magento\QuoteGraphQl\Model\Cart\PlaceOrder as PlaceOrderModel;
+use Magento\QuoteGraphQl\Model\QuoteException;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\SalesGraphQl\Model\Formatter\Order as OrderFormatter;
 
@@ -62,7 +63,7 @@ class PlaceOrder implements ResolverInterface
                 __($exception->getMessage())
             );
         } catch (LocalizedException $exception) {
-            throw $this->errorMessageFormatter->getFormatted(
+            $exception = $this->errorMessageFormatter->getFormatted(
                 $exception,
                 __('Unable to place order: A server error stopped your order from being placed. ' .
                     'Please try to place your order again'),
@@ -71,6 +72,7 @@ class PlaceOrder implements ResolverInterface
                 $context,
                 $info
             );
+            throw new QuoteException(__($exception->getMessage()), $exception, $exception->getCode());
         }
 
         return [

@@ -11,25 +11,25 @@ class ErrorMapper
     /**
      * Error message codes
      */
-    private const ERROR_CART_NOT_FOUND = 'CART_NOT_FOUND';
-    private const ERROR_CART_NOT_ACTIVE = 'CART_NOT_ACTIVE';
-    private const ERROR_GUEST_EMAIL_MISSING = 'GUEST_EMAIL_MISSING';
-    private const ERROR_UNABLE_TO_PLACE_ORDER = 'UNABLE_TO_PLACE_ORDER';
-    private const ERROR_UNDEFINED = 'UNDEFINED';
+    public const ERROR_CART_NOT_FOUND = 'CART_NOT_FOUND';
+    public const ERROR_CART_NOT_ACTIVE = 'CART_NOT_ACTIVE';
+    public const ERROR_GUEST_EMAIL_MISSING = 'GUEST_EMAIL_MISSING';
+    public const ERROR_UNABLE_TO_PLACE_ORDER = 'UNABLE_TO_PLACE_ORDER';
+    public const ERROR_UNDEFINED = 'UNDEFINED';
 
     /**
      * Error message codes ids
      */
-    private const ERROR_CART_NOT_FOUND_ID = 1001;
-    private const ERROR_CART_NOT_ACTIVE_ID = 1002;
-    private const ERROR_GUEST_EMAIL_MISSING_ID = 1003;
-    private const ERROR_UNABLE_TO_PLACE_ORDER_ID = 1004;
-    private const ERROR_UNDEFINED_ID = 1005;
+    public const ERROR_CART_NOT_FOUND_ID = 1001;
+    public const ERROR_CART_NOT_ACTIVE_ID = 1002;
+    public const ERROR_GUEST_EMAIL_MISSING_ID = 1003;
+    public const ERROR_UNABLE_TO_PLACE_ORDER_ID = 1004;
+    public const ERROR_UNDEFINED_ID = 1005;
 
     /**
      * List of error messages and codes ids.
      */
-    private const MESSAGE_IDS = [
+    public const MESSAGE_IDS = [
         'Could not find a cart with ID' => self::ERROR_CART_NOT_FOUND_ID,
         'The cart isn\'t active' => self::ERROR_CART_NOT_ACTIVE_ID,
         'Guest email for cart is missing' => self::ERROR_GUEST_EMAIL_MISSING_ID,
@@ -47,7 +47,7 @@ class ErrorMapper
     /**
      * List of error message ids and codes.
      */
-    private const MESSAGE_CODE_IDS = [
+    public const MESSAGE_CODE_IDS = [
             self::ERROR_CART_NOT_FOUND_ID => self::ERROR_CART_NOT_FOUND,
             self::ERROR_CART_NOT_ACTIVE_ID => self::ERROR_CART_NOT_ACTIVE,
             self::ERROR_GUEST_EMAIL_MISSING_ID => self::ERROR_GUEST_EMAIL_MISSING,
@@ -58,7 +58,7 @@ class ErrorMapper
     /**
      * List of error messages and codes.
      */
-    private const MESSAGE_CODES = [
+    public const MESSAGE_CODES = [
         'Could not find a cart with ID' => self::ERROR_CART_NOT_FOUND,
         'The cart isn\'t active' => self::ERROR_CART_NOT_ACTIVE,
         'Guest email for cart is missing' => self::ERROR_GUEST_EMAIL_MISSING,

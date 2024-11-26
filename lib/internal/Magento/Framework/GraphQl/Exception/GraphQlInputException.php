@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2017 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 declare(strict_types=1);
 
@@ -12,7 +12,6 @@ use Magento\Framework\Exception\AggregateExceptionInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Phrase;
 use GraphQL\Error\ClientAware;
-use Magento\QuoteGraphQl\Model\ErrorMapper;
 
 /**
  * Exception for GraphQL to be thrown when user supplies invalid input
@@ -96,10 +95,6 @@ class GraphQlInputException extends LocalizedException implements AggregateExcep
     public function getExtensions(): array
     {
         $extensions['category'] = $this->getCategory();
-        if ($this->code) {
-            $extensions['err_code'] = ErrorMapper::getMessageCode($this->code);
-        }
-
         return $extensions;
     }
 }

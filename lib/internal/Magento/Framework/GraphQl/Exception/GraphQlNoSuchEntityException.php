@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2018 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 declare(strict_types=1);
 
@@ -11,7 +11,6 @@ use GraphQL\Error\ClientAware;
 use GraphQL\Error\ProvidesExtensions;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Phrase;
-use Magento\QuoteGraphQl\Model\ErrorMapper;
 
 /**
  * Exception for GraphQL to be thrown when entity does not exists
@@ -64,11 +63,7 @@ class GraphQlNoSuchEntityException extends NoSuchEntityException implements Clie
      */
     public function getExtensions(): array
     {
-        $extensions['category'] = $this->getCategory();
-        if ($this->code && ($errorCode = ErrorMapper::getMessageCode($this->code))) {
-            $extensions['err_code'] = $errorCode;
-        }
-
-        return $extensions;
+        $exceptionCategory['category'] = $this->getCategory();
+        return $exceptionCategory;
     }
 }

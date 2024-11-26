@@ -13,7 +13,6 @@ use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
 use Magento\Quote\Api\CartManagementInterface;
 use Magento\Quote\Model\Quote;
-use Magento\QuoteGraphQl\Model\ErrorMapper;
 
 /**
  * Get cart
@@ -31,23 +30,15 @@ class GetCartForCheckout
     private GetCartForUser $getCartForUser;
 
     /**
-     * @var ErrorMapper
-     */
-    private ErrorMapper $errorMapper;
-
-    /**
      * @param CheckCartCheckoutAllowance $checkoutAllowance
      * @param GetCartForUser $getCartForUser
-     * @param ErrorMapper $errorMapper
      */
     public function __construct(
         CheckCartCheckoutAllowance $checkoutAllowance,
-        GetCartForUser $getCartForUser,
-        ErrorMapper $errorMapper
+        GetCartForUser $getCartForUser
     ) {
         $this->checkoutAllowance = $checkoutAllowance;
         $this->getCartForUser = $getCartForUser;
-        $this->errorMapper = $errorMapper;
     }
 
     /**
@@ -72,11 +63,7 @@ class GetCartForCheckout
 
         if (null === $customerId || 0 === $customerId) {
             if (!$cart->getCustomerEmail()) {
-                throw new GraphQlInputException(
-                    __("Guest email for cart is missing."),
-                    null,
-                    $this->errorMapper->getErrorMessageId('Guest email for cart is missing')
-                );
+                throw new GraphQlInputException(__("Guest email for cart is missing."));
             }
             $cart->setCheckoutMethod(CartManagementInterface::METHOD_GUEST);
         }

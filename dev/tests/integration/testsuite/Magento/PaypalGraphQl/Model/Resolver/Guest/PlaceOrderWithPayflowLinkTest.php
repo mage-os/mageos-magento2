@@ -270,11 +270,11 @@ QUERY;
 
         $response = $this->graphQlRequest->send($query);
         $responseData = $this->json->unserialize($response->getContent());
-        $this->assertArrayHasKey('errors', $responseData['data']['placeOrder']);
-        $actualError = $responseData['data']['placeOrder']['errors'][0];
+        $this->assertArrayHasKey('errors', $responseData);
+        $actualError = $responseData['errors'][0];
         $this->assertEquals(
             $expectedErrorCode,
-            $actualError['code']
+            $actualError['extensions']['error_code']
         );
     }
 }

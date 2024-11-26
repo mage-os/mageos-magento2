@@ -210,10 +210,6 @@ mutation {
       number,
       email
     }
-    errors {
-      message
-      code
-    }
   }
 }
 QUERY;
