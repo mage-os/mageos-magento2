@@ -24,6 +24,8 @@ use Magento\SalesGraphQl\Model\Formatter\Order as OrderFormatter;
 
 /**
  * Resolver for placing order after payment method has already been set
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class PlaceOrder implements ResolverInterface
 {
