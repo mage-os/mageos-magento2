@@ -10,7 +10,7 @@
     <test name="AdminSaveProductWith2ORMorePagesOfCustomOptionsTest">
         <annotations>
             <features value="Create product"/>
-            <stories value="Save product with 2 or more pages of custom options"/>
+            <stories value="Save product with 2 or more page of custom options"/>
             <title value="Admin should be able to Save product with 2 or more pages of custom options"/>
             <description value="Admin save product with 2 or more pages of custom options"/>
             <severity value="MAJOR"/>
