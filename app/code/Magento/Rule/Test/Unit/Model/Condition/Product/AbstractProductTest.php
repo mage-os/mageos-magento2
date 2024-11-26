@@ -448,18 +448,21 @@ class AbstractProductTest extends TestCase
         array $optionsDefault
     ): Table {
         $collectionFactory = $this->getMockBuilder(CollectionFactory::class)
-            ->addMethods(
+            /*->addMethods(
                 [
                     'setPositionOrder', 'setAttributeFilter', 'addFieldToFilter',
                     'setStoreFilter', 'load', 'toOptionArray'
                 ]
-            )
+            )*/
             ->onlyMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $attributeOptionCollectionMock = $this->getMockBuilder(AttributeOptionCollection::class)
-            ->onlyMethods(['toOptionArray'])
+            $attributeOptionCollectionMock = $this->getMockBuilder(AttributeOptionCollection::class)
+            ->onlyMethods([
+                'setPositionOrder', 'setAttributeFilter', 'addFieldToFilter',
+                'setStoreFilter', 'load', 'toOptionArray'
+            ])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -486,21 +489,21 @@ class AbstractProductTest extends TestCase
 
         $collectionFactory->expects($this->once())
             ->method('create')
-            ->willReturnSelf();
-        $collectionFactory->expects($this->once())
+            ->willReturn($attributeOptionCollectionMock);
+        $attributeOptionCollectionMock->expects($this->once())
             ->method('setPositionOrder')
             ->willReturnSelf();
-        $collectionFactory->expects($this->once())
+        $attributeOptionCollectionMock->expects($this->once())
             ->method('setAttributeFilter')
             ->with($attributeId)
             ->willReturnSelf();
-        $collectionFactory->expects($this->once())
+        $attributeOptionCollectionMock->expects($this->once())
             ->method('setStoreFilter')
             ->with($storeId)
             ->willReturnSelf();
-        $collectionFactory->expects($this->once())
+        $attributeOptionCollectionMock->expects($this->once())
             ->method('load')
-            ->willReturn($attributeOptionCollectionMock);
+            ->willReturnSelf();
         $attributeOptionCollectionMock->expects($this->any())
             ->method('toOptionArray')
             ->willReturnMap(
