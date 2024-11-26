@@ -24,8 +24,6 @@ use Magento\TestFramework\Helper\Bootstrap;
  */
 class GraphQlControllerTest extends \Magento\TestFramework\Indexer\TestCase
 {
-    const CONTENT_TYPE = 'application/json';
-
     /** @var \Magento\Framework\ObjectManagerInterface */
     private $objectManager;
 
