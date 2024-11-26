@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2024 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -15,6 +15,7 @@ use Magento\Framework\ObjectManager\ResetAfterRequestInterface;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Quote\Model\Cart\Totals;
 use Magento\Quote\Model\Quote\Item;
+use Magento\Downloadable\Model\Product\Type;
 use Magento\QuoteGraphQl\Model\Cart\TotalsCollector;
 use Magento\QuoteGraphQl\Model\GetDiscounts;
 use Magento\QuoteGraphQl\Model\GetOptionsRegularPrice;
@@ -81,15 +82,6 @@ class CartItemPrices implements ResolverInterface, ResetAfterRequestInterface
             $discountAmount = $cartItem->getDiscountAmount();
         }
 
-        /**
-         * Calculate the actual price of the product with all discounts applied
-         */
-        $originalItemPrice = $cartItem->getTotalDiscountAmount() > 0
-            ? $this->priceCurrency->round(
-                $cartItem->getCalculationPrice() - ($cartItem->getTotalDiscountAmount() / max($cartItem->getQty(), 1))
-            )
-            : $cartItem->getCalculationPrice();
-
         return [
             'model' => $cartItem,
             'price' => [
@@ -118,7 +110,7 @@ class CartItemPrices implements ResolverInterface, ResetAfterRequestInterface
             ),
             'original_item_price' => [
                 'currency' => $currencyCode,
-                'value' => $originalItemPrice
+                'value' => $this->getOriginalItemPrice($cartItem),
             ],
             'original_row_total' => [
                 'currency' => $currencyCode,
@@ -128,16 +120,34 @@ class CartItemPrices implements ResolverInterface, ResetAfterRequestInterface
     }
 
     /**
-     * Calculate the original price row total
+     * Calculate the original item price, with no discounts or taxes applied
+     *
+     * @param Item $cartItem
+     * @return float
+     */
+    private function getOriginalItemPrice(Item $cartItem): float
+    {
+        $originalItemPrice = $cartItem->getOriginalPrice() + $this->getOptionsPrice($cartItem);
+
+        // To add downloadable product link price to the original item price
+        if ($cartItem->getProductType() === Type::TYPE_DOWNLOADABLE &&
+            $cartItem->getProduct()->getData('links_purchased_separately')) {
+            $originalItemPrice += (float)$this->getDownloadableLinkPrice($cartItem);
+        }
+
+        return $originalItemPrice;
+    }
+
+    /**
+     * Calculate the original row total price
      *
      * @param Item $cartItem
      * @return float
      */
     private function getOriginalRowTotal(Item $cartItem): float
     {
-        $qty = $cartItem->getTotalQty();
         // Round unit price before multiplying to prevent losing 1 cent on subtotal
-        return $this->priceCurrency->round($cartItem->getOriginalPrice() + $this->getOptionsPrice($cartItem)) * $qty;
+        return $this->priceCurrency->round($this->getOriginalItemPrice($cartItem) * $cartItem->getTotalQty());
     }
 
     /**
@@ -168,6 +178,29 @@ class CartItemPrices implements ResolverInterface, ResetAfterRequestInterface
             }
         }
 
+        return $price;
+    }
+
+    /**
+     * Get the downloadable link price
+     *
+     * @param Item $cartItem
+     * @return float
+     */
+    private function getDownloadableLinkPrice(Item $cartItem): float
+    {
+        $price = 0.0;
+        $links = $cartItem->getProduct()->getCustomOption('downloadable_link_ids');
+        if (!$links || empty($links->getValue())) {
+            return $price;
+        }
+        $selectedLinks = explode(',', $links->getValue());
+        $downloadableLinks = $cartItem->getProduct()->getTypeInstance()->getLinks($cartItem->getProduct());
+        foreach ($downloadableLinks as $link) {
+            if (in_array($link->getId(), $selectedLinks)) {
+                $price += (float)$link->getPrice();
+            }
+        }
         return $price;
     }
 }
