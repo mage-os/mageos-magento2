@@ -17,6 +17,7 @@ use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\GraphQl\Helper\Error\AggregateExceptionMessageFormatter;
 use Magento\QuoteGraphQl\Model\Cart\GetCartForCheckout;
 use Magento\QuoteGraphQl\Model\Cart\PlaceOrder as PlaceOrderModel;
+use Magento\QuoteGraphQl\Model\ErrorMapper;
 use Magento\QuoteGraphQl\Model\QuoteException;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\SalesGraphQl\Model\Formatter\Order as OrderFormatter;
@@ -32,13 +33,15 @@ class PlaceOrder implements ResolverInterface
      * @param OrderRepositoryInterface $orderRepository
      * @param OrderFormatter $orderFormatter
      * @param AggregateExceptionMessageFormatter $errorMessageFormatter
+     * @param ErrorMapper $errorMapper
      */
     public function __construct(
         private readonly GetCartForCheckout $getCartForCheckout,
         private readonly PlaceOrderModel $placeOrder,
         private readonly OrderRepositoryInterface $orderRepository,
         private readonly OrderFormatter $orderFormatter,
-        private readonly AggregateExceptionMessageFormatter $errorMessageFormatter
+        private readonly AggregateExceptionMessageFormatter $errorMessageFormatter,
+        private readonly ErrorMapper $errorMapper
     ) {
     }
 
@@ -72,7 +75,12 @@ class PlaceOrder implements ResolverInterface
                 $context,
                 $info
             );
-            throw new QuoteException(__($exception->getMessage()), $exception, $exception->getCode());
+            $exceptionCode = $exception->getCode();
+            if (!$exceptionCode) {
+                $exceptionCode = $this->errorMapper->getErrorMessageId($exception->getMessage());
+            }
+
+            throw new QuoteException(__($exception->getMessage()), $exception, $exceptionCode);
         }
 
         return [

@@ -91,7 +91,4 @@
             </argument>
         </arguments>
     </type>
-    <type name="Magento\GraphQl\Helper\Error\AggregateExceptionMessageFormatter">
-        <plugin name="exception_message_decorator" type="Magento\QuoteGraphQl\Plugin\ExceptionMessageDecorator" sortOrder="1"/>
-    </type>
 </config>
