@@ -1,10 +1,8 @@
 <?php
-
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2017 Adobe
+ * All Rights Reserved.
  */
-
 declare(strict_types=1);
 
 namespace Magento\GraphQl\Controller;
@@ -181,38 +179,44 @@ class GraphQl implements FrontControllerInterface
     {
         $this->areaList->getArea(Area::AREA_GRAPHQL)->load(Area::PART_TRANSLATE);
 
-        $statusCode = 200;
+        $statusCode = 204;
         $jsonResult = $this->jsonFactory->create();
         $data = $this->getDataFromRequest($request);
-        $result = [];
+        $result = null;
 
         $schema = null;
         $query = $data['query'] ?? '';
         try {
             /** @var Http $request */
             $this->requestProcessor->validateRequest($request);
-            $parsedQuery = $this->queryParser->parse($query);
-            $data['parsedQuery'] = $parsedQuery;
+            if ($request->isGet() || $request->isPost()) {
+                $parsedQuery = $this->queryParser->parse($query);
+                $data['parsedQuery'] = $parsedQuery;
 
-            // We must extract queried field names to avoid instantiation of unnecessary fields in webonyx schema
-            // Temporal coupling is required for performance optimization
-            $this->queryFields->setQuery($parsedQuery, $data['variables'] ?? null);
-            $schema = $this->schemaGenerator->generate();
+                // We must extract queried field names to avoid instantiation of unnecessary fields in webonyx schema
+                // Temporal coupling is required for performance optimization
+                $this->queryFields->setQuery($parsedQuery, $data['variables'] ?? null);
+                $schema = $this->schemaGenerator->generate();
 
-            $result = $this->queryProcessor->process(
-                $schema,
-                $parsedQuery,
-                $this->contextFactory->create(),
-                $data['variables'] ?? []
-            );
+                $result = $this->queryProcessor->process(
+                    $schema,
+                    $parsedQuery,
+                    $this->contextFactory->create(),
+                    $data['variables'] ?? []
+                );
+                $statusCode = 200;
+            }
         } catch (\Exception $error) {
-            $result['errors'] = isset($result['errors']) ? $result['errors'] : [];
-            $result['errors'][] = $this->graphQlError->create($error);
+            $result = [
+                'errors' => [$this->graphQlError->create($error)],
+            ];
             $statusCode = ExceptionFormatter::HTTP_GRAPH_QL_SCHEMA_ERROR_STATUS;
         }
 
         $jsonResult->setHttpResponseCode($statusCode);
-        $jsonResult->setData($result);
+        if ($result !== null) {
+            $jsonResult->setData($result);
+        }
         $jsonResult->renderResult($this->httpResponse);
 
         // log information about the query, unless it is an introspection query

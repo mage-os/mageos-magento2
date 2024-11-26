@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -175,7 +175,7 @@ query GetProducts(\$filterInput:ProductAttributeFilterInput){
             id
             name
             sku
-        }  
+        }
     }
 }
 QUERY;
@@ -223,12 +223,12 @@ QUERY;
     }
   ])
     {
-      items{        
+      items{
       attribute_code
       attribute_type
       entity_type
-    }      
-    }  
+    }
+    }
   }
 QUERY;
 
@@ -264,5 +264,14 @@ QUERY;
                 }
             }
         }
+    }
+
+    public function testDispatchWithOptions(): void
+    {
+        $this->request->setPathInfo('/graphql');
+        $this->request->setMethod('OPTIONS');
+        $response = $this->graphql->dispatch($this->request);
+        self::assertEquals(204, $response->getStatusCode());
+        self::assertEmpty($response->getContent());
     }
 }
