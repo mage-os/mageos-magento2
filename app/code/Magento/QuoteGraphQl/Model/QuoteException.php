@@ -20,7 +20,7 @@ class QuoteException extends GraphQlInputException
     {
         $extensions['category'] = $this->getCategory();
         if ($this->code) {
-            $extensions['error_code'] = ErrorMapper::getMessageCode($this->code);
+            $extensions['error_code'] = ErrorMapper::MESSAGE_CODE_IDS[$this->code] ?? ErrorMapper::ERROR_UNDEFINED;
         }
 
         return $extensions;

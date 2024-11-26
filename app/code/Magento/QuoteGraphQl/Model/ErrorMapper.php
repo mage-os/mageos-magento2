@@ -74,6 +74,8 @@ class ErrorMapper
     ];
 
     /**
+     * Transforms a message into a corresponding id
+     *
      * @param string $message
      * @return int
      */
@@ -94,14 +96,5 @@ class ErrorMapper
         }
 
         return $code;
-    }
-
-    /**
-     * @param int $errorId
-     * @return string
-     */
-    public static function getMessageCode(int $errorId): string
-    {
-        return self::MESSAGE_CODE_IDS[$errorId] ?? self::ERROR_UNDEFINED;
     }
 }

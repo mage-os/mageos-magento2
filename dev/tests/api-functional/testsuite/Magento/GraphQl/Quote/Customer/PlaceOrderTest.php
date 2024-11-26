@@ -188,7 +188,8 @@ class PlaceOrderTest extends GraphQlAbstract
             $exceptionData = $exception->getResponseData();
             self::assertEquals(1, count($exceptionData['errors']));
             self::assertEquals(
-                'Unable to place order: Some addresses can\'t be used due to the configurations for specific countries.',
+                'Unable to place order: Some addresses can\'t be used' .
+                ' due to the configurations for specific countries.',
                 $exceptionData['errors'][0]['message']
             );
             self::assertEquals(

@@ -20,6 +20,8 @@ class ExceptionMessageDecorator
     }
 
     /**
+     * Add error id to an exception if it is not set
+     *
      * @param AggregateExceptionMessageFormatter $subject
      * @param mixed $result
      * @return mixed
