@@ -72,9 +72,9 @@ class RequestPasswordResetEmailTest extends TestCase
      * ensuring alignment between content and subject in translated languages.
      *
      * @dataProvider customerOnFrenchStore
-     * @param $requestFromStore
-     * @param $subject
-     * @param $message
+     * @param string $requestFromStore
+     * @param string $subject
+     * @param string $message
      * @throws NoSuchEntityException
      */
     #[
@@ -86,9 +86,9 @@ class RequestPasswordResetEmailTest extends TestCase
         DataFixture(Customer::class, ['email' => 'customer@example.com', 'store_id' => '$store2.id$'], as: 'customer'),
     ]
     public function testResetPasswordEmailRequestFromCustomStoreWhenCustomerIsOnCustomStore(
-        $requestFromStore,
-        $subject,
-        $message
+        string $requestFromStore,
+        string $subject,
+        string $message
     ) {
         $this->assertResetPasswordEmailContent($requestFromStore, $subject, $message);
     }
@@ -98,9 +98,9 @@ class RequestPasswordResetEmailTest extends TestCase
      * ensuring alignment between content and subject in translated languages.
      *
      * @dataProvider customerOnDefaultStore
-     * @param $requestFromStore
-     * @param $subject
-     * @param $comment
+     * @param string $requestFromStore
+     * @param string $subject
+     * @param string $comment
      * @throws NoSuchEntityException
      */
     #[
@@ -112,9 +112,9 @@ class RequestPasswordResetEmailTest extends TestCase
         DataFixture(Customer::class, ['email' => 'customer@example.com'], as: 'customer'),
     ]
     public function testResetPasswordEmailRequestFromCustomStoreWhenCustomerIsOnDefaultStore(
-        $requestFromStore,
-        $subject,
-        $comment
+        string $requestFromStore,
+        string $subject,
+        string $comment
     ) {
         $this->assertResetPasswordEmailContent($requestFromStore, $subject, $comment);
     }
@@ -123,12 +123,12 @@ class RequestPasswordResetEmailTest extends TestCase
      * Assert the consistency between the reset password email subject and content
      * when the request originates from different stores.
      *
-     * @param $store
-     * @param $subject
-     * @param $message
+     * @param string $store
+     * @param string $subject
+     * @param string $message
      * @throws NoSuchEntityException
      */
-    private function assertResetPasswordEmailContent($store, $subject, $message)
+    private function assertResetPasswordEmailContent(string $store, string $subject, string $message)
     {
         $customer = $this->fixtures->get('customer');
         $email = $customer->getEmail();
