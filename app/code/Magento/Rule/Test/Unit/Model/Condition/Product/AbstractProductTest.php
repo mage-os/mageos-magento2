@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2011 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 declare(strict_types=1);
 
@@ -11,18 +11,12 @@ use Magento\Catalog\Model\ProductCategoryList;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Catalog\Model\ResourceModel\Product;
 use Magento\Eav\Model\Config;
-use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
-use Magento\Eav\Model\Entity\Attribute\Source\Table;
+use Magento\Eav\Model\Entity\Attribute\Source\AbstractSource;
 use Magento\Eav\Model\Entity\Type;
-use Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\Collection as AttributeOptionCollection;
-use Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\CollectionFactory;
-use Magento\Eav\Model\ResourceModel\Entity\Attribute\OptionFactory;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\Collection;
 use Magento\Framework\DataObject;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Rule\Model\Condition\Product\AbstractProduct;
-use Magento\Store\Api\Data\StoreInterface;
-use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -343,8 +337,6 @@ class AbstractProductTest extends TestCase
      * @param bool $expectedAttrObjSourceAllOptionsParam
      * @param array $expectedValueSelectOptions
      * @param array $expectedValueOption
-     * @param array|null $options,
-     * @param array|null $optionsDefault
      * @dataProvider prepareValueOptionsDataProvider
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
@@ -355,32 +347,33 @@ class AbstractProductTest extends TestCase
         $attrSetCollectionOptionsArray,
         $expectedAttrObjSourceAllOptionsParam,
         $expectedValueSelectOptions,
-        $expectedValueOption,
-        $options = null,
-        $optionsDefault = null
+        $expectedValueOption
     ) {
         foreach ($setData as $key => $value) {
             $this->_condition->setData($key, $value);
         }
 
-        $attributeObjectMock = $this->getMockBuilder(Attribute::class)
+        $attrObjectSourceMock = $this->getMockBuilder(AbstractSource::class)
+            ->onlyMethods(['getAllOptions'])
             ->disableOriginalConstructor()
             ->getMock();
-        if ($attributeObjectFrontendInput == 'select' || $attributeObjectFrontendInput == 'multiselect') {
-            $attrObjectSourceMock = $this->verifySelectAllOptions(
-                $attrObjectSourceAllOptionsValue,
-                $expectedAttrObjSourceAllOptionsParam,
-                $options,
-                $optionsDefault
-            );
-            $attributeObjectMock->method('getSource')->willReturn($attrObjectSourceMock);
-        }
+        $attrObjectSourceMock
+            ->expects((null === $expectedAttrObjSourceAllOptionsParam) ? $this->never() : $this->once())
+            ->method('getAllOptions')
+            ->with($expectedAttrObjSourceAllOptionsParam, true)
+            ->willReturn($attrObjectSourceAllOptionsValue);
 
+        $attributeObjectMock = $this->getMockBuilder(Attribute::class)
+            ->addMethods(['getAllOptions'])
+            ->onlyMethods(['usesSource', 'getFrontendInput', 'getSource'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $attributeObjectMock->method('usesSource')->willReturn(true);
         $attributeObjectMock
             ->expects((null === $attributeObjectFrontendInput) ? $this->never() : $this->once())
             ->method('getFrontendInput')
             ->willReturn($attributeObjectFrontendInput);
+        $attributeObjectMock->method('getSource')->willReturn($attrObjectSourceMock);
 
         $entityTypeMock = $this->getMockBuilder(Type::class)
             ->onlyMethods(['getId'])
@@ -431,86 +424,6 @@ class AbstractProductTest extends TestCase
 
         $this->assertEquals($expectedValueSelectOptions, $this->_condition->getData('value_select_options'));
         $this->assertEquals($expectedValueOption, $this->_condition->getData('value_option'));
-    }
-
-    /**
-     * Test to verify all select value options
-     *
-     * @param array $attrObjectSourceAllOptionsValue
-     * @param bool $expectedAttrObjSourceAllOptionsParam
-     * @return Table
-     */
-    private function verifySelectAllOptions(
-        array $attrObjectSourceAllOptionsValue,
-        bool $expectedAttrObjSourceAllOptionsParam,
-        array $options,
-        array $optionsDefault
-    ): Table {
-        $collectionFactory = $this->getMockBuilder(CollectionFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
-
-            $attributeOptionCollectionMock = $this->getMockBuilder(AttributeOptionCollection::class)
-            ->onlyMethods([
-                'setPositionOrder', 'setAttributeFilter', 'addFieldToFilter',
-                'setStoreFilter', 'load', 'toOptionArray'
-            ])
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $storeId = '1';
-        $storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)->getMock();
-        $storeMock = $this->getMockBuilder(StoreInterface::class)->getMock();
-        $storeMock->expects($this->atLeastOnce())->method('getId')->willReturn($storeId);
-        $storeManagerMock->expects($this->atLeastOnce())->method('getStore')->willReturn($storeMock);
-        $attrOptionFactory = $this->createPartialMock(OptionFactory::class, ['create']);
-
-        $attributeId = '42';
-        $abstractAttributeMock = $this->getMockBuilder(AbstractAttribute::class)
-            ->addMethods(['getStoreId'])
-            ->onlyMethods(
-                [
-                    'getFrontend', 'getAttributeCode', '__wakeup',
-                    'getId', 'getIsRequired', 'getEntity', 'getBackend'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
-        $abstractAttributeMock->expects($this->atLeastOnce())->method('getStoreId')->willReturn(null);
-        $abstractAttributeMock->expects($this->atLeastOnce())->method('getId')->willReturn($attributeId);
-
-        $collectionFactory->expects($this->once())
-            ->method('create')
-            ->willReturn($attributeOptionCollectionMock);
-        $attributeOptionCollectionMock->expects($this->once())
-            ->method('setPositionOrder')
-            ->willReturnSelf();
-        $attributeOptionCollectionMock->expects($this->once())
-            ->method('setAttributeFilter')
-            ->with($attributeId)
-            ->willReturnSelf();
-        $attributeOptionCollectionMock->expects($this->once())
-            ->method('setStoreFilter')
-            ->with($storeId)
-            ->willReturnSelf();
-        $attributeOptionCollectionMock->expects($this->once())
-            ->method('load')
-            ->willReturnSelf();
-        $attributeOptionCollectionMock->expects($this->any())
-            ->method('toOptionArray')
-            ->willReturnMap(
-                [
-                    ['value', $options],
-                    ['default_value', $optionsDefault]
-                ]
-            );
-
-        $attrObjectSourceMock = new Table($collectionFactory, $attrOptionFactory, $storeManagerMock);
-        $attrObjectSourceMock->setAttribute($abstractAttributeMock);
-        $allOptionsValue = $attrObjectSourceMock->getAllOptions($expectedAttrObjSourceAllOptionsParam, true);
-        $this->assertEquals($attrObjectSourceAllOptionsValue, $allOptionsValue);
-        return $attrObjectSourceMock;
     }
 
     /**
@@ -605,14 +518,6 @@ class AbstractProductTest extends TestCase
                     'value7' => 'Label for value 7',
                     'value8' => 'Label for value 8',
                 ],
-                [
-                    ['value' => 'value7', 'label' => 'Label for default sv value 7'],
-                    ['value' => 'value8', 'label' => 'Label for default sv value 8'],
-                ],
-                [
-                    ['value' => 'value7', 'label' => 'Label for value 7'],
-                    ['value' => 'value8', 'label' => 'Label for value 8'],
-                ]
             ],
             [
                 [],
@@ -630,43 +535,27 @@ class AbstractProductTest extends TestCase
                 [
                     'valueA' => 'Label for value A',
                 ],
-                [
-                    ['value' => 'valueA', 'label' => 'Label for default sv value A'],
-                    ['value' => ['array value'], 'label' => 'Label for default sv value B']
-                ],
-                [
-                    ['value' => 'valueA', 'label' => 'Label for value A'],
-                    ['value' => ['array value'], 'label' => 'Label for value B']
-                ],
             ],
             [
                 [],
                 'select',
                 [
-                    ['value' => '', 'label' => ' '],
                     ['value' => 'value7', 'label' => 'Label for value 7'],
                     ['value' => 'value8', 'label' => 'Label for value 8'],
+                    ['value' => 'default', 'label' => 'Default Option']
                 ],
                 null,
                 true,
                 [
-                    ['value' => '', 'label' => ' '],
                     ['value' => 'value7', 'label' => 'Label for value 7'],
                     ['value' => 'value8', 'label' => 'Label for value 8'],
+                    ['value' => 'default', 'label' => 'Default Option']
                 ],
                 [
-                    '' => ' ',
                     'value7' => 'Label for value 7',
                     'value8' => 'Label for value 8',
+                    'default' => 'Default Option'
                 ],
-                [
-                    ['value' => 'value7', 'label' => 'Label for default sv value 7'],
-                    ['value' => 'value8', 'label' => 'Label for default sv value 8'],
-                ],
-                [
-                    ['value' => 'value7', 'label' => 'Label for value 7'],
-                    ['value' => 'value8', 'label' => 'Label for value 8'],
-                ]
             ]
         ];
     }
