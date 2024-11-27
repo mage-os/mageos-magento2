@@ -9,105 +9,16 @@
               xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
     <actionGroup name="AdminAddCustomOptionsActionGroup">
         <annotations>
-            <description>Clicks on 'Add Option'. Adds the 22 provided Options under the provided Custom Option Name to a Product on the Admin Product creation/edit page under the 'Customizable Options' section.</description>
+            <description>Clicks on 'Add Option'. Adds the provided Options under the provided Custom Option Name to a Product on the Admin Product creation/edit page under the 'Customizable Options' section.</description>
         </annotations>
         <arguments>
-            <argument name="firstOption" type="entity"/>
-            <argument name="secondOption" type="entity"/>
-            <argument name="thirdOption" type="entity"/>
-            <argument name="fourthOption" type="entity"/>
-            <argument name="fifthOption" type="entity"/>
-            <argument name="sixthOption" type="entity"/>
-            <argument name="seventhOption" type="entity"/>
-            <argument name="eighthOption" type="entity"/>
-            <argument name="ninthOption" type="entity"/>
-            <argument name="tenthOption" type="entity"/>
-            <argument name="eleventhOption" type="entity"/>
-            <argument name="twelfthOption" type="entity"/>
-            <argument name="thirteenthOption" type="entity"/>
-            <argument name="fourteenthOption" type="entity"/>
-            <argument name="fifteenthOption" type="entity"/>
-            <argument name="sixteenthOption" type="entity"/>
-            <argument name="seventeenthOption" type="entity"/>
-            <argument name="eighteenthOption" type="entity"/>
-            <argument name="nineteenthOption" type="entity"/>
-            <argument name="twentiethOption" type="entity"/>
-            <argument name="twentyfirstOption" type="entity"/>
-            <argument name="twentytwoOption" type="entity"/>
+            <argument name="customOptionName" type="string"/>
+            <argument name="customOption" type="entity"/>
+
         </arguments>
-        <click stepKey="clickAddOptions" selector="{{AdminProductCustomizableOptionsSection.addOptionBtn}}"/>
-        <waitForPageLoad stepKey="waitForAddProductPageLoad"/>
-        <!-- Fill in the option and select the type of drop down -->
-        <fillField stepKey="fillInOptionTitle" selector="{{AdminProductCustomizableOptionsSection.lastOptionTitle}}" userInput="{{customOptionName}}"/>
-        <click stepKey="clickOptionTypeParent" selector="{{AdminProductCustomizableOptionsSection.lastOptionTypeParent}}"/>
-        <waitForPageLoad stepKey="waitForDropdownOpen"/>
-        <click stepKey="clickOptionType" selector="{{AdminProductCustomizableOptionsSection.optionType('Drop-down')}}"/>
         <!-- Add option based on the parameter -->
         <click stepKey="clickAddFirstValue" selector="{{AdminProductCustomizableOptionsSection.addValue}}"/>
-        <fillField stepKey="fillInFirstOptionValueTitle" selector="{{AdminProductCustomizableOptionsSection.valueTitle}}" userInput="{{firstOption.title}}"/>
-        <fillField stepKey="fillInFirstOptionValuePrice" selector="{{AdminProductCustomizableOptionsSection.valuePrice}}" userInput="{{firstOption.price}}"/>
-        <click stepKey="clickAddSecondValue" selector="{{AdminProductCustomizableOptionsSection.addValue}}"/>
-        <fillField stepKey="fillInSecondOptionValueTitle" selector="{{AdminProductCustomizableOptionsSection.valueTitle}}" userInput="{{secondOption.title}}"/>
-        <fillField stepKey="fillInSecondOptionValuePrice" selector="{{AdminProductCustomizableOptionsSection.valuePrice}}" userInput="{{secondOption.price}}"/>
-        <click stepKey="clickAddThirdValue" selector="{{AdminProductCustomizableOptionsSection.addValue}}"/>
-        <fillField stepKey="fillInThirdOptionValueTitle" selector="{{AdminProductCustomizableOptionsSection.valueTitle}}" userInput="{{thirdOption.title}}"/>
-        <fillField stepKey="fillInThirdOptionValuePrice" selector="{{AdminProductCustomizableOptionsSection.valuePrice}}" userInput="{{thirdOption.price}}"/>
-        <click stepKey="clickAddFourthValue" selector="{{AdminProductCustomizableOptionsSection.addValue}}"/>
-        <fillField stepKey="fillInFourthOptionValueTitle" selector="{{AdminProductCustomizableOptionsSection.valueTitle}}" userInput="{{fourthOption.title}}"/>
-        <fillField stepKey="fillInFourthOptionValuePrice" selector="{{AdminProductCustomizableOptionsSection.valuePrice}}" userInput="{{fourthOption.price}}"/>
-        <click stepKey="clickAddFifthValue" selector="{{AdminProductCustomizableOptionsSection.addValue}}"/>
-        <fillField stepKey="fillInFifthOptionValueTitle" selector="{{AdminProductCustomizableOptionsSection.valueTitle}}" userInput="{{fifthOption.title}}"/>
-        <fillField stepKey="fillInFifthOptionValuePrice" selector="{{AdminProductCustomizableOptionsSection.valuePrice}}" userInput="{{fifthOption.price}}"/>
-        <click stepKey="clickAddSixthValue" selector="{{AdminProductCustomizableOptionsSection.addValue}}"/>
-        <fillField stepKey="fillInSixthOptionValueTitle" selector="{{AdminProductCustomizableOptionsSection.valueTitle}}" userInput="{{sixthOption.title}}"/>
-        <fillField stepKey="fillInSixthOptionValuePrice" selector="{{AdminProductCustomizableOptionsSection.valuePrice}}" userInput="{{sixthOption.price}}"/>
-        <click stepKey="clickAddSeventhValue" selector="{{AdminProductCustomizableOptionsSection.addValue}}"/>
-        <fillField stepKey="fillInSeventhOptionValueTitle" selector="{{AdminProductCustomizableOptionsSection.valueTitle}}" userInput="{{seventhOption.title}}"/>
-        <fillField stepKey="fillInSeventhOptionValuePrice" selector="{{AdminProductCustomizableOptionsSection.valuePrice}}" userInput="{{seventhOption.price}}"/>
-        <click stepKey="clickAddEighthValue" selector="{{AdminProductCustomizableOptionsSection.addValue}}"/>
-        <fillField stepKey="fillInEighthOptionValueTitle" selector="{{AdminProductCustomizableOptionsSection.valueTitle}}" userInput="{{eighthOption.title}}"/>
-        <fillField stepKey="fillInEighthOptionValuePrice" selector="{{AdminProductCustomizableOptionsSection.valuePrice}}" userInput="{{eighthOption.price}}"/>
-        <click stepKey="clickAddNinthValue" selector="{{AdminProductCustomizableOptionsSection.addValue}}"/>
-        <fillField stepKey="fillInNinthOptionValueTitle" selector="{{AdminProductCustomizableOptionsSection.valueTitle}}" userInput="{{ninthOption.title}}"/>
-        <fillField stepKey="fillInNinthOptionValuePrice" selector="{{AdminProductCustomizableOptionsSection.valuePrice}}" userInput="{{ninthOption.price}}"/>
-        <click stepKey="clickAddTenthValue" selector="{{AdminProductCustomizableOptionsSection.addValue}}"/>
-        <fillField stepKey="fillInTenthOptionValueTitle" selector="{{AdminProductCustomizableOptionsSection.valueTitle}}" userInput="{{tenthOption.title}}"/>
-        <fillField stepKey="fillInTenthOptionValuePrice" selector="{{AdminProductCustomizableOptionsSection.valuePrice}}" userInput="{{tenthOption.price}}"/>
-        <click stepKey="clickAddEleventhValue" selector="{{AdminProductCustomizableOptionsSection.addValue}}"/>
-        <fillField stepKey="fillInEleventhOptionValueTitle" selector="{{AdminProductCustomizableOptionsSection.valueTitle}}" userInput="{{eleventhOption.title}}"/>
-        <fillField stepKey="fillInEleventhOptionValuePrice" selector="{{AdminProductCustomizableOptionsSection.valuePrice}}" userInput="{{eleventhOption.price}}"/>
-        <click stepKey="clickAddTwelfthValue" selector="{{AdminProductCustomizableOptionsSection.addValue}}"/>
-        <fillField stepKey="fillInTwelfthOptionValueTitle" selector="{{AdminProductCustomizableOptionsSection.valueTitle}}" userInput="{{twelfthOption.title}}"/>
-        <fillField stepKey="fillInTwelfthOptionValuePrice" selector="{{AdminProductCustomizableOptionsSection.valuePrice}}" userInput="{{twelfthOption.price}}"/>
-        <click stepKey="clickAddThirteenthValue" selector="{{AdminProductCustomizableOptionsSection.addValue}}"/>
-        <fillField stepKey="fillInThirteenthOptionValueTitle" selector="{{AdminProductCustomizableOptionsSection.valueTitle}}" userInput="{{thirteenthOption.title}}"/>
-        <fillField stepKey="fillInThirteenthOptionValuePrice" selector="{{AdminProductCustomizableOptionsSection.valuePrice}}" userInput="{{thirteenthOption.price}}"/>
-        <click stepKey="clickAddFourteenthValue" selector="{{AdminProductCustomizableOptionsSection.addValue}}"/>
-        <fillField stepKey="fillInFourteenthOptionValueTitle" selector="{{AdminProductCustomizableOptionsSection.valueTitle}}" userInput="{{fourteenthOption.title}}"/>
-        <fillField stepKey="fillInFourteenthOptionValuePrice" selector="{{AdminProductCustomizableOptionsSection.valuePrice}}" userInput="{{fourteenthOption.price}}"/>
-        <click stepKey="clickAddFifteenthValue" selector="{{AdminProductCustomizableOptionsSection.addValue}}"/>
-        <fillField stepKey="fillInFifteenthOptionValueTitle" selector="{{AdminProductCustomizableOptionsSection.valueTitle}}" userInput="{{fifteenthOption.title}}"/>
-        <fillField stepKey="fillInFifteenthOptionValuePrice" selector="{{AdminProductCustomizableOptionsSection.valuePrice}}" userInput="{{fifteenthOption.price}}"/>
-        <click stepKey="clickAddSixteenthValue" selector="{{AdminProductCustomizableOptionsSection.addValue}}"/>
-        <fillField stepKey="fillInSixteenthOptionValueTitle" selector="{{AdminProductCustomizableOptionsSection.valueTitle}}" userInput="{{sixteenthOption.title}}"/>
-        <fillField stepKey="fillInSixteenthOptionValuePrice" selector="{{AdminProductCustomizableOptionsSection.valuePrice}}" userInput="{{sixteenthOption.price}}"/>
-        <click stepKey="clickAddSeventeenthValue" selector="{{AdminProductCustomizableOptionsSection.addValue}}"/>
-        <fillField stepKey="fillInSeventeenthOptionValueTitle" selector="{{AdminProductCustomizableOptionsSection.valueTitle}}" userInput="{{seventeenthOption.title}}"/>
-        <fillField stepKey="fillInSeventeenthOptionValuePrice" selector="{{AdminProductCustomizableOptionsSection.valuePrice}}" userInput="{{seventeenthOption.price}}"/>
-        <click stepKey="clickAddEighteenthValue" selector="{{AdminProductCustomizableOptionsSection.addValue}}"/>
-        <fillField stepKey="fillInEighteenthOptionValueTitle" selector="{{AdminProductCustomizableOptionsSection.valueTitle}}" userInput="{{eighteenthOption.title}}"/>
-        <fillField stepKey="fillInEighteenthOptionValuePrice" selector="{{AdminProductCustomizableOptionsSection.valuePrice}}" userInput="{{eighteenthOption.price}}"/>
-        <click stepKey="clickAddNineteenthValue" selector="{{AdminProductCustomizableOptionsSection.addValue}}"/>
-        <fillField stepKey="fillInNineteenthOptionValueTitle" selector="{{AdminProductCustomizableOptionsSection.valueTitle}}" userInput="{{nineteenthOption.title}}"/>
-        <fillField stepKey="fillInNineteenthOptionValuePrice" selector="{{AdminProductCustomizableOptionsSection.valuePrice}}" userInput="{{nineteenthOption.price}}"/>
-        <click stepKey="clickAddTwentiethValue" selector="{{AdminProductCustomizableOptionsSection.addValue}}"/>
-        <fillField stepKey="fillInTwentiethOptionValueTitle" selector="{{AdminProductCustomizableOptionsSection.valueTitle}}" userInput="{{twentiethOption.title}}"/>
-        <fillField stepKey="fillInTwentiethOptionValuePrice" selector="{{AdminProductCustomizableOptionsSection.valuePrice}}" userInput="{{twentiethOption.price}}"/>
-        <click stepKey="clickAddTwentyfirstValue" selector="{{AdminProductCustomizableOptionsSection.addValue}}"/>
-        <fillField stepKey="fillInTwentyfirstOptionValueTitle" selector="{{AdminProductCustomizableOptionsSection.valueTitle}}" userInput="{{twentyfirstOption.title}}"/>
-        <fillField stepKey="fillInTwentyfirstOptionValuePrice" selector="{{AdminProductCustomizableOptionsSection.valuePrice}}" userInput="{{twentyfirstOption.price}}"/>
-        <click stepKey="clickAddTwentytwoValue" selector="{{AdminProductCustomizableOptionsSection.addValue}}"/>
-        <fillField stepKey="fillInTwentytwoOptionValueTitle" selector="{{AdminProductCustomizableOptionsSection.valueTitle}}" userInput="{{twentytwoOption.title}}"/>
-        <fillField stepKey="fillInTwentytwoOptionValuePrice" selector="{{AdminProductCustomizableOptionsSection.valuePrice}}" userInput="{{twentytwoOption.price}}"/>
+        <fillField stepKey="fillInCustomOptionValueTitle" selector="{{AdminProductCustomizableOptionsSection.valueTitle}}" userInput="{{customOption.title}}"/>
+        <fillField stepKey="fillInCustomOptionValuePrice" selector="{{AdminProductCustomizableOptionsSection.valuePrice}}" userInput="{{customOption.price}}"/>
     </actionGroup>
 </actionGroups>
