@@ -31,31 +31,113 @@
         </actionGroup>
         <click selector="{{AdminProductCustomizableOptionsSection.customizableOptions}}" stepKey="openCustomizableOptions"/>
         <waitForPageLoad stepKey="waitForCustomOptionsOpen"/>
-        <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions">
+        <click stepKey="clickAddOptions" selector="{{AdminProductCustomizableOptionsSection.addOptionBtn}}"/>
+        <waitForPageLoad stepKey="waitForAddProductPageLoad"/>
+        <!-- Fill in the option and select the type of drop down -->
+        <fillField stepKey="fillInOptionTitle" selector="{{AdminProductCustomizableOptionsSection.lastOptionTitle}}" userInput="{{customOptionName}}"/>
+        <click stepKey="clickOptionTypeParent" selector="{{AdminProductCustomizableOptionsSection.lastOptionTypeParent}}"/>
+        <waitForPageLoad stepKey="waitForDropdownOpen"/>
+        <click stepKey="clickOptionType" selector="{{AdminProductCustomizableOptionsSection.optionType('Drop-down')}}"/>
+        <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions1">
             <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
-            <argument name="firstOption" value="ProductOptionValueDropdown1"/>
-            <argument name="secondOption" value="ProductOptionValueDropdown2"/>
-            <argument name="thirdOption" value="ProductOptionValueDropdown3"/>
-            <argument name="fourthOption" value="ProductOptionValueDropdown3"/>
-            <argument name="fifthOption" value="ProductOptionValueDropdown3"/>
-            <argument name="sixthOption" value="ProductOptionValueDropdown3"/>
-            <argument name="seventhOption" value="ProductOptionValueDropdown3"/>
-            <argument name="eighthOption" value="ProductOptionValueDropdown3"/>
-            <argument name="ninthOption" value="ProductOptionValueDropdown3"/>
-            <argument name="tenthOption" value="ProductOptionValueDropdown3"/>
-            <argument name="eleventhOption" value="ProductOptionValueDropdown3"/>
-            <argument name="twelfthOption" value="ProductOptionValueDropdown3"/>
-            <argument name="thirteenthOption" value="ProductOptionValueDropdown3"/>
-            <argument name="fourteenthOption" value="ProductOptionValueDropdown3"/>
-            <argument name="fifteenthOption" value="ProductOptionValueDropdown3"/>
-            <argument name="sixteenthOption" value="ProductOptionValueDropdown3"/>
-            <argument name="seventeenthOption" value="ProductOptionValueDropdown3"/>
-            <argument name="eighteenthOption" value="ProductOptionValueDropdown3"/>
-            <argument name="nineteenthOption" value="ProductOptionValueDropdown3"/>
-            <argument name="twentiethOption" value="ProductOptionValueDropdown3"/>
-            <argument name="twentyfirstOption" value="ProductOptionValueDropdown3"/>
-            <argument name="twentytwoOption" value="ProductOptionValueDropdown3"/>
+            <argument name="customOption" value="ProductOptionValueDropdown2"/>
         </actionGroup>
+        <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions2">
+            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
+            <argument name="customOption" value="ProductOptionValueDropdown2"/>
+        </actionGroup>
+        <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions3">
+            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
+            <argument name="customOption" value="ProductOptionValueDropdown3"/>
+        </actionGroup>
+        <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions4">
+            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
+            <argument name="customOption" value="ProductOptionValueDropdown1"/>
+        </actionGroup>
+        <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions5">
+            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
+            <argument name="customOption" value="ProductOptionValueDropdown2"/>
+        </actionGroup>
+        <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions6">
+            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
+            <argument name="customOption" value="ProductOptionValueDropdown3"/>
+        </actionGroup>
+        <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions7">
+            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
+            <argument name="customOption" value="ProductOptionValueDropdown1"/>
+        </actionGroup>
+        <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions8">
+            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
+            <argument name="customOption" value="ProductOptionValueDropdown2"/>
+        </actionGroup>
+        <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions9">
+            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
+            <argument name="customOption" value="ProductOptionValueDropdown3"/>
+        </actionGroup>
+        <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions10">
+            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
+            <argument name="customOption" value="ProductOptionValueDropdown1"/>
+        </actionGroup>
+        <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions11">
+            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
+            <argument name="customOption" value="ProductOptionValueDropdown2"/>
+        </actionGroup>
+        <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions12">
+            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
+            <argument name="customOption" value="ProductOptionValueDropdown3"/>
+        </actionGroup>
+        <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions13">
+            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
+            <argument name="customOption" value="ProductOptionValueDropdown1"/>
+        </actionGroup>
+        <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions14">
+            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
+            <argument name="customOption" value="ProductOptionValueDropdown2"/>
+        </actionGroup>
+        <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions15">
+            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
+            <argument name="customOption" value="ProductOptionValueDropdown3"/>
+        </actionGroup>
+        <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions16">
+            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
+            <argument name="customOption" value="ProductOptionValueDropdown1"/>
+        </actionGroup>
+        <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions17">
+            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
+            <argument name="customOption" value="ProductOptionValueDropdown2"/>
+        </actionGroup>
+        <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions18">
+            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
+            <argument name="customOption" value="ProductOptionValueDropdown3"/>
+        </actionGroup>
+        <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions19">
+            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
+            <argument name="customOption" value="ProductOptionValueDropdown1"/>
+        </actionGroup>
+        <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions20">
+            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
+            <argument name="customOption" value="ProductOptionValueDropdown2"/>
+        </actionGroup>
+        <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions21">
+            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
+            <argument name="customOption" value="ProductOptionValueDropdown3"/>
+        </actionGroup>
+        <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions22">
+            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
+            <argument name="customOption" value="ProductOptionValueDropdown1"/>
+        </actionGroup>
+        <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions23">
+            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
+            <argument name="customOption" value="ProductOptionValueDropdown2"/>
+        </actionGroup>
+        <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions24">
+            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
+            <argument name="customOption" value="ProductOptionValueDropdown3"/>
+        </actionGroup>
+        <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions25">
+            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
+            <argument name="customOption" value="ProductOptionValueDropdown1"/>
+        </actionGroup>        
         <actionGroup ref="AdminProductFormSaveActionGroup" stepKey="clickSaveButton"/>
         <waitForElementVisible selector="{{AdminProductMessagesSection.successMessage}}" stepKey="seeProductSavedMessage"/>
         <actionGroup ref="ReloadPageActionGroup" stepKey="reloadPage"/>
