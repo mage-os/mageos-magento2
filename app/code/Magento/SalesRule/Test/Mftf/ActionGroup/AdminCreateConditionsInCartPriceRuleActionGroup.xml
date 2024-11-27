@@ -20,7 +20,10 @@
             <argument name="ruleToChange2" type="string" defaultValue="..."/>
             <argument name="category" type="string" defaultValue="_defaultCategory.name"/>
         </arguments>
-        <click selector="{{AdminCartPriceRulesFormSection.conditionsHeader}}" stepKey="openConditionsSection"/>
+        <remove keyForRemoval="clickSaveButton"/>
+        <remove keyForRemoval="waitForSuccessMessage"/>
+        <remove keyForRemoval="seeSuccessMessage"/>
+        <conditionalClick selector="{{AdminCartPriceRulesFormSection.conditionsHeader}}" dependentSelector="{{AdminCartPriceRulesFormSection.conditionsHeader}}" visible="true" stepKey="clickToExpandConditions"/>
         <click selector="{{AdminCartPriceRulesFormSection.addCondition('1')}}" stepKey="addFirstCondition"/>
         <selectOption selector="{{AdminCartPriceRulesFormSection.ruleCondition('1')}}" userInput="{{condition1}}" stepKey="selectRule"/>
         <click selector="{{AdminCartPriceRulesFormSection.ruleParameter(ruleToChange1)}}" stepKey="clickToChangeRule1"/>
