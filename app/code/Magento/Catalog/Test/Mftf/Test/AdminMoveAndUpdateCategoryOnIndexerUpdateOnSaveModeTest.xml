@@ -175,14 +175,15 @@
         <actionGroup ref="AdminChangeCategoryNameOnStoreViewLevelActionGroup" stepKey="changeCategory1NameForEnStoreView">
             <argument name="categoryName" value="Категория А"/>
         </actionGroup>
-        <!--Add category A description-->
+        <!--Update category A description-->
         <actionGroup ref="AdminUpdateCategoryDescriptionAtStoreViewLevelActionGroup" stepKey="addCategoryDescriptionC1">
             <argument name="description" value="Другое описание категории А"/>
         </actionGroup>
+        <!--Update category A image -->
         <actionGroup ref="AdminChangeCategoryImageOnStoreviewActionGroup" stepKey="addPlaceholderSmallImage">
             <argument name="image" value="ImageUpload_1"/>
         </actionGroup>
-        <!--Add category A url key-->
+        <!--Update category A url key-->
         <actionGroup ref="ChangeSeoUrlKeyForSubCategoryActionGroup" stepKey="changeSeoUrlKeyENStoreView">
             <argument name="value" value="kategoriya-A"/>
         </actionGroup>
@@ -207,6 +208,7 @@
         <waitForText selector="{{StorefrontCategoryMainSection.CategoryTitle}}" userInput="Категория А" stepKey="seeTitleOnCategoryAPage"/>
         <waitForText userInput="Другое описание категории А" selector="{{StorefrontCategoryMainSection.CatalogDescriptionWithoutPTag}}" stepKey="assertCatalogDescriptionA2"/>
         <waitForElement selector="{{StorefrontCategoryHeadSection.pageTitle('Категория А')}}" stepKey="assertCatalogMetaTitleA2"/>
+        <waitForElementVisible selector="{{StorefrontCategoryMainSection.imageSource(ImageUpload_1.fileName)}}" stepKey="assertCatalogImageA2"/>
         <!-- Verify Updated URLKey is present-->
         <actionGroup ref="StorefrontAssertProperUrlIsShownActionGroup" stepKey="seeUpdatedUrlkey">
             <argument name="urlPath" value="kategoriya-a.html"/>
