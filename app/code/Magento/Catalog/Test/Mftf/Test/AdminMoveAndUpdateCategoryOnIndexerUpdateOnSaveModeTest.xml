@@ -9,9 +9,9 @@
     <test name="AdminMoveAndUpdateCategoryOnIndexerUpdateOnSaveModeTest">
         <annotations>
             <features value="Catalog"/>
-            <stories value="Move and Update Categories"/>
-            <title value="Move and Update Categories on Indexer on Save Mode"/>
-            <description value="Move and Update categories on store view level when indexer is set on Update on Save Mode"/>
+            <stories value="Move and Update Category on Store View level"/>
+            <title value="Move and Update Category on Store View level when Category Flat Indexer is in Update on Save mode"/>
+            <description value="Move and Update Category on Store View level and ensure categories keep work as expected on Storefront when Category Flat indexer is turned on"/>
             <severity value="MAJOR"/>
             <testCaseId value="AC-4613"/>
             <group value="catalog"/>
