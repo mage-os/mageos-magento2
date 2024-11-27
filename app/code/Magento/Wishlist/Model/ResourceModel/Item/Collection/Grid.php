@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2013 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 
 namespace Magento\Wishlist\Model\ResourceModel\Item\Collection;
@@ -124,8 +124,6 @@ class Grid extends \Magento\Wishlist\Model\ResourceModel\Item\Collection
                 $item->setProductName($product->getName());
                 $item->setName($product->getName());
                 $item->setPrice($product->getPrice());
-            } else {
-                $this->removeItemByKey($item->getId());
             }
         }
 
@@ -188,17 +186,4 @@ class Grid extends \Magento\Wishlist\Model\ResourceModel\Item\Collection
     {
         return parent::addFieldToFilter('main_table.' . $field, $condition);
     }
-
-    /**
-     * @inheritdoc
-     */
-   /* public function getSize()
-    {
-        $this->load();
-        if ($this->_totalRecords === null) {
-            $this->_totalRecords = count($this->getItems());
-        }
-
-        return (int)$this->_totalRecords;
-    }*/
 }
