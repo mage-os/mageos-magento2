@@ -32,5 +32,8 @@
         <selectOption selector="{{AdminCartPriceRulesFormSection.ruleCondition('1--1')}}" userInput="{{condition2}}" stepKey="selectSecondCondition"/>
         <click selector="{{AdminCartPriceRulesFormSection.ruleParameter(ruleToChange2)}}" stepKey="addThirdCondition"/>
         <fillField selector="{{AdminCartPriceRulesFormSection.ruleParameterInput('1--1--1')}}" userInput="{{category}}" stepKey="fillRuleForSecondCondition"/>
+        <waitForElementClickable selector="{{AdminCartPriceRulesFormSection.save}}" stepKey="waitToClickSaveButtonWithCondition"/>
+        <click selector="{{AdminCartPriceRulesFormSection.save}}" stepKey="clickSaveButtonWithCondition"/>
+        <waitForText selector="{{AdminCartPriceRulesSection.messages}}" userInput="You saved the rule." stepKey="seeSuccessMessageForCondition"/>
     </actionGroup>
 </actionGroups>
