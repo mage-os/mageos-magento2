@@ -621,4 +621,12 @@ class ProductsList extends AbstractProduct implements BlockInterface, IdentityIn
     {
         return $this->conditionsHelper->decode(htmlspecialchars_decode($encodedConditions));
     }
+
+    /**
+     * @inheritdoc
+     */
+    protected function _afterToHtml($html)
+    {
+        return trim($html);
+    }
 }
