@@ -12,7 +12,6 @@
             <description>Clicks on 'Add Option'. Adds the provided Options under the provided Custom Option Name to a Product on the Admin Product creation/edit page under the 'Customizable Options' section.</description>
         </annotations>
         <arguments>
-            <argument name="customOptionName" type="string"/>
             <argument name="customOption" type="entity"/>
 
         </arguments>
