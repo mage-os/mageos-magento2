@@ -439,7 +439,7 @@ define([
                     if ($editForm.valid()) {
                         $submitButton.prop('disabled', true);
                         const beforeSubmitOrderEvent = $.Event('beforeSubmitOrder');
-                        
+
                         $editForm.trigger(beforeSubmitOrderEvent);
 
                         if (beforeSubmitOrderEvent.result !== false) {
