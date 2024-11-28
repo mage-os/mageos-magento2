@@ -25,9 +25,9 @@
         <click selector="{{AdminCartPriceRulesFormSection.conditionsHeader}}" stepKey="openConditionsSection" after="selectActionType"/>
         <click selector="{{AdminCartPriceRulesFormSection.addCondition('1')}}" stepKey="addFirstCondition" after="openConditionsSection"/>
         <selectOption selector="{{AdminCartPriceRulesFormSection.ruleCondition('1')}}" userInput="{{condition1}}" stepKey="selectRule" after="addFirstCondition"/>
-        <click selector="{{AdminCartPriceRulesFormSection.ruleParameter(ruleToChange1)}}" stepKey="clickToChangeRule" after="waitForFirstRuleElement"/>
+        <click selector="{{AdminCartPriceRulesFormSection.ruleParameter(ruleToChange1)}}" stepKey="clickToChangeRule" after="selectRule"/>
         <selectOption selector="{{AdminCartPriceRulesFormSection.ruleParameterSelect('1--1')}}" userInput="{{rule1}}" stepKey="selectRule1" after="clickToChangeRule"/>
-        <click selector="{{AdminCartPriceRulesFormSection.ruleParameter(ruleToChange2)}}" stepKey="clickToChangeRule1" after="waitForSecondRuleElement"/>
+        <click selector="{{AdminCartPriceRulesFormSection.ruleParameter(ruleToChange2)}}" stepKey="clickToChangeRule1" after="selectRule1"/>
         <fillField selector="{{AdminCartPriceRulesFormSection.ruleParameterInput('1--1')}}" userInput="{{rule2}}" stepKey="fillRule" after="clickToChangeRule1"/>
         <click selector="{{AdminCartPriceRulesFormSection.addCondition('1--1')}}" stepKey="addSecondCondition" after="fillRule"/>
         <selectOption selector="{{AdminCartPriceRulesFormSection.ruleCondition('1--1')}}" userInput="{{condition2}}" stepKey="selectSecondCondition" after="addSecondCondition"/>
