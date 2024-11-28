@@ -67,7 +67,17 @@ namespace Magento\Framework\Session {
             SessionManagerTest::$isSessionSetSaveHandlerInvoked = true;
             return true;
         }
-        return call_user_func_array('\session_set_save_handler', func_get_args());
+
+        $args = func_get_args();
+
+        if (count($args) === 1 && $args[0] instanceof \SessionHandlerInterface) {
+            // PHP 8.4+ single argument case
+            return \session_set_save_handler($args[0], true);
+        } elseif (count($args) === 2 && $args[0] instanceof \SessionHandlerInterface && is_bool($args[1])) {
+            // PHP 8.4+ two arguments case
+            return \session_set_save_handler($args[0], $args[1]);
+        }
+        return call_user_func_array('\session_set_save_handler', $args);
     }
 
     /**

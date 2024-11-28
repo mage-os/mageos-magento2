@@ -258,12 +258,8 @@ class SessionManager implements SessionManagerInterface, ResetAfterRequestInterf
     protected function registerSaveHandler()
     {
         return session_set_save_handler(
-            [$this->saveHandler, 'open'],
-            [$this->saveHandler, 'close'],
-            [$this->saveHandler, 'read'],
-            [$this->saveHandler, 'write'],
-            [$this->saveHandler, 'destroy'],
-            [$this->saveHandler, 'gc']
+            $this->saveHandler,
+            true
         );
     }
 
