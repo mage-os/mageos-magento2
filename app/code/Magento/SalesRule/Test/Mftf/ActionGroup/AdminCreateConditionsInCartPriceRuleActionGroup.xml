@@ -19,7 +19,6 @@
             <argument name="rule1" type="string" defaultValue="equals or greater than"/>
             <argument name="ruleToChange2" type="string" defaultValue="..."/>
             <argument name="rule2" type="string" defaultValue="2"/>
-            <argument name="categoryName" type="string" defaultValue="_defaultCategory.name"/>
         </arguments>
         <remove keyForRemoval="fillDiscountAmount"/>
         <!--Go to Conditions section-->
