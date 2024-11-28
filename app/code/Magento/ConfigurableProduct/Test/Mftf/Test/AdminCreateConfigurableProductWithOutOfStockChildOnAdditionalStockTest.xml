@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright 2024 Adobe
+  * All Rights Reserved.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateConfigurableProductWithOutOfStockChildOnAdditionalStockTest">
+        <annotations>
+            <stories value="Configurable Product"/>
+            <title value="Configurable Product with 'Out of Stock' Child on Additional Stock."/>
+            <description value="Admin create configurable product with size attribute and set out of stock of one of the simple products and assert it in storefront."/>
+            <severity value="MAJOR"/>
+            <testCaseId value="AC-4359"/>
+        </annotations>
+        <after>
+            <!--<actionGroup ref="AssignWebsiteToStockActionGroup" stepKey="assignMainWebsiteToDefaultStock">
+                <argument name="stockName" value="{{_defaultStock.name}}"/>
+                <argument name="websiteName" value="{{_defaultWebsite.name}}"/>
+            </actionGroup>
+            <deleteData createDataKey="stock" stepKey="deleteCustomStock"/>
+            &lt;!&ndash;Disable all sources.&ndash;&gt;
+            <actionGroup ref="DisableAllSourcesActionGroup" stepKey="deleteSource"/>
+            &lt;!&ndash;Delete all created product&ndash;&gt;
+            <actionGroup ref="DeleteProductBySkuActionGroup" stepKey="deleteCreatedProducts">
+                <argument name="sku" value="{{ApiConfigurableProduct.sku}}"/>
+            </actionGroup>
+            <actionGroup ref="ResetAdminDataGridToDefaultViewActionGroup" stepKey="clearFilters"/>-->
+            <actionGroup ref="DeleteProductAttributeActionGroup" after="clearFilters" stepKey="deleteCreatedAttribute">
+                <argument name="ProductAttribute" value="sizeAttribute"/>
+            </actionGroup>
+            <!--&lt;!&ndash;Clear filter&ndash;&gt;
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" after="deleteCreatedAttribute" stepKey="clearFilterInProductAttributePage"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>-->
+        </after>
+        <!--<createData entity="FullSource1" stepKey="source"/>
+        <createData entity="BasicMsiStockWithMainWebsite1" stepKey="stock"/>
+        <createData entity="SourceStockLinked1" stepKey="sourceStockLink">
+            <requiredEntity createDataKey="stock"/>
+            <requiredEntity createDataKey="source"/>
+        </createData>-->
+        <actionGroup ref="AdminNavigateToNewProductAttributePageActionGroup" after="sourceStockLink" stepKey="navigateToNewProductAttributePage"/>
+        <actionGroup ref="AdminFillProductAttributePropertiesActionGroup" after="navigateToNewProductAttributePage" stepKey="fillAttributeProperties">
+            <argument name="attributeName" value="{{sizeAttribute.attribute_code}}"/>
+            <argument name="attributeType" value="{{sizeAttribute.input_type}}"/>
+        </actionGroup>
+        <!--Add option S, M and L to attribute and save-->
+        <waitForElementClickable selector="{{AdminNewAttributePanel.addOption}}" stepKey="waitToClickOnAddOptionButton" after="fillAttributeProperties"/>
+        <click selector="{{AdminNewAttributePanel.addOption}}" after="waitToClickOnAddOptionButton" stepKey="clickAddOptionSSize"/>
+        <actionGroup ref="AdminAddOptionsToSizeAttributeActionGroup" stepKey="addSSizeOption" after="clickAddOptionSSize">
+            <argument name="position" value="0"/>
+            <argument name="size" value="S"/>
+        </actionGroup>
+        <waitForElementClickable selector="{{AdminNewAttributePanel.addOption}}" stepKey="waitToClickAddOptionForMSize" after="addSSizeOption"/>
+        <click selector="{{AdminNewAttributePanel.addOption}}" stepKey="clickAddOptionForMSize" after="waitToClickAddOptionForMSize"/>
+        <actionGroup ref="AdminAddOptionsToSizeAttributeActionGroup" stepKey="addMSizeOption" after="clickAddOptionForMSize">
+            <argument name="position" value="1"/>
+            <argument name="size" value="M"/>
+        </actionGroup>
+        <waitForElementClickable selector="{{AdminNewAttributePanel.addOption}}" stepKey="waitToClickAddOptionForLSize" after="addMSizeOption"/>
+        <click selector="{{AdminNewAttributePanel.addOption}}" stepKey="clickAddOptionForLSize" after="waitToClickAddOptionForLSize" />
+        <actionGroup ref="AdminAddOptionsToSizeAttributeActionGroup" stepKey="addLSizeOption" after="clickAddOptionForLSize">
+            <argument name="position" value="2"/>
+            <argument name="size" value="L"/>
+        </actionGroup>
+        <waitForElementClickable selector="{{AdvancedAttributePropertiesSection.AdvancedAttributePropertiesSectionToggle}}" stepKey="waitForAdvancedPropertiesFieldIsVisible" after="addLSizeOption" />
+        <click selector="{{AdvancedAttributePropertiesSection.AdvancedAttributePropertiesSectionToggle}}" stepKey="openAttributeAdvancedSection" after="waitForAdvancedPropertiesFieldIsVisible"/>
+        <selectOption selector="{{AdvancedAttributePropertiesSection.Scope}}" userInput="Global" stepKey="selectScope" after="openAttributeAdvancedSection"/>
+        <click selector="{{AdminProductFormNewAttributeSection.saveAttribute}}" stepKey="saveAttribute" after="selectScope"/>
+        <!--Open product page and start creating configurable product-->
+        <!--<actionGroup ref="AdminOpenProductIndexPageActionGroup" after="saveAttribute" stepKey="openProductIndexPage"/>
+        <actionGroup ref="GoToCreateProductPageActionGroup" stepKey="goToCreateConfigurableProduct">
+            <argument name="product" value="ApiConfigurableProduct"/>
+        </actionGroup>
+        &lt;!&ndash; Fill all the necessary information such as weight, name, SKU etc &ndash;&gt;
+        <actionGroup ref="FillMainProductFormActionGroup" stepKey="fillProductForm">
+            <argument name="product" value="ApiConfigurableProduct"/>
+        </actionGroup>
+        &lt;!&ndash;<actionGroup ref="AdminCreateOptionsForAttributeMultiStockActionGroup" stepKey="generateVariations">
+            <argument name="attributeCode" value="{{sizeAttribute.attribute_code}}"/>
+            <argument name="sourceCode" value="$source.source[source_code]$"/>
+        </actionGroup>&ndash;&gt;
+        <actionGroup ref="SaveConfigurableProductActionGroup" stepKey="saveConfigurable" after="generateVariations">
+            <argument name="product" value="ApiConfigurableProduct"/>
+        </actionGroup>
+        &lt;!&ndash; Go to child product S and update status as out of stock&ndash;&gt;
+        <actionGroup ref="AdminOpenChildVariationOfConfigurableProductActionGroup" stepKey="OpenChildVariation"/>
+        <switchToNextTab stepKey="switchToConfigChildProductPage"/>
+        <waitForPageLoad stepKey="waitForProductPageLoad"/>
+        <actionGroup ref="AdminUpdateStatusOfChildVariationOfConfigurableProductActionGroup" stepKey="updateStatusAndSave"/>
+        <closeTab stepKey="closeConfigChildProductPage"/>
+        &lt;!&ndash;Reindex and clear cache&ndash;&gt;
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+                <argument name="indices" value=""/>
+            </actionGroup>
+            <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanCache">
+                <argument name="tags" value="full_page"/>
+            </actionGroup>
+        &lt;!&ndash; Go to storefront and assert the configurable product&ndash;&gt;
+        <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToStoreFront2"/>
+        <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="GoToProductPage">
+            <argument name="productUrl" value="{{ApiConfigurableProduct.urlKey}}"/>
+        </actionGroup>
+        <waitForPageLoad stepKey="waitingForPageLoad"/>
+        <waitForElementClickable selector="{{StorefrontConfigurableProductPage.productAttributeDropDown}}" stepKey="waitForDropDownOptionToBeSelected"/>
+        <click selector="{{StorefrontConfigurableProductPage.productAttributeDropDown}}" stepKey="clickOnDropDown"/>
+        <dontSeeElement selector="{{StorefrontProductInfoMainSection.dropDownOption('S')}}" stepKey="seeSSizeIsAvailable"/>-->
+    </test>
+</tests>
