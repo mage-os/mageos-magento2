@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2023 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -58,5 +58,15 @@ class ModelHydrator implements HydratorInterface
             $this->customerModels[$resolverData['model_id']] = $model;
             $resolverData['model'] = $this->customerModels[$resolverData['model_id']];
         }
+    }
+
+    /**
+     * Reset customerModels
+     *
+     * @return void
+     */
+    public function _resetState(): void
+    {
+        $this->customerModels = [];
     }
 }
