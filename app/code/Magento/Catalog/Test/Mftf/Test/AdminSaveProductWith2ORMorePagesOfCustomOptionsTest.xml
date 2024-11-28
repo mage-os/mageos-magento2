@@ -30,9 +30,7 @@
             <argument name="product" value="SimpleProduct"/>
         </actionGroup>
         <click selector="{{AdminProductCustomizableOptionsSection.customizableOptions}}" stepKey="openCustomizableOptions"/>
-        <waitForPageLoad stepKey="waitForCustomOptionsOpen"/>
         <click stepKey="clickAddOptions" selector="{{AdminProductCustomizableOptionsSection.addOptionBtn}}"/>
-        <waitForPageLoad stepKey="waitForAddProductPageLoad"/>
         <!-- Fill in the option and select the type of drop down -->
         <fillField stepKey="fillInOptionTitle" selector="{{AdminProductCustomizableOptionsSection.lastOptionTitle}}" userInput="{{customOptionName}}"/>
         <click stepKey="clickOptionTypeParent" selector="{{AdminProductCustomizableOptionsSection.lastOptionTypeParent}}"/>
@@ -142,6 +140,6 @@
         <waitForElementVisible selector="{{AdminProductMessagesSection.successMessage}}" stepKey="seeProductSavedMessage"/>
         <actionGroup ref="ReloadPageActionGroup" stepKey="reloadPage"/>
         <actionGroup ref="AdminProductFormSaveActionGroup" stepKey="clickSaveButtonAgain"/>
-        <seeElement selector="{{AdminCategoryMessagesSection.SuccessMessage}}" stepKey="messageYouSavedTheProductIsShownAgain"/>
+        <waitForElementVisible selector="{{AdminCategoryMessagesSection.SuccessMessage}}" stepKey="messageYouSavedTheProductIsShownAgain"/>
     </test>
 </tests>
