@@ -13,7 +13,6 @@
         </annotations>
         <arguments>
             <argument name="customOption" type="entity"/>
-
         </arguments>
         <!-- Add option based on the parameter -->
         <click stepKey="clickAddFirstValue" selector="{{AdminProductCustomizableOptionsSection.addValue}}"/>
