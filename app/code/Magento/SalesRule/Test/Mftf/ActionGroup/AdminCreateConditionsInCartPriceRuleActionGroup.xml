@@ -37,7 +37,5 @@
         <click selector="{{AdminCartPriceRulesFormSection.ruleParameter(ruleToChange2)}}" stepKey="addThirdCondition" after="waitForThirdRuleElement"/>
         <waitForElementVisible selector="{{AdminCartPriceRulesFormSection.openChooser('1--1--1')}}" stepKey="waitForForthRuleElement" after="addThirdCondition"/>
         <click selector="{{AdminCartPriceRulesFormSection.openChooser('1--1--1')}}" stepKey="openChooser" after="waitForForthRuleElement"/>
-        <click selector="{{AdminCartPriceRulesFormSection.save}}" stepKey="clickSaveButtonWithCondition"/>
-        <waitForText selector="{{AdminCartPriceRulesSection.messages}}" userInput="You saved the rule." stepKey="seeSuccessMessageForCondition"/>
     </actionGroup>
 </actionGroups>
