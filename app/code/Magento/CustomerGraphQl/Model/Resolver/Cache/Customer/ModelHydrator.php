@@ -10,12 +10,13 @@ namespace Magento\CustomerGraphQl\Model\Resolver\Cache\Customer;
 use Magento\Customer\Model\Data\Customer;
 use Magento\Customer\Model\Data\CustomerFactory;
 use Magento\Framework\EntityManager\HydratorPool;
+use Magento\Framework\ObjectManager\ResetAfterRequestInterface;
 use Magento\GraphQlResolverCache\Model\Resolver\Result\HydratorInterface;
 
 /**
  * Customer resolver data hydrator to rehydrate propagated model.
  */
-class ModelHydrator implements HydratorInterface
+class ModelHydrator implements HydratorInterface, ResetAfterRequestInterface
 {
     /**
      * @var CustomerFactory
