@@ -389,16 +389,17 @@ define([
                 expect($.ajax).toHaveBeenCalledTimes(1);
                 expect($.ajax).toHaveBeenCalledWith(jasmine.objectContaining(ajaxParams));
 
-                expect($.prototype.trigger).toHaveBeenCalledWith(jasmine.objectContaining({ type: 'beforeSubmitOrder' }));
+                expect($.prototype.trigger).toHaveBeenCalledWith(
+                    jasmine.objectContaining({ type: 'beforeSubmitOrder' }));
 
-                if (paymentMethod != 'payment1') {
+                if (paymentMethod !== 'payment1') {
                     $.prototype.trigger.and.callFake(function (event) {
                         if (event.type === 'beforeSubmitOrder') {
                             event.result = false;
                         }
                     });
                     expect($submitButton.prop('disabled')).toBe(true);
-                } else{
+                } else {
                     expect($submitButton.prop('disabled')).toBe(false);
 
                 }
@@ -434,6 +435,7 @@ define([
                 order = new window.AdminOrder({});
                 spyOn(order, 'submit').and.callFake(function () {
                     const $editForm = $('#edit_form');
+
                     if ($editForm.valid()) {
                         $submitButton.prop('disabled', true);
                         const beforeSubmitOrderEvent = $.Event('beforeSubmitOrder');
