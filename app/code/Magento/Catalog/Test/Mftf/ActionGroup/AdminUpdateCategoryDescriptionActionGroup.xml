@@ -16,6 +16,7 @@
         <scrollTo  selector="{{AdminCategoryContentSection.sectionHeader}}" x="0" y="-80" stepKey="scrollToContent"/>
         <click selector="{{AdminCategoryContentSection.sectionHeader}}"  stepKey="selectContent"/>
         <scrollTo selector="{{AdminCategoryContentSection.description}}" x="0" y="-80" stepKey="scrollToDescription"/>
+        <conditionalClick selector="{{AdminCategoryContentSection.categoryDescriptionUseDefault}}" dependentSelector="{{AdminCategoryContentSection.categoryDescriptionUseDefault}}" visible="true" stepKey="uncheckUseDefaultValueStoreView"/>
         <fillField selector="{{AdminCategoryContentSection.description}}" userInput="{{description}}" stepKey="fillUpdatedDescription"/>
     </actionGroup>
 </actionGroups>

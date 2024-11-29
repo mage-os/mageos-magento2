@@ -15,6 +15,7 @@
         </arguments>
         <scrollTo  selector="{{AdminCategorySEOSection.SectionHeader}}" x="0" y="-80" stepKey="scrollToSearchEngineOptimization"/>
         <click selector="{{AdminCategorySEOSection.SectionHeader}}" stepKey="selectSearchEngineOptimization"/>
+        <conditionalClick selector="{{AdminCategorySEOSection.MetaTitleDefaultValueCheckbox}}" dependentSelector="{{AdminCategorySEOSection.MetaTitleDefaultValueCheckbox}}" visible="true" stepKey="uncheckUseDefaultValueStoreView"/>
         <waitForElementVisible selector="{{AdminCategorySEOSection.MetaTitleInput}}" stepKey="waitForElementVisible"/>
         <fillField selector="{{AdminCategorySEOSection.MetaTitleInput}}" userInput="{{metaTitle}}" stepKey="fillUpdatedMetaTitle"/>
     </actionGroup>

@@ -15,10 +15,9 @@
             <severity value="MAJOR"/>
             <testCaseId value="AC-4613"/>
             <group value="catalog"/>
+            <group value="WYSIWYGDisabled"/>
         </annotations>
         <before>
-            <!-- Set indexer on save-->
-            <magentoCLI stepKey="setIndexerMode" command="indexer:set-mode" arguments="realtime" />
             <!--set catalog flat category to yes-->
             <magentoCLI stepKey="setFlatCatalogCategory" command="config:set catalog/frontend/flat_catalog_category 1"/>
             <createData entity="ApiCategory" stepKey="categoryA"/>
@@ -36,8 +35,6 @@
                 <requiredEntity createDataKey="categoryC"/>
             </createData>
             <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
-            <!--disable wysiwyg-->
-            <actionGroup ref="AdminDisableWYSIWYGActionGroup" stepKey="disableWYSIWYG"/>
             <!--open category in BE-->
             <!-- update category A details-->
             <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="goToAdminCategoryPageA">
@@ -50,8 +47,8 @@
             </actionGroup>
             <!--Select Display Setting and fill the options-->
             <actionGroup ref="AdminUpdateCategoryDisplaySettingsActionGroup" stepKey="addCategoryDisplaySettingA">
-                <argument name="availableSortOptions" value="Position"/>
-                <argument name="defaultSortingOption" value="position"/>
+                <argument name="availableSortOptions" value="Product Name"/>
+                <argument name="defaultSortingOption" value="name"/>
                 <argument name="priceRange" value="5.5"/>
             </actionGroup>
             <!--Update meta title-->
@@ -62,7 +59,7 @@
             <actionGroup ref="AssertMessageInAdminPanelActionGroup" stepKey="seeSuccessMessageA">
                 <argument name="message" value="You saved the category."/>
             </actionGroup>
-            <!--            update category C details-->
+            <!--update category C details-->
             <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="goToAdminCategoryPageC">
                 <argument name="id" value="$categoryC.id$"/>
             </actionGroup>
@@ -73,8 +70,8 @@
             </actionGroup>
             <!--Select Display Setting and fill the options-->
             <actionGroup ref="AdminUpdateCategoryDisplaySettingsActionGroup" stepKey="addCategoryDisplaySettingC">
-                <argument name="availableSortOptions" value="Position"/>
-                <argument name="defaultSortingOption" value="position"/>
+                <argument name="availableSortOptions" value="Product Name"/>
+                <argument name="defaultSortingOption" value="name"/>
                 <argument name="priceRange" value="5.5"/>
             </actionGroup>
             <!--Update meta title-->
@@ -87,6 +84,7 @@
             </actionGroup>
         </before>
         <after>
+            <magentoCLI stepKey="setFlatCatalogCategory" command="config:set catalog/frontend/flat_catalog_category 0 "/>
             <deleteData createDataKey="categoryB" stepKey="deleteSimpleCategoryB"/>
             <deleteData createDataKey="categoryA" stepKey="deleteSimpleCategoryA"/>
             <deleteData createDataKey="categoryC" stepKey="deleteSimpleCategoryC"/>
@@ -106,7 +104,7 @@
         <waitForText userInput="Updated CategoryA Description" selector="{{StorefrontCategoryMainSection.CatalogDescriptionWithoutPTag}}" stepKey="assertCatalogDescriptionA"/>
         <!-- assert title-->
         <waitForElement selector="{{StorefrontCategoryHeadSection.pageTitle('MetaAtitle')}}" stepKey="assertCatalogMetaTitleA"/>
-        <waitForText userInput="2" selector="{{StorefrontCategoryMainSection.productCount}} span" stepKey="assertProductCount1stTimeA"/>
+        <waitForText userInput="2" selector="{{StorefrontCategoryMainSection.productCount}}" stepKey="assertProductCount1stTimeA"/>
         <!-- Move CategoryA under CategoryC and click ok button-->
         <actionGroup ref="AdminOpenCategoryPageActionGroup" stepKey="navigateToAdminCategoryPage1"/>
         <actionGroup ref="MoveCategoryActionGroup" stepKey="moveCategoryAUnderCategoryC">
@@ -128,7 +126,7 @@
         <waitForElementVisible selector="{{StorefrontCategoryMainSection.imageSource(ProductImage.filename)}}" stepKey="seeImageA1"/>
         <waitForText userInput="Updated CategoryA Description" selector="{{StorefrontCategoryMainSection.CatalogDescriptionWithoutPTag}}" stepKey="assertCatalogDescriptionA1"/>
         <waitForElement selector="{{StorefrontCategoryHeadSection.pageTitle('MetaAtitle')}}" stepKey="assertCatalogMetaTitleA1"/>
-        <waitForText userInput="2" selector="{{StorefrontCategoryMainSection.productCount}} span" stepKey="assertProductCount2ndTimeA1"/>
+        <waitForText userInput="2" selector="{{StorefrontCategoryMainSection.productCount}}" stepKey="assertProductCount2ndTimeA1"/>
         <!-- Move CategoryB under CategoryC and click ok button-->
         <actionGroup ref="AdminOpenCategoryPageActionGroup" stepKey="navigateToAdminCategoryPage2"/>
         <actionGroup ref="MoveCategoryActionGroup" stepKey="moveCategoryBUnderCategoryC">
@@ -150,7 +148,7 @@
         <waitForElementVisible selector="{{StorefrontCategoryMainSection.imageSource(ProductImage.filename)}}" stepKey="seeImageC"/>
         <waitForText userInput="Updated CategoryC Description" selector="{{StorefrontCategoryMainSection.CatalogDescriptionWithoutPTag}}" stepKey="assertCatalogDescriptionC"/>
         <waitForElement selector="{{StorefrontCategoryHeadSection.pageTitle('MetaCtitle')}}" stepKey="assertCatalogMetaTitleC"/>
-        <waitForText userInput="1" selector="{{StorefrontCategoryMainSection.productCount}} span" stepKey="assertProductCount3rdTimeC"/>
+        <waitForText userInput="1" selector="{{StorefrontCategoryMainSection.productCount}}" stepKey="assertProductCount3rdTimeC"/>
         <!--Create a Store-->
         <actionGroup ref="CreateCustomStoreActionGroup" stepKey="createCustomStore">
             <argument name="website" value="{{_defaultWebsite.name}}"/>
@@ -176,7 +174,7 @@
             <argument name="categoryName" value="Категория А"/>
         </actionGroup>
         <!--Update category A description-->
-        <actionGroup ref="AdminUpdateCategoryDescriptionAtStoreViewLevelActionGroup" stepKey="addCategoryDescriptionC1">
+        <actionGroup ref="AdminUpdateCategoryDescriptionActionGroup" stepKey="addCategoryDescriptionC1">
             <argument name="description" value="Другое описание категории А"/>
         </actionGroup>
         <!--Update category A image -->
@@ -188,7 +186,7 @@
             <argument name="value" value="kategoriya-A"/>
         </actionGroup>
         <!--Update category A meta title-->
-        <actionGroup ref="AdminUpdateCategoryMetaInformationAtStoreViewLevelActionGroup" stepKey="addCategoryMetaTitleC">
+        <actionGroup ref="AdminUpdateCategoryMetaInformationActionGroup" stepKey="addCategoryMetaTitleC">
             <argument name="metaTitle" value="Категория А"/>
         </actionGroup>
         <actionGroup ref="AdminSaveCategoryActionGroup" stepKey="saveCategoryA"/>
