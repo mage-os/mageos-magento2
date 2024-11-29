@@ -7,7 +7,7 @@
 -->
 <tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
-    <test name="AdminSaveProductWith2ORMorePagesOfCustomOptionsTest">
+    <test name="AdminSaveProductWithTwoORMorePagesOfCustomOptionsTest">
         <annotations>
             <features value="Create product"/>
             <stories value="Save product with 2 or more page of custom options"/>
@@ -37,105 +37,105 @@
         <waitForPageLoad stepKey="waitForDropdownOpen"/>
         <click stepKey="clickOptionType" selector="{{AdminProductCustomizableOptionsSection.optionType('Drop-down')}}"/>
         <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions1">
-            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
-            <argument name="customOption" value="ProductOptionValueDropdown2"/>
+            <argument name="title" value="value1"/>
+            <argument name="price" value="10"/>
         </actionGroup>
         <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions2">
-            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
-            <argument name="customOption" value="ProductOptionValueDropdown2"/>
+            <argument name="title" value="value2"/>
+            <argument name="price" value="20"/>
         </actionGroup>
         <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions3">
-            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
-            <argument name="customOption" value="ProductOptionValueDropdown3"/>
+            <argument name="title" value="value3"/>
+            <argument name="price" value="30"/>
         </actionGroup>
         <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions4">
-            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
-            <argument name="customOption" value="ProductOptionValueDropdown1"/>
+            <argument name="title" value="value4"/>
+            <argument name="price" value="40"/>
         </actionGroup>
         <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions5">
-            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
-            <argument name="customOption" value="ProductOptionValueDropdown2"/>
+            <argument name="title" value="value5"/>
+            <argument name="price" value="50"/>
         </actionGroup>
         <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions6">
-            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
-            <argument name="customOption" value="ProductOptionValueDropdown3"/>
+            <argument name="title" value="value6"/>
+            <argument name="price" value="60"/>
         </actionGroup>
         <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions7">
-            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
-            <argument name="customOption" value="ProductOptionValueDropdown1"/>
+            <argument name="title" value="value7"/>
+            <argument name="price" value="70"/>
         </actionGroup>
         <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions8">
-            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
-            <argument name="customOption" value="ProductOptionValueDropdown2"/>
+            <argument name="title" value="value8"/>
+            <argument name="price" value="80"/>
         </actionGroup>
         <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions9">
-            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
-            <argument name="customOption" value="ProductOptionValueDropdown3"/>
+            <argument name="title" value="value9"/>
+            <argument name="price" value="90"/>
         </actionGroup>
         <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions10">
-            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
-            <argument name="customOption" value="ProductOptionValueDropdown1"/>
+            <argument name="title" value="value10"/>
+            <argument name="price" value="100"/>
         </actionGroup>
         <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions11">
-            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
-            <argument name="customOption" value="ProductOptionValueDropdown2"/>
+            <argument name="title" value="value11"/>
+            <argument name="price" value="10"/>
         </actionGroup>
         <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions12">
-            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
-            <argument name="customOption" value="ProductOptionValueDropdown3"/>
+            <argument name="title" value="value12"/>
+            <argument name="price" value="20"/>
         </actionGroup>
         <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions13">
-            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
-            <argument name="customOption" value="ProductOptionValueDropdown1"/>
+            <argument name="title" value="value13"/>
+            <argument name="price" value="30"/>
         </actionGroup>
         <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions14">
-            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
-            <argument name="customOption" value="ProductOptionValueDropdown2"/>
+            <argument name="title" value="value14"/>
+            <argument name="price" value="40"/>
         </actionGroup>
         <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions15">
-            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
-            <argument name="customOption" value="ProductOptionValueDropdown3"/>
+            <argument name="title" value="value15"/>
+            <argument name="price" value="50"/>
         </actionGroup>
         <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions16">
-            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
-            <argument name="customOption" value="ProductOptionValueDropdown1"/>
+            <argument name="title" value="value16"/>
+            <argument name="price" value="60"/>
         </actionGroup>
         <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions17">
-            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
-            <argument name="customOption" value="ProductOptionValueDropdown2"/>
+            <argument name="title" value="value17"/>
+            <argument name="price" value="70"/>
         </actionGroup>
         <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions18">
-            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
-            <argument name="customOption" value="ProductOptionValueDropdown3"/>
+            <argument name="title" value="value18"/>
+            <argument name="price" value="80"/>
         </actionGroup>
         <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions19">
-            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
-            <argument name="customOption" value="ProductOptionValueDropdown1"/>
+            <argument name="title" value="value19"/>
+            <argument name="price" value="90"/>
         </actionGroup>
         <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions20">
-            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
-            <argument name="customOption" value="ProductOptionValueDropdown2"/>
+            <argument name="title" value="value20"/>
+            <argument name="price" value="100"/>
         </actionGroup>
         <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions21">
-            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
-            <argument name="customOption" value="ProductOptionValueDropdown3"/>
+            <argument name="title" value="value21"/>
+            <argument name="price" value="10"/>
         </actionGroup>
         <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions22">
-            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
-            <argument name="customOption" value="ProductOptionValueDropdown1"/>
+            <argument name="title" value="value22"/>
+            <argument name="price" value="20"/>
         </actionGroup>
         <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions23">
-            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
-            <argument name="customOption" value="ProductOptionValueDropdown2"/>
+            <argument name="title" value="value23"/>
+            <argument name="price" value="30"/>
         </actionGroup>
         <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions24">
-            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
-            <argument name="customOption" value="ProductOptionValueDropdown3"/>
+            <argument name="title" value="value24"/>
+            <argument name="price" value="40"/>
         </actionGroup>
         <actionGroup ref="AdminAddCustomOptionsActionGroup" stepKey="createCustomOptions25">
-            <argument name="customOptionName" value="{{ProductOptionDropDown.title}}"/>
-            <argument name="customOption" value="ProductOptionValueDropdown1"/>
-        </actionGroup>        
+            <argument name="title" value="value25"/>
+            <argument name="price" value="50"/>
+        </actionGroup>
         <actionGroup ref="AdminProductFormSaveActionGroup" stepKey="clickSaveButton"/>
         <waitForElementVisible selector="{{AdminProductMessagesSection.successMessage}}" stepKey="seeProductSavedMessage"/>
         <actionGroup ref="ReloadPageActionGroup" stepKey="reloadPage"/>
