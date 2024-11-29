@@ -19,5 +19,6 @@
         <element name="editStockCheckbox" type="checkbox" selector="//a[@id='Magento_InventoryApi::stock_edit_anchor']/i[@class='jstree-icon jstree-checkbox']"/>
         <element name="deleteStockCheckbox" type="checkbox" selector="//a[@id='Magento_InventoryApi::stock_delete_anchor']/i[@class='jstree-icon jstree-checkbox']"/>
         <element name="twoFactorAuth" type="checkbox" selector="//a[@id='Magento_TwoFactorAuth::tfa_anchor']/i[@class='jstree-icon jstree-checkbox']"/>
+        <element name="resourceId" type="checkbox" selector="//a[@id='{{resourceId}}']" timeout="30" parameterized="true"/>
     </section>
 </sections>
