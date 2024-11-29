@@ -464,7 +464,7 @@ class ProductsListTest extends TestCase
 
         $collection = $this->getCollection();
         $this->getConditionsForCollection($collection);
-        $this->productsList->setDat('html', ' ');
+        $this->productsList->setData('html', ' ');
 
         $this->assertEquals('', $this->productsList->toHtml());
     }
