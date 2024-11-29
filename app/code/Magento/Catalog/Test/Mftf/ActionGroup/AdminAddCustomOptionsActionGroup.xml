@@ -12,11 +12,12 @@
             <description>Clicks on 'Add Option'. Adds the provided Options under the provided Custom Option Name to a Product on the Admin Product creation/edit page under the 'Customizable Options' section.</description>
         </annotations>
         <arguments>
-            <argument name="customOption" type="entity"/>
+                <argument name="title" type="string"/>
+                <argument name="price" type="string"/>
         </arguments>
         <!-- Add option based on the parameter -->
-        <click stepKey="clickAddFirstValue" selector="{{AdminProductCustomizableOptionsSection.addValue}}"/>
-        <fillField stepKey="fillInCustomOptionValueTitle" selector="{{AdminProductCustomizableOptionsSection.valueTitle}}" userInput="{{customOption.title}}"/>
-        <fillField stepKey="fillInCustomOptionValuePrice" selector="{{AdminProductCustomizableOptionsSection.valuePrice}}" userInput="{{customOption.price}}"/>
+        <click stepKey="clickAddValue" selector="{{AdminProductCustomizableOptionsSection.addValue}}"/>
+        <fillField stepKey="fillInCustomOptionValueTitle" selector="{{AdminProductCustomizableOptionsSection.valueTitle}}" userInput="{{title}}"/>
+        <fillField stepKey="fillInCustomOptionValuePrice" selector="{{AdminProductCustomizableOptionsSection.valuePrice}}" userInput="{{price}}"/>
     </actionGroup>
 </actionGroups>
