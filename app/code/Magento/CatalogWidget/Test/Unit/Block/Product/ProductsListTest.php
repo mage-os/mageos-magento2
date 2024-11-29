@@ -17,6 +17,7 @@ use Magento\CatalogWidget\Model\Rule;
 use Magento\Directory\Model\Currency;
 use Magento\Framework\App\Http\Context;
 use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Cache\LockGuardedCacheLoader;
 use Magento\Framework\DataObject\IdentityInterface;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\Pricing\Render;
@@ -24,6 +25,7 @@ use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Framework\View\Design\ThemeInterface;
 use Magento\Framework\View\DesignInterface;
+use Magento\Catalog\Block\Product\Context as ViewContext;
 use Magento\Framework\View\LayoutInterface;
 use Magento\Rule\Model\Condition\Combine;
 use Magento\Rule\Model\Condition\Sql\Builder;
@@ -137,13 +139,14 @@ class ProductsListTest extends TestCase
                 'conditionsHelper' => $this->widgetConditionsHelper,
                 'storeManager' => $this->storeManager,
                 'design' => $this->design,
-                'json' => $this->serializer
+                'json' => $this->serializer,
             ]
         );
         $this->request = $arguments['context']->getRequest();
         $this->layout = $arguments['context']->getLayout();
         $this->priceCurrency = $this->getMockForAbstractClass(PriceCurrencyInterface::class);
 
+        //$arguments['context'] = $this->viewContext;
         $this->productsList = $objectManagerHelper->getObject(
             ProductsList::class,
             $arguments
@@ -453,5 +456,57 @@ class ProductsListTest extends TestCase
     public function testScope()
     {
         $this->assertFalse($this->productsList->isScopePrivate());
+    }
+
+    public function testTrimHtml()
+    {
+        $this->productsList->setData('conditions', []);
+
+        $collection = $this->getCollection();
+        $this->getConditionsForCollection($collection);
+        $this->productsList->setDat('html', ' ');
+
+        $this->assertEquals('', $this->productsList->toHtml());
+    }
+
+    /**
+     * @return MockObject
+     */
+    private function getCollection() : MockObject
+    {
+        $this->visibility->expects($this->once())->method('getVisibleInCatalogIds')
+            ->willReturn([Visibility::VISIBILITY_IN_CATALOG, Visibility::VISIBILITY_BOTH]);
+        $collection = $this->getMockBuilder(Collection::class)
+            ->onlyMethods([
+                'setVisibility',
+                'addMinimalPrice',
+                'addFinalPrice',
+                'addTaxPercents',
+                'addAttributeToSelect',
+                'addUrlRewrite',
+                'addStoreFilter',
+                'addAttributeToSort',
+                'setPageSize',
+                'setCurPage',
+                'distinct'
+            ])->disableOriginalConstructor()
+            ->getMock();
+        $collection->expects($this->once())->method('setVisibility')
+            ->with([Visibility::VISIBILITY_IN_CATALOG, Visibility::VISIBILITY_BOTH])
+            ->willReturnSelf();
+        $collection->expects($this->once())->method('addMinimalPrice')->willReturnSelf();
+        $collection->expects($this->once())->method('addFinalPrice')->willReturnSelf();
+        $collection->expects($this->once())->method('addTaxPercents')->willReturnSelf();
+        $collection->expects($this->once())->method('addAttributeToSelect')->willReturnSelf();
+        $collection->expects($this->once())->method('addUrlRewrite')->willReturnSelf();
+        $collection->expects($this->once())->method('addStoreFilter')->willReturnSelf();
+        $collection->expects($this->once())->method('addAttributeToSort')->willReturnSelf();
+        $collection->expects($this->once())->method('setPageSize')->willReturnSelf();
+        $collection->expects($this->once())->method('setCurPage')->willReturnSelf();
+        $collection->expects($this->once())->method('distinct')->willReturnSelf();
+
+        $this->collectionFactory->expects($this->once())->method('create')->willReturn($collection);
+
+        return $collection;
     }
 }
