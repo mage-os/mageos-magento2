@@ -129,7 +129,10 @@
 
         <!-- Clicking on Reorder link from Order Details Tab -->
         <click selector="{{StorefrontCustomerOrderViewSection.reorder}}" stepKey="clickReorder"/>
-
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindexInvalidatedIndices">
+            <argument name="indices" value=""/>
+        </actionGroup>
+            
         <!-- Reuse coupon code -->
         <click selector="{{DiscountSection.DiscountTab}}" stepKey="clickToDiscountTab"/>
         <fillField selector="{{DiscountSection.CouponInput}}" userInput="{{CatPriceRule.coupon_code}}" stepKey="fillCouponCode"/>
