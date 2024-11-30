@@ -107,8 +107,8 @@
         <waitForElementVisible selector="{{AttributeManageSwatchSection.textSwatchStoreViewValue('L3')}}" stepKey="assertLSizeStoreViewValue"/>
         <waitForElementVisible selector="{{AttributeManageSwatchSection.textSwatchStoreViewValue('XL')}}" stepKey="assertXLSizeStoreViewValue"/>
         <!--Add created attribute to default attribute set-->
-        <actionGroup ref="AdminOpenAttributeSetGridPageActionGroup" stepKey="openAttributeSetPage"/>
-        <actionGroup ref="AdminOpenAttributeSetByNameActionGroup" stepKey="openDefaultAttributeSet"/>
+        <comment userInput="Go to default attribute set edit page and add the product attribute to the set" stepKey="commentAttributeSetEdit" />
+        <amOnPage url="{{AdminProductAttributeSetEditPage.url}}/{{AddToDefaultSet.attributeSetId}}/" stepKey="onAttributeSetEdit"/>
         <dragAndDrop selector1="{{AdminProductAttributeSetSection.attribute('size')}}" selector2="{{AdminProductAttributeSetSection.attribute('Product Details')}}" stepKey="assignTestAttributes"/>
         <waitForElementClickable selector="{{AdminProductAttributeSetSection.saveBtn}}" stepKey="waitToClickOnAttributeSetSaveButton"/>
         <click selector="{{AdminProductAttributeSetSection.saveBtn}}" stepKey="clickAttributeSetSave"/>
