@@ -260,7 +260,7 @@
                 <argument name="indices" value=""/>
             </actionGroup>
             <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushPageCache">
-                <argument name="tags" value="full_page"/>
+                <argument name="tags" value=""/>
             </actionGroup>
         </before>
         <after>
