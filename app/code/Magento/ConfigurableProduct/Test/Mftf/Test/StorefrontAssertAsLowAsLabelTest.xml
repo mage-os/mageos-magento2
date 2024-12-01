@@ -23,7 +23,7 @@
                 <requiredEntity createDataKey="createCategory"/>
             </createData>
             <createData entity="ApiConfigurableProduct" stepKey="createConfigurableProductP2">
-                <field key="name">Configurable product p2</field>
+                <field key="name">Configurable product p8</field>
                 <requiredEntity createDataKey="createCategory"/>
             </createData>
             <createData entity="ApiConfigurableProduct" stepKey="createConfigurableProductP3">
