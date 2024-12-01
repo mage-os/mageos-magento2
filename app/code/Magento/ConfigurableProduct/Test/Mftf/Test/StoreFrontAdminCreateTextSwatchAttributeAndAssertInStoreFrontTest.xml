@@ -106,6 +106,14 @@
         <waitForElementVisible selector="{{AttributeManageSwatchSection.textSwatchStoreViewValue('M2')}}" stepKey="assertMSizeStoreViewValue"/>
         <waitForElementVisible selector="{{AttributeManageSwatchSection.textSwatchStoreViewValue('L3')}}" stepKey="assertLSizeStoreViewValue"/>
         <waitForElementVisible selector="{{AttributeManageSwatchSection.textSwatchStoreViewValue('XL')}}" stepKey="assertXLSizeStoreViewValue"/>
+     ```<actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+            <argument name="indices" value=""/>
+        </actionGroup>
+        <!-- Flush cache -->
+        <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache">
+            <argument name="tags" value=""/>
+        </actionGroup>
+        
         <!--Add created attribute to default attribute set-->
         <comment userInput="Go to default attribute set edit page and add the product attribute to the set" stepKey="commentAttributeSetEdit" />
         <amOnPage url="{{AdminProductAttributeSetEditPage.url}}/{{AddToDefaultSet.attributeSetId}}/" stepKey="onAttributeSetEdit"/>
