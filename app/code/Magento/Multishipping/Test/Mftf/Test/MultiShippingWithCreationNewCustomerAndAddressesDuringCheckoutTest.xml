@@ -108,7 +108,7 @@
         <waitForElementVisible selector="{{AdminCreateUserSection.createAnAccountButtonForCustomer}}" stepKey="waitCreateAnAccountButton"/>
         <click selector="{{AdminCreateUserSection.createAnAccountButtonForCustomer}}" stepKey="clickOnCreateAnAccountButton"/>
         <waitForPageLoad stepKey="waitForCreateAccountPageToLoad"/>
-        <actionGroup ref="EnterAddressDetailsActionGroup" stepKey="enterAddressInfo">
+        <actionGroup ref="EnterCustomerAddressInfoActionGroup" stepKey="enterAddressInfo">
             <argument name="Address" value="US_Address_CA"/>
         </actionGroup>
         <actionGroup ref="StorefrontFillCustomerCreateAnAccountActionGroup" stepKey="fillDetails">
