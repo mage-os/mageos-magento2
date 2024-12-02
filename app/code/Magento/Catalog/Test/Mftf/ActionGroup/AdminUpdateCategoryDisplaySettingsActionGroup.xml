@@ -13,7 +13,7 @@
         <arguments>
             <argument name="availableSortOptions" type="string"  defaultValue="Position"/>
             <argument name="defaultSortingOption" type="string"  defaultValue="position"/>
-            <argument name="priceRange" type="string"  defaultValue="1"/>
+            <argument name="priceRange" type="string"  defaultValue="0"/>
         </arguments>
         <!--Select Display Setting and fill the options-->
         <scrollTo selector="{{CategoryDisplaySettingsSection.DisplaySettingTab}}" x="0" y="-80" stepKey="scrollToDisplaySetting"/>
