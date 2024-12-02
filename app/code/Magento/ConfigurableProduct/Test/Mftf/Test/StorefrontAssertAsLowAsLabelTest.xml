@@ -95,7 +95,7 @@
             </actionGroup>
             <actionGroup ref="ChangeConfigurableProductChildProductPriceActionGroup" stepKey="changePriceForBlueP2">
                 <argument name="productAttributes" value="Color: Blue"/>
-                <argument name="productPrice" value="10"/>
+                <argument name="productPrice" value="30"/>
             </actionGroup>
             <actionGroup ref="SaveProductFormActionGroup" stepKey="saveConfigurableProductP2"/>
             <waitForElementClickable selector="{{AdminProductFormConfigurationsSection.variationProductLinkByName('Blue')}}" stepKey="waitForBlueChildProductToBecomeClickable"/>
