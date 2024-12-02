@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2017 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\CatalogInventory\Model;
@@ -153,7 +153,7 @@ class StockRegistry implements StockRegistryInterface
      * Get Product Stock status by SKU
      *
      * @param string $productSku
-     * @param null $scopeId
+     * @param null|int $scopeId
      * @return int
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */

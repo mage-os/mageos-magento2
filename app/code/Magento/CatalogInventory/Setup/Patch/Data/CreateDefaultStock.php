@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\CatalogInventory\Setup\Patch\Data;
@@ -13,8 +13,7 @@ use Magento\Framework\Setup\Patch\DataPatchInterface;
 use Magento\Framework\Setup\Patch\PatchVersionInterface;
 
 /**
- * Class CreateDefaultStock
- * @package Magento\CatalogInventory\Setup\Patch
+ * Class CreateDefaultStock patch
  */
 class CreateDefaultStock implements DataPatchInterface, PatchVersionInterface
 {
@@ -42,7 +41,7 @@ class CreateDefaultStock implements DataPatchInterface, PatchVersionInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function apply()
     {
@@ -65,7 +64,7 @@ class CreateDefaultStock implements DataPatchInterface, PatchVersionInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public static function getDependencies()
     {
@@ -73,7 +72,7 @@ class CreateDefaultStock implements DataPatchInterface, PatchVersionInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public static function getVersion()
     {
@@ -81,7 +80,7 @@ class CreateDefaultStock implements DataPatchInterface, PatchVersionInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getAliases()
     {
