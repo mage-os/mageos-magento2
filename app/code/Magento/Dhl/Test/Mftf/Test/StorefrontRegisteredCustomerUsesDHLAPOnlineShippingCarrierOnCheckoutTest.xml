@@ -8,11 +8,11 @@
 
 <tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
-    <test name="AdminUsesDHLAPOnlineShippingCarrierOnCheckoutAsARegisteredCustomerTest">
+    <test name="StorefrontRegisteredCustomerUsesDHLAPOnlineShippingCarrierOnCheckoutTest">
         <annotations>
-            <stories value="DHL Shipping Carrier On Checkout "/>
-            <title value="Admin Uses DHL AP Online Shipping Carrier On Checkout"/>
-            <description value="Admin Uses DHL(AP) Online Shipping Carrier On Checkout As A Registered Customer"/>
+            <stories value="DHL Shipping Carrier On Checkout"/>
+            <title value="Customer Uses DHL AP Online Shipping Carrier On Checkout"/>
+            <description value="Testcase verifies On storefront customer successfully place an order using DHL(AP) shipping carrier"/>
             <severity value="CRITICAL"/>
             <testCaseId value="AC-5026"/>
         </annotations>
@@ -36,14 +36,9 @@
                 <argument name="rate" value="1.35"/>
             </actionGroup>
             <!--Create category and simple product-->
-            <createData entity="ApiCategory" stepKey="createCategory"/>
-            <createData entity="SimpleProduct" stepKey="createSimpleProduct">
-                <requiredEntity createDataKey="createCategory"/>
-            </createData>
+            <createData entity="SimpleProduct" stepKey="createSimpleProduct"/>
             <!-- Create configurable product with two options -->
-            <createData entity="ApiConfigurableProduct" stepKey="createConfigProduct">
-                <requiredEntity createDataKey="createCategory"/>
-            </createData>
+            <createData entity="ApiConfigurableProduct" stepKey="createConfigProduct"/>
             <createData entity="productAttributeWithTwoOptions" stepKey="createConfigProductAttribute"/>
             <createData entity="productAttributeOption1" stepKey="createConfigProductAttributeOption">
                 <requiredEntity createDataKey="createConfigProductAttribute"/>
@@ -57,7 +52,6 @@
             <createData entity="ApiSimpleOne" stepKey="createConfigChildProduct">
                 <requiredEntity createDataKey="createConfigProductAttribute"/>
                 <requiredEntity createDataKey="getConfigAttributeOption"/>
-                <requiredEntity createDataKey="createCategory"/>
             </createData>
             <createData entity="ConfigurableProductTwoOptions" stepKey="createConfigProductOption">
                 <requiredEntity createDataKey="createConfigProduct"/>
@@ -69,9 +63,7 @@
                 <requiredEntity createDataKey="createConfigChildProduct"/>
             </createData>
             <!--Create Bundle product with multi select option-->
-            <createData entity="BundleProductPriceViewRange" stepKey="createBundleProduct">
-                <requiredEntity createDataKey="createCategory"/>
-            </createData>
+            <createData entity="BundleProductPriceViewRange" stepKey="createBundleProduct"/>
             <createData entity="MultipleSelectOption" stepKey="createBundleOption1_1">
                 <requiredEntity createDataKey="createBundleProduct"/>
                 <field key="required">True</field>
@@ -97,7 +89,6 @@
             <deleteData createDataKey="createConfigProductAttribute" stepKey="deleteConfigProductAttribute"/>
             <deleteData createDataKey="createBundleProduct" stepKey="deleteBundleProduct"/>
             <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
-            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
             <!-- Reset shipping origin -->
             <actionGroup ref="AdminResetShippingOriginConfigurationActionGroup" stepKey="resetCaliforniaShippingOrigin"/>
             <actionGroup ref="AdminDisableDHLConfigurationActionGroup" stepKey="resetDhlConfig"/>
@@ -141,7 +132,6 @@
         <waitForElement selector="{{CheckoutCartSummarySection.shippingMethods('Express easy')}}" stepKey="verifyExpressEasyIsAvailable"/>
         <waitForElement selector="{{CheckoutCartSummarySection.shippingMethods('Express 12:00')}}" stepKey="verifyExpress12IsAvailable"/>
         <waitForElement selector="{{CheckoutCartSummarySection.shippingMethods('Medical express')}}" stepKey="verifyMedicalExpressIsAvailable"/>
-        <waitForElementClickable selector="{{CheckoutCartSummarySection.shippingMethods('Express worldwide')}}" stepKey="waitForExpressWorldWideIsClickable"/>
         <click selector="{{CheckoutCartSummarySection.shippingMethods('Express worldwide')}}" stepKey="selectExpressWorldWide"/>
         <actionGroup ref="StorefrontClickProceedToCheckoutActionGroup" stepKey="goToCheckout"/>
         <actionGroup ref="StorefrontCheckoutClickNextButtonActionGroup" stepKey="clickOnNextButton"/>
@@ -151,13 +141,9 @@
         <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="grabOrderNumber"/>
         <!--navigate to orders grid-->
         <actionGroup ref="AdminOrdersPageOpenActionGroup" stepKey="goToAdminSalesOrders"/>
-        <!--filter order by ID-->
-        <actionGroup ref="OpenOrderByIdActionGroup" stepKey="filterOrderGridById">
-            <argument name="orderId" value="$grabOrderNumber"/>
+        <actionGroup ref="FilterOrderGridByIdActionGroup" stepKey="filterOrderGridById">
+            <argument name="orderId" value="{$grabOrderNumber}"/>
         </actionGroup>
-        <!--assert order ID-->
-        <assertNotEmpty stepKey="assertOrderIdIsNotEmpty">
-            <actualResult type="const">$grabOrderNumber</actualResult>
-        </assertNotEmpty>
+        <waitForText selector="{{AdminOrdersGridSection.firstRow}}" userInput="$grabOrderNumber" stepKey="seeOrderIdInGrid"/>
     </test>
 </tests>
