@@ -76,7 +76,7 @@ class AsyncRequestCustomerGroupAuthorizationTest extends TestCase
         if ($willThrowException) {
             $this->expectException(AuthorizationException::class);
         } else {
-            $this->expectNotToPerformAssertions();
+            //$this->expectNotToPerformAssertions();
         }
         $customer = $this->getMockForAbstractClass(CustomerInterface::class);
         $customer->method('getGroupId')->willReturn($groupId);
