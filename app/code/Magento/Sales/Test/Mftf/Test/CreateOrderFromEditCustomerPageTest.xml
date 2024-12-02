@@ -217,6 +217,9 @@
         <comment userInput="Comment is added to preserve the step key for backward compatibility" stepKey="waitForCustomerEditPageToLoad1"/>
 
         <actionGroup ref="AdminClickOrdersItemOnCustomerEditPageActionGroup" stepKey="clickOnOrdersButton"/>
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex"> 
+            <argument name="indices" value=""/> 
+        </actionGroup>
         <comment userInput="Comment is added to preserve the step key for backward compatibility" stepKey="waitForOrderPageToOpen"/>
         <actionGroup ref="AdminOpenOrderByIdFromOrdersGridOnCustomerEditPageActionGroup" stepKey="selectOnOrderID">
             <argument name="orderId" value="$orderId"/>
