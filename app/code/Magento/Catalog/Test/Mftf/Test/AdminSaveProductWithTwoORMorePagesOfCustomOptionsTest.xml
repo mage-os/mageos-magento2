@@ -32,7 +32,7 @@
         <click selector="{{AdminProductCustomizableOptionsSection.customizableOptions}}" stepKey="openCustomizableOptions"/>
         <click stepKey="clickAddOptions" selector="{{AdminProductCustomizableOptionsSection.addOptionBtn}}"/>
         <!-- Fill in the option and select the type of drop down -->
-        <fillField stepKey="fillInOptionTitle" selector="{{AdminProductCustomizableOptionsSection.lastOptionTitle}}" userInput="{{customOptionName}}"/>
+       <fillField selector="{{AdminProductCustomizableOptionsSection.optionTitleInput('0')}}" userInput="{{virtualProductCustomizableOption1.title}}" stepKey="fillOptionTitleForDataSet"/>
         <click stepKey="clickOptionTypeParent" selector="{{AdminProductCustomizableOptionsSection.lastOptionTypeParent}}"/>
         <waitForPageLoad stepKey="waitForDropdownOpen"/>
         <click stepKey="clickOptionType" selector="{{AdminProductCustomizableOptionsSection.optionType('Drop-down')}}"/>
