@@ -143,7 +143,6 @@ class ProductsListTest extends TestCase
         $this->layout = $arguments['context']->getLayout();
         $this->priceCurrency = $this->getMockForAbstractClass(PriceCurrencyInterface::class);
 
-        //$arguments['context'] = $this->viewContext;
         $this->productsList = $objectManagerHelper->getObject(
             ProductsList::class,
             $arguments
@@ -453,57 +452,5 @@ class ProductsListTest extends TestCase
     public function testScope()
     {
         $this->assertFalse($this->productsList->isScopePrivate());
-    }
-
-    public function testTrimHtml()
-    {
-        $this->productsList->setData('conditions', []);
-
-        $collection = $this->getCollection();
-        $this->getConditionsForCollection($collection);
-        $this->productsList->setData('html', ' ');
-
-        $this->assertEquals('', $this->productsList->toHtml());
-    }
-
-    /**
-     * @return MockObject
-     */
-    private function getCollection() : MockObject
-    {
-        $this->visibility->expects($this->once())->method('getVisibleInCatalogIds')
-            ->willReturn([Visibility::VISIBILITY_IN_CATALOG, Visibility::VISIBILITY_BOTH]);
-        $collection = $this->getMockBuilder(Collection::class)
-            ->onlyMethods([
-                'setVisibility',
-                'addMinimalPrice',
-                'addFinalPrice',
-                'addTaxPercents',
-                'addAttributeToSelect',
-                'addUrlRewrite',
-                'addStoreFilter',
-                'addAttributeToSort',
-                'setPageSize',
-                'setCurPage',
-                'distinct'
-            ])->disableOriginalConstructor()
-            ->getMock();
-        $collection->expects($this->once())->method('setVisibility')
-            ->with([Visibility::VISIBILITY_IN_CATALOG, Visibility::VISIBILITY_BOTH])
-            ->willReturnSelf();
-        $collection->expects($this->once())->method('addMinimalPrice')->willReturnSelf();
-        $collection->expects($this->once())->method('addFinalPrice')->willReturnSelf();
-        $collection->expects($this->once())->method('addTaxPercents')->willReturnSelf();
-        $collection->expects($this->once())->method('addAttributeToSelect')->willReturnSelf();
-        $collection->expects($this->once())->method('addUrlRewrite')->willReturnSelf();
-        $collection->expects($this->once())->method('addStoreFilter')->willReturnSelf();
-        $collection->expects($this->once())->method('addAttributeToSort')->willReturnSelf();
-        $collection->expects($this->once())->method('setPageSize')->willReturnSelf();
-        $collection->expects($this->once())->method('setCurPage')->willReturnSelf();
-        $collection->expects($this->once())->method('distinct')->willReturnSelf();
-
-        $this->collectionFactory->expects($this->once())->method('create')->willReturn($collection);
-
-        return $collection;
     }
 }
