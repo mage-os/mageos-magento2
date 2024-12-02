@@ -14,8 +14,6 @@
             <description value="Verify Multi shipping with creation new customer and addresses during checkout"/>
             <severity value="MAJOR"/>
             <testCaseId value="AC-4685" />
-            <!-- will be fixed in ACQE-7229 -->
-            <group value="pr_exclude"/>
         </annotations>
         <before>
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginToAdminArea"/>
