@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright Adobe 2024
+ * Copyright 2024 Adobe
  * All rights reserved.
  * See COPYING.txt for license details.
  */
