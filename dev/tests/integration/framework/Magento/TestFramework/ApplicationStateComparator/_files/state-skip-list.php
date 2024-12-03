@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2023 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -272,6 +272,7 @@ return [
     ],
     '*-fromConstructed' => [
         // phpcs:disable Generic.Files.LineLength.TooLong
+        Magento\Catalog\Model\Product\Attribute\Backend\Url\Interceptor::class => null,
         Magento\Customer\Model\Cache\GroupExcludedWebsiteCache::class => null,
         Magento\Sales\Model\ResourceModel\Grid::class => null,
         Magento\Sales\Model\ResourceModel\GridPool::class => null,
