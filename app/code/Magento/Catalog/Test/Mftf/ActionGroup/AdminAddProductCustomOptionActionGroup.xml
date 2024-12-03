@@ -29,4 +29,3 @@
         <click stepKey="clickOptionType" selector="{{AdminProductCustomizableOptionsSection.optionType(customOptionType)}}"/>
     </actionGroup>
 </actionGroups>
-
