@@ -20,8 +20,8 @@
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
         </before>
         <after>
-            <actionGroup stepKey="deleteProduct" ref="DeleteProductBySkuActionGroup">
-                <argument name="sku" value="{{SimpleProduct.sku}}"/>
+             <actionGroup ref="DeleteProductUsingProductGridActionGroup" stepKey="deleteProduct">
+                <argument name="product" value="SimpleProduct"/>
             </actionGroup>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
         </after>
