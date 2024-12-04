@@ -82,6 +82,9 @@
         <!--Go to Admin Sales Order View Page-->
         <amOnPage url="{{AdminSalesOrderViewPage.url({$getOrderId})}}" stepKey="navigateToSalesOrderViewPage"/>
         <waitForPageLoad stepKey="waitForAdminSalesOrderViewPageLoad"/>
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindexing"> 
+            <argument name="indices" value=""/> 
+        </actionGroup>
 
         <!--Check Order History block-->
         <waitForElementVisible selector="{{AdminSalesOrderViewSection.orderHistoryNoteListFirstComment}}" stepKey="waitForReteriveOrderCancellationReason"/>
