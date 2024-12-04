@@ -118,6 +118,8 @@ class ModelHydratorTest extends TestCase
      *
      * @return void
      * @throws Exception
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function testResetState()
     {
