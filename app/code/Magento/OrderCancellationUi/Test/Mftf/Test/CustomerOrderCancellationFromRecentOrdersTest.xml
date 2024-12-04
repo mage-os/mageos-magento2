@@ -79,9 +79,6 @@
             <expectedResult type="string">Canceled</expectedResult>
             <actualResult type="variable">$getLatestOrderStatus</actualResult>
         </assertEquals>
-        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="performReindexing">
-            <argument name="indices" value=""/>
-        </actionGroup>
         <!--Grab Order Id for later usage-->
         <grabTextFrom selector="{{CustomerOrderCancellationSection.referenceToLatestOrderId}}" stepKey="getOrderId"/>
 
