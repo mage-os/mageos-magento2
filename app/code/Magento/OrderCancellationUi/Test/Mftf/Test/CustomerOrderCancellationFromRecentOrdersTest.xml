@@ -14,7 +14,8 @@
             <title value="Customer cancels an order from recent orders page."/>
             <description value="Customer cancels an order from recent orders page."/>
             <severity value="AVERAGE"/>
-            <testCaseId value="LYNX-180"/>
+            <!-- Will be fixed in the scope of ACQE-7314 -->
+            <group value="pr_exclude"/>
         </annotations>
         <before>
             <!-- Enable configuration -->
