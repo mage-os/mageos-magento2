@@ -16,8 +16,66 @@
         "preferred-install": "dist",
         "sort-packages": true
     },
+    "repositories": [
+        {
+            "type" : "vcs",
+            "url" : "git@github.com:cod43156/laminas-captcha.git"
+        },
+        {
+            "type" : "vcs",
+            "url" : "git@github.com:cod43156/laminas-db.git"
+        },
+        {
+            "type" : "vcs",
+            "url" : "git@github.com:cod43156/laminas-file.git"
+        },
+        {
+            "type" : "vcs",
+            "url" : "git@github.com:laminas/laminas-di.git"
+        },
+        {
+            "type" : "vcs",
+            "url" : "git@github.com:magento-gl/composer.git"
+        },
+        {
+            "type" : "vcs",
+            "url" : "git@github.com:glo71317/allure-phpunit.git"
+        },
+        {
+            "type" : "vcs",
+            "url" : "git@github.com:glo71317/laminas-mail.git"
+        },
+        {
+            "type" : "vcs",
+            "url" : "git@github.com:glo71317/laminas-mime.git"
+        },
+        {
+            "type" : "vcs",
+            "url" : "git@github.com:glo71317/laminas-crypt.git"
+        },
+        {
+            "type" : "vcs",
+            "url" : "git@github.com:glo71317/laminas-oauth.git"
+        },
+        {
+            "type" : "vcs",
+            "url" : "git@github.com:cod43156/laminas-server.git"
+        },
+        {
+            "type" : "vcs",
+            "url" : "git@github.com:glo71317/laminas-soap.git"
+        },
+        {
+            "type" : "vcs",
+            "url" : "git@github.com:magento-gl/magento-coding-standard.git"
+        },
+        {
+            "type" : "vcs",
+            "url" : "git@github.com:Atul-glo35265/laminas-math.git"
+        }
+    ],
     "require": {
-        "php": "~8.2.0||~8.3.0",
+        "php": "~8.2.0||~8.3.0||~8.4.0",
         "ext-bcmath": "*",
         "ext-ctype": "*",
         "ext-curl": "*",
@@ -43,32 +101,31 @@
         "elasticsearch/elasticsearch": "~7.17.0 || ~8.5.0",
         "ezyang/htmlpurifier": "^4.17",
         "guzzlehttp/guzzle": "^7.5",
-        "laminas/laminas-captcha": "^2.17",
+        "laminas/laminas-captcha": "dev-php8.4_support",
         "laminas/laminas-code": "^4.13",
-        "laminas/laminas-db": "^2.19",
-        "laminas/laminas-di": "^3.13",
+        "laminas/laminas-db": "dev-php8.4_support",
+        "laminas/laminas-di": "dev-renovate/all-minor-patch",
         "laminas/laminas-escaper": "^2.13",
         "laminas/laminas-eventmanager": "^3.11",
         "laminas/laminas-feed": "^2.22",
-        "laminas/laminas-file": "^2.13",
+        "laminas/laminas-file": "dev-php8.4_support",
         "laminas/laminas-filter": "^2.33",
         "laminas/laminas-http": "^2.15",
         "laminas/laminas-i18n": "^2.17",
-        "laminas/laminas-mail": "^2.16",
-        "laminas/laminas-mime": "^2.9",
+        "laminas/laminas-mail": "dev-php8.4_support",
+        "laminas/laminas-mime": "dev-php8.4_support",
         "laminas/laminas-modulemanager": "^2.11",
         "laminas/laminas-mvc": "^3.6",
-        "laminas/laminas-oauth": "^2.6",
+        "laminas/laminas-oauth": "dev-backward-compatibilty",
         "laminas/laminas-permissions-acl": "^2.10",
-        "laminas/laminas-server": "^2.16",
         "laminas/laminas-servicemanager": "^3.16",
-        "laminas/laminas-soap": "^2.10",
+        "laminas/laminas-soap": "dev-php84",
         "laminas/laminas-stdlib": "^3.11",
         "laminas/laminas-uri": "^2.9",
         "laminas/laminas-validator": "^2.23",
         "league/flysystem": "^3.0",
         "league/flysystem-aws-s3-v3": "^3.0",
-        "magento/composer": "^1.10.0-beta1",
+        "magento/composer": "dev-AC-13307",
         "magento/composer-dependency-version-audit-plugin": "^0.1",
         "magento/magento-composer-installer": ">=0.4.0",
         "magento/zend-cache": "^1.16",
@@ -90,16 +147,17 @@
         "tubalmartin/cssmin": "^4.1",
         "web-token/jwt-framework": "^3.1",
         "webonyx/graphql-php": "^15.0",
-        "wikimedia/less.php": "^5.0"
+        "wikimedia/less.php": "^5.0",
+        "laminas/laminas-math": "dev-php8.4_support"
     },
     "require-dev": {
-        "allure-framework/allure-phpunit": "^3",
+        "allure-framework/allure-phpunit": "dev-php8.4_support",
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7 || ^1.0",
         "dg/bypass-finals": "^1.4",
         "friendsofphp/php-cs-fixer": "^3.22",
         "lusitanian/oauth": "^0.8",
-        "magento/magento-coding-standard": "*",
-        "magento/magento2-functional-testing-framework": "^4.8",
+        "magento/magento-coding-standard": "dev-php8.4_support",
+        "magento/magento2-functional-testing-framework": "dev-develop",
         "pdepend/pdepend": "^2.10",
         "phpmd/phpmd": "^2.12",
         "phpstan/phpstan": "^1.9",
@@ -398,5 +456,6 @@
             "Magento\\PhpStan\\": "dev/tests/static/framework/Magento/PhpStan/"
         }
     },
-    "prefer-stable": true
+    "prefer-stable": true,
+    "minimum-stability": "dev"
 }
