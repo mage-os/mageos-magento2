@@ -18,7 +18,6 @@
             <group value="pr_exclude"/>
         </annotations>
         <before>
-            <!-- Will be fixed in the scope of  -->
             <magentoCLI command="config:set sales/cancellation/enabled 1" stepKey="EnablingSalesCancellation"/>
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
             <createData entity="_defaultCategory" stepKey="createCategory"/>
