@@ -50,10 +50,17 @@ class Datetime extends \Magento\Eav\Model\Entity\Attribute\Backend\AbstractBacke
             }
 
             if ($value === null) {
-                $value = $object->getData($attributeName);
+                //$value = $object->getData($attributeName);
+                $value = $this->getDefaultValue();
             }
 
             $object->setData($attributeName, $value);
+            $object->setData($attributeName . '_is_formated', true);
+        }
+
+        $defaultValue = $this->getDefaultValue();
+        if (is_null($object->getData($attributeName)) && $defaultValue !== null) {
+            $object->setData($attributeName, $defaultValue);
             $object->setData($attributeName . '_is_formated', true);
         }
 
