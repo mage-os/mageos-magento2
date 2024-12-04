@@ -7,6 +7,8 @@ declare(strict_types=1);
 
 namespace Magento\GraphQl\Controller;
 
+use GraphQL\Error\FormattedError;
+use GraphQL\Error\SyntaxError;
 use Magento\Framework\App\Area;
 use Magento\Framework\App\AreaList;
 use Magento\Framework\App\FrontControllerInterface;
@@ -206,6 +208,11 @@ class GraphQl implements FrontControllerInterface
                 );
                 $statusCode = 200;
             }
+        } catch (SyntaxError $error) {
+            $result = [
+                'errors' => [FormattedError::createFromException($error)],
+            ];
+            $statusCode = 400;
         } catch (\Exception $error) {
             $result = [
                 'errors' => [$this->graphQlError->create($error)],

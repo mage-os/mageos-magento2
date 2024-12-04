@@ -272,4 +272,14 @@ QUERY;
         self::assertEquals(204, $response->getStatusCode());
         self::assertEmpty($response->getContent());
     }
+
+    public function testDispatchWithoutQuery(): void
+    {
+        $this->request->setPathInfo('/graphql');
+        $this->request->setMethod('GET');
+        $response = $this->graphql->dispatch($this->request);
+        self::assertEquals(400, $response->getStatusCode());
+        $output = $this->jsonSerializer->unserialize($response->getContent());
+        self::assertNotEmpty($output['errors']);
+    }
 }
