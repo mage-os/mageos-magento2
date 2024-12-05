@@ -64,7 +64,6 @@ class Datetime extends \Magento\Eav\Model\Entity\Attribute\Backend\AbstractBacke
             $object->setData($attributeName . '_is_formated', true);
         }
 
-
         return $this;
     }
 
