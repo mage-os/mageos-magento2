@@ -93,7 +93,6 @@ class CartFixed extends AbstractDiscount
         $baseItemPrice = $this->validator->getItemBasePrice($item);
         $itemOriginalPrice = $this->validator->getItemOriginalPrice($item);
         $baseItemOriginalPrice = $this->validator->getItemBaseOriginalPrice($item);
-        $baseItemDiscountAmount = (float) $item->getBaseDiscountAmount();
 
         $cartRules = $quote->getCartFixedRules();
         if (!isset($cartRules[$rule->getId()])) {
@@ -132,8 +131,8 @@ class CartFixed extends AbstractDiscount
                         $ruleDiscount,
                         $qty,
                         $baseItemPrice,
-                        $baseItemDiscountAmount,
-                        $baseRuleTotals - $baseItemDiscountAmount,
+                        0,
+                        $baseRuleTotals,
                         $discountType
                     );
             }
