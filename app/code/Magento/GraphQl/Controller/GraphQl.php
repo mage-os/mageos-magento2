@@ -19,6 +19,7 @@ use Magento\Framework\App\Response\Http as HttpResponse;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\GraphQl\Exception\ExceptionFormatter;
+use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\Fields as QueryFields;
 use Magento\Framework\GraphQl\Query\QueryParser;
 use Magento\Framework\GraphQl\Query\QueryProcessor;
@@ -208,7 +209,7 @@ class GraphQl implements FrontControllerInterface
                 );
                 $statusCode = 200;
             }
-        } catch (SyntaxError $error) {
+        } catch (SyntaxError|GraphQlInputException $error) {
             $result = [
                 'errors' => [FormattedError::createFromException($error)],
             ];
@@ -245,7 +246,7 @@ class GraphQl implements FrontControllerInterface
     {
         /** @var Http $request */
         if ($request->isPost()) {
-            $data = $this->jsonSerializer->unserialize($request->getContent());
+            $data = $request->getContent() ? $this->jsonSerializer->unserialize($request->getContent()) : [];
         } elseif ($request->isGet()) {
             $data = $request->getParams();
             $data['variables'] = isset($data['variables']) ?

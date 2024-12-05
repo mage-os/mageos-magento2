@@ -273,10 +273,38 @@ QUERY;
         self::assertEmpty($response->getContent());
     }
 
-    public function testDispatchWithoutQuery(): void
+    public function testDispatchWithGetWithoutQuery(): void
     {
         $this->request->setPathInfo('/graphql');
         $this->request->setMethod('GET');
+        $response = $this->graphql->dispatch($this->request);
+        self::assertEquals(400, $response->getStatusCode());
+        $output = $this->jsonSerializer->unserialize($response->getContent());
+        self::assertNotEmpty($output['errors']);
+    }
+
+    public function testDispatchWithPostAndWrongContentType(): void
+    {
+        $query = <<<QUERY
+{
+    products(filter: {sku: {eq: "simple1"}}) {
+        items {
+            id
+            name
+            sku
+        }
+    }
+}
+QUERY;
+        $postData = [
+            'query' => $query,
+            'variables' => null,
+            'operationName' => null
+        ];
+
+        $this->request->setPathInfo('/graphql');
+        $this->request->setMethod('POST');
+        $this->request->setContent(json_encode($postData));
         $response = $this->graphql->dispatch($this->request);
         self::assertEquals(400, $response->getStatusCode());
         $output = $this->jsonSerializer->unserialize($response->getContent());
