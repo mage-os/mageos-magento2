@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright 2024 Adobe
+  * All Rights Reserved.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminRemoveCustomOptionInStagingSlideOutPageActionGroup">
+        <annotations>
+            <description>Remove custom option in staging slideOut Page.</description>
+        </annotations>
+        <arguments>
+            <argument name="optionName" type="string" defaultValue="Option 2"/>
+        </arguments>
+        <waitForElementClickable selector="{{AdminStagingSlideOutSection.optionDelete(optionName)}}" stepKey="waitForRemoveOption2ToBeClickable"/>
+        <click selector="{{AdminStagingSlideOutSection.optionDelete(optionName)}}" stepKey="removeOption2"/>
+    </actionGroup>
+</actionGroups>
