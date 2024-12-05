@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    /**
+     * Copyright 2024 Adobe
+     * All Rights Reserved.
+     */
+   -->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminRemoveCustomizableOptionFromProductWithOverTwentyCustomizableOptionsTest">
+        <annotations>
+            <features value="Catalog"/>
+            <stories value="Remove Customizable Option from Product"/>
+            <title value="Admin should be able to Remove Customizable Option from Product with over 20 Customizable Options."/>
+            <description value="Remove Customizable Option from Product with over 20 Customizable Options."/>
+            <severity value="MAJOR"/>
+            <testCaseId value="AC-4703"/>
+            <group value="Catalog"/>
+            <group value="cloud"/>
+        </annotations>
+        <before>
+            <createData entity="SimpleProduct" stepKey="createSimpleProduct"/>
+            <updateData entity="ProductWithTwoOneTextFieldOptions" createDataKey="createSimpleProduct" stepKey="addCustomOptions">
+                <requiredEntity createDataKey="createSimpleProduct"/>
+            </updateData>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteProduct"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <actionGroup ref="AdminProductPageOpenByIdActionGroup" stepKey="openProductForEdit">
+            <argument name="productId" value="$createSimpleProduct.id$"/>
+        </actionGroup>
+        <scrollTo selector="{{AdminStagingSlideOutSection.customizableOptions}}" stepKey="scrollToCustomizableOptions"/>
+        <click selector="{{AdminProductCustomizableOptionsSection.customizableOptions}}" stepKey="clickAdminProductCustomizableOption2"/>
+        <actionGroup ref="AdminRemoveCustomOptionInStagingSlideOutPageActionGroup" stepKey="removeOption">
+            <argument name="optionName" value="OptionField21"/>
+        </actionGroup>
+        <actionGroup ref="AdminProductFormSaveButtonClickActionGroup" stepKey="clickSaveButton"/>
+        <actionGroup ref="StorefrontOpenProductEntityPageActionGroup" stepKey="openProductPage">
+            <argument name="product" value="$createSimpleProduct$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontAssertCustomOptionByTitleActionGroup" stepKey="assertDropDownOptionByTitleOnStorefront">
+            <argument name="title" value="{{ProductOptionField.title}}"/>
+            <argument name="title" value="{{ProductOptionField2.title}}"/>
+            <argument name="title" value="{{ProductOptionField3.title}}"/>
+            <argument name="title" value="{{ProductOptionField4.title}}"/>
+            <argument name="title" value="{{ProductOptionField5.title}}"/>
+            <argument name="title" value="{{ProductOptionField6.title}}"/>
+            <argument name="title" value="{{ProductOptionField7.title}}"/>
+            <argument name="title" value="{{ProductOptionField8.title}}"/>
+            <argument name="title" value="{{ProductOptionField9.title}}"/>
+            <argument name="title" value="{{ProductOptionField10.title}}"/>
+            <argument name="title" value="{{ProductOptionField11.title}}"/>
+            <argument name="title" value="{{ProductOptionField12.title}}"/>
+            <argument name="title" value="{{ProductOptionField13.title}}"/>
+            <argument name="title" value="{{ProductOptionField14.title}}"/>
+            <argument name="title" value="{{ProductOptionField15.title}}"/>
+            <argument name="title" value="{{ProductOptionField16.title}}"/>
+            <argument name="title" value="{{ProductOptionField17.title}}"/>
+            <argument name="title" value="{{ProductOptionField18.title}}"/>
+            <argument name="title" value="{{ProductOptionField19.title}}"/>
+            <argument name="title" value="{{ProductOptionField20.title}}"/>
+        </actionGroup>
+    </test>
+</tests>
