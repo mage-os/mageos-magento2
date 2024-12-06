@@ -22,7 +22,7 @@
                 <field key="price">10</field>
             </createData>
             <actionGroup ref="CliEnableFreeShippingMethodActionGroup" stepKey="enableFreeShippingMethod"/>
-            <actionGroup ref="AdminEnableFreeShippingToSpecificCountriesActionGroup" stepKey="enableToSpecificCountrie"/>
+            <actionGroup ref="AdminEnableFreeShippingToSpecificCountriesActionGroup" stepKey="enableToSpecificCountries"/>
             <actionGroup ref="AdminEnableFedExConfigurationActionGroup" stepKey="enableFedEx"/>
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
             <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
@@ -66,7 +66,7 @@
             <argument name="address" value="US_Address_TX"/>
         </actionGroup>
         <waitForElementNotVisible selector="{{CheckoutShippingMethodsSection.shippingMethodFreeShippingLabel}}" stepKey="againWaitForFreeShippingLabelNotVisible"/>
-        <actionGroup ref="StorefrontCheckForFlatRateShippingMethodAvailabilityActionGroup" stepKey="verifyFlatRateShippingMethodAfterCOuntryChangeToUS"/>
+        <actionGroup ref="StorefrontCheckForFlatRateShippingMethodAvailabilityActionGroup" stepKey="verifyFlatRateShippingMethodAfterCountryChangeToUS"/>
         <actionGroup ref="StorefrontVerifyFedexShippingMethodPricesActionGroup" stepKey="verifyFedexShippingMethodPrices"/>
     </test>
 </tests>
