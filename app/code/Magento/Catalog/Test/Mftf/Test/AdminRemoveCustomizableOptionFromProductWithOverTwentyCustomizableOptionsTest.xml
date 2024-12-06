@@ -32,7 +32,7 @@
         <actionGroup ref="AdminProductPageOpenByIdActionGroup" stepKey="openProductForEdit">
             <argument name="productId" value="$createSimpleProduct.id$"/>
         </actionGroup>
-        <scrollTo selector="{{AdminStagingSlideOutSection.customizableOptions}}" stepKey="scrollToCustomizableOptions"/>
+        <scrollTo selector="{{AdminProductCustomizableOptionsSection.customizableOptions}}" stepKey="scrollToCustomizableOptions"/>
         <click selector="{{AdminProductCustomizableOptionsSection.customizableOptions}}" stepKey="clickAdminProductCustomizableOption2"/>
         <actionGroup ref="AdminRemoveCustomOptionInStagingSlideOutPageActionGroup" stepKey="removeOption">
             <argument name="optionName" value="OptionField21"/>
