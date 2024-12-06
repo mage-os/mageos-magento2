@@ -56,7 +56,13 @@ class UpdateStockItemsWebsite implements DataPatchInterface, PatchVersionInterfa
     }
 
     /**
-     * @inheritdoc
+     * Run code inside patch
+     * If code fails, patch must be reverted, in case when we are speaking about schema - then under revert
+     * means run PatchInterface::revert()
+     *
+     * If we speak about data, under revert means: $transaction->rollback()
+     *
+     * @return void
      */
     public function apply()
     {
