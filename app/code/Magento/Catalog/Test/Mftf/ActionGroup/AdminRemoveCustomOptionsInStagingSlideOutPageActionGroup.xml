@@ -8,14 +8,14 @@
 
 <actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
-    <actionGroup name="AdminRemoveCustomOptionInStagingSlideOutPageActionGroup">
+    <actionGroup name="AdminRemoveCustomOptionsInStagingSlideOutPageActionGroup">
         <annotations>
             <description>Remove custom option in staging slideOut Page.</description>
         </annotations>
         <arguments>
             <argument name="optionName" type="string" defaultValue="Option 2"/>
         </arguments>
-        <waitForElementClickable selector="{{AdminStagingSlideOutSection.optionDelete(optionName)}}" stepKey="waitForRemoveOption2ToBeClickable"/>
-        <click selector="{{AdminStagingSlideOutSection.optionDelete(optionName)}}" stepKey="removeOption2"/>
+        <waitForElementClickable selector="{{AdminOptionStagingSlideOutSection.optionDelete(optionName)}}" stepKey="waitForRemoveOption2ToBeClickable"/>
+        <click selector="{{AdminOptionStagingSlideOutSection.optionDelete(optionName)}}" stepKey="removeOption2"/>
     </actionGroup>
 </actionGroups>
