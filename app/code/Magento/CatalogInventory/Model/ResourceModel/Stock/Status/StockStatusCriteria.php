@@ -24,7 +24,10 @@ class StockStatusCriteria extends AbstractCriteria implements StockStatusCriteri
     }
 
     /**
-     * @inheritdoc
+     * Filter by scope(s)
+     *
+     * @param int $scope
+     * @return void
      */
     public function setScopeFilter($scope)
     {
@@ -32,7 +35,10 @@ class StockStatusCriteria extends AbstractCriteria implements StockStatusCriteri
     }
 
     /**
-     * @inheritdoc
+     * Add product(s) filter
+     *
+     * @param int $products
+     * @return void
      */
     public function setProductsFilter($products)
     {
@@ -40,7 +46,10 @@ class StockStatusCriteria extends AbstractCriteria implements StockStatusCriteri
     }
 
     /**
-     * @inheritdoc
+     * Add filter by quantity
+     *
+     * @param float $qty
+     * @return void
      */
     public function setQtyFilter($qty)
     {
@@ -48,7 +57,10 @@ class StockStatusCriteria extends AbstractCriteria implements StockStatusCriteri
     }
 
     /**
-     * @inheritdoc
+     * Add Criteria object
+     *
+     * @param \Magento\CatalogInventory\Api\StockStatusCriteriaInterface $criteria
+     * @return void
      */
     public function addCriteria(StockStatusCriteriaInterface $criteria)
     {
