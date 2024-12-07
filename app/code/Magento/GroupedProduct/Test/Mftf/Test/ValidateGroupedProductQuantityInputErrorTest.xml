@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright 2011 Adobe
+  * All Rights Reserved.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="ValidateGroupedProductQuantityInputErrorTest">
+        <annotations>
+            <features value="GroupedProduct"/>
+            <stories value="Verify grouped product qty validation message in Storefront"/>
+            <title value="Grouped product qty validation should be displayed only on invalid qty textbox"/>
+            <description value="Grouped product qty validation should be displayed only on invalid qty textbox"/>
+            <testCaseId value="AC-13325"/>
+            <severity value="MAJOR"/>
+            <group value="GroupedProduct"/>
+        </annotations>
+        <before>
+            <createData entity="ApiProductWithDescription" stepKey="simple1"/>
+            <createData entity="ApiProductWithDescription" stepKey="simple2"/>
+            <createData entity="ApiGroupedProduct" stepKey="product"/>
+            <createData entity="OneSimpleProductLink" stepKey="addProductOne">
+                <requiredEntity createDataKey="product"/>
+                <requiredEntity createDataKey="simple1"/>
+            </createData>
+            <updateData entity="OneMoreSimpleProductLink" createDataKey="addProductOne" stepKey="addProductTwo">
+                <requiredEntity createDataKey="product"/>
+                <requiredEntity createDataKey="simple2"/>
+            </updateData>
+            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="runIndex">
+                <argument name="indices" value=""/>
+            </actionGroup>
+            <actionGroup ref="CliCacheFlushActionGroup" stepKey="clearCache">
+                <argument name="tags" value=""/>
+            </actionGroup>
+        </before>
+        <after>
+            <deleteData createDataKey="simple1" stepKey="deleteSimple1"/>
+            <deleteData createDataKey="simple2" stepKey="deleteSimple2"/>
+            <deleteData createDataKey="product" stepKey="deleteGroupedProduct"/>
+            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="runIndex">
+                <argument name="indices" value=""/>
+            </actionGroup>
+            <actionGroup ref="CliCacheFlushActionGroup" stepKey="clearCache">
+                <argument name="tags" value=""/>
+            </actionGroup>
+        </after>
+        <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProductStorefront">
+            <argument name="productUrl" value="$$product.custom_attributes[url_key]$$"/>
+        </actionGroup>
+        <waitForElementVisible selector="{{StorefrontProductInfoMainSection.groupedProductsTableAllRows}}" stepKey="waitForGroupedProductRows"/>
+        <fillField selector="#super-product-table tbody tr:nth-child(1) input.qty" userInput="-10" stepKey="fillTheFirstProductQuantity"/>
+        <fillField selector="#super-product-table tbody tr:nth-child(2) input.qty" userInput="10" stepKey="fillTheSecondProductQuantity"/>
+        <click selector="{{StorefrontProductPageSection.addToCartBtn}}" stepKey="clickOnAddToCartButton"/>
+        <seeElement selector="#super-product-table tbody tr:nth-child(1) input.mage-error" stepKey="checkingInputValidationErrorForFirstProduct"/>
+        <dontSeeElement selector="#super-product-table tbody tr:nth-child(2) input.mage-error" stepKey="checkingInputValidationErrorForSecondProduct"/>
+    </test>
+</tests>
