@@ -19,8 +19,8 @@
         <click selector="{{AdminEditRoleResourcesSection.editStockCheckbox}}" stepKey="uncheckEditStock"/>
         <waitForElementClickable selector="{{AdminEditRoleResourcesSection.deleteStockCheckbox}}" stepKey="waitForDeleteStockToBeClickable"/>
         <click selector="{{AdminEditRoleResourcesSection.deleteStockCheckbox}}" stepKey="uncheckDeleteStock"/>
-        <scrollTo selector="{{AdminEditRoleResourcesSection.twoFactorAuth}}" stepKey="scrollToTwoFactor"/>
-        <waitForElementClickable selector="{{AdminEditRoleResourcesSection.twoFactorAuth}}" stepKey="waitForTwoFactorToBeClickable"/>
-        <click selector="{{AdminEditRoleResourcesSection.twoFactorAuth}}" stepKey="checkTwoFactorCheckbox"/>
+        <comment userInput="BIC workaround" stepKey="scrollToTwoFactor"/>
+        <comment userInput="BIC workaround" stepKey="waitForTwoFactorToBeClickable"/>
+        <comment userInput="BIC workaround" stepKey="checkTwoFactorCheckbox"/>
     </actionGroup>
 </actionGroups>
