@@ -41,7 +41,7 @@
         <actionGroup ref="StorefrontOpenProductEntityPageActionGroup" stepKey="openProductPage">
             <argument name="product" value="$createSimpleProduct$"/>
         </actionGroup>
-       tionGroup ref="StorefrontAssertCustomOptionByTitleActionGroup" stepKey="assertDropDownOptionByTitleOnStorefront">
+       <actionGroup ref="StorefrontAssertCustomOptionByTitleActionGroup" stepKey="assertDropDownOptionByTitleOnStorefront">
             <argument name="title" value="{{ProductOptionField.title}}"/>
         </actionGroup>
         <actionGroup ref="StorefrontAssertCustomOptionByTitleActionGroup" stepKey="assertDropDownOptionByTitle2OnStorefront2">
