@@ -267,7 +267,7 @@
             "tax_class_id": true
         },
         "index": {
-            "CUSTOMER_GROUP_CODE": true
+            "CUSTOMER_GROUP_CUSTOMER_GROUP_CODE": true
         },
         "constraint": {
             "PRIMARY": true

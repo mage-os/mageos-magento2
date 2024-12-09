@@ -493,7 +493,7 @@ class TierPriceValidator implements ResetAfterRequestInterface
                 'customer_group_code = ?',
                 $code
             );
-            $this->customerGroupCheck[$code] = (bool)$connection->fetchOne($select);
+            $this->customerGroupCheck[$code] = $connection->fetchOne($select);
         }
 
         return $this->customerGroupCheck[$code];
