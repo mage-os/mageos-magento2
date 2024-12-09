@@ -44,16 +44,16 @@
        <actionGroup ref="StorefrontAssertCustomOptionByTitleActionGroup" stepKey="assertDropDownOptionByTitleOnStorefront">
             <argument name="title" value="{{ProductOptionField.title}}"/>
         </actionGroup>
-        <actionGroup ref="StorefrontAssertCustomOptionByTitleActionGroup" stepKey="assertDropDownOptionByTitle2OnStorefront2">
+        <actionGroup ref="StorefrontAssertCustomOptionByTitleActionGroup" stepKey="assertDropDownOptionByTitle2OnStorefront">
             <argument name="title" value="{{ProductOptionField2.title}}"/>
         </actionGroup>
-        <actionGroup ref="StorefrontAssertCustomOptionByTitleActionGroup" stepKey="assertDropDownOptionByTitle2OnStorefront3">
+        <actionGroup ref="StorefrontAssertCustomOptionByTitleActionGroup" stepKey="assertDropDownOptionByTitle3OnStorefront">
             <argument name="title" value="{{ProductOptionField5.title}}"/>
         </actionGroup>
-        <actionGroup ref="StorefrontAssertCustomOptionByTitleActionGroup" stepKey="assertDropDownOptionByTitle2OnStorefront4">
+        <actionGroup ref="StorefrontAssertCustomOptionByTitleActionGroup" stepKey="assertDropDownOptionByTitle4OnStorefront">
             <argument name="title" value="{{ProductOptionField12.title}}"/>
         </actionGroup>
-        <actionGroup ref="StorefrontAssertCustomOptionByTitleActionGroup" stepKey="assertDropDownOptionByTitle2OnStorefront5">
+        <actionGroup ref="StorefrontAssertCustomOptionByTitleActionGroup" stepKey="assertDropDownOptionByTitle5OnStorefront">
             <argument name="title" value="{{ProductOptionField20.title}}"/>
         </actionGroup>
         <dontSee selector="{{StorefrontProductInfoMainSection.customOptionByTitle('OptionField21')}}" stepKey="dontSeeCustomOption"/>
