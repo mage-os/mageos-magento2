@@ -13,6 +13,7 @@ use Magento\SalesRule\Helper\CartFixedDiscount;
 use Magento\SalesRule\Model\DeltaPriceRound;
 use Magento\SalesRule\Model\Rule;
 use Magento\SalesRule\Model\Validator;
+use Magento\Quote\Model\Quote\Item;
 
 /**
  * Calculates discount for cart item if fixed discount applied on whole cart.
@@ -79,10 +80,11 @@ class CartFixed extends AbstractDiscount
         $discountData = $this->discountFactory->create();
 
         $ruleTotals = $this->validator->getRuleItemTotalsInfo($rule->getId());
-        if (is_null($rule->getExistingDiscounts())) {
+        if ($rule->getExistingDiscounts() === null) {
             $existingRuleDiscount = 0;
+            /** @var Item $ruleItem */
             foreach ($ruleTotals['affected_items'] as $ruleItem) {
-                $existingRuleDiscount += $ruleItem->getBaseDiscountAmount() * $qty;
+                $existingRuleDiscount += $ruleItem->getBaseDiscountAmount();
             }
             $rule->setExistingDiscounts($existingRuleDiscount);
         }

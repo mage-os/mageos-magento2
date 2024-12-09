@@ -185,7 +185,6 @@ class CartFixedTest extends TestCase
             ->willReturn(true);
         $cartExtensionMock = $this->getMockBuilder(CartExtensionInterface::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getShippingAssignments'])
             ->getMockForAbstractClass();
         $this->quote->expects($this->any())->method('getCartFixedRules')->will($this->returnValue([]));
         $store = $this->createMock(Store::class);
@@ -279,7 +278,8 @@ class CartFixedTest extends TestCase
                     'items_count' => 1,
                     'rounded_amount' => 0.0,
                     'discounted_amount' => 10.0,
-                    'cart_rules' => 0.0
+                    'cart_rules' => 0.0,
+                    'affected_items' => []
                 ]
             ],
             'regular shipping with two items and single shipping' => [
@@ -294,7 +294,8 @@ class CartFixedTest extends TestCase
                     'items_count' => 2,
                     'rounded_amount' => 0.0,
                     'discounted_amount' => 10.0,
-                    'cart_rules' => 0.0
+                    'cart_rules' => 0.0,
+                    'affected_items' => []
                 ]
             ],
             'regular shipping with two items and multiple shipping' => [
@@ -309,7 +310,8 @@ class CartFixedTest extends TestCase
                     'items_count' => 2,
                     'rounded_amount' => 0.0,
                     'discounted_amount' => 10.0,
-                    'cart_rules' => 0.0
+                    'cart_rules' => 0.0,
+                    'affected_items' => []
                 ]
             ]
 
