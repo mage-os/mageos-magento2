@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -185,6 +185,7 @@ class CartFixedTest extends TestCase
             ->willReturn(true);
         $cartExtensionMock = $this->getMockBuilder(CartExtensionInterface::class)
             ->disableOriginalConstructor()
+            ->addMethods(['getShippingAssignments'])
             ->getMockForAbstractClass();
         $this->quote->expects($this->any())->method('getCartFixedRules')->will($this->returnValue([]));
         $store = $this->createMock(Store::class);
