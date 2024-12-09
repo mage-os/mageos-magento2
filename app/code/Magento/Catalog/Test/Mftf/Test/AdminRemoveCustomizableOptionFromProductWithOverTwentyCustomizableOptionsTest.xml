@@ -56,6 +56,6 @@
         <actionGroup ref="StorefrontAssertCustomOptionByTitleActionGroup" stepKey="assertDropDownOptionByTitle2OnStorefront5">
             <argument name="title" value="{{ProductOptionField20.title}}"/>
         </actionGroup>
-        <dontSee selector="{{StorefrontProductInfoMainSection.customOptionByTitle('OptionField21')}}" stepKey="dontseeCustomOption"/>
+        <dontSee selector="{{StorefrontProductInfoMainSection.customOptionByTitle('OptionField21')}}" stepKey="dontSeeCustomOption"/>
     </test>
 </tests>
