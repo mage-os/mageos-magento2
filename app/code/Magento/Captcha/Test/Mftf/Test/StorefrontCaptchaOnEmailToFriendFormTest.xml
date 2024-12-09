@@ -63,7 +63,7 @@
             <argument name="recipientName" value="{{EmailToFriendValidValues.recipient_name}}"/>
             <argument name="recipientEmail" value="{{EmailToFriendValidValues.shareInfo_email}}"/>
         </actionGroup>
-        <actionGroup ref="StorefrontFillCaptchaOnEmailToFriendForm" stepKey="fillCaptchaFieldWithIncorrectValues">
+        <actionGroup ref="StorefrontFillCaptchaOnEmailToFriendFormActionGroup" stepKey="fillCaptchaFieldWithIncorrectValues">
             <argument name="captcha" value="{{WrongCaptcha.value}}"/>
         </actionGroup>
         <actionGroup ref="StorefrontClickSendEmailButtonOnEmailToFriendFormActionGroup" stepKey="submitEmailToFriendForm"/>
@@ -78,7 +78,7 @@
             <argument name="recipientName" value="{{EmailToFriendValidValues.recipient_name}}"/>
             <argument name="recipientEmail" value="{{EmailToFriendValidValues.shareInfo_email}}"/>
         </actionGroup>
-        <actionGroup ref="StorefrontFillCaptchaOnEmailToFriendForm" stepKey="fillCaptchaFieldWithCorrectValues">
+        <actionGroup ref="StorefrontFillCaptchaOnEmailToFriendFormActionGroup" stepKey="fillCaptchaFieldWithCorrectValues">
             <argument name="captcha" value="{{PreconfiguredCaptcha.value}}"/>
         </actionGroup>
         <actionGroup ref="StorefrontClickSendEmailButtonOnEmailToFriendFormActionGroup" stepKey="submitEmailToFriendFormWithValidValues"/>
