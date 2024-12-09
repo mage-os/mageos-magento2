@@ -48,7 +48,6 @@ class CreateDefaultStock implements DataPatchInterface, PatchVersionInterface
      * If we speak about data, under revert means: $transaction->rollback()
      *
      * @return void
-     *
      */
     public function apply()
     {
