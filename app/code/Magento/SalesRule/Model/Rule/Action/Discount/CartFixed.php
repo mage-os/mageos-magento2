@@ -79,6 +79,13 @@ class CartFixed extends AbstractDiscount
         $discountData = $this->discountFactory->create();
 
         $ruleTotals = $this->validator->getRuleItemTotalsInfo($rule->getId());
+        if (is_null($rule->getExistingDiscounts())) {
+            $existingRuleDiscount = 0;
+            foreach ($ruleTotals['affected_items'] as $ruleItem) {
+                $existingRuleDiscount += $ruleItem->getBaseDiscountAmount() * $qty;
+            }
+            $rule->setExistingDiscounts($existingRuleDiscount);
+        }
         $baseRuleTotals = $ruleTotals['base_items_price'] ?? 0.0;
         $ruleItemsCount = $ruleTotals['items_count'] ?? 0;
 
@@ -93,6 +100,7 @@ class CartFixed extends AbstractDiscount
         $baseItemPrice = $this->validator->getItemBasePrice($item);
         $itemOriginalPrice = $this->validator->getItemOriginalPrice($item);
         $baseItemOriginalPrice = $this->validator->getItemBaseOriginalPrice($item);
+        $baseItemDiscountAmount = (float) $item->getBaseDiscountAmount();
 
         $cartRules = $quote->getCartFixedRules();
         if (!isset($cartRules[$rule->getId()])) {
@@ -131,10 +139,11 @@ class CartFixed extends AbstractDiscount
                         $ruleDiscount,
                         $qty,
                         $baseItemPrice,
-                        0,
-                        $baseRuleTotals,
+                        $baseItemDiscountAmount,
+                        $baseRuleTotals - $rule->getExistingDiscounts(),
                         $discountType
                     );
+
             }
             $discountAmount = $this->priceCurrency->convert($baseDiscountAmount, $store);
             $baseDiscountAmount = min($baseItemPrice * $qty, $baseDiscountAmount);
