@@ -8,7 +8,7 @@
 
 <tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
-    <test name="ValidateGroupedProductQuantityInputErrorTest">
+    <test name="StoreFrontValidateGroupedProductQuantityInputErrorMessageTest">
         <annotations>
             <features value="GroupedProduct"/>
             <stories value="Verify grouped product qty validation message in Storefront"/>
@@ -21,6 +21,7 @@
         <before>
             <createData entity="ApiProductWithDescription" stepKey="simple1"/>
             <createData entity="ApiProductWithDescription" stepKey="simple2"/>
+            <createData entity="ApiProductWithDescription" stepKey="simple3"/>
             <createData entity="ApiGroupedProduct" stepKey="product"/>
             <createData entity="OneSimpleProductLink" stepKey="addProductOne">
                 <requiredEntity createDataKey="product"/>
@@ -30,32 +31,29 @@
                 <requiredEntity createDataKey="product"/>
                 <requiredEntity createDataKey="simple2"/>
             </updateData>
+            <updateData entity="OneMoreSimpleProductLink" createDataKey="addProductOne" stepKey="addProductThree">
+                <requiredEntity createDataKey="product"/>
+                <requiredEntity createDataKey="simple3"/>
+            </updateData>
             <actionGroup ref="CliIndexerReindexActionGroup" stepKey="runIndex">
                 <argument name="indices" value=""/>
-            </actionGroup>
-            <actionGroup ref="CliCacheFlushActionGroup" stepKey="clearCache">
-                <argument name="tags" value=""/>
             </actionGroup>
         </before>
         <after>
             <deleteData createDataKey="simple1" stepKey="deleteSimple1"/>
             <deleteData createDataKey="simple2" stepKey="deleteSimple2"/>
+            <deleteData createDataKey="simple3" stepKey="deleteSimple3"/>
             <deleteData createDataKey="product" stepKey="deleteGroupedProduct"/>
-            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="runIndex">
-                <argument name="indices" value=""/>
-            </actionGroup>
-            <actionGroup ref="CliCacheFlushActionGroup" stepKey="clearCache">
-                <argument name="tags" value=""/>
-            </actionGroup>
         </after>
-        <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProductStorefront">
-            <argument name="productUrl" value="$$product.custom_attributes[url_key]$$"/>
+        <actionGroup ref="StorefrontAddThreeGroupedProductToTheCartActionGroup" stepKey="enterSimpleProductsQty">
+            <argument name="urlKey" value="$$product.custom_attributes[url_key]$$" />
+            <argument name="product1" value="$simple1.name$"/>
+            <argument name="product2" value="$simple2.name$"/>
+            <argument name="product3" value="$simple3.name$"/>
+            <argument name="qty1" value="10"/>
+            <argument name="qty2" value="-10"/>
+            <argument name="qty3" value="5"/>
         </actionGroup>
-        <waitForElementVisible selector="{{StorefrontProductInfoMainSection.groupedProductsTableAllRows}}" stepKey="waitForGroupedProductRows"/>
-        <fillField selector="#super-product-table tbody tr:nth-child(1) input.qty" userInput="-10" stepKey="fillTheFirstProductQuantity"/>
-        <fillField selector="#super-product-table tbody tr:nth-child(2) input.qty" userInput="10" stepKey="fillTheSecondProductQuantity"/>
-        <click selector="{{StorefrontProductPageSection.addToCartBtn}}" stepKey="clickOnAddToCartButton"/>
-        <seeElement selector="#super-product-table tbody tr:nth-child(1) input.mage-error" stepKey="checkingInputValidationErrorForFirstProduct"/>
-        <dontSeeElement selector="#super-product-table tbody tr:nth-child(2) input.mage-error" stepKey="checkingInputValidationErrorForSecondProduct"/>
+        <actionGroup ref="StorefrontValidateThreeGroupedProductQtyErrorMessageActionGroup" stepKey="verifyQtyInputErrorMessage" />
     </test>
 </tests>
