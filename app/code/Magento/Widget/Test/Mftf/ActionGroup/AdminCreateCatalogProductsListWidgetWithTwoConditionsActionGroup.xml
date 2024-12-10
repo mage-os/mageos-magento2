@@ -37,7 +37,6 @@
         <waitForElementClickable selector="{{AdminNewWidgetSection.conditionOperator}}" stepKey="clickConditionsOperator234"/>
         <click selector="{{AdminNewWidgetSection.conditionOperator}}" stepKey="clickConditionsOperator"/>
         <selectOption selector="{{AdminNewWidgetSection.selectOperator}}" userInput="{{conditionsOperator}}" stepKey="selectConditionsOperator"/>
-        <pressKey selector="{{AdminNewWidgetSection.selectOperator}}" parameterArray="[\Facebook\WebDriver\WebDriverKeys::TAB]" stepKey="unFocusFieldFromFirstConditionOperator"/>
         <waitForElementClickable selector="{{AdminNewWidgetSection.ruleParameter}}" stepKey="waitForConiditionParameterToBeClickable"/>
         <click selector="{{AdminNewWidgetSection.ruleParameter}}" stepKey="clickConditionParameter"/>
         <waitForElementVisible selector="{{AdminNewWidgetSection.setRuleParameter}}" stepKey="waitForConditionParameterFieldToBeVisible"/>
@@ -51,7 +50,6 @@
         <waitForElementClickable selector="{{AdminNewWidgetSection.secondConditionOperator}}" stepKey="waitForSecondConditionsOperatorToBeClickable"/>
         <click selector="{{AdminNewWidgetSection.secondConditionOperator}}" stepKey="clickSecondConditionsOperator"/>
         <selectOption selector="{{AdminNewWidgetSection.secondSelectOperator}}" userInput="{{secondConditionOperator}}" stepKey="selectSecondConditionsOperator"/>
-        <pressKey selector="{{AdminNewWidgetSection.secondRuleParameter}}" parameterArray="[\Facebook\WebDriver\WebDriverKeys::TAB]" stepKey="unFocusFieldFromSecondConditionOperator"/>
         <waitForElementClickable selector="{{AdminNewWidgetSection.secondRuleParameter}}" stepKey="waitForSecondRuleParameterToBeClickable"/>
         <click selector="{{AdminNewWidgetSection.secondRuleParameter}}" stepKey="clickSecondRuleParameter"/>
         <waitForElementVisible selector="{{AdminNewWidgetSection.setSecondRuleParameter}}" stepKey="waitForSecondConditionParameterToBeVisible"/>
