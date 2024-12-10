@@ -3,13 +3,11 @@
  * Copyright 2014 Adobe
  * All Rights Reserved.
  */
-
 namespace Magento\Tax\Model\Sales\Total\Quote;
 
 use Magento\Customer\Api\AccountManagementInterface as CustomerAccountManagement;
 use Magento\Customer\Api\Data\AddressInterfaceFactory as CustomerAddressFactory;
 use Magento\Customer\Api\Data\AddressInterface as CustomerAddress;
-use Magento\Customer\Api\Data\RegionInterfaceFactory;
 use Magento\Customer\Api\Data\RegionInterfaceFactory as CustomerAddressRegionFactory;
 use Magento\Quote\Model\Quote\Address as QuoteAddress;
 use Magento\Quote\Model\Quote\Address\Total\AbstractTotal;
@@ -27,7 +25,6 @@ use Magento\Quote\Api\Data\ShippingAssignmentInterface;
 use Magento\Tax\Api\TaxCalculationInterface;
 use Magento\Tax\Helper\Data as TaxHelper;
 use Magento\Framework\App\ObjectManager;
-use Magento\Tax\Api\Data\QuoteDetailsItemExtensionInterface;
 use Magento\Tax\Api\Data\QuoteDetailsItemExtensionInterfaceFactory;
 use Magento\Tax\Model\Config;
 
@@ -131,11 +128,6 @@ class CommonTaxCollector extends AbstractTotal
     protected $customerAddressRegionFactory;
 
     /**
-     * @var RegionInterfaceFactory
-     */
-    private RegionInterfaceFactory $regionFactory;
-
-    /**
      * @var \Magento\Tax\Api\Data\TaxClassKeyInterfaceFactory
      */
     protected $taxClassKeyDataObjectFactory;
@@ -170,7 +162,6 @@ class CommonTaxCollector extends AbstractTotal
      * @param TaxClassKeyInterfaceFactory $taxClassKeyDataObjectFactory
      * @param CustomerAddressFactory $customerAddressFactory
      * @param CustomerAddressRegionFactory $customerAddressRegionFactory
-     * @param RegionInterfaceFactory $regionInterfaceFactory
      * @param TaxHelper|null $taxHelper
      * @param QuoteDetailsItemExtensionInterfaceFactory|null $quoteDetailsItemExtensionInterfaceFactory
      * @param CustomerAccountManagement|null $customerAccountManagement
@@ -184,7 +175,6 @@ class CommonTaxCollector extends AbstractTotal
         \Magento\Tax\Api\Data\TaxClassKeyInterfaceFactory $taxClassKeyDataObjectFactory,
         CustomerAddressFactory $customerAddressFactory,
         CustomerAddressRegionFactory $customerAddressRegionFactory,
-        RegionInterfaceFactory $regionInterfaceFactory,
         TaxHelper $taxHelper = null,
         QuoteDetailsItemExtensionInterfaceFactory $quoteDetailsItemExtensionInterfaceFactory = null,
         ?CustomerAccountManagement $customerAccountManagement = null
@@ -196,7 +186,6 @@ class CommonTaxCollector extends AbstractTotal
         $this->quoteDetailsItemDataObjectFactory = $quoteDetailsItemDataObjectFactory;
         $this->customerAddressFactory = $customerAddressFactory;
         $this->customerAddressRegionFactory = $customerAddressRegionFactory;
-        $this->regionFactory = $regionInterfaceFactory;
         $this->taxHelper = $taxHelper ?: ObjectManager::getInstance()->get(TaxHelper::class);
         $this->quoteDetailsItemExtensionFactory = $quoteDetailsItemExtensionInterfaceFactory ?:
             ObjectManager::getInstance()->get(QuoteDetailsItemExtensionInterfaceFactory::class);
@@ -223,11 +212,16 @@ class CommonTaxCollector extends AbstractTotal
     {
         $customerAddress = $this->customerAddressFactory->create();
         $customerAddress->setCountryId($address->getCountryId());
-        $customerAddress->setRegion(
-            $this->customerAddressRegionFactory->create()->setRegionId($address->getRegionId())
+        $region = $this->customerAddressRegionFactory->create(
+            [
+                'data' =>
+                    [
+                        'region_id' => $address->getRegionId(),
+                        'region_code' => $address->getRegionCode(),
+                        'region' => $address->getRegion()
+                    ]
+            ]
         );
-        $region = $this->regionFactory->create()->setRegionCode($address->getRegionCode());
-        $region->setRegion($address->getRegion());
         $customerAddress->setRegion($region);
         $customerAddress->setPostcode($address->getPostcode());
         $customerAddress->setCity($address->getCity());
