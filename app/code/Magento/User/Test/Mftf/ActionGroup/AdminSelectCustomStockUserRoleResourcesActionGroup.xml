@@ -11,7 +11,8 @@
         <annotations>
             <description>Goes to the Backend Custom User role page. Selecting required elements on roles resource page.</description>
         </annotations>
-
+        <scrollTo selector="{{AdminEditRoleInfoSection.blockName('restrictedRole')}}"  x="0" y="-120" stepKey="scrollToResourceElement"/>
+        <click stepKey="clickTFACheckbox" selector="{{AdminEditRoleInfoSection.checkboxByRole('Magento_TwoFactorAuth::tfa')}}" after="waitForTfaRole"/>
         <scrollTo selector="{{AdminEditRoleResourcesSection.inventoryCheckbox}}" stepKey="scrollToInventoryCheckBox"/>
         <waitForElementClickable selector="{{AdminEditRoleResourcesSection.stockCheckbox}}" stepKey="waitForStockToBeClickable"/>
         <click selector="{{AdminEditRoleResourcesSection.stockCheckbox}}" stepKey="selectStock"/>
@@ -19,8 +20,6 @@
         <click selector="{{AdminEditRoleResourcesSection.editStockCheckbox}}" stepKey="uncheckEditStock"/>
         <waitForElementClickable selector="{{AdminEditRoleResourcesSection.deleteStockCheckbox}}" stepKey="waitForDeleteStockToBeClickable"/>
         <click selector="{{AdminEditRoleResourcesSection.deleteStockCheckbox}}" stepKey="uncheckDeleteStock"/>
-        <comment userInput="BIC workaround" stepKey="scrollToTwoFactor"/>
-        <comment userInput="BIC workaround" stepKey="waitForTwoFactorToBeClickable"/>
-        <comment userInput="BIC workaround" stepKey="checkTwoFactorCheckbox"/>
+        <scrollTo selector="{{AdminEditRoleInfoSection.checkboxByRole('Magento_User::acl_anchor')}}" stepKey="scrollToTwoFactor"/>
     </actionGroup>
 </actionGroups>
