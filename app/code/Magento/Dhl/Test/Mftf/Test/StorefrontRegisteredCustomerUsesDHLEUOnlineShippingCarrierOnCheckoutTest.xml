@@ -25,7 +25,7 @@
                 <argument name="stateField" value="Suffolk"/>
             </actionGroup>
             <actionGroup ref="AdminNavigateToCurrencySetupPageActionGroup" stepKey="goToCurrencySetupPage"/>
-            <!--Open currency options and select singapore dollar as allowed currency-->
+            <!--Open currency options and select british pound as allowed currency-->
             <conditionalClick selector="{{AdminConfigSection.currencyOptionsTab}}" dependentSelector="{{AdminConfigSection.defaultCurrencySelect}}" visible="false" stepKey="openCurrencyOptionsTab"/>
             <selectOption selector="{{AdminConfigSection.allowedCurrencies}}" parameterArray="['British Pound', 'US Dollar']" stepKey="selectAllowedCurrency"/>
             <actionGroup ref="SaveStoreConfigurationActionGroup" stepKey="saveStoreConfiguration"/>
@@ -131,8 +131,8 @@
         </actionGroup>
         <waitForElement selector="{{CheckoutCartSummarySection.shippingMethods('Express 12:00')}}" stepKey="verifyExpress12IsAvailable"/>
         <actionGroup ref="StorefrontClickProceedToCheckoutActionGroup" stepKey="goToCheckout"/>
-        <waitForElementClickable selector="{{CheckoutShippingMethodsSection.shippingMethodDhlExpressTwelveLabel}}" stepKey="waitForShippingDhlExpressTwelveLabelVisible"/>
-        <click selector="{{CheckoutShippingMethodsSection.shippingMethodDhlExpressEasyLabel}}" stepKey="selectExpressTwelveRadioButton"/>
+        <waitForElementClickable selector="{{CheckoutShippingMethodsSection.shippingMethodDhlExpressEasyLabel}}" stepKey="waitForShippingDhlExpressEasyLabelVisible"/>
+        <click selector="{{CheckoutShippingMethodsSection.shippingMethodDhlExpressEasyLabel}}" stepKey="clickOnExpressEasy"/>
         <actionGroup ref="StorefrontCheckoutClickNextButtonActionGroup" stepKey="clickOnNextButton"/>
         <!-- Checkout select Check/Money Order payment -->
         <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="selectCheckMoneyPayment"/>
