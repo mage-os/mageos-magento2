@@ -37,5 +37,6 @@
         <element name="shippingMethodFreeShippingLabel" type="text" selector="#label_carrier_freeshipping_freeshipping"/>
         <element name="shippingDHLErrorMessage" type="text" selector="#checkout-shipping-method-load .table-checkout-shipping-method tr.row-error .error div"/>
         <element name="smartPostShippingMethod" type="radio" selector="#checkout-shipping-method-load input[value='fedex_SMART_POST']"/>
+        <element name="shippingMethodDhlExpressEasyLabel" type="text" selector="#label_method_8_dhl"/>
     </section>
 </sections>
