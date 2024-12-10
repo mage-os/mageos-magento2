@@ -3,6 +3,8 @@
  * Copyright 2014 Adobe
  * All Rights Reserved.
  */
+declare(strict_types=1);
+
 namespace Magento\Tax\Model\Sales\Total\Quote;
 
 use Magento\Customer\Api\AccountManagementInterface as CustomerAccountManagement;
@@ -210,24 +212,27 @@ class CommonTaxCollector extends AbstractTotal
      */
     public function mapAddress(QuoteAddress $address)
     {
-        $customerAddress = $this->customerAddressFactory->create();
-        $customerAddress->setCountryId($address->getCountryId());
         $region = $this->customerAddressRegionFactory->create(
             [
-                'data' =>
-                    [
-                        'region_id' => $address->getRegionId(),
-                        'region_code' => $address->getRegionCode(),
-                        'region' => $address->getRegion()
-                    ]
+                'data' => [
+                    'region_id' => $address->getRegionId(),
+                    'region_code' => $address->getRegionCode(),
+                    'region' => $address->getRegion()
+                ]
             ]
         );
-        $customerAddress->setRegion($region);
-        $customerAddress->setPostcode($address->getPostcode());
-        $customerAddress->setCity($address->getCity());
-        $customerAddress->setStreet($address->getStreet());
 
-        return $customerAddress;
+        return $this->customerAddressFactory->create(
+            [
+                'data' => [
+                    'country_id' => $address->getCountryId(),
+                    'region' => $region,
+                    'postcode' => $address->getPostcode(),
+                    'city' => $address->getCity(),
+                    'street' => $address->getStreet()
+                ]
+            ]
+        );
     }
 
     /**
