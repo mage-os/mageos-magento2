@@ -18,60 +18,48 @@
     },
     "repositories": [
         {
-            "type" : "vcs",
-            "url" : "git@github.com:cod43156/laminas-captcha.git"
+            "type": "vcs",
+            "url": "git@github.com:cod43156/laminas-captcha.git"
         },
         {
-            "type" : "vcs",
-            "url" : "git@github.com:cod43156/laminas-db.git"
+            "type": "vcs",
+            "url": "git@github.com:cod43156/laminas-db.git"
         },
         {
-            "type" : "vcs",
-            "url" : "git@github.com:cod43156/laminas-file.git"
+            "type": "vcs",
+            "url": "git@github.com:cod43156/laminas-file.git"
         },
         {
-            "type" : "vcs",
-            "url" : "git@github.com:laminas/laminas-di.git"
+            "type": "vcs",
+            "url": "git@github.com:laminas/laminas-di.git"
         },
         {
-            "type" : "vcs",
-            "url" : "git@github.com:magento-gl/composer.git"
+            "type": "vcs",
+            "url": "git@github.com:magento-gl/composer.git"
         },
         {
-            "type" : "vcs",
-            "url" : "git@github.com:glo71317/allure-phpunit.git"
+            "type": "vcs",
+            "url": "git@github.com:glo71317/allure-phpunit.git"
         },
         {
-            "type" : "vcs",
-            "url" : "git@github.com:glo71317/laminas-mail.git"
+            "type": "vcs",
+            "url": "git@github.com:glo71317/laminas-mail.git"
         },
         {
-            "type" : "vcs",
-            "url" : "git@github.com:glo71317/laminas-mime.git"
+            "type": "vcs",
+            "url": "git@github.com:glo71317/laminas-mime.git"
         },
         {
-            "type" : "vcs",
-            "url" : "git@github.com:glo71317/laminas-crypt.git"
+            "type": "vcs",
+            "url": "git@github.com:glo71317/laminas-crypt.git"
         },
         {
-            "type" : "vcs",
-            "url" : "git@github.com:glo71317/laminas-oauth.git"
+            "type": "vcs",
+            "url": "git@github.com:glo71317/laminas-oauth.git"
         },
         {
-            "type" : "vcs",
-            "url" : "git@github.com:cod43156/laminas-server.git"
-        },
-        {
-            "type" : "vcs",
-            "url" : "git@github.com:glo71317/laminas-soap.git"
-        },
-        {
-            "type" : "vcs",
-            "url" : "git@github.com:magento-gl/magento-coding-standard.git"
-        },
-        {
-            "type" : "vcs",
-            "url" : "git@github.com:Atul-glo35265/laminas-math.git"
+            "type": "vcs",
+            "url": "git@github.com:magento-gl/magento-coding-standard.git"
         }
     ],
     "require": {
@@ -119,7 +107,7 @@
         "laminas/laminas-oauth": "dev-backward-compatibilty",
         "laminas/laminas-permissions-acl": "^2.10",
         "laminas/laminas-servicemanager": "^3.16",
-        "laminas/laminas-soap": "dev-php84",
+        "laminas/laminas-soap": "^2.10",
         "laminas/laminas-stdlib": "^3.11",
         "laminas/laminas-uri": "^2.9",
         "laminas/laminas-validator": "^2.23",
@@ -147,8 +135,7 @@
         "tubalmartin/cssmin": "^4.1",
         "web-token/jwt-framework": "^3.1",
         "webonyx/graphql-php": "^15.0",
-        "wikimedia/less.php": "^5.0",
-        "laminas/laminas-math": "dev-php8.4_support"
+        "wikimedia/less.php": "^5.0"
     },
     "require-dev": {
         "allure-framework/allure-phpunit": "dev-php8.4_support",

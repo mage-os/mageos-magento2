@@ -11,20 +11,20 @@
     },
     "repositories": [
         {
-            "type" : "vcs",
-            "url" : "git@github.com:cod43156/laminas-file.git"
+            "type": "vcs",
+            "url": "git@github.com:cod43156/laminas-file.git"
         },
         {
-            "type" : "vcs",
-            "url" : "git@github.com:glo71317/laminas-mail.git"
+            "type": "vcs",
+            "url": "git@github.com:glo71317/laminas-mail.git"
         },
         {
-            "type" : "vcs",
-            "url" : "git@github.com:glo71317/laminas-mime.git"
+            "type": "vcs",
+            "url": "git@github.com:glo71317/laminas-mime.git"
         },
         {
-            "type" : "vcs",
-            "url" : "git@github.com:glo71317/laminas-oauth.git"
+            "type": "vcs",
+            "url": "git@github.com:glo71317/laminas-oauth.git"
         }
     ],
     "require": {
