@@ -20,7 +20,7 @@
         </annotations>
         <before>
             <createData entity="SimpleProduct" stepKey="createSimpleProduct"/>
-            <updateData entity="ProductWithTwoOneTextFieldOptions" createDataKey="createSimpleProduct" stepKey="addCustomOptions">
+            <updateData entity="ProductWithTwentyOneTextFieldOptions" createDataKey="createSimpleProduct" stepKey="addCustomOptions">
                 <requiredEntity createDataKey="createSimpleProduct"/>
             </updateData>
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
