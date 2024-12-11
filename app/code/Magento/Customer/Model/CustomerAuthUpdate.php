@@ -38,7 +38,7 @@ class CustomerAuthUpdate
     public function __construct(
         CustomerRegistry $customerRegistry,
         CustomerResourceModel $customerResourceModel,
-        Customer $customerModel = null
+        ?Customer $customerModel = null
     ) {
         $this->customerRegistry = $customerRegistry;
         $this->customerResourceModel = $customerResourceModel;
