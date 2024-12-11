@@ -62,8 +62,8 @@ class MassStatus extends \Magento\Catalog\Controller\Adminhtml\Product implement
         \Magento\Catalog\Model\Indexer\Product\Price\Processor $productPriceIndexerProcessor,
         Filter $filter,
         CollectionFactory $collectionFactory,
-        \Magento\Catalog\Model\Product\Action $productAction = null,
-        AttributeHelper $attributeHelper = null
+        ?\Magento\Catalog\Model\Product\Action $productAction = null,
+        ?AttributeHelper $attributeHelper = null
     ) {
         $this->filter = $filter;
         $this->collectionFactory = $collectionFactory;

@@ -76,7 +76,7 @@ class Configure extends \Magento\Backend\Block\Widget
      * @param \Magento\Catalog\Model\Product $product
      * @return $this
      */
-    public function setProduct(\Magento\Catalog\Model\Product $product = null)
+    public function setProduct(?\Magento\Catalog\Model\Product $product = null)
     {
         $this->_product = $product;
         return $this;

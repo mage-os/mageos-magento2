@@ -75,8 +75,8 @@ class Content extends \Magento\Backend\Block\Widget
         \Magento\Framework\Json\EncoderInterface $jsonEncoder,
         \Magento\Catalog\Model\Product\Media\Config $mediaConfig,
         array $data = [],
-        ImageUploadConfigDataProvider $imageUploadConfigDataProvider = null,
-        Database $fileStorageDatabase = null,
+        ?ImageUploadConfigDataProvider $imageUploadConfigDataProvider = null,
+        ?Database $fileStorageDatabase = null,
         ?JsonHelper $jsonHelper = null,
         ?Image $imageHelper = null
     ) {

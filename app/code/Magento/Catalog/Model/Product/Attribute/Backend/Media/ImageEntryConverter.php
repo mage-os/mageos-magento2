@@ -98,7 +98,7 @@ class ImageEntryConverter implements EntryConverterInterface
      * @return array
      */
     protected function convertFromMediaGalleryEntryContentInterface(
-        ImageContentInterface $content = null
+        ?ImageContentInterface $content = null
     ) {
         if ($content === null) {
             return null;

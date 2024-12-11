@@ -139,13 +139,13 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         Session $customerSession,
         DateTime $dateTime,
         GroupManagementInterface $groupManagement,
-        AdapterInterface $connection = null,
-        ProductLimitationFactory $productLimitationFactory = null,
-        MetadataPool $metadataPool = null,
-        TableMaintainer $tableMaintainer = null,
-        PriceTableResolver $priceTableResolver = null,
-        DimensionFactory $dimensionFactory = null,
-        Category $categoryResourceModel = null,
+        ?AdapterInterface $connection = null,
+        ?ProductLimitationFactory $productLimitationFactory = null,
+        ?MetadataPool $metadataPool = null,
+        ?TableMaintainer $tableMaintainer = null,
+        ?PriceTableResolver $priceTableResolver = null,
+        ?DimensionFactory $dimensionFactory = null,
+        ?Category $categoryResourceModel = null,
         ?array $productIds = null
     ) {
         parent::__construct(

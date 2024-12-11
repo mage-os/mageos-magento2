@@ -35,7 +35,7 @@ class Collection extends \Magento\Framework\Pricing\Price\Collection
         Factory $priceFactory,
         Pool $pool,
         $quantity,
-        StoreManagerInterface $storeManager = null
+        ?StoreManagerInterface $storeManager = null
     ) {
         parent::__construct($saleableItem, $priceFactory, $pool, $quantity);
         $this->storeManager = $storeManager ?? ObjectManager::getInstance()->get(StoreManagerInterface::class);

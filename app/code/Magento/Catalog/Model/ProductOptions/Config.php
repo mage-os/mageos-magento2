@@ -25,7 +25,7 @@ class Config extends \Magento\Framework\Config\Data implements
         \Magento\Catalog\Model\ProductOptions\Config\Reader $reader,
         \Magento\Framework\Config\CacheInterface $cache,
         $cacheId = 'product_options_config',
-        SerializerInterface $serializer = null
+        ?SerializerInterface $serializer = null
     ) {
         parent::__construct($reader, $cache, $cacheId, $serializer);
     }

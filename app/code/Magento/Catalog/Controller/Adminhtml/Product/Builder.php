@@ -70,8 +70,8 @@ class Builder
         Logger $logger,
         Registry $registry,
         WysiwygModel\Config $wysiwygConfig,
-        StoreFactory $storeFactory = null,
-        ProductRepositoryInterface $productRepository = null
+        ?StoreFactory $storeFactory = null,
+        ?ProductRepositoryInterface $productRepository = null
     ) {
         $this->productFactory = $productFactory;
         $this->logger = $logger;

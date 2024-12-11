@@ -97,7 +97,7 @@ class ImageUploader
         $basePath,
         $allowedExtensions,
         $allowedMimeTypes = [],
-        Name $fileNameLookup = null
+        ?Name $fileNameLookup = null
     ) {
         $this->coreFileStorageDatabase = $coreFileStorageDatabase;
         $this->mediaDirectory = $filesystem->getDirectoryWrite(DirectoryList::MEDIA);

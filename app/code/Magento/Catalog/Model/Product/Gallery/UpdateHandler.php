@@ -63,7 +63,7 @@ class UpdateHandler extends CreateHandler
         Config $mediaConfig,
         Filesystem $filesystem,
         Database $fileStorageDb,
-        StoreManagerInterface $storeManager = null,
+        ?StoreManagerInterface $storeManager = null,
         ?AttributeValue $attributeValue = null,
         ?RemoveDeletedImagesFromCache $removeDeletedImagesFromCache = null
     ) {

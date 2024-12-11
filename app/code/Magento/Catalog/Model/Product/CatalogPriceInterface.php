@@ -24,7 +24,7 @@ interface CatalogPriceInterface
      */
     public function getCatalogPrice(
         \Magento\Catalog\Model\Product $product,
-        \Magento\Store\Api\Data\StoreInterface $store = null,
+        ?\Magento\Store\Api\Data\StoreInterface $store = null,
         $inclTax = false
     );
 

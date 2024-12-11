@@ -43,7 +43,7 @@ class CategoryLinkRepository implements CategoryLinkRepositoryInterface, Categor
     public function __construct(
         CategoryRepositoryInterface $categoryRepository,
         ProductRepositoryInterface $productRepository,
-        Product $productResource = null
+        ?Product $productResource = null
     ) {
         $this->categoryRepository = $categoryRepository;
         $this->productRepository = $productRepository;

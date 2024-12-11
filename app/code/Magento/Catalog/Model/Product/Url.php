@@ -65,7 +65,7 @@ class Url extends \Magento\Framework\DataObject
         \Magento\Framework\Session\SidResolverInterface $sidResolver,
         UrlFinderInterface $urlFinder,
         array $data = [],
-        ScopeConfigInterface $scopeConfig = null
+        ?ScopeConfigInterface $scopeConfig = null
     ) {
         parent::__construct($data);
         $this->urlFactory = $urlFactory;

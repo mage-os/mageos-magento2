@@ -61,8 +61,8 @@ class Configuration extends AbstractHelper implements ConfigurationInterface
         \Magento\Catalog\Model\Product\OptionFactory $productOptionFactory,
         \Magento\Framework\Filter\FilterManager $filter,
         \Magento\Framework\Stdlib\StringUtils $string,
-        Json $serializer = null,
-        Escaper $escaper = null
+        ?Json $serializer = null,
+        ?Escaper $escaper = null
     ) {
         $this->_productOptionFactory = $productOptionFactory;
         $this->filter = $filter;

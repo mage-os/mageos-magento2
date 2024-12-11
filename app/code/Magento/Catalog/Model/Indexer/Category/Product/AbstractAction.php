@@ -153,10 +153,10 @@ abstract class AbstractAction implements ResetAfterRequestInterface
         \Magento\Framework\App\ResourceConnection $resource,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Catalog\Model\Config $config,
-        QueryGenerator $queryGenerator = null,
-        MetadataPool $metadataPool = null,
-        TableMaintainer $tableMaintainer = null,
-        Visibility $visibility = null
+        ?QueryGenerator $queryGenerator = null,
+        ?MetadataPool $metadataPool = null,
+        ?TableMaintainer $tableMaintainer = null,
+        ?Visibility $visibility = null
     ) {
         $this->resource = $resource;
         $this->connection = $resource->getConnection();

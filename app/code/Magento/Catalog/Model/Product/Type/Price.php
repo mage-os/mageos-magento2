@@ -113,7 +113,7 @@ class Price implements ResetAfterRequestInterface
         GroupManagementInterface $groupManagement,
         \Magento\Catalog\Api\Data\ProductTierPriceInterfaceFactory $tierPriceFactory,
         \Magento\Framework\App\Config\ScopeConfigInterface $config,
-        ProductTierPriceExtensionFactory $tierPriceExtensionFactory = null
+        ?ProductTierPriceExtensionFactory $tierPriceExtensionFactory = null
     ) {
         $this->_ruleFactory = $ruleFactory;
         $this->_storeManager = $storeManager;
@@ -395,7 +395,7 @@ class Price implements ResetAfterRequestInterface
      * @param \Magento\Catalog\Api\Data\ProductTierPriceInterface[] $tierPrices
      * @return $this
      */
-    public function setTierPrices($product, array $tierPrices = null)
+    public function setTierPrices($product, ?array $tierPrices = null)
     {
         // null array means leave everything as is
         if ($tierPrices === null) {

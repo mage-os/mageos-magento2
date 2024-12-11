@@ -112,7 +112,7 @@ interface ProductAttributeMediaGalleryEntryInterface extends ExtensibleDataInter
      * @param string[] $types
      * @return $this
      */
-    public function setTypes(array $types = null);
+    public function setTypes(?array $types = null);
 
     /**
      * Get file path

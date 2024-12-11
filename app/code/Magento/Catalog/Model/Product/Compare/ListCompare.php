@@ -78,7 +78,7 @@ class ListCompare extends \Magento\Framework\DataObject
         \Magento\Customer\Model\Session $customerSession,
         \Magento\Customer\Model\Visitor $customerVisitor,
         array $data = [],
-        ProductRepository $productRepository = null
+        ?ProductRepository $productRepository = null
     ) {
         $this->_compareItemFactory = $compareItemFactory;
         $this->_itemCollectionFactory = $itemCollectionFactory;

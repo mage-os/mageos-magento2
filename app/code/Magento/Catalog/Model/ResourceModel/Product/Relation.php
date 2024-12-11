@@ -31,7 +31,7 @@ class Relation extends AbstractDb
     public function __construct(
         Context $context,
         $connectionName = null,
-        MetadataPool $metadataPool = null
+        ?MetadataPool $metadataPool = null
     ) {
         parent::__construct($context, $connectionName);
         $this->metadataPool = $metadataPool ?: ObjectManager::getInstance()->get(MetadataPool::class);

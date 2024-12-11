@@ -74,8 +74,8 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
         ManagerInterface $eventManager,
         StoreManagerInterface $storeManager,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Magento\Framework\DB\Adapter\AdapterInterface $connection = null,
-        AbstractDb $resource = null
+        ?\Magento\Framework\DB\Adapter\AdapterInterface $connection = null,
+        ?AbstractDb $resource = null
     ) {
         $this->_storeManager = $storeManager;
         $this->scopeConfig = $scopeConfig;

@@ -132,9 +132,9 @@ abstract class AbstractAction
         Type $catalogProductType,
         Factory $indexerPriceFactory,
         DefaultPrice $defaultIndexerResource,
-        TierPrice $tierPriceIndexResource = null,
-        DimensionCollectionFactory $dimensionCollectionFactory = null,
-        TableMaintainer $tableMaintainer = null
+        ?TierPrice $tierPriceIndexResource = null,
+        ?DimensionCollectionFactory $dimensionCollectionFactory = null,
+        ?TableMaintainer $tableMaintainer = null
     ) {
         $this->_config = $config;
         $this->_storeManager = $storeManager;

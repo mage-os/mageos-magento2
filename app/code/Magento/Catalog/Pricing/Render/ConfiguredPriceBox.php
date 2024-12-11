@@ -45,9 +45,9 @@ class ConfiguredPriceBox extends FinalPriceBox
         PriceInterface $price,
         RendererPool $rendererPool,
         array $data = [],
-        SalableResolverInterface $salableResolver = null,
-        MinimalPriceCalculatorInterface $minimalPriceCalculator = null,
-        ConfiguredPriceSelection $configuredPriceSelection = null
+        ?SalableResolverInterface $salableResolver = null,
+        ?MinimalPriceCalculatorInterface $minimalPriceCalculator = null,
+        ?ConfiguredPriceSelection $configuredPriceSelection = null
     ) {
         $this->configuredPriceSelection = $configuredPriceSelection
             ?: ObjectManager::getInstance()

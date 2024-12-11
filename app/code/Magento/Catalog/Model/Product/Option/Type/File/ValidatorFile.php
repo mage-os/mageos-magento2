@@ -92,7 +92,7 @@ class ValidatorFile extends Validator
         \Magento\Framework\File\Size $fileSize,
         \Magento\Framework\HTTP\Adapter\FileTransferFactory $httpFactory,
         \Magento\Framework\Validator\File\IsImage $isImageValidator,
-        Random $random = null
+        ?Random $random = null
     ) {
         $this->mediaDirectory = $filesystem->getDirectoryWrite(DirectoryList::MEDIA);
         $this->filesystem = $filesystem;

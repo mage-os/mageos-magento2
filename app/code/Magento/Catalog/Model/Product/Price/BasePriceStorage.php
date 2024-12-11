@@ -111,7 +111,7 @@ class BasePriceStorage implements BasePriceStorageInterface
         Result $validationResult,
         InvalidSkuProcessor $invalidSkuProcessor,
         array $allowedProductTypes = [],
-        ProductAttributeRepositoryInterface $productAttributeRepository = null
+        ?ProductAttributeRepositoryInterface $productAttributeRepository = null
     ) {
         $this->pricePersistenceFactory = $pricePersistenceFactory;
         $this->basePriceInterfaceFactory = $basePriceInterfaceFactory;

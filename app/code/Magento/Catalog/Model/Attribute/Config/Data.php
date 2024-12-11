@@ -24,7 +24,7 @@ class Data extends \Magento\Framework\Config\Data
         \Magento\Catalog\Model\Attribute\Config\Reader $reader,
         \Magento\Framework\Config\CacheInterface $cache,
         $cacheId = 'catalog_attributes',
-        SerializerInterface $serializer = null
+        ?SerializerInterface $serializer = null
     ) {
         parent::__construct($reader, $cache, $cacheId, $serializer);
     }

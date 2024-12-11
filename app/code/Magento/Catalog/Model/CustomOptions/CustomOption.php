@@ -38,8 +38,8 @@ class CustomOption extends AbstractExtensibleModel implements CustomOptionInterf
         ExtensionAttributesFactory $extensionFactory,
         AttributeValueFactory $customAttributeFactory,
         FileProcessor $fileProcessor,
-        AbstractResource $resource = null,
-        AbstractDb $resourceCollection = null,
+        ?AbstractResource $resource = null,
+        ?AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         $this->fileProcessor = $fileProcessor;

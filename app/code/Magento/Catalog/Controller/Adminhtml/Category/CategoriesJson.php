@@ -38,7 +38,7 @@ class CategoriesJson extends \Magento\Catalog\Controller\Adminhtml\Category impl
         \Magento\Backend\App\Action\Context $context,
         \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
         \Magento\Framework\View\LayoutFactory $layoutFactory,
-        \Magento\Backend\Model\Auth\Session $authSession = null
+        ?\Magento\Backend\Model\Auth\Session $authSession = null
     ) {
         parent::__construct($context);
         $this->resultJsonFactory = $resultJsonFactory;

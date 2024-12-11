@@ -45,8 +45,8 @@ class RequestAwareValidatorFile extends ValidatorFile
         Size $fileSize,
         FileTransferFactory $httpFactory,
         IsImage $isImageValidator,
-        Random $random = null,
-        Request $request = null
+        ?Random $random = null,
+        ?Request $request = null
     ) {
         $this->request = $request ?: ObjectManager::getInstance()->get(Request::class);
         parent::__construct(

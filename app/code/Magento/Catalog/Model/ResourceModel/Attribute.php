@@ -47,7 +47,7 @@ class Attribute extends \Magento\Eav\Model\ResourceModel\Entity\Attribute
         \Magento\Eav\Model\Config $eavConfig,
         LockValidatorInterface $lockValidator,
         $connectionName = null,
-        RemoveProductAttributeData $removeProductAttributeData = null
+        ?RemoveProductAttributeData $removeProductAttributeData = null
     ) {
         $this->attrLockValidator = $lockValidator;
         $this->_eavConfig = $eavConfig;

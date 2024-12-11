@@ -46,7 +46,7 @@ class View extends \Magento\Framework\View\Element\Template implements \Magento\
         \Magento\Framework\Registry $registry,
         \Magento\Catalog\Helper\Category $categoryHelper,
         array $data = [],
-        \Magento\Catalog\Helper\Data $catalogData = null
+        ?\Magento\Catalog\Helper\Data $catalogData = null
     ) {
         $this->_categoryHelper = $categoryHelper;
         $this->_catalogLayer = $layerResolver->get();

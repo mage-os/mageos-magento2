@@ -74,8 +74,8 @@ class Image extends \Magento\Eav\Model\Entity\Attribute\Backend\AbstractBackend
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\Filesystem $filesystem,
         \Magento\MediaStorage\Model\File\UploaderFactory $fileUploaderFactory,
-        StoreManagerInterface $storeManager = null,
-        ImageUploader $imageUploader = null
+        ?StoreManagerInterface $storeManager = null,
+        ?ImageUploader $imageUploader = null
     ) {
         $this->_filesystem = $filesystem;
         $this->_fileUploaderFactory = $fileUploaderFactory;

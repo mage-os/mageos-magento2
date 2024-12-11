@@ -95,13 +95,13 @@ class Full extends AbstractAction
         ResourceConnection $resource,
         StoreManagerInterface $storeManager,
         Config $config,
-        QueryGenerator $queryGenerator = null,
-        BatchSizeManagementInterface $batchSizeManagement = null,
-        BatchProviderInterface $batchProvider = null,
-        MetadataPool $metadataPool = null,
+        ?QueryGenerator $queryGenerator = null,
+        ?BatchSizeManagementInterface $batchSizeManagement = null,
+        ?BatchProviderInterface $batchProvider = null,
+        ?MetadataPool $metadataPool = null,
         $batchRowsCount = null,
-        ActiveTableSwitcher $activeTableSwitcher = null,
-        ProcessManager $processManager = null,
+        ?ActiveTableSwitcher $activeTableSwitcher = null,
+        ?ProcessManager $processManager = null,
         ?DeploymentConfig $deploymentConfig = null
     ) {
         parent::__construct(

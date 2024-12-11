@@ -41,7 +41,7 @@ class Edit extends \Magento\Catalog\Controller\Adminhtml\Product implements Http
         \Magento\Backend\App\Action\Context $context,
         \Magento\Catalog\Controller\Adminhtml\Product\Builder $productBuilder,
         \Magento\Framework\View\Result\PageFactory $resultPageFactory,
-        \Magento\Store\Model\StoreManagerInterface $storeManager = null
+        ?\Magento\Store\Model\StoreManagerInterface $storeManager = null
     ) {
         parent::__construct($context, $productBuilder);
         $this->resultPageFactory = $resultPageFactory;

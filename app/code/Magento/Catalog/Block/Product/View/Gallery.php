@@ -64,9 +64,9 @@ class Gallery extends AbstractView
         ArrayUtils $arrayUtils,
         EncoderInterface $jsonEncoder,
         array $data = [],
-        ImagesConfigFactoryInterface $imagesConfigFactory = null,
+        ?ImagesConfigFactoryInterface $imagesConfigFactory = null,
         array $galleryImagesConfig = [],
-        UrlBuilder $urlBuilder = null
+        ?UrlBuilder $urlBuilder = null
     ) {
         parent::__construct($context, $arrayUtils, $data);
         $this->jsonEncoder = $jsonEncoder;

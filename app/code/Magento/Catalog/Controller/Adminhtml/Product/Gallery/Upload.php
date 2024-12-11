@@ -62,9 +62,9 @@ class Upload extends \Magento\Backend\App\Action implements HttpPostActionInterf
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
         \Magento\Framework\Controller\Result\RawFactory $resultRawFactory,
-        \Magento\Framework\Image\AdapterFactory $adapterFactory = null,
-        \Magento\Framework\Filesystem $filesystem = null,
-        \Magento\Catalog\Model\Product\Media\Config $productMediaConfig = null
+        ?\Magento\Framework\Image\AdapterFactory $adapterFactory = null,
+        ?\Magento\Framework\Filesystem $filesystem = null,
+        ?\Magento\Catalog\Model\Product\Media\Config $productMediaConfig = null
     ) {
         parent::__construct($context);
         $this->resultRawFactory = $resultRawFactory;

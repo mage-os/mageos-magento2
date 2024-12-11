@@ -92,8 +92,8 @@ class AbstractAction
         ResourceConnection $resource,
         StoreManagerInterface $storeManager,
         Helper $resourceHelper,
-        MetadataPool $metadataPool = null,
-        SkipStaticColumnsProvider $skipStaticColumnsProvider = null
+        ?MetadataPool $metadataPool = null,
+        ?SkipStaticColumnsProvider $skipStaticColumnsProvider = null
     ) {
         $this->resource = $resource;
         $this->connection = $resource->getConnection();

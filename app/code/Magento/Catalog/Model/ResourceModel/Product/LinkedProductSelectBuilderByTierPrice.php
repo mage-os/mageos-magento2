@@ -69,7 +69,7 @@ class LinkedProductSelectBuilderByTierPrice implements LinkedProductSelectBuilde
         \Magento\Customer\Model\Session $customerSession,
         \Magento\Catalog\Helper\Data $catalogHelper,
         \Magento\Framework\EntityManager\MetadataPool $metadataPool,
-        BaseSelectProcessorInterface $baseSelectProcessor = null
+        ?BaseSelectProcessorInterface $baseSelectProcessor = null
     ) {
         $this->storeManager = $storeManager;
         $this->resource = $resourceConnection;

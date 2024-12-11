@@ -143,8 +143,8 @@ class Image extends AbstractHelper implements ArgumentInterface
         \Magento\Catalog\Model\Product\ImageFactory $productImageFactory,
         \Magento\Framework\View\Asset\Repository $assetRepo,
         \Magento\Framework\View\ConfigInterface $viewConfig,
-        \Magento\Catalog\Model\View\Asset\PlaceholderFactory $placeholderFactory = null,
-        CatalogMediaConfig $mediaConfig = null
+        ?\Magento\Catalog\Model\View\Asset\PlaceholderFactory $placeholderFactory = null,
+        ?CatalogMediaConfig $mediaConfig = null
     ) {
         $this->_productImageFactory = $productImageFactory;
         parent::__construct($context);

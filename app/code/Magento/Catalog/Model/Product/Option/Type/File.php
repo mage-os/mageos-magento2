@@ -118,9 +118,9 @@ class File extends \Magento\Catalog\Model\Product\Option\Type\DefaultType
         \Magento\Catalog\Model\Product\Option\UrlBuilder $urlBuilder,
         \Magento\Framework\Escaper $escaper,
         array $data = [],
-        Filesystem $filesystem = null,
-        Json $serializer = null,
-        ProductHelper $productHelper = null
+        ?Filesystem $filesystem = null,
+        ?Json $serializer = null,
+        ?ProductHelper $productHelper = null
     ) {
         $this->_itemOptionFactory = $itemOptionFactory;
         $this->_urlBuilder = $urlBuilder;

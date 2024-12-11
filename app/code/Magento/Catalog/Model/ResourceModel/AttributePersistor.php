@@ -30,7 +30,7 @@ class AttributePersistor extends \Magento\Eav\Model\ResourceModel\AttributePersi
         FormatInterface $localeFormat,
         AttributeRepositoryInterface $attributeRepository,
         MetadataPool $metadataPool,
-        ConditionBuilder $conditionBuilder = null
+        ?ConditionBuilder $conditionBuilder = null
     ) {
         parent::__construct($localeFormat, $attributeRepository, $metadataPool);
         $this->conditionBuilder = $conditionBuilder ?: ObjectManager::getInstance()->get(ConditionBuilder::class);

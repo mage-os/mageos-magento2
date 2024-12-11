@@ -50,7 +50,7 @@ class NewCategory extends \Magento\Backend\Block\Widget\Form\Generic
         \Magento\Framework\Json\EncoderInterface $jsonEncoder,
         \Magento\Catalog\Model\CategoryFactory $categoryFactory,
         array $data = [],
-        SecureHtmlRenderer $htmlRenderer = null
+        ?SecureHtmlRenderer $htmlRenderer = null
     ) {
         $this->_jsonEncoder = $jsonEncoder;
         $this->_categoryFactory = $categoryFactory;

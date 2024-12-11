@@ -42,7 +42,7 @@ class Validate extends AttributeAction implements HttpGetActionInterface, HttpPo
         \Magento\Catalog\Helper\Product\Edit\Action\Attribute $attributeHelper,
         \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
         \Magento\Framework\View\LayoutFactory $layoutFactory,
-        \Magento\Eav\Model\Config $eavConfig = null
+        ?\Magento\Eav\Model\Config $eavConfig = null
     ) {
         parent::__construct($context, $attributeHelper);
         $this->resultJsonFactory = $resultJsonFactory;

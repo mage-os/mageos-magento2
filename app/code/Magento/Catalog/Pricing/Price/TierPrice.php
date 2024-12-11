@@ -91,7 +91,7 @@ class TierPrice extends AbstractPrice implements TierPriceInterface, BasePricePr
         PriceCurrencyInterface $priceCurrency,
         Session $customerSession,
         GroupManagementInterface $groupManagement,
-        CustomerGroupRetrieverInterface $customerGroupRetriever = null,
+        ?CustomerGroupRetrieverInterface $customerGroupRetriever = null,
         ?ScopeConfigInterface $scopeConfig = null
     ) {
         $quantity = (float)$quantity ? $quantity : 1;

@@ -45,8 +45,8 @@ class Select extends \Magento\Catalog\Block\Product\View\Options\AbstractOptions
         Data $pricingHelper,
         CatalogHelper $catalogData,
         array $data = [],
-        CheckableFactory $checkableFactory = null,
-        MultipleFactory $multipleFactory = null
+        ?CheckableFactory $checkableFactory = null,
+        ?MultipleFactory $multipleFactory = null
     ) {
         parent::__construct($context, $pricingHelper, $catalogData, $data);
         $this->checkableFactory = $checkableFactory ?: ObjectManager::getInstance()->get(CheckableFactory::class);

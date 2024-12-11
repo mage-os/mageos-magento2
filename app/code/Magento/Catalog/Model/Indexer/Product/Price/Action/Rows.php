@@ -69,11 +69,11 @@ class Rows extends \Magento\Catalog\Model\Indexer\Product\Price\AbstractAction
         Type $catalogProductType,
         Factory $indexerPriceFactory,
         DefaultPrice $defaultIndexerResource,
-        TierPrice $tierPriceIndexResource = null,
-        DimensionCollectionFactory $dimensionCollectionFactory = null,
-        TableMaintainer $tableMaintainer = null,
+        ?TierPrice $tierPriceIndexResource = null,
+        ?DimensionCollectionFactory $dimensionCollectionFactory = null,
+        ?TableMaintainer $tableMaintainer = null,
         ?int $batchSize = null,
-        CacheContext $cacheContext = null
+        ?CacheContext $cacheContext = null
     ) {
         parent::__construct(
             $config,
