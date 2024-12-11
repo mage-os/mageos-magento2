@@ -168,7 +168,7 @@ class Context extends \Magento\Framework\View\Element\Template\Context
         \Magento\Catalog\Block\Product\ImageBuilder $imageBuilder,
         ReviewRendererInterface $reviewRenderer,
         \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
-        LockGuardedCacheLoader $lockQuery = null
+        ?LockGuardedCacheLoader $lockQuery = null
     ) {
         $this->imageHelper = $imageHelper;
         $this->imageBuilder = $imageBuilder;

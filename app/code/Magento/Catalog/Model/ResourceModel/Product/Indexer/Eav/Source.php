@@ -65,8 +65,8 @@ class Source extends AbstractEav
         \Magento\Framework\Event\ManagerInterface $eventManager,
         \Magento\Catalog\Model\ResourceModel\Helper $resourceHelper,
         ?string $connectionName = null,
-        \Magento\Eav\Api\AttributeRepositoryInterface $attributeRepository = null,
-        \Magento\Framework\Api\SearchCriteriaBuilder $criteriaBuilder = null,
+        ?\Magento\Eav\Api\AttributeRepositoryInterface $attributeRepository = null,
+        ?\Magento\Framework\Api\SearchCriteriaBuilder $criteriaBuilder = null,
         ?\Magento\Framework\EntityManager\MetadataPool $metadataPool = null
     ) {
         parent::__construct(

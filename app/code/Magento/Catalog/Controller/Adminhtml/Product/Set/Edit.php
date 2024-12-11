@@ -42,7 +42,7 @@ class Edit extends Set implements HttpGetActionInterface
         Context $context,
         Registry $coreRegistry,
         PageFactory $resultPageFactory,
-        AttributeSetRepositoryInterface $attributeSetRepository = null
+        ?AttributeSetRepositoryInterface $attributeSetRepository = null
     ) {
         parent::__construct($context, $coreRegistry);
         $this->resultPageFactory = $resultPageFactory;

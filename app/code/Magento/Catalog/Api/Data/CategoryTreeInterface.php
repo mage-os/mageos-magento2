@@ -124,5 +124,5 @@ interface CategoryTreeInterface
      * @param \Magento\Catalog\Api\Data\CategoryTreeInterface[] $childrenData
      * @return $this
      */
-    public function setChildrenData(array $childrenData = null);
+    public function setChildrenData(?array $childrenData = null);
 }

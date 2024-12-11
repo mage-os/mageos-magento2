@@ -136,7 +136,7 @@ class Option extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      * @param int $storeId
      * @param float|null $newPrice
      */
-    private function savePriceByStore(AbstractModel $object, int $storeId, float $newPrice = null): void
+    private function savePriceByStore(AbstractModel $object, int $storeId, ?float $newPrice = null): void
     {
         $priceTable = $this->getTable('catalog_product_option_price');
         $connection = $this->getConnection();

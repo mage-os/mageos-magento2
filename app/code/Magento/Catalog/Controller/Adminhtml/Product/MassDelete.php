@@ -60,8 +60,8 @@ class MassDelete extends Product implements HttpPostActionInterface
         Builder $productBuilder,
         Filter $filter,
         CollectionFactory $collectionFactory,
-        ProductRepositoryInterface $productRepository = null,
-        LoggerInterface $logger = null
+        ?ProductRepositoryInterface $productRepository = null,
+        ?LoggerInterface $logger = null
     ) {
         $this->filter = $filter;
         $this->collectionFactory = $collectionFactory;

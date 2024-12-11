@@ -54,7 +54,7 @@ class CustomOptionPrice extends AbstractPrice implements CustomOptionPriceInterf
         CalculatorInterface $calculator,
         \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency,
         $excludeAdjustment = null,
-        CustomOptionPriceCalculator $customOptionPriceCalculator = null
+        ?CustomOptionPriceCalculator $customOptionPriceCalculator = null
     ) {
         parent::__construct($saleableItem, $quantity, $calculator, $priceCurrency);
         $this->excludeAdjustment = $excludeAdjustment;

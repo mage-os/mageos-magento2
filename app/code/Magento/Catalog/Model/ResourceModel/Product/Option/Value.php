@@ -69,7 +69,7 @@ class Value extends AbstractDb
         StoreManagerInterface $storeManager,
         ScopeConfigInterface $config,
         $connectionName = null,
-        Data $dataHelper = null
+        ?Data $dataHelper = null
     ) {
         $this->_currencyFactory = $currencyFactory;
         $this->_storeManager = $storeManager;

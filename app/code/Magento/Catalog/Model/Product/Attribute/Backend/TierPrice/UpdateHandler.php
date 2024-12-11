@@ -60,7 +60,7 @@ class UpdateHandler extends AbstractHandler
         GroupManagementInterface $groupManagement,
         MetadataPool $metadataPool,
         Tierprice $tierPriceResource,
-        FormatInterface $localeFormat = null
+        ?FormatInterface $localeFormat = null
     ) {
         parent::__construct($groupManagement);
 

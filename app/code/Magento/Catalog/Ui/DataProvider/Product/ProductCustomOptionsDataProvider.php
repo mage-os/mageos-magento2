@@ -75,8 +75,8 @@ class ProductCustomOptionsDataProvider extends ProductDataProvider
         array $addFilterStrategies = [],
         array $meta = [],
         array $data = [],
-        PoolInterface $modifiersPool = null,
-        MetadataPool $metadataPool = null
+        ?PoolInterface $modifiersPool = null,
+        ?MetadataPool $metadataPool = null
     ) {
         parent::__construct(
             $name,

@@ -40,7 +40,7 @@ class Edit extends \Magento\Catalog\Controller\Adminhtml\Category implements Htt
         \Magento\Backend\App\Action\Context $context,
         \Magento\Framework\View\Result\PageFactory $resultPageFactory,
         \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
-        \Magento\Store\Model\StoreManagerInterface $storeManager = null
+        ?\Magento\Store\Model\StoreManagerInterface $storeManager = null
     ) {
         parent::__construct($context);
         $this->resultPageFactory = $resultPageFactory;

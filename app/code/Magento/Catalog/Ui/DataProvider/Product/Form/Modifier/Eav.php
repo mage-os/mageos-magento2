@@ -262,9 +262,9 @@ class Eav extends AbstractModifier
         DataPersistorInterface $dataPersistor,
         $attributesToDisable = [],
         $attributesToEliminate = [],
-        CompositeConfigProcessor $wysiwygConfigProcessor = null,
-        ScopeConfigInterface $scopeConfig = null,
-        AttributeCollectionFactory $attributeCollectionFactory = null,
+        ?CompositeConfigProcessor $wysiwygConfigProcessor = null,
+        ?ScopeConfigInterface $scopeConfig = null,
+        ?AttributeCollectionFactory $attributeCollectionFactory = null,
         ?AuthorizationInterface $auth = null
     ) {
         $this->locator = $locator;

@@ -27,7 +27,7 @@ class Serializer extends \Magento\Framework\View\Element\Template
      */
     public function __construct(
         Template\Context $context,
-        \Magento\Framework\Serialize\Serializer\Json $serializer = null,
+        ?\Magento\Framework\Serialize\Serializer\Json $serializer = null,
         array $data = []
     ) {
         parent::__construct($context, $data);

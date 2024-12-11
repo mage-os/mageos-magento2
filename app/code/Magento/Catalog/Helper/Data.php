@@ -495,7 +495,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      * @param array $taxAddress
      * @return \Magento\Customer\Api\Data\AddressInterface|null
      */
-    private function convertDefaultTaxAddress(array $taxAddress = null)
+    private function convertDefaultTaxAddress(?array $taxAddress = null)
     {
         if (empty($taxAddress)) {
             return null;

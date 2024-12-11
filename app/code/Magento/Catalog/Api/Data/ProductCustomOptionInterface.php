@@ -271,7 +271,7 @@ interface ProductCustomOptionInterface extends \Magento\Framework\Api\Extensible
      * @param \Magento\Catalog\Api\Data\ProductCustomOptionValuesInterface[] $values
      * @return $this
      */
-    public function setValues(array $values = null);
+    public function setValues(?array $values = null);
 
     /**
      * Retrieve existing extension attributes object or create a new one.

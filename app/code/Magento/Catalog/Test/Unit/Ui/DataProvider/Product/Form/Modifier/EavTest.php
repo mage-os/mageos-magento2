@@ -450,7 +450,7 @@ class EavTest extends AbstractModifierTestCase
         $attrValue,
         array $expected,
         bool $locked = false,
-        string $frontendInput = null,
+        ?string $frontendInput = null,
         array $expectedCustomize = []
     ) : void {
         $configPath = 'arguments/data/config';

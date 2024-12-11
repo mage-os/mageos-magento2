@@ -47,7 +47,7 @@ class StatusBaseSelectProcessor implements BaseSelectProcessorInterface
         Config $eavConfig,
         MetadataPool $metadataPool,
         StoreResolverInterface $storeResolver,
-        StoreManagerInterface $storeManager = null
+        ?StoreManagerInterface $storeManager = null
     ) {
         $this->eavConfig = $eavConfig;
         $this->metadataPool = $metadataPool;

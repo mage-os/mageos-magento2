@@ -90,7 +90,7 @@ class Gallery extends \Magento\Framework\View\Element\AbstractBlock
         Registry $registry,
         \Magento\Framework\Data\Form $form,
         $data = [],
-        DataPersistorInterface $dataPersistor = null
+        ?DataPersistorInterface $dataPersistor = null
     ) {
         $this->storeManager = $storeManager;
         $this->registry = $registry;

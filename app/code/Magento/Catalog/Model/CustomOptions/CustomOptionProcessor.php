@@ -57,7 +57,7 @@ class CustomOptionProcessor implements CartItemProcessorInterface
         \Magento\Quote\Model\Quote\ProductOptionFactory $productOptionFactory,
         \Magento\Quote\Api\Data\ProductOptionExtensionFactory $extensionFactory,
         \Magento\Catalog\Model\CustomOptions\CustomOptionFactory $customOptionFactory,
-        \Magento\Framework\Serialize\Serializer\Json $serializer = null
+        ?\Magento\Framework\Serialize\Serializer\Json $serializer = null
     ) {
         $this->objectFactory = $objectFactory;
         $this->productOptionFactory = $productOptionFactory;

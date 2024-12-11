@@ -52,7 +52,7 @@ class Add extends \Magento\Catalog\Controller\Product\Compare implements HttpPos
         Validator $formKeyValidator,
         PageFactory $resultPageFactory,
         ProductRepositoryInterface $productRepository,
-        AddToCompareAvailability $compareAvailability = null
+        ?AddToCompareAvailability $compareAvailability = null
     ) {
         parent::__construct(
             $context,

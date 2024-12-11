@@ -29,7 +29,7 @@ class Website
      */
     public function __construct(
         TableMaintainer $tableMaintainer,
-        \Magento\Framework\MessageQueue\PoisonPill\PoisonPillPutInterface $pillPut = null
+        ?\Magento\Framework\MessageQueue\PoisonPill\PoisonPillPutInterface $pillPut = null
     ) {
         $this->tableMaintainer = $tableMaintainer;
         $this->pillPut = $pillPut ?: ObjectManager::getInstance()

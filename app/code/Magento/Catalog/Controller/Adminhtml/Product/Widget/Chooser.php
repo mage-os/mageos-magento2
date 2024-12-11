@@ -43,7 +43,7 @@ class Chooser extends \Magento\Backend\App\Action implements HttpPostActionInter
         \Magento\Backend\App\Action\Context $context,
         \Magento\Framework\Controller\Result\RawFactory $resultRawFactory,
         \Magento\Framework\View\LayoutFactory $layoutFactory,
-        \Magento\Framework\Escaper $escaper = null
+        ?\Magento\Framework\Escaper $escaper = null
     ) {
         parent::__construct($context);
         $this->resultRawFactory = $resultRawFactory;

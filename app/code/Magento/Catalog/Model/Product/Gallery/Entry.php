@@ -143,7 +143,7 @@ class Entry extends AbstractExtensibleModel implements ProductAttributeMediaGall
      * @param string[] $types
      * @return $this
      */
-    public function setTypes(array $types = null)
+    public function setTypes(?array $types = null)
     {
         return $this->setData(self::TYPES, $types);
     }

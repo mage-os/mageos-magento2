@@ -93,7 +93,7 @@ class Flat extends \Magento\Indexer\Model\ResourceModel\AbstractResource
         \Magento\Catalog\Model\Config $catalogConfig,
         \Magento\Framework\Event\ManagerInterface $eventManager,
         $connectionName = null,
-        \Magento\Catalog\Model\ResourceModel\Category\Flat\CollectionFactory $categoryFlatCollectionFactory = null
+        ?\Magento\Catalog\Model\ResourceModel\Category\Flat\CollectionFactory $categoryFlatCollectionFactory = null
     ) {
         $this->_categoryFactory = $categoryFactory;
         $this->_categoryCollectionFactory = $categoryCollectionFactory;

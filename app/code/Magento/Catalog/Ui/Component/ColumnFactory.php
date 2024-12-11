@@ -61,7 +61,7 @@ class ColumnFactory
      */
     public function __construct(
         UiComponentFactory $componentFactory,
-        TimezoneInterface $timezone = null
+        ?TimezoneInterface $timezone = null
     ) {
         $this->componentFactory = $componentFactory;
         $this->timezone = $timezone

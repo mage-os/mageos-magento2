@@ -44,8 +44,8 @@ class ConfiguredPrice extends FinalPrice implements ConfiguredPriceInterface
         $quantity,
         CalculatorInterface $calculator,
         \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency,
-        ItemInterface $item = null,
-        ConfiguredOptions $configuredOptions = null
+        ?ItemInterface $item = null,
+        ?ConfiguredOptions $configuredOptions = null
     ) {
         $this->item = $item;
         $this->configuredOptions = $configuredOptions ?: ObjectManager::getInstance()->get(ConfiguredOptions::class);

@@ -85,7 +85,7 @@ class Image implements ProductRenderCollectorInterface
         DesignInterface $design,
         ImageInterfaceFactory $imageRenderInfoFactory,
         array $imageCodes = [],
-        DesignLoader $designLoader = null
+        ?DesignLoader $designLoader = null
     ) {
         $this->imageFactory = $imageFactory;
         $this->imageCodes = $imageCodes;

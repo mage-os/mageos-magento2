@@ -89,7 +89,7 @@ class View extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Framework\Message\ManagerInterface $messageManager,
         \Magento\CatalogUrlRewrite\Model\CategoryUrlPathGenerator $categoryUrlPathGenerator,
         array $messageGroups = [],
-        \Magento\Framework\Stdlib\StringUtils $string = null,
+        ?\Magento\Framework\Stdlib\StringUtils $string = null,
         ?LayoutUpdateManager $layoutUpdateManager = null
     ) {
         $this->_catalogSession = $catalogSession;

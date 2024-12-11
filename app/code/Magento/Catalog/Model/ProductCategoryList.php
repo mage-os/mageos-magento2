@@ -51,8 +51,8 @@ class ProductCategoryList implements ResetAfterRequestInterface
     public function __construct(
         ResourceModel\Product $productResource,
         ResourceModel\Category $category,
-        StoreManagerInterface $storeManager = null,
-        TableMaintainer $tableMaintainer = null
+        ?StoreManagerInterface $storeManager = null,
+        ?TableMaintainer $tableMaintainer = null
     ) {
         $this->productResource = $productResource;
         $this->category = $category;

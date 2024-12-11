@@ -60,7 +60,7 @@ class CategoryList implements CategoryListInterface
         JoinProcessorInterface $extensionAttributesJoinProcessor,
         CategorySearchResultsInterfaceFactory $categorySearchResultsFactory,
         CategoryRepositoryInterface $categoryRepository,
-        CollectionProcessorInterface $collectionProcessor = null
+        ?CollectionProcessorInterface $collectionProcessor = null
     ) {
         $this->categoryCollectionFactory = $categoryCollectionFactory;
         $this->extensionAttributesJoinProcessor = $extensionAttributesJoinProcessor;

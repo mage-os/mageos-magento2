@@ -35,7 +35,7 @@ class Duplicate extends \Magento\Catalog\Controller\Adminhtml\Product implements
         \Magento\Backend\App\Action\Context $context,
         Product\Builder $productBuilder,
         \Magento\Catalog\Model\Product\Copier $productCopier,
-        \Psr\Log\LoggerInterface $logger = null
+        ?\Psr\Log\LoggerInterface $logger = null
     ) {
         $this->productCopier = $productCopier;
         $this->logger = $logger ?: ObjectManager::getInstance()

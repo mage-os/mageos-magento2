@@ -109,15 +109,15 @@ class AddAttributeToTemplate extends Product implements HttpPostActionInterface
         Context $context,
         Builder $productBuilder,
         JsonFactory $resultJsonFactory,
-        AttributeGroupInterfaceFactory $attributeGroupFactory = null,
-        AttributeRepositoryInterface $attributeRepository = null,
-        AttributeSetRepositoryInterface $attributeSetRepository = null,
-        AttributeGroupRepositoryInterface $attributeGroupRepository = null,
-        SearchCriteriaBuilder $searchCriteriaBuilder = null,
-        AttributeManagementInterface $attributeManagement = null,
-        LoggerInterface $logger = null,
-        ExtensionAttributesFactory $extensionAttributesFactory = null,
-        CacheInterface $cache = null
+        ?AttributeGroupInterfaceFactory $attributeGroupFactory = null,
+        ?AttributeRepositoryInterface $attributeRepository = null,
+        ?AttributeSetRepositoryInterface $attributeSetRepository = null,
+        ?AttributeGroupRepositoryInterface $attributeGroupRepository = null,
+        ?SearchCriteriaBuilder $searchCriteriaBuilder = null,
+        ?AttributeManagementInterface $attributeManagement = null,
+        ?LoggerInterface $logger = null,
+        ?ExtensionAttributesFactory $extensionAttributesFactory = null,
+        ?CacheInterface $cache = null
     ) {
         parent::__construct($context, $productBuilder);
         $this->resultJsonFactory = $resultJsonFactory;

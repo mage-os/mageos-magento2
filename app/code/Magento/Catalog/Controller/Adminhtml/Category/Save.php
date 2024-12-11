@@ -81,8 +81,8 @@ class Save extends \Magento\Catalog\Controller\Adminhtml\Category implements Htt
         \Magento\Framework\View\LayoutFactory $layoutFactory,
         \Magento\Framework\Stdlib\DateTime\Filter\Date $dateFilter,
         StoreManagerInterface $storeManager,
-        \Magento\Eav\Model\Config $eavConfig = null,
-        \Psr\Log\LoggerInterface $logger = null
+        ?\Magento\Eav\Model\Config $eavConfig = null,
+        ?\Psr\Log\LoggerInterface $logger = null
     ) {
         parent::__construct($context, $dateFilter);
         $this->resultRawFactory = $resultRawFactory;

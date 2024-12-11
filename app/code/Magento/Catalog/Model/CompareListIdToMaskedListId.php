@@ -46,7 +46,7 @@ class CompareListIdToMaskedListId
      * @return null|string
      * @throws LocalizedException
      */
-    public function execute(int $listId, int $customerId = null): ?string
+    public function execute(int $listId, ?int $customerId = null): ?string
     {
         $compareList = $this->compareListFactory->create();
         $this->compareListResource->load($compareList, $listId, 'list_id');

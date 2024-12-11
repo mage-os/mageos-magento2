@@ -56,7 +56,7 @@ class Websites extends \Magento\Ui\Component\Listing\Columns\Column
         StoreManagerInterface $storeManager,
         array $components = [],
         array $data = [],
-        Helper $resourceHelper = null
+        ?Helper $resourceHelper = null
     ) {
         parent::__construct($context, $uiComponentFactory, $components, $data);
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();

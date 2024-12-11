@@ -95,7 +95,7 @@ class Gallery extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $tableNameAlias,
         array $ids,
         $storeId = null,
-        array $cols = null,
+        ?array $cols = null,
         array $leftJoinTables = [],
         $whereCondition = null
     ) {

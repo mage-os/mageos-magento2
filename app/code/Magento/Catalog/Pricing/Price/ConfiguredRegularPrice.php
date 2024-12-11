@@ -46,7 +46,7 @@ class ConfiguredRegularPrice extends RegularPrice implements ConfiguredPriceInte
         CalculatorInterface $calculator,
         PriceCurrencyInterface $priceCurrency,
         ConfiguredOptions $configuredOptions,
-        ItemInterface $item = null
+        ?ItemInterface $item = null
     ) {
         $this->item = $item;
         $this->configuredOptions = $configuredOptions;

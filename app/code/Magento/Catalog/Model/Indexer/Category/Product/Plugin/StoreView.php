@@ -30,7 +30,7 @@ class StoreView extends StoreGroup
      *
      * @return AbstractDb
      */
-    public function afterSave(AbstractDb $subject, AbstractDb $objectResource, AbstractModel $store = null)
+    public function afterSave(AbstractDb $subject, AbstractDb $objectResource, ?AbstractModel $store = null)
     {
         if ($store->isObjectNew()) {
             $this->tableMaintainer->createTablesForStore($store->getId());

@@ -53,8 +53,8 @@ class TableBuilder
     public function __construct(
         \Magento\Catalog\Helper\Product\Flat\Indexer $productIndexerHelper,
         \Magento\Framework\App\ResourceConnection $resource,
-        BuilderInterfaceFactory $tableBuilderFactory = null,
-        MetadataPool $metadataPool = null
+        ?BuilderInterfaceFactory $tableBuilderFactory = null,
+        ?MetadataPool $metadataPool = null
     ) {
         $this->_productIndexerHelper = $productIndexerHelper;
         $this->resource = $resource;

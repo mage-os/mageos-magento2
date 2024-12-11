@@ -77,7 +77,7 @@ class Processor
         \Magento\Catalog\Model\Product\Media\Config $mediaConfig,
         \Magento\Framework\Filesystem $filesystem,
         \Magento\Catalog\Model\ResourceModel\Product\Gallery $resourceModel,
-        \Magento\Framework\File\Mime $mime = null
+        ?\Magento\Framework\File\Mime $mime = null
     ) {
         $this->attributeRepository = $attributeRepository;
         $this->fileStorageDb = $fileStorageDb;

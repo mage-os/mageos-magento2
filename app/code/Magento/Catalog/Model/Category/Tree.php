@@ -58,7 +58,7 @@ class Tree
         StoreManagerInterface $storeManager,
         Collection $categoryCollection,
         CategoryTreeInterfaceFactory $treeFactory,
-        TreeFactory $treeResourceFactory = null
+        ?TreeFactory $treeResourceFactory = null
     ) {
         $this->categoryTree = $categoryTree;
         $this->storeManager = $storeManager;

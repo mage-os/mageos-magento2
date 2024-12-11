@@ -154,7 +154,7 @@ class CreateHandler implements ExtensionInterface
         Config $mediaConfig,
         Filesystem $filesystem,
         Database $fileStorageDb,
-        StoreManagerInterface $storeManager = null,
+        ?StoreManagerInterface $storeManager = null,
         ?DeleteValidator $deleteValidator = null,
         ?MediaGalleryValue $mediaGalleryValue = null,
         ?AttributeValue $attributeValue = null,
@@ -736,7 +736,7 @@ class CreateHandler implements ExtensionInterface
     private function getMediaAttributeStoreValue(
         Product $product,
         string $attributeCode,
-        int $storeId = null
+        ?int $storeId = null
     ): mixed {
         $attributes = $this->eavConfig->getEntityAttributes(Product::ENTITY);
         $attributeId = $attributes[$attributeCode]->getAttributeId();

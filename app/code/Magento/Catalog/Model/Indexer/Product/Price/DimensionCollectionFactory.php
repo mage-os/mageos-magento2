@@ -49,7 +49,7 @@ class DimensionCollectionFactory
      * @param string|null $dimensionsMode
      * @return MultiDimensionProvider
      */
-    public function create(string $dimensionsMode = null): MultiDimensionProvider
+    public function create(?string $dimensionsMode = null): MultiDimensionProvider
     {
         $dimensionConfiguration = $this->dimensionModeConfiguration->getDimensionConfiguration($dimensionsMode);
 

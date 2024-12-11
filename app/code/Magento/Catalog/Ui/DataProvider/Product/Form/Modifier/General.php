@@ -45,7 +45,7 @@ class General extends AbstractModifier
     public function __construct(
         LocatorInterface $locator,
         ArrayManager $arrayManager,
-        AttributeRepositoryInterface $attributeRepository = null
+        ?AttributeRepositoryInterface $attributeRepository = null
     ) {
         $this->locator = $locator;
         $this->arrayManager = $arrayManager;

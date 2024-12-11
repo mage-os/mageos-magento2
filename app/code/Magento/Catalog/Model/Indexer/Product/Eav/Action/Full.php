@@ -73,12 +73,12 @@ class Full extends AbstractAction
     public function __construct(
         DecimalFactory $eavDecimalFactory,
         SourceFactory $eavSourceFactory,
-        MetadataPool $metadataPool = null,
-        BatchProviderInterface $batchProvider = null,
-        BatchSizeCalculator $batchSizeCalculator = null,
-        ActiveTableSwitcher $activeTableSwitcher = null,
-        ScopeConfigInterface $scopeConfig = null,
-        QueryGenerator $batchQueryGenerator = null
+        ?MetadataPool $metadataPool = null,
+        ?BatchProviderInterface $batchProvider = null,
+        ?BatchSizeCalculator $batchSizeCalculator = null,
+        ?ActiveTableSwitcher $activeTableSwitcher = null,
+        ?ScopeConfigInterface $scopeConfig = null,
+        ?QueryGenerator $batchQueryGenerator = null
     ) {
         $this->scopeConfig = $scopeConfig ?: ObjectManager::getInstance()->get(
             ScopeConfigInterface::class

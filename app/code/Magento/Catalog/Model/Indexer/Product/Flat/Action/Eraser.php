@@ -47,7 +47,7 @@ class Eraser
         \Magento\Framework\App\ResourceConnection $resource,
         \Magento\Catalog\Helper\Product\Flat\Indexer $productHelper,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        MetadataPool $metadataPool = null
+        ?MetadataPool $metadataPool = null
     ) {
         $this->productIndexerHelper = $productHelper;
         $this->connection = $resource->getConnection();

@@ -77,7 +77,7 @@ class DimensionModeConfiguration
      * @return string[]
      * @throws \InvalidArgumentException
      */
-    public function getDimensionConfiguration(string $mode = null): array
+    public function getDimensionConfiguration(?string $mode = null): array
     {
         if ($mode && !isset($this->modesMapping[$mode])) {
             throw new \InvalidArgumentException(

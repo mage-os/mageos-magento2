@@ -98,9 +98,9 @@ class Save extends \Magento\Catalog\Controller\Adminhtml\Product\Action\Attribut
         \Magento\Framework\Serialize\SerializerInterface $serializer,
         \Magento\Authorization\Model\UserContextInterface $userContext,
         int $bulkSize = 100,
-        TimezoneInterface $timezone = null,
-        Config $eavConfig = null,
-        ProductFactory $productFactory = null,
+        ?TimezoneInterface $timezone = null,
+        ?Config $eavConfig = null,
+        ?ProductFactory $productFactory = null,
         ?DateTimeFilter $dateTimeFilter = null
     ) {
         parent::__construct($context, $attributeHelper);

@@ -53,9 +53,9 @@ class Save extends \Magento\Catalog\Controller\Adminhtml\Product\Set implements 
         \Magento\Framework\Registry $coreRegistry,
         \Magento\Framework\View\LayoutFactory $layoutFactory,
         \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
-        \Magento\Eav\Model\Entity\Attribute\SetFactory $attributeSetFactory = null,
-        \Magento\Framework\Filter\FilterManager $filterManager = null,
-        \Magento\Framework\Json\Helper\Data $jsonHelper = null
+        ?\Magento\Eav\Model\Entity\Attribute\SetFactory $attributeSetFactory = null,
+        ?\Magento\Framework\Filter\FilterManager $filterManager = null,
+        ?\Magento\Framework\Json\Helper\Data $jsonHelper = null
     ) {
         parent::__construct($context, $coreRegistry);
         $this->layoutFactory = $layoutFactory;

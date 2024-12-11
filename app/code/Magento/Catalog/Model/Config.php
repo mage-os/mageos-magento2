@@ -142,7 +142,7 @@ class Config extends \Magento\Eav\Model\Config
         \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory $setCollectionFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Eav\Model\Config $eavConfig,
-        SerializerInterface $serializer = null,
+        ?SerializerInterface $serializer = null,
         $attributesForPreload = []
     ) {
         $this->_scopeConfig = $scopeConfig;

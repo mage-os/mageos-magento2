@@ -47,7 +47,7 @@ class TierPrice extends AbstractDb
         TierPriceResourceModel $tierPriceResourceModel,
         MetadataPool $metadataPool,
         ProductAttributeRepositoryInterface $attributeRepository,
-        string $connectionName = null
+        ?string $connectionName = null
     ) {
         parent::__construct($context, $connectionName);
 
