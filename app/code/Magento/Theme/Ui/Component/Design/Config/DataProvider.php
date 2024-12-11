@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2024 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Theme\Ui\Component\Design\Config;
 
@@ -9,6 +9,7 @@ use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\Api\Search\ReportingInterface;
 use Magento\Framework\Api\Search\SearchCriteriaBuilder;
 use Magento\Framework\App\RequestInterface;
+use Magento\Framework\App\ResourceConnection;
 use Magento\Store\Model\StoreManagerInterface;
 
 /**
@@ -26,6 +27,11 @@ class DataProvider extends \Magento\Framework\View\Element\UiComponent\DataProvi
     protected $storeManager;
 
     /**
+     * @var ResourceConnection
+     */
+    private $resourceConnection;
+
+    /**
      * @param string $name
      * @param string $primaryFieldName
      * @param string $requestFieldName
@@ -34,6 +40,7 @@ class DataProvider extends \Magento\Framework\View\Element\UiComponent\DataProvi
      * @param RequestInterface $request
      * @param FilterBuilder $filterBuilder
      * @param StoreManagerInterface $storeManager
+     * @param ResourceConnection $resourceConnection
      * @param array $meta
      * @param array $data
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -47,6 +54,7 @@ class DataProvider extends \Magento\Framework\View\Element\UiComponent\DataProvi
         RequestInterface $request,
         FilterBuilder $filterBuilder,
         StoreManagerInterface $storeManager,
+        ResourceConnection $resourceConnection,
         array $meta = [],
         array $data = []
     ) {
@@ -62,6 +70,7 @@ class DataProvider extends \Magento\Framework\View\Element\UiComponent\DataProvi
             $data
         );
         $this->storeManager = $storeManager;
+        $this->resourceConnection = $resourceConnection;
     }
 
     /**
@@ -87,11 +96,38 @@ class DataProvider extends \Magento\Framework\View\Element\UiComponent\DataProvi
                     ->create()
             );
         }
+
+        $themeConfigData = $this->getCoreConfigData();
         $data = parent::getData();
         foreach ($data['items'] as & $item) {
             $item += ['default' => __('Global')];
+
+            $scope = ($item['store_id']) ? 'stores' : (($item['store_website_id']) ? 'websites' : 'default');
+            $scopeId = (int) $item['store_website_id'] ?? 0;
+            $themeId = (int) $item['theme_theme_id'] ?? 0;
+
+            $criteria = ['scope' => $scope, 'scope_id' => $scopeId, 'value' => $themeId];
+            $configData = array_filter($themeConfigData, function ($themeConfig) use ($criteria) {
+                return array_intersect_assoc($criteria, $themeConfig) === $criteria;
+            });
+
+            $item += ['short_description' => !$configData ? __('Using Default Theme') : ''];
         }
 
         return $data;
+    }
+
+    /**
+     * Get the core config data related to theme
+     *
+     * @return array
+     */
+    private function getCoreConfigData(): array
+    {
+        $connection = $this->resourceConnection->getConnection();
+        return $connection->fetchAll(
+            $connection->select()->from($connection->getTableName('core_config_data'))
+                ->where('path = ?', 'design/theme/theme_id')
+        );
     }
 }
