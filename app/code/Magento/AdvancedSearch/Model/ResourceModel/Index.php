@@ -67,8 +67,8 @@ class Index extends AbstractDb
         StoreManagerInterface $storeManager,
         MetadataPool $metadataPool,
         $connectionName = null,
-        TableResolver $tableResolver = null,
-        DimensionCollectionFactory $dimensionCollectionFactory = null
+        ?TableResolver $tableResolver = null,
+        ?DimensionCollectionFactory $dimensionCollectionFactory = null
     ) {
         parent::__construct($context, $connectionName);
         $this->storeManager = $storeManager;

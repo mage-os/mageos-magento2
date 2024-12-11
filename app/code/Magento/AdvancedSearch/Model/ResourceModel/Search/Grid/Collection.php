@@ -37,7 +37,7 @@ class Collection extends \Magento\Search\Model\ResourceModel\Query\Collection
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\DB\Helper $resourceHelper,
         \Magento\Framework\Registry $registry,
-        \Magento\Framework\DB\Adapter\AdapterInterface $connection = null,
+        ?\Magento\Framework\DB\Adapter\AdapterInterface $connection = null,
         $resource = null
     ) {
         $this->_registryManager = $registry;

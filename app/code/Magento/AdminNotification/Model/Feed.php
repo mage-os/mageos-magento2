@@ -107,10 +107,10 @@ class Feed extends AbstractModel
         DeploymentConfig $deploymentConfig,
         ProductMetadataInterface $productMetadata,
         UrlInterface $urlBuilder,
-        AbstractResource $resource = null,
-        AbstractDb $resourceCollection = null,
+        ?AbstractResource $resource = null,
+        ?AbstractDb $resourceCollection = null,
         array $data = [],
-        Escaper $escaper = null
+        ?Escaper $escaper = null
     ) {
         parent::__construct($context, $registry, $resource, $resourceCollection, $data);
         $this->_backendConfig = $backendConfig;

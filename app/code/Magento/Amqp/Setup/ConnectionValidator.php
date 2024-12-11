@@ -45,7 +45,7 @@ class ConnectionValidator
         $password = '',
         $virtualHost = '',
         bool $ssl = false,
-        array $sslOptions = null
+        ?array $sslOptions = null
     ) {
         try {
             $options = new FactoryOptions();

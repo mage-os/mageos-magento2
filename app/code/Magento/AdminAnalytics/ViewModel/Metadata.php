@@ -65,7 +65,7 @@ class Metadata implements ArgumentInterface
         Session $authSession,
         State $appState,
         ScopeConfigInterface $config,
-        CspNonceProvider $nonceProvider = null
+        ?CspNonceProvider $nonceProvider = null
     ) {
         $this->productMetadata = $productMetadata;
         $this->authSession = $authSession;
