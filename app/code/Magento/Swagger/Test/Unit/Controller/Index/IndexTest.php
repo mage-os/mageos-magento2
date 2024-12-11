@@ -71,9 +71,11 @@ class IndexTest extends TestCase
      */
     public function testExecute()
     {
-        $this->pageConfigMock->method('addBodyClass')
+        $this->pageConfigMock->expects($this->once())
+            ->method('addBodyClass')
             ->with('swagger-section');
-        $this->resultPageFactory->method('create');
+        $this->resultPageFactory->expects($this->once())
+            ->method('create');
 
         $this->indexAction->execute();
     }
@@ -101,7 +103,8 @@ class IndexTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         // Assert that execute is called
-        $request->method('getFullActionName');
+        $request->expects($this->once())
+            ->method('getFullActionName');
         $this->config->method('isEnabled')
             ->willReturn(true);
 
