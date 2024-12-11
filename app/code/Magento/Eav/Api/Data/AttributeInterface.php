@@ -304,7 +304,7 @@ interface AttributeInterface extends CustomAttributesDataInterface, MetadataObje
      * @param \Magento\Eav\Api\Data\AttributeValidationRuleInterface[] $validationRules
      * @return $this
      */
-    public function setValidationRules(array $validationRules = null);
+    public function setValidationRules(?array $validationRules = null);
 
     /**
      * @return \Magento\Eav\Api\Data\AttributeExtensionInterface|null

@@ -29,7 +29,7 @@ class DefaultTemplate extends \Magento\Email\Controller\Adminhtml\Email\Template
         \Magento\Backend\App\Action\Context $context,
         \Magento\Framework\Registry $coreRegistry,
         \Magento\Email\Model\Template\Config $emailConfig,
-        \Magento\Framework\Serialize\Serializer\Json $serializer = null
+        ?\Magento\Framework\Serialize\Serializer\Json $serializer = null
     ) {
         $this->emailConfig = $emailConfig;
         $this->serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()
