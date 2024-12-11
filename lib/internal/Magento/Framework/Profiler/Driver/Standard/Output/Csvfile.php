@@ -35,7 +35,7 @@ class Csvfile extends AbstractOutput
      *
      * @param array|null $config
      */
-    public function __construct(array $config = null)
+    public function __construct(?array $config = null)
     {
         parent::__construct($config);
         $this->_filePath = $this->_parseFilePath($config);
@@ -49,7 +49,7 @@ class Csvfile extends AbstractOutput
      * @param array|null $config
      * @return string
      */
-    protected function _parseFilePath(array $config = null)
+    protected function _parseFilePath(?array $config = null)
     {
         $result = isset($config['filePath']) ? $config['filePath'] : self::DEFAULT_FILEPATH;
         if (isset($config['baseDir'])) {
