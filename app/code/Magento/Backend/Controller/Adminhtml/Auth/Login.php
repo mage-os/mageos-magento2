@@ -57,10 +57,10 @@ class Login extends \Magento\Backend\Controller\Adminhtml\Auth implements HttpGe
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
         \Magento\Framework\View\Result\PageFactory $resultPageFactory,
-        FrontNameResolver $frontNameResolver = null,
-        BackendAppList $backendAppList = null,
-        UrlFactory $backendUrlFactory = null,
-        Http $http = null
+        ?FrontNameResolver $frontNameResolver = null,
+        ?BackendAppList $backendAppList = null,
+        ?UrlFactory $backendUrlFactory = null,
+        ?Http $http = null
     ) {
         $this->resultPageFactory = $resultPageFactory;
         parent::__construct($context);

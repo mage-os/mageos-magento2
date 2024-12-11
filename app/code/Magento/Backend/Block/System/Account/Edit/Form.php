@@ -57,7 +57,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
         \Magento\Backend\Model\Auth\Session $authSession,
         \Magento\Framework\Locale\ListsInterface $localeLists,
         array $data = [],
-        OptionInterface $deployedLocales = null
+        ?OptionInterface $deployedLocales = null
     ) {
         $this->_userFactory = $userFactory;
         $this->_authSession = $authSession;

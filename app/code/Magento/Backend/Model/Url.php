@@ -128,8 +128,8 @@ class Url extends \Magento\Framework\Url implements \Magento\Backend\Model\UrlIn
         \Magento\Store\Model\StoreFactory $storeFactory,
         \Magento\Framework\Data\Form\FormKey $formKey,
         array $data = [],
-        HostChecker $hostChecker = null,
-        Json $serializer = null
+        ?HostChecker $hostChecker = null,
+        ?Json $serializer = null
     ) {
         $this->_encryptor = $encryptor;
         $hostChecker = $hostChecker ?: ObjectManager::getInstance()->get(HostChecker::class);

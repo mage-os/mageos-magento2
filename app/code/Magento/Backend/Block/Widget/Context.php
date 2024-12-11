@@ -109,7 +109,7 @@ class Context extends \Magento\Backend\Block\Template\Context
         \Magento\Framework\Code\NameBuilder $nameBuilder,
         Button\ButtonList $buttonList,
         Button\ToolbarInterface $toolbar,
-        LockGuardedCacheLoader $lockQuery = null
+        ?LockGuardedCacheLoader $lockQuery = null
     ) {
         parent::__construct(
             $request,

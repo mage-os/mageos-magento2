@@ -48,8 +48,8 @@ class Enabled extends Value
         ScopeConfigInterface $config,
         TypeListInterface $cacheTypeList,
         SubscriptionHandler $subscriptionHandler,
-        AbstractResource $resource = null,
-        AbstractDb $resourceCollection = null,
+        ?AbstractResource $resource = null,
+        ?AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         $this->subscriptionHandler = $subscriptionHandler;

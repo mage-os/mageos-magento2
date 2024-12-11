@@ -60,9 +60,9 @@ class Chart
     public function getByPeriod(
         string $period,
         string $chartParam,
-        string $store = null,
-        string $website = null,
-        string $group = null
+        ?string $store = null,
+        ?string $website = null,
+        ?string $group = null
     ): array {
         $this->orderHelper->setParam('store', $store);
         $this->orderHelper->setParam('website', $website);

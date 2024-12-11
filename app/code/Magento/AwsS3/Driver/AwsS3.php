@@ -74,7 +74,7 @@ class AwsS3 implements RemoteDriverInterface
         FilesystemAdapter $adapter,
         LoggerInterface $logger,
         string $objectUrl,
-        MetadataProviderInterface $metadataProvider = null
+        ?MetadataProviderInterface $metadataProvider = null
     ) {
         $this->adapter = $adapter;
         $this->logger = $logger;
@@ -207,7 +207,7 @@ class AwsS3 implements RemoteDriverInterface
     /**
      * @inheritDoc
      */
-    public function copy($source, $destination, DriverInterface $targetDriver = null): bool
+    public function copy($source, $destination, ?DriverInterface $targetDriver = null): bool
     {
         try {
             $this->adapter->copy(
@@ -526,7 +526,7 @@ class AwsS3 implements RemoteDriverInterface
     /**
      * @inheritDoc
      */
-    public function rename($oldPath, $newPath, DriverInterface $targetDriver = null): bool
+    public function rename($oldPath, $newPath, ?DriverInterface $targetDriver = null): bool
     {
         if ($oldPath === $newPath) {
             return true;
@@ -636,7 +636,7 @@ class AwsS3 implements RemoteDriverInterface
     /**
      * @inheritDoc
      */
-    public function symlink($source, $destination, DriverInterface $targetDriver = null): bool
+    public function symlink($source, $destination, ?DriverInterface $targetDriver = null): bool
     {
         return $this->copy($source, $destination, $targetDriver);
     }

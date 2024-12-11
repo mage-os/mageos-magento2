@@ -226,7 +226,7 @@ class Auth
      * @throws \Magento\Framework\Exception\AuthenticationException
      * @static
      */
-    public static function throwException(Phrase $msg = null)
+    public static function throwException(?Phrase $msg = null)
     {
         if ($msg === null) {
             $msg = __('An authentication error occurred. Verify and try again.');

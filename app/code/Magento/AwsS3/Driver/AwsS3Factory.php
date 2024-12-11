@@ -74,7 +74,7 @@ class AwsS3Factory implements DriverFactoryInterface
         MetadataProviderInterfaceFactory $metadataProviderFactory,
         CacheInterfaceFactory $cacheInterfaceFactory,
         CachedAdapterInterfaceFactory $cachedAdapterInterfaceFactory,
-        string $cachePrefix = null,
+        ?string $cachePrefix = null,
         ?CachedCredentialsProvider $cachedCredentialsProvider = null,
     ) {
         $this->objectManager = $objectManager;

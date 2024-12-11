@@ -38,7 +38,7 @@ class Edit extends \Magento\Backend\Block\Widget\Form\Container
         \Magento\Backend\Block\Widget\Context $context,
         \Magento\Framework\Registry $registry,
         array $data = [],
-        SerializerInterface $serializer = null
+        ?SerializerInterface $serializer = null
     ) {
         $this->_coreRegistry = $registry;
         $this->serializer = $serializer ?: ObjectManager::getInstance()->get(SerializerInterface::class);

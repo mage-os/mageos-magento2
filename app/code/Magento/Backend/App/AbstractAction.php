@@ -369,7 +369,7 @@ abstract class AbstractAction extends \Magento\Framework\App\Action\Action
      * @param array|null $params
      * @return void
      */
-    protected function _forward($action, $controller = null, $module = null, array $params = null)
+    protected function _forward($action, $controller = null, $module = null, ?array $params = null)
     {
         $this->_getSession()->setIsUrlNotice($this->_actionFlag->get('', self::FLAG_IS_URLS_CHECKED));
         parent::_forward($action, $controller, $module, $params);

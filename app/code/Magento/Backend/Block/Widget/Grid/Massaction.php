@@ -50,7 +50,7 @@ class Massaction extends \Magento\Backend\Block\Widget\Grid\Massaction\AbstractM
         Context $context,
         EncoderInterface $jsonEncoder,
         array $data = [],
-        AuthorizationInterface $authorization = null
+        ?AuthorizationInterface $authorization = null
     ) {
         $this->authorization = $authorization ?: ObjectManager::getInstance()->get(AuthorizationInterface::class);
 

@@ -86,8 +86,8 @@ class FrontNameResolver implements FrontNameResolverInterface
         Config $config,
         DeploymentConfig $deploymentConfig,
         ScopeConfigInterface $scopeConfig,
-        Uri $uri = null,
-        RequestInterface $request = null
+        ?Uri $uri = null,
+        ?RequestInterface $request = null
     ) {
         $this->config = $config;
         $this->defaultFrontName = $deploymentConfig->get(ConfigOptionsList::CONFIG_PATH_BACKEND_FRONTNAME);

@@ -43,7 +43,7 @@ class Form extends \Magento\Backend\Block\Widget
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
         array $data = [],
-        Form\Element\ElementCreator $creator = null
+        ?Form\Element\ElementCreator $creator = null
     ) {
         parent::__construct($context, $data);
         $this->creator = $creator ?: ObjectManager::getInstance()->get(Form\Element\ElementCreator::class);

@@ -46,7 +46,7 @@ class ReportValidator
      * @return array
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function validate($name, SearchCriteriaInterface $criteria = null)
+    public function validate($name, ?SearchCriteriaInterface $criteria = null)
     {
         $query = $this->queryFactory->create($name);
         $connection = $this->connectionFactory->getConnection($query->getConnectionName());

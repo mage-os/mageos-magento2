@@ -221,7 +221,7 @@ class AwsS3Test extends TestCase
         array $metadata,
         bool $expected,
         iterable $listContents,
-        \Throwable $listContentsException = null
+        ?\Throwable $listContentsException = null
     ): void {
         if (!empty($metadata)) {
             $this->metadataProviderMock->method('getMetadata')

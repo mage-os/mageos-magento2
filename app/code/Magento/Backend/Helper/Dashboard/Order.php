@@ -34,7 +34,7 @@ class Order extends AbstractDashboard
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Reports\Model\ResourceModel\Order\Collection $orderCollection,
-        \Magento\Store\Model\StoreManagerInterface $storeManager = null
+        ?\Magento\Store\Model\StoreManagerInterface $storeManager = null
     ) {
         $this->_orderCollection = $orderCollection;
         $this->_storeManager = $storeManager ?: ObjectManager::getInstance()

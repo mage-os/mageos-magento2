@@ -518,7 +518,7 @@ class Export extends \Magento\Backend\Block\Widget implements \Magento\Backend\B
      * @param \Magento\Framework\Data\Collection $baseCollection
      * @return \Magento\Framework\Data\Collection
      */
-    protected function _getRowCollection(\Magento\Framework\Data\Collection $baseCollection = null)
+    protected function _getRowCollection(?\Magento\Framework\Data\Collection $baseCollection = null)
     {
         if (null === $baseCollection) {
             $baseCollection = $this->getParentBlock()->getPreparedCollection();

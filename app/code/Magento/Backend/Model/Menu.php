@@ -52,8 +52,8 @@ class Menu extends \ArrayObject
     public function __construct(
         LoggerInterface $logger,
         $pathInMenuStructure = '',
-        Factory $menuItemFactory = null,
-        SerializerInterface $serializer = null
+        ?Factory $menuItemFactory = null,
+        ?SerializerInterface $serializer = null
     ) {
         if ($pathInMenuStructure) {
             $this->_path = $pathInMenuStructure . '/';
