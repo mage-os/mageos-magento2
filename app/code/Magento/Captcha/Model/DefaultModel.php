@@ -114,7 +114,7 @@ class DefaultModel extends \Laminas\Captcha\Image implements \Magento\Captcha\Mo
         \Magento\Captcha\Helper\Data $captchaData,
         \Magento\Captcha\Model\ResourceModel\LogFactory $resLogFactory,
         $formId,
-        Random $randomMath = null,
+        ?Random $randomMath = null,
         ?UserContextInterface $userContext = null
     ) {
         parent::__construct();

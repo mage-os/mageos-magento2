@@ -58,7 +58,7 @@ class CatalogProcessor implements CollectionProcessorInterface
         Collection $collection,
         SearchCriteriaInterface $searchCriteria,
         array $attributeNames,
-        ContextInterface $context = null
+        ?ContextInterface $context = null
     ): Collection {
         $this->collectionProcessor->process($searchCriteria, $collection);
         $store = $context->getExtensionAttributes()->getStore();

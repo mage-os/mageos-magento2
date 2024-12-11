@@ -49,7 +49,7 @@ class BundleDataProvider extends ProductDataProvider
         array $data = [],
         array $addFieldStrategies = [],
         array $addFilterStrategies = [],
-        PoolInterface $modifiersPool = null
+        ?PoolInterface $modifiersPool = null
     ) {
         parent::__construct(
             $name,

@@ -47,7 +47,7 @@ class Filters
      * @return array
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function getData(string $layerType, array $attributesToFilter = null) : array
+    public function getData(string $layerType, ?array $attributesToFilter = null) : array
     {
         $filtersData = [];
         /** @var AbstractFilter $filter */

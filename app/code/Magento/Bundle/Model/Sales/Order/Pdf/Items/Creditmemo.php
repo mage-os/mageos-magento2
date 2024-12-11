@@ -50,8 +50,8 @@ class Creditmemo extends AbstractItems
         FilterManager $filterManager,
         Json $serializer,
         StringUtils $string,
-        AbstractResource $resource = null,
-        AbstractDb $resourceCollection = null,
+        ?AbstractResource $resource = null,
+        ?AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         $this->string = $string;

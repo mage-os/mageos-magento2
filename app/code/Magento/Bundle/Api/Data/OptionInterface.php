@@ -117,7 +117,7 @@ interface OptionInterface extends \Magento\Framework\Api\ExtensibleDataInterface
      * @param \Magento\Bundle\Api\Data\LinkInterface[] $productLinks
      * @return $this
      */
-    public function setProductLinks(array $productLinks = null);
+    public function setProductLinks(?array $productLinks = null);
 
     /**
      * Retrieve existing extension attributes object or create a new one.

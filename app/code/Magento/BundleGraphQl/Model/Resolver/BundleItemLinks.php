@@ -40,7 +40,7 @@ class BundleItemLinks implements ResolverInterface
     public function __construct(
         Collection $linkCollection,
         ValueFactory $valueFactory,
-        CollectionFactory $linkCollectionFactory = null
+        ?CollectionFactory $linkCollectionFactory = null
     ) {
         $this->linkCollectionFactory = $linkCollectionFactory
             ?: ObjectManager::getInstance()->get(CollectionFactory::class);
@@ -50,7 +50,7 @@ class BundleItemLinks implements ResolverInterface
     /**
      * @inheritdoc
      */
-    public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
+    public function resolve(Field $field, $context, ResolveInfo $info, ?array $value = null, ?array $args = null)
     {
         if (!isset($value['option_id']) || !isset($value['parent_id'])) {
             throw new LocalizedException(__('"option_id" and "parent_id" values should be specified'));

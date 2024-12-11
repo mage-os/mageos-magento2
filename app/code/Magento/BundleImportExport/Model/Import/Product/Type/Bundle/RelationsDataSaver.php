@@ -31,7 +31,7 @@ class RelationsDataSaver
      */
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resource,
-        Relation $productRelation = null
+        ?Relation $productRelation = null
     ) {
         $this->resource        = $resource;
         $this->productRelation = $productRelation

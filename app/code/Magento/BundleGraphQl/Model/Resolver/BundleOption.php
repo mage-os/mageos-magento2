@@ -36,7 +36,7 @@ class BundleOption implements ResolverInterface
      * @inheritdoc
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
+    public function resolve(Field $field, $context, ResolveInfo $info, ?array $value = null, ?array $args = null)
     {
         if (!isset($value['model'])) {
             throw new GraphQlInputException(__('Value must contain "model" property.'));

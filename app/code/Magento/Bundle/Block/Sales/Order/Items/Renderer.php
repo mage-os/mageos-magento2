@@ -32,7 +32,7 @@ class Renderer extends \Magento\Sales\Block\Order\Item\Renderer\DefaultRenderer
         \Magento\Framework\Stdlib\StringUtils $string,
         \Magento\Catalog\Model\Product\OptionFactory $productOptionFactory,
         array $data = [],
-        Json $serializer = null
+        ?Json $serializer = null
     ) {
         $this->serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()
             ->get(Json::class);

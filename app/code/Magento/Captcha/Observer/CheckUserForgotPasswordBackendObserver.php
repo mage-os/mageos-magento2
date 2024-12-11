@@ -67,7 +67,7 @@ class CheckUserForgotPasswordBackendObserver implements ObserverInterface
         SessionManagerInterface $session,
         ActionFlag $actionFlag,
         ManagerInterface $messageManager,
-        RequestInterface $request = null
+        ?RequestInterface $request = null
     ) {
         $this->_helper = $helper;
         $this->captchaStringResolver = $captchaStringResolver;

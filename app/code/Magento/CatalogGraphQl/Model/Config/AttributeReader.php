@@ -60,7 +60,7 @@ class AttributeReader implements ReaderInterface
         Type $typeLocator,
         Collection $collection,
         ScopeConfigInterface $config,
-        CollectionFactory $collectionFactory = null,
+        ?CollectionFactory $collectionFactory = null,
     ) {
         $this->mapper = $mapper;
         $this->typeLocator = $typeLocator;

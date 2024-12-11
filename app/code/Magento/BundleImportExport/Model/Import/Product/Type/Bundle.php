@@ -157,9 +157,9 @@ class Bundle extends CatalogImportExportAbstractType implements
         AttributeCollectionFactory $prodAttrColFac,
         ResourceConnection $resource,
         array $params,
-        MetadataPool $metadataPool = null,
-        Bundle\RelationsDataSaver $relationsDataSaver = null,
-        StoreManagerInterface $storeManager = null
+        ?MetadataPool $metadataPool = null,
+        ?Bundle\RelationsDataSaver $relationsDataSaver = null,
+        ?StoreManagerInterface $storeManager = null
     ) {
         parent::__construct($attrSetColFac, $prodAttrColFac, $resource, $params, $metadataPool);
 

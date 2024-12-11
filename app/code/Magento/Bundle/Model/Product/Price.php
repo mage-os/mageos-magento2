@@ -79,8 +79,8 @@ class Price extends \Magento\Catalog\Model\Product\Type\Price
         \Magento\Catalog\Api\Data\ProductTierPriceInterfaceFactory $tierPriceFactory,
         \Magento\Framework\App\Config\ScopeConfigInterface $config,
         \Magento\Catalog\Helper\Data $catalogData,
-        \Magento\Framework\Serialize\Serializer\Json $serializer = null,
-        ProductTierPriceExtensionFactory $tierPriceExtensionFactory = null
+        ?\Magento\Framework\Serialize\Serializer\Json $serializer = null,
+        ?ProductTierPriceExtensionFactory $tierPriceExtensionFactory = null
     ) {
         $this->_catalogData = $catalogData;
         $this->serializer = $serializer ?: ObjectManager::getInstance()

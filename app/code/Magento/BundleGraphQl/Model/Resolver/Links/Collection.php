@@ -59,7 +59,7 @@ class Collection implements ResetAfterRequestInterface
     public function __construct(
         CollectionFactory $linkCollectionFactory,
         EnumLookup $enumLookup,
-        Uid $uidEncoder = null
+        ?Uid $uidEncoder = null
     ) {
         $this->linkCollectionFactory = $linkCollectionFactory;
         $this->enumLookup = $enumLookup;

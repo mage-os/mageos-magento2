@@ -62,7 +62,7 @@ class Collection implements ResetAfterRequestInterface
         OptionFactory $bundleOptionFactory,
         JoinProcessorInterface $extensionAttributesJoinProcessor,
         StoreManagerInterface $storeManager,
-        Uid $uidEncoder = null
+        ?Uid $uidEncoder = null
     ) {
         $this->bundleOptionFactory = $bundleOptionFactory;
         $this->extensionAttributesJoinProcessor = $extensionAttributesJoinProcessor;

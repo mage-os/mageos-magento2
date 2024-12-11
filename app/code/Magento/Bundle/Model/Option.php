@@ -267,7 +267,7 @@ class Option extends \Magento\Framework\Model\AbstractExtensibleModel implements
      * @param \Magento\Bundle\Api\Data\LinkInterface[] $productLinks
      * @return $this
      */
-    public function setProductLinks(array $productLinks = null)
+    public function setProductLinks(?array $productLinks = null)
     {
         return $this->setData(self::KEY_PRODUCT_LINKS, $productLinks);
     }

@@ -53,7 +53,7 @@ class AjaxLogin
         SessionManagerInterface $sessionManager,
         JsonFactory $resultJsonFactory,
         array $formIds,
-        \Magento\Framework\Serialize\Serializer\Json $serializer = null
+        ?\Magento\Framework\Serialize\Serializer\Json $serializer = null
     ) {
         $this->helper = $helper;
         $this->sessionManager = $sessionManager;

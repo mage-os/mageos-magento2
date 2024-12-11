@@ -43,8 +43,8 @@ class Aggregations implements ResolverInterface
      */
     public function __construct(
         LayerBuilder $layerBuilder,
-        PriceCurrency $priceCurrency = null,
-        Category\IncludeDirectChildrenOnly $includeDirectChildrenOnly = null
+        ?PriceCurrency $priceCurrency = null,
+        ?Category\IncludeDirectChildrenOnly $includeDirectChildrenOnly = null
     ) {
         $this->layerBuilder = $layerBuilder;
         $this->priceCurrency = $priceCurrency ?: ObjectManager::getInstance()->get(PriceCurrency::class);
@@ -59,8 +59,8 @@ class Aggregations implements ResolverInterface
         Field $field,
         $context,
         ResolveInfo $info,
-        array $value = null,
-        array $args = null
+        ?array $value = null,
+        ?array $args = null
     ) {
         if (!isset($value['layer_type']) || !isset($value['search_result'])) {
             return null;

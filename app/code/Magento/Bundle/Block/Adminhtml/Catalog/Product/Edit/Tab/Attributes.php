@@ -32,7 +32,7 @@ class Attributes extends \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Attri
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = [],
-        SecureHtmlRenderer $htmlRenderer = null
+        ?SecureHtmlRenderer $htmlRenderer = null
     ) {
         parent::__construct(
             $context,

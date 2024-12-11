@@ -42,7 +42,7 @@ class Selection extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         Context $context,
         MetadataPool $metadataPool,
         $connectionName = null,
-        EntityManager $entityManager = null
+        ?EntityManager $entityManager = null
     ) {
         parent::__construct(
             $context,

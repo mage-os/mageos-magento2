@@ -48,8 +48,8 @@ class Shipment extends AbstractItems
         FilterManager $filterManager,
         StringUtils $string,
         Json $serializer,
-        AbstractResource $resource = null,
-        AbstractDb $resourceCollection = null,
+        ?AbstractResource $resource = null,
+        ?AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         $this->string = $string;

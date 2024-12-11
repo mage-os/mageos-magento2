@@ -40,7 +40,7 @@ class Renderer extends \Magento\Sales\Block\Adminhtml\Items\Renderer\DefaultRend
         \Magento\CatalogInventory\Api\StockConfigurationInterface $stockConfiguration,
         \Magento\Framework\Registry $registry,
         array $data = [],
-        Json $serializer = null,
+        ?Json $serializer = null,
         ?CatalogHelper $catalogHelper = null
     ) {
         $this->serializer = $serializer ?: ObjectManager::getInstance()->get(Json::class);

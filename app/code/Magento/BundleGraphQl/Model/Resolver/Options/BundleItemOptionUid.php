@@ -54,8 +54,8 @@ class BundleItemOptionUid implements ResolverInterface
         Field $field,
         $context,
         ResolveInfo $info,
-        array $value = null,
-        array $args = null
+        ?array $value = null,
+        ?array $args = null
     ) {
         if (!isset($value['option_id']) || empty($value['option_id'])) {
             throw new GraphQlInputException(__('"option_id" value should be specified.'));

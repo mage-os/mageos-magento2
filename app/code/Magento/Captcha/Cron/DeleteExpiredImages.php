@@ -78,8 +78,8 @@ class DeleteExpiredImages
      */
     protected function _deleteExpiredImagesForWebsite(
         \Magento\Captcha\Helper\Data $helper,
-        \Magento\Store\Model\Website $website = null,
-        \Magento\Store\Model\Store $store = null
+        ?\Magento\Store\Model\Website $website = null,
+        ?\Magento\Store\Model\Store $store = null
     ) {
         $expire = time() - $helper->getConfig('timeout', $store) * 60;
         $imageDirectory = $this->_mediaDirectory->getRelativePath($helper->getImgDir($website));

@@ -38,8 +38,8 @@ class ShipBundleItems implements ResolverInterface
         Field $field,
         $context,
         ResolveInfo $info,
-        array $value = null,
-        array $args = null
+        ?array $value = null,
+        ?array $args = null
     ) {
         $result = isset($value['shipment_type']) && $value['type_id'] === Bundle::TYPE_CODE
             ? $this->enumLookup->getEnumValueFromField('ShipBundleItemsEnum', $value['shipment_type']) : null;

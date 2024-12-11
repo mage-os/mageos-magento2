@@ -48,8 +48,8 @@ class Products implements ResolverInterface
         Field $field,
         $context,
         ResolveInfo $info,
-        array $value = null,
-        array $args = null
+        ?array $value = null,
+        ?array $args = null
     ) {
         if ($args['currentPage'] < 1) {
             throw new GraphQlInputException(__('currentPage value must be greater than 0.'));

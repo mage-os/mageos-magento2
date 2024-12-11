@@ -42,7 +42,7 @@ class Renderer extends \Magento\Sales\Block\Adminhtml\Order\View\Items\Renderer\
         \Magento\GiftMessage\Helper\Message $messageHelper,
         \Magento\Checkout\Helper\Data $checkoutHelper,
         array $data = [],
-        Json $serializer = null,
+        ?Json $serializer = null,
         ?CatalogHelper $catalogHelper = null
     ) {
         $this->serializer = $serializer ?? ObjectManager::getInstance()->get(Json::class);

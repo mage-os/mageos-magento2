@@ -41,7 +41,7 @@ class BundleOptionDataProvider
         private readonly SerializerInterface $serializer,
         private readonly Configuration $configuration,
         private readonly OriginalPrice $originalPrice,
-        Uid $uidEncoder = null
+        ?Uid $uidEncoder = null
     ) {
         $this->uidEncoder = $uidEncoder ?: ObjectManager::getInstance()
             ->get(Uid::class);

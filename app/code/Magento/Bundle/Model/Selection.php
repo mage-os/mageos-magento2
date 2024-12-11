@@ -55,7 +55,7 @@ class Selection extends \Magento\Framework\Model\AbstractModel
         \Magento\Framework\Registry $registry,
         \Magento\Catalog\Helper\Data $catalogData,
         \Magento\Bundle\Model\ResourceModel\Selection $resource,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        ?\Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         $this->_catalogData = $catalogData;

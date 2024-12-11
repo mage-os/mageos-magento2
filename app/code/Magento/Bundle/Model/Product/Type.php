@@ -228,12 +228,12 @@ class Type extends \Magento\Catalog\Model\Product\Type\AbstractType
         PriceCurrencyInterface $priceCurrency,
         \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
         \Magento\CatalogInventory\Api\StockStateInterface $stockState,
-        Json $serializer = null,
-        MetadataPool $metadataPool = null,
-        SelectionCollectionFilterApplier $selectionCollectionFilterApplier = null,
-        ArrayUtils $arrayUtility = null,
-        UploaderFactory $uploaderFactory = null,
-        AreBundleOptionsSalable $areBundleOptionsSalable = null
+        ?Json $serializer = null,
+        ?MetadataPool $metadataPool = null,
+        ?SelectionCollectionFilterApplier $selectionCollectionFilterApplier = null,
+        ?ArrayUtils $arrayUtility = null,
+        ?UploaderFactory $uploaderFactory = null,
+        ?AreBundleOptionsSalable $areBundleOptionsSalable = null
     ) {
         $this->_catalogProduct = $catalogProduct;
         $this->_catalogData = $catalogData;

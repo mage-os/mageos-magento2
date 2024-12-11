@@ -40,7 +40,7 @@ class Hydrator
     public function __construct(
         CustomAttributesFlattener $flattener,
         DataObjectProcessor $dataObjectProcessor,
-        Uid $uidEncoder = null
+        ?Uid $uidEncoder = null
     ) {
         $this->flattener = $flattener;
         $this->dataObjectProcessor = $dataObjectProcessor;

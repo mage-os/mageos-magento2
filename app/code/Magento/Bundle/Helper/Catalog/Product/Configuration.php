@@ -72,8 +72,8 @@ class Configuration extends AbstractHelper implements ConfigurationInterface
         ProductConfiguration $productConfiguration,
         Data                 $pricingHelper,
         Escaper              $escaper,
-        Json                 $serializer = null,
-        TaxPrice $taxHelper = null
+        ?Json                 $serializer = null,
+        ?TaxPrice $taxHelper = null
     ) {
         $this->productConfiguration = $productConfiguration;
         $this->pricingHelper = $pricingHelper;

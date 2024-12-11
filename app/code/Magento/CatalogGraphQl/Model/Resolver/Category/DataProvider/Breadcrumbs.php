@@ -31,7 +31,7 @@ class Breadcrumbs
      */
     public function __construct(
         CollectionFactory $collectionFactory,
-        Uid $uidEncoder = null
+        ?Uid $uidEncoder = null
     ) {
         $this->collectionFactory = $collectionFactory;
         $this->uidEncoder = $uidEncoder ?: ObjectManager::getInstance()
