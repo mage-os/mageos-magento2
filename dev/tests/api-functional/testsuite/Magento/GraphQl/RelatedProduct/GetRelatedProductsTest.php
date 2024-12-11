@@ -84,6 +84,40 @@ QUERY;
     }
 
     /**
+     * @magentoApiDataFixture Magento/Catalog/_files/products_related_disabled.php
+     * @magentoConfigFixture default/cataloginventory/options/show_out_of_stock 1
+     */
+    public function testQueryDisableRelatedProductWithShowOutOfStock()
+    {
+        $productSku = 'simple_with_cross';
+
+        $query = <<<QUERY
+{
+    products(filter: {sku: {eq: "{$productSku}"}})
+    {
+        items {
+            related_products
+            {
+                sku
+                name
+                url_key
+            }
+        }
+    }
+}
+QUERY;
+        $response = $this->graphQlQuery($query);
+
+        self::assertArrayHasKey('products', $response);
+        self::assertArrayHasKey('items', $response['products']);
+        self::assertCount(1, $response['products']['items']);
+        self::assertArrayHasKey(0, $response['products']['items']);
+        self::assertArrayHasKey('related_products', $response['products']['items'][0]);
+        $relatedProducts = $response['products']['items'][0]['related_products'];
+        self::assertCount(0, $relatedProducts);
+    }
+
+    /**
      * @magentoApiDataFixture Magento/Catalog/_files/products_crosssell.php
      */
     public function testQueryCrossSellProducts()
