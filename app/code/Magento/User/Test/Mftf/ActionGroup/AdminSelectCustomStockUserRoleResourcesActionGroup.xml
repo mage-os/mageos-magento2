@@ -11,7 +11,7 @@
         <annotations>
             <description>Goes to the Backend Custom User role page. Selecting required elements on roles resource page.</description>
         </annotations>
-        <scrollTo selector="{{AdminEditRoleInfoSection.checkboxByRole('Magento_User::acl_anchor')}}" stepKey="scrollToTwoFactor"/>
+        <scrollTo selector="{{AdminEditRoleInfoSection.checkboxByRole('Magento_User::acl_users')}}" stepKey="scrollToTwoFactor"/>
         <waitForElementClickable selector="{{AdminEditRoleInfoSection.checkboxByRole('Magento_TwoFactorAuth::tfa')}}" stepKey="waitForTwoFactorToBeClickable"/>
         <click stepKey="clickTFACheckbox" selector="{{AdminEditRoleInfoSection.checkboxByRole('Magento_TwoFactorAuth::tfa')}}"/>
         <scrollTo selector="{{AdminEditRoleResourcesSection.inventoryCheckbox}}" stepKey="scrollToInventoryCheckBox"/>
