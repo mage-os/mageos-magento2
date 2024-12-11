@@ -16,7 +16,7 @@
             <features value="Shipping"/>
             <severity value="MINOR"/>
             <group value="3rd_party_integration"/>
-            <!--            <group value="pr_exclude"/>-->
+            <group value="pr_exclude"/>
         </annotations>
         <before>
             <!--Login as Admin-->
