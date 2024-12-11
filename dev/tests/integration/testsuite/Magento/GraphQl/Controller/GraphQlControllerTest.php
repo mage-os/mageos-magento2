@@ -264,26 +264,65 @@ QUERY;
         }
     }
 
-    public function testDispatchWithOptions(): void
+    public function testDispatchOptions(): void
     {
         $this->request->setPathInfo('/graphql');
         $this->request->setMethod('OPTIONS');
         $response = $this->graphql->dispatch($this->request);
-        self::assertEquals(204, $response->getStatusCode());
+        self::assertEquals(200, $response->getStatusCode());
         self::assertEmpty($response->getContent());
     }
 
-    public function testDispatchWithGetWithoutQuery(): void
+    public function testDispatchGetWithoutQuery(): void
     {
         $this->request->setPathInfo('/graphql');
         $this->request->setMethod('GET');
         $response = $this->graphql->dispatch($this->request);
         self::assertEquals(400, $response->getStatusCode());
         $output = $this->jsonSerializer->unserialize($response->getContent());
+        self::assertArrayHasKey('errors', $output);
         self::assertNotEmpty($output['errors']);
+        self::assertArrayHasKey('message', $output['errors'][0]);
+        self::assertStringStartsWith('Syntax Error:', $output['errors'][0]['message']);
     }
 
-    public function testDispatchWithPostAndWrongContentType(): void
+    public function testDispatchGetWithInvalidQuery(): void
+    {
+        $query = <<<QUERY
+{
+    products(filter: {sku: {eq: "simple1"}
+}
+QUERY;
+
+        $this->request->setPathInfo('/graphql');
+        $this->request->setMethod('GET');
+        $this->request->setQueryValue('query', $query);
+        $response = $this->graphql->dispatch($this->request);
+        self::assertEquals(400, $response->getStatusCode());
+        $output = $this->jsonSerializer->unserialize($response->getContent());
+        self::assertArrayHasKey('errors', $output);
+        self::assertNotEmpty($output['errors']);
+        self::assertArrayHasKey('message', $output['errors'][0]);
+        self::assertStringStartsWith('Syntax Error:', $output['errors'][0]['message']);
+    }
+
+    public function testDispatchPostWithoutQuery(): void
+    {
+        $this->request->setPathInfo('/graphql');
+        $this->request->setMethod('POST');
+        $headers = $this->objectManager->create(\Laminas\Http\Headers::class)
+            ->addHeaders(['Content-Type' => 'application/json']);
+        $this->request->setHeaders($headers);
+        $response = $this->graphql->dispatch($this->request);
+        self::assertEquals(400, $response->getStatusCode());
+        $output = $this->jsonSerializer->unserialize($response->getContent());
+        self::assertArrayHasKey('errors', $output);
+        self::assertNotEmpty($output['errors']);
+        self::assertArrayHasKey('message', $output['errors'][0]);
+        self::assertStringStartsWith('Syntax Error:', $output['errors'][0]['message']);
+    }
+
+    public function testDispatchPostWithInvalidJson(): void
     {
         $query = <<<QUERY
 {
@@ -296,11 +335,37 @@ QUERY;
     }
 }
 QUERY;
-        $postData = [
-            'query' => $query,
-            'variables' => null,
-            'operationName' => null
-        ];
+        $postData = ['query' => $query];
+
+        $this->request->setPathInfo('/graphql');
+        $this->request->setMethod('POST');
+        $this->request->setContent(http_build_query($postData));
+        $headers = $this->objectManager->create(\Laminas\Http\Headers::class)
+            ->addHeaders(['Content-Type' => 'application/json']);
+        $this->request->setHeaders($headers);
+        $response = $this->graphql->dispatch($this->request);
+        self::assertEquals(400, $response->getStatusCode());
+        $output = $this->jsonSerializer->unserialize($response->getContent());
+        self::assertArrayHasKey('errors', $output);
+        self::assertNotEmpty($output['errors']);
+        self::assertArrayHasKey('message', $output['errors'][0]);
+        self::assertEquals('Unable to parse the request.', $output['errors'][0]['message']);
+    }
+
+    public function testDispatchPostWithWrongContentType(): void
+    {
+        $query = <<<QUERY
+{
+    products(filter: {sku: {eq: "simple1"}}) {
+        items {
+            id
+            name
+            sku
+        }
+    }
+}
+QUERY;
+        $postData = ['query' => $query];
 
         $this->request->setPathInfo('/graphql');
         $this->request->setMethod('POST');
@@ -308,6 +373,9 @@ QUERY;
         $response = $this->graphql->dispatch($this->request);
         self::assertEquals(400, $response->getStatusCode());
         $output = $this->jsonSerializer->unserialize($response->getContent());
+        self::assertArrayHasKey('errors', $output);
         self::assertNotEmpty($output['errors']);
+        self::assertArrayHasKey('message', $output['errors'][0]);
+        self::assertEquals('Request content type must be application/json', $output['errors'][0]['message']);
     }
 }

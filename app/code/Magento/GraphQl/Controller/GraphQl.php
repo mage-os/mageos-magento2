@@ -182,14 +182,17 @@ class GraphQl implements FrontControllerInterface
     {
         $this->areaList->getArea(Area::AREA_GRAPHQL)->load(Area::PART_TRANSLATE);
 
-        $statusCode = 204;
+        $statusCode = 200;
         $jsonResult = $this->jsonFactory->create();
-        $data = $this->getDataFromRequest($request);
+        $data = [];
         $result = null;
-
         $schema = null;
-        $query = $data['query'] ?? '';
+        $query = '';
+
         try {
+            $data = $this->getDataFromRequest($request);
+            $query = $data['query'] ?? '';
+
             /** @var Http $request */
             $this->requestProcessor->validateRequest($request);
             if ($request->isGet() || $request->isPost()) {
@@ -207,7 +210,6 @@ class GraphQl implements FrontControllerInterface
                     $this->contextFactory->create(),
                     $data['variables'] ?? []
                 );
-                $statusCode = 200;
             }
         } catch (SyntaxError|GraphQlInputException $error) {
             $result = [
@@ -241,20 +243,25 @@ class GraphQl implements FrontControllerInterface
      *
      * @param RequestInterface $request
      * @return array
+     * @throws GraphQlInputException
      */
     private function getDataFromRequest(RequestInterface $request): array
     {
-        /** @var Http $request */
-        if ($request->isPost()) {
-            $data = $request->getContent() ? $this->jsonSerializer->unserialize($request->getContent()) : [];
-        } elseif ($request->isGet()) {
-            $data = $request->getParams();
-            $data['variables'] = isset($data['variables']) ?
-                $this->jsonSerializer->unserialize($data['variables']) : null;
-            $data['variables'] = is_array($data['variables']) ?
-                $data['variables'] : null;
-        } else {
-            return [];
+        try {
+            /** @var Http $request */
+            if ($request->isPost()) {
+                $data = $request->getContent() ? $this->jsonSerializer->unserialize($request->getContent()) : [];
+            } elseif ($request->isGet()) {
+                $data = $request->getParams();
+                $data['variables'] = isset($data['variables']) ?
+                    $this->jsonSerializer->unserialize($data['variables']) : null;
+                $data['variables'] = is_array($data['variables']) ?
+                    $data['variables'] : null;
+            } else {
+                $data = [];
+            }
+        } catch (\InvalidArgumentException $e) {
+            throw new GraphQlInputException(__('Unable to parse the request.'), $e);
         }
 
         return $data;
