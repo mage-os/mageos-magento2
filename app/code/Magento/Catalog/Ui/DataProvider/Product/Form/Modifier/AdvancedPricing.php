@@ -129,7 +129,7 @@ class AdvancedPricing extends AbstractModifier
         Data $directoryHelper,
         ArrayManager $arrayManager,
         $scopeName = '',
-        GroupSourceInterface $customerGroupSource = null,
+        ?GroupSourceInterface $customerGroupSource = null,
         ?CurrencySymbolProvider $currencySymbolProvider = null
     ) {
         $this->locator = $locator;

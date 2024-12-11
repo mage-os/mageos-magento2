@@ -75,7 +75,7 @@ class Attributes extends Form implements TabInterface
         ProductFactory $productFactory,
         Attribute $attributeAction,
         array $data = [],
-        array $excludeFields = null,
+        ?array $excludeFields = null,
         ?SecureHtmlRenderer $secureRenderer = null
     ) {
         $this->_attributeAction = $attributeAction;
