@@ -46,9 +46,9 @@ class DataProvider extends \Magento\Framework\View\Element\UiComponent\DataProvi
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
-        $name,
-        $primaryFieldName,
-        $requestFieldName,
+        string $name,
+        string $primaryFieldName,
+        string $requestFieldName,
         ReportingInterface $reporting,
         SearchCriteriaBuilder $searchCriteriaBuilder,
         RequestInterface $request,
