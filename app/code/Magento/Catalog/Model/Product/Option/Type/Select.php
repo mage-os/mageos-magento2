@@ -70,6 +70,7 @@ class Select extends \Magento\Catalog\Model\Product\Option\Type\DefaultType
      * @param array $values All product option values, i.e. array (option_id => mixed, option_id => mixed...)
      * @return $this
      * @throws LocalizedException
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function validateUserValue($values)
     {
