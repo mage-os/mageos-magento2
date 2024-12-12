@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "99392d361996e2dbcfe9acdd09559a75",
+    "content-hash": "a150aac3dbc3ae29d6a67a2c1667e5ee",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -4712,16 +4712,16 @@
         },
         {
             "name": "magento/zend-db",
-            "version": "1.16.1",
+            "version": "dev-php84_deprication_fix",
             "source": {
                 "type": "git",
-                "url": "https://github.com/magento/magento-zend-db.git",
-                "reference": "475addb06c0a417b2fd18effe5966bd3aa929b7b"
+                "url": "git@github.com:magento-gl/magento-zend-db.git",
+                "reference": "fb960c593d7e8fb09f655b819334acd12be357e2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento/magento-zend-db/zipball/475addb06c0a417b2fd18effe5966bd3aa929b7b",
-                "reference": "475addb06c0a417b2fd18effe5966bd3aa929b7b",
+                "url": "https://api.github.com/repos/magento-gl/magento-zend-db/zipball/fb960c593d7e8fb09f655b819334acd12be357e2",
+                "reference": "fb960c593d7e8fb09f655b819334acd12be357e2",
                 "shasum": ""
             },
             "require": {
@@ -4744,23 +4744,21 @@
                     "Zend_Db": "library/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
             "description": "Zend Framework 1 Db package",
             "homepage": "http://framework.zend.com/",
             "keywords": [
-                "ZF1",
                 "db",
                 "framework",
-                "zend"
+                "zend",
+                "zf1"
             ],
             "support": {
-                "issues": "https://github.com/magento/magento-zend-db/issues",
-                "source": "https://github.com/magento/magento-zend-db/tree/1.16.1"
+                "source": "https://github.com/magento-gl/magento-zend-db/tree/php84_deprication_fix"
             },
-            "time": "2023-08-25T13:52:30+00:00"
+            "time": "2024-12-12T12:27:49+00:00"
         },
         {
             "name": "magento/zend-exception",
@@ -14752,7 +14750,8 @@
         "laminas/laminas-oauth": 20,
         "magento/composer": 20,
         "magento/magento-coding-standard": 20,
-        "magento/magento2-functional-testing-framework": 20
+        "magento/magento2-functional-testing-framework": 20,
+        "magento/zend-db": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
