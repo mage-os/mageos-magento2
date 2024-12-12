@@ -8,6 +8,7 @@ namespace Magento\Theme\Ui\Component\Design\Config;
 use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\Api\Search\ReportingInterface;
 use Magento\Framework\Api\Search\SearchCriteriaBuilder;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Store\Model\StoreManagerInterface;
@@ -40,9 +41,9 @@ class DataProvider extends \Magento\Framework\View\Element\UiComponent\DataProvi
      * @param RequestInterface $request
      * @param FilterBuilder $filterBuilder
      * @param StoreManagerInterface $storeManager
-     * @param ResourceConnection $resourceConnection
      * @param array $meta
      * @param array $data
+     * @param ResourceConnection|null $resourceConnection
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -54,9 +55,9 @@ class DataProvider extends \Magento\Framework\View\Element\UiComponent\DataProvi
         RequestInterface $request,
         FilterBuilder $filterBuilder,
         StoreManagerInterface $storeManager,
-        ResourceConnection $resourceConnection,
         array $meta = [],
-        array $data = []
+        array $data = [],
+        ResourceConnection $resourceConnection = null
     ) {
         parent::__construct(
             $name,
@@ -70,7 +71,7 @@ class DataProvider extends \Magento\Framework\View\Element\UiComponent\DataProvi
             $data
         );
         $this->storeManager = $storeManager;
-        $this->resourceConnection = $resourceConnection;
+        $this->resourceConnection = $resourceConnection ?: ObjectManager::getInstance()->get(ResourceConnection::class);
     }
 
     /**
