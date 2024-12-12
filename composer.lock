@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "658a5940acef2dea2618e6a5c1de2fb6",
+    "content-hash": "99392d361996e2dbcfe9acdd09559a75",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -1713,16 +1713,16 @@
         },
         {
             "name": "laminas/laminas-captcha",
-            "version": "dev-php8.4_support",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
-                "url": "https://github.com/cod43156/laminas-captcha.git",
-                "reference": "bbb4cc005c1a3c3e1c11d9167fc9a45796de9161"
+                "url": "git@github.com:magento-commerce/laminas-captcha.git",
+                "reference": "12e67f1d971aa75cb8acd756f5fec0c7445db8d7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cod43156/laminas-captcha/zipball/bbb4cc005c1a3c3e1c11d9167fc9a45796de9161",
-                "reference": "bbb4cc005c1a3c3e1c11d9167fc9a45796de9161",
+                "url": "https://api.github.com/repos/magento-commerce/laminas-captcha/zipball/12e67f1d971aa75cb8acd756f5fec0c7445db8d7",
+                "reference": "12e67f1d971aa75cb8acd756f5fec0c7445db8d7",
                 "shasum": ""
             },
             "require": {
@@ -1746,6 +1746,7 @@
             "suggest": {
                 "laminas/laminas-i18n-resources": "Translations of captcha messages"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1792,7 +1793,7 @@
                 "chat": "https://laminas.dev/chat",
                 "forum": "https://discourse.laminas.dev"
             },
-            "time": "2024-10-14T09:25:16+00:00"
+            "time": "2024-12-11T11:52:38+00:00"
         },
         {
             "name": "laminas/laminas-code",
@@ -1928,16 +1929,16 @@
         },
         {
             "name": "laminas/laminas-crypt",
-            "version": "dev-php8.4_support",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
-                "url": "https://github.com/glo71317/laminas-crypt.git",
-                "reference": "c5e2ebc5e76bf3868f0d105da0f2facd800db83e"
+                "url": "git@github.com:magento-commerce/laminas-crypt.git",
+                "reference": "c4657a2fc3445ea20179ab4bf5cbdb4465dd031b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/glo71317/laminas-crypt/zipball/c5e2ebc5e76bf3868f0d105da0f2facd800db83e",
-                "reference": "c5e2ebc5e76bf3868f0d105da0f2facd800db83e",
+                "url": "https://api.github.com/repos/magento-commerce/laminas-crypt/zipball/c4657a2fc3445ea20179ab4bf5cbdb4465dd031b",
+                "reference": "c4657a2fc3445ea20179ab4bf5cbdb4465dd031b",
                 "shasum": ""
             },
             "require": {
@@ -1957,6 +1958,7 @@
             "suggest": {
                 "ext-openssl": "Required for most features of Laminas\\Crypt"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -2007,20 +2009,20 @@
                 "forum": "https://discourse.laminas.dev"
             },
             "abandoned": true,
-            "time": "2024-12-10T09:57:58+00:00"
+            "time": "2024-12-11T12:07:45+00:00"
         },
         {
             "name": "laminas/laminas-db",
-            "version": "dev-php8.4_support",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
-                "url": "https://github.com/cod43156/laminas-db.git",
-                "reference": "6f0b590922e52bd3a531dc25ce4583c6f0bbd476"
+                "url": "git@github.com:magento-commerce/laminas-db.git",
+                "reference": "33711b48bfc5790bcdef1aa868b387217235945a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cod43156/laminas-db/zipball/6f0b590922e52bd3a531dc25ce4583c6f0bbd476",
-                "reference": "6f0b590922e52bd3a531dc25ce4583c6f0bbd476",
+                "url": "https://api.github.com/repos/magento-commerce/laminas-db/zipball/33711b48bfc5790bcdef1aa868b387217235945a",
+                "reference": "33711b48bfc5790bcdef1aa868b387217235945a",
                 "shasum": ""
             },
             "require": {
@@ -2042,6 +2044,7 @@
                 "laminas/laminas-hydrator": "(^3.2 || ^4.3) Laminas\\Hydrator component for using HydratingResultSets",
                 "laminas/laminas-servicemanager": "Laminas\\ServiceManager component"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laminas": {
@@ -2059,6 +2062,11 @@
                     "LaminasTest\\Db\\": "test/unit/",
                     "LaminasIntegrationTest\\Db\\": "test/integration/"
                 }
+            },
+            "archive": {
+                "exclude": [
+                    "/.github/.metadata.json"
+                ]
             },
             "scripts": {
                 "check": [
@@ -2101,20 +2109,20 @@
                 "chat": "https://laminas.dev/chat",
                 "forum": "https://discourse.laminas.dev"
             },
-            "time": "2024-10-24T06:56:54+00:00"
+            "time": "2024-12-11T17:08:49+00:00"
         },
         {
             "name": "laminas/laminas-di",
-            "version": "dev-renovate/all-minor-patch",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
-                "url": "https://github.com/laminas/laminas-di.git",
-                "reference": "ada2d60d0448c9ea9909d5938463fd71a865a028"
+                "url": "git@github.com:magento-commerce/laminas-di.git",
+                "reference": "b6baf7d4e06d08e0c1351537b62fb657f7aee27d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-di/zipball/ada2d60d0448c9ea9909d5938463fd71a865a028",
-                "reference": "ada2d60d0448c9ea9909d5938463fd71a865a028",
+                "url": "https://api.github.com/repos/magento-commerce/laminas-di/zipball/b6baf7d4e06d08e0c1351537b62fb657f7aee27d",
+                "reference": "b6baf7d4e06d08e0c1351537b62fb657f7aee27d",
                 "shasum": ""
             },
             "require": {
@@ -2134,13 +2142,14 @@
                 "mikey179/vfsstream": "^1.6.11@alpha",
                 "phpbench/phpbench": "^1.2.7",
                 "phpunit/phpunit": "^9.5.26",
-                "psalm/plugin-phpunit": "^0.19.0",
+                "psalm/plugin-phpunit": "^0.18.0",
                 "squizlabs/php_codesniffer": "^3.7.1",
                 "vimeo/psalm": "^5.0"
             },
             "suggest": {
                 "laminas/laminas-servicemanager": "An IoC container without auto wiring capabilities"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laminas": {
@@ -2201,13 +2210,7 @@
                 "chat": "https://laminas.dev/chat",
                 "forum": "https://discourse.laminas.dev"
             },
-            "funding": [
-                {
-                    "type": "community_bridge",
-                    "url": "https://funding.communitybridge.org/projects/laminas-project"
-                }
-            ],
-            "time": "2024-11-25T18:33:43+00:00"
+            "time": "2024-12-11T11:57:02+00:00"
         },
         {
             "name": "laminas/laminas-escaper",
@@ -2421,16 +2424,16 @@
         },
         {
             "name": "laminas/laminas-file",
-            "version": "dev-php8.4_support",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
-                "url": "https://github.com/cod43156/laminas-file.git",
-                "reference": "9b68801c3c50648570d1a1aeafd4d7e163c3b63f"
+                "url": "git@github.com:magento-commerce/laminas-file.git",
+                "reference": "8d3f9a04c58d4082a96e90de4d46a3a67e604609"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cod43156/laminas-file/zipball/9b68801c3c50648570d1a1aeafd4d7e163c3b63f",
-                "reference": "9b68801c3c50648570d1a1aeafd4d7e163c3b63f",
+                "url": "https://api.github.com/repos/magento-commerce/laminas-file/zipball/8d3f9a04c58d4082a96e90de4d46a3a67e604609",
+                "reference": "8d3f9a04c58d4082a96e90de4d46a3a67e604609",
                 "shasum": ""
             },
             "require": {
@@ -2441,20 +2444,21 @@
                 "zendframework/zend-file": "*"
             },
             "require-dev": {
-                "laminas/laminas-coding-standard": "^3.0",
-                "laminas/laminas-filter": "^2.39",
-                "laminas/laminas-i18n": "^2.29",
+                "laminas/laminas-coding-standard": "~1.0.0",
+                "laminas/laminas-filter": "^2.23.2",
+                "laminas/laminas-i18n": "^2.7.4",
                 "laminas/laminas-progressbar": "^2.5.2",
                 "laminas/laminas-servicemanager": "^2.7.8 || ^3.3",
-                "laminas/laminas-session": "^2.22",
+                "laminas/laminas-session": "^2.8",
                 "laminas/laminas-validator": "^2.10.1",
-                "phpunit/phpunit": "^10.5"
+                "phpunit/phpunit": "^9.5.10"
             },
             "suggest": {
                 "laminas/laminas-filter": "Laminas\\Filter component",
                 "laminas/laminas-i18n": "Laminas\\I18n component",
                 "laminas/laminas-validator": "Laminas\\Validator component"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -2507,7 +2511,7 @@
                 "chat": "https://laminas.dev/chat",
                 "forum": "https://discourse.laminas.dev"
             },
-            "time": "2024-11-19T09:30:04+00:00"
+            "time": "2024-12-12T09:30:41+00:00"
         },
         {
             "name": "laminas/laminas-filter",
@@ -2860,22 +2864,22 @@
         },
         {
             "name": "laminas/laminas-mail",
-            "version": "dev-php8.4_support",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
-                "url": "https://github.com/glo71317/laminas-mail.git",
-                "reference": "84675398f7a996abdfc1a0d2240189244fe74c9f"
+                "url": "git@github.com:magento-commerce/laminas-mail.git",
+                "reference": "01bb6a7b3e232d326e0211c6f37ee3f350ca2d51"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/glo71317/laminas-mail/zipball/84675398f7a996abdfc1a0d2240189244fe74c9f",
-                "reference": "84675398f7a996abdfc1a0d2240189244fe74c9f",
+                "url": "https://api.github.com/repos/magento-commerce/laminas-mail/zipball/01bb6a7b3e232d326e0211c6f37ee3f350ca2d51",
+                "reference": "01bb6a7b3e232d326e0211c6f37ee3f350ca2d51",
                 "shasum": ""
             },
             "require": {
                 "ext-iconv": "*",
                 "laminas/laminas-loader": "^2.9.0",
-                "laminas/laminas-mime": "dev-php8.4_support",
+                "laminas/laminas-mime": "dev-develop",
                 "laminas/laminas-stdlib": "^3.17.0",
                 "laminas/laminas-validator": "^2.31.0",
                 "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0",
@@ -2895,6 +2899,7 @@
             "suggest": {
                 "laminas/laminas-servicemanager": "^3.21 when using SMTP to deliver messages"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laminas": {
@@ -2952,7 +2957,7 @@
                 "rss": "https://github.com/laminas/laminas-mail/releases.atom"
             },
             "abandoned": "symfony/mailer",
-            "time": "2024-12-05T10:56:15+00:00"
+            "time": "2024-12-12T09:16:40+00:00"
         },
         {
             "name": "laminas/laminas-math",
@@ -3024,16 +3029,16 @@
         },
         {
             "name": "laminas/laminas-mime",
-            "version": "dev-php8.4_support",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
-                "url": "https://github.com/glo71317/laminas-mime.git",
-                "reference": "0fe56bb257e11fdfe2fca298ec360646b1ff0815"
+                "url": "git@github.com:magento-commerce/laminas-mime.git",
+                "reference": "bbec82c38b6654255e0b7a658f9ab640743b93d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/glo71317/laminas-mime/zipball/0fe56bb257e11fdfe2fca298ec360646b1ff0815",
-                "reference": "0fe56bb257e11fdfe2fca298ec360646b1ff0815",
+                "url": "https://api.github.com/repos/magento-commerce/laminas-mime/zipball/bbec82c38b6654255e0b7a658f9ab640743b93d9",
+                "reference": "bbec82c38b6654255e0b7a658f9ab640743b93d9",
                 "shasum": ""
             },
             "require": {
@@ -3051,6 +3056,7 @@
             "suggest": {
                 "laminas/laminas-mail": "Laminas\\Mail component"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -3101,7 +3107,7 @@
                 "forum": "https://discourse.laminas.dev"
             },
             "abandoned": "symfony/mime",
-            "time": "2024-12-03T07:32:25+00:00"
+            "time": "2024-12-11T12:04:38+00:00"
         },
         {
             "name": "laminas/laminas-modulemanager",
@@ -3257,21 +3263,21 @@
         },
         {
             "name": "laminas/laminas-oauth",
-            "version": "dev-backward-compatibilty",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
-                "url": "https://github.com/glo71317/laminas-oauth.git",
-                "reference": "73d0141b0068dd5c7375ee1f7a22acf4522d2faf"
+                "url": "git@github.com:magento-commerce/laminas-oauth.git",
+                "reference": "0f2925e1d89026005cb6ab1175df1cec1e370c78"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/glo71317/laminas-oauth/zipball/73d0141b0068dd5c7375ee1f7a22acf4522d2faf",
-                "reference": "73d0141b0068dd5c7375ee1f7a22acf4522d2faf",
+                "url": "https://api.github.com/repos/magento-commerce/laminas-oauth/zipball/0f2925e1d89026005cb6ab1175df1cec1e370c78",
+                "reference": "0f2925e1d89026005cb6ab1175df1cec1e370c78",
                 "shasum": ""
             },
             "require": {
                 "laminas/laminas-config": "^3.7",
-                "laminas/laminas-crypt": "dev-php8.4_support",
+                "laminas/laminas-crypt": "dev-develop",
                 "laminas/laminas-http": "^2.15",
                 "laminas/laminas-i18n": "^2.13.0",
                 "laminas/laminas-loader": "^2.8",
@@ -3287,6 +3293,7 @@
                 "laminas/laminas-coding-standard": "~2.5.0",
                 "phpunit/phpunit": "^9.6.20"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -3320,7 +3327,7 @@
                 "forum": "https://discourse.laminas.dev"
             },
             "abandoned": true,
-            "time": "2024-12-10T10:02:46+00:00"
+            "time": "2024-12-12T09:20:15+00:00"
         },
         {
             "name": "laminas/laminas-permissions-acl",
@@ -10040,16 +10047,16 @@
         },
         {
             "name": "allure-framework/allure-phpunit",
-            "version": "dev-php8.4_support",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
-                "url": "https://github.com/glo71317/allure-phpunit.git",
-                "reference": "b75785e87027dc857d837384afa20cb506195fd1"
+                "url": "git@github.com:magento-commerce/allure-phpunit.git",
+                "reference": "2ba454e587f6854bc707f0b03927bae0d823c873"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/glo71317/allure-phpunit/zipball/b75785e87027dc857d837384afa20cb506195fd1",
-                "reference": "b75785e87027dc857d837384afa20cb506195fd1",
+                "url": "https://api.github.com/repos/magento-commerce/allure-phpunit/zipball/2ba454e587f6854bc707f0b03927bae0d823c873",
+                "reference": "2ba454e587f6854bc707f0b03927bae0d823c873",
                 "shasum": ""
             },
             "require": {
@@ -10067,6 +10074,7 @@
                 "squizlabs/php_codesniffer": "^3.7.2",
                 "vimeo/psalm": "^5.15"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -10171,9 +10179,10 @@
             ],
             "support": {
                 "email": "allure@qameta.io",
-                "source": "https://github.com/allure-framework/allure-phpunit"
+                "source": "https://github.com/allure-framework/allure-phpunit",
+                "issues": "https://github.com/magento-commerce/allure-phpunit/issues"
             },
-            "time": "2024-12-03T07:19:01+00:00"
+            "time": "2024-12-11T12:17:39+00:00"
         },
         {
             "name": "behat/gherkin",
