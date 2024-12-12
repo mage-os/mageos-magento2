@@ -85,8 +85,9 @@ define([
                 uiRegistry.async(formPath + '.' + field)(self.doElementBinding.bind(self));
             });
             let regionId = uiRegistry.async(formPath + '.region_id');
-
-            this.bindHandler(regionId(), self.validateDelay);
+            if (regionId() !== undefined) {
+                this.bindHandler(regionId(), self.validateDelay);
+            }
         },
 
         /**
