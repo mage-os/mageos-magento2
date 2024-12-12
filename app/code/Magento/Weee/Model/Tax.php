@@ -116,7 +116,7 @@ class Tax extends \Magento\Framework\Model\AbstractModel
         \Magento\Weee\Model\ResourceModel\Tax $resource,
         \Magento\Weee\Model\Config $weeeConfig,
         PriceCurrencyInterface $priceCurrency,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        ?\Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         $this->_attributeFactory = $attributeFactory;
