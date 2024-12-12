@@ -57,8 +57,8 @@ class CancelOrder implements ResolverInterface
         Field $field,
         $context,
         ResolveInfo $info,
-        array $value = null,
-        array $args = null
+        ?array $value = null,
+        ?array $args = null
     ) {
         $this->validateRequest->execute($context, $args['input'] ?? []);
 
