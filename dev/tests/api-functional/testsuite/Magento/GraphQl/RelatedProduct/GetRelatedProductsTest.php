@@ -52,11 +52,11 @@ QUERY;
 
     /**
      * @magentoApiDataFixture Magento/Catalog/_files/products_related_disabled.php
-     * @magentoConfigFixture current_store cataloginventory/options/show_out_of_stock 1
-     * @magentoConfigFixture current_store catalog/magento_catalogpermissions/enabled 1
-     * @magentoConfigFixture current_store catalog/magento_catalogpermissions/grant_catalog_category_view 1
-     * @magentoConfigFixture current_store catalog/magento_catalogpermissions/grant_catalog_product_price 1
-     * @magentoConfigFixture current_store catalog/magento_catalogpermissions/grant_checkout_items 1
+     * @magentoConfigFixture default_store cataloginventory/options/show_out_of_stock 1
+     * @magentoConfigFixture default_store catalog/magento_catalogpermissions/enabled 1
+     * @magentoConfigFixture default_store catalog/magento_catalogpermissions/grant_catalog_category_view 1
+     * @magentoConfigFixture default_store catalog/magento_catalogpermissions/grant_catalog_product_price 1
+     * @magentoConfigFixture default_store catalog/magento_catalogpermissions/grant_checkout_items 1
      */
     public function testQueryDisableRelatedProductWithShowOutOfStock()
     {
