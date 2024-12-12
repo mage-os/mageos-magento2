@@ -49,22 +49,22 @@ class Book extends \Magento\Framework\View\Element\Template
 
     /**
      * @param \Magento\Framework\View\Element\Template\Context $context
-     * @param CustomerRepositoryInterface|null $customerRepository
      * @param AddressRepositoryInterface $addressRepository
      * @param \Magento\Customer\Helper\Session\CurrentCustomer $currentCustomer
      * @param \Magento\Customer\Model\Address\Config $addressConfig
      * @param Mapper $addressMapper
+     * @param \Magento\Customer\Api\CustomerRepositoryInterface|null $customerRepository
      * @param array $data
      * @param AddressesGrid|null $addressesGrid
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
-        ?\Magento\Customer\Api\CustomerRepositoryInterface $customerRepository = null,
         AddressRepositoryInterface $addressRepository,
         \Magento\Customer\Helper\Session\CurrentCustomer $currentCustomer,
         \Magento\Customer\Model\Address\Config $addressConfig,
         Mapper $addressMapper,
+        ?\Magento\Customer\Api\CustomerRepositoryInterface $customerRepository = null,
         array $data = [],
         ?Grid $addressesGrid = null
     ) {
