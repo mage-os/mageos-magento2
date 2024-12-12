@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2024 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Catalog\Model\Product\Option\Type;
@@ -90,7 +90,11 @@ class Select extends \Magento\Catalog\Model\Product\Option\Type\DefaultType
             }
         } else {
             if (!$this->_isSingleSelection()) {
-                $value = is_string($value) ? explode(',', $value) : [$value];
+                if (is_string($value)) {
+                    $value = explode(',', $value);
+                } else if (!is_array($value)) {
+                    $value = [$value];
+                }
                 $valuesCollection = $option->getOptionValuesByOptionId($value, $this->getProduct()->getStoreId());
                 $valueCount = is_array($value) ? count($value) : 0;
                 if ($valuesCollection->count() != $valueCount) {
