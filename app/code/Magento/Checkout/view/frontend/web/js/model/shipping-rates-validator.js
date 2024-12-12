@@ -84,6 +84,8 @@ define([
             $.each(elements, function (index, field) {
                 uiRegistry.async(formPath + '.' + field)(self.doElementBinding.bind(self));
             });
+            let regionId = uiRegistry.async(formPath + '.region_id');
+            this.bindHandler(regionId(), self.validateDelay);
         },
 
         /**
@@ -199,7 +201,7 @@ define([
                 address;
 
             if (this.validateAddressData(addressFlat)) {
-                addressFlat = uiRegistry.get('checkoutProvider').shippingAddress;
+                addressFlat = uiRegistry.get('checkoutProvider').shippingAddress; // this is how the triggering is performed. Need to trigger this when selecting region
                 address = addressConverter.formAddressDataToQuoteAddress(addressFlat);
                 selectShippingAddress(address);
             } else {
