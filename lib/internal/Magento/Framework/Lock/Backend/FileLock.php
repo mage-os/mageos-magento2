@@ -106,7 +106,7 @@ class FileLock implements LockManagerInterface
     }
 
     /**
-     * Find lock files that haven't been touched in the last 24 hours and are unlocked, and delete those
+     * Find lock files that haven't been touched in the last 24 hours, are 0 bytes and are unlocked, then delete those
      */
     public function cleanupOldLocks(): int
     {
@@ -125,6 +125,11 @@ class FileLock implements LockManagerInterface
 
             $modifiedTimestamp = filemtime($lockFile);
             if ($timestamp24HoursAgo < $modifiedTimestamp) {
+                continue;
+            }
+
+            $filesize = filesize($lockFile);
+            if ($filesize !== 0) {
                 continue;
             }
 
