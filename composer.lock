@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a150aac3dbc3ae29d6a67a2c1667e5ee",
+    "content-hash": "2d16c482269c148664506e61cff5b7bb",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -4966,16 +4966,16 @@
         },
         {
             "name": "magento/zend-pdf",
-            "version": "1.16.3",
+            "version": "dev-php84_deprication_fix",
             "source": {
                 "type": "git",
-                "url": "https://github.com/magento/magento-zend-pdf.git",
-                "reference": "4426cdf87d10ad9a45e21da1468665a97d01ef79"
+                "url": "git@github.com:magento-gl/magento-zend-pdf.git",
+                "reference": "6619d96a83732d85ea63fd5d6879f9fdaa15d330"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento/magento-zend-pdf/zipball/4426cdf87d10ad9a45e21da1468665a97d01ef79",
-                "reference": "4426cdf87d10ad9a45e21da1468665a97d01ef79",
+                "url": "https://api.github.com/repos/magento-gl/magento-zend-pdf/zipball/6619d96a83732d85ea63fd5d6879f9fdaa15d330",
+                "reference": "6619d96a83732d85ea63fd5d6879f9fdaa15d330",
                 "shasum": ""
             },
             "require": {
@@ -5003,23 +5003,21 @@
                     "Zend_Pdf": "library/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
             "description": "Zend Framework 1 Pdf package",
             "homepage": "http://framework.zend.com/",
             "keywords": [
-                "ZF1",
                 "framework",
                 "pdf",
-                "zend"
+                "zend",
+                "zf1"
             ],
             "support": {
-                "issues": "https://github.com/magento/magento-zend-pdf/issues",
-                "source": "https://github.com/magento/magento-zend-pdf/tree/1.16.3"
+                "source": "https://github.com/magento-gl/magento-zend-pdf/tree/php84_deprication_fix"
             },
-            "time": "2023-08-25T12:52:21+00:00"
+            "time": "2024-12-12T13:17:43+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -14751,7 +14749,8 @@
         "magento/composer": 20,
         "magento/magento-coding-standard": 20,
         "magento/magento2-functional-testing-framework": 20,
-        "magento/zend-db": 20
+        "magento/zend-db": 20,
+        "magento/zend-pdf": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
