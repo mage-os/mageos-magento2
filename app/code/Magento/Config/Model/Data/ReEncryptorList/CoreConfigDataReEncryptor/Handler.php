@@ -11,6 +11,7 @@ use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\EncryptionKey\Model\Data\ReEncryptorList\ReEncryptor\HandlerInterface;
 use Magento\EncryptionKey\Model\Data\ReEncryptorList\ReEncryptor\Handler\ErrorFactory;
+use Magento\Framework\DB\Query\Generator;
 
 /**
  * Handler for core configuration re-encryption.
@@ -30,7 +31,12 @@ class Handler implements HandlerInterface
     /**
      * @var int
      */
-    private const QUERY_SIZE = 1000;
+    private const BATCH_SIZE = 1000;
+
+    /**
+     * @var string
+     */
+    private const IDENTIFIER = "config_id";
 
     /**
      * @var EncryptorInterface
@@ -48,18 +54,26 @@ class Handler implements HandlerInterface
     private ErrorFactory $errorFactory;
 
     /**
+     * @var Generator
+     */
+    private Generator $queryGenerator;
+
+    /**
      * @param EncryptorInterface $encryptor
      * @param ResourceConnection $resourceConnection
      * @param ErrorFactory $errorFactory
+     * @param Generator $queryGenerator
      */
     public function __construct(
         EncryptorInterface $encryptor,
         ResourceConnection $resourceConnection,
-        ErrorFactory $errorFactory
+        ErrorFactory $errorFactory,
+        Generator $queryGenerator
     ) {
         $this->encryptor = $encryptor;
         $this->resourceConnection = $resourceConnection;
         $this->errorFactory = $errorFactory;
+        $this->queryGenerator = $queryGenerator;
     }
 
     /**
@@ -77,24 +91,31 @@ class Handler implements HandlerInterface
             ->from($tableName, ['config_id', 'value'])
             ->where('value != ?', '')
             ->where('value IS NOT NULL')
-            ->where('value REGEXP ?', self::PATTERN)
-            ->limit(self::QUERY_SIZE);
+            ->where('value REGEXP ?', self::PATTERN);
 
-        foreach ($connection->fetchPairs($select) as $configId => $value) {
-            try {
-                $connection->update(
-                    $tableName,
-                    ['value' => $this->encryptor->encrypt($this->encryptor->decrypt($value))],
-                    ['config_id = ?' => (int)$configId]
-                );
-            } catch (\Throwable $e) {
-                $errors[] = $this->errorFactory->create(
-                    "config_id",
-                    $configId,
-                    $e->getMessage()
-                );
+        $iterator = $this->queryGenerator->generate(
+            self::IDENTIFIER,
+            $select,
+            self::BATCH_SIZE
+        );
 
-                continue;
+        foreach ($iterator as $batch) {
+            foreach ($connection->fetchAll($batch) as $row) {
+                try {
+                    $connection->update(
+                        $tableName,
+                        ['value' => $this->encryptor->encrypt($this->encryptor->decrypt($row['value']))],
+                        ['config_id = ?' => $row['config_id']]
+                    );
+                } catch (\Throwable $e) {
+                    $errors[] = $this->errorFactory->create(
+                        self::IDENTIFIER,
+                        $row['config_id'],
+                        $e->getMessage()
+                    );
+
+                    continue;
+                }
             }
         }
 

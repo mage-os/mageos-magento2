@@ -22,9 +22,9 @@ class Error
     /**
      * Value of the identifier field of a DB row an error relates to.
      *
-     * @var int
+     * @var int|string
      */
-    private int $rowIdValue;
+    private int|string $rowIdValue;
 
     /**
      * Error message.
@@ -35,12 +35,12 @@ class Error
 
     /**
      * @param string $rowIdField
-     * @param int $rowIdValue
+     * @param int|string $rowIdValue
      * @param string $message
      */
     public function __construct(
         string $rowIdField,
-        int $rowIdValue,
+        int|string $rowIdValue,
         string $message
     ) {
         $this->rowIdField = $rowIdField;
@@ -61,9 +61,9 @@ class Error
     /**
      * Returns row ID field value.
      *
-     * @return int
+     * @return int|string
      */
-    public function getRowIdValue(): int
+    public function getRowIdValue(): int|string
     {
         return $this->rowIdValue;
     }

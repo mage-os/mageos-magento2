@@ -32,12 +32,12 @@ class ErrorFactory
      * Creates an error object.
      *
      * @param string $rowIdField
-     * @param int $rowIdValue
+     * @param int|string $rowIdValue
      * @param string $message
      *
      * @return Error
      */
-    public function create(string $rowIdField, int $rowIdValue, string $message): Error
+    public function create(string $rowIdField, int|string $rowIdValue, string $message): Error
     {
         return $this->objectManager->create(
             Error::class,

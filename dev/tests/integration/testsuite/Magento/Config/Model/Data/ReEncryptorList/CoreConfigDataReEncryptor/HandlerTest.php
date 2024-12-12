@@ -35,6 +35,11 @@ class HandlerTest extends TestCase
      */
     private ?EncryptorInterface $encryptor;
 
+    /**
+     * Initialize dependencies
+     *
+     * @return void
+     */
     protected function setUp(): void
     {
         $this->config = Bootstrap::getObjectManager()->get(
@@ -51,29 +56,16 @@ class HandlerTest extends TestCase
     }
 
     /**
+     * Test ReEncryption for core config data
+     *
      * @magentoDbIsolation enabled
+     * @return void
      */
-    public function testReEncrypt()
+    public function testReEncrypt():void
     {
         $testConfigPath1 = "test/correct_enc_value";
         $testConfigPath2 = "test/incorrect_enc_value";
         $testConfigPath3 = "test/empty_enc_value";
-
-        $initialMock = $this->createMock(Initial::class);
-
-        $initialMock->expects($this->any())
-            ->method('getMetadata')
-            ->willReturn([
-                $testConfigPath1 => [
-                    "backendModel" => Encrypted::class
-                ],
-                $testConfigPath2 => [
-                    "backendModel" => Encrypted::class
-                ],
-                $testConfigPath3 => [
-                    "backendModel" => Encrypted::class
-                ]
-            ]);
 
         $this->configResource->saveConfig(
             $testConfigPath1,
@@ -97,10 +89,7 @@ class HandlerTest extends TestCase
 
         /** @var Handler $coreConfigDataReEncryptionHandler */
         $coreConfigDataReEncryptionHandler = Bootstrap::getObjectManager()->create(
-            Handler::class,
-            [
-                "config" => $initialMock
-            ]
+            Handler::class
         );
 
         try {
