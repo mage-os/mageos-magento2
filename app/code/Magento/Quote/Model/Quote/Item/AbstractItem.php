@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2011 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Quote\Model\Quote\Item;
@@ -20,6 +20,7 @@ use Magento\Quote\Model\Quote\Item;
  *  - custom_price - new price that can be declared by user and recalculated during calculation process
  *  - original_custom_price - original defined value of custom price without any conversion
  *
+ * phpcs:disable Magento2.Classes.AbstractApi
  * @api
  * @method float getDiscountAmount()
  * @method \Magento\Quote\Model\Quote\Item\AbstractItem setDiscountAmount(float $amount)
@@ -668,9 +669,7 @@ abstract class AbstractItem extends \Magento\Framework\Model\AbstractExtensibleM
             foreach ($children as $child) {
                 $totalDiscountAmount += $child->getDiscountAmount();
             }
-        } else {
-            $totalDiscountAmount = $this->getDiscountAmount();
         }
-        return $totalDiscountAmount;
+        return $totalDiscountAmount + $this->getDiscountAmount();
     }
 }
