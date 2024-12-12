@@ -84,6 +84,46 @@ QUERY;
     }
 
     /**
+     * @magentoApiDataFixture Magento/Catalog/_files/products_crosssell.php
+     */
+    public function testQueryCrossSellProducts()
+    {
+        $productSku = 'simple_with_cross';
+
+        $query = <<<QUERY
+{
+    products(filter: {sku: {eq: "{$productSku}"}})
+    {
+        items {
+            crosssell_products
+            {
+                sku
+                name
+                url_key
+            }
+        }
+    }
+}
+QUERY;
+        $response = $this->graphQlQuery($query);
+
+        self::assertArrayHasKey('products', $response);
+        self::assertArrayHasKey('items', $response['products']);
+        self::assertCount(1, $response['products']['items']);
+        self::assertArrayHasKey(0, $response['products']['items']);
+        self::assertArrayHasKey('crosssell_products', $response['products']['items'][0]);
+        $crossSellProducts = $response['products']['items'][0]['crosssell_products'];
+        self::assertCount(1, $crossSellProducts);
+        $crossSellProduct = $crossSellProducts[0];
+        self::assertArrayHasKey('sku', $crossSellProduct);
+        self::assertArrayHasKey('name', $crossSellProduct);
+        self::assertArrayHasKey('url_key', $crossSellProduct);
+        self::assertEquals($crossSellProduct['sku'], 'simple');
+        self::assertEquals($crossSellProduct['name'], 'Simple Cross Sell');
+        self::assertEquals($crossSellProduct['url_key'], 'simple-cross-sell');
+    }
+
+    /**
      * @magentoApiDataFixture Magento/Catalog/_files/products_upsell.php
      */
     public function testQueryUpSellProducts()
