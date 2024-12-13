@@ -14,6 +14,7 @@
             <description value="On the storefront, validate that if a child product in a grouped product has an invalid quantity, the error is displayed only for that specific child product."/>
             <features value="GroupedProduct"/>
             <testCaseId value="AC-13508"/>
+            <useCaseId value="ACP2E-3469"/>
             <severity value="MINOR"/>
         </annotations>
         <before>
