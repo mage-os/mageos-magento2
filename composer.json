@@ -63,6 +63,10 @@
         },
         {
             "type": "vcs",
+            "url": "git@github.com:magento-gl/composer-dependency-version-audit-plugin.git"
+        },
+        {
+            "type": "vcs",
             "url": "git@github.com:magento-gl/magento-zend-db.git"
         },
         {
@@ -142,7 +146,7 @@
         "league/flysystem": "^3.0",
         "league/flysystem-aws-s3-v3": "^3.0",
         "magento/composer": "dev-AC-13307",
-        "magento/composer-dependency-version-audit-plugin": "^0.1",
+        "magento/composer-dependency-version-audit-plugin": "dev-php84_deprication_fix",
         "magento/magento-composer-installer": ">=0.4.0",
         "magento/zend-cache": "dev-php84_deprecation_fix",
         "magento/zend-db": "dev-php84_deprication_fix",

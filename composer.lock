@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7f646f4e0a655bf5bf566faf32f2580f",
+    "content-hash": "ade321dbe50e6e3681618bc547545cc9",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -4538,16 +4538,16 @@
         },
         {
             "name": "magento/composer-dependency-version-audit-plugin",
-            "version": "0.1.5",
+            "version": "dev-php84_deprication_fix",
             "source": {
                 "type": "git",
-                "url": "https://github.com/magento/composer-dependency-version-audit-plugin.git",
-                "reference": "3350798d52c96bb89a17c955d3e0fce00fcaead1"
+                "url": "git@github.com:magento-gl/composer-dependency-version-audit-plugin.git",
+                "reference": "2d4100401c02cd97434c76000b3a717a35c606a9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento/composer-dependency-version-audit-plugin/zipball/3350798d52c96bb89a17c955d3e0fce00fcaead1",
-                "reference": "3350798d52c96bb89a17c955d3e0fce00fcaead1",
+                "url": "https://api.github.com/repos/magento-gl/composer-dependency-version-audit-plugin/zipball/2d4100401c02cd97434c76000b3a717a35c606a9",
+                "reference": "2d4100401c02cd97434c76000b3a717a35c606a9",
                 "shasum": ""
             },
             "require": {
@@ -4566,16 +4566,19 @@
                     "Magento\\ComposerDependencyVersionAuditPlugin\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Magento\\ComposerDependencyVersionAuditPlugin\\": "tests/Unit/Magento/ComposerDependencyVersionAuditPlugin/"
+                }
+            },
             "license": [
                 "OSL-3.0"
             ],
             "description": "Validating packages through a composer plugin",
             "support": {
-                "issues": "https://github.com/magento/composer-dependency-version-audit-plugin/issues",
-                "source": "https://github.com/magento/composer-dependency-version-audit-plugin/tree/0.1.5"
+                "source": "https://github.com/magento-gl/composer-dependency-version-audit-plugin/tree/php84_deprication_fix"
             },
-            "time": "2023-04-12T17:04:39+00:00"
+            "time": "2024-12-13T10:15:13+00:00"
         },
         {
             "name": "magento/magento-composer-installer",
@@ -14737,6 +14740,7 @@
         "laminas/laminas-mime": 20,
         "laminas/laminas-oauth": 20,
         "magento/composer": 20,
+        "magento/composer-dependency-version-audit-plugin": 20,
         "magento/magento-coding-standard": 20,
         "magento/magento2-functional-testing-framework": 20,
         "magento/zend-cache": 20,
