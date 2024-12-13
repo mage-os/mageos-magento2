@@ -6,8 +6,10 @@
 
 namespace Magento\Quote\Model\Quote\Item;
 
+use Magento\Catalog\Model\Product\Configuration\Item\ItemInterface;
 use Magento\Catalog\Model\Product\Configuration\Item\Option\OptionInterface;
 use Magento\Framework\Api\AttributeValueFactory;
+use Magento\Framework\Model\AbstractExtensibleModel;
 use Magento\Quote\Model\Quote\Item;
 
 /**
@@ -50,8 +52,7 @@ use Magento\Quote\Model\Quote\Item;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @since 100.0.2
  */
-abstract class AbstractItem extends \Magento\Framework\Model\AbstractExtensibleModel
-    implements \Magento\Catalog\Model\Product\Configuration\Item\ItemInterface
+abstract class AbstractItem extends AbstractExtensibleModel implements ItemInterface
 {
     /**
      * @var Item|null
@@ -271,7 +272,7 @@ abstract class AbstractItem extends \Magento\Framework\Model\AbstractExtensibleM
      * Get messages array of quote item
      *
      * @param bool $string flag for converting messages to string
-     * @return  array|string
+     * @return string[]|string
      */
     public function getMessage($string = true)
     {
