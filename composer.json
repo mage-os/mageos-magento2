@@ -68,6 +68,26 @@
         {
             "type": "vcs",
             "url": "git@github.com:magento-gl/magento-zend-pdf.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:magento-gl/magento-zend-cache.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:magento-gl/magento-zend-memory.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:magento-gl/magento-zend-exception.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:magento-gl/magento-zend-loader.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:magento-gl/magento-zend-log.git"
         }
     ],
     "require": {
@@ -124,7 +144,7 @@
         "magento/composer": "dev-AC-13307",
         "magento/composer-dependency-version-audit-plugin": "^0.1",
         "magento/magento-composer-installer": ">=0.4.0",
-        "magento/zend-cache": "^1.16",
+        "magento/zend-cache": "dev-php84_deprecation_fix",
         "magento/zend-db": "dev-php84_deprication_fix",
         "magento/zend-pdf": "dev-php84_deprication_fix",
         "monolog/monolog": "^3.6",
@@ -143,7 +163,11 @@
         "tubalmartin/cssmin": "^4.1",
         "web-token/jwt-framework": "^3.1",
         "webonyx/graphql-php": "^15.0",
-        "wikimedia/less.php": "^5.0"
+        "wikimedia/less.php": "^5.0",
+        "magento/zend-memory": "dev-php84_deprication_fix",
+        "magento/zend-exception": "dev-php84_deprication_fix",
+        "magento/zend-loader": "dev-php84_deprication_fix",
+        "magento/zend-log": "dev-php84_deprication_fix"
     },
     "require-dev": {
         "allure-framework/allure-phpunit": "dev-develop",

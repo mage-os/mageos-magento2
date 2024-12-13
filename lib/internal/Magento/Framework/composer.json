@@ -25,6 +25,18 @@
         {
             "type": "vcs",
             "url": "git@github.com:glo71317/laminas-oauth.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:magento-gl/magento-zend-db.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:magento-gl/magento-zend-pdf.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:magento-gl/magento-zend-cache.git"
         }
     ],
     "require": {
@@ -59,9 +71,9 @@
         "laminas/laminas-uri": "^2.9",
         "laminas/laminas-validator": "^2.23",
         "magento/composer-dependency-version-audit-plugin": "^0.1",
-        "magento/zend-cache": "^1.16",
-        "magento/zend-db": "^1.16",
-        "magento/zend-pdf": "^1.16",
+        "magento/zend-cache": "dev-php84_deprecation_fix",
+        "magento/zend-db": "dev-php84_deprication_fix",
+        "magento/zend-pdf": "dev-php84_deprication_fix",
         "monolog/monolog": "^3.6",
         "psr/log": "^2 || ^3",
         "ramsey/uuid": "^4.2",

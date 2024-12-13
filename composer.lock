@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2d16c482269c148664506e61cff5b7bb",
+    "content-hash": "7f646f4e0a655bf5bf566faf32f2580f",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.334.2",
+            "version": "3.334.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "b19afc076bb1cc2617bdef76efd41587596109e7"
+                "reference": "3b4fa2180f5c6307c2d3c577392d3702d1f78eaf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/b19afc076bb1cc2617bdef76efd41587596109e7",
-                "reference": "b19afc076bb1cc2617bdef76efd41587596109e7",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/3b4fa2180f5c6307c2d3c577392d3702d1f78eaf",
+                "reference": "3b4fa2180f5c6307c2d3c577392d3702d1f78eaf",
                 "shasum": ""
             },
             "require": {
@@ -154,9 +154,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.334.2"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.334.5"
             },
-            "time": "2024-12-09T19:30:23+00:00"
+            "time": "2024-12-12T19:25:15+00:00"
         },
         {
             "name": "brick/math",
@@ -596,16 +596,16 @@
         },
         {
             "name": "composer/composer",
-            "version": "2.8.3",
+            "version": "2.8.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "2a7c71266b2545a3bed9f4860734081963f6e688"
+                "reference": "112e37d1dca22b3fdb81cf3524ab4994f47fdb8c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/2a7c71266b2545a3bed9f4860734081963f6e688",
-                "reference": "2a7c71266b2545a3bed9f4860734081963f6e688",
+                "url": "https://api.github.com/repos/composer/composer/zipball/112e37d1dca22b3fdb81cf3524ab4994f47fdb8c",
+                "reference": "112e37d1dca22b3fdb81cf3524ab4994f47fdb8c",
                 "shasum": ""
             },
             "require": {
@@ -690,7 +690,7 @@
                 "irc": "ircs://irc.libera.chat:6697/composer",
                 "issues": "https://github.com/composer/composer/issues",
                 "security": "https://github.com/composer/composer/security/policy",
-                "source": "https://github.com/composer/composer/tree/2.8.3"
+                "source": "https://github.com/composer/composer/tree/2.8.4"
             },
             "funding": [
                 {
@@ -706,7 +706,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-11-17T12:13:04+00:00"
+            "time": "2024-12-11T10:57:47+00:00"
         },
         {
             "name": "composer/metadata-minifier",
@@ -4498,12 +4498,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:magento-gl/composer.git",
-                "reference": "194febd465e08759c1ef4530e59a269ae414e5d1"
+                "reference": "ee4bef316e2e6984fd0dc749e058a6d6fa1e721c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-gl/composer/zipball/194febd465e08759c1ef4530e59a269ae414e5d1",
-                "reference": "194febd465e08759c1ef4530e59a269ae414e5d1",
+                "url": "https://api.github.com/repos/magento-gl/composer/zipball/ee4bef316e2e6984fd0dc749e058a6d6fa1e721c",
+                "reference": "ee4bef316e2e6984fd0dc749e058a6d6fa1e721c",
                 "shasum": ""
             },
             "require": {
@@ -4534,7 +4534,7 @@
             "support": {
                 "source": "https://github.com/magento-gl/composer/tree/AC-13307"
             },
-            "time": "2024-11-05T09:15:02+00:00"
+            "time": "2024-12-13T03:45:09+00:00"
         },
         {
             "name": "magento/composer-dependency-version-audit-plugin",
@@ -4660,21 +4660,21 @@
         },
         {
             "name": "magento/zend-cache",
-            "version": "1.16.0",
+            "version": "dev-php84_deprecation_fix",
             "source": {
                 "type": "git",
-                "url": "https://github.com/magento/magento-zend-cache.git",
-                "reference": "75e6a43f198b17ea4b0c3f46b700b7a757eba84d"
+                "url": "git@github.com:magento-gl/magento-zend-cache.git",
+                "reference": "80442dd9c5012bd0f8a464250d5f32153395aa23"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento/magento-zend-cache/zipball/75e6a43f198b17ea4b0c3f46b700b7a757eba84d",
-                "reference": "75e6a43f198b17ea4b0c3f46b700b7a757eba84d",
+                "url": "https://api.github.com/repos/magento-gl/magento-zend-cache/zipball/80442dd9c5012bd0f8a464250d5f32153395aa23",
+                "reference": "80442dd9c5012bd0f8a464250d5f32153395aa23",
                 "shasum": ""
             },
             "require": {
-                "magento/zend-exception": "^1.16",
-                "magento/zend-log": "^1.16",
+                "magento/zend-exception": "dev-php84_deprication_fix",
+                "magento/zend-log": "dev-php84_deprication_fix",
                 "php": ">=7.0.0"
             },
             "replace": {
@@ -4692,23 +4692,21 @@
                     "Zend_Cache": "library/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
             "description": "Zend Framework 1 Cache package",
             "homepage": "http://framework.zend.com/",
             "keywords": [
-                "ZF1",
                 "cache",
                 "framework",
-                "zend"
+                "zend",
+                "zf1"
             ],
             "support": {
-                "issues": "https://github.com/magento/magento-zend-cache/issues",
-                "source": "https://github.com/magento/magento-zend-cache/tree/1.16.0"
+                "source": "https://github.com/magento-gl/magento-zend-cache/tree/php84_deprecation_fix"
             },
-            "time": "2022-09-22T19:09:32+00:00"
+            "time": "2024-12-13T07:58:45+00:00"
         },
         {
             "name": "magento/zend-db",
@@ -4716,17 +4714,17 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:magento-gl/magento-zend-db.git",
-                "reference": "fb960c593d7e8fb09f655b819334acd12be357e2"
+                "reference": "4afc4b1b9ee6ea5604fd3ed88ca562121fa4134a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-gl/magento-zend-db/zipball/fb960c593d7e8fb09f655b819334acd12be357e2",
-                "reference": "fb960c593d7e8fb09f655b819334acd12be357e2",
+                "url": "https://api.github.com/repos/magento-gl/magento-zend-db/zipball/4afc4b1b9ee6ea5604fd3ed88ca562121fa4134a",
+                "reference": "4afc4b1b9ee6ea5604fd3ed88ca562121fa4134a",
                 "shasum": ""
             },
             "require": {
-                "magento/zend-exception": "^1.16",
-                "magento/zend-loader": "^1.16",
+                "magento/zend-exception": "dev-php84_deprication_fix",
+                "magento/zend-loader": "dev-php84_deprication_fix",
                 "php": ">=7.0.0"
             },
             "replace": {
@@ -4758,20 +4756,20 @@
             "support": {
                 "source": "https://github.com/magento-gl/magento-zend-db/tree/php84_deprication_fix"
             },
-            "time": "2024-12-12T12:27:49+00:00"
+            "time": "2024-12-13T11:43:26+00:00"
         },
         {
             "name": "magento/zend-exception",
-            "version": "1.16.0",
+            "version": "dev-php84_deprication_fix",
             "source": {
                 "type": "git",
-                "url": "https://github.com/magento/magento-zend-exception.git",
-                "reference": "5219ba961e36dc1a713da3ad4f1594a87c71f758"
+                "url": "git@github.com:magento-gl/magento-zend-exception.git",
+                "reference": "8c062394f403ccef9f1080c269e630e77f58de17"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento/magento-zend-exception/zipball/5219ba961e36dc1a713da3ad4f1594a87c71f758",
-                "reference": "5219ba961e36dc1a713da3ad4f1594a87c71f758",
+                "url": "https://api.github.com/repos/magento-gl/magento-zend-exception/zipball/8c062394f403ccef9f1080c269e630e77f58de17",
+                "reference": "8c062394f403ccef9f1080c269e630e77f58de17",
                 "shasum": ""
             },
             "require": {
@@ -4792,40 +4790,38 @@
                     "Zend_Exception": "library/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
             "description": "Zend Framework 1 Exception package",
             "homepage": "http://framework.zend.com/",
             "keywords": [
-                "ZF1",
                 "exception",
                 "framework",
-                "zend"
+                "zend",
+                "zf1"
             ],
             "support": {
-                "issues": "https://github.com/magento/magento-zend-exception/issues",
-                "source": "https://github.com/magento/magento-zend-exception/tree/1.16.0"
+                "source": "https://github.com/magento-gl/magento-zend-exception/tree/php84_deprication_fix"
             },
-            "time": "2022-09-22T19:06:06+00:00"
+            "time": "2024-12-13T06:23:15+00:00"
         },
         {
             "name": "magento/zend-loader",
-            "version": "1.16.1",
+            "version": "dev-php84_deprication_fix",
             "source": {
                 "type": "git",
-                "url": "https://github.com/magento/magento-zend-loader.git",
-                "reference": "7eca22970a6b7cdaa3d3a6a6d117e4c0d3bef5e9"
+                "url": "git@github.com:magento-gl/magento-zend-loader.git",
+                "reference": "54507ee95979f15ff26c6f60e36b0c234a5e6401"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento/magento-zend-loader/zipball/7eca22970a6b7cdaa3d3a6a6d117e4c0d3bef5e9",
-                "reference": "7eca22970a6b7cdaa3d3a6a6d117e4c0d3bef5e9",
+                "url": "https://api.github.com/repos/magento-gl/magento-zend-loader/zipball/54507ee95979f15ff26c6f60e36b0c234a5e6401",
+                "reference": "54507ee95979f15ff26c6f60e36b0c234a5e6401",
                 "shasum": ""
             },
             "require": {
-                "magento/zend-exception": "^1.16.0",
+                "magento/zend-exception": "dev-php84_deprication_fix",
                 "php": ">=7.0.0"
             },
             "replace": {
@@ -4843,40 +4839,38 @@
                     "Zend_Loader": "library/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
             "description": "Zend Framework 1 Loader package",
             "homepage": "http://framework.zend.com/",
             "keywords": [
-                "ZF1",
                 "framework",
                 "loader",
-                "zend"
+                "zend",
+                "zf1"
             ],
             "support": {
-                "issues": "https://github.com/magento/magento-zend-loader/issues",
-                "source": "https://github.com/magento/magento-zend-loader/tree/1.16.1"
+                "source": "https://github.com/magento-gl/magento-zend-loader/tree/php84_deprication_fix"
             },
-            "time": "2023-08-25T13:52:37+00:00"
+            "time": "2024-12-13T11:35:58+00:00"
         },
         {
             "name": "magento/zend-log",
-            "version": "1.16.0",
+            "version": "dev-php84_deprication_fix",
             "source": {
                 "type": "git",
-                "url": "https://github.com/magento/magento-zend-log.git",
-                "reference": "c03b9febe92c501288cf441d41b49cd01f1e8a50"
+                "url": "git@github.com:magento-gl/magento-zend-log.git",
+                "reference": "ae85b8453be1d309989fc4a8ecb1a7e7d5952e7a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento/magento-zend-log/zipball/c03b9febe92c501288cf441d41b49cd01f1e8a50",
-                "reference": "c03b9febe92c501288cf441d41b49cd01f1e8a50",
+                "url": "https://api.github.com/repos/magento-gl/magento-zend-log/zipball/ae85b8453be1d309989fc4a8ecb1a7e7d5952e7a",
+                "reference": "ae85b8453be1d309989fc4a8ecb1a7e7d5952e7a",
                 "shasum": ""
             },
             "require": {
-                "magento/zend-exception": "^1.16",
+                "magento/zend-exception": "dev-php84_deprication_fix",
                 "php": ">=7.0.0"
             },
             "replace": {
@@ -4894,41 +4888,39 @@
                     "Zend_Log": "library/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
             "description": "Zend Framework 1 Log package",
             "homepage": "http://framework.zend.com/",
             "keywords": [
-                "ZF1",
                 "framework",
                 "log",
-                "zend"
+                "zend",
+                "zf1"
             ],
             "support": {
-                "issues": "https://github.com/magento/magento-zend-log/issues",
-                "source": "https://github.com/magento/magento-zend-log/tree/1.16.0"
+                "source": "https://github.com/magento-gl/magento-zend-log/tree/php84_deprication_fix"
             },
-            "time": "2022-09-22T19:03:03+00:00"
+            "time": "2024-12-13T07:36:21+00:00"
         },
         {
             "name": "magento/zend-memory",
-            "version": "1.16.0",
+            "version": "dev-php84_deprication_fix",
             "source": {
                 "type": "git",
-                "url": "https://github.com/magento/magento-zend-memory.git",
-                "reference": "0d48804c6718cc9f15e5c356e6192fd6fff8932b"
+                "url": "git@github.com:magento-gl/magento-zend-memory.git",
+                "reference": "2cdeca995fa9ee56e798d3f4c0a4583cfd168dc0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento/magento-zend-memory/zipball/0d48804c6718cc9f15e5c356e6192fd6fff8932b",
-                "reference": "0d48804c6718cc9f15e5c356e6192fd6fff8932b",
+                "url": "https://api.github.com/repos/magento-gl/magento-zend-memory/zipball/2cdeca995fa9ee56e798d3f4c0a4583cfd168dc0",
+                "reference": "2cdeca995fa9ee56e798d3f4c0a4583cfd168dc0",
                 "shasum": ""
             },
             "require": {
-                "magento/zend-cache": "^1.16",
-                "magento/zend-exception": "^1.16",
+                "magento/zend-cache": "dev-php84_deprecation_fix",
+                "magento/zend-exception": "dev-php84_deprication_fix",
                 "php": ">=7.0.0"
             },
             "replace": {
@@ -4946,23 +4938,21 @@
                     "Zend_Memory": "library/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
             "description": "Zend Framework 1 Memory package",
             "homepage": "http://framework.zend.com/",
             "keywords": [
-                "ZF1",
                 "framework",
                 "memory",
-                "zend"
+                "zend",
+                "zf1"
             ],
             "support": {
-                "issues": "https://github.com/magento/magento-zend-memory/issues",
-                "source": "https://github.com/magento/magento-zend-memory/tree/1.16.0"
+                "source": "https://github.com/magento-gl/magento-zend-memory/tree/php84_deprication_fix"
             },
-            "time": "2022-09-22T18:17:46+00:00"
+            "time": "2024-12-13T07:47:36+00:00"
         },
         {
             "name": "magento/zend-pdf",
@@ -4970,12 +4960,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:magento-gl/magento-zend-pdf.git",
-                "reference": "6619d96a83732d85ea63fd5d6879f9fdaa15d330"
+                "reference": "049313c0b7ab527fbcfc535637d1db3513e302c8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-gl/magento-zend-pdf/zipball/6619d96a83732d85ea63fd5d6879f9fdaa15d330",
-                "reference": "6619d96a83732d85ea63fd5d6879f9fdaa15d330",
+                "url": "https://api.github.com/repos/magento-gl/magento-zend-pdf/zipball/049313c0b7ab527fbcfc535637d1db3513e302c8",
+                "reference": "049313c0b7ab527fbcfc535637d1db3513e302c8",
                 "shasum": ""
             },
             "require": {
@@ -4983,9 +4973,9 @@
                 "ext-gd": "*",
                 "ext-iconv": "*",
                 "ext-zlib": "*",
-                "magento/zend-exception": "^1.16",
-                "magento/zend-log": "^1.16",
-                "magento/zend-memory": "^1.16",
+                "magento/zend-exception": "dev-php84_deprication_fix",
+                "magento/zend-log": "dev-php84_deprication_fix",
+                "magento/zend-memory": "dev-php84_deprication_fix",
                 "php": ">=7.0.0"
             },
             "replace": {
@@ -5017,7 +5007,7 @@
             "support": {
                 "source": "https://github.com/magento-gl/magento-zend-pdf/tree/php84_deprication_fix"
             },
-            "time": "2024-12-12T13:17:43+00:00"
+            "time": "2024-12-13T08:04:33+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -7373,16 +7363,16 @@
         },
         {
             "name": "symfony/error-handler",
-            "version": "v7.2.0",
+            "version": "v7.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/error-handler.git",
-                "reference": "672b3dd1ef8b87119b446d67c58c106c43f965fe"
+                "reference": "6150b89186573046167796fa5f3f76601d5145f8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/error-handler/zipball/672b3dd1ef8b87119b446d67c58c106c43f965fe",
-                "reference": "672b3dd1ef8b87119b446d67c58c106c43f965fe",
+                "url": "https://api.github.com/repos/symfony/error-handler/zipball/6150b89186573046167796fa5f3f76601d5145f8",
+                "reference": "6150b89186573046167796fa5f3f76601d5145f8",
                 "shasum": ""
             },
             "require": {
@@ -7428,7 +7418,7 @@
             "description": "Provides tools to manage errors and ease debugging PHP code",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/error-handler/tree/v7.2.0"
+                "source": "https://github.com/symfony/error-handler/tree/v7.2.1"
             },
             "funding": [
                 {
@@ -7444,7 +7434,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-11-05T15:35:02+00:00"
+            "time": "2024-12-07T08:50:44+00:00"
         },
         {
             "name": "symfony/event-dispatcher",
@@ -7734,23 +7724,23 @@
         },
         {
             "name": "symfony/http-client",
-            "version": "v7.2.0",
+            "version": "v7.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-client.git",
-                "reference": "955e43336aff03df1e8a8e17daefabb0127a313b"
+                "reference": "ff4df2b68d1c67abb9fef146e6540ea16b58d99e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-client/zipball/955e43336aff03df1e8a8e17daefabb0127a313b",
-                "reference": "955e43336aff03df1e8a8e17daefabb0127a313b",
+                "url": "https://api.github.com/repos/symfony/http-client/zipball/ff4df2b68d1c67abb9fef146e6540ea16b58d99e",
+                "reference": "ff4df2b68d1c67abb9fef146e6540ea16b58d99e",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.2",
                 "psr/log": "^1|^2|^3",
                 "symfony/deprecation-contracts": "^2.5|^3",
-                "symfony/http-client-contracts": "~3.4.3|^3.5.1",
+                "symfony/http-client-contracts": "~3.4.4|^3.5.2",
                 "symfony/service-contracts": "^2.5|^3"
             },
             "conflict": {
@@ -7809,7 +7799,7 @@
                 "http"
             ],
             "support": {
-                "source": "https://github.com/symfony/http-client/tree/v7.2.0"
+                "source": "https://github.com/symfony/http-client/tree/v7.2.1"
             },
             "funding": [
                 {
@@ -7825,20 +7815,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-11-29T08:22:02+00:00"
+            "time": "2024-12-07T08:50:44+00:00"
         },
         {
             "name": "symfony/http-client-contracts",
-            "version": "v3.5.1",
+            "version": "v3.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-client-contracts.git",
-                "reference": "c2f3ad828596624ca39ea40f83617ef51ca8bbf9"
+                "reference": "ee8d807ab20fcb51267fdace50fbe3494c31e645"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-client-contracts/zipball/c2f3ad828596624ca39ea40f83617ef51ca8bbf9",
-                "reference": "c2f3ad828596624ca39ea40f83617ef51ca8bbf9",
+                "url": "https://api.github.com/repos/symfony/http-client-contracts/zipball/ee8d807ab20fcb51267fdace50fbe3494c31e645",
+                "reference": "ee8d807ab20fcb51267fdace50fbe3494c31e645",
                 "shasum": ""
             },
             "require": {
@@ -7887,7 +7877,7 @@
                 "standards"
             ],
             "support": {
-                "source": "https://github.com/symfony/http-client-contracts/tree/v3.5.1"
+                "source": "https://github.com/symfony/http-client-contracts/tree/v3.5.2"
             },
             "funding": [
                 {
@@ -7903,7 +7893,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-11-25T12:02:18+00:00"
+            "time": "2024-12-07T08:49:48+00:00"
         },
         {
             "name": "symfony/http-foundation",
@@ -7985,16 +7975,16 @@
         },
         {
             "name": "symfony/http-kernel",
-            "version": "v7.2.0",
+            "version": "v7.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-kernel.git",
-                "reference": "6b4722a25e0aed1ccb4914b9bcbd493cc4676b4d"
+                "reference": "d8ae58eecae44c8e66833e76cc50a4ad3c002d97"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-kernel/zipball/6b4722a25e0aed1ccb4914b9bcbd493cc4676b4d",
-                "reference": "6b4722a25e0aed1ccb4914b9bcbd493cc4676b4d",
+                "url": "https://api.github.com/repos/symfony/http-kernel/zipball/d8ae58eecae44c8e66833e76cc50a4ad3c002d97",
+                "reference": "d8ae58eecae44c8e66833e76cc50a4ad3c002d97",
                 "shasum": ""
             },
             "require": {
@@ -8079,7 +8069,7 @@
             "description": "Provides a structured process for converting a Request into a Response",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/http-kernel/tree/v7.2.0"
+                "source": "https://github.com/symfony/http-kernel/tree/v7.2.1"
             },
             "funding": [
                 {
@@ -8095,7 +8085,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-11-29T08:42:40+00:00"
+            "time": "2024-12-11T12:09:10+00:00"
         },
         {
             "name": "symfony/intl",
@@ -8361,8 +8351,8 @@
             "type": "library",
             "extra": {
                 "thanks": {
-                    "name": "symfony/polyfill",
-                    "url": "https://github.com/symfony/polyfill"
+                    "url": "https://github.com/symfony/polyfill",
+                    "name": "symfony/polyfill"
                 }
             },
             "autoload": {
@@ -8527,8 +8517,8 @@
             "type": "library",
             "extra": {
                 "thanks": {
-                    "name": "symfony/polyfill",
-                    "url": "https://github.com/symfony/polyfill"
+                    "url": "https://github.com/symfony/polyfill",
+                    "name": "symfony/polyfill"
                 }
             },
             "autoload": {
@@ -12583,16 +12573,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "10.5.38",
+            "version": "10.5.39",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "a86773b9e887a67bc53efa9da9ad6e3f2498c132"
+                "reference": "4e89eff200b801db58f3d580ad7426431949eaa9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/a86773b9e887a67bc53efa9da9ad6e3f2498c132",
-                "reference": "a86773b9e887a67bc53efa9da9ad6e3f2498c132",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/4e89eff200b801db58f3d580ad7426431949eaa9",
+                "reference": "4e89eff200b801db58f3d580ad7426431949eaa9",
                 "shasum": ""
             },
             "require": {
@@ -12602,7 +12592,7 @@
                 "ext-mbstring": "*",
                 "ext-xml": "*",
                 "ext-xmlwriter": "*",
-                "myclabs/deep-copy": "^1.12.0",
+                "myclabs/deep-copy": "^1.12.1",
                 "phar-io/manifest": "^2.0.4",
                 "phar-io/version": "^3.2.1",
                 "php": ">=8.1",
@@ -12664,7 +12654,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.5.38"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.5.39"
             },
             "funding": [
                 {
@@ -12680,7 +12670,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-10-28T13:06:21+00:00"
+            "time": "2024-12-11T10:51:07+00:00"
         },
         {
             "name": "psy/psysh",
@@ -14277,16 +14267,16 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "3.11.1",
+            "version": "3.11.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPCSStandards/PHP_CodeSniffer.git",
-                "reference": "19473c30efe4f7b3cd42522d0b2e6e7f243c6f87"
+                "reference": "1368f4a58c3c52114b86b1abe8f4098869cb0079"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPCSStandards/PHP_CodeSniffer/zipball/19473c30efe4f7b3cd42522d0b2e6e7f243c6f87",
-                "reference": "19473c30efe4f7b3cd42522d0b2e6e7f243c6f87",
+                "url": "https://api.github.com/repos/PHPCSStandards/PHP_CodeSniffer/zipball/1368f4a58c3c52114b86b1abe8f4098869cb0079",
+                "reference": "1368f4a58c3c52114b86b1abe8f4098869cb0079",
                 "shasum": ""
             },
             "require": {
@@ -14353,7 +14343,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2024-11-16T12:02:36+00:00"
+            "time": "2024-12-11T16:04:26+00:00"
         },
         {
             "name": "symfony/dotenv",
@@ -14749,7 +14739,12 @@
         "magento/composer": 20,
         "magento/magento-coding-standard": 20,
         "magento/magento2-functional-testing-framework": 20,
+        "magento/zend-cache": 20,
         "magento/zend-db": 20,
+        "magento/zend-exception": 20,
+        "magento/zend-loader": 20,
+        "magento/zend-log": 20,
+        "magento/zend-memory": 20,
         "magento/zend-pdf": 20
     },
     "prefer-stable": true,
