@@ -1074,8 +1074,8 @@ class QuoteManagementTest extends TestCase
         int $customerId,
         int $id,
         array $quoteItems,
-        bool $setIsActive,
-        ?Address $shippingAddress = null
+        ?Address $shippingAddress,
+        bool $setIsActive
     ): MockObject {
         $quote = $this->getMockBuilder(Quote::class)
             ->addMethods(['getCustomerEmail', 'getCustomerId'])

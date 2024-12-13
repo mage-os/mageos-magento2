@@ -69,7 +69,7 @@ class UploadImageTest extends TestCase
      *
      * @dataProvider executeDataProvider
      */
-    public function testExecute(string $targetFolder, string $absolutePath, ?string $type = null): void
+    public function testExecute(string $targetFolder, ?string $type, string $absolutePath): void
     {
         $this->fileSystemMock->expects($this->once())
             ->method('getDirectoryRead')
