@@ -125,4 +125,16 @@
         <data key="sort_order">3</data>
         <requiredEntity type="StoreLabel">Option14Store1</requiredEntity>
     </entity>
+    <entity name="productAttributeOptionAdult" type="ProductAttributeOption">
+        <var key="attribute_code" entityKey="attribute_code" entityType="ProductAttribute"/>
+        <data key="label">Adult</data>
+        <data key="is_default">false</data>
+        <data key="sort_order">0</data>
+    </entity>
+    <entity name="productAttributeOptionChildren" type="ProductAttributeOption">
+        <var key="attribute_code" entityKey="attribute_code" entityType="ProductAttribute"/>
+        <data key="label">children</data>
+        <data key="is_default">false</data>
+        <data key="sort_order">0</data>
+    </entity>
 </entities>
