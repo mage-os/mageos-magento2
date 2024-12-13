@@ -9,17 +9,18 @@
        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
     <test name="AssertGroupedProductQtyOnProductPageTest">
         <annotations>
-            <title value="Validate quantity in Storefront with group product"/>
-            <stories value="ACP2E-3469: Validation Error Triggered for All Products in Group When One Has Invalid Quantity"/>
-            <description value="Products in group should not show error for all Products when one Has invalid quantity"/>
+            <title value="Validate quantity in Storefront for a grouped product"/>
+            <stories value="Storefront grouped product quantity validation when one child product has invalid quantity"/>
+            <description value="On the storefront, validate that if a child product in a grouped product has an invalid quantity, the error is displayed only for that specific child product."/>
             <features value="GroupedProduct"/>
             <testCaseId value="AC-13508"/>
             <severity value="MINOR"/>
         </annotations>
         <before>
             <!--Create simple and grouped product-->
-            <createData entity="ApiProductWithDescription" before="simple2" stepKey="simple1"/>
-            <createData entity="ApiProductWithDescription" before="groupedProduct" stepKey="simple2"/>
+            <createData entity="ApiProductWithDescription" stepKey="simple1"/>
+            <createData entity="ApiProductWithDescription" stepKey="simple2"/>
+            <createData entity="ApiProductWithDescription" stepKey="simple3"/>
             <createData entity="ApiGroupedProduct" stepKey="groupedProduct"/>
             <createData entity="OneSimpleProductLink" stepKey="addProductOne">
                 <requiredEntity createDataKey="groupedProduct"/>
@@ -29,26 +30,30 @@
                 <requiredEntity createDataKey="groupedProduct"/>
                 <requiredEntity createDataKey="simple2"/>
             </updateData>
+            <updateData entity="OneMoreSimpleProductLink" createDataKey="addProductOne" stepKey="addProductThree">
+                <requiredEntity createDataKey="groupedProduct"/>
+                <requiredEntity createDataKey="simple3"/>
+            </updateData>
         </before>
         <after>
-            <deleteData createDataKey="simple1" before="deleteSimple2" stepKey="deleteSimple1"/>
-            <deleteData createDataKey="simple2" before="deleteGroupProduct" stepKey="deleteSimple2"/>
             <deleteData createDataKey="groupedProduct" stepKey="deleteGroupProduct"/>
+            <deleteData createDataKey="simple1" stepKey="deleteSimple1"/>
+            <deleteData createDataKey="simple2" stepKey="deleteSimple2"/>
+            <deleteData createDataKey="simple3" stepKey="deleteSimple3"/>
         </after>
-        <!-- Go to storefront home page -->
-        <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToHomepage"/>
-        <!-- Check Grouped product is visible on the storefront-->
-        <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProductPage">
-            <argument name="productUrl" value="$$groupedProduct.custom_attributes[url_key]$$"/>
+        <!-- Add grouped product to the cart -->
+        <actionGroup ref="StorefrontAddThreeGroupedProductToTheCartActionGroup" stepKey="addGropedProductsToTheCart">
+            <argument name="urlKey" value="$$groupedProduct.custom_attributes[url_key]$$"/>
+            <argument name="product1" value="$$simple1.name$$"/>
+            <argument name="product2" value="$$simple2.name$$"/>
+            <argument name="product3" value="$$simple3.name$$"/>
+            <argument name="qty1" value="1"/>
+            <argument name="qty2" value="1"/>
+            <argument name="qty3" value="-1"/>
         </actionGroup>
-        <!-- Fill qty for product options-->
-        <fillField selector="{{StorefrontProductPageSection.qtyInputWithProduct($simple1.name$)}}" userInput="1" before="addToCart" stepKey="fillQuantityForFirsProduct"/>
-        <fillField selector="{{StorefrontProductPageSection.qtyInputWithProduct($simple2.name$)}}" userInput="-1" after="fillQuantityForFirsProduct" stepKey="fillQuantityForSecondProduct"/>
-        <!--Add grouped product to cart -->
-        <waitForElementClickable selector="{{StorefrontProductPageSection.addToCart}}" stepKey="waitForAddToCart"/>
-        <click selector="{{StorefrontProductPageSection.addToCart}}" stepKey="addToCart"/>
         <!-- Asserting product options qty errors-->
         <waitForElementNotVisible selector="{{StorefrontProductInfoMainSection.groupedProductOptionQtyError($simple1.id$)}}" stepKey="firstProductQtyError"/>
-        <waitForElementVisible selector="{{StorefrontProductInfoMainSection.groupedProductOptionQtyError($simple2.id$)}}" stepKey="secondProductQtyError"/>
+        <waitForElementNotVisible selector="{{StorefrontProductInfoMainSection.groupedProductOptionQtyError($simple2.id$)}}" stepKey="secondProductQtyError"/>
+        <waitForElementVisible selector="{{StorefrontProductInfoMainSection.groupedProductOptionQtyError($simple3.id$)}}" stepKey="thirdProductQtyError"/>
     </test>
 </tests>
