@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2011 Adobe
+ * All Rights Reserved.
  */
 
 /**
@@ -11,10 +11,13 @@
  * @var $block \Magento\GroupedProduct\Block\Product\View\Type\Grouped
  */
 ?>
-<?php $block->setPreconfiguredValue(); ?>
-<?php $_product = $block->getProduct(); ?>
-<?php $_associatedProducts = $block->getAssociatedProducts(); ?>
-<?php $_hasAssociatedProducts = count($_associatedProducts) > 0; ?>
+<?php
+    $block->setPreconfiguredValue();
+    $_product = $block->getProduct();
+    $_associatedProducts = $block->getAssociatedProducts();
+    $_hasAssociatedProducts = count($_associatedProducts) > 0;
+    $viewModel = $block->getData('validateQuantityViewModel');
+?>
 
 <div class="table-wrapper grouped">
     <table class="table data grouped"
@@ -52,7 +55,7 @@
                                value="<?= $block->escapeHtmlAttr($_item->getQty() * 1) ?>"
                                title="<?= $block->escapeHtmlAttr(__('Qty')) ?>"
                                class="input-text qty"
-                               data-validate="{'validate-grouped-qty':'#super-product-table'}"
+                               data-validate="<?= $block->escapeHtmlAttr($viewModel->getQuantityValidators($_item->getId(), $_item->getWebsiteId())) ?>"
                                data-errors-message-box="#validation-message-box"/>
                     </div>
                 <?php else: ?>
