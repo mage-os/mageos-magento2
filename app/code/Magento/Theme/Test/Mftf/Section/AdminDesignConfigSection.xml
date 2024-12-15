@@ -17,6 +17,7 @@
         <element name="addSelectedFromMediaGallery" type="input" selector="//button[contains(@title,'Add Selected')]"/>
         <element name="htmlHeaderSection" type="text" selector="[data-index='head']"/>
         <element name="headerSection" type="text" selector="[data-index='header']"/>
+        <element name="deleteheaderSectionImage" type="text" selector="//button[@title='Delete image']"/>
         <element name="selectFromGalleryByFieldsetName" type="input" selector="//*[contains(@class,'fieldset-wrapper')][child::*[contains(@class,'fieldset-wrapper-title')]//*[contains(text(),'{{arg1}}')]]//*[contains(@class,'file-uploader')]//label[contains(text(), 'Select from Gallery')]" parameterized="true"/>
         <element name="imageUploadFromMediaGallery" type="input" selector="//input[contains(@class,'fileupload')]" />
         <element name="saveConfiguration" type="input" selector="//button[contains(@title, 'Save Configuration')]" />

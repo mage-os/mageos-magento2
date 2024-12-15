@@ -69,6 +69,11 @@
         <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache1">
             <argument name="tags" value=""/>
         </actionGroup>
+        <!--Navigate to Store front home page-->
+        <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToHomePage1"/>
+        <waitForPageLoad stepKey="waitToLoadHomePage3"/>
+        <!--assert to check first uploaded image name-->
+        <seeElementInDOM selector="{{StorefrontHeaderSection.logoImage(ImageUpload3.fileName)}}" stepKey="assertMediaSource1"/>
         <!-- Enable Single Store Mode -->
         <magentoCLI command="config:set general/single_store_mode/enabled 1" stepKey="enabledSingleStoreMode"/>
         <!--Clear Cache-->
@@ -113,6 +118,25 @@
         <waitForPageLoad stepKey="waitToLoadHomePage2"/>
         <!--assert to check second uploaded image name-->
         <seeElementInDOM selector="{{StorefrontHeaderSection.logoImage(ImageUpload.fileName)}}" stepKey="assertMediaSource3"/>
+        <!--Navigate to Store View to delete uploaded logo-->
+        <comment userInput="Edit Store View" stepKey="editStoreViewComment2"/>
+        <amOnPage url="{{DesignConfigPage.url}}" stepKey="navigateToDesignConfigPageToDeleteUploadedLogo" />
+        <waitForPageLoad stepKey="waitForDesignConfigPageload"/>
+        <click selector="{{AdminDesignConfigSection.scopeRow('1')}}" stepKey="editStoreView2"/>
+        <waitForPageLoad stepKey="waitForPageload3"/>
+        <scrollTo selector="{{AdminDesignConfigSection.headerSection}}" stepKey="scrollToHtmlHeadSection2"/>
+        <click selector="{{AdminDesignConfigSection.headerSection}}" stepKey="openHtmlHeadSection2"/>
+        <!--Clear Cache-->
+        <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache4">
+            <argument name="tags" value=""/>
+        </actionGroup>
+        <!--Delete uploaded Image From Header-->
+        <comment userInput="Delete Uploaded Image" stepKey="DeleteUploadedImageComment"/>
+        <click selector="{{AdminDesignConfigSection.deleteheaderSectionImage}}" stepKey="clickUseDefault"/>
+        <waitForElementVisible selector="{{AdminDesignConfigSection.saveConfiguration}}" stepKey="waitForWrapperToClose2"/>
+        <click selector="{{AdminDesignConfigSection.saveConfiguration}}" stepKey="saveConfiguration2"/>
+        <waitForElementVisible selector="{{AdminDesignConfigSection.successNotification}}" stepKey="waitForSuccessNotification2"/>
+        <waitForPageLoad stepKey="waitForPageloadSuccess2"/>
         <!--Delete Image -->
         <comment userInput="Delete Image" stepKey="deleteImageComment"/>
         <actionGroup ref="NavigateToMediaGalleryActionGroup" stepKey="navigateToMediaGallery"/>
@@ -127,7 +151,5 @@
         <actionGroup ref="DeleteFolderActionGroup" stepKey="DeleteFolderFromMediaGallery">
             <argument name="Image" value="{{ImageFolder.name}}"/>
         </actionGroup>
-        <comment userInput="BIC workaround" stepKey="navigateToFolder3"/>
-        <comment userInput="BIC workaround" stepKey="deleteImageFromStorage2"/>
     </test>
 </tests>
