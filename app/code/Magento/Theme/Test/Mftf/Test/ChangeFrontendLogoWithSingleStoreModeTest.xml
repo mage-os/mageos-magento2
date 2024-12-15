@@ -126,10 +126,6 @@
         <waitForPageLoad stepKey="waitForPageload3"/>
         <scrollTo selector="{{AdminDesignConfigSection.headerSection}}" stepKey="scrollToHtmlHeadSection2"/>
         <click selector="{{AdminDesignConfigSection.headerSection}}" stepKey="openHtmlHeadSection2"/>
-        <!--Clear Cache-->
-        <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache4">
-            <argument name="tags" value=""/>
-        </actionGroup>
         <!--Delete uploaded Image From Header-->
         <comment userInput="Delete Uploaded Image" stepKey="DeleteUploadedImageComment"/>
         <click selector="{{AdminDesignConfigSection.deleteheaderSectionImage}}" stepKey="clickUseDefault"/>
@@ -137,7 +133,11 @@
         <click selector="{{AdminDesignConfigSection.saveConfiguration}}" stepKey="saveConfiguration2"/>
         <waitForElementVisible selector="{{AdminDesignConfigSection.successNotification}}" stepKey="waitForSuccessNotification2"/>
         <waitForPageLoad stepKey="waitForPageloadSuccess2"/>
-        <!--Delete Image -->
+        <!--Clear Cache-->
+        <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache4">
+            <argument name="tags" value=""/>
+        </actionGroup>
+        <!--Delete ImageFolder -->
         <comment userInput="Delete Image" stepKey="deleteImageComment"/>
         <actionGroup ref="NavigateToMediaGalleryActionGroup" stepKey="navigateToMediaGallery"/>
         <comment userInput="BIC workaround" stepKey="navigateToFolder2"/>
