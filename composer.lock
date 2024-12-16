@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.334.5",
+            "version": "3.334.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "3b4fa2180f5c6307c2d3c577392d3702d1f78eaf"
+                "reference": "2b0be3aded849d3b7bb0b53ea3295c7cecdeeee7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/3b4fa2180f5c6307c2d3c577392d3702d1f78eaf",
-                "reference": "3b4fa2180f5c6307c2d3c577392d3702d1f78eaf",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/2b0be3aded849d3b7bb0b53ea3295c7cecdeeee7",
+                "reference": "2b0be3aded849d3b7bb0b53ea3295c7cecdeeee7",
                 "shasum": ""
             },
             "require": {
@@ -154,9 +154,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.334.5"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.334.6"
             },
-            "time": "2024-12-12T19:25:15+00:00"
+            "time": "2024-12-13T19:18:29+00:00"
         },
         {
             "name": "brick/math",
@@ -4610,10 +4610,10 @@
             },
             "type": "composer-plugin",
             "extra": {
+                "class": "MagentoHackathon\\Composer\\Magento\\Plugin",
                 "composer-command-registry": [
                     "MagentoHackathon\\Composer\\Magento\\Command\\DeployCommand"
-                ],
-                "class": "MagentoHackathon\\Composer\\Magento\\Plugin"
+                ]
             },
             "autoload": {
                 "psr-0": {
@@ -5748,16 +5748,16 @@
         },
         {
             "name": "phpseclib/phpseclib",
-            "version": "3.0.42",
+            "version": "3.0.43",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "db92f1b1987b12b13f248fe76c3a52cadb67bb98"
+                "reference": "709ec107af3cb2f385b9617be72af8cf62441d02"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/db92f1b1987b12b13f248fe76c3a52cadb67bb98",
-                "reference": "db92f1b1987b12b13f248fe76c3a52cadb67bb98",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/709ec107af3cb2f385b9617be72af8cf62441d02",
+                "reference": "709ec107af3cb2f385b9617be72af8cf62441d02",
                 "shasum": ""
             },
             "require": {
@@ -5838,7 +5838,7 @@
             ],
             "support": {
                 "issues": "https://github.com/phpseclib/phpseclib/issues",
-                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.42"
+                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.43"
             },
             "funding": [
                 {
@@ -5854,7 +5854,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-09-16T03:06:04+00:00"
+            "time": "2024-12-14T21:12:59+00:00"
         },
         {
             "name": "psr/cache",
@@ -11513,12 +11513,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/magento/magento2-functional-testing-framework.git",
-                "reference": "578b2cb1bec3fc97260824a704ae14a74575f747"
+                "reference": "1bbd6b21e1493516254eeb0a4be8d088d018292f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento/magento2-functional-testing-framework/zipball/578b2cb1bec3fc97260824a704ae14a74575f747",
-                "reference": "578b2cb1bec3fc97260824a704ae14a74575f747",
+                "url": "https://api.github.com/repos/magento/magento2-functional-testing-framework/zipball/1bbd6b21e1493516254eeb0a4be8d088d018292f",
+                "reference": "1bbd6b21e1493516254eeb0a4be8d088d018292f",
                 "shasum": ""
             },
             "require": {
@@ -11541,7 +11541,7 @@
                 "monolog/monolog": "^2.3||^3.0",
                 "mustache/mustache": "~2.5",
                 "nikic/php-parser": "^4.4||^5.0",
-                "php": ">8.2",
+                "php": ">=8.2",
                 "php-webdriver/webdriver": "^1.14.0",
                 "spomky-labs/otphp": "^10.0||^11.0",
                 "symfony/console": "^6.4",
@@ -11596,7 +11596,7 @@
                 "issues": "https://github.com/magento/magento2-functional-testing-framework/issues",
                 "source": "https://github.com/magento/magento2-functional-testing-framework/tree/develop"
             },
-            "time": "2024-11-18T14:29:51+00:00"
+            "time": "2024-12-13T16:39:02+00:00"
         },
         {
             "name": "magento/php-compatibility-fork",
