@@ -211,4 +211,5 @@
             <argument name="scopeConfig" xsi:type="object">Magento\Framework\App\Config\ScopeConfigInterface\Proxy</argument>
         </arguments>
     </type>
+    <type name="Magento\SalesRule\Model\Rule\Action\Discount\ExistingDiscountRuleCollector" shared="true" />
 </config>

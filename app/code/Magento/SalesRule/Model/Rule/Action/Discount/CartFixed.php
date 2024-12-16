@@ -30,12 +30,12 @@ class CartFixed extends AbstractDiscount
     /**
      * @var DeltaPriceRound
      */
-    private $deltaPriceRound;
+    private DeltaPriceRound $deltaPriceRound;
 
     /**
      * @var CartFixedDiscount
      */
-    private $cartFixedDiscountHelper;
+    private CartFixedDiscount $cartFixedDiscountHelper;
 
     /**
      * @var string
@@ -43,10 +43,16 @@ class CartFixed extends AbstractDiscount
     private static $discountType = 'CartFixed';
 
     /**
+     * @var ExistingDiscountRuleCollector
+     */
+    private ExistingDiscountRuleCollector $existingDiscountRuleCollector;
+
+    /**
      * @param Validator $validator
      * @param DataFactory $discountDataFactory
      * @param PriceCurrencyInterface $priceCurrency
      * @param DeltaPriceRound $deltaPriceRound
+     * @param ExistingDiscountRuleCollector $existingDiscountRuleCollector
      * @param CartFixedDiscount|null $cartFixedDiscount
      */
     public function __construct(
@@ -54,9 +60,11 @@ class CartFixed extends AbstractDiscount
         DataFactory $discountDataFactory,
         PriceCurrencyInterface $priceCurrency,
         DeltaPriceRound $deltaPriceRound,
+        ExistingDiscountRuleCollector $existingDiscountRuleCollector,
         ?CartFixedDiscount $cartFixedDiscount = null
     ) {
         $this->deltaPriceRound = $deltaPriceRound;
+        $this->existingDiscountRuleCollector = $existingDiscountRuleCollector;
         $this->cartFixedDiscountHelper = $cartFixedDiscount ?:
             ObjectManager::getInstance()->get(CartFixedDiscount::class);
         parent::__construct($validator, $discountDataFactory, $priceCurrency);
@@ -76,18 +84,7 @@ class CartFixed extends AbstractDiscount
      */
     public function calculate($rule, $item, $qty)
     {
-        /** @var Data $discountData */
-        $discountData = $this->discountFactory->create();
-
         $ruleTotals = $this->validator->getRuleItemTotalsInfo($rule->getId());
-        if ($rule->getExistingDiscounts() === null) {
-            $existingRuleDiscount = 0;
-            /** @var Item $ruleItem */
-            foreach ($ruleTotals['affected_items'] as $ruleItem) {
-                $existingRuleDiscount += $ruleItem->getBaseDiscountAmount();
-            }
-            $rule->setExistingDiscounts($existingRuleDiscount);
-        }
         $baseRuleTotals = $ruleTotals['base_items_price'] ?? 0.0;
         $ruleItemsCount = $ruleTotals['items_count'] ?? 0;
 
@@ -111,6 +108,8 @@ class CartFixed extends AbstractDiscount
         $availableDiscountAmount = (float) $cartRules[$rule->getId()];
         $discountType = self::$discountType . $rule->getId();
 
+        /** @var Data $discountData */
+        $discountData = $this->discountFactory->create();
         if ($availableDiscountAmount > 0) {
             $store = $quote->getStore();
             $shippingPrice = $this->cartFixedDiscountHelper->applyDiscountOnPricesIncludedTax()
@@ -142,7 +141,8 @@ class CartFixed extends AbstractDiscount
                         $qty,
                         $baseItemPrice,
                         $baseItemDiscountAmount,
-                        $baseRuleTotals - $rule->getExistingDiscounts(),
+                        $baseRuleTotals -
+                        $this->getItemsTotalDiscount($rule->getId(), $ruleTotals['affected_items']),
                         $discountType
                     );
 
@@ -198,6 +198,25 @@ class CartFixed extends AbstractDiscount
         $quote->setCartFixedRules($cartRules);
 
         return $discountData;
+    }
+
+    /**
+     * @param int $ruleId
+     * @param array $affectedItems
+     * @return float
+     */
+    private function getItemsTotalDiscount(int $ruleId, array $affectedItems): float
+    {
+        if ($this->existingDiscountRuleCollector->getExistingRuleDiscount($ruleId) === null) {
+            $existingRuleDiscount = 0;
+            /** @var Item $ruleItem */
+            foreach ($affectedItems as $ruleItem) {
+                $existingRuleDiscount += $ruleItem->getBaseDiscountAmount();
+            }
+            $this->existingDiscountRuleCollector->setExistingRuleDiscount($ruleId, $existingRuleDiscount);
+        }
+
+        return $this->existingDiscountRuleCollector->getExistingRuleDiscount($ruleId);
     }
 
     /**
