@@ -201,6 +201,8 @@ class CartFixed extends AbstractDiscount
     }
 
     /**
+     * Get existing discount applied to affected items
+     *
      * @param int $ruleId
      * @param array $affectedItems
      * @return float

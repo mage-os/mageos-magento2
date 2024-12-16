@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -701,7 +701,7 @@ class CartFixedTest extends TestCase
                 'discount_amount' => 153,
                 'apply_to_shipping' => 0,
                 'stop_rules_processing' => 0,
-                'sort_order' => 1,
+                'sort_order' => 0,
                 'conditions' => ['$cond111$'],
                 'actions' => ['$applyCond1$']
             ]
@@ -733,7 +733,7 @@ class CartFixedTest extends TestCase
                 'discount_amount' => 14,
                 'apply_to_shipping' => 0,
                 'stop_rules_processing' => 0,
-                'sort_order' => 2,
+                'sort_order' => 0,
                 'conditions' => ['$cond222$'],
                 'actions' => ['$applyCond2$']
             ]
