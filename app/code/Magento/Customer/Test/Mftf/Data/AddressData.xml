@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  /**
-  * Copyright © Magento, Inc. All rights reserved.
-  * See COPYING.txt for license details.
+  * Copyright 2024 Adobe
+  * All Rights Reserved.
   */
 -->
 
@@ -128,6 +128,24 @@
         <data key="telephone">512-345-6789</data>
         <data key="default_billing">Yes</data>
         <requiredEntity type="region">RegionTX</requiredEntity>
+    </entity>
+    <entity name="US_Address_Custom" type="address">
+        <data key="firstname">Adam</data>
+        <data key="lastname">Black</data>
+        <data key="company">Magento</data>
+        <array key="street">
+            <item>1100 West Parmer Lane</item>
+            <item>113</item>
+        </array>
+        <data key="city">Los Angeles</data>
+        <data key="state">California</data>
+        <data key="country_id">US</data>
+        <data key="country">United States</data>
+        <data key="postcode">20011</data>
+        <data key="telephone">512-345-6789</data>
+        <data key="default_billing">Yes</data>
+        <data key="default_shipping">Yes</data>
+        <requiredEntity type="region">RegionCA</requiredEntity>
     </entity>
     <entity name="US_Address_NY" type="address">
         <data key="firstname">John</data>

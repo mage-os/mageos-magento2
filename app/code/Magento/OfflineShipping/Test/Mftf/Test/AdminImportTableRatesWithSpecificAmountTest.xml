@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright 2024 Adobe
+  * All Rights Reserved.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminImportTableRatesWithSpecificAmountTest">
+        <annotations>
+            <features value="Shipping"/>
+            <stories value="Offline Shipping Methods"/>
+            <title value="Import table rate shipping prices with specific amount including and excluding virtual products"/>
+            <description value="Admin Should Able to import table rate shipping prices with specific amount with Virtual Products as per Configuration"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="AC-13526"/>
+            <group value="shipping"/>
+        </annotations>
+        <before>
+            <!--Create customer-->
+            <createData entity="Simple_Customer_Without_Address" stepKey="createCustomer"/>
+            <!-- Add simple product -->
+            <createData entity="SimpleProduct2" stepKey="createFirstSimpleProduct">
+                <field key="price">9.00</field>
+            </createData>
+            <createData entity="SimpleProduct2" stepKey="createSecondSimpleProduct">
+                <field key="price">11.00</field>
+            </createData>
+            <createData entity="SimpleProduct3" stepKey="createThirdSimpleProduct">
+                <field key="price">64.00</field>
+            </createData>
+            <createData entity="ApiVirtualProductWithDescription" stepKey="createVirtualProduct"/>
+            <magentoCLI command="config:set {{DisableFlatRateConfigData.path}} {{DisableFlatRateConfigData.value}}" stepKey="disableFlatRate"/>
+        </before>
+        <after>
+            <!-- Roll back configuration -->
+            <magentoCLI command="config:set {{EnableFlatRateConfigData.path}} {{EnableFlatRateConfigData.value}}" stepKey="enableFlatRate"/>
+            <!-- Go to Stores > Configuration > Sales > Shipping Methods -->
+            <actionGroup ref="AdminOpenShippingMethodsConfigPageActionGroup" stepKey="openShippingMethodConfigPage"/>
+            <!-- Switch to Website scope -->
+            <actionGroup ref="AdminSwitchWebsiteActionGroup" stepKey="AdminSwitchStoreView">
+                <argument name="website" value="_defaultWebsite"/>
+            </actionGroup>
+            <!-- Check Use Default checkbox for Default Condition and Active -->
+            <checkOption selector="{{AdminShippingMethodTableRatesSection.carriersTableRateConditionName}}" stepKey="enableUseDefaultCondition"/>
+            <checkOption selector="{{AdminShippingMethodTableRatesSection.enabledUseSystemValue}}" stepKey="enableUseDefaultActive"/>
+            <actionGroup ref="AdminSaveConfigActionGroup" stepKey="saveConfigs"/>
+            <!-- Log out -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+            <!-- Remove Virtual products-->
+            <deleteData createDataKey="createVirtualProduct" stepKey="deleteVirtualProduct"/>
+            <!-- Remove simple products-->
+            <deleteData createDataKey="createFirstSimpleProduct" stepKey="deleteFirstSimpleProduct"/>
+            <deleteData createDataKey="createSecondSimpleProduct" stepKey="deleteSecondSimpleProduct"/>
+            <deleteData createDataKey="createThirdSimpleProduct" stepKey="deleteThirdSimpleProduct"/>
+            <!-- Delete sales rule -->
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+        </after>
+        <!-- Login as admin -->
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        <!-- Go to Stores > Configuration > Sales > Shipping Methods -->
+        <actionGroup ref="AdminOpenShippingMethodsConfigPageActionGroup" stepKey="openShippingMethodConfigPage"/>
+        <!-- Switch to Website scope -->
+        <actionGroup ref="AdminSwitchWebsiteActionGroup" stepKey="AdminSwitchStoreView">
+            <argument name="website" value="_defaultWebsite"/>
+        </actionGroup>
+        <!-- Enable Table Rate method and save config -->
+        <actionGroup ref="AdminChangeTableRatesShippingMethodStatusActionGroup" stepKey="enableTableRatesShippingMethod"/>
+        <!-- Uncheck Use Default checkbox for Default Condition -->
+        <uncheckOption selector="{{AdminShippingMethodTableRatesSection.carriersTableRateConditionName}}" stepKey="disableUseDefaultCondition"/>
+        <!-- Make sure you have Condition Price vs. Destination -->
+        <selectOption selector="{{AdminShippingMethodTableRatesSection.condition}}" userInput="{{TableRateShippingMethodConfig.package_value_with_discount}}" stepKey="setCondition"/>
+        <!-- Uncheck Use Default checkbox for include virtual price -->
+        <uncheckOption selector="{{AdminShippingMethodTableRatesSection.carriersTableRateIncludeVirtualPrice}}" stepKey="uncheckIncludeVirtualPrice"/>
+        <selectOption selector="{{AdminShippingMethodTableRatesSection.carriersTableRateIncludeVirtualPriceDropdown}}" userInput="No" stepKey="setIncludeVirtualPriceAsYes"/>
+        <!-- Import file and save config -->
+        <attachFile selector="{{AdminShippingMethodTableRatesSection.importFile}}" userInput="usa_tablerates.csv" stepKey="attachFileForImport"/>
+        <actionGroup ref="AdminSaveConfigActionGroup" stepKey="saveConfigs"/>
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+            <argument name="indices" value=""/>
+        </actionGroup>
+        <!-- Login as Customer Login from Customer page -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
+            <argument name="Customer" value="$$createCustomer$$" />
+        </actionGroup>
+        <actionGroup ref="StorefrontAddNewCustomerAddressActionGroup" stepKey="AddNewAddress">
+            <argument name="Address" value="US_Address_Custom"/>
+        </actionGroup>
+        <!-- Add simple product to cart -->
+        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="addProductToCart">
+            <argument name="product" value="$$createFirstSimpleProduct$$"/>
+        </actionGroup>
+        <!-- Assert that table rate value is correct for US -->
+        <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="goToCheckout"/>
+        <waitForElement time="30" selector="{{CheckoutCartSummarySection.estimateShippingAndTaxForm}}" stepKey="waitForEstimateShippingAndTaxForm"/>
+        <conditionalClick selector="{{CheckoutCartSummarySection.estimateShippingAndTax}}" dependentSelector="{{CheckoutCartSummarySection.country}}" visible="false" stepKey="expandEstimateShippingandTax" />
+        <scrollTo selector="{{CheckoutCartSummarySection.shippingPrice}}" stepKey="scrollToShippingForUS"/>
+        <grabTextFrom  selector="{{CheckoutCartSummarySection.shippingPrice}}" stepKey="grabTableratePrice5"/>
+        <assertStringContainsString  stepKey="checkCustomerShippingPrice5">
+            <expectedResult type="string">$6.99</expectedResult>
+            <actualResult type="variable">grabTableratePrice5</actualResult>
+        </assertStringContainsString>
+        <waitForText selector="{{CheckoutCartSummarySection.country}}" userInput="United States" stepKey="selectUSCountry"/>
+        <waitForText selector="{{CheckoutCartSummarySection.stateProvince}}" userInput="California" stepKey="selectCaliforniaRegion"/>
+        <waitForElementVisible selector="{{CheckoutCartSummarySection.postcode}}" stepKey="selectZipCode"/>
+        <grabValueFrom  selector="{{CheckoutCartSummarySection.postcode}}" stepKey="grabTextPostCode"/>
+        <assertEquals message="pass" stepKey="checkCustomerPostcode">
+            <expectedResult type="string">{{US_Address_Custom.postcode}}</expectedResult>
+            <actualResult type="variable">grabTextPostCode</actualResult>
+        </assertEquals>
+        <waitForPageLoad stepKey="waitForSelectCountry"/>
+        <!-- Add simple product to cart -->
+        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="addSecondProductToCart1">
+            <argument name="product" value="$$createVirtualProduct$$"/>
+        </actionGroup>
+        <!-- Assert that table rate value is correct for US -->
+        <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="goAgainToCheckout"/>
+        <conditionalClick selector="{{CheckoutCartSummarySection.estimateShippingAndTax}}" dependentSelector="{{CheckoutCartSummarySection.country}}" visible="false" stepKey="expandEstimateShippingandTax1"/>
+        <grabTextFrom  selector="{{CheckoutCartSummarySection.shippingPrice}}" stepKey="grabTableratePrice2"/>
+        <assertStringContainsString  stepKey="checkCustomerShippingPrice2">
+            <expectedResult type="string">$6.99</expectedResult>
+            <actualResult type="variable">grabTableratePrice2</actualResult>
+        </assertStringContainsString>
+        <!-- Assert product details in Mini Cart -->
+        <actionGroup ref="StorefrontClickOnMiniCartActionGroup" stepKey="clickOnMiniCart"/>
+        <!--Remove an item from the cart using minicart-->
+        <actionGroup ref="RemoveProductFromMiniCartActionGroup" stepKey="removeProductFromMiniCart">
+            <argument name="productName" value="$$createFirstSimpleProduct.name$$"/>
+        </actionGroup>
+        <!-- Add simple product to cart -->
+        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="addAnotherProductToCart">
+            <argument name="product" value="$$createSecondSimpleProduct$$"/>
+        </actionGroup>
+        <!-- Assert that table rate value is correct for US -->
+        <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="navigateToToCheckout"/>
+        <conditionalClick selector="{{CheckoutCartSummarySection.estimateShippingAndTax}}" dependentSelector="{{CheckoutCartSummarySection.country}}" visible="false" stepKey="expandEstimateShippingPrice"/>
+        <grabTextFrom  selector="{{CheckoutCartSummarySection.shippingPrice}}" stepKey="grabTableratePrice1"/>
+        <assertStringContainsString  stepKey="checkCustomerShippingPrice1">
+            <expectedResult type="string">$6.99</expectedResult>
+            <actualResult type="variable">grabTableratePrice1</actualResult>
+        </assertStringContainsString>
+        <!-- Assert product details in Mini Cart -->
+        <actionGroup ref="StorefrontClickOnMiniCartActionGroup" stepKey="clickOnMiniCart1"/>
+        <!--Remove an item from the cart using minicart-->
+        <actionGroup ref="RemoveProductFromMiniCartActionGroup" stepKey="removeProductFromMiniCart1">
+            <argument name="productName" value="$$createSecondSimpleProduct.name$$"/>
+        </actionGroup>
+        <!-- Add simple product to cart -->
+        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="addAnotherProductIntoCart">
+            <argument name="product" value="$$createThirdSimpleProduct$$"/>
+        </actionGroup>
+        <!-- Assert that table rate value is correct for US -->
+        <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="navigateAgainToToCheckout"/>
+        <conditionalClick selector="{{CheckoutCartSummarySection.estimateShippingAndTax}}" dependentSelector="{{CheckoutCartSummarySection.country}}" visible="false" stepKey="expandEstimateShippingPrice1"/>
+        <grabTextFrom  selector="{{CheckoutCartSummarySection.shippingPrice}}" stepKey="grabTableratePrice3"/>
+        <assertStringContainsString  stepKey="checkCustomerShippingPrice3">
+            <expectedResult type="string">$4.99</expectedResult>
+            <actualResult type="variable">grabTableratePrice3</actualResult>
+        </assertStringContainsString>
+        <!-- Assert product details in Mini Cart -->
+        <actionGroup ref="StorefrontClickOnMiniCartActionGroup" stepKey="clickOnMiniCart2"/>
+        <!--Remove an item from the cart using minicart-->
+        <actionGroup ref="RemoveProductFromMiniCartActionGroup" stepKey="removeProductFromMiniCart3">
+            <argument name="productName" value="$$createThirdSimpleProduct.name$$"/>
+        </actionGroup>
+        <!-- Assert that table rate value is correct for US -->
+        <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="navigateAgainToToCheckout1"/>
+        <conditionalClick selector="{{CheckoutCartSummarySection.estimateShippingAndTax}}" dependentSelector="{{CheckoutCartSummarySection.country}}" visible="false" stepKey="expandEstimateShippingPrice2"/>
+        <waitForElementNotVisible selector="{{CheckoutCartSummarySection.shippingPrice}}"  stepKey="dontSeeShippingPriceForUS"/>
+        <actionGroup ref="AdminOpenShippingMethodsConfigPageActionGroup" stepKey="openAgainShippingMethodConfigPage"/>
+        <!-- Enable Table Rate method and save config -->
+        <actionGroup ref="AdminChangeTableRatesShippingMethodStatusActionGroup" stepKey="enableTableRatesShippingMethod1"/>
+        <scrollTo selector="{{AdminShippingMethodTableRatesSection.carriersTableRateIncludeVirtualPriceDropdown}}" stepKey="scrollToIncludeVirtualPrice"/>
+        <selectOption selector="{{AdminShippingMethodTableRatesSection.carriersTableRateIncludeVirtualPriceDropdown}}" userInput="Yes" stepKey="setIncludeVirtualPriceAsNo"/>
+        <actionGroup ref="AdminSaveConfigActionGroup" stepKey="saveConfig"/>
+        <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="navigateToStorefront"/>
+        <actionGroup ref="StorefrontClickOnMiniCartActionGroup" stepKey="clickOnMiniCart3"/>
+        <!--Remove an item from the cart using minicart-->
+        <actionGroup ref="RemoveProductFromMiniCartActionGroup" stepKey="removeVirtualProductFromMiniCart">
+            <argument name="productName" value="$$createVirtualProduct.name$$"/>
+        </actionGroup>
+        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="addSimpleProductToCart">
+            <argument name="product" value="$$createFirstSimpleProduct$$"/>
+        </actionGroup>
+        <!-- Add Virtual product to cart -->
+        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="addVirtualProductToCart">
+            <argument name="product" value="$$createVirtualProduct$$"/>
+        </actionGroup>
+        <!-- Assert that table rate value is correct for US -->
+        <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="goAgainToCheckout2"/>
+        <conditionalClick selector="{{CheckoutCartSummarySection.estimateShippingAndTax}}" dependentSelector="{{CheckoutCartSummarySection.country}}" visible="false" stepKey="expandEstimateTableRatePrice"/>
+        <grabTextFrom  selector="{{CheckoutCartSummarySection.shippingPrice}}" stepKey="grabTableratePrice4"/>
+        <assertStringContainsString  stepKey="checkCustomerShippingPrice">
+            <expectedResult type="string">$6.99</expectedResult>
+            <actualResult type="variable">grabTableratePrice4</actualResult>
+        </assertStringContainsString>
+    </test>
+</tests>
