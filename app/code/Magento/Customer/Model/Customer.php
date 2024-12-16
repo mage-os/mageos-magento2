@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2011 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Customer\Model;
@@ -342,13 +342,17 @@ class Customer extends \Magento\Framework\Model\AbstractModel implements ResetAf
     public function getDataModel()
     {
         $customerData = $this->getData();
-        $addressesData = [];
+        $regularAddresses = $defaultAddresses = [];
         /** @var \Magento\Customer\Model\Address $address */
         foreach ($this->getAddresses() as $address) {
             if (!isset($this->storedAddress[$address->getId()])) {
                 $this->storedAddress[$address->getId()] = $address->getDataModel();
             }
-            $addressesData[] = $this->storedAddress[$address->getId()];
+            if ($this->storedAddress[$address->getId()]->isDefaultShipping()) {
+                $defaultAddresses[] = $this->storedAddress[$address->getId()];
+            } else {
+                $regularAddresses[] = $this->storedAddress[$address->getId()];
+            }
         }
         $customerDataObject = $this->customerDataFactory->create();
         $this->dataObjectHelper->populateWithArray(
@@ -356,7 +360,7 @@ class Customer extends \Magento\Framework\Model\AbstractModel implements ResetAf
             $customerData,
             \Magento\Customer\Api\Data\CustomerInterface::class
         );
-        $customerDataObject->setAddresses($addressesData)
+        $customerDataObject->setAddresses(array_merge($defaultAddresses, $regularAddresses))
             ->setId($this->getId());
         return $customerDataObject;
     }
@@ -1411,5 +1415,8 @@ class Customer extends \Magento\Framework\Model\AbstractModel implements ResetAf
     public function _resetState(): void
     {
         $this->_errors = [];
+        $this->_origData = null;
+        $this->storedData = [];
+        $this->_data = [];
     }
 }

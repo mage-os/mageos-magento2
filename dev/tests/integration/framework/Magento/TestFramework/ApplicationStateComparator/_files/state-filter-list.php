@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2023 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -41,6 +41,7 @@ return [
         Magento\Framework\Logger\Handler\Base::class => [ // TODO: remove this after ACPT-1034 is fixed
             'stream' => null,
         ],
+        Magento\Framework\Validator\AbstractValidator::class => ['_defaultTranslator' => null],
     ],
     'services' => [ // Note: These apply only to the service names that match.
         Magento\Framework\ObjectManager\ConfigInterface::class => ['_mergedArguments' => null],
@@ -213,6 +214,12 @@ return [
         ],
         Magento\Framework\App\State\Interceptor::class => [
             '_areaCode' => null, // Note: _areaCode gets set after construction.
+        ],
+        Magento\Framework\Cache\Frontend\Adapter\Zend::class => [
+            'parentFrontends' => null, // Note: This is to prevent closing parent thread's connection.
+        ],
+        Magento\Framework\Session\SaveHandler\Redis::class => [
+            'connection' => null, // Note: This is to prevent closing parent thread's connection.
         ],
     ],
 ];
