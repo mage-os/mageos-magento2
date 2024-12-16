@@ -50,6 +50,7 @@ use Magento\SalesRule\Test\Fixture\Rule as RuleFixture;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\TestFramework\Fixture\DataFixture;
 use Magento\TestFramework\Fixture\DataFixtureStorageManager;
+use Magento\TestFramework\Fixture\DbIsolation;
 use Magento\TestFramework\Helper\Bootstrap;
 use PHPUnit\Framework\TestCase;
 
@@ -57,6 +58,7 @@ use PHPUnit\Framework\TestCase;
  * Tests for Magento\SalesRule\Model\Rule\Action\Discount\CartFixed.
  *
  * @magentoAppArea frontend
+ * @magentoAppIsolation enabled
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class CartFixedTest extends TestCase
@@ -605,6 +607,7 @@ class CartFixedTest extends TestCase
     }
 
     #[
+        DbIsolation(true),
         DataFixture(ProductFixture::class, ['price' => 10], 'p1'),
         DataFixture(ProductFixture::class, ['price' => 10], 'p2'),
         DataFixture(
@@ -672,6 +675,7 @@ class CartFixedTest extends TestCase
     }
 
     #[
+        DbIsolation(true),
         DataFixture(ProductFixture::class, ['price' => 850, 'special_price' => 765], 'p1'),
         DataFixture(ProductFixture::class, ['price' => 85, 'special_price' => 68], 'p2'),
         DataFixture(
