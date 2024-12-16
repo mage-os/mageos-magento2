@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Unit\Model\Acl\Loader;
+namespace Magento\Authorization\Test\Unit\Model\Acl\Loader;
 
 use Magento\Authorization\Model\Acl\Loader\Rule;
 use Magento\Framework\Acl;
