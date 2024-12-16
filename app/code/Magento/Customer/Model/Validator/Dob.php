@@ -12,19 +12,19 @@ use Magento\Framework\Validator\AbstractValidator;
 use Magento\Store\Model\StoreManagerInterface;
 
 /**
- * Customer name fields validator.
+ * Customer dob field validator.
  */
 class Dob extends AbstractValidator
 {
     /**
      * @var \DateTime
      */
-    private $currentDate;
+    private \DateTime $currentDate;
 
    /**
     * @var StoreManagerInterface
     */
-    private $storeManager;
+    private StoreManagerInterface $storeManager;
 
     /**
      * @param StoreManagerInterface $storeManager
@@ -41,7 +41,7 @@ class Dob extends AbstractValidator
      * @param Customer $customer
      * @return bool
      */
-    public function isValid($customer)
+    public function isValid($customer): bool
     {
         if (!$this->isValidDob($customer->getDob(), $customer->getStoreId())) {
             parent::_addMessages([['dob' => 'The Date of Birth should not be greater than today.']]);
@@ -57,7 +57,7 @@ class Dob extends AbstractValidator
      * @param int $storeId
      * @return bool
      */
-    private function isValidDob($dobValue, $storeId)
+    private function isValidDob(?string $dobValue, int $storeId): bool
     {
         if ($dobValue != null) {
 

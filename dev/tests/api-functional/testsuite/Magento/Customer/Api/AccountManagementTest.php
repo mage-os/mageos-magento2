@@ -240,7 +240,9 @@ class AccountManagementTest extends WebapiAbstract
             $this->customerHelper->createSampleCustomerDataObject(),
             \Magento\Customer\Api\Data\CustomerInterface::class
         );
-        $futureDob = '14-12-2044';
+        $date = new \DateTime();
+        $date->modify('+1 month');
+        $futureDob = $date->format('Y-m-d');
         $customerDataArray['dob'] = $futureDob;
         $requestData = ['customer' => $customerDataArray, 'password' => CustomerHelper::PASSWORD];
         try {
