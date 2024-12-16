@@ -1,9 +1,7 @@
 <?php
 /**
- * Configuration interface
- *
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2011 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Framework\App\Config;
@@ -17,7 +15,7 @@ interface ScopeConfigInterface
     /**
      * Default scope type
      */
-    const SCOPE_TYPE_DEFAULT = 'default';
+    public const SCOPE_TYPE_DEFAULT = 'default';
 
     /**
      * Retrieve config value by path and scope.
