@@ -70,7 +70,7 @@
             <argument name="qty" value="2"/>
         </actionGroup>
         <!-- verify quantity updated-->
-        <seeInField userInput="2" selector="{{CheckoutCartProductSection.ProductQuantityByName($$createSimpleProduct.name$$)}}" stepKey="seeInProductQtyInCart"/>
+        <waitForText userInput="2" selector="{{StorefrontMinicartSection.productCount}}" stepKey="assertProductCount"/>
         <!-- verify discount is applied for only one product -->
         <actionGroup ref="AssertStorefrontCartDiscountActionGroup" stepKey="seeDiscountAmount1">
             <argument name="discount" value="600.00"/>
