@@ -19,6 +19,7 @@ use Magento\SalesRule\Model\Rule;
 use Magento\SalesRule\Model\Rule\Action\Discount\CartFixed;
 use Magento\SalesRule\Model\Rule\Action\Discount\Data;
 use Magento\SalesRule\Model\Rule\Action\Discount\DataFactory;
+use Magento\SalesRule\Model\Rule\Action\Discount\ExistingDiscountRuleCollector;
 use Magento\SalesRule\Model\Validator;
 use Magento\Store\Model\Store;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -82,6 +83,11 @@ class CartFixedTest extends TestCase
     protected $cartFixedDiscountHelper;
 
     /**
+     * @var ExistingDiscountRuleCollector|MockObject
+     */
+    private ExistingDiscountRuleCollector $existingDiscountRuleCollector;
+
+    /**
      * @inheritdoc
      */
     protected function setUp(): void
@@ -136,11 +142,16 @@ class CartFixedTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->existingDiscountRuleCollector = $this->createMock(ExistingDiscountRuleCollector::class);
+        $this->existingDiscountRuleCollector->expects($this->any())
+            ->method('getExistingRuleDiscount')
+            ->willReturn(0.00);
         $this->model = new CartFixed(
             $this->validator,
             $dataFactory,
             $this->priceCurrency,
             $this->deltaPriceRound,
+            $this->existingDiscountRuleCollector,
             $this->cartFixedDiscountHelper
         );
     }
@@ -150,7 +161,7 @@ class CartFixedTest extends TestCase
      * @dataProvider dataProviderActions
      * @param array $shipping
      * @param array $ruleDetails
-     * @throws LocalizedException
+     * @throws LocalizedException|\PHPUnit\Framework\MockObject\Exception
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testCalculate(array $shipping, array $ruleDetails): void
