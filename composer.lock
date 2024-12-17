@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1d8e7a314e26afc04c05dae58b1297d7",
+    "content-hash": "e83c64121ba2ba5beb07ce64fd7c3841",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -2428,12 +2428,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:magento-commerce/laminas-file.git",
-                "reference": "8d3f9a04c58d4082a96e90de4d46a3a67e604609"
+                "reference": "a61bdc03448726d0e7d9b753c617d7bbe5d263be"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-commerce/laminas-file/zipball/8d3f9a04c58d4082a96e90de4d46a3a67e604609",
-                "reference": "8d3f9a04c58d4082a96e90de4d46a3a67e604609",
+                "url": "https://api.github.com/repos/magento-commerce/laminas-file/zipball/a61bdc03448726d0e7d9b753c617d7bbe5d263be",
+                "reference": "a61bdc03448726d0e7d9b753c617d7bbe5d263be",
                 "shasum": ""
             },
             "require": {
@@ -2511,7 +2511,7 @@
                 "chat": "https://laminas.dev/chat",
                 "forum": "https://discourse.laminas.dev"
             },
-            "time": "2024-12-12T09:30:41+00:00"
+            "time": "2024-12-16T11:19:56+00:00"
         },
         {
             "name": "laminas/laminas-filter",
