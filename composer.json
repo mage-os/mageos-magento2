@@ -92,6 +92,14 @@
         {
             "type": "vcs",
             "url": "git@github.com:magento-gl/magento-zend-log.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:djadobe16/module-sequence.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:magento-gl/magento2-functional-testing-framework.git"
         }
     ],
     "require": {
@@ -171,7 +179,8 @@
         "magento/zend-memory": "dev-php84_deprication_fix",
         "magento/zend-exception": "dev-php84_deprication_fix",
         "magento/zend-loader": "dev-php84_deprication_fix",
-        "magento/zend-log": "dev-php84_deprication_fix"
+        "magento/zend-log": "dev-php84_deprication_fix",
+        "codeception/module-sequence": "dev-php84-support"
     },
     "require-dev": {
         "allure-framework/allure-phpunit": "dev-develop",
@@ -180,7 +189,7 @@
         "friendsofphp/php-cs-fixer": "^3.22",
         "lusitanian/oauth": "^0.8",
         "magento/magento-coding-standard": "dev-php8.4_support",
-        "magento/magento2-functional-testing-framework": "dev-develop",
+        "magento/magento2-functional-testing-framework": "dev-AC-13306",
         "pdepend/pdepend": "^2.10",
         "phpmd/phpmd": "^2.12",
         "phpstan/phpstan": "^1.9",
