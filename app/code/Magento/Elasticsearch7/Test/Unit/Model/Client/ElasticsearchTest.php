@@ -272,7 +272,7 @@ class ElasticsearchTest extends TestCase
             ->method('bulk')
             ->with([])
             ->willReturn($result);
-        self::assertEquals($result, $this->model->bulkQuery([]));
+        $this->assertEquals($result, $this->model->bulkQuery([]));
     }
 
     /**
