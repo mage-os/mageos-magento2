@@ -1,57 +1,76 @@
 <?php
 /**
- *
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2017 Adobe
+ * All Rights Reserved.
  */
+declare(strict_types=1);
+
 namespace Magento\Persistent\Observer;
 
-use Magento\Framework\Event\ObserverInterface;
+use Magento\Cron\Model\Schedule;
+use Magento\Persistent\Model\DeleteExpiredQuoteFactory;
+use Magento\Framework\App\ObjectManager;
+use Magento\Persistent\Model\SessionFactory;
+use Magento\Store\Model\ResourceModel\Website\CollectionFactory;
 
 class ClearExpiredCronJobObserver
 {
     /**
      * Website collection factory
      *
-     * @var \Magento\Store\Model\ResourceModel\Website\CollectionFactory
+     * @var CollectionFactory
      */
-    protected $_websiteCollectionFactory;
+    private CollectionFactory $websiteCollectionFactory;
 
     /**
      * Session factory
      *
-     * @var \Magento\Persistent\Model\SessionFactory
+     * @var SessionFactory
      */
-    protected $_sessionFactory;
+    private SessionFactory $sessionFactory;
 
     /**
-     * @param \Magento\Store\Model\ResourceModel\Website\CollectionFactory $websiteCollectionFactory
-     * @param \Magento\Persistent\Model\SessionFactory $sessionFactory
+     * Delete expired quote factory
+     *
+     * @var DeleteExpiredQuoteFactory
+     */
+    private DeleteExpiredQuoteFactory $deleteExpiredQuoteFactory;
+
+
+
+    /**
+     * @param CollectionFactory $websiteCollectionFactory
+     * @param SessionFactory $sessionFactory
+     * @param DeleteExpiredQuoteFactory|null $deleteExpiredQuoteFactory
      */
     public function __construct(
-        \Magento\Store\Model\ResourceModel\Website\CollectionFactory $websiteCollectionFactory,
-        \Magento\Persistent\Model\SessionFactory $sessionFactory
+        CollectionFactory $websiteCollectionFactory,
+        SessionFactory $sessionFactory,
+        DeleteExpiredQuoteFactory $deleteExpiredQuoteFactory = null
     ) {
-        $this->_websiteCollectionFactory = $websiteCollectionFactory;
-        $this->_sessionFactory = $sessionFactory;
+        $this->websiteCollectionFactory = $websiteCollectionFactory;
+        $this->sessionFactory = $sessionFactory;
+        $this->deleteExpiredQuoteFactory = $deleteExpiredQuoteFactory ?:
+            ObjectManager::getInstance()->get(DeleteExpiredQuoteFactory::class);
     }
 
     /**
      * Clear expired persistent sessions
      *
-     * @param \Magento\Cron\Model\Schedule $schedule
+     * @param Schedule $schedule
      * @return $this
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function execute(\Magento\Cron\Model\Schedule $schedule)
+    public function execute(Schedule $schedule)
     {
-        $websiteIds = $this->_websiteCollectionFactory->create()->getAllIds();
+        $websiteIds = $this->websiteCollectionFactory->create()->getAllIds();
         if (!is_array($websiteIds)) {
             return $this;
         }
 
         foreach ($websiteIds as $websiteId) {
-            $this->_sessionFactory->create()->deleteExpired($websiteId);
+            $this->sessionFactory->create()->deleteExpired($websiteId);
+            $this->deleteExpiredQuoteFactory->create()->deleteExpiredQuote($websiteId);
         }
 
         return $this;
