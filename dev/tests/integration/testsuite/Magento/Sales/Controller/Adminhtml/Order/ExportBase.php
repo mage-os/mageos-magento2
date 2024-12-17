@@ -83,7 +83,7 @@ class ExportBase extends AbstractBackendController
     {
         $result = [];
         $data = str_getcsv($data, PHP_EOL, '"', '\\');
-        $headers = str_getcsv(array_shift($data), ',', '"');
+        $headers = str_getcsv(array_shift($data), ',', '"', '\\');
         foreach ($data as $row) {
             $result[] = array_combine($headers, str_getcsv($row, ',', '"'));
         }

@@ -91,7 +91,7 @@ class Memory
     {
         $output = $this->_shell->execute('tasklist.exe /fi %s /fo CSV /nh', ["PID eq {$pid}"]);
 
-        $arr = str_getcsv($output);
+        $arr = str_getcsv($output, ',', '"', '\\');
         $memory = $arr[4];
         return self::convertToBytes($memory);
     }
