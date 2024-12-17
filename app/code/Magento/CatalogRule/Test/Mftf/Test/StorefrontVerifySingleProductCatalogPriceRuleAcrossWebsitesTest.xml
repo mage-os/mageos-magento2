@@ -7,7 +7,7 @@
 -->
 
 <tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
-    <test name="StorefrontCheckProductPricesAcrossWebsitesBasedOnCatalogPriceRuleTest">
+    <test name="StorefrontVerifySingleProductCatalogPriceRuleAcrossWebsitesTest">
         <annotations>
             <features value="CatalogRule"/>
             <stories value="Apply catalog price rule"/>
@@ -17,6 +17,19 @@
             <testCaseId value="AC-7409"/>
         </annotations>
         <before>
+            <!--Create dropdown product attribute-->
+            <createData entity="productAttributeAgeGroupDropdown" stepKey="createDropdownAttribute"/>
+            <!--Create attribute options-->
+            <createData entity="productAttributeOptionAdult" stepKey="createFirstAttributeOption">
+                <requiredEntity createDataKey="createDropdownAttribute"/>
+            </createData>
+            <createData entity="productAttributeOptionChildren" stepKey="createSecondAttributeOption">
+                <requiredEntity createDataKey="createDropdownAttribute"/>
+            </createData>
+            <!--Add attribute to default attribute set-->
+            <createData entity="AddToDefaultSet" stepKey="addAttributeToDefaultSet">
+                <requiredEntity createDataKey="createDropdownAttribute"/>
+            </createData>
             <!-- Create Simple Product -->
             <createData entity="SimpleProduct" stepKey="createProduct">
                 <field key="price">100.00</field>
@@ -39,19 +52,6 @@
                 <argument name="StoreGroup" value="NewWebSiteData"/>
                 <argument name="customStore" value="NewWebSiteData"/>
             </actionGroup>
-            <!--Create dropdown product attribute-->
-            <createData entity="productAttributeAgeGroupDropdown" stepKey="createDropdownAttribute"/>
-            <!--Create attribute options-->
-            <createData entity="productAttributeOptionAdult" stepKey="createFirstAttributeOption">
-                <requiredEntity createDataKey="createDropdownAttribute"/>
-            </createData>
-            <createData entity="productAttributeOptionChildren" stepKey="createSecondAttributeOption">
-                <requiredEntity createDataKey="createDropdownAttribute"/>
-            </createData>
-            <!--Add attribute to default attribute set-->
-            <createData entity="AddToDefaultSet" stepKey="addAttributeToDefaultSet">
-                <requiredEntity createDataKey="createDropdownAttribute"/>
-            </createData>
         </before>
         <after>
             <!--set main website as default-->
