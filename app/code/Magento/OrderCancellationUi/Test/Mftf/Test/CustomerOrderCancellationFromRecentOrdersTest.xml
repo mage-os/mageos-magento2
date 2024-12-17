@@ -83,7 +83,9 @@
         <grabTextFrom selector="{{CustomerOrderCancellationSection.referenceToLatestOrderId}}" stepKey="getOrderId"/>
 
         <!--Go to Admin Sales Order View Page-->
-        <amOnPage url="{{AdminSalesOrderViewPage.url({$getOrderId})}}" stepKey="navigateToSalesOrderViewPage"/>
+        <actionGroup ref="AdminOpenOrderByEntityIdActionGroup" stepKey="navigateToSalesOrderViewPage">
+            <argument name="entityId" value="{$orderId}"/>
+        </actionGroup>
         <waitForPageLoad stepKey="waitForAdminSalesOrderViewPageLoad"/>
 
         <!--Check Order History block-->
