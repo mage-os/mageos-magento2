@@ -777,7 +777,7 @@ class AwsS3 implements RemoteDriverInterface
     public function filePutCsv($resource, array $data, $delimiter = ',', $enclosure = '"')
     {
         //phpcs:ignore Magento2.Functions.DiscouragedFunction
-        return fputcsv($resource, $data, $delimiter, $enclosure);
+        return fputcsv($resource, $data, $delimiter, $enclosure,'\\');
     }
 
     /**

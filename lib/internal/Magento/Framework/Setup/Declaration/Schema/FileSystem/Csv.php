@@ -70,7 +70,7 @@ class Csv implements \Magento\Framework\Setup\Declaration\Schema\DataSavior\Dump
         $fh = fopen($file, 'a');
 
         foreach ($data as $dataRow) {
-            fputcsv($fh, $dataRow);
+            fputcsv($fh, $dataRow,',','"','\\');
         }
 
         fclose($fh);

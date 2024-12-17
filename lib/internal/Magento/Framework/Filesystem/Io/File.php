@@ -202,7 +202,7 @@ class File extends AbstractIo
                 $row[$key] = ' ' . $value;
             }
         }
-        return @fputcsv($this->_streamHandler, $row, $delimiter, $enclosure);
+        return @fputcsv($this->_streamHandler, $row, $delimiter, $enclosure,'\\');
     }
 
     /**
