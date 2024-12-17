@@ -11,6 +11,8 @@ use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Exception\AuthenticationException;
 use Magento\Framework\Registry;
+use Magento\Framework\Stdlib\DateTime;
+use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\GraphQl\GetCustomerAuthenticationHeader;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\ResourceModel\Order\Collection;
@@ -48,6 +50,9 @@ class RetrieveOrdersByOrderNumberTest extends GraphQlAbstract
     /** @var ProductRepositoryInterface */
     private $productRepository;
 
+    /** @var TimezoneInterface */
+    private $timezone;
+
     /**
      * @var DataFixtureStorage
      */
@@ -61,6 +66,7 @@ class RetrieveOrdersByOrderNumberTest extends GraphQlAbstract
         $this->orderRepository = $objectManager->get(OrderRepositoryInterface::class);
         $this->searchCriteriaBuilder = $objectManager->get(SearchCriteriaBuilder::class);
         $this->productRepository = $objectManager->get(ProductRepositoryInterface::class);
+        $this->timezone = $objectManager->get(TimezoneInterface::class);
         $this->fixtures = $objectManager->get(DataFixtureStorageManager::class)->getStorage();
     }
 
@@ -500,7 +506,8 @@ QUERY;
         $orderNumberCreatedAtExpected = [];
         for ($i = 1; $i <= 3; $i++) {
             $orderNumber = $this->fixtures->get('or' . $i)->getIncrementId();
-            $orderCreatedAt = $this->fixtures->get('or' . $i)->getCreatedAt();
+            $orderCreatedAt = $this->timezone->date($this->fixtures->get('or' . $i)->getCreatedAt())
+                ->format(DateTime::DATETIME_PHP_FORMAT);
             $orderNumberCreatedAtExpected[$orderNumber] = $orderCreatedAt;
         }
 
