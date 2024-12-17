@@ -41,7 +41,7 @@ class Dob extends AbstractValidator
      * @param Customer $customer
      * @return bool
      */
-    public function isValid($customer): bool
+    public function isValid($customer)
     {
         if (!$this->isValidDob($customer->getDob(), $customer->getStoreId())) {
             parent::_addMessages([['dob' => 'The Date of Birth should not be greater than today.']]);
