@@ -16,27 +16,25 @@ use Magento\Store\Model\ResourceModel\Website\CollectionFactory;
 class ClearExpiredCronJobObserver
 {
     /**
-     * Website collection factory
+     * A property for website collection factory
      *
      * @var CollectionFactory
      */
     private CollectionFactory $websiteCollectionFactory;
 
     /**
-     * Session factory
+     * A property for session factory
      *
      * @var SessionFactory
      */
     private SessionFactory $sessionFactory;
 
     /**
-     * Delete expired quote factory
+     * A property for delete expired quote factory
      *
      * @var DeleteExpiredQuoteFactory
      */
     private DeleteExpiredQuoteFactory $deleteExpiredQuoteFactory;
-
-
 
     /**
      * @param CollectionFactory $websiteCollectionFactory

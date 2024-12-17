@@ -14,6 +14,8 @@ use Magento\Persistent\Model\SessionFactory;
 use Magento\Persistent\Observer\ClearExpiredCronJobObserver;
 use Magento\Store\Model\ResourceModel\Website\Collection;
 use Magento\Store\Model\ResourceModel\Website\CollectionFactory;
+use Magento\Persistent\Model\DeleteExpiredQuote;
+use Magento\Persistent\Model\DeleteExpiredQuoteFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -37,12 +39,22 @@ class ClearExpiredCronJobObserverTest extends TestCase
     /**
      * @var MockObject
      */
+    protected $deleteExpiredQuoteFactoryMock;
+
+    /**
+     * @var MockObject
+     */
     protected $scheduleMock;
 
     /**
      * @var MockObject
      */
     protected $websiteCollectionMock;
+
+    /**
+     * @var MockObject
+     */
+    protected $deleteExpiredQuoteMock;
 
     /**
      * @var MockObject
@@ -57,14 +69,21 @@ class ClearExpiredCronJobObserverTest extends TestCase
             SessionFactory::class,
             ['create']
         );
+        $this->deleteExpiredQuoteFactoryMock = $this->createPartialMock(
+            DeleteExpiredQuoteFactory::class,
+            ['create']
+        );
         $this->scheduleMock = $this->createMock(Schedule::class);
         $this->sessionMock = $this->createMock(Session::class);
         $this->websiteCollectionMock
             = $this->createMock(Collection::class);
 
+        $this->deleteExpiredQuoteMock = $this->createMock(DeleteExpiredQuote::class);
+
         $this->model = new ClearExpiredCronJobObserver(
             $this->collectionFactoryMock,
-            $this->sessionFactoryMock
+            $this->sessionFactoryMock,
+            $this->deleteExpiredQuoteFactoryMock
         );
     }
 
@@ -79,7 +98,12 @@ class ClearExpiredCronJobObserverTest extends TestCase
             ->expects($this->once())
             ->method('create')
             ->willReturn($this->sessionMock);
+        $this->deleteExpiredQuoteFactoryMock
+            ->expects($this->once())
+            ->method('create')
+            ->willReturn($this->deleteExpiredQuoteMock);
         $this->sessionMock->expects($this->once())->method('deleteExpired')->with(1);
+        $this->deleteExpiredQuoteMock->expects($this->once())->method('deleteExpiredQuote')->with(1);
         $this->model->execute($this->scheduleMock);
     }
 
