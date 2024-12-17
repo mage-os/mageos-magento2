@@ -82,7 +82,7 @@ class ExportBase extends AbstractBackendController
     protected function parseCsvResponse(string $data): array
     {
         $result = [];
-        $data = str_getcsv($data, PHP_EOL);
+        $data = str_getcsv($data, PHP_EOL, '"', '\\');
         $headers = str_getcsv(array_shift($data), ',', '"');
         foreach ($data as $row) {
             $result[] = array_combine($headers, str_getcsv($row, ',', '"'));
