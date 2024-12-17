@@ -293,7 +293,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     {
         $rows = [];
         $headers = [];
-        foreach (str_getcsv($exportData, "\n") as $row) {
+        foreach (str_getcsv($exportData, "\n", '"', '\\') as $row) {
             if (!$headers) {
                 $headers = str_getcsv($row, ',', '"', '\\');
             } else {
