@@ -12,6 +12,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
+use Magento\Framework\Stdlib\DateTime;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Sales\Api\Data\CreditmemoInterface;
 
@@ -51,6 +52,7 @@ class CreditMemoComments implements ResolverInterface
                 $comments[] = [
                     'message' => $comment->getComment(),
                     'timestamp' => $this->timezone->date($comment->getCreatedAt())
+                        ->format(DateTime::DATETIME_PHP_FORMAT)
                 ];
             }
         }

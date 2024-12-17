@@ -12,6 +12,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
+use Magento\Framework\Stdlib\DateTime;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\InvoiceInterface;
@@ -71,7 +72,8 @@ class Invoices implements ResolverInterface
         foreach ($invoice->getComments() as $comment) {
             if ($comment->getIsVisibleOnFront()) {
                 $comments[] = [
-                    'timestamp' => $this->timezone->date($comment->getCreatedAt()),
+                    'timestamp' => $this->timezone->date($comment->getCreatedAt())
+                        ->format(DateTime::DATETIME_PHP_FORMAT),
                     'message' => $comment->getComment()
                 ];
             }

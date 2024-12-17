@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\SalesGraphQl\Model\Formatter;
 
 use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Stdlib\DateTime;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Sales\Api\Data\OrderInterface;
@@ -49,7 +50,8 @@ class Order
             'id' => base64_encode((string)$orderModel->getEntityId()),
             'increment_id' => $orderModel->getIncrementId(),
             'number' => $orderModel->getIncrementId(),
-            'order_date' => $this->timezone->date($orderModel->getCreatedAt()),
+            'order_date' => $this->timezone->date($orderModel->getCreatedAt())
+                ->format(DateTime::DATETIME_PHP_FORMAT),
             'order_number' => $orderModel->getIncrementId(),
             'status' => $orderModel->getStatusLabel(),
             'email' => $orderModel->getCustomerEmail(),
