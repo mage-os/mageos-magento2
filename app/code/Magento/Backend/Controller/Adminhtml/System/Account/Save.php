@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Backend\Controller\Adminhtml\System\Account;
 
@@ -12,6 +12,7 @@ use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Exception\State\UserLockedException;
 use Magento\Security\Model\SecurityCookie;
 use Magento\Framework\App\Action\HttpPostActionInterface;
+use \Magento\User\Model\User;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -86,19 +87,9 @@ class Save extends \Magento\Backend\Controller\Adminhtml\System\Account implemen
                 $user->save();
                 $user->sendNotificationEmailsIfRequired();
 
-                // Check which fields were modified after saving
-                $modifiedFields = [];
-                $propertiesToCheck = ['password', 'username', 'firstname', 'lastname', 'email'];
-
-                foreach ($propertiesToCheck as $property) {
-                    if ($user->getOrigData($property) !== $user->{'get' . ucfirst($property)}()) {
-                        $modifiedFields[] = $property;
-                    }
-                }
-
+                $modifiedFields = $this->getModifiedFields($user);
                 if (!empty($modifiedFields)) {
                     $countModifiedFields = count($modifiedFields);
-                    $successMessage = '';
                     // validate how many fields were modified to display them correctly
                     if ($countModifiedFields > 1) {
                         $lastModifiedField = array_pop($modifiedFields);
@@ -138,5 +129,23 @@ class Save extends \Magento\Backend\Controller\Adminhtml\System\Account implemen
         /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
         return $resultRedirect->setPath("*/*/");
+    }
+
+    /**
+     * Get user modified fields
+     *
+     * @param User $user
+     * @return array
+     */
+    private function getModifiedFields(User $user)
+    {
+        $modifiedFields = [];
+        $propertiesToCheck = ['password', 'username', 'firstname', 'lastname', 'email'];
+        foreach ($propertiesToCheck as $property) {
+            if ($user->getOrigData($property) !== $user->{'get' . ucfirst($property)}()) {
+                $modifiedFields[] = $property;
+            }
+        }
+        return $modifiedFields;
     }
 }
