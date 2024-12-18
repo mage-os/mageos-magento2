@@ -11,7 +11,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Exception\State\UserLockedException;
 use Magento\Security\Model\SecurityCookie;
-use \Magento\User\Model\User;
+use Magento\User\Model\User;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
