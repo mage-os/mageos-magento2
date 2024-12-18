@@ -853,6 +853,7 @@ class QuoteManagementTest extends TestCase
     /**
      * @dataProvider guestPlaceOrderDataProvider
      * @return void
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testPlaceOrderIfCustomerIsGuest(?string $settledEmail, int $countSetAddress): void
     {
