@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3aab7cc5c535ce88775eaac8996f5c21",
+    "content-hash": "8de42ff41b550e187ba1cf2dfff58ea9",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -1639,6 +1639,70 @@
                 "source": "https://github.com/ezyang/htmlpurifier/tree/v4.18.0"
             },
             "time": "2024-11-01T03:51:45+00:00"
+        },
+        {
+            "name": "google/recaptcha",
+            "version": "dev-PHP84",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpfui/recaptcha.git",
+                "reference": "c775e260789b2fdf0634aaed08e63c0e608b1609"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpfui/recaptcha/zipball/c775e260789b2fdf0634aaed08e63c0e608b1609",
+                "reference": "c775e260789b2fdf0634aaed08e63c0e608b1609",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.14",
+                "php-coveralls/php-coveralls": "^2.5",
+                "phpunit/phpunit": "^10"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.3.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "ReCaptcha\\": "src/ReCaptcha"
+                }
+            },
+            "scripts": {
+                "lint": [
+                    "PHP_CS_FIXER_IGNORE_ENV=1 vendor/bin/php-cs-fixer -vvv fix --using-cache=no --dry-run ."
+                ],
+                "lint-fix": [
+                    "PHP_CS_FIXER_IGNORE_ENV=1 vendor/bin/php-cs-fixer -vvv fix --using-cache=no ."
+                ],
+                "test": [
+                    "XDEBUG_MODE=coverage vendor/bin/phpunit"
+                ],
+                "serve-examples": [
+                    "@php -S localhost:8080 -t examples"
+                ]
+            },
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "Client library for reCAPTCHA, a free service that protects websites from spam and abuse.",
+            "homepage": "https://www.google.com/recaptcha/",
+            "keywords": [
+                "abuse",
+                "captcha",
+                "recaptcha",
+                "spam"
+            ],
+            "support": {
+                "forum": "https://groups.google.com/forum/#!forum/recaptcha",
+                "source": "https://github.com/google/recaptcha"
+            },
+            "time": "2024-10-24T14:42:45+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -14948,6 +15012,9 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "allure-framework/allure-phpunit": 20,
+        "codeception/module-sequence": 20,
+        "google/recaptcha": 20,
         "laminas/laminas-captcha": 20,
         "laminas/laminas-db": 20,
         "laminas/laminas-di": 20,
@@ -14957,18 +15024,16 @@
         "laminas/laminas-oauth": 20,
         "magento/composer": 20,
         "magento/composer-dependency-version-audit-plugin": 20,
+        "magento/magento-coding-standard": 20,
+        "magento/magento2-functional-testing-framework": 20,
         "magento/zend-cache": 20,
         "magento/zend-db": 20,
-        "magento/zend-pdf": 20,
-        "magento/zend-memory": 20,
         "magento/zend-exception": 20,
         "magento/zend-loader": 20,
         "magento/zend-log": 20,
-        "codeception/module-sequence": 20,
-        "phpgt/dom": 20,
-        "allure-framework/allure-phpunit": 20,
-        "magento/magento-coding-standard": 20,
-        "magento/magento2-functional-testing-framework": 20
+        "magento/zend-memory": 20,
+        "magento/zend-pdf": 20,
+        "phpgt/dom": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
@@ -14992,6 +15057,6 @@
         "ext-zip": "*",
         "lib-libxml": "*"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }
