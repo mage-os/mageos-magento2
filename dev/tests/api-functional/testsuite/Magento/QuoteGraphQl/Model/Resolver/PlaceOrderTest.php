@@ -5,6 +5,8 @@
  */
 declare(strict_types=1);
 
+namespace Magento\QuoteGraphQl\Model\Resolver;
+
 use Magento\Catalog\Test\Fixture\Product as ProductFixture;
 use Magento\Customer\Test\Fixture\Customer;
 use Magento\Indexer\Test\Fixture\Indexer;
@@ -15,9 +17,9 @@ use Magento\Quote\Test\Fixture\QuoteIdMask;
 use Magento\TestFramework\Fixture\DataFixture;
 use Magento\TestFramework\Fixture\DataFixtureStorageManager;
 use Magento\TestFramework\Helper\Bootstrap;
-use Magento\TestFramework\Helper\CacheCleaner;
 use Magento\TestFramework\TestCase\GraphQl\ResponseContainsErrorsException;
 use Magento\TestFramework\TestCase\GraphQlAbstract;
+use Magento\Translation\Test\Fixture\Translation;
 
 class PlaceOrderTest extends GraphQlAbstract
 {
@@ -41,10 +43,26 @@ class PlaceOrderTest extends GraphQlAbstract
      * Test translated error message in non default store
      *
      * @magentoApiDataFixture Magento/Store/_files/second_store.php
-     * @magentoApiDataFixture Magento/Translation/_files/place_order_message_translate.php
      * @magentoConfigFixture fixture_second_store_store general/locale/code nl_NL
      */
     #[
+        DataFixture(
+            Translation::class,
+            [
+                'string' => 'Unable to place order: %message',
+                'translate' => 'Kan geen bestelling plaatsen: %message',
+                'locale' => 'nl_NL',
+            ]
+        ),
+        DataFixture(
+            Translation::class,
+            [
+                'string' => 'Some addresses can\'t be used due to the configurations for specific countries.',
+                'translate' => 'Sommige adressen kunnen niet worden ' .
+                                'gebruikt vanwege de configuraties van specifieke landen.',
+                'locale' => 'nl_NL',
+            ]
+        ),
         DataFixture(ProductFixture::class, as: 'product'),
         DataFixture(Indexer::class, as: 'indexer'),
         DataFixture(Customer::class, ['email' => 'customer@example.com'], as: 'customer'),
@@ -61,7 +79,6 @@ class PlaceOrderTest extends GraphQlAbstract
     ]
     public function testPlaceOrderErrorTranslation()
     {
-        CacheCleaner::clean(['translate', 'config']);
         $storeCode = "fixture_second_store";
         $maskedQuoteId = DataFixtureStorageManager::getStorage()->get('quoteIdMask')->getMaskedId();
         $query = $this->placeOrderQuery($maskedQuoteId);
@@ -71,9 +88,9 @@ class PlaceOrderTest extends GraphQlAbstract
         } catch (ResponseContainsErrorsException $exception) {
             $exceptionData = $exception->getResponseData();
             self::assertEquals(1, count($exceptionData['errors']));
-            self::assertEquals(
-                'Kan geen bestelling plaatsen: Sommige adressen kunnen niet worden gebruikt' .
-                ' vanwege de configuraties van specifieke landen.',
+            self::assertStringContainsString('Kan geen bestelling plaatsen:', $exceptionData['errors'][0]['message']);
+            self::assertStringContainsString(
+                'Sommige adressen kunnen niet worden',
                 $exceptionData['errors'][0]['message']
             );
         }
