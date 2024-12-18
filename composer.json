@@ -63,38 +63,6 @@
         },
         {
             "type": "vcs",
-            "url": "git@github.com:magento-gl/composer-dependency-version-audit-plugin.git"
-        },
-        {
-            "type": "vcs",
-            "url": "git@github.com:magento-gl/magento-zend-db.git"
-        },
-        {
-            "type": "vcs",
-            "url": "git@github.com:magento-gl/magento-zend-pdf.git"
-        },
-        {
-            "type": "vcs",
-            "url": "git@github.com:magento-gl/magento-zend-cache.git"
-        },
-        {
-            "type": "vcs",
-            "url": "git@github.com:magento-gl/magento-zend-memory.git"
-        },
-        {
-            "type": "vcs",
-            "url": "git@github.com:magento-gl/magento-zend-exception.git"
-        },
-        {
-            "type": "vcs",
-            "url": "git@github.com:magento-gl/magento-zend-loader.git"
-        },
-        {
-            "type": "vcs",
-            "url": "git@github.com:magento-gl/magento-zend-log.git"
-        },
-        {
-            "type": "vcs",
             "url": "git@github.com:djadobe16/module-sequence.git"
         },
         {
@@ -162,11 +130,11 @@
         "league/flysystem": "^3.0",
         "league/flysystem-aws-s3-v3": "^3.0",
         "magento/composer": "dev-AC-13307",
-        "magento/composer-dependency-version-audit-plugin": "dev-php84_deprication_fix",
+        "magento/composer-dependency-version-audit-plugin": "^0.1",
         "magento/magento-composer-installer": ">=0.4.0",
-        "magento/zend-cache": "dev-php84_deprecation_fix",
-        "magento/zend-db": "dev-php84_deprication_fix",
-        "magento/zend-pdf": "dev-php84_deprication_fix",
+        "magento/zend-cache": "^1.16",
+        "magento/zend-db": "^1.16",
+        "magento/zend-pdf": "^1.16",
         "monolog/monolog": "^3.6",
         "opensearch-project/opensearch-php": "^2.2",
         "pelago/emogrifier": "^7.0",
@@ -184,10 +152,6 @@
         "web-token/jwt-framework": "^3.1",
         "webonyx/graphql-php": "^15.0",
         "wikimedia/less.php": "^5.0",
-        "magento/zend-memory": "dev-php84_deprication_fix",
-        "magento/zend-exception": "dev-php84_deprication_fix",
-        "magento/zend-loader": "dev-php84_deprication_fix",
-        "magento/zend-log": "dev-php84_deprication_fix",
         "codeception/module-sequence": "dev-php84-support",
         "phpgt/dom": "dev-php84-support",
         "google/recaptcha": "dev-PHP84"

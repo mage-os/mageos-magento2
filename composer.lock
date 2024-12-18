@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8de42ff41b550e187ba1cf2dfff58ea9",
+    "content-hash": "f663ef3785dd38d7756417de2659ad53",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.334.6",
+            "version": "3.335.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "2b0be3aded849d3b7bb0b53ea3295c7cecdeeee7"
+                "reference": "104c61bff0f7fb55763c67baee8c1f0e46e2d021"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/2b0be3aded849d3b7bb0b53ea3295c7cecdeeee7",
-                "reference": "2b0be3aded849d3b7bb0b53ea3295c7cecdeeee7",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/104c61bff0f7fb55763c67baee8c1f0e46e2d021",
+                "reference": "104c61bff0f7fb55763c67baee8c1f0e46e2d021",
                 "shasum": ""
             },
             "require": {
@@ -154,9 +154,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.334.6"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.335.0"
             },
-            "time": "2024-12-13T19:18:29+00:00"
+            "time": "2024-12-17T19:04:01+00:00"
         },
         {
             "name": "behat/gherkin",
@@ -675,16 +675,16 @@
         },
         {
             "name": "colinmollenhour/credis",
-            "version": "v1.16.1",
+            "version": "v1.16.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/colinmollenhour/credis.git",
-                "reference": "f11a89fd068d3e5db0c2b5a9ba8663bc36162e95"
+                "reference": "db2c0323292e360fdba39bf98c7a405fe3cb05b0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/colinmollenhour/credis/zipball/f11a89fd068d3e5db0c2b5a9ba8663bc36162e95",
-                "reference": "f11a89fd068d3e5db0c2b5a9ba8663bc36162e95",
+                "url": "https://api.github.com/repos/colinmollenhour/credis/zipball/db2c0323292e360fdba39bf98c7a405fe3cb05b0",
+                "reference": "db2c0323292e360fdba39bf98c7a405fe3cb05b0",
                 "shasum": ""
             },
             "require": {
@@ -716,9 +716,9 @@
             "homepage": "https://github.com/colinmollenhour/credis",
             "support": {
                 "issues": "https://github.com/colinmollenhour/credis/issues",
-                "source": "https://github.com/colinmollenhour/credis/tree/v1.16.1"
+                "source": "https://github.com/colinmollenhour/credis/tree/v1.16.2"
             },
-            "time": "2024-07-04T15:08:03+00:00"
+            "time": "2024-12-17T02:24:03+00:00"
         },
         {
             "name": "colinmollenhour/php-redis-session-abstract",
@@ -1403,71 +1403,120 @@
             "time": "2024-05-06T16:37:16+00:00"
         },
         {
-            "name": "elasticsearch/elasticsearch",
-            "version": "v7.17.2",
+            "name": "elastic/transport",
+            "version": "v8.10.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/elastic/elasticsearch-php.git",
-                "reference": "2d302233f2bb0926812d82823bb820d405e130fc"
+                "url": "https://github.com/elastic/elastic-transport-php.git",
+                "reference": "8be37d679637545e50b1cea9f8ee903888783021"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/elastic/elasticsearch-php/zipball/2d302233f2bb0926812d82823bb820d405e130fc",
-                "reference": "2d302233f2bb0926812d82823bb820d405e130fc",
+                "url": "https://api.github.com/repos/elastic/elastic-transport-php/zipball/8be37d679637545e50b1cea9f8ee903888783021",
+                "reference": "8be37d679637545e50b1cea9f8ee903888783021",
                 "shasum": ""
             },
             "require": {
-                "ext-json": ">=1.3.7",
-                "ezimuel/ringphp": "^1.1.2",
-                "php": "^7.3 || ^8.0",
+                "composer-runtime-api": "^2.0",
+                "open-telemetry/api": "^1.0",
+                "php": "^7.4 || ^8.0",
+                "php-http/discovery": "^1.14",
+                "php-http/httplug": "^2.3",
+                "psr/http-client": "^1.0",
+                "psr/http-factory": "^1.0",
+                "psr/http-message": "^1.0 || ^2.0",
+                "psr/log": "^1 || ^2 || ^3"
+            },
+            "require-dev": {
+                "nyholm/psr7": "^1.5",
+                "open-telemetry/sdk": "^1.0",
+                "php-http/mock-client": "^1.5",
+                "phpstan/phpstan": "^1.4",
+                "phpunit/phpunit": "^9.5",
+                "symfony/http-client": "^5.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Elastic\\Transport\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "HTTP transport PHP library for Elastic products",
+            "keywords": [
+                "PSR_17",
+                "elastic",
+                "http",
+                "psr-18",
+                "psr-7",
+                "transport"
+            ],
+            "support": {
+                "issues": "https://github.com/elastic/elastic-transport-php/issues",
+                "source": "https://github.com/elastic/elastic-transport-php/tree/v8.10.0"
+            },
+            "time": "2024-08-14T08:55:07+00:00"
+        },
+        {
+            "name": "elasticsearch/elasticsearch",
+            "version": "v8.17.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/elastic/elasticsearch-php.git",
+                "reference": "6cd0fe6a95fdb7198a2795624927b094813b3d8b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/elastic/elasticsearch-php/zipball/6cd0fe6a95fdb7198a2795624927b094813b3d8b",
+                "reference": "6cd0fe6a95fdb7198a2795624927b094813b3d8b",
+                "shasum": ""
+            },
+            "require": {
+                "elastic/transport": "^8.10",
+                "guzzlehttp/guzzle": "^7.0",
+                "php": "^7.4 || ^8.0",
+                "psr/http-client": "^1.0",
+                "psr/http-message": "^1.1 || ^2.0",
                 "psr/log": "^1|^2|^3"
             },
             "require-dev": {
                 "ext-yaml": "*",
                 "ext-zip": "*",
-                "mockery/mockery": "^1.2",
-                "phpstan/phpstan": "^1.10",
-                "phpunit/phpunit": "^9.3",
-                "squizlabs/php_codesniffer": "^3.4",
-                "symfony/finder": "~4.0"
-            },
-            "suggest": {
-                "ext-curl": "*",
-                "monolog/monolog": "Allows for client-level logging and tracing"
+                "mockery/mockery": "^1.5",
+                "nyholm/psr7": "^1.5",
+                "php-http/message-factory": "^1.0",
+                "php-http/mock-client": "^1.5",
+                "phpstan/phpstan": "^1.4",
+                "phpunit/phpunit": "^9.5",
+                "psr/http-factory": "^1.0",
+                "symfony/finder": "~4.0",
+                "symfony/http-client": "^5.0|^6.0|^7.0"
             },
             "type": "library",
             "autoload": {
-                "files": [
-                    "src/autoload.php"
-                ],
                 "psr-4": {
-                    "Elasticsearch\\": "src/Elasticsearch/"
+                    "Elastic\\Elasticsearch\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "Apache-2.0",
-                "LGPL-2.1-only"
-            ],
-            "authors": [
-                {
-                    "name": "Zachary Tong"
-                },
-                {
-                    "name": "Enrico Zimuel"
-                }
+                "MIT"
             ],
             "description": "PHP Client for Elasticsearch",
             "keywords": [
                 "client",
+                "elastic",
                 "elasticsearch",
                 "search"
             ],
             "support": {
                 "issues": "https://github.com/elastic/elasticsearch-php/issues",
-                "source": "https://github.com/elastic/elasticsearch-php/tree/v7.17.2"
+                "source": "https://github.com/elastic/elasticsearch-php/tree/v8.17.0"
             },
-            "time": "2023-04-21T15:31:12+00:00"
+            "time": "2024-12-18T11:00:27+00:00"
         },
         {
             "name": "ezimuel/guzzlestreams",
@@ -2597,16 +2646,16 @@
         },
         {
             "name": "laminas/laminas-escaper",
-            "version": "2.14.0",
+            "version": "2.15.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-escaper.git",
-                "reference": "0f7cb975f4443cf22f33408925c231225cfba8cb"
+                "reference": "c612b0488ae486284c39885efca494c180f16351"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-escaper/zipball/0f7cb975f4443cf22f33408925c231225cfba8cb",
-                "reference": "0f7cb975f4443cf22f33408925c231225cfba8cb",
+                "url": "https://api.github.com/repos/laminas/laminas-escaper/zipball/c612b0488ae486284c39885efca494c180f16351",
+                "reference": "c612b0488ae486284c39885efca494c180f16351",
                 "shasum": ""
             },
             "require": {
@@ -2618,12 +2667,12 @@
                 "zendframework/zend-escaper": "*"
             },
             "require-dev": {
-                "infection/infection": "^0.27.9",
-                "laminas/laminas-coding-standard": "~3.0.0",
+                "infection/infection": "^0.27.11",
+                "laminas/laminas-coding-standard": "~3.0.1",
                 "maglnet/composer-require-checker": "^3.8.0",
-                "phpunit/phpunit": "^9.6.16",
+                "phpunit/phpunit": "^9.6.22",
                 "psalm/plugin-phpunit": "^0.19.0",
-                "vimeo/psalm": "^5.21.1"
+                "vimeo/psalm": "^5.26.1"
             },
             "type": "library",
             "autoload": {
@@ -2655,7 +2704,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2024-10-24T10:12:53+00:00"
+            "time": "2024-12-17T19:39:54+00:00"
         },
         {
             "name": "laminas/laminas-eventmanager",
@@ -4881,12 +4930,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:magento-gl/composer.git",
-                "reference": "ee4bef316e2e6984fd0dc749e058a6d6fa1e721c"
+                "reference": "65eb41125c41b83d314f870aca73766ffc147c4d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-gl/composer/zipball/ee4bef316e2e6984fd0dc749e058a6d6fa1e721c",
-                "reference": "ee4bef316e2e6984fd0dc749e058a6d6fa1e721c",
+                "url": "https://api.github.com/repos/magento-gl/composer/zipball/65eb41125c41b83d314f870aca73766ffc147c4d",
+                "reference": "65eb41125c41b83d314f870aca73766ffc147c4d",
                 "shasum": ""
             },
             "require": {
@@ -4917,20 +4966,20 @@
             "support": {
                 "source": "https://github.com/magento-gl/composer/tree/AC-13307"
             },
-            "time": "2024-12-13T03:45:09+00:00"
+            "time": "2024-12-17T07:22:05+00:00"
         },
         {
             "name": "magento/composer-dependency-version-audit-plugin",
-            "version": "dev-php84_deprication_fix",
+            "version": "0.1.6",
             "source": {
                 "type": "git",
-                "url": "git@github.com:magento-gl/composer-dependency-version-audit-plugin.git",
-                "reference": "2d4100401c02cd97434c76000b3a717a35c606a9"
+                "url": "https://github.com/magento/composer-dependency-version-audit-plugin.git",
+                "reference": "37099d19495df296de962257c54088c953bbc1ac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-gl/composer-dependency-version-audit-plugin/zipball/2d4100401c02cd97434c76000b3a717a35c606a9",
-                "reference": "2d4100401c02cd97434c76000b3a717a35c606a9",
+                "url": "https://api.github.com/repos/magento/composer-dependency-version-audit-plugin/zipball/37099d19495df296de962257c54088c953bbc1ac",
+                "reference": "37099d19495df296de962257c54088c953bbc1ac",
                 "shasum": ""
             },
             "require": {
@@ -4949,19 +4998,16 @@
                     "Magento\\ComposerDependencyVersionAuditPlugin\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Magento\\ComposerDependencyVersionAuditPlugin\\": "tests/Unit/Magento/ComposerDependencyVersionAuditPlugin/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "OSL-3.0"
             ],
             "description": "Validating packages through a composer plugin",
             "support": {
-                "source": "https://github.com/magento-gl/composer-dependency-version-audit-plugin/tree/php84_deprication_fix"
+                "issues": "https://github.com/magento/composer-dependency-version-audit-plugin/issues",
+                "source": "https://github.com/magento/composer-dependency-version-audit-plugin/tree/0.1.6"
             },
-            "time": "2024-12-13T10:15:13+00:00"
+            "time": "2024-12-18T09:52:06+00:00"
         },
         {
             "name": "magento/magento-composer-installer",
@@ -5046,21 +5092,21 @@
         },
         {
             "name": "magento/zend-cache",
-            "version": "dev-php84_deprecation_fix",
+            "version": "1.16.1",
             "source": {
                 "type": "git",
-                "url": "git@github.com:magento-gl/magento-zend-cache.git",
-                "reference": "80442dd9c5012bd0f8a464250d5f32153395aa23"
+                "url": "https://github.com/magento/magento-zend-cache.git",
+                "reference": "815ef459560be6a3f0907016d8fc40f111f34209"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-gl/magento-zend-cache/zipball/80442dd9c5012bd0f8a464250d5f32153395aa23",
-                "reference": "80442dd9c5012bd0f8a464250d5f32153395aa23",
+                "url": "https://api.github.com/repos/magento/magento-zend-cache/zipball/815ef459560be6a3f0907016d8fc40f111f34209",
+                "reference": "815ef459560be6a3f0907016d8fc40f111f34209",
                 "shasum": ""
             },
             "require": {
-                "magento/zend-exception": "dev-php84_deprication_fix",
-                "magento/zend-log": "dev-php84_deprication_fix",
+                "magento/zend-exception": "^1.16",
+                "magento/zend-log": "^1.16",
                 "php": ">=7.0.0"
             },
             "replace": {
@@ -5078,39 +5124,41 @@
                     "Zend_Cache": "library/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
             "description": "Zend Framework 1 Cache package",
             "homepage": "http://framework.zend.com/",
             "keywords": [
+                "ZF1",
                 "cache",
                 "framework",
-                "zend",
-                "zf1"
+                "zend"
             ],
             "support": {
-                "source": "https://github.com/magento-gl/magento-zend-cache/tree/php84_deprecation_fix"
+                "issues": "https://github.com/magento/magento-zend-cache/issues",
+                "source": "https://github.com/magento/magento-zend-cache/tree/1.16.1"
             },
-            "time": "2024-12-13T07:58:45+00:00"
+            "time": "2024-12-18T14:42:52+00:00"
         },
         {
             "name": "magento/zend-db",
-            "version": "dev-php84_deprication_fix",
+            "version": "1.16.2",
             "source": {
                 "type": "git",
-                "url": "git@github.com:magento-gl/magento-zend-db.git",
-                "reference": "4afc4b1b9ee6ea5604fd3ed88ca562121fa4134a"
+                "url": "https://github.com/magento/magento-zend-db.git",
+                "reference": "a7d7c3802937ab2986000bc89cc623b58987de22"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-gl/magento-zend-db/zipball/4afc4b1b9ee6ea5604fd3ed88ca562121fa4134a",
-                "reference": "4afc4b1b9ee6ea5604fd3ed88ca562121fa4134a",
+                "url": "https://api.github.com/repos/magento/magento-zend-db/zipball/a7d7c3802937ab2986000bc89cc623b58987de22",
+                "reference": "a7d7c3802937ab2986000bc89cc623b58987de22",
                 "shasum": ""
             },
             "require": {
-                "magento/zend-exception": "dev-php84_deprication_fix",
-                "magento/zend-loader": "dev-php84_deprication_fix",
+                "magento/zend-exception": "^1.16",
+                "magento/zend-loader": "^1.16",
                 "php": ">=7.0.0"
             },
             "replace": {
@@ -5128,34 +5176,36 @@
                     "Zend_Db": "library/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
             "description": "Zend Framework 1 Db package",
             "homepage": "http://framework.zend.com/",
             "keywords": [
+                "ZF1",
                 "db",
                 "framework",
-                "zend",
-                "zf1"
+                "zend"
             ],
             "support": {
-                "source": "https://github.com/magento-gl/magento-zend-db/tree/php84_deprication_fix"
+                "issues": "https://github.com/magento/magento-zend-db/issues",
+                "source": "https://github.com/magento/magento-zend-db/tree/1.16.2"
             },
-            "time": "2024-12-13T11:43:26+00:00"
+            "time": "2024-12-18T15:03:32+00:00"
         },
         {
             "name": "magento/zend-exception",
-            "version": "dev-php84_deprication_fix",
+            "version": "1.16.1",
             "source": {
                 "type": "git",
-                "url": "git@github.com:magento-gl/magento-zend-exception.git",
-                "reference": "8c062394f403ccef9f1080c269e630e77f58de17"
+                "url": "https://github.com/magento/magento-zend-exception.git",
+                "reference": "2aa533f83aebc3963df099da27427fda7d32585e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-gl/magento-zend-exception/zipball/8c062394f403ccef9f1080c269e630e77f58de17",
-                "reference": "8c062394f403ccef9f1080c269e630e77f58de17",
+                "url": "https://api.github.com/repos/magento/magento-zend-exception/zipball/2aa533f83aebc3963df099da27427fda7d32585e",
+                "reference": "2aa533f83aebc3963df099da27427fda7d32585e",
                 "shasum": ""
             },
             "require": {
@@ -5176,38 +5226,40 @@
                     "Zend_Exception": "library/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
             "description": "Zend Framework 1 Exception package",
             "homepage": "http://framework.zend.com/",
             "keywords": [
+                "ZF1",
                 "exception",
                 "framework",
-                "zend",
-                "zf1"
+                "zend"
             ],
             "support": {
-                "source": "https://github.com/magento-gl/magento-zend-exception/tree/php84_deprication_fix"
+                "issues": "https://github.com/magento/magento-zend-exception/issues",
+                "source": "https://github.com/magento/magento-zend-exception/tree/1.16.1"
             },
-            "time": "2024-12-13T06:23:15+00:00"
+            "time": "2024-12-18T10:09:19+00:00"
         },
         {
             "name": "magento/zend-loader",
-            "version": "dev-php84_deprication_fix",
+            "version": "1.16.1",
             "source": {
                 "type": "git",
-                "url": "git@github.com:magento-gl/magento-zend-loader.git",
-                "reference": "54507ee95979f15ff26c6f60e36b0c234a5e6401"
+                "url": "https://github.com/magento/magento-zend-loader.git",
+                "reference": "7eca22970a6b7cdaa3d3a6a6d117e4c0d3bef5e9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-gl/magento-zend-loader/zipball/54507ee95979f15ff26c6f60e36b0c234a5e6401",
-                "reference": "54507ee95979f15ff26c6f60e36b0c234a5e6401",
+                "url": "https://api.github.com/repos/magento/magento-zend-loader/zipball/7eca22970a6b7cdaa3d3a6a6d117e4c0d3bef5e9",
+                "reference": "7eca22970a6b7cdaa3d3a6a6d117e4c0d3bef5e9",
                 "shasum": ""
             },
             "require": {
-                "magento/zend-exception": "dev-php84_deprication_fix",
+                "magento/zend-exception": "^1.16.0",
                 "php": ">=7.0.0"
             },
             "replace": {
@@ -5225,38 +5277,40 @@
                     "Zend_Loader": "library/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
             "description": "Zend Framework 1 Loader package",
             "homepage": "http://framework.zend.com/",
             "keywords": [
+                "ZF1",
                 "framework",
                 "loader",
-                "zend",
-                "zf1"
+                "zend"
             ],
             "support": {
-                "source": "https://github.com/magento-gl/magento-zend-loader/tree/php84_deprication_fix"
+                "issues": "https://github.com/magento/magento-zend-loader/issues",
+                "source": "https://github.com/magento/magento-zend-loader/tree/1.16.1"
             },
-            "time": "2024-12-13T11:35:58+00:00"
+            "time": "2023-08-25T13:52:37+00:00"
         },
         {
             "name": "magento/zend-log",
-            "version": "dev-php84_deprication_fix",
+            "version": "1.16.1",
             "source": {
                 "type": "git",
-                "url": "git@github.com:magento-gl/magento-zend-log.git",
-                "reference": "ae85b8453be1d309989fc4a8ecb1a7e7d5952e7a"
+                "url": "https://github.com/magento/magento-zend-log.git",
+                "reference": "4069130d58e1aaf8f3a0a2593a05083b5c2a85f8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-gl/magento-zend-log/zipball/ae85b8453be1d309989fc4a8ecb1a7e7d5952e7a",
-                "reference": "ae85b8453be1d309989fc4a8ecb1a7e7d5952e7a",
+                "url": "https://api.github.com/repos/magento/magento-zend-log/zipball/4069130d58e1aaf8f3a0a2593a05083b5c2a85f8",
+                "reference": "4069130d58e1aaf8f3a0a2593a05083b5c2a85f8",
                 "shasum": ""
             },
             "require": {
-                "magento/zend-exception": "dev-php84_deprication_fix",
+                "magento/zend-exception": "^1.16",
                 "php": ">=7.0.0"
             },
             "replace": {
@@ -5274,39 +5328,41 @@
                     "Zend_Log": "library/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
             "description": "Zend Framework 1 Log package",
             "homepage": "http://framework.zend.com/",
             "keywords": [
+                "ZF1",
                 "framework",
                 "log",
-                "zend",
-                "zf1"
+                "zend"
             ],
             "support": {
-                "source": "https://github.com/magento-gl/magento-zend-log/tree/php84_deprication_fix"
+                "issues": "https://github.com/magento/magento-zend-log/issues",
+                "source": "https://github.com/magento/magento-zend-log/tree/1.16.1"
             },
-            "time": "2024-12-13T07:36:21+00:00"
+            "time": "2024-12-18T11:34:38+00:00"
         },
         {
             "name": "magento/zend-memory",
-            "version": "dev-php84_deprication_fix",
+            "version": "1.16.0",
             "source": {
                 "type": "git",
-                "url": "git@github.com:magento-gl/magento-zend-memory.git",
-                "reference": "2cdeca995fa9ee56e798d3f4c0a4583cfd168dc0"
+                "url": "https://github.com/magento/magento-zend-memory.git",
+                "reference": "0d48804c6718cc9f15e5c356e6192fd6fff8932b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-gl/magento-zend-memory/zipball/2cdeca995fa9ee56e798d3f4c0a4583cfd168dc0",
-                "reference": "2cdeca995fa9ee56e798d3f4c0a4583cfd168dc0",
+                "url": "https://api.github.com/repos/magento/magento-zend-memory/zipball/0d48804c6718cc9f15e5c356e6192fd6fff8932b",
+                "reference": "0d48804c6718cc9f15e5c356e6192fd6fff8932b",
                 "shasum": ""
             },
             "require": {
-                "magento/zend-cache": "dev-php84_deprecation_fix",
-                "magento/zend-exception": "dev-php84_deprication_fix",
+                "magento/zend-cache": "^1.16",
+                "magento/zend-exception": "^1.16",
                 "php": ">=7.0.0"
             },
             "replace": {
@@ -5324,34 +5380,36 @@
                     "Zend_Memory": "library/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
             "description": "Zend Framework 1 Memory package",
             "homepage": "http://framework.zend.com/",
             "keywords": [
+                "ZF1",
                 "framework",
                 "memory",
-                "zend",
-                "zf1"
+                "zend"
             ],
             "support": {
-                "source": "https://github.com/magento-gl/magento-zend-memory/tree/php84_deprication_fix"
+                "issues": "https://github.com/magento/magento-zend-memory/issues",
+                "source": "https://github.com/magento/magento-zend-memory/tree/1.16.0"
             },
-            "time": "2024-12-13T07:47:36+00:00"
+            "time": "2022-09-22T18:17:46+00:00"
         },
         {
             "name": "magento/zend-pdf",
-            "version": "dev-php84_deprication_fix",
+            "version": "1.16.4",
             "source": {
                 "type": "git",
-                "url": "git@github.com:magento-gl/magento-zend-pdf.git",
-                "reference": "049313c0b7ab527fbcfc535637d1db3513e302c8"
+                "url": "https://github.com/magento/magento-zend-pdf.git",
+                "reference": "b6e9fcbec29184bb4eb6fa4a261a79d5d92f7ff8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-gl/magento-zend-pdf/zipball/049313c0b7ab527fbcfc535637d1db3513e302c8",
-                "reference": "049313c0b7ab527fbcfc535637d1db3513e302c8",
+                "url": "https://api.github.com/repos/magento/magento-zend-pdf/zipball/b6e9fcbec29184bb4eb6fa4a261a79d5d92f7ff8",
+                "reference": "b6e9fcbec29184bb4eb6fa4a261a79d5d92f7ff8",
                 "shasum": ""
             },
             "require": {
@@ -5359,9 +5417,9 @@
                 "ext-gd": "*",
                 "ext-iconv": "*",
                 "ext-zlib": "*",
-                "magento/zend-exception": "dev-php84_deprication_fix",
-                "magento/zend-log": "dev-php84_deprication_fix",
-                "magento/zend-memory": "dev-php84_deprication_fix",
+                "magento/zend-exception": "^1.16",
+                "magento/zend-log": "^1.16",
+                "magento/zend-memory": "^1.16",
                 "php": ">=7.0.0"
             },
             "replace": {
@@ -5379,21 +5437,23 @@
                     "Zend_Pdf": "library/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
             "description": "Zend Framework 1 Pdf package",
             "homepage": "http://framework.zend.com/",
             "keywords": [
+                "ZF1",
                 "framework",
                 "pdf",
-                "zend",
-                "zf1"
+                "zend"
             ],
             "support": {
-                "source": "https://github.com/magento-gl/magento-zend-pdf/tree/php84_deprication_fix"
+                "issues": "https://github.com/magento/magento-zend-pdf/issues",
+                "source": "https://github.com/magento/magento-zend-pdf/tree/1.16.4"
             },
-            "time": "2024-12-13T08:04:33+00:00"
+            "time": "2024-12-18T14:59:28+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -5681,6 +5741,135 @@
                 "source": "https://github.com/nikic/PHP-Parser/tree/v5.3.1"
             },
             "time": "2024-10-08T18:51:32+00:00"
+        },
+        {
+            "name": "open-telemetry/api",
+            "version": "1.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/opentelemetry-php/api.git",
+                "reference": "04c85a1e41a3d59fa9bdc801a5de1df6624b95ed"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/opentelemetry-php/api/zipball/04c85a1e41a3d59fa9bdc801a5de1df6624b95ed",
+                "reference": "04c85a1e41a3d59fa9bdc801a5de1df6624b95ed",
+                "shasum": ""
+            },
+            "require": {
+                "open-telemetry/context": "^1.0",
+                "php": "^8.1",
+                "psr/log": "^1.1|^2.0|^3.0",
+                "symfony/polyfill-php82": "^1.26"
+            },
+            "conflict": {
+                "open-telemetry/sdk": "<=1.0.8"
+            },
+            "type": "library",
+            "extra": {
+                "spi": {
+                    "OpenTelemetry\\API\\Instrumentation\\AutoInstrumentation\\HookManagerInterface": [
+                        "OpenTelemetry\\API\\Instrumentation\\AutoInstrumentation\\ExtensionHookManager"
+                    ]
+                },
+                "branch-alias": {
+                    "dev-main": "1.1.x-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "Trace/functions.php"
+                ],
+                "psr-4": {
+                    "OpenTelemetry\\API\\": "."
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "opentelemetry-php contributors",
+                    "homepage": "https://github.com/open-telemetry/opentelemetry-php/graphs/contributors"
+                }
+            ],
+            "description": "API for OpenTelemetry PHP.",
+            "keywords": [
+                "Metrics",
+                "api",
+                "apm",
+                "logging",
+                "opentelemetry",
+                "otel",
+                "tracing"
+            ],
+            "support": {
+                "chat": "https://app.slack.com/client/T08PSQ7BQ/C01NFPCV44V",
+                "docs": "https://opentelemetry.io/docs/php",
+                "issues": "https://github.com/open-telemetry/opentelemetry-php/issues",
+                "source": "https://github.com/open-telemetry/opentelemetry-php"
+            },
+            "time": "2024-11-16T04:32:30+00:00"
+        },
+        {
+            "name": "open-telemetry/context",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/opentelemetry-php/context.git",
+                "reference": "0cba875ea1953435f78aec7f1d75afa87bdbf7f3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/opentelemetry-php/context/zipball/0cba875ea1953435f78aec7f1d75afa87bdbf7f3",
+                "reference": "0cba875ea1953435f78aec7f1d75afa87bdbf7f3",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.1",
+                "symfony/polyfill-php82": "^1.26"
+            },
+            "suggest": {
+                "ext-ffi": "To allow context switching in Fibers"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "fiber/initialize_fiber_handler.php"
+                ],
+                "psr-4": {
+                    "OpenTelemetry\\Context\\": "."
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "opentelemetry-php contributors",
+                    "homepage": "https://github.com/open-telemetry/opentelemetry-php/graphs/contributors"
+                }
+            ],
+            "description": "Context implementation for OpenTelemetry PHP.",
+            "keywords": [
+                "Context",
+                "opentelemetry",
+                "otel"
+            ],
+            "support": {
+                "chat": "https://app.slack.com/client/T08PSQ7BQ/C01NFPCV44V",
+                "docs": "https://opentelemetry.io/docs/php",
+                "issues": "https://github.com/open-telemetry/opentelemetry-php/issues",
+                "source": "https://github.com/open-telemetry/opentelemetry-php"
+            },
+            "time": "2024-08-21T00:29:20+00:00"
         },
         {
             "name": "opensearch-project/opensearch-php",
@@ -6238,6 +6427,194 @@
                 "source": "https://github.com/php-amqplib/php-amqplib/tree/v3.7.2"
             },
             "time": "2024-11-21T09:21:41+00:00"
+        },
+        {
+            "name": "php-http/discovery",
+            "version": "1.20.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-http/discovery.git",
+                "reference": "82fe4c73ef3363caed49ff8dd1539ba06044910d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-http/discovery/zipball/82fe4c73ef3363caed49ff8dd1539ba06044910d",
+                "reference": "82fe4c73ef3363caed49ff8dd1539ba06044910d",
+                "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "^1.0|^2.0",
+                "php": "^7.1 || ^8.0"
+            },
+            "conflict": {
+                "nyholm/psr7": "<1.0",
+                "zendframework/zend-diactoros": "*"
+            },
+            "provide": {
+                "php-http/async-client-implementation": "*",
+                "php-http/client-implementation": "*",
+                "psr/http-client-implementation": "*",
+                "psr/http-factory-implementation": "*",
+                "psr/http-message-implementation": "*"
+            },
+            "require-dev": {
+                "composer/composer": "^1.0.2|^2.0",
+                "graham-campbell/phpspec-skip-example-extension": "^5.0",
+                "php-http/httplug": "^1.0 || ^2.0",
+                "php-http/message-factory": "^1.0",
+                "phpspec/phpspec": "^5.1 || ^6.1 || ^7.3",
+                "sebastian/comparator": "^3.0.5 || ^4.0.8",
+                "symfony/phpunit-bridge": "^6.4.4 || ^7.0.1"
+            },
+            "type": "composer-plugin",
+            "extra": {
+                "class": "Http\\Discovery\\Composer\\Plugin",
+                "plugin-optional": true
+            },
+            "autoload": {
+                "psr-4": {
+                    "Http\\Discovery\\": "src/"
+                },
+                "exclude-from-classmap": [
+                    "src/Composer/Plugin.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Márk Sági-Kazár",
+                    "email": "mark.sagikazar@gmail.com"
+                }
+            ],
+            "description": "Finds and installs PSR-7, PSR-17, PSR-18 and HTTPlug implementations",
+            "homepage": "http://php-http.org",
+            "keywords": [
+                "adapter",
+                "client",
+                "discovery",
+                "factory",
+                "http",
+                "message",
+                "psr17",
+                "psr7"
+            ],
+            "support": {
+                "issues": "https://github.com/php-http/discovery/issues",
+                "source": "https://github.com/php-http/discovery/tree/1.20.0"
+            },
+            "time": "2024-10-02T11:20:13+00:00"
+        },
+        {
+            "name": "php-http/httplug",
+            "version": "2.4.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-http/httplug.git",
+                "reference": "5cad731844891a4c282f3f3e1b582c46839d22f4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-http/httplug/zipball/5cad731844891a4c282f3f3e1b582c46839d22f4",
+                "reference": "5cad731844891a4c282f3f3e1b582c46839d22f4",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1 || ^8.0",
+                "php-http/promise": "^1.1",
+                "psr/http-client": "^1.0",
+                "psr/http-message": "^1.0 || ^2.0"
+            },
+            "require-dev": {
+                "friends-of-phpspec/phpspec-code-coverage": "^4.1 || ^5.0 || ^6.0",
+                "phpspec/phpspec": "^5.1 || ^6.0 || ^7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Http\\Client\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Eric GELOEN",
+                    "email": "geloen.eric@gmail.com"
+                },
+                {
+                    "name": "Márk Sági-Kazár",
+                    "email": "mark.sagikazar@gmail.com",
+                    "homepage": "https://sagikazarmark.hu"
+                }
+            ],
+            "description": "HTTPlug, the HTTP client abstraction for PHP",
+            "homepage": "http://httplug.io",
+            "keywords": [
+                "client",
+                "http"
+            ],
+            "support": {
+                "issues": "https://github.com/php-http/httplug/issues",
+                "source": "https://github.com/php-http/httplug/tree/2.4.1"
+            },
+            "time": "2024-09-23T11:39:58+00:00"
+        },
+        {
+            "name": "php-http/promise",
+            "version": "1.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-http/promise.git",
+                "reference": "fc85b1fba37c169a69a07ef0d5a8075770cc1f83"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-http/promise/zipball/fc85b1fba37c169a69a07ef0d5a8075770cc1f83",
+                "reference": "fc85b1fba37c169a69a07ef0d5a8075770cc1f83",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1 || ^8.0"
+            },
+            "require-dev": {
+                "friends-of-phpspec/phpspec-code-coverage": "^4.3.2 || ^6.3",
+                "phpspec/phpspec": "^5.1.2 || ^6.2 || ^7.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Http\\Promise\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Joel Wurtz",
+                    "email": "joel.wurtz@gmail.com"
+                },
+                {
+                    "name": "Márk Sági-Kazár",
+                    "email": "mark.sagikazar@gmail.com"
+                }
+            ],
+            "description": "Promise used for asynchronous HTTP requests",
+            "homepage": "http://httplug.io",
+            "keywords": [
+                "promise"
+            ],
+            "support": {
+                "issues": "https://github.com/php-http/promise/issues",
+                "source": "https://github.com/php-http/promise/tree/1.3.1"
+            },
+            "time": "2024-03-15T13:55:21+00:00"
         },
         {
             "name": "phpgt/cssxpath",
@@ -10994,6 +11371,82 @@
             "time": "2024-09-09T11:45:10+00:00"
         },
         {
+            "name": "symfony/polyfill-php82",
+            "version": "v1.31.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-php82.git",
+                "reference": "5d2ed36f7734637dacc025f179698031951b1692"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-php82/zipball/5d2ed36f7734637dacc025f179698031951b1692",
+                "reference": "5d2ed36f7734637dacc025f179698031951b1692",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2"
+            },
+            "type": "library",
+            "extra": {
+                "thanks": {
+                    "url": "https://github.com/symfony/polyfill",
+                    "name": "symfony/polyfill"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "bootstrap.php"
+                ],
+                "psr-4": {
+                    "Symfony\\Polyfill\\Php82\\": ""
+                },
+                "classmap": [
+                    "Resources/stubs"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill backporting some PHP 8.2+ features to lower PHP versions",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/polyfill-php82/tree/v1.31.0"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2024-09-09T11:45:10+00:00"
+        },
+        {
             "name": "symfony/polyfill-php83",
             "version": "v1.31.0",
             "source": {
@@ -13244,8 +13697,8 @@
             "type": "library",
             "extra": {
                 "laminas": {
-                    "config-provider": "Laminas\\Diactoros\\ConfigProvider",
-                    "module": "Laminas\\Diactoros"
+                    "module": "Laminas\\Diactoros",
+                    "config-provider": "Laminas\\Diactoros\\ConfigProvider"
                 }
             },
             "autoload": {
@@ -13945,16 +14398,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.12.12",
+            "version": "1.12.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "b5ae1b88f471d3fd4ba1aa0046234b5ca3776dd0"
+                "reference": "9b469068840cfa031e1deaf2fa1886d00e20680f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/b5ae1b88f471d3fd4ba1aa0046234b5ca3776dd0",
-                "reference": "b5ae1b88f471d3fd4ba1aa0046234b5ca3776dd0",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/9b469068840cfa031e1deaf2fa1886d00e20680f",
+                "reference": "9b469068840cfa031e1deaf2fa1886d00e20680f",
                 "shasum": ""
             },
             "require": {
@@ -13999,7 +14452,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-11-28T22:13:23+00:00"
+            "time": "2024-12-17T17:00:20+00:00"
         },
         {
             "name": "react/cache",
@@ -15023,16 +15476,8 @@
         "laminas/laminas-mime": 20,
         "laminas/laminas-oauth": 20,
         "magento/composer": 20,
-        "magento/composer-dependency-version-audit-plugin": 20,
         "magento/magento-coding-standard": 20,
         "magento/magento2-functional-testing-framework": 20,
-        "magento/zend-cache": 20,
-        "magento/zend-db": 20,
-        "magento/zend-exception": 20,
-        "magento/zend-loader": 20,
-        "magento/zend-log": 20,
-        "magento/zend-memory": 20,
-        "magento/zend-pdf": 20,
         "phpgt/dom": 20
     },
     "prefer-stable": true,
