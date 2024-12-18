@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminVerifyWYSIWYGIsPresentedInNewTabTest">
+        <annotations>
+            <features value="Cms"/>
+            <stories value="404 Not Found Page"/>
+            <title value="WYSIWYG is presented for content if page for edit is opened in new browser tab"/>
+            <description value="Testcase verifie WYSIWYG is presented for content if page for edit is opened in new browser tab"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="AC-4119" />
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <actionGroup ref="AdminOpenCMSPagesGridActionGroup" stepKey="navigateToCmsPageGrid"/>
+        <waitForElementVisible selector="{{CmsPagesPageActionsSection.select('404 Not Found')}}" stepKey="waitForCMSPageListItem" />
+        <click selector="{{CmsPagesPageActionsSection.select('404 Not Found')}}" stepKey="clickSelect" />
+        <waitForElementVisible selector="{{CmsPagesPageActionsSection.edit('404 Not Found')}}" stepKey="waitForEditLink" />
+        <waitForElementVisible selector="{{CmsPagesPageActionsSection.preview('404 Not Found')}}" stepKey="waitForPreviewLink" />
+        <waitForElementVisible selector="{{CmsPagesPageActionsSection.delete('404 Not Found')}}" stepKey="waitForDeleteLink" />
+        <click selector="{{CmsPagesPageActionsSection.edit('404 Not Found')}}" stepKey="clickEdit" />
+        <openNewTab stepKey="openNewTab"/>
+        <amOnPage url="admin/cms/page/edit/page_id/1/" stepKey="open404PageInNewTab"/>
+        <waitForPageLoad stepKey="waitForCMSPage"/>
+        <switchToPreviousTab stepKey="switchToPreviousTab"/>
+        <actionGroup ref="AdminExpandContentSectionActionGroup" stepKey="expandContentSection"/>
+        <waitForElementVisible selector="{{TinyMCESection.TinyMCE}}" stepKey="waitForTinyMCE"/>
+        <click selector="{{TinyMCESection.ShowHideBtn}}" stepKey="clickShowHideBtn1" />
+        <wait time="10" stepKey="k1"/>
+        <waitForElementNotVisible selector="{{TinyMCESection.TinyMCE}}" stepKey="tinyMCENotAvailable"/>
+        <waitForElementVisible selector="{{TinyMCESection.InsertWidgetBtn}}" stepKey="waitForInsertWidget"/>
+        <waitForElementVisible selector="{{TinyMCESection.InsertImageBtn}}" stepKey="waitForInsertImage"/>
+        <waitForElementVisible selector="{{TinyMCESection.InsertVariableBtn}}" stepKey="waitForInsertVariable"/>
+
+
+        <switchToNextTab stepKey="switchToNextTab1"/>
+        <actionGroup ref="AdminExpandContentSectionActionGroup" stepKey="expandContentSection1"/>
+        <waitForElementVisible selector="{{TinyMCESection.TinyMCE}}" stepKey="waitForTinyMCE1" />
+        <click selector="{{TinyMCESection.ShowHideBtn}}" stepKey="clickShowHideBtn11" />
+        <wait time="10" stepKey="k2"/>
+        <waitForElementNotVisible selector="{{TinyMCESection.TinyMCE}}" stepKey="tinyMCENotAvailable11"/>
+        <waitForElementVisible selector="{{TinyMCESection.InsertWidgetBtn}}" stepKey="waitForInsertWidget1"/>
+        <waitForElementVisible selector="{{TinyMCESection.InsertImageBtn}}" stepKey="waitForInsertImage1"/>
+        <waitForElementVisible selector="{{TinyMCESection.InsertVariableBtn}}" stepKey="waitForInsertVariable1"/>
+    </test>
+</tests>
