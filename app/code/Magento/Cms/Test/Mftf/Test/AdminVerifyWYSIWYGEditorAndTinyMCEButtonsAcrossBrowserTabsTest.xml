@@ -37,10 +37,10 @@
         </actionGroup>
         <waitForPageLoad stepKey="waitForCMSPage"/>
         <switchToPreviousTab stepKey="switchToPreviousTab"/>
-        <actionGroup ref="AdminExpandContentSectionActionGroup" stepKey="expandContentSection"/>
+        <conditionalClick selector="{{CmsNewPagePageContentSection.header}}" dependentSelector="{{CmsNewPagePageContentSection.contentHeading}}" visible="false" stepKey="expandContentTabIfCollapsed"/>
         <actionGroup ref="AdminVerifyWYSIWYGEditorAndTinyMCEButtonsActionGroup" stepKey="verifyWYSIWYGEditorAndButtonsPresentInCurrentTab"/>
         <switchToNextTab stepKey="switchToNextTab"/>
-        <actionGroup ref="AdminExpandContentSectionActionGroup" stepKey="expandContentSectionInAnotherTab"/>
+        <conditionalClick selector="{{CmsNewPagePageContentSection.header}}" dependentSelector="{{CmsNewPagePageContentSection.contentHeading}}" visible="false" stepKey="againExpandContentTabIfCollapsed"/>
         <actionGroup ref="AdminVerifyWYSIWYGEditorAndTinyMCEButtonsActionGroup" stepKey="verifyWYSIWYGEditorAndButtonsPresentInAnotherTab"/>
     </test>
 </tests>
