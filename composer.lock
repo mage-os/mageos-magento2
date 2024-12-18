@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1c7a60fddcc959cf7ec24afaa4e8204c",
+    "content-hash": "3aab7cc5c535ce88775eaac8996f5c21",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -6174,6 +6174,215 @@
                 "source": "https://github.com/php-amqplib/php-amqplib/tree/v3.7.2"
             },
             "time": "2024-11-21T09:21:41+00:00"
+        },
+        {
+            "name": "phpgt/cssxpath",
+            "version": "v1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PhpGt/CssXPath.git",
+                "reference": "c0a06671fed8db601bb680dc4d5accf3cd9deb81"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PhpGt/CssXPath/zipball/c0a06671fed8db601bb680dc4d5accf3cd9deb81",
+                "reference": "c0a06671fed8db601bb680dc4d5accf3cd9deb81",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.0"
+            },
+            "require-dev": {
+                "ext-dom": "*",
+                "ext-libxml": "*",
+                "phpstan/phpstan": "^v1.8",
+                "phpunit/phpunit": "^v9.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Gt\\CssXPath\\": "./src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Greg Bowler",
+                    "email": "greg.bowler@g105b.com",
+                    "homepage": "https://www.g105b.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Convert CSS selectors to XPath queries.",
+            "support": {
+                "issues": "https://github.com/PhpGt/CssXPath/issues",
+                "source": "https://github.com/PhpGt/CssXPath/tree/v1.2.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/PhpGt",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-01-03T18:33:56+00:00"
+        },
+        {
+            "name": "phpgt/dom",
+            "version": "dev-php84-support",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/djadobe16/Dom.git",
+                "reference": "3934c8e4323fc0585854a556c6dfd8bb26ed9f29"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/djadobe16/Dom/zipball/3934c8e4323fc0585854a556c6dfd8bb26ed9f29",
+                "reference": "3934c8e4323fc0585854a556c6dfd8bb26ed9f29",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "ext-libxml": "*",
+                "ext-mbstring": "*",
+                "php": ">=8.1",
+                "phpgt/cssxpath": "^1.1",
+                "phpgt/propfunc": "^1.0",
+                "psr/http-message": "^1.0 || ^2.0"
+            },
+            "require-dev": {
+                "phpmd/phpmd": "^2.13",
+                "phpstan/phpstan": "^1.9",
+                "phpunit/phpunit": "^10.4",
+                "squizlabs/php_codesniffer": "^3.7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Gt\\Dom\\": "./src"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Gt\\Dom\\Test\\": "./test/phpunit"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Greg Bowler",
+                    "homepage": "https://www.g105b.com",
+                    "email": "greg.bowler@g105b.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Alvaro Guimaraes",
+                    "homepage": "https://github.com/aguimaraes",
+                    "role": "Developer"
+                },
+                {
+                    "name": "James Fellows",
+                    "homepage": "https://github.com/j4m3s",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Emile Ward",
+                    "homepage": "https://github.com/emileward",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Jelmer Wijnja",
+                    "homepage": "https://github.com/Jelmergu",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Ognjen Petrovic",
+                    "homepage": "https://github.com/ognjen-petrovic",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Jacob Bearden",
+                    "homepage": "https://github.com/jacobbearden",
+                    "role": "Documentation contributor"
+                },
+                {
+                    "name": "Jaroslav Týc",
+                    "homepage": "https://www.jaroslavtyc.com/",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Andrii Beziazychnyi",
+                    "homepage": "https://www.atwix.com/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Modern DOM API.",
+            "support": {
+                "source": "https://github.com/djadobe16/Dom/tree/php84-support"
+            },
+            "funding": [
+                {
+                    "type": "github",
+                    "url": "https://github.com/sponsors/PhpGt"
+                }
+            ],
+            "time": "2024-12-17T07:54:23+00:00"
+        },
+        {
+            "name": "phpgt/propfunc",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PhpGt/PropFunc.git",
+                "reference": "091213649e89ff22d1ef640b46fbee5215c65520"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PhpGt/PropFunc/zipball/091213649e89ff22d1ef640b46fbee5215c65520",
+                "reference": "091213649e89ff22d1ef640b46fbee5215c65520",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.0"
+            },
+            "require-dev": {
+                "phpstan/phpstan": ">=0.12",
+                "phpunit/phpunit": ">=9.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Gt\\PropFunc\\": "./src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Greg Bowler",
+                    "email": "greg.bowler@g105b.com",
+                    "homepage": "https://www.g105b.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Property accessor and mutator functions.",
+            "support": {
+                "issues": "https://github.com/PhpGt/PropFunc/issues",
+                "source": "https://github.com/PhpGt/PropFunc/tree/v1.0.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/PhpGt",
+                    "type": "github"
+                }
+            ],
+            "time": "2021-03-23T12:46:44+00:00"
         },
         {
             "name": "phpseclib/mcrypt_compat",
@@ -14739,8 +14948,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "allure-framework/allure-phpunit": 20,
-        "codeception/module-sequence": 20,
         "laminas/laminas-captcha": 20,
         "laminas/laminas-db": 20,
         "laminas/laminas-di": 20,
@@ -14750,15 +14957,18 @@
         "laminas/laminas-oauth": 20,
         "magento/composer": 20,
         "magento/composer-dependency-version-audit-plugin": 20,
-        "magento/magento-coding-standard": 20,
-        "magento/magento2-functional-testing-framework": 20,
         "magento/zend-cache": 20,
         "magento/zend-db": 20,
+        "magento/zend-pdf": 20,
+        "magento/zend-memory": 20,
         "magento/zend-exception": 20,
         "magento/zend-loader": 20,
         "magento/zend-log": 20,
-        "magento/zend-memory": 20,
-        "magento/zend-pdf": 20
+        "codeception/module-sequence": 20,
+        "phpgt/dom": 20,
+        "allure-framework/allure-phpunit": 20,
+        "magento/magento-coding-standard": 20,
+        "magento/magento2-functional-testing-framework": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
@@ -14782,6 +14992,6 @@
         "ext-zip": "*",
         "lib-libxml": "*"
     },
-    "platform-dev": {},
+    "platform-dev": [],
     "plugin-api-version": "2.6.0"
 }
