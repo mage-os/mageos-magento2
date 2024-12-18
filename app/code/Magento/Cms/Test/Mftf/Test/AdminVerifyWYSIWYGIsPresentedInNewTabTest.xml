@@ -33,7 +33,8 @@
         <amOnPage url="admin/cms/page/edit/page_id/1/" stepKey="open404PageInNewTab"/>
         <waitForPageLoad stepKey="waitForCMSPage"/>
         <switchToPreviousTab stepKey="switchToPreviousTab"/>
-        <actionGroup ref="AdminExpandContentSectionActionGroup" stepKey="expandContentSection"/>
+        <waitForPageLoad stepKey="waitForCMSPageToLoad2"/>
+        <conditionalClick selector="{{CmsNewPagePageContentSection.header}}" dependentSelector="{{CmsNewPagePageContentSection.contentHeading}}" visible="false" stepKey="expandContentTabIfCollapsed"/>
         <waitForElementVisible selector="{{TinyMCESection.TinyMCE}}" stepKey="waitForTinyMCE"/>
         <click selector="{{TinyMCESection.ShowHideBtn}}" stepKey="clickShowHideBtn1" />
         <wait time="10" stepKey="k1"/>
@@ -44,7 +45,8 @@
 
 
         <switchToNextTab stepKey="switchToNextTab1"/>
-        <actionGroup ref="AdminExpandContentSectionActionGroup" stepKey="expandContentSection1"/>
+        <waitForPageLoad stepKey="waitForCMSPage45"/>
+        <conditionalClick selector="{{CmsNewPagePageContentSection.header}}" dependentSelector="{{CmsNewPagePageContentSection.contentHeading}}" visible="false" stepKey="againExpandContentTabIfCollapsed"/>
         <waitForElementVisible selector="{{TinyMCESection.TinyMCE}}" stepKey="waitForTinyMCE1" />
         <click selector="{{TinyMCESection.ShowHideBtn}}" stepKey="clickShowHideBtn11" />
         <wait time="10" stepKey="k2"/>
