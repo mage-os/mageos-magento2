@@ -1,0 +1,30 @@
+name: Sansec eComscan Security Scan
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  run-ecomscan:
+    name: Run Sansec eComscan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Sansec eComscan
+        uses: sansecio/ecomscan-github-action@main
+        with:
+          key: ${{ secrets.SANSEC_LICENSE_KEY }}
+          directory: '.'
+          fail_on_detection: true  # Fail workflow if malware is detected
+
+      - name: Upload scan results
+        if: always()  # Run even if previous step fails
+        uses: actions/upload-artifact@v3
+        with:
+          name: sansec-scan-results
+          path: ecomscan-result.json
+          retention-days: 7
