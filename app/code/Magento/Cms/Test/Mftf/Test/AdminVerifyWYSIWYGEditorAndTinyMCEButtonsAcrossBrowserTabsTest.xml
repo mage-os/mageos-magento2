@@ -38,9 +38,9 @@
         <waitForPageLoad stepKey="waitForCMSPage"/>
         <switchToPreviousTab stepKey="switchToPreviousTab"/>
         <actionGroup ref="AdminExpandContentSectionActionGroup" stepKey="expandContentSection"/>
-        <actionGroup ref="AdminVerifyWYSIWYGEditorAndButtonsActionGroup" stepKey="verifyWYSIWYGEditorAndButtonsPresentInCurrentTab"/>
+        <actionGroup ref="AdminVerifyWYSIWYGEditorAndTinyMCEButtonsActionGroup" stepKey="verifyWYSIWYGEditorAndButtonsPresentInCurrentTab"/>
         <switchToNextTab stepKey="switchToNextTab"/>
         <actionGroup ref="AdminExpandContentSectionActionGroup" stepKey="expandContentSectionInAnotherTab"/>
-        <actionGroup ref="AdminVerifyWYSIWYGEditorAndButtonsActionGroup" stepKey="verifyWYSIWYGEditorAndButtonsPresentInAnotherTab"/>
+        <actionGroup ref="AdminVerifyWYSIWYGEditorAndTinyMCEButtonsActionGroup" stepKey="verifyWYSIWYGEditorAndButtonsPresentInAnotherTab"/>
     </test>
 </tests>
