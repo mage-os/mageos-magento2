@@ -100,10 +100,6 @@
         {
             "type": "vcs",
             "url": "git@github.com:magento-gl/magento2-functional-testing-framework.git"
-        },
-        {
-            "type": "vcs",
-            "url": "git@github.com:djadobe16/Dom.git"
         }
     ],
     "require": {
@@ -184,8 +180,7 @@
         "magento/zend-exception": "dev-php84_deprication_fix",
         "magento/zend-loader": "dev-php84_deprication_fix",
         "magento/zend-log": "dev-php84_deprication_fix",
-        "codeception/module-sequence": "dev-php84-support",
-        "phpgt/dom": "dev-php84-support"
+        "codeception/module-sequence": "dev-php84-support"
     },
     "require-dev": {
         "allure-framework/allure-phpunit": "dev-develop",
