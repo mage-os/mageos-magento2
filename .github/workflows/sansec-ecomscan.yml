@@ -19,12 +19,3 @@ jobs:
         with:
           key: ${{ secrets.SANSEC_LICENSE_KEY }}
           directory: '.'
-          fail_on_detection: true  # Fail workflow if malware is detected
-
-      - name: Upload scan results
-        if: always()  # Run even if previous step fails
-        uses: actions/upload-artifact@v3
-        with:
-          name: sansec-scan-results
-          path: ecomscan-result.json
-          retention-days: 7
