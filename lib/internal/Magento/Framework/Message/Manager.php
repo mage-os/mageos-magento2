@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2017 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Framework\Message;
 
@@ -9,6 +9,7 @@ use Magento\Framework\Event;
 use Psr\Log\LoggerInterface;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Debug;
+use Magento\Framework\Message\ExceptionMessageLookupFactory;
 
 /**
  * Message manager model
@@ -21,7 +22,7 @@ class Manager implements ManagerInterface
     /**
      * Default message group
      */
-    const DEFAULT_GROUP = 'default';
+    protected const DEFAULT_GROUP = 'default';
 
     /**
      * @var Session
@@ -64,6 +65,11 @@ class Manager implements ManagerInterface
     private $exceptionMessageFactory;
 
     /**
+     * @var ExceptionMessageLookupFactory
+     */
+    private $exceptionMessageLookupFactory;
+
+    /**
      * @param Session $session
      * @param Factory $messageFactory
      * @param CollectionFactory $messagesFactory
@@ -71,6 +77,7 @@ class Manager implements ManagerInterface
      * @param LoggerInterface $logger
      * @param string $defaultGroup
      * @param ExceptionMessageFactoryInterface|null $exceptionMessageFactory
+     * @param ExceptionMessageLookupFactory|null $exceptionMessageLookupFactory
      */
     public function __construct(
         Session $session,
@@ -79,7 +86,8 @@ class Manager implements ManagerInterface
         Event\ManagerInterface $eventManager,
         LoggerInterface $logger,
         $defaultGroup = self::DEFAULT_GROUP,
-        ExceptionMessageFactoryInterface $exceptionMessageFactory = null
+        ExceptionMessageFactoryInterface $exceptionMessageFactory = null,
+        ExceptionMessageLookupFactory $exceptionMessageLookupFactory = null
     ) {
         $this->session = $session;
         $this->messageFactory = $messageFactory;
@@ -87,8 +95,7 @@ class Manager implements ManagerInterface
         $this->eventManager = $eventManager;
         $this->logger = $logger;
         $this->defaultGroup = $defaultGroup;
-        $this->exceptionMessageFactory = $exceptionMessageFactory ?: ObjectManager::getInstance()
-            ->get(ExceptionMessageLookupFactory::class);
+        $this->exceptionMessageFactory = $exceptionMessageFactory ?: $exceptionMessageLookupFactory;
     }
 
     /**
