@@ -15,6 +15,7 @@ use Magento\User\Model\User;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.AllPurposeAction)
  */
 class Save extends \Magento\Backend\Controller\Adminhtml\System\Account
 {
