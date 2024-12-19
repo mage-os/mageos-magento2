@@ -9,10 +9,16 @@ jobs:
   run-ecomscan:
     name: Run Sansec eComscan
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
 
       - name: Download eComscan
         run: wget https://ecomscan.com/downloads/linux-amd64/ecomscan
