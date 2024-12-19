@@ -2,7 +2,7 @@ name: Sansec eComscan Security Scan
 
 on:
   push:
-  pull_request:
+  pull_request_target:
   workflow_dispatch:
 
 jobs:
