@@ -8,9 +8,9 @@
 
 <tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
-    <test name="AdminReorderInAdminPanelOrderPlacedUsingDHLAPShippingMethodTest">
+    <test name="AdminReorderPlacedUsingDHLAPShippingMethodTest">
         <annotations>
-            <stories value="Reorder in admin panel which is placed using DHL shipping method "/>
+            <stories value="Admin Reorder with DHL Shipping method"/>
             <title value="Reorder placed order using DHL in admin panel"/>
             <description value="Reorder in admin panel order placed using DHL (AP) as a shipping method"/>
             <severity value="MAJOR"/>
@@ -68,7 +68,7 @@
         <actionGroup ref="AdminOrderGridClickFirstRowActionGroup" stepKey="clickOrderRow"/>
         <actionGroup ref="AdminStartReorderFromOrderPageActionGroup" stepKey="startReorder"/>
         <!--select Check/Money order payment method-->
-        <scrollTo selector="{{AdminOrderFormPaymentSection.DHLShipping('Domestic express')}}" x="0" y="-100" stepKey="scrollToDHLShippingMethod"/>
+        <scrollTo selector="{{AdminOrderFormPaymentSection.DHLShipping('Domestic express')}}" stepKey="scrollToDHLShippingMethod"/>
         <waitForText selector="{{AdminOrderFormPaymentSection.DHLShipping('Domestic express')}}" userInput="Domestic express" stepKey="verifyDHLShippingMethodIsSelected"/>
         <waitForText selector="{{AdminOrderFormPaymentSection.verifyCheckMoneyPayment}}" userInput="Check / Money order" stepKey="verifyCheckMoneyOrderIsSelected"/>
         <actionGroup ref="AdminSubmitOrderActionGroup" stepKey="submitOrder"/>
