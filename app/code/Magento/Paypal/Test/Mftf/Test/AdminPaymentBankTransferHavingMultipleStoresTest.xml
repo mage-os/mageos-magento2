@@ -69,6 +69,7 @@
         <waitForText selector="{{AdminOrderPaymentInformationSection.paymentMethod}}" userInput="Bank Transfer Payment(Second)" stepKey="seePaymentMethodName"/>
         <click selector="{{AdminOrderDetailsMainActionsSection.ship}}" stepKey="clickShipAction"/>
         <click selector="{{AdminShipmentMainActionsSection.submitShipment}}" stepKey="clickSubmitShipment"/>
+        <scrollTo selector="{{CatalogSection.paymentInformation}}" stepKey="scrollToPaymentAndShippingInformation"/>
         <waitForText selector="{{AdminOrderPaymentInformationSection.paymentMethod}}" userInput="Bank Transfer Payment(Second)" stepKey="seePaymentMethodName2"/>
         <actionGroup ref="AdminStartToCreateCreditMemoFromOrderPageActionGroup" stepKey="startCreatingCreditMemo"/>
         <actionGroup ref="SubmitCreditMemoActionGroup" stepKey="submitCreditMemo"/>
