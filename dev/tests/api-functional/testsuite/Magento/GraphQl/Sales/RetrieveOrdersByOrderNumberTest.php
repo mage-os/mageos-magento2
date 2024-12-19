@@ -35,6 +35,8 @@ use Magento\TestFramework\Fixture\Config;
 
 /**
  * Class RetrieveOrdersTest
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class RetrieveOrdersByOrderNumberTest extends GraphQlAbstract
 {
