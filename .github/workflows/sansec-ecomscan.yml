@@ -14,9 +14,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run Sansec eComscan
-        uses: sansecio/ecomscan-github-action@main
+      - name: Download eComscan
+        run: wget https://ecomscan.com/downloads/linux-amd64/ecomscan
+
+      - name: Fix permissions
+        run: chmod +x ecomscan
+
+      - name: Run eComscan
         env:
           ECOMSCAN_KEY: ${{ secrets.SANSEC_LICENSE_KEY }}
-        with:
-          directory: '.'
+        run: ./ecomscan .
