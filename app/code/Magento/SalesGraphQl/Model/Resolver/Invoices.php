@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -22,10 +22,11 @@ use Magento\Sales\Api\Data\InvoiceInterface;
  */
 class Invoices implements ResolverInterface
 {
-    private TimezoneInterface $timezone;
-
+    /**
+     * @param TimezoneInterface|null $timezone
+     */
     public function __construct(
-        TimezoneInterface $timezone = null
+        private ?TimezoneInterface $timezone = null
     ) {
         $this->timezone = $timezone ?: ObjectManager::getInstance()->get(TimezoneInterface::class);
     }

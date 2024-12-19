@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -20,8 +20,6 @@ use Magento\SalesGraphQl\Model\Order\OrderPayments;
  */
 class Order
 {
-    private TimezoneInterface $timezone;
-
     /**
      * @param OrderAddress $orderAddress
      * @param OrderPayments $orderPayments
@@ -30,7 +28,7 @@ class Order
     public function __construct(
         private readonly OrderAddress $orderAddress,
         private readonly OrderPayments $orderPayments,
-        TimezoneInterface $timezone = null
+        private ?TimezoneInterface $timezone = null
     ) {
         $this->timezone = $timezone ?: ObjectManager::getInstance()->get(TimezoneInterface::class);
     }
