@@ -1,0 +1,38 @@
+name: Sansec eComscan Security Scan
+
+on:
+  push:
+  pull_request_target:
+  workflow_dispatch:
+
+jobs:
+  run-ecomscan:
+    name: Run Sansec eComscan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Download eComscan
+        run: wget https://ecomscan.com/downloads/linux-amd64/ecomscan
+
+      - name: Fix permissions
+        run: chmod +x ecomscan
+
+      - name: Run eComscan
+        env:
+          ECOMSCAN_KEY: ${{ secrets.SANSEC_LICENSE_KEY }}
+        run: |
+          output=$(./ecomscan --no-auto-update --skip-database --deep --format=csv .)
+          if [ -n "$output" ]; then
+            echo "Security issues found:"
+            echo "$output"
+            exit 1
+          fi
