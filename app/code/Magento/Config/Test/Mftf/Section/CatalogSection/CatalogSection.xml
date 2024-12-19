@@ -31,5 +31,6 @@
         <element name="productsPerPageOnGridBankTransferPaymentDefaultValueUseConfigCheckbox" type="checkbox" selector="//input[@id='payment_us_banktransfer_title_inherit']"/>
         <element name="dateAndTimeCustomOptions" type="select" selector="#catalog_custom_options-head"/>
         <element name="CheckIfTabExpandForDateAndTimeCustomOptions" type="button" selector="#catalog_custom_options-head:not(.open)"/>
+        <element name="expandedTab" type="button" selector="//a[@id='payment_us_banktransfer-head']"/>
     </section>
 </sections>

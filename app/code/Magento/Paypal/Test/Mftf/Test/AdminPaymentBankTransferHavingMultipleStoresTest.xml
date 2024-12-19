@@ -18,7 +18,6 @@
             <group value="Payments"/>
         </annotations>
         <before>
-
             <createData entity="defaultSimpleProduct" stepKey="createProduct"/>
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
             <actionGroup ref="CreateCustomStoreActionGroup" stepKey="createCustomStore">
@@ -36,17 +35,18 @@
                 <argument name="defaultStoreName" value="{{customStoreGroup.name}}"/>
             </actionGroup>
             <magentoCLI command="config:set {{enabledBankTransferPaymentOrder.label}} {{enabledBankTransferPaymentOrder.value}}" stepKey="enableBankTransfer"/>
-            <amOnPage url="{{AdminConfigPaymentMethodsPage.url}}" stepKey="navigateToPaymentConfigurationPage"/>
-            <waitForPageLoad stepKey="waitForSecondStorePageLoad"/>
         </before>
         <after>
             <magentoCLI command="config:set {{DisablePaymentBankTransferConfigData.path}} {{DisablePaymentBankTransferConfigData.value}}" stepKey="disableBankTransferPayment"/>
             <deleteData stepKey="deleteProduct" createDataKey="createProduct"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
         </after>
+        <amOnPage url="{{AdminConfigPaymentMethodsPage.url}}" stepKey="navigateToPaymentConfigurationPage"/>
+        <waitForPageLoad stepKey="waitForSecondStorePageLoad"/>
         <actionGroup ref="AdminSwitchSecondStoreViewActionGroup" stepKey="AdminSwitchSecondStoreView">
             <argument name="secondStoreView" value="customStoreEN"/>
         </actionGroup>
+        <scrollTo selector="{{CatalogSection.expandedTab}}" stepKey="clickExpandSearchEngineOptimisation"/>
         <uncheckOption selector="{{CatalogSection.productsPerPageOnGridBankTransferPaymentDefaultValueUseConfigCheckbox}}" stepKey="uncheckUseSystemValue"/>
         <fillField selector="{{CatalogSection.productsPerPageOnGridAllowedBankTransferPaymentValues}}" userInput="Bank Transfer Payment(Second)" stepKey="fillProductQuantity"/>
         <waitForElementClickable selector="{{AdminConfigSection.saveButton}}" stepKey="waitForSaveConfigbtn" />
