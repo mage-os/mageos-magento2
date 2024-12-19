@@ -22,7 +22,7 @@ class Manager implements ManagerInterface
     /**
      * Default message group
      */
-    protected const DEFAULT_GROUP = 'default';
+    public const DEFAULT_GROUP = 'default';
 
     /**
      * @var Session
