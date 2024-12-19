@@ -26,5 +26,7 @@ jobs:
         run: |
           output=$(./ecomscan --no-auto-update --skip-database --deep --format=csv .)
           if [ -n "$output" ]; then
+            echo "Security issues found:"
+            echo "$output"
             exit 1
           fi
