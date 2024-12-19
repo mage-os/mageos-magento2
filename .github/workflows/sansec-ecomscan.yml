@@ -23,4 +23,9 @@ jobs:
       - name: Run eComscan
         env:
           ECOMSCAN_KEY: ${{ secrets.SANSEC_LICENSE_KEY }}
-        run: ./ecomscan .
+        run: |
+          ls -lah
+          output=$(./ecomscan --no-auto-update --skip-database --deep --format=csv ${{ inputs.directory }})
+          if [ -n "$output" ]; then
+            exit 1
+          fi
