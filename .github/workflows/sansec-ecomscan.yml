@@ -16,6 +16,7 @@ jobs:
 
       - name: Run Sansec eComscan
         uses: sansecio/ecomscan-github-action@main
+        env:
+          ECOMSCAN_KEY: ${{ secrets.SANSEC_LICENSE_KEY }}
         with:
-          key: ${{ secrets.SANSEC_LICENSE_KEY }}
           directory: '.'
