@@ -1,8 +1,19 @@
 <?php
-/**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+/************************************************************************
+ * Copyright 2024 Adobe
+ * All Rights Reserved.
+ *
+ * NOTICE: All information contained herein is, and remains
+ * the property of Adobe and its suppliers, if any. The intellectual
+ * and technical concepts contained herein are proprietary to Adobe
+ * and its suppliers and are protected by all applicable intellectual
+ * property laws, including trade secret and copyright laws.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Adobe.
+ * ***********************************************************************
  */
+
 declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Model\Product\Image;
@@ -171,10 +182,6 @@ class RemoveDeletedImagesFromCacheTest extends TestCase
             ->method('convertImageMiscParamsToReadableFormat')
             ->willReturn($data['convertImageParamsToReadableFormat']);
 
-        $this->encryptor->expects($this->once())
-            ->method('hash')
-            ->willReturn('85b0304775df23c13f08dd2c1f9c4c28');
-
         $this->mediaConfig->expects($this->once())
             ->method('getBaseMediaPath')
             ->willReturn('catalog/product');
@@ -183,17 +190,17 @@ class RemoveDeletedImagesFromCacheTest extends TestCase
     /**
      * @return array
      */
-    public function createDataProvider(): array
+    public static function createDataProvider(): array
     {
         return [
-            $this->getTestDataWithAttributes()
+            self::getTestDataWithAttributes()
         ];
     }
 
     /**
      * @return array
      */
-    private function getTestDataWithAttributes(): array
+    private static function getTestDataWithAttributes(): array
     {
         return [
             'data' => [
