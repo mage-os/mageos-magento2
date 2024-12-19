@@ -28,6 +28,9 @@ use Magento\Store\Api\Data\WebsiteInterface;
 use Magento\Store\Api\WebsiteRepositoryInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\DB\Adapter\AdapterInterface;
+use Magento\Framework\DB\Select;
 
 /**
  * Test for \Magento\Catalog\Model\Product\Price\Validation\TierPriceValidator.
@@ -45,21 +48,6 @@ class TierPriceValidatorTest extends TestCase
      * @var ProductIdLocatorInterface|MockObject
      */
     private $productIdLocator;
-
-    /**
-     * @var SearchCriteriaBuilder|MockObject
-     */
-    private $searchCriteriaBuilder;
-
-    /**
-     * @var FilterBuilder|MockObject
-     */
-    private $filterBuilder;
-
-    /**
-     * @var GroupRepositoryInterface|MockObject
-     */
-    private $customerGroupRepository;
 
     /**
      * @var WebsiteRepositoryInterface|MockObject
@@ -85,6 +73,16 @@ class TierPriceValidatorTest extends TestCase
      * @var ProductRepositoryInterface|MockObject
      */
     private $productRepository;
+
+    /**
+     * @var ResourceConnection|MockObject
+     */
+    private $resourceConnectionMock;
+
+    /**
+     * @var AdapterInterface|MockObject
+     */
+    private $adapterInterface;
 
     /**
      * {@inheritdoc}
@@ -119,6 +117,13 @@ class TierPriceValidatorTest extends TestCase
         $this->productRepository = $this->getMockBuilder(ProductRepositoryInterface::class)
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
+        $this->resourceConnectionMock = $this->getMockBuilder(ResourceConnection::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->adapterInterface = $this->getMockBuilder(AdapterInterface::class)
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
 
         $objectManagerHelper = new ObjectManager($this);
         $this->tierPriceValidator = $objectManagerHelper->getObject(
@@ -131,7 +136,8 @@ class TierPriceValidatorTest extends TestCase
                 'websiteRepository' => $this->websiteRepository,
                 'validationResult' => $this->validationResult,
                 'invalidSkuProcessor' => $this->invalidSkuProcessor,
-                'productRepository' => $this->productRepository
+                'productRepository' => $this->productRepository,
+                'resourceConnection' => $this->resourceConnectionMock
             ]
         );
     }
@@ -144,26 +150,25 @@ class TierPriceValidatorTest extends TestCase
      */
     private function prepareCustomerGroupRepositoryMock(array $returned)
     {
-        $searchCriteria = $this
-            ->getMockBuilder(SearchCriteriaInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $filter = $this->getMockBuilder(AbstractSimpleObject::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->filterBuilder->expects($this->atLeastOnce())->method('setField')->willReturnSelf();
-        $this->filterBuilder->expects($this->atLeastOnce())->method('setValue')->willReturnSelf();
-        $this->filterBuilder->expects($this->atLeastOnce())->method('create')->willReturn($filter);
-        $this->searchCriteriaBuilder->expects($this->atLeastOnce())->method('addFilters')->willReturnSelf();
-        $this->searchCriteriaBuilder->expects($this->atLeastOnce())->method('create')->willReturn($searchCriteria);
-        $customerGroupSearchResults = $this
-            ->getMockBuilder(GroupSearchResultsInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $customerGroupSearchResults->expects($this->once())->method('getItems')
-            ->willReturn($returned['customerGroupSearchResults_getItems']);
-        $this->customerGroupRepository->expects($this->atLeastOnce())->method('getList')
-            ->willReturn($customerGroupSearchResults);
+        $select = $this->createMock(Select::class);
+        $select->expects($this->once())
+            ->method('from')
+            ->with('customer_group', 'customer_group_id')
+            ->willReturnSelf();
+        $select->expects($this->once())
+            ->method('where')
+            ->with('customer_group_code = ?', 'test_group')
+            ->willReturnSelf();
+        $this->adapterInterface->expects($this->once())
+            ->method('select')
+            ->willReturn($select);
+
+        $this->resourceConnectionMock->expects($this->once())
+            ->method('getConnection')
+            ->willReturn($this->adapterInterface);
+        $this->resourceConnectionMock->expects($this->once())
+            ->method('getTableName')
+            ->willReturnArgument(0);
     }
 
     /**
