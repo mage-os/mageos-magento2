@@ -19,6 +19,8 @@
         </annotations>
         <before>
             <magentoCLI command="config:set {{EnablePaymentBankTransferConfigData.path}} {{EnablePaymentBankTransferConfigData.value}}" stepKey="enableBankTransferPayment"/>
+            <!--Create customer-->
+            <createData entity="Simple_US_CA_Customer" stepKey="createCustomer"/>
             <createData entity="defaultSimpleProduct" stepKey="createProduct"/>
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
             <actionGroup ref="CreateCustomStoreActionGroup" stepKey="createCustomStore">
@@ -45,11 +47,30 @@
         <actionGroup ref="AdminSwitchSecondStoreViewActionGroup" stepKey="AdminSwitchSecondStoreView">
             <argument name="secondStoreView" value="customStoreEN"/>
         </actionGroup>
-        <waitForElementVisible selector="{{CatalogSection.expandedTab}}" stepKey="clickExpandSearchEngineOptimisation1"/>
-        <click selector="{{CatalogSection.expandedTab}}" stepKey="clickExpandSearchEngineOptimisation2"/>
+        <conditionalClick selector="{{CatalogSection.expandedTab}}" dependentSelector="{{CatalogSection.productsPerPageOnGridBankTransferPaymentDefaultValueUseConfigCheckbox}}" visible="false" stepKey="expandOtherPaypalConfigButton"/>
         <uncheckOption selector="{{CatalogSection.productsPerPageOnGridBankTransferPaymentDefaultValueUseConfigCheckbox}}" stepKey="uncheckUseSystemValue"/>
         <fillField selector="{{CatalogSection.productsPerPageOnGridAllowedBankTransferPaymentValues}}" userInput="Bank Transfer Payment(Second)" stepKey="fillProductQuantity"/>
         <actionGroup ref="AdminSavePaymentConfigActionGroup" stepKey="clickSaveConfigBtn"/>
+        <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanInvalidatedCaches">
+            <argument name="tags" value="config full_page"/>
+        </actionGroup>
+        <!--Open customer edit page-->
+        <actionGroup ref="AdminOpenCustomerEditPageActionGroup" stepKey="openCustomerEditPage">
+            <argument name="customerId" value="$createCustomer.id$"/>
+        </actionGroup>
+        <!--Navigate to "Account Information" tab-->
+        <actionGroup ref="AdminOpenAccountInformationTabFromCustomerEditPageActionGroup" stepKey="openAccountInformationEditPage"/>
+        <actionGroup ref="AdminSelectStoreInCustomerEditPageActionGroup" stepKey="selectWebsiteGroupStoreForFRCustomerMembersGroup">
+            <argument name="store" value="{{customStoreEN.name}}"/>
+        </actionGroup>
+        <waitForPageLoad stepKey="waitForCustomersPage"/>
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+            <argument name="indices" value=""/>
+        </actionGroup>
+        <!-- Login as Customer Login from Customer page -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
+            <argument name="Customer" value="$$createCustomer$$" />
+        </actionGroup>
         <actionGroup ref="StorefrontOpenProductEntityPageActionGroup" stepKey="openProductPage">
             <argument name="product" value="$createProduct$"/>
         </actionGroup>
@@ -58,10 +79,14 @@
             <argument name="productQty" value="1"/>
         </actionGroup>
         <actionGroup ref="StorefrontOpenCheckoutPageActionGroup" stepKey="navigateToCheckoutPage"/>
-        <actionGroup ref="GuestCheckoutFillingShippingSectionActionGroup" stepKey="guestCheckoutFillingShipping"/>
+        <actionGroup ref="StorefrontSetShippingMethodActionGroup" stepKey="selectFlatrate">
+            <argument name="shippingMethodName" value="Flat Rate"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCheckoutClickNextOnShippingStepActionGroup" stepKey="clickNext"/>
         <click selector="{{StorefrontCheckoutPaymentMethodsSection.bankTransfer}}" stepKey="selectBankTransferMethod"/>
         <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="checkoutPlaceOrder"/>
-        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumberWithoutLink}}" stepKey="grabOrderNumber"/>
+        <waitForElementVisible selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="waitForOderNumber"/>
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="grabOrderNumber"/>
         <actionGroup ref="AdminOrdersPageOpenActionGroup" stepKey="goToOrders"/>
         <actionGroup ref="OpenOrderByIdActionGroup" stepKey="openOrder">
             <argument name="orderId" value="{$grabOrderNumber}"/>
