@@ -18,6 +18,7 @@
             <group value="Payments"/>
         </annotations>
         <before>
+            <magentoCLI command="config:set {{EnablePaymentBankTransferConfigData.path}} {{EnablePaymentBankTransferConfigData.value}}" stepKey="enableBankTransferPayment"/>
             <createData entity="defaultSimpleProduct" stepKey="createProduct"/>
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
             <actionGroup ref="CreateCustomStoreActionGroup" stepKey="createCustomStore">
@@ -34,7 +35,6 @@
                 <argument name="storeGroupName" value="{{customStoreGroup.name}}"/>
                 <argument name="defaultStoreName" value="{{customStoreGroup.name}}"/>
             </actionGroup>
-            <magentoCLI command="config:set {{enabledBankTransferPaymentOrder.label}} {{enabledBankTransferPaymentOrder.value}}" stepKey="enableBankTransfer"/>
         </before>
         <after>
             <magentoCLI command="config:set {{DisablePaymentBankTransferConfigData.path}} {{DisablePaymentBankTransferConfigData.value}}" stepKey="disableBankTransferPayment"/>
@@ -42,17 +42,14 @@
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
         </after>
         <amOnPage url="{{AdminConfigPaymentMethodsPage.url}}" stepKey="navigateToPaymentConfigurationPage"/>
-        <waitForPageLoad stepKey="waitForSecondStorePageLoad"/>
         <actionGroup ref="AdminSwitchSecondStoreViewActionGroup" stepKey="AdminSwitchSecondStoreView">
             <argument name="secondStoreView" value="customStoreEN"/>
         </actionGroup>
-        <waitForElementClickable selector="{{CatalogSection.expandedTab}}" stepKey="waitToClickExpandForBankTransferPayment"/>
-        <click selector="{{CatalogSection.expandedTab}}" stepKey="clickExpandForBankTransferPayment"/>
+        <waitForElementVisible selector="{{CatalogSection.expandedTab}}" stepKey="clickExpandSearchEngineOptimisation1"/>
+        <click selector="{{CatalogSection.expandedTab}}" stepKey="clickExpandSearchEngineOptimisation2"/>
         <uncheckOption selector="{{CatalogSection.productsPerPageOnGridBankTransferPaymentDefaultValueUseConfigCheckbox}}" stepKey="uncheckUseSystemValue"/>
         <fillField selector="{{CatalogSection.productsPerPageOnGridAllowedBankTransferPaymentValues}}" userInput="Bank Transfer Payment(Second)" stepKey="fillProductQuantity"/>
-        <waitForElementClickable selector="{{AdminConfigSection.saveButton}}" stepKey="waitForSaveConfigbtn" />
-        <click selector="{{AdminConfigSection.saveButton}}" stepKey="saveConfig"/>
-        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <actionGroup ref="AdminSavePaymentConfigActionGroup" stepKey="clickSaveConfigBtn"/>
         <actionGroup ref="StorefrontOpenProductEntityPageActionGroup" stepKey="openProductPage">
             <argument name="product" value="$createProduct$"/>
         </actionGroup>
@@ -75,10 +72,11 @@
         <waitForText selector="{{AdminOrderPaymentInformationSection.paymentMethod}}" userInput="Bank Transfer Payment(Second)" stepKey="seePaymentMethodName"/>
         <click selector="{{AdminOrderDetailsMainActionsSection.ship}}" stepKey="clickShipAction"/>
         <click selector="{{AdminShipmentMainActionsSection.submitShipment}}" stepKey="clickSubmitShipment"/>
-        <scrollTo selector="{{CatalogSection.paymentInformation}}" stepKey="scrollToPaymentAndShippingInformation1"/>
+        <scrollTo selector="{{CatalogSection.paymentInformation}}" stepKey="scrollToPaymentAndShippingInformation2"/>
         <waitForText selector="{{AdminOrderPaymentInformationSection.paymentMethod}}" userInput="Bank Transfer Payment(Second)" stepKey="seePaymentMethodName2"/>
         <actionGroup ref="AdminStartToCreateCreditMemoFromOrderPageActionGroup" stepKey="startCreatingCreditMemo"/>
         <actionGroup ref="SubmitCreditMemoActionGroup" stepKey="submitCreditMemo"/>
+        <scrollTo selector="{{CatalogSection.paymentInformation}}" stepKey="scrollToPaymentAndShippingInformation3"/>
         <waitForText selector="{{AdminOrderPaymentInformationSection.paymentMethod}}" userInput="Bank Transfer Payment(Second)" stepKey="seePaymentMethodName3"/>
     </test>
 </tests>
