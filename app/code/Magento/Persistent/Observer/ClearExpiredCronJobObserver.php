@@ -20,14 +20,14 @@ class ClearExpiredCronJobObserver
      *
      * @var CollectionFactory
      */
-    private CollectionFactory $websiteCollectionFactory;
+    protected CollectionFactory $_websiteCollectionFactory;
 
     /**
      * A property for session factory
      *
      * @var SessionFactory
      */
-    private SessionFactory $sessionFactory;
+    protected SessionFactory $_sessionFactory;
 
     /**
      * A property for delete expired quote factory
@@ -46,8 +46,8 @@ class ClearExpiredCronJobObserver
         SessionFactory $sessionFactory,
         DeleteExpiredQuoteFactory $deleteExpiredQuoteFactory = null
     ) {
-        $this->websiteCollectionFactory = $websiteCollectionFactory;
-        $this->sessionFactory = $sessionFactory;
+        $this->_websiteCollectionFactory = $websiteCollectionFactory;
+        $this->_sessionFactory = $sessionFactory;
         $this->deleteExpiredQuoteFactory = $deleteExpiredQuoteFactory ?:
             ObjectManager::getInstance()->get(DeleteExpiredQuoteFactory::class);
     }
@@ -61,13 +61,13 @@ class ClearExpiredCronJobObserver
      */
     public function execute(Schedule $schedule)
     {
-        $websiteIds = $this->websiteCollectionFactory->create()->getAllIds();
+        $websiteIds = $this->_websiteCollectionFactory->create()->getAllIds();
         if (!is_array($websiteIds)) {
             return $this;
         }
 
         foreach ($websiteIds as $websiteId) {
-            $this->sessionFactory->create()->deleteExpired($websiteId);
+            $this->_sessionFactory->create()->deleteExpired($websiteId);
             $this->deleteExpiredQuoteFactory->create()->deleteExpiredQuote($websiteId);
         }
 
