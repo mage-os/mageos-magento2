@@ -38,6 +38,7 @@ class XsdTest extends TestCase
      * @param string $schemaName
      * @param string $xmlString
      * @param array $expectedError
+     * @param bool $isRegex
      */
     protected function _loadDataForTest($schemaName, $xmlString, $expectedError, $isRegex = false)
     {
@@ -58,6 +59,7 @@ class XsdTest extends TestCase
     /**
      * @param string $xmlString
      * @param array $expectedError
+     * @param $isRegex
      * @dataProvider schemaCorrectlyIdentifiesInvalidProductOptionsDataProvider
      */
     public function testSchemaCorrectlyIdentifiesInvalidProductOptionsXml($xmlString, $expectedError, $isRegex)
