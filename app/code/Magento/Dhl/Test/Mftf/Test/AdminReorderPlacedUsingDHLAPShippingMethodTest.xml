@@ -8,7 +8,7 @@
 
 <tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
-    <test name="AdminReorderPlacedUsingDHLAPShippingMethodTest">
+    <test name="AdminReorderPlacedUsingDHLAPShippingMethodTest" extends="StorefrontRegisteredCustomerUsesDHLAPOnlineShippingCarrierOnCheckoutTest">
         <annotations>
             <stories value="Admin Reorder with DHL Shipping method"/>
             <title value="Reorder placed order using DHL in admin panel"/>
@@ -18,61 +18,16 @@
             <!--            <group value="pr_exclude"/>-->
             <group value="3rd_party_integration"/>
         </annotations>
-        <before>
-            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
-            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
-            <!--Create simple product-->
-            <createData entity="SimpleProduct" stepKey="createSimpleProduct"/>
-            <actionGroup ref="AdminEnableDHLAPWithoutAccountAndCountryConfigurationActionGroup" stepKey="enableDHL"/>
-            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
-                <argument name="indices" value=""/>
-            </actionGroup>
-            <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanCache">
-                <argument name="tags" value="config full_page"/>
-            </actionGroup>
-        </before>
-        <after>
-            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutCustomer" />
-            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
-            <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
-            <actionGroup ref="AdminDisableDHLConfigurationActionGroup" stepKey="resetDhlConfig"/>
-            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
-        </after>
-        <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToStoreFront"/>
-        <!-- Add simple product to cart -->
-        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="addProductToCart">
-            <argument name="product" value="$$createSimpleProduct$$"/>
-        </actionGroup>
-        <!--Open cart page and proceed to checkout-->
-        <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="goToCheckoutCartPage"/>
-        <actionGroup ref="StorefrontClickProceedToCheckoutActionGroup" stepKey="clickProceedToCheckout"/>
-        <!--Fill Shipping Address-->
-        <actionGroup ref="GuestCheckoutFillNewShippingAddressActionGroup" stepKey="fillShippingAddress">
-            <argument name="customer" value="$$createCustomer$$" />
-            <argument name="address" value="US_Address_TX"/>
-        </actionGroup>
-        <!-- Select DHL shipping method -->
-        <actionGroup ref="StorefrontSetShippingMethodActionGroup" stepKey="selectShippingMethodAsDHL">
-            <argument name="shippingMethodName" value="DHL"/>
-        </actionGroup>
-        <!-- Go to Order review -->
-        <actionGroup ref="StorefrontCheckoutClickNextOnShippingStepActionGroup" stepKey="goToCheckoutPaymentPage"/>
-        <!-- Checkout select Check/Money Order payment -->
-        <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="selectCheckMoneyPayment"/>
-        <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="clickPlaceOrder"/>
-        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber}}" stepKey="grabOrderNumber"/>
-        <!-- Reorder created order -->
-        <actionGroup ref="FilterOrderGridByIdActionGroup" stepKey="filterOrderGrid">
-            <argument name="orderId" value="$grabOrderNumber"/>
-        </actionGroup>
+        <remove keyForRemoval="selectExpressWorldWide"/>
+        <click selector="{{CheckoutCartSummarySection.shippingMethods('Express easy')}}"  after="verifyMedicalExpressIsAvailable" stepKey="selectExpressEasy"/>
         <actionGroup ref="AdminOrderGridClickFirstRowActionGroup" stepKey="clickOrderRow"/>
         <actionGroup ref="AdminStartReorderFromOrderPageActionGroup" stepKey="startReorder"/>
         <!--select Check/Money order payment method-->
-        <scrollTo selector="{{AdminOrderFormPaymentSection.DHLShipping('Domestic express')}}" stepKey="scrollToDHLShippingMethod"/>
-        <waitForText selector="{{AdminOrderFormPaymentSection.DHLShipping('Domestic express')}}" userInput="Domestic express" stepKey="verifyDHLShippingMethodIsSelected"/>
+        <scrollTo selector="{{AdminOrderFormPaymentSection.DHLShipping('Express easy')}}" stepKey="scrollToDHLShippingMethod"/>
+        <waitForText selector="{{AdminOrderFormPaymentSection.DHLShipping('Express easy')}}" userInput="Express easy" stepKey="verifyDHLShippingMethodIsSelected"/>
         <waitForText selector="{{AdminOrderFormPaymentSection.verifyCheckMoneyPayment}}" userInput="Check / Money order" stepKey="verifyCheckMoneyOrderIsSelected"/>
         <actionGroup ref="AdminSubmitOrderActionGroup" stepKey="submitOrder"/>
         <actionGroup ref="AdminOrderViewCheckStatusActionGroup" stepKey="seeAdminOrderStatusIsPending"/>
-        <waitForText selector="{{AdminOrderFormPaymentSection.shippingMethodName('DHL - Domestic express')}}" userInput="DHL - Domestic express" stepKey="verifyShippingAndHandlingInformationInOrderPage"/>
+        <waitForText selector="{{AdminOrderFormPaymentSection.shippingMethodName('DHL - Express easy')}}" userInput="DHL - Express easy" stepKey="verifyShippingAndHandlingInformationInOrderPage"/>
     </test>
 </tests>
