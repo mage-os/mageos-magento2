@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2013 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -39,12 +39,19 @@ class XsdTest extends TestCase
      * @param string $xmlString
      * @param array $expectedError
      */
-    protected function _loadDataForTest($schemaName, $xmlString, $expectedError)
+    protected function _loadDataForTest($schemaName, $xmlString, $expectedError, $isRegex = false)
     {
-        $actualError = $this->_xsdValidator->validate($this->_xsdSchemaPath . $schemaName, $xmlString);
-        $this->assertEquals(false, empty($actualError));
+        $actualErrors = $this->_xsdValidator->validate($this->_xsdSchemaPath . $schemaName, $xmlString);
+        $this->assertNotEmpty($actualErrors);
+
         foreach ($expectedError as $error) {
-            $this->assertContains($error, $actualError);
+            if ($isRegex) {
+                foreach ($actualErrors as $actualError) {
+                    $this->assertMatchesRegularExpression($error, $actualError);
+                }
+            } else {
+                $this->assertContains($error, $actualErrors);
+            }
         }
     }
 
@@ -53,9 +60,9 @@ class XsdTest extends TestCase
      * @param array $expectedError
      * @dataProvider schemaCorrectlyIdentifiesInvalidProductOptionsDataProvider
      */
-    public function testSchemaCorrectlyIdentifiesInvalidProductOptionsXml($xmlString, $expectedError)
+    public function testSchemaCorrectlyIdentifiesInvalidProductOptionsXml($xmlString, $expectedError, $isRegex)
     {
-        $this->_loadDataForTest('product_options.xsd', $xmlString, $expectedError);
+        $this->_loadDataForTest('product_options.xsd', $xmlString, $expectedError, $isRegex);
     }
 
     /**
