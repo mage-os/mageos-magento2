@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2190a5667fb11e6562c4604df6b9bff2",
+    "content-hash": "6ee73165a21acfbb674431be055f54cc",
     "packages": [
         {
             "name": "astock/stock-api-libphp",
@@ -1466,12 +1466,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/djadobe16/elasticsearch-php.git",
-                "reference": "5a2fba7ac14268353d69b9e3eb54efa97600e88d"
+                "reference": "9ab3d525765578b4d5b68ec29a98a051ff3a0649"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/djadobe16/elasticsearch-php/zipball/5a2fba7ac14268353d69b9e3eb54efa97600e88d",
-                "reference": "5a2fba7ac14268353d69b9e3eb54efa97600e88d",
+                "url": "https://api.github.com/repos/djadobe16/elasticsearch-php/zipball/9ab3d525765578b4d5b68ec29a98a051ff3a0649",
+                "reference": "9ab3d525765578b4d5b68ec29a98a051ff3a0649",
                 "shasum": ""
             },
             "require": {
@@ -1539,7 +1539,7 @@
             "support": {
                 "source": "https://github.com/djadobe16/elasticsearch-php/tree/php84"
             },
-            "time": "2024-12-19T10:40:51+00:00"
+            "time": "2024-12-20T08:17:57+00:00"
         },
         {
             "name": "ezimuel/guzzlestreams",
@@ -1599,19 +1599,19 @@
             "version": "dev-feature/php84-compatible",
             "source": {
                 "type": "git",
-                "url": "https://github.com/dmnlk/ringphp.git",
-                "reference": "b1a16f13e8e6de8b6bf5fe022e57335b45c67e10"
+                "url": "https://github.com/djadobe16/ringphp.git",
+                "reference": "8e5d2c49e10b1eccbbc11748b4bd6f6533404cab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dmnlk/ringphp/zipball/b1a16f13e8e6de8b6bf5fe022e57335b45c67e10",
-                "reference": "b1a16f13e8e6de8b6bf5fe022e57335b45c67e10",
+                "url": "https://api.github.com/repos/djadobe16/ringphp/zipball/8e5d2c49e10b1eccbbc11748b4bd6f6533404cab",
+                "reference": "8e5d2c49e10b1eccbbc11748b4bd6f6533404cab",
                 "shasum": ""
             },
             "require": {
                 "ezimuel/guzzlestreams": "^3.0.1",
                 "php": ">=5.4.0",
-                "react/promise": "~2.0"
+                "react/promise": "~3.0"
             },
             "replace": {
                 "guzzlehttp/ringphp": "self.version"
@@ -1659,9 +1659,9 @@
             ],
             "description": "Fork of guzzle/RingPHP (abandoned) to be used with elasticsearch-php",
             "support": {
-                "source": "https://github.com/dmnlk/ringphp/tree/feature/php84-compatible"
+                "source": "https://github.com/djadobe16/ringphp/tree/feature/php84-compatible"
             },
-            "time": "2024-12-07T11:06:31+00:00"
+            "time": "2024-12-20T11:07:44+00:00"
         },
         {
             "name": "ezyang/htmlpurifier",
@@ -5783,12 +5783,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/djadobe16/opensearch-php.git",
-                "reference": "818542ef8da952d85cae663952e64469b526f47c"
+                "reference": "ba582cc2d526c84c687e2ecd9abe9e3535de78e8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/djadobe16/opensearch-php/zipball/818542ef8da952d85cae663952e64469b526f47c",
-                "reference": "818542ef8da952d85cae663952e64469b526f47c",
+                "url": "https://api.github.com/repos/djadobe16/opensearch-php/zipball/ba582cc2d526c84c687e2ecd9abe9e3535de78e8",
+                "reference": "ba582cc2d526c84c687e2ecd9abe9e3535de78e8",
                 "shasum": ""
             },
             "require": {
@@ -5879,7 +5879,7 @@
             "support": {
                 "source": "https://github.com/djadobe16/opensearch-php/tree/php84-support"
             },
-            "time": "2024-12-19T10:55:56+00:00"
+            "time": "2024-12-20T08:19:05+00:00"
         },
         {
             "name": "paragonie/constant_time_encoding",
@@ -7890,23 +7890,24 @@
         },
         {
             "name": "react/promise",
-            "version": "v2.11.0",
+            "version": "v3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/reactphp/promise.git",
-                "reference": "1a8460931ea36dc5c76838fec5734d55c88c6831"
+                "reference": "8a164643313c71354582dc850b42b33fa12a4b63"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/reactphp/promise/zipball/1a8460931ea36dc5c76838fec5734d55c88c6831",
-                "reference": "1a8460931ea36dc5c76838fec5734d55c88c6831",
+                "url": "https://api.github.com/repos/reactphp/promise/zipball/8a164643313c71354582dc850b42b33fa12a4b63",
+                "reference": "8a164643313c71354582dc850b42b33fa12a4b63",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.4.0"
+                "php": ">=7.1.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^9.6 || ^5.7 || ^4.8.36"
+                "phpstan/phpstan": "1.10.39 || 1.4.10",
+                "phpunit/phpunit": "^9.6 || ^7.5"
             },
             "type": "library",
             "autoload": {
@@ -7950,7 +7951,7 @@
             ],
             "support": {
                 "issues": "https://github.com/reactphp/promise/issues",
-                "source": "https://github.com/reactphp/promise/tree/v2.11.0"
+                "source": "https://github.com/reactphp/promise/tree/v3.2.0"
             },
             "funding": [
                 {
@@ -7958,7 +7959,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2023-11-16T16:16:50+00:00"
+            "time": "2024-05-24T10:39:05+00:00"
         },
         {
             "name": "sabberworm/php-css-parser",
