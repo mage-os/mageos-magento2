@@ -9,6 +9,7 @@ namespace Magento\Customer\Model\Validator;
 
 use Magento\Customer\Model\Customer;
 use Magento\Framework\Validator\AbstractValidator;
+use Magento\Store\Api\Data\StoreInterface as StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
 
 /**
@@ -41,7 +42,7 @@ class Dob extends AbstractValidator
      * @param Customer $customer
      * @return bool
      */
-    public function isValid($customer)
+    public function isValid($customer): bool
     {
         if (!$this->isValidDob($customer->getDob(), $customer->getStoreId())) {
             parent::_addMessages([['dob' => 'The Date of Birth should not be greater than today.']]);
@@ -54,13 +55,11 @@ class Dob extends AbstractValidator
      * Check if specified dob is not in the future
      *
      * @param string|null $dobValue
-     * @param int $storeId
+     * @param null|string|bool|int|StoreInterface $storeId
      * @return bool
      */
-    private function isValidDob(?string $dobValue, int $storeId): bool
+    private function isValidDob(?string $dobValue, null|string|bool|int|StoreInterface $storeId): bool
     {
-        if ($dobValue != null) {
-
             // Get the timezone of the store
             $store = $this->storeManager->getStore($storeId);
             $timezone = $store->getConfig('general/locale/timezone');
@@ -77,7 +76,6 @@ class Dob extends AbstractValidator
             if ($dobTimestamp > $currentTimestamp) {
                 return false;
             }
-        }
 
         return true;
     }
