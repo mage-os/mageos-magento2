@@ -60,6 +60,8 @@ class Dob extends AbstractValidator
      */
     private function isValidDob(?string $dobValue, null|string|bool|int|StoreInterface $storeId): bool
     {
+        if ($dobValue != null) {
+
             // Get the timezone of the store
             $store = $this->storeManager->getStore($storeId);
             $timezone = $store->getConfig('general/locale/timezone');
@@ -76,6 +78,7 @@ class Dob extends AbstractValidator
             if ($dobTimestamp > $currentTimestamp) {
                 return false;
             }
+        }
 
         return true;
     }
