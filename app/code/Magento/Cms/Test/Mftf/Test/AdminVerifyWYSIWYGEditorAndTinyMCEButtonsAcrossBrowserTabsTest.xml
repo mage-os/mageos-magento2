@@ -37,9 +37,8 @@
         </actionGroup>
         <waitForPageLoad stepKey="waitForCMSPage"/>
         <switchToPreviousTab stepKey="switchToPreviousTab"/>
-        <waitForPageLoad stepKey="waitForCMSPage123"/>
+        <waitForPageLoad stepKey="waitForCMSPageToLoad"/>
         <conditionalClick selector="{{CmsNewPagePageContentSection.header}}" dependentSelector="{{CmsNewPagePageContentSection.contentHeading}}" visible="false" stepKey="expandContentTabIfCollapsed"/>
-        <wait time="15" stepKey="k1"/>
         <actionGroup ref="AdminVerifyWYSIWYGEditorAndTinyMCEButtonsActionGroup" stepKey="verifyWYSIWYGEditorAndButtonsPresentInCurrentTab"/>
         <switchToNextTab stepKey="switchToNextTab"/>
         <conditionalClick selector="{{CmsNewPagePageContentSection.header}}" dependentSelector="{{CmsNewPagePageContentSection.contentHeading}}" visible="false" stepKey="againExpandContentTabIfCollapsed"/>
