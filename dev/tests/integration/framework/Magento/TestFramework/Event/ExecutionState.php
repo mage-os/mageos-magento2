@@ -15,6 +15,8 @@ class ExecutionState
     private array $data = [];
 
     /**
+     * Register failure during preparation phase.
+     *
      * @param string $test
      * @param \Throwable $exception
      * @return void
@@ -25,6 +27,8 @@ class ExecutionState
     }
 
     /**
+     * Pop failure registered during preparation phase.
+     *
      * @param string $test
      * @return \Throwable|null
      */
@@ -39,6 +43,8 @@ class ExecutionState
     }
 
     /**
+     * Clear stored test data.
+     *
      * @param string $test
      * @return void
      */

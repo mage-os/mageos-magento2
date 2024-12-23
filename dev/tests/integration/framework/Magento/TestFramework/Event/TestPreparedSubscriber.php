@@ -12,9 +12,6 @@ use PHPUnit\Event\Test\PreparedSubscriber;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\Workaround\Override\Config;
 
-/**
- * Test Prepared Subscriber
- */
 class TestPreparedSubscriber implements PreparedSubscriber
 {
     /**

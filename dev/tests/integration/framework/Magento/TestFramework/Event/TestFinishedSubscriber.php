@@ -12,9 +12,6 @@ use PHPUnit\Event\Test\Finished;
 use Magento\TestFramework\Helper\Bootstrap;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Test Finished Subscriber
- */
 class TestFinishedSubscriber implements FinishedSubscriber
 {
     /**
