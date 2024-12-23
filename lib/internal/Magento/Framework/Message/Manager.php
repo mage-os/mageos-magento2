@@ -63,7 +63,7 @@ class Manager implements ManagerInterface
      * @var ExceptionMessageFactoryInterface
      */
     private $exceptionMessageFactory;
-    
+
     /**
      * @param Session $session
      * @param Factory $messageFactory
@@ -90,7 +90,8 @@ class Manager implements ManagerInterface
         $this->eventManager = $eventManager;
         $this->logger = $logger;
         $this->defaultGroup = $defaultGroup;
-        $this->exceptionMessageFactory = $exceptionMessageFactory ?: $exceptionMessageLookupFactory;
+        $this->exceptionMessageFactory = $exceptionMessageFactory ?:
+            ObjectManager::getInstance->get(ExceptionMessageLookupFactory::class);
     }
 
     /**
