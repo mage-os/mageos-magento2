@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2013 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\Setup\Module\I18n\Dictionary\Writer;
 
@@ -47,7 +47,7 @@ class Csv implements WriterInterface
             $fields[] = $contextValue;
         }
 
-        fputcsv($this->_fileHandler, $fields, ',', '"','\\');
+        fputcsv($this->_fileHandler, $fields, ',', '"');
     }
 
     /**

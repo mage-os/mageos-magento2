@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2017 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 
 namespace Magento\Framework\Setup\Declaration\Schema\FileSystem;
@@ -70,7 +70,7 @@ class Csv implements \Magento\Framework\Setup\Declaration\Schema\DataSavior\Dump
         $fh = fopen($file, 'a');
 
         foreach ($data as $dataRow) {
-            fputcsv($fh, $dataRow,',','"','\\');
+            fputcsv($fh, $dataRow);
         }
 
         fclose($fh);
