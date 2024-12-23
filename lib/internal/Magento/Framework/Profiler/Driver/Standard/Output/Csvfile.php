@@ -96,7 +96,7 @@ class Csvfile extends AbstractOutput
             foreach ($this->_columns as $column) {
                 $row[] = $this->_renderColumnValue($stat->fetch($timerName, $column), $column);
             }
-            fputcsv($fileHandle, $row, $this->_delimiter, $this->_enclosure);
+            fputcsv($fileHandle, $row, $this->_delimiter, $this->_enclosure, '\\');
         }
     }
 }
