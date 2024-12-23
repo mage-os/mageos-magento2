@@ -53,7 +53,7 @@ define([
         /**
          * Set the file input value
          *
-         *  @param {FileUploader} fileUploader - UI Class
+         * @param {FileUploader} fileUploader - UI Class
          * @param {Event} e
          */
         setFileValue: function (fileUploader, e) {
