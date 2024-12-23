@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2011 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Catalog\Block\Product\View\Options\Type;
@@ -62,6 +62,10 @@ class Select extends \Magento\Catalog\Block\Product\View\Options\AbstractOptions
     {
         $option = $this->getOption();
         $optionType = $option->getType();
+
+        // Initialize $optionBlock with a default value or null.
+        $optionBlock = null;
+
         if ($optionType === Option::OPTION_TYPE_DROP_DOWN ||
             $optionType === Option::OPTION_TYPE_MULTIPLE
         ) {

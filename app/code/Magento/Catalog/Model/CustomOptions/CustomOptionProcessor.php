@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Catalog\Model\CustomOptions;
 
@@ -147,6 +147,7 @@ class CustomOptionProcessor implements CartItemProcessorInterface
             $option->setOptionValue($optionValue);
             $optionValue = $option;
         }
+        return null;
     }
 
     /**
@@ -188,9 +189,12 @@ class CustomOptionProcessor implements CartItemProcessorInterface
     }
 
     /**
+     * Get URL Builder
+     *
      * @return \Magento\Catalog\Model\Product\Option\UrlBuilder
      *
      * @deprecated 101.0.0
+     * @see MAGETWO-71174
      */
     private function getUrlBuilder()
     {

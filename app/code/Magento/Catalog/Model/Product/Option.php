@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2011 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Catalog\Model\Product;
@@ -30,7 +30,6 @@ use Magento\Framework\Model\AbstractExtensibleModel;
  * @method int getProductId()
  * @method \Magento\Catalog\Model\Product\Option setProductId(int $value)
  *
- * @author      Magento Core Team <core@magentocommerce.com>
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @since 100.0.2
@@ -990,7 +989,7 @@ class Option extends AbstractExtensibleModel implements ProductCustomOptionInter
         $matches = [];
         preg_match_all('/(?<extensions>[a-z0-9]+)/i', strtolower($rawExtensions), $matches);
 
-        if (!empty($matches)) {
+        if (!empty($matches['extensions'])) {
             $extensions = implode(', ', array_unique($matches['extensions']));
             $this->setFileExtension($extensions);
         }

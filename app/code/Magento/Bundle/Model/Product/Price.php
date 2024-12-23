@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2011 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Bundle\Model\Product;
 
@@ -23,12 +23,12 @@ class Price extends \Magento\Catalog\Model\Product\Type\Price
     /**
      * Fixed bundle price type
      */
-    const PRICE_TYPE_FIXED = 1;
+    public const PRICE_TYPE_FIXED = 1;
 
     /**
      * Dynamic bundle price type
      */
-    const PRICE_TYPE_DYNAMIC = 0;
+    public const PRICE_TYPE_DYNAMIC = 0;
 
     /**
      * Flag which indicates - is min/max prices have been calculated by index
@@ -38,7 +38,7 @@ class Price extends \Magento\Catalog\Model\Product\Type\Price
     protected $_isPricesCalculatedByIndex;
 
     /**
-     * Catalog data
+     * Catalog data variable
      *
      * @var \Magento\Catalog\Helper\Data
      */
@@ -342,7 +342,7 @@ class Price extends \Magento\Catalog\Model\Product\Type\Price
 
                             $prices[] = $valuePrice;
                         }
-                        if (empty($prices)) {
+                        if (count($prices) === 0) {
                             continue;
                         }
 

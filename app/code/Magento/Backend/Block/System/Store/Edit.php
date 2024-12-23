@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2011 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Backend\Block\System\Store;
 
@@ -17,7 +17,7 @@ use Magento\Framework\Serialize\SerializerInterface;
 class Edit extends \Magento\Backend\Block\Widget\Form\Container
 {
     /**
-     * Core registry
+     * Core registry var
      *
      * @var \Magento\Framework\Registry
      */
@@ -114,6 +114,8 @@ class Edit extends \Magento\Backend\Block\Widget\Form\Container
      */
     public function getHeaderText()
     {
+        $addLabel = '';
+        $editLabel = '';
         switch ($this->_coreRegistry->registry('store_type')) {
             case 'website':
                 $editLabel = __('Edit Web Site');
