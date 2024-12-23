@@ -1,6 +1,6 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 
 /**
@@ -53,7 +53,7 @@ define([
         /**
          * Set the file input value
          *
-         *  @param {ImageUploader} imageUploader - UI Class
+         *  @param {FileUploader} fileUploader - UI Class
          * @param {Event} e
          */
         setFileValue: function (fileUploader, e) {
