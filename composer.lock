@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c74b66e523c0c4a3b0d91f0e68ba944e",
+    "content-hash": "79a8876440922a2aab36d5b129d19a5c",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -2621,91 +2621,6 @@
             "time": "2024-12-05T13:49:56+00:00"
         },
         {
-            "name": "laminas/laminas-mime",
-            "version": "dev-develop",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:magento-commerce/laminas-mime.git",
-                "reference": "87289bd45136ed0c12a0dfde7b61e0f216ea9b79"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/magento-commerce/laminas-mime/zipball/87289bd45136ed0c12a0dfde7b61e0f216ea9b79",
-                "reference": "87289bd45136ed0c12a0dfde7b61e0f216ea9b79",
-                "shasum": ""
-            },
-            "require": {
-                "laminas/laminas-stdlib": "^2.7 || ^3.0",
-                "php": "~8.0.0 || ~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0"
-            },
-            "conflict": {
-                "zendframework/zend-mime": "*"
-            },
-            "replace": {
-                "laminas/laminas-mime": "^2.12"
-            },
-            "require-dev": {
-                "laminas/laminas-coding-standard": "~2.4.0",
-                "magento/laminas-mail": "dev-develop",
-                "phpunit/phpunit": "~9.5.25"
-            },
-            "suggest": {
-                "laminas/laminas-mail": "Laminas\\Mail component"
-            },
-            "default-branch": true,
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Laminas\\Mime\\": "src/"
-                }
-            },
-            "autoload-dev": {
-                "files": [
-                    "test/TestAsset/Mail/Headers.php"
-                ],
-                "psr-4": {
-                    "LaminasTest\\Mime\\": "test/"
-                }
-            },
-            "scripts": {
-                "check": [
-                    "@cs-check",
-                    "@test"
-                ],
-                "cs-check": [
-                    "phpcs"
-                ],
-                "cs-fix": [
-                    "phpcbf"
-                ],
-                "test": [
-                    "phpunit --colors=always"
-                ],
-                "test-coverage": [
-                    "phpunit --colors=always --coverage-clover clover.xml"
-                ]
-            },
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "Create and parse MIME messages and parts",
-            "homepage": "https://laminas.dev",
-            "keywords": [
-                "laminas",
-                "mime"
-            ],
-            "support": {
-                "docs": "https://docs.laminas.dev/laminas-mime/",
-                "issues": "https://github.com/laminas/laminas-mime/issues",
-                "source": "https://github.com/laminas/laminas-mime",
-                "rss": "https://github.com/laminas/laminas-mime/releases.atom",
-                "chat": "https://laminas.dev/chat",
-                "forum": "https://discourse.laminas.dev"
-            },
-            "abandoned": "symfony/mime",
-            "time": "2024-12-20T16:34:21+00:00"
-        },
-        {
             "name": "laminas/laminas-modulemanager",
             "version": "2.17.0",
             "source": {
@@ -4672,20 +4587,20 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:magento-commerce/laminas-mail.git",
-                "reference": "137d3ecbd77a11426b4f4bf598f7920967a99fcb"
+                "reference": "50ff495744f06b1ea2aa701e7945a25c0098621a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-commerce/laminas-mail/zipball/137d3ecbd77a11426b4f4bf598f7920967a99fcb",
-                "reference": "137d3ecbd77a11426b4f4bf598f7920967a99fcb",
+                "url": "https://api.github.com/repos/magento-commerce/laminas-mail/zipball/50ff495744f06b1ea2aa701e7945a25c0098621a",
+                "reference": "50ff495744f06b1ea2aa701e7945a25c0098621a",
                 "shasum": ""
             },
             "require": {
                 "ext-iconv": "*",
                 "laminas/laminas-loader": "^2.9.0",
-                "laminas/laminas-mime": "dev-develop",
                 "laminas/laminas-stdlib": "^3.17.0",
                 "laminas/laminas-validator": "^2.31.0",
+                "magento/laminas-mime": "dev-develop",
                 "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0",
                 "symfony/polyfill-intl-idn": "^1.27.0",
                 "symfony/polyfill-mbstring": "^1.27.0",
@@ -4764,7 +4679,92 @@
                 "rss": "https://github.com/laminas/laminas-mail/releases.atom"
             },
             "abandoned": "symfony/mailer",
-            "time": "2024-12-20T16:35:30+00:00"
+            "time": "2024-12-23T09:48:07+00:00"
+        },
+        {
+            "name": "magento/laminas-mime",
+            "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:magento-commerce/laminas-mime.git",
+                "reference": "e1a57fcce9b623f232d1f3b864f7b9bcbaffefbd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/magento-commerce/laminas-mime/zipball/e1a57fcce9b623f232d1f3b864f7b9bcbaffefbd",
+                "reference": "e1a57fcce9b623f232d1f3b864f7b9bcbaffefbd",
+                "shasum": ""
+            },
+            "require": {
+                "laminas/laminas-stdlib": "^2.7 || ^3.0",
+                "php": "~8.0.0 || ~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0"
+            },
+            "conflict": {
+                "zendframework/zend-mime": "*"
+            },
+            "replace": {
+                "laminas/laminas-mime": "^2.12"
+            },
+            "require-dev": {
+                "laminas/laminas-coding-standard": "~2.4.0",
+                "magento/laminas-mail": "dev-develop",
+                "phpunit/phpunit": "~9.5.25"
+            },
+            "suggest": {
+                "laminas/laminas-mail": "Laminas\\Mail component"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Laminas\\Mime\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "files": [
+                    "test/TestAsset/Mail/Headers.php"
+                ],
+                "psr-4": {
+                    "LaminasTest\\Mime\\": "test/"
+                }
+            },
+            "scripts": {
+                "check": [
+                    "@cs-check",
+                    "@test"
+                ],
+                "cs-check": [
+                    "phpcs"
+                ],
+                "cs-fix": [
+                    "phpcbf"
+                ],
+                "test": [
+                    "phpunit --colors=always"
+                ],
+                "test-coverage": [
+                    "phpunit --colors=always --coverage-clover clover.xml"
+                ]
+            },
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "Create and parse MIME messages and parts",
+            "homepage": "https://laminas.dev",
+            "keywords": [
+                "laminas",
+                "mime"
+            ],
+            "support": {
+                "docs": "https://docs.laminas.dev/laminas-mime/",
+                "issues": "https://github.com/laminas/laminas-mime/issues",
+                "source": "https://github.com/laminas/laminas-mime",
+                "rss": "https://github.com/laminas/laminas-mime/releases.atom",
+                "chat": "https://laminas.dev/chat",
+                "forum": "https://discourse.laminas.dev"
+            },
+            "abandoned": "symfony/mime",
+            "time": "2024-12-23T09:48:52+00:00"
         },
         {
             "name": "magento/laminas-oauth",
@@ -14978,7 +14978,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "laminas/laminas-mime": 20,
         "magento/allure-phpunit": 20,
         "magento/composer": 20,
         "magento/elasticsearch": 20,
@@ -14987,6 +14986,7 @@
         "magento/laminas-di": 20,
         "magento/laminas-file": 20,
         "magento/laminas-mail": 20,
+        "magento/laminas-mime": 20,
         "magento/laminas-oauth": 20,
         "magento/magento2-functional-testing-framework": 20,
         "magento/module-sequence": 20,
