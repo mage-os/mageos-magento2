@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  /**
-  * Copyright © Magento, Inc. All rights reserved.
-  * See COPYING.txt for license details.
+  * Copyright 2024 Adobe
+  * All Rights Reserved.
   */
 -->
 
@@ -16,6 +16,7 @@
             <description value="Product image with dot in filename should be visible on frontend after catalog image cache flush"/>
             <group value="Catalog"/>
             <severity value="AVERAGE"/>
+            <group value="cloud"/>
         </annotations>
         <before>
             <magentoCLI command="config:set system/upload_configuration/enable_resize 0" stepKey="disableImageResizing"/>
