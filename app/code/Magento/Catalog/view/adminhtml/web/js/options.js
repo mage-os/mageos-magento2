@@ -95,7 +95,7 @@ define([
                     }
                 },
                 reset: function () {
-                    jQuery('input[name="default[]"]').prop('checked', false);
+                    jQuery('input[name^="default["]').prop('checked', false);
                     jQuery('input[name="reset_is-default_option"]').val(1);
                 },
 

@@ -259,7 +259,7 @@ script;
     setRowVisibility('default_value_yesno', defaultValueYesnoVisibility);
     setRowVisibility('is_global', scopeVisibility);
 
-    var elems = document.getElementsByName('default[]');
+    var elems = document.querySelectorAll('input[name^="default["]');
     for (var i = 0; i < elems.length; i++) {
         elems[i].type = optionDefaultInputType;
     }
