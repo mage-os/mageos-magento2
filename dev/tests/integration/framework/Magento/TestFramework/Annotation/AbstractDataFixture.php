@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -11,8 +11,6 @@ use Magento\TestFramework\Fixture\ParserInterface;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\Workaround\Override\Fixture\Resolver;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
-use ReflectionException;
 
 /**
  * Class consist of dataFixtures base logic
@@ -65,9 +63,8 @@ abstract class AbstractDataFixture
         } catch (\Throwable $exception) {
             ExceptionHandler::handle(
                 'Unable to parse fixtures',
-                get_class($test),
-                $test->name(),
-                $exception
+                $exception,
+                $test
             );
         }
 
@@ -125,8 +122,6 @@ abstract class AbstractDataFixture
             } catch (\Throwable $exception) {
                 ExceptionHandler::handle(
                     'Unable to apply fixture: ' . $this->getFixtureReference($fixture),
-                    $fixture['test']['class'],
-                    $fixture['test']['method'],
                     $exception,
                     $test
                 );
@@ -156,8 +151,6 @@ abstract class AbstractDataFixture
             } catch (\Throwable $exception) {
                 ExceptionHandler::handle(
                     'Unable to revert fixture: ' . $this->getFixtureReference($fixture),
-                    $fixture['test']['class'],
-                    $fixture['test']['method'],
                     $exception,
                     $test
                 );
