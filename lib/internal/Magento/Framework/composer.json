@@ -12,19 +12,19 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "git@github.com:cod43156/laminas-file.git"
+            "url": "git@github.com:magento-commerce/laminas-file.git"
         },
         {
             "type": "vcs",
-            "url": "git@github.com:glo71317/laminas-mail.git"
+            "url": "git@github.com:magento-commerce/laminas-mail.git"
         },
         {
             "type": "vcs",
-            "url": "git@github.com:glo71317/laminas-mime.git"
+            "url": "git@github.com:magento-commerce/laminas-mime.git"
         },
         {
             "type": "vcs",
-            "url": "git@github.com:glo71317/laminas-oauth.git"
+            "url": "git@github.com:magento-commerce/laminas-oauth.git"
         }
     ],
     "require": {

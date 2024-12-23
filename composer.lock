@@ -4,66 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1ca49c5a7b39f8f41c5088bce57b4c42",
+    "content-hash": "c74b66e523c0c4a3b0d91f0e68ba944e",
     "packages": [
-        {
-            "name": "astock/stock-api-libphp",
-            "version": "dev-php8.4_deprecations",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/cod62627/stock-api-libphp.git",
-                "reference": "181a13b8b22e7aaa9dd6818b42f843a4f2f6cd43"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/cod62627/stock-api-libphp/zipball/181a13b8b22e7aaa9dd6818b42f843a4f2f6cd43",
-                "reference": "181a13b8b22e7aaa9dd6818b42f843a4f2f6cd43",
-                "shasum": ""
-            },
-            "require": {
-                "guzzlehttp/guzzle": "~7.3",
-                "php": ">=7.3"
-            },
-            "require-dev": {
-                "mockery/mockery": "^1.4.3",
-                "phpunit/phpunit": ">=6.0",
-                "squizlabs/php_codesniffer": "~3.6.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "AdobeStock\\Api\\": "src"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "AdobeStock\\Api\\Test\\": "test"
-                }
-            },
-            "scripts": {
-                "check": [
-                    "@test",
-                    "@lint"
-                ],
-                "lint": [
-                    "vendor/bin/phpcs --standard='libs/phpcs-psr2-stock/PSR2Stock' src test"
-                ],
-                "test": [
-                    "vendor/bin/phpunit"
-                ],
-                "test-coverage": [
-                    "vendor/bin/phpunit --coverage-html data/clover"
-                ]
-            },
-            "license": [
-                "Apache-2.0"
-            ],
-            "description": "Adobe Stock API library",
-            "support": {
-                "source": "https://github.com/cod62627/stock-api-libphp/tree/php8.4_deprecations"
-            },
-            "time": "2024-12-20T11:03:47+00:00"
-        },
         {
             "name": "aws/aws-crt-php",
             "version": "v1.2.7",
@@ -120,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.336.1",
+            "version": "3.336.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "bef061855d6db932aac8f354f774b9b3ad84ad14"
+                "reference": "954bfdfc048840ca34afe2a2e1cbcff6681989c4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/bef061855d6db932aac8f354f774b9b3ad84ad14",
-                "reference": "bef061855d6db932aac8f354f774b9b3ad84ad14",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/954bfdfc048840ca34afe2a2e1cbcff6681989c4",
+                "reference": "954bfdfc048840ca34afe2a2e1cbcff6681989c4",
                 "shasum": ""
             },
             "require": {
@@ -212,9 +154,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.336.1"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.336.2"
             },
-            "time": "2024-12-19T19:03:08+00:00"
+            "time": "2024-12-20T19:05:10+00:00"
         },
         {
             "name": "behat/gherkin",
@@ -557,51 +499,6 @@
                 "source": "https://github.com/Codeception/lib-asserts/tree/2.1.0"
             },
             "time": "2023-02-10T18:36:23+00:00"
-        },
-        {
-            "name": "codeception/module-sequence",
-            "version": "dev-php84-support",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/djadobe16/module-sequence.git",
-                "reference": "47df102210a4666effaed2f08c17a833aadd9418"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/djadobe16/module-sequence/zipball/47df102210a4666effaed2f08c17a833aadd9418",
-                "reference": "47df102210a4666effaed2f08c17a833aadd9418",
-                "shasum": ""
-            },
-            "require": {
-                "codeception/codeception": "^5.0",
-                "php": "^8.0"
-            },
-            "type": "library",
-            "autoload": {
-                "classmap": [
-                    "src/"
-                ],
-                "files": [
-                    "src/Codeception/Util/sq.php"
-                ]
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Michael Bodnarchuk"
-                }
-            ],
-            "description": "Sequence module for Codeception",
-            "homepage": "https://codeception.com/",
-            "keywords": [
-                "codeception"
-            ],
-            "support": {
-                "source": "https://github.com/djadobe16/module-sequence/tree/php84-support"
-            },
-            "time": "2024-12-17T08:09:48+00:00"
         },
         {
             "name": "codeception/stub",
@@ -1461,87 +1358,6 @@
             "time": "2024-05-06T16:37:16+00:00"
         },
         {
-            "name": "elasticsearch/elasticsearch",
-            "version": "dev-php84",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/djadobe16/elasticsearch-php.git",
-                "reference": "9ab3d525765578b4d5b68ec29a98a051ff3a0649"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/djadobe16/elasticsearch-php/zipball/9ab3d525765578b4d5b68ec29a98a051ff3a0649",
-                "reference": "9ab3d525765578b4d5b68ec29a98a051ff3a0649",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": ">=1.3.7",
-                "ezimuel/ringphp": "dev-feature/php84-compatible",
-                "php": "^7.3 || ^8.0",
-                "psr/log": "^1|^2|^3"
-            },
-            "require-dev": {
-                "ext-yaml": "*",
-                "ext-zip": "*",
-                "mockery/mockery": "^1.2",
-                "phpstan/phpstan": "^1.10",
-                "phpunit/phpunit": "^9.3",
-                "squizlabs/php_codesniffer": "^3.4",
-                "symfony/finder": "~4.0"
-            },
-            "suggest": {
-                "ext-curl": "*",
-                "monolog/monolog": "Allows for client-level logging and tracing"
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "src/autoload.php"
-                ],
-                "psr-4": {
-                    "Elasticsearch\\": "src/Elasticsearch/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "Elasticsearch\\Tests\\": "tests/Elasticsearch/Tests/",
-                    "Elasticsearch\\IntegrationTests\\": "tests/Elasticsearch/IntegrationTests/",
-                    "Elasticsearch\\Util\\": "util/"
-                }
-            },
-            "scripts": {
-                "phpcs": [
-                    "phpcs --standard=ruleset.xml --extensions=php --encoding=utf-8 --tab-width=4 -sp src --ignore=src/Elasticsearch/Endpoints",
-                    "phpcs --standard=ruleset.xml --extensions=php --encoding=utf-8 --tab-width=4 -sp tests --ignore=tests/Elasticsearch/Tests/Yaml"
-                ],
-                "phpstan": [
-                    "phpstan analyse src --level 2 --no-progress"
-                ]
-            },
-            "license": [
-                "Apache-2.0",
-                "LGPL-2.1-only"
-            ],
-            "authors": [
-                {
-                    "name": "Zachary Tong"
-                },
-                {
-                    "name": "Enrico Zimuel"
-                }
-            ],
-            "description": "PHP Client for Elasticsearch",
-            "keywords": [
-                "client",
-                "elasticsearch",
-                "search"
-            ],
-            "support": {
-                "source": "https://github.com/djadobe16/elasticsearch-php/tree/php84"
-            },
-            "time": "2024-12-20T08:17:57+00:00"
-        },
-        {
             "name": "ezimuel/guzzlestreams",
             "version": "3.1.0",
             "source": {
@@ -1593,75 +1409,6 @@
                 "source": "https://github.com/ezimuel/guzzlestreams/tree/3.1.0"
             },
             "time": "2022-10-24T12:58:50+00:00"
-        },
-        {
-            "name": "ezimuel/ringphp",
-            "version": "dev-feature/php84-compatible",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/djadobe16/ringphp.git",
-                "reference": "8e5d2c49e10b1eccbbc11748b4bd6f6533404cab"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/djadobe16/ringphp/zipball/8e5d2c49e10b1eccbbc11748b4bd6f6533404cab",
-                "reference": "8e5d2c49e10b1eccbbc11748b4bd6f6533404cab",
-                "shasum": ""
-            },
-            "require": {
-                "ezimuel/guzzlestreams": "^3.0.1",
-                "php": ">=5.4.0",
-                "react/promise": "~3.0"
-            },
-            "replace": {
-                "guzzlehttp/ringphp": "self.version"
-            },
-            "require-dev": {
-                "ext-curl": "*",
-                "phpunit/phpunit": "~9.0"
-            },
-            "suggest": {
-                "ext-curl": "Guzzle will use specific adapters if cURL is present"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.1-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "GuzzleHttp\\Ring\\": "src/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "GuzzleHttp\\Tests\\Ring\\": "tests/"
-                }
-            },
-            "scripts": {
-                "test": [
-                    "make test"
-                ],
-                "test-ci": [
-                    "make coverage"
-                ]
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Michael Dowling",
-                    "email": "mtdowling@gmail.com",
-                    "homepage": "https://github.com/mtdowling"
-                }
-            ],
-            "description": "Fork of guzzle/RingPHP (abandoned) to be used with elasticsearch-php",
-            "support": {
-                "source": "https://github.com/djadobe16/ringphp/tree/feature/php84-compatible"
-            },
-            "time": "2024-12-20T11:07:44+00:00"
         },
         {
             "name": "ezyang/htmlpurifier",
@@ -1723,70 +1470,6 @@
                 "source": "https://github.com/ezyang/htmlpurifier/tree/v4.18.0"
             },
             "time": "2024-11-01T03:51:45+00:00"
-        },
-        {
-            "name": "google/recaptcha",
-            "version": "dev-PHP84",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/phpfui/recaptcha.git",
-                "reference": "c775e260789b2fdf0634aaed08e63c0e608b1609"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/phpfui/recaptcha/zipball/c775e260789b2fdf0634aaed08e63c0e608b1609",
-                "reference": "c775e260789b2fdf0634aaed08e63c0e608b1609",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.14",
-                "php-coveralls/php-coveralls": "^2.5",
-                "phpunit/phpunit": "^10"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.3.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "ReCaptcha\\": "src/ReCaptcha"
-                }
-            },
-            "scripts": {
-                "lint": [
-                    "PHP_CS_FIXER_IGNORE_ENV=1 vendor/bin/php-cs-fixer -vvv fix --using-cache=no --dry-run ."
-                ],
-                "lint-fix": [
-                    "PHP_CS_FIXER_IGNORE_ENV=1 vendor/bin/php-cs-fixer -vvv fix --using-cache=no ."
-                ],
-                "test": [
-                    "XDEBUG_MODE=coverage vendor/bin/phpunit"
-                ],
-                "serve-examples": [
-                    "@php -S localhost:8080 -t examples"
-                ]
-            },
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "Client library for reCAPTCHA, a free service that protects websites from spam and abuse.",
-            "homepage": "https://www.google.com/recaptcha/",
-            "keywords": [
-                "abuse",
-                "captcha",
-                "recaptcha",
-                "spam"
-            ],
-            "support": {
-                "forum": "https://groups.google.com/forum/#!forum/recaptcha",
-                "source": "https://github.com/google/recaptcha"
-            },
-            "time": "2024-10-24T14:42:45+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -2943,12 +2626,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:magento-commerce/laminas-mime.git",
-                "reference": "bbec82c38b6654255e0b7a658f9ab640743b93d9"
+                "reference": "87289bd45136ed0c12a0dfde7b61e0f216ea9b79"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-commerce/laminas-mime/zipball/bbec82c38b6654255e0b7a658f9ab640743b93d9",
-                "reference": "bbec82c38b6654255e0b7a658f9ab640743b93d9",
+                "url": "https://api.github.com/repos/magento-commerce/laminas-mime/zipball/87289bd45136ed0c12a0dfde7b61e0f216ea9b79",
+                "reference": "87289bd45136ed0c12a0dfde7b61e0f216ea9b79",
                 "shasum": ""
             },
             "require": {
@@ -2958,9 +2641,12 @@
             "conflict": {
                 "zendframework/zend-mime": "*"
             },
+            "replace": {
+                "laminas/laminas-mime": "^2.12"
+            },
             "require-dev": {
                 "laminas/laminas-coding-standard": "~2.4.0",
-                "laminas/laminas-mail": "^2.19.0",
+                "magento/laminas-mail": "dev-develop",
                 "phpunit/phpunit": "~9.5.25"
             },
             "suggest": {
@@ -3017,7 +2703,7 @@
                 "forum": "https://discourse.laminas.dev"
             },
             "abandoned": "symfony/mime",
-            "time": "2024-12-11T12:04:38+00:00"
+            "time": "2024-12-20T16:34:21+00:00"
         },
         {
             "name": "laminas/laminas-modulemanager",
@@ -4420,6 +4106,92 @@
             "time": "2024-12-18T09:52:06+00:00"
         },
         {
+            "name": "magento/elasticsearch",
+            "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:magento-commerce/magento-elasticsearch-php.git",
+                "reference": "7260a97036705ca7842f5bff280b7c3f19659597"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/magento-commerce/magento-elasticsearch-php/zipball/7260a97036705ca7842f5bff280b7c3f19659597",
+                "reference": "7260a97036705ca7842f5bff280b7c3f19659597",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": ">=1.3.7",
+                "magento/ringphp": "dev-develop",
+                "php": "^7.3 || ^8.0",
+                "psr/log": "^1|^2|^3"
+            },
+            "replace": {
+                "elasticsearch/elasticsearch": "^7.17"
+            },
+            "require-dev": {
+                "ext-yaml": "*",
+                "ext-zip": "*",
+                "mockery/mockery": "^1.2",
+                "phpstan/phpstan": "^1.10",
+                "phpunit/phpunit": "^9.3",
+                "squizlabs/php_codesniffer": "^3.4",
+                "symfony/finder": "~4.0"
+            },
+            "suggest": {
+                "ext-curl": "*",
+                "monolog/monolog": "Allows for client-level logging and tracing"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/autoload.php"
+                ],
+                "psr-4": {
+                    "Elasticsearch\\": "src/Elasticsearch/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Elasticsearch\\Tests\\": "tests/Elasticsearch/Tests/",
+                    "Elasticsearch\\IntegrationTests\\": "tests/Elasticsearch/IntegrationTests/",
+                    "Elasticsearch\\Util\\": "util/"
+                }
+            },
+            "scripts": {
+                "phpcs": [
+                    "phpcs --standard=ruleset.xml --extensions=php --encoding=utf-8 --tab-width=4 -sp src --ignore=src/Elasticsearch/Endpoints",
+                    "phpcs --standard=ruleset.xml --extensions=php --encoding=utf-8 --tab-width=4 -sp tests --ignore=tests/Elasticsearch/Tests/Yaml"
+                ],
+                "phpstan": [
+                    "phpstan analyse src --level 2 --no-progress"
+                ]
+            },
+            "license": [
+                "Apache-2.0",
+                "LGPL-2.1-only"
+            ],
+            "authors": [
+                {
+                    "name": "Zachary Tong"
+                },
+                {
+                    "name": "Enrico Zimuel"
+                }
+            ],
+            "description": "PHP Client for Elasticsearch",
+            "keywords": [
+                "client",
+                "elasticsearch",
+                "search"
+            ],
+            "support": {
+                "source": "https://github.com/magento-commerce/magento-elasticsearch-php/tree/develop",
+                "issues": "https://github.com/magento-commerce/magento-elasticsearch-php/issues"
+            },
+            "time": "2024-12-23T07:49:46+00:00"
+        },
+        {
             "name": "magento/laminas-captcha",
             "version": "dev-develop",
             "source": {
@@ -4599,12 +4371,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:magento-commerce/laminas-db.git",
-                "reference": "bb05b562c1be9ed6e6e0dc9677da0bbd32aa721b"
+                "reference": "bf73b0b22324b91c948d6a9aa8e6bededb638e2c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-commerce/laminas-db/zipball/bb05b562c1be9ed6e6e0dc9677da0bbd32aa721b",
-                "reference": "bb05b562c1be9ed6e6e0dc9677da0bbd32aa721b",
+                "url": "https://api.github.com/repos/magento-commerce/laminas-db/zipball/bf73b0b22324b91c948d6a9aa8e6bededb638e2c",
+                "reference": "bf73b0b22324b91c948d6a9aa8e6bededb638e2c",
                 "shasum": ""
             },
             "require": {
@@ -4694,7 +4466,7 @@
                 "chat": "https://laminas.dev/chat",
                 "forum": "https://discourse.laminas.dev"
             },
-            "time": "2024-12-20T08:42:09+00:00"
+            "time": "2024-12-20T16:36:57+00:00"
         },
         {
             "name": "magento/laminas-di",
@@ -4702,12 +4474,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:magento-commerce/laminas-di.git",
-                "reference": "5a02d82261cac1eb9e22e2900f2a7401e90d623b"
+                "reference": "87046cf2a81fcf25cde0b0dbef78d2f74b2168d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-commerce/laminas-di/zipball/5a02d82261cac1eb9e22e2900f2a7401e90d623b",
-                "reference": "5a02d82261cac1eb9e22e2900f2a7401e90d623b",
+                "url": "https://api.github.com/repos/magento-commerce/laminas-di/zipball/87046cf2a81fcf25cde0b0dbef78d2f74b2168d0",
+                "reference": "87046cf2a81fcf25cde0b0dbef78d2f74b2168d0",
                 "shasum": ""
             },
             "require": {
@@ -4798,7 +4570,7 @@
                 "chat": "https://laminas.dev/chat",
                 "forum": "https://discourse.laminas.dev"
             },
-            "time": "2024-12-20T08:59:20+00:00"
+            "time": "2024-12-20T16:36:04+00:00"
         },
         {
             "name": "magento/laminas-file",
@@ -4806,12 +4578,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:magento-commerce/laminas-file.git",
-                "reference": "8ca6e281642df903b1c532f03a7459d090114ea3"
+                "reference": "272536dc20f0c9a989c5538773758f8a85735cb2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-commerce/laminas-file/zipball/8ca6e281642df903b1c532f03a7459d090114ea3",
-                "reference": "8ca6e281642df903b1c532f03a7459d090114ea3",
+                "url": "https://api.github.com/repos/magento-commerce/laminas-file/zipball/272536dc20f0c9a989c5538773758f8a85735cb2",
+                "reference": "272536dc20f0c9a989c5538773758f8a85735cb2",
                 "shasum": ""
             },
             "require": {
@@ -4892,7 +4664,7 @@
                 "chat": "https://laminas.dev/chat",
                 "forum": "https://discourse.laminas.dev"
             },
-            "time": "2024-12-20T08:55:12+00:00"
+            "time": "2024-12-20T16:38:30+00:00"
         },
         {
             "name": "magento/laminas-mail",
@@ -4900,12 +4672,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:magento-commerce/laminas-mail.git",
-                "reference": "01a3f3beadcf4ce40c5adc467d62af15fe83adc0"
+                "reference": "137d3ecbd77a11426b4f4bf598f7920967a99fcb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-commerce/laminas-mail/zipball/01a3f3beadcf4ce40c5adc467d62af15fe83adc0",
-                "reference": "01a3f3beadcf4ce40c5adc467d62af15fe83adc0",
+                "url": "https://api.github.com/repos/magento-commerce/laminas-mail/zipball/137d3ecbd77a11426b4f4bf598f7920967a99fcb",
+                "reference": "137d3ecbd77a11426b4f4bf598f7920967a99fcb",
                 "shasum": ""
             },
             "require": {
@@ -4992,7 +4764,7 @@
                 "rss": "https://github.com/laminas/laminas-mail/releases.atom"
             },
             "abandoned": "symfony/mailer",
-            "time": "2024-12-20T11:15:43+00:00"
+            "time": "2024-12-20T16:35:30+00:00"
         },
         {
             "name": "magento/laminas-oauth",
@@ -5145,6 +4917,368 @@
                 "source": "https://github.com/magento/magento-composer-installer/tree/0.4.0"
             },
             "time": "2022-12-01T15:21:32+00:00"
+        },
+        {
+            "name": "magento/module-sequence",
+            "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:magento-commerce/magento-module-sequence.git",
+                "reference": "85eb340e3130a9ad7d29667b2a77caceb3e3568b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/magento-commerce/magento-module-sequence/zipball/85eb340e3130a9ad7d29667b2a77caceb3e3568b",
+                "reference": "85eb340e3130a9ad7d29667b2a77caceb3e3568b",
+                "shasum": ""
+            },
+            "require": {
+                "codeception/codeception": "^5.0",
+                "php": "^8.0"
+            },
+            "replace": {
+                "codeception/module-sequence": "^3.0"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ],
+                "files": [
+                    "src/Codeception/Util/sq.php"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Bodnarchuk"
+                }
+            ],
+            "description": "Sequence module for Codeception",
+            "homepage": "https://codeception.com/",
+            "keywords": [
+                "codeception"
+            ],
+            "support": {
+                "source": "https://github.com/magento-commerce/magento-module-sequence/tree/develop",
+                "issues": "https://github.com/magento-commerce/magento-module-sequence/issues"
+            },
+            "time": "2024-12-23T06:48:59+00:00"
+        },
+        {
+            "name": "magento/opensearch-php",
+            "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:magento-commerce/magento-opensearch-php.git",
+                "reference": "549ca7d26a15c17ca87c8733d840a757cdfa87e5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/magento-commerce/magento-opensearch-php/zipball/549ca7d26a15c17ca87c8733d840a757cdfa87e5",
+                "reference": "549ca7d26a15c17ca87c8733d840a757cdfa87e5",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": ">=1.3.7",
+                "magento/ringphp": "dev-develop",
+                "php": "^8.0",
+                "psr/log": "^1|^2|^3",
+                "symfony/yaml": "*"
+            },
+            "replace": {
+                "opensearch-project/opensearch-php": "^2.3"
+            },
+            "require-dev": {
+                "aws/aws-sdk-php": "^3.0",
+                "ext-zip": "*",
+                "friendsofphp/php-cs-fixer": "^3.0",
+                "mockery/mockery": "^1.2",
+                "phpstan/phpstan": "^1.7.15",
+                "phpstan/phpstan-mockery": "^1.1.0",
+                "phpunit/phpunit": "^9.3",
+                "symfony/finder": "~4.0 || ~5.0"
+            },
+            "suggest": {
+                "aws/aws-sdk-php": "Required (^3.0.0) in order to use the SigV4 handler",
+                "monolog/monolog": "Allows for client-level logging and tracing"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "OpenSearch\\": "src/OpenSearch/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "OpenSearch\\Tests\\": "tests/",
+                    "OpenSearch\\Util\\": "util/"
+                }
+            },
+            "scripts": {
+                "php-cs": [
+                    "php-cs-fixer fix"
+                ],
+                "phpstan": [
+                    "phpstan analyse --no-progress"
+                ],
+                "unit": [
+                    "phpunit --exclude-group Integration"
+                ],
+                "integration": [
+                    "phpunit --group Integration"
+                ],
+                "integration-min": [
+                    "phpunit --group Integration-Min"
+                ],
+                "phpunit": [
+                    "phpunit"
+                ],
+                "apigen": [
+                    "rm -f apigen",
+                    "curl -L https://github.com/ApiGen/ApiGen/releases/download/v7.0.0-alpha.4/apigen.phar -o apigen",
+                    "chmod +x apigen",
+                    "./apigen src --output docs",
+                    "rm -f apigen"
+                ],
+                "generate-api": [
+                    "php util/GenerateEndpoints.php",
+                    "composer run php-cs",
+                    "php util/changelog_updater.php"
+                ]
+            },
+            "license": [
+                "Apache-2.0",
+                "LGPL-2.1-only"
+            ],
+            "authors": [
+                {
+                    "name": "Elastic"
+                },
+                {
+                    "name": "OpenSearch Contributors"
+                }
+            ],
+            "description": "PHP Client for OpenSearch",
+            "keywords": [
+                "client",
+                "elasticsearch",
+                "opensearch",
+                "search"
+            ],
+            "support": {
+                "source": "https://github.com/magento-commerce/magento-opensearch-php/tree/develop",
+                "issues": "https://github.com/magento-commerce/magento-opensearch-php/issues"
+            },
+            "time": "2024-12-23T07:49:20+00:00"
+        },
+        {
+            "name": "magento/recaptcha",
+            "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:magento-commerce/magento-recaptcha.git",
+                "reference": "93b1fb2b71c2fcc6e3705b74403935a760815c30"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/magento-commerce/magento-recaptcha/zipball/93b1fb2b71c2fcc6e3705b74403935a760815c30",
+                "reference": "93b1fb2b71c2fcc6e3705b74403935a760815c30",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8"
+            },
+            "replace": {
+                "google/recaptcha": "^1.3"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.14",
+                "php-coveralls/php-coveralls": "^2.5",
+                "phpunit/phpunit": "^10"
+            },
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.3.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "ReCaptcha\\": "src/ReCaptcha"
+                }
+            },
+            "scripts": {
+                "lint": [
+                    "PHP_CS_FIXER_IGNORE_ENV=1 vendor/bin/php-cs-fixer -vvv fix --using-cache=no --dry-run ."
+                ],
+                "lint-fix": [
+                    "PHP_CS_FIXER_IGNORE_ENV=1 vendor/bin/php-cs-fixer -vvv fix --using-cache=no ."
+                ],
+                "test": [
+                    "XDEBUG_MODE=coverage vendor/bin/phpunit"
+                ],
+                "serve-examples": [
+                    "@php -S localhost:8080 -t examples"
+                ]
+            },
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "Client library for reCAPTCHA, a free service that protects websites from spam and abuse.",
+            "homepage": "https://www.google.com/recaptcha/",
+            "keywords": [
+                "abuse",
+                "captcha",
+                "recaptcha",
+                "spam"
+            ],
+            "support": {
+                "forum": "https://groups.google.com/forum/#!forum/recaptcha",
+                "source": "https://github.com/google/recaptcha",
+                "issues": "https://github.com/magento-commerce/magento-recaptcha/issues"
+            },
+            "time": "2024-12-23T06:55:32+00:00"
+        },
+        {
+            "name": "magento/ringphp",
+            "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:magento-commerce/magento-ringphp.git",
+                "reference": "d554fd90cd8f11a006cea88102cd072489e6a8ee"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/magento-commerce/magento-ringphp/zipball/d554fd90cd8f11a006cea88102cd072489e6a8ee",
+                "reference": "d554fd90cd8f11a006cea88102cd072489e6a8ee",
+                "shasum": ""
+            },
+            "require": {
+                "ezimuel/guzzlestreams": "^3.0.1",
+                "php": ">=5.4.0",
+                "react/promise": "~3.0"
+            },
+            "replace": {
+                "ezimuel/ringphp": "^1.2"
+            },
+            "require-dev": {
+                "ext-curl": "*",
+                "phpunit/phpunit": "~9.0"
+            },
+            "suggest": {
+                "ext-curl": "Guzzle will use specific adapters if cURL is present"
+            },
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "GuzzleHttp\\Ring\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "GuzzleHttp\\Tests\\Ring\\": "tests/"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "make test"
+                ],
+                "test-ci": [
+                    "make coverage"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                }
+            ],
+            "description": "Fork of guzzle/RingPHP (abandoned) to be used with elasticsearch-php",
+            "support": {
+                "source": "https://github.com/magento-commerce/magento-ringphp/tree/develop",
+                "issues": "https://github.com/magento-commerce/magento-ringphp/issues"
+            },
+            "time": "2024-12-23T07:00:26+00:00"
+        },
+        {
+            "name": "magento/stock-api-libphp",
+            "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:magento-commerce/magento-stock-api-libphp.git",
+                "reference": "7dae11993e11a4e00dbd5f4e390d0278af3868f4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/magento-commerce/magento-stock-api-libphp/zipball/7dae11993e11a4e00dbd5f4e390d0278af3868f4",
+                "reference": "7dae11993e11a4e00dbd5f4e390d0278af3868f4",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "~7.3",
+                "php": ">=7.3"
+            },
+            "replace": {
+                "astock/stock-api-libphp": "^1.1"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.4.3",
+                "phpunit/phpunit": ">=6.0",
+                "squizlabs/php_codesniffer": "~3.6.0"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "AdobeStock\\Api\\": "src"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "AdobeStock\\Api\\Test\\": "test"
+                }
+            },
+            "scripts": {
+                "check": [
+                    "@test",
+                    "@lint"
+                ],
+                "lint": [
+                    "vendor/bin/phpcs --standard='libs/phpcs-psr2-stock/PSR2Stock' src test"
+                ],
+                "test": [
+                    "vendor/bin/phpunit"
+                ],
+                "test-coverage": [
+                    "vendor/bin/phpunit --coverage-html data/clover"
+                ]
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "Adobe Stock API library",
+            "support": {
+                "source": "https://github.com/magento-commerce/magento-stock-api-libphp/tree/develop",
+                "issues": "https://github.com/magento-commerce/magento-stock-api-libphp/issues"
+            },
+            "time": "2024-12-23T07:01:50+00:00"
         },
         {
             "name": "magento/zend-cache",
@@ -5799,110 +5933,6 @@
             "time": "2024-10-08T18:51:32+00:00"
         },
         {
-            "name": "opensearch-project/opensearch-php",
-            "version": "dev-php84-support",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/djadobe16/opensearch-php.git",
-                "reference": "ba582cc2d526c84c687e2ecd9abe9e3535de78e8"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/djadobe16/opensearch-php/zipball/ba582cc2d526c84c687e2ecd9abe9e3535de78e8",
-                "reference": "ba582cc2d526c84c687e2ecd9abe9e3535de78e8",
-                "shasum": ""
-            },
-            "require": {
-                "ext-curl": "*",
-                "ext-json": ">=1.3.7",
-                "ezimuel/ringphp": "dev-feature/php84-compatible",
-                "php": "^8.0",
-                "psr/log": "^1|^2|^3",
-                "symfony/yaml": "*"
-            },
-            "require-dev": {
-                "aws/aws-sdk-php": "^3.0",
-                "ext-zip": "*",
-                "friendsofphp/php-cs-fixer": "^3.0",
-                "mockery/mockery": "^1.2",
-                "phpstan/phpstan": "^1.7.15",
-                "phpstan/phpstan-mockery": "^1.1.0",
-                "phpunit/phpunit": "^9.3",
-                "symfony/finder": "~4.0 || ~5.0"
-            },
-            "suggest": {
-                "aws/aws-sdk-php": "Required (^3.0.0) in order to use the SigV4 handler",
-                "monolog/monolog": "Allows for client-level logging and tracing"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "OpenSearch\\": "src/OpenSearch/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "OpenSearch\\Tests\\": "tests/",
-                    "OpenSearch\\Util\\": "util/"
-                }
-            },
-            "scripts": {
-                "php-cs": [
-                    "php-cs-fixer fix"
-                ],
-                "phpstan": [
-                    "phpstan analyse --no-progress"
-                ],
-                "unit": [
-                    "phpunit --exclude-group Integration"
-                ],
-                "integration": [
-                    "phpunit --group Integration"
-                ],
-                "integration-min": [
-                    "phpunit --group Integration-Min"
-                ],
-                "phpunit": [
-                    "phpunit"
-                ],
-                "apigen": [
-                    "rm -f apigen",
-                    "curl -L https://github.com/ApiGen/ApiGen/releases/download/v7.0.0-alpha.4/apigen.phar -o apigen",
-                    "chmod +x apigen",
-                    "./apigen src --output docs",
-                    "rm -f apigen"
-                ],
-                "generate-api": [
-                    "php util/GenerateEndpoints.php",
-                    "composer run php-cs",
-                    "php util/changelog_updater.php"
-                ]
-            },
-            "license": [
-                "Apache-2.0",
-                "LGPL-2.1-only"
-            ],
-            "authors": [
-                {
-                    "name": "Elastic"
-                },
-                {
-                    "name": "OpenSearch Contributors"
-                }
-            ],
-            "description": "PHP Client for OpenSearch",
-            "keywords": [
-                "client",
-                "elasticsearch",
-                "opensearch",
-                "search"
-            ],
-            "support": {
-                "source": "https://github.com/djadobe16/opensearch-php/tree/php84-support"
-            },
-            "time": "2024-12-20T08:19:05+00:00"
-        },
-        {
             "name": "paragonie/constant_time_encoding",
             "version": "v3.0.0",
             "source": {
@@ -6390,215 +6420,6 @@
                 "source": "https://github.com/php-amqplib/php-amqplib/tree/v3.7.2"
             },
             "time": "2024-11-21T09:21:41+00:00"
-        },
-        {
-            "name": "phpgt/cssxpath",
-            "version": "v1.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/PhpGt/CssXPath.git",
-                "reference": "c0a06671fed8db601bb680dc4d5accf3cd9deb81"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/PhpGt/CssXPath/zipball/c0a06671fed8db601bb680dc4d5accf3cd9deb81",
-                "reference": "c0a06671fed8db601bb680dc4d5accf3cd9deb81",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8.0"
-            },
-            "require-dev": {
-                "ext-dom": "*",
-                "ext-libxml": "*",
-                "phpstan/phpstan": "^v1.8",
-                "phpunit/phpunit": "^v9.5"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Gt\\CssXPath\\": "./src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Greg Bowler",
-                    "email": "greg.bowler@g105b.com",
-                    "homepage": "https://www.g105b.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Convert CSS selectors to XPath queries.",
-            "support": {
-                "issues": "https://github.com/PhpGt/CssXPath/issues",
-                "source": "https://github.com/PhpGt/CssXPath/tree/v1.2.0"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/sponsors/PhpGt",
-                    "type": "github"
-                }
-            ],
-            "time": "2024-01-03T18:33:56+00:00"
-        },
-        {
-            "name": "phpgt/dom",
-            "version": "dev-php84-support",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/djadobe16/Dom.git",
-                "reference": "603238c43014698c48887e6a0be65003a3094606"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/djadobe16/Dom/zipball/603238c43014698c48887e6a0be65003a3094606",
-                "reference": "603238c43014698c48887e6a0be65003a3094606",
-                "shasum": ""
-            },
-            "require": {
-                "ext-dom": "*",
-                "ext-libxml": "*",
-                "ext-mbstring": "*",
-                "php": ">=8.1",
-                "phpgt/cssxpath": "^1.1",
-                "phpgt/propfunc": "^1.0",
-                "psr/http-message": "^1.0 || ^2.0"
-            },
-            "require-dev": {
-                "phpmd/phpmd": "^2.13",
-                "phpstan/phpstan": "^1.9",
-                "phpunit/phpunit": "^10.4",
-                "squizlabs/php_codesniffer": "^3.7"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Gt\\Dom\\": "./src"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "Gt\\Dom\\Test\\": "./test/phpunit"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Greg Bowler",
-                    "homepage": "https://www.g105b.com",
-                    "email": "greg.bowler@g105b.com",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Alvaro Guimaraes",
-                    "homepage": "https://github.com/aguimaraes",
-                    "role": "Developer"
-                },
-                {
-                    "name": "James Fellows",
-                    "homepage": "https://github.com/j4m3s",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Emile Ward",
-                    "homepage": "https://github.com/emileward",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Jelmer Wijnja",
-                    "homepage": "https://github.com/Jelmergu",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Ognjen Petrovic",
-                    "homepage": "https://github.com/ognjen-petrovic",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Jacob Bearden",
-                    "homepage": "https://github.com/jacobbearden",
-                    "role": "Documentation contributor"
-                },
-                {
-                    "name": "Jaroslav Týc",
-                    "homepage": "https://www.jaroslavtyc.com/",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Andrii Beziazychnyi",
-                    "homepage": "https://www.atwix.com/",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Modern DOM API.",
-            "support": {
-                "source": "https://github.com/djadobe16/Dom/tree/php84-support"
-            },
-            "funding": [
-                {
-                    "type": "github",
-                    "url": "https://github.com/sponsors/PhpGt"
-                }
-            ],
-            "time": "2024-12-19T15:35:05+00:00"
-        },
-        {
-            "name": "phpgt/propfunc",
-            "version": "v1.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/PhpGt/PropFunc.git",
-                "reference": "091213649e89ff22d1ef640b46fbee5215c65520"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/PhpGt/PropFunc/zipball/091213649e89ff22d1ef640b46fbee5215c65520",
-                "reference": "091213649e89ff22d1ef640b46fbee5215c65520",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8.0"
-            },
-            "require-dev": {
-                "phpstan/phpstan": ">=0.12",
-                "phpunit/phpunit": ">=9.3"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Gt\\PropFunc\\": "./src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Greg Bowler",
-                    "email": "greg.bowler@g105b.com",
-                    "homepage": "https://www.g105b.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Property accessor and mutator functions.",
-            "support": {
-                "issues": "https://github.com/PhpGt/PropFunc/issues",
-                "source": "https://github.com/PhpGt/PropFunc/tree/v1.0.1"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/sponsors/PhpGt",
-                    "type": "github"
-                }
-            ],
-            "time": "2021-03-23T12:46:44+00:00"
         },
         {
             "name": "phpseclib/mcrypt_compat",
@@ -7101,16 +6922,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "10.5.39",
+            "version": "10.5.40",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "4e89eff200b801db58f3d580ad7426431949eaa9"
+                "reference": "e6ddda95af52f69c1e0c7b4f977cccb58048798c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/4e89eff200b801db58f3d580ad7426431949eaa9",
-                "reference": "4e89eff200b801db58f3d580ad7426431949eaa9",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/e6ddda95af52f69c1e0c7b4f977cccb58048798c",
+                "reference": "e6ddda95af52f69c1e0c7b4f977cccb58048798c",
                 "shasum": ""
             },
             "require": {
@@ -7182,7 +7003,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.5.39"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.5.40"
             },
             "funding": [
                 {
@@ -7198,7 +7019,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-12-11T10:51:07+00:00"
+            "time": "2024-12-21T05:49:06+00:00"
         },
         {
             "name": "psr/cache",
@@ -13574,12 +13395,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:magento-gl/magento2-functional-testing-framework.git",
-                "reference": "0fce9d3984301add11c3eb17691be59eb61387a1"
+                "reference": "cbee5a3f629351efe7695166fa76857c29f87f51"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-gl/magento2-functional-testing-framework/zipball/0fce9d3984301add11c3eb17691be59eb61387a1",
-                "reference": "0fce9d3984301add11c3eb17691be59eb61387a1",
+                "url": "https://api.github.com/repos/magento-gl/magento2-functional-testing-framework/zipball/cbee5a3f629351efe7695166fa76857c29f87f51",
+                "reference": "cbee5a3f629351efe7695166fa76857c29f87f51",
                 "shasum": ""
             },
             "require": {
@@ -13587,7 +13408,6 @@
                 "aws/aws-sdk-php": "^3.132",
                 "codeception/codeception": "^5.0",
                 "codeception/module-asserts": "^3.0",
-                "codeception/module-sequence": "dev-php84-support",
                 "codeception/module-webdriver": "^4.0",
                 "composer/composer": "^1.9||^2.0,!=2.2.16",
                 "csharpru/vault-php": "^4.2.1",
@@ -13599,6 +13419,7 @@
                 "ext-openssl": "*",
                 "guzzlehttp/guzzle": "^7.3.0",
                 "laminas/laminas-diactoros": "^3.0",
+                "magento/module-sequence": "dev-develop",
                 "monolog/monolog": "^2.3||^3.0",
                 "mustache/mustache": "~2.5",
                 "nikic/php-parser": "^4.4||^5.0",
@@ -13667,7 +13488,7 @@
             "support": {
                 "source": "https://github.com/magento-gl/magento2-functional-testing-framework/tree/AC-13306"
             },
-            "time": "2024-12-17T10:40:53+00:00"
+            "time": "2024-12-23T07:46:21+00:00"
         },
         {
             "name": "magento/php-compatibility-fork",
@@ -15157,14 +14978,10 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "astock/stock-api-libphp": 20,
-        "codeception/module-sequence": 20,
-        "elasticsearch/elasticsearch": 20,
-        "ezimuel/ringphp": 20,
-        "google/recaptcha": 20,
         "laminas/laminas-mime": 20,
         "magento/allure-phpunit": 20,
         "magento/composer": 20,
+        "magento/elasticsearch": 20,
         "magento/laminas-captcha": 20,
         "magento/laminas-db": 20,
         "magento/laminas-di": 20,
@@ -15172,8 +14989,11 @@
         "magento/laminas-mail": 20,
         "magento/laminas-oauth": 20,
         "magento/magento2-functional-testing-framework": 20,
-        "opensearch-project/opensearch-php": 20,
-        "phpgt/dom": 20
+        "magento/module-sequence": 20,
+        "magento/opensearch-php": 20,
+        "magento/recaptcha": 20,
+        "magento/ringphp": 20,
+        "magento/stock-api-libphp": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

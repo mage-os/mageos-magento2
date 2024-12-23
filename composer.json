@@ -59,7 +59,7 @@
         },
         {
             "type": "vcs",
-            "url": "git@github.com:djadobe16/module-sequence.git"
+            "url": "git@github.com:magento-commerce/magento-module-sequence.git"
         },
         {
             "type": "vcs",
@@ -67,27 +67,23 @@
         },
         {
             "type": "vcs",
-            "url": "git@github.com:djadobe16/Dom.git"
+            "url": "git@github.com:magento-commerce/magento-recaptcha.git"
         },
         {
             "type": "vcs",
-            "url": "git@github.com:phpfui/recaptcha.git"
+            "url": "git@github.com:magento-commerce/magento-stock-api-libphp.git"
         },
         {
             "type": "vcs",
-            "url": "git@github.com:cod62627/stock-api-libphp.git"
+            "url": "git@github.com:magento-commerce/magento-ringphp.git"
         },
         {
             "type": "vcs",
-            "url": "git@github.com:djadobe16/ringphp.git"
+            "url": "git@github.com:magento-commerce/magento-elasticsearch-php.git"
         },
         {
             "type": "vcs",
-            "url": "git@github.com:djadobe16/elasticsearch-php.git"
-        },
-        {
-            "type": "vcs",
-            "url": "git@github.com:djadobe16/opensearch-php.git"
+            "url": "git@github.com:magento-commerce/magento-opensearch-php.git"
         }
     ],
     "require": {
@@ -114,7 +110,7 @@
         "colinmollenhour/credis": "^1.15",
         "colinmollenhour/php-redis-session-abstract": "^2.0",
         "composer/composer": "^2.0, !=2.2.16",
-        "elasticsearch/elasticsearch": "dev-php84",
+        "magento/elasticsearch": "dev-develop",
         "ezyang/htmlpurifier": "^4.17",
         "guzzlehttp/guzzle": "^7.5",
         "magento/laminas-captcha": "dev-develop",
@@ -148,7 +144,7 @@
         "magento/zend-db": "^1.16",
         "magento/zend-pdf": "^1.16",
         "monolog/monolog": "^3.6",
-        "opensearch-project/opensearch-php": "dev-php84-support",
+        "magento/opensearch-php": "dev-develop",
         "pelago/emogrifier": "^7.0",
         "php-amqplib/php-amqplib": "^3.2",
         "phpseclib/mcrypt_compat": "^2.0",
@@ -164,11 +160,10 @@
         "web-token/jwt-framework": "^3.1",
         "webonyx/graphql-php": "^15.0",
         "wikimedia/less.php": "^5.0",
-        "codeception/module-sequence": "dev-php84-support",
-        "phpgt/dom": "dev-php84-support",
-        "google/recaptcha": "dev-PHP84",
-        "astock/stock-api-libphp": "dev-php8.4_deprecations",
-        "ezimuel/ringphp": "dev-feature/php84-compatible"
+        "magento/module-sequence": "dev-develop",
+        "magento/recaptcha": "dev-develop",
+        "magento/stock-api-libphp": "dev-develop",
+        "magento/ringphp": "dev-develop"
     },
     "require-dev": {
         "magento/allure-phpunit": "dev-develop",
