@@ -13,15 +13,15 @@
             <description>In the Admin Import page. Imports the provided File. Validates that the Success Message is present and correct.</description>
         </annotations>
         <arguments>
-            <argument name="importNoticeMessage" type="string" defaultValue="" />
-            <argument name="importMessageType" type="string" defaultValue="success" />
-            <argument name="importMessage" type="string" defaultValue="Import successfully done" />
+            <argument name="importNoticeMessage" type="string" defaultValue=""/>
+            <argument name="importMessageType" type="string" defaultValue="success"/>
+            <argument name="importMessage" type="string" defaultValue="Import successfully done"/>
         </arguments>
-        <waitForElementVisible selector="{{AdminImportMainSection.importButton}}" stepKey="waitForImportButtonElementVisible" />
-        <click selector="{{AdminImportMainSection.importButton}}" stepKey="clickImportButton" />
-        <waitForElementVisible selector="{{AdminImportValidationMessagesSection.notice}}" stepKey="waitForNoticeMessage" />
-        <see selector="{{AdminImportValidationMessagesSection.notice}}" userInput="{{importNoticeMessage}}" stepKey="seeNoticeMessage" />
-        <see selector="{{AdminImportValidationMessagesSection.messageByType(importMessageType)}}" userInput="{{importMessage}}" stepKey="seeImportMessage" />
+        <waitForElementVisible selector="{{AdminImportMainSection.importButton}}" stepKey="waitForImportButtonElementVisible"/>
+        <click selector="{{AdminImportMainSection.importButton}}" stepKey="clickImportButton"/>
+        <waitForElementVisible selector="{{AdminImportValidationMessagesSection.notice}}" stepKey="waitForNoticeMessage"/>
+        <see selector="{{AdminImportValidationMessagesSection.notice}}" userInput="{{importNoticeMessage}}" stepKey="seeNoticeMessage"/>
+        <see selector="{{AdminImportValidationMessagesSection.messageByType(importMessageType)}}" userInput="{{importMessage}}" stepKey="seeImportMessage"/>
     </actionGroup>
 </actionGroups>
 
