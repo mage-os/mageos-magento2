@@ -10,16 +10,16 @@
        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
     <test name="ChangeFrontendLogoWithSingleStoreModeTest">
         <annotations>
-            <features value="Content" />
-            <stories value="Content" />
-            <title value="AC-8825: To check whether admin is able to change the frontend logo when single store mode is enabled in the configuration." />
-            <description value="This test validates that the admin can change the frontend logo under Single Store Mode, ensuring the original logo is saved and restored after the test." />
-            <severity value="MAJOR" />
-            <testCaseId value="AC-8825" />
-            <group value="Content" />
+            <features value="Content"/>
+            <stories value="Frontend logo change"/>
+            <title value="To check whether admin is able to change the frontend logo when single store mode is enabled in the configuration."/>
+            <description value="This test validates that the admin can change the frontend logo under Single Store Mode, ensuring the original logo is saved and restored after the test."/>
+            <severity value="MAJOR"/>
+            <testCaseId value="AC-8825"/>
+            <group value="Content"/>
         </annotations>
         <before>
-            <!-- Log in as Admin -->
+            <!--Log in as Admin-->
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
             <!-- Enable media gallery if not already enabled -->
             <actionGroup ref="CliMediaGalleryEnhancedEnableActionGroup" stepKey="enableOldMediaGallery">
@@ -27,28 +27,25 @@
             </actionGroup>
         </before>
         <after>
-            <!-- Disable Single Store Mode -->
+            <!--Disable Single Store Mode-->
             <magentoCLI command="config:set general/single_store_mode/enabled 0" stepKey="disabledSingleStoreMode"/>
             <!-- Disable media gallery if previously enabled -->
             <actionGroup ref="CliMediaGalleryEnhancedEnableActionGroup" stepKey="disableOldMediaGallery">
                 <argument name="enabled" value="1"/>
             </actionGroup>
-            <!-- Log out as Admin -->
+            <!--Log out as Admin-->
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutOfAdmin"/>
         </after>
-        <!--Edit Store View-->
-        <comment userInput="Edit Store View" stepKey="editStoreViewComment"/>
         <amOnPage url="{{DesignConfigPage.url}}" stepKey="navigateToDesignConfigPage" />
-        <waitForPageLoad stepKey="waitForPageload1"/>
+        <waitForPageLoad stepKey="waitForDesignConfigPageLoad"/>
         <click selector="{{AdminDesignConfigSection.scopeRow('3')}}" stepKey="editStoreView"/>
-        <waitForPageLoad stepKey="waitForPageload2"/>
+        <waitForPageLoad stepKey="waitForAdminDesignConfigSectionPageLoad"/>
         <scrollTo selector="{{AdminDesignConfigSection.headerSection}}" stepKey="scrollToHtmlHeadSection"/>
         <click selector="{{AdminDesignConfigSection.headerSection}}" stepKey="openHtmlHeadSection"/>
-        <!--Upload First Image-->
-        <comment userInput="Upload Image" stepKey="uploadImageComment"/>
+        <!--Upload the First Image-->
         <click selector="{{AdminDesignConfigSection.selectFromGalleryByFieldsetName('Head')}}" stepKey="openMediaGallery"/>
         <actionGroup ref="VerifyMediaGalleryStorageActionsActionGroup" stepKey="verifyMediaGalleryStorageBtn"/>
-        <comment userInput="BIC workaround" stepKey="navigateToFolder"/>
+        <!--Navigate to Storage Folder-->
         <actionGroup ref="AdminExpandMediaGalleryFolderActionGroup" stepKey="expandStorageRootFolder">
             <argument name="FolderName" value="Storage Root"/>
         </actionGroup>
@@ -64,42 +61,40 @@
         <actionGroup ref="SaveImageActionGroup" stepKey="insertImage"/>
         <click selector="{{AdminDesignConfigSection.saveConfiguration}}" stepKey="saveConfiguration"/>
         <waitForElementVisible selector="{{AdminDesignConfigSection.successNotification}}" stepKey="waitForSuccessNotification"/>
-        <waitForPageLoad stepKey="waitForPageloadSuccess"/>
+        <waitForPageLoad stepKey="waitForPageLoadSuccess"/>
         <!--Clear Cache-->
-        <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache1">
+        <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCacheAfterFirstImageUpload">
             <argument name="tags" value=""/>
         </actionGroup>
         <!--Navigate to Store front home page-->
-        <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToHomePage1"/>
-        <waitForPageLoad stepKey="waitToLoadHomePage3"/>
+        <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToHomePage"/>
+        <waitForPageLoad stepKey="waitToLoadHomePage"/>
         <!--assert to check first uploaded image name-->
-        <seeElementInDOM selector="{{StorefrontHeaderSection.logoImage(ImageUpload3.fileName)}}" stepKey="assertMediaSource1"/>
+        <seeElementInDOM selector="{{StorefrontHeaderSection.logoImage(ImageUpload3.fileName)}}" stepKey="assertMediaSource"/>
         <!-- Enable Single Store Mode -->
         <magentoCLI command="config:set general/single_store_mode/enabled 1" stepKey="enabledSingleStoreMode"/>
         <!--Clear Cache-->
-        <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache2">
+        <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCacheAfterSingleStoreModeEnabled">
             <argument name="tags" value=""/>
         </actionGroup>
         <!--Edit Store View for Second Image-->
-        <comment userInput="Edit Store View for Image2" stepKey="editStoreViewCommentForImage2"/>
-        <amOnPage url="{{DesignConfigPage.url}}" stepKey="navigateToDesignConfigPageForImage2" />
-        <waitForPageLoad stepKey="waitForPageload1ForImage2"/>
-        <click selector="{{AdminDesignConfigSection.scopeRow('1')}}" stepKey="editStoreViewForImage2"/>
-        <waitForPageLoad stepKey="waitForPageload2ForImage2"/>
-        <scrollTo selector="{{AdminDesignConfigSection.headerSection}}" stepKey="scrollToHtmlHeadSectionForImage2"/>
-        <click selector="{{AdminDesignConfigSection.headerSection}}" stepKey="openHtmlHeadSectionForImage2"/>
+        <amOnPage url="{{DesignConfigPage.url}}" stepKey="navigateToDesignConfigPageForSecondImage"/>
+        <waitForPageLoad stepKey="waitForConfigPageLoad"/>
+        <click selector="{{AdminDesignConfigSection.scopeRow('1')}}" stepKey="editStoreViewForSecondImage"/>
+        <waitForPageLoad stepKey="waitForPageLoadPostSelectingScopeRow"/>
+        <scrollTo selector="{{AdminDesignConfigSection.headerSection}}" stepKey="scrollToHtmlHeadSectionForSecondImageUpload"/>
+        <click selector="{{AdminDesignConfigSection.headerSection}}" stepKey="openHtmlHeadSectionForSecondImageUpload"/>
         <!-- Upload second Image-->
-        <comment userInput="Upload Second Image" stepKey="uploadSecondImageComment"/>
         <click selector="{{AdminDesignConfigSection.selectFromGalleryByFieldsetName('Head')}}" stepKey="openMediaGalleryForSecondImage"/>
         <actionGroup ref="VerifyMediaGalleryStorageActionsActionGroup" stepKey="verifyMediaGalleryStorageBtnForSecondImage"/>
-        <comment userInput="BIC workaround" stepKey="navigateToFolderForSecondImage"/>
+        <!--Navigate to Created Folder to Store Second Image-->
         <actionGroup ref="AdminExpandMediaGalleryFolderActionGroup" stepKey="expandStorageRootFolderForSecondImage">
             <argument name="FolderName" value="Storage Root"/>
         </actionGroup>
-        <actionGroup ref="NavigateToMediaFolderActionGroup" stepKey="navigateToWysiwygFolderForSecondIamge">
+        <actionGroup ref="NavigateToMediaFolderActionGroup" stepKey="navigateToWysiwygFolderForSecondImage">
             <argument name="FolderName" value="wysiwyg"/>
         </actionGroup>
-        <actionGroup ref="NavigateToMediaFolderActionGroup" stepKey="selectTheCreatedFolderForSecondIamge">
+        <actionGroup ref="NavigateToMediaFolderActionGroup" stepKey="selectTheCreatedFolderForSecondImage">
             <argument name="FolderName" value="{{ImageFolder.name}}"/>
         </actionGroup>
         <actionGroup ref="AttachImageActionGroup" stepKey="selectSecondImageFromMediaStorage">
@@ -108,46 +103,43 @@
         <actionGroup ref="SaveImageActionGroup" stepKey="insertSecondImage"/>
         <click selector="{{AdminDesignConfigSection.saveConfiguration}}" stepKey="saveConfigurationForSecondImage"/>
         <waitForElementVisible selector="{{AdminDesignConfigSection.successNotification}}" stepKey="waitForSuccessNotificationForSecondImage"/>
-        <waitForPageLoad stepKey="waitForPageloadSuccessForSecondImage"/>
+        <waitForPageLoad stepKey="waitForPageLoadSuccessForSecondImage"/>
         <!--Clear Cache-->
-        <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache3">
+        <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCacheAfterSecondImageUpload">
             <argument name="tags" value=""/>
         </actionGroup>
         <!--Navigate to Store front home page-->
-        <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToHomePage"/>
-        <waitForPageLoad stepKey="waitToLoadHomePage2"/>
+        <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToStoreFrontHomePage"/>
+        <waitForPageLoad stepKey="waitToLoadStoreFrontHomePage"/>
         <!--assert to check second uploaded image name-->
-        <seeElementInDOM selector="{{StorefrontHeaderSection.logoImage(ImageUpload.fileName)}}" stepKey="assertMediaSource3"/>
+        <seeElementInDOM selector="{{StorefrontHeaderSection.logoImage(ImageUpload.fileName)}}" stepKey="assertUploadedImage"/>
         <!--Navigate to Store View to delete uploaded logo-->
-        <comment userInput="Edit Store View" stepKey="editStoreViewComment2"/>
-        <amOnPage url="{{DesignConfigPage.url}}" stepKey="navigateToDesignConfigPageToDeleteUploadedLogo" />
-        <waitForPageLoad stepKey="waitForDesignConfigPageload"/>
-        <click selector="{{AdminDesignConfigSection.scopeRow('1')}}" stepKey="editStoreView2"/>
-        <waitForPageLoad stepKey="waitForPageload3"/>
-        <scrollTo selector="{{AdminDesignConfigSection.headerSection}}" stepKey="scrollToHtmlHeadSection2"/>
-        <click selector="{{AdminDesignConfigSection.headerSection}}" stepKey="openHtmlHeadSection2"/>
+        <amOnPage url="{{DesignConfigPage.url}}" stepKey="navigateToDesignConfigPageToDeleteUploadedLogo"/>
+        <waitForPageLoad stepKey="waitForNavigateDesignConfigPageLoad"/>
+        <click selector="{{AdminDesignConfigSection.scopeRow('1')}}" stepKey="editStoreViewForScopeRow"/>
+        <waitForPageLoad stepKey="waitForPageLoadAfterSelectingScopeRow"/>
+        <scrollTo selector="{{AdminDesignConfigSection.headerSection}}" stepKey="scrollToHtmlHeadSectionToDeleteImage"/>
+        <click selector="{{AdminDesignConfigSection.headerSection}}" stepKey="openHtmlHeadSectionToDeleteImage"/>
         <!--Delete uploaded Image From Header-->
-        <comment userInput="Delete Uploaded Image" stepKey="DeleteUploadedImageComment"/>
-        <click selector="{{AdminDesignConfigSection.deleteheaderSectionImage}}" stepKey="clickUseDefault"/>
-        <waitForElementVisible selector="{{AdminDesignConfigSection.saveConfiguration}}" stepKey="waitForWrapperToClose2"/>
-        <click selector="{{AdminDesignConfigSection.saveConfiguration}}" stepKey="saveConfiguration2"/>
-        <waitForElementVisible selector="{{AdminDesignConfigSection.successNotification}}" stepKey="waitForSuccessNotification2"/>
-        <waitForPageLoad stepKey="waitForPageloadSuccess2"/>
+        <click selector="{{AdminDesignConfigSection.deleteHeaderSectionImage}}" stepKey="clickUseDefault"/>
+        <waitForElementVisible selector="{{AdminDesignConfigSection.saveConfiguration}}" stepKey="waitForSaveConfiguration"/>
+        <click selector="{{AdminDesignConfigSection.saveConfiguration}}" stepKey="saveConfigSectionConfiguration"/>
+        <waitForElementVisible selector="{{AdminDesignConfigSection.successNotification}}" stepKey="waitForConfigSectionSuccessNotification"/>
+        <waitForPageLoad stepKey="waitForSuccessNotificationPageLoad"/>
         <!--Clear Cache-->
-        <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache4">
+        <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCacheAfterDeleteImage">
             <argument name="tags" value=""/>
         </actionGroup>
-        <!--Delete ImageFolder -->
-        <comment userInput="Delete Image" stepKey="deleteImageComment"/>
+        <!--Code Section To Delete ImageFolder-->
         <actionGroup ref="NavigateToMediaGalleryActionGroup" stepKey="navigateToMediaGallery"/>
-        <comment userInput="BIC workaround" stepKey="navigateToFolder2"/>
+        <!--Expand Media Gallery Folder-->
         <actionGroup ref="AdminExpandMediaGalleryFolderActionGroup" stepKey="expandStorageRootFolder2">
             <argument name="FolderName" value="Storage Root"/>
         </actionGroup>
         <actionGroup ref="AdminExpandMediaGalleryFolderActionGroup" stepKey="expandWysiwygFolder">
             <argument name="FolderName" value="wysiwyg"/>
         </actionGroup>
-        <comment userInput="BIC workaround" stepKey="deleteImageFromStorage"/>
+        <!--Delete Folder From Media Gallery-->
         <actionGroup ref="DeleteFolderActionGroup" stepKey="DeleteFolderFromMediaGallery">
             <argument name="Image" value="{{ImageFolder.name}}"/>
         </actionGroup>
