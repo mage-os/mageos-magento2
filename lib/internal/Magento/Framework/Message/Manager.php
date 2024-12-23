@@ -63,7 +63,6 @@ class Manager implements ManagerInterface
      * @var ExceptionMessageFactoryInterface
      */
     private $exceptionMessageFactory;
-
     /**
      * @param Session $session
      * @param Factory $messageFactory
