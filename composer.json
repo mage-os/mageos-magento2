@@ -84,6 +84,10 @@
         {
             "type": "vcs",
             "url": "git@github.com:magento-commerce/magento-opensearch-php.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:glo17680/PHPoAuthLib.git"
         }
     ],
     "require": {
@@ -170,7 +174,7 @@
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7 || ^1.0",
         "dg/bypass-finals": "^1.4",
         "friendsofphp/php-cs-fixer": "^3.22",
-        "lusitanian/oauth": "^0.8",
+        "lusitanian/oauth": "dev-php84_deprication_fix",
         "magento/magento-coding-standard": "*",
         "magento/magento2-functional-testing-framework": "dev-AC-13306",
         "pdepend/pdepend": "^2.10",

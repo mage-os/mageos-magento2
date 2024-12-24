@@ -28,7 +28,7 @@ class CurlClient extends \OAuth\Common\Http\Client\CurlClient
     /**
      * @inheritdoc
      */
-    public function normalizeHeaders(&$headers)
+    public function normalizeHeaders($headers): array
     {
         array_walk(
             $headers,
