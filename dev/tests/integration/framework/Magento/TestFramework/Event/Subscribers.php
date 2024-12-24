@@ -21,6 +21,7 @@ class Subscribers implements Runner\Extension\Extension
      * @param TextUI\Configuration\Configuration $configuration
      * @param Runner\Extension\Facade $facade
      * @param Runner\Extension\ParameterCollection $parameters
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function bootstrap(
         TextUI\Configuration\Configuration $configuration,
