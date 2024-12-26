@@ -79,14 +79,6 @@
         },
         {
             "type": "vcs",
-            "url": "git@github.com:magento-commerce/magento-elasticsearch-php.git"
-        },
-        {
-            "type": "vcs",
-            "url": "git@github.com:magento-commerce/magento-opensearch-php.git"
-        },
-        {
-            "type": "vcs",
             "url": "git@github.com:glo17680/PHPoAuthLib.git"
         }
     ],
@@ -115,7 +107,7 @@
         "colinmollenhour/credis": "^1.15",
         "colinmollenhour/php-redis-session-abstract": "^2.0",
         "composer/composer": "^2.0, !=2.2.16",
-        "magento/elasticsearch": "dev-develop",
+        "elasticsearch/elasticsearch": "^7.17",
         "ezyang/htmlpurifier": "^4.17",
         "guzzlehttp/guzzle": "^7.5",
         "magento/laminas-captcha": "dev-develop",
@@ -149,7 +141,7 @@
         "magento/zend-db": "^1.16",
         "magento/zend-pdf": "^1.16",
         "monolog/monolog": "^3.6",
-        "magento/opensearch-php": "dev-develop",
+        "opensearch-project/opensearch-php": "^2.3",
         "pelago/emogrifier": "^7.0",
         "php-amqplib/php-amqplib": "^3.2",
         "phpseclib/mcrypt_compat": "^2.0",

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a1f0eb603f1d632a75de386410fed017",
+    "content-hash": "df2280f20b78cc6a23d7508b8edcb22f",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.336.2",
+            "version": "3.336.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "954bfdfc048840ca34afe2a2e1cbcff6681989c4"
+                "reference": "b863c7953ebeeae191c3835bb5413f872cfbb753"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/954bfdfc048840ca34afe2a2e1cbcff6681989c4",
-                "reference": "954bfdfc048840ca34afe2a2e1cbcff6681989c4",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/b863c7953ebeeae191c3835bb5413f872cfbb753",
+                "reference": "b863c7953ebeeae191c3835bb5413f872cfbb753",
                 "shasum": ""
             },
             "require": {
@@ -154,9 +154,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.336.2"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.336.3"
             },
-            "time": "2024-12-20T19:05:10+00:00"
+            "time": "2024-12-23T19:13:29+00:00"
         },
         {
             "name": "behat/gherkin",
@@ -1356,6 +1356,73 @@
                 }
             ],
             "time": "2024-05-06T16:37:16+00:00"
+        },
+        {
+            "name": "elasticsearch/elasticsearch",
+            "version": "v7.17.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/elastic/elasticsearch-php.git",
+                "reference": "2d302233f2bb0926812d82823bb820d405e130fc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/elastic/elasticsearch-php/zipball/2d302233f2bb0926812d82823bb820d405e130fc",
+                "reference": "2d302233f2bb0926812d82823bb820d405e130fc",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": ">=1.3.7",
+                "ezimuel/ringphp": "^1.1.2",
+                "php": "^7.3 || ^8.0",
+                "psr/log": "^1|^2|^3"
+            },
+            "require-dev": {
+                "ext-yaml": "*",
+                "ext-zip": "*",
+                "mockery/mockery": "^1.2",
+                "phpstan/phpstan": "^1.10",
+                "phpunit/phpunit": "^9.3",
+                "squizlabs/php_codesniffer": "^3.4",
+                "symfony/finder": "~4.0"
+            },
+            "suggest": {
+                "ext-curl": "*",
+                "monolog/monolog": "Allows for client-level logging and tracing"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/autoload.php"
+                ],
+                "psr-4": {
+                    "Elasticsearch\\": "src/Elasticsearch/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0",
+                "LGPL-2.1-only"
+            ],
+            "authors": [
+                {
+                    "name": "Zachary Tong"
+                },
+                {
+                    "name": "Enrico Zimuel"
+                }
+            ],
+            "description": "PHP Client for Elasticsearch",
+            "keywords": [
+                "client",
+                "elasticsearch",
+                "search"
+            ],
+            "support": {
+                "issues": "https://github.com/elastic/elasticsearch-php/issues",
+                "source": "https://github.com/elastic/elasticsearch-php/tree/v7.17.2"
+            },
+            "time": "2023-04-21T15:31:12+00:00"
         },
         {
             "name": "ezimuel/guzzlestreams",
@@ -4021,92 +4088,6 @@
             "time": "2024-12-18T09:52:06+00:00"
         },
         {
-            "name": "magento/elasticsearch",
-            "version": "dev-develop",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:magento-commerce/magento-elasticsearch-php.git",
-                "reference": "7260a97036705ca7842f5bff280b7c3f19659597"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/magento-commerce/magento-elasticsearch-php/zipball/7260a97036705ca7842f5bff280b7c3f19659597",
-                "reference": "7260a97036705ca7842f5bff280b7c3f19659597",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": ">=1.3.7",
-                "magento/ringphp": "dev-develop",
-                "php": "^7.3 || ^8.0",
-                "psr/log": "^1|^2|^3"
-            },
-            "replace": {
-                "elasticsearch/elasticsearch": "^7.17"
-            },
-            "require-dev": {
-                "ext-yaml": "*",
-                "ext-zip": "*",
-                "mockery/mockery": "^1.2",
-                "phpstan/phpstan": "^1.10",
-                "phpunit/phpunit": "^9.3",
-                "squizlabs/php_codesniffer": "^3.4",
-                "symfony/finder": "~4.0"
-            },
-            "suggest": {
-                "ext-curl": "*",
-                "monolog/monolog": "Allows for client-level logging and tracing"
-            },
-            "default-branch": true,
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "src/autoload.php"
-                ],
-                "psr-4": {
-                    "Elasticsearch\\": "src/Elasticsearch/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "Elasticsearch\\Tests\\": "tests/Elasticsearch/Tests/",
-                    "Elasticsearch\\IntegrationTests\\": "tests/Elasticsearch/IntegrationTests/",
-                    "Elasticsearch\\Util\\": "util/"
-                }
-            },
-            "scripts": {
-                "phpcs": [
-                    "phpcs --standard=ruleset.xml --extensions=php --encoding=utf-8 --tab-width=4 -sp src --ignore=src/Elasticsearch/Endpoints",
-                    "phpcs --standard=ruleset.xml --extensions=php --encoding=utf-8 --tab-width=4 -sp tests --ignore=tests/Elasticsearch/Tests/Yaml"
-                ],
-                "phpstan": [
-                    "phpstan analyse src --level 2 --no-progress"
-                ]
-            },
-            "license": [
-                "Apache-2.0",
-                "LGPL-2.1-only"
-            ],
-            "authors": [
-                {
-                    "name": "Zachary Tong"
-                },
-                {
-                    "name": "Enrico Zimuel"
-                }
-            ],
-            "description": "PHP Client for Elasticsearch",
-            "keywords": [
-                "client",
-                "elasticsearch",
-                "search"
-            ],
-            "support": {
-                "source": "https://github.com/magento-commerce/magento-elasticsearch-php/tree/develop",
-                "issues": "https://github.com/magento-commerce/magento-elasticsearch-php/issues"
-            },
-            "time": "2024-12-23T07:49:46+00:00"
-        },
-        {
             "name": "magento/laminas-captcha",
             "version": "dev-develop",
             "source": {
@@ -4969,115 +4950,6 @@
             "time": "2024-12-23T06:48:59+00:00"
         },
         {
-            "name": "magento/opensearch-php",
-            "version": "dev-develop",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:magento-commerce/magento-opensearch-php.git",
-                "reference": "549ca7d26a15c17ca87c8733d840a757cdfa87e5"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/magento-commerce/magento-opensearch-php/zipball/549ca7d26a15c17ca87c8733d840a757cdfa87e5",
-                "reference": "549ca7d26a15c17ca87c8733d840a757cdfa87e5",
-                "shasum": ""
-            },
-            "require": {
-                "ext-curl": "*",
-                "ext-json": ">=1.3.7",
-                "magento/ringphp": "dev-develop",
-                "php": "^8.0",
-                "psr/log": "^1|^2|^3",
-                "symfony/yaml": "*"
-            },
-            "replace": {
-                "opensearch-project/opensearch-php": "^2.3"
-            },
-            "require-dev": {
-                "aws/aws-sdk-php": "^3.0",
-                "ext-zip": "*",
-                "friendsofphp/php-cs-fixer": "^3.0",
-                "mockery/mockery": "^1.2",
-                "phpstan/phpstan": "^1.7.15",
-                "phpstan/phpstan-mockery": "^1.1.0",
-                "phpunit/phpunit": "^9.3",
-                "symfony/finder": "~4.0 || ~5.0"
-            },
-            "suggest": {
-                "aws/aws-sdk-php": "Required (^3.0.0) in order to use the SigV4 handler",
-                "monolog/monolog": "Allows for client-level logging and tracing"
-            },
-            "default-branch": true,
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "OpenSearch\\": "src/OpenSearch/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "OpenSearch\\Tests\\": "tests/",
-                    "OpenSearch\\Util\\": "util/"
-                }
-            },
-            "scripts": {
-                "php-cs": [
-                    "php-cs-fixer fix"
-                ],
-                "phpstan": [
-                    "phpstan analyse --no-progress"
-                ],
-                "unit": [
-                    "phpunit --exclude-group Integration"
-                ],
-                "integration": [
-                    "phpunit --group Integration"
-                ],
-                "integration-min": [
-                    "phpunit --group Integration-Min"
-                ],
-                "phpunit": [
-                    "phpunit"
-                ],
-                "apigen": [
-                    "rm -f apigen",
-                    "curl -L https://github.com/ApiGen/ApiGen/releases/download/v7.0.0-alpha.4/apigen.phar -o apigen",
-                    "chmod +x apigen",
-                    "./apigen src --output docs",
-                    "rm -f apigen"
-                ],
-                "generate-api": [
-                    "php util/GenerateEndpoints.php",
-                    "composer run php-cs",
-                    "php util/changelog_updater.php"
-                ]
-            },
-            "license": [
-                "Apache-2.0",
-                "LGPL-2.1-only"
-            ],
-            "authors": [
-                {
-                    "name": "Elastic"
-                },
-                {
-                    "name": "OpenSearch Contributors"
-                }
-            ],
-            "description": "PHP Client for OpenSearch",
-            "keywords": [
-                "client",
-                "elasticsearch",
-                "opensearch",
-                "search"
-            ],
-            "support": {
-                "source": "https://github.com/magento-commerce/magento-opensearch-php/tree/develop",
-                "issues": "https://github.com/magento-commerce/magento-opensearch-php/issues"
-            },
-            "time": "2024-12-23T07:49:20+00:00"
-        },
-        {
             "name": "magento/recaptcha",
             "version": "dev-develop",
             "source": {
@@ -5223,12 +5095,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:magento-commerce/magento-stock-api-libphp.git",
-                "reference": "7dae11993e11a4e00dbd5f4e390d0278af3868f4"
+                "reference": "855dfade371496d39d4f0da40c259ff1e83d12e5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-commerce/magento-stock-api-libphp/zipball/7dae11993e11a4e00dbd5f4e390d0278af3868f4",
-                "reference": "7dae11993e11a4e00dbd5f4e390d0278af3868f4",
+                "url": "https://api.github.com/repos/magento-commerce/magento-stock-api-libphp/zipball/855dfade371496d39d4f0da40c259ff1e83d12e5",
+                "reference": "855dfade371496d39d4f0da40c259ff1e83d12e5",
                 "shasum": ""
             },
             "require": {
@@ -5278,7 +5150,7 @@
                 "source": "https://github.com/magento-commerce/magento-stock-api-libphp/tree/develop",
                 "issues": "https://github.com/magento-commerce/magento-stock-api-libphp/issues"
             },
-            "time": "2024-12-23T07:01:50+00:00"
+            "time": "2024-12-23T09:57:41+00:00"
         },
         {
             "name": "magento/zend-cache",
@@ -5931,6 +5803,74 @@
                 "source": "https://github.com/nikic/PHP-Parser/tree/v5.3.1"
             },
             "time": "2024-10-08T18:51:32+00:00"
+        },
+        {
+            "name": "opensearch-project/opensearch-php",
+            "version": "2.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/opensearch-project/opensearch-php.git",
+                "reference": "1866e6ee95c15036038d6c95a5c54c6fe648de36"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/opensearch-project/opensearch-php/zipball/1866e6ee95c15036038d6c95a5c54c6fe648de36",
+                "reference": "1866e6ee95c15036038d6c95a5c54c6fe648de36",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": ">=1.3.7",
+                "ezimuel/ringphp": "^1.2.2",
+                "php": "^7.3 || ^8.0",
+                "psr/log": "^1|^2|^3",
+                "symfony/yaml": "*"
+            },
+            "require-dev": {
+                "aws/aws-sdk-php": "^3.0",
+                "ext-zip": "*",
+                "friendsofphp/php-cs-fixer": "^3.0",
+                "mockery/mockery": "^1.2",
+                "phpstan/phpstan": "^1.7.15",
+                "phpstan/phpstan-mockery": "^1.1.0",
+                "phpunit/phpunit": "^9.3",
+                "symfony/finder": "~4.0 || ~5.0"
+            },
+            "suggest": {
+                "aws/aws-sdk-php": "Required (^3.0.0) in order to use the SigV4 handler",
+                "monolog/monolog": "Allows for client-level logging and tracing"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "OpenSearch\\": "src/OpenSearch/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0",
+                "LGPL-2.1-only"
+            ],
+            "authors": [
+                {
+                    "name": "Elastic"
+                },
+                {
+                    "name": "OpenSearch Contributors"
+                }
+            ],
+            "description": "PHP Client for OpenSearch",
+            "keywords": [
+                "client",
+                "elasticsearch",
+                "opensearch",
+                "search"
+            ],
+            "support": {
+                "issues": "https://github.com/opensearch-project/opensearch-php/issues",
+                "source": "https://github.com/opensearch-project/opensearch-php/tree/2.3.1"
+            },
+            "time": "2024-08-27T10:13:25+00:00"
         },
         {
             "name": "paragonie/constant_time_encoding",
@@ -15002,7 +14942,6 @@
         "lusitanian/oauth": 20,
         "magento/allure-phpunit": 20,
         "magento/composer": 20,
-        "magento/elasticsearch": 20,
         "magento/laminas-captcha": 20,
         "magento/laminas-db": 20,
         "magento/laminas-di": 20,
@@ -15012,7 +14951,6 @@
         "magento/laminas-oauth": 20,
         "magento/magento2-functional-testing-framework": 20,
         "magento/module-sequence": 20,
-        "magento/opensearch-php": 20,
         "magento/recaptcha": 20,
         "magento/ringphp": 20,
         "magento/stock-api-libphp": 20
@@ -15025,6 +14963,7 @@
         "ext-ctype": "*",
         "ext-curl": "*",
         "ext-dom": "*",
+        "ext-ftp": "*",
         "ext-gd": "*",
         "ext-hash": "*",
         "ext-iconv": "*",
