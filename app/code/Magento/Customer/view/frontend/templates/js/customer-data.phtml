@@ -1,12 +1,15 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 use Magento\Customer\ViewModel\Customer\Data;
 use Magento\Customer\ViewModel\CookieSettings;
 
-/** @var \Magento\Customer\Block\CustomerData $block */
+/**
+ * @var \Magento\Customer\Block\CustomerData $block
+ * @var \Magento\Framework\Escaper $escaper
+ */
 
 // phpcs:disable Magento2.Templates.ThisInTemplate.FoundHelper
 /** @var Auth $auth */
@@ -22,14 +25,14 @@ $cookieSettings = $block->getCookieSettings();
     {
         "*": {
             "Magento_Customer/js/customer-data": {
-                "sectionLoadUrl": "<?= $block->escapeJs($block->getCustomerDataUrl('customer/section/load')) ?>",
+                "sectionLoadUrl": "<?= $escaper->escapeJs($block->getCustomerDataUrl('customer/section/load')) ?>",
                 "expirableSectionLifetime": <?= (int)$block->getExpirableSectionLifetime() ?>,
                 "expirableSectionNames": <?= /* @noEscape */ $jsonSerializer->serialize(
                     $expirableSectionNames
                 ) ?>,
-                "cookieLifeTime": "<?= $block->escapeJs($block->getCookieLifeTime()) ?>",
-                "cookieDomain": "<?= $block->escapeJs($cookieSettings->getCookieDomain()) ?>",
-                "updateSessionUrl": "<?= $block->escapeJs($customerDataUrl) ?>",
+                "cookieLifeTime": "<?= $escaper->escapeJs($block->getCookieLifeTime()) ?>",
+                "cookieDomain": "<?= $escaper->escapeJs($cookieSettings->getCookieDomain()) ?>",
+                "updateSessionUrl": "<?= $escaper->escapeJs($customerDataUrl) ?>",
                 "isLoggedIn": "<?= /* @noEscape */ $auth->isLoggedIn() ?>"
             }
         }
