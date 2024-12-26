@@ -69,6 +69,20 @@ class CustomerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Export with Multi Websites "Customer Main File".
+     *
+     * @magentoDataFixture Magento/Customer/_files/import_export/customers_with_websites.php
+     * @return void
+     */
+    public function testExportWithMultiWebsites(): void
+    {
+        $this->processCustomerAttribute();
+        $expectedAttributes = $this->getExpectedAttributes();
+        $lines = $this->export($expectedAttributes);
+        $this->checkExportData($lines, $expectedAttributes);
+    }
+
+    /**
      * Export "Customer Main File".
      *
      * @magentoDataFixture Magento/Customer/_files/import_export/customers.php
@@ -82,19 +96,7 @@ class CustomerTest extends \PHPUnit\Framework\TestCase
         $this->checkExportData($lines, $expectedAttributes);
     }
 
-    /**
-     * Export with Multi Websites "Customer Main File".
-     *
-     * @magentoDataFixture Magento/Customer/_files/import_export/customers_with_websites.php
-     * @return void
-     */
-    public function testExportWithMultiWebsites(): void
-    {
-        $this->processCustomerAttribute();
-        $expectedAttributes = $this->getExpectedAttributes();
-        $lines = $this->export($expectedAttributes);
-        $this->checkExportData($lines, $expectedAttributes);
-    }
+
 
     /**
      * Return attributes which should be exported.
