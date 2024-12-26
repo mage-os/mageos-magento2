@@ -15,8 +15,6 @@
             <description value="Creating Multi shipping checkout with multiple address and verify order in admin for multiple shipping methods"/>
             <severity value="MAJOR"/>
             <testCaseId value="AC-4736"/>
-            <group value="pr_exclude"/>
-            <group value="3rd_party_integration"/>
         </annotations>
         <before>
             <createData entity="SimpleSubCategory" stepKey="category"/>
