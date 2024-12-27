@@ -1,17 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2011 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Ajax;
 
 use Magento\Framework\View\Element\Template;
 
-/**
- * Class Serializer
- * @package Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Ajax
- * @deprecated 102.0.0
- */
 class Serializer extends \Magento\Framework\View\Element\Template
 {
     /**

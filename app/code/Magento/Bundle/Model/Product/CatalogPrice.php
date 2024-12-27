@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Bundle\Model\Product;
 
@@ -41,7 +41,7 @@ class CatalogPrice implements \Magento\Catalog\Model\Product\CatalogPriceInterfa
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getCatalogPrice(
         \Magento\Catalog\Model\Product $product,

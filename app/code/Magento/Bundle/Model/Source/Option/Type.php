@@ -1,9 +1,7 @@
 <?php
 /**
- * Bundle Option Type Source Model
- *
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2011 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Bundle\Model\Source\Option;
@@ -11,10 +9,6 @@ namespace Magento\Bundle\Model\Source\Option;
 use Magento\Framework\Api\AttributeValueFactory;
 use Magento\Framework\Api\ExtensionAttributesFactory;
 
-/**
- * Class Type
- *
- */
 class Type extends \Magento\Framework\Model\AbstractExtensibleModel implements
     \Magento\Framework\Option\ArrayInterface,
     \Magento\Bundle\Api\Data\OptionTypeInterface
@@ -22,11 +16,13 @@ class Type extends \Magento\Framework\Model\AbstractExtensibleModel implements
     /**#@+
      * Constants
      */
-    const KEY_LABEL = 'label';
-    const KEY_CODE = 'code';
+    public const KEY_LABEL = 'label';
+    public const KEY_CODE = 'code';
     /**#@-*/
 
-    /**#@-*/
+    /**
+     * @var array
+     */
     protected $options = [];
 
     /**
@@ -78,7 +74,7 @@ class Type extends \Magento\Framework\Model\AbstractExtensibleModel implements
     //@codeCoverageIgnoreStart
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getLabel()
     {
@@ -86,7 +82,7 @@ class Type extends \Magento\Framework\Model\AbstractExtensibleModel implements
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getCode()
     {
@@ -116,7 +112,7 @@ class Type extends \Magento\Framework\Model\AbstractExtensibleModel implements
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      *
      * @return \Magento\Bundle\Api\Data\OptionTypeExtensionInterface|null
      */
@@ -126,7 +122,7 @@ class Type extends \Magento\Framework\Model\AbstractExtensibleModel implements
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      *
      * @param \Magento\Bundle\Api\Data\OptionTypeExtensionInterface $extensionAttributes
      * @return $this

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -32,7 +32,7 @@ use Magento\Framework\View\Result\PageFactory;
  */
 class Validate extends AttributeAction implements HttpGetActionInterface, HttpPostActionInterface
 {
-    const DEFAULT_MESSAGE_KEY = 'message';
+    private const DEFAULT_MESSAGE_KEY = 'message';
     private const RESERVED_ATTRIBUTE_CODES = ['product_type', 'type_id'];
 
     /**

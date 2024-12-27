@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2013 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Backend\Helper\Dashboard;
 
@@ -44,6 +44,8 @@ class Order extends AbstractDashboard
     }
 
     /**
+     * Initialize Collection
+     *
      * @return void
      *
      * @throws \Magento\Framework\Exception\LocalizedException

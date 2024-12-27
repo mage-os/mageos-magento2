@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Catalog\Controller\Adminhtml\Product\Action\Attribute;
 
@@ -10,9 +10,6 @@ use Magento\Framework\App\Action\HttpPostActionInterface as HttpPostActionInterf
 use Magento\Catalog\Controller\Adminhtml\Product\Action\Attribute as AttributeAction;
 use Magento\Framework\App\ObjectManager;
 
-/**
- * Class Validate
- */
 class Validate extends AttributeAction implements HttpGetActionInterface, HttpPostActionInterface
 {
     /**

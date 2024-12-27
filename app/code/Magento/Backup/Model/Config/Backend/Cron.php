@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2011 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Backup\Model\Config\Backend;
 
@@ -12,15 +12,15 @@ namespace Magento\Backup\Model\Config\Backend;
  */
 class Cron extends \Magento\Framework\App\Config\Value
 {
-    const CRON_STRING_PATH = 'crontab/default/jobs/system_backup/schedule/cron_expr';
+    public const CRON_STRING_PATH = 'crontab/default/jobs/system_backup/schedule/cron_expr';
 
-    const CRON_MODEL_PATH = 'crontab/default/jobs/system_backup/run/model';
+    public const CRON_MODEL_PATH = 'crontab/default/jobs/system_backup/run/model';
 
-    const XML_PATH_BACKUP_ENABLED = 'groups/backup/fields/enabled/value';
+    public const XML_PATH_BACKUP_ENABLED = 'groups/backup/fields/enabled/value';
 
-    const XML_PATH_BACKUP_TIME = 'groups/backup/fields/time/value';
+    public const XML_PATH_BACKUP_TIME = 'groups/backup/fields/time/value';
 
-    const XML_PATH_BACKUP_FREQUENCY = 'groups/backup/fields/frequency/value';
+    public const XML_PATH_BACKUP_FREQUENCY = 'groups/backup/fields/frequency/value';
 
     /**
      * @var \Magento\Framework\App\Config\ValueFactory
