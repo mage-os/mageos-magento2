@@ -38,8 +38,9 @@
         </after>
         <amOnPage url="{{DesignConfigPage.url}}" stepKey="navigateToDesignConfigPage" />
         <waitForPageLoad stepKey="waitForDesignConfigPageLoad"/>
+        <waitForElementClickable selector="{{AdminDesignConfigSection.scopeRow('3')}}" stepKey="waitForScopeRowClickable"/>
         <click selector="{{AdminDesignConfigSection.scopeRow('3')}}" stepKey="editStoreView"/>
-        <waitForPageLoad stepKey="waitForAdminDesignConfigSectionPageLoad"/>
+        <waitForElementVisible selector="{{AdminDesignConfigSection.headerSection}}" stepKey="waitForAdminDesignConfigHeaderSectionVisible"/>
         <scrollTo selector="{{AdminDesignConfigSection.headerSection}}" stepKey="scrollToHtmlHeadSection"/>
         <click selector="{{AdminDesignConfigSection.headerSection}}" stepKey="openHtmlHeadSection"/>
         <!--Upload the First Image-->
@@ -61,7 +62,6 @@
         <actionGroup ref="SaveImageActionGroup" stepKey="insertImage"/>
         <click selector="{{AdminDesignConfigSection.saveConfiguration}}" stepKey="saveConfiguration"/>
         <waitForElementVisible selector="{{AdminDesignConfigSection.successNotification}}" stepKey="waitForSuccessNotification"/>
-        <waitForPageLoad stepKey="waitForPageLoadSuccess"/>
         <!--Clear Cache-->
         <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCacheAfterFirstImageUpload">
             <argument name="tags" value=""/>
@@ -70,8 +70,8 @@
         <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToHomePage"/>
         <waitForPageLoad stepKey="waitToLoadHomePage"/>
         <!--assert to check first uploaded image name-->
-        <seeElementInDOM selector="{{StorefrontHeaderSection.logoImage(ImageUpload3.fileName)}}" stepKey="assertMediaSource"/>
-        <!-- Enable Single Store Mode -->
+        <waitForElement selector="{{StorefrontHeaderSection.logoImage(ImageUpload3.fileName)}}" stepKey="waitForLogoImageVisible"/>
+     <!-- Enable Single Store Mode -->
         <magentoCLI command="config:set general/single_store_mode/enabled 1" stepKey="enabledSingleStoreMode"/>
         <!--Clear Cache-->
         <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCacheAfterSingleStoreModeEnabled">
@@ -103,7 +103,6 @@
         <actionGroup ref="SaveImageActionGroup" stepKey="insertSecondImage"/>
         <click selector="{{AdminDesignConfigSection.saveConfiguration}}" stepKey="saveConfigurationForSecondImage"/>
         <waitForElementVisible selector="{{AdminDesignConfigSection.successNotification}}" stepKey="waitForSuccessNotificationForSecondImage"/>
-        <waitForPageLoad stepKey="waitForPageLoadSuccessForSecondImage"/>
         <!--Clear Cache-->
         <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCacheAfterSecondImageUpload">
             <argument name="tags" value=""/>
@@ -112,10 +111,10 @@
         <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToStoreFrontHomePage"/>
         <waitForPageLoad stepKey="waitToLoadStoreFrontHomePage"/>
         <!--assert to check second uploaded image name-->
-        <seeElementInDOM selector="{{StorefrontHeaderSection.logoImage(ImageUpload.fileName)}}" stepKey="assertUploadedImage"/>
+        <waitForElement selector="{{StorefrontHeaderSection.logoImage(ImageUpload.fileName)}}" stepKey="waitForSecondLogoImageVisible"/>
         <!--Navigate to Store View to delete uploaded logo-->
         <amOnPage url="{{DesignConfigPage.url}}" stepKey="navigateToDesignConfigPageToDeleteUploadedLogo"/>
-        <waitForPageLoad stepKey="waitForNavigateDesignConfigPageLoad"/>
+        <waitForElementClickable selector="{{AdminDesignConfigSection.scopeRow('1')}}" stepKey="waitForScopeRow1Clickable"/>
         <click selector="{{AdminDesignConfigSection.scopeRow('1')}}" stepKey="editStoreViewForScopeRow"/>
         <waitForPageLoad stepKey="waitForPageLoadAfterSelectingScopeRow"/>
         <scrollTo selector="{{AdminDesignConfigSection.headerSection}}" stepKey="scrollToHtmlHeadSectionToDeleteImage"/>
