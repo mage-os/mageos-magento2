@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2012 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\CustomerImportExport\Model\Export;
@@ -95,8 +95,6 @@ class CustomerTest extends \PHPUnit\Framework\TestCase
         $lines = $this->export($expectedAttributes);
         $this->checkExportData($lines, $expectedAttributes);
     }
-
-
 
     /**
      * Return attributes which should be exported.
