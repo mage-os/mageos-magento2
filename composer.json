@@ -79,7 +79,11 @@
         },
         {
             "type": "vcs",
-            "url": "git@github.com:glo17680/PHPoAuthLib.git"
+            "url": "git@github.com:magento-commerce/magento-elasticsearch-php.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:magento-commerce/magento-lusitanian-oauth.git"
         }
     ],
     "require": {
@@ -107,7 +111,7 @@
         "colinmollenhour/credis": "^1.15",
         "colinmollenhour/php-redis-session-abstract": "^2.0",
         "composer/composer": "^2.0, !=2.2.16",
-        "elasticsearch/elasticsearch": "^7.17",
+        "magento/elasticsearch": "dev-develop",
         "ezyang/htmlpurifier": "^4.17",
         "guzzlehttp/guzzle": "^7.5",
         "magento/laminas-captcha": "dev-develop",
@@ -167,7 +171,7 @@
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7 || ^1.0",
         "dg/bypass-finals": "^1.4",
         "friendsofphp/php-cs-fixer": "^3.22",
-        "lusitanian/oauth": "dev-php84_deprication_fix",
+        "magento/oauth": "dev-develop",
         "magento/magento-coding-standard": "*",
         "magento/magento2-functional-testing-framework": "dev-AC-13306",
         "pdepend/pdepend": "^2.10",
