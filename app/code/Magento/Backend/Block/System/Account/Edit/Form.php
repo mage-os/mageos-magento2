@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2011 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Backend\Block\System\Account\Edit;
 
@@ -11,11 +11,10 @@ use Magento\Framework\Locale\OptionInterface;
 /**
  * Adminhtml edit admin user account form
  *
- * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Form extends \Magento\Backend\Block\Widget\Form\Generic
 {
-    const IDENTITY_VERIFICATION_PASSWORD_FIELD = 'current_password';
+    public const IDENTITY_VERIFICATION_PASSWORD_FIELD = 'current_password';
 
     /**
      * @var \Magento\Backend\Model\Auth\Session
