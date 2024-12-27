@@ -1,6 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright 2024 Adobe
+ * All rights reserved.
  * See COPYING.txt for license details.
  */
 declare(strict_types=1);
@@ -93,6 +94,9 @@ class DeleteExpiredImagesTest extends TestCase
      */
     public function testDeleteExpiredImages($website, $isFile, $filename, $mTime, $timeout)
     {
+        if ($website!=null) {
+            $website = $website($this);
+        }
         $this->_storeManager->expects(
             $this->once()
         )->method(
@@ -139,14 +143,20 @@ class DeleteExpiredImagesTest extends TestCase
         $this->_deleteExpiredImages->execute();
     }
 
-    /**
-     * @return array
-     */
-    public function getExpiredImages()
+    protected function getMockForWebsiteClass()
     {
         $website = $this->createPartialMock(Website::class, ['__wakeup', 'getDefaultStore']);
         $store = $this->createPartialMock(Store::class, ['__wakeup']);
         $website->expects($this->any())->method('getDefaultStore')->willReturn($store);
+        return $website;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getExpiredImages()
+    {
+        $website = static fn (self $testCase) => $testCase->getMockForWebsiteClass();
         $time = time();
         return [
             [null, true, 'test.png', 50, ($time - 60) / 60, true],
