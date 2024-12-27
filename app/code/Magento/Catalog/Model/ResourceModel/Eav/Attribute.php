@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2011 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Catalog\Model\ResourceModel\Eav;
@@ -24,7 +24,6 @@ use Magento\Framework\Stdlib\DateTime\DateTimeFormatterInterface;
  * @method bool getIsUsedForPriceRules()
  * @method int setIsUsedForPriceRules(int $value)
  *
- * @author      Magento Core Team <core@magentocommerce.com>
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
