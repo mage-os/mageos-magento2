@@ -15,7 +15,7 @@
             <description value="Reorder in admin panel order placed using DHL (AP) as a shipping method"/>
             <severity value="MAJOR"/>
             <testCaseId value="AC-4802"/>
-            <!--            <group value="pr_exclude"/>-->
+            <group value="pr_exclude"/>
             <group value="3rd_party_integration"/>
         </annotations>
         <remove keyForRemoval="selectExpressWorldWide"/>
