@@ -84,6 +84,10 @@
         {
             "type": "vcs",
             "url": "git@github.com:magento-commerce/magento-lusitanian-oauth.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:emteknetnz/pki-framework.git"
         }
     ],
     "require": {
@@ -164,7 +168,8 @@
         "magento/module-sequence": "dev-develop",
         "magento/recaptcha": "dev-develop",
         "magento/stock-api-libphp": "dev-develop",
-        "magento/ringphp": "dev-develop"
+        "magento/ringphp": "dev-develop",
+        "spomky-labs/pki-framework": "dev-php84-implicit-nullable"
     },
     "require-dev": {
         "magento/allure-phpunit": "dev-develop",
