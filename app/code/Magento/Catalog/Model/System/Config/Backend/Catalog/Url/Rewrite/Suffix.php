@@ -99,6 +99,7 @@ class Suffix extends \Magento\Framework\App\Config\Value
      *
      * @return \Magento\Framework\App\Config
      * @deprecated 102.0.0
+     * @see Updated deprecation doc annotations
      */
     private function getAppConfig()
     {
@@ -122,6 +123,8 @@ class Suffix extends \Magento\Framework\App\Config\Value
     }
 
     /**
+     * After save implementation
+     *
      * @return $this
      */
     public function afterSave()
@@ -139,7 +142,8 @@ class Suffix extends \Magento\Framework\App\Config\Value
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
+     *
      * @since 102.0.0
      */
     public function afterDeleteCommit()
@@ -209,6 +213,8 @@ class Suffix extends \Magento\Framework\App\Config\Value
     }
 
     /**
+     * Get store Ids implementation
+     *
      * @return array|null
      */
     protected function getStoreIds()
@@ -227,6 +233,8 @@ class Suffix extends \Magento\Framework\App\Config\Value
     }
 
     /**
+     * Get Override StoreIds implementation
+     *
      * @param array $storeIds
      * @return array
      */

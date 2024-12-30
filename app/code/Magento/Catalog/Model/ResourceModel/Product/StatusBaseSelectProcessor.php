@@ -15,9 +15,6 @@ use Magento\Store\Api\StoreResolverInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 
-/**
- * Class StatusBaseSelectProcessor
- */
 class StatusBaseSelectProcessor implements BaseSelectProcessorInterface
 {
     /**

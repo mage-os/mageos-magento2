@@ -20,7 +20,7 @@ class ConfiguredRegularPrice extends RegularPrice implements ConfiguredPriceInte
     /**
      * Price type configured.
      */
-    const PRICE_CODE = self::CONFIGURED_REGULAR_PRICE_CODE;
+    public const PRICE_CODE = self::CONFIGURED_REGULAR_PRICE_CODE;
 
     /**
      * @var null|ItemInterface
@@ -54,6 +54,8 @@ class ConfiguredRegularPrice extends RegularPrice implements ConfiguredPriceInte
     }
 
     /**
+     * Set Item Implementation
+     *
      * @param ItemInterface $item
      * @return $this
      */

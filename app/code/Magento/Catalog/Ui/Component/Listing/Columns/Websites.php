@@ -23,15 +23,17 @@ class Websites extends \Magento\Ui\Component\Listing\Columns\Column
     /**
      * Column name
      */
-    const NAME = 'websites';
+    public const NAME = 'websites';
 
     /**
      * Data for concatenated website names value.
+     *
+     * @var string
      */
     private $websiteNames = 'website_names';
 
     /**
-     * Store manager
+     * Store manager property
      *
      * @var StoreManagerInterface
      */
@@ -68,6 +70,7 @@ class Websites extends \Magento\Ui\Component\Listing\Columns\Column
      * @inheritdoc
      *
      * @deprecated 101.0.0
+     * @see MAGETWO-71174
      */
     public function prepareDataSource(array $dataSource)
     {

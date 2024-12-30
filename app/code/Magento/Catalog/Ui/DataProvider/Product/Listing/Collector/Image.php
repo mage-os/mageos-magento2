@@ -30,7 +30,7 @@ use Magento\Framework\View\DesignLoader;
 class Image implements ProductRenderCollectorInterface
 {
     /** Key for image information access to, when render product */
-    const KEY = "images";
+    public const KEY = "images";
 
     /**
      * @var ImageFactory
@@ -55,6 +55,7 @@ class Image implements ProductRenderCollectorInterface
     /**
      * @var DesignInterface
      * @deprecated 103.0.1 DesignLoader is used for design theme loading
+     * @see 103.0.1 DesignLoader is used for design theme loading
      */
     private $design;
 

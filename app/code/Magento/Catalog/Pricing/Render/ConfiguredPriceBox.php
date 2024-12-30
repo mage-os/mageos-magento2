@@ -86,7 +86,7 @@ class ConfiguredPriceBox extends FinalPriceBox
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getPriceType($priceCode)
     {
@@ -102,6 +102,8 @@ class ConfiguredPriceBox extends FinalPriceBox
     }
 
     /**
+     * Get Configured Price
+     *
      * @return PriceInterface
      */
     public function getConfiguredPrice(): PriceInterface
@@ -117,6 +119,8 @@ class ConfiguredPriceBox extends FinalPriceBox
     }
 
     /**
+     * Get Configured Regular Price
+     *
      * @return PriceInterface
      */
     public function getConfiguredRegularPrice(): PriceInterface

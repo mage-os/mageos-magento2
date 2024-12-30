@@ -32,7 +32,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     protected $metadataPool;
 
     /**
-     * Store manager
+     * Store manager property
      *
      * @var \Magento\Store\Model\StoreManagerInterface
      */
@@ -247,6 +247,8 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     }
 
     /**
+     * Init Select implementation
+     *
      * @return void
      * @throws \Exception
      * @since 101.0.0
@@ -265,6 +267,8 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     }
 
     /**
+     * Get product options
+     *
      * @param int $productId
      * @param int $storeId
      * @param bool $requiredOnly
@@ -330,6 +334,8 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     }
 
     /**
+     * Get Join Processor
+     *
      * @return JoinProcessorInterface
      */
     private function getJoinProcessor()

@@ -68,6 +68,7 @@ class ConfiguredPrice extends FinalPrice implements ConfiguredPriceInterface
      * Get value of configured options.
      *
      * @deprecated 102.0.4 ConfiguredOptions::getItemOptionsValue is used instead
+     * @see Updated deprecation doc annotations
      * @return float
      */
     protected function getOptionsValue(): float
