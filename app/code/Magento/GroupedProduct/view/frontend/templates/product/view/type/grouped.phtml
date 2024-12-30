@@ -55,7 +55,10 @@
                                value="<?= $escaper->escapeHtmlAttr($_item->getQty() * 1) ?>"
                                title="<?= $escaper->escapeHtmlAttr(__('Qty')) ?>"
                                class="input-text qty"
-                               data-validate="<?= $escaper->escapeHtmlAttr($viewModel->getQuantityValidators($_item->getId(), $_item->getWebsiteId())) ?>"
+                               data-validate="<?= $escaper->escapeHtmlAttr($viewModel->getQuantityValidators(
+                                   $_item->getId(),
+                                   $_item->getWebsiteId()
+                               )) ?>"
                                data-no-validation-for-zero-qty="true"
                                data-errors-message-box="#validation-message-box"/>
                     </div>

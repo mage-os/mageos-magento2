@@ -53,7 +53,6 @@ class ProductViewTest extends TestCase
         $this->stockRegistry = $this->getMockBuilder(StockRegistryInterface::class)
             ->getMock();
 
-
         $this->productQuantityValidator = $objectManager->getObject(
             QuantityValidator::class,
             [
