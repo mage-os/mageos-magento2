@@ -83,6 +83,7 @@
         </actionGroup>
         <!-- Assert that table rate value is correct for US -->
         <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="goToCheckout"/>
+        <waitForElementVisible selector="{{CheckoutCartSummarySection.estimateShippingAndTax}}" stepKey="seeEstimateShippingandTax"/>
         <conditionalClick selector="{{CheckoutCartSummarySection.estimateShippingAndTax}}" dependentSelector="{{CheckoutCartSummarySection.country}}" visible="false" stepKey="expandEstimateShippingandTax" />
         <grabValueFrom selector="{{CheckoutCartSummarySection.shippingPrice}}" stepKey="grabShippingForUS"/>
         <waitForText selector="{{CheckoutCartSummarySection.shippingPrice}}" userInput="$grabShippingForUS" stepKey="seeShippingForUS1"/>
@@ -93,6 +94,7 @@
         </actionGroup>
         <!-- Assert that table rate value is correct for US -->
         <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="goAgainToCheckout"/>
+        <waitForElementVisible selector="{{CheckoutCartSummarySection.estimateShippingAndTax}}" stepKey="seeEstimateShippingandTax1"/>
         <conditionalClick selector="{{CheckoutCartSummarySection.estimateShippingAndTax}}" dependentSelector="{{CheckoutCartSummarySection.country}}" visible="false" stepKey="expandToEstimateShippingandTax1"/>
         <grabValueFrom selector="{{CheckoutCartSummarySection.shippingPrice}}" stepKey="grabShippingForUS1"/>
         <waitForText selector="{{CheckoutCartSummarySection.shippingPrice}}" userInput="$grabShippingForUS1" stepKey="seeShippingForUS"/>
@@ -108,6 +110,7 @@
         </actionGroup>
         <!-- Assert that table rate value is correct for US -->
         <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="navigateToToCheckout"/>
+        <waitForElementVisible selector="{{CheckoutCartSummarySection.estimateShippingAndTax}}" stepKey="seeEstimateShippingandTax2"/>
         <conditionalClick selector="{{CheckoutCartSummarySection.estimateShippingAndTax}}" dependentSelector="{{CheckoutCartSummarySection.country}}" visible="false" stepKey="expandEstimateShippingPrice"/>
         <grabValueFrom  selector="{{CheckoutCartSummarySection.shippingPrice}}" stepKey="grabTableratePrice1"/>
         <waitForText selector="{{CheckoutCartSummarySection.shippingPrice}}" userInput="$grabTableratePrice1" stepKey="seeShippingForUS2"/>
@@ -123,6 +126,7 @@
         </actionGroup>
         <!-- Assert that table rate value is correct for US -->
         <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="navigateAgainToToCheckout"/>
+        <waitForElementVisible selector="{{CheckoutCartSummarySection.estimateShippingAndTax}}" stepKey="seeEstimateShippingandTax3"/>
         <conditionalClick selector="{{CheckoutCartSummarySection.estimateShippingAndTax}}" dependentSelector="{{CheckoutCartSummarySection.country}}" visible="false" stepKey="expandEstimateShippingPrice1"/>
         <waitForText selector="{{CheckoutCartSummarySection.shippingPrice}}" userInput="$4.99" stepKey="seeShippingForUS3"/>
         <!-- Assert product details in Mini Cart -->
@@ -133,6 +137,7 @@
         </actionGroup>
         <!-- Assert that table rate value is correct for US -->
         <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="navigateAgainToToCheckout1"/>
+        <waitForElementVisible selector="{{CheckoutCartSummarySection.estimateShippingAndTax}}" stepKey="seeEstimateShippingandTax4"/>
         <conditionalClick selector="{{CheckoutCartSummarySection.estimateShippingAndTax}}" dependentSelector="{{CheckoutCartSummarySection.country}}" visible="false" stepKey="expandEstimateShippingPrice2"/>
         <waitForElementNotVisible selector="{{CheckoutCartSummarySection.shippingPrice}}"  stepKey="dontSeeShippingPriceForUS"/>
         <actionGroup ref="AdminOpenShippingMethodsConfigPageActionGroup" stepKey="openAgainShippingMethodConfigPage"/>
@@ -151,6 +156,7 @@
             <argument name="product" value="$$createFirstSimpleProduct$$"/>
         </actionGroup>
         <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="goAgainToCheckout3"/>
+        <waitForElementVisible selector="{{CheckoutCartSummarySection.estimateShippingAndTax}}" stepKey="seeEstimateShippingandTax5"/>
         <conditionalClick selector="{{CheckoutCartSummarySection.estimateShippingAndTax}}" dependentSelector="{{CheckoutCartSummarySection.country}}" visible="false" stepKey="expandEstimateShippingandTax1" />
         <grabValueFrom  selector="{{CheckoutCartSummarySection.shippingPrice}}" stepKey="grabAgainTableratePrice"/>
         <waitForText selector="{{CheckoutCartSummarySection.shippingPrice}}" userInput="$grabAgainTableratePrice" stepKey="seeShippingForUS5"/>
@@ -160,6 +166,7 @@
         </actionGroup>
         <!-- Assert that table rate value is correct for US -->
         <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="goAgainToCheckout2"/>
+        <waitForElementVisible selector="{{CheckoutCartSummarySection.estimateShippingAndTax}}" stepKey="seeEstimateShippingandTax6"/>
         <conditionalClick selector="{{CheckoutCartSummarySection.estimateShippingAndTax}}" dependentSelector="{{CheckoutCartSummarySection.country}}" visible="false" stepKey="expandEstimateTableRatePrice"/>
         <waitForText selector="{{CheckoutCartSummarySection.shippingPrice}}" userInput="$4.99" stepKey="seeShippingForUS4"/>
     </test>
