@@ -24,7 +24,7 @@ class AttributePersistor extends \Magento\Eav\Model\ResourceModel\AttributePersi
     private $conditionBuilder;
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function __construct(
         FormatInterface $localeFormat,
@@ -37,6 +37,8 @@ class AttributePersistor extends \Magento\Eav\Model\ResourceModel\AttributePersi
     }
 
     /**
+     * Method to get scope value
+     *
      * @param ScopeInterface $scope
      * @param AbstractAttribute $attribute
      * @param bool $useDefault
@@ -51,7 +53,7 @@ class AttributePersistor extends \Magento\Eav\Model\ResourceModel\AttributePersi
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function buildUpdateConditions(
         AbstractAttribute $attribute,
@@ -72,7 +74,7 @@ class AttributePersistor extends \Magento\Eav\Model\ResourceModel\AttributePersi
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function buildInsertConditions(
         AbstractAttribute $attribute,
@@ -92,7 +94,7 @@ class AttributePersistor extends \Magento\Eav\Model\ResourceModel\AttributePersi
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function buildDeleteConditions(
         AbstractAttribute $attribute,
@@ -113,6 +115,8 @@ class AttributePersistor extends \Magento\Eav\Model\ResourceModel\AttributePersi
     }
 
     /**
+     * Method to check whether it is website attribute
+     *
      * @param AbstractAttribute $attribute
      * @return bool
      */

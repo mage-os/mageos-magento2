@@ -85,6 +85,8 @@ class Entry extends AbstractExtensibleModel implements ProductAttributeMediaGall
     }
 
     /**
+     * Get Content
+     *
      * @return \Magento\Framework\Api\Data\ImageContentInterface|null
      */
     public function getContent()
@@ -161,7 +163,7 @@ class Entry extends AbstractExtensibleModel implements ProductAttributeMediaGall
     /**
      * Set media gallery content
      *
-     * @param $content \Magento\Framework\Api\Data\ImageContentInterface
+     * @param \Magento\Framework\Api\Data\ImageContentInterface $content
      * @return $this
      */
     public function setContent($content)
@@ -170,7 +172,7 @@ class Entry extends AbstractExtensibleModel implements ProductAttributeMediaGall
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      *
      * @return ProductAttributeMediaGalleryEntryExtensionInterface|null
      */
@@ -180,7 +182,7 @@ class Entry extends AbstractExtensibleModel implements ProductAttributeMediaGall
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      *
      * @param ProductAttributeMediaGalleryEntryExtensionInterface $extensionAttributes
      * @return $this

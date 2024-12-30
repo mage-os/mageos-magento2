@@ -23,7 +23,7 @@ class LinkedProductSelectBuilderByTierPrice implements LinkedProductSelectBuilde
      *
      * Constant represents default website id
      */
-    const DEFAULT_WEBSITE_ID = 0;
+    public const DEFAULT_WEBSITE_ID = 0;
 
     /**
      * @var \Magento\Store\Model\StoreManagerInterface

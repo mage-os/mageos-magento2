@@ -31,6 +31,8 @@ class Serializer extends \Magento\Framework\View\Element\Template
     }
 
     /**
+     * Serializer Constructor
+     *
      * @return $this
      */
     public function _construct()
@@ -41,8 +43,11 @@ class Serializer extends \Magento\Framework\View\Element\Template
     }
 
     /**
+     * Method to get Products JSON data
+     *
      * @return string
      * @deprecated 102.0.0
+     * @see Updated deprecation doc annotations
      */
     public function getProductsJSON()
     {

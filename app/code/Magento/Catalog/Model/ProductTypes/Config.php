@@ -19,6 +19,7 @@ class Config extends \Magento\Framework\Config\Data implements \Magento\Catalog\
      * @param \Magento\Framework\Config\CacheInterface $cache
      * @param string|null $cacheId
      * @param SerializerInterface|null $serializer
+     * phpcs:disable Generic.CodeAnalysis.UselessOverridingMethod.Found
      */
     public function __construct(
         \Magento\Catalog\Model\ProductTypes\Config\Reader $reader,

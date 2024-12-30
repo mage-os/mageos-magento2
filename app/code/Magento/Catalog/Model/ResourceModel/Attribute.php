@@ -15,8 +15,6 @@ use Magento\Framework\App\ObjectManager;
 class Attribute extends \Magento\Eav\Model\ResourceModel\Entity\Attribute
 {
     /**
-     * Eav config
-     *
      * @var \Magento\Eav\Model\Config
      */
     protected $_eavConfig;

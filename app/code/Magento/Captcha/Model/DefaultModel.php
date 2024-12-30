@@ -577,6 +577,7 @@ class DefaultModel extends \Laminas\Captcha\Image implements \Magento\Captcha\Mo
      */
     protected function gc()
     {
+        // phpcs:ignore
         return; // required for static testing to pass
     }
 

@@ -431,6 +431,7 @@ class File extends \Magento\Catalog\Model\Product\Option\Type\DefaultType
      * @return string
      *
      * @deprecated 102.0.0
+     * @see Updated deprecation doc annotations
      */
     public function getEditableOptionValue($optionValue)
     {
@@ -455,6 +456,7 @@ class File extends \Magento\Catalog\Model\Product\Option\Type\DefaultType
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      *
      * @deprecated 102.0.0
+     * @see Updated deprecation doc annotations
      */
     public function parseOptionValue($optionValue, $productOptionValues)
     {
