@@ -132,7 +132,9 @@ class Validate extends ImportResultController implements HttpPostActionInterface
         $errors = $errorAggregator->getAllErrors();
         $rowNumber = [];
         foreach ($errors as $error) {
-            $rowNumber = array_unique([...$rowNumber , ...[$error->getRowNumber()]]);
+            if ($error->getRowNumber()) {
+                $rowNumber = array_unique([...$rowNumber , ...[$error->getRowNumber()]]);
+            }
         }
         (count($rowNumber) < $totalRows)? $this->_validateRowError = true : $this->_validateRowError = false;
         return $this->_validateRowError;
