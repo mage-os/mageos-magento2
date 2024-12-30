@@ -1,6 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright 2024 Adobe
+ * All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Model;
@@ -2413,6 +2414,7 @@ class Product extends \Magento\Catalog\Model\AbstractModel implements
             || $this->isObjectNew();
         if ($isProductNew && ($isStatusChanged || $this->getStatus() == Status::STATUS_ENABLED)) {
             $identities[] = \Magento\Catalog\Block\Product\NewProduct::CACHE_TAG;
+            $identities[] = \Magento\Catalog\Block\Rss\Product\NewProducts::CACHE_TAG;
         }
 
         return array_unique($identities);

@@ -1,6 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright 2024 Adobe
+ * All rights reserved.
  * See COPYING.txt for license details.
  */
 declare(strict_types=1);
@@ -84,7 +85,7 @@ class XsdTest extends TestCase
     /**
      * Data provider with valid xml array according to schema
      */
-    public function schemaCorrectlyIdentifiesValidXmlDataProvider()
+    public static function schemaCorrectlyIdentifiesValidXmlDataProvider()
     {
         return [
             'product_options' => ['product_options.xsd', 'product_options_valid.xml'],
@@ -95,7 +96,7 @@ class XsdTest extends TestCase
     /**
      * Data provider with invalid xml array according to schema
      */
-    public function schemaCorrectlyIdentifiesInvalidProductOptionsDataProvider()
+    public static function schemaCorrectlyIdentifiesInvalidProductOptionsDataProvider()
     {
         return include __DIR__ . '/_files/invalidProductOptionsXmlArray.php';
     }
@@ -103,7 +104,7 @@ class XsdTest extends TestCase
     /**
      * Data provider with invalid xml array according to schema
      */
-    public function schemaCorrectlyIdentifiesInvalidProductOptionsMergedXmlDataProvider()
+    public static function schemaCorrectlyIdentifiesInvalidProductOptionsMergedXmlDataProvider()
     {
         return include __DIR__ . '/_files/invalidProductOptionsMergedXmlArray.php';
     }
