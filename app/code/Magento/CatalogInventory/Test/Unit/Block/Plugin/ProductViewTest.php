@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -12,6 +12,7 @@ use Magento\Catalog\Model\Product;
 use Magento\CatalogInventory\Api\Data\StockItemInterface;
 use Magento\CatalogInventory\Api\StockRegistryInterface;
 use Magento\CatalogInventory\Block\Plugin\ProductView;
+use Magento\CatalogInventory\Model\Product\QuantityValidator;
 use Magento\CatalogInventory\Model\Stock\Item;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\Store;
@@ -35,6 +36,11 @@ class ProductViewTest extends TestCase
      */
     protected $stockRegistry;
 
+    /**
+     * @var QuantityValidator|MockObject
+     */
+    protected $productQuantityValidator;
+
     protected function setUp(): void
     {
         $objectManager = new ObjectManager($this);
@@ -47,10 +53,18 @@ class ProductViewTest extends TestCase
         $this->stockRegistry = $this->getMockBuilder(StockRegistryInterface::class)
             ->getMock();
 
+
+        $this->productQuantityValidator = $objectManager->getObject(
+            QuantityValidator::class,
+            [
+                'stockRegistry' => $this->stockRegistry
+            ]
+        );
+
         $this->block = $objectManager->getObject(
             ProductView::class,
             [
-                'stockRegistry' => $this->stockRegistry
+                'productQuantityValidator' => $this->productQuantityValidator
             ]
         );
     }
@@ -59,6 +73,7 @@ class ProductViewTest extends TestCase
     {
         $result = [
             'validate-item-quantity' => [
+                'minAllowed' => 1.0,
                 'maxAllowed' => 5.0,
                 'qtyIncrements' => 3.0
             ]
@@ -86,9 +101,9 @@ class ProductViewTest extends TestCase
             ->method('getStockItem')
             ->with('productId', 'websiteId')
             ->willReturn($this->stockItem);
+        $this->stockItem->expects($this->any())->method('getMinSaleQty')->willReturn(1);
         $this->stockItem->expects($this->any())->method('getMaxSaleQty')->willReturn(5);
         $this->stockItem->expects($this->any())->method('getQtyIncrements')->willReturn(3);
-
         $this->assertEquals($result, $this->block->afterGetQuantityValidators($productViewBlock, $validators));
     }
 }
