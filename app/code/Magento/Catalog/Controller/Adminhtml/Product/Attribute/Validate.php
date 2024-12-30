@@ -32,7 +32,7 @@ use Magento\Framework\View\Result\PageFactory;
  */
 class Validate extends AttributeAction implements HttpGetActionInterface, HttpPostActionInterface
 {
-    private const DEFAULT_MESSAGE_KEY = 'message';
+    public const DEFAULT_MESSAGE_KEY = 'message';
     private const RESERVED_ATTRIBUTE_CODES = ['product_type', 'type_id'];
 
     /**
