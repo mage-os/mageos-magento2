@@ -16,15 +16,11 @@ use Magento\Framework\App\ObjectManager;
 class Image extends \Magento\Framework\App\Config\Value
 {
     /**
-     * Eav config
-     *
      * @var \Magento\Eav\Model\Config
      */
     protected $_eavConfig;
 
     /**
-     * Attribute collection factory
-     *
      * @var \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory
      */
     protected $_attributeCollectionFactory;

@@ -48,20 +48,16 @@ use Magento\Framework\Stdlib\DateTime\DateTimeFormatterInterface;
 class Attribute extends \Magento\Eav\Model\Entity\Attribute
 {
     /**
-     * Event Prefix
-     *
      * @var string
      */
     protected $_eventPrefix = 'catalog_entity_attribute';
 
     /**
-     * Event Object
-     *
      * @var string
      */
     protected $_eventObject = 'attribute';
 
-    const MODULE_NAME = 'Magento_Catalog';
+    public const MODULE_NAME = 'Magento_Catalog';
 
     /**
      * @var LockValidatorInterface

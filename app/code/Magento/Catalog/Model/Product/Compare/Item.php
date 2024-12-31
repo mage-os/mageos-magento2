@@ -24,7 +24,7 @@ class Item extends \Magento\Framework\Model\AbstractModel implements \Magento\Fr
     /**
      * Model cache tag
      */
-    const CACHE_TAG = 'compare_item';
+    public const CACHE_TAG = 'compare_item';
 
     /**
      * Prefix of model events names
@@ -43,29 +43,21 @@ class Item extends \Magento\Framework\Model\AbstractModel implements \Magento\Fr
     protected $_eventObject = 'item';
 
     /**
-     * Catalog product compare
-     *
      * @var \Magento\Catalog\Helper\Product\Compare
      */
     protected $_catalogProductCompare = null;
 
     /**
-     * Customer session
-     *
      * @var \Magento\Customer\Model\Session
      */
     protected $_customerSession;
 
     /**
-     * Customer visitor
-     *
      * @var \Magento\Customer\Model\Visitor
      */
     protected $_customerVisitor;
 
     /**
-     * Store manager
-     *
      * @var \Magento\Store\Model\StoreManagerInterface
      */
     protected $_storeManager;

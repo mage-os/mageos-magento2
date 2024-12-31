@@ -16,8 +16,6 @@ namespace Magento\Catalog\Model\Product;
 class Action extends \Magento\Framework\Model\AbstractModel
 {
     /**
-     * Product website factory
-     *
      * @var \Magento\Catalog\Model\Product\WebsiteFactory
      */
     protected $_productWebsiteFactory;

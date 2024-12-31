@@ -25,22 +25,16 @@ class Price extends \Magento\Eav\Model\Entity\Attribute\Backend\AbstractBackend
     protected $_helper;
 
     /**
-     * Store manager
-     *
      * @var \Magento\Store\Model\StoreManagerInterface
      */
     protected $_storeManager;
 
     /**
-     * Currency factory
-     *
      * @var \Magento\Directory\Model\CurrencyFactory
      */
     protected $_currencyFactory;
 
     /**
-     * Core config model
-     *
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
      */
     protected $_config;
@@ -82,6 +76,7 @@ class Price extends \Magento\Eav\Model\Entity\Attribute\Backend\AbstractBackend
 
     /**
      * Set Attribute instance
+     *
      * Rewrite for redefine attribute scope
      *
      * @param \Magento\Catalog\Model\ResourceModel\Eav\Attribute $attribute
@@ -145,6 +140,7 @@ class Price extends \Magento\Eav\Model\Entity\Attribute\Backend\AbstractBackend
 
     /**
      * Check whether product uses default attribute's value in selected scope
+     *
      * @param \Magento\Catalog\Model\Product $object
      * @return bool
      */

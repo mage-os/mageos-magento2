@@ -44,6 +44,7 @@ class DimensionCollectionFactory
 
     /**
      * Create MultiDimensionProvider for specified "dimension mode".
+     *
      * By default return multiplication of dimensions by current set mode
      *
      * @param string|null $dimensionsMode

@@ -98,13 +98,14 @@ class CategoryList implements CategoryListInterface
      * Retrieve collection processor
      *
      * @deprecated 102.0.0
+     * @see Updated deprecation doc annotations
      * @return CollectionProcessorInterface
      */
     private function getCollectionProcessor()
     {
         if (!$this->collectionProcessor) {
             $this->collectionProcessor = \Magento\Framework\App\ObjectManager::getInstance()->get(
-                'Magento\Eav\Model\Api\SearchCriteria\CollectionProcessor'
+                \Magento\Eav\Model\Api\SearchCriteria\CollectionProcessor::class
             );
         }
         return $this->collectionProcessor;

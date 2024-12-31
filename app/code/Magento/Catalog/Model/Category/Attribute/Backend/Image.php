@@ -24,6 +24,7 @@ class Image extends \Magento\Eav\Model\Entity\Attribute\Backend\AbstractBackend
      * @var \Magento\MediaStorage\Model\File\UploaderFactory
      *
      * @deprecated 101.0.0
+     * @see MAGETWO-71174
      */
     protected $_uploaderFactory;
 
@@ -31,6 +32,7 @@ class Image extends \Magento\Eav\Model\Entity\Attribute\Backend\AbstractBackend
      * @var \Magento\Framework\Filesystem
      *
      * @deprecated 101.0.0
+     * @see MAGETWO-71174
      */
     protected $_filesystem;
 
@@ -38,6 +40,7 @@ class Image extends \Magento\Eav\Model\Entity\Attribute\Backend\AbstractBackend
      * @var \Magento\MediaStorage\Model\File\UploaderFactory
      *
      * @deprecated 101.0.0
+     * @see MAGETWO-71174
      */
     protected $_fileUploaderFactory;
 
@@ -45,6 +48,7 @@ class Image extends \Magento\Eav\Model\Entity\Attribute\Backend\AbstractBackend
      * @var \Psr\Log\LoggerInterface
      *
      * @deprecated 101.0.0
+     * @see MAGETWO-71174
      */
     protected $_logger;
 

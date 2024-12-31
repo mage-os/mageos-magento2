@@ -24,8 +24,8 @@ class ProductList
     public const XML_PATH_LIST_MODE = 'catalog/frontend/list_mode';
     public const DEFAULT_SORT_DIRECTION = 'asc';
 
-    const VIEW_MODE_LIST = 'list';
-    const VIEW_MODE_GRID = 'grid';
+    public const VIEW_MODE_LIST = 'list';
+    public const VIEW_MODE_GRID = 'grid';
 
     /**
      * @var ScopeConfigInterface

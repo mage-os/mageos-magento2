@@ -41,7 +41,6 @@ class CompareListIdToMaskedListId
      * Get listIdMask by listId
      *
      * @param int $listId
-     *
      * @param int|null $customerId
      * @return null|string
      * @throws LocalizedException

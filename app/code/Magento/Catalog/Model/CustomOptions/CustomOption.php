@@ -27,9 +27,9 @@ class CustomOption extends AbstractExtensibleModel implements CustomOptionInterf
      * @param Registry $registry
      * @param ExtensionAttributesFactory $extensionFactory
      * @param AttributeValueFactory $customAttributeFactory
+     * @param FileProcessor $fileProcessor
      * @param AbstractResource|null $resource
      * @param AbstractDb|null $resourceCollection
-     * @param FileProcessor $fileProcessor
      * @param array $data
      */
     public function __construct(

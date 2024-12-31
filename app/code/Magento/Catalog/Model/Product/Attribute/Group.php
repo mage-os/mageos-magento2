@@ -10,7 +10,7 @@ use Magento\Framework\Api\AttributeValueFactory;
 class Group extends \Magento\Eav\Model\Entity\Attribute\Group
 {
     /**
-     * Attribute collection factory
+     * Attribute collection factory for Product
      *
      * @var \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory
      */

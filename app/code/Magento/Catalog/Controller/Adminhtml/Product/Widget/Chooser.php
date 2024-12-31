@@ -16,7 +16,7 @@ class Chooser extends \Magento\Backend\App\Action implements HttpPostActionInter
     /**
      * Authorization level of a basic admin session
      */
-    const ADMIN_RESOURCE = 'Magento_Widget::widget_instance';
+    public const ADMIN_RESOURCE = 'Magento_Widget::widget_instance';
 
     /**
      * @var \Magento\Framework\Controller\Result\RawFactory

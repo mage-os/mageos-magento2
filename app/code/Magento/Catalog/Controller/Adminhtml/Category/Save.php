@@ -99,6 +99,7 @@ class Save extends \Magento\Catalog\Controller\Adminhtml\Category implements Htt
      * Filter category data
      *
      * @deprecated 101.0.8
+     * @see MAGETWO-71174
      * @param array $rawData
      * @return array
      */
