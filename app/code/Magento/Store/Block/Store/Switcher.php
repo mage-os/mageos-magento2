@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 
 /**
@@ -29,15 +29,11 @@ class Switcher extends \Magento\Framework\View\Element\Template
     protected $_loaded = false;
 
     /**
-     * Store factory
-     *
      * @var \Magento\Store\Model\StoreFactory
      */
     protected $_storeFactory;
 
     /**
-     * Store group factory
-     *
      * @var \Magento\Store\Model\GroupFactory
      */
     protected $_storeGroupFactory;
@@ -60,7 +56,7 @@ class Switcher extends \Magento\Framework\View\Element\Template
     }
 
     /**
-     * @return void
+     * @inheritdoc
      */
     protected function _construct()
     {
@@ -72,6 +68,8 @@ class Switcher extends \Magento\Framework\View\Element\Template
     }
 
     /**
+     * Load data
+     *
      * @return $this
      */
     protected function _loadData()
@@ -105,6 +103,8 @@ class Switcher extends \Magento\Framework\View\Element\Template
     }
 
     /**
+     * Sets stores and returns their count
+     *
      * @return int
      */
     public function getStoreCount()
@@ -135,6 +135,8 @@ class Switcher extends \Magento\Framework\View\Element\Template
     }
 
     /**
+     * Sets languages and returns their count
+     *
      * @return int
      */
     public function getLanguageCount()
@@ -149,6 +151,8 @@ class Switcher extends \Magento\Framework\View\Element\Template
     }
 
     /**
+     * Returns current store id
+     *
      * @return int
      */
     public function getCurrentStoreId()
@@ -157,6 +161,8 @@ class Switcher extends \Magento\Framework\View\Element\Template
     }
 
     /**
+     * Returns current store code
+     *
      * @return string
      */
     public function getCurrentStoreCode()

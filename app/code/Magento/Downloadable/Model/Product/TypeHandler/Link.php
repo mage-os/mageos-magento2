@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Downloadable\Model\Product\TypeHandler;
 
@@ -10,7 +10,6 @@ use Magento\Catalog\Model\Product;
 use Magento\Downloadable\Model\ComponentInterface;
 
 /**
- * Class Link
  * @api
  * @since 100.0.2
  */
@@ -22,7 +21,7 @@ class Link extends AbstractTypeHandler
     private $sampleItem = [];
 
     /**
-     * @var \Magento\Downloadable\Model\ComponentInterfaceFactory
+     * @var \Magento\Downloadable\Model\LinkFactory
      */
     private $linkFactory;
 
@@ -49,7 +48,7 @@ class Link extends AbstractTypeHandler
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getDataKey()
     {
@@ -57,7 +56,7 @@ class Link extends AbstractTypeHandler
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getIdentifierKey()
     {
@@ -65,18 +64,21 @@ class Link extends AbstractTypeHandler
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function save(Product $product, array $data)
     {
         parent::save($product, $data);
+
         if ($product->getLinksPurchasedSeparately()) {
             $product->setIsCustomOptionChanged();
         }
+
+        return $this;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function clear()
     {
@@ -86,7 +88,7 @@ class Link extends AbstractTypeHandler
     }
 
     /**
-     * @return ComponentInterface
+     * @inheritdoc
      */
     protected function createItem()
     {
@@ -94,10 +96,7 @@ class Link extends AbstractTypeHandler
     }
 
     /**
-     * @param ComponentInterface $model
-     * @param array $data
-     * @param Product $product
-     * @return void
+     * @inheritdoc
      */
     protected function setDataToModel(ComponentInterface $model, array $data, Product $product)
     {
@@ -125,9 +124,7 @@ class Link extends AbstractTypeHandler
     }
 
     /**
-     * @param ComponentInterface $model
-     * @param Product $product
-     * @return void
+     * @inheritdoc
      */
     protected function linkToProduct(ComponentInterface $model, Product $product)
     {
@@ -135,7 +132,7 @@ class Link extends AbstractTypeHandler
     }
 
     /**
-     * @return void
+     * @inheritdoc
      */
     protected function processDelete()
     {
@@ -145,7 +142,7 @@ class Link extends AbstractTypeHandler
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function saveItem(Product $product, array $item)
     {
@@ -157,9 +154,7 @@ class Link extends AbstractTypeHandler
     }
 
     /**
-     * @param ComponentInterface $model
-     * @param array $files
-     * @return void
+     * @inheritdoc
      */
     protected function setFiles(ComponentInterface $model, array $files)
     {
