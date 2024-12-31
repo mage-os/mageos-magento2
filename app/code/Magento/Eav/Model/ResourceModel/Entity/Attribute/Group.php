@@ -161,7 +161,7 @@ class Group extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     protected function saveNewObject(AbstractModel $object)
     {
         try {
-            return parent::saveNewObject($object);
+            parent::saveNewObject($object);
         } catch (DuplicateException $e) {
             throw new AttributeGroupAlreadyExistsException(
                 __(
@@ -178,7 +178,7 @@ class Group extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     protected function updateObject(AbstractModel $object)
     {
         try {
-            return parent::updateObject($object);
+            parent::updateObject($object);
         } catch (DuplicateException $e) {
             throw new AttributeGroupAlreadyExistsException(
                 __(

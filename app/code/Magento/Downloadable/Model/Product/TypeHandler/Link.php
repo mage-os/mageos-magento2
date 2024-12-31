@@ -81,7 +81,8 @@ class Link extends AbstractTypeHandler
     protected function clear()
     {
         $this->sampleItem = [];
-        return parent::clear();
+
+        parent::clear();
     }
 
     /**

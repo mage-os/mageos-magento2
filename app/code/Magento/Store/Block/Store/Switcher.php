@@ -67,7 +67,8 @@ class Switcher extends \Magento\Framework\View\Element\Template
         $this->_loadData();
         $this->setStores([]);
         $this->setLanguages([]);
-        return parent::_construct();
+
+        parent::_construct();
     }
 
     /**
