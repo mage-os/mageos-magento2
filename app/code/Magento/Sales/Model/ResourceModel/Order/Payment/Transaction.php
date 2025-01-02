@@ -152,7 +152,6 @@ class Transaction extends EntityAbstract implements TransactionResourceInterface
             $parentId = (int)$this->_lookupByTxnId($orderId, $paymentId, $parentTxnId, $idFieldName);
             if ($parentId && $txnType == 'authorization') {
                 $transaction->setData('parent_id', $parentId);
-                $transaction->setData('txn_type', \Magento\Sales\Model\Order\Payment\Transaction::TYPE_CAPTURE);
             }
         } else {
             $result = $this->getParentId($orderId);
