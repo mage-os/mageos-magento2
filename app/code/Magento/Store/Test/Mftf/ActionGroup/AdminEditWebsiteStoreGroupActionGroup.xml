@@ -19,6 +19,7 @@
         <waitForElementClickable selector="{{AdminDataGridHeaderSection.clearFilters}}" stepKey="waitForClearFiltersClickable" />
         <click selector="{{AdminDataGridHeaderSection.clearFilters}}" stepKey="resetSearchFilter"/>
         <waitForPageLoad stepKey="waitForResetResult"/>
+        <waitForElementVisible selector="{{AdminStoresGridSection.storeGrpFilterTextField}}" stepKey="waitForContentHeading"/>
         <fillField userInput="{{storeGroupName}}" selector="{{AdminStoresGridSection.storeGrpFilterTextField}}" stepKey="fillStoreGroupFilter"/>
         <waitForElementClickable selector="{{AdminStoresGridSection.searchButton}}" stepKey="waitForSearchButtonClickable" />
         <click selector="{{AdminStoresGridSection.searchButton}}" stepKey="clickSearchButton"/>
