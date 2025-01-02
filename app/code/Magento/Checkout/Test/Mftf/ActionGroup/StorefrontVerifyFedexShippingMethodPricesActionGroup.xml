@@ -13,7 +13,7 @@
             <description>Validates that the Fedex Shipping method prices in the checkout page.</description>
         </annotations>
         <arguments>
-            <argument name="smartPostPrice" type="string" defaultValue="$17.25"/>
+            <argument name="smartPostPrice" type="string" defaultValue="$15.93"/>
             <argument name="groundPrice" type="string" defaultValue="$13.72"/>
             <argument name="expressSaverPrice" type="string" defaultValue="$37.97"/>
             <argument name="twoDayPrice" type="string" defaultValue="$44.11"/>
