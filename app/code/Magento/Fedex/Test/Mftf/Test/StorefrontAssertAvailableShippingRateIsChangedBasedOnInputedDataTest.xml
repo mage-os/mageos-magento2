@@ -67,6 +67,8 @@
         </actionGroup>
         <waitForElementNotVisible selector="{{CheckoutShippingMethodsSection.shippingMethodFreeShippingLabel}}" stepKey="againWaitForFreeShippingLabelNotVisible"/>
         <actionGroup ref="StorefrontCheckForFlatRateShippingMethodAvailabilityActionGroup" stepKey="verifyFlatRateShippingMethodAfterCountryChangeToUS"/>
-        <actionGroup ref="StorefrontVerifyFedexShippingMethodPricesActionGroup" stepKey="verifyFedexShippingMethodPrices"/>
+        <actionGroup ref="StorefrontVerifyFedexShippingMethodPricesActionGroup" stepKey="verifyFedexShippingMethodPrices">
+            <argument name="smartPostPrice" value="$15.93"/>
+        </actionGroup>
     </test>
 </tests>
