@@ -116,6 +116,7 @@ class Login extends \Magento\Backend\Controller\Adminhtml\Auth implements HttpGe
     {
         $requestUri = $this->getRequest()->getRequestUri();
         $backendApp = $this->backendAppList->getCurrentApp();
+        //phpcs:ignore Magento2.Functions.DiscouragedFunction
         $baseUrl = parse_url($this->backendUrlFactory->create()->getBaseUrl(), PHP_URL_PATH);
         if (!$backendApp) {
             $backendFrontName = $this->frontNameResolver->getFrontName();
