@@ -30,9 +30,9 @@ jobs:
         env:
           ECOMSCAN_KEY: ${{ secrets.SANSEC_LICENSE_KEY }}
         run: |
-          output=$$(./ecomscan --no-auto-update --skip-database --deep --format=csv .)
-          if [ -n "$$output" ]; then
+          output=$(./ecomscan --no-auto-update --skip-database --deep --format=csv .)
+          if [ -n "$output" ]; then
             echo "Security issues found:"
-            echo "$$output"
+            echo "$output"
             exit 1
           fi
