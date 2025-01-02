@@ -17,10 +17,8 @@
             <testCaseId value="AC-5671"/>
             <group value="Payments"/>
         </annotations>
-        <before>
+      <before>
             <magentoCLI command="config:set {{EnablePaymentBankTransferConfigData.path}} {{EnablePaymentBankTransferConfigData.value}}" stepKey="enableBankTransferPayment"/>
-            <!--Create customer-->
-            <createData entity="Simple_US_CA_Customer" stepKey="createCustomer"/>
             <createData entity="defaultSimpleProduct" stepKey="createProduct"/>
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
             <actionGroup ref="CreateCustomStoreActionGroup" stepKey="createCustomStore">
@@ -41,35 +39,25 @@
         <after>
             <magentoCLI command="config:set {{DisablePaymentBankTransferConfigData.path}} {{DisablePaymentBankTransferConfigData.value}}" stepKey="disableBankTransferPayment"/>
             <deleteData stepKey="deleteProduct" createDataKey="createProduct"/>
+            <actionGroup ref="DeleteCustomStoreActionGroup" stepKey="deleteCustomStore">
+                <argument name="storeGroupName" value="customStoreGroup.name"/>
+            </actionGroup>
+            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+                <argument name="indices" value=""/>
+            </actionGroup>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
         </after>
-        <amOnPage url="{{AdminConfigPaymentMethodsPage.url}}" stepKey="navigateToPaymentConfigurationPage"/>
+        <actionGroup ref="AdminNavigateToConfigurationPaymentMethodSectionActionGroup" stepKey="navigateToPaymentConfigurationPage"/>
         <actionGroup ref="AdminSwitchSecondStoreViewActionGroup" stepKey="AdminSwitchSecondStoreView">
             <argument name="secondStoreView" value="customStoreEN"/>
         </actionGroup>
         <conditionalClick selector="{{CatalogSection.expandedTab}}" dependentSelector="{{CatalogSection.productsPerPageOnGridBankTransferPaymentDefaultValueUseConfigCheckbox}}" visible="false" stepKey="expandOtherPaypalConfigButton"/>
         <uncheckOption selector="{{CatalogSection.productsPerPageOnGridBankTransferPaymentDefaultValueUseConfigCheckbox}}" stepKey="uncheckUseSystemValue"/>
+        <waitForElementVisible selector="{{CatalogSection.productsPerPageOnGridAllowedBankTransferPaymentValues}}" stepKey="waitForContentHeading"/>
         <fillField selector="{{CatalogSection.productsPerPageOnGridAllowedBankTransferPaymentValues}}" userInput="Bank Transfer Payment(Second)" stepKey="fillProductQuantity"/>
         <actionGroup ref="AdminSavePaymentConfigActionGroup" stepKey="clickSaveConfigBtn"/>
         <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanInvalidatedCaches">
             <argument name="tags" value="config full_page"/>
-        </actionGroup>
-        <!--Open customer edit page-->
-        <actionGroup ref="AdminOpenCustomerEditPageActionGroup" stepKey="openCustomerEditPage">
-            <argument name="customerId" value="$createCustomer.id$"/>
-        </actionGroup>
-        <!--Navigate to "Account Information" tab-->
-        <actionGroup ref="AdminOpenAccountInformationTabFromCustomerEditPageActionGroup" stepKey="openAccountInformationEditPage"/>
-        <actionGroup ref="AdminSelectStoreInCustomerEditPageActionGroup" stepKey="selectWebsiteGroupStoreForFRCustomerMembersGroup">
-            <argument name="store" value="{{customStoreEN.name}}"/>
-        </actionGroup>
-        <waitForPageLoad stepKey="waitForCustomersPage"/>
-        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
-            <argument name="indices" value=""/>
-        </actionGroup>
-        <!-- Login as Customer Login from Customer page -->
-        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
-            <argument name="Customer" value="$$createCustomer$$" />
         </actionGroup>
         <actionGroup ref="StorefrontOpenProductEntityPageActionGroup" stepKey="openProductPage">
             <argument name="product" value="$createProduct$"/>
@@ -79,14 +67,11 @@
             <argument name="productQty" value="1"/>
         </actionGroup>
         <actionGroup ref="StorefrontOpenCheckoutPageActionGroup" stepKey="navigateToCheckoutPage"/>
-        <actionGroup ref="StorefrontSetShippingMethodActionGroup" stepKey="selectFlatrate">
-            <argument name="shippingMethodName" value="Flat Rate"/>
-        </actionGroup>
-        <actionGroup ref="StorefrontCheckoutClickNextOnShippingStepActionGroup" stepKey="clickNext"/>
+        <actionGroup ref="GuestCheckoutFillingShippingSectionActionGroup" stepKey="guestCheckoutFillingShipping"/>
+        <waitForElementClickable selector="{{StorefrontCheckoutPaymentMethodsSection.bankTransfer}}" stepKey="waitForBankTransferMethod" />
         <click selector="{{StorefrontCheckoutPaymentMethodsSection.bankTransfer}}" stepKey="selectBankTransferMethod"/>
         <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="checkoutPlaceOrder"/>
-        <waitForElementVisible selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="waitForOderNumber"/>
-        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="grabOrderNumber"/>
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumberWithoutLink}}" stepKey="grabOrderNumber"/>
         <actionGroup ref="AdminOrdersPageOpenActionGroup" stepKey="goToOrders"/>
         <actionGroup ref="OpenOrderByIdActionGroup" stepKey="openOrder">
             <argument name="orderId" value="{$grabOrderNumber}"/>
@@ -94,14 +79,16 @@
         <actionGroup ref="AdminClickInvoiceButtonOrderViewActionGroup" stepKey="clickInvoiceButton"/>
         <actionGroup ref="AdminInvoiceClickSubmitActionGroup" stepKey="clickSubmitInvoice"/>
         <scrollTo selector="{{CatalogSection.paymentInformation}}" stepKey="scrollToPaymentAndShippingInformation"/>
-        <waitForText selector="{{AdminOrderPaymentInformationSection.paymentMethod}}" userInput="Bank Transfer Payment(Second)" stepKey="seePaymentMethodName"/>
+        <waitForText selector="{{AdminOrderPaymentInformationSection.paymentMethod}}" userInput="Bank Transfer Payment(Second)" stepKey="seePaymentMethodNameU"/>
+        <waitForElementClickable selector="{{AdminOrderDetailsMainActionsSection.ship}}" stepKey="waitForShipActionClickable" />
         <click selector="{{AdminOrderDetailsMainActionsSection.ship}}" stepKey="clickShipAction"/>
+        <waitForElementClickable selector="{{AdminShipmentMainActionsSection.submitShipment}}" stepKey="waitForSubmitShipmentButtonClickable" />
         <click selector="{{AdminShipmentMainActionsSection.submitShipment}}" stepKey="clickSubmitShipment"/>
-        <scrollTo selector="{{CatalogSection.paymentInformation}}" stepKey="scrollToPaymentAndShippingInformation2"/>
-        <waitForText selector="{{AdminOrderPaymentInformationSection.paymentMethod}}" userInput="Bank Transfer Payment(Second)" stepKey="seePaymentMethodName2"/>
+        <scrollTo selector="{{CatalogSection.paymentInformation}}" stepKey="scrollToPaymentAndShippingInformationUnderShipmentPage"/>
+        <waitForText selector="{{AdminOrderPaymentInformationSection.paymentMethod}}" userInput="Bank Transfer Payment(Second)" stepKey="seePaymentMethodNameUnderShipmentPage"/>
         <actionGroup ref="AdminStartToCreateCreditMemoFromOrderPageActionGroup" stepKey="startCreatingCreditMemo"/>
         <actionGroup ref="SubmitCreditMemoActionGroup" stepKey="submitCreditMemo"/>
-        <scrollTo selector="{{CatalogSection.paymentInformation}}" stepKey="scrollToPaymentAndShippingInformation3"/>
-        <waitForText selector="{{AdminOrderPaymentInformationSection.paymentMethod}}" userInput="Bank Transfer Payment(Second)" stepKey="seePaymentMethodName3"/>
+        <scrollTo selector="{{CatalogSection.paymentInformation}}" stepKey="scrollToPaymentAndShippingInformationUnderCreditMemoPage"/>
+        <waitForText selector="{{AdminOrderPaymentInformationSection.paymentMethod}}" userInput="Bank Transfer Payment(Second)" stepKey="seePaymentMethodNameUnderCreditMemoPage"/>
     </test>
 </tests>
