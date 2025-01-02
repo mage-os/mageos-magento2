@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b15f6da3d45b93a4200d6d91180b1506",
+    "content-hash": "9409bed03bf4a387d1f934404e6f91da",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -13605,32 +13605,37 @@
         },
         {
             "name": "pdepend/pdepend",
-            "version": "2.16.2",
+            "version": "3.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pdepend/pdepend.git",
-                "reference": "f942b208dc2a0868454d01b29f0c75bbcfc6ed58"
+                "reference": "f8300ed0136076b6a818cbb5104e291759fef55d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pdepend/pdepend/zipball/f942b208dc2a0868454d01b29f0c75bbcfc6ed58",
-                "reference": "f942b208dc2a0868454d01b29f0c75bbcfc6ed58",
+                "url": "https://api.github.com/repos/pdepend/pdepend/zipball/f8300ed0136076b6a818cbb5104e291759fef55d",
+                "reference": "f8300ed0136076b6a818cbb5104e291759fef55d",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.7",
-                "symfony/config": "^2.3.0|^3|^4|^5|^6.0|^7.0",
-                "symfony/dependency-injection": "^2.3.0|^3|^4|^5|^6.0|^7.0",
-                "symfony/filesystem": "^2.3.0|^3|^4|^5|^6.0|^7.0",
+                "php": ">=8.1",
+                "php-64bit": "*",
+                "symfony/config": "^5.4 || ^6.0 || ^7.0",
+                "symfony/dependency-injection": "^5.4 || ^6.0 || ^7.0",
+                "symfony/filesystem": "^5.4 || ^6.0 || ^7.0",
                 "symfony/polyfill-mbstring": "^1.19"
             },
             "require-dev": {
-                "easy-doc/easy-doc": "0.0.0|^1.2.3",
-                "gregwar/rst": "^1.0",
-                "squizlabs/php_codesniffer": "^2.0.0"
+                "brianium/paratest": "^7.3",
+                "easy-doc/easy-doc": "0.0.0 || ^1.2.3",
+                "friendsofphp/php-cs-fixer": "^3.57",
+                "gregwar/rst": "^1.0.6",
+                "phpstan/phpstan": "~1.12.0",
+                "phpunit/phpunit": "^10.5.20,<10.5.32",
+                "squizlabs/php_codesniffer": "^3.8.0"
             },
             "bin": [
-                "src/bin/pdepend"
+                "bin/pdepend"
             ],
             "type": "library",
             "extra": {
@@ -13640,7 +13645,7 @@
             },
             "autoload": {
                 "psr-4": {
-                    "PDepend\\": "src/main/php/PDepend"
+                    "PDepend\\": "src"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -13656,7 +13661,7 @@
             ],
             "support": {
                 "issues": "https://github.com/pdepend/pdepend/issues",
-                "source": "https://github.com/pdepend/pdepend/tree/2.16.2"
+                "source": "https://github.com/pdepend/pdepend/tree/3.x"
             },
             "funding": [
                 {
@@ -13664,7 +13669,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-12-17T18:09:59+00:00"
+            "time": "2024-10-05T19:22:38+00:00"
         },
         {
             "name": "php-webdriver/webdriver",
@@ -13822,39 +13827,43 @@
         },
         {
             "name": "phpmd/phpmd",
-            "version": "2.15.0",
+            "version": "3.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpmd/phpmd.git",
-                "reference": "74a1f56e33afad4128b886e334093e98e1b5e7c0"
+                "reference": "38b0de1987374c30a9b09af9a0661c6fc1531ea1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpmd/phpmd/zipball/74a1f56e33afad4128b886e334093e98e1b5e7c0",
-                "reference": "74a1f56e33afad4128b886e334093e98e1b5e7c0",
+                "url": "https://api.github.com/repos/phpmd/phpmd/zipball/38b0de1987374c30a9b09af9a0661c6fc1531ea1",
+                "reference": "38b0de1987374c30a9b09af9a0661c6fc1531ea1",
                 "shasum": ""
             },
             "require": {
-                "composer/xdebug-handler": "^1.0 || ^2.0 || ^3.0",
+                "composer/xdebug-handler": "^3.0",
                 "ext-xml": "*",
-                "pdepend/pdepend": "^2.16.1",
-                "php": ">=5.3.9"
+                "pdepend/pdepend": "3.x-dev#5fddc0476146acf1455bd4cccf83f20439a0335b",
+                "php": "^8.1"
             },
             "require-dev": {
-                "easy-doc/easy-doc": "0.0.0 || ^1.3.2",
+                "brianium/paratest": "^7.3",
+                "easy-doc/easy-doc": "^1.3.2",
                 "ext-json": "*",
                 "ext-simplexml": "*",
+                "friendsofphp/php-cs-fixer": "^3.57",
                 "gregwar/rst": "^1.0",
                 "mikey179/vfsstream": "^1.6.8",
-                "squizlabs/php_codesniffer": "^2.9.2 || ^3.7.2"
+                "phpstan/phpstan": "~1.12.0",
+                "phpunit/phpunit": "^10.5.20,<10.5.32",
+                "squizlabs/php_codesniffer": "^3.8.0"
             },
             "bin": [
-                "src/bin/phpmd"
+                "bin/phpmd"
             ],
             "type": "library",
             "autoload": {
-                "psr-0": {
-                    "PHPMD\\": "src/main/php"
+                "psr-4": {
+                    "PHPMD\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -13893,7 +13902,7 @@
             "support": {
                 "irc": "irc://irc.freenode.org/phpmd",
                 "issues": "https://github.com/phpmd/phpmd/issues",
-                "source": "https://github.com/phpmd/phpmd/tree/2.15.0"
+                "source": "https://github.com/phpmd/phpmd/tree/3.x"
             },
             "funding": [
                 {
@@ -13901,7 +13910,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-12-11T08:22:20+00:00"
+            "time": "2024-10-05T18:27:13+00:00"
         },
         {
             "name": "phpstan/phpstan",
@@ -14988,6 +14997,8 @@
         "magento/recaptcha": 20,
         "magento/ringphp": 20,
         "magento/stock-api-libphp": 20,
+        "pdepend/pdepend": 20,
+        "phpmd/phpmd": 20,
         "spomky-labs/pki-framework": 20,
         "web-token/jwt-framework": 20
     },

@@ -183,8 +183,8 @@
         "magento/oauth": "dev-develop",
         "magento/magento-coding-standard": "*",
         "magento/magento2-functional-testing-framework": "dev-AC-13306",
-        "pdepend/pdepend": "^2.10",
-        "phpmd/phpmd": "^2.12",
+        "pdepend/pdepend": "3.x-dev",
+        "phpmd/phpmd": "3.x-dev",
         "phpstan/phpstan": "^1.9",
         "phpunit/phpunit": "^10.5",
         "symfony/finder": "^6.4"
