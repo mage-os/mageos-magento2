@@ -15,11 +15,13 @@
             <argument name="defaultStoreName" type="string"/>
         </arguments>
         <selectOption selector="{{AdminEditStoreGroupSection.defaultStore}}" userInput="{{defaultStoreName}}" stepKey="changeDefaultStoreView" after="waitForStorePageToLoad"/>
+        <waitForElementClickable selector="{{AdminStoreGroupActionsSection.saveButton}}"  stepKey="waitForSaveStoreButtonClickable" />
         <click selector="{{AdminStoreGroupActionsSection.saveButton}}" stepKey="clickSaveStoreGroup"/>
         <waitForElementVisible selector="{{AdminConfirmationModalSection.ok}}" stepKey="waitForModal"/>
-        <see selector="{{AdminConfirmationModalSection.title}}" userInput="Warning message" stepKey="seeWarningAboutTakingALongTimeToComplete"/>
+        <waitForText selector="{{AdminConfirmationModalSection.title}}" userInput="Warning message" stepKey="seeWarningAboutTakingALongTimeToComplete"/>
+        <waitForElementClickable selector="{{AdminConfirmationModalSection.ok}}" stepKey="waitForOkButtonClickable" />
         <click selector="{{AdminConfirmationModalSection.ok}}" stepKey="confirmModal"/>
         <waitForElementVisible selector="{{AdminMessagesSection.success}}" stepKey="seeForSuccessMessage"/>
-        <see selector="{{AdminMessagesSection.success}}" userInput="You saved the website." stepKey="seeSuccessMessage"/>
+        <waitForText selector="{{AdminMessagesSection.success}}" userInput="You saved the website." stepKey="seeSuccessMessage"/>
     </actionGroup>
 </actionGroups>
