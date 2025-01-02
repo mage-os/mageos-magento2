@@ -8,7 +8,7 @@
 
 <tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
-    <test name="AdminTwoImportProductsInParallelTest">
+    <test name="AdminImportTwoProductsInParallelTest">
         <annotations>
             <features value="Import/Export"/>
             <stories value="Import Products"/>
@@ -34,7 +34,7 @@
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
         </after>
         <!-- Navigate to the Import page in the admin panel -->
-        <amOnPage url="{{AdminImportIndexPage.url}}" stepKey="goToImportIndexPage"/>
+        <actionGroup ref="AdminNavigateToImportPageActionGroup" stepKey="goToImportIndexPage"/>
         <!-- Set import settings: Entity Type > Product, Import Behavior > Add/Update,
              Select File to Import > press "Check Data" and Validate Message -->
         <actionGroup ref="AdminImportDataCheckActionGroup" stepKey="adminImportButtonVisible">
