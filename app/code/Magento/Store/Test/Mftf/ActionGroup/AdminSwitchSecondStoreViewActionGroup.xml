@@ -15,11 +15,12 @@
             <argument name="secondStoreView"/>
         </arguments>
         <scrollToTopOfPage stepKey="scrollToTop"/>
+        <waitForElementClickable selector="{{AdminMainActionsSection.storeViewDropdown}}" stepKey="waitForStoreViewAreVisible"/>
         <click selector="{{AdminMainActionsSection.storeViewDropdown}}" stepKey="clickWebsiteSwitchDropdown"/>
-        <waitForElementVisible selector="{{AdminMainActionsSection.websiteByName('Main Website')}}" stepKey="waitForWebsiteAreVisible"/>
+        <waitForElementClickable selector="{{AdminMainActionsSection.websiteByName('Main Website')}}" stepKey="waitForWebsiteAreVisible"/>
         <click selector="{{AdminMainActionsSection.storeViewByName(secondStoreView.name)}}" stepKey="clicksecondStoreViewByName"/>
-        <waitForElementVisible selector="{{AdminConfirmationModalSection.ok}}" stepKey="waitingForInformationModal"/>
+        <waitForElementClickable selector="{{AdminConfirmationModalSection.ok}}" stepKey="waitingForInformationModal"/>
         <click selector="{{AdminConfirmationModalSection.ok}}" stepKey="confirmStoreSwitch"/>
-        <see userInput="{{secondStoreView.name}}" selector="{{AdminMainActionsSection.storeSwitcher}}" stepKey="seesecondStoreViewName"/>
+        <waitForText userInput="{{secondStoreView.name}}" selector="{{AdminMainActionsSection.storeSwitcher}}" stepKey="seesecondStoreViewName"/>
     </actionGroup>
 </actionGroups>
