@@ -84,10 +84,6 @@
         {
             "type": "vcs",
             "url": "git@github.com:magento-commerce/magento-lusitanian-oauth.git"
-        },
-        {
-            "type": "vcs",
-            "url": "git@github.com:magento-commerce/magento-jwt-framework.git"
         }
     ],
     "require": {
@@ -162,7 +158,7 @@
         "symfony/string": "^6.4",
         "tedivm/jshrink": "^1.4",
         "tubalmartin/cssmin": "^4.1",
-        "magento/jwt-framework": "dev-develop",
+        "web-token/jwt-framework": "^3.4",
         "webonyx/graphql-php": "^15.0",
         "wikimedia/less.php": "^5.0",
         "magento/module-sequence": "dev-develop",
