@@ -100,7 +100,9 @@ class AgreementsConfigProvider implements ConfigProviderInterface
                 'content' => $agreement->getIsHtml()
                     ? $agreement->getContent()
                     : nl2br($this->escaper->escapeHtml($agreement->getContent())),
-                'checkboxText' => $this->escaper->escapeHtml($agreement->getCheckboxText()),
+                'checkboxText' => $agreement->getIsHtml()
+                    ? $agreement->getCheckboxText()
+                    : $this->escaper->escapeHtml($agreement->getCheckboxText()),
                 'mode' => $agreement->getMode(),
                 'agreementId' => $agreement->getAgreementId(),
                 'contentHeight' => $agreement->getContentHeight()
