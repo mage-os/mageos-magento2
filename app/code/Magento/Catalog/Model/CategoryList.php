@@ -105,7 +105,7 @@ class CategoryList implements CategoryListInterface
     {
         if (!$this->collectionProcessor) {
             $this->collectionProcessor = \Magento\Framework\App\ObjectManager::getInstance()->get(
-                \Magento\Eav\Model\Api\SearchCriteria\CollectionProcessor::class
+                '\Magento\Eav\Model\Api\SearchCriteria\CollectionProcessor'
             );
         }
         return $this->collectionProcessor;
