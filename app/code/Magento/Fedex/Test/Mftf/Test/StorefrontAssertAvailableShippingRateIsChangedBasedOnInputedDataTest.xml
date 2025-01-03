@@ -70,6 +70,7 @@
         <actionGroup ref="StorefrontVerifyFedexShippingMethodPricesActionGroup" stepKey="verifyFedexShippingMethodPrices">
             <argument name="smartPostPrice" value="$15.93"/>
             <argument name="expressSaverPrice" value="$35.87"/>
+            <argument name="twoDayPrice" value="$42.01"/>
         </actionGroup>
     </test>
 </tests>
