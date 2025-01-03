@@ -87,11 +87,7 @@
         },
         {
             "type": "vcs",
-            "url": "git@github.com:glo71317/jwt-framework.git"
-        },
-        {
-            "type": "vcs",
-            "url": "git@github.com:emteknetnz/pki-framework.git"
+            "url": "git@github.com:magento-commerce/magento-jwt-framework.git"
         }
     ],
     "require": {
@@ -166,14 +162,13 @@
         "symfony/string": "^6.4",
         "tedivm/jshrink": "^1.4",
         "tubalmartin/cssmin": "^4.1",
-        "web-token/jwt-framework": "dev-update_spomky-labs/pki-framework",
+        "magento/jwt-framework": "dev-develop",
         "webonyx/graphql-php": "^15.0",
         "wikimedia/less.php": "^5.0",
         "magento/module-sequence": "dev-develop",
         "magento/recaptcha": "dev-develop",
         "magento/stock-api-libphp": "dev-develop",
-        "magento/ringphp": "dev-develop",
-        "spomky-labs/pki-framework": "dev-php84-implicit-nullable"
+        "magento/ringphp": "dev-develop"
     },
     "require-dev": {
         "magento/allure-phpunit": "dev-develop",
