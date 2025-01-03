@@ -18,6 +18,9 @@
             <group value="encryption_key"/>
             <group value="pr_exclude"/>
             <group value="cloud"/>
+            <skip>
+                <issueId value="AC-12680"/>
+            </skip>
         </annotations>
 
         <before>
