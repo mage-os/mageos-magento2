@@ -9,13 +9,28 @@ namespace Magento\Customer\Model\Validator;
 
 use DateTimeZone;
 use Magento\Customer\Model\Customer;
+use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Framework\Validator\AbstractValidator;
+use Magento\Store\Model\ScopeInterface;
 
 /**
  * Customer dob field validator.
  */
 class Dob extends AbstractValidator
 {
+    /**
+     * @var TimezoneInterface
+     */
+    private $timezone;
+
+    /**
+     * @param TimezoneInterface $timezone
+     */
+    public function __construct(TimezoneInterface $timezone)
+    {
+        $this->timezone = $timezone;
+    }
+
     /**
      * Validate dob field.
      *
@@ -24,7 +39,9 @@ class Dob extends AbstractValidator
      */
     public function isValid($customer): bool
     {
-        $timezone = new DateTimeZone($customer->getStore()->getConfig('general/locale/timezone'));
+        $storeId = (int)$customer->getStoreId();
+        $timezone = new DateTimeZone($this->timezone->getConfigTimezone(ScopeInterface::SCOPE_STORE, $storeId));
+
         if (!$this->isValidDob($customer->getDob(), $timezone)) {
             $this->_addMessages([['dob' => 'The Date of Birth should not be greater than today.']]);
         }
@@ -36,7 +53,7 @@ class Dob extends AbstractValidator
      * Check if specified dob is not in the future
      *
      * @param string|null $dobValue
-     * @param DateTimeZone $timezone
+     * @param DateTimeZone|null $timezone
      * @return bool
      */
     private function isValidDob(?string $dobValue, ?DateTimeZone $timezone = null): bool

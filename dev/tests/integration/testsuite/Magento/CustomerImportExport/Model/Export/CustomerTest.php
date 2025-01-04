@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2012 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 
 namespace Magento\CustomerImportExport\Model\Export;
@@ -69,12 +69,12 @@ class CustomerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Export with Multi Websites "Customer Main File".
+     * Export "Customer Main File".
      *
-     * @magentoDataFixture Magento/Customer/_files/import_export/customers_with_websites.php
+     * @magentoDataFixture Magento/Customer/_files/import_export/customers.php
      * @return void
      */
-    public function testExportWithMultiWebsites(): void
+    public function testExport()
     {
         $this->processCustomerAttribute();
         $expectedAttributes = $this->getExpectedAttributes();
@@ -83,12 +83,12 @@ class CustomerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Export "Customer Main File".
+     * Export with Multi Websites "Customer Main File".
      *
-     * @magentoDataFixture Magento/Customer/_files/import_export/customers.php
+     * @magentoDataFixture Magento/Customer/_files/import_export/customers_with_websites.php
      * @return void
      */
-    public function testExport()
+    public function testExportWithMultiWebsites(): void
     {
         $this->processCustomerAttribute();
         $expectedAttributes = $this->getExpectedAttributes();
