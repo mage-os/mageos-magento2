@@ -55,15 +55,12 @@ class LiveCodeTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp(): void
     {
-        if(!self::$executedCompilation ){
-            $this->_shell = new \Magento\Framework\Shell(new \Magento\Framework\Shell\CommandRenderer());
-            $basePath = BP;
-            $basePath = str_replace('\\', '/', $basePath);
+        $this->_shell = new \Magento\Framework\Shell(new \Magento\Framework\Shell\CommandRenderer());
+        $basePath = BP;
+        $basePath = str_replace('\\', '/', $basePath);
 
-            $this->_command = 'php ' . $basePath . '/bin/magento setup:di:compile';
-            $this->_shell->execute($this->_command);
-            self::$executedCompilation = true;
-        }
+        $this->_command = 'php ' . $basePath . '/bin/magento setup:di:compile';
+        self::$executedCompilation = true;
     }
 
     /**
