@@ -77,10 +77,8 @@ class Builder
         $this->logger = $logger;
         $this->registry = $registry;
         $this->wysiwygConfig = $wysiwygConfig;
-        // phpcs:disable
         $this->storeFactory = $storeFactory ?: \Magento\Framework\App\ObjectManager::getInstance()
-            ->get(\Magento\Store\Model\StoreFactory::class);
-        // phpcs:enable
+            ->get(StoreFactory::class);
         $this->productRepository = $productRepository ?: \Magento\Framework\App\ObjectManager::getInstance()
             ->get(ProductRepositoryInterface::class);
     }
