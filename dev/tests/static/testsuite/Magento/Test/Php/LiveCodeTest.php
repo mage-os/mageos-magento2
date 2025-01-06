@@ -60,7 +60,6 @@ class LiveCodeTest extends \PHPUnit\Framework\TestCase
         $basePath = str_replace('\\', '/', $basePath);
 
         $this->_command = 'php ' . $basePath . '/bin/magento setup:di:compile';
-        self::$executedCompilation = true;
     }
 
     /**
