@@ -98,7 +98,7 @@ class AgreementsConfigProviderTest extends TestCase
                 'agreements' => [
                     [
                         'content' => $content,
-                        'checkboxText' => $escapedCheckboxText,
+                        'checkboxText' => $checkboxText,
                         'mode' => $mode,
                         'agreementId' => $agreementId,
                         'contentHeight' => $contentHeight
@@ -121,11 +121,6 @@ class AgreementsConfigProviderTest extends TestCase
             ->method('getList')
             ->with($searchCriteriaMock)
             ->willReturn([$agreement]);
-
-        $this->escaperMock->expects($this->once())
-            ->method('escapeHtml')
-            ->with($checkboxText)
-            ->willReturn($escapedCheckboxText);
 
         $agreement->expects($this->once())->method('getIsHtml')->willReturn(true);
         $agreement->expects($this->once())->method('getContent')->willReturn($content);
