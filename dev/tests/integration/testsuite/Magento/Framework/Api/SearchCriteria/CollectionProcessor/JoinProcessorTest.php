@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2023 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -10,18 +10,20 @@ namespace Magento\Framework\Api\SearchCriteria\CollectionProcessor;
 use Magento\Framework\Api\SearchCriteria\CollectionProcessor\JoinProcessor\CustomJoinInterface;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Data\Collection\AbstractDb;
+use Magento\Framework\ObjectManagerInterface;
+use Magento\TestFramework\Helper\Bootstrap;
 use PHPUnit\Framework\TestCase;
 
 class JoinProcessorTest extends TestCase
 {
     /**
-     * @var \Magento\Framework\ObjectManagerInterface
+     * @var ObjectManagerInterface
      */
     private $objectManager;
 
     protected function setUp(): void
     {
-        $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
+        $this->objectManager = Bootstrap::getObjectManager();
     }
 
     /**
@@ -52,11 +54,11 @@ class JoinProcessorTest extends TestCase
 
         $collection1 = $this->getMockBuilder(AbstractDb::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $collection2 = $this->getMockBuilder(AbstractDb::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $joinProcessor->process($searchCriteria, $collection1);
         $joinProcessor->process($searchCriteria, $collection2);
