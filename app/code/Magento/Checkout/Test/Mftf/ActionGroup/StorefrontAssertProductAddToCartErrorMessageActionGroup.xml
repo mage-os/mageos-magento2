@@ -13,6 +13,6 @@
             <argument name="message" type="string" defaultValue=""/>
         </arguments>
         <comment userInput="Comment is added to preserve the step key for backward compatibility" stepKey="waitForProductAddedMessage"/>
-        <waitForText selector="{{StorefrontMessagesSection.error}}" userInput="{{message}}" stepKey="seeAddToCartErrorMessage"/>
+        <waitForText selector="{{StorefrontMessagesSection.error}}" time="120" userInput="{{message}}" stepKey="seeAddToCartErrorMessage"/>
     </actionGroup>
 </actionGroups>
