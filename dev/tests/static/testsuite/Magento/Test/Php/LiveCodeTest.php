@@ -24,6 +24,16 @@ use PHPMD\TextUI\ExitCode;
 class LiveCodeTest extends \PHPUnit\Framework\TestCase
 {
     /**
+     * @var \Magento\Framework\Shell
+     */
+    protected $_shell;
+
+    /**
+     * @var string
+     */
+    protected $_command;
+
+    /**
      * @var string
      */
     protected static $reportDir = '';
@@ -32,6 +42,29 @@ class LiveCodeTest extends \PHPUnit\Framework\TestCase
      * @var string
      */
     protected static $pathToSource = '';
+
+    /**
+     * @var boolean
+     */
+    protected static $executedCompilation = false;
+
+    /**
+     * Setup compilation
+     *
+     * @return void
+     */
+    protected function setUp(): void
+    {
+        if(!self::$executedCompilation ){
+            $this->_shell = new \Magento\Framework\Shell(new \Magento\Framework\Shell\CommandRenderer());
+            $basePath = BP;
+            $basePath = str_replace('\\', '/', $basePath);
+
+            $this->_command = 'php ' . $basePath . '/bin/magento setup:di:compile';
+            $this->_shell->execute($this->_command);
+            self::$executedCompilation = true;
+        }
+    }
 
     /**
      * Setup basics for all tests
