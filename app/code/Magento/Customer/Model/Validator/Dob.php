@@ -53,12 +53,12 @@ class Dob extends AbstractValidator
      * Check if specified dob is not in the future
      *
      * @param string|null $dobValue
-     * @param DateTimeZone|null $timezone
+     * @param DateTimeZone $timezone
      * @return bool
      */
-    private function isValidDob(?string $dobValue, ?DateTimeZone $timezone = null): bool
+    private function isValidDob(?string $dobValue, DateTimeZone $timezone): bool
     {
-        if ($dobValue != null) {
+        if ($dobValue) {
 
             // Get the date of birth and set the time to 00:00:00
             $dobDate = new \DateTime($dobValue, $timezone);
