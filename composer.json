@@ -19,10 +19,6 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "git@github.com:magento-commerce/laminas-captcha.git"
-        },
-        {
-            "type": "vcs",
             "url": "git@github.com:magento-commerce/laminas-db.git"
         },
         {
@@ -32,10 +28,6 @@
         {
             "type": "vcs",
             "url": "git@github.com:magento-commerce/laminas-di.git"
-        },
-        {
-            "type": "vcs",
-            "url": "git@github.com:magento-gl/composer.git"
         },
         {
             "type": "vcs",
@@ -56,14 +48,6 @@
         {
             "type": "vcs",
             "url": "git@github.com:magento-commerce/laminas-oauth.git"
-        },
-        {
-            "type": "vcs",
-            "url": "git@github.com:magento-commerce/magento-module-sequence.git"
-        },
-        {
-            "type": "vcs",
-            "url": "git@github.com:magento-gl/magento2-functional-testing-framework.git"
         },
         {
             "type": "vcs",
@@ -114,7 +98,7 @@
         "magento/elasticsearch": "dev-develop",
         "ezyang/htmlpurifier": "^4.17",
         "guzzlehttp/guzzle": "^7.5",
-        "magento/laminas-captcha": "dev-develop",
+        "laminas/laminas-captcha": "^2.18",
         "laminas/laminas-code": "^4.13",
         "magento/laminas-db": "dev-develop",
         "magento/laminas-di": "dev-develop",
@@ -138,7 +122,7 @@
         "laminas/laminas-validator": "^2.23",
         "league/flysystem": "^3.0",
         "league/flysystem-aws-s3-v3": "^3.0",
-        "magento/composer": "dev-AC-13307",
+        "magento/composer": "dev-develop",
         "magento/composer-dependency-version-audit-plugin": "^0.1",
         "magento/magento-composer-installer": ">=0.4.0",
         "magento/zend-cache": "^1.16",
@@ -161,7 +145,6 @@
         "web-token/jwt-framework": "^3.4",
         "webonyx/graphql-php": "^15.0",
         "wikimedia/less.php": "^5.0",
-        "magento/module-sequence": "dev-develop",
         "magento/recaptcha": "dev-develop",
         "magento/stock-api-libphp": "dev-develop",
         "magento/ringphp": "dev-develop"
@@ -173,7 +156,7 @@
         "friendsofphp/php-cs-fixer": "^3.22",
         "magento/oauth": "dev-develop",
         "magento/magento-coding-standard": "*",
-        "magento/magento2-functional-testing-framework": "dev-AC-13306",
+        "magento/magento2-functional-testing-framework": "^5.0",
         "pdepend/pdepend": "3.x-dev",
         "phpmd/phpmd": "3.x-dev",
         "phpstan/phpstan": "^1.9",
