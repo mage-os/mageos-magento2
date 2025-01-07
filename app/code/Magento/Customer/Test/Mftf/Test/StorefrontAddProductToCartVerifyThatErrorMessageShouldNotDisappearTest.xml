@@ -45,7 +45,8 @@
             <argument name="product" value="$$createSimpleProduct$$"/>
         </actionGroup>
 
-        <fillField selector="{{StorefrontProductInfoMainSection.qty}}" userInput="1001" stepKey="fillQuantity"/>
+        <fillField selector="{{StorefrontProductInfoMainSection.qty}}" userInput="10000" stepKey="fillQuantity"/>
+        <seeInField userInput="10000" selector="{{StorefrontProductInfoMainSection.qty}}" stepKey="seeUpdatedQuantity"/>
 
         <actionGroup ref="StorefrontProductPageAddSimpleProductToCartActionGroup" stepKey="addProductToCart"/>
         <!-- Check that error remains -->
