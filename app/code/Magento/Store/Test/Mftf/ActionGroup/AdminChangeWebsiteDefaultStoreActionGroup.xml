@@ -21,7 +21,6 @@
         <waitForText selector="{{AdminConfirmationModalSection.title}}" userInput="Warning message" stepKey="seeWarningAboutTakingALongTimeToComplete"/>
         <waitForElementClickable selector="{{AdminConfirmationModalSection.ok}}" stepKey="waitForOkButtonClickable" />
         <click selector="{{AdminConfirmationModalSection.ok}}" stepKey="confirmModal"/>
-        <waitForElementVisible selector="{{AdminMessagesSection.success}}" stepKey="seeForSuccessMessage"/>
         <waitForText selector="{{AdminMessagesSection.success}}" userInput="You saved the website." stepKey="seeSuccessMessage"/>
     </actionGroup>
 </actionGroups>
