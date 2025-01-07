@@ -18,6 +18,7 @@ use Magento\Catalog\Model\Product;
  * @method int getStoreId()
  * @method \Magento\Catalog\Model\Product\Compare\Item setStoreId(int $value)
  * @since 100.0.2
+ * @SuppressWarnings(PHPMD.CookieAndSessionMisuse)
  */
 class Item extends \Magento\Framework\Model\AbstractModel implements \Magento\Framework\DataObject\IdentityInterface
 {
