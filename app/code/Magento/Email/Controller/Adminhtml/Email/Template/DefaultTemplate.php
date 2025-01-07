@@ -6,7 +6,12 @@
  */
 namespace Magento\Email\Controller\Adminhtml\Email\Template;
 
-class DefaultTemplate extends \Magento\Email\Controller\Adminhtml\Email\Template
+use Magento\Framework\App\Action\HttpGetActionInterface;
+
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
+class DefaultTemplate extends \Magento\Email\Controller\Adminhtml\Email\Template implements HttpGetActionInterface
 {
     /**
      * @var \Magento\Email\Model\Template\Config
