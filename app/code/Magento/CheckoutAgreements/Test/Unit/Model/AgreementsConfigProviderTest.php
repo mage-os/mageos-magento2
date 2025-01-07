@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -88,7 +88,6 @@ class AgreementsConfigProviderTest extends TestCase
     {
         $content = 'content';
         $checkboxText = 'checkbox_text';
-        $escapedCheckboxText = 'escaped_checkbox_text';
         $mode = AgreementModeOptions::MODE_AUTO;
         $agreementId = 100;
         $contentHeight = '100px';
