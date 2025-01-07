@@ -13,7 +13,7 @@
         "magento/module-sales": "*",
         "magento/module-store": "*",
         "magento/module-authorization": "*",
-        "magento/laminas-captcha": "dev-develop",
+        "laminas/laminas-captcha": "^2.18",
         "magento/laminas-db": "dev-develop"
     },
     "type": "magento2-module",
