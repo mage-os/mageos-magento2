@@ -27,6 +27,7 @@ use Magento\Framework\View\DesignInterface;
  *
  * @since 100.0.2
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.CookieAndSessionMisuse)
  */
 class Design extends \Magento\Framework\Model\AbstractModel
 {
