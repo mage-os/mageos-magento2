@@ -18,8 +18,11 @@
         <remove keyForRemoval="waitForScopeSelection"/>
         <remove keyForRemoval="clickSaveRoleButton"/>
         <remove keyForRemoval="waitForPageLoad2"/>
+        <remove keyForRemoval="waitForTfaRole"/>
         <remove keyForRemoval="clickCheckbox"/>
         <scrollTo selector="{{AdminEditRoleInfoSection.blockName('restrictedRole')}}"  x="0" y="-120" stepKey="scrollToResourceElement" after="selectResourceAccessCustom"/>
-        <click stepKey="clickTFACheckbox" selector="{{AdminEditRoleInfoSection.checkboxByRole('Magento_TwoFactorAuth::tfa')}}" after="waitForTfaRole"/>
+        <scrollTo selector="{{AdminEditRoleInfoSection.checkboxByRole('Magento_User::acl_users')}}" stepKey="scrollToTwoFactor" after="clickContentBlockCheckbox"/>
+        <waitForElementClickable selector="{{AdminEditRoleInfoSection.checkboxByRole('Magento_TwoFactorAuth::tfa')}}" stepKey="waitForTwoFactorToBeClickable"/>
+        <click selector="{{AdminEditRoleInfoSection.checkboxByRole('Magento_TwoFactorAuth::tfa')}}" stepKey="checkTwoFactorCheckbox"/>
     </actionGroup>
 </actionGroups>
