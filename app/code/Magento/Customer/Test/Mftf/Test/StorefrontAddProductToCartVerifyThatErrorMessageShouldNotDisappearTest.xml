@@ -44,7 +44,7 @@
         <actionGroup ref="StorefrontOpenProductEntityPageActionGroup" stepKey="openProductPage">
             <argument name="product" value="$$createSimpleProduct$$"/>
         </actionGroup>
-
+        <clearField selector="{{StorefrontProductInfoMainSection.qty}}" stepKey="clearQuantity"/>
         <fillField selector="{{StorefrontProductInfoMainSection.qty}}" userInput="10000" stepKey="fillQuantity"/>
         <seeInField userInput="10000" selector="{{StorefrontProductInfoMainSection.qty}}" stepKey="seeUpdatedQuantity"/>
 
