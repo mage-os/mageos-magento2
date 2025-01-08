@@ -9,24 +9,6 @@
     "config": {
         "sort-packages": true
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "git@github.com:magento-commerce/laminas-file.git"
-        },
-        {
-            "type": "vcs",
-            "url": "git@github.com:magento-commerce/laminas-mail.git"
-        },
-        {
-            "type": "vcs",
-            "url": "git@github.com:magento-commerce/laminas-mime.git"
-        },
-        {
-            "type": "vcs",
-            "url": "git@github.com:magento-commerce/laminas-oauth.git"
-        }
-    ],
     "require": {
         "php": "~8.2.0||~8.3.0||~8.4.0",
         "ext-bcmath": "*",
@@ -48,15 +30,15 @@
         "guzzlehttp/guzzle": "^7.5",
         "laminas/laminas-code": "^4.13",
         "laminas/laminas-escaper": "^2.13",
-        "magento/laminas-file": "dev-develop",
+        "magento/laminas-file": "^1.0.0",
         "laminas/laminas-filter": "^2.33",
         "laminas/laminas-http": "^2.15",
         "laminas/laminas-i18n": "^2.17",
-        "magento/laminas-mail": "dev-develop",
-        "magento/laminas-mime": "dev-develop",
+        "magento/laminas-mail": "^1.0.0",
+        "magento/laminas-mime": "^1.0.0",
         "laminas/laminas-permissions-acl": "^2.10",
         "laminas/laminas-stdlib": "^3.11",
-        "magento/laminas-oauth": "dev-develop",
+        "magento/laminas-oauth": "^1.0.0",
         "laminas/laminas-uri": "^2.9",
         "laminas/laminas-validator": "^2.23",
         "magento/composer-dependency-version-audit-plugin": "^0.1",

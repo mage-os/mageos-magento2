@@ -12,7 +12,7 @@
         "magento/module-store": "*",
         "magento/module-catalog-inventory": "*",
         "magento/framework": "*",
-        "magento/elasticsearch": "dev-develop"
+        "magento/elasticsearch": "^1.0.0"
     },
     "suggest": {
         "magento/module-config": "*"
