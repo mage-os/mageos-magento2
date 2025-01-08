@@ -14,7 +14,7 @@
         "magento/module-store": "*",
         "magento/module-authorization": "*",
         "laminas/laminas-captcha": "^2.18",
-        "magento/laminas-db": "dev-develop"
+        "magento/laminas-db": "^1.0.0"
     },
     "type": "magento2-module",
     "license": [

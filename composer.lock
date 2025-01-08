@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c3a6a9a928f0b06cc64724a267fb9c7e",
+    "content-hash": "d996c279b0705a5664ab3f8fe30c686c",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.336.9",
+            "version": "3.336.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "bbc76138ed66f593dc2ae529c95fe1f794e6d77f"
+                "reference": "bb137145fdbcd4ca121446157d804b9653aff54c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/bbc76138ed66f593dc2ae529c95fe1f794e6d77f",
-                "reference": "bbc76138ed66f593dc2ae529c95fe1f794e6d77f",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/bb137145fdbcd4ca121446157d804b9653aff54c",
+                "reference": "bb137145fdbcd4ca121446157d804b9653aff54c",
                 "shasum": ""
             },
             "require": {
@@ -154,9 +154,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.336.9"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.336.10"
             },
-            "time": "2025-01-06T19:06:42+00:00"
+            "time": "2025-01-07T19:05:48+00:00"
         },
         {
             "name": "brick/math",
@@ -3730,58 +3730,39 @@
         },
         {
             "name": "magento/composer",
-            "version": "dev-develop",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/magento/composer.git",
-                "reference": "f785d2b98b54301afbd7f022f9df70d07e58b465"
-            },
+            "version": "1.10.0",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento/composer/zipball/f785d2b98b54301afbd7f022f9df70d07e58b465",
-                "reference": "f785d2b98b54301afbd7f022f9df70d07e58b465",
-                "shasum": ""
+                "url": "https://connect20-qa01.magedevteam.com/archives/magento/composer/magento-composer-1.10.0.0.zip",
+                "shasum": "9108a967ca00664c955b0ffcf8a0fce1b085d38f"
             },
             "require": {
-                "composer/composer": "^2.1.13",
-                "php": "~7.4.0||~8.1.0||~8.2.0||~8.3.0||~8.4.0",
+                "composer/composer": "^2.0",
+                "php": "~7.4.0||~8.1.0||~8.2.0||~8.3.0",
                 "symfony/console": "~4.4.0||~5.4.0||~6.4.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^9.5.10 || ^10"
+                "phpunit/phpunit": "^9"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
                     "Magento\\Composer\\": "src"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "OSL-3.0",
                 "AFL-3.0"
             ],
-            "description": "Magento composer library helps to instantiate Composer application and run composer commands.",
-            "support": {
-                "issues": "https://github.com/magento/composer/issues",
-                "source": "https://github.com/magento/composer/tree/develop"
-            },
-            "time": "2025-01-06T16:52:20+00:00"
+            "description": "Magento composer library helps to instantiate Composer application and run composer commands."
         },
         {
             "name": "magento/composer-dependency-version-audit-plugin",
             "version": "0.1.6",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/magento/composer-dependency-version-audit-plugin.git",
-                "reference": "37099d19495df296de962257c54088c953bbc1ac"
-            },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento/composer-dependency-version-audit-plugin/zipball/37099d19495df296de962257c54088c953bbc1ac",
-                "reference": "37099d19495df296de962257c54088c953bbc1ac",
-                "shasum": ""
+                "url": "https://connect20-qa01.magedevteam.com/archives/magento/composer-dependency-version-audit-plugin/magento-composer-dependency-version-audit-plugin-0.1.6.0.zip",
+                "shasum": "6e981073d6d680aa91e1730d667c3600cefb5926"
             },
             "require": {
                 "composer-plugin-api": "^1.0 || ^2.0",
@@ -3799,30 +3780,18 @@
                     "Magento\\ComposerDependencyVersionAuditPlugin\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "OSL-3.0"
             ],
-            "description": "Validating packages through a composer plugin",
-            "support": {
-                "issues": "https://github.com/magento/composer-dependency-version-audit-plugin/issues",
-                "source": "https://github.com/magento/composer-dependency-version-audit-plugin/tree/0.1.6"
-            },
-            "time": "2024-12-18T09:52:06+00:00"
+            "description": "Validating packages through a composer plugin"
         },
         {
             "name": "magento/elasticsearch",
-            "version": "dev-develop",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:magento-commerce/magento-elasticsearch-php.git",
-                "reference": "dd1796d075345ace19d674c80c4b774bc95067d8"
-            },
+            "version": "1.0.0-beta105",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-commerce/magento-elasticsearch-php/zipball/dd1796d075345ace19d674c80c4b774bc95067d8",
-                "reference": "dd1796d075345ace19d674c80c4b774bc95067d8",
-                "shasum": ""
+                "url": "https://connect20-qa01.magedevteam.com/archives/magento/elasticsearch/magento-elasticsearch-1.0.0.0-beta105.zip",
+                "shasum": "339b683ba76e3139c6680691050f38bc9913684a"
             },
             "require": {
                 "ext-json": ">=1.3.7",
@@ -3846,7 +3815,6 @@
                 "ext-curl": "*",
                 "monolog/monolog": "Allows for client-level logging and tracing"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "files": [
@@ -3855,22 +3823,6 @@
                 "psr-4": {
                     "Elasticsearch\\": "src/Elasticsearch/"
                 }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "Elasticsearch\\Tests\\": "tests/Elasticsearch/Tests/",
-                    "Elasticsearch\\IntegrationTests\\": "tests/Elasticsearch/IntegrationTests/",
-                    "Elasticsearch\\Util\\": "util/"
-                }
-            },
-            "scripts": {
-                "phpcs": [
-                    "phpcs --standard=ruleset.xml --extensions=php --encoding=utf-8 --tab-width=4 -sp src --ignore=src/Elasticsearch/Endpoints",
-                    "phpcs --standard=ruleset.xml --extensions=php --encoding=utf-8 --tab-width=4 -sp tests --ignore=tests/Elasticsearch/Tests/Yaml"
-                ],
-                "phpstan": [
-                    "phpstan analyse src --level 2 --no-progress"
-                ]
             },
             "license": [
                 "Apache-2.0",
@@ -3889,26 +3841,15 @@
                 "client",
                 "elasticsearch",
                 "search"
-            ],
-            "support": {
-                "source": "https://github.com/magento-commerce/magento-elasticsearch-php/tree/develop",
-                "issues": "https://github.com/magento-commerce/magento-elasticsearch-php/issues"
-            },
-            "time": "2024-12-27T06:28:47+00:00"
+            ]
         },
         {
             "name": "magento/laminas-crypt",
-            "version": "dev-develop",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:magento-commerce/laminas-crypt.git",
-                "reference": "9e01f67bdab53cdf4439bf399e5a8ce0a47710ba"
-            },
+            "version": "1.0.0-beta105",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-commerce/laminas-crypt/zipball/9e01f67bdab53cdf4439bf399e5a8ce0a47710ba",
-                "reference": "9e01f67bdab53cdf4439bf399e5a8ce0a47710ba",
-                "shasum": ""
+                "url": "https://connect20-qa01.magedevteam.com/archives/magento/laminas-crypt/magento-laminas-crypt-1.0.0.0-beta105.zip",
+                "shasum": "b93c170e390c552a7101dd9a1167338b45bdc42a"
             },
             "require": {
                 "ext-mbstring": "*",
@@ -3930,38 +3871,11 @@
             "suggest": {
                 "ext-openssl": "Required for most features of Laminas\\Crypt"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
                     "Laminas\\Crypt\\": "src/"
                 }
-            },
-            "autoload-dev": {
-                "files": [
-                    "test/_autoload.php"
-                ],
-                "psr-4": {
-                    "LaminasTest\\Crypt\\": "test/"
-                }
-            },
-            "scripts": {
-                "check": [
-                    "@cs-check",
-                    "@test"
-                ],
-                "cs-check": [
-                    "phpcs"
-                ],
-                "cs-fix": [
-                    "phpcbf"
-                ],
-                "test": [
-                    "phpunit --colors=always"
-                ],
-                "test-coverage": [
-                    "phpunit --colors=always --coverage-clover clover.xml"
-                ]
             },
             "license": [
                 "BSD-3-Clause"
@@ -3971,31 +3885,15 @@
             "keywords": [
                 "crypt",
                 "laminas"
-            ],
-            "support": {
-                "docs": "https://docs.laminas.dev/laminas-crypt/",
-                "issues": "https://github.com/laminas/laminas-crypt/issues",
-                "source": "https://github.com/laminas/laminas-crypt",
-                "rss": "https://github.com/laminas/laminas-crypt/releases.atom",
-                "chat": "https://laminas.dev/chat",
-                "forum": "https://discourse.laminas.dev"
-            },
-            "abandoned": true,
-            "time": "2024-12-20T11:23:12+00:00"
+            ]
         },
         {
             "name": "magento/laminas-db",
-            "version": "dev-develop",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:magento-commerce/laminas-db.git",
-                "reference": "bf73b0b22324b91c948d6a9aa8e6bededb638e2c"
-            },
+            "version": "1.0.0-beta105",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-commerce/laminas-db/zipball/bf73b0b22324b91c948d6a9aa8e6bededb638e2c",
-                "reference": "bf73b0b22324b91c948d6a9aa8e6bededb638e2c",
-                "shasum": ""
+                "url": "https://connect20-qa01.magedevteam.com/archives/magento/laminas-db/magento-laminas-db-1.0.0.0-beta105.zip",
+                "shasum": "4eabdd0df150fc2d7517f1e873ca3fa189916beb"
             },
             "require": {
                 "laminas/laminas-stdlib": "^3.7.1",
@@ -4019,7 +3917,6 @@
                 "laminas/laminas-hydrator": "(^3.2 || ^4.3) Laminas\\Hydrator component for using HydratingResultSets",
                 "laminas/laminas-servicemanager": "Laminas\\ServiceManager component"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "laminas": {
@@ -4032,41 +3929,6 @@
                     "Laminas\\Db\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "LaminasTest\\Db\\": "test/unit/",
-                    "LaminasIntegrationTest\\Db\\": "test/integration/"
-                }
-            },
-            "archive": {
-                "exclude": [
-                    "/.github/.metadata.json"
-                ]
-            },
-            "scripts": {
-                "check": [
-                    "@cs-check",
-                    "@test"
-                ],
-                "cs-check": [
-                    "phpcs"
-                ],
-                "cs-fix": [
-                    "phpcbf"
-                ],
-                "test": [
-                    "phpunit --colors=always --testsuite \"unit test\""
-                ],
-                "test-coverage": [
-                    "phpunit --colors=always --coverage-clover clover.xml"
-                ],
-                "test-integration": [
-                    "phpunit --colors=always --testsuite \"integration test\""
-                ],
-                "upload-coverage": [
-                    "coveralls -v"
-                ]
-            },
             "license": [
                 "BSD-3-Clause"
             ],
@@ -4075,30 +3937,15 @@
             "keywords": [
                 "db",
                 "laminas"
-            ],
-            "support": {
-                "docs": "https://docs.laminas.dev/laminas-db/",
-                "issues": "https://github.com/laminas/laminas-db/issues",
-                "source": "https://github.com/laminas/laminas-db",
-                "rss": "https://github.com/laminas/laminas-db/releases.atom",
-                "chat": "https://laminas.dev/chat",
-                "forum": "https://discourse.laminas.dev"
-            },
-            "time": "2024-12-20T16:36:57+00:00"
+            ]
         },
         {
             "name": "magento/laminas-di",
-            "version": "dev-develop",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:magento-commerce/laminas-di.git",
-                "reference": "87046cf2a81fcf25cde0b0dbef78d2f74b2168d0"
-            },
+            "version": "1.0.0-beta105",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-commerce/laminas-di/zipball/87046cf2a81fcf25cde0b0dbef78d2f74b2168d0",
-                "reference": "87046cf2a81fcf25cde0b0dbef78d2f74b2168d0",
-                "shasum": ""
+                "url": "https://connect20-qa01.magedevteam.com/archives/magento/laminas-di/magento-laminas-di-1.0.0.0-beta105.zip",
+                "shasum": "bb5097fb0b0f29571f822a58beb7b25f8ea071c2"
             },
             "require": {
                 "laminas/laminas-stdlib": "^3.18.0",
@@ -4127,7 +3974,6 @@
             "suggest": {
                 "laminas/laminas-servicemanager": "An IoC container without auto wiring capabilities"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "laminas": {
@@ -4140,36 +3986,6 @@
                     "Laminas\\Di\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "LaminasTest\\Di\\": "test/",
-                    "LaminasBench\\Di\\": "benchmarks/"
-                }
-            },
-            "scripts": {
-                "benchmark": [
-                    "phpbench run --revs=2 --iterations=2 --report=aggregate"
-                ],
-                "check": [
-                    "@cs-check",
-                    "@test"
-                ],
-                "cs-check": [
-                    "phpcs"
-                ],
-                "cs-fix": [
-                    "phpcbf"
-                ],
-                "analyse": [
-                    "psalm --shepherd --stats"
-                ],
-                "test": [
-                    "phpunit --colors=always"
-                ],
-                "test-coverage": [
-                    "phpunit --colors=always --coverage-clover clover.xml"
-                ]
-            },
             "license": [
                 "BSD-3-Clause"
             ],
@@ -4179,30 +3995,15 @@
                 "di",
                 "laminas",
                 "psr-11"
-            ],
-            "support": {
-                "docs": "https://docs.laminas.dev/laminas-di/",
-                "issues": "https://github.com/laminas/laminas-di/issues",
-                "source": "https://github.com/laminas/laminas-di",
-                "rss": "https://github.com/laminas/laminas-di/releases.atom",
-                "chat": "https://laminas.dev/chat",
-                "forum": "https://discourse.laminas.dev"
-            },
-            "time": "2024-12-20T16:36:04+00:00"
+            ]
         },
         {
             "name": "magento/laminas-file",
-            "version": "dev-develop",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:magento-commerce/laminas-file.git",
-                "reference": "272536dc20f0c9a989c5538773758f8a85735cb2"
-            },
+            "version": "1.0.0-beta105",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-commerce/laminas-file/zipball/272536dc20f0c9a989c5538773758f8a85735cb2",
-                "reference": "272536dc20f0c9a989c5538773758f8a85735cb2",
-                "shasum": ""
+                "url": "https://connect20-qa01.magedevteam.com/archives/magento/laminas-file/magento-laminas-file-1.0.0.0-beta105.zip",
+                "shasum": "b5a8456cfec121f98fbb2ece26892097fa3052e2"
             },
             "require": {
                 "laminas/laminas-stdlib": "^2.7.7 || ^3.15.0",
@@ -4229,41 +4030,11 @@
                 "laminas/laminas-i18n": "Laminas\\I18n component",
                 "laminas/laminas-validator": "Laminas\\Validator component"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
                     "Laminas\\File\\": "src/"
                 }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "LaminasTest\\File\\": "test/"
-                }
-            },
-            "scripts": {
-                "check": [
-                    "@cs-check",
-                    "@test"
-                ],
-                "cs-check": [
-                    "phpcs"
-                ],
-                "cs-fix": [
-                    "phpcbf"
-                ],
-                "test": [
-                    "phpunit --colors=always --testsuite \"unit test\""
-                ],
-                "test-coverage": [
-                    "phpunit --colors=always --coverage-clover clover.xml"
-                ],
-                "test-integration": [
-                    "phpunit --colors=always --testsuite \"integration test\""
-                ],
-                "upload-coverage": [
-                    "coveralls -v"
-                ]
             },
             "license": [
                 "BSD-3-Clause"
@@ -4273,37 +4044,22 @@
             "keywords": [
                 "file",
                 "laminas"
-            ],
-            "support": {
-                "docs": "https://docs.laminas.dev/laminas-file/",
-                "issues": "https://github.com/laminas/laminas-file/issues",
-                "source": "https://github.com/laminas/laminas-file",
-                "rss": "https://github.com/laminas/laminas-file/releases.atom",
-                "chat": "https://laminas.dev/chat",
-                "forum": "https://discourse.laminas.dev"
-            },
-            "time": "2024-12-20T16:38:30+00:00"
+            ]
         },
         {
             "name": "magento/laminas-mail",
-            "version": "dev-develop",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:magento-commerce/laminas-mail.git",
-                "reference": "50ff495744f06b1ea2aa701e7945a25c0098621a"
-            },
+            "version": "1.0.0-beta105",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-commerce/laminas-mail/zipball/50ff495744f06b1ea2aa701e7945a25c0098621a",
-                "reference": "50ff495744f06b1ea2aa701e7945a25c0098621a",
-                "shasum": ""
+                "url": "https://connect20-qa01.magedevteam.com/archives/magento/laminas-mail/magento-laminas-mail-1.0.0.0-beta105.zip",
+                "shasum": "b2202cd705b3f9bfef04aa4c503abd5550610fa0"
             },
             "require": {
                 "ext-iconv": "*",
                 "laminas/laminas-loader": "^2.9.0",
                 "laminas/laminas-stdlib": "^3.17.0",
                 "laminas/laminas-validator": "^2.31.0",
-                "magento/laminas-mime": "dev-develop",
+                "magento/laminas-mime": "^1.0.0",
                 "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0",
                 "symfony/polyfill-intl-idn": "^1.27.0",
                 "symfony/polyfill-mbstring": "^1.27.0",
@@ -4324,7 +4080,6 @@
             "suggest": {
                 "laminas/laminas-servicemanager": "^3.21 when using SMTP to deliver messages"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "laminas": {
@@ -4337,33 +4092,6 @@
                     "Laminas\\Mail\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "LaminasTest\\Mail\\": "test/"
-                }
-            },
-            "scripts": {
-                "check": [
-                    "@cs-check",
-                    "@static-analysis",
-                    "@test"
-                ],
-                "cs-check": [
-                    "phpcs"
-                ],
-                "cs-fix": [
-                    "phpcbf"
-                ],
-                "static-analysis": [
-                    "psalm --shepherd --stats"
-                ],
-                "test": [
-                    "phpunit --colors=always"
-                ],
-                "test-coverage": [
-                    "phpunit --colors=always --coverage-clover clover.xml"
-                ]
-            },
             "license": [
                 "BSD-3-Clause"
             ],
@@ -4372,31 +4100,15 @@
             "keywords": [
                 "laminas",
                 "mail"
-            ],
-            "support": {
-                "issues": "https://github.com/laminas/laminas-mail/issues",
-                "forum": "https://discourse.laminas.dev",
-                "chat": "https://laminas.dev/chat",
-                "source": "https://github.com/laminas/laminas-mail",
-                "docs": "https://docs.laminas.dev/laminas-mail/",
-                "rss": "https://github.com/laminas/laminas-mail/releases.atom"
-            },
-            "abandoned": "symfony/mailer",
-            "time": "2024-12-23T09:48:07+00:00"
+            ]
         },
         {
             "name": "magento/laminas-mime",
-            "version": "dev-develop",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:magento-commerce/laminas-mime.git",
-                "reference": "e1a57fcce9b623f232d1f3b864f7b9bcbaffefbd"
-            },
+            "version": "1.0.0-beta105",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-commerce/laminas-mime/zipball/e1a57fcce9b623f232d1f3b864f7b9bcbaffefbd",
-                "reference": "e1a57fcce9b623f232d1f3b864f7b9bcbaffefbd",
-                "shasum": ""
+                "url": "https://connect20-qa01.magedevteam.com/archives/magento/laminas-mime/magento-laminas-mime-1.0.0.0-beta105.zip",
+                "shasum": "c9b69c0f87697cf26536c05e4df2659414f30830"
             },
             "require": {
                 "laminas/laminas-stdlib": "^2.7 || ^3.0",
@@ -4410,44 +4122,17 @@
             },
             "require-dev": {
                 "laminas/laminas-coding-standard": "~2.4.0",
-                "magento/laminas-mail": "dev-develop",
+                "magento/laminas-mail": "~1.0.0",
                 "phpunit/phpunit": "~9.5.25"
             },
             "suggest": {
                 "laminas/laminas-mail": "Laminas\\Mail component"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
                     "Laminas\\Mime\\": "src/"
                 }
-            },
-            "autoload-dev": {
-                "files": [
-                    "test/TestAsset/Mail/Headers.php"
-                ],
-                "psr-4": {
-                    "LaminasTest\\Mime\\": "test/"
-                }
-            },
-            "scripts": {
-                "check": [
-                    "@cs-check",
-                    "@test"
-                ],
-                "cs-check": [
-                    "phpcs"
-                ],
-                "cs-fix": [
-                    "phpcbf"
-                ],
-                "test": [
-                    "phpunit --colors=always"
-                ],
-                "test-coverage": [
-                    "phpunit --colors=always --coverage-clover clover.xml"
-                ]
             },
             "license": [
                 "BSD-3-Clause"
@@ -4457,31 +4142,15 @@
             "keywords": [
                 "laminas",
                 "mime"
-            ],
-            "support": {
-                "docs": "https://docs.laminas.dev/laminas-mime/",
-                "issues": "https://github.com/laminas/laminas-mime/issues",
-                "source": "https://github.com/laminas/laminas-mime",
-                "rss": "https://github.com/laminas/laminas-mime/releases.atom",
-                "chat": "https://laminas.dev/chat",
-                "forum": "https://discourse.laminas.dev"
-            },
-            "abandoned": "symfony/mime",
-            "time": "2024-12-23T09:48:52+00:00"
+            ]
         },
         {
             "name": "magento/laminas-oauth",
-            "version": "dev-develop",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:magento-commerce/laminas-oauth.git",
-                "reference": "1c7ab34b31b26cea9ea1e6ab704572ec4366d7e4"
-            },
+            "version": "1.0.0-beta105",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-commerce/laminas-oauth/zipball/1c7ab34b31b26cea9ea1e6ab704572ec4366d7e4",
-                "reference": "1c7ab34b31b26cea9ea1e6ab704572ec4366d7e4",
-                "shasum": ""
+                "url": "https://connect20-qa01.magedevteam.com/archives/magento/laminas-oauth/magento-laminas-oauth-1.0.0.0-beta105.zip",
+                "shasum": "85996f9c34b32b2279019b437ab00f1a762be5e1"
             },
             "require": {
                 "laminas/laminas-config": "^3.7",
@@ -4491,7 +4160,7 @@
                 "laminas/laminas-math": "^3.8",
                 "laminas/laminas-stdlib": "^3.10",
                 "laminas/laminas-uri": "^2.9",
-                "magento/laminas-crypt": "dev-develop",
+                "magento/laminas-crypt": "^1.0.0",
                 "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0"
             },
             "conflict": {
@@ -4504,22 +4173,11 @@
                 "laminas/laminas-coding-standard": "~2.5.0",
                 "phpunit/phpunit": "^9.6.20"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
                     "Laminas\\OAuth\\": "src/"
                 }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "LaminasTest\\OAuth\\": "test/"
-                }
-            },
-            "scripts": {
-                "static-analysis": [
-                    "psalm --shepherd --stats"
-                ]
             },
             "license": [
                 "BSD-3-Clause"
@@ -4529,16 +4187,7 @@
             "keywords": [
                 "laminas",
                 "oauth"
-            ],
-            "support": {
-                "issues": "https://github.com/laminas/laminas-oauth/issues",
-                "source": "https://github.com/laminas/laminas-oauth",
-                "rss": "https://github.com/laminas/laminas-oauth/releases.atom",
-                "chat": "https://laminas.dev/chat",
-                "forum": "https://discourse.laminas.dev"
-            },
-            "abandoned": true,
-            "time": "2024-12-20T11:24:57+00:00"
+            ]
         },
         {
             "name": "magento/magento-composer-installer",
@@ -4622,87 +4271,12 @@
             "time": "2022-12-01T15:21:32+00:00"
         },
         {
-            "name": "magento/recaptcha",
-            "version": "dev-develop",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:magento-commerce/magento-recaptcha.git",
-                "reference": "93b1fb2b71c2fcc6e3705b74403935a760815c30"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/magento-commerce/magento-recaptcha/zipball/93b1fb2b71c2fcc6e3705b74403935a760815c30",
-                "reference": "93b1fb2b71c2fcc6e3705b74403935a760815c30",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8"
-            },
-            "replace": {
-                "google/recaptcha": "^1.3"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.14",
-                "php-coveralls/php-coveralls": "^2.5",
-                "phpunit/phpunit": "^10"
-            },
-            "default-branch": true,
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.3.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "ReCaptcha\\": "src/ReCaptcha"
-                }
-            },
-            "scripts": {
-                "lint": [
-                    "PHP_CS_FIXER_IGNORE_ENV=1 vendor/bin/php-cs-fixer -vvv fix --using-cache=no --dry-run ."
-                ],
-                "lint-fix": [
-                    "PHP_CS_FIXER_IGNORE_ENV=1 vendor/bin/php-cs-fixer -vvv fix --using-cache=no ."
-                ],
-                "test": [
-                    "XDEBUG_MODE=coverage vendor/bin/phpunit"
-                ],
-                "serve-examples": [
-                    "@php -S localhost:8080 -t examples"
-                ]
-            },
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "Client library for reCAPTCHA, a free service that protects websites from spam and abuse.",
-            "homepage": "https://www.google.com/recaptcha/",
-            "keywords": [
-                "abuse",
-                "captcha",
-                "recaptcha",
-                "spam"
-            ],
-            "support": {
-                "forum": "https://groups.google.com/forum/#!forum/recaptcha",
-                "source": "https://github.com/google/recaptcha",
-                "issues": "https://github.com/magento-commerce/magento-recaptcha/issues"
-            },
-            "time": "2024-12-23T06:55:32+00:00"
-        },
-        {
             "name": "magento/ringphp",
-            "version": "dev-develop",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:magento-commerce/magento-ringphp.git",
-                "reference": "d554fd90cd8f11a006cea88102cd072489e6a8ee"
-            },
+            "version": "1.0.0-beta105",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-commerce/magento-ringphp/zipball/d554fd90cd8f11a006cea88102cd072489e6a8ee",
-                "reference": "d554fd90cd8f11a006cea88102cd072489e6a8ee",
-                "shasum": ""
+                "url": "https://connect20-qa01.magedevteam.com/archives/magento/ringphp/magento-ringphp-1.0.0.0-beta105.zip",
+                "shasum": "dc97f5605057e0cf9b7f93243005e01686df7132"
             },
             "require": {
                 "ezimuel/guzzlestreams": "^3.0.1",
@@ -4719,7 +4293,6 @@
             "suggest": {
                 "ext-curl": "Guzzle will use specific adapters if cURL is present"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -4731,19 +4304,6 @@
                     "GuzzleHttp\\Ring\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "GuzzleHttp\\Tests\\Ring\\": "tests/"
-                }
-            },
-            "scripts": {
-                "test": [
-                    "make test"
-                ],
-                "test-ci": [
-                    "make coverage"
-                ]
-            },
             "license": [
                 "MIT"
             ],
@@ -4754,75 +4314,7 @@
                     "homepage": "https://github.com/mtdowling"
                 }
             ],
-            "description": "Fork of guzzle/RingPHP (abandoned) to be used with elasticsearch-php",
-            "support": {
-                "source": "https://github.com/magento-commerce/magento-ringphp/tree/develop",
-                "issues": "https://github.com/magento-commerce/magento-ringphp/issues"
-            },
-            "time": "2024-12-23T07:00:26+00:00"
-        },
-        {
-            "name": "magento/stock-api-libphp",
-            "version": "dev-develop",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:magento-commerce/magento-stock-api-libphp.git",
-                "reference": "855dfade371496d39d4f0da40c259ff1e83d12e5"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/magento-commerce/magento-stock-api-libphp/zipball/855dfade371496d39d4f0da40c259ff1e83d12e5",
-                "reference": "855dfade371496d39d4f0da40c259ff1e83d12e5",
-                "shasum": ""
-            },
-            "require": {
-                "guzzlehttp/guzzle": "~7.3",
-                "php": ">=7.3"
-            },
-            "replace": {
-                "astock/stock-api-libphp": "^1.1"
-            },
-            "require-dev": {
-                "mockery/mockery": "^1.4.3",
-                "phpunit/phpunit": ">=6.0",
-                "squizlabs/php_codesniffer": "~3.6.0"
-            },
-            "default-branch": true,
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "AdobeStock\\Api\\": "src"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "AdobeStock\\Api\\Test\\": "test"
-                }
-            },
-            "scripts": {
-                "check": [
-                    "@test",
-                    "@lint"
-                ],
-                "lint": [
-                    "vendor/bin/phpcs --standard='libs/phpcs-psr2-stock/PSR2Stock' src test"
-                ],
-                "test": [
-                    "vendor/bin/phpunit"
-                ],
-                "test-coverage": [
-                    "vendor/bin/phpunit --coverage-html data/clover"
-                ]
-            },
-            "license": [
-                "Apache-2.0"
-            ],
-            "description": "Adobe Stock API library",
-            "support": {
-                "source": "https://github.com/magento-commerce/magento-stock-api-libphp/tree/develop",
-                "issues": "https://github.com/magento-commerce/magento-stock-api-libphp/issues"
-            },
-            "time": "2024-12-23T09:57:41+00:00"
+            "description": "Fork of guzzle/RingPHP (abandoned) to be used with elasticsearch-php"
         },
         {
             "name": "magento/zend-cache",
@@ -11176,16 +10668,16 @@
         },
         {
             "name": "friendsofphp/php-cs-fixer",
-            "version": "v3.66.2",
+            "version": "v3.67.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer.git",
-                "reference": "25addd3cb10e54cfd20b84d9c083c6625cd52218"
+                "reference": "0ad34c75d1172f7d30320460e803887981830cbf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/25addd3cb10e54cfd20b84d9c083c6625cd52218",
-                "reference": "25addd3cb10e54cfd20b84d9c083c6625cd52218",
+                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/0ad34c75d1172f7d30320460e803887981830cbf",
+                "reference": "0ad34c75d1172f7d30320460e803887981830cbf",
                 "shasum": ""
             },
             "require": {
@@ -11267,7 +10759,7 @@
             ],
             "support": {
                 "issues": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/issues",
-                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.66.2"
+                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.67.0"
             },
             "funding": [
                 {
@@ -11275,7 +10767,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-01-07T09:21:51+00:00"
+            "time": "2025-01-08T10:17:40+00:00"
         },
         {
             "name": "laminas/laminas-diactoros",
@@ -11367,17 +10859,11 @@
         },
         {
             "name": "magento/allure-phpunit",
-            "version": "dev-develop",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:magento-commerce/allure-phpunit.git",
-                "reference": "c0b63ac169a93d14f2819346981ca0fcddab8d3d"
-            },
+            "version": "1.0.0-beta105",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-commerce/allure-phpunit/zipball/c0b63ac169a93d14f2819346981ca0fcddab8d3d",
-                "reference": "c0b63ac169a93d14f2819346981ca0fcddab8d3d",
-                "shasum": ""
+                "url": "https://connect20-qa01.magedevteam.com/archives/magento/allure-phpunit/magento-allure-phpunit-1.0.0.0-beta105.zip",
+                "shasum": "9ed69c788d1c68599188956d2f2c4251d6076776"
             },
             "require": {
                 "allure-framework/allure-php-commons": "^2",
@@ -11397,82 +10883,11 @@
                 "squizlabs/php_codesniffer": "^3.7.2",
                 "vimeo/psalm": "dev-master"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
                     "Qameta\\Allure\\PHPUnit\\": "src/"
                 }
-            },
-            "autoload-dev": {
-                "psr-0": {
-                    "Yandex": "test/"
-                },
-                "psr-4": {
-                    "Qameta\\Allure\\PHPUnit\\Test\\Unit\\": "test/unit/",
-                    "Qameta\\Allure\\PHPUnit\\Test\\Report\\": "test/report/"
-                }
-            },
-            "scripts": {
-                "test-cs": [
-                    "vendor/bin/phpcs -sp"
-                ],
-                "test-unit": [
-                    "vendor/bin/phpunit --coverage-text"
-                ],
-                "test-unit-lowest": [
-                    "vendor/bin/phpunit --configuration=phpunit.10.0.xml --coverage-text"
-                ],
-                "clear-allure-results": [
-                    "rm -rf ./build/allure-results"
-                ],
-                "test-report": [
-                    "@clear-allure-results",
-                    "vendor/bin/paratest --processes=3 --configuration=phpunit.report.xml --testsuite=positive",
-                    "vendor/bin/paratest --processes=3 --configuration=phpunit.report.xml --testsuite=negative; exit 0"
-                ],
-                "test-report-lowest": [
-                    "@clear-allure-results",
-                    "vendor/bin/paratest --processes=3 --configuration=phpunit.10.0.report.xml --testsuite=positive",
-                    "vendor/bin/paratest --processes=3 --configuration=phpunit.10.0.report.xml --testsuite=negative; exit 0"
-                ],
-                "test-report-windows": [
-                    "@clear-allure-results",
-                    "vendor/bin/paratest --processes=3 --configuration=phpunit.report.xml --testsuite=positive",
-                    "vendor/bin/paratest --processes=3 --configuration=phpunit.report.xml --testsuite=negative & exit 0"
-                ],
-                "test-report-windows-lowest": [
-                    "@clear-allure-results",
-                    "vendor/bin/paratest --processes=3 --configuration=phpunit.10.0.report.xml --testsuite=positive",
-                    "vendor/bin/paratest --processes=3 --configuration=phpunit.10.0.report.xml --testsuite=negative & exit 0"
-                ],
-                "test-psalm": [
-                    "vendor/bin/psalm --shepherd"
-                ],
-                "test": [
-                    "@test-cs",
-                    "@test-unit",
-                    "@test-report",
-                    "@test-psalm"
-                ],
-                "test-lowest": [
-                    "@test-cs",
-                    "@test-unit-lowest",
-                    "@test-report-lowest",
-                    "@test-psalm"
-                ],
-                "test-windows": [
-                    "@test-cs",
-                    "@test-unit",
-                    "@test-report-windows",
-                    "@test-psalm"
-                ],
-                "test-windows-lowest": [
-                    "@test-cs",
-                    "@test-unit-lowest",
-                    "@test-report-windows-lowest",
-                    "@test-psalm"
-                ]
             },
             "license": [
                 "Apache-2.0"
@@ -11499,13 +10914,7 @@
                 "report",
                 "steps",
                 "testing"
-            ],
-            "support": {
-                "email": "allure@qameta.io",
-                "source": "https://github.com/allure-framework/allure-phpunit",
-                "issues": "https://github.com/magento-commerce/allure-phpunit/issues"
-            },
-            "time": "2024-12-20T11:30:00+00:00"
+            ]
         },
         {
             "name": "magento/magento-coding-standard",
@@ -11559,16 +10968,16 @@
         },
         {
             "name": "magento/magento2-functional-testing-framework",
-            "version": "5.0.0",
+            "version": "5.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/magento/magento2-functional-testing-framework.git",
-                "reference": "a7bbc8e4d8f9acae817e92cdf5378d61f6e5e0fb"
+                "reference": "a8b0a6aff91860bd39a6489e11e75ec57f295c03"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento/magento2-functional-testing-framework/zipball/a7bbc8e4d8f9acae817e92cdf5378d61f6e5e0fb",
-                "reference": "a7bbc8e4d8f9acae817e92cdf5378d61f6e5e0fb",
+                "url": "https://api.github.com/repos/magento/magento2-functional-testing-framework/zipball/a8b0a6aff91860bd39a6489e11e75ec57f295c03",
+                "reference": "a8b0a6aff91860bd39a6489e11e75ec57f295c03",
                 "shasum": ""
             },
             "require": {
@@ -11642,23 +11051,17 @@
             ],
             "support": {
                 "issues": "https://github.com/magento/magento2-functional-testing-framework/issues",
-                "source": "https://github.com/magento/magento2-functional-testing-framework/tree/5.0.0"
+                "source": "https://github.com/magento/magento2-functional-testing-framework/tree/5.0.1"
             },
-            "time": "2025-01-07T04:45:52+00:00"
+            "time": "2025-01-07T09:28:28+00:00"
         },
         {
             "name": "magento/oauth",
-            "version": "dev-develop",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:magento-commerce/magento-lusitanian-oauth.git",
-                "reference": "c5f636534c4c0e44c062ed71c3a48f75b81a536a"
-            },
+            "version": "1.0.0-beta105",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-commerce/magento-lusitanian-oauth/zipball/c5f636534c4c0e44c062ed71c3a48f75b81a536a",
-                "reference": "c5f636534c4c0e44c062ed71c3a48f75b81a536a",
-                "shasum": ""
+                "url": "https://connect20-qa01.magedevteam.com/archives/magento/oauth/magento-oauth-1.0.0.0-beta105.zip",
+                "shasum": "29ca9ad031e47caa77d7bba9ad87adac40dbd990"
             },
             "require": {
                 "php": "^7.2 || ^8.0"
@@ -11683,7 +11086,6 @@
                 "predis/predis": "Allows using the Redis storage backend.",
                 "symfony/http-foundation": "Allows using the Symfony Session storage backend."
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -11694,24 +11096,6 @@
                 "psr-4": {
                     "OAuth\\": "src/OAuth"
                 }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "OAuthTest\\Unit\\": "tests/Unit",
-                    "OAuthTest\\Mocks\\": "tests/Mocks"
-                }
-            },
-            "scripts": {
-                "tests": [
-                    "./vendor/bin/phpunit --color=always"
-                ],
-                "check": [
-                    "./vendor/bin/php-cs-fixer fix --ansi --dry-run --diff",
-                    "./vendor/bin/phpunit --color=always"
-                ],
-                "fix": [
-                    "./vendor/bin/php-cs-fixer fix --ansi"
-                ]
             },
             "license": [
                 "MIT"
@@ -11736,12 +11120,7 @@
                 "authorization",
                 "oauth",
                 "security"
-            ],
-            "support": {
-                "source": "https://github.com/magento-commerce/magento-lusitanian-oauth/tree/develop",
-                "issues": "https://github.com/magento-commerce/magento-lusitanian-oauth/issues"
-            },
-            "time": "2024-12-27T07:15:10+00:00"
+            ]
         },
         {
             "name": "magento/php-compatibility-fork",
@@ -14879,21 +14258,9 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "dev",
+    "minimum-stability": "beta",
     "stability-flags": {
-        "magento/allure-phpunit": 20,
-        "magento/composer": 20,
-        "magento/elasticsearch": 20,
-        "magento/laminas-db": 20,
-        "magento/laminas-di": 20,
-        "magento/laminas-file": 20,
-        "magento/laminas-mail": 20,
-        "magento/laminas-mime": 20,
-        "magento/laminas-oauth": 20,
-        "magento/oauth": 20,
-        "magento/recaptcha": 20,
-        "magento/ringphp": 20,
-        "magento/stock-api-libphp": 20,
+        "magento/composer": 10,
         "pdepend/pdepend": 20,
         "phpmd/phpmd": 20
     },
