@@ -33,5 +33,6 @@
         <actionGroup ref="AssertEmailTemplateContentActionGroup" stepKey="assertContent">
             <argument name="expectedContent" value=""/>
         </actionGroup>
+        <dontSee userInput="{{EmailTemplateWithStoreddXSS.templateText}}" stepKey="checkTemplateContainText"/>
     </test>
 </tests>
