@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d996c279b0705a5664ab3f8fe30c686c",
+    "content-hash": "60b5294777646871ec2441cbb45e83cb",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -3730,19 +3730,19 @@
         },
         {
             "name": "magento/composer",
-            "version": "1.10.0",
+            "version": "1.10.1-beta1",
             "dist": {
                 "type": "zip",
-                "url": "https://connect20-qa01.magedevteam.com/archives/magento/composer/magento-composer-1.10.0.0.zip",
-                "shasum": "9108a967ca00664c955b0ffcf8a0fce1b085d38f"
+                "url": "https://connect20-qa01.magedevteam.com/archives/magento/composer/magento-composer-1.10.1.0-beta1.zip",
+                "shasum": "d289bf655054387348aaf26ca1ed61e7ee6f0ce2"
             },
             "require": {
-                "composer/composer": "^2.0",
-                "php": "~7.4.0||~8.1.0||~8.2.0||~8.3.0",
+                "composer/composer": "^2.1.13",
+                "php": "~7.4.0||~8.1.0||~8.2.0||~8.3.0||~8.4.0",
                 "symfony/console": "~4.4.0||~5.4.0||~6.4.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^9"
+                "phpunit/phpunit": "^9.5.10 || ^10"
             },
             "type": "library",
             "autoload": {
