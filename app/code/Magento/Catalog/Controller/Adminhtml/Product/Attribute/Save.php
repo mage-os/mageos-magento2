@@ -271,7 +271,7 @@ class Save extends Attribute implements HttpPostActionInterface
             if (array_key_exists('reset_is-default_option', $data) && $data['reset_is-default_option']) {
                 unset($data['reset_is-default_option']);
                 $data['default_value'] = null;
-            } else {
+            } elseif(isset($data['default'])) {
                 $data['default_value'] = implode(",", $data['default']);
             }
 
