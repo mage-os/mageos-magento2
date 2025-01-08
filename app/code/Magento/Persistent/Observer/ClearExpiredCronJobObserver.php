@@ -33,7 +33,7 @@ class ClearExpiredCronJobObserver
      *
      * @var DeleteExpiredQuoteFactory
      */
-    private DeleteExpiredQuoteFactory $deleteExpiredQuoteFactory;
+    protected DeleteExpiredQuoteFactory $deleteExpiredQuoteFactory;
 
     /**
      * @param CollectionFactory $websiteCollectionFactory
@@ -67,7 +67,7 @@ class ClearExpiredCronJobObserver
         $deleteExpiredQuote = $this->deleteExpiredQuoteFactory->create();
         foreach ($websiteIds as $websiteId) {
             $this->_sessionFactory->create()->deleteExpired($websiteId);
-            $deleteExpiredQuote->deleteExpiredQuote($websiteId);
+            $deleteExpiredQuote->deleteExpiredQuote((int) $websiteId);
         }
 
         return $this;

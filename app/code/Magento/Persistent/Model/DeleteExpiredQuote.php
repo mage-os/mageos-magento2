@@ -35,10 +35,11 @@ class DeleteExpiredQuote
      * Delete expired persistent quote for the website
      *
      * @param int|null $websiteId
-     * @return $this
-     * @throws NoSuchEntityException|LocalizedException
+     * @return void
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
      */
-    public function deleteExpiredQuote($websiteId = null): static
+    public function deleteExpiredQuote(?int $websiteId): void
     {
         if ($websiteId === null) {
             $websiteId = $this->storeManager->getStore()->getWebsiteId();
@@ -59,7 +60,5 @@ class DeleteExpiredQuote
                 ['store_id in (?)' => $storeIds, 'updated_at < ?' => $expiredBefore, 'is_persistent' => 1]
             );
         }
-
-        return $this;
     }
 }

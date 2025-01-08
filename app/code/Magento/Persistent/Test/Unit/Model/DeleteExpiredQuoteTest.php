@@ -141,7 +141,7 @@ class DeleteExpiredQuoteTest extends TestCase
             );
 
         // Call the method to test with null websiteId
-        $this->model->deleteExpiredQuote();
+        $this->model->deleteExpiredQuote(null);
     }
 
     /**
