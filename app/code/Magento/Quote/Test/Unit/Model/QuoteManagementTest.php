@@ -210,7 +210,6 @@ class QuoteManagementTest extends TestCase
 
     /**
      * @inheriDoc
-     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     protected function setUp(): void
