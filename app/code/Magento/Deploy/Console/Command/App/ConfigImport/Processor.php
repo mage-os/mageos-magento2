@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2017 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Deploy\Console\Command\App\ConfigImport;
 
@@ -59,8 +59,6 @@ class Processor
     private $importerFactory;
 
     /**
-     * Logger.
-     *
      * @var Logger
      */
     private $logger;
@@ -133,6 +131,7 @@ class Processor
                 /** @var ImporterInterface $importer */
                 $importer = $this->importerFactory->create($importerClassName);
                 $warnings = $importer->getWarningMessages($data);
+                //phpcs:ignore Magento2.Performance.ForeachArrayMerge
                 $questions = array_merge($warnings, ['Do you want to continue [yes/no]?']);
 
                 /**

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2017 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Deploy\Console\Command\App;
@@ -28,7 +28,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ConfigImportCommand extends Command
 {
-    const COMMAND_NAME = 'app:config:import';
+    public const COMMAND_NAME = 'app:config:import';
 
     /**
      * Configuration importer.

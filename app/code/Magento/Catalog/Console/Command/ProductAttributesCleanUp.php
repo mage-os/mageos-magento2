@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Catalog\Console\Command;
 
@@ -11,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Magento\Catalog\Api\Data\ProductInterface;
 
 /**
- * Class ProductAttributesCleanUp
+ * Class for ProductAttributesCleanUp
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ProductAttributesCleanUp extends \Symfony\Component\Console\Command\Command
@@ -64,7 +64,7 @@ class ProductAttributesCleanUp extends \Symfony\Component\Console\Command\Comman
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function configure()
     {
@@ -73,7 +73,7 @@ class ProductAttributesCleanUp extends \Symfony\Component\Console\Command\Comman
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -113,6 +113,8 @@ class ProductAttributesCleanUp extends \Symfony\Component\Console\Command\Comman
     }
 
     /**
+     * This getAttributeTables function retrieves a list of tables related to product attributes
+     *
      * @return array
      * @throws \Magento\Framework\Exception\LocalizedException
      */
@@ -134,6 +136,8 @@ class ProductAttributesCleanUp extends \Symfony\Component\Console\Command\Comman
     }
 
     /**
+     * Function to get affectedattributeids
+     *
      * @param AdapterInterface $connection
      * @param string $attributeTableName
      * @return array

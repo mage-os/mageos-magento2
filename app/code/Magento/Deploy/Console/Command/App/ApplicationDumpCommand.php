@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2016 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Deploy\Console\Command\App;
 
@@ -21,7 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ApplicationDumpCommand extends Command
 {
-    const INPUT_CONFIG_TYPES = 'config-types';
+    public const INPUT_CONFIG_TYPES = 'config-types';
 
     /**
      * @var Writer
