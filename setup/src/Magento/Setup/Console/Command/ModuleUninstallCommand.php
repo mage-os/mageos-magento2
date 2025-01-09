@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Setup\Console\Command;
 
@@ -36,11 +36,11 @@ class ModuleUninstallCommand extends AbstractModuleCommand
     /**
      * Names of input options
      */
-    const INPUT_KEY_REMOVE_DATA = 'remove-data';
-    const INPUT_KEY_BACKUP_CODE = 'backup-code';
-    const INPUT_KEY_BACKUP_MEDIA = 'backup-media';
-    const INPUT_KEY_BACKUP_DB = 'backup-db';
-    const INPUT_KEY_NON_COMPOSER_MODULE = 'non-composer';
+    public const INPUT_KEY_REMOVE_DATA = 'remove-data';
+    public const INPUT_KEY_BACKUP_CODE = 'backup-code';
+    public const INPUT_KEY_BACKUP_MEDIA = 'backup-media';
+    public const INPUT_KEY_BACKUP_DB = 'backup-db';
+    public const INPUT_KEY_NON_COMPOSER_MODULE = 'non-composer';
 
     /**
      * Deployment Configuration
@@ -50,14 +50,14 @@ class ModuleUninstallCommand extends AbstractModuleCommand
     private $deploymentConfig;
 
     /**
-     * Full module list
+     * Get full module list
      *
      * @var FullModuleList
      */
     private $fullModuleList;
 
     /**
-     * Module package info
+     * Get module package info
      *
      * @var PackageInfo
      */
@@ -85,21 +85,21 @@ class ModuleUninstallCommand extends AbstractModuleCommand
     private $composer;
 
     /**
-     * BackupRollback factory
+     * BackupRollback factory var
      *
      * @var BackupRollbackFactory
      */
     private $backupRollbackFactory;
 
     /**
-     * Module Uninstaller
+     * Module Uninstaller var
      *
      * @var ModuleUninstaller
      */
     private $moduleUninstaller;
 
     /**
-     * Module Registry uninstaller
+     * Module Registry uninstaller var
      *
      * @var ModuleRegistryUninstaller
      */
@@ -156,6 +156,8 @@ class ModuleUninstallCommand extends AbstractModuleCommand
     }
 
     /**
+     * Get applier
+     *
      * @return PatchApplier
      */
     private function getPatchApplier()
@@ -169,7 +171,7 @@ class ModuleUninstallCommand extends AbstractModuleCommand
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function configure()
     {
@@ -212,7 +214,7 @@ class ModuleUninstallCommand extends AbstractModuleCommand
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function isModuleRequired()
     {
@@ -220,7 +222,7 @@ class ModuleUninstallCommand extends AbstractModuleCommand
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */

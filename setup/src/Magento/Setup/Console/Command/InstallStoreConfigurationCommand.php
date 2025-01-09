@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Setup\Console\Command;
@@ -39,10 +39,11 @@ class InstallStoreConfigurationCommand extends AbstractSetupCommand
     private $deploymentConfig;
 
     /**
-     * Object Manager
+     * Object Manager to create object
      *
      * @var ObjectManagerInterface
      * @deprecated 2.2.0
+     * @see MAGETWO-71174
      */
     private $objectManager;
 
@@ -66,16 +67,17 @@ class InstallStoreConfigurationCommand extends AbstractSetupCommand
      */
     private $urlValidator;
 
-    /**
+    /***
      * Inject dependencies
      *
      * @param InstallerFactory $installerFactory
      * @param DeploymentConfig $deploymentConfig
      * @param ObjectManagerProvider $objectManagerProvider
-     * @param LocaleValidator $localeValidator,
-     * @param TimezoneValidator $timezoneValidator,
-     * @param CurrencyValidator $currencyValidator,
+     * @param LocaleValidator $localeValidator
+     * @param TimezoneValidator $timezoneValidator
+     * @param CurrencyValidator $currencyValidator
      * @param UrlValidator $urlValidator
+     * @throws \Magento\Setup\Exception
      */
     public function __construct(
         InstallerFactory $installerFactory,
@@ -97,7 +99,7 @@ class InstallStoreConfigurationCommand extends AbstractSetupCommand
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function configure()
     {
@@ -108,7 +110,7 @@ class InstallStoreConfigurationCommand extends AbstractSetupCommand
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -310,9 +312,9 @@ class InstallStoreConfigurationCommand extends AbstractSetupCommand
     /**
      * Validate codes for languages, currencies or timezones
      *
-     * @param LocaleValidator|TimezoneValidator|CurrencyValidator  $lists
-     * @param string  $code
-     * @param string  $type
+     * @param LocaleValidator|TimezoneValidator|CurrencyValidator $lists
+     * @param string $code
+     * @param string $type
      * @return string
      */
     private function validateCodes($lists, $code, $type)

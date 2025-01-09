@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Setup\Console\Command;
@@ -21,9 +21,7 @@ use Magento\Framework\App\ObjectManager;
  */
 class InfoBackupsListCommand extends Command
 {
-    /**
-     * File
-     *
+    /***
      * @var File
      */
     private $file;
@@ -57,7 +55,7 @@ class InfoBackupsListCommand extends Command
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function configure()
     {
@@ -68,7 +66,7 @@ class InfoBackupsListCommand extends Command
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

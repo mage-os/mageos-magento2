@@ -19,8 +19,8 @@ abstract class AbstractModuleManageCommand extends AbstractModuleCommand
     /**
      * Names of input arguments or options
      */
-    const INPUT_KEY_ALL = 'all';
-    const INPUT_KEY_FORCE = 'force';
+    public const INPUT_KEY_ALL = 'all';
+    public const INPUT_KEY_FORCE = 'force';
 
     /**
      * @var GeneratedFiles
@@ -33,7 +33,7 @@ abstract class AbstractModuleManageCommand extends AbstractModuleCommand
     protected $deploymentConfig;
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function configure()
     {
@@ -54,7 +54,7 @@ abstract class AbstractModuleManageCommand extends AbstractModuleCommand
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function isModuleRequired()
     {
@@ -62,7 +62,7 @@ abstract class AbstractModuleManageCommand extends AbstractModuleCommand
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -181,6 +181,7 @@ abstract class AbstractModuleManageCommand extends AbstractModuleCommand
      *
      * @return DeploymentConfig
      * @deprecated 2.0.6
+     * @see MAGETWO-71174
      */
     private function getDeploymentConfig()
     {
@@ -195,6 +196,7 @@ abstract class AbstractModuleManageCommand extends AbstractModuleCommand
      *
      * @return GeneratedFiles
      * @deprecated 2.1.0
+     * @see MAGETWO-71174
      */
     private function getGeneratedFiles()
     {

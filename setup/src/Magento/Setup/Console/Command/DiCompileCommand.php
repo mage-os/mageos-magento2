@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Setup\Console\Command;
 
@@ -31,7 +31,7 @@ use Magento\Framework\Console\Cli;
 class DiCompileCommand extends Command
 {
     /** Command name */
-    const NAME = 'setup:di:compile';
+    public const NAME = 'setup:di:compile';
 
     /**
      * @var \Magento\Framework\App\DeploymentConfig

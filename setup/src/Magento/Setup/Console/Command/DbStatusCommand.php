@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Setup\Console\Command;
 
@@ -24,10 +24,10 @@ class DbStatusCommand extends AbstractSetupCommand
     /**
      * Code for error when application upgrade is required.
      */
-    const EXIT_CODE_UPGRADE_REQUIRED = 2;
+    public const EXIT_CODE_UPGRADE_REQUIRED = 2;
 
     /**
-     * Object manager provider
+     * Object Manager to create object
      *
      * @var ObjectManagerProvider
      */
@@ -69,7 +69,7 @@ class DbStatusCommand extends AbstractSetupCommand
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function configure()
     {
@@ -79,7 +79,7 @@ class DbStatusCommand extends AbstractSetupCommand
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
