@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Theme\Console\Command;
@@ -36,9 +36,9 @@ class ThemeUninstallCommand extends Command
     /**
      * Names of input arguments or options
      */
-    const INPUT_KEY_BACKUP_CODE = 'backup-code';
-    const INPUT_KEY_THEMES = 'theme';
-    const INPUT_KEY_CLEAR_STATIC_CONTENT = 'clear-static-content';
+    public const INPUT_KEY_BACKUP_CODE = 'backup-code';
+    public const INPUT_KEY_THEMES = 'theme';
+    public const INPUT_KEY_CLEAR_STATIC_CONTENT = 'clear-static-content';
 
     /**
      * Composer general dependency checker
@@ -76,35 +76,31 @@ class ThemeUninstallCommand extends Command
     private $cleanupFiles;
 
     /**
-     * BackupRollback factory
-     *
      * @var BackupRollbackFactory
      */
     private $backupRollbackFactory;
 
     /**
-     * Theme Validator
-     *
      * @var ThemeValidator
      */
     private $themeValidator;
 
     /**
-     * Package name finder
+     * Holds information about the theme packag.
      *
      * @var ThemePackageInfo
      */
     private $themePackageInfo;
 
     /**
-     * Theme Uninstaller
+     * ThemeUninstaller instance responsible for uninstalling themes.
      *
      * @var ThemeUninstaller
      */
     private $themeUninstaller;
 
     /**
-     * Theme Dependency Checker
+     * Theme Dependency Checker to check theme dependency
      *
      * @var ThemeDependencyChecker
      */
@@ -163,7 +159,7 @@ class ThemeUninstallCommand extends Command
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function configure()
     {
@@ -191,7 +187,7 @@ class ThemeUninstallCommand extends Command
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
