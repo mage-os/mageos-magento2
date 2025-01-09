@@ -25,10 +25,9 @@ class DbStatusCommand extends AbstractSetupCommand
      * Code for error when application upgrade is required.
      */
     public const EXIT_CODE_UPGRADE_REQUIRED = 2;
+    public const NAME = 'setup:db:status';
 
     /**
-     * Object Manager to create object
-     *
      * @var ObjectManagerProvider
      */
     private $objectManagerProvider;
@@ -73,7 +72,7 @@ class DbStatusCommand extends AbstractSetupCommand
      */
     protected function configure()
     {
-        $this->setName('setup:db:status')
+        $this->setName(self::NAME)
             ->setDescription('Checks if DB schema or data requires upgrade');
         parent::configure();
     }

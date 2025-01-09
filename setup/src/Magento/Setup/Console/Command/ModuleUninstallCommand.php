@@ -41,6 +41,7 @@ class ModuleUninstallCommand extends AbstractModuleCommand
     public const INPUT_KEY_BACKUP_MEDIA = 'backup-media';
     public const INPUT_KEY_BACKUP_DB = 'backup-db';
     public const INPUT_KEY_NON_COMPOSER_MODULE = 'non-composer';
+    public const NAME = 'module:uninstall';
 
     /**
      * Deployment Configuration
@@ -85,22 +86,16 @@ class ModuleUninstallCommand extends AbstractModuleCommand
     private $composer;
 
     /**
-     * BackupRollback factory var
-     *
      * @var BackupRollbackFactory
      */
     private $backupRollbackFactory;
 
     /**
-     * Module Uninstaller var
-     *
      * @var ModuleUninstaller
      */
     private $moduleUninstaller;
 
     /**
-     * Module Registry uninstaller var
-     *
      * @var ModuleRegistryUninstaller
      */
     private $moduleRegistryUninstaller;
@@ -156,7 +151,7 @@ class ModuleUninstallCommand extends AbstractModuleCommand
     }
 
     /**
-     * Get applier
+     * Returns patch applier object
      *
      * @return PatchApplier
      */
@@ -207,7 +202,7 @@ class ModuleUninstallCommand extends AbstractModuleCommand
                 'All modules, that will be past here will be non composer based'
             )
         ];
-        $this->setName('module:uninstall')
+        $this->setName(self::NAME)
             ->setDescription('Uninstalls modules installed by composer')
             ->setDefinition($options);
         parent::configure();

@@ -21,7 +21,8 @@ use Magento\Framework\App\ObjectManager;
  */
 class InfoBackupsListCommand extends Command
 {
-    /***
+    public const NAME = 'info:backups:list';
+    /**
      * @var File
      */
     private $file;
@@ -59,7 +60,7 @@ class InfoBackupsListCommand extends Command
      */
     protected function configure()
     {
-        $this->setName('info:backups:list')
+        $this->setName(self::NAME)
             ->setDescription('Prints list of available backup files');
 
         parent::configure();

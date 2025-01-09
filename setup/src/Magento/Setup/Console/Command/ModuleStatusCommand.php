@@ -3,7 +3,6 @@
  * Copyright 2015 Adobe
  * All Rights Reserved.
  */
-
 declare(strict_types=1);
 
 namespace Magento\Setup\Console\Command;
@@ -21,6 +20,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ModuleStatusCommand extends AbstractSetupCommand
 {
+    public const NAME = 'module:status';
     /**
      * @var ObjectManagerProvider
      */
@@ -40,7 +40,7 @@ class ModuleStatusCommand extends AbstractSetupCommand
      */
     protected function configure()
     {
-        $this->setName('module:status')
+        $this->setName(self::NAME)
             ->setDescription('Displays status of modules')
             ->addArgument(
                 'module-names',

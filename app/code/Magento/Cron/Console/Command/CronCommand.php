@@ -135,10 +135,15 @@ class CronCommand extends Command
                 $params[ProcessCronQueueObserver::STANDALONE_PROCESS_STARTED] = $bootstrapOptionValue;
             }
         }
+
         /** @var Cron $cronObserver */
         $cronObserver = $objectManager->create(Cron::class, ['parameters' => $params]);
         $cronObserver->launch();
-        $output->writeln('<info>' . 'Ran jobs by schedule.' . '</info>');
+
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction.Discouraged,Magento2.Exceptions.TryProcessSystemResources.MissingTryCatch
+        if (stream_isatty(STDOUT)) {
+            $output->writeln('<info>' . 'Ran jobs by schedule.' . '</info>');
+        }
 
         return Cli::RETURN_SUCCESS;
     }

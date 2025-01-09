@@ -30,10 +30,9 @@ class RollbackCommand extends AbstractSetupCommand
     public const INPUT_KEY_CODE_BACKUP_FILE = 'code-file';
     public const INPUT_KEY_MEDIA_BACKUP_FILE = 'media-file';
     public const INPUT_KEY_DB_BACKUP_FILE = 'db-file';
+    public const NAME = 'setup:rollback';
 
     /**
-     * Object Manager Interface
-     *
      * @var ObjectManagerInterface
      */
     private $objectManager;
@@ -104,7 +103,7 @@ class RollbackCommand extends AbstractSetupCommand
                 'Basename of the db backup file in var/backups'
             ),
         ];
-        $this->setName('setup:rollback')
+        $this->setName(self::NAME)
             ->setDescription('Rolls back Magento Application codebase, media and database')
             ->setDefinition($options);
         parent::configure();

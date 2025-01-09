@@ -14,8 +14,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Magento\Setup\Model\StoreConfigurationDataMapper;
 use Magento\Setup\Model\ObjectManagerProvider;
-use Magento\Framework\ObjectManagerInterface;
-use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Validator\Locale as LocaleValidator;
 use Magento\Framework\Validator\Timezone as TimezoneValidator;
 use Magento\Framework\Validator\Currency as CurrencyValidator;
@@ -26,14 +24,13 @@ use Magento\Framework\Validator\Url as UrlValidator;
  */
 class InstallStoreConfigurationCommand extends AbstractSetupCommand
 {
+    public const NAME = 'setup:store-config:set';
     /**
      * @var InstallerFactory
      */
     private $installerFactory;
 
     /**
-     * Deployment configuration
-     *
      * @var DeploymentConfig
      */
     private $deploymentConfig;
@@ -72,12 +69,12 @@ class InstallStoreConfigurationCommand extends AbstractSetupCommand
      *
      * @param InstallerFactory $installerFactory
      * @param DeploymentConfig $deploymentConfig
-     * @param ObjectManagerProvider $objectManagerProvider
+     * @param ObjectManagerProvider $objectManagerProvider Deprecated since not used anymore
      * @param LocaleValidator $localeValidator
      * @param TimezoneValidator $timezoneValidator
      * @param CurrencyValidator $currencyValidator
      * @param UrlValidator $urlValidator
-     * @throws \Magento\Setup\Exception
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function __construct(
         InstallerFactory $installerFactory,
@@ -90,7 +87,6 @@ class InstallStoreConfigurationCommand extends AbstractSetupCommand
     ) {
         $this->installerFactory = $installerFactory;
         $this->deploymentConfig = $deploymentConfig;
-        $this->objectManager = $objectManagerProvider->get();
         $this->localeValidator = $localeValidator;
         $this->timezoneValidator = $timezoneValidator;
         $this->currencyValidator = $currencyValidator;
@@ -103,7 +99,7 @@ class InstallStoreConfigurationCommand extends AbstractSetupCommand
      */
     protected function configure()
     {
-        $this->setName('setup:store-config:set')
+        $this->setName(self::NAME)
             ->setDescription('Installs the store configuration. Deprecated since 2.2.0. Use config:set instead')
             ->setDefinition($this->getOptionsList());
         parent::configure();
