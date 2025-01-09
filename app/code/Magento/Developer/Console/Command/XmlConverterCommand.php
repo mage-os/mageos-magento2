@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Developer\Console\Command;
@@ -24,17 +24,17 @@ class XmlConverterCommand extends Command
     /**
      * XML file argument name constant
      */
-    const XML_FILE_ARGUMENT = 'xml-file';
+    public const XML_FILE_ARGUMENT = 'xml-file';
 
     /**
      * Processor argument constant
      */
-    const PROCESSOR_ARGUMENT = 'processor';
+    public const PROCESSOR_ARGUMENT = 'processor';
 
     /**
      * Overwrite option constant
      */
-    const OVERWRITE_OPTION = 'overwrite';
+    public const OVERWRITE_OPTION = 'overwrite';
 
     /**
      * @var Formatter
@@ -71,7 +71,7 @@ class XmlConverterCommand extends Command
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function configure()
     {
@@ -101,7 +101,7 @@ class XmlConverterCommand extends Command
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -123,6 +123,7 @@ class XmlConverterCommand extends Command
             $result = $this->formatter->format($transformedDoc);
 
             if ($input->getOption(self::OVERWRITE_OPTION)) {
+                //phpcs:ignore
                 file_put_contents($input->getArgument(self::XML_FILE_ARGUMENT), $result);
                 $output->writeln("<info>You saved converted XML into $xmlFile</info>");
             } else {

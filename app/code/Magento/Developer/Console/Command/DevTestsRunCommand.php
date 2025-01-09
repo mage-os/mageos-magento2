@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Developer\Console\Command;
 
@@ -21,18 +21,18 @@ class DevTestsRunCommand extends Command
     /**
      * input parameter parameter
      */
-    const INPUT_ARG_TYPE = 'type';
+    public const INPUT_ARG_TYPE = 'type';
 
     /**
      * PHPUnit arguments parameter
      */
-    const INPUT_OPT_COMMAND_ARGUMENTS       = 'arguments';
-    const INPUT_OPT_COMMAND_ARGUMENTS_SHORT = 'c';
+    public const INPUT_OPT_COMMAND_ARGUMENTS       = 'arguments';
+    public const INPUT_OPT_COMMAND_ARGUMENTS_SHORT = 'c';
 
     /**
      * command name
      */
-    const COMMAND_NAME = 'dev:tests:run';
+    public const COMMAND_NAME = 'dev:tests:run';
 
     /**
      * Maps types (from user input) to phpunit test names
@@ -49,7 +49,7 @@ class DevTestsRunCommand extends Command
     private $commands;
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function configure()
     {
@@ -90,14 +90,16 @@ class DevTestsRunCommand extends Command
             );
             return 1;
         }
-
+        // phpcs:ignore
         $vendorDir = require BP . '/app/etc/vendor_path.php';
 
         $failures = [];
         $runCommands = $this->types[$type];
         foreach ($runCommands as $key) {
             list($dir, $options) = $this->commands[$key];
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction
             $dirName = realpath(BP . '/dev/tests/' . $dir);
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction
             chdir($dirName);
             $command = PHP_BINARY . ' ' . BP . '/' . $vendorDir . '/phpunit/phpunit/phpunit ' . $options;
             if ($commandArguments = $input->getOption(self::INPUT_OPT_COMMAND_ARGUMENTS)) {
