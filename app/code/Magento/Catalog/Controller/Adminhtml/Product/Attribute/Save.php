@@ -272,7 +272,15 @@ class Save extends Attribute implements HttpPostActionInterface
                 unset($data['reset_is-default_option']);
                 $data['default_value'] = null;
             } elseif (isset($data['default'])) {
-                $data['default_value'] = implode(",", $data['default']);
+                $defaultOptions = [];
+                foreach ($data['default'] as $defaultValue) {
+                    if (intval($defaultValue) > 0) {
+                        $defaultOptions[] = $defaultValue;
+                    }
+                }
+                if (!empty($defaultOptions)) {
+                    $data['default_value'] = implode(",", $defaultOptions);
+                }
             }
 
             $model->addData($data);
