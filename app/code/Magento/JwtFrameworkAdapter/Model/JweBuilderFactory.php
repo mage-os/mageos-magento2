@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2021 Adobe
+ * All Rights Reserved.
  */
 
 declare(strict_types=1);
@@ -29,6 +29,11 @@ class JweBuilderFactory
      */
     private $contentAlgoManager;
 
+    /***
+     * @param JweSerializerPoolFactory $serializerPoolFactory
+     * @param JweAlgorithmManagerFactory $algorithmManagerFactory
+     * @param JweContentAlgorithmManagerFactory $contentAlgoManagerFactory
+     */
     public function __construct(
         JweSerializerPoolFactory $serializerPoolFactory,
         JweAlgorithmManagerFactory $algorithmManagerFactory,
@@ -39,6 +44,11 @@ class JweBuilderFactory
         $this->contentAlgoManager = $contentAlgoManagerFactory->create();
     }
 
+    /***
+     * Will return object of JWEBuilder
+     *
+     * @return JWEBuilder
+     */
     public function create(): JWEBuilder
     {
         return new JWEBuilder($this->algoManager);
