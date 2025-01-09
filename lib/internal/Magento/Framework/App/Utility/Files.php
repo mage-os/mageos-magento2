@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2012 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Framework\App\Utility;
@@ -93,8 +93,8 @@ class Files
         ComponentRegistrar $componentRegistrar,
         DirSearch $dirSearch,
         ThemePackageList $themePackageList,
-        Json $serializer = null,
-        RegexIteratorFactory $regexIteratorFactory = null
+        ?Json $serializer = null,
+        ?RegexIteratorFactory $regexIteratorFactory = null
     ) {
         $this->componentRegistrar = $componentRegistrar;
         $this->dirSearch = $dirSearch;
@@ -113,7 +113,7 @@ class Files
      * @param Files|null $instance
      * @return void
      */
-    public static function setInstance(Files $instance = null)
+    public static function setInstance(?Files $instance = null)
     {
         self::$_instance = $instance;
     }
@@ -1020,7 +1020,7 @@ class Files
      * Parse meta-info of a static file in module
      *
      * @deprecated 102.0.4 Replaced with method accumulateStaticFiles()
-     *
+     * @see 6729b6e0
      * @param string $file
      * @return array
      */
