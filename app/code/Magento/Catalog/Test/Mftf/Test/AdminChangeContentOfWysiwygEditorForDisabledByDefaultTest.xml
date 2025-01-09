@@ -338,9 +338,6 @@
         <waitForPageLoad  stepKey="wait4"/>
         <waitForText userInput="%Hello CMS World" stepKey="seeCmsContent"/>
         <waitForElementVisible selector="{{StorefrontCMSPageSection.imageSource(ImageUpload3.fileName)}}" stepKey="assertMediaSource2"/>
-
-
-
         <!--Code Section To Delete ImageFolder-->
         <actionGroup ref="NavigateToMediaGalleryActionGroup" stepKey="navigateToMediaGallery3"/>
         <!--Expand Media Gallery Folder-->
@@ -354,9 +351,6 @@
         <actionGroup ref="DeleteFolderActionGroup" stepKey="DeleteFolderFromMediaGallery1">
             <argument name="Image" value="{{ImageFolder.name}}"/>
         </actionGroup>
-
-
-
         <!-- Add content into CMS Block -->
         <actionGroup ref="CliMediaGalleryEnhancedEnableActionGroup" stepKey="enableOldMediaGallery1">
             <argument name="enabled" value="0"/>
