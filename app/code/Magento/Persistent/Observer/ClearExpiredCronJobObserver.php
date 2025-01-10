@@ -33,7 +33,7 @@ class ClearExpiredCronJobObserver
      *
      * @var DeleteExpiredQuoteFactory
      */
-    protected DeleteExpiredQuoteFactory $deleteExpiredQuoteFactory;
+    private DeleteExpiredQuoteFactory $deleteExpiredQuoteFactory;
 
     /**
      * @param CollectionFactory $websiteCollectionFactory
