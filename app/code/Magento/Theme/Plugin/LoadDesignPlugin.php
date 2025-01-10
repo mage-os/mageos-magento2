@@ -59,6 +59,8 @@ class LoadDesignPlugin
                     ->setText($e->getMessage());
                 $this->messageManager->addUniqueMessages([$message]);
             }
+        } catch (\InvalidArgumentException $e) {
+            $this->messageManager->addErrorMessage($e->getMessage());
         }
     }
 }
