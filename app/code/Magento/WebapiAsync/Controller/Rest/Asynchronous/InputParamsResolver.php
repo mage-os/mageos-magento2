@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 
 declare(strict_types=1);
@@ -118,6 +118,12 @@ class InputParamsResolver
         $routeServiceClass = $route->getServiceClass();
         $routeServiceMethod = $route->getServiceMethod();
         $this->inputArraySizeLimitValue->set($route->getInputArraySizeLimit());
+
+        if (!array_is_list($inputData)) {
+            throw new Exception(
+                __('Request body must be an array'),
+            );
+        }
 
         foreach ($inputData as $key => $singleEntityParams) {
             $webapiResolvedParams[$key] = $this->resolveBulkItemParams(
