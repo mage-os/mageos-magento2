@@ -318,6 +318,7 @@ type ShippingCartAddress implements CartAddressInterface @doc(description: "Cont
     items_weight: Float @deprecated(reason: "This information should not be exposed on the frontend.")
     cart_items: [CartItemQuantity] @deprecated(reason: "Use `cart_items_v2` instead.")
     cart_items_v2: [CartItemInterface] @doc(description: "An array that lists the items in the cart.")
+    same_as_billing: Boolean! @doc(description: "Indicates whether the shipping address is same as billing address.")
 }
 
 type BillingCartAddress implements CartAddressInterface @doc(description: "Contains details about the billing address.") {
