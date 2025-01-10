@@ -41,6 +41,8 @@
         "colinmollenhour/credis": "^1.15",
         "colinmollenhour/php-redis-session-abstract": "^2.0",
         "composer/composer": "^2.0, !=2.2.16",
+        "duosecurity/duo_api_php": "^1.1",
+        "duosecurity/duo_universal_php": "^1.0",
         "elasticsearch/elasticsearch": "^7.17 || ^8.15",
         "ezyang/htmlpurifier": "^4.17",
         "guzzlehttp/guzzle": "^7.5",
