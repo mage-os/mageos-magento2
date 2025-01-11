@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6cbdc2f28bac498427a971b0eeafbae9",
+    "content-hash": "30cf3f7d526bf55292b4d4c61c46e2dd",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -3874,8 +3874,8 @@
             "version": "1.10.1-beta1",
             "dist": {
                 "type": "zip",
-                "url": "https://repo.magento.com/archives/magento/composer/magento-composer-1.10.1.0-beta1.zip",
-                "shasum": "0bd1179f48278b0326b4ee16bbf297b1cf683804"
+                "url": "https://connect20-qa01.magedevteam.com/archives/magento/composer/magento-composer-1.10.1.0-beta1.zip",
+                "shasum": "d289bf655054387348aaf26ca1ed61e7ee6f0ce2"
             },
             "require": {
                 "composer/composer": "^2.1.13",
@@ -3900,10 +3900,16 @@
         {
             "name": "magento/composer-dependency-version-audit-plugin",
             "version": "0.1.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/magento/composer-dependency-version-audit-plugin.git",
+                "reference": "37099d19495df296de962257c54088c953bbc1ac"
+            },
             "dist": {
                 "type": "zip",
-                "url": "https://repo.magento.com/archives/magento/composer-dependency-version-audit-plugin/magento-composer-dependency-version-audit-plugin-0.1.6.0.zip",
-                "shasum": "62f455a259a54aa1869127f7b911345266105bf7"
+                "url": "https://api.github.com/repos/magento/composer-dependency-version-audit-plugin/zipball/37099d19495df296de962257c54088c953bbc1ac",
+                "reference": "37099d19495df296de962257c54088c953bbc1ac",
+                "shasum": ""
             },
             "require": {
                 "composer-plugin-api": "^1.0 || ^2.0",
@@ -3921,10 +3927,16 @@
                     "Magento\\ComposerDependencyVersionAuditPlugin\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "OSL-3.0"
             ],
-            "description": "Validating packages through a composer plugin"
+            "description": "Validating packages through a composer plugin",
+            "support": {
+                "issues": "https://github.com/magento/composer-dependency-version-audit-plugin/issues",
+                "source": "https://github.com/magento/composer-dependency-version-audit-plugin/tree/0.1.6"
+            },
+            "time": "2024-12-18T09:52:06+00:00"
         },
         {
             "name": "magento/elasticsearch",
