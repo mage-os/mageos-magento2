@@ -74,7 +74,7 @@ class Input extends AbstractFilter
                 $valueExpression = $filterConfig['valueExpression'] ?? null;
             }
             if ($conditionType === self::CONDITION_LIKE) {
-                $value = str_replace(['%', '_'], ['\%', '\_'], $value);
+                $value = str_replace(['\\', '%', '_'], ['\\\\', '\%', '\_'], $value);
                 $valueExpression = $valueExpression ?? '%%%s%%';
             }
             if ($valueExpression) {
