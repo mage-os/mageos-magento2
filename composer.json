@@ -19,6 +19,10 @@
     "repositories": [
         {
             "type": "composer",
+            "url": "https://repo.magento.com/"
+        },
+        {
+            "type": "composer",
             "url": "https://connect20-qa01.magedevteam.com/"
         }
     ],
