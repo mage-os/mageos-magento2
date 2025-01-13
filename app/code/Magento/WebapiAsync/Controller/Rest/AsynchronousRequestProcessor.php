@@ -30,8 +30,8 @@ use Magento\AsynchronousOperations\Api\Data\AsyncResponseInterface;
  */
 class AsynchronousRequestProcessor implements RequestProcessorInterface
 {
-    private const PROCESSOR_PATH = "/^\\/async(\\/V.+)/";
-    private const BULK_PROCESSOR_PATH = "/^\\/async\/bulk(\\/V.+)/";
+    public const PROCESSOR_PATH = "/^\\/async(\\/V.+)/";
+    public const BULK_PROCESSOR_PATH = "/^\\/async\/bulk(\\/V.+)/";
 
     /**
      * @var \Magento\Framework\Webapi\Rest\Response
