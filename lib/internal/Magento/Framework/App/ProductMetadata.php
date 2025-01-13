@@ -15,7 +15,7 @@ use Magento\Framework\Composer\ComposerInformation;
 /**
  * Magento application product metadata
  */
-class ProductMetadata implements ProductMetadataInterface
+class ProductMetadata implements ProductMetadataInterface, DistributionMetadataInterface
 {
     /**
      * Magento product edition
@@ -25,7 +25,12 @@ class ProductMetadata implements ProductMetadataInterface
     /**
      * Magento product name
      */
-    const PRODUCT_NAME  = 'Mage-OS';
+    const PRODUCT_NAME  = 'Magento';
+
+    /**
+     * Distribution product name
+     */
+    const DISTRIBUTION_NAME  = 'Mage-OS';
 
     /**
      * Magento version cache key
@@ -33,11 +38,23 @@ class ProductMetadata implements ProductMetadataInterface
     const VERSION_CACHE_KEY = 'mage-version';
 
     /**
+     * Distribution version cache key
+     */
+    const DISTRO_VERSION_CACHE_KEY = 'distro-version';
+
+    /**
      * Product version
      *
      * @var string
      */
     protected $version;
+
+    /**
+     * Distribution version
+     *
+     * @var string
+     */
+    protected $distroVersion;
 
     /**
      * @var \Magento\Framework\Composer\ComposerJsonFinder
@@ -90,6 +107,27 @@ class ProductMetadata implements ProductMetadataInterface
     }
 
     /**
+     * Get Distribution version
+     *
+     * @return string
+     */
+    public function getDistributionVersion()
+    {
+        $this->distroVersion = $this->distroVersion ?: $this->cache->load(self::DISTRO_VERSION_CACHE_KEY);
+        if (!$this->distroVersion) {
+            if (!($this->distroVersion = $this->getSystemDistroVersion())) {
+                if ($this->getComposerInformation()->isMagentoRoot()) {
+                    $this->distroVersion = $this->getComposerInformation()->getRootPackage()->getPrettyVersion();
+                } else {
+                    $this->distroVersion = 'UNKNOWN';
+                }
+            }
+            $this->cache->save($this->distroVersion, self::DISTRO_VERSION_CACHE_KEY, [Config::CACHE_TAG]);
+        }
+        return $this->distroVersion;
+    }
+
+    /**
      * Get Product edition
      *
      * @return string
@@ -100,11 +138,21 @@ class ProductMetadata implements ProductMetadataInterface
     }
 
     /**
-     * Get Product name
+     * Get Distribution name
      *
      * @return string
      */
     public function getName()
+    {
+        return self::DISTRIBUTION_NAME;
+    }
+
+    /**
+     * Get Product name
+     *
+     * @return string
+     */
+    public function getProductName()
     {
         return self::PRODUCT_NAME;
     }
@@ -116,6 +164,22 @@ class ProductMetadata implements ProductMetadataInterface
      * @deprecated 100.1.0
      */
     private function getSystemPackageVersion()
+    {
+        $packages = $this->getComposerInformation()->getSystemPackages();
+        foreach ($packages as $package) {
+            if (isset($package['name']) && isset($package['magento_version'])) {
+                return $package['magento_version'];
+            }
+        }
+        return '';
+    }
+
+    /**
+     * Get distribution version from system package
+     *
+     * @return string
+     */
+    private function getSystemDistroVersion()
     {
         $packages = $this->getComposerInformation()->getSystemPackages();
         foreach ($packages as $package) {

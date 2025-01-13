@@ -19,7 +19,7 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractController
         $name = $productMetadata->getName();
         $edition = $productMetadata->getEdition();
 
-        $fullVersion = $productMetadata->getVersion();
+        $fullVersion = $productMetadata->getDistributionVersion();
         if ($this->isComposerBasedInstallation($fullVersion)) {
             $versionParts = explode('.', $fullVersion);
             $majorMinor = $versionParts[0] . '.' . $versionParts[1];

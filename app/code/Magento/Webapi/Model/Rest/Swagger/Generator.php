@@ -6,6 +6,7 @@
 namespace Magento\Webapi\Model\Rest\Swagger;
 
 use Magento\Framework\Api\SimpleDataObjectConverter;
+use Magento\Framework\App\DistributionMetadataInterface;
 use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\Reflection\TypeProcessor;
 use Magento\Framework\Webapi\Authorization;
@@ -52,7 +53,7 @@ class Generator extends AbstractSchemaGenerator
     /**
      * Magento product metadata
      *
-     * @var ProductMetadataInterface
+     * @var ProductMetadataInterface|DistributionMetadataInterface
      */
     protected ProductMetadataInterface $productMetadata;
 
@@ -182,7 +183,7 @@ class Generator extends AbstractSchemaGenerator
      */
     protected function getGeneralInfo()
     {
-        $versionParts = explode('.', $this->productMetadata->getVersion());
+        $versionParts = explode('.', $this->productMetadata->getDistributionVersion());
         if (!isset($versionParts[0]) || !isset($versionParts[1])) {
             return []; // Major and minor version are not set - return empty response
         }

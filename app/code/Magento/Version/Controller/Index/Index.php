@@ -10,6 +10,7 @@ namespace Magento\Version\Controller\Index;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Action\HttpGetActionInterface;
+use Magento\Framework\App\DistributionMetadataInterface;
 use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\Controller\Result\RawFactory as RawResponseFactory;
 
@@ -21,7 +22,7 @@ class Index extends Action implements HttpGetActionInterface
     public const DEV_PREFIX = 'dev-';
 
     /**
-     * @var ProductMetadataInterface
+     * @var ProductMetadataInterface|DistributionMetadataInterface
      */
     private $productMetadata;
 
@@ -52,7 +53,7 @@ class Index extends Action implements HttpGetActionInterface
     {
         $rawResponse = $this->rawFactory->create();
 
-        $version = $this->productMetadata->getVersion() ?? '';
+        $version = $this->productMetadata->getDistributionVersion() ?? '';
         $versionParts = explode('.', $version);
         if (!$this->isGitBasedInstallation($version) && $this->isCorrectVersion($versionParts)) {
             $rawResponse->setContents(
