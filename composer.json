@@ -19,8 +19,7 @@
     "repositories": [
         {
             "type": "composer",
-            "url": "https://connect20-qa01.magedevteam.com/",
-            "exclude": ["magento/composer-dependency-version-audit-plugin"]
+            "url": "https://repo.magento.com/"
         }
     ],
     "require": {

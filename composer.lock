@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "30cf3f7d526bf55292b4d4c61c46e2dd",
+    "content-hash": "70a2b64cfd2aae73628f56ca984e0d23",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -3874,8 +3874,8 @@
             "version": "1.10.1-beta1",
             "dist": {
                 "type": "zip",
-                "url": "https://connect20-qa01.magedevteam.com/archives/magento/composer/magento-composer-1.10.1.0-beta1.zip",
-                "shasum": "d289bf655054387348aaf26ca1ed61e7ee6f0ce2"
+                "url": "https://repo.magento.com/archives/magento/composer/magento-composer-1.10.1.0-beta1.zip",
+                "shasum": "0bd1179f48278b0326b4ee16bbf297b1cf683804"
             },
             "require": {
                 "composer/composer": "^2.1.13",
@@ -3900,16 +3900,10 @@
         {
             "name": "magento/composer-dependency-version-audit-plugin",
             "version": "0.1.6",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/magento/composer-dependency-version-audit-plugin.git",
-                "reference": "37099d19495df296de962257c54088c953bbc1ac"
-            },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento/composer-dependency-version-audit-plugin/zipball/37099d19495df296de962257c54088c953bbc1ac",
-                "reference": "37099d19495df296de962257c54088c953bbc1ac",
-                "shasum": ""
+                "url": "https://repo.magento.com/archives/magento/composer-dependency-version-audit-plugin/magento-composer-dependency-version-audit-plugin-0.1.6.0.zip",
+                "shasum": "62f455a259a54aa1869127f7b911345266105bf7"
             },
             "require": {
                 "composer-plugin-api": "^1.0 || ^2.0",
@@ -3927,24 +3921,18 @@
                     "Magento\\ComposerDependencyVersionAuditPlugin\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "OSL-3.0"
             ],
-            "description": "Validating packages through a composer plugin",
-            "support": {
-                "issues": "https://github.com/magento/composer-dependency-version-audit-plugin/issues",
-                "source": "https://github.com/magento/composer-dependency-version-audit-plugin/tree/0.1.6"
-            },
-            "time": "2024-12-18T09:52:06+00:00"
+            "description": "Validating packages through a composer plugin"
         },
         {
             "name": "magento/elasticsearch",
-            "version": "1.0.0-beta105",
+            "version": "1.0.0-beta106",
             "dist": {
                 "type": "zip",
-                "url": "https://connect20-qa01.magedevteam.com/archives/magento/elasticsearch/magento-elasticsearch-1.0.0.0-beta105.zip",
-                "shasum": "339b683ba76e3139c6680691050f38bc9913684a"
+                "url": "https://repo.magento.com/archives/magento/elasticsearch/magento-elasticsearch-1.0.0.0-beta106.zip",
+                "shasum": "e37af28b840c683beee6d1e2157278980086e286"
             },
             "require": {
                 "ext-json": ">=1.3.7",
@@ -3998,11 +3986,11 @@
         },
         {
             "name": "magento/laminas-crypt",
-            "version": "1.0.0-beta105",
+            "version": "1.0.0-beta106",
             "dist": {
                 "type": "zip",
-                "url": "https://connect20-qa01.magedevteam.com/archives/magento/laminas-crypt/magento-laminas-crypt-1.0.0.0-beta105.zip",
-                "shasum": "b93c170e390c552a7101dd9a1167338b45bdc42a"
+                "url": "https://repo.magento.com/archives/magento/laminas-crypt/magento-laminas-crypt-1.0.0.0-beta106.zip",
+                "shasum": "dbaa80319c0d80de3cc90a55fefdeee75f941c65"
             },
             "require": {
                 "ext-mbstring": "*",
@@ -4042,11 +4030,11 @@
         },
         {
             "name": "magento/laminas-db",
-            "version": "1.0.0-beta105",
+            "version": "1.0.0-beta106",
             "dist": {
                 "type": "zip",
-                "url": "https://connect20-qa01.magedevteam.com/archives/magento/laminas-db/magento-laminas-db-1.0.0.0-beta105.zip",
-                "shasum": "4eabdd0df150fc2d7517f1e873ca3fa189916beb"
+                "url": "https://repo.magento.com/archives/magento/laminas-db/magento-laminas-db-1.0.0.0-beta106.zip",
+                "shasum": "88e10ec24e6f7ee57bbed13f9e7238296199577e"
             },
             "require": {
                 "laminas/laminas-stdlib": "^3.7.1",
@@ -4094,11 +4082,11 @@
         },
         {
             "name": "magento/laminas-di",
-            "version": "1.0.0-beta105",
+            "version": "1.0.0-beta106",
             "dist": {
                 "type": "zip",
-                "url": "https://connect20-qa01.magedevteam.com/archives/magento/laminas-di/magento-laminas-di-1.0.0.0-beta105.zip",
-                "shasum": "bb5097fb0b0f29571f822a58beb7b25f8ea071c2"
+                "url": "https://repo.magento.com/archives/magento/laminas-di/magento-laminas-di-1.0.0.0-beta106.zip",
+                "shasum": "fdd8a93915c5359cd8ae931b9621762e40b0a9af"
             },
             "require": {
                 "laminas/laminas-stdlib": "^3.18.0",
@@ -4152,11 +4140,11 @@
         },
         {
             "name": "magento/laminas-file",
-            "version": "1.0.0-beta105",
+            "version": "1.0.0-beta106",
             "dist": {
                 "type": "zip",
-                "url": "https://connect20-qa01.magedevteam.com/archives/magento/laminas-file/magento-laminas-file-1.0.0.0-beta105.zip",
-                "shasum": "b5a8456cfec121f98fbb2ece26892097fa3052e2"
+                "url": "https://repo.magento.com/archives/magento/laminas-file/magento-laminas-file-1.0.0.0-beta106.zip",
+                "shasum": "924605561c0395a2ced463d1512284b2ef75f40d"
             },
             "require": {
                 "laminas/laminas-stdlib": "^2.7.7 || ^3.15.0",
@@ -4201,11 +4189,11 @@
         },
         {
             "name": "magento/laminas-mail",
-            "version": "1.0.0-beta105",
+            "version": "1.0.0-beta106",
             "dist": {
                 "type": "zip",
-                "url": "https://connect20-qa01.magedevteam.com/archives/magento/laminas-mail/magento-laminas-mail-1.0.0.0-beta105.zip",
-                "shasum": "b2202cd705b3f9bfef04aa4c503abd5550610fa0"
+                "url": "https://repo.magento.com/archives/magento/laminas-mail/magento-laminas-mail-1.0.0.0-beta106.zip",
+                "shasum": "31d5494a7f734d7349b2e3cb4b10aede9ba70bda"
             },
             "require": {
                 "ext-iconv": "*",
@@ -4257,11 +4245,11 @@
         },
         {
             "name": "magento/laminas-mime",
-            "version": "1.0.0-beta105",
+            "version": "1.0.0-beta106",
             "dist": {
                 "type": "zip",
-                "url": "https://connect20-qa01.magedevteam.com/archives/magento/laminas-mime/magento-laminas-mime-1.0.0.0-beta105.zip",
-                "shasum": "c9b69c0f87697cf26536c05e4df2659414f30830"
+                "url": "https://repo.magento.com/archives/magento/laminas-mime/magento-laminas-mime-1.0.0.0-beta106.zip",
+                "shasum": "d69e7850d0eae03e49fbd9af3a656a99f9542869"
             },
             "require": {
                 "laminas/laminas-stdlib": "^2.7 || ^3.0",
@@ -4299,11 +4287,11 @@
         },
         {
             "name": "magento/laminas-oauth",
-            "version": "1.0.0-beta105",
+            "version": "1.0.0-beta106",
             "dist": {
                 "type": "zip",
-                "url": "https://connect20-qa01.magedevteam.com/archives/magento/laminas-oauth/magento-laminas-oauth-1.0.0.0-beta105.zip",
-                "shasum": "85996f9c34b32b2279019b437ab00f1a762be5e1"
+                "url": "https://repo.magento.com/archives/magento/laminas-oauth/magento-laminas-oauth-1.0.0.0-beta106.zip",
+                "shasum": "f06ccd62dfc55b4cfb7951cc9f9c7b13a870f2e1"
             },
             "require": {
                 "laminas/laminas-config": "^3.7",
@@ -4338,8 +4326,8 @@
             "description": " ",
             "homepage": "https://laminas.dev",
             "keywords": [
-                "laminas",
-                "oauth"
+                "OAuth",
+                "laminas"
             ]
         },
         {
@@ -4425,11 +4413,11 @@
         },
         {
             "name": "magento/ringphp",
-            "version": "1.0.0-beta105",
+            "version": "1.0.0-beta106",
             "dist": {
                 "type": "zip",
-                "url": "https://connect20-qa01.magedevteam.com/archives/magento/ringphp/magento-ringphp-1.0.0.0-beta105.zip",
-                "shasum": "dc97f5605057e0cf9b7f93243005e01686df7132"
+                "url": "https://repo.magento.com/archives/magento/ringphp/magento-ringphp-1.0.0.0-beta106.zip",
+                "shasum": "5337f6891afcf199ee1a06856c7f5d1f61d5f344"
             },
             "require": {
                 "ezimuel/guzzlestreams": "^3.0.1",
@@ -10821,16 +10809,16 @@
         },
         {
             "name": "friendsofphp/php-cs-fixer",
-            "version": "v3.67.0",
+            "version": "v3.68.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer.git",
-                "reference": "0ad34c75d1172f7d30320460e803887981830cbf"
+                "reference": "73f78d8b2b34a0dd65fedb434a602ee4c2c8ad4c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/0ad34c75d1172f7d30320460e803887981830cbf",
-                "reference": "0ad34c75d1172f7d30320460e803887981830cbf",
+                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/73f78d8b2b34a0dd65fedb434a602ee4c2c8ad4c",
+                "reference": "73f78d8b2b34a0dd65fedb434a602ee4c2c8ad4c",
                 "shasum": ""
             },
             "require": {
@@ -10912,7 +10900,7 @@
             ],
             "support": {
                 "issues": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/issues",
-                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.67.0"
+                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.68.0"
             },
             "funding": [
                 {
@@ -10920,7 +10908,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-01-08T10:17:40+00:00"
+            "time": "2025-01-13T17:01:01+00:00"
         },
         {
             "name": "laminas/laminas-diactoros",
@@ -11012,11 +11000,11 @@
         },
         {
             "name": "magento/allure-phpunit",
-            "version": "1.0.0-beta105",
+            "version": "1.0.0-beta106",
             "dist": {
                 "type": "zip",
-                "url": "https://connect20-qa01.magedevteam.com/archives/magento/allure-phpunit/magento-allure-phpunit-1.0.0.0-beta105.zip",
-                "shasum": "9ed69c788d1c68599188956d2f2c4251d6076776"
+                "url": "https://repo.magento.com/archives/magento/allure-phpunit/magento-allure-phpunit-1.0.0.0-beta106.zip",
+                "shasum": "16253cbe574e2e8c8e953f2ad9b57121c26133e4"
             },
             "require": {
                 "allure-framework/allure-php-commons": "^2",
@@ -11210,11 +11198,11 @@
         },
         {
             "name": "magento/oauth",
-            "version": "1.0.0-beta105",
+            "version": "1.0.0-beta106",
             "dist": {
                 "type": "zip",
-                "url": "https://connect20-qa01.magedevteam.com/archives/magento/oauth/magento-oauth-1.0.0.0-beta105.zip",
-                "shasum": "29ca9ad031e47caa77d7bba9ad87adac40dbd990"
+                "url": "https://repo.magento.com/archives/magento/oauth/magento-oauth-1.0.0.0-beta106.zip",
+                "shasum": "a5717cfc6412a952d72df9e1148371b0772e47e6"
             },
             "require": {
                 "php": "^7.2 || ^8.0"
@@ -11269,9 +11257,9 @@
             ],
             "description": "PHP 7.2 oAuth 1/2 Library",
             "keywords": [
-                "authentication",
+                "Authentication",
+                "OAuth",
                 "authorization",
-                "oauth",
                 "security"
             ]
         },
@@ -12262,16 +12250,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "10.5.40",
+            "version": "10.5.41",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "e6ddda95af52f69c1e0c7b4f977cccb58048798c"
+                "reference": "e76586fa3d49714f230221734b44892e384109d7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/e6ddda95af52f69c1e0c7b4f977cccb58048798c",
-                "reference": "e6ddda95af52f69c1e0c7b4f977cccb58048798c",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/e76586fa3d49714f230221734b44892e384109d7",
+                "reference": "e76586fa3d49714f230221734b44892e384109d7",
                 "shasum": ""
             },
             "require": {
@@ -12343,7 +12331,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.5.40"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.5.41"
             },
             "funding": [
                 {
@@ -12359,7 +12347,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-12-21T05:49:06+00:00"
+            "time": "2025-01-13T09:33:05+00:00"
         },
         {
             "name": "psy/psysh",
