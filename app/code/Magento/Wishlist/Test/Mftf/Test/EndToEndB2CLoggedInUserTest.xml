@@ -32,11 +32,11 @@
             <argument name="productVar" value="$$createSimpleProduct2$$"/>
         </actionGroup>
         <!-- clear cache -->
-        <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanCache">
+        <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanCache" after="wishlistAddSimpleProduct2ToWishlist" >
             <argument name="tags" value=""/>
         </actionGroup>
         <!-- reload wish list page -->
-        <actionGroup ref="ReloadPageActionGroup" stepKey="refreshPage"/>
+        <actionGroup ref="ReloadPageActionGroup" stepKey="refreshPage" after="cleanCache"/>
         <actionGroup ref="StorefrontCustomerCheckProductInWishlistActionGroup" after="wishlistAddSimpleProduct2ToWishlist" stepKey="wishlistCheckSimpleProduct2InWishlist">
             <argument name="productVar" value="$$createSimpleProduct2$$"/>
         </actionGroup>
