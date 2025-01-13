@@ -37,7 +37,7 @@
         </actionGroup>
         <!-- reload wish list page -->
         <actionGroup ref="ReloadPageActionGroup" stepKey="refreshPage" after="cleanCache"/>
-        <actionGroup ref="StorefrontCustomerCheckProductInWishlistActionGroup" after="wishlistAddSimpleProduct2ToWishlist" stepKey="wishlistCheckSimpleProduct2InWishlist">
+        <actionGroup ref="StorefrontCustomerCheckProductInWishlistActionGroup" after="refreshPage" stepKey="wishlistCheckSimpleProduct2InWishlist">
             <argument name="productVar" value="$$createSimpleProduct2$$"/>
         </actionGroup>
         <actionGroup ref="StorefrontCustomerCheckProductInWishlistSidebarActionGroup" after="wishlistCheckSimpleProduct2InWishlist" stepKey="wishlistCheckSimpleProduct2InWishlistSidebar">
