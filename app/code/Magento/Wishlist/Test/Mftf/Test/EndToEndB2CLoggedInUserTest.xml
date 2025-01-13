@@ -31,6 +31,12 @@
         <actionGroup ref="StorefrontCustomerAddProductToWishlistActionGroup" after="wishlistClickSimpleProduct2" stepKey="wishlistAddSimpleProduct2ToWishlist">
             <argument name="productVar" value="$$createSimpleProduct2$$"/>
         </actionGroup>
+        <!-- clear cache -->
+        <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanCache">
+            <argument name="tags" value=""/>
+        </actionGroup>
+        <!-- reload wish list page -->
+        <actionGroup ref="ReloadPageActionGroup" stepKey="refreshPage"/>
         <actionGroup ref="StorefrontCustomerCheckProductInWishlistActionGroup" after="wishlistAddSimpleProduct2ToWishlist" stepKey="wishlistCheckSimpleProduct2InWishlist">
             <argument name="productVar" value="$$createSimpleProduct2$$"/>
         </actionGroup>
