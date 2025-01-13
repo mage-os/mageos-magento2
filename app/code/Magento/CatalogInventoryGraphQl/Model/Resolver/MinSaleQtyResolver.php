@@ -43,6 +43,6 @@ class MinSaleQtyResolver implements ResolverInterface
         array $args = null
     ) {
         $stockItem = $this->stockItemService->getStockItem($value['model']);
-        return $stockItem ? (float)$stockItem->getMinSaleQty() : null;
+        return $stockItem ? $stockItem->getMinSaleQty() : null;
     }
 }

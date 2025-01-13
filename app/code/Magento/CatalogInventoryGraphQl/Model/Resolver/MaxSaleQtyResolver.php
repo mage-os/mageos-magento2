@@ -43,6 +43,6 @@ class MaxSaleQtyResolver implements ResolverInterface
         array $args = null
     ) {
         $stockItem = $this->stockItemService->getStockItem($value['model']);
-        return $stockItem ? (float)$stockItem->getMaxSaleQty() : null;
+        return $stockItem ? $stockItem->getMaxSaleQty() : null;
     }
 }
