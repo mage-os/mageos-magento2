@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2024 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 
 namespace Magento\Theme\Plugin;
@@ -21,12 +21,12 @@ class LoadDesignPlugin
     /**
      * @var DesignLoader
      */
-    private DesignLoader $designLoader;
+    private $designLoader;
 
     /**
      * @var MessageManagerInterface
      */
-    private MessageManagerInterface $messageManager;
+    private $messageManager;
 
     /**
      * @param DesignLoader $designLoader
@@ -59,8 +59,6 @@ class LoadDesignPlugin
                     ->setText($e->getMessage());
                 $this->messageManager->addUniqueMessages([$message]);
             }
-        } catch (\InvalidArgumentException $e) {
-            $this->messageManager->addErrorMessage($e->getMessage());
         }
     }
 }
