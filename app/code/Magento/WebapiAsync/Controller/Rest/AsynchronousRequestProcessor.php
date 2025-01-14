@@ -1,6 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright 2025 Adobe
+ * All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,6 +10,10 @@ declare(strict_types=1);
 namespace Magento\WebapiAsync\Controller\Rest;
 
 use Magento\Framework\Exception\BulkException;
+use Magento\Framework\Exception\InputException;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Webapi\Exception;
+use Magento\Framework\Webapi\Rest\Request;
 use Magento\Webapi\Controller\Rest\RequestProcessorInterface;
 use Magento\Framework\Webapi\Rest\Response as RestResponse;
 use Magento\WebapiAsync\Controller\Rest\Asynchronous\InputParamsResolver;
@@ -17,8 +22,6 @@ use Magento\AsynchronousOperations\Model\ConfigInterface as WebApiAsyncConfig;
 use Magento\Framework\Reflection\DataObjectProcessor;
 use Magento\AsynchronousOperations\Api\Data\AsyncResponseInterfaceFactory;
 use Magento\AsynchronousOperations\Api\Data\AsyncResponseInterface;
-use Magento\Framework\Webapi\Rest\Request;
-use Magento\Framework\Webapi\Exception;
 
 /**
  * Responsible for dispatching single and bulk requests.
@@ -121,13 +124,15 @@ class AsynchronousRequestProcessor implements RequestProcessorInterface
     }
 
     /**
-     * Get topic name from webapi_async_config services config array by route url and http method
+     * Get Topic Name
      *
-     * @param \Magento\Framework\Webapi\Rest\Request $request
-     *
+     * @param Request $request
      * @return string
+     * @throws InputException
+     * @throws LocalizedException
+     * @throws Exception
      */
-    private function getTopicName($request)
+    private function getTopicName(Request $request): string
     {
         $route = $this->inputParamsResolver->getRoute();
 
@@ -147,49 +152,22 @@ class AsynchronousRequestProcessor implements RequestProcessorInterface
         }
 
         if (preg_match($this->processorPath, $request->getPathInfo()) === 1) {
-            return $this->checkSelfResourceRequest($request);
-        }
-
-        return false;
-    }
-
-    /**
-     * Check if current request is bulk request
-     *
-     * @param Request $request
-     * @return bool
-     */
-    public function isBulk(Request $request)
-    {
-        if (preg_match(self::BULK_PROCESSOR_PATH, $request->getPathInfo()) === 1) {
             return true;
         }
         return false;
     }
 
     /**
-     * Check if current request is self resource request
+     * To check if it is bulk
      *
      * @param Request $request
      * @return bool
-     *
-     * @throws Exception
      */
-    private function checkSelfResourceRequest(Request $request): bool
+    public function isBulk(Request $request): bool
     {
-        $path = preg_replace($this->processorPath, "$1", $request->getPathInfo());
-        $request->setPathInfo(
-            $path
-        );
-
-        $route = $this->inputParamsResolver->getRoute();
-        $aclResources = $route->getAclResources();
-
-        // We do not process self resource requests asynchronously
-        if (in_array('self', $aclResources, true)) {
-            return false;
+        if (preg_match(self::BULK_PROCESSOR_PATH, $request->getPathInfo()) === 1) {
+            return true;
         }
-
-        return true;
+        return false;
     }
 }
