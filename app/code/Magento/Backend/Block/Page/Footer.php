@@ -67,7 +67,7 @@ class Footer extends \Magento\Backend\Block\Template
      */
     public function getName()
     {
-        return $this->productMetadata->getName();
+        return $this->productMetadata->getDistributionName();
     }
 
     /**

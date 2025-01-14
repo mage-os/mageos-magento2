@@ -1,15 +1,17 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * (c) Mage-OS
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * files distributed with this source code.
  */
 namespace Magento\Framework\App;
 
 /**
- * Magento application product metadata
+ * Mage-OS Distribution metadata
  *
  * @api
- * @since 100.0.2
+ * @since 1.0.6
  */
 interface DistributionMetadataInterface
 {
@@ -21,9 +23,9 @@ interface DistributionMetadataInterface
     public function getDistributionVersion();
 
     /**
-     * Get Product name
+     * Get Distribution name
      *
      * @return string
      */
-    public function getProductName();
+    public function getDistributionName();
 }

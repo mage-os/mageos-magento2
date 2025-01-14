@@ -57,7 +57,7 @@ class Index extends Action implements HttpGetActionInterface
         $versionParts = explode('.', $version);
         if (!$this->isGitBasedInstallation($version) && $this->isCorrectVersion($versionParts)) {
             $rawResponse->setContents(
-                $this->productMetadata->getName() . '/' .
+                $this->productMetadata->getDistributionName() . '/' .
                 $this->getMajorMinorVersion($versionParts) .
                 ' (' . $this->productMetadata->getEdition() . ')'
             );

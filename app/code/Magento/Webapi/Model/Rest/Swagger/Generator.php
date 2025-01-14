@@ -191,7 +191,7 @@ class Generator extends AbstractSchemaGenerator
 
         return [
             'version' => $majorMinorVersion,
-            'title' => $this->productMetadata->getName() . ' ' . $this->productMetadata->getEdition(),
+            'title' => $this->productMetadata->getDistributionName() . ' ' . $this->productMetadata->getEdition(),
         ];
     }
 

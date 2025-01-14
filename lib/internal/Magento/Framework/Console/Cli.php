@@ -104,7 +104,7 @@ class Cli extends Console\Application
             $directoryList = new DirectoryList(BP);
             $composerJsonFinder = new ComposerJsonFinder($directoryList);
             $this->productMetadata = new ProductMetadata($composerJsonFinder);
-            $name = $this->productMetadata->getName() . ' CLI';
+            $name = $this->productMetadata->getDistributionName() . ' CLI';
             $version = $this->productMetadata->getDistributionVersion();
         }
 

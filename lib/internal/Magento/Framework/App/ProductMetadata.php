@@ -25,12 +25,12 @@ class ProductMetadata implements ProductMetadataInterface, DistributionMetadataI
     /**
      * Magento product name
      */
-    const PRODUCT_NAME  = 'Magento';
+    public const PRODUCT_NAME  = 'Magento';
 
     /**
      * Distribution product name
      */
-    const DISTRIBUTION_NAME  = 'Mage-OS';
+    public const DISTRIBUTION_NAME  = 'Mage-OS';
 
     /**
      * Magento version cache key
@@ -40,7 +40,7 @@ class ProductMetadata implements ProductMetadataInterface, DistributionMetadataI
     /**
      * Distribution version cache key
      */
-    const DISTRO_VERSION_CACHE_KEY = 'distro-version';
+    protected const DISTRO_VERSION_CACHE_KEY = 'distro-version';
 
     /**
      * Product version
@@ -138,23 +138,23 @@ class ProductMetadata implements ProductMetadataInterface, DistributionMetadataI
     }
 
     /**
-     * Get Distribution name
+     * Get Product name
      *
      * @return string
      */
     public function getName()
     {
-        return self::DISTRIBUTION_NAME;
+        return self::PRODUCT_NAME;
     }
 
     /**
-     * Get Product name
+     * Get Distribution name
      *
      * @return string
      */
-    public function getProductName()
+    public function getDistributionName()
     {
-        return self::PRODUCT_NAME;
+        return self::DISTRIBUTION_NAME;
     }
 
     /**
