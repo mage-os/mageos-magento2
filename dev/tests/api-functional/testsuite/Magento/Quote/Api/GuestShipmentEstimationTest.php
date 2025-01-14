@@ -11,9 +11,9 @@ use Magento\Quote\Api\Data\AddressInterface;
 
 class GuestShipmentEstimationTest extends WebapiAbstract
 {
-    const SERVICE_VERSION = 'V1';
-    const SERVICE_NAME = 'quoteGuestShipmentEstimationV1';
-    const RESOURCE_PATH = '/V1/guest-carts/';
+    public const SERVICE_VERSION = 'V1';
+    public const SERVICE_NAME = 'quoteGuestShipmentEstimationV1';
+    public const RESOURCE_PATH = '/V1/guest-carts/';
 
     /**
      * @var ObjectManager
@@ -30,6 +30,7 @@ class GuestShipmentEstimationTest extends WebapiAbstract
      */
     public function testNotAuthorized(): void
     {
+        $this->_markTestAsRestOnly();
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => '/V1/carts/mine/estimate-shipping-methods',
