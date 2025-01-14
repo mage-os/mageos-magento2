@@ -147,7 +147,8 @@ class DataProvider
                 'product_sku' => $orderItem->getSku(),
                 'product_url_key' => $associatedProduct ? $associatedProduct->getUrlKey() : null,
                 'product_type' => $orderItem->getProductType(),
-                'parent_sku' => ($orderItem->getChildrenItems() && $associatedProduct) ? $associatedProduct->getSku() : null,
+                'parent_sku' => ($orderItem->getChildrenItems() && $associatedProduct) ?
+                    $associatedProduct->getSku() : null,
                 'status' => $orderItem->getStatus(),
                 'discounts' => $this->getDiscountDetails($associatedOrder, $orderItem),
                 'product_sale_price' => [
