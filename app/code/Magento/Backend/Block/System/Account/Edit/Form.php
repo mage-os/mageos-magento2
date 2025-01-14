@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2011 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Backend\Block\System\Account\Edit;
 
@@ -55,7 +55,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
         \Magento\Backend\Model\Auth\Session $authSession,
         \Magento\Framework\Locale\ListsInterface $localeLists,
         array $data = [],
-        OptionInterface $deployedLocales = null
+        ?OptionInterface $deployedLocales = null
     ) {
         $this->_userFactory = $userFactory;
         $this->_authSession = $authSession;
