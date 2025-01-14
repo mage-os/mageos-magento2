@@ -92,7 +92,7 @@ class ProductSearch
         SearchCriteriaInterface $searchCriteria,
         SearchResultInterface $searchResult,
         array $attributes = [],
-        ContextInterface $context = null
+        ?ContextInterface $context = null
     ): SearchResultsInterface {
         /** @var Collection $collection */
         $collection = $this->collectionFactory->create();
