@@ -9,7 +9,7 @@ namespace Magento\GraphQl\Sales;
 
 use Magento\Catalog\Test\Fixture\Product as ProductFixture;
 use Magento\ConfigurableProduct\Test\Fixture\AddProductToCart as AddConfigurableProductToCartFixture;
-use Magento\NegotiableQuote\Test\Fixture\QuoteIdMask;
+use Magento\Quote\Test\Fixture\QuoteIdMask;
 use Magento\Checkout\Test\Fixture\PlaceOrder as PlaceOrderFixture;
 use Magento\Checkout\Test\Fixture\SetBillingAddress as SetBillingAddressFixture;
 use Magento\Checkout\Test\Fixture\SetDeliveryMethod as SetDeliveryMethodFixture;
