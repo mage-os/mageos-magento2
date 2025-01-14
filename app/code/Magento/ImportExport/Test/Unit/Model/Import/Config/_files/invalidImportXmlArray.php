@@ -24,17 +24,18 @@ return [
     'entity_with_invalid_model_value' => [
         '<?xml version="1.0"?><config><entity name="some_name" model="12345"/></config>',
         [
-            "Element 'entity', attribute 'model': '12345' is not a valid value of the atomic type 'modelName'.\n" .
-            "Line: 1\nThe xml was: \n0:<?xml version=\"1.0\"?>\n1:<config><entity name=\"some_name\" " .
-            "model=\"12345\"/></config>\n2:\n"
-
+            "Element 'entity', attribute 'model': [facet 'pattern'] The value '12345' is not accepted " .
+            "by the pattern '([\\\\]?[a-zA-Z_][a-zA-Z0-9_]*)+'.\n" .
+            "Line: 1\nThe xml was: \n0:<?xml version=\"1.0\"?>\n1:<config><entity name=\"some_name\"" .
+            " model=\"12345\"/></config>\n2:\n"
         ],
     ],
     'entity_with_invalid_behaviormodel_value' => [
         '<?xml version="1.0"?><config><entity name="some_name" behaviorModel="=--09"/></config>',
         [
-            "Element 'entity', attribute 'behaviorModel': '=--09' is not a valid value of the atomic type " .
-            "'modelName'.\nLine: 1\nThe xml was: \n0:<?xml version=\"1.0\"?>\n1:<config><entity " .
+            "Element 'entity', attribute 'behaviorModel': [facet 'pattern'] The value '=--09'" .
+            " is not accepted by the pattern '([\\\\]?[a-zA-Z_][a-zA-Z0-9_]*)+'.\n" .
+            "Line: 1\nThe xml was: \n0:<?xml version=\"1.0\"?>\n1:<config><entity " .
             "name=\"some_name\" behaviorModel=\"=--09\"/></config>\n2:\n"
         ],
     ],
@@ -65,7 +66,8 @@ return [
     'entitytype_with_invalid_model_attribute_value' => [
         '<?xml version="1.0"?><config><entityType entity="entity_name" name="some_name" model="1test"/></config>',
         [
-            "Element 'entityType', attribute 'model': '1test' is not a valid value of the atomic type 'modelName'.\n" .
+            "Element 'entityType', attribute 'model': [facet 'pattern'] The value '1test'" .
+            " is not accepted by the pattern '([\\\\]?[a-zA-Z_][a-zA-Z0-9_]*)+'.\n" .
             "Line: 1\nThe xml was: \n0:<?xml version=\"1.0\"?>\n" .
             "1:<config><entityType entity=\"entity_name\" name=\"some_name\" model=\"1test\"/></config>\n2:\n"
         ],

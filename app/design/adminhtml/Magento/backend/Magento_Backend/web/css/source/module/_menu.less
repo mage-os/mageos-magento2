@@ -13,19 +13,19 @@
 
 @menu-wrapper__z-index: @menu__z-index - 1;
 
-@menu__background-color: @color-very-dark-grayish-orange;
+@menu__background-color: @color-blue-dark;
 
 @menu-logo__padding-bottom: 1.7rem;
 @menu-logo__outer-size: @menu-logo__padding-top + @menu-logo-img__height + @menu-logo__padding-bottom;
 @menu-logo__padding-top: 1.7rem;
 @menu-logo-img__height: 4.1rem;
-@menu-logo-img__width: 3.5rem;
+@menu-logo-img__width: 6.5rem;
 
 @menu-item__color: @color-gray65-lighten;
 @menu-item__font-size: 1rem;
-@menu-item__hover__background-color: @color-brownie-almost;
-@menu-item__active__background-color: darken(@menu-item__hover__background-color, 3%);
+@menu-item__active__background-color: lighten(@menu__background-color, 7%);
 @menu-item__active__color: @color-ivory;
+@menu-item__hover__background-color: lighten(@menu__background-color, 12%);
 @menu-item-icon__height: 2.2rem;
 
 @menu-line-before__background-color: @color-brownie-vanilla;
@@ -33,7 +33,7 @@
 
 @menu-overlay__z-index: @menu__z-index - 3;
 
-@submenu__background-color: @menu-item__active__background-color;
+@submenu__background-color: @menu-item__hover__background-color;
 @submenu__padding-horizontal: 1.5rem;
 @submenu__padding-vertical: 2rem;
 @submenu__z-index: @menu__z-index - 2;
@@ -44,8 +44,8 @@
 @submenu-link__color: @color-very-light-gray;
 @submenu-link__padding-vertical: 1.25rem;
 @submenu-link__active__background-color: darken(@submenu-link__focus__background-color, 5%);
-@submenu-link__focus__background-color: @color-black4-almost;
-@submenu-section-label__color: @color-gray65-almost;
+@submenu-link__focus__background-color: lighten(@menu__background-color, 17%);
+@submenu-section-label__color: @color-blue-ice;
 @submenu-heading-group__indent-bottom: 3.8rem;
 @submenu-action-close__indent-right: 2.8rem;
 
@@ -233,13 +233,13 @@
 
         &._active {
             > a {
-                background-color: @menu-item__hover__background-color;
+                background-color: @menu-item__active__background-color;
             }
         }
 
         &:hover {
             > a {
-                background-color: @menu-item__active__background-color;
+                background-color: @menu-item__hover__background-color;
             }
         }
 

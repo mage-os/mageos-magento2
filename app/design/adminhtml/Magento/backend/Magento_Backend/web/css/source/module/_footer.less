@@ -8,16 +8,16 @@
 //  _____________________________________________
 
 @footer__background-color: @body__background-color;
-@footer__border-color: @color-light-gray;
+@footer__border-color: @color-mageos-stroke;
 @footer__border-width: .1rem;
 @footer__color: @color-very-dark-gray1;
 @footer-version__color: @color-gray40;
 @footer-copyright__color: @color-gray40;
 
-@footer-link__color: @color-light-phoenix;
+@footer-link__color: @color-phoenix;
 @footer-link__text-decoration: underline;
 
-@footer-link__hover__color: @color-light-phoenix;
+@footer-link__hover__color: @color-phoenix-dark;
 @footer-link__hover__text-decoration: underline;
 
 .page-footer {
@@ -28,6 +28,7 @@
     padding: 2.6rem 3rem 6rem;
 
     a {
+        /* phpcs:disable */
         .lib-link(
             @_link-color: @footer-link__color,
             @_link-text-decoration: @footer-link__text-decoration,
@@ -39,6 +40,8 @@
             @_link-text-decoration-active: false
         );
     }
+
+    /* phpcs:enable */
 
     .admin__control-select {
         max-width: 52rem;
@@ -56,6 +59,8 @@
 
 //  Copyright
 .copyright {
+    display: flex;
+    flex-direction: column;
     margin-bottom: -.2rem;
     position: relative;
     text-align: left;
@@ -67,26 +72,7 @@
         vertical-align: top;
 
         &:hover {
-            &:before {
-                color: lighten(@color-light-phoenix, 10%);
-            }
-        }
-
-        &:before {
-            &:extend(.abs-icon all);
-            .transition(color);
-            color: @primary__color;
-            content: @icon-logo__content;
-            display: block;
-            font-size: 2.5rem;
-            position: relative;
-            top: -.2rem;
-        }
-
-        &:active {
-            &:before {
-                .scale();
-            }
+            color: lighten(@color-light-phoenix, 10%);
         }
     }
 }

@@ -17,6 +17,8 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 use Magento\OpenSearch\Model\SearchClient;
 use Magento\Search\Model\QueryInterface;
 use Magento\Search\Model\QueryResultFactory;
+use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory;
+use Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection as ProductAttributeCollection;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface as StoreManager;
 use OpenSearch\Common\Exceptions\BadRequest400Exception;
@@ -85,6 +87,11 @@ class SuggestionsTest extends TestCase
     private $query;
 
     /**
+     * @var CollectionFactory|MockObject
+     */
+    private $productAttributeCollectionFactory;
+
+    /**
      * Set up test environment
      *
      * @return void
@@ -136,6 +143,11 @@ class SuggestionsTest extends TestCase
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
+        $this->productAttributeCollectionFactory = $this->getMockBuilder(CollectionFactory::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['create'])
+            ->getMock();
+
         $objectManager = new ObjectManagerHelper($this);
 
         $this->model = $objectManager->getObject(
@@ -149,6 +161,7 @@ class SuggestionsTest extends TestCase
                 'storeManager' => $this->storeManager,
                 'fieldProvider' => $this->fieldProvider,
                 'logger' => $this->logger,
+                'productAttributeCollectionFactory' => $this->productAttributeCollectionFactory,
                 'responseErrorExceptionList' => ['opensearchBadRequest400' => BadRequest400Exception::class]
             ]
         );
@@ -174,6 +187,21 @@ class SuggestionsTest extends TestCase
 
         $this->queryResultFactory->expects($this->never())
             ->method('create');
+
+        $objectManager = new ObjectManagerHelper($this);
+        $productAttributeCollection = $objectManager->getCollectionMock(ProductAttributeCollection::class, []);
+
+        $productAttributeCollection->expects($this->once())
+            ->method('addFieldToFilter')
+            ->willReturnSelf();
+
+        $productAttributeCollection->expects($this->once())
+            ->method('getColumnValues')
+            ->willReturn([]);
+
+        $this->productAttributeCollectionFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($productAttributeCollection);
 
         $this->assertEmpty($this->model->getItems($this->query));
     }
@@ -218,10 +246,6 @@ class SuggestionsTest extends TestCase
         $this->query->expects($this->once())
             ->method('getQueryText')
             ->willReturn('query');
-
-        $this->fieldProvider->expects($this->once())
-            ->method('getFields')
-            ->willReturn([]);
 
         $this->connectionManager->expects($this->once())
             ->method('getConnection')
