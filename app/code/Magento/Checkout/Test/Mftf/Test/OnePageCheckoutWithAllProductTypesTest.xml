@@ -127,7 +127,7 @@
         <actionGroup ref="AdminChangeTableRatesShippingMethodStatusActionGroup" stepKey="enableTableRatesShippingMethodForDefaultWebsite">
             <argument name="status" value="0"/>
         </actionGroup>
-
+        <actionGroup ref="AdminSaveConfigActionGroup" stepKey="saveConfigs"/>
         <!-- Add Simple Product to cart -->
         <amOnPage url="{{StorefrontProductPage.url($$createSimpleProduct.custom_attributes[url_key]$$)}}" stepKey="navigateToSimpleProductPage"/>
         <waitForPageLoad stepKey="waitForSimpleProductPageLoad"/>
