@@ -355,7 +355,7 @@
         <actionGroup ref="CliMediaGalleryEnhancedEnableActionGroup" stepKey="enableOldMediaGallery1">
             <argument name="enabled" value="0"/>
         </actionGroup>
-        <actionGroup ref="AdminAssertWYSIWYGeditorActionGroup" stepKey="assignBlockToCMSPage">
+        <actionGroup ref="AdminAssertWysiwygEditorActionGroup" stepKey="assignBlockToCMSPage">
             <argument name="Block" value="$$createPreReqBlock$$"/>
             <argument name="CmsPage" value="$$createCMSPage$$"/>
         </actionGroup>
