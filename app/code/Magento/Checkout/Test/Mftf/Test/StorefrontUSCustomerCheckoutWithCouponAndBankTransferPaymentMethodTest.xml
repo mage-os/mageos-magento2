@@ -20,8 +20,12 @@
         <before>
             <magentoCLI command="config:set {{EnableFlatRateConfigData.path}} {{EnableFlatRateConfigData.value}}" stepKey="enableFlatRate"/>
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginToAdminPanel"/>
-            <actionGroup ref="AdminChangeTableRatesShippingMethodStatusActionGroup" stepKey="disableTableRatesShippingMethod">
-                <argument name="status" value="0"/>
+            <actionGroup ref="AdminOpenShippingMethodsConfigPageActionGroup" stepKey="openShippingMethodConfigPage"/>
+            <actionGroup ref="AdminSwitchWebsiteActionGroup" stepKey="switchDefaultWebsite">
+                <argument name="website" value="_defaultWebsite"/>
+            </actionGroup>
+            <actionGroup ref="AdminChangeTableRatesShippingMethodStatusActionGroup" stepKey="enableTableRatesShippingMethodForDefaultWebsite">
+                <argument name="status" value="1"/>
             </actionGroup>
             <magentoCLI command="config:set {{EnablePaymentBankTransferConfigData.path}} {{EnablePaymentBankTransferConfigData.value}}" stepKey="enableBankTransferPayment"/>
             <createData entity="SimpleProduct2" stepKey="simpleProduct">
