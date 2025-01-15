@@ -15,7 +15,7 @@
             <description value="Admin Print Shipping Labels from Actions dropdown from the FedEx submitted shipment"/>
             <severity value="MAJOR"/>
             <testCaseId value="AC-2832"/>
-<!--            <group value="pr_exclude"/>-->
+            <group value="pr_exclude"/>
             <group value="3rd_party_integration"/>
         </annotations>
         <before>
