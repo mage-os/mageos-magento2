@@ -87,9 +87,6 @@
 
             <!-- Create customer -->
             <createData entity="Simple_Customer_Without_Address" stepKey="createCustomer"/>
-            <actionGroup ref="AdminChangeTableRatesShippingMethodStatusActionGroup" stepKey="disableTableRatesShippingMethod">
-                <argument name="status" value="0"/>
-            </actionGroup>
 
             <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
                 <argument name="indices" value="cataloginventory_stock"/>
@@ -123,6 +120,13 @@
                 <argument name="indices" value=""/>
             </actionGroup>
         </after>
+         <actionGroup ref="AdminOpenShippingMethodsConfigPageActionGroup" stepKey="openShippingMethodConfigPage"/>
+         <actionGroup ref="AdminSwitchWebsiteActionGroup" stepKey="switchDefaultWebsite">
+            <argument name="website" value="_defaultWebsite"/>
+         </actionGroup>
+        <actionGroup ref="AdminChangeTableRatesShippingMethodStatusActionGroup" stepKey="enableTableRatesShippingMethodForDefaultWebsite">
+            <argument name="status" value="1"/>
+        </actionGroup>
 
         <!-- Add Simple Product to cart -->
         <amOnPage url="{{StorefrontProductPage.url($$createSimpleProduct.custom_attributes[url_key]$$)}}" stepKey="navigateToSimpleProductPage"/>
