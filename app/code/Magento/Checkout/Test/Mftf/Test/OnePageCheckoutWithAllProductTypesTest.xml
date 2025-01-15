@@ -120,14 +120,6 @@
                 <argument name="indices" value=""/>
             </actionGroup>
         </after>
-         <actionGroup ref="AdminOpenShippingMethodsConfigPageActionGroup" stepKey="openShippingMethodConfigPage"/>
-         <actionGroup ref="AdminSwitchWebsiteActionGroup" stepKey="switchDefaultWebsite">
-            <argument name="website" value="_defaultWebsite"/>
-         </actionGroup>
-        <actionGroup ref="AdminChangeTableRatesShippingMethodStatusActionGroup" stepKey="enableTableRatesShippingMethodForDefaultWebsite">
-            <argument name="status" value="0"/>
-        </actionGroup>
-        <actionGroup ref="AdminSaveConfigActionGroup" stepKey="saveConfigs"/>
         <!-- Add Simple Product to cart -->
         <amOnPage url="{{StorefrontProductPage.url($$createSimpleProduct.custom_attributes[url_key]$$)}}" stepKey="navigateToSimpleProductPage"/>
         <waitForPageLoad stepKey="waitForSimpleProductPageLoad"/>
