@@ -75,12 +75,12 @@
         </after>
         <!--Navigate to home page-->
         <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToHomePage"/>
-        <!--Search for word "5127AB"-->
+        <!--Search for word "5127S"-->
         <actionGroup ref="StorefrontCheckQuickSearchStringActionGroup" stepKey="search1">
-            <argument name="phrase" value="5127AB"/>
+            <argument name="phrase" value="5127S"/>
         </actionGroup>
         <!--Assert that product1 is present in the search result-->
-        <actionGroup ref="AssertStorefrontProductNameIsNotOnProductMainPageActionGroup" stepKey="dontSeeProduct1inAB">
+        <actionGroup ref="StorefrontAssertProductNameOnProductMainPageActionGroup" stepKey="seeProduct1">
             <argument name="productName" value="$$product1.name$$"/>
         </actionGroup>
         <!--Assert that product2 is not present in the search result-->
@@ -88,11 +88,11 @@
             <argument name="productName" value="$$product2.name$$"/>
         </actionGroup>
         <!--Assert that product2 is not present in the search result-->
-        <actionGroup ref="StorefrontAssertProductNameOnProductMainPageActionGroup" stepKey="seeProduct3inAB">
+        <actionGroup ref="AssertStorefrontProductNameIsNotOnProductMainPageActionGroup" stepKey="dontSeeProduct3">
             <argument name="productName" value="$$product3.name$$"/>
         </actionGroup>
         <!--Assert that product4 is present in the search result-->
-        <actionGroup ref="AssertStorefrontProductNameIsNotOnProductMainPageActionGroup" stepKey="dontSeeProduct4inAB">
+        <actionGroup ref="StorefrontAssertProductNameOnProductMainPageActionGroup" stepKey="seeProduct4">
             <argument name="productName" value="$$product4.name$$"/>
         </actionGroup>
         <!--Assert that product5 is not present in the search result-->
@@ -100,7 +100,7 @@
             <argument name="productName" value="$$product5.name$$"/>
         </actionGroup>
         <!--Assert that product6 is not present in the search result-->
-        <actionGroup ref="StorefrontAssertProductNameOnProductMainPageActionGroup" stepKey="seeProduct6inAB">
+        <actionGroup ref="AssertStorefrontProductNameIsNotOnProductMainPageActionGroup" stepKey="dontSeeProduct6">
             <argument name="productName" value="$$product6.name$$"/>
         </actionGroup>
 
@@ -163,4 +163,3 @@
         </actionGroup>
     </test>
 </tests>
-
