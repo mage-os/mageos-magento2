@@ -18,6 +18,8 @@
             <testCaseId value="MC-14742"/>
             <group value="checkout"/>
             <group value="mtf_migrated"/>
+            <!--Will be fixed in the scope of ACQE-7434 -->
+            <group value="pr_exclude"/>
         </annotations>
         <before>
             <magentoCLI stepKey="addDownloadableDomain" command="downloadable:domains:add static.magento.com"/>
