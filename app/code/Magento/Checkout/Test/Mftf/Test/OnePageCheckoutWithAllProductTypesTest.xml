@@ -18,14 +18,12 @@
             <testCaseId value="MC-14742"/>
             <group value="checkout"/>
             <group value="mtf_migrated"/>
-            <!--Will be fixed in the scope of ACQE-7434 -->
-            <group value="pr_exclude"/>
         </annotations>
         <before>
             <magentoCLI stepKey="addDownloadableDomain" command="downloadable:domains:add static.magento.com"/>
             <!-- Create category -->
             <createData entity="_defaultCategory" stepKey="createCategory"/>
-
+            
             <!-- Create Configurable Product -->
             <createData entity="ApiConfigurableProduct" stepKey="createConfigProduct">
                 <requiredEntity createDataKey="createCategory"/>
@@ -89,6 +87,9 @@
 
             <!-- Create customer -->
             <createData entity="Simple_Customer_Without_Address" stepKey="createCustomer"/>
+            <actionGroup ref="AdminChangeTableRatesShippingMethodStatusActionGroup" stepKey="disableTableRatesShippingMethod">
+                <argument name="status" value="0"/>
+            </actionGroup>
 
             <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
                 <argument name="indices" value="cataloginventory_stock"/>
