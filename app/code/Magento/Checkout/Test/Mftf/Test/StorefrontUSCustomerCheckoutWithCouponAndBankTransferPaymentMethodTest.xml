@@ -25,7 +25,7 @@
                 <argument name="website" value="_defaultWebsite"/>
             </actionGroup>
             <actionGroup ref="AdminChangeTableRatesShippingMethodStatusActionGroup" stepKey="enableTableRatesShippingMethodForDefaultWebsite">
-                <argument name="status" value="1"/>
+                <argument name="status" value="0"/>
             </actionGroup>
             <magentoCLI command="config:set {{EnablePaymentBankTransferConfigData.path}} {{EnablePaymentBankTransferConfigData.value}}" stepKey="enableBankTransferPayment"/>
             <createData entity="SimpleProduct2" stepKey="simpleProduct">
