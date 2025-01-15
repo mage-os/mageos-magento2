@@ -62,9 +62,6 @@
 
         <!-- Fill the guest form -->
         <actionGroup ref="FillGuestCheckoutShippingAddressFormActionGroup" stepKey="fillGuestForm"/>
-        <click selector="{{CheckoutShippingMethodsSection.checkShippingMethodByName('Flat Rate')}}"
-               stepKey="selectFlatShippingMethod"/>
-        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMask"/>
         <actionGroup ref="StorefrontCheckoutClickNextButtonActionGroup" stepKey="clickOnNextButton"/>
         <waitForElementVisible selector="{{CheckoutPaymentSection.bankTransfer}}" stepKey="waitForPlaceOrderButton"/>
         <checkOption selector="{{CheckoutPaymentSection.bankTransfer}}" stepKey="selectBankTransfer"/>
