@@ -1,8 +1,7 @@
 <?php
 /**
- * Copyright 2024 Adobe
- * All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2013 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -13,6 +12,7 @@ use Magento\Captcha\Helper\Data;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\Write;
 use Magento\Framework\Filesystem\Directory\WriteInterface;
+use Magento\Framework\Filesystem\Io\File;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManager;
 use Magento\Store\Model\Website;
@@ -58,6 +58,11 @@ class DeleteExpiredImagesTest extends TestCase
     protected $_directory;
 
     /**
+     * @var File|MockObject
+     */
+    protected $_fileInfo;
+
+    /**
      * @var int
      */
     public static $currentTime;
@@ -72,6 +77,7 @@ class DeleteExpiredImagesTest extends TestCase
         $this->_filesystem = $this->createMock(Filesystem::class);
         $this->_directory = $this->createMock(Write::class);
         $this->_storeManager = $this->createMock(StoreManager::class);
+        $this->_fileInfo = $this->createMock(File::class);
 
         $this->_filesystem->expects(
             $this->once()
@@ -85,7 +91,8 @@ class DeleteExpiredImagesTest extends TestCase
             $this->_helper,
             $this->_adminHelper,
             $this->_filesystem,
-            $this->_storeManager
+            $this->_storeManager,
+            $this->_fileInfo
         );
     }
 
