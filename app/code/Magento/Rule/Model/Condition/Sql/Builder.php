@@ -185,25 +185,13 @@ class Builder
         } else {
             $sql = str_replace(
                 ':field',
-                (string) $this->_connection->getIfNullSql(
-                    $this->_connection->quoteIdentifier($argument),
-                    $defaultValue
-                ),
+                $this->_connection->quoteIdentifier($argument),
                 $this->_conditionOperatorMap[$conditionOperator]
             );
             $bindValue = $condition->getBindArgumentValue();
             $expression = $value . $this->_connection->quoteInto($sql, $bindValue);
         }
         // values for multiselect attributes can be saved in comma-separated format
-        // below is a solution for matching such conditions with selected values
-        if (is_array($bindValue) && \in_array($conditionOperator, ['()', '{}'], true)) {
-            foreach ($bindValue as $item) {
-                $expression .= $this->_connection->quoteInto(
-                    " OR (FIND_IN_SET (?, {$this->_connection->quoteIdentifier($argument)}) > 0)",
-                    $item
-                );
-            }
-        }
         return $this->_expressionFactory->create(
             ['expression' => $expression]
         );
