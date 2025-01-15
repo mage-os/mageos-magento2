@@ -253,7 +253,7 @@ class Cli extends Console\Application
             return sprintf(
                 '%s (based on %s %s)',
                 parent::getLongVersion(),
-                $this->productMetadata->getProductName(),
+                $this->productMetadata->getName(),
                 $this->productMetadata->getVersion()
             );
         }
