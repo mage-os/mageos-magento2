@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace Magento\CatalogInventoryGraphQl\Model\Resolver;
 
-use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
@@ -38,12 +37,12 @@ class MaxSaleQtyResolver implements ResolverInterface
      */
     public function resolve(
         Field $field,
-        ContextInterface $context,
+        $context,
         ResolveInfo $info,
-        ?array $value,
-        ?array $args
+        ?array $value = null,
+        ?array $args = null
     ) {
         $stockItem = $this->stockItemService->getStockItem($value['model']);
-        return $stockItem ? $stockItem->getMaxSaleQty() : null;
+        return $stockItem?->getMaxSaleQty();
     }
 }

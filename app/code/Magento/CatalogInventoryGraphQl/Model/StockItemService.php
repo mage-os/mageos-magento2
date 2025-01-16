@@ -49,7 +49,7 @@ class StockItemService
      * Returns stock item if the product is available
      *
      * @param Product|null $product
-     * @return Item
+     * @return Item|null
      */
     public function getStockItem(?Product $product)
     {
