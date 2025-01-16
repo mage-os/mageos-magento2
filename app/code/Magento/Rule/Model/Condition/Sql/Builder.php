@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Rule\Model\Condition\Sql;
@@ -166,7 +166,6 @@ class Builder
             throw new \Magento\Framework\Exception\LocalizedException(__('Unknown condition operator'));
         }
 
-        $defaultValue = 0;
         //operator 'contains {}' is mapped to 'IN()' query that cannot work with substrings
         // adding mapping to 'LIKE %%'
         if ($condition->getInputType() === 'string'
