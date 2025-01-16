@@ -24,7 +24,13 @@ define([
             messageContainer = messageContainer || globalMessageList;
 
             if (response.status == 401) { //eslint-disable-line eqeqeq
-                this.redirectTo(url.build('customer/account/login/'));
+                error = {
+                    message: $t('You are not authorized to access this resource.')
+                };
+                messageContainer.addErrorMessage(error);
+                setTimeout(() => {
+                    this.redirectTo(url.build('customer/account/login/'));
+                }, 2000);
             } else {
                 try {
                     error = JSON.parse(response.responseText);
