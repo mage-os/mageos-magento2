@@ -173,7 +173,7 @@ class Builder
         ) {
             $sql = str_replace(
                 ':field',
-                $this->_connection->quoteIdentifier($argument),
+                (string)$this->_connection->quoteIdentifier($argument),
                 $this->stringConditionOperatorMap[$conditionOperator]
             );
             $bindValue = $condition->getBindArgumentValue();
@@ -181,7 +181,7 @@ class Builder
         } else {
             $sql = str_replace(
                 ':field',
-                $this->_connection->quoteIdentifier($argument),
+                (string)$this->_connection->quoteIdentifier($argument),
                 $this->_conditionOperatorMap[$conditionOperator]
             );
             $bindValue = $condition->getBindArgumentValue();
