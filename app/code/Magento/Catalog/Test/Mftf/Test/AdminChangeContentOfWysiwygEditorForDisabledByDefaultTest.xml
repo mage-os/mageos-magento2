@@ -117,7 +117,7 @@
         <click selector="{{AdminProductFormSection.contentTab}}" stepKey="clickContentTabForProduct"/>
         <waitForPageLoad stepKey="waitForGridLoad2"/>
         <click selector="{{TinyMCESection.ShowHideBtn}}" stepKey="clickShowHideBtnAgain"/>
-        <waitForElementVisible selector="{{ProductShortDescriptionWysiwygSection.form}} {{TinyMCESection.TinyMCE}}" stepKey="waitforTinyMCEToBeVisible"/>
+        <waitForElementVisible selector="{{ProductShortDescriptionWysiwygSection.form}} {{TinyMCESection.TinyMCE}}" stepKey="waitForTinyMCEToBeVisible"/>
         <click selector="{{ProductShortDescriptionWysiwygSection.form}} {{TinyMCESection.ShowHideBtn}}" stepKey="focusProductShortDescriptionWysiwyg1"/>
         <waitForElementNotVisible selector="{{ProductShortDescriptionWysiwygSection.form}} {{TinyMCESection.TinyMCE}}" stepKey="waitForShortDescription1"/>
         <click selector="{{ProductShortDescriptionWysiwygSection.form}} {{TinyMCESection.ShowHideBtn}}" stepKey="clickAgainShowHideBtn2"/>
