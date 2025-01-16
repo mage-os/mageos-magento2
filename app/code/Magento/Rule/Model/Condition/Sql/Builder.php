@@ -191,7 +191,7 @@ class Builder
         // values for multiselect attributes can be saved in comma-separated format
         // below is a solution for matching such conditions with selected values
         $attribute = $condition->getAttributeObject();
-        if ($attribute->getFrontendInput() === 'multiselect') {
+        if ($attribute && $attribute->getFrontendInput() === 'multiselect') {
             if (is_array($bindValue) && \in_array($conditionOperator, ['()', '{}'], true)) {
                 foreach ($bindValue as $item) {
                     $expression .= $this->_connection->quoteInto(
