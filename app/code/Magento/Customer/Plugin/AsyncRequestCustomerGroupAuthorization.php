@@ -57,8 +57,8 @@ class AsyncRequestCustomerGroupAuthorization
         MassSchedule $massSchedule,
         string       $topic,
         array        $entitiesArray,
-        string       $groupId = null,
-        string       $userId = null
+        ?string       $groupId = null,
+        ?string       $userId = null
     ) {
         // only apply the plugin on account create.
         if ($topic !== 'async.magento.customer.api.accountmanagementinterface.createaccount.post') {
