@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2024 Adobe
+ * Copyright 2025 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -11,6 +11,7 @@ use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\CatalogInventory\Model\StockRegistry;
+use Magento\CatalogInventory\Model\Stock\Item;
 
 /**
  * Service to provide stock item for given product
@@ -48,9 +49,9 @@ class StockItemService
      * Returns stock item if the product is available
      *
      * @param Product|null $product
-     * @return mixed
+     * @return Item
      */
-    public function getStockItem(Product $product = null)
+    public function getStockItem(?Product $product)
     {
         if (!isset($product)) {
             throw new LocalizedException(__('"model" value should be specified'));
