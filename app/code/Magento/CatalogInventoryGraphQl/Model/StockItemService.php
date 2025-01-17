@@ -50,8 +50,9 @@ class StockItemService
      *
      * @param Product|null $product
      * @return Item|null
+     * @throws LocalizedException
      */
-    public function getStockItem(?Product $product)
+    public function getStockItem(?Product $product): ?Item
     {
         if (!isset($product)) {
             throw new LocalizedException(__('"model" value should be specified'));
