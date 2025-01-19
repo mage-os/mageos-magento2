@@ -181,7 +181,7 @@ class GeneratorTest extends TestCase
             );
 
         $this->productMetadata->expects($this->once())
-            ->method('getVersion')
+            ->method('getDistributionVersion')
             ->willReturn('UNKNOWN');
 
         $this->assertEquals(
