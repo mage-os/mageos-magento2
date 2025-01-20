@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2017 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Rule\Model\Condition\Sql;
@@ -70,9 +70,22 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
         ];
 
         $rule->loadPost($ruleConditionArray);
-        $this->model->attachConditionToCollection($collection, $rule->getConditions());
+        $combine =  $rule->getConditions();
+        $this->model->attachConditionToCollection($collection, $combine);
+        $multiSelectField = null;
+        foreach ($combine->getConditions() as $condition) {
+            $attribute = $condition->getAttributeObject();
+            if ($attribute && $attribute->getFrontendInput() === 'multiselect') {
+                $multiSelectField = 1;
+                break;
+            }
+        }
+        if (!$multiSelectField) {
+            $whereString = "/\(FIND_IN_SET \('/";
+            $this->assertEquals(0, preg_match($whereString, $collection->getSelectSql(true)));
+        }
 
-        $whereString = "/\(category_id IN \('3'\).+\(IFNULL\(`e`\.`entity_id`,.+\) = '2017-09-15 00:00:00'\)"
+        $whereString = "/\(category_id IN \('3'\).+\(`e`\.`entity_id` = '2017-09-15 00:00:00'\)"
             . ".+ORDER BY \(FIELD\(`e`.`sku`, ':\(', ':\)'\)\)/";
         $this->assertEquals(1, preg_match($whereString, $collection->getSelectSql(true)));
     }
