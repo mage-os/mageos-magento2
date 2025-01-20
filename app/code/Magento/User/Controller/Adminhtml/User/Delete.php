@@ -41,7 +41,7 @@ class Delete extends User implements HttpPostActionInterface
                 /** @var \Magento\User\Model\User $model */
                 $model = $this->_userFactory->create();
                 $model->setId($userId);
-                $deletedUser = $this->_userFactory->create()->load($userId);
+                $deletedUser = $model->load($userId);
                 $model->delete();
                 $this->_eventManager->dispatch('log_user_after_delete', [
                     'deletedUser' => $deletedUser,
