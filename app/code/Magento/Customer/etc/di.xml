@@ -593,4 +593,9 @@
                 type="Magento\Customer\Plugin\AsyncRequestCustomerGroupAuthorization"
         />
     </type>
+    <type name="Magento\Customer\Model\Address\AbstractAddress">
+        <arguments>
+            <argument name="addressHelper" xsi:type="object">Magento\Customer\Helper\Address</argument>
+        </arguments>
+    </type>
 </config>
