@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2024 Adobe
+ * Copyright 2025 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -10,7 +10,6 @@ namespace Magento\SalesRule\Test\Unit\Observer;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
-use Magento\Multicoupon\Model\Config\Config;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Sales\Model\AdminOrder\Create;
@@ -27,11 +26,6 @@ class ProcessOrderCreationDataObserverTest extends TestCase
      * @var MockObject|Observer
      */
     private $observerMock;
-
-    /**
-     * @var MockObject|Config
-     */
-    private $multiCouponConfigMock;
 
     /**
      * @var Event|MockObject
@@ -73,10 +67,6 @@ class ProcessOrderCreationDataObserverTest extends TestCase
             ->onlyMethods(['isVirtual', 'getShippingAddress'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->multiCouponConfigMock = $this->getMockBuilder(Config::class)
-            ->onlyMethods(['getMaximumNumberOfCoupons'])
-            ->disableOriginalConstructor()
-            ->getMock();
         $this->eventMock = $this->getMockBuilder(Event::class)
             ->disableOriginalConstructor()
             ->addMethods(['getRequest', 'getOrderCreateModel', 'getShippingMethod'])
@@ -90,14 +80,13 @@ class ProcessOrderCreationDataObserverTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->requestMock = $this->getMockForAbstractClass(RequestInterface::class);
-        $this->model = new ProcessOrderCreationDataObserver($this->multiCouponConfigMock);
+        $this->model = new ProcessOrderCreationDataObserver();
     }
 
     /**
      * Test case for processOrderCreationDataObserver::execute
      *
      * @param bool $isVirtualQuote
-     * @param int $maximumNumberOfCoupons
      * @param array $requestArr
      * @param string|null $quoteShippingMethod
      * @return void
@@ -105,7 +94,6 @@ class ProcessOrderCreationDataObserverTest extends TestCase
      */
     public function testExecute(
         bool $isVirtualQuote,
-        int $maximumNumberOfCoupons,
         array $requestArr,
         ?string $quoteShippingMethod = null,
     ): void {
@@ -137,10 +125,6 @@ class ProcessOrderCreationDataObserverTest extends TestCase
             ->expects($this->any())
             ->method('getShippingAddress')
             ->willReturn($this->shippingAddressMock);
-        $this->multiCouponConfigMock
-            ->expects($this->any())
-            ->method('getMaximumNumberOfCoupons')
-            ->willReturn($maximumNumberOfCoupons);
         $this->shippingAddressMock
             ->expects($this->any())
             ->method('setShippingMethod')
@@ -159,7 +143,6 @@ class ProcessOrderCreationDataObserverTest extends TestCase
         return [
             [
                 'isVirtualQuote' => false,
-                'maximumNumberOfCoupons' => 1,
                 'requestArr' =>
                     [
                         'order' => ['coupon' => 'coupon_code'],
@@ -170,7 +153,6 @@ class ProcessOrderCreationDataObserverTest extends TestCase
             ],
             [
                 'isVirtualQuote' => true,
-                'maximumNumberOfCoupons' => 1,
                 'requestArr' =>
                     [
                         'order' => ['coupon' => 'coupon_code'],
@@ -180,7 +162,6 @@ class ProcessOrderCreationDataObserverTest extends TestCase
             ],
             [
                 'isVirtualQuote' => false,
-                'maximumNumberOfCoupons' => 1,
                 'requestArr' =>
                     [
                         'order' => ['coupon' => ''],
@@ -190,7 +171,6 @@ class ProcessOrderCreationDataObserverTest extends TestCase
             ],
             [
                 'isVirtualQuote' => false,
-                'maximumNumberOfCoupons' => 10,
                 'requestArr' =>
                     [
                         'order' => ['coupon' => 'coupon_code'],
