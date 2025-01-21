@@ -9,9 +9,12 @@ use Magento\Framework\App\Action\HttpPostActionInterface as HttpPostActionInterf
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Backend\Model\Image\UploadResizeConfigInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * The product gallery upload controller
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Upload extends \Magento\Backend\App\Action implements HttpPostActionInterface
 {
@@ -53,18 +56,31 @@ class Upload extends \Magento\Backend\App\Action implements HttpPostActionInterf
     private $productMediaConfig;
 
     /**
+     * @var UploadResizeConfigInterface
+     */
+    private $imageUploadConfig;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $_logger;
+
+    /**
      * @param \Magento\Backend\App\Action\Context $context
      * @param \Magento\Framework\Controller\Result\RawFactory $resultRawFactory
-     * @param \Magento\Framework\Image\AdapterFactory $adapterFactory
-     * @param \Magento\Framework\Filesystem $filesystem
-     * @param \Magento\Catalog\Model\Product\Media\Config $productMediaConfig
+     * @param \Magento\Framework\Image\AdapterFactory|null $adapterFactory
+     * @param \Magento\Framework\Filesystem|null $filesystem
+     * @param \Magento\Catalog\Model\Product\Media\Config|null $productMediaConfig
+     * @param UploadResizeConfigInterface|null $imageUploadConfig
+     * @throws \Magento\Framework\Exception\FileSystemException
      */
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
         \Magento\Framework\Controller\Result\RawFactory $resultRawFactory,
-        ?\Magento\Framework\Image\AdapterFactory $adapterFactory = null,
-        ?\Magento\Framework\Filesystem $filesystem = null,
-        ?\Magento\Catalog\Model\Product\Media\Config $productMediaConfig = null
+        \Magento\Framework\Image\AdapterFactory $adapterFactory = null,
+        \Magento\Framework\Filesystem $filesystem = null,
+        \Magento\Catalog\Model\Product\Media\Config $productMediaConfig = null,
+        UploadResizeConfigInterface $imageUploadConfig = null
     ) {
         parent::__construct($context);
         $this->resultRawFactory = $resultRawFactory;
@@ -74,6 +90,8 @@ class Upload extends \Magento\Backend\App\Action implements HttpPostActionInterf
             ->get(\Magento\Framework\Filesystem::class);
         $this->productMediaConfig = $productMediaConfig ?: ObjectManager::getInstance()
             ->get(\Magento\Catalog\Model\Product\Media\Config::class);
+        $this->imageUploadConfig = $imageUploadConfig
+            ?: ObjectManager::getInstance()->get(UploadResizeConfigInterface::class);
     }
 
     /**
@@ -96,6 +114,12 @@ class Upload extends \Magento\Backend\App\Action implements HttpPostActionInterf
             $mediaDirectory = $this->filesystem->getDirectoryRead(DirectoryList::MEDIA);
             $result = $uploader->save(
                 $mediaDirectory->getAbsolutePath($this->productMediaConfig->getBaseTmpMediaPath())
+            );
+            // Resize the image if needed
+            $this->processImage(
+                $imageAdapter,
+                $mediaDirectory->getAbsolutePath($this->productMediaConfig->getBaseTmpMediaPath()),
+                $result['file']
             );
             $this->_eventManager->dispatch(
                 'catalog_product_gallery_upload_image_after',
@@ -122,6 +146,48 @@ class Upload extends \Magento\Backend\App\Action implements HttpPostActionInterf
         $response->setHeader('Content-type', 'text/plain');
         $response->setContents(json_encode($result));
         return $response;
+    }
+
+    /**
+     * Resize the image
+     *
+     * @param \Magento\Framework\Image\AdapterFactory $imageAdapter
+     * @param string $path
+     * @param string $file
+     * @return bool
+     */
+    private function processImage($imageAdapter, $path, $file): bool
+    {
+        try {
+            $filePath = $path . DIRECTORY_SEPARATOR . $file;
+
+            // Open the image file
+            $imageAdapter->open($filePath);
+
+            // Get current dimensions
+            $imageWidth = $imageAdapter->getOriginalWidth();
+            $imageHeight = $imageAdapter->getOriginalHeight();
+
+            // Fetch resizing configurations
+            $maxWidth = $this->imageUploadConfig->getMaxWidth();
+            $maxHeight = $this->imageUploadConfig->getMaxHeight();
+
+            // Check if resizing is necessary
+            if ($this->imageUploadConfig->isResizeEnabled()
+                && ($imageWidth > $maxWidth || $imageHeight > $maxHeight)) {
+                // Maintain aspect ratio and resize
+                $imageAdapter->keepAspectRatio(true);
+                $imageAdapter->resize($maxWidth, $maxHeight);
+
+                // Save the resized image
+                $imageAdapter->save($filePath);
+            }
+
+            return true;
+        } catch (\Exception $e) {
+            $this->_logger->error($e->getMessage());
+            return false;
+        }
     }
 
     /**

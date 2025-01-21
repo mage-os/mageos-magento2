@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2011 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -15,6 +15,7 @@ use Magento\Framework\Filesystem\Directory\WriteInterface;
 use Magento\Framework\Filesystem\DirectoryList;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\TestFramework\TestCase\AbstractBackendController;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 
 /**
  * Provide tests for admin product upload image action.
@@ -54,6 +55,11 @@ class UploadTest extends AbstractBackendController
     private $config;
 
     /**
+     * @var ScopeConfigInterface
+     */
+    private mixed $scopeConfig;
+
+    /**
      * @inheritdoc
      */
     protected function setUp(): void
@@ -64,6 +70,7 @@ class UploadTest extends AbstractBackendController
         $this->serializer = $this->_objectManager->get(Json::class);
         $this->mediaDirectory = $this->filesystem->getDirectoryWrite(AppDirectoryList::MEDIA);
         $this->config = $this->_objectManager->get(Config::class);
+        $this->scopeConfig = $this->_objectManager->get(ScopeConfigInterface::class);
     }
 
     /**
@@ -90,6 +97,67 @@ class UploadTest extends AbstractBackendController
         $this->assertTrue($this->mediaDirectory->isExist(
             $this->getFileAbsolutePath($expectation['tmp_media_path'])
         ));
+    }
+
+    /**
+     * Test upload image on admin product page.
+     *
+     * @dataProvider uploadActionDataProvider
+     * @magentoDbIsolation enabled
+     * @param array $file
+     * @param array $expectation
+     * @return void
+     */
+    public function testUploadWithResizeAction(array $file, array $expectation): void
+    {
+        $this->copyFileToSysTmpDir($file);
+        $this->scopeConfig->setValue(
+            'system/upload_configuration/max_width',
+            100
+        );
+        $this->scopeConfig->setValue(
+            'system/upload_configuration/max_height',
+            100
+        );
+        $this->getRequest()->setMethod($this->httpMethod);
+        $this->dispatch($this->uri);
+        $jsonBody = $this->serializer->unserialize($this->getResponse()->getBody());
+        $this->assertEquals($jsonBody['name'], $expectation['name']);
+        $this->assertEquals($jsonBody['type'], $expectation['type']);
+        $this->assertEquals($jsonBody['file'], $expectation['file']);
+        $this->assertEquals($jsonBody['url'], $expectation['url']);
+        $this->assertArrayNotHasKey('error', $jsonBody);
+        $this->assertArrayNotHasKey('errorcode', $jsonBody);
+        $this->assertTrue($this->mediaDirectory->isExist(
+            $this->getFileAbsolutePath($expectation['tmp_media_path'])
+        ));
+        $dimensions = $this->getImageDimensions($this->getFileAbsolutePath($expectation['tmp_media_path']));
+        $this->assertLessThanOrEqual(100, $dimensions['width']);
+        $this->assertLessThanOrEqual(100, $dimensions['height']);
+    }
+
+    /**
+     * Fetch uploaded image dimension.
+     *
+     * @param $imagePath
+     * @return array|false
+     */
+    private function getImageDimensions($imagePath)
+    {
+        if (!file_exists($imagePath)) {
+            return false;
+        }
+
+        $imageInfo = getimagesize($imagePath);
+
+        if ($imageInfo === false) {
+            return false;
+        }
+
+        return [
+            'width'  => $imageInfo[0],
+            'height' => $imageInfo[1],
+        ];
     }
 
     /**
