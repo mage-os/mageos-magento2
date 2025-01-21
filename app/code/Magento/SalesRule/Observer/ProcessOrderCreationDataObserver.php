@@ -9,20 +9,12 @@ namespace Magento\SalesRule\Observer;
 
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
-use Magento\Multicoupon\Model\Config\Config;
 
 /**
  * Class for process order for resetting shipping flag.
  */
 class ProcessOrderCreationDataObserver implements ObserverInterface
 {
-    /**
-     * @param Config $multiCouponConfig
-     */
-    public function __construct(private Config $multiCouponConfig)
-    {
-    }
-
     /**
      * Checking shipping method and resetting it if needed.
      *
@@ -38,8 +30,7 @@ class ProcessOrderCreationDataObserver implements ObserverInterface
             $isVirtualQuote = $quote->isVirtual();
             $quoteShippingMethod = $observer->getEvent()->getShippingMethod();
             $checkIfCouponExists = array_key_exists('coupon', $request['order']);
-            $noOfCouponsAvailable = $this->multiCouponConfig->getMaximumNumberOfCoupons();
-            if (!$isVirtualQuote && !empty($quoteShippingMethod) && $checkIfCouponExists && $noOfCouponsAvailable <= 1) {
+            if (!$isVirtualQuote && !empty($quoteShippingMethod) && $checkIfCouponExists) {
                     $shippingAddress = $quote->getShippingAddress();
                     $shippingAddress->setShippingMethod($quoteShippingMethod);
             }
