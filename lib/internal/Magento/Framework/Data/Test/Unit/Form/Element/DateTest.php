@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -125,4 +125,43 @@ class DateTest extends TestCase
 
         return $formMock;
     }
+
+    /**
+     * @dataProvider providerGetValue
+     */
+    public function testGetValue($dateFormat, $format, $timeFormat, $expectedFormat)
+    {
+        $dateTime = new \DateTime('2025-10-13 10:36:00', new \DateTimeZone('America/Los_Angeles'));
+        $this->model->setValue($dateTime);
+        $this->model->setDateFormat($dateFormat);
+        $this->model->setFormat($format);
+        $this->model->setTimeFormat($timeFormat);
+
+        $this->localeDateMock->expects($this->once())
+            ->method('formatDateTime')
+            ->with(
+                $this->equalTo($dateTime),
+                $this->isNull(),
+                $this->isNull(),
+                $this->isNull(),
+                $this->equalTo($dateTime->getTimezone()),
+                $this->equalTo($expectedFormat)
+            )
+            ->willReturn('2025-10-13 10:36:00');
+
+        $this->model->getValue();
+    }
+
+    public function providerGetValue()
+    {
+        return [
+            [null, 'yyyy-mm-dd', 'hh:mm:ss', 'yyyy-mm-dd hh:mm:ss'],
+            [null, 'yy-mm-dd', null, 'yy-mm-dd'],
+            ['yyyy-mm-dd', null, null, 'yyyy-mm-dd'],
+            ['yyyy-mm-dd', 'yy-mm-dd', 'hh:mm:ss', 'yyyy-mm-dd hh:mm:ss'],
+            ['yyyy-mm-dd', 'yy-mm-dd', null, 'yyyy-mm-dd']
+        ];
+    }
+
+
 }

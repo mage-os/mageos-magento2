@@ -5,7 +5,8 @@
  */
 
 /**
- * Magento data selector form element
+ * Copyright 2011 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Framework\Data\Form\Element;
@@ -121,7 +122,7 @@ class Date extends AbstractElement
             return '';
         }
         if (null === $format) {
-            $format = $this->getDateFormat();
+            $format = $this->getDateFormat() ?: $this->getFormat();
             $format .= ($format && $this->getTimeFormat()) ? ' ' : '';
             $format .= $this->getTimeFormat() ? $this->getTimeFormat() : '';
         }
