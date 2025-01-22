@@ -162,6 +162,4 @@ class DateTest extends TestCase
             ['yyyy-mm-dd', 'yy-mm-dd', null, 'yyyy-mm-dd']
         ];
     }
-
-
 }
