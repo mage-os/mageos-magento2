@@ -4,6 +4,10 @@
  * All Rights Reserved.
  */
 
+/**
+ * Magento data selector form element
+ */
+
 namespace Magento\Framework\Data\Form\Element;
 
 use Magento\Framework\Escaper;
