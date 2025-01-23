@@ -8,8 +8,11 @@
  * @var \Magento\Framework\View\Element\Template $block
  * @var \Magento\Framework\Escaper $escaper
  */
-$viewFileUrl = $block->getViewFileUrl('Magento_LoginAsCustomerFrontendUi::images/magento-icon.svg');
-$adobeFileUrl = $block->getViewFileUrl('Magento_LoginAsCustomerFrontendUi::images/adobe-icon.svg');
+if ($block->getConfig()->isB2bEnabled()) {
+    $adobeFileUrl = $block->getViewFileUrl('Magento_LoginAsCustomerFrontendUi::images/adobe-icon.svg');
+} else {
+    $adobeFileUrl = $block->getViewFileUrl('Magento_LoginAsCustomerFrontendUi::images/magento-icon.svg');
+}
 ?>
 <?php if ($block->getConfig()->isEnabled()): ?>
     <div class="lac-notification-sticky"
