@@ -70,6 +70,9 @@ class AbstractAddressTest extends TestCase
     /** @var CompositeValidator|MockObject  */
     private $compositeValidatorMock;
 
+    /**
+     * @var \Magento\Customer\Helper\Address|MockObject
+     */
     private $addressHelperMock;
 
     protected function setUp(): void

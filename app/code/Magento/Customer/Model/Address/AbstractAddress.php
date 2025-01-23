@@ -172,7 +172,7 @@ class AbstractAddress extends AbstractExtensibleModel implements AddressModelInt
      * @param CompositeValidator $compositeValidator
      * @param CountryModelsCache|null $countryModelsCache
      * @param RegionModelsCache|null $regionModelsCache
-     * @param Magento\Customer\Helper\Address\AddressHelper|null $addressHelper
+     * @param AddressHelper|null $addressHelper
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
