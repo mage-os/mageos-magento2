@@ -17,36 +17,24 @@ use Magento\Framework\View\Element\Block\ArgumentInterface;
 class ValidateQuantity implements ArgumentInterface
 {
     /**
-     * @var Json
-     */
-    private $serializer;
-
-    /**
-     * @var QuantityValidator
-     */
-    private $productQuantityValidator;
-
-    /**
      * @param Json $serializer
      * @param QuantityValidator $productQuantityValidator
      */
     public function __construct(
-        Json $serializer,
-        QuantityValidator $productQuantityValidator,
+        private readonly Json $serializer,
+        private readonly QuantityValidator $productQuantityValidator,
     ) {
-        $this->serializer = $serializer;
-        $this->productQuantityValidator = $productQuantityValidator;
     }
 
     /**
      * To get the quantity validators
      *
      * @param int $productId
-     * @param int $websiteId
+     * @param int|null $websiteId
      *
      * @return string
      */
-    public function getQuantityValidators($productId, $websiteId): string
+    public function getQuantityValidators(int $productId, int|null $websiteId): string
     {
         return $this->serializer->serialize(
             array_merge(

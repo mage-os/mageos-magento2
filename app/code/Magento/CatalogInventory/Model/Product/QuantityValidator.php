@@ -12,39 +12,33 @@ use Magento\CatalogInventory\Api\StockRegistryInterface;
 class QuantityValidator
 {
     /**
-     * @var StockRegistryInterface
-     */
-    private $stockRegistry;
-
-    /**
      * @param StockRegistryInterface $stockRegistry
      */
     public function __construct(
-        StockRegistryInterface $stockRegistry
+        private readonly StockRegistryInterface $stockRegistry
     ) {
-        $this->stockRegistry = $stockRegistry;
     }
 
     /**
      * To get quantity validators
      *
      * @param int $productId
-     * @param int $websiteId
+     * @param int|null $websiteId
      *
      * @return array
      */
-    public function getData($productId, $websiteId): array
+    public function getData(int $productId, int|null $websiteId): array
     {
         $stockItem = $this->stockRegistry->getStockItem($productId, $websiteId);
 
         $params = [];
         $validators = [];
-        $params['minAllowed'] = (float)$stockItem->getMinSaleQty();
+        $params['minAllowed'] =  $stockItem->getMinSaleQty();
         if ($stockItem->getMaxSaleQty()) {
-            $params['maxAllowed'] = (float)$stockItem->getMaxSaleQty();
+            $params['maxAllowed'] = $stockItem->getMaxSaleQty();
         }
         if ($stockItem->getQtyIncrements() > 0) {
-            $params['qtyIncrements'] = (float)$stockItem->getQtyIncrements();
+            $params['qtyIncrements'] = (float) $stockItem->getQtyIncrements();
         }
         $validators['validate-item-quantity'] = $params;
 
