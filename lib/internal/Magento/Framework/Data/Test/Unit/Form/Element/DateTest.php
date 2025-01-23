@@ -140,10 +140,10 @@ class DateTest extends TestCase
         $this->localeDateMock->expects($this->once())
             ->method('formatDateTime')
             ->with(
-                $this->equalTo($dateTime),
-                $this->isNull(),
-                $this->isNull(),
-                $this->isNull(),
+                $dateTime,
+                null,
+                null,
+                null,
                 $this->equalTo($dateTime->getTimezone()),
                 $this->equalTo($expectedFormat)
             )
