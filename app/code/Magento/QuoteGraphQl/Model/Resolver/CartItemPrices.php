@@ -127,7 +127,7 @@ class CartItemPrices implements ResolverInterface, ResetAfterRequestInterface
      */
     private function getOriginalItemPrice(Item $cartItem): float
     {
-        $originalItemPrice = $cartItem->getOriginalPrice() + $this->getOptionsPrice($cartItem);
+        $originalItemPrice = $cartItem->getOriginalPrice() + $this->getCustomOptionPrice($cartItem);
 
         // To add downloadable product link price to the original item price
         if ($cartItem->getProductType() === Type::TYPE_DOWNLOADABLE &&
@@ -147,7 +147,7 @@ class CartItemPrices implements ResolverInterface, ResetAfterRequestInterface
     private function getOriginalRowTotal(Item $cartItem): float
     {
         // Round unit price before multiplying to prevent losing 1 cent on subtotal
-        return $this->priceCurrency->round($this->getOriginalItemPrice($cartItem) * $cartItem->getTotalQty());
+        return $this->priceCurrency->round($this->getOriginalItemPrice($cartItem)) * $cartItem->getTotalQty();
     }
 
     /**
@@ -156,14 +156,13 @@ class CartItemPrices implements ResolverInterface, ResetAfterRequestInterface
      * @param Item $cartItem
      * @return float
      */
-    private function getOptionsPrice(Item $cartItem): float
+    private function getCustomOptionPrice(Item $cartItem): float
     {
         $price = 0.0;
         $optionIds = $cartItem->getProduct()->getCustomOption('option_ids');
         if (!$optionIds) {
             return $price;
         }
-
         foreach (explode(',', $optionIds->getValue() ?? '') as $optionId) {
             $option = $cartItem->getProduct()->getOptionById($optionId);
             $optionValueIds = $cartItem->getOptionByCode('option_' . $optionId);
@@ -189,18 +188,19 @@ class CartItemPrices implements ResolverInterface, ResetAfterRequestInterface
      */
     private function getDownloadableLinkPrice(Item $cartItem): float
     {
-        $price = 0.0;
-        $links = $cartItem->getProduct()->getCustomOption('downloadable_link_ids');
-        if (!$links || empty($links->getValue())) {
-            return $price;
+        $linksOption = $cartItem->getProduct()->getCustomOption('downloadable_link_ids');
+        if (!$linksOption || !$linksOption->getValue()) {
+            return 0.0;
         }
-        $selectedLinks = explode(',', $links->getValue());
+
+        $selectedLinks = array_flip(explode(',', $linksOption->getValue()));
         $downloadableLinks = $cartItem->getProduct()->getTypeInstance()->getLinks($cartItem->getProduct());
-        foreach ($downloadableLinks as $link) {
-            if (in_array($link->getId(), $selectedLinks)) {
-                $price += (float)$link->getPrice();
-            }
-        }
-        return $price;
+
+        return array_reduce(
+            $downloadableLinks,
+            fn(float $total, $link) => isset($selectedLinks[$link->getId()]) ?
+                $total + (float) $link->getPrice() : $total,
+            0.0
+        );
     }
 }
