@@ -128,8 +128,12 @@ class DateTest extends TestCase
 
     /**
      * @dataProvider providerGetValue
+     * @param string|null $dateFormat
+     * @param string|null $format
+     * @param string|null $timeFormat
+     * @param string $expectedFormat
      */
-    public function testGetValue($dateFormat, $format, $timeFormat, $expectedFormat)
+    public function testGetValue(?string $dateFormat, ?string $format, ?string $timeFormat, string $expectedFormat)
     {
         $dateTime = new \DateTime('2025-10-13 10:36:00', new \DateTimeZone('America/Los_Angeles'));
         $this->model->setValue($dateTime);
