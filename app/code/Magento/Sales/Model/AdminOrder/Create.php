@@ -598,6 +598,11 @@ class Create extends \Magento\Framework\DataObject implements \Magento\Checkout\
                     if (is_string($item)) {
                         throw new \Magento\Framework\Exception\LocalizedException(__($item));
                     }
+                    if ($item->getStockStateResult() && $item->getStockStateResult()->getHasError()) {
+                        $this->messageManager->addErrorMessage(
+                            __('The product with SKU %sku is out of stock.', ['sku' => $item->getSku()])
+                        );
+                    }
                 }
             }
         }

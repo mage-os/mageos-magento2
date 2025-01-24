@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2011 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Quote\Model;
 
@@ -1699,22 +1699,11 @@ class Quote extends AbstractExtensibleModel implements \Magento\Quote\Api\Data\C
 
             $this->itemProcessor->prepare($item, $request, $candidate);
 
-            // collect errors instead of throwing first one
             if ($item->getHasError()) {
                 if (!$invalidProductAddFlag) {
                     $this->deleteItem($item);
                 }
-                foreach ($item->getMessage(false) as $message) {
-                    if (!in_array($message, $errors)) {
-                        // filter duplicate messages
-                        $errors[] = $message;
-                    }
-                }
-                break;
             }
-        }
-        if (!empty($errors)) {
-            throw new \Magento\Framework\Exception\LocalizedException(__(implode("\n", $errors)));
         }
 
         $this->_eventManager->dispatch('sales_quote_product_add_after', ['items' => $items]);
