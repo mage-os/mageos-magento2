@@ -97,6 +97,10 @@ class ProductListTest extends TestCase
         // Load products collection filtered using specified conditions and perform assertions
         $productCollection = $this->block->createCollection();
         $productCollection->load();
+
+        $whereString = "/\(FIND_IN_SET \('/";
+        $this->assertEquals(1, preg_match($whereString, $productCollection->getSelectSql(true)));
+
         $this->assertEquals(
             1,
             $productCollection->count(),
@@ -151,6 +155,10 @@ class ProductListTest extends TestCase
         // Load products collection filtered using specified conditions and perform assertions.
         $productCollection = $this->block->createCollection();
         $productCollection->load();
+
+        $whereString = "/\(FIND_IN_SET \('/";
+        $this->assertEquals(0, preg_match($whereString, $productCollection->getSelectSql(true)));
+
         $this->assertEquals(
             $count,
             $productCollection->count(),
