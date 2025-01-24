@@ -64,7 +64,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
                     'type' => ProductCondition::class,
                     'attribute' => 'sku',
                     'operator' => '()',
-                    'value' => ' :(  ,  :) ',
+                    'value' => 'sku1,sku2,sku3,sku4,sku5',
                 ]
             ],
         ];
@@ -73,7 +73,8 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
         $this->model->attachConditionToCollection($collection, $rule->getConditions());
 
         $whereString = "/\(category_id IN \('3'\).+\(`e`\.`entity_id` = '2017-09-15 00:00:00'\)"
-            . ".+ORDER BY \(FIELD\(`e`.`sku`, ':\(', ':\)'\)\)/";
+            .".+\(`e`\.`sku` IN \('sku1', 'sku2', 'sku3', 'sku4', 'sku5'\)"
+            . ".+ORDER BY \(FIELD\(`e`.`sku`, 'sku1', 'sku2', 'sku3', 'sku4', 'sku5'\)\)/";
         $this->assertEquals(1, preg_match($whereString, $collection->getSelectSql(true)));
     }
 }
