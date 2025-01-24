@@ -5,14 +5,14 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Persistent\Model;
+namespace Magento\Persistent\Model\ResourceModel;
 
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Persistent\Helper\Data;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ResourceConnection;
+use Magento\Store\Model\ScopeInterface;
 
 /**
  * Delete expired quote model
@@ -34,23 +34,18 @@ class DeleteExpiredQuote
     /**
      * Delete expired persistent quote for the website
      *
-     * @param int|null $websiteId
+     * @param int $websiteId
      * @return void
      * @throws LocalizedException
-     * @throws NoSuchEntityException
      */
-    public function deleteExpiredQuote(?int $websiteId): void
+    public function deleteExpiredQuote(int $websiteId): void
     {
-        if ($websiteId === null) {
-            $websiteId = $this->storeManager->getStore()->getWebsiteId();
-        }
-
         $storeIds = $this->storeManager->getWebsite($websiteId)->getStoreIds();
 
         $lifetime = $this->scopeConfig->getValue(
             Data::XML_PATH_LIFE_TIME,
-            'website',
-            (int)$websiteId
+            ScopeInterface::SCOPE_WEBSITE,
+            $websiteId
         );
 
         if ($lifetime) {

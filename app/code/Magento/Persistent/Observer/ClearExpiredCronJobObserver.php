@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace Magento\Persistent\Observer;
 
 use Magento\Cron\Model\Schedule;
-use Magento\Persistent\Model\DeleteExpiredQuoteFactory;
+use Magento\Persistent\Model\ResourceModel\DeleteExpiredQuote;
 use Magento\Persistent\Model\SessionFactory;
 use Magento\Store\Model\ResourceModel\Website\CollectionFactory;
 
@@ -31,23 +31,23 @@ class ClearExpiredCronJobObserver
     /**
      * A property for delete expired quote factory
      *
-     * @var DeleteExpiredQuoteFactory
+     * @var DeleteExpiredQuote
      */
-    private DeleteExpiredQuoteFactory $deleteExpiredQuoteFactory;
+    private DeleteExpiredQuote $deleteExpiredQuote;
 
     /**
      * @param CollectionFactory $websiteCollectionFactory
      * @param SessionFactory $sessionFactory
-     * @param DeleteExpiredQuoteFactory $deleteExpiredQuoteFactory
+     * @param DeleteExpiredQuote $deleteExpiredQuote
      */
     public function __construct(
         CollectionFactory $websiteCollectionFactory,
         SessionFactory $sessionFactory,
-        DeleteExpiredQuoteFactory $deleteExpiredQuoteFactory
+        DeleteExpiredQuote $deleteExpiredQuote
     ) {
         $this->_websiteCollectionFactory = $websiteCollectionFactory;
         $this->_sessionFactory = $sessionFactory;
-        $this->deleteExpiredQuoteFactory = $deleteExpiredQuoteFactory;
+        $this->deleteExpiredQuote = $deleteExpiredQuote;
     }
 
     /**
@@ -64,10 +64,9 @@ class ClearExpiredCronJobObserver
             return $this;
         }
 
-        $deleteExpiredQuote = $this->deleteExpiredQuoteFactory->create();
         foreach ($websiteIds as $websiteId) {
             $this->_sessionFactory->create()->deleteExpired($websiteId);
-            $deleteExpiredQuote->deleteExpiredQuote((int) $websiteId);
+            $this->deleteExpiredQuote->deleteExpiredQuote((int) $websiteId);
         }
 
         return $this;
