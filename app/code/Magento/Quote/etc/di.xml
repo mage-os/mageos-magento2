@@ -63,6 +63,7 @@
     <type name="Magento\Quote\Model\Quote\Address">
         <arguments>
             <argument name="addressConfig" xsi:type="object">Magento\Customer\Model\Address\Config\Proxy</argument>
+            <argument name="addressHelper" xsi:type="object">Magento\Customer\Helper\Address</argument>
         </arguments>
     </type>
     <virtualType name="QuoteAddressRelationsComposite" type="Magento\Framework\Model\ResourceModel\Db\VersionControl\RelationComposite">
