@@ -168,11 +168,17 @@ class AddProductsToCart
                 $stockItemQuantity
             );
         }
-
+//here $result has errors
         if (is_string($result)) {
             foreach (array_unique(explode("\n", $result)) as $error) {
                 $errors[] = $this->error->create(__($error)->render(), $cartItemPosition, $stockItemQuantity);
             }
+        } elseif ($result->getHasError() && $result->getStockStateResult()->getHasError()) {
+            $errors[] = $this->error->create(
+                __($result->getStockStateResult()->getMessage())->render(),
+                $cartItemPosition,
+                $stockItemQuantity
+            );
         }
 
         return $errors;

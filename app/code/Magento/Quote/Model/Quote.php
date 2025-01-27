@@ -1668,8 +1668,6 @@ class Quote extends AbstractExtensibleModel implements \Magento\Quote\Api\Data\C
         }
 
         $parentItem = null;
-        $errors = [];
-        $item = null;
         $items = [];
         foreach ($cartCandidates as $candidate) {
             // Child items can be sticked together only within their parent

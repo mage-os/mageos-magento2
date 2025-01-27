@@ -130,28 +130,4 @@ class Reorder extends Create implements HttpGetActionInterface
 
         return $resultRedirect;
     }
-
-    /**
-     * Collect all item errors
-     *
-     * @param $order
-     * @return array
-     */
-    private function getItemErrors($order): array
-    {
-        $errors = [];
-        $items = $order->getAllItems();
-        foreach($items as $item) {
-            if (!$item->getMessage(false)) {
-                continue;
-            }
-            foreach ($item->getMessage(false) as $message) {
-                if (!in_array($message, $errors)) {
-                    $errors[] = $message;
-                }
-            }
-        }
-
-        return $errors;
-    }
 }
