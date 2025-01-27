@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -78,6 +78,7 @@ class Elasticsearch implements ClientInterface
         }
         $this->clientOptions = $options;
         $this->fieldsMappingPreprocessors = $fieldsMappingPreprocessors;
+        // phpstan:ignore "File has calls static method. (phpStaticMethodCalls)"
         $this->dynamicTemplatesProvider = $dynamicTemplatesProvider ?: ObjectManager::getInstance()
             ->get(DynamicTemplatesProvider::class);
     }

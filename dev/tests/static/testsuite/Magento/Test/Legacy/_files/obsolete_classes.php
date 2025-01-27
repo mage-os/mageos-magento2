@@ -4331,15 +4331,18 @@ return [
     ],
     [
         'Magento\Elasticsearch6\Block\Adminhtml\System\Config\TestConnection',
-        'Magento\Elasticsearch7\Block\Adminhtml\System\Config\TestConnection'
+        'Magento\Elasticsearch7\Block\Adminhtml\System\Config\TestConnection',
+        'Magento\Elasticsearch8\Block\Adminhtml\System\Config\TestConnection'
     ],
     [
         'Magento\Elasticsearch6\Model\Adapter\FieldMapper\Product\FieldProvider\FieldName\Resolver\DefaultResolver',
-        'Magento\Elasticsearch7\Model\Adapter\FieldMapper\Product\FieldProvider\FieldName\Resolver\DefaultResolver'
+        'Magento\Elasticsearch7\Model\Adapter\FieldMapper\Product\FieldProvider\FieldName\Resolver\DefaultResolver',
+        'Magento\Elasticsearch8\Model\Adapter\FieldMapper\Product\FieldProvider\FieldName\Resolver\DefaultResolver'
     ],
     [
         'Magento\Elasticsearch6\Model\Client\Elasticsearch',
-        'Magento\Elasticsearch7\Model\Client\Elasticsearch'
+        'Magento\Elasticsearch7\Model\Client\Elasticsearch',
+        'Magento\Elasticsearch8\Model\Client\Elasticsearch'
     ],
     ['Magento\Elasticsearch\Test\Unit\Model\DataProvider\Base\SuggestionsTest'],
     ['Magento\Elasticsearch6\Test\Unit\Model\Client\ElasticsearchTest'],

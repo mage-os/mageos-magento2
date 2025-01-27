@@ -1,9 +1,8 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
-
 declare(strict_types=1);
 
 namespace Magento\Elasticsearch8\Test\Unit\Model\Client;
@@ -61,6 +60,7 @@ class ElasticsearchTest extends TestCase
      */
     protected function setUp(): void
     {
+        // phpstan:ignore "File has calls static method. (phpStaticMethodCalls)"
         BypassFinals::enable();
         $this->elasticsearchClientMock = $this->getMockBuilder(Client::class) /** @phpstan-ignore-line */
             ->onlyMethods(
