@@ -1668,6 +1668,8 @@ class Quote extends AbstractExtensibleModel implements \Magento\Quote\Api\Data\C
         }
 
         $parentItem = null;
+        $errors = [];
+        $item = null;
         $items = [];
         foreach ($cartCandidates as $candidate) {
             // Child items can be sticked together only within their parent
@@ -1697,11 +1699,22 @@ class Quote extends AbstractExtensibleModel implements \Magento\Quote\Api\Data\C
 
             $this->itemProcessor->prepare($item, $request, $candidate);
 
+            // collect errors instead of throwing first one
             if ($item->getHasError()) {
                 if (!$invalidProductAddFlag) {
                     $this->deleteItem($item);
                 }
+                foreach ($item->getMessage(false) as $message) {
+                    if (!in_array($message, $errors)) {
+                        // filter duplicate messages
+                        $errors[] = $message;
+                    }
+                }
+                break;
             }
+        }
+        if (!empty($errors)) {
+            throw new \Magento\Framework\Exception\LocalizedException(__(implode("\n", $errors)));
         }
 
         $this->_eventManager->dispatch('sales_quote_product_add_after', ['items' => $items]);

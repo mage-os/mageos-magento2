@@ -598,11 +598,6 @@ class Create extends \Magento\Framework\DataObject implements \Magento\Checkout\
                     if (is_string($item)) {
                         throw new \Magento\Framework\Exception\LocalizedException(__($item));
                     }
-                    if ($item->getStockStateResult() && $item->getStockStateResult()->getHasError()) {
-                        $this->messageManager->addErrorMessage(
-                            __('The product with SKU %sku is out of stock.', ['sku' => $item->getSku()])
-                        );
-                    }
                 }
             }
         }
@@ -738,10 +733,16 @@ class Create extends \Magento\Framework\DataObject implements \Magento\Checkout\
 
             $this->formattedOptions($product, $buyRequest, $productOptions);
 
-            $item = $this->getQuote()->addProduct($product, $buyRequest);
-            if (is_string($item)) {
-                return $item;
+            try {
+                $item = $this->getQuote()->addProduct($product, $buyRequest);
+                if (is_string($item)) {
+                    return $item;
+                }
+            } catch (LocalizedException $e) {
+                $this->messageManager->addErrorMessage(__($e->getMessage()));
+                return $this;
             }
+
 
             if ($additionalOptions = $orderItem->getProductOptionByCode('additional_options')) {
                 $item->addOption(
