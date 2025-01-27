@@ -743,7 +743,6 @@ class Create extends \Magento\Framework\DataObject implements \Magento\Checkout\
                 return $this;
             }
 
-
             if ($additionalOptions = $orderItem->getProductOptionByCode('additional_options')) {
                 $item->addOption(
                     new \Magento\Framework\DataObject(

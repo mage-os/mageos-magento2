@@ -159,7 +159,7 @@ class StockStateProvider implements StockStateProviderInterface
         if (!$stockItem->getIsInStock()) {
             $result->setHasError(true)
                 ->setErrorCode('out_stock')
-                ->setMessage(__('This product is out of stock.'))
+                ->setMessage(__('The product with SKU %sku is out of stock.', ['sku' => $item->getSku()]))
                 ->setQuoteMessage(__('Some of the products are out of stock.'))
                 ->setQuoteMessageIndex('stock');
             $result->setItemUseOldQty(true);
