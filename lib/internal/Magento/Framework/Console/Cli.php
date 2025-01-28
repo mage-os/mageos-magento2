@@ -9,6 +9,7 @@ namespace Magento\Framework\Console;
 
 use Magento\Framework\App\Bootstrap;
 use Magento\Framework\App\DeploymentConfig;
+use Magento\Framework\App\DistributionMetadataInterface;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\ProductMetadata;
 use Magento\Framework\Composer\ComposerJsonFinder;
@@ -69,6 +70,11 @@ class Cli extends Console\Application
     private $logger;
 
     /**
+     * @var ProductMetadata
+     */
+    private $productMetadata;
+
+    /**
      * @param string $name the application name
      * @param string $version the application version
      */
@@ -97,8 +103,9 @@ class Cli extends Console\Application
         if ($version == 'UNKNOWN') {
             $directoryList = new DirectoryList(BP);
             $composerJsonFinder = new ComposerJsonFinder($directoryList);
-            $productMetadata = new ProductMetadata($composerJsonFinder);
-            $version = $productMetadata->getVersion();
+            $this->productMetadata = new ProductMetadata($composerJsonFinder);
+            $name = $this->productMetadata->getDistributionName() . ' CLI';
+            $version = $this->productMetadata->getDistributionVersion();
         }
 
         parent::__construct($name, $version);
@@ -231,5 +238,26 @@ class Cli extends Console\Application
         }
 
         return array_merge([], ...$commands);
+    }
+
+    /**
+     * Get system version info.
+     *
+     * @return string
+     */
+    public function getLongVersion()
+    {
+        if (isset($this->productMetadata)
+            && $this->productMetadata instanceof DistributionMetadataInterface
+            && $this->productMetadata->getDistributionVersion() !== $this->productMetadata->getVersion()) {
+            return sprintf(
+                '%s (based on %s %s)',
+                parent::getLongVersion(),
+                $this->productMetadata->getName(),
+                $this->productMetadata->getVersion()
+            );
+        }
+
+        return parent::getLongVersion();
     }
 }
