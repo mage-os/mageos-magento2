@@ -708,6 +708,7 @@ class Create extends \Magento\Framework\DataObject implements \Magento\Checkout\
      * @param int $qty
      * @return \Magento\Quote\Model\Quote\Item|string|$this
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @throws LocalizedException
      */
     public function initFromOrderItem(\Magento\Sales\Model\Order\Item $orderItem, $qty = null)
     {
