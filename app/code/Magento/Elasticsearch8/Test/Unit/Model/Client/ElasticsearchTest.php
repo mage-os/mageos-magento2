@@ -60,8 +60,7 @@ class ElasticsearchTest extends TestCase
      */
     protected function setUp(): void
     {
-        // phpstan:ignore "File has calls static method. (phpStaticMethodCalls)"
-        BypassFinals::enable();
+        BypassFinals::enable(); /** @phpstan-ignore-line */
         $this->elasticsearchClientMock = $this->getMockBuilder(Client::class) /** @phpstan-ignore-line */
             ->onlyMethods(
                 [

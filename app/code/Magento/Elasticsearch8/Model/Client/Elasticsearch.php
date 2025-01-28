@@ -78,9 +78,8 @@ class Elasticsearch implements ClientInterface
         }
         $this->clientOptions = $options;
         $this->fieldsMappingPreprocessors = $fieldsMappingPreprocessors;
-        // phpstan:ignore "File has calls static method. (phpStaticMethodCalls)"
         $this->dynamicTemplatesProvider = $dynamicTemplatesProvider ?: ObjectManager::getInstance()
-            ->get(DynamicTemplatesProvider::class);
+            ->get(DynamicTemplatesProvider::class); /** @phpstan-ignore-line */
     }
 
     /**
