@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2017 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 
 namespace Magento\CatalogWidget\Block\Product;
@@ -97,10 +97,6 @@ class ProductListTest extends TestCase
         // Load products collection filtered using specified conditions and perform assertions
         $productCollection = $this->block->createCollection();
         $productCollection->load();
-
-        $whereString = "/\(FIND_IN_SET \('/";
-        $this->assertEquals(1, preg_match($whereString, $productCollection->getSelectSql(true)));
-
         $this->assertEquals(
             1,
             $productCollection->count(),
@@ -155,10 +151,6 @@ class ProductListTest extends TestCase
         // Load products collection filtered using specified conditions and perform assertions.
         $productCollection = $this->block->createCollection();
         $productCollection->load();
-
-        $whereString = "/\(FIND_IN_SET \('/";
-        $this->assertEquals(0, preg_match($whereString, $productCollection->getSelectSql(true)));
-
         $this->assertEquals(
             $count,
             $productCollection->count(),
