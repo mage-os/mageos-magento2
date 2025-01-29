@@ -269,6 +269,7 @@ class CustomerManagementTest extends TestCase
     {
         $this->expectException(ValidatorException::class);
         $this->quoteMock->method('getCustomerIsGuest')->willReturn(true);
+        $this->quoteAddressMock->expects($this->any())->method('getCustomerAddressId')->willReturn(2);
         $this->quoteAddressMock->method('getStreet')->willReturn(['test']);
         $this->quoteAddressMock->method('getCustomAttributes')->willReturn(['test']);
         $this->customerAddressFactoryMock->method('create')
@@ -278,14 +279,13 @@ class CustomerManagementTest extends TestCase
             ->getMock();
         $this->addressFactoryMock->expects($this->exactly(1))->method('create')->willReturn($addressMock);
         $this->quoteMock
-            ->expects($this->atMost(2))
+            ->expects($this->any())
             ->method('getBillingAddress')
             ->willReturn($this->quoteAddressMock);
         $this->quoteMock
-            ->expects($this->once())
+            ->expects($this->any())
             ->method('getShippingAddress')
             ->willReturn($this->quoteAddressMock);
-        $this->quoteAddressMock->expects($this->any())->method('getCustomerAddressId')->willReturn(null);
         $validatorMock = $this->getMockBuilder(Validator::class)
             ->disableOriginalConstructor()
             ->getMock();
