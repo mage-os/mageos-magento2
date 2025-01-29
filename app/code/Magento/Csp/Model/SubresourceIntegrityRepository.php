@@ -8,7 +8,10 @@ declare(strict_types=1);
 namespace Magento\Csp\Model;
 
 use Magento\Framework\App\CacheInterface;
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Serialize\SerializerInterface;
+use Magento\Csp\Model\SubresourceIntegrity\Storage\File;
 
 /**
  * Class contains methods equivalent to repository design to manage SRI hashes in cache.
@@ -47,22 +50,27 @@ class SubresourceIntegrityRepository
      */
     private SubresourceIntegrityFactory $integrityFactory;
 
+    private File $sriStorage;
+
     /**
      * @param CacheInterface $cache
      * @param SerializerInterface $serializer
      * @param SubresourceIntegrityFactory $integrityFactory
      * @param string|null $context
+     * @param File|null $sriStorage
      */
     public function __construct(
         CacheInterface $cache,
         SerializerInterface $serializer,
         SubresourceIntegrityFactory $integrityFactory,
-        ?string $context = null
+        ?string $context = null,
+        ? File $sriStorage = null
     ) {
         $this->cache = $cache;
         $this->serializer = $serializer;
         $this->integrityFactory = $integrityFactory;
         $this->context = $context;
+        $this->sriStorage = $sriStorage ?? ObjectManager::getInstance()->get(File::class);
     }
 
     /**
@@ -94,6 +102,7 @@ class SubresourceIntegrityRepository
      * Gets all available Integrity objects.
      *
      * @return SubresourceIntegrity[]
+     * @throws FileSystemException
      */
     public function getAll(): array
     {
@@ -119,6 +128,7 @@ class SubresourceIntegrityRepository
      * @param SubresourceIntegrity $integrity
      *
      * @return bool
+     * @throws FileSystemException
      */
     public function save(SubresourceIntegrity $integrity): bool
     {
@@ -128,10 +138,9 @@ class SubresourceIntegrityRepository
 
         $this->data = $data;
 
-        return $this->cache->save(
+        return $this->sriStorage->save(
             $this->serializer->serialize($this->data),
-            $this->getCacheKey(),
-            [self::CACHE_PREFIX]
+            $this->context
         );
     }
 
@@ -152,10 +161,9 @@ class SubresourceIntegrityRepository
 
         $this->data = $data;
 
-        return $this->cache->save(
+        return $this->sriStorage->save(
             $this->serializer->serialize($this->data),
-            $this->getCacheKey(),
-            [self::CACHE_PREFIX]
+           $this->context
         );
     }
 
@@ -163,25 +171,25 @@ class SubresourceIntegrityRepository
      * Deletes all Integrity objects.
      *
      * @return bool
+     * @throws FileSystemException
      */
     public function deleteAll(): bool
     {
         $this->data = null;
 
-        return $this->cache->remove(
-            $this->getCacheKey()
-        );
+        return $this->sriStorage->remove();
     }
 
     /**
      * Loads integrity data from a storage.
      *
      * @return array
+     * @throws FileSystemException
      */
     private function getData(): array
     {
         if ($this->data === null) {
-            $cache = $this->cache->load($this->getCacheKey());
+            $cache = $this->sriStorage->load($this->context);
 
             $this->data = $cache ? $this->serializer->unserialize($cache) : [];
         }
@@ -193,6 +201,7 @@ class SubresourceIntegrityRepository
      * Gets a cache key based on current context.
      *
      * @return string
+     * @deprecated Filesystem storage used instead of a cache
      */
     private function getCacheKey(): string
     {
