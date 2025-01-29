@@ -663,7 +663,7 @@ interface AdapterInterface
      * Quote a column identifier and alias.
      *
      * @param string|array|\Zend_Db_Expr $ident The identifier or expression.
-     * @param string $alias An alias for the column.
+     * @param string|null $alias An alias for the column.
      * @param boolean $auto If true, heed the AUTO_QUOTE_IDENTIFIERS config option.
      * @return string The quoted identifier and alias.
      */
