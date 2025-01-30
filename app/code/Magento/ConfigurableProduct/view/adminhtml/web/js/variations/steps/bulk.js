@@ -463,15 +463,14 @@ define([
                     uppy.use(Uppy.Dashboard, options);
 
                     // Use 'self.options' to access component options
-                    if (self.options.isResizeEnabled) {
+                    if (self.options?.isResizeEnabled) {
                         uppy.use(Uppy.Compressor, {
                             maxWidth: self.options.maxWidth,
                             maxHeight: self.options.maxHeight,
                             quality: 0.92,
                             beforeDraw() {
-                                if (!allowedResize) {
+                                if (!allowedResize)
                                     this.abort();
-                                }
                             }
                         });
                     }
