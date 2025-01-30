@@ -381,6 +381,7 @@ define([
          */
         bindGalleries: function () {
             var self = this; // Save the correct context of 'this'
+
             $('[data-role=bulk-step] [data-role=gallery]').each(function (index, element) {
                 var gallery = $(element),
                     uploadInput = $(gallery.find('.uploader'))[0],
@@ -469,8 +470,9 @@ define([
                             maxHeight: self.options.maxHeight,
                             quality: 0.92,
                             beforeDraw() {
-                                if (!allowedResize)
+                                if (!allowedResize) {
                                     this.abort();
+                                }
                             }
                         });
                     }
