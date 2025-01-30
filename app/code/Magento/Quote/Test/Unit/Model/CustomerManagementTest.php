@@ -279,11 +279,11 @@ class CustomerManagementTest extends TestCase
             ->getMock();
         $this->addressFactoryMock->expects($this->exactly(1))->method('create')->willReturn($addressMock);
         $this->quoteMock
-            ->expects($this->any())
+            ->expects($this->atLeastOnce())
             ->method('getBillingAddress')
             ->willReturn($this->quoteAddressMock);
         $this->quoteMock
-            ->expects($this->any())
+            ->expects($this->atLeastOnce())
             ->method('getShippingAddress')
             ->willReturn($this->quoteAddressMock);
         $validatorMock = $this->getMockBuilder(Validator::class)
