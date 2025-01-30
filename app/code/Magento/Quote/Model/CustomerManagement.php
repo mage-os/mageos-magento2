@@ -159,7 +159,7 @@ class CustomerManagement
                 $quote->getShippingAddress()->getCustomerAddressId()
             );
         }
-        if (empty($addresses) && $quote->getCustomerIsGuest()) {
+        if (!empty($addresses) && $quote->getCustomerIsGuest()) {
             $billingAddress = $quote->getBillingAddress();
             $customerAddress = $this->customerAddressFactory->create();
             $customerAddress->setFirstname($billingAddress->getFirstname());
