@@ -64,7 +64,6 @@ class UploadTest extends AbstractBackendController
         $this->serializer = $this->_objectManager->get(Json::class);
         $this->mediaDirectory = $this->filesystem->getDirectoryWrite(AppDirectoryList::MEDIA);
         $this->config = $this->_objectManager->get(Config::class);
-        $this->scopeConfig = $this->_objectManager->get(ScopeConfigInterface::class);
     }
 
     /**
