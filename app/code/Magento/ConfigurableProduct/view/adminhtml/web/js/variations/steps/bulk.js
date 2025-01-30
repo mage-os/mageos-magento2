@@ -177,8 +177,6 @@ define([
             });
 
             this.initCountVariations();
-            // Explicitly bind the `bindGalleries` method to the component's context
-            this.bindGalleries = this.bindGalleries.bind(this);
             this.bindGalleries();
         },
 
