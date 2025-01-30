@@ -35,6 +35,11 @@ define([
             notificationMessage: {
                 text: null,
                 error: null
+            },
+            options: {
+                isResizeEnabled: false,
+                maxWidth: 1920,
+                maxHeight: 1080
             }
         },
 
@@ -46,7 +51,7 @@ define([
         },
 
         /** @inheritdoc */
-        initialize: function () {
+        initialize: function (config) {
             var self = this;
 
             this._super();
@@ -71,6 +76,13 @@ define([
                     attribute: ko.observable()
                 }
             });
+
+            // Retrieve configuration passed from .phtml
+            if (config) {
+                this.options.isResizeEnabled = config.isResizeEnabled || false;
+                this.options.maxWidth = config.maxWidth || 1920;
+                this.options.maxHeight = config.maxHeight || 1080;
+            }
 
             this.variationsComponent(function (variationsComponent) {
                 this.sections().price.currencySymbol = variationsComponent.getCurrencySymbol();
@@ -165,6 +177,8 @@ define([
             });
 
             this.initCountVariations();
+            // Explicitly bind the `bindGalleries` method to the component's context
+            this.bindGalleries = this.bindGalleries.bind(this);
             this.bindGalleries();
         },
 
@@ -368,6 +382,7 @@ define([
          * Bind galleries.
          */
         bindGalleries: function () {
+            var self = this; // Save the correct context of 'this'
             $('[data-role=bulk-step] [data-role=gallery]').each(function (index, element) {
                 var gallery = $(element),
                     uploadInput = $(gallery.find('.uploader'))[0],
@@ -385,6 +400,8 @@ define([
                     let targetElement = uploadInput,
                         fileId = null,
                         arrayFromObj = Array.from,
+                        allowedExt = ['jpeg', 'jpg', 'png', 'gif'],
+                        allowedResize = false,
                         options = {
                             proudlyDisplayPoweredByUppy: false,
                             target: targetElement,
@@ -425,6 +442,8 @@ define([
                                     id: fileId
                                 }
                             });
+                            // check if file is allowed to upload and resize
+                            allowedResize = $.inArray(currentFile.extension?.toLowerCase(), allowedExt) !== -1;
 
                             // code to allow duplicate files from same folder
                             const modifiedFile = {
@@ -445,6 +464,20 @@ define([
                     // initialize Uppy upload
                     uppy.use(Uppy.Dashboard, options);
 
+                    // Use 'self.options' to access component options
+                    if (self.options.isResizeEnabled) {
+                        uppy.use(Uppy.Compressor, {
+                            maxWidth: self.options.maxWidth,
+                            maxHeight: self.options.maxHeight,
+                            quality: 0.92,
+                            beforeDraw() {
+                                if (!allowedResize) {
+                                    this.abort();
+                                }
+                            }
+                        });
+                    }
+
                     // drop area for file upload
                     uppy.use(Uppy.DropTarget, {
                         target: dropZone,
@@ -462,7 +495,6 @@ define([
                         endpoint: uploadUrl,
                         fieldName: 'image'
                     });
-
                     uppy.on('upload-success', (file, response) => {
                         if (response.body && !response.body.error) {
                             gallery.trigger('addItem', response.body);

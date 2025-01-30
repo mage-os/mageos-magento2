@@ -58,6 +58,7 @@
                             <item name="modal" xsi:type="string">configurableModal</item>
                             <item name="dataScope" xsi:type="string">productFormConfigurable</item>
                         </argument>
+                        <argument name="view_model" xsi:type="object">Magento\ConfigurableProduct\ViewModel\uploadResizeConfigValue</argument>
                     </arguments>
                 </block>
                 <block class="Magento\ConfigurableProduct\Block\Adminhtml\Product\Steps\Summary" name="step4" template="Magento_ConfigurableProduct::catalog/product/edit/attribute/steps/summary.phtml">
