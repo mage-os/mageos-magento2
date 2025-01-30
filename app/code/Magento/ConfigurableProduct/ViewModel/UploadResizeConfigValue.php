@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -12,8 +12,7 @@ use Magento\Backend\Model\Image\UploadResizeConfigInterface;
 /**
  * Get configuration values for frontend image uploader.
  */
-class uploadResizeConfigValue implements \Magento\Framework\View\Element\Block\ArgumentInterface
-
+class UploadResizeConfigValue implements \Magento\Framework\View\Element\Block\ArgumentInterface
 {
     /**
      * @var UploadResizeConfigInterface
@@ -58,6 +57,4 @@ class uploadResizeConfigValue implements \Magento\Framework\View\Element\Block\A
     {
         return $this->uploadResizeConfig->isResizeEnabled();
     }
-
-
 }
