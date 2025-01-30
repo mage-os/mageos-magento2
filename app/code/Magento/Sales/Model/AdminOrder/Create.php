@@ -2420,4 +2420,3 @@ class Create extends \Magento\Framework\DataObject implements \Magento\Checkout\
         return array_values($specifications);
     }
 }
-
