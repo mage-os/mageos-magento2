@@ -1,11 +1,10 @@
 <?php
-
+/**
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
+ */
 declare(strict_types=1);
 
-/**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
- */
 namespace Magento\Review\Controller;
 
 use Magento\Catalog\Api\CategoryRepositoryInterface;
@@ -245,16 +244,13 @@ abstract class Product extends Action
         if (!$productId) {
             return false;
         }
-
         try {
             $product = $this->productRepository->getById($productId);
 
-            if (!in_array($this->storeManager->getStore()->getWebsiteId(), $product->getWebsiteIds())) {
-                throw new NoSuchEntityException();
-            }
-
-            if (!$product->isVisibleInCatalog() || !$product->isVisibleInSiteVisibility()) {
-                throw new NoSuchEntityException();
+            if ((!in_array($this->storeManager->getStore()->getWebsiteId(), $product->getWebsiteIds()))
+                || (!$product->isVisibleInCatalog() || !$product->isVisibleInSiteVisibility())
+            ) {
+                    return false;
             }
         } catch (NoSuchEntityException $noEntityException) {
             return false;
