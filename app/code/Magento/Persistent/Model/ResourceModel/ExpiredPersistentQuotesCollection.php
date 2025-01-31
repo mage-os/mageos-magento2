@@ -48,6 +48,11 @@ class ExpiredPersistentQuotesCollection
 
         /** @var $quotes Collection */
         $quotes = $this->quoteCollectionFactory->create();
+        $quotes->getSelect()->join(
+            ['cl' => $quotes->getTable('customer_log')],
+            'cl.customer_id = main_table.customer_id',
+            []
+        )->where('cl.last_logout_at > cl.last_login_at');
         $quotes->addFieldToFilter('main_table.store_id', $store->getId());
         $quotes->addFieldToFilter('main_table.updated_at', ['lt' => gmdate("Y-m-d H:i:s", time() - $lifetime)]);
         $quotes->addFieldToFilter('main_table.is_persistent', 1);

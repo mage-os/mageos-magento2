@@ -11,7 +11,6 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Quote\Model\ResourceModel\Quote\Collection as QuoteCollection;
 use Magento\Persistent\Model\ResourceModel\ExpiredPersistentQuotesCollection;
-use Magento\Customer\Model\Logger as CustomerLogger;
 use Magento\Quote\Model\QuoteRepository;
 use Psr\Log\LoggerInterface;
 use Exception;
@@ -24,14 +23,12 @@ class CleanExpiredPersistentQuotes
     /**
      * @param StoreManagerInterface $storeManager
      * @param ExpiredPersistentQuotesCollection $expiredPersistentQuotesCollection
-     * @param CustomerLogger $customerLogger
      * @param QuoteRepository $quoteRepository
      * @param LoggerInterface $logger
      */
     public function __construct(
         private readonly StoreManagerInterface $storeManager,
         private readonly ExpiredPersistentQuotesCollection $expiredPersistentQuotesCollection,
-        private readonly CustomerLogger $customerLogger,
         private readonly QuoteRepository $quoteRepository,
         private readonly LoggerInterface $logger
     ) {
@@ -73,9 +70,7 @@ class CleanExpiredPersistentQuotes
     {
         foreach ($quoteCollection as $quote) {
             try {
-                if (!$this->isLoggedInCustomer((int) $quote->getCustomerId())) {
-                    $this->quoteRepository->delete($quote);
-                }
+                $this->quoteRepository->delete($quote);
             } catch (Exception $e) {
                 $message = sprintf(
                     'Unable to delete expired quote (ID: %s): %s',
@@ -87,22 +82,5 @@ class CleanExpiredPersistentQuotes
         }
 
         $quoteCollection->clear();
-    }
-
-    /**
-     * Determine if the customer is currently logged in based on their last login and logout timestamps.
-     *
-     * @param int $customerId
-     * @return bool
-     */
-    private function isLoggedInCustomer(int $customerId): bool
-    {
-        $isLoggedIn = false;
-        $customerLastLoginAt = strtotime($this->customerLogger->get($customerId)->getLastLoginAt());
-        $customerLastLogoutAt = strtotime($this->customerLogger->get($customerId)->getLastLogoutAt());
-        if ($customerLastLoginAt > $customerLastLogoutAt) {
-            $isLoggedIn = true;
-        }
-        return $isLoggedIn;
     }
 }

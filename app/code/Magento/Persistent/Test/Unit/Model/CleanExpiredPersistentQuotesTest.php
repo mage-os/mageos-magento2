@@ -9,7 +9,6 @@ namespace Magento\Persistent\Test\Unit\Model;
 
 use Magento\Persistent\Model\CleanExpiredPersistentQuotes;
 use Magento\Persistent\Model\ResourceModel\ExpiredPersistentQuotesCollection;
-use Magento\Customer\Model\Logger as CustomerLogger;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\QuoteRepository;
 use Magento\Store\Model\StoreManagerInterface;
@@ -33,11 +32,6 @@ class CleanExpiredPersistentQuotesTest extends TestCase
     private ExpiredPersistentQuotesCollection $expiredPersistentQuotesCollectionMock;
 
     /**
-     * @var CustomerLogger
-     */
-    private CustomerLogger $customerLoggerMock;
-
-    /**
      * @var QuoteRepository
      */
     private QuoteRepository $quoteRepositoryMock;
@@ -56,14 +50,12 @@ class CleanExpiredPersistentQuotesTest extends TestCase
     {
         $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
         $this->expiredPersistentQuotesCollectionMock = $this->createMock(ExpiredPersistentQuotesCollection::class);
-        $this->customerLoggerMock = $this->createMock(CustomerLogger::class);
         $this->quoteRepositoryMock = $this->createMock(QuoteRepository::class);
         $this->loggerMock = $this->createMock(LoggerInterface::class);
 
         $this->cleanExpiredPersistentQuotes = new CleanExpiredPersistentQuotes(
             $this->storeManagerMock,
             $this->expiredPersistentQuotesCollectionMock,
-            $this->customerLoggerMock,
             $this->quoteRepositoryMock,
             $this->loggerMock
         );
@@ -95,17 +87,8 @@ class CleanExpiredPersistentQuotesTest extends TestCase
             ->with($storeMock)
             ->willReturn($quoteCollectionMock);
 
-        $quoteMock = $this->getMockBuilder(Quote::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getCustomerId'])
-            ->getMock();
-        $quoteMock->method('getCustomerId')->willReturn(1);
+        $quoteMock = $this->createMock(Quote::class);
         $quoteCollectionMock->method('getIterator')->willReturn(new \ArrayIterator([$quoteMock]));
-
-        $logMock = $this->createMock(Log::class);
-        $logMock->method('getLastLoginAt')->willReturn('2025-01-01 00:00:00');
-        $logMock->method('getLastLogoutAt')->willReturn('2025-01-01 10:05:00');
-        $this->customerLoggerMock->method('get')->willReturn($logMock);
 
         $this->quoteRepositoryMock->expects($this->once())->method('delete');
 

@@ -14,6 +14,7 @@ use Magento\Quote\Model\ResourceModel\Quote\Collection;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Persistent\Helper\Data;
 use Magento\Store\Model\ScopeInterface;
+use Magento\Framework\DB\Select;
 use PHPUnit\Framework\TestCase;
 
 class ExpiredPersistentQuotesCollectionTest extends TestCase
@@ -57,6 +58,22 @@ class ExpiredPersistentQuotesCollectionTest extends TestCase
         $quoteCollectionMock = $this->createMock(Collection::class);
 
         $this->quoteCollectionFactoryMock->method('create')->willReturn($quoteCollectionMock);
+
+        $dbSelectMock = $this->createMock(Select::class);
+        $quoteCollectionMock->method('getSelect')->willReturn($dbSelectMock);
+        $quoteCollectionMock->method('getTable')->willReturn('customer_log');
+        $dbSelectMock->expects($this->once())
+            ->method('join')
+            ->with(
+                $this->equalTo(['cl' => 'customer_log']),
+                $this->equalTo('cl.customer_id = main_table.customer_id'),
+                $this->equalTo([])
+            )
+            ->willReturnSelf();
+        $dbSelectMock->expects($this->once())
+            ->method('where')
+            ->with($this->equalTo('cl.last_logout_at > cl.last_login_at'))
+            ->willReturnSelf();
 
         $quoteCollectionMock->expects($this->exactly(3))
             ->method('addFieldToFilter')
