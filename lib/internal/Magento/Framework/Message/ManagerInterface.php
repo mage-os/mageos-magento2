@@ -50,7 +50,7 @@ interface ManagerInterface
     /**
      * Adds new error message
      *
-     * @param string|\Magento\Framework\Phrase $message
+     * @param string|\Stringable $message
      * @param string|null $group
      * @return ManagerInterface
      * @deprecated 100.1.0
@@ -61,7 +61,7 @@ interface ManagerInterface
     /**
      * Adds new warning message
      *
-     * @param string|\Magento\Framework\Phrase $message
+     * @param string|\Stringable $message
      * @param string|null $group
      * @return ManagerInterface
      * @deprecated 100.1.0
@@ -72,7 +72,7 @@ interface ManagerInterface
     /**
      * Adds new notice message
      *
-     * @param string|\Magento\Framework\Phrase $message
+     * @param string|\Stringable $message
      * @param string|null $group
      * @return ManagerInterface
      * @deprecated 100.1.0
@@ -83,7 +83,7 @@ interface ManagerInterface
     /**
      * Adds new success message
      *
-     * @param string|\Magento\Framework\Phrase $message
+     * @param string|\Stringable $message
      * @param string|null $group
      * @return ManagerInterface
      * @deprecated 100.1.0
@@ -94,7 +94,7 @@ interface ManagerInterface
     /**
      * Adds new error message
      *
-     * @param string|\Magento\Framework\Phrase $message
+     * @param string|\Stringable $message
      * @param string|null $group
      * @return ManagerInterface
      */
@@ -103,7 +103,7 @@ interface ManagerInterface
     /**
      * Adds new warning message
      *
-     * @param string|\Magento\Framework\Phrase $message
+     * @param string|\Stringable $message
      * @param string|null $group
      * @return ManagerInterface
      */
@@ -112,7 +112,7 @@ interface ManagerInterface
     /**
      * Adds new notice message
      *
-     * @param string|\Magento\Framework\Phrase $message
+     * @param string|\Stringable $message
      * @param string|null $group
      * @return ManagerInterface
      */
@@ -121,7 +121,7 @@ interface ManagerInterface
     /**
      * Adds new success message
      *
-     * @param string|\Magento\Framework\Phrase $message
+     * @param string|\Stringable $message
      * @param string|null $group
      * @return ManagerInterface
      */
