@@ -156,7 +156,7 @@ class PriceCurrency implements \Magento\Framework\Pricing\PriceCurrencyInterface
         if (str_contains(PHP_VERSION, '8.4')) {
             return round(round((float) $price, 3), 2);
         }
-        return round((string) $price, 2);
+        return round((float) $price, 2);
     }
 
     /**
