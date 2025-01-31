@@ -61,14 +61,20 @@ define([
 
             it('check on failed status', function () {
                 var messageContainer = jasmine.createSpyObj('globalMessageList', ['addErrorMessage']);
-
+                let messageObject = {
+                    message: 'You are not authorized to access this resource.'
+                };
                 spyOn(model, 'redirectTo').and.callFake(function () {});
                 model.process({
                     status: 401,
                     responseText: ''
                 }, messageContainer);
-                expect(mocks['mage/url'].build)
-                    .toHaveBeenCalled();
+                expect(messageContainer.addErrorMessage)
+                    .toHaveBeenCalledWith(messageObject);
+                setTimeout(function () {
+                    expect(mocks['mage/url'].build).toHaveBeenCalled();
+                    done();
+                }, 2000);
             });
         });
     });
