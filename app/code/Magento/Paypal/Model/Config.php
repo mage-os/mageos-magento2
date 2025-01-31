@@ -608,6 +608,25 @@ class Config extends AbstractConfig
     protected $cspNonceProvider;
 
     /**
+     * Payment methods to skip address validation
+     */
+    public const PAYMENT_METHODS_SKIP_ADDRESS_VALIDATION = [
+        self::METHOD_EXPRESS,
+        self::METHOD_WPS_EXPRESS,
+        self::METHOD_WPS_BML,
+        self::METHOD_WPP_BML,
+        self::METHOD_WPP_DIRECT,
+        self::METHOD_PAYMENT_PRO,
+        self::METHOD_WPP_PE_EXPRESS,
+        self::METHOD_WPP_PE_BML,
+        self::METHOD_PAYFLOWPRO,
+        self::METHOD_PAYFLOWLINK,
+        self::METHOD_PAYFLOWADVANCED,
+        self::METHOD_HOSTEDPRO,
+        self::METHOD_BILLING_AGREEMENT
+    ];
+
+    /**
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
      * @param \Magento\Directory\Helper\Data $directoryHelper
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager

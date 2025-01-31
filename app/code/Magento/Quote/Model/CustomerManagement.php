@@ -16,6 +16,7 @@ use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Validator\Exception as ValidatorException;
 use Magento\Framework\Validator\Factory as ValidatorFactory;
 use Magento\Quote\Model\Quote as QuoteEntity;
+use Magento\Paypal\Model\Config as PaymentMethod;
 
 /**
  * Class Customer
@@ -159,7 +160,8 @@ class CustomerManagement
                 $quote->getShippingAddress()->getCustomerAddressId()
             );
         }
-        if (empty($addresses) && $quote->getCustomerIsGuest()) {
+        if (empty($addresses) && $quote->getCustomerIsGuest() &&
+            !in_array($quote->getPayment()->getMethod(), PaymentMethod::PAYMENT_METHODS_SKIP_ADDRESS_VALIDATION)) {
             $billingAddress = $quote->getBillingAddress();
             $customerAddress = $this->customerAddressFactory->create();
             $customerAddress->setFirstname($billingAddress->getFirstname());
