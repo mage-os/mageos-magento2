@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe.
+ * All rights reserved.
  */
 namespace Magento\Directory\Model;
 
@@ -15,7 +15,7 @@ use Magento\Store\Model\Store;
  */
 class PriceCurrency implements \Magento\Framework\Pricing\PriceCurrencyInterface
 {
-    const PRECISION_TO_FIX_PENNY_ROUNDING_ERROR = 3;
+    private const PRECISION_TO_FIX_PENNY_ROUNDING_ERROR = 3;
 
     /**
      * @var \Magento\Store\Model\StoreManagerInterface
