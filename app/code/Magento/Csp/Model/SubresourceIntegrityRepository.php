@@ -18,12 +18,6 @@ use Magento\Csp\Model\SubresourceIntegrity\Storage\File;
  */
 class SubresourceIntegrityRepository
 {
-    /**
-     * Cache prefix.
-     *
-     * @var string
-     */
-    private const CACHE_PREFIX = 'INTEGRITY';
 
     /**
      * @var array|null
@@ -34,11 +28,6 @@ class SubresourceIntegrityRepository
      * @var string|null
      */
     private ?string $context;
-
-    /**
-     * @var CacheInterface
-     */
-    private CacheInterface $cache;
 
     /**
      * @var SerializerInterface
@@ -53,20 +42,17 @@ class SubresourceIntegrityRepository
     private File $sriStorage;
 
     /**
-     * @param CacheInterface $cache
      * @param SerializerInterface $serializer
      * @param SubresourceIntegrityFactory $integrityFactory
      * @param string|null $context
      * @param File|null $sriStorage
      */
     public function __construct(
-        CacheInterface $cache,
         SerializerInterface $serializer,
         SubresourceIntegrityFactory $integrityFactory,
         ?string $context = null,
         ? File $sriStorage = null
     ) {
-        $this->cache = $cache;
         $this->serializer = $serializer;
         $this->integrityFactory = $integrityFactory;
         $this->context = $context;
@@ -195,22 +181,5 @@ class SubresourceIntegrityRepository
         }
 
         return $this->data;
-    }
-
-    /**
-     * Gets a cache key based on current context.
-     *
-     * @return string
-     * @deprecated Filesystem storage used instead of a cache
-     */
-    private function getCacheKey(): string
-    {
-        $cacheKey = self::CACHE_PREFIX;
-
-        if ($this->context) {
-            $cacheKey .= "_" . $this->context;
-        }
-
-        return $cacheKey;
     }
 }
