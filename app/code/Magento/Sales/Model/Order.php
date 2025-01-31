@@ -1184,7 +1184,7 @@ class Order extends AbstractModel implements EntityInterface, OrderInterface
      * Add status change information to history
      *
      * @param  string $status
-     * @param  string|\Magento\Framework\Phrase $comment
+     * @param  string|\Stringable $comment
      * @param  bool $isCustomerNotified
      * @return $this
      */
@@ -1199,7 +1199,7 @@ class Order extends AbstractModel implements EntityInterface, OrderInterface
      *
      * Different or default status may be specified.
      *
-     * @param string|\Magento\Framework\Phrase $comment
+     * @param string|\Stringable $comment
      * @param bool|string $status
      * @return OrderStatusHistoryInterface
      * @deprecated 101.0.5
@@ -1215,7 +1215,7 @@ class Order extends AbstractModel implements EntityInterface, OrderInterface
      *
      * Different or default status may be specified.
      *
-     * @param string|\Magento\Framework\Phrase $comment
+     * @param string|\Stringable $comment
      * @param bool|string $status
      * @param bool $isVisibleOnFront
      * @return OrderStatusHistoryInterface
@@ -1346,7 +1346,7 @@ class Order extends AbstractModel implements EntityInterface, OrderInterface
     /**
      * Prepare order totals to cancellation
      *
-     * @param string $comment
+     * @param string|\Stringable $comment
      * @param bool $graceful
      * @return $this
      * @throws LocalizedException
