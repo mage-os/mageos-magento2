@@ -15,8 +15,6 @@ use Magento\Store\Model\Store;
  */
 class PriceCurrency implements \Magento\Framework\Pricing\PriceCurrencyInterface
 {
-    private const PRECISION_TO_FIX_PENNY_ROUNDING_ERROR = 3;
-
     /**
      * @var \Magento\Store\Model\StoreManagerInterface
      */
@@ -154,7 +152,8 @@ class PriceCurrency implements \Magento\Framework\Pricing\PriceCurrencyInterface
      */
     public function round($price)
     {
-        return round((float) $price, self::PRECISION_TO_FIX_PENNY_ROUNDING_ERROR);
+        // To fix rounding error in PHP 8.4
+        return round(round((float) $price, 3), 2);
     }
 
     /**
