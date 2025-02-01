@@ -269,4 +269,7 @@
             </argument>
         </arguments>
     </type>
+    <type name="Magento\Quote\Model\CustomerManagement">
+        <plugin name="paypal_payment_skip_addresses_validate" type="Magento\Paypal\Plugin\CustomerManagementPlugin"/>
+    </type>
 </config>
