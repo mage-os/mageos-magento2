@@ -140,7 +140,6 @@ class PriceCurrency implements \Magento\Framework\Pricing\PriceCurrencyInterface
                 $scope = $this->storeManager->getStore($scope);
             }
         } catch (\Exception $e) {
-            $this->logger->critical($e);
             $scope = $this->storeManager->getStore();
         }
 
@@ -153,7 +152,7 @@ class PriceCurrency implements \Magento\Framework\Pricing\PriceCurrencyInterface
     public function round($price)
     {
         // To fix rounding error in PHP 8.4
-        if (str_contains(PHP_VERSION, '8.4')) {
+        if (version_compare(PHP_VERSION, '8.4', '>=')) {
             return round((float)sprintf("%.3f", $price), 2);
         }
         return round((float) $price, 2);
