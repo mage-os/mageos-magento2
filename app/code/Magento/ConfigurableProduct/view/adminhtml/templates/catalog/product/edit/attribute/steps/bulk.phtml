@@ -771,8 +771,7 @@ $uploadUrl = $block->getUrl('catalog/product_gallery/upload');
                     "component": "Magento_ConfigurableProduct/js/variations/steps/bulk",
                     "appendTo": "<?= /* @noEscape */  $block->getParentComponentName() ?>",
                     "noImage": "<?= /* @noEscape */  $block->getNoImageUrl() ?>",
-                    "variationsComponent": "<?= /* @noEscape */ $block->getData('config/form')
-                    ?>.configurableVariations",
+                    "variationsComponent": "<?= /* @noEscape */ $block->getData('config/form') ?>.configurableVariations",
                     "isResizeEnabled": <?= /* @noEscape */  $viewModel->isResizeEnabled() ?>,
                     "maxWidth": <?= /* @noEscape */  $viewModel->getMaxWidth() ?>,
                     "maxHeight": <?= /* @noEscape */  $viewModel->getMaxHeight() ?>
