@@ -10,7 +10,6 @@ namespace Magento\Paypal\Plugin;
 use Magento\Quote\Model\CustomerManagement;
 use Magento\Quote\Model\Quote as QuoteEntity;
 use Magento\Paypal\Model\Config as PaymentMethodConfig;
-use Magento\Framework\Validator\Exception as ValidatorException;
 
 /**
  * Skip billing address validation for PayPal payment method
@@ -24,7 +23,7 @@ class CustomerManagementPlugin
      * @param \Closure $proceed
      * @param QuoteEntity $quote
      * @return void
-     * @throws ValidatorException
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function aroundValidateAddresses(CustomerManagement $subject, \Closure $proceed, QuoteEntity $quote)
     {
