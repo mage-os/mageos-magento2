@@ -114,8 +114,11 @@ class Redis extends \Cm_Cache_Backend_Redis
     {
         $useLua = $this->_useLua;
         $this->_useLua = $this->useLuaOnGc;
-        parent::_collectGarbage();
-        $this->_useLua = $useLua;
+        try {
+            parent::_collectGarbage();
+        } finally {
+            $this->_useLua = $useLua;
+        }
     }
 
     /**
