@@ -71,12 +71,10 @@ class SubresourceIntegrityRepository
         $data = $this->getData();
 
         if (isset($data[$path])) {
-            return $this->integrityFactory->create(
+            return new SubresourceIntegrity(
                 [
-                    "data" => [
-                        "path" => $path,
-                        "hash" => $data[$path]
-                    ]
+                    "path" => $path,
+                    "hash" => $data[$path]
                 ]
             );
         }
@@ -95,12 +93,10 @@ class SubresourceIntegrityRepository
         $result = [];
 
         foreach ($this->getData() as $path => $hash) {
-            $result[] = $this->integrityFactory->create(
+            $result[] = new SubresourceIntegrity(
                 [
-                    "data" => [
-                        "path" => $path,
-                        "hash" => $hash
-                    ]
+                    "path" => $path,
+                    "hash" => $hash
                 ]
             );
         }
