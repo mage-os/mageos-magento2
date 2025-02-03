@@ -85,8 +85,8 @@ class Manager implements ManagerInterface
         Event\ManagerInterface $eventManager,
         LoggerInterface $logger,
         $defaultGroup = self::DEFAULT_GROUP,
-        ExceptionMessageFactoryInterface $exceptionMessageFactory = null,
-        ExceptionMessageLookupFactory $exceptionMessageLookupFactory = null
+        ?ExceptionMessageFactoryInterface $exceptionMessageFactory = null,
+        ?ExceptionMessageLookupFactory $exceptionMessageLookupFactory = null
     ) {
         $this->session = $session;
         $this->messageFactory = $messageFactory;
