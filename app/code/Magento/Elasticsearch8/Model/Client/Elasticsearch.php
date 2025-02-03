@@ -19,6 +19,7 @@ use Magento\Framework\Exception\LocalizedException;
  * Elasticsearch client
  * @deprecated Elasticsearch8 is no longer supported by Adobe
  * @see this class will be responsible for ES8 only
+ * phpstan:ignore "File has calls static method. (phpStaticMethodCalls)"
  */
 class Elasticsearch implements ClientInterface
 {

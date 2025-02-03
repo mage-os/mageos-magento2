@@ -27,6 +27,7 @@ use PHPUnit\Framework\TestCase;
  * Class ElasticsearchTest to test Elasticsearch 8
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * phpstan:ignore "File has calls static method. (phpStaticMethodCalls)"
  */
 class ElasticsearchTest extends TestCase
 {
