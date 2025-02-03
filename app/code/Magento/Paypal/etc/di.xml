@@ -288,7 +288,6 @@
                 <item name="payflow_advanced" xsi:type="string">payflow_advanced</item>
                 <item name="hosted_pro" xsi:type="string">hosted_pro</item>
                 <item name="paypal_billing_agreement" xsi:type="string">paypal_billing_agreement</item>
-                <item name="paypal_express" xsi:type="string">paypal_express</item>
             </argument>
         </arguments>
     </type>
