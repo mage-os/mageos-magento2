@@ -3,6 +3,7 @@
  * Copyright 2025 Adobe
  * All Rights Reserved.
  */
+
 declare(strict_types=1);
 
 namespace Magento\Elasticsearch8\Test\Unit\Model\Client;
@@ -27,7 +28,6 @@ use PHPUnit\Framework\TestCase;
  * Class ElasticsearchTest to test Elasticsearch 8
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * phpstan:ignore "File has calls static method. (phpStaticMethodCalls)"
  */
 class ElasticsearchTest extends TestCase
 {
@@ -61,43 +61,43 @@ class ElasticsearchTest extends TestCase
      */
     protected function setUp(): void
     {
-        BypassFinals::enable(); /** @phpstan-ignore-line */
+        BypassFinals::enable();
         $this->elasticsearchClientMock = $this->getMockBuilder(Client::class) /** @phpstan-ignore-line */
-            ->onlyMethods(
-                [
-                    'indices',
-                    'ping',
-                    'bulk',
-                    'search',
-                    'scroll',
-                    'info',
-                ]
-            )
+        ->onlyMethods(
+            [
+                'indices',
+                'ping',
+                'bulk',
+                'search',
+                'scroll',
+                'info',
+            ]
+        )
             ->disableOriginalConstructor()
             ->getMock();
         $this->indicesMock = $this->getMockBuilder(Indices::class) /** @phpstan-ignore-line */
-            ->onlyMethods(
-                [
-                    'exists',
-                    'getSettings',
-                    'create',
-                    'delete',
-                    'putMapping',
-                    'getMapping',
-                    'stats',
-                    'updateAliases',
-                    'existsAlias',
-                    'getAlias',
-                ]
-            )
+        ->onlyMethods(
+            [
+                'exists',
+                'getSettings',
+                'create',
+                'delete',
+                'putMapping',
+                'getMapping',
+                'stats',
+                'updateAliases',
+                'existsAlias',
+                'getAlias',
+            ]
+        )
             ->addMethods(['deleteMapping'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->elasticsearchResponse = $this->getMockBuilder(ElasticsearchResponse::class) /** @phpstan-ignore-line */
-            ->onlyMethods([
-                'asBool',
-                'asArray',
-            ])
+        ->onlyMethods([
+            'asBool',
+            'asArray',
+        ])
             ->getMock();
         $this->elasticsearchClientMock->expects($this->any())
             ->method('indices')
