@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Sales\Helper;
@@ -14,27 +14,19 @@ class Reorder extends \Magento\Framework\App\Helper\AbstractHelper
     const XML_PATH_SALES_REORDER_ALLOW = 'sales/reorder/allow';
 
     /**
-     * @var \Magento\Customer\Model\Session
-     */
-    protected $customerSession;
-
-    /**
      * @var \Magento\Sales\Api\OrderRepositoryInterface
      */
     protected $orderRepository;
 
     /**
      * @param \Magento\Framework\App\Helper\Context $context
-     * @param \Magento\Customer\Model\Session $customerSession
      * @param \Magento\Sales\Api\OrderRepositoryInterface $orderRepository
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
-        \Magento\Customer\Model\Session $customerSession,
         \Magento\Sales\Api\OrderRepositoryInterface $orderRepository
     ) {
         $this->orderRepository = $orderRepository;
-        $this->customerSession = $customerSession;
         parent::__construct(
             $context
         );
@@ -78,10 +70,6 @@ class Reorder extends \Magento\Framework\App\Helper\AbstractHelper
         if (!$this->isAllowed($order->getStore())) {
             return false;
         }
-        if ($this->customerSession->isLoggedIn()) {
-            return $order->canReorder();
-        } else {
-            return true;
-        }
+        return $order->canReorder();
     }
 }
