@@ -25,7 +25,7 @@ define([
             rows: [],
             rowsProvider: '${ $.parentName }',
             fieldClass: {
-                'data-grid-actions-cell': true
+                'data-grid-actions-cell data-action-position': true
             },
             templates: {
                 actions: {}
