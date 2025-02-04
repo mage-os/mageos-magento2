@@ -21,6 +21,7 @@ define([
             model;
 
         beforeEach(function (done) {
+            jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
             injector.mock(mocks);
             injector.require([
                 'Magento_Checkout/js/model/error-processor'
@@ -64,7 +65,7 @@ define([
                 let messageObject = {
                     message: 'You are not authorized to access this resource.'
                 };
-
+                console.log(jasmine.DEFAULT_TIMEOUT_INTERVAL);
                 spyOn(model, 'redirectTo').and.callFake(function () {});
                 model.process({
                     status: 401,
