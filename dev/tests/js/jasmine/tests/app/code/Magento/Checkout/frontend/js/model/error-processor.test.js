@@ -62,10 +62,11 @@ define([
 
             it('check on failed status', function () {
                 var messageContainer = jasmine.createSpyObj('globalMessageList', ['addErrorMessage']);
+
                 let messageObject = {
                     message: 'You are not authorized to access this resource.'
                 };
-                console.log(jasmine.DEFAULT_TIMEOUT_INTERVAL);
+
                 spyOn(model, 'redirectTo').and.callFake(function () {});
                 model.process({
                     status: 401,
