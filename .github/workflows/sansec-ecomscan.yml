@@ -7,6 +7,8 @@ on:
 
 jobs:
   run-ecomscan:
+    # Skip if it's a push event on a PR (it can't access secrets)
+    if: github.event.pull_request == null || github.event_name != 'push'
     name: Run Sansec eComscan
     runs-on: ubuntu-latest
     permissions:
