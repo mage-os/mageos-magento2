@@ -18,6 +18,7 @@
             <group value="urlRewrite"/>
         </annotations>
         <before>
+            <comment userInput="Enable config to generate category/product URL Rewrites " stepKey="commentEnableConfig"/>
             <!-- Set the configuration for Generate "category/product" URL Rewrites-->
             <magentoCLI command="config:set catalog/seo/generate_category_product_rewrites 1" stepKey="enableGenerateUrlRewrite"/>
             <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanCache">
