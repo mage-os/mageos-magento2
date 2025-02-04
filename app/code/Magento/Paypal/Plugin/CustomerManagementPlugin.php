@@ -9,13 +9,26 @@ namespace Magento\Paypal\Plugin;
 
 use Magento\Quote\Model\CustomerManagement;
 use Magento\Quote\Model\Quote as QuoteEntity;
-use Magento\Paypal\Model\Config as PaymentMethodConfig;
 
 /**
  * Skip billing address validation for PayPal payment method
  */
 class CustomerManagementPlugin
 {
+    /**
+     * @var array
+     */
+    private $paymentMethodSkipAddressValidation;
+
+    /**
+     * PaymentMethodSkipAddressValidation constructor.
+     * @param array $paymentMethodSkipAddressValidation
+     */
+    public function __construct($paymentMethodSkipAddressValidation = [])
+    {
+        $this->paymentMethodSkipAddressValidation = $paymentMethodSkipAddressValidation;
+    }
+
     /**
      * Around plugin for the validateAddresses method
      *
@@ -28,7 +41,7 @@ class CustomerManagementPlugin
     public function aroundValidateAddresses(CustomerManagement $subject, \Closure $proceed, QuoteEntity $quote)
     {
         if ($quote->getCustomerIsGuest() &&
-            in_array($quote->getPayment()->getMethod(), PaymentMethodConfig::PAYMENT_METHODS_SKIP_ADDRESS_VALIDATION)) {
+            in_array($quote->getPayment()->getMethod(), $this->paymentMethodSkipAddressValidation)) {
             return;
         }
         $proceed($quote);
