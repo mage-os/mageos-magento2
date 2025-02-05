@@ -43,6 +43,8 @@ class SubresourceIntegrityRepository
      * @param SubresourceIntegrityFactory $integrityFactory
      * @param string|null $context
      * @param StorageInterface|null $storage
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function __construct(
         CacheInterface $cache,
@@ -152,13 +154,12 @@ class SubresourceIntegrityRepository
     {
         if ($this->data === null) {
             $rawData = $this->storage->load($this->context);
-            $decodedData = $rawData ? $this->serializer->unserialize($rawData) : [];
 
-            $this->data = array_map(
-                fn($hash, $path) => new SubresourceIntegrity(["path" => $path, "hash" => $hash]),
-                $decodedData,
-                array_keys($decodedData)
-            );
+            $this->data = $rawData ? $this->serializer->unserialize($rawData) : [];
+
+            foreach ($this->data as $path => $hash) {
+                $this->data[$path] = new SubresourceIntegrity(["path" => $path, "hash" => $hash]);
+            }
         }
 
         return $this->data;
