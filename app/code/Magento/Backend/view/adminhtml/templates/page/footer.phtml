@@ -11,6 +11,6 @@ use Magento\Framework\Escaper;
 /** @var Footer $block */
 ?>
 <p class="magento-version">
-    <strong><?= $escaper->escapeHtml(__('Mage-OS')); ?></strong>
+    <strong><?= $escaper->escapeHtml(__($block->getName())); ?></strong>
     <?= $escaper->escapeHtml(__('ver. %1', $block->getMagentoVersion())); ?>
 </p>
