@@ -16,10 +16,10 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractController
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var \Magento\Framework\App\ProductMetadataInterface $productMetadata */
         $productMetadata = $objectManager->get(\Magento\Framework\App\ProductMetadataInterface::class);
-        $name = $productMetadata->getName();
+        $name = $productMetadata->getDistributionName();
         $edition = $productMetadata->getEdition();
 
-        $fullVersion = $productMetadata->getVersion();
+        $fullVersion = $productMetadata->getDistributionVersion();
         if ($this->isComposerBasedInstallation($fullVersion)) {
             $versionParts = explode('.', $fullVersion);
             $majorMinor = $versionParts[0] . '.' . $versionParts[1];

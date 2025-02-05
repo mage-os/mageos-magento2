@@ -246,7 +246,8 @@ class ComposerInformation
                 $packages[$package->getName()] = [
                     'name' => $package->getName(),
                     'type' => $package->getType(),
-                    'version' => $package->getPrettyVersion()
+                    'version' => $package->getPrettyVersion(),
+                    'magento_version' => $package->getExtra()['magento_version'] ?? null,
                 ];
             }
         }
