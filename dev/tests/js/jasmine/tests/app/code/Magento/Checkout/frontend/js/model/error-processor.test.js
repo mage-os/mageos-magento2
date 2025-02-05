@@ -1,6 +1,6 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 
 /*eslint max-nested-callbacks: 0*/
@@ -21,7 +21,6 @@ define([
             model;
 
         beforeEach(function (done) {
-            jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
             injector.mock(mocks);
             injector.require([
                 'Magento_Checkout/js/model/error-processor'
