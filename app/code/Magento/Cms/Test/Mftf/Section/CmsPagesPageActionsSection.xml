@@ -17,7 +17,7 @@
         <element name="addNewPageButton" type="button" selector="#add" timeout="30"/>
         <element name="select" type="button" selector="//div[text()='{{var1}}']/parent::td//following-sibling::td[@class='data-grid-actions-cell data-action-position']//button[text()='Select']" parameterized="true"/>
         <element name="edit" type="button" selector="//div[text()='{{var1}}']/parent::td//following-sibling::td[@class='data-grid-actions-cell data-action-position']//a[text()='Edit']" parameterized="true"/>
-        <element name="preview" type="button" selector="//div[text()='{{var1}}']/parent::td//following-sibling::td[@class='data-grid-actions-cell']//a[text()='View']" parameterized="true"/>
+        <element name="preview" type="button" selector="//div[text()='{{var1}}']/parent::td//following-sibling::td[@class='data-grid-actions-cell data-action-position']//a[text()='View']" parameterized="true"/>
         <element name="clearAllButton" type="button" selector="//div[@class='admin__data-grid-header']//button[contains(text(), 'Clear all')]" timeout="60"/>
         <element name="clearFilters" type="button" selector=".admin__data-grid-header button[data-action='grid-filter-reset']" timeout="30"/>
         <element name="activeFilters" type="button" selector="//div[@class='admin__data-grid-header']//span[contains(text(), 'Active filters:')]" />
