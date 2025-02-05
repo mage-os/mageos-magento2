@@ -9,7 +9,7 @@
     <test name="AdminToVerifyDynamicRowsComponentWhenNewElementIsAddedTest">
         <annotations>
             <features value="GroupedProduct"/>
-            <stories value="verify dynamic rows component"/>
+            <stories value="Verify dynamic rows component"/>
             <title value="Admin to verify dynamic rows component behaviour when new element is added"/>
             <description value="Admin to verify dynamic rows component when new element is added in grouped product"/>
             <testCaseId value="AC-6478"/>
