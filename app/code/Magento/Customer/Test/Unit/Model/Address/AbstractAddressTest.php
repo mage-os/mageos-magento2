@@ -70,6 +70,11 @@ class AbstractAddressTest extends TestCase
     /** @var CompositeValidator|MockObject  */
     private $compositeValidatorMock;
 
+    /**
+     * @var \Magento\Customer\Helper\Address|MockObject
+     */
+    private $addressHelperMock;
+
     protected function setUp(): void
     {
         $this->contextMock = $this->createMock(Context::class);
@@ -489,6 +494,89 @@ class AbstractAddressTest extends TestCase
                 $model->getCustomAttributes()
             )
         );
+    }
+
+    public function testGetStreetWithTwoLines()
+    {
+        // Create a partial mock for AddressHelper
+        $this->addressHelperMock = $this->getMockBuilder(\Magento\Customer\Helper\Address::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getStreetLines']) // Mock only getStreetLines, keep the real convertStreetLines
+            ->getMock();
+
+        // Mock getStreetLines to return 2 by default
+        $this->addressHelperMock->method('getStreetLines')->willReturn(2);
+
+        // Use reflection to inject the partial mock into the model
+        $reflection = new \ReflectionClass($this->model);
+        $property = $reflection->getProperty('addressHelper');
+        $property->setAccessible(true);
+        $property->setValue($this->model, $this->addressHelperMock);
+
+        $this->addressHelperMock->method('getStreetLines')->willReturn(2);
+        $streetData = ["Street Line 1", "Street Line 2", "Street Line 3", "Street Line 4"];
+        $this->model->setData('street', $streetData);
+
+        // Call getStreet() which should internally call convertStreetLines()
+        $result = $this->model->getStreet();
+
+        // Assert that empty and whitespace-only lines are removed by convertStreetLines
+        $this->assertEquals(["Street Line 1 Street Line 2", "Street Line 3 Street Line 4"], $result);
+    }
+
+    public function testGetStreetWithThreeLines()
+    {
+        // Create a partial mock for AddressHelper
+        $this->addressHelperMock = $this->getMockBuilder(\Magento\Customer\Helper\Address::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getStreetLines']) // Mock only getStreetLines, keep the real convertStreetLines
+            ->getMock();
+
+        // Mock getStreetLines to return 2 by default
+        $this->addressHelperMock->method('getStreetLines')->willReturn(3);
+
+        // Use reflection to inject the partial mock into the model
+        $reflection = new \ReflectionClass($this->model);
+        $property = $reflection->getProperty('addressHelper');
+        $property->setAccessible(true);
+        $property->setValue($this->model, $this->addressHelperMock);
+
+        $this->addressHelperMock->method('getStreetLines')->willReturn(3);
+        $streetData = ["Street Line 1", "Street Line 2", "Street Line 3", "Street Line 4"];
+        $this->model->setData('street', $streetData);
+
+        // Call getStreet() which should internally call convertStreetLines()
+        $result = $this->model->getStreet();
+
+        // Assert that empty and whitespace-only lines are removed by convertStreetLines
+        $this->assertEquals(["Street Line 1 Street Line 2","Street Line 3","Street Line 4"], $result);
+    }
+
+    public function testGetStreetWithOneLine()
+    {
+        // Create a partial mock for AddressHelper
+        $this->addressHelperMock = $this->getMockBuilder(\Magento\Customer\Helper\Address::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getStreetLines']) // Mock only getStreetLines, keep the real convertStreetLines
+            ->getMock();
+
+        // Mock getStreetLines to return 2 by default
+        $this->addressHelperMock->method('getStreetLines')->willReturn(1);
+
+        // Use reflection to inject the partial mock into the model
+        $reflection = new \ReflectionClass($this->model);
+        $property = $reflection->getProperty('addressHelper');
+        $property->setAccessible(true);
+        $property->setValue($this->model, $this->addressHelperMock);
+
+        $streetData = ["Street Line 1", "Street Line 2", "Street Line 3", "Street Line 4"];
+        $this->model->setData('street', $streetData);
+
+        // Call getStreet() which should internally call convertStreetLines()
+        $result = $this->model->getStreet();
+
+        // Assert that empty and whitespace-only lines are removed by convertStreetLines
+        $this->assertEquals(["Street Line 1 Street Line 2 Street Line 3 Street Line 4"], $result);
     }
 
     protected function tearDown(): void

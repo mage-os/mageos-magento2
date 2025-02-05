@@ -17,6 +17,7 @@ use Magento\Customer\Model\Data\Address as AddressData;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Model\AbstractExtensibleModel;
 use Magento\Framework\ObjectManager\ResetAfterRequestInterface;
+use Magento\Customer\Helper\Address as AddressHelper;
 
 /**
  * Address abstract model
@@ -147,6 +148,11 @@ class AbstractAddress extends AbstractExtensibleModel implements AddressModelInt
     private array $regionIdCountry = [];
 
     /**
+     * @var AddressHelper|null
+     */
+    protected ?AddressHelper $addressHelper;
+
+    /**
      * @param \Magento\Framework\Model\Context $context
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\Framework\Api\ExtensionAttributesFactory $extensionFactory
@@ -166,6 +172,7 @@ class AbstractAddress extends AbstractExtensibleModel implements AddressModelInt
      * @param CompositeValidator $compositeValidator
      * @param CountryModelsCache|null $countryModelsCache
      * @param RegionModelsCache|null $regionModelsCache
+     * @param AddressHelper|null $addressHelper
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
@@ -189,6 +196,7 @@ class AbstractAddress extends AbstractExtensibleModel implements AddressModelInt
         CompositeValidator $compositeValidator = null,
         ?CountryModelsCache $countryModelsCache = null,
         ?RegionModelsCache $regionModelsCache = null,
+        ?AddressHelper $addressHelper = null
     ) {
         $this->_directoryData = $directoryData;
         $data = $this->_implodeArrayField($data);
@@ -206,6 +214,8 @@ class AbstractAddress extends AbstractExtensibleModel implements AddressModelInt
             ->get(CountryModelsCache::class);
         $this->regionModelsCache = $regionModelsCache ?: ObjectManager::getInstance()
             ->get(RegionModelsCache::class);
+        $this->addressHelper = $addressHelper ?: ObjectManager::getInstance()
+            ->get(AddressHelper::class);
         parent::__construct(
             $context,
             $registry,
@@ -242,6 +252,8 @@ class AbstractAddress extends AbstractExtensibleModel implements AddressModelInt
 
     /**
      * Retrieve street field of an address
+     * Honour current configured street lines, and convert
+     * legacy data to match
      *
      * @return string[]
      */
@@ -250,7 +262,11 @@ class AbstractAddress extends AbstractExtensibleModel implements AddressModelInt
         if (is_array($this->getStreetFull())) {
             return $this->getStreetFull();
         }
-        return explode("\n", $this->getStreetFull());
+        $maxAllowedLineCount = $this->addressHelper->getStreetLines() ?? 2;
+        $lines = explode("\n", $this->getStreetFull());
+        $lines = $this->addressHelper->convertStreetLines($lines, $maxAllowedLineCount);
+        $this->setStreetFull(implode("\n", $lines));
+        return $lines;
     }
 
     /**
