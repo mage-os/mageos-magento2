@@ -13,9 +13,6 @@
     "suggest": {
         "magento/module-config": "*"
     },
-    "replace": {
-        "magento/module-elasticsearch-7": "*"
-    },
     "type": "magento2-module",
     "license": [
         "OSL-3.0",
