@@ -1,24 +1,22 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2024 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
 namespace Magento\Csp\Model;
 
-use Magento\Framework\App\CacheInterface;
 use Magento\Framework\App\ObjectManager;
-use Magento\Framework\Exception\FileSystemException;
+use Magento\Framework\App\CacheInterface;
 use Magento\Framework\Serialize\SerializerInterface;
-use Magento\Csp\Model\SubresourceIntegrity\Storage\File;
+use Magento\Csp\Model\SubresourceIntegrity\StorageInterface;
 
 /**
- * Class contains methods equivalent to repository design to manage SRI hashes in cache.
+ * Class contains methods equivalent to repository design to manage SRI hashes.
  */
 class SubresourceIntegrityRepository
 {
-
     /**
      * @var array|null
      */
@@ -35,28 +33,30 @@ class SubresourceIntegrityRepository
     private SerializerInterface $serializer;
 
     /**
-     * @var SubresourceIntegrityFactory
+     * @var StorageInterface
      */
-    private SubresourceIntegrityFactory $integrityFactory;
-
-    private File $sriStorage;
+    private StorageInterface $storage;
 
     /**
+     * @param CacheInterface $cache
      * @param SerializerInterface $serializer
      * @param SubresourceIntegrityFactory $integrityFactory
      * @param string|null $context
-     * @param File|null $sriStorage
+     * @param StorageInterface|null $storage
      */
     public function __construct(
+        CacheInterface $cache,
         SerializerInterface $serializer,
         SubresourceIntegrityFactory $integrityFactory,
         ?string $context = null,
-        ? File $sriStorage = null
+        ?StorageInterface $storage = null
     ) {
         $this->serializer = $serializer;
-        $this->integrityFactory = $integrityFactory;
         $this->context = $context;
-        $this->sriStorage = $sriStorage ?? ObjectManager::getInstance()->get(File::class);
+
+        $this->storage = $storage ?? ObjectManager::getInstance()->get(
+            StorageInterface::class
+        );
     }
 
     /**
@@ -68,40 +68,17 @@ class SubresourceIntegrityRepository
      */
     public function getByPath(string $path): ?SubresourceIntegrity
     {
-        $data = $this->getData();
-
-        if (isset($data[$path])) {
-            return new SubresourceIntegrity(
-                [
-                    "path" => $path,
-                    "hash" => $data[$path]
-                ]
-            );
-        }
-
-        return null;
+        return $this->getData()[$path] ?? null;
     }
 
     /**
      * Gets all available Integrity objects.
      *
      * @return SubresourceIntegrity[]
-     * @throws FileSystemException
      */
     public function getAll(): array
     {
-        $result = [];
-
-        foreach ($this->getData() as $path => $hash) {
-            $result[] = new SubresourceIntegrity(
-                [
-                    "path" => $path,
-                    "hash" => $hash
-                ]
-            );
-        }
-
-        return $result;
+        return array_values($this->getData());
     }
 
     /**
@@ -110,18 +87,20 @@ class SubresourceIntegrityRepository
      * @param SubresourceIntegrity $integrity
      *
      * @return bool
-     * @throws FileSystemException
      */
     public function save(SubresourceIntegrity $integrity): bool
     {
         $data = $this->getData();
 
-        $data[$integrity->getPath()] = $integrity->getHash();
+        $data[$integrity->getPath()] = $integrity;
 
         $this->data = $data;
 
-        return $this->sriStorage->save(
-            $this->serializer->serialize($this->data),
+        // Transform the data before saving.
+        $transformedData = array_map(fn($integrity) => $integrity->getHash(), $this->data);
+
+        return $this->storage->save(
+            $this->serializer->serialize($transformedData),
             $this->context
         );
     }
@@ -138,14 +117,17 @@ class SubresourceIntegrityRepository
         $data = $this->getData();
 
         foreach ($bunch as $integrity) {
-            $data[$integrity->getPath()] = $integrity->getHash();
+            $data[$integrity->getPath()] = $integrity;
         }
 
         $this->data = $data;
 
-        return $this->sriStorage->save(
-            $this->serializer->serialize($this->data),
-           $this->context
+        // Transform the data before saving.
+        $transformedData = array_map(fn($integrity) => $integrity->getHash(), $this->data);
+
+        return $this->storage->save(
+            $this->serializer->serialize($transformedData),
+            $this->context
         );
     }
 
@@ -153,27 +135,30 @@ class SubresourceIntegrityRepository
      * Deletes all Integrity objects.
      *
      * @return bool
-     * @throws FileSystemException
      */
     public function deleteAll(): bool
     {
         $this->data = null;
 
-        return $this->sriStorage->remove();
+        return $this->storage->remove($this->context);
     }
 
     /**
      * Loads integrity data from a storage.
      *
      * @return array
-     * @throws FileSystemException
      */
     private function getData(): array
     {
         if ($this->data === null) {
-            $cache = $this->sriStorage->load($this->context);
+            $rawData = $this->storage->load($this->context);
+            $decodedData = $rawData ? $this->serializer->unserialize($rawData) : [];
 
-            $this->data = $cache ? $this->serializer->unserialize($cache) : [];
+            $this->data = array_map(
+                fn($hash, $path) => new SubresourceIntegrity(["path" => $path, "hash" => $hash]),
+                $decodedData,
+                array_keys($decodedData)
+            );
         }
 
         return $this->data;
