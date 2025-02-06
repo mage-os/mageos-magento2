@@ -96,9 +96,10 @@ class IndexTest extends TestCase
     }
 
     /**
-     * @doesNotPerformAssertions
+     * @return void
+     * @throws NotFoundException
      */
-    public function testDispatchIsSuccessfulWhenEnabled()
+    public function testDispatchIsSuccessfulWhenEnabled(): void
     {
         $request = self::getMockBuilder(Http::class)
             ->disableOriginalConstructor()
