@@ -22,7 +22,7 @@ use Magento\TestModuleCatalogSearch\Model\SearchEngineVersionReader;
  * Important: Please make sure that each integration test file works with unique search index. In order to
  * achieve this, use @magentoConfigFixture to pass unique value for index_prefix for every test
  * method.
- * E.g. '@magentoConfigFixture current_store catalog/search/elasticsearch7_index_prefix indexerhandlertest_configurable'
+ * E.g. '@magentoConfigFixture current_store catalog/search/elasticsearch8_index_prefix indexerhandlertest_configurable'
  *
  * @magentoDbIsolation disabled
  * @magentoAppIsolation enabled

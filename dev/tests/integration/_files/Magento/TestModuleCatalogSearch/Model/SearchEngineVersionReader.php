@@ -24,7 +24,7 @@ class SearchEngineVersionReader
     private $versionInfo;
 
     /**
-     * Returns full search engine version e.g. 'elasticsearch7'
+     * Returns full search engine version e.g. 'elasticsearch8'
      *
      * @return string
      */
