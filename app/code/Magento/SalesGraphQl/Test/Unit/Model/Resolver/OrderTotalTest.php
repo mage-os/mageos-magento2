@@ -26,11 +26,6 @@ class OrderTotalTest extends TestCase
     private $orderMock;
 
     /**
-     * @var QuoteFactory|MockObject
-     */
-    private $quoteFactoryMock;
-
-    /**
      * @var OrderTotal|MockObject
      */
     private $orderTotal;
@@ -60,7 +55,6 @@ class OrderTotalTest extends TestCase
         $this->contextMock = $this->createMock(ContextInterface::class);
         $this->fieldMock = $this->createMock(Field::class);
         $this->resolveInfoMock = $this->createMock(ResolveInfo::class);
-        $this->quoteFactoryMock = $this->createMock(QuoteFactory::class);
         $this->extensionAttributesMock = $this->createMock(OrderExtensionInterface::class);
         $this->orderMock = $this->createMock(OrderInterface::class);
         $this->orderMock->method('getOrderCurrencyCode')->willReturn('USD');
@@ -73,7 +67,7 @@ class OrderTotalTest extends TestCase
         $this->orderMock->method('getShippingInclTax')->willReturn(7.00);
         $this->orderMock->method('getDiscountAmount')->willReturn(7.00);
         $this->orderMock->method('getDiscountDescription')->willReturn('TEST123');
-        $this->orderTotal = new OrderTotal($this->quoteFactoryMock);
+        $this->orderTotal = new OrderTotal();
     }
 
     public function testResolve(): void
