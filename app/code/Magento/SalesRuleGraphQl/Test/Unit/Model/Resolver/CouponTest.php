@@ -17,7 +17,9 @@ use Magento\SalesRule\Model\GetCoupons;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\SalesRule\Model\Quote\GetCouponCodes;
 use Magento\SalesRuleGraphQl\Model\Resolver\Coupon;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 
 class CouponTest extends TestCase
 {
@@ -36,10 +38,28 @@ class CouponTest extends TestCase
      */
     private $resolver;
 
+    /**
+     * @var ContextInterface|MockObject
+     */
+    private $contextMock;
+
+    /**
+     * @var Field|MockObject
+     */
+    private $fieldMock;
+
+    /**
+     * @var ResolveInfo|MockObject
+     */
+    private $resolveInfoMock;
+
     protected function setUp(): void
     {
         $this->getCouponCodesMock = $this->createMock(GetCouponCodes::class);
         $this->getCouponsMock = $this->createMock(GetCoupons::class);
+        $this->contextMock = $this->createMock(ContextInterface::class);
+        $this->fieldMock = $this->createMock(Field::class);
+        $this->resolveInfoMock = $this->createMock(ResolveInfo::class);
         $this->resolver = new Coupon(
             $this->getCouponCodesMock,
             $this->getCouponsMock
@@ -53,9 +73,9 @@ class CouponTest extends TestCase
             ->method('getCouponCode')
             ->willReturn('TEST1234');
         $result = $this->resolver->resolve(
-            $this->createMock(Field::class),
-            [],
-            $this->createMock(ResolveInfo::class),
+            $this->fieldMock,
+            $this->contextMock,
+            $this->resolveInfoMock,
             ['order_model' => $orderModel]
         );
 
@@ -67,9 +87,9 @@ class CouponTest extends TestCase
         $this->expectException(LocalizedException::class);
         $this->expectExceptionMessage('"discount_model" value should be specified');
         $this->resolver->resolve(
-            $this->createMock(Field::class),
-            [],
-            $this->createMock(ResolveInfo::class),
+            $this->fieldMock,
+            $this->contextMock,
+            $this->resolveInfoMock,
             []
         );
     }
@@ -79,9 +99,9 @@ class CouponTest extends TestCase
         $this->expectException(LocalizedException::class);
         $this->expectExceptionMessage('"quote_model" value should be specified');
         $this->resolver->resolve(
-            $this->createMock(Field::class),
-            [],
-            $this->createMock(ResolveInfo::class),
+            $this->fieldMock,
+            $this->contextMock,
+            $this->resolveInfoMock,
             ['discount_model' => $this->createMock(RuleDiscountInterface::class)]
         );
     }
@@ -93,9 +113,9 @@ class CouponTest extends TestCase
         $this->getCouponCodesMock->method('execute')->willReturn([]);
         $this->getCouponsMock->method('execute')->willReturn([]);
         $result = $this->resolver->resolve(
-            $this->createMock(Field::class),
-            [],
-            $this->createMock(ResolveInfo::class),
+            $this->fieldMock,
+            $this->contextMock,
+            $this->resolveInfoMock,
             ['discount_model' => $discountModel, 'quote_model' => $quoteModel]
         );
 
@@ -113,9 +133,9 @@ class CouponTest extends TestCase
         $this->getCouponCodesMock->method('execute')->willReturn(['test']);
         $this->getCouponsMock->method('execute')->willReturn([$couponMock]);
         $result = $this->resolver->resolve(
-            $this->createMock(Field::class),
-            [],
-            $this->createMock(ResolveInfo::class),
+            $this->fieldMock,
+            $this->contextMock,
+            $this->resolveInfoMock,
             ['discount_model' => $discountModel, 'quote_model' => $quoteModel]
         );
 
@@ -132,9 +152,9 @@ class CouponTest extends TestCase
         $this->getCouponCodesMock->method('execute')->willReturn(['test']);
         $this->getCouponsMock->method('execute')->willReturn([$couponMock]);
         $result = $this->resolver->resolve(
-            $this->createMock(Field::class),
-            [],
-            $this->createMock(ResolveInfo::class),
+            $this->fieldMock,
+            $this->contextMock,
+            $this->resolveInfoMock,
             ['discount_model' => $discountModel, 'quote_model' => $quoteModel]
         );
 
