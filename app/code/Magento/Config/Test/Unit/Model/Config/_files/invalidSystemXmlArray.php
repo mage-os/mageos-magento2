@@ -11,9 +11,9 @@ return [
         '</tab><tab id="tab1"><label>Label Two</label></tab></system></config>',
         [
             [
-                "Element 'tab': Duplicate key-sequence ['tab1'] in unique identity-constraint 'uniqueTabId'.\nLine: 1\n" .
-                "The xml was: \n0:<?xml version=\"1.0\"?>\n1:<config><system><tab id=\"tab1\"><label>Label One</label>" .
-                "</tab><tab id=\"tab1\"><label>Label Two</label></tab></system></config>\n2:\n",
+                "Element 'tab': Duplicate key-sequence ['tab1'] in unique identity-constraint 'uniqueTabId'.\n" .
+                "Line: 1\nThe xml was: \n0:<?xml version=\"1.0\"?>\n1:<config><system><tab id=\"tab1\"><label>" .
+                "Label One</label></tab><tab id=\"tab1\"><label>Label Two</label></tab></system></config>\n2:\n",
                 false,
             ],
         ],
@@ -37,10 +37,10 @@ return [
         '<group id="group2"><label>Label_One</label></group></section></system></config>',
         [
             [
-                "Element 'field': Duplicate key-sequence ['field_id'] in unique identity-constraint 'uniqueFieldId'.\n" .
-                "Line: 1\nThe xml was: \n0:<?xml version=\"1.0\"?>\n1:<config><system><section id=\"section1\"><group " .
-                "id=\"group1\"><label>Label</label><field id=\"field_id\"/><field id=\"field_id\"/></group><group " .
-                "id=\"group2\"><label>Label_One</label></group></section></system></config>\n2:\n",
+                "Element 'field': Duplicate key-sequence ['field_id'] in unique identity-constraint 'uniqueFieldId'." .
+                "\nLine: 1\nThe xml was: \n0:<?xml version=\"1.0\"?>\n1:<config><system><section id=\"section1\">" .
+                "<group id=\"group1\"><label>Label</label><field id=\"field_id\"/><field id=\"field_id\"/></group>" .
+                "<group id=\"group2\"><label>Label_One</label></group></section></system></config>\n2:\n",
                 false,
             ],
         ],
@@ -64,8 +64,8 @@ return [
         [
             [
                 "Element 'group': Duplicate key-sequence ['group1'] in unique identity-constraint 'uniqueGroupId'.\n" .
-                "Line: 1\nThe xml was: \n0:<?xml version=\"1.0\"?>\n1:<config><system><section id=\"section1\"><group " .
-                "id=\"group1\"><label>Label</label></group><group id=\"group1\"><label>Label_One</label>" .
+                "Line: 1\nThe xml was: \n0:<?xml version=\"1.0\"?>\n1:<config><system><section id=\"section1\">" .
+                "<group id=\"group1\"><label>Label</label></group><group id=\"group1\"><label>Label_One</label>" .
                 "</group></section></system></config>\n2:\n",
                 false,
             ],
@@ -77,9 +77,9 @@ return [
         [
             [
                 "Element 'group': This element is not expected. Expected is one of ( tab, section ).\nLine: 1\n" .
-                "The xml was: \n0:<?xml version=\"1.0\"?>\n1:<config><system><group id=\"group1\"><label>Label</label>" .
-                "<tab>Tab</tab></group><group id=\"group1\"><label>Label_One</label><tab>Tab_One</tab></group></system>" .
-                "</config>\n2:\n",
+                "The xml was: \n0:<?xml version=\"1.0\"?>\n1:<config><system><group id=\"group1\"><label>Label" .
+                "</label><tab>Tab</tab></group><group id=\"group1\"><label>Label_One</label><tab>Tab_One</tab>" .
+                "</group></system></config>\n2:\n",
                 false,
             ],
         ],
@@ -91,11 +91,11 @@ return [
         '<group id="group2"><label>Label_One</label></group></section></system></config>',
         [
             [
-                "Element 'upload_dir': This element is not expected.\nLine: 1\nThe xml was: \n0:<?xml version=\"1.0\"?>\n" .
-                "1:<config><system><section id=\"section1\"><group id=\"group1\"><label>Label</label><field " .
-                "id=\"field_id\"/><upload_dir config=\"node_one/node_two/node_three\" scope_info=\"1\">" .
-                "node_one/node_two/node_three</upload_dir></group><group id=\"group2\"><label>Label_One" .
-                "</label></group></section></system></config>\n2:\n",
+                "Element 'upload_dir': This element is not expected.\nLine: 1\nThe xml was: \n0:" .
+                "<?xml version=\"1.0\"?>\n1:<config><system><section id=\"section1\"><group id=\"group1\">" .
+                "<label>Label</label><field id=\"field_id\"/><upload_dir config=\"node_one/node_two/node_three\" " .
+                "scope_info=\"1\">node_one/node_two/node_three</upload_dir></group><group id=\"group2\">" .
+                "<label>Label_One</label></group></section></system></config>\n2:\n",
                 false,
             ],
         ],
@@ -154,16 +154,16 @@ return [
                 false,
             ],
             [
-                "Element 'field', attribute 'id': [facet 'minLength'] The value 'f' has a length of '1'; this underruns " .
-                "the allowed minimum length of '2'.\nLine: 1\nThe xml was: \n0:<?xml version=\"1.0\"?>\n" .
+                "Element 'field', attribute 'id': [facet 'minLength'] The value 'f' has a length of '1'; this " .
+                "underruns the allowed minimum length of '2'.\nLine: 1\nThe xml was: \n0:<?xml version=\"1.0\"?>\n" .
                 "1:<config><system><section id=\"s\"><group id=\"gr\"><label>Label</label><field id=\"f\"/></group>" .
                 "<group id=\"group1\"><label>Label</label></group></section><tab id=\"h\"><label>Label_One</label>" .
                 "</tab></system></config>\n2:\n",
                 false,
             ],
             [
-                "Element 'tab', attribute 'id': [facet 'minLength'] The value 'h' has a length of '1'; this underruns " .
-                "the allowed minimum length of '2'.\nLine: 1\nThe xml was: \n0:<?xml version=\"1.0\"?>\n" .
+                "Element 'tab', attribute 'id': [facet 'minLength'] The value 'h' has a length of '1'; this " .
+                "underruns the allowed minimum length of '2'.\nLine: 1\nThe xml was: \n0:<?xml version=\"1.0\"?>\n" .
                 "1:<config><system><section id=\"s\"><group id=\"gr\"><label>Label</label><field id=\"f\"/></group>" .
                 "<group id=\"group1\"><label>Label</label></group></section><tab id=\"h\"><label>Label_One</label>" .
                 "</tab></system></config>\n2:\n",
@@ -233,8 +233,9 @@ return [
             [
                 "Element 'section', attribute 'advanced': 'string' is not a valid value of the atomic type " .
                 "'xs:boolean'.\nLine: 1\nThe xml was: \n0:<?xml version=\"1.0\"?>\n1:<config><system><section " .
-                "id=\"section1\" advanced=\"string\"><group id=\"group1\"><label>Label</label><field id=\"field_id\"/>" .
-                "</group><group id=\"group2\"><label>Label_One</label></group></section></system></config>\n2:\n",
+                "id=\"section1\" advanced=\"string\"><group id=\"group1\"><label>Label</label>" .
+                "<field id=\"field_id\"/></group><group id=\"group2\"><label>Label_One</label></group></section>" .
+                "</system></config>\n2:\n",
                 false,
             ],
         ],
@@ -339,10 +340,10 @@ return [
         [
             [
                 "Element 'attribute': Duplicate key-sequence ['one'] in unique identity-constraint " .
-                "'uniqueAttributeType'.\nLine: 1\nThe xml was: \n0:<?xml version=\"1.0\"?>\n1:<config><system><section " .
-                "id=\"name\"><group id=\"name\"><label>Label</label><field id=\"name\"><attribute type=\"one\"/>" .
-                "<attribute type=\"one\"/></field></group><group id=\"group2\"><label>Label_One</label></group></section>" .
-                "</system></config>\n2:\n",
+                "'uniqueAttributeType'.\nLine: 1\nThe xml was: \n0:<?xml version=\"1.0\"?>\n1:<config><system>" .
+                "<section id=\"name\"><group id=\"name\"><label>Label</label><field id=\"name\">" .
+                "<attribute type=\"one\"/><attribute type=\"one\"/></field></group><group id=\"group2\">" .
+                "<label>Label_One</label></group></section></system></config>\n2:\n",
                 false,
             ],
         ],

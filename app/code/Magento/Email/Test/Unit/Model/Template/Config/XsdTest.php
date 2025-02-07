@@ -224,7 +224,8 @@ class XsdTest extends TestCase
                         $this->assertMatchesRegularExpression($error, $actualError);
                         $matched = true;
                         break;
-                    } catch (AssertionFailedError $e) {}
+                    } catch (AssertionFailedError $e) {
+                    }
                 }
                 $this->assertTrue($matched, "None of the errors matched: $error");
             } else {

@@ -336,7 +336,8 @@ return [
         </config>',
         [
             [
-                "/Element \'virtualType\', attribute \'name\': .*\'777Digits\\\\IsNotAllowed\' is not (a valid value|accepted).*/",
+                "/Element \'virtualType\', attribute \'name\': .*\'777Digits\\\\IsNotAllowed\' is not" .
+                " (a valid value|accepted).*/",
                 true,
             ],
         ],
