@@ -8,12 +8,11 @@ declare(strict_types=1);
 namespace Magento\SalesGraphQl\Test\Unit\Model\Resolver;
 
 use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
-use Magento\Sales\Api\Data\OrderExtensionInterface;
+use Magento\Framework\Api\ExtensionAttributesInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\SalesGraphQl\Model\Resolver\OrderTotal;
 use Magento\Sales\Api\Data\OrderInterface;
-use Magento\Quote\Model\QuoteFactory;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Framework\Exception\LocalizedException;
@@ -46,7 +45,7 @@ class OrderTotalTest extends TestCase
     private $resolveInfoMock;
 
     /**
-     * @var OrderExtensionInterface|MockObject
+     * @var ExtensionAttributesInterface|MockObject
      */
     private $extensionAttributesMock;
 
@@ -55,7 +54,6 @@ class OrderTotalTest extends TestCase
         $this->contextMock = $this->createMock(ContextInterface::class);
         $this->fieldMock = $this->createMock(Field::class);
         $this->resolveInfoMock = $this->createMock(ResolveInfo::class);
-        $this->extensionAttributesMock = $this->createMock(OrderExtensionInterface::class);
         $this->orderMock = $this->createMock(OrderInterface::class);
         $this->orderMock->method('getOrderCurrencyCode')->willReturn('USD');
         $this->orderMock->method('getBaseCurrencyCode')->willReturn('USD');
@@ -76,12 +74,12 @@ class OrderTotalTest extends TestCase
         $resolveInfoMock = $this->createMock(ResolveInfo::class);
         $value = ['model' => $this->orderMock];
         $args = [];
-        $this->extensionAttributesMock->expects($this->once())
-            ->method('getAppliedTaxes')
-            ->willReturn([]);
-        $this->extensionAttributesMock->expects($this->once())
-            ->method('getItemAppliedTaxes')
-            ->willReturn([]);
+        $this->extensionAttributesMock = $this->getMockBuilder(ExtensionAttributesInterface::class)
+            ->addMethods(['getAppliedTaxes', 'getItemAppliedTaxes'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->extensionAttributesMock->expects($this->once())->method('getAppliedTaxes')->willReturn([]);
+        $this->extensionAttributesMock->expects($this->once())->method('getItemAppliedTaxes')->willReturn([]);
         $this->orderMock->method('getExtensionAttributes')->willReturn($this->extensionAttributesMock);
         $result = $this->orderTotal->resolve($fieldMock, $this->contextMock, $resolveInfoMock, $value, $args);
         $this->assertArrayHasKey('base_grand_total', $result);
