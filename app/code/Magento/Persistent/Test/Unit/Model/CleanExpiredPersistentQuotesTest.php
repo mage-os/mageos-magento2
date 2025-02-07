@@ -7,17 +7,19 @@ declare(strict_types=1);
 
 namespace Magento\Persistent\Test\Unit\Model;
 
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Model\ResourceModel\Db\VersionControl\Snapshot;
 use Magento\Persistent\Model\CleanExpiredPersistentQuotes;
 use Magento\Persistent\Model\ResourceModel\ExpiredPersistentQuotesCollection;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\QuoteRepository;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Quote\Model\ResourceModel\Quote\Collection;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\Website;
-use Magento\Customer\Model\Log;
 
 class CleanExpiredPersistentQuotesTest extends TestCase
 {
@@ -51,16 +53,25 @@ class CleanExpiredPersistentQuotesTest extends TestCase
         $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
         $this->expiredPersistentQuotesCollectionMock = $this->createMock(ExpiredPersistentQuotesCollection::class);
         $this->quoteRepositoryMock = $this->createMock(QuoteRepository::class);
+        $this->snapshotMock = $this->createMock(Snapshot::class);
         $this->loggerMock = $this->createMock(LoggerInterface::class);
 
         $this->cleanExpiredPersistentQuotes = new CleanExpiredPersistentQuotes(
             $this->storeManagerMock,
             $this->expiredPersistentQuotesCollectionMock,
             $this->quoteRepositoryMock,
+            $this->snapshotMock,
             $this->loggerMock
         );
     }
 
+    /**
+     * Test execute method
+     *
+     * @return void
+     * @throws LocalizedException
+     * @throws Exception
+     */
     public function testExecuteDeletesExpiredQuotes(): void
     {
         $websiteId = 1;
@@ -81,6 +92,19 @@ class CleanExpiredPersistentQuotesTest extends TestCase
         $quoteCollectionMock->method('getLastPageNumber')->willReturn(1);
         $quoteCollectionMock->method('setPageSize')->willReturnSelf();
         $quoteCollectionMock->method('setCurPage')->willReturnSelf();
+        $quoteCollectionMock->expects($this->exactly(2))
+            ->method('count')
+            ->willReturnCallback(function () use ($quoteCollectionMock) {
+                static $filterCallCount = 0;
+                $filterCallCount++;
+
+                match ($filterCallCount) {
+                    1 => $count = 1,
+                    2 => $count = 0
+                };
+
+                return $count;
+            });
 
         $this->expiredPersistentQuotesCollectionMock
             ->method('getExpiredPersistentQuotes')

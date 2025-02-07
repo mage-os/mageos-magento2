@@ -15,6 +15,7 @@ use Magento\Store\Api\Data\StoreInterface;
 use Magento\Persistent\Helper\Data;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Framework\DB\Select;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
 class ExpiredPersistentQuotesCollectionTest extends TestCase
@@ -45,6 +46,12 @@ class ExpiredPersistentQuotesCollectionTest extends TestCase
         );
     }
 
+    /**
+     * Test getExpiredPersistentQuotes method
+     *
+     * @return void
+     * @throws Exception
+     */
     public function testGetExpiredPersistentQuotes(): void
     {
         $storeMock = $this->createMock(StoreInterface::class);
@@ -56,40 +63,61 @@ class ExpiredPersistentQuotesCollectionTest extends TestCase
             ->willReturn(60);
 
         $quoteCollectionMock = $this->createMock(Collection::class);
-
         $this->quoteCollectionFactoryMock->method('create')->willReturn($quoteCollectionMock);
 
         $dbSelectMock = $this->createMock(Select::class);
         $quoteCollectionMock->method('getSelect')->willReturn($dbSelectMock);
         $quoteCollectionMock->method('getTable')->willReturn('customer_log');
-        $dbSelectMock->expects($this->once())
-            ->method('join')
-            ->with(
-                $this->equalTo(['cl' => 'customer_log']),
-                $this->equalTo('cl.customer_id = main_table.customer_id'),
-                $this->equalTo([])
-            )
+
+        $dbSelectMock->method('joinLeft')
+            ->willReturnCallback(function ($table, $condition) use ($dbSelectMock) {
+                static $callCount = 0;
+                $callCount++;
+
+                if ($callCount === 1) {
+                    $this->assertEquals(['cl1' => 'customer_log'], $table);
+                    $this->assertStringContainsString('cl1.customer_id = main_table.customer_id', $condition);
+                    $this->assertStringContainsString('cl1.last_login_at < cl1.last_logout_at', $condition);
+                    $this->assertStringContainsString('cl1.last_logout_at IS NOT NULL', $condition);
+                }
+
+                if ($callCount === 2) {
+                    $this->assertEquals(['cl2' => 'customer_log'], $table);
+                    $this->assertStringContainsString('cl2.customer_id = main_table.customer_id', $condition);
+                    $this->assertStringContainsString('cl2.last_login_at <', $condition);
+                    $this->assertStringContainsString(
+                        'cl2.last_logout_at IS NULL OR cl2.last_login_at > cl2.last_logout_at',
+                        $condition
+                    );
+                }
+
+                return $dbSelectMock;
+            });
+
+        $quoteCollectionMock->method('addFieldToFilter')
+            ->willReturnCallback(function ($field) use ($quoteCollectionMock) {
+                static $filterCallCount = 0;
+                $filterCallCount++;
+
+                match ($filterCallCount) {
+                    1 => $this->assertEquals('main_table.store_id', $field),
+                    2 => $this->assertEquals('main_table.updated_at', $field),
+                    3 => $this->assertEquals('main_table.is_persistent', $field),
+                    4 => $this->assertEquals('main_table.entity_id', $field)
+                };
+
+                return $quoteCollectionMock;
+            });
+
+        $quoteCollectionMock->method('setOrder')
+            ->with('entity_id', Collection::SORT_ORDER_ASC)
             ->willReturnSelf();
-        $dbSelectMock->expects($this->once())
-            ->method('where')
-            ->with($this->equalTo('cl.last_logout_at > cl.last_login_at'))
+
+        $quoteCollectionMock->method('setPageSize')
+            ->with($this->isType('integer'))
             ->willReturnSelf();
 
-        $quoteCollectionMock->expects($this->exactly(3))
-            ->method('addFieldToFilter')
-            ->with(
-                $this->callback(
-                    function ($field) {
-                        return in_array(
-                            $field,
-                            ['main_table.store_id', 'main_table.updated_at', 'main_table.is_persistent']
-                        );
-                    }
-                )
-            );
-
-        $result = $this->model->getExpiredPersistentQuotes($storeMock);
-
+        $result = $this->model->getExpiredPersistentQuotes($storeMock, 0, 100);
         $this->assertSame($quoteCollectionMock, $result);
     }
 }
