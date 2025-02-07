@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2021 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 
 declare(strict_types=1);
@@ -38,9 +38,9 @@ class DefaultPageSizeSetterTest extends TestCase
     }
 
     /**
-     * @return void
+     * @doesNotPerformAssertions
      */
-    public function testPageSizeIsNotSetWhenLimitingIsDisabled(): void
+    public function testPageSizeIsNotSetWhenLimitingIsDisabled()
     {
         $this->configProvider->method('isInputLimitingEnabled')
             ->willReturn(false);
@@ -55,9 +55,9 @@ class DefaultPageSizeSetterTest extends TestCase
     }
 
     /**
-     * @return void
+     * @doesNotPerformAssertions
      */
-    public function testPageSizeIsNotSetWhenAlreadySet(): void
+    public function testPageSizeIsNotSetWhenAlreadySet()
     {
         $this->configProvider->method('isInputLimitingEnabled')
             ->willReturn(true);
@@ -72,9 +72,9 @@ class DefaultPageSizeSetterTest extends TestCase
     }
 
     /**
-     * @return void
+     * @doesNotPerformAssertions
      */
-    public function testPageSizeIsSetWithPreferredConfigValue(): void
+    public function testPageSizeIsSetWithPreferredConfigValue()
     {
         $this->configProvider->method('isInputLimitingEnabled')
             ->willReturn(true);
@@ -93,9 +93,9 @@ class DefaultPageSizeSetterTest extends TestCase
     }
 
     /**
-     * @return void
+     * @doesNotPerformAssertions
      */
-    public function testPageSizeIsSetWithPreferredFallbackValue(): void
+    public function testPageSizeIsSetWithPreferredFallbackValue()
     {
         $this->configProvider->method('isInputLimitingEnabled')
             ->willReturn(true);

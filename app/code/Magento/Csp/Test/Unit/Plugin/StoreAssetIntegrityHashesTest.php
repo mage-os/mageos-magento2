@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2024 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 declare(strict_types=1);
 
@@ -62,6 +62,7 @@ class StoreAssetIntegrityHashesTest extends TestCase
      * Test After Deploy method of plugin
      *
      * @return void
+     * @doesNotPerformAssertions
      */
     public function testAfterDeploy(): void
     {

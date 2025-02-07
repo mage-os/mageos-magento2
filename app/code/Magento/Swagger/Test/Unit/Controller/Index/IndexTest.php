@@ -1,7 +1,7 @@
 <?php
-/**
- * Copyright 2015 Adobe
- * All Rights Reserved.
+/***
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 
 declare(strict_types=1);
@@ -67,10 +67,9 @@ class IndexTest extends TestCase
     }
 
     /**
-     * @return void
-     * @throws NotFoundException
+     * @doesNotPerformAssertions
      */
-    public function testExecute(): void
+    public function testExecute()
     {
         $this->pageConfigMock->expects($this->once())
             ->method('addBodyClass')
@@ -96,10 +95,9 @@ class IndexTest extends TestCase
     }
 
     /**
-     * @return void
-     * @throws NotFoundException
+     * @doesNotPerformAssertions
      */
-    public function testDispatchIsSuccessfulWhenEnabled(): void
+    public function testDispatchIsSuccessfulWhenEnabled()
     {
         $request = self::getMockBuilder(Http::class)
             ->disableOriginalConstructor()
