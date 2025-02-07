@@ -103,8 +103,8 @@ class XsdTest extends TestCase
                 '<integrations/>',
                 [
                     [
-                        "Element 'integrations': Missing child element(s). Expected is ( integration ).The xml was: \n" .
-                        "0:<?xml version=\"1.0\"?>\n1:<integrations/>\n2:\n",
+                        "Element 'integrations': Missing child element(s). Expected is ( integration )." .
+                        "The xml was: \n0:<?xml version=\"1.0\"?>\n1:<integrations/>\n2:\n",
                         false,
                     ],
                 ],
@@ -134,9 +134,9 @@ class XsdTest extends TestCase
                         "Element 'endpoint_url': This element is not expected. Expected is ( email ).The xml was: \n" .
                         "0:<?xml version=\"1.0\"?>\n1:<integrations>\n2:                    <integration " .
                         "name=\"TestIntegration1\">\n3:                        <endpoint_url>http://endpoint.url" .
-                        "</endpoint_url>\n4:                        <identity_link_url>http://www.example.com/identity" .
-                        "</identity_link_url>\n5:                    </integration>\n6:                " .
-                        "</integrations>\n7:\n",
+                        "</endpoint_url>\n4:                        <identity_link_url>" .
+                        "http://www.example.com/identity</identity_link_url>\n5:                    </integration>" .
+                        "\n6:                </integrations>\n7:\n",
                         false,
                     ],
                 ],
@@ -172,9 +172,9 @@ class XsdTest extends TestCase
                 </integrations>',
                 [
                     [
-                        "Element 'endpoint_url': [facet 'minLength'] The value has a length of '0'; this underruns the " .
-                        "allowed minimum length of '4'.The xml was: \n0:<?xml version=\"1.0\"?>\n1:<integrations>\n" .
-                        "2:                    <integration name=\"TestIntegration1\">\n3:                        " .
+                        "Element 'endpoint_url': [facet 'minLength'] The value has a length of '0'; this underruns " .
+                        "the allowed minimum length of '4'.The xml was: \n0:<?xml version=\"1.0\"?>\n1:<integrations>" .
+                        "\n2:                    <integration name=\"TestIntegration1\">\n3:                        " .
                         "<email>test-integration1@magento.com</email>\n4:                        <endpoint_url/>\n" .
                         "5:                    </integration>\n6:                </integrations>\n7:\n",
                         false,
@@ -191,12 +191,13 @@ class XsdTest extends TestCase
                 </integrations>',
                 [
                     [
-                        "Element 'identity_link_url': [facet 'minLength'] The value has a length of '0'; this underruns " .
-                        "the allowed minimum length of '4'.The xml was: \n0:<?xml version=\"1.0\"?>\n1:<integrations>\n" .
-                        "2:                    <integration name=\"TestIntegration1\">\n3:                        " .
-                        "<email>test-integration1@magento.com</email>\n4:                        <endpoint_url>" .
-                        "http://endpoint.url</endpoint_url>\n5:                        <identity_link_url/>\n" .
-                        "6:                    </integration>\n7:                </integrations>\n8:\n",
+                        "Element 'identity_link_url': [facet 'minLength'] The value has a length of '0'; this " .
+                        "underruns the allowed minimum length of '4'.The xml was: \n0:<?xml version=\"1.0\"?>\n1:" .
+                        "<integrations>\n2:                    <integration name=\"TestIntegration1\">" .
+                        "\n3:                        <email>test-integration1@magento.com</email>" .
+                        "\n4:                        <endpoint_url>http://endpoint.url</endpoint_url>" .
+                        "\n5:                        <identity_link_url/>\n6:                    </integration>" .
+                        "\n7:                </integrations>\n8:\n",
                         false,
                     ],
                 ],
@@ -287,12 +288,13 @@ class XsdTest extends TestCase
                 [
                     [
                         "Element 'integrations', attribute 'invalid': The attribute 'invalid' is not allowed.The xml " .
-                        "was: \n0:<?xml version=\"1.0\"?>\n1:<integrations invalid=\"invalid\">\n2:                    " .
-                        "<integration name=\"TestIntegration1\">\n3:                        <email>" .
-                        "test-integration1@magento.com</email>\n4:                        <endpoint_url>" .
-                        "http://endpoint.url</endpoint_url>\n5:                        <identity_link_url>" .
-                        "http://www.example.com/identity</identity_link_url>\n6:                    </integration>\n" .
-                        "7:                </integrations>\n8:\n",
+                        "was: \n0:<?xml version=\"1.0\"?>\n1:<integrations invalid=\"invalid\">" .
+                        "\n2:                    <integration name=\"TestIntegration1\">" .
+                        "\n3:                        <email>test-integration1@magento.com</email>" .
+                        "\n4:                        <endpoint_url>http://endpoint.url</endpoint_url>" .
+                        "\n5:                        <identity_link_url>http://www.example.com/identity" .
+                        "</identity_link_url>\n6:                    </integration>" .
+                        "\n7:                </integrations>\n8:\n",
                         false,
                     ],
                 ],
@@ -353,9 +355,9 @@ class XsdTest extends TestCase
                         "was: \n0:<?xml version=\"1.0\"?>\n1:<integrations>\n2:                    <integration " .
                         "name=\"TestIntegration1\">\n3:                        <email>test-integration1@magento.com" .
                         "</email>\n4:                        <endpoint_url invalid=\"invalid\">http://endpoint.url" .
-                        "</endpoint_url>\n5:                        <identity_link_url>http://www.example.com/identity" .
-                        "</identity_link_url>\n6:                    </integration>\n7:                " .
-                        "</integrations>\n8:\n",
+                        "</endpoint_url>\n5:                        <identity_link_url>" .
+                        "http://www.example.com/identity</identity_link_url>\n6:                    </integration>" .
+                        "\n7:                </integrations>\n8:\n",
                         false,
                     ],
                 ],
@@ -371,12 +373,12 @@ class XsdTest extends TestCase
                 [
                     [
                         "Element 'identity_link_url', attribute 'invalid': The attribute 'invalid' is not allowed." .
-                        "The xml was: \n0:<?xml version=\"1.0\"?>\n1:<integrations>\n2:                    <integration" .
-                        " name=\"TestIntegration1\">\n3:                        <email>test-integration1@magento.com" .
-                        "</email>\n4:                        <endpoint_url>http://endpoint.url</endpoint_url>\n" .
-                        "5:                        <identity_link_url invalid=\"invalid\">http://endpoint.url" .
-                        "</identity_link_url>\n6:                    </integration>\n" .
-                        "7:                </integrations>\n8:\n",
+                        "The xml was: \n0:<?xml version=\"1.0\"?>\n1:<integrations>\n2:                    " .
+                        "<integration name=\"TestIntegration1\">\n3:                        " .
+                        "<email>test-integration1@magento.com</email>\n4:                        " .
+                        "<endpoint_url>http://endpoint.url</endpoint_url>\n5:                        " .
+                        "<identity_link_url invalid=\"invalid\">http://endpoint.url</identity_link_url>" .
+                        "\n6:                    </integration>\n7:                </integrations>\n8:\n",
                         false,
                     ],
                 ],
@@ -413,7 +415,8 @@ class XsdTest extends TestCase
                 </integrations>',
                 [
                     [
-                        "/Element \'integration\', attribute \'name\': .*\'\' (is not a valid value|has a length of \'0\').*/",
+                        "/Element \'integration\', attribute \'name\': .*\'\'" .
+                        " (is not a valid value|has a length of \'0\').*/",
                         true,
                     ],
                 ],

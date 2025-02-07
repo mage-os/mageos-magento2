@@ -119,10 +119,10 @@ class XsdTest extends TestCase
             '<config><totals><total name="i1"><title>Title</title></total></totals></config>',
             [
                 [
-                    "Element 'total': Missing child element(s). Expected is one of ( source_field, title_source_field," .
-                    " font_size, display_zero, sort_order, model, amount_prefix ).The xml was: \n0:<?xml " .
-                    "version=\"1.0\"?>\n1:<config><totals><total name=\"i1\"><title>Title</title></total></totals>" .
-                    "</config>\n2:\n",
+                    "Element 'total': Missing child element(s). Expected is one of ( source_field, " .
+                    "title_source_field, font_size, display_zero, sort_order, model, amount_prefix ).The xml was: " .
+                    "\n0:<?xml version=\"1.0\"?>\n1:<config><totals><total name=\"i1\"><title>Title</title></total>" .
+                    "</totals></config>\n2:\n",
                     false,
                 ],
             ],
@@ -297,8 +297,8 @@ class XsdTest extends TestCase
                     [
                         "Element 'title_source_field': [facet 'pattern'] The value '' is not accepted by the " .
                         "pattern '[a-z0-9_]+'.The xml was: \n0:<?xml version=\"1.0\"?>\n1:<config><totals><total " .
-                        "name=\"i1\"><title>Title</title><source_field>foo</source_field><title_source_field/></total>" .
-                        "</totals></config>\n2:\n",
+                        "name=\"i1\"><title>Title</title><source_field>foo</source_field><title_source_field/>" .
+                        "</total></totals></config>\n2:\n",
                         false,
                     ],
                 ],
@@ -348,7 +348,8 @@ class XsdTest extends TestCase
                     [
                         "Element 'font_size': 'A' is not a valid value of the atomic type 'xs:positiveInteger'.The " .
                         "xml was: \n0:<?xml version=\"1.0\"?>\n1:<config><totals><total name=\"i1\"><title>Title" .
-                        "</title><source_field>foo</source_field><font_size>A</font_size></total></totals></config>\n2:\n",
+                        "</title><source_field>foo</source_field><font_size>A</font_size></total></totals></config>" .
+                        "\n2:\n",
                         false,
                     ]
                 ],
@@ -368,9 +369,10 @@ class XsdTest extends TestCase
                 '<display_zero>A</display_zero></total></totals></config>',
                 [
                     [
-                        "Element 'display_zero': 'A' is not a valid value of the atomic type 'xs:boolean'.The xml was: \n" .
-                        "0:<?xml version=\"1.0\"?>\n1:<config><totals><total name=\"i1\"><title>Title</title>" .
-                        "<source_field>foo</source_field><display_zero>A</display_zero></total></totals></config>\n2:\n",
+                        "Element 'display_zero': 'A' is not a valid value of the atomic type 'xs:boolean'." .
+                        "The xml was: \n0:<?xml version=\"1.0\"?>\n1:<config><totals><total name=\"i1\">" .
+                        "<title>Title</title><source_field>foo</source_field><display_zero>A</display_zero>" .
+                        "</total></totals></config>\n2:\n",
                         false,
                     ],
                 ],
@@ -390,8 +392,8 @@ class XsdTest extends TestCase
                 '<sort_order>A</sort_order></total></totals></config>',
                 [
                     [
-                        "Element 'sort_order': 'A' is not a valid value of the atomic type 'xs:nonNegativeInteger'.The " .
-                        "xml was: \n0:<?xml version=\"1.0\"?>\n1:<config><totals><total name=\"i1\"><title>Title" .
+                        "Element 'sort_order': 'A' is not a valid value of the atomic type 'xs:nonNegativeInteger'." .
+                        "The xml was: \n0:<?xml version=\"1.0\"?>\n1:<config><totals><total name=\"i1\"><title>Title" .
                         "</title><source_field>foo</source_field><sort_order>A</sort_order></total></totals>" .
                         "</config>\n2:\n",
                         false,
