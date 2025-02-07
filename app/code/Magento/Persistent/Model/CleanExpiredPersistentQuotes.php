@@ -61,7 +61,7 @@ class CleanExpiredPersistentQuotes
     private function processStoreQuotes(StoreInterface $store): void
     {
         $batchSize = 500;
-        $lastProcessedId = 0;
+        $lastProcessedId = $count = 0;
 
         while (true) {
             $quotesToProcess = $this->expiredPersistentQuotesCollection
@@ -72,6 +72,7 @@ class CleanExpiredPersistentQuotes
             }
 
             foreach ($quotesToProcess as $quote) {
+                $count++;
                 try {
                     $this->quoteRepository->delete($quote);
                     $lastProcessedId = (int)$quote->getId();
@@ -82,12 +83,14 @@ class CleanExpiredPersistentQuotes
                         (string)$e
                     ));
                 }
+                if ($count % $batchSize === 0) {
+                   $this->snapshot->clear($quote);
+                }
                 $quote->clearInstance();
                 unset($quote);
             }
 
             $quotesToProcess->clear();
-            $this->snapshot->clear();
             unset($quotesToProcess);
         }
     }

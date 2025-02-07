@@ -16,11 +16,15 @@ use Magento\Quote\Model\QuoteRepository;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Quote\Model\ResourceModel\Quote\Collection;
 use PHPUnit\Framework\MockObject\Exception;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\Website;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class CleanExpiredPersistentQuotesTest extends TestCase
 {
     /**
@@ -37,6 +41,11 @@ class CleanExpiredPersistentQuotesTest extends TestCase
      * @var QuoteRepository
      */
     private QuoteRepository $quoteRepositoryMock;
+
+    /**
+     * @var MockObject|Snapshot
+     */
+    private MockObject|Snapshot $snapshotMock;
 
     /**
      * @var LoggerInterface
