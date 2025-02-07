@@ -82,6 +82,7 @@
             <argument name="discountCode" value="{{CatPriceRule.coupon_code}}"/>
         </actionGroup>
         <!--  Assert order cannot be placed and error message will shown. -->
+        <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="selectDefaultPaymentMethod"/>
         <actionGroup ref="AssertStorefrontOrderIsNotPlacedActionGroup" stepKey="seeShippingMethodError">
             <argument name="error" value="The shipping method is missing. Select the shipping method and try again."/>
         </actionGroup>
