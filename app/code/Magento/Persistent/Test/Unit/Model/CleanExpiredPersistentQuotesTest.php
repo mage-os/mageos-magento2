@@ -103,7 +103,8 @@ class CleanExpiredPersistentQuotesTest extends TestCase
         $quoteCollectionMock->method('setCurPage')->willReturnSelf();
         $quoteCollectionMock->expects($this->exactly(2))
             ->method('count')
-            ->willReturnCallback(function () use ($quoteCollectionMock) {
+            ->willReturnCallback(function () {
+                $count = 999;
                 static $filterCallCount = 0;
                 $filterCallCount++;
 

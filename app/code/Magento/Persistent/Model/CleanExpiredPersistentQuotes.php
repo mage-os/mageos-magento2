@@ -84,7 +84,7 @@ class CleanExpiredPersistentQuotes
                     ));
                 }
                 if ($count % $batchSize === 0) {
-                   $this->snapshot->clear($quote);
+                    $this->snapshot->clear($quote);
                 }
                 $quote->clearInstance();
                 unset($quote);
