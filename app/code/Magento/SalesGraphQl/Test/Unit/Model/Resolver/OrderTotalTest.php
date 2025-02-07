@@ -79,6 +79,9 @@ class OrderTotalTest extends TestCase
         $this->extensionAttributesMock->expects($this->once())
             ->method('getAppliedTaxes')
             ->willReturn([]);
+        $this->extensionAttributesMock->expects($this->once())
+            ->method('getItemAppliedTaxes')
+            ->willReturn([]);
         $this->orderMock->method('getExtensionAttributes')->willReturn($this->extensionAttributesMock);
         $result = $this->orderTotal->resolve($fieldMock, $this->contextMock, $resolveInfoMock, $value, $args);
         $this->assertArrayHasKey('base_grand_total', $result);
