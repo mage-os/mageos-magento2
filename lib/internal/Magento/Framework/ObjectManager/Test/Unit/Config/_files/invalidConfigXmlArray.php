@@ -314,7 +314,7 @@ return [
         </config>',
         [
             [
-                "/Element \'virtualType\', attribute \'name\': .*\'\' (is not a valid value|is not accepted).*/",
+                "/Element \'virtualType\', attribute \'name\': .*\'\' is not (a valid value|accepted).*/",
                 true,
             ],
         ],
@@ -325,7 +325,7 @@ return [
         </config>',
         [
             [
-                "/Element \'virtualType\', attribute \'type\': .*\'\' (is not a valid value|is not accepted).*/",
+                "/Element \'virtualType\', attribute \'type\': .*\'\' is not (a valid value|accepted).*/",
                 true,
             ],
         ],

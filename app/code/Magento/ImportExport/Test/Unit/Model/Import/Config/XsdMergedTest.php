@@ -52,7 +52,7 @@ class XsdMergedTest extends TestCase
                         $this->assertMatchesRegularExpression($error, $actualError);
                         $matched = true;
                         break;
-                    } catch (AssertionFailedError $e) {
+                    } catch (AssertionFailedError) {
                     }
                 }
                 $this->assertTrue($matched, "None of the errors matched: $error");
