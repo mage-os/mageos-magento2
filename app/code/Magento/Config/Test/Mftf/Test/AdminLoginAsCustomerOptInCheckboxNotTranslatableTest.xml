@@ -26,18 +26,18 @@
         </after>
         <amOnPage url="{{AdminLoginAsCustomerConfigPage.url}}" stepKey="navigateToLoginAsCustomerConfigSection"/>
         <!--Look for fields "Title for Login as Customer opt-in checkbox" and "Login as Customer checkbox tooltip"-->
-        <waitForElementVisible selector="{{AdminStoresCustomerConfigurationSection.TitleForLoginAsCustomerOptInCheckbox}}" stepKey="TitleForLoginAsCustomerOptInCheckbox"/>
-        <waitForElementVisible selector="{{AdminStoresCustomerConfigurationSection.LoginAsCustomerOptInCheckboxTextField}}" stepKey="LoginAsCustomerOptInCheckboxTextField"/>
-        <waitForElementVisible selector="{{AdminStoresCustomerConfigurationSection.TitleForLoginAsCustomerCheckboxToolTip}}" stepKey="TitleForLoginAsCustomerCheckboxToolTip"/>
-        <waitForElementVisible selector="{{AdminStoresCustomerConfigurationSection.LoginAsCustomerCheckboxToolTipTextField}}" stepKey="LoginAsCustomerCheckboxToolTipTextField"/>
+        <waitForElementVisible selector="{{AdminStoresLoginAsCustomerSection.TitleForLoginAsCustomerOptInCheckbox}}" stepKey="TitleForLoginAsCustomerOptInCheckbox"/>
+        <waitForElementVisible selector="{{AdminStoresLoginAsCustomerSection.LoginAsCustomerOptInCheckboxTextField}}" stepKey="LoginAsCustomerOptInCheckboxTextField"/>
+        <waitForElementVisible selector="{{AdminStoresLoginAsCustomerSection.TitleForLoginAsCustomerCheckboxToolTip}}" stepKey="TitleForLoginAsCustomerCheckboxToolTip"/>
+        <waitForElementVisible selector="{{AdminStoresLoginAsCustomerSection.LoginAsCustomerCheckboxToolTipTextField}}" stepKey="LoginAsCustomerCheckboxToolTipTextField"/>
         <!--Switch to Default Store view-->
         <actionGroup ref="SwitchToTheNewStoreViewActionGroup" stepKey="selectDefaultStoreView">
             <argument name="storeViewName" value="Default Store View"/>
         </actionGroup>
         <!--Look for fields "Title for Login as Customer opt-in checkbox" and "Login as Customer checkbox tooltip"-->
-        <waitForElementVisible selector="{{AdminStoresCustomerConfigurationSection.TitleForLoginAsCustomerOptInCheckbox}}" stepKey="TitleForLoginAsCustomerOptInCheckboxInDefaultStoreView"/>
-        <waitForElementVisible selector="{{AdminStoresCustomerConfigurationSection.LoginAsCustomerOptInCheckboxTextField}}" stepKey="LoginAsCustomerOptInCheckboxTextFieldInDefaultStoreView"/>
-        <waitForElementVisible selector="{{AdminStoresCustomerConfigurationSection.TitleForLoginAsCustomerCheckboxToolTip}}" stepKey="TitleForLoginAsCustomerCheckboxToolTipInDefaultStoreView"/>
-        <waitForElementVisible selector="{{AdminStoresCustomerConfigurationSection.LoginAsCustomerCheckboxToolTipTextField}}" stepKey="LoginAsCustomerCheckboxToolTipTextFieldInDefaultStoreView"/>
+        <waitForElementVisible selector="{{AdminStoresLoginAsCustomerSection.TitleForLoginAsCustomerOptInCheckbox}}" stepKey="TitleForLoginAsCustomerOptInCheckboxInDefaultStoreView"/>
+        <waitForElementVisible selector="{{AdminStoresLoginAsCustomerSection.LoginAsCustomerOptInCheckboxTextField}}" stepKey="LoginAsCustomerOptInCheckboxTextFieldInDefaultStoreView"/>
+        <waitForElementVisible selector="{{AdminStoresLoginAsCustomerSection.TitleForLoginAsCustomerCheckboxToolTip}}" stepKey="TitleForLoginAsCustomerCheckboxToolTipInDefaultStoreView"/>
+        <waitForElementVisible selector="{{AdminStoresLoginAsCustomerSection.LoginAsCustomerCheckboxToolTipTextField}}" stepKey="LoginAsCustomerCheckboxToolTipTextFieldInDefaultStoreView"/>
     </test>
 </tests>
