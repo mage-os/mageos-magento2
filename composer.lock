@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "70a2b64cfd2aae73628f56ca984e0d23",
+    "content-hash": "5ac6e0d2b7df240f982b2c379a4ae370",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -9907,6 +9907,77 @@
             "time": "2024-12-06T10:07:25+00:00"
         },
         {
+            "name": "carlos-mg89/oauth",
+            "version": "0.8.17",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/carlos-mg89/PHPoAuthLib.git",
+                "reference": "7003d50bbb90383408abc1450d943657d087fc70"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/carlos-mg89/PHPoAuthLib/zipball/7003d50bbb90383408abc1450d943657d087fc70",
+                "reference": "7003d50bbb90383408abc1450d943657d087fc70",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2 || ^8.0"
+            },
+            "replace": {
+                "lusitanian/oauth": "~0.3"
+            },
+            "require-dev": {
+                "ext-curl": "*",
+                "ext-dom": "*",
+                "ext-json": "*",
+                "friendsofphp/php-cs-fixer": "^3.0",
+                "phpunit/phpunit": "^8.5",
+                "predis/predis": "0.8.*@dev",
+                "squizlabs/php_codesniffer": "^3.5",
+                "symfony/finder": "^5.1",
+                "symfony/http-foundation": "~2.1",
+                "symfony/var-dumper": "^5.1"
+            },
+            "suggest": {
+                "ext-openssl": "Allows for usage of secure connections with the stream-based HTTP client.",
+                "predis/predis": "Allows using the Redis storage backend.",
+                "symfony/http-foundation": "Allows using the Symfony Session storage backend."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "OAuth\\": "src/OAuth"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Carlos Martínez Gadea",
+                    "email": "carlosmartinezgadea@gmail.com"
+                }
+            ],
+            "description": "PHP 7.2 oAuth 1/2 Library",
+            "keywords": [
+                "Authentication",
+                "authorization",
+                "oauth",
+                "security"
+            ],
+            "support": {
+                "issues": "https://github.com/carlos-mg89/PHPoAuthLib/issues",
+                "source": "https://github.com/carlos-mg89/PHPoAuthLib/tree/0.8.17"
+            },
+            "time": "2025-02-08T12:14:07+00:00"
+        },
+        {
             "name": "clue/ndjson-react",
             "version": "v1.3.0",
             "source": {
@@ -11195,73 +11266,6 @@
                 "source": "https://github.com/magento/magento2-functional-testing-framework/tree/5.0.2"
             },
             "time": "2025-01-08T16:45:32+00:00"
-        },
-        {
-            "name": "magento/oauth",
-            "version": "1.0.0-beta106",
-            "dist": {
-                "type": "zip",
-                "url": "https://repo.magento.com/archives/magento/oauth/magento-oauth-1.0.0.0-beta106.zip",
-                "shasum": "a5717cfc6412a952d72df9e1148371b0772e47e6"
-            },
-            "require": {
-                "php": "^7.2 || ^8.0"
-            },
-            "replace": {
-                "lusitanian/oauth": "^0.8"
-            },
-            "require-dev": {
-                "ext-curl": "*",
-                "ext-dom": "*",
-                "ext-json": "*",
-                "friendsofphp/php-cs-fixer": "^3.0",
-                "phpunit/phpunit": "^8.5",
-                "predis/predis": "0.8.*@dev",
-                "squizlabs/php_codesniffer": "^3.5",
-                "symfony/finder": "^5.1",
-                "symfony/http-foundation": "~2.1",
-                "symfony/var-dumper": "^5.1"
-            },
-            "suggest": {
-                "ext-openssl": "Allows for usage of secure connections with the stream-based HTTP client.",
-                "predis/predis": "Allows using the Redis storage backend.",
-                "symfony/http-foundation": "Allows using the Symfony Session storage backend."
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "0.1-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "OAuth\\": "src/OAuth"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "David Desberg",
-                    "email": "david@daviddesberg.com"
-                },
-                {
-                    "name": "Pieter Hordijk",
-                    "email": "info@pieterhordijk.com"
-                },
-                {
-                    "name": "Elliot Chance",
-                    "email": "elliotchance@gmail.com"
-                }
-            ],
-            "description": "PHP 7.2 oAuth 1/2 Library",
-            "keywords": [
-                "Authentication",
-                "OAuth",
-                "authorization",
-                "security"
-            ]
         },
         {
             "name": "magento/php-compatibility-fork",
