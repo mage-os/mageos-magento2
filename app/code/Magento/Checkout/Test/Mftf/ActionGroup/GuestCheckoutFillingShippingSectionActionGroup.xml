@@ -15,7 +15,6 @@
         <arguments>
             <argument name="customerVar" defaultValue="CustomerEntityOne"/>
             <argument name="customerAddressVar" defaultValue="CustomerAddressSimple"/>
-            <!--First available shipping method will be selected if value is not passed for shippingMethod-->
             <argument name="shippingMethod" defaultValue="Flat Rate" type="string"/>
         </arguments>
 
