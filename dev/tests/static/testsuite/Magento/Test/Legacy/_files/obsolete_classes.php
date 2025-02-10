@@ -4333,9 +4333,6 @@ return [
         'Magento\Elasticsearch8\Block\Adminhtml\System\Config\TestConnection'
     ],
     [
-        'Magento\Elasticsearch8\Model\Adapter\FieldMapper\Product\FieldProvider\FieldName\Resolver\DefaultResolver'
-    ],
-    [
         'Magento\Elasticsearch8\Model\Client\Elasticsearch'
     ],
     ['Magento\Elasticsearch\Test\Unit\Model\DataProvider\Base\SuggestionsTest'],
