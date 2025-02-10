@@ -94,14 +94,17 @@
         <!-- Login to Paypal in-context and verify order total on paypal page-->
         <actionGroup ref="StorefrontLoginToPayPalPaymentAccountTwoStepActionGroup" stepKey="loginToPayPal"/>
         <actionGroup ref="StorefrontPaypalSwitchBackToMagentoFromCheckoutPageActionGroup" stepKey="confirmPaymentAndGoBackToMagento"/>
+        <waitForElementVisible selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="waitForOrderNumberToBeGrabbed"/>
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="grabOrderNumber"/>
+        <!-- open order view page -->
         <click selector="{{CheckoutSuccessMainSection.linkToOpenViewOrder}}" stepKey="clickOnLinkToViewOrder"/>
-        <grabFromCurrentUrl regex="~/order_id/(\d+)/~" stepKey="grabOrderNumber"/>
-        <!-- Navigate to Sales order page -->
-        <actionGroup ref="AdminOrdersPageOpenActionGroup" stepKey="navigateToSalesOrderPage"/>
-        <!-- Open created order -->
-        <actionGroup ref="AdminOpenOrderByEntityIdActionGroup" stepKey="filterOrdersGridById">
-            <argument name="entityId" value="{$grabOrderNumber}"/>
+        <!--Grab Order Id for later usage-->
+        <grabFromCurrentUrl regex="~/order_id/(\d+)/~" stepKey="getOrderId"/>
+        <!--Go to Admin Sales Order View Page-->
+        <actionGroup ref="AdminOpenOrderByEntityIdActionGroup" stepKey="navigateToSalesOrderViewPage">
+            <argument name="entityId" value="{$getOrderId}"/>
         </actionGroup>
+        <waitForPageLoad stepKey="waitForAdminSalesOrderViewPageLoad"/>
         <!--Verify Success Message-->
         <waitForText userInput="The order was placed using HKD" stepKey="successMessageIsBeingDisplayed"/>
     </test>
