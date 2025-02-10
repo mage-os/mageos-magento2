@@ -57,6 +57,9 @@ class CleanExpiredPersistentQuotesTest extends TestCase
      */
     private CleanExpiredPersistentQuotes $cleanExpiredPersistentQuotes;
 
+    /**
+     * @var int
+     */
     private int $batchSize;
 
     protected function setUp(): void
