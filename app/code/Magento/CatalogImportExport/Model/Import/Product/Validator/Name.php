@@ -17,7 +17,11 @@ class Name extends AbstractImportValidator implements RowValidatorInterface
     public function isValid($value)
     {
         $this->_clearMessages();
-        if (empty($value['name']) && $value['name'] !== $this->context->getEmptyAttributeValueConstant()) {
+        if (
+            isset($value['name']) &&
+            empty($value['name']) &&
+            $value['name'] !== $this->context->getEmptyAttributeValueConstant()
+        ) {
             $this->_addMessages(
                 [
                     sprintf(
