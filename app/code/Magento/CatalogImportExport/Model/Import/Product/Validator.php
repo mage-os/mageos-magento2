@@ -24,6 +24,7 @@ class Validator extends AbstractValidator implements RowValidatorInterface
      * Filter chain const
      */
     private const FILTER_CHAIN = "php://filter";
+
     /**
      * @var RowValidatorInterface[]|AbstractValidator[]
      */
