@@ -27,13 +27,15 @@ class CleanExpiredPersistentQuotes
      * @param QuoteRepository $quoteRepository
      * @param Snapshot $snapshot
      * @param LoggerInterface $logger
+     * @param int $batchSize
      */
     public function __construct(
         private readonly StoreManagerInterface $storeManager,
         private readonly ExpiredPersistentQuotesCollection $expiredPersistentQuotesCollection,
         private readonly QuoteRepository $quoteRepository,
-        private Snapshot $snapshot,
-        private readonly LoggerInterface $logger
+        private readonly Snapshot $snapshot,
+        private readonly LoggerInterface $logger,
+        private readonly int $batchSize
     ) {
     }
 
@@ -60,12 +62,11 @@ class CleanExpiredPersistentQuotes
      */
     private function processStoreQuotes(StoreInterface $store): void
     {
-        $batchSize = 500;
         $lastProcessedId = $count = 0;
 
         while (true) {
             $quotesToProcess = $this->expiredPersistentQuotesCollection
-                ->getExpiredPersistentQuotes($store, $lastProcessedId, $batchSize);
+                ->getExpiredPersistentQuotes($store, $lastProcessedId, $this->batchSize);
 
             if (!$quotesToProcess->count()) {
                 break;
@@ -83,7 +84,7 @@ class CleanExpiredPersistentQuotes
                         (string)$e
                     ));
                 }
-                if ($count % $batchSize === 0) {
+                if ($count % $this->batchSize === 0) {
                     $this->snapshot->clear($quote);
                 }
                 $quote->clearInstance();

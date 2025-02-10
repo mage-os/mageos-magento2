@@ -57,6 +57,8 @@ class CleanExpiredPersistentQuotesTest extends TestCase
      */
     private CleanExpiredPersistentQuotes $cleanExpiredPersistentQuotes;
 
+    private int $batchSize;
+
     protected function setUp(): void
     {
         $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
@@ -64,13 +66,15 @@ class CleanExpiredPersistentQuotesTest extends TestCase
         $this->quoteRepositoryMock = $this->createMock(QuoteRepository::class);
         $this->snapshotMock = $this->createMock(Snapshot::class);
         $this->loggerMock = $this->createMock(LoggerInterface::class);
+        $this->batchSize = 500;
 
         $this->cleanExpiredPersistentQuotes = new CleanExpiredPersistentQuotes(
             $this->storeManagerMock,
             $this->expiredPersistentQuotesCollectionMock,
             $this->quoteRepositoryMock,
             $this->snapshotMock,
-            $this->loggerMock
+            $this->loggerMock,
+            $this->batchSize
         );
     }
 
