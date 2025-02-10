@@ -94,7 +94,7 @@
         <!-- Login to Paypal in-context and verify order total on paypal page-->
         <actionGroup ref="StorefrontLoginToPayPalPaymentAccountTwoStepActionGroup" stepKey="loginToPayPal"/>
         <actionGroup ref="StorefrontPaypalSwitchBackToMagentoFromCheckoutPageActionGroup" stepKey="confirmPaymentAndGoBackToMagento"/>
-        <click selector="{{CustomerOrderCancellationSection.linkToOpenViewOrder}}" stepKey="clickOnLinkToViewOrder"/>
+        <click selector="{{CheckoutSuccessMainSection.linkToOpenViewOrder}}" stepKey="clickOnLinkToViewOrder"/>
         <grabFromCurrentUrl regex="~/order_id/(\d+)/~" stepKey="grabOrderNumber"/>
         <!-- Navigate to Sales order page -->
         <actionGroup ref="AdminOrdersPageOpenActionGroup" stepKey="navigateToSalesOrderPage"/>
