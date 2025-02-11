@@ -96,13 +96,10 @@
         <actionGroup ref="StorefrontPaypalSwitchBackToMagentoFromCheckoutPageActionGroup" stepKey="confirmPaymentAndGoBackToMagento"/>
         <waitForElementVisible selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="waitForOrderNumberToBeGrabbed"/>
         <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="grabOrderNumber"/>
-        <!-- open order view page -->
-        <click selector="{{CheckoutSuccessMainSection.linkToOpenViewOrder}}" stepKey="clickOnLinkToViewOrder"/>
-        <!--Grab Order Id for later usage-->
-        <grabFromCurrentUrl regex="~/order_id/(\d+)/~" stepKey="getOrderId"/>
-        <!--Go to Admin Sales Order View Page-->
+        <grabFromCurrentUrl regex="~/order_id/(\d+)/~" stepKey="orderId"/>
+        <actionGroup ref="AdminOrdersPageOpenActionGroup" stepKey="goToOrders"/>
         <actionGroup ref="AdminOpenOrderByEntityIdActionGroup" stepKey="navigateToSalesOrderViewPage">
-            <argument name="entityId" value="{$getOrderId}"/>
+            <argument name="entityId" value="{$orderId}"/>
         </actionGroup>
         <waitForPageLoad stepKey="waitForAdminSalesOrderViewPageLoad"/>
         <!--Verify Success Message-->
