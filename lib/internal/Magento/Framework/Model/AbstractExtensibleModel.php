@@ -297,7 +297,7 @@ abstract class AbstractExtensibleModel extends AbstractModel implements
                 ? $this->_data[self::CUSTOM_ATTRIBUTES]
                 : [];
             $this->convertCustomAttributeValues($customAttributes);
-            $data = $customAttributes ? array_merge($customAttributes, $this->_data) : array_merge($this->_data, $customAttributes);
+            $data = array_merge($this->_data, $customAttributes);
             unset($data[self::CUSTOM_ATTRIBUTES]);
         } else {
             $data = parent::getData($key, $index);
