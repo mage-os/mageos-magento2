@@ -49,15 +49,19 @@ class PayflowSilentPost
     public function beforeExecute(Subject $subject): void
     {
         $data = $this->request->getParams();
-        $orderId = (string)$data['INVNUM'];
+        if (!array_key_exists('INVNUM', $data)
+            || !array_key_exists('RESPMSG', $data)
+            || !array_key_exists('RESULT', $data)) {
+            return;
+        }
 
+        $orderId = (string)$data['INVNUM'];
         if (!$orderId) {
             return;
         }
 
         $order = $this->orderFactory->create()->loadByIncrementId($orderId);
         $payment = $order->getPayment();
-
         if (in_array($order->getState(), $this->allowedOrderStates) || $payment->getLastTransId()
             || trim((string)$data['RESPMSG']) !== 'Approved' || (int)$data['RESULT'] !== 0) {
             return;
