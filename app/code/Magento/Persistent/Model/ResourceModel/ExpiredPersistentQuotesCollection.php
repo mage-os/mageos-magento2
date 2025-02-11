@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Persistent\Model\ResourceModel;
 
+use Magento\Framework\DB\Select;
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 use Magento\Persistent\Helper\Data;
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -53,27 +54,50 @@ class ExpiredPersistentQuotesCollection
         /** @var $quotes Collection */
         $quotes = $this->quoteCollectionFactory->create();
 
-        $select = $quotes->getSelect();
-        $select->joinLeft(
-            ['cl1' => $quotes->getTable('customer_log')],
-            'cl1.customer_id = main_table.customer_id
-            AND cl1.last_login_at < cl1.last_logout_at
-            AND cl1.last_logout_at IS NOT NULL',
-            []
-        )->joinLeft(
-            ['cl2' => $quotes->getTable('customer_log')],
-            'cl2.customer_id = main_table.customer_id
-            AND cl2.last_login_at < "' . $lastLoginCondition . '"
-            AND (cl2.last_logout_at IS NULL OR cl2.last_login_at > cl2.last_logout_at)',
-            []
-        );
+        $additionalQuotes = clone $quotes;
+        $additionalQuotes->addFieldToFilter('main_table.store_id', (int)$store->getId());
+        $additionalQuotes->addFieldToFilter('main_table.updated_at', ['lt' => $lastLoginCondition]);
+        $additionalQuotes->addFieldToFilter('main_table.is_persistent', 1);
+        $additionalQuotes->addFieldToFilter('main_table.entity_id', ['gt' => $lastId]);
+        $additionalQuotes->setOrder('entity_id', Collection::SORT_ORDER_ASC);
+        $additionalQuotes->setPageSize($batchSize);
 
-        $quotes->addFieldToFilter('main_table.store_id', $store->getId());
-        $quotes->addFieldToFilter('main_table.updated_at', ['lt' => $lastLoginCondition]);
-        $quotes->addFieldToFilter('main_table.is_persistent', 1);
-        $quotes->addFieldToFilter('main_table.entity_id', ['gt' => $lastId]);
-        $quotes->setOrder('entity_id', Collection::SORT_ORDER_ASC);
-        $quotes->setPageSize($batchSize);
+        $select1 = clone $additionalQuotes->getSelect();
+        $select2 = clone $additionalQuotes->getSelect();
+
+        //case 1 - customer logged in and logged out
+        $select1->reset(Select::COLUMNS)
+            ->columns('main_table.entity_id')
+            ->joinLeft(
+                ['cl1' => $additionalQuotes->getTable('customer_log')],
+                'cl1.customer_id = main_table.customer_id',
+                []
+            )->where('cl1.last_login_at < cl1.last_logout_at
+            AND cl1.last_logout_at IS NOT NULL');
+
+        //case 2 - customer logged in and not logged out but session expired
+        //case 3 - customer logged in, logged out, logged in and then session expired
+        $select2->reset(Select::COLUMNS)
+            ->columns('main_table.entity_id')
+            ->joinLeft(
+                ['cl2' => $additionalQuotes->getTable('customer_log')],
+                'cl2.customer_id = main_table.customer_id',
+                []
+            )->where('cl2.last_login_at < "' . $lastLoginCondition . '"
+        AND (cl2.last_logout_at IS NULL OR cl2.last_login_at > cl2.last_logout_at)');
+
+        $selectQuoteIds = $additionalQuotes
+            ->getConnection()
+            ->select()
+            ->union(
+                [
+                    $select1,
+                    $select2
+                ],
+                Select::SQL_UNION_ALL
+            );
+
+        $quotes->getSelect()->where('main_table.entity_id IN (' . $selectQuoteIds . ')');
 
         return $quotes;
     }
