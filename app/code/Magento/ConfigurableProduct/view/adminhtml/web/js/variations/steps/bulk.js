@@ -37,9 +37,7 @@ define([
                 error: null
             },
             options: {
-                isResizeEnabled: false,
-                maxWidth: 1920,
-                maxHeight: 1080
+                isResizeEnabled: ''
             }
         },
 
@@ -79,9 +77,9 @@ define([
 
             // Retrieve configuration passed from .phtml
             if (config) {
-                this.options.isResizeEnabled = config.isResizeEnabled || false;
-                this.options.maxWidth = config.maxWidth || 1920;
-                this.options.maxHeight = config.maxHeight || 1080;
+                this.options.isResizeEnabled = config.isResizeEnabled;
+                this.options.maxWidth = config.maxWidth;
+                this.options.maxHeight = config.maxHeight;
             }
 
             this.variationsComponent(function (variationsComponent) {
@@ -462,9 +460,10 @@ define([
 
                     // initialize Uppy upload
                     uppy.use(Uppy.Dashboard, options);
-
                     // Use 'self.options' to access component options
-                    if (self.options?.isResizeEnabled) {
+                    self.options = self.options || {};
+
+                    if (self.options.isResizeEnabled ?? false) {
                         uppy.use(Uppy.Compressor, {
                             maxWidth: self.options.maxWidth,
                             maxHeight: self.options.maxHeight,
