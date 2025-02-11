@@ -4329,12 +4329,6 @@ return [
         'Magento\Elasticsearch\Test\Unit\SearchAdapter\Query\Builder\MatchTest',
         'Magento\Elasticsearch\Test\Unit\SearchAdapter\Query\Builder\MatchQueryTest'
     ],
-    [
-        'Magento\Elasticsearch8\Block\Adminhtml\System\Config\TestConnection'
-    ],
-    [
-        'Magento\Elasticsearch8\Model\Client\Elasticsearch'
-    ],
     ['Magento\Elasticsearch\Test\Unit\Model\DataProvider\Base\SuggestionsTest'],
     ['Zend_Measure_Length', 'Magento\Framework\Measure\Length'],
     ['Zend_Measure_Weight', 'Magento\Framework\Measure\Weight'],
