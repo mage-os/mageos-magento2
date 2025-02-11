@@ -101,7 +101,6 @@
         <actionGroup ref="AdminOpenOrderByEntityIdActionGroup" stepKey="navigateToSalesOrderViewPage">
             <argument name="entityId" value="{$orderId}"/>
         </actionGroup>
-        <waitForPageLoad stepKey="waitForAdminSalesOrderViewPageLoad"/>
         <!--Verify Success Message-->
         <waitForText userInput="The order was placed using HKD" stepKey="successMessageIsBeingDisplayed"/>
     </test>
