@@ -97,8 +97,8 @@
         <waitForElementVisible selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="waitForOrderNumberToBeGrabbed"/>
         <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="grabOrderNumber"/>
         <grabFromCurrentUrl regex="~/order_id/(\d+)/~" stepKey="orderId"/>
-        <actionGroup ref="AdminOrdersPageOpenActionGroup" stepKey="goToOrders"/>
-        <actionGroup ref="AdminOpenOrderByEntityIdActionGroup" stepKey="navigateToSalesOrderViewPage">
+        <actionGroup ref="AdminOrdersPageOpenActionGroup" stepKey="navigateToSalesOrderPage"/>
+        <actionGroup ref="AdminOpenOrderByEntityIdActionGroup" stepKey="filterOrdersGridById">
             <argument name="entityId" value="{$orderId}"/>
         </actionGroup>
         <!--Verify Success Message-->
