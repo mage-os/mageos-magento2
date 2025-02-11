@@ -96,10 +96,10 @@
         <actionGroup ref="StorefrontPaypalSwitchBackToMagentoFromCheckoutPageActionGroup" stepKey="confirmPaymentAndGoBackToMagento"/>
         <waitForElementVisible selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="waitForOrderNumberToBeGrabbed"/>
         <actionGroup ref="StorefrontClickOrderLinkFromCheckoutSuccessPageActionGroup" stepKey="openOrderViewPage"/>
-        <grabFromCurrentUrl regex="~/order_id/(\d+)/~" stepKey="grabOrderId"/>
+        <grabFromCurrentUrl regex="~/order_id/(\d+)/~" stepKey="grabOrderNumber"/>
         <!--Step11. Go to admin Order page for newly created order-->
-        <actionGroup ref="AdminOpenOrderByEntityIdActionGroup" stepKey="filterOrdersGridById">
-            <argument name="entityId" value="{$grabOrderId}"/>
+        <actionGroup ref="AdminOpenOrderByEntityIdActionGroup" stepKey="navigateToSalesOrderPage">
+            <argument name="entityId" value="{$grabOrderNumber}"/>
         </actionGroup>
         <!--Verify Success Message-->
         <waitForText userInput="The order was placed using HKD" stepKey="successMessageIsBeingDisplayed"/>
