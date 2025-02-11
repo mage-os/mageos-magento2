@@ -32,10 +32,10 @@ class PayflowSilentPost
      * @param LoggerInterface $logger
      */
     public function __construct(
-        Private readonly RequestInterface $request,
-        Private readonly OrderFactory $orderFactory,
-        Private readonly PayflowlinkFactory $payflowlinkFactory,
-        Private readonly LoggerInterface $logger,
+        private readonly RequestInterface $request,
+        private readonly OrderFactory $orderFactory,
+        private readonly PayflowlinkFactory $payflowlinkFactory,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
