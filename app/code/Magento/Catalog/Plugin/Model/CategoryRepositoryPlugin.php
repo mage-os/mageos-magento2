@@ -32,10 +32,11 @@ class CategoryRepositoryPlugin
     public function beforeSave(CategoryRepository $subject, CategoryInterface $category): array
     {
         foreach (self::ATTRIBUTES_TO_PROCESS as $attributeKey) {
-            if ($attribute = $category->getCustomAttribute($attributeKey)) {
-                $attribute->setValue($category->formatUrlKey(
-                    $category->getData($attributeKey)
-                ));
+            $attribute = $category->getCustomAttribute($attributeKey);
+            if ($attribute !== null) {
+                $value = $category->getData($attributeKey);
+                $formattedValue = $category->formatUrlKey($value);
+                $attribute->setValue($formattedValue);
             }
         }
         return [$category];
