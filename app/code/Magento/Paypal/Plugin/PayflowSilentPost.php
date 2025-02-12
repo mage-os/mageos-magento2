@@ -45,6 +45,7 @@ class PayflowSilentPost
      * @param Subject $subject
      * @return void
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function beforeExecute(Subject $subject): void
     {
