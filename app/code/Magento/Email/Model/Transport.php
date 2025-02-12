@@ -123,7 +123,7 @@ class Transport implements TransportInterface
     public function __construct(
         EmailMessageInterface $message,
         ScopeConfigInterface $scopeConfig,
-        LoggerInterface $logger = null
+        ?LoggerInterface $logger = null
     ) {
         $this->isSetReturnPath = (int) $scopeConfig->getValue(
             self::XML_PATH_SENDING_SET_RETURN_PATH,

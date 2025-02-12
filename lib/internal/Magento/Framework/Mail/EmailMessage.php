@@ -309,7 +309,7 @@ class EmailMessage extends Message implements EmailMessageInterface
      * @param array $addressList
      * @return array
      */
-    private function convertAddressListToAddressArray($addressList): array
+    private function convertAddressListToAddressArray(array $addressList): array
     {
         return array_map(function ($address) {
             return $this->addressFactory->create([
