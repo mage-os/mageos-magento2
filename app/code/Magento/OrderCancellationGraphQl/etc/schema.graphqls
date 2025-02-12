@@ -51,6 +51,6 @@ enum CancelOrderErrorCode {
     INVALID_ORDER_STATUS
 }
 
-enum OrderActionType @doc(description: "The list of available order actions.") {
+enum OrderActionType {
     CANCEL
 }
