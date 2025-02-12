@@ -18,4 +18,13 @@
             </argument>
         </arguments>
     </type>
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="encryption_update_key_command" xsi:type="object">Magento\EncryptionKey\Console\Command\UpdateEncryptionKeyCommand</item>
+                <item name="encryption_data_re-encrypt_command" xsi:type="object">Magento\EncryptionKey\Console\Command\ReEncryptDataCommand</item>
+                <item name="encryption_data_list-re-encryptors_command" xsi:type="object">Magento\EncryptionKey\Console\Command\ListReEncryptorsCommand</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
