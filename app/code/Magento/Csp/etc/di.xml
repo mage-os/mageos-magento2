@@ -141,6 +141,7 @@
                 <item name="sales_order_create_load_block" xsi:type="string">sales_order_create_loadBlock</item>
                 <item name="checkout_index_index" xsi:type="string">checkout_index_index</item>
                 <item name="checkout_onepage_success" xsi:type="string">checkout_onepage_success</item>
+                <item name="multishipping_checkout_billing" xsi:type="string">multishipping_checkout_billing</item>
             </argument>
         </arguments>
     </type>
