@@ -1,23 +1,27 @@
 {
-    "name": "magento/module-review-analytics",
-    "description": "N/A",
-    "require": {
-        "php": "~8.1.0||~8.2.0||~8.3.0",
-        "magento/framework": "*",
-        "magento/module-review": "*",
-        "magento/module-analytics": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-review-analytics",
+  "description": "N/A",
+  "require": {
+    "php": "~8.1.0||~8.2.0||~8.3.0",
+    "mage-os/framework": "1.0.6",
+    "mage-os/module-review": "1.0.6",
+    "mage-os/module-analytics": "1.0.6"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\ReviewAnalytics\\": ""
-        }
+    "psr-4": {
+      "Magento\\ReviewAnalytics\\": ""
     }
+  },
+  "version": "1.0.6",
+  "replace": {
+    "magento/module-review-analytics": "100.4.4"
+  }
 }

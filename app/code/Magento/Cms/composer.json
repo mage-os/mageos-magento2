@@ -1,36 +1,40 @@
 {
-    "name": "magento/module-cms",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.1.0||~8.2.0||~8.3.0",
-        "magento/framework": "*",
-        "magento/module-backend": "*",
-        "magento/module-catalog": "*",
-        "magento/module-email": "*",
-        "magento/module-media-storage": "*",
-        "magento/module-store": "*",
-        "magento/module-theme": "*",
-        "magento/module-ui": "*",
-        "magento/module-variable": "*",
-        "magento/module-widget": "*"
-    },
-    "suggest": {
-        "magento/module-cms-sample-data": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-cms",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.1.0||~8.2.0||~8.3.0",
+    "mage-os/framework": "1.0.6",
+    "mage-os/module-backend": "1.0.6",
+    "mage-os/module-catalog": "1.0.6",
+    "mage-os/module-email": "1.0.6",
+    "mage-os/module-media-storage": "1.0.6",
+    "mage-os/module-store": "1.0.6",
+    "mage-os/module-theme": "1.0.6",
+    "mage-os/module-ui": "1.0.6",
+    "mage-os/module-variable": "1.0.6",
+    "mage-os/module-widget": "1.0.6"
+  },
+  "suggest": {
+    "mage-os/module-cms-sample-data": "Sample Data version: 1.0.6"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\Cms\\": ""
-        }
+    "psr-4": {
+      "Magento\\Cms\\": ""
     }
+  },
+  "version": "1.0.6",
+  "replace": {
+    "magento/module-cms": "104.0.7-p4"
+  }
 }

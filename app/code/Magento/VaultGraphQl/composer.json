@@ -1,23 +1,27 @@
 {
-    "name": "magento/module-vault-graph-ql",
-    "description": "N/A",
-    "type": "magento2-module",
-    "require": {
-        "php": "~8.1.0||~8.2.0||~8.3.0",
-        "magento/framework": "*",
-        "magento/module-vault": "*",
-        "magento/module-graph-ql": "*"
-    },
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-vault-graph-ql",
+  "description": "N/A",
+  "type": "magento2-module",
+  "require": {
+    "php": "~8.1.0||~8.2.0||~8.3.0",
+    "mage-os/framework": "1.0.6",
+    "mage-os/module-vault": "1.0.6",
+    "mage-os/module-graph-ql": "1.0.6"
+  },
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\VaultGraphQl\\": ""
-        }
+    "psr-4": {
+      "Magento\\VaultGraphQl\\": ""
     }
+  },
+  "version": "1.0.6",
+  "replace": {
+    "magento/module-vault-graph-ql": "100.4.3"
+  }
 }

@@ -1,29 +1,33 @@
 {
-    "name": "magento/module-search",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.1.0||~8.2.0||~8.3.0",
-        "magento/framework": "*",
-        "magento/module-backend": "*",
-        "magento/module-catalog-search": "*",
-        "magento/module-reports": "*",
-        "magento/module-store": "*",
-        "magento/module-ui": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-search",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.1.0||~8.2.0||~8.3.0",
+    "mage-os/framework": "1.0.6",
+    "mage-os/module-backend": "1.0.6",
+    "mage-os/module-catalog-search": "1.0.6",
+    "mage-os/module-reports": "1.0.6",
+    "mage-os/module-store": "1.0.6",
+    "mage-os/module-ui": "1.0.6"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\Search\\": ""
-        }
+    "psr-4": {
+      "Magento\\Search\\": ""
     }
+  },
+  "version": "1.0.6",
+  "replace": {
+    "magento/module-search": "101.1.7-p3"
+  }
 }

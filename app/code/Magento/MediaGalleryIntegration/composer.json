@@ -1,32 +1,36 @@
 {
-    "name": "magento/module-media-gallery-integration",
-    "description": "Magento module responsible for integration of enhanced media gallery",
-    "require": {
-        "php": "~8.1.0||~8.2.0||~8.3.0",
-        "magento/framework": "*",
-        "magento/module-media-gallery-ui-api": "*",
-        "magento/module-media-gallery-api": "*",
-        "magento/module-media-gallery-synchronization-api": "*",
-        "magento/module-ui": "*"
-    },
-    "require-dev": {
-        "magento/module-cms": "*"
-    },
-    "suggest": {
-        "magento/module-catalog": "*",
-        "magento/module-cms": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-media-gallery-integration",
+  "description": "Magento module responsible for integration of enhanced media gallery",
+  "require": {
+    "php": "~8.1.0||~8.2.0||~8.3.0",
+    "mage-os/framework": "1.0.6",
+    "mage-os/module-media-gallery-ui-api": "1.0.6",
+    "mage-os/module-media-gallery-api": "1.0.6",
+    "mage-os/module-media-gallery-synchronization-api": "1.0.6",
+    "mage-os/module-ui": "1.0.6"
+  },
+  "require-dev": {
+    "mage-os/module-cms": "1.0.6"
+  },
+  "suggest": {
+    "mage-os/module-catalog": "1.0.6",
+    "mage-os/module-cms": "1.0.6"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\MediaGalleryIntegration\\": ""
-        }
+    "psr-4": {
+      "Magento\\MediaGalleryIntegration\\": ""
     }
+  },
+  "version": "1.0.6",
+  "replace": {
+    "magento/module-media-gallery-integration": "100.4.6"
+  }
 }

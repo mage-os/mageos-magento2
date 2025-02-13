@@ -1,32 +1,36 @@
 {
-    "name": "magento/module-translation",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.1.0||~8.2.0||~8.3.0",
-        "magento/framework": "*",
-        "magento/module-backend": "*",
-        "magento/module-developer": "*",
-        "magento/module-store": "*",
-        "magento/module-theme": "*",
-        "magento/module-deploy": "*"
-    },
-    "suggest": {
-        "magento/module-deploy": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-translation",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.1.0||~8.2.0||~8.3.0",
+    "mage-os/framework": "1.0.6",
+    "mage-os/module-backend": "1.0.6",
+    "mage-os/module-developer": "1.0.6",
+    "mage-os/module-store": "1.0.6",
+    "mage-os/module-theme": "1.0.6",
+    "mage-os/module-deploy": "1.0.6"
+  },
+  "suggest": {
+    "mage-os/module-deploy": "1.0.6"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\Translation\\": ""
-        }
+    "psr-4": {
+      "Magento\\Translation\\": ""
     }
+  },
+  "version": "1.0.6",
+  "replace": {
+    "magento/module-translation": "100.4.7"
+  }
 }

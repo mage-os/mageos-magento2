@@ -1,28 +1,32 @@
 {
-    "name": "magento/module-media-gallery-renditions",
-    "description": "Magento module that implements height and width fields for for media gallery items.",
-    "require": {
-        "php": "~8.1.0||~8.2.0||~8.3.0",
-        "magento/framework": "*",
-        "magento/module-media-gallery-renditions-api": "*",
-        "magento/module-media-gallery-api": "*",
-        "magento/framework-message-queue": "*",
-        "magento/module-cms": "*"
-    },
-    "suggest": {
-        "magento/module-media-content-api": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-media-gallery-renditions",
+  "description": "Magento module that implements height and width fields for for media gallery items.",
+  "require": {
+    "php": "~8.1.0||~8.2.0||~8.3.0",
+    "mage-os/framework": "1.0.6",
+    "mage-os/module-media-gallery-renditions-api": "1.0.6",
+    "mage-os/module-media-gallery-api": "1.0.6",
+    "mage-os/framework-message-queue": "1.0.6",
+    "mage-os/module-cms": "1.0.6"
+  },
+  "suggest": {
+    "mage-os/module-media-content-api": "1.0.6"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\MediaGalleryRenditions\\": ""
-        }
+    "psr-4": {
+      "Magento\\MediaGalleryRenditions\\": ""
     }
+  },
+  "version": "1.0.6",
+  "replace": {
+    "magento/module-media-gallery-renditions": "100.4.5"
+  }
 }

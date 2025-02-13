@@ -1,27 +1,31 @@
 {
-    "name": "magento/module-csp",
-    "description": "CSP module enables Content Security Policies for Magento",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.1.0||~8.2.0||~8.3.0",
-        "magento/framework": "*",
-        "magento/module-store": "*",
-        "magento/module-require-js": "*",
-        "magento/module-deploy": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-csp",
+  "description": "CSP module enables Content Security Policies for Magento",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.1.0||~8.2.0||~8.3.0",
+    "mage-os/framework": "1.0.6",
+    "mage-os/module-store": "1.0.6",
+    "mage-os/module-require-js": "1.0.6",
+    "mage-os/module-deploy": "1.0.6"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\Csp\\": ""
-        }
+    "psr-4": {
+      "Magento\\Csp\\": ""
     }
+  },
+  "version": "1.0.6",
+  "replace": {
+    "magento/module-csp": "100.4.6"
+  }
 }

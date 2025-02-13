@@ -1,24 +1,28 @@
 {
-    "name": "magento/module-media-gallery-synchronization",
-    "description": "Magento module provides implementation of the media gallery data synchronization.",
-    "require": {
-        "php": "~8.1.0||~8.2.0||~8.3.0",
-        "magento/framework": "*",
-        "magento/module-media-gallery-api": "*",
-        "magento/module-media-gallery-synchronization-api": "*",
-        "magento/framework-message-queue": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-media-gallery-synchronization",
+  "description": "Magento module provides implementation of the media gallery data synchronization.",
+  "require": {
+    "php": "~8.1.0||~8.2.0||~8.3.0",
+    "mage-os/framework": "1.0.6",
+    "mage-os/module-media-gallery-api": "1.0.6",
+    "mage-os/module-media-gallery-synchronization-api": "1.0.6",
+    "mage-os/framework-message-queue": "1.0.6"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\MediaGallerySynchronization\\": ""
-        }
+    "psr-4": {
+      "Magento\\MediaGallerySynchronization\\": ""
     }
+  },
+  "version": "1.0.6",
+  "replace": {
+    "magento/module-media-gallery-synchronization": "100.4.6"
+  }
 }

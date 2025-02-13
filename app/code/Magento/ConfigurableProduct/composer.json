@@ -1,45 +1,49 @@
 {
-    "name": "magento/module-configurable-product",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.1.0||~8.2.0||~8.3.0",
-        "magento/framework": "*",
-        "magento/module-backend": "*",
-        "magento/module-catalog": "*",
-        "magento/module-catalog-inventory": "*",
-        "magento/module-checkout": "*",
-        "magento/module-customer": "*",
-        "magento/module-eav": "*",
-        "magento/module-media-storage": "*",
-        "magento/module-quote": "*",
-        "magento/module-store": "*",
-        "magento/module-ui": "*"
-    },
-    "suggest": {
-        "magento/module-msrp": "*",
-        "magento/module-webapi": "*",
-        "magento/module-sales": "*",
-        "magento/module-sales-rule": "*",
-        "magento/module-product-video": "*",
-        "magento/module-configurable-sample-data": "*",
-        "magento/module-product-links-sample-data": "*",
-        "magento/module-tax": "*",
-        "magento/module-catalog-widget": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-configurable-product",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.1.0||~8.2.0||~8.3.0",
+    "mage-os/framework": "1.0.6",
+    "mage-os/module-backend": "1.0.6",
+    "mage-os/module-catalog": "1.0.6",
+    "mage-os/module-catalog-inventory": "1.0.6",
+    "mage-os/module-checkout": "1.0.6",
+    "mage-os/module-customer": "1.0.6",
+    "mage-os/module-eav": "1.0.6",
+    "mage-os/module-media-storage": "1.0.6",
+    "mage-os/module-quote": "1.0.6",
+    "mage-os/module-store": "1.0.6",
+    "mage-os/module-ui": "1.0.6"
+  },
+  "suggest": {
+    "mage-os/module-msrp": "1.0.6",
+    "mage-os/module-webapi": "1.0.6",
+    "mage-os/module-sales": "1.0.6",
+    "mage-os/module-sales-rule": "1.0.6",
+    "mage-os/module-product-video": "1.0.6",
+    "mage-os/module-configurable-sample-data": "Sample Data version: 1.0.6",
+    "mage-os/module-product-links-sample-data": "Sample Data version: 1.0.6",
+    "mage-os/module-tax": "1.0.6",
+    "mage-os/module-catalog-widget": "1.0.6"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\ConfigurableProduct\\": ""
-        }
+    "psr-4": {
+      "Magento\\ConfigurableProduct\\": ""
     }
+  },
+  "version": "1.0.6",
+  "replace": {
+    "magento/module-configurable-product": "100.4.7"
+  }
 }

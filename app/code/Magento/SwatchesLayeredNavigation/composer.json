@@ -1,25 +1,29 @@
 {
-    "name": "magento/module-swatches-layered-navigation",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.1.0||~8.2.0||~8.3.0",
-        "magento/framework": "*",
-        "magento/magento-composer-installer": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-swatches-layered-navigation",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.1.0||~8.2.0||~8.3.0",
+    "mage-os/framework": "1.0.6",
+    "mage-os/magento-composer-installer": "1.0.6"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\SwatchesLayeredNavigation\\": ""
-        }
+    "psr-4": {
+      "Magento\\SwatchesLayeredNavigation\\": ""
     }
+  },
+  "version": "1.0.6",
+  "replace": {
+    "magento/module-swatches-layered-navigation": "100.4.3"
+  }
 }
