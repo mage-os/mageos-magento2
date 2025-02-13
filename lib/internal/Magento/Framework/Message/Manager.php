@@ -79,7 +79,7 @@ class Manager implements ManagerInterface
         Event\ManagerInterface $eventManager,
         LoggerInterface $logger,
         $defaultGroup = self::DEFAULT_GROUP,
-        ExceptionMessageFactoryInterface $exceptionMessageFactory = null
+        ?ExceptionMessageFactoryInterface $exceptionMessageFactory = null
     ) {
         $this->session = $session;
         $this->messageFactory = $messageFactory;
@@ -88,7 +88,7 @@ class Manager implements ManagerInterface
         $this->logger = $logger;
         $this->defaultGroup = $defaultGroup;
         $this->exceptionMessageFactory = $exceptionMessageFactory ?: ObjectManager::getInstance()
-            ->get(ExceptionMessageLookupFactory::class);
+            ->get(ExceptionMessageLookupFactory::class); // phpcs:ignore
     }
 
     /**
