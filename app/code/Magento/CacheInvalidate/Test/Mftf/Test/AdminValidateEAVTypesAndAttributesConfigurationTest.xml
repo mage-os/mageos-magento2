@@ -21,81 +21,64 @@
             <actionGroup ref="AdminGoToCacheManagementPageActionGroup" stepKey="goToCacheManagementPage"/>
             <!--Verify Cache Type EAV Types And Attributes Is ENABLED -->
             <waitForText selector="{{AdminMessagesSection.assertCacheManagementStatusEnabled('EAV')}}" userInput="ENABLED" stepKey="verifyCacheTypeEAVTypesAndAttributesIsENABLED"/>
-            <!--Create Category-->
-            <createData entity="SimpleSubCategory" stepKey="createCategory"/>
-            <!--Create Simple Product-->
-            <createData entity="SimpleProduct" stepKey="createSimpleProduct">
-                <requiredEntity createDataKey="createCategory"/>
-            </createData>
         </before>
         <after>
             <!--Delete created entity -->
-            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
-            <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
-            <actionGroup ref="DeleteProductAttributeActionGroup" stepKey="deleteCreatedAttribute">
-                <argument name="ProductAttribute" value="newProductAttribute"/>
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteFirstProduct"/>
+            <actionGroup ref="NavigateToEditProductAttributeActionGroup" stepKey="goToEditPage">
+                <argument name="ProductAttribute" value="{{multiselectProductAttribute.attribute_code}}"/>
             </actionGroup>
+            <actionGroup ref="DeleteProductAttributeByAttributeCodeActionGroup" stepKey="deleteProductAttribute"/>
             <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
                 <argument name="indices" value=""/>
             </actionGroup>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
         </after>
-        <!-- Open Product Index Page-->
-        <actionGroup ref="AdminOpenProductIndexPageActionGroup" stepKey="navigateToProductIndex"/>
-        <!-- Select Created Product-->
-        <actionGroup ref="FilterProductGridBySkuActionGroup" stepKey="filterProductGridBySku">
-            <argument name="product" value="$$createSimpleProduct$$"/>
+        <!-- Create Simple Product -->
+        <createData entity="SimpleProduct" stepKey="createSimpleProduct"/>
+        <!--Navigate to Stores > Attributes > Product.-->
+        <actionGroup ref="AdminOpenProductAttributePageActionGroup" stepKey="goToProductAttributes"/>
+        <!--Create new Product Attribute as TextField, with code and default value.-->
+        <actionGroup ref="CreateProductAttributeActionGroup" stepKey="createAttribute">
+            <argument name="attribute" value="multiselectProductAttribute"/>
         </actionGroup>
-        <waitForElementVisible selector="{{AdminProductGridSection.productRowBySku($$createSimpleProduct.sku$$)}}" stepKey="waitForFirstProductToBeVisible"/>
-        <click selector="{{AdminProductGridSection.productRowBySku($$createSimpleProduct.sku$$)}}" stepKey="openFirstProduct"/>
-        <waitForPageLoad stepKey="waitForProductToLoad"/>
-        <actionGroup ref="AdminFillProductQtyOnProductFormActionGroup" stepKey="fillProductQty">
-            <argument name="productQty" value="100"/>
+        <!--Navigate to Product Attribute, add Product Options and Save - 1-->
+        <actionGroup ref="NavigateToEditProductAttributeActionGroup" stepKey="goToEditPage1">
+            <argument name="ProductAttribute" value="{{multiselectProductAttribute.attribute_code}}"/>
         </actionGroup>
-        <actionGroup ref="AdminSetStockStatusActionGroup" stepKey="selectStockStatus">
-            <argument name="stockStatus" value="In Stock"/>
+        <actionGroup ref="CreateAttributeDropdownNthOptionActionGroup" stepKey="createOption1">
+            <argument name="adminName" value="{{multiselectProductAttribute.option1_admin}}"/>
+            <argument name="frontName" value="{{multiselectProductAttribute.option1_frontend}}"/>
+            <argument name="row" value="1"/>
         </actionGroup>
-        <!-- Create New Product Attribute -->
-        <waitForElementVisible selector="{{AdminProductFormSection.addAttributeBtn}}" stepKey="waitForAttributeToBeVisible"/>
-        <click selector="{{AdminProductFormSection.addAttributeBtn}}" stepKey="clickOnAddAttribute"/>
-        <waitForPageLoad stepKey="waitForAttributePageToLoad"/>
-        <click selector="{{AdminProductFormSection.createNewAttributeBtn}}" stepKey="clickCreateNewAttributeButton"/>
-        <waitForPageLoad stepKey="waitForNewAttributePageToLoad"/>
-        <waitForElementVisible selector="{{AdminCreateNewProductAttributeSection.defaultLabel}}" stepKey="waitForDefaultLabelToBeVisible"/>
-        <fillField selector="{{AdminCreateNewProductAttributeSection.defaultLabel}}" userInput="{{ProductAttributeFrontendLabel.label}}" stepKey="fillAttributeLabel"/>
-        <selectOption selector="{{AdminCreateNewProductAttributeSection.inputType}}" userInput="Text Field" stepKey="selectTextField"/>
-        <click selector="{{AdminCreateNewProductAttributeSection.advancedAttributeProperties}}" stepKey="clickOnAdvancedAttributeProperties"/>
-        <waitForElementVisible selector="{{AdminCreateNewProductAttributeSection.attributeCode}}" stepKey="waitForAttributeCodeToVisible"/>
-        <scrollTo selector="{{AdminCreateNewProductAttributeSection.attributeCode}}" stepKey="scrollToAttributeCode"/>
-        <fillField selector="{{AdminCreateNewProductAttributeSection.attributeCode}}" userInput="{{newProductAttribute.attribute_code}}" stepKey="fillAttributeCode"/>
-        <fillField selector="{{AdminCreateNewProductAttributeSection.defaultValue}}" userInput="{{ProductAttributeOption8.value}}" stepKey="fillDefaultValue"/>
-        <scrollTo selector="{{AdminCreateNewProductAttributeSection.isUnique}}"   stepKey="scrollToIsUniqueOption"/>
-        <checkOption selector="{{AdminCreateNewProductAttributeSection.isUnique}}" stepKey="enableIsUniqueOption"/>
-        <scrollTo selector="{{AdminCreateNewProductAttributeSection.advancedAttributeProperties}}" stepKey="scrollToAdvancedAttributeProperties"/>
-        <click selector="{{AdminCreateNewProductAttributeSection.advancedAttributeProperties}}" stepKey="clickOnAdvancedAttributeProperties1"/>
-        <scrollTo selector="{{AdminCreateNewProductAttributeSection.storefrontProperties}}"  stepKey="scrollToStorefrontProperties"/>
-        <click selector="{{AdminCreateNewProductAttributeSection.storefrontProperties}}" stepKey="clickOnStorefrontProperties"/>
-        <waitForPageLoad stepKey="waitForStoreFrontToLoad"/>
-        <scrollTo stepKey="scroll1" selector="{{AdminCreateNewProductAttributeSection.sortProductListing}}" x="0" y="-80"/>
-        <checkOption selector="{{AdminCreateNewProductAttributeSection.inSearch}}" stepKey="enableInSearchOption"/>
-        <checkOption selector="{{AdminCreateNewProductAttributeSection.advancedSearch}}" stepKey="enableAdvancedSearch"/>
-        <checkOption selector="{{AdminCreateNewProductAttributeSection.isComparable}}" stepKey="enableIsUComparableption"/>
-        <checkOption  selector="{{AdminCreateNewProductAttributeSection.allowHtmlTags}}" stepKey="enableAllowHtmlTags"/>
-        <checkOption selector="{{AdminCreateNewProductAttributeSection.visibleOnStorefront}}" stepKey="enableVisibleOnStorefront"/>
-        <checkOption selector="{{AdminCreateNewProductAttributeSection.sortProductListing}}" stepKey="enableSortProductListing"/>
-        <scrollToTopOfPage stepKey="scrollToTopOfPage"/>
-        <click selector="{{AdminCreateNewProductAttributeSection.saveAttribute}}" stepKey="clickOnSaveAttribute"/>
-        <waitForPageLoad stepKey="waitForAttributeToSave"/>
-        <actionGroup ref="AdminProductFormSaveButtonClickActionGroup" stepKey="saveTheProduct"/>
-        <waitForText selector="{{AdminCategoryMessagesSection.SuccessMessage}}" userInput="You saved the product." stepKey="messageYouSavedTheProductIsShown"/>
-        <actionGroup ref="AdminInputCustomAttributeToExistingProductActionGroup" stepKey="adminProductFillCustomAttribute">
-            <argument name="attributeCode" value="{{newProductAttribute.attribute_code}}"/>
-            <argument name="adminOption1" value="{{ProductAttributeOption8.label}}"/>
+        <actionGroup ref="AdminSetProductAttributeUseInLayeredNavigationOptionActionGroup" stepKey="setDropdownUseInLayeredNavigationNoResults">
+            <argument name="useInLayeredNavigationValue" value="Filterable (with results)"/>
         </actionGroup>
-        <!--Verify product attribute added in product form -->
-        <scrollTo selector="{{AdminProductFormSection.contentTab}}" stepKey="scrollToContentTab"/>
-        <waitForElementVisible selector="{{AdminProductFormSection.attributeTab}}" stepKey="waitForAttributeToVisible"/>
-        <click selector="{{AdminProductFormSection.attributeTab}}" stepKey="clickOnAttribute"/>
+        <selectOption selector="{{AdvancedAttributePropertiesSection.UseInSearch}}" userInput="Yes" stepKey="selectIsSearchAble"/>
+        <selectOption selector="{{AttributePropertiesSection.useInSearchResultsLayeredNavigation}}" userInput="Yes" stepKey="selectUseInLayeredNavigationOption"/>
+        <click stepKey="saveAttribute" selector="{{AttributePropertiesSection.Save}}"/>
+        <!-- Open created product for edit -->
+        <actionGroup ref="AdminProductPageOpenByIdActionGroup" stepKey="goToProductEditPage">
+            <argument name="productId" value="$createSimpleProduct.id$"/>
+        </actionGroup>
+        <waitForPageLoad stepKey="waitForProductPageLoad"/>
+        <click selector="{{AdminProductFormSection.addAttributeBtn}}" stepKey="clickAddAttributeBtn"/>
+        <waitForPageLoad stepKey="waitForAttributeAdded"/>
+        <!-- Filter By Attribute Label on Add Attribute Page -->
+        <click selector="{{AdminProductFiltersSection.filter}}" stepKey="clickOnFilter"/>
+        <fillField selector="{{AdminProductAddAttributeModalSection.attributeCodeFilter}}" userInput="{{multiselectProductAttribute.attribute_code}}" stepKey="fillAttrCodeField" />
+        <click selector="{{AdminProductAttributeGridSection.Search}}" stepKey="clickSearchBtn" />
+        <click stepKey="clickonFirstRow" selector="{{AdminProductAddAttributeModalSection.firstRowCheckBox}}"/>
+        <click stepKey="clickOnAddSelected" selector="{{AdminProductAttributeGridSection.addSelected}}"/>
+        <waitForPageLoad stepKey="waitForAttributeAdded2"/>
+        <!-- Expand 'Attributes' tab -->
+        <actionGroup ref="AdminExpandProductAttributesTabActionGroup" stepKey="expandAttributesTab"/>
+        <!-- Check created attribute presents in the 'Attributes' tab -->
+        <waitForElementVisible selector="{{AdminProductAttributesSection.attributeDropdownByCode(multiselectProductAttribute.attribute_code)}}" stepKey="assertAttributeIsPresentInTab"/>
+        <!-- Select attribute options -->
+        <selectOption selector="{{AdminProductAttributesSection.attributeDropdownByCode(multiselectProductAttribute.attribute_code)}}" userInput="{{multiselectProductAttribute.option1_admin}}" stepKey="selectProduct1AttributeOption"/>
+        <!-- Save product -->
+        <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProductForm"/>
         <!--Verify Cache Type Page Cache Is INVALIDATED -->
         <actionGroup ref="AdminGoToCacheManagementPageActionGroup" stepKey="goToCacheManagementPageAgain"/>
         <waitForText selector="{{AdminMessagesSection.assertCacheManagementStatusInvalidated('FPC')}}" userInput="INVALIDATED" stepKey="verifyCacheTypePageCacheIsInvalidated"/>
@@ -109,30 +92,14 @@
         <!--Verify Cache Type Page Cache s Is Enabled -->
         <actionGroup ref="AdminGoToCacheManagementPageActionGroup" stepKey="goToCacheManagementPageAgain1"/>
         <waitForText selector="{{AdminMessagesSection.assertCacheManagementStatusEnabled('FPC')}}" userInput="ENABLED" stepKey="verifyCacheTypePageCacheIsENABLED"/>
-        <!--Verify Product Attribute is present in Category Store Front Page -->
-        <!--Navigate To Product Storefront-->
-        <amOnPage url="$$createCategory.custom_attributes[url_key]$$.html" stepKey="goToStorefrontPageAgain"/>
-        <waitForPageLoad stepKey="waitForProductFrontPageToLoad1"/>
-        <click selector="{{StorefrontHeaderSection.NavigationCategoryByName(SimpleSubCategory.name)}}" stepKey="clickOnCategory"/>
-        <waitForPageLoad stepKey="waitForCategoryPageToLoad"/>
-        <click selector="{{StorefrontCategoryMainSection.productLink}}" stepKey="openSearchedProduct"/>
-        <waitForPageLoad  stepKey="waitForProductToLoad2"/>
-        <actionGroup ref="AssertStorefrontProductInfoMainProductNameActionGroup" stepKey="seeProductNameInStoreFront">
-            <argument name="value" value="{{SimpleProduct.name}}"/>
+        <!-- Go to Storefront and search for product-->
+        <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToFrontPage"/>
+        <actionGroup ref="StorefrontCheckQuickSearchStringActionGroup" stepKey="searchStorefront">
+            <argument name="phrase" value="$createSimpleProduct.name$"/>
         </actionGroup>
-        <actionGroup ref="StorefrontAssertProductSkuOnProductPageActionGroup" stepKey="seeProductSkuInStoreFront">
-            <argument name="productSku" value="{{SimpleProduct.sku}}"/>
-        </actionGroup>
-        <scrollTo selector="{{StorefrontProductMoreInformationSection.moreInformation}}" stepKey="scrollToMoreInformation"/>
-        <waitForText selector="{{StorefrontProductMoreInformationSection.attributeLabel}}"  userInput="{{ProductAttributeFrontendLabel.label}}" stepKey="seeAttributeLabel"/>
-        <!--Verify Product Attribute present in search page -->
-        <amOnPage url="$$createCategory.custom_attributes[url_key]$$.html" stepKey="goToStorefrontPage1"/>
-        <waitForPageLoad stepKey="waitForProductFrontPageToLoad2"/>
-        <actionGroup ref="StorefrontCheckQuickSearchStringActionGroup" stepKey="fillAttribute">
-            <argument name="phrase" value="{{ProductAttributeOption8.value}}"/>
-        </actionGroup>
-        <actionGroup ref="StorefrontAssertProductNameOnProductMainPageActionGroup" stepKey="seeProductNameInCategoryPage">
-            <argument name="productName" value="{{SimpleProduct.name}}"/>
-        </actionGroup>
+        <!-- Assert custom Attribute in Layered Navigation-->
+        <waitForElementVisible selector="{{StorefrontCategorySidebarSection.filterOptionsTitle(multiselectProductAttribute.attribute_code)}}" stepKey="waitForAttributeVisible"/>
+        <conditionalClick selector="{{StorefrontCategorySidebarSection.filterOptionsTitle(multiselectProductAttribute.attribute_code)}}" dependentSelector="{{StorefrontCategorySidebarSection.activeFilterOptions}}" visible="false" stepKey="clickToExpandAttribute"/>
+        <waitForElementVisible selector="{{StorefrontCategorySidebarSection.activeFilterOptions}}" stepKey="waitForAttributeOptionsVisible"/>
     </test>
 </tests>
