@@ -3,6 +3,8 @@
  * Copyright 2025 Adobe
  * All rights reserved.
  */
+declare(strict_types=1);
+
 namespace Magento\Paypal\Plugin;
 
 use Magento\Framework\Api\FilterBuilder;
