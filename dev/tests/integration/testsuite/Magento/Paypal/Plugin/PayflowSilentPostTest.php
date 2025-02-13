@@ -3,7 +3,7 @@
  * Copyright 2025 Adobe
  * All rights reserved.
  */
-namespace integration\testsuite\Magento\Paypal\Plugin;
+namespace Magento\Paypal\Plugin;
 
 use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\Api\SearchCriteriaBuilder;
@@ -57,7 +57,7 @@ class PayflowSilentPostTest extends AbstractController
         $this->_objectManager->addSharedInstance($this->gateway, Gateway::class);
         $this->_objectManager->addSharedInstance($this->orderSender, OrderSender::class);
 
-        $order = $this->getOrder($this->orderIncrementId);
+        $order = $this->getOrder();
         $payment = $this->_objectManager->create(Payment::class);
         $payment->setMethod(Config::METHOD_PAYFLOWLINK)
             ->setBaseAmountAuthorized(100)
@@ -100,7 +100,7 @@ class PayflowSilentPostTest extends AbstractController
         $this->dispatch('paypal/payflow/returnUrl');
         self::assertEquals(200, $this->getResponse()->getStatusCode());
 
-        $order = $this->getOrder($this->orderIncrementId);
+        $order = $this->getOrder();
         self::assertEquals($orderState, $order->getState());
         self::assertEquals($orderStatus, $order->getStatus());
     }
