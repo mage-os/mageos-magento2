@@ -110,7 +110,8 @@ class ConfigurableWYSIWYGValidator implements WYSIWYGValidatorInterface
     private function validateConfigured(\DOMXPath $xpath): void
     {
         //Validating tags
-        $this->allowedTags = array_merge($this->allowedTags, ["body", "html"]);
+        $this->allowedTags['body'] = 'body';
+        $this->allowedTags['html'] = 'html';
         $found = $xpath->query(
             '//*['
             . implode(

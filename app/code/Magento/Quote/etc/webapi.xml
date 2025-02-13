@@ -98,6 +98,9 @@
         <resources>
             <resource ref="self" />
         </resources>
+        <data>
+            <parameter name="customerId" force="true">%customer_id%</parameter>
+        </data>
     </route>
     <route url="/V1/guest-carts/:cartId/order" method="PUT">
         <service class="Magento\Quote\Api\GuestCartManagementInterface" method="placeOrder"/>
