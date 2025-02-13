@@ -52,8 +52,8 @@ class AddDefaultPropertiesToGroupPlugin
     public function __construct(
         State $state,
         SubresourceIntegrityRepositoryPool $integrityRepositoryPool,
-        Http $request = null,
-        SriEnabledActions $action = null
+        ?Http $request = null,
+        ?SriEnabledActions $action = null
     ) {
         $this->state = $state;
         $this->integrityRepositoryPool = $integrityRepositoryPool;
