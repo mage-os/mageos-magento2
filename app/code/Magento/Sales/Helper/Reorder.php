@@ -11,7 +11,7 @@ namespace Magento\Sales\Helper;
  */
 class Reorder extends \Magento\Framework\App\Helper\AbstractHelper
 {
-    const XML_PATH_SALES_REORDER_ALLOW = 'sales/reorder/allow';
+    public const XML_PATH_SALES_REORDER_ALLOW = 'sales/reorder/allow';
 
     /**
      * @var \Magento\Sales\Api\OrderRepositoryInterface
@@ -33,6 +33,8 @@ class Reorder extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * Check if reorder is allowed
+     *
      * @return bool
      */
     public function isAllow()

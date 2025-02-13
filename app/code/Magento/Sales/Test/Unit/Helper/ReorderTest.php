@@ -156,7 +156,6 @@ class ReorderTest extends TestCase
     {
         $this->setupOrderMock(true);
 
-
         $this->orderMock->expects($this->once())
             ->method('canReorder')
             ->willReturn($orderCanReorder);
