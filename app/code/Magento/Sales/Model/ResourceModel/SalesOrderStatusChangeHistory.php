@@ -47,7 +47,7 @@ class SalesOrderStatusChangeHistory
         $connection = $this->resourceConnection->getConnection();
         return $connection->fetchRow(
             $connection->select()->from(
-                $connection->getTableName(self::TABLE_NAME),
+                $this->resourceConnection->getTableName(self::TABLE_NAME),
                 ['status', 'created_at']
             )->where(
                 'order_id = ?',
@@ -70,7 +70,7 @@ class SalesOrderStatusChangeHistory
 
         $connection = $this->resourceConnection->getConnection();
         $connection->insert(
-            $connection->getTableName(self::TABLE_NAME),
+            $this->resourceConnection->getTableName(self::TABLE_NAME),
             [
                 'order_id' => (int)$order->getId(),
                 'status' => $order->getStatus()
@@ -89,7 +89,7 @@ class SalesOrderStatusChangeHistory
         $connection = $this->resourceConnection->getConnection();
         $entityId = $connection->fetchOne(
             $connection->select()->from(
-                $connection->getTableName(self::ORDER_TABLE_NAME),
+                $this->resourceConnection->getTableName(self::ORDER_TABLE_NAME),
                 ['entity_id']
             )->where(
                 'entity_id = ?',
