@@ -1,7 +1,16 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
+ *
+ * NOTICE: All information contained herein is, and remains
+ * the property of Adobe and its suppliers, if any. The intellectual
+ * and technical concepts contained herein are proprietary to Adobe
+ * and its suppliers and are protected by all applicable intellectual
+ * property laws, including trade secret and copyright laws.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Adobe.
  */
 declare(strict_types=1);
 
@@ -186,7 +195,7 @@ MUTATION;
         mutation {
             cancelOrder(
               input: {
-                reason: "Cancel sample reason"
+                reason: "Other"
               }
             ){
                 error
@@ -224,7 +233,7 @@ MUTATION;
             cancelOrder(
               input: {
                 order_id: 99999999,
-                reason: "Cancel sample reason"
+                reason: "Other"
               }
             ){
                 error
@@ -622,7 +631,7 @@ MUTATION;
         $this->assertEquals("Order cancellation notification email was sent.", $comment->getComment());
 
         $comment = array_pop($comments);
-        $this->assertEquals('Cancel sample reason', $comment->getComment());
+        $this->assertEquals('Other', $comment->getComment());
         $this->assertEquals('canceled', $comment->getStatus());
     }
 
@@ -672,7 +681,7 @@ MUTATION;
         $this->assertEquals("Order cancellation notification email was sent.", $comment->getComment());
 
         $comment = array_pop($comments);
-        $this->assertEquals('Cancel sample reason', $comment->getComment());
+        $this->assertEquals('Other', $comment->getComment());
         $this->assertEquals('closed', $comment->getStatus());
     }
 
@@ -758,7 +767,7 @@ MUTATION;
         $this->assertEquals("Order cancellation notification email was sent.", $comment->getComment());
 
         $comment = array_pop($comments);
-        $this->assertEquals('Cancel sample reason', $comment->getComment());
+        $this->assertEquals('Other', $comment->getComment());
         $this->assertEquals('closed', $comment->getStatus());
     }
 
@@ -806,19 +815,14 @@ MUTATION;
             [
                 'cancelOrder' =>
                     [
-                        'errorV2' => null,
-                        'order' => [
-                            'status' => 'Closed'
-                        ]
+                        'errorV2' => [
+                            'message' => 'Order cancellation reason is invalid.'
+                        ],
+                        'order' => null
                     ]
             ],
             $response
         );
-
-        $comments = $order->getStatusHistories();
-        $comment = reset($comments);
-        $this->assertEquals('&lt;script&gt;while(true){alert(666);}&lt;/script&gt;', $comment->getComment());
-        $this->assertEquals('closed', $comment->getStatus());
     }
 
     #[
@@ -889,7 +893,7 @@ MUTATION;
         $this->assertEquals("Order cancellation notification email was sent.", $comment->getComment());
 
         $comment = array_pop($comments);
-        $this->assertEquals('Cancel sample reason', $comment->getComment());
+        $this->assertEquals('Other', $comment->getComment());
         $this->assertEquals('canceled', $comment->getStatus());
     }
 
@@ -906,7 +910,7 @@ MUTATION;
             cancelOrder(
               input: {
                 order_id: "{$orderId}"
-                reason: "Cancel sample reason"
+                reason: "Other"
               }
             ){
                 errorV2 {

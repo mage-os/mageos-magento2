@@ -423,7 +423,7 @@ MUTATION;
          * @var $order OrderInterface
          */
         $order = DataFixtureStorageManager::getStorage()->get('order');
-        $this->confirmationKey->execute($order, 'Simple reason');
+        $this->confirmationKey->execute($order, 'Other');
 
         $query = $this->getConfirmCancelOrderMutation($order);
         $this->assertEquals(
@@ -459,7 +459,7 @@ MUTATION;
          * @var $order OrderInterface
          */
         $order = DataFixtureStorageManager::getStorage()->get('order');
-        $confirmationKey = $this->confirmationKey->execute($order, 'Cancel sample reason');
+        $confirmationKey = $this->confirmationKey->execute($order, 'Other');
 
         $query = <<<MUTATION
         mutation {
