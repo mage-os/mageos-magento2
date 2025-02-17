@@ -67,10 +67,10 @@
 
             <!-- second tax rate-->
             <click stepKey="addSecondTaxRate" selector="{{AdminGridMainControls.add}}"/>
-            <fillField stepKey="fillSecondRuleName" selector="{{AdminTaxRulesSection.ruleName}}" userInput="Canada-GST-PST-5%"/>
+            <fillField stepKey="fillSecondRuleName" selector="{{AdminTaxRulesSection.ruleName}}" userInput="Canada-PST-5%"/>
             <!-- Go to the tax rate page -->
             <click stepKey="addSecondTaxRate2" selector="{{AdminTaxRulesSection.addNewTaxRate}}"/>
-            <fillField stepKey="fillSecondTaxIdentifier" selector="{{AdminTaxRulesSection.taxIdentifier}}" userInput="Canada-GST-PST-5%"/>
+            <fillField stepKey="fillSecondTaxIdentifier" selector="{{AdminTaxRulesSection.taxIdentifier}}" userInput="Canada-PST-5%"/>
             <fillField stepKey="fillSecondZipCode" selector="{{AdminTaxRulesSection.zipCode}}" userInput="*"/>
             <selectOption stepKey="selectStateAgain" selector="{{AdminTaxRulesSection.state}}" userInput="*"/>
             <selectOption stepKey="selectCountryAgain" selector="{{AdminTaxRulesSection.country}}" userInput="Canada"/>
@@ -127,7 +127,7 @@
                 <argument name="taxRuleCode" value="Canada-GST-5%" />
             </actionGroup>
             <actionGroup ref="AdminDeleteTaxRule" stepKey="deleteSecondRule">
-                <argument name="taxRuleCode" value="Canada-GST-PST-5%" />
+                <argument name="taxRuleCode" value="Canada-PST-5%" />
             </actionGroup>
             <actionGroup ref="AdminDeleteMultipleTaxRatesActionGroup" stepKey="deleteAllNonDefaultTaxRates"/>
             <!-- Reset shipping origin -->
