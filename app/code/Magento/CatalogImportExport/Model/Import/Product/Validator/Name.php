@@ -17,7 +17,10 @@ class Name extends AbstractImportValidator implements RowValidatorInterface
     public function isValid($value)
     {
         $this->_clearMessages();
-        if (!$this->hasNameValue($value) && !$this->hasCustomOptions($value) && $value['store_view_code'] != 'default') {
+        if (!$this->hasNameValue($value) &&
+            !$this->hasCustomOptions($value) &&
+            (!isset($value['store_view_code']) || $value['store_view_code'] != 'default')
+        ) {
             $this->_addMessages(
                 [
                     sprintf(
