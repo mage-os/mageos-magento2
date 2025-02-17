@@ -175,6 +175,7 @@ define([
             });
 
             this.initCountVariations();
+            this.bindGalleries();
             this.bindGalleries = this.bindGalleries.bind(this);
         },
 
