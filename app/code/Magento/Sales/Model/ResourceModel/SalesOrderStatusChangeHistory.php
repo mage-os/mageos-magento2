@@ -9,7 +9,6 @@ namespace Magento\Sales\Model\ResourceModel;
 
 use Magento\Framework\App\ResourceConnection;
 use Magento\Sales\Model\Order;
-use Magento\Sales\Model\OrderRepository;
 
 /**
  * Sales order status change history resource model.
@@ -28,11 +27,9 @@ class SalesOrderStatusChangeHistory
 
     /**
      * @param ResourceConnection $resourceConnection
-     * @param OrderRepository $orderRepository
      */
     public function __construct(
         private readonly ResourceConnection $resourceConnection,
-        private readonly OrderRepository $orderRepository,
     ) {
     }
 
