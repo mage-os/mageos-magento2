@@ -39,11 +39,11 @@ class NameTest extends TestCase
         return [
             [
                 false,
-                ['name' => null]
+                ['name' => null, 'store_view_code' => 'en']
             ],
             [
                 true,
-                ['name' => 'anything goes here']
+                ['name' => 'anything goes here', 'store_view_code' => 'en']
             ]
         ];
     }
