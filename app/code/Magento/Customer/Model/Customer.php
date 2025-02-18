@@ -1102,7 +1102,8 @@ class Customer extends \Magento\Framework\Model\AbstractModel implements ResetAf
      */
     public function afterSave()
     {
-        if ($this->getIndexer()->getState()->getStatus() == StateInterface::STATUS_VALID) {
+        $indexer = $this->getIndexer();
+        if (($indexer->getState()->getStatus() == StateInterface::STATUS_VALID) && !$indexer->isScheduled()) {
             $this->_getResource()->addCommitCallback([$this, 'reindex']);
         }
         return parent::afterSave();
