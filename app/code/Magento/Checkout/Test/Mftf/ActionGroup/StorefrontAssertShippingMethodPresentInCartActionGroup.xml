@@ -17,6 +17,6 @@
             <argument name="shippingMethod" type="string"/>
         </arguments>
         
-        <see selector="{{CheckoutCartSummarySection.shippingMethodLabel}}" userInput="{{shippingMethod}}" stepKey="assertShippingMethodIsPresentInCart"/>
+        <waitForText selector="{{CheckoutCartSummarySection.shippingMethodLabel}}" userInput="{{shippingMethod}}" stepKey="assertShippingMethodIsPresentInCart"/>
     </actionGroup>
 </actionGroups>
