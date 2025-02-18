@@ -129,7 +129,10 @@
             <actionGroup ref="AdminDeleteTaxRule" stepKey="deleteSecondRule">
                 <argument name="taxRuleCode" value="Canada-GST-PST-5%" />
             </actionGroup>
-            <actionGroup ref="AdminDeleteMultipleTaxRatesActionGroup" stepKey="deleteAllNonDefaultTaxRates"/>
+            <actionGroup ref="AdminDeleteMultipleTaxRatesActionGroup" stepKey="deleteAllNonDefaultTaxRates">
+                <argument name="expectedRemainingRows" value="0"/>
+            </actionGroup>
+
             <!-- Reset shipping origin -->
             <actionGroup ref="AdminResetShippingOriginConfigurationActionGroup" stepKey="ResetCaliforniaShippingOrigin"/>
             <!-- delete created attribute category and simple product -->
