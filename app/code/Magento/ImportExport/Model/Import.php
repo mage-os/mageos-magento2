@@ -79,7 +79,7 @@ class Import extends AbstractModel
     public const FIELD_NAME_ALLOWED_ERROR_COUNT = 'allowed_error_count';
 
     /**
-     * Validation startegt field name
+     * Validation strategy field name
      */
     public const FIELD_NAME_VALIDATION_STRATEGY = 'validation_strategy';
 
