@@ -34,7 +34,6 @@ class Name extends AbstractImportValidator implements RowValidatorInterface
         $this->_clearMessages();
         if (!$this->hasNameValue($value) &&
             !$this->hasCustomOptions($value) &&
-            (!isset($value['store_view_code']) || $value['store_view_code'] != 'default') &&
             !$this->skuStorage->has($value[Product::COL_SKU])
         ) {
             $this->_addMessages(
