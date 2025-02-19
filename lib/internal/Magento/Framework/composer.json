@@ -36,7 +36,6 @@
         "laminas/laminas-i18n": "^2.17",
         "laminas/laminas-permissions-acl": "^2.10",
         "laminas/laminas-stdlib": "^3.11",
-        "magento/laminas-oauth": "^1.0.0",
         "laminas/laminas-uri": "^2.9",
         "laminas/laminas-validator": "^2.23",
         "magento/composer-dependency-version-audit-plugin": "^0.1",
