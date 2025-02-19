@@ -80,7 +80,8 @@ class CancelOrderGuest
                     $order->getIncrementId(),
                     $order->getBillingAddress()->getEmail(),
                     $order->getBillingAddress()->getLastname()
-                )
+                ),
+                'action' => 'cancel'
             ]
         );
 
