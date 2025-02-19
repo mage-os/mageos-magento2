@@ -56,12 +56,16 @@ class NameTest extends TestCase
         return [
             [
                 false,
-                ['name' => null, 'store_view_code' => 'en', 'sku' => 'sku']
+                ['name' => null, 'store_view_code' => '', 'sku' => 'sku']
             ],
             [
                 true,
                 ['name' => 'anything goes here', 'store_view_code' => 'en', 'sku' => 'sku']
-            ]
+            ],
+            [
+                true,
+                ['name' => null, 'store_view_code' => 'en', 'sku' => 'sku']
+            ],
         ];
     }
 }
