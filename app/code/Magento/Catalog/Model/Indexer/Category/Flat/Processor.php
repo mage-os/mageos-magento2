@@ -34,7 +34,7 @@ class Processor extends AbstractProcessor
             return;
         }
 
-        parent::reindexList($id, $forceReindex);
+        parent::reindexRow($id, $forceReindex);
     }
 
     /**
