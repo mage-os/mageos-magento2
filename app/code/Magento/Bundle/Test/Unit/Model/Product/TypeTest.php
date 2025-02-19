@@ -1,6 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright 2024 Adobe
+ * All rights reserved.
  * See COPYING.txt for license details.
  */
 declare(strict_types=1);
@@ -2492,6 +2493,9 @@ class TypeTest extends TestCase
      */
     public function testCheckProductBuyStateMissedOptionException($element, $expectedMessage, $check): void
     {
+        if (is_callable($element)) {
+            $element = $element($this);
+        }
         $this->expectException(LocalizedException::class);
 
         $this->mockBundleCollection();
@@ -2603,17 +2607,24 @@ class TypeTest extends TestCase
         $selectionCollectionMock->method('setOptionIdsFilter')->willReturn($selectionCollectionMock);
     }
 
-    /**
-     * Data provider for not available option.
-     *
-     * @return array
-     */
-    public function notAvailableOptionProvider(): array
+    protected function getMockForSectionClass()
     {
         $falseSelection = $this->getMockBuilder(Selection::class)->disableOriginalConstructor()
             ->addMethods(['isSalable'])
             ->getMock();
         $falseSelection->method('isSalable')->willReturn(false);
+        return $falseSelection;
+    }
+
+    /**
+     * Data provider for not available option.
+     *
+     * @return array
+     */
+    public static function notAvailableOptionProvider(): array
+    {
+        $falseSelection = static fn (self $testCase) => $testCase->getMockForSectionClass();
+
         return [
             [
                 false,
