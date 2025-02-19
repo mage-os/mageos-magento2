@@ -8,9 +8,24 @@ declare(strict_types=1);
 namespace Magento\CatalogImportExport\Model\Import\Product\Validator;
 
 use Magento\CatalogImportExport\Model\Import\Product\RowValidatorInterface;
+use Magento\CatalogImportExport\Model\Import\Product\SkuStorage;
+use Magento\CatalogImportExport\Model\Import\Product;
 
 class Name extends AbstractImportValidator implements RowValidatorInterface
 {
+    /**
+     * @var SkuStorage
+     */
+    private SkuStorage $skuStorage;
+
+    /**
+     * @param SkuStorage $skuStorage
+     */
+    public function __construct(SkuStorage $skuStorage)
+    {
+        $this->skuStorage = $skuStorage;
+    }
+
     /**
      * @inheritDoc
      */
@@ -19,7 +34,8 @@ class Name extends AbstractImportValidator implements RowValidatorInterface
         $this->_clearMessages();
         if (!$this->hasNameValue($value) &&
             !$this->hasCustomOptions($value) &&
-            (!isset($value['store_view_code']) || $value['store_view_code'] != 'default')
+            (!isset($value['store_view_code']) || $value['store_view_code'] != 'default') &&
+            !$this->skuStorage->has($value[Product::COL_SKU])
         ) {
             $this->_addMessages(
                 [
@@ -43,9 +59,9 @@ class Name extends AbstractImportValidator implements RowValidatorInterface
      */
     private function hasNameValue(array $rowData): bool
     {
-        return array_key_exists('name', $rowData) &&
-            !empty($rowData['name']) &&
-            $rowData['name'] !== $this->context->getEmptyAttributeValueConstant();
+        return array_key_exists(Product::COL_NAME, $rowData) &&
+            !empty($rowData[Product::COL_NAME]) &&
+            $rowData[Product::COL_NAME] !== $this->context->getEmptyAttributeValueConstant();
     }
 
     /**

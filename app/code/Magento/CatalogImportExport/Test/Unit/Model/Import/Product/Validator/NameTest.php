@@ -8,12 +8,28 @@ declare(strict_types=1);
 namespace Magento\CatalogImportExport\Test\Unit\Model\Import\Product\Validator;
 
 use Magento\CatalogImportExport\Model\Import\Product;
+use Magento\CatalogImportExport\Model\Import\Product\SkuStorage;
 use Magento\CatalogImportExport\Model\Import\Product\Validator\Name;
 use PHPUnit\Framework\MockObject\Exception;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class NameTest extends TestCase
 {
+    /**
+     * @var SkuStorage|MockObject
+     */
+    private SkuStorage $skuStorage;
+
+    /**
+     * @return void
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->skuStorage = $this->createMock(SkuStorage::class);
+    }
+
     /**
      * @param $expected
      * @param $value
@@ -23,7 +39,8 @@ class NameTest extends TestCase
      */
     public function testIsValid($expected, $value): void
     {
-        $nameValidator = new Name();
+        $this->skuStorage->expects($this->any())->method('has')->willReturn(false);
+        $nameValidator = new Name($this->skuStorage);
         $context = $this->createMock(Product::class);
         $context->expects($this->any())->method('getEmptyAttributeValueConstant')->willReturn('|');
         $context->expects($this->any())->method('retrieveMessageTemplate')->willReturn('%s error %s');
@@ -39,11 +56,11 @@ class NameTest extends TestCase
         return [
             [
                 false,
-                ['name' => null, 'store_view_code' => 'en']
+                ['name' => null, 'store_view_code' => 'en', 'sku' => 'sku']
             ],
             [
                 true,
-                ['name' => 'anything goes here', 'store_view_code' => 'en']
+                ['name' => 'anything goes here', 'store_view_code' => 'en', 'sku' => 'sku']
             ]
         ];
     }
