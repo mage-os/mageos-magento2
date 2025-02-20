@@ -172,7 +172,7 @@
         <see selector="{{CheckoutCartSummarySection.taxAmount}}" userInput="$11.50" stepKey="assertTaxAmount"/>
         <see selector="{{CheckoutCartSummarySection.fptAmount}}" userInput="$10.00" stepKey="assertFptAmount"/>
         <click selector="{{CheckoutCartSummarySection.taxAmount}}" stepKey="clickTaxAmount"/>
-        <see selector="{{CheckoutCartSummarySection.canadaTaxAmount}}" userInput="$5.75" stepKey="assertGstAmount"/>
+        <waitForText selector="{{CheckoutCartSummarySection.canadaTaxAmount}}" userInput="$5.75" stepKey="assertGstAmount"/>
         <see selector="{{CheckoutCartSummarySection.canadaPstTaxAmount}}" userInput="$5.75" stepKey="assertPstAmount"/>
         <!--Assert Shopping Cart Summary-->
         <actionGroup ref="AssertStorefrontShoppingCartSummaryWithShippingActionGroup" stepKey="AssertCartSummary" >
