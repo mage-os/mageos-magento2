@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2021 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -10,7 +10,6 @@ namespace Magento\SalesRule\Test\Unit\Model\Rule\Condition\Product;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\DataObject;
 use Magento\Framework\Model\AbstractModel;
-use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Item;
 use Magento\Quote\Model\Quote\Item\AbstractItem;
 use Magento\Rule\Model\Condition\Context;
@@ -37,9 +36,6 @@ class SubselectTest extends TestCase
     /** @var Product|MockObject */
     private $productMock;
 
-    /** @var Quote|MockObject */
-    private $quoteMock;
-
     /** @var Item|MockObject */
     private $quoteItemMock;
 
@@ -55,16 +51,12 @@ class SubselectTest extends TestCase
             ->getMock();
         $this->abstractModel = $this->getMockBuilder(AbstractModel::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getQuote', 'getProduct'])
+            ->addMethods(['getAllItems', 'getProduct'])
             ->getMockForAbstractClass();
         $this->productMock = $this->getMockBuilder(Product::class)
             ->onlyMethods(['getData', 'getResource', 'hasData'])
             ->addMethods(['getOperatorForValidate', 'getValueParsed'])
             ->disableOriginalConstructor()
-            ->getMock();
-        $this->quoteMock = $this->getMockBuilder(Quote::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getAllVisibleItems'])
             ->getMock();
         $this->quoteItemMock = $this->getMockBuilder(Item::class)
             ->addMethods(['getHasChildren', 'getProductId'])
@@ -74,19 +66,15 @@ class SubselectTest extends TestCase
                     'getProduct',
                     'getProductType',
                     'getChildren',
-                    'getQuote',
                     'getAddress',
                     'getOptionByCode'
                 ]
             )
             ->disableOriginalConstructor()
             ->getMock();
-        $this->quoteMock->expects($this->any())
-            ->method('getAllVisibleItems')
-            ->willReturn([$this->quoteItemMock]);
         $this->abstractModel->expects($this->any())
-            ->method('getQuote')
-            ->willReturn($this->quoteMock);
+            ->method('getAllItems')
+            ->willReturn([$this->quoteItemMock]);
         $this->abstractModel->expects($this->any())
             ->method('getProduct')
             ->willReturn($this->productMock);
