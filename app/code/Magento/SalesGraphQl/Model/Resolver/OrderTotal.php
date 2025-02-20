@@ -1,23 +1,36 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
 namespace Magento\SalesGraphQl\Model\Resolver;
 
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Sales\Api\Data\OrderInterface;
+use Magento\Tax\Api\OrderTaxManagementInterface;
 
 /**
  * Resolve order totals taxes and discounts for order
  */
 class OrderTotal implements ResolverInterface
 {
+
+    /**
+     * OrderTotal Constructor
+     *
+     * @param OrderTaxManagementInterface $orderTaxManagement
+     */
+    public function __construct(
+        private readonly OrderTaxManagementInterface $orderTaxManagement,
+    ) {
+    }
+
     /**
      * @inheritDoc
      */
@@ -35,10 +48,12 @@ class OrderTotal implements ResolverInterface
         /** @var OrderInterface $order */
         $order = $value['model'];
         $currency = $order->getOrderCurrencyCode();
-        $baseCurrency = $order->getBaseCurrencyCode();
 
         return [
-            'base_grand_total' => ['value' => $order->getBaseGrandTotal(), 'currency' => $baseCurrency],
+            'base_grand_total' => [
+                'value' => $order->getBaseGrandTotal(),
+                'currency' => $order->getBaseCurrencyCode()
+            ],
             'grand_total' => ['value' => $order->getGrandTotal(), 'currency' => $currency],
             'subtotal' => ['value' => $order->getSubtotal(), 'currency' => $currency],
             'total_tax' => ['value' => $order->getTaxAmount(), 'currency' => $currency],
@@ -70,11 +85,12 @@ class OrderTotal implements ResolverInterface
      *
      * @param OrderInterface $order
      * @return array
+     * @throws NoSuchEntityException
      */
     private function getAllAppliedTaxesOnOrders(OrderInterface $order): array
     {
-        $extensionAttributes = $order->getExtensionAttributes();
-        $appliedTaxes = $extensionAttributes->getAppliedTaxes() ?? [];
+        $orderTaxDetails = $this->orderTaxManagement->getOrderTaxDetails($order->getEntityId());
+        $appliedTaxes = $orderTaxDetails->getAppliedTaxes();
         $allAppliedTaxOnOrders = [];
         foreach ($appliedTaxes as $taxIndex => $appliedTaxesData) {
             $allAppliedTaxOnOrders[$taxIndex] = [
@@ -83,6 +99,7 @@ class OrderTotal implements ResolverInterface
                 'amount' => $appliedTaxesData->getDataByKey('amount'),
             ];
         }
+
         return $allAppliedTaxOnOrders;
     }
 
@@ -91,23 +108,21 @@ class OrderTotal implements ResolverInterface
      *
      * @param OrderInterface $order
      * @return array
+     * @throws NoSuchEntityException
      */
     private function getAppliedTaxesDetails(OrderInterface $order): array
     {
-        $allAppliedTaxOnOrders = $this->getAllAppliedTaxesOnOrders($order);
-        $taxes = [];
-        foreach ($allAppliedTaxOnOrders as $appliedTaxes) {
-            $appliedTaxesArray = [
+        return array_map(
+            fn($appliedTaxes) => [
                 'rate' => $appliedTaxes['percent'] ?? 0,
                 'title' => $appliedTaxes['title'] ?? null,
                 'amount' => [
                     'value' => $appliedTaxes['amount'] ?? 0,
-                    'currency' => $order->getOrderCurrencyCode()
-                ]
-            ];
-            $taxes[] = $appliedTaxesArray;
-        }
-        return $taxes;
+                    'currency' => $order->getOrderCurrencyCode(),
+                ],
+            ],
+            $this->getAllAppliedTaxesOnOrders($order)
+        );
     }
 
     /**
