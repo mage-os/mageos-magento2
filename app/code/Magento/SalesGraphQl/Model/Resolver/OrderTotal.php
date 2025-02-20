@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -41,6 +41,8 @@ class OrderTotal implements ResolverInterface
             'base_grand_total' => ['value' => $order->getBaseGrandTotal(), 'currency' => $baseCurrency],
             'grand_total' => ['value' => $order->getGrandTotal(), 'currency' => $currency],
             'subtotal' => ['value' => $order->getSubtotal(), 'currency' => $currency],
+            'subtotal_incl_tax' => ['value' => $order->getSubtotalInclTax(), 'currency' => $currency],
+            'subtotal_excl_tax' => ['value' => $order->getSubtotal(), 'currency' => $currency],
             'total_tax' => ['value' => $order->getTaxAmount(), 'currency' => $currency],
             'taxes' => $this->getAppliedTaxesDetails($order),
             'discounts' => $this->getDiscountDetails($order),
