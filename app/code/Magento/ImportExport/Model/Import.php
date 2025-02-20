@@ -1,7 +1,7 @@
 <?php
 /**
-Copyright 2013 Adobe 
-All Rights Reserved.
+ * Copyright 2013 Adobe 
+ * All Rights Reserved.
  */
 
 namespace Magento\ImportExport\Model;
