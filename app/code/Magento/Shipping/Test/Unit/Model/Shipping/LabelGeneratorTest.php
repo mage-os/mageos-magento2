@@ -123,29 +123,19 @@ class LabelGeneratorTest extends TestCase
             ->getMock();
         $shipmentMock->expects(static::once())->method('getOrder')->willReturn($order);
 
-        $this->carrierFactory->expects(static::once())
-            ->method('create')
-            ->with(self::CARRIER_CODE)
+        $this->carrierFactory->expects(static::once())->method('create')->with(self::CARRIER_CODE)
             ->willReturn($this->getCarrierMock());
 
-        $labelsMock = $this->getMockBuilder(Labels::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $labelsMock->expects(static::once())
-            ->method('requestToShipment')
-            ->with($shipmentMock)
+        $labelsMock = $this->getMockBuilder(Labels::class)->disableOriginalConstructor()->getMock();
+        $labelsMock->expects(static::once())->method('requestToShipment')->with($shipmentMock)
             ->willReturn($this->getResponseMock($info));
 
-        $this->labelsFactory->expects(static::once())
-            ->method('create')
-            ->willReturn($labelsMock);
+        $this->labelsFactory->expects(static::once())->method('create')->willReturn($labelsMock);
 
-        $this->filesystem->expects(static::once())
-            ->method('getDirectoryWrite')
+        $this->filesystem->expects(static::once())->method('getDirectoryWrite')
             ->willReturn($this->getMockForAbstractClass(WriteInterface::class));
 
-        $this->scopeConfig->expects(static::once())
-            ->method('getValue')
+        $this->scopeConfig->expects(static::once())->method('getValue')
             ->with(
                 'carriers/' . self::CARRIER_CODE . '/title',
                 ScopeInterface::SCOPE_STORE,
@@ -204,9 +194,7 @@ class LabelGeneratorTest extends TestCase
                 }
             });
 
-        $this->trackFactory->expects(static::any())
-            ->method('create')
-            ->willReturn($trackMock);
+        $this->trackFactory->expects(static::any())->method('create')->willReturn($trackMock);
 
         /**
          * @var $requestMock \Magento\Framework\App\RequestInterface|MockObject
