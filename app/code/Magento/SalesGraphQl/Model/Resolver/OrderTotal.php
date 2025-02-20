@@ -89,18 +89,14 @@ class OrderTotal implements ResolverInterface
      */
     private function getAllAppliedTaxesOnOrders(OrderInterface $order): array
     {
-        $orderTaxDetails = $this->orderTaxManagement->getOrderTaxDetails($order->getEntityId());
-        $appliedTaxes = $orderTaxDetails->getAppliedTaxes();
-        $allAppliedTaxOnOrders = [];
-        foreach ($appliedTaxes as $taxIndex => $appliedTaxesData) {
-            $allAppliedTaxOnOrders[$taxIndex] = [
+        return array_map(
+            fn($appliedTaxesData) => [
                 'title' => $appliedTaxesData->getDataByKey('title'),
                 'percent' => $appliedTaxesData->getDataByKey('percent'),
                 'amount' => $appliedTaxesData->getDataByKey('amount'),
-            ];
-        }
-
-        return $allAppliedTaxOnOrders;
+            ],
+            $this->orderTaxManagement->getOrderTaxDetails($order->getEntityId())->getAppliedTaxes()
+        );
     }
 
     /**

@@ -83,22 +83,47 @@ class PlaceOrderTaxTitleTest extends GraphQlAbstract
     public function testTaxTitleOnPlaceOrder(): void
     {
         $maskedQuoteId = $this->fixtures->get('quoteIdMask')->getMaskedId();
-        $headerMap = $this->getCustomerAuthHeaders($this->fixtures->get('customer')->getEmail());
+        $customerAuthHeaders = $this->getCustomerAuthHeaders($this->fixtures->get('customer')->getEmail());
 
         //set shipping address to cart (save_in_address_book => true)
-        $this->graphQlMutation($this->getSetShippingAddressOnCartMutation($maskedQuoteId), [], '', $headerMap);
+        $this->graphQlMutation(
+            $this->getSetShippingAddressOnCartMutation($maskedQuoteId),
+            [],
+            '',
+            $customerAuthHeaders
+        );
 
         //set billing address to cart same as shipping
-        $this->graphQlMutation($this->getBillingAddressMutationSameAsShipping($maskedQuoteId), [], '', $headerMap);
+        $this->graphQlMutation(
+            $this->getBillingAddressMutationSameAsShipping($maskedQuoteId),
+            [],
+            '',
+            $customerAuthHeaders
+        );
 
         //set shipping method on cart
-        $this->graphQlMutation($this->getShippingMethodMutation($maskedQuoteId), [], '', $headerMap);
+        $this->graphQlMutation(
+            $this->getShippingMethodMutation($maskedQuoteId),
+            [],
+            '',
+            $customerAuthHeaders
+        );
 
         //set payment method on cart
-        $this->graphQlMutation($this->getPaymentMethodMutation($maskedQuoteId), [], '', $headerMap);
+        $this->graphQlMutation(
+            $this->getPaymentMethodMutation($maskedQuoteId),
+            [],
+            '',
+            $customerAuthHeaders
+        );
 
         //place order
-        $orderResponse = $this->graphQlMutation($this->getPlaceOrderMutation($maskedQuoteId), [], '', $headerMap);
+        $orderResponse = $this->graphQlMutation(
+            $this->getPlaceOrderMutation($maskedQuoteId),
+            [],
+            '',
+            $customerAuthHeaders
+        );
 
         //assert tax title
         self::assertNotNull($orderResponse['placeOrder']['orderV2']['total']['taxes'][0]['title']);
