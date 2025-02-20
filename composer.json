@@ -75,7 +75,6 @@
         "magento/elasticsearch": "^1.0.0",
         "magento/laminas-db": "^1.0.0",
         "magento/laminas-di": "^1.0.0",
-        "magento/laminas-file": "^1.0.0",
         "magento/magento-composer-installer": ">=0.4.0",
         "magento/ringphp": "^1.0.0",
         "magento/zend-cache": "^1.16",

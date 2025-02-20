@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2bb82a92ab38dec1fb043d383f980248",
+    "content-hash": "1a6830b5c41227da403c6f465d4c5278",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -4168,55 +4168,6 @@
                 "di",
                 "laminas",
                 "psr-11"
-            ]
-        },
-        {
-            "name": "magento/laminas-file",
-            "version": "1.0.0-beta106",
-            "dist": {
-                "type": "zip",
-                "url": "https://repo.magento.com/archives/magento/laminas-file/magento-laminas-file-1.0.0.0-beta106.zip",
-                "shasum": "924605561c0395a2ced463d1512284b2ef75f40d"
-            },
-            "require": {
-                "laminas/laminas-stdlib": "^2.7.7 || ^3.15.0",
-                "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0"
-            },
-            "conflict": {
-                "zendframework/zend-file": "*"
-            },
-            "replace": {
-                "laminas/laminas-file": "^2.13"
-            },
-            "require-dev": {
-                "laminas/laminas-coding-standard": "~1.0.0",
-                "laminas/laminas-filter": "^2.23.2",
-                "laminas/laminas-i18n": "^2.7.4",
-                "laminas/laminas-progressbar": "^2.5.2",
-                "laminas/laminas-servicemanager": "^2.7.8 || ^3.3",
-                "laminas/laminas-session": "^2.8",
-                "laminas/laminas-validator": "^2.10.1",
-                "phpunit/phpunit": "^9.5.10"
-            },
-            "suggest": {
-                "laminas/laminas-filter": "Laminas\\Filter component",
-                "laminas/laminas-i18n": "Laminas\\I18n component",
-                "laminas/laminas-validator": "Laminas\\Validator component"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Laminas\\File\\": "src/"
-                }
-            },
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "Locate PHP classfiles",
-            "homepage": "https://laminas.dev",
-            "keywords": [
-                "file",
-                "laminas"
             ]
         },
         {
@@ -14262,6 +14213,6 @@
         "ext-zip": "*",
         "lib-libxml": "*"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.6.0"
 }

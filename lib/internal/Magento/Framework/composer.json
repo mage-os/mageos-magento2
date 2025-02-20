@@ -30,7 +30,6 @@
         "guzzlehttp/guzzle": "^7.5",
         "laminas/laminas-code": "^4.13",
         "laminas/laminas-escaper": "^2.13",
-        "magento/laminas-file": "^1.0.0",
         "laminas/laminas-filter": "^2.33",
         "laminas/laminas-http": "^2.15",
         "laminas/laminas-i18n": "^2.17",
