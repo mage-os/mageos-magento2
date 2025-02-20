@@ -46,20 +46,23 @@ class StoreConfigResolverTest extends GraphQlAbstract
     ]
     public function testGetStoreConfig(): void
     {
-        $this->assertEquals([
-            'storeConfig' => [
-                'is_guest_checkout_enabled' => true,
-                'is_one_page_checkout_enabled' => true,
-                'max_items_in_order_summary' => self::MAX_ITEMS_TO_DISPLAY,
-                'cart_summary_display_quantity' => self::CART_SUMMARY_DISPLAY_TOTAL,
-                'minicart_display' => true,
-                'minicart_max_items' => self::MINICART_MAX_ITEMS,
-                'cart_expires_in_days' => self::CART_EXPIRES_IN_DAYS,
-                'grouped_product_image' => 'PARENT',
-                'configurable_product_image' => 'ITSELF',
-                'is_checkout_agreements_enabled' => true
-            ]
-        ], $this->graphQlQuery($this->getStoreConfigQuery()));
+        $this->assertEquals(
+          [
+              'storeConfig' => [
+                  'is_guest_checkout_enabled' => true,
+                  'is_one_page_checkout_enabled' => true,
+                  'max_items_in_order_summary' => self::MAX_ITEMS_TO_DISPLAY,
+                  'cart_summary_display_quantity' => self::CART_SUMMARY_DISPLAY_TOTAL,
+                  'minicart_display' => true,
+                  'minicart_max_items' => self::MINICART_MAX_ITEMS,
+                  'cart_expires_in_days' => self::CART_EXPIRES_IN_DAYS,
+                  'grouped_product_image' => 'PARENT',
+                  'configurable_product_image' => 'ITSELF',
+                  'is_checkout_agreements_enabled' => true,
+              ],
+          ], 
+          $this->graphQlQuery($this->getStoreConfigQuery())
+    );
     }
 
     /**
