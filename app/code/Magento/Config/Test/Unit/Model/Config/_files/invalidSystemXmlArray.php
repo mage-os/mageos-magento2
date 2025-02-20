@@ -90,7 +90,8 @@ return [
             "1:<config><system><section id=\"section1\"><group id=\"group1\"><label>Label</label><field " .
             "id=\"field_id\"><config_path>co</config_path></field></group><group id=\"group2\"><label>" .
             "Label_One</label></group></section></system></config>\n2:\n",
-            "Element 'config_path': 'co' is not a valid value of the atomic type 'typeConfigPath'.\nLine: 1\n" .
+            "Element 'config_path': [facet 'minLength'] The value has a length of '2'; " .
+            "this underruns the allowed minimum length of '5'.\nLine: 1\n" .
             "The xml was: \n0:<?xml version=\"1.0\"?>\n1:<config><system><section id=\"section1\"><group " .
             "id=\"group1\"><label>Label</label><field id=\"field_id\"><config_path>co</config_path></field>" .
             "</group><group id=\"group2\"><label>Label_One</label></group></section></system></config>\n2:\n"
@@ -107,7 +108,8 @@ return [
             "1:<config><system><section id=\"section1\"><group id=\"group1\"><label>Label</label><field " .
             "id=\"field_id\"><if_module_enabled>Som</if_module_enabled></field></group><group id=\"group2\">" .
             "<label>Label_One</label></group></section></system></config>\n2:\n",
-            "Element 'if_module_enabled': 'Som' is not a valid value of the atomic type 'typeModule'.\n" .
+            "Element 'if_module_enabled': [facet 'minLength'] The value has a length of '3'; " .
+            "this underruns the allowed minimum length of '5'.\n" .
             "Line: 1\nThe xml was: \n0:<?xml version=\"1.0\"?>\n1:<config><system><section id=\"section1\">" .
             "<group id=\"group1\"><label>Label</label><field id=\"field_id\"><if_module_enabled>Som" .
             "</if_module_enabled></field></group><group id=\"group2\"><label>Label_One</label></group>" .

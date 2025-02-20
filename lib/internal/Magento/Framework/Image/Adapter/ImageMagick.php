@@ -267,7 +267,13 @@ class ImageMagick extends AbstractAdapter
         // compatibility with GD2 adapter
         $angle = 360 - $angle;
         $pixel = new \ImagickPixel();
-        $pixel->setColor("rgb(" . $this->imageBackgroundColor . ")");
+
+        if (preg_match('/^(s?rgb)\((\d+),(\d+),(\d+)\)$/', $this->imageBackgroundColor, $matches)) {
+            $pixel->setColor(sprintf("%s(%s,%s,%s)", $matches[1], $matches[2], $matches[3], $matches[4]));
+        } else {
+            $pixel->setColor("rgb(" . $this->imageBackgroundColor . ")");
+        }
+
 
         $this->_imageHandler->rotateImage($pixel, $angle);
         $this->refreshImageDimensions();
@@ -478,7 +484,9 @@ class ImageMagick extends AbstractAdapter
         if (!empty($font)) {
             if (method_exists($image, 'setFont')) {
                 $image->setFont($font);
-            } elseif (method_exists($draw, 'setFont')) {
+            }
+
+            if (method_exists($draw, 'setFont')) {
                 $draw->setFont($font);
             }
         }
@@ -494,7 +502,7 @@ class ImageMagick extends AbstractAdapter
         $draw->annotation(0, $metrics['ascender'], $text);
 
         $height = abs($metrics['ascender']) + abs($metrics['descender']);
-        $image->newImage($metrics['textWidth'], $height, $background);
+        $image->newImage((int) $metrics['textWidth'], (int) $height, $background);
         $this->_fileType = IMAGETYPE_PNG;
         $image->setImageFormat('png');
         $image->drawImage($draw);
