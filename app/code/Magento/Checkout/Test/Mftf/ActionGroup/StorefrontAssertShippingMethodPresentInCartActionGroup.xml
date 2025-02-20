@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  /**
-  * Copyright © Magento, Inc. All rights reserved.
-  * See COPYING.txt for license details.
+   * Copyright 2024 Adobe
+  * All Rights Reserved.
   */
 -->
 
@@ -17,6 +17,6 @@
             <argument name="shippingMethod" type="string"/>
         </arguments>
         
-        <see selector="{{CheckoutCartSummarySection.shippingMethodLabel}}" userInput="{{shippingMethod}}" stepKey="assertShippingMethodIsPresentInCart"/>
+        <waitForText selector="{{CheckoutCartSummarySection.shippingMethodLabel}}" userInput="{{shippingMethod}}" stepKey="assertShippingMethodIsPresentInCart"/>
     </actionGroup>
 </actionGroups>
