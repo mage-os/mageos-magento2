@@ -118,8 +118,8 @@ class OrderTotal implements ResolverInterface
                 'title' => $appliedTaxes['title'] ?? null,
                 'amount' => [
                     'value' => $appliedTaxes['amount'] ?? 0,
-                    'currency' => $order->getOrderCurrencyCode(),
-                ],
+                    'currency' => $order->getOrderCurrencyCode()
+                ]
             ],
             $this->getAllAppliedTaxesOnOrders($order)
         );

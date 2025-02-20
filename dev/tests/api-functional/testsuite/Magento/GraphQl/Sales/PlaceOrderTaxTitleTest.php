@@ -78,7 +78,7 @@ class PlaceOrderTaxTitleTest extends GraphQlAbstract
         DataFixture(CustomerFixture::class, as: 'customer'),
         DataFixture(CustomerCartFixture::class, ['customer_id' => '$customer.id$'], as: 'quote'),
         DataFixture(AddProductToCartFixture::class, ['cart_id' => '$quote.id$', 'product_id' => '$product.id$']),
-        DataFixture(QuoteIdMask::class, ['cart_id' => '$quote.id$'], 'quoteIdMask'),
+        DataFixture(QuoteIdMask::class, ['cart_id' => '$quote.id$'], 'quoteIdMask')
     ]
     public function testTaxTitleOnPlaceOrder(): void
     {
@@ -114,7 +114,7 @@ class PlaceOrderTaxTitleTest extends GraphQlAbstract
      * @param string $maskedQuoteId
      * @return string
      */
-    private function getSetShippingAddressOnCartMutation(string $maskedQuoteId)
+    private function getSetShippingAddressOnCartMutation(string $maskedQuoteId): string
     {
         return <<<MUTATION
             mutation {
