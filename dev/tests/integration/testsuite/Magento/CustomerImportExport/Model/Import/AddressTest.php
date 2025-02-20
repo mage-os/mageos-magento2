@@ -478,8 +478,7 @@ class AddressTest extends TestCase
     /**
      * Test customer indexer gets invalidated after import when Update on Schedule mode is set
      *
-     * @magentoAppIsolation enabled
-     * @magentoDbIsolation disabled
+     * @magentoDbIsolation enabled
      */
     public function testCustomerIndexer(): void
     {

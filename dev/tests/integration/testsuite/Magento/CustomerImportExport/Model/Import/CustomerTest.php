@@ -495,8 +495,7 @@ class CustomerTest extends \PHPUnit\Framework\TestCase
     /**
      * Test customer indexer gets invalidated after import when Update on Schedule mode is set
      *
-     * @magentoAppIsolation enabled
-     * @magentoDbIsolation disabled
+     * @magentoDbIsolation enabled
      * @return void
      */
     public function testCustomerIndexer(): void
