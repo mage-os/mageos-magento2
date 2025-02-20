@@ -47,7 +47,7 @@ class StoreConfigResolverTest extends GraphQlAbstract
     public function testGetStoreConfig(): void
     {
         $this->assertEquals(
-          [
+            [
               'storeConfig' => [
                   'is_guest_checkout_enabled' => true,
                   'is_one_page_checkout_enabled' => true,
@@ -60,9 +60,9 @@ class StoreConfigResolverTest extends GraphQlAbstract
                   'configurable_product_image' => 'ITSELF',
                   'is_checkout_agreements_enabled' => true,
               ],
-          ], 
-          $this->graphQlQuery($this->getStoreConfigQuery())
-    );
+            ],
+            $this->graphQlQuery($this->getStoreConfigQuery())
+        );
     }
 
     /**
