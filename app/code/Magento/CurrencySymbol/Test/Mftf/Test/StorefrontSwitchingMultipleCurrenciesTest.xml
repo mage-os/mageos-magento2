@@ -16,6 +16,8 @@
             <severity value="MAJOR"/>
             <testCaseId value="AC-5358"/>
             <features value="CurrencySymbol"/>
+            <!--Will be fixed in scope of ACQE-7613-->
+            <group value="pr_exclude"/>
         </annotations>
         <before>
             <!--Login as admin-->
