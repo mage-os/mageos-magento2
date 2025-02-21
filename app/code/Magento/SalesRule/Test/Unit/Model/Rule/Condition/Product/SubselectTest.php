@@ -10,6 +10,7 @@ namespace Magento\SalesRule\Test\Unit\Model\Rule\Condition\Product;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\DataObject;
 use Magento\Framework\Model\AbstractModel;
+use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Item;
 use Magento\Quote\Model\Quote\Item\AbstractItem;
 use Magento\Rule\Model\Condition\Context;
@@ -36,6 +37,9 @@ class SubselectTest extends TestCase
     /** @var Product|MockObject */
     private $productMock;
 
+    /** @var Quote|MockObject */
+    private $quoteMock;
+
     /** @var Item|MockObject */
     private $quoteItemMock;
 
@@ -51,12 +55,17 @@ class SubselectTest extends TestCase
             ->getMock();
         $this->abstractModel = $this->getMockBuilder(AbstractModel::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getAllItems', 'getProduct'])
+            ->addMethods(['getQuote', 'getAllItems', 'getProduct'])
             ->getMockForAbstractClass();
         $this->productMock = $this->getMockBuilder(Product::class)
             ->onlyMethods(['getData', 'getResource', 'hasData'])
             ->addMethods(['getOperatorForValidate', 'getValueParsed'])
             ->disableOriginalConstructor()
+            ->getMock();
+        $this->quoteMock = $this->getMockBuilder(Quote::class)
+            ->disableOriginalConstructor()
+            ->addMethods(['getIsMultiShipping'])
+            ->onlyMethods(['getAllVisibleItems'])
             ->getMock();
         $this->quoteItemMock = $this->getMockBuilder(Item::class)
             ->addMethods(['getHasChildren', 'getProductId'])
@@ -66,12 +75,19 @@ class SubselectTest extends TestCase
                     'getProduct',
                     'getProductType',
                     'getChildren',
+                    'getQuote',
                     'getAddress',
                     'getOptionByCode'
                 ]
             )
             ->disableOriginalConstructor()
             ->getMock();
+        $this->quoteMock->expects($this->any())
+            ->method('getAllVisibleItems')
+            ->willReturn([$this->quoteItemMock]);
+        $this->abstractModel->expects($this->any())
+            ->method('getQuote')
+            ->willReturn($this->quoteMock);
         $this->abstractModel->expects($this->any())
             ->method('getAllItems')
             ->willReturn([$this->quoteItemMock]);
@@ -90,6 +106,7 @@ class SubselectTest extends TestCase
      *
      * @param array|null $attributeDetails
      * @param array $productDetails
+     * @param bool $isMultiShipping
      * @param bool $expectedResult
      * @return void
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
@@ -98,6 +115,7 @@ class SubselectTest extends TestCase
     public function testValidateForFixedBundleProduct(
         ?array $attributeDetails,
         array $productDetails,
+        bool $isMultiShipping,
         bool $expectedResult
     ): void {
         $attributeResource = new DataObject();
@@ -130,6 +148,9 @@ class SubselectTest extends TestCase
             $this->ruleConditionMock->expects($this->any())->method('getOperatorForValidate')
                 ->willReturn($attributeDetails['attributeOperator']);
         }
+        $this->quoteMock->expects($this->any())
+            ->method('getIsMultiShipping')
+            ->willReturn($isMultiShipping);
         $this->quoteItemMock->expects($this->any())
             ->method('getProductType')
             ->willReturn($productDetails['type']);
@@ -185,7 +206,7 @@ class SubselectTest extends TestCase
     public static function dataProviderForFixedBundleProduct(): array
     {
         return [
-            'validate true for bundle product data with conditions' =>
+            'validate true for bundle product data with conditions with multi shipping' =>
                 [
                     [
                         'id' => 'attribute_set_id',
@@ -202,9 +223,10 @@ class SubselectTest extends TestCase
                         'baseRowTotal' => 100,
                         'valueParsed' => 100
                     ],
+                    true,
                     true
                 ],
-            'validate false for bundle product data with conditions' =>
+            'validate false for bundle product data with conditions w/o multi shipping' =>
                 [
                     [
                         'id' => 'attribute_set_id',
@@ -221,9 +243,10 @@ class SubselectTest extends TestCase
                         'baseRowTotal' => 100,
                         'valueParsed' => 50
                     ],
+                    false,
                     false
                 ],
-            'validate product data without conditions with bundle product' =>
+            'validate product data without conditions with bundle product w/o multi shipping' =>
                 [
                     null,
                     [
@@ -235,9 +258,11 @@ class SubselectTest extends TestCase
                         'baseRowTotal' => 100,
                         'valueParsed' => 100
                     ],
+                    false,
                     false
                 ],
-            'validate true for bundle product data with conditions for attribute base_row_total' =>
+            'validate true for bundle product
+            data with conditions for attribute base_row_total w/o multi shipping' =>
                 [
                     [
                         'id' => 'attribute_set_id',
@@ -254,9 +279,10 @@ class SubselectTest extends TestCase
                         'baseRowTotal' => 200,
                         'valueParsed' => 200
                     ],
+                    false,
                     false
                 ],
-            'validate true for simple product data with conditions' =>
+            'validate true for simple product data with conditions with multi shipping' =>
                 [
                     [
                         'id' => 'attribute_set_id',
@@ -273,9 +299,10 @@ class SubselectTest extends TestCase
                         'baseRowTotal' => 100,
                         'valueParsed' => 100
                     ],
+                    true,
                     true
                 ],
-            'validate false for simple product data with conditions' =>
+            'validate false for simple product data with conditions w/o multi shipping' =>
                 [
                     [
                         'id' => 'attribute_set_id',
@@ -292,6 +319,7 @@ class SubselectTest extends TestCase
                         'baseRowTotal' => 100,
                         'valueParsed' => 50
                     ],
+                    false,
                     false
                 ]
         ];
@@ -302,6 +330,7 @@ class SubselectTest extends TestCase
      *
      * @param array|null $attributeDetails
      * @param array $productDetails
+     * @param bool $isMultiShipping
      * @param bool $expectedResult
      * @return void
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
@@ -310,6 +339,7 @@ class SubselectTest extends TestCase
     public function testValidateForBaseTotalInclTax(
         ?array $attributeDetails,
         array $productDetails,
+        bool $isMultiShipping,
         bool $expectedResult
     ):void {
         $attributeResource = new DataObject();
@@ -343,6 +373,9 @@ class SubselectTest extends TestCase
                 ->willReturn($attributeDetails['attributeOperator']);
         }
 
+        $this->quoteMock->expects($this->any())
+            ->method('getIsMultiShipping')
+            ->willReturn($isMultiShipping);
         /* @var AbstractItem|MockObject $quoteItemMock */
         $this->productMock->expects($this->any())
             ->method('getResource')
@@ -368,7 +401,8 @@ class SubselectTest extends TestCase
     public static function dataProviderForBaseTotalInclTax(): array
     {
         return [
-            'validate true for product data with conditions for attribute base_row_total_incl_tax' =>
+            'validate true for product data with conditions
+            for attribute base_row_total_incl_tax w/o multi shipping' =>
                 [
                     [
                         'id' => 'attribute_set_id',
@@ -385,6 +419,7 @@ class SubselectTest extends TestCase
                         'baseRowTotalInclTax' => 200,
                         'valueParsed' => 200
                     ],
+                    false,
                     false
                 ]
         ];

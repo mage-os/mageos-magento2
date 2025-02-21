@@ -159,15 +159,15 @@ class Subselect extends Combine
         if (!$this->getConditions()) {
             return false;
         }
-
         $attr = $this->getAttribute();
         $total = 0;
-
-        foreach ($model->getAllItems() as $item) {
-            $subSelectConditionsFlag = $this->validateSubSelectConditions($item);
-            if ($subSelectConditionsFlag) {
-                $total = $this->getBaseRowTotalForChildrenProduct($item, $attr, $total);
+        $isMultiShipping = (bool) $model->getQuote()->getIsMultiShipping();
+        $items = $isMultiShipping ? $model->getAllItems() : $model->getQuote()->getAllVisibleItems();
+        foreach ($items as $item) {
+            if ($isMultiShipping) {
+                $subSelectConditionsFlag = $this->validateSubSelectConditions($item);
             }
+            $total = $this->getBaseRowTotalForChildrenProduct($item, $attr, $total);
         }
         return $subSelectConditionsFlag && $this->validateAttribute($total);
     }
