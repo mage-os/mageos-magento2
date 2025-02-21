@@ -44,7 +44,7 @@ class Validator implements ValidatorInterface
             echo "<pre>$output</pre>";
 
 
-            $output = shell_exec("cat /var/log/elasticsearch/elasticsearch.log");
+            $output = shell_exec("sudo cat /var/log/elasticsearch/elasticsearch.log");
             echo "<pre>$output</pre>";
 
             $client = $this->clientResolver->create();
