@@ -138,7 +138,8 @@ class OrderTotal implements ResolverInterface
                 'amount' => [
                     'value' => abs((float) $order->getDiscountAmount()),
                     'currency' => $order->getOrderCurrencyCode()
-                ]
+                ],
+                'order_model' => $order
             ];
         }
         return $orderDiscounts;
