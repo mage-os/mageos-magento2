@@ -39,7 +39,7 @@
         <element name="productCurrencyByProductName" type="text" selector="//strong[@class='product name product-item-name']//a[contains(text(),'{{productName}}')]/parent::strong/following-sibling::div[@class='price-box price-final_price']//span[@class='price' and contains(text(),'{{currencySymbol}}')]" parameterized="true"/>
         <element name="productPriceByProductName" type="text" selector="//strong[@class='product name product-item-name']//a[contains(text(),'{{productName}}')]/parent::strong/following-sibling::div[@class='price-box price-final_price']//span[@class='price' and contains(text(),'{{productPrice}}')]" parameterized="true"/>
         <element name="filterOptionCurrencySymbol" type="text" selector="//div[@class='filter-options-content']//a//span[@class='price' and contains(text(),'{{currencySymbol}}')]" parameterized="true"/>
-        <element name="priceDropdown" type="button" selector="//div[@class='filter-options-title']"/>
+        <element name="priceDropdown" type="button" selector="//div[@class='filter-options-title' and text()='Price']/following-sibling::div[@class='filter-options-content']"/>
         <element name="priceBlockShoppingOptions" type="block" selector="//div[@class='filter-options-content']"/>
         <element name="widgetProduct" type="text" selector="//main//ol[@class='product-items widget-product-grid']//a[contains(text(), '{{productName}}')]" parameterized="true"/>
     </section>
