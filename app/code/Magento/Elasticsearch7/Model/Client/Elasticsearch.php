@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -15,6 +15,8 @@ use Magento\Framework\Exception\LocalizedException;
 
 /**
  * Elasticsearch client
+ * @deprecated 100.3.0 because of EOL for Elasticsearch7
+ * @see this class will be responsible for ES7 only
  */
 class Elasticsearch implements ClientInterface
 {
@@ -166,11 +168,11 @@ class Elasticsearch implements ClientInterface
      * Performs bulk query over Elasticsearch 7  index
      *
      * @param array $query
-     * @return void
+     * @return array
      */
     public function bulkQuery(array $query)
     {
-        $this->getElasticsearchClient()->bulk($query);
+        return $this->getElasticsearchClient()->bulk($query);
     }
 
     /**
@@ -378,5 +380,27 @@ class Elasticsearch implements ClientInterface
             $properties = $preprocessor->process($properties);
         }
         return $properties;
+    }
+
+    /**
+     * Open point in time
+     *
+     * @param array $params
+     * @return array
+     */
+    public function openPointInTime(array $params = []): array
+    {
+        return $this->getElasticsearchClient()->openPointInTime($params);
+    }
+
+    /**
+     * Close point in time
+     *
+     * @param array $params
+     * @return array
+     */
+    public function closePointInTime(array $params = []): array
+    {
+        return $this->getElasticsearchClient()->closePointInTime($params);
     }
 }

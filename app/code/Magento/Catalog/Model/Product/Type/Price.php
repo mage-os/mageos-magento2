@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2011 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -9,6 +9,7 @@ namespace Magento\Catalog\Model\Product\Type;
 
 use Magento\Catalog\Model\Product;
 use Magento\Customer\Api\GroupManagementInterface;
+use Magento\Framework\ObjectManager\ResetAfterRequestInterface;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Store\Model\Store;
 use Magento\Catalog\Api\Data\ProductTierPriceExtensionFactory;
@@ -23,7 +24,7 @@ use Magento\Store\Api\Data\WebsiteInterface;
  * @SuppressWarnings(PHPMD.CookieAndSessionMisuse)
  * @since 100.0.2
  */
-class Price
+class Price implements ResetAfterRequestInterface
 {
     /**
      * Product price cache tag
@@ -112,7 +113,7 @@ class Price
         GroupManagementInterface $groupManagement,
         \Magento\Catalog\Api\Data\ProductTierPriceInterfaceFactory $tierPriceFactory,
         \Magento\Framework\App\Config\ScopeConfigInterface $config,
-        ProductTierPriceExtensionFactory $tierPriceExtensionFactory = null
+        ?ProductTierPriceExtensionFactory $tierPriceExtensionFactory = null
     ) {
         $this->_ruleFactory = $ruleFactory;
         $this->_storeManager = $storeManager;
@@ -394,7 +395,7 @@ class Price
      * @param \Magento\Catalog\Api\Data\ProductTierPriceInterface[] $tierPrices
      * @return $this
      */
-    public function setTierPrices($product, array $tierPrices = null)
+    public function setTierPrices($product, ?array $tierPrices = null)
     {
         // null array means leave everything as is
         if ($tierPrices === null) {
@@ -656,5 +657,13 @@ class Price
     public function isTierPriceFixed()
     {
         return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function _resetState(): void
+    {
+        self::$attributeCache = [];
     }
 }

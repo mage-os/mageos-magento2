@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2022 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -25,7 +25,7 @@ class ConnectionManagerTest extends TestCase
     private $connectionManager;
 
     /**
-     * @inheirtDoc
+     * @inheritDoc
      */
     protected function setUp(): void
     {
@@ -43,6 +43,10 @@ class ConnectionManagerTest extends TestCase
      */
     public function testCorrectElasticsearchClientEs7()
     {
+        if (!class_exists(\Elasticsearch\ClientBuilder::class)) { /** @phpstan-ignore-line */
+            $this->markTestSkipped('AC-6597: Skipped as Elasticsearch 8 is configured');
+        }
+
         $connection = $this->connectionManager->getConnection();
         $this->assertInstanceOf(Elasticsearch::class, $connection);
     }

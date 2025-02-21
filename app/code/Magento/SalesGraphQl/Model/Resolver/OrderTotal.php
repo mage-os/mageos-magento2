@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2019 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -25,8 +25,8 @@ class OrderTotal implements ResolverInterface
         Field $field,
         $context,
         ResolveInfo $info,
-        array $value = null,
-        array $args = null
+        ?array $value = null,
+        ?array $args = null
     ) {
         if (!(($value['model'] ?? null) instanceof OrderInterface)) {
             throw new LocalizedException(__('"model" value should be specified'));
@@ -125,7 +125,8 @@ class OrderTotal implements ResolverInterface
                 'amount' => [
                     'value' => abs((float) $order->getDiscountAmount()),
                     'currency' => $order->getOrderCurrencyCode()
-                ]
+                ],
+                'order_model' => $order
             ];
         }
         return $orderDiscounts;
