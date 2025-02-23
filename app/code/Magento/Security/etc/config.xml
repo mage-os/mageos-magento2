@@ -18,7 +18,7 @@
         </admin>
         <system>
             <security>
-                <max_session_size_admin>256000</max_session_size_admin>
+                <max_session_size_admin>1024000</max_session_size_admin>
                 <max_session_size_storefront>256000</max_session_size_storefront>
             </security>
         </system>

@@ -32,8 +32,8 @@ return [
     ],
     'attributes_with_type_modelName_and_invalid_value' => [
         '<?xml version="1.0"?><config><entity name="Name/one" model="model_one" '
-            . 'entityAttributeFilterType="model_one"/><entityType entity="Name/one" name="name_one" model="1"/>'
-            . ' <fileFormat name="name_one" model="1model"/></config>',
+        . 'entityAttributeFilterType="model_one"/><entityType entity="Name/one" name="name_one" model="1"/>'
+        . ' <fileFormat name="name_one" model="1model"/></config>',
         [
             [
                 "/Element \'entityType\', attribute \'model\': .*\'1\' is not (a valid value|accepted).*/",
