@@ -28,9 +28,7 @@ define([
                     message: $t('You are not authorized to access this resource.')
                 };
                 messageContainer.addErrorMessage(error);
-                setTimeout(() => {
-                    this.redirectTo(url.build('customer/account/login/'));
-                }, 2000);
+                this.redirectTo(url.build('customer/account/login/'), 2000);
             } else {
                 try {
                     error = JSON.parse(response.responseText);
@@ -46,8 +44,10 @@ define([
         /**
          * Method to redirect by requested URL.
          */
-        redirectTo: function (redirectUrl) {
-            window.location.replace(redirectUrl);
+        redirectTo: function (redirectUrl, delay = 0) {
+            setTimeout(() => {
+                window.location.replace(redirectUrl);
+            }, delay);
         }
     };
 });
