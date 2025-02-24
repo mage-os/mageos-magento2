@@ -93,9 +93,9 @@ class OrderTotal implements ResolverInterface
     {
         return array_map(
             fn($appliedTaxesData) => [
-                'title' => $appliedTaxesData->getDataByKey('title'),
-                'percent' => $appliedTaxesData->getDataByKey('percent'),
-                'amount' => $appliedTaxesData->getDataByKey('amount'),
+                'title' => $appliedTaxesData->getTitle(),
+                'percent' => $appliedTaxesData->getPercent(),
+                'amount' => $appliedTaxesData->getAmount(),
             ],
             $this->orderTaxManagement->getOrderTaxDetails($order->getEntityId())->getAppliedTaxes()
         );
