@@ -60,7 +60,7 @@ class Elasticsearch implements ClientInterface
      */
     public function __construct(
         array $options = [],
-        $elasticsearchClient = null,
+        ?Client $elasticsearchClient = null,
         array $fieldsMappingPreprocessors = [],
         ?DynamicTemplatesProvider $dynamicTemplatesProvider = null
     ) {
