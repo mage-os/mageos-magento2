@@ -382,9 +382,8 @@ class Validator extends AbstractValidator implements RowValidatorInterface
      * Is valid attributes
      *
      * @return array
-     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
-    protected function isValidAttributes(): array
+    protected function isValidAttributes()
     {
         $this->_clearMessages();
         $this->setInvalidAttribute(null);
@@ -441,7 +440,7 @@ class Validator extends AbstractValidator implements RowValidatorInterface
             }
         }
 
-        return !in_array(false, array_values($validatedAttributes['attributes']));
+        return count($this->_messages) == 0;
     }
 
     /**
@@ -456,16 +455,6 @@ class Validator extends AbstractValidator implements RowValidatorInterface
             return Product::SCOPE_DEFAULT;
         }
         return Product::SCOPE_STORE;
-    }
-
-    private function getValidatorFields(): array
-    {
-        $validatorFields = [];
-        /** @var Product\Validator\AbstractImportValidator $validator */
-        foreach($this->validators as $validator) {
-            $validatorFields[] = $validator->getFieldName();
-        }
-        return $validatorFields;
     }
 
     /**

@@ -21,8 +21,7 @@ abstract class AbstractImportValidator extends AbstractValidator implements RowV
     protected $context;
 
     /**
-     * @param \Magento\CatalogImportExport\Model\Import\Product $context
-     * @return $this
+     * @inheritDoc
      */
     public function init($context)
     {
@@ -31,6 +30,8 @@ abstract class AbstractImportValidator extends AbstractValidator implements RowV
     }
 
     /**
+     * Get validating field name
+     *
      * @return string|null
      */
     public function getFieldName(): ?string

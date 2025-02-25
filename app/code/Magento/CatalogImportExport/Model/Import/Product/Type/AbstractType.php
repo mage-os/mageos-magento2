@@ -583,7 +583,7 @@ abstract class AbstractType
                     // For the default scope - if this is a new product or
                     // for an old product, if the imported doc has the column present for the attrCode
                     if (Product::SCOPE_DEFAULT == $rowScope &&
-                        ($isNewProduct || !in_array($attrCode,self::NON_REQUIRED_ATTRIBUTES_EXISTING_PRODUCTS)) &&
+                        ($isNewProduct || !in_array($attrCode, self::NON_REQUIRED_ATTRIBUTES_EXISTING_PRODUCTS)) &&
                         array_key_exists($attrCode, $rowData)
                     ) {
                         $this->_entityModel->addRowError(

@@ -331,7 +331,8 @@ class AbstractTypeTest extends TestCase
     {
         $rowData = [
             '_attribute_set' => 'attribute_set_name',
-            'sku' => 'sku'
+            'sku' => 'sku',
+            'attr_code' => 'test'
         ];
         $rowNum = 1;
         $this->entityModel->method('getRowScope')
