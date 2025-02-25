@@ -381,31 +381,36 @@ class Validator extends AbstractValidator implements RowValidatorInterface
     /**
      * Is valid attributes
      *
-     * @return bool
+     * @return array
      * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
-    protected function isValidAttributes()
+    protected function isValidAttributes(): array
     {
         $this->_clearMessages();
         $this->setInvalidAttribute(null);
+        $attributeValidationResult['result'] = true;
+
         if (!isset($this->_rowData['product_type'])) {
-            return false;
+            $attributeValidationResult['result'] = false;
+            return $attributeValidationResult;
         }
         $entityTypeModel = $this->context->retrieveProductTypeByName($this->_rowData['product_type']);
         if ($entityTypeModel) {
+            $result = true;
             foreach ($this->_rowData as $attrCode => $attrValue) {
                 $attrParams = $entityTypeModel->retrieveAttributeFromCache($attrCode);
                 if ($attrCode === Product::COL_CATEGORY && $attrValue) {
-                    $this->isCategoriesValid($attrValue);
+                    $result = $this->isCategoriesValid($attrValue);
                 } elseif ($attrParams) {
-                    $this->isAttributeValid($attrCode, $attrParams, $this->_rowData);
+                    $result = $this->isAttributeValid($attrCode, $attrParams, $this->_rowData);
                 }
+                $attributeValidationResult['attributes'][$attrCode] = $result;
             }
             if ($this->getMessages()) {
-                return false;
+                $attributeValidationResult['result'] = false;
             }
         }
-        return true;
+        return $attributeValidationResult;
     }
 
     /**
@@ -415,14 +420,28 @@ class Validator extends AbstractValidator implements RowValidatorInterface
     {
         $this->_rowData = $value;
         $this->_clearMessages();
-        $returnValue = $this->isValidAttributes();
+        $validatedAttributes = $this->isValidAttributes();
+        /** @var Product\Validator\AbstractImportValidator $validator */
         foreach ($this->validators as $validator) {
             if (!$validator->isValid($value)) {
-                $returnValue = false;
                 $this->_addMessages($validator->getMessages());
+            } else {
+                //prioritize specialized validation
+                if ($validator->getFieldName() &&
+                    $validatedAttributes['attributes'][$validator->getFieldName()] === false
+                ) {
+                    $validatedAttributes['attributes'][$validator->getFieldName()] = true;
+                    foreach ($this->_messages as $key => $message) {
+                        if (str_contains($message, $validator->getFieldName())) {
+                            unset($this->_messages[$key]);
+                        }
+                    }
+                    $this->_messages = array_values($this->_messages);
+                }
             }
         }
-        return $returnValue;
+
+        return !in_array(false, array_values($validatedAttributes['attributes']));
     }
 
     /**
@@ -437,6 +456,16 @@ class Validator extends AbstractValidator implements RowValidatorInterface
             return Product::SCOPE_DEFAULT;
         }
         return Product::SCOPE_STORE;
+    }
+
+    private function getValidatorFields(): array
+    {
+        $validatorFields = [];
+        /** @var Product\Validator\AbstractImportValidator $validator */
+        foreach($this->validators as $validator) {
+            $validatorFields[] = $validator->getFieldName();
+        }
+        return $validatorFields;
     }
 
     /**

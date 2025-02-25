@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\CatalogImportExport\Model\Import\Product\Validator;
 
@@ -10,6 +10,11 @@ use Magento\CatalogImportExport\Model\Import\Product\RowValidatorInterface;
 
 abstract class AbstractImportValidator extends AbstractValidator implements RowValidatorInterface
 {
+    /**
+     * @var string|null
+     */
+    protected ?string $fieldName = null;
+
     /**
      * @var \Magento\CatalogImportExport\Model\Import\Product
      */
@@ -23,5 +28,13 @@ abstract class AbstractImportValidator extends AbstractValidator implements RowV
     {
         $this->context = $context;
         return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getFieldName(): ?string
+    {
+        return $this->fieldName;
     }
 }

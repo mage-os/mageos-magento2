@@ -24,6 +24,7 @@ class Name extends AbstractImportValidator implements RowValidatorInterface
     public function __construct(SkuStorage $skuStorage)
     {
         $this->skuStorage = $skuStorage;
+        $this->fieldName = Product::COL_NAME;
     }
 
     /**
@@ -41,7 +42,7 @@ class Name extends AbstractImportValidator implements RowValidatorInterface
                 [
                     sprintf(
                         $this->context->retrieveMessageTemplate(self::ERROR_INVALID_ATTRIBUTE_TYPE),
-                        'name',
+                        $this->fieldName,
                         'not empty'
                     )
                 ]
@@ -59,9 +60,9 @@ class Name extends AbstractImportValidator implements RowValidatorInterface
      */
     private function hasNameValue(array $rowData): bool
     {
-        return array_key_exists(Product::COL_NAME, $rowData) &&
-            !empty($rowData[Product::COL_NAME]) &&
-            $rowData[Product::COL_NAME] !== $this->context->getEmptyAttributeValueConstant();
+        return array_key_exists($this->fieldName, $rowData) &&
+            !empty($rowData[$this->fieldName]) &&
+            $rowData[$this->fieldName] !== $this->context->getEmptyAttributeValueConstant();
     }
 
     /**
