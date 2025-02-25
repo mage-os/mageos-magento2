@@ -379,11 +379,11 @@ class Validator extends AbstractValidator implements RowValidatorInterface
     }
 
     /**
-     * Is valid attributes
+     * Validate attributes against configured properties
      *
      * @return array
      */
-    protected function isValidAttributes()
+    private function validateAttributes(): array
     {
         $this->_clearMessages();
         $this->setInvalidAttribute(null);
@@ -413,13 +413,43 @@ class Validator extends AbstractValidator implements RowValidatorInterface
     }
 
     /**
+     * Is valid attributes
+     *
+     * @return bool
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     */
+    protected function isValidAttributes()
+    {
+        $this->_clearMessages();
+        $this->setInvalidAttribute(null);
+        if (!isset($this->_rowData['product_type'])) {
+            return false;
+        }
+        $entityTypeModel = $this->context->retrieveProductTypeByName($this->_rowData['product_type']);
+        if ($entityTypeModel) {
+            foreach ($this->_rowData as $attrCode => $attrValue) {
+                $attrParams = $entityTypeModel->retrieveAttributeFromCache($attrCode);
+                if ($attrCode === Product::COL_CATEGORY && $attrValue) {
+                    $this->isCategoriesValid($attrValue);
+                } elseif ($attrParams) {
+                    $this->isAttributeValid($attrCode, $attrParams, $this->_rowData);
+                }
+            }
+            if ($this->getMessages()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * @inheritdoc
      */
     public function isValid($value)
     {
         $this->_rowData = $value;
         $this->_clearMessages();
-        $validatedAttributes = $this->isValidAttributes();
+        $validatedAttributes = $this->validateAttributes();
         /** @var Product\Validator\AbstractImportValidator $validator */
         foreach ($this->validators as $validator) {
             if (!$validator->isValid($value)) {
@@ -427,6 +457,7 @@ class Validator extends AbstractValidator implements RowValidatorInterface
             } else {
                 //prioritize specialized validation
                 if ($validator->getFieldName() &&
+                    isset($validatedAttributes['attributes']) &&
                     $validatedAttributes['attributes'][$validator->getFieldName()] === false
                 ) {
                     $validatedAttributes['attributes'][$validator->getFieldName()] = true;
