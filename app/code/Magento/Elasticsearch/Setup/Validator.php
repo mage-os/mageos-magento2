@@ -37,16 +37,6 @@ class Validator implements ValidatorInterface
     {
         $errors = [];
         try {
-            echo "Check elasticsearch8 server up or not with command line\n";
-            shell_exec("curl http://127.0.0.1:9200/");
-
-            $output = shell_exec('netstat -tuln');
-            echo "<pre>$output</pre>";
-
-
-            $output = shell_exec("sudo cat /var/log/elasticsearch/elasticsearch.log");
-            echo "<pre>$output</pre>";
-
             $client = $this->clientResolver->create();
             if (!$client->testConnection()) {
                 $errors[] = 'Could not validate a connection to Elasticsearch.'
