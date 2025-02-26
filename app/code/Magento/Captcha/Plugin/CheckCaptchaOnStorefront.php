@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2024 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -18,33 +18,18 @@ use Magento\Framework\App\Http\Context as HttpContext;
 class CheckCaptchaOnStorefront
 {
     /**
-     * @var HelperCaptcha
-     */
-    private $helper;
-
-    /**
-     * Customer session
-     *
-     * @var HttpContext
-     */
-    private $httpContext;
-
-    /**
      * CheckCaptchaOnStorefront constructor
      *
      * @param HelperCaptcha $helper
      * @param HttpContext $httpContext
      */
     public function __construct(
-        HelperCaptcha $helper,
-        HttpContext $httpContext
-    ) {
-        $this->helper = $helper;
-        $this->httpContext = $httpContext;
-    }
+        private readonly HelperCaptcha $helper,
+        private readonly HttpContext   $httpContext
+    ) {}
 
     /**
-     * Remove template when loggin or disable captcha storefront
+     * Remove template when login or disable captcha storefront
      *
      * @param AuthenticationPopup $subject
      * @param string $result
@@ -54,8 +39,8 @@ class CheckCaptchaOnStorefront
      */
     public function afterGetTemplate(
         AuthenticationPopup $subject,
-        $result
-    ) {
+        string $result
+    ): string {
         if ($this->isLoggedIn() || !$this->helper->getConfig('enable')) {
             return '';
         }
@@ -68,7 +53,7 @@ class CheckCaptchaOnStorefront
      *
      * @return bool
      */
-    private function isLoggedIn()
+    private function isLoggedIn(): bool
     {
         return $this->httpContext->getValue(Context::CONTEXT_AUTH);
     }
