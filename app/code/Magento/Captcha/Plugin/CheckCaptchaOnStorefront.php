@@ -26,7 +26,8 @@ class CheckCaptchaOnStorefront
     public function __construct(
         private readonly HelperCaptcha $helper,
         private readonly HttpContext   $httpContext
-    ) {}
+    ) {
+    }
 
     /**
      * Remove template when login or disable captcha storefront
