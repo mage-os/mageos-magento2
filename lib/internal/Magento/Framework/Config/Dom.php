@@ -171,10 +171,11 @@ class Dom
         /* Update matched node attributes and value */
         if ($matchedNode) {
             //different node type
-            if ($this->typeAttributeName &&
+            if (($this->typeAttributeName &&
                 $node->hasAttribute($this->typeAttributeName) &&
                 $matchedNode->hasAttribute($this->typeAttributeName) &&
-                $node->getAttribute($this->typeAttributeName) !== $matchedNode->getAttribute($this->typeAttributeName)
+                $node->getAttribute($this->typeAttributeName) !== $matchedNode->getAttribute($this->typeAttributeName))
+                || ($node->tagName === 'column')
             ) {
                 $parentMatchedNode = $this->_getMatchedNode($parentPath);
                 $newNode = $this->dom->importNode($node, true);
