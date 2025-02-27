@@ -17,6 +17,7 @@
             <severity value="MAJOR"/>
             <testCaseId value="MC-28543"/>
             <group value="sales"/>
+            <group value="pr_exclude"/>
         </annotations>
         <before>
             <createData entity="_defaultCategory" stepKey="createCategory"/>
