@@ -57,7 +57,7 @@ class InvalidateToken extends User implements HttpGetActionInterface, HttpPostAc
         Registry $coreRegistry,
         UserFactory $userFactory,
         AdminTokenServiceInterface $tokenService,
-        ForceSignIn $forceSignIn = null
+        ?ForceSignIn $forceSignIn = null
     ) {
         parent::__construct($context, $coreRegistry, $userFactory);
         $this->tokenService = $tokenService;
