@@ -11,6 +11,8 @@ use Magento\Captcha\Helper\Data as HelperCaptcha;
 use Magento\Customer\Block\Account\AuthenticationPopup;
 use Magento\Customer\Model\Context;
 use Magento\Framework\App\Http\Context as HttpContext;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Store\Model\ScopeInterface;
 
 /**
  * Check need captcha for authentication popup
@@ -25,7 +27,8 @@ class CheckCaptchaOnStorefront
      */
     public function __construct(
         private readonly HelperCaptcha $helper,
-        private readonly HttpContext   $httpContext
+        private readonly HttpContext   $httpContext,
+        private readonly ScopeConfigInterface $scopeConfig
     ) {
     }
 
@@ -40,13 +43,16 @@ class CheckCaptchaOnStorefront
      */
     public function afterGetTemplate(
         AuthenticationPopup $subject,
-        string $result
+        ?string $result
     ): string {
-        if ($this->isLoggedIn() || !$this->helper->getConfig('enable')) {
+        // Check the value for recaptcha_frontend/type_for/customer_login
+        $recaptchaType = $this->scopeConfig->getValue('recaptcha_frontend/type_for/customer_login', ScopeInterface::SCOPE_WEBSITE);
+
+        if ($this->isLoggedIn() || (!$this->helper->getConfig('enable') && $recaptchaType === null)) {
             return '';
         }
 
-        return $result;
+        return $result ?? '';
     }
 
     /**
