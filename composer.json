@@ -54,8 +54,8 @@
         "guzzlehttp/guzzle": "^7.5",
         "laminas/laminas-captcha": "^2.18",
         "laminas/laminas-code": "^4.13",
-        "magento/laminas-db": "^1.0.0",
-        "magento/laminas-di": "^1.0.0",
+        "magento/magento-zf-db": "^3.21",
+        "laminas/laminas-di": "^3.15",
         "laminas/laminas-escaper": "^2.13",
         "laminas/laminas-eventmanager": "^3.11",
         "laminas/laminas-feed": "^2.22",
@@ -96,11 +96,10 @@
         "tubalmartin/cssmin": "^4.1",
         "web-token/jwt-framework": "^3.4",
         "webonyx/graphql-php": "^15.0",
-        "wikimedia/less.php": "^5.0",
-        "magento/ringphp": "^1.0.0"
+        "wikimedia/less.php": "^5.0"
     },
     "require-dev": {
-        "magento/allure-phpunit": "^1.0.0",
+        "magento/magento-allure-phpunit": "^3.0",
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7 || ^1.0",
         "dg/bypass-finals": "^1.4",
         "friendsofphp/php-cs-fixer": "^3.22",
