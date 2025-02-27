@@ -20,14 +20,6 @@
         {
             "type": "composer",
             "url": "https://repo.magento.com/"
-        },
-        {
-            "type": "vcs",
-            "url": "git@github.com:magento/magento-allure-phpunit.git"
-        },
-        {
-            "type": "vcs",
-            "url": "git@github.com:magento/magento-zf-db.git"
         }
     ],
     "require": {
@@ -62,7 +54,7 @@
         "guzzlehttp/guzzle": "^7.5",
         "laminas/laminas-captcha": "^2.18",
         "laminas/laminas-code": "^4.13",
-        "magento/magento-zf-db": "2.21.x-dev",
+        "magento/magento-zf-db": "^3.21",
         "laminas/laminas-di": "^3.15",
         "laminas/laminas-escaper": "^2.13",
         "laminas/laminas-eventmanager": "^3.11",
@@ -107,7 +99,7 @@
         "wikimedia/less.php": "^5.0"
     },
     "require-dev": {
-        "magento/magento-allure-phpunit": "dev-main",
+        "magento/magento-allure-phpunit": "^3.0",
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7 || ^1.0",
         "dg/bypass-finals": "^1.4",
         "friendsofphp/php-cs-fixer": "^3.22",

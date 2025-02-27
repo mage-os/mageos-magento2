@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bf53cf7e52e0f2abbbd7704f139fe123",
+    "content-hash": "b835aa849bdd6d22bf6cf403d82f009a",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.340.1",
+            "version": "3.340.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "414b84a625c239b3cbfa132b8d522c579a7eb75c"
+                "reference": "22cee29c0ca8d93a7a9c03d13739217373a21fcc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/414b84a625c239b3cbfa132b8d522c579a7eb75c",
-                "reference": "414b84a625c239b3cbfa132b8d522c579a7eb75c",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/22cee29c0ca8d93a7a9c03d13739217373a21fcc",
+                "reference": "22cee29c0ca8d93a7a9c03d13739217373a21fcc",
                 "shasum": ""
             },
             "require": {
@@ -153,9 +153,9 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.340.1"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.340.2"
             },
-            "time": "2025-02-25T19:14:47+00:00"
+            "time": "2025-02-26T19:28:12+00:00"
         },
         {
             "name": "brick/math",
@@ -4252,116 +4252,6 @@
             "description": "Validating packages through a composer plugin"
         },
         {
-            "name": "magento/laminas-db",
-            "version": "1.0.0-beta124",
-            "dist": {
-                "type": "zip",
-                "url": "https://repo.magento.com/archives/magento/laminas-db/magento-laminas-db-1.0.0.0-beta124.zip",
-                "shasum": "554d6f51517abe054aac5b67248f6e9e345cb6b2"
-            },
-            "require": {
-                "laminas/laminas-stdlib": "^3.7.1",
-                "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0"
-            },
-            "conflict": {
-                "zendframework/zend-db": "*"
-            },
-            "replace": {
-                "laminas/laminas-db": "^2.20"
-            },
-            "require-dev": {
-                "laminas/laminas-coding-standard": "^2.4.0",
-                "laminas/laminas-eventmanager": "^3.6.0",
-                "laminas/laminas-hydrator": "^4.7",
-                "laminas/laminas-servicemanager": "^3.19.0",
-                "phpunit/phpunit": "^9.5.25"
-            },
-            "suggest": {
-                "laminas/laminas-eventmanager": "Laminas\\EventManager component",
-                "laminas/laminas-hydrator": "(^3.2 || ^4.3) Laminas\\Hydrator component for using HydratingResultSets",
-                "laminas/laminas-servicemanager": "Laminas\\ServiceManager component"
-            },
-            "type": "library",
-            "extra": {
-                "laminas": {
-                    "component": "Laminas\\Db",
-                    "config-provider": "Laminas\\Db\\ConfigProvider"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Laminas\\Db\\": "src/"
-                }
-            },
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "Database abstraction layer, SQL abstraction, result set abstraction, and RowDataGateway and TableDataGateway implementations",
-            "homepage": "https://laminas.dev",
-            "keywords": [
-                "db",
-                "laminas"
-            ]
-        },
-        {
-            "name": "magento/laminas-di",
-            "version": "1.0.0-beta124",
-            "dist": {
-                "type": "zip",
-                "url": "https://repo.magento.com/archives/magento/laminas-di/magento-laminas-di-1.0.0.0-beta124.zip",
-                "shasum": "35ad16be92497523c9b04ab005332f7d09bf9d78"
-            },
-            "require": {
-                "laminas/laminas-stdlib": "^3.18.0",
-                "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0",
-                "psr/container": "^1.1.1",
-                "psr/log": "^1.1.4 || ^2.0.0 ||  ^3.0.0"
-            },
-            "conflict": {
-                "laminas/laminas-servicemanager": "<3.13.0 || >=4.0.0",
-                "laminas/laminas-servicemanager-di": "*",
-                "zendframework/zend-di": "*"
-            },
-            "replace": {
-                "laminas/laminas-di": "^3.14"
-            },
-            "require-dev": {
-                "laminas/laminas-coding-standard": "~2.5.0",
-                "laminas/laminas-servicemanager": "^3.22",
-                "mikey179/vfsstream": "^1.6.11@alpha",
-                "phpbench/phpbench": "^1.2.7",
-                "phpunit/phpunit": "^9.5.26",
-                "psalm/plugin-phpunit": "^0.18.0",
-                "squizlabs/php_codesniffer": "^3.7.1",
-                "vimeo/psalm": "^5.0"
-            },
-            "suggest": {
-                "laminas/laminas-servicemanager": "An IoC container without auto wiring capabilities"
-            },
-            "type": "library",
-            "extra": {
-                "laminas": {
-                    "component": "Laminas\\Di",
-                    "config-provider": "Laminas\\Di\\ConfigProvider"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Laminas\\Di\\": "src/"
-                }
-            },
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "Automated dependency injection for PSR-11 containers",
-            "homepage": "https://laminas.dev",
-            "keywords": [
-                "di",
-                "laminas",
-                "psr-11"
-            ]
-        },
-        {
             "name": "magento/magento-composer-installer",
             "version": "0.4.0",
             "source": {
@@ -4444,7 +4334,7 @@
         },
         {
             "name": "magento/magento-zf-db",
-            "version": "2.21.x-dev",
+            "version": "3.21.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/magento/magento-zf-db.git",
@@ -4490,36 +4380,7 @@
                     "Laminas\\Db\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "LaminasTest\\Db\\": "test/unit/",
-                    "LaminasIntegrationTest\\Db\\": "test/integration/"
-                }
-            },
-            "scripts": {
-                "check": [
-                    "@cs-check",
-                    "@test"
-                ],
-                "cs-check": [
-                    "phpcs"
-                ],
-                "cs-fix": [
-                    "phpcbf"
-                ],
-                "test": [
-                    "phpunit --colors=always --testsuite \"unit test\""
-                ],
-                "test-coverage": [
-                    "phpunit --colors=always --coverage-clover clover.xml"
-                ],
-                "test-integration": [
-                    "phpunit --colors=always --testsuite \"integration test\""
-                ],
-                "upload-coverage": [
-                    "coveralls -v"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
@@ -4530,12 +4391,12 @@
                 "laminas"
             ],
             "support": {
-                "docs": "https://docs.laminas.dev/laminas-db/",
-                "issues": "https://github.com/laminas/laminas-db/issues",
-                "source": "https://github.com/laminas/laminas-db",
-                "rss": "https://github.com/laminas/laminas-db/releases.atom",
                 "chat": "https://laminas.dev/chat",
-                "forum": "https://discourse.laminas.dev"
+                "docs": "https://docs.laminas.dev/laminas-db/",
+                "forum": "https://discourse.laminas.dev",
+                "issues": "https://github.com/laminas/laminas-db/issues",
+                "rss": "https://github.com/laminas/laminas-db/releases.atom",
+                "source": "https://github.com/laminas/laminas-db"
             },
             "time": "2025-02-26T05:37:14+00:00"
         },
@@ -10443,24 +10304,30 @@
         },
         {
             "name": "behat/gherkin",
-            "version": "v4.11.0",
+            "version": "v4.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Behat/Gherkin.git",
-                "reference": "32821a17b12620951e755b5d49328a6421a5b5b5"
+                "reference": "cc3a7e224b36373be382b53ef02ede0f1807bb58"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Behat/Gherkin/zipball/32821a17b12620951e755b5d49328a6421a5b5b5",
-                "reference": "32821a17b12620951e755b5d49328a6421a5b5b5",
+                "url": "https://api.github.com/repos/Behat/Gherkin/zipball/cc3a7e224b36373be382b53ef02ede0f1807bb58",
+                "reference": "cc3a7e224b36373be382b53ef02ede0f1807bb58",
                 "shasum": ""
             },
             "require": {
+                "composer-runtime-api": "^2.2",
                 "php": "8.1.* || 8.2.* || 8.3.* || 8.4.*"
             },
             "require-dev": {
                 "cucumber/cucumber": "dev-gherkin-24.1.0",
-                "phpunit/phpunit": "^9.6",
+                "friendsofphp/php-cs-fixer": "^3.65",
+                "phpstan/extension-installer": "^1",
+                "phpstan/phpstan": "^2",
+                "phpstan/phpstan-phpunit": "^2",
+                "phpunit/phpunit": "^10.5",
+                "symfony/filesystem": "^5.4 || ^6.4 || ^7.0",
                 "symfony/yaml": "^5.4 || ^6.4 || ^7.0"
             },
             "suggest": {
@@ -10485,11 +10352,11 @@
                 {
                     "name": "Konstantin Kudryashov",
                     "email": "ever.zet@gmail.com",
-                    "homepage": "http://everzet.com"
+                    "homepage": "https://everzet.com"
                 }
             ],
             "description": "Gherkin DSL parser for PHP",
-            "homepage": "http://behat.org/",
+            "homepage": "https://behat.org/",
             "keywords": [
                 "BDD",
                 "Behat",
@@ -10500,9 +10367,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Behat/Gherkin/issues",
-                "source": "https://github.com/Behat/Gherkin/tree/v4.11.0"
+                "source": "https://github.com/Behat/Gherkin/tree/v4.12.0"
             },
-            "time": "2024-12-06T10:07:25+00:00"
+            "time": "2025-02-26T14:28:23+00:00"
         },
         {
             "name": "clue/ndjson-react",
@@ -11526,7 +11393,7 @@
         },
         {
             "name": "magento/magento-allure-phpunit",
-            "version": "dev-main",
+            "version": "3.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/magento/magento-allure-phpunit.git",
@@ -11556,83 +11423,13 @@
                 "squizlabs/php_codesniffer": "^3.7.2",
                 "vimeo/psalm": "^5.15"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
                     "Qameta\\Allure\\PHPUnit\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-0": {
-                    "Yandex": "test/"
-                },
-                "psr-4": {
-                    "Qameta\\Allure\\PHPUnit\\Test\\Unit\\": "test/unit/",
-                    "Qameta\\Allure\\PHPUnit\\Test\\Report\\": "test/report/"
-                }
-            },
-            "scripts": {
-                "test-cs": [
-                    "vendor/bin/phpcs -sp"
-                ],
-                "test-unit": [
-                    "vendor/bin/phpunit --coverage-text"
-                ],
-                "test-unit-lowest": [
-                    "vendor/bin/phpunit --configuration=phpunit.10.0.xml --coverage-text"
-                ],
-                "clear-allure-results": [
-                    "rm -rf ./build/allure-results"
-                ],
-                "test-report": [
-                    "@clear-allure-results",
-                    "vendor/bin/paratest --processes=3 --configuration=phpunit.report.xml --testsuite=positive",
-                    "vendor/bin/paratest --processes=3 --configuration=phpunit.report.xml --testsuite=negative; exit 0"
-                ],
-                "test-report-lowest": [
-                    "@clear-allure-results",
-                    "vendor/bin/paratest --processes=3 --configuration=phpunit.10.0.report.xml --testsuite=positive",
-                    "vendor/bin/paratest --processes=3 --configuration=phpunit.10.0.report.xml --testsuite=negative; exit 0"
-                ],
-                "test-report-windows": [
-                    "@clear-allure-results",
-                    "vendor/bin/paratest --processes=3 --configuration=phpunit.report.xml --testsuite=positive",
-                    "vendor/bin/paratest --processes=3 --configuration=phpunit.report.xml --testsuite=negative & exit 0"
-                ],
-                "test-report-windows-lowest": [
-                    "@clear-allure-results",
-                    "vendor/bin/paratest --processes=3 --configuration=phpunit.10.0.report.xml --testsuite=positive",
-                    "vendor/bin/paratest --processes=3 --configuration=phpunit.10.0.report.xml --testsuite=negative & exit 0"
-                ],
-                "test-psalm": [
-                    "vendor/bin/psalm --shepherd"
-                ],
-                "test": [
-                    "@test-cs",
-                    "@test-unit",
-                    "@test-report",
-                    "@test-psalm"
-                ],
-                "test-lowest": [
-                    "@test-cs",
-                    "@test-unit-lowest",
-                    "@test-report-lowest",
-                    "@test-psalm"
-                ],
-                "test-windows": [
-                    "@test-cs",
-                    "@test-unit",
-                    "@test-report-windows",
-                    "@test-psalm"
-                ],
-                "test-windows-lowest": [
-                    "@test-cs",
-                    "@test-unit-lowest",
-                    "@test-report-windows-lowest",
-                    "@test-psalm"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "Apache-2.0"
             ],
@@ -11717,16 +11514,16 @@
         },
         {
             "name": "magento/magento2-functional-testing-framework",
-            "version": "5.0.2",
+            "version": "5.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/magento/magento2-functional-testing-framework.git",
-                "reference": "6c139594c271fcec4996c7782552d44016ec2c7c"
+                "reference": "4a353df8982190bcd54869dc7900098a49f1fbe2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento/magento2-functional-testing-framework/zipball/6c139594c271fcec4996c7782552d44016ec2c7c",
-                "reference": "6c139594c271fcec4996c7782552d44016ec2c7c",
+                "url": "https://api.github.com/repos/magento/magento2-functional-testing-framework/zipball/4a353df8982190bcd54869dc7900098a49f1fbe2",
+                "reference": "4a353df8982190bcd54869dc7900098a49f1fbe2",
                 "shasum": ""
             },
             "require": {
@@ -11800,9 +11597,9 @@
             ],
             "support": {
                 "issues": "https://github.com/magento/magento2-functional-testing-framework/issues",
-                "source": "https://github.com/magento/magento2-functional-testing-framework/tree/5.0.2"
+                "source": "https://github.com/magento/magento2-functional-testing-framework/tree/5.0.3"
             },
-            "time": "2025-01-08T16:45:32+00:00"
+            "time": "2025-02-27T04:12:59+00:00"
         },
         {
             "name": "magento/oauth",
@@ -14929,8 +14726,6 @@
     "minimum-stability": "beta",
     "stability-flags": {
         "magento/composer": 10,
-        "magento/magento-allure-phpunit": 20,
-        "magento/magento-zf-db": 20,
         "pdepend/pdepend": 20,
         "phpmd/phpmd": 20
     },
