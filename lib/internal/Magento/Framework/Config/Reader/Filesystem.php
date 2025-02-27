@@ -1,7 +1,7 @@
 <?php
 /**
- *  Copyright 2014 Adobe
- *  All Rights Reserved.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Framework\Config\Reader;
@@ -84,7 +84,7 @@ class Filesystem implements \Magento\Framework\Config\ReaderInterface
     /**
      * Name of an attribute that stands for data type of node values
      */
-    public const TYPE_ATTRIBUTE = 'xsi:type';
+    private const TYPE_ATTRIBUTE = 'xsi:type';
 
     /**
      * Constructor
