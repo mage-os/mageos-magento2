@@ -11449,16 +11449,16 @@
         },
         {
             "name": "magento/magento2-functional-testing-framework",
-            "version": "5.0.2",
+            "version": "5.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/magento/magento2-functional-testing-framework.git",
-                "reference": "6c139594c271fcec4996c7782552d44016ec2c7c"
+                "reference": "4a353df8982190bcd54869dc7900098a49f1fbe2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento/magento2-functional-testing-framework/zipball/6c139594c271fcec4996c7782552d44016ec2c7c",
-                "reference": "6c139594c271fcec4996c7782552d44016ec2c7c",
+                "url": "https://api.github.com/repos/magento/magento2-functional-testing-framework/zipball/4a353df8982190bcd54869dc7900098a49f1fbe2",
+                "reference": "4a353df8982190bcd54869dc7900098a49f1fbe2",
                 "shasum": ""
             },
             "require": {
@@ -11532,9 +11532,9 @@
             ],
             "support": {
                 "issues": "https://github.com/magento/magento2-functional-testing-framework/issues",
-                "source": "https://github.com/magento/magento2-functional-testing-framework/tree/5.0.2"
+                "source": "https://github.com/magento/magento2-functional-testing-framework/tree/5.0.3"
             },
-            "time": "2025-01-08T16:45:32+00:00"
+            "time": "2025-02-27T04:12:59+00:00"
         },
         {
             "name": "magento/oauth",
@@ -14687,6 +14687,6 @@
         "ext-zip": "*",
         "lib-libxml": "*"
     },
-    "platform-dev": {},
+    "platform-dev": [],
     "plugin-api-version": "2.6.0"
 }
