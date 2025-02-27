@@ -48,8 +48,8 @@ class ResetPasswordPost extends Auth implements HttpGetActionInterface, HttpPost
     public function __construct(
         Context $context,
         UserFactory $userFactory,
-        Data $backendDataHelper = null,
-        ForceSignIn $forceSignIn = null
+        ?Data $backendDataHelper = null,
+        ?ForceSignIn $forceSignIn = null
     ) {
         parent::__construct($context, $userFactory);
         $this->backendDataHelper = $backendDataHelper ?: ObjectManager::getInstance()->get(Data::class);

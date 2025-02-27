@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -60,7 +60,7 @@ class Processor
         private readonly Usage $couponUsage,
         private readonly CouponRepositoryInterface $couponRepository,
         private readonly SearchCriteriaBuilder $criteriaBuilder,
-        LockManagerInterface $lockManager = null
+        ?LockManagerInterface $lockManager = null
     ) {
         $this->lockManager = $lockManager ?? ObjectManager::getInstance()->get(LockManagerInterface::class);
     }
