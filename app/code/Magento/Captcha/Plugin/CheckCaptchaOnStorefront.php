@@ -60,7 +60,7 @@ class CheckCaptchaOnStorefront
      *
      * @return bool
      */
-    private function isLoggedIn(): bool
+    private function isLoggedIn(): ?bool
     {
         return $this->httpContext->getValue(Context::CONTEXT_AUTH);
     }
