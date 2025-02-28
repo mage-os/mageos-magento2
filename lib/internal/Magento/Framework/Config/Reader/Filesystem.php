@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2014 Adobe
- * All Rights Reserved.
+ *  Copyright 2014 Adobe
+ *  All Rights Reserved.
  */
 
 namespace Magento\Framework\Config\Reader;
@@ -83,8 +83,10 @@ class Filesystem implements \Magento\Framework\Config\ReaderInterface
 
     /**
      * Name of an attribute that stands for data type of node values
+     *
+     * @var string
      */
-    private const TYPE_ATTRIBUTE = 'xsi:type';
+    protected $_typeAttributeName;
 
     /**
      * Constructor
@@ -97,6 +99,7 @@ class Filesystem implements \Magento\Framework\Config\ReaderInterface
      * @param array $idAttributes
      * @param string $domDocumentClass
      * @param string $defaultScope
+     * @param string $typeAttributeName
      */
     public function __construct(
         \Magento\Framework\Config\FileResolverInterface $fileResolver,
@@ -106,7 +109,8 @@ class Filesystem implements \Magento\Framework\Config\ReaderInterface
         $fileName,
         $idAttributes = [],
         $domDocumentClass = \Magento\Framework\Config\Dom::class,
-        $defaultScope = 'global'
+        $defaultScope = 'global',
+        $typeAttributeName = null,
     ) {
         $this->_fileResolver = $fileResolver;
         $this->_converter = $converter;
@@ -118,6 +122,7 @@ class Filesystem implements \Magento\Framework\Config\ReaderInterface
             ? $schemaLocator->getPerFileSchema() : null;
         $this->_domDocumentClass = $domDocumentClass;
         $this->_defaultScope = $defaultScope;
+        $this->_typeAttributeName = $typeAttributeName;
     }
 
     /**
@@ -153,6 +158,9 @@ class Filesystem implements \Magento\Framework\Config\ReaderInterface
         foreach ($fileList as $key => $content) {
             try {
                 if (!$configMerger) {
+                    if ($this->isDbSchemaFile($key)) {
+                        $this->_typeAttributeName = 'xsi:type';
+                    }
                     $configMerger = $this->_createConfigMerger($this->_domDocumentClass, $content);
                 } else {
                     $configMerger->merge($content);
@@ -176,6 +184,9 @@ class Filesystem implements \Magento\Framework\Config\ReaderInterface
                 $configMerger = null;
                 foreach ($fileList as $key => $content) {
                     if (!$configMerger) {
+                        if ($this->isDbSchemaFile($key)) {
+                            $this->_typeAttributeName = 'xsi:type';
+                        }
                         $configMerger = $this->_createConfigMerger($this->_domDocumentClass, $content);
                     } else {
                         $configMerger->merge($content);
@@ -206,6 +217,7 @@ class Filesystem implements \Magento\Framework\Config\ReaderInterface
      *
      * @param string $mergerClass
      * @param string $initialContents
+     * @param string $typeAttributeName
      * @return \Magento\Framework\Config\Dom
      * @throws \UnexpectedValueException
      */
@@ -215,7 +227,7 @@ class Filesystem implements \Magento\Framework\Config\ReaderInterface
             $initialContents,
             $this->validationState,
             $this->_idAttributes,
-            self::TYPE_ATTRIBUTE,
+            $this->_typeAttributeName,
             $this->_perFileSchema
         );
         if (!$result instanceof \Magento\Framework\Config\Dom) {
@@ -224,5 +236,17 @@ class Filesystem implements \Magento\Framework\Config\ReaderInterface
             );
         }
         return $result;
+    }
+
+    /**
+     * Check schema file, return true if it is db_schema.xml
+     *
+     * @param string $filePath
+     * @return bool
+     */
+    private function isDbSchemaFile(string $filePath): bool {
+        // Check only if "db_schema.xml" is at the very end of the path
+        $pattern = '/db_schema\.xml$/';
+        return preg_match($pattern, $filePath) === 1;
     }
 }

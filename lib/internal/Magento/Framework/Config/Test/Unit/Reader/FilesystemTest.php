@@ -187,7 +187,7 @@ class FilesystemTest extends TestCase
         $model->read();
     }
 
-    public function testCreateConfigMergerSuccess()
+    public function testCreateConfigMergerWithTypeAttributeSuccess()
     {
         $initialContents = '<?xml version="1.0"?><config><test id="1"/></config>';
         $reflection = new \ReflectionClass($this->filesystem);
@@ -202,16 +202,14 @@ class FilesystemTest extends TestCase
         $this->assertEquals('xsi:type', $typeAttributeProperty->getValue($result));
     }
 
-    public function testCreateConfigMergerThrowsException()
+    public function testCreateConfigMergerWithTypeAttributeThrowsException()
     {
         $initialContents = '<?xml version="1.0"?><config><test id="1"/></config>';
         $wrongClass = \stdClass::class;
         $reflection = new \ReflectionClass($this->filesystem);
         $method = $reflection->getMethod('_createConfigMerger');
         $this->expectException(\UnexpectedValueException::class);
-        $this->expectExceptionMessage(
-            "Instance of the DOM config merger is expected, got {$wrongClass} instead."
-        );
+        $this->expectExceptionMessage("Instance of the DOM config merger is expected, got {$wrongClass} instead.");
         $method->invokeArgs($this->filesystem, [$wrongClass, $initialContents]);
     }
 }
