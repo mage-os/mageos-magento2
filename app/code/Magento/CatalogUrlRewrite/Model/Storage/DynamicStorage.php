@@ -170,7 +170,7 @@ class DynamicStorage extends BaseDbStorage
         }
         $categorySuffix = $this->getCategoryUrlSuffix($data[UrlRewrite::STORE_ID]);
         $productResource = $this->productFactory->create();
-        $categoryPath = str_replace('/' . $productUrl, '', $requestPath);
+        $categoryPath = substr($requestPath, 0, -1 * strlen('/' . $productUrl));
         if ($productFromDb[UrlRewrite::REDIRECT_TYPE]) {
             $productUrl = $productFromDb[UrlRewrite::TARGET_PATH];
         }
