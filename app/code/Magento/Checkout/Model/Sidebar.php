@@ -129,8 +129,12 @@ class Sidebar
     protected function normalize($itemQty)
     {
         if ($itemQty) {
+            if (is_string($itemQty) && str_contains($itemQty, ',')) {
+                $itemQty = (double)str_replace(',', '.', $itemQty);
+            }
+
             $filter = new LocalizedToNormalized(
-                ['locale' => $this->resolver->getLocale()]
+                ['locale' => $this->resolver->getLocale(), 'decimal_style' => false]
             );
             return $filter->filter((string)$itemQty);
         }

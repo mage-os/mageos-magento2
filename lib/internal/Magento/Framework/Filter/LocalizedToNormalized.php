@@ -17,9 +17,10 @@ class LocalizedToNormalized implements FilterInterface
      * @var array
      */
     protected $_options = [
-        'locale'      => null,
-        'date_format' => null,
-        'precision'   => null
+        'locale'        => null,
+        'date_format'   => null,
+        'precision'     => null,
+        'decimal_style' => null,
     ];
 
     /**
@@ -60,14 +61,21 @@ class LocalizedToNormalized implements FilterInterface
      *
      * Normalizes the given input
      *
-     * @param  string $value Value to normalized
+     * @param string $value Value to normalized
      * @return string|array The normalized value
      */
     public function filter($value)
     {
         if (is_numeric($value)) {
-            $numberParse = new NumberParse($this->_options['locale'], NumberFormatter::PATTERN_DECIMAL);
-            return (string) $numberParse->filter($value);
+            $decimalStyle = $this->_options['decimal_style'] ?? null;
+            if ($decimalStyle === null) {
+                $numberParse = new NumberParse($this->_options['locale'], NumberFormatter::PATTERN_DECIMAL);
+            } elseif ($decimalStyle === false) {
+                $numberParse = new NumberParse($this->_options['locale'], NumberFormatter::DECIMAL);
+            } else {
+                $numberParse = new NumberParse($this->_options['locale'], $decimalStyle);
+            }
+            return (string)$numberParse->filter($value);
         } elseif ($this->_options['date_format'] === null && strpos($value, ':') !== false) {
             $formatter = new IntlDateFormatter(
                 $this->_options['locale'],
