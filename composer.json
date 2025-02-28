@@ -16,12 +16,6 @@
         "preferred-install": "dist",
         "sort-packages": true
     },
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://repo.magento.com/"
-        }
-    ],
     "require": {
         "php": "~8.2.0||~8.3.0||~8.4.0",
         "ext-bcmath": "*",

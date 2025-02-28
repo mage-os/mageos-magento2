@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7f92f2e264a493b8042568cc77095060",
+    "content-hash": "fc713685ade6309bb576551ed5114f82",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.340.2",
+            "version": "3.340.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "22cee29c0ca8d93a7a9c03d13739217373a21fcc"
+                "reference": "d5ce8f22952710da40be75ad69e2f04d47598a5d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/22cee29c0ca8d93a7a9c03d13739217373a21fcc",
-                "reference": "22cee29c0ca8d93a7a9c03d13739217373a21fcc",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/d5ce8f22952710da40be75ad69e2f04d47598a5d",
+                "reference": "d5ce8f22952710da40be75ad69e2f04d47598a5d",
                 "shasum": ""
             },
             "require": {
@@ -153,9 +153,9 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.340.2"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.340.3"
             },
-            "time": "2025-02-26T19:28:12+00:00"
+            "time": "2025-02-27T19:11:54+00:00"
         },
         {
             "name": "brick/math",
@@ -4197,10 +4197,16 @@
         {
             "name": "magento/composer",
             "version": "1.10.1-beta1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/magento/composer.git",
+                "reference": "276afa129efa4b11a20f7dddcad65d8b87522d2c"
+            },
             "dist": {
                 "type": "zip",
-                "url": "https://repo.magento.com/archives/magento/composer/magento-composer-1.10.1.0-beta1.zip",
-                "shasum": "0bd1179f48278b0326b4ee16bbf297b1cf683804"
+                "url": "https://api.github.com/repos/magento/composer/zipball/276afa129efa4b11a20f7dddcad65d8b87522d2c",
+                "reference": "276afa129efa4b11a20f7dddcad65d8b87522d2c",
+                "shasum": ""
             },
             "require": {
                 "composer/composer": "^2.1.13",
@@ -4216,19 +4222,31 @@
                     "Magento\\Composer\\": "src"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "OSL-3.0",
                 "AFL-3.0"
             ],
-            "description": "Magento composer library helps to instantiate Composer application and run composer commands."
+            "description": "Magento composer library helps to instantiate Composer application and run composer commands.",
+            "support": {
+                "issues": "https://github.com/magento/composer/issues",
+                "source": "https://github.com/magento/composer/tree/1.10.1-beta1"
+            },
+            "time": "2025-01-07T17:44:55+00:00"
         },
         {
             "name": "magento/composer-dependency-version-audit-plugin",
             "version": "0.1.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/magento/composer-dependency-version-audit-plugin.git",
+                "reference": "37099d19495df296de962257c54088c953bbc1ac"
+            },
             "dist": {
                 "type": "zip",
-                "url": "https://repo.magento.com/archives/magento/composer-dependency-version-audit-plugin/magento-composer-dependency-version-audit-plugin-0.1.6.0.zip",
-                "shasum": "62f455a259a54aa1869127f7b911345266105bf7"
+                "url": "https://api.github.com/repos/magento/composer-dependency-version-audit-plugin/zipball/37099d19495df296de962257c54088c953bbc1ac",
+                "reference": "37099d19495df296de962257c54088c953bbc1ac",
+                "shasum": ""
             },
             "require": {
                 "composer-plugin-api": "^1.0 || ^2.0",
@@ -4246,10 +4264,16 @@
                     "Magento\\ComposerDependencyVersionAuditPlugin\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "OSL-3.0"
             ],
-            "description": "Validating packages through a composer plugin"
+            "description": "Validating packages through a composer plugin",
+            "support": {
+                "issues": "https://github.com/magento/composer-dependency-version-audit-plugin/issues",
+                "source": "https://github.com/magento/composer-dependency-version-audit-plugin/tree/0.1.6"
+            },
+            "time": "2024-12-18T09:52:06+00:00"
         },
         {
             "name": "magento/magento-composer-installer",
