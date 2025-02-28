@@ -10,6 +10,7 @@ use Magento\Checkout\Model\Cart;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Filter\LocalizedToNormalized;
 use Magento\Framework\Locale\ResolverInterface;
+use Magento\Framework\NumberFormatter;
 use Magento\Quote\Api\Data\CartItemInterface;
 use Magento\Quote\Model\Quote\Address\Total;
 
@@ -134,7 +135,7 @@ class Sidebar
             }
 
             $filter = new LocalizedToNormalized(
-                ['locale' => $this->resolver->getLocale(), 'decimal_style' => false]
+                ['locale' => $this->resolver->getLocale(), 'decimal_style' => NumberFormatter::DECIMAL]
             );
             return $filter->filter((string)$itemQty);
         }

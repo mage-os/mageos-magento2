@@ -3,6 +3,7 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 namespace Magento\Framework\Filter;
 
 use Exception;
@@ -17,9 +18,9 @@ class LocalizedToNormalized implements FilterInterface
      * @var array
      */
     protected $_options = [
-        'locale'        => null,
-        'date_format'   => null,
-        'precision'     => null,
+        'locale' => null,
+        'date_format' => null,
+        'precision' => null,
         'decimal_style' => null,
     ];
 
@@ -67,14 +68,10 @@ class LocalizedToNormalized implements FilterInterface
     public function filter($value)
     {
         if (is_numeric($value)) {
-            $decimalStyle = $this->_options['decimal_style'] ?? null;
-            if ($decimalStyle === null) {
-                $numberParse = new NumberParse($this->_options['locale'], NumberFormatter::PATTERN_DECIMAL);
-            } elseif ($decimalStyle === false) {
-                $numberParse = new NumberParse($this->_options['locale'], NumberFormatter::DECIMAL);
-            } else {
-                $numberParse = new NumberParse($this->_options['locale'], $decimalStyle);
-            }
+            $numberParse = new NumberParse(
+                $this->_options['locale'],
+                empty($this->_options['decimal_style']) ? NumberFormatter::PATTERN_DECIMAL : $this->_options['decimal_style']
+            );
             return (string)$numberParse->filter($value);
         } elseif ($this->_options['date_format'] === null && strpos($value, ':') !== false) {
             $formatter = new IntlDateFormatter(
@@ -152,7 +149,7 @@ class LocalizedToNormalized implements FilterInterface
             $parse[$month] = 'M';
         }
         if ($year !== false) {
-            $parse[$year]  = 'y';
+            $parse[$year] = 'y';
         }
         preg_match_all('/\d+/u', $date, $splitted);
         $split = false;
@@ -192,7 +189,7 @@ class LocalizedToNormalized implements FilterInterface
                 }
                 if ($split === false) {
                     if (count($splitted[0]) > $cnt) {
-                        $result['year']   = $splitted[0][$cnt];
+                        $result['year'] = $splitted[0][$cnt];
                     }
                 } else {
                     $result['year'] = iconv_substr($splitted[0][0], $split, $length);
