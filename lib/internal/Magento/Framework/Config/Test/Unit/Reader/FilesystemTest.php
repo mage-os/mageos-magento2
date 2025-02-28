@@ -78,7 +78,8 @@ class FilesystemTest extends TestCase
             'test.xml',
             ['/test/node' => 'id'],
             Dom::class,
-            'global'
+            'global',
+            'xsi:type'
         );
     }
 

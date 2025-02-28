@@ -217,7 +217,6 @@ class Filesystem implements \Magento\Framework\Config\ReaderInterface
      *
      * @param string $mergerClass
      * @param string $initialContents
-     * @param string $typeAttributeName
      * @return \Magento\Framework\Config\Dom
      * @throws \UnexpectedValueException
      */
@@ -244,7 +243,8 @@ class Filesystem implements \Magento\Framework\Config\ReaderInterface
      * @param string $filePath
      * @return bool
      */
-    private function isDbSchemaFile(string $filePath): bool {
+    private function isDbSchemaFile(string $filePath): bool
+    {
         // Check only if "db_schema.xml" is at the very end of the path
         $pattern = '/db_schema\.xml$/';
         return preg_match($pattern, $filePath) === 1;
