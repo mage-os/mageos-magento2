@@ -10,8 +10,7 @@ var config = {
             relatedProducts:        'Magento_Catalog/js/related-products',
             upsellProducts:         'Magento_Catalog/js/upsell-products',
             productListToolbarForm: 'Magento_Catalog/js/product/list/toolbar',
-            catalogGallery:         'Magento_Catalog/js/gallery',
-            catalogAddToCart:       'Magento_Catalog/js/catalog-add-to-cart'
+            catalogGallery:         'Magento_Catalog/js/gallery'
         }
     },
     config: {
