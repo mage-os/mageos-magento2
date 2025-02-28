@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\SalesRule\Model\Rule\Action\Discount;
 
@@ -60,11 +60,11 @@ class ByPercent extends AbstractDiscount
         $baseItemOriginalPrice = $this->validator->getItemBaseOriginalPrice($item);
 
         $_rulePct = $rulePercent / 100;
-        $discountData->setAmount(($qty * $itemPrice - $item->getDiscountAmount()) * $_rulePct);
-        $discountData->setBaseAmount(($qty * $baseItemPrice - $item->getBaseDiscountAmount()) * $_rulePct);
-        $discountData->setOriginalAmount(($qty * $itemOriginalPrice - $item->getDiscountAmount()) * $_rulePct);
+        $discountData->setAmount($this->priceCurrency->round(($qty * $itemPrice - $item->getDiscountAmount()) * $_rulePct));
+        $discountData->setBaseAmount($this->priceCurrency->round(($qty * $baseItemPrice - $item->getBaseDiscountAmount()) * $_rulePct));
+        $discountData->setOriginalAmount($this->priceCurrency->round(($qty * $itemOriginalPrice - $item->getDiscountAmount()) * $_rulePct));
         $discountData->setBaseOriginalAmount(
-            ($qty * $baseItemOriginalPrice - $item->getBaseDiscountAmount()) * $_rulePct
+            $this->priceCurrency->round(($qty * $baseItemOriginalPrice - $item->getBaseDiscountAmount()) * $_rulePct)
         );
 
         if (!$rule->getDiscountQty() || $rule->getDiscountQty() >= $qty) {
