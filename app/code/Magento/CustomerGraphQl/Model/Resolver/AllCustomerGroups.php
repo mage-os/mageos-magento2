@@ -42,8 +42,8 @@ class AllCustomerGroups implements ResolverInterface
         Field $field,
         $context,
         ResolveInfo $info,
-        array $value = null,
-        array $args = null
+        ?array $value = null,
+        ?array $args = null
     ): array {
         if (!$this->config->isShareAllCustomerGroupsEnabled()) {
             throw new GraphQlInputException(__('Sharing customer group information is disabled or not configured.'));

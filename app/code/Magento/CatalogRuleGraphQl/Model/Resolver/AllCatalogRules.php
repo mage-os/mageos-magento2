@@ -38,8 +38,8 @@ class AllCatalogRules implements ResolverInterface
         Field $field,
         $context,
         ResolveInfo $info,
-        array $value = null,
-        array $args = null
+        ?array $value = null,
+        ?array $args = null
     ): ?array {
         if (!$this->config->isShareAllCatalogRulesEnabled()) {
             throw new GraphQlInputException(__('Sharing catalog rules information is disabled or not configured.'));
