@@ -24,6 +24,7 @@ class CheckCaptchaOnStorefront
      *
      * @param HelperCaptcha $helper
      * @param HttpContext $httpContext
+     * @param ScopeConfigInterface $scopeConfig
      */
     public function __construct(
         private readonly HelperCaptcha $helper,
@@ -46,7 +47,10 @@ class CheckCaptchaOnStorefront
         ?string $result
     ): string {
         // Check the value for recaptcha_frontend/type_for/customer_login
-        $recaptchaType = $this->scopeConfig->getValue('recaptcha_frontend/type_for/customer_login', ScopeInterface::SCOPE_WEBSITE);
+        $recaptchaType = $this->scopeConfig->getValue(
+            'recaptcha_frontend/type_for/customer_login',
+            ScopeInterface::SCOPE_WEBSITE
+        );
 
         if ($this->isLoggedIn() || (!$this->helper->getConfig('enable') && $recaptchaType === null)) {
             return '';
