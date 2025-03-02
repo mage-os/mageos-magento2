@@ -162,7 +162,9 @@ class Stock extends AbstractDb implements QtyCounterInterface
             $items[$si['product_id']] = $si;
         }
         foreach ($this->getConnection()->fetchAll($selectProducts) as $p) {
-            $items[$p['product_id']]['type_id'] = $p['type_id'];
+            if (isset($items[$p['product_id']])) {
+                $items[$p['product_id']]['type_id'] = $p['type_id'];
+            }
         }
 
         return $items;

@@ -547,6 +547,26 @@ return [
         Magento\Framework\MessageQueue\Topology\Config\QueueConfigItem\DataMapper::class => null,
         // phpcs:enable Generic.Files.LineLength.TooLong
     ],
+    'placeOrder' => [
+        Magento\Elasticsearch7\Model\Client\Elasticsearch::class => null,
+        Magento\Elasticsearch\Model\Adapter\BatchDataMapper\ProductDataMapper::class => null,
+    ],
+    'createCustomer' => [
+        Magento\Framework\Session\SaveHandler\Redis\Config::class => null,
+        Magento\Framework\Session\SaveHandler\Redis\Logger::class => null,
+    ],
+    'updateCustomerAddress' => [
+        Magento\Framework\Session\SaveHandler\Redis\Config::class => null,
+        Magento\Framework\Session\SaveHandler\Redis\Logger::class => null,
+    ],
+    'updateCustomerEmail' => [
+        Magento\Framework\Session\SaveHandler\Redis\Config::class => null,
+        Magento\Framework\Session\SaveHandler\Redis\Logger::class => null,
+    ],
+    'updateCustomer' => [
+        Magento\Framework\Session\SaveHandler\Redis\Config::class => null,
+        Magento\Framework\Session\SaveHandler\Redis\Logger::class => null,
+    ],
     '' => [
     ],
 ];

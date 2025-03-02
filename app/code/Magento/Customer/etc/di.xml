@@ -88,6 +88,7 @@
     <type name="Magento\Customer\Helper\Address">
         <arguments>
             <argument name="addressConfig" xsi:type="object">Magento\Customer\Model\Address\Config\Proxy</argument>
+            <argument name="addressHelper" xsi:type="object">Magento\Customer\Helper\Address</argument>
         </arguments>
     </type>
     <type name="Magento\Framework\App\Http\Context">
@@ -592,5 +593,10 @@
         <plugin name="anonymousAsyncCustomerRequest"
                 type="Magento\Customer\Plugin\AsyncRequestCustomerGroupAuthorization"
         />
+    </type>
+    <type name="Magento\Customer\Model\Address\AbstractAddress">
+        <arguments>
+            <argument name="addressHelper" xsi:type="object">Magento\Customer\Helper\Address</argument>
+        </arguments>
     </type>
 </config>

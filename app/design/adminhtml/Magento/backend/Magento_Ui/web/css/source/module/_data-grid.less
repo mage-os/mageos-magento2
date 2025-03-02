@@ -316,15 +316,15 @@ body._in-resize {
 
     th {
         background-color: @data-grid-th__background-color;
-        border: @data-grid-cell__border-width @data-grid-th__border-style @data-grid-th__border-color;
-        border-left-color: transparent;
+        border-bottom: 2px @data-grid-th__border-style @data-grid-th__border-color;
+        border-right: 1px dashed @color-mageos-stroke;
         color: @data-grid-th__color;
         font-weight: @font-weight__semibold;
         padding: 0;
         text-align: left;
 
         &:first-child {
-            border-left-color: @data-grid-th__border-color;
+            border-left: 1px dashed @color-mageos-stroke;
         }
 
         &._dragover-left {

@@ -61,8 +61,8 @@ class ComposerInformationTest extends TestCase
         $this->packageMock = $this->getMockForAbstractClass(CompletePackageInterface::class);
         $this->lockerMock->method('getLockedRepository')->willReturn($this->lockerRepositoryMock);
         $this->packageMock->method('getType')->willReturn('metapackage');
-        $this->packageMock->method('getPrettyName')->willReturn('magento/product-test-package-name-edition');
-        $this->packageMock->method('getName')->willReturn('magento/product-test-package-name-edition');
+        $this->packageMock->method('getPrettyName')->willReturn('mage-os/product-test-package-name-edition');
+        $this->packageMock->method('getName')->willReturn('mage-os/product-test-package-name-edition');
         $this->packageMock->method('getPrettyVersion')->willReturn('123.456.789');
         $this->lockerRepositoryMock->method('getPackages')->willReturn([$this->packageMock]);
 
@@ -79,8 +79,8 @@ class ComposerInformationTest extends TestCase
     public function testGetSystemPackages()
     {
         $expected = [
-            'magento/product-test-package-name-edition' => [
-                'name'    => 'magento/product-test-package-name-edition',
+            'mage-os/product-test-package-name-edition' => [
+                'name'    => 'mage-os/product-test-package-name-edition',
                 'type'    => 'metapackage',
                 'version' => '123.456.789'
             ]
@@ -114,8 +114,8 @@ class ComposerInformationTest extends TestCase
     public static function isMagentoRootDataProvider()
     {
         return [
-            ['magento/magento2ce', true],
-            ['magento/magento2ee', true],
+            ['mage-os/magento2ce', true],
+            ['mage-os/magento2ee', true],
             ['namespace/package', false],
         ];
     }

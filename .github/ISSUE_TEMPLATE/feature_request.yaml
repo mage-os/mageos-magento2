@@ -5,7 +5,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Important: This repository is intended only for Magento 2 Technical Issues.
+        Important: This repository is intended only for Mage-OS Magento 2 Technical Issues.
         Enter Feature Requests at https://github.com/magento/community-features.
         Project stakeholders monitor and manage requests.
         Feature requests entered using this form may be moved to the forum.
@@ -28,7 +28,7 @@ body:
     attributes:
       label: Benefits
       description: |
-        How do you think this feature would improve Magento?
+        How do you think this feature would improve Mage-OS Magento?
   - type: textarea
     attributes:
       label: Additional information
