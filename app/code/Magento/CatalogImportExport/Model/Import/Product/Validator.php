@@ -458,6 +458,7 @@ class Validator extends AbstractValidator implements RowValidatorInterface
                 //prioritize specialized validation
                 if ($validator->getFieldName() &&
                     isset($validatedAttributes['attributes']) &&
+                    isset($validatedAttributes['attributes'][$validator->getFieldName()]) &&
                     $validatedAttributes['attributes'][$validator->getFieldName()] === false
                 ) {
                     $validatedAttributes['attributes'][$validator->getFieldName()] = true;
