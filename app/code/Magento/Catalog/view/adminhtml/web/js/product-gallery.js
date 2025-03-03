@@ -1,6 +1,6 @@
 /**
- * Copyright 2015 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 
 /**
@@ -354,11 +354,6 @@ define([
 
             imageData.isRemoved = true;
             $imageContainer.addClass('removed').hide().find('.is-removed').val(1);
-
-            $.each(this.options.types, $.proxy(function (index, type) {
-                this.element.find('.image-' + type.code).val('no_selection');
-                this.options.types[index].value = 'no_selection';
-            }, this));
 
             this._contentUpdated();
         },

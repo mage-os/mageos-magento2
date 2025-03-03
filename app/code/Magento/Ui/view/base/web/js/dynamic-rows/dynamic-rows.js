@@ -1,6 +1,6 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 
 /**
@@ -691,12 +691,11 @@ define([
         processingAddChild: function (ctx, index, prop) {
             this.bubble('addChild', false);
 
-            if (this.relatedData.length && this.relatedData.length % this.pageSize === 0) {
-                this.pages(this.pages() + 1);
-                this.nextPage();
-            } else if (~~this.currentPage() !== this.pages()) {
-                this.currentPage(this.pages());
-            }
+            var newTotal = this.relatedData.length + 1;
+            var newPages = Math.ceil(newTotal / this.pageSize);
+
+            this.pages(newPages);
+            this.currentPage(newPages);
 
             this.addChild(ctx, index, prop);
         },
