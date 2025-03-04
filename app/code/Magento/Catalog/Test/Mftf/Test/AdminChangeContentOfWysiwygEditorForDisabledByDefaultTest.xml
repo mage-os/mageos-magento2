@@ -10,9 +10,9 @@
     <test name="AdminChangeContentOfWysiwygEditorForDisabledByDefaultTest">
         <annotations>
             <features value="Cms"/>
-            <stories value="Apply WYSIWYG Editor configuration for disabled by default"/>
-            <title value="Change content of WYSIWYG editor if it's disabled by default"/>
-            <description value="Admin should be able to Check WYSIWYG editor content can be changed and saved if it is disabled by default"/>
+            <stories value="Apply Wysiwyg Editor configuration for disabled by default"/>
+            <title value="Change content of Wysiwyg Editor if it's disabled by default"/>
+            <description value="Admin should be able to Check Wysiwyg Editor content can be changed and saved if it is disabled by default"/>
             <severity value="MAJOR"/>
             <testCaseId value="AC-4143"/>
             <group value="Cms"/>
@@ -44,7 +44,7 @@
             <deleteData createDataKey="createPreReqBlock" stepKey="deletePreReqBlock"/>
             <deleteData createDataKey="createCMSPage" stepKey="deletePreReqCMSPage"/>
             <!-- Set default option to WYSIWYG Editor Configuration-->
-            <actionGroup ref="DisabledWYSIWYGActionGroup" stepKey="disableWYSIWYG"/>
+            <actionGroup ref="DisabledWYSIWYGActionGroup" stepKey="disableWYSIWYGCompletely"/>
             <actionGroup ref="CliMediaGalleryEnhancedEnableActionGroup" stepKey="disableOldMediaGallery">
                 <argument name="enabled" value="1"/>
             </actionGroup>
@@ -120,10 +120,10 @@
         <actionGroup ref="OpenEditProductOnBackendActionGroup" stepKey="openSimpleProduct">
             <argument name="product" value="$$createSimpleProduct$$"/>
         </actionGroup>
-        <!-- Navigate to Content & Click On Show hide button and then Asset WYSIWYG editor for Product-->
+        <!-- Navigate to Content & Click On Show hide button and then Assert WYSIWYG editor for Product-->
         <waitForElementClickable selector="{{AdminProductFormSection.contentTab}}" stepKey="waitToClickContentTab"/>
         <click selector="{{AdminProductFormSection.contentTab}}" stepKey="clickContentTabForProduct"/>
-        <waitForPageLoad stepKey="waitForGridLoad2"/>
+        <waitForElementClickable selector="{{TinyMCESection.ShowHideBtn}}" stepKey="waitToClickShowHideBtnAgain"/>
         <click selector="{{TinyMCESection.ShowHideBtn}}" stepKey="clickShowHideBtnAgain"/>
         <waitForElementVisible selector="{{ProductShortDescriptionWysiwygSection.form}} {{TinyMCESection.TinyMCE}}" stepKey="waitForTinyMCEToBeVisible"/>
         <click selector="{{ProductShortDescriptionWysiwygSection.form}} {{TinyMCESection.ShowHideBtn}}" stepKey="focusProductShortDescriptionWysiwyg1"/>
