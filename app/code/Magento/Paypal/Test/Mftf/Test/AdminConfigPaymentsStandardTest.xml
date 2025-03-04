@@ -24,7 +24,7 @@
                 <requiredEntity createDataKey="simpleCategory"/>
             </createData>
             <!-- Create customer -->
-            <createData entity="Simple_US_Customer_NY" stepKey="customer"/>
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
             <!-- Login -->
             <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
             <!--Config PayPal Standard-->
@@ -36,6 +36,7 @@
         <after>
             <deleteData createDataKey="simpleProduct" stepKey="deleteProduct"/>
             <deleteData createDataKey="simpleCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
         </after>
         <actionGroup ref="AdminEnablePaypalStandardPaylaterActionGroup" stepKey="enablePaypalStandard"/>
@@ -49,7 +50,7 @@
         </actionGroup>
         <!--Navigate to Storefront-->
         <actionGroup ref="LoginToStorefrontActionGroup" stepKey="goToStoreFront">
-            <argument name="Customer" value="$customer$"/>
+            <argument name="Customer" value="$createCustomer$"/>
         </actionGroup>
         <actionGroup ref="AssertStorefrontPaypalPaylaterActionGroup" stepKey="verifyPaylaterInStorefrontCategoryPage"/>
         <!--Disable Paypal Standard-->
