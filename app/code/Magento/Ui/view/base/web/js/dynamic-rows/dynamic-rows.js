@@ -689,10 +689,13 @@ define([
          * @param {Number|String} prop - additional property to element
          */
         processingAddChild: function (ctx, index, prop) {
+            var newTotal,
+                newPages;
+
             this.bubble('addChild', false);
 
-            var newTotal = this.relatedData.length + 1;
-            var newPages = Math.ceil(newTotal / this.pageSize);
+            newTotal = this.relatedData.length + 1;
+            newPages = Math.ceil(newTotal / this.pageSize);
 
             this.pages(newPages);
             this.currentPage(newPages);
