@@ -19,6 +19,8 @@ use Magento\Framework\App\Response\Http as HttpResponse;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\GraphQl\Exception\ExceptionFormatter;
+use Magento\Framework\GraphQl\Exception\GraphQlAuthenticationException;
+use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\Fields as QueryFields;
 use Magento\Framework\GraphQl\Query\QueryParser;
@@ -185,7 +187,7 @@ class GraphQl implements FrontControllerInterface
         $statusCode = 200;
         $jsonResult = $this->jsonFactory->create();
         $data = [];
-        $result = null;
+        $result = ['errors' => []];
         $schema = null;
         $query = '';
 
@@ -211,6 +213,13 @@ class GraphQl implements FrontControllerInterface
                     $data['variables'] ?? []
                 );
             }
+            $statusCode = $this->getHttpResponseCode($result);
+        } catch (GraphQlAuthenticationException $error) {
+            $result['errors'][] = $this->graphQlError->create($error);
+            $statusCode = 401;
+        } catch (GraphQlAuthorizationException $error) {
+            $result['errors'][] = $this->graphQlError->create($error);
+            $statusCode = 403;
         } catch (SyntaxError|GraphQlInputException $error) {
             $result = [
                 'errors' => [FormattedError::createFromException($error)],
@@ -230,12 +239,33 @@ class GraphQl implements FrontControllerInterface
         $jsonResult->renderResult($this->httpResponse);
 
         // log information about the query, unless it is an introspection query
-        if (strpos($query, 'IntrospectionQuery') === false) {
+        if (!str_contains($query, 'IntrospectionQuery')) {
             $queryInformation = $this->logDataHelper->getLogData($request, $data, $schema, $this->httpResponse);
             $this->loggerPool->execute($queryInformation);
         }
 
         return $this->httpResponse;
+    }
+
+    /**
+     * Retrieve http response code based on the error categories
+     *
+     * @param array $result
+     * @return int
+     */
+    private function getHttpResponseCode(array $result): int
+    {
+        foreach ($result['errors'] ?? [] as $error) {
+            if (isset($error['extensions']['category'])) {
+                return match ($error['extensions']['category']) {
+                    GraphQlAuthenticationException::EXCEPTION_CATEGORY => 401,
+                    GraphQlAuthorizationException::EXCEPTION_CATEGORY => 403,
+                    default => 200,
+                };
+            }
+        }
+
+        return 200;
     }
 
     /**

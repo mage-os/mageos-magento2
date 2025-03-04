@@ -270,7 +270,8 @@ QUERY;
         $this->request->setMethod('OPTIONS');
         $response = $this->graphql->dispatch($this->request);
         self::assertEquals(200, $response->getStatusCode());
-        self::assertEmpty($response->getContent());
+        $output = $this->jsonSerializer->unserialize($response->getContent());
+        self::assertEmpty($output['errors']);
     }
 
     public function testDispatchGetWithoutQuery(): void
