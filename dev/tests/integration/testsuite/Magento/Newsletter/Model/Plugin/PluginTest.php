@@ -275,13 +275,14 @@ class PluginTest extends \PHPUnit\Framework\TestCase
 
         $this->assertNotNull($message);
         $this->assertEquals('Welcome to Main Website Store', $message->getSubject());
+        $mailMessage = quoted_printable_decode($message->getBody()->bodyToString());
         $this->assertStringContainsString(
             'John',
-            $message->getBody()->getParts()[0]->getRawContent()
+            $mailMessage
         );
         $this->assertStringContainsString(
             'customer@example.com',
-            $message->getBody()->getParts()[0]->getRawContent()
+            $mailMessage
         );
 
         /** @var Subscriber $subscriber */
@@ -303,11 +304,11 @@ class PluginTest extends \PHPUnit\Framework\TestCase
         ->getTransport();
 
         $message = $this->transportBuilderMock->getSentMessage();
-
+        $mailMessage = quoted_printable_decode($message->getBody()->bodyToString());
         $this->assertNotNull($message);
         $this->assertStringContainsString(
             $subscriber->getConfirmationLink(),
-            $message->getBody()->getParts()[0]->getRawContent()
+            $mailMessage
         );
         $this->assertEquals('Newsletter subscription confirmation', $message->getSubject());
     }
