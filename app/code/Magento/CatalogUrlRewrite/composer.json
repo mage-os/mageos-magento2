@@ -14,6 +14,7 @@
         "magento/module-import-export": "*",
         "magento/module-store": "*",
         "magento/module-ui": "*",
+        "magento/module-asynchronous-operations": "*",
         "magento/module-url-rewrite": "*"
     },
     "suggest": {
