@@ -168,5 +168,11 @@
             <argument name="product" value="$$createProduct3$$"/>
         </actionGroup>
 
+        <comment userInput="BIC workaround" stepKey="navigateToCategoryPageAfterStoreFrontProductsAssertions"/>
+        <comment userInput="BIC workaround" stepKey="clickOnNewRootCategoryA"/>
+        <comment userInput="BIC workaround" stepKey="waitForPageNewRootCategoryALoad" />
+        <comment userInput="BIC workaround" stepKey="enterCategoryNameAsDefaultCategory"/>
+        <comment userInput="BIC workaround"  stepKey="saveCategoryDefaultCategory"/>
+        <comment userInput="BIC workaround"  stepKey="assertSuccessMessageAfterSaveDefaultCategory"/>
     </test>
 </tests>
