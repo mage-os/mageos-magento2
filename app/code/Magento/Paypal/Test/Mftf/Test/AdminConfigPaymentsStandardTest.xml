@@ -23,6 +23,8 @@
             <createData entity="SimpleProduct" stepKey="simpleProduct">
                 <requiredEntity createDataKey="simpleCategory"/>
             </createData>
+            <!-- Create customer -->
+            <createData entity="Simple_US_Customer_NY" stepKey="customer"/>
             <!-- Login -->
             <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
             <!--Config PayPal Standard-->
@@ -46,7 +48,9 @@
             <argument name="tags" value="config full_page"/>
         </actionGroup>
         <!--Navigate to Storefront-->
-        <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToStoreFront"/>
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="goToStoreFront">
+            <argument name="Customer" value="$customer$"/>
+        </actionGroup>
         <actionGroup ref="AssertStorefrontPaypalPaylaterActionGroup" stepKey="verifyPaylaterInStorefrontCategoryPage"/>
         <!--Disable Paypal Standard-->
         <magentoCLI command="config:set {{DisablePaypalPayStandard.path}} {{DisablePaypalPayStandard.value}}" stepKey="disablePayPalStandard"/>
