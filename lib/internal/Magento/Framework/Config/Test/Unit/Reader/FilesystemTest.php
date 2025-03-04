@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2014 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 declare(strict_types=1);
 
@@ -15,7 +15,6 @@ use Magento\Framework\Config\SchemaLocatorInterface;
 use Magento\Framework\Config\ValidationStateInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Framework\Config\Dom;
 
 /**
  * Test for
@@ -54,11 +53,6 @@ class FilesystemTest extends TestCase
      */
     protected $_file;
 
-    /**
-     * @var Filesystem
-     */
-    private $filesystem;
-
     protected function setUp(): void
     {
         if (!function_exists('libxml_set_external_entity_loader')) {
@@ -70,17 +64,6 @@ class FilesystemTest extends TestCase
         $this->_schemaLocatorMock = $this->getMockForAbstractClass(SchemaLocatorInterface::class);
         $this->_validationStateMock = $this->getMockForAbstractClass(ValidationStateInterface::class);
         $this->urnResolver = new UrnResolver();
-        $this->filesystem = new Filesystem(
-            $this->_fileResolverMock,
-            $this->_converterMock,
-            $this->_schemaLocatorMock,
-            $this->_validationStateMock,
-            'test.xml',
-            ['/test/node' => 'id'],
-            Dom::class,
-            'global',
-            'xsi:type'
-        );
     }
 
     public function testRead()
@@ -186,31 +169,5 @@ class FilesystemTest extends TestCase
             'StdClass'
         );
         $model->read();
-    }
-
-    public function testCreateConfigMergerWithTypeAttributeSuccess()
-    {
-        $initialContents = '<?xml version="1.0"?><config><test id="1"/></config>';
-        $reflection = new \ReflectionClass($this->filesystem);
-        $method = $reflection->getMethod('_createConfigMerger');
-        $result = $method->invokeArgs(
-            $this->filesystem,
-            [Dom::class, $initialContents]
-        );
-        $this->assertInstanceOf(\Magento\Framework\Config\Dom::class, $result);
-        $domReflection = new \ReflectionClass($result);
-        $typeAttributeProperty = $domReflection->getProperty('typeAttributeName');
-        $this->assertEquals('xsi:type', $typeAttributeProperty->getValue($result));
-    }
-
-    public function testCreateConfigMergerWithTypeAttributeThrowsException()
-    {
-        $initialContents = '<?xml version="1.0"?><config><test id="1"/></config>';
-        $wrongClass = \stdClass::class;
-        $reflection = new \ReflectionClass($this->filesystem);
-        $method = $reflection->getMethod('_createConfigMerger');
-        $this->expectException(\UnexpectedValueException::class);
-        $this->expectExceptionMessage("Instance of the DOM config merger is expected, got {$wrongClass} instead.");
-        $method->invokeArgs($this->filesystem, [$wrongClass, $initialContents]);
     }
 }

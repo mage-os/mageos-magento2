@@ -84,7 +84,7 @@ class Filesystem implements \Magento\Framework\Config\ReaderInterface
     /**
      * Name of an attribute that stands for data type of node values
      *
-     * @var string
+     * @var string|null
      */
     private $typeAttributeName;
 
@@ -99,7 +99,7 @@ class Filesystem implements \Magento\Framework\Config\ReaderInterface
      * @param array $idAttributes
      * @param string $domDocumentClass
      * @param string $defaultScope
-     * @param string $typeAttributeName
+     * @param string|null $typeAttributeName
      */
     public function __construct(
         \Magento\Framework\Config\FileResolverInterface $fileResolver,
