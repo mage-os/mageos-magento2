@@ -85,27 +85,27 @@ class SaveTest extends TestCase
             ->getMock();
         $this->contextMock = $this->createMock(Context::class);
         $this->registryMock = $this->createMock(Registry::class);
-        $this->userFactoryMock->expects($this->any())
+        $this->userFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($this->userModelMock);
         $responseMock = $this->createMock(ResponseInterface::class);
         $redirectMock = $this->createMock(RedirectInterface::class);
-        $this->contextMock->expects($this->any())
+        $this->contextMock->expects($this->once())
             ->method('getRequest')
             ->willReturn($this->requestMock);
-        $this->contextMock->expects($this->any())
+        $this->contextMock->expects($this->once())
             ->method('getMessageManager')
             ->willReturn($this->messageManagerMock);
-        $this->contextMock->expects($this->any())
+        $this->contextMock->expects($this->once())
             ->method('getResponse')
             ->willReturn($responseMock);
-        $this->contextMock->expects($this->any())
+        $this->contextMock->expects($this->once())
             ->method('getRedirect')
             ->willReturn($redirectMock);
-        $this->contextMock->expects($this->any())
+        $this->contextMock->expects($this->once())
             ->method('getSession')
             ->willReturn($this->sessionMock);
-        $this->contextMock->expects($this->any())
+        $this->contextMock->expects($this->once())
             ->method('getObjectManager')
             ->willReturn($this->objectManagerMock);
         $this->controller = $this->getMockBuilder(Save::class)
