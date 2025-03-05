@@ -5,9 +5,11 @@
  */
 namespace Magento\Customer\Block\Account;
 
+use Magento\Framework\App\ObjectManager;
 use Magento\Customer\Model\Form;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Customer\Model\Context;
+use Magento\Framework\App\Http\Context as HttpContext;
 
 /**
  * @api
@@ -26,20 +28,28 @@ class AuthenticationPopup extends \Magento\Framework\View\Element\Template
     private $serializer;
 
     /**
+     * @var HttpContext
+     */
+    private $httpContext;
+
+    /**
      * @param \Magento\Framework\View\Element\Template\Context $context
      * @param array $data
      * @param \Magento\Framework\Serialize\Serializer\Json|null $serializer
+     * @param HttpContext $httpContext
      * @throws \RuntimeException
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
         array $data = [],
-        ?\Magento\Framework\Serialize\Serializer\Json $serializer = null
+        ?\Magento\Framework\Serialize\Serializer\Json $serializer = null,
+        HttpContext $httpContext = null
     ) {
         parent::__construct($context, $data);
         $this->jsLayout = isset($data['jsLayout']) && is_array($data['jsLayout']) ? $data['jsLayout'] : [];
         $this->serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()
             ->get(\Magento\Framework\Serialize\Serializer\Json::class);
+        $this->httpContext = $httpContext ?: ObjectManager::getInstance()->get(HttpContext::class);
     }
 
     /**
@@ -54,7 +64,7 @@ class AuthenticationPopup extends \Magento\Framework\View\Element\Template
             Form::XML_PATH_CUSTOMER_CAPTCHA_ENABLED,
             ScopeInterface::SCOPE_STORE
         ) && !$this->isLoggedIn()) {
-            if(isset($this->jsLayout['components']['authenticationPopup']['children']['captcha'])) {
+            if (isset($this->jsLayout['components']['authenticationPopup']['children']['captcha'])) {
                 unset($this->jsLayout['components']['authenticationPopup']['children']['captcha']);
             }
         }
