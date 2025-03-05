@@ -33,23 +33,40 @@ class Name extends AbstractImportValidator implements RowValidatorInterface
     public function isValid($value)
     {
         $this->_clearMessages();
-        if (!$this->hasNameValue($value) &&
-            !$this->hasCustomOptions($value) &&
-            !$this->skuStorage->has($value[Product::COL_SKU]) &&
-            (!isset($value['store_view_code']) || $value['store_view_code'] === '')
-        ) {
-            $this->_addMessages(
-                [
-                    sprintf(
-                        $this->context->retrieveMessageTemplate(self::ERROR_INVALID_ATTRIBUTE_TYPE),
-                        $this->fieldName,
-                        'not empty'
-                    )
-                ]
-            );
-            return false;
+
+        $skuExists = $this->skuStorage->has($value[Product::COL_SKU]);
+        $hasCustomOptions = $this->hasCustomOptions($value);
+        $hasNameValue = $this->hasNameValue($value);
+        $isStoreViewCodeEmpty = !isset($value['store_view_code']) || $value['store_view_code'] === '';
+
+        if (!$skuExists && !$hasCustomOptions && !$hasNameValue) {
+            return $this->invalidate();
         }
+
+        if (!$hasNameValue && !$hasCustomOptions && !$skuExists && $isStoreViewCodeEmpty) {
+            return $this->invalidate();
+        }
+
         return true;
+    }
+
+    /**
+     * Invalidate row data
+     *
+     * @return bool
+     */
+    private function invalidate(): bool
+    {
+        $this->_addMessages(
+            [
+                sprintf(
+                    $this->context->retrieveMessageTemplate(self::ERROR_INVALID_ATTRIBUTE_TYPE),
+                    $this->fieldName,
+                    'not empty'
+                )
+            ]
+        );
+        return false;
     }
 
     /**
