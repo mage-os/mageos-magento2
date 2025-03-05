@@ -68,7 +68,7 @@ class CancelGuestOrderTest extends GraphQlAbstract
         mutation {
             requestGuestOrderCancel(
               input: {
-                reason: "Cancel sample reason"
+                reason: "Other"
               }
             ){
                 error
@@ -118,7 +118,7 @@ MUTATION;
             requestGuestOrderCancel(
               input: {
                 token: "TestToken"
-                reason: "Cancel sample reason"
+                reason: "Other"
               }
             ){
                 error
@@ -442,7 +442,7 @@ MUTATION;
             requestGuestOrderCancel(
               input: {
                 token: "{$this->getOrderToken($order)}",
-                reason: "Sample reason"
+                reason: "Other"
               }
             ){
                 errorV2 {
