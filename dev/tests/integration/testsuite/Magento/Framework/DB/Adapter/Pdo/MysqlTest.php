@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2014 Adobe
+ * Copyright 2012 Adobe
  * All Rights Reserved.
  */
 namespace Magento\Framework\DB\Adapter\Pdo;
