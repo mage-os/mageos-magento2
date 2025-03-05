@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2011 Adobe.
+ * All Rights Reserved.
  */
 
 namespace Magento\Customer\Model;
@@ -15,6 +15,11 @@ class Form extends \Magento\Eav\Model\Form
      * XML configuration paths for "Disable autocomplete on storefront" property
      */
     public const XML_PATH_ENABLE_AUTOCOMPLETE = 'customer/password/autocomplete_on_storefront';
+
+    /**
+     * XML configuration paths for "Enable CAPTCHA on Storefront" property
+     */
+    public const XML_PATH_CUSTOMER_CAPTCHA_ENABLED = 'customer/captcha/enable';
 
     /**
      * Current module pathname

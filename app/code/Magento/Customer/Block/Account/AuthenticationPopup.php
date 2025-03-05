@@ -1,12 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe.
+ * All Rights Reserved.
  */
 namespace Magento\Customer\Block\Account;
 
 use Magento\Customer\Model\Form;
 use Magento\Store\Model\ScopeInterface;
+use Magento\Customer\Model\Context;
 
 /**
  * @api
@@ -48,6 +49,16 @@ class AuthenticationPopup extends \Magento\Framework\View\Element\Template
      */
     public function getJsLayout()
     {
+        // Check if captcha is not enabled and user is not logged in
+        if (!$this->_scopeConfig->getValue(
+            Form::XML_PATH_CUSTOMER_CAPTCHA_ENABLED,
+            ScopeInterface::SCOPE_STORE
+        ) && !$this->isLoggedIn()) {
+            if(isset($this->jsLayout['components']['authenticationPopup']['children']['captcha'])) {
+                unset($this->jsLayout['components']['authenticationPopup']['children']['captcha']);
+            }
+        }
+
         return $this->serializer->serialize($this->jsLayout);
     }
 
@@ -121,5 +132,15 @@ class AuthenticationPopup extends \Magento\Framework\View\Element\Template
     public function getCustomerForgotPasswordUrl()
     {
         return $this->getUrl('customer/account/forgotpassword');
+    }
+
+    /**
+     * Is logged in
+     *
+     * @return bool
+     */
+    private function isLoggedIn(): ?bool
+    {
+        return $this->httpContext->getValue(Context::CONTEXT_AUTH);
     }
 }
