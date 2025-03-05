@@ -37,13 +37,8 @@ class Name extends AbstractImportValidator implements RowValidatorInterface
         $skuExists = $this->skuStorage->has($value[Product::COL_SKU]);
         $hasCustomOptions = $this->hasCustomOptions($value);
         $hasNameValue = $this->hasNameValue($value);
-        $isStoreViewCodeEmpty = !isset($value['store_view_code']) || $value['store_view_code'] === '';
 
         if (!$skuExists && !$hasCustomOptions && !$hasNameValue) {
-            return $this->invalidate();
-        }
-
-        if (!$hasNameValue && !$hasCustomOptions && !$skuExists && $isStoreViewCodeEmpty) {
             return $this->invalidate();
         }
 
