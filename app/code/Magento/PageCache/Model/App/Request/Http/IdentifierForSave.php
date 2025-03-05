@@ -8,6 +8,8 @@ declare(strict_types=1);
 namespace Magento\PageCache\Model\App\Request\Http;
 
 use Magento\Framework\App\Http\Context;
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\App\PageCache\Identifier;
 use Magento\Framework\App\PageCache\IdentifierInterface;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\Serialize\Serializer\Json;
@@ -22,13 +24,17 @@ class IdentifierForSave implements IdentifierInterface
      * @param Context $context
      * @param Json $serializer
      * @param IdentifierStoreReader $identifierStoreReader
+     * @param Identifier|null $identifier
      */
     public function __construct(
         private Http                  $request,
         private Context               $context,
         private Json                  $serializer,
         private IdentifierStoreReader $identifierStoreReader,
+        private ?Identifier $identifier = null
     ) {
+        $this->identifier = $identifier ?: ObjectManager::getInstance()
+            ->get(Identifier::class);
     }
 
     /**
@@ -38,7 +44,9 @@ class IdentifierForSave implements IdentifierInterface
      */
     public function getValue()
     {
-        $url = (string)$this->request->getUriString();
+        $pattern = $this->identifier->getMarketingParameterPatterns();
+        $replace = array_fill(0, count($pattern), '');
+        $url = preg_replace($pattern, $replace, (string)$this->request->getUriString());
         list($baseUrl, $query) = $this->reconstructUrl($url);
         $data = [
             $this->request->isSecure(),

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2011 Adobe
+ * Copyright 2024 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -22,7 +22,7 @@ class IdentifierTest extends TestCase
     /**
      * Test value for cache vary string
      */
-    private const VARY = '123';
+    public const VARY = '123';
 
     /**
      * @var ObjectManager
@@ -294,6 +294,39 @@ class IdentifierTest extends TestCase
                         true,
                         'http://example.com/path1/',
                         'a=1&b=2',
+                        self::VARY
+                    ]
+                )
+            ),
+            $this->model->getValue()
+        );
+    }
+
+    /**
+     * Test get identifier value with marketing parameters.
+     *
+     * @return void
+     */
+    public function testGetValueWithMarketingParameters(): void
+    {
+        $this->requestMock->expects($this->any())
+            ->method('isSecure')
+            ->willReturn(true);
+
+        $this->requestMock->expects($this->any())
+            ->method('getUriString')
+            ->willReturn('http://example.com/path1/?abc=123&gclid=456&utm_source=abc');
+
+        $this->contextMock->expects($this->any())
+            ->method('getVaryString')
+            ->willReturn(self::VARY);
+
+        $this->assertEquals(
+            sha1(
+                json_encode(
+                    [
+                        true,
+                        'http://example.com/path1/?abc=123',
                         self::VARY
                     ]
                 )

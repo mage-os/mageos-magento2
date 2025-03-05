@@ -36,7 +36,7 @@ class Identifier implements IdentifierInterface
     public function __construct(
         \Magento\Framework\App\Request\Http $request,
         \Magento\Framework\App\Http\Context $context,
-        Json $serializer = null
+        ?Json $serializer = null
     ) {
         $this->request = $request;
         $this->context = $context;
@@ -50,7 +50,9 @@ class Identifier implements IdentifierInterface
      */
     public function getValue()
     {
-        $url = (string)$this->request->getUriString();
+        $pattern = $this->getMarketingParameterPatterns();
+        $replace = array_fill(0, count($pattern), '');
+        $url = preg_replace($pattern, $replace, (string)$this->request->getUriString());
         list($baseUrl, $query) = $this->reconstructUrl($url);
         $data = [
             $this->request->isSecure(),
@@ -60,6 +62,37 @@ class Identifier implements IdentifierInterface
                 ?: $this->context->getVaryString()
         ];
         return sha1($this->serializer->serialize($data));
+    }
+
+    /**
+     * Pattern detect marketing parameters
+     *
+     * @return array
+     */
+    public function getMarketingParameterPatterns(): array
+    {
+        return [
+            '/&?gad_source\=[^&]+/',
+            '/&?gbraid\=[^&]+/',
+            '/&?wbraid\=[^&]+/',
+            '/&?_gl\=[^&]+/',
+            '/&?dclid\=[^&]+/',
+            '/&?gclsrc\=[^&]+/',
+            '/&?srsltid\=[^&]+/',
+            '/&?msclkid\=[^&]+/',
+            '/&?_kx\=[^&]+/',
+            '/&?gclid\=[^&]+/',
+            '/&?cx\=[^&]+/',
+            '/&?ie\=[^&]+/',
+            '/&?cof\=[^&]+/',
+            '/&?siteurl\=[^&]+/',
+            '/&?zanpid\=[^&]+/',
+            '/&?origin\=[^&]+/',
+            '/&?fbclid\=[^&]+/',
+            '/&?mc_(.*?)\=[^&]+/',
+            '/&?utm_(.*?)\=[^&]+/',
+            '/&?_bta_(.*?)\=[^&]+/',
+        ];
     }
 
     /**
