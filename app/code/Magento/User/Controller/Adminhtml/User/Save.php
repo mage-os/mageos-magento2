@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\User\Controller\Adminhtml\User;
@@ -64,6 +64,22 @@ class Save extends \Magento\User\Controller\Adminhtml\User implements HttpPostAc
             return;
         }
         $model->setData($this->_getAdminUserData($data));
+        try {
+            $errors = $model->validate();
+            if ($errors !== true && !empty($errors)) {
+                foreach ($errors as $error) {
+                    $this->messageManager->addError($error);
+                }
+                $this->redirectToEdit($model, $data);
+                return;
+            }
+        } catch (\Magento\Framework\Validator\Exception $e) {
+            if ($e->getMessage()) {
+                $this->messageManager->addError($e->getMessage());
+            }
+            $this->redirectToEdit($model, $data);
+            return;
+        }
         $userRoles = $this->getRequest()->getParam('roles', []);
         if (count($userRoles)) {
             $model->setRoleId($userRoles[0]);
