@@ -22,6 +22,9 @@ acl purge {
 }
 
 sub vcl_recv {
+    # Sorting query string parameters
+    set req.url = std.querysort(req.url);
+
     if (req.method == "PURGE") {
         if (client.ip !~ purge) {
             return (synth(405, "Method not allowed"));
