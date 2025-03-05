@@ -35,15 +35,12 @@
                 <requiredEntity createDataKey="product"/>
                 <requiredEntity createDataKey="simple3"/>
             </updateData>
-            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="runIndex">
-                <argument name="indices" value=""/>
-            </actionGroup>
         </before>
         <after>
+            <deleteData createDataKey="product" stepKey="deleteGroupedProduct"/>
             <deleteData createDataKey="simple1" stepKey="deleteSimple1"/>
             <deleteData createDataKey="simple2" stepKey="deleteSimple2"/>
             <deleteData createDataKey="simple3" stepKey="deleteSimple3"/>
-            <deleteData createDataKey="product" stepKey="deleteGroupedProduct"/>
         </after>
         <actionGroup ref="StorefrontAddThreeGroupedProductToTheCartActionGroup" stepKey="enterSimpleProductsQty">
             <argument name="urlKey" value="$$product.custom_attributes[url_key]$$" />
@@ -54,6 +51,10 @@
             <argument name="qty2" value="-10"/>
             <argument name="qty3" value="5"/>
         </actionGroup>
-        <actionGroup ref="StorefrontValidateThreeGroupedProductQtyErrorMessageActionGroup" stepKey="verifyQtyInputErrorMessage" />
+        <actionGroup ref="StorefrontValidateThreeGroupedProductQtyErrorMessageActionGroup" stepKey="verifyQtyInputErrorMessage">
+            <argument name="firstProductId" value="$simple1.id$"/>
+            <argument name="secondProductId" value="$simple2.id$"/>
+            <argument name="thirdProductId" value="$simple3.id$"/>
+        </actionGroup>
     </test>
 </tests>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  /**
-  * Copyright 2011 Adobe
+  * Copyright 2024 Adobe
   * All Rights Reserved.
   */
 -->
@@ -13,12 +13,12 @@
             <description>Validates Child Products Quantities Input Error Messages are displaying</description>
         </annotations>
         <arguments>
-            <argument name="firstProductIndex" type="string" defaultValue="1"/>
-            <argument name="secondProductIndex" type="string" defaultValue="2"/>
-            <argument name="thirdProductIndex" type="string" defaultValue="3"/>
+            <argument name="firstProductId" type="string"/>
+            <argument name="secondProductId" type="string"/>
+            <argument name="thirdProductId" type="string" />
         </arguments>
-        <dontSeeElement selector="{{StorefrontProductInfoMainSection.groupedProductsAssociatedProductQuantityMageError(firstProductIndex)}}" stepKey="checkingInputValidationErrorMessageForFirstProduct"/>
-        <seeElement selector="{{StorefrontProductInfoMainSection.groupedProductsAssociatedProductQuantityMageError(secondProductIndex)}}" stepKey="checkingInputValidationErrorMessageForSecondProduct"/>
-        <dontSeeElement selector="{{StorefrontProductInfoMainSection.groupedProductsAssociatedProductQuantityMageError(thirdProductIndex)}}" stepKey="checkingInputValidationErrorMessageForThirdProduct"/>
+        <dontSeeElement selector="{{StorefrontProductInfoMainSection.groupedProductOptionQtyError(firstProductId)}}" stepKey="checkingInputValidationErrorMessageForFirstProduct"/>
+        <seeElement selector="{{StorefrontProductInfoMainSection.groupedProductOptionQtyError(secondProductId)}}" stepKey="checkingInputValidationErrorMessageForSecondProduct"/>
+        <dontSeeElement selector="{{StorefrontProductInfoMainSection.groupedProductOptionQtyError(thirdProductId)}}" stepKey="checkingInputValidationErrorMessageForThirdProduct"/>
     </actionGroup>
 </actionGroups>
