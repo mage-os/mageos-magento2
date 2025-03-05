@@ -29,6 +29,7 @@ class Save extends \Magento\User\Controller\Adminhtml\User implements HttpPostAc
      *
      * @return SecurityCookie
      * @deprecated 100.1.0
+     * @see we don't recommend this approach anymore
      */
     private function getSecurityCookie()
     {

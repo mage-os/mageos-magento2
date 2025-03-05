@@ -151,7 +151,7 @@ class SaveTest extends TestCase
         $this->controller->expects($this->once())
             ->method('redirectToEdit')
             ->with($this->userModelMock, $postData)
-            ->willReturnCallback(function ($model, $data) {
+            ->willReturnCallback(function ($_, $data) {
                 $this->sessionMock->setUserData($data);
             });
         $this->controller->execute();
