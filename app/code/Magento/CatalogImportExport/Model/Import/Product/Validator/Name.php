@@ -37,8 +37,9 @@ class Name extends AbstractImportValidator implements RowValidatorInterface
         $skuExists = $this->skuStorage->has($value[Product::COL_SKU]);
         $hasCustomOptions = $this->hasCustomOptions($value);
         $hasNameValue = $this->hasNameValue($value);
+        $hasParentInImport = $this->hasValidatedImportParent($value);
 
-        if (!$skuExists && !$hasCustomOptions && !$hasNameValue) {
+        if (!$skuExists && !$hasCustomOptions && !$hasNameValue && !$hasParentInImport) {
             return $this->invalidate();
         }
 
@@ -62,6 +63,17 @@ class Name extends AbstractImportValidator implements RowValidatorInterface
             ]
         );
         return false;
+    }
+
+    /**
+     * Check if current row data has a soon-to-be added parent product
+     *
+     * @param array $rowData
+     * @return bool
+     */
+    private function hasValidatedImportParent(array $rowData): bool
+    {
+        return array_key_exists('has_import_parent', $rowData) && $rowData['has_import_parent'];
     }
 
     /**

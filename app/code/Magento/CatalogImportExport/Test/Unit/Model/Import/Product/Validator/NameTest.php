@@ -63,7 +63,7 @@ class NameTest extends TestCase
                 ['name' => 'anything goes here', 'store_view_code' => 'en', 'sku' => 'sku']
             ],
             [
-                true,
+                false,
                 ['name' => null, 'store_view_code' => 'en', 'sku' => 'sku']
             ],
         ];

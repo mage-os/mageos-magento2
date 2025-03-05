@@ -2708,7 +2708,9 @@ class Product extends AbstractEntity
         // if product doesn't exist, need to throw critical error else all errors should be not critical.
         $errorLevel = $this->getValidationErrorLevel($sku);
 
-        if (!$this->validator->isValid($rowData)) {
+        $hasValidatedImportParent = $sku && $this->skuProcessor->getNewSku($sku);
+        $contextRowData = array_merge(['has_import_parent' => $hasValidatedImportParent], $rowData);
+        if (!$this->validator->isValid($contextRowData)) {
             foreach ($this->validator->getMessages() as $message) {
                 $this->skipRow($rowNum, $message, $errorLevel, $this->validator->getInvalidAttribute());
             }
@@ -2756,6 +2758,7 @@ class Product extends AbstractEntity
                         'attr_set_code' => $rowData[self::COL_ATTR_SET],
                     ]
                 );
+                //$this->skuStorage->set(array_merge(['sku' => $sku], $this->skuProcessor->getNewSku($sku)));
             }
         }
 
