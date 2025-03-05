@@ -321,12 +321,19 @@ class IdentifierTest extends TestCase
             ->method('getVaryString')
             ->willReturn(self::VARY);
 
+        $uri = $this->createMock(HttpUri::class);
+        $uri->expects($this->any())->method('getQueryAsArray')->willReturn(['abc' => '123']);
+        $this->requestMock->expects($this->any())
+            ->method('getUri')
+            ->willReturn($uri);
+
         $this->assertEquals(
             sha1(
                 json_encode(
                     [
                         true,
-                        'http://example.com/path1/?abc=123',
+                        'http://example.com/path1/',
+                        'abc=123',
                         self::VARY
                     ]
                 )
