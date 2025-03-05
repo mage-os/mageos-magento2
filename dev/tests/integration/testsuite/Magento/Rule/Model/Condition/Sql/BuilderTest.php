@@ -140,10 +140,7 @@ class BuilderTest extends TestCase
                         'value' => 'sku1,sku2,sku3,sku4,sku5',
                     ]
                 ],
-                "WHERE ((((`e`.`entity_id` IN (SELECT `catalog_category_product`.`product_id` FROM " .
-                "`catalog_category_product` WHERE (category_id IN ('3')))) AND(`e`.`entity_id` = '2017-09-15 00:00:00')"
-                ." AND(`e`.`sku` IN ('sku1', 'sku2', 'sku3', 'sku4', 'sku5')) ))) AND (e.created_in <= 1) AND " .
-                "(e.updated_in > 1) ",
+                "WHERE (((`e`.`entity_id` IN (SELECT `catalog_category_product`.`product_id` FROM `catalog_category_product` WHERE (category_id IN ('3')))) AND(`e`.`entity_id` = '2017-09-15 00:00:00') AND(`e`.`sku` IN ('sku1', 'sku2', 'sku3', 'sku4', 'sku5')) ))",
                 "ORDER BY (FIELD(`e`.`sku`, 'sku1', 'sku2', 'sku3', 'sku4', 'sku5'))"
             ],
             [
