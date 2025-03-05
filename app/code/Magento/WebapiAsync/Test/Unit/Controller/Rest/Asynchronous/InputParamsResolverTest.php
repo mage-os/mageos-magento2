@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\WebapiAsync\Test\Unit\Controller\Rest\Asynchronous;
 
+use Magento\Framework\Reflection\MethodsMap;
 use Magento\Framework\Webapi\Rest\Request;
 use Magento\Framework\Webapi\ServiceInputProcessor;
 use Magento\Framework\Webapi\Validator\EntityArrayValidator\InputArraySizeLimitValue;
@@ -57,6 +58,11 @@ class InputParamsResolverTest extends TestCase
      */
     private $inputArraySizeLimitValueMock;
 
+    /**
+     * @var MethodsMap|MockObject
+     */
+    private $methodsMap;
+
     protected function setUp(): void
     {
         $this->requestMock = $this->createMock(Request::class);
@@ -66,6 +72,7 @@ class InputParamsResolverTest extends TestCase
         $this->requestValidatorMock = $this->createMock(RequestValidator::class);
         $this->webapiInputParamsResolverMock = $this->createMock(WebapiInputParamsResolver::class);
         $this->inputArraySizeLimitValueMock = $this->createMock(InputArraySizeLimitValue::class);
+        $this->methodsMap = $this->createMock(MethodsMap::class);
     }
 
     #[DataProvider('requestBodyDataProvider')]
@@ -74,9 +81,12 @@ class InputParamsResolverTest extends TestCase
         string $expectedExceptionMessage
     ): void {
         $routeMock = $this->createMock(Route::class);
-        $this->webapiInputParamsResolverMock->expects($this->once())
-            ->method('getRoute')
+        $routeMock->method('getParameters')
+            ->willReturn([]);
+        $this->webapiInputParamsResolverMock->method('getRoute')
             ->willReturn($routeMock);
+        $this->paramsOverriderMock->method('override')
+            ->willReturnArgument(0);
         $this->requestMock->expects($this->once())
             ->method('getRequestData')
             ->willReturn($requestData);
@@ -89,14 +99,15 @@ class InputParamsResolverTest extends TestCase
     {
         $requestData = [['param1' => 'value1'], ['param1' => 'value1']];
         $routeMock = $this->createMock(Route::class);
-        $routeMock->expects($this->once())
-            ->method('getServiceClass')
+        $routeMock->method('getServiceClass')
             ->willReturn('serviceClass');
-        $routeMock->expects($this->once())
-            ->method('getServiceMethod')
+        $routeMock->method('getServiceMethod')
             ->willReturn('serviceMethod');
-        $this->webapiInputParamsResolverMock->expects($this->once())
-            ->method('getRoute')
+        $routeMock->method('getParameters')
+            ->willReturn([]);
+        $this->paramsOverriderMock->method('override')
+            ->willReturnArgument(0);
+        $this->webapiInputParamsResolverMock->method('getRoute')
             ->willReturn($routeMock);
         $this->requestMock->expects($this->once())
             ->method('getRequestData')
@@ -139,7 +150,8 @@ class InputParamsResolverTest extends TestCase
             $this->requestValidatorMock,
             $this->webapiInputParamsResolverMock,
             $isBulk,
-            $this->inputArraySizeLimitValueMock
+            $this->inputArraySizeLimitValueMock,
+            $this->methodsMap
         );
     }
 }
