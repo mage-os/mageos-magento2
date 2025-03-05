@@ -20,6 +20,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Test for Magento\Rule\Model\Condition\Sql\Builder
+ * @magentoDbIsolation enabled
  */
 class BuilderTest extends TestCase
 {
