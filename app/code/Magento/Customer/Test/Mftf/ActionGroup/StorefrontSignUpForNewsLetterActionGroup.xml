@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright 2025 Adobe
+  * All Rights Reserved.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="StorefrontSignUpForNewsletterActionGroup">
+        <annotations>
+            <description>Goes to the Storefront. Clicks on 'Create Account'. Fills in the provided Customer details, including Newsletter Sign-Up. Clicks on 'Create Account' button.</description>
+        </annotations>
+        <checkOption selector="{{StorefrontCustomerCreateFormSection.signUpForNewsletter}}" stepKey="checkSignUpForNewsletter"/>
+    </actionGroup>
+</actionGroups>
