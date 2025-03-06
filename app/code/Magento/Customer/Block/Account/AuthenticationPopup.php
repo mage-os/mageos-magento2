@@ -43,7 +43,7 @@ class AuthenticationPopup extends \Magento\Framework\View\Element\Template
         \Magento\Framework\View\Element\Template\Context $context,
         array $data = [],
         ?\Magento\Framework\Serialize\Serializer\Json $serializer = null,
-        HttpContext $httpContext = null
+        ?HttpContext $httpContext = null
     ) {
         parent::__construct($context, $data);
         $this->jsLayout = isset($data['jsLayout']) && is_array($data['jsLayout']) ? $data['jsLayout'] : [];
