@@ -476,7 +476,7 @@ MUTATION;
         return Bootstrap::getObjectManager()->create(Token::class)->encrypt(
             $order->getIncrementId(),
             $order->getBillingAddress()->getEmail(),
-            $order->getBillingAddress()->getPostcode()
+            $order->getBillingAddress()->getLastname()
         );
     }
 
