@@ -99,9 +99,16 @@ class BuilderTest extends TestCase
                 );
                 $multiselect->load('multi_select_attr', 'attribute_code');
                 $multiselectAttributeOptionIds = [];
+                $optionIndex = 1;
                 foreach ($multiselect->getOptions() as $option) {
                     if ($option->getValue()) {
                         $multiselectAttributeOptionIds[] = $option->getValue();
+                        $expectedWhere = str_replace(
+                            "#optionAtrId$optionIndex#",
+                            $option->getValue(),
+                            $expectedWhere
+                        );
+                        $optionIndex++;
                     }
                 }
 
@@ -205,11 +212,12 @@ class BuilderTest extends TestCase
                         'collected_attributes' => ['multiselect_attribute' => true],
                     ]
                 ],
-                "WHERE (((`e`.`entity_id` IN (SELECT `catalog_category_product`.`product_id` FROM " .
-                "`catalog_category_product` WHERE (category_id IN ('3')))) " .
-                "AND(`e`.`sku` IN ('sku1', 'sku2', 'sku3')) AND(`at_multi_select_attr`.`value` IN ('4', '5') OR " .
-                "(FIND_IN_SET ('4', `at_multi_select_attr`.`value`) > 0) OR " .
-                "(FIND_IN_SET ('5', `at_multi_select_attr`.`value`) > 0)) ))",
+                "WHERE ((((`e`.`entity_id` IN (SELECT `catalog_category_product`.`product_id` FROM " .
+                "`catalog_category_product` WHERE (category_id IN ('3')))) AND(`e`.`sku` IN " .
+                "('sku1', 'sku2', 'sku3')) AND(`at_multi_select_attr`.`value` IN ('#optionAtrId1#', '#optionAtrId2#') OR " .
+                "(FIND_IN_SET ('#optionAtrId1#', `at_multi_select_attr`.`value`) > 0) OR " .
+                "(FIND_IN_SET ('#optionAtrId2#', `at_multi_select_attr`.`value`) > 0)) ))) AND " .
+                "(e.created_in <= 1) AND (e.updated_in > 1)",
                 "ORDER BY (FIELD(`e`.`sku`, 'sku1', 'sku2', 'sku3'))"
             ]
         ];
