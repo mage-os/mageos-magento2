@@ -47,7 +47,7 @@
             <argument name="product1" value="$simple1.name$"/>
             <argument name="product2" value="$simple2.name$"/>
             <argument name="product3" value="$simple3.name$"/>
-            <argument name="qty1" value="10"/>
+            <argument name="qty1" value="0"/>
             <argument name="qty2" value="-10"/>
             <argument name="qty3" value="5"/>
         </actionGroup>
@@ -56,5 +56,15 @@
             <argument name="secondProductId" value="$simple2.id$"/>
             <argument name="thirdProductId" value="$simple3.id$"/>
         </actionGroup>
+        <actionGroup ref="StorefrontAddThreeGroupedProductToTheCartActionGroup" stepKey="enterSimpleProductsQty2">
+            <argument name="urlKey" value="$$product.custom_attributes[url_key]$$" />
+            <argument name="product1" value="$simple1.name$"/>
+            <argument name="product2" value="$simple2.name$"/>
+            <argument name="product3" value="$simple3.name$"/>
+            <argument name="qty1" value="0"/>
+            <argument name="qty2" value="0"/>
+            <argument name="qty3" value="5"/>
+        </actionGroup>
+        <see userInput="You added $$product.name$$ to your shopping cart" stepKey="seeGroupedAddedToCart"/>
     </test>
 </tests>
