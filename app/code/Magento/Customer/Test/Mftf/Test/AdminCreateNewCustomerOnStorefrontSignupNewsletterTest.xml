@@ -36,7 +36,7 @@
         <actionGroup ref="StorefrontFillCustomerAccountCreationFormActionGroup" stepKey="createCustomer">
             <argument name="customer" value="CustomerEntityOne"/>
         </actionGroup>
-        <actionGroup ref="StorefrontSignUpForNewsletterActionGroup" stepKey="clickOnSignUpButton"/>
+        <actionGroup ref="StorefrontSignUpForNewsLetterActionGroup" stepKey="clickOnSignUpButton"/>
         <actionGroup ref="StorefrontClickCreateAnAccountCustomerAccountCreationFormActionGroup" stepKey="submitCreateAccountForm"/>
 
         <!--Assert verify created new customer in grid-->
