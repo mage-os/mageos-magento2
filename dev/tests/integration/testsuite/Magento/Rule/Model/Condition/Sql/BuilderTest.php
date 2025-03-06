@@ -7,10 +7,11 @@
 namespace Magento\Rule\Model\Condition\Sql;
 
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
+use Magento\Catalog\Model\ResourceModel\Product\Collection\ProductLimitation;
 use Magento\Catalog\Setup\CategorySetup;
 use Magento\Eav\Model\Entity\Attribute\Backend\ArrayBackend;
-use Magento\Eav\Model\Entity\Attribute\Source\Table;
 use Magento\Eav\Test\Fixture\AttributeOption as AttributeOptionFixture;
+use Magento\Framework\DB\Select;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\Fixture\DataFixture;
@@ -19,6 +20,7 @@ use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductColl
 use Magento\CatalogWidget\Model\RuleFactory;
 use Magento\CatalogWidget\Model\Rule\Condition\Combine as CombineCondition;
 use Magento\CatalogWidget\Model\Rule\Condition\Product as ProductCondition;
+use Magento\Catalog\Model\ResourceModel\Product\Collection;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -52,12 +54,13 @@ class BuilderTest extends TestCase
             MultiselectAttribute::class,
             [
                 'entity_type_id' => CategorySetup::CATALOG_PRODUCT_ENTITY_TYPE_ID,
-                'source_model' => Table::class,
-                //'backend_model' => ArrayBackend::class,
+                'source_model' => null,
+                'backend_model' => ArrayBackend::class,
                 'attribute_code' => 'multi_select_attr',
                 'is_visible_on_front' => true,
                 'frontend_input' => 'multiselect',
-                'backend_type' => 'static' //nu asa ?!
+                'backend_type' => 'text',
+                'attribute_model' => Attribute::class,
             ],
             'multiselect'
         ),
@@ -115,6 +118,21 @@ class BuilderTest extends TestCase
         ];
 
         $rule->loadPost($ruleConditionArray);
+        foreach($rule->getConditions()->getConditions() as $condition) {
+            if ($condition->getAttribute() === 'multi_select_attr') {
+                $productCollection = $this->createMock(Collection::class);
+                $limitationFilters = $this->createMock(ProductLimitation::class);
+                $limitationFilters->expects($this->any())->method('isUsingPriceIndex')->willReturn(false);
+                $productCollection->expects($this->any())
+                    ->method('getLimitationFilters')
+                    ->willReturn($limitationFilters);
+                $productCollection->expects($this->any())->method('isEnabledFlat')->willReturn(true);
+                $select = $this->createMock(Select::class);
+                $select->expects($this->any())->method('getPart')->willReturn([]);
+                $productCollection->expects($this->any())->method('getSelect')->willReturn($select);
+                $condition->addToCollection($productCollection);
+            }
+        }
         $this->model->attachConditionToCollection($collection, $rule->getConditions());
 
         $this->assertStringContainsString($expectedWhere, $collection->getSelectSql(true));
@@ -127,7 +145,7 @@ class BuilderTest extends TestCase
     public static function attachConditionToCollectionDataProvider(): array
     {
         return [
-/*            [
+            [
                 [
                     '1' => [
                         'type' => CombineCondition::class,
@@ -159,7 +177,7 @@ class BuilderTest extends TestCase
                 "AND(`e`.`entity_id` = '2017-09-15 00:00:00') AND(`e`.`sku` IN " .
                 "('sku1', 'sku2', 'sku3', 'sku4', 'sku5')) ))) AND (e.created_in <= 1) AND (e.updated_in > 1)",
                 "ORDER BY (FIELD(`e`.`sku`, 'sku1', 'sku2', 'sku3', 'sku4', 'sku5'))"
-            ],*/
+            ],
             [
                 [
                     '1' => [
@@ -184,12 +202,15 @@ class BuilderTest extends TestCase
                         'type' => ProductCondition::class,
                         'attribute' => 'multi_select_attr',
                         'operator' => '{}',
+                        'collected_attributes' => ['multiselect_attribute' => true],
                     ]
                 ],
                 "WHERE ((((`e`.`entity_id` IN (SELECT `catalog_category_product`.`product_id` FROM " .
-                "`catalog_category_product` WHERE (category_id IN ('3')))) AND(`e`.`sku` IN " .
-                "('sku1', 'sku2', 'sku3')) AND(`multiselect_attribute` LIKE '%%') ))) AND " .
-                "(e.created_in <= 1) AND (e.updated_in > 1) ",
+                "`catalog_category_product` WHERE (category_id IN ('3')))) AND(`e`.`sku` IN ('sku1', 'sku2', 'sku3'))" .
+                " AND(`at_multi_select_attr`.`value` IN ('13', '14') OR " .
+                "(FIND_IN_SET ('13', `at_multi_select_attr`.`value`) > 0) OR " .
+                "(FIND_IN_SET ('14', `at_multi_select_attr`.`value`) > 0)) ))) AND " .
+                "(e.created_in <= 1) AND (e.updated_in > 1)",
                 "ORDER BY (FIELD(`e`.`sku`, 'sku1', 'sku2', 'sku3'))"
             ]
         ];
