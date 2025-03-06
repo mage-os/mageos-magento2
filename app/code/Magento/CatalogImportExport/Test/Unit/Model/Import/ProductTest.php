@@ -1448,7 +1448,7 @@ class ProductTest extends AbstractImportTestCase
             ]
         ];
         $importProduct = $this->createModelMockWithErrorAggregator(
-            ['addRowError', 'getOptionEntity'],
+            ['addRowError', 'getOptionEntity', 'getNewSku'],
             ['isRowInvalid' => true]
         );
 
