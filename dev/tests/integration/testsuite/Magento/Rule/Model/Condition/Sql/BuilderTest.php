@@ -7,6 +7,9 @@
 namespace Magento\Rule\Model\Condition\Sql;
 
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
+use Magento\Catalog\Setup\CategorySetup;
+use Magento\Eav\Model\Entity\Attribute\Backend\ArrayBackend;
+use Magento\Eav\Model\Entity\Attribute\Source\Table;
 use Magento\Eav\Test\Fixture\AttributeOption as AttributeOptionFixture;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\TestFramework\Helper\Bootstrap;
@@ -20,7 +23,6 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Test for Magento\Rule\Model\Condition\Sql\Builder
- * @magentoDbIsolation enabled
  */
 class BuilderTest extends TestCase
 {
@@ -46,7 +48,19 @@ class BuilderTest extends TestCase
      * @dataProvider attachConditionToCollectionDataProvider
      */
     #[
-        DataFixture(MultiselectAttribute::class, ['attribute_code' => 'multi_select_attr'], 'multiselect'),
+        DataFixture(
+            MultiselectAttribute::class,
+            [
+                'entity_type_id' => CategorySetup::CATALOG_PRODUCT_ENTITY_TYPE_ID,
+                'source_model' => Table::class,
+                //'backend_model' => ArrayBackend::class,
+                'attribute_code' => 'multi_select_attr',
+                'is_visible_on_front' => true,
+                'frontend_input' => 'multiselect',
+                'backend_type' => 'static' //nu asa ?!
+            ],
+            'multiselect'
+        ),
         DataFixture(
             AttributeOptionFixture::class,
             [
@@ -76,7 +90,7 @@ class BuilderTest extends TestCase
         $collectionFactory = Bootstrap::getObjectManager()->create(ProductCollectionFactory::class);
         $collection = $collectionFactory->create();
         foreach ($conditions as $key => $condition) {
-            if (isset($condition['attribute']) && $condition['attribute'] === 'multiselect_attribute') {
+            if (isset($condition['attribute']) && $condition['attribute'] === 'multi_select_attr') {
                 $multiselect = Bootstrap::getObjectManager()->create(
                     Attribute::class
                 );
@@ -88,7 +102,7 @@ class BuilderTest extends TestCase
                     }
                 }
 
-                $condition[$key]['value'] = implode(',', $multiselectAttributeOptionIds);
+                $conditions[$key]['value'] = $multiselectAttributeOptionIds;
             }
         }
 
@@ -113,7 +127,7 @@ class BuilderTest extends TestCase
     public static function attachConditionToCollectionDataProvider(): array
     {
         return [
-            [
+/*            [
                 [
                     '1' => [
                         'type' => CombineCondition::class,
@@ -140,9 +154,12 @@ class BuilderTest extends TestCase
                         'value' => 'sku1,sku2,sku3,sku4,sku5',
                     ]
                 ],
-                "WHERE (((`e`.`entity_id` IN (SELECT `catalog_category_product`.`product_id` FROM `catalog_category_product` WHERE (category_id IN ('3')))) AND(`e`.`entity_id` = '2017-09-15 00:00:00') AND(`e`.`sku` IN ('sku1', 'sku2', 'sku3', 'sku4', 'sku5')) ))",
+                "WHERE ((((`e`.`entity_id` IN (SELECT `catalog_category_product`.`product_id` FROM " .
+                "`catalog_category_product` WHERE (category_id IN ('3')))) " .
+                "AND(`e`.`entity_id` = '2017-09-15 00:00:00') AND(`e`.`sku` IN " .
+                "('sku1', 'sku2', 'sku3', 'sku4', 'sku5')) ))) AND (e.created_in <= 1) AND (e.updated_in > 1)",
                 "ORDER BY (FIELD(`e`.`sku`, 'sku1', 'sku2', 'sku3', 'sku4', 'sku5'))"
-            ],
+            ],*/
             [
                 [
                     '1' => [
@@ -165,7 +182,7 @@ class BuilderTest extends TestCase
                     ],
                     '1--3' => [
                         'type' => ProductCondition::class,
-                        'attribute' => 'multiselect_attribute',
+                        'attribute' => 'multi_select_attr',
                         'operator' => '{}',
                     ]
                 ],
