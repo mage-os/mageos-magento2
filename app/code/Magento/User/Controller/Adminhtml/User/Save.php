@@ -140,6 +140,8 @@ class Save extends \Magento\User\Controller\Adminhtml\User implements HttpPostAc
             }
             $this->redirectToEdit($model, $data);
         }
+
+        return $this->getResponse();
     }
 
     /**

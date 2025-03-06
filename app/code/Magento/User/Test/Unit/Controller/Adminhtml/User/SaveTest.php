@@ -14,7 +14,6 @@ use Magento\Framework\App\Response\RedirectInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\ObjectManagerInterface;
-use Magento\Framework\Registry;
 use Magento\User\Controller\Adminhtml\User\Save;
 use Magento\User\Model\User;
 use Magento\User\Model\UserFactory;
@@ -63,11 +62,6 @@ class SaveTest extends TestCase
      */
     private $contextMock;
 
-    /**
-     * @var Registry|MockObject
-     */
-    private $registryMock;
-
     protected function setUp(): void
     {
         $this->requestMock = $this->createMock(Http::class);
@@ -83,8 +77,9 @@ class SaveTest extends TestCase
             ->disableOriginalConstructor()
             ->addMethods(['setUserData'])
             ->getMock();
+        // phpcs:ignore Magento2.Deprecation.Registry -- Required for testing core dependency
+        $registryMock = $this->createMock(\Magento\Framework\Registry::class);
         $this->contextMock = $this->createMock(Context::class);
-        $this->registryMock = $this->createMock(Registry::class);
         $this->userFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($this->userModelMock);
@@ -112,7 +107,7 @@ class SaveTest extends TestCase
             ->setConstructorArgs([
                 'context' => $this->contextMock,
                 'userFactory' => $this->userFactoryMock,
-                'coreRegistry' => $this->registryMock
+                'coreRegistry' => $registryMock
             ])
             ->onlyMethods(['redirectToEdit'])
             ->getMock();
