@@ -10,7 +10,7 @@
               xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
     <actionGroup name="StorefrontSignUpForNewsletterActionGroup">
         <annotations>
-            <description>Goes to the Storefront. Clicks on 'Create Account'. Fills in the provided Customer details, including Newsletter Sign-Up. Clicks on 'Create Account' button.</description>
+            <description>Checks the Newsletter Sign-Up checkbox</description>
         </annotations>
         <checkOption selector="{{StorefrontCustomerCreateFormSection.signUpForNewsletter}}" stepKey="checkSignUpForNewsletter"/>
     </actionGroup>
