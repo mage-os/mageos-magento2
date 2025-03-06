@@ -150,7 +150,7 @@ abstract class Product extends Action
         Generic $reviewSession,
         StoreManagerInterface $storeManager,
         Validator $formKeyValidator,
-        ReviewsConfig $reviewsConfig = null
+        ?ReviewsConfig $reviewsConfig = null
     ) {
         $this->storeManager = $storeManager;
         $this->coreRegistry = $coreRegistry;
