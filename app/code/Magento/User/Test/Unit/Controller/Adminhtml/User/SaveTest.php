@@ -77,7 +77,7 @@ class SaveTest extends TestCase
             ->disableOriginalConstructor()
             ->addMethods(['setUserData'])
             ->getMock();
-        // phpcs:ignore Magento2.Deprecation.Registry -- Required for testing core dependency
+        // // @phpcsSuppress Magento2.Security.GlobalState
         $registryMock = $this->createMock(\Magento\Framework\Registry::class);
         $this->contextMock = $this->createMock(Context::class);
         $this->userFactoryMock->expects($this->once())
