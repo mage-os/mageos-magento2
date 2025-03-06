@@ -65,21 +65,13 @@ class Save extends \Magento\User\Controller\Adminhtml\User implements HttpPostAc
             return;
         }
         $model->setData($this->_getAdminUserData($data));
-        try {
-            $errors = $model->validate();
-            if ($errors !== true && !empty($errors)) {
-                foreach ($errors as $error) {
-                    $this->messageManager->addError($error);
-                }
-                $this->redirectToEdit($model, $data);
-                return;
-            }
-        } catch (\Magento\Framework\Validator\Exception $e) {
-            if ($e->getMessage()) {
-                $this->messageManager->addError($e->getMessage());
+        $errors = $model->validate();
+        if ($errors !== true && !empty($errors)) {
+            foreach ($errors as $error) {
+                $this->messageManager->addError($error);
             }
             $this->redirectToEdit($model, $data);
-            return;
+            return $this->getResponse();
         }
         $userRoles = $this->getRequest()->getParam('roles', []);
         if (count($userRoles)) {
