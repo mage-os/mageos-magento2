@@ -77,7 +77,7 @@ class ValidatorTest extends TestCase
      *
      * @return array
      */
-    public function providerCommentData()
+    public static function providerCommentData()
     {
         return [
             [
