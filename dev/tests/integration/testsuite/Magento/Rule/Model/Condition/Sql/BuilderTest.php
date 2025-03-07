@@ -214,9 +214,10 @@ class BuilderTest extends TestCase
                 ],
                 "(((`e`.`entity_id` IN (SELECT `catalog_category_product`.`product_id` FROM " .
                 "`catalog_category_product` WHERE (category_id IN ('3')))) " .
-                "AND(`e`.`sku` IN ('sku1', 'sku2', 'sku3')) AND(`at_multi_select_attr`.`value` IN ('4', '5') OR " .
-                "(FIND_IN_SET ('4', `at_multi_select_attr`.`value`) > 0) OR " .
-                "(FIND_IN_SET ('5', `at_multi_select_attr`.`value`) > 0))",
+                "AND(`e`.`sku` IN ('sku1', 'sku2', 'sku3')) AND(`at_multi_select_attr`.`value` IN " .
+                "('#optionAtrId1#', '#optionAtrId2#') OR " .
+                "(FIND_IN_SET ('#optionAtrId1#', `at_multi_select_attr`.`value`) > 0) OR " .
+                "(FIND_IN_SET ('#optionAtrId2#', `at_multi_select_attr`.`value`) > 0))",
                 "ORDER BY (FIELD(`e`.`sku`, 'sku1', 'sku2', 'sku3'))"
             ]
         ];
