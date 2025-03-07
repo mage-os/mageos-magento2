@@ -2758,7 +2758,6 @@ class Product extends AbstractEntity
                         'attr_set_code' => $rowData[self::COL_ATTR_SET],
                     ]
                 );
-                //$this->skuStorage->set(array_merge(['sku' => $sku], $this->skuProcessor->getNewSku($sku)));
             }
         }
 
