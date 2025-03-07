@@ -8,6 +8,8 @@
         "php": "~8.2.0||~8.3.0||~8.4.0",
         "magento/framework": "*",
         "magento/module-catalog": "*",
+        "magento/module-inventory-configuration-api": "*",
+        "magento/module-inventory-sales-api": "*",
         "magento/module-config": "*",
         "magento/module-customer": "*",
         "magento/module-eav": "*",

@@ -29,17 +29,17 @@ class ValidateQuantity implements ArgumentInterface
     /**
      * To get the quantity validators
      *
-     * @param int $productId
+     * @param string $sku
      * @param int|null $websiteId
      *
      * @return string
      */
-    public function getQuantityValidators(int $productId, int|null $websiteId): string
+    public function getQuantityValidators(string $sku, int|null $websiteId): string
     {
         return $this->serializer->serialize(
             array_merge(
                 ['validate-grouped-qty' => '#super-product-table'],
-                $this->productQuantityValidator->getData($productId, $websiteId)
+                $this->productQuantityValidator->getData($sku, $websiteId)
             )
         );
     }

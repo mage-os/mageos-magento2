@@ -7,41 +7,79 @@ declare(strict_types=1);
 
 namespace Magento\CatalogInventory\Model\Product;
 
-use Magento\CatalogInventory\Api\StockRegistryInterface;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\InventoryConfigurationApi\Api\GetStockItemConfigurationInterface;
+use Magento\InventorySalesApi\Api\StockResolverInterface;
+use Magento\InventorySalesApi\Api\Data\SalesChannelInterface;
+use Magento\Store\Model\StoreManagerInterface;
 
 class QuantityValidator
 {
     /**
-     * @param StockRegistryInterface $stockRegistry
+     * @param GetStockItemConfigurationInterface $getStockItemConfiguration
+     * @param StoreManagerInterface $storeManager
+     * @param StockResolverInterface $stockResolver
      */
     public function __construct(
-        private readonly StockRegistryInterface $stockRegistry
+        private readonly GetStockItemConfigurationInterface $getStockItemConfiguration,
+        private readonly StoreManagerInterface $storeManager,
+        private readonly StockResolverInterface $stockResolver
     ) {
     }
 
     /**
      * To get quantity validators
      *
-     * @param int $productId
+     * @param string $sku
      * @param int|null $websiteId
      *
      * @return array
      */
-    public function getData(int $productId, int|null $websiteId): array
+    public function getData(string $sku, int|null $websiteId): array
     {
-        $stockItem = $this->stockRegistry->getStockItem($productId, $websiteId);
+        try {
+            $stockItemConfig = $this->getStockItemConfiguration->execute(
+                $sku,
+                $this->getStockId($websiteId)
+            );
 
-        $params = [];
-        $validators = [];
-        $params['minAllowed'] =  $stockItem->getMinSaleQty();
-        if ($stockItem->getMaxSaleQty()) {
-            $params['maxAllowed'] = $stockItem->getMaxSaleQty();
-        }
-        if ($stockItem->getQtyIncrements() > 0) {
-            $params['qtyIncrements'] = (float) $stockItem->getQtyIncrements();
-        }
-        $validators['validate-item-quantity'] = $params;
+            $params = [];
+            $validators = [];
+            $params['minAllowed'] = $stockItemConfig->getMinSaleQty();
 
-        return $validators;
+            if ($stockItemConfig->getMaxSaleQty()) {
+                $params['maxAllowed'] = $stockItemConfig->getMaxSaleQty();
+            }
+            if ($stockItemConfig->getQtyIncrements() > 0) {
+                $params['qtyIncrements'] = $stockItemConfig->getQtyIncrements();
+            }
+            $validators['validate-item-quantity'] = $params;
+
+            return $validators;
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+
+    /**
+     * Get Stock ID by Website ID
+     *
+     * @param int|null $websiteId
+     * @return int
+     * @throws LocalizedException
+     */
+    private function getStockId(?int $websiteId): int
+    {
+        if ($websiteId === null) {
+            $websiteId = $this->storeManager->getWebsite()->getId();
+        }
+
+        $websiteCode = $this->storeManager->getWebsite($websiteId)->getCode();
+        $stock = $this->stockResolver->execute(
+            SalesChannelInterface::TYPE_WEBSITE,
+            $websiteCode
+        );
+
+        return (int) $stock->getStockId();
     }
 }
