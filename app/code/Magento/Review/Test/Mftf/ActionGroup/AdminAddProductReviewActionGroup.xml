@@ -18,6 +18,7 @@
         <!--Select Product by SKU and Create Review -->
         <waitForElementClickable selector="{{AdminCreateNewReviewSection.addNewReviewBySKU(sku)}}" stepKey="waitForVisibleReviewButton"/>
         <click selector="{{AdminCreateNewReviewSection.addNewReviewBySKU(sku)}}" stepKey="addNewReviewBySKU"/>
+        <waitForPageLoad stepKey="waitForStorefrontPageLoad"/
         <waitForElementVisible selector="{{AdminCreateNewReviewSection.select_stores}}" stepKey="waitForVisibleReviewDetails"/>
         <selectOption selector="{{AdminCreateNewReviewSection.select_stores}}" userInput="{{review.select_stores[0]}}" stepKey="visibilityField"/>
         <fillField selector="{{AdminCreateNewReviewSection.nickname}}" userInput="{{review.nickname}}" stepKey="fillNicknameField"/>
