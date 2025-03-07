@@ -3,8 +3,14 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
+use Magento\Backend\Block\Page\Footer;
+use Magento\Framework\Escaper;
+
+/** @var Escaper $escaper */
+/** @var Footer $block */
 ?>
 <p class="magento-version">
-    <strong><?= $block->escapeHtml(__('Magento')) ?></strong>
-    <?= $block->escapeHtml(__('ver. %1', $block->getMagentoVersion())) ?>
+    <strong><?= $escaper->escapeHtml(__($block->getName())); ?></strong>
+    <?= $escaper->escapeHtml(__('ver. %1', $block->getMagentoVersion())); ?>
 </p>
