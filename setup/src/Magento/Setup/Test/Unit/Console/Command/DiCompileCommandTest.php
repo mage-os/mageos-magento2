@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -168,10 +168,17 @@ class DiCompileCommandTest extends TestCase
         $writeDirectory->expects($this->atLeastOnce())->method('delete');
         $this->filesystemMock->expects($this->atLeastOnce())->method('getDirectoryWrite')->willReturn($writeDirectory);
 
-        $this->deploymentConfigMock->expects($this->once())
+        $this->deploymentConfigMock->expects($this->exactly(2))
             ->method('get')
             ->with(ConfigOptionsListConstants::KEY_MODULES)
-            ->willReturn(['Magento_Catalog' => 1]);
+            ->willReturn(
+                [
+                    'Magento_Catalog' => 1,
+                    'Module_Test' => 0
+                ]
+            );
+        $this->componentRegistrarMock->expects($this->exactly(2))->method('getPaths');
+
         $progressBar = new ProgressBar($this->outputMock);
 
         $this->objectManagerMock->expects($this->once())->method('configure');
