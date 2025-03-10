@@ -1013,7 +1013,7 @@ class CarrierTest extends TestCase
         $this->assertIsArray($result, 'Should return array of all method codes');
         $this->assertArrayHasKey('FEDEX_INTERNATIONAL_PRIORITY', $result);
         $this->assertArrayHasKey('FEDEX_INTERNATIONAL_PRIORITY_EXPRESS', $result);
-        $this->assertEquals(__('FedEx International Priority'), $result['FEDEX_INTERNATIONAL_PRIORITY']);
+        $this->assertEquals(__('International Priority'), $result['FEDEX_INTERNATIONAL_PRIORITY']);
     }
 
     /**
@@ -1027,7 +1027,7 @@ class CarrierTest extends TestCase
             $result,
             'Should return Phrase object for valid method code'
         );
-        $this->assertEquals('FedEx International Priority', $result->getText());
+        $this->assertEquals('International Priority', $result->getText());
     }
 
     /**
