@@ -33,23 +33,31 @@ class AuthenticationPopup extends \Magento\Framework\View\Element\Template
     private $httpContext;
 
     /**
+     * @var array
+     */
+    private $layoutProcessors;
+
+    /**
      * @param \Magento\Framework\View\Element\Template\Context $context
      * @param array $data
      * @param \Magento\Framework\Serialize\Serializer\Json|null $serializer
      * @param HttpContext $httpContext
+     * @param array $layoutProcessors
      * @throws \RuntimeException
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
         array $data = [],
         ?\Magento\Framework\Serialize\Serializer\Json $serializer = null,
-        ?HttpContext $httpContext = null
+        ?HttpContext $httpContext = null,
+        array $layoutProcessors = []
     ) {
         parent::__construct($context, $data);
         $this->jsLayout = isset($data['jsLayout']) && is_array($data['jsLayout']) ? $data['jsLayout'] : [];
         $this->serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()
             ->get(\Magento\Framework\Serialize\Serializer\Json::class);
         $this->httpContext = $httpContext ?: ObjectManager::getInstance()->get(HttpContext::class);
+        $this->layoutProcessors = $layoutProcessors;
     }
 
     /**
@@ -59,16 +67,9 @@ class AuthenticationPopup extends \Magento\Framework\View\Element\Template
      */
     public function getJsLayout()
     {
-        // Check if captcha is not enabled and user is not logged in
-        if (!$this->_scopeConfig->getValue(
-            Form::XML_PATH_CUSTOMER_CAPTCHA_ENABLED,
-            ScopeInterface::SCOPE_STORE
-        ) && !$this->isLoggedIn()) {
-            if (isset($this->jsLayout['components']['authenticationPopup']['children']['captcha'])) {
-                unset($this->jsLayout['components']['authenticationPopup']['children']['captcha']);
-            }
+        foreach ($this->layoutProcessors as $processor) {
+            $this->jsLayout = $processor->process($this->jsLayout);
         }
-
         return $this->serializer->serialize($this->jsLayout);
     }
 
@@ -142,15 +143,5 @@ class AuthenticationPopup extends \Magento\Framework\View\Element\Template
     public function getCustomerForgotPasswordUrl()
     {
         return $this->getUrl('customer/account/forgotpassword');
-    }
-
-    /**
-     * Is logged in
-     *
-     * @return bool
-     */
-    private function isLoggedIn(): ?bool
-    {
-        return $this->httpContext->getValue(Context::CONTEXT_AUTH);
     }
 }
