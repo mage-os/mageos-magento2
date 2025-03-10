@@ -320,7 +320,7 @@ class ChooserTest extends TestCase
         );
         $this->escaper->expects($this->once())
             ->method('escapeJs')
-            ->willReturnCallback(function($input) {
+            ->willReturnCallback(function ($input) {
                 return $input;
             });
         $jsCallback = $chooserBlock->getRowClickCallback();
