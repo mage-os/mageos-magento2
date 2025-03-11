@@ -151,7 +151,6 @@ class CreateTest extends TestCase
 
         $this->orderMock = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->addMethods(['setReordered', 'getReordered'])
             ->onlyMethods(
                 [
                     'getEntityId',
@@ -448,8 +447,6 @@ class CreateTest extends TestCase
 
         $this->orderMock->method('getItemsCollection')
             ->willReturn($itemCollectionMock);
-        $this->orderMock->method('getReordered')
-            ->willReturn(false);
         $this->orderMock->method('getShippingAddress')
             ->willReturn($address);
         $this->orderMock->method('getBillingAddress')
