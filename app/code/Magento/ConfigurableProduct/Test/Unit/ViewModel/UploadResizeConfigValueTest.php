@@ -4,7 +4,7 @@
  * All Rights Reserved.
  */
 
-namespace Unit\ViewModel;
+namespace Magento\ConfigurableProduct\Test\Unit\ViewModel;
 
 use Magento\ConfigurableProduct\ViewModel\UploadResizeConfigValue;
 use Magento\Backend\Model\Image\UploadResizeConfigInterface;
