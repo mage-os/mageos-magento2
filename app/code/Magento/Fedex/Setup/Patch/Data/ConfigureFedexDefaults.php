@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Fedex\Setup\Patch\Data;
@@ -48,7 +48,7 @@ class ConfigureFedexDefaults implements DataPatchInterface, PatchVersionInterfac
                 'INTERNATIONALECONOMY FREIGHT' => 'INTERNATIONAL_ECONOMY_FREIGHT',
                 'INTERNATIONALFIRST' => 'INTERNATIONAL_FIRST',
                 'INTERNATIONALGROUND' => 'INTERNATIONAL_GROUND',
-                'INTERNATIONALPRIORITY' => 'INTERNATIONAL_PRIORITY',
+                'INTERNATIONALPRIORITY' => 'FEDEX_INTERNATIONAL_PRIORITY',
                 'INTERNATIONALPRIORITY FREIGHT' => 'INTERNATIONAL_PRIORITY_FREIGHT',
                 'PRIORITYOVERNIGHT' => 'PRIORITY_OVERNIGHT',
                 'SMARTPOST' => 'SMART_POST',
