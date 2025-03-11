@@ -453,15 +453,19 @@ class CarrierTest extends TestCase
      *
      * @dataProvider getGatewayURLProvider
      * @param $sandboxMode
+     * @param string $type
      * @param $expectedURL
      * @throws \ReflectionException
      */
-    public function testGetGatewayURL($sandboxMode, $expectedURL)
+    public function testGetGatewayURL($sandboxMode, $type, $expectedURL)
     {
         $scopeConfigValueMap = [
-            ['carriers/dhl/gateway_url', 'store', null, 'https://xmlpi-ea.dhl.com/XMLShippingServlet'],
-            ['carriers/dhl/sandbox_url', 'store', null, 'https://xmlpitest-ea.dhl.com/XMLShippingServlet'],
-            ['carriers/dhl/sandbox_mode', 'store', null, $sandboxMode]
+            ['carriers/dhl/sandbox_mode', 'store', null, $sandboxMode],
+            ['carriers/dhl/type', 'store', null, $type],
+            ['carriers/dhl/sandbox_xml_url', 'store', null, 'https://xmlpitest-ea.dhl.com/XMLShippingServlet'],
+            ['carriers/dhl/sandbox_rest_url', 'store', null, 'https://express.api.dhl.com/mydhlapi/test'],
+            ['carriers/dhl/gateway_xml_url', 'store', null, 'https://xmlpi-ea.dhl.com/XMLShippingServlet'],
+            ['carriers/dhl/gateway_rest_url', 'store', null, 'https://express.api.dhl.com/mydhlapi']
         ];
 
         $this->scope->method('getValue')
@@ -487,8 +491,10 @@ class CarrierTest extends TestCase
     public static function getGatewayURLProvider()
     {
         return [
-            'standard_url' => [0, 'https://xmlpi-ea.dhl.com/XMLShippingServlet'],
-            'sandbox_url' => [1, 'https://xmlpitest-ea.dhl.com/XMLShippingServlet']
+            'standard_xml_url' => [0, 'DHL_XML', 'https://xmlpi-ea.dhl.com/XMLShippingServlet'],
+            'sandbox_xml_url' => [1, 'DHL_XML', 'https://xmlpitest-ea.dhl.com/XMLShippingServlet'],
+            'standard_rest_url' => [0, 'DHL_REST', 'https://express.api.dhl.com/mydhlapi'],
+            'sandbox_rest_url' => [1, 'DHL_REST', 'https://express.api.dhl.com/mydhlapi/test']
         ];
     }
 
