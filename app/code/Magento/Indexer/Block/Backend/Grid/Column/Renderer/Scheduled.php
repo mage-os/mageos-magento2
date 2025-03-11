@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2011 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Indexer\Block\Backend\Grid\Column\Renderer;
 
@@ -44,11 +44,10 @@ class Scheduled extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Abstr
      *
      * @param string $indexer
      * @return bool
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function isPreferRealtime(string $indexer): bool
     {
-        return in_array($indexer, [
-            Customer::CUSTOMER_GRID_INDEXER_ID,
-        ]);
+        return false;
     }
 }
