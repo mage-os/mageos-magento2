@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2025 Adobe
+ * Copyright 2015 Adobe
  * All Rights Reserved.
  */
 
@@ -166,16 +166,14 @@ class DiCompileCommand extends Command
 
         $modulePaths = $this->componentRegistrar->getPaths(ComponentRegistrar::MODULE);
         $moduleStatuses = $this->deploymentConfig->get(ConfigOptionsListConstants::KEY_MODULES);
+
         if (!$moduleStatuses || !is_array($moduleStatuses)) {
+            $output->writeln('<error>Deployment config not available.</error>');
             return Cli::RETURN_FAILURE;
         }
-        $enabledModuleStatuses = array_filter($moduleStatuses, function ($enabled) {
-            return $enabled === 1;
-        });
-        $enabledModules = array_keys($enabledModuleStatuses);
 
-        $modulePathsEnabled = array_filter($modulePaths, function ($path, $module) use ($enabledModules) {
-            return in_array($module, $enabledModules, true);
+        $modulePathsEnabled = array_filter($modulePaths, function ($path, $module) use ($moduleStatuses) {
+            return ($moduleStatuses[$module] ?? 0) === 1;
         }, ARRAY_FILTER_USE_BOTH);
 
         $libraryPaths = $this->componentRegistrar->getPaths(ComponentRegistrar::LIBRARY);
