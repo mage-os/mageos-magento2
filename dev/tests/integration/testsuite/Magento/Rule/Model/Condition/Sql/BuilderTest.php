@@ -31,14 +31,14 @@ use PHPUnit\Framework\TestCase;
 class BuilderTest extends TestCase
 {
     /**
-     * @var Builder
+     * @var Builder|null
      */
-    private Builder $model;
+    private ?Builder $model;
 
     /**
-     * @var DataFixtureStorage
+     * @var DataFixtureStorage|null
      */
-    private DataFixtureStorage $fixtures;
+    private ?DataFixtureStorage $fixtures;
 
     /**
      * @inheritDoc
@@ -104,18 +104,10 @@ class BuilderTest extends TestCase
 
         $rule->loadPost($ruleConditionArray);
         foreach ($rule->getConditions()->getConditions() as $condition) {
+            $condition->addToCollection($collection);
             if ($condition->getAttribute() === 'multi_select_attr') {
-                $productCollection = $this->createMock(Collection::class);
-                $limitationFilters = $this->createMock(ProductLimitation::class);
-                $limitationFilters->expects($this->any())->method('isUsingPriceIndex')->willReturn(false);
-                $productCollection->expects($this->any())
-                    ->method('getLimitationFilters')
-                    ->willReturn($limitationFilters);
-                $productCollection->expects($this->any())->method('isEnabledFlat')->willReturn(true);
-                $select = $this->createMock(Select::class);
-                $select->expects($this->any())->method('getPart')->willReturn([]);
-                $productCollection->expects($this->any())->method('getSelect')->willReturn($select);
-                $condition->addToCollection($productCollection);
+                $from = array_keys($collection->getSelectSql()->getPart('from'));
+                $expectedWhere = str_replace('multi_select_attr', end($from), $expectedWhere);
             }
         }
         $this->model->attachConditionToCollection($collection, $rule->getConditions());
@@ -159,7 +151,8 @@ class BuilderTest extends TestCase
                 ],
                 "(((`e`.`entity_id` IN (SELECT `catalog_category_product`.`product_id` FROM " .
                 "`catalog_category_product` WHERE (category_id IN ('3')))) " .
-                "AND(`e`.`entity_id` = '2017-09-15 00:00:00') " .
+                "AND(IF(`at_special_to_date`.`value_id` > 0, `at_special_to_date`.`value`, " .
+                "`at_special_to_date_default`.`value`) = '2017-09-15 00:00:00') " .
                 "AND(`e`.`sku` IN ('sku1', 'sku2', 'sku3', 'sku4', 'sku5'))",
                 "ORDER BY (FIELD(`e`.`sku`, 'sku1', 'sku2', 'sku3', 'sku4', 'sku5'))"
             ],
@@ -192,10 +185,9 @@ class BuilderTest extends TestCase
                 ],
                 "(((`e`.`entity_id` IN (SELECT `catalog_category_product`.`product_id` FROM " .
                 "`catalog_category_product` WHERE (category_id IN ('3')))) " .
-                "AND(`e`.`sku` IN ('sku1', 'sku2', 'sku3')) AND(`at_multi_select_attr`.`value` IN " .
-                "('red', 'white') OR " .
-                "(FIND_IN_SET ('red', `at_multi_select_attr`.`value`) > 0) OR " .
-                "(FIND_IN_SET ('white', `at_multi_select_attr`.`value`) > 0))",
+                "AND(`e`.`sku` IN ('sku1', 'sku2', 'sku3')) AND(`multi_select_attr`.`value` IN ('red', 'white') OR " .
+                "(FIND_IN_SET ('red', `multi_select_attr`.`value`) > 0) OR " .
+                "(FIND_IN_SET ('white', `multi_select_attr`.`value`) > 0))",
                 "ORDER BY (FIELD(`e`.`sku`, 'sku1', 'sku2', 'sku3'))"
             ]
         ];
