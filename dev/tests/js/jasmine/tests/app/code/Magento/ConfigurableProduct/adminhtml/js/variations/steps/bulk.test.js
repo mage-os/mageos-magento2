@@ -15,6 +15,8 @@ define([
     'jquery/uppy-core',
     'mage/translate'
 ], function (Bulk, $) {
+    'use strict';
+
     describe('Magento_ConfigurableProduct/js/variations/steps/bulk', function () {
         let bulkInstance, config;
 
