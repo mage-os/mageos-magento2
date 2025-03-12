@@ -1,10 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Backend\Block\Widget\Grid\Column\Renderer;
+
+use Magento\Framework\Exception\NoSuchEntityException;
 
 /**
  * Backend grid item renderer currency
@@ -108,6 +110,25 @@ class Currency extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Abstra
             return $code;
         }
 
+        $storeId = $row->getData('store_id');
+        if ($storeId) {
+            try {
+                $store = $this->_storeManager->getStore($storeId);
+                // Check if the currency is set at the store level
+                $currencyCode = $store->getCurrentCurrencyCode();
+                if ($currencyCode) {
+                    return $currencyCode;
+                }
+                $website = $store->getWebsite();
+                // Check if the currency is set at the website level
+                $currencyCode = $website->getBaseCurrencyCode();
+                if ($currencyCode) {
+                    return $currencyCode;
+                }
+            } catch (NoSuchEntityException $e) {
+                $this->_logger->warning('Failed to get website currency: ' . $e->getMessage());
+            }
+        }
         return $this->_currencyLocator->getDefaultCurrency($this->_request);
     }
 

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -16,7 +16,9 @@ use Magento\Framework\Currency\Data\Currency as CurrencyData;
 use Magento\Framework\DataObject;
 use Magento\Framework\Locale\CurrencyInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Store\Model\Website;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -137,5 +139,43 @@ class CurrencyTest extends TestCase
         $this->_columnMock->method('getRateField')->willReturn('test_rate_field');
 
         $this->assertEquals('15USD', $this->_blockCurrency->render($this->_row));
+    }
+
+    /**
+     * @covers \Magento\Backend\Block\Widget\Grid\Column\Renderer\Currency::render
+     */
+    public function testRenderWithNonDefaultCurrency()
+    {
+        $this->_currencyMock->expects($this->once())
+            ->method('getRate')
+            ->with('nonDefaultCurrency')
+            ->willReturn(2.0);
+        $this->_curLocatorMock->expects($this->never())
+            ->method('getDefaultCurrency');
+        $currLocaleMock = $this->createMock(CurrencyData::class);
+        $currLocaleMock->expects($this->once())
+            ->method('toCurrency')
+            ->with(20.0000)
+            ->willReturn('20EUR');
+        $this->_localeMock->expects($this->once())
+            ->method('getCurrency')
+            ->with('nonDefaultCurrency')
+            ->willReturn($currLocaleMock);
+        $this->_columnMock->method('getCurrency')->willReturn('EUR');
+        $this->_columnMock->method('getRateField')->willReturn('test_rate_field');
+        $this->_row->setData('store_id', 1);
+        $storeMock = $this->createMock(Store::class);
+        $websiteMock = $this->createMock(Website::class);
+        $websiteMock->expects($this->exactly(2))
+            ->method('getBaseCurrencyCode')
+            ->willReturn('nonDefaultCurrency');
+        $storeMock->expects($this->exactly(2))
+            ->method('getWebsite')
+            ->willReturn($websiteMock);
+        $this->_storeManagerMock->expects($this->exactly(2))
+            ->method('getStore')
+            ->with(1)
+            ->willReturn($storeMock);
+        $this->assertEquals('20EUR', $this->_blockCurrency->render($this->_row));
     }
 }
