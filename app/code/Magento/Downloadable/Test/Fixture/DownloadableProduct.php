@@ -116,11 +116,17 @@ class DownloadableProduct extends Product
                 'id' => null,
                 'title' => $link['title'] ?? 'Test Link%uniqid%',
                 'price' => $link['price'] ?? 0,
-                'link_type' => $link['link_type'] ?? 'file',
-                'link_url' => null,
-                'link_file' => $this->generateDownloadableLink($link['link_file'] ?? 'test-' . uniqid() . '.txt'),
-                'is_shareable' => $link['is_shareable'] ?? 0,
-                'number_of_downloads' => $link['number_of_downloads'] ?? 5,
+
+                'link_type' => \Magento\Downloadable\Helper\Download::LINK_TYPE_URL,
+                'link_url' => 'http://example.com/downloadable.txt',
+                'is_shareable' => \Magento\Downloadable\Model\Link::LINK_SHAREABLE_CONFIG,
+                'number_of_downloads' => 10,
+
+                //'link_type' => $link['link_type'] ?? 'file',
+                //'link_url' => null,
+                //'link_file' => $this->generateDownloadableLink($link['link_file'] ?? 'test-' . uniqid() . '.txt'),
+                //'is_shareable' => $link['is_shareable'] ?? 0,
+                //'number_of_downloads' => $link['number_of_downloads'] ?? 5,
                 'sort_order' => $link['sort_order'] ?? 10,
             ];
         }
