@@ -66,6 +66,8 @@ class UpdateFedexInternationalPriority implements DataPatchInterface, PatchVersi
                 }
             }
         }
+
+        return $this;
     }
 
     /**
