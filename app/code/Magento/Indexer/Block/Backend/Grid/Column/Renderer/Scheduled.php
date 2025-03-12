@@ -5,8 +5,6 @@
  */
 namespace Magento\Indexer\Block\Backend\Grid\Column\Renderer;
 
-use Magento\Customer\Model\Customer;
-
 /**
  * Renderer for 'Scheduled' column in indexer grid
  */
