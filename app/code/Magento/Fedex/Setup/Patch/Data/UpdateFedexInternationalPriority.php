@@ -29,7 +29,8 @@ class UpdateFedexInternationalPriority implements DataPatchInterface, PatchVersi
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
+     *
      * Apply the patch to update INTERNATIONAL_PRIORITY to FEDEX_INTERNATIONAL_PRIORITY
      */
     public function apply()
@@ -68,7 +69,7 @@ class UpdateFedexInternationalPriority implements DataPatchInterface, PatchVersi
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public static function getDependencies()
     {
@@ -78,7 +79,7 @@ class UpdateFedexInternationalPriority implements DataPatchInterface, PatchVersi
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public static function getVersion()
     {
@@ -86,7 +87,7 @@ class UpdateFedexInternationalPriority implements DataPatchInterface, PatchVersi
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getAliases()
     {
