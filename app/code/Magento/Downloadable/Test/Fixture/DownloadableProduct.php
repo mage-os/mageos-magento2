@@ -19,6 +19,7 @@ use Magento\Framework\Filesystem\Io\File;
 use Magento\TestFramework\Fixture\Api\DataMerger;
 use Magento\TestFramework\Fixture\Api\ServiceFactory;
 use Magento\TestFramework\Fixture\Data\ProcessorInterface;
+use Magento\Downloadable\Api\DomainManagerInterface;
 
 class DownloadableProduct extends Product
 {
@@ -61,7 +62,8 @@ class DownloadableProduct extends Product
         private readonly ProductRepositoryInterface $productRepository,
         private readonly DirectoryList $directoryList,
         private readonly Link $link,
-        private readonly File $file
+        private readonly File $file,
+        private readonly DomainManagerInterface $domainManager
     ) {
         parent::__construct($serviceFactory, $dataProcessor, $dataMerger, $productRepository);
     }
@@ -74,6 +76,15 @@ class DownloadableProduct extends Product
      */
     public function apply(array $data = []): ?DataObject
     {
+        $this->domainManager->addDomains(
+            [
+                'example.com',
+                'www.example.com',
+                'www.sample.example.com',
+                'google.com'
+            ]
+        );
+
         return parent::apply($this->prepareData($data));
     }
 
