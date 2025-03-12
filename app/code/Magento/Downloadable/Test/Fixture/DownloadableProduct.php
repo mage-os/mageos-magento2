@@ -79,13 +79,24 @@ class DownloadableProduct extends Product
         $this->domainManager->addDomains(
             [
                 'example.com',
-                'www.example.com',
-                'www.sample.example.com',
-                'google.com'
+                'www.example.com'
             ]
         );
 
         return parent::apply($this->prepareData($data));
+    }
+
+    public function revert(DataObject $data): void
+    {
+        $this->domainManager->removeDomains(
+            [
+                'example.com',
+                'www.example.com',
+            ]
+        );
+
+        parent::revert($data);
+
     }
 
     /**
