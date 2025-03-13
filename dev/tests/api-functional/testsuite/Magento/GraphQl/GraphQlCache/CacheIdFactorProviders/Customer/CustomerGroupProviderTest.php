@@ -7,11 +7,15 @@ declare(strict_types=1);
 
 namespace Magento\GraphQl\GraphQlCache\CacheIdFactorProviders\Customer;
 
+use Magento\Catalog\Test\Fixture\Product as ProductFixture;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Model\Group;
+use Magento\Customer\Test\Fixture\Customer;
 use Magento\Framework\Exception\AuthenticationException;
 use Magento\GraphQlCache\Model\CacheId\CacheIdCalculator;
 use Magento\Integration\Api\CustomerTokenServiceInterface;
+use Magento\TestFramework\Fixture\DataFixture;
+use Magento\TestFramework\Fixture\DataFixtureStorageManager;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\TestCase\GraphQlAbstract;
 
@@ -45,13 +49,16 @@ class CustomerGroupProviderTest extends GraphQlAbstract
 
     /**
      * Tests that cache id header changes based on customer group and remains consistent for same customer group
-     *
-     * @magentoApiDataFixture Magento/Customer/_files/customer.php
-     * @magentoApiDataFixture Magento/GraphQl/Catalog/_files/simple_product.php
      */
+    #[
+        DataFixture(Customer::class, as: 'customer'),
+        DataFixture(ProductFixture::class, as: 'product'),
+    ]
     public function testCacheIdHeaderWithCustomerGroup()
     {
-        $sku = 'simple_product';
+        $customer = DataFixtureStorageManager::getStorage()->get('customer');
+        $product = DataFixtureStorageManager::getStorage()->get('product');
+        $sku = $product->getSku();
         $query = <<<QUERY
  {
            products(filter: {sku: {eq: "{$sku}"}})
@@ -67,12 +74,12 @@ class CustomerGroupProviderTest extends GraphQlAbstract
            }
        }
 QUERY;
-        $response = $this->graphQlQueryWithResponseHeaders($query, [], '', $this->getHeaderMap());
+        $response = $this->graphQlQueryWithResponseHeaders($query, [], '', $this->getHeaderMap($customer->getEmail()));
         $this->assertArrayHasKey(CacheIdCalculator::CACHE_ID_HEADER, $response['headers']);
         $cacheId = $response['headers'][CacheIdCalculator::CACHE_ID_HEADER];
         $this->assertTrue((boolean)preg_match('/^[0-9a-f]{64}$/i', $cacheId));
         $groupCode = 'Retailer';
-        $customer = $this->customerRepository->get('customer@example.com');
+        $customer = $this->customerRepository->get($customer->getEmail());
         $customerGroupId = $this->customerGroup->load($groupCode, 'customer_group_code')->getId();
         // change the customer group of this customer from the default group
         $customer->setGroupId($customerGroupId);
@@ -81,7 +88,7 @@ QUERY;
             $query,
             [],
             '',
-            $this->getHeaderMap()
+            $this->getHeaderMap($customer->getEmail())
         );
         $this->assertArrayHasKey(CacheIdCalculator::CACHE_ID_HEADER, $responseAfterCustomerGroupChange['headers']);
         $cacheIdCustomerGroupChange = $responseAfterCustomerGroupChange['headers'][CacheIdCalculator::CACHE_ID_HEADER];
@@ -96,7 +103,7 @@ QUERY;
             $query,
             [],
             '',
-            $this->getHeaderMap()
+            $this->getHeaderMap($customer->getEmail())
         );
         $cacheIdDefaultCustomerGroup = $responseDefaultCustomerGroup['headers'][CacheIdCalculator::CACHE_ID_HEADER];
         //Verify that the cache id is same as original $cacheId
