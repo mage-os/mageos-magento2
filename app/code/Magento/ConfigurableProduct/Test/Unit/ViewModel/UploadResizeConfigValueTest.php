@@ -9,12 +9,13 @@ namespace Magento\ConfigurableProduct\Test\Unit\ViewModel;
 
 use Magento\ConfigurableProduct\ViewModel\UploadResizeConfigValue;
 use Magento\Backend\Model\Image\UploadResizeConfigInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class UploadResizeConfigValueTest extends TestCase
 {
     /**
-     * @var UploadResizeConfigInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var UploadResizeConfigInterface|MockObject
      */
     private $uploadResizeConfigMock;
 

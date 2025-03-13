@@ -8,11 +8,12 @@ declare(strict_types=1);
 namespace Magento\ConfigurableProduct\ViewModel;
 
 use Magento\Backend\Model\Image\UploadResizeConfigInterface;
+use Magento\Framework\View\Element\Block\ArgumentInterface;
 
 /**
  * Get configuration values for frontend image uploader.
  */
-class UploadResizeConfigValue implements \Magento\Framework\View\Element\Block\ArgumentInterface
+class UploadResizeConfigValue implements ArgumentInterface
 {
     /**
      * @var UploadResizeConfigInterface
