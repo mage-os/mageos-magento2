@@ -44,6 +44,8 @@ class DownloadableProduct extends Product
         ],
     ];
 
+    private const DOMAINS = ['example.com','www.example.com'];
+
     /**
      * DownloadableProduct constructor
      *
@@ -76,27 +78,15 @@ class DownloadableProduct extends Product
      */
     public function apply(array $data = []): ?DataObject
     {
-        $this->domainManager->addDomains(
-            [
-                'example.com',
-                'www.example.com'
-            ]
-        );
+        $this->domainManager->addDomains(self::DOMAINS);
 
         return parent::apply($this->prepareData($data));
     }
 
     public function revert(DataObject $data): void
     {
-        $this->domainManager->removeDomains(
-            [
-                'example.com',
-                'www.example.com',
-            ]
-        );
-
+        $this->domainManager->removeDomains(self::DOMAINS);
         parent::revert($data);
-
     }
 
     /**
@@ -134,21 +124,24 @@ class DownloadableProduct extends Product
     {
         $links = [];
         foreach ($data['extension_attributes']['downloadable_product_links'] as $link) {
+
+            if ($link['link_type'] == 'url') {
+                $link['link_url'] = 'http://example.com/downloadable.txt';
+                $link['link_file'] = '';
+            } else {
+                $link['link_file'] = $this->generateDownloadableLink($link['link_file'] ?? 'test-' . uniqid() . '.txt');
+                $link['link_url'] = '';
+            }
+
             $links[] = [
                 'id' => null,
                 'title' => $link['title'] ?? 'Test Link%uniqid%',
                 'price' => $link['price'] ?? 0,
-
-                'link_type' => \Magento\Downloadable\Helper\Download::LINK_TYPE_URL,
-                'link_url' => 'http://example.com/downloadable.txt',
-                'is_shareable' => \Magento\Downloadable\Model\Link::LINK_SHAREABLE_CONFIG,
-                'number_of_downloads' => 10,
-
-                //'link_type' => $link['link_type'] ?? 'file',
-                //'link_url' => null,
-                //'link_file' => $this->generateDownloadableLink($link['link_file'] ?? 'test-' . uniqid() . '.txt'),
-                //'is_shareable' => $link['is_shareable'] ?? 0,
-                //'number_of_downloads' => $link['number_of_downloads'] ?? 5,
+                'link_type' => $link['link_type'] ?? 'file',
+                'link_url' => $link['link_url'],
+                'link_file' => $link['link_file'],
+                'is_shareable' => $link['is_shareable'] ?? 0,
+                'number_of_downloads' => $link['number_of_downloads'] ?? 5,
                 'sort_order' => $link['sort_order'] ?? 10,
             ];
         }
