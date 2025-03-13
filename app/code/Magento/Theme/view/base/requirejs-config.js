@@ -1,6 +1,6 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 
 var config = {
@@ -9,6 +9,7 @@ var config = {
         '*': {
             'ko': 'knockoutjs/knockout',
             'knockout': 'knockoutjs/knockout',
+            'jquery/validate': 'jquery/validate-extended',
             'mageUtils': 'mage/utils/main',
             'rjsResolver': 'mage/requirejs/resolver',
             'jquery-ui-modules/core': 'jquery/ui-modules/core',
@@ -66,6 +67,7 @@ var config = {
     },
     paths: {
         'jquery/validate': 'jquery/jquery.validate',
+        'jquery/validate-extended': 'jquery/jquery.validate.extended',
         'jquery/uppy-core': 'jquery/uppy/dist/uppy.min',
         'prototype': 'legacy-build.min',
         'jquery/jquery-storageapi': 'js-storage/storage-wrapper',
