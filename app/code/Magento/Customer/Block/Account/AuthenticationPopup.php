@@ -41,7 +41,6 @@ class AuthenticationPopup extends \Magento\Framework\View\Element\Template
      * @param \Magento\Framework\View\Element\Template\Context $context
      * @param array $data
      * @param \Magento\Framework\Serialize\Serializer\Json|null $serializer
-     * @param HttpContext $httpContext
      * @param array $layoutProcessors
      * @throws \RuntimeException
      */
@@ -49,14 +48,12 @@ class AuthenticationPopup extends \Magento\Framework\View\Element\Template
         \Magento\Framework\View\Element\Template\Context $context,
         array $data = [],
         ?\Magento\Framework\Serialize\Serializer\Json $serializer = null,
-        ?HttpContext $httpContext = null,
         array $layoutProcessors = []
     ) {
         parent::__construct($context, $data);
         $this->jsLayout = isset($data['jsLayout']) && is_array($data['jsLayout']) ? $data['jsLayout'] : [];
         $this->serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()
             ->get(\Magento\Framework\Serialize\Serializer\Json::class);
-        $this->httpContext = $httpContext ?: ObjectManager::getInstance()->get(HttpContext::class);
         $this->layoutProcessors = $layoutProcessors;
     }
 

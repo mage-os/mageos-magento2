@@ -5,10 +5,10 @@
  */
 
 declare(strict_types=1);
-namespace Magento\Captcha\Block\Checkout;
+namespace Magento\Captcha\Block\Customer\AuthenticationPopup;
 
-use Magento\Checkout\Block\Checkout\LayoutProcessorInterface;
 use Magento\Captcha\Helper\Data as HelperCaptcha;
+use Magento\Checkout\Block\Checkout\LayoutProcessorInterface;
 
 class LayoutProcessor implements LayoutProcessorInterface
 {

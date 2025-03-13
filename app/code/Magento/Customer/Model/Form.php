@@ -15,7 +15,7 @@ class Form extends \Magento\Eav\Model\Form
      * XML configuration paths for "Disable autocomplete on storefront" property
      */
     public const XML_PATH_ENABLE_AUTOCOMPLETE = 'customer/password/autocomplete_on_storefront';
-    
+
     /**
      * Current module pathname
      *
