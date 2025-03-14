@@ -117,6 +117,9 @@ class FrontNameResolver implements FrontNameResolverInterface
     /**
      * Return whether the host from request is the backend host
      *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return bool
      */
     public function isHostBackend()
