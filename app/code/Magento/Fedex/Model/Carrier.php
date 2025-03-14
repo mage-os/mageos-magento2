@@ -725,7 +725,6 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
                 'FEDEX_PRIORITY_EXPRESS_FREIGHT' => __('Priority Express Freight'),
                 'FEDEX_PRIORITY_FREIGHT' => __('Priority Freight'),
                 'FEDEX_ECONOMY_SELECT' => __('Economy Select'),
-                'PRIORITY_EXPRESS' => __('Priority Express'),
                 'INTERNATIONAL_PRIORITY_FREIGHT' => __('Intl Priority Freight'),
                 'PRIORITY_OVERNIGHT' => __('Priority Overnight'),
                 'SMART_POST' => __('Smart Post'),

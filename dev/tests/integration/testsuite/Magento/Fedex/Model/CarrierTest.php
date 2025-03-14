@@ -38,7 +38,7 @@ class CarrierTest extends \PHPUnit\Framework\TestCase
     public static function getCodeDataProvider()
     {
         return [
-            ['method', 29],
+            ['method', 28],
             ['dropoff', 5],
             ['packaging', 7],
             ['containers_filter', 4],
