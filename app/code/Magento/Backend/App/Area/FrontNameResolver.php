@@ -119,14 +119,24 @@ class FrontNameResolver implements FrontNameResolverInterface
      *
      * @return bool
      */
-    public function isHostBackend(): bool
+    public function isHostBackend()
     {
         if (!$this->request->getServer('HTTP_HOST')) {
             return false;
         }
 
-        $backendUrl = $this->getBackendUrl();
-
+        if ($this->scopeConfig->getValue(self::XML_PATH_USE_CUSTOM_ADMIN_URL, ScopeInterface::SCOPE_STORE)) {
+            $backendUrl = $this->scopeConfig->getValue(self::XML_PATH_CUSTOM_ADMIN_URL, ScopeInterface::SCOPE_STORE);
+        } else {
+            $xmlPath = $this->request->isSecure() ? Store::XML_PATH_SECURE_BASE_URL : Store::XML_PATH_UNSECURE_BASE_URL;
+            $backendUrl = $this->config->getValue($xmlPath);
+            if ($backendUrl === null) {
+                $backendUrl = $this->scopeConfig->getValue(
+                    $xmlPath,
+                    ScopeInterface::SCOPE_STORE
+                );
+            }
+        }
         $this->uri->parse($backendUrl);
         $configuredHost = $this->uri->getHost();
         if (!$configuredHost) {
@@ -144,20 +154,4 @@ class FrontNameResolver implements FrontNameResolverInterface
 
         return strcasecmp($configuredHost, $host) === 0;
     }
-
-    /**
-     * Retrieve backend URL
-     * @return string|null
-     */
-    private function getBackendUrl(): ?string
-    {
-        if ($this->scopeConfig->getValue(self::XML_PATH_USE_CUSTOM_ADMIN_URL, ScopeInterface::SCOPE_STORE)) {
-            return $this->scopeConfig->getValue(self::XML_PATH_CUSTOM_ADMIN_URL, ScopeInterface::SCOPE_STORE);
-        }
-
-        $xmlPath = $this->request->isSecure() ? Store::XML_PATH_SECURE_BASE_URL : Store::XML_PATH_UNSECURE_BASE_URL;
-        $backendUrl = $this->config->getValue($xmlPath);
-        return $backendUrl ?? $this->scopeConfig->getValue($xmlPath, ScopeInterface::SCOPE_STORE);
-    }
-
 }
