@@ -167,11 +167,6 @@ class DiCompileCommand extends Command
         $modulePaths = $this->componentRegistrar->getPaths(ComponentRegistrar::MODULE);
         $moduleStatuses = $this->deploymentConfig->get(ConfigOptionsListConstants::KEY_MODULES);
 
-        if (!$moduleStatuses || !is_array($moduleStatuses)) {
-            $output->writeln('<error>Deployment config not available.</error>');
-            return Cli::RETURN_FAILURE;
-        }
-
         $modulePathsEnabled = array_filter($modulePaths, function ($path, $module) use ($moduleStatuses) {
             return ($moduleStatuses[$module] ?? 0) === 1;
         }, ARRAY_FILTER_USE_BOTH);
