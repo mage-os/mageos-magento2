@@ -84,7 +84,6 @@ class Currency extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Abstra
     {
         if ($data = (string)$this->_getValue($row)) {
             $currency_code = $this->_getCurrencyCode($row);
-            $data = (float)$data * $this->_getRate($row);
             $sign = (bool)(int)$this->getColumn()->getShowNumberSign() && $data > 0 ? '+' : '';
             $data = sprintf("%f", $data);
             $data = $this->_localeCurrency->getCurrency($currency_code)->toCurrency($data);
@@ -105,11 +104,9 @@ class Currency extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Abstra
             return $code;
         }
         $currency = $this->getColumn()->getCurrency();
-
         if ($currency !== null && $code = $row->getData($currency)) {
             return $code;
         }
-
         $storeId = $row->getData('store_id');
         if ($storeId) {
             try {
@@ -147,6 +144,17 @@ class Currency extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Abstra
 
         if ($rateField !== null && $rate = $row->getData($rateField)) {
             return (float) $rate;
+        }
+
+        $storeId = $row->getData('store_id');
+        if ($storeId) {
+            try {
+                $store = $this->_storeManager->getStore($storeId);
+                return $store->getBaseCurrency()->getRate($store->getCurrentCurrencyCode());
+            } catch (NoSuchEntityException $e) {
+                $this->_logger->warning('Failed to get website currency: ' . $e->getMessage());
+            }
+
         }
 
         return $this->_defaultBaseCurrency->getRate($this->_getCurrencyCode($row));
