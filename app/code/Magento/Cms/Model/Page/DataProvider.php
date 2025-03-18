@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Cms\Model\Page;
 
@@ -215,12 +215,15 @@ class DataProvider extends ModifierPoolDataProvider
 
         $page = null;
         try {
-            $page = $this->pageRepository->getById($this->getPageId());
-            if ($page->getCustomLayoutUpdateXml() || $page->getLayoutUpdateXml()) {
-                $options[] = ['label' => 'Use existing layout update XML', 'value' => '_existing_'];
-            }
-            foreach ($this->customLayoutManager->fetchAvailableFiles($page) as $layoutFile) {
-                $options[] = ['label' => $layoutFile, 'value' => $layoutFile];
+            $pageId = $this->getPageId();
+            if ($pageId) {
+                $page = $this->pageRepository->getById($pageId);
+                if ($page->getCustomLayoutUpdateXml() || $page->getLayoutUpdateXml()) {
+                    $options[] = ['label' => 'Use existing layout update XML', 'value' => '_existing_'];
+                }
+                foreach ($this->customLayoutManager->fetchAvailableFiles($page) as $layoutFile) {
+                    $options[] = ['label' => $layoutFile, 'value' => $layoutFile];
+                }
             }
         } catch (LocalizedException $e) {
             $this->logger->error($e->getMessage());
