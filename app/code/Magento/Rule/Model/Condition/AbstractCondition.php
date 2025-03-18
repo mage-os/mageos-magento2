@@ -885,7 +885,7 @@ abstract class AbstractCondition extends \Magento\Framework\DataObject implement
     protected function _compareValues($validatedValue, $value, $strict = true)
     {
         if ($strict && is_numeric($validatedValue) && is_numeric($value)) {
-            if (preg_match('/^0\d+$/', $validatedValue)) {
+            if (preg_match('/^0\d+$/', $validatedValue) || preg_match('/^0\d+$/', $value)) {
                 return $validatedValue === $value;
             }
             return $validatedValue == $value;

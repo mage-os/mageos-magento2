@@ -65,6 +65,9 @@ class AbstractConditionTest extends TestCase
             [null, '==', 0, false],
             [null, '==', 0.00, false],
 
+            ['0123', '===', '123', false],
+            ['123', '===', '0123', false],
+
             [1, '!=', 1, false],
             [0, '!=', 1, true],
             ['0', '!=', 1, true],
