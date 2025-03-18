@@ -28,11 +28,6 @@ class AuthenticationPopup extends \Magento\Framework\View\Element\Template
     private $serializer;
 
     /**
-     * @var HttpContext
-     */
-    private $httpContext;
-
-    /**
      * @var array
      */
     private $layoutProcessors;
