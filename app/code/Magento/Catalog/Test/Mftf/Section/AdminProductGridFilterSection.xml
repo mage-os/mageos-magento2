@@ -43,6 +43,6 @@
         <element name="customAttribute" type="text" selector="input.admin__control-text[name='{{var}}']" parameterized="true"/>
         <element name="crossSellFilters" type="button" selector="//*[contains(@class, 'crosssell_product')]//button[text()='Filters']"/>
         <element name="upSellFilters" type="button" selector="//*[contains(@class, 'upsell_product')]//button[text()='Filters']"/>
-        <element name="removeFilters" type="button" selector="button.action-remove"/>
+        <element name="removeFilters" type="button" selector="(//button[contains(@class, 'action-remove')])[1]"/>
     </section>
 </sections>
