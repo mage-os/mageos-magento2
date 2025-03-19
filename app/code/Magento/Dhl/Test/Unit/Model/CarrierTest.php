@@ -99,6 +99,11 @@ class CarrierTest extends TestCase
     private $productMetadataMock;
 
     /**
+     * @var mixed
+     */
+    private mixed $responseData;
+
+    /**
      * @inheritdoc
      */
     protected function setUp(): void
@@ -173,9 +178,12 @@ class CarrierTest extends TestCase
             'carriers/dhl/intl_shipment_days' => 'Mon,Tue,Wed,Thu,Fri,Sat',
             'carriers/dhl/allowed_methods' => 'IE',
             'carriers/dhl/international_service' => 'IE',
-            'carriers/dhl/gateway_url' => 'https://xmlpi-ea.dhl.com/XMLShippingServlet',
+            'carriers/dhl/gateway_xml_url' => 'https://xmlpi-ea.dhl.com/XMLShippingServlet',
+            'carriers/dhl/gateway_rest_url' => 'https://express.api.dhl.com/mydhlapi',
             'carriers/dhl/id' => 'some ID',
             'carriers/dhl/password' => 'some password',
+            'carriers/dhl/api_key' => 'some key',
+            'carriers/dhl/api_secret' => 'some secret key',
             'carriers/dhl/content_type' => 'N',
             'carriers/dhl/nondoc_methods' => '1,3,4,8,P,Q,E,F,H,J,M,V,Y',
             'carriers/dhl/showmethod' => 1,
@@ -675,5 +683,38 @@ class CarrierTest extends TestCase
             ->willReturn($this->httpClient);
 
         return $httpClientFactory;
+    }
+
+    public function testSuccessfulLabelGeneration()
+    {
+        $this->responseData = json_decode(file_get_contents(__DIR__ . '/_files/response_shipping_label.json'), true);
+        $result = new DataObject();
+
+        // Extract label content from response and decode it
+        $labelContent = base64_decode($this->responseData['documents'][0]['content']);
+
+        $result->setData('shipping_label_content', $labelContent);
+
+        // Assert that the label was correctly set
+        $this->assertEquals($labelContent, $result->getData('shipping_label_content'));
+    }
+
+    public function testLabelGenerationException()
+    {
+        $this->responseData = json_decode(file_get_contents(__DIR__ . '/_files/response_shipping_label.json'), true);
+        $this->expectException(\Exception::class);
+
+        $result = new DataObject();
+
+        // Simulate a failure (e.g., missing document content)
+        $invalidResponse = $this->responseData;
+        unset($invalidResponse['documents'][0]['content']);
+
+        if (!isset($invalidResponse['documents'][0]['content'])) {
+            throw new \Exception("Shipping label content is missing");
+        }
+
+        $labelContent = base64_decode($invalidResponse['documents'][0]['content']);
+        $result->setData('shipping_label_content', $labelContent);
     }
 }

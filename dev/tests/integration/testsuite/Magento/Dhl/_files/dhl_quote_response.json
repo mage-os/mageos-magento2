@@ -1,0 +1,1143 @@
+{
+  "products": [
+    {
+      "productName": "EXPRESS DOMESTIC",
+      "productCode": "N",
+      "localProductCode": "N",
+      "localProductCountryCode": "US",
+      "networkTypeCode": "TD",
+      "isCustomerAgreement": true,
+      "weight": {
+        "volumetric": 2.76,
+        "provided": 3,
+        "unitOfMeasurement": "imperial"
+      },
+      "totalPrice": [
+        {
+          "currencyType": "BILLC",
+          "priceCurrency": "USD",
+          "price": 47.63
+        },
+        {
+          "currencyType": "PULCL",
+          "priceCurrency": "USD",
+          "price": 47.63
+        },
+        {
+          "currencyType": "BASEC",
+          "priceCurrency": "EUR",
+          "price": 45.8
+        }
+      ],
+      "totalPriceBreakdown": [
+        {
+          "currencyType": "BILLC",
+          "priceCurrency": "USD",
+          "priceBreakdown": [
+            {
+              "typeCode": "SPRQT",
+              "price": 39.86
+            }
+          ]
+        },
+        {
+          "currencyType": "PULCL",
+          "priceCurrency": "USD",
+          "priceBreakdown": [
+            {
+              "typeCode": "SPRQT",
+              "price": 39.86
+            }
+          ]
+        },
+        {
+          "currencyType": "BASEC",
+          "priceCurrency": "EUR",
+          "priceBreakdown": [
+            {
+              "typeCode": "SPRQT",
+              "price": 38.33
+            }
+          ]
+        }
+      ],
+      "detailedPriceBreakdown": [
+        {
+          "currencyType": "BILLC",
+          "priceCurrency": "USD",
+          "breakdown": [
+            {
+              "name": "EXPRESS DOMESTIC",
+              "price": 39.86
+            },
+            {
+              "name": "FUEL SURCHARGE",
+              "serviceCode": "FF",
+              "localServiceCode": "FF",
+              "serviceTypeCode": "SCH",
+              "price": 7.77,
+              "isCustomerAgreement": false,
+              "isMarketedService": false,
+              "priceBreakdown": []
+            },
+            {
+              "name": "LOCAL CHARGE",
+              "serviceCode": "99",
+              "localServiceCode": "99",
+              "typeCode": "GUAM IMPORT PROCESS",
+              "serviceTypeCode": "FEE",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "SECURE PROTECTION",
+              "serviceCode": "CM",
+              "localServiceCode": "CM",
+              "serviceTypeCode": "SCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": true
+            },
+            {
+              "name": "GOGREEN PLUS - CARBON REDUCED",
+              "serviceCode": "FT",
+              "localServiceCode": "FT",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": true
+            },
+            {
+              "name": "REPACKING",
+              "serviceCode": "GD",
+              "localServiceCode": "GD",
+              "serviceTypeCode": "SCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "SODIUM BATTERIES IN EQUIPMENT",
+              "serviceCode": "HA",
+              "localServiceCode": "HA",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": true
+            },
+            {
+              "name": "SODIUM BATTERIES WITH EQUIPMENT",
+              "serviceCode": "HB",
+              "localServiceCode": "HB",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": true
+            },
+            {
+              "name": "DRY ICE UN1845",
+              "serviceCode": "HC",
+              "localServiceCode": "HC",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "LITHIUM ION PI966 SECTION II",
+              "serviceCode": "HD",
+              "localServiceCode": "HD",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": true
+            },
+            {
+              "name": "FULL DANGEROUS GOODS",
+              "serviceCode": "HE",
+              "localServiceCode": "HE",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": true
+            },
+            {
+              "name": "EXCEPTED QUANTITIES",
+              "serviceCode": "HH",
+              "localServiceCode": "HH",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": true
+            },
+            {
+              "name": "CONSUMER GOODS ID8000",
+              "serviceCode": "HK",
+              "localServiceCode": "HK",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "LIMITED QUANTITIES ADR",
+              "serviceCode": "HL",
+              "localServiceCode": "HL",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": true
+            },
+            {
+              "name": "LITHIUM METAL PI969 SECTION II",
+              "serviceCode": "HM",
+              "localServiceCode": "HM",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": true
+            },
+            {
+              "name": "ACTIVE DATA LOGGER",
+              "serviceCode": "HT",
+              "localServiceCode": "HT",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "LITHIUM ION PI967 SECTION II",
+              "serviceCode": "HV",
+              "localServiceCode": "HV",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": true
+            },
+            {
+              "name": "LITHIUM METAL PI970 SECTION II",
+              "serviceCode": "HW",
+              "localServiceCode": "HW",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": true
+            },
+            {
+              "name": "EXTENDED LIABILITY",
+              "serviceCode": "IB",
+              "localServiceCode": "IB",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": true
+            },
+            {
+              "name": "SHIPMENT INSURANCE",
+              "serviceCode": "IC",
+              "localServiceCode": "IC",
+              "serviceTypeCode": "FEE",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "SHIPMENT INSURANCE",
+              "serviceCode": "II",
+              "localServiceCode": "II",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": true
+            },
+            {
+              "name": "COLD STORAGE",
+              "serviceCode": "LG",
+              "localServiceCode": "LG",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "HOLD FOR COLLECTION",
+              "serviceCode": "LX",
+              "localServiceCode": "LX",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": true
+            },
+            {
+              "name": "ADDRESS CORRECTION",
+              "serviceCode": "MA",
+              "localServiceCode": "MA",
+              "serviceTypeCode": "SCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": false
+            },
+            {
+              "name": "REMOTE AREA DELIVERY",
+              "serviceCode": "OO",
+              "localServiceCode": "OO",
+              "serviceTypeCode": "SCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": false
+            },
+            {
+              "name": "SHIPMENT PREPARATION",
+              "serviceCode": "PA",
+              "localServiceCode": "PA",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": true
+            },
+            {
+              "name": "DATA ENTRY",
+              "serviceCode": "PD",
+              "localServiceCode": "PD",
+              "serviceTypeCode": "SCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": true
+            },
+            {
+              "name": "AUTOMATED DIGITAL IMAGING",
+              "serviceCode": "PJ",
+              "localServiceCode": "PJ",
+              "serviceTypeCode": "TEC",
+              "isCustomerAgreement": false,
+              "isMarketedService": false
+            },
+            {
+              "name": "OPTICAL CHARACTER RECOGNITION",
+              "serviceCode": "PL",
+              "localServiceCode": "PL",
+              "serviceTypeCode": "TEC",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "NEUTRAL DESCRIPTION LABEL",
+              "serviceCode": "PP",
+              "localServiceCode": "PP",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "DATA STAGING 03",
+              "serviceCode": "PT",
+              "localServiceCode": "PT",
+              "serviceTypeCode": "TEC",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "DATA STAGING 06",
+              "serviceCode": "PU",
+              "localServiceCode": "PU",
+              "serviceTypeCode": "TEC",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "DATA STAGING 12",
+              "serviceCode": "PV",
+              "localServiceCode": "PV",
+              "serviceTypeCode": "TEC",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "DATA STAGING 24",
+              "serviceCode": "PW",
+              "localServiceCode": "PW",
+              "serviceTypeCode": "TEC",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "DEDICATED PICKUP",
+              "serviceCode": "QA",
+              "localServiceCode": "QA",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": true
+            },
+            {
+              "name": "ADULT SIGNATURE",
+              "serviceCode": "SD",
+              "localServiceCode": "SD",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": true
+            },
+            {
+              "name": "DIRECT SIGNATURE",
+              "serviceCode": "SF",
+              "localServiceCode": "SF",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": true
+            },
+            {
+              "name": "LEAVE WITH NEIGHBOUR",
+              "serviceCode": "SW",
+              "localServiceCode": "SW",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "NO SIGNATURE REQUIRED",
+              "serviceCode": "SX",
+              "localServiceCode": "SX",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": false
+            },
+            {
+              "name": "DEDICATED DELIVERY",
+              "serviceCode": "TA",
+              "localServiceCode": "TA",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "RESIDENTIAL ADDRESS",
+              "serviceCode": "TK",
+              "localServiceCode": "TK",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": true
+            },
+            {
+              "name": "DIRECT TO SERVICE POINT",
+              "serviceCode": "TV",
+              "localServiceCode": "TV",
+              "serviceTypeCode": "TEC",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "NON STACKABLE PALLET",
+              "serviceCode": "YC",
+              "localServiceCode": "YC",
+              "serviceTypeCode": "SCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": false
+            }
+          ]
+        },
+        {
+          "currencyType": "PULCL",
+          "priceCurrency": "USD",
+          "breakdown": [
+            {
+              "name": "EXPRESS DOMESTIC",
+              "price": 39.86
+            },
+            {
+              "name": "FUEL SURCHARGE",
+              "serviceCode": "FF",
+              "localServiceCode": "FF",
+              "serviceTypeCode": "SCH",
+              "price": 7.77,
+              "isCustomerAgreement": false,
+              "isMarketedService": false,
+              "priceBreakdown": []
+            },
+            {
+              "name": "LOCAL CHARGE",
+              "serviceCode": "99",
+              "localServiceCode": "99",
+              "typeCode": "GUAM IMPORT PROCESS",
+              "serviceTypeCode": "FEE",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "SECURE PROTECTION",
+              "serviceCode": "CM",
+              "localServiceCode": "CM",
+              "serviceTypeCode": "SCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": true
+            },
+            {
+              "name": "GOGREEN PLUS - CARBON REDUCED",
+              "serviceCode": "FT",
+              "localServiceCode": "FT",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": true
+            },
+            {
+              "name": "REPACKING",
+              "serviceCode": "GD",
+              "localServiceCode": "GD",
+              "serviceTypeCode": "SCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "SODIUM BATTERIES IN EQUIPMENT",
+              "serviceCode": "HA",
+              "localServiceCode": "HA",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": true
+            },
+            {
+              "name": "SODIUM BATTERIES WITH EQUIPMENT",
+              "serviceCode": "HB",
+              "localServiceCode": "HB",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": true
+            },
+            {
+              "name": "DRY ICE UN1845",
+              "serviceCode": "HC",
+              "localServiceCode": "HC",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "LITHIUM ION PI966 SECTION II",
+              "serviceCode": "HD",
+              "localServiceCode": "HD",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": true
+            },
+            {
+              "name": "FULL DANGEROUS GOODS",
+              "serviceCode": "HE",
+              "localServiceCode": "HE",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": true
+            },
+            {
+              "name": "EXCEPTED QUANTITIES",
+              "serviceCode": "HH",
+              "localServiceCode": "HH",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": true
+            },
+            {
+              "name": "CONSUMER GOODS ID8000",
+              "serviceCode": "HK",
+              "localServiceCode": "HK",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "LIMITED QUANTITIES ADR",
+              "serviceCode": "HL",
+              "localServiceCode": "HL",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": true
+            },
+            {
+              "name": "LITHIUM METAL PI969 SECTION II",
+              "serviceCode": "HM",
+              "localServiceCode": "HM",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": true
+            },
+            {
+              "name": "ACTIVE DATA LOGGER",
+              "serviceCode": "HT",
+              "localServiceCode": "HT",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "LITHIUM ION PI967 SECTION II",
+              "serviceCode": "HV",
+              "localServiceCode": "HV",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": true
+            },
+            {
+              "name": "LITHIUM METAL PI970 SECTION II",
+              "serviceCode": "HW",
+              "localServiceCode": "HW",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": true
+            },
+            {
+              "name": "EXTENDED LIABILITY",
+              "serviceCode": "IB",
+              "localServiceCode": "IB",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": true
+            },
+            {
+              "name": "SHIPMENT INSURANCE",
+              "serviceCode": "IC",
+              "localServiceCode": "IC",
+              "serviceTypeCode": "FEE",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "SHIPMENT INSURANCE",
+              "serviceCode": "II",
+              "localServiceCode": "II",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": true
+            },
+            {
+              "name": "COLD STORAGE",
+              "serviceCode": "LG",
+              "localServiceCode": "LG",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "HOLD FOR COLLECTION",
+              "serviceCode": "LX",
+              "localServiceCode": "LX",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": true
+            },
+            {
+              "name": "ADDRESS CORRECTION",
+              "serviceCode": "MA",
+              "localServiceCode": "MA",
+              "serviceTypeCode": "SCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": false
+            },
+            {
+              "name": "REMOTE AREA DELIVERY",
+              "serviceCode": "OO",
+              "localServiceCode": "OO",
+              "serviceTypeCode": "SCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": false
+            },
+            {
+              "name": "SHIPMENT PREPARATION",
+              "serviceCode": "PA",
+              "localServiceCode": "PA",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": true
+            },
+            {
+              "name": "DATA ENTRY",
+              "serviceCode": "PD",
+              "localServiceCode": "PD",
+              "serviceTypeCode": "SCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": true
+            },
+            {
+              "name": "AUTOMATED DIGITAL IMAGING",
+              "serviceCode": "PJ",
+              "localServiceCode": "PJ",
+              "serviceTypeCode": "TEC",
+              "isCustomerAgreement": false,
+              "isMarketedService": false
+            },
+            {
+              "name": "OPTICAL CHARACTER RECOGNITION",
+              "serviceCode": "PL",
+              "localServiceCode": "PL",
+              "serviceTypeCode": "TEC",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "NEUTRAL DESCRIPTION LABEL",
+              "serviceCode": "PP",
+              "localServiceCode": "PP",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "DATA STAGING 03",
+              "serviceCode": "PT",
+              "localServiceCode": "PT",
+              "serviceTypeCode": "TEC",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "DATA STAGING 06",
+              "serviceCode": "PU",
+              "localServiceCode": "PU",
+              "serviceTypeCode": "TEC",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "DATA STAGING 12",
+              "serviceCode": "PV",
+              "localServiceCode": "PV",
+              "serviceTypeCode": "TEC",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "DATA STAGING 24",
+              "serviceCode": "PW",
+              "localServiceCode": "PW",
+              "serviceTypeCode": "TEC",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "DEDICATED PICKUP",
+              "serviceCode": "QA",
+              "localServiceCode": "QA",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": true
+            },
+            {
+              "name": "ADULT SIGNATURE",
+              "serviceCode": "SD",
+              "localServiceCode": "SD",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": true
+            },
+            {
+              "name": "DIRECT SIGNATURE",
+              "serviceCode": "SF",
+              "localServiceCode": "SF",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": true
+            },
+            {
+              "name": "LEAVE WITH NEIGHBOUR",
+              "serviceCode": "SW",
+              "localServiceCode": "SW",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "NO SIGNATURE REQUIRED",
+              "serviceCode": "SX",
+              "localServiceCode": "SX",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": false
+            },
+            {
+              "name": "DEDICATED DELIVERY",
+              "serviceCode": "TA",
+              "localServiceCode": "TA",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "RESIDENTIAL ADDRESS",
+              "serviceCode": "TK",
+              "localServiceCode": "TK",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": true
+            },
+            {
+              "name": "DIRECT TO SERVICE POINT",
+              "serviceCode": "TV",
+              "localServiceCode": "TV",
+              "serviceTypeCode": "TEC",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "NON STACKABLE PALLET",
+              "serviceCode": "YC",
+              "localServiceCode": "YC",
+              "serviceTypeCode": "SCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": false
+            }
+          ]
+        },
+        {
+          "currencyType": "BASEC",
+          "priceCurrency": "EUR",
+          "breakdown": [
+            {
+              "name": "EXPRESS DOMESTIC",
+              "price": 38.33
+            },
+            {
+              "name": "FUEL SURCHARGE",
+              "serviceCode": "FF",
+              "localServiceCode": "FF",
+              "serviceTypeCode": "SCH",
+              "price": 7.47,
+              "isCustomerAgreement": false,
+              "isMarketedService": false,
+              "priceBreakdown": []
+            },
+            {
+              "name": "LOCAL CHARGE",
+              "serviceCode": "99",
+              "localServiceCode": "99",
+              "typeCode": "GUAM IMPORT PROCESS",
+              "serviceTypeCode": "FEE",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "SECURE PROTECTION",
+              "serviceCode": "CM",
+              "localServiceCode": "CM",
+              "serviceTypeCode": "SCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": true
+            },
+            {
+              "name": "GOGREEN PLUS - CARBON REDUCED",
+              "serviceCode": "FT",
+              "localServiceCode": "FT",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": true
+            },
+            {
+              "name": "REPACKING",
+              "serviceCode": "GD",
+              "localServiceCode": "GD",
+              "serviceTypeCode": "SCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "SODIUM BATTERIES IN EQUIPMENT",
+              "serviceCode": "HA",
+              "localServiceCode": "HA",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": true
+            },
+            {
+              "name": "SODIUM BATTERIES WITH EQUIPMENT",
+              "serviceCode": "HB",
+              "localServiceCode": "HB",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": true
+            },
+            {
+              "name": "DRY ICE UN1845",
+              "serviceCode": "HC",
+              "localServiceCode": "HC",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "LITHIUM ION PI966 SECTION II",
+              "serviceCode": "HD",
+              "localServiceCode": "HD",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": true
+            },
+            {
+              "name": "FULL DANGEROUS GOODS",
+              "serviceCode": "HE",
+              "localServiceCode": "HE",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": true
+            },
+            {
+              "name": "EXCEPTED QUANTITIES",
+              "serviceCode": "HH",
+              "localServiceCode": "HH",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": true
+            },
+            {
+              "name": "CONSUMER GOODS ID8000",
+              "serviceCode": "HK",
+              "localServiceCode": "HK",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "LIMITED QUANTITIES ADR",
+              "serviceCode": "HL",
+              "localServiceCode": "HL",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": true
+            },
+            {
+              "name": "LITHIUM METAL PI969 SECTION II",
+              "serviceCode": "HM",
+              "localServiceCode": "HM",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": true
+            },
+            {
+              "name": "ACTIVE DATA LOGGER",
+              "serviceCode": "HT",
+              "localServiceCode": "HT",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "LITHIUM ION PI967 SECTION II",
+              "serviceCode": "HV",
+              "localServiceCode": "HV",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": true
+            },
+            {
+              "name": "LITHIUM METAL PI970 SECTION II",
+              "serviceCode": "HW",
+              "localServiceCode": "HW",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": true
+            },
+            {
+              "name": "EXTENDED LIABILITY",
+              "serviceCode": "IB",
+              "localServiceCode": "IB",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": true
+            },
+            {
+              "name": "SHIPMENT INSURANCE",
+              "serviceCode": "IC",
+              "localServiceCode": "IC",
+              "serviceTypeCode": "FEE",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "SHIPMENT INSURANCE",
+              "serviceCode": "II",
+              "localServiceCode": "II",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": true
+            },
+            {
+              "name": "COLD STORAGE",
+              "serviceCode": "LG",
+              "localServiceCode": "LG",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "HOLD FOR COLLECTION",
+              "serviceCode": "LX",
+              "localServiceCode": "LX",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": true
+            },
+            {
+              "name": "ADDRESS CORRECTION",
+              "serviceCode": "MA",
+              "localServiceCode": "MA",
+              "serviceTypeCode": "SCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": false
+            },
+            {
+              "name": "REMOTE AREA DELIVERY",
+              "serviceCode": "OO",
+              "localServiceCode": "OO",
+              "serviceTypeCode": "SCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": false
+            },
+            {
+              "name": "SHIPMENT PREPARATION",
+              "serviceCode": "PA",
+              "localServiceCode": "PA",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": true
+            },
+            {
+              "name": "DATA ENTRY",
+              "serviceCode": "PD",
+              "localServiceCode": "PD",
+              "serviceTypeCode": "SCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": true
+            },
+            {
+              "name": "AUTOMATED DIGITAL IMAGING",
+              "serviceCode": "PJ",
+              "localServiceCode": "PJ",
+              "serviceTypeCode": "TEC",
+              "isCustomerAgreement": false,
+              "isMarketedService": false
+            },
+            {
+              "name": "OPTICAL CHARACTER RECOGNITION",
+              "serviceCode": "PL",
+              "localServiceCode": "PL",
+              "serviceTypeCode": "TEC",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "NEUTRAL DESCRIPTION LABEL",
+              "serviceCode": "PP",
+              "localServiceCode": "PP",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "DATA STAGING 03",
+              "serviceCode": "PT",
+              "localServiceCode": "PT",
+              "serviceTypeCode": "TEC",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "DATA STAGING 06",
+              "serviceCode": "PU",
+              "localServiceCode": "PU",
+              "serviceTypeCode": "TEC",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "DATA STAGING 12",
+              "serviceCode": "PV",
+              "localServiceCode": "PV",
+              "serviceTypeCode": "TEC",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "DATA STAGING 24",
+              "serviceCode": "PW",
+              "localServiceCode": "PW",
+              "serviceTypeCode": "TEC",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "DEDICATED PICKUP",
+              "serviceCode": "QA",
+              "localServiceCode": "QA",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": true
+            },
+            {
+              "name": "ADULT SIGNATURE",
+              "serviceCode": "SD",
+              "localServiceCode": "SD",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": true
+            },
+            {
+              "name": "DIRECT SIGNATURE",
+              "serviceCode": "SF",
+              "localServiceCode": "SF",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": true
+            },
+            {
+              "name": "LEAVE WITH NEIGHBOUR",
+              "serviceCode": "SW",
+              "localServiceCode": "SW",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "NO SIGNATURE REQUIRED",
+              "serviceCode": "SX",
+              "localServiceCode": "SX",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": false
+            },
+            {
+              "name": "DEDICATED DELIVERY",
+              "serviceCode": "TA",
+              "localServiceCode": "TA",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "RESIDENTIAL ADDRESS",
+              "serviceCode": "TK",
+              "localServiceCode": "TK",
+              "serviceTypeCode": "XCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": true
+            },
+            {
+              "name": "DIRECT TO SERVICE POINT",
+              "serviceCode": "TV",
+              "localServiceCode": "TV",
+              "serviceTypeCode": "TEC",
+              "isCustomerAgreement": true,
+              "isMarketedService": false
+            },
+            {
+              "name": "NON STACKABLE PALLET",
+              "serviceCode": "YC",
+              "localServiceCode": "YC",
+              "serviceTypeCode": "SCH",
+              "isCustomerAgreement": false,
+              "isMarketedService": false
+            }
+          ]
+        }
+      ],
+      "pickupCapabilities": {
+        "nextBusinessDay": false,
+        "localCutoffDateAndTime": "2025-01-29T16:00:00",
+        "pickupEarliest": "11:00:00",
+        "pickupLatest": "18:00:00",
+        "pickupCutoffSameDayOutboundProcessing": "17:00:00",
+        "originServiceAreaCode": "ELA",
+        "originFacilityAreaCode": "HHR",
+        "pickupAdditionalDays": 0,
+        "pickupDayOfWeek": 3
+      },
+      "deliveryCapabilities": {
+        "deliveryTypeCode": "QDDF",
+        "estimatedDeliveryDateAndTime": "2025-01-30T23:59:00",
+        "destinationServiceAreaCode": "ELA",
+        "destinationFacilityAreaCode": "ELA",
+        "deliveryAdditionalDays": 0,
+        "deliveryDayOfWeek": 4,
+        "totalTransitDays": 1
+      },
+      "pricingDate": "2025-01-22"
+    }
+  ],
+  "exchangeRates": [
+    {
+      "currentExchangeRate": 0.961538,
+      "currency": "USD",
+      "baseCurrency": "EUR"
+    }
+  ]
+}

@@ -257,7 +257,7 @@ class CarrierTest extends TestCase
      * @magentoConfigFixture default_store carriers/dhl/id some ID
      * @magentoConfigFixture default_store carriers/dhl/password some password
      * @magentoConfigFixture default_store carriers/dhl/account 1234567890
-     * @magentoConfigFixture default_store carriers/dhl/gateway_url https://xmlpi-ea.dhl.com/XMLShippingServlet
+     * @magentoConfigFixture default_store carriers/dhl/gateway_xml_url https://xmlpi-ea.dhl.com/XMLShippingServlet
      * @magentoConfigFixture default_store carriers/dhl/content_type N
      * @magentoConfigFixture default_store carriers/dhl/nondoc_methods 1,3,4,8,P,Q,E,F,H,J,M,V,Y
      * @magentoConfigFixture default_store carriers/dhl/unit_of_measure C
@@ -451,12 +451,13 @@ class CarrierTest extends TestCase
      * Tests that valid rates are returned when sending a quotes request.
      *
      * @magentoConfigFixture default_store carriers/dhl/active 1
+     * @magentoConfigFixture default_store carriers/dhl/type DHL_XML
      * @magentoConfigFixture default_store carriers/dhl/id some ID
      * @magentoConfigFixture default_store carriers/dhl/shipment_days Mon,Tue,Wed,Thu,Fri,Sat
      * @magentoConfigFixture default_store carriers/dhl/intl_shipment_days Mon,Tue,Wed,Thu,Fri,Sat
      * @magentoConfigFixture default_store carriers/dhl/allowed_methods IE
      * @magentoConfigFixture default_store carriers/dhl/international_service IE
-     * @magentoConfigFixture default_store carriers/dhl/gateway_url https://xmlpi-ea.dhl.com/XMLShippingServlet
+     * @magentoConfigFixture default_store carriers/dhl/gateway_xml_url https://xmlpi-ea.dhl.com/XMLShippingServlet
      * @magentoConfigFixture default_store carriers/dhl/id some ID
      * @magentoConfigFixture default_store carriers/dhl/password some password
      * @magentoConfigFixture default_store carriers/dhl/content_type N
@@ -506,6 +507,7 @@ class CarrierTest extends TestCase
      * @param string|null $width
      * @param string|null $depth
      * @magentoConfigFixture default_store carriers/dhl/active 1
+     * @magentoConfigFixture default_store carriers/dhl/type DHL_XML
      * @dataProvider collectRatesWithoutDimensionsDataProvider
      */
     public function testCollectRatesWithoutDimensions(?string $size, ?string $height, ?string $width, ?string $depth)
@@ -528,6 +530,8 @@ class CarrierTest extends TestCase
      * Test get carriers rates if has HttpException.
      *
      * @magentoConfigFixture default_store carriers/dhl/active 1
+     * @magentoConfigFixture default_store carriers/dhl/type DHL_XML
+     *
      */
     public function testGetRatesWithHttpException(): void
     {
@@ -588,12 +592,13 @@ class CarrierTest extends TestCase
      * @param array $addRequestData
      * @param bool $freeShippingExpects
      * @magentoConfigFixture default_store carriers/dhl/active 1
+     * @magentoConfigFixture default_store carriers/dhl/type DHL_XML
      * @magentoConfigFixture default_store carriers/dhl/id some ID
      * @magentoConfigFixture default_store carriers/dhl/shipment_days Mon,Tue,Wed,Thu,Fri,Sat
      * @magentoConfigFixture default_store carriers/dhl/intl_shipment_days Mon,Tue,Wed,Thu,Fri,Sat
      * @magentoConfigFixture default_store carriers/dhl/allowed_methods IE
      * @magentoConfigFixture default_store carriers/dhl/international_service IE
-     * @magentoConfigFixture default_store carriers/dhl/gateway_url https://xmlpi-ea.dhl.com/XMLShippingServlet
+     * @magentoConfigFixture default_store carriers/dhl/gateway_xml_url https://xmlpi-ea.dhl.com/XMLShippingServlet
      * @magentoConfigFixture default_store carriers/dhl/id some ID
      * @magentoConfigFixture default_store carriers/dhl/password some password
      * @magentoConfigFixture default_store carriers/dhl/content_type N
@@ -686,6 +691,8 @@ class CarrierTest extends TestCase
             'dhl_id' => 'MAGEN_8501',
             'dhl_password' => 'QR2GO1U74X',
             'dhl_account' => '799909537',
+            'dhl_api_key' => 'ab01cD2eF3gH4j',
+            'dhl_api_secret' => 'A!1bC@3dE#4fG$5h',
             'dhl_shipping_intl_key' => '54233F2B2C4E5C4B4C5E5A59565530554B405641475D5659',
             'girth' => null,
             'height' => null,
@@ -736,5 +743,54 @@ class CarrierTest extends TestCase
         }
 
         return Bootstrap::getObjectManager()->create(RateRequest::class, ['data' => $requestData]);
+    }
+
+    /**
+     * Tests that valid rates are returned when sending a quotes request.
+     *
+     * @magentoConfigFixture default_store carriers/dhl/active 1
+     * @magentoConfigFixture default_store carriers/dhl/type DHL_REST
+     * @magentoConfigFixture default_store carriers/dhl/api_key some KEY
+     * @magentoConfigFixture default_store carriers/dhl/shipment_days Mon,Tue,Wed,Thu,Fri,Sat
+     * @magentoConfigFixture default_store carriers/dhl/intl_shipment_days Mon,Tue,Wed,Thu,Fri,Sat
+     * @magentoConfigFixture default_store carriers/dhl/allowed_methods IE
+     * @magentoConfigFixture default_store carriers/dhl/international_service IE
+     * @magentoConfigFixture default_store carriers/dhl/gateway_rest_url https://express.api.dhl.com/mydhlapi
+     * @magentoConfigFixture default_store carriers/dhl/api_key some KEY
+     * @magentoConfigFixture default_store carriers/dhl/api_secret some secret
+     * @magentoConfigFixture default_store carriers/dhl/content_type N
+     * @magentoConfigFixture default_store carriers/dhl/nondoc_methods 1,3,4,8,P,Q,E,F,H,J,M,V,Y,N
+     * @magentoConfigFixture default_store carriers/dhl/showmethod' => 1,
+     * @magentoConfigFixture default_store carriers/dhl/title DHL Title
+     * @magentoConfigFixture default_store carriers/dhl/specificerrmsg dhl error message
+     * @magentoConfigFixture default_store carriers/dhl/unit_of_measure K
+     * @magentoConfigFixture default_store carriers/dhl/size 1
+     * @magentoConfigFixture default_store carriers/dhl/height 1.6
+     * @magentoConfigFixture default_store carriers/dhl/width 1.6
+     * @magentoConfigFixture default_store carriers/dhl/length 1.6
+     * @magentoConfigFixture default_store carriers/dhl/debug 1
+     * @magentoConfigFixture default_store shipping/origin/country_id GB
+     */
+    public function testCollectRestRates()
+    {
+        $this->setNextResponse(__DIR__ . '/../_files/dhl_quote_response.json');
+        $request = $this->createRequest();
+        $expectedRates = [
+            ['carrier' => 'dhl', 'carrier_title' => 'DHL Title', 'price' => 47.63, 'method' => 'N', 'cost' => 47.63]
+        ];
+
+        $actualRates = $this->dhlCarrier->collectRates($request)->getAllRates();
+
+        self::assertEquals(count($expectedRates), count($actualRates));
+        foreach ($actualRates as $i => $actualRate) {
+            $actualRate = $actualRate->getData();
+            unset($actualRate['method_title']);
+            self::assertEquals($expectedRates[$i], $actualRate);
+        }
+        $requestRest = $this->httpClient->getLastRequest()->getBody();
+        self::assertStringContainsString('"weight": 18', $requestRest);
+        self::assertStringContainsString('"height": 0.63', $requestRest);
+        self::assertStringContainsString('"width": 0.63', $requestRest);
+        self::assertStringContainsString('"length": 0', $requestRest);
     }
 }

@@ -508,6 +508,17 @@ class Carrier extends AbstractDhl implements CarrierInterface
 
         $requestObject = $this->_addParams($requestObject);
 
+        /** setting destination city name in case of guest customer specific to DHL REST API */
+        $region = $this->_regionFactory->create()->loadByCode(
+            $request->getDestRegionCode(),
+            $request->getDestCountryId()
+        );
+        if ($region->getId()) {
+            $destCityName = $region->getName(); // Returning region name as fallback
+        } else {
+            $destCityName = ''; //returning blank in case of XML API
+        }
+
         if ($request->getDestPostcode()) {
             $requestObject->setDestPostal($request->getDestPostcode());
         }
@@ -526,7 +537,7 @@ class Carrier extends AbstractDhl implements CarrierInterface
             ->setCustomsValue($request->getPackageCustomsValue())
             ->setDestStreet($this->string->substr($destStreet, 0, 35))
             ->setDestStreetLine2($request->getDestStreetLine2())
-            ->setDestCity($request->getDestCity())
+            ->setDestCity($request->getDestCity() ? $request->getDestCity() : $destCityName)
             ->setOrigCompanyName($request->getOrigCompanyName())
             ->setOrigCity($request->getOrigCity())
             ->setOrigPhoneNumber($request->getOrigPhoneNumber())
@@ -1407,16 +1418,13 @@ class Carrier extends AbstractDhl implements CarrierInterface
 
         try {
             $responseResult = $httpResponse->get();
+            $jsonResponse = $responseResult->getStatusCode() >= 400 ? '' : $responseResult->getBody();
+            $debugData['result'] = $jsonResponse;
         } catch (HttpException $e) {
             $debugData['result'] = ['error' => $e->getMessage(), 'code' => $e->getCode()];
             $this->_logger->critical($e);
         }
-        if ($responseResult) {
-            $jsonResponse = $responseResult->getStatusCode() >= 400 ? '' : $responseResult->getBody();
-        }
-        $debugData['result'] = $jsonResponse;
         $this->_debug($debugData);
-
         // Decode JSON to array
         $data = json_decode($jsonResponse, true);
         $productCodes = array_map(fn($product) => $product['productCode'], $data['products']);
@@ -1623,7 +1631,7 @@ class Carrier extends AbstractDhl implements CarrierInterface
             && isset($exchangeRates[0]['currency'])
             && array_key_exists((string)$product['productCode'], $this->getAllowedMethods())
         ) {
-            // DHL product code, e.g. '3', 'A', 'Q', etc.
+            // DHL product code, e.g. '3', 'A', 'N', etc.
             $dhlProduct = (string)$product['productCode'];
             $totalPrice = $product['totalPrice'];
             $billic_price = array_column(
