@@ -12,9 +12,7 @@ use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory as A
 use Magento\CatalogImportExport\Model\Import\Product;
 use Magento\CatalogImportExport\Model\Import\Product\RowValidatorInterface;
 use Magento\CatalogImportExport\Model\Import\Product\Type\Simple;
-use Magento\Eav\Model\Entity\Attribute\Set;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection as AttributeCollection;
-use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\Collection;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory as AttributeSetCollectionFactory;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
@@ -64,9 +62,7 @@ class SimpleTest extends TestCase
     {
         $this->entityModel = $this->createMock(Product::class);
         $attrSetColFactory = $this->createMock(AttributeSetCollectionFactory::class);
-        $attrSetCollection = $this->createMock(Collection::class);
         $attrColFactory = $this->createMock(AttributeCollectionFactory::class);
-        $attributeSet = $this->createMock(Set::class);
         $attrCollection = $this->createMock(AttributeCollection::class);
         $attribute = $this->getMockBuilder(Attribute::class)
             ->addMethods(['getFrontendLabel'])
@@ -155,18 +151,10 @@ class SimpleTest extends TestCase
                     return ['yes' => 1, 'no' => 0];
                 }
             });
-        $attrSetColFactory->method('create')
-            ->willReturn($attrSetCollection);
-        $attrSetCollection->method('setEntityTypeFilter')
-            ->willReturn([$attributeSet]);
         $attrColFactory->method('create')
             ->willReturn($attrCollection);
         $attrCollection->method('setAttributeSetFilter')
             ->willReturn([$attribute1, $attribute2, $attribute3]);
-        $attributeSet->method('getId')
-            ->willReturn(1);
-        $attributeSet->method('getAttributeSetName')
-            ->willReturn('attribute_set_name');
         $attrCollection->method('addFieldToFilter')
             ->willReturnSelf();
         $attrCollection->method('getItems')

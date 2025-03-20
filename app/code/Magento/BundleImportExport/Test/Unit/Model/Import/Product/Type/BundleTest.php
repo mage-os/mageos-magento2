@@ -12,7 +12,6 @@ use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection as ProductAttributeCollection;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory as ProductAttributeCollectionFactory;
 use Magento\CatalogImportExport\Model\Import\Product;
-use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\Collection;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory as AttributeSetCollectionFactory;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\App\ScopeInterface;
@@ -71,11 +70,6 @@ class BundleTest extends AbstractImportTestCase
      * @var ProductAttributeCollectionFactory|MockObject
      */
     private $prodAttrColFac;
-
-    /**
-     * @var Collection|MockObject
-     */
-    private $setCollection;
 
     /**
      * @var ScopeResolverInterface|MockObject
@@ -182,9 +176,6 @@ class BundleTest extends AbstractImportTestCase
         $this->resource->expects($this->any())->method('getConnection')->willReturn($this->connection);
         $this->resource->expects($this->any())->method('getTableName')->willReturn('tableName');
         $this->attrSetColFac = $this->createMock(AttributeSetCollectionFactory::class);
-        $this->setCollection = $this->createMock(Collection::class);
-        $this->attrSetColFac->expects($this->any())->method('create')->willReturn($this->setCollection);
-        $this->setCollection->expects($this->any())->method('setEntityTypeFilter')->willReturn([]);
         $this->prodAttrColFac = $this->createMock(ProductAttributeCollectionFactory::class);
         $attrCollection = $this->createMock(ProductAttributeCollection::class);
         $attrCollection->expects($this->any())->method('addFieldToFilter')->willReturnSelf();

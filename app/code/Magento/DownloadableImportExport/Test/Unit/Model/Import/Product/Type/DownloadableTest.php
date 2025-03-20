@@ -17,7 +17,6 @@ use Magento\DownloadableImportExport\Helper\Data;
 use Magento\DownloadableImportExport\Helper\Uploader as UploaderHelper;
 use Magento\DownloadableImportExport\Model\Import\Product\Type\Downloadable;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\CollectionFactory as AttributeOptionCollectionFactory;
-use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\Collection as AttributeSetCollection;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory as AttributeSetCollectionFactory;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\Pdo\Mysql;
@@ -51,11 +50,6 @@ class DownloadableTest extends AbstractImportTestCase
      * @var AttributeSetCollectionFactory|MockObject
      */
     private $attrSetColFacMock;
-
-    /**
-     * @var AttributeSetCollection|MockObject
-     */
-    private $attrSetColMock;
 
     /**
      * @var ProductAttributeCollectionFactory|MockObject
@@ -149,8 +143,6 @@ class DownloadableTest extends AbstractImportTestCase
         //constructor arguments:
         // 1. $attrSetColFac
         $this->attrSetColFacMock = $this->createMock(AttributeSetCollectionFactory::class);
-        $this->attrSetColMock = $this->createMock(AttributeSetCollection::class);
-        $this->attrSetColMock->expects($this->any())->method('setEntityTypeFilter')->willReturn([]);
 
         // 2. $prodAttrColFac
         $this->prodAttrColFacMock = $this->createMock(ProductAttributeCollectionFactory::class);

@@ -12,7 +12,6 @@ use Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection as ProductA
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory as ProductAttributeCollectionFactory;
 use Magento\CatalogImportExport\Model\Import\Product;
 use Magento\CatalogImportExport\Model\Import\Product\SkuStorage;
-use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\Collection as AttributeSetCollection;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory as AttributeSetCollectionFactory;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\Pdo\Mysql;
@@ -40,11 +39,6 @@ class GroupedTest extends AbstractImportTestCase
      * @var AttributeSetCollectionFactory|MockObject
      */
     private $setCollectionFactory;
-
-    /**
-     * @var AttributeSetCollection|MockObject
-     */
-    private $setCollection;
 
     /**
      * @var ProductAttributeCollectionFactory|MockObject
@@ -106,9 +100,6 @@ class GroupedTest extends AbstractImportTestCase
         parent::setUp();
 
         $this->setCollectionFactory = $this->createMock(AttributeSetCollectionFactory::class);
-        $this->setCollection = $this->createMock(AttributeSetCollection::class);
-        $this->setCollectionFactory->method('create')->willReturn($this->setCollection);
-        $this->setCollection->expects($this->any())->method('setEntityTypeFilter')->willReturn([]);
         $this->attrCollectionFactory = $this->createMock(ProductAttributeCollectionFactory::class);
         $this->attrCollection = $this->createMock(ProductAttributeCollection::class);
         $this->attrCollectionFactory->method('create')->willReturn($this->attrCollection);
