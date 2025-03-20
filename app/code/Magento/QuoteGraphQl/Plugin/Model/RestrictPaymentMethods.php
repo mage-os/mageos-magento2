@@ -24,7 +24,7 @@ class RestrictPaymentMethods
     public function afterGetAvailableMethods(
         MethodList $subject,
         array $result,
-        CartInterface $quote = null
+        ?CartInterface $quote = null
     ): array {
         if (!$quote || $quote->getGrandTotal() != 0) {
             return $result;
