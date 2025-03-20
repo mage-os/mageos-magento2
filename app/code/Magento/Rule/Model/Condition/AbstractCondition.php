@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2015 Adobe
+ * Copyright 2011 Adobe
  * All Rights Reserved.
  */
 namespace Magento\Rule\Model\Condition;
@@ -865,6 +865,11 @@ abstract class AbstractCondition extends \Magento\Framework\DataObject implement
                     }
                 }
                 break;
+            case '===':
+                if (!is_array($validatedValue) && !is_array($value)) {
+                    $result = $this->_compareValues($validatedValue, $value);
+                }
+                break;
         }
 
         if ('!=' == $option || '>' == $option || '<' == $option || '!{}' == $option || '!()' == $option) {
@@ -885,7 +890,8 @@ abstract class AbstractCondition extends \Magento\Framework\DataObject implement
     protected function _compareValues($validatedValue, $value, $strict = true)
     {
         if ($strict && is_numeric($validatedValue) && is_numeric($value)) {
-            if (preg_match('/^0\d+$/', $validatedValue) || preg_match('/^0\d+$/', $value)) {
+            $pattern = '/^0\d+$/';
+            if (preg_match($pattern, $validatedValue) || preg_match($pattern, $value)) {
                 return $validatedValue === $value;
             }
             return $validatedValue == $value;

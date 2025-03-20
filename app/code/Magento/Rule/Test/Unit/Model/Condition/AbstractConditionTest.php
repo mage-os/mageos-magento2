@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2015 Adobe
+ * Copyright 2013 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -65,8 +65,17 @@ class AbstractConditionTest extends TestCase
             [null, '==', 0, false],
             [null, '==', 0.00, false],
 
+            // Test cases for strict equality with leading zeros
             ['0123', '===', '123', false],
+            ['000123', '===', '123', false],
             ['123', '===', '0123', false],
+            ['123', '===', '000123', false],
+            ['0123', '===', '0123', true],
+
+            // Test cases for strict equality with different numeric types
+            [0123, '===', '0123', false],
+            ['123', '===', 0123, false],
+            [0123, '===', 0123, true],
 
             [1, '!=', 1, false],
             [0, '!=', 1, true],
