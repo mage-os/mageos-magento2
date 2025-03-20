@@ -55,7 +55,7 @@ define([
             if ($messagesBlock.length) {
                 resultHeight += $messagesBlock.outerHeight();
             }
-
+            console.log('Reproduce eslint issue');
             if ($collapsibleBlock.length && $collapsibleBlock.is(':visible') && !closed) {
                 resultHeight += $collapsibleBlock.outerHeight();
             }
