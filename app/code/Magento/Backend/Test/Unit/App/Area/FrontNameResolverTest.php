@@ -125,11 +125,11 @@ class FrontNameResolverTest extends TestCase
         string $customAdminUrl,
         bool $expectedValue
     ): void {
-        $this->scopeConfigMock->expects($this->once())
+        $this->scopeConfigMock
             ->method('isSetFlag')
             ->willReturn($useCustomAdminUrl);
 
-        $this->scopeConfigMock->expects($this->once())
+        $this->scopeConfigMock
             ->method('getValue')
             ->willReturnMap(
                 [
