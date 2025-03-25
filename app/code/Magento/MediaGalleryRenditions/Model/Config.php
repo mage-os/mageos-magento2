@@ -1,13 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
 
 declare(strict_types=1);
 
 namespace Magento\MediaGalleryRenditions\Model;
 
+use Magento\Framework\App\Config\Initial;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -29,19 +30,27 @@ class Config
     private $scopeConfig;
 
     /**
+     * @var Initial
+     */
+    private $initialConfig;
+
+    /**
      * @var ResourceConnection
      */
     private $resourceConnection;
 
     /**
      * @param ScopeConfigInterface $scopeConfig
+     * @param Initial $initialConfig
      * @param ResourceConnection $resourceConnection
      */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
+        Initial $initialConfig,
         ResourceConnection $resourceConnection
     ) {
         $this->scopeConfig = $scopeConfig;
+        $this->initialConfig = $initialConfig;
         $this->resourceConnection = $resourceConnection;
     }
 
@@ -75,7 +84,9 @@ class Config
         try {
             return $this->getDatabaseValue(self::XML_PATH_MEDIA_GALLERY_RENDITIONS_WIDTH_PATH);
         } catch (NoSuchEntityException $exception) {
-            return (int) $this->scopeConfig->getValue(self::XML_PATH_MEDIA_GALLERY_RENDITIONS_WIDTH_PATH);
+            $configData = $this->initialConfig->getData('default');
+            $width = $configData['system']['media_gallery_renditions']['width'] ?? 0;
+            return (int) $width;
         }
     }
 
@@ -89,7 +100,9 @@ class Config
         try {
             return $this->getDatabaseValue(self::XML_PATH_MEDIA_GALLERY_RENDITIONS_HEIGHT_PATH);
         } catch (NoSuchEntityException $exception) {
-            return (int) $this->scopeConfig->getValue(self::XML_PATH_MEDIA_GALLERY_RENDITIONS_HEIGHT_PATH);
+            $configData = $this->initialConfig->getData('default');
+            $height = $configData['system']['media_gallery_renditions']['height'] ?? 0;
+            return (int) $height;
         }
     }
 
@@ -115,7 +128,7 @@ class Config
             ->where('config.path = ?', $path);
         $value = $connection->query($select)->fetchColumn();
 
-        if ($value === false) {
+        if ($value === false || $value === null) {
             throw new NoSuchEntityException(
                 __(
                     'The config value for %path is not saved to database.',
