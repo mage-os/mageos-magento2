@@ -28,5 +28,6 @@
         <element name="gridCustomer_filter_review_cnt" type="button" selector="#customers_grid_filter_review_cnt"/>
         <element name="CustomerSearchButton" type="button" selector="//*[@id='customers_grid']//button[contains(@title, 'Search')]"/>
         <element name="filterName" type="text" selector="#productGrid_product_filter_name"/>
+        <element name="firstRowReview" type="text" selector="#productGrid_table tbody tr:first-child td:first-child"/>
      </section>
 </sections>
