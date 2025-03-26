@@ -10,15 +10,12 @@ namespace Magento\MediaGalleryRenditions\Model;
 
 use Magento\Framework\App\Config\Initial;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\App\ResourceConnection;
-use Magento\Framework\Exception\NoSuchEntityException;
 
 /**
  * Class responsible for providing access to Media Gallery Renditions system configuration.
  */
 class Config
 {
-    private const TABLE_CORE_CONFIG_DATA = 'core_config_data';
     private const XML_PATH_MEDIA_GALLERY_ENABLED = 'system/media_gallery/enabled';
     private const XML_PATH_ENABLED = 'system/media_gallery_renditions/enabled';
     private const XML_PATH_MEDIA_GALLERY_RENDITIONS_WIDTH_PATH = 'system/media_gallery_renditions/width';
@@ -35,23 +32,15 @@ class Config
     private $initialConfig;
 
     /**
-     * @var ResourceConnection
-     */
-    private $resourceConnection;
-
-    /**
      * @param ScopeConfigInterface $scopeConfig
      * @param Initial $initialConfig
-     * @param ResourceConnection $resourceConnection
      */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
-        Initial $initialConfig,
-        ResourceConnection $resourceConnection
+        Initial $initialConfig
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->initialConfig = $initialConfig;
-        $this->resourceConnection = $resourceConnection;
     }
 
     /**

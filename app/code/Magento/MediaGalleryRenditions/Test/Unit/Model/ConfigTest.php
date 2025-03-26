@@ -9,7 +9,6 @@ namespace Magento\MediaGalleryRenditions\Test\Unit\Model;
 
 use Magento\Framework\App\Config\Initial;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\App\ResourceConnection;
 use Magento\MediaGalleryRenditions\Model\Config;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -27,11 +26,6 @@ class ConfigTest extends TestCase
     private $initialConfigMock;
 
     /**
-     * @var ResourceConnection|MockObject
-     */
-    private $resourceConnectionMock;
-
-    /**
      * @var Config
      */
     private $config;
@@ -40,11 +34,9 @@ class ConfigTest extends TestCase
     {
         $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
         $this->initialConfigMock = $this->createMock(Initial::class);
-        $this->resourceConnectionMock = $this->createMock(ResourceConnection::class);
         $this->config = new Config(
             $this->scopeConfigMock,
-            $this->initialConfigMock,
-            $this->resourceConnectionMock
+            $this->initialConfigMock
         );
     }
 
