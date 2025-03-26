@@ -16,7 +16,6 @@
             <severity value="CRITICAL"/>
             <testCaseId value="AC-6116"/>
             <group value="3rd_party_integration"/>
-            <group value="pr_exclude"/>
         </annotations>
         <before>
             <!-- Create Product -->
