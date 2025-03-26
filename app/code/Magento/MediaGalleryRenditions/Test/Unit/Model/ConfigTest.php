@@ -10,8 +10,6 @@ namespace Magento\MediaGalleryRenditions\Test\Unit\Model;
 use Magento\Framework\App\Config\Initial;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ResourceConnection;
-use Magento\Framework\DB\Adapter\AdapterInterface;
-use Magento\Framework\DB\Select;
 use Magento\MediaGalleryRenditions\Model\Config;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -38,30 +36,11 @@ class ConfigTest extends TestCase
      */
     private $config;
 
-    /**
-     * @var AdapterInterface|MockObject
-     */
-    private $connectionMock;
-
-    /**
-     * @var Select|MockObject
-     */
-    private $selectMock;
-
     protected function setUp(): void
     {
         $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
         $this->initialConfigMock = $this->createMock(Initial::class);
         $this->resourceConnectionMock = $this->createMock(ResourceConnection::class);
-        $this->connectionMock = $this->getMockBuilder(AdapterInterface::class)
-            ->addMethods(['fetchColumn'])
-            ->getMockForAbstractClass();
-        $this->selectMock = $this->createMock(Select::class);
-        $this->resourceConnectionMock->method('getConnection')
-            ->willReturn($this->connectionMock);
-        $this->resourceConnectionMock->method('getTableName')
-            ->with('core_config_data')
-            ->willReturn('core_config_data');
         $this->config = new Config(
             $this->scopeConfigMock,
             $this->initialConfigMock,
@@ -70,43 +49,29 @@ class ConfigTest extends TestCase
     }
 
     /**
-     * Test getWidth() with successful database retrieval
+     * Test getWidth() using scopeConfig value
      */
-    public function testGetWidthSuccess(): void
+    public function testGetWidthFromScopeConfig(): void
     {
         $expectedWidth = 800;
-        $this->connectionMock->method('select')
-            ->willReturn($this->selectMock);
-        $this->selectMock->method('from')
-            ->willReturnSelf();
-        $this->selectMock->method('where')
-            ->willReturnSelf();
-        $this->connectionMock->method('query')
-            ->with($this->selectMock)
-            ->willReturnSelf();
-        $this->connectionMock->method('fetchColumn')
-            ->willReturn((string)$expectedWidth);
+        $widthPath = 'system/media_gallery_renditions/width';
+        $this->scopeConfigMock->method('getValue')
+            ->with($widthPath)
+            ->willReturn($expectedWidth);
         $result = $this->config->getWidth();
         $this->assertEquals($expectedWidth, $result);
     }
 
     /**
-     * Test getWidth() with empty database result falling back to initial config
+     * Test getWidth() falling back to initial config
      */
-    public function testGetWidthFallback(): void
+    public function testGetWidthFromInitialConfig(): void
     {
         $expectedWidth = 600;
-        $this->connectionMock->method('select')
-            ->willReturn($this->selectMock);
-        $this->selectMock->method('from')
-            ->willReturnSelf();
-        $this->selectMock->method('where')
-            ->willReturnSelf();
-        $this->connectionMock->method('query')
-            ->with($this->selectMock)
-            ->willReturnSelf();
-        $this->connectionMock->method('fetchColumn')
-            ->willReturn(false);
+        $widthPath = 'system/media_gallery_renditions/width';
+        $this->scopeConfigMock->method('getValue')
+            ->with($widthPath)
+            ->willReturn(null);
         $this->initialConfigMock->method('getData')
             ->with('default')
             ->willReturn([
@@ -121,42 +86,28 @@ class ConfigTest extends TestCase
     }
 
     /**
-     * Test getHeight() with successful database retrieval
+     * Test getHeight() using scopeConfig value
      */
-    public function testGetHeightSuccess(): void
+    public function testGetHeightFromScopeConfig(): void
     {
         $expectedHeight = 600;
-        $this->connectionMock->method('select')
-            ->willReturn($this->selectMock);
-        $this->selectMock->method('from')
-            ->willReturnSelf();
-        $this->selectMock->method('where')
-            ->willReturnSelf();
-        $this->connectionMock->method('query')
-            ->with($this->selectMock)
-            ->willReturnSelf();
-        $this->connectionMock->method('fetchColumn')
-            ->willReturn((string)$expectedHeight);
+        $heightPath = 'system/media_gallery_renditions/height';
+        $this->scopeConfigMock->method('getValue')
+            ->with($heightPath)
+            ->willReturn($expectedHeight);
         $result = $this->config->getHeight();
         $this->assertEquals($expectedHeight, $result);
     }
 
     /**
-     * Test getHeight() with empty database result falling back to initial config
+     * Test getHeight() falling back to initial config
      */
-    public function testGetHeightFallback(): void
+    public function testGetHeightFromInitialConfig(): void
     {
         $expectedHeight = 400;
-        $this->connectionMock->method('select')
-            ->willReturn($this->selectMock);
-        $this->selectMock->method('from')
-            ->willReturnSelf();
-        $this->selectMock->method('where')
-            ->willReturnSelf();
-        $this->connectionMock->method('query')
-            ->with($this->selectMock)
-            ->willReturnSelf();
-        $this->connectionMock->method('fetchColumn')
+        $heightPath = 'system/media_gallery_renditions/height';
+        $this->scopeConfigMock->method('getValue')
+            ->with($heightPath)
             ->willReturn(null);
         $this->initialConfigMock->method('getData')
             ->with('default')

@@ -81,13 +81,9 @@ class Config
      */
     public function getWidth(): int
     {
-        try {
-            return $this->getDatabaseValue(self::XML_PATH_MEDIA_GALLERY_RENDITIONS_WIDTH_PATH);
-        } catch (NoSuchEntityException $exception) {
-            $configData = $this->initialConfig->getData('default');
-            $width = $configData['system']['media_gallery_renditions']['width'] ?? 0;
-            return (int) $width;
-        }
+        $width = $this->scopeConfig->getValue(self::XML_PATH_MEDIA_GALLERY_RENDITIONS_WIDTH_PATH)
+            ?? $this->initialConfig->getData('default')['system']['media_gallery_renditions']['width'];
+        return (int)$width;
     }
 
     /**
@@ -97,46 +93,8 @@ class Config
      */
     public function getHeight(): int
     {
-        try {
-            return $this->getDatabaseValue(self::XML_PATH_MEDIA_GALLERY_RENDITIONS_HEIGHT_PATH);
-        } catch (NoSuchEntityException $exception) {
-            $configData = $this->initialConfig->getData('default');
-            $height = $configData['system']['media_gallery_renditions']['height'] ?? 0;
-            return (int) $height;
-        }
-    }
-
-    /**
-     * Get value from database bypassing config cache
-     *
-     * @param string $path
-     * @return int
-     * @throws NoSuchEntityException
-     */
-    private function getDatabaseValue(string $path): int
-    {
-        $connection = $this->resourceConnection->getConnection();
-        $select = $connection->select()
-            ->from(
-                [
-                    'config' => $this->resourceConnection->getTableName(self::TABLE_CORE_CONFIG_DATA)
-                ],
-                [
-                    'value'
-                ]
-            )
-            ->where('config.path = ?', $path);
-        $value = $connection->query($select)->fetchColumn();
-
-        if ($value === false || $value === null) {
-            throw new NoSuchEntityException(
-                __(
-                    'The config value for %path is not saved to database.',
-                    ['path' => $path]
-                )
-            );
-        }
-
-        return (int) $value;
+        $height = $this->scopeConfig->getValue(self::XML_PATH_MEDIA_GALLERY_RENDITIONS_HEIGHT_PATH)
+            ?? $this->initialConfig->getData('default')['system']['media_gallery_renditions']['height'];
+        return (int)$height;
     }
 }
