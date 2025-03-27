@@ -70,7 +70,9 @@ class LocalizedToNormalized implements FilterInterface
         if (is_numeric($value)) {
             $numberParse = new NumberParse(
                 $this->_options['locale'],
-                empty($this->_options['decimal_style']) ? NumberFormatter::PATTERN_DECIMAL : $this->_options['decimal_style']
+                empty($this->_options['decimal_style'])
+                ? NumberFormatter::PATTERN_DECIMAL
+                : $this->_options['decimal_style']
             );
             return (string)$numberParse->filter($value);
         } elseif ($this->_options['date_format'] === null && strpos($value, ':') !== false) {
@@ -198,7 +200,6 @@ class LocalizedToNormalized implements FilterInterface
             }
             ++$cnt;
         }
-
         return $result;
     }
 }

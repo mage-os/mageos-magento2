@@ -140,19 +140,25 @@ class SidebarTest extends TestCase
         $this->assertEquals($this->sidebar, $this->sidebar->removeQuoteItem($itemId));
     }
 
-    public function testUpdateQuoteItem()
+    /**
+     * @param string $locale
+     * @param int|string $itemId
+     * @param int|string|float $expectedItemQty
+     * @param int|string|float $itemQty
+     *
+     * @dataProvider dataProviderUpdateQuoteItem
+     */
+    public function testUpdateQuoteItem($locale, $itemId, $expectedItemQty ,$itemQty)
     {
-        $itemId = 1;
-        $itemQty = 2;
-
         $this->resolverMock->expects($this->once())
             ->method('getLocale')
-            ->willReturn('en');
+            ->willReturn($locale);
 
         $this->cartMock->expects($this->once())
             ->method('updateItems')
-            ->with([$itemId => ['qty' => $itemQty]])
+            ->with([$itemId => ['qty' => $expectedItemQty]])
             ->willReturnSelf();
+
         $this->cartMock->expects($this->once())
             ->method('save')
             ->willReturnSelf();
@@ -177,5 +183,19 @@ class SidebarTest extends TestCase
             ->willReturnSelf();
 
         $this->assertEquals($this->sidebar, $this->sidebar->updateQuoteItem($itemId, $itemQty));
+    }
+
+    /**
+     * @return array
+     */
+    public static function dataProviderUpdateQuoteItem()
+    {
+        return [
+            //locale, itemId, expectedItemQty, ItemQty
+            [ 'en_US', 1, 2, 2],
+            [ 'en_US', 1, 0.5, 0.5],
+            [ 'en_US', 1,"0.5","0.5"],
+            [ 'nl_NL', 1,"0.5","0,5"]
+        ];
     }
 }
