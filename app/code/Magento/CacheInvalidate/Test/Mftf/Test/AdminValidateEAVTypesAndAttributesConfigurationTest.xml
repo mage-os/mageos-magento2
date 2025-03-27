@@ -15,6 +15,7 @@
             <description value="Validate EAVTypes And Attributes  Cache Type After Cache Management"/>
             <severity value="MAJOR"/>
             <testCaseId value="AC-3833"/>
+            <group value="pr_exclude"/>
         </annotations>
         <before>
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
