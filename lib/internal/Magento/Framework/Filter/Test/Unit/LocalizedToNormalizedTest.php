@@ -18,7 +18,7 @@ class LocalizedToNormalizedTest extends TestCase
      * @param string $value
      * @param array $options
      * @param string|array $expectedValues
-     * 
+     *
      * @dataProvider localizedToNormalizedDataProvider
      */
     public function testLocalizedToNormalized($value, $options, $expectedValue)
