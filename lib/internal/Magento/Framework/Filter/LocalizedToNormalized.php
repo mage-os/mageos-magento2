@@ -20,8 +20,7 @@ class LocalizedToNormalized implements FilterInterface
     protected $_options = [
         'locale' => null,
         'date_format' => null,
-        'precision' => null,
-        'type' => null,
+        'precision' => null
     ];
 
     /**
@@ -69,12 +68,8 @@ class LocalizedToNormalized implements FilterInterface
     {
         if (is_numeric($value)) {
             $numberParse = new NumberParse(
-                $this->_options['locale'],
-                empty($this->_options['type'])
-                ? NumberFormatter::TYPE_DOUBLE
-                : $this->_options['type']
+                $this->_options['locale']
             );
-
             return (string)$numberParse->filter($value);
         } elseif ($this->_options['date_format'] === null && strpos($value, ':') !== false) {
             $formatter = new IntlDateFormatter(
