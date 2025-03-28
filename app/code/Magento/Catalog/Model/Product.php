@@ -1,8 +1,7 @@
 <?php
 /**
- * Copyright 2024 Adobe
- * All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2011 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Catalog\Model;
 
@@ -422,8 +421,8 @@ class Product extends \Magento\Catalog\Model\AbstractModel implements
         \Magento\Framework\Api\DataObjectHelper $dataObjectHelper,
         \Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface $joinProcessor,
         array $data = [],
-        \Magento\Eav\Model\Config $config = null,
-        FilterProductCustomAttribute $filterCustomAttribute = null
+        ?\Magento\Eav\Model\Config $config = null,
+        ?FilterProductCustomAttribute $filterCustomAttribute = null
     ) {
         $this->metadataService = $metadataService;
         $this->_itemOptionFactory = $itemOptionFactory;
@@ -1163,7 +1162,7 @@ class Product extends \Magento\Catalog\Model\AbstractModel implements
      * @param \Magento\Catalog\Api\Data\ProductTierPriceInterface[] $tierPrices
      * @return $this
      */
-    public function setTierPrices(array $tierPrices = null)
+    public function setTierPrices(?array $tierPrices = null)
     {
         $this->getPriceModel()->setTierPrices($this, $tierPrices);
         return $this;
@@ -1493,7 +1492,7 @@ class Product extends \Magento\Catalog\Model\AbstractModel implements
      * @param \Magento\Catalog\Api\Data\ProductLinkInterface[] $links
      * @return $this
      */
-    public function setProductLinks(array $links = null)
+    public function setProductLinks(?array $links = null)
     {
         if ($links === null) {
             $this->setData('ignore_links_flag', true);
@@ -2048,7 +2047,7 @@ class Product extends \Magento\Catalog\Model\AbstractModel implements
      * @param \Magento\Catalog\Api\Data\ProductCustomOptionInterface[] $options
      * @return $this
      */
-    public function setOptions(array $options = null)
+    public function setOptions(?array $options = null)
     {
         $this->setData('options', $options);
         return $this;
@@ -2697,7 +2696,7 @@ class Product extends \Magento\Catalog\Model\AbstractModel implements
      * @return $this
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function setMediaGalleryEntries(array $mediaGalleryEntries = null)
+    public function setMediaGalleryEntries(?array $mediaGalleryEntries = null)
     {
         if ($mediaGalleryEntries !== null) {
             $images = [];
