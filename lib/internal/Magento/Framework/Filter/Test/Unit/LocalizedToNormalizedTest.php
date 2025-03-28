@@ -40,7 +40,7 @@ class LocalizedToNormalizedTest extends TestCase
                     'locale' => 'nl',
                     'date_format' => null,
                     'precision' => null,
-                    'decimal_style' => NumberFormatter::PATTERN_DECIMAL
+                    'type' => NumberFormatter::TYPE_DOUBLE
                 ],
                 "0.5"
             ],
@@ -50,17 +50,27 @@ class LocalizedToNormalizedTest extends TestCase
                     'locale' => 'en',
                     'date_format' => null,
                     'precision' => null,
-                    'decimal_style' => ' '
+                    'type' => ' '
                 ],
                 "0.5"
             ],
             '3' => [
+                "2",
+                [
+                    'locale' => 'en',
+                    'date_format' => null,
+                    'precision' => null,
+                    'type' => ''
+                ],
+                "2"
+            ],
+            '4' => [
                 '2014-03-30',
                 [
                     'locale' => 'en',
                     'date_format' => 'Y-M-d',
                     'precision' => null,
-                    'decimal_style' => ''
+                    'type' => ''
                 ],
                 [
                     "date_format" => "Y-M-d",

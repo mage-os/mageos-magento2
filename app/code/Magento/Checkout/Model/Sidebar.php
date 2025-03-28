@@ -135,7 +135,7 @@ class Sidebar
             }
 
             $filter = new LocalizedToNormalized(
-                ['locale' => $this->resolver->getLocale(), 'decimal_style' => NumberFormatter::DECIMAL]
+                ['locale' => $this->resolver->getLocale(), 'type' => NumberFormatter::TYPE_DOUBLE]
             );
             return $filter->filter((string)$itemQty);
         }
