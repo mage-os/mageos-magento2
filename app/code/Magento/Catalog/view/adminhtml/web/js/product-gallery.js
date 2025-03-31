@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Adobe
+ * Copyright 2013 Adobe
  * All Rights Reserved.
  */
 
@@ -355,6 +355,9 @@ define([
             imageData.isRemoved = true;
             $imageContainer.addClass('removed').hide().find('.is-removed').val(1);
 
+            // Reset all image role/type selections to 'no_selection' value
+            // For each role (like base image, small image, etc.), clears both
+            // the UI select element and the internal types data structure
             $.each(this.options.types, $.proxy(function (index, type) {
                 this.element.find('.image-' + type.code).val('no_selection');
                 this.options.types[index].value = 'no_selection';
