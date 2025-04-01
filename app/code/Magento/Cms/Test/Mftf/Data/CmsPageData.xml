@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  /**
-  * Copyright 2024 Adobe
-  * All Rights Reserved.
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
   */
 -->
 
@@ -18,12 +18,6 @@
         <data key="title" unique="suffix">Test CMS Page</data>
         <data key="content_heading">Test Content Heading</data>
         <data key="content">Sample page content. Yada yada yada.</data>
-        <data key="identifier" unique="suffix">test-page-</data>
-    </entity>
-    <entity name="testCmsPage" type="cms_page">
-        <data key="title">Test CMS Page</data>
-        <data key="content_heading">Test Content Heading</data>
-        <data key="content">%Hello CMS World</data>
         <data key="identifier" unique="suffix">test-page-</data>
     </entity>
     <entity name="customCmsPage" extends="_defaultCmsPage" type="cms_page">
