@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2019 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -255,6 +255,7 @@ class CarrierTest extends TestCase
      * Test sending shipping requests.
      *
      * @magentoConfigFixture default_store carriers/dhl/id some ID
+     * @magentoConfigFixture default_store carriers/dhl/type DHL_XML
      * @magentoConfigFixture default_store carriers/dhl/password some password
      * @magentoConfigFixture default_store carriers/dhl/account 1234567890
      * @magentoConfigFixture default_store carriers/dhl/gateway_xml_url https://xmlpi-ea.dhl.com/XMLShippingServlet
@@ -759,7 +760,7 @@ class CarrierTest extends TestCase
      * @magentoConfigFixture default_store carriers/dhl/api_key some KEY
      * @magentoConfigFixture default_store carriers/dhl/api_secret some secret
      * @magentoConfigFixture default_store carriers/dhl/content_type N
-     * @magentoConfigFixture default_store carriers/dhl/nondoc_methods 1,3,4,8,P,Q,E,F,H,J,M,V,Y,N
+     * @magentoConfigFixture default_store carriers/dhl/nondoc_methods 1,3,4,8,P,Q,E,F,H,J,M,V,Y
      * @magentoConfigFixture default_store carriers/dhl/showmethod' => 1,
      * @magentoConfigFixture default_store carriers/dhl/title DHL Title
      * @magentoConfigFixture default_store carriers/dhl/specificerrmsg dhl error message
@@ -776,7 +777,20 @@ class CarrierTest extends TestCase
         $this->setNextResponse(__DIR__ . '/../_files/dhl_quote_response.json');
         $request = $this->createRequest();
         $expectedRates = [
-            ['carrier' => 'dhl', 'carrier_title' => 'DHL Title', 'price' => 47.63, 'method' => 'N', 'cost' => 47.63]
+            [
+                'carrier' => 'dhl',
+                'carrier_title' => 'DHL Title',
+                'price' => 4810.92,
+                'method' => 'P',
+                'cost' => 4810.92
+            ],
+            [
+                'carrier' => 'dhl',
+                'carrier_title' => 'DHL Title',
+                'price' => 5980.74,
+                'method' => 'Q',
+                'cost' => 5980.74
+            ]
         ];
 
         $actualRates = $this->dhlCarrier->collectRates($request)->getAllRates();
@@ -792,5 +806,279 @@ class CarrierTest extends TestCase
         self::assertStringContainsString('"height": 0.63', $requestRest);
         self::assertStringContainsString('"width": 0.63', $requestRest);
         self::assertStringContainsString('"length": 0', $requestRest);
+    }
+
+    /**
+     * Test sending shipping requests.
+     *
+     * @magentoConfigFixture default_store carriers/dhl/api_key some KEY
+     * @magentoConfigFixture default_store carriers/dhl/type DHL_REST
+     * @magentoConfigFixture default_store carriers/dhl/api_secret some secret
+     * @magentoConfigFixture default_store carriers/dhl/account 998765432
+     * @magentoConfigFixture default_store carriers/dhl/gateway_rest_url https://express.api.dhl.com/mydhlapi
+     * @magentoConfigFixture default_store carriers/dhl/content_type N
+     * @magentoConfigFixture default_store carriers/dhl/nondoc_methods 1,3,4,8,P,Q,E,F,H,J,M,V,Y
+     * @magentoConfigFixture default_store carriers/dhl/unit_of_measure C
+     * @param string $origCountryId
+     * @param string $destCountryId
+     * @param string $shipperPostalCode
+     * @param string $recipientPostalCode
+     * @param string $shipperCity
+     * @param string $recipientCity
+     * @return void
+     * @dataProvider requestToRestShipmentDataProvider
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
+    public function testRequestRestToShip(
+        string $origCountryId,
+        string $destCountryId,
+        string $shipperPostalCode,
+        string $recipientPostalCode,
+        string $shipperCity,
+        string $recipientCity
+    ): void {
+        $this->config->setValue(
+            'shipping/origin/country_id',
+            $origCountryId,
+            'store',
+            null
+        );
+        $content = file_get_contents(__DIR__ . '/../_files/dhl_shipping_response.json');
+        //phpcs:disable Magento2.Functions.DiscouragedFunction
+        $this->httpClient->nextResponses(
+            [
+                new Response(
+                    200,
+                    [],
+                    $content
+                )
+            ]
+        );
+        $productName = 'item_name';
+
+        //phpcs:enable Magento2.Functions.DiscouragedFunction
+        $request = new Request(
+            [
+                'packages' => [
+                    'package' => [
+                        'params' => [
+                            'width' => '5',
+                            'length' => '5',
+                            'height' => '5',
+                            'dimension_units' => 'CENTIMETER',
+                            'weight_units' => 'KILOGRAM',
+                            'weight' => '100',
+                            'customs_value' => '100.00',
+                            'container' => Carrier::DHL_CONTENT_TYPE_NON_DOC,
+                        ],
+                        'items' => [
+                            'item1' => [
+                                'name' => $productName,
+                                'qty' => 1,
+                                'weight' => '100',
+                                'price' => '100.00',
+                            ],
+                        ],
+                    ],
+                ],
+                'orig_country_id' => $origCountryId,
+                'dest_country_id' => $destCountryId,
+                'shipper_address_country_code' => $origCountryId,
+                'recipient_address_country_code' => $destCountryId,
+                'package_weight' => '100',
+                'free_method_weight' => '100',
+                'recipient_address_street_1' => $recipientCity,
+                'shipper_address_street_1' => $shipperCity,
+                'order_shipment' => new DataObject(
+                    [
+                        'order' => new DataObject(
+                            [
+                                'subtotal' => '10.00'
+                            ]
+                        )
+                    ]
+                )
+            ]
+        );
+
+        //Generating labels
+        $labels = $this->dhlCarrier->requestToShipment($request);
+        $this->assertNotEmpty($labels);
+        $this->assertNotEmpty($labels->getInfo());
+        $request = $this->httpClient->getLastRequest()->getBody();
+        $requestElement = json_decode($request, true);
+        $requestElement['plannedShippingDateAndTime'] = 'currentTime';
+        $requestElement['productCode'] = 'P';
+        $requestElement['customerDetails']['shipperDetails']['postalAddress']['postalCode'] = $shipperPostalCode;
+        $requestElement['customerDetails']['shipperDetails']['postalAddress']['cityName'] = $shipperCity;
+        $requestElement['customerDetails']['shipperDetails']['contactInformation']['phone'] = '1234567890';
+        $requestElement['customerDetails']['shipperDetails']['contactInformation']['companyName'] = 'demo store';
+        $requestElement['customerDetails']['shipperDetails']['contactInformation']['fullName'] = 'admin admin';
+
+        $requestElement['customerDetails']['receiverDetails']['postalAddress']['postalCode'] = $recipientPostalCode;
+        $requestElement['customerDetails']['receiverDetails']['postalAddress']['cityName'] = $recipientCity;
+        $requestElement['customerDetails']['receiverDetails']['contactInformation']['phone'] = '1234567890';
+        $requestElement['customerDetails']['receiverDetails']['contactInformation']['companyName'] = 'store new';
+        $requestElement['customerDetails']['receiverDetails']['contactInformation']['fullName'] = 'John Doe';
+
+        $requestElement['content']['exportDeclaration']['invoice']['number'] = '123';
+        $requestElement['content']['exportDeclaration']['invoice']['date'] = 'currentDate';
+
+        $actualRequest = json_encode($requestElement);
+        $expectedLabelRequest = $this->getExpectedLabelRequestRest(
+            $origCountryId,
+            $destCountryId
+        );
+
+        $this->assertJsonStringEqualsJsonString($expectedLabelRequest, $actualRequest);
+    }
+
+    /**
+     * Cases with different countries.
+     *
+     * @return array
+     */
+    public static function requestToRestShipmentDataProvider(): array
+    {
+        return [
+            [
+                'US', 'CA', '90034', 'G1A 0A8', 'los angeles', 'quebec'
+            ]
+        ];
+    }
+
+    /**
+     * Generate expected labels request REST.
+     *
+     * @param string $origCountryId
+     * @param string $destCountryId
+     * @return string
+     */
+    private function getExpectedLabelRequestRest(
+        string $origCountryId,
+        string $destCountryId
+    ): string {
+        $requestRestPath = $origCountryId == $destCountryId
+            ? '/../_files/domestic_shipment_request.json'
+            : '/../_files/shipment_request.json';
+
+        $expectedRequestElement = json_decode(file_get_contents(__DIR__ . $requestRestPath), true);
+        $expectedRequestElement['plannedShippingDateAndTime'] = 'currentTime';
+        $expectedRequestElement['content']['exportDeclaration']['invoice']['date'] = 'currentDate';
+        $expectedRequestElement['customerDetails']['receiverDetails']['postalAddress']['countryCode'] = $destCountryId;
+        $expectedRequestElement['customerDetails']['shipperDetails']['postalAddress']['countryCode'] = $origCountryId;
+
+        return json_encode($expectedRequestElement);
+    }
+
+    /**
+     * Test sending tracking REST API requests.
+     *
+     * @magentoConfigFixture default_store carriers/dhl/api_key customerKey
+     * @magentoConfigFixture default_store carriers/dhl/api_secret CustomerSecret
+     * @magentoConfigFixture default_store carriers/dhl/type DHL_REST
+     * @param string[] $trackingNumbers
+     * @param string $responseRest
+     * @param array $expectedTrackingData
+     * @param string $expectedRequestRest
+     * @dataProvider trackingRestDataProvider
+     */
+    public function testGetRestTracking(
+        $trackingNumbers,
+        string $responseRest,
+        $expectedTrackingData,
+        string $expectedRequestRest = ''
+    ) {
+        $this->httpClient->nextResponses([new Response(200, [], $responseRest)]);
+        $trackingResult = $this->dhlCarrier->getTracking(implode(',', $trackingNumbers));
+        $this->assertRestTrackingResult($expectedTrackingData, $trackingResult->getAllTrackings());
+        if ($expectedRequestRest !== '') {
+            $expectedRequestRest = json_decode($expectedRequestRest, true);
+
+            $lastRequest = $this->httpClient->getLastRequest();
+            $lastRequestUrl = $lastRequest->getUrl();
+            $parsedUrl = parse_url($lastRequestUrl);
+            $queryString = $parsedUrl['query'] ?? '';
+            parse_str($queryString, $actualParams);
+
+            $this->assertEquals(
+                $expectedRequestRest['params']['shipmentTrackingNumber'],
+                explode(',', $actualParams['shipmentTrackingNumber'])
+            );
+            $this->assertEquals($expectedRequestRest['headers'], $lastRequest->getHeaders());
+        }
+    }
+
+    /**
+     * Get tracking data provider
+     *
+     * @return array
+     */
+    public static function trackingRestDataProvider() : array
+    {
+        // phpcs:disable Magento2.Functions.DiscouragedFunction
+        $expectedMultiShipRequestRest = file_get_contents(__DIR__ . '/../_files/TrackingRequest_MultipleShipment.json');
+        $multiShipResponseRest = file_get_contents(__DIR__ . '/../_files/TrackingResponse_MultipleShipment.json');
+        $expectedSingleShipRequestRest = file_get_contents(__DIR__ . '/../_files/TrackingRequest_SingleShipment.json');
+        $singleShipResponseRest = file_get_contents(__DIR__ . '/../_files/TrackingResponse_SingleShipment.json');
+        $singleNoDataResponseRest = file_get_contents(__DIR__ . '/../_files/SingleTrackResponse-no-data-found.json');
+        //phpcs:enable Magento2.Functions.DiscouragedFunction
+        $expectedTrackingDataA = [
+            'carrier' => 'dhl',
+            'carrier_title' => 'DHL',
+            'tracking' => 2725476530,
+            'service' => 'Shipment',
+            'progressdetail' => [],
+            'weight' => '222 imperial',
+        ];
+        $expectedTrackingDataB = [
+            'carrier' => 'dhl',
+            'carrier_title' => 'DHL',
+            'tracking' => 5539315121,
+            'service' => 'Shipment',
+            'progressdetail' => [],
+            'weight' => '222 imperial',
+        ];
+        $expectedTrackingDataC = [
+            'carrier' => 'dhl',
+            'carrier_title' => 'DHL',
+            'tracking' => 'error',
+            'error_message' => __('Error %1', 'No data found'),
+        ];
+
+        return [
+            'multi-Ship' => [
+                ['2725476530', '5539315121'],
+                $multiShipResponseRest,
+                [$expectedTrackingDataA, $expectedTrackingDataB],
+                $expectedMultiShipRequestRest
+            ],
+            'single-Ship' => [
+                ['2725476530'],
+                $singleShipResponseRest,
+                [$expectedTrackingDataA],
+                $expectedSingleShipRequestRest
+            ],
+            'single-Ship-no-data' => [['1234567892'], $singleNoDataResponseRest, [$expectedTrackingDataC]]
+        ];
+    }
+
+    /**
+     * Assert tracking REST API
+     *
+     * @param array|null $expectedTrackingData
+     * @param Status[]|null $trackingResults
+     * @return void
+     */
+    private function assertRestTrackingResult($expectedTrackingData, $trackingResults): void
+    {
+        if (null === $expectedTrackingData) {
+            $this->assertNull($trackingResults);
+        } else {
+            $ctr = 0;
+            foreach ($trackingResults as $trackingResult) {
+                $this->assertEquals($expectedTrackingData[$ctr++], $trackingResult->getData());
+            }
+        }
     }
 }

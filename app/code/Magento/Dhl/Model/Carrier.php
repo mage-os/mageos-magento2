@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2012 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Dhl\Model;
@@ -417,12 +417,11 @@ class Carrier extends AbstractDhl implements CarrierInterface
         $this->setRequest($requestDhl);
         //Loading quotes
         //Saving $result to use proper result with the callback
+        $result = null;
         if ($this->getConfigData('type') == 'DHL_XML') {
             $this->_result = $result = $this->_getQuotes();
         } elseif ($this->getConfigData('type') == 'DHL_REST') {
-            // get the product code as per shipment country
-            $productCodes = $this->getProductCode();
-            $this->_result = $result = $this->_getQuotesRest($productCodes);
+            $this->_result = $result = $this->_getQuotesRest();
         }
         //After quotes are loaded parsing the response.
         return $this->proxyDeferredFactory->create(
@@ -490,6 +489,7 @@ class Carrier extends AbstractDhl implements CarrierInterface
      * @return $this
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function setRequest(DataObject $request)
     {
@@ -497,15 +497,11 @@ class Carrier extends AbstractDhl implements CarrierInterface
         $this->setStore($request->getStoreId());
 
         $requestObject = new DataObject();
-
         $requestObject->setIsGenerateLabelReturn($request->getIsGenerateLabelReturn());
-
         $requestObject->setStoreId($request->getStoreId());
-
         if ($request->getLimitMethod()) {
             $requestObject->setService($request->getLimitMethod());
         }
-
         $requestObject = $this->_addParams($requestObject);
 
         /** setting destination city name in case of guest customer specific to DHL REST API */
@@ -513,11 +509,7 @@ class Carrier extends AbstractDhl implements CarrierInterface
             $request->getDestRegionCode(),
             $request->getDestCountryId()
         );
-        if ($region->getId()) {
-            $destCityName = $region->getName(); // Returning region name as fallback
-        } else {
-            $destCityName = ''; //returning blank in case of XML API
-        }
+        $destCityName = $region->getId() ? $region->getName() : '';
 
         if ($request->getDestPostcode()) {
             $requestObject->setDestPostal($request->getDestPostcode());
@@ -595,7 +587,6 @@ class Carrier extends AbstractDhl implements CarrierInterface
         }
 
         $requestObject->setBaseSubtotalInclTax($request->getBaseSubtotalInclTax());
-
         $this->setRawRequest($requestObject);
 
         return $this;
@@ -1373,10 +1364,11 @@ class Carrier extends AbstractDhl implements CarrierInterface
     }
 
     /**
-     * Get product codes for DHL REST API
+     * Get product codes for DHL REST API for future use
      *
      * @return array
      * @throws Throwable
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      */
     private function getProductCode()
     {
@@ -1426,37 +1418,31 @@ class Carrier extends AbstractDhl implements CarrierInterface
         }
         $this->_debug($debugData);
         // Decode JSON to array
-        $data = json_decode($jsonResponse, true);
-        $productCodes = array_map(fn($product) => $product['productCode'], $data['products']);
-
+        $productCodes = [];
+        if (!empty($jsonResponse)) {
+            $data = json_decode($jsonResponse, true);
+            if (json_last_error() === JSON_ERROR_NONE && isset($data['products'])) {
+                $productCodes = array_map(fn($product) => $product['productCode'], $data['products']);
+            }
+        }
         return $productCodes;
     }
 
     /**
      * DHL REST API for Quote Data
      *
-     * @param array $productCodes
      * @return Result\ProxyDeferred
      * @throws LocalizedException
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    protected function _getQuotesRest(array $productCodes)
+    protected function _getQuotesRest()
     {
         $rawRequest = $this->_rawRequest;
         $url = $this->getGatewayURL();
 
-        /** Product Codes */
-        if (!empty($productCodes)) {
-            $productCodesParams = array_map(function ($code) {
-                    return ["productCode" => $code];
-            }, $productCodes);
-        } else {
-            $productCodesParams = [["productCode" => "N"]];
-        }
-
         /** Dutiable */
         $dutiable = ["isCustomsDeclarable" => false];
         if ($this->isDutiable($rawRequest->getOrigCountryId(), $rawRequest->getDestCountryId())) {
-            $isCustomDeclarable = true;
             $declaredValue = (int) $rawRequest->getValue();
             $baseCurrencyCode = $this->_storeManager
                 ->getWebsite($this->_request->getWebsiteId())
@@ -1492,7 +1478,6 @@ class Carrier extends AbstractDhl implements CarrierInterface
                     "number" => $this->getConfigData('account')
                 ]
             ],
-            "productsAndServices" => $productCodesParams,
             "plannedShippingDateAndTime" => date('Y-m-d\TH:i:s\Z', strtotime($this->_getShipDate())),
             "unitOfMeasurement" => "metric",
             "getAdditionalInformation" => [
@@ -1526,8 +1511,8 @@ class Carrier extends AbstractDhl implements CarrierInterface
         $httpResponse = $this->httpClient->request(
             new Request($url . '/rates', Request::METHOD_POST, $headers, $ratePayload)
         );
-
         $debugData['request'] = $ratePayload;
+
         return $this->proxyDeferredFactory->create(
             [
                 'deferred' => new CallbackDeferred(
@@ -1545,7 +1530,6 @@ class Carrier extends AbstractDhl implements CarrierInterface
                         }
                         $debugData['result'] = $jsonResponse;
                         $this->_debug($debugData);
-
                         return $this->_parseRestResponse($jsonResponse);
                     }
                 )
@@ -1572,6 +1556,7 @@ class Carrier extends AbstractDhl implements CarrierInterface
      * @param string $rateResponse
      * @return Result
      * @throws LocalizedException
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     protected function _parseRestResponse($rateResponse)
     {
@@ -1623,6 +1608,7 @@ class Carrier extends AbstractDhl implements CarrierInterface
      * @param array $exchangeRates
      * @return $this
      * @throws LocalizedException
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     protected function _addRestRate($product, $exchangeRates)
     {
@@ -2193,6 +2179,9 @@ class Carrier extends AbstractDhl implements CarrierInterface
      * @return DataObject
      * @throws LocalizedException
      * @throws Throwable
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     protected function _doShipmentRequestRest()
     {
@@ -2200,6 +2189,7 @@ class Carrier extends AbstractDhl implements CarrierInterface
         $url = $this->getGatewayURL().'/shipments';
 
         /** shipper */
+        $shipperAddress = $receiverAddress = [];
         $shipAddress = $rawRequest->getShipperAddressStreet1() . ' ' . $rawRequest->getShipperAddressStreet2();
         $shipAddress = $this->string->split($shipAddress, 45, false, true);
         if (is_array($shipAddress)) {
@@ -2270,7 +2260,6 @@ class Carrier extends AbstractDhl implements CarrierInterface
             $rawRequest->getShipperAddressCountryCode(),
             $rawRequest->getRecipientAddressCountryCode()
         )) {
-            $isCustomDeclarable = true;
             $declaredValue = sprintf("%.2F", $rawRequest->getOrderShipment()->getOrder()->getSubtotal());
             $baseCurrencyCode = $this->_storeManager->getWebsite($rawRequest->getWebsiteId())->getBaseCurrencyCode();
             /** Export Declaration details */
@@ -2281,11 +2270,11 @@ class Carrier extends AbstractDhl implements CarrierInterface
                     $nodeExportItem = [];
                     $nodeExportItem['number'] = $itemNo;
                     $nodeExportItem['description'] = $itemData['name'];
-                    $nodeExportItem['price'] = $itemData['price'];
-                    $nodeExportItem['quantity']['value'] = $itemData['qty'];
+                    $nodeExportItem['price'] = (int)$itemData['price'];
+                    $nodeExportItem['quantity']['value'] = (int)$itemData['qty'];
                     $nodeExportItem['quantity']['unitOfMeasurement'] = 'PCS';
-                    $nodeExportItem['weight']['netValue'] = $itemData['weight'];
-                    $nodeExportItem['weight']['grossValue'] = $itemData['weight'];
+                    $nodeExportItem['weight']['netValue'] = (int)$itemData['weight'];
+                    $nodeExportItem['weight']['grossValue'] = (int)$itemData['weight'];
                     $nodeExportItem['manufacturerCountry'] = $rawRequest->getShipperAddressCountryCode();
                     $nodeExportItems[$i] = $nodeExportItem;
                     $i++;
@@ -2296,9 +2285,11 @@ class Carrier extends AbstractDhl implements CarrierInterface
                 "declaredValue" => $declaredValue,
                 "declaredValueCurrency" => $baseCurrencyCode,
                 "exportDeclaration" => [
-                    "lineItems" => [
-                        $nodeExportItems
-                    ]
+                    "lineItems" => $nodeExportItems,
+                    "invoice" => [
+                        "number" => $rawRequest->getOrderShipment()->getOrder()->getIncrementId(),
+                        "date" => date('Y-m-d')
+                        ]
                 ]
             ];
         }
@@ -2310,7 +2301,7 @@ class Carrier extends AbstractDhl implements CarrierInterface
             "pickup" => [
                 "isRequested" => false
             ],
-            "productCode" => "N",
+            "productCode" => $rawRequest->getShippingMethod(),
             "accounts" => [
                 [
                     "typeCode" => "shipper",
@@ -2365,6 +2356,7 @@ class Carrier extends AbstractDhl implements CarrierInterface
         ];
 
         $shippingPayload = json_encode($shippingParams);
+
         $debugData = ['request' => $this->filterDebugData($shippingPayload)];
         try {
             $response = $this->httpClient->request(
@@ -2413,7 +2405,7 @@ class Carrier extends AbstractDhl implements CarrierInterface
         }
 
         if ($this->getConfigData('type') == 'DHL_REST') {
-            $this->_getRestTracking($trackings);
+            $this->_getRestTracking(implode(',', $trackings));
         } else {
             $this->_getXMLTracking($trackings);
         }
@@ -2600,7 +2592,7 @@ class Carrier extends AbstractDhl implements CarrierInterface
         $url = $this->getGatewayURL().'/tracking?';
 
         $trackingParams = [
-            'shipmentTrackingNumber' => $trackings[0],
+            'shipmentTrackingNumber' => $trackings,
             'language' => 'en',
             'limit' => 10
         ];
@@ -2639,6 +2631,8 @@ class Carrier extends AbstractDhl implements CarrierInterface
      * @param string[] $trackings
      * @param string $response
      * @return void
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     protected function _parseRestTrackingResponse($trackings, $response)
     {
@@ -2648,10 +2642,10 @@ class Carrier extends AbstractDhl implements CarrierInterface
         if (!empty(trim($response))) {
             $trackingData = json_decode($response);
             if (!empty($trackingData)
-                && (isset($trackingData->shipments[0]->status)
-                    && $trackingData->shipments[0]->status !== 'Success')
+                && (isset($trackingData->status)
+                    && $trackingData->status !== 'Success')
             ) {
-                $this->_errors['error'] = __('Error %1', $trackingData->shipments[0]->status);
+                $this->_errors['error'] = __('Error %1', $trackingData->message);
             } elseif (!empty($trackingData) && $trackingData->shipments[0]->status == 'Success') {
                 foreach ($trackingData->shipments as $shipment) {
                     $awbinfoData = [];
