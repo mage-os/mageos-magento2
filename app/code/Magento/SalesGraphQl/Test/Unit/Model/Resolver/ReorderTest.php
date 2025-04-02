@@ -73,10 +73,7 @@ class ReorderTest extends TestCase
         $args = ['orderNumber' => '00000010'];
         $value = [];
 
-        $this->extensionAttributesMock = $this->getMockBuilder(ContextExtension::class)
-            ->onlyMethods(['getIsCustomer', 'getStore'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->extensionAttributesMock = $this->createMock(ContextExtension::class);
         $this->extensionAttributesMock->expects($this->once())
             ->method('getIsCustomer')
             ->willReturn(true);
