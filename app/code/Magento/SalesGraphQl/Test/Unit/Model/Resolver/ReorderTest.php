@@ -74,6 +74,7 @@ class ReorderTest extends TestCase
         $value = [];
 
         $this->extensionAttributesMock = $this->getMockBuilder(ContextExtension::class)
+            ->onlyMethods(['getIsCustomer', 'getStore'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->extensionAttributesMock->expects($this->once())
