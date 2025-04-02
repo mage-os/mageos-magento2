@@ -122,6 +122,9 @@
         <actionGroup ref="AdminOpenReviewByUserNicknameActionGroup" stepKey="openFirstCustomerReviews"/>
         <actionGroup ref="AdminChangeReviewStatusActionGroup" stepKey="changeFirstReviewStatus"/>
         <actionGroup ref="AdminSaveReviewActionGroup" stepKey="saveModeratedFirstReview"/>
+        <actionGroup ref="CliCacheCleanActionGroup" stepKey="cacheClean">
+          <argument name="tags" value="config"/>
+        </actionGroup>
 
         <!-- Moderate second product reviews: change review status from pending to approved, save -->
         <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearFilter"/>
