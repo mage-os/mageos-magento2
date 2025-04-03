@@ -100,6 +100,6 @@
         <actionGroup ref="CliCacheCleanActionGroup" stepKey="cacheClean">
             <argument name="tags" value="config"/>
         </actionGroup>
-        <dontSee selector="{{StorefrontCategoryProductSection.ProductCatalogRulePriceTitleByName($$createProduct.name$$)}}" userInput="Special Price" stepKey="dontSeeSpecialPrice"/>
+        <dontSeeElement selector="{{StorefrontCategoryProductSection.ProductCatalogRuleSpecialPriceTitleByName($createProduct.name$)}}" stepKey="dontSeeSpecialPrice"/>
     </test>
 </tests>
