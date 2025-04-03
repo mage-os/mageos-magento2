@@ -6,7 +6,7 @@
 namespace Magento\Webapi\Authentication;
 
 use Magento\TestFramework\Helper\Bootstrap;
-use Magento\TestFramework\Authentication\Rest\OauthService;
+use Magento\TestFramework\Authentication\Rest\OauthClient;
 
 /**
  * @magentoApiDataFixture consumerFixture
@@ -28,14 +28,14 @@ class RestTest extends \Magento\TestFramework\TestCase\WebapiAbstract
     /** @var string */
     protected static $_verifier;
 
-    /** @var \Magento\TestFramework\Authentication\Rest\OauthService */
-    private $_oauthService;
+    /** @var \Magento\TestFramework\Authentication\Rest\OauthClient */
+    private $_oauthClient;
 
     protected function setUp(): void
     {
         $this->_markTestAsRestOnly();
         $objectManager = Bootstrap::getObjectManager();
-        $this->_oauthService = $objectManager->create(OauthService::class);
+        $this->_oauthClient = $objectManager->create(OauthClient::class);
         parent::setUp();
     }
 
@@ -58,7 +58,7 @@ class RestTest extends \Magento\TestFramework\TestCase\WebapiAbstract
     protected function tearDown(): void
     {
         parent::tearDown();
-        $this->_oauthService = null;
+        $this->_oauthClient = null;
         if (isset(self::$_consumer)) {
             self::$_consumer->delete();
             self::$_token->delete();
@@ -67,8 +67,8 @@ class RestTest extends \Magento\TestFramework\TestCase\WebapiAbstract
 
     public function testGetRequestToken()
     {
-        $oauthService = $this->_oauthService->create(self::$_consumerKey, self::$_consumerSecret);
-        $requestToken = $oauthService->getRequestToken();
+        $oauthClient = $this->_oauthClient->create(self::$_consumerKey, self::$_consumerSecret);
+        $requestToken = $oauthClient->getRequestToken();
 
         $this->assertNotEmpty($requestToken["oauth_token"], "Request token value is not set");
         $this->assertNotEmpty($requestToken["oauth_token_secret"], "Request token secret is not set");
@@ -96,8 +96,8 @@ class RestTest extends \Magento\TestFramework\TestCase\WebapiAbstract
         $this::$_consumer->setUpdatedAt('2012-01-01 00:00:00');
         $this::$_consumer->save();
 
-        $oauthService = $this->_oauthService->create(self::$_consumerKey, self::$_consumerSecret);
-        $oauthService->getRequestToken();
+        $oauthClient = $this->_oauthClient->create(self::$_consumerKey, self::$_consumerSecret);
+        $oauthClient->getRequestToken();
     }
 
     /**
@@ -107,8 +107,8 @@ class RestTest extends \Magento\TestFramework\TestCase\WebapiAbstract
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('401 Unauthorized');
 
-        $oauthService = $this->_oauthService->create('invalid_key', self::$_consumerSecret);
-        $oauthService->getRequestToken();
+        $oauthClient = $this->_oauthClient->create('invalid_key', self::$_consumerSecret);
+        $oauthClient->getRequestToken();
     }
 
     /**
@@ -118,15 +118,15 @@ class RestTest extends \Magento\TestFramework\TestCase\WebapiAbstract
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('401 Unauthorized');
 
-        $oauthService = $this->_oauthService->create(self::$_consumerKey, 'invalid_secret');
-        $oauthService->getRequestToken();
+        $oauthClient = $this->_oauthClient->create(self::$_consumerKey, 'invalid_secret');
+        $oauthClient->getRequestToken();
     }
 
     public function testGetAccessToken()
     {
-        $oauthService = $this->_oauthService->create(self::$_consumerKey, self::$_consumerSecret);
-        $requestToken = $oauthService->getRequestToken();
-        $accessToken = $oauthService->getAccessToken($requestToken, self::$_verifier);
+        $oauthClient = $this->_oauthClient->create(self::$_consumerKey, self::$_consumerSecret);
+        $requestToken = $oauthClient->getRequestToken();
+        $accessToken = $oauthClient->getAccessToken($requestToken, self::$_verifier);
 
         $this->assertNotEmpty($accessToken["oauth_token"], "Access token value is not set.");
         $this->assertNotEmpty($accessToken["oauth_token_secret"], "Access token secret is not set.");
@@ -150,9 +150,9 @@ class RestTest extends \Magento\TestFramework\TestCase\WebapiAbstract
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('401 Unauthorized');
 
-        $oauthService = $this->_oauthService->create(self::$_consumerKey, self::$_consumerSecret);
-        $requestToken = $oauthService->getRequestToken();
-        $oauthService->getAccessToken($requestToken, 'invalid verifier');
+        $oauthClient = $this->_oauthClient->create(self::$_consumerKey, self::$_consumerSecret);
+        $requestToken = $oauthClient->getRequestToken();
+        $oauthClient->getAccessToken($requestToken, 'invalid verifier');
     }
 
     /**
@@ -162,14 +162,14 @@ class RestTest extends \Magento\TestFramework\TestCase\WebapiAbstract
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('401 Unauthorized');
 
-        $oauthServiceA = $this->_oauthService->create(self::$_consumerKey, self::$_consumerSecret);
-        $requestTokenA = $oauthServiceA->getRequestToken();
+        $oauthClientA = $this->_oauthClient->create(self::$_consumerKey, self::$_consumerSecret);
+        $requestTokenA = $oauthClientA->getRequestToken();
         $oauthVerifierA = self::$_verifier;
 
         self::consumerFixture();
-        $oauthServiceB = $this->_oauthService->create(self::$_consumerKey, self::$_consumerSecret);
-        $oauthServiceB->getRequestToken();
-        $oauthServiceB->getAccessToken($requestTokenA, $oauthVerifierA);
+        $oauthClientB = $this->_oauthClient->create(self::$_consumerKey, self::$_consumerSecret);
+        $oauthClientB->getRequestToken();
+        $oauthClientB->getAccessToken($requestTokenA, $oauthVerifierA);
     }
 
     /**
@@ -179,14 +179,14 @@ class RestTest extends \Magento\TestFramework\TestCase\WebapiAbstract
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('400 Bad Request');
 
-        $oauthService = $this->_oauthService->create(self::$_consumerKey, self::$_consumerSecret);
-        $requestToken = $oauthService->getRequestToken();
-        $accessToken = $oauthService->getAccessToken(
+        $oauthClient = $this->_oauthClient->create(self::$_consumerKey, self::$_consumerSecret);
+        $requestToken = $oauthClient->getRequestToken();
+        $accessToken = $oauthClient->getAccessToken(
             $requestToken,
             self::$_verifier
         );
 
         $accessToken['oauth_token'] = 'invalid';
-        $oauthService->validateAccessToken($accessToken);
+        $oauthClient->validateAccessToken($accessToken);
     }
 }
