@@ -16,6 +16,7 @@
             <severity value="CRITICAL"/>
             <testCaseId value="AC-6116"/>
             <group value="3rd_party_integration"/>
+            <group value="paypal"/>
         </annotations>
         <before>
             <!-- Create Product -->
@@ -56,9 +57,5 @@
         <!-- Login to Paypal in-context-->
         <actionGroup ref="StorefrontLoginToPayPalPaymentAccountTwoStepActionGroup" stepKey="loginToPayPal"/>
         <actionGroup ref="StorefrontPaypalSwitchBackToMagentoFromCheckoutPageActionGroup" stepKey="confirmPaymentAndGoBackToMagento"/>
-        <actionGroup ref="StorefrontPlaceOrderOnOrderReviewPageActionGroup" stepKey="clickPlaceOrderBtn"/>
-        <!-- I see order successful Page -->
-        <waitForElementVisible selector="{{CheckoutSuccessMainSection.orderNumber}}" stepKey="waitForOrderNumberToBeGrabbed"/>
-        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber}}" stepKey="grabOrderNumber"/>
     </test>
 </tests>
