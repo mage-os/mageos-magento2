@@ -5,8 +5,8 @@
  */
 namespace Magento\CatalogInventory\Block\Plugin;
 
+use Magento\Catalog\Block\Product\View;
 use Magento\CatalogInventory\Model\Product\QuantityValidator;
-use Magento\Framework\App\ObjectManager;
 
 class ProductView
 {
@@ -16,25 +16,23 @@ class ProductView
     private $productQuantityValidator;
 
     /**
-     * @param QuantityValidator|null $productQuantityValidator
+     * @param QuantityValidator $productQuantityValidator
      */
     public function __construct(
-        QuantityValidator $productQuantityValidator = null
+        QuantityValidator $productQuantityValidator
     ) {
-        $this->productQuantityValidator = $productQuantityValidator ?: ObjectManager::getInstance()->get(
-            QuantityValidator::class
-        );
+        $this->productQuantityValidator = $productQuantityValidator;
     }
 
     /**
      * Adds quantities validator.
      *
-     * @param \Magento\Catalog\Block\Product\View $block
+     * @param View $block
      * @param array $validators
      * @return array
      */
     public function afterGetQuantityValidators(
-        \Magento\Catalog\Block\Product\View $block,
+        View $block,
         array $validators
     ) {
         return array_merge(
