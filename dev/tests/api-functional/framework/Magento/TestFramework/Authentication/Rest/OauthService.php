@@ -272,7 +272,7 @@ class OauthService
     {
         return $this->urlProvider->getRebuiltUrl(TESTS_BASE_URL . '/oauth/token/access');
     }
-    
+
     /**
      * Returns the TestModule1 Rest API endpoint.
      *
@@ -280,6 +280,7 @@ class OauthService
      */
     public function getTestApiEndpoint(): string
     {
+        /** @phpstan-ignore-next-line */
         $defaultStoreCode = Bootstrap::getObjectManager()->get(\Magento\Store\Model\StoreManagerInterface::class)
             ->getStore()->getCode();
         return $this->urlProvider->getRebuiltUrl(TESTS_BASE_URL . '/rest/' . $defaultStoreCode . '/V1/testmodule1');
