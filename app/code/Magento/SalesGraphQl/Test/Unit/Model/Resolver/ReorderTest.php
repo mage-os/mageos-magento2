@@ -9,9 +9,11 @@ namespace Magento\SalesGraphQl\Test\Unit\Model\Resolver;
 
 use Magento\Framework\Lock\LockManagerInterface;
 use Magento\GraphQl\Model\Query\Context;
-use Magento\GraphQl\Model\Query\ContextExtension;
+use Magento\GraphQl\Model\Query\ContextExtensionInterface;
+use Magento\Sales\Model\Order;
 use Magento\Sales\Model\OrderFactory;
 use Magento\Sales\Model\Reorder\Reorder;
+use Magento\Store\Api\Data\StoreInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\SalesGraphQl\Model\Resolver\Reorder as Subject;
@@ -26,7 +28,7 @@ class ReorderTest extends TestCase
     private $subject;
 
     /**
-     * @var ContextExtension|MockObject
+     * @var ContextExtensionInterface|MockObject
      */
     private $extensionAttributesMock;
 
@@ -73,12 +75,14 @@ class ReorderTest extends TestCase
         $args = ['orderNumber' => '00000010'];
         $value = [];
 
-        $this->extensionAttributesMock = $this->createMock(ContextExtension::class);
+        $this->extensionAttributesMock = $this->getMockBuilder(ContextExtensionInterface::class)
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
         $this->extensionAttributesMock->expects($this->once())
             ->method('getIsCustomer')
             ->willReturn(true);
 
-        $store = $this->createMock(\Magento\Store\Api\Data\StoreInterface::class);
+        $store = $this->createMock(StoreInterface::class);
         $store->expects($this->once())
             ->method('getId')
             ->willReturn(1);
@@ -94,7 +98,7 @@ class ReorderTest extends TestCase
             ->method('getUserId')
             ->willReturn($contextCustomerId);
 
-        $order = $this->createMock(\Magento\Sales\Model\Order::class);
+        $order = $this->createMock(Order::class);
         $order->expects($this->once())
             ->method('loadByIncrementIdAndStoreId')
             ->willReturnSelf();

@@ -87,7 +87,7 @@ class Reorder implements ResolverInterface
             );
         }
 
-        $lockName = implode('_', [$currentUserId, $storeId, $orderNumber]);
+        $lockName = hash('sha256', $orderNumber);
         if ($this->lockManager->lock(self::LOCK_PREFIX . $lockName, self::LOCK_TIMEOUT)) {
             try {
                 $reorderOutput = $this->reorder->execute($orderNumber, $storeId);
@@ -96,7 +96,7 @@ class Reorder implements ResolverInterface
             }
         } else {
             throw new \Magento\Framework\Exception\LocalizedException(
-                __('The reorder is locked for processing. The concurrent request has been aborted.')
+                __('Sorry, there has been an error processing your request. Please try again later.')
             );
         }
 
