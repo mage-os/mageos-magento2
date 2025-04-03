@@ -21,7 +21,7 @@ class LocalizedToNormalizedTest extends TestCase
      *
      * @dataProvider localizedToNormalizedDataProvider
      */
-    public function testLocalizedToNormalized($value, $options, $expectedValue)
+    public function testLocalizedToNormalized(string $value, array $options, string|array $expectedValue)
     {
         $filter = new LocalizedToNormalized($options);
         $this->assertEquals($expectedValue, $filter->filter($value));
@@ -30,16 +30,16 @@ class LocalizedToNormalizedTest extends TestCase
     /**
      * @return array
      */
-    public static function localizedToNormalizedDataProvider()
+    public static function localizedToNormalizedDataProvider(): array
     {
-        
         return [
             '1' => [
                 "0.5",
                 [
                     'locale' => 'nl',
                     'date_format' => null,
-                    'precision' => null
+                    'precision' => null,
+                    'decimal_style' => null
                 ],
                 "0.5"
             ],
@@ -48,7 +48,8 @@ class LocalizedToNormalizedTest extends TestCase
                 [
                     'locale' => 'en',
                     'date_format' => null,
-                    'precision' => null
+                    'precision' => null,
+                    'decimal_style' => NumberFormatter::PATTERN_DECIMAL
                 ],
                 "0.5"
             ],

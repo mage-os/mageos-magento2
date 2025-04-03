@@ -148,8 +148,12 @@ class SidebarTest extends TestCase
      *
      * @dataProvider dataProviderUpdateQuoteItem
      */
-    public function testUpdateQuoteItem($locale, $itemId, $expectedItemQty, $itemQty)
-    {
+    public function testUpdateQuoteItem(
+        string $locale,
+        int|string $itemId,
+        int|string|float $expectedItemQty,
+        int|string|float $itemQty
+    ) {
         $this->resolverMock->expects($this->once())
             ->method('getLocale')
             ->willReturn($locale);
@@ -188,7 +192,7 @@ class SidebarTest extends TestCase
     /**
      * @return array
      */
-    public static function dataProviderUpdateQuoteItem()
+    public static function dataProviderUpdateQuoteItem(): array
     {
         return [
             //locale, itemId, expectedItemQty, ItemQty
