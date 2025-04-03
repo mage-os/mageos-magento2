@@ -1,14 +1,18 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2022 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
 namespace Magento\SalesRule\Test\Unit\Model\Coupon\Usage;
 
+use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Framework\Api\SearchCriteriaInterface;
+use Magento\Framework\Lock\LockManagerInterface;
+use Magento\SalesRule\Api\CouponRepositoryInterface;
+use Magento\SalesRule\Api\Data\CouponSearchResultInterface;
 use Magento\SalesRule\Model\Coupon;
-use Magento\SalesRule\Model\CouponFactory;
 use Magento\SalesRule\Model\Coupon\Usage\Processor;
 use Magento\SalesRule\Model\Coupon\Usage\UpdateInfo;
 use Magento\SalesRule\Model\ResourceModel\Coupon\Usage;
@@ -19,6 +23,9 @@ use Magento\SalesRule\Model\RuleFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class ProcessorTest extends TestCase
 {
     /**
@@ -37,11 +44,6 @@ class ProcessorTest extends TestCase
     private $ruleCustomerFactoryMock;
 
     /**
-     * @var CouponFactory|MockObject
-     */
-    private $couponFactoryMock;
-
-    /**
      * @var Usage|MockObject
      */
     private $couponUsageMock;
@@ -52,21 +54,43 @@ class ProcessorTest extends TestCase
     private $updateInfoMock;
 
     /**
+     * @var CouponRepositoryInterface|CouponRepositoryInterface&MockObject|MockObject
+     */
+    private $couponRepository;
+
+    /**
+     * @var SearchCriteriaBuilder|SearchCriteriaBuilder&MockObject|MockObject
+     */
+    private $criteriaBuilder;
+
+    /**
+     * @var LockManagerInterface|LockManagerInterface&MockObject|MockObject
+     */
+    private $lockManager;
+
+    /**
      * @inheritDoc
      */
     protected function setUp(): void
     {
         $this->ruleFactoryMock = $this->createMock(RuleFactory::class);
         $this->ruleCustomerFactoryMock = $this->createMock(CustomerFactory::class);
-        $this->couponFactoryMock = $this->createMock(CouponFactory::class);
         $this->couponUsageMock = $this->createMock(Usage::class);
         $this->updateInfoMock = $this->createMock(UpdateInfo::class);
+        $this->couponRepository = $this->createMock(CouponRepositoryInterface::class);
+        $this->criteriaBuilder = $this->createMock(SearchCriteriaBuilder::class);
+        $this->criteriaBuilder->method('addFilter')->willReturnSelf();
+        $searchCriteria = $this->createMock(SearchCriteriaInterface::class);
+        $this->criteriaBuilder->method('create')->willReturn($searchCriteria);
+        $this->lockManager = $this->createMock(LockManagerInterface::class);
 
         $this->processor = new Processor(
             $this->ruleFactoryMock,
             $this->ruleCustomerFactoryMock,
-            $this->couponFactoryMock,
-            $this->couponUsageMock
+            $this->couponUsageMock,
+            $this->couponRepository,
+            $this->criteriaBuilder,
+            $this->lockManager
         );
     }
 
@@ -92,9 +116,12 @@ class ProcessorTest extends TestCase
         $this->updateInfoMock->expects($this->atLeastOnce())->method('isIncrement')->willReturn($isIncrement);
 
         $couponMock = $this->createMock(Coupon::class);
-        $this->couponFactoryMock->expects($this->exactly(2))->method('create')->willReturn($couponMock);
-        $couponMock->expects($this->exactly(2))->method('loadByCode')->with($couponCode)->willReturnSelf();
-        $couponMock->expects($this->atLeastOnce())->method('getId')->willReturn($couponId);
+        $searchResult = $this->createMock(CouponSearchResultInterface::class);
+        $searchResult->method('getItems')
+            ->willReturn([$couponMock]);
+        $this->couponRepository->method('getList')->willReturn($searchResult);
+        $couponMock->expects($this->exactly(4))->method('getId')->willReturn($couponId);
+        $this->couponRepository->method('getById')->with($couponId)->willReturn($couponMock);
         $couponMock->expects($this->atLeastOnce())->method('getTimesUsed')->willReturn($timesUsed);
         $couponMock->expects($this->any())->method('setTimesUsed')->with($setTimesUsed)->willReturnSelf();
         $couponMock->expects($this->any())->method('save')->willReturnSelf();
@@ -113,6 +140,9 @@ class ProcessorTest extends TestCase
             ->getMock();
         $customerRuleMock->expects($this->once())->method('loadByCustomerRule')->with($customerId, $ruleId)
             ->willReturnSelf();
+
+        $this->lockManager->expects($this->any())->method('lock')->willReturn(true);
+        $this->lockManager->expects($this->any())->method('unlock')->willReturn(true);
         $customerRuleMock->expects($this->once())->method('getId')->willReturn($ruleCustomerId);
         $customerRuleMock->expects($this->any())->method('getTimesUsed')->willReturn($timesUsed);
         $customerRuleMock->expects($this->any())->method('setTimesUsed')->willReturn($setTimesUsed);
@@ -127,12 +157,12 @@ class ProcessorTest extends TestCase
             ->addMethods(['getTimesUsed', 'setTimesUsed'])
             ->disableOriginalConstructor()
             ->getMock();
-        $ruleMock->expects($this->once())->method('load')->willReturnSelf();
-        $ruleMock->expects($this->once())->method('getId')->willReturn(true);
-        $ruleMock->expects($this->once())->method('loadCouponCode')->willReturnSelf();
+        $ruleMock->expects($this->atLeastOnce())->method('load')->willReturnSelf();
+        $ruleMock->expects($this->atLeastOnce())->method('getId')->willReturn(true);
+        $ruleMock->expects($this->atLeastOnce())->method('loadCouponCode')->willReturnSelf();
         $ruleMock->expects($this->any())->method('getTimesUsed')->willReturn($timesUsed);
         $ruleMock->expects($this->any())->method('setTimesUsed')->willReturn($setTimesUsed);
-        $this->ruleFactoryMock->expects($this->once())->method('create')->willReturn($ruleMock);
+        $this->ruleFactoryMock->expects($this->atLeastOnce())->method('create')->willReturn($ruleMock);
 
         $this->processor->process($this->updateInfoMock);
     }
@@ -140,7 +170,7 @@ class ProcessorTest extends TestCase
     /**
      * @return array
      */
-    public function dataProvider(): array
+    public static function dataProvider(): array
     {
         return [
             [true, 1],
