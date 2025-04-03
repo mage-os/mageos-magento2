@@ -56,8 +56,7 @@ class OauthService
         ClientFactory           $clientFactory,
         NonceGeneratorInterface $nonceGenerator,
         Utility                 $utility
-    )
-    {
+    ) {
         $this->urlProvider = $urlProvider;
         $this->clientFactory = $clientFactory;
         $this->_nonceGenerator = $nonceGenerator;
@@ -107,44 +106,21 @@ class OauthService
         $authParameters = ['oauth_consumer_key' => $this->consumerKey];
         $authParameters = $this->getBasicAuthorizationParams($authParameters);
         $requestUrl = $this->getRequestTokenEndpoint();
-        $headers = ['Authorization' => $this->buildAuthorizationHeaderToRequestToken($authParameters, $this->consumerSecret, $requestUrl)];
+        $headers = [
+            'Authorization' => $this->buildAuthorizationHeaderToRequestToken(
+                $authParameters,
+                $this->consumerSecret,
+                $requestUrl
+            )
+        ];
 
         $responseBody = $this->fetchResponse($requestUrl, [], $headers);
         return $this->parseResponseBody($responseBody);
     }
 
     /**
-     * Get request token endpoint.
-     * @return string
-     * @throws \Exception
-     */
-    public function getRequestTokenEndpoint(): string
-    {
-        return $this->urlProvider->getRebuiltUrl(TESTS_BASE_URL . '/oauth/token/request');
-    }
-
-    /**
-     * @param string $url
-     * @param array $requestBody
-     * @param array $headers
-     * @param string $method
-     * @return string
-     */
-    public function fetchResponse(string $url, array $requestBody, array $headers, string $method = 'POST'): string
-    {
-        $httpClient = $this->clientFactory->create();
-        $httpClient->setHeaders($headers);
-        $httpClient->setOption(CURLOPT_FAILONERROR, true);
-        if ($method === 'GET') {
-            $httpClient->get($url);
-        } else {
-            $httpClient->post($url, $requestBody);
-        }
-
-        return $httpClient->getBody();
-    }
-
-    /**
+     * Build header for request token
+     *
      * @param array $params
      * @param string $consumerSecret
      * @param string $requestUrl
@@ -158,8 +134,7 @@ class OauthService
         string $requestUrl,
         string $signatureMethod = \Magento\Framework\Oauth\Oauth::SIGNATURE_SHA256,
         string $httpMethod = 'POST'
-    ): string
-    {
+    ): string {
         $params['oauth_signature'] = $this->_httpUtility->sign(
             $params,
             $signatureMethod,
@@ -173,6 +148,8 @@ class OauthService
     }
 
     /**
+     * Get access token
+     *
      * @param array $token
      * @param string $verifier
      * @return array
@@ -201,46 +178,8 @@ class OauthService
     }
 
     /**
-     * @param array $params
-     * @param string $consumerSecret
-     * @param string $requestUrl
-     * @param array $token
-     * @param array|null $bodyParams
-     * @param string $signatureMethod
-     * @param string $httpMethod
-     * @return string
-     */
-    protected function buildAuthorizationHeaderForAPIRequest(
-        array  $params,
-        string $consumerSecret,
-        string $requestUrl,
-        array  $token,
-        ?array $bodyParams = null,
-        string $signatureMethod = \Magento\Framework\Oauth\Oauth::SIGNATURE_SHA256,
-        string $httpMethod = 'POST'
-    ): string
-    {
-
-        if (isset($params['oauth_callback'])) {
-            unset($params['oauth_callback']);
-        }
-
-        $params = array_merge($params, ['oauth_token' => $token['oauth_token']]);
-        $params = array_merge($params, $bodyParams);
-
-        $params['oauth_signature'] = $this->_httpUtility->sign(
-            $params,
-            $signatureMethod,
-            $consumerSecret,
-            $token['oauth_token_secret'],
-            $httpMethod,
-            $requestUrl
-        );
-
-        return $this->_httpUtility->toAuthorizationHeader($params);
-    }
-
-    /**
+     * Validate access token
+     *
      * @param array $token
      * @param string $method
      * @return array
@@ -273,14 +212,67 @@ class OauthService
     }
 
     /**
+     * Build header for api request
+     *
+     * @param array $params
+     * @param string $consumerSecret
+     * @param string $requestUrl
+     * @param array $token
+     * @param array|null $bodyParams
+     * @param string $signatureMethod
+     * @param string $httpMethod
+     * @return string
+     */
+    public function buildAuthorizationHeaderForAPIRequest(
+        array  $params,
+        string $consumerSecret,
+        string $requestUrl,
+        array  $token,
+        ?array $bodyParams = null,
+        string $signatureMethod = \Magento\Framework\Oauth\Oauth::SIGNATURE_SHA256,
+        string $httpMethod = 'POST'
+    ): string {
+
+        if (isset($params['oauth_callback'])) {
+            unset($params['oauth_callback']);
+        }
+
+        $params = array_merge($params, ['oauth_token' => $token['oauth_token']]);
+        $params = array_merge($params, $bodyParams);
+
+        $params['oauth_signature'] = $this->_httpUtility->sign(
+            $params,
+            $signatureMethod,
+            $consumerSecret,
+            $token['oauth_token_secret'],
+            $httpMethod,
+            $requestUrl
+        );
+
+        return $this->_httpUtility->toAuthorizationHeader($params);
+    }
+
+    /**
+     * Request token endpoint.
+     *
+     * @return string
+     * @throws \Exception
+     */
+    public function getRequestTokenEndpoint(): string
+    {
+        return $this->urlProvider->getRebuiltUrl(TESTS_BASE_URL . '/oauth/token/request');
+    }
+
+    /**
+     * Access token endpoint
+     *
      * @return string
      */
     public function getAccessTokenEndpoint(): string
     {
         return $this->urlProvider->getRebuiltUrl(TESTS_BASE_URL . '/oauth/token/access');
     }
-
-
+    
     /**
      * Returns the TestModule1 Rest API endpoint.
      *
@@ -291,6 +283,29 @@ class OauthService
         $defaultStoreCode = Bootstrap::getObjectManager()->get(\Magento\Store\Model\StoreManagerInterface::class)
             ->getStore()->getCode();
         return $this->urlProvider->getRebuiltUrl(TESTS_BASE_URL . '/rest/' . $defaultStoreCode . '/V1/testmodule1');
+    }
+
+    /**
+     * Fetch api response using curl client factory
+     *
+     * @param string $url
+     * @param array $requestBody
+     * @param array $headers
+     * @param string $method
+     * @return string
+     */
+    public function fetchResponse(string $url, array $requestBody, array $headers, string $method = 'POST'): string
+    {
+        $httpClient = $this->clientFactory->create();
+        $httpClient->setHeaders($headers);
+        $httpClient->setOption(CURLOPT_FAILONERROR, true);
+        if ($method === 'GET') {
+            $httpClient->get($url);
+        } else {
+            $httpClient->post($url, $requestBody);
+        }
+
+        return $httpClient->getBody();
     }
 
     /**
