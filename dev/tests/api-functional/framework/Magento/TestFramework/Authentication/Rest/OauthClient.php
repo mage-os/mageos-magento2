@@ -137,7 +137,7 @@ class OauthClient
         string $signatureMethod = \Magento\Framework\Oauth\Oauth::SIGNATURE_SHA256,
         string $httpMethod = 'POST'
     ): string {
-        $params['oauth_signature'] = $this->_httpUtility->sign(
+        $params['oauth_signature'] = $this->getSignature(
             $params,
             $signatureMethod,
             $consumerSecret,
@@ -241,7 +241,7 @@ class OauthClient
         $params = array_merge($params, ['oauth_token' => $token['oauth_token']]);
         $params = array_merge($params, $bodyParams);
 
-        $params['oauth_signature'] = $this->_httpUtility->sign(
+        $params['oauth_signature'] = $this->getSignature(
             $params,
             $signatureMethod,
             $consumerSecret,
@@ -251,6 +251,46 @@ class OauthClient
         );
 
         return $this->_httpUtility->toAuthorizationHeader($params);
+    }
+
+    /**
+     * Get the signature
+     *
+     * @param array $params
+     * @param string $signatureMethod
+     * @param string $consumerSecret
+     * @param string|null $tokenSecret
+     * @param string $httpMethod
+     * @param string $requestUrl
+     * @return string
+     */
+    public function getSignature(
+        array $params,
+        string $signatureMethod,
+        string $consumerSecret,
+        ?string $tokenSecret,
+        string $httpMethod,
+        string $requestUrl
+    ): string {
+        $data = parse_url($requestUrl);
+        $queryStringData = !isset($data['query']) ? [] : array_reduce(
+            explode('&', $data['query']),
+            function ($carry, $item) {
+                list($key, $value) = explode('=', $item, 2);
+                $carry[rawurldecode($key)] = rawurldecode($value);
+                return $carry;
+            },
+            []
+        );
+
+        return $this->_httpUtility->sign(
+            array_merge($queryStringData, $params),
+            $signatureMethod,
+            $consumerSecret,
+            $tokenSecret,
+            $httpMethod,
+            $requestUrl
+        );
     }
 
     /**
@@ -313,10 +353,10 @@ class OauthClient
     /**
      * Builds the bearer token authorization header
      *
-     * @param string $token
+     * @param string|null $token
      * @return array
      */
-    public function buildBearerTokenAuthorizationHeader(string $token): array
+    public function buildBearerTokenAuthorizationHeader(?string $token): array
     {
         return [
             'Authorization: Bearer ' . $token
