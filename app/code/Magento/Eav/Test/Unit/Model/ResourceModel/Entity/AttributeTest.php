@@ -124,6 +124,78 @@ class AttributeTest extends TestCase
     }
 
     /**
+     * Verify select option with multiple choice save one default value
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
+    public function testSaveSelectDefaultOptionAttribute()
+    {
+        list($connectionMock, $resourceModel) = $this->_prepareResourceModel();
+
+        $originalData = [
+            'entity_type_id' => 4,
+            'attribute_code' => 'custom_layout',
+            'backend_model' => null,
+            'backend_type' => 'varchar',
+            'frontend_input' => 'select',
+            'frontend_label' => 'Test Dropdown',
+            'frontend_class' => null,
+            'source_model' => Layout::class,
+            'is_required' => 0,
+            'is_user_defined' => 1,
+            'is_unique' => 0,
+            'default_value' => "option_3",
+        ];
+
+        $attributeData = [
+            'id' => '999',
+            'attribute_id' => '123',
+            'entity_type_id' => 4,
+            'attribute_code' => 'custom_layout',
+            'backend_model' => null,
+            'backend_type' => 'varchar',
+            'frontend_input' => 'select',
+            'frontend_label' => 'Test Dropdown',
+            'frontend_class' => null,
+            'source_model' => Layout::class,
+            'is_required' => 0,
+            'is_user_defined' => 1,
+            'is_unique' => 0,
+            'default_value' => "option_3",
+            'default' => ['option_1'],
+            'sort_order' => 1,
+        ];
+
+        $objectManagerHelper = new ObjectManager($this);
+        /** @var AbstractModel $model */
+        $arguments = $objectManagerHelper->getConstructArguments(AbstractModel::class);
+        $arguments['data'] = $attributeData;
+        $arguments['context'] = $this->contextMock;
+        $model = $this->getMockBuilder(AbstractModel::class)
+            ->onlyMethods(['save'])
+            ->setConstructorArgs($arguments)
+            ->getMock();
+//        $model->expects($this->any())->method('hasDataChanges')->willReturn(true);
+        $model->setOption(
+            [
+                'delete' =>
+                    [
+                        'option_1' => ['choice_1', 'Frontend choice_1'],
+                        'option_2' => ['choice_2', 'Frontend choice_2'],
+                        'option_3' => ['choice_3', 'Frontend choice_3']
+                    ]
+            ]
+        );
+
+        $connectionMock->expects($this->any())
+            ->method('update')
+            ->with('eav_attribute', $this->logicalOr($originalData, ['default_value' => "option_1"]));
+//        $connectionMock->expects($this->any())->method('getTransactionLevel')->willReturn(1);
+
+        $resourceModel->save($model);
+    }
+
+    /**
      * @covers \Magento\Eav\Model\ResourceModel\Entity\Attribute::_saveOption
      */
     public function testSaveOptionNewUserDefinedAttribute()
