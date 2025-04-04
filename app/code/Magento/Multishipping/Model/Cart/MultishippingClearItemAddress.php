@@ -86,16 +86,26 @@ class MultishippingClearItemAddress
         $isMultipleShippingAddressesPresent = $quote->isMultipleShippingAddresses();
         if ($isMultipleShippingAddressesPresent || $this->isDisableMultishippingRequired($request, $quote)) {
             $this->disableMultishipping->execute($quote);
+            $currentShippingAddress = $quote->getShippingAddress();
             foreach ($quote->getAllShippingAddresses() as $address) {
+                if ($address->getId() == $currentShippingAddress->getId()) {
+                    continue;
+                }
                 $quote->removeAddress($address->getId());
             }
 
-            $shippingAddress = $quote->getShippingAddress();
-            $defaultShipping = $quote->getCustomer()->getDefaultShipping();
-            if ($defaultShipping) {
-                $defaultCustomerAddress = $this->addressRepository->getById($defaultShipping);
-                $shippingAddress->importCustomerAddressData($defaultCustomerAddress);
+            if ($currentShippingAddress) {
+                $defaultShipping = $currentShippingAddress->getCustomerAddressId();
+                $quote->addShippingAddress($currentShippingAddress);
+            } else {
+                $shippingAddress = $quote->getShippingAddress();
+                $defaultShipping = $quote->getCustomer()->getDefaultShipping();
+                if ($defaultShipping) {
+                    $defaultCustomerAddress = $this->addressRepository->getById($defaultShipping);
+                    $shippingAddress->importCustomerAddressData($defaultCustomerAddress);
+                }
             }
+
             if ($isMultipleShippingAddressesPresent) {
                 $this->checkoutSession->setMultiShippingAddressesFlag(true);
             }

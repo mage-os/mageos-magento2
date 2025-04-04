@@ -296,10 +296,15 @@ class Multishipping extends \Magento\Framework\DataObject
              */
             $addresses = $quote->getAllAddresses();
             foreach ($addresses as $address) {
+                if ($address->getAllItems()) {
+                    $defaultShippingId = $address->getCustomerAddressId();
+                }
                 $quote->removeAddress($address->getId());
             }
 
-            $defaultShippingId = $this->getCustomerDefaultShippingAddress();
+            if (!$defaultShippingId) {
+                $defaultShippingId = $this->getCustomerDefaultShippingAddress();
+            }
             if ($defaultShippingId) {
                 $quote->getShippingAddress()->importCustomerAddressData(
                     $this->addressRepository->getById($defaultShippingId)
