@@ -41,7 +41,9 @@ class CartAddressMutexTest extends TestCase
     protected function setUp(): void
     {
         $this->lockManager = $this->createMock(LockManagerInterface::class);
-        $this->cartAddressMutex = new CartAddressMutex($this->lockManager);
+        $this->cartAddressMutex = new CartAddressMutex(
+            $this->lockManager
+        );
     }
 
     /**

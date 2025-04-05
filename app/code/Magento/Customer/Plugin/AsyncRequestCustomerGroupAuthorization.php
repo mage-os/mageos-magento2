@@ -1,6 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright 2025 Adobe
+ * All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -63,8 +64,8 @@ class AsyncRequestCustomerGroupAuthorization
         MassSchedule $massSchedule,
         string       $topic,
         array        $entitiesArray,
-        string       $groupId = null,
-        string       $userId = null
+        ?string       $groupId = null,
+        ?string       $userId = null
     ) {
         // only apply the plugin on account create.
         if ($topic !== self::TOPIC_NAME) {

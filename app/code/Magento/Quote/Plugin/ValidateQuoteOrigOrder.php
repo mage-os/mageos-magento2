@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2024 Adobe
+ * All Rights Reserved.
  */
 
 declare(strict_types=1);
@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace Magento\Quote\Plugin;
 
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Webapi\Rest\Request as RestRequest;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;

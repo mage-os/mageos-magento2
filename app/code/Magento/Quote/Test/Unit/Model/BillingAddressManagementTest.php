@@ -1,8 +1,7 @@
 <?php
 /**
- *
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -20,6 +19,7 @@ use Magento\Quote\Model\ShippingAddressAssignment;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use ReflectionClass;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -62,6 +62,11 @@ class BillingAddressManagementTest extends TestCase
     private MockObject|CartAddressMutexInterface $cartAddressMutex;
 
     /**
+     * @var ReflectionClass
+     */
+    private ReflectionClass $reflectionClass;
+
+    /**
      * @return void
      */
     protected function setUp(): void
@@ -93,6 +98,7 @@ class BillingAddressManagementTest extends TestCase
             'shippingAddressAssignment',
             $this->shippingAssignmentMock
         );
+        $this->reflectionClass = new ReflectionClass($this->model);
     }
 
     /**
@@ -175,7 +181,10 @@ class BillingAddressManagementTest extends TestCase
             ->willThrowException(
                 new \Exception('Some DB Error')
             );
-        $this->model->assignBillingAddress($address, $quoteMock, false);
+
+        $property = $this->reflectionClass->getMethod('assignBillingAddress');
+        $property->setAccessible(true);
+        $property->invokeArgs($this->model, [$address, $quoteMock, false]);
     }
 
     /**
@@ -219,6 +228,10 @@ class BillingAddressManagementTest extends TestCase
             ->with($quoteMock, $address, $useForShipping);
 
         $this->quoteRepositoryMock->expects($this->once())->method('save')->with($quoteMock);
-        $this->assertEquals($addressId, $this->model->assignBillingAddress($address, $quoteMock, $useForShipping));
+
+        $property = $this->reflectionClass->getMethod('assignBillingAddress');
+        $property->setAccessible(true);
+
+        $this->assertEquals($addressId, $property->invokeArgs($this->model, [$address, $quoteMock, $useForShipping]));
     }
 }

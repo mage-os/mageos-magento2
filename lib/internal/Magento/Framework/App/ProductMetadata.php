@@ -79,7 +79,7 @@ class ProductMetadata implements ProductMetadataInterface, DistributionMetadataI
      */
     public function __construct(
         ComposerJsonFinder $composerJsonFinder,
-        CacheInterface $cache = null
+        ?CacheInterface $cache = null
     ) {
         $this->composerJsonFinder = $composerJsonFinder;
         $this->cache = $cache ?: ObjectManager::getInstance()->get(CacheInterface::class);

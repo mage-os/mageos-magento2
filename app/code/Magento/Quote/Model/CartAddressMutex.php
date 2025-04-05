@@ -34,7 +34,7 @@ class CartAddressMutex implements CartAddressMutexInterface
      * @param LockManagerInterface $lockManager
      */
     public function __construct(
-        LockManagerInterface $lockManager
+        LockManagerInterface $lockManager,
     ) {
         $this->lockManager = $lockManager;
     }
