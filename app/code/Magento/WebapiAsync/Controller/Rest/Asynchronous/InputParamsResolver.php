@@ -1,6 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright 2025 Adobe
+ * All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -69,6 +70,11 @@ class InputParamsResolver
      * @var MethodsMap
      */
     private $methodsMap;
+
+    /**
+     * @var array
+     */
+    private array $inputData = [];
 
     /**
      * Initialize dependencies.
@@ -156,8 +162,14 @@ class InputParamsResolver
      */
     public function getInputData()
     {
+        if (!empty($this->inputData)) {
+            return $this->inputData;
+        }
+
         if ($this->isBulk === false) {
-            return [$this->inputParamsResolver->getInputData()];
+            $this->inputData = [$this->inputParamsResolver->getInputData()];
+
+            return $this->inputData;
         }
         $inputData = $this->request->getRequestData();
 
@@ -167,7 +179,7 @@ class InputParamsResolver
             $inputData = array_merge($requestBodyParams, $inputData);
         }
 
-        return array_map(function ($singleEntityParams) {
+        $this->inputData = array_map(function ($singleEntityParams) {
             if (is_array($singleEntityParams)) {
                 $singleEntityParams = $this->filterInputData($singleEntityParams);
                 $singleEntityParams = $this->paramsOverrider->override(
@@ -178,6 +190,8 @@ class InputParamsResolver
 
             return $singleEntityParams;
         }, $inputData);
+
+        return $this->inputData;
     }
 
     /**
@@ -243,7 +257,6 @@ class InputParamsResolver
         string $serviceMethodName,
         array $paramOverriders
     ): void {
-        //phpcs:ignore CopyPaste
         $methodParams = $this->methodsMap->getMethodParams($serviceClassName, $serviceMethodName);
         foreach ($paramOverriders as $key => $param) {
             $arrayKeys = explode('.', $param ?? '');

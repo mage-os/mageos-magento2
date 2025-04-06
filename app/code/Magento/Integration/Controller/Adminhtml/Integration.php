@@ -9,8 +9,8 @@ declare(strict_types=1);
 namespace Magento\Integration\Controller\Adminhtml;
 
 use Magento\Backend\App\Action;
-use Magento\Framework\Url\Validator;
 use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Url\Validator;
 
 /**
  * Controller for integrations management.
@@ -106,7 +106,7 @@ abstract class Integration extends Action
         \Magento\Integration\Helper\Data $integrationData,
         \Magento\Framework\Escaper $escaper,
         \Magento\Integration\Model\ResourceModel\Integration\Collection $integrationCollection,
-        Validator $urlValidator = null
+        ?Validator $urlValidator = null
     ) {
         parent::__construct($context);
         $this->_registry = $registry;

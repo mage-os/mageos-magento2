@@ -1,9 +1,8 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2024 Adobe.
+ * All Rights Reserved.
  */
-
 declare(strict_types=1);
 
 namespace Magento\Framework\Test\Unit\Validator\HTML;
@@ -66,7 +65,7 @@ class ConfigurableWYSIWYGValidatorTest extends TestCase
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function getConfigurations(): array
+    public static function getConfigurations(): array
     {
         return [
             'no-html' => [['div'], [], [], 'just text', false, [], []],

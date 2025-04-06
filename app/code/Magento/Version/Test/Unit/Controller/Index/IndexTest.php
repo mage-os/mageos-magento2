@@ -41,7 +41,7 @@ class IndexTest extends TestCase
 
         $this->productMetadataMock = $this->getMockBuilder(ProductMetadataInterface::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getName', 'getEdition', 'getVersion', 'getDistributionName', 'getDistributionVersion'])
+            ->onlyMethods(['getName', 'getEdition', 'getVersion', 'getDistributionName', 'getDistributionVersion'])
             ->getMockForAbstractClass();
 
         $this->rawResponseFactoryMock = $this->createPartialMock(RawFactory::class, ['create']);

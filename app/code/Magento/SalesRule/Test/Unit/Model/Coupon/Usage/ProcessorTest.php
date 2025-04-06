@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2022 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -120,7 +120,7 @@ class ProcessorTest extends TestCase
         $searchResult->method('getItems')
             ->willReturn([$couponMock]);
         $this->couponRepository->method('getList')->willReturn($searchResult);
-        $couponMock->expects($this->atLeastOnce())->method('getId')->willReturn($couponId);
+        $couponMock->expects($this->exactly(4))->method('getId')->willReturn($couponId);
         $this->couponRepository->method('getById')->with($couponId)->willReturn($couponMock);
         $couponMock->expects($this->atLeastOnce())->method('getTimesUsed')->willReturn($timesUsed);
         $couponMock->expects($this->any())->method('setTimesUsed')->with($setTimesUsed)->willReturnSelf();
@@ -140,6 +140,7 @@ class ProcessorTest extends TestCase
             ->getMock();
         $customerRuleMock->expects($this->once())->method('loadByCustomerRule')->with($customerId, $ruleId)
             ->willReturnSelf();
+
         $this->lockManager->expects($this->any())->method('lock')->willReturn(true);
         $this->lockManager->expects($this->any())->method('unlock')->willReturn(true);
         $customerRuleMock->expects($this->once())->method('getId')->willReturn($ruleCustomerId);

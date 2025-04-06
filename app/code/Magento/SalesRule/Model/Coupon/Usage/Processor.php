@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -60,7 +60,7 @@ class Processor
         private readonly Usage $couponUsage,
         private readonly CouponRepositoryInterface $couponRepository,
         private readonly SearchCriteriaBuilder $criteriaBuilder,
-        LockManagerInterface $lockManager = null
+        ?LockManagerInterface $lockManager = null
     ) {
         $this->lockManager = $lockManager ?? ObjectManager::getInstance()->get(LockManagerInterface::class);
     }
@@ -115,7 +115,8 @@ class Processor
     private function lockLoadedCoupon(Coupon $coupon, UpdateInfo $updateInfo, array $incrementedCouponIds): void
     {
         $isIncrement = $updateInfo->isIncrement();
-        $lockName = self::LOCK_NAME . $coupon->getCode();
+        // Lock name based on coupon id, rather than coupon code that may contain illegal symbols for file based lock
+        $lockName = self::LOCK_NAME . $coupon->getId();
         if ($this->lockManager->lock($lockName, self::LOCK_TIMEOUT)) {
             try {
                 $coupon = $this->couponRepository->getById($coupon->getId());

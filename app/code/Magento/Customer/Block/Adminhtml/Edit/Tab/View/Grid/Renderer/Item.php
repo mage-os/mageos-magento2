@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2011 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -125,8 +125,8 @@ class Item extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\AbstractRe
         $this->setItem($item);
         $product = $this->getProduct();
         $options = $this->getOptionList();
-        return $options ? $this->_renderItemOptions($product, $options) :
-            $this->_escaper->escapeHtml($product->getName());
+        return $options ? $this->_renderItemOptions($product, $options)
+            : $this->_escaper->escapeHtml($product->getName());
     }
 
     /**

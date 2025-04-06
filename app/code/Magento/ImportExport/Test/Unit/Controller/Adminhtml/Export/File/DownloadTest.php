@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -230,7 +230,7 @@ class DownloadTest extends TestCase
      * Data provider to test possible invalid filenames
      * @return array
      */
-    public function invalidFileDataProvider()
+    public static function invalidFileDataProvider()
     {
         return [
             'Relative file name' => ['../.htaccess'],

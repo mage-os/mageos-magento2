@@ -1,6 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright 2025 Adobe
+ * All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -157,7 +158,7 @@ class AsynchronousRequestProcessor implements RequestProcessorInterface
     }
 
     /**
-     * To find bulk status
+     * To check if it is bulk
      *
      * @param Request $request
      * @return bool

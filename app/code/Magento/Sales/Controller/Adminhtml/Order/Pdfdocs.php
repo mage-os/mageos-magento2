@@ -23,7 +23,6 @@ use Magento\Sales\Model\ResourceModel\Order\Creditmemo\CollectionFactory as Cred
 
 /**
  * Export all docs in pdf
- *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Pdfdocs extends \Magento\Sales\Controller\Adminhtml\Order\AbstractMassAction implements HttpPostActionInterface
