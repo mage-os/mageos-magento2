@@ -1,16 +1,16 @@
 {
     "services": {
         "php": [
-            8.2
+            8.3
         ],
         "composer": [
-            2.2
+            2.8
         ],
         "database": [
-            "mysql:8.0"
+            "mysql:8.4"
         ],
         "search": [
-          "elasticsearch:7.17"
+          "opensearch:2.12"
         ],
         "message_queue": [
             "rabbitmq:3.9"
@@ -19,7 +19,7 @@
             "redis:7.0"
         ],
         "http_cache": [
-            "varnish:7.1"
+            "varnish:7.6"
         ]
     }
 }
