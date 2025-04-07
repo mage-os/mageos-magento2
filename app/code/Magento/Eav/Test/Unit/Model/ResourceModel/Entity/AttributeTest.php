@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2024 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -100,15 +100,13 @@ class AttributeTest extends TestCase
         )->method(
             'fetchRow'
         )->willReturnMap(
-
+            [
                 [
-                    [
-                        'SELECT `eav_attribute`.* FROM `eav_attribute` ' .
-                        'WHERE (attribute_code="status") AND (entity_type_id="4")',
-                        $attributeData,
-                    ],
-                ]
-
+                    'SELECT `eav_attribute`.* FROM `eav_attribute` ' .
+                    'WHERE (attribute_code="status") AND (entity_type_id="4")',
+                    $attributeData,
+                ],
+            ]
         );
         $connectionMock->expects(
             $this->once()
@@ -242,24 +240,22 @@ class AttributeTest extends TestCase
         )->method(
             'update'
         )->willReturnMap(
-
-                [['eav_attribute', ['default_value' => ''], ['attribute_id = ?' => 123], 1]]
-
+            [
+                ['eav_attribute', ['default_value' => ''], ['attribute_id = ?' => 123], 1]
+            ]
         );
         $connectionMock->expects(
             $this->once()
         )->method(
             'fetchRow'
         )->willReturnMap(
-
+            [
                 [
-                    [
-                        'SELECT `eav_attribute`.* FROM `eav_attribute` ' .
-                        'WHERE (attribute_code="a_dropdown") AND (entity_type_id="4")',
-                        false,
-                    ],
-                ]
-
+                    'SELECT `eav_attribute`.* FROM `eav_attribute` ' .
+                    'WHERE (attribute_code="a_dropdown") AND (entity_type_id="4")',
+                    false,
+                ],
+            ]
         );
         $connectionMock->expects(
             $this->once()
@@ -273,22 +269,20 @@ class AttributeTest extends TestCase
         )->method(
             'insert'
         )->willReturnMap(
-
+            [
+                ['eav_attribute', $attributeData, 1],
+                ['eav_attribute_option', ['attribute_id' => 123, 'sort_order' => 0], 1],
                 [
-                    ['eav_attribute', $attributeData, 1],
-                    ['eav_attribute_option', ['attribute_id' => 123, 'sort_order' => 0], 1],
-                    [
-                        'eav_attribute_option_value',
-                        ['option_id' => 123, 'store_id' => 0, 'value' => 'Backend Label'],
-                        1
-                    ],
-                    [
-                        'eav_attribute_option_value',
-                        ['option_id' => 123, 'store_id' => 1, 'value' => 'Frontend Label'],
-                        1
-                    ],
-                ]
-
+                    'eav_attribute_option_value',
+                    ['option_id' => 123, 'store_id' => 0, 'value' => 'Backend Label'],
+                    1
+                ],
+                [
+                    'eav_attribute_option_value',
+                    ['option_id' => 123, 'store_id' => 1, 'value' => 'Frontend Label'],
+                    1
+                ],
+            ]
         );
         $connectionMock->expects($this->any())->method('getTransactionLevel')->willReturn(1);
 
