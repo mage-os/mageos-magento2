@@ -175,7 +175,6 @@ class AttributeTest extends TestCase
             ->onlyMethods(['save'])
             ->setConstructorArgs($arguments)
             ->getMock();
-//        $model->expects($this->any())->method('hasDataChanges')->willReturn(true);
         $model->setOption(
             [
                 'delete' =>
@@ -190,7 +189,6 @@ class AttributeTest extends TestCase
         $connectionMock->expects($this->any())
             ->method('update')
             ->with('eav_attribute', $this->logicalOr($originalData, ['default_value' => "option_1"]));
-//        $connectionMock->expects($this->any())->method('getTransactionLevel')->willReturn(1);
 
         $resourceModel->save($model);
     }
