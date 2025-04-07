@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Eav\Test\Unit\Model\ResourceModel\Entity;
 
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
+use Magento\Catalog\Model\Product\Attribute\Source\Layout;
 use Magento\Eav\Model\Config;
 use Magento\Eav\Model\Entity\Attribute\Source\Table;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute;
