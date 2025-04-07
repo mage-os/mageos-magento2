@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Multishipping\Model\Checkout\Type;
@@ -277,6 +277,8 @@ class Multishipping extends \Magento\Framework\DataObject
      *
      * @return \Magento\Multishipping\Model\Checkout\Type\Multishipping
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @throws LocalizedException
      */
     protected function _init()
     {
@@ -295,6 +297,7 @@ class Multishipping extends \Magento\Framework\DataObject
              * Remove all addresses
              */
             $addresses = $quote->getAllAddresses();
+            $defaultShippingId = null;
             foreach ($addresses as $address) {
                 if ($address->getAllItems()) {
                     $defaultShippingId = $address->getCustomerAddressId();

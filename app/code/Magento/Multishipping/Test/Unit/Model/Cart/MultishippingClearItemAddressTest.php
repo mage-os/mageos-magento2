@@ -94,7 +94,8 @@ class MultishippingClearItemAddressTest extends TestCase
             'getAllShippingAddresses',
             'removeAddress',
             'getShippingAddress',
-            'getCustomer'
+            'getCustomer',
+            'addShippingAddress'
         ]);
         $requestMock->method('getActionName')
             ->willReturn($actionName);
@@ -119,6 +120,9 @@ class MultishippingClearItemAddressTest extends TestCase
         $customerMock = $this->getMockForAbstractClass(CustomerInterface::class);
         $quoteMock->method('getCustomer')
             ->willReturn($customerMock);
+        $quoteMock->method('addShippingAddress')
+            ->with($shippingAddressMock)
+            ->willReturnSelf();
         $customerMock->method('getDefaultShipping')
             ->willReturn($customerAddressId);
 

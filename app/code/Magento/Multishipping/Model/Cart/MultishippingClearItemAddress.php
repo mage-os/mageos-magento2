@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -74,6 +74,7 @@ class MultishippingClearItemAddress
     /**
      * Cleans shipping addresses and item assignments after MultiShipping flow
      *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @param Cart|UpdateItemQty $subject
      * @param RequestInterface $request
      * @throws LocalizedException
@@ -95,7 +96,6 @@ class MultishippingClearItemAddress
             }
 
             if ($currentShippingAddress) {
-                $defaultShipping = $currentShippingAddress->getCustomerAddressId();
                 $quote->addShippingAddress($currentShippingAddress);
             } else {
                 $shippingAddress = $quote->getShippingAddress();
