@@ -7,16 +7,16 @@
             2.8
         ],
         "database": [
-            "mysql:8.4"
+            "mariadb:11.4"
         ],
         "search": [
-          "opensearch:2.12"
+          "opensearch:2.19"
         ],
         "message_queue": [
-            "rabbitmq:3.9"
+            "rabbitmq:4"
         ],
         "cache": [
-            "redis:7.0"
+            "redis:8"
         ],
         "http_cache": [
             "varnish:7.6"
