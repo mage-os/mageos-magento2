@@ -16,7 +16,7 @@
             "rabbitmq:4.0"
         ],
         "cache": [
-            "valkey:8.0"
+            "redis:7.4"
         ],
         "http_cache": [
             "varnish:7.6"
