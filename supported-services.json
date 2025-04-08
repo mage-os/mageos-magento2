@@ -4,7 +4,7 @@
             8.3
         ],
         "composer": [
-            2.8
+            2
         ],
         "database": [
             "mariadb:11.4"
