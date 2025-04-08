@@ -13,7 +13,7 @@
           "opensearch:2.17"
         ],
         "message_queue": [
-            "rabbitmq:4"
+            "rabbitmq:4.0"
         ],
         "cache": [
             "valkey:8.0"
