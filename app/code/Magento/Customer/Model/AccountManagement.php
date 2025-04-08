@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -37,7 +37,6 @@ use Magento\Framework\Encryption\EncryptorInterface as Encryptor;
 use Magento\Framework\Encryption\Helper\Security;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Exception\AlreadyExistsException;
-use Magento\Framework\Exception\EmailNotConfirmedException;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\InvalidEmailOrPasswordException;
 use Magento\Framework\Exception\LocalizedException;
@@ -407,6 +406,11 @@ class AccountManagement implements AccountManagementInterface
     private Authenticate $authenticate;
 
     /**
+     * @var AddressFactory
+     */
+    private AddressFactory $addressFactory;
+
+    /**
      * @param CustomerFactory $customerFactory
      * @param ManagerInterface $eventManager
      * @param StoreManagerInterface $storeManager
@@ -446,6 +450,7 @@ class AccountManagement implements AccountManagementInterface
      * @param Backend|null $eavValidator
      * @param CustomerLogger|null $customerLogger
      * @param Authenticate|null $authenticate
+     * @param AddressFactory|null $addressFactory
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      * @SuppressWarnings(PHPMD.NPathComplexity)
@@ -491,7 +496,8 @@ class AccountManagement implements AccountManagementInterface
         ?AuthenticationInterface $authentication = null,
         ?Backend $eavValidator = null,
         ?CustomerLogger $customerLogger = null,
-        ?Authenticate $authenticate = null
+        ?Authenticate $authenticate = null,
+        ?AddressFactory $addressFactory = null,
     ) {
         $this->customerFactory = $customerFactory;
         $this->eventManager = $eventManager;
@@ -536,6 +542,7 @@ class AccountManagement implements AccountManagementInterface
         $this->eavValidator = $eavValidator ?? $objectManager->get(Backend::class);
         $this->customerLogger = $customerLogger ?? $objectManager->get(CustomerLogger::class);
         $this->authenticate = $authenticate ?? $objectManager->get(Authenticate::class);
+        $this->addressFactory = $addressFactory ?? $objectManager->get(AddressFactory::class);
     }
 
     /**
@@ -921,6 +928,18 @@ class AccountManagement implements AccountManagementInterface
 
         $customerAddresses = $customer->getAddresses() ?: [];
         $customer->setAddresses(null);
+        foreach ($customerAddresses as $address) {
+            $addressModel = $this->addressFactory->create()->updateData($address);
+            $errors = $addressModel->validate();
+            if ($errors !== true) {
+                $exception = new InputException();
+                foreach ($errors as $error) {
+                    $exception->addError($error);
+                }
+                throw $exception;
+            }
+        }
+
         try {
             // If customer exists existing hash will be used by Repository
             $customer = $this->customerRepository->save($customer, $hash);
@@ -928,8 +947,6 @@ class AccountManagement implements AccountManagementInterface
             throw new InputMismatchException(
                 __('A customer with the same email address already exists in an associated website.')
             );
-        } catch (LocalizedException $e) {
-            throw $e;
         }
         try {
             foreach ($customerAddresses as $address) {

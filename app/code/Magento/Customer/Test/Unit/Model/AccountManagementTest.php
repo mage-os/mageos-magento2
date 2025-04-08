@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -19,6 +19,7 @@ use Magento\Customer\Helper\View;
 use Magento\Customer\Model\AccountConfirmation;
 use Magento\Customer\Model\AccountManagement;
 use Magento\Customer\Model\Address;
+use Magento\Customer\Model\AddressFactory;
 use Magento\Customer\Model\AddressRegistry;
 use Magento\Customer\Model\AuthenticationInterface;
 use Magento\Customer\Model\Config\Share;
@@ -243,6 +244,11 @@ class AccountManagementTest extends TestCase
     private $saveHandler;
 
     /**
+     * @var MockObject|AddressFactory
+     */
+    private $addressFactory;
+
+    /**
      * @var MockObject|AddressRegistry
      */
     private $addressRegistryMock;
@@ -345,6 +351,7 @@ class AccountManagementTest extends TestCase
         $this->saveHandler = $this->getMockBuilder(SaveHandlerInterface::class)
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
+        $this->addressFactory = $this->createMock(AddressFactory::class);
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $objects = [
@@ -427,7 +434,8 @@ class AccountManagementTest extends TestCase
                 'visitorCollectionFactory' => $this->visitorCollectionFactory,
                 'searchCriteriaBuilder' => $this->searchCriteriaBuilderMock,
                 'addressRegistry' => $this->addressRegistryMock,
-                'allowedCountriesReader' => $this->allowedCountriesReader
+                'allowedCountriesReader' => $this->allowedCountriesReader,
+                'addressFactory' => $this->addressFactory,
             ]
         );
         $this->objectManagerHelper->setBackwardCompatibleProperty(
@@ -509,9 +517,6 @@ class AccountManagementTest extends TestCase
         $customerEmail = 'email@email.com';
         $hash = '4nj54lkj5jfi03j49f8bgujfgsd';
 
-        $address = $this->getMockBuilder(AddressInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
         $store = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -544,14 +549,15 @@ class AccountManagementTest extends TestCase
         $customer->expects($this->once())
             ->method('setStoreId')
             ->with($defaultStoreId);
-        $customer
-            ->expects($this->once())
-            ->method('getAddresses')
-            ->willReturn([$address]);
-        $customer
-            ->expects($this->once())
-            ->method('setAddresses')
-            ->with(null);
+
+        $address = $this->createMock(AddressInterface::class);
+        $customer->expects($this->once())->method('getAddresses')->willReturn([$address]);
+        $customer->expects($this->once())->method('setAddresses')->with(null);
+        $addressModel = $this->createMock(Address::class);
+        $this->addressFactory->expects($this->once())->method('create')->willReturn($addressModel);
+        $addressModel->expects($this->once())->method('updateData')->with($address)->willReturnSelf();
+        $addressModel->expects($this->once())->method('validate')->willReturn(true);
+
         $this->customerRepository
             ->expects($this->once())
             ->method('get')
@@ -589,9 +595,6 @@ class AccountManagementTest extends TestCase
         $customerEmail = 'email@email.com';
         $hash = '4nj54lkj5jfi03j49f8bgujfgsd';
 
-        $address = $this->getMockBuilder(AddressInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
         $store = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -623,14 +626,15 @@ class AccountManagementTest extends TestCase
         $customer->expects($this->once())
             ->method('setStoreId')
             ->with($defaultStoreId);
-        $customer
-            ->expects($this->once())
-            ->method('getAddresses')
-            ->willReturn([$address]);
-        $customer
-            ->expects($this->once())
-            ->method('setAddresses')
-            ->with(null);
+
+        $address = $this->createMock(AddressInterface::class);
+        $customer->expects($this->once())->method('getAddresses')->willReturn([$address]);
+        $customer->expects($this->once())->method('setAddresses')->with(null);
+        $addressModel = $this->createMock(Address::class);
+        $this->addressFactory->expects($this->once())->method('create')->willReturn($addressModel);
+        $addressModel->expects($this->once())->method('updateData')->with($address)->willReturnSelf();
+        $addressModel->expects($this->once())->method('validate')->willReturn(true);
+
         $this->customerRepository
             ->expects($this->once())
             ->method('get')
@@ -660,7 +664,7 @@ class AccountManagementTest extends TestCase
      */
     public function testCreateAccountWithPasswordHashWithAddressException(): void
     {
-        $this->expectException(LocalizedException::class);
+        $this->expectException(InputException::class);
 
         $websiteId = 1;
         $defaultStoreId = 1;
@@ -668,12 +672,6 @@ class AccountManagementTest extends TestCase
         $customerEmail = 'email@email.com';
         $hash = '4nj54lkj5jfi03j49f8bgujfgsd';
 
-        $address = $this->getMockBuilder(AddressInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $address->expects($this->once())
-            ->method('setCustomerId')
-            ->with($customerId);
         $store = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -709,14 +707,15 @@ class AccountManagementTest extends TestCase
         $customer->expects($this->once())
             ->method('setStoreId')
             ->with($defaultStoreId);
-        $customer
-            ->expects($this->once())
-            ->method('getAddresses')
-            ->willReturn([$address]);
-        $customer
-            ->expects($this->once())
-            ->method('setAddresses')
-            ->with(null);
+
+        $address = $this->createMock(AddressInterface::class);
+        $customer->expects($this->once())->method('getAddresses')->willReturn([$address]);
+        $customer->expects($this->once())->method('setAddresses')->with(null);
+        $addressModel = $this->createMock(Address::class);
+        $this->addressFactory->expects($this->once())->method('create')->willReturn($addressModel);
+        $addressModel->expects($this->once())->method('updateData')->with($address)->willReturnSelf();
+        $addressModel->expects($this->once())->method('validate')->willReturn([new Phrase('Exception message')]);
+
         $this->customerRepository
             ->expects($this->once())
             ->method('get')
@@ -729,31 +728,11 @@ class AccountManagementTest extends TestCase
             ->method('getWebsite')
             ->with($websiteId)
             ->willReturn($website);
-        $this->customerRepository
-            ->expects($this->once())
-            ->method('save')
-            ->with($customer, $hash)
-            ->willReturn($customer);
-        $exception = new InputException(
-            new Phrase('Exception message')
-        );
-        $this->addressRepository
-            ->expects($this->atLeastOnce())
-            ->method('save')
-            ->with($address)
-            ->willThrowException($exception);
-        $this->customerRepository
-            ->expects($this->once())
-            ->method('delete')
-            ->with($customer);
-        $this->allowedCountriesReader
-            ->expects($this->atLeastOnce())
-            ->method('getAllowedCountries')
-            ->willReturn(['US' => 'US']);
-        $address
-            ->expects($this->atLeastOnce())
-            ->method('getCountryId')
-            ->willReturn('US');
+
+        $this->customerRepository->expects($this->never())->method('save');
+        $this->addressRepository->expects($this->never())->method('save');
+        $this->customerRepository->expects($this->never())->method('delete');
+
         $this->accountManagement->createAccountWithPasswordHash($customer, $hash);
     }
 
@@ -847,12 +826,6 @@ class AccountManagementTest extends TestCase
 
         $datetime = $this->prepareDateTimeFactory();
 
-        $address = $this->getMockBuilder(AddressInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $address->expects($this->once())
-            ->method('setCustomerId')
-            ->with($customerId);
         $store = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -911,12 +884,16 @@ class AccountManagementTest extends TestCase
         $customer->expects($this->once())
             ->method('setStoreId')
             ->with($defaultStoreId);
-        $customer->expects($this->once())
-            ->method('getAddresses')
-            ->willReturn([$address]);
-        $customer->expects($this->once())
-            ->method('setAddresses')
-            ->with(null);
+
+        $address = $this->createMock(AddressInterface::class);
+        $address->expects($this->once())->method('setCustomerId')->with($customerId);
+        $customer->expects($this->once())->method('getAddresses')->willReturn([$address]);
+        $customer->expects($this->once())->method('setAddresses')->with(null);
+        $addressModel = $this->createMock(Address::class);
+        $this->addressFactory->expects($this->once())->method('create')->willReturn($addressModel);
+        $addressModel->expects($this->once())->method('updateData')->with($address)->willReturnSelf();
+        $addressModel->expects($this->once())->method('validate')->willReturn(true);
+
         $this->share->method('isWebsiteScope')
             ->willReturn(true);
         $this->storeManager->expects($this->atLeastOnce())
@@ -1143,12 +1120,6 @@ class AccountManagementTest extends TestCase
             ->method('getHash')
             ->with($password, true)
             ->willReturn($hash);
-        $address = $this->getMockBuilder(AddressInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $address->expects($this->once())
-            ->method('setCustomerId')
-            ->with($customerId);
         $store = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -1207,12 +1178,16 @@ class AccountManagementTest extends TestCase
         $customer->expects($this->once())
             ->method('setStoreId')
             ->with($defaultStoreId);
-        $customer->expects($this->once())
-            ->method('getAddresses')
-            ->willReturn([$address]);
-        $customer->expects($this->once())
-            ->method('setAddresses')
-            ->with(null);
+
+        $address = $this->createMock(AddressInterface::class);
+        $address->expects($this->once())->method('setCustomerId')->with($customerId);
+        $customer->expects($this->once())->method('getAddresses')->willReturn([$address]);
+        $customer->expects($this->once())->method('setAddresses')->with(null);
+        $addressModel = $this->createMock(Address::class);
+        $this->addressFactory->expects($this->once())->method('create')->willReturn($addressModel);
+        $addressModel->expects($this->once())->method('updateData')->with($address)->willReturnSelf();
+        $addressModel->expects($this->once())->method('validate')->willReturn(true);
+
         $this->share->method('isWebsiteScope')
             ->willReturn(true);
         $this->storeManager->expects($this->atLeastOnce())
@@ -1324,12 +1299,6 @@ class AccountManagementTest extends TestCase
             ->method('getHash')
             ->with($password, true)
             ->willReturn($hash);
-        $address = $this->getMockBuilder(AddressInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $address->expects($this->once())
-            ->method('setCustomerId')
-            ->with($customerId);
         $store = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -1391,12 +1360,16 @@ class AccountManagementTest extends TestCase
         $customer->expects($this->once())
             ->method('setStoreId')
             ->with($defaultStoreId);
-        $customer->expects($this->once())
-            ->method('getAddresses')
-            ->willReturn([$address]);
-        $customer->expects($this->once())
-            ->method('setAddresses')
-            ->with(null);
+
+        $address = $this->createMock(AddressInterface::class);
+        $address->expects($this->once())->method('setCustomerId')->with($customerId);
+        $customer->expects($this->once())->method('getAddresses')->willReturn([$address]);
+        $customer->expects($this->once())->method('setAddresses')->with(null);
+        $addressModel = $this->createMock(Address::class);
+        $this->addressFactory->expects($this->once())->method('create')->willReturn($addressModel);
+        $addressModel->expects($this->once())->method('updateData')->with($address)->willReturnSelf();
+        $addressModel->expects($this->once())->method('validate')->willReturn(true);
+
         $this->share->method('isWebsiteScope')
             ->willReturn(true);
         $this->storeManager->expects($this->atLeastOnce())
@@ -2269,12 +2242,8 @@ class AccountManagementTest extends TestCase
             ->method('getWebsiteId')
             ->willReturn($websiteId);
         //Handle address - existing and non-existing. Non-Existing should return null when call getId method
-        $existingAddress = $this->getMockBuilder(AddressInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $nonExistingAddress = $this->getMockBuilder(AddressInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $existingAddress = $this->createMock(AddressInterface::class);
+        $nonExistingAddress = $this->createMock(AddressInterface::class);
         //Ensure that existing address is not in use
         $this->addressRepository
             ->expects($this->atLeastOnce())
@@ -2341,10 +2310,22 @@ class AccountManagementTest extends TestCase
             ->method('getUniqueHash')
             ->willReturn($hash);
 
-        $customer
-            ->expects($this->atLeastOnce())
+        $customer->expects($this->atLeastOnce())
             ->method('getAddresses')
             ->willReturn([$existingAddress, $nonExistingAddress]);
+        $customer->expects($this->once())->method('setAddresses')->with(null);
+        $existingAddressModel = $this->createMock(Address::class);
+        $nonExistingAddressModel = $this->createMock(Address::class);
+        $this->addressFactory->expects($this->exactly(2))
+            ->method('create')
+            ->willReturnOnConsecutiveCalls($existingAddressModel, $nonExistingAddressModel);
+        $existingAddressModel->expects($this->once())->method('updateData')->with($existingAddress)->willReturnSelf();
+        $existingAddressModel->expects($this->once())->method('validate')->willReturn(true);
+        $nonExistingAddressModel->expects($this->once())
+            ->method('updateData')
+            ->with($nonExistingAddress)
+            ->willReturnSelf();
+        $nonExistingAddressModel->expects($this->once())->method('validate')->willReturn(true);
 
         $this->storeManager
             ->expects($this->atLeastOnce())
@@ -2419,10 +2400,6 @@ class AccountManagementTest extends TestCase
 
         $datetime = $this->prepareDateTimeFactory();
 
-        $address = $this->getMockForAbstractClass(AddressInterface::class);
-        $address->expects($this->once())
-            ->method('setCustomerId')
-            ->with($customerId);
         $store = $this->createMock(Store::class);
         $store->expects($this->once())
             ->method('getId')
@@ -2474,12 +2451,16 @@ class AccountManagementTest extends TestCase
         $customer->expects($this->once())
             ->method('setStoreId')
             ->with($defaultStoreId);
-        $customer->expects($this->once())
-            ->method('getAddresses')
-            ->willReturn([$address]);
-        $customer->expects($this->once())
-            ->method('setAddresses')
-            ->with(null);
+
+        $address = $this->createMock(AddressInterface::class);
+        $address->expects($this->once())->method('setCustomerId')->with($customerId);
+        $customer->expects($this->once())->method('getAddresses')->willReturn([$address]);
+        $customer->expects($this->once())->method('setAddresses')->with(null);
+        $addressModel = $this->createMock(Address::class);
+        $this->addressFactory->expects($this->once())->method('create')->willReturn($addressModel);
+        $addressModel->expects($this->once())->method('updateData')->with($address)->willReturnSelf();
+        $addressModel->expects($this->once())->method('validate')->willReturn(true);
+
         $this->share->method('isWebsiteScope')
             ->willReturn(true);
         $this->storeManager->expects($this->atLeastOnce())
