@@ -1130,7 +1130,7 @@ class Multishipping extends \Magento\Framework\DataObject
     /**
      * Retrieve quote items
      *
-     * @return Item[]
+     * @return \Magento\Quote\Model\Quote\Item[]
      */
     public function getQuoteItems()
     {
@@ -1376,5 +1376,4 @@ class Multishipping extends \Magento\Framework\DataObject
 
         return $placedAddressItems;
     }
-
 }
