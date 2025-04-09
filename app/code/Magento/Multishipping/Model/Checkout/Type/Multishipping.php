@@ -558,7 +558,7 @@ class Multishipping extends \Magento\Framework\DataObject
      * @return Multishipping
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
-     *@throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     protected function _addShippingItem($quoteItemId, $data)
     {
@@ -612,7 +612,7 @@ class Multishipping extends \Magento\Framework\DataObject
      *
      * @param int $addressId customer address id
      * @return Multishipping
-     *@throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function updateQuoteCustomerShippingAddress($addressId)
     {
@@ -640,7 +640,7 @@ class Multishipping extends \Magento\Framework\DataObject
      *
      * @param int $addressId customer address id
      * @return Multishipping
-     *@throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function setQuoteCustomerBillingAddress($addressId)
     {
