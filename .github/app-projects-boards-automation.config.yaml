@@ -399,5 +399,4 @@ automations:
         ['modifiedLabel.name', 'eq', 'Priority: P4']
       ]
     actions:
-      - comment: ['Applying recursive label glo47154']
       - addLabelsToRelated: ['${modifiedLabel.name}']
