@@ -9,7 +9,7 @@ automations:
   - trigger: pull_request.labeled
     conditions:
       - ['modifiedLabel.name', 'eq', 'Project: Community Picked']
-      - ['projects#number', 'in', 23] ## this one is for safety reasons to ensure that PR is assigned to project XX
+      - ['projects#number', 'in', 23]
     actions:
       - addToProject: [22] #['Community Dashboard']
       - moveTo: [22, '${projectsByNumber.23.column.name}']
@@ -61,7 +61,6 @@ automations:
     actions:
       - addLabels: ['Progress: review']
       - removeLabels: ['Progress: pending review']
-      # Action moveTo will be skipped if the PR or issue is not in the project, this is why we can safely use the same action for both projects
       - moveTo: [23, 'Review in Progress'] #['Pull Requests Dashboard', 'Review in Progress']
       - moveTo: [22, 'Review in Progress'] #['Community Dashboard', 'Review in Progress']
 
