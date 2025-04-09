@@ -230,3 +230,175 @@ automations:
     actions:
       - removeFromProject: [23] #['Pull Requests Dashboard']
       - removeFromProject: [22] #['Community Dashboard']
+
+
+  ############################################################################################################
+  # Issues Automation                                                                                        #
+  ############################################################################################################
+  # 1. Whenever a new issue is created and has no priority label on it (e.g., P1, P2, etc.):
+  #   a. it must be added to the "Issues Confirmation and Triage Board" project
+  #   b. it must be moved to the "Ready for confirmation" column on the board
+  #   c. it must be labeled with the "Issue: ready for confirmation" label
+  #   d. the below labels must be removed from the issue:
+  #     - "feature request"
+  - trigger: issues.opened
+    conditions:
+      - ['labels#name', 'notIncludes', 'Priority']
+    actions:
+      - addToProject: [18] #['Issues Confirmation and Triage Board']
+      - addLabels: ['Issue: ready for confirmation']
+      - moveTo: [18, 'Ready for Confirmation'] #['Issues Confirmation and Triage Board', 'Ready for Confirmation']
+      - removeLabels: ['feature request']
+
+  # 2. Whenever an issue is labeled with the "Issue: Needs Update" label:
+  #   a. it must be moved to the "Needs Update" column on the board
+  #   b. the below labels must be removed from the issue:
+  #     - "Issue: ready for confirmation"
+  #     - "Issue: Confirmed"
+  #     - "Issue: On Hold"
+  #     - "Reproduced on 2.4.x"
+  - trigger: issues.labeled
+    conditions:
+      - ['modifiedLabel.name', 'eq', 'Issue: needs update']
+    actions:
+      - moveTo: [18, 'Needs Update'] #['Issues Confirmation and Triage Board', 'Needs Update']
+      - removeLabels: ['Issue: ready for confirmation', 'Issue: Confirmed', 'Issue: On Hold', 'Reproduced on 2.4.x']
+
+  - trigger: issues.labeled
+    conditions:
+      - ['modifiedLabel.name', 'eq', 'Issue: ready for confirmation']
+    actions:
+      - moveTo: [18, 'Ready for Confirmation'] #['Issues Confirmation and Triage Board', 'Needs Update']
+      - removeLabels: ['Issue: Needs Update', 'Issue: Confirmed', 'Issue: On Hold', 'Reproduced on 2.4.x']
+
+  # 3. Whenever an issue is moved to the "Needs Update" column on the board:
+  #   a. it must be labeled with "Issue: Needs Update" label
+  #   b. the below labels must be removed from the issue:
+  #     - "Issue: ready for confirmation"
+  #     - "Issue: Confirmed"
+  #     - "Issue: On Hold"
+  #     - "Reproduced on 2.4.x"
+  - trigger: projects_v2_item.edited
+    conditions:
+      - ['movedToColumn.name', 'eq', 'Needs Update']
+    actions:
+      - addLabels: ['Issue: Needs Update']
+      - removeLabels: ['Issue: ready for confirmation', 'Issue: Confirmed', 'Issue: On Hold', 'Reproduced on 2.4.x']
+
+  # 4. Whenever an issue is labeled with the "feature request" label:
+  #   a. it must be removed from the "Issues Confirmation and Triage Board" project
+  #   b. it must be added to the "feature requests Backlog" project
+  #   c. it must be moved to the "Ready for Grooming" column of the "feature requests Backlog" project
+  #   d. the below labels must be removed from the issue:
+  #     - "Issue: ready for confirmation"
+  #     - "Issue: Confirmed"
+  #     - "Issue: On Hold"
+  #     - "Reproduced on 2.4.x"
+  - trigger: issues.labeled
+    conditions:
+      - ['modifiedLabel.name', 'eq', 'feature request']
+    actions:
+      - removeFromProject: [18] #['Issues Confirmation and Triage Board']
+      - addToProject: [20] #['Feature Requests Backlog']
+      - moveTo: [18, 'Ready for Grooming'] #['Feature Requests Backlog', 'Ready for Grooming']
+      - addLabels: ['Progress: ready for grooming']
+      - removeLabels: ['Issue: ready for confirmation', 'Issue: Confirmed', 'Issue: On Hold', 'Reproduced on 2.4.x']
+
+  # 5. Whenever an issue is labeled with the "Issue: On Hold" label:
+  #   a. it must be moved to the "On Hold" column on the board
+  #   b. the below labels must be removed from the issue:
+  #     - "Issue: ready for confirmation"
+  #     - "Issue: Confirmed"
+  #     - "Issue: Needs Update"
+  #     - "Reproduced on 2.4.x"
+  - trigger: issues.labeled
+    conditions:
+      - ['modifiedLabel.name', 'eq', 'Issue: On Hold']
+    actions:
+      - moveTo: [18, 'On Hold'] #['Issues Confirmation and Triage Board', 'On Hold']
+      - removeLabels: ['Issue: ready for confirmation', 'Issue: Confirmed', 'Issue: needs update', 'Reproduced on 2.4.x']
+
+  # 6. Whenever an issue is moved to the "On Hold" column on the board:
+  #   a. it must be labeled with "Issue: On Hold" label
+  #   b. the below labels must be removed from the issue:
+  #     - "Issue: ready for confirmation"
+  #     - "Issue: Confirmed"
+  #     - "Issue: Needs Update"
+  #     - "Reproduced on 2.4.x"
+  - trigger: projects_v2_item.edited
+    conditions:
+      - ['movedToColumn.name', 'eq', 'On Hold']
+      - ['projects#number', 'in', 18]
+    actions:
+      - addLabels: ['Issue: On Hold']
+      - removeLabels: ['Issue: ready for confirmation', 'Issue: Confirmed', 'Issue: Needs Update', 'Reproduced on 2.4.x']
+
+  # 7. Whenever an issue is labeled with the "Issue: Confirmed" label:
+  #   a. it must be moved to the "Confirmed" column on the board
+  #   b. the below labels must be removed from the issue:
+  #     - "Issue: ready for confirmation"
+  #     - "Issue: On Hold"
+  #     - "Issue: Needs Update"
+  - trigger: issues.labeled
+    conditions:
+      - ['modifiedLabel.name', 'eq', 'Issue: Confirmed']
+    actions:
+      - moveTo: [18, 'Confirmed'] #['Issues Confirmation and Triage Board', 'Confirmed']
+      - removeLabels: ['Issue: ready for confirmation', 'Issue: On Hold', 'Issue: Needs Update']
+
+  # 8. Whenever an issue is moved to the "Confirmed" column on the board:
+  #   a. it must be labeled with "Issue: Confirmed" label
+  #   b. the below labels must be removed from the issue:
+  #     - "Issue: ready for confirmation"
+  #     - "Issue: On Hold"
+  #     - "Issue: Needs Update"
+  - trigger: projects_v2_item.edited
+    conditions:
+      - ['movedToColumn.name', 'eq', 'Confirmed']
+    actions:
+      - addLabels: ['Issue: Confirmed']
+      - removeLabels: ['Issue: ready for confirmation', 'Issue: On Hold', 'Issue: Needs Update']
+
+  # 9. Whenever an issue is labeled with "Priority: P0", "Priority: P1", or "Priority: P2" label:
+  #   a. it must be removed from the "Issues Confirmation and Triage Board" project
+  #   b. it must be added to the "High Priority Backlog" project
+  #   c. it must be moved to the "Ready for Development" column of the "High Priority Backlog" project
+  - trigger: issues.labeled
+    conditions:
+      - [
+        ['modifiedLabel.name', 'eq', 'Priority: P0'],
+        ['modifiedLabel.name', 'eq', 'Priority: P1'],
+        ['modifiedLabel.name', 'eq', 'Priority: P2']
+      ]
+    actions:
+      - removeFromProject: [18] #['Issues Confirmation and Triage Board']
+      - addToProject: [21] #['High Priority Backlog']
+      - moveTo: [21, 'Ready for Development'] #['High Priority Backlog', 'Ready for Development']
+
+  # 10. Whenever an issue is labeled with "Priority: P3" or "Priority: P4" label:
+  #   a. it must be removed from the "Issues Confirmation and Triage Board" project
+  #   b. it must be added to the "Low Priority Backlog" project
+  #   c. it must be moved to the "Ready for Development" column of the "Low Priority Backlog" project
+  - trigger: issues.labeled
+    conditions:
+      - [
+        ['modifiedLabel.name', 'eq', 'Priority: P3'],
+        ['modifiedLabel.name', 'eq', 'Priority: P4']
+      ]
+    actions:
+      - removeFromProject: [18] #['Issues Confirmation and Triage Board']
+      - addToProject: [19] #['Low Priority Backlog']
+      - moveTo: [19, 'Ready for Development'] #['Low Priority Backlog', 'Ready for Development']
+
+  - trigger: issues.labeled
+    conditions:
+      - [
+        ['modifiedLabel.name', 'eq', 'Priority: P0'],
+        ['modifiedLabel.name', 'eq', 'Priority: P1'],
+        ['modifiedLabel.name', 'eq', 'Priority: P2'],
+        ['modifiedLabel.name', 'eq', 'Priority: P3'],
+        ['modifiedLabel.name', 'eq', 'Priority: P4']
+      ]
+    actions:
+      - comment: ['Applying recursive label glo47154']
+      - addLabelsToRelated: ['${modifiedLabel.name}']
