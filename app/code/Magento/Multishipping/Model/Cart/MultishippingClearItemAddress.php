@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2025 Adobe
+ * Copyright 2022 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -74,7 +74,6 @@ class MultishippingClearItemAddress
     /**
      * Cleans shipping addresses and item assignments after MultiShipping flow
      *
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @param Cart|UpdateItemQty $subject
      * @param RequestInterface $request
      * @throws LocalizedException
@@ -87,24 +86,7 @@ class MultishippingClearItemAddress
         $isMultipleShippingAddressesPresent = $quote->isMultipleShippingAddresses();
         if ($isMultipleShippingAddressesPresent || $this->isDisableMultishippingRequired($request, $quote)) {
             $this->disableMultishipping->execute($quote);
-            $currentShippingAddress = $quote->getShippingAddress();
-            foreach ($quote->getAllShippingAddresses() as $address) {
-                if ($address->getId() == $currentShippingAddress->getId()) {
-                    continue;
-                }
-                $quote->removeAddress($address->getId());
-            }
-
-            if ($currentShippingAddress) {
-                $quote->addShippingAddress($currentShippingAddress);
-            } else {
-                $shippingAddress = $quote->getShippingAddress();
-                $defaultShipping = $quote->getCustomer()->getDefaultShipping();
-                if ($defaultShipping) {
-                    $defaultCustomerAddress = $this->addressRepository->getById($defaultShipping);
-                    $shippingAddress->importCustomerAddressData($defaultCustomerAddress);
-                }
-            }
+            $this->setDefaultShippingAddress($quote);
 
             if ($isMultipleShippingAddressesPresent) {
                 $this->checkoutSession->setMultiShippingAddressesFlag(true);
@@ -118,6 +100,35 @@ class MultishippingClearItemAddress
         } elseif ($this->disableMultishipping->execute($quote) && $this->isVirtualItemInQuote($quote)) {
             $quote->setTotalsCollectedFlag(false);
             $this->cartRepository->save($quote);
+        }
+    }
+
+    /**
+     * Determine shipping address from current multi-shipping configuration
+     *
+     * @param Quote $quote
+     * @return void
+     * @throws LocalizedException
+     */
+    private function setDefaultShippingAddress(Quote $quote): void
+    {
+        $currentShippingAddress = $quote->getShippingAddress();
+        foreach ($quote->getAllShippingAddresses() as $address) {
+            if ($address->getId() === $currentShippingAddress->getId()) {
+                continue;
+            }
+            $quote->removeAddress($address->getId());
+        }
+
+        if ($currentShippingAddress) {
+            $quote->addShippingAddress($currentShippingAddress);
+        } else {
+            $shippingAddress = $quote->getShippingAddress();
+            $defaultShipping = $quote->getCustomer()->getDefaultShipping();
+            if ($defaultShipping) {
+                $defaultCustomerAddress = $this->addressRepository->getById($defaultShipping);
+                $shippingAddress->importCustomerAddressData($defaultCustomerAddress);
+            }
         }
     }
 
