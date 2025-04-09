@@ -758,7 +758,7 @@ class Multishipping extends \Magento\Framework\DataObject
         $store = $order->getStore();
         $amountPrice = $store->getBaseCurrency()
             ->convert($shippingPrice, $store->getCurrentCurrencyCode());
-        $order->setBaseShippingAmount($shippingPrice);
+        $order->setBaseShippingAmount((float)$shippingPrice);
         $order->setShippingAmount($amountPrice);
 
         $order->setQuote($quote);
