@@ -69,7 +69,7 @@ automations:
   #   b. it must be moved to the "Ready for Testing" column
   - trigger: pull_request_review.submitted
     conditions:
-      - ['review#state', 'eq', 'approved']
+      - ['review', 'eq', 'approved']
     actions:
       - removeLabels: ['Progress: review']
       - moveTo: [23, 'Ready for Testing'] #['Pull Requests Dashboard', 'Ready for Testing']
