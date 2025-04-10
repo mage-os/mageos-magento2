@@ -4,19 +4,19 @@
             8.3
         ],
         "composer": [
-            2.8
+            2
         ],
         "database": [
             "mariadb:11.4"
         ],
         "search": [
-          "opensearch:2.19"
+          "opensearch:2.17"
         ],
         "message_queue": [
-            "rabbitmq:4"
+            "rabbitmq:4.0"
         ],
         "cache": [
-            "redis:8"
+            "redis:7.4"
         ],
         "http_cache": [
             "varnish:7.6"
