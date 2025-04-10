@@ -18,6 +18,7 @@ use Magento\Customer\Model\AccountConfirmation;
 use Magento\Customer\Model\AccountManagement;
 use Magento\Customer\Model\AccountManagement\Authenticate;
 use Magento\Customer\Model\AccountManagementApi;
+use Magento\Customer\Model\AddressFactory;
 use Magento\Customer\Model\AddressRegistry;
 use Magento\Customer\Model\AuthenticationInterface;
 use Magento\Customer\Model\Config\Share;
@@ -365,7 +366,11 @@ class AccountManagementApiTest extends TestCase
             [
                 EmailNotificationInterface::class,
                 $this->createMock(EmailNotificationInterface::class)
-            ]
+            ],
+            [
+                AddressFactory::class,
+                $this->createMock(AddressFactory::class)
+            ],
         ];
         $this->objectManagerHelper->prepareObjectManager($objects);
         $this->accountManagement = $this->objectManagerHelper->getObject(

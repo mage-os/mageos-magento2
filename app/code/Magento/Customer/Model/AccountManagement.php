@@ -928,8 +928,15 @@ class AccountManagement implements AccountManagementInterface
 
         $customerAddresses = $customer->getAddresses() ?: [];
         $customer->setAddresses(null);
+        $customerAddresses = array_filter(
+            $customerAddresses,
+            fn ($address) => $this->isAddressAllowedForWebsite($address, $customer->getStoreId())
+        );
         foreach ($customerAddresses as $address) {
             $addressModel = $this->addressFactory->create()->updateData($address);
+            if ($this->configShare->isWebsiteScope()) {
+                $addressModel->setStoreId($customer->getStoreId());
+            }
             $errors = $addressModel->validate();
             if ($errors !== true) {
                 $exception = new InputException();
@@ -950,9 +957,6 @@ class AccountManagement implements AccountManagementInterface
         }
         try {
             foreach ($customerAddresses as $address) {
-                if (!$this->isAddressAllowedForWebsite($address, $customer->getStoreId())) {
-                    continue;
-                }
                 if ($address->getId()) {
                     $newAddress = clone $address;
                     $newAddress->setId(null);
