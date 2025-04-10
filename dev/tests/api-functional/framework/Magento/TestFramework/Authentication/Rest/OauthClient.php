@@ -10,7 +10,7 @@ use Magento\Framework\Url;
 use Magento\Framework\Oauth\Helper\Utility;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\Inspection\Exception;
-use Magento\Framework\HTTP\ClientFactory;
+use Magento\TestFramework\Authentication\Rest\OauthClient\Signature;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -18,24 +18,29 @@ use Magento\Framework\HTTP\ClientFactory;
 class OauthClient
 {
     /**
-     * @var \Magento\Framework\Url
+     * @var Url
      */
     protected Url $urlProvider;
 
     /**
-     * @var \Magento\Framework\HTTP\ClientFactory
+     * @var CurlClient
      */
-    protected ClientFactory $clientFactory;
+    protected CurlClient $curlClient;
 
     /**
-     * @var \Magento\Framework\Oauth\NonceGeneratorInterface
+     * @var NonceGeneratorInterface
      */
     protected NonceGeneratorInterface $_nonceGenerator;
 
     /**
-     * @var \Magento\Framework\Oauth\Helper\Utility
+     * @var Utility
      */
     private Utility $_httpUtility;
+
+    /**
+     * @var Signature
+     */
+    private Signature $signature;
 
     /**
      * @var string
@@ -49,20 +54,23 @@ class OauthClient
 
     /**
      * @param Url $urlProvider
-     * @param ClientFactory $clientFactory
+     * @param CurlClient $curlClient
      * @param NonceGeneratorInterface $nonceGenerator
      * @param Utility $utility
+     * @param Signature $signature
      */
     public function __construct(
         Url                     $urlProvider,
-        ClientFactory           $clientFactory,
+        CurlClient              $curlClient,
         NonceGeneratorInterface $nonceGenerator,
-        Utility                 $utility
+        Utility                 $utility,
+        Signature               $signature
     ) {
         $this->urlProvider = $urlProvider;
-        $this->clientFactory = $clientFactory;
+        $this->curlClient = $curlClient;
         $this->_nonceGenerator = $nonceGenerator;
         $this->_httpUtility = $utility;
+        $this->signature = $signature;
     }
 
     /**
@@ -116,7 +124,7 @@ class OauthClient
             )
         ];
 
-        $responseBody = $this->fetchResponse($requestUrl, [], $headers);
+        $responseBody = $this->curlClient->retrieveResponse($requestUrl, [], $headers);
         return $this->parseResponseBody($responseBody);
     }
 
@@ -137,7 +145,7 @@ class OauthClient
         string $signatureMethod = \Magento\Framework\Oauth\Oauth::SIGNATURE_SHA256,
         string $httpMethod = 'POST'
     ): string {
-        $params['oauth_signature'] = $this->getSignature(
+        $params['oauth_signature'] = $this->signature->getSignature(
             $params,
             $signatureMethod,
             $consumerSecret,
@@ -175,7 +183,11 @@ class OauthClient
                 $bodyParams
             ),
         ];
-        $responseBody = $this->fetchResponse($this->getAccessTokenEndpoint(), $bodyParams, $authorizationHeader);
+        $responseBody = $this->curlClient->retrieveResponse(
+            $this->getAccessTokenEndpoint(),
+            $bodyParams,
+            $authorizationHeader
+        );
         return $this->parseResponseBody($responseBody);
     }
 
@@ -207,7 +219,7 @@ class OauthClient
 
         $headers = array_merge($authorizationHeader, $extraAuthenticationHeaders);
 
-        $responseBody = $this->fetchResponse($this->getTestApiEndpoint(), [], $headers, $method);
+        $responseBody = $this->curlClient->retrieveResponse($this->getTestApiEndpoint(), [], $headers, $method);
 
         return json_decode($responseBody);
     }
@@ -241,7 +253,7 @@ class OauthClient
         $params = array_merge($params, ['oauth_token' => $token['oauth_token']]);
         $params = array_merge($params, $bodyParams);
 
-        $params['oauth_signature'] = $this->getSignature(
+        $params['oauth_signature'] = $this->signature->getSignature(
             $params,
             $signatureMethod,
             $consumerSecret,
@@ -251,46 +263,6 @@ class OauthClient
         );
 
         return $this->_httpUtility->toAuthorizationHeader($params);
-    }
-
-    /**
-     * Get the signature
-     *
-     * @param array $params
-     * @param string $signatureMethod
-     * @param string $consumerSecret
-     * @param string|null $tokenSecret
-     * @param string $httpMethod
-     * @param string $requestUrl
-     * @return string
-     */
-    public function getSignature(
-        array $params,
-        string $signatureMethod,
-        string $consumerSecret,
-        ?string $tokenSecret,
-        string $httpMethod,
-        string $requestUrl
-    ): string {
-        $data = parse_url($requestUrl);
-        $queryStringData = !isset($data['query']) ? [] : array_reduce(
-            explode('&', $data['query']),
-            function ($carry, $item) {
-                list($key, $value) = explode('=', $item, 2);
-                $carry[rawurldecode($key)] = rawurldecode($value);
-                return $carry;
-            },
-            []
-        );
-
-        return $this->_httpUtility->sign(
-            array_merge($queryStringData, $params),
-            $signatureMethod,
-            $consumerSecret,
-            $tokenSecret,
-            $httpMethod,
-            $requestUrl
-        );
     }
 
     /**
@@ -325,29 +297,6 @@ class OauthClient
         $defaultStoreCode = Bootstrap::getObjectManager()->get(\Magento\Store\Model\StoreManagerInterface::class)
             ->getStore()->getCode();
         return $this->urlProvider->getRebuiltUrl(TESTS_BASE_URL . '/rest/' . $defaultStoreCode . '/V1/testmodule1');
-    }
-
-    /**
-     * Fetch api response using curl client factory
-     *
-     * @param string $url
-     * @param array $requestBody
-     * @param array $headers
-     * @param string $method
-     * @return string
-     */
-    public function fetchResponse(string $url, array $requestBody, array $headers, string $method = 'POST'): string
-    {
-        $httpClient = $this->clientFactory->create();
-        $httpClient->setHeaders($headers);
-        $httpClient->setOption(CURLOPT_FAILONERROR, true);
-        if ($method === 'GET') {
-            $httpClient->get($url);
-        } else {
-            $httpClient->post($url, $requestBody);
-        }
-
-        return $httpClient->getBody();
     }
 
     /**
