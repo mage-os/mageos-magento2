@@ -87,8 +87,22 @@ class SchemaBuilder
         if (isset($data['table'])) {
             foreach ($data['table'] as $keyTable => $tableColumns) {
                 foreach ($tableColumns['column'] as $keyColumn => $columnData) {
-                    if ($columnData['type'] == 'json') {
-                        $tablesWithJsonTypeField[$keyTable] = $keyColumn;
+                    try {
+                        if ($columnData['type'] == 'json') {
+                            $tablesWithJsonTypeField[$keyTable] = $keyColumn;
+                        }
+                    } catch (\Throwable $e) {
+                        // Create a new exception with extended context message
+                        $errorMessage = sprintf(
+                            "%s\nError processing table %s column %s",
+                            $e->getMessage(),
+                            $keyTable,
+                            $keyColumn
+                        );
+                        
+                        // Throw a new exception with the extended message
+                        // This preserves the original error but adds our context
+                        throw new \Exception($errorMessage, $e->getCode(), $e);
                     }
                 }
             }
