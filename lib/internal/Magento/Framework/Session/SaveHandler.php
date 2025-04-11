@@ -1,9 +1,8 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2013 Adobe
+ * All Rights Reserved.
  */
-
 namespace Magento\Framework\Session;
 
 use Magento\Framework\App\Area;
@@ -17,7 +16,6 @@ use Magento\Framework\Session\Config\ConfigInterface;
 use Psr\Log\LoggerInterface;
 
 /**
- * Magento session save handler.
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class SaveHandler implements SaveHandlerInterface, ResetAfterRequestInterface
@@ -128,11 +126,22 @@ class SaveHandler implements SaveHandlerInterface, ResetAfterRequestInterface
         $sessionSize = $sessionData !== null ? strlen($sessionData) : 0;
 
         if ($sessionMaxSize !== null && $sessionMaxSize < $sessionSize) {
-            $sessionData = '';
-            if ($this->appState->getAreaCode() === Area::AREA_FRONTEND) {
-                $this->messageManager->addErrorMessage(
-                    __('There is an error. Please Contact store administrator.')
-                );
+            switch ($this->appState->getAreaCode()) {
+                case Area::AREA_ADMINHTML:
+                    $this->messageManager->addNoticeMessage(
+                        __(
+                            'The current session size exceeds configured maximum session size,'
+                            . ' consider increasing the configured value.'
+                        )
+                    );
+                    break;
+                case Area::AREA_FRONTEND:
+                    $this->messageManager->addErrorMessage(
+                        __('There is an error. Please Contact store administrator.')
+                    );
+                //clear session data for all areas other than adminhtml
+                default:
+                    $sessionData = '';
             }
         }
 
