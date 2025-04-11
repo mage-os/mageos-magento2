@@ -1364,78 +1364,13 @@ class Carrier extends AbstractDhl implements CarrierInterface
     }
 
     /**
-     * Get product codes for DHL REST API for future use
-     *
-     * @return array
-     * @throws Throwable
-     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
-     */
-    private function getProductCode()
-    {
-        $rawRequest = $this->_rawRequest;
-        $url = $this->getGatewayURL();
-
-        /** @var HttpResponseDeferredInterface[] $httpResponse */
-        $httpResponse = [];
-
-        $params = [
-            'accountNumber' => $this->getConfigData('account'),
-            'originCountryCode' => $rawRequest->getOrigCountryId(),
-            'originCityName' => $rawRequest->getOrigCity(),
-            'destinationCountryCode' => $rawRequest->getDestCountryId(),
-            'destinationCityName' => $rawRequest->getDestCity(),
-            'weight' => (int) $this->_getWeight($rawRequest->getWeight()),
-            'length' => $this->_getDimension($this->getConfigData('depth')),
-            'width' => $this->_getDimension($this->getConfigData('width')),
-            'height' => $this->_getDimension($this->getConfigData('height')),
-            'plannedShippingDate' => date('Y-m-d', strtotime($this->_getShipDate())),
-            'isCustomsDeclarable' => 'false',
-            'unitOfMeasurement' => 'metric'
-        ];
-
-        $queryString = http_build_query($params);
-        $productParams = (object)[];
-        $productPayload = json_encode($productParams);
-
-        $headers = [
-            "Authorization" => "Basic " . $this->getDhlAccessToken(),
-            "Content-Type" => "application/json",
-            "x-version" => "2.12.0"
-        ];
-
-        $httpResponse = $this->httpClient->request(
-            new Request($url . '/products?' . $queryString, Request::METHOD_GET, $headers, $productPayload)
-        );
-        $debugData['request'] = $queryString;
-
-        try {
-            $responseResult = $httpResponse->get();
-            $jsonResponse = $responseResult->getStatusCode() >= 400 ? '' : $responseResult->getBody();
-            $debugData['result'] = $jsonResponse;
-        } catch (HttpException $e) {
-            $debugData['result'] = ['error' => $e->getMessage(), 'code' => $e->getCode()];
-            $this->_logger->critical($e);
-        }
-        $this->_debug($debugData);
-        // Decode JSON to array
-        $productCodes = [];
-        if (!empty($jsonResponse)) {
-            $data = json_decode($jsonResponse, true);
-            if (json_last_error() === JSON_ERROR_NONE && isset($data['products'])) {
-                $productCodes = array_map(fn($product) => $product['productCode'], $data['products']);
-            }
-        }
-        return $productCodes;
-    }
-
-    /**
      * DHL REST API for Quote Data
      *
      * @return Result\ProxyDeferred
      * @throws LocalizedException
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    protected function _getQuotesRest()
+    protected function _getQuotesRest() : Result\ProxyDeferred
     {
         $rawRequest = $this->_rawRequest;
         $url = $this->getGatewayURL();
@@ -1501,15 +1436,8 @@ class Carrier extends AbstractDhl implements CarrierInterface
 
         $ratePayload = json_encode($rateParams, JSON_PRETTY_PRINT);
 
-        /** Rest API Payload */
-        $headers = [
-            "Authorization" => "Basic " . $this->getDhlAccessToken(),
-            "Content-Type" => "application/json",
-            "x-version" => "2.12.0"
-        ];
-
         $httpResponse = $this->httpClient->request(
-            new Request($url . '/rates', Request::METHOD_POST, $headers, $ratePayload)
+            new Request($url . '/rates', Request::METHOD_POST, $this->getRestHeaders(), $ratePayload)
         );
         $debugData['request'] = $ratePayload;
 
@@ -1542,12 +1470,26 @@ class Carrier extends AbstractDhl implements CarrierInterface
      *
      * @return string
      */
-    private function getDhlAccessToken()
+    private function getDhlAccessToken() : string
     {
         $username = (string) $this->getConfigData('api_key');
         $password = (string) $this->getConfigData('api_secret');
         $access_token = base64_encode($username . ":" . $password);
         return $access_token;
+    }
+
+    /**
+     * Rest API Headers
+     *
+     * @return string[]
+     */
+    private function getRestHeaders(): array
+    {
+        return $headers = [
+            "Authorization" => "Basic " . $this->getDhlAccessToken(),
+            "Content-Type" => "application/json",
+            "x-version" => "2.12.0"
+        ];
     }
 
     /**
@@ -1558,7 +1500,7 @@ class Carrier extends AbstractDhl implements CarrierInterface
      * @throws LocalizedException
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    protected function _parseRestResponse($rateResponse)
+    protected function _parseRestResponse($rateResponse): Result
     {
         $responseError = __('The response is in wrong format.');
         if ($rateResponse !== null && strlen($rateResponse) > 0) {
@@ -1610,7 +1552,7 @@ class Carrier extends AbstractDhl implements CarrierInterface
      * @throws LocalizedException
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    protected function _addRestRate($product, $exchangeRates)
+    protected function _addRestRate($product, $exchangeRates): self
     {
         if (isset($product['productName'])
             && isset($product['productCode'])
@@ -2183,7 +2125,7 @@ class Carrier extends AbstractDhl implements CarrierInterface
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    protected function _doShipmentRequestRest()
+    protected function _doShipmentRequestRest(): DataObject
     {
         $rawRequest = $this->_request;
         $url = $this->getGatewayURL().'/shipments';
@@ -2348,13 +2290,6 @@ class Carrier extends AbstractDhl implements CarrierInterface
             ], $dutiable)
         ];
 
-        /** Rest API Payload */
-        $headers = [
-            "Authorization" => "Basic " . $this->getDhlAccessToken(),
-            "Content-Type" => "application/json",
-            "x-version" => "2.12.0"
-        ];
-
         $shippingPayload = json_encode($shippingParams);
 
         $debugData = ['request' => $this->filterDebugData($shippingPayload)];
@@ -2363,7 +2298,7 @@ class Carrier extends AbstractDhl implements CarrierInterface
                 new Request(
                     $url,
                     Request::METHOD_POST,
-                    $headers,
+                    $this->getRestHeaders(),
                     $shippingPayload
                 )
             );
@@ -2398,7 +2333,7 @@ class Carrier extends AbstractDhl implements CarrierInterface
      * @param string|string[] $trackings
      * @return \Magento\Shipping\Model\Tracking\Result|null
      */
-    public function getTracking($trackings)
+    public function getTracking($trackings): ?\Magento\Shipping\Model\Tracking\Result
     {
         if (!is_array($trackings)) {
             $trackings = [$trackings];
@@ -2601,19 +2536,13 @@ class Carrier extends AbstractDhl implements CarrierInterface
         $trackingPayload = (object)[];
         $trackingPayload = json_encode($trackingPayload);
 
-        $headers = [
-            "Authorization" => "Basic " . $this->getDhlAccessToken(),
-            "Content-Type" => "application/json",
-            "x-version" => "2.12.0"
-        ];
-
         $debugData = ['request' => $this->filterDebugData($trackingPayload)];
         try {
             $response = $this->httpClient->request(
                 new Request(
                     $url.$queryString,
                     Request::METHOD_GET,
-                    $headers,
+                    $this->getRestHeaders(),
                     $trackingPayload
                 )
             );
