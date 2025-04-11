@@ -392,17 +392,18 @@ class DynamicStorageTest extends TestCase
     private function fetchDataMock($productFromDb, $categoryFromDb): void
     {
         $selectMock = $this->selectMock;
-        $this->selectMock->expects($this->any())->method('where')
+        $this->selectMock->expects($this->any())
+            ->method('where')
             ->willReturnCallback(function ($string, $value) use ($selectMock) {
-                if($string == 'url_rewrite.request_path IN (?)')
+                if ($string == 'url_rewrite.request_path IN (?)') {
                     $this->requestPath = array_shift($value);
-
+                }
                 return $selectMock;
             });
         $this->connectionMock->expects($this->any())
             ->method('fetchRow')
-            ->willReturnCallback(function ($select) use ($productFromDb, $categoryFromDb) {
-                switch (true){
+            ->willReturnCallback(function () use ($productFromDb, $categoryFromDb) {
+                switch (true) {
                     case $productFromDb && $productFromDb['request_path'] == $this->requestPath:
                         return $productFromDb;
                     case $categoryFromDb && $categoryFromDb['request_path'] == $this->requestPath:
