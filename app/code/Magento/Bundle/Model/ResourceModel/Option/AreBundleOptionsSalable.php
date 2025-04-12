@@ -72,6 +72,10 @@ class AreBundleOptionsSalable
                 ['child_products' => $this->resourceConnection->getTableName('catalog_product_entity')],
                 'child_products.entity_id = bundle_selections.product_id',
                 []
+            )->joinInner(
+                ['child_stock_item' => $this->resourceConnection->getTableName('cataloginventory_stock_item')],
+                'child_stock_item.product_id = child_products.entity_id',
+                []
             )->group(
                 ['bundle_options.parent_id', 'bundle_options.option_id']
             )->where(
@@ -103,18 +107,36 @@ class AreBundleOptionsSalable
             '1',
             '0'
         );
+
+        $hasMinRequiredQuantity = $connection->getCheckSql(
+            'required = 1 AND manage_stock = 1 AND selection_can_change_qty = 0',
+            'qty >= bundle_selections.selection_qty AND is_in_stock = 1',
+            '1'
+        );
+
+        $requiredInStock = $connection->getCheckSql(
+            'required = 1 AND manage_stock = 1 AND selection_can_change_qty = 1',
+            'qty >= 0 AND is_in_stock = 1',
+            '1'
+        );
+
         $optionsSaleabilitySelect->columns([
             'required' => 'bundle_options.required',
             'is_salable' => $isOptionSalableExpr,
             'is_required_and_unsalable' => $isRequiredOptionUnsalable,
+            'has_min_required_quantity' => $hasMinRequiredQuantity,
+            'required_in_stock' => $requiredInStock
         ]);
 
         $select = $connection->select()->from(
             $optionsSaleabilitySelect,
-            [new \Zend_Db_Expr('(MAX(is_salable) = 1 AND MAX(is_required_and_unsalable) = 0)')]
+            [new \Zend_Db_Expr(
+                '(MAX(is_salable) = 1 AND MAX(is_required_and_unsalable) = 0)' .
+                'AND MIN(required_in_stock) = 1 AND MIN(has_min_required_quantity) = 1'
+            )]
         );
-        $isSalable = $connection->fetchOne($select);
 
+        $isSalable = $connection->fetchOne($select);
         return (bool) $isSalable;
     }
 }
