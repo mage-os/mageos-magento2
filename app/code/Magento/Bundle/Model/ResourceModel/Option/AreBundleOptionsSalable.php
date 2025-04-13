@@ -110,13 +110,13 @@ class AreBundleOptionsSalable
 
         $hasMinRequiredQuantity = $connection->getCheckSql(
             'required = 1 AND manage_stock = 1 AND selection_can_change_qty = 0',
-            'qty >= bundle_selections.selection_qty AND is_in_stock = 1',
+            '(qty >= bundle_selections.selection_qty OR backorders > 0) AND is_in_stock = 1',
             '1'
         );
 
         $requiredInStock = $connection->getCheckSql(
             'required = 1 AND manage_stock = 1 AND selection_can_change_qty = 1',
-            'qty >= 0 AND is_in_stock = 1',
+            '(qty >= 0 OR backorders > 0) AND is_in_stock = 1',
             '1'
         );
 
