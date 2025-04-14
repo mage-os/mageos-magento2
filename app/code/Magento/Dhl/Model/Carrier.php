@@ -1370,7 +1370,7 @@ class Carrier extends AbstractDhl implements CarrierInterface
      * @throws LocalizedException
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    protected function _getQuotesRest() : Result\ProxyDeferred
+    protected function _getQuotesRest()
     {
         $rawRequest = $this->_rawRequest;
         $url = $this->getGatewayURL();
@@ -1485,7 +1485,7 @@ class Carrier extends AbstractDhl implements CarrierInterface
      */
     private function getRestHeaders(): array
     {
-        return $headers = [
+        return [
             "Authorization" => "Basic " . $this->getDhlAccessToken(),
             "Content-Type" => "application/json",
             "x-version" => "2.12.0"
@@ -1552,7 +1552,7 @@ class Carrier extends AbstractDhl implements CarrierInterface
      * @throws LocalizedException
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    protected function _addRestRate($product, $exchangeRates): self
+    protected function _addRestRate(array $product, array $exchangeRates): self
     {
         if (isset($product['productName'])
             && isset($product['productCode'])
@@ -2333,7 +2333,7 @@ class Carrier extends AbstractDhl implements CarrierInterface
      * @param string|string[] $trackings
      * @return \Magento\Shipping\Model\Tracking\Result|null
      */
-    public function getTracking($trackings): ?\Magento\Shipping\Model\Tracking\Result
+    public function getTracking(string|array $trackings): ?\Magento\Shipping\Model\Tracking\Result
     {
         if (!is_array($trackings)) {
             $trackings = [$trackings];
@@ -2518,11 +2518,11 @@ class Carrier extends AbstractDhl implements CarrierInterface
     }
 
     /**
-     * @param string[] $trackings
+     * @param string $trackings
      * @return void
      * @throws Throwable
      */
-    protected function _getRestTracking($trackings)
+    protected function _getRestTracking(string $trackings): void
     {
         $url = $this->getGatewayURL().'/tracking?';
 
@@ -2557,13 +2557,13 @@ class Carrier extends AbstractDhl implements CarrierInterface
     }
 
     /**
-     * @param string[] $trackings
+     * @param string $trackings
      * @param string $response
      * @return void
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
-    protected function _parseRestTrackingResponse($trackings, $response)
+    protected function _parseRestTrackingResponse(string $trackings, string $response): void
     {
         $errorTitle = __('Unable to retrieve tracking');
         $resultArr = [];
