@@ -89,7 +89,6 @@ define([
                 update: this._updateSelectionsPositions,
                 tolerance: 'pointer'
             });
-            console.log('Reproduce eslint issue');
 
             return this;
         },
