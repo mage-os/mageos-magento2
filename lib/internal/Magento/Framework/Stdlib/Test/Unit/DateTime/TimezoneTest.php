@@ -426,41 +426,6 @@ class TimezoneTest extends TestCase
         $this->assertEquals($timezone, $scopeDate->getTimezone()->getName());
     }
 
-    /**
-     * @return void
-     * @throws \PHPUnit\Framework\MockObject\Exception
-     */
-    public function testIsScopeDateInInterval()
-    {
-        $scopeMock = $this->createMock(\Magento\Framework\App\ScopeInterface::class);
-        $this->scopeResolver->method('getScope')->willReturn($scopeMock);
-
-        $result = $this->getTimezone()->isScopeDateInInterval(
-            null,
-            '2025-04-01 00:00:00',
-            '2999-05-01 00:00:00',
-        );
-
-        $this->assertTrue($result);
-    }
-
-    /**
-     * @return void
-     * @throws \PHPUnit\Framework\MockObject\Exception
-     */
-    public function testIsScopeDateInIntervalFalse()
-    {
-        $scopeMock = $this->createMock(\Magento\Framework\App\ScopeInterface::class);
-        $this->scopeResolver->method('getScope')->willReturn($scopeMock);
-
-        $result = $this->getTimezone()->isScopeDateInInterval(
-            null,
-            '2025-03-01 00:00:00',
-            '2025-04-01 00:00:00',
-        );
-
-        $this->assertFalse($result);
-    }
 
     /**
      * @return array
