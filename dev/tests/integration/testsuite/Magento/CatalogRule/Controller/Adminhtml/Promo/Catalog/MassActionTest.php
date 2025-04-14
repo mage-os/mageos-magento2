@@ -85,6 +85,21 @@ class MassActionTest extends AbstractBackendController
         self::assertEquals(0, $afterActivateRule2->getIsActive());
     }
 
+    #[DataFixture(CatalogRuleFixture::class, ['is_active' => 1], 'cr1')]
+    #[DataFixture(CatalogRuleFixture::class, ['is_active' => 1], 'cr2')]
+    public function testMassDeleteRule()
+    {
+        $rule1 = FixtureManager::getStorage()->get('cr1');
+        $rule2 = FixtureManager::getStorage()->get('cr2');
+        $params = ['catalogpricerule' => [$rule1->getId(), $rule2->getId()]];
+        $request = $this->getRequest();
+        $request->setParams($params);
+        $request->setMethod(HttpRequest::METHOD_POST);
+        $url = 'backend/catalog_rule/promo_catalog/massDelete';
+        $this->dispatch($url);
+        self::assertEquals('A total of 2 record(s) were deleted.', $this->getSuccessMessage());
+    }
+
     /**
      * Gets success message after dispatching the controller.
      *

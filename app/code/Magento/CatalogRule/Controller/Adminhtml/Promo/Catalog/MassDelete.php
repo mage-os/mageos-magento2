@@ -48,7 +48,7 @@ class MassDelete extends MassAction implements HttpPostActionInterface, HttpGetA
             foreach ($ids as $id) {
                 $this->ruleRepository->deleteById($id);
             }
-            $this->messageManager->addSuccessMessage(__('You deleted a total of %1 records.', count($ids)));
+            $this->messageManager->addSuccessMessage(__('A total of %1 record(s) were deleted.', count($ids)));
         } else {
             $this->messageManager->addErrorMessage(__('Please select a catalog price rule(s)'));
         }
