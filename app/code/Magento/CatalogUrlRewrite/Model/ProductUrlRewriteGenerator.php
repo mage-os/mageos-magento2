@@ -12,6 +12,7 @@ use Magento\CatalogUrlRewrite\Model\Product\CurrentUrlRewritesRegenerator;
 use Magento\CatalogUrlRewrite\Service\V1\StoreViewService;
 use Magento\Framework\App\ObjectManager;
 use Magento\Catalog\Model\Product\Visibility;
+use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 
 /**
@@ -106,7 +107,7 @@ class ProductUrlRewriteGenerator
         ObjectRegistryFactory         $objectRegistryFactory,
         StoreViewService              $storeViewService,
         StoreManagerInterface         $storeManager,
-        GetVisibleForStores           $visibleForStores = null
+        ?GetVisibleForStores           $visibleForStores = null
     ) {
         $this->canonicalUrlRewriteGenerator = $canonicalUrlRewriteGenerator;
         $this->currentUrlRewritesRegenerator = $currentUrlRewritesRegenerator;
@@ -146,6 +147,7 @@ class ProductUrlRewriteGenerator
         if ($product->getVisibility() == Visibility::VISIBILITY_NOT_VISIBLE) {
             $visibleForStores = $this->visibleForStores->execute($product);
             if (count($visibleForStores) === 0 ||
+                $product->getStoreId() !== Store::DEFAULT_STORE_ID &&
                 !in_array($product->getStoreId(), $visibleForStores)
             ) {
                 return [];
