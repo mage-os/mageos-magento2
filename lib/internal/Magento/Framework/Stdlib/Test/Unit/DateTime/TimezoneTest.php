@@ -426,7 +426,6 @@ class TimezoneTest extends TestCase
         $this->assertEquals($timezone, $scopeDate->getTimezone()->getName());
     }
 
-
     /**
      * @return array
      */
