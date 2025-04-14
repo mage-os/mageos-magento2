@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a80bcea0bbbe042d4696d4618f45ff37",
+    "content-hash": "8c50e2f55797b42aa7597db166f8fbed",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -11492,12 +11492,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:magento-gl/magento-coding-standard.git",
-                "reference": "c8e0ee9f05852242b1f2aab9a79c250d56b76a0b"
+                "reference": "4d17750c057a3c5d070da15cd593ae90a292296f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-gl/magento-coding-standard/zipball/c8e0ee9f05852242b1f2aab9a79c250d56b76a0b",
-                "reference": "c8e0ee9f05852242b1f2aab9a79c250d56b76a0b",
+                "url": "https://api.github.com/repos/magento-gl/magento-coding-standard/zipball/4d17750c057a3c5d070da15cd593ae90a292296f",
+                "reference": "4d17750c057a3c5d070da15cd593ae90a292296f",
                 "shasum": ""
             },
             "require": {
@@ -11545,7 +11545,7 @@
             "support": {
                 "source": "https://github.com/magento-gl/magento-coding-standard/tree/AC-13683-v1"
             },
-            "time": "2025-03-19T21:25:28+00:00"
+            "time": "2025-03-26T10:02:47+00:00"
         },
         {
             "name": "magento/magento2-functional-testing-framework",
