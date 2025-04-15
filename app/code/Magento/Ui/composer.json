@@ -1,32 +1,36 @@
 {
-    "name": "magento/module-ui",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-authorization": "*",
-        "magento/module-backend": "*",
-        "magento/module-eav": "*",
-        "magento/module-store": "*",
-        "magento/module-user": "*"
-    },
-    "suggest": {
-        "magento/module-config": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-ui",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.1.0",
+    "mage-os/module-authorization": "1.1.0",
+    "mage-os/module-backend": "1.1.0",
+    "mage-os/module-eav": "1.1.0",
+    "mage-os/module-store": "1.1.0",
+    "mage-os/module-user": "1.1.0"
+  },
+  "suggest": {
+    "mage-os/module-config": "1.1.0"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\Ui\\": ""
-        }
+    "psr-4": {
+      "Magento\\Ui\\": ""
     }
+  },
+  "version": "1.1.0",
+  "replace": {
+    "magento/module-ui": "101.2.8"
+  }
 }

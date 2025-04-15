@@ -1,25 +1,29 @@
 {
-    "name": "magento/module-authorization",
-    "description": "Authorization module provides access to Magento ACL functionality.",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-backend": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-authorization",
+  "description": "Authorization module provides access to Magento ACL functionality.",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.1.0",
+    "mage-os/module-backend": "1.1.0"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\Authorization\\": ""
-        }
+    "psr-4": {
+      "Magento\\Authorization\\": ""
     }
+  },
+  "version": "1.1.0",
+  "replace": {
+    "magento/module-authorization": "100.4.8"
+  }
 }

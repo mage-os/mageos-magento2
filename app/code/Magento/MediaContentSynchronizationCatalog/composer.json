@@ -1,24 +1,28 @@
 {
-    "name": "magento/module-media-content-synchronization-catalog",
-    "description": "Magento module provides the implementation of MediaContentSynchronization functionality for Magento_Catalog module",
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-media-content-synchronization-api": "*",
-        "magento/module-media-gallery-synchronization-api": "*",
-        "magento/module-media-content-api": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-media-content-synchronization-catalog",
+  "description": "Magento module provides the implementation of MediaContentSynchronization functionality for Magento_Catalog module",
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.1.0",
+    "mage-os/module-media-content-synchronization-api": "1.1.0",
+    "mage-os/module-media-gallery-synchronization-api": "1.1.0",
+    "mage-os/module-media-content-api": "1.1.0"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\MediaContentSynchronizationCatalog\\": ""
-        }
+    "psr-4": {
+      "Magento\\MediaContentSynchronizationCatalog\\": ""
     }
+  },
+  "version": "1.1.0",
+  "replace": {
+    "magento/module-media-content-synchronization-catalog": "100.4.5"
+  }
 }

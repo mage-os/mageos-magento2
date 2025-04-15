@@ -1,40 +1,44 @@
 {
-    "name": "magento/module-reports",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-backend": "*",
-        "magento/module-catalog": "*",
-        "magento/module-catalog-inventory": "*",
-        "magento/module-cms": "*",
-        "magento/module-config": "*",
-        "magento/module-customer": "*",
-        "magento/module-downloadable": "*",
-        "magento/module-eav": "*",
-        "magento/module-quote": "*",
-        "magento/module-review": "*",
-        "magento/module-sales": "*",
-        "magento/module-sales-rule": "*",
-        "magento/module-store": "*",
-        "magento/module-tax": "*",
-        "magento/module-widget": "*",
-        "magento/module-wishlist": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-reports",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.1.0",
+    "mage-os/module-backend": "1.1.0",
+    "mage-os/module-catalog": "1.1.0",
+    "mage-os/module-catalog-inventory": "1.1.0",
+    "mage-os/module-cms": "1.1.0",
+    "mage-os/module-config": "1.1.0",
+    "mage-os/module-customer": "1.1.0",
+    "mage-os/module-downloadable": "1.1.0",
+    "mage-os/module-eav": "1.1.0",
+    "mage-os/module-quote": "1.1.0",
+    "mage-os/module-review": "1.1.0",
+    "mage-os/module-sales": "1.1.0",
+    "mage-os/module-sales-rule": "1.1.0",
+    "mage-os/module-store": "1.1.0",
+    "mage-os/module-tax": "1.1.0",
+    "mage-os/module-widget": "1.1.0",
+    "mage-os/module-wishlist": "1.1.0"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\Reports\\": ""
-        }
+    "psr-4": {
+      "Magento\\Reports\\": ""
     }
+  },
+  "version": "1.1.0",
+  "replace": {
+    "magento/module-reports": "100.4.8"
+  }
 }

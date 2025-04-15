@@ -1,22 +1,26 @@
 {
-    "name": "magento/module-quote-bundle-options",
-    "description": "Magento module provides data provider for creating buy request for bundle products",
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-quote": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-quote-bundle-options",
+  "description": "Magento module provides data provider for creating buy request for bundle products",
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.1.0",
+    "mage-os/module-quote": "1.1.0"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\QuoteBundleOptions\\": ""
-        }
+    "psr-4": {
+      "Magento\\QuoteBundleOptions\\": ""
     }
+  },
+  "version": "1.1.0",
+  "replace": {
+    "magento/module-quote-bundle-options": "100.4.4"
+  }
 }

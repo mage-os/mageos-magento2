@@ -1,20 +1,24 @@
 {
-    "name": "magento/language-fr_fr",
-    "description": "French (France) language",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
-    ],
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "magento/framework": "*"
-    },
-    "type": "magento2-language",
-    "autoload": {
-        "files": [
-            "registration.php"
-        ]
-    }
+  "name": "mage-os/language-fr_fr",
+  "description": "French (France) language",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "mage-os/framework": "1.1.0"
+  },
+  "type": "magento2-language",
+  "autoload": {
+    "files": [
+      "registration.php"
+    ]
+  },
+  "version": "1.1.0",
+  "replace": {
+    "magento/language-fr_fr": "100.4.0"
+  }
 }

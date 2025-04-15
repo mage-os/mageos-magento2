@@ -1,38 +1,42 @@
 {
-    "name": "magento/module-offline-shipping",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-backend": "*",
-        "magento/module-catalog": "*",
-        "magento/module-config": "*",
-        "magento/module-directory": "*",
-        "magento/module-quote": "*",
-        "magento/module-sales": "*",
-        "magento/module-sales-rule": "*",
-        "magento/module-shipping": "*",
-        "magento/module-store": "*",
-        "magento/module-async-config": "*"
-    },
-    "suggest": {
-        "magento/module-checkout": "*",
-        "magento/module-offline-shipping-sample-data": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-offline-shipping",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.1.0",
+    "mage-os/module-backend": "1.1.0",
+    "mage-os/module-catalog": "1.1.0",
+    "mage-os/module-config": "1.1.0",
+    "mage-os/module-directory": "1.1.0",
+    "mage-os/module-quote": "1.1.0",
+    "mage-os/module-sales": "1.1.0",
+    "mage-os/module-sales-rule": "1.1.0",
+    "mage-os/module-shipping": "1.1.0",
+    "mage-os/module-store": "1.1.0",
+    "mage-os/module-async-config": "1.1.0"
+  },
+  "suggest": {
+    "mage-os/module-checkout": "1.1.0",
+    "mage-os/module-offline-shipping-sample-data": "Sample Data version: 1.1.0"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\OfflineShipping\\": ""
-        }
+    "psr-4": {
+      "Magento\\OfflineShipping\\": ""
     }
+  },
+  "version": "1.1.0",
+  "replace": {
+    "magento/module-offline-shipping": "100.4.7"
+  }
 }

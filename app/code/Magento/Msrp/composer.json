@@ -1,33 +1,37 @@
 {
-    "name": "magento/module-msrp",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-catalog": "*",
-        "magento/module-downloadable": "*",
-        "magento/module-eav": "*",
-        "magento/module-store": "*",
-        "magento/module-tax": "*"
-    },
-    "suggest": {
-        "magento/module-bundle": "*",
-        "magento/module-msrp-sample-data": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-msrp",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.1.0",
+    "mage-os/module-catalog": "1.1.0",
+    "mage-os/module-downloadable": "1.1.0",
+    "mage-os/module-eav": "1.1.0",
+    "mage-os/module-store": "1.1.0",
+    "mage-os/module-tax": "1.1.0"
+  },
+  "suggest": {
+    "mage-os/module-bundle": "1.1.0",
+    "mage-os/module-msrp-sample-data": "Sample Data version: 1.1.0"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\Msrp\\": ""
-        }
+    "psr-4": {
+      "Magento\\Msrp\\": ""
     }
+  },
+  "version": "1.1.0",
+  "replace": {
+    "magento/module-msrp": "100.4.7"
+  }
 }

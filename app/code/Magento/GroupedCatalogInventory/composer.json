@@ -1,27 +1,31 @@
 {
-    "name": "magento/module-grouped-catalog-inventory",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-catalog": "*",
-        "magento/module-catalog-inventory": "*",
-        "magento/module-grouped-product": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-grouped-catalog-inventory",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.1.0",
+    "mage-os/module-catalog": "1.1.0",
+    "mage-os/module-catalog-inventory": "1.1.0",
+    "mage-os/module-grouped-product": "1.1.0"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\GroupedCatalogInventory\\": ""
-        }
+    "psr-4": {
+      "Magento\\GroupedCatalogInventory\\": ""
     }
+  },
+  "version": "1.1.0",
+  "replace": {
+    "magento/module-grouped-catalog-inventory": "100.4.5"
+  }
 }

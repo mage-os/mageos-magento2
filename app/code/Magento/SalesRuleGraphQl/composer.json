@@ -1,26 +1,30 @@
 {
-    "name": "magento/module-sales-rule-graph-ql",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-sales-rule": "*",
-        "magento/module-quote": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-sales-rule-graph-ql",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.1.0",
+    "mage-os/module-sales-rule": "1.1.0",
+    "mage-os/module-quote": "1.1.0"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\SalesRuleGraphQl\\": ""
-        }
+    "psr-4": {
+      "Magento\\SalesRuleGraphQl\\": ""
     }
+  },
+  "version": "1.1.0",
+  "replace": {
+    "magento/module-sales-rule-graph-ql": "100.4.1"
+  }
 }

@@ -1,21 +1,25 @@
 {
-    "name": "magento/module-async-config",
-    "description": "N/A",
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-config": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "proprietary"
+  "name": "mage-os/module-async-config",
+  "description": "N/A",
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.1.0",
+    "mage-os/module-config": "1.1.0"
+  },
+  "type": "magento2-module",
+  "license": [
+    "proprietary"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\AsyncConfig\\": ""
-        }
+    "psr-4": {
+      "Magento\\AsyncConfig\\": ""
     }
+  },
+  "version": "1.1.0",
+  "replace": {
+    "magento/module-async-config": "100.4.1"
+  }
 }

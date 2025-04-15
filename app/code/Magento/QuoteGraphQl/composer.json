@@ -1,43 +1,47 @@
 {
-    "name": "magento/module-quote-graph-ql",
-    "description": "N/A",
-    "type": "magento2-module",
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-quote": "*",
-        "magento/module-checkout": "*",
-        "magento/module-catalog": "*",
-        "magento/module-store": "*",
-        "magento/module-customer": "*",
-        "magento/module-customer-graph-ql": "*",
-        "magento/module-sales": "*",
-        "magento/module-sales-graph-ql": "*",
-        "magento/module-directory": "*",
-        "magento/module-graph-ql": "*",
-        "magento/module-gift-message": "*",
-        "magento/module-gift-message-graph-ql": "*",
-        "magento/module-catalog-inventory": "*",
-        "magento/module-eav-graph-ql": "*",
-        "magento/module-downloadable": "*",
-        "magento/module-catalog-graph-ql": "*",
-        "magento/module-payment": "*"
-    },
-    "suggest": {
-        "magento/module-graph-ql-cache": "*",
-        "magento/module-catalog-inventory-graph-ql": "*",
-        "magento/module-payment-graph-ql": "*"
-    },
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-quote-graph-ql",
+  "description": "N/A",
+  "type": "magento2-module",
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.1.0",
+    "mage-os/module-quote": "1.1.0",
+    "mage-os/module-checkout": "1.1.0",
+    "mage-os/module-catalog": "1.1.0",
+    "mage-os/module-store": "1.1.0",
+    "mage-os/module-customer": "1.1.0",
+    "mage-os/module-customer-graph-ql": "1.1.0",
+    "mage-os/module-sales": "1.1.0",
+    "mage-os/module-sales-graph-ql": "1.1.0",
+    "mage-os/module-directory": "1.1.0",
+    "mage-os/module-graph-ql": "1.1.0",
+    "mage-os/module-gift-message": "1.1.0",
+    "mage-os/module-gift-message-graph-ql": "1.1.0",
+    "mage-os/module-catalog-inventory": "1.1.0",
+    "mage-os/module-eav-graph-ql": "1.1.0",
+    "mage-os/module-downloadable": "1.1.0",
+    "mage-os/module-catalog-graph-ql": "1.1.0",
+    "mage-os/module-payment": "1.1.0"
+  },
+  "suggest": {
+    "mage-os/module-graph-ql-cache": "1.1.0",
+    "mage-os/module-catalog-inventory-graph-ql": "1.1.0",
+    "mage-os/module-payment-graph-ql": "1.1.0"
+  },
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\QuoteGraphQl\\": ""
-        }
+    "psr-4": {
+      "Magento\\QuoteGraphQl\\": ""
     }
+  },
+  "version": "1.1.0",
+  "replace": {
+    "magento/module-quote-graph-ql": "100.4.8"
+  }
 }

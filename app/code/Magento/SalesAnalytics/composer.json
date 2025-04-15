@@ -1,23 +1,27 @@
 {
-    "name": "magento/module-sales-analytics",
-    "description": "N/A",
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-sales": "*",
-        "magento/module-analytics": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-sales-analytics",
+  "description": "N/A",
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.1.0",
+    "mage-os/module-sales": "1.1.0",
+    "mage-os/module-analytics": "1.1.0"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\SalesAnalytics\\": ""
-        }
+    "psr-4": {
+      "Magento\\SalesAnalytics\\": ""
     }
+  },
+  "version": "1.1.0",
+  "replace": {
+    "magento/module-sales-analytics": "100.4.5"
+  }
 }

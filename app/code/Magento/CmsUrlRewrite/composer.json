@@ -1,27 +1,31 @@
 {
-    "name": "magento/module-cms-url-rewrite",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-cms": "*",
-        "magento/module-store": "*",
-        "magento/module-url-rewrite": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-cms-url-rewrite",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.1.0",
+    "mage-os/module-cms": "1.1.0",
+    "mage-os/module-store": "1.1.0",
+    "mage-os/module-url-rewrite": "1.1.0"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\CmsUrlRewrite\\": ""
-        }
+    "psr-4": {
+      "Magento\\CmsUrlRewrite\\": ""
     }
+  },
+  "version": "1.1.0",
+  "replace": {
+    "magento/module-cms-url-rewrite": "100.4.7"
+  }
 }
