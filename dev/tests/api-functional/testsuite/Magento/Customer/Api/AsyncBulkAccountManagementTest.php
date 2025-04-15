@@ -129,8 +129,8 @@ class AsyncBulkAccountManagementTest extends WebapiAbstract
             $this->publisherConsumerController->waitForAsynchronousResult(
                 function (array $data) {
                     return 1 === $this->objectManager->create(Collection::class)
-                            ->addAttributeToFilter('email', ['eq' => $data[0]['customer']['email']])
-                            ->getSize();
+                        ->addAttributeToFilter('email', ['eq' => $data[0]['customer']['email']])
+                        ->getSize();
                 },
                 [$postData]
             );
