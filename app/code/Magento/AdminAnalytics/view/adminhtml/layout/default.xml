@@ -8,7 +8,7 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd" >
     <body>
         <referenceContainer name="header">
-            <block name="tracking" as="tracking" template="Magento_AdminAnalytics::tracking.phtml" ifconfig="admin/usage/enabled">
+            <block name="tracking" as="tracking" template="Magento_AdminAnalytics::tracking.phtml">
                 <arguments>
                     <!-- For Mage-OS the tracking_url is empty by default. -->
                     <argument name="tracking_url" xsi:type="string"/>
