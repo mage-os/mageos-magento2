@@ -71,16 +71,15 @@ class FileResolverTest extends TestCase
     {
         $this->moduleFileResolverMock = $this->getMockBuilder(FileResolverInterface::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['get'])
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->designMock = $this->getMockBuilder(DesignInterface::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getDesignTheme'])
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->themeInterFaceMock = $this->getMockBuilder(ThemeInterface::class)
-            ->getMockForAbstractClass();
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->designMock->expects($this->once())
             ->method('getDesignTheme')
@@ -93,13 +92,13 @@ class FileResolverTest extends TestCase
 
         $this->customizationInterfaceMock = $this->getMockBuilder(CustomizationInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->filesystemMock = $this->createPartialMock(Filesystem::class, ['getDirectoryRead']);
 
         $this->readInterfaceMock = $this->getMockBuilder(ReadInterface::class)
-        ->disableOriginalConstructor()
-        ->getMockForAbstractClass();
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->filesystemMock->expects($this->once())
             ->method('getDirectoryRead')
@@ -122,17 +121,19 @@ class FileResolverTest extends TestCase
     /**
      * Test for get method with frontend scope.
      *
-     * @param string $filename
+     * @param string $scope
+     * @param string $fileName
      * @param array $fileList
+     * @param string $themeFilesPath
      *
      * @return void
      * @dataProvider providerGetFrontend
      */
-    public function testGetFrontend(string $scope, string $filename, array $fileList, string $themeFilesPath): void
+    public function testGetFrontend(string $scope, string $fileName, array $fileList, string $themeFilesPath): void
     {
         $this->moduleFileResolverMock->expects($this->once())
             ->method('get')
-            ->with($filename, $scope)
+            ->with($fileName, $scope)
             ->willReturn($fileList);
 
         $this->customizationFactoryMock->expects($this->any())
@@ -146,26 +147,27 @@ class FileResolverTest extends TestCase
 
         $this->readInterfaceMock->expects($this->once())
             ->method('isExist')
-            ->with($themeFilesPath.'/etc/'.$filename)
+            ->with($themeFilesPath.'/etc/'.$fileName)
             ->willReturn(true);
 
         $this->iteratorFactoryMock->expects($this->once())
             ->method('create')
             ->with(
                 [
-                    'paths' => array_reverse([$themeFilesPath.'/etc/'.$filename]),
+                    'paths' => array_reverse([$themeFilesPath.'/etc/'.$fileName]),
                     'existingIterator' => $fileList
                 ]
             )
             ->willReturn($fileList);
 
-        $this->assertEquals($fileList, $this->model->get($filename, $scope));
+        $this->assertEquals($fileList, $this->model->get($fileName, $scope));
     }
 
     /**
      * Test for get method with global scope.
      *
-     * @param string $filename
+     * @param string $scope
+     * @param string $fileName
      * @param array $fileList
      *
      * @return void
@@ -181,7 +183,7 @@ class FileResolverTest extends TestCase
     }
 
     /**
-     * Data provider for get glocal scope tests.
+     * Data provider for get global scope tests.
      *
      * @return array
      */
