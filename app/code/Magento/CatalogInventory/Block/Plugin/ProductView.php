@@ -38,7 +38,7 @@ class ProductView
         return array_merge(
             $validators,
             $this->productQuantityValidator->getData(
-                $block->getProduct()->getSku(),
+                $block->getProduct()->getId(),
                 $block->getProduct()->getStore()->getWebsiteId()
             )
         );

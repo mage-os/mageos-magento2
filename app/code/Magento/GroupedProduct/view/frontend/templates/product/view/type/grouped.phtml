@@ -56,7 +56,7 @@
                                title="<?= $escaper->escapeHtmlAttr(__('Qty')) ?>"
                                class="input-text qty"
                                data-validate="<?= $escaper->escapeHtmlAttr($viewModel->getQuantityValidators(
-                                   $_item->getSku(),
+                                   $_item->getId(),
                                    $_item->getWebsiteId()
                                )) ?>"
                                data-no-validation-for-zero-qty="true"

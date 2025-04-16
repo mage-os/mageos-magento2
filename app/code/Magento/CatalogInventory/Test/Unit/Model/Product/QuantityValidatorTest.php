@@ -7,14 +7,9 @@ declare(strict_types=1);
 
 namespace Magento\CatalogInventory\Test\Unit\Model\Product;
 
+use Magento\CatalogInventory\Api\StockRegistryInterface;
 use Magento\CatalogInventory\Model\Product\QuantityValidator;
-use Magento\InventoryConfigurationApi\Api\GetStockItemConfigurationInterface;
-use Magento\InventoryConfigurationApi\Api\Data\StockItemConfigurationInterface;
-use Magento\InventorySalesApi\Api\Data\SalesChannelInterface;
-use Magento\InventoryApi\Api\Data\StockInterface;
-use Magento\InventorySalesApi\Api\StockResolverInterface;
-use Magento\Store\Api\Data\WebsiteInterface;
-use Magento\Store\Model\StoreManagerInterface;
+use Magento\CatalogInventory\Api\Data\StockItemInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -23,10 +18,8 @@ use PHPUnit\Framework\TestCase;
  */
 class QuantityValidatorTest extends TestCase
 {
+    private const PRODUCT_ID = 42;
     private const WEBSITE_ID = 1;
-    private const WEBSITE_CODE = 'base';
-    private const STOCK_ID = 1;
-    private const TEST_SKU = 'TEST-SKU';
 
     /**
      * @var QuantityValidator
@@ -34,71 +27,46 @@ class QuantityValidatorTest extends TestCase
     private $quantityValidator;
 
     /**
-     * @var GetStockItemConfigurationInterface|MockObject
+     * @var StockRegistryInterface|MockObject
      */
-    private $getStockItemConfiguration;
-
-    /**
-     * @var StoreManagerInterface|MockObject
-     */
-    private $storeManager;
-
-    /**
-     * @var StockResolverInterface|MockObject
-     */
-    private $stockResolver;
+    private $stockRegistry;
 
     protected function setUp(): void
     {
-        $this->getStockItemConfiguration = $this->createMock(GetStockItemConfigurationInterface::class);
-        $this->storeManager = $this->createMock(StoreManagerInterface::class);
-        $this->stockResolver = $this->createMock(StockResolverInterface::class);
+        $this->stockRegistry = $this->createMock(StockRegistryInterface::class);
 
         $this->quantityValidator = new QuantityValidator(
-            $this->getStockItemConfiguration,
-            $this->storeManager,
-            $this->stockResolver
+            $this->stockRegistry
         );
     }
 
-    public function testGetDataWithValidators(): void
+    public function testGetDataWithMinMaxAndIncrements(): void
     {
-        $website = $this->createMock(WebsiteInterface::class);
-        $website->method('getCode')->willReturn(self::WEBSITE_CODE);
+        $stockItem = $this->createMock(StockItemInterface::class);
 
-        $stock = $this->createMock(StockInterface::class);
-        $stock->method('getStockId')->willReturn(self::STOCK_ID);
+        $stockItem->method('getMinSaleQty')
+            ->willReturn(2.0);
 
-        $stockItemConfiguration = $this->createMock(StockItemConfigurationInterface::class);
-        $stockItemConfiguration->method('getMinSaleQty')->willReturn(2.0);
-        $stockItemConfiguration->method('getMaxSaleQty')->willReturn(10.0);
-        $stockItemConfiguration->method('getQtyIncrements')->willReturn(2.0);
+        $stockItem->method('getMaxSaleQty')
+            ->willReturn(10.0);
 
-        // Set expectations
-        $this->storeManager->expects($this->once())
-            ->method('getWebsite')
-            ->with(self::WEBSITE_ID)
-            ->willReturn($website);
+        $stockItem->method('getQtyIncrements')
+            ->willReturn(2.0);
 
-        $this->stockResolver->expects($this->once())
-            ->method('execute')
-            ->with(SalesChannelInterface::TYPE_WEBSITE, self::WEBSITE_CODE)
-            ->willReturn($stock);
-
-        $this->getStockItemConfiguration->expects($this->once())
-            ->method('execute')
-            ->with(self::TEST_SKU, self::STOCK_ID)
-            ->willReturn($stockItemConfiguration);
+        $this->stockRegistry->expects($this->once())
+            ->method('getStockItem')
+            ->with(self::PRODUCT_ID, self::WEBSITE_ID)
+            ->willReturn($stockItem);
 
         $expected = [
             'validate-item-quantity' => [
-                'minAllowed' => 2,
-                'maxAllowed' => 10,
+                'minAllowed' => 2.0,
+                'maxAllowed' => 10.0,
                 'qtyIncrements' => 2.0
             ]
         ];
 
-        $result = $this->quantityValidator->getData(self::TEST_SKU, self::WEBSITE_ID);
+        $result = $this->quantityValidator->getData(self::PRODUCT_ID, self::WEBSITE_ID);
         $this->assertEquals($expected, $result);
     }
 }
