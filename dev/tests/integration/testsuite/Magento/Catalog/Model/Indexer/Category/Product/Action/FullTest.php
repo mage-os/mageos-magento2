@@ -1,13 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2019 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
 namespace Magento\Catalog\Model\Indexer\Category\Product\Action;
 
 use Magento\Catalog\Model\Indexer\Category\Product\Action\Full as OriginObject;
+use Magento\Framework\Module\Manager;
 use Magento\TestFramework\Catalog\Model\Indexer\Category\Product\Action\Full as PreferenceObject;
 use Magento\Framework\Interception\PluginListInterface;
 use Magento\TestFramework\Helper\Bootstrap;
@@ -36,6 +37,11 @@ class FullTest extends \PHPUnit\Framework\TestCase
     private $objectManager;
 
     /**
+     * @var Manager
+     */
+    private Manager $moduleManager;
+
+    /**
      * @inheritDoc
      */
     protected function setUp(): void
@@ -45,6 +51,7 @@ class FullTest extends \PHPUnit\Framework\TestCase
         $this->objectManager->addSharedInstance($preferenceObject, OriginObject::class);
         $this->interceptor = $this->objectManager->get(OriginObject::class);
         $this->pluginList = $this->objectManager->get(PluginListInterface::class);
+        $this->objectManager->get(Manager::class);
     }
 
     /**
@@ -63,7 +70,14 @@ class FullTest extends \PHPUnit\Framework\TestCase
         $interceptorClassName = get_class($this->interceptor);
 
         // Check interceptor class name
-        $this->assertEquals($interceptorClassName, PreferenceObject::class . '\Interceptor');
+        if ($this->moduleManager->isEnabled('Magento_Staging')) {
+            $this->assertEquals(
+                '\Magento\Staging\Model\Indexer\Category\Product\Action\Full\Interceptor',
+                $interceptorClassName
+            );
+        } else {
+            $this->assertEquals(PreferenceObject::class . '\Interceptor', $interceptorClassName);
+        }
 
         //check that there are no fatal errors
         $this->pluginList->getNext($interceptorClassName, 'execute');
