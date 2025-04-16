@@ -125,23 +125,14 @@ class SaveHandler implements SaveHandlerInterface, ResetAfterRequestInterface
         $sessionMaxSize = $this->sessionMaxSizeConfig->getSessionMaxSize();
         $sessionSize = $sessionData !== null ? strlen($sessionData) : 0;
 
-        if ($sessionMaxSize !== null && $sessionMaxSize < $sessionSize) {
-            switch ($this->appState->getAreaCode()) {
-                case Area::AREA_ADMINHTML:
-                    $this->messageManager->addNoticeMessage(
-                        __(
-                            'The current session size exceeds configured maximum session size,'
-                            . ' consider increasing the configured value.'
-                        )
-                    );
-                    break;
-                case Area::AREA_FRONTEND:
-                    $this->messageManager->addErrorMessage(
-                        __('There is an error. Please Contact store administrator.')
-                    );
-                //clear session data for all areas other than adminhtml
-                default:
-                    $sessionData = '';
+        if ($sessionMaxSize !== null && $sessionMaxSize < $sessionSize
+            && $this->appState->getAreaCode() !== Area::AREA_ADMINHTML
+        ) {
+            $sessionData = '';
+            if ($this->appState->getAreaCode() === Area::AREA_FRONTEND) {
+                $this->messageManager->addErrorMessage(
+                    __('There is an error. Please Contact store administrator.')
+                );
             }
         }
 
