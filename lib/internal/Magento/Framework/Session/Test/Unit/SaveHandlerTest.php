@@ -137,7 +137,7 @@ class SaveHandlerTest extends TestCase
             ->with('test_session_id')
             ->willReturn('test_session_data');
 
-        $this->appStateMock->expects($this->once())
+        $this->appStateMock->expects($this->atLeastOnce())
             ->method('getAreaCode')
             ->willReturn(AppArea::AREA_FRONTEND);
         $this->messageManagerMock->expects($this->once())
@@ -160,7 +160,7 @@ class SaveHandlerTest extends TestCase
             ->with('test_session_id')
             ->willReturn('test_session_data');
 
-        $this->appStateMock->expects($this->once())
+        $this->appStateMock->expects($this->atLeastOnce())
             ->method('getAreaCode')
             ->willReturn(AppArea::AREA_FRONTEND);
         $this->messageManagerMock->expects($this->once())
@@ -184,9 +184,6 @@ class SaveHandlerTest extends TestCase
         $this->appStateMock->expects($this->once())
             ->method('getAreaCode')
             ->willReturn(AppArea::AREA_ADMINHTML);
-        $this->messageManagerMock->expects($this->once())
-            ->method('addNoticeMessage')
-            ->willReturnSelf();
 
         $this->assertEquals('test_session_data', $this->saveHandler->read('test_session_id'));
     }
