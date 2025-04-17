@@ -20,9 +20,7 @@
         </annotations>
         <before>
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
-            <actionGroup ref="AdminGoToCacheManagementPageActionGroup" stepKey="goToCacheManagementPage"/>
-            <!--Verify Cache Type EAV Types And Attributes Is ENABLED -->
-            <waitForText selector="{{AdminMessagesSection.assertCacheManagementStatusEnabled('EAV')}}" userInput="ENABLED" stepKey="verifyCacheTypeEAVTypesAndAttributesIsENABLED"/>
+            <magentoCLI command="cache:enable" arguments="eav" stepKey="cleanSpecifiedCache"/>
         </before>
         <after>
             <!--Delete created entity -->
