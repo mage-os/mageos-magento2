@@ -51,7 +51,7 @@ class FullTest extends \PHPUnit\Framework\TestCase
         $this->objectManager->addSharedInstance($preferenceObject, OriginObject::class);
         $this->interceptor = $this->objectManager->get(OriginObject::class);
         $this->pluginList = $this->objectManager->get(PluginListInterface::class);
-        $this->objectManager->get(Manager::class);
+        $this->moduleManager = $this->objectManager->get(Manager::class);
     }
 
     /**
@@ -72,7 +72,7 @@ class FullTest extends \PHPUnit\Framework\TestCase
         // Check interceptor class name
         if ($this->moduleManager->isEnabled('Magento_Staging')) {
             $this->assertEquals(
-                '\Magento\Staging\Model\Indexer\Category\Product\Action\Full\Interceptor',
+                'Magento\Staging\Model\Indexer\Category\Product\Action\Full\Interceptor',
                 $interceptorClassName
             );
         } else {
