@@ -51,7 +51,7 @@
         <!-- Assert block_id value in page content -->
         <actionGroup ref="AdminAssertCMSPageContentParamValueActionGroup" stepKey="assertBlockId">
             <argument name="param" value="block_id"/>
-            <argument name="value" value="$$createPreReqBlock.block_id$$"/>
+            <argument name="value" value="$$createPreReqBlock.id$$"/>
         </actionGroup>
     </test>
 </tests>
