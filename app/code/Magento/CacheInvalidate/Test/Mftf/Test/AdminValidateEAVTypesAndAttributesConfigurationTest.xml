@@ -20,7 +20,8 @@
         </annotations>
         <before>
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
-            <magentoCLI command="cache:enable" arguments="eav" stepKey="cleanSpecifiedCache"/>
+            <comment userInput="BIC Workaround" stepKey="goToCacheManagementPage" />
+            <magentoCLI command="cache:enable" arguments="eav" stepKey="verifyCacheTypeEAVTypesAndAttributesIsENABLED"/>
         </before>
         <after>
             <!--Delete created entity -->
