@@ -19,7 +19,6 @@ class SubscriptionsTest extends TestCase
      */
     private PriceIndexProcessor $priceIndexProcessor;
 
-
     /**
      * @var FulltextIndexProcessor
      */
@@ -39,4 +38,3 @@ class SubscriptionsTest extends TestCase
         $this->assertNotContains('cataloginventory_stock_item', $subscriptions);
     }
 }
-
