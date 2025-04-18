@@ -136,6 +136,11 @@ abstract class AbstractEntityUrl implements ResolverInterface
                 $urlRewrite->getTargetPath(),
                 (int) $urlRewrite->getStoreId()
             );
+
+            if ($nextUrlRewrite?->getTargetPath() === $urlRewrite->getTargetPath()) {
+                return $nextUrlRewrite;
+            }
+
             if ($nextUrlRewrite) {
                 $urlRewrite = $nextUrlRewrite;
             }
