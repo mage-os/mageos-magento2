@@ -59,7 +59,7 @@ class ChangeParentStockStatus
     /**
      * Update stock status of configurable products based on children products stock status
      *
-     * @param array $childrenIds
+     * @param array<string|int> $childrenIds
      * @return void
      */
     public function execute(array $childrenIds): void
@@ -68,6 +68,17 @@ class ChangeParentStockStatus
         foreach (array_unique($parentIds) as $productId) {
             $this->processStockForParent((int)$productId);
         }
+    }
+
+    /**
+     * Updates the parent stock status based on children statuses
+     *
+     * @param int $parentId
+     * @return void
+     */
+    public function executeFromParent(int $parentId): void
+    {
+        $this->processStockForParent($parentId);
     }
 
     /**
@@ -106,6 +117,7 @@ class ChangeParentStockStatus
         if ($this->isNeedToUpdateParent($parentStockItem, $childrenIsInStock)) {
             $parentStockItem->setIsInStock($childrenIsInStock);
             $parentStockItem->setStockStatusChangedAuto(1);
+            // @phpstan-ignore method.notFound
             $parentStockItem->setStockStatusChangedAutomaticallyFlag(true);
             $this->stockItemRepository->save($parentStockItem);
         }

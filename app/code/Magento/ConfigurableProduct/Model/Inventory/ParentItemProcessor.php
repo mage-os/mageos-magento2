@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\ConfigurableProduct\Model\Inventory;
 
+use Magento\Catalog\Model\Product\Type;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Magento\Catalog\Api\Data\ProductInterface as Product;
 use Magento\CatalogInventory\Api\StockItemCriteriaInterfaceFactory;
@@ -21,27 +22,11 @@ use Magento\Framework\App\ObjectManager;
 class ParentItemProcessor implements ParentItemProcessorInterface
 {
     /**
-     * @var ChangeParentStockStatus
-     */
-    private $changeParentStockStatus;
-
-    /**
-     * @param Configurable $configurableType
-     * @param StockItemCriteriaInterfaceFactory $criteriaInterfaceFactory
-     * @param StockItemRepositoryInterface $stockItemRepository
-     * @param StockConfigurationInterface $stockConfiguration
-     * @param ChangeParentStockStatus|null $changeParentStockStatus
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter) Deprecated dependencies
+     * @param ChangeParentStockStatus $changeParentStockStatus
      */
     public function __construct(
-        Configurable $configurableType,
-        StockItemCriteriaInterfaceFactory $criteriaInterfaceFactory,
-        StockItemRepositoryInterface $stockItemRepository,
-        StockConfigurationInterface $stockConfiguration,
-        ?ChangeParentStockStatus $changeParentStockStatus = null
+        private readonly ChangeParentStockStatus $changeParentStockStatus
     ) {
-        $this->changeParentStockStatus = $changeParentStockStatus
-            ?? ObjectManager::getInstance()->get(ChangeParentStockStatus::class);
     }
 
     /**
@@ -50,8 +35,12 @@ class ParentItemProcessor implements ParentItemProcessorInterface
      * @param Product $product
      * @return void
      */
-    public function process(Product $product)
+    public function process(Product $product): void
     {
-        $this->changeParentStockStatus->execute([$product->getId()]);
+        if ($product->getTypeId() === Type::TYPE_SIMPLE) {
+            $this->changeParentStockStatus->execute([$product->getId()]);
+        } elseif ($product->getTypeId() === Configurable::TYPE_CODE) {
+            $this->changeParentStockStatus->executeFromParent((int)$product->getId());
+        }
     }
 }
