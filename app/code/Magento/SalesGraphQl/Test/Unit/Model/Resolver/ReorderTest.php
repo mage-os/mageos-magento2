@@ -110,7 +110,7 @@ class ReorderTest extends TestCase
         $this->expectException(LocalizedException::class);
         $this->expectExceptionMessage($exceptionMessage);
 
-        $result = $this->subject->resolve($fieldMock, $this->contextMock, $resolveInfoMock, $value, $args);
+        $this->subject->resolve($fieldMock, $this->contextMock, $resolveInfoMock, $value, $args);
     }
 
     private function prepareCommonFlow()
