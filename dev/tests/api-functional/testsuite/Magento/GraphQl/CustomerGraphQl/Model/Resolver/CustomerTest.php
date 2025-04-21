@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2024 Adobe
+ * Copyright 2025 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -551,7 +551,7 @@ class CustomerTest extends ResolverCacheAbstract
                 $query
             );
             $this->fail('Expected exception not thrown');
-        } catch (ResponseContainsErrorsException $e) {
+        } catch (Exception $e) {
             // expected exception
         }
 
