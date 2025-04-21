@@ -8,7 +8,8 @@ use Magento\TestFramework\Workaround\Override\Fixture\Resolver;
 
 Resolver::getInstance()->requireDataFixture('Magento/Bundle/_files/multiple_products.php');
 
-if (!function_exists('prepareBundleOptions')) {
+if (!function_exists('prepareBundleOptions'))
+{
     function prepareBundleOptions(Magento\Catalog\Model\Product $product) {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var \Magento\Catalog\Model\ProductRepository $productRepository */
@@ -220,7 +221,7 @@ $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_BUNDLE)
         ]
     );
 
-$bundleProduct = $objectManager->create(\Magento\Catalog\Model\Product::class);;
+$bundleProduct = $objectManager->create(\Magento\Catalog\Model\Product::class);
 $bundleProduct->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_BUNDLE)
     ->setId(4)
     ->setAttributeSetId(4)
@@ -259,4 +260,3 @@ $bundleProduct->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_BUNDLE)
 
 prepareBundleOptions($product);
 prepareBundleOptions($bundleProduct);
-
