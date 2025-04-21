@@ -44,7 +44,7 @@ class MatchQueryPlugin
     ): array {
 
         $nameIsSearchable = $this->dataProvider->getSearchableAttribute('name')->getIsSearchable();
-        if ($nameIsSearchable === 0) {
+        if ($nameIsSearchable == 0) {
             if (isset($selectQuery['bool']['should'][0]['match_phrase_prefix']['name']['query'])) {
                 $requestQueryValue = $selectQuery['bool']['should'][0]['match_phrase_prefix']['name']['query'];
                 if (!empty($requestQueryValue) &&
