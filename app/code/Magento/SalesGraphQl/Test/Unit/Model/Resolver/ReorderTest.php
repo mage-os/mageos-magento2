@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\SalesGraphQl\Test\Unit\Model\Resolver;
 
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Lock\LockManagerInterface;
 use Magento\GraphQl\Model\Query\Context;
 use Magento\GraphQl\Model\Query\ContextExtensionInterface;
@@ -68,12 +69,54 @@ class ReorderTest extends TestCase
 
     public function testResolve(): void
     {
-        $contextCustomerId = 1;
-        $orderCustomerId = 1;
         $fieldMock = $this->createMock(Field::class);
         $resolveInfoMock = $this->createMock(ResolveInfo::class);
         $args = ['orderNumber' => '00000010'];
         $value = [];
+
+        $this->prepareCommonFlow();
+
+        $this->lockManager->expects($this->once())
+            ->method('lock')
+            ->willReturn(true);
+        $this->lockManager->expects($this->once())
+            ->method('unlock')
+            ->willReturn(true);
+
+        $result = $this->subject->resolve($fieldMock, $this->contextMock, $resolveInfoMock, $value, $args);
+
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('cart', $result);
+        $this->assertArrayHasKey('userInputErrors', $result);
+        $this->assertEmpty($result['userInputErrors']);
+    }
+
+    public function testResolveLockedAndThrowsError(): void
+    {
+        $fieldMock = $this->createMock(Field::class);
+        $resolveInfoMock = $this->createMock(ResolveInfo::class);
+        $args = ['orderNumber' => '00000010'];
+        $value = [];
+
+        $this->prepareCommonFlow();
+
+        $this->lockManager->expects($this->once())
+            ->method('lock')
+            ->willReturn(false);
+        $this->lockManager->expects($this->never())
+            ->method('unlock');
+
+        $exceptionMessage = 'Sorry, there has been an error processing your request. Please try again later.';
+        $this->expectException(LocalizedException::class);
+        $this->expectExceptionMessage($exceptionMessage);
+
+        $result = $this->subject->resolve($fieldMock, $this->contextMock, $resolveInfoMock, $value, $args);
+    }
+
+    private function prepareCommonFlow()
+    {
+        $contextCustomerId = 1;
+        $orderCustomerId = 1;
 
         $this->extensionAttributesMock = $this->getMockBuilder(ContextExtensionInterface::class)
             ->disableOriginalConstructor()
@@ -109,19 +152,5 @@ class ReorderTest extends TestCase
         $this->orderFactory->expects($this->once())
             ->method('create')
             ->willReturn($order);
-
-        $this->lockManager->expects($this->once())
-            ->method('lock')
-            ->willReturn(true);
-        $this->lockManager->expects($this->once())
-            ->method('unlock')
-            ->willReturn(true);
-
-        $result = $this->subject->resolve($fieldMock, $this->contextMock, $resolveInfoMock, $value, $args);
-
-        $this->assertIsArray($result);
-        $this->assertArrayHasKey('cart', $result);
-        $this->assertArrayHasKey('userInputErrors', $result);
-        $this->assertEmpty($result['userInputErrors']);
     }
 }
