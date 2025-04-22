@@ -37,6 +37,7 @@ class MatchQueryPlugin
      * @param BaseMatchQuery $subject
      * @param array $selectQuery
      * @return array
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function afterBuild(
         BaseMatchQuery $subject,
