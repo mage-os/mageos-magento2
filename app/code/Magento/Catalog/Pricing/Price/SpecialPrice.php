@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Catalog\Pricing\Price;
@@ -103,10 +103,16 @@ class SpecialPrice extends AbstractPrice implements SpecialPriceInterface, BaseP
      */
     public function isScopeDateInInterval()
     {
+        $dateTo = $this->getSpecialToDate();
+        if ($dateTo && date('H:i:s', strtotime($dateTo)) !== '00:00:00') {
+            $dateToTimestamp = strtotime($dateTo);
+            $dateTo = date('Y-m-d H:i:s', $dateToTimestamp - 86400);
+        }
+
         return $this->localeDate->isScopeDateInInterval(
             WebsiteInterface::ADMIN_CODE,
             $this->getSpecialFromDate(),
-            $this->getSpecialToDate()
+            $dateTo
         );
     }
 

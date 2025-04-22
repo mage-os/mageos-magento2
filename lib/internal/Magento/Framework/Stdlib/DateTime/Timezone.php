@@ -274,9 +274,9 @@ class Timezone implements TimezoneInterface
         $scopeTimeStamp = $this->scopeTimeStamp($scope);
         $fromTimeStamp = strtotime($dateFrom);
         $toTimeStamp = strtotime($dateTo);
-        if ($dateTo && date('H:i:s', strtotime($dateTo)) === '00:00:00') {
+        if ($dateTo) {
             // fix date YYYY-MM-DD 00:00:00 to YYYY-MM-DD 23:59:59
-            $toTimeStamp += 86399;
+            $toTimeStamp += 86400;
         }
 
         return !(!$this->_dateTime->isEmptyDate($dateFrom) && $scopeTimeStamp < $fromTimeStamp ||
