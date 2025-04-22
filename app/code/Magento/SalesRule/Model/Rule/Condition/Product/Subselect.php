@@ -208,10 +208,10 @@ class Subselect extends Combine
      * @param mixed $item
      * @param mixed $attr
      * @param float $total
-     * @return float
+     * @return float|mixed
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    private function getBaseRowTotalForChildrenProduct(mixed $item, mixed $attr, float $total): float
+    private function getBaseRowTotalForChildrenProduct(mixed $item, mixed $attr, float $total): mixed
     {
         $hasValidChild = false;
         $useChildrenTotal = ($item->getProductType() == Type::TYPE_BUNDLE);
