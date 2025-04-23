@@ -59,6 +59,7 @@ use Magento\Framework\Session\SaveHandlerInterface;
 use Magento\Framework\Session\SessionManagerInterface;
 use Magento\Framework\Stdlib\StringUtils;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\Framework\Validator\Factory as ValidatorFactory;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
@@ -249,6 +250,11 @@ class AccountManagementTest extends TestCase
     private $addressFactory;
 
     /**
+     * @var MockObject|ValidatorFactory
+     */
+    private $validatorFactory;
+
+    /**
      * @var MockObject|AddressRegistry
      */
     private $addressRegistryMock;
@@ -336,6 +342,7 @@ class AccountManagementTest extends TestCase
         $this->sessionManager = $this->createMock(SessionManagerInterface::class);
         $this->saveHandler = $this->createMock(SaveHandlerInterface::class);
         $this->addressFactory = $this->createMock(AddressFactory::class);
+        $this->validatorFactory = $this->createMock(ValidatorFactory::class);
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $objects = [
@@ -420,6 +427,7 @@ class AccountManagementTest extends TestCase
                 'addressRegistry' => $this->addressRegistryMock,
                 'allowedCountriesReader' => $this->allowedCountriesReader,
                 'addressFactory' => $this->addressFactory,
+                'validatorFactory' => $this->validatorFactory,
             ]
         );
         $this->objectManagerHelper->setBackwardCompatibleProperty(
@@ -547,7 +555,12 @@ class AccountManagementTest extends TestCase
         $addressModel = $this->createMock(Address::class);
         $this->addressFactory->expects($this->once())->method('create')->willReturn($addressModel);
         $addressModel->expects($this->once())->method('updateData')->with($address)->willReturnSelf();
-        $addressModel->expects($this->once())->method('validate')->willReturn(true);
+        $validator = $this->createMock(\Magento\Framework\Validator::class);
+        $this->validatorFactory->expects($this->once())
+            ->method('createValidator')
+            ->with('customer_address', 'save')
+            ->willReturn($validator);
+        $validator->expects($this->once())->method('isValid')->with($addressModel)->willReturn(true);
 
         $this->customerRepository
             ->expects($this->once())
@@ -629,7 +642,12 @@ class AccountManagementTest extends TestCase
         $addressModel = $this->createMock(Address::class);
         $this->addressFactory->expects($this->once())->method('create')->willReturn($addressModel);
         $addressModel->expects($this->once())->method('updateData')->with($address)->willReturnSelf();
-        $addressModel->expects($this->once())->method('validate')->willReturn(true);
+        $validator = $this->createMock(\Magento\Framework\Validator::class);
+        $this->validatorFactory->expects($this->once())
+            ->method('createValidator')
+            ->with('customer_address', 'save')
+            ->willReturn($validator);
+        $validator->expects($this->once())->method('isValid')->with($addressModel)->willReturn(true);
 
         $this->customerRepository
             ->expects($this->once())
@@ -711,7 +729,15 @@ class AccountManagementTest extends TestCase
         $addressModel = $this->createMock(Address::class);
         $this->addressFactory->expects($this->once())->method('create')->willReturn($addressModel);
         $addressModel->expects($this->once())->method('updateData')->with($address)->willReturnSelf();
-        $addressModel->expects($this->once())->method('validate')->willReturn([new Phrase('Exception message')]);
+        $validator = $this->createMock(\Magento\Framework\Validator::class);
+        $this->validatorFactory->expects($this->once())
+            ->method('createValidator')
+            ->with('customer_address', 'save')
+            ->willReturn($validator);
+        $validator->expects($this->once())->method('isValid')->willReturn(false);
+        $validator->expects($this->atLeastOnce())
+            ->method('getMessages')
+            ->willReturn([[new Phrase('Exception message')]]);
 
         $this->customerRepository
             ->expects($this->once())
@@ -885,7 +911,12 @@ class AccountManagementTest extends TestCase
         $addressModel = $this->createMock(Address::class);
         $this->addressFactory->expects($this->once())->method('create')->willReturn($addressModel);
         $addressModel->expects($this->once())->method('updateData')->with($address)->willReturnSelf();
-        $addressModel->expects($this->once())->method('validate')->willReturn(true);
+        $validator = $this->createMock(\Magento\Framework\Validator::class);
+        $this->validatorFactory->expects($this->once())
+            ->method('createValidator')
+            ->with('customer_address', 'save')
+            ->willReturn($validator);
+        $validator->expects($this->once())->method('isValid')->with($addressModel)->willReturn(true);
 
         $this->share->method('isWebsiteScope')
             ->willReturn(true);
@@ -1171,7 +1202,12 @@ class AccountManagementTest extends TestCase
         $addressModel = $this->createMock(Address::class);
         $this->addressFactory->expects($this->once())->method('create')->willReturn($addressModel);
         $addressModel->expects($this->once())->method('updateData')->with($address)->willReturnSelf();
-        $addressModel->expects($this->once())->method('validate')->willReturn(true);
+        $validator = $this->createMock(\Magento\Framework\Validator::class);
+        $this->validatorFactory->expects($this->once())
+            ->method('createValidator')
+            ->with('customer_address', 'save')
+            ->willReturn($validator);
+        $validator->expects($this->once())->method('isValid')->with($addressModel)->willReturn(true);
 
         $this->share->method('isWebsiteScope')
             ->willReturn(true);
@@ -1345,7 +1381,12 @@ class AccountManagementTest extends TestCase
         $addressModel = $this->createMock(Address::class);
         $this->addressFactory->expects($this->once())->method('create')->willReturn($addressModel);
         $addressModel->expects($this->once())->method('updateData')->with($address)->willReturnSelf();
-        $addressModel->expects($this->once())->method('validate')->willReturn(true);
+        $validator = $this->createMock(\Magento\Framework\Validator::class);
+        $this->validatorFactory->expects($this->once())
+            ->method('createValidator')
+            ->with('customer_address', 'save')
+            ->willReturn($validator);
+        $validator->expects($this->once())->method('isValid')->with($addressModel)->willReturn(true);
 
         $this->share->method('isWebsiteScope')
             ->willReturn(true);
@@ -2294,13 +2335,20 @@ class AccountManagementTest extends TestCase
         $this->addressFactory->expects($this->exactly(2))
             ->method('create')
             ->willReturnOnConsecutiveCalls($existingAddressModel, $nonExistingAddressModel);
-        $existingAddressModel->expects($this->once())->method('updateData')->with($existingAddress)->willReturnSelf();
-        $existingAddressModel->expects($this->once())->method('validate')->willReturn(true);
+        $existingAddressModel->expects($this->once())
+            ->method('updateData')
+            ->with($existingAddress)
+            ->willReturnSelf();
         $nonExistingAddressModel->expects($this->once())
             ->method('updateData')
             ->with($nonExistingAddress)
             ->willReturnSelf();
-        $nonExistingAddressModel->expects($this->once())->method('validate')->willReturn(true);
+        $validator = $this->createMock(\Magento\Framework\Validator::class);
+        $this->validatorFactory->expects($this->once())
+            ->method('createValidator')
+            ->with('customer_address', 'save')
+            ->willReturn($validator);
+        $validator->expects($this->exactly(2))->method('isValid')->willReturn(true);
 
         $this->storeManager
             ->expects($this->atLeastOnce())
@@ -2422,7 +2470,12 @@ class AccountManagementTest extends TestCase
         $addressModel = $this->createMock(Address::class);
         $this->addressFactory->expects($this->once())->method('create')->willReturn($addressModel);
         $addressModel->expects($this->once())->method('updateData')->with($address)->willReturnSelf();
-        $addressModel->expects($this->once())->method('validate')->willReturn(true);
+        $validator = $this->createMock(\Magento\Framework\Validator::class);
+        $this->validatorFactory->expects($this->once())
+            ->method('createValidator')
+            ->with('customer_address', 'save')
+            ->willReturn($validator);
+        $validator->expects($this->once())->method('isValid')->with($addressModel)->willReturn(true);
 
         $this->share->method('isWebsiteScope')
             ->willReturn(true);
