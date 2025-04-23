@@ -939,8 +939,8 @@ class AccountManagement implements AccountManagementInterface
             }
             if (!$addressValidator->isValid($addressModel)) {
                 $exception = new InputException();
-                $messages = array_merge(...array_values($addressValidator->getMessages()));
-                array_walk($messages, [$exception, 'addError']);
+                $messages = $addressValidator->getMessages();
+                array_walk_recursive($messages, [$exception, 'addError']);
                 throw $exception;
             }
         }
