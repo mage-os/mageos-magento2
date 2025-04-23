@@ -1,30 +1,34 @@
 {
-    "name": "magento/module-login-as-customer-assistance",
-    "description": "",
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-authorization": "*",
-        "magento/module-backend": "*",
-        "magento/module-customer": "*",
-        "magento/module-store": "*",
-        "magento/module-login-as-customer": "*",
-        "magento/module-login-as-customer-api": "*"
-    },
-    "suggest": {
-        "magento/module-login-as-customer-admin-ui": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-login-as-customer-assistance",
+  "description": "",
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.1.1",
+    "mage-os/module-authorization": "1.1.1",
+    "mage-os/module-backend": "1.1.1",
+    "mage-os/module-customer": "1.1.1",
+    "mage-os/module-store": "1.1.1",
+    "mage-os/module-login-as-customer": "1.1.1",
+    "mage-os/module-login-as-customer-api": "1.1.1"
+  },
+  "suggest": {
+    "mage-os/module-login-as-customer-admin-ui": "1.1.1"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\LoginAsCustomerAssistance\\": ""
-        }
+    "psr-4": {
+      "Magento\\LoginAsCustomerAssistance\\": ""
     }
+  },
+  "version": "1.1.1",
+  "replace": {
+    "magento/module-login-as-customer-assistance": "100.4.7"
+  }
 }

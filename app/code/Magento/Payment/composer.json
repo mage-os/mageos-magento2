@@ -1,31 +1,35 @@
 {
-    "name": "magento/module-payment",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-checkout": "*",
-        "magento/module-config": "*",
-        "magento/module-directory": "*",
-        "magento/module-quote": "*",
-        "magento/module-sales": "*",
-        "magento/module-store": "*",
-        "magento/module-ui": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-payment",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.1.1",
+    "mage-os/module-checkout": "1.1.1",
+    "mage-os/module-config": "1.1.1",
+    "mage-os/module-directory": "1.1.1",
+    "mage-os/module-quote": "1.1.1",
+    "mage-os/module-sales": "1.1.1",
+    "mage-os/module-store": "1.1.1",
+    "mage-os/module-ui": "1.1.1"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\Payment\\": ""
-        }
+    "psr-4": {
+      "Magento\\Payment\\": ""
     }
+  },
+  "version": "1.1.1",
+  "replace": {
+    "magento/module-payment": "100.4.8"
+  }
 }

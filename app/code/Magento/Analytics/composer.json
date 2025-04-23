@@ -1,25 +1,29 @@
 {
-    "name": "magento/module-analytics",
-    "description": "N/A",
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/module-backend": "*",
-        "magento/module-config": "*",
-        "magento/module-integration": "*",
-        "magento/module-store": "*",
-        "magento/framework": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-analytics",
+  "description": "N/A",
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/module-backend": "1.1.1",
+    "mage-os/module-config": "1.1.1",
+    "mage-os/module-integration": "1.1.1",
+    "mage-os/module-store": "1.1.1",
+    "mage-os/framework": "1.1.1"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\Analytics\\": ""
-        }
+    "psr-4": {
+      "Magento\\Analytics\\": ""
     }
+  },
+  "version": "1.1.1",
+  "replace": {
+    "magento/module-analytics": "100.4.8"
+  }
 }

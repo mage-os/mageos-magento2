@@ -1,29 +1,33 @@
 {
-    "name": "magento/module-newsletter-graph-ql",
-    "description": "Provides GraphQl functionality for the newsletter subscriptions.",
-    "config": {
-        "sort-packages": true
-    },
-    "type": "magento2-module",
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-customer": "*",
-        "magento/module-newsletter": "*",
-        "magento/module-store": "*",
-        "magento/module-graph-ql": "*",
-        "magento/module-graph-ql-resolver-cache": "*"
-    },
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-newsletter-graph-ql",
+  "description": "Provides GraphQl functionality for the newsletter subscriptions.",
+  "config": {
+    "sort-packages": true
+  },
+  "type": "magento2-module",
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.1.1",
+    "mage-os/module-customer": "1.1.1",
+    "mage-os/module-newsletter": "1.1.1",
+    "mage-os/module-store": "1.1.1",
+    "mage-os/module-graph-ql": "1.1.1",
+    "mage-os/module-graph-ql-resolver-cache": "1.1.1"
+  },
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\NewsletterGraphQl\\": ""
-        }
+    "psr-4": {
+      "Magento\\NewsletterGraphQl\\": ""
     }
+  },
+  "version": "1.1.1",
+  "replace": {
+    "magento/module-newsletter-graph-ql": "100.4.5"
+  }
 }

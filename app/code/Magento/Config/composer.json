@@ -1,32 +1,36 @@
 {
-    "name": "magento/module-config",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-backend": "*",
-        "magento/module-cron": "*",
-        "magento/module-deploy": "*",
-        "magento/module-directory": "*",
-        "magento/module-email": "*",
-        "magento/module-media-storage": "*",
-        "magento/module-store": "*",
-        "magento/module-encryption-key": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-config",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.1.1",
+    "mage-os/module-backend": "1.1.1",
+    "mage-os/module-cron": "1.1.1",
+    "mage-os/module-deploy": "1.1.1",
+    "mage-os/module-directory": "1.1.1",
+    "mage-os/module-email": "1.1.1",
+    "mage-os/module-media-storage": "1.1.1",
+    "mage-os/module-store": "1.1.1",
+    "mage-os/module-encryption-key": "1.1.1"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\Config\\": ""
-        }
+    "psr-4": {
+      "Magento\\Config\\": ""
     }
+  },
+  "version": "1.1.1",
+  "replace": {
+    "magento/module-config": "101.2.8"
+  }
 }

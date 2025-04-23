@@ -1,28 +1,32 @@
 {
-    "name": "magento/module-review-graph-ql",
-    "description": "N/A",
-    "type": "magento2-module",
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/module-catalog": "*",
-        "magento/module-review": "*",
-        "magento/module-store": "*",
-        "magento/framework": "*"
-    },
-    "suggest": {
-        "magento/module-graph-ql": "*",
-        "magento/module-graph-ql-cache": "*"
-    },
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-review-graph-ql",
+  "description": "N/A",
+  "type": "magento2-module",
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/module-catalog": "1.1.1",
+    "mage-os/module-review": "1.1.1",
+    "mage-os/module-store": "1.1.1",
+    "mage-os/framework": "1.1.1"
+  },
+  "suggest": {
+    "mage-os/module-graph-ql": "1.1.1",
+    "mage-os/module-graph-ql-cache": "1.1.1"
+  },
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\ReviewGraphQl\\": ""
-        }
+    "psr-4": {
+      "Magento\\ReviewGraphQl\\": ""
     }
+  },
+  "version": "1.1.1",
+  "replace": {
+    "magento/module-review-graph-ql": "100.4.4"
+  }
 }

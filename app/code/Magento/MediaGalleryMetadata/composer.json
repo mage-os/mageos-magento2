@@ -1,22 +1,26 @@
 {
-    "name": "magento/module-media-gallery-metadata",
-    "description": "Magento module responsible for images metadata processing",
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-media-gallery-metadata-api": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-media-gallery-metadata",
+  "description": "Magento module responsible for images metadata processing",
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.1.1",
+    "mage-os/module-media-gallery-metadata-api": "1.1.1"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\MediaGalleryMetadata\\": ""
-        }
+    "psr-4": {
+      "Magento\\MediaGalleryMetadata\\": ""
     }
+  },
+  "version": "1.1.1",
+  "replace": {
+    "magento/module-media-gallery-metadata": "100.4.6"
+  }
 }

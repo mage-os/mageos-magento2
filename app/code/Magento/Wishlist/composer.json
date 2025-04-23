@@ -1,43 +1,47 @@
 {
-    "name": "magento/module-wishlist",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-backend": "*",
-        "magento/module-catalog": "*",
-        "magento/module-catalog-inventory": "*",
-        "magento/module-checkout": "*",
-        "magento/module-customer": "*",
-        "magento/module-rss": "*",
-        "magento/module-sales": "*",
-        "magento/module-store": "*",
-        "magento/module-theme": "*",
-        "magento/module-ui": "*",
-        "magento/module-captcha": "*"
-    },
-    "suggest": {
-        "magento/module-configurable-product": "*",
-        "magento/module-downloadable": "*",
-        "magento/module-bundle": "*",
-        "magento/module-cookie": "*",
-        "magento/module-grouped-product": "*",
-        "magento/module-wishlist-sample-data": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-wishlist",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.1.1",
+    "mage-os/module-backend": "1.1.1",
+    "mage-os/module-catalog": "1.1.1",
+    "mage-os/module-catalog-inventory": "1.1.1",
+    "mage-os/module-checkout": "1.1.1",
+    "mage-os/module-customer": "1.1.1",
+    "mage-os/module-rss": "1.1.1",
+    "mage-os/module-sales": "1.1.1",
+    "mage-os/module-store": "1.1.1",
+    "mage-os/module-theme": "1.1.1",
+    "mage-os/module-ui": "1.1.1",
+    "mage-os/module-captcha": "1.1.1"
+  },
+  "suggest": {
+    "mage-os/module-configurable-product": "1.1.1",
+    "mage-os/module-downloadable": "1.1.1",
+    "mage-os/module-bundle": "1.1.1",
+    "mage-os/module-cookie": "1.1.1",
+    "mage-os/module-grouped-product": "1.1.1",
+    "mage-os/module-wishlist-sample-data": "Sample Data version: 1.1.1"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\Wishlist\\": ""
-        }
+    "psr-4": {
+      "Magento\\Wishlist\\": ""
     }
+  },
+  "version": "1.1.1",
+  "replace": {
+    "magento/module-wishlist": "101.2.8"
+  }
 }

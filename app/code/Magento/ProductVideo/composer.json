@@ -1,35 +1,39 @@
 {
-    "name": "magento/module-product-video",
-    "description": "Add Video to Products",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/magento-composer-installer": "*",
-        "magento/module-backend": "*",
-        "magento/module-catalog": "*",
-        "magento/module-eav": "*",
-        "magento/module-media-storage": "*",
-        "magento/module-store": "*"
-    },
-    "suggest": {
-        "magento/module-customer": "*",
-        "magento/module-config": "*",
-        "magento/module-theme": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-product-video",
+  "description": "Add Video to Products",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.1.1",
+    "mage-os/magento-composer-installer": "1.1.1",
+    "mage-os/module-backend": "1.1.1",
+    "mage-os/module-catalog": "1.1.1",
+    "mage-os/module-eav": "1.1.1",
+    "mage-os/module-media-storage": "1.1.1",
+    "mage-os/module-store": "1.1.1"
+  },
+  "suggest": {
+    "mage-os/module-customer": "1.1.1",
+    "mage-os/module-config": "1.1.1",
+    "mage-os/module-theme": "1.1.1"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\ProductVideo\\": ""
-        }
+    "psr-4": {
+      "Magento\\ProductVideo\\": ""
     }
+  },
+  "version": "1.1.1",
+  "replace": {
+    "magento/module-product-video": "100.4.8"
+  }
 }

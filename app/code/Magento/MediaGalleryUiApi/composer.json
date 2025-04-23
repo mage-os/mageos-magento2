@@ -1,24 +1,28 @@
 {
-    "name": "magento/module-media-gallery-ui-api",
-    "description": "Magento module responsible for the media gallery UI implementation API",
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*"
-    },
-    "suggest": {
-        "magento/module-cms": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-media-gallery-ui-api",
+  "description": "Magento module responsible for the media gallery UI implementation API",
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.1.1"
+  },
+  "suggest": {
+    "mage-os/module-cms": "1.1.1"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\MediaGalleryUiApi\\": ""
-        }
+    "psr-4": {
+      "Magento\\MediaGalleryUiApi\\": ""
     }
+  },
+  "version": "1.1.1",
+  "replace": {
+    "magento/module-media-gallery-ui-api": "100.4.6"
+  }
 }

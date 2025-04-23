@@ -1,32 +1,36 @@
 {
-    "name": "magento/module-webapi",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-authorization": "*",
-        "magento/module-backend": "*",
-        "magento/module-integration": "*",
-        "magento/module-store": "*"
-    },
-    "suggest": {
-        "magento/module-user": "*",
-        "magento/module-customer": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-webapi",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.1.1",
+    "mage-os/module-authorization": "1.1.1",
+    "mage-os/module-backend": "1.1.1",
+    "mage-os/module-integration": "1.1.1",
+    "mage-os/module-store": "1.1.1"
+  },
+  "suggest": {
+    "mage-os/module-user": "1.1.1",
+    "mage-os/module-customer": "1.1.1"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\Webapi\\": ""
-        }
+    "psr-4": {
+      "Magento\\Webapi\\": ""
     }
+  },
+  "version": "1.1.1",
+  "replace": {
+    "magento/module-webapi": "100.4.7"
+  }
 }

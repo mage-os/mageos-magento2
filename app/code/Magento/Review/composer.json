@@ -1,36 +1,40 @@
 {
-    "name": "magento/module-review",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-backend": "*",
-        "magento/module-catalog": "*",
-        "magento/module-customer": "*",
-        "magento/module-eav": "*",
-        "magento/module-newsletter": "*",
-        "magento/module-store": "*",
-        "magento/module-theme": "*",
-        "magento/module-ui": "*"
-    },
-    "suggest": {
-        "magento/module-cookie": "*",
-        "magento/module-review-sample-data": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-review",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.1.1",
+    "mage-os/module-backend": "1.1.1",
+    "mage-os/module-catalog": "1.1.1",
+    "mage-os/module-customer": "1.1.1",
+    "mage-os/module-eav": "1.1.1",
+    "mage-os/module-newsletter": "1.1.1",
+    "mage-os/module-store": "1.1.1",
+    "mage-os/module-theme": "1.1.1",
+    "mage-os/module-ui": "1.1.1"
+  },
+  "suggest": {
+    "mage-os/module-cookie": "1.1.1",
+    "mage-os/module-review-sample-data": "Sample Data version: 1.1.1"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\Review\\": ""
-        }
+    "psr-4": {
+      "Magento\\Review\\": ""
     }
+  },
+  "version": "1.1.1",
+  "replace": {
+    "magento/module-review": "100.4.8"
+  }
 }

@@ -1,28 +1,32 @@
 {
-    "name": "magento/module-catalog-cms-graph-ql",
-    "description": "N/A",
-    "type": "magento2-module",
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-catalog": "*",
-        "magento/module-cms-graph-ql": "*"
-    },
-    "suggest": {
-        "magento/module-graph-ql": "*",
-        "magento/module-cms": "*",
-        "magento/module-catalog-graph-ql": "*"
-    },
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-catalog-cms-graph-ql",
+  "description": "N/A",
+  "type": "magento2-module",
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.1.1",
+    "mage-os/module-catalog": "1.1.1",
+    "mage-os/module-cms-graph-ql": "1.1.1"
+  },
+  "suggest": {
+    "mage-os/module-graph-ql": "1.1.1",
+    "mage-os/module-cms": "1.1.1",
+    "mage-os/module-catalog-graph-ql": "1.1.1"
+  },
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\CatalogCmsGraphQl\\": ""
-        }
+    "psr-4": {
+      "Magento\\CatalogCmsGraphQl\\": ""
     }
+  },
+  "version": "1.1.1",
+  "replace": {
+    "magento/module-catalog-cms-graph-ql": "100.4.4"
+  }
 }

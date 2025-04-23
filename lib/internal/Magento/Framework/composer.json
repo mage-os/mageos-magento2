@@ -1,74 +1,78 @@
 {
-    "name": "magento/framework",
-    "description": "N/A",
-    "type": "magento2-library",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
-    ],
-    "config": {
-        "sort-packages": true
+  "name": "mage-os/framework",
+  "description": "N/A",
+  "type": "magento2-library",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "ext-bcmath": "*",
+    "ext-curl": "*",
+    "ext-dom": "*",
+    "ext-ftp": "*",
+    "ext-gd": "*",
+    "ext-hash": "*",
+    "ext-iconv": "*",
+    "ext-intl": "*",
+    "ext-openssl": "*",
+    "ext-simplexml": "*",
+    "ext-sodium": "*",
+    "ext-xsl": "*",
+    "lib-libxml": "*",
+    "colinmollenhour/php-redis-session-abstract": "^2.0",
+    "composer/composer": "^2.0, !=2.2.16",
+    "ezyang/htmlpurifier": "^4.17",
+    "guzzlehttp/guzzle": "^7.5",
+    "laminas/laminas-code": "^4.13",
+    "laminas/laminas-escaper": "^2.13",
+    "laminas/laminas-filter": "^2.33",
+    "laminas/laminas-http": "^2.15",
+    "laminas/laminas-i18n": "^2.17",
+    "laminas/laminas-permissions-acl": "^2.10",
+    "laminas/laminas-stdlib": "^3.11",
+    "laminas/laminas-uri": "^2.9",
+    "laminas/laminas-validator": "^2.23",
+    "mage-os/composer-dependency-version-audit-plugin": "1.1.1",
+    "mage-os/zend-cache": "1.1.1",
+    "mage-os/zend-db": "1.1.1",
+    "mage-os/zend-pdf": "1.1.1",
+    "monolog/monolog": "^3.6",
+    "psr/log": "^2 || ^3",
+    "ramsey/uuid": "^4.2",
+    "symfony/console": "^6.4",
+    "symfony/intl": "^6.4",
+    "symfony/process": "^6.4",
+    "symfony/mailer": "^6.4",
+    "symfony/mime": "^6.4",
+    "tedivm/jshrink": "^1.4",
+    "webonyx/graphql-php": "^15.0",
+    "wikimedia/less.php": "^5.0"
+  },
+  "archive": {
+    "exclude": [
+      "Amqp",
+      "Bulk",
+      "MessageQueue"
+    ]
+  },
+  "suggest": {
+    "ext-imagick": "Use Image Magick >=3.0.0 as an optional alternative image processing library"
+  },
+  "autoload": {
+    "psr-4": {
+      "Magento\\Framework\\": ""
     },
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "ext-bcmath": "*",
-        "ext-curl": "*",
-        "ext-dom": "*",
-        "ext-ftp": "*",
-        "ext-gd": "*",
-        "ext-hash": "*",
-        "ext-iconv": "*",
-        "ext-intl": "*",
-        "ext-openssl": "*",
-        "ext-simplexml": "*",
-        "ext-sodium": "*",
-        "ext-xsl": "*",
-        "lib-libxml": "*",
-        "colinmollenhour/php-redis-session-abstract": "^2.0",
-        "composer/composer": "^2.0, !=2.2.16",
-        "ezyang/htmlpurifier": "^4.17",
-        "guzzlehttp/guzzle": "^7.5",
-        "laminas/laminas-code": "^4.13",
-        "laminas/laminas-escaper": "^2.13",
-        "laminas/laminas-filter": "^2.33",
-        "laminas/laminas-http": "^2.15",
-        "laminas/laminas-i18n": "^2.17",
-        "laminas/laminas-permissions-acl": "^2.10",
-        "laminas/laminas-stdlib": "^3.11",
-        "laminas/laminas-uri": "^2.9",
-        "laminas/laminas-validator": "^2.23",
-        "magento/composer-dependency-version-audit-plugin": "^0.1",
-        "magento/zend-cache": "^1.16",
-        "magento/zend-db": "^1.16",
-        "magento/zend-pdf": "^1.16",
-        "monolog/monolog": "^3.6",
-        "psr/log": "^2 || ^3",
-        "ramsey/uuid": "^4.2",
-        "symfony/console": "^6.4",
-        "symfony/intl": "^6.4",
-        "symfony/process": "^6.4",
-        "symfony/mailer": "^6.4",
-        "symfony/mime": "^6.4",
-        "tedivm/jshrink": "^1.4",
-        "webonyx/graphql-php": "^15.0",
-        "wikimedia/less.php": "^5.0"
-    },
-    "archive": {
-        "exclude": [
-            "Amqp",
-            "Bulk",
-            "MessageQueue"
-        ]
-    },
-    "suggest": {
-        "ext-imagick": "Use Image Magick >=3.0.0 as an optional alternative image processing library"
-    },
-    "autoload": {
-        "psr-4": {
-            "Magento\\Framework\\": ""
-        },
-        "files": [
-            "registration.php"
-        ]
-    }
+    "files": [
+      "registration.php"
+    ]
+  },
+  "version": "1.1.1",
+  "replace": {
+    "magento/framework": "103.0.8"
+  }
 }

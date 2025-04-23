@@ -1,37 +1,41 @@
 {
-    "name": "magento/module-remote-storage",
-    "description": "N/A",
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "league/flysystem": "^3.0",
-        "league/flysystem-aws-s3-v3": "^3.0"
-    },
-    "suggest": {
-        "magento/module-backend": "*",
-        "magento/module-sitemap": "*",
-        "magento/module-cms": "*",
-        "magento/module-downloadable": "*",
-        "magento/module-catalog": "*",
-        "magento/module-media-storage": "*",
-        "magento/module-media-gallery-metadata": "*",
-        "magento/module-media-gallery-synchronization": "*",
-        "magento/module-import-export": "*",
-        "magento/module-catalog-import-export": "*",
-        "magento/module-downloadable-import-export": "*",
-        "predis/predis": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-remote-storage",
+  "description": "N/A",
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.1.1",
+    "league/flysystem": "^3.0",
+    "league/flysystem-aws-s3-v3": "^3.0"
+  },
+  "suggest": {
+    "mage-os/module-backend": "1.1.1",
+    "mage-os/module-sitemap": "1.1.1",
+    "mage-os/module-cms": "1.1.1",
+    "mage-os/module-downloadable": "1.1.1",
+    "mage-os/module-catalog": "1.1.1",
+    "mage-os/module-media-storage": "1.1.1",
+    "mage-os/module-media-gallery-metadata": "1.1.1",
+    "mage-os/module-media-gallery-synchronization": "1.1.1",
+    "mage-os/module-import-export": "1.1.1",
+    "mage-os/module-catalog-import-export": "1.1.1",
+    "mage-os/module-downloadable-import-export": "1.1.1",
+    "predis/predis": "*"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\RemoteStorage\\": ""
-        }
+    "psr-4": {
+      "Magento\\RemoteStorage\\": ""
     }
+  },
+  "version": "1.1.1",
+  "replace": {
+    "magento/module-remote-storage": "100.4.6"
+  }
 }

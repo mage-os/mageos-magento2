@@ -1,25 +1,29 @@
 {
-    "name": "magento/module-graph-ql-cache",
-    "description": "N/A",
-    "type": "magento2-module",
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-page-cache": "*",
-        "magento/module-graph-ql": "*",
-        "magento/module-authorization": "*",
-        "magento/module-integration": "*"
-    },
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-graph-ql-cache",
+  "description": "N/A",
+  "type": "magento2-module",
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.1.1",
+    "mage-os/module-page-cache": "1.1.1",
+    "mage-os/module-graph-ql": "1.1.1",
+    "mage-os/module-authorization": "1.1.1",
+    "mage-os/module-integration": "1.1.1"
+  },
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\GraphQlCache\\": ""
-        }
+    "psr-4": {
+      "Magento\\GraphQlCache\\": ""
     }
+  },
+  "version": "1.1.1",
+  "replace": {
+    "magento/module-graph-ql-cache": "100.4.5"
+  }
 }

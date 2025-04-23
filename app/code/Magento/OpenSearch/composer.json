@@ -1,27 +1,31 @@
 {
-    "name": "magento/module-open-search",
-    "description": "N/A",
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-advanced-search": "*",
-        "magento/module-catalog-search": "*",
-        "magento/module-elasticsearch": "*",
-        "magento/module-search": "*",
-        "magento/module-config": "*",
-        "opensearch-project/opensearch-php": "^2.3"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-open-search",
+  "description": "N/A",
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.1.1",
+    "mage-os/module-advanced-search": "1.1.1",
+    "mage-os/module-catalog-search": "1.1.1",
+    "mage-os/module-elasticsearch": "1.1.1",
+    "mage-os/module-search": "1.1.1",
+    "mage-os/module-config": "1.1.1",
+    "opensearch-project/opensearch-php": "^2.3"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\OpenSearch\\": ""
-        }
+    "psr-4": {
+      "Magento\\OpenSearch\\": ""
     }
+  },
+  "version": "1.1.1",
+  "replace": {
+    "magento/module-open-search": "100.4.2"
+  }
 }

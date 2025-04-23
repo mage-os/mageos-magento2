@@ -1,29 +1,33 @@
 {
-    "name": "magento/module-login-as-customer-log",
-    "description": "",
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-backend": "*",
-        "magento/module-customer": "*",
-        "magento/module-login-as-customer-api": "*",
-        "magento/module-ui": "*",
-        "magento/module-user": "*"
-    },
-    "suggest": {
-        "magento/module-login-as-customer": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-login-as-customer-log",
+  "description": "",
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.1.1",
+    "mage-os/module-backend": "1.1.1",
+    "mage-os/module-customer": "1.1.1",
+    "mage-os/module-login-as-customer-api": "1.1.1",
+    "mage-os/module-ui": "1.1.1",
+    "mage-os/module-user": "1.1.1"
+  },
+  "suggest": {
+    "mage-os/module-login-as-customer": "1.1.1"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\LoginAsCustomerLog\\": ""
-        }
+    "psr-4": {
+      "Magento\\LoginAsCustomerLog\\": ""
     }
+  },
+  "version": "1.1.1",
+  "replace": {
+    "magento/module-login-as-customer-log": "100.4.6"
+  }
 }

@@ -1,45 +1,49 @@
 {
-    "name": "magento/module-bundle",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-backend": "*",
-        "magento/module-catalog": "*",
-        "magento/module-catalog-inventory": "*",
-        "magento/module-catalog-rule": "*",
-        "magento/module-checkout": "*",
-        "magento/module-config": "*",
-        "magento/module-customer": "*",
-        "magento/module-eav": "*",
-        "magento/module-gift-message": "*",
-        "magento/module-media-storage": "*",
-        "magento/module-quote": "*",
-        "magento/module-sales": "*",
-        "magento/module-store": "*",
-        "magento/module-tax": "*",
-        "magento/module-ui": "*",
-        "magento/module-directory": "*"
-    },
-    "suggest": {
-        "magento/module-webapi": "*",
-        "magento/module-bundle-sample-data": "*",
-        "magento/module-sales-rule": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-bundle",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.1.1",
+    "mage-os/module-backend": "1.1.1",
+    "mage-os/module-catalog": "1.1.1",
+    "mage-os/module-catalog-inventory": "1.1.1",
+    "mage-os/module-catalog-rule": "1.1.1",
+    "mage-os/module-checkout": "1.1.1",
+    "mage-os/module-config": "1.1.1",
+    "mage-os/module-customer": "1.1.1",
+    "mage-os/module-eav": "1.1.1",
+    "mage-os/module-gift-message": "1.1.1",
+    "mage-os/module-media-storage": "1.1.1",
+    "mage-os/module-quote": "1.1.1",
+    "mage-os/module-sales": "1.1.1",
+    "mage-os/module-store": "1.1.1",
+    "mage-os/module-tax": "1.1.1",
+    "mage-os/module-ui": "1.1.1",
+    "mage-os/module-directory": "1.1.1"
+  },
+  "suggest": {
+    "mage-os/module-webapi": "1.1.1",
+    "mage-os/module-bundle-sample-data": "Sample Data version: 1.1.1",
+    "mage-os/module-sales-rule": "1.1.1"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\Bundle\\": ""
-        }
+    "psr-4": {
+      "Magento\\Bundle\\": ""
     }
+  },
+  "version": "1.1.1",
+  "replace": {
+    "magento/module-bundle": "101.0.8"
+  }
 }
