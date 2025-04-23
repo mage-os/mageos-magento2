@@ -1,8 +1,11 @@
 <?php
-/************************************************************************
- * Copyright 2025 Adobe
+/**
+ * Copyright 2011 Adobe
  * All Rights Reserved.
+<<<<<<< Updated upstream
  * ***********************************************************************
+=======
+>>>>>>> Stashed changes
  */
 namespace Magento\Sales\Model\ResourceModel\Order\Shipment;
 

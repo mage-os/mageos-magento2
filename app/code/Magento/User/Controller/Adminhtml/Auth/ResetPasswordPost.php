@@ -1,9 +1,11 @@
 <?php
-/************************************************************************
- *
- * Copyright 2025 Adobe
+/**
+ * Copyright 2014 Adobe
  * All Rights Reserved.
+<<<<<<< Updated upstream
  * ************************************************************************
+=======
+>>>>>>> Stashed changes
  */
 declare(strict_types=1);
 
