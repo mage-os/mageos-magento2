@@ -108,6 +108,17 @@ class Carrier extends AbstractDhl implements CarrierInterface
     private const SERVICE_PREFIX_SHIPVAL = 'SHIP';
     private const SERVICE_PREFIX_TRACKING = 'TRCK';
 
+    /** DHL REST API */
+
+    public const WEIGHT_UNIT_LB = 'LB';
+    public const WEIGHT_UNIT_KG = 'KG';
+    public const WEIGHT_UNIT_IMPERIAL = 'imperial';
+    public const WEIGHT_UNIT_METRIC = 'metric';
+    public const API_RESPONSE_STATUS_SUCCESS = 'Success';
+    public const DHL_TYPE_XML = 'DHL_XML';
+    public const DHL_TYPE_REST = 'DHL_REST';
+    public const DHL_REST_API_VERSION = '2.12.0';
+
     /**
      * Rate request data
      *
@@ -418,9 +429,9 @@ class Carrier extends AbstractDhl implements CarrierInterface
         //Loading quotes
         //Saving $result to use proper result with the callback
         $result = null;
-        if ($this->getConfigData('type') == 'DHL_XML') {
+        if ($this->getConfigData('type') == self::DHL_TYPE_XML) {
             $this->_result = $result = $this->_getQuotes();
-        } elseif ($this->getConfigData('type') == 'DHL_REST') {
+        } elseif ($this->getConfigData('type') == self::DHL_TYPE_REST) {
             $this->_result = $result = $this->_getQuotesRest();
         }
         //After quotes are loaded parsing the response.
@@ -1374,6 +1385,7 @@ class Carrier extends AbstractDhl implements CarrierInterface
     {
         $rawRequest = $this->_rawRequest;
         $url = $this->getGatewayURL();
+        $packageWeightUnit = $this->_getRestPackageWeightUnit();
 
         /** Dutiable */
         $dutiable = ["isCustomsDeclarable" => false];
@@ -1414,7 +1426,7 @@ class Carrier extends AbstractDhl implements CarrierInterface
                 ]
             ],
             "plannedShippingDateAndTime" => date('Y-m-d\TH:i:s\Z', strtotime($this->_getShipDate())),
-            "unitOfMeasurement" => "metric",
+            "unitOfMeasurement" => $packageWeightUnit,
             "getAdditionalInformation" => [
                 [
                     "typeCode" => "allValueAddedServices",
@@ -1488,7 +1500,7 @@ class Carrier extends AbstractDhl implements CarrierInterface
         return [
             "Authorization" => "Basic " . $this->getDhlAccessToken(),
             "Content-Type" => "application/json",
-            "x-version" => "2.12.0"
+            "x-version" => self::DHL_REST_API_VERSION
         ];
     }
 
@@ -1696,7 +1708,7 @@ class Carrier extends AbstractDhl implements CarrierInterface
         $this->_prepareShipmentRequest($request);
         $this->_mapRequestToShipment($request);
         $this->setRequest($request);
-        if ($this->getConfigData('type') == 'DHL_REST') {
+        if ($this->getConfigData('type') == self::DHL_TYPE_REST) {
             return $this->_doShipmentRequestRest();
         }
         return $this->_doRequest();
@@ -2196,6 +2208,8 @@ class Carrier extends AbstractDhl implements CarrierInterface
             $i++;
         }
 
+        $packageWeightUnit = $this->_getRestPackageWeightUnit();
+
         /** Dutiable */
         $dutiable = ["isCustomsDeclarable" => false];
         if ($this->isDutiable(
@@ -2286,7 +2300,7 @@ class Carrier extends AbstractDhl implements CarrierInterface
                 "packages" => $packages,
                 "description" => "Shipment",
                 "incoterm" => "DAP",
-                "unitOfMeasurement" => "metric"
+                "unitOfMeasurement" => $packageWeightUnit
             ], $dutiable)
         ];
 
@@ -2339,8 +2353,8 @@ class Carrier extends AbstractDhl implements CarrierInterface
             $trackings = [$trackings];
         }
 
-        if ($this->getConfigData('type') == 'DHL_REST') {
-            $this->_getRestTracking(implode(',', $trackings));
+        if ($this->getConfigData('type') == self::DHL_TYPE_REST) {
+            $this->_getRestTracking($trackings);
         } else {
             $this->_getXMLTracking($trackings);
         }
@@ -2518,16 +2532,16 @@ class Carrier extends AbstractDhl implements CarrierInterface
     }
 
     /**
-     * @param string $trackings
+     * @param string[] $trackings
      * @return void
      * @throws Throwable
      */
-    protected function _getRestTracking(string $trackings): void
+    protected function _getRestTracking(array $trackings): void
     {
         $url = $this->getGatewayURL().'/tracking?';
 
         $trackingParams = [
-            'shipmentTrackingNumber' => $trackings,
+            'shipmentTrackingNumber' => implode(',', $trackings),
             'language' => 'en',
             'limit' => 10
         ];
@@ -2548,6 +2562,21 @@ class Carrier extends AbstractDhl implements CarrierInterface
             );
             $responseBody = $response->get()->getBody();
             $debugData['result'] = $this->filterDebugData($responseBody);
+
+            // Check if the response contains valid JSON data
+            $decoded = json_decode($responseBody, true);
+            if (isset($decoded['additionalDetails']) && is_array($decoded['additionalDetails'])) {
+                $validTrackings = [];
+                foreach ($decoded['additionalDetails'] as $detail) {
+                    if (preg_match('/Shipments Found for shipmentTrackingNumber (\d+)/', $detail, $matches)) {
+                        $validTrackings[] = $matches[1];
+                    }
+                }
+                if (!empty($validTrackings)) {
+                    $this->_getRestTracking($validTrackings);
+                    return;
+                }
+            }
         } catch (Exception $e) {
             $this->_errors[$e->getCode()] = $e->getMessage();
             $responseBody = '';
@@ -2557,13 +2586,13 @@ class Carrier extends AbstractDhl implements CarrierInterface
     }
 
     /**
-     * @param string $trackings
+     * @param string[] $trackings
      * @param string $response
      * @return void
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
-    protected function _parseRestTrackingResponse(string $trackings, string $response): void
+    protected function _parseRestTrackingResponse(array $trackings, string $response): void
     {
         $errorTitle = __('Unable to retrieve tracking');
         $resultArr = [];
@@ -2572,10 +2601,13 @@ class Carrier extends AbstractDhl implements CarrierInterface
             $trackingData = json_decode($response);
             if (!empty($trackingData)
                 && (isset($trackingData->status)
-                    && $trackingData->status !== 'Success')
+                    && $trackingData->status !== self::API_RESPONSE_STATUS_SUCCESS)
             ) {
-                $this->_errors['error'] = __('Error %1', $trackingData->message);
-            } elseif (!empty($trackingData) && $trackingData->shipments[0]->status == 'Success') {
+                foreach ($trackings as $tracking) {
+                    $this->_errors[$tracking] = __('Unable to retrieve tracking');
+                }
+            } elseif (!empty($trackingData)
+                && $trackingData->shipments[0]->status == self::API_RESPONSE_STATUS_SUCCESS) {
                 foreach ($trackingData->shipments as $shipment) {
                     $awbinfoData = [];
                     $trackNum = isset($shipment->shipmentTrackingNumber)
@@ -2583,9 +2615,14 @@ class Carrier extends AbstractDhl implements CarrierInterface
                     if ($shipment->description) {
                         $awbinfoData['service'] = (string)$shipment->description;
                     }
+                    if ($shipment->unitOfMeasurements == self::WEIGHT_UNIT_IMPERIAL) {
+                        $shipmentMeasurements = self::WEIGHT_UNIT_LB;
+                    } else {
+                        $shipmentMeasurements = self::WEIGHT_UNIT_KG;
+                    }
 
                     $awbinfoData['weight'] = (string)$shipment->totalWeight . ' ' .
-                        (string)$shipment->unitOfMeasurements;
+                        (string)$shipmentMeasurements;
                     $packageProgress = [];
                     if (isset($shipment->events)) {
                         foreach ($shipment->events as $shipmentEvent) {
@@ -2811,18 +2848,30 @@ class Carrier extends AbstractDhl implements CarrierInterface
     private function getGatewayURL(): string
     {
         if ($this->getConfigData('sandbox_mode')) {
-            if ($this->getConfigData('type') == 'DHL_XML') {
+            if ($this->getConfigData('type') == self::DHL_TYPE_XML) {
                 return (string)$this->getConfigData('sandbox_xml_url');
             } else {
                 return (string)$this->getConfigData('sandbox_rest_url');
             }
         } else {
-            if ($this->getConfigData('type') == 'DHL_XML') {
+            if ($this->getConfigData('type') == self::DHL_TYPE_XML) {
                 return (string)$this->getConfigData('gateway_xml_url');
             } else {
                 return (string)$this->getConfigData('gateway_rest_url');
             }
         }
+    }
+
+    /**
+     * Get the weight Unit for Rest API
+     *
+     * @return string
+     * @throws LocalizedException
+     */
+    private function _getRestPackageWeightUnit(): string
+    {
+        $packageWeightUnit = substr($this->_getWeightUnit(), 0, 1);
+        return $packageWeightUnit === 'L' ? self::WEIGHT_UNIT_IMPERIAL : self::WEIGHT_UNIT_METRIC;
     }
 
     /**

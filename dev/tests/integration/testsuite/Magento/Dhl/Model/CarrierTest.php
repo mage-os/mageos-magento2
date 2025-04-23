@@ -862,12 +862,12 @@ class CarrierTest extends TestCase
                 'packages' => [
                     'package' => [
                         'params' => [
-                            'width' => '5',
-                            'length' => '5',
-                            'height' => '5',
-                            'dimension_units' => 'CENTIMETER',
-                            'weight_units' => 'KILOGRAM',
-                            'weight' => '100',
+                            'width' => '2',
+                            'length' => '2',
+                            'height' => '2',
+                            'dimension_units' => 'IN',
+                            'weight_units' => 'L',
+                            'weight' => '220',
                             'customs_value' => '100.00',
                             'container' => Carrier::DHL_CONTENT_TYPE_NON_DOC,
                         ],
@@ -1029,7 +1029,7 @@ class CarrierTest extends TestCase
             'tracking' => 2725476530,
             'service' => 'Shipment',
             'progressdetail' => [],
-            'weight' => '222 imperial',
+            'weight' => '222 LB',
         ];
         $expectedTrackingDataB = [
             'carrier' => 'dhl',
@@ -1037,13 +1037,13 @@ class CarrierTest extends TestCase
             'tracking' => 5539315121,
             'service' => 'Shipment',
             'progressdetail' => [],
-            'weight' => '222 imperial',
+            'weight' => '222 LB',
         ];
         $expectedTrackingDataC = [
             'carrier' => 'dhl',
             'carrier_title' => 'DHL',
-            'tracking' => 'error',
-            'error_message' => __('Error %1', 'No data found'),
+            'tracking' => '1234567892',
+            'error_message' => __('Unable to retrieve tracking'),
         ];
 
         return [

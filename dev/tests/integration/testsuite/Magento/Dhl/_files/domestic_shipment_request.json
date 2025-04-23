@@ -58,7 +58,7 @@
     ],
     "description": "Shipment",
     "incoterm": "DAP",
-    "unitOfMeasurement": "metric",
+    "unitOfMeasurement": "imperial",
     "isCustomsDeclarable": false
   }
 }
