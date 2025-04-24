@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2011 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Sales\Block\Adminhtml\Order\Create;
 
@@ -9,7 +9,7 @@ namespace Magento\Sales\Block\Adminhtml\Order\Create;
  * Adminhtml sales order create newsletter block
  *
  * @api
- * @author      Magento Core Team <core@magentocommerce.com>
+ * Magento Core Team <core@magentocommerce.com>
  * @since 100.0.2
  */
 class Newsletter extends AbstractCreate
