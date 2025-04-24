@@ -20,10 +20,16 @@ class City extends AbstractValidator
      *
      * \p{L}: Unicode letters.
      * \p{M}: Unicode marks (diacritic marks, accents, etc.).
-     * ': Apostrophe mark.
+     * \d: Digits (0-9).
      * \s: Whitespace characters (spaces, tabs, newlines, etc.).
+     * -: Hyphen.
+     * ': Apostrophe mark.
+     * .: Period/full stop.
+     * ,: Comma.
+     * &: Ampersand.
+     * (): Parentheses.
      */
-    private const PATTERN_CITY = '/(?:[\p{L}\p{M}\s\-\']{1,100})/u';
+    private const PATTERN_CITY = '/^[\p{L}\p{M}\d\s\-\'\.,&\(\)]{1,100}$/u';
 
     /**
      * Validate city fields.
