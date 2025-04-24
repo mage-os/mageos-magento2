@@ -2,10 +2,6 @@
 /**
  * Copyright 2011 Adobe
  * All Rights Reserved.
-<<<<<<< Updated upstream
- * ***********************************************************************
-=======
->>>>>>> Stashed changes
  */
 declare(strict_types=1);
 
