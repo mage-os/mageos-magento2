@@ -16,6 +16,7 @@
             <severity value="MINOR"/>
             <testCaseId value="MC-36869"/>
             <group value="pr_exclude"/>
+            <group value="all_bundled_only"/>
         </annotations>
         <before>
             <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
