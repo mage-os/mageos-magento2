@@ -60,15 +60,13 @@ class ByPercent extends AbstractDiscount
         $baseItemOriginalPrice = $this->validator->getItemBaseOriginalPrice($item);
 
         $_rulePct = $rulePercent / 100;
-        $amountRound = $this->priceCurrency->round(($qty * $itemPrice - $item->getDiscountAmount()) * $_rulePct);
-        $baseAmountRound = $this->priceCurrency->round(($qty * $baseItemPrice - $item->getBaseDiscountAmount()) * $_rulePct);
-        $originalAmountRound = $this->priceCurrency->round(($qty * $itemOriginalPrice - $item->getDiscountAmount()) * $_rulePct);
-        $baseOriginalAmountRound = $this->priceCurrency->round(($qty * $baseItemOriginalPrice - $item->getBaseDiscountAmount()) * $_rulePct);
-
-        $discountData->setAmount($amountRound);
-        $discountData->setBaseAmount($baseAmountRound);
-        $discountData->setOriginalAmount($originalAmountRound);
-        $discountData->setBaseOriginalAmount($baseOriginalAmountRound);
+        $pc = $this->priceCurrency;
+        $discountData->setAmount($pc->round(($qty * $itemPrice - $item->getDiscountAmount()) * $_rulePct));
+        $discountData->setBaseAmount($pc->round(($qty * $baseItemPrice - $item->getBaseDiscountAmount()) * $_rulePct));
+        $discountData->setOriginalAmount($pc->round(($qty * $itemOriginalPrice - $item->getDiscountAmount()) * $_rulePct));
+        $discountData->setBaseOriginalAmount(
+            $pc->round(($qty * $baseItemOriginalPrice - $item->getBaseDiscountAmount()) * $_rulePct)
+        );
 
         if (!$rule->getDiscountQty() || $rule->getDiscountQty() >= $qty) {
             $discountPercent = min(100, $item->getDiscountPercent() + $rulePercent);
