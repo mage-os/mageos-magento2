@@ -7,9 +7,15 @@ declare(strict_types=1);
 
 namespace Magento\SalesRule\Model\Rule\Condition\Product;
 
+use Magento\Catalog\Test\Fixture\Product as ProductFixture;
+use Magento\Customer\Test\Fixture\Customer;
 use Magento\Framework\ObjectManagerInterface;
-use Magento\Quote\Model\Quote;
+use Magento\Quote\Test\Fixture\AddProductToCart;
+use Magento\Quote\Test\Fixture\CustomerCart;
+use Magento\TestFramework\Fixture\DataFixture;
+use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\SalesRule\Model\Rule\Condition\Product as SalesRuleProduct;
+use Magento\TestFramework\Fixture\DataFixtureStorageManager;
 use Magento\TestFramework\Helper\Bootstrap;
 use PHPUnit\Framework\TestCase;
 
@@ -17,7 +23,6 @@ use PHPUnit\Framework\TestCase;
  * Integration test for Subselect::validate() method returning true.
  *
  * @magentoAppArea frontend
- * @magentoDbIsolation enabled
  */
 class SubselectTest extends TestCase
 {
@@ -32,28 +37,31 @@ class SubselectTest extends TestCase
     private $subselectCondition;
 
     /**
-     * @var SalesRuleProduct
+     * @var \Magento\Catalog\Api\ProductRepositoryInterface
      */
-    private $productCondition;
+    protected $productRepository;
 
     protected function setUp(): void
     {
         $this->objectManager = Bootstrap::getObjectManager();
-        $this->productCondition = $this->objectManager->create(SalesRuleProduct::class);
-        $this->subselectCondition = $this->objectManager->create(
-            Subselect::class,
-            [
-                'context' => $this->objectManager->get(\Magento\Rule\Model\Condition\Context::class),
-                'ruleConditionProduct' => $this->productCondition
-            ]
-        );
+        $this->subselectCondition = $this->objectManager->create(Subselect::class);
+        $this->productRepository = $this->objectManager->get(ProductRepositoryInterface::class);
     }
 
     /**
      * Test validate() method returning true for total quantity >= 2 with single shipping.
      *
-     * @magentoDataFixture Magento/Catalog/_files/products.php
      */
+    #[
+        DataFixture(Customer::class, as: 'customer'),
+        DataFixture(CustomerCart::class, ['customer_id' => '$customer.id$'], 'quote'),
+        DataFixture(ProductFixture::class, ['sku' => 'simple1', 'price' => 100.50], as: 'product'),
+        DataFixture(
+            AddProductToCart::class,
+            ['cart_id' => '$quote.id$', 'product_id' => '$product.id$', 'qty' => 2],
+            'item'
+        ),
+    ]
     public function testValidateReturnsTrueForSufficientQuantity()
     {
         $this->subselectCondition->setData([
@@ -66,20 +74,13 @@ class SubselectTest extends TestCase
         $productCondition->setData([
             'attribute' => 'sku',
             'operator' => '==',
-            'value' => 'simple',
+            'value' => 'simple1',
         ]);
         $this->subselectCondition->setConditions([$productCondition]);
-        $productRepository = $this->objectManager->create(\Magento\Catalog\Api\ProductRepositoryInterface::class);
-        $product = $productRepository->get('simple');
-        $product->setPrice(100.50);
+        $product = $this->productRepository->get('simple1');
         $this->assertNotNull($product->getId());
-        $quote = $this->objectManager->create(Quote::class);
-        $quote->setStoreId(1)
-            ->setIsActive(true)
-            ->setIsMultiShipping(false)
-            ->setReservedOrderId('test_quote')
-            ->addProduct($product, 2);
-        $quote->collectTotals()->save();
+        $quote = DataFixtureStorageManager::getStorage()->get('quote');
+        $quote->setStoreId(1)->setIsActive(true)->setIsMultiShipping(false);
         $this->assertNotNull($quote->getId());
         $this->assertNotEmpty($quote->getAllVisibleItems());
         $quoteItem = $quote->getAllVisibleItems()[0];
