@@ -160,26 +160,7 @@ class OrderShipmentsTest extends GraphQlAbstract
         $this->assertEquals($shipment2->getIncrementId(), $shipments[1]['number']);
         $this->assertCount(1, $shipments[1]['items']);
     }
-
-//    /**
-//     * @magentoApiDataFixture Magento/GraphQl/Sales/_files/customer_order_with_multiple_shipments.php
-//     */
-//    public function testGetOrderShipmentsMultiple()
-//    {
-//        $query = $this->getQuery('100000555');
-//        $authHeader = $this->getCustomerAuthHeader->execute('customer_uk_address@test.com', 'password');
-//
-//        $result = $this->graphQlQuery($query, [], '', $authHeader);
-//        $this->assertArrayNotHasKey('errors', $result);
-//        $order = $result['customer']['orders']['items'][0];
-//        $shipments = $order['shipments'];
-//        $this->assertCount(2, $shipments);
-//        $this->assertEquals('0000000098', $shipments[0]['number']);
-//        $this->assertCount(1, $shipments[0]['items']);
-//        $this->assertEquals('0000000099', $shipments[1]['number']);
-//        $this->assertCount(1, $shipments[1]['items']);
-//    }
-
+    
     /**
      * @magentoConfigFixture default_store carriers/ups/active 1
      * @magentoApiDataFixture Magento/GraphQl/Sales/_files/customer_order_with_ups_shipping.php
