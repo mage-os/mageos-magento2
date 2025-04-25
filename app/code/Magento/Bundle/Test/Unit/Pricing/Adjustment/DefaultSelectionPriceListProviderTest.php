@@ -1,13 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2022 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
 namespace Magento\Bundle\Test\Unit\Pricing\Adjustment;
 
 use Magento\Bundle\Model\Option;
+use Magento\Bundle\Model\Product\Price;
 use Magento\Bundle\Model\Product\Type;
 use Magento\Bundle\Model\ResourceModel\Option\Collection;
 use Magento\Bundle\Model\ResourceModel\Selection\Collection as SelectionCollection;
@@ -109,6 +110,8 @@ class DefaultSelectionPriceListProviderTest extends TestCase
 
         $this->product = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
+            ->addMethods(['getPriceType'])
+            ->onlyMethods(['getTypeInstance', 'isSalable'])
             ->getMock();
         $this->optionsCollection = $this->getMockBuilder(Collection::class)
             ->disableOriginalConstructor()
@@ -149,6 +152,8 @@ class DefaultSelectionPriceListProviderTest extends TestCase
         $this->product->expects($this->any())
             ->method('getTypeInstance')
             ->willReturn($this->typeInstance);
+        $this->product->expects($this->once())
+            ->method('getPriceType')->willReturn(Price::PRICE_TYPE_FIXED);
         $this->optionsCollection->expects($this->once())
             ->method('getIterator')
             ->willReturn(new \ArrayIterator([$this->option]));
@@ -177,7 +182,110 @@ class DefaultSelectionPriceListProviderTest extends TestCase
         $this->selectionCollection->expects($this->once())
             ->method('getIterator')
             ->willReturn(new \ArrayIterator([]));
+        $this->selectionCollection->expects($this->never())
+            ->method('setFlag')
+            ->with('has_stock_status_filter', true);
 
         $this->model->getPriceList($this->product, false, false);
+    }
+
+    /**
+     * @dataProvider dataProvider
+     */
+    public function testGetPriceListForFixedPriceType($websiteId): void
+    {
+        $optionId = 1;
+
+        $this->typeInstance->expects($this->any())
+            ->method('getOptionsCollection')
+            ->with($this->product)
+            ->willReturn($this->optionsCollection);
+        $this->product->expects($this->any())
+            ->method('getTypeInstance')
+            ->willReturn($this->typeInstance);
+        $this->optionsCollection->expects($this->once())
+            ->method('getIterator')
+            ->willReturn(new \ArrayIterator([$this->option]));
+        $this->option->expects($this->once())
+            ->method('getOptionId')
+            ->willReturn($optionId);
+        $this->typeInstance->expects($this->once())
+            ->method('getSelectionsCollection')
+            ->with([$optionId], $this->product)
+            ->willReturn($this->selectionCollection);
+        $this->option->expects($this->once())
+            ->method('isMultiSelection')
+            ->willReturn(true);
+        $this->storeManager->expects($this->once())
+            ->method('getStore')
+            ->willReturn($this->store);
+        $this->store->expects($this->once())
+            ->method('getWebsiteId')
+            ->willReturn($websiteId);
+
+        if ($websiteId) {
+            $this->websiteRepository->expects($this->never())
+                ->method('getDefault');
+        } else {
+            $this->websiteRepository->expects($this->once())
+                ->method('getDefault')
+                ->willReturn($this->website);
+            $this->website->expects($this->once())
+                ->method('getId')
+                ->willReturn(1);
+        }
+        $this->selectionCollection->expects($this->once())
+            ->method('getIterator')
+            ->willReturn(new \ArrayIterator([]));
+        $this->selectionCollection->expects($this->once())
+            ->method('setFlag')
+            ->with('has_stock_status_filter', true);
+
+        $this->model->getPriceList($this->product, false, false);
+    }
+
+    public function testGetPriceListWithSearchMin(): void
+    {
+        $option = $this->createMock(Option::class);
+        $option->expects($this->once())->method('getRequired')
+            ->willReturn(true);
+        $this->optionsCollection->expects($this->any())
+            ->method('getIterator')
+            ->willReturn(new \ArrayIterator([$option]));
+        $this->typeInstance->expects($this->any())
+            ->method('getOptionsCollection')
+            ->with($this->product)
+            ->willReturn($this->optionsCollection);
+        $this->product->expects($this->any())
+            ->method('getTypeInstance')
+            ->willReturn($this->typeInstance);
+        $this->selectionCollection->expects($this->once())
+            ->method('getFirstItem')
+            ->willReturn($this->createMock(Product::class));
+        $this->typeInstance->expects($this->once())
+            ->method('getSelectionsCollection')
+            ->willReturn($this->selectionCollection);
+        $this->selectionCollection->expects($this->once())
+            ->method('setFlag')
+            ->with('has_stock_status_filter', true);
+        $this->selectionCollection->expects($this->once())
+            ->method('addQuantityFilter');
+        $this->product->expects($this->once())->method('isSalable')->willReturn(true);
+        $this->optionsCollection->expects($this->once())
+            ->method('getSize')
+            ->willReturn(1);
+        $this->optionsCollection->expects($this->once())
+            ->method('addFilter')
+            ->willReturn($this->optionsCollection);
+
+        $this->model->getPriceList($this->product, true, false);
+    }
+
+    public static function dataProvider()
+    {
+        return [
+            'website provided' => [1],
+            'website not provided' => [0]
+        ];
     }
 }

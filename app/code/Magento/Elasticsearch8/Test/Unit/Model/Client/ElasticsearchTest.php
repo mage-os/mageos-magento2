@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
 
 declare(strict_types=1);
@@ -63,41 +63,41 @@ class ElasticsearchTest extends TestCase
     {
         BypassFinals::enable();
         $this->elasticsearchClientMock = $this->getMockBuilder(Client::class) /** @phpstan-ignore-line */
-            ->setMethods(
-                [
-                    'indices',
-                    'ping',
-                    'bulk',
-                    'search',
-                    'scroll',
-                    'info',
-                ]
-            )
+        ->onlyMethods(
+            [
+                'indices',
+                'ping',
+                'bulk',
+                'search',
+                'scroll',
+                'info',
+            ]
+        )
             ->disableOriginalConstructor()
             ->getMock();
         $this->indicesMock = $this->getMockBuilder(Indices::class) /** @phpstan-ignore-line */
-            ->setMethods(
-                [
-                    'exists',
-                    'getSettings',
-                    'create',
-                    'delete',
-                    'putMapping',
-                    'deleteMapping',
-                    'getMapping',
-                    'stats',
-                    'updateAliases',
-                    'existsAlias',
-                    'getAlias',
-                ]
-            )
+        ->onlyMethods(
+            [
+                'exists',
+                'getSettings',
+                'create',
+                'delete',
+                'putMapping',
+                'getMapping',
+                'stats',
+                'updateAliases',
+                'existsAlias',
+                'getAlias',
+            ]
+        )
+            ->addMethods(['deleteMapping'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->elasticsearchResponse = $this->getMockBuilder(ElasticsearchResponse::class) /** @phpstan-ignore-line */
-            ->setMethods([
-                'asBool',
-                'asArray',
-            ])
+        ->onlyMethods([
+            'asBool',
+            'asArray',
+        ])
             ->getMock();
         $this->elasticsearchClientMock->expects($this->any())
             ->method('indices')

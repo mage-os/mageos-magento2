@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -48,11 +48,11 @@ class DefaultResolverTest extends TestCase
         $objectManager = new ObjectManagerHelper($this);
         $this->fieldTypeConverter = $this->getMockBuilder(FieldTypeConverterInterface::class)
             ->disableOriginalConstructor()
-            ->setMethods(['convert'])
+            ->onlyMethods(['convert'])
             ->getMockForAbstractClass();
         $this->fieldTypeResolver = $this->getMockBuilder(FieldTypeResolver::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getFieldType'])
+            ->onlyMethods(['getFieldType'])
             ->getMockForAbstractClass();
 
         $baseResolver = $objectManager->getObject(
@@ -86,7 +86,7 @@ class DefaultResolverTest extends TestCase
     ) {
         $attributeMock = $this->getMockBuilder(AttributeAdapter::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getAttributeCode', 'getFrontendInput', 'isSortable'])
+            ->onlyMethods(['getAttributeCode', 'getFrontendInput', 'isSortable'])
             ->getMock();
         $this->fieldTypeConverter->expects($this->any())
             ->method('convert')
@@ -113,7 +113,7 @@ class DefaultResolverTest extends TestCase
     /**
      * @return array
      */
-    public function getFieldNameProvider(): array
+    public static function getFieldNameProvider(): array
     {
         return [
             ['', 'code', '', false, [], 'code'],
