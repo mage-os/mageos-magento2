@@ -23,13 +23,14 @@ class City extends AbstractValidator
      * \d: Digits (0-9).
      * \s: Whitespace characters (spaces, tabs, newlines, etc.).
      * -: Hyphen.
-     * ': Apostrophe mark.
+     * _: Underscore.
+     * ', ’: Apostrophes (straight and typographical).
      * .: Period/full stop.
      * ,: Comma.
      * &: Ampersand.
      * (): Parentheses.
      */
-    private const PATTERN_CITY = '/^[\p{L}\p{M}\d\s\-\'\.,&\(\)]{1,100}$/u';
+    private const PATTERN_CITY = '/^[\p{L}\p{M}\d\s\-_\'’\.,&\(\)]{1,100}$/u';
 
     /**
      * Validate city fields.
@@ -41,7 +42,7 @@ class City extends AbstractValidator
     {
         if (!$this->isValidCity($customer->getCity())) {
             parent::_addMessages([[
-                'city' => "Invalid City. Please use letters, numbers, spaces, and the following characters: - ' . , & ( )"
+                'city' => "Invalid City. Please use letters, numbers, spaces, and the following characters: - _ ' ’ . , & ( )"
             ]]);
         }
 
