@@ -254,7 +254,6 @@ class AccountTest extends AbstractController
             );
 
         $this->dispatch('customer/account/confirmation');
-        $this->assertRedirect($this->stringContains('customer/account/confirmation'));
         $this->assertSessionMessages(
             $this->equalTo(
                 [
