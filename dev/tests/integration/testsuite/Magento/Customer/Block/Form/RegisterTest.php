@@ -7,6 +7,7 @@ namespace Magento\Customer\Block\Form;
 
 use Magento\Customer\Block\DataProviders\AddressAttributeData;
 use Magento\Customer\ViewModel\Address\RegionProvider;
+use Magento\Framework\View\Element\ButtonLockInterface;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\ButtonLockManager;
 use Magento\TestFramework\Helper\Bootstrap;
@@ -207,7 +208,7 @@ class RegisterTest extends \PHPUnit\Framework\TestCase
     private function setButtonLockManager(Template $block): void
     {
         $code = 'customer_create_form_submit';
-        $buttonLock = $this->getMockBuilder(\Magento\ReCaptchaUi\Model\ButtonLock::class)
+        $buttonLock = $this->getMockBuilder(ButtonLockInterface::class)
             ->disableOriginalConstructor()
             ->disableAutoload()
             ->onlyMethods(['isDisabled', 'getCode'])

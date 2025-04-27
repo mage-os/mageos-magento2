@@ -81,15 +81,15 @@ class AddressRepositoryTest extends TestCase
         $region = $this->regionFactory->create()
             ->setRegionCode('AL')
             ->setRegion('Alabama')
-            ->setRegionId(1);
+            ->setRegionId('1');
         $address = $this->addressFactory->create()
             ->setId('1')
             ->setCountryId('US')
             ->setCustomerId('1')
             ->setPostcode('75477')
             ->setRegion($region)
-            ->setRegionId(1)
-            ->setStreet(['Green str, 67'])
+            ->setRegionId('1')
+            ->setStreet(['Green str, 67', ''])
             ->setTelephone('3468676')
             ->setCity('CityM')
             ->setFirstname('John')
@@ -101,8 +101,8 @@ class AddressRepositoryTest extends TestCase
             ->setCustomerId('1')
             ->setPostcode('47676')
             ->setRegion($region)
-            ->setRegionId(1)
-            ->setStreet(['Black str, 48'])
+            ->setRegionId('1')
+            ->setStreet(['Black str, 48', ''])
             ->setCity('CityX')
             ->setTelephone('3234676')
             ->setFirstname('John')
@@ -647,7 +647,7 @@ class AddressRepositoryTest extends TestCase
             AddressInterface::SUFFIX => '_Suffix',
             AddressInterface::PREFIX => 'Prefix',
             AddressInterface::COMPANY => 'Company',
-            AddressInterface::STREET => ['Northgate Street, 39'],
+            AddressInterface::STREET => ['Northgate Street, 39', ''],
             AddressInterface::CITY => 'BICKTON',
             AddressInterface::COUNTRY_ID => 'GB',
             AddressInterface::REGION => $region,

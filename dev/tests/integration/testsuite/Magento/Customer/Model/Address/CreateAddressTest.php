@@ -220,7 +220,7 @@ class CreateAddressTest extends TestCase
                     'custom_region_name' => 'Alabama',
                     AddressInterface::FIRSTNAME => 'John',
                     AddressInterface::LASTNAME => 'Smith',
-                    AddressInterface::STREET => ['Green str, 67'],
+                    AddressInterface::STREET => ['Green str, 67', ''],
                     AddressInterface::CITY => 'CityM',
                 ],
             ],
@@ -250,7 +250,7 @@ class CreateAddressTest extends TestCase
             ],
             'required_field_street_as_array' => [
                 array_replace(self::STATIC_CUSTOMER_ADDRESS_DATA, [AddressInterface::STREET => ['', 'Green str, 67']]),
-                [AddressInterface::STREET => ['Green str, 67']],
+                [AddressInterface::STREET => ['Green str, 67', '']],
             ],
             'field_name_prefix' => [
                 array_merge(self::STATIC_CUSTOMER_ADDRESS_DATA, [AddressInterface::PREFIX => 'My prefix']),

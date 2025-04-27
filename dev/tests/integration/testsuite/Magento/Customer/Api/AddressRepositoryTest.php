@@ -65,15 +65,15 @@ class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
         $address2 = $this->_addressFactory->create()
             ->setId('2')
             ->setCountryId('US')
-            ->setCustomerId(1)
+            ->setCustomerId('1')
             ->setPostcode('47676')
             ->setRegion($region)
-            ->setStreet(['Black str, 48'])
+            ->setStreet(['Black str, 48', ''])
             ->setCity('CityX')
             ->setTelephone('3234676')
             ->setFirstname('John')
             ->setLastname('Smith')
-            ->setRegionId(1);
+            ->setRegionId('1');
 
         $this->_expectedAddresses = [$address, $address2];
     }

@@ -54,7 +54,7 @@ class CollectionTest extends TestCase
         $item = $this->targetObject->getItemById($newCustomer->getId());
         $this->assertNotEmpty($item);
         $this->assertSame($newCustomer->getEmail(), $item->getEmail());
-        $this->assertSame('test street test city Armed Forces Middle East 01001', $item->getBillingFull());
+        $this->assertSame('test street' . PHP_EOL . ' test city Armed Forces Middle East 01001', $item->getBillingFull());
 
         /** set customer grid indexer on schedule' mode */
         $indexer->setScheduled(true);
