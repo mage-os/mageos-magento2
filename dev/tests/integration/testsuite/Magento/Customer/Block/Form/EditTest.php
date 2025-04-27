@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Customer\Block\Form;
 
 use Magento\Customer\Model\Session;
+use Magento\Framework\View\Element\ButtonLockInterface;
 use Magento\Framework\View\LayoutInterface;
 use Magento\Framework\View\Element\ButtonLockManager;
 use Magento\TestFramework\Helper\Bootstrap;
@@ -60,7 +61,7 @@ class EditTest extends TestCase
     public function testCustomerEditButton(): void
     {
         $code = 'customer_edit';
-        $buttonLock = $this->getMockBuilder(\Magento\ReCaptchaUi\Model\ButtonLock::class)
+        $buttonLock = $this->getMockBuilder(ButtonLockInterface::class)
             ->disableOriginalConstructor()
             ->disableAutoload()
             ->onlyMethods(['isDisabled', 'getCode'])
