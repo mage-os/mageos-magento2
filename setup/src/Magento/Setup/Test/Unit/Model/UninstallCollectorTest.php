@@ -7,8 +7,11 @@ declare(strict_types=1);
 
 namespace Magento\Setup\Test\Unit\Model;
 
+use Magento\Setup\Model\FunctionOverrides;
 use Magento\Setup\Model\UninstallCollector;
 
+// phpcs:disable PSR1.Classes.ClassDeclaration
+// phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
 class UninstallCollectorTest extends \PHPUnit\Framework\TestCase
 {
     /**
@@ -28,6 +31,7 @@ class UninstallCollectorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
+        FunctionOverrides::enable();
         $objectManagerProvider = $this->createMock(\Magento\Setup\Model\ObjectManagerProvider::class);
         $objectManager =
             $this->getMockForAbstractClass(\Magento\Framework\ObjectManagerInterface::class, [], '', false);
@@ -86,6 +90,11 @@ class UninstallCollectorTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals(['Magento_A' => 'Uninstall Class A'], $this->collector->collectUninstall(['Magento_A']));
     }
+    public function tearDown(): void
+    {
+        FunctionOverrides::disable();
+        parent::tearDown();
+    }
 }
 
 namespace Magento\Setup\Model;
@@ -99,13 +108,7 @@ namespace Magento\Setup\Model;
  */
 function is_subclass_of($obj, $className)
 {
-    if ($obj == 'Uninstall Class A' && $className == \Magento\Framework\Setup\UninstallInterface::class) {
-        return true;
-    }
-    if ($obj == 'Uninstall Class B' && $className == \Magento\Framework\Setup\UninstallInterface::class) {
-        return true;
-    }
-    return false;
+    return FunctionOverrides::is_subclass_of($obj, $className);
 }
 
 /**
@@ -116,8 +119,47 @@ function is_subclass_of($obj, $className)
  */
 function class_exists($className)
 {
-    if ($className == 'Magento\A\Setup\Uninstall' || $className == 'Magento\B\Setup\Uninstall') {
-        return true;
+    return FunctionOverrides::class_exists($className);
+}
+
+/**
+ * This class is used to override the native functions for the purpose of testing
+ */
+class FunctionOverrides
+{
+    /**
+     * @var bool
+     */
+    private static bool $enabled = false;
+    public static function enable(): void
+    {
+        self::$enabled = true;
     }
-    return false;
+    public static function disable(): void
+    {
+        self::$enabled = false;
+    }
+    public static function is_subclass_of($obj, $className): bool
+    {
+        if (!self::$enabled) {
+            return \is_subclass_of($obj, $className);
+        }
+        if ($obj == 'Uninstall Class A' && $className == \Magento\Framework\Setup\UninstallInterface::class) {
+            return true;
+        }
+        if ($obj == 'Uninstall Class B' && $className == \Magento\Framework\Setup\UninstallInterface::class) {
+            return true;
+        }
+        return false;
+    }
+    public static function class_exists($className): bool
+    {
+        if (!self::$enabled) {
+            return \class_exists($className);
+        }
+        if ($className == 'Magento\A\Setup\Uninstall' || $className == 'Magento\B\Setup\Uninstall') {
+            return true;
+        }
+        return false;
+    }
 }

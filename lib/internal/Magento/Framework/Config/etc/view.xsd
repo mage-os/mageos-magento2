@@ -79,6 +79,7 @@
                                 <xs:simpleType>
                                     <xs:restriction base="xs:string">
                                         <xs:pattern value="[a-z]+(_?[a-z])+"/>
+                                        <xs:minLength value="2"/>
                                     </xs:restriction>
                                 </xs:simpleType>
                             </xs:union>

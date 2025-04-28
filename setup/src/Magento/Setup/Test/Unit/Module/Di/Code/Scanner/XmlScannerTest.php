@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe.
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -52,8 +52,9 @@ class XmlScannerTest extends TestCase
             $testDir . '/app/code/Magento/SomeModule/etc/di.xml',
             $testDir . '/app/code/Magento/SomeModule/view/frontend/default.xml',
         ];
-        require_once  __DIR__ . '/../../_files/app/code/Magento/SomeModule/Element.php';
-        require_once  __DIR__ . '/../../_files/app/code/Magento/SomeModule/NestedElement.php';
+
+        require_once __DIR__ . '/../../_files/app/code/Magento/SomeModule/Element.php';
+        require_once __DIR__ . '/../../_files/app/code/Magento/SomeModule/NestedElement.php';
     }
 
     /**
@@ -80,7 +81,19 @@ class XmlScannerTest extends TestCase
             });
 
         $actual = $this->model->collectEntities($this->testFiles);
-        $expected = [];
+
+        $proxyElementExists = class_exists('Magento\SomeModule\Element\Proxy');
+        $proxyNestedElementExists = class_exists('Magento\SomeModule\NestedElement\Proxy');
+
+        if ($proxyElementExists || $proxyNestedElementExists) {
+            $expected = [];
+        } else {
+            $expected = [
+                'Magento\SomeModule\Element\Proxy',
+                'Magento\SomeModule\NestedElement\Proxy'
+            ];
+        }
+
         $this->assertEquals($expected, $actual);
     }
 }

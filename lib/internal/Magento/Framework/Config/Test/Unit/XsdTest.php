@@ -17,6 +17,7 @@ class XsdTest extends TestCase
      * @param string $invalidXmlFile
      * @param int $expectedErrorsQty
      * @dataProvider invalidXmlFileDataProvider
+     * @throws \Exception
      */
     public function testInvalidXmlFile($xsdFile, $invalidXmlFile, $expectedErrorsQty)
     {
@@ -43,6 +44,6 @@ class XsdTest extends TestCase
      */
     public static function invalidXmlFileDataProvider()
     {
-        return [['view.xsd', 'view_invalid.xml', 8], ['theme.xsd', 'theme_invalid.xml', 1]];
+        return [['view.xsd', 'view_invalid.xml', 10], ['theme.xsd', 'theme_invalid.xml', 1]];
     }
 }
