@@ -1,36 +1,28 @@
 <?php
 /**
- * Copyright 2015 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
-/**
- * Escaper
- *
- * @var \Magento\Framework\Escaper
- */
+
 /**
  * @var $block \Magento\Theme\Block\Html\Title
  */
 $cssClass = $block->getCssClass() ? ' ' . $block->getCssClass() : '';
 $titleHtml = '';
-
-$pageHeading = $block->getPageHeading() ? trim($block->getPageHeading()) : '';
-
-if ($pageHeading) {
+if (trim($block->getPageHeading())) {
     $titleHtml = '<span class="base" data-ui-id="page-title-wrapper" '
         . $block->getAddBaseAttribute()
         . '>'
-        . $escaper->escapeHtml($pageHeading)
+        . $block->escapeHtml($block->getPageHeading())
         . '</span>';
 }
 ?>
-
-<?php if ($titleHtml): ?>
-<div class="page-title-wrapper<?= $escaper->escapeHtmlAttr($cssClass) ?>">
+<?php if ($titleHtml) : ?>
+<div class="page-title-wrapper<?= $block->escapeHtmlAttr($cssClass) ?>">
     <h1 class="page-title"
-        <?php if ($block->getId()): ?> id="<?= $escaper->escapeHtmlAttr($block->getId()) ?>" <?php endif; ?>
-        <?php if ($block->getAddBaseAttributeAria()): ?>
-            aria-labelledby="<?= $escaper->escapeHtmlAttr($block->getAddBaseAttributeAria()) ?>"
+        <?php if ($block->getId()) : ?> id="<?= $block->escapeHtmlAttr($block->getId()) ?>" <?php endif; ?>
+        <?php if ($block->getAddBaseAttributeAria()) : ?>
+            aria-labelledby="<?= $block->escapeHtmlAttr($block->getAddBaseAttributeAria()) ?>"
         <?php endif; ?>>
         <?= /* @noEscape */ $titleHtml ?>
     </h1>

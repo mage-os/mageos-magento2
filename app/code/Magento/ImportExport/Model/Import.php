@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2011 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 
 namespace Magento\ImportExport\Model;
@@ -79,7 +79,7 @@ class Import extends AbstractModel
     public const FIELD_NAME_ALLOWED_ERROR_COUNT = 'allowed_error_count';
 
     /**
-     * Validation strategy field name
+     * Validation startegt field name
      */
     public const FIELD_NAME_VALIDATION_STRATEGY = 'validation_strategy';
 
@@ -904,7 +904,7 @@ class Import extends AbstractModel
                     $this->_varDirectory->writeFile($copyFile, $content);
                 }
             } catch (FileSystemException $e) {
-                throw new LocalizedException(__('Source file copying failed'));
+                throw new LocalizedException(__('Source file coping failed'));
             }
             $this->importHistoryModel->addReport($copyName);
         }

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2015 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 declare(strict_types=1);
 
@@ -1011,7 +1011,7 @@ class ImportTest extends AbstractImportTestCase
     public function testCreateHistoryReportThrowException()
     {
         $this->expectException(LocalizedException::class);
-        $this->expectExceptionMessage('Source file copying failed');
+        $this->expectExceptionMessage('Source file coping failed');
         $sourceFileRelative = null;
         $entity = '';
         $extension = '';

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2017 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Message;
 
@@ -21,7 +21,7 @@ class Manager implements ManagerInterface
     /**
      * Default message group
      */
-    public const DEFAULT_GROUP = 'default';
+    const DEFAULT_GROUP = 'default';
 
     /**
      * @var Session
@@ -88,7 +88,7 @@ class Manager implements ManagerInterface
         $this->logger = $logger;
         $this->defaultGroup = $defaultGroup;
         $this->exceptionMessageFactory = $exceptionMessageFactory ?: ObjectManager::getInstance()
-            ->get(ExceptionMessageLookupFactory::class); // phpcs:ignore
+            ->get(ExceptionMessageLookupFactory::class);
     }
 
     /**
@@ -112,6 +112,10 @@ class Manager implements ManagerInterface
 
     /**
      * @inheritdoc
+     *
+     * @param bool $clear
+     * @param string|null $group
+     * @return Collection
      */
     public function getMessages($clear = false, $group = null)
     {
@@ -131,6 +135,10 @@ class Manager implements ManagerInterface
 
     /**
      * @inheritdoc
+     *
+     * @param MessageInterface $message
+     * @param string|null $group
+     * @return $this
      */
     public function addMessage(MessageInterface $message, $group = null)
     {
@@ -142,6 +150,10 @@ class Manager implements ManagerInterface
 
     /**
      * @inheritdoc
+     *
+     * @param MessageInterface[] $messages
+     * @param string|null $group
+     * @return $this
      */
     public function addMessages(array $messages, $group = null)
     {
@@ -155,6 +167,10 @@ class Manager implements ManagerInterface
 
     /**
      * @inheritdoc
+     *
+     * @param string $message
+     * @param string|null $group
+     * @return $this
      */
     public function addError($message, $group = null)
     {
@@ -164,6 +180,10 @@ class Manager implements ManagerInterface
 
     /**
      * @inheritdoc
+     *
+     * @param string $message
+     * @param string|null $group
+     * @return $this
      */
     public function addWarning($message, $group = null)
     {
@@ -173,6 +193,10 @@ class Manager implements ManagerInterface
 
     /**
      * @inheritdoc
+     *
+     * @param string $message
+     * @param string|null $group
+     * @return $this
      */
     public function addNotice($message, $group = null)
     {
@@ -182,6 +206,10 @@ class Manager implements ManagerInterface
 
     /**
      * @inheritdoc
+     *
+     * @param string $message
+     * @param string|null $group
+     * @return $this
      */
     public function addSuccess($message, $group = null)
     {
@@ -191,6 +219,10 @@ class Manager implements ManagerInterface
 
     /**
      * @inheritdoc
+     *
+     * @param MessageInterface[] $messages
+     * @param string|null $group
+     * @return $this
      */
     public function addUniqueMessages(array $messages, $group = null)
     {
@@ -207,6 +239,11 @@ class Manager implements ManagerInterface
 
     /**
      * @inheritdoc
+     *
+     * @param \Exception $exception
+     * @param string $alternativeText
+     * @param string $group
+     * @return $this
      */
     public function addException(\Exception $exception, $alternativeText = null, $group = null)
     {
@@ -245,6 +282,11 @@ class Manager implements ManagerInterface
 
     /**
      * @inheritdoc
+     *
+     * @param \Exception $exception
+     * @param string $alternativeText
+     * @param string $group
+     * @return $this
      */
     public function addExceptionMessage(\Exception $exception, $alternativeText = null, $group = null)
     {
@@ -272,7 +314,11 @@ class Manager implements ManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * Adds new error message
+     *
+     * @param string $message
+     * @param string|null $group
+     * @return ManagerInterface
      */
     public function addErrorMessage($message, $group = null)
     {
@@ -285,7 +331,11 @@ class Manager implements ManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * Adds new warning message
+     *
+     * @param string $message
+     * @param string|null $group
+     * @return ManagerInterface
      */
     public function addWarningMessage($message, $group = null)
     {
@@ -298,7 +348,11 @@ class Manager implements ManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * Adds new notice message
+     *
+     * @param string $message
+     * @param string|null $group
+     * @return ManagerInterface
      */
     public function addNoticeMessage($message, $group = null)
     {
@@ -311,7 +365,11 @@ class Manager implements ManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * Adds new success message
+     *
+     * @param string $message
+     * @param string|null $group
+     * @return ManagerInterface
      */
     public function addSuccessMessage($message, $group = null)
     {
@@ -324,7 +382,13 @@ class Manager implements ManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * Adds new complex error message
+     *
+     * @param string $identifier
+     * @param array $data
+     * @param string|null $group
+     * @return ManagerInterface
+     * @throws \InvalidArgumentException
      */
     public function addComplexErrorMessage($identifier, array $data = [], $group = null)
     {
@@ -339,7 +403,13 @@ class Manager implements ManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * Adds new complex warning message
+     *
+     * @param string $identifier
+     * @param array $data
+     * @param string|null $group
+     * @return ManagerInterface
+     * @throws \InvalidArgumentException
      */
     public function addComplexWarningMessage($identifier, array $data = [], $group = null)
     {
@@ -354,7 +424,13 @@ class Manager implements ManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * Adds new complex notice message
+     *
+     * @param string $identifier
+     * @param array $data
+     * @param string|null $group
+     * @return ManagerInterface
+     * @throws \InvalidArgumentException
      */
     public function addComplexNoticeMessage($identifier, array $data = [], $group = null)
     {
@@ -369,7 +445,13 @@ class Manager implements ManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * Adds new complex success message
+     *
+     * @param string $identifier
+     * @param array $data
+     * @param string|null $group
+     * @return ManagerInterface
+     * @throws \InvalidArgumentException
      */
     public function addComplexSuccessMessage($identifier, array $data = [], $group = null)
     {
@@ -384,7 +466,12 @@ class Manager implements ManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * Creates identified message
+     *
+     * @param string $type
+     * @param string|null $identifier
+     * @return MessageInterface
+     * @throws \InvalidArgumentException
      */
     public function createMessage($type, $identifier = null)
     {
