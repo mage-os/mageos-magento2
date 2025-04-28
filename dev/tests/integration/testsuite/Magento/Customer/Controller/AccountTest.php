@@ -260,7 +260,7 @@ class AccountTest extends AbstractController
                     'Wrong email.',
                 ]
             ),
-            MessageInterface::TYPE_SUCCESS
+            MessageInterface::TYPE_ERROR
         );
     }
 
