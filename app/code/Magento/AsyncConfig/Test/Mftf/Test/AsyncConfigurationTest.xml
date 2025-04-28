@@ -59,8 +59,10 @@
         <see selector="{{CatalogSection.successMessage}}" userInput="Configuration changes will be applied by consumer soon." stepKey="seeCustomSuccessMessage"/>
 
         <!--Trigger the Consumer-->
-        <magentoCLI stepKey="EnableAsyncConfig" command="queue:consumers:start saveConfigProcessor --max-messages=1"/>
-
+        <actionGroup ref="CliConsumerStartActionGroup" stepKey="startMessageQueueConsumer">
+            <argument name="consumerName" value="saveConfigProcessor"/>
+            <argument name="maxMessages" value="1"/>
+        </actionGroup>
         <!--Open Configuration Page Again-->
         <amOnPage url="{{CatalogConfigPage.url}}" stepKey="navigateToConfigurationPageAgain" />
         <waitForPageLoad stepKey="waitForPageLoadAgain"/>

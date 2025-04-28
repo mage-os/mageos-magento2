@@ -15,8 +15,9 @@
         <arguments>
             <argument name="consumerName" type="string"/>
             <argument name="maxMessages" type="string"/>
+            <argument name="timeout" type="string" defaultValue="10"/>
         </arguments>
 
-        <magentoCLI command="queue:consumers:start {{consumerName}} --max-messages={{maxMessages}}" stepKey="startMessageQueue"/>
+        <magentoCLI timeout="{{timeout}}" command="queue:consumers:start {{consumerName}} --max-messages={{maxMessages}}" stepKey="startMessageQueue"/>
     </actionGroup>
 </actionGroups>
