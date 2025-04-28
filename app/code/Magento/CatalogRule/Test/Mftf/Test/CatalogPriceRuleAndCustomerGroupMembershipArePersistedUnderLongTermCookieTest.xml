@@ -96,9 +96,6 @@
             <argument name="categoryUrl" value="$createCategory.custom_attributes[url_key]$"/>
             <argument name="productName" value="$createProduct.name$"/>
         </actionGroup>
-        <actionGroup ref="CliCacheCleanActionGroup" stepKey="cacheClean">
-            <argument name="tags" value="config"/>
-        </actionGroup>
         <waitForPageLoad time="30" stepKey="waitFormReload"/>
         <dontSeeElement selector="{{StorefrontCategoryProductSection.ProductCatalogRuleSpecialPriceTitleByName($createProduct.name$)}}" stepKey="dontSeeSpecialPrice"/>
     </test>
