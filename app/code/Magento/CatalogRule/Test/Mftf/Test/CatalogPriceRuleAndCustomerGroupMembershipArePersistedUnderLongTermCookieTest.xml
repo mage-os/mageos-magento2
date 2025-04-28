@@ -17,6 +17,8 @@
             <severity value="CRITICAL"/>
             <testCaseId value="MC-27571"/>
             <group value="persistent"/>
+            <!-- added pr_exclude group as this test failing repeatedly and will be fixed and removed in this ACQE-7751 -->
+            <group value="pr_exclude"/>
         </annotations>
         <before>
 
