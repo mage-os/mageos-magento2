@@ -24,9 +24,24 @@ use PHPUnit\Framework\TestCase;
  */
 class UrlTest extends TestCase
 {
+    /**
+     * @var CategoryRepositoryInterface
+     */
     private CategoryRepositoryInterface $categoryRepository;
+
+    /**
+     * @var DataFixtureStorage
+     */
     private DataFixtureStorage $fixtures;
+
+    /**
+     * @var StoreManagerInterface
+     */
     private StoreManagerInterface $storeManager;
+
+    /**
+     * @var Url
+     */
     private Url $urlResource;
 
     protected function setUp(): void
@@ -69,10 +84,10 @@ class UrlTest extends TestCase
         $storeId = (int) $this->storeManager->getStore('default')->getId();
 
         // Get Category IDs
-        $fixtureNames = ['c1', 'c2', 'c3', 'c4'];
-        $categoryIds = array_combine($fixtureNames, array_map(function (string $fixtureName): int {
-            return (int) $this->fixtures->get($fixtureName)->getId();
-        }, $fixtureNames));
+        $categoryIds = [];
+        foreach (['c1', 'c2', 'c3', 'c4'] as $fixtureName) {
+            $categoryIds[$fixtureName] = (int) $this->fixtures->get($fixtureName)->getId();
+        }
 
         // Disable c3 for store
         $c3 = $this->categoryRepository->get($categoryIds['c3'], $storeId);
