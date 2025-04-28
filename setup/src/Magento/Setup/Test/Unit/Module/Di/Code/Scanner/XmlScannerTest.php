@@ -59,6 +59,7 @@ class XmlScannerTest extends TestCase
 
     /**
      * @return void
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function testCollectEntities(): void
     {
