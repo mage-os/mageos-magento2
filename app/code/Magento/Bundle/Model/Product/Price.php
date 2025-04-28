@@ -629,6 +629,12 @@ class Price extends \Magento\Catalog\Model\Product\Type\Price
         $store = null
     ) {
         if ($specialPrice !== null && $specialPrice != false) {
+
+            if ($specialPriceTo && date('H:i:s', strtotime($specialPriceTo)) !== '00:00:00') {
+                $dateToTimestamp = strtotime($specialPriceTo);
+                $specialPriceTo = date('Y-m-d H:i:s', $dateToTimestamp - 86400);
+            }
+
             if ($this->_localeDate->isScopeDateInInterval($store, $specialPriceFrom, $specialPriceTo)) {
                 $specialPrice = $finalPrice * ($specialPrice / 100);
                 $finalPrice = min($finalPrice, $specialPrice);
