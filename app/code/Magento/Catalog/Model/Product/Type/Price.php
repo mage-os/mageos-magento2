@@ -602,11 +602,6 @@ class Price implements ResetAfterRequestInterface
 
         $finalPrice = $basePrice;
 
-        if ($specialPriceTo && date('H:i:s', strtotime($specialPriceTo)) !== '00:00:00') {
-            $dateToTimestamp = strtotime($specialPriceTo);
-            $specialPriceTo = date('Y-m-d H:i:s', $dateToTimestamp - 86400);
-        }
-
         $finalPrice = $this->calculateSpecialPrice(
             $finalPrice,
             $specialPrice,
