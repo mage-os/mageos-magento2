@@ -131,14 +131,34 @@ class FunctionOverrides
      * @var bool
      */
     private static bool $enabled = false;
+
+    /**
+     * Check if the function overrides are enabled
+     *
+     * @return void
+     */
     public static function enable(): void
     {
         self::$enabled = true;
     }
+
+    /**
+     * Check if the function overrides are disabled
+     *
+     * @return void
+     */
     public static function disable(): void
     {
         self::$enabled = false;
     }
+
+    /**
+     * Check if the object is a subclass of the given class name
+     *
+     * @param $obj
+     * @param $className
+     * @return bool
+     */
     public static function is_subclass_of($obj, $className): bool
     {
         if (!self::$enabled) {
@@ -152,6 +172,13 @@ class FunctionOverrides
         }
         return false;
     }
+
+    /**
+     * Check if the class exists of the given class name
+     *
+     * @param $className
+     * @return bool
+     */
     public static function class_exists($className): bool
     {
         if (!self::$enabled) {
