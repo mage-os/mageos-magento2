@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -97,6 +97,11 @@ class ImageResize
     private $storeManager;
 
     /**
+     * @var array[]
+     */
+    private array $paramsWebsitesMap;
+
+    /**
      * @param State $appState
      * @param MediaConfig $imageConfig
      * @param ProductImage $productImage
@@ -188,6 +193,9 @@ class ImageResize
         foreach ($productImages as $image) {
             $error = '';
             $originalImageName = $image['filepath'];
+            $websiteIds = isset($image['website_ids'])
+                ? array_map('intval', explode(',', $image['website_ids']))
+                : [];
 
             $mediastoragefilename = $this->imageConfig->getMediaPath($originalImageName);
             $originalImagePath = $this->mediaDirectory->getAbsolutePath($mediastoragefilename);
@@ -197,7 +205,11 @@ class ImageResize
             }
             if ($this->mediaDirectory->isFile($originalImagePath)) {
                 try {
-                    foreach ($viewImages as $viewImage) {
+                    foreach ($viewImages as $index => $viewImage) {
+                        if ($skipHiddenImages && !array_intersect($this->paramsWebsitesMap[$index], $websiteIds)) {
+                            continue;
+                        }
+
                         $this->resize($viewImage, $originalImagePath, $originalImageName);
                     }
                 } catch (\Exception $e) {
@@ -275,6 +287,8 @@ class ImageResize
                     $uniqIndex = $this->getUniqueImageIndex($data);
                     $data['id'] = $imageId;
                     $viewImages[$uniqIndex] = $data;
+                    $websiteId = (int) $store->getWebsiteId();
+                    $this->paramsWebsitesMap[$uniqIndex][$websiteId] = $websiteId;
                 }
             }
         }
