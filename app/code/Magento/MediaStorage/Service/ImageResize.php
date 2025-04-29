@@ -193,9 +193,15 @@ class ImageResize
         foreach ($productImages as $image) {
             $error = '';
             $originalImageName = $image['filepath'];
+
             $websiteIds = isset($image['website_ids'])
                 ? array_map('intval', explode(',', $image['website_ids']))
                 : [];
+            $relevantViewImages = $skipHiddenImages ? array_filter(
+                $viewImages,
+                fn ($index) => array_intersect($this->paramsWebsitesMap[$index], $websiteIds),
+                ARRAY_FILTER_USE_KEY
+            ) : $viewImages;
 
             $mediastoragefilename = $this->imageConfig->getMediaPath($originalImageName);
             $originalImagePath = $this->mediaDirectory->getAbsolutePath($mediastoragefilename);
@@ -205,11 +211,7 @@ class ImageResize
             }
             if ($this->mediaDirectory->isFile($originalImagePath)) {
                 try {
-                    foreach ($viewImages as $index => $viewImage) {
-                        if ($skipHiddenImages && !array_intersect($this->paramsWebsitesMap[$index], $websiteIds)) {
-                            continue;
-                        }
-
+                    foreach ($relevantViewImages as $viewImage) {
                         $this->resize($viewImage, $originalImagePath, $originalImageName);
                     }
                 } catch (\Exception $e) {
@@ -224,6 +226,8 @@ class ImageResize
     }
 
     /**
+     * Get count of product images.
+     *
      * @param bool $skipHiddenImages
      * @return int
      */
@@ -234,6 +238,8 @@ class ImageResize
     }
 
     /**
+     * Get product images.
+     *
      * @param bool $skipHiddenImages
      * @return Generator
      */
