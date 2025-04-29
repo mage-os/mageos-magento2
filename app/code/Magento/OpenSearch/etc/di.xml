@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Copyright 2022 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -286,8 +286,5 @@
                 <item name="integer_mapping" xsi:type="object">Magento\OpenSearch\Model\Adapter\DynamicTemplates\IntegerMapper</item>
             </argument>
         </arguments>
-    </type>
-    <type name="Magento\Elasticsearch\SearchAdapter\Query\Builder\QueryInterface">
-        <plugin name="sanitize_search_string" type="Magento\OpenSearch\Plugin\SearchAdapter\Query\Builder\MatchQueryPlugin" />
     </type>
 </config>
