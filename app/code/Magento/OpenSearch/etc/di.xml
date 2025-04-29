@@ -287,7 +287,4 @@
             </argument>
         </arguments>
     </type>
-    <type name="Magento\Elasticsearch\SearchAdapter\Query\Builder\QueryInterface">
-        <plugin name="sanitize_search_string" type="Magento\OpenSearch\Plugin\SearchAdapter\Query\Builder\MatchQueryPlugin" />
-    </type>
 </config>
