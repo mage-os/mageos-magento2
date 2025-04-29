@@ -91,6 +91,9 @@
         <index referenceId="SALESRULE_COUPON_RULE_ID" indexType="btree">
             <column name="rule_id"/>
         </index>
+        <index referenceId="SALESRULE_COUPON_CODE" indexType="btree">
+            <column name="code"/>
+        </index>
     </table>
     <table name="salesrule_coupon_usage" resource="default" engine="innodb" comment="Salesrule Coupon Usage">
         <column xsi:type="int" name="coupon_id" unsigned="true" nullable="false" identity="false"

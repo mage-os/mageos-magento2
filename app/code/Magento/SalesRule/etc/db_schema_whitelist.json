@@ -46,7 +46,8 @@
             "type": true
         },
         "index": {
-            "SALESRULE_COUPON_RULE_ID": true
+            "SALESRULE_COUPON_RULE_ID": true,
+            "SALESRULE_COUPON_CODE": true
         },
         "constraint": {
             "PRIMARY": true,
