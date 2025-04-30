@@ -59,7 +59,7 @@
         <see selector="{{CatalogSection.successMessage}}" userInput="Configuration changes will be applied by consumer soon." stepKey="seeCustomSuccessMessage"/>
 
         <!--Trigger the Consumer-->
-        <actionGroup ref="CliConsumerStartActionGroup" stepKey="startMessageQueueConsumer">
+        <actionGroup ref="CliConsumerStartActionGroup" stepKey="EnableAsyncConfig">
             <argument name="consumerName" value="saveConfigProcessor"/>
             <argument name="maxMessages" value="1"/>
         </actionGroup>
