@@ -82,18 +82,7 @@ class XmlScannerTest extends TestCase
             });
 
         $actual = $this->model->collectEntities($this->testFiles);
-
-        $proxyElementExists = class_exists('Magento\SomeModule\Element\Proxy');
-        $proxyNestedElementExists = class_exists('Magento\SomeModule\NestedElement\Proxy');
-
-        if ($proxyElementExists || $proxyNestedElementExists) {
-            $expected = [];
-        } else {
-            $expected = [
-                'Magento\SomeModule\Element\Proxy',
-                'Magento\SomeModule\NestedElement\Proxy'
-            ];
-        }
+        $expected = [];
 
         $this->assertEquals($expected, $actual);
     }
