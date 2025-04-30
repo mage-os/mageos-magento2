@@ -89,10 +89,9 @@ class UninstallCollectorTest extends \PHPUnit\Framework\TestCase
             ->with($this->result)
             ->willReturn([['module' => 'Magento_A']]);
 
-        $this->assertEquals(['Magento_A' => 'Magento\A\Setup\Uninstall'], $this->collector->collectUninstall(['Magento_A']));
-    }
-    public function tearDown(): void
-    {
-        parent::tearDown();
+        $this->assertEquals(
+            ['Magento_A' => 'Magento\A\Setup\Uninstall'],
+            $this->collector->collectUninstall(['Magento_A'])
+        );
     }
 }
