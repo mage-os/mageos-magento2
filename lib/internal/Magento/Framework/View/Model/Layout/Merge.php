@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2011 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Framework\View\Model\Layout;
 
@@ -572,7 +572,11 @@ class Merge implements \Magento\Framework\View\Layout\ProcessorInterface
      */
     protected function _safeLoadXmlString($xmlString)
     {
-        return simplexml_load_string($xmlString, \Magento\Framework\View\Layout\Element::class, LIBXML_NOWARNING | LIBXML_NOERROR);
+        return simplexml_load_string(
+            $xmlString,
+            \Magento\Framework\View\Layout\Element::class,
+            LIBXML_NOWARNING | LIBXML_NOERROR
+        );
     }
 
     /**
