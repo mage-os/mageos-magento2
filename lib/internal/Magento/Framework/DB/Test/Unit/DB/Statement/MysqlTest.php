@@ -189,10 +189,7 @@ class MysqlTest extends TestCase
         /*
          * In PHP 8.1 $queryString is a Typed property, thus it should be initialized before the 1st call.
          * But it's not automatically initialized in case of Mocking, so we do it here.
-         * Note: In PHP < 8.1 such assignment prohibited.
          */
-        if (PHP_VERSION_ID >= 80100) {
-            $this->pdoStatementMock->queryString = $query;
-        }
+        $this->pdoStatementMock->queryString = $query;
     }
 }
