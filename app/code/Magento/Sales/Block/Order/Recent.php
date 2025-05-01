@@ -23,7 +23,7 @@ class Recent extends \Magento\Framework\View\Element\Template
     /**
      * Limit of orders
      */
-    const ORDER_LIMIT = 5;
+    public const ORDER_LIMIT = 5;
 
     /**
      * @var CollectionFactoryInterface
@@ -119,6 +119,8 @@ class Recent extends \Magento\Framework\View\Element\Template
      * @param object $order
      * @return string
      * @deprecated 102.0.3 Action does not exist
+     * @see This method is not used anymore
+     *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getTrackUrl($order)
