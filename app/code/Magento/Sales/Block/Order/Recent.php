@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2011 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Sales\Block\Order;
 
@@ -90,9 +90,6 @@ class Recent extends \Magento\Framework\View\Element\Template
         )->addAttributeToFilter(
             'customer_id',
             $customerId
-        )->addAttributeToFilter(
-            'store_id',
-            $this->storeManager->getStore()->getId()
         )->addAttributeToFilter(
             'status',
             ['in' => $this->_orderConfig->getVisibleOnFrontStatuses()]
