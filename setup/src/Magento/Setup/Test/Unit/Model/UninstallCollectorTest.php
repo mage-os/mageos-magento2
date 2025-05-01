@@ -9,8 +9,6 @@ namespace Magento\Setup\Test\Unit\Model;
 
 use Magento\Setup\Model\UninstallCollector;
 
-// phpcs:disable PSR1.Classes.ClassDeclaration
-// phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
 class UninstallCollectorTest extends \PHPUnit\Framework\TestCase
 {
     /**
