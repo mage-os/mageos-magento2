@@ -568,9 +568,9 @@ class Merge implements \Magento\Framework\View\Layout\ProcessorInterface
      * Return object representation of XML string, or false, if XML was invalid
      *
      * @param string $xmlString
-     * @return \SimpleXMLElement
+     * @return \SimpleXMLElement|false
      */
-    protected function _safeLoadXmlString($xmlString)
+    protected function _safeLoadXmlString(string $xmlString): \SimpleXMLElement|false
     {
         return simplexml_load_string(
             $xmlString,
