@@ -21,7 +21,7 @@ class SpecialPrice extends AbstractPrice implements SpecialPriceInterface, BaseP
     /**
      * Price type special
      */
-    const PRICE_CODE = 'special_price';
+    public const string PRICE_CODE = 'special_price';
 
     /**
      * @var TimezoneInterface
@@ -104,7 +104,9 @@ class SpecialPrice extends AbstractPrice implements SpecialPriceInterface, BaseP
     public function isScopeDateInInterval()
     {
         $dateTo = $this->getSpecialToDate();
-        if ($dateTo && date('H:i:s', strtotime($dateTo)) !== '00:00:00') {
+        if ($dateTo
+            && strtotime($dateTo) !== false
+            && date('H:i:s', strtotime($dateTo)) !== '00:00:00') {
             $dateToTimestamp = strtotime($dateTo);
             $dateTo = date('Y-m-d H:i:s', $dateToTimestamp - 86400);
         }
