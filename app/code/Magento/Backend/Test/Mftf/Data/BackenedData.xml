@@ -11,4 +11,7 @@
     <entity name="backendDataOne" type="backend">
         <data key="backendConfigName">data</data>
     </entity>
+    <entity name="WebdriverKey">
+        <data key="tabKey">[\Facebook\WebDriver\WebDriverKeys::TAB]</data>
+    </entity>
 </entities>
