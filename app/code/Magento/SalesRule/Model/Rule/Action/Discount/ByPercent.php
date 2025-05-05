@@ -60,12 +60,17 @@ class ByPercent extends AbstractDiscount
         $baseItemOriginalPrice = $this->validator->getItemBaseOriginalPrice($item);
 
         $_rulePct = $rulePercent / 100;
-        $pc = $this->priceCurrency;
-        $discountData->setAmount($pc->round(($qty * $itemPrice - $item->getDiscountAmount()) * $_rulePct));
-        $discountData->setBaseAmount($pc->round(($qty * $baseItemPrice - $item->getBaseDiscountAmount()) * $_rulePct));
-        $discountData->setOriginalAmount($pc->round(($qty * $itemOriginalPrice - $item->getDiscountAmount()) * $_rulePct));
+        $discountData->setAmount(
+            number_format((($qty * $itemPrice - $item->getDiscountAmount()) * $_rulePct), 2, '.', '')
+        );
+        $discountData->setBaseAmount(
+            number_format((($qty * $baseItemPrice - $item->getBaseDiscountAmount()) * $_rulePct), 2, '.', '')
+        );
+        $discountData->setOriginalAmount(
+            number_format((($qty * $itemOriginalPrice - $item->getDiscountAmount()) * $_rulePct), 2, '.', '')
+        );
         $discountData->setBaseOriginalAmount(
-            $pc->round(($qty * $baseItemOriginalPrice - $item->getBaseDiscountAmount()) * $_rulePct)
+            number_format((($qty * $baseItemOriginalPrice - $item->getBaseDiscountAmount()) * $_rulePct), 2, '.', '')
         );
 
         if (!$rule->getDiscountQty() || $rule->getDiscountQty() >= $qty) {
