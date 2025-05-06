@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2015 Adobe
+ * Copyright 2014 Adobe
  * All Rights Reserved.
  */
 namespace Magento\SalesRule\Model\Rule\Action\Discount;
@@ -60,18 +60,16 @@ class ByPercent extends AbstractDiscount
         $baseItemOriginalPrice = $this->validator->getItemBaseOriginalPrice($item);
 
         $_rulePct = $rulePercent / 100;
-        $discountData->setAmount(
-            number_format((($qty * $itemPrice - $item->getDiscountAmount()) * $_rulePct), 2, '.', '')
-        );
-        $discountData->setBaseAmount(
-            number_format((($qty * $baseItemPrice - $item->getBaseDiscountAmount()) * $_rulePct), 2, '.', '')
-        );
-        $discountData->setOriginalAmount(
-            number_format((($qty * $itemOriginalPrice - $item->getDiscountAmount()) * $_rulePct), 2, '.', '')
-        );
-        $discountData->setBaseOriginalAmount(
-            number_format((($qty * $baseItemOriginalPrice - $item->getBaseDiscountAmount()) * $_rulePct), 2, '.', '')
-        );
+
+        $amount = ($qty * $itemPrice - $item->getDiscountAmount()) * $_rulePct;
+        $baseAmount = ($qty * $baseItemPrice - $item->getBaseDiscountAmount()) * $_rulePct;
+        $originalAmount = ($qty * $itemOriginalPrice - $item->getDiscountAmount()) * $_rulePct;
+        $baseOriginalAmount = ($qty * $baseItemOriginalPrice - $item->getBaseDiscountAmount()) * $_rulePct;
+
+        $discountData->setAmount(round(floatval((string) $amount), 2));
+        $discountData->setBaseAmount(round(floatval((string) $baseAmount), 2));
+        $discountData->setOriginalAmount(round(floatval((string) $originalAmount), 2));
+        $discountData->setBaseOriginalAmount(round(floatval((string) $baseOriginalAmount), 2));
 
         if (!$rule->getDiscountQty() || $rule->getDiscountQty() >= $qty) {
             $discountPercent = min(100, $item->getDiscountPercent() + $rulePercent);
