@@ -13,6 +13,7 @@ use Magento\Csp\Model\SubresourceIntegrity\HashGenerator;
 use Magento\Csp\Model\SubresourceIntegrityFactory;
 use Magento\Framework\App\Area;
 use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Filesystem;
 use Magento\Framework\View\Asset\LocalInterface;
 use Magento\Framework\View\Asset\MergeStrategy\FileExists;
@@ -47,9 +48,9 @@ class GenerateMergedAssetIntegrity
      */
     public function __construct(
         SubresourceIntegrityRepositoryPool $sourceIntegrityRepositoryPool,
-        HashGenerator                      $hashGenerator,
-        SubresourceIntegrityFactory        $integrityFactory,
-        Filesystem                         $filesystem
+        HashGenerator $hashGenerator,
+        SubresourceIntegrityFactory $integrityFactory,
+        Filesystem $filesystem
     ) {
         $this->sourceIntegrityRepository = $sourceIntegrityRepositoryPool->get(Area::AREA_FRONTEND);
         $this->hashGenerator = $hashGenerator;
@@ -58,12 +59,15 @@ class GenerateMergedAssetIntegrity
     }
 
     /**
+     * Generate SRI hash for merged JS files.
+     *
      * @param FileExists $subject
      * @param string|null $result
      * @param array $assetsToMerge
      * @param LocalInterface $resultAsset
      * @return string|null
-     * @throws \Magento\Framework\Exception\FileSystemException
+     * @throws FileSystemException
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function afterMerge(FileExists $subject, ?string $result, array $assetsToMerge, LocalInterface $resultAsset)
     {

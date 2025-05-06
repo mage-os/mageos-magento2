@@ -65,6 +65,8 @@ class GenerateBundleAssetIntegrity
     }
 
     /**
+     * Generate SRI hashes for JS files in the bundle directory.
+     *
      * @param Bundle $subject
      * @param string|null $result
      * @param string $area
@@ -72,6 +74,7 @@ class GenerateBundleAssetIntegrity
      * @param string $locale
      * @return void
      * @throws FileSystemException
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function afterDeploy(Bundle $subject, ?string $result, string $area, string $theme, string $locale)
     {
