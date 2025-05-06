@@ -14,7 +14,7 @@
             <stories value="Recent Orders appearing on Dashboard"/>
             <title value="Verify recent Orders appearing in other store view if the orders are created on another store view"/>
             <description value="Verify recent Orders appearing in other store view if the orders are created on another store view"/>
-            <testCaseId value="ACP2E-3807"/>
+            <testCaseId value="AC-14595"/>
             <useCaseId value="ACP2E-3807"/>
             <severity value="MINOR"/>
             <group value="Sales"/>
