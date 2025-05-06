@@ -15,6 +15,8 @@
             <title value="Admin check bundle product in customer activities shopping cart test"/>
             <description value="Admin check bundle product in customer activities shopping cart"/>
             <severity value="MINOR"/>
+            <testCaseId value="AC-14596"/>
+            <useCaseId value="ACP2E-3872"/>
             <group value="sales"/>
         </annotations>
         <before>
