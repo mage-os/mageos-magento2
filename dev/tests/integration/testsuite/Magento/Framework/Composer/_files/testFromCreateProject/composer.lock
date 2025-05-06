@@ -9330,7 +9330,7 @@
             "description": "N/A"
         },
         {
-            "name": "magento/product-community-edition",
+            "name": "mage-os/product-community-edition",
             "version": "2.3.1",
             "require": {
                 "amzn/amazon-pay-and-login-magento-2-module": "3.1.4",
