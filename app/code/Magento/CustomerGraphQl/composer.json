@@ -17,8 +17,7 @@
         "magento/module-tax": "*",
         "magento/module-graph-ql-cache": "*",
         "magento/module-graph-ql-resolver-cache": "*",
-        "magento/module-sales": "*",
-        "magento/module-catalog-customer-graph-ql": "*"
+        "magento/module-sales": "*"
     },
     "license": [
         "OSL-3.0",
