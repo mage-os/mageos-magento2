@@ -75,11 +75,12 @@ class GenerateMergedAssetIntegrity
             return $result;
         }
         $pubStaticDir = $this->filesystem->getDirectoryWrite(DirectoryList::STATIC_VIEW);
-        $absolutePath = $pubStaticDir->getAbsolutePath() . $resultAsset->getRelativeSourceFilePath();
         $integrity = $this->integrityFactory->create(
             [
                 "data" => [
-                    'hash' => $this->hashGenerator->generate(file_get_contents($absolutePath)),
+                    'hash' => $this->hashGenerator->generate(
+                        $pubStaticDir->readFile($resultAsset->getRelativeSourceFilePath())
+                    ),
                     'path' => $resultAsset->getRelativeSourceFilePath()
                 ]
             ]

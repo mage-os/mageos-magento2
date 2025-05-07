@@ -12,7 +12,6 @@ use Magento\Csp\Model\SubresourceIntegrityCollector;
 use Magento\Csp\Model\SubresourceIntegrityFactory;
 use Magento\Deploy\Service\Bundle;
 use Magento\Framework\App\Filesystem\DirectoryList;
-use Magento\Framework\App\Utility\Files;
 use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Filesystem;
 
@@ -39,29 +38,21 @@ class GenerateBundleAssetIntegrity
     private Filesystem $filesystem;
 
     /**
-     * @var Files
-     */
-    private Files $utilityFiles;
-
-    /**
      * @param HashGenerator $hashGenerator
      * @param SubresourceIntegrityFactory $integrityFactory
      * @param SubresourceIntegrityCollector $integrityCollector
      * @param Filesystem $filesystem
-     * @param Files $utilityFiles
      */
     public function __construct(
         HashGenerator $hashGenerator,
         SubresourceIntegrityFactory $integrityFactory,
         SubresourceIntegrityCollector $integrityCollector,
-        Filesystem $filesystem,
-        Files $utilityFiles
+        Filesystem $filesystem
     ) {
         $this->hashGenerator = $hashGenerator;
         $this->integrityFactory = $integrityFactory;
         $this->integrityCollector = $integrityCollector;
         $this->filesystem = $filesystem;
-        $this->utilityFiles = $utilityFiles;
     }
 
     /**
@@ -79,20 +70,19 @@ class GenerateBundleAssetIntegrity
     public function afterDeploy(Bundle $subject, ?string $result, string $area, string $theme, string $locale)
     {
         if (PHP_SAPI == 'cli') {
-            $pubStaticDir = $this->filesystem->getDirectoryWrite(DirectoryList::STATIC_VIEW);
-            $bundleDir = $pubStaticDir->getAbsolutePath($area . '/' . $theme . '/' . $locale) .
-                "/". Bundle::BUNDLE_JS_DIR;
-            $files = $this->utilityFiles->getFiles([$bundleDir], '*.js');
-
+            $pubStaticDir = $this->filesystem->getDirectoryRead(DirectoryList::STATIC_VIEW);
+            $files = $pubStaticDir->search(
+                $area ."/" . $theme . "/" . $locale . "/" . Bundle::BUNDLE_JS_DIR . "/*.js"
+            );
             foreach ($files as $file) {
                 $integrity = $this->integrityFactory->create(
                     [
                         "data" => [
                             'hash' => $this->hashGenerator->generate(
-                                file_get_contents($file)
+                                $pubStaticDir->readFile($file)
                             ),
                             'path' => $area . '/' . $theme . '/' . $locale .
-                                "/" . Bundle::BUNDLE_JS_DIR . '/' . basename($file)
+                                "/" . Bundle::BUNDLE_JS_DIR . '/' . pathinfo($file)['basename']
                         ]
                     ]
                 );
