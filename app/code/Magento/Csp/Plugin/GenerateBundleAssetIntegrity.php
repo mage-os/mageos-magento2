@@ -14,6 +14,7 @@ use Magento\Deploy\Service\Bundle;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Filesystem;
+use Magento\Framework\Filesystem\Io\File;
 
 class GenerateBundleAssetIntegrity
 {
@@ -38,21 +39,29 @@ class GenerateBundleAssetIntegrity
     private Filesystem $filesystem;
 
     /**
+     * @var File
+     */
+    private File $fileIo;
+
+    /**
      * @param HashGenerator $hashGenerator
      * @param SubresourceIntegrityFactory $integrityFactory
      * @param SubresourceIntegrityCollector $integrityCollector
      * @param Filesystem $filesystem
+     * @param File $fileIo
      */
     public function __construct(
         HashGenerator $hashGenerator,
         SubresourceIntegrityFactory $integrityFactory,
         SubresourceIntegrityCollector $integrityCollector,
-        Filesystem $filesystem
+        Filesystem $filesystem,
+        File $fileIo,
     ) {
         $this->hashGenerator = $hashGenerator;
         $this->integrityFactory = $integrityFactory;
         $this->integrityCollector = $integrityCollector;
         $this->filesystem = $filesystem;
+        $this->fileIo = $fileIo;
     }
 
     /**
@@ -82,7 +91,7 @@ class GenerateBundleAssetIntegrity
                                 $pubStaticDir->readFile($file)
                             ),
                             'path' => $area . '/' . $theme . '/' . $locale .
-                                "/" . Bundle::BUNDLE_JS_DIR . '/' . pathinfo($file)['basename']
+                                "/" . Bundle::BUNDLE_JS_DIR . '/' . $this->fileIo->getPathInfo($file)['basename']
                         ]
                     ]
                 );
