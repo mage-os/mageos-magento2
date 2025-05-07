@@ -79,7 +79,7 @@ $sideBarPermissionCheck = $block->getData('sideBarPermissionCheck');
 
                         <?php if ($block->canDisplayItemQty()): ?>
                             <td class="col-qty">
-                                <?= (float) $_item->getQty() ?>
+                                <?= (float) $block->getItemQty($_item) ?>
                             </td>
                         <?php endif; ?>
 
