@@ -1006,9 +1006,7 @@ class Product extends \Magento\ImportExport\Model\Export\Entity\AbstractEntity
             $entityCollection->setOrder('entity_id', 'asc');
             $this->_prepareEntityCollection($entityCollection);
             $this->paginateCollection($page, $this->getItemsPerPage());
-            if ($entityCollection->count() == 0) {
-                break;
-            }
+
             $exportData = $this->getExportData();
             if ($page == 1) {
                 $writer->setHeaderCols($this->_getHeaderColumns());
