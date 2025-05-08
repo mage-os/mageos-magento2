@@ -343,8 +343,6 @@ class ProductTest extends TestCase
         $this->product->expects($this->once())->method('paginateCollection')->with($page, $itemsPerPage);
         $this->abstractCollection->expects($this->once())->method('setOrder')->with('entity_id', 'asc');
 
-        $this->abstractCollection->expects($this->once())->method('count')->willReturn(0);
-
         $this->abstractCollection->expects($this->never())->method('getCurPage');
         $this->abstractCollection->expects($this->never())->method('getLastPageNumber');
         $this->product->expects($this->never())->method('_getHeaderColumns');

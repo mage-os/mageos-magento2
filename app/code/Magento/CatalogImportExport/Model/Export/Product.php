@@ -1008,7 +1008,7 @@ class Product extends \Magento\ImportExport\Model\Export\Entity\AbstractEntity
             $this->paginateCollection($page, $this->getItemsPerPage());
 
             $exportData = $this->getExportData();
-            if (count($exportData) == 0) {
+            if ($exportData == null || count($exportData) == 0) {
                 break;
             }
             if ($page == 1) {
