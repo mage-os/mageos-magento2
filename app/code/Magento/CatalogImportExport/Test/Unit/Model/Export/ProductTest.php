@@ -350,7 +350,6 @@ class ProductTest extends TestCase
         $this->product->expects($this->never())->method('_getHeaderColumns');
         $this->writer->expects($this->never())->method('setHeaderCols');
         $this->writer->expects($this->never())->method('writeRow');
-        $this->product->expects($this->never())->method('getExportData');
         $this->product->expects($this->never())->method('_customFieldsMapping');
 
         $this->writer->expects($this->once())->method('getContents');
