@@ -167,7 +167,8 @@ class Save extends \Magento\Backend\App\Action implements HttpPostActionInterfac
 
             $this->_saveShipment($shipment);
 
-            if (!empty($data['send_email']) && $this->salesData->canSendNewShipmentEmail()) {
+            if (!empty($data['send_email'])
+                && $this->salesData->canSendNewShipmentEmail($shipment->getOrder()->getStoreId())) {
                 $this->shipmentSender->send($shipment);
             }
 
