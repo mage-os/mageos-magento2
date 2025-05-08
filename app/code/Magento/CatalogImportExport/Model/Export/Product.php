@@ -1008,6 +1008,9 @@ class Product extends \Magento\ImportExport\Model\Export\Entity\AbstractEntity
             $this->paginateCollection($page, $this->getItemsPerPage());
 
             $exportData = $this->getExportData();
+            if (count($exportData) == 0) {
+                break;
+            }
             if ($page == 1) {
                 $writer->setHeaderCols($this->_getHeaderColumns());
             }
