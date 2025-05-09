@@ -16,6 +16,8 @@
             <severity value="CRITICAL"/>
             <group value="CatalogRule"/>
             <group value="mtf_migrated"/>
+            <!-- pr_exclude is added as in daily builds and will be addressed and group will removed in ACQE-7945-->
+            <group value="pr_exclude"/>
         </annotations>
 
         <before>
