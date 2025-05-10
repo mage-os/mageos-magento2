@@ -25,7 +25,7 @@ class ProductMetadata implements ProductMetadataInterface, DistributionMetadataI
     /**
      * Magento product name
      */
-    public const PRODUCT_NAME  = 'Magento';
+    public const PRODUCT_NAME  = 'Mage-OS';
 
     /**
      * Distribution product name
