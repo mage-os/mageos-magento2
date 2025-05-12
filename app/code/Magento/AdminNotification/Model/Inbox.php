@@ -33,7 +33,7 @@ use Magento\AdminNotification\Model\InboxInterface;
 class Inbox extends \Magento\Framework\Model\AbstractModel implements NotifierInterface, InboxInterface
 {
     /**
-     * @inheridoc
+     * @inheritdoc
      */
     protected function _construct()
     {

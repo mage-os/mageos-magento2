@@ -10,9 +10,6 @@ use Magento\Framework\Setup\InstallSchemaInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
 
-/**
- * Class Recurring
- */
 class Recurring implements InstallSchemaInterface
 {
     /**
@@ -29,7 +26,7 @@ class Recurring implements InstallSchemaInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {

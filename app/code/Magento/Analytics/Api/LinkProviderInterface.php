@@ -15,6 +15,8 @@ namespace Magento\Analytics\Api;
 interface LinkProviderInterface
 {
     /**
+     * Retrieve link
+     *
      * @return \Magento\Analytics\Api\Data\LinkInterface
      */
     public function get();

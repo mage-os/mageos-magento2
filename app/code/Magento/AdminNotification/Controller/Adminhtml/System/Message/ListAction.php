@@ -44,7 +44,7 @@ class ListAction extends \Magento\Backend\App\AbstractAction
     }
 
     /**
-     * @inheridoc
+     * @inheritdoc
      */
     public function execute()
     {

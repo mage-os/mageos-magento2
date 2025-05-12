@@ -22,17 +22,23 @@ interface SearchDataInterface
     public function getItems();
 
     /**
+     * Check is need to show number of results
+     *
      * @return bool
      */
     public function isShowResultsCount();
 
     /**
+     * Retrieve link
+     *
      * @param string $queryText
      * @return string
      */
     public function getLink($queryText);
 
     /**
+     * Retrieve title
+     *
      * @return string
      */
     public function getTitle();

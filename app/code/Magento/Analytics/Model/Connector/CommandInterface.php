@@ -17,6 +17,7 @@ interface CommandInterface
 {
     /**
      * Execute call to external service
+     *
      * Information about destination and arguments appears from config
      *
      * @return bool

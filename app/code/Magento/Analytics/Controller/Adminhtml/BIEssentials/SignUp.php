@@ -30,7 +30,7 @@ class SignUp extends Action implements HttpGetActionInterface
     /**
      * @inheritdoc
      */
-    const ADMIN_RESOURCE = 'Magento_Analytics::bi_essentials';
+    public const ADMIN_RESOURCE = 'Magento_Analytics::bi_essentials';
 
     /**
      * @param Context $context

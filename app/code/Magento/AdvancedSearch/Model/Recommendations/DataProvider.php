@@ -10,28 +10,25 @@ use Magento\Store\Model\ScopeInterface;
 use Magento\Search\Model\QueryInterface;
 use Magento\AdvancedSearch\Model\SuggestedQueriesInterface;
 
-/**
- * Class DataProvider
- */
 class DataProvider implements SuggestedQueriesInterface
 {
     /**
      * @deprecated
      * @see SuggestedQueriesInterface::SEARCH_RECOMMENDATIONS_ENABLED
      */
-    const CONFIG_IS_ENABLED = 'catalog/search/search_recommendations_enabled';
+    public const CONFIG_IS_ENABLED = 'catalog/search/search_recommendations_enabled';
 
     /**
      * @deprecated
      * @see SuggestedQueriesInterface::SEARCH_RECOMMENDATIONS_COUNT_RESULTS_ENABLED
      */
-    const CONFIG_RESULTS_COUNT_ENABLED = 'catalog/search/search_recommendations_count_results_enabled';
+    public const CONFIG_RESULTS_COUNT_ENABLED = 'catalog/search/search_recommendations_count_results_enabled';
 
     /**
      * @deprecated
      * @see SuggestedQueriesInterface::SEARCH_RECOMMENDATIONS_COUNT
      */
-    const CONFIG_RESULTS_COUNT = 'catalog/search/search_recommendations_count';
+    public const CONFIG_RESULTS_COUNT = 'catalog/search/search_recommendations_count';
 
     /**
      * @var \Magento\Search\Model\QueryResultFactory

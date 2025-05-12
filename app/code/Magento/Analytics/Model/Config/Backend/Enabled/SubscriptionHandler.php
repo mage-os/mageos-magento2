@@ -19,17 +19,17 @@ class SubscriptionHandler
     /**
      * Flag code for reserve counter of attempts to subscribe.
      */
-    const ATTEMPTS_REVERSE_COUNTER_FLAG_CODE = 'analytics_link_attempts_reverse_counter';
+    public const ATTEMPTS_REVERSE_COUNTER_FLAG_CODE = 'analytics_link_attempts_reverse_counter';
 
     /**
      * Config path for schedule setting of subscription handler.
      */
-    const CRON_STRING_PATH = 'crontab/default/jobs/analytics_subscribe/schedule/cron_expr';
+    public const CRON_STRING_PATH = 'crontab/default/jobs/analytics_subscribe/schedule/cron_expr';
 
     /**
      * Config value for schedule setting of subscription handler.
      */
-    const CRON_EXPR_ARRAY = [
+    public const CRON_EXPR_ARRAY = [
         '0',                    # Minute
         '*',                    # Hour
         '*',                    # Day of the Month

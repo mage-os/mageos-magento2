@@ -40,6 +40,8 @@ class CollectData
     }
 
     /**
+     * Run data export preparation
+     *
      * @return bool
      */
     public function execute()

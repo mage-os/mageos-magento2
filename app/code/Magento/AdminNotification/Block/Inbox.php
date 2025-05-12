@@ -12,7 +12,7 @@ namespace Magento\AdminNotification\Block;
 class Inbox extends \Magento\Backend\Block\Widget\Grid\Container
 {
     /**
-     * @inheridoc
+     * @inheritdoc
      */
     protected function _construct()
     {

@@ -19,17 +19,17 @@ class SubscriptionUpdateHandler
     /**
      * Flag code for a reserve counter to update subscription.
      */
-    const SUBSCRIPTION_UPDATE_REVERSE_COUNTER_FLAG_CODE = 'analytics_link_subscription_update_reverse_counter';
+    public const SUBSCRIPTION_UPDATE_REVERSE_COUNTER_FLAG_CODE = 'analytics_link_subscription_update_reverse_counter';
 
     /**
      * Config path for schedule setting of update handler.
      */
-    const UPDATE_CRON_STRING_PATH = "crontab/default/jobs/analytics_update/schedule/cron_expr";
+    public const UPDATE_CRON_STRING_PATH = "crontab/default/jobs/analytics_update/schedule/cron_expr";
 
     /**
      * Flag code for the previous Base URL.
      */
-    const PREVIOUS_BASE_URL_FLAG_CODE = 'analytics_previous_base_url';
+    public const PREVIOUS_BASE_URL_FLAG_CODE = 'analytics_previous_base_url';
 
     /**
      * Max value for a reserve counter to update subscription.

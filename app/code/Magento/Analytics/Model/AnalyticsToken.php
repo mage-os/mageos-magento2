@@ -16,6 +16,8 @@ class AnalyticsToken
 {
     /**
      * Path to value of Magento BI token into config.
+     *
+     * @var string
      */
     private $tokenPath = 'analytics/general/token';
 

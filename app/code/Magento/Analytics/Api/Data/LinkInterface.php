@@ -15,11 +15,15 @@ namespace Magento\Analytics\Api\Data;
 interface LinkInterface
 {
     /**
+     * Retrieve url
+     *
      * @return string
      */
     public function getUrl();
 
     /**
+     * Retrieve initialization vector
+     *
      * @return string
      */
     public function getInitializationVector();

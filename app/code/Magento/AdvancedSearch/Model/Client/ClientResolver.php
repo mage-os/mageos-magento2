@@ -21,6 +21,7 @@ class ClientResolver
      * @var ScopeConfigInterface
      * @since 100.1.0
      * @deprecated 100.3.0 since it is not used anymore
+     * @see not used
      */
     protected $scopeConfig;
 
@@ -57,13 +58,17 @@ class ClientResolver
      * @var string
      * @since 100.1.0
      * @deprecated 100.3.0 since it is not used anymore
+     * @see not used
      */
     protected $path;
 
     /**
      * Config Scope
+     *
+     * @var string
      * @since 100.1.0
      * @deprecated 100.3.0 since it is not used anymore
+     * @see not used
      */
     protected $scope;
 

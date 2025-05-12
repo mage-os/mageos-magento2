@@ -25,7 +25,7 @@ class Critical extends \Magento\Framework\Model\ResourceModel\Db\Collection\Abst
     }
 
     /**
-     * @inheridoc
+     * @inheritdoc
      */
     protected function _initSelect()
     {
