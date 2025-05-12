@@ -165,9 +165,12 @@ class ProductStock
         float $requiredQuantity,
         float $prevQty
     ): bool {
-        $storeId = $this->storeManager->getStore()->getId();
-        $websiteId = $this->storeManager->getStore($storeId)->getWebsiteId();
-        $scopeId = $websiteId ?? $this->stockConfiguration->getDefaultScopeId();
+        try {
+            $storeId = $this->storeManager->getStore()->getId();
+            $scopeId = $this->storeManager->getStore($storeId)->getWebsiteId();
+        } catch (NoSuchEntityException $e) {
+            $scopeId = $this->stockConfiguration->getDefaultScopeId();
+        }
         $stockStatus = $this->stockState->checkQuoteItemQty(
             $product->getId(),
             $itemQty,
