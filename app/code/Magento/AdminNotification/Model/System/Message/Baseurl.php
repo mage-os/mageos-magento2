@@ -10,6 +10,7 @@ use Magento\Store\Model\Store;
 
 /**
  * @deprecated 100.1.0
+ * @see we are not using it anymore
  */
 class Baseurl implements \Magento\Framework\Notification\MessageInterface
 {

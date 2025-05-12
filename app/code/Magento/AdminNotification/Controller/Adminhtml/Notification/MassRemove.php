@@ -21,7 +21,8 @@ class MassRemove extends Notification implements HttpPostActionInterface
      *
      * @see _isAllowed()
      */
-    const ADMIN_RESOURCE = 'Magento_AdminNotification::adminnotification_remove';
+    public const ADMIN_RESOURCE = 'Magento_AdminNotification::adminnotification_remove';
+
     /**
      * @var InboxModelFactory
      */

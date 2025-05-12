@@ -27,6 +27,7 @@ class Messages extends Template
     /**
      * @var JsonDataHelper
      * @deprecated 100.3.0
+     * @see \Magento\Framework\Serialize\Serializer\Json
      */
     protected $jsonHelper;
 

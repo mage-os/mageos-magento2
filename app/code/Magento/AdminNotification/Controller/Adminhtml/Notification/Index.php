@@ -10,7 +10,7 @@ use Magento\Framework\App\Action\HttpGetActionInterface as HttpGetActionInterfac
 class Index extends \Magento\AdminNotification\Controller\Adminhtml\Notification implements HttpGetActionInterface
 {
     /**
-     * @return void
+     * @inheridoc
      */
     public function execute()
     {

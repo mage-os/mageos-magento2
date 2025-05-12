@@ -21,7 +21,7 @@ class MarkAsRead extends Notification implements HttpGetActionInterface
      *
      * @see _isAllowed()
      */
-    const ADMIN_RESOURCE = 'Magento_AdminNotification::mark_as_read';
+    public const ADMIN_RESOURCE = 'Magento_AdminNotification::mark_as_read';
 
     /**
      * @var NotificationService

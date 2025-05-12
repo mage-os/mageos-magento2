@@ -33,7 +33,7 @@ use Magento\AdminNotification\Model\InboxInterface;
 class Inbox extends \Magento\Framework\Model\AbstractModel implements NotifierInterface, InboxInterface
 {
     /**
-     * @return void
+     * @inheridoc
      */
     protected function _construct()
     {
@@ -41,7 +41,7 @@ class Inbox extends \Magento\Framework\Model\AbstractModel implements NotifierIn
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getSeverities($severity = null)
     {
@@ -63,7 +63,7 @@ class Inbox extends \Magento\Framework\Model\AbstractModel implements NotifierIn
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function loadLatestNotice()
     {
@@ -73,7 +73,7 @@ class Inbox extends \Magento\Framework\Model\AbstractModel implements NotifierIn
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getNoticeStatus()
     {

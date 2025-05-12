@@ -12,11 +12,12 @@ class ListAction extends \Magento\Backend\App\AbstractAction
     /**
      * Authorization level of a basic admin session
      */
-    const ADMIN_RESOURCE = 'Magento_AdminNotification::show_list';
+    public const ADMIN_RESOURCE = 'Magento_AdminNotification::show_list';
 
     /**
      * @var \Magento\Framework\Json\Helper\Data
      * @deprecated 100.3.0
+     * @see \Magento\Framework\Serialize\Serializer\Json
      */
     protected $jsonHelper;
 
@@ -43,7 +44,7 @@ class ListAction extends \Magento\Backend\App\AbstractAction
     }
 
     /**
-     * @return \Magento\Framework\Controller\Result\Json
+     * @inheridoc
      */
     public function execute()
     {
