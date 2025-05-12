@@ -17,6 +17,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Model\Quote\Item;
 use Magento\Store\Model\ScopeInterface;
+use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * Product Stock class to check availability of product
@@ -41,13 +42,15 @@ class ProductStock
      * @param StockConfigurationInterface $stockConfiguration
      * @param ScopeConfigInterface $scopeConfig
      * @param StockRegistryInterface $stockRegistry
+     * @param StoreManagerInterface $storeManager
      */
     public function __construct(
         private readonly ProductRepositoryInterface $productRepositoryInterface,
         private readonly StockState $stockState,
         private readonly StockConfigurationInterface $stockConfiguration,
         private readonly ScopeConfigInterface $scopeConfig,
-        private readonly StockRegistryInterface $stockRegistry
+        private readonly StockRegistryInterface $stockRegistry,
+        private readonly StoreManagerInterface $storeManager
     ) {
     }
 
@@ -60,6 +63,9 @@ class ProductStock
      */
     public function isProductAvailable(Item $cartItem): bool
     {
+        if (!$cartItem->getQtyToAdd()) {
+            return false;
+        }
         $requestedQty = $cartItem->getQtyToAdd() ?? $cartItem->getQty();
         $previousQty = $cartItem->getPreviousQty() ?? 0;
 
@@ -159,12 +165,15 @@ class ProductStock
         float $requiredQuantity,
         float $prevQty
     ): bool {
+        $storeId = $this->storeManager->getStore()->getId();
+        $websiteId = $this->storeManager->getStore($storeId)->getWebsiteId();
+        $scopeId = $websiteId ?? $this->stockConfiguration->getDefaultScopeId();
         $stockStatus = $this->stockState->checkQuoteItemQty(
             $product->getId(),
             $itemQty,
             $requiredQuantity,
             $prevQty,
-            $this->stockConfiguration->getDefaultScopeId()
+            $scopeId
         );
 
         return ((bool) $stockStatus->getHasError()) === false;
