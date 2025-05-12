@@ -9,6 +9,7 @@ use Magento\Customer\Api\GroupManagementInterface;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\App\ObjectManager;
 use Magento\Catalog\Api\Data\ProductTierPriceExtensionFactory;
+use Magento\Catalog\Service\SpecialPriceService;
 
 /**
  * Bundle product type price model
@@ -51,6 +52,12 @@ class Price extends \Magento\Catalog\Model\Product\Type\Price
      */
     private $serializer;
 
+
+    /**
+     * @var SpecialPriceService
+     */
+    protected SpecialPriceService $specialPriceService;
+
     /**
      * Constructor
      *
@@ -66,6 +73,7 @@ class Price extends \Magento\Catalog\Model\Product\Type\Price
      * @param \Magento\Catalog\Helper\Data $catalogData
      * @param \Magento\Framework\Serialize\Serializer\Json|null $serializer
      * @param ProductTierPriceExtensionFactory|null $tierPriceExtensionFactory
+     * @param SpecialPriceService|null $specialPriceService
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -80,11 +88,14 @@ class Price extends \Magento\Catalog\Model\Product\Type\Price
         \Magento\Framework\App\Config\ScopeConfigInterface $config,
         \Magento\Catalog\Helper\Data $catalogData,
         ?\Magento\Framework\Serialize\Serializer\Json $serializer = null,
-        ?ProductTierPriceExtensionFactory $tierPriceExtensionFactory = null
+        ?ProductTierPriceExtensionFactory $tierPriceExtensionFactory = null,
+        ?SpecialPriceService $specialPriceService = null
     ) {
         $this->_catalogData = $catalogData;
         $this->serializer = $serializer ?: ObjectManager::getInstance()
             ->get(\Magento\Framework\Serialize\Serializer\Json::class);
+        $this->specialPriceService = $specialPriceService ?: ObjectManager::getInstance()
+            ->get(SpecialPriceService::class);
         parent::__construct(
             $ruleFactory,
             $storeManager,
@@ -630,12 +641,7 @@ class Price extends \Magento\Catalog\Model\Product\Type\Price
     ) {
         if ($specialPrice !== null && $specialPrice != false) {
 
-            if ($specialPriceTo
-                && strtotime($specialPriceTo) !== false
-                && date('H:i:s', strtotime($specialPriceTo)) !== '00:00:00') {
-                $dateToTimestamp = strtotime($specialPriceTo);
-                $specialPriceTo = date('Y-m-d H:i:s', $dateToTimestamp - 86400);
-            }
+            $specialPriceTo = $this->specialPriceService->execute($specialPriceTo);
 
             if ($this->_localeDate->isScopeDateInInterval($store, $specialPriceFrom, $specialPriceTo)) {
                 $specialPrice = $finalPrice * ($specialPrice / 100);

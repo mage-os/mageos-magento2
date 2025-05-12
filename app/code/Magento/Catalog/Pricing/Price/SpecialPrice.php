@@ -7,11 +7,13 @@
 namespace Magento\Catalog\Pricing\Price;
 
 use Magento\Catalog\Model\Product;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Pricing\Adjustment\CalculatorInterface;
 use Magento\Framework\Pricing\Price\AbstractPrice;
 use Magento\Framework\Pricing\Price\BasePriceProviderInterface;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Store\Api\Data\WebsiteInterface;
+use Magento\Catalog\Service\SpecialPriceService;
 
 /**
  * Special price model
@@ -29,21 +31,30 @@ class SpecialPrice extends AbstractPrice implements SpecialPriceInterface, BaseP
     protected $localeDate;
 
     /**
+     * @var SpecialPriceService
+     */
+    protected SpecialPriceService $specialPriceService;
+
+    /**
      * @param Product $saleableItem
      * @param float $quantity
      * @param CalculatorInterface $calculator
      * @param \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency
      * @param TimezoneInterface $localeDate
+     * @param SpecialPriceService|null $specialPriceService
      */
     public function __construct(
         Product $saleableItem,
         $quantity,
         CalculatorInterface $calculator,
         \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency,
-        TimezoneInterface $localeDate
+        TimezoneInterface $localeDate,
+        ?SpecialPriceService $specialPriceService = null
     ) {
         parent::__construct($saleableItem, $quantity, $calculator, $priceCurrency);
         $this->localeDate = $localeDate;
+        $this->specialPriceService = $specialPriceService ?: ObjectManager::getInstance()
+            ->get(SpecialPriceService::class);
     }
 
     /**
@@ -103,13 +114,7 @@ class SpecialPrice extends AbstractPrice implements SpecialPriceInterface, BaseP
      */
     public function isScopeDateInInterval()
     {
-        $dateTo = $this->getSpecialToDate();
-        if ($dateTo
-            && strtotime($dateTo) !== false
-            && date('H:i:s', strtotime($dateTo)) !== '00:00:00') {
-            $dateToTimestamp = strtotime($dateTo);
-            $dateTo = date('Y-m-d H:i:s', $dateToTimestamp - 86400);
-        }
+        $dateTo = $this->specialPriceService->execute($this->getSpecialToDate());
 
         return $this->localeDate->isScopeDateInInterval(
             WebsiteInterface::ADMIN_CODE,
