@@ -32,7 +32,7 @@ class LinkProvider implements LinkProviderInterface
     private $storeManager;
 
     /**
-     * @param LinkInterfaceFactory $linkInterfaceFactory
+     * @param LinkInterfaceFactory $linkFactory
      * @param FileInfoManager $fileInfoManager
      * @param StoreManagerInterface $storeManager
      */

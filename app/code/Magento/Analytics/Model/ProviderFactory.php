@@ -27,6 +27,8 @@ class ProviderFactory
     }
 
     /**
+     * Object creation
+     *
      * @param string $providerName
      * @return object
      */

@@ -49,6 +49,8 @@ class BaseUrlConfigPlugin
     }
 
     /**
+     * Check is need to apply the plugin logic
+     *
      * @param Value $result
      * @return bool
      */

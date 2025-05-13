@@ -31,10 +31,7 @@ class ExportDataHandlerNotification implements ExportDataHandlerInterface
     }
 
     /**
-     * {@inheritdoc}
-     * Execute notification command.
-     *
-     * @return bool
+     * @inheritdoc
      */
     public function prepareExportData()
     {

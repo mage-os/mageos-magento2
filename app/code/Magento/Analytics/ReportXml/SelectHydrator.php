@@ -66,6 +66,8 @@ class SelectHydrator
     }
 
     /**
+     * Perform merge of parts
+     *
      * @return array
      */
     private function getSelectParts()
@@ -90,6 +92,8 @@ class SelectHydrator
     }
 
     /**
+     * Set parts to the select object
+     *
      * @param array $selectParts
      * @return Select
      */

@@ -18,6 +18,7 @@ use Magento\Framework\Amqp\TopologyInstaller;
  * Class Topology creates topology for Amqp messaging
  *
  * @deprecated 100.2.0
+ * @see Magento\Framework\MessageQueue
  */
 class Topology extends TopologyInstaller
 {
@@ -25,20 +26,19 @@ class Topology extends TopologyInstaller
      * Type of exchange
      *
      * @deprecated
+     * @see not used anymore
      */
-    const TOPIC_EXCHANGE = 'topic';
+    public const TOPIC_EXCHANGE = 'topic';
 
-    /**
-     * Amqp connection
-     */
-    const AMQP_CONNECTION = 'amqp';
+    public const AMQP_CONNECTION = 'amqp';
 
     /**
      * Durability for exchange and queue
      *
      * @deprecated
+     * @see not used anymore
      */
-    const IS_DURABLE = true;
+    public const IS_DURABLE = true;
 
     /**
      * Initialize dependencies

@@ -11,6 +11,8 @@ namespace Magento\Analytics\Model\Connector\Http;
 interface ResponseHandlerInterface
 {
     /**
+     * Process response body
+     *
      * @param array $responseBody
      * @return bool|string
      */

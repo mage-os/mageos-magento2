@@ -52,8 +52,6 @@ class SubscriptionHandler
     private $configWriter;
 
     /**
-     * Flag Manager.
-     *
      * @var FlagManager
      */
     private $flagManager;

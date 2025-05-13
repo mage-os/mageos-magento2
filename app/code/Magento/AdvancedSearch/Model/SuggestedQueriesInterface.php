@@ -17,7 +17,8 @@ interface SuggestedQueriesInterface
      * Recommendations settings config paths
      */
     public const SEARCH_RECOMMENDATIONS_ENABLED = 'catalog/search/search_recommendations_enabled';
-    public const SEARCH_RECOMMENDATIONS_COUNT_RESULTS_ENABLED = 'catalog/search/search_recommendations_count_results_enabled';
+    public const SEARCH_RECOMMENDATIONS_COUNT_RESULTS_ENABLED =
+        'catalog/search/search_recommendations_count_results_enabled';
     public const SEARCH_RECOMMENDATIONS_COUNT = 'catalog/search/search_recommendations_count';
     /**#@-*/
 

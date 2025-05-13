@@ -35,6 +35,8 @@ class EncodedContext
     }
 
     /**
+     * Retrieve content
+     *
      * @return string
      */
     public function getContent()
@@ -43,6 +45,8 @@ class EncodedContext
     }
 
     /**
+     * Retrieve initialization vector
+     *
      * @return string
      */
     public function getInitializationVector()

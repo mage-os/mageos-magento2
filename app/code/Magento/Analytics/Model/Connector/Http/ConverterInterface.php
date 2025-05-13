@@ -14,28 +14,34 @@ namespace Magento\Analytics\Model\Connector\Http;
 interface ConverterInterface
 {
     /**
-     * @param string $body
+     * Unserialize data
      *
+     * @param string $body
      * @return array
      * @since 100.2.0
      */
     public function fromBody($body);
 
     /**
-     * @param array $data
+     * Serialize data
      *
+     * @param array $data
      * @return string
      * @since 100.2.0
      */
     public function toBody(array $data);
 
     /**
+     * Retrieve content type
+     *
      * @return string
      * @since 100.2.0
      */
     public function getContentTypeHeader();
 
     /**
+     * Retrieve content media
+     *
      * @return string
      * @since 100.3.0
      */

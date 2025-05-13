@@ -13,9 +13,7 @@ use Magento\Analytics\Model\Connector\Http\ResponseHandlerInterface;
 class Update implements ResponseHandlerInterface
 {
     /**
-     * @param array $responseBody
-     *
-     * @return bool|string
+     * @inheritdoc
      */
     public function handleResponse(array $responseBody)
     {

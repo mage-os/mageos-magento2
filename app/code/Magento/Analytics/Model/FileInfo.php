@@ -35,6 +35,8 @@ class FileInfo
     }
 
     /**
+     * Retrieve path
+     *
      * @return string
      */
     public function getPath()
@@ -43,6 +45,8 @@ class FileInfo
     }
 
     /**
+     * Retrieve initialization vector
+     *
      * @return string
      */
     public function getInitializationVector()

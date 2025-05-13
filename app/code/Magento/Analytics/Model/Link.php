@@ -33,7 +33,7 @@ class Link implements LinkInterface
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getUrl()
     {
@@ -41,7 +41,7 @@ class Link implements LinkInterface
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getInitializationVector()
     {
