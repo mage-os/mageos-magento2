@@ -1,8 +1,8 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
- */
+ * Copyright 2011 Adobe
+ * All Rights Reserved.
+ **/
 namespace Magento\ProductAlert\Model;
 
 use Magento\ProductAlert\Model\ResourceModel\Stock\Customer\Collection;
@@ -49,8 +49,8 @@ class Stock extends \Magento\Framework\Model\AbstractModel
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
         \Magento\ProductAlert\Model\ResourceModel\Stock\Customer\CollectionFactory $customerColFactory,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        ?\Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        ?\Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         $this->_customerColFactory = $customerColFactory;
@@ -91,7 +91,7 @@ class Stock extends \Magento\Framework\Model\AbstractModel
     }
 
     /**
-     * Method for deleting customer from website.
+     * Method for deleting customer's stock alert from website.
      *
      * @param int $customerId
      * @param int $websiteId

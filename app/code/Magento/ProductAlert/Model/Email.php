@@ -155,8 +155,8 @@ class Email extends AbstractModel
         View $customerHelper,
         Emulation $appEmulation,
         TransportBuilder $transportBuilder,
-        AbstractResource $resource = null,
-        AbstractDb $resourceCollection = null,
+        ?AbstractResource $resource = null,
+        ?AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         $this->_productAlertData = $productAlertData;
