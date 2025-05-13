@@ -63,9 +63,6 @@ class ProductStock
      */
     public function isProductAvailable(Item $cartItem): bool
     {
-        if (!$cartItem->getQtyToAdd()) {
-            return false;
-        }
         $requestedQty = $cartItem->getQtyToAdd() ?? $cartItem->getQty();
         $previousQty = $cartItem->getPreviousQty() ?? 0;
 

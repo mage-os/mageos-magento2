@@ -83,21 +83,6 @@ class ProductStockTest extends TestCase
     }
 
     /**
-     * Test isProductAvailable() without quantity to add
-     */
-    public function testIsProductAvailableWithoutQtyToAdd(): void
-    {
-        $cartItemMock = $this->getMockBuilder(Item::class)
-            ->addMethods(['getQtyToAdd'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $cartItemMock->expects($this->once())
-            ->method('getQtyToAdd')
-            ->willReturn(null);
-        $this->assertFalse($this->productStock->isProductAvailable($cartItemMock));
-    }
-
-    /**
      * Test isProductAvailable() for a simple product with sufficient stock
      */
     public function testIsProductAvailableForSimpleProductWithStock(): void
@@ -113,7 +98,7 @@ class ProductStockTest extends TestCase
             ->disableOriginalConstructor()
             ->addMethods(['getHasError'])
             ->getMockForAbstractClass();
-        $cartItemMock->expects($this->exactly(2))
+        $cartItemMock->expects($this->once())
             ->method('getQtyToAdd')
             ->willReturn(2);
         $cartItemMock->expects($this->once())
@@ -164,7 +149,7 @@ class ProductStockTest extends TestCase
             ->disableOriginalConstructor()
             ->addMethods(['getHasError'])
             ->getMockForAbstractClass();
-        $cartItemMock->expects($this->exactly(2))
+        $cartItemMock->expects($this->once())
             ->method('getQtyToAdd')
             ->willReturn(5);
         $cartItemMock->expects($this->once())
