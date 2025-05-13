@@ -35,7 +35,7 @@ class Collection
      * @param array $events
      * @param Observer\Collection $observerCollection
      */
-    public function __construct(array $events = [], Observer\Collection $observerCollection = null)
+    public function __construct(array $events = [], ?Observer\Collection $observerCollection = null)
     {
         $this->events = $events;
         $this->globalObservers = !$observerCollection ? new Observer\Collection() : $observerCollection;
