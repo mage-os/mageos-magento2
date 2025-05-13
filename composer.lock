@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b6632ff1e01797644a5fe11fdc451d00",
+    "content-hash": "3b5e6fdf60e5ab333bde121d520d86c7",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -1985,58 +1985,24 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/hugerte/hugerte-dist.git",
-                "reference": "a723324bbdcedafeca2454b7e4532033c117d7b1"
+                "reference": "v1.0.9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hugerte/hugerte-dist/zipball/a723324bbdcedafeca2454b7e4532033c117d7b1",
-                "reference": "a723324bbdcedafeca2454b7e4532033c117d7b1",
-                "shasum": ""
+                "url": "https://github.com/hugerte/hugerte-dist/archive/refs/tags/v1.0.9.zip"
             },
-            "type": "component",
+            "require": {
+                "magento/magento-composer-installer": ">=0.4.0"
+            },
+            "type": "magento2-component",
             "extra": {
-                "component": {
-                    "files": [
-                        "hugerte.min.js",
-                        "plugins/*/plugin.min.js",
-                        "themes/*/theme.min.js",
-                        "models/*/model.min.js",
-                        "skins/**",
-                        "icons/*/icons.min.js"
-                    ],
-                    "scripts": [
-                        "hugerte.js",
-                        "plugins/*/plugin.js",
-                        "themes/*/theme.js",
-                        "models/*/model.js",
-                        "icons/*/icons.js"
+                "map": [
+                    [
+                        "*",
+                        "lib/web/hugerte/"
                     ]
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Web based JavaScript HTML WYSIWYG editor control.",
-            "homepage": "https://hugerte.org/",
-            "keywords": [
-                "contenteditable",
-                "editing",
-                "html",
-                "hugerte",
-                "javascript",
-                "rich editor",
-                "rich text",
-                "rich text editor",
-                "richtext",
-                "rte",
-                "text",
-                "wysiwyg"
-            ],
-            "support": {
-                "source": "https://github.com/hugerte/hugerte-dist/tree/v1.0.9"
-            },
-            "time": "2025-03-15T21:14:20+00:00"
+                ]
+            }
         },
         {
             "name": "justinrainbow/json-schema",
