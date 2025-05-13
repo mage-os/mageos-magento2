@@ -78,7 +78,7 @@ class Subscriber extends AbstractDb
         DateTime $date,
         Random $mathRandom,
         $connectionName = null,
-        StoreManagerInterface $storeManager = null
+        ?StoreManagerInterface $storeManager = null
     ) {
         $this->_date = $date;
         $this->mathRandom = $mathRandom;
