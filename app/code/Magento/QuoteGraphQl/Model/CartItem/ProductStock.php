@@ -68,11 +68,19 @@ class ProductStock
         $requiredItemQty =  $requestedQty + $previousQty;
         if ($variantProduct !== null) {
             return $this->isStockQtyAvailable(
-                $cartItem, $variantProduct, $requestedQty, $requiredItemQty, $previousQty
+                $cartItem,
+                $variantProduct,
+                $requestedQty,
+                $requiredItemQty,
+                $previousQty
             );
         }
         return $this->isStockQtyAvailable(
-            $cartItem, $cartItem->getProduct(), $requestedQty, $requiredItemQty, $previousQty
+            $cartItem,
+            $cartItem->getProduct(),
+            $requestedQty,
+            $requiredItemQty,
+            $previousQty
         );
     }
 
@@ -95,7 +103,12 @@ class ProductStock
                 $requiredItemQty = $requiredItemQty * $totalRequestedQty;
             }
             if (!$this->isStockQtyAvailable(
-                $cartItem, $qtyOption->getProduct(), $requestedQty, $requiredItemQty, $previousQty)) {
+                $cartItem,
+                $qtyOption->getProduct(),
+                $requestedQty,
+                $requiredItemQty,
+                $previousQty
+            )) {
                 return false;
             }
         }
