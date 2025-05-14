@@ -7,6 +7,9 @@ namespace Magento\AdminNotification\Controller\Adminhtml\System\Message;
 
 use Magento\Framework\Controller\ResultFactory;
 
+/**
+ * @SuppressWarnings(PHPMD.AllPurposeAction)
+ */
 class ListAction extends \Magento\Backend\App\AbstractAction
 {
     /**

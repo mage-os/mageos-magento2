@@ -15,6 +15,7 @@ use Magento\Framework\Exception\LocalizedException;
 
 /**
  * Retry subscription to Magento BI Advanced Reporting.
+ * @SuppressWarnings(PHPMD.AllPurposeAction)
  */
 class Retry extends Action
 {

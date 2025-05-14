@@ -89,6 +89,7 @@ class JoinAssembler implements AssemblerInterface
                 )
             ];
             if (isset($join['filter'])) {
+                // phpcs:ignore Magento2.Performance.ForeachArrayMerge
                 $filters = array_merge(
                     $filters,
                     [
@@ -102,6 +103,7 @@ class JoinAssembler implements AssemblerInterface
                 );
             }
             $columns = $this->columnsResolver->getColumns($selectBuilder, isset($join['attribute']) ? $join : []);
+            // phpcs:ignore Magento2.Performance.ForeachArrayMerge
             $selectBuilder->setColumns(array_merge($selectBuilder->getColumns(), $columns));
         }
         $selectBuilder->setFilters($filters);

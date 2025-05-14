@@ -125,7 +125,7 @@ class FileRecorder
         }
 
         $directory->delete($fileInfo->getPath());
-
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         $directoryName = dirname($fileInfo->getPath());
         if ($directoryName !== '.') {
             $directory->delete($directoryName);

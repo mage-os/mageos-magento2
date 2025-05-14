@@ -30,14 +30,13 @@ class BearerTokenValidatorPlugin
         $this->config = $config;
     }
 
-    /***
+    /**
      * Always allow access token for analytics to be used as bearer
      *
      * @param BearerTokenValidator $subject
      * @param bool $result
      * @param Integration $integration
      * @return bool
-     *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function afterIsIntegrationAllowedAsBearerToken(

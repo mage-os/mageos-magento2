@@ -91,7 +91,7 @@ class DisableAdminUsage extends Action implements HttpPostActionInterface
     public function execute()
     {
         $this->disableAdminUsage();
-        $this->markUserNotified();
+        return $this->markUserNotified();
     }
 
     /**

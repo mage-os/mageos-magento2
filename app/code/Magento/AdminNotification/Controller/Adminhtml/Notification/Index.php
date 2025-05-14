@@ -22,6 +22,6 @@ class Index extends \Magento\AdminNotification\Controller\Adminhtml\Notification
             __('Messages Inbox')
         );
         $this->_view->getPage()->getConfig()->getTitle()->prepend(__('Notifications'));
-        $this->_view->renderLayout();
+        return $this->_view->renderLayout();
     }
 }

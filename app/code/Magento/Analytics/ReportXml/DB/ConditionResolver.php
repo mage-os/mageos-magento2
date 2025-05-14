@@ -140,6 +140,7 @@ class ConditionResolver
             $parts = [];
             foreach ($filter['condition'] as $condition) {
                 if (isset($condition['type']) && $condition['type'] == 'variable') {
+                    // phpcs:ignore Magento2.Performance.ForeachArrayMerge
                     $selectBuilder->setParams(array_merge($selectBuilder->getParams(), [$condition['_value']]));
                 }
                 $parts[] = $this->getCondition(

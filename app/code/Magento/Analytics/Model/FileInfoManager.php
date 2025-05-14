@@ -118,6 +118,7 @@ class FileInfoManager
      */
     private function decodeValue($value)
     {
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         return base64_decode($value);
     }
 }
