@@ -206,9 +206,10 @@ define([
         });
 
         it('should process pages before addChild', function () {
-            var ctx = {}; // Mock context
-            var index = 5;
-            var prop = 'someProp';
+            var ctx = {},
+                index = 5,
+                prop = 'someProp';
+
             model.pageSize = 2;
             model.relatedData = [
                 {
