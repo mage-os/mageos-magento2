@@ -15,7 +15,9 @@ namespace Magento\AdminNotification\Model\Config\Source;
 class Frequency implements \Magento\Framework\Option\ArrayInterface
 {
     /**
-     * @inheritdoc
+     * Return array of options as value-label pairs
+     *
+     * @return array
      */
     public function toOptionArray()
     {
