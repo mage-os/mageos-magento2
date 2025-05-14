@@ -17,7 +17,7 @@ $lastCritical = $block->getLastCritical();
      class="message-system<?php if ($lastCritical):?>
      message-system-unread<?php endif;?>">
     <div class="message-system-inner">
-        <?php if ($lastCritical) : ?>
+        <?php if ($lastCritical): ?>
             <ul class="message-system-list">
                 <li class="message message-warning error">
                     <?= $escaper->escapeHtml($lastCritical->getText()) ?>
@@ -29,17 +29,19 @@ $lastCritical = $block->getLastCritical();
                 <?= $escaper->escapeHtml(__('System Messages:'))?>
             </span>
 
-            <?php if ($block->getCriticalCount()) : ?>
+            <?php if ($block->getCriticalCount()): ?>
                 <div class="message message-warning error">
-                    <a class="message-link" href="#" title="<?= $escaper->escapeHtml(__('Critical System Messages')) ?>">
+                    <a class="message-link" href="#"
+                       title="<?= $escaper->escapeHtml(__('Critical System Messages')) ?>">
                         <?= (int) $block->getCriticalCount() ?>
                     </a>
                 </div>
             <?php endif; ?>
 
-            <?php if ($block->getMajorCount()) : ?>
+            <?php if ($block->getMajorCount()): ?>
                <div class="message message-warning warning">
-                   <a class="message-link" href="#" title="<?= $escaper->escapeHtml(__('Major System Messages')) ?>">
+                   <a class="message-link" href="#"
+                      title="<?= $escaper->escapeHtml(__('Major System Messages')) ?>">
                        <?= (int) $block->getMajorCount() ?>
                    </a>
                </div>

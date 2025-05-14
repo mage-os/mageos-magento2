@@ -15,7 +15,7 @@
      title="<?= $escaper->escapeHtmlAttr($block->getPopupTitle()) ?>">
     <ul class="message-system-list messages">
         <?php foreach ($block->getUnreadMessages() as $message): ?>
-            <li class="message message-warning <?= $block->escapeHtmlAttr($block->getItemClass($message)) ?>">
+            <li class="message message-warning <?= $escaper->escapeHtmlAttr($block->getItemClass($message)) ?>">
                 <?= $escaper->escapeHtml($message->getText()) ?>
             </li>
         <?php endforeach;?>
