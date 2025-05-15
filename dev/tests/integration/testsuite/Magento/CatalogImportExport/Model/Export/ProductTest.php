@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 
 declare(strict_types = 1);
@@ -235,7 +235,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array
      */
-    public function exportWithJsonAndMarkupTextAttributeDataProvider(): array
+    public static function exportWithJsonAndMarkupTextAttributeDataProvider(): array
     {
         return [
             'json' => [
@@ -293,11 +293,11 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     {
         $rows = [];
         $headers = [];
-        foreach (str_getcsv($exportData, "\n") as $row) {
+        foreach (str_getcsv($exportData, "\n", '"', '\\') as $row) {
             if (!$headers) {
-                $headers = str_getcsv($row);
+                $headers = str_getcsv($row, ',', '"', '\\');
             } else {
-                $rows[] = array_combine($headers, str_getcsv($row));
+                $rows[] = array_combine($headers, str_getcsv($row, ',', '"', '\\'));
             }
         }
         return $rows;
@@ -774,7 +774,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array
      */
-    public function filterByQuantityAndStockStatusDataProvider(): array
+    public static function filterByQuantityAndStockStatusDataProvider(): array
     {
         return [
             [
@@ -818,16 +818,25 @@ class ProductTest extends \PHPUnit\Framework\TestCase
      *
      * @magentoDataFixture Magento/Catalog/_files/product_simple_with_options.php
      * @magentoDataFixture Magento/Catalog/_files/product_with_two_websites.php
+     * @dataProvider websiteIdFilterDataProvider
      */
-    public function testExportProductWithRestrictedWebsite(): void
+    public function testFilterByWebsiteId(string $websiteIdFilter): void
     {
         $websiteRepository = $this->objectManager->get(\Magento\Store\Api\WebsiteRepositoryInterface::class);
         $website = $websiteRepository->get('second_website');
 
-        $exportData = $this->doExport(['website_id' => $website->getId()]);
+        $exportData = $this->doExport([$websiteIdFilter => $website->getId()]);
 
         $this->assertStringContainsString('"Simple Product"', $exportData);
         $this->assertStringNotContainsString('"Virtual Product With Custom Options"', $exportData);
+    }
+
+    public static function websiteIdFilterDataProvider(): array
+    {
+        return [
+            ['website_id'],
+            ['website_ids'],
+        ];
     }
 
     public function testFilterAttributeCollection(): void
