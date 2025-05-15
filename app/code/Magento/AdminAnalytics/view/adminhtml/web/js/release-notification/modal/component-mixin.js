@@ -4,36 +4,32 @@
  */
 
 define(['jquery', 'analyticsPopupConfig'], function ($, analyticsPopupConfig) {
-    'use strict';
+    'use strict'; // eslint-disable-line strict
+    var deferred = $.Deferred(), mixin = {
+    /**
+     * Initializes content only if its visible
+     */
+    initializeContent: function () {
+        var initializeContent = this._super.bind(this);
 
-    var deferred = $.Deferred(),
-
-        mixin = {
-        /**
-         * Initializes content only if its visible
-         */
-        initializeContent: function () {
-            var initializeContent = this._super.bind(this);
-
-            if (!analyticsPopupConfig.analyticsVisible) {
+        if (!analyticsPopupConfig.analyticsVisible) {
+            initializeContent();
+        } else {
+            deferred.then(function () {
                 initializeContent();
-            } else {
-                deferred.then(function () {
-                    initializeContent();
-                });
-            }
-        },
-
-        /**
-         * Initializes release notification content after admin analytics
-         */
-        initializeContentAfterAnalytics: function () {
-            deferred.resolve();
+            });
         }
+    },
+
+    /**
+     * Initializes release notification content after admin analytics
+     */
+    initializeContentAfterAnalytics: function () {
+        deferred.resolve();
+    }
     };
 
     return function (target) {
         return target.extend(mixin);
     };
 });
-

@@ -156,20 +156,20 @@ function (_, $, Modal, registry, analyticsPopupConfig) {
                 }
 
                 switch (event.keyCode) {
-                    case KEY_TAB:
-                        if (modal.focusableElements.length === 1) {
-                            event.preventDefault();
-                            break;
-                        }
+                case KEY_TAB:
+                    if (modal.focusableElements.length === 1) {
+                        event.preventDefault();
+                        break;
+                    }
 
-                        if (event.shiftKey) {
-                            handleBackwardTab();
-                            break;
-                        }
-                        handleForwardTab();
+                    if (event.shiftKey) {
+                        handleBackwardTab();
                         break;
-                    default:
-                        break;
+                    }
+                    handleForwardTab();
+                    break;
+                default:
+                    break;
                 }
             },
 
@@ -181,6 +181,6 @@ function (_, $, Modal, registry, analyticsPopupConfig) {
             handleEscKey: function (event) {
                 event.preventDefault();
             }
-        });
-    }
-);
+        }
+    );
+});

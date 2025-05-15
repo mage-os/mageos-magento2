@@ -11,7 +11,7 @@ define([
     'jquery/ui',
     'domReady!'
 ], function ($) {
-    'use strict';
+    'use strict'; // eslint-disable-line strict
 
     /**
      * Mark notification as read via AJAX call.

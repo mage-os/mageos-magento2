@@ -11,7 +11,7 @@ define([
     'Magento_Ui/js/modal/alert',
     'jquery/ui'
 ], function ($, alert) {
-    'use strict';
+    'use strict'; // eslint-disable-line strict
 
     $.widget('mage.testConnection', {
         options: {

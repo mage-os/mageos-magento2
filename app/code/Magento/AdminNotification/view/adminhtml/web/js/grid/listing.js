@@ -11,7 +11,7 @@ define([
     'Magento_Ui/js/lib/spinner',
     'jquery'
 ], function (Listing, loader, $) {
-    'use strict';
+    'use strict'; // eslint-disable-line strict
 
     return Listing.extend({
         defaults: {

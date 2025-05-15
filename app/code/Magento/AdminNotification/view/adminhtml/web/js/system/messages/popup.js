@@ -7,7 +7,7 @@ define([
     'jquery',
     'Magento_Ui/js/modal/modal'
 ], function ($, modal) {
-    'use strict';
+    'use strict'; // eslint-disable-line strict
 
     return function (data, element) {
 

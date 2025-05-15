@@ -12,7 +12,7 @@ define([
     'jquery/ui',
     'Magento_Ui/js/modal/modal'
 ], function ($, mageTemplate) {
-    'use strict';
+    'use strict'; // eslint-disable-line strict
 
     $.widget('mage.systemMessageDialog', $.mage.modal, {
         options: {
