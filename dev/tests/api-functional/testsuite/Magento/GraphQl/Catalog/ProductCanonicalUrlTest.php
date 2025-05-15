@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2019 Adobe
+ * All rights reserved.
  */
 declare(strict_types=1);
 
@@ -11,9 +11,15 @@ use Magento\Catalog\Model\Indexer\Category\Product;
 use Magento\Catalog\Model\Indexer\Product\Category;
 use Magento\CatalogSearch\Model\Indexer\Fulltext as IndexerSearch;
 use Magento\Indexer\Model\Indexer;
+use Magento\Indexer\Test\Fixture\Indexer as IndexerFixture;
+use Magento\TestFramework\Fixture\Config;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\ObjectManager;
 use Magento\TestFramework\TestCase\GraphQlAbstract;
+use Magento\Catalog\Test\Fixture\Product as ProductFixture;
+use Magento\TestFramework\Fixture\DataFixture;
+use Magento\TestFramework\Fixture\DataFixtureStorage;
+use Magento\TestFramework\Fixture\DataFixtureStorageManager;
 
 /**
  * Test for getting canonical_url for products
@@ -23,23 +29,28 @@ class ProductCanonicalUrlTest extends GraphQlAbstract
     /** @var ObjectManager */
     private $objectManager;
 
+    /** @var DataFixtureStorage */
+    private $fixtures;
+
     /**
      * @inheritdoc
      */
     protected function setUp(): void
     {
         $this->objectManager = Bootstrap::getObjectManager();
+        $this->fixtures = DataFixtureStorageManager::getStorage();
     }
 
-    /**
-     * @magentoApiDataFixture Magento/Catalog/_files/product_simple.php
-     * @magentoConfigFixture default_store catalog/seo/product_canonical_tag 1
-     *
-     */
+    #[
+        Config('catalog/seo/product_canonical_tag', 1),
+        DataFixture(ProductFixture::class, as: 'product'),
+        DataFixture(IndexerFixture::class)
+    ]
     public function testProductWithCanonicalLinksMetaTagSettingsEnabled()
     {
-        $this->reindex();
-        $productSku = 'simple';
+        $product = DataFixtureStorageManager::getStorage()->get('product');
+        $productSku = $product->getSku();
+        $productCanonicalUrl = $product->getUrlKey();
         $query
             = <<<QUERY
 {
@@ -57,10 +68,10 @@ QUERY;
         $this->assertNotEmpty($response['products']['items']);
 
         $this->assertEquals(
-            'simple-product.html',
+            $productCanonicalUrl . '.html',
             $response['products']['items'][0]['canonical_url']
         );
-        $this->assertEquals('simple', $response['products']['items'][0]['sku']);
+        $this->assertEquals($productSku, $response['products']['items'][0]['sku']);
     }
 
     /**
