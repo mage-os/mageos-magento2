@@ -9,12 +9,9 @@ namespace Magento\GraphQl\Catalog;
 
 use Magento\Indexer\Test\Fixture\Indexer as IndexerFixture;
 use Magento\TestFramework\Fixture\Config;
-use Magento\TestFramework\Helper\Bootstrap;
-use Magento\TestFramework\ObjectManager;
 use Magento\TestFramework\TestCase\GraphQlAbstract;
 use Magento\Catalog\Test\Fixture\Product as ProductFixture;
 use Magento\TestFramework\Fixture\DataFixture;
-use Magento\TestFramework\Fixture\DataFixtureStorage;
 use Magento\TestFramework\Fixture\DataFixtureStorageManager;
 
 /**
@@ -22,21 +19,6 @@ use Magento\TestFramework\Fixture\DataFixtureStorageManager;
  */
 class ProductCanonicalUrlTest extends GraphQlAbstract
 {
-    /** @var ObjectManager */
-    private $objectManager;
-
-    /** @var DataFixtureStorage */
-    private $fixtures;
-
-    /**
-     * @inheritdoc
-     */
-    protected function setUp(): void
-    {
-        $this->objectManager = Bootstrap::getObjectManager();
-        $this->fixtures = DataFixtureStorageManager::getStorage();
-    }
-
     #[
         Config('catalog/seo/product_canonical_tag', 1),
         DataFixture(ProductFixture::class, as: 'product'),
