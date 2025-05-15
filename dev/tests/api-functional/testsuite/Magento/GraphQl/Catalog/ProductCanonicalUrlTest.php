@@ -100,15 +100,4 @@ QUERY;
         );
         $this->assertEquals('simple', $response['products']['items'][0]['sku']);
     }
-
-    private function reindex()
-    {
-        $indexer = $this->objectManager->create(Indexer::class);
-        $indexer->load(Product::INDEXER_ID);
-        $indexer->reindexAll();
-        $indexer->load(Category::INDEXER_ID);
-        $indexer->reindexAll();
-        $indexer->load(IndexerSearch::INDEXER_ID);
-        $indexer->reindexAll();
-    }
 }
