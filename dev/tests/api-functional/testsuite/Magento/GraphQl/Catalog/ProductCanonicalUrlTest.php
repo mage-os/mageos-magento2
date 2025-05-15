@@ -7,10 +7,6 @@ declare(strict_types=1);
 
 namespace Magento\GraphQl\Catalog;
 
-use Magento\Catalog\Model\Indexer\Category\Product;
-use Magento\Catalog\Model\Indexer\Product\Category;
-use Magento\CatalogSearch\Model\Indexer\Fulltext as IndexerSearch;
-use Magento\Indexer\Model\Indexer;
 use Magento\Indexer\Test\Fixture\Indexer as IndexerFixture;
 use Magento\TestFramework\Fixture\Config;
 use Magento\TestFramework\Helper\Bootstrap;
@@ -74,13 +70,15 @@ QUERY;
         $this->assertEquals($productSku, $response['products']['items'][0]['sku']);
     }
 
-    /**
-     * @magentoApiDataFixture Magento/Catalog/_files/product_simple.php
-     * @magentoConfigFixture default_store catalog/seo/product_canonical_tag 0
-     */
+    #[
+        Config('catalog/seo/product_canonical_tag', 0),
+        DataFixture(ProductFixture::class, as: 'product'),
+        DataFixture(IndexerFixture::class)
+    ]
     public function testProductWithCanonicalLinksMetaTagSettingsDisabled()
     {
-        $productSku = 'simple';
+        $product = DataFixtureStorageManager::getStorage()->get('product');
+        $productSku = $product->getSku();
         $query
             = <<<QUERY
 {
@@ -98,6 +96,6 @@ QUERY;
         $this->assertNull(
             $response['products']['items'][0]['canonical_url']
         );
-        $this->assertEquals('simple', $response['products']['items'][0]['sku']);
+        $this->assertEquals($productSku, $response['products']['items'][0]['sku']);
     }
 }
