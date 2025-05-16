@@ -11,9 +11,7 @@
             "dealerdirect/phpcodesniffer-composer-installer": true,
             "laminas/laminas-dependency-plugin": true,
             "magento/*": true,
-            "php-http/discovery": true,
-            "magento/magento-composer-installer": true,
-            "composer/installers": true
+            "php-http/discovery": true
         },
         "preferred-install": "dist",
         "sort-packages": true
@@ -48,7 +46,6 @@
         "elasticsearch/elasticsearch": "^8.15",
         "ezyang/htmlpurifier": "^4.17",
         "guzzlehttp/guzzle": "^7.5",
-        "hugerte/hugerte": "^1.0",
         "laminas/laminas-captcha": "^2.18",
         "laminas/laminas-code": "^4.13",
         "laminas/laminas-di": "^3.15",
@@ -357,9 +354,6 @@
     "scripts": {
     },
     "extra": {
-        "installer-paths": {
-            "lib/web/hugerte": ["hugerte/hugerte"]
-        },
         "component_paths": {
             "trentrichardson/jquery-timepicker-addon": "lib/web/jquery/jquery-ui-timepicker-addon.js",
             "components/jquery": [
@@ -405,32 +399,5 @@
             "Magento\\PhpStan\\": "dev/tests/static/framework/Magento/PhpStan/"
         }
     },
-    "prefer-stable": true,
-    "repositories": [
-        {
-            "type": "package",
-            "package": {
-                "name": "hugerte/hugerte",
-                "version": "1.0.9",
-                "type": "magento2-component",
-                "require": {
-                    "magento/magento-composer-installer": ">=0.4.0"
-                },
-                "source": {
-                    "url": "https://github.com/hugerte/hugerte-dist.git",
-                    "type": "git",
-                    "reference": "v1.0.9"
-                },
-                "dist": {
-                    "url": "https://github.com/hugerte/hugerte-dist/archive/refs/tags/v1.0.9.zip",
-                    "type": "zip"
-                },
-                "extra": {
-                    "map": [
-                        ["*", "lib/web/hugerte/"]
-                    ]
-                }
-            }
-        }
-    ]
+    "prefer-stable": true
 }

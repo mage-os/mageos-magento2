@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3b5e6fdf60e5ab333bde121d520d86c7",
+    "content-hash": "dfa6d909594713ec6b281c23870e5969",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -1978,31 +1978,6 @@
                 }
             ],
             "time": "2024-07-18T11:15:46+00:00"
-        },
-        {
-            "name": "hugerte/hugerte",
-            "version": "1.0.9",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/hugerte/hugerte-dist.git",
-                "reference": "v1.0.9"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://github.com/hugerte/hugerte-dist/archive/refs/tags/v1.0.9.zip"
-            },
-            "require": {
-                "magento/magento-composer-installer": ">=0.4.0"
-            },
-            "type": "magento2-component",
-            "extra": {
-                "map": [
-                    [
-                        "*",
-                        "lib/web/hugerte/"
-                    ]
-                ]
-            }
         },
         {
             "name": "justinrainbow/json-schema",
