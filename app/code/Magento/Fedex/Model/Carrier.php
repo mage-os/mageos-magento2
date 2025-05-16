@@ -968,6 +968,7 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
      * @param string|null $apiKey
      * @param string|null $secretKey
      * @return string|null
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function retrieveAccessToken(?string $apiKey, ?string $secretKey): string|null
     {
