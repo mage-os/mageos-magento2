@@ -968,26 +968,16 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
      * @param string|null $apiKey
      * @param string|null $secretKey
      * @return string|null
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function retrieveAccessToken(?string $apiKey, ?string $secretKey): string|null
     {
-        if (!$apiKey || !$secretKey) {
-            $this->_debug(__('Authentication keys are missing.'));
+        if (!$this->areAuthKeysValid($apiKey, $secretKey)) {
             return null;
         }
         $cacheKey = 'fedex_access_token_' . $apiKey . $secretKey;
         $cacheType = 'fedex_api';
-        $cachedData = $this->cache->load($cacheKey);
-        if ($cachedData) {
-            $cachedData = json_decode($cachedData, true);
-            $currentTime = time();
-            if (isset($cachedData['access_token']) &&
-                isset($cachedData['expires_at'])
-                && $currentTime < $cachedData['expires_at']
-            ) {
-                return $cachedData['access_token'];
-            }
+        if ($cachedToken = $this->getCachedAccessToken($cacheKey)) {
+            return $cachedToken;
         }
         $requestArray = [
             'grant_type' => self::AUTHENTICATION_GRANT_TYPE,
@@ -1013,6 +1003,44 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
         }
 
         return $accessToken;
+    }
+
+    /**
+     * Validate apiKey and secretKey
+     *
+     * @param string|null $apiKey
+     * @param string|null $secretKey
+     * @return bool
+     */
+    private function areAuthKeysValid(?string $apiKey, ?string $secretKey): bool
+    {
+        if (!$apiKey || !$secretKey) {
+            $this->_debug(__('Authentication keys are missing.'));
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Retrieve access token from cache
+     *
+     * @param string $cacheKey
+     * @return string|null
+     */
+    private function getCachedAccessToken(string $cacheKey): ?string
+    {
+        $cachedData = $this->cache->load($cacheKey);
+        if (!$cachedData) {
+            return null;
+        }
+
+        $cachedData = json_decode($cachedData, true);
+        $currentTime = time();
+        if (isset($cachedData['access_token'], $cachedData['expires_at']) && $currentTime < $cachedData['expires_at']) {
+            return $cachedData['access_token'];
+        }
+
+        return null;
     }
 
     /**

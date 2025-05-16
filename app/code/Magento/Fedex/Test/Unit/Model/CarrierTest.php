@@ -49,6 +49,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Magento\Catalog\Api\Data\ProductInterface;
+use Magento\Framework\App\CacheInterface;
 
 /**
  * CarrierTest contains units test for Fedex carrier methods
@@ -133,6 +134,11 @@ class CarrierTest extends TestCase
     private DecoderInterface $decoderInterface;
 
     /**
+     * @var CacheInterface|MockObject
+     */
+    private $cacheMock;
+
+    /**
      * @return void
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
@@ -206,6 +212,9 @@ class CarrierTest extends TestCase
             ->onlyMethods(['decode'])
             ->getMock();
 
+        $this->cacheMock = $this->getMockBuilder(CacheInterface::class)
+            ->onlyMethods(['load', 'save'])
+            ->getMockForAbstractClass();
         $this->carrier = $this->getMockBuilder(Carrier::class)
             ->addMethods(['rateRequest'])
             ->setConstructorArgs(
@@ -229,6 +238,7 @@ class CarrierTest extends TestCase
                     'productCollectionFactory' => $this->collectionFactory,
                     'curlFactory' => $this->curlFactory,
                     'decoderInterface' => $this->decoderInterface,
+                    'cache' => $this->cacheMock,
                     'data' => [],
                     'serializer' => $this->serializer,
                 ]
