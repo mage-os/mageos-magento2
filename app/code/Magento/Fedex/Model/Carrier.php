@@ -975,7 +975,7 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
             $this->_debug(__('Authentication keys are missing.'));
             return null;
         }
-        $cacheKey = 'fedex_access_token_' . md5($apiKey . $secretKey);
+        $cacheKey = 'fedex_access_token_' . $apiKey . $secretKey;
         $cacheType = 'fedex_api';
         $cachedData = $this->cache->load($cacheKey);
         if ($cachedData) {
