@@ -1,8 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2011 Adobe
+ * All Rights Reserved.
  */
+declare(strict_types=1);
+
 namespace Magento\Store\Model;
 
 use Laminas\Uri\UriFactory;
@@ -828,7 +830,7 @@ class Store extends AbstractExtensibleModel implements
         $port = $uri->getPort();
         $serverPort = $this->_request->getServer('SERVER_PORT');
 
-        return $uri->getScheme() == 'https' && isset($serverPort) && $port == $serverPort;
+        return $uri->getScheme() === 'https' && $serverPort !== null && $port == $serverPort;
     }
 
     /*************************************************************************************
