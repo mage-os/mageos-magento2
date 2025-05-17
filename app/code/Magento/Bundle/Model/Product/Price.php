@@ -52,12 +52,6 @@ class Price extends \Magento\Catalog\Model\Product\Type\Price
      */
     private $serializer;
 
-
-    /**
-     * @var SpecialPriceService
-     */
-    protected SpecialPriceService $specialPriceService;
-
     /**
      * Constructor
      *
@@ -94,8 +88,6 @@ class Price extends \Magento\Catalog\Model\Product\Type\Price
         $this->_catalogData = $catalogData;
         $this->serializer = $serializer ?: ObjectManager::getInstance()
             ->get(\Magento\Framework\Serialize\Serializer\Json::class);
-        $this->specialPriceService = $specialPriceService ?: ObjectManager::getInstance()
-            ->get(SpecialPriceService::class);
         parent::__construct(
             $ruleFactory,
             $storeManager,
@@ -106,7 +98,8 @@ class Price extends \Magento\Catalog\Model\Product\Type\Price
             $groupManagement,
             $tierPriceFactory,
             $config,
-            $tierPriceExtensionFactory
+            $tierPriceExtensionFactory,
+            $specialPriceService
         );
     }
 

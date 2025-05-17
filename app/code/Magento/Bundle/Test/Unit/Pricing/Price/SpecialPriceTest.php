@@ -11,6 +11,7 @@ namespace Magento\Bundle\Test\Unit\Pricing\Price;
 use Magento\Bundle\Pricing\Price\SpecialPrice;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Pricing\Price\RegularPrice;
+use Magento\Catalog\Service\SpecialPriceService;
 use Magento\Framework\Pricing\Price\PriceInterface;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\Pricing\PriceInfo\Base;
@@ -48,6 +49,11 @@ class SpecialPriceTest extends TestCase
      */
     protected $priceCurrencyMock;
 
+    /**
+     * @var SpecialPriceService|MockObject
+     */
+    private $specialPriceService;
+
     protected function setUp(): void
     {
         $this->saleable = $this->getMockBuilder(Product::class)
@@ -63,13 +69,18 @@ class SpecialPriceTest extends TestCase
 
         $this->priceCurrencyMock = $this->getMockForAbstractClass(PriceCurrencyInterface::class);
 
+        $this->specialPriceService = $this->getMockBuilder(SpecialPriceService::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $objectHelper = new ObjectManager($this);
         $this->model = $objectHelper->getObject(
             SpecialPrice::class,
             [
                 'saleableItem' => $this->saleable,
                 'localeDate' => $this->localeDate,
-                'priceCurrency' => $this->priceCurrencyMock
+                'priceCurrency' => $this->priceCurrencyMock,
+                'specialPriceService' => $this->specialPriceService
             ]
         );
     }
@@ -102,6 +113,11 @@ class SpecialPriceTest extends TestCase
             ->method('isScopeDateInInterval')
             ->with(WebsiteInterface::ADMIN_CODE, $specialFromDate, $specialToDate)
             ->willReturn($isScopeDateInInterval);
+
+        $this->specialPriceService->expects($this->once())
+            ->method('execute')
+            ->with($specialToDate)
+            ->willReturn($specialToDate);
 
         $this->priceCurrencyMock->expects($this->never())
             ->method('convertAndRound');
