@@ -52,15 +52,15 @@ class DownloadableTest extends TestCase
     }
 
     /**
-     * @magentoDataFixture Magento/Downloadable/_files/quote_with_configurable_downloadable_product.php
+     * @magentoDataFixture Magento/Downloadable/_files/quote_with_downloadable_product.php
      * @return void
      */
     public function testShouldSendDownloadableLinksInTheEmail(): void
     {
         /** @var Quote $quote */
         $quote = $this->objectManager->create(Quote::class);
-        $quote->load('reserved_order_configurable_downloadable', 'reserved_order_id');
-
+        // @phpstan-ignore argument.type
+        $quote->load('reserved_order_id_1', 'reserved_order_id');
         $checkoutSession = $this->objectManager->get(CheckoutSession::class);
         $checkoutSession->setQuoteId($quote->getId());
 
@@ -74,7 +74,7 @@ class DownloadableTest extends TestCase
         $cartManagement->placeOrder($cartId);
         $message = $this->transportBuilder->getSentMessage();
         $rawMessage = quoted_printable_decode($message->getBody()->bodyToString());
-        $this->assertStringContainsString('Configurable Downloadable Product', $rawMessage);
+        $this->assertStringContainsString('Downloadable Product', $rawMessage);
         $this->assertStringContainsString('SKU: downloadable-product', $rawMessage);
         $this->assertStringContainsString('Downloadable Product Link', $rawMessage);
         $this->assertStringContainsString('/downloadable/download/link/id/', $rawMessage);
