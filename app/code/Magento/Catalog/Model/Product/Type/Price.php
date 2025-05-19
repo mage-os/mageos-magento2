@@ -90,9 +90,9 @@ class Price implements ResetAfterRequestInterface
     private $tierPriceExtensionFactory;
 
     /**
-     * @var SpecialPriceService
+     * @var SpecialPriceService|null
      */
-    protected SpecialPriceService $specialPriceService;
+    protected ?SpecialPriceService $specialPriceService;
 
     /**
      * Constructor

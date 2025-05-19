@@ -143,7 +143,7 @@ class PriceTest extends TestCase
 
         $specialPriceService->expects($this->any())
             ->method('execute')
-            ->willReturnCallback(function($value) {
+            ->willReturnCallback(function ($value) {
                 return $value;
             });
 
