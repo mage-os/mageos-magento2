@@ -58,7 +58,7 @@ define([
             autoPosition: true,
             closeOnClickOutside: false,
             classes: {
-                "ui-dialog": "popup map-popup-wrapper"
+                'ui-dialog': 'popup map-popup-wrapper'
             },
             position: {
                 my: 'left top',
