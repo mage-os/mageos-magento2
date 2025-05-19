@@ -22,7 +22,9 @@ define([
                 dialogContentClass: 'active',
                 closeOnMouseLeave: false,
                 autoPosition: true,
-                dialogClass: 'popup map-popup-wrapper',
+                classes: {
+                    "ui-dialog": "popup map-popup-wrapper"
+                },
                 position: {
                     my: 'left top',
                     collision: 'fit none',
