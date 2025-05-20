@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2012 Adobe
+ * All rights reserved.
  */
 // @codingStandardsIgnoreStart
 namespace {
@@ -295,7 +295,9 @@ namespace Magento\Framework\Session {
             $mockPHPFunctions = true;
 
             if ($this->isComposerBaseInstallation()) {
-                $this->markTestSkipped('Skipping: In Composer-based installations, the php_ini global method does not invoke the session value.');
+                $this->markTestSkipped(
+                    'Skipping: In Composer-based installations, the php_ini global method does not invoke the session value.'
+                );
             }
 
             $deploymentConfigMock = $this->createMock(DeploymentConfig::class);
