@@ -296,7 +296,7 @@ namespace Magento\Framework\Session {
 
             if ($this->isComposerBaseInstallation()) {
                 $this->markTestSkipped(
-                    'Skipping: In Composer-based installations, the php_ini global method does not invoke the session value.'
+                    'Skipping: Composer-based installation, php_ini global method does not invoke the session value.'
                 );
             }
 
