@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Tax\Model\Calculation;
 
@@ -115,8 +115,20 @@ abstract class AbstractAggregateCalculator extends AbstractCalculator
             $taxId = $appliedRate['id'];
             $taxRate = $appliedRate['percent'];
             $rowTaxPerRate = $this->calculationTool->calcTaxAmount($rowTotalForTaxCalculation, $taxRate, false, false);
-            $rowTaxPerRate = $this->calculationTool->round($rowTaxPerRate);
+
+            $deltaRoundingType = self::KEY_REGULAR_DELTA_ROUNDING;
+            if ($applyTaxAfterDiscount) {
+                $deltaRoundingType = self::KEY_TAX_BEFORE_DISCOUNT_DELTA_ROUNDING;
+            }
+            
+            if ($round) {
+                $rowTaxPerRate = $this->calculationTool->round($rowTaxPerRate);
+            } else {
+                $rowTaxPerRate = $this->roundAmount($rowTaxPerRate, $taxId, false, $deltaRoundingType, $round, $item);
+            }
+
             $rowTaxAfterDiscount = $rowTaxPerRate;
+
             //Handle discount
             if ($applyTaxAfterDiscount) {
                 //TODO: handle originalDiscountAmount
