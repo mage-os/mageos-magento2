@@ -1,6 +1,6 @@
 {
 	"name": "hugerte/hugerte",
-	"version": "1.0.9",
+	"version": "1.0.4",
 	"description": "Web based JavaScript HTML WYSIWYG editor control.",
 	"license": [
 		"MIT"
@@ -24,14 +24,14 @@
 	"extra": {
 		"component": {
 			"scripts": [
-                "hugerte.js",
+				"hugerte.js",
 				"plugins/*/plugin.js",
 				"themes/*/theme.js",
 				"models/*/model.js",
 				"icons/*/icons.js"
 			],
 			"files": [
-                "hugerte.min.js",
+				"hugerte.min.js",
 				"plugins/*/plugin.min.js",
 				"themes/*/theme.min.js",
 				"models/*/model.min.js",
@@ -42,7 +42,7 @@
 	},
 	"archive": {
 		"exclude": [
-            "README.md",
+			"README.md",
 			"bower.js",
 			"package.json",
 			".npmignore",
