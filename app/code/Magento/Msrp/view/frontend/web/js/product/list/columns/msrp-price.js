@@ -53,7 +53,7 @@ define([
             this.popupOptions.triggerTarget = $trigger;
 
             $popup.dropdownDialog(this.popupOptions)
-                  .dropdownDialog('open');
+                .dropdownDialog('open');
         },
 
         /**
