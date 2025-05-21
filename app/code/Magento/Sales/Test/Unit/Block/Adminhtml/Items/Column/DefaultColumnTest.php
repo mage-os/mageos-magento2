@@ -36,7 +36,6 @@ class DefaultColumnTest extends TestCase
         );
         $this->itemMock = $this->getMockBuilder(Item::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getRowTotal', 'getDiscountAmount', 'getBaseRowTotal', 'getBaseDiscountAmount'])
             ->getMock();
     }
 
