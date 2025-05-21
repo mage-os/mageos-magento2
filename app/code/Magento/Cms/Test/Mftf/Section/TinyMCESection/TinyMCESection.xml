@@ -10,7 +10,7 @@
     <section name="TinyMCESection">
         <element name="checkIfContentTabOpen" type="button" selector="//span[text()='Content']/parent::strong/parent::*[@data-state-collapsible='closed']"/>
         <element name="CheckIfTabExpand" type="button" selector="//div[@data-state-collapsible='closed']//span[text()='Content']"/>
-        <element name="TinyMCE" type="text" selector=".tox-tinymce"/>
+        <element name="TinyMCE" type="text" selector=".tox-hugerte"/>
         <element name="InsertWidgetBtn" type="button" selector=".action-add-widget"/>
         <element name="InsertWidgetIcon" type="button" selector="button[title='Insert Widget']" timeout="30"/>
         <element name="InsertVariableBtn" type="button" selector=".scalable.add-variable.plugin"/>
