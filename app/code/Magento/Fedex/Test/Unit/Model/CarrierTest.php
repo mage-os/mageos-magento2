@@ -104,11 +104,6 @@ class CarrierTest extends TestCase
     private Json $serializer;
 
     /**
-     * @var LoggerInterface|MockObject
-     */
-    private LoggerInterface $logger;
-
-    /**
      * @var CurrencyFactory|MockObject
      */
     private CurrencyFactory $currencyFactory;
@@ -195,7 +190,7 @@ class CarrierTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->logger = $this->getMockForAbstractClass(LoggerInterface::class);
+        $logger = $this->getMockForAbstractClass(LoggerInterface::class);
 
         $this->curlFactory = $this->getMockBuilder(CurlFactory::class)
             ->disableOriginalConstructor()
@@ -221,7 +216,7 @@ class CarrierTest extends TestCase
                 [
                     'scopeConfig' => $this->scope,
                     'rateErrorFactory' => $this->errorFactory,
-                    'logger' => $this->logger,
+                    'logger' => $logger,
                     'xmlSecurity' => new Security(),
                     'xmlElFactory' => $elementFactory,
                     'rateFactory' => $rateFactory,
