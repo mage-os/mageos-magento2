@@ -120,8 +120,8 @@ abstract class AbstractAggregateCalculator extends AbstractCalculator
             if ($applyTaxAfterDiscount) {
                 $deltaRoundingType = self::KEY_TAX_BEFORE_DISCOUNT_DELTA_ROUNDING;
             }
-            
-            if ($round) {
+
+            if ($round && strpos($item->getCode(), 'weee') !== false) {
                 $rowTaxPerRate = $this->calculationTool->round($rowTaxPerRate);
             } else {
                 $rowTaxPerRate = $this->roundAmount($rowTaxPerRate, $taxId, false, $deltaRoundingType, $round, $item);

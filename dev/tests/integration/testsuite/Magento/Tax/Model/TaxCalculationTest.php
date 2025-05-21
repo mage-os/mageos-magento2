@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Tax\Model;
 
@@ -1397,10 +1397,10 @@ class TaxCalculationTest extends \PHPUnit\Framework\TestCase
                 'weee1-Recycling Fee' => [
                     'code' => 'weee1-Recycling Fee',
                     'row_tax' => 0.57,
-                    'price' => 7,
-                    'price_incl_tax' => 7.57,
-                    'row_total' => 7,
-                    'row_total_incl_tax' => 7.57,
+                    'price' => 7.0,
+                    'price_incl_tax' => 7.58,
+                    'row_total' => 7.0,
+                    'row_total_incl_tax' => 7.58,
                     'type' => 'weee',
                     'tax_percent' => 8.25,
                     'discount_tax_compensation_amount' => 0,
