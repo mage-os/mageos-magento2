@@ -1075,6 +1075,79 @@ class CarrierTest extends TestCase
     }
 
     /**
+     * Test get access token from cache
+     */
+    public function testCollectRatesWithCachedAccessToken(): void
+    {
+        $apiKey = 'TestApiKey';
+        $secretKey = 'TestSecretKey';
+        $accessToken = 'CachedTestAccessToken';
+        $cacheKey = 'fedex_access_token_' . hash('sha256', $apiKey . $secretKey);
+        $expiresAt = time() + 3600;
+        $cachedData = json_encode([
+            'access_token' => $accessToken,
+            'expires_at' => $expiresAt
+        ]);
+        $this->scope->expects($this->any())
+            ->method('getValue')
+            ->willReturnCallback([$this, 'scopeConfigGetValue']);
+        $this->scope->expects($this->exactly(2))
+            ->method('isSetFlag')
+            ->willReturn(true);
+
+        $this->cacheMock->expects($this->once())
+            ->method('load')
+            ->with($cacheKey)
+            ->willReturn($cachedData);
+
+        $rateResponseMock = [
+            'output' => [
+                'rateReplyDetails' => [
+                    [
+                        'serviceType' => 'FEDEX_GROUND',
+                        'ratedShipmentDetails' => [
+                            [
+                                'totalNetCharge' => '28.75',
+                                'currency' => 'USD',
+                                'ratedPackages' => [
+                                    ['packageRateDetail' => ['rateType' => 'RATED_ACCOUNT_PACKAGE']]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+        $this->serializer->expects($this->once())
+            ->method('serialize')
+            ->willReturn(json_encode(['mocked_request' => 'data']));
+        $this->serializer->expects($this->once())
+            ->method('unserialize')
+            ->willReturn($rateResponseMock);
+        $this->curlFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($this->curlClient);
+        $this->curlClient->expects($this->once())
+            ->method('setHeaders')
+            ->willReturnSelf();
+        $this->curlClient->expects($this->once())
+            ->method('post')
+            ->willReturnSelf();
+        $this->curlClient->expects($this->once())
+            ->method('getBody')
+            ->willReturn(json_encode($rateResponseMock));
+        $request = $this->getMockBuilder(RateRequest::class)
+            ->addMethods(['getBaseCurrency', 'getPackageWeight'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $request->method('getPackageWeight')
+            ->willReturn(10.0);
+        $result = $this->carrier->collectRates($request);
+        $this->assertInstanceOf(RateResult::class, $result);
+        $rates = $result->getAllRates();
+        $this->assertNotEmpty($rates);
+    }
+    /**
      * Gets list of variations for testing ship date.
      *
      * @return array
