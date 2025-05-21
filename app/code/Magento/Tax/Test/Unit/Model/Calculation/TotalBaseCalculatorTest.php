@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2014 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 declare(strict_types=1);
 
@@ -60,7 +60,7 @@ class TotalBaseCalculatorTest extends RowBaseAndTotalBaseCalculatorTestCase
     public function testCalculateWithTaxNotInPrice()
     {
         $this->initTotalBaseCalculator();
-        $this->totalBaseCalculator->expects($this->exactly(1))
+        $this->totalBaseCalculator->expects($this->exactly(2))
             ->method('deltaRound')->willReturn(0);
         $this->initMocks(false);
 

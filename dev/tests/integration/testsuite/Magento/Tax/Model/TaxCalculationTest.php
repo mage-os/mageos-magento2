@@ -1088,30 +1088,42 @@ class TaxCalculationTest extends \PHPUnit\Framework\TestCase
         $productInclTaxWithoutStoreIdWithoutTaxClassId = $productTaxInclBase;
 
         $productInclTaxWithStoreIdWithTaxClassId['storeId'] = 1;
-        $productInclTaxWithStoreIdWithTaxClassId['quoteDetailsData']['items'][] = $quoteDetailTaxInclItemWithDefaultProductTaxClass;
+        $productInclTaxWithStoreIdWithTaxClassId['quoteDetailsData']['items'][] =
+            $quoteDetailTaxInclItemWithDefaultProductTaxClass;
         $productInclTaxWithStoreIdWithTaxClassId['expectedTaxDetails']['tax_amount'] = 0.70;
         $productInclTaxWithStoreIdWithTaxClassId['expectedTaxDetails']['subtotal'] = 9.30;
         $productInclTaxWithStoreIdWithTaxClassId['expectedTaxDetails']['applied_taxes'] = $quoteDetailAppliedTaxesBase;
-        $productInclTaxWithStoreIdWithTaxClassId['expectedTaxDetails']['items'] = $productTaxInclExpectedItemWithDefaultProductTaxClass;
+        $productInclTaxWithStoreIdWithTaxClassId['expectedTaxDetails']['items'] =
+            $productTaxInclExpectedItemWithDefaultProductTaxClass;
 
         $productInclTaxWithStoreIdWithoutTaxClassId['storeId'] = 1;
         $productInclTaxWithStoreIdWithoutTaxClassId['quoteDetailsData']['items'][] = $productTaxInclQuoteDetailItemBase;
-        $productInclTaxWithStoreIdWithoutTaxClassId['expectedTaxDetails']['items'] = $productTaxInclExpectedItemWithNoProductTaxClass;
+        $productInclTaxWithStoreIdWithoutTaxClassId['expectedTaxDetails']['items'] =
+            $productTaxInclExpectedItemWithNoProductTaxClass;
 
-        $productInclTaxWithoutStoreIdWithTaxClassId['quoteDetailsData']['items'][] = $quoteDetailTaxInclItemWithDefaultProductTaxClass;
+        $productInclTaxWithoutStoreIdWithTaxClassId['quoteDetailsData']['items'][] =
+            $quoteDetailTaxInclItemWithDefaultProductTaxClass;
         $productInclTaxWithoutStoreIdWithTaxClassId['expectedTaxDetails']['tax_amount'] = 0.70;
         $productInclTaxWithoutStoreIdWithTaxClassId['expectedTaxDetails']['subtotal'] = 9.30;
-        $productInclTaxWithoutStoreIdWithTaxClassId['expectedTaxDetails']['applied_taxes'] = $quoteDetailAppliedTaxesBase;
-        $productInclTaxWithoutStoreIdWithTaxClassId['expectedTaxDetails']['items'] = $productTaxInclExpectedItemWithDefaultProductTaxClass;
+        $productInclTaxWithoutStoreIdWithTaxClassId['expectedTaxDetails']['applied_taxes'] =
+            $quoteDetailAppliedTaxesBase;
+        $productInclTaxWithoutStoreIdWithTaxClassId['expectedTaxDetails']['items'] =
+            $productTaxInclExpectedItemWithDefaultProductTaxClass;
 
-        $productInclTaxWithoutStoreIdWithoutTaxClassId['quoteDetailsData']['items'][] = $productTaxInclQuoteDetailItemBase;
-        $productInclTaxWithoutStoreIdWithoutTaxClassId['expectedTaxDetails']['items'] = $productTaxInclExpectedItemWithNoProductTaxClass;
+        $productInclTaxWithoutStoreIdWithoutTaxClassId['quoteDetailsData']['items'][] =
+            $productTaxInclQuoteDetailItemBase;
+        $productInclTaxWithoutStoreIdWithoutTaxClassId['expectedTaxDetails']['items'] =
+            $productTaxInclExpectedItemWithNoProductTaxClass;
 
         return [
-            'product incl tax with store id, with tax class id' => $productInclTaxWithStoreIdWithTaxClassId,
-            'product incl tax with store id, without tax class id' => $productInclTaxWithStoreIdWithoutTaxClassId,
-            'product incl tax without store id, with tax class id' => $productInclTaxWithoutStoreIdWithTaxClassId,
-            'product incl tax without store id, without tax class id' => $productInclTaxWithoutStoreIdWithoutTaxClassId,
+            'product incl tax with store id, with tax class id' =>
+                $productInclTaxWithStoreIdWithTaxClassId,
+            'product incl tax with store id, without tax class id' =>
+                $productInclTaxWithStoreIdWithoutTaxClassId,
+            'product incl tax without store id, with tax class id' =>
+                $productInclTaxWithoutStoreIdWithTaxClassId,
+            'product incl tax without store id, without tax class id' =>
+                $productInclTaxWithoutStoreIdWithoutTaxClassId,
         ];
     }
 
