@@ -206,6 +206,9 @@ class TokensConfigProvider
                 $this->filterBuilder->setField(PaymentTokenInterface::WEBSITE_ID)
                     ->setValue($websiteId)
                     ->create(),
+                $this->filterBuilder->setField(PaymentTokenInterface::WEBSITE_ID)
+                    ->setConditionType('null')
+                    ->create(),
             ]
         );
 
