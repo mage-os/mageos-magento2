@@ -239,6 +239,7 @@ class LinkTest extends TestCase
                     UrlRewrite::ENTITY_ID => 'entity_id',
                     UrlRewrite::ENTITY_TYPE => 'entity_type',
                     UrlRewrite::STORE_ID => $this->storeManager->getStore($storeId)->getStoreId(),
+                    UrlRewrite::REDIRECT_TYPE => 0,
                 ]
             )
             ->willReturn($rewrite);
@@ -318,6 +319,7 @@ class LinkTest extends TestCase
                     UrlRewrite::ENTITY_TYPE => ProductUrlRewriteGenerator::ENTITY_TYPE,
                     UrlRewrite::STORE_ID => $storeId,
                     UrlRewrite::METADATA => ['category_id' => 'category_id'],
+                    UrlRewrite::REDIRECT_TYPE => 0,
                 ]
             )
             ->willReturn(false);
