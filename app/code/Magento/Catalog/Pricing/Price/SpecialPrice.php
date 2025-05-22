@@ -13,7 +13,7 @@ use Magento\Framework\Pricing\Price\AbstractPrice;
 use Magento\Framework\Pricing\Price\BasePriceProviderInterface;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Store\Api\Data\WebsiteInterface;
-use Magento\Catalog\Service\SpecialPriceService;
+use Magento\Catalog\Model\Pricing\SpecialPriceService;
 
 /**
  * Special price model
@@ -33,7 +33,7 @@ class SpecialPrice extends AbstractPrice implements SpecialPriceInterface, BaseP
     /**
      * @var SpecialPriceService
      */
-    protected SpecialPriceService $specialPriceService;
+    private SpecialPriceService $specialPriceService;
 
     /**
      * @param Product $saleableItem

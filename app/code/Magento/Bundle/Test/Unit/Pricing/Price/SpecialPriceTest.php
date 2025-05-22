@@ -11,7 +11,7 @@ namespace Magento\Bundle\Test\Unit\Pricing\Price;
 use Magento\Bundle\Pricing\Price\SpecialPrice;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Pricing\Price\RegularPrice;
-use Magento\Catalog\Service\SpecialPriceService;
+use Magento\Catalog\Model\Pricing\SpecialPriceService;
 use Magento\Framework\Pricing\Price\PriceInterface;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\Pricing\PriceInfo\Base;

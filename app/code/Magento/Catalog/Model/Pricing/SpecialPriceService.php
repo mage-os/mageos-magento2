@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Catalog\Service;
+namespace Magento\Catalog\Model\Pricing;
 
 /**
  * This class provides functionality to normalize the end date/time of special prices

@@ -14,7 +14,7 @@ use Magento\Catalog\Api\Data\ProductTierPriceExtensionFactory;
 use Magento\Catalog\Api\Data\ProductTierPriceInterfaceFactory;
 use Magento\Catalog\Helper\Data;
 use Magento\Catalog\Model\Product;
-use Magento\Catalog\Service\SpecialPriceService;
+use Magento\Catalog\Model\Pricing\SpecialPriceService;
 use Magento\CatalogRule\Model\ResourceModel\RuleFactory;
 use Magento\Customer\Api\GroupManagementInterface;
 use Magento\Customer\Model\Session;

@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Service;
 
-use Magento\Catalog\Service\SpecialPriceService;
+use Magento\Catalog\Model\Pricing\SpecialPriceService;
 use PHPUnit\Framework\TestCase;
 
 /**

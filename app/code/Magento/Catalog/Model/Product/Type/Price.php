@@ -15,7 +15,7 @@ use Magento\Store\Model\Store;
 use Magento\Catalog\Api\Data\ProductTierPriceExtensionFactory;
 use Magento\Framework\App\ObjectManager;
 use Magento\Store\Api\Data\WebsiteInterface;
-use Magento\Catalog\Service\SpecialPriceService;
+use Magento\Catalog\Model\Pricing\SpecialPriceService;
 
 /**
  * Product type price model

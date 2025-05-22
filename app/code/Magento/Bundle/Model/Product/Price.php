@@ -9,7 +9,7 @@ use Magento\Customer\Api\GroupManagementInterface;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\App\ObjectManager;
 use Magento\Catalog\Api\Data\ProductTierPriceExtensionFactory;
-use Magento\Catalog\Service\SpecialPriceService;
+use Magento\Catalog\Model\Pricing\SpecialPriceService;
 
 /**
  * Bundle product type price model
