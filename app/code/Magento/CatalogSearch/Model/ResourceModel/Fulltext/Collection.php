@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\CatalogSearch\Model\ResourceModel\Fulltext;
@@ -581,7 +581,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
          * for the same requests and products with the same relevance
          * NOTE: this does not replace existing orders but ADDs one more
          */
-        $this->setOrder('entity_id', Select::SQL_ASC);
+        $this->setOrder('entity_id', Select::SQL_DESC);
         return parent::_beforeLoad();
     }
 
