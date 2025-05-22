@@ -200,7 +200,6 @@ class TokensConfigProvider
         if ($quote) {
             $websiteId = $quote->getStore()->getWebsite()->getId();
         }
-
         $this->searchCriteriaBuilder->addFilters(
             [
                 $this->filterBuilder->setField(PaymentTokenInterface::WEBSITE_ID)
@@ -211,7 +210,6 @@ class TokensConfigProvider
                     ->create(),
             ]
         );
-
         $searchCriteria = $this->searchCriteriaBuilder->create();
 
         foreach ($this->paymentTokenRepository->getList($searchCriteria)->getItems() as $token) {
