@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2017 Adobe All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2017 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -16,6 +16,8 @@ use Magento\Framework\Setup\Declaration\Schema\Dto\Table;
 use Magento\Framework\Setup\Declaration\Schema\Sharding;
 use Magento\Framework\Config\FileResolverByModule;
 use Magento\Framework\Setup\Declaration\Schema\Declaration\ReaderComposite;
+use Psr\Log\LoggerInterface;
+use Magento\Framework\Exception\LocalizedException;
 
 /**
  * This type of builder is responsible for converting ENTIRE data, that comes from db
@@ -27,6 +29,7 @@ use Magento\Framework\Setup\Declaration\Schema\Declaration\ReaderComposite;
  *
  * @see        Schema
  * @inheritdoc
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class SchemaBuilder
 {
@@ -56,29 +59,38 @@ class SchemaBuilder
     private $readerComposite;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * Constructor.
      *
      * @param ElementFactory $elementFactory
      * @param DbSchemaReaderInterface $dbSchemaReader
      * @param Sharding $sharding
      * @param ReaderComposite $readerComposite
+     * @param LoggerInterface $logger
      */
     public function __construct(
         ElementFactory $elementFactory,
         DbSchemaReaderInterface $dbSchemaReader,
         Sharding $sharding,
-        ReaderComposite $readerComposite
+        ReaderComposite $readerComposite,
+        LoggerInterface $logger
     ) {
         $this->elementFactory = $elementFactory;
         $this->dbSchemaReader = $dbSchemaReader;
         $this->sharding = $sharding;
         $this->readerComposite = $readerComposite;
+        $this->logger = $logger;
     }
 
     /**
      * @inheritdoc
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @throws LocalizedException
      */
     public function build(Schema $schema)
     {
@@ -100,10 +112,10 @@ class SchemaBuilder
                             $keyTable,
                             $keyColumn
                         );
-                        
+                        $this->logger->error($errorMessage);
                         // Throw a new exception with the extended message
                         // This preserves the original error but adds our context
-                        throw new \Exception($errorMessage, $e->getCode(), $e);
+                        throw new LocalizedException(new Phrase($errorMessage));
                     }
                 }
             }
