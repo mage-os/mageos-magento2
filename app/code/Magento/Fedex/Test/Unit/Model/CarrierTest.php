@@ -1194,24 +1194,7 @@ class CarrierTest extends TestCase
         $curlTokenClient->expects($this->once())
             ->method('getBody')
             ->willReturn(json_encode($tokenResponse));
-        $trackingResponse = [
-            'output' => [
-                'completeTrackResults' => [
-                    [
-                        'trackingNumber' => $trackingNumber,
-                        'trackResults' => [
-                            [
-                                'trackingNumberInfo' => ['trackingNumber' => $trackingNumber],
-                                'statusDetail' => ['description' => 'Delivered'],
-                                'dateAndTimes' => [
-                                    ['type' => 'ACTUAL_DELIVERY', 'dateTime' => '2025-05-20T10:00:00Z']
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        ];
+        $trackingResponse = $this->getTrackingResponse();
         $trackingStatusMock = $this->getMockBuilder(Status::class)
             ->addMethods(['setCarrier', 'setCarrierTitle', 'setTracking'])
             ->onlyMethods(['addData'])
@@ -1503,5 +1486,30 @@ class CarrierTest extends TestCase
                 'getPackageParams'
             ])
             ->getMock();
+    }
+
+    /**
+     * @return array
+     */
+    private function getTrackingResponse(): array
+    {
+        return  [
+                'output' => [
+                    'completeTrackResults' => [
+                        [
+                            'trackingNumber' => '123456789012',
+                            'trackResults' => [
+                                [
+                                    'trackingNumberInfo' => ['trackingNumber' => '123456789012'],
+                                    'statusDetail' => ['description' => 'Delivered'],
+                                    'dateAndTimes' => [
+                                        ['type' => 'ACTUAL_DELIVERY', 'dateTime' => '2025-05-20T10:00:00Z']
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ];
     }
 }
