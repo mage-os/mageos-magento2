@@ -79,9 +79,9 @@ class GenerateMergedAssetIntegrity
             [
                 "data" => [
                     'hash' => $this->hashGenerator->generate(
-                        $pubStaticDir->readFile($resultAsset->getRelativeSourceFilePath())
+                        $pubStaticDir->readFile($resultAsset->getPath())
                     ),
-                    'path' => $resultAsset->getRelativeSourceFilePath()
+                    'path' => $resultAsset->getPath()
                 ]
             ]
         );

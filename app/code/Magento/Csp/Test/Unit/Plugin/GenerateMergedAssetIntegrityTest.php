@@ -76,7 +76,7 @@ class GenerateMergedAssetIntegrityTest extends TestCase
         $resultAsset = $this->createMock(File::class);
         $resultAsset->expects($this->once())->method('getContentType')->willReturn($fileExtension);
         $resultAsset->expects($this->exactly(2))
-            ->method('getRelativeSourceFilePath')
+            ->method('getPath')
             ->willReturn($filePath);
         $pubStaticDir = $this->createMock(WriteInterface::class);
         $pubStaticDir->expects($this->once())->method('readFile')->with($filePath)->willReturn($fileContent);
