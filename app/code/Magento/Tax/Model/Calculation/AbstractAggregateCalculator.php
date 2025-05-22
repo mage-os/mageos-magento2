@@ -115,7 +115,6 @@ abstract class AbstractAggregateCalculator extends AbstractCalculator
             $taxId = $appliedRate['id'];
             $taxRate = $appliedRate['percent'];
             $rowTaxPerRate = $this->calculationTool->calcTaxAmount($rowTotalForTaxCalculation, $taxRate, false, false);
-
             $deltaRoundingType = self::KEY_REGULAR_DELTA_ROUNDING;
             if ($applyTaxAfterDiscount) {
                 $deltaRoundingType = self::KEY_TAX_BEFORE_DISCOUNT_DELTA_ROUNDING;
