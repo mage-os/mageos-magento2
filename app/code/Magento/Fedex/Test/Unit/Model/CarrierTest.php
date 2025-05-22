@@ -22,6 +22,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\HTTP\Client\Curl;
 use Magento\Framework\HTTP\Client\CurlFactory;
+use Magento\Framework\HTTP\ClientInterface;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -1141,6 +1142,117 @@ class CarrierTest extends TestCase
         $this->assertInstanceOf(RateResult::class, $result);
         $rates = $result->getAllRates();
         $this->assertNotEmpty($rates);
+    }
+
+    /**
+     * Test getTracking when a new access token is requested and saved to cache
+     */
+    public function testGetTrackingWithNewAccessTokenSavedToCache(): void
+    {
+        $apiKey = 'TestApiKey';
+        $secretKey = 'TestSecretKey';
+        $accessToken = 'NewTrackingTestAccessToken';
+        $cacheKey = 'fedex_access_token_' . hash('sha256', $apiKey . $secretKey);
+        $expiresIn = 3600;
+        $cacheType = 'fedex_api';
+        $tokenResponse = [
+            'access_token' => $accessToken,
+            'expires_in' => $expiresIn
+        ];
+        $trackingNumber = '123456789012';
+        $this->scope->expects($this->any())
+            ->method('getValue')
+            ->willReturnCallback([$this, 'scopeConfigGetValue']);
+        $this->cacheMock->expects($this->once())
+            ->method('load')
+            ->with($cacheKey)
+            ->willReturn(false);
+        $this->cacheMock->expects($this->once())
+            ->method('save')
+            ->with(
+                $this->callback(function ($data) use ($accessToken, $expiresIn) {
+                    $decoded = json_decode($data, true);
+                    return $decoded['access_token'] === $accessToken &&
+                        $decoded['expires_at'] <= (time() + $expiresIn) &&
+                        $decoded['expires_at'] > time();
+                }),
+                $cacheKey,
+                [$cacheType],
+                $expiresIn
+            )
+            ->willReturn(true);
+        $curlTokenClient = $this->createMock(ClientInterface::class);
+        $this->curlFactory->expects($this->exactly(2))
+            ->method('create')
+            ->willReturnOnConsecutiveCalls($curlTokenClient, $this->curlClient);
+        $curlTokenClient->expects($this->once())
+            ->method('setHeaders')
+            ->willReturnSelf();
+        $curlTokenClient->expects($this->once())
+            ->method('post')
+            ->willReturnSelf();
+        $curlTokenClient->expects($this->once())
+            ->method('getBody')
+            ->willReturn(json_encode($tokenResponse));
+        $trackingResponse = [
+            'output' => [
+                'completeTrackResults' => [
+                    [
+                        'trackingNumber' => $trackingNumber,
+                        'trackResults' => [
+                            [
+                                'trackingNumberInfo' => ['trackingNumber' => $trackingNumber],
+                                'statusDetail' => ['description' => 'Delivered'],
+                                'dateAndTimes' => [
+                                    ['type' => 'ACTUAL_DELIVERY', 'dateTime' => '2025-05-20T10:00:00Z']
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+        $trackingStatusMock = $this->getMockBuilder(Status::class)
+            ->addMethods(['setCarrier', 'setCarrierTitle', 'setTracking'])
+            ->onlyMethods(['addData'])
+            ->getMock();
+        $this->statusFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($trackingStatusMock);
+        $trackingStatusMock->expects($this->once())
+            ->method('setCarrier')
+            ->with(Carrier::CODE)
+            ->willReturnSelf();
+        $trackingStatusMock->expects($this->once())
+            ->method('setCarrierTitle')
+            ->willReturnSelf();
+        $trackingStatusMock->expects($this->once())
+            ->method('setTracking')
+            ->with($trackingNumber)
+            ->willReturnSelf();
+        $trackingStatusMock->expects($this->once())
+            ->method('addData')
+            ->willReturnSelf();
+        $this->serializer->expects($this->once())
+            ->method('serialize')
+            ->willReturn(json_encode($this->getTrackRequest($trackingNumber)));
+        $this->serializer->expects($this->exactly(2))
+            ->method('unserialize')
+            ->willReturnOnConsecutiveCalls($tokenResponse, $trackingResponse);
+        $this->curlClient->expects($this->once())
+            ->method('setHeaders')
+            ->willReturnSelf();
+        $this->curlClient->expects($this->once())
+            ->method('post')
+            ->willReturnSelf();
+        $this->curlClient->expects($this->once())
+            ->method('getBody')
+            ->willReturn(json_encode($trackingResponse));
+        $trackings = [$trackingNumber];
+        $result = $this->carrier->getTracking($trackings);
+        $this->assertInstanceOf(Result::class, $result);
+        $trackingsResult = $result->getAllTrackings();
+        $this->assertNotEmpty($trackingsResult);
     }
     /**
      * Gets list of variations for testing ship date.
