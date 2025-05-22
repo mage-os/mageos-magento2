@@ -10,6 +10,9 @@ namespace Magento\Catalog\Api;
 
 use Magento\Catalog\Test\Fixture\Product as ProductFixture;
 use Magento\Framework\Api\Data\ImageContentInterface;
+use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\Filesystem;
+use Magento\Framework\Filesystem\Directory\WriteInterface;
 use Magento\Store\Test\Fixture\Store as StoreFixture;
 use Magento\TestFramework\Fixture\DataFixture;
 use Magento\TestFramework\Fixture\DataFixtureStorage;
@@ -70,6 +73,11 @@ class ProductAttributeMediaGalleryManagementInterfaceTest extends WebapiAbstract
     private $fixtures;
 
     /**
+     * @var WriteInterface
+     */
+    private $mediaDirectory;
+
+    /**
      * @inheritDoc
      */
     protected function setUp(): void
@@ -113,6 +121,8 @@ class ProductAttributeMediaGalleryManagementInterfaceTest extends WebapiAbstract
 
         $this->testImagePath = __DIR__ . DIRECTORY_SEPARATOR . '_files' . DIRECTORY_SEPARATOR . 'test_image.jpg';
         $this->fixtures = $this->objectManager->get(DataFixtureStorageManager::class)->getStorage();
+        $this->mediaDirectory = $this->objectManager->get(Filesystem::class)
+            ->getDirectoryWrite(DirectoryList::MEDIA);
     }
 
     /**
@@ -894,5 +904,45 @@ class ProductAttributeMediaGalleryManagementInterfaceTest extends WebapiAbstract
         ];
         $response = $this->_webApiCall($serviceInfo, $requestData);
         $this->assertArrayHasKey('content', $response);
+    }
+
+    /**
+     * Test update() method when existing image gets overwritten
+     *
+     * @magentoApiDataFixture Magento/Catalog/_files/product_with_image.php
+     */
+    public function testUpdateExistingImage()
+    {
+        $productRepository = $this->objectManager->create(ProductRepositoryInterface::class);
+        /** @var \Magento\Catalog\Api\Data\ProductInterface $product */
+        $product = $productRepository->get('simple');
+        $imageId = (int)$product->getMediaGalleryImages()->getFirstItem()->getValueId();
+        $originalImagePath = $product->getMediaGalleryImages()->getFirstItem()->getFile();
+        $requestData = [
+            'sku' => 'simple',
+            'entry' => [
+                'id' => $this->getTargetGalleryEntryId(),
+                'label' => 'Updated Image Text',
+                'position' => 10,
+                'types' => ['thumbnail'],
+                'disabled' => true,
+                'media_type' => 'image',
+                'content' => [
+                    'base64_encoded_data' => base64_encode(file_get_contents($this->testImagePath)),
+                    'type' => 'image/jpeg',
+                    'name' => 'test_image.jpg',
+                ]
+            ]
+        ];
+
+        $this->updateServiceInfo['rest']['resourcePath'] = $this->updateServiceInfo['rest']['resourcePath']
+            . '/' . $this->getTargetGalleryEntryId();
+
+        $this->assertTrue($this->_webApiCall($this->updateServiceInfo, $requestData, null, 'all'));
+        $updatedImage = $this->assertMediaGalleryData($imageId, '/t/e/test_image.jpg', 'Updated Image Text');
+        $this->assertEquals(10, $updatedImage['position_default']);
+        $this->assertEquals(1, $updatedImage['disabled_default']);
+        $this->assertStringStartsWith('/t/e/test_image.jpg', $updatedImage['file']);
+        $this->assertFalse($this->mediaDirectory->isExist($originalImagePath));
     }
 }
