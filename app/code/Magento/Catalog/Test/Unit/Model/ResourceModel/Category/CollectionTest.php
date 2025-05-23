@@ -7,7 +7,9 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Model\ResourceModel\Category;
 
+use Magento\Catalog\Model\Category;
 use Magento\Framework\Data\Collection\EntityFactory;
+use Magento\Store\Model\Store;
 use Psr\Log\LoggerInterface;
 use Magento\Framework\Data\Collection\Db\FetchStrategyInterface;
 use Magento\Framework\Event\ManagerInterface;
@@ -214,5 +216,53 @@ class CollectionTest extends TestCase
             ->with($this->select)
             ->willReturn([]);
         $this->collection->loadProductCount([]);
+    }
+
+    /**
+     * Test that loadProductCount calls getCountFromCategoryTableBulk
+     */
+    public function testLoadProductCountCallsBulkMethodForLargeCategoryCount()
+    {
+        $websiteId = 1;
+        $storeId = 1;
+        $categoryCount = 401;
+        $items = [];
+        $categoryIds = [];
+        for ($i = 1; $i <= $categoryCount; $i++) {
+            $category = $this->getMockBuilder(Category::class)
+                ->addMethods(['getIsAnchor'])
+                ->onlyMethods(['getId', 'setProductCount'])
+                ->disableOriginalConstructor()
+                ->getMock();
+            $category->method('getId')->willReturn($i);
+            $category->method('getIsAnchor')->willReturn(true);
+            $category->expects($this->once())->method('setProductCount')->with(5);
+            $items[$i] = $category;
+            $categoryIds[] = $i;
+        }
+        $storeMock = $this->createMock(Store::class);
+        $storeMock->method('getWebsiteId')->willReturn($websiteId);
+        $this->storeManager->method('getStore')->with($storeId)->willReturn($storeMock);
+        $this->connection->method('select')->willReturn($this->select);
+        $counts = array_fill_keys($categoryIds, 5);
+        $this->select->method('from')->willReturnSelf();
+        $this->select->method('where')->willReturnSelf();
+        $this->select->method('group')->willReturnSelf();
+        $this->connection->method('fetchPairs')
+            ->with($this->isInstanceOf(Select::class))
+            ->willReturn($counts);
+        $tempTableName = 'temp_category_descendants_';
+        $this->connection->method('query')->willReturn($tempTableName);
+        $this->select->method('joinInner')->willReturnSelf();
+        $this->connection->method('insertFromSelect')->willReturn('INSERT QUERY');
+        $bulkSelectMock = $this->createMock(Select::class);
+        $bulkSelectMock->method('from')->willReturnSelf();
+        $bulkSelectMock->method('joinLeft')->willReturnSelf();
+        $bulkSelectMock->method('join')->willReturnSelf();
+        $bulkSelectMock->method('where')->willReturnSelf();
+        $bulkSelectMock->method('group')->willReturnSelf();
+        $this->connection->method('fetchPairs')->willReturn($counts);
+        $this->collection->setProductStoreId($storeId);
+        $this->collection->loadProductCount($items, false, true);
     }
 }

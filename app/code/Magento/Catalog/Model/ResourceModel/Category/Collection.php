@@ -375,35 +375,57 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Collection\Abstrac
         array $categoryIds,
         int $websiteId
     ) : array {
-        $subSelect = clone $this->_conn->select();
-        $subSelect->from(['ce2' => $this->getTable('catalog_category_entity')], 'ce2.entity_id')
-            ->where("ce2.path LIKE CONCAT(ce.path, '/%') OR ce2.path = ce.path");
-
-        $select = clone $this->_conn->select();
-        $select->from(
+        $connection = $this->_conn;
+        $tempTableName = $connection->getTableName('temp_category_descendants_' . uniqid());
+        $connection->query("CREATE TEMPORARY TABLE {$tempTableName} (
+        category_id INT UNSIGNED NOT NULL,
+        descendant_id INT UNSIGNED NOT NULL,
+        PRIMARY KEY (category_id, descendant_id)
+    )");
+        $selectDescendants = clone $connection->select();
+        $selectDescendants->from(
             ['ce' => $this->getTable('catalog_category_entity')],
-            'ce.entity_id'
+            ['category_id' => 'ce.entity_id', 'descendant_id' => 'ce2.entity_id']
+        )
+            ->joinInner(
+                ['ce2' => $this->getTable('catalog_category_entity')],
+                'ce2.path LIKE CONCAT(ce.path, \'/%\') OR ce2.entity_id = ce.entity_id',
+                []
+            )
+            ->where('ce.entity_id IN (?)', $categoryIds);
+        $connection->query(
+            $connection->insertFromSelect(
+                $selectDescendants,
+                $tempTableName,
+                ['category_id', 'descendant_id']
+            )
         );
-        $joinCondition =  new \Zend_Db_Expr("cp.category_id IN ({$subSelect})");
-        $select->joinLeft(
-            ['cp' => $this->getProductTable()],
-            $joinCondition,
-            'COUNT(DISTINCT cp.product_id) AS product_count'
-        );
+        $select = clone $connection->select();
+        $select->from(
+            ['t' => $tempTableName],
+            ['category_id' => 't.category_id']
+        )
+            ->joinLeft(
+                ['cp' => $this->getTable('catalog_category_product')],
+                'cp.category_id = t.descendant_id',
+                ['product_count' => 'COUNT(DISTINCT cp.product_id)']
+            );
         if ($websiteId) {
             $select->join(
                 ['w' => $this->getProductWebsiteTable()],
                 'cp.product_id = w.product_id',
                 []
-            )->where(
-                'w.website_id = ?',
-                $websiteId
-            );
+            )->where('w.website_id = ?', $websiteId);
         }
-        $select->where('ce.entity_id IN(?)', $categoryIds);
-        $select->group('ce.entity_id');
+        $select->group('t.category_id');
+        $result = $connection->fetchPairs($select);
+        $connection->query("DROP TEMPORARY TABLE {$tempTableName}");
+        $counts = array_fill_keys($categoryIds, 0);
+        foreach ($result as $categoryId => $count) {
+            $counts[$categoryId] = (int)$count;
+        }
 
-        return $this->_conn->fetchPairs($select);
+        return $counts;
     }
 
     /**
