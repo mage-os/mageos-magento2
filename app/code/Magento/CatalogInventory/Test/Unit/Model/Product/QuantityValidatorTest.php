@@ -69,4 +69,64 @@ class QuantityValidatorTest extends TestCase
         $result = $this->quantityValidator->getData(self::PRODUCT_ID, self::WEBSITE_ID);
         $this->assertEquals($expected, $result);
     }
+
+    public function testReturnsEmptyArrayForNonExistentProductOrWebsite(): void
+    {
+        $this->stockRegistry->expects($this->once())
+            ->method('getStockItem')
+            ->with(self::PRODUCT_ID, self::WEBSITE_ID)
+            ->willReturn(null);
+
+        $result = $this->quantityValidator->getData(self::PRODUCT_ID, self::WEBSITE_ID);
+        $this->assertSame([], $result, 'Should return empty array when StockItem is not found');
+    }
+
+    public function testHandlesNullValuesFromStockItem(): void
+    {
+        $stockItem = $this->createMock(StockItemInterface::class);
+        $stockItem->method('getMinSaleQty')
+            ->willReturn(null);
+        $stockItem->method('getMaxSaleQty')
+            ->willReturn(null);
+        $stockItem->method('getQtyIncrements')
+            ->willReturn(null);
+
+        $this->stockRegistry->expects($this->once())
+            ->method('getStockItem')
+            ->with(self::PRODUCT_ID, self::WEBSITE_ID)
+            ->willReturn($stockItem);
+
+        $expected = [
+            'validate-item-quantity' => [
+                'minAllowed'    => null
+            ],
+        ];
+        $result = $this->quantityValidator->getData(self::PRODUCT_ID, self::WEBSITE_ID);
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testHandlesInvalidValuesFromStockItem(): void
+    {
+        $stockItem = $this->createMock(StockItemInterface::class);
+        $stockItem->method('getMinSaleQty')
+            ->willReturn('not-a-number');
+        $stockItem->method('getMaxSaleQty')
+            ->willReturn(-5);
+        $stockItem->method('getQtyIncrements')
+            ->willReturn(false);
+
+        $this->stockRegistry->expects($this->once())
+            ->method('getStockItem')
+            ->with(self::PRODUCT_ID, self::WEBSITE_ID)
+            ->willReturn($stockItem);
+
+        $expected = [
+            'validate-item-quantity' => [
+                'minAllowed'    => 'not-a-number',
+                'maxAllowed'    => -5
+            ],
+        ];
+        $result = $this->quantityValidator->getData(self::PRODUCT_ID, self::WEBSITE_ID);
+        $this->assertEquals($expected, $result);
+    }
 }

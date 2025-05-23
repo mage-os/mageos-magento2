@@ -31,6 +31,10 @@ class QuantityValidator
     {
         $stockItem = $this->stockRegistry->getStockItem($productId, $websiteId);
 
+        if (!$stockItem) {
+            return [];
+        }
+
         $params = [];
         $validators = [];
         $params['minAllowed'] =  $stockItem->getMinSaleQty();
