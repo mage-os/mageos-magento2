@@ -245,23 +245,29 @@ class CollectionTest extends TestCase
         $this->storeManager->method('getStore')->with($storeId)->willReturn($storeMock);
         $this->connection->method('select')->willReturn($this->select);
         $counts = array_fill_keys($categoryIds, 5);
+        $tableMock = $this->createMock(\Magento\Framework\DB\Ddl\Table::class);
+        $tableMock->method('addColumn')->willReturnSelf();
+        $tableMock->method('addIndex')->willReturnSelf();
+        $this->connection->method('newTable')
+            ->with($this->stringContains('temp_category_descendants_'))
+            ->willReturn($tableMock);
+        $this->connection->expects($this->once())->method('createTemporaryTable')->with($tableMock);
+        $this->connection->expects($this->once())->method('dropTemporaryTable')
+            ->with($this->stringContains('temp_category_descendants_'));
         $this->select->method('from')->willReturnSelf();
+        $this->select->method('joinInner')->willReturnSelf();
+        $this->select->method('where')->willReturnSelf();
+        $this->connection->method('select')->willReturn($this->select);
+        $this->connection->method('insertFromSelect')->willReturn('INSERT QUERY');
+        $this->connection->method('query')->with('INSERT QUERY')->willReturnSelf();
+        $this->select->method('from')->willReturnSelf();
+        $this->select->method('joinLeft')->willReturnSelf();
+        $this->select->method('join')->willReturnSelf();
         $this->select->method('where')->willReturnSelf();
         $this->select->method('group')->willReturnSelf();
         $this->connection->method('fetchPairs')
             ->with($this->isInstanceOf(Select::class))
             ->willReturn($counts);
-        $tempTableName = 'temp_category_descendants_';
-        $this->connection->method('query')->willReturn($tempTableName);
-        $this->select->method('joinInner')->willReturnSelf();
-        $this->connection->method('insertFromSelect')->willReturn('INSERT QUERY');
-        $bulkSelectMock = $this->createMock(Select::class);
-        $bulkSelectMock->method('from')->willReturnSelf();
-        $bulkSelectMock->method('joinLeft')->willReturnSelf();
-        $bulkSelectMock->method('join')->willReturnSelf();
-        $bulkSelectMock->method('where')->willReturnSelf();
-        $bulkSelectMock->method('group')->willReturnSelf();
-        $this->connection->method('fetchPairs')->willReturn($counts);
         $this->collection->setProductStoreId($storeId);
         $this->collection->loadProductCount($items, false, true);
     }

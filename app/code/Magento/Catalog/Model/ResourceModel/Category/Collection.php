@@ -11,6 +11,8 @@ use Magento\CatalogUrlRewrite\Model\CategoryUrlRewriteGenerator;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DB\Select;
 use Magento\Store\Model\ScopeInterface;
+use Magento\Framework\DB\Adapter\AdapterInterface;
+use Magento\Framework\DB\Ddl\Table;
 
 /**
  * Category resource collection
@@ -370,29 +372,47 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Collection\Abstrac
      * @param array $categoryIds
      * @param int $websiteId
      * @return array
+     * @throws \Zend_Db_Exception
      */
     private function getCountFromCategoryTableBulk(
         array $categoryIds,
         int $websiteId
     ) : array {
         $connection = $this->_conn;
-        $tempTableName = $connection->getTableName('temp_category_descendants_' . uniqid());
-        $connection->query("CREATE TEMPORARY TABLE {$tempTableName} (
-        category_id INT UNSIGNED NOT NULL,
-        descendant_id INT UNSIGNED NOT NULL,
-        PRIMARY KEY (category_id, descendant_id)
-    )");
-        $selectDescendants = clone $connection->select();
-        $selectDescendants->from(
-            ['ce' => $this->getTable('catalog_category_entity')],
-            ['category_id' => 'ce.entity_id', 'descendant_id' => 'ce2.entity_id']
-        )
+        $tempTableName = 'temp_category_descendants_' . uniqid();
+        $tempTable = $connection->newTable($tempTableName)
+            ->addColumn(
+                'category_id',
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'nullable' => false],
+                'Category ID'
+            )
+            ->addColumn(
+                'descendant_id',
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'nullable' => false],
+                'Descendant ID'
+            )
+            ->addIndex(
+                $connection->getIndexName($tempTableName, ['category_id', 'descendant_id']),
+                ['category_id', 'descendant_id'],
+                ['type' => AdapterInterface::INDEX_TYPE_PRIMARY]
+            );
+        $connection->createTemporaryTable($tempTable);
+        $selectDescendants = $connection->select()
+            ->from(
+                ['ce' => $this->getTable('catalog_category_entity')],
+                ['category_id' => 'ce.entity_id', 'descendant_id' => 'ce2.entity_id']
+            )
             ->joinInner(
                 ['ce2' => $this->getTable('catalog_category_entity')],
                 'ce2.path LIKE CONCAT(ce.path, \'/%\') OR ce2.entity_id = ce.entity_id',
                 []
             )
             ->where('ce.entity_id IN (?)', $categoryIds);
+
         $connection->query(
             $connection->insertFromSelect(
                 $selectDescendants,
@@ -400,11 +420,11 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Collection\Abstrac
                 ['category_id', 'descendant_id']
             )
         );
-        $select = clone $connection->select();
-        $select->from(
-            ['t' => $tempTableName],
-            ['category_id' => 't.category_id']
-        )
+        $select = $connection->select()
+            ->from(
+                ['t' => $tempTableName],
+                ['category_id' => 't.category_id']
+            )
             ->joinLeft(
                 ['cp' => $this->getTable('catalog_category_product')],
                 'cp.category_id = t.descendant_id',
@@ -419,7 +439,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Collection\Abstrac
         }
         $select->group('t.category_id');
         $result = $connection->fetchPairs($select);
-        $connection->query("DROP TEMPORARY TABLE {$tempTableName}");
+        $connection->dropTemporaryTable($tempTableName);
         $counts = array_fill_keys($categoryIds, 0);
         foreach ($result as $categoryId => $count) {
             $counts[$categoryId] = (int)$count;
