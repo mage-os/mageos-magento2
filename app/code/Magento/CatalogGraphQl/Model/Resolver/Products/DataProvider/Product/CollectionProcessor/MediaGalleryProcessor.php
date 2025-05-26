@@ -51,7 +51,9 @@ class MediaGalleryProcessor implements CollectionProcessorInterface
         array $attributeNames,
         ?ContextInterface $context = null
     ): Collection {
-        if (in_array('media_gallery_entries', $attributeNames)) {
+        if (in_array('media_gallery_entries', $attributeNames) ||
+            in_array('media_gallery', $attributeNames)
+        ) {
             $mediaAttributes = $this->mediaConfig->getMediaAttributeCodes();
             foreach ($mediaAttributes as $mediaAttribute) {
                 if (!in_array($mediaAttribute, $attributeNames)) {
