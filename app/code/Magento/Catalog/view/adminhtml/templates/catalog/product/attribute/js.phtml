@@ -14,7 +14,9 @@ use Magento\Catalog\Helper\Data;
 /** @var \Magento\Framework\Json\Helper\Data $jsonHelper */
 $jsonHelper = $block->getData('jsonHelper');
 if (!method_exists($jsonHelper, 'getAttributeHiddenFields')) {
-    $jsonHelper = $this->helper(Data::class);
+    /** @var \Magento\Catalog\ViewModel\Attribute\ProductAttributeHelper $viewModel */
+    $viewModel = $block->getViewModel();
+    $jsonHelper = $viewModel->getCatalogHelper();
 }
 $scriptString = <<<script
 require([
