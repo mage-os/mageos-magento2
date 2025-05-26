@@ -167,6 +167,7 @@ class Save extends \Magento\Backend\App\Action implements HttpPostActionInterfac
 
             $this->_saveShipment($shipment);
 
+            // Pass the specific store ID from the order to check if shipment emails are enabled for that store
             if (!empty($data['send_email'])
                 && $this->salesData->canSendNewShipmentEmail($shipment->getOrder()->getStoreId())) {
                 $this->shipmentSender->send($shipment);
