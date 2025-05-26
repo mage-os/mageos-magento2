@@ -297,7 +297,7 @@ class Subscription implements SubscriptionInterface, SubscriptionTriggersInterfa
      */
     protected function buildStatement(string $event, ViewInterface $view): string
     {
-        $trigger = "%sINSERT IGNORE INTO %s (%s) VALUES (%s);";
+        $trigger = "%sINSERT INTO %s (%s) VALUES (%s);";
         $changelog = $view->getChangelog();
 
         switch ($event) {
