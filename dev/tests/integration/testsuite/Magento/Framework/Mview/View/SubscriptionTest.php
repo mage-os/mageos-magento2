@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Framework\Mview\View\Test\Integration;
+namespace Magento\Framework\Mview\View;
 
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Ddl\Trigger;
@@ -22,6 +22,7 @@ use PHPUnit\Framework\TestCase;
  * Integration test for \Magento\Framework\Mview\View\Subscription
  *
  * @magentoDbIsolation disabled
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class SubscriptionTest extends TestCase
 {
@@ -237,4 +238,4 @@ class SubscriptionTest extends TestCase
             'Trigger contains check for ignored column'
         );
     }
-} 
+}
