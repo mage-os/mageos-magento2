@@ -57,7 +57,7 @@ class GetCartForCheckout
         try {
             $cart = $this->getCartForUser->execute($cartHash, $customerId, $storeId);
         } catch (NoSuchEntityException $e) {
-            throw new GraphQlNoSuchEntityException(__($e->getMessage()), $e);
+            throw new GraphQlNoSuchEntityException(__($e->getMessage()), $e, $e->getCode());
         }
         $this->checkoutAllowance->execute($cart);
 
