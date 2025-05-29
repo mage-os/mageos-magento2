@@ -92,7 +92,7 @@ class Price implements ResetAfterRequestInterface
     /**
      * @var SpecialPriceService|null
      */
-    protected ?SpecialPriceService $specialPriceService;
+    private ?SpecialPriceService $specialPriceService;
 
     /**
      * Constructor
@@ -136,6 +136,14 @@ class Price implements ResetAfterRequestInterface
             ->get(ProductTierPriceExtensionFactory::class);
         $this->specialPriceService = $specialPriceService ?: ObjectManager::getInstance()
             ->get(SpecialPriceService::class);
+    }
+
+    /**
+     * @return SpecialPriceService|null
+     */
+    protected function getSpecialPriceService(): ?SpecialPriceService
+    {
+        return $this->specialPriceService;
     }
 
     /**

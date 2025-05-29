@@ -634,7 +634,7 @@ class Price extends \Magento\Catalog\Model\Product\Type\Price
     ) {
         if ($specialPrice !== null && $specialPrice != false) {
 
-            $specialPriceTo = $this->specialPriceService->execute($specialPriceTo);
+            $specialPriceTo = $this->getSpecialPriceService()->execute($specialPriceTo);
 
             if ($this->_localeDate->isScopeDateInInterval($store, $specialPriceFrom, $specialPriceTo)) {
                 $specialPrice = $finalPrice * ($specialPrice / 100);
