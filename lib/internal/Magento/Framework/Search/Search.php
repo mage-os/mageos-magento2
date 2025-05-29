@@ -1,10 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Framework\Search;
 
+use Magento\AdvancedSearch\Model\Client\ClientException;
+use Magento\Elasticsearch\SearchAdapter\Aggregation\Builder as AggregationBuilder;
+use Magento\Elasticsearch\SearchAdapter\ResponseFactory;
 use Magento\Framework\Api\Search\SearchInterface;
 use Magento\Framework\Api\Search\SearchCriteriaInterface;
 use Magento\Framework\App\ScopeResolverInterface;
@@ -18,39 +21,55 @@ class Search implements SearchInterface
     /**
      * @var Builder
      */
-    private $requestBuilder;
+    private Builder $requestBuilder;
 
     /**
      * @var ScopeResolverInterface
      */
-    private $scopeResolver;
+    private ScopeResolverInterface $scopeResolver;
 
     /**
      * @var SearchEngineInterface
      */
-    private $searchEngine;
+    private SearchEngineInterface $searchEngine;
 
     /**
      * @var SearchResponseBuilder
      */
-    private $searchResponseBuilder;
+    private SearchResponseBuilder $searchResponseBuilder;
+
+    /**
+     * @var ResponseFactory
+     */
+    private ResponseFactory $responseFactory;
+
+    /**
+     * @var AggregationBuilder
+     */
+    private AggregationBuilder $aggregationBuilder;
 
     /**
      * @param Builder $requestBuilder
      * @param ScopeResolverInterface $scopeResolver
      * @param SearchEngineInterface $searchEngine
      * @param SearchResponseBuilder $searchResponseBuilder
+     * @param ResponseFactory $responseFactory
+     * @param AggregationBuilder $aggregationBuilder
      */
     public function __construct(
         Builder $requestBuilder,
         ScopeResolverInterface $scopeResolver,
         SearchEngineInterface $searchEngine,
-        SearchResponseBuilder $searchResponseBuilder
+        SearchResponseBuilder $searchResponseBuilder,
+        ResponseFactory $responseFactory,
+        AggregationBuilder $aggregationBuilder
     ) {
         $this->requestBuilder = $requestBuilder;
         $this->scopeResolver = $scopeResolver;
         $this->searchEngine = $searchEngine;
         $this->searchResponseBuilder = $searchResponseBuilder;
+        $this->responseFactory = $responseFactory;
+        $this->aggregationBuilder = $aggregationBuilder;
     }
 
     /**
@@ -81,11 +100,24 @@ class Search implements SearchInterface
         if (method_exists($this->requestBuilder, 'setSort')) {
             $this->requestBuilder->setSort($searchCriteria->getSortOrders());
         }
-        $request = $this->requestBuilder->create();
-        $searchResponse = $this->searchEngine->search($request);
+        try {
+            $request = $this->requestBuilder->create();
+            $searchResponse = $this->searchEngine->search($request);
+            $response = $this->searchResponseBuilder->build($searchResponse)
+                ->setSearchCriteria($searchCriteria);
+        } catch (ClientException $e) {
+            $aggregations = $this->aggregationBuilder->build($request, AdapterInterface::EMPTY_RAW_RESPONSE);
+            $response = $this->responseFactory->create(
+                [
+                    'documents' => [],
+                    'aggregations' => $aggregations,
+                    'total' => 0
+                ]
+            );
+            $response = $this->searchResponseBuilder->build($response)->setSearchCriteria($searchCriteria);
+        }
 
-        return $this->searchResponseBuilder->build($searchResponse)
-            ->setSearchCriteria($searchCriteria);
+        return $response;
     }
 
     /**

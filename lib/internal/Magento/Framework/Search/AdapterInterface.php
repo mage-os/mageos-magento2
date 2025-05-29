@@ -16,6 +16,18 @@ use Magento\Framework\Search\Response\QueryResponse;
  */
 interface AdapterInterface
 {
+    public const EMPTY_RAW_RESPONSE = [
+        'hits' => [
+            'hits' => []
+        ],
+        'aggregations' => [
+            'price_bucket' => [],
+            'category_bucket' => [
+                'buckets' => []
+            ]
+        ]
+    ];
+
     /**
      * Process Search Request
      *

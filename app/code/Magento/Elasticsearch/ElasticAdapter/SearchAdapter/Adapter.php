@@ -5,6 +5,7 @@
  */
 namespace Magento\Elasticsearch\ElasticAdapter\SearchAdapter;
 
+use Magento\AdvancedSearch\Model\Client\ClientException;
 use Magento\Elasticsearch\SearchAdapter\Aggregation\Builder as AggregationBuilder;
 use Magento\Elasticsearch\SearchAdapter\ConnectionManager;
 use Magento\Elasticsearch\SearchAdapter\QueryContainerFactory;
@@ -111,8 +112,7 @@ class Adapter implements AdapterInterface
             $rawResponse = $client->query($query);
         } catch (\Exception $e) {
             $this->logger->critical($e);
-            // return empty search result in case an exception is thrown from Elasticsearch
-            $rawResponse = self::$emptyRawResponse;
+            throw new ClientException(__($e->getMessage()), $e->getCode(), $e);
         }
 
         $rawDocuments = isset($rawResponse['hits']['hits']) ? $rawResponse['hits']['hits'] : [];
