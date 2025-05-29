@@ -85,12 +85,15 @@ class ChangeOutputArray
      */
     private function getBundleProductPrice(array $result): array
     {
-        if ($result[OrderItemInterface::PRICE] == 0 && isset($result[OrderItemInterface::PARENT_ITEM])) {
+        if (isset($result[OrderItemInterface::PRICE], $result[OrderItemInterface::PARENT_ITEM]) &&
+            $result[OrderItemInterface::PRICE] == 0
+        ) {
             if ($result[OrderItemInterface::PARENT_ITEM][OrderItemInterface::PRODUCT_TYPE] == Type::TYPE_CODE) {
                 $result[OrderItemInterface::PRICE] =
                     $result[OrderItemInterface::PARENT_ITEM][OrderItemInterface::PRICE];
             }
         }
+
         return $result;
     }
 }
