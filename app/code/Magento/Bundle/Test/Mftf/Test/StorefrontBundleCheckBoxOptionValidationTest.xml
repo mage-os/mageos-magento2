@@ -5,7 +5,6 @@
  * All Rights Reserved.
  */
 -->
-
 <tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
     <test name="StorefrontBundleCheckBoxOptionValidationTest">
@@ -17,11 +16,7 @@
             <testCaseId value="MC-35133"/>
             <severity value="MINOR"/>
             <group value="Bundle"/>
-            <group value="pr_exclude"/>
             <group value="cloud"/>
-            <skip>
-                <issueId value="AC-10826"/>
-            </skip>
         </annotations>
         <before>
             <createData entity="ApiProductWithDescription" stepKey="simpleProduct1" before="bundleProduct"/>
