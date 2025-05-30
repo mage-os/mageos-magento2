@@ -139,6 +139,8 @@ class Price implements ResetAfterRequestInterface
     }
 
     /**
+     * Returns the SpecialPriceService instance
+     *
      * @return SpecialPriceService|null
      */
     protected function getSpecialPriceService(): ?SpecialPriceService
