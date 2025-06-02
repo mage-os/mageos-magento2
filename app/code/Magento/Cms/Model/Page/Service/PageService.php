@@ -23,9 +23,9 @@ class PageService
      * @param CustomLayoutManagerInterface $customLayoutManager
      */
     public function __construct(
-        private PageRepositoryInterface $pageRepository,
-        private PageFactory $pageFactory,
-        private CustomLayoutManagerInterface $customLayoutManager,
+        private readonly PageRepositoryInterface $pageRepository,
+        private readonly PageFactory $pageFactory,
+        private readonly CustomLayoutManagerInterface $customLayoutManager,
     ) {
     }
 
