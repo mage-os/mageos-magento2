@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Authorization\Model\ResourceModel;
 
@@ -118,6 +118,8 @@ class Role extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $connection->delete($this->getMainTable(), ['parent_id = ?' => (int)$role->getId()]);
 
         $connection->delete($this->_ruleTable, ['role_id = ?' => (int)$role->getId()]);
+
+        $this->_cache->clean(\Zend_Cache::CLEANING_MODE_MATCHING_TAG, [\Magento\Backend\Block\Menu::CACHE_TAGS]);
 
         return $this;
     }

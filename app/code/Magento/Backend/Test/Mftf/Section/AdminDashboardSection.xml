@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- /**
-  * Copyright © Magento, Inc. All rights reserved.
-  * See COPYING.txt for license details.
-  */
+/**
+ * Copyright 2019 Adobe
+ * All Rights Reserved.
+ */
 -->
 
 <sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -17,5 +17,7 @@
         <element name="dashboardDiagramAmountsContentTab" type="block" selector="#diagram_tab_amounts_content"/>
         <element name="dashboardDiagramTotals" type="text" selector="#diagram_tab_amounts_content"/>
         <element name="dashboardTotals" type="text" selector="//*[@class='dashboard-totals-label' and contains(text(), '{{columnName}}')]/../*[@class='dashboard-totals-value']" parameterized="true"/>
+        <element name="productInBestsellers" type="text" selector="#productsOrderedGrid_table td.col-product.col-name"/>
+        <element name="dashboardButtonReloadData" type="button" selector=".action-primary[title='Reload Data'][type='submit']"/>
     </section>
 </sections>

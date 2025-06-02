@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2017 Adobe
+ * All Rights Reserved.
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
@@ -265,5 +265,13 @@
                 <item name="crontab/default/jobs/analytics_subscribe/schedule/cron_expr" xsi:type="string">1</item>
             </argument>
         </arguments>
+    </type>
+    <type name="Magento\Analytics\ReportXml\ConnectionFactory">
+        <arguments>
+            <argument name="connectionFactory" xsi:type="object">Magento\Framework\Model\ResourceModel\Type\Db\ConnectionFactory</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Integration\Model\Validator\BearerTokenValidator">
+        <plugin name="allow_bearer_token" type="Magento\Analytics\Plugin\BearerTokenValidatorPlugin"/>
     </type>
 </config>

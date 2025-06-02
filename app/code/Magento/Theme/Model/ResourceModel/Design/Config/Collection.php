@@ -36,8 +36,8 @@ class Collection extends ConfigCollection
         FetchStrategyInterface $fetchStrategy,
         ManagerInterface $eventManager,
         ValueProcessor $valueProcessor,
-        AdapterInterface $connection = null,
-        AbstractDb $resource = null
+        ?AdapterInterface $connection = null,
+        ?AbstractDb $resource = null
     ) {
         $this->valueProcessor = $valueProcessor;
         parent::__construct($entityFactory, $logger, $fetchStrategy, $eventManager, $connection, $resource);
@@ -77,12 +77,13 @@ class Collection extends ConfigCollection
                 'value',
                 $this->valueProcessor->process(
                     $item->getData('value'),
-                    $this->getData('scope'),
-                    $this->getData('scope_id'),
+                    $item->getData('scope'),
+                    $item->getData('scope_id'),
                     $item->getData('path')
                 )
             );
         }
-        parent::_afterLoad();
+
+        return parent::_afterLoad();
     }
 }

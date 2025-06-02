@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2017 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -166,6 +166,7 @@ class ProductViewCounterTest extends TestCase
     {
         $productMock = $this->getMockBuilder(ProductInterface::class)
             ->disableOriginalConstructor()
+            ->addMethods(['isAvailable'])
             ->getMockForAbstractClass();
         $productRendererMock = $this->getMockBuilder(ProductRenderInterface::class)
             ->disableOriginalConstructor()
@@ -173,7 +174,6 @@ class ProductViewCounterTest extends TestCase
         $storeMock = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
             ->getMock();
-
         $this->registryMock->expects($this->once())
             ->method('registry')
             ->with('product')

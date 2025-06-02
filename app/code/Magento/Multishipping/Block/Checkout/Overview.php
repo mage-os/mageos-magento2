@@ -1,11 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2011 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Multishipping\Block\Checkout;
 
+use Magento\Captcha\Block\Captcha;
+use Magento\Checkout\Model\CaptchaPaymentProcessingRateLimiter;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Checkout\Helper\Data as CheckoutHelper;
@@ -17,7 +19,6 @@ use Magento\Store\Model\ScopeInterface;
  * Multishipping checkout overview information
  *
  * @api
- * @author Magento Core Team <core@magentocommerce.com>
  * @since  100.0.2
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
@@ -26,7 +27,7 @@ class Overview extends \Magento\Sales\Block\Items\AbstractItems
     /**
      * Block alias fallback
      */
-    const DEFAULT_TYPE = 'default';
+    public const DEFAULT_TYPE = 'default';
 
     /**
      * @var \Magento\Multishipping\Model\Checkout\Type\Multishipping
@@ -125,6 +126,21 @@ class Overview extends \Magento\Sales\Block\Items\AbstractItems
         $this->pageConfig->getTitle()->set(
             __('Review Order - %1', $this->pageConfig->getTitle()->getDefault())
         );
+        if (!$this->getChildBlock('captcha')) {
+            $this->addChild(
+                'captcha',
+                Captcha::class,
+                [
+                    'cacheable' => false,
+                    'after' => '-',
+                    'form_id' => CaptchaPaymentProcessingRateLimiter::CAPTCHA_FORM,
+                    'image_width' => 230,
+                    'image_height' => 230,
+                    'frontend_validation' => false
+                ]
+            );
+        }
+
         return parent::_prepareLayout();
     }
 
@@ -401,8 +417,9 @@ class Overview extends \Magento\Sales\Block\Items\AbstractItems
     /**
      * Get billin address totals
      *
-     * @return     mixed
+     * @return mixed
      * @deprecated 100.2.3
+     * @see nothing
      * typo in method name, see getBillingAddressTotals()
      */
     public function getBillinAddressTotals()

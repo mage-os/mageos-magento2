@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2016 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Catalog\Ui\DataProvider\Product\Form\Modifier;
 
@@ -118,6 +118,10 @@ class TierPrice extends AbstractModifier
                             'showLabel' => false,
                             'dataScope' => '',
                             'additionalClasses' => 'control-grouped',
+                            'imports' => [
+                                'currency' => '${ $.parentName }.website_id:currency',
+                                '__disableTmpl' => ['currency' => false],
+                            ],
                             'sortOrder' => isset($priceMeta['arguments']['data']['config']['sortOrder'])
                                 ? $priceMeta['arguments']['data']['config']['sortOrder'] : 40,
                         ],

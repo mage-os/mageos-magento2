@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2013 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\CatalogInventory\Model\Adminhtml\Stock;
 
@@ -22,8 +22,8 @@ use Magento\Catalog\Model\Product;
  * @since 100.0.2
  *
  * @deprecated 100.3.0 Replaced with Multi Source Inventory
- * @link https://devdocs.magento.com/guides/v2.3/inventory/index.html
- * @link https://devdocs.magento.com/guides/v2.3/inventory/catalog-inventory-replacements.html
+ * @link https://developer.adobe.com/commerce/webapi/rest/inventory/index.html
+ * @link https://developer.adobe.com/commerce/webapi/rest/inventory/inventory-api-reference.html
  */
 class Item extends \Magento\CatalogInventory\Model\Stock\Item implements IdentityInterface
 {
@@ -59,8 +59,8 @@ class Item extends \Magento\CatalogInventory\Model\Stock\Item implements Identit
         StockRegistryInterface $stockRegistry,
         StockItemRepositoryInterface $stockItemRepository,
         GroupManagementInterface $groupManagement,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        ?\Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        ?\Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         parent::__construct(

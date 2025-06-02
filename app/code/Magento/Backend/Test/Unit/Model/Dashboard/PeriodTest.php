@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -37,6 +37,7 @@ class PeriodTest extends TestCase
     {
         $this->assertEquals(
             [
+                Period::PERIOD_TODAY => (string)__('Today'),
                 Period::PERIOD_24_HOURS => (string)__('Last 24 Hours'),
                 Period::PERIOD_7_DAYS => (string)__('Last 7 Days'),
                 Period::PERIOD_1_MONTH => (string)__('Current Month'),

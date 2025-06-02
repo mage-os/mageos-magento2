@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -66,7 +66,7 @@ class SelectTest extends TestCase
         ];
         $configMock->expects($this->once())->method('getAll')->willReturn($config);
         $methods = ['getTitle', 'getType', 'getPriceType', 'getPrice', 'getData'];
-        $this->valueMock = $this->createPartialMock(Option::class, $methods, []);
+        $this->valueMock = $this->createPartialMock(Option::class, $methods);
         $this->validator = new Select(
             $configMock,
             $priceConfigMock,
@@ -98,7 +98,7 @@ class SelectTest extends TestCase
     /**
      * @return array
      */
-    public function isValidSuccessDataProvider()
+    public static function isValidSuccessDataProvider()
     {
         return [
             [
@@ -194,7 +194,7 @@ class SelectTest extends TestCase
     /**
      * @return array
      */
-    public function isValidateWithInvalidDataDataProvider()
+    public static function isValidateWithInvalidDataDataProvider()
     {
         return [
             'invalid_price_type' => ['some_value', '10', 'Title'],

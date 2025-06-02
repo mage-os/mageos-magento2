@@ -49,7 +49,7 @@ class Layout extends Template implements RendererInterface
         \Magento\Backend\Block\Template\Context $context,
         \Magento\Catalog\Model\Product\Type $productType,
         array $data = [],
-        Json $serializer = null
+        ?Json $serializer = null
     ) {
         $this->_productType = $productType;
         $this->serializer = $serializer ?: ObjectManager::getInstance()->get(Json::class);
@@ -310,25 +310,6 @@ class Layout extends Template implements RendererInterface
                 'label' => __('Add Layout Update'),
                 'onclick' => 'WidgetInstance.addPageGroup({})',
                 'class' => 'action-add',
-            ]
-        );
-        return $button->toHtml();
-    }
-
-    /**
-     * Retrieve remove layout button html
-     *
-     * @return string
-     */
-    public function getRemoveLayoutButtonHtml()
-    {
-        $button = $this->getLayout()->createBlock(
-            \Magento\Backend\Block\Widget\Button::class
-        )->setData(
-            [
-                'label' => $this->escapeHtmlAttr(__('Remove Layout Update')),
-                'onclick' => 'WidgetInstance.removePageGroup(this)',
-                'class' => 'action-delete',
             ]
         );
         return $button->toHtml();

@@ -35,7 +35,7 @@ class Action extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Abstract
         \Magento\Backend\Block\Context $context,
         \Magento\Framework\Registry $registry,
         array $data = [],
-        Escaper $escaper = null
+        ?Escaper $escaper = null
     ) {
         $this->_coreRegistry = $registry;
         $this->escaper = $escaper ?? ObjectManager::getInstance()->get(
@@ -60,7 +60,7 @@ class Action extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Abstract
                     'newsletter/template/preview',
                     [
                         'id' => $row->getTemplateId(),
-                        'subscriber' => $this->_coreRegistry->registry('subscriber')->getId()
+                        'subscriber' => $row->getSubscriberId(),
                     ]
                 ),
                 'target' => '_blank',

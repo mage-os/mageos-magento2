@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -100,5 +100,23 @@ class TaxClassProcessorTest extends TestCase
     {
         $taxClassId = $this->taxClassProcessor->upsertTaxClass('noExistClassName', $this->product);
         $this->assertEquals(self::TEST_JUST_CREATED_TAX_CLASS_ID, $taxClassId);
+    }
+
+    public function testUpsertTaxClassExistCaseInsensitive()
+    {
+        $taxClassId = $this->taxClassProcessor->upsertTaxClass(strtoupper(self::TEST_TAX_CLASS_NAME), $this->product);
+        $this->assertEquals(self::TEST_TAX_CLASS_ID, $taxClassId);
+    }
+
+    public function testUpsertTaxClassNone()
+    {
+        $taxClassId = $this->taxClassProcessor->upsertTaxClass('none', $this->product);
+        $this->assertEquals(0, $taxClassId);
+    }
+
+    public function testUpsertTaxClassZero()
+    {
+        $taxClassId = $this->taxClassProcessor->upsertTaxClass(0, $this->product);
+        $this->assertEquals(0, $taxClassId);
     }
 }

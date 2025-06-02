@@ -1,10 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2013 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Backend\Block\Dashboard;
 
+use Magento\Directory\Model\Currency;
 use Magento\Store\Model\Store;
 
 /**
@@ -20,9 +21,14 @@ class Bar extends \Magento\Backend\Block\Dashboard\AbstractDashboard
     protected $_totals = [];
 
     /**
-     * @var \Magento\Directory\Model\Currency|null
+     * @var Currency|null
      */
     protected $_currentCurrencyCode = null;
+
+    /**
+     * @var Currency
+     */
+    private $_currency;
 
     /**
      * Get totals
@@ -67,7 +73,7 @@ class Bar extends \Magento\Backend\Block\Dashboard\AbstractDashboard
     /**
      * Setting currency model
      *
-     * @param \Magento\Directory\Model\Currency $currency
+     * @param Currency $currency
      * @return void
      */
     public function setCurrency($currency)
@@ -78,7 +84,7 @@ class Bar extends \Magento\Backend\Block\Dashboard\AbstractDashboard
     /**
      * Retrieve currency model if not set then return currency model for current store
      *
-     * @return \Magento\Directory\Model\Currency
+     * @return Currency
      * @SuppressWarnings(PHPMD.RequestAwareBlockMethod)
      */
     public function getCurrency()

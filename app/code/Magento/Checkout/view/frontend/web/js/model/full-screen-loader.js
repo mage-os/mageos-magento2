@@ -1,6 +1,6 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 
 define([
@@ -27,7 +27,7 @@ define([
          */
         stopLoader: function (forceStop) {
             var $elem = $(containerId),
-                stop = $elem.trigger.bind($elem, 'processStop');
+                stop = $elem.trigger.bind($elem, 'processStop'); //eslint-disable-line jquery-no-bind-unbind
 
             forceStop ? stop() : resolver(stop);
         }

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2016 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -50,8 +50,7 @@ class CatalogEavValidationRulesTest extends TestCase
         $attribute->expects($this->once())
             ->method('getFrontendInput')
             ->willReturn($frontendInput);
-        $attribute->expects($this->once())
-            ->method('getFrontendClass')
+        $attribute->method('getFrontendClass')
             ->willReturn($frontendClass);
 
         $this->assertEquals($expectedResult, $this->catalogEavValidationRules->build($attribute, $eavConfig));
@@ -60,7 +59,7 @@ class CatalogEavValidationRulesTest extends TestCase
     /**
      * @return array
      */
-    public function buildDataProvider()
+    public static function buildDataProvider()
     {
         $data['required'] = true;
 

@@ -1,8 +1,7 @@
 <?php
 /**
- *
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -95,7 +94,7 @@ class LinksListTest extends TestCase
         $this->selectionMock->expects($this->once())
             ->method('getSelectionPriceType')
             ->willReturn('selection_price_type');
-        $this->selectionMock->expects($this->once())->method('getSelectionPriceValue')->willReturn(12);
+        $this->selectionMock->expects($this->exactly(2))->method('getSelectionPriceValue')->willReturn(12);
         $this->selectionMock->expects($this->once())->method('getData')->willReturn(['some data']);
         $this->selectionMock->expects($this->once())->method('getSelectionId')->willReturn($selectionId);
         $this->selectionMock->expects($this->once())->method('getIsDefault')->willReturn(true);

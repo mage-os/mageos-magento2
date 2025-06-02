@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -25,6 +25,7 @@ use Magento\Review\Model\Rating;
 use Magento\Review\Model\RatingFactory;
 use Magento\Review\Model\Review;
 use Magento\Review\Model\ReviewFactory;
+use Magento\Review\Model\Review\Config;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -122,6 +123,13 @@ class PostTest extends TestCase
     protected $resultRedirectMock;
 
     /**
+     * @var Config|MockObject
+     */
+    protected $reviewsConfig;
+
+    /**
+     * @inheritDoc
+     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     protected function setUp(): void
@@ -132,6 +140,10 @@ class PostTest extends TestCase
         $this->formKeyValidator = $this->createPartialMock(
             Validator::class,
             ['validate']
+        );
+        $this->reviewsConfig = $this->createPartialMock(
+            Config::class,
+            ['isEnabled']
         );
         $this->reviewSession = $this->getMockBuilder(Generic::class)
             ->addMethods(['getFormData', 'getRedirectUrl'])
@@ -209,15 +221,17 @@ class PostTest extends TestCase
                 'customerSession' => $this->customerSession,
                 'ratingFactory' => $ratingFactory,
                 'storeManager' => $storeManager,
-                'context' => $this->context
+                'context' => $this->context,
+                'reviewsConfig' => $this->reviewsConfig
             ]
         );
     }
 
     /**
+     * @return void
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testExecute()
+    public function testExecute(): void
     {
         $reviewData = [
             'ratings' => [1 => 1],
@@ -231,15 +245,21 @@ class PostTest extends TestCase
         $this->formKeyValidator->expects($this->any())->method('validate')
             ->with($this->request)
             ->willReturn(true);
+        $this->reviewsConfig->expects($this->any())->method('isEnabled')
+            ->willReturn(true);
         $this->reviewSession->expects($this->any())->method('getFormData')
             ->with(true)
             ->willReturn($reviewData);
-        $this->request->expects($this->at(0))->method('getParam')
-            ->with('category', false)
-            ->willReturn(false);
-        $this->request->expects($this->at(1))->method('getParam')
-            ->with('id')
-            ->willReturn(1);
+        $this->request
+            ->method('getParam')
+            ->willReturnCallback(function ($arg1, $arg2) {
+                if ($arg1 == 'category' && $arg2 == false) {
+                    return false;
+                }
+                if ($arg1 == 'id') {
+                    return 1;
+                }
+            });
         $product = $this->createPartialMock(
             Product::class,
             ['__wakeup', 'isVisibleInCatalog', 'isVisibleInSiteVisibility', 'getId', 'getWebsiteIds']
@@ -262,12 +282,16 @@ class PostTest extends TestCase
         $this->productRepository->expects($this->any())->method('getById')
             ->with(1)
             ->willReturn($product);
-        $this->coreRegistry->expects($this->at(0))->method('register')
-            ->with('current_product', $product)
-            ->willReturnSelf();
-        $this->coreRegistry->expects($this->at(1))->method('register')
-            ->with('product', $product)
-            ->willReturnSelf();
+        $this->coreRegistry
+            ->method('register')
+            ->willReturnCallback(function ($arg1, $arg2) use ($product) {
+                if ($arg1 == 'current_product' && $arg2 == $product) {
+                    return $this->coreRegistry;
+                }
+                if ($arg1 == 'product' && $arg2 == $product) {
+                    return $this->coreRegistry;
+                }
+            });
         $this->review->expects($this->once())->method('setData')
             ->with($reviewData)
             ->willReturnSelf();

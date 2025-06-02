@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2017 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -21,28 +21,34 @@ use Magento\Setup\Validator\RedisConnectionValidator;
  */
 class Cache implements ConfigOptionsListInterface
 {
-    const INPUT_VALUE_CACHE_REDIS = 'redis';
-    const CONFIG_VALUE_CACHE_REDIS = \Magento\Framework\Cache\Backend\Redis::class;
+    public const INPUT_VALUE_CACHE_REDIS = 'redis';
+    public const CONFIG_VALUE_CACHE_REDIS = \Magento\Framework\Cache\Backend\Redis::class;
 
-    const INPUT_KEY_CACHE_BACKEND = 'cache-backend';
-    const INPUT_KEY_CACHE_BACKEND_REDIS_SERVER = 'cache-backend-redis-server';
-    const INPUT_KEY_CACHE_BACKEND_REDIS_DATABASE = 'cache-backend-redis-db';
-    const INPUT_KEY_CACHE_BACKEND_REDIS_PORT = 'cache-backend-redis-port';
-    const INPUT_KEY_CACHE_BACKEND_REDIS_PASSWORD = 'cache-backend-redis-password';
-    const INPUT_KEY_CACHE_BACKEND_REDIS_COMPRESS_DATA = 'cache-backend-redis-compress-data';
-    const INPUT_KEY_CACHE_BACKEND_REDIS_COMPRESSION_LIB = 'cache-backend-redis-compression-lib';
-    const INPUT_KEY_CACHE_ID_PREFIX = 'cache-id-prefix';
-    const INPUT_KEY_CACHE_ALLOW_PARALLEL_CACHE_GENERATION = 'allow-parallel-generation';
+    public const INPUT_KEY_CACHE_BACKEND = 'cache-backend';
+    public const INPUT_KEY_CACHE_BACKEND_REDIS_SERVER = 'cache-backend-redis-server';
+    public const INPUT_KEY_CACHE_BACKEND_REDIS_DATABASE = 'cache-backend-redis-db';
+    public const INPUT_KEY_CACHE_BACKEND_REDIS_PORT = 'cache-backend-redis-port';
+    public const INPUT_KEY_CACHE_BACKEND_REDIS_PASSWORD = 'cache-backend-redis-password';
+    public const INPUT_KEY_CACHE_BACKEND_REDIS_COMPRESS_DATA = 'cache-backend-redis-compress-data';
+    public const INPUT_KEY_CACHE_BACKEND_REDIS_COMPRESSION_LIB = 'cache-backend-redis-compression-lib';
+    public const INPUT_KEY_CACHE_BACKEND_REDIS_LUA_KEY = 'cache-backend-redis-lua-key';
+    public const INPUT_KEY_CACHE_BACKEND_REDIS_USE_LUA = 'cache-backend-redis-use-lua';
+    public const INPUT_KEY_CACHE_BACKEND_REDIS_USE_LUA_ON_GC = 'cache-backend-redis-use-lua-on-gc';
+    public const INPUT_KEY_CACHE_ID_PREFIX = 'cache-id-prefix';
+    public const INPUT_KEY_CACHE_ALLOW_PARALLEL_CACHE_GENERATION = 'allow-parallel-generation';
 
-    const CONFIG_PATH_CACHE_BACKEND = 'cache/frontend/default/backend';
-    const CONFIG_PATH_CACHE_BACKEND_SERVER = 'cache/frontend/default/backend_options/server';
-    const CONFIG_PATH_CACHE_BACKEND_DATABASE = 'cache/frontend/default/backend_options/database';
-    const CONFIG_PATH_CACHE_BACKEND_PORT = 'cache/frontend/default/backend_options/port';
-    const CONFIG_PATH_CACHE_BACKEND_PASSWORD = 'cache/frontend/default/backend_options/password';
-    const CONFIG_PATH_CACHE_BACKEND_COMPRESS_DATA = 'cache/frontend/default/backend_options/compress_data';
-    const CONFIG_PATH_CACHE_BACKEND_COMPRESSION_LIB = 'cache/frontend/default/backend_options/compression_lib';
-    const CONFIG_PATH_CACHE_ID_PREFIX = 'cache/frontend/default/id_prefix';
-    const CONFIG_PATH_ALLOW_PARALLEL_CACHE_GENERATION = 'cache/allow_parallel_generation';
+    public const CONFIG_PATH_CACHE_BACKEND = 'cache/frontend/default/backend';
+    public const CONFIG_PATH_CACHE_BACKEND_SERVER = 'cache/frontend/default/backend_options/server';
+    public const CONFIG_PATH_CACHE_BACKEND_DATABASE = 'cache/frontend/default/backend_options/database';
+    public const CONFIG_PATH_CACHE_BACKEND_PORT = 'cache/frontend/default/backend_options/port';
+    public const CONFIG_PATH_CACHE_BACKEND_PASSWORD = 'cache/frontend/default/backend_options/password';
+    public const CONFIG_PATH_CACHE_BACKEND_COMPRESS_DATA = 'cache/frontend/default/backend_options/compress_data';
+    public const CONFIG_PATH_CACHE_BACKEND_COMPRESSION_LIB = 'cache/frontend/default/backend_options/compression_lib';
+    public const CONFIG_PATH_CACHE_BACKEND_LUA_KEY = 'cache/frontend/default/backend_options/_useLua';
+    public const CONFIG_PATH_CACHE_BACKEND_USE_LUA = 'cache/frontend/default/backend_options/use_lua';
+    public const CONFIG_PATH_CACHE_BACKEND_USE_LUA_ON_GC = 'cache/frontend/default/backend_options/use_lua_on_gc';
+    public const CONFIG_PATH_CACHE_ID_PREFIX = 'cache/frontend/default/id_prefix';
+    public const CONFIG_PATH_ALLOW_PARALLEL_CACHE_GENERATION = 'cache/allow_parallel_generation';
 
     /**
      * @var array
@@ -55,6 +61,8 @@ class Cache implements ConfigOptionsListInterface
         self::INPUT_KEY_CACHE_BACKEND_REDIS_COMPRESS_DATA => '1',
         self::INPUT_KEY_CACHE_BACKEND_REDIS_COMPRESSION_LIB => '',
         self::INPUT_KEY_CACHE_ALLOW_PARALLEL_CACHE_GENERATION => 'false',
+        self::INPUT_KEY_CACHE_BACKEND_REDIS_USE_LUA => '0',
+        self::INPUT_KEY_CACHE_BACKEND_REDIS_USE_LUA_ON_GC => '1'
     ];
 
     /**
@@ -75,6 +83,8 @@ class Cache implements ConfigOptionsListInterface
         self::INPUT_KEY_CACHE_BACKEND_REDIS_COMPRESS_DATA => self::CONFIG_PATH_CACHE_BACKEND_COMPRESS_DATA,
         self::INPUT_KEY_CACHE_BACKEND_REDIS_COMPRESSION_LIB => self::CONFIG_PATH_CACHE_BACKEND_COMPRESSION_LIB,
         self::INPUT_KEY_CACHE_ALLOW_PARALLEL_CACHE_GENERATION => self::CONFIG_PATH_ALLOW_PARALLEL_CACHE_GENERATION,
+        self::INPUT_KEY_CACHE_BACKEND_REDIS_USE_LUA => self::CONFIG_PATH_CACHE_BACKEND_USE_LUA,
+        self::INPUT_KEY_CACHE_BACKEND_REDIS_USE_LUA_ON_GC=> self::CONFIG_PATH_CACHE_BACKEND_USE_LUA_ON_GC,
     ];
 
     /**
@@ -142,6 +152,18 @@ class Cache implements ConfigOptionsListInterface
                 'Compression lib to use [snappy,lzf,l4z,zstd,gzip] (leave blank to determine automatically)'
             ),
             new TextConfigOption(
+                self::INPUT_KEY_CACHE_BACKEND_REDIS_USE_LUA,
+                TextConfigOption::FRONTEND_WIZARD_TEXT,
+                self::CONFIG_PATH_CACHE_BACKEND_USE_LUA,
+                'Set to 1 to enable lua (default is 0, disabled)'
+            ),
+            new TextConfigOption(
+                self::INPUT_KEY_CACHE_BACKEND_REDIS_USE_LUA_ON_GC,
+                TextConfigOption::FRONTEND_WIZARD_TEXT,
+                self::CONFIG_PATH_CACHE_BACKEND_USE_LUA_ON_GC,
+                'Set to 0 to disable lua on garbage collection (default is 1, enabled)'
+            ),
+            new TextConfigOption(
                 self::INPUT_KEY_CACHE_ID_PREFIX,
                 TextConfigOption::FRONTEND_WIZARD_TEXT,
                 self::CONFIG_PATH_CACHE_ID_PREFIX,
@@ -163,7 +185,7 @@ class Cache implements ConfigOptionsListInterface
         $configData = new ConfigData(ConfigFilePool::APP_ENV);
         if (isset($options[self::INPUT_KEY_CACHE_ID_PREFIX])) {
             $configData->set(self::CONFIG_PATH_CACHE_ID_PREFIX, $options[self::INPUT_KEY_CACHE_ID_PREFIX]);
-        } else {
+        } elseif (!$deploymentConfig->get(self::CONFIG_PATH_CACHE_ID_PREFIX)) {
             $configData->set(self::CONFIG_PATH_CACHE_ID_PREFIX, $this->generateCachePrefix());
         }
 
@@ -293,6 +315,7 @@ class Cache implements ConfigOptionsListInterface
      */
     private function generateCachePrefix(): string
     {
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         return substr(\hash('sha256', dirname(__DIR__, 6)), 0, 3) . '_';
     }
 }

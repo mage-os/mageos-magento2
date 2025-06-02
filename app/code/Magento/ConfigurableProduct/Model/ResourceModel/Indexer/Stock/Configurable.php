@@ -43,7 +43,7 @@ class Configurable extends \Magento\CatalogInventory\Model\ResourceModel\Indexer
         \Magento\Eav\Model\Config $eavConfig,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         $connectionName = null,
-        \Magento\Catalog\Model\ResourceModel\Indexer\ActiveTableSwitcher $activeTableSwitcher = null
+        ?\Magento\Catalog\Model\ResourceModel\Indexer\ActiveTableSwitcher $activeTableSwitcher = null
     ) {
         parent::__construct($context, $tableStrategy, $eavConfig, $scopeConfig, $connectionName);
         $this->activeTableSwitcher = $activeTableSwitcher ?: ObjectManager::getInstance()->get(
@@ -101,7 +101,7 @@ class Configurable extends \Magento\CatalogInventory\Model\ResourceModel\Indexer
         $select->columns(['status' => $stockStatusExpr]);
 
         if ($entityIds !== null) {
-            $select->where('e.entity_id IN(?)', $entityIds);
+            $select->where('e.entity_id IN(?)', $entityIds, \Zend_Db::INT_TYPE);
         }
 
         return $select;

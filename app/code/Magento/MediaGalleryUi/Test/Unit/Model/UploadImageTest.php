@@ -69,7 +69,7 @@ class UploadImageTest extends TestCase
      *
      * @dataProvider executeDataProvider
      */
-    public function testExecute(string $targetFolder, string $type = null, string $absolutePath): void
+    public function testExecute(string $targetFolder, ?string $type, string $absolutePath): void
     {
         $this->fileSystemMock->expects($this->once())
             ->method('getDirectoryRead')
@@ -123,13 +123,13 @@ class UploadImageTest extends TestCase
      *
      * @return array
      */
-    public function executeDataProvider(): array
+    public static function executeDataProvider(): array
     {
         return [
             [
                 'targetFolder' => 'media/catalog',
                 'type' => 'image',
-                'absolutePath' => 'root/pub/media/catalog/test-image.jpeg'
+                'absolutePath' => 'root/media/catalog/test-image.jpeg'
             ]
         ];
     }

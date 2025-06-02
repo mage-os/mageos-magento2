@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Catalog\Ui\Component\Listing;
 
@@ -22,6 +22,11 @@ class Columns extends \Magento\Ui\Component\Listing\Columns
      * @var \Magento\Catalog\Ui\Component\Listing\Attribute\RepositoryInterface
      */
     protected $attributeRepository;
+
+    /**
+     * @var \Magento\Catalog\Ui\Component\ColumnFactory
+     */
+    private $columnFactory;
 
     /**
      * @var array

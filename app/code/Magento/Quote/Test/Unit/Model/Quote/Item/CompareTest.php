@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -13,6 +13,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Quote\Model\Quote\Item;
 use Magento\Quote\Model\Quote\Item\Compare;
 use Magento\Quote\Model\Quote\Item\Option;
+use Magento\Quote\Model\Quote\Item\Option\Comparator;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -51,15 +52,22 @@ class CompareTest extends TestCase
      */
     protected function setUp(): void
     {
+        $objectManagerHelper = new ObjectManager($this);
+        $constrArgs = $objectManagerHelper->getConstructArguments(
+            Item::class,
+            [
+                'itemOptionComparator' => new Comparator()
+            ]
+        );
         $this->itemMock = $this->getMockBuilder(Item::class)
             ->addMethods(['getProductId'])
-            ->onlyMethods(['__wakeup', 'getOptions', 'getOptionsByCode'])
-            ->disableOriginalConstructor()
+            ->onlyMethods(['__wakeup', 'getOptions', 'getOptionsByCode', 'getSku'])
+            ->setConstructorArgs($constrArgs)
             ->getMock();
         $this->comparedMock = $this->getMockBuilder(Item::class)
             ->addMethods(['getProductId'])
-            ->onlyMethods(['__wakeup', 'getOptions', 'getOptionsByCode'])
-            ->disableOriginalConstructor()
+            ->onlyMethods(['__wakeup', 'getOptions', 'getOptionsByCode', 'getSku'])
+            ->setConstructorArgs($constrArgs)
             ->getMock();
         $this->optionMock = $this->getMockBuilder(Option::class)
             ->addMethods(['getCode'])
@@ -67,7 +75,7 @@ class CompareTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $serializer = $this->getMockBuilder(Json::class)
-            ->setMethods(['unserialize'])
+            ->onlyMethods(['unserialize'])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
         $serializer->expects($this->any())
@@ -82,7 +90,6 @@ class CompareTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $objectManagerHelper = new ObjectManager($this);
         $this->helper = $objectManagerHelper->getObject(
             Compare::class,
             [

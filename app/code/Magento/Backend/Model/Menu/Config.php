@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2013 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Backend\Model\Menu;
 
@@ -62,6 +62,11 @@ class Config
      * @var \Magento\Framework\App\State
      */
     protected $_appState;
+
+    /**
+     * @var Builder
+     */
+    private $_menuBuilder;
 
     /**
      * @param \Magento\Backend\Model\Menu\Builder $menuBuilder

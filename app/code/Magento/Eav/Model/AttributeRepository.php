@@ -69,7 +69,7 @@ class AttributeRepository implements \Magento\Eav\Api\AttributeRepositoryInterfa
         \Magento\Eav\Api\Data\AttributeSearchResultsInterfaceFactory $searchResultsFactory,
         \Magento\Eav\Model\Entity\AttributeFactory $attributeFactory,
         \Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface $joinProcessor,
-        CollectionProcessorInterface $collectionProcessor = null
+        ?CollectionProcessorInterface $collectionProcessor = null
     ) {
         $this->eavConfig = $eavConfig;
         $this->eavResource = $eavResource;
@@ -88,7 +88,7 @@ class AttributeRepository implements \Magento\Eav\Api\AttributeRepositoryInterfa
         try {
             $this->eavResource->save($attribute);
         } catch (\Exception $e) {
-            throw new StateException(__("The attribute can't be saved."));
+            throw new StateException(__("The attribute can't be saved."), $e);
         }
         return $attribute;
     }

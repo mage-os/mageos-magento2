@@ -1,8 +1,8 @@
 <?php
 
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -105,15 +105,15 @@ class OptionTest extends TestCase
         $this->quoteItemMock->expects($this->any())->method('getStore')->willReturn($store);
 
         $this->stockItemMock = $this->getMockBuilder(StockItemInterface::class)
-            ->setMethods(
+            ->addMethods(
                 [
                     'setIsChildItem',
                     'setSuppressCheckQtyIncrements',
                     'unsIsChildItem',
-                    'getItemId',
                     'setProductName'
                 ]
             )
+            ->onlyMethods(['getItemId'])
             ->getMockForAbstractClass();
         $this->productMock = $this->createPartialMock(Product::class, ['getId', 'getStore']);
         $store = $this->createPartialMock(Store::class, ['getWebsiteId']);
@@ -125,7 +125,14 @@ class OptionTest extends TestCase
         );
         $this->resultMock = $this->getMockBuilder(DataObject::class)
             ->addMethods(
-                ['getItemIsQtyDecimal', 'getHasQtyOptionUpdate', 'getOrigQty', 'getMessage', 'getItemBackorders']
+                [
+                    'getItemIsQtyDecimal',
+                    'getHasQtyOptionUpdate',
+                    'getOrigQty',
+                    'getMessage',
+                    'getItemBackorders',
+                    'getItemQty'
+                ]
             )
             ->disableOriginalConstructor()
             ->getMock();
@@ -217,6 +224,7 @@ class OptionTest extends TestCase
         $this->optionMock->expects($this->once())->method('setBackorders')->with('backorders');
 
         $this->stockItemMock->expects($this->once())->method('unsIsChildItem');
+        $this->resultMock->expects($this->once())->method('getItemQty')->willReturn($qty);
         $this->validator->initialize($this->optionMock, $this->quoteItemMock, $qty);
     }
 

@@ -1,8 +1,7 @@
 <?php
 /**
- *
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -31,11 +30,6 @@ class AfterProductLoadTest extends TestCase
     protected $productMock;
 
     /**
-     * @var ProductExtensionFactory|MockObject
-     */
-    protected $productExtensionFactoryMock;
-
-    /**
      * @var ProductExtensionInterface|MockObject
      */
     protected $productExtensionMock;
@@ -43,16 +37,9 @@ class AfterProductLoadTest extends TestCase
     protected function setUp(): void
     {
         $stockRegistryMock = $this->getMockForAbstractClass(StockRegistryInterface::class);
-        $this->productExtensionFactoryMock = $this->getMockBuilder(
-            ProductExtensionFactory::class
-        )
-            ->setMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
 
         $this->plugin = new AfterProductLoad(
-            $stockRegistryMock,
-            $this->productExtensionFactoryMock
+            $stockRegistryMock
         );
 
         $productId = 5494;
@@ -64,7 +51,7 @@ class AfterProductLoadTest extends TestCase
             ->willReturn($stockItemMock);
 
         $this->productExtensionMock = $this->getMockBuilder(ProductExtensionInterface::class)
-            ->setMethods(['setStockItem'])
+            ->addMethods(['setStockItem'])
             ->getMockForAbstractClass();
         $this->productExtensionMock->expects($this->once())
             ->method('setStockItem')
@@ -88,8 +75,6 @@ class AfterProductLoadTest extends TestCase
         $this->productMock->expects($this->once())
             ->method('getExtensionAttributes')
             ->willReturn($this->productExtensionMock);
-        $this->productExtensionFactoryMock->expects($this->never())
-            ->method('create');
 
         $this->assertEquals(
             $this->productMock,
