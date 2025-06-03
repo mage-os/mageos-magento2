@@ -264,7 +264,11 @@ class Queue
             && ($this->maxProcesses < 2 || (count($this->inProgress) < $this->maxProcesses))
         ) {
             if (!isset($packages[$name])) {
-                $this->logger->debug('Preventing duplicate execution of package as it is in progress: ' . $package->getPath() . ' (pid: ' . $this->getPid($package) . ')');
+                $this->logger->debug(sprintf(
+                    'Preventing duplicate execution of package as it is in progress: %s (pid: %s)',
+                    $package->getPath(),
+                    $this->getPid($package)
+                ));
                 return;
             }
             unset($packages[$name]);
