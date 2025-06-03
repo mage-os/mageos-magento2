@@ -89,7 +89,6 @@ class ListProduct extends AbstractProduct implements IdentityInterface
      * @param array $data
      * @param OutputHelper|null $outputHelper
      * @param SpecialPriceBulkResolverInterface|null $specialPriceBulkResolver
-     * @param ResponseHttp|null $response
      */
     public function __construct(
         Context $context,

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2017 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Elasticsearch\ElasticAdapter\SearchAdapter;
 
@@ -48,23 +48,6 @@ class Adapter implements AdapterInterface
      * @var QueryContainerFactory
      */
     private $queryContainerFactory;
-
-    /**
-     * Empty response from Elasticsearch.
-     *
-     * @var array
-     */
-    private static $emptyRawResponse = [
-        'hits' => [
-            'hits' => []
-        ],
-        'aggregations' => [
-            'price_bucket' => [],
-            'category_bucket' => [
-                'buckets' => []
-            ]
-        ]
-    ];
 
     /**
      * @var LoggerInterface

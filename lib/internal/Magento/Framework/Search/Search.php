@@ -6,7 +6,6 @@
 namespace Magento\Framework\Search;
 
 use Magento\AdvancedSearch\Model\Client\ClientException;
-use Magento\Elasticsearch\SearchAdapter\ResponseFactory;
 use Magento\Framework\Api\Search\SearchInterface;
 use Magento\Framework\Api\Search\SearchCriteriaInterface;
 use Magento\Framework\App\ScopeResolverInterface;
@@ -39,34 +38,25 @@ class Search implements SearchInterface
     private SearchResponseBuilder $searchResponseBuilder;
 
     /**
-     * @var ResponseFactory
-     */
-    private ResponseFactory $responseFactory;
-
-    /**
      * @param Builder $requestBuilder
      * @param ScopeResolverInterface $scopeResolver
      * @param SearchEngineInterface $searchEngine
      * @param SearchResponseBuilder $searchResponseBuilder
-     * @param ResponseFactory $responseFactory
      */
     public function __construct(
         Builder $requestBuilder,
         ScopeResolverInterface $scopeResolver,
         SearchEngineInterface $searchEngine,
         SearchResponseBuilder $searchResponseBuilder,
-        ResponseFactory $responseFactory
     ) {
         $this->requestBuilder = $requestBuilder;
         $this->scopeResolver = $scopeResolver;
         $this->searchEngine = $searchEngine;
         $this->searchResponseBuilder = $searchResponseBuilder;
-        $this->responseFactory = $responseFactory;
     }
 
     /**
      * @inheritdoc
-     * @throws LocalizedException
      */
     public function search(SearchCriteriaInterface $searchCriteria)
     {
