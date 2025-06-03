@@ -23,7 +23,7 @@ class SpecialPrice extends AbstractPrice implements SpecialPriceInterface, BaseP
     /**
      * Price type special
      */
-    public const string PRICE_CODE = 'special_price';
+    const PRICE_CODE = 'special_price';
 
     /**
      * @var TimezoneInterface
