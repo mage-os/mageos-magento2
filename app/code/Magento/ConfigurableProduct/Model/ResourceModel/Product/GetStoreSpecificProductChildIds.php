@@ -82,7 +82,6 @@ class GetStoreSpecificProductChildIds extends AbstractDb
             ->where('cpsl.parent_id = ?', (int) $productData[$linkField])
             ->where('cpw.website_id = ?', $websiteId);
 
-        $result = $connection->fetchAll($select);
-        return array_column($result, 'product_id');
+        return $connection->fetchCol($select);
     }
 }
