@@ -22,12 +22,12 @@ class Products implements ResolverInterface
     /**
      * @var ProductQueryInterface
      */
-    private $searchQuery;
+    private ProductQueryInterface $searchQuery;
 
     /**
      * @var SearchCriteriaBuilder
      */
-    private $searchApiCriteriaBuilder;
+    private SearchCriteriaBuilder $searchApiCriteriaBuilder;
 
     /**
      * @param ProductQueryInterface $searchQuery
@@ -63,34 +63,47 @@ class Products implements ResolverInterface
                 'eq' => $value['id']
             ]
         ];
-        $searchResult = $this->searchQuery->getResult($args, $info, $context);
+        try {
+            $searchResult = $this->searchQuery->getResult($args, $info, $context);
 
-        //possible division by 0
-        if ($searchResult->getPageSize()) {
-            $maxPages = ceil($searchResult->getTotalCount() / $searchResult->getPageSize());
-        } else {
-            $maxPages = 0;
+            //possible division by 0
+            if ($searchResult->getPageSize()) {
+                $maxPages = ceil($searchResult->getTotalCount() / $searchResult->getPageSize());
+            } else {
+                $maxPages = 0;
+            }
+
+            $currentPage = $searchResult->getCurrentPage();
+            if ($searchResult->getCurrentPage() > $maxPages && $searchResult->getTotalCount() > 0) {
+                $currentPage = new GraphQlInputException(
+                    __(
+                        'currentPage value %1 specified is greater than the number of pages available.',
+                        [$maxPages]
+                    )
+                );
+            }
+
+            $data = [
+                'total_count' => $searchResult->getTotalCount(),
+                'items'       => $searchResult->getProductsSearchResult(),
+                'page_info'   => [
+                    'page_size'    => $searchResult->getPageSize(),
+                    'current_page' => $currentPage,
+                    'total_pages' => $maxPages
+                ]
+            ];
+        } catch (\Throwable) {
+            $data = [
+                'total_count' => 0,
+                'items'       => [],
+                'page_info'   => [
+                    'page_size'    => 0,
+                    'current_page' => 0,
+                    'total_pages' => 0
+                ]
+            ];
         }
 
-        $currentPage = $searchResult->getCurrentPage();
-        if ($searchResult->getCurrentPage() > $maxPages && $searchResult->getTotalCount() > 0) {
-            $currentPage = new GraphQlInputException(
-                __(
-                    'currentPage value %1 specified is greater than the number of pages available.',
-                    [$maxPages]
-                )
-            );
-        }
-
-        $data = [
-            'total_count' => $searchResult->getTotalCount(),
-            'items'       => $searchResult->getProductsSearchResult(),
-            'page_info'   => [
-                'page_size'    => $searchResult->getPageSize(),
-                'current_page' => $currentPage,
-                'total_pages' => $maxPages
-            ]
-        ];
         return $data;
     }
 }
