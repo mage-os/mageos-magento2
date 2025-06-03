@@ -6,11 +6,11 @@
 namespace Magento\Framework\Search;
 
 use Magento\AdvancedSearch\Model\Client\ClientException;
-use Magento\Elasticsearch\SearchAdapter\Aggregation\Builder as AggregationBuilder;
 use Magento\Elasticsearch\SearchAdapter\ResponseFactory;
 use Magento\Framework\Api\Search\SearchInterface;
 use Magento\Framework\Api\Search\SearchCriteriaInterface;
 use Magento\Framework\App\ScopeResolverInterface;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Search\Request\Builder;
 
 /**
@@ -44,36 +44,29 @@ class Search implements SearchInterface
     private ResponseFactory $responseFactory;
 
     /**
-     * @var AggregationBuilder
-     */
-    private AggregationBuilder $aggregationBuilder;
-
-    /**
      * @param Builder $requestBuilder
      * @param ScopeResolverInterface $scopeResolver
      * @param SearchEngineInterface $searchEngine
      * @param SearchResponseBuilder $searchResponseBuilder
      * @param ResponseFactory $responseFactory
-     * @param AggregationBuilder $aggregationBuilder
      */
     public function __construct(
         Builder $requestBuilder,
         ScopeResolverInterface $scopeResolver,
         SearchEngineInterface $searchEngine,
         SearchResponseBuilder $searchResponseBuilder,
-        ResponseFactory $responseFactory,
-        AggregationBuilder $aggregationBuilder
+        ResponseFactory $responseFactory
     ) {
         $this->requestBuilder = $requestBuilder;
         $this->scopeResolver = $scopeResolver;
         $this->searchEngine = $searchEngine;
         $this->searchResponseBuilder = $searchResponseBuilder;
         $this->responseFactory = $responseFactory;
-        $this->aggregationBuilder = $aggregationBuilder;
     }
 
     /**
      * @inheritdoc
+     * @throws LocalizedException
      */
     public function search(SearchCriteriaInterface $searchCriteria)
     {
@@ -106,15 +99,7 @@ class Search implements SearchInterface
             $response = $this->searchResponseBuilder->build($searchResponse)
                 ->setSearchCriteria($searchCriteria);
         } catch (ClientException $e) {
-            $aggregations = $this->aggregationBuilder->build($request, AdapterInterface::EMPTY_RAW_RESPONSE);
-            $response = $this->responseFactory->create(
-                [
-                    'documents' => [],
-                    'aggregations' => $aggregations,
-                    'total' => 0
-                ]
-            );
-            $response = $this->searchResponseBuilder->build($response)->setSearchCriteria($searchCriteria);
+            throw new LocalizedException(__('Could not perform search'), $e, $e->getCode());
         }
 
         return $response;

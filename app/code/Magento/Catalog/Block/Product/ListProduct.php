@@ -28,6 +28,7 @@ use Magento\Framework\Pricing\Render;
 use Magento\Framework\Url\Helper\Data;
 use Magento\Framework\App\ObjectManager;
 use Magento\Catalog\Helper\Output as OutputHelper;
+use Magento\Framework\App\Response\Http as ResponseHttp;
 
 /**
  * Product list
@@ -88,6 +89,7 @@ class ListProduct extends AbstractProduct implements IdentityInterface
      * @param array $data
      * @param OutputHelper|null $outputHelper
      * @param SpecialPriceBulkResolverInterface|null $specialPriceBulkResolver
+     * @param ResponseHttp|null $response
      */
     public function __construct(
         Context $context,
@@ -208,14 +210,16 @@ class ListProduct extends AbstractProduct implements IdentityInterface
         $this->addToolbarBlock($collection);
 
         if (!$collection->isLoaded()) {
-            $collection->load();
-        }
-
-        $categoryId = $this->getLayer()->getCurrentCategory()->getId();
-
-        if ($categoryId) {
-            foreach ($collection as $product) {
-                $product->setData('category_id', $categoryId);
+            try {
+                $products = $collection->getItems();
+                if ($categoryId = $this->getLayer()->getCurrentCategory()->getId()) {
+                    foreach ($products as $product) {
+                        $product->setData('category_id', $categoryId);
+                    }
+                }
+            } catch (\Throwable) {
+                $this->setData('has_error', true);
+                $this->_productCollection = [];
             }
         }
 
