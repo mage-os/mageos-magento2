@@ -53,7 +53,7 @@ class Filters
         $filtersData = [];
         /** @var AbstractFilter $filter */
         foreach ($this->filtersProvider->getFilters($layerType) as $filter) {
-            if ($this->isNeedToAddFilter($filter, $attributesToFilter)) {//here
+            if ($this->isNeedToAddFilter($filter, $attributesToFilter)) {
                 $filterGroup = [
                     'name' => (string)$filter->getName(),
                     'filter_items_count' => $filter->getItemsCount(),
