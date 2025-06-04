@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\PageCache\Model\App;
 
+use Magento\Framework\App\Cache\StateInterface;
 use Magento\Framework\App\PageCache\Identifier;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\ObjectManagerInterface;
@@ -48,16 +49,37 @@ class CacheIdentifierPluginTest extends TestCase
      */
     private $fixtures;
 
+    /**
+     * @var StateInterface
+     */
+    private $cacheState;
+
+    /**
+     * @var bool
+     */
+    private $originalCacheState;
+
     protected function setUp(): void
     {
         $this->objectManager = Bootstrap::getObjectManager();
         $this->request = $this->objectManager->get(Http::class);
         $this->identifier = $this->objectManager->get(Identifier::class);
         $this->fixtures = $this->objectManager->get(DataFixtureStorageManager::class)->getStorage();
+        $this->cacheState = $this->objectManager->get(StateInterface::class);
+
+        // Store original cache state
+        $this->originalCacheState = $this->cacheState->isEnabled(Type::TYPE_IDENTIFIER);
 
         // Enable the cache type
-        $this->objectManager->get(\Magento\Framework\App\Cache\StateInterface::class)
-            ->setEnabled(Type::TYPE_IDENTIFIER, true);
+        $this->cacheState->setEnabled(Type::TYPE_IDENTIFIER, true);
+    }
+
+    protected function tearDown(): void
+    {
+        // Revert cache state to original
+        if (isset($this->cacheState) && isset($this->originalCacheState)) {
+            $this->cacheState->setEnabled(Type::TYPE_IDENTIFIER, $this->originalCacheState);
+        }
     }
 
     /**
