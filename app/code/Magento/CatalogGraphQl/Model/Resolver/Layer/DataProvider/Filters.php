@@ -10,6 +10,7 @@ namespace Magento\CatalogGraphQl\Model\Resolver\Layer\DataProvider;
 use Magento\Catalog\Model\Layer\Filter\AbstractFilter;
 use Magento\CatalogGraphQl\Model\Resolver\Layer\FiltersProvider;
 use Magento\Catalog\Model\Layer\Filter\Item;
+use Magento\Framework\Exception\LocalizedException;
 
 /**
  * Layered navigation filters data provider.
@@ -52,7 +53,7 @@ class Filters
         $filtersData = [];
         /** @var AbstractFilter $filter */
         foreach ($this->filtersProvider->getFilters($layerType) as $filter) {
-            if ($this->isNeedToAddFilter($filter, $attributesToFilter)) {
+            if ($this->isNeedToAddFilter($filter, $attributesToFilter)) {//here
                 $filterGroup = [
                     'name' => (string)$filter->getName(),
                     'filter_items_count' => $filter->getItemsCount(),
@@ -76,11 +77,11 @@ class Filters
      * Check for adding filter to the list
      *
      * @param AbstractFilter $filter
-     * @param array $attributesToFilter
+     * @param array|null $attributesToFilter
      * @return bool
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws LocalizedException
      */
-    private function isNeedToAddFilter(AbstractFilter $filter, array $attributesToFilter): bool
+    private function isNeedToAddFilter(AbstractFilter $filter, ?array $attributesToFilter): bool
     {
         if ($attributesToFilter === null) {
             $result = (bool)$filter->getItemsCount();

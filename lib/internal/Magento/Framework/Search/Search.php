@@ -5,11 +5,9 @@
  */
 namespace Magento\Framework\Search;
 
-use Magento\AdvancedSearch\Model\Client\ClientException;
 use Magento\Framework\Api\Search\SearchInterface;
 use Magento\Framework\Api\Search\SearchCriteriaInterface;
 use Magento\Framework\App\ScopeResolverInterface;
-use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Search\Request\Builder;
 
 /**
@@ -83,14 +81,10 @@ class Search implements SearchInterface
         if (method_exists($this->requestBuilder, 'setSort')) {
             $this->requestBuilder->setSort($searchCriteria->getSortOrders());
         }
-        try {
-            $request = $this->requestBuilder->create();
-            $searchResponse = $this->searchEngine->search($request);
-            $response = $this->searchResponseBuilder->build($searchResponse)
-                ->setSearchCriteria($searchCriteria);
-        } catch (ClientException $e) {
-            throw new LocalizedException(__('Could not perform search'), $e, $e->getCode());
-        }
+        $request = $this->requestBuilder->create();
+        $searchResponse = $this->searchEngine->search($request);
+        $response = $this->searchResponseBuilder->build($searchResponse)
+            ->setSearchCriteria($searchCriteria);
 
         return $response;
     }
