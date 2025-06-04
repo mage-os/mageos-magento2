@@ -16,6 +16,7 @@ use Magento\Framework\Search\AdapterInterface;
 use Magento\Framework\Search\RequestInterface;
 use Magento\Framework\Search\Response\QueryResponse;
 use Magento\Search\Model\Search\PageSizeProvider;
+use OpenSearch\Common\Exceptions\Missing404Exception;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -44,6 +45,23 @@ class Adapter implements AdapterInterface
      * @var AggregationBuilder
      */
     private AggregationBuilder $aggregationBuilder;
+
+    /**
+     * Empty response from OpenSearch
+     *
+     * @var array
+     */
+    private static $emptyRawResponse = [
+        'hits' => [
+            'hits' => []
+        ],
+        'aggregations' => [
+            'price_bucket' => [],
+            'category_bucket' => [
+                'buckets' => []
+            ]
+        ]
+    ];
 
     /**
      * @var QueryContainerFactory
@@ -126,6 +144,9 @@ class Adapter implements AdapterInterface
             }
 
             $rawResponse = $client->query($query);
+        } catch (Missing404Exception $e) {
+            $this->logger->critical($e);
+            $rawResponse = self::$emptyRawResponse;
         } catch (\Exception $e) {
             $this->logger->critical($e);
             throw new ClientException($e->getMessage(), $e->getCode(), $e);

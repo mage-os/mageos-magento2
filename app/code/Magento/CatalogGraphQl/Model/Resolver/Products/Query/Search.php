@@ -167,7 +167,6 @@ class Search implements ProductQueryInterface
                 ]
             );
         }
-
     }
 
     /**
