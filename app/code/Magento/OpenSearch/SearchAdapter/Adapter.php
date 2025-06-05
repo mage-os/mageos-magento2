@@ -24,6 +24,7 @@ use Psr\Log\LoggerInterface;
 
 /**
  * OpenSearch Search Adapter
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Adapter implements AdapterInterface
 {
