@@ -1,15 +1,9 @@
 {
     "name": "magento/module-catalog-url-rewrite",
     "description": "N/A",
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
-    ],
     "config": {
         "sort-packages": true
     },
-    "version": "100.4.8",
     "require": {
         "php": "~8.2.0||~8.3.0||~8.4.0",
         "magento/framework": "*",
@@ -25,8 +19,13 @@
         "magento/module-url-rewrite": "*"
     },
     "suggest": {
-        "magento/module-webapi": "100.4.*"
+        "magento/module-webapi": "*"
     },
+    "type": "magento2-module",
+    "license": [
+        "OSL-3.0",
+        "AFL-3.0"
+    ],
     "autoload": {
         "files": [
             "registration.php"
@@ -36,4 +35,3 @@
         }
     }
 }
-
