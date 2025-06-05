@@ -73,4 +73,22 @@ class OldDbValidator implements UpToDateValidatorInterface
     {
         return empty($this->dbVersionInfo->getDbVersionErrors());
     }
+
+    /**
+     * Get detailed information about database version errors
+     *
+     * @return array
+     */
+    public function getDetails() : array
+    {
+        $versionErrors = $this->dbVersionInfo->getDbVersionErrors();
+        if (empty($versionErrors)) {
+            return [];
+        }
+
+        return [
+            'timestamp' => date('Y-m-d H:i:s'),
+            'version_errors' => $versionErrors
+        ];
+    }
 }

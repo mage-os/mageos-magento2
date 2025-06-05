@@ -35,4 +35,11 @@ interface UpToDateValidatorInterface
      * @return bool
      */
     public function isUpToDate() : bool ;
+
+    /**
+     * Retrieve detailed information about validator state and differences found
+     *
+     * @return array
+     */
+    public function getDetails() : array;
 }

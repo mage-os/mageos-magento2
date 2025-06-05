@@ -78,4 +78,35 @@ class UpToDateSchema implements UpToDateValidatorInterface
 
         return true;
     }
+
+    /**
+     * Get detailed information about unapplied schema patches
+     *
+     * @return array
+     */
+    public function getDetails(): array
+    {
+        $unappliedPatches = [];
+
+        foreach ($this->moduleList->getNames() as $moduleName) {
+            foreach ($this->patchReader->read($moduleName) as $patchName) {
+                if (!$this->patchBackwardCompatability->isSkipableBySchemaSetupVersion($patchName, $moduleName) &&
+                    !$this->patchHistory->isApplied($patchName)) {
+                    $unappliedPatches[] = [
+                        'patch' => $patchName,
+                        'module' => $moduleName
+                    ];
+                }
+            }
+        }
+
+        if (empty($unappliedPatches)) {
+            return [];
+        }
+
+        return [
+            'timestamp' => date('Y-m-d H:i:s'),
+            'unapplied_patches' => $unappliedPatches
+        ];
+    }
 }
