@@ -30,8 +30,6 @@
         <click selector="{{AdminProductFormSection.contentTab}}" stepKey="clickContentTab"/>
         <waitForElementVisible selector="{{ProductDescriptionWysiwygSection.form}} {{TinyMCESection.TinyMCE}}" stepKey="waitforTinyMCEVisible1"/>
         <seeElement selector="{{ProductDescriptionWysiwygSection.form}} {{TinyMCESection.TinyMCE}}" stepKey="TinyMCEDescription"/>
-        <waitForElementVisible selector="{{ProductDescriptionWysiwygSection.form}} {{TinyMCESection.Toolbar}}" stepKey="waitForToolbarVisible"/>
-        <waitForElementVisible selector="{{ProductDescriptionWysiwygSection.form}} {{TinyMCESection.Toolbar}} button[title='Bold']" stepKey="waitForBoldButton"/>
         <seeElement selector="{{ProductDescriptionWysiwygSection.form}} {{TinyMCESection.Style}}" stepKey="assertInfo2"/>
         <seeElement selector="{{ProductDescriptionWysiwygSection.form}} {{TinyMCESection.Bold}}" stepKey="assertInfo3"/>
         <seeElement selector="{{ProductDescriptionWysiwygSection.form}} {{TinyMCESection.Italic}}" stepKey="assertInfo4"/>
