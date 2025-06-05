@@ -11,6 +11,7 @@ use Magento\Framework\App\Cache\StateInterface;
 use Magento\Framework\App\PageCache\Identifier;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\ObjectManagerInterface;
+use Magento\PageCache\Model\App\Request\Http\IdentifierForSave;
 use Magento\PageCache\Model\Cache\Type;
 use Magento\Store\Model\StoreManager;
 use Magento\Store\Test\Fixture\Group as StoreGroupFixture;
@@ -45,6 +46,11 @@ class CacheIdentifierPluginTest extends TestCase
     private $identifier;
 
     /**
+     * @var IdentifierForSave
+     */
+    private $identifierForSave;
+
+    /**
      * @var DataFixtureStorage
      */
     private $fixtures;
@@ -64,6 +70,7 @@ class CacheIdentifierPluginTest extends TestCase
         $this->objectManager = Bootstrap::getObjectManager();
         $this->request = $this->objectManager->get(Http::class);
         $this->identifier = $this->objectManager->get(Identifier::class);
+        $this->identifierForSave = $this->objectManager->get(IdentifierForSave::class);
         $this->fixtures = $this->objectManager->get(DataFixtureStorageManager::class)->getStorage();
         $this->cacheState = $this->objectManager->get(StateInterface::class);
 
@@ -106,5 +113,10 @@ class CacheIdentifierPluginTest extends TestCase
         $this->assertNotEmpty($result);
         $this->assertStringContainsString('MAGE_RUN_TYPE=store', $result);
         $this->assertStringContainsString('MAGE_RUN_CODE=' . $storeCode, $result);
+
+        $resultForSave = $this->identifierForSave->getValue();
+        $this->assertNotEmpty($resultForSave);
+        $this->assertStringContainsString('MAGE_RUN_TYPE=store', $resultForSave);
+        $this->assertStringContainsString('MAGE_RUN_CODE=' . $storeCode, $resultForSave);
     }
 }
