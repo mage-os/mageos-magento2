@@ -12,10 +12,13 @@ use Magento\Elasticsearch\SearchAdapter\Aggregation\Builder as AggregationBuilde
 use Magento\Elasticsearch\SearchAdapter\ConnectionManager;
 use Magento\Elasticsearch\SearchAdapter\QueryContainerFactory;
 use Magento\Elasticsearch\SearchAdapter\ResponseFactory;
+use Magento\Framework\Phrase;
 use Magento\Framework\Search\AdapterInterface;
+use Magento\Framework\Search\Request\EmptyRequestDataException;
 use Magento\Framework\Search\RequestInterface;
 use Magento\Framework\Search\Response\QueryResponse;
 use Magento\Search\Model\Search\PageSizeProvider;
+use OpenSearch\Common\Exceptions\BadRequest400Exception;
 use OpenSearch\Common\Exceptions\Missing404Exception;
 use Psr\Log\LoggerInterface;
 
@@ -45,23 +48,6 @@ class Adapter implements AdapterInterface
      * @var AggregationBuilder
      */
     private AggregationBuilder $aggregationBuilder;
-
-    /**
-     * Empty response from OpenSearch
-     *
-     * @var array
-     */
-    private static $emptyRawResponse = [
-        'hits' => [
-            'hits' => []
-        ],
-        'aggregations' => [
-            'price_bucket' => [],
-            'category_bucket' => [
-                'buckets' => []
-            ]
-        ]
-    ];
 
     /**
      * @var QueryContainerFactory
@@ -144,9 +130,11 @@ class Adapter implements AdapterInterface
             }
 
             $rawResponse = $client->query($query);
-        } catch (Missing404Exception $e) {
+        } catch (Missing404Exception|BadRequest400Exception $e) {
             $this->logger->critical($e);
-            $rawResponse = self::$emptyRawResponse;
+            throw new EmptyRequestDataException(
+                (new Phrase("Could not perform search query."))->render()
+            );
         } catch (\Exception $e) {
             $this->logger->critical($e);
             throw new ClientException($e->getMessage(), $e->getCode(), $e);
