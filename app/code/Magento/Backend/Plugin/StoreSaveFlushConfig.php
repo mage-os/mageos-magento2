@@ -3,6 +3,8 @@
  * Copyright 2025 Adobe
  * All Rights Reserved.
  */
+declare(strict_types=1);
+
 namespace Magento\Backend\Plugin;
 
 use Magento\Backend\Controller\Adminhtml\System\Store\Save;
