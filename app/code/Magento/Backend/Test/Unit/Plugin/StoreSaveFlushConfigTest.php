@@ -3,6 +3,8 @@
  * Copyright 2025 Adobe
  * All Rights Reserved.
  */
+declare(strict_types=1);
+
 namespace Magento\Backend\Test\Unit\Plugin;
 
 use Magento\Backend\Plugin\StoreSaveFlushConfig;
