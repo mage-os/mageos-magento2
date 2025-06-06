@@ -110,6 +110,11 @@ class MysqlTest extends TestCase
         (new Mysql($this->adapterMock, $query))->_execute($params);
     }
 
+    /**
+     * Test execute method when params are passed as Parameter objects.
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
     public function testExecuteWhenParamsAsParameterObject()
     {
         $param1 = $this->createMock(Parameter::class);
