@@ -56,6 +56,8 @@ class UpToDateData implements UpToDateValidatorInterface
     }
 
     /**
+     * Get not update data information
+     *
      * @return string
      */
     public function getNotUpToDateMessage() : string
@@ -64,6 +66,8 @@ class UpToDateData implements UpToDateValidatorInterface
     }
 
     /**
+     * Check module list update
+     *
      * @return bool
      */
     public function isUpToDate() : bool

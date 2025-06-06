@@ -45,6 +45,8 @@ class UpToDateDeclarativeSchema implements UpToDateValidatorInterface
     }
 
     /**
+     * Get the message
+     *
      * @return string
      */
     public function getNotUpToDateMessage() : string
@@ -53,6 +55,8 @@ class UpToDateDeclarativeSchema implements UpToDateValidatorInterface
     }
 
     /**
+     * Check calculate schema differences
+     *
      * @return bool
      */
     public function isUpToDate() : bool
@@ -97,7 +101,7 @@ class UpToDateDeclarativeSchema implements UpToDateValidatorInterface
      * @param array $diffData
      * @return array
      */
-    private function buildSummary(array $diffData) : array
+    private function buildSummary(array $diffData): array
     {
         $summary = [
             'timestamp' => date('Y-m-d H:i:s'),
@@ -106,83 +110,115 @@ class UpToDateDeclarativeSchema implements UpToDateValidatorInterface
             'affected_tables' => [],
             'changes' => []
         ];
-
         try {
-            foreach ($diffData as $key => $operations) {
+            foreach ($diffData as $operations) {
                 if (!is_array($operations)) {
                     continue;
                 }
-
                 foreach ($operations as $operationType => $changes) {
-                    if (!isset($summary['by_change_type'][$operationType])) {
-                        $summary['by_change_type'][$operationType] = 0;
-                    }
+                    $this->initChangeTypeCount($summary, $operationType);
 
                     $changeCount = is_array($changes) ? count($changes) : 1;
                     $summary['by_change_type'][$operationType] += $changeCount;
                     $summary['total_differences'] += $changeCount;
 
-                    if (is_array($changes)) {
-                        foreach ($changes as $changeIndex => $change) {
-                            $changeInfo = [
-                                'operation' => $operationType,
-                                'index' => $changeIndex
-                            ];
+                    if (!is_array($changes)) {
+                        continue;
+                    }
 
-                            $tableName = $this->safeGetTableName($change);
-                            if ($tableName) {
-                                $changeInfo['table'] = $tableName;
-
-                                if (!isset($summary['affected_tables'][$tableName])) {
-                                    $summary['affected_tables'][$tableName] = [];
-                                }
-
-                                if (!isset($summary['affected_tables'][$tableName][$operationType])) {
-                                    $summary['affected_tables'][$tableName][$operationType] = 0;
-                                }
-
-                                $summary['affected_tables'][$tableName][$operationType]++;
-                            }
-
-                            // Add any other safely extractable information
-                            if ($change instanceof ElementHistory) {
-                                $changeInfo = $this->processElementHistory($change, $changeInfo);
-                            } elseif (is_array($change) && isset($change['name'])) {
-                                $changeInfo['name'] = $change['name'];
-                            } elseif (is_object($change) && method_exists($change, 'getName')) {
-                                $changeInfo['name'] = $change->getName();
-
-                                // Special handling for index elements
-                                if (method_exists($change, 'getType') && ($change->getType() === 'index' || $change->getType() === 'constraint')) {
-                                    $changeInfo['type'] = $change->getType();
-
-                                    // Try to get the index columns if available
-                                    if (method_exists($change, 'getColumns')) {
-                                        $columns = $change->getColumns();
-                                        if (is_array($columns)) {
-                                            $changeInfo['columns'] = [];
-                                            foreach ($columns as $column) {
-                                                if (is_object($column) && method_exists($column, 'getName')) {
-                                                    $changeInfo['columns'][] = $column->getName();
-                                                } elseif (is_string($column)) {
-                                                    $changeInfo['columns'][] = $column;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            $summary['changes'][] = $changeInfo;
-                        }
+                    foreach ($changes as $changeIndex => $change) {
+                        $changeInfo = $this->buildChangeInfo($change, $operationType, $changeIndex, $summary);
+                        $summary['changes'][] = $changeInfo;
                     }
                 }
             }
         } catch (\Exception $e) {
             $summary['error'] = $e->getMessage();
         }
-
         return $summary;
+    }
+
+    /**
+     * Initialize the counter for a given operation type in the summary if not already set.
+     *
+     * @param array &$summary
+     * @param string $operationType
+     */
+    private function initChangeTypeCount(array &$summary, string $operationType): void
+    {
+        if (!isset($summary['by_change_type'][$operationType])) {
+            $summary['by_change_type'][$operationType] = 0;
+        }
+    }
+
+    /**
+     * Build a structured array with information about a single change operation.
+     *
+     * @param mixed $change
+     * @param string $operationType
+     * @param int|string $changeIndex
+     * @param array $summary
+     * @return array
+     */
+    private function buildChangeInfo($change, $operationType, $changeIndex, &$summary): array
+    {
+        $changeInfo = [
+            'operation' => $operationType,
+            'index' => $changeIndex
+        ];
+
+        $tableName = $this->safeGetTableName($change);
+        if ($tableName) {
+            $changeInfo['table'] = $tableName;
+
+            if (!isset($summary['affected_tables'][$tableName])) {
+                $summary['affected_tables'][$tableName] = [];
+            }
+            if (!isset($summary['affected_tables'][$tableName][$operationType])) {
+                $summary['affected_tables'][$tableName][$operationType] = 0;
+            }
+            $summary['affected_tables'][$tableName][$operationType]++;
+        }
+
+        if ($change instanceof ElementHistory) {
+            $changeInfo = $this->processElementHistory($change, $changeInfo);
+        } elseif (is_array($change) && isset($change['name'])) {
+            $changeInfo['name'] = $change['name'];
+        } elseif (is_object($change) && method_exists($change, 'getName')) {
+            $changeInfo['name'] = $change->getName();
+
+            if (method_exists($change, 'getType')) {
+                $this->isMethodExists($change, $changeInfo);
+            }
+        }
+        return $changeInfo;
+    }
+
+    /**
+     * Build a structured array with method exist information.
+     *
+     * @param mixed $change
+     * @param array $changeInfo
+     */
+    private function isMethodExists(mixed $change, array $changeInfo): void
+    {
+        $type = $change->getType();
+        if ($type === 'index' || $type === 'constraint') {
+            $changeInfo['type'] = $type;
+            if (method_exists($change, 'getColumns')) {
+                $columns = $change->getColumns();
+                if (is_array($columns)) {
+                    $changeInfo['columns'] = array_map(function ($column) {
+                        if (is_object($column) && method_exists($column, 'getName')) {
+                            return $column->getName();
+                        }
+                        return is_string($column) ? $column : null;
+                    }, $columns);
+                    // Remove any nulls if any invalid columns found
+                    $changeInfo['columns'] = array_filter($changeInfo['columns']);
+                }
+            }
+        }
     }
 
     /**
@@ -236,6 +272,7 @@ class UpToDateDeclarativeSchema implements UpToDateValidatorInterface
             }
         } catch (\Exception $e) {
             // Silently fail and return null
+            error_log('Error get table name: ' . $e->getMessage());
         }
 
         return null;
@@ -269,7 +306,8 @@ class UpToDateDeclarativeSchema implements UpToDateValidatorInterface
             }
 
             // For modify operations, add basic diff information
-            if (($changeInfo['operation'] === 'modify_column' || $changeInfo['operation'] === 'modify_table') && $oldElement && $newElement) {
+            if (($changeInfo['operation'] === 'modify_column' || $changeInfo['operation'] === 'modify_table')
+                && $oldElement && $newElement) {
                 // Check for comment differences (most common issue)
                 if (method_exists($oldElement, 'getComment') && method_exists($newElement, 'getComment')) {
                     $oldComment = $oldElement->getComment();
@@ -284,6 +322,7 @@ class UpToDateDeclarativeSchema implements UpToDateValidatorInterface
             }
         } catch (\Exception $e) {
             // Silently fail and return original changeInfo
+            error_log('Error processing element history: ' . $e->getMessage());
         }
 
         return $changeInfo;

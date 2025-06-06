@@ -55,6 +55,8 @@ class UpToDateSchema implements UpToDateValidatorInterface
     }
 
     /**
+     * Get not update schema information
+     *
      * @return string
      */
     public function getNotUpToDateMessage() : string
@@ -63,6 +65,8 @@ class UpToDateSchema implements UpToDateValidatorInterface
     }
 
     /**
+     * Check module list schema update
+     *
      * @return bool
      */
     public function isUpToDate() : bool

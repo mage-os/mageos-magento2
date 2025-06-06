@@ -99,7 +99,9 @@ class DbStatusCommand extends AbstractSetupCommand
 
             try {
                 $isUpToDate = $validator->isUpToDate();
-                $output->writeln("<info>Validator {$validatorClass} isUpToDate: " . ($isUpToDate ? 'true' : 'false') . "</info>");
+                $output->writeln(
+                    "<info>Validator {$validatorClass} isUpToDate: " . ($isUpToDate ? 'true' : 'false') . "</info>"
+                );
 
                 if (!$isUpToDate) {
                     $message = $validator->getNotUpToDateMessage();
@@ -114,7 +116,9 @@ class DbStatusCommand extends AbstractSetupCommand
                     $outDated = true;
                 }
             } catch (\Throwable $e) {
-                $output->writeln("<info>Validator {$validatorClass} failed with error: " . $e->getMessage() . "</info>");
+                $output->writeln(
+                    "<info>Validator {$validatorClass} failed with error: " . $e->getMessage() . "</info>"
+                );
                 $output->writeln("<info>Treating as upgrade required due to validation error.</info>");
                 $outDated = true;
             }
