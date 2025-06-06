@@ -14,12 +14,14 @@ use Magento\Catalog\Model\Attribute\ScopeOverriddenValue;
 use Magento\Catalog\Model\Product\Gallery\MimeTypeExtensionMap;
 use Magento\Catalog\Model\ProductRepository\MediaGalleryProcessor;
 use Magento\Catalog\Model\ResourceModel\Product\Collection;
+use Magento\CatalogUrlRewrite\Block\UrlKeyRenderer;
 use Magento\Eav\Model\Entity\Attribute\Exception as AttributeException;
 use Magento\Framework\Api\Data\ImageContentInterfaceFactory;
 use Magento\Framework\Api\ImageContentValidatorInterface;
 use Magento\Framework\Api\ImageProcessorInterface;
 use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
 use Magento\Framework\Api\SearchCriteriaInterface;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DB\Adapter\ConnectionException;
 use Magento\Framework\DB\Adapter\DeadlockException;
 use Magento\Framework\DB\Adapter\LockWaitException;
@@ -32,6 +34,7 @@ use Magento\Framework\Exception\StateException;
 use Magento\Framework\Exception\TemporaryState\CouldNotSaveException as TemporaryCouldNotSaveException;
 use Magento\Framework\Exception\ValidatorException;
 use Magento\Framework\ObjectManager\ResetAfterRequestInterface;
+use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
 use Magento\Catalog\Api\Data\EavAttributeInterface;
 
@@ -188,6 +191,11 @@ class ProductRepository implements \Magento\Catalog\Api\ProductRepositoryInterfa
     private $scopeOverriddenValue;
 
     /**
+     * @var ScopeConfigInterface
+     */
+    private ScopeConfigInterface $scopeConfig;
+
+    /**
      * ProductRepository constructor.
      * @param ProductFactory $productFactory
      * @param \Magento\Catalog\Api\Data\ProductSearchResultsInterfaceFactory $searchResultsFactory
@@ -214,6 +222,7 @@ class ProductRepository implements \Magento\Catalog\Api\ProductRepositoryInterfa
      * @param ReadExtensions $readExtensions
      * @param CategoryLinkManagementInterface $linkManagement
      * @param ScopeOverriddenValue|null $scopeOverriddenValue
+     * @param ScopeConfigInterface|null $scopeConfig
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
@@ -242,7 +251,8 @@ class ProductRepository implements \Magento\Catalog\Api\ProductRepositoryInterfa
         $cacheLimit = 1000,
         ?ReadExtensions $readExtensions = null,
         ?CategoryLinkManagementInterface $linkManagement = null,
-        ?ScopeOverriddenValue $scopeOverriddenValue = null
+        ?ScopeOverriddenValue $scopeOverriddenValue = null,
+        ?ScopeConfigInterface $scopeConfig = null
     ) {
         $this->productFactory = $productFactory;
         $this->collectionFactory = $collectionFactory;
@@ -270,6 +280,8 @@ class ProductRepository implements \Magento\Catalog\Api\ProductRepositoryInterfa
             ->get(CategoryLinkManagementInterface::class);
         $this->scopeOverriddenValue = $scopeOverriddenValue ?: \Magento\Framework\App\ObjectManager::getInstance()
             ->get(ScopeOverriddenValue::class);
+        $this->scopeConfig = $scopeConfig ?: \Magento\Framework\App\ObjectManager::getInstance()
+            ->get(ScopeConfigInterface::class);;
     }
 
     /**
@@ -648,6 +660,14 @@ class ProductRepository implements \Magento\Catalog\Api\ProductRepositoryInterfa
                 }
             }
         }
+
+        $isSaveHistory = $this->scopeConfig->isSetFlag(
+            UrlKeyRenderer::XML_PATH_SEO_SAVE_HISTORY,
+            ScopeInterface::SCOPE_STORE,
+            $productDataArray['store_id']
+        );
+
+        $product->setData('save_rewrites_history', $isSaveHistory);
 
         $this->saveProduct($product);
         if ($assignToCategories === true && $product->getCategoryIds()) {
