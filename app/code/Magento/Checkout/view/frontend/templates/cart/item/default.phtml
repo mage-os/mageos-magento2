@@ -58,7 +58,7 @@ $canApplyMsrp = $helper->isShowBeforeOrderConfirm($product) && $helper->isMinima
                 <?php endif; ?>
                 <?php if ($messages = $block->getMessages()): ?>
                     <?php foreach ($messages as $message): ?>
-                        <div class= "cart item message <?= $block->escapeHtmlAttr($message['type']) ?>">
+                        <div class="cart item message <?= $block->escapeHtmlAttr($message['type']) ?>">
                             <div><?= $block->escapeHtml($message['text']) ?></div>
                         </div>
                     <?php endforeach; ?>
