@@ -201,7 +201,7 @@ class UpToDateDeclarativeSchema implements UpToDateValidatorInterface
      * @param mixed $change
      * @param array $changeInfo
      */
-    private function isMethodExists(mixed $change, array $changeInfo): void
+    private function isMethodExists(mixed $change, array &$changeInfo): void
     {
         $type = $change->getType();
         if ($type === 'index' || $type === 'constraint') {
