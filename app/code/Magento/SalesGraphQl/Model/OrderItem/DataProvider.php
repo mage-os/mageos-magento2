@@ -16,7 +16,6 @@ use Magento\Sales\Api\Data\OrderItemInterface;
 use Magento\Sales\Api\OrderItemRepositoryInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\SalesRule\Api\Data\DiscountAppliedToInterface as DiscountAppliedTo;
-
 use Magento\Tax\Helper\Data as TaxHelper;
 
 /**
