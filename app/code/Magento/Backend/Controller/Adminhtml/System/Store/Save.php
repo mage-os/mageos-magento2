@@ -156,7 +156,10 @@ class Save extends \Magento\Backend\Controller\Adminhtml\System\Store implements
     }
 
     /**
+     * Saving edited store information
+     *
      * @return \Magento\Backend\Model\View\Result\Redirect
+     *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function execute()

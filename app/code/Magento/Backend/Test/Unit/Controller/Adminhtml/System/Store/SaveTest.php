@@ -29,6 +29,11 @@ use Magento\Store\Model\Store;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Unit test for \Magento\Backend\Controller\Adminhtml\System\Store\Save controller.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class SaveTest extends TestCase
 {
     /**
