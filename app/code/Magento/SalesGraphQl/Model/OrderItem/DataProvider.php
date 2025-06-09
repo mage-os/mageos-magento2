@@ -257,7 +257,7 @@ class DataProvider
      * @param OrderInterface $order
      * @return string
      */
-    public function getAppliedTo($order)
+    private function getAppliedTo($order)
     {
         if ((float) $order->getShippingDiscountAmount() > 0) {
             return DiscountAppliedTo::APPLIED_TO_SHIPPING;
