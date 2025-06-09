@@ -154,6 +154,7 @@ class UpToDateDeclarativeSchema implements UpToDateValidatorInterface
     /**
      * Build a structured array with information about a single change operation.
      *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @param mixed $change
      * @param string $operationType
      * @param int|string $changeIndex
@@ -224,6 +225,8 @@ class UpToDateDeclarativeSchema implements UpToDateValidatorInterface
     /**
      * Safely get table name from any change object
      *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      * @param mixed $change
      * @return string|null
      */
@@ -281,6 +284,8 @@ class UpToDateDeclarativeSchema implements UpToDateValidatorInterface
     /**
      * Process ElementHistory object to extract useful information
      *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      * @param ElementHistory $change
      * @param array $changeInfo
      * @return array
