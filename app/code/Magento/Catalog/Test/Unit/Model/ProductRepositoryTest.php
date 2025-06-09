@@ -384,6 +384,15 @@ class ProductRepositoryTest extends TestCase
                     return null;
                 }
             });
+        $this->product
+            ->method('setData')
+            ->willReturnCallback(function ($key, $value) {
+                if ($key !== 'save_rewrites_history') {
+                    return null;
+                }
+
+                $this->assertEquals(null, $value);
+            });
         $this->model->save($this->product);
     }
 
