@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Webapi\Controller\Rest;
 
+use Magento\Framework\Webapi\Exception as WebapiException;
 use Magento\Framework\Webapi\Rest\Response as RestResponse;
 use Magento\Framework\Webapi\ServiceOutputProcessor;
 use Magento\Framework\Webapi\Rest\Response\FieldsFilter;
@@ -92,7 +93,11 @@ class SynchronousRequestProcessor implements RequestProcessorInterface
         /**
          * @var \Magento\Framework\Api\AbstractExtensibleObject $outputData
          */
-        $outputData = call_user_func_array([$service, $serviceMethodName], $inputParams);
+        try {
+            $outputData = call_user_func_array([$service, $serviceMethodName], $inputParams);
+        } catch (\Throwable $e) {
+            throw new WebapiException(__($e->getMessage()));
+        }
         $outputData = $this->serviceOutputProcessor->process(
             $outputData,
             $serviceClassName,
