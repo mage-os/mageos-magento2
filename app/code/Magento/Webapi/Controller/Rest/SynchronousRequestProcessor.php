@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -20,7 +20,7 @@ use Magento\Framework\Config\ConfigOptionsListConstants;
  */
 class SynchronousRequestProcessor implements RequestProcessorInterface
 {
-    const PROCESSOR_PATH = "/^\\/V\\d+/";
+    private const PROCESSOR_PATH = "/^\\/V\\d+/";
 
     /**
      * @var RestResponse
@@ -79,7 +79,7 @@ class SynchronousRequestProcessor implements RequestProcessorInterface
     }
 
     /**
-     *  {@inheritdoc}
+     * @inheritdoc
      */
     public function process(\Magento\Framework\Webapi\Rest\Request $request)
     {
@@ -94,7 +94,9 @@ class SynchronousRequestProcessor implements RequestProcessorInterface
          * @var \Magento\Framework\Api\AbstractExtensibleObject $outputData
          */
         try {
+            // phpcs:disable Magento2.Functions.DiscouragedFunction
             $outputData = call_user_func_array([$service, $serviceMethodName], $inputParams);
+            // phpcs:enable Magento2.Functions.DiscouragedFunction
         } catch (\Throwable $e) {
             throw new WebapiException(__($e->getMessage()));
         }
@@ -114,7 +116,7 @@ class SynchronousRequestProcessor implements RequestProcessorInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function canProcess(\Magento\Framework\Webapi\Rest\Request $request)
     {
