@@ -97,7 +97,7 @@ class SynchronousRequestProcessor implements RequestProcessorInterface
             // phpcs:disable Magento2.Functions.DiscouragedFunction
             $outputData = call_user_func_array([$service, $serviceMethodName], $inputParams);
             // phpcs:enable Magento2.Functions.DiscouragedFunction
-        } catch (\Throwable $e) {
+        } catch (\TypeError $e) {
             throw new WebapiException(__($e->getMessage()));
         }
         $outputData = $this->serviceOutputProcessor->process(

@@ -182,6 +182,23 @@ class ShipOrderTest extends \Magento\TestFramework\TestCase\WebapiAbstract
     }
 
     /**
+     * @magentoApiDataFixture Magento/Sales/_files/order_new.php
+     */
+    public function testShipOrderWithTypeError()
+    {
+        /** @var Order $existingOrder */
+        $existingOrder = $this->getOrder('100000001');
+
+        $requestData = [
+            'orderId' => $existingOrder->getId(),
+            'items' => "[]",
+        ];
+
+        $this->expectExceptionCode(400);
+        $this->_webApiCall($this->getServiceInfo($existingOrder), $requestData);
+    }
+
+    /**
      * Tests that not providing a tracking number produces the correct error. See MAGETWO-95429
      * @codingStandardsIgnoreStart
      * @codingStandardsIgnoreEnd
