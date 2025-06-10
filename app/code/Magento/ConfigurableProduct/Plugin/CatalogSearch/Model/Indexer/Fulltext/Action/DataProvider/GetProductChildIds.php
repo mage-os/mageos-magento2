@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace Magento\ConfigurableProduct\Plugin\CatalogSearch\Model\Indexer\Fulltext\Action\DataProvider;
 
-use Magento\CatalogInventory\Api\StockConfigurationInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\CatalogSearch\Model\Indexer\Fulltext\Action\DataProvider;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
@@ -26,11 +25,6 @@ class GetProductChildIds
     private $storeManager;
 
     /**
-     * @var StockConfigurationInterface
-     */
-    private $stockConfiguration;
-
-    /**
      * @var GetStoreSpecificProductChildIds
      */
     private $getChildProductFromStoreId;
@@ -42,18 +36,15 @@ class GetProductChildIds
 
     /**
      * @param StoreManagerInterface $storeManager
-     * @param StockConfigurationInterface $stockConfiguration
      * @param GetStoreSpecificProductChildIds $getChildProductFromStoreId
      * @param ProductRepositoryInterface $productRepository
      */
     public function __construct(
         StoreManagerInterface           $storeManager,
-        StockConfigurationInterface     $stockConfiguration,
         GetStoreSpecificProductChildIds $getChildProductFromStoreId,
         ProductRepositoryInterface      $productRepository
     ) {
         $this->storeManager = $storeManager;
-        $this->stockConfiguration = $stockConfiguration;
         $this->getChildProductFromStoreId = $getChildProductFromStoreId;
         $this->productRepository = $productRepository;
     }
@@ -75,8 +66,7 @@ class GetProductChildIds
         array        $productData,
         int          $storeId
     ) {
-        if (!$this->stockConfiguration->isShowOutOfStock($storeId) &&
-            Configurable::TYPE_CODE === $productData['type_id']) {
+        if (Configurable::TYPE_CODE === $productData['type_id']) {
             $websiteId = $this->storeManager->getStore($storeId)->getWebsiteId();
             $product = $this->productRepository->getById($productData['entity_id']);
 

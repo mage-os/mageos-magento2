@@ -9,7 +9,6 @@ namespace Magento\ConfigurableProduct\Test\Unit\Model\Plugin\CatalogSearch\Model
 
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\Product;
-use Magento\CatalogInventory\Api\StockConfigurationInterface;
 use Magento\CatalogSearch\Model\Indexer\Fulltext\Action\DataProvider;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Magento\ConfigurableProduct\Model\ResourceModel\Product\GetStoreSpecificProductChildIds;
@@ -29,11 +28,6 @@ class GetProductChildIdsTest extends TestCase
     private $storeManagerMock;
 
     /**
-     * @var StockConfigurationInterface|MockObject
-     */
-    private $stockConfigurationMock;
-
-    /**
      * @var GetStoreSpecificProductChildIds|MockObject
      */
     private $getChildProductFromStoreIdMock;
@@ -51,7 +45,6 @@ class GetProductChildIdsTest extends TestCase
     protected function setUp(): void
     {
         $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
-        $this->stockConfigurationMock = $this->createMock(StockConfigurationInterface::class);
         $this->getChildProductFromStoreIdMock = $this->createMock(GetStoreSpecificProductChildIds::class);
         $this->productRepositoryMock = $this->getMockBuilder(ProductRepositoryInterface::class)
             ->disableOriginalConstructor()
@@ -60,7 +53,6 @@ class GetProductChildIdsTest extends TestCase
 
         $this->plugin = new GetProductChildIds(
             $this->storeManagerMock,
-            $this->stockConfigurationMock,
             $this->getChildProductFromStoreIdMock,
             $this->productRepositoryMock
         );
@@ -96,11 +88,6 @@ class GetProductChildIdsTest extends TestCase
             ->method('getStore')
             ->with($storeId)
             ->willReturn($storeMock);
-
-        $this->stockConfigurationMock->expects($this->once())
-            ->method('isShowOutOfStock')
-            ->with($storeId)
-            ->willReturn(false);
 
         $productMock = $this->createMock(Product::class);
         $productMock->expects($this->any())
