@@ -22,7 +22,6 @@ use Magento\Framework\Filter\FilterManager;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\ObjectManager\ObjectManager;
 use Magento\Framework\Registry;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as TestObjectManager;
 use Magento\Framework\View\Result\PageFactory;
 use Magento\Store\Model\Group;
 use Magento\Store\Model\Store;
@@ -39,77 +38,77 @@ class SaveTest extends TestCase
     /**
      * @var Save
      */
-    protected $controller;
+    private $controller;
 
     /**
      * @var RequestInterface|MockObject
      */
-    protected $requestMock;
+    private $requestMock;
 
     /**
      * @var ResponseInterface|MockObject
      */
-    protected $responseMock;
+    private $responseMock;
 
     /**
      * @var ObjectManager|MockObject
      */
-    protected $objectManagerMock;
+    private $objectManagerMock;
 
     /**
      * @var ManagerInterface|MockObject
      */
-    protected $messagesMock;
+    private $messagesMock;
 
     /**
      * @var Data|MockObject
      */
-    protected $helperMock;
+    private $helperMock;
 
     /**
      * @var Session|MockObject
      */
-    protected $sessionMock;
+    private $sessionMock;
 
     /**
      * @var Store|MockObject
      */
-    protected $storeModelMock;
+    private $storeModelMock;
 
     /**
      * @var Group|MockObject
      */
-    protected $groupModelMock;
+    private $groupModelMock;
 
     /**
      * @var FilterManager|MockObject
      */
-    protected $filterManagerMock;
+    private $filterManagerMock;
 
     /**
      * @var TypeListInterface|MockObject
      */
-    protected $cacheTypeListMock;
+    private $cacheTypeListMock;
 
     /**
      * @var Registry|MockObject
      */
-    protected $registryMock;
+    private $registryMock;
 
     /**
      * @var ForwardFactory|MockObject
      */
-    protected $resultForwardFactoryMock;
+    private $resultForwardFactoryMock;
 
     /**
      * @var PageFactory|MockObject
      */
-    protected $resultPageFactoryMock;
+    private $resultPageFactoryMock;
 
     /**
      * @inheritDoc
      */
-    protected function setUp(): void
+    public function setUp(): void
     {
         $this->requestMock = $this->getMockBuilder(Http::class)
             ->disableOriginalConstructor()
@@ -186,17 +185,13 @@ class SaveTest extends TestCase
         $contextMock->expects($this->once())->method('getHelper')->willReturn($this->helperMock);
         $contextMock->expects($this->once())->method('getMessageManager')->willReturn($this->messagesMock);
         $contextMock->expects($this->once())->method('getResultRedirectFactory')->willReturn($redirectFactory);
-        $testHelper = new TestObjectManager($this);
-        $this->controller = $testHelper->getObject(
-            Save::class,
-            [
-                'context' => $contextMock,
-                'coreRegistry' => $this->registryMock,
-                'filterManager' => $this->filterManagerMock,
-                'resultForwardFactory' => $this->resultForwardFactoryMock,
-                'resultPageFactory' => $this->resultPageFactoryMock,
-                'cacheTypeList' => $this->cacheTypeListMock
-            ]
+        $this->controller = new Save(
+            $contextMock,
+            $this->registryMock,
+            $this->filterManagerMock,
+            $this->resultForwardFactoryMock,
+            $this->resultPageFactoryMock,
+            $this->cacheTypeListMock
         );
     }
 
