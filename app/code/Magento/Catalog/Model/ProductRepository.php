@@ -281,7 +281,7 @@ class ProductRepository implements \Magento\Catalog\Api\ProductRepositoryInterfa
         $this->scopeOverriddenValue = $scopeOverriddenValue ?: \Magento\Framework\App\ObjectManager::getInstance()
             ->get(ScopeOverriddenValue::class);
         $this->scopeConfig = $scopeConfig ?: \Magento\Framework\App\ObjectManager::getInstance()
-            ->get(ScopeConfigInterface::class);;
+            ->get(ScopeConfigInterface::class);
     }
 
     /**
