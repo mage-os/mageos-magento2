@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2021 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -25,11 +25,6 @@ class S3FileAssertions extends Helper
      * @var DriverInterface $driver
      */
     private $driver;
-
-    /**
-     * @var AwsS3V3Adapter
-     */
-    private $adapter;
 
     /**
      * Call the parent constructor then create the AwsS3 driver from environment variables
@@ -70,7 +65,6 @@ class S3FileAssertions extends Helper
         $s3Driver = new AwsS3($adapter, new MockTestLogger(), $objectUrl, $metadataProvider);
 
         $this->driver = $s3Driver;
-        $this->adapter = $adapter;
     }
 
     /**
@@ -202,11 +196,10 @@ class S3FileAssertions extends Helper
      * @return void
      *
      * @throws \Magento\Framework\Exception\FileSystemException
-     * @throws \League\Flysystem\FilesystemException
      */
     public function assertDirectoryExists($path, $message = ''): void
     {
-        $this->assertTrue($this->adapter->directoryExists($path), "Failed asserting $path exists. " . $message);
+        $this->assertTrue($this->driver->isDirectory($path), "Failed asserting $path exists. " . $message);
     }
 
     /**
