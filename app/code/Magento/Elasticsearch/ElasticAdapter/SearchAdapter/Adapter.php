@@ -83,6 +83,7 @@ class Adapter implements AdapterInterface
      *
      * @param RequestInterface $request
      * @return QueryResponse
+     * @throws ClientException
      */
     public function query(RequestInterface $request)
     {
@@ -95,7 +96,7 @@ class Adapter implements AdapterInterface
             $rawResponse = $client->query($query);
         } catch (\Exception $e) {
             $this->logger->critical($e);
-            throw new ClientException(__($e->getMessage()), $e->getCode(), $e);
+            throw new ClientException(__("Could not perform search query."), $e->getCode(), $e);
         }
 
         $rawDocuments = isset($rawResponse['hits']['hits']) ? $rawResponse['hits']['hits'] : [];

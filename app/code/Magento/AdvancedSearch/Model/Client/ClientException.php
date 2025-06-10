@@ -7,7 +7,9 @@ declare(strict_types=1);
 
 namespace Magento\AdvancedSearch\Model\Client;
 
-class ClientException extends \Exception
+use Magento\Framework\Exception\LocalizedException;
+
+class ClientException extends LocalizedException
 {
 
 }

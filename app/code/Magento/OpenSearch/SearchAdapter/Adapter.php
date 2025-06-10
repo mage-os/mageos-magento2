@@ -138,7 +138,7 @@ class Adapter implements AdapterInterface
             );
         } catch (\Exception $e) {
             $this->logger->critical($e);
-            throw new ClientException($e->getMessage(), $e->getCode(), $e);
+            throw new ClientException(__("Could not perform search query."), $e->getCode(), $e);
         } finally {
             if (isset($pitId)) {
                 $client->closePointInTime(['body' => ['pit_id' => [$pitId]]]);
