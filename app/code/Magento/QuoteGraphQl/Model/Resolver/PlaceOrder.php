@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2019 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -16,57 +16,41 @@ use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\GraphQl\Helper\Error\AggregateExceptionMessageFormatter;
 use Magento\QuoteGraphQl\Model\Cart\GetCartForCheckout;
-use Magento\GraphQl\Model\Query\ContextInterface;
 use Magento\QuoteGraphQl\Model\Cart\PlaceOrder as PlaceOrderModel;
+use Magento\QuoteGraphQl\Model\ErrorMapper;
+use Magento\QuoteGraphQl\Model\QuoteException;
 use Magento\Sales\Api\OrderRepositoryInterface;
+use Magento\SalesGraphQl\Model\Formatter\Order as OrderFormatter;
 
 /**
  * Resolver for placing order after payment method has already been set
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class PlaceOrder implements ResolverInterface
 {
     /**
-     * @var GetCartForCheckout
-     */
-    private $getCartForCheckout;
-
-    /**
-     * @var PlaceOrderModel
-     */
-    private $placeOrder;
-
-    /**
-     * @var OrderRepositoryInterface
-     */
-    private $orderRepository;
-
-    /**
-     * @var AggregateExceptionMessageFormatter
-     */
-    private $errorMessageFormatter;
-
-    /**
      * @param GetCartForCheckout $getCartForCheckout
      * @param PlaceOrderModel $placeOrder
      * @param OrderRepositoryInterface $orderRepository
+     * @param OrderFormatter $orderFormatter
      * @param AggregateExceptionMessageFormatter $errorMessageFormatter
+     * @param ErrorMapper $errorMapper
      */
     public function __construct(
-        GetCartForCheckout $getCartForCheckout,
-        PlaceOrderModel $placeOrder,
-        OrderRepositoryInterface $orderRepository,
-        AggregateExceptionMessageFormatter $errorMessageFormatter
+        private readonly GetCartForCheckout $getCartForCheckout,
+        private readonly PlaceOrderModel $placeOrder,
+        private readonly OrderRepositoryInterface $orderRepository,
+        private readonly OrderFormatter $orderFormatter,
+        private readonly AggregateExceptionMessageFormatter $errorMessageFormatter,
+        private readonly ErrorMapper $errorMapper
     ) {
-        $this->getCartForCheckout = $getCartForCheckout;
-        $this->placeOrder = $placeOrder;
-        $this->orderRepository = $orderRepository;
-        $this->errorMessageFormatter = $errorMessageFormatter;
     }
 
     /**
      * @inheritdoc
      */
-    public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
+    public function resolve(Field $field, $context, ResolveInfo $info, ?array $value = null, ?array $args = null)
     {
         if (empty($args['input']['cart_id'])) {
             throw new GraphQlInputException(__('Required parameter "cart_id" is missing'));
@@ -75,7 +59,6 @@ class PlaceOrder implements ResolverInterface
         $maskedCartId = $args['input']['cart_id'];
         $userId = (int)$context->getUserId();
         $storeId = (int)$context->getExtensionAttributes()->getStore()->getId();
-
         try {
             $cart = $this->getCartForCheckout->execute($maskedCartId, $userId, $storeId);
             $orderId = $this->placeOrder->execute($cart, $maskedCartId, $userId);
@@ -84,9 +67,9 @@ class PlaceOrder implements ResolverInterface
             throw new GraphQlAuthorizationException(
                 __($exception->getMessage())
             );
-        } catch (LocalizedException $e) {
-            throw $this->errorMessageFormatter->getFormatted(
-                $e,
+        } catch (LocalizedException $exception) {
+            $exception = $this->errorMessageFormatter->getFormatted(
+                $exception,
                 __('Unable to place order: A server error stopped your order from being placed. ' .
                     'Please try to place your order again'),
                 'Unable to place order',
@@ -94,14 +77,21 @@ class PlaceOrder implements ResolverInterface
                 $context,
                 $info
             );
+            $exceptionCode = $exception->getCode();
+            if (!$exceptionCode) {
+                $exceptionCode = $this->errorMapper->getErrorMessageId($exception->getMessage());
+            }
+
+            throw new QuoteException(__($exception->getMessage()), $exception, $exceptionCode);
         }
 
         return [
             'order' => [
-                'order_number' => $order->getIncrementId(),
+                'order_number' => $order?->getIncrementId(),
                 // @deprecated The order_id field is deprecated, use order_number instead
-                'order_id' => $order->getIncrementId(),
+                'order_id' => $order?->getIncrementId(),
             ],
+            'orderV2' => $order ? $this->orderFormatter->format($order) : null
         ];
     }
 }
