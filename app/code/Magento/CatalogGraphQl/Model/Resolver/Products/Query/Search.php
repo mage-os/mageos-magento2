@@ -17,7 +17,6 @@ use Magento\Framework\Api\Search\SearchCriteriaInterface;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\Resolver\ArgumentsProcessorInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
-use Magento\Framework\Search\Request\EmptyRequestDataException;
 use Magento\GraphQl\Model\Query\ContextInterface;
 use Magento\Search\Api\SearchInterface;
 
@@ -155,9 +154,7 @@ class Search implements ProductQueryInterface
                     'suggestions' => $suggestions,
                 ]
             );
-        } catch (GraphQlInputException $e) {
-            throw $e;
-        } catch (\InvalidArgumentException|EmptyRequestDataException|ClientException) {
+        } catch (\InvalidArgumentException|ClientException) {
             return $this->searchResultFactory->create(
                 [
                     'totalCount' => 0,

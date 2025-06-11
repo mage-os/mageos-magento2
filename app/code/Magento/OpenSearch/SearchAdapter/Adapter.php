@@ -133,12 +133,10 @@ class Adapter implements AdapterInterface
             $rawResponse = $client->query($query);
         } catch (Missing404Exception|BadRequest400Exception $e) {
             $this->logger->critical($e);
-            throw new EmptyRequestDataException(
-                (new Phrase("Could not perform search query."))->render()
-            );
+            throw new EmptyRequestDataException("Could not perform search query.");
         } catch (\Exception $e) {
             $this->logger->critical($e);
-            throw new ClientException(__("Could not perform search query."), $e->getCode(), $e);
+            throw new ClientException("Could not perform search query.", $e->getCode(), $e);
         } finally {
             if (isset($pitId)) {
                 $client->closePointInTime(['body' => ['pit_id' => [$pitId]]]);

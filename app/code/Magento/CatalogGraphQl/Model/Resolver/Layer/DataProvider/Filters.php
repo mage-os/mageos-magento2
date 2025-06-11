@@ -81,7 +81,7 @@ class Filters
      * @return bool
      * @throws LocalizedException
      */
-    private function isNeedToAddFilter(AbstractFilter $filter, ?array $attributesToFilter): bool
+    private function isNeedToAddFilter(AbstractFilter $filter, ?array $attributesToFilter = null): bool
     {
         if ($attributesToFilter === null) {
             $result = (bool)$filter->getItemsCount();
