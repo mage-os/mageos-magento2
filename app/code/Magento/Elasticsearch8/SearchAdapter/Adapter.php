@@ -98,7 +98,7 @@ class Adapter implements AdapterInterface
             $rawResponse = $client->query($query);
         } catch (\Exception $e) {
             $this->logger->critical($e);
-            throw new ClientException(__("Could not perform search query."), $e->getCode(), $e);
+            throw new ClientException("Could not perform search query.", $e->getCode(), $e);
         }
 
         $rawDocuments = $rawResponse['hits']['hits'] ?? [];
