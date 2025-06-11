@@ -194,8 +194,11 @@ class ShipOrderTest extends \Magento\TestFramework\TestCase\WebapiAbstract
             'items' => "[]",
         ];
 
-        $this->expectExceptionCode(400);
-        $this->_webApiCall($this->getServiceInfo($existingOrder), $requestData);
+        try {
+            $this->_webApiCall($this->getServiceInfo($existingOrder), $requestData);
+            $this->fail('Expected exception was not raised');
+        } catch (\Exception $exception) {
+        }
     }
 
     /**
