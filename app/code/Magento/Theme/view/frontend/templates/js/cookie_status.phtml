@@ -15,7 +15,7 @@
 <?php
 $script = 'document.querySelector("#cookie-status").style.display = "none";';
 ?>
-<?= /* @noEscape */ $secureRenderer->renderTag('script', ['type' => 'text/javascript'], $script, false); ?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $script, false); ?>
 
 <script type="text/x-magento-init">
     {
