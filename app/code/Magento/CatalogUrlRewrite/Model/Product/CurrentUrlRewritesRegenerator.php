@@ -8,6 +8,7 @@ namespace Magento\CatalogUrlRewrite\Model\Product;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\CategoryRepository;
 use Magento\Catalog\Model\Product;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
 use Magento\UrlRewrite\Model\OptionProvider;
 use Magento\CatalogUrlRewrite\Model\ObjectRegistry;
@@ -18,6 +19,8 @@ use Magento\UrlRewrite\Service\V1\Data\UrlRewriteFactory;
 use Magento\CatalogUrlRewrite\Model\Map\UrlRewriteFinder;
 use Magento\Framework\App\ObjectManager;
 use Magento\UrlRewrite\Model\MergeDataProviderFactory;
+use Magento\CatalogUrlRewrite\Block\UrlKeyRenderer;
+use Magento\Store\Model\ScopeInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -73,6 +76,11 @@ class CurrentUrlRewritesRegenerator
     private $categoryRepository;
 
     /**
+     * @var ScopeConfigInterface
+     */
+    private ScopeConfigInterface $scopeConfig;
+
+    /**
      * @param UrlFinderInterface $urlFinder
      * @param ProductUrlPathGenerator $productUrlPathGenerator
      * @param UrlRewriteFactory $urlRewriteFactory
@@ -86,7 +94,8 @@ class CurrentUrlRewritesRegenerator
         UrlRewriteFactory $urlRewriteFactory,
         ?UrlRewriteFinder $urlRewriteFinder = null,
         ?MergeDataProviderFactory $mergeDataProviderFactory = null,
-        ?CategoryRepository $categoryRepository = null
+        ?CategoryRepository $categoryRepository = null,
+        ?ScopeConfigInterface $scopeConfig = null
     ) {
         $this->urlFinder = $urlFinder;
         $this->productUrlPathGenerator = $productUrlPathGenerator;
@@ -98,6 +107,7 @@ class CurrentUrlRewritesRegenerator
         }
         $this->categoryRepository = $categoryRepository ?: ObjectManager::getInstance()->get(CategoryRepository::class);
         $this->mergeDataProviderPrototype = $mergeDataProviderFactory->create();
+        $this->scopeConfig = $scopeConfig ?: ObjectManager::getInstance()->get(ScopeConfigInterface::class);
     }
 
     /**
@@ -118,6 +128,14 @@ class CurrentUrlRewritesRegenerator
             ProductUrlRewriteGenerator::ENTITY_TYPE,
             $rootCategoryId
         );
+
+        $isSaveHistory = $this->scopeConfig->isSetFlag(
+            UrlKeyRenderer::XML_PATH_SEO_SAVE_HISTORY,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+
+        $product->setData('save_rewrites_history', $isSaveHistory);
 
         foreach ($currentUrlRewrites as $currentUrlRewrite) {
             $category = $this->retrieveCategoryFromMetadata($currentUrlRewrite, $productCategories);
