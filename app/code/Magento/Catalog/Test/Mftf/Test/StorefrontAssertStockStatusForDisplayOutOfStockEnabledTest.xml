@@ -18,8 +18,6 @@
             <testCaseId value="AC-6393"/>
         </annotations>
         <before>
-            <!--Precondition Step: Create Customer-->
-            <createData entity="Simple_US_Customer_CA" stepKey="createCustomer"/>
             <!--Create Category-->
             <createData entity="CategoryB" stepKey="createCategory"/>
             <!--Create Simple Product-->
@@ -53,7 +51,6 @@
             <deleteData createDataKey="createSimpleOutStockProduct" stepKey="deleteSecondProduct"/>
             <deleteData createDataKey="createProductNoQuantity" stepKey="deleteThirdProduct"/>
             <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
-            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
             <!-- Logout From Customer and Admin -->
             <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutCustomer" />
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
@@ -65,9 +62,6 @@
         <!-- Step3: Clear cache and verify catalog on front end all categories -->
         <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanInvalidatedCaches">
             <argument name="tags" value="config full_page"/>
-        </actionGroup>
-        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginCustomerOnStorefront">
-            <argument name="Customer" value="$$createCustomer$$"/>
         </actionGroup>
         <!-- Go to storefront category page -->
         <actionGroup ref="GoToStorefrontCategoryPageByParametersActionGroup" stepKey="GoToStorefrontCategoryPage3">
