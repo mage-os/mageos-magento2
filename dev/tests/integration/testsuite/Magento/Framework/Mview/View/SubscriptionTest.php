@@ -10,10 +10,10 @@ namespace Magento\Framework\Mview\View;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Ddl\Trigger;
 use Magento\Framework\DB\Ddl\TriggerFactory;
+use Magento\Framework\Indexer\Action\Dummy;
 use Magento\Framework\Mview\Config;
-use Magento\Framework\Mview\View\CollectionInterface;
-use Magento\Framework\Mview\View\Subscription;
-use Magento\Framework\Mview\View\SubscriptionStatementPostprocessorInterface;
+use Magento\Framework\Mview\Config\Data;
+use Magento\Framework\Mview\View\AdditionalColumnsProcessor\DefaultProcessor;
 use Magento\Framework\Mview\ViewInterface;
 use Magento\TestFramework\Helper\Bootstrap;
 use PHPUnit\Framework\TestCase;
@@ -81,37 +81,37 @@ class SubscriptionTest extends TestCase
                     'name' => 'catalog_product_entity',
                     'column' => 'entity_id',
                     'subscription_model' => null,
-                    'processor' => \Magento\Framework\Mview\View\AdditionalColumnsProcessor\DefaultProcessor::class
+                    'processor' => DefaultProcessor::class
                 ]
             ]);
 
         // Create changelog for the view
-        $changelog = $objectManager->create(\Magento\Framework\Mview\View\Changelog::class);
+        $changelog = $objectManager->create(Changelog::class);
         $changelog->setViewId('test_view');
         $changelog->create();
 
         // Set up view state
-        $state = $objectManager->create(\Magento\Framework\Mview\View\StateInterface::class);
+        $state = $objectManager->create(StateInterface::class);
         $state->setViewId('test_view')
-            ->setMode(\Magento\Framework\Mview\View\StateInterface::MODE_ENABLED)
-            ->setStatus(\Magento\Framework\Mview\View\StateInterface::STATUS_IDLE)
+            ->setMode(StateInterface::MODE_ENABLED)
+            ->setStatus(StateInterface::STATUS_IDLE)
             ->save();
 
         $this->view->setState($state);
 
         // Configure the view in Mview configuration
-        $configData = $objectManager->get(\Magento\Framework\Mview\Config\Data::class);
+        $configData = $objectManager->get(Data::class);
         $configData->merge([
             'test_view' => [
                 'view_id' => 'test_view',
-                'action_class' => \Magento\Framework\Indexer\Action\Dummy::class,
+                'action_class' => Dummy::class,
                 'group' => 'indexer',
                 'subscriptions' => [
                     'catalog_product_entity' => [
                         'name' => 'catalog_product_entity',
                         'column' => 'entity_id',
                         'subscription_model' => null,
-                        'processor' => \Magento\Framework\Mview\View\AdditionalColumnsProcessor\DefaultProcessor::class
+                        'processor' => DefaultProcessor::class
                     ]
                 ]
             ]
@@ -160,7 +160,7 @@ class SubscriptionTest extends TestCase
         // Verify triggers were created
         $connection = $this->resource->getConnection();
         $triggers = $this->subscription->getTriggers();
-        
+
         foreach ($triggers as $trigger) {
             $triggerName = $trigger->getName();
             $result = $connection->fetchOne(
@@ -181,7 +181,7 @@ class SubscriptionTest extends TestCase
     {
         // First create triggers
         $this->subscription->create();
-        
+
         // Get trigger names before removal
         $triggers = $this->subscription->getTriggers();
         $triggerNames = array_map(function ($trigger) {
@@ -208,7 +208,7 @@ class SubscriptionTest extends TestCase
     {
         $this->subscription->create();
         $triggers = $this->subscription->getTriggers();
-        
+
         // Find the UPDATE trigger
         $updateTrigger = null;
         foreach ($triggers as $trigger) {
@@ -219,11 +219,11 @@ class SubscriptionTest extends TestCase
         }
 
         $this->assertNotNull($updateTrigger, 'UPDATE trigger not found');
-        
+
         // Verify the trigger statements contain the ignored column check
         $statements = $updateTrigger->getStatements();
         $this->assertNotEmpty($statements, 'Trigger has no statements');
-        
+
         // Check that updated_at is NOT in the list of columns being checked
         $hasIgnoredColumnCheck = true;
         foreach ($statements as $statement) {
@@ -232,7 +232,7 @@ class SubscriptionTest extends TestCase
                 break;
             }
         }
-        
+
         $this->assertTrue(
             $hasIgnoredColumnCheck,
             'Trigger contains check for ignored column'
