@@ -12,7 +12,6 @@ use Magento\Elasticsearch\SearchAdapter\Aggregation\Builder as AggregationBuilde
 use Magento\Elasticsearch\SearchAdapter\ConnectionManager;
 use Magento\Elasticsearch\SearchAdapter\QueryContainerFactory;
 use Magento\Elasticsearch\SearchAdapter\ResponseFactory;
-use Magento\Framework\Phrase;
 use Magento\Framework\Search\AdapterInterface;
 use Magento\Framework\Search\Request\EmptyRequestDataException;
 use Magento\Framework\Search\RequestInterface;
