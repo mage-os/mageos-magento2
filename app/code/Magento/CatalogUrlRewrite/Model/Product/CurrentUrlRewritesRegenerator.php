@@ -182,7 +182,8 @@ class CurrentUrlRewritesRegenerator
         );
         $anchorCategoryIds = array_merge(
             ...array_map(
-                fn($productCategory) => $productCategory->getAnchorsAbove(), $productCategories->getList()
+                fn($productCategory) => $productCategory->getAnchorsAbove(),
+                $productCategories->getList()
             )
         );
 
