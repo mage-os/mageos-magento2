@@ -47,12 +47,18 @@
             <actionGroup ref="StorefrontSwitchToPayPalPayflowActionGroup" stepKey="switchToPaypalPayflowIframe"/>
             <actionGroup ref="StorefrontFillCreditCardDetailsActionGroup" stepKey="inputCreditCardNumberFillCreditCardDetails"/>
             <waitForPageLoad stepKey="waitForOrderData"/>
-            <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="grabOrderNumber"/>
-            <!-- Go to order page & Open the order-->
-            <actionGroup ref="FilterOrderGridByIdActionGroup" stepKey="filterOrderById">
-                <argument name="orderId" value="$grabOrderNumber"/>
+            <actionGroup ref="StorefrontClickOrderLinkFromCheckoutSuccessPageActionGroup" stepKey="clickOrderLink"/>
+            <comment userInput="BIC workaround" stepKey="assertOrderLink"/>
+            <grabFromCurrentUrl regex="~/order_id/(\d+)/~" stepKey="orderId"/>
+            <!-- Verify Company Credit Message, Order Status, Payment Method, & Custom Reference Number on Admin Order Index Page  -->
+            <comment userInput="BIC workaround" stepKey="goToOrders"/>
+            <comment userInput="BIC workaround" stepKey="waitForPageLoad"/>
+            <comment userInput="BIC workaround" stepKey="filterOrderGridById"/>
+            <comment userInput="BIC workaround" stepKey="clickOnViewLink"/>
+            <comment userInput="BIC workaround" stepKey="waitForOrderPageToLoad"/>
+            <actionGroup ref="AdminOpenOrderByEntityIdActionGroup" stepKey="openOrderById">
+                <argument name="entityId" value="$orderId"/>
             </actionGroup>
-            <actionGroup ref="AdminOrderGridClickFirstRowActionGroup" stepKey="clickOrderRow"/>
         </before>
         <after>
             <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
