@@ -12,6 +12,8 @@ define([
     'jquery/jstree/jquery.jstree',
     'mage/translate'
 ], function ($) {
+    'use strict';
+
     // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
     $.widget('mage.rolesTree', {
         options: {
