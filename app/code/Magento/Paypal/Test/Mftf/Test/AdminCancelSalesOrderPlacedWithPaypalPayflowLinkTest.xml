@@ -47,7 +47,6 @@
             <actionGroup ref="StorefrontSwitchToPayPalPayflowActionGroup" stepKey="switchToPaypalPayflowIframe"/>
             <actionGroup ref="StorefrontFillCreditCardDetailsActionGroup" stepKey="inputCreditCardNumberFillCreditCardDetails"/>
             <waitForPageLoad stepKey="waitForOrderData"/>
-            <actionGroup ref="ReloadPageActionGroup" stepKey="reloadPage"/>
             <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="grabOrderNumber"/>
             <!-- Go to order page & Open the order-->
             <actionGroup ref="FilterOrderGridByIdActionGroup" stepKey="filterOrderById">
