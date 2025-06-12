@@ -62,7 +62,7 @@
             <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutCustomer"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
         </after>
-
+        <waitForPageLoad stepKey="waitPage"/>
         <!-- Step 4&5: Click on Cancel button then OK Button-->
         <actionGroup ref="CancelPendingOrderActionGroup" stepKey="cancelOrder"/>
         <!-- Step6: Observe the Data -->
