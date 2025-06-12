@@ -16,7 +16,7 @@ use Magento\Framework\Module\DbVersionInfo;
  * Used in order to support backward compatibility of modules that are installed
  * in old way (with Install/Upgrade Schema/Data scripts)
  */
-class OldDbValidator implements UpToDateValidatorInterface
+class OldDbValidator implements UpToDateValidatorInterface, DetailProviderInterface
 {
     /**
      * @var DbVersionInfo

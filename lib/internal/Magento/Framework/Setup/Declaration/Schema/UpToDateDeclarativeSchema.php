@@ -10,11 +10,12 @@ namespace Magento\Framework\Setup\Declaration\Schema;
 
 use Magento\Framework\Setup\Declaration\Schema\Diff\SchemaDiff;
 use Magento\Framework\Setup\UpToDateValidatorInterface;
+use Magento\Framework\Setup\DetailProviderInterface;
 
 /**
  * Allows to validate if schema is up to date or not
  */
-class UpToDateDeclarativeSchema implements UpToDateValidatorInterface
+class UpToDateDeclarativeSchema implements UpToDateValidatorInterface, DetailProviderInterface
 {
     /**
      * @var SchemaConfigInterface

@@ -10,11 +10,12 @@ namespace Magento\Framework\Setup\Patch;
 
 use Magento\Framework\Module\ModuleList;
 use Magento\Framework\Setup\UpToDateValidatorInterface;
+use Magento\Framework\Setup\DetailProviderInterface;
 
 /**
  * Allows to validate if data patches is up to date or not
  */
-class UpToDateData implements UpToDateValidatorInterface
+class UpToDateData implements UpToDateValidatorInterface, DetailProviderInterface
 {
     /**
      * @var PatchHistory

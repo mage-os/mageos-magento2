@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -20,19 +20,12 @@ namespace Magento\Framework\Setup;
  *
  * @api
  */
-interface UpToDateValidatorInterface
+interface DetailProviderInterface
 {
     /**
-     * Retrieve message, that uncover outdated component
+     * Retrieve detailed information about validator state and differences found
      *
-     * @return string
+     * @return array
      */
-    public function getNotUpToDateMessage() : string ;
-
-    /**
-     * Validate component whether it is up to date or not
-     *
-     * @return bool
-     */
-    public function isUpToDate() : bool ;
+    public function getDetails() : array;
 }
