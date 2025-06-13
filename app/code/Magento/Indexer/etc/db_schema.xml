@@ -29,7 +29,7 @@
         <column xsi:type="varchar" name="mode" nullable="true" length="16" default="disabled" comment="View Mode"/>
         <column xsi:type="varchar" name="status" nullable="true" length="16" default="idle" comment="View Status"/>
         <column xsi:type="datetime" name="updated" on_update="false" nullable="true" comment="View updated time"/>
-        <column xsi:type="int" name="version_id" unsigned="true" nullable="true" identity="false"
+        <column xsi:type="bigint" name="version_id" unsigned="true" nullable="true" identity="false"
                 comment="View Version ID"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="state_id"/>
