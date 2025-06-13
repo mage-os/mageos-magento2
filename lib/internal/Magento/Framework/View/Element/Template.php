@@ -211,6 +211,7 @@ class Template extends AbstractBlock
         if ($area) {
             $params['area'] = $area;
         }
+        $params['store_id'] = $this->_storeManager->getStore()->getId();
         return $this->resolver->getTemplateFileName($template ?: $this->getTemplate(), $params);
     }
 
