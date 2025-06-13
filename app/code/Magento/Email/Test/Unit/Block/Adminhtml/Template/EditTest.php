@@ -1,12 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2013 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
 namespace Magento\Email\Test\Unit\Block\Adminhtml\Template;
 
+use Magento\Backend\Block\Template\Context;
+use Magento\Backend\Model\Menu\Item\Factory;
 use Magento\Backend\Helper\Data;
 use Magento\Backend\Model\Menu;
 use Magento\Backend\Model\Menu\Config;
@@ -21,9 +23,11 @@ use Magento\Email\Model\BackendTemplate;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\Read;
+use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\FileSystem as FilesystemView;
 use Magento\Framework\View\Layout;
+use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -62,6 +66,11 @@ class EditTest extends TestCase
      */
     protected $filesystemMock;
 
+    /**
+     * @var Context|MockObject
+     */
+    private Context $context;
+
     protected function setUp(): void
     {
         $objectManager = new ObjectManager($this);
@@ -72,8 +81,14 @@ class EditTest extends TestCase
         $helperMock = $this->createMock(Data::class);
         $menuConfigMock = $this->createMock(Config::class);
         $menuMock = $this->getMockBuilder(Menu::class)
-            ->setConstructorArgs([$this->getMockForAbstractClass(LoggerInterface::class)])
-            ->getMock();
+            ->setConstructorArgs(
+                [
+                    $this->getMockForAbstractClass(LoggerInterface::class),
+                    '',
+                    $this->createMock(Factory::class),
+                    $this->createMock(SerializerInterface::class)
+                ]
+            )->getMock();
         $menuItemMock = $this->createMock(Item::class);
         $urlBuilder = $this->createMock(Url::class);
         $this->_configStructureMock = $this->createMock(Structure::class);
@@ -96,6 +111,9 @@ class EditTest extends TestCase
         )->willReturn(
             DirectoryList::ROOT . '/custom/filename.phtml'
         );
+        $this->context = $this->createMock(Context::class);
+        $this->context->expects($this->any())->method('getStoreManager')
+            ->willReturn($this->createMock(StoreManagerInterface::class));
 
         $params = [
             'urlBuilder' => $urlBuilder,
@@ -105,6 +123,7 @@ class EditTest extends TestCase
             'emailConfig' => $this->_emailConfigMock,
             'filesystem' => $this->filesystemMock,
             'viewFileSystem' => $viewFilesystem,
+            'context' => $this->context
         ];
         $arguments = $objectManager->getConstructArguments(
             Edit::class,
