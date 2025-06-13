@@ -278,7 +278,7 @@ class ProductUrlRewriteTest extends AbstractUrlRewriteTest
             $product
         );
         $urlRewriteItems = $this->getEntityRewriteCollection($product->getId())->getItems();
-        $this->assertTrue(count($urlRewriteItems) == 2);
+        $this->assertTrue(count($urlRewriteItems) == 3);
         foreach ($urlRewriteItems as $item) {
             $item->getData('store_id') == $secondStoreId
                 ? $this->assertEquals($urlKeySecondStore . $this->suffix, $item->getRequestPath())
