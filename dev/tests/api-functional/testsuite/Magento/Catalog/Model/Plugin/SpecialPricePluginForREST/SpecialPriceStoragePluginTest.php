@@ -9,7 +9,6 @@ namespace Magento\Catalog\Model\Plugin\SpecialPricePluginForREST;
 
 use Magento\Authorization\Test\Fixture\Role as RoleFixture;
 use Magento\Catalog\Api\ProductRepositoryInterface;
-use Magento\Catalog\Api\SpecialPriceStorageInterface;
 use Magento\Framework\Webapi\Rest\Request;
 use Magento\Integration\Api\AdminTokenServiceInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -32,11 +31,6 @@ class SpecialPriceStoragePluginTest extends WebapiAbstract
     private $fixtures;
 
     /**
-     * @var SpecialPriceStorageInterface
-     */
-    private SpecialPriceStorageInterface $specialPriceStorage;
-
-    /**
      * @var ProductRepositoryInterface
      */
     private ProductRepositoryInterface $productRepository;
@@ -50,36 +44,14 @@ class SpecialPriceStoragePluginTest extends WebapiAbstract
     {
         $this->fixtures = Bootstrap::getObjectManager()->get(DataFixtureStorageManager::class)->getStorage();
         $objectManager = Bootstrap::getObjectManager();
-        $this->specialPriceStorage = $objectManager->get(SpecialPriceStorageInterface::class);
         $this->productRepository = $objectManager->get(ProductRepositoryInterface::class);
         $this->storeManager = $objectManager->get(StoreManagerInterface::class);
-
     }
 
     #[
         DataFixture(ProductFixture::class, as: 'product'),
         DataFixture(RoleFixture::class, as: 'restrictedRole'),
         DataFixture(UserFixture::class, ['role_id' => '$restrictedRole.id$'], 'restrictedUser'),
-        DataFixture(
-            \Magento\Customer\Test\Fixture\Customer::class,
-            [
-                'email' => 'john@doe.com',
-                'password' => 'test@123',
-                'addresses' => [
-                    [
-                        'country_id' => 'US',
-                        'region_id' => 32,
-                        'city' => 'Boston',
-                        'street' => ['10 Milk Street'],
-                        'postcode' => '02108',
-                        'telephone' => '1234567890',
-                        'default_billing' => true,
-                        'default_shipping' => true,
-                    ],
-                ],
-            ],
-            'customer'
-        ),
     ]
     public function testSpecialPriceIsAppliedToAllStoresInWebsite(): void
     {
@@ -93,7 +65,6 @@ class SpecialPriceStoragePluginTest extends WebapiAbstract
         $website = $Store->getWebsite();
         $storeIds = $website->getStoreIds();
 
-        $customer = $this->fixtures->get('customer');
         $restrictedUser = $this->fixtures->get('restrictedUser');
 
         $adminTokens = Bootstrap::getObjectManager()->get(AdminTokenServiceInterface::class);
@@ -101,8 +72,7 @@ class SpecialPriceStoragePluginTest extends WebapiAbstract
             $restrictedUser->getData('username'),
             \Magento\TestFramework\Bootstrap::ADMIN_PASSWORD
         );
-
-
+        
         $data = [
             'sku' => $sku,
             'price' =>123.45,
