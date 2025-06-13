@@ -213,7 +213,7 @@ HTML;
             ->onlyMethods(['getCode'])
             ->getMock();
         $store->expects($this->once())->method('getCode')->willReturn('321');
-        $this->storeManager->expects($this->once())->method('getStore')->willReturn($store);
+        $this->storeManager->expects($this->exactly(2))->method('getStore')->willReturn($store);
 
         $this->assertEquals(
             ['BLOCK_TPL', '321', null, 'base_url' => 'baseUrl', 'template' => null],

@@ -130,7 +130,7 @@ class TemplateTest extends TestCase
 
     public function testGetTemplateFile()
     {
-        $params = ['module' => 'Fixture_Module', 'area' => 'frontend'];
+        $params = ['module' => 'Fixture_Module', 'area' => 'frontend', 'store_id' => null];
         $this->resolver->expects($this->once())->method('getTemplateFileName')->with('template.phtml', $params);
         $this->block->getTemplateFile();
     }

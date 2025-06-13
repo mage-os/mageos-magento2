@@ -8,12 +8,13 @@ declare(strict_types=1);
 namespace Magento\Email\Test\Unit\Block\Adminhtml\Template;
 
 use Magento\Backend\Block\Template\Context;
+use Magento\Backend\Block\Widget\Button\ButtonList;
+use Magento\Backend\Block\Widget\Button\ToolbarInterface;
 use Magento\Backend\Model\Menu\Item\Factory;
 use Magento\Backend\Helper\Data;
 use Magento\Backend\Model\Menu;
 use Magento\Backend\Model\Menu\Config;
 use Magento\Backend\Model\Menu\Item;
-use Magento\Backend\Model\Url;
 use Magento\Config\Model\Config\Structure;
 use Magento\Config\Model\Config\Structure\Element\Field;
 use Magento\Config\Model\Config\Structure\Element\Group;
@@ -23,8 +24,11 @@ use Magento\Email\Model\BackendTemplate;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\Read;
+use Magento\Framework\Json\EncoderInterface;
+use Magento\Framework\Json\Helper\Data as JsonHelper;
+use Magento\Framework\Registry;
 use Magento\Framework\Serialize\SerializerInterface;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\UrlInterface;
 use Magento\Framework\View\FileSystem as FilesystemView;
 use Magento\Framework\View\Layout;
 use Magento\Store\Model\StoreManagerInterface;
@@ -73,7 +77,6 @@ class EditTest extends TestCase
 
     protected function setUp(): void
     {
-        $objectManager = new ObjectManager($this);
         $layoutMock = $this->getMockBuilder(Layout::class)
             ->addMethods(['helper'])
             ->disableOriginalConstructor()
@@ -90,7 +93,6 @@ class EditTest extends TestCase
                 ]
             )->getMock();
         $menuItemMock = $this->createMock(Item::class);
-        $urlBuilder = $this->createMock(Url::class);
         $this->_configStructureMock = $this->createMock(Structure::class);
         $this->_emailConfigMock = $this->createMock(\Magento\Email\Model\Template\Config::class);
 
@@ -114,21 +116,8 @@ class EditTest extends TestCase
         $this->context = $this->createMock(Context::class);
         $this->context->expects($this->any())->method('getStoreManager')
             ->willReturn($this->createMock(StoreManagerInterface::class));
-
-        $params = [
-            'urlBuilder' => $urlBuilder,
-            'layout' => $layoutMock,
-            'menuConfig' => $menuConfigMock,
-            'configStructure' => $this->_configStructureMock,
-            'emailConfig' => $this->_emailConfigMock,
-            'filesystem' => $this->filesystemMock,
-            'viewFileSystem' => $viewFilesystem,
-            'context' => $this->context
-        ];
-        $arguments = $objectManager->getConstructArguments(
-            Edit::class,
-            $params
-        );
+        $urlBuilder = $this->createMock(UrlInterface::class);
+        $this->context->expects($this->any())->method('getUrlBuilder')->willReturn($urlBuilder);
 
         $urlBuilder->expects($this->any())->method('getUrl')->willReturnArgument(0);
         $menuConfigMock->expects($this->any())->method('getMenu')->willReturn($menuMock);
@@ -137,7 +126,23 @@ class EditTest extends TestCase
 
         $layoutMock->expects($this->any())->method('helper')->willReturn($helperMock);
 
-        $this->_block = $objectManager->getObject(Edit::class, $arguments);
+        $encoder = $this->createMock(EncoderInterface::class);
+        $registry = $this->createMock(Registry::class);
+        $structure = $this->createMock(Structure::class);
+        $jsonHelper = $this->createMock(JsonHelper::class);
+        $buttonList = $this->createMock(ButtonList::class);
+        $toolbar = $this->createMock(ToolbarInterface::class);
+        $this->_block = new Edit(
+            $this->context,
+            $encoder,
+            $registry,
+            $menuConfigMock,
+            $structure,
+            $this->_emailConfigMock,
+            $jsonHelper,
+            $buttonList,
+            $toolbar
+        );
     }
 
     /**

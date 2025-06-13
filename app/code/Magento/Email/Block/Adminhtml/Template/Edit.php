@@ -100,7 +100,7 @@ class Edit extends Widget implements ContainerInterface
         $this->_emailConfig = $emailConfig;
         $this->buttonList = $buttonList;
         $this->toolbar = $toolbar;
-        parent::__construct($context, $data);
+        parent::__construct($context, $data, $jsonHelper);
     }
 
     /**
