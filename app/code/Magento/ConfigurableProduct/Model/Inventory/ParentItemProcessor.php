@@ -21,12 +21,25 @@ use Magento\Framework\App\ObjectManager;
  */
 class ParentItemProcessor implements ParentItemProcessorInterface
 {
+    private ChangeParentStockStatus $changeParentStockStatus;
+
     /**
-     * @param ChangeParentStockStatus $changeParentStockStatus
+     * @param Configurable $configurableType
+     * @param StockItemCriteriaInterfaceFactory $criteriaInterfaceFactory
+     * @param StockItemRepositoryInterface $stockItemRepository
+     * @param StockConfigurationInterface $stockConfiguration
+     * @param ChangeParentStockStatus|null $changeParentStockStatus
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter) Deprecated dependencies
      */
     public function __construct(
-        private readonly ChangeParentStockStatus $changeParentStockStatus
+        Configurable $configurableType,
+        StockItemCriteriaInterfaceFactory $criteriaInterfaceFactory,
+        StockItemRepositoryInterface $stockItemRepository,
+        StockConfigurationInterface $stockConfiguration,
+        ?ChangeParentStockStatus $changeParentStockStatus = null
     ) {
+        $this->changeParentStockStatus = $changeParentStockStatus
+            ?? ObjectManager::getInstance()->get(ChangeParentStockStatus::class);
     }
 
     /**
