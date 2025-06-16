@@ -56,7 +56,6 @@ class SpecialPriceStoragePluginTest extends WebapiAbstract
     public function testSpecialPriceIsAppliedToAllStoresInWebsite(): void
     {
         $this->_markTestAsRestOnly();
-        $objectManager = Bootstrap::getObjectManager();
         $product = $this->fixtures->get('product');
         $sku = $product->getSku();
         $storeId= $product->getStoreId();
@@ -87,7 +86,7 @@ class SpecialPriceStoragePluginTest extends WebapiAbstract
                 'token' => $accessToken,
             ],
         ];
-        $response = $this->_webApiCall(
+        $this->_webApiCall(
             $serviceInfo,
             [
                 'prices' => [

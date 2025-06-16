@@ -3,6 +3,8 @@
  * Copyright 2025 Adobe
  * All Rights Reserved.
  */
+declare(strict_types=1);
+
 namespace Magento\Catalog\Model\Plugin\SpecialPricePluginForREST;
 
 use Magento\Catalog\Model\Product\Price\SpecialPriceStorage;
