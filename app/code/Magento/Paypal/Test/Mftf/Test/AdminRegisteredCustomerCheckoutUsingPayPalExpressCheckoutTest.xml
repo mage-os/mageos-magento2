@@ -71,7 +71,3 @@
         <waitForText selector="{{AdminOrderDetailsMainActionsSection.invoiceTabContent1}}" userInput="We couldn't find any records." stepKey="verifyThereIsNoInvoiceCreated"/>
     </test>
 </tests>
-
-
-
-
