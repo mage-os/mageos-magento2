@@ -109,6 +109,7 @@ class Template extends \Magento\Framework\View\Element\Template
      * not be used in future development. Module design should explicitly state dependencies to avoid requiring output
      * disabling. This functionality will temporarily be kept in Magento core, as there are unresolved modularity
      * issues that will be addressed in future releases.
+     * @see no alternatives
      */
     public function isOutputEnabled($moduleName = null)
     {
