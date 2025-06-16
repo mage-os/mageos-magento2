@@ -55,6 +55,7 @@ class SpecialPriceStoragePluginTest extends WebapiAbstract
     ]
     public function testSpecialPriceIsAppliedToAllStoresInWebsite(): void
     {
+        $this->_markTestAsRestOnly();
         $objectManager = Bootstrap::getObjectManager();
         $product = $this->fixtures->get('product');
         $sku = $product->getSku();
@@ -72,7 +73,7 @@ class SpecialPriceStoragePluginTest extends WebapiAbstract
             $restrictedUser->getData('username'),
             \Magento\TestFramework\Bootstrap::ADMIN_PASSWORD
         );
-        
+
         $data = [
             'sku' => $sku,
             'price' =>123.45,

@@ -14,16 +14,35 @@ use Magento\Store\Model\StoreManagerInterface;
  */
 class SpecialPriceStoragePlugin
 {
+    /**
+     * Constructor
+     *
+     * @param StoreManagerInterface $storeManager
+     */
     public function __construct(
         private StoreManagerInterface $storeManager
-    ) {}
+    ) {
+    }
 
+    /**
+     * Around update plugin for REST api fix
+     *
+     * @param SpecialPriceStorage $subject
+     * @param callable $proceed
+     * @param array $prices
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function aroundUpdate(SpecialPriceStorage $subject, callable $proceed, array $prices)
     {
         $prices = $this->applyWebsitePrices($prices);
         return $proceed($prices);
     }
 
+    /**
+     * Function to get website id from current store id and then find all stores and apply prices to them
+     *
+     * @param array $formattedPrices
+     */
     private function applyWebsitePrices(array $formattedPrices): array
     {
         $newPrices = [];
@@ -53,5 +72,4 @@ class SpecialPriceStoragePlugin
 
         return $newPrices;
     }
-
 }
