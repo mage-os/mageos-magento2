@@ -43,6 +43,7 @@
             <waitForElementClickable selector="{{CheckoutPaymentSection.PayPalPayflowLinkRadio}}" stepKey="waitForPayPalRadioButton"/>
             <click selector="{{CheckoutPaymentSection.PayPalPayflowLinkRadio}}" stepKey="selectPaypalPayment"/>
             <checkOption selector="{{CheckoutPaymentSection.selectCheckboxforBilling}}" stepKey="selectCheckboxForBilling"/>
+            <waitForElementClickable selector="{{CheckoutPaymentSection.cntinuebtn}}" stepKey="waitToClickContinueButton"/>
             <click selector="{{CheckoutPaymentSection.cntinuebtn}}" stepKey="submitContinueButton"/>
             <actionGroup ref="StorefrontSwitchToPayPalPayflowActionGroup" stepKey="switchToPaypalPayflowIframe"/>
             <actionGroup ref="StorefrontFillCreditCardDetailsActionGroup" stepKey="inputCreditCardNumberFillCreditCardDetails"/>

@@ -13,7 +13,7 @@
             <description>Fills in the provided Credit Card details. And Clicks on PayNow Button</description>
         </annotations>
         <arguments>
-            <argument name="creditCardDetails" defaultValue="Visa3DSecureCard"/>
+            <argument name="creditCardDetails" defaultValue="VisaDefaultCard"/>
         </arguments>
         <!--Fill the required details for Credit card-->
         <waitForElementVisible selector="{{CheckoutPaymentSection.creditCardField}}" stepKey="waitForCreditCardField"/>
@@ -23,6 +23,7 @@
         <fillField selector ="{{CheckoutPaymentSection.expirationMonth}}" userInput="{{creditCardDetails.month}}" stepKey="inputExpirationMonth"/>
         <fillField selector ="{{CheckoutPaymentSection.expirationYear}}" userInput="{{creditCardDetails.year}}" stepKey="inputExpirationYear"/>
         <fillField selector ="{{CheckoutPaymentSection.cvv}}" userInput="{{creditCardDetails.cvv}}" stepKey="inputCvv"/>
+        <waitForElementClickable selector="{{CheckoutPaymentSection.payNowBtn}}" stepKey="waitToClickPayNowBtn"/>
         <click selector="{{CheckoutPaymentSection.payNowBtn}}" stepKey="clickPayNowBtn"/>
     </actionGroup>
 </actionGroups>
