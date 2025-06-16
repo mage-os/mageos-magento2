@@ -10,7 +10,7 @@
        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
     <test name="AdminAbleToCreateOrderStatusAndUpdateStatusInOrderTest">
         <annotations>
-            <features value="Checkout"/>
+            <features value="Sales"/>
             <stories value="CRUD status in order"/>
             <title value="Order status is set and updated correctly when default status is used for processing"/>
             <description value="Create a custom order status, assign it as default to processing state, then place an order, invoice it, and verify status behaviour."/>
