@@ -19,10 +19,11 @@ use Magento\Config\Model\Config\Structure;
 use Magento\Config\Model\Config\Structure\Element\Field;
 use Magento\Config\Model\Config\Structure\Element\Group;
 use Magento\Config\Model\Config\Structure\Element\Section;
-use Magento\Config\Model\Config\Structure\ElementInterface;
 use Magento\Email\Block\Adminhtml\Template\Edit;
 use Magento\Email\Model\BackendTemplate;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\App\State;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\Read;
@@ -31,6 +32,8 @@ use Magento\Framework\Json\Helper\Data as JsonHelper;
 use Magento\Framework\Registry;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Framework\UrlInterface;
+use Magento\Framework\View\Element\Template\File\Resolver;
+use Magento\Framework\View\Element\Template\File\Validator;
 use Magento\Framework\View\FileSystem as FilesystemView;
 use Magento\Framework\View\Layout;
 use Magento\Store\Model\StoreManagerInterface;
@@ -122,6 +125,22 @@ class EditTest extends TestCase
         $this->context->expects($this->any())->method('getUrlBuilder')->willReturn($urlBuilder);
         $eventManager = $this->createMock(ManagerInterface::class);
         $this->context->expects($this->any())->method('getEventManager')->willReturn($eventManager);
+        $scopeConfig = $this->createMock(ScopeConfigInterface::class);
+        $this->context->expects($this->any())->method('getScopeConfig')->willReturn($scopeConfig);
+        $appState = $this->createMock(State::class);
+        $this->context->expects($this->any())->method('getAppState')->willReturn($appState);
+        $resolver = $this->createMock(Resolver::class);
+        $this->context->expects($this->any())->method('getResolver')->willReturn($resolver);
+        $fileSystem = $this->createMock(Filesystem::class);
+        $fileSystem->expects($this->any())
+            ->method('getDirectoryRead')
+            ->willReturn($this->createMock(Read::class));
+        $this->context->expects($this->any())->method('getFilesystem')->willReturn($fileSystem);
+        $validator = $this->createMock(Validator::class);
+        $this->context->expects($this->any())->method('getValidator')->willReturn($validator);
+        $this->context->expects($this->any())
+            ->method('getLogger')
+            ->willReturn($this->createMock(LoggerInterface::class));
 
         $urlBuilder->expects($this->any())->method('getUrl')->willReturnArgument(0);
         $menuConfigMock->expects($this->any())->method('getMenu')->willReturn($menuMock);
@@ -132,11 +151,6 @@ class EditTest extends TestCase
 
         $encoder = $this->createMock(EncoderInterface::class);
         $registry = $this->createMock(Registry::class);
-        $structure = $this->createMock(Structure::class);
-        $element = $this->createMock(ElementInterface::class);
-        $structure->expects($this->any())
-            ->method('getElement')
-            ->willReturn($element);
         $jsonHelper = $this->createMock(JsonHelper::class);
         $buttonList = $this->createMock(ButtonList::class);
         $toolbar = $this->createMock(ToolbarInterface::class);
@@ -145,11 +159,14 @@ class EditTest extends TestCase
             $encoder,
             $registry,
             $menuConfigMock,
-            $structure,
+            $this->_configStructureMock,
             $this->_emailConfigMock,
             $jsonHelper,
             $buttonList,
-            $toolbar
+            $toolbar,
+            [
+                'directoryHelper' => $this->createMock(\Magento\Directory\Helper\Data::class)
+            ]
         );
     }
 
@@ -180,6 +197,7 @@ class EditTest extends TestCase
             ['getLabel']
         );
         $map = [
+            [['section1'], $sectionMock],
             [['section1', 'group1'], $groupMock1],
             [['section1', 'group1', 'group2'], $groupMock2],
             [['section1', 'group1', 'group2', 'group3'], $groupMock3],

@@ -80,7 +80,9 @@ class Template extends \Magento\Framework\View\Element\Template
         $this->formKey = $context->getFormKey();
         $this->nameBuilder = $context->getNameBuilder();
         $data['jsonHelper'] = $jsonHelper ?? ObjectManager::getInstance()->get(JsonHelper::class);
-        $data['directoryHelper']= $directoryHelper ?? ObjectManager::getInstance()->get(DirectoryHelper::class);
+        if (empty($data['directoryHelper'])) {
+            $data['directoryHelper'] = $directoryHelper ?? ObjectManager::getInstance()->get(DirectoryHelper::class);
+        }
         parent::__construct($context, $data);
     }
 
