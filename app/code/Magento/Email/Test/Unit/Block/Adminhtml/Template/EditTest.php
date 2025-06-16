@@ -19,9 +19,11 @@ use Magento\Config\Model\Config\Structure;
 use Magento\Config\Model\Config\Structure\Element\Field;
 use Magento\Config\Model\Config\Structure\Element\Group;
 use Magento\Config\Model\Config\Structure\Element\Section;
+use Magento\Config\Model\Config\Structure\ElementInterface;
 use Magento\Email\Block\Adminhtml\Template\Edit;
 use Magento\Email\Model\BackendTemplate;
 use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\Read;
 use Magento\Framework\Json\EncoderInterface;
@@ -118,6 +120,8 @@ class EditTest extends TestCase
             ->willReturn($this->createMock(StoreManagerInterface::class));
         $urlBuilder = $this->createMock(UrlInterface::class);
         $this->context->expects($this->any())->method('getUrlBuilder')->willReturn($urlBuilder);
+        $eventManager = $this->createMock(ManagerInterface::class);
+        $this->context->expects($this->any())->method('getEventManager')->willReturn($eventManager);
 
         $urlBuilder->expects($this->any())->method('getUrl')->willReturnArgument(0);
         $menuConfigMock->expects($this->any())->method('getMenu')->willReturn($menuMock);
@@ -129,6 +133,10 @@ class EditTest extends TestCase
         $encoder = $this->createMock(EncoderInterface::class);
         $registry = $this->createMock(Registry::class);
         $structure = $this->createMock(Structure::class);
+        $element = $this->createMock(ElementInterface::class);
+        $structure->expects($this->any())
+            ->method('getElement')
+            ->willReturn($element);
         $jsonHelper = $this->createMock(JsonHelper::class);
         $buttonList = $this->createMock(ButtonList::class);
         $toolbar = $this->createMock(ToolbarInterface::class);
