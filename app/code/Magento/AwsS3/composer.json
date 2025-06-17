@@ -1,24 +1,28 @@
 {
-    "name": "magento/module-aws-s3",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-remote-storage": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "proprietary"
+  "name": "mage-os/module-aws-s3",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.2.0",
+    "mage-os/module-remote-storage": "1.2.0"
+  },
+  "type": "magento2-module",
+  "license": [
+    "proprietary"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\AwsS3\\": ""
-        }
+    "psr-4": {
+      "Magento\\AwsS3\\": ""
     }
+  },
+  "version": "1.2.0",
+  "replace": {
+    "magento/module-aws-s3": "100.4.6"
+  }
 }

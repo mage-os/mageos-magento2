@@ -1,31 +1,35 @@
 {
-    "name": "magento/module-google-optimizer",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-backend": "*",
-        "magento/module-catalog": "*",
-        "magento/module-cms": "*",
-        "magento/module-google-analytics": "*",
-        "magento/module-google-gtag": "*",
-        "magento/module-store": "*",
-        "magento/module-ui": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-google-optimizer",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.2.0",
+    "mage-os/module-backend": "1.2.0",
+    "mage-os/module-catalog": "1.2.0",
+    "mage-os/module-cms": "1.2.0",
+    "mage-os/module-google-analytics": "1.2.0",
+    "mage-os/module-google-gtag": "1.2.0",
+    "mage-os/module-store": "1.2.0",
+    "mage-os/module-ui": "1.2.0"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\GoogleOptimizer\\": ""
-        }
+    "psr-4": {
+      "Magento\\GoogleOptimizer\\": ""
     }
+  },
+  "version": "1.2.0",
+  "replace": {
+    "magento/module-google-optimizer": "100.4.7"
+  }
 }

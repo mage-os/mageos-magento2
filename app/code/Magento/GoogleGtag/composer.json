@@ -1,30 +1,34 @@
 {
-    "name": "magento/module-google-gtag",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-cookie": "*",
-        "magento/module-sales": "*",
-        "magento/module-store": "*"
-    },
-    "suggest": {
-        "magento/module-config": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-google-gtag",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.2.0",
+    "mage-os/module-cookie": "1.2.0",
+    "mage-os/module-sales": "1.2.0",
+    "mage-os/module-store": "1.2.0"
+  },
+  "suggest": {
+    "mage-os/module-config": "1.2.0"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\GoogleGtag\\": ""
-        }
+    "psr-4": {
+      "Magento\\GoogleGtag\\": ""
     }
+  },
+  "version": "1.2.0",
+  "replace": {
+    "magento/module-google-gtag": "100.4.3"
+  }
 }

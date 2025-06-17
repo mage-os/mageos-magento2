@@ -1,30 +1,34 @@
 {
-    "name": "magento/module-offline-payments",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-checkout": "*",
-        "magento/module-payment": "*",
-        "magento/module-quote": "*"
-    },
-    "suggest": {
-        "magento/module-config": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-offline-payments",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.2.0",
+    "mage-os/module-checkout": "1.2.0",
+    "mage-os/module-payment": "1.2.0",
+    "mage-os/module-quote": "1.2.0"
+  },
+  "suggest": {
+    "mage-os/module-config": "1.2.0"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\OfflinePayments\\": ""
-        }
+    "psr-4": {
+      "Magento\\OfflinePayments\\": ""
     }
+  },
+  "version": "1.2.0",
+  "replace": {
+    "magento/module-offline-payments": "100.4.6"
+  }
 }

@@ -1,50 +1,54 @@
 {
-    "name": "magento/module-sales-rule",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/framework-bulk": "*",
-        "magento/module-backend": "*",
-        "magento/module-catalog": "*",
-        "magento/module-catalog-rule": "*",
-        "magento/module-config": "*",
-        "magento/module-customer": "*",
-        "magento/module-directory": "*",
-        "magento/module-eav": "*",
-        "magento/module-payment": "*",
-        "magento/module-quote": "*",
-        "magento/module-reports": "*",
-        "magento/module-rule": "*",
-        "magento/module-sales": "*",
-        "magento/module-shipping": "*",
-        "magento/module-store": "*",
-        "magento/module-ui": "*",
-        "magento/module-widget": "*",
-        "magento/module-captcha": "*",
-        "magento/module-checkout": "*",
-        "magento/module-authorization": "*",
-        "magento/module-asynchronous-operations": "*",
-        "magento/module-multishipping": "*",
-        "magento/module-tax": "*"
-    },
-    "suggest": {
-        "magento/module-sales-rule-sample-data": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-sales-rule",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.2.0",
+    "mage-os/framework-bulk": "1.2.0",
+    "mage-os/module-backend": "1.2.0",
+    "mage-os/module-catalog": "1.2.0",
+    "mage-os/module-catalog-rule": "1.2.0",
+    "mage-os/module-config": "1.2.0",
+    "mage-os/module-customer": "1.2.0",
+    "mage-os/module-directory": "1.2.0",
+    "mage-os/module-eav": "1.2.0",
+    "mage-os/module-payment": "1.2.0",
+    "mage-os/module-quote": "1.2.0",
+    "mage-os/module-reports": "1.2.0",
+    "mage-os/module-rule": "1.2.0",
+    "mage-os/module-sales": "1.2.0",
+    "mage-os/module-shipping": "1.2.0",
+    "mage-os/module-store": "1.2.0",
+    "mage-os/module-ui": "1.2.0",
+    "mage-os/module-widget": "1.2.0",
+    "mage-os/module-captcha": "1.2.0",
+    "mage-os/module-checkout": "1.2.0",
+    "mage-os/module-authorization": "1.2.0",
+    "mage-os/module-asynchronous-operations": "1.2.0",
+    "mage-os/module-multishipping": "1.2.0",
+    "mage-os/module-tax": "1.2.0"
+  },
+  "suggest": {
+    "mage-os/module-sales-rule-sample-data": "Sample Data version: 1.2.0"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\SalesRule\\": ""
-        }
+    "psr-4": {
+      "Magento\\SalesRule\\": ""
     }
+  },
+  "version": "1.2.0",
+  "replace": {
+    "magento/module-sales-rule": "101.2.8-p1"
+  }
 }

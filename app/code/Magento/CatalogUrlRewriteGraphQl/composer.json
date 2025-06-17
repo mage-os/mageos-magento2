@@ -1,30 +1,34 @@
 {
-    "name": "magento/module-catalog-url-rewrite-graph-ql",
-    "description": "N/A",
-    "type": "magento2-module",
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/module-store": "*",
-        "magento/module-catalog": "*",
-        "magento/module-catalog-graph-ql": "*",
-        "magento/module-url-rewrite-graph-ql": "*",
-        "magento/framework": "*"
-    },
-    "suggest": {
-        "magento/module-catalog-url-rewrite": "*",
-        "magento/module-catalog-graph-ql": "*",
-        "magento/module-url-rewrite-graph-ql": "*"
-    },
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-catalog-url-rewrite-graph-ql",
+  "description": "N/A",
+  "type": "magento2-module",
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/module-store": "1.2.0",
+    "mage-os/module-catalog": "1.2.0",
+    "mage-os/module-catalog-graph-ql": "1.2.0",
+    "mage-os/module-url-rewrite-graph-ql": "1.2.0",
+    "mage-os/framework": "1.2.0"
+  },
+  "suggest": {
+    "mage-os/module-catalog-url-rewrite": "1.2.0",
+    "mage-os/module-catalog-graph-ql": "1.2.0",
+    "mage-os/module-url-rewrite-graph-ql": "1.2.0"
+  },
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\CatalogUrlRewriteGraphQl\\": ""
-        }
+    "psr-4": {
+      "Magento\\CatalogUrlRewriteGraphQl\\": ""
     }
+  },
+  "version": "1.2.0",
+  "replace": {
+    "magento/module-catalog-url-rewrite-graph-ql": "100.4.6"
+  }
 }

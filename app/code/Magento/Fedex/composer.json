@@ -1,33 +1,37 @@
 {
-    "name": "magento/module-fedex",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "lib-libxml": "*",
-        "magento/framework": "*",
-        "magento/module-catalog": "*",
-        "magento/module-catalog-inventory": "*",
-        "magento/module-config": "*",
-        "magento/module-directory": "*",
-        "magento/module-quote": "*",
-        "magento/module-sales": "*",
-        "magento/module-shipping": "*",
-        "magento/module-store": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-fedex",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "lib-libxml": "*",
+    "mage-os/framework": "1.2.0",
+    "mage-os/module-catalog": "1.2.0",
+    "mage-os/module-catalog-inventory": "1.2.0",
+    "mage-os/module-config": "1.2.0",
+    "mage-os/module-directory": "1.2.0",
+    "mage-os/module-quote": "1.2.0",
+    "mage-os/module-sales": "1.2.0",
+    "mage-os/module-shipping": "1.2.0",
+    "mage-os/module-store": "1.2.0"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\Fedex\\": ""
-        }
+    "psr-4": {
+      "Magento\\Fedex\\": ""
     }
+  },
+  "version": "1.2.0",
+  "replace": {
+    "magento/module-fedex": "100.4.6"
+  }
 }

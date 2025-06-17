@@ -1,36 +1,40 @@
 {
-    "name": "magento/module-paypal-graph-ql",
-    "description": "GraphQl support for Paypal",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-quote": "*",
-        "magento/module-checkout": "*",
-        "magento/module-paypal": "*",
-        "magento/module-quote-graph-ql": "*",
-        "magento/module-sales": "*",
-        "magento/module-payment": "*",
-        "magento/module-store": "*",
-        "magento/module-vault": "*"
-    },
-    "suggest": {
-        "magento/module-graph-ql": "*",
-        "magento/module-store-graph-ql": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-paypal-graph-ql",
+  "description": "GraphQl support for Paypal",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.2.0",
+    "mage-os/module-quote": "1.2.0",
+    "mage-os/module-checkout": "1.2.0",
+    "mage-os/module-paypal": "1.2.0",
+    "mage-os/module-quote-graph-ql": "1.2.0",
+    "mage-os/module-sales": "1.2.0",
+    "mage-os/module-payment": "1.2.0",
+    "mage-os/module-store": "1.2.0",
+    "mage-os/module-vault": "1.2.0"
+  },
+  "suggest": {
+    "mage-os/module-graph-ql": "1.2.0",
+    "mage-os/module-store-graph-ql": "1.2.0"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\PaypalGraphQl\\": ""
-        }
+    "psr-4": {
+      "Magento\\PaypalGraphQl\\": ""
     }
+  },
+  "version": "1.2.0",
+  "replace": {
+    "magento/module-paypal-graph-ql": "100.4.6"
+  }
 }

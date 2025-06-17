@@ -1,29 +1,33 @@
 {
-    "name": "magento/module-cms-url-rewrite-graph-ql",
-    "description": "N/A",
-    "type": "magento2-module",
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-cms": "*",
-        "magento/module-store": "*",
-        "magento/module-url-rewrite-graph-ql": "*",
-        "magento/module-cms-graph-ql": "*"
-    },
-    "suggest": {
-        "magento/module-cms-url-rewrite": "*",
-        "magento/module-catalog-graph-ql": "*"
-    },
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-cms-url-rewrite-graph-ql",
+  "description": "N/A",
+  "type": "magento2-module",
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.2.0",
+    "mage-os/module-cms": "1.2.0",
+    "mage-os/module-store": "1.2.0",
+    "mage-os/module-url-rewrite-graph-ql": "1.2.0",
+    "mage-os/module-cms-graph-ql": "1.2.0"
+  },
+  "suggest": {
+    "mage-os/module-cms-url-rewrite": "1.2.0",
+    "mage-os/module-catalog-graph-ql": "1.2.0"
+  },
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\CmsUrlRewriteGraphQl\\": ""
-        }
+    "psr-4": {
+      "Magento\\CmsUrlRewriteGraphQl\\": ""
     }
+  },
+  "version": "1.2.0",
+  "replace": {
+    "magento/module-cms-url-rewrite-graph-ql": "100.4.6"
+  }
 }

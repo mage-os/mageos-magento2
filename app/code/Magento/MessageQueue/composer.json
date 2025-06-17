@@ -1,26 +1,30 @@
 {
-    "name": "magento/module-message-queue",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "magento/framework": "*",
-        "magento/framework-message-queue": "*",
-        "magento/magento-composer-installer": "*",
-        "php": "~8.2.0||~8.3.0||~8.4.0"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-message-queue",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "mage-os/framework": "1.2.0",
+    "mage-os/framework-message-queue": "1.2.0",
+    "mage-os/magento-composer-installer": "1.2.0",
+    "php": "~8.2.0||~8.3.0||~8.4.0"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\MessageQueue\\": ""
-        }
+    "psr-4": {
+      "Magento\\MessageQueue\\": ""
     }
+  },
+  "version": "1.2.0",
+  "replace": {
+    "magento/module-message-queue": "100.4.8"
+  }
 }

@@ -1,23 +1,27 @@
 {
-    "name": "magento/module-graph-ql-new-relic",
-    "description": "N/A",
-    "type": "magento2-module",
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-new-relic-reporting": "*",
-        "magento/module-graph-ql": "*"
-    },
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-graph-ql-new-relic",
+  "description": "N/A",
+  "type": "magento2-module",
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.2.0",
+    "mage-os/module-new-relic-reporting": "1.2.0",
+    "mage-os/module-graph-ql": "1.2.0"
+  },
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\GraphQlNewRelic\\": ""
-        }
+    "psr-4": {
+      "Magento\\GraphQlNewRelic\\": ""
     }
+  },
+  "version": "1.2.0",
+  "replace": {
+    "magento/module-graph-ql-new-relic": "100.4.1"
+  }
 }

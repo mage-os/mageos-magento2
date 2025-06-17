@@ -1,37 +1,41 @@
 {
-    "name": "magento/module-catalog-graph-ql",
-    "description": "N/A",
-    "type": "magento2-module",
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/module-eav": "*",
-        "magento/module-catalog": "*",
-        "magento/module-catalog-inventory": "*",
-        "magento/module-directory": "*",
-        "magento/module-search": "*",
-        "magento/module-store": "*",
-        "magento/module-eav-graph-ql": "*",
-        "magento/module-catalog-search": "*",
-        "magento/framework": "*",
-        "magento/module-graph-ql": "*",
-        "magento/module-graph-ql-resolver-cache": "*",
-        "magento/module-config": "*",
-        "magento/module-advanced-search": "*"
-    },
-    "suggest": {
-        "magento/module-graph-ql-cache": "*",
-        "magento/module-store-graph-ql": "*"
-    },
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-catalog-graph-ql",
+  "description": "N/A",
+  "type": "magento2-module",
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/module-eav": "1.2.0",
+    "mage-os/module-catalog": "1.2.0",
+    "mage-os/module-catalog-inventory": "1.2.0",
+    "mage-os/module-directory": "1.2.0",
+    "mage-os/module-search": "1.2.0",
+    "mage-os/module-store": "1.2.0",
+    "mage-os/module-eav-graph-ql": "1.2.0",
+    "mage-os/module-catalog-search": "1.2.0",
+    "mage-os/framework": "1.2.0",
+    "mage-os/module-graph-ql": "1.2.0",
+    "mage-os/module-graph-ql-resolver-cache": "1.2.0",
+    "mage-os/module-config": "1.2.0",
+    "mage-os/module-advanced-search": "1.2.0"
+  },
+  "suggest": {
+    "mage-os/module-graph-ql-cache": "1.2.0",
+    "mage-os/module-store-graph-ql": "1.2.0"
+  },
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\CatalogGraphQl\\": ""
-        }
+    "psr-4": {
+      "Magento\\CatalogGraphQl\\": ""
     }
+  },
+  "version": "1.2.0",
+  "replace": {
+    "magento/module-catalog-graph-ql": "100.4.8"
+  }
 }

@@ -1,22 +1,26 @@
 {
-    "name": "magento/module-catalog-rule-graph-ql",
-    "description": "N/A",
-    "type": "magento2-module",
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-catalog-rule": "*"
-    },
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-catalog-rule-graph-ql",
+  "description": "N/A",
+  "type": "magento2-module",
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.2.0",
+    "mage-os/module-catalog-rule": "1.2.0"
+  },
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\CatalogRuleGraphQl\\": ""
-        }
+    "psr-4": {
+      "Magento\\CatalogRuleGraphQl\\": ""
     }
+  },
+  "version": "1.2.0",
+  "replace": {
+    "magento/module-catalog-rule-graph-ql": "100.4.5-p1"
+  }
 }

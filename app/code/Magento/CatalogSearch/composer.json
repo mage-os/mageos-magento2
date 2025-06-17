@@ -1,38 +1,42 @@
 {
-    "name": "magento/module-catalog-search",
-    "description": "Catalog search",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-backend": "*",
-        "magento/module-catalog": "*",
-        "magento/module-indexer": "*",
-        "magento/module-catalog-inventory": "*",
-        "magento/module-customer": "*",
-        "magento/module-directory": "*",
-        "magento/module-eav": "*",
-        "magento/module-search": "*",
-        "magento/module-store": "*",
-        "magento/module-theme": "*",
-        "magento/module-ui": "*"
-    },
-    "suggest": {
-        "magento/module-config": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-catalog-search",
+  "description": "Catalog search",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.2.0",
+    "mage-os/module-backend": "1.2.0",
+    "mage-os/module-catalog": "1.2.0",
+    "mage-os/module-indexer": "1.2.0",
+    "mage-os/module-catalog-inventory": "1.2.0",
+    "mage-os/module-customer": "1.2.0",
+    "mage-os/module-directory": "1.2.0",
+    "mage-os/module-eav": "1.2.0",
+    "mage-os/module-search": "1.2.0",
+    "mage-os/module-store": "1.2.0",
+    "mage-os/module-theme": "1.2.0",
+    "mage-os/module-ui": "1.2.0"
+  },
+  "suggest": {
+    "mage-os/module-config": "1.2.0"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\CatalogSearch\\": ""
-        }
+    "psr-4": {
+      "Magento\\CatalogSearch\\": ""
     }
+  },
+  "version": "1.2.0",
+  "replace": {
+    "magento/module-catalog-search": "102.0.8"
+  }
 }
