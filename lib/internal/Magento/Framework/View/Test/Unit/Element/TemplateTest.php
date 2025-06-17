@@ -107,6 +107,7 @@ class TemplateTest extends TestCase
         $storeMock->expects($this->any())
             ->method('getCode')
             ->willReturn('storeCode');
+        $storeMock->expects($this->any())->method('getId')->willReturn(1);
         $urlBuilderMock = $this->getMockForAbstractClass(UrlInterface::class);
         $urlBuilderMock->expects($this->any())
             ->method('getBaseUrl')
@@ -130,7 +131,7 @@ class TemplateTest extends TestCase
 
     public function testGetTemplateFile()
     {
-        $params = ['module' => 'Fixture_Module', 'area' => 'frontend', 'store_id' => null];
+        $params = ['module' => 'Fixture_Module', 'area' => 'frontend', 'store_id' => 1];
         $this->resolver->expects($this->once())->method('getTemplateFileName')->with('template.phtml', $params);
         $this->block->getTemplateFile();
     }
