@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Unit\ElasticAdapter\SearchAdapter;
+namespace Magento\Elasticsearch\Test\Unit\ElasticAdapter\SearchAdapter;
 
 use Magento\AdvancedSearch\Model\Client\ClientException;
 use Magento\Elasticsearch\SearchAdapter\QueryContainer;
@@ -21,6 +21,9 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Magento\Elasticsearch\ElasticAdapter\SearchAdapter\Adapter;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class AdapterTest extends TestCase
 {
     /**

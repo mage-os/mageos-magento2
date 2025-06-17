@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Unit\SearchAdapter;
+namespace Magento\Elasticsearch8\Test\Unit\SearchAdapter;
 
 use Magento\AdvancedSearch\Model\Client\ClientException;
 use Magento\Elasticsearch\SearchAdapter\Aggregation\Builder as AggregationBuilder;
@@ -22,6 +22,9 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class AdapterTest extends TestCase
 {
     /**
