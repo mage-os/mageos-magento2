@@ -351,8 +351,6 @@
     "conflict": {
         "gene/bluefoot": "*"
     },
-    "scripts": {
-    },
     "extra": {
         "component_paths": {
             "trentrichardson/jquery-timepicker-addon": "lib/web/jquery/jquery-ui-timepicker-addon.js",
