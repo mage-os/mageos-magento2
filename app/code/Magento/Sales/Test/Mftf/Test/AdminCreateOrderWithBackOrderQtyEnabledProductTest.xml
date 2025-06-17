@@ -63,6 +63,7 @@
         <!-- Step4: Create Shipment for this Order and verify backorder -->
         <click selector="{{AdminOrderDetailsMainActionsSection.ship}}" stepKey="clickShipAction"/>
         <waitForPageLoad stepKey="waitForPageToLoad"/>
+        <waitForElementClickable selector="{{AdminShipmentMainActionsSection.submitShipment}}" stepKey="waitForSubmitShipmentButtonToBeClickable"/>
         <click selector="{{AdminShipmentMainActionsSection.submitShipment}}" stepKey="clickSubmitShipment"/>
         <waitForText selector="{{AdminOrderItemsOrderedSection.itemsOrderedStatus($$createProduct.sku$$)}}" userInput="Shipped" stepKey="verifyItemStatusAfterShipment"/>
         <waitForText selector="{{AdminOrderItemsOrderedSection.backOrdered($$createProduct.sku$$)}}" userInput="1" stepKey="verifyBackOrderedAfterShipment"/>
