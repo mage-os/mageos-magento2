@@ -451,10 +451,16 @@ class Price implements ResetAfterRequestInterface
      */
     protected function _applySpecialPrice($product, $finalPrice)
     {
+
+        $specialPriceFrom = $product->getSpecialFromDate();
+        if ($specialPriceFrom instanceof \DateTimeInterface) {
+            $specialPriceFrom = $specialPriceFrom->format('Y-m-d H:i:s');
+        }
+
         return $this->calculateSpecialPrice(
             $finalPrice,
             $product->getSpecialPrice(),
-            $product->getSpecialFromDate(),
+            $specialPriceFrom,
             $product->getSpecialToDate(),
             WebsiteInterface::ADMIN_CODE
         );
