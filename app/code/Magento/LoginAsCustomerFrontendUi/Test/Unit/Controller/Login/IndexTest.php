@@ -29,6 +29,8 @@ use Magento\LoginAsCustomerFrontendUi\Controller\Login\Index;
 
 /**
  * Unit tests for Magento\LoginAsCustomerFrontendUi\Controller\Login\Index
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class IndexTest extends TestCase
 {
