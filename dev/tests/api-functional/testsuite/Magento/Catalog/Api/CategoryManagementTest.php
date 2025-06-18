@@ -1,8 +1,8 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All rights reserved.
  */
 
 namespace Magento\Catalog\Api;
@@ -96,7 +96,7 @@ class CategoryManagementTest extends WebapiAbstract
             ],
             [
                 2,
-                null,
+                3,
                 [
                     'id' => 2,
                     'name' => 'Default Category',
@@ -125,7 +125,7 @@ class CategoryManagementTest extends WebapiAbstract
             ],
             [
                 400,
-                1,
+                null, // Default depth is 1
                 [
                     'id' => 400,
                     'name' => 'Category 1',

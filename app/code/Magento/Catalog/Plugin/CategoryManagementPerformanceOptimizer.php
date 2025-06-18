@@ -24,6 +24,7 @@ class CategoryManagementPerformanceOptimizer
      * @param int|null $rootCategoryId
      * @param int|null $depth
      * @return array
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function beforeGetTree(
         CategoryManagementInterface $subject,
