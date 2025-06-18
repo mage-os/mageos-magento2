@@ -47,4 +47,9 @@
     <type name="Magento\Catalog\Model\CategoryRepository">
         <plugin name="format_category_url_key_rest_api" type="Magento\Catalog\Plugin\Model\CategoryRepositoryPlugin" />
     </type>
+    <!-- Essential performance optimizations for category tree operations -->
+    <type name="Magento\Catalog\Api\CategoryManagementInterface">
+        <plugin name="categoryManagementPerformanceOptimizer"
+                type="Magento\Catalog\Plugin\CategoryManagementPerformanceOptimizer" />
+    </type>
 </config>
