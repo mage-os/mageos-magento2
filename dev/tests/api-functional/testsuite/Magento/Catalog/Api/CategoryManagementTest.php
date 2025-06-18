@@ -16,9 +16,8 @@ use Magento\TestFramework\Helper\CompareArraysRecursively;
  */
 class CategoryManagementTest extends WebapiAbstract
 {
-    const RESOURCE_PATH = '/V1/categories';
-
-    const SERVICE_NAME = 'catalogCategoryManagementV1';
+    private const RESOURCE_PATH = '/V1/categories';
+    private const SERVICE_NAME = 'catalogCategoryManagementV1';
 
     /**
      * @var CompareArraysRecursively
