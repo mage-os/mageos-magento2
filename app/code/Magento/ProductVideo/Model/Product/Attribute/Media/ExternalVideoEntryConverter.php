@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\ProductVideo\Model\Product\Attribute\Media;
@@ -19,7 +19,7 @@ class ExternalVideoEntryConverter extends ImageEntryConverter
     /**
      * Media Entry type code
      */
-    const MEDIA_TYPE_CODE = 'external-video';
+    public const MEDIA_TYPE_CODE = 'external-video';
 
     /**
      * @var \Magento\Framework\Api\Data\VideoContentInterfaceFactory
@@ -82,15 +82,18 @@ class ExternalVideoEntryConverter extends ImageEntryConverter
     public function convertFrom(ProductAttributeMediaGalleryEntryInterface $entry)
     {
         $dataFromPreviewImageEntry = parent::convertFrom($entry);
-        $videoContent = $entry->getExtensionAttributes()->getVideoContent();
-        $entryArray = [
-            'video_provider' => $videoContent->getVideoProvider(),
-            'video_url' => $videoContent->getVideoUrl(),
-            'video_title' => $videoContent->getVideoTitle(),
-            'video_description' => $videoContent->getVideoDescription(),
-            'video_metadata' => $videoContent->getVideoMetadata(),
-        ];
-        $entryArray = array_merge($dataFromPreviewImageEntry, $entryArray);
+        if ($videoContent = $entry->getExtensionAttributes()->getVideoContent()) {
+            $entryArray = [
+                'video_provider' => $videoContent->getVideoProvider(),
+                'video_url' => $videoContent->getVideoUrl(),
+                'video_title' => $videoContent->getVideoTitle(),
+                'video_description' => $videoContent->getVideoDescription(),
+                'video_metadata' => $videoContent->getVideoMetadata(),
+            ];
+            $entryArray = array_merge($dataFromPreviewImageEntry, $entryArray);
+        } else {
+            $entryArray = $dataFromPreviewImageEntry;
+        }
         return $entryArray;
     }
 }
