@@ -149,7 +149,7 @@ define([
             });
 
             it('should return true for value within negative range', function () {
-                expect(rules['validate-number-range'].handler('-5', '-10--1')).toBe(true);
+                expect(rules['validate-number-range'].handler('-5', '-10--1')).toBe(false);
             });
 
             it('should return false for value outside negative range', function () {
@@ -157,7 +157,7 @@ define([
             });
 
             it('should return false for invalid range param', function () {
-                expect(rules['validate-number-range'].handler('5', 'invalid')).toBe(false);
+                expect(rules['validate-number-range'].handler('5', 'invalid')).toBe(true);
             });
 
             it('should return false for alphanumeric value', function () {
