@@ -130,14 +130,16 @@ class LinkManagementTest extends TestCase
         $childProduct->expects($this->once())->method('getData')->with('code')->willReturn(10);
         $childProduct->expects($this->once())->method('getStoreId')->willReturn(1);
         $childProduct->expects($this->once())->method('getAttributes')->willReturn([$attribute]);
+        $childProduct->expects($this->once())->method('getMediaGalleryEntries')->willReturn([]);
 
         $productMock = $this->getMockForAbstractClass(ProductInterface::class);
+        $productMock->expects($this->once())->method('setMediaGalleryEntries')->with([])->willReturnSelf();
 
         $this->dataObjectHelperMock->expects($this->once())
             ->method('populateWithArray')
             ->with(
                 $productMock,
-                ['store_id' => 1, 'code' => 10, 'media_gallery_entries' => []],
+                ['store_id' => 1, 'code' => 10],
                 ProductInterface::class
             )->willReturnSelf();
 

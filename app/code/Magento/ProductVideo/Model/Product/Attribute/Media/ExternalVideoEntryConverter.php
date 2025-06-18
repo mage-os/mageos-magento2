@@ -49,6 +49,8 @@ class ExternalVideoEntryConverter extends ImageEntryConverter
     }
 
     /**
+     * Return video entry type
+     *
      * @return string
      */
     public function getMediaEntryType()
@@ -57,6 +59,8 @@ class ExternalVideoEntryConverter extends ImageEntryConverter
     }
 
     /**
+     * Convert raw data to media gallery video entry
+     *
      * @param Product $product
      * @param array $rowData
      * @return ProductAttributeMediaGalleryEntryInterface
@@ -77,7 +81,7 @@ class ExternalVideoEntryConverter extends ImageEntryConverter
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function convertFrom(ProductAttributeMediaGalleryEntryInterface $entry)
     {

@@ -22,6 +22,7 @@ use Magento\Framework\Exception\StateException;
 /**
  * Configurable product link management.
  *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class LinkManagement implements LinkManagementInterface
 {
