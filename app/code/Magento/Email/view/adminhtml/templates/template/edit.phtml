@@ -171,10 +171,10 @@ require([
                 $('preview_type').value = {$templateType};
             }
 
-            if (typeof tinyMCE == 'undefined' || !tinyMCE.get('template_text')) {
+            if (typeof tinyMCE == 'undefined' || !hugerte.get('template_text')) {
                 $('preview_text').value = $('template_text').value;
             } else {
-                $('preview_text').value = tinyMCE.get('template_text').getHTML();
+                $('preview_text').value = hugerte.get('template_text').getHTML();
             }
 
             if ($('template_styles') != undefined) {
