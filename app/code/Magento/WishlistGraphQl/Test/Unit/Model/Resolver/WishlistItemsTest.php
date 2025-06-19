@@ -13,6 +13,7 @@ use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\GraphQl\Model\Query\ContextExtensionInterface;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Store\Model\Website;
 use Magento\Wishlist\Model\ResourceModel\Item;
 use Magento\Wishlist\Model\ResourceModel\Item\Collection as WishlistItemCollection;
 use Magento\Wishlist\Model\ResourceModel\Item\CollectionFactory as WishlistItemCollectionFactory;
@@ -49,18 +50,18 @@ class WishlistItemsTest extends TestCase
      */
     public function testResolve(): void
     {
-        $storeId = $itemId = 1;
+        $webId = $storeId = $itemId = 1;
 
         $field = $this->createMock(Field::class);
         $context = $this->getMockBuilder(ContextInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
         $store = $this->createMock(StoreInterface::class);
-        $store->expects($this->once())->method('getId')->willReturn($storeId);
+        $store->expects($this->once())->method('getWebsiteId')->willReturn($webId);
+        $store->expects($this->any())->method('getId')->willReturn($storeId);
 
         $extensionAttributes = $this->getMockBuilder(ContextExtensionInterface::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getStore'])
             ->getMock();
         $extensionAttributes->expects($this->exactly(2))
             ->method('getStore')
@@ -99,6 +100,10 @@ class WishlistItemsTest extends TestCase
         $this->wishlistItemCollectionFactory->expects($this->once())
             ->method('create')
             ->willReturn($wishlistCollection);
+
+        $website = $this->createMock(Website::class);
+        $website->expects($this->any())->method('getStores')->willReturn([$store]);
+        $this->storeManager->expects($this->once())->method('getWebsite')->with($webId)->willReturn($website);
 
         $resolver = new WishlistItems($this->wishlistItemCollectionFactory, $this->storeManager);
         $resolver->resolve($field, $context, $info, ['model' => $wishlist]);
