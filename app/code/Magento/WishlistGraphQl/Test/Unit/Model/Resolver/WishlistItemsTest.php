@@ -22,6 +22,9 @@ use Magento\WishlistGraphQl\Model\Resolver\WishlistItems;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class WishlistItemsTest extends TestCase
 {
     /**
