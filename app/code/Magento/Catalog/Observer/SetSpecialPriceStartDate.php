@@ -39,7 +39,8 @@ class SetSpecialPriceStartDate implements ObserverInterface
         /** @var  $product \Magento\Catalog\Model\Product */
         $product = $observer->getEvent()->getProduct();
         if ($product->getSpecialPrice() && $product->getSpecialFromDate() === null) {
-            $product->setData('special_from_date', $this->localeDate->date()->setTime(0, 0));
+            $product->setData('special_from_date',
+                $this->localeDate->date()->setTime(0, 0)->format('Y-m-d H:i:s'));
         }
         return $this;
     }
