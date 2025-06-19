@@ -8,9 +8,9 @@ declare(strict_types=1);
 namespace Magento\WishlistGraphQl\Test\Unit\Model\Resolver;
 
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
+use Magento\GraphQl\Model\Query\ContextExtension;
 use Magento\GraphQl\Model\Query\ContextInterface;
 use Magento\Framework\GraphQl\Config\Element\Field;
-use Magento\GraphQl\Model\Query\ContextExtensionInterface;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Model\Website;
@@ -56,16 +56,12 @@ class WishlistItemsTest extends TestCase
         $webId = $storeId = $itemId = 1;
 
         $field = $this->createMock(Field::class);
-        $context = $this->getMockBuilder(ContextInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $context = $this->createMock(ContextInterface::class);
         $store = $this->createMock(StoreInterface::class);
         $store->expects($this->once())->method('getWebsiteId')->willReturn($webId);
         $store->expects($this->any())->method('getId')->willReturn($storeId);
 
-        $extensionAttributes = $this->getMockBuilder(ContextExtensionInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $extensionAttributes = $this->createMock(ContextExtension::class);
         $extensionAttributes->expects($this->exactly(2))
             ->method('getStore')
             ->willReturn($store);
