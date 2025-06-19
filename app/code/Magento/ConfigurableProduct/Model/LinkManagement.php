@@ -6,6 +6,7 @@
 
 namespace Magento\ConfigurableProduct\Model;
 
+use Magento\Catalog\Api\Data\ProductAttributeMediaGalleryEntryInterfaceFactory;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\Data\ProductInterfaceFactory;
 use Magento\Catalog\Api\ProductRepositoryInterface;
@@ -15,6 +16,7 @@ use Magento\ConfigurableProduct\Api\LinkManagementInterface;
 use Magento\ConfigurableProduct\Helper\Product\Options\Factory;
 use Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable;
 use Magento\Framework\Api\DataObjectHelper;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Exception\StateException;
@@ -62,6 +64,11 @@ class LinkManagement implements LinkManagementInterface
     private ProductRepository $mediaGallery;
 
     /**
+     * @var ProductAttributeMediaGalleryEntryInterfaceFactory|mixed
+     */
+    private ProductAttributeMediaGalleryEntryInterfaceFactory $myModelFactory;
+
+    /**
      * Constructor
      *
      * @param ProductRepositoryInterface $productRepository
@@ -70,6 +77,7 @@ class LinkManagement implements LinkManagementInterface
      * @param DataObjectHelper $dataObjectHelper
      * @param AttributeFactory|null $attributeFactory
      * @param ProductRepository|null $mediaGalleryProcessor
+     * @param ProductAttributeMediaGalleryEntryInterfaceFactory|null $myModelFactory
      * @param Factory|null $optionsFactory
      */
     public function __construct(
@@ -79,17 +87,20 @@ class LinkManagement implements LinkManagementInterface
         DataObjectHelper $dataObjectHelper,
         ?AttributeFactory $attributeFactory = null,
         ?ProductRepository $mediaGalleryProcessor = null,
+        ?ProductAttributeMediaGalleryEntryInterfaceFactory $myModelFactory = null,
         ?Factory $optionsFactory = null
     ) {
         $this->productRepository = $productRepository;
         $this->productFactory = $productFactory;
         $this->configurableType = $configurableType;
         $this->dataObjectHelper = $dataObjectHelper;
-        $this->attributeFactory = $attributeFactory ?: \Magento\Framework\App\ObjectManager::getInstance()
+        $this->attributeFactory = $attributeFactory ?: ObjectManager::getInstance()
             ->get(AttributeFactory::class);
-        $this->mediaGallery = $mediaGalleryProcessor ?: \Magento\Framework\App\ObjectManager::getInstance()
+        $this->mediaGallery = $mediaGalleryProcessor ?: ObjectManager::getInstance()
             ->get(ProductRepository::class);
-        $this->optionsFactory = $optionsFactory ?: \Magento\Framework\App\ObjectManager::getInstance()
+        $this->myModelFactory = $myModelFactory ?: ObjectManager::getInstance()
+            ->get(ProductAttributeMediaGalleryEntryInterfaceFactory::class);
+        $this->optionsFactory = $optionsFactory ?: ObjectManager::getInstance()
             ->get(Factory::class);
     }
 
@@ -127,6 +138,30 @@ class LinkManagement implements LinkManagementInterface
             $childrenList[] = $productDataObject;
         }
         return $childrenList;
+    }
+
+    /**
+     * Get media entries
+     *
+     * @param array $images
+     * @return array
+     * @deprecated This approach is designed only for images
+     * @see ProductInterface::getMediaGalleryEntries
+     */
+    public function getMediaEntries(array $images): array
+    {
+        $media = $this->myModelFactory->create();
+        $mediaGalleryEntries=[];
+        foreach ($images as $image) {
+            $media->setId($image["value_id"]);
+            $media->setMediaType($image["media_type"]);
+            $media->setLabel($image["label"]);
+            $media->setPosition($image["position"]);
+            $media->setDisabled($image["disabled"]);
+            $media->setFile($image["file"]);
+            $mediaGalleryEntries[]=$media->getData();
+        }
+        return $mediaGalleryEntries;
     }
 
     /**
