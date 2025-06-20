@@ -12,5 +12,6 @@
         <annotations>
             <description>Clicks On Show/Hide Button To display TinyMCE</description>
         </annotations>
+        <conditionalClick selector="{{TinyMCESection.ShowHideBtn}}" dependentSelector="{{TinyMCESection.TinyMCE}}" visible="false" after="clickContentTab" stepKey="toggleEditorAgainIfHidden"/>
     </actionGroup>
 </actionGroups>
