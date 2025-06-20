@@ -11,7 +11,7 @@
         <annotations>
             <features value="Payflow"/>
             <stories value="Payment Payflow Link methods"/>
-            <title value="Sales Order Cancellation Using PayPal Payflow Link"/>
+            <title value="Cancel a Sales Order placed with PayPal Payflow Link"/>
             <description value="Admin can cancel orders placed by customers using PayPal Payflow"/>
             <severity value="MAJOR"/>
             <testCaseId value="AC-5429"/>
@@ -24,11 +24,11 @@
             </createData>
             <!-- US Customer is created -->
             <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
-            <!-- Precondition Step1: Login To admin -->
             <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
             <actionGroup ref="AdminEnablePayPalPayFlowLinkActionGroup" stepKey="ConfigPayPalPayFlowLink">
                 <argument name="credentials" value="SamplePaypalPaymentsFlowLinkConfig"/>
             </actionGroup>
+            <!-- Precondition Step1: Order is placed within PayPal Payflow Link -->
             <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginToStorefrontAccount">
                 <argument name="Customer" value="$$createCustomer$$"/>
             </actionGroup>
@@ -49,14 +49,7 @@
             <actionGroup ref="StorefrontFillCreditCardDetailsActionGroup" stepKey="inputCreditCardNumberFillCreditCardDetails"/>
             <waitForPageLoad stepKey="waitForOrderData"/>
             <actionGroup ref="StorefrontClickOrderLinkFromCheckoutSuccessPageActionGroup" stepKey="clickOrderLink"/>
-            <comment userInput="BIC workaround" stepKey="assertOrderLink"/>
             <grabFromCurrentUrl regex="~/order_id/(\d+)/~" stepKey="orderId"/>
-            <!-- Verify Company Credit Message, Order Status, Payment Method, & Custom Reference Number on Admin Order Index Page  -->
-            <comment userInput="BIC workaround" stepKey="goToOrders"/>
-            <comment userInput="BIC workaround" stepKey="waitForPageLoad"/>
-            <comment userInput="BIC workaround" stepKey="filterOrderGridById"/>
-            <comment userInput="BIC workaround" stepKey="clickOnViewLink"/>
-            <comment userInput="BIC workaround" stepKey="waitForOrderPageToLoad"/>
             <actionGroup ref="AdminOpenOrderByEntityIdActionGroup" stepKey="openOrderById">
                 <argument name="entityId" value="$orderId"/>
             </actionGroup>
@@ -69,6 +62,10 @@
             <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutCustomer"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
         </after>
+        <!--  Step1,2&3: Log in to Admin, Go to Sales > Orders & Open the Order from preconditions -->
+        <actionGroup ref="AdminOpenOrderByEntityIdActionGroup" stepKey="openOrderById">
+            <argument name="entityId" value="$orderId"/>
+        </actionGroup>
         <waitForPageLoad stepKey="waitPage"/>
         <!-- Step 4&5: Click on Cancel button then OK Button-->
         <actionGroup ref="CancelPendingOrderActionGroup" stepKey="cancelOrder"/>
