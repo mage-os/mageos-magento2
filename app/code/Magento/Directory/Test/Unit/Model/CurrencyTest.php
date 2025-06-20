@@ -296,6 +296,8 @@ class CurrencyTest extends TestCase
                 ['precision' => 2, 'symbol' => '#', 'display' => CurrencyData::NO_SYMBOL],
                 '9,999.99'
             ],
+            ['he_IL', 'USD', '9999', [], '9,999.00 ‏$'],
+            ['he_IL', 'USD', '9999', ['display' => CurrencyData::NO_SYMBOL], '9,999.00'],
         ];
     }
 
