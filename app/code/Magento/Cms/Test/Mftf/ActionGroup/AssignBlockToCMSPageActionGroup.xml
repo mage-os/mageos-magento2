@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-/**
- * Copyright 2018 Adobe
- * All Rights Reserved.
- */
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
 -->
 
 <actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -33,7 +33,6 @@
         <click selector="{{CmsPagesPageActionsSection.edit(CmsPage.identifier)}}" stepKey="clickEdit"/>
         <waitForPageLoad stepKey="waitForPageLoad2"/>
         <click selector="{{CmsNewPagePageContentSection.header}}" stepKey="clickContentTab"/>
-        <conditionalClick selector="{{TinyMCESection.ShowHideBtn}}" dependentSelector="{{TinyMCESection.TinyMCE}}" visible="false"  stepKey="clickShowHideEditor"/>
         <waitForElementVisible selector="{{TinyMCESection.TinyMCE}}" stepKey="waitForTinyMCE"/>
         <seeElement selector="{{TinyMCESection.InsertWidgetIcon}}" stepKey="seeWidgetIcon"/>
         <click selector="{{TinyMCESection.InsertWidgetIcon}}" stepKey="clickInsertWidgetIcon"/>
