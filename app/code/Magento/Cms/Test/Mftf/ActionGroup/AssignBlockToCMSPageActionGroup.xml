@@ -33,7 +33,6 @@
         <click selector="{{CmsPagesPageActionsSection.edit(CmsPage.identifier)}}" stepKey="clickEdit"/>
         <waitForPageLoad stepKey="waitForPageLoad2"/>
         <click selector="{{CmsNewPagePageContentSection.header}}" stepKey="clickContentTab"/>
-        <conditionalClick selector="{{TinyMCESection.ShowHideBtn}}" dependentSelector="{{TinyMCESection.TinyMCE}}" visible="false"  stepKey="clickShowHideEditor"/>
         <waitForElementVisible selector="{{TinyMCESection.TinyMCE}}" stepKey="waitForTinyMCE"/>
         <seeElement selector="{{TinyMCESection.InsertWidgetIcon}}" stepKey="seeWidgetIcon"/>
         <click selector="{{TinyMCESection.InsertWidgetIcon}}" stepKey="clickInsertWidgetIcon"/>
