@@ -48,11 +48,6 @@
             <actionGroup ref="StorefrontSwitchToPayPalPayflowActionGroup" stepKey="switchToPaypalPayflowIframe"/>
             <actionGroup ref="StorefrontFillCreditCardDetailsActionGroup" stepKey="inputCreditCardNumberFillCreditCardDetails"/>
             <waitForPageLoad stepKey="waitForOrderData"/>
-            <actionGroup ref="StorefrontClickOrderLinkFromCheckoutSuccessPageActionGroup" stepKey="clickOrderLink"/>
-            <grabFromCurrentUrl regex="~/order_id/(\d+)/~" stepKey="orderId"/>
-            <actionGroup ref="AdminOpenOrderByEntityIdActionGroup" stepKey="openOrderById">
-                <argument name="entityId" value="$orderId"/>
-            </actionGroup>
         </before>
         <after>
             <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
@@ -63,6 +58,8 @@
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
         </after>
         <!--  Step1,2&3: Log in to Admin, Go to Sales > Orders & Open the Order from preconditions -->
+        <actionGroup ref="StorefrontClickOrderLinkFromCheckoutSuccessPageActionGroup" stepKey="clickOrderLink"/>
+        <grabFromCurrentUrl regex="~/order_id/(\d+)/~" stepKey="orderId"/>
         <actionGroup ref="AdminOpenOrderByEntityIdActionGroup" stepKey="openOrderById">
             <argument name="entityId" value="$orderId"/>
         </actionGroup>
