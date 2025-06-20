@@ -1,8 +1,8 @@
 <?php
 /**
  *
- * Copyright 2015 Adobe
- * All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 
 namespace Magento\Catalog\Api;
@@ -16,8 +16,9 @@ use Magento\TestFramework\Helper\CompareArraysRecursively;
  */
 class CategoryManagementTest extends WebapiAbstract
 {
-    private const RESOURCE_PATH = '/V1/categories';
-    private const SERVICE_NAME = 'catalogCategoryManagementV1';
+    const RESOURCE_PATH = '/V1/categories';
+
+    const SERVICE_NAME = 'catalogCategoryManagementV1';
 
     /**
      * @var CompareArraysRecursively
@@ -95,7 +96,7 @@ class CategoryManagementTest extends WebapiAbstract
             ],
             [
                 2,
-                3,
+                null,
                 [
                     'id' => 2,
                     'name' => 'Default Category',
@@ -124,7 +125,7 @@ class CategoryManagementTest extends WebapiAbstract
             ],
             [
                 400,
-                null, // Default depth is 1
+                1,
                 [
                     'id' => 400,
                     'name' => 'Category 1',

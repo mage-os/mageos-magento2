@@ -15,7 +15,7 @@ use Magento\Catalog\Api\Data\CategoryTreeInterface;
  */
 class CategoryManagementPerformanceOptimizer
 {
-    private const DEFAULT_MAX_DEPTH = 1; // Limit depth to prevent timeouts
+    private const DEFAULT_MAX_DEPTH = 3; // Limit depth to prevent timeouts
 
     /**
      * Optimize getTree method with depth limits to prevent timeouts
