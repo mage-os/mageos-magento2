@@ -32,16 +32,6 @@ class ArraySerializedPlugin
     }
 
     /**
-     * Check if we're on the design config edit page.
-     *
-     * @return bool
-     */
-    private function isDesignConfigEditPage(): bool
-    {
-        return in_array($this->request->getFullActionName(), self::DESIGN_CONFIG_EDIT_PAGE);
-    }
-
-    /**
      * Convert string keys to numeric keys. Only applies in adminhtml area and on design config edit page
      *
      * @param ArraySerialized $subject
@@ -69,6 +59,17 @@ class ArraySerializedPlugin
         // Convert to numerically indexed array
         $convertedValue = array_values($value);
         $subject->setValue($convertedValue);
+
         return $result;
+    }
+
+    /**
+     * Check if we're on the design config edit page.
+     *
+     * @return bool
+     */
+    private function isDesignConfigEditPage(): bool
+    {
+        return in_array($this->request->getFullActionName(), self::DESIGN_CONFIG_EDIT_PAGE);
     }
 }
