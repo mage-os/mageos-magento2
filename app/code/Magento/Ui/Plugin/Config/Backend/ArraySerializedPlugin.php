@@ -56,19 +56,19 @@ class ArraySerializedPlugin
         }
 
         $value = $subject->getValue();
-
-        // If the value is an array but has string keys (row1, row2, row3)
-        if (is_array($value) && !empty($value)) {
-            $keys = array_keys($value);
-
-            // Check if keys are string-based (row1, row2, row3) instead of numeric
-            if (!empty($keys) && !is_numeric($keys[0])) {
-                // Convert to numerically indexed array
-                $convertedValue = array_values($value);
-                $subject->setValue($convertedValue);
-            }
+        if (!is_array($value)) {
+            return $result;
         }
 
+        $keys = array_keys($value);
+        // Check if keys are string-based (row1, row2, row3) instead of numeric
+        if (empty($keys) || is_numeric($keys[0])) {
+            return $result;
+        }
+
+        // Convert to numerically indexed array
+        $convertedValue = array_values($value);
+        $subject->setValue($convertedValue);
         return $result;
     }
 }
