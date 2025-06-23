@@ -13,7 +13,8 @@ use Magento\Store\Model\StoreManagerInterface as StoreManager;
 use Magento\Framework\App\RequestInterface;
 
 /**
- * Class Bundle
+ * Plugin class to initialize Bundle product
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Bundle
@@ -106,6 +107,13 @@ class Bundle
                 $product->setBundleOptionsData($result['bundle_options']);
             }
 
+            if (!$result['bundle_selections']) {
+                $extension = $product->getExtensionAttributes();
+                $extension->setBundleProductOptions([]);
+                $product->setExtensionAttributes($extension);
+                $product->setDropOptions(true);
+            }
+
             $this->processBundleOptionsData($product);
             $this->processDynamicOptionsData($product);
         } elseif (!$compositeReadonly) {
@@ -120,6 +128,8 @@ class Bundle
     }
 
     /**
+     * Process Bundle Options Data
+     *
      * @param \Magento\Catalog\Model\Product $product
      * @return void
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
@@ -161,10 +171,11 @@ class Bundle
         $extension = $product->getExtensionAttributes();
         $extension->setBundleProductOptions($options);
         $product->setExtensionAttributes($extension);
-        return;
     }
 
     /**
+     * Process Dynamic Options Data
+     *
      * @param \Magento\Catalog\Model\Product $product
      * @return void
      */
@@ -198,9 +209,10 @@ class Bundle
     }
 
     /**
+     * Build product link
+     *
      * @param \Magento\Catalog\Model\Product $product
      * @param array $linkData
-     *
      * @return \Magento\Bundle\Api\Data\LinkInterface
      */
     private function buildLink(
