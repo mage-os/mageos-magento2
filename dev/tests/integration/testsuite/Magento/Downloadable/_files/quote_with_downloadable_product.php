@@ -50,8 +50,8 @@ $quote->setCustomerIsGuest(
 )->setIsMultiShipping(
     0
 )->setBillingAddress($billingAddress)
-    ->setShippingAddress($shippingAddress)
-    ->addProduct(
+->setShippingAddress($shippingAddress)
+->addProduct(
     // @phpstan-ignore argument.type
     $product,
     new \Magento\Framework\DataObject([
