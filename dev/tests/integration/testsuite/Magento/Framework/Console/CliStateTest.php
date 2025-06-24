@@ -49,7 +49,7 @@ class CliStateTest extends TestCase
 
         try {
             // Create a new Cli instance which will use our fixed initObjectManager method
-            $cli = new Cli('Magento CLI', '2.4.0');
+            $cli = new Cli('Magento CLI');
             
             // Get the ObjectManager from the Cli instance using reflection
             $reflection = new \ReflectionClass($cli);
