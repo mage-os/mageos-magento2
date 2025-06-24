@@ -539,7 +539,8 @@ class ShipmentService
             $accessToken = $this->carrierModel->getOauthAccessRequest();
 
             if (!$accessToken) {
-                throw new LocalizedException(__('We couldn\'t connect to USPS at the moment. Please try again shortly.'));
+                throw new LocalizedException(__('We couldn\'t connect to USPS at the moment.
+                 Please try again shortly.'));
             }
 
             $paymentToken = $this->getLabelPaymentTokenRequest($accessToken);
@@ -597,7 +598,8 @@ class ShipmentService
         } else {
             $errorMsg = $this->handleErrorResponse($response);
             if (empty($errorMsg)) {
-                $errorMsg[] = $response['error']['message'] ?? __('An error occurred while processing your request.');
+                $errorMsg[] = $response['error']['message']
+                    ?? __('An error occurred while processing your request.');
             }
             $debugData['result'] = [
                 'error' => $errorMsg,
@@ -638,7 +640,8 @@ class ShipmentService
             // Handle girth for non-rectangular containers
             $container = $this->carrierModel->getConfigData('container');
             if (in_array($container, ['NONRECTANGULAR', 'VARIABLE'], true)) {
-                $girth = (int)($request->getGirth() ?: $this->carrierModel->getConfigData('girth') ?: $defaultDimension);
+                $girth = (int)($request->getGirth()
+                    ?: $this->carrierModel->getConfigData('girth') ?: $defaultDimension);
                 $request->setPackageGirth($girth);
             }
         } else {
@@ -647,8 +650,9 @@ class ShipmentService
             $request->setPackageLength($length);
         }
 
-        if ($this->shippingMethodManager->getPackageType($request->getShippingMethod()) === 'FLAT_RATE_ENVELOPE') {
-            $packageDimension = $this->shippingMethodManager->getMethodMinDimensions($request->getShippingMethod());
+        // Apply minimum dimensions if they exist for the shipping method
+        $packageDimension = $this->shippingMethodManager->getMethodMinDimensions($request->getShippingMethod());
+        if ($packageDimension) {
             $request->setPackageHeight(($packageDimension['height'] ?? $height));
             $request->setPackageWidth(($packageDimension['width'] ?? $width));
             $request->setPackageLength(($packageDimension['length'] ?? $length));
@@ -816,8 +820,8 @@ class ShipmentService
                         <a href="%1" target="_blank">Schedule B Export Codes</a>
                         and the shipment must not require an export license. If any item exceeds this value,
                         an export license is required. A shipment (regardless of value) is going to Canada and does not
-                        require an export license. Users may enter <b>%2</b> in the AESITN field if the shipment value meets the exemption criteria.
-                        Please contact USPS for more information.',
+                        require an export license. Users may enter <b>%2</b> in the AESITN field if the shipment value
+                        meets the exemption criteria. Please contact USPS for more information.',
                         'www.census.gov/foreign-trade/schedules/b',
                         "'NO EEI 30.37(a)'"
                     )

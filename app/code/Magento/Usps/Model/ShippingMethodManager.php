@@ -188,7 +188,6 @@ class ShippingMethodManager
             'mail_class' => "PRIORITY_MAIL_INTERNATIONAL",
             'processing_category' => "FLATS",
             'destination_entry_facility_type' => "INTERNATIONAL_SERVICE_CENTER",
-            'package_type' => "FLAT_RATE_ENVELOPE",
             'min_dimension' => [
                 'length' => 12.5,
                 'height' => 9.5,
@@ -202,7 +201,6 @@ class ShippingMethodManager
             'mail_class' => "PRIORITY_MAIL_INTERNATIONAL",
             'processing_category' => "MACHINABLE",
             'destination_entry_facility_type' => "INTERNATIONAL_SERVICE_CENTER",
-            'package_type' => "FLAT_RATE_ENVELOPE",
             'min_dimension' => [
                 'length' => 11.25,
                 'height' => 8.75,
@@ -216,7 +214,6 @@ class ShippingMethodManager
             'mail_class' => "PRIORITY_MAIL_INTERNATIONAL",
             'processing_category' => "MACHINABLE",
             'destination_entry_facility_type' => "INTERNATIONAL_SERVICE_CENTER",
-            'package_type' => "FLAT_RATE_ENVELOPE",
             'min_dimension' => [
                 'length' => 12.25,
                 'height' => 12.25,
@@ -230,7 +227,6 @@ class ShippingMethodManager
             'mail_class' => "PRIORITY_MAIL_INTERNATIONAL",
             'processing_category' => "MACHINABLE",
             'destination_entry_facility_type' => "INTERNATIONAL_SERVICE_CENTER",
-            'package_type' => "FLAT_RATE_ENVELOPE",
             'min_dimension' => [
                 'length' => 8.6875,
                 'height' => 5.4375,
@@ -244,7 +240,6 @@ class ShippingMethodManager
             'mail_class' => "PRIORITY_MAIL_INTERNATIONAL",
             'processing_category' => "FLATS",
             'destination_entry_facility_type' => "INTERNATIONAL_SERVICE_CENTER",
-            'package_type' => "FLAT_RATE_ENVELOPE",
             'min_dimension' => [
                 'length' => 15,
                 'height' => 9.5,
@@ -258,7 +253,6 @@ class ShippingMethodManager
             'mail_class' => "PRIORITY_MAIL_INTERNATIONAL",
             'processing_category' => "MACHINABLE",
             'destination_entry_facility_type' => "INTERNATIONAL_SERVICE_CENTER",
-            'package_type' => "FLAT_RATE_ENVELOPE",
             'min_dimension' => [
                 'length' => 12.5,
                 'height' => 9.5,
@@ -272,7 +266,6 @@ class ShippingMethodManager
             'mail_class' => "PRIORITY_MAIL_EXPRESS_INTERNATIONAL",
             'processing_category' => "MACHINABLE",
             'destination_entry_facility_type' => "INTERNATIONAL_SERVICE_CENTER",
-            'package_type' => "FLAT_RATE_ENVELOPE",
             'min_dimension' => [
                 'length' => 12.5,
                 'height' => 9.5,
@@ -286,7 +279,6 @@ class ShippingMethodManager
             'mail_class' => "PRIORITY_MAIL_EXPRESS_INTERNATIONAL",
             'processing_category' => "FLATS",
             'destination_entry_facility_type' => "INTERNATIONAL_SERVICE_CENTER",
-            'package_type' => "FLAT_RATE_ENVELOPE",
             'min_dimension' => [
                 'length' => 15,
                 'height' => 9.5,
@@ -300,7 +292,6 @@ class ShippingMethodManager
             'mail_class' => "PRIORITY_MAIL_EXPRESS_INTERNATIONAL",
             'processing_category' => "FLATS",
             'destination_entry_facility_type' => "INTERNATIONAL_SERVICE_CENTER",
-            'package_type' => "FLAT_RATE_ENVELOPE",
             'min_dimension' => [
                 'length' => 12.5,
                 'height' => 9.5,
@@ -420,17 +411,5 @@ class ShippingMethodManager
     {
         $methodCode = strtoupper($methodCode);
         return $this->shippingMethods[$methodCode]['max_dimension'] ?? null;
-    }
-
-    /**
-     * Get the rate indicator for a specific method code
-     *
-     * @param string $methodCode The shipping method code
-     * @return string|null The rate indicator or null if not found
-     */
-    public function getPackageType(string $methodCode): ?string
-    {
-        $methodCode = strtoupper($methodCode);
-        return $this->shippingMethods[$methodCode]['package_type'] ?? null;
     }
 }

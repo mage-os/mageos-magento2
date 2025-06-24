@@ -1020,7 +1020,9 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
                             ],
                         ],
                         'from_us' => [
-                            'method' => ['INT_16', 'INT_24', 'PRIORITY_MAIL_INTERNATIONAL_MACHINABLE_ISC_SMALL_FLAT_RATE_BOX'],
+                            'method' => ['INT_16', 'INT_24',
+                                'PRIORITY_MAIL_INTERNATIONAL_MACHINABLE_ISC_SMALL_FLAT_RATE_BOX'
+                            ],
                         ],
                     ]
                 ],
@@ -1028,10 +1030,13 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
                     'containers' => ['MD FLAT RATE BOX'],
                     'filters' => [
                         'within_us' => [
-                            'method' => ['17', '57', 'PRIORITY_MAIL_MACHINABLE_MEDIUM_FLAT_RATE_BOX'],
+                            'method' => ['17', '57', 'PRIORITY_MAIL_MACHINABLE_MEDIUM_FLAT_RATE_BOX'
+                            ],
                         ],
                         'from_us' => [
-                            'method' => ['INT_9', 'INT_24', 'PRIORITY_MAIL_INTERNATIONAL_MACHINABLE_ISC_MEDIUM_FLAT_RATE_BOX'],
+                            'method' => ['INT_9', 'INT_24',
+                                'PRIORITY_MAIL_INTERNATIONAL_MACHINABLE_ISC_MEDIUM_FLAT_RATE_BOX'
+                            ],
                         ],
                     ]
                 ],
@@ -1042,7 +1047,9 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
                             'method' => ['22', '57', 'PRIORITY_MAIL_MACHINABLE_LARGE_FLAT_RATE_BOX'],
                         ],
                         'from_us' => [
-                            'method' => ['INT_11', 'INT_24', 'INT_25', 'PRIORITY_MAIL_INTERNATIONAL_MACHINABLE_ISC_LARGE_FLAT_RATE_BOX'],
+                            'method' => ['INT_11', 'INT_24', 'INT_25',
+                                'PRIORITY_MAIL_INTERNATIONAL_MACHINABLE_ISC_LARGE_FLAT_RATE_BOX'
+                            ],
                         ],
                     ]
                 ],
@@ -1086,7 +1093,7 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
                             'method' => ['62', '63', '64', '46', '29',
                                 'PRIORITY_MAIL_EXPRESS_PADDED_FLAT_RATE_ENVELOPE',
                                 'PRIORITY_MAIL_PADDED_FLAT_RATE_ENVELOPE'
-                        ],
+                            ],
                         ],
                         'from_us' => [
                             'method' => ['INT_27', 'INT_23',
@@ -1144,7 +1151,8 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
                             ],
                         ],
                         'from_us' => [
-                            'method' => ['INT_12', 'INT_1', 'INT_2', 'INT_15', 'INT_13', 'INT_14', 'INT_16', 'INT_20', 'INT_21', 'INT_22', 'INT_23', 'INT_24', 'INT_25', 'INT_27',
+                            'method' => ['INT_12', 'INT_1', 'INT_2', 'INT_15', 'INT_13', 'INT_14', 'INT_16', 'INT_20',
+                                'INT_21', 'INT_22', 'INT_23', 'INT_24', 'INT_25', 'INT_27',
                                 'FIRST-CLASS_PACKAGE_INTERNATIONAL_SERVICE_MACHINABLE_ISC_SINGLE-PIECE',
                                 'PRIORITY_MAIL_INTERNATIONAL_ISC_SINGLE-PIECE',
                                 'PRIORITY_MAIL_EXPRESS_INTERNATIONAL_ISC_SINGLE-PIECE'
@@ -1165,7 +1173,12 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
                                     ],
                         ],
                         'from_us' => [
-                            'method' => ['INT_4', 'INT_1', 'INT_2', 'INT_15', 'INT_13', 'INT_14', 'INT_16', 'INT_20', 'INT_21', 'INT_22', 'INT_23', 'INT_24', 'INT_25', 'INT_27', 'INT_28', 'INT_29', 'INT_30', 'INT_31', 'INT_32', 'INT_33', 'INT_34', 'INT_35', 'INT_36', 'INT_37', 'INT_38', 'INT_39', 'INT_40', 'INT_41', 'INT_42', 'INT_43', 'INT_44', 'INT_45', 'INT_46', 'INT_47', 'INT_48', 'INT_49', 'INT_50', 'INT_53', 'INT_58', 'INT_59', 'INT_61', 'INT_62', 'INT_63', 'INT_64',
+                            'method' => ['INT_4', 'INT_1', 'INT_2', 'INT_15', 'INT_13', 'INT_14', 'INT_16', 'INT_20',
+                                        'INT_21', 'INT_22', 'INT_23', 'INT_24', 'INT_25', 'INT_27', 'INT_28', 'INT_29',
+                                        'INT_30', 'INT_31', 'INT_32', 'INT_33', 'INT_34', 'INT_35', 'INT_36', 'INT_37',
+                                        'INT_38', 'INT_39', 'INT_40', 'INT_41', 'INT_42', 'INT_43', 'INT_44', 'INT_45',
+                                        'INT_46', 'INT_47', 'INT_48', 'INT_49', 'INT_50', 'INT_53', 'INT_58', 'INT_59',
+                                        'INT_61', 'INT_62', 'INT_63', 'INT_64',
                                         'FIRST-CLASS_PACKAGE_INTERNATIONAL_SERVICE_MACHINABLE_ISC_SINGLE-PIECE',
                                         'PRIORITY_MAIL_INTERNATIONAL_ISC_SINGLE-PIECE',
                                         'PRIORITY_MAIL_EXPRESS_INTERNATIONAL_ISC_SINGLE-PIECE',

@@ -528,7 +528,7 @@ class ShipmentServiceTest extends TestCase
     }
 
     /**
-     * Test setPackageRequest for large packages
+     * Test setPackageRequest for large package
      */
     public function testSetPackageRequestLargePackage(): void
     {
@@ -545,11 +545,6 @@ class ShipmentServiceTest extends TestCase
             ->method('getConfigData')
             ->with('container')
             ->willReturn('NONRECTANGULAR');
-
-        $this->shippingMethodManagerMock->expects($this->once())
-            ->method('getPackageType')
-            ->with('Priority Mail')
-            ->willReturn('RECTANGULAR');
 
         $result = $this->shipmentService->setPackageRequest($request);
 
@@ -583,11 +578,6 @@ class ShipmentServiceTest extends TestCase
                 ];
                 return $map[$key] ?? null;
             });
-
-        $this->shippingMethodManagerMock->expects($this->once())
-            ->method('getPackageType')
-            ->with('Priority Mail Express Flat Rate Envelope')
-            ->willReturn('FLAT_RATE_ENVELOPE');
 
         $this->shippingMethodManagerMock->expects($this->once())
             ->method('getMethodMinDimensions')
@@ -975,7 +965,7 @@ class ShipmentServiceTest extends TestCase
         // The method should return a DataObject with errors instead of throwing an exception
         $this->assertInstanceOf(DataObject::class, $result);
         $this->assertNotEmpty($result->getErrors());
-        $this->assertStringContainsString('valued at $2,500 or less', implode(' ', $result->getErrors()));
+        $this->assertStringContainsString('Schedule B Export Codes', implode(' ', $result->getErrors()));
     }
 
     /**
