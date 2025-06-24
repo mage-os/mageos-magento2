@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Usps\Model\Source;
 
@@ -11,7 +11,7 @@ namespace Magento\Usps\Model\Source;
 class Freemethod extends Method
 {
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function toOptionArray()
     {
