@@ -37,10 +37,6 @@
                 <argument name="statusCode" value="{{readyForPickup.code}}"/>
             </actionGroup>
             <click selector="{{AdminOrderStatusGridSection.unassign}}" stepKey="unassigningOrderStatus"/>
-            <!-- Disable created order status -->
-            <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanInvalidatedCaches">
-                <argument name="tags" value="config full_page"/>
-            </actionGroup>
             <!--Logout from customer account-->
             <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutStorefront"/>
             <!--Delete Data-->

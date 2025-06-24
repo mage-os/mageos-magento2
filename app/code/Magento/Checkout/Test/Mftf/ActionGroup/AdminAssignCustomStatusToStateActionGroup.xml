@@ -13,7 +13,7 @@
         </annotations>
         <arguments>
             <argument name="orderStatus" type="string"/>
-            <argument name="orderState" type="string" />
+            <argument name="orderState" type="string"/>
         </arguments>
         <click selector="{{AdminOrderStatusGridSection.assignStatusToStateBtn}}" stepKey="clickAssignStatusBtn" after="waitForPageLoaded"/>
         <selectOption selector="{{AdminAssignOrderStatusToStateSection.orderStatus}}" userInput="{{orderStatus}}" stepKey="selectOrderStatus"/>
