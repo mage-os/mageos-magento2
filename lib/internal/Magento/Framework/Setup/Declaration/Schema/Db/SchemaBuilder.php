@@ -18,6 +18,7 @@ use Magento\Framework\Config\FileResolverByModule;
 use Magento\Framework\Setup\Declaration\Schema\Declaration\ReaderComposite;
 use Psr\Log\LoggerInterface;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\App\ObjectManager;
 
 /**
  * This type of builder is responsible for converting ENTIRE data, that comes from db
@@ -77,13 +78,13 @@ class SchemaBuilder
         DbSchemaReaderInterface $dbSchemaReader,
         Sharding $sharding,
         ReaderComposite $readerComposite,
-        LoggerInterface $logger
+        ?LoggerInterface $logger = null
     ) {
         $this->elementFactory = $elementFactory;
         $this->dbSchemaReader = $dbSchemaReader;
         $this->sharding = $sharding;
         $this->readerComposite = $readerComposite;
-        $this->logger = $logger;
+        $this->logger = $logger ?: ObjectManager::getInstance()->get(LoggerInterface::class);
     }
 
     /**
