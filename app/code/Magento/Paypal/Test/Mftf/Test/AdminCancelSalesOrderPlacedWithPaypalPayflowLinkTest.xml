@@ -16,6 +16,7 @@
             <severity value="MAJOR"/>
             <testCaseId value="AC-5429"/>
             <group value="3rd_party_integration"/>
+            <group value="pr_exclude"/>
         </annotations>
         <before>
             <!-- Simple product is created -->
@@ -70,19 +71,19 @@
         <actionGroup ref="AdminOrderViewCheckStatusActionGroup" stepKey="seeAdminOrderStatus">
             <argument name="status" value="Canceled"/>
         </actionGroup>
-        <waitForElementVisible selector="{{AdminOrderDetailsInformationSection.paymentInformationField('Last Transaction ID')}}" stepKey="waitForTransactionIDFieldToBeAppeared"/>
-        <grabTextFrom selector="{{AdminOrderDetailsInformationSection.paymentInformationField('Last Transaction ID')}}" stepKey="grabTransactionID"/>
+        <waitForElementVisible selector="{{AdminOrderDetailsInformationSection.paymentInformationField(AdminMenuPaypalTransaction.dataUiId)}}" stepKey="waitForTransactionIDFieldToBeAppeared"/>
+        <grabTextFrom selector="{{AdminOrderDetailsInformationSection.paymentInformationField(AdminMenuPaypalTransaction.dataUiId)}}" stepKey="grabTransactionID"/>
         <actionGroup ref="AdminOpenOrderCommentsHistoryActionGroup" stepKey="clickOnCommentsHistory"/>
-        <waitForText selector="{{AdminOrderCommentsTabSection.orderCommentsWithType('Canceled order')}}" userInput="Canceled order online Amount: $15.00. Transaction ID: &quot;{$grabTransactionID}&quot;" stepKey="seeOrderHistoryNotesAfterCancelingOrder"/>
+        <waitForText selector="{{AdminOrderCommentsTabSection.orderCommentsWithType(AdminMenuPaypalTransaction.orderData)}}" userInput="Canceled order online Amount: $15.00. Transaction ID: &quot;{$grabTransactionID}&quot;" stepKey="seeOrderHistoryNotesAfterCancelingOrder"/>
         <actionGroup ref="AdminOpenTransactionsTabActionGroup" stepKey="openTransactionTypeHasAuthorization">
             <argument name="transactionType" value="authorization"/>
         </actionGroup>
-        <waitForText selector="{{AdminTransactionsGridSection.transactionData('Is Closed')}}" userInput="Yes" stepKey="seeIfClosedHeaderIsSetAsYesForAuthorization"/>
+        <waitForText selector="{{AdminTransactionsGridSection.transactionData(AdminMenuPaypalTransaction.status)}}" userInput="{{ImageUpload.shareable}}" stepKey="seeIfClosedHeaderIsSetAsYesForAuthorization"/>
         <waitForElementClickable selector="{{AdminProductFormActionSection.backButton}}" stepKey="waitForBackButtonToBeClicked"/>
         <click selector="{{AdminProductFormActionSection.backButton}}" stepKey="clickBackButton"/>
         <actionGroup ref="AdminOpenTransactionsTabActionGroup" stepKey="openTransactionTypeHasVoid">
             <argument name="transactionType" value="void"/>
         </actionGroup>
-        <waitForText selector="{{AdminTransactionsGridSection.transactionData('Is Closed')}}" userInput="Yes" stepKey="seeIfClosedHeaderIsSetAsYesForVoid"/>
+        <waitForText selector="{{AdminTransactionsGridSection.transactionData(AdminMenuPaypalTransaction.status)}}" userInput="{{ImageUpload.shareable}}" stepKey="seeIfClosedHeaderIsSetAsYesForVoid"/>
     </test>
 </tests>
