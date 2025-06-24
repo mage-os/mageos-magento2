@@ -177,10 +177,10 @@ class Cli extends Console\Application
         $params = (new ComplexParameter(self::INPUT_KEY_BOOTSTRAP))->mergeFromArgv($_SERVER, $_SERVER);
         $params[Bootstrap::PARAM_REQUIRE_MAINTENANCE] = null;
         $requestParams = $this->serviceManager->get('magento-init-params');
-        $appBootstrapKey = Bootstrap::INIT_PARAM_FILESYSTEM_DIR_PATHS;
 
-        if (isset($requestParams[$appBootstrapKey]) && !isset($params[$appBootstrapKey])) {
-            $params[$appBootstrapKey] = $requestParams[$appBootstrapKey];
+        // Merge ALL magento-init-params, not just filesystem paths
+        if (!empty($requestParams) && is_array($requestParams)) {
+            $params = array_replace_recursive($params, $requestParams);
         }
 
         $this->objectManager = Bootstrap::create(BP, $params)->getObjectManager();
