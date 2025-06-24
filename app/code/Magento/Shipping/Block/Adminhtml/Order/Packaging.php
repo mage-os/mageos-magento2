@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2011 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Shipping\Block\Adminhtml\Order;
@@ -18,14 +18,14 @@ use Magento\Shipping\Helper\Carrier;
 class Packaging extends \Magento\Backend\Block\Template
 {
     /**
-     * Source size model
+     * Source size model instance
      *
      * @var \Magento\Shipping\Model\Carrier\Source\GenericInterface
      */
     protected $_sourceSizeModel;
 
     /**
-     * Core registry
+     * Core registry instance
      *
      * @var \Magento\Framework\Registry
      */
