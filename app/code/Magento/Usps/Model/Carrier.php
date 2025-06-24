@@ -1114,7 +1114,7 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
                         ],
                         'from_us' => [
                             'method' => ['INT_17', 'INT_22',
-                                'PRIORITY_MAIL_INTERNATIONAL_MACHINABLE_ISC_LEGAL_FLAT_RATE_ENVELOPE',
+                                'PRIORITY_MAIL_INTERNATIONAL_ISC_LEGAL_FLAT_RATE_ENVELOPE',
                                 'PRIORITY_MAIL_EXPRESS_INTERNATIONAL_ISC_LEGAL_FLAT_RATE_ENVELOPE'
                             ],
                         ],
