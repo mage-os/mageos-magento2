@@ -342,10 +342,10 @@ class ShipmentService
             return;
         }
         $productName = $rateElement['description'];
-        $methodCode = substr($this->replaceSpaceWithUnderscore($productName), 0, 120);
+        $methodCode = strtoupper(substr($this->replaceSpaceWithUnderscore($productName), 0, 120));
         $methodTitle = $this->shippingMethodManager->getMethodTitle($methodCode);
         $allowedMethods = $this->getRestAllowedMethods();
-        if (in_array(strtoupper($methodCode), array_keys($allowedMethods))) {
+        if (in_array($methodCode, array_keys($allowedMethods))) {
             // Use totalPrice if available, otherwise use price
             $cost = isset($rateElement['totalPrice']) ?
                 (float)$rateElement['totalPrice'] : (float)$rateElement['price'];
@@ -624,16 +624,27 @@ class ShipmentService
         $length = $request->getLength() ?? $this->carrierModel->getConfigData('length');
         $width = $request->getWidth() ?? $this->carrierModel->getConfigData('width');
 
-        if ($size === 'LARGE') {
-            $request->setPackageHeight((int)$height);
-            $request->setPackageLength((int)$length);
-            $request->setPackageWidth((int)$width);
+        // Set default dimensions if not provided
+        $defaultDimension = 1;
+        $height = (int)($height ?: $defaultDimension);
+        $length = (int)($length ?: $defaultDimension);
+        $width = (int)($width ?: $defaultDimension);
 
+        if ($size === 'LARGE') {
+            $request->setPackageHeight($height);
+            $request->setPackageLength($length);
+            $request->setPackageWidth($width);
+
+            // Handle girth for non-rectangular containers
             $container = $this->carrierModel->getConfigData('container');
             if (in_array($container, ['NONRECTANGULAR', 'VARIABLE'], true)) {
-                $girth = $request->getGirth() ?? $this->carrierModel->getConfigData('girth');
-                $request->setPackageGirth((int)$girth);
+                $girth = (int)($request->getGirth() ?: $this->carrierModel->getConfigData('girth') ?: $defaultDimension);
+                $request->setPackageGirth($girth);
             }
+        } else {
+            $request->setPackageHeight($height);
+            $request->setPackageWidth($width);
+            $request->setPackageLength($length);
         }
 
         if ($this->shippingMethodManager->getPackageType($request->getShippingMethod()) === 'FLAT_RATE_ENVELOPE') {
@@ -805,7 +816,7 @@ class ShipmentService
                         <a href="%1" target="_blank">Schedule B Export Codes</a>
                         and the shipment must not require an export license. If any item exceeds this value,
                         an export license is required. A shipment (regardless of value) is going to Canada and does not
-                        require an export license. Users may enter <b>%2</b> in the AESITN field if the shipment value meets the exemption criteria. 
+                        require an export license. Users may enter <b>%2</b> in the AESITN field if the shipment value meets the exemption criteria.
                         Please contact USPS for more information.',
                         'www.census.gov/foreign-trade/schedules/b',
                         "'NO EEI 30.37(a)'"
@@ -828,9 +839,6 @@ class ShipmentService
     private function preparePackageDescForIntl($request, $packageParams, &$requestParam): void
     {
         $dimensions = $this->preparePackageDimensions($request, $packageParams);
-        $height = $dimensions['height'] ?: $request->getPackageHeight();
-        $width = $dimensions['width'] ?: $request->getPackageWidth();
-        $length = $dimensions['length'] ?: $request->getPackageLength();
         $girth = $dimensions['girth'] ?: $request->getPackageGirth();
         $packagePoundsWeight = $dimensions['weight'] ?: null;
         $shippingMethod = $request->getShippingMethod();
@@ -838,22 +846,23 @@ class ShipmentService
         $minDimension = $this->shippingMethodManager->getMethodMinDimensions($shippingMethod);
         $maxDimension = $this->shippingMethodManager->getMethodMaxDimensions($shippingMethod);
 
-        $dimensions = ['length', 'width', 'height'];
+        $dimensionNames = ['length', 'width', 'height'];
 
-        foreach ($dimensions as $dimension) {
-            if (isset($minDimension[$dimension]) && $$dimension < $minDimension[$dimension]) {
+        foreach ($dimensionNames as $dimensionName) {
+            $dimensionValue = $dimensions[$dimensionName];
+            if (isset($minDimension[$dimensionName]) && $dimensionValue < $minDimension[$dimensionName]) {
                 throw new LocalizedException(__(
                     'The package dimensions are invalid. The package %1 must be greater than or equal to %2 inch.',
-                    $dimension,
-                    $minDimension[$dimension]
+                    $dimensionName,
+                    $minDimension[$dimensionName]
                 ));
             }
 
-            if (isset($maxDimension[$dimension]) && $$dimension > $maxDimension[$dimension]) {
+            if (isset($maxDimension[$dimensionName]) && $dimensionValue > $maxDimension[$dimensionName]) {
                 throw new LocalizedException(__(
                     'The package dimensions are invalid. The package %1 must be less than or equal to %2 inch.',
-                    $dimension,
-                    $maxDimension[$dimension]
+                    $dimensionName,
+                    $maxDimension[$dimensionName]
                 ));
             }
         }
@@ -861,9 +870,9 @@ class ShipmentService
         $requestParam['packageDescription'] = [
             "destinationEntryFacilityType" =>
                 $this->shippingMethodManager->getMethodDestinationEntryFacilityType($shippingMethod),
-            "height" => (float)$height,
-            "length" => (float)$length,
-            "width" => (float)$width,
+            "height" => (float)$dimensions['height'],
+            "length" => (float)$dimensions['length'],
+            "width" => (float)$dimensions['width'],
             "weight" => (float) $packagePoundsWeight,
             "mailClass" => $this->shippingMethodManager->getMethodMailClass($shippingMethod),
             "mailingDate" => (new \DateTime())->format('Y-m-d'),
@@ -924,10 +933,11 @@ class ShipmentService
     {
         try {
             // Retrieve initial dimensions and weight from the package parameters
-            $height = $packageParams->getHeight();
-            $width = $packageParams->getWidth();
-            $length = $packageParams->getLength();
-            $girth = $packageParams->getGirth();
+            // Use request values as fallback when packageParams doesn't have values
+            $height = $packageParams->getHeight() ?: $request->getPackageHeight();
+            $width = $packageParams->getWidth() ?: $request->getPackageWidth();
+            $length = $packageParams->getLength() ?: $request->getPackageLength();
+            $girth = $packageParams->getGirth() ?: $request->getPackageGirth();
             $packageWeight = $request->getPackageWeight();
 
             // Convert weight to pounds if it is not already in pounds
@@ -943,21 +953,21 @@ class ShipmentService
             if ($packageParams->getDimensionUnits() != Length::INCH) {
                 $length = round(
                     (float) $this->_carrierHelper->convertMeasureDimension(
-                        (float)$packageParams->getLength(),
+                        (float)$length,
                         $packageParams->getDimensionUnits(),
                         Length::INCH
                     )
                 );
                 $width = round(
                     (float) $this->_carrierHelper->convertMeasureDimension(
-                        (float)$packageParams->getWidth(),
+                        (float)$width,
                         $packageParams->getDimensionUnits(),
                         Length::INCH
                     )
                 );
                 $height = round(
                     (float) $this->_carrierHelper->convertMeasureDimension(
-                        (float)$packageParams->getHeight(),
+                        (float)$height,
                         $packageParams->getDimensionUnits(),
                         Length::INCH
                     )
@@ -968,7 +978,7 @@ class ShipmentService
             if ($packageParams->getGirthDimensionUnits() != Length::INCH) {
                 $girth = round(
                     (float) $this->_carrierHelper->convertMeasureDimension(
-                        (float)$packageParams->getGirth(),
+                        (float)$girth,
                         $packageParams->getGirthDimensionUnits(),
                         Length::INCH
                     )
