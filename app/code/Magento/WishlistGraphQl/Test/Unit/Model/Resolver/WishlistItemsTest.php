@@ -90,7 +90,7 @@ class WishlistItemsTest extends TestCase
             ->willReturnSelf();
         $wishlistCollection->expects($this->once())
             ->method('addStoreFilter')
-            ->with($storeId)
+            ->with([$storeId])
             ->willReturnSelf();
         $wishlistCollection->expects($this->once())->method('setVisibilityFilter')->willReturnSelf();
         $wishlistCollection->expects($this->once())->method('setCurPage')->willReturnSelf();
