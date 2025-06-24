@@ -101,8 +101,8 @@ class AddressRepositoryTest extends TestCase
             ->setCustomerId('1')
             ->setPostcode('47676')
             ->setRegion($region)
-            ->setRegionId('1')
-            ->setStreet(['Black str, 48', ''])
+            ->setRegionId(1)
+            ->setStreet(['Black str, 48'])
             ->setCity('CityX')
             ->setTelephone('3234676')
             ->setFirstname('John')
@@ -647,7 +647,7 @@ class AddressRepositoryTest extends TestCase
             AddressInterface::SUFFIX => '_Suffix',
             AddressInterface::PREFIX => 'Prefix',
             AddressInterface::COMPANY => 'Company',
-            AddressInterface::STREET => ['Northgate Street, 39', ''],
+            AddressInterface::STREET => ['Northgate Street, 39'],
             AddressInterface::CITY => 'BICKTON',
             AddressInterface::COUNTRY_ID => 'GB',
             AddressInterface::REGION => $region,

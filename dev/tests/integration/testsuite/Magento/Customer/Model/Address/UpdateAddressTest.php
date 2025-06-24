@@ -195,7 +195,7 @@ class UpdateAddressTest extends TestCase
             ],
             'required_field_street_as_array' => [
                 [AddressInterface::STREET => ['', 'Test str, 55']],
-                [AddressInterface::STREET => ['Test str, 55', '']],
+                [AddressInterface::STREET => ['Test str, 55']],
             ],
             'required_field_city' => [
                 [AddressInterface::CITY => 'Test city'],

@@ -220,7 +220,7 @@ class CreateAddressTest extends AbstractController
                     'custom_region_name' => 'Alabama',
                     AddressInterface::FIRSTNAME => 'John',
                     AddressInterface::LASTNAME => 'Smith',
-                    AddressInterface::STREET => ['Green str, 67', ''],
+                    AddressInterface::STREET => ['Green str, 67'],
                     AddressInterface::CITY => 'CityM',
                 ],
             ],
@@ -250,7 +250,7 @@ class CreateAddressTest extends AbstractController
             ],
             'required_field_street_as_array' => [
                 array_replace(self::STATIC_POST_ADDRESS_DATA, [AddressInterface::STREET => ['', 'Green str, 67']]),
-                [AddressInterface::STREET => ['Green str, 67', '']],
+                [AddressInterface::STREET => ['Green str, 67']],
             ],
             'field_company_name' => [
                 array_merge(self::STATIC_POST_ADDRESS_DATA, [AddressInterface::COMPANY => 'My company']),
