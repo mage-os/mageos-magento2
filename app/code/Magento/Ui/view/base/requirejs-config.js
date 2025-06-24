@@ -32,7 +32,7 @@ var config = {
             buttonAdapter:  'Magento_Ui/js/form/button-adapter',
             chartJs:        'chartjs/Chart.min',
             'chart.js':     'chartjs/Chart.min',
-            'tinymce':      'hugerte/hugerte.min',
+            tinymce:        'hugerte/hugerte.min',
             wysiwygAdapter: 'mage/adminhtml/wysiwyg/tiny_mce/tinymceAdapter'
         }
     }
