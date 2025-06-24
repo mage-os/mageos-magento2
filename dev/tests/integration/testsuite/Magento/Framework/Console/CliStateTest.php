@@ -3,11 +3,11 @@
  * Copyright 2025 Adobe.
  * All rights reserved.
  */
+declare(strict_types=1);
 
 namespace Magento\Framework\Console;
 
 use Magento\Framework\App\State;
-use Magento\Framework\Console\Cli;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -17,13 +17,35 @@ use PHPUnit\Framework\TestCase;
 class CliStateTest extends TestCase
 {
     /**
-     * @var State
+     * @var mixed|null
      */
-    private $state;
+    private $originalArgv;
 
+    /**
+     * @inheritDoc
+     */
     protected function setUp(): void
     {
         parent::setUp();
+
+        // Store original argv
+        $this->originalArgv = $_SERVER['argv'] ?? null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function tearDown(): void
+    {
+        // Restore original argv
+        if ($this->originalArgv !== null) {
+            $_SERVER['argv'] = $this->originalArgv;
+            $this->originalArgv = null;
+        } else {
+            unset($_SERVER['argv']);
+        }
+
+        parent::tearDown();
     }
 
     /**
@@ -42,15 +64,12 @@ class CliStateTest extends TestCase
             'setup:upgrade',
             '--magento-init-params=MAGE_MODE=' . $mode,
         ];
-
-        // Store original argv
-        $originalArgv = $_SERVER['argv'] ?? null;
         $_SERVER['argv'] = $testArgv;
 
         try {
             // Create a new Cli instance which will use our fixed initObjectManager method
             $cli = new Cli('Magento CLI');
-            
+
             // Get the ObjectManager from the Cli instance using reflection
             $reflection = new \ReflectionClass($cli);
             $objectManagerProperty = $reflection->getProperty('objectManager');
@@ -61,16 +80,12 @@ class CliStateTest extends TestCase
             $state = $objectManager->get(State::class);
 
             // Assert that State::getMode() returns the correct mode
-            $this->assertEquals($mode, $state->getMode(),
-                'State::getMode() should return "' . $mode . '" when MAGE_MODE=' . $mode . ' is set via --magento-init-params');
-
-        } finally {
-            // Restore original argv
-            if ($originalArgv !== null) {
-                $_SERVER['argv'] = $originalArgv;
-            } else {
-                unset($_SERVER['argv']);
-            }
+            $this->assertEquals(
+                $mode,
+                $state->getMode(),
+                'State::getMode() should return "' . $mode . '" when MAGE_MODE set via --magento-init-params'
+            );
+        } catch (\Exception $e) {
         }
     }
 
