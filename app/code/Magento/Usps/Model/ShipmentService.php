@@ -318,7 +318,7 @@ class ShipmentService
 
                 $shippingCost = (float)$method['price'];
                 $rate->setCost($shippingCost);
-                $rate->setPrice($this->carrierModel->getMethodPrice($shippingCost));
+                $rate->setPrice($this->carrierModel->getMethodPrice($shippingCost, $method['code']));
 
                 /** @var Result $result */
                 $result->append($rate);
