@@ -107,8 +107,12 @@ class WishlistItems implements ResolverInterface
         $wishlistItemCollection->addWishlistFilter($wishlist);
         if (isset($args['website_id']) && $args['website_id']) {
             $website = $this->storeManager->getWebsite($args['website_id']);
+            $stores = [];
             foreach ($website->getStores() as $store) {
-                $wishlistItemCollection->addStoreFilter($store->getId());
+                $stores[] = $store->getId();
+            }
+            if ($stores) {
+                $wishlistItemCollection->addStoreFilter($stores);
             }
         } else {
             $wishlistItemCollection->addStoreFilter(array_map(function (StoreInterface $store) {
