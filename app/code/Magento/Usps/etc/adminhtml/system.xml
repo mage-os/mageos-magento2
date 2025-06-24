@@ -178,6 +178,9 @@
                 <field id="machinable" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" canRestore="1">
                     <label>Machinable</label>
                     <source_model>Magento\Usps\Model\Source\Machinable</source_model>
+                    <depends>
+                        <field id="usps_type">USPS_XML</field>
+                    </depends>
                 </field>
                 <field id="max_package_weight" translate="label" type="text" sortOrder="90" showInDefault="1" showInWebsite="1" canRestore="1">
                     <label>Maximum Package Weight (Please consult your shipping carrier for maximum supported shipping weight)</label>
