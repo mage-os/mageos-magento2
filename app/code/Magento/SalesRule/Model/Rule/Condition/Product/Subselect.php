@@ -168,6 +168,7 @@ class Subselect extends Combine
                 $subSelectConditionsFlag = $this->validateSubSelectConditions($item);
             }
             $total = $this->getBaseRowTotalForChildrenProduct($item, $attr, $total);
+            if ($subSelectConditionsFlag && $this->validateAttribute($total)) return true;
         }
         return $subSelectConditionsFlag && $this->validateAttribute($total);
     }
