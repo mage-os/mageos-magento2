@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All rights reserved.
  */
 declare(strict_types=1);
 
@@ -67,6 +67,11 @@ class Bootstrap
      * Initialization parameter for additional filesystem drivers
      */
     const INIT_PARAM_FILESYSTEM_DRIVERS = 'MAGE_FILESYSTEM_DRIVERS';
+
+    /**
+     * Initialization parameter for magento mode
+     */
+    const INIT_PARAM_MAGE_MODE = 'MAGE_MODE';
 
     /**
      * The initialization parameters (normally come from the $_SERVER)
