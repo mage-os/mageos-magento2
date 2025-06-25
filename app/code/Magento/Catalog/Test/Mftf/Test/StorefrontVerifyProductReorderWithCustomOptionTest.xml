@@ -21,17 +21,17 @@
         <before>
             <!-- Precondition: Create customer -->
             <createData entity="Simple_US_Customer_NY" stepKey="createCustomer"/>
+            <!-- Step1&2&3: Create product with checkbox two custom options -->
+            <createData entity="SimpleProduct2" stepKey="createSimpleProduct"/>
+            <updateData entity="productWithCheckboxCustomOptions" createDataKey="createSimpleProduct" stepKey="addCustomOptions">
+                <requiredEntity createDataKey="createSimpleProduct"/>
+            </updateData>
         </before>
         <after>
             <!-- Customer logout -->
             <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="customerLogout"/>
             <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
         </after>
-        <!-- Step1&2&3: Create product with checkbox two custom options -->
-        <createData entity="SimpleProduct2" stepKey="createSimpleProduct"/>
-        <updateData entity="productWithCheckboxCustomOptions" createDataKey="createSimpleProduct" stepKey="addCustomOptions">
-            <requiredEntity createDataKey="createSimpleProduct"/>
-        </updateData>
         <!-- Step4: Login as a customer -->
         <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginToStorefrontAccount">
             <argument name="Customer" value="$createCustomer$"/>
