@@ -133,14 +133,6 @@ class ShippingMethodManager
             'processing_category' => "FLATS",
             'destination_entry_facility_type' => "NONE"
         ],
-        "PRIORITY_MAIL_EXPRESS_LEGAL_FLAT_RATE_ENVELOPE_HOLIDAY_DELIVERY" => [
-            'description' => "Priority Mail Express Legal Flat Rate Envelope Holiday Delivery",
-            'title' => "Priority Mail Express Holiday Delivery Legal Flat Rate Envelope",
-            'rate_indicator' => "E7",
-            'mail_class' => "PRIORITY_MAIL_EXPRESS",
-            'processing_category' => "FLATS",
-            'destination_entry_facility_type' => "NONE"
-        ],
         "PRIORITY_MAIL_EXPRESS_PADDED_FLAT_RATE_ENVELOPE" => [
             'description' => "Priority Mail Express Padded Flat Rate Envelope",
             'title' => "Priority Mail Express Padded Flat Rate Envelope",

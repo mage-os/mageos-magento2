@@ -992,8 +992,7 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
                                 'PRIORITY_MAIL_MACHINABLE_SINGLE-PIECE',
                                 'PRIORITY_MAIL_EXPRESS_MACHINABLE_SINGLE-PIECE',
                                 'MEDIA_MAIL_MACHINABLE_5-DIGIT',
-                                'USPS_GROUND_ADVANTAGE_MACHINABLE_SINGLE-PIECE',
-                                'PRIORITY_MAIL_EXPRESS_LEGAL_FLAT_RATE_ENVELOPE_HOLIDAY_DELIVERY'
+                                'USPS_GROUND_ADVANTAGE_MACHINABLE_SINGLE-PIECE'
                             ],
                         ],
                         'from_us' => [
