@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+  * Copyright 2025 Adobe
+  * All Rights Reserved.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminCreateInvoiceNotCaptureActionGroup">
+        <click selector="{{AdminOrderDetailsMainActionsSection.invoice}}" stepKey="clickInvoice"/>
+        <waitForPageLoad stepKey="waitForInvoicePage"/>
+        <scrollTo selector="{{AdminInvoiceMainActionsSection.selectModeOfAmount}}" x="0" y="-80" stepKey="scrollToAmount"/>
+        <selectOption userInput="Not Capture" selector="{{AdminInvoiceMainActionsSection.selectModeOfAmount}}" stepKey="selectNotCaptureUnderAmount"/>
+        <waitForElementVisible selector="{{AdminInvoiceMainActionsSection.submitInvoice}}" stepKey="waitForSubmitInvoicebtn"/>
+        <click selector="{{AdminInvoiceMainActionsSection.submitInvoice}}" stepKey="submitInvoice"/>
+        <waitForPageLoad stepKey="waitForLoadPage"/>
+        <waitForText userInput="The invoice has been created." stepKey="seeMessageInvoiceCreated"/>
+    </actionGroup>
+</actionGroups>
