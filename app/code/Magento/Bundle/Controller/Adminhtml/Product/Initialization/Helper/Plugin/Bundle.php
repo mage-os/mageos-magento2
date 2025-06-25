@@ -8,6 +8,7 @@ namespace Magento\Bundle\Controller\Adminhtml\Product\Initialization\Helper\Plug
 use Magento\Bundle\Api\Data\OptionInterfaceFactory as OptionFactory;
 use Magento\Bundle\Api\Data\LinkInterfaceFactory as LinkFactory;
 use Magento\Catalog\Api\Data\ProductCustomOptionInterfaceFactory;
+use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface as ProductRepository;
 use Magento\Store\Model\StoreManagerInterface as StoreManager;
 use Magento\Framework\App\RequestInterface;
@@ -108,18 +109,13 @@ class Bundle
             }
 
             if (!$result['bundle_selections']) {
-                $extension = $product->getExtensionAttributes();
-                $extension->setBundleProductOptions([]);
-                $product->setExtensionAttributes($extension);
-                $product->setDropOptions(true);
+                $this->resetBundleProductOptions($product);
             }
 
             $this->processBundleOptionsData($product);
             $this->processDynamicOptionsData($product);
         } elseif (!$compositeReadonly) {
-            $extension = $product->getExtensionAttributes();
-            $extension->setBundleProductOptions([]);
-            $product->setExtensionAttributes($extension);
+            $this->resetBundleProductOptions($product);
         }
 
         $affectProductSelections = (bool)$this->request->getPost('affect_bundle_product_selections');
@@ -239,5 +235,19 @@ class Bundle
         }
 
         return $link;
+    }
+
+    /**
+     * Resets bundle product options inside product extension attributes
+     *
+     * @param ProductInterface $product
+     * @return void
+     */
+    private function resetBundleProductOptions(ProductInterface $product) : void
+    {
+        $extension = $product->getExtensionAttributes();
+        $extension->setBundleProductOptions([]);
+        $product->setExtensionAttributes($extension);
+        $product->setDropOptions(true);
     }
 }

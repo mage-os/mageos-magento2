@@ -97,8 +97,7 @@ class SaveHandler implements ExtensionInterface
         $bundleProductOptions = $entity->getExtensionAttributes()->getBundleProductOptions() ?: [];
         //Only processing bundle products.
         if ($entity->getTypeId() !== Type::TYPE_CODE
-            || empty($bundleProductOptions)
-            && !$entity->getDropOptions()
+            || (empty($bundleProductOptions) && !$entity->getDropOptions())
         ) {
             return $entity;
         }
