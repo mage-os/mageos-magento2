@@ -87,27 +87,27 @@
         <actionGroup ref="AdminVerifyProductDetailsInDashboardActionGroup" stepKey="adminAssertProductDetails">
             <argument name="productName" value="$$createProduct.name$$"/>
             <argument name="productPrice" value="$$createProduct.price$$"/>
-            <argument name="productViews" value="AdminEnableDashboardCharts.value"/>
+            <argument name="productViews" value="1"/>
         </actionGroup>
         <actionGroup ref="AdminVerifyProductDetailsInDashboardActionGroup" stepKey="adminAssertProductDetails1">
             <argument name="productName" value="$$createSimpleProduct.name$$"/>
             <argument name="productPrice" value="$$createSimpleProduct.price$$"/>
-            <argument name="productViews" value="AdminEnableDashboardCharts.value"/>
+            <argument name="productViews" value="1"/>
         </actionGroup>
         <actionGroup ref="AdminVerifyProductDetailsInDashboardActionGroup" stepKey="adminAssertProductDetails2">
             <argument name="productName" value="$$createFirstProduct.name$$"/>
             <argument name="productPrice" value="$$createFirstProduct.price$$"/>
-            <argument name="productViews" value="AdminEnableDashboardCharts.value"/>
+            <argument name="productViews" value="1"/>
         </actionGroup>
         <actionGroup ref="AdminVerifyProductDetailsInDashboardActionGroup" stepKey="adminAssertProductDetails3">
             <argument name="productName" value="$$createSecondProduct.name$$"/>
             <argument name="productPrice" value="$$createSecondProduct.price$$"/>
-            <argument name="productViews" value="AdminEnableDashboardCharts.value"/>
+            <argument name="productViews" value="1"/>
         </actionGroup>
         <actionGroup ref="AdminVerifyProductDetailsInDashboardActionGroup" stepKey="adminAssertProductDetails4">
             <argument name="productName" value="$$createThirdProduct.name$$"/>
             <argument name="productPrice" value="$$createThirdProduct.price$$"/>
-            <argument name="productViews" value="AdminEnableDashboardCharts.value"/>
+            <argument name="productViews" value="1/>
         </actionGroup>
         <!--Step 7: Disable charts on dashboard by default -->
         <waitForElementVisible selector="{{AdminDashboardSection.dashboardChart(AdminMenuDashboard.message)}}" stepKey="waitForChartsToBeVisibleAsDisabled"/>
