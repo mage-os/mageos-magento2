@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * ADOBE CONFIDENTIAL
+ *
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
+ *
+ * NOTICE: All information contained herein is, and remains
+ * the property of Adobe and its suppliers, if any. The intellectual
+ * and technical concepts contained herein are proprietary to Adobe
+ * and its suppliers and are protected by all applicable intellectual
+ * property laws, including trade secret and copyright laws.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Adobe.
+ */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminSelectAllValueOfTwoAttributesPageActionGroup">
+        <annotations>
+            <description>Selects values of each attribute to include in the product.</description>
+        </annotations>
+        <arguments>
+            <argument name="attributeLabel1" type="string" defaultValue="{{colorProductAttribute.default_label}}"/>
+            <argument name="attributeLabel2" type="string" defaultValue="{{sizeAttribute.default_label}}"/>
+        </arguments>
+        <click selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="clickNextToSelectOptions"/>
+        <click selector="{{AdminCreateProductConfigurationsPanel.selectAllByAttribute(attributeLabel1)}}" stepKey="selectAllSwatchAttributeOptions"/>
+        <click selector="{{AdminCreateProductConfigurationsPanel.selectAllByAttribute(attributeLabel2)}}" stepKey="selectAllSwatchAttributeOptions1"/>
+        <click selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="clickNextToApplyQuantity"/>
+        <click selector="{{AdminCreateProductConfigurationsPanel.applySingleQuantityToEachSkus}}" stepKey="clickOnApplySingleQuantityToEachSku"/>
+        <fillField selector="{{AdminCreateProductConfigurationsPanel.quantity}}" userInput="100" stepKey="enterAttributeQuantity"/>
+        <click selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="clickOnNextButton3"/>
+        <click selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="clickOnNextButton4"/>
+    </actionGroup>
+</actionGroups>
