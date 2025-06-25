@@ -28,6 +28,7 @@
             <argument name="inputType" type="string" defaultValue="Dropdown"/>
             <argument name="scope" type="string" defaultValue="Store View"/>
         </arguments>
+        <waitForElementVisible selector="{{AdminProductAttributeGridSection.createNewAttributeBtn}}" stepKey="waitForAddNewButton"/>
         <click selector="{{AdminProductAttributeGridSection.createNewAttributeBtn}}" stepKey="clickAddNewAttributeButton"/>
         <fillField selector="{{AttributePropertiesSection.DefaultLabel}}" userInput="{{attributeLabel}}" stepKey="fillAttributeLabel"/>
         <selectOption selector="{{AttributePropertiesSection.InputType}}" userInput="{{inputType}}" stepKey="selectDropdown"/>
