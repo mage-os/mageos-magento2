@@ -16,10 +16,9 @@
             <severity value="CRITICAL"/>
             <testCaseId value="AC-15016"/>
             <useCaseId value="ACP2E-4001"/>
-       <!--     <group value="3rd_party_integration"/>
+            <group value="3rd_party_integration"/>
             <group value="paypalExpress"/>
             <group value="pr_exclude"/>
-        -->
         </annotations>
         <before>
             <!-- Simple product is created  -->
@@ -58,12 +57,10 @@
         <!-- Click on PayPal payment radio button -->
         <waitForElementClickable selector="{{CheckoutPaymentSection.PayPalPaymentRadio}}" stepKey="waitForPayPalRadioButton"/>
         <click selector="{{CheckoutPaymentSection.PayPalPaymentRadio}}" stepKey="selectPaypalPayment"/>
-  <!--      <actionGroup ref="SwitchToPayPalGroupBtnActionGroup" stepKey="clickPayPalBtn"/>
-  -->
+        <actionGroup ref="SwitchToPayPalGroupBtnActionGroup" stepKey="clickPayPalBtn"/>
         <!-- Login to Paypal in-context and verify order total on paypal page-->
-   <!--     <actionGroup ref="StorefrontLoginToPayPalPaymentAccountTwoStepActionGroup" stepKey="loginToPayPal"/>
+        <actionGroup ref="StorefrontLoginToPayPalPaymentAccountTwoStepActionGroup" stepKey="loginToPayPal"/>
         <actionGroup ref="StorefrontPaypalSwitchBackToMagentoFromCheckoutPageActionGroup" stepKey="confirmPaymentAndGoBackToMagento"/>
-        -->
         <!-- I see order successful Page -->
         <waitForElementVisible selector="{{CheckoutSuccessMainSection.orderNumber}}" stepKey="waitForOrderNumberToBeGrabbed"/>
         <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber}}" stepKey="grabOrderNumber"/>
