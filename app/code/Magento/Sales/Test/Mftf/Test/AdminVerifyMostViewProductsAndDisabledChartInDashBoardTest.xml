@@ -63,53 +63,17 @@
         <actionGroup ref="OpenStoreFrontProductPageActionGroup" stepKey="goToProductPage">
             <argument name="productUrlKey" value="$$createProduct.custom_attributes[url_key]$$"/>
         </actionGroup>
-        <actionGroup ref="OpenStoreFrontProductPageActionGroup" stepKey="goToThirdProductPage1">
-            <argument name="productUrlKey" value="$$createThirdProduct.custom_attributes[url_key]$$"/>
+        <actionGroup ref="OpenStoreFrontProductPageActionGroup" stepKey="goToSimpleProductPage">
+            <argument name="productUrlKey" value="$$createSimpleProduct.custom_attributes[url_key]$$"/>
         </actionGroup>
-        <actionGroup ref="OpenStoreFrontProductPageActionGroup" stepKey="goToProductPageFirst">
-            <argument name="productUrlKey" value="$$createProduct.custom_attributes[url_key]$$"/>
-        </actionGroup>
-        <actionGroup ref="OpenStoreFrontProductPageActionGroup" stepKey="goToFirstProductPage1">
+        <actionGroup ref="OpenStoreFrontProductPageActionGroup" stepKey="goToFirstProductPage">
             <argument name="productUrlKey" value="$$createFirstProduct.custom_attributes[url_key]$$"/>
         </actionGroup>
-        <actionGroup ref="OpenStoreFrontProductPageActionGroup" stepKey="goToProductPageSecond">
-            <argument name="productUrlKey" value="$$createProduct.custom_attributes[url_key]$$"/>
-        </actionGroup>
-        <actionGroup ref="OpenStoreFrontProductPageActionGroup" stepKey="goToSimpleProductPage3">
-            <argument name="productUrlKey" value="$$createSimpleProduct.custom_attributes[url_key]$$"/>
-        </actionGroup>
-        <actionGroup ref="OpenStoreFrontProductPageActionGroup" stepKey="goToProductPageThird">
-            <argument name="productUrlKey" value="$$createProduct.custom_attributes[url_key]$$"/>
-        </actionGroup>
-        <actionGroup ref="OpenStoreFrontProductPageActionGroup" stepKey="goToSimpleProductPage2">
-            <argument name="productUrlKey" value="$$createSimpleProduct.custom_attributes[url_key]$$"/>
-        </actionGroup>
-        <actionGroup ref="OpenStoreFrontProductPageActionGroup" stepKey="goToProductPageForth">
-            <argument name="productUrlKey" value="$$createProduct.custom_attributes[url_key]$$"/>
-        </actionGroup>
-        <actionGroup ref="OpenStoreFrontProductPageActionGroup" stepKey="goToProductPage1">
-            <argument name="productUrlKey" value="$$createSimpleProduct.custom_attributes[url_key]$$"/>
-        </actionGroup>
-        <actionGroup ref="OpenStoreFrontProductPageActionGroup" stepKey="goToFirstProductPage3">
-            <argument name="productUrlKey" value="$$createFirstProduct.custom_attributes[url_key]$$"/>
-        </actionGroup>
-        <actionGroup ref="OpenStoreFrontProductPageActionGroup" stepKey="goToSimpleProductPage1">
-            <argument name="productUrlKey" value="$$createSimpleProduct.custom_attributes[url_key]$$"/>
-        </actionGroup>
-        <actionGroup ref="OpenStoreFrontProductPageActionGroup" stepKey="goToSecondProductPage3">
-            <argument name="productUrlKey" value="$$createSecondProduct.custom_attributes[url_key]$$"/>
-        </actionGroup>
-        <actionGroup ref="OpenStoreFrontProductPageActionGroup" stepKey="goToFirstProductPage2">
-            <argument name="productUrlKey" value="$$createFirstProduct.custom_attributes[url_key]$$"/>
-        </actionGroup>
-        <actionGroup ref="OpenStoreFrontProductPageActionGroup" stepKey="goToSecondProductPage1">
+        <actionGroup ref="OpenStoreFrontProductPageActionGroup" stepKey="goToSecondProductPage">
             <argument name="productUrlKey" value="$$createSecondProduct.custom_attributes[url_key]$$"/>
         </actionGroup>
         <actionGroup ref="OpenStoreFrontProductPageActionGroup" stepKey="goToThirdProductPage">
             <argument name="productUrlKey" value="$$createThirdProduct.custom_attributes[url_key]$$"/>
-        </actionGroup>
-        <actionGroup ref="OpenStoreFrontProductPageActionGroup" stepKey="goToSecondProductPage2">
-            <argument name="productUrlKey" value="$$createSecondProduct.custom_attributes[url_key]$$"/>
         </actionGroup>
         <!--Step 3: Login as Admin -->
         <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
@@ -123,27 +87,27 @@
         <actionGroup ref="AdminVerifyProductDetailsInDashboardActionGroup" stepKey="adminAssertProductDetails">
             <argument name="productName" value="$$createProduct.name$$"/>
             <argument name="productPrice" value="$$createProduct.price$$"/>
-            <argument name="productViews" value="5"/>
+            <argument name="productViews" value="AdminEnableDashboardCharts.value"/>
         </actionGroup>
         <actionGroup ref="AdminVerifyProductDetailsInDashboardActionGroup" stepKey="adminAssertProductDetails1">
             <argument name="productName" value="$$createSimpleProduct.name$$"/>
             <argument name="productPrice" value="$$createSimpleProduct.price$$"/>
-            <argument name="productViews" value="4"/>
+            <argument name="productViews" value="AdminEnableDashboardCharts.value"/>
         </actionGroup>
         <actionGroup ref="AdminVerifyProductDetailsInDashboardActionGroup" stepKey="adminAssertProductDetails2">
             <argument name="productName" value="$$createFirstProduct.name$$"/>
             <argument name="productPrice" value="$$createFirstProduct.price$$"/>
-            <argument name="productViews" value="3"/>
+            <argument name="productViews" value="AdminEnableDashboardCharts.value"/>
         </actionGroup>
         <actionGroup ref="AdminVerifyProductDetailsInDashboardActionGroup" stepKey="adminAssertProductDetails3">
             <argument name="productName" value="$$createSecondProduct.name$$"/>
             <argument name="productPrice" value="$$createSecondProduct.price$$"/>
-            <argument name="productViews" value="3"/>
+            <argument name="productViews" value="AdminEnableDashboardCharts.value"/>
         </actionGroup>
         <actionGroup ref="AdminVerifyProductDetailsInDashboardActionGroup" stepKey="adminAssertProductDetails4">
             <argument name="productName" value="$$createThirdProduct.name$$"/>
             <argument name="productPrice" value="$$createThirdProduct.price$$"/>
-            <argument name="productViews" value="2"/>
+            <argument name="productViews" value="AdminEnableDashboardCharts.value"/>
         </actionGroup>
         <!--Step 7: Disable charts on dashboard by default -->
         <waitForElementVisible selector="{{AdminDashboardSection.dashboardChart(AdminMenuDashboard.message)}}" stepKey="waitForChartsToBeVisibleAsDisabled"/>
