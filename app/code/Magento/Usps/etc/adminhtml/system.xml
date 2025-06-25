@@ -150,21 +150,21 @@
                 </field>
                 <field id="width" translate="label" type="text" sortOrder="73" showInDefault="1" showInWebsite="1">
                     <label>Width</label>
-                    <validate>required-entry validate-number validate-zero-or-greater</validate>
+                    <validate>required-entry validate-number validate-greater-than-zero</validate>
                     <depends>
                         <field id="size">LARGE</field>
                     </depends>
                 </field>
                 <field id="length" translate="label" type="text" sortOrder="72" showInDefault="1" showInWebsite="1">
                     <label>Length</label>
-                    <validate>required-entry validate-number validate-zero-or-greater</validate>
+                    <validate>required-entry validate-number validate-greater-than-zero</validate>
                     <depends>
                         <field id="size">LARGE</field>
                     </depends>
                 </field>
                 <field id="height" translate="label" type="text" sortOrder="74" showInDefault="1" showInWebsite="1">
                     <label>Height</label>
-                    <validate>required-entry validate-number validate-zero-or-greater</validate>
+                    <validate>required-entry validate-number validate-greater-than-zero</validate>
                     <depends>
                         <field id="size">LARGE</field>
                     </depends>
