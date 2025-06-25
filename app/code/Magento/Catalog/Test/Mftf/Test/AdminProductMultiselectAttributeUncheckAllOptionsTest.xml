@@ -23,7 +23,7 @@
             <group value="Catalog"/>
             <title value="Product Attribute of multiselect type can be saved with all options unchecked"/>
             <features value="Uncheck multiselect attribute options and save the product"/>
-            <stories value="Verify out of stock product swatch visibility"/>
+            <stories value="Save Product Multiselect attribute without selecting any options"/>
             <description value="Verify that a product attribute of multiselect type can be saved with all options unchecked in the admin product edit page."/>
             <testCaseId value="AC-4856"/>
             <severity value="MAJOR"/>
