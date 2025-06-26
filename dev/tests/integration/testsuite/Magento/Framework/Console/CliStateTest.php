@@ -7,6 +7,8 @@ declare(strict_types=1);
 
 namespace Magento\Framework\Console;
 
+use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\State;
 use PHPUnit\Framework\TestCase;
 
@@ -67,14 +69,43 @@ class CliStateTest extends TestCase
         $_SERVER['argv'] = $testArgv;
 
         try {
-            // Create a new Cli instance which will use our fixed initObjectManager method
-            $cli = new Cli('Magento CLI');
+            // Get the State object from the ObjectManager
+            $state = $this->getObjectManager()->get(State::class);
 
-            // Get the ObjectManager from the Cli instance using reflection
-            $reflection = new \ReflectionClass($cli);
-            $objectManagerProperty = $reflection->getProperty('objectManager');
-            $objectManagerProperty->setAccessible(true);
-            $objectManager = $objectManagerProperty->getValue($cli);
+            // Assert that State::getMode() returns the correct mode
+            $this->assertEquals(
+                $mode,
+                $state->getMode(),
+                'State::getMode() should return "' . $mode . '" when MAGE_MODE set via --magento-init-params'
+            );
+        } catch (\Exception $e) {
+        }
+    }
+
+    /**
+     * Test that multiple --magento-init-params are processed correctly
+     *
+     * @return void
+     */
+    public function testMultipleMagentoInitParams()
+    {
+        $mode = 'developer';
+        $cachePath = '/var/tmp/cache';
+        $varPath = '/var/tmp/var';
+
+        // Set up test argv with multiple --magento-init-params
+        $testArgv = [
+            'php',
+            'bin/magento',
+            'setup:upgrade',
+            '--magento-init-params=MAGE_MODE=' .$mode .
+            '&MAGE_DIRS[cache][path]=' . $cachePath . '&MAGE_DIRS[var][path]=' . $varPath,
+        ];
+        $_SERVER['argv'] = $testArgv;
+
+        try {
+            // Get the ObjectManager
+            $objectManager = $this->getObjectManager();
 
             // Get the State object from the ObjectManager
             $state = $objectManager->get(State::class);
@@ -84,6 +115,22 @@ class CliStateTest extends TestCase
                 $mode,
                 $state->getMode(),
                 'State::getMode() should return "' . $mode . '" when MAGE_MODE set via --magento-init-params'
+            );
+
+            // Get the DirectoryList to verify filesystem paths were set
+            $directoryList = $objectManager->get(DirectoryList::class);
+
+            // Assert that custom filesystem paths were applied
+            $this->assertEquals(
+                $cachePath,
+                $directoryList->getPath(DirectoryList::CACHE),
+                'Custom cache directory path should be set via --magento-init-params'
+            );
+
+            $this->assertEquals(
+                $varPath,
+                $directoryList->getPath(DirectoryList::VAR_DIR),
+                'Custom var directory path should be set via --magento-init-params'
             );
         } catch (\Exception $e) {
         }
@@ -101,5 +148,22 @@ class CliStateTest extends TestCase
             ['developer'],
             ['default']
         ];
+    }
+
+    /**
+     * Get the ObjectManager from the Cli instance using reflection
+     *
+     * @return ObjectManager
+     */
+    private function getObjectManager()
+    {
+        // Create a new Cli instance
+        $cli = new Cli('Magento CLI');
+
+        // Get the ObjectManager from the Cli instance using reflection
+        $reflection = new \ReflectionClass($cli);
+        $objectManagerProperty = $reflection->getProperty('objectManager');
+        $objectManagerProperty->setAccessible(true);
+        return $objectManagerProperty->getValue($cli);
     }
 }
