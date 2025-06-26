@@ -55,6 +55,7 @@ class OrderTotal implements ResolverInterface
                 'currency' => $order->getBaseCurrencyCode()
             ],
             'grand_total' => ['value' => $order->getGrandTotal(), 'currency' => $currency],
+            'grand_total_excl_tax' => ['value' => $this->getGrandTotalExclTax($order), 'currency' => $currency],
             'subtotal' => ['value' => $order->getSubtotal(), 'currency' => $currency],
             'subtotal_incl_tax' => ['value' => $order->getSubtotalInclTax(), 'currency' => $currency],
             'subtotal_excl_tax' => ['value' => $order->getSubtotal(), 'currency' => $currency],
@@ -92,7 +93,7 @@ class OrderTotal implements ResolverInterface
     private function getAllAppliedTaxesOnOrders(OrderInterface $order): array
     {
         return array_map(
-            fn($appliedTaxesData) => [
+            fn ($appliedTaxesData) => [
                 'title' => $appliedTaxesData->getTitle(),
                 'percent' => $appliedTaxesData->getPercent(),
                 'amount' => $appliedTaxesData->getAmount(),
@@ -111,7 +112,7 @@ class OrderTotal implements ResolverInterface
     private function getAppliedTaxesDetails(OrderInterface $order): array
     {
         return array_map(
-            fn($appliedTaxes) => [
+            fn ($appliedTaxes) => [
                 'rate' => $appliedTaxes['percent'] ?? 0,
                 'title' => $appliedTaxes['title'] ?? null,
                 'amount' => [
@@ -216,5 +217,18 @@ class OrderTotal implements ResolverInterface
                 ];
         }
         return $shippingDiscounts;
+    }
+
+    /**
+     * Get grand total excluding tax
+     *
+     * @param OrderInterface $order
+     * @return float
+     */
+    private function getGrandTotalExclTax(OrderInterface $order): float
+    {
+        return (float) ($order->getSubtotal()
+            + $order->getShippingAmount()
+            - abs((float)$order->getDiscountAmount()));
     }
 }
