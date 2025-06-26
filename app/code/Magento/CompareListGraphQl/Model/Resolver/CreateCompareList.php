@@ -7,10 +7,12 @@ declare(strict_types=1);
 
 namespace Magento\CompareListGraphQl\Model\Resolver;
 
+use Magento\Catalog\Helper\Product\Compare;
 use Magento\CompareListGraphQl\Model\Service\AddToCompareList;
 use Magento\CompareListGraphQl\Model\Service\CreateCompareList as CreateCompareListService;
 use Magento\CompareListGraphQl\Model\Service\Customer\GetListIdByCustomerId;
 use Magento\CompareListGraphQl\Model\Service\GetCompareList;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
@@ -51,24 +53,33 @@ class CreateCompareList implements ResolverInterface
     private $createCompareList;
 
     /**
+     * @var Compare
+     */
+    private mixed $productCompareHelper;
+
+    /**
      * @param Random $mathRandom
      * @param GetListIdByCustomerId $getListIdByCustomerId
      * @param AddToCompareList $addProductToCompareList
      * @param GetCompareList $getCompareList
      * @param CreateCompareListService $createCompareList
+     * @param Compare|null $productCompareHelper
      */
     public function __construct(
         Random $mathRandom,
         GetListIdByCustomerId $getListIdByCustomerId,
         AddToCompareList $addProductToCompareList,
         GetCompareList $getCompareList,
-        CreateCompareListService $createCompareList
+        CreateCompareListService $createCompareList,
+        ?Compare $productCompareHelper = null
     ) {
         $this->mathRandom = $mathRandom;
         $this->getListIdByCustomerId = $getListIdByCustomerId;
         $this->addProductToCompareList = $addProductToCompareList;
         $this->getCompareList = $getCompareList;
         $this->createCompareList = $createCompareList;
+        $this->productCompareHelper = $productCompareHelper ?: ObjectManager::getInstance()
+            ->get(Compare::class);
     }
 
     /**
@@ -111,6 +122,7 @@ class CreateCompareList implements ResolverInterface
                 } else {
                     $listId = $this->createCompareList->execute($generatedListId, $customerId);
                     $this->addProductToCompareList->execute($listId, $products, $context);
+                    $this->productCompareHelper->calculate();
                 }
             }
         } catch (LocalizedException $exception) {

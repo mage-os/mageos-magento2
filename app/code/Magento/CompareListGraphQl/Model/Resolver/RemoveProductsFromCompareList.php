@@ -7,10 +7,12 @@ declare(strict_types=1);
 
 namespace Magento\CompareListGraphQl\Model\Resolver;
 
+use Magento\Catalog\Helper\Product\Compare;
 use Magento\Catalog\Model\MaskedListIdToCompareListId;
 use Magento\CompareListGraphQl\Model\Service\Customer\GetListIdByCustomerId;
 use Magento\CompareListGraphQl\Model\Service\GetCompareList;
 use Magento\CompareListGraphQl\Model\Service\RemoveFromCompareList;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
@@ -45,21 +47,30 @@ class RemoveProductsFromCompareList implements ResolverInterface
     private $getListIdByCustomerId;
 
     /**
+     * @var Compare
+     */
+    private mixed $productCompareHelper;
+
+    /**
      * @param GetCompareList $getCompareList
      * @param RemoveFromCompareList $removeFromCompareList
      * @param MaskedListIdToCompareListId $maskedListIdToCompareListId
      * @param GetListIdByCustomerId $getListIdByCustomerId
+     * @param Compare|null $productCompareHelper
      */
     public function __construct(
         GetCompareList $getCompareList,
         RemoveFromCompareList $removeFromCompareList,
         MaskedListIdToCompareListId $maskedListIdToCompareListId,
-        GetListIdByCustomerId $getListIdByCustomerId
+        GetListIdByCustomerId $getListIdByCustomerId,
+        ?Compare $productCompareHelper = null
     ) {
         $this->getCompareList = $getCompareList;
         $this->removeFromCompareList = $removeFromCompareList;
         $this->maskedListIdToCompareListId = $maskedListIdToCompareListId;
         $this->getListIdByCustomerId = $getListIdByCustomerId;
+        $this->productCompareHelper = $productCompareHelper ?: ObjectManager::getInstance()
+            ->get(Compare::class);
     }
 
     /**
@@ -111,6 +122,7 @@ class RemoveProductsFromCompareList implements ResolverInterface
 
         try {
             $this->removeFromCompareList->execute($listId, $args['input']['products']);
+            $this->productCompareHelper->calculate();
         } catch (LocalizedException $exception) {
             throw new GraphQlInputException(
                 __('Something was wrong during removing products from compare list')

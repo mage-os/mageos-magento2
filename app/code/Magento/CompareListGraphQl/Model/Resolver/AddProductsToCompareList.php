@@ -7,10 +7,12 @@ declare(strict_types=1);
 
 namespace Magento\CompareListGraphQl\Model\Resolver;
 
+use Magento\Catalog\Helper\Product\Compare;
 use Magento\Catalog\Model\MaskedListIdToCompareListId;
 use Magento\CompareListGraphQl\Model\Service\AddToCompareList;
 use Magento\CompareListGraphQl\Model\Service\Customer\GetListIdByCustomerId;
 use Magento\CompareListGraphQl\Model\Service\GetCompareList;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
@@ -45,21 +47,30 @@ class AddProductsToCompareList implements ResolverInterface
     private $getListIdByCustomerId;
 
     /**
+     * @var Compare
+     */
+    private mixed $productCompareHelper;
+
+    /**
      * @param AddToCompareList $addProductToCompareList
      * @param GetCompareList $getCompareList
      * @param MaskedListIdToCompareListId $maskedListIdToCompareListId
      * @param GetListIdByCustomerId $getListIdByCustomerId
+     * @param Compare|null $productCompareHelper
      */
     public function __construct(
         AddToCompareList $addProductToCompareList,
         GetCompareList $getCompareList,
         MaskedListIdToCompareListId $maskedListIdToCompareListId,
-        GetListIdByCustomerId $getListIdByCustomerId
+        GetListIdByCustomerId $getListIdByCustomerId,
+        ?Compare $productCompareHelper = null
     ) {
         $this->addProductToCompareList = $addProductToCompareList;
         $this->getCompareList = $getCompareList;
         $this->maskedListIdToCompareListId = $maskedListIdToCompareListId;
         $this->getListIdByCustomerId = $getListIdByCustomerId;
+        $this->productCompareHelper = $productCompareHelper ?: ObjectManager::getInstance()
+            ->get(Compare::class);
     }
 
     /**
@@ -104,6 +115,7 @@ class AddProductsToCompareList implements ResolverInterface
 
         try {
             $this->addProductToCompareList->execute($listId, $args['input']['products'], $context);
+            $this->productCompareHelper->calculate();
         } catch (\Exception $exception) {
             throw new GraphQlInputException(__($exception->getMessage()));
         }
