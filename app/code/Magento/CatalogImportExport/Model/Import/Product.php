@@ -1718,7 +1718,6 @@ class Product extends AbstractEntity
                     $this->saveProductToWebsitePhase($rowData);
                     $this->saveProductCategoriesPhase($rowNum, $rowData);
                     $this->saveProductTierPricesPhase($rowData, $priceIsGlobal, $tierPrices);
-                    $imagesToBeRemoved = [];
                     $this->saveProductMediaGalleryPhase(
                         $rowNum,
                         $rowData,
