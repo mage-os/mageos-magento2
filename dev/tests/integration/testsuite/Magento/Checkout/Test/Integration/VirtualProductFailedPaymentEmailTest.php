@@ -9,6 +9,7 @@ namespace Magento\Checkout\Test\Integration;
 
 use Magento\Checkout\Helper\Data;
 use Magento\Framework\ObjectManagerInterface;
+use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\QuoteFactory;
 use Magento\Quote\Model\QuoteManagement;
 use Magento\Sales\Api\OrderRepositoryInterface;
@@ -22,6 +23,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @magentoAppIsolation enabled
  * @magentoDbIsolation enabled
+ * @magentoApiDataFixture Magento/Checkout/_files/quote.php
  * @magentoDataFixture Magento/Checkout/_files/quote_with_virtual_product_and_address.php
  */
 class VirtualProductFailedPaymentEmailTest extends TestCase
@@ -87,7 +89,8 @@ class VirtualProductFailedPaymentEmailTest extends TestCase
     private function prepareOrderFromFixtureQuote(): array
     {
         /** @var \Magento\Quote\Model\Quote $quote */
-        $quote = $this->quoteFactory->create()->loadByIdWithoutStore(1);
+        $quote = $this->objectManager->create(Quote::class)
+            ->load('test_order_with_virtual_product', 'reserved_order_id');
         $this->assertTrue((bool)$quote->getId(), 'Quote was not loaded from fixture.');
         $this->assertNotEmpty($quote->getAllItems(), 'Quote from fixture is empty.');
         $quote->getPayment()->setMethod('checkmo');
