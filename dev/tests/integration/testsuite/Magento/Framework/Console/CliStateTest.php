@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Integration test for CLI --magento-init-params functionality
- * Tests that Magento\Framework\App\State::getMode() returns the correct mode
  */
 class CliStateTest extends TestCase
 {
