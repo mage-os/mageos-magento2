@@ -30,6 +30,7 @@
         <after>
             <!-- Customer logout -->
             <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="customerLogout"/>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
             <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
         </after>
         <!-- Step4: Login as a customer -->
@@ -43,7 +44,7 @@
         <!-- Add Product to Cart from product detail page -->
         <click selector="{{StorefrontProductActionSection.addToCart}}" stepKey="addToCart"/>
         <!-- see custom option validation message -->
-        <waitForText userInput="This is a required field." stepKey="seeRequiredField"/>
+        <waitForText userInput="{{ProductWarningMessage.require_Message}}" stepKey="seeRequiredField"/>
         <!-- Choose checkbox value1 -->
         <actionGroup ref="StorefrontAddSimpleProductCustomOptionCheckBoxActionGroup" stepKey="selectCustomOptionCheckBoxForValue1"/>
         <!-- Step6: place order -->
@@ -61,9 +62,10 @@
         <!-- Clicking View Order from My Orders Grid -->
         <actionGroup ref="StorefrontClickViewOrderLinkOnMyOrdersPageActionGroup" stepKey="clickViewOrder"/>
         <!-- Clicking on Reorder link from Order Details Tab -->
+        <waitForElementClickable selector="{{StorefrontCustomerOrderViewSection.reorder}}" stepKey="waitForReorderButtonToBeClickable"/>
         <click selector="{{StorefrontCustomerOrderViewSection.reorder}}" stepKey="clickReorder"/>
         <actionGroup ref="StorefrontCheckoutCheckProductActionGroup" stepKey="checkProduct">
-            <argument name="product" value="$$createSimpleProduct$$" />
+            <argument name="product" value="$$createSimpleProduct$$"/>
             <argument name="cartItem" value="SimpleCartItem"/>
         </actionGroup>
     </test>
