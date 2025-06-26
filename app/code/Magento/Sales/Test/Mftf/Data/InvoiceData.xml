@@ -13,5 +13,7 @@
     <entity name="Invoice" type="Invoice">
        <var key="quote_id" entityKey="return" entityType="CustomerCart"/>
     </entity>
-
+    <entity name="InvoiceTabErrorMessage" type="message">
+        <data key="error_Message">We couldn't find any records.</data>
+    </entity>
 </entities>

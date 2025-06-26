@@ -17,6 +17,7 @@
             <testCaseId value="AC-5246"/>
             <group value="3rd_party_integration"/>
             <group value="paypalExpress"/>
+            <group value="pr_exclude"/>
         </annotations>
         <before>
             <!-- Precondition1: create Simple product -->
@@ -65,8 +66,9 @@
         <actionGroup ref="AdminOpenOrderCommentsHistoryActionGroup" stepKey="clickOnCommentsHistory"/>
         <waitForText selector="{{AdminOrderCommentsTabSection.orderComment}}" userInput="Authorized amount of $15.00." stepKey="seeOrderHistoryNotes"/>
         <!--Open invoice tab and verify the invoice is present-->
+        <waitForElementClickable selector="{{AdminOrderDetailsOrderViewSection.invoices}}" stepKey="waitForInvoicesTabToBeClickable"/>
         <click selector="{{AdminOrderDetailsOrderViewSection.invoices}}" stepKey="clickOrderInvoicesTab"/>
-        <waitForLoadingMaskToDisappear stepKey="waitForInvoiceGridLoadingMask"/>
-        <waitForText selector="{{AdminOrderDetailsMainActionsSection.invoiceTabContent1}}" userInput="We couldn't find any records." stepKey="verifyThereIsNoInvoiceCreated"/>
+        <waitForPageLoad stepKey="waitForInvoiceGridLoadingMask"/>
+        <waitForText selector="{{AdminOrderDetailsMainActionsSection.invoiceTabContent1}}" userInput="{{InvoiceTabErrorMessage.error_Message}}" stepKey="verifyThereIsNoInvoiceCreated"/>
     </test>
 </tests>
