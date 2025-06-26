@@ -51,4 +51,9 @@
         <plugin name="vendor_special_price_rest_plugin"
                 type="Magento\Catalog\Model\Plugin\SpecialPricePluginForREST\SpecialPriceStoragePlugin" />
     </type>
+    <!-- Essential performance optimizations for category tree operations -->
+    <type name="Magento\Catalog\Api\CategoryManagementInterface">
+        <plugin name="categoryManagementPerformanceOptimizer"
+                type="Magento\Catalog\Plugin\CategoryManagementPerformanceOptimizer" />
+    </type>
 </config>
