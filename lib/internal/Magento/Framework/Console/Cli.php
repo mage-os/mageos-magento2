@@ -12,6 +12,7 @@ use Magento\Framework\App\Bootstrap;
 use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\ProductMetadata;
+use Magento\Framework\App\State as AppState;
 use Magento\Framework\Composer\ComposerJsonFinder;
 use Magento\Framework\Config\ConfigOptionsListConstants;
 use Magento\Framework\Console\CommandLoader\Aggregate;
@@ -179,7 +180,7 @@ class Cli extends Console\Application
         $requestParams = $this->serviceManager->get('magento-init-params');
         $appBootstrapKeys = [
             Bootstrap::INIT_PARAM_FILESYSTEM_DIR_PATHS,
-            Bootstrap::INIT_PARAM_MAGE_MODE,
+            AppState::PARAM_MODE,
         ];
 
         foreach ($appBootstrapKeys as $appBootstrapKey) {
