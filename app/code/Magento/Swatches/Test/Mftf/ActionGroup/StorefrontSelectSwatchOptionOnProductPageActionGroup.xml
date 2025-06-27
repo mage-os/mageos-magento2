@@ -13,6 +13,7 @@
         <arguments>
             <argument name="optionName" type="string"/>
         </arguments>
+        <waitForElementClickable selector="{{StorefrontProductInfoMainSection.swatchOptionByLabel(optionName)}}" stepKey="waitForCreateConfigurationsButtonToBeClickable"/>
         <click selector="{{StorefrontProductInfoMainSection.swatchOptionByLabel(optionName)}}" stepKey="clickSwatchOption"/>
     </actionGroup>
 </actionGroups>
