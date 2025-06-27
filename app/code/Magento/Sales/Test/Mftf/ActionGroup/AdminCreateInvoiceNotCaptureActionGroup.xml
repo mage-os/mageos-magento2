@@ -8,14 +8,10 @@
 
 <actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
-    <actionGroup name="AdminCreateInvoiceNotCaptureActionGroup">
-        <click selector="{{AdminOrderDetailsMainActionsSection.invoice}}" stepKey="clickInvoice"/>
-        <waitForPageLoad stepKey="waitForInvoicePage"/>
-        <scrollTo selector="{{AdminInvoiceMainActionsSection.selectModeOfAmount}}" x="0" y="-80" stepKey="scrollToAmount"/>
-        <selectOption userInput="Not Capture" selector="{{AdminInvoiceMainActionsSection.selectModeOfAmount}}" stepKey="selectNotCaptureUnderAmount"/>
-        <waitForElementVisible selector="{{AdminInvoiceMainActionsSection.submitInvoice}}" stepKey="waitForSubmitInvoicebtn"/>
-        <click selector="{{AdminInvoiceMainActionsSection.submitInvoice}}" stepKey="submitInvoice"/>
-        <waitForPageLoad stepKey="waitForLoadPage"/>
-        <waitForText userInput="The invoice has been created." stepKey="seeMessageInvoiceCreated"/>
+    <actionGroup name="AdminCreateInvoiceNotCaptureActionGroup" extends="AdminCreateInvoiceActionGroup">
+        <waitForElementVisible selector="{{AdminOrderDetailsMainActionsSection.invoice}}" stepKey="waitForInvoiceButton" before="clickInvoice"/>
+        <scrollTo selector="{{AdminInvoiceMainActionsSection.selectModeOfAmount}}" x="0" y="-80" stepKey="scrollToAmount" after="waitForInvoicePage"/>
+        <selectOption userInput="Not Capture" selector="{{AdminInvoiceMainActionsSection.selectModeOfAmount}}" stepKey="selectNotCaptureUnderAmount" after="scrollToAmount"/>
+        <waitForElementVisible selector="{{AdminInvoiceMainActionsSection.submitInvoice}}" stepKey="waitForSubmitInvoicebtn" after="selectNotCaptureUnderAmount"/>
     </actionGroup>
 </actionGroups>

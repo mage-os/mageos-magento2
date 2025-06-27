@@ -72,12 +72,9 @@
         <grabTextFrom selector="{{AdminOrderPaymentInformationSection.paymentInformationField('Last Transaction ID')}}" stepKey="grabTransactionID"/>
         <waitForText selector="{{AdminOrderTotalSection.grandTotal}}" userInput="$15.00" stepKey="checkGrandTotal"/>
         <!-- Create invoice with not capture amount -->
-        <waitForElementVisible selector="{{AdminOrderDetailsMainActionsSection.invoice}}" stepKey="waitForInvoicebtn"/>
         <actionGroup ref="AdminCreateInvoiceNotCaptureActionGroup" stepKey="createInvoiceNotCapture"/>
         <!-- Open invoice and cancel it -->
         <actionGroup ref="AdminOpenInvoiceFromOrderPageActionGroup" stepKey="openInvoiceFromOrderPage"/>
         <actionGroup ref="AdminClickCancelButtonInInvoiceActionGroup" stepKey="clickCancelInvoiceButton"/>
-        <waitForPageLoad stepKey="waitForLoadPage2"/>
-        <waitForText userInput="You canceled the invoice." stepKey="seeMessageInvoiceCanceled"/>
     </test>
 </tests>

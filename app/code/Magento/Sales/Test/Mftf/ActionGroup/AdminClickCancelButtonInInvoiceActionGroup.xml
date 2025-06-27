@@ -14,5 +14,7 @@
         </annotations>
         <waitForElementClickable selector="{{AdminInvoiceMainActionsSection.cancel}}" stepKey="waitForHoldButtonToBeClickable"/>
         <click selector="{{AdminInvoiceMainActionsSection.cancel}}" stepKey="clickCancelButton"/>
+        <waitForPageLoad stepKey="waitForLoadPage2"/>
+        <waitForText userInput="You canceled the invoice." stepKey="seeMessageInvoiceCanceled"/>
     </actionGroup>
 </actionGroups>
