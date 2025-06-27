@@ -1018,6 +1018,7 @@ class Product extends AbstractEntity
                 }
             }
         } catch (NoSuchEntityException) {
+            return null;
         }
 
         return null;
