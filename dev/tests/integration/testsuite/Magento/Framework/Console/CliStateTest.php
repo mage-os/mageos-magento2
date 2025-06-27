@@ -67,18 +67,15 @@ class CliStateTest extends TestCase
         ];
         $_SERVER['argv'] = $testArgv;
 
-        try {
-            // Get the State object from the ObjectManager
-            $state = $this->getObjectManager()->get(State::class);
+        // Get the State object from the ObjectManager
+        $state = $this->getObjectManager()->get(State::class);
 
-            // Assert that State::getMode() returns the correct mode
-            $this->assertEquals(
-                $mode,
-                $state->getMode(),
-                'State::getMode() should return "' . $mode . '" when MAGE_MODE set via --magento-init-params'
-            );
-        } catch (\Exception $e) {
-        }
+        // Assert that State::getMode() returns the correct mode
+        $this->assertEquals(
+            $mode,
+            $state->getMode(),
+            'State::getMode() should return "' . $mode . '" when MAGE_MODE set via --magento-init-params'
+        );
     }
 
     /**
@@ -102,37 +99,34 @@ class CliStateTest extends TestCase
         ];
         $_SERVER['argv'] = $testArgv;
 
-        try {
-            // Get the ObjectManager
-            $objectManager = $this->getObjectManager();
+        // Get the ObjectManager
+        $objectManager = $this->getObjectManager();
 
-            // Get the State object from the ObjectManager
-            $state = $objectManager->get(State::class);
+        // Get the State object from the ObjectManager
+        $state = $objectManager->get(State::class);
 
-            // Assert that State::getMode() returns the correct mode
-            $this->assertEquals(
-                $mode,
-                $state->getMode(),
-                'State::getMode() should return "' . $mode . '" when MAGE_MODE set via --magento-init-params'
-            );
+        // Assert that State::getMode() returns the correct mode
+        $this->assertEquals(
+            $mode,
+            $state->getMode(),
+            'State::getMode() should return "' . $mode . '" when MAGE_MODE set via --magento-init-params'
+        );
 
-            // Get the DirectoryList to verify filesystem paths were set
-            $directoryList = $objectManager->get(DirectoryList::class);
+        // Get the DirectoryList to verify filesystem paths were set
+        $directoryList = $objectManager->get(DirectoryList::class);
 
-            // Assert that custom filesystem paths were applied
-            $this->assertEquals(
-                $cachePath,
-                $directoryList->getPath(DirectoryList::CACHE),
-                'Custom cache directory path should be set via --magento-init-params'
-            );
+        // Assert that custom filesystem paths were applied
+        $this->assertEquals(
+            $cachePath,
+            $directoryList->getPath(DirectoryList::CACHE),
+            'Custom cache directory path should be set via --magento-init-params'
+        );
 
-            $this->assertEquals(
-                $varPath,
-                $directoryList->getPath(DirectoryList::VAR_DIR),
-                'Custom var directory path should be set via --magento-init-params'
-            );
-        } catch (\Exception $e) {
-        }
+        $this->assertEquals(
+            $varPath,
+            $directoryList->getPath(DirectoryList::VAR_DIR),
+            'Custom var directory path should be set via --magento-init-params'
+        );
     }
 
     /**
