@@ -96,7 +96,6 @@ class ImportWithSharedImagesTest extends TestCase
         parent::tearDown();
     }
 
-
     /**
      * @return void
      */
