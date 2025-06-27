@@ -47,6 +47,7 @@ class CartQuantityValidator implements CartQuantityValidatorInterface
      * @param CartInterface $customerCart
      * @param CartInterface $guestCart
      * @return bool
+     * @throws NoSuchEntityException
      */
     public function validateFinalCartQuantities(CartInterface $customerCart, CartInterface $guestCart): bool
     {
@@ -68,7 +69,7 @@ class CartQuantityValidator implements CartQuantityValidatorInterface
                 $sku = $this->getSkuFromItem($customerCartItem);
                 $product = $this->getProduct((int) $customerCartItem->getProduct()->getId());
                 $isAvailable = $customerCartItem->getChildren()
-                    ? $this->validateCompositeProductQty($product, $guestCartItem, $customerCartItem)
+                    ? $this->validateCompositeProductQty($guestCartItem, $customerCartItem)
                     : $this->validateProductQty($product, $sku, $guestCartItem->getQty(), $customerCartItem->getQty());
 
                 if ($this->config->getCartMergePreference() === Config::CART_PREFERENCE_GUEST) {
@@ -91,6 +92,7 @@ class CartQuantityValidator implements CartQuantityValidatorInterface
      *
      * @param CartItemInterface $item
      * @return string
+     * @throws NoSuchEntityException
      */
     private function getSkuFromItem(CartItemInterface $item): string
     {
@@ -144,13 +146,12 @@ class CartQuantityValidator implements CartQuantityValidatorInterface
     /**
      * Validate composite product quantities
      *
-     * @param ProductInterface $productInterface
      * @param Item $guestCartItem
      * @param Item $customerCartItem
      * @return bool
+     * @throws NoSuchEntityException
      */
     private function validateCompositeProductQty(
-        ProductInterface $productInterface,
         Item $guestCartItem,
         Item $customerCartItem
     ): bool {

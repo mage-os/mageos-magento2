@@ -72,7 +72,8 @@ class MergeCartsTest extends GraphQlAbstract
             ['cart_id' => '$guestCart.id$', 'product_id' => '$product1.id$', 'qty' => 5]
         ),
         DataFixture(
-            AddProductToCart::class, ['cart_id' => '$customerCart.id$', 'product_id' => '$product1.id$', 'qty' => 3]
+            AddProductToCart::class,
+            ['cart_id' => '$customerCart.id$', 'product_id' => '$product1.id$', 'qty' => 3]
         ),
         DataFixture(
             AddProductToCart::class,
@@ -179,7 +180,7 @@ class MergeCartsTest extends GraphQlAbstract
 
         $this->assertEquals($response['mergeCarts']['total_quantity'], $totalQuantity, 'Total quantity does not match');
         foreach ($products as $product) {
-            foreach ($response['mergeCarts']['items'] as  $item) {
+            foreach ($response['mergeCarts']['items'] as $item) {
                 if ($item['product']['sku'] === $product['sku']) {
                     $this->assertEquals($product['quantity'], $item['quantity'], 'Item quantity does not match');
                 }
