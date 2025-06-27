@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -94,6 +94,41 @@ class ImportWithSharedImagesTest extends TestCase
         $this->importDataResource->cleanBunches();
 
         parent::tearDown();
+    }
+
+    /**
+     * @return void
+     */
+    public function testHideImageWhenColumnContainsEmptyValue(): void
+    {
+        $productSku = 'ABC';
+        $this->moveImages('magento_image.jpg');
+        $source = $this->prepareFile('catalog_import_products_with_swatch_image.csv');
+        $this->updateUploader();
+        $errors = $this->import->setParameters([
+            'behavior' => Import::BEHAVIOR_ADD_UPDATE,
+            'entity' => ProductEntity::ENTITY,
+        ])
+            ->setSource($source)->validateData();
+        $this->assertEmpty($errors->getAllErrors());
+        $this->import->importData();
+        $this->createdProductsSkus[] =  $productSku;
+        $this->checkProductsImages('/m/a/magento_image.jpg', $this->createdProductsSkus);
+
+        $this->importDataResource->cleanBunches();
+        $source = $this->prepareFile('catalog_import_products_without_swatch_image.csv');
+        $this->updateUploader();
+        $errors = $this->import->setParameters([
+            'behavior' => Import::BEHAVIOR_ADD_UPDATE,
+            'entity' => ProductEntity::ENTITY,
+        ])
+            ->setSource($source)->validateData();
+        $this->assertEmpty($errors->getAllErrors());
+        $this->import->importData();
+        $this->productRepository->cleanCache();
+        $product = $this->productRepository->get($productSku);
+        $images = $product->getMediaGalleryImages();
+        $this->assertEmpty($images->getItems());
     }
 
     /**
