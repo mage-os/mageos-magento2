@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -132,7 +132,7 @@ class PriceTest extends TestCase
                 }
             );
         $tierPriceExtensionFactoryMock = $this->getMockBuilder(ProductTierPriceExtensionFactory::class)
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
         $objectManagerHelper = new ObjectManagerHelper($this);
@@ -191,7 +191,7 @@ class PriceTest extends TestCase
      *
      * @return array
      */
-    public function calculateSpecialPrice()
+    public static function calculateSpecialPrice()
     {
         return [
             [10, null, 0, true, 10],
@@ -231,7 +231,7 @@ class PriceTest extends TestCase
     public function testGetTotalBundleItemsPriceWithEmptyOptions($value)
     {
         $dataObjectMock = $this->getMockBuilder(DataObject::class)
-            ->setMethods(['getValue'])
+            ->addMethods(['getValue'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -258,7 +258,7 @@ class PriceTest extends TestCase
      *
      * @return array
      */
-    public function dataProviderWithEmptyOptions()
+    public static function dataProviderWithEmptyOptions()
     {
         return [
             ['{}'],
@@ -277,7 +277,7 @@ class PriceTest extends TestCase
         $storeId = 1;
 
         $dataObjectMock = $this->getMockBuilder(DataObject::class)
-            ->setMethods(['getValue'])
+            ->addMethods(['getValue'])
             ->disableOriginalConstructor()
             ->getMock();
 

@@ -1,6 +1,6 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 
 /**
@@ -47,7 +47,17 @@ define([
      * Invalidate Cache By Close Cookie Session
      */
     invalidateCacheByCloseCookieSession = function () {
+        var isLoggedIn = parseInt(options.isLoggedIn, 10) || 0;
+
         if (!$.cookieStorage.isSet('mage-cache-sessid')) {
+            storage.removeAll();
+        }
+
+        if (!$.localStorage.isSet('mage-customer-login')) {
+            $.localStorage.set('mage-customer-login', isLoggedIn);
+        }
+        if ($.localStorage.get('mage-customer-login') !== isLoggedIn) {
+            $.localStorage.set('mage-customer-login', isLoggedIn);
             storage.removeAll();
         }
 
@@ -85,7 +95,10 @@ define([
             parameters['force_new_section_timestamp'] = forceNewSectionTimestamp;
 
             return $.getJSON(options.sectionLoadUrl, parameters).fail(function (jqXHR) {
-                throw new Error(jqXHR);
+                // don't throw error if the request is cancelled or blocked
+                if (jqXHR.status !== 0) {
+                    throw new Error(jqXHR);
+                }
             });
         }
     };
@@ -222,6 +235,13 @@ define([
                 path: '/',
                 expires: new Date(Date.now() + parseInt(options.cookieLifeTime, 10) * 1000)
             });
+
+            if (options.cookieDomain) {
+                $.cookieStorage.setConf({
+                    domain: options.cookieDomain
+                });
+            }
+
             storage = $.initNamespaceStorage('mage-cache-storage').localStorage;
             storageInvalidation = $.initNamespaceStorage('mage-cache-storage-section-invalidation').localStorage;
         },
@@ -412,7 +432,7 @@ define([
     $(document).on('submit', function (event) {
         var sections;
 
-        if (event.target.method.match(/post|put|delete/i)) {
+        if (event.target.hasAttribute('method') && event.target.getAttribute('method').match(/post|put|delete/i)) {
             sections = sectionConfig.getAffectedSections(event.target.action);
 
             if (sections) {
