@@ -6,11 +6,37 @@
 define([
     'underscore',
     'uiRegistry',
+    'jquery',
     'Magento_Ui/js/form/components/html'
-], function (_, registry, Constr) {
+], function (_, registry, $, Constr) {
     'use strict';
 
     describe('Magento_Ui/js/form/components/html', function () {
+        var originalJQueryAjax;
+
+        beforeEach(function () {
+            // Store and ensure $.ajax exists
+            originalJQueryAjax = $.ajax;
+            
+            if (!$.ajax) {
+                $.ajax = jasmine.createSpy('ajax').and.callFake(function(options) {
+                    return {
+                        done: function() { return this; },
+                        fail: function() { return this; },
+                        always: function() { return this; }
+                    };
+                });
+            }
+        });
+
+        afterEach(function () {
+            // Restore original $.ajax
+            if (originalJQueryAjax) {
+                $.ajax = originalJQueryAjax;
+            } else if ($.ajax && $.ajax.isSpy) {
+                delete $.ajax;
+            }
+        });
 
         var obj = new Constr({
             provider: 'provName',
