@@ -1,12 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
 namespace Magento\CompareListGraphQl\Model\Resolver;
 
+use Magento\CompareListGraphQl\Model\Service\CompareCookieManager;
 use Magento\Catalog\Helper\Product\Compare;
 use Magento\CompareListGraphQl\Model\Service\AddToCompareList;
 use Magento\CompareListGraphQl\Model\Service\CreateCompareList as CreateCompareListService;
@@ -58,6 +59,11 @@ class CreateCompareList implements ResolverInterface
     private mixed $productCompareHelper;
 
     /**
+     * @var CompareCookieManager
+     */
+    private CompareCookieManager $compareCookieManager;
+
+    /**
      * @param Random $mathRandom
      * @param GetListIdByCustomerId $getListIdByCustomerId
      * @param AddToCompareList $addProductToCompareList
@@ -71,7 +77,8 @@ class CreateCompareList implements ResolverInterface
         AddToCompareList $addProductToCompareList,
         GetCompareList $getCompareList,
         CreateCompareListService $createCompareList,
-        ?Compare $productCompareHelper = null
+        ?Compare $productCompareHelper = null,
+        ?CompareCookieManager $compareCookieManager = null
     ) {
         $this->mathRandom = $mathRandom;
         $this->getListIdByCustomerId = $getListIdByCustomerId;
@@ -80,6 +87,8 @@ class CreateCompareList implements ResolverInterface
         $this->createCompareList = $createCompareList;
         $this->productCompareHelper = $productCompareHelper ?: ObjectManager::getInstance()
             ->get(Compare::class);
+        $this->compareCookieManager = $compareCookieManager ?: ObjectManager::getInstance()
+            ->get(CompareCookieManager::class);
     }
 
     /**
@@ -123,6 +132,7 @@ class CreateCompareList implements ResolverInterface
                     $listId = $this->createCompareList->execute($generatedListId, $customerId);
                     $this->addProductToCompareList->execute($listId, $products, $context);
                     $this->productCompareHelper->calculate();
+                    $this->compareCookieManager->invalidate();
                 }
             }
         } catch (LocalizedException $exception) {

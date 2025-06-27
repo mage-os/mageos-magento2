@@ -1,12 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
 namespace Magento\CompareListGraphQl\Model\Resolver;
 
+use Magento\CompareListGraphQl\Model\Service\CompareCookieManager;
 use Magento\Catalog\Helper\Product\Compare;
 use Magento\Catalog\Model\MaskedListIdToCompareListId;
 use Magento\CompareListGraphQl\Model\Service\Customer\GetListIdByCustomerId;
@@ -52,18 +53,25 @@ class RemoveProductsFromCompareList implements ResolverInterface
     private mixed $productCompareHelper;
 
     /**
+     * @var CompareCookieManager
+     */
+    private CompareCookieManager $compareCookieManager;
+
+    /**
      * @param GetCompareList $getCompareList
      * @param RemoveFromCompareList $removeFromCompareList
      * @param MaskedListIdToCompareListId $maskedListIdToCompareListId
      * @param GetListIdByCustomerId $getListIdByCustomerId
      * @param Compare|null $productCompareHelper
+     * @param CompareCookieManager|null $compareCookieManager
      */
     public function __construct(
         GetCompareList $getCompareList,
         RemoveFromCompareList $removeFromCompareList,
         MaskedListIdToCompareListId $maskedListIdToCompareListId,
         GetListIdByCustomerId $getListIdByCustomerId,
-        ?Compare $productCompareHelper = null
+        ?Compare $productCompareHelper = null,
+        ?CompareCookieManager $compareCookieManager = null
     ) {
         $this->getCompareList = $getCompareList;
         $this->removeFromCompareList = $removeFromCompareList;
@@ -71,6 +79,8 @@ class RemoveProductsFromCompareList implements ResolverInterface
         $this->getListIdByCustomerId = $getListIdByCustomerId;
         $this->productCompareHelper = $productCompareHelper ?: ObjectManager::getInstance()
             ->get(Compare::class);
+        $this->compareCookieManager = $compareCookieManager ?: ObjectManager::getInstance()
+            ->get(CompareCookieManager::class);
     }
 
     /**
@@ -123,6 +133,7 @@ class RemoveProductsFromCompareList implements ResolverInterface
         try {
             $this->removeFromCompareList->execute($listId, $args['input']['products']);
             $this->productCompareHelper->calculate();
+            $this->compareCookieManager->invalidate();
         } catch (LocalizedException $exception) {
             throw new GraphQlInputException(
                 __('Something was wrong during removing products from compare list')

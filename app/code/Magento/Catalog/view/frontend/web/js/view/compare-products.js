@@ -46,10 +46,6 @@ define([
                 customerData.reload(['compare-products'], false);
                 compareProductsReloaded = true;
             }
-
-            // Force reload on page load
-            customerData.reload(['compare-products'], false);
-
             initSidebar();
         }
     });
