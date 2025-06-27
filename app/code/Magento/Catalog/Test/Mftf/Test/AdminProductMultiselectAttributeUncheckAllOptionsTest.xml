@@ -20,13 +20,14 @@
        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
     <test name="AdminProductMultiselectAttributeUncheckAllOptionsTest">
         <annotations>
-            <group value="Catalog"/>
-            <title value="Product Attribute of multiselect type can be saved with all options unchecked"/>
             <features value="Uncheck multiselect attribute options and save the product"/>
             <stories value="Save Product Multiselect attribute without selecting any options"/>
-            <description value="Verify that a product attribute of multiselect type can be saved with all options unchecked in the admin product edit page."/>
+            <title value="Product Attribute of multiselect type can be saved with all options unchecked"/>
+            <description
+                value="Verify that a product attribute of multiselect type can be saved with all options unchecked in the admin product edit page."/>
             <testCaseId value="AC-4856"/>
             <severity value="MAJOR"/>
+            <group value="Catalog"/>
         </annotations>
         <before>
             <!-- Login as admin -->
@@ -52,8 +53,8 @@
                 <argument name="frontName" value="{{multiSelectAttributeWithThreeOptions.option3}}"/>
                 <argument name="row" value="{{multiSelectAttributeWithThreeOptions.option3}}"/>
             </actionGroup>
-            <waitForElement selector="{{AttributePropertiesSection.Save}}" stepKey="waitForSaveButton" />
-            <click selector="{{AttributePropertiesSection.Save}}" stepKey="saveAttribute"/>
+            <waitForElementVisible selector="{{AttributePropertiesSection.Save}}" stepKey="waitForSaveButton"/>
+            <actionGroup ref="AdminSaveProductAttributeActionGroup" stepKey="saveMultiSelectAttribute"/>
             <!-- Pre-condition Step-2 Multiselect Attribute added to default Attribute set -->
             <actionGroup ref="AdminOpenAttributeSetGridPageActionGroup" stepKey="openAttributeSetPage"/>
             <actionGroup ref="AdminOpenAttributeSetByNameActionGroup" stepKey="openDefaultAttributeSet"/>
@@ -71,8 +72,12 @@
             <actionGroup ref="OpenEditProductOnBackendActionGroup" stepKey="openEditProduct">
                 <argument name="product" value="$$createSimpleProduct$$"/>
             </actionGroup>
-            <waitForElement selector="{{AdminProductFormSection.customSelectAttribute('$$createMultiSelectProductAttributeWith2Options.attribute_code$$')}}" stepKey="waitForMultiSelectAttributeToSelect" />
-            <selectOption selector="{{AdminProductFormSection.customSelectAttribute('$$createMultiSelectProductAttributeWith2Options.attribute_code$$')}}" parameterArray="['1','2']" stepKey="selectFirstAndSecondOptions"/>
+            <waitForElementVisible
+                selector="{{AdminProductFormSection.customSelectAttribute('$$createMultiSelectProductAttributeWith2Options.attribute_code$$')}}"
+                stepKey="waitForMultiSelectAttributeToSelect"/>
+            <selectOption
+                selector="{{AdminProductFormSection.customSelectAttribute('$$createMultiSelectProductAttributeWith2Options.attribute_code$$')}}"
+                parameterArray="['1','2']" stepKey="selectFirstAndSecondOptions"/>
             <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProductForm"/>
         </before>
         <after>
@@ -91,16 +96,24 @@
         </actionGroup>
         <waitForPageLoad stepKey="waitForProductPageLoad"/>
         <!-- Step 4 - Uncheck all options of multiselect attribute -->
-        <waitForElement selector="{{AdminProductFormSection.customSelectAttribute('$$createMultiSelectProductAttributeWith2Options.attribute_code$$')}}" stepKey="waitForMultiSelectAttributeToUnSelect" />
-        <unselectOption selector="{{AdminProductFormSection.customSelectAttribute('$$createMultiSelectProductAttributeWith2Options.attribute_code$$')}}" parameterArray="['1','2']" stepKey="uncheckAllOptions"/>
+        <waitForElement
+            selector="{{AdminProductFormSection.customSelectAttribute('$$createMultiSelectProductAttributeWith2Options.attribute_code$$')}}"
+            stepKey="waitForMultiSelectAttributeToUnSelect"/>
+        <unselectOption
+            selector="{{AdminProductFormSection.customSelectAttribute('$$createMultiSelectProductAttributeWith2Options.attribute_code$$')}}"
+            parameterArray="['1','2']" stepKey="uncheckAllOptions"/>
         <!-- Step 5 - Save product -->
         <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProductFormAfterUncheck"/>
-        <waitForElementVisible selector="{{AdminMessagesSection.successMessage}}" stepKey="waitForSuccessMessage"/>
-        <seeElement selector="{{AdminMessagesSection.successMessage}}" stepKey="seeSuccessMessage"/>
         <!-- Assert multiselect attribute has all options unchecked -->
-        <dontSeeOptionIsSelected selector="{{AdminProductFormSection.customSelectAttribute('$$createMultiSelectProductAttributeWith2Options.attribute_code$$')}}" userInput="1" stepKey="assertOption1NotChecked"/>
-        <dontSeeOptionIsSelected selector="{{AdminProductFormSection.customSelectAttribute('$$createMultiSelectProductAttributeWith2Options.attribute_code$$')}}" userInput="2" stepKey="assertOption2NotChecked"/>
-        <dontSeeOptionIsSelected selector="{{AdminProductFormSection.customSelectAttribute('$$createMultiSelectProductAttributeWith2Options.attribute_code$$')}}" userInput="3" stepKey="assertOption3NotChecked"/>
+        <dontSeeOptionIsSelected
+            selector="{{AdminProductFormSection.customSelectAttribute('$$createMultiSelectProductAttributeWith2Options.attribute_code$$')}}"
+            userInput="1" stepKey="assertOption1NotChecked"/>
+        <dontSeeOptionIsSelected
+            selector="{{AdminProductFormSection.customSelectAttribute('$$createMultiSelectProductAttributeWith2Options.attribute_code$$')}}"
+            userInput="2" stepKey="assertOption2NotChecked"/>
+        <dontSeeOptionIsSelected
+            selector="{{AdminProductFormSection.customSelectAttribute('$$createMultiSelectProductAttributeWith2Options.attribute_code$$')}}"
+            userInput="3" stepKey="assertOption3NotChecked"/>
     </test>
 </tests>
 
