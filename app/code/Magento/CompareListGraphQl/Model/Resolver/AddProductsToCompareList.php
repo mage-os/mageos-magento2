@@ -24,6 +24,8 @@ use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 
 /**
  * Add products item to compare list
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class AddProductsToCompareList implements ResolverInterface
 {
@@ -117,7 +119,6 @@ class AddProductsToCompareList implements ResolverInterface
         } catch (LocalizedException $exception) {
             throw new GraphQlInputException(__($exception->getMessage()));
         }
-
 
         if (!$listId) {
             throw new GraphQlInputException(__('"uid" value does not exist'));

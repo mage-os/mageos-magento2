@@ -16,23 +16,25 @@ use Psr\Log\LoggerInterface;
 
 /**
  * Service for managing compare list cookies
+ *
+ * @SuppressWarnings(PHPMD.CookieAndSessionMisuse)
  */
 class CompareCookieManager
 {
     /**
      * Name of cookie that holds compare products section data
      */
-    const COOKIE_COMPARE_PRODUCTS = 'section_data_ids';
+    public const COOKIE_COMPARE_PRODUCTS = 'section_data_ids';
 
     /**
-     * Cookie path
+     * The path for which the cookie will be available
      */
-    const COOKIE_PATH = '/';
+    public const COOKIE_PATH = '/';
 
     /**
-     * Cookie lifetime value
+     * Cookie lifetime value in seconds (86400 = 24 hours)
      */
-    const COOKIE_LIFETIME = 86400;
+    public const COOKIE_LIFETIME = 86400;
 
     /**
      * @var CookieManagerInterface
@@ -56,8 +58,8 @@ class CompareCookieManager
      */
     public function __construct(
         CookieManagerInterface $cookieManager,
-        CookieMetadataFactory $cookieMetadataFactory,
-        LoggerInterface $logger
+        CookieMetadataFactory  $cookieMetadataFactory,
+        LoggerInterface        $logger
     ) {
         $this->cookieManager = $cookieManager;
         $this->cookieMetadataFactory = $cookieMetadataFactory;

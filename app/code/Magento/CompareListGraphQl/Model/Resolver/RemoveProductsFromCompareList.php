@@ -24,6 +24,8 @@ use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 
 /**
  * Remove items from compare list
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class RemoveProductsFromCompareList implements ResolverInterface
 {

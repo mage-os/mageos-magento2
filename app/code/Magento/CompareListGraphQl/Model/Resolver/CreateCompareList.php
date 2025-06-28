@@ -25,6 +25,8 @@ use Magento\Framework\Math\Random;
 
 /**
  * Class for creating compare list
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class CreateCompareList implements ResolverInterface
 {
@@ -70,6 +72,7 @@ class CreateCompareList implements ResolverInterface
      * @param GetCompareList $getCompareList
      * @param CreateCompareListService $createCompareList
      * @param Compare|null $productCompareHelper
+     * @param CompareCookieManager|null $compareCookieManager
      */
     public function __construct(
         Random $mathRandom,
