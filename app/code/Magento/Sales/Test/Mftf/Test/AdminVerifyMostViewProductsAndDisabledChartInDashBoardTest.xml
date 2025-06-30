@@ -107,7 +107,7 @@
         <actionGroup ref="AdminVerifyProductDetailsInDashboardActionGroup" stepKey="adminAssertProductDetails4">
             <argument name="productName" value="$$createThirdProduct.name$$"/>
             <argument name="productPrice" value="$$createThirdProduct.price$$"/>
-            <argument name="productViews" value="1/>
+            <argument name="productViews" value="1"/>
         </actionGroup>
         <!--Step 7: Disable charts on dashboard by default -->
         <waitForElementVisible selector="{{AdminDashboardSection.dashboardChart(AdminMenuDashboard.message)}}" stepKey="waitForChartsToBeVisibleAsDisabled"/>
