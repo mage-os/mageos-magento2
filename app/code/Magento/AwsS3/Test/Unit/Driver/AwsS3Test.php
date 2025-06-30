@@ -18,6 +18,7 @@ use Psr\Log\LoggerInterface;
 
 /**
  * @see AwsS3
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class AwsS3Test extends TestCase
 {
