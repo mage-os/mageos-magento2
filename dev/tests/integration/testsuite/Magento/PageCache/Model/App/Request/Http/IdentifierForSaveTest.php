@@ -20,12 +20,12 @@ use Magento\TestFramework\Fixture\DataFixtureStorage;
 use Magento\TestFramework\Fixture\DataFixtureStorageManager;
 use Magento\TestFramework\Fixture\DbIsolation;
 use Magento\TestFramework\Helper\Bootstrap;
-use PHPUnit\Framework\TestCase;
 use Magento\Customer\Model\Session;
 use Magento\Framework\App\Http\Context;
 use Magento\Framework\Stdlib\CookieManagerInterface;
 use Magento\Framework\Stdlib\Cookie\CookieMetadataFactory;
 use Magento\Customer\Test\Fixture\Customer as CustomerFixture;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Integration test for \Magento\PageCache\Model\App\Request\Http\IdentifierForSave
