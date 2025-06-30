@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2015 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 declare(strict_types=1);
 
@@ -39,14 +39,12 @@ class Index implements HttpGetActionInterface
     /**
      * @var CustomerRepositoryInterface
      * @deprecated
-     * @see not used anymore
      */
     private $customerRepository;
 
     /**
      * @var GetAuthenticationDataBySecretInterface
      * @deprecated
-     * @see not used anymore
      */
     private $getAuthenticationDataBySecret;
 
@@ -114,7 +112,6 @@ class Index implements HttpGetActionInterface
         try {
             $this->authenticateCustomerBySecret->execute($secret);
             $customer = $this->customerSession->getCustomer();
-            $this->messageManager->getMessages(true);
             $this->messageManager->addSuccessMessage(
                 __('You are logged in as customer: %1', $customer->getFirstname() . ' ' . $customer->getLastname())
             );
