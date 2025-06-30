@@ -172,7 +172,10 @@ class InputTest extends TestCase
     }
 
     /**
+     * SuppressWarnings was added due to the big size of data provider
+     *
      * @return array
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public static function getPrepareDataProvider(): array
     {
