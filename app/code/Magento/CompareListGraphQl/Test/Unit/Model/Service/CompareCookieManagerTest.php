@@ -76,8 +76,6 @@ class CompareCookieManagerTest extends TestCase
      */
     public function testInvalidateSuccess(): void
     {
-        $cookieValue = json_encode(['compare-products' => time()]);
-
         $this->cookieMetadataFactoryMock->expects($this->once())
             ->method('createPublicCookieMetadata')
             ->willReturn($this->publicCookieMetadataMock);
