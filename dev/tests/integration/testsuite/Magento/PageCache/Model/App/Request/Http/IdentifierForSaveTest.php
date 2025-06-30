@@ -52,12 +52,12 @@ class IdentifierForSaveTest extends TestCase
      */
     private $fixtures;
 
-    /*
+    /**
      * @var Context
      */
     private $context;
 
-    /*
+    /**
      * @var CookieManagerInterface
      */
     private $cookieManager;
