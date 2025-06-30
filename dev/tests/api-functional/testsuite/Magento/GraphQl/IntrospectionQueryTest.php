@@ -1,15 +1,13 @@
 <?php
 /**
- * Copyright 2025 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 declare(strict_types=1);
 
 namespace Magento\GraphQl;
 
-use Magento\Framework\App\ObjectManager;
 use Magento\TestFramework\TestCase\GraphQlAbstract;
-use Psr\Log\LoggerInterface;
 
 class IntrospectionQueryTest extends GraphQlAbstract
 {
@@ -55,11 +53,7 @@ fragment InputValue on __InputValue {
   defaultValue
 }
 QUERY;
-        try {
-            $this->assertArrayHasKey('__schema', $this->graphQlQuery($query));
-        } catch (\Exception $e){
-            ObjectManager::getInstance()->get(LoggerInterface::class)->debug($e->getMessage());
-        }
+        $this->assertArrayHasKey('__schema', $this->graphQlQuery($query));
     }
 
     /**
@@ -104,11 +98,7 @@ fragment InputValue on __InputValue {
   defaultValue
 }
 QUERY;
-        try {
-            $this->assertArrayHasKey('__schema', $this->graphQlQuery($query));
-        } catch (\Exception $e){
-            ObjectManager::getInstance()->get(LoggerInterface::class)->debug($e->getMessage());
-        }
+        $this->assertArrayHasKey('__schema', $this->graphQlQuery($query));
         $response = $this->graphQlQuery($query);
 
         $query
@@ -147,11 +137,7 @@ fragment InputValue on __InputValue {
   defaultValue
 }
 QUERY;
-        try {
-            $this->assertArrayHasKey('__schema', $this->graphQlQuery($query));
-        } catch (\Exception $e){
-            ObjectManager::getInstance()->get(LoggerInterface::class)->debug($e->getMessage());
-        }
+        $this->assertArrayHasKey('__schema', $this->graphQlQuery($query));
         $responseFields = $this->graphQlQuery($query);
         $this->assertResponseFields($response, $responseFields);
         $this->assertEquals($responseFields, $response);
@@ -183,11 +169,7 @@ QUERY;
   }
 }
 QUERY;
-        try {
-            $this->assertArrayHasKey('__type', $this->graphQlQuery($query));
-        } catch (\Exception $e){
-            ObjectManager::getInstance()->get(LoggerInterface::class)->debug($e->getMessage());
-        }
+        $this->assertArrayHasKey('__type', $this->graphQlQuery($query));
         $response = $this->graphQlQuery($query);
         $this->assertNotEmpty($response['__type']['fields']);
     }
@@ -227,11 +209,7 @@ QUERY;
   }
 
 QUERY;
-        try {
-            $response = $this->graphQlQuery($query);
-        } catch (\Exception $e){
-            ObjectManager::getInstance()->get(LoggerInterface::class)->debug($e->getMessage());
-        }
+        $response = $this->graphQlQuery($query);
         $this->assertArrayHasKey('__schema', $response);
         $schemaResponseFields = $response['__schema']['types'];
         $enumValueReasonArray = $this->getEnumValueDeprecatedReason($schemaResponseFields);
