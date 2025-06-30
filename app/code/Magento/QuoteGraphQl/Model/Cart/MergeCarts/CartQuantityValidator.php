@@ -17,6 +17,7 @@ use Magento\Quote\Api\CartItemRepositoryInterface;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Api\Data\CartItemInterface;
 use Magento\Quote\Model\Quote\Item;
+use Psr\Log\LoggerInterface;
 
 class CartQuantityValidator implements CartQuantityValidatorInterface
 {
@@ -32,12 +33,14 @@ class CartQuantityValidator implements CartQuantityValidatorInterface
      * @param StockRegistryInterface $stockRegistry
      * @param Config $config
      * @param ProductRepositoryInterface $productRepository
+     * @param LoggerInterface $logger
      */
     public function __construct(
         private readonly CartItemRepositoryInterface $cartItemRepository,
-        private readonly StockRegistryInterface $stockRegistry,
-        private readonly Config $config,
-        private readonly ProductRepositoryInterface $productRepository
+        private readonly StockRegistryInterface      $stockRegistry,
+        private readonly Config                      $config,
+        private readonly ProductRepositoryInterface  $productRepository,
+        private readonly LoggerInterface             $logger
     ) {
     }
 
@@ -69,8 +72,8 @@ class CartQuantityValidator implements CartQuantityValidatorInterface
                 $sku = $this->getSkuFromItem($customerCartItem);
                 $product = $this->getProduct((int) $customerCartItem->getProduct()->getId());
                 $isAvailable = $customerCartItem->getChildren()
-                    ? $this->validateCompositeProductQty($guestCartItem, $customerCartItem)
-                    : $this->validateProductQty($product, $sku, $guestCartItem->getQty(), $customerCartItem->getQty());
+                    ? $this->isCompositeProductQtyValid($guestCartItem, $customerCartItem)
+                    : $this->isProductQtyValid($product, $sku, $guestCartItem->getQty(), $customerCartItem->getQty());
 
                 if ($this->config->getCartMergePreference() === Config::CART_PREFERENCE_GUEST) {
                     $this->safeDeleteCartItem((int) $customerCart->getId(), (int) $customerCartItem->getItemId());
@@ -126,7 +129,7 @@ class CartQuantityValidator implements CartQuantityValidatorInterface
      * @param float $customerQty
      * @return bool
      */
-    private function validateProductQty(
+    private function isProductQtyValid(
         ProductInterface $product,
         string $sku,
         float $guestQty,
@@ -151,7 +154,7 @@ class CartQuantityValidator implements CartQuantityValidatorInterface
      * @return bool
      * @throws NoSuchEntityException
      */
-    private function validateCompositeProductQty(
+    private function isCompositeProductQtyValid(
         Item $guestCartItem,
         Item $customerCartItem
     ): bool {
@@ -164,7 +167,7 @@ class CartQuantityValidator implements CartQuantityValidatorInterface
             $customerItemQty = $customerCartItem->getQty() * $customerChildItem->getQty();
             $guestItemQty = $guestCartItem->getQty() * $guestChildItems[$sku]->getQty();
 
-            if (!$this->validateProductQty($childProduct, $sku, $guestItemQty, $customerItemQty)) {
+            if (!$this->isProductQtyValid($childProduct, $sku, $guestItemQty, $customerItemQty)) {
                 return false;
             }
         }
@@ -210,8 +213,8 @@ class CartQuantityValidator implements CartQuantityValidatorInterface
     {
         try {
             $this->cartItemRepository->deleteById($cartId, $itemId);
-        } catch (NoSuchEntityException|CouldNotSaveException $e) { // phpcs:ignore
-            // Optionally log the error.
+        } catch (NoSuchEntityException|CouldNotSaveException $e) {
+            $this->logger->error($e);
         }
     }
 }
