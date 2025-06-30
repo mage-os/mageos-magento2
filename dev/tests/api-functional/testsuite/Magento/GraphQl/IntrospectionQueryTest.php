@@ -37,7 +37,7 @@ fragment FullType on __Type{
     }
          }
     }
-
+    
 fragment TypeRef on __Type {
   kind
   name
@@ -82,7 +82,7 @@ fragment FullType on __Type{
     }
          }
     }
-
+    
 fragment TypeRef on __Type {
   kind
   name
@@ -121,7 +121,7 @@ fragment FullType on __Type{
     }
          }
     }
-
+    
 fragment TypeRef on __Type {
   kind
   name
@@ -167,7 +167,7 @@ QUERY;
       deprecationReason
     }
   }
-}
+} 
 QUERY;
         $this->assertArrayHasKey('__type', $this->graphQlQuery($query));
         $response = $this->graphQlQuery($query);
@@ -207,7 +207,7 @@ QUERY;
       deprecationReason
     }
   }
-
+  
 QUERY;
         $response = $this->graphQlQuery($query);
         $this->assertArrayHasKey('__schema', $response);
