@@ -7,10 +7,9 @@
 -->
 <actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
-    <!--Click save button and see message-->
     <actionGroup name="AdminVerifyProductDetailsInDashboardActionGroup">
         <annotations>
-            <description>Admin Asserts Details including Price and Views in Dashboard page.</description>
+            <description>Admin asserts name, price and views details on the dashboard for most viewed products.</description>
         </annotations>
         <arguments>
             <argument name="productName" type="string" defaultValue="$$createProduct.name$$"/>

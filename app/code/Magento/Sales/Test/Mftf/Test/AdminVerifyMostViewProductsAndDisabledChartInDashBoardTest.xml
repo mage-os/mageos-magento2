@@ -11,15 +11,15 @@
     <test name="AdminVerifyMostViewProductsAndDisabledChartInDashBoardTest">
         <annotations>
             <features value="Sales"/>
-            <stories value="Most Viewed Products Widget and Disabled Charts  On Dashboard"/>
-            <title value="Validating Most Viewed Products Widget and Disabled Charts Behaviour On Admin Dashboard Page"/>
-            <description value="Admin Verifies Most View Products as well as Disables Chart Behaviour On Admin Dashboard Page"/>
+            <stories value="Most viewed products widget and disabled charts on dashboard"/>
+            <title value="Validating most Viewed products widget and disabled charts behaviour on admin dashboard"/>
+            <description value="Verify most view products as well as disables charts behaviour on admin dashboard page"/>
             <severity value="MAJOR"/>
             <testCaseId value="AC-11007"/>
             <group value="sales"/>
         </annotations>
         <before>
-            <!-- Precondition Step 1. Create  5 Simple Products -->
+            <!-- Precondition Step 1: Create 5 Simple Products -->
             <createData entity="_defaultProduct" stepKey="createProduct">
                 <field key="price">100.00</field>
             </createData>
@@ -35,10 +35,10 @@
             <createData entity="SimpleProduct3" stepKey="createThirdProduct">
                 <field key="price">500.00</field>
             </createData>
-            <!-- Precondition Step 2. Create Customer -->
+            <!-- Precondition Step 2: Create Customer -->
             <createData entity="Simple_US_CA_Customer" stepKey="createCustomer"/>
-            <!-- Precondition Step 3. Enable View Report In Configuration -->
-            <magentoCLI command="config:set reports/options/enabled 1" stepKey="setReportAsEnable"/>
+            <!-- Precondition Step 3: Enable View Report In Configuration -->
+            <actionGroup ref="AdminEnableViewProductReportActionGroup" stepKey="enableViewProductReport"/>
         </before>
         <after>
             <!-- Delete Customer and Product -->
@@ -49,7 +49,7 @@
             <deleteData createDataKey="createFirstProduct" stepKey="deleteFirstProduct"/>
             <deleteData createDataKey="createSecondProduct" stepKey="deleteSecondProduct"/>
             <!-- Disable View Report -->
-            <magentoCLI command="config:set reports/options/enabled 0" stepKey="disableReportModule"/>
+            <actionGroup ref="AdminDisableViewProductReportActionGroup" stepKey="disableViewProductReport"/>
             <!-- Logout from Storefront -->
             <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="customerLogout"/>
             <!-- Logout from Admin -->
@@ -109,7 +109,7 @@
             <argument name="productPrice" value="$$createThirdProduct.price$$"/>
             <argument name="productViews" value="1"/>
         </actionGroup>
-        <!--Step 7: Disable charts on dashboard by default -->
+        <!--Step 7: Verify charts are disabled on the dashboard by default -->
         <waitForElementVisible selector="{{AdminDashboardSection.dashboardChart(AdminMenuDashboard.message)}}" stepKey="waitForChartsToBeVisibleAsDisabled"/>
     </test>
 </tests>
