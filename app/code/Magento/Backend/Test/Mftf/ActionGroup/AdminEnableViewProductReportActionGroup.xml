@@ -12,6 +12,6 @@
         <annotations>
             <description>Admin enables most view products report in configuration</description>
         </annotations>
-        <magentoCLI command="config:set reports/options/enabled 1" stepKey="setReportAsEnable"/>
+        <magentoCLI command="config:set {{AdminEnableReportConfigData.path}} {{AdminEnableReportConfigData.value}}" stepKey="setReportAsEnable"/>
     </actionGroup>
 </actionGroups>

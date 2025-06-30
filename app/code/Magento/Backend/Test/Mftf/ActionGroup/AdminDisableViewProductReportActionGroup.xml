@@ -12,6 +12,6 @@
         <annotations>
             <description>Admin disables most view products report in configuration</description>
         </annotations>
-        <magentoCLI command="config:set reports/options/enabled 0" stepKey="setReportAsDisable"/>
+        <magentoCLI command="config:set {{AdminDisableReportConfigData.path}} {{AdminDisableReportConfigData.value}}" stepKey="setReportAsDisable"/>
     </actionGroup>
 </actionGroups>
