@@ -20,7 +20,7 @@
        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
     <test name="AdminProductMultiselectAttributeUncheckAllOptionsTest">
         <annotations>
-            <features value="Uncheck multiselect attribute options and save the product"/>
+            <features value="Catalog"/>
             <stories value="Save Product Multiselect attribute without selecting any options"/>
             <title value="Product Attribute of multiselect type can be saved with all options unchecked"/>
             <description
