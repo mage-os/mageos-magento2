@@ -90,7 +90,7 @@ class MergeCarts implements ResolverInterface
         $customerCart = $this->getCartForUser->execute($customerMaskedCartId, $currentUserId, $storeId);
         $guestCart = $this->getCartForUser->execute($guestMaskedCartId, null, $storeId);
 
-        // // Validate cart quantities before merging and reload cart before cart merge
+        // Validate cart quantities before merging and reload cart before cart merge
         if ($this->cartQuantityValidator->validateFinalCartQuantities($customerCart, $guestCart)) {
             $guestCart = $this->getCartForUser->execute($guestMaskedCartId, null, $storeId);
             $customerCart = $this->getCartForUser->execute($customerMaskedCartId, $currentUserId, $storeId);
