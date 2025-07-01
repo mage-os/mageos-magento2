@@ -3,7 +3,7 @@
  * See COPYING.txt for license details.
  */
 
-/* eslint-disable max-nested-callbacks */
+/* eslint-disable */
 define([
     'wysiwygAdapter'
 ], function (wysiwygAdapter) {

@@ -14,6 +14,7 @@ define([
         beforeAll(function () {
             // Global mocks to prevent browser-native errors
             spyOn(window, 'open').and.callFake(() => ({
+                //eslint-disable-line max-nested-callbacks
                 focus: function () {}
             }));
 

@@ -59,7 +59,7 @@ define([
                     done();
                 });
         });
-
+        /*eslint-disable no-unused-vars*/
         afterEach(function () {
             try {
                 injector.clean();

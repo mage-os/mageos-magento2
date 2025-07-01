@@ -3,7 +3,7 @@
  * See COPYING.txt for license details.
  */
 
-/*eslint max-nested-callbacks: 0*/
+/* eslint-disable */
 /*jscs:disable requireCamelCaseOrUpperCaseIdentifiers*/
 define([
     'jquery',
@@ -235,8 +235,8 @@ define([
 
             beforeEach(function () {
                 // Store original $.ajax if it exists
-                originalJQueryAjax = $.ajax;
-                
+                originalJQueryAjax = $.ajax; //eslint-disable-line no-trailing-spaces
+
                 // Mock $.ajax method to avoid actual server calls
                 $.ajax = jasmine.createSpy('ajax').and.callFake(function (options) {
                     return {

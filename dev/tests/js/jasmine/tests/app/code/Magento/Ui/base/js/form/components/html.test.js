@@ -17,9 +17,9 @@ define([
         beforeEach(function () {
             // Store and ensure $.ajax exists
             originalJQueryAjax = $.ajax;
-            
             if (!$.ajax) {
                 $.ajax = jasmine.createSpy('ajax').and.callFake(function(options) {
+                    //eslint-disable-line max-nested-callbacks, space-before-function-paren, no-unused-vars
                     return {
                         done: function() { return this; },
                         fail: function() { return this; },
@@ -37,7 +37,7 @@ define([
                 delete $.ajax;
             }
         });
-
+        //eslint-disable-line one-var, vars-on-top
         var obj = new Constr({
             provider: 'provName',
             name: '',
