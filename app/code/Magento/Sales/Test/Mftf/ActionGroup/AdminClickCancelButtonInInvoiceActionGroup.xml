@@ -10,11 +10,11 @@
               xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
     <actionGroup name="AdminClickCancelButtonInInvoiceActionGroup">
         <annotations>
-            <description>Admin clicks cancel button on invoice page.</description>
+            <description>Admin clicks cancel button from top menu on invoice page.</description>
         </annotations>
         <waitForElementClickable selector="{{AdminInvoiceMainActionsSection.cancel}}" stepKey="waitForHoldButtonToBeClickable"/>
         <click selector="{{AdminInvoiceMainActionsSection.cancel}}" stepKey="clickCancelButton"/>
-        <waitForPageLoad stepKey="waitForLoadPage2"/>
+        <waitForPageLoad stepKey="waitForLoadPage"/>
         <waitForText userInput="You canceled the invoice." stepKey="seeMessageInvoiceCanceled"/>
     </actionGroup>
 </actionGroups>
