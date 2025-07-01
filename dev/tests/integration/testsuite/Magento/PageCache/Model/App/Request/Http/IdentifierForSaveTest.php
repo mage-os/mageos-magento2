@@ -7,18 +7,11 @@ declare(strict_types=1);
 
 namespace Magento\PageCache\Model\App\Request\Http;
 
-use Magento\Framework\App\Request\Http as HttpRequest;
-use Magento\Framework\App\Response\Http as HttpResponse;
 use Magento\Framework\ObjectManagerInterface;
-use Magento\Store\Model\StoreManager;
-use Magento\Store\Test\Fixture\Group as StoreGroupFixture;
-use Magento\Store\Test\Fixture\Store as StoreFixture;
-use Magento\Store\Test\Fixture\Website as WebsiteFixture;
 use Magento\TestFramework\Fixture\Config as ConfigFixture;
 use Magento\TestFramework\Fixture\DataFixture;
 use Magento\TestFramework\Fixture\DataFixtureStorage;
 use Magento\TestFramework\Fixture\DataFixtureStorageManager;
-use Magento\TestFramework\Fixture\DbIsolation;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\Customer\Model\Session;
 use Magento\Framework\App\Http\Context;
@@ -29,6 +22,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Integration test for \Magento\PageCache\Model\App\Request\Http\IdentifierForSave
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class IdentifierForSaveTest extends TestCase
 {
@@ -36,11 +31,6 @@ class IdentifierForSaveTest extends TestCase
      * @var ObjectManagerInterface
      */
     private $objectManager;
-
-    /**
-     * @var HttpRequest
-     */
-    private $request;
 
     /**
      * @var IdentifierForSave
@@ -67,10 +57,14 @@ class IdentifierForSaveTest extends TestCase
      */
     private $cookieMetadataFactory;
 
+    /**
+     * @var string
+     */
+    private const COOKIE_VARY_STRING = 'X-Magento-Vary';
+
     protected function setUp(): void
     {
         $this->objectManager = Bootstrap::getObjectManager();
-        $this->request = $this->objectManager->get(HttpRequest::class);
         $this->identifierForSave = $this->objectManager->get(IdentifierForSave::class);
         $this->fixtures = $this->objectManager->get(DataFixtureStorageManager::class)->getStorage();
         $this->context = $this->objectManager->get(Context::class);
@@ -82,23 +76,12 @@ class IdentifierForSaveTest extends TestCase
      * Test that cache identifier properly handles logged-in customers
      */
     #[
-        DbIsolation(false),
         ConfigFixture('system/full_page_cache/caching_application', '1', 'store'),
         ConfigFixture('system/full_page_cache/enabled', '1', 'store'),
-        DataFixture(WebsiteFixture::class, as: 'website'),
-        DataFixture(StoreGroupFixture::class, ['website_id' => '$website.id$'], 'store_group'),
-        DataFixture(StoreFixture::class, ['store_group_id' => '$store_group.id$'], 'store'),
         DataFixture(CustomerFixture::class, as: 'customer')
     ]
     public function testAfterGetValueWithLoggedInCustomer()
     {
-        $storeCode = $this->fixtures->get('store')->getCode();
-        $serverParams = [
-            StoreManager::PARAM_RUN_TYPE => 'store',
-            StoreManager::PARAM_RUN_CODE => $storeCode
-        ];
-        $this->request->setServer(new \Laminas\Stdlib\Parameters($serverParams));
-
         // Get customer and login
         $customer = $this->fixtures->get('customer');
         $customerSession = $this->objectManager->get(Session::class);
@@ -118,7 +101,7 @@ class IdentifierForSaveTest extends TestCase
         // Set the vary cookie to simulate a previous request
         $cookieMetadata = $this->cookieMetadataFactory->createSensitiveCookieMetadata()->setPath('/');
         $this->cookieManager->setSensitiveCookie(
-            HttpResponse::COOKIE_VARY_STRING,
+            self::COOKIE_VARY_STRING,
             $originalVaryString,
             $cookieMetadata
         );
@@ -142,9 +125,6 @@ class IdentifierForSaveTest extends TestCase
         $this->assertEquals($result, $resultWithEmptyContext);
 
         // Clean up
-        $this->cookieManager->deleteCookie(
-            HttpResponse::COOKIE_VARY_STRING,
-            $cookieMetadata
-        );
+        $this->cookieManager->deleteCookie(self::COOKIE_VARY_STRING, $cookieMetadata);
     }
 }
