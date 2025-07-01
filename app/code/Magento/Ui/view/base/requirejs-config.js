@@ -10,7 +10,8 @@ var config = {
         'chartjs/es6-shim.min': {},
         'hugerte/hugerte.min': {
             exports: 'hugerte',
-            init: function() {
+            init: function () {
+                'use strict';
                 window.tinymce = window.hugerte;
                 return window.hugerte;
             }
