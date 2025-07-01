@@ -12,7 +12,7 @@
         <annotations>
             <description>Expand media gallery filter by clicking on button</description>
         </annotations>
-        
+        <waitForElementClickable selector="{{AdminEnhancedMediaGalleryFiltersSection.filtersButton}}" stepKey="waitForExpandFilter"/>
         <click selector="{{AdminEnhancedMediaGalleryFiltersSection.filtersButton}}" stepKey="expandFilter"/>
         <waitForLoadingMaskToDisappear stepKey="waitForLoadingMaskToDisappear"/>
     </actionGroup>
