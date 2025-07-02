@@ -19,7 +19,7 @@
         </arguments>
 
         <selectOption userInput="{{label}}" selector="{{StorefrontProductInfoMainSection.productAttributeOptionsSelectButton}}" stepKey="selectOption"/>
-        <wait time="10" stepKey="waitForOptionLoad"/>
+        <waitForPageLoad stepKey="waitForOptionLoad"/>
         <waitForElementVisible selector="{{StorefrontProductMediaSection.imageFile(image)}}" stepKey="seeImage"/>
         <see userInput="{{price}}" selector="{{StorefrontProductInfoMainSection.price}}" stepKey="seeProductPrice"/>
     </actionGroup>
