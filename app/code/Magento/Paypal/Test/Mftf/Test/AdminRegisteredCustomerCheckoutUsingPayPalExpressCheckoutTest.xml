@@ -60,7 +60,7 @@
             <argument name="orderId" value="{$grabOrderNumber}"/>
         </actionGroup>
         <actionGroup ref="AdminOrderViewCheckStatusActionGroup" stepKey="seeAdminOrderStatus">
-            <argument name="status" value="Processing"/>
+            <argument name="status" value="{{OrderState.processing}}"/>
         </actionGroup>
         <waitForText selector="{{AdminOrderTotalSection.grandTotal}}" userInput="$15.00" stepKey="checkGrandTotal"/>
         <actionGroup ref="AdminOpenOrderCommentsHistoryActionGroup" stepKey="clickOnCommentsHistory"/>
