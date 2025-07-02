@@ -68,7 +68,7 @@
             <!-- US Customer is created -->
             <createData entity="Simple_US_Customer_CA" stepKey="createCustomer"/>
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
-<!--            <actionGroup ref="AdminEnableFedExConfigurationActionGroup" stepKey="enableFedEx"/>-->
+            <actionGroup ref="AdminEnableFedExConfigurationActionGroup" stepKey="enableFedEx"/>
             <!--Set US Shipping settings origin data-->
             <actionGroup ref="AdminSetShippingOriginConfigActionGroup" stepKey="setShippingOriginConfigurationData">
                 <argument name="country" value="United States"/>
@@ -199,8 +199,8 @@
             <switchToPreviousTab stepKey="switchToShipmentPage"/>
         <after>
             <!-- Reset shipping origin -->
-<!--            <actionGroup ref="AdminResetShippingOriginConfigurationActionGroup" stepKey="ResetCaliforniaShippingOrigin"/>-->
-<!--            <magentoCLI command="config:set {{AdminFedexEnableForCheckoutConfigData.path}} 0" stepKey="disableCheckout"/>-->
+            <actionGroup ref="AdminResetShippingOriginConfigurationActionGroup" stepKey="ResetCaliforniaShippingOrigin"/>
+            <magentoCLI command="config:set {{AdminFedexEnableForCheckoutConfigData.path}} 0" stepKey="disableCheckout"/>
             <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
             <!-- Delete configurable product data -->
             <deleteData createDataKey="createConfigChildProduct" stepKey="deleteConfigChildProduct"/>
