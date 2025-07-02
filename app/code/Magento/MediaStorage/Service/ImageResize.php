@@ -151,10 +151,10 @@ class ImageResize
      * Create resized images of different sizes from an original image.
      *
      * @param string $originalImageName
-     * @param array $websiteIds
+     * @param bool $skipHiddenImages
      * @throws NotFoundException
      */
-    public function resizeFromImageName(string $originalImageName, array $websiteIds = [])
+    public function resizeFromImageName(string $originalImageName, bool $skipHiddenImages = false)
     {
         $mediastoragefilename = $this->imageConfig->getMediaPath($originalImageName);
         $originalImagePath = $this->mediaDirectory->getAbsolutePath($mediastoragefilename);
@@ -170,7 +170,8 @@ class ImageResize
         }
 
         $viewImages = $this->getViewImages($this->getThemesInUse());
-        if ($websiteIds) {
+        if ($skipHiddenImages) {
+            $websiteIds = $this->productImage->getRelatedWebsiteIds($originalImageName);
             $viewImages = array_filter(
                 $viewImages,
                 fn (string $index) => array_intersect($websiteIds, $this->paramsWebsitesMap[$index]),

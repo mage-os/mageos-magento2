@@ -463,12 +463,13 @@ class ImageResizeTest extends TestCase
             ->willReturn(
                 ['0' => []]
             );
+        $this->productImageMock->expects($this->once())->method('getRelatedWebsiteIds')->willReturn([2]);
         $imageMock = $this->createMock(Image::class);
         $this->imageFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($imageMock);
 
-        $this->service->resizeFromImageName($this->testfilename, [2]);
+        $this->service->resizeFromImageName($this->testfilename, true);
     }
 
     public function testResizeFromImageNameWithNotAssignedWebsite()
@@ -490,10 +491,11 @@ class ImageResizeTest extends TestCase
             ->willReturn(
                 ['0' => []]
             );
+        $this->productImageMock->expects($this->once())->method('getRelatedWebsiteIds')->willReturn([3]);
         $this->imageFactoryMock->expects($this->never())
             ->method('create');
 
-        $this->service->resizeFromImageName($this->testfilename, [3]);
+        $this->service->resizeFromImageName($this->testfilename, true);
     }
 
     public function testSkipResizingAlreadyResizedImageOnDisk()

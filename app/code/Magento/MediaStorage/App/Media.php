@@ -26,7 +26,6 @@ use Magento\MediaStorage\Model\File\Storage\ConfigFactory;
 use Magento\MediaStorage\Model\File\Storage\Response;
 use Magento\MediaStorage\Model\File\Storage\SynchronizationFactory;
 use Magento\MediaStorage\Service\ImageResize;
-use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * The class resize original images
@@ -107,11 +106,6 @@ class Media implements AppInterface
     private $mediaUrlFormat;
 
     /**
-     * @var StoreManagerInterface
-     */
-    private $storeManager;
-
-    /**
      * @param ConfigFactory $configFactory
      * @param SynchronizationFactory $syncFactory
      * @param Response $response
@@ -125,7 +119,6 @@ class Media implements AppInterface
      * @param ImageResize $imageResize
      * @param File $file
      * @param CatalogMediaConfig $catalogMediaConfig
-     * @param StoreManagerInterface|null $storeManager
      * @throws \Magento\Framework\Exception\FileSystemException
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
@@ -142,8 +135,7 @@ class Media implements AppInterface
         State $state,
         ImageResize $imageResize,
         File $file,
-        ?CatalogMediaConfig $catalogMediaConfig = null,
-        ?StoreManagerInterface $storeManager = null,
+        ?CatalogMediaConfig $catalogMediaConfig = null
     ) {
         $this->response = $response;
         $this->isAllowed = $isAllowed;
@@ -170,7 +162,6 @@ class Media implements AppInterface
 
         $catalogMediaConfig = $catalogMediaConfig ?: App\ObjectManager::getInstance()->get(CatalogMediaConfig::class);
         $this->mediaUrlFormat = $catalogMediaConfig->getMediaUrlFormat();
-        $this->storeManager = $storeManager ?? App\ObjectManager::getInstance()->get(StoreManagerInterface::class);
     }
 
     /**
@@ -228,10 +219,7 @@ class Media implements AppInterface
         }
 
         if ($this->mediaUrlFormat === CatalogMediaConfig::HASH) {
-            $this->imageResize->resizeFromImageName(
-                $this->getOriginalImage($this->relativeFileName),
-                [(int) $this->storeManager->getStore()->getWebsiteId()]
-            );
+            $this->imageResize->resizeFromImageName($this->getOriginalImage($this->relativeFileName), true);
             if (!$this->directoryPub->isReadable($this->relativeFileName)) {
                 $synchronizer->synchronize($this->relativeFileName);
             }

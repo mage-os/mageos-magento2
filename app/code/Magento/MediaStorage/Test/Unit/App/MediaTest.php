@@ -1,9 +1,10 @@
 <?php
 /**
- * Copyright 2013 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ *  See COPYING.txt for license details.
  */
 declare(strict_types=1);
+
 
 namespace Magento\MediaStorage\Test\Unit\App;
 
@@ -26,7 +27,6 @@ use Magento\MediaStorage\Model\File\Storage\Response;
 use Magento\MediaStorage\Model\File\Storage\Synchronization;
 use Magento\MediaStorage\Model\File\Storage\SynchronizationFactory;
 use Magento\MediaStorage\Service\ImageResize;
-use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -82,11 +82,6 @@ class MediaTest extends TestCase
     private $directoryMediaMock;
 
     /**
-     * @var StoreManagerInterface|MockObject
-     */
-    private $storeManagerMock;
-
-    /**
      * @var Read|MockObject
      */
     private $directoryPubMock;
@@ -98,13 +93,12 @@ class MediaTest extends TestCase
     {
         $this->configMock = $this->createMock(Config::class);
         $this->sync = $this->createMock(Synchronization::class);
-        $this->configFactoryMock = $this->createMock(ConfigFactory::class);
+        $this->configFactoryMock = $this->createPartialMock(ConfigFactory::class, ['create']);
         $this->responseMock = $this->createMock(Response::class);
-        $this->syncFactoryMock = $this->createMock(SynchronizationFactory::class);
+        $this->syncFactoryMock = $this->createPartialMock(SynchronizationFactory::class, ['create']);
         $this->filesystemMock = $this->createMock(Filesystem::class);
-        $this->directoryPubMock = $this->createMock(WriteInterface::class);
-        $this->directoryMediaMock = $this->createMock(WriteInterface::class);
-        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
+        $this->directoryPubMock = $this->getMockForAbstractClass(WriteInterface::class);
+        $this->directoryMediaMock = $this->getMockForAbstractClass(WriteInterface::class);
 
         $this->configFactoryMock->method('create')
             ->willReturn($this->configMock);
@@ -294,8 +288,7 @@ class MediaTest extends TestCase
             $this->createMock(State::class),
             $this->createMock(ImageResize::class),
             $driverFile,
-            $this->createMock(CatalogMediaConfig::class),
-            $this->storeManagerMock,
+            $this->createMock(CatalogMediaConfig::class)
         );
     }
 }
