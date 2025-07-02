@@ -13,6 +13,8 @@ use Magento\Framework\Webapi\Rest\Response\FieldsFilter;
 use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Config\ConfigOptionsListConstants;
+use Magento\Framework\Phrase;
+use Magento\Framework\Webapi\Exception as WebapiException;
 
 /**
  * REST request processor for synchronous requests
@@ -92,7 +94,17 @@ class SynchronousRequestProcessor implements RequestProcessorInterface
         /**
          * @var \Magento\Framework\Api\AbstractExtensibleObject $outputData
          */
-        $outputData = call_user_func_array([$service, $serviceMethodName], $inputParams);
+        try {
+            $outputData = call_user_func_array([$service, $serviceMethodName], $inputParams);
+        } catch (\Exception $e) {
+            // Re-throw other exceptions as WebapiException with 400 status code
+            throw new WebapiException(
+                new Phrase($e->getMessage()),
+                0,
+                WebapiException::HTTP_BAD_REQUEST
+            );
+        }
+
         $outputData = $this->serviceOutputProcessor->process(
             $outputData,
             $serviceClassName,
