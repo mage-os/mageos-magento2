@@ -170,6 +170,7 @@ type OrderTotal @doc(description: "Contains details about the sales total amount
     shipping_handling: ShippingHandling @doc(description: "Details about the shipping and handling costs for the order.")
     subtotal_incl_tax: Money! @doc(description: "The subtotal of the order, including taxes.")
     subtotal_excl_tax: Money! @doc(description: "The subtotal of the order, excluding taxes.")
+    grand_total_excl_tax: Money! @doc(description: "The grand total of the order, excluding taxes.")
 }
 
 type Invoice @doc(description: "Contains invoice details.") {
