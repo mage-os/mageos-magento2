@@ -57,7 +57,7 @@
         <!-- Step7: Go to order page -->
         <actionGroup ref="StorefrontOpenMyAccountPageActionGroup" stepKey="goToMyAccountPage"/>
         <actionGroup ref="StorefrontCustomerGoToSidebarMenu" stepKey="goToSidebarMenu">
-            <argument name="menu" value="My Orders"/>
+            <argument name="menu" value="{{sidebarTabMenu.my_orders}}"/>
         </actionGroup>
         <!-- Clicking View Order from My Orders Grid -->
         <actionGroup ref="StorefrontClickViewOrderLinkOnMyOrdersPageActionGroup" stepKey="clickViewOrder"/>
