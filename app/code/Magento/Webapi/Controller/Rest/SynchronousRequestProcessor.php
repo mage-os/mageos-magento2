@@ -94,16 +94,7 @@ class SynchronousRequestProcessor implements RequestProcessorInterface
         /**
          * @var \Magento\Framework\Api\AbstractExtensibleObject $outputData
          */
-        try {
-            $outputData = call_user_func_array([$service, $serviceMethodName], $inputParams);
-        } catch (\Exception $e) {
-            // Re-throw other exceptions as WebapiException with 400 status code
-            throw new WebapiException(
-                new Phrase($e->getMessage()),
-                0,
-                WebapiException::HTTP_BAD_REQUEST
-            );
-        }
+        $outputData = call_user_func_array([$service, $serviceMethodName], $inputParams);
 
         $outputData = $this->serviceOutputProcessor->process(
             $outputData,

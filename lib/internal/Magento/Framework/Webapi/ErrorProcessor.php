@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2012 Adobe
+ * All rights reserved.
  */
 declare(strict_types=1);
 
@@ -42,6 +42,17 @@ class ErrorProcessor
     public const DATA_FORMAT_JSON = 'json';
 
     public const DATA_FORMAT_XML = 'xml';
+
+    /**
+     * Client error keywords
+     */
+    private const CLIENT_ERROR_KEYWORDS = [
+        'sqlstate',
+        'missing required',
+        'doesn\'t exist',
+        'not found',
+        'not authorized',
+    ];
 
     /**
      * @var \Magento\Framework\Json\Encoder $encoder
@@ -145,6 +156,10 @@ class ErrorProcessor
                 $stackTrace
             );
         } else {
+            // Check if this is a client error based on message content
+            $httpCode = ($this->isClientError($exception))
+                ? WebapiException::HTTP_BAD_REQUEST
+                : WebapiException::HTTP_INTERNAL_ERROR;
             $message = $exception->getMessage();
             $code = $exception->getCode();
             //if not in Dev mode, make sure the message and code is masked for unanticipated exceptions
@@ -157,7 +172,7 @@ class ErrorProcessor
             $maskedException = new WebapiException(
                 new Phrase($message),
                 $code,
-                WebapiException::HTTP_INTERNAL_ERROR,
+                $httpCode,
                 [],
                 '',
                 null,
@@ -165,6 +180,21 @@ class ErrorProcessor
             );
         }
         return $maskedException;
+    }
+
+    /**
+     * Determine if an exception is a client error based on message content and context
+     *
+     * @param \Exception $exception
+     * @return bool
+     */
+    private function isClientError(\Exception $exception)
+    {
+        $message = strtolower($exception->getMessage());
+
+        return array_filter(self::CLIENT_ERROR_KEYWORDS, function($keyword) use ($message) {
+            return strpos($message, $keyword) !== false;
+        }) !== [];
     }
 
     /**
