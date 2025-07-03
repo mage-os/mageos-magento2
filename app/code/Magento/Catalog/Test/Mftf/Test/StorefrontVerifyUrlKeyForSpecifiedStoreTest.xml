@@ -29,6 +29,7 @@
                 <requiredEntity createDataKey="createTestCategory"/>
             </createData>
             <!-- Precondition Step 4:Create 1 additional store view including default store view -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
             <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createStoreView">
                 <argument name="customStore" value="NewStoreViewData"/>
             </actionGroup>
@@ -47,9 +48,9 @@
             <!-- Logout from admin -->
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
         </after>
-        <!-- Step 1:Login to Admin Panel -->
+
         <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
-        <!-- Step 2&3:Switch To Default Store view For root category and Click On Ok Button-->
+        <!-- Step 1,2&3:Switch To Default Store view For root category and Click On Ok Button-->
         <actionGroup ref="SwitchRootCategoryForDefaultStoreActionGroup" stepKey="SwitchStoreView">
             <argument name="Store" value="_defaultStore.name"/>
             <argument name="CatName" value="_defaultCategory.name"/>
