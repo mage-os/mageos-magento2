@@ -48,8 +48,6 @@
             <!-- Logout from admin -->
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
         </after>
-
-        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
         <!-- Step 1,2&3:Switch To Default Store view For root category and Click On Ok Button-->
         <actionGroup ref="SwitchRootCategoryForDefaultStoreActionGroup" stepKey="SwitchStoreView">
             <argument name="Store" value="_defaultStore.name"/>
