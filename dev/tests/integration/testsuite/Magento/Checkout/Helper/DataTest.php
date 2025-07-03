@@ -35,43 +35,31 @@ use PHPUnit\Framework\TestCase;
 class DataTest extends TestCase
 {
     /**
-     * Magento Object Manager
-     *
      * @var ObjectManagerInterface
      */
     private ObjectManagerInterface $objectManager;
 
     /**
-     * Quote management service
-     *
      * @var QuoteManagement
      */
     private QuoteManagement $quoteManagement;
 
     /**
-     * Quote factory
-     *
      * @var QuoteFactory
      */
     private QuoteFactory $quoteFactory;
 
     /**
-     * Checkout data helper
-     *
      * @var Data
      */
     private Data $checkoutHelper;
 
     /**
-     * Order repository
-     *
      * @var OrderRepositoryInterface
      */
     private OrderRepositoryInterface $orderRepository;
 
     /**
-     * Transport builder mock
-     *
      * @var TransportBuilderMock
      */
     private TransportBuilderMock $transportBuilder;
