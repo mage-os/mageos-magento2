@@ -21,6 +21,15 @@
 
         <before>
             <createData entity="SimpleTwo" stepKey="createSimpleProduct"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+            <!-- Customer address validation rule to none -->
+            <actionGroup ref="AdminGoToCustomerAddressActionGroup" stepKey="GoToCustomerAddressRollBack"/>
+            <actionGroup ref="AdminCustomerAddressAttributeEditValidationRuleRollbackActionGroup" stepKey="editCustomerAddressPropertiesRollBack">
+                <argument name="inputValidation" value="None"/>
+            </actionGroup>
+            <actionGroup ref="AssertMessageInAdminPanelActionGroup" stepKey="seeSuccessSaveCustomerAddressAttrRollBack">
+                <argument name="message" value="You saved the customer address attribute." />
+            </actionGroup>
 
             <!-- Enable payment method -->
             <magentoCLI command="config:set {{PurchaseOrderEnableConfigData.path}} {{PurchaseOrderEnableConfigData.value}}" stepKey="enablePaymentMethod"/>
