@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
+ */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminSetCategoryUrlSuffixActionGroup">
+        <annotations>
+            <description>Sets Category Url Suffix as .html through CLI</description>
+        </annotations>
+        <magentoCLI command="config:set {{CustomizedCategory.url_path}} {{CustomizedCategory.url_suffix}}" stepKey="setCategoryUrlSuffix"/>
+    </actionGroup>
+</actionGroups>
