@@ -13,8 +13,6 @@ use Magento\Framework\Webapi\Rest\Response\FieldsFilter;
 use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Config\ConfigOptionsListConstants;
-use Magento\Framework\Phrase;
-use Magento\Framework\Webapi\Exception as WebapiException;
 
 /**
  * REST request processor for synchronous requests
@@ -95,7 +93,6 @@ class SynchronousRequestProcessor implements RequestProcessorInterface
          * @var \Magento\Framework\Api\AbstractExtensibleObject $outputData
          */
         $outputData = call_user_func_array([$service, $serviceMethodName], $inputParams);
-
         $outputData = $this->serviceOutputProcessor->process(
             $outputData,
             $serviceClassName,
