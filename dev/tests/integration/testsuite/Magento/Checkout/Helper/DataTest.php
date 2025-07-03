@@ -28,6 +28,9 @@ use PHPUnit\Framework\TestCase;
  * @magentoAppIsolation enabled
  * @magentoDbIsolation enabled
  * @magentoDataFixture Magento/Checkout/_files/quote_with_virtual_product_and_address.php
+ *
+ * @AllureSuite("Checkout")
+ * @AllureFeature("Payment Failed Email")
  */
 class DataTest extends TestCase
 {
@@ -67,7 +70,24 @@ class DataTest extends TestCase
     private OrderRepositoryInterface $orderRepository;
 
     /**
-     * Set up required Magento services for the test
+     * Transport builder mock
+     *
+     * @var TransportBuilderMock
+     */
+    private TransportBuilderMock $transportBuilder;
+
+    /**
+     * Reserved order ID used in fixture.
+     */
+    private const FIXTURE_RESERVED_ORDER_ID = 'test_order_with_virtual_product';
+
+    /**
+     * Payment method code to use in test.
+     */
+    private const PAYMENT_METHOD = 'checkmo';
+
+    /**
+     * Set up required Magento services for the test.
      *
      * @return void
      */
@@ -80,14 +100,16 @@ class DataTest extends TestCase
         $this->quoteFactory = $this->objectManager->get(QuoteFactory::class);
         $this->checkoutHelper = $this->objectManager->get(Data::class);
         $this->orderRepository = $this->objectManager->get(OrderRepositoryInterface::class);
+        $this->transportBuilder = $this->objectManager->get(TransportBuilderMock::class);
     }
 
     /**
-     * Test the sending of the "payment failed" email for a virtual product order.
+     * Test sending the "payment failed" email for an order with a virtual product.
      *
-     * Asserts that:
-     * - The email is sent
-     * - The email does not contain shipping address or shipping method
+     * This test verifies that:
+     * - The payment failure email is sent successfully.
+     * - The email content does not include shipping address or shipping method
+     *   since the product is virtual.
      *
      * @return void
      */
@@ -98,22 +120,22 @@ class DataTest extends TestCase
 
         $this->checkoutHelper->sendPaymentFailedEmail(
             $quote,
-            __('Simulated payment failure')->render(),
+            (string)__('Simulated payment failure'),
             $quote->getPayment()->getMethod(),
             $quote->getCheckoutMethod()
         );
 
-        /** @var TransportBuilderMock $transportBuilder */
-        $transportBuilder = $this->objectManager->get(TransportBuilderMock::class);
-
-        /** @var \Magento\Framework\Mail\EmailMessageInterface $message */
-        $message = $transportBuilder->getSentMessage();
+        $message = $this->transportBuilder->getSentMessage();
         $this->assertNotNull($message, 'Expected a payment failed email to be sent.');
 
         $emailBody = $message->getBody();
-        $emailContent = method_exists($emailBody, 'bodyToString')
-            ? quoted_printable_decode($emailBody->bodyToString())
-            : $emailBody->getParts()[0]->getRawContent();
+        if (method_exists($emailBody, 'bodyToString')) {
+            $emailContent = quoted_printable_decode($emailBody->bodyToString());
+        } elseif (method_exists($emailBody, 'getParts') && isset($emailBody->getParts()[0])) {
+            $emailContent = $emailBody->getParts()[0]->getRawContent();
+        } else {
+            $this->fail('Unable to extract email content for assertion.');
+        }
 
         $this->assertStringNotContainsString(
             'Shipping Address',
@@ -128,25 +150,27 @@ class DataTest extends TestCase
     }
 
     /**
-     * Prepare an order from a quote fixture containing a virtual product.
+     * Prepare an order from a fixture quote containing a virtual product.
      *
-     * Loads a predefined quote and submits it to create an order.
+     * Loads the quote with reserved_order_id from fixture,
+     * sets payment method, submits the quote to create the order.
      *
-     * @return array{0: Order, 1: Quote}
+     * @return array{0: Order, 1: Quote} Returns the created order and the original quote.
      */
     private function prepareOrderFromFixtureQuote(): array
     {
         /** @var Quote $quote */
         $quote = $this->objectManager->create(Quote::class)
-            ->load('test_order_with_virtual_product', 'reserved_order_id');
+            ->load(self::FIXTURE_RESERVED_ORDER_ID, 'reserved_order_id');
 
-        $this->assertTrue((bool)$quote->getId(), 'Quote was not loaded from fixture.');
+        $this->assertNotNull($quote->getId(), 'Failed to load quote from fixture.');
         $this->assertNotEmpty($quote->getAllItems(), 'Quote from fixture is empty.');
 
-        $quote->getPayment()->setMethod('checkmo');
+        $quote->getPayment()->setMethod(self::PAYMENT_METHOD);
 
         $order = $this->quoteManagement->submit($quote);
-        $this->assertNotNull($order->getId(), 'Order was not created.');
+
+        $this->assertNotNull($order->getId(), 'Order was not created from quote.');
         $this->assertNotEmpty($order->getIncrementId(), 'Order increment ID is missing.');
 
         return [$order, $quote];
@@ -155,14 +179,17 @@ class DataTest extends TestCase
     /**
      * Simulate a payment failure by cancelling the order and adding a history comment.
      *
+     * This method updates the order state and status to 'canceled',
+     * adds a comment explaining the payment failure, and saves the order.
+     *
      * @param Order $order
      * @return void
      */
     private function simulatePaymentFailure(Order $order): void
     {
-        $order->setStatus(Order::STATE_CANCELED)
-            ->setState(Order::STATE_CANCELED)
-            ->addCommentToStatusHistory(__('Simulated: Payment failure due to gateway timeout.'));
+        $order->setState(Order::STATE_CANCELED)
+            ->setStatus(Order::STATE_CANCELED)
+            ->addCommentToStatusHistory((string)__('Simulated: Payment failure due to gateway timeout.'));
 
         $this->orderRepository->save($order);
 
