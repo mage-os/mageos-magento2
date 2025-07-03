@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+   * Copyright 2025 Adobe
+  * All Rights Reserved.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminVerifySimpleProductCustomOptionPriceActionGroup">
+        <annotations>
+            <description>Adds the provided Simple Product to an Order. Verify custom option price.</description>
+        </annotations>
+        <arguments>
+            <argument name="product" defaultValue="_defaultProduct" type="entity"/>
+            <argument name="priceAmount" defaultValue="$1,500.00" type="string"/>
+        </arguments>
+        <waitForElementClickable selector="{{AdminOrderFormItemsSection.addProducts}}" stepKey="waitForAddProductsButtonToBeClickable"/>
+        <click selector="{{AdminOrderFormItemsSection.addProducts}}" stepKey="clickAddProducts"/>
+        <fillField selector="{{AdminOrderFormItemsSection.skuFilter}}" userInput="{{product.sku}}" stepKey="fillSkuFilter"/>
+        <waitForElementClickable selector="{{AdminOrderFormItemsSection.search}}" stepKey="waitForSearchButtonToBeClickable"/>
+        <click selector="{{AdminOrderFormItemsSection.search}}" stepKey="clickSearch"/>
+        <scrollTo selector="{{AdminOrderFormItemsSection.rowCheck('1')}}" x="0" y="-100" stepKey="scrollToCheckColumn"/>
+        <checkOption selector="{{AdminOrderFormItemsSection.rowCheck('1')}}" stepKey="selectProduct"/>
+        <waitForPageLoad stepKey="waitForProductLoad"/>
+        <waitForElementVisible selector="{{AdminOrderFormItemsSection.optionPrice(priceAmount)}}" stepKey="assertOptionPrice"/>
+    </actionGroup>
+</actionGroups>
