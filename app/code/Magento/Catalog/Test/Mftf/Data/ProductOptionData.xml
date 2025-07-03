@@ -447,4 +447,14 @@
         <requiredEntity type="product_option_value">ProductValueCheckbox1</requiredEntity>
         <requiredEntity type="product_option_value">ProductValueCheckbox2</requiredEntity>
     </entity>
+    <entity name="ProductOptionTextFile" type="product_option">
+        <var key="product_sku" entityType="product" entityKey="sku" />
+        <data key="title">OptionFile</data>
+        <data key="type">file</data>
+        <data key="is_require">true</data>
+        <data key="sort_order">3</data>
+        <data key="price">9.99</data>
+        <data key="price_type">fixed</data>
+        <data key="file_extension">txt</data>
+    </entity>
 </entities>

@@ -1604,4 +1604,9 @@
         <requiredEntity type="product_option">ProductOptionField20</requiredEntity>
         <requiredEntity type="product_option">ProductOptionField21</requiredEntity>
     </entity>
+    <entity name="EmptyFilesAndValidationMessage">
+        <data key="file1">emptyTxtFile.txt</data>
+        <data key="file2">emptyPngFile.png</data>
+        <data key="fileValidationMessage">The file is empty. Select another file and try again.</data>
+    </entity>
 </entities>
