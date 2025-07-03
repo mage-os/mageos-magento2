@@ -5,10 +5,11 @@
  */
 namespace Magento\Sales\Controller\Adminhtml\Order\Invoice;
 
+use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Sales\Controller\Adminhtml\Invoice\AbstractInvoice\View;
 
-class Cancel extends View implements HttpGetActionInterface
+class Cancel extends View implements HttpPostActionInterface, HttpGetActionInterface
 {
     /**
      * Authorization level of a basic admin session
