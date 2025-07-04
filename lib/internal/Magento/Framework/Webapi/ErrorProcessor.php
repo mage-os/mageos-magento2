@@ -44,17 +44,6 @@ class ErrorProcessor
     public const DATA_FORMAT_XML = 'xml';
 
     /**
-     * Client error keywords
-     */
-    private const CLIENT_ERROR_KEYWORDS = [
-        'sqlstate',
-        'missing required',
-        'doesn\'t exist',
-        'not found',
-        'not authorized',
-    ];
-
-    /**
      * @var \Magento\Framework\Json\Encoder $encoder
      */
     protected $encoder;
@@ -183,18 +172,25 @@ class ErrorProcessor
     }
 
     /**
-     * Determine if an exception is a client error based on message content and context
+     * Determine if an exception is a client error based on the exception type
      *
      * @param \Exception $exception
      * @return bool
      */
     private function isClientError(\Exception $exception)
     {
-        $message = strtolower($exception->getMessage());
-
-        return array_filter(self::CLIENT_ERROR_KEYWORDS, function($keyword) use ($message) {
-            return strpos($message, $keyword) !== false;
-        }) !== [];
+        if ($exception instanceof \Zend_Db_Exception
+            || $exception instanceof \Zend_Db_Adapter_Exception
+            || $exception instanceof \Zend_Db_Statement_Exception
+            || $exception instanceof \PDOException
+            || $exception instanceof \InvalidArgumentException
+            || $exception instanceof \BadMethodCallException
+            || $exception instanceof \UnexpectedValueException
+            || $exception instanceof \Magento\Framework\Search\Request\NonExistingRequestNameException
+        ) {
+            return true;
+        }
+        return false;
     }
 
     /**

@@ -83,4 +83,7 @@
     <type name="Magento\Store\Model\Validation\StoreCodeValidator">
         <plugin name="check_if_parsed_store_code_is_valid" type="Magento\Webapi\Model\Plugin\Store\Model\Validation\StoreCodeValidator"/>
     </type>
+    <type name="Magento\Framework\Api\Filter">
+        <plugin name="validate_search_criteria_field" type="Magento\Webapi\Model\Plugin\Framework\Api\FilterPlugin" sortOrder="10"/>
+    </type>
 </config>
