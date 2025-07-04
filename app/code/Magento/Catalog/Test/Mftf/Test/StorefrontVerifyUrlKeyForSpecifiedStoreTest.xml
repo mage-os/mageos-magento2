@@ -153,9 +153,6 @@
         <!-- Step 26:Open storefront -->
         <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToHomePage"/>
         <!-- Step 27&28:Open subcategory for custom store view and Verify url for subcategory for custom store view -->
-        <actionGroup ref="StorefrontSwitchStoreViewActionGroup" stepKey="switchBackToStoreView">
-            <argument name="storeView" value="NewStoreViewData"/>
-        </actionGroup>
         <waitForPageLoad stepKey="waitForPageToBeLoaded"/>
         <actionGroup ref="StorefrontGoToSubCategoryPageActionGroup" stepKey="navigateToSubCategoryStore">
             <argument name="categoryName" value="$$createTestCategory.name$$"/>
