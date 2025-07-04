@@ -68,6 +68,6 @@
         <waitForPageLoad stepKey="waitForPage"/>
         <waitForElementVisible selector="{{StorefrontProductPageSection.errorMsgText}}" stepKey="wait"/>
         <!-- Assert the Error Message-->
-        <see selector="{{StorefrontProductPageSection.errorMsgText}}" userInput="Product that you are trying to add is not available." stepKey="seeErrorMessage"/>
+        <waitForText userInput="Product that you are trying to add is not available." selector="{{StorefrontProductPageSection.errorMsgText}}" stepKey="seeErrorMessage"/>
     </test>
 </tests>
