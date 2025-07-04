@@ -145,10 +145,8 @@ class ErrorProcessor
                 $stackTrace
             );
         } else {
-            // Check if this is a client error based on message content
-            $httpCode = ($this->isClientError($exception))
-                ? WebapiException::HTTP_BAD_REQUEST
-                : WebapiException::HTTP_INTERNAL_ERROR;
+            // Check if this is a client error based on the exception type
+            $httpCode = $this->getClientErrorHttpCode($exception);
             $message = $exception->getMessage();
             $code = $exception->getCode();
             //if not in Dev mode, make sure the message and code is masked for unanticipated exceptions
@@ -172,13 +170,14 @@ class ErrorProcessor
     }
 
     /**
-     * Determine if an exception is a client error based on the exception type
+     * Return the HTTP code for a client error based on the exception type
      *
      * @param \Exception $exception
-     * @return bool
+     * @return int
      */
-    private function isClientError(\Exception $exception)
+    private function getClientErrorHttpCode(\Exception $exception)
     {
+        // Check if this is a client error based on the exception type
         if ($exception instanceof \Zend_Db_Exception
             || $exception instanceof \Zend_Db_Adapter_Exception
             || $exception instanceof \Zend_Db_Statement_Exception
@@ -188,9 +187,9 @@ class ErrorProcessor
             || $exception instanceof \UnexpectedValueException
             || $exception instanceof \Magento\Framework\Search\Request\NonExistingRequestNameException
         ) {
-            return true;
+            return WebapiException::HTTP_BAD_REQUEST;
         }
-        return false;
+        return WebapiException::HTTP_INTERNAL_ERROR;
     }
 
     /**
