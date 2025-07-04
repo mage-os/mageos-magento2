@@ -11,7 +11,6 @@ namespace Magento\Checkout\Helper;
 use Magento\Checkout\Helper\Data;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Quote\Model\Quote;
-use Magento\Quote\Model\QuoteFactory;
 use Magento\Quote\Model\QuoteManagement;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order;
@@ -25,8 +24,8 @@ use PHPUnit\Framework\TestCase;
  * Ensures that when a virtual product order fails during payment, the appropriate failure email is
  * sent and does not include any shipping address or method information.
  *
- * @magentoAppIsolation enabled
  * @magentoDbIsolation enabled
+ * @magentoAppIsolation enabled
  * @magentoDataFixture Magento/Checkout/_files/quote_with_virtual_product_and_address.php
  *
  * @AllureSuite("Checkout")
@@ -43,11 +42,6 @@ class DataTest extends TestCase
      * @var QuoteManagement
      */
     private QuoteManagement $quoteManagement;
-
-    /**
-     * @var QuoteFactory
-     */
-    private QuoteFactory $quoteFactory;
 
     /**
      * @var Data
@@ -85,7 +79,6 @@ class DataTest extends TestCase
 
         $this->objectManager = Bootstrap::getObjectManager();
         $this->quoteManagement = $this->objectManager->get(QuoteManagement::class);
-        $this->quoteFactory = $this->objectManager->get(QuoteFactory::class);
         $this->checkoutHelper = $this->objectManager->get(Data::class);
         $this->orderRepository = $this->objectManager->get(OrderRepositoryInterface::class);
         $this->transportBuilder = $this->objectManager->get(TransportBuilderMock::class);
@@ -103,14 +96,13 @@ class DataTest extends TestCase
      */
     public function testSendPaymentFailedEmail(): void
     {
-        [$order, $quote] = $this->prepareOrderFromFixtureQuote();
+        [$order, $quote] = $this->createOrderFromFixture();
         $this->simulatePaymentFailure($order);
 
         $this->checkoutHelper->sendPaymentFailedEmail(
             $quote,
-            (string)__('Simulated payment failure'),
-            $quote->getPayment()->getMethod(),
-            $quote->getCheckoutMethod()
+            'Simulated payment failure',
+            $quote->getPayment()->getMethod()
         );
 
         $message = $this->transportBuilder->getSentMessage();
@@ -135,6 +127,11 @@ class DataTest extends TestCase
             $emailContent,
             'Shipping method should not appear in the payment failed email for virtual product.'
         );
+        $this->assertStringContainsString(
+            'Simulated payment failure',
+            $emailContent,
+            'Expected payment failure message to be present in the email.'
+        );
     }
 
     /**
@@ -145,7 +142,7 @@ class DataTest extends TestCase
      *
      * @return array{0: Order, 1: Quote} Returns the created order and the original quote.
      */
-    private function prepareOrderFromFixtureQuote(): array
+    private function createOrderFromFixture(): array
     {
         /** @var Quote $quote */
         $quote = $this->objectManager->create(Quote::class)
