@@ -84,7 +84,7 @@
         <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProductInFirstStoreView"/>
         <!--Change Scope to Default store view  and change price of custom option-->
         <actionGroup ref="SwitchToTheNewStoreViewActionGroup" stepKey="changeScopeToDefaultStoreView">
-            <argument name="storeViewName" value="'Default Store View'"/>
+            <argument name="storeViewName" value="{{_defaultStore.name}}"/>
         </actionGroup>
         <scrollTo selector="{{AdminProductCustomizableOptionsSection.customizableOptions}}" stepKey="scrollToAddButtonOptionInDefaultStoreView"/>
         <conditionalClick selector="{{AdminProductCustomizableOptionsSection.customizableOptions}}" dependentSelector="{{AdminProductCustomizableOptionsSection.addOptionBtn}}" visible="false" stepKey="openCustomOptionSectionInDefaultStoreView"/>
