@@ -215,7 +215,10 @@ class CustomizableOptionsTest extends TestCase
                 function (
                     QuoteItem $item,
                     int $optionId
-                ) use ($expectedOptionData1, $expectedOptionData3) {
+                ) use (
+                    $expectedOptionData1,
+                    $expectedOptionData3
+                ) {
                     switch ($optionId) {
                         case 1:
                             return $expectedOptionData1;
@@ -443,7 +446,10 @@ class CustomizableOptionsTest extends TestCase
                 function (
                     QuoteItem $item,
                     int $optionId
-                ) use ($validOption1, $validOption2) {
+                ) use (
+                    $validOption1,
+                    $validOption2
+                ) {
                     switch ($optionId) {
                         case 1:
                             return $validOption1;
