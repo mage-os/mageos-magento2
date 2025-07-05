@@ -19,6 +19,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Unit test for CustomizableOptions resolver
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class CustomizableOptionsTest extends TestCase
 {
@@ -153,7 +154,10 @@ class CustomizableOptionsTest extends TestCase
         $this->customizableOptionMock->expects($this->exactly(3))
             ->method('getData')
             ->willReturnCallback(
-                function ($unused, $optionId) use (
+                function (
+                    QuoteItem $item,
+                    int $optionId
+                ) use (
                     $expectedOptionData1,
                     $expectedOptionData2,
                     $expectedOptionData3
@@ -208,7 +212,10 @@ class CustomizableOptionsTest extends TestCase
         $this->customizableOptionMock->expects($this->exactly(3))
             ->method('getData')
             ->willReturnCallback(
-                function ($unused, $optionId) use ($expectedOptionData1, $expectedOptionData3) {
+                function (
+                    QuoteItem $item,
+                    int $optionId
+                ) use ($expectedOptionData1, $expectedOptionData3) {
                     switch ($optionId) {
                         case 1:
                             return $expectedOptionData1;
@@ -281,7 +288,10 @@ class CustomizableOptionsTest extends TestCase
         $this->customizableOptionMock->expects($this->exactly(4))
             ->method('getData')
             ->willReturnCallback(
-                function ($unused, $optionId) use ($expectedOptionData1) {
+                function (
+                    QuoteItem $item,
+                    int $optionId
+                ) use ($expectedOptionData1) {
                     switch ($optionId) {
                         case 1:
                             return $expectedOptionData1;
@@ -430,7 +440,10 @@ class CustomizableOptionsTest extends TestCase
         $this->customizableOptionMock->expects($this->exactly(3))
             ->method('getData')
             ->willReturnCallback(
-                function ($unused, $optionId) use ($validOption1, $validOption2) {
+                function (
+                    QuoteItem $item,
+                    int $optionId
+                ) use ($validOption1, $validOption2) {
                     switch ($optionId) {
                         case 1:
                             return $validOption1;
