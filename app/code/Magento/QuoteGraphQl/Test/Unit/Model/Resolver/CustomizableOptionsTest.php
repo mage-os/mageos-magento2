@@ -152,18 +152,24 @@ class CustomizableOptionsTest extends TestCase
 
         $this->customizableOptionMock->expects($this->exactly(3))
             ->method('getData')
-            ->willReturnCallback(function ($cartItem, $optionId) use ($expectedOptionData1, $expectedOptionData2, $expectedOptionData3) {
-                switch ($optionId) {
-                    case 1:
-                        return $expectedOptionData1;
-                    case 2:
-                        return $expectedOptionData2;
-                    case 3:
-                        return $expectedOptionData3;
-                    default:
-                        return [];
+            ->willReturnCallback(
+                function ($unused, $optionId) use (
+                    $expectedOptionData1,
+                    $expectedOptionData2,
+                    $expectedOptionData3
+                ) {
+                    switch ($optionId) {
+                        case 1:
+                            return $expectedOptionData1;
+                        case 2:
+                            return $expectedOptionData2;
+                        case 3:
+                            return $expectedOptionData3;
+                        default:
+                            return [];
+                    }
                 }
-            });
+            );
 
         $result = $this->resolver->resolve($this->fieldMock, null, $this->resolveInfoMock, $value);
 
@@ -201,18 +207,20 @@ class CustomizableOptionsTest extends TestCase
 
         $this->customizableOptionMock->expects($this->exactly(3))
             ->method('getData')
-            ->willReturnCallback(function ($cartItem, $optionId) use ($expectedOptionData1, $expectedOptionData3) {
-                switch ($optionId) {
-                    case 1:
-                        return $expectedOptionData1;
-                    case 2:
-                        return [];
-                    case 3:
-                        return $expectedOptionData3;
-                    default:
-                        return [];
+            ->willReturnCallback(
+                function ($unused, $optionId) use ($expectedOptionData1, $expectedOptionData3) {
+                    switch ($optionId) {
+                        case 1:
+                            return $expectedOptionData1;
+                        case 2:
+                            return [];
+                        case 3:
+                            return $expectedOptionData3;
+                        default:
+                            return [];
+                    }
                 }
-            });
+            );
 
         $result = $this->resolver->resolve($this->fieldMock, null, $this->resolveInfoMock, $value);
 
@@ -272,18 +280,20 @@ class CustomizableOptionsTest extends TestCase
 
         $this->customizableOptionMock->expects($this->exactly(4))
             ->method('getData')
-            ->willReturnCallback(function ($cartItem, $optionId) use ($expectedOptionData1) {
-                switch ($optionId) {
-                    case 1:
-                        return $expectedOptionData1;
-                    case 2:
-                    case 3:
-                    case 4:
-                        return [];
-                    default:
-                        return [];
+            ->willReturnCallback(
+                function ($unused, $optionId) use ($expectedOptionData1) {
+                    switch ($optionId) {
+                        case 1:
+                            return $expectedOptionData1;
+                        case 2:
+                        case 3:
+                        case 4:
+                            return [];
+                        default:
+                            return [];
+                    }
                 }
-            });
+            );
 
         $result = $this->resolver->resolve($this->fieldMock, null, $this->resolveInfoMock, $value);
 
@@ -419,18 +429,20 @@ class CustomizableOptionsTest extends TestCase
 
         $this->customizableOptionMock->expects($this->exactly(3))
             ->method('getData')
-            ->willReturnCallback(function ($cartItem, $optionId) use ($validOption1, $validOption2) {
-                switch ($optionId) {
-                    case 1:
-                        return $validOption1;
-                    case 999:
-                        return [];
-                    case 2:
-                        return $validOption2;
-                    default:
-                        return [];
+            ->willReturnCallback(
+                function ($unused, $optionId) use ($validOption1, $validOption2) {
+                    switch ($optionId) {
+                        case 1:
+                            return $validOption1;
+                        case 999:
+                            return [];
+                        case 2:
+                            return $validOption2;
+                        default:
+                            return [];
+                    }
                 }
-            });
+            );
 
         $result = $this->resolver->resolve($this->fieldMock, null, $this->resolveInfoMock, $value);
 
