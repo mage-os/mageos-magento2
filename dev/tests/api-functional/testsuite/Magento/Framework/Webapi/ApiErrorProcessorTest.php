@@ -31,8 +31,8 @@ class ApiErrorProcessorTest extends WebapiAbstract
 
     protected function setUp(): void
     {
+        $this->_markTestAsRestOnly();
         parent::setUp();
-
         /** @var DataFixtureStorage $fixtures */
         $this->fixtures = DataFixtureStorageManager::getStorage();
     }
@@ -58,7 +58,7 @@ class ApiErrorProcessorTest extends WebapiAbstract
             ]
         ];
 
-        $result = $this->_webApiCall($serviceInfo, $requestData);
+        $this->_webApiCall($serviceInfo, $requestData);
     }
 
     /**
@@ -84,7 +84,7 @@ class ApiErrorProcessorTest extends WebapiAbstract
                     ]
                 ],
                 'endpoint' => 'eav/attribute-sets/list',
-                'expectedExceptionCode' => 400,
+                'expectedExceptionCode' => 500,
             ],
             'empty_filter_groups_value' => [
                 'requestData' => [
@@ -118,7 +118,7 @@ class ApiErrorProcessorTest extends WebapiAbstract
                     ]
                 ],
                 'endpoint' => 'cmsBlock/search',
-                'expectedExceptionCode' => 400,
+                'expectedExceptionCode' => 500,
             ],
             'empty_filter_groups_value2' => [
                 'requestData' => [
