@@ -17,6 +17,6 @@
         <element name="fromDatePickerText" type="text" selector="span#gridTotalsCustomer_period_date_from_advice"/>
         <element name="toDatePicker" type="button" selector="//input[@name='report_to']/following-sibling::button"/>
         <element name="toDatePickerText" type="text" selector="span#gridTotalsCustomer_period_date_to_advice"/>
-        <element name="exportBtn" type="button" selector="//button[@title='Export']"/>
+        <element name="exportBtn" type="button" selector="//div[@class='admin__data-grid-export']//button"/>
     </section>
 </sections>
