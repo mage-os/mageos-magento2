@@ -332,7 +332,10 @@ class CustomerManagementTest extends TestCase
         $this->customerAddressMock->expects($this->once())->method('setFax')->with('9876543210');
         $this->customerAddressMock->expects($this->once())->method('setVatId')->with('US123456789');
         $this->customerAddressMock->expects($this->once())->method('setRegion')->with($regionMock);
-        $this->customerAddressMock->expects($this->once())->method('setCustomAttributes')->with(['custom_attr' => 'value']);
+        $this->customerAddressMock
+            ->expects($this->once())
+            ->method('setCustomAttributes')
+            ->with(['custom_attr' => 'value']);
 
         // Validator to fail
         $validatorMock = $this->createMock(Validator::class);
