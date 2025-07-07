@@ -179,6 +179,7 @@ class ErrorProcessor
     {
         // Check if this is a client error based on the exception type
         if ($exception instanceof \Zend_Db_Exception
+            || $exception instanceof \Exception
             || $exception instanceof \Zend_Db_Adapter_Exception
             || $exception instanceof \Zend_Db_Statement_Exception
             || $exception instanceof \PDOException

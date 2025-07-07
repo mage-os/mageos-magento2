@@ -84,7 +84,7 @@ class ApiErrorProcessorTest extends WebapiAbstract
                     ]
                 ],
                 'endpoint' => 'eav/attribute-sets/list',
-                'expectedExceptionCode' => 500,
+                'expectedExceptionCode' => 400,
             ],
             'empty_filter_groups_value' => [
                 'requestData' => [
@@ -118,7 +118,7 @@ class ApiErrorProcessorTest extends WebapiAbstract
                     ]
                 ],
                 'endpoint' => 'cmsBlock/search',
-                'expectedExceptionCode' => 500,
+                'expectedExceptionCode' => 400,
             ],
             'empty_filter_groups_value2' => [
                 'requestData' => [
