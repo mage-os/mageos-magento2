@@ -18,6 +18,7 @@
             <group value="Catalog"/>
         </annotations>
         <before>
+            <createData entity="SimpleProduct" stepKey="createSimpleProduct"/>
             <!-- Pre-condition Step-1 Multiselect attribute is created with three options: 1, 2, 3 -->
             <createData entity="multiSelectAttributeWithThreeOptions" stepKey="createMultiSelectProductAttributeWithThreeOptions"/>
             <!-- Login as admin -->
@@ -51,7 +52,6 @@
             </actionGroup>
             <actionGroup ref="SaveAttributeSetActionGroup" stepKey="saveAttributeSet"/>
             <!-- Pre-condition Step-3 Product is created based on default attribute set. Value of multiselect attribute set to 1 and 2 for this product -->
-            <createData entity="SimpleProduct" stepKey="createSimpleProduct"/>
             <actionGroup ref="AdminOpenProductIndexPageActionGroup" stepKey="navigateToProductIndex"/>
             <actionGroup ref="FilterProductGridBySkuActionGroup" stepKey="filterProduct">
                 <argument name="product" value="$$createSimpleProduct$$"/>
