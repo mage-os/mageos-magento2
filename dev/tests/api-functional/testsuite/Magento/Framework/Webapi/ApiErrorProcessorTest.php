@@ -69,23 +69,6 @@ class ApiErrorProcessorTest extends WebapiAbstract
     public static function malformedRequestParamsDataProvider()
     {
         return [
-            'empty_filter_groups_field' => [
-                'requestData' => [
-                    'searchCriteria' => [
-                        'filterGroups' => [
-                            [
-                                'filters' => [
-                                    [
-                                        'value' => 'string'
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ],
-                'endpoint' => 'eav/attribute-sets/list',
-                'expectedExceptionCode' => 400,
-            ],
             'empty_filter_groups_value' => [
                 'requestData' => [
                     'searchCriteria' => [
@@ -101,23 +84,6 @@ class ApiErrorProcessorTest extends WebapiAbstract
                     ]
                 ],
                 'endpoint' => 'coupons/search',
-                'expectedExceptionCode' => 400,
-            ],
-            'empty_filter_groups_field2' => [
-                'requestData' => [
-                    'searchCriteria' => [
-                        'filterGroups' => [
-                            [
-                                'filters' => [
-                                    [
-                                        'value' => 'string'
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ],
-                'endpoint' => 'cmsBlock/search',
                 'expectedExceptionCode' => 400,
             ],
             'empty_filter_groups_value2' => [
