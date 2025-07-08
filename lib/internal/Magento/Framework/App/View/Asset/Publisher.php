@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2011 Adobe
+ * All rights reserved.
  */
 
 namespace Magento\Framework\App\View\Asset;
@@ -49,17 +49,58 @@ class Publisher
     }
 
     /**
+     * Publish the asset
+     *
      * @param Asset\LocalInterface $asset
      * @return bool
      */
     public function publish(Asset\LocalInterface $asset)
     {
         $dir = $this->filesystem->getDirectoryRead(DirectoryList::STATIC_VIEW);
-        if ($dir->isExist($asset->getPath())) {
+        $targetPath = $asset->getPath();
+
+        // Check if target file exists and is newer than source file
+        if ($dir->isExist($targetPath) && !$this->isSourceFileNewer($asset, $dir, $targetPath)) {
             return true;
         }
 
         return $this->publishAsset($asset);
+    }
+
+    /**
+     * Check if source file is newer than target file
+     *
+     * @param Asset\LocalInterface $asset
+     * @param \Magento\Framework\Filesystem\Directory\ReadInterface $dir
+     * @param string $targetPath
+     * @return bool
+     */
+    private function isSourceFileNewer(Asset\LocalInterface $asset, $dir, $targetPath)
+    {
+        $sourceFile = $asset->getSourceFile();
+
+        // Check if source file exists
+        if (!file_exists($sourceFile)) {
+            return false;
+        }
+
+        $sourceMtime = $this->getFileModificationTime($sourceFile);
+        $targetStat = $dir->stat($targetPath);
+        $targetMtime = $targetStat['mtime'] ?? 0;
+
+        return $sourceMtime > $targetMtime;
+    }
+
+    /**
+     * Get file modification time
+     *
+     * @param string $filePath
+     * @return int
+     */
+    private function getFileModificationTime($filePath)
+    {
+        $mtime = @filemtime($filePath);
+        return $mtime !== false ? $mtime : 0;
     }
 
     /**
