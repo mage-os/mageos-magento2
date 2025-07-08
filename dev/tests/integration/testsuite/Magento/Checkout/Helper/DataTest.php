@@ -102,7 +102,7 @@ class DataTest extends TestCase
         $this->checkoutHelper->sendPaymentFailedEmail(
             $quote,
             'Simulated payment failure',
-            $quote->getPayment()->getMethod()
+            'onepage'
         );
 
         $message = $this->transportBuilder->getSentMessage();
