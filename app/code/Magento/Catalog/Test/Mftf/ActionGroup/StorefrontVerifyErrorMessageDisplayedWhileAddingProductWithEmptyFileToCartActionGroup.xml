@@ -5,15 +5,16 @@
   * All Rights Reserved.
   */
 -->
+
 <actionGroups
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
-    <actionGroup name="VerifyErrorMessageDisplayedWhileAddingProductWithEmptyFileToCartActionGroup" extends="AddToCartFromStorefrontProductPageActionGroup">
+    <actionGroup name="StorefrontVerifyErrorMessageDisplayedWhileAddingProductWithEmptyFileToCartActionGroup" extends="AddToCartFromStorefrontProductPageActionGroup">
         <arguments>
             <argument name="productName" type="string"/>
         </arguments>
         <remove keyForRemoval="waitForSuccessMessage"/>
         <remove keyForRemoval="seeAddToCartSuccessMessage"/>
-        <waitForText selector="{{StorefrontProductInfoMainSection.customEmptyFileValidationMessage}}" userInput="{{EmptyFilesAndValidationMessage.fileValidationMessage}}" stepKey="verify"/>
+        <waitForText selector="{{StorefrontProductInfoMainSection.customEmptyFileValidationMessage}}" userInput="{{EmptyFileValidationMessage.fileValidationMessage}}" stepKey="verifyEmptyFileValidationMessage"/>
     </actionGroup>
 </actionGroups>

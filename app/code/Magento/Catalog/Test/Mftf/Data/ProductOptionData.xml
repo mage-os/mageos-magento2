@@ -456,5 +456,14 @@
         <data key="price">9.99</data>
         <data key="price_type">fixed</data>
         <data key="file_extension">txt</data>
+        <data key="image_size_x">500</data>
+        <data key="image_size_y">500</data>
+    </entity>
+    <entity name="EmptyFiles">
+        <data key="file1">emptyTxtFile.txt</data>
+        <data key="file2">emptyPngFile.png</data>
+    </entity>
+    <entity name="EmptyFileValidationMessage">
+        <data key="fileValidationMessage">The file is empty. Select another file and try again.</data>
     </entity>
 </entities>
