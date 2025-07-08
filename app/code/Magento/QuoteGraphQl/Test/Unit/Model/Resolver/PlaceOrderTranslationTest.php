@@ -94,7 +94,15 @@ class PlaceOrderTranslationTest extends TestCase
         $this->errorMessageFormatterMock->method('getFormatted')->willReturn($exception);
 
         $contextMock = $this->createMock(Context::class);
-        $extensionAttributesMock = $this->createMock(ContextExtensionInterface::class);
+
+        $extensionAttributesMock = $this->getMockBuilder(ContextExtensionInterface::class)
+            ->disableOriginalConstructor()
+            ->addMethods(
+                [
+                    'getStore',
+                ]
+            )
+            ->getMock();
         $extensionAttributesMock->method('getStore')->willReturn($this->createMock(StoreInterface::class));
         $contextMock->method('getExtensionAttributes')->willReturn($extensionAttributesMock);
 
