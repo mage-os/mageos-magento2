@@ -13,7 +13,7 @@
         <annotations>
             <features value="Customer"/>
             <stories value="Cart discounts meant for logged-in users are not applied to guest users"/>
-            <title value="User Specific CartRule Is Not Applied To Guest user"/>
+            <title value="User Specific Cart price rule Is Not Applied To Guest user"/>
             <description value="This test case verifies the Cart price rule created for logged in user doesnt apply for Not Logged in user"/>
             <testCaseId value="AC-13440"/>
             <severity value="MAJOR"/>
