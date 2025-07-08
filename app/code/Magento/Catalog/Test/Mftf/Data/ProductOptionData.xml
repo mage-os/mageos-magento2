@@ -456,8 +456,6 @@
         <data key="price">9.99</data>
         <data key="price_type">fixed</data>
         <data key="file_extension">txt</data>
-        <data key="image_size_x">500</data>
-        <data key="image_size_y">500</data>
     </entity>
     <entity name="EmptyFiles">
         <data key="file1">emptyTxtFile.txt</data>
