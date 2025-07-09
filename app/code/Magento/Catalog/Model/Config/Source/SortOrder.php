@@ -3,6 +3,7 @@
  * Copyright 2025 Adobe
  * All Rights Reserved.
  */
+declare(strict_types=1);
 
 /**
  * Catalog Product List Sort Order
