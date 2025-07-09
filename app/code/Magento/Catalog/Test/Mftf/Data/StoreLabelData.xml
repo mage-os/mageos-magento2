@@ -92,4 +92,12 @@
         <data key="store_id">1</data>
         <data key="label">36</data>
     </entity>
+    <entity name="Store2Group" type="group">
+        <data key="name">Store 2</data>
+        <data key="code">store2_group</data>
+    </entity>
+    <entity name="Store2View" type="store">
+        <data key="name">Store View 2</data>
+        <data key="code">store_view_2</data>
+    </entity>
 </entities>

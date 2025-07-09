@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright 2024 Adobe
+  * All Rights Reserved.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminUpdateCategoryDisplaySettingsWithCustomValuesActionGroup">
+        <annotations>
+            <description>Update Category Display settings with custom values (unchecks Use Config first)</description>
+        </annotations>
+        <arguments>
+            <argument name="availableSortOptions" type="string" defaultValue="Product Name"/>
+            <argument name="defaultSortingOption" type="string" defaultValue="name"/>
+            <argument name="priceRange" type="string" defaultValue="5.5"/>
+        </arguments>
+        <!-- Select Display Setting and fill the options -->
+        <scrollTo selector="{{CategoryDisplaySettingsSection.DisplaySettingTab}}" x="0" y="-80"
+                  stepKey="scrollToDisplaySetting"/>
+        <waitForElementVisible selector="{{CategoryDisplaySettingsSection.DisplaySettingTab}}"
+                               stepKey="waitForDisplaySettingTab"/>
+        <click selector="{{CategoryDisplaySettingsSection.DisplaySettingTab}}" stepKey="selectDisplaySetting"/>
+        <waitForPageLoad stepKey="waitForDisplaySettingsSectionLoad"/>
+        <!-- Uncheck Use Config for Available Sort Options and set custom value -->
+        <waitForElementVisible selector="{{CategoryDisplaySettingsSection.productListCheckBox}}"
+                               stepKey="waitForAvailableSortCheckbox"/>
+        <uncheckOption selector="{{CategoryDisplaySettingsSection.productListCheckBox}}"
+                       stepKey="uncheckUseConfigForAvailableSort"/>
+        <waitForElementVisible selector="{{CategoryDisplaySettingsSection.productList}}"
+                               stepKey="waitForAvailableSortDropdown"/>
+        <selectOption selector="{{CategoryDisplaySettingsSection.productList}}"
+                      parameterArray="[{{availableSortOptions}}]" stepKey="selectAvailableSortOptions"/>
+        <!-- Uncheck Use Config for Default Sort Option and set custom value -->
+        <scrollTo selector="{{CategoryDisplaySettingsSection.defaultProductLisCheckBox}}" x="0" y="-80"
+                  stepKey="scrollToDefaultSortSection"/>
+        <waitForElementVisible selector="{{CategoryDisplaySettingsSection.defaultProductLisCheckBox}}"
+                               stepKey="waitForDefaultSortCheckbox"/>
+        <uncheckOption selector="{{CategoryDisplaySettingsSection.defaultProductLisCheckBox}}"
+                       stepKey="uncheckUseConfigForDefaultSort"/>
+        <waitForElementVisible selector="{{CategoryDisplaySettingsSection.defaultProductList}}"
+                               stepKey="waitForDefaultSortDropdown"/>
+        <selectOption selector="{{CategoryDisplaySettingsSection.defaultProductList}}"
+                      userInput="{{defaultSortingOption}}" stepKey="selectDefaultSortOption"/>
+        <!-- Uncheck Use Config for Price Range and set custom value -->
+        <scrollTo selector="{{CategoryDisplaySettingsSection.layeredNavigationPriceCheckBox}}" x="0" y="-80"
+                  stepKey="scrollToPriceRangeSection"/>
+        <waitForElementVisible selector="{{CategoryDisplaySettingsSection.layeredNavigationPriceCheckBox}}"
+                               stepKey="waitForPriceRangeCheckbox"/>
+        <uncheckOption selector="{{CategoryDisplaySettingsSection.layeredNavigationPriceCheckBox}}"
+                       stepKey="uncheckUseConfigForPriceRange"/>
+        <waitForElementVisible selector="{{CategoryDisplaySettingsSection.layeredNavigationPriceInput}}"
+                               stepKey="waitForPriceRangeInput"/>
+        <fillField selector="{{CategoryDisplaySettingsSection.layeredNavigationPriceInput}}" userInput="{{priceRange}}"
+                   stepKey="fillPriceRange"/>
+    </actionGroup>
+</actionGroups>
