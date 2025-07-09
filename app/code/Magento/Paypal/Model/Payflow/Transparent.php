@@ -276,29 +276,6 @@ class Transparent extends Payflowpro implements TransparentInterface
     }
 
     /**
-     * Generates CC expiration date by year and month provided in payment.
-     *
-     * @param Payment $payment
-     * @return string
-     * @throws \Exception
-     */
-    private function getExpirationDate(Payment $payment)
-    {
-        $expDate = new \DateTime(
-            $payment->getCcExpYear()
-            . '-'
-            . $payment->getCcExpMonth()
-            . '-'
-            . '01'
-            . ' '
-            . '00:00:00',
-            new \DateTimeZone('UTC')
-        );
-        $expDate->add(new \DateInterval('P1M'));
-        return $expDate->format('Y-m-d 00:00:00');
-    }
-
-    /**
      * Returns payment extension attributes instance.
      *
      * @param Payment $payment
