@@ -447,6 +447,9 @@
         <requiredEntity type="product_option_value">ProductValueCheckbox1</requiredEntity>
         <requiredEntity type="product_option_value">ProductValueCheckbox2</requiredEntity>
     </entity>
+    <entity name="ProductRadioButtonType" type="product_option">
+        <data key="type">Radio Buttons</data>
+    </entity>
     <entity name="ProductOptionTextFile" type="product_option">
         <var key="product_sku" entityType="product" entityKey="sku" />
         <data key="title">OptionFile</data>
