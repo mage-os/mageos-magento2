@@ -118,9 +118,6 @@
             <argument name="categoryName" value="$$createTestCategory.name$$"/>
             <argument name="subCategoryName" value="$$createSubTestCategory.name$$"/>
         </actionGroup>
-        <actionGroup ref="StorefrontSwitchStoreViewActionGroup" stepKey="switchTheStoreViewToCustomStore">
-            <argument name="storeView" value="NewStoreViewData"/>
-        </actionGroup>
         <!-- Step 21:Verify url for subcategory for custom store view -->
         <actionGroup ref="StorefrontAssertProperUrlIsShownActionGroup" stepKey="seeUpdatedUrlKey">
             <argument name="urlPath" value="{{CustomizedCategory.value}}/{{CustomizedCategory.urlKey}}.html"/>
