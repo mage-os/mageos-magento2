@@ -9,13 +9,13 @@
        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
     <test name="AdminProductAttributeAdminValuesUsedInsteadOfDefaultValueTest">
         <annotations>
-            <features value="Catalog"/>
+            <features value="SalesRule"/>
             <stories value="Product attribute admin values should be used in backend"/>
             <title value="Product attribute admin values should be used instead of default store view values in backend"/>
             <description value="Verify that product attribute admin values should be used in cart price rule instead of default store view values in backend"/>
             <testCaseId value="AC-13048"/>
             <severity value="MINOR"/>
-            <group value="Catalog"/>
+            <group value="SalesRule"/>
         </annotations>
         <before>
             <createData entity="productAttributeMultiselectTwoOptions" stepKey="createColourProductAttribute"/>
@@ -41,8 +41,8 @@
         </actionGroup>
         <fillField selector="{{AttributePropertiesSection.DefaultLabel}}" userInput="$$createColourProductAttribute.attribute_code$$" stepKey="fillDefaultLabel"/>
         <actionGroup ref="CreateAttributeDropdownNthOptionActionGroup" stepKey="createColourOptionWhichAsDifferentValuesInAdminAndDefaultStoreView">
-            <argument name="adminName" value="{{colorDefaultProductAttribute2.name}}"/>
-            <argument name="frontName" value="{{colorDefaultProductAttribute1.name}}"/>
+            <argument name="adminName" value="{{productAttributeColour.black}}"/>
+            <argument name="frontName" value="{{productAttributeColour.gold}}"/>
             <argument name="row" value="1"/>
         </actionGroup>
         <actionGroup ref="AdminSaveProductAttributeActionGroup" stepKey="saveMultiSelectAttribute"/>
@@ -64,8 +64,8 @@
         <actionGroup ref="AdminCreateCustomConditionWithMultipleSelectInCartPriceRuleActionGroup" stepKey="createProductAttributeCombinationCondition">
             <argument name="productAttribute" value="$$createColourProductAttribute.attribute_code$$"/>
         </actionGroup>
-        <waitForText selector="{{AdminCartPriceRulesFormSection.ruleFieldByIndex('1--1--1')}}" userInput="{{colorDefaultProductAttribute2.name}}" stepKey="verifyAdminValueIsVisibleInTheConditionInsteadOfDefaultStoreViewValue"/>
-        <dontSee selector="{{AdminCartPriceRulesFormSection.ruleFieldByIndex('1--1--1')}}" userInput="{{colorDefaultProductAttribute1.name}}" stepKey="verifyDefaultStoreViewValueIsNotVisible"/>
+        <waitForText selector="{{AdminCartPriceRulesFormSection.ruleFieldByIndex('1--1--1')}}" userInput="{{productAttributeColour.black}}" stepKey="verifyAdminValueIsVisibleInTheConditionInsteadOfDefaultStoreViewValue"/>
+        <dontSee selector="{{AdminCartPriceRulesFormSection.ruleFieldByIndex('1--1--1')}}" userInput="{{productAttributeColour.gold}}" stepKey="verifyDefaultStoreViewValueIsNotVisible"/>
         <actionGroup ref="AssertCartPriceRuleSuccessSaveMessageActionGroup" stepKey="saveAndAssertCartPriceRuleSuccessSaveMessage"/>
     </test>
 </tests>

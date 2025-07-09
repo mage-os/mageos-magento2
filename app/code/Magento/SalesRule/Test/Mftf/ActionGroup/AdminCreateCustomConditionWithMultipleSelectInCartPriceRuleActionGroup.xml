@@ -12,7 +12,7 @@
             <description>Remove fill filed action and replace with select option</description>
         </annotations>
         <arguments>
-            <argument name="productAttributeOption" type="string" defaultValue="{{colorDefaultProductAttribute2.name}}"/>
+            <argument name="productAttributeOption" type="string" defaultValue="{{productAttributeColour.black}}"/>
         </arguments>
         <remove keyForRemoval="fillCategoryId"/>
         <selectOption selector="{{AdminCartPriceRulesFormSection.ruleFieldByIndex('1--1--1')}}" userInput="{{productAttributeOption}}" stepKey="selectProductAttributeValue"/>
