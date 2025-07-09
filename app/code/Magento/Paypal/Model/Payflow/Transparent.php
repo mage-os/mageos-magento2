@@ -268,11 +268,39 @@ class Transparent extends Payflowpro implements TransparentInterface
         $paymentToken->setTokenDetails(
             json_encode($payment->getAdditionalInformation(Transparent::CC_DETAILS))
         );
-        $expDate = new \DateTime('now', new \DateTimeZone('UTC'));
-        $expDate->add(new \DateInterval('P1Y'));
-        $paymentToken->setExpiresAt($expDate->format('Y-m-d 00:00:00'));
+        $paymentToken->setExpiresAt(
+            $this->getExpirationDate($payment)
+        );
 
         $this->getPaymentExtensionAttributes($payment)->setVaultPaymentToken($paymentToken);
+    }
+
+    /**
+     * Generates CC expiration date by year and month provided in payment.
+     *
+     * @param Payment $payment
+     * @return string
+     * @throws \Exception
+     */
+    private function getExpirationDate(Payment $payment)
+    {
+        $cardExpDate = new \DateTime(
+            $payment->getCcExpYear()
+            . '-'
+            . $payment->getCcExpMonth()
+            . '-'
+            . '01'
+            . ' '
+            . '00:00:00',
+            new \DateTimeZone('UTC')
+        );
+        $cardExpDate->add(new \DateInterval('P1M'));
+        $oneYearFromNow = new \DateTime('now', new \DateTimeZone('UTC'));
+        $oneYearFromNow->add(new \DateInterval('P1Y'));
+        if ($cardExpDate <= $oneYearFromNow) {
+            return $cardExpDate->format('Y-m-d 00:00:00');
+        }
+        return $oneYearFromNow->format('Y-m-d 00:00:00');
     }
 
     /**
