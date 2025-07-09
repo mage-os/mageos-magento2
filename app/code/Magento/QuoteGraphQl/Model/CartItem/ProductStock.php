@@ -57,8 +57,8 @@ class ProductStock
      */
     public function isProductAvailable(Item $cartItem): bool
     {
-        $requestedQty = $cartItem->getQtyToAdd() ?? $cartItem->getQty();
-        $previousQty = $cartItem->getPreviousQty() ?? 0;
+        $requestedQty = (float)($cartItem->getQtyToAdd() ?? $cartItem->getQty());
+        $previousQty = (int)$cartItem->getPreviousQty() ?? 0;
 
         if ($cartItem->getProductType() === self::PRODUCT_TYPE_BUNDLE) {
             return $this->isStockAvailableBundle($cartItem, $previousQty, $requestedQty);
@@ -98,7 +98,7 @@ class ProductStock
         $qtyOptions = $cartItem->getQtyOptions();
         $totalRequestedQty = $previousQty + $requestedQty;
         foreach ($qtyOptions as $qtyOption) {
-            $requiredItemQty = $qtyOption->getValue();
+            $requiredItemQty = (float)$qtyOption->getValue();
             if ($totalRequestedQty) {
                 $requiredItemQty = $requiredItemQty * $totalRequestedQty;
             }
