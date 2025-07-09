@@ -10,22 +10,17 @@ namespace Magento\QuoteGraphQl\Model\Resolver;
 use Magento\Framework\Exception\AuthorizationException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\GraphQl\Config\Element\Field;
-use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
-use Magento\GraphQl\Helper\Error\AggregateExceptionMessageFormatter;
 use Magento\QuoteGraphQl\Model\Cart\GetCartForCheckout;
 use Magento\QuoteGraphQl\Model\Cart\PlaceOrder as PlaceOrderModel;
-use Magento\QuoteGraphQl\Model\ErrorMapper;
-use Magento\QuoteGraphQl\Model\QuoteException;
+use Magento\QuoteGraphQl\Model\OrderErrorProcessor;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\SalesGraphQl\Model\Formatter\Order as OrderFormatter;
 
 /**
  * Resolver for placing order after payment method has already been set
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class PlaceOrder implements ResolverInterface
 {
@@ -34,16 +29,14 @@ class PlaceOrder implements ResolverInterface
      * @param PlaceOrderModel $placeOrder
      * @param OrderRepositoryInterface $orderRepository
      * @param OrderFormatter $orderFormatter
-     * @param AggregateExceptionMessageFormatter $errorMessageFormatter
-     * @param ErrorMapper $errorMapper
+     * @param OrderErrorProcessor $orderErrorProcessor
      */
     public function __construct(
         private readonly GetCartForCheckout $getCartForCheckout,
         private readonly PlaceOrderModel $placeOrder,
         private readonly OrderRepositoryInterface $orderRepository,
         private readonly OrderFormatter $orderFormatter,
-        private readonly AggregateExceptionMessageFormatter $errorMessageFormatter,
-        private readonly ErrorMapper $errorMapper
+        private readonly OrderErrorProcessor $orderErrorProcessor
     ) {
     }
 
@@ -63,26 +56,8 @@ class PlaceOrder implements ResolverInterface
             $cart = $this->getCartForCheckout->execute($maskedCartId, $userId, $storeId);
             $orderId = $this->placeOrder->execute($cart, $maskedCartId, $userId);
             $order = $this->orderRepository->get($orderId);
-        } catch (AuthorizationException $exception) {
-            throw new GraphQlAuthorizationException(
-                __($exception->getMessage())
-            );
-        } catch (LocalizedException $exception) {
-            $exception = $this->errorMessageFormatter->getFormatted(
-                $exception,
-                __('Unable to place order: A server error stopped your order from being placed. ' .
-                    'Please try to place your order again'),
-                'Unable to place order',
-                $field,
-                $context,
-                $info
-            );
-            $exceptionCode = $exception->getCode();
-            if (!$exceptionCode) {
-                $exceptionCode = $this->errorMapper->getErrorMessageId($exception->getMessage());
-            }
-
-            throw new QuoteException(__($exception->getMessage()), $exception, $exceptionCode);
+        } catch (AuthorizationException|LocalizedException $exception) {
+            return $this->orderErrorProcessor->execute($exception, $field, $context, $info);
         }
 
         return [
@@ -91,7 +66,7 @@ class PlaceOrder implements ResolverInterface
                 // @deprecated The order_id field is deprecated, use order_number instead
                 'order_id' => $order?->getIncrementId(),
             ],
-            'orderV2' => $order ? $this->orderFormatter->format($order) : null
+            'orderV2' => $order ? $this->orderFormatter->format($order) : null,
         ];
     }
 }
