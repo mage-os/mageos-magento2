@@ -44,7 +44,7 @@ class Preview extends Widget
     /**
      * @var MaliciousCode
      */
-    protected $maliciousCode;
+    private $maliciousCode;
 
     /**
      * @param Context $context
