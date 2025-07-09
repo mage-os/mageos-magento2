@@ -41,8 +41,8 @@
         </actionGroup>
         <fillField selector="{{AttributePropertiesSection.DefaultLabel}}" userInput="$$createColourProductAttribute.attribute_code$$" stepKey="fillDefaultLabel"/>
         <actionGroup ref="CreateAttributeDropdownNthOptionActionGroup" stepKey="createColourOptionWhichAsDifferentValuesInAdminAndDefaultStoreView">
-            <argument name="adminName" value="{{PayPalColor.black}}"/>
-            <argument name="frontName" value="{{PayPalColor.gold}}"/>
+            <argument name="adminName" value="{{colorDefaultProductAttribute2.name}}"/>
+            <argument name="frontName" value="{{colorDefaultProductAttribute1.name}}"/>
             <argument name="row" value="1"/>
         </actionGroup>
         <actionGroup ref="AdminSaveProductAttributeActionGroup" stepKey="saveMultiSelectAttribute"/>
@@ -64,8 +64,8 @@
         <actionGroup ref="AdminCreateCustomConditionWithMultipleSelectInCartPriceRuleActionGroup" stepKey="createProductAttributeCombinationCondition">
             <argument name="productAttribute" value="$$createColourProductAttribute.attribute_code$$"/>
         </actionGroup>
-        <waitForText selector="{{AdminCartPriceRulesFormSection.ruleFieldByIndex('1--1--1')}}" userInput="{{PayPalColor.black}}" stepKey="verifyAdminValueIsVisibleInTheConditionInsteadOfDefaultStoreViewValue"/>
-        <dontSee selector="{{AdminCartPriceRulesFormSection.ruleFieldByIndex('1--1--1')}}" userInput="{{PayPalColor.gold}}" stepKey="verifyDefaultStoreViewValueIsNotVisible"/>
+        <waitForText selector="{{AdminCartPriceRulesFormSection.ruleFieldByIndex('1--1--1')}}" userInput="{{colorDefaultProductAttribute2.name}}" stepKey="verifyAdminValueIsVisibleInTheConditionInsteadOfDefaultStoreViewValue"/>
+        <dontSee selector="{{AdminCartPriceRulesFormSection.ruleFieldByIndex('1--1--1')}}" userInput="{{colorDefaultProductAttribute1.name}}" stepKey="verifyDefaultStoreViewValueIsNotVisible"/>
         <actionGroup ref="AssertCartPriceRuleSuccessSaveMessageActionGroup" stepKey="saveAndAssertCartPriceRuleSuccessSaveMessage"/>
     </test>
 </tests>
