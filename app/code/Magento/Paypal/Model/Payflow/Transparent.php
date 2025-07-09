@@ -268,9 +268,9 @@ class Transparent extends Payflowpro implements TransparentInterface
         $paymentToken->setTokenDetails(
             json_encode($payment->getAdditionalInformation(Transparent::CC_DETAILS))
         );
-        $paymentToken->setExpiresAt(
-            $this->getExpirationDate($payment)
-        );
+        $expDate = new \DateTime('now', new \DateTimeZone('UTC'));
+        $expDate->add(new \DateInterval('P1Y'));
+        $paymentToken->setExpiresAt($expDate->format('Y-m-d 00:00:00'));
 
         $this->getPaymentExtensionAttributes($payment)->setVaultPaymentToken($paymentToken);
     }
