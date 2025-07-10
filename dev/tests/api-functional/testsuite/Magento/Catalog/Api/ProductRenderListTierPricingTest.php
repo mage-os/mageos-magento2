@@ -70,7 +70,6 @@ class ProductRenderListTierPricingTest extends WebapiAbstract
         ];
         $customerEmail = DataFixtureStorageManager::getStorage()->get('customer_a')->getEmail();
         $customerPassword = "password";
-        // Get customer token
         $token = $this->customerTokenService
             ->createCustomerAccessToken($customerEmail, $customerPassword);
         $serviceInfo = [
@@ -86,12 +85,10 @@ class ProductRenderListTierPricingTest extends WebapiAbstract
         $this->assertNotEmpty($response['items']);
         $product = reset($response['items']);
         $this->assertArrayHasKey('price_info', $product);
-        // Guest should get regular price, not tier price
         $finalPrice = $product['price_info']['final_price'];
         $this->assertEquals(6, $finalPrice, 'customer_a should get tier price');
 
         $customerEmail = DataFixtureStorageManager::getStorage()->get('customer_b')->getEmail();
-        // Get customer token
         $token = $this->customerTokenService
             ->createCustomerAccessToken($customerEmail, $customerPassword);
         $serviceInfo = [
@@ -106,7 +103,6 @@ class ProductRenderListTierPricingTest extends WebapiAbstract
         $response = $this->_webApiCall($serviceInfo);
         $product = reset($response['items']);
         $this->assertArrayHasKey('price_info', $product);
-        // Guest should get regular price, not tier price
         $finalPrice = $product['price_info']['final_price'];
         $this->assertEquals(10, $finalPrice, 'customer_b should not get tier price');
     }

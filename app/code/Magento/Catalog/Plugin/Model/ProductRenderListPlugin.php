@@ -3,27 +3,26 @@
  * Copyright 2025 Adobe
  * All Rights Reserved.
  */
-
 declare(strict_types=1);
 
 namespace Magento\Catalog\Plugin\Model;
 
 use Magento\Authorization\Model\UserContextInterface;
-use Magento\Catalog\Model\ProductRenderList as Subject;
+use Magento\Catalog\Model\ProductRenderList;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Model\Group;
-use Magento\Customer\Model\Session as CustomerSession;
+use Magento\Customer\Model\Context;
 use Magento\Framework\Api\SearchCriteriaInterface;
+use Magento\Framework\App\Http\Context as HttpContext;
 use Magento\Framework\App\State;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\Webapi\Rest\Request;
 use Psr\Log\LoggerInterface;
 
 /**
- * Plugin to fix customer group context in ProductRenderList for API requests
+ * Plugin to set customer group context for REST API pricing
  */
-class ProductRenderList
+class ProductRenderListPlugin
 {
     /**
      * @var UserContextInterface
@@ -36,9 +35,9 @@ class ProductRenderList
     private $customerRepository;
 
     /**
-     * @var CustomerSession
+     * @var HttpContext
      */
-    private $customerSession;
+    private $httpContext;
 
     /**
      * @var State
@@ -51,59 +50,56 @@ class ProductRenderList
     private $logger;
 
     /**
-     * @var Request
-     */
-    private $request;
-
-    /**
      * @param UserContextInterface $userContext
      * @param CustomerRepositoryInterface $customerRepository
-     * @param CustomerSession $customerSession
+     * @param HttpContext $httpContext
      * @param State $appState
      * @param LoggerInterface $logger
-     * @param Request $request
      */
     public function __construct(
         UserContextInterface $userContext,
         CustomerRepositoryInterface $customerRepository,
-        CustomerSession $customerSession,
+        HttpContext $httpContext,
         State $appState,
-        LoggerInterface $logger,
-        Request $request
+        LoggerInterface $logger
     ) {
         $this->userContext = $userContext;
         $this->customerRepository = $customerRepository;
-        $this->customerSession = $customerSession;
+        $this->httpContext = $httpContext;
         $this->appState = $appState;
         $this->logger = $logger;
-        $this->request = $request;
     }
 
     /**
-     * Before getList - set customer group context for proper pricing
+     * Set customer group context in HTTP context for REST API requests
      *
-     * @param Subject $subject
+     * @param ProductRenderList $subject
      * @param SearchCriteriaInterface $searchCriteria
-     * @param int $storeId
-     * @param string $currencyCode
+     * @param int|null $storeId
+     * @param string|null $currencyCode
      * @return array
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function beforeGetList(
-        Subject $subject,
+        ProductRenderList $subject,
         SearchCriteriaInterface $searchCriteria,
-        $storeId,
-        $currencyCode
+        $storeId = null,
+        $currencyCode = null
     ): array {
         try {
-            if ($this->appState->getAreaCode() !== 'webapi_rest') {
+            $areaCode = $this->appState->getAreaCode();
+            if (!in_array($areaCode, ['webapi_rest', 'webapi_soap'], true)) {
                 return [$searchCriteria, $storeId, $currencyCode];
             }
-
             $customerGroupId = $this->getCustomerGroupId();
 
-            // Set customer group ID in session for proper pricing context
             if ($customerGroupId !== null) {
-                $this->customerSession->setCustomerGroupId($customerGroupId);
+                // Set in HTTP context for cache and general context
+                $this->httpContext->setValue(
+                    Context::CONTEXT_GROUP,
+                    (string)$customerGroupId,
+                    Group::NOT_LOGGED_IN_ID
+                );
             }
 
         } catch (\Exception $e) {
@@ -117,7 +113,7 @@ class ProductRenderList
     }
 
     /**
-     * Get customer group ID from current context
+     * Get customer group ID from authenticated user context
      *
      * @return int|null
      */
@@ -137,14 +133,8 @@ class ProductRenderList
             return Group::NOT_LOGGED_IN_ID;
 
         } catch (NoSuchEntityException $e) {
-            $this->logger->warning(
-                'Customer not found in ProductRenderList plugin: ' . $e->getMessage()
-            );
             return Group::NOT_LOGGED_IN_ID;
         } catch (LocalizedException $e) {
-            $this->logger->error(
-                'Error getting customer group ID in ProductRenderList plugin: ' . $e->getMessage()
-            );
             return null;
         }
     }

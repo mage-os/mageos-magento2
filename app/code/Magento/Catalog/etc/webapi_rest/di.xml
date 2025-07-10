@@ -57,7 +57,7 @@
                 type="Magento\Catalog\Plugin\CategoryManagementPerformanceOptimizer" />
     </type>
     <type name="Magento\Catalog\Model\ProductRenderList">
-        <plugin name="fix_customer_group_context_for_pricing"
-                type="Magento\Catalog\Plugin\Model\ProductRenderList" />
+        <plugin name="customerGroupContextForPricing"
+                type="Magento\Catalog\Plugin\Model\ProductRenderListPlugin" />
     </type>
 </config>
