@@ -223,7 +223,7 @@
         <click selector="{{StorefrontGuestOrdersReturnsSearchSection.continue}}" stepKey="clickContinue"/>
         <waitForPageLoad stepKey="waitForPageLoad1"/>
         <!-- Step 4 Assertion: order has Pagers (Top and Bottom) and text "Items 1-20 of 21 total" are  present and 20 items present on the first page-->
-        <waitForText userInput="{{OrdersPaginationData.pager}}" selector="{{StorefrontGuestOrderSearchSection.pagerAtTop}}" stepKey="seeTotalProductsAndNumberOfProductsPerPageAtTop"/>
-        <waitForText userInput="{{OrdersPaginationData.pager}}" selector="{{StorefrontGuestOrderSearchSection.pagerAtBottom}}" stepKey="seePagerAtBottom"/>
+        <waitForText userInput="{{OrdersPaginationData.pager}}" selector="{{StorefrontOrderAndReturnInformationSection.pagerAtTop}}" stepKey="seeTotalProductsAndNumberOfProductsPerPageAtTop"/>
+        <waitForText userInput="{{OrdersPaginationData.pager}}" selector="{{StorefrontOrderAndReturnInformationSection.pagerAtBottom}}" stepKey="seePagerAtBottom"/>
     </test>
 </tests>
