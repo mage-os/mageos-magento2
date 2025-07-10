@@ -31,15 +31,15 @@ class OrderErrorProcessor
      * @param Field $field
      * @param $context
      * @param ResolveInfo $info
-     * @return array
      * @throws GraphQlAuthorizationException
      * @throws QuoteException
      */
     public function execute(
         LocalizedException $exception,
-        Field $field, $context,
+        Field $field,
+        $context,
         ResolveInfo $info
-    ): array {
+    ): void {
         if ($exception instanceof AuthorizationException) {
             throw new GraphQlAuthorizationException(
                 __($exception->getMessage())
@@ -47,7 +47,7 @@ class OrderErrorProcessor
         }
         $exception = $this->errorMessageFormatter->getFormatted(
             $exception,
-            __('Unable to place order: A server error stopped your order from being placed. ' .
+            __('A server error stopped your order from being placed. ' .
                 'Please try to place your order again'),
             'Unable to place order',
             $field,
@@ -58,6 +58,7 @@ class OrderErrorProcessor
         if (!$exceptionCode) {
             $exceptionCode = $this->errorMapper->getErrorMessageId($exception->getRawMessage());
         }
+
         throw new QuoteException(__($exception->getMessage()), $exception, $exceptionCode);
     }
 }
