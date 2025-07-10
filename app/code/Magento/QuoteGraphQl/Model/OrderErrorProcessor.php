@@ -11,6 +11,7 @@ use Magento\Framework\Exception\AuthorizationException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
+use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\GraphQl\Helper\Error\AggregateExceptionMessageFormatter;
 
@@ -27,9 +28,11 @@ class OrderErrorProcessor
     }
 
     /**
+     * Process exception thrown by ordering process
+     *
      * @param LocalizedException $exception
      * @param Field $field
-     * @param $context
+     * @param ContextInterface $context
      * @param ResolveInfo $info
      * @throws GraphQlAuthorizationException
      * @throws QuoteException
@@ -37,7 +40,7 @@ class OrderErrorProcessor
     public function execute(
         LocalizedException $exception,
         Field $field,
-        $context,
+        ContextInterface $context,
         ResolveInfo $info
     ): void {
         if ($exception instanceof AuthorizationException) {
