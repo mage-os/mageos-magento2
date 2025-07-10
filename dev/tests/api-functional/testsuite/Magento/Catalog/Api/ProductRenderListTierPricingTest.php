@@ -56,8 +56,8 @@ class ProductRenderListTierPricingTest extends WebapiAbstract
                 ]
             ]
         ),
-        DataFixture(CustomerFixture::class, ['group_id' => 1], as: 'customer_a'),
-        DataFixture(CustomerFixture::class, ['group_id' => 2], as: 'customer_b')
+        DataFixture(CustomerFixture::class, ['group_id' => 2], as: 'customer_a'),
+        DataFixture(CustomerFixture::class, ['group_id' => 1], as: 'customer_b')
     ]
     public function testGuestUserGetsBasePriceNotTierPrice(): void
     {
