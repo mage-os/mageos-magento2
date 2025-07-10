@@ -79,16 +79,11 @@ class Publisher
     {
         $sourceFile = $asset->getSourceFile();
 
-        // Check if source file exists
-        if (!file_exists($sourceFile)) {
-            return false;
-        }
-
         $sourceMtime = $this->getFileModificationTime($sourceFile);
         $targetStat = $dir->stat($targetPath);
         $targetMtime = $targetStat['mtime'] ?? 0;
 
-        return $sourceMtime > $targetMtime;
+        return ($sourceMtime > $targetMtime) || ($sourceMtime === 0 && $targetMtime > 0);
     }
 
     /**
