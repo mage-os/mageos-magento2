@@ -34,9 +34,9 @@ use Magento\Store\Model\StoreManagerInterface;
  */
 class Product extends AbstractDb
 {
-    private const string NOT_SELECTED_IMAGE = 'no_selection';
-    private const int DEFAULT_BATCH_SIZE = 5000;
-    private const int MAX_IMAGES_PER_PRODUCT = 10;
+    private const NOT_SELECTED_IMAGE = 'no_selection';
+    private const DEFAULT_BATCH_SIZE = 5000;
+    private const MAX_IMAGES_PER_PRODUCT = 10;
 
     /**
      * @var Select|null
