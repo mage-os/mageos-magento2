@@ -120,6 +120,7 @@ class TransparentTest extends TestCase
      * @param bool $createPaymentToken
      * @throws InvalidTransitionException
      * @throws LocalizedException
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function testCaptureCorrectId(string $parentTransactionId, bool $createPaymentToken)
     {
