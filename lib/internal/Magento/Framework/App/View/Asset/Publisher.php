@@ -106,7 +106,7 @@ class Publisher
             if ($content === false) {
                 self::$fileHashes[$filePath] = false;
             } else {
-                self::$fileHashes[$filePath] = md5($content);
+                self::$fileHashes[$filePath] = hash('sha256', $content);
             }
         }
         return self::$fileHashes[$filePath];
@@ -123,7 +123,7 @@ class Publisher
     {
         try {
             $content = $dir->readFile($targetPath);
-            return md5($content);
+            return hash('sha256', $content);
         } catch (\Exception $e) {
             return false;
         }
