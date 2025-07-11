@@ -10,7 +10,7 @@ use Magento\Framework\Url\RouteParamsResolver;
 use Magento\Framework\Url\QueryParamsResolverInterface;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\ScopeInterface as StoreScopeInterface;
-use Magento\Store\Model\StoreManagerInterface
+use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Model\Store;
 
 /**
