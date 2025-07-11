@@ -144,7 +144,7 @@ class TransparentTest extends TestCase
                 } elseif ($callCount == 1 && $args == Payflowpro::PNREF && !$createPaymentToken) {
                     $callCount++;
                     return '';
-                }elseif ($callCount == 1 && $args == Payflowpro::PNREF && $createPaymentToken) {
+                } elseif ($callCount == 1 && $args == Payflowpro::PNREF && $createPaymentToken) {
                     $callCount++;
                     return 'ABCD';
                 } elseif ($callCount == 2 && $args == Payflowpro::PNREF) {
@@ -153,7 +153,7 @@ class TransparentTest extends TestCase
                 } elseif ($callCount == 3 && $args == Payflowpro::PNREF) {
                     $callCount++;
                     return Payflowpro::PNREF;
-                } else if ($args == PayPalPayflowTransparent::CC_DETAILS && $createPaymentToken) {
+                } elseif ($args == PayPalPayflowTransparent::CC_DETAILS && $createPaymentToken) {
                     return json_encode([]);
                 }
             });
