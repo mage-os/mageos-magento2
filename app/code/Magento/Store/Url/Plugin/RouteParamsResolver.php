@@ -6,7 +6,7 @@
 namespace Magento\Store\Url\Plugin;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\Url\RouteParamsResolver;
+use Magento\Framework\Url\RouteParamsResolver as UrlRouteParamsResolver;
 use Magento\Framework\Url\QueryParamsResolverInterface;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\ScopeInterface as StoreScopeInterface;
@@ -41,7 +41,7 @@ class RouteParamsResolver
      *
      * @return array
      */
-    public function beforeSetRouteParams(RouteParamsResolver $subject, array $data, $unsetOldParams = true)
+    public function beforeSetRouteParams(UrlRouteParamsResolver $subject, array $data, $unsetOldParams = true)
     {
         if (isset($data['_scope'])) {
             $subject->setScope($data['_scope']);
