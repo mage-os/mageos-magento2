@@ -34,6 +34,11 @@ class Publisher
     private $writeFactory;
 
     /**
+     * @var array
+     */
+    private static $fileHashes = [];
+
+    /**
      * @param \Magento\Framework\Filesystem $filesystem
      * @param MaterializationStrategy\Factory $materializationStrategyFactory
      * @param WriteFactory $writeFactory
@@ -59,8 +64,8 @@ class Publisher
         $dir = $this->filesystem->getDirectoryRead(DirectoryList::STATIC_VIEW);
         $targetPath = $asset->getPath();
 
-        // Check if target file exists and is newer than source file
-        if ($dir->isExist($targetPath) && !$this->isSourceFileNewer($asset, $dir, $targetPath)) {
+        // Check if target file exists and content hasn't changed
+        if ($dir->isExist($targetPath) && !$this->hasSourceFileChanged($asset, $dir, $targetPath)) {
             return true;
         }
 
@@ -68,34 +73,60 @@ class Publisher
     }
 
     /**
-     * Check if source file is newer than target file
+     * Check if source file content has changed compared to target file
      *
      * @param Asset\LocalInterface $asset
      * @param \Magento\Framework\Filesystem\Directory\ReadInterface $dir
      * @param string $targetPath
      * @return bool
      */
-    private function isSourceFileNewer(Asset\LocalInterface $asset, $dir, $targetPath)
+    private function hasSourceFileChanged(Asset\LocalInterface $asset, $dir, $targetPath)
     {
         $sourceFile = $asset->getSourceFile();
+        // Get source file hash
+        $sourceHash = $this->getFileHash($sourceFile);
 
-        $sourceMtime = $this->getFileModificationTime($sourceFile);
-        $targetStat = $dir->stat($targetPath);
-        $targetMtime = $targetStat['mtime'] ?? 0;
+        // Get target file hash
+        $targetHash = $this->getTargetFileHash($dir, $targetPath);
 
-        return ($sourceMtime > $targetMtime) || ($sourceMtime === 0 && $targetMtime > 0);
+        // Compare hashes
+        return $sourceHash !== $targetHash;
     }
 
     /**
-     * Get file modification time
+     * Get file hash with caching
      *
      * @param string $filePath
-     * @return int
+     * @return string|false
      */
-    private function getFileModificationTime($filePath)
+    private function getFileHash($filePath)
     {
-        $mtime = @filemtime($filePath);
-        return $mtime !== false ? $mtime : 0;
+        if (!isset(self::$fileHashes[$filePath])) {
+            $content = @file_get_contents($filePath);
+            if ($content === false) {
+                self::$fileHashes[$filePath] = false;
+            } else {
+                self::$fileHashes[$filePath] = md5($content);
+            }
+        }
+        return self::$fileHashes[$filePath];
+    }
+
+    /**
+     * Get target file hash
+     *
+     * @param \Magento\Framework\Filesystem\Directory\ReadInterface $dir
+     * @param string $targetPath
+     * @return string|false
+     */
+    private function getTargetFileHash($dir, $targetPath)
+    {
+        try {
+            $content = $dir->readFile($targetPath);
+            return md5($content);
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
     /**

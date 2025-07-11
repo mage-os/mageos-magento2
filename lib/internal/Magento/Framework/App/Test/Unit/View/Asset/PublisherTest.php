@@ -122,9 +122,9 @@ class PublisherTest extends TestCase
             ->with('some/file.ext')
             ->willReturn(true);
         $this->staticDirRead->expects($this->once())
-            ->method('stat')
+            ->method('readFile')
             ->with('some/file.ext')
-            ->willReturn(['mtime' => 1000]);
+            ->willReturn('test');
 
         $materializationStrategy =
             $this->getMockForAbstractClass(StrategyInterface::class);
@@ -148,9 +148,9 @@ class PublisherTest extends TestCase
             ->with('some/file.ext')
             ->willReturn(true);
         $this->staticDirRead->expects($this->once())
-            ->method('stat')
+            ->method('readFile')
             ->with('some/file.ext')
-            ->willReturn(['mtime' => 0]);
+            ->willReturn(null);
 
         $this->assertTrue($this->object->publish($this->getAsset()));
     }
