@@ -123,7 +123,7 @@
             <argument name="subCategoryName" value="$$createSubTestCategory.name$$"/>
         </actionGroup>
         <!-- Step 17:Verify url for subcategory for default store view -->
-        <actionGroup ref="StorefrontAssertProperUrlIsShownActionGroup" stepKey="assertUrlPathForCategory">
+        <actionGroup ref="StorefrontAssertProperUrlIsShownActionGroup" stepKey="assertSeoUrlPathForCategory">
             <argument name="urlPath" value="{{CustomizedCategory.name}}/{{CustomizedCategory.path}}.html"/>
         </actionGroup>
         <!-- Step 18&19:Go To Storefront and Switch to custom store view for root category & Open root category on Storefront under custom store view -->
