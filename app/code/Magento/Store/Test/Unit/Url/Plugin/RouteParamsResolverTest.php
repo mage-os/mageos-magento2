@@ -74,12 +74,8 @@ class RouteParamsResolverTest extends TestCase
 
         $this->scopeConfigMock
             ->expects($this->once())
-            ->method('getValue')
-            ->with(
-                Store::XML_PATH_STORE_IN_URL,
-                ScopeInterface::SCOPE_STORE,
-                $storeCode
-            )
+            ->method('isSetFlag')
+            ->with(Store::XML_PATH_STORE_IN_URL)
             ->willReturn(false);
         $this->storeManagerMock->expects($this->any())->method('hasSingleStore')->willReturn(false);
 
@@ -106,12 +102,8 @@ class RouteParamsResolverTest extends TestCase
 
         $this->scopeConfigMock
             ->expects($this->once())
-            ->method('getValue')
-            ->with(
-                Store::XML_PATH_STORE_IN_URL,
-                ScopeInterface::SCOPE_STORE,
-                $storeCode
-            )
+            ->method('isSetFlag')
+            ->with(Store::XML_PATH_STORE_IN_URL)
             ->willReturn(true);
 
         $this->storeManagerMock->expects($this->any())->method('hasSingleStore')->willReturn(false);
@@ -139,12 +131,8 @@ class RouteParamsResolverTest extends TestCase
 
         $this->scopeConfigMock
             ->expects($this->once())
-            ->method('getValue')
-            ->with(
-                Store::XML_PATH_STORE_IN_URL,
-                ScopeInterface::SCOPE_STORE,
-                $storeCode
-            )
+            ->method('isSetFlag')
+            ->with(Store::XML_PATH_STORE_IN_URL)
             ->willReturn(false);
         $this->storeManagerMock->expects($this->any())->method('hasSingleStore')->willReturn(true);
 
@@ -171,12 +159,8 @@ class RouteParamsResolverTest extends TestCase
 
         $this->scopeConfigMock
             ->expects($this->once())
-            ->method('getValue')
-            ->with(
-                Store::XML_PATH_STORE_IN_URL,
-                ScopeInterface::SCOPE_STORE,
-                $storeCode
-            )
+            ->method('isSetFlag')
+            ->with(Store::XML_PATH_STORE_IN_URL)
             ->willReturn(true);
 
         $this->storeManagerMock->expects($this->any())->method('hasSingleStore')->willReturn(false);

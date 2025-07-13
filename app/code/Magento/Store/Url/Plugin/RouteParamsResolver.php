@@ -3,6 +3,8 @@
  * Copyright 2015 Adobe
  * All Rights Reserved.
  */
+declare(strict_types=1);
+
 namespace Magento\Store\Url\Plugin;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -29,7 +31,8 @@ class RouteParamsResolver
         protected ScopeConfigInterface $scopeConfig,
         protected StoreManagerInterface $storeManager,
         protected QueryParamsResolverInterface $queryParamsResolver
-    ) {}
+    ) {
+    }
 
     /**
      * Process scope query parameters.
@@ -48,7 +51,7 @@ class RouteParamsResolver
             unset($data['_scope']);
         }
         if (isset($data['_scope_to_url']) && (bool)$data['_scope_to_url'] === true) {
-            $useStoreInUrl = $this->scopeConfig->getValue(Store::XML_PATH_STORE_IN_URL);
+            $useStoreInUrl = $this->scopeConfig->isSetFlag(Store::XML_PATH_STORE_IN_URL);
             if (!$useStoreInUrl && !$this->storeManager->hasSingleStore()) {
                 $currentScope = $subject->getScope();
                 $storeCode = $currentScope instanceof StoreInterface
