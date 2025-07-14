@@ -7,8 +7,8 @@
 -->
 
 <tests
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
     <test name="StorefrontVerifyPagerIsPresentOnViewOrderPageForGuestUsingOrdersAndReturnsTest">
         <annotations>
             <features value="Order"/>
@@ -20,7 +20,7 @@
             <group value="Order"/>
         </annotations>
         <before>
-            <!-- creating simple products -->
+            <!-- Create simple products -->
             <createData entity="ApiSimpleProduct" stepKey="createProduct1"/>
             <createData entity="ApiSimpleProduct" stepKey="createProduct2"/>
             <createData entity="ApiSimpleProduct" stepKey="createProduct3"/>
@@ -42,151 +42,101 @@
             <createData entity="ApiSimpleProduct" stepKey="createProduct19"/>
             <createData entity="ApiSimpleProduct" stepKey="createProduct20"/>
             <createData entity="ApiSimpleProduct" stepKey="createProduct21"/>
-            <!-- Pre-condition 1,2: place an order with 21 products and with address information -->
-            <!-- Go to Product page-->
-            <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProduct1Page">
-                <argument name="productUrl" value="$$createProduct1.custom_attributes[url_key]$$"/>
-            </actionGroup>
-            <!--Click on Add Product to Cart -->
-            <actionGroup ref="StorefrontAddToTheCartActionGroup" stepKey="clickOnAddToCartButtonForProduct1"/>
-            <!-- Go to Product page-->
-            <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProduct2Page">
-                <argument name="productUrl" value="$$createProduct2.custom_attributes[url_key]$$"/>
-            </actionGroup>
-            <!--Click on Add Product to Cart -->
-            <actionGroup ref="StorefrontAddToTheCartActionGroup" stepKey="clickOnAddToCartButtonForProduct2"/>
-            <!-- Go to Product page-->
-            <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProduct3Page">
-                <argument name="productUrl" value="$$createProduct3.custom_attributes[url_key]$$"/>
-            </actionGroup>
-            <!--Click on Add Product to Cart -->
-            <actionGroup ref="StorefrontAddToTheCartActionGroup" stepKey="clickOnAddToCartButtonForProduct3"/>
-            <!-- Go to Product page-->
-            <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProduct4Page">
-                <argument name="productUrl" value="$$createProduct4.custom_attributes[url_key]$$"/>
-            </actionGroup>
-            <!--Click on Add Product to Cart -->
-            <actionGroup ref="StorefrontAddToTheCartActionGroup" stepKey="clickOnAddToCartButtonForProduct4"/>
-            <!-- Go to Product page-->
-            <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProduct5Page">
-                <argument name="productUrl" value="$$createProduct5.custom_attributes[url_key]$$"/>
-            </actionGroup>
-            <!--Click on Add Product to Cart -->
-            <actionGroup ref="StorefrontAddToTheCartActionGroup" stepKey="clickOnAddToCartButtonForProduct5"/>
-            <!-- Go to Product page-->
-            <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProduct6Page">
-                <argument name="productUrl" value="$$createProduct6.custom_attributes[url_key]$$"/>
-            </actionGroup>
-            <!--Click on Add Product to Cart -->
-            <actionGroup ref="StorefrontAddToTheCartActionGroup" stepKey="clickOnAddToCartButtonForProduct6"/>
-            <!-- Go to Product page-->
-            <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProduct7Page">
-                <argument name="productUrl" value="$$createProduct7.custom_attributes[url_key]$$"/>
-            </actionGroup>
-            <!--Click on Add Product to Cart -->
-            <actionGroup ref="StorefrontAddToTheCartActionGroup" stepKey="clickOnAddToCartButtonForProduct7"/>
-            <!-- Go to Product page-->
-            <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProduct8Page">
-                <argument name="productUrl" value="$$createProduct8.custom_attributes[url_key]$$"/>
-            </actionGroup>
-            <!--Click on Add Product to Cart -->
-            <actionGroup ref="StorefrontAddToTheCartActionGroup" stepKey="clickOnAddToCartButtonForProduct8"/>
-            <!-- Go to Product page-->
-            <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProduct9Page">
-                <argument name="productUrl" value="$$createProduct9.custom_attributes[url_key]$$"/>
-            </actionGroup>
-            <!--Click on Add Product to Cart -->
-            <actionGroup ref="StorefrontAddToTheCartActionGroup" stepKey="clickOnAddToCartButtonForProduct9"/>
-            <!-- Go to Product page-->
-            <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProduct10Page">
-                <argument name="productUrl" value="$$createProduct10.custom_attributes[url_key]$$"/>
-            </actionGroup>
-            <!--Click on Add Product to Cart -->
-            <actionGroup ref="StorefrontAddToTheCartActionGroup" stepKey="clickOnAddToCartButtonForProduct10"/>
-            <!-- Go to Product page-->
-            <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProduct11Page">
-                <argument name="productUrl" value="$$createProduct11.custom_attributes[url_key]$$"/>
-            </actionGroup>
-            <!--Click on Add Product to Cart -->
-            <actionGroup ref="StorefrontAddToTheCartActionGroup" stepKey="clickOnAddToCartButtonForProduct11"/>
-            <!-- Go to Product page-->
-            <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProduct12Page">
-                <argument name="productUrl" value="$$createProduct12.custom_attributes[url_key]$$"/>
-            </actionGroup>
-            <!--Click on Add Product to Cart -->
-            <actionGroup ref="StorefrontAddToTheCartActionGroup" stepKey="clickOnAddToCartButtonForProduct12"/>
-            <!-- Go to Product page-->
-            <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProduct13Page">
-                <argument name="productUrl" value="$$createProduct13.custom_attributes[url_key]$$"/>
-            </actionGroup>
-            <!--Click on Add Product to Cart -->
-            <actionGroup ref="StorefrontAddToTheCartActionGroup" stepKey="clickOnAddToCartButtonForProduct13"/>
-            <!-- Go to Product page-->
-            <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProduct14Page">
-                <argument name="productUrl" value="$$createProduct14.custom_attributes[url_key]$$"/>
-            </actionGroup>
-            <!--Click on Add Product to Cart -->
-            <actionGroup ref="StorefrontAddToTheCartActionGroup" stepKey="clickOnAddToCartButtonForProduct14"/>
-            <!-- Go to Product page-->
-            <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProduct15Page">
-                <argument name="productUrl" value="$$createProduct15.custom_attributes[url_key]$$"/>
-            </actionGroup>
-            <!--Click on Add Product to Cart -->
-            <actionGroup ref="StorefrontAddToTheCartActionGroup" stepKey="clickOnAddToCartButtonForProduct15"/>
-            <!-- Go to Product page-->
-            <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProduct16Page">
-                <argument name="productUrl" value="$$createProduct16.custom_attributes[url_key]$$"/>
-            </actionGroup>
-            <!--Click on Add Product to Cart -->
-            <actionGroup ref="StorefrontAddToTheCartActionGroup" stepKey="clickOnAddToCartButtonForProduct16"/>
-            <!-- Go to Product page-->
-            <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProduct17Page">
-                <argument name="productUrl" value="$$createProduct17.custom_attributes[url_key]$$"/>
-            </actionGroup>
-            <!--Click on Add Product to Cart -->
-            <actionGroup ref="StorefrontAddToTheCartActionGroup" stepKey="clickOnAddToCartButtonForProduct17"/>
-            <!-- Go to Product page-->
-            <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProduct18Page">
-                <argument name="productUrl" value="$$createProduct18.custom_attributes[url_key]$$"/>
-            </actionGroup>
-            <!--Click on Add Product to Cart -->
-            <actionGroup ref="StorefrontAddToTheCartActionGroup" stepKey="clickOnAddToCartButtonForProduct18"/>
-            <!-- Go to Product page-->
-            <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProduct19Page">
-                <argument name="productUrl" value="$$createProduct19.custom_attributes[url_key]$$"/>
-            </actionGroup>
-            <!--Click on Add Product to Cart -->
-            <actionGroup ref="StorefrontAddToTheCartActionGroup" stepKey="clickOnAddToCartButtonForProduct19"/>
-            <!-- Go to Product page-->
-            <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProduct20Page">
-                <argument name="productUrl" value="$$createProduct20.custom_attributes[url_key]$$"/>
-            </actionGroup>
-            <!--Click on Add Product to Cart -->
-            <actionGroup ref="StorefrontAddToTheCartActionGroup" stepKey="clickOnAddToCartButtonForProduct20"/>
-            <!-- Go to Product page-->
-            <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProduct21Page">
-                <argument name="productUrl" value="$$createProduct21.custom_attributes[url_key]$$"/>
-            </actionGroup>
-            <!--Click on Add Product to Cart -->
-            <actionGroup ref="StorefrontAddToTheCartActionGroup" stepKey="clickOnAddToCartButtonForProduct21"/>
-            <!-- Guest Checkout Process-->
-            <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="guestGoToCheckoutFromMinicart"/>
-            <actionGroup ref="GuestCheckoutFillingShippingSectionActionGroup" stepKey="guestCheckoutFillingShippingSection">
-                <argument name="customerVar" value="CustomerEntityOne"/>
-                <argument name="customerAddressVar" value="CustomerAddressSimple"/>
-            </actionGroup>
-            <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="guestSelectCheckMoneyOrderPayment"/>
-            <actionGroup ref="CheckBillingAddressInCheckoutActionGroup" stepKey="guestSeeAddress">
-                <argument name="customerVar" value="CustomerEntityOne"/>
-                <argument name="customerAddressVar" value="CustomerAddressSimple"/>
-            </actionGroup>
-            <actionGroup ref="CheckoutPlaceOrderActionGroup" stepKey="guestPlaceorder">
-                <argument name="orderNumberMessage" value="CONST.successGuestCheckoutOrderNumberMessage"/>
-                <argument name="emailYouMessage" value="CONST.successCheckoutEmailYouMessage"/>
-            </actionGroup>
+            <!-- Pre-condition 1,2: Place an order with 21 products -->
+            <createData entity="GuestCart" stepKey="createGuestCart"/>
+            <createData entity="SimpleCartItem" stepKey="addCartItem">
+                <requiredEntity createDataKey="createGuestCart"/>
+                <requiredEntity createDataKey="createProduct1"/>
+            </createData>
+            <createData entity="SimpleCartItem" stepKey="addCartItem2">
+                <requiredEntity createDataKey="createGuestCart"/>
+                <requiredEntity createDataKey="createProduct2"/>
+            </createData>
+            <createData entity="SimpleCartItem" stepKey="addCartItem3">
+                <requiredEntity createDataKey="createGuestCart"/>
+                <requiredEntity createDataKey="createProduct3"/>
+            </createData>
+            <createData entity="SimpleCartItem" stepKey="addCartItem4">
+                <requiredEntity createDataKey="createGuestCart"/>
+                <requiredEntity createDataKey="createProduct4"/>
+            </createData>
+            <createData entity="SimpleCartItem" stepKey="addCartItem5">
+                <requiredEntity createDataKey="createGuestCart"/>
+                <requiredEntity createDataKey="createProduct5"/>
+            </createData>
+            <createData entity="SimpleCartItem" stepKey="addCartItem6">
+                <requiredEntity createDataKey="createGuestCart"/>
+                <requiredEntity createDataKey="createProduct6"/>
+            </createData>
+            <createData entity="SimpleCartItem" stepKey="addCartItem7">
+                <requiredEntity createDataKey="createGuestCart"/>
+                <requiredEntity createDataKey="createProduct7"/>
+            </createData>
+            <createData entity="SimpleCartItem" stepKey="addCartItem8">
+                <requiredEntity createDataKey="createGuestCart"/>
+                <requiredEntity createDataKey="createProduct8"/>
+            </createData>
+            <createData entity="SimpleCartItem" stepKey="addCartItem9">
+                <requiredEntity createDataKey="createGuestCart"/>
+                <requiredEntity createDataKey="createProduct9"/>
+            </createData>
+            <createData entity="SimpleCartItem" stepKey="addCartItem10">
+                <requiredEntity createDataKey="createGuestCart"/>
+                <requiredEntity createDataKey="createProduct10"/>
+            </createData>
+            <createData entity="SimpleCartItem" stepKey="addCartItem11">
+                <requiredEntity createDataKey="createGuestCart"/>
+                <requiredEntity createDataKey="createProduct11"/>
+            </createData>
+            <createData entity="SimpleCartItem" stepKey="addCartItem12">
+                <requiredEntity createDataKey="createGuestCart"/>
+                <requiredEntity createDataKey="createProduct12"/>
+            </createData>
+            <createData entity="SimpleCartItem" stepKey="addCartItem13">
+                <requiredEntity createDataKey="createGuestCart"/>
+                <requiredEntity createDataKey="createProduct13"/>
+            </createData>
+            <createData entity="SimpleCartItem" stepKey="addCartItem14">
+                <requiredEntity createDataKey="createGuestCart"/>
+                <requiredEntity createDataKey="createProduct14"/>
+            </createData>
+            <createData entity="SimpleCartItem" stepKey="addCartItem15">
+                <requiredEntity createDataKey="createGuestCart"/>
+                <requiredEntity createDataKey="createProduct15"/>
+            </createData>
+            <createData entity="SimpleCartItem" stepKey="addCartItem16">
+                <requiredEntity createDataKey="createGuestCart"/>
+                <requiredEntity createDataKey="createProduct16"/>
+            </createData>
+            <createData entity="SimpleCartItem" stepKey="addCartItem17">
+                <requiredEntity createDataKey="createGuestCart"/>
+                <requiredEntity createDataKey="createProduct17"/>
+            </createData>
+            <createData entity="SimpleCartItem" stepKey="addCartItem18">
+                <requiredEntity createDataKey="createGuestCart"/>
+                <requiredEntity createDataKey="createProduct18"/>
+            </createData>
+            <createData entity="SimpleCartItem" stepKey="addCartItem19">
+                <requiredEntity createDataKey="createGuestCart"/>
+                <requiredEntity createDataKey="createProduct19"/>
+            </createData>
+            <createData entity="SimpleCartItem" stepKey="addCartItem20">
+                <requiredEntity createDataKey="createGuestCart"/>
+                <requiredEntity createDataKey="createProduct20"/>
+            </createData>
+            <createData entity="SimpleCartItem" stepKey="addCartItem21">
+                <requiredEntity createDataKey="createGuestCart"/>
+                <requiredEntity createDataKey="createProduct21"/>
+            </createData>
+            <createData entity="GuestAddressInformation" stepKey="addGuestOrderAddress">
+                <requiredEntity createDataKey="createGuestCart"/>
+            </createData>
+            <updateData createDataKey="createGuestCart" entity="GuestOrderPaymentMethod" stepKey="sendGuestPaymentInformation">
+                <requiredEntity createDataKey="createGuestCart"/>
+            </updateData>
         </before>
         <after>
-            <!-- deleting simple products,  -->
+            <!-- Delete simple products -->
             <deleteData createDataKey="createProduct1" stepKey="deleteProduct1"/>
             <deleteData createDataKey="createProduct2" stepKey="deleteProduct2"/>
             <deleteData createDataKey="createProduct3" stepKey="deleteProduct3"/>
@@ -208,21 +158,31 @@
             <deleteData createDataKey="createProduct19" stepKey="deleteProduct19"/>
             <deleteData createDataKey="createProduct20" stepKey="deleteProduct20"/>
             <deleteData createDataKey="createProduct21" stepKey="deleteProduct21"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
         </after>
-        <!-- Get Order id -->
-        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber}}" stepKey="grabOrderNumber"/>
-        <!-- Step 1,2: Go to Storefront as Guest and Navigate to: Orders and Returns page -->
+        <!-- Get order-id, email -->
+        <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+        <actionGroup ref="AdminOrdersPageOpenActionGroup" stepKey="onOrderPage"/>
+        <actionGroup ref="AdminOrdersGridClearFiltersActionGroup" stepKey="clearFilters"/>
+        <grabTextFrom selector="{{AdminOrdersGridSection.orderIdByIncrementId($createGuestCart.return$)}}" stepKey="grabOrderNumber"/>
+        <actionGroup ref="OpenOrderByIdActionGroup" stepKey="openCreatedOrder">
+            <argument name="orderId" value="{$grabOrderNumber}"/>
+        </actionGroup>
+        <grabTextFrom selector="{{AdminOrderDetailsInformationSection.customerEmail}}" stepKey="grabEmail"/>
+        <!-- Step 1,2: Go to storefront as guest and navigate to: orders and returns page -->
         <actionGroup ref="StorefrontOpenOrdersAndReturnsPageActionGroup" stepKey="goToOrdersAndReturnsPage"/>
         <waitForPageLoad stepKey="waiForStorefrontPage"/>
-        <!-- Step 3: Fill the Form with address data form and precondition-->
-        <actionGroup ref="StorefrontFillOrdersAndReturnsFormActionGroup" stepKey="fillOrder">
+        <!-- Step 3: Fill the form with address data form and precondition-->
+        <actionGroup ref="StorefrontFillOrdersAndReturnsFormByEmailActionGroup" stepKey="fillOrder">
             <argument name="orderNumber" value="$grabOrderNumber"/>
-            <argument name="customer" value="CustomerEntityOne"/>
+            <argument name="customer" value="BillingAddressTX"/>
+            <argument name="emailId" value="$grabEmail"/>
         </actionGroup>
-        <!-- Step 4:  Click on the "Continue" Button -->
+        <!-- Step 4:  Click on the "continue" Button -->
         <click selector="{{StorefrontOrderAndReturnInformationSection.continueButton}}" stepKey="clickContinueButton"/>
         <waitForPageLoad stepKey="waitForPageLoad1"/>
-        <!-- Step 4 Assertion: order has Pagers (Top and Bottom) and text "Items 1-20 of 21 total" are  present and 20 items present on the first page-->
+        <!-- Step 4 Assertion: Verify order page is opened, only 20 items present on the first page and pagers (Top and Bottom) and text "Items 1-20 of 21 total" are present -->
+        <waitForElementVisible selector="{{StorefrontOrderAndReturnInformationSection.orderPage({$grabOrderNumber})}}" stepKey="verifyOrderPage" />
         <waitForText userInput="{{OrdersPaginationData.pager}}" selector="{{StorefrontOrderAndReturnInformationSection.pagerAtTop}}" stepKey="seeTotalProductsAndNumberOfProductsPerPageAtTop"/>
         <waitForText userInput="{{OrdersPaginationData.pager}}" selector="{{StorefrontOrderAndReturnInformationSection.pagerAtBottom}}" stepKey="seePagerAtBottom"/>
     </test>

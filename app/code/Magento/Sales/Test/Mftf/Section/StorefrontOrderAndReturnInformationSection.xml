@@ -18,5 +18,6 @@
         <element name="ordersAndReturnsTitle" type="text" selector="//span[@id='page-title-wrapper']"/>
         <element name="pagerAtTop" type="text" selector="//td[@data-block='order-items-pager-top']//span[@class='toolbar-number']"/>
         <element name="pagerAtBottom" type="text" selector="//td[@data-block='order-items-pager-bottom']//span[@class='toolbar-number']"/>
+        <element name="orderPage" type="text" selector="//span[contains(text(),'{{grabOrderText}}')]" parameterized="true"/>
     </section>
 </sections>
