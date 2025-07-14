@@ -3,7 +3,6 @@
  * Copyright 2025 Adobe
  * All Rights Reserved.
  */
-
 declare(strict_types=1);
 
 namespace Magento\Sales\Service\V1;
@@ -191,7 +190,7 @@ class OrderApiConfigurableVariationsPriceTest extends WebapiAbstract
                 'service' => 'salesOrderRepositoryV1',
                 'operation' => 'salesOrderRepositoryV1Get',
                 'parameters' => [
-                    'orderId' => $orderId,
+                    'orderId' => ['id' => $orderId],
                 ],
             ],
         ]);
