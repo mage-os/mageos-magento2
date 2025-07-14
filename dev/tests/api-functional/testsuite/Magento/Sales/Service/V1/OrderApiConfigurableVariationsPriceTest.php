@@ -137,6 +137,13 @@ class OrderApiConfigurableVariationsPriceTest extends WebapiAbstract
                 'resourcePath' => self::RESOURCE_PATH . '/' . $orderId,
                 'httpMethod' => Request::HTTP_METHOD_GET,
             ],
+            'soap' => [
+                'service' => 'salesOrderRepositoryV1',
+                'operation' => 'salesOrderRepositoryV1Get',
+                'parameters' => [
+                    'orderId' => $orderId,
+                ],
+            ],
         ]);
     }
 
