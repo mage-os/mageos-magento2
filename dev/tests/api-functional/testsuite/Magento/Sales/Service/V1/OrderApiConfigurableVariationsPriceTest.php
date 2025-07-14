@@ -1,4 +1,9 @@
 <?php
+/**
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
+ */
+
 declare(strict_types=1);
 
 namespace Magento\Sales\Service\V1;
@@ -27,6 +32,11 @@ class OrderApiConfigurableVariationsPriceTest extends WebapiAbstract
 {
     private const RESOURCE_PATH = '/V1/orders';
 
+    /**
+     * Fixture storage manager for resolving test data.
+     *
+     * @var DataFixtureStorage
+     */
     private DataFixtureStorage $fixtures;
 
     /**
@@ -40,18 +50,23 @@ class OrderApiConfigurableVariationsPriceTest extends WebapiAbstract
     }
 
     #[
-        DataFixture(AttributeFixture::class,  [
-            'frontend_input' => 'select',
-            'options' => ['40', '42'],
-            'is_configurable' => true,
-            'is_global' => true
-        ], as: 'attribute'),
-        DataFixture(ProductFixture::class,
+        DataFixture(
+            AttributeFixture::class,
+            [
+                'frontend_input' => 'select',
+                'options' => ['40', '42'],
+                'is_configurable' => true,
+                'is_global' => true,
+            ],
+            as: 'attribute'
+        ),
+        DataFixture(
+            ProductFixture::class,
             [
                 'price' => 100,
                 'custom_attributes' => [
-                    ['attribute_code' => '$attribute.attribute_code$', 'value' => '40']
-                ]
+                    ['attribute_code' => '$attribute.attribute_code$', 'value' => '40'],
+                ],
             ],
             as: 'product1'
         ),
@@ -60,31 +75,34 @@ class OrderApiConfigurableVariationsPriceTest extends WebapiAbstract
             [
                 'price' => 100,
                 'custom_attributes' => [
-                    ['attribute_code' => '$attribute.attribute_code$', 'value' => '42']
-                ]
+                    ['attribute_code' => '$attribute.attribute_code$', 'value' => '42'],
+                ],
             ],
             as: 'product2'
         ),
         DataFixture(
             ConfigurableProductFixture::class,
             [
-            '_options' => ['$attribute$'],
-            '_links' => ['$product1$', '$product2$'],
-            'custom_attributes' => [
-            ['attribute_code' => '$attribute.attribute_code$', 'value' => '40']
-            ]
+                '_options' => ['$attribute$'],
+                '_links' => ['$product1$', '$product2$'],
+                'custom_attributes' => [
+                    ['attribute_code' => '$attribute.attribute_code$', 'value' => '40'],
+                ],
             ],
             'configurable_product'
         ),
         DataFixture(GuestCart::class, as: 'cart'),
         DataFixture(Customer::class, as: 'customer'),
         DataFixture(CustomerCart::class, ['customer_id' => '$customer.id$'], as: 'quote'),
-        DataFixture(AddProductToCart::class, [
-            'cart_id' => '$cart.id$',
-            'product_id' => '$configurable_product.id$',
-            'child_product_id' => '$product1.id$',
-            'qty' => 1
-        ]),
+        DataFixture(
+            AddProductToCart::class,
+            [
+                'cart_id' => '$cart.id$',
+                'product_id' => '$configurable_product.id$',
+                'child_product_id' => '$product1.id$',
+                'qty' => 1,
+            ]
+        ),
         DataFixture(SetBillingAddress::class, ['cart_id' => '$cart.id$']),
         DataFixture(SetShippingAddress::class, ['cart_id' => '$cart.id$']),
         DataFixture(SetGuestEmail::class, ['cart_id' => '$cart.id$']),
@@ -95,12 +113,12 @@ class OrderApiConfigurableVariationsPriceTest extends WebapiAbstract
     /**
      * Validates that simple products linked to a configurable parent in an order:
      * - Exist in the response
-     * - Are linked correctly via parent_item_id
-     * - Carry expected pricing logic (either 0.0 or actual price depending on Magento behavior)
+     * - Are linked via parent_item_id
+     * - Carry expected pricing logic
      */
     public function testSimpleItemsAssignedToConfigurableHaveValidPrice(): void
     {
-        $orderData = $this->callOrderApi((string)$this->fixtures->get('order')->getEntityId());
+        $orderData = $this->callOrderApi((string) $this->fixtures->get('order')->getEntityId());
 
         $this->assertArrayHasKey('items', $orderData);
         $this->assertIsArray($orderData['items']);
@@ -129,19 +147,18 @@ class OrderApiConfigurableVariationsPriceTest extends WebapiAbstract
 
         foreach ($simpleItemsWithParent as $item) {
             $this->assertNotEmpty($item['sku'], 'Simple item must have SKU.');
+            $price = (float) $item['price'];
 
-            $price = (float)$item['price'];
-            $this->assertTrue(true, sprintf(
-                'Simple item "%s" has price %s (valid if parent holds pricing).',
-                $item['sku'],
-                $price
-            ));
+            $this->assertTrue(
+                true,
+                sprintf('Simple item "%s" has price %s.', $item['sku'], $price)
+            );
 
             if ($price > 0.0) {
                 $this->assertGreaterThan(
                     0.0,
                     $price,
-                    sprintf('Simple item "%s" should have valid price if used independently.', $item['sku'])
+                    sprintf('Simple item "%s" should have price > 0.', $item['sku'])
                 );
             }
         }
@@ -149,7 +166,7 @@ class OrderApiConfigurableVariationsPriceTest extends WebapiAbstract
         foreach ($unlinkedSimples as $item) {
             $this->assertEquals(
                 0.0,
-                (float)$item['price'],
+                (float) $item['price'],
                 'Unlinked simple item should have zero price.'
             );
         }
@@ -158,7 +175,7 @@ class OrderApiConfigurableVariationsPriceTest extends WebapiAbstract
     }
 
     /**
-     * Calls the REST API to retrieve order data by order ID.
+     * Calls the REST and SOAP APIs to retrieve order data by order ID.
      *
      * @param string $orderId
      * @return array
@@ -181,7 +198,7 @@ class OrderApiConfigurableVariationsPriceTest extends WebapiAbstract
     }
 
     /**
-     * Validates that each simple product has a valid parent link to a configurable item.
+     * Validates that simple items link correctly to one of the configurable parent items.
      *
      * @param array $configurableItems
      * @param array $simpleItems
@@ -195,10 +212,7 @@ class OrderApiConfigurableVariationsPriceTest extends WebapiAbstract
             $this->assertContains(
                 $item['parent_item_id'],
                 $configurableItemIds,
-                sprintf(
-                    'Simple item "%s" must link to a configurable parent.',
-                    $item['item_id'] ?? 'N/A'
-                )
+                sprintf('Simple item "%s" must link to a configurable parent.', $item['item_id'] ?? 'N/A')
             );
         }
     }
