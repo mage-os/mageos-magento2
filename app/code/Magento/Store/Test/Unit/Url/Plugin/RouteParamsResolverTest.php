@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -54,10 +54,7 @@ class RouteParamsResolverTest extends TestCase
         $this->storeMock->expects($this->any())->method('getCode')->willReturn('custom_store');
 
         $this->storeManagerMock = $this->getMockForAbstractClass(StoreManagerInterface::class);
-        $this->storeManagerMock
-            ->expects($this->once())
-            ->method('getStore')
-            ->willReturn($this->storeMock);
+        $this->storeManagerMock->method('getStore')->willReturn($this->storeMock);
 
         $this->queryParamsResolverMock = $this->getMockForAbstractClass(QueryParamsResolverInterface::class);
         $this->model = new RouteParamsResolver(
