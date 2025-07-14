@@ -76,10 +76,7 @@ class CliStateTest extends TestCase
 
         // Process the bootstrap parameters like the CLI does
         $params = (new ComplexParameter(Cli::INPUT_KEY_BOOTSTRAP))->mergeFromArgv($_SERVER, $_SERVER);
-        
-        // Debug: Let's see what was parsed
-        error_log("Parsed params: " . print_r($params, true));
-        
+
         // Get the ObjectManager from the test framework
         $objectManager = TestBootstrap::getObjectManager();
         
@@ -120,10 +117,7 @@ class CliStateTest extends TestCase
 
         // Process the bootstrap parameters like the CLI does
         $params = (new ComplexParameter(Cli::INPUT_KEY_BOOTSTRAP))->mergeFromArgv($_SERVER, $_SERVER);
-        
-        // Debug: Let's see what was parsed
-        error_log("Parsed params for multiple: " . print_r($params, true));
-        
+
         // Get the ObjectManager from the test framework
         $objectManager = TestBootstrap::getObjectManager();
         
