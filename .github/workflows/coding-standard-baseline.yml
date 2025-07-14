@@ -1,0 +1,16 @@
+name: Coding Standard With Baseline
+on:
+  pull_request:
+    branches: ["**"]
+permissions:
+  contents: read
+jobs:
+  coding-standard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Coding Standard Baseline
+        uses: mage-os/github-actions/coding-standard-baseline@main
+        with:
+          head_repo: ${{github.event.pull_request.head.repo.full_name}}
+          head_ref: ${{github.event.pull_request.head.ref}}
+

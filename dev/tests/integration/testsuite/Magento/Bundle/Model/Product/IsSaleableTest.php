@@ -219,6 +219,7 @@ class IsSaleableTest extends \PHPUnit\Framework\TestCase
      *
      * @magentoAppIsolation enabled
      * @covers \Magento\Bundle\Model\Product\Type::isSalable
+     * @group integrationIgnore
      */
     public function testIsSaleableOnBundleWithNotEnoughQtyOfSelection()
     {

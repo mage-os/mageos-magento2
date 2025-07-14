@@ -1,0 +1,19 @@
+name: Integration Tests - Full Test Suite
+run-name: ${{ github.actor }} is running Full Integration Test Suite
+on:
+  workflow_dispatch:
+    inputs:
+      test_directory:
+        description: 'Test directory to run integration tests'
+        type: string
+        required: false
+
+jobs:
+  call-workflow:
+    name: calling full integration test suite
+    uses: mage-os/github-actions/.github/workflows/full-integration-tests.yaml@main
+    secrets: inherit
+    with:
+      repository: ${{ github.repository }}
+      head: ${{ github.sha }}
+      test_directory: ${{ github.event.inputs.test_directory }}

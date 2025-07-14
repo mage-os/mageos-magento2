@@ -1,6 +1,6 @@
 {
-    "name": "magento/magento2ce",
-    "description": "Magento 2 (Open Source)",
+    "name": "mage-os/magento2ce",
+    "description": "Mage-OS (Open Source)",
     "type": "project",
     "license": [
         "OSL-3.0",
