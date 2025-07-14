@@ -40,16 +40,49 @@ class OrderApiConfigurableVariationsPriceTest extends WebapiAbstract
     }
 
     #[
-        DataFixture(AttributeFixture::class, as: 'attr'),
-        DataFixture(ProductFixture::class, ['custom_attributes' => [['attribute_code' => 'color', 'value' => '1']]], as: 'product'),
-        DataFixture(ConfigurableProductFixture::class, ['_options' => ['$attr$'], '_links' => ['$product$']], as: 'cp1'),
+        DataFixture(AttributeFixture::class,  [
+            'frontend_input' => 'select',
+            'options' => ['40', '42'],
+            'is_configurable' => true,
+            'is_global' => true
+        ], as: 'attribute'),
+        DataFixture(ProductFixture::class,
+            [
+                'price' => 100,
+                'custom_attributes' => [
+                    ['attribute_code' => '$attribute.attribute_code$', 'value' => '40']
+                ]
+            ],
+            as: 'product1'
+        ),
+        DataFixture(
+            ProductFixture::class,
+            [
+                'price' => 100,
+                'custom_attributes' => [
+                    ['attribute_code' => '$attribute.attribute_code$', 'value' => '42']
+                ]
+            ],
+            as: 'product2'
+        ),
+        DataFixture(
+            ConfigurableProductFixture::class,
+            [
+            '_options' => ['$attribute$'],
+            '_links' => ['$product1$', '$product2$'],
+            'custom_attributes' => [
+            ['attribute_code' => '$attribute.attribute_code$', 'value' => '40']
+            ]
+            ],
+            'configurable_product'
+        ),
         DataFixture(GuestCart::class, as: 'cart'),
         DataFixture(Customer::class, as: 'customer'),
         DataFixture(CustomerCart::class, ['customer_id' => '$customer.id$'], as: 'quote'),
         DataFixture(AddProductToCart::class, [
             'cart_id' => '$cart.id$',
-            'product_id' => '$cp1.id$',
-            'child_product_id' => '$product.id$',
+            'product_id' => '$configurable_product.id$',
+            'child_product_id' => '$product1.id$',
             'qty' => 1
         ]),
         DataFixture(SetBillingAddress::class, ['cart_id' => '$cart.id$']),
