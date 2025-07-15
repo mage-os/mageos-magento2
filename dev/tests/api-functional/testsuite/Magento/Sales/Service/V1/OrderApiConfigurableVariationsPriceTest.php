@@ -190,11 +190,12 @@ class OrderApiConfigurableVariationsPriceTest extends WebapiAbstract
                 'service' => 'salesOrderRepositoryV1',
                 'operation' => 'salesOrderRepositoryV1Get',
                 'parameters' => [
-                    'orderId' => ['id' => $orderId],
+                    'id' => $orderId,
                 ],
             ],
         ]);
     }
+
 
     /**
      * Validates that simple items link correctly to one of the configurable parent items.
