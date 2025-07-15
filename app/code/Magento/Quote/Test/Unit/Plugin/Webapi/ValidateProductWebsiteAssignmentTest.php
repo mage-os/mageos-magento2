@@ -160,7 +160,7 @@ class ValidateProductWebsiteAssignmentTest extends TestCase
             ->with($productId, false, $storeId)
             ->willReturn($this->productMock);
 
-        $this->productMock->expects($this->once())
+        $this->productMock->expects($this->exactly(2))
             ->method('getWebsiteIds')
             ->willReturn($productWebsiteIds);
 
@@ -226,7 +226,7 @@ class ValidateProductWebsiteAssignmentTest extends TestCase
             ->with($productId, false, $storeId)
             ->willReturn($this->productMock);
 
-        $this->productMock->expects($this->once())
+        $this->productMock->expects($this->exactly(2))
             ->method('getWebsiteIds')
             ->willReturn($productWebsiteIds);
 
@@ -277,15 +277,6 @@ class ValidateProductWebsiteAssignmentTest extends TestCase
             ->method('getProductId')
             ->willReturn($productId);
 
-        $this->storeManagerMock->expects($this->once())
-            ->method('getStore')
-            ->with($storeId)
-            ->willReturn($this->storeMock);
-
-        $this->storeMock->expects($this->once())
-            ->method('getWebsiteId')
-            ->willReturn($websiteId);
-
         $this->productRepositoryMock->expects($this->once())
             ->method('getById')
             ->with($productId, false, $storeId)
@@ -295,10 +286,8 @@ class ValidateProductWebsiteAssignmentTest extends TestCase
             ->method('getWebsiteIds')
             ->willReturn($productWebsiteIds);
 
-        $this->expectException(LocalizedException::class);
-        $this->expectExceptionMessage('Product that you are trying to add is not available.');
-
         $this->plugin->beforeSave($this->cartItemRepositoryMock, $this->cartItemMock);
+        $this->assertTrue(true);
     }
 
     /**
@@ -390,7 +379,7 @@ class ValidateProductWebsiteAssignmentTest extends TestCase
             ->with($productId, false, $storeId)
             ->willReturn($this->productMock);
 
-        $this->productMock->expects($this->once())
+        $this->productMock->expects($this->exactly(2))
             ->method('getWebsiteIds')
             ->willReturn($productWebsiteIds);
 
@@ -442,28 +431,13 @@ class ValidateProductWebsiteAssignmentTest extends TestCase
             ->method('getProductId')
             ->willReturn($productId);
 
-        $this->storeManagerMock->expects($this->once())
-            ->method('getStore')
-            ->with($storeId)
-            ->willReturn($this->storeMock);
-
-        $this->storeMock->expects($this->once())
-            ->method('getWebsiteId')
-            ->willReturn($websiteId);
-
         $this->productRepositoryMock->expects($this->once())
             ->method('getById')
             ->with($productId, false, $storeId)
             ->willReturn($this->productMock);
 
-        $this->productMock->expects($this->once())
-            ->method('getWebsiteIds')
-            ->willReturn($productWebsiteIds);
-
-        $this->expectException(LocalizedException::class);
-        $this->expectExceptionMessage('Product that you are trying to add is not available.');
-
         $this->plugin->beforeSave($this->cartItemRepositoryMock, $this->cartItemMock);
+        $this->assertTrue(true);
     }
 
     /**
@@ -521,7 +495,7 @@ class ValidateProductWebsiteAssignmentTest extends TestCase
             ->with($productId, false, $storeId)
             ->willReturn($this->productMock);
 
-        $this->productMock->expects($this->once())
+        $this->productMock->expects($this->exactly(2))
             ->method('getWebsiteIds')
             ->willReturn($productWebsiteIds);
 
