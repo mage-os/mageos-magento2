@@ -42,7 +42,8 @@ class City extends AbstractValidator
     {
         if (!$this->isValidCity($customer->getCity())) {
             parent::_addMessages([[
-                'city' => "Invalid City. Please use letters, numbers, spaces, and the following characters: - _ ' ’ . , & ( )"
+                'city' => "Invalid City. Please use letters, numbers, spaces,
+                and the following characters: - _ ' ’ . , & ( )"
             ]]);
         }
 
