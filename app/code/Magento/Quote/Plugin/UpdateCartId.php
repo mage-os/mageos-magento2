@@ -131,6 +131,9 @@ class UpdateCartId
     {
         try {
             $product = $this->productRepository->getById($productId, false, $storeId);
+            if (empty($product->getWebsiteIds())) {
+                return;
+            }
             $this->checkProductInWebsite($product->getWebsiteIds(), $storeId);
         } catch (NoSuchEntityException) {
             throw new LocalizedException(__('Product that you are trying to add is not available.'));
