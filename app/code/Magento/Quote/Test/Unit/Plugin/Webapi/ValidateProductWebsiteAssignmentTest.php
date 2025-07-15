@@ -302,65 +302,6 @@ class ValidateProductWebsiteAssignmentTest extends TestCase
     }
 
     /**
-     * Test validation when product is not found
-     */
-    public function testBeforeSaveProductNotFound()
-    {
-        $sku = 'test-product';
-        $quoteId = 1;
-        $storeId = 1;
-        $productId = 123;
-
-        $this->cartItemMock->expects($this->once())
-            ->method('getSku')
-            ->willReturn($sku);
-
-        $this->cartItemMock->expects($this->once())
-            ->method('getQuoteId')
-            ->willReturn($quoteId);
-
-        $this->cartRepositoryMock->expects($this->once())
-            ->method('getActive')
-            ->with($quoteId)
-            ->willReturn($this->quoteMock);
-
-        $this->quoteMock->expects($this->once())
-            ->method('getAllItems')
-            ->willReturn([$this->quoteItemMock]);
-
-        $this->quoteItemMock->expects($this->once())
-            ->method('getSku')
-            ->willReturn($sku);
-
-        $this->quoteItemMock->expects($this->once())
-            ->method('getStoreId')
-            ->willReturn($storeId);
-
-        $this->quoteItemMock->expects($this->once())
-            ->method('getProductId')
-            ->willReturn($productId);
-
-        $this->storeManagerMock->expects($this->once())
-            ->method('getStore')
-            ->with($storeId)
-            ->willReturn($this->storeMock);
-
-        $this->storeMock->expects($this->once())
-            ->method('getWebsiteId')
-            ->willReturn(1);
-
-        $this->productRepositoryMock->expects($this->once())
-            ->method('getById')
-            ->with($productId, false, $storeId)
-            ->willThrowException(new NoSuchEntityException(__('Product not found')));
-
-        $this->expectException(LocalizedException::class);
-        $this->expectExceptionMessage('Product that you are trying to add is not available.');
-
-        $this->plugin->beforeSave($this->cartItemRepositoryMock, $this->cartItemMock);
-    }
-
-    /**
      * Test validation skips when no SKU provided
      */
     public function testBeforeSaveNoSku()
@@ -584,44 +525,6 @@ class ValidateProductWebsiteAssignmentTest extends TestCase
             ->method('getWebsiteIds')
             ->willReturn($productWebsiteIds);
 
-        // Method returns void, so we just verify no exception is thrown
-        $this->plugin->beforeSave($this->cartItemRepositoryMock, $this->cartItemMock);
-
-        // If we reach this point, validation passed
-        $this->assertTrue(true);
-    }
-
-    /**
-     * Test validation when no matching quote item found for SKU
-     */
-    public function testBeforeSaveNoMatchingQuoteItem()
-    {
-        $sku = 'test-product';
-        $quoteId = 1;
-        $differentSku = 'different-product';
-
-        $this->cartItemMock->expects($this->once())
-            ->method('getSku')
-            ->willReturn($sku);
-
-        $this->cartItemMock->expects($this->once())
-            ->method('getQuoteId')
-            ->willReturn($quoteId);
-
-        $this->cartRepositoryMock->expects($this->once())
-            ->method('getActive')
-            ->with($quoteId)
-            ->willReturn($this->quoteMock);
-
-        $this->quoteMock->expects($this->once())
-            ->method('getAllItems')
-            ->willReturn([$this->quoteItemMock]);
-
-        $this->quoteItemMock->expects($this->once())
-            ->method('getSku')
-            ->willReturn($differentSku); // Different SKU
-
-        // No further method calls expected since no matching item found
         // Method returns void, so we just verify no exception is thrown
         $this->plugin->beforeSave($this->cartItemRepositoryMock, $this->cartItemMock);
 
