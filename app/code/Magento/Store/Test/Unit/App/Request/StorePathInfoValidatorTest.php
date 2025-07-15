@@ -80,7 +80,7 @@ class StorePathInfoValidatorTest extends TestCase
             ->willReturn(true);
 
         $this->configMock->expects($this->once())
-            ->method('getValue')
+            ->method('isSetFlag')
             ->with(Store::XML_PATH_STORE_IN_URL)
             ->willReturn(false);
         $this->storeRepositoryMock->expects($this->never())
@@ -118,7 +118,7 @@ class StorePathInfoValidatorTest extends TestCase
     public function testGetValidStoreCodeWithEmptyPathInfo(): void
     {
         $this->configMock->expects($this->once())
-            ->method('getValue')
+            ->method('isSetFlag')
             ->with(Store::XML_PATH_STORE_IN_URL)
             ->willReturn(true);
         $this->pathInfoMock->expects($this->once())
