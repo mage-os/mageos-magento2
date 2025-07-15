@@ -43,11 +43,6 @@ class OrderErrorProcessor
         ContextInterface $context,
         ResolveInfo $info
     ): void {
-        if ($exception instanceof AuthorizationException) {
-            throw new GraphQlAuthorizationException(
-                __($exception->getMessage())
-            );
-        }
         $exception = $this->errorMessageFormatter->getFormatted(
             $exception,
             __('A server error stopped your order from being placed. ' .
