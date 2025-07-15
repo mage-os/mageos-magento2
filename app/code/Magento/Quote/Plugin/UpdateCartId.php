@@ -12,13 +12,14 @@ use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Webapi\Rest\Request as RestRequest;
+use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\CartItemInterface;
 use Magento\Quote\Api\GuestCartItemRepositoryInterface;
 use Magento\Quote\Model\QuoteIdMaskFactory;
 use Magento\Store\Model\StoreManagerInterface;
 
 /**
- * Update cart id from request param
+ * Plugin to update cart ID from request and validate product website assignment
  */
 class UpdateCartId
 {
@@ -27,42 +28,42 @@ class UpdateCartId
      * @param ProductRepositoryInterface $productRepository
      * @param StoreManagerInterface $storeManager
      * @param QuoteIdMaskFactory $quoteIdMaskFactory
+     * @param CartRepositoryInterface $cartRepository
      */
     public function __construct(
         private readonly RestRequest $request,
         private readonly ProductRepositoryInterface $productRepository,
-        private readonly StoreManagerInterface      $storeManager,
-        private readonly QuoteIdMaskFactory         $quoteIdMaskFactory
+        private readonly StoreManagerInterface $storeManager,
+        private readonly QuoteIdMaskFactory $quoteIdMaskFactory,
+        private readonly CartRepositoryInterface $cartRepository
     ) {
     }
 
     /**
-     * Update id from request if param cartId exist
+     * Before saving a guest cart item, set quote ID from request and validate website assignment
      *
-     * @param GuestCartItemRepositoryInterface $guestCartItemRepository
+     * @param GuestCartItemRepositoryInterface $subject
      * @param CartItemInterface $cartItem
-     * @return array
+     * @return void
+     * @throws LocalizedException
+     *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function beforeSave(
-        GuestCartItemRepositoryInterface $guestCartItemRepository,
+        GuestCartItemRepositoryInterface $subject,
         CartItemInterface $cartItem
-    ): array {
-        $cartId = $this->request->getParam('cartId');
-
-        if ($cartId) {
+    ): void {
+        if ($cartId = $this->request->getParam('cartId')) {
             $cartItem->setQuoteId($cartId);
         }
+
         $this->validateProductWebsiteAssignment($cartItem);
-        return [$cartItem];
     }
 
     /**
-     * Validate that product is assigned to the current website
+     * Validate product's website assignment for guest cart item
      *
-     * @param CartItemInterface $cartItem
      * @throws LocalizedException
-     * @throws NoSuchEntityException
      */
     private function validateProductWebsiteAssignment(CartItemInterface $cartItem): void
     {
@@ -71,29 +72,84 @@ class UpdateCartId
             return;
         }
 
-        // Get current website ID from the masked cart ID
         $maskedQuoteId = $cartItem->getQuoteId();
         $quoteIdMask = $this->quoteIdMaskFactory->create()->load($maskedQuoteId, 'masked_id');
+        $quoteId = $quoteIdMask->getQuoteId();
 
-        if (!$quoteIdMask->getQuoteId()) {
+        if (!$quoteId) {
             return;
         }
-        $currentWebsiteId = $this->storeManager->getStore()->getWebsiteId();
+
         try {
-            $product = $this->productRepository->get($sku, false, null);
+            $quote = $this->cartRepository->get($quoteId);
+            $storeId = $quote->getStoreId();
 
-            $productWebsiteIds = $product->getWebsiteIds();
-
-            // Validate website assignment
-            if (!is_array($productWebsiteIds) || !in_array($currentWebsiteId, $productWebsiteIds)) {
-                throw new LocalizedException(
-                    __('Product that you are trying to add is not available.')
-                );
+            foreach ($quote->getAllItems() as $item) {
+                if ($sku === $item->getSku()) {
+                    $this->validateWebsiteAssignment($item->getProductId(), $storeId);
+                    return;
+                }
             }
-        } catch (NoSuchEntityException $e) {
-            throw new LocalizedException(
-                __('Product that you are trying to add is not available.')
-            );
+
+            // Product not in quote yet
+            $this->validateWebsiteAssignmentBySku($sku, $storeId);
+
+        } catch (NoSuchEntityException) {
+            throw new LocalizedException(__('Product that you are trying to add is not available.'));
+        }
+    }
+
+    /**
+     * Validate by SKU for new items
+     *
+     * @param string $sku
+     * @param int $storeId
+     * @return void
+     * @throws LocalizedException
+     */
+    private function validateWebsiteAssignmentBySku(string $sku, int $storeId): void
+    {
+        try {
+            $product = $this->productRepository->get($sku, false, $storeId);
+            $this->checkProductInWebsite($product->getWebsiteIds(), $storeId);
+        } catch (NoSuchEntityException) {
+            throw new LocalizedException(__('Product that you are trying to add is not available.'));
+        }
+    }
+
+    /**
+     * Validate by product ID for existing items
+     *
+     * @param int $productId
+     * @param int $storeId
+     * @return void
+     * @throws LocalizedException
+     */
+    private function validateWebsiteAssignment(int $productId, int $storeId): void
+    {
+        try {
+            $product = $this->productRepository->getById($productId, false, $storeId);
+            $this->checkProductInWebsite($product->getWebsiteIds(), $storeId);
+        } catch (NoSuchEntityException) {
+            throw new LocalizedException(__('Product that you are trying to add is not available.'));
+        }
+    }
+
+    /**
+     * Validate by product ID for existing items
+     *
+     * @param array|null $websiteIds
+     * @param int $storeId
+     * @return void
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
+     */
+    private function checkProductInWebsite(?array $websiteIds, int $storeId): void
+    {
+        $websiteId = $this->storeManager->getStore($storeId)->getWebsiteId();
+
+        if (empty($websiteIds) || !in_array($websiteId, $websiteIds, true)) {
+            throw new LocalizedException(__('Product that you are trying to add is not available.'));
         }
     }
 }

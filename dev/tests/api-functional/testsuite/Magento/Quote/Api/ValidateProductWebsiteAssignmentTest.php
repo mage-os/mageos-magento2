@@ -61,18 +61,12 @@ class ValidateProductWebsiteAssignmentTest extends WebapiAbstract
                 'sku' => 'product-base-website',
                 'name' => 'Product Base Website',
                 'price' => 10.00,
-                'website_ids' => ['$website2.id$'], // Base website only
+                'website_ids' => [1, '$website2.id$'], // Base website only
                 'stock_data' => ['use_config_manage_stock' => 1, 'qty' => 100, 'is_in_stock' => 1]
             ],
             'product_base'
         ),
-        DataFixture(
-            Customer::class,
-            [
-                'website_id' => '$website2.id$'
-            ],
-            'customer'
-        )
+        DataFixture(Customer::class, as: 'customer'),
     ]
     public function testCustomerCartRestApiValidatesProductWebsiteAssignmentSuccessfully(): void
     {
