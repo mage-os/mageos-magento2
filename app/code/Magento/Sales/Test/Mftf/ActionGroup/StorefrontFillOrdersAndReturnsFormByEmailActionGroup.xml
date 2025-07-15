@@ -13,6 +13,6 @@
             <argument name="emailId" type="string"/>
         </arguments>
         <remove keyForRemoval="inputEmail"/>
-        <fillField selector="{{StorefrontGuestOrderSearchSection.email}}" userInput="{{emailId}}" stepKey="enterMailId" after="fillEmailId"/>
+        <fillField selector="{{StorefrontGuestOrderSearchSection.email}}" userInput="{{emailId}}" stepKey="enterMailId" after="selectFindOrderByEmail"/>
     </actionGroup>
 </actionGroups>
