@@ -147,7 +147,7 @@ class WebsiteRepository implements \Magento\Store\Api\WebsiteRepositoryInterface
                 $this->initDefaultWebsite();
             }
             if (!$this->default) {
-                throw new \DomainException(__("The default website isn't defined. Set the website and try again."));
+                throw new \DomainException("The default website isn't defined. Set the website and try again.");
             }
         }
 
@@ -168,7 +168,7 @@ class WebsiteRepository implements \Magento\Store\Api\WebsiteRepositoryInterface
     /**
      * Retrieve application config.
      *
-     * @deprecated 100.1.3
+     * @deprecated 100.1.3 Should be lazy loaded with a proxy via the DI.
      * @return Config
      */
     private function getAppConfig()
@@ -191,10 +191,8 @@ class WebsiteRepository implements \Magento\Store\Api\WebsiteRepositoryInterface
             if (isset($data['is_default']) && $data['is_default'] == 1) {
                 if ($this->default) {
                     throw new \DomainException(
-                        __(
                             'The default website is invalid. '
                             . 'Make sure no more than one default is defined and try again.'
-                        )
                     );
                 }
                 $website = $this->factory->create([

@@ -22,7 +22,9 @@ class FrontendStorageConfigurationPool
      * StorageConfigurationPool constructor.
      * @param array $storageConfigurations
      */
-    public function __construct(private array $storageConfigurations = [])  {}
+    public function __construct(private array $storageConfigurations = [])
+    {
+    }
 
     /**
      * Retrieve storage collector (which hold dynamic configurations) by its namespace
