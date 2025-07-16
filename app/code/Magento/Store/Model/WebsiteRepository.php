@@ -191,8 +191,7 @@ class WebsiteRepository implements \Magento\Store\Api\WebsiteRepositoryInterface
             if (isset($data['is_default']) && $data['is_default'] == 1) {
                 if ($this->default) {
                     throw new \DomainException(
-                            'The default website is invalid. '
-                            . 'Make sure no more than one default is defined and try again.'
+                        'The default website is invalid. Make sure no more than one default is defined and try again.'
                     );
                 }
                 $website = $this->factory->create([
