@@ -89,7 +89,6 @@ QUERY;
         $date = \DateTime::createFromFormat($expectedFormat, $dateString);
         $isValid = $date && $date->format($expectedFormat) === $dateString;
         $this->assertTrue($isValid, "Date format is not valid: $dateString");
-
     }
 
     /**
