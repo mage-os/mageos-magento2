@@ -70,7 +70,7 @@ class PlaceOrder implements ResolverInterface
                 // @deprecated The order_id field is deprecated, use order_number instead
                 'order_id' => $order?->getIncrementId(),
             ],
-            'orderV2' => $order ? $this->orderFormatter->format($order) : null,
+            'orderV2' => $order ? $this->orderFormatter->format($order) : null
         ];
     }
 }

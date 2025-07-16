@@ -63,6 +63,7 @@ class AggregateExceptionMessageFormatter
         $messageWithPrefix = empty($messagePrefix)
             ? $messageText
             : __("$messagePrefix: %message", ['message' => $messageText]);
+
         return new GraphQlInputException($messageWithPrefix, $e, $e->getCode());
     }
 }
