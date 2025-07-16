@@ -169,18 +169,6 @@ class WebsiteRepository implements \Magento\Store\Api\WebsiteRepositoryInterface
     }
 
     /**
-     * Retrieve application config.
-     *
-     * @deprecated 100.1.3 Should be lazy loaded with a proxy via the DI.
-     * @see self::$appConfig
-     * @return Config
-     */
-    private function getAppConfig(): Config
-    {
-        return $this->appConfig;
-    }
-
-    /**
      * Initialize default website.
      *
      * @return void
