@@ -13,8 +13,4 @@
         <data key="quantityInCart">Magento\SalesRule\Model\Rule\Condition\Product|quote_item_qty</data>
         <data key="rowTotalInCart">Magento\SalesRule\Model\Rule\Condition\Product|quote_item_row_total</data>
     </entity>
-    <entity name="productAttributeColour" type="productAttribute">
-        <data key="gold">gold</data>
-        <data key="black">black</data>
-    </entity>
 </entities>

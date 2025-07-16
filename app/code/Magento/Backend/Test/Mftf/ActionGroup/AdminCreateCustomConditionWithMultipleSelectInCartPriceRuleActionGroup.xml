@@ -9,7 +9,7 @@
               xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
     <actionGroup name="AdminCreateCustomConditionWithMultipleSelectInCartPriceRuleActionGroup" extends="AdminCreateCustomConditionInCartPriceRuleActionGroup">
         <annotations>
-            <description>Remove fill filed action and replace with select option</description>
+            <description>Create custom condition in action tab in cart price rule</description>
         </annotations>
         <arguments>
             <argument name="productAttributeOption" type="string" defaultValue="{{productAttributeColour.black}}"/>

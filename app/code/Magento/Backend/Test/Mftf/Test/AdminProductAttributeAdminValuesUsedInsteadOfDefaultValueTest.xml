@@ -9,13 +9,13 @@
        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
     <test name="AdminProductAttributeAdminValuesUsedInsteadOfDefaultValueTest">
         <annotations>
-            <features value="SalesRule"/>
+            <features value="Backend"/>
             <stories value="Product attribute admin values should be used in backend"/>
             <title value="Product attribute admin values should be used instead of default store view values in backend"/>
             <description value="Verify that product attribute admin values should be used in cart price rule instead of default store view values in backend"/>
             <testCaseId value="AC-13048"/>
             <severity value="MINOR"/>
-            <group value="SalesRule"/>
+            <group value="backend"/>
         </annotations>
         <before>
             <createData entity="productAttributeMultiselectTwoOptions" stepKey="createColourProductAttribute"/>
