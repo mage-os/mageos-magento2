@@ -27,7 +27,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class PlaceOrderTranslationTest extends TestCase
+class PlaceOrderExceptionProcessingTest extends TestCase
 {
     /**
      * @var GetCartForCheckout|MockObject
