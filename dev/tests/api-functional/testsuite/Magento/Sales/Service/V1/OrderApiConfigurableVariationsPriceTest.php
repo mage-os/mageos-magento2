@@ -190,7 +190,9 @@ class OrderApiConfigurableVariationsPriceTest extends WebapiAbstract
                 'service' => 'salesOrderRepositoryV1',
                 'operation' => 'salesOrderRepositoryV1Get',
                 'parameters' => [
-                    'order_id' => $orderId,
+                    'order_id' => [
+                        'id' => $orderId,
+                    ],
                 ],
             ],
         ]);
