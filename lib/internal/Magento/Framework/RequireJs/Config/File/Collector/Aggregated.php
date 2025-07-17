@@ -1,14 +1,18 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Framework\RequireJs\Config\File\Collector;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\Filesystem;
+use Magento\Framework\RequireJs\Config as RequireJsConfig;
+use Magento\Framework\View\Asset\Minification;
 use Magento\Framework\View\Design\ThemeInterface;
 use Magento\Framework\View\File\CollectorInterface;
+use Magento\Framework\View\File\Factory;
 
 /**
  * Source of RequireJs config files basing on list of directories they may be located in
@@ -42,29 +46,37 @@ class Aggregated implements CollectorInterface
     protected $libDirectory;
 
     /**
-     * @var \Magento\Framework\View\File\Factory
+     * @var Factory
      */
     protected $fileFactory;
 
     /**
-     * @param \Magento\Framework\Filesystem $filesystem
-     * @param \Magento\Framework\View\File\Factory $fileFactory
+     * @var Minification
+     */
+    private Minification $minification;
+
+    /**
+     * @param Filesystem $filesystem
+     * @param Factory $fileFactory
      * @param CollectorInterface $baseFiles
      * @param CollectorInterface $themeFiles
      * @param CollectorInterface $themeModularFiles
+     * @param Minification $minification
      */
     public function __construct(
-        \Magento\Framework\Filesystem $filesystem,
-        \Magento\Framework\View\File\Factory $fileFactory,
+        Filesystem         $filesystem,
+        Factory            $fileFactory,
         CollectorInterface $baseFiles,
         CollectorInterface $themeFiles,
-        CollectorInterface $themeModularFiles
+        CollectorInterface $themeModularFiles,
+        Minification       $minification
     ) {
         $this->libDirectory = $filesystem->getDirectoryRead(DirectoryList::LIB_WEB);
         $this->fileFactory = $fileFactory;
         $this->baseFiles = $baseFiles;
         $this->themeFiles = $themeFiles;
         $this->themeModularFiles = $themeModularFiles;
+        $this->minification = $minification;
     }
 
     /**
@@ -92,6 +104,47 @@ class Aggregated implements CollectorInterface
             $files = array_merge($files, $this->themeModularFiles->getFiles($currentTheme, $filePath));
             $files = array_merge($files, $this->themeFiles->getFiles($currentTheme, $filePath));
         }
+        //return $files;
+        return $this->adjustMinification($theme, $files, $filePath);
+    }
+
+    /**
+     * @param ThemeInterface $theme
+     * @param array $files
+     * @param string $filePath
+     * @return array
+     */
+    private function adjustMinification(ThemeInterface $theme, array $files, string $filePath): array
+    {
+        if ($this->minification->isEnabled('js') && $filePath === RequireJsConfig::CONFIG_FILE_NAME) {
+            $minifiedConfigurations = $this->baseFiles->getFiles($theme, RequireJsConfig::CONFIG_FILE_NAME_MIN);
+            foreach ($theme->getInheritedThemes() as $currentTheme) {
+                $minifiedConfigurations = array_merge(
+                    $minifiedConfigurations,
+                    $this->themeModularFiles->getFiles($currentTheme, RequireJsConfig::CONFIG_FILE_NAME_MIN)
+                );
+                $minifiedConfigurations = array_merge(
+                    $minifiedConfigurations,
+                    $this->themeFiles->getFiles($currentTheme, RequireJsConfig::CONFIG_FILE_NAME_MIN)
+                );
+            }
+            if (!empty($minifiedConfigurations)) {
+                /* @var \Magento\Framework\View\File $file */
+                foreach ($files as $key => $file) {
+                    foreach ($minifiedConfigurations as $minifiedConfiguration) {
+                        $replacedFilename = str_replace(
+                            RequireJsConfig::CONFIG_FILE_NAME_MIN,
+                            RequireJsConfig::CONFIG_FILE_NAME,
+                            $minifiedConfiguration->getFilename()
+                        );
+                        if ($file->getFilename() === $replacedFilename) {
+                            $files[$key] = $minifiedConfiguration;
+                        }
+                    }
+                }
+            }
+        }
+
         return $files;
     }
 }

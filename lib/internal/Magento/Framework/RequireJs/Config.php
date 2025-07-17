@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Framework\RequireJs;
 
@@ -20,27 +20,32 @@ class Config
      *
      * @deprecated since 2.2.0 RequireJS Configuration file is moved into package directory
      */
-    const DIR_NAME = '_requirejs';
+    public const DIR_NAME = '_requirejs';
 
     /**
      * File name of RequireJs config
      */
-    const CONFIG_FILE_NAME = 'requirejs-config.js';
+    public const CONFIG_FILE_NAME = 'requirejs-config.js';
+
+    /**
+     * File name of minified RequireJs config
+     */
+    public const CONFIG_FILE_NAME_MIN = 'requirejs-config-minify.js';
 
     /**
      * File name of RequireJs mixins
      */
-    const MIXINS_FILE_NAME = 'mage/requirejs/mixins.js';
+    public const MIXINS_FILE_NAME = 'mage/requirejs/mixins.js';
 
     /**
      * File name of RequireJs
      */
-    const REQUIRE_JS_FILE_NAME = 'requirejs/require.js';
+    public const REQUIRE_JS_FILE_NAME = 'requirejs/require.js';
 
     /**
      * File name of StaticJs
      */
-    const STATIC_FILE_NAME = 'mage/requirejs/static.js';
+    public const STATIC_FILE_NAME = 'mage/requirejs/static.js';
 
     /**
      * File name of minified files resolver
@@ -155,7 +160,7 @@ config;
     {
         $distributedConfig = '';
         $customConfigFiles = $this->fileSource->getFiles($this->design->getDesignTheme(), self::CONFIG_FILE_NAME);
-        
+
         foreach ($customConfigFiles as $file) {
             /** @var $fileReader \Magento\Framework\Filesystem\File\Read */
             $fileReader = $this->readFactory->create($file->getFilename(), DriverPool::FILE);
