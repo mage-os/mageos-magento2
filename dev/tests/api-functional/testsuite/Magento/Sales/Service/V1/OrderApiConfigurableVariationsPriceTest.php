@@ -32,11 +32,6 @@ class OrderApiConfigurableVariationsPriceTest extends WebapiAbstract
     private const RESOURCE_PATH = '/V1/orders';
 
     /**
-     * Service version
-     */
-    public const SERVICE_VERSION = 'V1';
-
-    /**
      * Fixture storage manager for resolving test data.
      *
      * @var DataFixtureStorage
@@ -193,8 +188,10 @@ class OrderApiConfigurableVariationsPriceTest extends WebapiAbstract
             ],
             'soap' => [
                 'service' => 'salesOrderRepositoryV1',
-                'serviceVersion' => self::SERVICE_VERSION,
                 'operation' => 'salesOrderRepositoryV1Get',
+                'parameters' => [
+                    'id' => (int)$orderId,
+                ],
             ],
         ]);
     }
