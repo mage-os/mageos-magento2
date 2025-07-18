@@ -25,7 +25,6 @@ class AddExistingItemProductOptions
     ) {
     }
 
-
     /**
      * Convert product options from serialized string to array format.
      *
