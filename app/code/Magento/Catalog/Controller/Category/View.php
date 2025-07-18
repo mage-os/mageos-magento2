@@ -212,6 +212,13 @@ class View extends Action implements HttpGetActionInterface, HttpPostActionInter
 
         $category = $this->_initCategory();
         if ($category) {
+            // Negative ?p= value is not supported, redirect to a base version of category page.
+            if ($this->_request->getParam(Toolbar::PAGE_PARM_NAME) < 0) {
+                return $this->resultRedirectFactory->create()
+                    ->setHttpResponseCode(301)
+                    ->setUrl($category->getUrl());
+            }
+
             $this->layerResolver->create(Resolver::CATALOG_LAYER_CATEGORY);
             $settings = $this->_catalogDesign->getDesignSettings($category);
 
