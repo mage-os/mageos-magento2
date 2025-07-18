@@ -107,6 +107,11 @@ class PluginListGenerator implements ConfigWriterInterface, ConfigLoaderInterfac
     private $scopePriorityScheme;
 
     /**
+     * @var State|null
+     */
+    private ?State $appState;
+
+    /**
      * @var array
      */
     private $globalScopePluginData = [];
