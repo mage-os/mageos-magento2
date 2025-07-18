@@ -8,6 +8,8 @@ declare(strict_types=1);
 namespace Magento\Framework\Interception;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\App\State;
 use Magento\Framework\Config\ReaderInterface;
 use Magento\Framework\Config\ScopeInterface;
 use Magento\Framework\Interception\ObjectManager\ConfigInterface;
@@ -129,7 +131,8 @@ class PluginListGenerator implements ConfigWriterInterface, ConfigLoaderInterfac
         ClassDefinitions $classDefinitions,
         LoggerInterface $logger,
         DirectoryList $directoryList,
-        array $scopePriorityScheme = ['global']
+        array $scopePriorityScheme = ['global'],
+        ?State $appstate = null
     ) {
         $this->reader = $reader;
         $this->scopeConfig = $scopeConfig;
@@ -140,6 +143,7 @@ class PluginListGenerator implements ConfigWriterInterface, ConfigLoaderInterfac
         $this->logger = $logger;
         $this->directoryList = $directoryList;
         $this->scopePriorityScheme = $scopePriorityScheme;
+        $this->appState = $appstate ?? ObjectManager::getInstance()->get(State::class);
     }
 
     /**
@@ -368,9 +372,9 @@ class PluginListGenerator implements ConfigWriterInterface, ConfigLoaderInterfac
         foreach ($plugins as $name => $plugin) {
             if (!isset($plugin['instance'])) {
                 unset($plugins[$name]);
-                $isDisabled = $plugin['disabled'] ?? false;
-                if (!$isDisabled) {
-                    $this->logger->info("Reference to undeclared plugin with name '{$name}'.");
+                // Log the undeclared plugin when it is not disabled or when the app is in Developer mode.
+                if ($this->appState->getMode() === State::MODE_DEVELOPER || !($plugin['disabled'] ?? false)) {
+                    $this->logger->debug("Reference to undeclared plugin with name '{$name}'.");
                 }
             }
         }
