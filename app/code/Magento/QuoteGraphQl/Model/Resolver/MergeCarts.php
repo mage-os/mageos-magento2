@@ -25,6 +25,11 @@ use Magento\QuoteGraphQl\Model\Cart\MergeCarts\CartQuantityValidatorInterface;
 class MergeCarts implements ResolverInterface
 {
     /**
+     * @var array
+     */
+    private array $fields;
+
+    /**
      * MergeCarts Constructor
      *
      * @param GetCartForUser $getCartForUser
@@ -40,8 +45,9 @@ class MergeCarts implements ResolverInterface
         private readonly CustomerCartResolver $customerCartResolver,
         private readonly QuoteIdToMaskedQuoteIdInterface $quoteIdToMaskedQuoteId,
         private readonly CartQuantityValidatorInterface $cartQuantityValidator,
-        private readonly array $fields
+        array $fields
     ) {
+        $this->fields = $fields;
     }
 
     /**
@@ -90,10 +96,9 @@ class MergeCarts implements ResolverInterface
         $customerCart = $this->getCartForUser->execute($customerMaskedCartId, $currentUserId, $storeId);
         $guestCart = $this->getCartForUser->execute($guestMaskedCartId, null, $storeId);
 
-        // Validate cart quantities before merging and reload cart before cart merge
+        // Validate cart quantities before merging
         if ($this->cartQuantityValidator->validateFinalCartQuantities($customerCart, $guestCart)) {
             $guestCart = $this->getCartForUser->execute($guestMaskedCartId, null, $storeId);
-            $customerCart = $this->getCartForUser->execute($customerMaskedCartId, $currentUserId, $storeId);
         }
 
         // Merge carts and save
