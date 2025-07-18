@@ -79,7 +79,7 @@ class AddExistingItemProductOptions
         if ($object instanceof OrderInterface && $object->getId() && $object->getItems()) {
             foreach ($object->getItems() as $item) {
                 if ($item->getItemId()) {
-                    $productOptions = $this->getExistingOrderItemProductOptions($item->getItemId());
+                    $productOptions = $this->getExistingOrderItemProductOptions((int)$item->getItemId());
                     if (count($productOptions)) {
                         $item->setProductOptions($productOptions);
                     }
