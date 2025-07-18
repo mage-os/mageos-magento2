@@ -366,9 +366,12 @@ class PluginListGenerator implements ConfigWriterInterface, ConfigLoaderInterfac
     public function filterPlugins(array &$plugins)
     {
         foreach ($plugins as $name => $plugin) {
-            if (empty($plugin['instance'])) {
+            if (!isset($plugin['instance'])) {
                 unset($plugins[$name]);
-                $this->logger->info("Reference to undeclared plugin with name '{$name}'.");
+                $isDisabled = $plugin['disabled'] ?? false;
+                if (!$isDisabled) {
+                    $this->logger->info("Reference to undeclared plugin with name '{$name}'.");
+                }
             }
         }
     }
