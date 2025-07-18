@@ -84,7 +84,6 @@ class RuleTest extends TestCase
 
     /**
      * @magentoAppIsolation enabled
-     * @covers Rule::calcProductPriceRule
      */
     public function testCalcProductPriceRule()
     {
@@ -145,7 +144,6 @@ class RuleTest extends TestCase
         DataFixture(
             AddProductToCartFixture::class,
             ['cart_id' => '$cart.id$', 'product_id' => '$product.id$', 'qty' => 1]
-
         ),
         DataFixture(ScheduleMode::class, ['indexer' => ProductPriceIndexerProcessor::INDEXER_ID]),
         DataFixture(ScheduleMode::class, ['indexer' => RuleProductProcessor::INDEXER_ID])
@@ -177,9 +175,8 @@ class RuleTest extends TestCase
         $updatedCartRepo = $this->objectManager->create(CartRepositoryInterface::class);
         $updatedCartDetails = $updatedCartRepo->get($cart->getId());
 
-        $updatedCartDetails->collectTotals()->save();
         $updatedItems = $updatedCartDetails->getAllItems();
-        //verify that the cart item price is updated after the catalog rule change
+
         $this->assertCount(1, $updatedItems);
         $this->assertEquals($updatedItems[0]->getProduct()->getId(), $product->getId());
         $this->assertEquals((float) $updatedItems[0]->getPrice(), 50.00);

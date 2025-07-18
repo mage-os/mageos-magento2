@@ -27,7 +27,7 @@ class RecollectQuoteAfterRuleChange
      * Recollect quote on product ids after rule change.
      *
      * @param Price $subject
-     * @param $result
+     * @param void $result
      * @param array $ids
      * @return void
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
