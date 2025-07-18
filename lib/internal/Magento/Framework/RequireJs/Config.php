@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2014 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\Framework\RequireJs;
 
@@ -20,32 +20,27 @@ class Config
      *
      * @deprecated since 2.2.0 RequireJS Configuration file is moved into package directory
      */
-    public const DIR_NAME = '_requirejs';
+    const DIR_NAME = '_requirejs';
 
     /**
      * File name of RequireJs config
      */
-    public const CONFIG_FILE_NAME = 'requirejs-config.js';
-
-    /**
-     * File name of minified RequireJs config
-     */
-    public const CONFIG_FILE_NAME_MIN = 'requirejs-config-minify.js';
+    const CONFIG_FILE_NAME = 'requirejs-config.js';
 
     /**
      * File name of RequireJs mixins
      */
-    public const MIXINS_FILE_NAME = 'mage/requirejs/mixins.js';
+    const MIXINS_FILE_NAME = 'mage/requirejs/mixins.js';
 
     /**
      * File name of RequireJs
      */
-    public const REQUIRE_JS_FILE_NAME = 'requirejs/require.js';
+    const REQUIRE_JS_FILE_NAME = 'requirejs/require.js';
 
     /**
      * File name of StaticJs
      */
-    public const STATIC_FILE_NAME = 'mage/requirejs/static.js';
+    const STATIC_FILE_NAME = 'mage/requirejs/static.js';
 
     /**
      * File name of minified files resolver

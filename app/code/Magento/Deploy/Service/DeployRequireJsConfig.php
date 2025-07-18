@@ -110,7 +110,7 @@ class DeployRequireJsConfig
             ]
         );
 
-        $fileManager->createRequireJsConfigAsset();//see here
+        $fileManager->createRequireJsConfigAsset();
 
         $fileManager->createMinResolverAsset();
 
