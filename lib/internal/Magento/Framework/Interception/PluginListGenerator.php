@@ -126,6 +126,7 @@ class PluginListGenerator implements ConfigWriterInterface, ConfigLoaderInterfac
      * @param LoggerInterface $logger
      * @param DirectoryList $directoryList
      * @param array $scopePriorityScheme
+     * @param State|null $appstate
      */
     public function __construct(
         ReaderInterface $reader,
