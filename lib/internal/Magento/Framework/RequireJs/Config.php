@@ -155,7 +155,7 @@ config;
     {
         $distributedConfig = '';
         $customConfigFiles = $this->fileSource->getFiles($this->design->getDesignTheme(), self::CONFIG_FILE_NAME);
-
+        
         foreach ($customConfigFiles as $file) {
             /** @var $fileReader \Magento\Framework\Filesystem\File\Read */
             $fileReader = $this->readFactory->create($file->getFilename(), DriverPool::FILE);
