@@ -31,6 +31,10 @@ class OrderApiConfigurableVariationsPriceTest extends WebapiAbstract
 {
     private const RESOURCE_PATH = '/V1/orders';
 
+    private const SERVICE_READ_NAME = 'salesOrderRepositoryV1';
+
+    private const SERVICE_VERSION = 'V1';
+
     /**
      * Fixture storage manager for resolving test data.
      *
@@ -181,19 +185,18 @@ class OrderApiConfigurableVariationsPriceTest extends WebapiAbstract
      */
     private function callOrderApi(string $orderId): array
     {
-        return $this->_webApiCall([
+        $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH . '/' . $orderId,
                 'httpMethod' => Request::HTTP_METHOD_GET,
             ],
             'soap' => [
-                'service' => 'salesOrderRepositoryV1',
-                'operation' => 'salesOrderRepositoryV1Get',
-                'parameters' => [
-                    'id' => (int)$orderId,
-                ],
+                'service' => self::SERVICE_READ_NAME,
+                'serviceVersion' => self::SERVICE_VERSION,
+                'operation' => self::SERVICE_READ_NAME . 'get',
             ],
-        ]);
+        ];
+        return $this->_webApiCall($serviceInfo, ['id' => $orderId]);
     }
 
     /**
