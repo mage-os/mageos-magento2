@@ -107,9 +107,9 @@ class PluginListGenerator implements ConfigWriterInterface, ConfigLoaderInterfac
     private $scopePriorityScheme;
 
     /**
-     * @var State|null
+     * @var State
      */
-    private ?State $appState;
+    private State $appState;
 
     /**
      * @var array
@@ -126,7 +126,7 @@ class PluginListGenerator implements ConfigWriterInterface, ConfigLoaderInterfac
      * @param LoggerInterface $logger
      * @param DirectoryList $directoryList
      * @param array $scopePriorityScheme
-     * @param State|null $appstate
+     * @param State|null $appState
      */
     public function __construct(
         ReaderInterface $reader,
@@ -138,7 +138,7 @@ class PluginListGenerator implements ConfigWriterInterface, ConfigLoaderInterfac
         LoggerInterface $logger,
         DirectoryList $directoryList,
         array $scopePriorityScheme = ['global'],
-        ?State $appstate = null
+        ?State $appState = null
     ) {
         $this->reader = $reader;
         $this->scopeConfig = $scopeConfig;
@@ -149,7 +149,7 @@ class PluginListGenerator implements ConfigWriterInterface, ConfigLoaderInterfac
         $this->logger = $logger;
         $this->directoryList = $directoryList;
         $this->scopePriorityScheme = $scopePriorityScheme;
-        $this->appState = $appstate ?? ObjectManager::getInstance()->get(State::class);
+        $this->appState = $appState ?? ObjectManager::getInstance()->get(State::class);
     }
 
     /**
