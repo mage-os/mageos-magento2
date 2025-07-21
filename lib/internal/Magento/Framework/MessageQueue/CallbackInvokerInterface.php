@@ -28,6 +28,7 @@ interface CallbackInvokerInterface
         $maxNumberOfMessages,
         $callback,
         $maxIdleTime = null,
-        $sleep = null
+        $sleep = null,
+        $connectionName = 'amqp'
     );
 }

@@ -1,10 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Framework\MessageQueue;
 
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\MessageQueue\ConfigInterface as MessageQueueConfig;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\MessageQueue\Consumer\ConfigInterface as ConsumerConfig;
@@ -74,10 +75,8 @@ class BatchConsumer implements ConsumerInterface
      * @param ConsumerConfigurationInterface $configuration
      * @param int $interval [optional]
      * @param int $batchSize [optional]
-     * @param MessageProcessorLoader $messageProcessorLoader [optional]
-     * @param MessageController $messageController [optional]
-     * @param ConsumerConfig $consumerConfig [optional]
-     *
+     * @param MessageProcessorLoader|null $messageProcessorLoader [optional]
+     * @param ConsumerConfig|null $consumerConfig
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function __construct(
@@ -89,7 +88,8 @@ class BatchConsumer implements ConsumerInterface
         ConsumerConfigurationInterface $configuration,
         $interval = 5,
         $batchSize = 0,
-        ?MessageProcessorLoader $messageProcessorLoader = null
+        ?MessageProcessorLoader $messageProcessorLoader = null,
+        ?ConsumerConfig $consumerConfig = null
     ) {
         $this->messageEncoder = $messageEncoder;
         $this->queueRepository = $queueRepository;
@@ -100,10 +100,11 @@ class BatchConsumer implements ConsumerInterface
         $this->configuration = $configuration;
         $this->messageProcessorLoader = $messageProcessorLoader
             ?: \Magento\Framework\App\ObjectManager::getInstance()->get(MessageProcessorLoader::class);
+        $this->consumerConfig = $consumerConfig ?: ObjectManager::getInstance()->get(ConsumerConfig::class);
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function process($maxNumberOfMessages = null)
     {
@@ -177,10 +178,14 @@ class BatchConsumer implements ConsumerInterface
     private function getAllMessages(QueueInterface $queue)
     {
         $messages = [];
+        $consumerName = $this->configuration->getConsumerName();
+        $connectionName = $this->consumerConfig->getConsumer($consumerName)->getConnection();
+        if($connectionName === 'stomp'){
+            $queue->subscribeQueue();
+        }
         while ($message = $queue->dequeue()) {
             $messages[] = $message;
         }
-
         return $messages;
     }
 
@@ -194,6 +199,11 @@ class BatchConsumer implements ConsumerInterface
     private function getMessages(QueueInterface $queue, $count)
     {
         $messages = [];
+        $consumerName = $this->configuration->getConsumerName();
+        $connectionName = $this->consumerConfig->getConsumer($consumerName)->getConnection();
+        if($connectionName === 'stomp'){
+            $queue->subscribeQueue();
+        }
         for ($i = $count; $i > 0; $i--) {
             $message = $queue->dequeue();
             if ($message === null) {

@@ -67,11 +67,15 @@ class CallbackInvoker implements CallbackInvokerInterface
         $maxNumberOfMessages,
         $callback,
         $maxIdleTime = null,
-        $sleep = null
+        $sleep = null,
+        $connectionName = 'amqp'
     ) {
         $this->poisonPillVersion = $this->poisonPillRead->getLatestVersion();
         $sleep = (int) $sleep ?: 1;
         $maxIdleTime = $maxIdleTime ? (int) $maxIdleTime : PHP_INT_MAX;
+        if ($connectionName === 'stomp') {
+            $queue->subscribeQueue();
+        }
         for ($i = $maxNumberOfMessages; $i > 0; $i--) {
             $idleStartTime = microtime(true);
             do {
