@@ -285,7 +285,7 @@ class ProductRepository implements \Magento\Catalog\Api\ProductRepositoryInterfa
             $productId = $this->resourceModel->getIdBySku($sku);
             if (!$productId) {
                 throw new NoSuchEntityException(
-                    __("The product that was requested doesn't exist. Verify the product and try again.")
+                    __("The product with the SKU: " . $sku . " was requested and doesn't exist. Verify the product and try again.")
                 );
             }
             if ($editMode) {
@@ -319,7 +319,7 @@ class ProductRepository implements \Magento\Catalog\Api\ProductRepositoryInterfa
             $product->load($productId);
             if (!$product->getId()) {
                 throw new NoSuchEntityException(
-                    __("The product that was requested doesn't exist. Verify the product and try again.")
+                    __("The product with the ID: " . $productId ." was requested and doesn't exist. Verify the product and try again.")
                 );
             }
             $this->cacheProduct($cacheKey, $product);
