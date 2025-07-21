@@ -1,9 +1,11 @@
 <?php
 /**
- * Copyright 2015 Adobe
+ * Copyright 2025 Adobe
  * All Rights Reserved.
  */
-namespace Magento\Framework\MessageQueue;
+declare(strict_types=1);
+
+namespace Magento\Framework\MessageQueue\Bulk\Queue;
 
 /**
  * Queue factory
@@ -36,7 +38,7 @@ class QueueRepository
      * @return QueueInterface
      * @throws \LogicException
      */
-    public function get($connectionName, $queueName): QueueInterface
+    public function get(string $connectionName, string $queueName): QueueInterface
     {
         if (!isset($this->queueInstances[$connectionName][$queueName])) {
             $queue = $this->queueFactory->create($queueName, $connectionName);

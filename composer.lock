@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c0a82fa4155cf2880ee2593885bab2ac",
+    "content-hash": "a4e42b7c8b4fb89860b9e7e72b85fce9",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -7091,6 +7091,79 @@
                 }
             ],
             "time": "2025-01-03T09:35:48+00:00"
+        },
+        {
+            "name": "stomp-php/stomp-php",
+            "version": "5.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/stomp-php/stomp-php.git",
+                "reference": "85e7ad490aeda7d23f8dd7c570aab08e096e40b6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/stomp-php/stomp-php/zipball/85e7ad490aeda7d23f8dd7c570aab08e096e40b6",
+                "reference": "85e7ad490aeda7d23f8dd7c570aab08e096e40b6",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.3|^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Stomp\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Dejan Bosnanac",
+                    "email": "dejan@nighttale.net",
+                    "homepage": "http://www.nighttale.net"
+                },
+                {
+                    "name": "Sören Rohweder",
+                    "email": "s.rohweder@blage.net",
+                    "homepage": "http://www.monofone.de"
+                },
+                {
+                    "name": "Jens Radtke",
+                    "email": "swefl@fin-sn.de",
+                    "homepage": "http://www.fin-sn.de"
+                }
+            ],
+            "description": "stomp support for PHP",
+            "homepage": "http://github.com/stomp-php/stomp-php",
+            "keywords": [
+                "activeMQ",
+                "apollomq",
+                "jms",
+                "messaging",
+                "rabbitmq",
+                "stomp"
+            ],
+            "support": {
+                "issues": "https://github.com/stomp-php/stomp-php/issues",
+                "source": "https://github.com/stomp-php/stomp-php/tree/5.1.2"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/jmglsn",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/staabm",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-02-03T12:32:51+00:00"
         },
         {
             "name": "symfony/config",
