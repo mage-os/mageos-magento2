@@ -192,6 +192,7 @@ class Discount extends AbstractTotal
         /** @var Rule $rule */
         foreach ($rules as $rule) {
             $ruleTotalDiscount = 0;
+            $ruleDiscountAmount = 0;
             /** @var Item $item */
             foreach ($itemsToApplyRules as $key => $item) {
                 if ($item->getNoDiscount() || !$this->calculator->canApplyDiscount($item) || $item->getParentItem()) {
@@ -224,11 +225,15 @@ class Discount extends AbstractTotal
                 if ($item->getChildren() && $item->isChildrenCalculated()) {
                     foreach ($item->getChildren() as $child) {
                         $ruleTotalDiscount += $child->getBaseDiscountAmount();
+                        $ruleDiscountAmount += $child->getDiscountAmount();
                     }
                 }
                 $ruleTotalDiscount += $item->getBaseDiscountAmount();
+                $ruleDiscountAmount += $item->getDiscountAmount();
             }
             $address->setBaseDiscountAmount($ruleTotalDiscount);
+            $address->setBaseSubtotalWithDiscount($address->getBaseSubtotal() - $ruleTotalDiscount);
+            $address->setSubtotalWithDiscount($address->getSubtotal() - $ruleDiscountAmount);
         }
         $this->calculator->initTotals($items, $address);
         foreach ($items as $item) {
