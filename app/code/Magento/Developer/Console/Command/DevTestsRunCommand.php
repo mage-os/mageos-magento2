@@ -80,7 +80,7 @@ class DevTestsRunCommand extends Command
      * @param OutputInterface $output
      * @return int Non zero if invalid type, 0 otherwise
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         /* Validate type argument is valid */
         $type = $input->getArgument(self::INPUT_ARG_TYPE);
