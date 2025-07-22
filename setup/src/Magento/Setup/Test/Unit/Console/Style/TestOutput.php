@@ -16,7 +16,7 @@ class TestOutput extends Output
 {
     public $output = '';
 
-    public function clear()
+    public function clear(): void
     {
         $this->output = '';
     }
@@ -25,7 +25,7 @@ class TestOutput extends Output
      * @param string $message
      * @param bool $newline
      */
-    protected function doWrite($message, $newline)
+    protected function doWrite($message, $newline): void
     {
         $this->output .= $message . ($newline ? "\n" : '');
     }
