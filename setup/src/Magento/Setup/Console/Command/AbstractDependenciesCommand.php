@@ -87,7 +87,7 @@ abstract class AbstractDependenciesCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         try {
             /** @var \Magento\Framework\Component\ComponentRegistrar $componentRegistrar */
