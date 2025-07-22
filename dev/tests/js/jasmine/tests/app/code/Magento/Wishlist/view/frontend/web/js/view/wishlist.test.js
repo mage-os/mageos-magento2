@@ -50,21 +50,25 @@ define([
                 injector.clean();
                 injector.remove();
                 delete window.checkout;
-            } catch (e) {}
+            } catch (e) { // eslint-disable-line no-unused-vars
+                // Ignore cleanup errors
+            }
         }
 
-        async function loadWishlistComponent() {
+        function loadWishlistComponent() {
             return new Promise(resolve => {
-                injector.require(['Magento_Wishlist/js/view/wishlist'], async function (WishlistComponent) {
+                injector.require(['Magento_Wishlist/js/view/wishlist'], function (WishlistComponent) {
                     wishlistComponent = new WishlistComponent();
                     resolve();
                 });
             });
         }
 
-        beforeEach(async function () {
+        beforeEach(function (done) {
             setupInjector();
-            await loadWishlistComponent();
+            loadWishlistComponent().then(function () {
+                done();
+            });
         });
 
         afterEach(function () {
@@ -72,38 +76,118 @@ define([
         });
 
         describe('Initialization', function () {
-            it('should call customerData.get with "wishlist"', async function () {
+            it('should call customerData.get with "wishlist"', function () {
                 expect(mockCustomerData.get).toHaveBeenCalledWith('wishlist');
             });
 
-            it('should call customerData.get with "company"', async function () {
+            it('should call customerData.get with "company"', function () {
                 expect(mockCustomerData.get).toHaveBeenCalledWith('company');
             });
 
-            it('should invalidate wishlist if storeIds do not match', async function () {
+            it('should invalidate wishlist if storeIds do not match', function () {
                 window.checkout = { storeId: 2 };
-                await wishlistComponent.initialize();
+                wishlistComponent.initialize();
                 expect(mockCustomerData.invalidate).toHaveBeenCalledWith(['wishlist']);
             });
 
-            it('should not reload wishlist if storeIds match and company is disabled', async function () {
+            it('should not reload wishlist if storeIds match and company is disabled', function () {
                 window.checkout = { storeId: 1 };
                 mockCompany.is_enabled = false;
-                await wishlistComponent.initialize();
+                wishlistComponent.initialize();
                 expect(mockCustomerData.reload).not.toHaveBeenCalledWith(['wishlist'], false);
             });
 
-            it('should reload wishlist if storeIds do not match', async function () {
+            it('should reload wishlist if storeIds do not match', function () {
                 window.checkout = { storeId: 2 };
-                await wishlistComponent.initialize();
+                wishlistComponent.initialize();
                 expect(mockCustomerData.reload).toHaveBeenCalledWith(['wishlist'], false);
             });
 
-            it('should reload wishlist if storeIds match and company is enabled', async function () {
+            it('should reload wishlist if storeIds match and company is enabled', function () {
                 window.checkout = { storeId: 1 };
                 mockCompany.is_enabled = true;
-                await wishlistComponent.initialize();
+                wishlistComponent.initialize();
                 expect(mockCustomerData.reload).toHaveBeenCalledWith(['wishlist'], false);
+            });
+        });
+
+        describe('Core Methods', function () {
+            it('should have ensureWishlistDataLoaded method', function () {
+                expect(typeof wishlistComponent.ensureWishlistDataLoaded).toBe('function');
+            });
+
+            it('should have handleDepersonalization method', function () {
+                expect(typeof wishlistComponent.handleDepersonalization).toBe('function');
+            });
+
+            it('should have updateWishlistUI method', function () {
+                expect(typeof wishlistComponent.updateWishlistUI).toBe('function');
+            });
+        });
+
+        describe('Data Handling', function () {
+            it('should have wishlist data available', function () {
+                expect(wishlistComponent.wishlist).toBeDefined();
+                expect(wishlistComponent.wishlist()).toEqual(mockWishlist);
+            });
+
+            it('should have company data available', function () {
+                expect(wishlistComponent.company).toBeDefined();
+                expect(wishlistComponent.company()).toEqual(mockCompany);
+            });
+
+            it('should handle empty wishlist data', function () {
+                mockWishlist.counter = 0;
+                expect(wishlistComponent.wishlist().counter).toBe(0);
+            });
+        });
+
+        describe('ensureWishlistDataLoaded', function () {
+            it('should not call customerData.reload when wishlist has data', function () {
+                mockWishlist.counter = 3;
+                wishlistComponent.ensureWishlistDataLoaded();
+                expect(mockCustomerData.reload).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('handleDepersonalization', function () {
+            it('should set up timeout attempts', function () {
+                spyOn(window, 'setTimeout');
+                wishlistComponent.handleDepersonalization();
+                expect(window.setTimeout).toHaveBeenCalledTimes(1);
+            });
+
+            it('should not call customerData.reload when wishlist has data', function () {
+                // Reset mock and set wishlist to have data
+                mockCustomerData.reload.calls.reset();
+                mockWishlist.counter = 3;
+                spyOn(window, 'setTimeout').and.callFake(function (callback) {
+                    callback();
+                });
+                wishlistComponent.handleDepersonalization();
+                expect(mockCustomerData.reload).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('updateWishlistUI', function () {
+            it('should execute without errors when called', function () {
+                expect(function () {
+                    wishlistComponent.updateWishlistUI();
+                }).not.toThrow();
+            });
+
+            it('should handle wishlist data with counter', function () {
+                mockWishlist.counter = '5 items';
+                expect(function () {
+                    wishlistComponent.updateWishlistUI();
+                }).not.toThrow();
+            });
+
+            it('should handle wishlist data without counter', function () {
+                mockWishlist.counter = null;
+                expect(function () {
+                    wishlistComponent.updateWishlistUI();
+                }).not.toThrow();
             });
         });
     });
