@@ -193,7 +193,7 @@ class ThemeUninstallCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $messages = [];
         $themePaths = $input->getArgument(self::INPUT_KEY_THEMES);
