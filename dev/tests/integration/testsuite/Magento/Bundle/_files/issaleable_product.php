@@ -8,8 +8,7 @@ use Magento\TestFramework\Workaround\Override\Fixture\Resolver;
 
 Resolver::getInstance()->requireDataFixture('Magento/Bundle/_files/multiple_products.php');
 
-if (!function_exists('prepareBundleOptions'))
-{
+if (!function_exists('prepareBundleOptions')) {
     function prepareBundleOptions(Magento\Catalog\Model\Product $product)
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
