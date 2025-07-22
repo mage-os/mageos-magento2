@@ -330,7 +330,7 @@ class Address extends \Magento\Framework\App\Helper\AbstractHelper implements Re
             }
         }
 
-        return $lines;
+        return array_filter($lines);
     }
 
     /**

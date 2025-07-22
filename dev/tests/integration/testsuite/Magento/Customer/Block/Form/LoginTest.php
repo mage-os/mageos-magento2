@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Customer\Block\Form;
 
 use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\View\Element\ButtonLockInterface;
 use Magento\Framework\View\LayoutInterface;
 use Magento\Framework\View\Element\ButtonLockManager;
 use Magento\TestFramework\Helper\Bootstrap;
@@ -49,7 +50,7 @@ class LoginTest extends TestCase
         $this->layout = $this->objectManager->get(LayoutInterface::class);
 
         $code = 'customer_login_form_submit';
-        $buttonLock = $this->getMockBuilder(\Magento\ReCaptchaUi\Model\ButtonLock::class)
+        $buttonLock = $this->getMockBuilder(ButtonLockInterface::class)
             ->disableOriginalConstructor()
             ->disableAutoload()
             ->onlyMethods(['isDisabled', 'getCode'])
