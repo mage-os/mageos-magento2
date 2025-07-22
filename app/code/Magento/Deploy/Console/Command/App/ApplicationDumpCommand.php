@@ -81,7 +81,7 @@ class ApplicationDumpCommand extends Command
      * @return boolean
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->groupSourcesByPool();
         $dumpedTypes = [];
