@@ -6,6 +6,8 @@
 
 namespace Magento\Bundle\Model\Product;
 
+use Magento\Framework\Exception\NoSuchEntityException;
+
 /**
  * Test class for \Magento\Bundle\Model\Product\Type (bundle product type)
  *
@@ -216,6 +218,7 @@ class IsSaleableTest extends \PHPUnit\Framework\TestCase
     /**
      * Check bundle product is NOT saleable if
      * there are not enough qty of selection on required option
+     * when user cannot define own quantities
      *
      * @magentoAppIsolation enabled
      * @covers \Magento\Bundle\Model\Product\Type::isSalable
@@ -224,9 +227,7 @@ class IsSaleableTest extends \PHPUnit\Framework\TestCase
     public function testIsSaleableOnBundleWithNotEnoughQtyOfSelection()
     {
         $this->setQtyForSelections(['simple1', 'simple2', 'simple3'], 1);
-
         $bundleProduct = $this->productRepository->get('bundle-product');
-
         $this->assertFalse(
             $bundleProduct->isSalable(),
             'Bundle product supposed to be non saleable'
@@ -353,5 +354,23 @@ class IsSaleableTest extends \PHPUnit\Framework\TestCase
             $ea->getStockItem()->setQty($qty);
             $this->productRepository->save($product);
         }
+    }
+
+    /**
+     * Check bundle product is not salable if required option where user can
+     * set own quantity is not in stock
+     *
+     * @return void
+     * @magentoAppIsolation enabled
+     * @throws NoSuchEntityException
+     */
+    public function testIsSalableOnBundleWithRequiredOptionUserCanChangeQtyWithoutStock()
+    {
+        $product = $this->productRepository->get('bundle-product-checkbox-required-option');
+        $this->setQtyForSelections(['simple1'], 0);
+        $this->assertFalse(
+            $product->isSalable(),
+            'Bundle product with required option that has 0 stock should not be salable'
+        );
     }
 }
