@@ -11,7 +11,7 @@
     <test name="AdminCreateOrderWithBackOrderQtyEnabledProductTest">
         <annotations>
             <features value="Sales"/>
-            <stories value="Backordered qty"/>
+            <stories value="Backorders"/>
             <title value="Backordered quantity is visible on order item level in backend"/>
             <description value="Ensure that backordered quantity is displayed at item level in admin order details when backorders are allowed."/>
             <testCaseId value="AC-12061"/>
