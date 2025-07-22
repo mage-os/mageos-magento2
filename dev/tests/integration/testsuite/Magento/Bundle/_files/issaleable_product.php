@@ -10,7 +10,8 @@ Resolver::getInstance()->requireDataFixture('Magento/Bundle/_files/multiple_prod
 
 if (!function_exists('prepareBundleOptions'))
 {
-    function prepareBundleOptions(Magento\Catalog\Model\Product $product) {
+    function prepareBundleOptions(Magento\Catalog\Model\Product $product)
+    {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var \Magento\Catalog\Model\ProductRepository $productRepository */
         $productRepository = $objectManager->create(\Magento\Catalog\Api\ProductRepositoryInterface::class);
