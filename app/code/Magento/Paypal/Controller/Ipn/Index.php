@@ -102,7 +102,7 @@ class Index extends \Magento\Framework\App\Action\Action implements CsrfAwareAct
             // phpcs:ignore Magento2.Security.LanguageConstruct.ExitUsage
             exit;
         } catch (UnknownIpnException $e) {
-            $this->_logger->critical($e);
+            $this->_logger->warning($e);
         } catch (\Exception $e) {
             $this->_logger->critical($e);
             $this->getResponse()->setHttpResponseCode(500);
