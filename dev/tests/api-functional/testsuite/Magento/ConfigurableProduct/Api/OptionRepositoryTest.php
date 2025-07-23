@@ -102,7 +102,7 @@ class OptionRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstrac
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage(
-            'The product with SKU "product_not_exist" does not exist.'
+            'The product with SKU "%1" does not exist.'
         );
 
         $productSku = 'product_not_exist';

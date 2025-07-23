@@ -383,7 +383,7 @@ class ProductRepositoryTest extends WebapiAbstract
             $nonExistingId,
         ];
 
-        $expectedMessage = 'The product with SKU "wrong_product_sku" does not exist.';
+        $expectedMessage = 'The product with ID "%1" does not exist.';
         try {
             $this->saveProduct($response);
             $this->fail("Expected exception");
@@ -461,7 +461,7 @@ class ProductRepositoryTest extends WebapiAbstract
             $productId2,
         ];
 
-        $expectedMessage = 'The product with SKU "product_not_exist" does not exist.';
+        $expectedMessage = 'The product with ID "%1" does not exist.';
         try {
             $this->saveProduct($response);
             $this->fail("Expected exception");
