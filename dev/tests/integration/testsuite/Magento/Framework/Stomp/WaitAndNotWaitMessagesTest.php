@@ -59,7 +59,7 @@ class WaitAndNotWaitMessagesTest extends QueueTestCaseAbstract
             $stompConfig = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
                 ->get(\Magento\Framework\Stomp\Config::class);
             $stompConfig->getConnection();
-        } catch (\Throwable $e) {
+        } catch (\Exception $e) {
             $this->markTestSkipped('STOMP test skipped because AMQP connection is available. This test is STOMP-specific');
         }
 
