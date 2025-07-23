@@ -1,11 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Framework\DB\Logger;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\WriteInterface;
 
@@ -28,19 +30,24 @@ class File extends LoggerAbstract
 
     /**
      * @param Filesystem $filesystem
+     * @param ResourceConnection $resource
      * @param string $debugFile
      * @param bool $logAllQueries
      * @param float $logQueryTime
      * @param bool $logCallStack
+     * @param bool $logIndexCheck
+     * @throws FileSystemException
      */
     public function __construct(
         Filesystem $filesystem,
+        ResourceConnection $resource,
         $debugFile = 'debug/db.log',
         $logAllQueries = false,
         $logQueryTime = 0.05,
-        $logCallStack = false
+        $logCallStack = false,
+        $logIndexCheck = false
     ) {
-        parent::__construct($logAllQueries, $logQueryTime, $logCallStack);
+        parent::__construct($resource, $logAllQueries, $logQueryTime, $logCallStack, $logIndexCheck);
         $this->dir = $filesystem->getDirectoryWrite(DirectoryList::VAR_DIR);
         $this->debugFile = $debugFile;
     }
