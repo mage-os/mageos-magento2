@@ -60,15 +60,15 @@
         <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
             <argument name="Customer" value="$$customer$$"/>
         </actionGroup>
-        <actionGroup ref="StorefrontNavigateToCategoryUrlActionGroup" stepKey="NavigateToCategoryPageOnStoreFront">
-            <argument name="categoryUrl" value="$$category.custom_attributes[url_key]$$"/>
-        </actionGroup>
-        <!-- Step 2: Search for the product example - Bag -->
+        <!-- Step 2: Search for the product Bag -->
         <actionGroup ref="StoreFrontQuickSearchActionGroup" stepKey="searchByCreatedTerm">
             <argument name="query" value="Bag"/>
         </actionGroup>
+        <waitForElementVisible userInput="$product1.name$" selector="{{StorefrontCatalogSearchMainSection.searchResults}}" stepKey="seeProduct1"/>
+        <waitForElementVisible userInput="$product2.name$" selector="{{StorefrontCatalogSearchMainSection.searchResults}}" stepKey="seeProduct2"/>
+        <waitForElementVisible userInput="$product3.name$" selector="{{StorefrontCatalogSearchMainSection.searchResults}}" stepKey="seeProduct3"/>
         <!-- Step 3: Sort by Change to "Price". -->
-        <actionGroup ref="StorefrontCategoryPageSortProductActionGroup" stepKey="sortProductByPrice"/>
+        <actionGroup ref="StorefrontCategoryPageSortProductActionGroup" stepKey="sortProductByPriceAscending"/>
         <!-- Step 4: Click the arrow to sort by price desc/asc by clicking on UP/Down arrow. -->
         <actionGroup ref="StorefrontCategoryPageSortDescendingActionGroup" stepKey="setDescendingDirection"/>
         <selectOption selector="{{StorefrontCategoryTopToolbarSection.sortByDropdown}}" userInput="Price" stepKey="selectSortByProductName"/>
