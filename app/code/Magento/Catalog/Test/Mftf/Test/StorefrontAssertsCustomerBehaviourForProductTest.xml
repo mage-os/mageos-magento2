@@ -64,9 +64,9 @@
         <actionGroup ref="StoreFrontQuickSearchActionGroup" stepKey="searchByCreatedTerm">
             <argument name="query" value="Bag"/>
         </actionGroup>
-        <waitForElementVisible userInput="$product1.name$" selector="{{StorefrontCatalogSearchMainSection.searchResults}}" stepKey="seeProduct1"/>
-        <waitForElementVisible userInput="$product2.name$" selector="{{StorefrontCatalogSearchMainSection.searchResults}}" stepKey="seeProduct2"/>
-        <waitForElementVisible userInput="$product3.name$" selector="{{StorefrontCatalogSearchMainSection.searchResults}}" stepKey="seeProduct3"/>
+        <waitForText userInput="$product1.name$" selector="{{StorefrontCatalogSearchMainSection.searchResults}}" stepKey="seeProduct1"/>
+        <waitForText userInput="$product2.name$" selector="{{StorefrontCatalogSearchMainSection.searchResults}}" stepKey="seeProduct2"/>
+        <waitForText userInput="$product3.name$" selector="{{StorefrontCatalogSearchMainSection.searchResults}}" stepKey="seeProduct3"/>
         <!-- Step 3: Sort by Change to "Price". -->
         <actionGroup ref="StorefrontCategoryPageSortProductActionGroup" stepKey="sortProductByPriceAscending"/>
         <!-- Step 4: Click the arrow to sort by price desc/asc by clicking on UP/Down arrow. -->
