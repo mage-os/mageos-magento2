@@ -17,6 +17,5 @@ $data = [
     'endpoint' => 'http://localhost/endpoint',
     'identity_link_url' => 'http://localhost/link',
     'all_resources' => 0,
-    'status' => 1
 ];
 $integrationService->create($data);
