@@ -75,7 +75,7 @@ class ProductAttributesCleanUp extends \Symfony\Component\Console\Command\Comman
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->setDecorated(true);
         $this->appState->setAreaCode(\Magento\Framework\App\Area::AREA_GLOBAL);
