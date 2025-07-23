@@ -10,6 +10,7 @@ use Magento\Framework\App\DeploymentConfig\Writer;
 use Magento\Framework\Config\File\ConfigFilePool;
 use Magento\Framework\Filesystem;
 use Magento\Framework\MessageQueue\UseCase\QueueTestCaseAbstract;
+use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestModuleAsyncStomp\Model\AsyncTestData;
 
 class WaitAndNotWaitMessagesTest extends QueueTestCaseAbstract
@@ -50,23 +51,27 @@ class WaitAndNotWaitMessagesTest extends QueueTestCaseAbstract
     protected $maxMessages = 4;
 
     /**
+     * @var string
+     */
+    private $connectionType;
+
+    /**
      * @inheritdoc
      */
     protected function setUp(): void
     {
-        // Check if STOMP connection is available
-        try {
-            $stompConfig = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-                ->get(\Magento\Framework\Stomp\Config::class);
-            $stompConfig->getConnection();
-        } catch (\Exception $e) {
-            $this->markTestSkipped('STOMP test skipped because AMQP connection is available. This test is STOMP-specific');
-        }
+        $this->objectManager = Bootstrap::getObjectManager();
+        // Check if STOMP is configured as the queue connection
+        /** @var \Magento\Framework\MessageQueue\DefaultValueProvider $defaultValueProvider */
+        $defaultValueProvider = $this->objectManager->get(\Magento\Framework\MessageQueue\DefaultValueProvider::class);
+        $this->connectionType = $defaultValueProvider->getConnection();
 
-        parent::setUp();
-        $this->reader = $this->objectManager->get(FileReader::class);
-        $this->filesystem = $this->objectManager->get(Filesystem::class);
-        $this->config = $this->loadConfig();
+        if ($this->connectionType === 'stomp') {
+            parent::setUp();
+            $this->reader = $this->objectManager->get(FileReader::class);
+            $this->filesystem = $this->objectManager->get(Filesystem::class);
+            $this->config = $this->loadConfig();
+        }
     }
 
     /**
@@ -88,6 +93,10 @@ class WaitAndNotWaitMessagesTest extends QueueTestCaseAbstract
      */
     public function testWaitForMessages()
     {
+        if ($this->connectionType !== 'stomp'){
+            $this->markTestSkipped('STOMP test skipped because AMQP connection is available. This test is STOMP-specific.');
+        }
+
         $this->publisherConsumerController->stopConsumers();
 
         $config = $this->config;
@@ -119,6 +128,10 @@ class WaitAndNotWaitMessagesTest extends QueueTestCaseAbstract
      */
     public function testNotWaitForMessages(): void
     {
+        if ($this->connectionType !== 'stomp'){
+            $this->markTestSkipped('STOMP test skipped because AMQP connection is available. This test is STOMP-specific.');
+        }
+
         $this->publisherConsumerController->stopConsumers();
 
         $config = $this->config;

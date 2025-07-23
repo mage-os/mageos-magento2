@@ -34,27 +34,32 @@ class TopologyTest extends TestCase
      */
     private $objectManager;
 
+
+    /**
+     * @var string
+     */
+    private $connectionType;
+
     /**
      * @return void
      */
     protected function setUp(): void
     {
         $this->objectManager = Bootstrap::getObjectManager();
-        
-        // Check if AMQP connection is available - skip STOMP test if AMQP is working
-        try {
-            $stompConfig = $this->objectManager->get(Config::class);
-            $stompConfig->getConnection();
-        } catch (\Throwable $e) {
-            $this->markTestSkipped('STOMP test skipped because AMQP connection is available. This test is STOMP-specific.');
-        }
 
-        $this->helper = $this->objectManager->create(Stomp::class);
+        // Check if STOMP is configured as the queue connection
+        /** @var \Magento\Framework\MessageQueue\DefaultValueProvider $defaultValueProvider */
+        $defaultValueProvider = $this->objectManager->get(\Magento\Framework\MessageQueue\DefaultValueProvider::class);
+        $this->connectionType = $defaultValueProvider->getConnection();
 
-        if (!$this->helper->isAvailable()) {
-            $this->fail('This test relies on ActiveMq JMX/Jalokia.');
+        if($this->connectionType === 'stomp') {
+            $this->helper = $this->objectManager->create(Stomp::class);
+
+            if (!$this->helper->isAvailable()) {
+                $this->fail('This test relies on ActiveMq JMX/Jalokia.');
+            }
+            $this->declaredQueues = $this->helper->getQueues();
         }
-        $this->declaredQueues = $this->helper->getQueues();
     }
 
     /**
@@ -63,6 +68,10 @@ class TopologyTest extends TestCase
      */
     public function testTopologyInstallation(array $expectedConfig): void
     {
+        if($this->connectionType !== 'stomp') {
+            $this->markTestSkipped('STOMP test skipped because AMQP connection is available. This test is STOMP-specific.');
+        }
+
         $name = $expectedConfig['name'];
         $this->assertArrayHasKey($name, $this->declaredQueues);
 
