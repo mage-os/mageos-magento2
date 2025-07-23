@@ -16,7 +16,7 @@ define(['Magento_Ui/js/form/adapter/buttons'], function (uiFormSelectors) {
             expect(uiFormSelectors.saveAndContinue).toBeDefined();
 
             // Verify that each selector matches the expected value
-            expect(uiFormSelectors.reset).toBe('#reset_ui_form');
+            expect(uiFormSelectors.reset).toBe('#reset');
             expect(uiFormSelectors.save).toBe('#save');
             expect(uiFormSelectors.saveAndContinue).toBe('#save_and_continue');
         });
