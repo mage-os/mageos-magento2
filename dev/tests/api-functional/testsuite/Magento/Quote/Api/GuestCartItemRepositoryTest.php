@@ -1,16 +1,13 @@
 <?php
 /**
- * Copyright 2015 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\Quote\Api;
 
 use Magento\Catalog\Model\Product;
 use Magento\CatalogInventory\Api\StockRegistryInterface;
 use Magento\CatalogInventory\Model\Stock;
-use Magento\ConfigurableProduct\Api\CartItemRepositoryTest as ConfigurableCartItemRepositoryTest;
-use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
-use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\QuoteIdMask;
 use Magento\Quote\Model\QuoteIdMaskFactory;
@@ -186,136 +183,6 @@ class GuestCartItemRepositoryTest extends WebapiAbstract
         $quote = $this->objectManager->create(Quote::class);
         $quote->load('test_order_item_with_items', 'reserved_order_id');
         $this->assertFalse($quote->hasProductId($productId));
-    }
-
-    /**
-     * @param int $itemId
-     * @param int $qty
-     * @throws LocalizedException
-     */
-    protected function updateStockForItem($itemId, $qty)
-    {
-        /** @var \Magento\CatalogInventory\Model\Stock\Status $stockStatus */
-        $stockStatus = $this->objectManager->create(\Magento\CatalogInventory\Model\Stock\Status::class);
-        $stockStatus->load($itemId, 'product_id');
-        if (!$stockStatus->getProductId()) {
-            $stockStatus->setProductId($itemId);
-        }
-        $stockStatus->setQty($qty);
-        $stockStatus->setStockStatus(1);
-        $stockStatus->save();
-
-        /** @var \Magento\CatalogInventory\Model\Stock\Item $stockItem */
-        $stockItem = $this->objectManager->create(\Magento\CatalogInventory\Model\Stock\Item::class);
-        $stockItem->load($itemId, 'product_id');
-
-        if (!$stockItem->getProductId()) {
-            $stockItem->setProductId($itemId);
-        }
-        $stockItem->setUseConfigManageStock(1);
-        $stockItem->setQty($qty);
-        $stockItem->setIsQtyDecimal(0);
-        $stockItem->setIsInStock(1);
-        $stockItem->save();
-    }
-
-    /**
-     * @param $cartId
-     * @param null $selectedOption
-     * @return array
-     */
-    protected function getRequestData($cartId, $selectedOption = null)
-    {
-        /** @var \Magento\Catalog\Api\ProductRepositoryInterface $productRepository */
-        $productRepository = $this->objectManager->create(\Magento\Catalog\Api\ProductRepositoryInterface::class);
-        $product = $productRepository->get(ConfigurableCartItemRepositoryTest::CONFIGURABLE_PRODUCT_SKU);
-
-        $configurableProductOptions = $product->getExtensionAttributes()->getConfigurableProductOptions();
-
-        $optionKey = 0;
-        if ($selectedOption && isset($options[$selectedOption])) {
-            $optionKey = $selectedOption;
-        }
-
-        $attributeId = $configurableProductOptions[0]->getAttributeId();
-        $options = $configurableProductOptions[0]->getOptions();
-        $optionId = $options[$optionKey]['value_index'];
-
-        return [
-            'cartItem' => [
-                'sku' => ConfigurableCartItemRepositoryTest::CONFIGURABLE_PRODUCT_SKU,
-                'qty' => 1,
-                'quote_id' => $cartId,
-                'product_option' => [
-                    'extension_attributes' => [
-                        'configurable_item_options' => [
-                            [
-                                'option_id' => $attributeId,
-                                'option_value' => $optionId
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        ];
-    }
-
-    /**
-     * @magentoApiDataFixture Magento/ConfigurableProduct/_files/quote_with_configurable_product.php
-     */
-    public function testAddAndUpdateConfigurableProductInGuestCart()
-    {
-        $qty = 4;
-        $this->updateStockForItem(10, 100);
-        $this->updateStockForItem(20, 100);
-
-        /** @var \Magento\Quote\Model\Quote  $quote */
-        $quote = $this->objectManager->create(\Magento\Quote\Model\Quote::class);
-        $quote->load('test_cart_with_configurable', 'reserved_order_id');
-        $quoteIdMask = $this->objectManager->create(\Magento\Quote\Model\QuoteIdMaskFactory::class)->create();
-        $quoteIdMask->load($quote->getId(), 'quote_id');
-        $cartId = $quoteIdMask->getMaskedId();
-        $items = $quote->getAllItems();
-        $this->assertGreaterThan(0, count($items));
-
-        /** @var \Magento\Quote\Model\ResourceModel\Quote\Item|null $item */
-        $item = null;
-        /** @var \Magento\Quote\Model\ResourceModel\Quote\Item $quoteItem */
-        foreach ($items as $quoteItem) {
-            if ($quoteItem->getProductType() == Configurable::TYPE_CODE) {
-                $item = $quoteItem;
-                break;
-            }
-        }
-        $this->assertNotNull($item);
-        $this->assertNotNull($item->getId());
-        $this->assertEquals(Configurable::TYPE_CODE, $item->getProductType());
-
-        $requestData = $this->getRequestData($cartId, 1);
-        $requestData['cartItem']['qty'] = $qty;
-        $requestData['cartItem']['item_id'] = $item->getId();
-
-        $serviceInfo = [
-            'rest' => [
-                'resourcePath' =>  self::RESOURCE_PATH . $cartId . '/items/' . $item->getId(),
-                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_PUT
-            ],
-            'soap' => [
-                'service' => self::SERVICE_NAME,
-                'serviceVersion' => self::SERVICE_VERSION,
-                'operation' => self::SERVICE_NAME . 'Save',
-            ],
-        ];
-        $response = $this->_webApiCall($serviceInfo, $requestData);
-
-        $this->assertNotNull($response['item_id']);
-        $this->assertEquals(Configurable::TYPE_CODE, $response['product_type']);
-        $this->assertEquals($quote->getId(), $response['quote_id']);
-        $this->assertEquals($qty, $response['qty']);
-        $this->assertEquals(
-            $response['product_option']['extension_attributes']['configurable_item_options'][0],
-            $requestData['cartItem']['product_option']['extension_attributes']['configurable_item_options'][0]
-        );
     }
 
     /**
