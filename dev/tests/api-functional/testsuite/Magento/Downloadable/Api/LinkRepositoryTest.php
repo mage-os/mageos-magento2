@@ -751,7 +751,7 @@ class LinkRepositoryTest extends WebapiAbstract
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage(
-            'The product with SKU "wrong-sku" does not exist.'
+            'The product with SKU "%1" does not exist.'
 
         );
 
