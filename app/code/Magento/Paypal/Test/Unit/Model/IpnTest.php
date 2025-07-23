@@ -172,6 +172,11 @@ class IpnTest extends TestCase
             ->getMock();
         $orderMutexMock = $this->getMockForAbstractClass(orderMutexInterface::class);
         $loggerMock = $this->getMockForAbstractClass(LoggerInterface::class);
+        $data = [
+            'payment_status' => 'Pending',
+            'pending_reason' => 'fraud',
+            'fraud_management_pending_filters_1' => 'Maximum Transaction Amount',
+        ];
         $this->_ipn = new Ipn(
             $this->configFactory,
             $loggerMock,
@@ -181,11 +186,7 @@ class IpnTest extends TestCase
             $orderSenderMock,
             $creditmemoSenderMock,
             $orderMutexMock,
-            [
-                'payment_status' => 'Pending',
-                'pending_reason' => 'fraud',
-                'fraud_management_pending_filters_1' => 'Maximum Transaction Amount',
-            ]
+            $data
         );
         $this->expectException(UnknownIpnException::class);
         $this->_ipn->processIpnRequest();
