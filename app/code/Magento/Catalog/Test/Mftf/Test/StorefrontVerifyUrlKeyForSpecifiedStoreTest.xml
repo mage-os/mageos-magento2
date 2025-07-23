@@ -21,7 +21,7 @@
         <before>
             <!-- Precondition Step 2:Use Categories Path for Product URLs: Yes -->
             <actionGroup ref="AdminEnableCategoryPathForProductUrlActionGroup" stepKey="enableCategoriesPathForProductUrls"/>
-            <!-- Precondition Step 3:Create an additional root category with a sub category -->
+            <!-- Precondition Step 3:Create Categories "CatA" and "CatAB" exist enabled and visible on storefront  -->
             <createData entity="NewRootCategory" stepKey="createRootCategory"/>
             <createData entity="SimpleRootSubCategory" stepKey="createTestCategory">
                 <requiredEntity createDataKey="createRootCategory"/>
@@ -29,13 +29,14 @@
             <createData entity="Two_nested_categories" stepKey="createSubTestCategory">
                 <requiredEntity createDataKey="createTestCategory"/>
             </createData>
-            <!-- Precondition Step 4:Create 1 additional store view including default store view -->
+            <!-- Precondition Step 4:Create a new store -->
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
             <actionGroup ref="CreateCustomStoreActionGroup" stepKey="createCustomStore">
                 <argument name="website" value="Main Website"/>
                 <argument name="store" value="{{customStoreGroup.name}}"/>
                 <argument name="rootCategory" value="$$createRootCategory.name$$"/>
             </actionGroup>
+            <!-- Precondition Step 5:Create a store view for main website: Store view 1 and Store View 2 -->
             <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createCustomStoreView">
                 <argument name="StoreGroup" value="customStoreGroup"/>
                 <argument name="customStore" value="storeViewData"/>
@@ -44,6 +45,7 @@
                 <argument name="StoreGroup" value="customStoreGroup"/>
                 <argument name="customStore" value="NewStoreViewData"/>
             </actionGroup>
+            <!-- Precondition Step 6:Assign Custom store into main website -->
             <actionGroup ref="AdminChangeWebsiteDefaultStoreActionGroup" stepKey="changeDefaultStoreToCustomStore">
                 <argument name="website" value="Main Website"/>
                 <argument name="storeGroupName" value="{{customStoreGroup.name}}"/>
@@ -62,12 +64,12 @@
             <!-- Logout from admin -->
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
         </after>
-        <!-- Step 1,2&3:Switch To Default Store view For root category and Click On Ok Button-->
+        <!-- Step 1,2&3:Switch To First Store View For root category and Click On Ok Button-->
         <actionGroup ref="SwitchCategoryStoreViewActionGroup" stepKey="switchStoreView">
             <argument name="Store" value="storeViewData.name"/>
             <argument name="CatName" value="NewRootCategory.name"/>
         </actionGroup>
-        <!-- Step 4:Update data for root category under default store view scope -->
+        <!-- Step 4:Update data for category A under first store view scope -->
         <waitForElementClickable selector="{{AdminCategorySidebarTreeSection.expandAll}}" stepKey="waitToClickOnExpandTree"/>
         <actionGroup ref="AdminExpandCategoryTreeActionGroup" stepKey="clickOnExpandTree"/>
         <actionGroup ref="AdminCategoriesOpenCategoryActionGroup" stepKey="selectCategory">
@@ -76,16 +78,16 @@
         <actionGroup ref="ChangeSeoUrlKeyForSubCategoryActionGroup" stepKey="updateUrlKeyForCategory">
             <argument name="value" value="{{CustomizedCategory.name}}"/>
         </actionGroup>
-        <!-- Step 5&6:Switch To custom store view scope for root category and Click On Ok Button -->
+        <!-- Step 5&6:Switch To second store view scope for  category A and Click On Ok Button -->
         <actionGroup ref="SwitchToTheNewStoreViewActionGroup" stepKey="switchToStoreView">
             <argument name="storeViewName" value="{{NewStoreViewData.name}}"/>
         </actionGroup>
-        <!-- Step 7:Update data for root category under custom store view scope -->
+        <!-- Step 7:Update data for category A under second store view scope -->
         <waitForElementClickable selector="{{AdminCategorySEOSection.SectionHeader}}" stepKey="waitToBeClickOpenSeoSection"/>
         <actionGroup ref="ChangeSeoUrlKeyForSubCategoryActionGroup" stepKey="changeSeoUrlKeyForSubCategoryCustomStore">
             <argument name="value" value="{{CustomizedCategory.value}}"/>
         </actionGroup>
-        <!-- Step 8&9:Switch To default store view scope for sub category and Click On Ok Button -->
+        <!-- Step 8&9:Switch To first store view scope for sub category AB and Click On Ok Button -->
         <actionGroup ref="AdminExpandCategoryTreeActionGroup" stepKey="clickOnExpand"/>
         <actionGroup ref="AdminCategoriesOpenCategoryActionGroup" stepKey="selectSubCategoryTree">
             <argument name="category" value="$$createSubTestCategory$$"/>
@@ -93,40 +95,37 @@
         <actionGroup ref="SwitchToTheNewStoreViewActionGroup" stepKey="switchDefaultStoreView">
             <argument name="storeViewName" value="{{storeViewData.name}}"/>
         </actionGroup>
-        <!-- Step 10:Update data for sub category under default store view scope -->
+        <!-- Step 10:Update data for sub category AB under first store view scope -->
         <actionGroup ref="ChangeSeoUrlKeyForSubCategoryActionGroup" stepKey="updateUrlKeyForSubCategoryCustomStore">
             <argument name="value" value="{{CustomizedCategory.path}}"/>
         </actionGroup>
-        <!-- Step 11&12:Switch To custom store view scope for sub category and Click On Ok Button -->
+        <!-- Step 11&12:Switch To second store view scope for sub category AB and Click On Ok Button -->
         <actionGroup ref="SwitchToTheNewStoreViewActionGroup" stepKey="switchNewStoreView">
             <argument name="storeViewName" value="{{NewStoreViewData.name}}"/>
         </actionGroup>
-        <!-- Step 13:Update data for root category under custom store view scope -->
+        <!-- Step 13:Update data for  category A under second store view scope -->
         <waitForElementClickable selector="{{AdminCategorySEOSection.SectionHeader}}" stepKey="waitToClickOpenSeoSection"/>
         <actionGroup ref="ChangeSeoUrlKeyForSubCategoryActionGroup" stepKey="changeUrlKeyForSubCategoryCustomizedStore">
             <argument name="value" value="{{CustomizedCategory.urlKey}}"/>
         </actionGroup>
-        <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanCache">
-            <argument name="tags" value=""/>
-        </actionGroup>
         <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="openHomePage"/>
-        <!-- Step 14&15:Go To Storefront and Switch to default store view for root category & Open root category on Storefront under default store view -->
+        <!-- Step 14&15:Go To Storefront and Switch to first store view for category A & Open root category on Storefront under first store view -->
         <actionGroup ref="StorefrontGoToCategoryPageActionGroup" stepKey="openRootCategoryPage">
             <argument name="categoryName" value="$$createTestCategory.name$$"/>
         </actionGroup>
         <actionGroup ref="StorefrontAssertProperUrlIsShownActionGroup" stepKey="assertUpdatedUrlKey">
             <argument name="urlPath" value="{{CustomizedCategory.name}}.html"/>
         </actionGroup>
-        <!-- Step 16:Open subcategory for default store view -->
+        <!-- Step 16:Open subcategory AB for first store view -->
         <actionGroup ref="StorefrontGoToSubCategoryPageActionGroup" stepKey="navigateToSubCategoryPage">
             <argument name="categoryName" value="$$createTestCategory.name$$"/>
             <argument name="subCategoryName" value="$$createSubTestCategory.name$$"/>
         </actionGroup>
-        <!-- Step 17:Verify url for subcategory for default store view -->
+        <!-- Step 17:Verify url for subcategory AB for first store view -->
         <actionGroup ref="StorefrontAssertProperUrlIsShownActionGroup" stepKey="assertSeoUrlPathForCategory">
             <argument name="urlPath" value="{{CustomizedCategory.name}}/{{CustomizedCategory.path}}.html"/>
         </actionGroup>
-        <!-- Step 18&19:Go To Storefront and Switch to custom store view for root category & Open root category on Storefront under custom store view -->
+        <!-- Step 18&19:Go To Storefront and Switch to second store view for category A & Open category A on Storefront under second store view -->
         <actionGroup ref="StorefrontGoToCategoryPageActionGroup" stepKey="openCategoryPage">
             <argument name="categoryName" value="$$createTestCategory.name$$"/>
         </actionGroup>
@@ -136,12 +135,12 @@
         <actionGroup ref="StorefrontAssertProperUrlIsShownActionGroup" stepKey="verifyUpdatedUrlKey">
             <argument name="urlPath" value="{{CustomizedCategory.value}}.html"/>
         </actionGroup>
-        <!-- Step 20:Open subcategory for custom store view -->
+        <!-- Step 20:Open subcategory AB for second store view -->
         <actionGroup ref="StorefrontGoToSubCategoryPageActionGroup" stepKey="goToSubCategoryPage">
             <argument name="categoryName" value="$$createTestCategory.name$$"/>
             <argument name="subCategoryName" value="$$createSubTestCategory.name$$"/>
         </actionGroup>
-        <!-- Step 21:Verify url for subcategory for custom store view -->
+        <!-- Step 21:Verify url for subcategory AB for second store view -->
         <actionGroup ref="StorefrontAssertProperUrlIsShownActionGroup" stepKey="seeUpdatedUrlKey">
             <argument name="urlPath" value="{{CustomizedCategory.value}}/{{CustomizedCategory.urlKey}}.html"/>
         </actionGroup>
@@ -151,17 +150,17 @@
         <actionGroup ref="AdminCategoriesOpenCategoryActionGroup" stepKey="selectSubCategory">
             <argument name="category" value="$$createSubTestCategory$$"/>
         </actionGroup>
-        <!-- Step 23&24:Switch To custom store view scope for sub category and Click On Ok Button -->
+        <!-- Step 23&24:Switch To second store view scope for sub category AB and Click On Ok Button -->
         <actionGroup ref="SwitchToTheNewStoreViewActionGroup" stepKey="switchToCustomStoreViewInAdmin">
             <argument name="storeViewName" value="{{NewStoreViewData.name}}"/>
         </actionGroup>
-        <!-- Step 25:Update data for root category under custom store view scope -->
+        <!-- Step 25:Update data for Sub category AB under second store view scope -->
         <actionGroup ref="ChangeSeoUrlKeyForSubCategoryActionGroup" stepKey="updateSeoUrlKeyForSubCategoryCustomStore">
             <argument name="value" value="{{CustomizedCategory.data}}"/>
         </actionGroup>
         <!-- Step 26:Open storefront -->
         <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToHomePage"/>
-        <!-- Step 27&28:Open subcategory for custom store view and Verify url for subcategory for custom store view -->
+        <!-- Step 27&28:Open subcategory for second store view and Verify url for subcategory AB for second store view -->
         <waitForPageLoad stepKey="waitForPageToBeLoaded"/>
         <actionGroup ref="StorefrontGoToSubCategoryPageActionGroup" stepKey="navigateToSubCategoryStore">
             <argument name="categoryName" value="$$createTestCategory.name$$"/>
