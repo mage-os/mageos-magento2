@@ -413,7 +413,7 @@ class SubselectTest extends TestCase
                         'valueParsed' => 100
                     ],
                     true,
-                    true
+                    false
                 ],
             'validate true for bundle product
             data with conditions for attribute base_row_total w/o multi shipping' =>
