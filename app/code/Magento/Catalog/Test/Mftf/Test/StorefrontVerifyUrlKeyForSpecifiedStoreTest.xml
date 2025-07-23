@@ -108,6 +108,9 @@
         <actionGroup ref="ChangeSeoUrlKeyForSubCategoryActionGroup" stepKey="changeUrlKeyForSubCategoryCustomizedStore">
             <argument name="value" value="{{CustomizedCategory.urlKey}}"/>
         </actionGroup>
+        <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanCache">
+            <argument name="tags" value=""/>
+        </actionGroup>
         <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="openHomePage"/>
         <!-- Step 14&15:Go To Storefront and Switch to first store view for category A & Open root category on Storefront under first store view -->
         <actionGroup ref="StorefrontGoToCategoryPageActionGroup" stepKey="openRootCategoryPage">
