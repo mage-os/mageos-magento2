@@ -8,8 +8,10 @@ declare(strict_types=1);
 
 namespace Magento\Framework\Stomp;
 
+use Magento\Framework\MessageQueue\DefaultValueProvider;
 use Magento\TestFramework\Helper\Stomp;
 use Magento\TestFramework\Helper\Bootstrap;
+use Magento\TestFramework\ObjectManager;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -30,7 +32,7 @@ class TopologyTest extends TestCase
     private $helper;
 
     /**
-     * @var \Magento\TestFramework\ObjectManager
+     * @var ObjectManager
      */
     private $objectManager;
 
@@ -47,9 +49,8 @@ class TopologyTest extends TestCase
     {
         $this->objectManager = Bootstrap::getObjectManager();
 
-        // Check if STOMP is configured as the queue connection
-        /** @var \Magento\Framework\MessageQueue\DefaultValueProvider $defaultValueProvider */
-        $defaultValueProvider = $this->objectManager->get(\Magento\Framework\MessageQueue\DefaultValueProvider::class);
+        /** @var DefaultValueProvider $defaultValueProvider */
+        $defaultValueProvider = $this->objectManager->get(DefaultValueProvider::class);
         $this->connectionType = $defaultValueProvider->getConnection();
 
         if($this->connectionType === 'stomp') {
@@ -68,7 +69,7 @@ class TopologyTest extends TestCase
      */
     public function testTopologyInstallation(array $expectedConfig): void
     {
-        if($this->connectionType !== 'stomp') {
+        if($this->connectionType === 'amqp') {
             $this->markTestSkipped('STOMP test skipped because AMQP connection is available. This test is STOMP-specific.');
         }
 

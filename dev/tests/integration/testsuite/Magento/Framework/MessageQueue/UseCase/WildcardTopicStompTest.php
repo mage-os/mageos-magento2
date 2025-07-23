@@ -7,18 +7,16 @@ namespace Magento\Framework\MessageQueue\UseCase;
 
 use Magento\Framework\MessageQueue\DefaultValueProvider;
 use Magento\TestFramework\Helper\Bootstrap;
-use Magento\TestModuleAsyncAmqp\Model\AsyncTestData;
+use Magento\TestModuleAsyncStomp\Model\AsyncTestData;
 
-class WildcardTopicTest extends QueueTestCaseAbstract
+class WildcardTopicStompTest extends QueueTestCaseAbstract
 {
     /**
      * @var string[]
      */
     protected $consumers = [
-        'wildcard.queue.one.consumer',
-        'wildcard.queue.two.consumer',
-        'wildcard.queue.three.consumer',
-        'wildcard.queue.four.consumer',
+        'stomp.wildcard.queue.one.consumer',
+        'stomp.wildcard.queue.two.consumer'
     ];
 
     /**
@@ -36,7 +34,7 @@ class WildcardTopicTest extends QueueTestCaseAbstract
         $defaultValueProvider = $this->objectManager->get(DefaultValueProvider::class);
         $this->connectionType = $defaultValueProvider->getConnection();
 
-        if ($this->connectionType === 'amqp') {
+        if ($this->connectionType === 'stomp') {
             parent::setUp();
         }
     }
@@ -50,8 +48,8 @@ class WildcardTopicTest extends QueueTestCaseAbstract
      */
     public function testWildCardMatchingTopic($topic, $matchingQueues, $nonMatchingQueues)
     {
-        if ($this->connectionType === 'stomp') {
-            $this->markTestSkipped('AMQP test skipped because STOMP connection is available. This test is AMQP-specific.');
+        if($this->connectionType === 'amqp') {
+            $this->markTestSkipped('STOMP test skipped because AMQP connection is available. This test is STOMP-specific.');
         }
 
         $testObject = $this->generateTestObject();
@@ -71,27 +69,27 @@ class WildcardTopicTest extends QueueTestCaseAbstract
     public static function wildCardTopicsDataProvider()
     {
         return [
-            'segment1.segment2.segment3.wildcard' => [
-                'segment1.segment2.segment3.wildcard',
-                ['wildcard.queue.one', 'wildcard.queue.two', 'wildcard.queue.four'],
-                ['wildcard.queue.three']
+            'stomp.segment1.segment2.segment3.wildcard' => [
+                'stomp.segment1.segment2.segment3.wildcard',
+                ['stomp.wildcard.queue.one'],
+                ['stomp.wildcard.queue.three']
             ],
-            'segment2.segment3.wildcard' => [
-                'segment2.segment3.wildcard',
-                ['wildcard.queue.one', 'wildcard.queue.three', 'wildcard.queue.four'],
-                ['wildcard.queue.two']
+            'stomp.segment2.segment3.wildcard' => [
+                'stomp.segment2.segment3.wildcard',
+                ['stomp.wildcard.queue.one'],
+                ['stomp.wildcard.queue.two']
             ]
         ];
     }
 
     public function testWildCardNonMatchingTopic()
     {
-        if ($this->connectionType === 'stomp'){
-            $this->markTestSkipped('AMQP test skipped because STOMP connection is available. This test is AMQP-specific.');
+        if($this->connectionType === 'amqp') {
+            $this->markTestSkipped('STOMP test skipped because AMQP connection is available. This test is STOMP-specific.');
         }
 
         $testObject = $this->generateTestObject();
-        $this->publisher->publish('not.matching.wildcard.topic', $testObject);
+        $this->publisher->publish('no.match.at.all', $testObject);
         sleep(2);
         $this->assertFileDoesNotExist($this->logFilePath, "No log file must be created for non-matching topic.");
     }
