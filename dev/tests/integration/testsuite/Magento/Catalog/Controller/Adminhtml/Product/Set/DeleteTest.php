@@ -109,7 +109,7 @@ class DeleteTest extends AbstractBackendController
         $this->deleteAttributeSetByNameAndAssert('new_attribute_set');
         $this->expectExceptionObject(
             new NoSuchEntityException(
-                __('The product that was requested doesn\'t exist. Verify the product and try again.')
+                __('The product with SKU "simple" does not exist.')
             )
         );
         $this->productRepository->get('simple');

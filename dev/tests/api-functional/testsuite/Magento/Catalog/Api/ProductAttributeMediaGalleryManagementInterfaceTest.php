@@ -500,7 +500,7 @@ class ProductAttributeMediaGalleryManagementInterfaceTest extends WebapiAbstract
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage(
-            'The product that was requested doesn\'t exist. Verify the product and try again.'
+            'The product with SKU "wrong_product_sku" does not exist.'
         );
 
         $this->createServiceInfo['rest']['resourcePath'] = '/V1/products/wrong_product_sku/media';
@@ -557,7 +557,7 @@ class ProductAttributeMediaGalleryManagementInterfaceTest extends WebapiAbstract
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage(
-            'The product that was requested doesn\'t exist. Verify the product and try again.'
+            'The product with SKU "wrong_product_sku" does not exist..'
         );
 
         $this->updateServiceInfo['rest']['resourcePath'] = '/V1/products/wrong_product_sku/media'
@@ -613,7 +613,7 @@ class ProductAttributeMediaGalleryManagementInterfaceTest extends WebapiAbstract
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage(
-            'The product that was requested doesn\'t exist. Verify the product and try again.'
+            'The product with SKU "wrong_product_sku" does not exist.'
         );
 
         $this->deleteServiceInfo['rest']['resourcePath'] = '/V1/products/wrong_product_sku/media/9999';

@@ -123,7 +123,7 @@ class SendFriendTest extends GraphQlAbstract
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage(
-            'The product that was requested doesn\'t exist. Verify the product and try again.'
+            'The product with ID "2018" does not exist.'
         );
 
         $productId = 2018;
@@ -284,7 +284,7 @@ QUERY;
               }';
         $query = $this->getQuery($productId, $recipients);
         $this->expectExceptionMessage(
-            'The product that was requested doesn\'t exist. Verify the product and try again.'
+            'The product with SKU "simple_product_without_visibility" does not exist.'
         );
         $this->graphQlMutation($query, [], '', $this->getHeaderMap());
     }

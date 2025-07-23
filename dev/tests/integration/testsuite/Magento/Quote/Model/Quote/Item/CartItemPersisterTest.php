@@ -125,7 +125,7 @@ class CartItemPersisterTest extends TestCase
         $item->setSku('not_existing_product_sku')->setQty(1);
         $this->expectExceptionObject(
             new NoSuchEntityException(
-                __('The product that was requested doesn\'t exist. Verify the product and try again.')
+                __('The product with SKU "not_existing_product_sku" does not exist.')
             )
         );
         $this->model->save($quote, $item);

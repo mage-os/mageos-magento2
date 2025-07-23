@@ -289,13 +289,13 @@ class ManagementTest extends TestCase
             ->method('get')
             ->willThrowException(
                 new NoSuchEntityException(
-                    __("The product that was requested doesn't exist. Verify the product and try again.")
+                    __('The product with SKU "' . $productSku . '" does not exist.')
                 )
             );
 
         $this->expectException(NoSuchEntityException::class);
         $this->expectExceptionMessage(
-            "The product that was requested doesn't exist. Verify the product and try again."
+            'The product with SKU " ' . $productSku . ' " does not exist.'
         );
 
         $this->model->setProductLinks($productSku, $links);
