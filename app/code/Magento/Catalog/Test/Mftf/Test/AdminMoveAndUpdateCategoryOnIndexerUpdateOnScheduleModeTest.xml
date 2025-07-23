@@ -55,13 +55,13 @@
             </actionGroup>
             <actionGroup ref="AddCategoryImageActionGroup" stepKey="addImageToCategoryA"/>
             <actionGroup ref="AdminUpdateCategoryDescriptionActionGroup" stepKey="addDescriptionToCategoryA">
-                <argument name="description" value="Updated CategoryA Description"/>
+                <argument name="description" value="{{CustomDynamicProductDescription.value}}"/>
             </actionGroup>
             <actionGroup ref="AdminUpdateCategoryDisplaySettingsWithCustomValuesActionGroup"
                          stepKey="updateCategoryADisplaySettings">
-                <argument name="availableSortOptions" value="Product Name"/>
-                <argument name="defaultSortingOption" value="name"/>
-                <argument name="priceRange" value="5.5"/>
+                <argument name="availableSortOptions" value="{{CategoryDisplaySettings.available_sort_by}}"/>
+                <argument name="defaultSortingOption" value="{{CategoryDisplaySettings.default_sort_by}}"/>
+                <argument name="priceRange" value="{{CategoryDisplaySettings.filter_price_range}}"/>
             </actionGroup>
             <actionGroup ref="AdminUpdateCategoryMetaInformationActionGroup" stepKey="addMetaTitleToCategoryA">
                 <argument name="metaTitle" value="MetaAtitle"/>
@@ -73,13 +73,13 @@
             </actionGroup>
             <actionGroup ref="AddCategoryImageActionGroup" stepKey="addImageToCategoryC"/>
             <actionGroup ref="AdminUpdateCategoryDescriptionActionGroup" stepKey="addDescriptionToCategoryC">
-                <argument name="description" value="Updated CategoryC Description"/>
+                <argument name="description" value="{{CustomDynamicProductDescription.value}}"/>
             </actionGroup>
             <actionGroup ref="AdminUpdateCategoryDisplaySettingsWithCustomValuesActionGroup"
                          stepKey="updateCategoryCDisplaySettings">
-                <argument name="availableSortOptions" value="Product Name"/>
-                <argument name="defaultSortingOption" value="name"/>
-                <argument name="priceRange" value="5.5"/>
+                <argument name="availableSortOptions" value="{{CategoryDisplaySettings.available_sort_by}}"/>
+                <argument name="defaultSortingOption" value="{{CategoryDisplaySettings.default_sort_by}}"/>
+                <argument name="priceRange" value="{{CategoryDisplaySettings.filter_price_range}}"/>
             </actionGroup>
             <actionGroup ref="AdminUpdateCategoryMetaInformationActionGroup" stepKey="addMetaTitleToCategoryC">
                 <argument name="metaTitle" value="MetaCtitle"/>
@@ -117,7 +117,7 @@
             <argument name="categoryName" value="$createAnchorCategoryA.name$"/>
         </actionGroup>
         <actionGroup ref="StorefrontVerifyCategoryContentActionGroup" stepKey="verifyCategoryAInitially">
-            <argument name="description" value="Updated CategoryA Description"/>
+            <argument name="description" value="{{CustomDynamicProductDescription.value}}"/>
             <argument name="metaTitle" value="MetaAtitle"/>
             <argument name="productCount" value="2"/>
         </actionGroup>
@@ -126,7 +126,7 @@
             <argument name="categoryName" value="$createNonAnchorCategoryC.name$"/>
         </actionGroup>
         <actionGroup ref="StorefrontVerifyCategoryContentActionGroup" stepKey="verifyCategoryCInitially">
-            <argument name="description" value="Updated CategoryC Description"/>
+            <argument name="description" value="{{CustomDynamicProductDescription.value}}"/>
             <argument name="metaTitle" value="MetaCtitle"/>
             <argument name="productCount" value="1"/>
         </actionGroup>
@@ -261,7 +261,7 @@
             <argument name="description" value="Другое описание категории А"/>
         </actionGroup>
         <actionGroup ref="AdminUpdateCategoryMetaInformationActionGroup" stepKey="changeCategoryMetaTitleOnStoreView">
-            <argument name="metaTitle" value="Meta A Store View"/>
+            <argument name="metaTitle" value="$createSubCategoryB.name$"/>
         </actionGroup>
         <actionGroup ref="ChangeSeoUrlKeyForSubCategoryActionGroup" stepKey="changeCategoryUrlKeyOnStoreView">
             <argument name="value" value="kategoriya-A"/>
@@ -280,7 +280,7 @@
         </actionGroup>
         <!-- Verify OLD content (English) - before cron runs -->
         <actionGroup ref="StorefrontVerifyCategoryContentActionGroup" stepKey="verifyOldContentOnCategoryAStoreView">
-            <argument name="description" value="Updated CategoryA Description"/>
+            <argument name="description" value="{{CustomDynamicProductDescription.value}}"/>
             <argument name="metaTitle" value="MetaAtitle"/>
             <argument name="productCount" value="1"/>
         </actionGroup>
@@ -297,7 +297,7 @@
         <!-- Verify NEW content (Russian) - after cron runs -->
         <actionGroup ref="StorefrontVerifyCategoryContentActionGroup" stepKey="verifyNewContentOnCategoryAStoreView">
             <argument name="description" value="Другое описание категории А"/>
-            <argument name="metaTitle" value="Meta A Store View"/>
+            <argument name="metaTitle" value="$createSubCategoryB.name$"/>
             <argument name="productCount" value="1"/>
         </actionGroup>
     </test>
