@@ -3,6 +3,9 @@
  * Copyright 2025 Adobe
  * All Rights Reserved.
  */
+
+declare(strict_types=1);
+
 namespace Magento\Quote\Api;
 
 use Magento\Catalog\Api\ProductRepositoryInterface;
@@ -144,10 +147,8 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
 
     private function verifyCartItems(string $guestCartId, string $adminToken, int $expectedItemId)
     {
-        $serviceInfo = $this->getCartServiceInfo($guestCartId, $adminToken,'get');
-
+        $serviceInfo = $this->getCartServiceInfo($guestCartId, $adminToken, 'get');
         $response = $this->_webApiCall($serviceInfo, []);
-
         $this->assertIsArray($response);
         $this->assertGreaterThan(0, count($response), 'Cart should contain at least one item');
 
@@ -236,8 +237,12 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
         ];
     }
 
-    private function getCartServiceInfo(string $cartId, string $adminToken, string $action = 'add', int $itemId = null): array
-    {
+    private function getCartServiceInfo(
+        string $cartId,
+        string $adminToken,
+        string $action = 'add',
+        ?int $itemId = null
+    ): array {
         $resourcePath = self::RESOURCE_PATH_GUEST_CART . $cartId . '/items';
         if ($action === 'update' && $itemId !== null) {
             $resourcePath .= '/' . $itemId;
