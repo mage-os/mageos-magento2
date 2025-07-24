@@ -120,7 +120,7 @@ class FileTest extends TestCase
     public static function statsDataProvider(): array
     {
         return [
-/*            'no-stats-for-update-query' => [
+            'no-stats-for-update-query' => [
                 LoggerInterface::TYPE_QUERY,
                 "UPDATE `admin_user_session` SET `updated_at` = '2025-07-23 14:42:02' WHERE (id=5)",
                 [],
@@ -167,7 +167,7 @@ class FileTest extends TestCase
                 "possible_keys":null,"key":null,"key_len":null,"ref":null,"rows":"1","filtered":"100.00",
                 "Extra":"Using filesort"}]',
                 'INDEX CHECK: FULL TABLE SCAN, NO INDEX, FILESORT'
-            ],*/
+            ],
             'subselect-with-dependent-query' => [
                 LoggerInterface::TYPE_QUERY,
                 "SELECT `main_table`.*, (IF(
