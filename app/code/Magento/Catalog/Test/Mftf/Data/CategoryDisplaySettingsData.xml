@@ -5,6 +5,7 @@
  * All Rights Reserved.
  */
 -->
+
 <entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
     <entity name="CategoryDisplaySettings" type="category">

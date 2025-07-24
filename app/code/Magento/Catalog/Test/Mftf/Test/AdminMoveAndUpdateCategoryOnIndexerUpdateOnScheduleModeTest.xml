@@ -5,6 +5,7 @@
   * All Rights Reserved.
   */
 -->
+
 <tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
     <test name="AdminMoveAndUpdateCategoryOnIndexerUpdateOnScheduleModeTest">
@@ -91,25 +92,32 @@
             <magentoCron groups="index" stepKey="runSecondCronAfterCategorySetup"/>
         </before>
         <after>
+            <!-- Reset indexer modes back to realtime for other tests -->
             <magentoCLI command="indexer:set-mode realtime catalog_category_flat"
                         stepKey="resetCategoryFlatIndexerToRealtimeMode"/>
             <magentoCLI command="indexer:set-mode realtime catalog_category_product"
                         stepKey="resetCategoryProductsIndexerToRealtimeMode"/>
             <magentoCLI command="indexer:set-mode realtime catalog_product_category"
                         stepKey="resetProductCategoriesIndexerToRealtimeMode"/>
+            <!-- Reset flat catalog configuration back to default (disabled) -->
             <magentoCLI command="config:set catalog/frontend/flat_catalog_category 0"
                         stepKey="disableCategoryFlatDataConfig"/>
+            <!-- Clean up test products in reverse order of creation -->
             <deleteData createDataKey="createProductAA" stepKey="deleteProductAAFromCategoryA"/>
             <deleteData createDataKey="createProductBB" stepKey="deleteProductBBFromCategoryB"/>
             <deleteData createDataKey="createProductCC" stepKey="deleteProductCCFromCategoryC"/>
+            <!-- Clean up test categories in reverse order of creation -->
             <deleteData createDataKey="createAnchorCategoryA" stepKey="deleteAnchorCategoryA"/>
             <deleteData createDataKey="createSubCategoryB" stepKey="deleteSubCategoryB"/>
             <deleteData createDataKey="createNonAnchorCategoryC" stepKey="deleteNonAnchorCategoryC"/>
+            <!-- Clean up custom store and store view created for multi-store testing -->
             <actionGroup ref="DeleteCustomStoreActionGroup" stepKey="deleteCustomStoreGroup">
                 <argument name="storeGroupName" value="customStore.name"/>
             </actionGroup>
+            <!-- Final cleanup: flush cache and reindex to ensure clean state -->
             <magentoCLI command="cache:flush" stepKey="flushCacheAfterCleanup"/>
             <magentoCLI command="indexer:reindex" stepKey="reindexAfterCleanup"/>
+            <!-- Logout from admin panel to clean up session -->
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdminPanel"/>
         </after>
         <!-- Step 1:- Open Category A on Storefront -->
@@ -142,9 +150,7 @@
              stepKey="verifySuccessMessageForFirstCategoryMove"/>
         <actionGroup ref="AdminOpenIndexManagementPageActionGroup"
                      stepKey="navigateToIndexManagementPageAfterFirstMove"/>
-        <see userInput="Ready"
-             selector="{{AdminIndexManagementSection.indexerStatus('Category Flat Data')}}"
-             stepKey="verifyCategoryFlatIndexerReadyAfterFirstMove"/>
+        <waitForElement selector="//tr[descendant::td[contains(., 'Category Flat Data')]]//*[contains(@class, 'col-indexer_status')]//span[@class='grid-severity-notice']//span" stepKey="verifyCategoryFlatIndexerReadyAfterFirstMove"/>
         <!-- Step 5:- Open Category A on Storefront and verify it hasn't moved yet -->
         <actionGroup ref="StorefrontGoToCategoryPageActionGroup"
                      stepKey="navigateToStorefrontCategoryAAfterFirstMove">
@@ -243,9 +249,7 @@
         <!-- Step 16:- Open Admin > System > Index Management -->
         <actionGroup ref="AdminOpenIndexManagementPageActionGroup"
                      stepKey="navigateToIndexManagementPageAfterStoreCreation"/>
-        <see userInput="Ready"
-             selector="{{AdminIndexManagementSection.indexerStatus('Category Flat Data')}}"
-             stepKey="verifyCategoryFlatIndexerReadyAfterStoreCreation"/>
+        <waitForElement selector="//tr[descendant::td[contains(., 'Category Flat Data')]]//*[contains(@class, 'col-indexer_status')]//span[@class='grid-severity-notice']//span" stepKey="verifyCategoryFlatIndexerReadyAfterStoreCreation"/>
         <!-- Step 17:- Open Admin > Catalog > Categories > Category A, switch to Store View 2, and update category settings -->
         <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="navigateToAdminCategoryAForStoreViewUpdate">
             <argument name="id" value="$createAnchorCategoryA.id$"/>

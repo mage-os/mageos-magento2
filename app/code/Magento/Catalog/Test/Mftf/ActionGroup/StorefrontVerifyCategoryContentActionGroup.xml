@@ -5,6 +5,7 @@
   * All Rights Reserved.
   */
 -->
+
 <actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
     <actionGroup name="StorefrontVerifyCategoryContentActionGroup">
@@ -12,9 +13,9 @@
             <description>Verify category content on storefront including image, description, meta title, and product count</description>
         </annotations>
         <arguments>
-            <argument name="description" type="string"/>
-            <argument name="metaTitle" type="string"/>
-            <argument name="productCount" type="string"/>
+            <argument name="description" type="string" defaultValue="categoryDescription"/>
+            <argument name="metaTitle" type="string" defaultValue="metaTitle"/>
+            <argument name="productCount" type="string" defaultValue="1"/>
         </arguments>
         <waitForElementVisible selector="{{StorefrontCategoryMainSection.categoryImage}}"
                                stepKey="verifyImageVisible"/>
