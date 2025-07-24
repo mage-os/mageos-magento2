@@ -45,6 +45,7 @@ class RemoteServiceCommunicationTest extends QueueTestCaseAbstract
 
         $input = 'Input value';
         /** @var ServiceInterface $generatedRemoteService */
+        /** @phpstan-ignore-next-line */
         $generatedRemoteService = $this->objectManager->get(ServiceInterface::class);
         $response = $generatedRemoteService->execute($input);
         $this->assertEquals($input . ' processed by RPC handler', $response);

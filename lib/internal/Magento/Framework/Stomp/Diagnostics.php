@@ -61,6 +61,7 @@ class Diagnostics
      *
      * @param string|null $connectionName
      * @return array
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     public function runDiagnostics(?string $connectionName = null): array
     {
@@ -88,9 +89,6 @@ class Diagnostics
 
             // Test additional STOMP connections
             if (isset($queueConfig['connections'])) {
-                /**
-                 * @SuppressWarnings(PHPMD.UnusedLocalVariable)
-                 */
                 foreach ($queueConfig['connections'] as $name => $config) {
                     $results['connections'][$name] = $this->testStompConnection($name);
                 }
@@ -320,12 +318,10 @@ class Diagnostics
      *
      * @param string $connectionName
      * @return array
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     private function testStompClientCreation(string $connectionName): array
     {
-        /**
-         * @SuppressWarnings(PHPMD.UnusedLocalVariable)
-         */
         try {
             $config = new Config($this->deploymentConfig, $connectionName);
             $client = $this->stompClientFactory->create();
@@ -347,13 +343,11 @@ class Diagnostics
      *
      * @param string $connectionName
      * @return array
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     private function testStompBasicOperations(string $connectionName): array
     {
         try {
-            /**
-             * @SuppressWarnings(PHPMD.UnusedLocalVariable)
-             */
             $config = new Config($this->deploymentConfig, $connectionName);
             $client = $this->stompClientFactory->create();
 
