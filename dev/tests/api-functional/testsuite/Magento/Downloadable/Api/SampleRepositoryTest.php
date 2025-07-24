@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Downloadable\Api;
@@ -551,7 +551,7 @@ class SampleRepositoryTest extends WebapiAbstract
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage(
-            "The product with SKU \"%1\" does not exist."
+            '{"message":"The product with SKU \"%1\" does not exist.","parameters":["wrong-sku"]}'
         );
 
         $this->createServiceInfo['rest']['resourcePath'] = '/V1/products/wrong-sku/downloadable-links/samples';
@@ -574,7 +574,7 @@ class SampleRepositoryTest extends WebapiAbstract
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage(
-            "The product with SKU \"%1\" does not exist."
+           '{"message":"The product with SKU \"%1\" does not exist.","parameters":["wrong-sku"]}'
         );
 
         $this->updateServiceInfo['rest']['resourcePath'] = '/V1/products/wrong-sku/downloadable-links/samples/1';

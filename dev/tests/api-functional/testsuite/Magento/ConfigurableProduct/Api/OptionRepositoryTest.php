@@ -1,8 +1,7 @@
 <?php
 /**
- *
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -102,7 +101,7 @@ class OptionRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstrac
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage(
-            "The product with SKU \"%1\" does not exist."
+            '{"message":"The product with SKU \"%1\" does not exist.","parameters":["product_not_exist"]}'
         );
 
         $productSku = 'product_not_exist';

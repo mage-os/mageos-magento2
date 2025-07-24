@@ -500,7 +500,7 @@ class ProductAttributeMediaGalleryManagementInterfaceTest extends WebapiAbstract
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage(
-            "The product with SKU \"%1\" does not exist."
+            '{"message":"The product with SKU \"%1\" does not exist.","parameters":["wrong_product_sku"]}'
         );
 
         $this->createServiceInfo['rest']['resourcePath'] = '/V1/products/wrong_product_sku/media';
@@ -557,7 +557,7 @@ class ProductAttributeMediaGalleryManagementInterfaceTest extends WebapiAbstract
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage(
-            "The product with SKU \"%1\" does not exist."
+            '{"message":"The product with SKU \"%1\" does not exist.","parameters":["wrong_product_sku"]}'
         );
 
         $this->updateServiceInfo['rest']['resourcePath'] = '/V1/products/wrong_product_sku/media'
@@ -612,7 +612,7 @@ class ProductAttributeMediaGalleryManagementInterfaceTest extends WebapiAbstract
     public function testDeleteThrowsExceptionIfTargetProductDoesNotExist()
     {
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage("The product with SKU \"%1\" does not exist.");
+        $this->expectExceptionMessage('{"message":"The product with SKU \"%1\" does not exist.","parameters":["wrong_product_sku"]}');
 
         $this->deleteServiceInfo['rest']['resourcePath'] = '/V1/products/wrong_product_sku/media/9999';
         $requestData = [
