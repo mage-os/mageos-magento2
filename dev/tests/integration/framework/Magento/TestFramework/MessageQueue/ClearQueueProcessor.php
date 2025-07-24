@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2022 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -64,7 +64,7 @@ class ClearQueueProcessor
         $queue = $this->queueRepository->get($consumerConfig->getConnection(), $consumerConfig->getQueue());
 
         if ($consumerConfig->getConnection() === 'stomp') {
-            $clearedCount = $queue->clearQueue();
+            $queue->clearQueue();
         } else {
             // AMQP and other protocols use the standard approach
             while ($message = $queue->dequeue()) {

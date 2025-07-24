@@ -17,7 +17,7 @@ class MixSyncAndAsyncSingleQueueTest extends QueueTestCaseAbstract
     protected $msgObject;
 
     /**
-     * {@inheritdoc}
+     * @var string[]
      */
     protected $consumers = ['mixed.sync.and.async.queue.consumer'];
 
@@ -54,7 +54,8 @@ class MixSyncAndAsyncSingleQueueTest extends QueueTestCaseAbstract
     public function testMixSyncAndAsyncSingleQueue()
     {
         if ($this->connectionType === 'stomp') {
-            $this->markTestSkipped('AMQP test skipped because STOMP connection is available. This test is AMQP-specific.');
+            $this->markTestSkipped('AMQP test skipped because STOMP connection is available.
+            This test is AMQP-specific.');
         }
 
         $this->msgObject = $this->objectManager->create(AsyncTestData::class); // @phpstan-ignore-line

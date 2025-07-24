@@ -36,7 +36,7 @@ class WaitAndNotWaitMessagesTest extends QueueTestCaseAbstract
     protected $msgObject;
 
     /**
-     * {@inheritdoc}
+     * @var string[]
      */
     protected $consumers = ['mixed.sync.and.async.queue.consumer'];
 
@@ -81,7 +81,8 @@ class WaitAndNotWaitMessagesTest extends QueueTestCaseAbstract
     public function testWaitForMessages()
     {
         if ($this->connectionType === 'stomp') {
-            $this->markTestSkipped('AMQP test skipped because STOMP connection is available. This test is AMQP-specific.');
+            $this->markTestSkipped('AMQP test skipped because STOMP connection is available.
+            This test is AMQP-specific.');
         }
 
         $this->publisherConsumerController->stopConsumers();
@@ -115,8 +116,9 @@ class WaitAndNotWaitMessagesTest extends QueueTestCaseAbstract
      */
     public function testNotWaitForMessages(): void
     {
-        if ($this->connectionType === 'stomp'){
-            $this->markTestSkipped('AMQP test skipped because STOMP connection is available. This test is AMQP-specific.');
+        if ($this->connectionType === 'stomp') {
+            $this->markTestSkipped('AMQP test skipped because STOMP connection is available.
+            This test is AMQP-specific.');
         }
 
         $this->publisherConsumerController->stopConsumers();

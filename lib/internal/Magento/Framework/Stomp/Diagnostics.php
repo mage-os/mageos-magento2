@@ -13,7 +13,7 @@ use Psr\Log\LoggerInterface;
 
 /**
  * Message Queue Diagnostics Tool
- * 
+ *
  * Helps diagnose connection and configuration issues for both AMQP and STOMP
  */
 class Diagnostics
@@ -75,7 +75,7 @@ class Diagnostics
         } else {
             // Test all configured connections
             $queueConfig = $this->deploymentConfig->getConfigData('queue') ?? [];
-            
+
             // Test AMQP if configured
             if (isset($queueConfig['amqp'])) {
                 $results['connections']['amqp'] = $this->testAmqpConnection($queueConfig['amqp']);
@@ -88,6 +88,9 @@ class Diagnostics
 
             // Test additional STOMP connections
             if (isset($queueConfig['connections'])) {
+                /**
+                 * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+                 */
                 foreach ($queueConfig['connections'] as $name => $config) {
                     $results['connections'][$name] = $this->testStompConnection($name);
                 }
@@ -106,7 +109,7 @@ class Diagnostics
     private function checkConfiguration(): array
     {
         $queueConfig = $this->deploymentConfig->getConfigData('queue') ?? [];
-        
+
         return [
             'queue_config_exists' => !empty($queueConfig),
             'amqp_configured' => isset($queueConfig['amqp']),
@@ -115,7 +118,7 @@ class Diagnostics
             'config_details' => [
                 'amqp' => $queueConfig['amqp'] ?? null,
                 'stomp' => isset($queueConfig['stomp']) ? $this->sanitizeConfig($queueConfig['stomp']) : null,
-                'connections' => isset($queueConfig['connections']) ? 
+                'connections' => isset($queueConfig['connections']) ?
                     array_map([$this, 'sanitizeConfig'], $queueConfig['connections']) : []
             ]
         ];
@@ -131,20 +134,20 @@ class Diagnostics
     {
         try {
             $connectionType = $this->connectionTypeResolver->getConnectionType($connectionName);
-            
+
             if ($connectionType === 'stomp') {
                 return $this->testStompConnection($connectionName);
             } elseif ($connectionType === 'amqp' || $connectionType === null) {
                 $queueConfig = $this->deploymentConfig->getConfigData('queue') ?? [];
                 return $this->testAmqpConnection($queueConfig['amqp'] ?? []);
             }
-            
+
             return [
                 'status' => 'error',
                 'message' => "Unknown connection type: {$connectionType}",
                 'connection_type' => $connectionType
             ];
-            
+
         } catch (\Exception $e) {
             return [
                 'status' => 'error',
@@ -172,16 +175,16 @@ class Diagnostics
         try {
             // Test configuration loading
             $result['tests']['config_load'] = $this->testStompConfigLoad($connectionName);
-            
+
             // Test network connectivity
             $result['tests']['network'] = $this->testStompNetworkConnectivity($connectionName);
-            
+
             // Test STOMP client creation
             $result['tests']['client_creation'] = $this->testStompClientCreation($connectionName);
-            
+
             // Test basic operations
             $result['tests']['basic_operations'] = $this->testStompBasicOperations($connectionName);
-            
+
             // Determine overall status
             $allPassed = true;
             foreach ($result['tests'] as $test) {
@@ -190,9 +193,9 @@ class Diagnostics
                     break;
                 }
             }
-            
+
             $result['status'] = $allPassed ? 'pass' : 'fail';
-            
+
         } catch (\Exception $e) {
             $result['status'] = 'error';
             $result['error'] = $e->getMessage();
@@ -225,12 +228,12 @@ class Diagnostics
             // Test network connectivity (basic check)
             $host = $config['host'] ?? 'localhost';
             $port = $config['port'] ?? 5672;
-            
+
             $result['tests']['network'] = $this->testNetworkConnectivity($host, $port);
-            
-            $result['status'] = $result['tests']['config']['status'] === 'pass' && 
+
+            $result['status'] = $result['tests']['config']['status'] === 'pass' &&
                               $result['tests']['network']['status'] === 'pass' ? 'pass' : 'fail';
-            
+
         } catch (\Exception $e) {
             $result['status'] = 'error';
             $result['error'] = $e->getMessage();
@@ -251,7 +254,7 @@ class Diagnostics
             $config = new Config($this->deploymentConfig, $connectionName);
             $host = $config->getValue(Config::HOST);
             $port = $config->getValue(Config::PORT);
-            
+
             return [
                 'status' => 'pass',
                 'message' => "Configuration loaded successfully (Host: {$host}, Port: {$port})"
@@ -276,7 +279,7 @@ class Diagnostics
             $config = new Config($this->deploymentConfig, $connectionName);
             $host = $config->getValue(Config::HOST) ?? 'localhost';
             $port = $config->getValue(Config::PORT) ?? 61613;
-            
+
             return $this->testNetworkConnectivity($host, $port);
         } catch (\Exception $e) {
             return [
@@ -297,7 +300,7 @@ class Diagnostics
     {
         $timeout = 5;
         $socket = @fsockopen($host, $port, $errno, $errstr, $timeout);
-        
+
         if ($socket) {
             fclose($socket);
             return [
@@ -320,10 +323,13 @@ class Diagnostics
      */
     private function testStompClientCreation(string $connectionName): array
     {
+        /**
+         * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+         */
         try {
             $config = new Config($this->deploymentConfig, $connectionName);
             $client = $this->stompClientFactory->create();
-            
+
             return [
                 'status' => 'pass',
                 'message' => 'STOMP client created successfully'
@@ -345,13 +351,16 @@ class Diagnostics
     private function testStompBasicOperations(string $connectionName): array
     {
         try {
+            /**
+             * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+             */
             $config = new Config($this->deploymentConfig, $connectionName);
             $client = $this->stompClientFactory->create();
-            
+
             // Try to subscribe to a test queue (this doesn't actually create the queue)
             $testQueue = 'diagnostic.test.queue';
             $client->subscribeQueue($testQueue);
-            
+
             return [
                 'status' => 'pass',
                 'message' => 'Basic STOMP operations successful'
@@ -369,6 +378,7 @@ class Diagnostics
      *
      * @param array $results
      * @return array
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function generateRecommendations(array $results): array
     {
@@ -387,12 +397,13 @@ class Diagnostics
         foreach ($results['connections'] as $name => $connection) {
             if ($connection['status'] === 'fail' || $connection['status'] === 'error') {
                 $recommendations[] = "Fix connection '{$name}' - check configuration and network connectivity";
-                
+
                 if (isset($connection['tests']['network']) && $connection['tests']['network']['status'] === 'fail') {
                     $recommendations[] = "Verify that the message queue service is running for connection '{$name}'";
                 }
-                
-                if (isset($connection['tests']['config_load']) && $connection['tests']['config_load']['status'] === 'fail') {
+
+                if (isset($connection['tests']['config_load'])
+                    && $connection['tests']['config_load']['status'] === 'fail') {
                     $recommendations[] = "Check configuration syntax for connection '{$name}' in env.php";
                 }
             }
@@ -421,4 +432,4 @@ class Diagnostics
         }
         return $sanitized;
     }
-} 
+}

@@ -161,6 +161,7 @@ class Queue implements CountableQueueInterface
             $envelope->getBody(),
             [$this->queueName]
         );
+        return $envelope;
     }
 
     /**
@@ -182,9 +183,12 @@ class Queue implements CountableQueueInterface
     }
 
     /**
+     * Clear queue
+     *
      * @return int
      */
     public function clearQueue(): int
     {
+        return 1;
     }
 }

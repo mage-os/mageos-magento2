@@ -36,7 +36,6 @@ class TopologyTest extends TestCase
      */
     private $objectManager;
 
-
     /**
      * @var string
      */
@@ -53,7 +52,7 @@ class TopologyTest extends TestCase
         $defaultValueProvider = $this->objectManager->get(DefaultValueProvider::class);
         $this->connectionType = $defaultValueProvider->getConnection();
 
-        if($this->connectionType === 'stomp') {
+        if ($this->connectionType === 'stomp') {
             $this->helper = $this->objectManager->create(Stomp::class);
 
             if (!$this->helper->isAvailable()) {
@@ -69,8 +68,9 @@ class TopologyTest extends TestCase
      */
     public function testTopologyInstallation(array $expectedConfig): void
     {
-        if($this->connectionType === 'amqp') {
-            $this->markTestSkipped('STOMP test skipped because AMQP connection is available. This test is STOMP-specific.');
+        if ($this->connectionType === 'amqp') {
+            $this->markTestSkipped('STOMP test skipped because AMQP connection is available.
+            This test is STOMP-specific.');
         }
 
         $name = $expectedConfig['name'];

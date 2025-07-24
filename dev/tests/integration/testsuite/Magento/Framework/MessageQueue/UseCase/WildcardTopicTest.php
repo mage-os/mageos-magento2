@@ -51,7 +51,8 @@ class WildcardTopicTest extends QueueTestCaseAbstract
     public function testWildCardMatchingTopic($topic, $matchingQueues, $nonMatchingQueues)
     {
         if ($this->connectionType === 'stomp') {
-            $this->markTestSkipped('AMQP test skipped because STOMP connection is available. This test is AMQP-specific.');
+            $this->markTestSkipped('AMQP test skipped because STOMP connection is available.
+            This test is AMQP-specific.');
         }
 
         $testObject = $this->generateTestObject();
@@ -86,8 +87,9 @@ class WildcardTopicTest extends QueueTestCaseAbstract
 
     public function testWildCardNonMatchingTopic()
     {
-        if ($this->connectionType === 'stomp'){
-            $this->markTestSkipped('AMQP test skipped because STOMP connection is available. This test is AMQP-specific.');
+        if ($this->connectionType === 'stomp') {
+            $this->markTestSkipped('AMQP test skipped because STOMP connection is available.
+            This test is AMQP-specific.');
         }
 
         $testObject = $this->generateTestObject();

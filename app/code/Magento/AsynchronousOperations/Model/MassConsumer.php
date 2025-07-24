@@ -85,7 +85,9 @@ class MassConsumer implements ConsumerInterface
         if (!isset($maxNumberOfMessages)) {
             $queue->subscribe($this->getTransactionCallback($queue));
         } else {
-            $connectionName = $this->consumerConfig->getConsumer($this->configuration->getConsumerName())->getConnection();
+            $connectionName = $this->consumerConfig
+                              ->getConsumer($this->configuration->getConsumerName())
+                              ->getConnection();
             $this->invoker->invoke(
                 $queue,
                 $maxNumberOfMessages,

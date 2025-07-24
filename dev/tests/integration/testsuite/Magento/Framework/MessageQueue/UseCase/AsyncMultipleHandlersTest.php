@@ -73,7 +73,8 @@ class AsyncMultipleHandlersTest extends QueueTestCaseAbstract
     public function testAsynchronousRpcCommunication()
     {
         if ($this->connectionType === 'stomp') {
-            $this->markTestSkipped('AMQP test skipped because STOMP connection is available. This test is AMQP-specific.');
+            $this->markTestSkipped('AMQP test skipped because STOMP connection is available.
+            This test is AMQP-specific.');
         }
 
         foreach ($this->topicValueMap as $topic => $data) {

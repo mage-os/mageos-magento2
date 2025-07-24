@@ -94,7 +94,7 @@ class QueueInstaller
      */
     private function getStompProducerClient(): StompClient
     {
-        if($this->stompProducerClient === null) {
+        if ($this->stompProducerClient === null) {
             $this->stompProducerClient = $this->stompClient->create(['clientId' => 'producer']);
         }
         return $this->stompProducerClient;
@@ -107,7 +107,7 @@ class QueueInstaller
      */
     private function getStompConsumerClient(): StompClient
     {
-        if($this->stompConsumerClient === null) {
+        if ($this->stompConsumerClient === null) {
             $this->stompConsumerClient = $this->stompClient->create(['clientId' => 'consumer']);
         }
         return $this->stompConsumerClient;

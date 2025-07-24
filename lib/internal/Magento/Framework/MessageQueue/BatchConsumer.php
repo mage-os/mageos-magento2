@@ -11,7 +11,7 @@ use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\MessageQueue\Consumer\ConfigInterface as ConsumerConfig;
 
 /**
- * Class BatchConsumer
+ * BatchConsumer to consume massages from queue and process
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class BatchConsumer implements ConsumerInterface
@@ -78,6 +78,7 @@ class BatchConsumer implements ConsumerInterface
      * @param MessageProcessorLoader|null $messageProcessorLoader [optional]
      * @param ConsumerConfig|null $consumerConfig
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         MessageQueueConfig $messageQueueConfig,
@@ -180,7 +181,7 @@ class BatchConsumer implements ConsumerInterface
         $messages = [];
         $consumerName = $this->configuration->getConsumerName();
         $connectionName = $this->consumerConfig->getConsumer($consumerName)->getConnection();
-        if($connectionName === 'stomp'){
+        if ($connectionName === 'stomp') {
             $queue->subscribeQueue();
         }
         while ($message = $queue->dequeue()) {
@@ -201,7 +202,7 @@ class BatchConsumer implements ConsumerInterface
         $messages = [];
         $consumerName = $this->configuration->getConsumerName();
         $connectionName = $this->consumerConfig->getConsumer($consumerName)->getConnection();
-        if($connectionName === 'stomp'){
+        if ($connectionName === 'stomp') {
             $queue->subscribeQueue();
         }
         for ($i = $count; $i > 0; $i--) {
@@ -285,7 +286,8 @@ class BatchConsumer implements ConsumerInterface
      *
      * @return ConsumerConfig
      *
-     * @deprecated 103.0.0
+     * @deprecated 103.0.0 Use constructor injection instead.
+     * @see \Magento\Framework\MessageQueue\Consumer\ConfigInterface
      */
     private function getConsumerConfig()
     {
@@ -302,7 +304,8 @@ class BatchConsumer implements ConsumerInterface
      *
      * @return MessageController
      *
-     * @deprecated 103.0.0
+     * @deprecated 103.0.0 Use constructor injection instead.
+     * @see \Magento\Framework\MessageQueue\MessageController
      */
     private function getMessageController()
     {

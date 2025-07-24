@@ -90,13 +90,20 @@ class StompClient implements StompClientInterface
      */
     protected array $acknowledged;
 
+    /**
+     * @var array
+     */
     public static $persistentclient;
 
+    /**
+     * @var string
+     */
     private string $clientId;
 
     /**
      * @param Config $stompConfig
      * @param LoggerInterface $logger
+     * @param string $clientId
      * @throws StompException
      */
     public function __construct(
@@ -112,6 +119,7 @@ class StompClient implements StompClientInterface
 
     /**
      * @inheritdoc
+     *
      * @throws StompException
      */
     public function send(string $queue, Message $message): void
@@ -180,15 +188,22 @@ class StompClient implements StompClientInterface
      * @param \Exception $e
      * @param int $retryCount
      * @param int $maxRetries
-     * @throws \Exception
+     * @param string $queue
+     * @param Message $message
+     * @throws StompException
      */
-    private function handleSendError(\Exception $e, int $retryCount, int $maxRetries, string $queue, Message $message): void
-    {
+    private function handleSendError(
+        \Exception $e,
+        int $retryCount,
+        int $maxRetries,
+        string $queue,
+        Message $message
+    ): void {
         $errorMessage = $e->getMessage();
         $isRetryableError = $this->isRetryableError($errorMessage);
         $body = null;
         $headers = null;
-        if($message){
+        if ($message) {
             $body = $message->getBody();
             $headers = $message->getHeaders();
         }
@@ -274,6 +289,7 @@ class StompClient implements StompClientInterface
 
     /**
      * @inheritdoc
+     *
      * @throws StompException
      */
     public function subscribeQueue(string $queue): void
@@ -329,6 +345,7 @@ class StompClient implements StompClientInterface
 
     /**
      * @inheritdoc
+     *
      * @throws StompException
      */
     public function readMessage(): ?Frame
@@ -369,13 +386,13 @@ class StompClient implements StompClientInterface
     {
         try {
             $properties = $lastFrame->getHeaders();
-            if (isset($properties['message-id'])){
+            if (isset($properties['message-id'])) {
                 $messageId = $properties['message-id'];
-                if(!isset($this->acknowledged[$messageId])) {
+                if (!isset($this->acknowledged[$messageId])) {
                     $this->stompConsumer->ack($lastFrame);
                     $this->acknowledged[$properties['message-id']] = true;
                     $this->lastFrame = null;
-                 }
+                }
             }
         } catch (\Exception $e) {
             $this->logger->error(
@@ -517,33 +534,35 @@ class StompClient implements StompClientInterface
         curl_close($ch);
 
         if ($error) {
-            throw new \Exception("CURL error: " . $error);
+            throw new \RuntimeException("CURL error: " . $error);
         }
 
         if ($httpCode !== 200) {
-            throw new \Exception("HTTP error: " . $httpCode);
+            throw new \RuntimeException("HTTP error: " . $httpCode);
         }
 
         $decoded = json_decode($response, true);
 
         if (!$decoded) {
-            throw new \Exception("Invalid JSON response");
+            throw new \RuntimeException("Invalid JSON response");
         }
 
         if (isset($decoded['status']) && $decoded['status'] !== 200) {
-            throw new \Exception("Jolokia error: " . ($decoded['error'] ?? 'Unknown error'));
+            throw new \RuntimeException("Jolokia error: " . ($decoded['error'] ?? 'Unknown error'));
         }
 
         return $decoded;
     }
 
     /**
+     * Create connection with stomp
+     *
      * @throws StompException
      */
     protected function connect(): void
     {
         try {
-            if(!isset(self::$persistentclient[$this->clientId])) {
+            if (!isset(self::$persistentclient[$this->clientId])) {
                 $connection = $this->stompConfig->getConnection();
                 $this->client = new Client($connection);
                 $this->client->setVersions([self::VERSION]);
@@ -568,7 +587,7 @@ class StompClient implements StompClientInterface
             } else {
                 $this->client =self::$persistentclient[$this->clientId];
                 $this->createStatefulStompInstance();
-                if (!self::$persistentclient[$this->clientId]->isConnected()){
+                if (!self::$persistentclient[$this->clientId]->isConnected()) {
                     $this->retryConnection();
                 }
             }
@@ -579,13 +598,12 @@ class StompClient implements StompClientInterface
         }
     }
 
-
     /**
      * Retry connection with the help of Client class
      */
     protected function retryConnection(): void
     {
-        if(!isset(self::$persistentclient[$this->clientId])) {
+        if (!isset(self::$persistentclient[$this->clientId])) {
             $host = $this->stompConfig->getValue(Config::HOST);
             $port = $this->stompConfig->getValue(Config::PORT);
             $heartbeatSend = $this->stompConfig->getValue('heartbeat_send') ?? self::HEARTBEAT_SEND_TIME;
@@ -613,6 +631,11 @@ class StompClient implements StompClientInterface
         }
     }
 
+    /**
+     * Create stateful stomp instance
+     *
+     * @return void
+     */
     private function createStatefulStompInstance(): void
     {
         if ($this->clientId === 'producer') {
@@ -622,21 +645,41 @@ class StompClient implements StompClientInterface
         }
     }
 
+    /**
+     * Stomp transaction begins
+     *
+     * @return void
+     */
     public function transactionBegin(): void
     {
         $this->stompProducer?->begin();
     }
 
+    /**
+     * Stomp transaction commit
+     *
+     * @return void
+     */
     public function transactionCommit(): void
     {
         $this->stompProducer?->commit();
     }
 
+    /**
+     * Check stomp is connected
+     *
+     * @return bool
+     */
     public function isConnected(): bool
     {
         return $this->client->isConnected();
     }
 
+    /**
+     * Disconnect stomp
+     *
+     * @return void
+     */
     public function disconnect(): void
     {
         $this->client->disconnect();

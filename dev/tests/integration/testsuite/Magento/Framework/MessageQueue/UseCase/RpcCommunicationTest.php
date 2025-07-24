@@ -11,7 +11,7 @@ use Magento\TestFramework\Helper\Bootstrap;
 class RpcCommunicationTest extends QueueTestCaseAbstract
 {
     /**
-     * {@inheritdoc}
+     * @var string[]
      */
     protected $consumers = ['synchronousRpcTestConsumer'];
 
@@ -43,7 +43,8 @@ class RpcCommunicationTest extends QueueTestCaseAbstract
     public function testSynchronousRpcCommunication()
     {
         if ($this->connectionType === 'stomp') {
-            $this->markTestSkipped('AMQP test skipped because STOMP connection is available. This test is AMQP-specific.');
+            $this->markTestSkipped('AMQP test skipped because STOMP connection is available.
+            This test is AMQP-specific.');
         }
 
         $input = 'Input value';

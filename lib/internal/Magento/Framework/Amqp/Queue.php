@@ -212,10 +212,12 @@ class Queue implements QueueInterface
     }
 
     /**
+     * Clear queue
+     *
      * @return int
      */
     public function clearQueue(): int
     {
-        return 0;
+        throw new \BadMethodCallException('clearQueue is not supported in amqp queue.');
     }
 }

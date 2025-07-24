@@ -205,9 +205,8 @@ class ConfigOptionsList implements ConfigOptionsListInterface
                 $errors[] = "Could not connect to the Amqp Server.";
             }
 
-            if(isset($options[self::INPUT_KEY_QUEUE_DEFAULT_CONNECTION])
-                && $options[self::INPUT_KEY_QUEUE_DEFAULT_CONNECTION] === 'stomp')
-            {
+            if (isset($options[self::INPUT_KEY_QUEUE_DEFAULT_CONNECTION])
+                && $options[self::INPUT_KEY_QUEUE_DEFAULT_CONNECTION] !== 'amqp') {
                 $errors = [];
             }
         }

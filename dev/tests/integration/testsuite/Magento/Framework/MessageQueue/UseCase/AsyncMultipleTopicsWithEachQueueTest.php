@@ -59,7 +59,8 @@ class AsyncMultipleTopicsWithEachQueueTest extends QueueTestCaseAbstract
     public function testAsyncMultipleTopicsPerQueue()
     {
         if ($this->connectionType === 'stomp') {
-            $this->markTestSkipped('AMQP test skipped because STOMP connection is available. This test is AMQP-specific.');
+            $this->markTestSkipped('AMQP test skipped because STOMP connection is available.
+            This test is AMQP-specific.');
         }
 
         $this->msgObject = $this->objectManager->create(AsyncTestData::class); // @phpstan-ignore-line

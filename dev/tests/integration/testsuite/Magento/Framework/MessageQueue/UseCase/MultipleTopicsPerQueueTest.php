@@ -11,7 +11,7 @@ use Magento\TestFramework\Helper\Bootstrap;
 class MultipleTopicsPerQueueTest extends QueueTestCaseAbstract
 {
     /**
-     * {@inheritdoc}
+     * @var string[]
      */
     protected $consumers = [
         'queue.for.multiple.topics.test.a',
@@ -47,7 +47,8 @@ class MultipleTopicsPerQueueTest extends QueueTestCaseAbstract
     public function testSynchronousRpcCommunication()
     {
         if ($this->connectionType === 'stomp') {
-            $this->markTestSkipped('AMQP test skipped because STOMP connection is available. This test is AMQP-specific.');
+            $this->markTestSkipped('AMQP test skipped because STOMP connection is available.
+            This test is AMQP-specific.');
         }
 
         foreach (['multi.topic.queue.topic.a', 'multi.topic.queue.topic.b'] as $topic) {

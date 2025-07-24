@@ -8,10 +8,12 @@ declare(strict_types=1);
 namespace Magento\Framework\Stomp\Bulk;
 
 use Magento\Framework\Communication\ConfigInterface as CommunicationConfigInterface;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\MessageQueue\Bulk\Queue\QueueInterface;
 use Magento\Framework\Stomp\Config;
 use Magento\Framework\Stomp\StompClientFactory;
 use Magento\Framework\Stomp\StompClient;
+use Stomp\Exception\StompException;
 use Stomp\Transport\Message;
 use Magento\Framework\MessageQueue\QueueInterface as BaseQueueInterface;
 
@@ -67,9 +69,14 @@ class Queue implements QueueInterface
     }
 
     /**
+     * Push a message to queue
+     *
      * @param BaseQueueInterface $queue
      * @param string $topic
      * @param array $envelopes
+     * @return array|null
+     * @throws LocalizedException
+     * @throws StompException
      * @inheritdoc
      */
     public function push(BaseQueueInterface $queue, string $topic, array $envelopes): ?array

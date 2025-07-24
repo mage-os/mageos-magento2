@@ -12,7 +12,7 @@ use Magento\TestModuleSynchronousAmqp\Api\ServiceInterface;
 class RemoteServiceCommunicationTest extends QueueTestCaseAbstract
 {
     /**
-     * {@inheritdoc}
+     * @var string[]
      */
     protected $consumers = ['RemoteServiceTestConsumer'];
 
@@ -39,7 +39,8 @@ class RemoteServiceCommunicationTest extends QueueTestCaseAbstract
     public function testRemoteServiceCommunication()
     {
         if ($this->connectionType === 'stomp') {
-            $this->markTestSkipped('AMQP test skipped because STOMP connection is available. This test is AMQP-specific.');
+            $this->markTestSkipped('AMQP test skipped because STOMP connection is available.
+            This test is AMQP-specific.');
         }
 
         $input = 'Input value';
