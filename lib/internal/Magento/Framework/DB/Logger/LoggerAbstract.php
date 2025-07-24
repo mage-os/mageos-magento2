@@ -104,15 +104,15 @@ abstract class LoggerAbstract implements LoggerInterface
                 if ($result instanceof \Zend_Db_Statement_Pdo) {
                     $message .= 'AFF: ' . $result->rowCount() . $nl;
                 }
+                if ($this->logIndexCheck) {
+                    $message .= 'INDEX CHECK: ' . $this->getIndexUsage($sql, $bind) . $nl;
+                }
                 break;
         }
         $message .= 'TIME: ' . $time . $nl;
 
         if ($this->logCallStack) {
             $message .= 'TRACE: ' . Debug::backtrace(true, false) . $nl;
-        }
-        if ($this->logIndexCheck) {
-            $message .= 'INDEX CHECK: ' . $this->getIndexUsage($sql) . $nl;
         }
 
         $message .= $nl;
@@ -124,17 +124,18 @@ abstract class LoggerAbstract implements LoggerInterface
      * Detects index usage for a given query
      *
      * @param string $sql
+     * @param array $bind
      * @return string
      * @throws \Zend_Db_Statement_Exception
      */
-    private function getIndexUsage(string $sql): string
+    private function getIndexUsage(string $sql, array $bind): string
     {
         if (!$this->isSelectQuery($sql)) {
             return 'NA';
         }
 
         $connection = $this->resource->getConnection();
-        $explainOutput = $connection->query('EXPLAIN ' . $sql)->fetchAll();
+        $explainOutput = $connection->query('EXPLAIN ' . $sql, $bind)->fetchAll();
 
         if (empty($explainOutput)) {
             return 'NA';
