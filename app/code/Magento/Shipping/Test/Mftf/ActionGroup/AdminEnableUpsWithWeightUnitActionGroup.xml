@@ -10,12 +10,11 @@
               xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
     <actionGroup name="AdminEnableUpsWithWeightUnitActionGroup" extends="AdminEnableUPSActionGroup">
         <arguments>
-            <argument name="shipping" defaultValue="UPSShippingMethod"/>
             <argument name="weight" type="string"/>
         </arguments>
         <scrollTo selector="{{AdminShippingMethodUPSSection.weightUnitCheckbox}}" stepKey="scrollToWeightUnits" after="enterTrackingRestURl" />
-        <waitForElementClickable selector="{{AdminShippingMethodUPSSection.weightUnitCheckbox}}" stepKey="waitForUnCheckWeightUnits" after="scrollToWeightUnits"/>
-        <uncheckOption selector="{{AdminShippingMethodUPSSection.weightUnitCheckbox}}" stepKey="unSelectWeightUnits" after="waitForUnCheckWeightUnits"/>
+        <waitForElementClickable selector="{{AdminShippingMethodUPSSection.weightUnitCheckbox}}" stepKey="waitForUnCheckWeightUnits" after="scrollToWeightUnitsx"/>
+        <click selector="{{AdminShippingMethodUPSSection.weightUnitCheckbox}}" stepKey="unSelectWeightUnits" after="waitForUnCheckWeightUnits"/>
         <selectOption selector="{{AdminShippingMethodUPSSection.weightUnitSelect}}" userInput="{{weight}}" stepKey="selectWeightUnit" after="unSelectWeightUnits"/>
     </actionGroup>
 </actionGroups>

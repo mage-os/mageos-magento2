@@ -38,7 +38,6 @@
             <actionGroup ref="AdminOpenShippingMethodsConfigPageActionGroup" stepKey="openShippingMethodConfigPageForEnablingUPS"/>
             <!--Step 2: Configure UPS shipping method with ups type:rest, weight unit:kgs-->
             <actionGroup ref="AdminEnableUpsWithWeightUnitActionGroup" stepKey="enableUPSShippingMethod">
-                <argument name="shipping" value="UPSShippingMethod"/>
                 <argument name="weight" value="KGS"/>
             </actionGroup>
             <!--Cache flush-->
