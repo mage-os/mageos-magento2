@@ -92,7 +92,7 @@ class IndexTest extends TestCase
         $this->requestMock->expects($this->once())->method('isPost')->willReturn(true);
         $exception = new UnknownIpnException(__('Missing invoice field in IPN request.'));
         $this->requestMock->expects($this->once())->method('getPostValue')->willThrowException($exception);
-        $this->loggerMock->expects($this->once())->method('critical')->with($this->identicalTo($exception));
+        $this->loggerMock->expects($this->once())->method('warning')->with($this->identicalTo($exception));
         $this->model->execute();
     }
 
