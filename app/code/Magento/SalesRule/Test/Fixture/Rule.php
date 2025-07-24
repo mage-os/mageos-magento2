@@ -145,38 +145,61 @@ class Rule implements RevertibleDataFixtureInterface
     private function prepareData(array $data): array
     {
         $data = array_merge($this->prepareDefaultData(), $data);
-        $data['conditions'] = $data['conditions'] ?? [];
-        $data['actions'] = $data['actions'] ?? [];
 
-        if ($data['conditions'] instanceof DataObject) {
-            $data['conditions'] = $data['conditions']->toArray();
-        } else {
-            $conditions = $data['conditions'];
-            $data['conditions'] = Conditions::DEFAULT_DATA;
-            foreach ($conditions as $condition) {
-                $data['conditions']['conditions'][] = $condition instanceof DataObject
-                    ? $condition->toArray()
-                    : $condition;
-            }
-        }
-
-        if ($data['actions'] instanceof DataObject) {
-            $data['actions'] = $data['actions']->toArray();
-        } else {
-            $conditions = $data['actions'];
-            $data['actions'] = ProductConditions::DEFAULT_DATA;
-            foreach ($conditions as $condition) {
-                $data['actions']['conditions'][] = $condition instanceof DataObject
-                    ? $condition->toArray()
-                    : $condition;
-            }
-        }
+        $data['conditions'] = $this->prepareConditionsData(
+            $data['conditions'] instanceof DataObject ? $data['conditions']->toArray() : $data['conditions'],
+            Conditions::DEFAULT_DATA,
+            AddressCondition::DEFAULT_DATA
+        );
+        $data['actions'] = $this->prepareConditionsData(
+            $data['actions'] instanceof DataObject ? $data['actions']->toArray() : $data['actions'],
+            ProductConditions::DEFAULT_DATA,
+            ProductCondition::DEFAULT_DATA
+        );
 
         if (!empty($data['coupon_code'])) {
             $data['coupon_type'] = \Magento\SalesRule\Model\Rule::COUPON_TYPE_SPECIFIC;
         }
 
         return $this->dataProcessor->process($this, $data);
+    }
+
+    /**
+     * Prepare conditions data
+     *
+     * @param array $conditions
+     * @param array $defaultConditionsData
+     * @param array $defaultConditionData
+     * @return array
+     */
+    private function prepareConditionsData(
+        array $conditions,
+        array $defaultConditionsData,
+        array $defaultConditionData
+    ): array {
+        $conditionsArray = array_is_list($conditions)
+            ? ['conditions' => $conditions]
+            : $conditions;
+        $conditionsArray += $defaultConditionsData;
+        $subConditions = $conditionsArray['conditions'];
+        $conditionsArray['conditions'] = [];
+        foreach ($subConditions as $condition) {
+            $conditionArray = $condition instanceof DataObject
+                ? $condition->toArray()
+                : $condition;
+            // Condition is a combine
+            if (array_is_list($conditionArray) || isset($conditionArray['conditions'])) {
+                $conditionArray = $this->prepareConditionsData(
+                    $conditionArray,
+                    $defaultConditionsData,
+                    $defaultConditionData
+                );
+            } else {
+                $conditionArray += $defaultConditionData;
+            }
+            $conditionsArray['conditions'][] = $conditionArray;
+        }
+        return $conditionsArray;
     }
 
     /**
