@@ -22,4 +22,9 @@
     </topic>
     <topic name="anotherTopic1" request="string"/>
     <topic name="anotherTopic2" request="string"/>
+
+    <!-- Stomp topics -->
+    <topic name="stomp.topic.declaration" request="string">
+        <handler name="handler1" type="Magento\TestModuleMessageQueueConfiguration\AsyncHandler" method="methodWithStringParam"/>
+    </topic>
 </config>

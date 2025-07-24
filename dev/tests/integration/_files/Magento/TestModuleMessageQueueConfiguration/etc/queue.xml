@@ -19,4 +19,9 @@
     <broker topic="overlapping.topic.declaration" exchange="overlappingDeprecatedExchange">
         <queue consumer="overlappingConsumerDeclaration" name="consumer.config.queue" consumerInstance="Magento\Framework\MessageQueue\BatchConsumer" maxMessages="222" handler="Magento\TestModuleMessageQueueConfiguration\AsyncHandler::methodWithMixedParam"/>
     </broker>
+
+    <!-- Stomp brokers -->
+    <broker topic="stomp.topic.declaration">
+        <queue consumer="stompConsumerDeclaration" name="stomp.consumer.config.queue" consumerInstance="Magento\Framework\MessageQueue\BatchConsumer" maxMessages="222" handler="Magento\TestModuleMessageQueueConfiguration\AsyncHandler::methodWithMixedParam"/>
+    </broker>
 </config>
