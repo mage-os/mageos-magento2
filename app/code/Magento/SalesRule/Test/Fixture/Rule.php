@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2022 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -16,6 +16,71 @@ use Magento\Store\Model\StoreManagerInterface;
 use Magento\TestFramework\Fixture\Data\ProcessorInterface;
 use Magento\TestFramework\Fixture\RevertibleDataFixtureInterface;
 
+/**
+ * Cart price rule fixture
+ *
+ * Example 1: Using array list: (base_subtotal > 1000) AND (sku in (simple1,simple3))
+ *
+ * ```php
+ *    #[
+ *        DataFixture(
+ *            RuleFixture::class,
+ *            [
+ *                'discount_amount' => 25,
+ *                'conditions' => [
+ *                    [
+ *                        'attribute' => 'base_subtotal',
+ *                        'operator' => '>',
+ *                        'value' => 1000
+ *                    ],
+ *                 ],
+ *                'actions' => [
+ *                    [
+ *                        'attribute' => 'sku',
+ *                        'operator' => '()',
+ *                        'value' => 'simple1,simple3'
+ *                    ]
+ *                ]
+ *            ],
+ *            'rule'
+ *        )
+ *    ]
+ * ```
+ *
+ * Example 2: Using associative conditions: (category_ids in (1, 2) AND attribute_set_id=default) OR (sku=simple3)
+ *
+ * ```php
+ *    #[
+ *        DataFixture(
+ *            RuleFixture::class,
+ *            [
+ *                'discount_amount' => 25,
+ *                'actions' => [
+ *                    'aggregator' => 'any',
+ *                    'conditions' => [
+ *                        [
+ *                            [
+ *                                'attribute' => 'category_ids',
+ *                                'operator' => '()',
+ *                                'value' => '1,2',
+ *                            ],
+ *                           [
+ *                                'attribute' => 'attribute_set_id',
+ *                                'value' => 'default',
+ *                           ],
+ *                        ],
+ *                        [
+ *                            'attribute' => 'sku',
+ *                            'value' => 'simple3'
+ *                        ]
+ *                    ],
+ *                ],
+ *            ],
+ *            'rule'
+ *        )
+ *    ]
+ * ```
+ */
 class Rule implements RevertibleDataFixtureInterface
 {
     private const DEFAULT_DATA = [
