@@ -186,7 +186,7 @@ class ProductRepositoryInterfaceTest extends WebapiAbstract
             ],
         ];
 
-        $expectedMessage = 'The product with SKU "%1" does not exist.';
+        $expectedMessage = "The product with SKU \"%1\" does not exist.";
 
         try {
             $this->_webApiCall($serviceInfo, ['sku' => $invalidSku]);
@@ -546,7 +546,7 @@ class ProductRepositoryInterfaceTest extends WebapiAbstract
         $this->saveProduct($fixtureProduct);
         $this->expectException('Exception');
         $this->expectExceptionMessage(
-            'The product with SKU "%1" does not exist.'
+            "The product with SKU \"%1\" does not exist."
         );
 
         // Delete all with 'all' store code

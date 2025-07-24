@@ -29,7 +29,7 @@ return [
             'product_sku'    => 'sku1',
             'max_characters' => 10,
         ],
-        'The product with SKU "sku1" does not exist.',
+        "The product with SKU \"%1\" does not exist.",
         404,
     ],
 ];
