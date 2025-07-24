@@ -13,7 +13,8 @@
             <argument name="shipping" defaultValue="UPSShippingMethod"/>
             <argument name="weight" type="string"/>
         </arguments>
-        <waitForElementClickable selector="{{AdminShippingMethodUPSSection.weightUnitCheckbox}}" stepKey="waitForUnCheckWeightUnits" after="selectDebugToYes"/>
+        <scrollTo selector="{{AdminShippingMethodUPSSection.weightUnitCheckbox}}" stepKey="scrollToWeightUnits" after="enterTrackingRestURl" />
+        <waitForElementClickable selector="{{AdminShippingMethodUPSSection.weightUnitCheckbox}}" stepKey="waitForUnCheckWeightUnits" after="scrollToWeightUnits"/>
         <uncheckOption selector="{{AdminShippingMethodUPSSection.weightUnitCheckbox}}" stepKey="unSelectWeightUnits" after="waitForUnCheckWeightUnits"/>
         <selectOption selector="{{AdminShippingMethodUPSSection.weightUnitSelect}}" userInput="{{weight}}" stepKey="selectWeightUnit" after="unSelectWeightUnits"/>
     </actionGroup>

@@ -36,8 +36,8 @@
         <element name="containerCheckbox" type="checkbox" selector="//tr[@id='row_carriers_ups_container']//td//input[@id='carriers_ups_container_inherit']"/>
         <element name="destinationTypeSelect" type="select" selector="//tr[@id='row_carriers_ups_dest_type']//td//select[@id='carriers_ups_dest_type']"/>
         <element name="destinationTypeCheckbox" type="checkbox" selector="//tr[@id='row_carriers_ups_dest_type']//td//input[@id='carriers_ups_dest_type_inherit']"/>
-        <element name="weightUnitSelect" type="select" selector="//select[@id='carriers_ups_unit_of_measure']"/>
-        <element name="weightUnitCheckbox" type="checkbox" selector="//input[@id='carriers_ups_unit_of_measure_inherit']"/>
+        <element name="weightUnitSelect" type="select" selector="//tr[@id='row_carriers_ups_unit_of_measure']//td//select[@id='carriers_ups_unit_of_measure']"/>
+        <element name="weightUnitCheckbox" type="checkbox" selector="//tr[@id='row_carriers_ups_unit_of_measure']//td//input[@id='carriers_ups_unit_of_measure_inherit']"/>
         <element name="trackingURLCheckbox" type="checkbox" selector="//tr[@id='row_carriers_ups_tracking_url']//td//input[@id='carriers_ups_tracking_url_inherit']"/>
         <element name="trackingURLInput" type="input" selector="//tr[@id='row_carriers_ups_tracking_url']//td//input[@id='carriers_ups_tracking_url']"/>
         <element name="handlingFee" type="input" selector="//tr[@id='row_carriers_ups_handling_fee']//td//input[@id='carriers_ups_handling_fee']"/>
