@@ -53,7 +53,7 @@ class File extends LoggerAbstract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function log($str)
     {
@@ -67,7 +67,7 @@ class File extends LoggerAbstract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function logStats($type, $sql, $bind = [], $result = null)
     {
@@ -78,7 +78,7 @@ class File extends LoggerAbstract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function critical(\Exception $e)
     {

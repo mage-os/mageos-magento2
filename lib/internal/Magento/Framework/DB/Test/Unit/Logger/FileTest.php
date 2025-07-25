@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -20,7 +20,7 @@ use Zend_Db_Statement_Interface;
 
 class FileTest extends TestCase
 {
-    const DEBUG_FILE = 'debug.file.log';
+    public const DEBUG_FILE = 'debug.file.log';
 
     /**
      * @var WriteInterface|MockObject
@@ -155,9 +155,9 @@ class FileTest extends TestCase
                 [],
                 null,
                 '{}',
-                'INDEX CHECK: NA'
+                ''
             ],
-            'full-table-scan-no-index-filesort-query' => [
+            'small-table-query' => [
                 LoggerInterface::TYPE_QUERY,
                 "SELECT `main_table`.* FROM `admin_system_messages` AS `main_table`
                       ORDER BY severity ASC, created_at DESC",
@@ -166,7 +166,7 @@ class FileTest extends TestCase
                 '[{"id":"1","select_type":"SIMPLE","table":"admin_system_messages","partitions":null,"type":"ALL",
                 "possible_keys":null,"key":null,"key_len":null,"ref":null,"rows":"1","filtered":"100.00",
                 "Extra":"Using filesort"}]',
-                'INDEX CHECK: FULL TABLE SCAN, NO INDEX, FILESORT'
+                'INDEX CHECK: NA'
             ],
             'subselect-with-dependent-query' => [
                 LoggerInterface::TYPE_QUERY,
@@ -191,11 +191,10 @@ class FileTest extends TestCase
                 "type":"ref","possible_keys":"MAGENTO_OPERATION_BULK_UUID_ERROR_CODE","key":
                 "MAGENTO_OPERATION_BULK_UUID_ERROR_CODE","key_len":"42","ref":
                 "magento24i2.main_table.uuid","rows":"1","filtered":"100.00","Extra":"Using index"}]',
-                'INDEX CHECK: FILESORT, DEPENDENT SUBQUERY'
+                'INDEX CHECK: POTENTIAL ISSUES - FILESORT, PARTIAL INDEX USED, DEPENDENT SUBQUERY'
             ],
         ];
     }
-
 
     /**
      * @param $type

@@ -8,9 +8,12 @@ namespace Magento\Framework\DB\Logger;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\LoggerInterface;
 use Magento\Framework\Debug;
+use Zend_Db_Statement_Pdo;
 
 abstract class LoggerAbstract implements LoggerInterface
 {
+    private const LINE_DELIMITER = "\n";
+
     /**
      * @var int
      */
@@ -42,6 +45,7 @@ abstract class LoggerAbstract implements LoggerInterface
     private ResourceConnection $resource;
 
     /**
+     * @param ResourceConnection $resource
      * @param bool $logAllQueries
      * @param float $logQueryTime
      * @param bool $logCallStack
@@ -62,7 +66,7 @@ abstract class LoggerAbstract implements LoggerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function startTimer()
     {
@@ -81,41 +85,87 @@ abstract class LoggerAbstract implements LoggerInterface
      */
     public function getStats($type, $sql, $bind = [], $result = null)
     {
-        $message = '## ' . getmypid() . ' ## ';
-        $nl   = "\n";
         $time = sprintf('%.4f', microtime(true) - $this->timer);
 
         if (!$this->logAllQueries && $time < $this->logQueryTime) {
             return '';
         }
+
+        if ($this->isExplainQuery($sql)) {
+            return '';
+        }
+
+        return $this->buildDebugMessage($type, $sql, $bind, $result, $time);
+    }
+
+    /**
+     * Check if query already contains 'explain' keyword
+     *
+     * @param string $query
+     * @return bool
+     */
+    private function isExplainQuery(string $query): bool
+    {
+        // Remove leading/trailing whitespace and normalize case
+        $cleaned = ltrim($query);
+
+        // Strip comments
+        while (preg_match('/^(--[^\n]*\n|\/\*.*?\*\/\s*)/s', $cleaned, $matches)) {
+            $cleaned = ltrim(substr($cleaned, strlen($matches[0])));
+        }
+
+        // Check if it starts with EXPLAIN
+        return (bool) preg_match('/^EXPLAIN\b/i', $cleaned);
+    }
+
+    /**
+     * Build log message based on query type
+     *
+     * @param string $type
+     * @param string $sql
+     * @param array $bind
+     * @param Zend_Db_Statement_Pdo|null $result
+     * @param string $time
+     * @return string
+     * @throws \Zend_Db_Statement_Exception
+     */
+    private function buildDebugMessage(
+        string $type,
+        string $sql,
+        array $bind,
+        ?Zend_Db_Statement_Pdo $result,
+        string $time
+    ): string {
+        $message = '## ' . getmypid() . ' ## ';
+
         switch ($type) {
             case self::TYPE_CONNECT:
-                $message .= 'CONNECT' . $nl;
+                $message .= 'CONNECT' . self::LINE_DELIMITER;
                 break;
             case self::TYPE_TRANSACTION:
-                $message .= 'TRANSACTION ' . $sql . $nl;
+                $message .= 'TRANSACTION ' . $sql . self::LINE_DELIMITER;
                 break;
             case self::TYPE_QUERY:
-                $message .= 'QUERY' . $nl;
-                $message .= 'SQL: ' . $sql . $nl;
+                $message .= 'QUERY' . self::LINE_DELIMITER;
+                $message .= 'SQL: ' . $sql . self::LINE_DELIMITER;
                 if ($bind) {
-                    $message .= 'BIND: ' . var_export($bind, true) . $nl;
+                    $message .= 'BIND: ' . var_export($bind, true) . self::LINE_DELIMITER;
                 }
                 if ($result instanceof \Zend_Db_Statement_Pdo) {
-                    $message .= 'AFF: ' . $result->rowCount() . $nl;
+                    $message .= 'AFF: ' . $result->rowCount() . self::LINE_DELIMITER;
                 }
                 if ($this->logIndexCheck) {
-                    $message .= 'INDEX CHECK: ' . $this->getIndexUsage($sql, $bind) . $nl;
+                    $message .= 'INDEX CHECK: ' . $this->getIndexUsage($sql, $bind) . self::LINE_DELIMITER;
                 }
                 break;
         }
-        $message .= 'TIME: ' . $time . $nl;
+        $message .= 'TIME: ' . $time . self::LINE_DELIMITER;
 
         if ($this->logCallStack) {
-            $message .= 'TRACE: ' . Debug::backtrace(true, false) . $nl;
+            $message .= 'TRACE: ' . Debug::backtrace(true, false) . self::LINE_DELIMITER;
         }
 
-        $message .= $nl;
+        $message .= self::LINE_DELIMITER;
 
         return $message;
     }
@@ -141,43 +191,112 @@ abstract class LoggerAbstract implements LoggerInterface
             return 'NA';
         }
 
-        $issues = [];
-        foreach ($explainOutput as $row) {
-            $row = array_change_key_case($row);
-
-            $selectType = strtolower($row['select_type'] ?? '');
-            $type = strtolower($row['type'] ?? '');
-            $key = $row['key'] ?? null;
-            $keyLen = $row['key_len'] ?? null;
-            $extra = strtolower($row['extra'] ?? '');
-
-            // Full table scan
-            if ($type === 'all' && empty($key)) {
-                $issues[] = 'FULL TABLE SCAN';
-            }
-
-            // No usable index
-            if (empty($key)) {
-                $issues[] = 'NO INDEX';
-            }
-
-            // Using filesort (inefficient sorting)
-            if (str_contains($extra, 'using filesort')) {
-                $issues[] = 'FILESORT';
-            }
-
-            // Dependent subquery (re-evaluated for every row)
-            if ($selectType === 'dependent subquery') {
-                $issues[] = 'DEPENDENT SUBQUERY';
-            }
-
-            // Partial index usage
-            if (!empty($key) && !empty($keyLen) && (int)$keyLen < 4) {
-                $issues[] = 'PARTIAL INDEX USED';
-            }
+        try {
+            $issues = $this->getPotentialQueryIssues($explainOutput);
+        } catch (\Throwable) {
+            return 'NA';
         }
 
-        return empty($issues) ? 'USING INDEX' : implode(', ', array_unique($issues));
+        return empty($issues) ? 'USING INDEX' : 'POTENTIAL ISSUES - ' . implode(', ', array_unique($issues));
+    }
+
+    /**
+     * Check each select from given query for potential issues
+     *
+     * @param array $explainOutput
+     * @return array
+     * @throws \Exception
+     */
+    private function getPotentialQueryIssues(array $explainOutput): array
+    {
+        $issues = [];
+        foreach ($explainOutput as $row) {
+            $issues = [...$issues, ...$this->getQueryIssues($row)];
+        }
+
+        return $issues;
+    }
+
+    /**
+     * Check EXPLAIN output for potential issues
+     *
+     * @param array $selectDetails
+     * @return array
+     * @throws \Exception
+     */
+    private function getQueryIssues(array $selectDetails): array
+    {
+        $issues = [];
+        $selectDetails = array_change_key_case($selectDetails);
+
+        $selectType = strtolower($selectDetails['select_type'] ?? '');
+        $type = strtolower($selectDetails['type'] ?? '');
+        $key = $selectDetails['key'] ?? null;
+        $extra = strtolower($selectDetails['extra'] ?? '');
+
+        // skip small tables
+        if ((int) $selectDetails['rows'] < 100 && strtolower($selectDetails['type']) === 'all') {
+            throw new \Exception('Small table');
+        }
+
+        // Full table scan
+        if ($type === 'all' && empty($key)) {
+            $issues[] = 'FULL TABLE SCAN';
+        }
+
+
+        // No usable index
+        if (empty($key)) {
+            $issues[] = 'NO INDEX';
+        }
+
+        // Using filesort (inefficient sorting)
+        if (str_contains($extra, 'using filesort')) {
+            $issues[] = 'FILESORT';
+        }
+
+        // Dependent subquery (re-evaluated for every row)
+        if ($selectType === 'dependent subquery') {
+            $issues[] = 'DEPENDENT SUBQUERY';
+        }
+
+        if ($this->isPartialIndexUsage($selectDetails)) {
+            $issues[] = 'PARTIAL INDEX USED';
+        }
+
+        return $issues;
+    }
+
+    /**
+     * Check for partial index usage
+     *
+     * @param array $row
+     * @return bool
+     */
+    private function isPartialIndexUsage(array $row): bool
+    {
+        $extra = strtolower($row['extra'] ?? '');
+
+        // Good full index usage if it's a covering index
+        if (!empty($row['key']) && str_contains($extra, 'using index') && !str_contains($extra, 'using where')) {
+            return false;
+        }
+
+        // If using index but still filtering or sorting, it's partial
+        if (!empty($row['key']) && (
+                str_contains($extra, 'using where') ||
+                str_contains($extra, 'using filesort') ||
+                str_contains($extra, 'using temporary')
+            )) {
+            return true;
+        }
+
+        // If an index is used but with full index scan
+        if ($row['type'] === 'index' && !str_contains($extra, 'using index')) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
