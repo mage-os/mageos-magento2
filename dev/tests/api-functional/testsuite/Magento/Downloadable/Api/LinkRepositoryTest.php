@@ -751,7 +751,7 @@ class LinkRepositoryTest extends WebapiAbstract
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage(
-            '{"message":"The product with SKU \"%1\" does not exist.","parameters":["wrong-sku"]}'
+            'The product with SKU "%1" does not exist.'
         );
 
         $this->updateServiceInfo['rest']['resourcePath'] = '/V1/products/wrong-sku/downloadable-links/1';
@@ -1001,7 +1001,7 @@ class LinkRepositoryTest extends WebapiAbstract
 
         $requestData = ['sku' => $sku];
 
-        $expectedMessage = '{"message":"The product with SKU \"%1\" does not exist.","parameters":["' . $sku . ' "]}';
+        $expectedMessage = 'The product with SKU "%1" does not exist.';
         try {
             $this->_webApiCall($serviceInfo, $requestData);
         } catch (\SoapFault $e) {

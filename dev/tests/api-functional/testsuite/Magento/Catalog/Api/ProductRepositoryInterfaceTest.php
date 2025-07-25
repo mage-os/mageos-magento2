@@ -45,13 +45,13 @@ use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
  */
 class ProductRepositoryInterfaceTest extends WebapiAbstract
 {
-    const SERVICE_NAME = 'catalogProductRepositoryV1';
-    const SERVICE_VERSION = 'V1';
-    const RESOURCE_PATH = '/V1/products';
+    private const SERVICE_NAME = 'catalogProductRepositoryV1';
+    private const SERVICE_VERSION = 'V1';
+    private const RESOURCE_PATH = '/V1/products';
 
-    const KEY_TIER_PRICES = 'tier_prices';
-    const KEY_SPECIAL_PRICE = 'special_price';
-    const KEY_CATEGORY_LINKS = 'category_links';
+    private const KEY_TIER_PRICES = 'tier_prices';
+    private const KEY_SPECIAL_PRICE = 'special_price';
+    private const KEY_CATEGORY_LINKS = 'category_links';
 
     /**
      * @var array

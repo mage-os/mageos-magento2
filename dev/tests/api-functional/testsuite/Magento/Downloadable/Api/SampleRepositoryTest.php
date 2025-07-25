@@ -574,7 +574,7 @@ class SampleRepositoryTest extends WebapiAbstract
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage(
-           '{"message":"The product with SKU \"%1\" does not exist.","parameters":["wrong-sku"]}'
+            '{"message":"The product with SKU \"%1\" does not exist.","parameters":["wrong-sku"]}'
         );
 
         $this->updateServiceInfo['rest']['resourcePath'] = '/V1/products/wrong-sku/downloadable-links/samples/1';

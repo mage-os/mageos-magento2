@@ -612,7 +612,9 @@ class ProductAttributeMediaGalleryManagementInterfaceTest extends WebapiAbstract
     public function testDeleteThrowsExceptionIfTargetProductDoesNotExist()
     {
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('{"message":"The product with SKU \"%1\" does not exist.","parameters":["wrong_product_sku"]}');
+        $this->expectExceptionMessage(
+            '{"message":"The product with SKU \"%1\" does not exist.","parameters":["wrong_product_sku"]}'
+        );
 
         $this->deleteServiceInfo['rest']['resourcePath'] = '/V1/products/wrong_product_sku/media/9999';
         $requestData = [
