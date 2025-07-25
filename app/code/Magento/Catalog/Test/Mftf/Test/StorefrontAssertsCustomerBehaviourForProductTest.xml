@@ -40,7 +40,7 @@
                 <requiredEntity createDataKey="category"/>
             </createData>
             <createData entity="Simple_US_Customer" stepKey="customer"/>
-            <!-- Precondition Step.2: "Remember Category Pagination" should be enabled in the configuration  -->
+            <!-- Precondition Step.2: Enable Remember Category Pagination in configuration  -->
             <actionGroup ref="AdminEnableRememberCategoryPaginationActionGroup" stepKey="enableRememberCategoryPagination"/>
         </before>
         <after>
@@ -60,6 +60,9 @@
         <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
             <argument name="Customer" value="$$customer$$"/>
         </actionGroup>
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+            <argument name="indices" value=""/>
+        </actionGroup>
         <!-- Step 2: Search for the product Bag -->
         <actionGroup ref="StoreFrontQuickSearchActionGroup" stepKey="searchByCreatedTerm">
             <argument name="query" value="Bag"/>
@@ -72,11 +75,10 @@
         <actionGroup ref="StorefrontCategoryPageSortProductActionGroup" stepKey="sortProductByPriceAscending"/>
         <!-- Step 4: Click the arrow to sort by price desc/asc by clicking on UP/Down arrow. -->
         <actionGroup ref="StorefrontCategoryPageSortDescendingActionGroup" stepKey="setDescendingDirection"/>
-        <actionGroup ref="StorefrontCategoryPageSortAscendingActionGroup" stepKey="setAscendingDirection"/>
-        <selectOption selector="{{StorefrontCategoryTopToolbarSection.showDropdown}}" userInput="24" stepKey="selectShowProducts"/>
+
         <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seeProductFirstPosition">
             <argument name="selector" value="{{StorefrontCategoryMainSection.lineProductName('1')}}"/>
-            <argument name="userInput" value="$$product3.name$$"/>
+            <argument name="userInput" value="$$product1.name$$"/>
         </actionGroup>
         <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seeProductSecondPosition">
             <argument name="selector" value="{{StorefrontCategoryMainSection.lineProductName('2')}}"/>
@@ -84,13 +86,13 @@
         </actionGroup>
         <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seeProductThirdPosition">
             <argument name="selector" value="{{StorefrontCategoryMainSection.lineProductName('3')}}"/>
-            <argument name="userInput" value="$$product1.name$$"/>
+            <argument name="userInput" value="$$product3.name$$"/>
         </actionGroup>
         <!-- Step 5: Try clicking multiple times on arrow. -->
-        <actionGroup ref="StorefrontCategoryPageSortDescendingActionGroup" stepKey="setDescendingDirection1"/>
+        <actionGroup ref="StorefrontCategoryPageSortAscendingActionGroup" stepKey="setAscendingDirection"/>
         <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seeProductFirstPosition1">
             <argument name="selector" value="{{StorefrontCategoryMainSection.lineProductName('1')}}"/>
-            <argument name="userInput" value="$$product1.name$$"/>
+            <argument name="userInput" value="$$product3.name$$"/>
         </actionGroup>
         <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seeProductSecondPosition1">
             <argument name="selector" value="{{StorefrontCategoryMainSection.lineProductName('2')}}"/>
@@ -98,12 +100,12 @@
         </actionGroup>
         <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seeProductThirdPosition1">
             <argument name="selector" value="{{StorefrontCategoryMainSection.lineProductName('3')}}"/>
-            <argument name="userInput" value="$$product3.name$$"/>
+            <argument name="userInput" value="$$product1.name$$"/>
         </actionGroup>
-        <actionGroup ref="StorefrontCategoryPageSortAscendingActionGroup" stepKey="setDescendingDirection2"/>
+        <actionGroup ref="StorefrontCategoryPageSortDescendingActionGroup" stepKey="setDescendingDirection2"/>
         <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seeProductFirstPosition2">
             <argument name="selector" value="{{StorefrontCategoryMainSection.lineProductName('1')}}"/>
-            <argument name="userInput" value="$$product3.name$$"/>
+            <argument name="userInput" value="$$product1.name$$"/>
         </actionGroup>
         <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seeProductSecondPosition2">
             <argument name="selector" value="{{StorefrontCategoryMainSection.lineProductName('2')}}"/>
@@ -111,12 +113,12 @@
         </actionGroup>
         <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seeProductThirdPosition2">
             <argument name="selector" value="{{StorefrontCategoryMainSection.lineProductName('3')}}"/>
-            <argument name="userInput" value="$$product1.name$$"/>
+            <argument name="userInput" value="$$product3.name$$"/>
         </actionGroup>
-        <actionGroup ref="StorefrontCategoryPageSortDescendingActionGroup" stepKey="setDescendingDirection3"/>
+        <actionGroup ref="StorefrontCategoryPageSortAscendingActionGroup" stepKey="setAscendingDirection3"/>
         <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seeProductFirstPosition3">
             <argument name="selector" value="{{StorefrontCategoryMainSection.lineProductName('1')}}"/>
-            <argument name="userInput" value="$$product1.name$$"/>
+            <argument name="userInput" value="$$product3.name$$"/>
         </actionGroup>
         <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seeProductSecondPosition3">
             <argument name="selector" value="{{StorefrontCategoryMainSection.lineProductName('2')}}"/>
@@ -124,7 +126,7 @@
         </actionGroup>
         <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seeProductThirdPosition3">
             <argument name="selector" value="{{StorefrontCategoryMainSection.lineProductName('3')}}"/>
-            <argument name="userInput" value="$$product3.name$$"/>
+            <argument name="userInput" value="$$product1.name$$"/>
         </actionGroup>
     </test>
 </tests>
