@@ -10,13 +10,13 @@
        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
     <test name="StorefrontVerifyPagerIsPresentOnViewOrderPageForGuestUsingOrdersAndReturnsTest">
         <annotations>
-            <features value="Order"/>
+            <features value="Sales"/>
             <stories value="Pager should be present on view order page if quantity of ordered products exceeds limit"/>
             <title value="Pager should be present on view order page"/>
             <description value="Verify Pager is present on View Order page for Guest using Orders and Returns functionality if qty of ordered products exceeds display limit"/>
             <severity value="MAJOR"/>
             <testCaseId value="AC-4415"/>
-            <group value="Order"/>
+            <group value="Sales"/>
         </annotations>
         <before>
             <!-- Create simple products -->
@@ -182,7 +182,7 @@
         <waitForPageLoad stepKey="waitForPageLoad1"/>
         <!-- Step 4 Assertion: Verify order page is opened, only 20 items present on the first page and pagers (Top and Bottom) and text "Items 1-20 of 21 total" are present -->
         <waitForElementVisible selector="{{StorefrontOrderAndReturnInformationSection.orderPage({$grabOrderNumber})}}" stepKey="verifyOrderPage" />
-        <waitForText userInput="{{OrdersPaginationData.pager}}" selector="{{StorefrontOrderAndReturnInformationSection.pagerAtTop}}" stepKey="seeTotalProductsAndNumberOfProductsPerPageAtTop"/>
-        <waitForText userInput="{{OrdersPaginationData.pager}}" selector="{{StorefrontOrderAndReturnInformationSection.pagerAtBottom}}" stepKey="seePagerAtBottom"/>
+        <waitForText userInput="Items 1 to 20 of 21 total" selector="{{StorefrontOrderAndReturnInformationSection.pagerAtTop}}" stepKey="seeTotalProductsAndNumberOfProductsPerPageAtTop"/>
+        <waitForText userInput="Items 1 to 20 of 21 total" selector="{{StorefrontOrderAndReturnInformationSection.pagerAtBottom}}" stepKey="seePagerAtBottom"/>
     </test>
 </tests>

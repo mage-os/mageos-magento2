@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  /**
-  * Copyright 2017 Adobe
-  * All Rights Reserved.
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
   */
 -->
 
@@ -44,8 +44,5 @@
         <data key="pendingPayment">Pending Payment</data>
         <data key="processing">Processing</data>
         <data key="ordered">Ordered</data>
-    </entity>
-    <entity name="OrdersPaginationData">
-        <data key="pager">Items 1 to 20 of 21 total</data>
     </entity>
 </entities>
