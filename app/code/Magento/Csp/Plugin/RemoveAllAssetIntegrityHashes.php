@@ -12,6 +12,7 @@ use Magento\Deploy\Package\Package;
 use Magento\Deploy\Console\DeployStaticOptions;
 use Magento\Deploy\Service\DeployStaticContent;
 use Magento\Csp\Model\SubresourceIntegrityRepositoryPool;
+use Magento\Csp\Model\SubresourceIntegrityCollector;
 
 /**
  * Plugin that removes existing integrity hashes for all assets.
@@ -24,12 +25,20 @@ class RemoveAllAssetIntegrityHashes
     private SubresourceIntegrityRepositoryPool $integrityRepositoryPool;
 
     /**
+     * @var SubresourceIntegrityCollector
+     */
+    private SubresourceIntegrityCollector $integrityCollector;
+
+    /**
      * @param SubresourceIntegrityRepositoryPool $integrityRepositoryPool
+     * @param SubresourceIntegrityCollector $integrityCollector
      */
     public function __construct(
-        SubresourceIntegrityRepositoryPool $integrityRepositoryPool
+        SubresourceIntegrityRepositoryPool $integrityRepositoryPool,
+        SubresourceIntegrityCollector $integrityCollector
     ) {
         $this->integrityRepositoryPool = $integrityRepositoryPool;
+        $this->integrityCollector = $integrityCollector;
     }
 
     /**
@@ -47,10 +56,14 @@ class RemoveAllAssetIntegrityHashes
         array $options
     ): void {
         if (PHP_SAPI == 'cli' && !$this->isRefreshContentVersionOnly($options)) {
+            // Clear stored integrity hashes from all areas
             foreach ([Package::BASE_AREA, Area::AREA_FRONTEND, Area::AREA_ADMINHTML] as $area) {
                 $this->integrityRepositoryPool->get($area)
                     ->deleteAll();
             }
+            
+            // Clear any leftover in-memory integrity hashes from previous runs
+            $this->integrityCollector->clear();
         }
     }
 

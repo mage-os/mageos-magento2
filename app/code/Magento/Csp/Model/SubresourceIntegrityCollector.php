@@ -7,22 +7,35 @@ declare(strict_types=1);
 
 namespace Magento\Csp\Model;
 
+use Magento\Framework\App\ObjectManager;
+use Psr\Log\LoggerInterface;
+
 /**
  * Collector of Integrity objects.
+ * 
+ * Uses static storage to persist data across ObjectManager instances
+ * during area emulation in static content deployment.
  */
 class SubresourceIntegrityCollector
 {
     /**
+     * Global storage that persists across ObjectManager instances
      * @var array
      */
-    private array $data = [];
+    private static array $globalData = [];
 
     /**
-     * @param array $data
+     * @var LoggerInterface
      */
-    public function __construct(array $data = [])
-    {
-        $this->data = $data;
+    private LoggerInterface $logger;
+
+    /**
+     * @param LoggerInterface|null $logger
+     */
+    public function __construct(?LoggerInterface $logger = null) {
+        $this->logger = $logger ?? ObjectManager::getInstance()->get(LoggerInterface::class);
+        
+        $this->logger->info('SRI Collector: Initialized with ' . count(self::$globalData) . ' objects (global storage)');
     }
 
     /**
@@ -34,7 +47,8 @@ class SubresourceIntegrityCollector
      */
     public function collect(SubresourceIntegrity $integrity): void
     {
-        $this->data[] = $integrity;
+        self::$globalData[] = $integrity;
+        $this->logger->info('SRI Collector: Collected object, total: ' . count(self::$globalData));
     }
 
     /**
@@ -44,6 +58,20 @@ class SubresourceIntegrityCollector
      */
     public function release(): array
     {
-        return $this->data;
+        $count = count(self::$globalData);
+        $this->logger->info('SRI Collector: Releasing ' . $count . ' objects');
+        return self::$globalData;
+    }
+
+    /**
+     * Clear all collected data.
+     *
+     * @return void
+     */
+    public function clear(): void
+    {
+        $count = count(self::$globalData);
+        self::$globalData = [];
+        $this->logger->info('SRI Collector: Cleared ' . $count . ' objects');
     }
 }
