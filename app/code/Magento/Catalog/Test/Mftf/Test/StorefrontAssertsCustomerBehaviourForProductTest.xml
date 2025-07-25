@@ -60,9 +60,6 @@
         <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
             <argument name="Customer" value="$$customer$$"/>
         </actionGroup>
-        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
-            <argument name="indices" value=""/>
-        </actionGroup>
         <!-- Step 2: Search for the product Bag -->
         <actionGroup ref="StoreFrontQuickSearchActionGroup" stepKey="searchByCreatedTerm">
             <argument name="query" value="Bag"/>
