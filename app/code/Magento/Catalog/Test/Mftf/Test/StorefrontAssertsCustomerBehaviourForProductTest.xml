@@ -68,10 +68,10 @@
         <waitForText userInput="$product2.name$" selector="{{StorefrontCatalogSearchMainSection.searchResults}}" stepKey="seeProduct2"/>
         <waitForText userInput="$product3.name$" selector="{{StorefrontCatalogSearchMainSection.searchResults}}" stepKey="seeProduct3"/>
         <!-- Step 3: Sort by Change to "Price". -->
+        <selectOption selector="{{StorefrontCategoryTopToolbarSection.sortByDropdown}}" userInput="Price" stepKey="selectSortByPriceFromDropdown"/>
         <actionGroup ref="StorefrontCategoryPageSortProductActionGroup" stepKey="sortProductByPriceAscending"/>
         <!-- Step 4: Click the arrow to sort by price desc/asc by clicking on UP/Down arrow. -->
         <actionGroup ref="StorefrontCategoryPageSortDescendingActionGroup" stepKey="setDescendingDirection"/>
-        <selectOption selector="{{StorefrontCategoryTopToolbarSection.sortByDropdown}}" userInput="Price" stepKey="selectSortByProductName"/>
         <actionGroup ref="StorefrontCategoryPageSortAscendingActionGroup" stepKey="setAscendingDirection"/>
         <selectOption selector="{{StorefrontCategoryTopToolbarSection.showDropdown}}" userInput="24" stepKey="selectShowProducts"/>
         <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seeProductFirstPosition">
