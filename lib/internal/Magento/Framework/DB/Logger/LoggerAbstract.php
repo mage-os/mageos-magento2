@@ -191,9 +191,8 @@ abstract class LoggerAbstract implements LoggerInterface
             return 'NA';
         }
 
-        try {
-            $issues = $this->getPotentialQueryIssues($explainOutput);
-        } catch (\Throwable) {
+        $issues = $this->analyzeQueries($explainOutput);
+        if ($issues === null) {
             return 'NA';
         }
 
@@ -204,27 +203,40 @@ abstract class LoggerAbstract implements LoggerInterface
      * Check each select from given query for potential issues
      *
      * @param array $explainOutput
-     * @return array
-     * @throws \Exception
+     * @return array|null
      */
-    private function getPotentialQueryIssues(array $explainOutput): array
+    private function analyzeQueries(array $explainOutput): ?array
     {
         $issues = [];
-        foreach ($explainOutput as $row) {
-            $issues = [...$issues, ...$this->getQueryIssues($row)];
+        $smallTableCount = 0;
+        foreach ($explainOutput as $key => $row) {
+            $result = $this->getQueryIssues($row);
+            if ($result === null) {
+                $smallTableCount++;
+            }
+            $issues[$key] = $result;
         }
 
-        return $issues;
+        if ($smallTableCount == count($explainOutput)) {
+            return null;
+        }
+        $result = [];
+        foreach ($issues as $queryIssues) {
+            if ($queryIssues) {
+                $result = [...$queryIssues, ...$result];
+            }
+        }
+
+        return $result;
     }
 
     /**
      * Check EXPLAIN output for potential issues
      *
      * @param array $selectDetails
-     * @return array
-     * @throws \Exception
+     * @return array|null
      */
-    private function getQueryIssues(array $selectDetails): array
+    private function getQueryIssues(array $selectDetails): ?array
     {
         $issues = [];
         $selectDetails = array_change_key_case($selectDetails);
@@ -235,8 +247,8 @@ abstract class LoggerAbstract implements LoggerInterface
         $extra = strtolower($selectDetails['extra'] ?? '');
 
         // skip small tables
-        if ((int) $selectDetails['rows'] < 100 && strtolower($selectDetails['type']) === 'all') {
-            throw new \Exception('Small table');
+        if ((int) $selectDetails['rows'] < 100 && $type === 'all') {
+            return null;
         }
 
         // Full table scan
@@ -244,9 +256,8 @@ abstract class LoggerAbstract implements LoggerInterface
             $issues[] = 'FULL TABLE SCAN';
         }
 
-
         // No usable index
-        if (empty($key)) {
+        if (empty($key) && !str_contains($extra, 'no matching row in const table')) {
             $issues[] = 'NO INDEX';
         }
 
@@ -276,28 +287,42 @@ abstract class LoggerAbstract implements LoggerInterface
     private function isPartialIndexUsage(array $row): bool
     {
         $extra = strtolower($row['extra'] ?? '');
+        $type = strtolower($row['type'] ?? '');
+        $key = $row['key'] ?? '';
 
-        // Good full index usage if it's a covering index
-        if (!empty($row['key']) && str_contains($extra, 'using index') && !str_contains($extra, 'using where')) {
+        if (empty($key)) {
             return false;
         }
 
-        // If using index but still filtering or sorting, it's partial
-        if (!empty($row['key']) && (
-                str_contains($extra, 'using where') ||
-                str_contains($extra, 'using filesort') ||
-                str_contains($extra, 'using temporary')
-            )) {
-            return true;
+        // Good: covering index (no need to read from table)
+        if (str_contains($extra, 'using index') && !str_contains($extra, 'using where')) {
+            return false;
         }
 
-        // If an index is used but with full index scan
-        if ($row['type'] === 'index' && !str_contains($extra, 'using index')) {
+        // Good: very efficient access types
+        if (in_array($type, ['const', 'eq_ref'])) {
+            return false;
+        }
+
+        // Acceptable: range/index lookup with covering index (even if filtered)
+        if (str_contains($extra, 'using index') &&
+            str_contains($extra, 'using where') &&
+            in_array($type, ['range', 'ref'])) {
+            return false;
+        }
+
+        // Partial usage: index used but not covering, or used inefficiently
+        if (
+            str_contains($extra, 'using filesort') ||
+            str_contains($extra, 'using temporary') ||
+            ($type === 'index' && !str_contains($extra, 'using index'))
+        ) {
             return true;
         }
 
         return false;
     }
+
 
     /**
      * Detects if a given SQL string is a SELECT query.

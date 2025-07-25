@@ -14,6 +14,7 @@ use Magento\Framework\DB\LoggerInterface;
 use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\File\WriteInterface;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Zend_Db_Statement_Interface;
@@ -85,9 +86,11 @@ class FileTest extends TestCase
      * @param $sql
      * @param $bind
      * @param $result
+     * @param $explainResult
      * @param $expectedResult
      * @return void
      * @throws FileSystemException
+     * @throws Exception
      * @throws \Zend_Db_Statement_Exception
      * @dataProvider statsDataProvider
      */
@@ -191,7 +194,7 @@ class FileTest extends TestCase
                 "type":"ref","possible_keys":"MAGENTO_OPERATION_BULK_UUID_ERROR_CODE","key":
                 "MAGENTO_OPERATION_BULK_UUID_ERROR_CODE","key_len":"42","ref":
                 "magento24i2.main_table.uuid","rows":"1","filtered":"100.00","Extra":"Using index"}]',
-                'INDEX CHECK: POTENTIAL ISSUES - FILESORT, PARTIAL INDEX USED, DEPENDENT SUBQUERY'
+                'INDEX CHECK: POTENTIAL ISSUES - DEPENDENT SUBQUERY, FILESORT, PARTIAL INDEX USED'
             ],
         ];
     }
