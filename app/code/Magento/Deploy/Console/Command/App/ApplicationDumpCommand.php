@@ -21,7 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ApplicationDumpCommand extends Command
 {
-    const INPUT_CONFIG_TYPES = 'config-types';
+    public const INPUT_CONFIG_TYPES = 'config-types';
 
     /**
      * @var Writer

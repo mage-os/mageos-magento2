@@ -23,6 +23,7 @@ class WebsiteListCommand extends Command
     private $manager;
 
     /**
+     * @param \Magento\Store\Api\WebsiteRepositoryInterface $websiteManagement
      */
     public function __construct(
         \Magento\Store\Api\WebsiteRepositoryInterface $websiteManagement
@@ -32,7 +33,7 @@ class WebsiteListCommand extends Command
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function configure()
     {
@@ -43,7 +44,7 @@ class WebsiteListCommand extends Command
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

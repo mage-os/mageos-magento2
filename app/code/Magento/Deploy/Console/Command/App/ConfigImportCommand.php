@@ -28,7 +28,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ConfigImportCommand extends Command
 {
-    const COMMAND_NAME = 'app:config:import';
+    public const COMMAND_NAME = 'app:config:import';
 
     /**
      * Configuration importer.

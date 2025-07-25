@@ -14,6 +14,11 @@ use Symfony\Component\Console\Output\Output;
  */
 class TestOutput extends Output
 {
+    /**
+     * Captured output content for testing purposes
+     *
+     * @var string
+     */
     public $output = '';
 
     public function clear(): void
