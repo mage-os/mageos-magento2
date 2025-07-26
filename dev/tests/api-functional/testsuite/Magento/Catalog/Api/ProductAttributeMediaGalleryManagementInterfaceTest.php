@@ -492,18 +492,22 @@ class ProductAttributeMediaGalleryManagementInterfaceTest extends WebapiAbstract
         $this->_webApiCall($this->createServiceInfo, ['sku' => 'simple', 'entry' => $requestData]);
     }
 
+    protected function assertMagentoProductNotFoundException(\Exception $e, string $sku): void
+    {
+        $expectedMessage = 'The product with SKU "%1" does not exist.';
+        $this->assertEquals(404, $e->getCode());
+        $this->assertStringContainsString($expectedMessage, $e->getMessage());
+        $this->assertStringContainsString($sku, $e->getMessage());
+    }
+
     /**
      * Test create method if target product does not exist
-     *
      */
     public function testCreateThrowsExceptionIfTargetProductDoesNotExist()
     {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage(
-            '{"message":"The product with SKU \"%1\" does not exist.","parameters":["wrong_product_sku"]}'
-        );
+        $sku = 'wrong_product_sku';
 
-        $this->createServiceInfo['rest']['resourcePath'] = '/V1/products/wrong_product_sku/media';
+        $this->createServiceInfo['rest']['resourcePath'] = '/V1/products/' . $sku . '/media';
 
         $requestData = [
             'id' => null,
@@ -519,7 +523,12 @@ class ProductAttributeMediaGalleryManagementInterfaceTest extends WebapiAbstract
             ]
         ];
 
-        $this->_webApiCall($this->createServiceInfo, ['sku' => 'simple', 'entry' => $requestData]);
+        try {
+            $this->_webApiCall($this->createServiceInfo, ['sku' => $sku, 'entry' => $requestData]);
+            $this->fail('Expected exception was not thrown.');
+        } catch (\Exception $e) {
+            $this->assertMagentoProductNotFoundException($e, $sku);
+        }
     }
 
     /**
@@ -551,19 +560,14 @@ class ProductAttributeMediaGalleryManagementInterfaceTest extends WebapiAbstract
 
     /**
      * Test update() method if target product does not exist
-     *
      */
     public function testUpdateThrowsExceptionIfTargetProductDoesNotExist()
     {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage(
-            '{"message":"The product with SKU \"%1\" does not exist.","parameters":["wrong_product_sku"]}'
-        );
+        $sku = 'wrong_product_sku';
 
-        $this->updateServiceInfo['rest']['resourcePath'] = '/V1/products/wrong_product_sku/media'
-            . '/' . 'wrong-sku';
+        $this->updateServiceInfo['rest']['resourcePath'] = '/V1/products/' . $sku . '/media/' . 'wrong-sku';
         $requestData = [
-            'sku' => 'wrong_product_sku',
+            'sku' => $sku,
             'entry' => [
                 'id' => 9999,
                 'media_type' => 'image',
@@ -574,8 +578,14 @@ class ProductAttributeMediaGalleryManagementInterfaceTest extends WebapiAbstract
             ],
         ];
 
-        $this->_webApiCall($this->updateServiceInfo, $requestData, null, 'all');
+        try {
+            $this->_webApiCall($this->updateServiceInfo, $requestData, null, 'all');
+            $this->fail('Expected exception was not thrown.');
+        } catch (\Exception $e) {
+            $this->assertMagentoProductNotFoundException($e, $sku);
+        }
     }
+
 
     /**
      * Test update() method if there is no image with given id
@@ -607,22 +617,23 @@ class ProductAttributeMediaGalleryManagementInterfaceTest extends WebapiAbstract
 
     /**
      * Test delete() method if target product does not exist
-     *
      */
     public function testDeleteThrowsExceptionIfTargetProductDoesNotExist()
     {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage(
-            '{"message":"The product with SKU \"%1\" does not exist.","parameters":["wrong_product_sku"]}'
-        );
+        $sku = 'wrong_product_sku';
 
-        $this->deleteServiceInfo['rest']['resourcePath'] = '/V1/products/wrong_product_sku/media/9999';
+        $this->deleteServiceInfo['rest']['resourcePath'] = '/V1/products/' . $sku . '/media/9999';
         $requestData = [
-            'sku' => 'wrong_product_sku',
+            'sku' => $sku,
             'entryId' => 9999,
         ];
 
-        $this->_webApiCall($this->deleteServiceInfo, $requestData);
+        try {
+            $this->_webApiCall($this->deleteServiceInfo, $requestData);
+            $this->fail('Expected exception was not thrown.');
+        } catch (\Exception $e) {
+            $this->assertMagentoProductNotFoundException($e, $sku);
+        }
     }
 
     /**

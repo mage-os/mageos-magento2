@@ -99,13 +99,17 @@ class OptionRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstrac
      */
     public function testGetUndefinedProduct(): void
     {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage(
-            'The product with SKU "%1" does not exist.'
-        );
-
         $productSku = 'product_not_exist';
-        $this->getList($productSku);
+
+        try {
+            $this->getList($productSku);
+            $this->fail('Expected exception was not thrown.');
+        } catch (\Exception $e) {
+            $expectedTemplate = 'The product with SKU "%1" does not exist.';
+            $this->assertEquals(404, $e->getCode());
+            $this->assertStringContainsString($expectedTemplate, $e->getMessage());
+            $this->assertStringContainsString($productSku, $e->getMessage());
+        }
     }
 
     /**

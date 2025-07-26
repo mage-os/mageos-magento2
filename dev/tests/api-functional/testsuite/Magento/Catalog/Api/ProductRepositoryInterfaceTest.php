@@ -537,18 +537,23 @@ class ProductRepositoryInterfaceTest extends WebapiAbstract
      * @dataProvider productCreationProvider
      * @magentoApiDataFixture Magento/Store/_files/fixture_store_with_catalogsearch_index.php
      */
-    public function testDeleteAllStoreCode($fixtureProduct)
+    public function testDeleteAllStoreCode(array $fixtureProduct)
     {
-        $sku = $fixtureProduct[ProductInterface::SKU];
+        $sku = $fixtureProduct[\Magento\Catalog\Api\Data\ProductInterface::SKU];
         $this->saveProduct($fixtureProduct);
-        $this->expectException('Exception');
-        $this->expectExceptionMessage(
-            '{"message":"The product with SKU \"%1\" does not exist.","parameters":["' . $sku . '"]}'
-        );
 
         // Delete all with 'all' store code
         $this->deleteProduct($sku);
-        $this->getProduct($sku);
+
+        try {
+            $this->getProduct($sku);
+            $this->fail('Expected exception was not thrown.');
+        } catch (\Exception $e) {
+            $expectedMessage = 'The product with SKU "%1" does not exist.';
+            $this->assertEquals(404, $e->getCode());
+            $this->assertStringContainsString($expectedMessage, $e->getMessage());
+            $this->assertStringContainsString($sku, $e->getMessage());
+        }
     }
 
     /**
