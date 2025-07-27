@@ -94,6 +94,14 @@ class OptionRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstrac
         }
     }
 
+    protected function assertProductNotFoundException(\Exception $e, string $sku): void
+    {
+        $decoded = json_decode($e->getMessage(), true);
+        $this->assertEquals('The product with SKU "%1" does not exist.', $decoded['message']);
+        $this->assertContains($sku, $decoded['parameters']);
+        $this->assertEquals(404, $e->getCode());
+    }
+
     /**
      * @return void
      */
@@ -105,10 +113,7 @@ class OptionRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstrac
             $this->getList($productSku);
             $this->fail('Expected exception was not thrown.');
         } catch (\Exception $e) {
-            $expectedTemplate = 'The product with SKU "%1" does not exist.';
-            $this->assertEquals(404, $e->getCode());
-            $this->assertStringContainsString($expectedTemplate, $e->getMessage());
-            $this->assertStringContainsString($productSku, $e->getMessage());
+            $this->assertProductNotFoundException($e, $productSku);
         }
     }
 

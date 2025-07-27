@@ -545,12 +545,12 @@ class SampleRepositoryTest extends WebapiAbstract
         $this->_webApiCall($this->createServiceInfo, $requestData);
     }
 
-    protected function assertMagentoProductNotFoundException(\Exception $e, string $sku): void
+    protected function assertProductNotFoundException(\Exception $e, string $sku): void
     {
-        $expectedMessage = 'The product with SKU "%1" does not exist.';
+        $decoded = json_decode($e->getMessage(), true);
+        $this->assertEquals('The product with SKU "%1" does not exist.', $decoded['message']);
+        $this->assertContains($sku, $decoded['parameters']);
         $this->assertEquals(404, $e->getCode());
-        $this->assertStringContainsString($expectedMessage, $e->getMessage());
-        $this->assertStringContainsString($sku, $e->getMessage());
     }
 
     /**
@@ -576,7 +576,7 @@ class SampleRepositoryTest extends WebapiAbstract
             $this->_webApiCall($this->createServiceInfo, $requestData);
             $this->fail('Expected exception was not thrown.');
         } catch (\Exception $e) {
-            $this->assertMagentoProductNotFoundException($e, $sku);
+            $this->assertProductNotFoundException($e, $sku);
         }
     }
 
@@ -603,7 +603,7 @@ class SampleRepositoryTest extends WebapiAbstract
             $this->_webApiCall($this->updateServiceInfo, $requestData);
             $this->fail('Expected exception was not thrown.');
         } catch (\Exception $e) {
-            $this->assertMagentoProductNotFoundException($e, $sku);
+            $this->assertProductNotFoundException($e, $sku);
         }
     }
 }

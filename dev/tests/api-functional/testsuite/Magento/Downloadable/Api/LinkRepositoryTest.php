@@ -745,17 +745,17 @@ class LinkRepositoryTest extends WebapiAbstract
         $this->assertEquals($requestData['link']['number_of_downloads'], $link->getNumberOfDownloads());
     }
 
-    protected function assertMagentoProductNotFoundException(\Exception $e, string $sku): void
+    protected function assertProductNotFoundException(\Exception $e, string $sku): void
     {
         $expectedTemplate = 'The product with SKU "%1" does not exist.';
-
         if ($e instanceof \SoapFault) {
             $expectedMessage = str_replace('%1', $sku, $expectedTemplate);
             $this->assertEquals($expectedMessage, $e->getMessage());
         } else {
+            $decoded = json_decode($e->getMessage(), true);
+            $this->assertEquals($expectedTemplate, $decoded['message']);
+            $this->assertContains($sku, $decoded['parameters']);
             $this->assertEquals(404, $e->getCode());
-            $this->assertStringContainsString($expectedTemplate, $e->getMessage());
-            $this->assertStringContainsString($sku, $e->getMessage());
         }
     }
 
@@ -785,7 +785,7 @@ class LinkRepositoryTest extends WebapiAbstract
             $this->_webApiCall($this->updateServiceInfo, $requestData);
             $this->fail('Expected exception was not thrown.');
         } catch (\Exception $e) {
-            $this->assertMagentoProductNotFoundException($e, $sku);
+            $this->assertProductNotFoundException($e, $sku);
         }
     }
 
@@ -1022,7 +1022,7 @@ class LinkRepositoryTest extends WebapiAbstract
             $this->_webApiCall($serviceInfo, $requestData);
             $this->fail('Expected exception was not thrown.');
         } catch (\Exception $e) {
-            $this->assertMagentoProductNotFoundException($e, $sku);
+            $this->assertProductNotFoundException($e, $sku);
         }
     }
 
@@ -1108,7 +1108,7 @@ class LinkRepositoryTest extends WebapiAbstract
             $this->_webApiCall($this->createServiceInfo, $requestData);
             $this->fail('Expected exception was not thrown.');
         } catch (\Exception $e) {
-            $this->assertMagentoProductNotFoundException($e, $sku);
+            $this->assertProductNotFoundException($e, $sku);
         }
     }
 }
