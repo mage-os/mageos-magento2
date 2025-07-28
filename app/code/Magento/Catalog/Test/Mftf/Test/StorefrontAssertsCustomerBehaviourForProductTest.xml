@@ -11,9 +11,9 @@
     <test name="StorefrontAssertsCustomerBehaviourForProductTest">
         <annotations>
             <features value="Catalog"/>
-            <stories value="Product Sorting for guest customer in storefront"/>
-            <title value="Sorting of product for guest customer on storefront if remember category pagination is enabled"/>
-            <description value="Guest Customer should able to verify the sorting of product on storefront when remember category pagination is enabled"/>
+            <stories value="Product Sorting for guest/customer in storefront"/>
+            <title value="Sorting of product for guest/customer on storefront if remember category pagination is enabled"/>
+            <description value="Guest/Customer should able to verify the sorting of product on storefront when remember category pagination is enabled"/>
             <severity value="MAJOR"/>
             <testCaseId value="AC-8905"/>
             <group value="catalog"/>
