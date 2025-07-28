@@ -5,6 +5,7 @@
   * All Rights Reserved.
   */
 -->
+
 <tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
     <test name="AdminMoveAndUpdateCategoryOnIndexerUpdateOnScheduleModeTest">
@@ -91,25 +92,32 @@
             <magentoCron groups="index" stepKey="runSecondCronAfterCategorySetup"/>
         </before>
         <after>
+            <!-- Reset indexer modes back to realtime for other tests -->
             <magentoCLI command="indexer:set-mode realtime catalog_category_flat"
                         stepKey="resetCategoryFlatIndexerToRealtimeMode"/>
             <magentoCLI command="indexer:set-mode realtime catalog_category_product"
                         stepKey="resetCategoryProductsIndexerToRealtimeMode"/>
             <magentoCLI command="indexer:set-mode realtime catalog_product_category"
                         stepKey="resetProductCategoriesIndexerToRealtimeMode"/>
+            <!-- Reset flat catalog configuration back to default (disabled) -->
             <magentoCLI command="config:set catalog/frontend/flat_catalog_category 0"
                         stepKey="disableCategoryFlatDataConfig"/>
+            <!-- Clean up test products in reverse order of creation -->
             <deleteData createDataKey="createProductAA" stepKey="deleteProductAAFromCategoryA"/>
             <deleteData createDataKey="createProductBB" stepKey="deleteProductBBFromCategoryB"/>
             <deleteData createDataKey="createProductCC" stepKey="deleteProductCCFromCategoryC"/>
+            <!-- Clean up test categories in reverse order of creation -->
             <deleteData createDataKey="createAnchorCategoryA" stepKey="deleteAnchorCategoryA"/>
             <deleteData createDataKey="createSubCategoryB" stepKey="deleteSubCategoryB"/>
             <deleteData createDataKey="createNonAnchorCategoryC" stepKey="deleteNonAnchorCategoryC"/>
+            <!-- Clean up custom store and store view created for multi-store testing -->
             <actionGroup ref="DeleteCustomStoreActionGroup" stepKey="deleteCustomStoreGroup">
                 <argument name="storeGroupName" value="customStore.name"/>
             </actionGroup>
+            <!-- Final cleanup: flush cache and reindex to ensure clean state -->
             <magentoCLI command="cache:flush" stepKey="flushCacheAfterCleanup"/>
             <magentoCLI command="indexer:reindex" stepKey="reindexAfterCleanup"/>
+            <!-- Logout from admin panel to clean up session -->
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdminPanel"/>
         </after>
         <!-- Step 1:- Open Category A on Storefront -->
