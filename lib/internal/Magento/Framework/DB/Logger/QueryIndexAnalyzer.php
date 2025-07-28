@@ -42,7 +42,7 @@ class QueryIndexAnalyzer implements QueryAnalyzerInterface
             throw new \InvalidArgumentException("Small table");
         }
 
-        return $issues;
+        return array_values(array_unique($issues));
     }
 
     /**

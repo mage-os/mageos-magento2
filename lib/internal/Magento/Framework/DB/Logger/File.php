@@ -6,7 +6,6 @@
 namespace Magento\Framework\DB\Logger;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
-use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\WriteInterface;
@@ -30,7 +29,7 @@ class File extends LoggerAbstract
 
     /**
      * @param Filesystem $filesystem
-     * @param ResourceConnection $resource
+     * @param QueryAnalyzerInterface $queryAnalyzer
      * @param string $debugFile
      * @param bool $logAllQueries
      * @param float $logQueryTime
@@ -40,14 +39,14 @@ class File extends LoggerAbstract
      */
     public function __construct(
         Filesystem $filesystem,
-        ResourceConnection $resource,
+        QueryAnalyzerInterface $queryAnalyzer,
         $debugFile = 'debug/db.log',
         $logAllQueries = false,
         $logQueryTime = 0.05,
         $logCallStack = false,
         $logIndexCheck = false
     ) {
-        parent::__construct($resource, $logAllQueries, $logQueryTime, $logCallStack, $logIndexCheck);
+        parent::__construct($queryAnalyzer, $logAllQueries, $logQueryTime, $logCallStack, $logIndexCheck);
         $this->dir = $filesystem->getDirectoryWrite(DirectoryList::VAR_DIR);
         $this->debugFile = $debugFile;
     }
