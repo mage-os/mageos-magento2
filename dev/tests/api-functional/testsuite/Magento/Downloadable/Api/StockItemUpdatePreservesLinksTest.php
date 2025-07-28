@@ -143,8 +143,11 @@ class StockItemUpdatePreservesLinksTest extends WebapiAbstract
         $this->assertGreaterThan(0, count($preservedLinks), 'Should have at least one downloadable link preserved');
 
         $linkTitles = array_column($preservedLinks, 'title');
-        $this->assertContains('Downloadable Product Link', $linkTitles,
-            'Downloadable product link should be preserved');
+        $this->assertContains(
+            'Downloadable Product Link',
+            $linkTitles,
+            'Downloadable product link should be preserved'
+        );
     }
 
     /**
