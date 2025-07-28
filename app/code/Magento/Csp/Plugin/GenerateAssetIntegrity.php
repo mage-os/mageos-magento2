@@ -12,6 +12,8 @@ use Magento\RequireJs\Model\FileManager;
 use Magento\Csp\Model\SubresourceIntegrityFactory;
 use Magento\Csp\Model\SubresourceIntegrityCollector;
 use Magento\Csp\Model\SubresourceIntegrity\HashGenerator;
+use Magento\Framework\App\ObjectManager;
+use Psr\Log\LoggerInterface;
 
 /**
  * Plugin to add asset integrity value after static content deploy.
@@ -41,18 +43,26 @@ class GenerateAssetIntegrity
     private SubresourceIntegrityCollector $integrityCollector;
 
     /**
+     * @var LoggerInterface
+     */
+    private LoggerInterface $logger;
+
+    /**
      * @param HashGenerator $hashGenerator
      * @param SubresourceIntegrityFactory $integrityFactory
      * @param SubresourceIntegrityCollector $integrityCollector
+     * @param LoggerInterface|null $logger
      */
     public function __construct(
         HashGenerator $hashGenerator,
         SubresourceIntegrityFactory $integrityFactory,
-        SubresourceIntegrityCollector $integrityCollector
+        SubresourceIntegrityCollector $integrityCollector,
+        ?LoggerInterface $logger = null
     ) {
         $this->hashGenerator = $hashGenerator;
         $this->integrityFactory = $integrityFactory;
         $this->integrityCollector = $integrityCollector;
+        $this->logger = $logger ?? ObjectManager::getInstance()->get(LoggerInterface::class);
     }
 
     /**
@@ -70,6 +80,8 @@ class GenerateAssetIntegrity
         File $result
     ): File {
         if (PHP_SAPI == 'cli') {
+            $this->logger->info('GenerateAssetIntegrity: Called for "' . $result->getPath() . '" (PID: ' . getmypid() . ')');
+            
             if (in_array($result->getContentType(), self::CONTENT_TYPES)) {
                 $integrity = $this->integrityFactory->create(
                     [
@@ -83,6 +95,7 @@ class GenerateAssetIntegrity
                 );
 
                 $this->integrityCollector->collect($integrity);
+                $this->logger->info('GenerateAssetIntegrity: Collected "' . $result->getPath() . '" (PID: ' . getmypid() . ')');
             }
         }
 

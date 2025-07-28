@@ -12,9 +12,11 @@ use Magento\Csp\Model\SubresourceIntegrityCollector;
 use Magento\Csp\Model\SubresourceIntegrityFactory;
 use Magento\Deploy\Service\Bundle;
 use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Io\File;
+use Psr\Log\LoggerInterface;
 
 class GenerateBundleAssetIntegrity
 {
@@ -44,11 +46,17 @@ class GenerateBundleAssetIntegrity
     private File $fileIo;
 
     /**
+     * @var LoggerInterface
+     */
+    private LoggerInterface $logger;
+
+    /**
      * @param HashGenerator $hashGenerator
      * @param SubresourceIntegrityFactory $integrityFactory
      * @param SubresourceIntegrityCollector $integrityCollector
      * @param Filesystem $filesystem
      * @param File $fileIo
+     * @param LoggerInterface|null $logger
      */
     public function __construct(
         HashGenerator $hashGenerator,
@@ -56,12 +64,14 @@ class GenerateBundleAssetIntegrity
         SubresourceIntegrityCollector $integrityCollector,
         Filesystem $filesystem,
         File $fileIo,
+        ?LoggerInterface $logger = null
     ) {
         $this->hashGenerator = $hashGenerator;
         $this->integrityFactory = $integrityFactory;
         $this->integrityCollector = $integrityCollector;
         $this->filesystem = $filesystem;
         $this->fileIo = $fileIo;
+        $this->logger = $logger ?? ObjectManager::getInstance()->get(LoggerInterface::class);
     }
 
     /**
@@ -79,24 +89,32 @@ class GenerateBundleAssetIntegrity
     public function afterDeploy(Bundle $subject, ?string $result, string $area, string $theme, string $locale)
     {
         if (PHP_SAPI == 'cli') {
+            $this->logger->info('GenerateBundleAssetIntegrity: Called for area=' . $area . ', theme=' . $theme . ', locale=' . $locale . ' (PID: ' . getmypid() . ')');
+            
             $pubStaticDir = $this->filesystem->getDirectoryRead(DirectoryList::STATIC_VIEW);
             $files = $pubStaticDir->search(
                 $area ."/" . $theme . "/" . $locale . "/" . Bundle::BUNDLE_JS_DIR . "/*.js"
             );
+            
+            $this->logger->info('GenerateBundleAssetIntegrity: Found ' . count($files) . ' bundle files (PID: ' . getmypid() . ')');
+            
             foreach ($files as $file) {
+                $bundlePath = $area . '/' . $theme . '/' . $locale .
+                    "/" . Bundle::BUNDLE_JS_DIR . '/' . $this->fileIo->getPathInfo($file)['basename'];
+                    
                 $integrity = $this->integrityFactory->create(
                     [
                         "data" => [
                             'hash' => $this->hashGenerator->generate(
                                 $pubStaticDir->readFile($file)
                             ),
-                            'path' => $area . '/' . $theme . '/' . $locale .
-                                "/" . Bundle::BUNDLE_JS_DIR . '/' . $this->fileIo->getPathInfo($file)['basename']
+                            'path' => $bundlePath
                         ]
                     ]
                 );
 
                 $this->integrityCollector->collect($integrity);
+                $this->logger->info('GenerateBundleAssetIntegrity: Collected "' . $bundlePath . '" (PID: ' . getmypid() . ')');
             }
         }
     }

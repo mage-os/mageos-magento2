@@ -12,17 +12,13 @@ use Psr\Log\LoggerInterface;
 
 /**
  * Collector of Integrity objects.
- * 
- * Uses static storage to persist data across ObjectManager instances
- * during area emulation in static content deployment.
  */
 class SubresourceIntegrityCollector
 {
     /**
-     * Global storage that persists across ObjectManager instances
      * @var array
      */
-    private static array $globalData = [];
+    private array $data = [];
 
     /**
      * @var LoggerInterface
@@ -35,7 +31,7 @@ class SubresourceIntegrityCollector
     public function __construct(?LoggerInterface $logger = null) {
         $this->logger = $logger ?? ObjectManager::getInstance()->get(LoggerInterface::class);
         
-        $this->logger->info('SRI Collector: Initialized with ' . count(self::$globalData) . ' objects (global storage)');
+        $this->logger->info('SRI Collector: Initialized (PID: ' . getmypid() . ')');
     }
 
     /**
@@ -47,8 +43,8 @@ class SubresourceIntegrityCollector
      */
     public function collect(SubresourceIntegrity $integrity): void
     {
-        self::$globalData[] = $integrity;
-        $this->logger->info('SRI Collector: Collected object, total: ' . count(self::$globalData));
+        $this->data[] = $integrity;
+        $this->logger->info('SRI Collector: Collected "' . $integrity->getPath() . '" - Total: ' . count($this->data) . ' (PID: ' . getmypid() . ')');
     }
 
     /**
@@ -58,9 +54,9 @@ class SubresourceIntegrityCollector
      */
     public function release(): array
     {
-        $count = count(self::$globalData);
-        $this->logger->info('SRI Collector: Releasing ' . $count . ' objects');
-        return self::$globalData;
+        $count = count($this->data);
+        $this->logger->info('SRI Collector: Releasing ' . $count . ' objects (PID: ' . getmypid() . ')');
+        return $this->data;
     }
 
     /**
@@ -70,8 +66,8 @@ class SubresourceIntegrityCollector
      */
     public function clear(): void
     {
-        $count = count(self::$globalData);
-        self::$globalData = [];
-        $this->logger->info('SRI Collector: Cleared ' . $count . ' objects');
+        $count = count($this->data);
+        $this->data = [];
+        $this->logger->info('SRI Collector: Cleared ' . $count . ' objects (PID: ' . getmypid() . ')');
     }
 }
