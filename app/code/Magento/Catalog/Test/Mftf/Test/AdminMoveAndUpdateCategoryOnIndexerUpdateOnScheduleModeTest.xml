@@ -306,7 +306,7 @@
             <argument name="subCategoryName" value="$createSubCategoryB.name$"/>
             <argument name="subSubCategoryName" value="$createAnchorCategoryA.name$"/>
         </actionGroup>
-        <!-- Verify NEW content (Russian) - after cron runs -->
+        <!-- Step 20:- Verify NEW content (Russian) - after cron runs -->
         <actionGroup ref="StorefrontVerifyCategoryContentActionGroup" stepKey="verifyNewContentOnCategoryAStoreView">
             <argument name="description" value="Другое описание категории А"/>
             <argument name="metaTitle" value="$createSubCategoryB.name$"/>
