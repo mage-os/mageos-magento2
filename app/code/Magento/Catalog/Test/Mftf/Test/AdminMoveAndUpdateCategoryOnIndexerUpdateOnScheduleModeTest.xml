@@ -130,9 +130,8 @@
             <argument name="metaTitle" value="MetaCtitle"/>
             <argument name="productCount" value="1"/>
         </actionGroup>
-        <!-- Step 3:- Open Admin > Catalog > Categories -->
+        <!-- Step 3:- Open Admin > Catalog > Categories and Move category A under category C -->
         <actionGroup ref="AdminOpenCategoryPageActionGroup" stepKey="navigateToAdminCategoryPageForFirstMove"/>
-        <!-- Step 4:- Move Category A under Category C -->
         <actionGroup ref="MoveCategoryActionGroup" stepKey="moveCategoryAUnderCategoryC">
             <argument name="childCategory" value="$createAnchorCategoryA.name$"/>
             <argument name="parentCategory" value="$createNonAnchorCategoryC.name$"/>
@@ -140,11 +139,14 @@
         <waitForElementVisible selector="{{AdminCategoryMessagesSection.SuccessMessage}}" stepKey="waitForSuccessMessageForFirstCategoryMove"/>
         <waitForText userInput="You moved the category." selector="{{AdminCategoryMessagesSection.SuccessMessage}}"
              stepKey="verifySuccessMessageForFirstCategoryMove"/>
+        <!-- Step 4:- Open Admin > System > Index Management -->
         <actionGroup ref="AdminOpenIndexManagementPageActionGroup"
                      stepKey="navigateToIndexManagementPageAfterFirstMove"/>
-        <see userInput="Ready"
-             selector="{{AdminIndexManagementSection.indexerStatus('Category Flat Data')}}"
-             stepKey="verifyCategoryFlatIndexerReadyAfterFirstMove"/>
+        <grabTextFrom selector="{{AdminIndexManagementSection.indexerStatus('Category Flat Data')}}" stepKey="grabCategoryFlatDataIndexerStatus"/>
+        <assertEquals stepKey="assertCategoryFlatDataIndexerStatusToReady">
+            <expectedResult type="string">READY</expectedResult>
+            <actualResult type="string">$grabCategoryFlatDataIndexerStatus</actualResult>
+        </assertEquals>
         <!-- Step 5:- Open Category A on Storefront and verify it hasn't moved yet -->
         <actionGroup ref="StorefrontGoToCategoryPageActionGroup"
                      stepKey="navigateToStorefrontCategoryAAfterFirstMove">
@@ -243,9 +245,11 @@
         <!-- Step 16:- Open Admin > System > Index Management -->
         <actionGroup ref="AdminOpenIndexManagementPageActionGroup"
                      stepKey="navigateToIndexManagementPageAfterStoreCreation"/>
-        <see userInput="Ready"
-             selector="{{AdminIndexManagementSection.indexerStatus('Category Flat Data')}}"
-             stepKey="verifyCategoryFlatIndexerReadyAfterStoreCreation"/>
+        <grabTextFrom selector="{{AdminIndexManagementSection.indexerStatus('Category Flat Data')}}" stepKey="grabCategoryFlatDataIndexerStatusAfterStoreCreation"/>
+        <assertEquals stepKey="assertCategoryFlatDataIndexerStatusToReadyAfterStoreCreation">
+            <expectedResult type="string">READY</expectedResult>
+            <actualResult type="string">$grabCategoryFlatDataIndexerStatusAfterStoreCreation</actualResult>
+        </assertEquals>
         <!-- Step 17:- Open Admin > Catalog > Categories > Category A, switch to Store View 2, and update category settings -->
         <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="navigateToAdminCategoryAForStoreViewUpdate">
             <argument name="id" value="$createAnchorCategoryA.id$"/>
