@@ -11,9 +11,9 @@
     <test name="StorefrontAssertsCustomerBehaviourForProductTest">
         <annotations>
             <features value="Catalog"/>
-            <stories value="Verify customer behaviour on storefront in product page"/>
-            <title value="Check customer behaviour for product page on storefront if remember category pagination is enabled"/>
-            <description value="Admin verifies the customer or guest can able to sort product on storefront when remember category pagination is enabled"/>
+            <stories value="Product Sorting for guest customer in storefront"/>
+            <title value="Sorting of product for guest customer on storefront if remember category pagination is enabled"/>
+            <description value="Guest Customer should able to verify the sorting of product on storefront when remember category pagination is enabled"/>
             <severity value="MAJOR"/>
             <testCaseId value="AC-8905"/>
             <group value="catalog"/>
@@ -69,10 +69,8 @@
         <waitForText userInput="$product3.name$" selector="{{StorefrontCatalogSearchMainSection.searchResults}}" stepKey="seeProduct3"/>
         <!-- Step 3: Sort by Change to "Price". -->
         <selectOption selector="{{StorefrontCategoryTopToolbarSection.sortByDropdown}}" userInput="Price" stepKey="selectSortByPriceFromDropdown"/>
-        <actionGroup ref="StorefrontCategoryPageSortProductActionGroup" stepKey="sortProductByPriceAscending"/>
         <!-- Step 4: Click the arrow to sort by price desc/asc by clicking on UP/Down arrow. -->
         <actionGroup ref="StorefrontCategoryPageSortDescendingActionGroup" stepKey="setDescendingDirection"/>
-
         <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seeProductFirstPosition">
             <argument name="selector" value="{{StorefrontCategoryMainSection.lineProductName('1')}}"/>
             <argument name="userInput" value="$$product1.name$$"/>
@@ -85,8 +83,9 @@
             <argument name="selector" value="{{StorefrontCategoryMainSection.lineProductName('3')}}"/>
             <argument name="userInput" value="$$product3.name$$"/>
         </actionGroup>
-        <!-- Step 5: Try clicking multiple times on arrow. -->
+        <!-- Step 5: Clicking on arrows for asc/desc of products -->
         <actionGroup ref="StorefrontCategoryPageSortAscendingActionGroup" stepKey="setAscendingDirection"/>
+        <!-- Verify the products in ascending by price -->
         <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seeProductFirstPosition1">
             <argument name="selector" value="{{StorefrontCategoryMainSection.lineProductName('1')}}"/>
             <argument name="userInput" value="$$product3.name$$"/>
@@ -99,7 +98,9 @@
             <argument name="selector" value="{{StorefrontCategoryMainSection.lineProductName('3')}}"/>
             <argument name="userInput" value="$$product1.name$$"/>
         </actionGroup>
+        <!-- Sort product by descending order -->
         <actionGroup ref="StorefrontCategoryPageSortDescendingActionGroup" stepKey="setDescendingDirection2"/>
+        <!-- Verify the products in descending by price -->
         <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seeProductFirstPosition2">
             <argument name="selector" value="{{StorefrontCategoryMainSection.lineProductName('1')}}"/>
             <argument name="userInput" value="$$product1.name$$"/>
@@ -112,7 +113,9 @@
             <argument name="selector" value="{{StorefrontCategoryMainSection.lineProductName('3')}}"/>
             <argument name="userInput" value="$$product3.name$$"/>
         </actionGroup>
+        <!-- Sort product by ascending order -->
         <actionGroup ref="StorefrontCategoryPageSortAscendingActionGroup" stepKey="setAscendingDirection3"/>
+        <!-- Verify the products in ascending by price -->
         <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seeProductFirstPosition3">
             <argument name="selector" value="{{StorefrontCategoryMainSection.lineProductName('1')}}"/>
             <argument name="userInput" value="$$product3.name$$"/>
