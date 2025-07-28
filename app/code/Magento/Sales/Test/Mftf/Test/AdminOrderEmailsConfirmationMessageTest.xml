@@ -26,10 +26,6 @@
             <createData entity="SimpleProduct2" stepKey="createSimpleProduct"/>
             <!-- Create customer -->
             <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
-            <!-- Reindex all indices -->
-            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindexAllIndices">
-                <argument name="indices" value=""/>
-            </actionGroup>
         </before>
         <!-- Step 1: Go to frontend and log in as customer -->
         <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginToStorefrontAccount">
