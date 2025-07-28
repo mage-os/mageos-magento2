@@ -157,15 +157,20 @@ class QueryIndexAnalyzerTest extends TestCase
                 `main_table`.`backend_model`, `main_table`.`backend_type`, `main_table`.`backend_table`,
                 `main_table`.`frontend_model`, `main_table`.`frontend_input`, `main_table`.`frontend_label`,
                 `main_table`.`frontend_class`, `main_table`.`source_model`, `main_table`.`is_required`,
-                `main_table`.`is_user_defined`, `main_table`.`default_value`, `main_table`.`is_unique`, `main_table`.`note`,
-                `additional_table`.* FROM `eav_attribute` AS `main_table`
-                INNER JOIN `catalog_eav_attribute` AS `additional_table` ON additional_table.attribute_id = main_table.attribute_id
-                WHERE (main_table.entity_type_id = 4) AND ((`is_searchable` = '1')
+                `main_table`.`is_user_defined`, `main_table`.`default_value`, `main_table`.`is_unique`,
+                `main_table`.`note`,`additional_table`.* FROM `eav_attribute` AS `main_table`
+                INNER JOIN `catalog_eav_attribute` AS `additional_table` ON additional_table.attribute_id =
+                main_table.attribute_id WHERE (main_table.entity_type_id = 4) AND ((`is_searchable` = '1')
                 OR (`is_visible_in_advanced_search` = '1') OR (((`is_filterable` = '1') OR (`is_filterable` = '2')))
                                                                OR (`is_filterable_in_search` = '1'))",
                 [],
                 null,
-                '[{"id":1,"select_type":"SIMPLE","table":"additional_table","partitions":null,"type":"ALL","possible_keys":"PRIMARY","key":null,"key_len":null,"ref":null,"rows":170,"filtered":40.95,"Extra":"Using where"},{"id":1,"select_type":"SIMPLE","table":"main_table","partitions":null,"type":"eq_ref","possible_keys":"PRIMARY,EAV_ATTRIBUTE_ENTITY_TYPE_ID_ATTRIBUTE_CODE","key":"PRIMARY","key_len":"2","ref":"magento24i2.additional_table.attribute_id","rows":1,"filtered":58.72,"Extra":"Using where"}]',
+                '[{"id":1,"select_type":"SIMPLE","table":"additional_table","partitions":null,"type":"ALL",
+                "possible_keys":"PRIMARY","key":null,"key_len":null,"ref":null,"rows":170,"filtered":40.95,"Extra":
+                "Using where"},{"id":1,"select_type":"SIMPLE","table":"main_table","partitions":null,"type":"eq_ref",
+                "possible_keys":"PRIMARY,EAV_ATTRIBUTE_ENTITY_TYPE_ID_ATTRIBUTE_CODE","key":"PRIMARY",
+                "key_len":"2","ref":"magento24i2.additional_table.attribute_id","rows":1,"filtered":58.72,
+                "Extra":"Using where"}]',
                 ['FULL TABLE SCAN', 'NO INDEX']
             ],
         ];

@@ -7,6 +7,7 @@ namespace Magento\Framework\DB\Logger;
 
 use Magento\Framework\DB\LoggerInterface;
 use Magento\Framework\Debug;
+use Magento\Tests\NamingConvention\true\string;
 use Zend_Db_Statement_Pdo;
 
 abstract class LoggerAbstract implements LoggerInterface
@@ -155,13 +156,7 @@ abstract class LoggerAbstract implements LoggerInterface
                 }
                 if ($this->logIndexCheck) {
                     try {
-                        $issues = $this->queryAnalyzer->process($sql, $bind);
-                        if (!empty($issues)) {
-                            $message .= 'INDEX CHECK: POTENTIAL ISSUES - ' . implode(', ', array_unique($issues));
-                        } else {
-                            $message .= 'INDEX CHECK: USING INDEX';
-                        }
-                        $message .= self::LINE_DELIMITER;
+                        $message .= $this->processIndexCheck($sql, $bind) . self::LINE_DELIMITER;
                     } catch (\InvalidArgumentException) {
                         $message .= 'INDEX CHECK: NA' . self::LINE_DELIMITER;
                     }
@@ -171,11 +166,41 @@ abstract class LoggerAbstract implements LoggerInterface
         $message .= 'TIME: ' . $time . self::LINE_DELIMITER;
 
         if ($this->logCallStack) {
-            $message .= 'TRACE: ' . Debug::backtrace(true, false) . self::LINE_DELIMITER;
+            $message .= $this->getCallStack();
         }
 
         $message .= self::LINE_DELIMITER;
 
         return $message;
+    }
+
+    /**
+     * Get potential index issues
+     *
+     * @param string $sql
+     * @param array $bind
+     * @return string
+     */
+    private function processIndexCheck(string $sql, array $bind): string
+    {
+        $message = '';
+        $issues = $this->queryAnalyzer->process($sql, $bind);
+        if (!empty($issues)) {
+            $message .= 'INDEX CHECK: POTENTIAL ISSUES - ' . implode(', ', array_unique($issues));
+        } else {
+            $message .= 'INDEX CHECK: USING INDEX';
+        }
+
+        return $message;
+    }
+
+    /**
+     * Get call stack debug message
+     *
+     * @return string
+     */
+    private function getCallStack(): string
+    {
+        return 'TRACE: ' . Debug::backtrace(true, false) . self::LINE_DELIMITER;
     }
 }

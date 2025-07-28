@@ -11,6 +11,16 @@ use Magento\Framework\App\ResourceConnection;
 
 class QueryIndexAnalyzer implements QueryAnalyzerInterface
 {
+    private const FULL_TABLE_SCAN = 'FULL TABLE SCAN';
+
+    private const NO_INDEX = 'NO INDEX';
+
+    private const FILESORT = 'FILESORT';
+
+    private const DEPENDENT_SUBQUERY = 'DEPENDENT SUBQUERY';
+
+    private const PARTIAL_INDEX = 'PARTIAL INDEX USED';
+
     /**
      * @param ResourceConnection $resource
      */
@@ -105,42 +115,104 @@ class QueryIndexAnalyzer implements QueryAnalyzerInterface
     {
         $issues = [];
         $selectDetails = array_change_key_case($selectDetails);
-
-        $selectType = strtolower($selectDetails['select_type'] ?? '');
         $type = strtolower($selectDetails['type'] ?? '');
-        $key = $selectDetails['key'] ?? null;
-        $extra = strtolower($selectDetails['extra'] ?? '');
 
         // skip small tables
         if ((int) $selectDetails['rows'] < 100 && $type === 'all') {
             return null;
         }
 
-        // Full table scan
-        if ($type === 'all' && empty($key)) {
-            $issues[] = 'FULL TABLE SCAN';
+        if ($this->hasFullTableScan($selectDetails)) {
+            $issues[] = self::FULL_TABLE_SCAN;
         }
 
-        // No usable index
-        if (empty($key) && !str_contains($extra, 'no matching row in const table')) {
-            $issues[] = 'NO INDEX';
+        if ($this->isUsingIndex($selectDetails)) {
+            $issues[] = self::NO_INDEX;
         }
 
-        // Using filesort (inefficient sorting)
-        if (str_contains($extra, 'using filesort')) {
-            $issues[] = 'FILESORT';
+        if ($this->isUsingFileSort($selectDetails)) {
+            $issues[] = self::FILESORT;
         }
 
-        // Dependent subquery (re-evaluated for every row)
-        if ($selectType === 'dependent subquery') {
-            $issues[] = 'DEPENDENT SUBQUERY';
+        if ($this->hasDependentSubquery($selectDetails)) {
+            $issues[] = self::DEPENDENT_SUBQUERY;
         }
 
         if ($this->isPartialIndexUsage($selectDetails)) {
-            $issues[] = 'PARTIAL INDEX USED';
+            $issues[] = self::PARTIAL_INDEX;
         }
 
         return $issues;
+    }
+
+    /**
+     * Check if dependent subqueries are used
+     *
+     * @param array $selectDetails
+     * @return bool
+     */
+    private function hasDependentSubquery(array $selectDetails): bool
+    {
+        $selectType = strtolower($selectDetails['select_type'] ?? '');
+
+        if ($selectType === 'dependent subquery') {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if query is using filesort
+     *
+     * @param array $selectDetails
+     * @return bool
+     */
+    private function isUsingFileSort(array $selectDetails): bool
+    {
+        $extra = strtolower($selectDetails['extra'] ?? '');
+
+        if (str_contains($extra, 'using filesort')) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if query optimizer is using an index
+     *
+     * @param array $selectDetails
+     * @return bool
+     */
+    private function isUsingIndex(array $selectDetails): bool
+    {
+        $extra = strtolower($selectDetails['extra'] ?? '');
+        $key = $selectDetails['key'] ?? null;
+
+        if (empty($key) && !str_contains($extra, 'no matching row in const table')) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if query uses full table scan
+     *
+     * @param array $selectDetails
+     * @return bool
+     */
+    private function hasFullTableScan(array $selectDetails): bool
+    {
+        $key = $selectDetails['key'] ?? null;
+        $type = $selectDetails['type'] ?? '';
+
+        if ($type === 'all' && empty($key)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -177,8 +249,7 @@ class QueryIndexAnalyzer implements QueryAnalyzerInterface
         }
 
         // Partial usage: index used but not covering, or used inefficiently
-        if (
-            str_contains($extra, 'using filesort') ||
+        if (str_contains($extra, 'using filesort') ||
             str_contains($extra, 'using temporary') ||
             ($type === 'index' && !str_contains($extra, 'using index'))
         ) {
