@@ -7,7 +7,6 @@ namespace Magento\Framework\DB\Logger;
 
 use Magento\Framework\DB\LoggerInterface;
 use Magento\Framework\Debug;
-use Magento\Tests\NamingConvention\true\string;
 use Zend_Db_Statement_Pdo;
 
 abstract class LoggerAbstract implements LoggerInterface
