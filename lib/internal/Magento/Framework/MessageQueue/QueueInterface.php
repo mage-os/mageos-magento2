@@ -65,7 +65,7 @@ interface QueueInterface
      *
      * @return void
      */
-    public function subscribeQueue();
+    public function subscribeQueue(): void;
 
     /**
      * Clear queue

@@ -25,7 +25,7 @@ class AsyncTestData
      * @param string $path
      * @return void
      */
-    public function setTextFilePath($path)
+    public function setTextFilePath(string $path): void
     {
         $this->path = $path;
     }
@@ -33,7 +33,7 @@ class AsyncTestData
     /**
      * @return string
      */
-    public function getTextFilePath()
+    public function getTextFilePath(): string
     {
         return $this->path;
     }
@@ -42,7 +42,7 @@ class AsyncTestData
      * @param string $strValue
      * @return void
      */
-    public function setValue($strValue)
+    public function setValue(string $strValue): void
     {
         $this->msgValue = $strValue;
     }
@@ -50,7 +50,7 @@ class AsyncTestData
     /**
      * @return string
      */
-    public function getValue()
+    public function getValue(): string
     {
         return $this->msgValue;
     }

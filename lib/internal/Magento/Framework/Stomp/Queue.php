@@ -258,7 +258,7 @@ class Queue implements QueueInterface
     /**
      * @inheritdoc
      */
-    public function subscribeQueue()
+    public function subscribeQueue(): void
     {
         $stompClient = $this->getStompConsumerClient();
         $stompClient->subscribeQueue($this->queueName);

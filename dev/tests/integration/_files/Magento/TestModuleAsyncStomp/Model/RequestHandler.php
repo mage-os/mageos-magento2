@@ -12,7 +12,7 @@ class RequestHandler
     /**
      * @param AsyncTestData $simpleDataItem
      */
-    public function process(AsyncTestData $simpleDataItem)
+    public function process(AsyncTestData $simpleDataItem): void
     {
         file_put_contents(
             $simpleDataItem->getTextFilePath(),

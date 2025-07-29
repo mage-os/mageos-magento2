@@ -206,7 +206,7 @@ class Queue implements QueueInterface
      *
      * @return void
      */
-    public function subscribeQueue()
+    public function subscribeQueue(): void
     {
         throw new \BadMethodCallException('subscribeQueue is not supported in amqp queue.');
     }

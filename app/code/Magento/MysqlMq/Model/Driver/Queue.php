@@ -177,7 +177,7 @@ class Queue implements CountableQueueInterface
      *
      * @return void
      */
-    public function subscribeQueue()
+    public function subscribeQueue(): void
     {
         throw new \BadMethodCallException('subscribeQueue is not supported in MySQL MQ driver.');
     }

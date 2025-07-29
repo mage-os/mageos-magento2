@@ -12,7 +12,7 @@ class CustomHandler
     /**
      * @param AsyncTestData $simpleDataItem
      */
-    public function process($simpleDataItem)
+    public function process(AsyncTestData $simpleDataItem): void
     {
         file_put_contents(
             $simpleDataItem->getTextFilePath(),
@@ -24,7 +24,7 @@ class CustomHandler
     /**
      * @param AsyncTestData[] $simpleDataItems
      */
-    public function processArray($simpleDataItems)
+    public function processArray(array $simpleDataItems): void
     {
         foreach ($simpleDataItems as $objItem) {
             file_put_contents(
@@ -38,7 +38,7 @@ class CustomHandler
     /**
      * @param mixed $simpleDataItems
      */
-    public function processMixed($simpleDataItems)
+    public function processMixed(mixed $simpleDataItems): void
     {
         /** @var AsyncTestData[] $simpleDataItems */
         $simpleDataItems = is_array($simpleDataItems) ? $simpleDataItems : [$simpleDataItems];

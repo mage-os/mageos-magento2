@@ -65,7 +65,4 @@
             <argument name="instanceName" xsi:type="string">\Magento\Framework\Stomp\Bulk\Queue</argument>
         </arguments>
     </virtualType>
-<!--    <type name="Magento\Framework\MessageQueue\BatchConsumer">-->
-<!--        <plugin name="batch_consumer_plugin" type="Magento\Stomp\Plugin\BatchConsumer" />-->
-<!--    </type>-->
 </config>

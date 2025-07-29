@@ -564,7 +564,7 @@ return [
         \Magento\Framework\Stomp\Queue::class => null,
         \Magento\Framework\Stomp\StompClient::class => null,
         \Magento\Framework\MessageQueue\QueueRepository::class => null,
-        'Stomp\StatefulStomp' => null,
+        Stomp\StatefulStomp::class => null,
     ],
     'placeOrder-fromConstructed' => [
         // AMQP message queue objects
@@ -580,6 +580,6 @@ return [
         \Magento\Framework\Stomp\Queue::class => null,
         \Magento\Framework\Stomp\StompClient::class => null,
         \Magento\Framework\MessageQueue\QueueRepository::class => null,
-        'Stomp\StatefulStomp' => null,
+        \Stomp\StatefulStomp::class => null,
     ],
 ];
