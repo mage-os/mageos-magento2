@@ -21,7 +21,7 @@ use Magento\GraphQl\App\State\GraphQlStateDiff;
  * Tests the dispatch method in the GraphQl Controller class using a simple product query
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @magentoDbIsolation disabled
+ * @magentoDbIsolation enabled
  * @magentoAppIsolation enabled
  * @magentoAppArea graphql
  */
@@ -123,12 +123,7 @@ class GraphQlCustomerMutationsTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test password reset email (security disabled)
-     *
      * @magentoDataFixture Magento/Customer/_files/customer.php
-     * @magentoConfigFixture current_store customer/password/password_reset_protection_type 0
-     * @magentoConfigFixture current_store customer/password/max_number_password_reset_requests 0
-     * @magentoConfigFixture current_store customer/password/min_time_between_password_reset_requests 0
      * @return void
      */
     public function testRequestPasswordResetEmail(): void
@@ -146,12 +141,7 @@ class GraphQlCustomerMutationsTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test password reset (security disabled)
-     *
      * @magentoDataFixture Magento/Customer/_files/customer.php
-     * @magentoConfigFixture current_store customer/password/password_reset_protection_type 0
-     * @magentoConfigFixture current_store customer/password/max_number_password_reset_requests 0
-     * @magentoConfigFixture current_store customer/password/min_time_between_password_reset_requests 0
      * @return void
      */
     public function testResetPassword(): void
