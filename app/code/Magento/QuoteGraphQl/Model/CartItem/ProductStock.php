@@ -9,6 +9,7 @@ namespace Magento\QuoteGraphQl\Model\CartItem;
 
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\CatalogInventory\Api\Data\StockStatusInterface;
 use Magento\CatalogInventory\Api\StockRegistryInterface;
 use Magento\CatalogInventory\Model\Configuration;
 use Magento\CatalogInventory\Model\StockState;
@@ -18,7 +19,7 @@ use Magento\Quote\Model\Quote\Item;
 use Magento\Store\Model\ScopeInterface;
 
 /**
- * Product Stock class to check availability of product
+ * Product Stock class to check the availability of product
  */
 class ProductStock
 {
@@ -33,7 +34,7 @@ class ProductStock
     private const PRODUCT_TYPE_CONFIGURABLE = "configurable";
 
     /**
-     * ProductStock constructor
+     * ProductStock Constructor
      *
      * @param ProductRepositoryInterface $productRepositoryInterface
      * @param StockState $stockState
@@ -176,16 +177,16 @@ class ProductStock
         float $requiredQuantity,
         float $prevQty
     ): bool {
-        $scopeId = $cartItem->getStore()->getId();
-        $stockStatus = $this->stockState->checkQuoteItemQty(
+        $this->stockState->checkQuoteItemQty(
             $product->getId(),
             $itemQty,
             $requiredQuantity,
             $prevQty,
-            $scopeId
+            $cartItem->getStore()->getId()
         );
 
-        return ((bool) $stockStatus->getHasError()) === false;
+        return ($this->getProductStockStatus($product)->getStockStatus() &&
+            $this->getAvailableStock($product) >= $itemQty);
     }
 
     /**
@@ -196,7 +197,7 @@ class ProductStock
      */
     private function getAvailableStock(ProductInterface $product): float
     {
-        return $this->stockState->getStockQty($product->getId());
+        return (float) $this->getProductStockStatus($product)->getQty();
     }
 
     /**
@@ -292,5 +293,19 @@ class ProductStock
         $stockLeft = $stockQty - $this->stockRegistry->getStockItem($product->getId())->getMinQty();
 
         return ($stockQty >= 0 && $stockLeft <= $thresholdQty) ? $stockQty : 0.0;
+    }
+
+    /**
+     * Returns the stock status of a product
+     *
+     * @param ProductInterface $product
+     * @return StockStatusInterface
+     */
+    private function getProductStockStatus(ProductInterface $product): StockStatusInterface
+    {
+        return $this->stockRegistry->getStockStatus(
+            $product->getId(),
+            $product->getStore()->getWebsiteId()
+        );
     }
 }
