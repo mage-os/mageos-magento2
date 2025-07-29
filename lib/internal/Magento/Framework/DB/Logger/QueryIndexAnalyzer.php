@@ -29,6 +29,8 @@ class QueryIndexAnalyzer implements QueryAnalyzerInterface
     }
 
     /**
+     * Check for potential index issues
+     *
      * @param string $sql
      * @param array $bindings
      * @return array
