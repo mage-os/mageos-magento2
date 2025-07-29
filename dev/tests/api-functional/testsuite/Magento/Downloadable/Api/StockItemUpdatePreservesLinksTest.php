@@ -11,6 +11,10 @@ namespace Magento\Downloadable\Api;
 use Magento\Framework\Webapi\Rest\Request;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\TestCase\WebapiAbstract;
+use Magento\TestFramework\Fixture\DataFixture;
+use Magento\TestFramework\Fixture\DataFixtureStorage;
+use Magento\TestFramework\Fixture\DataFixtureStorageManager;
+use Magento\User\Test\Fixture\User;
 
 /**
  * Test to verify REST-API updating product stock_item does not delete downloadable_product_links
@@ -24,21 +28,26 @@ class StockItemUpdatePreservesLinksTest extends WebapiAbstract
     private const TEST_PRODUCT_SKU = 'downloadable-product';
 
     /**
+     * @var DataFixtureStorage
+     */
+    private $fixtures;
+
+    /**
      * @inheritDoc
      */
     protected function setUp(): void
     {
         parent::setUp();
         $this->_markTestAsRestOnly();
+        $this->fixtures = DataFixtureStorageManager::getStorage();
     }
 
     /**
      * Test the complete workflow from Steps 1-16
      * Verify that REST-API updating product stock_item does not delete downloadable_product_links
-     *
-     * @magentoApiDataFixture Magento/Webapi/_files/webapi_user.php
-     * @magentoApiDataFixture Magento/Downloadable/_files/downloadable_product_with_files_and_sample_url.php
      */
+    #[DataFixture(User::class, ['role_id' => 1], 'admin_user')]
+    #[DataFixture('Magento/Downloadable/_files/downloadable_product_with_files_and_sample_url.php')]
     public function testStockItemUpdatePreservesDownloadableLinks()
     {
         // Steps 1-7: Generate admin access token
@@ -74,8 +83,9 @@ class StockItemUpdatePreservesLinksTest extends WebapiAbstract
             ],
         ];
 
+        $adminUser = $this->fixtures->get('admin_user');
         $requestData = [
-            'username' => 'webapi_user',
+            'username' => $adminUser->getUsername(),
             'password' => \Magento\TestFramework\Bootstrap::ADMIN_PASSWORD,
         ];
 
@@ -180,50 +190,5 @@ class StockItemUpdatePreservesLinksTest extends WebapiAbstract
         ];
 
         return $this->_webApiCall($serviceInfo, []);
-    }
-
-    /**
-     * Test Steps 1-7: Admin Token Generation
-     *
-     * @magentoApiDataFixture Magento/Webapi/_files/webapi_user.php
-     */
-    public function testSteps1Through7AdminTokenGeneration()
-    {
-        $token = $this->generateAdminAccessToken();
-        $this->assertNotEmpty($token, 'Steps 1-7: Admin token should be generated successfully');
-    }
-
-    /**
-     * Test Steps 8-14: Product Stock Item Update
-     *
-     * @magentoApiDataFixture Magento/Webapi/_files/webapi_user.php
-     * @magentoApiDataFixture Magento/Downloadable/_files/downloadable_product_with_files_and_sample_url.php
-     */
-    public function testSteps8Through14ProductStockItemUpdate()
-    {
-        $token = $this->generateAdminAccessToken();
-        $updatedProduct = $this->updateProductStockItem($token);
-
-        $this->assertNotEmpty($updatedProduct, 'Steps 8-14: Product should be updated successfully');
-        $this->assertEquals('99.99', $updatedProduct['price'], 'Steps 8-14: Product price should be updated to 99.99');
-        $this->assertEquals('1', $updatedProduct['status'], 'Steps 8-14: Product status should be enabled');
-    }
-
-    /**
-     * Test Steps 15-16: Downloadable Links Preservation
-     *
-     * @magentoApiDataFixture Magento/Webapi/_files/webapi_user.php
-     * @magentoApiDataFixture Magento/Downloadable/_files/downloadable_product_with_files_and_sample_url.php
-     */
-    public function testSteps15Through16DownloadableLinksPreservation()
-    {
-        $originalProduct = $this->getProductBySku(self::TEST_PRODUCT_SKU);
-        $this->verifyProductHasDownloadableLinks($originalProduct, 'Original product should have downloadable links');
-        $originalLinks = $originalProduct['extension_attributes']['downloadable_product_links'];
-
-        $token = $this->generateAdminAccessToken();
-        $this->updateProductStockItem($token);
-
-        $this->verifyDownloadableLinksPreserved($originalLinks);
     }
 }
