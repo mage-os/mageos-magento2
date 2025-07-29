@@ -67,7 +67,7 @@
         <!--Enter shipping address & method-->
         <actionGroup ref="FillGuestCheckoutShippingAddressFormActionGroup" stepKey="fillShippingAddress"/>
         <waitForPageLoad stepKey="waitForShippingPageToLoad"/>
-        <!--Step 4 Assertion: Verify ups shipping methods on front end and verify ups shipping methods should not be displayed to the user-->
+        <!--Step 3 Assertion: Verify ups shipping methods on front end and verify ups shipping methods should not be displayed to the user-->
         <waitForElementVisible selector="{{StorefrontOrderShipmentSection.upsShippingMethodIsNotAvailable}}" stepKey="verifyUPSShippingMethodIsNotAvailable"/>
         <!--In admin navigate to create new order with existing customer-->
         <actionGroup ref="AdminNavigateToNewOrderPageExistingCustomerActionGroup" stepKey="navigateToNewOrderWithExistingCustomer">
@@ -92,7 +92,7 @@
         <click selector="{{AdminOrderFormPaymentSection.header}}" stepKey="unfocus"/>
         <waitForLoadingMaskToDisappear stepKey="waitForJavascriptToFinish"/>
         <click selector="{{AdminOrderFormPaymentSection.getShippingMethods}}" stepKey="clickShippingMethods"/>
-        <!--Step 4 Assertion: Verify ups shipping method in admin and verify ups shipping methods is not available-->
+        <!--Step 3 Assertion: Verify ups shipping method in admin and verify ups shipping methods is not available-->
         <waitForElementVisible selector="{{AdminShippingMethodUPSSection.upsShippingNotAvailableAlertInAdmin}}" stepKey="waitForUpsShippingNotAvailable"/>
     </test>
 </tests>
