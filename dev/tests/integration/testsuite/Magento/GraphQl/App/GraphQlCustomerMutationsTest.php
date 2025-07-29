@@ -1,12 +1,17 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2023 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
 namespace Magento\GraphQl\App;
 
+use Magento\TestFramework\Helper\Bootstrap;
+use Magento\Customer\Api\AccountManagementInterface;
+use Magento\Framework\App\Area;
+use Magento\Framework\App\State;
+use Magento\Framework\Exception\SecurityViolationException;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Registry;
@@ -118,7 +123,12 @@ class GraphQlCustomerMutationsTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Test password reset email (security disabled)
+     *
      * @magentoDataFixture Magento/Customer/_files/customer.php
+     * @magentoConfigFixture current_store customer/password/password_reset_protection_type 0
+     * @magentoConfigFixture current_store customer/password/max_number_password_reset_requests 0
+     * @magentoConfigFixture current_store customer/password/min_time_between_password_reset_requests 0
      * @return void
      */
     public function testRequestPasswordResetEmail(): void
@@ -136,7 +146,12 @@ class GraphQlCustomerMutationsTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Test password reset (security disabled)
+     *
      * @magentoDataFixture Magento/Customer/_files/customer.php
+     * @magentoConfigFixture current_store customer/password/password_reset_protection_type 0
+     * @magentoConfigFixture current_store customer/password/max_number_password_reset_requests 0
+     * @magentoConfigFixture current_store customer/password/min_time_between_password_reset_requests 0
      * @return void
      */
     public function testResetPassword(): void
@@ -153,6 +168,37 @@ class GraphQlCustomerMutationsTest extends \PHPUnit\Framework\TestCase
             '"data":{"resetPassword":',
             $this
         );
+    }
+
+    /**
+     * Test that GraphQL password reset requests are subject to security checks (rate limiting)
+     * This test verifies our fix to include GraphQL area in security checks
+     *
+     * @magentoDataFixture Magento/Customer/_files/customer.php
+     * @magentoConfigFixture current_store customer/password/password_reset_protection_type 1
+     * @magentoConfigFixture current_store customer/password/max_number_password_reset_requests 1
+     * @magentoConfigFixture current_store customer/password/min_time_between_password_reset_requests 10
+     * @return void
+     */
+    public function testGraphQlPasswordResetSecurityLimiting(): void
+    {
+        $email = 'customer@example.com';
+        $query = $this->getRequestPasswordResetEmailMutation();
+        $this->graphQlStateDiff->testState(
+            $query,
+            ['email' => $email],
+            [],
+            [],
+            'requestPasswordResetEmail',
+            '"data":{"requestPasswordResetEmail":',
+            $this
+        );
+        $this->expectException(SecurityViolationException::class);
+        $objectManager = Bootstrap::getObjectManager();
+        $accountManagement = $objectManager->get(AccountManagementInterface::class);
+        $appState = $objectManager->get(State::class);
+        $appState->setAreaCode(Area::AREA_GRAPHQL);
+        $accountManagement->initiatePasswordReset($email, 'reset_password_template');
     }
 
     /**
