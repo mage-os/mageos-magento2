@@ -10,6 +10,7 @@ namespace Magento\Downloadable\Api;
 
 use Magento\Downloadable\Test\Fixture\DownloadableProduct;
 use Magento\Framework\Webapi\Rest\Request;
+use Magento\Integration\Api\AdminTokenServiceInterface;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\TestCase\WebapiAbstract;
 use Magento\TestFramework\Fixture\DataFixture;
@@ -24,13 +25,17 @@ use Magento\User\Test\Fixture\User;
  */
 class StockItemUpdatePreservesLinksTest extends WebapiAbstract
 {
-    private const ADMIN_TOKEN_RESOURCE_PATH = '/V1/integration/admin/token';
     private const PRODUCT_RESOURCE_PATH = '/V1/products';
 
     /**
      * @var DataFixtureStorage
      */
     private $fixtures;
+
+    /**
+     * @var AdminTokenServiceInterface
+     */
+    private $adminTokenService;
 
     /**
      * @inheritDoc
@@ -40,6 +45,7 @@ class StockItemUpdatePreservesLinksTest extends WebapiAbstract
         parent::setUp();
         $this->_markTestAsRestOnly();
         $this->fixtures = DataFixtureStorageManager::getStorage();
+        $this->adminTokenService = Bootstrap::getObjectManager()->get(AdminTokenServiceInterface::class);
     }
 
     /**
@@ -85,7 +91,7 @@ class StockItemUpdatePreservesLinksTest extends WebapiAbstract
     ], 'downloadable_product')]
     public function testStockItemUpdatePreservesDownloadableLinks()
     {
-        // Steps 1-7: Generate admin access token
+        // Steps 1-7: Generate admin access token using AdminTokenService directly
         $adminToken = $this->generateAdminAccessToken();
 
         // Get the product SKU from the fixture
@@ -111,24 +117,17 @@ class StockItemUpdatePreservesLinksTest extends WebapiAbstract
     }
 
     /**
-     * Generate Admin Access Token
+     * Generate Admin Access Token using AdminTokenService directly
      */
     private function generateAdminAccessToken(): string
     {
-        $serviceInfo = [
-            'rest' => [
-                'resourcePath' => self::ADMIN_TOKEN_RESOURCE_PATH,
-                'httpMethod' => Request::HTTP_METHOD_POST,
-            ],
-        ];
-
         $adminUser = $this->fixtures->get('admin_user');
-        $requestData = [
-            'username' => $adminUser->getUsername(),
-            'password' => \Magento\TestFramework\Bootstrap::ADMIN_PASSWORD,
-        ];
-
-        $accessToken = $this->_webApiCall($serviceInfo, $requestData);
+        
+        // Use AdminTokenService directly to bypass TwoFactorAuth issues
+        $accessToken = $this->adminTokenService->createAdminAccessToken(
+            $adminUser->getUsername(),
+            \Magento\TestFramework\Bootstrap::ADMIN_PASSWORD
+        );
 
         $this->assertNotEmpty($accessToken, 'Admin access token should be generated');
         $this->assertIsString($accessToken, 'Access token should be a string');
