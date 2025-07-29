@@ -117,6 +117,9 @@ class SearchCriteriaBuilder
             foreach ($query['match'] ?? [] as $index => $matchItem) {
                 if (in_array($matchItem['field'] ?? null, $partialMatchFilters, true)) {
                     $data['queries'][$queryName]['match'][$index]['matchCondition'] = 'match_phrase_prefix';
+                    if ($matchItem['field'] === 'name') {
+                        $data['queries'][$queryName]['match'][$index]['analyzer'] = 'prefix_search';
+                    }
                 }
             }
         }
