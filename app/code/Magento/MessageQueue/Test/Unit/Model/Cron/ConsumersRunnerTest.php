@@ -124,6 +124,7 @@ class ConsumersRunnerTest extends TestCase
 
     /**
      * @param int $maxMessages
+     * @param int $maxMessagesConsumer
      * @param bool $isLocked
      * @param string $php
      * @param string $command
@@ -135,6 +136,7 @@ class ConsumersRunnerTest extends TestCase
      */
     public function testRun(
         $maxMessages,
+        $maxMessagesConsumer,
         $isLocked,
         $php,
         $command,
@@ -161,6 +163,7 @@ class ConsumersRunnerTest extends TestCase
         $consumer = $this->getMockBuilder(ConsumerConfigItemInterface::class)
             ->getMockForAbstractClass();
         $consumer->method('getName')->willReturn($consumerName);
+        $consumer->method('getMaxMessages')->willReturn($maxMessagesConsumer);
 
         $this->phpExecutableFinderMock->expects($this->once())
             ->method('find')
@@ -190,6 +193,7 @@ class ConsumersRunnerTest extends TestCase
         return [
             [
                 'maxMessages' => 20000,
+                'maxMessagesConsumer' => 20000,
                 'isLocked' => false,
                 'php' => '',
                 'command' => 'php ' . BP . '/bin/magento queue:consumers:start %s %s %s',
@@ -200,16 +204,18 @@ class ConsumersRunnerTest extends TestCase
             ],
             [
                 'maxMessages' => 10000,
+                'maxMessagesConsumer' => 30000,
                 'isLocked' => false,
                 'php' => '',
                 'command' => 'php ' . BP . '/bin/magento queue:consumers:start %s %s %s',
-                'arguments' => ['consumerName', '--single-thread', '--max-messages=10000'],
+                'arguments' => ['consumerName', '--single-thread', '--max-messages=30000'],
                 'allowedConsumers' => [],
                 'shellBackgroundExpects' => 1,
                 'isRunExpects' => 1,
             ],
             [
                 'maxMessages' => 10000,
+                'maxMessagesConsumer' => 10000,
                 'isLocked' => false,
                 'php' => '',
                 'command' => 'php ' . BP . '/bin/magento queue:consumers:start %s %s %s',
@@ -220,6 +226,7 @@ class ConsumersRunnerTest extends TestCase
             ],
             [
                 'maxMessages' => 10000,
+                'maxMessagesConsumer' => 10000,
                 'isLocked' => true,
                 'php' => '',
                 'command' => 'php ' . BP . '/bin/magento queue:consumers:start %s %s %s',
@@ -230,6 +237,7 @@ class ConsumersRunnerTest extends TestCase
             ],
             [
                 'maxMessages' => 10000,
+                'maxMessagesConsumer' => 10000,
                 'isLocked' => true,
                 'php' => '',
                 'command' => 'php ' . BP . '/bin/magento queue:consumers:start %s %s %s',
@@ -240,6 +248,7 @@ class ConsumersRunnerTest extends TestCase
             ],
             [
                 'maxMessages' => 10000,
+                'maxMessagesConsumer' => 10000,
                 'isLocked' => true,
                 'php' => '',
                 'command' => 'php ' . BP . '/bin/magento queue:consumers:start %s %s %s',
@@ -250,16 +259,18 @@ class ConsumersRunnerTest extends TestCase
             ],
             [
                 'maxMessages' => 10000,
+                'maxMessagesConsumer' => 500,
                 'isLocked' => false,
                 'php' => '',
                 'command' => 'php ' . BP . '/bin/magento queue:consumers:start %s %s %s',
-                'arguments' => ['consumerName', '--single-thread', '--max-messages=10000'],
+                'arguments' => ['consumerName', '--single-thread', '--max-messages=500'],
                 'allowedConsumers' => ['consumerName'],
                 'shellBackgroundExpects' => 1,
                 'isRunExpects' => 1,
             ],
             [
                 'maxMessages' => 0,
+                'maxMessagesConsumer' => 0,
                 'isLocked' => false,
                 'php' => '/bin/php',
                 'command' => '/bin/php ' . BP . '/bin/magento queue:consumers:start %s %s',
