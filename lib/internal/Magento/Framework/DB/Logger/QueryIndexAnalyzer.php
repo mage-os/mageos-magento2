@@ -208,7 +208,7 @@ class QueryIndexAnalyzer implements QueryAnalyzerInterface
         $key = $selectDetails['key'] ?? null;
         $type = $selectDetails['type'] ?? '';
 
-        if ($type === 'all' && empty($key)) {
+        if (strtolower($type) === 'all' && empty($key)) {
             return true;
         }
 
@@ -231,20 +231,11 @@ class QueryIndexAnalyzer implements QueryAnalyzerInterface
             return false;
         }
 
-        // Good: covering index (no need to read from table)
-        if (str_contains($extra, 'using index') && !str_contains($extra, 'using where')) {
+        if ($this->checkForCoveringIndex($extra, $type)) {
             return false;
         }
 
-        // Good: very efficient access types
-        if (in_array($type, ['const', 'eq_ref'])) {
-            return false;
-        }
-
-        // Acceptable: range/index lookup with covering index (even if filtered)
-        if (str_contains($extra, 'using index') &&
-            str_contains($extra, 'using where') &&
-            in_array($type, ['range', 'ref'])) {
+        if ($this->checkEfficientAccessTypes($type)) {
             return false;
         }
 
@@ -253,6 +244,43 @@ class QueryIndexAnalyzer implements QueryAnalyzerInterface
             str_contains($extra, 'using temporary') ||
             ($type === 'index' && !str_contains($extra, 'using index'))
         ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check for clues over covering index
+     *
+     * @param string $extra
+     * @param string $type
+     * @return bool
+     */
+    private function checkForCoveringIndex(string $extra, string $type): bool
+    {
+        if (str_contains($extra, 'using index') && !str_contains($extra, 'using where')) {
+            return true;
+        }
+
+        if (str_contains($extra, 'using index') &&
+            str_contains($extra, 'using where') &&
+            in_array($type, ['range', 'ref'])) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if query is using an efficient access type
+     *
+     * @param string $type
+     * @return bool
+     */
+    private function checkEfficientAccessTypes(string $type): bool
+    {
+        if (in_array($type, ['const', 'eq_ref'])) {
             return true;
         }
 

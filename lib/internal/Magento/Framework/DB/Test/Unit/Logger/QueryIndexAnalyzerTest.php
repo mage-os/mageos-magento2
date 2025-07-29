@@ -29,6 +29,9 @@ class QueryIndexAnalyzerTest extends TestCase
      */
     private QueryIndexAnalyzer $queryAnalyzer;
 
+    /**
+     * @inheritDoc
+     */
     protected function setUp(): void
     {
         $this->resource = $this->createMock(ResourceConnection::class);
@@ -38,7 +41,6 @@ class QueryIndexAnalyzerTest extends TestCase
     }
 
     /**
-     * @param $type
      * @param $sql
      * @param $bind
      * @param $result
@@ -47,7 +49,7 @@ class QueryIndexAnalyzerTest extends TestCase
      * @return void
      * @dataProvider statsDataProvider
      */
-    public function testProcess($type, $sql, $bind, $result, $explainResult, $expectedResult): void
+    public function testProcess($sql, $bind, $result, $explainResult, $expectedResult): void
     {
         $statement = $this->createMock(\Zend_Db_Statement_Interface::class);
         $statement->expects($this->any())->method('fetchAll')->willReturn(json_decode($explainResult, true));
@@ -75,7 +77,6 @@ class QueryIndexAnalyzerTest extends TestCase
     {
         return [
             'no-stats-for-update-query' => [
-                LoggerInterface::TYPE_QUERY,
                 "UPDATE `admin_user_session` SET `updated_at` = '2025-07-23 14:42:02' WHERE (id=5)",
                 [],
                 null,
@@ -83,7 +84,6 @@ class QueryIndexAnalyzerTest extends TestCase
                 new \InvalidArgumentException("Can't process query type")
             ],
             'no-stats-for-insert-query' => [
-                LoggerInterface::TYPE_QUERY,
                 "INSERT INTO `magento_logging_event` (`ip`, `x_forwarded_ip`, `event_code`, `time`, `action`, `info`,
                             `status`, `user`, `user_id`, `fullaction`, `error_message`) VALUES
                             (?, ?, ?, '2025-07-23 14:42:02', ?, ?, ?, ?, ?, ?, ?)",
@@ -93,7 +93,6 @@ class QueryIndexAnalyzerTest extends TestCase
                 new \InvalidArgumentException("Can't process query type")
             ],
             'no-stats-for-delete-query' => [
-                LoggerInterface::TYPE_QUERY,
                 "DELETE FROM `sales_order_grid` WHERE (entity_id IN
                                       (SELECT `magento_sales_order_grid_archive`.`entity_id`
                                        FROM `magento_sales_order_grid_archive`))",
@@ -103,7 +102,6 @@ class QueryIndexAnalyzerTest extends TestCase
                 new \InvalidArgumentException("Can't process query type")
             ],
             'small-table-query' => [
-                LoggerInterface::TYPE_QUERY,
                 "SELECT `main_table`.* FROM `admin_system_messages` AS `main_table`
                       ORDER BY severity ASC, created_at DESC",
                 [],
@@ -114,7 +112,6 @@ class QueryIndexAnalyzerTest extends TestCase
                 new \InvalidArgumentException("Small table")
             ],
             'subselect-with-dependent-query' => [
-                LoggerInterface::TYPE_QUERY,
                 "SELECT `main_table`.*, (IF(
                 (SELECT count(*)
                     FROM magento_operation
@@ -139,7 +136,6 @@ class QueryIndexAnalyzerTest extends TestCase
                 ['DEPENDENT SUBQUERY', 'FILESORT', 'PARTIAL INDEX USED']
             ],
             'simple-qeury-partial-index' => [
-                LoggerInterface::TYPE_QUERY,
                 "SELECT `o`.`product_type`, COUNT(*) FROM `sales_order_item` AS `o` WHERE (o.order_id='67') AND
                  (o.product_id IS NOT NULL) AND ((o.product_type NOT IN
                  ('simple', 'virtual', 'bundle', 'downloadable', 'giftcard', 'configurable', 'grouped')))
@@ -152,7 +148,6 @@ class QueryIndexAnalyzerTest extends TestCase
                 ['PARTIAL INDEX USED']
             ],
             'full-table-scan-no-index' => [
-                LoggerInterface::TYPE_QUERY,
                 "SELECT `main_table`.`entity_type_id`, `main_table`.`attribute_code`, `main_table`.`attribute_model`,
                 `main_table`.`backend_model`, `main_table`.`backend_type`, `main_table`.`backend_table`,
                 `main_table`.`frontend_model`, `main_table`.`frontend_input`, `main_table`.`frontend_label`,
