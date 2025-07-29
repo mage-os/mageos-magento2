@@ -13,4 +13,8 @@
         <data key="two">2</data>
         <data key="fifty">50</data>
     </entity>
+    <entity name="OrderLinks" type="constant">
+        <data key="linkToNewOrder">Link to the New Order</data>
+        <data key="linkToPreviousOrder">Link to the Previous Order</data>
+    </entity>
 </entities>
