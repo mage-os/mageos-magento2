@@ -12,7 +12,7 @@ class WildCardHandler
     /**
      * @param AsyncTestData $simpleDataItem
      */
-    public function methodOne(AsyncTestData $simpleDataItem)
+    public function methodOne(AsyncTestData $simpleDataItem): void
     {
         file_put_contents(
             $simpleDataItem->getTextFilePath(),
@@ -24,7 +24,7 @@ class WildCardHandler
     /**
      * @param AsyncTestData $simpleDataItem
      */
-    public function methodTwo(AsyncTestData $simpleDataItem)
+    public function methodTwo(AsyncTestData $simpleDataItem): void
     {
         file_put_contents(
             $simpleDataItem->getTextFilePath(),
@@ -36,7 +36,7 @@ class WildCardHandler
     /**
      * @param AsyncTestData $simpleDataItem
      */
-    public function methodThree(AsyncTestData $simpleDataItem)
+    public function methodThree(AsyncTestData $simpleDataItem): void
     {
         file_put_contents(
             $simpleDataItem->getTextFilePath(),
@@ -48,7 +48,7 @@ class WildCardHandler
     /**
      * @param AsyncTestData $simpleDataItem
      */
-    public function methodFour(AsyncTestData $simpleDataItem)
+    public function methodFour(AsyncTestData $simpleDataItem): void
     {
         file_put_contents(
             $simpleDataItem->getTextFilePath(),
