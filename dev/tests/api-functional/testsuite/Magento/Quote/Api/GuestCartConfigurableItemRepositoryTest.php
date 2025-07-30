@@ -8,12 +8,18 @@ declare(strict_types=1);
 
 namespace Magento\Quote\Api;
 
-use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Catalog\Api\Data\ProductInterface;
+use Magento\Catalog\Test\Fixture\Product as ProductFixture;
+use Magento\ConfigurableProduct\Test\Fixture\Attribute as AttributeFixture;
+use Magento\ConfigurableProduct\Test\Fixture\Product as ConfigurableProductFixture;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Webapi\Rest\Request;
 use Magento\Integration\Api\AdminTokenServiceInterface;
 use Magento\Integration\Model\AdminTokenService;
 use Magento\Integration\Model\Oauth\Token as TokenModel;
-use Magento\TestFramework\Bootstrap as TestBootstrap;
+use Magento\TestFramework\Fixture\DataFixture;
+use Magento\TestFramework\Fixture\DataFixtureStorage;
+use Magento\TestFramework\Fixture\DataFixtureStorageManager;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\TestCase\WebapiAbstract;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
@@ -54,6 +60,11 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
     private $simpleProductSkus=[];
 
     /**
+     * @var DataFixtureStorage
+     */
+    private $fixtures;
+
+    /**
      * @inheritdoc
      */
     protected function setUp(): void
@@ -62,55 +73,45 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
         $this->tokenService = Bootstrap::getObjectManager()->get(AdminTokenService::class);
         $this->tokenModel = Bootstrap::getObjectManager()->get(TokenModel::class);
         $this->userModel = Bootstrap::getObjectManager()->get(User::class);
+        $this->fixtures = Bootstrap::getObjectManager()->get(DataFixtureStorageManager::class)->getStorage();
     }
 
     /**
-     * @magentoApiDataFixture Magento/Webapi/_files/webapi_user.php
-     * @magentoApiDataFixture Magento/ConfigurableProduct/_files/product_configurable.php
+     * Test guest cart update configurable item using modern fixtures
      */
+    #[
+        DataFixture(ProductFixture::class, ['price' => 10, 'sku' => 'simple-10'], as: 'p1'),
+        DataFixture(ProductFixture::class, ['price' => 20, 'sku' => 'simple-20'], as: 'p2'),
+        DataFixture(AttributeFixture::class, ['attribute_code' => 'test_configurable'], as: 'attr'),
+        DataFixture(
+            ConfigurableProductFixture::class,
+            [
+                'sku' => 'configurable',
+                'name' => 'Configurable Product',
+                '_options' => ['$attr$'],
+                '_links' => ['$p1$', '$p2$']
+            ],
+            'configurableProduct'
+        )
+    ]
     public function testGuestCartUpdateConfigurableItem()
     {
-        $adminToken = $this->createAdminAccessToken();
-        $guestCartId = $this->createGuestCart($adminToken);
-        $response = $this->addConfigurableProductToCart($guestCartId, $adminToken);
-        $this->updateConfigurableProductInCart($guestCartId, $adminToken, $response['item_id']);
-        $this->verifyCartItems($guestCartId, $adminToken, $response['item_id']);
+        $guestCartId = $this->createGuestCart();
+        $response = $this->addConfigurableProductToCart($guestCartId);
+        $this->updateConfigurableProductInCart($guestCartId, $response['item_id']);
+        $this->verifyCartItems($guestCartId, $response['item_id']);
     }
 
-    private function createAdminAccessToken()
-    {
-        $adminUser = 'webapi_user';
-
-        $serviceInfo = [
-            'rest' => [
-                'resourcePath' => self::RESOURCE_PATH_ADMIN_TOKEN,
-                'httpMethod' => Request::HTTP_METHOD_POST,
-            ],
-        ];
-        $requestData = [
-            'username' => $adminUser,
-            'password' => TestBootstrap::ADMIN_PASSWORD,
-        ];
-        $accessToken = $this->_webApiCall($serviceInfo, $requestData);
-        $this->assertNotNull($accessToken);
-        return $accessToken;
-    }
-
-    private function createGuestCart(string $adminToken)
+    /**
+     * @return string
+     */
+    private function createGuestCart(): string
     {
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH_GUEST_CART,
-                'httpMethod' => Request::HTTP_METHOD_POST,
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $adminToken
-                ]
-            ],
-            'soap' => [
-                'service' => self::SERVICE_NAME_GUEST_CART,
-                'serviceVersion' => self::SERVICE_VERSION_GUEST_CART,
-                'operation' => self::SERVICE_NAME_GUEST_CART . 'CreateEmptyCart',
-            ],
+                'httpMethod' => Request::HTTP_METHOD_POST
+            ]
         ];
 
         $requestData = ['storeId' => 1];
@@ -119,9 +120,13 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
         return $quoteId;
     }
 
-    private function addConfigurableProductToCart(string $guestCartId, string $adminToken)
+    /**
+     * @param string $guestCartId
+     * @return array
+     */
+    private function addConfigurableProductToCart(string $guestCartId): array
     {
-        $configurableProduct = $this->getConfigurableProduct('configurable');
+        $configurableProduct = $this->getConfigurableProduct();
         $optionData = $this->getConfigurableOptionData($configurableProduct);
 
         $requestData = $this->buildCartItemRequestData(
@@ -131,7 +136,7 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
             $optionData['option_id']
         );
 
-        $serviceInfo = $this->getCartServiceInfo($guestCartId, $adminToken, 'add');
+        $serviceInfo = $this->getCartServiceInfo($guestCartId, 'add');
 
         $response = $this->_webApiCall($serviceInfo, $requestData);
         $this->assertNotNull($response['item_id']);
@@ -145,9 +150,14 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
         return $response;
     }
 
-    private function verifyCartItems(string $guestCartId, string $adminToken, int $expectedItemId)
+    /**
+     * @param string $guestCartId
+     * @param int $expectedItemId
+     * @return void
+     */
+    private function verifyCartItems(string $guestCartId, int $expectedItemId): void
     {
-        $serviceInfo = $this->getCartServiceInfo($guestCartId, $adminToken, 'get');
+        $serviceInfo = $this->getCartServiceInfo($guestCartId, 'get');
         $response = $this->_webApiCall($serviceInfo, []);
         $this->assertIsArray($response);
         $this->assertGreaterThan(0, count($response), 'Cart should contain at least one item');
@@ -169,9 +179,14 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
         $this->assertTrue($foundItem, 'Expected cart item not found in cart items list');
     }
 
-    private function updateConfigurableProductInCart(string $guestCartId, string $adminToken, int $itemId)
+    /**
+     * @param string $guestCartId
+     * @param int $itemId
+     * @return void
+     */
+    private function updateConfigurableProductInCart(string $guestCartId, int $itemId): void
     {
-        $configurableProduct = $this->getConfigurableProduct('configurable');
+        $configurableProduct = $this->getConfigurableProduct();
         $optionData = $this->getConfigurableOptionData($configurableProduct);
         $requestData = $this->buildCartItemRequestData(
             $guestCartId,
@@ -180,7 +195,7 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
             $optionData['option_id']
         );
         $requestData['cartItem']['item_id'] = $itemId;
-        $serviceInfo = $this->getCartServiceInfo($guestCartId, $adminToken, 'update', $itemId);
+        $serviceInfo = $this->getCartServiceInfo($guestCartId, 'update', $itemId);
         $response = $this->_webApiCall($serviceInfo, $requestData);
         $this->assertNotNull($response['item_id']);
         $this->assertEquals(Configurable::TYPE_CODE, $response['product_type']);
@@ -192,10 +207,15 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
         );
     }
 
-    private function getConfigurableProduct(string $sku)
+    /**
+     * Get configurable product from fixtures
+     *
+     * @return ProductInterface
+     * @throws NoSuchEntityException
+     */
+    private function getConfigurableProduct(): ProductInterface
     {
-        $productRepository = Bootstrap::getObjectManager()->get(ProductRepositoryInterface::class);
-        $configurableProduct = $productRepository->get($sku);
+        $configurableProduct = $this->fixtures->get('configurableProduct');
         $simpleProducts = $configurableProduct->getTypeInstance()->getUsedProducts($configurableProduct);
         foreach ($simpleProducts as $simpleProduct) {
             $this->simpleProductSkus[] = $simpleProduct->getSku();
@@ -203,9 +223,14 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
         return $configurableProduct;
     }
 
-    private function getConfigurableOptionData($configurableProduct, $selectedOption = null)
+    /**
+     * @param $configurableProduct
+     * @param $selectedOption
+     * @return array
+     */
+    private function getConfigurableOptionData($configurableProduct, $selectedOption = null): array
     {
-        $configOptions = $configurableProduct->getExtensionAttributes()->getconfigOptions();
+        $configOptions = $configurableProduct->getExtensionAttributes()->getConfigurableProductOptions();
 
         $options = $configOptions[0]->getOptions();
         $optionKey = (isset($selectedOption) && isset($options[$selectedOption])) ? $selectedOption : 0;
@@ -216,7 +241,14 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
         ];
     }
 
-    private function buildCartItemRequestData(string $cartId, string $sku, int $attributeId, int $optionId): array
+    /**
+     * @param string $cartId
+     * @param string $sku
+     * @param string $attributeId
+     * @param string $optionId
+     * @return array[]
+     */
+    private function buildCartItemRequestData(string $cartId, string $sku, string $attributeId, string $optionId): array
     {
         return [
             'cartItem' => [
@@ -237,9 +269,14 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
         ];
     }
 
+    /**
+     * @param string $cartId
+     * @param string $action
+     * @param int|null $itemId
+     * @return array[]
+     */
     private function getCartServiceInfo(
         string $cartId,
-        string $adminToken,
         string $action = 'add',
         ?int $itemId = null
     ): array {
@@ -258,16 +295,8 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
         return [
             'rest' => [
                 'resourcePath' => $resourcePath,
-                'httpMethod' => $httpMethod,
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $adminToken
-                ]
-            ],
-            'soap' => [
-                'service' => self::SERVICE_NAME_GUEST_CART,
-                'serviceVersion' => self::SERVICE_VERSION_GUEST_CART,
-                'operation' => self::SERVICE_NAME_GUEST_CART . 'Save',
-            ],
+                'httpMethod' => $httpMethod
+            ]
         ];
     }
 }
