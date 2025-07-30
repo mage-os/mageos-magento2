@@ -36,12 +36,12 @@ class StoreAssetIntegrityHashes
     /**
      * @param SubresourceIntegrityCollector $integrityCollector
      * @param SubresourceIntegrityRepositoryPool $integrityRepositoryPool
-     * @param LoggerInterface $logger|null
+     * @param LoggerInterface|null $logger
      */
     public function __construct(
         SubresourceIntegrityCollector $integrityCollector,
         SubresourceIntegrityRepositoryPool $integrityRepositoryPool,
-        LoggerInterface $logger = null
+        ?LoggerInterface $logger = null
     ) {
         $this->integrityCollector = $integrityCollector;
         $this->integrityRepositoryPool = $integrityRepositoryPool;
