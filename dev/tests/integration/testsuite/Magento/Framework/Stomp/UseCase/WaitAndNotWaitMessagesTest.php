@@ -3,7 +3,9 @@
  * Copyright 2025 Adobe
  * All Rights Reserved.
  */
-namespace Magento\Framework\Stomp;
+declare(strict_types=1);
+
+namespace Magento\Framework\Stomp\UseCase;
 
 use Magento\Framework\App\DeploymentConfig\FileReader;
 use Magento\Framework\App\DeploymentConfig\Writer;
@@ -91,7 +93,7 @@ class WaitAndNotWaitMessagesTest extends QueueTestCaseAbstract
     /**
      * Check if consumers wait for messages from the queue
      */
-    public function testWaitForMessages()
+    public function testWaitForMessages(): void
     {
         if ($this->connectionType === 'amqp') {
             $this->markTestSkipped('STOMP test skipped because AMQP connection is available.

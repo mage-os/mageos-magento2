@@ -3,13 +3,16 @@
  * Copyright 2025 Adobe
  * All Rights Reserved.
  */
-namespace Magento\Framework\MessageQueue\UseCase;
+declare(strict_types=1);
+
+namespace Magento\Framework\Stomp\UseCase;
 
 use Magento\Framework\MessageQueue\DefaultValueProvider;
+use Magento\Framework\MessageQueue\UseCase\QueueTestCaseAbstract;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestModuleAsyncStomp\Model\AsyncTestData;
 
-class WildcardTopicStompTest extends QueueTestCaseAbstract
+class WildcardTopicTest extends QueueTestCaseAbstract
 {
     /**
      * @var string[]
@@ -46,7 +49,7 @@ class WildcardTopicStompTest extends QueueTestCaseAbstract
      *
      * @dataProvider wildCardTopicsDataProvider
      */
-    public function testWildCardMatchingTopic($topic, $matchingQueues, $nonMatchingQueues)
+    public function testWildCardMatchingTopic(string $topic, array $matchingQueues, array $nonMatchingQueues): void
     {
         if ($this->connectionType === 'amqp') {
             $this->markTestSkipped('STOMP test skipped because AMQP connection is available.
@@ -67,7 +70,7 @@ class WildcardTopicStompTest extends QueueTestCaseAbstract
         }
     }
 
-    public static function wildCardTopicsDataProvider()
+    public static function wildCardTopicsDataProvider(): array
     {
         return [
             'stomp.segment1.segment2.segment3.wildcard' => [
@@ -83,7 +86,7 @@ class WildcardTopicStompTest extends QueueTestCaseAbstract
         ];
     }
 
-    public function testWildCardNonMatchingTopic()
+    public function testWildCardNonMatchingTopic(): void
     {
         if ($this->connectionType === 'amqp') {
             $this->markTestSkipped('STOMP test skipped because AMQP connection is available.
@@ -99,7 +102,7 @@ class WildcardTopicStompTest extends QueueTestCaseAbstract
     /**
      * @return AsyncTestData
      */
-    private function generateTestObject()
+    private function generateTestObject(): AsyncTestData
     {
         $testObject = $this->objectManager->create(AsyncTestData::class); // @phpstan-ignore-line
         $testObject->setValue('||Message Contents||');
