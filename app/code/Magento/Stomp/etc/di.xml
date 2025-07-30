@@ -25,7 +25,7 @@
                     <item name="stomp" xsi:type="object">Magento\Stomp\Model\Bulk\Publisher</item>
                 </item>
                 <item name="sync" xsi:type="array">
-                    <item name="stomp" xsi:type="object">Magento\Framework\MessageQueue\Bulk\Rpc\Publisher</item>
+                    <item name="stomp" xsi:type="object">Magento\Stomp\Model\Rpc\Publisher</item>
                 </item>
             </argument>
         </arguments>

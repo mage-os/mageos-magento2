@@ -19,4 +19,10 @@
         <connection name="stomp" exchange="magento" />
     </publisher>
 
+    <publisher topic="stomp.multi.topic.queue.topic.y" queue="stomp.queue.for.multiple.topics.test.y">
+        <connection name="stomp" exchange="magento" />
+    </publisher>
+    <publisher topic="stomp.multi.topic.queue.topic.z" queue="stomp.queue.for.multiple.topics.test.z">
+        <connection name="stomp" exchange="magento" />
+    </publisher>
 </config>

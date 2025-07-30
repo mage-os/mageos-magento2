@@ -10,4 +10,7 @@
     <!-- Consumers for wildcard queues -->
     <consumer name="stomp.wildcard.queue.one.consumer" connection="stomp" queue="stomp.wildcard.queue.one" handler="Magento\TestModuleAsyncStomp\Model\WildCardHandler::methodOne"/>
     <consumer name="stomp.wildcard.queue.two.consumer" connection="stomp" queue="stomp.wildcard.queue.two" handler="Magento\TestModuleAsyncStomp\Model\WildCardHandler::methodTwo"/>
+
+    <consumer name="stomp.queue.for.multiple.topics.test.y" queue="stomp.queue.for.multiple.topics.test.y" connection="stomp"/>
+    <consumer name="stomp.queue.for.multiple.topics.test.z" queue="stomp.queue.for.multiple.topics.test.z" connection="stomp"/>
 </config>
