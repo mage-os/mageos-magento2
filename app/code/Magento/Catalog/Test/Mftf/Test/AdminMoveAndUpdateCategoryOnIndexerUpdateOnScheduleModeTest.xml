@@ -124,6 +124,7 @@
         <actionGroup ref="StorefrontGoToCategoryPageActionGroup" stepKey="navigateToStorefrontCategoryAInitially">
             <argument name="categoryName" value="$createAnchorCategoryA.name$"/>
         </actionGroup>
+        <!-- Step 1:- Verify the category displays correct amount of products as 2 -->
         <actionGroup ref="StorefrontVerifyCategoryContentActionGroup" stepKey="verifyCategoryAInitially">
             <argument name="description" value="{{CustomDynamicProductDescription.value}}"/>
             <argument name="metaTitle" value="MetaAtitle"/>
@@ -133,6 +134,7 @@
         <actionGroup ref="StorefrontGoToCategoryPageActionGroup" stepKey="navigateToStorefrontCategoryCInitially">
             <argument name="categoryName" value="$createNonAnchorCategoryC.name$"/>
         </actionGroup>
+        <!-- Step 2:- Verify the category displays correct amount of products as 1 -->
         <actionGroup ref="StorefrontVerifyCategoryContentActionGroup" stepKey="verifyCategoryCInitially">
             <argument name="description" value="{{CustomDynamicProductDescription.value}}"/>
             <argument name="metaTitle" value="MetaCtitle"/>
@@ -144,6 +146,7 @@
             <argument name="childCategory" value="$createAnchorCategoryA.name$"/>
             <argument name="parentCategory" value="$createNonAnchorCategoryC.name$"/>
         </actionGroup>
+        <!-- Step 3:- Verify the category has moved successfully -->
         <waitForElementVisible selector="{{AdminCategoryMessagesSection.SuccessMessage}}" stepKey="waitForSuccessMessageForFirstCategoryMove"/>
         <waitForText userInput="You moved the category." selector="{{AdminCategoryMessagesSection.SuccessMessage}}"
              stepKey="verifySuccessMessageForFirstCategoryMove"/>
@@ -151,6 +154,7 @@
         <actionGroup ref="AdminOpenIndexManagementPageActionGroup"
                      stepKey="navigateToIndexManagementPageAfterFirstMove"/>
         <grabTextFrom selector="{{AdminIndexManagementSection.indexerStatus('Category Flat Data')}}" stepKey="grabCategoryFlatDataIndexerStatus"/>
+        <!-- Step 4:- Verify the category flat data indexer is ready -->
         <assertEquals stepKey="assertCategoryFlatDataIndexerStatusToReady">
             <expectedResult type="string">READY</expectedResult>
             <actualResult type="string">$grabCategoryFlatDataIndexerStatus</actualResult>
@@ -160,6 +164,7 @@
                      stepKey="navigateToStorefrontCategoryAAfterFirstMove">
             <argument name="categoryName" value="$createAnchorCategoryA.name$"/>
         </actionGroup>
+        <!-- Step 5:- Verify the category displays same amount of products as 2 -->
         <waitForText userInput="2" selector="{{StorefrontCategoryMainSection.productCount}}"
                      stepKey="verifyProductCountOnCategoryAAfterFirstMove"/>
         <actionGroup ref="StorefrontAssertCategoryNameIsShownInMenuActionGroup"
@@ -171,6 +176,7 @@
                      stepKey="navigateToStorefrontCategoryCAfterFirstMove">
             <argument name="categoryName" value="$createNonAnchorCategoryC.name$"/>
         </actionGroup>
+        <!-- Step 6:- Verify the category displays correct amount of products as 1 -->
         <waitForText userInput="1" selector="{{StorefrontCategoryMainSection.productCount}}"
                      stepKey="verifyProductCountOnCategoryCAfterFirstMove"/>
         <actionGroup ref="StorefrontAssertCategoryNameIsShownInMenuActionGroup"
@@ -185,6 +191,7 @@
                      stepKey="navigateToStorefrontCategoryCAfterFirstCron">
             <argument name="categoryName" value="$createNonAnchorCategoryC.name$"/>
         </actionGroup>
+        <!-- Step 8:- Verify the category displays correct amount of products as 1 -->
         <waitForText userInput="1" selector="{{StorefrontCategoryMainSection.productCount}}"
                      stepKey="verifyProductCountOnCategoryCAfterFirstCron"/>
         <actionGroup ref="StorefrontCheckPresentSubCategoryActionGroup"
@@ -199,6 +206,7 @@
             <argument name="childCategory" value="$createSubCategoryB.name$"/>
             <argument name="parentCategory" value="$createNonAnchorCategoryC.name$"/>
         </actionGroup>
+        <!-- Step 9:- Verify the category has moved successfully -->
         <waitForElementVisible selector="{{AdminCategoryMessagesSection.SuccessMessage}}" stepKey="waitForSuccessMessageForSecondCategoryMove"/>
         <waitForText userInput="You moved the category." selector="{{AdminCategoryMessagesSection.SuccessMessage}}"
              stepKey="verifySuccessMessageForSecondCategoryMove"/>
@@ -214,6 +222,7 @@
                      stepKey="navigateToStorefrontCategoryCAfterSecondMove">
             <argument name="categoryName" value="$createNonAnchorCategoryC.name$"/>
         </actionGroup>
+        <!-- Step 10:- Verify the category displays correct amount of products as 1 -->
         <waitForText userInput="1" selector="{{StorefrontCategoryMainSection.productCount}}"
                      stepKey="verifyProductCountOnCategoryCAfterSecondMove"/>
         <!-- Step 11:- Run cron twice to reindex -->
@@ -224,13 +233,16 @@
                      stepKey="navigateToStorefrontCategoryCAfterSecondCron">
             <argument name="categoryName" value="$createNonAnchorCategoryC.name$"/>
         </actionGroup>
+        <!-- Step 12:- Verify the category displays correct amount of products as 1 -->
         <waitForText userInput="1" selector="{{StorefrontCategoryMainSection.productCount}}"
                      stepKey="verifyProductCountOnCategoryCAfterSecondCron"/>
+        <!-- Step 12:- Verify the category B has moved under category C successfully -->
         <actionGroup ref="StorefrontCheckPresentSubCategoryActionGroup"
                      stepKey="verifyCategoryBUnderCategoryCAfterSecondCron">
             <argument name="parenCategoryName" value="$createNonAnchorCategoryC.name$"/>
             <argument name="childCategoryName" value="$createSubCategoryB.name$"/>
         </actionGroup>
+        <!-- Step 12:- Verify the category A has moved under category B successfully -->
         <actionGroup ref="StorefrontCheckPresentSubCategoryActionGroup"
                      stepKey="verifyCategoryAUnderCategoryBAfterSecondCron">
             <argument name="parenCategoryName" value="$createSubCategoryB.name$"/>
@@ -253,6 +265,7 @@
         <!-- Step 16:- Open Admin > System > Index Management -->
         <actionGroup ref="AdminOpenIndexManagementPageActionGroup"
                      stepKey="navigateToIndexManagementPageAfterStoreCreation"/>
+        <!-- Step 16:- Verify the category flat data indexer is ready -->
         <grabTextFrom selector="{{AdminIndexManagementSection.indexerStatus('Category Flat Data')}}" stepKey="grabCategoryFlatDataIndexerStatusAfterStoreCreation"/>
         <assertEquals stepKey="assertCategoryFlatDataIndexerStatusToReadyAfterStoreCreation">
             <expectedResult type="string">READY</expectedResult>
@@ -275,6 +288,7 @@
         <actionGroup ref="AdminUpdateCategoryMetaInformationActionGroup" stepKey="changeCategoryMetaTitleOnStoreView">
             <argument name="metaTitle" value="$createSubCategoryB.name$"/>
         </actionGroup>
+        <!-- Step 17:- Verify the category settings on specific store view are saved -->
         <actionGroup ref="ChangeSeoUrlKeyForSubCategoryActionGroup" stepKey="changeCategoryUrlKeyOnStoreView">
             <argument name="value" value="kategoriya-A"/>
         </actionGroup>
@@ -283,14 +297,14 @@
         <actionGroup ref="StorefrontSwitchStoreActionGroup" stepKey="switchToCustomStoreFirst">
             <argument name="storeName" value="{{customStore.name}}"/>
         </actionGroup>
-        <!-- Navigate to category A on the custom store and verify OLD content (English) -->
+        <!-- Step 18:- Navigate to category A -->
         <actionGroup ref="StorefrontGoToSubSubCategoryPageActionGroup"
                      stepKey="navigateToStorefrontCategoryAOnCustomStore">
             <argument name="categoryName" value="$createNonAnchorCategoryC.name$"/>
             <argument name="subCategoryName" value="$createSubCategoryB.name$"/>
             <argument name="subSubCategoryName" value="$createAnchorCategoryA.name$"/>
         </actionGroup>
-        <!-- Verify OLD content (English) - before cron runs -->
+        <!-- Step 18:- Verify OLD content (English) - before cron runs -->
         <actionGroup ref="StorefrontVerifyCategoryContentActionGroup" stepKey="verifyOldContentOnCategoryAStoreView">
             <argument name="description" value="{{CustomDynamicProductDescription.value}}"/>
             <argument name="metaTitle" value="MetaAtitle"/>
