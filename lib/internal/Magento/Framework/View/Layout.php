@@ -194,6 +194,11 @@ class Layout extends \Magento\Framework\Simplexml\Config implements \Magento\Fra
     private ResponseHttp $response;
 
     /**
+     * Property used to cache the results of the isCacheable() method.
+     */
+    private bool|null $isCacheableCache = null;
+
+    /**
      * @param ProcessorFactory $processorFactory
      * @param ManagerInterface $eventManager
      * @param Structure $structure
@@ -1138,18 +1143,22 @@ class Layout extends \Magento\Framework\Simplexml\Config implements \Magento\Fra
      */
     public function isCacheable()
     {
-        $this->build();
-        $elements = $this->getXml()->xpath('//' . Element::TYPE_BLOCK . '[@cacheable="false"]');
-        $cacheable = $this->cacheable;
-        foreach ($elements as $element) {
-            $blockName = $element->getBlockName();
-            if ($blockName !== false && $this->structure->hasElement($blockName)) {
-                $cacheable = false;
-                break;
+        if (!isset($this->isCacheableCache)) {
+            $this->build();
+            $elements  = $this->getXml()->xpath('//' . Element::TYPE_BLOCK . '[@cacheable="false"]');
+            $cacheable = $this->cacheable;
+            foreach ($elements as $element) {
+                $blockName = $element->getBlockName();
+                if ($blockName !== false && $this->structure->hasElement($blockName)) {
+                    $cacheable = false;
+                    break;
+                }
             }
+
+            $this->isCacheableCache = $cacheable;
         }
 
-        return $cacheable;
+        return $this->isCacheableCache;
     }
 
     /**
