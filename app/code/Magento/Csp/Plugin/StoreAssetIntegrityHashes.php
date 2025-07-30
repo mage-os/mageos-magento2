@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -10,6 +10,8 @@ namespace Magento\Csp\Plugin;
 use Magento\Deploy\Service\DeployStaticContent;
 use Magento\Csp\Model\SubresourceIntegrityCollector;
 use Magento\Csp\Model\SubresourceIntegrityRepositoryPool;
+use Psr\Log\LoggerInterface;
+use Magento\Framework\App\ObjectManager;
 
 /**
  * Plugin that stores generated integrity hashes for all assets.
@@ -27,15 +29,24 @@ class StoreAssetIntegrityHashes
     private SubresourceIntegrityRepositoryPool $integrityRepositoryPool;
 
     /**
+     * @var LoggerInterface
+     */
+    private LoggerInterface $logger;
+
+    /**
      * @param SubresourceIntegrityCollector $integrityCollector
      * @param SubresourceIntegrityRepositoryPool $integrityRepositoryPool
+     * @param LoggerInterface $logger|null
      */
     public function __construct(
         SubresourceIntegrityCollector $integrityCollector,
-        SubresourceIntegrityRepositoryPool $integrityRepositoryPool
+        SubresourceIntegrityRepositoryPool $integrityRepositoryPool,
+        LoggerInterface $logger = null
     ) {
         $this->integrityCollector = $integrityCollector;
         $this->integrityRepositoryPool = $integrityRepositoryPool;
+        $this->logger = $logger ??
+            ObjectManager::getInstance()->get(LoggerInterface::class);
     }
 
     /**

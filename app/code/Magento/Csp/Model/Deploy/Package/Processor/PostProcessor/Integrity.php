@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -74,7 +74,8 @@ class Integrity implements ProcessorInterface
         $this->integrityFactory = $integrityFactory;
         $this->integrityCollector = $integrityCollector;
         $this->logger = $logger ?? ObjectManager::getInstance()->get(LoggerInterface::class);
-        $this->repositoryPool = $repositoryPool ?? ObjectManager::getInstance()->get(SubresourceIntegrityRepositoryPool::class);
+        $this->repositoryPool = $repositoryPool ??
+            ObjectManager::getInstance()->get(SubresourceIntegrityRepositoryPool::class);
     }
 
     /**
@@ -110,6 +111,7 @@ class Integrity implements ProcessorInterface
             try {
                 $this->repositoryPool->get($area)->saveBunch($collectedData);
             } catch (\Exception $e) {
+                //phpcs:ignore
                 $this->logger->error('Integrity PostProcessor: Failed saving to ' . $area . ' repository: ' . $e->getMessage());
             }
 
