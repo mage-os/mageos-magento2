@@ -10,5 +10,12 @@ var config = {
             addToWishlist:  'Magento_Wishlist/js/add-to-wishlist',
             wishlistSearch: 'Magento_Wishlist/js/search'
         }
+    },
+    config: {
+        mixins: {
+            'Magento_Wishlist/js/view/wishlist': {
+                'Magento_Wishlist/js/view/wishlist-mixin': true
+            }
+        }
     }
 };
