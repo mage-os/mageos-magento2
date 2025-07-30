@@ -243,7 +243,8 @@ class DataProvider
                 'amount' => [
                     'value' => abs((float) $orderItem->getDiscountAmount()),
                     'currency' => $associatedOrder->getOrderCurrencyCode()
-                ]
+                ],
+                'order_model' => $associatedOrder,
             ];
         }
         return $discounts;
