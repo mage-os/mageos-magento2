@@ -84,7 +84,7 @@ class QueryIndexAnalyzerTest extends TestCase
                 new \InvalidArgumentException("Can't process query type")
             ],
             'no-stats-for-insert-query' => [
-                "INSERT INTO `magento_logging_event` (`ip`, `x_forwarded_ip`, `event_code`, `time`, `action`, `info`,
+                "INSERT INTO `table_logging_event` (`ip`, `x_forwarded_ip`, `event_code`, `time`, `action`, `info`,
                             `status`, `user`, `user_id`, `fullaction`, `error_message`) VALUES
                             (?, ?, ?, '2025-07-23 14:42:02', ?, ?, ?, ?, ?, ?, ?)",
                 [],
@@ -138,7 +138,7 @@ class QueryIndexAnalyzerTest extends TestCase
             'simple-qeury-partial-index' => [
                 "SELECT `o`.`product_type`, COUNT(*) FROM `sales_order_item` AS `o` WHERE (o.order_id='67') AND
                  (o.product_id IS NOT NULL) AND ((o.product_type NOT IN
-                 ('simple', 'virtual', 'bundle', 'downloadable', 'giftcard', 'configurable', 'grouped')))
+                 ('simple', 'virtual', 'bundle', 'downloadable', 'configurable', 'grouped')))
                                                                    GROUP BY `o`.`product_type`",
                 [],
                 null,
