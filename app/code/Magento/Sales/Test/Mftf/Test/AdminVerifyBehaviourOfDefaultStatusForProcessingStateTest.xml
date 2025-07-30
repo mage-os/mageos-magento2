@@ -65,7 +65,7 @@
         </actionGroup>
         <waitForElementClickable selector="{{AdminOrderStatusGridSection.unassign}}" stepKey="waitToClickunassignOrderStatus"/>
         <click selector="{{AdminOrderStatusGridSection.unassign}}" stepKey="clickUnassign"/>
-        <waitForElementVisible selector="{{AdminMessagesSection.success}}" stepKey="waitForSuccessMessageVisible" />
+        <waitForElementVisible selector="{{AdminMessagesSection.success}}" stepKey="waitForSuccessMessageVisible"/>
         <waitForText selector="{{AdminMessagesSection.success}}" time="30" userInput="You have unassigned the order status." stepKey="seeAssertOrderStatusSuccessUnassignMessage"/>
         <!--Step 8: Verify the default status for the order status Processing -->
         <actionGroup ref="FilterOrderStatusByLabelAndCodeActionGroup" stepKey="filterOrderStatusGrid1">
