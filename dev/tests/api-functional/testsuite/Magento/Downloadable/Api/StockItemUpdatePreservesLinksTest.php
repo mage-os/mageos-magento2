@@ -10,13 +10,10 @@ namespace Magento\Downloadable\Api;
 
 use Magento\Downloadable\Test\Fixture\DownloadableProduct;
 use Magento\Framework\Webapi\Rest\Request;
-use Magento\Integration\Api\AdminTokenServiceInterface;
-use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\TestCase\WebapiAbstract;
 use Magento\TestFramework\Fixture\DataFixture;
 use Magento\TestFramework\Fixture\DataFixtureStorage;
 use Magento\TestFramework\Fixture\DataFixtureStorageManager;
-use Magento\User\Test\Fixture\User;
 
 /**
  * Test to verify REST-API updating product stock_item does not delete downloadable_product_links
@@ -33,11 +30,6 @@ class StockItemUpdatePreservesLinksTest extends WebapiAbstract
     private $fixtures;
 
     /**
-     * @var AdminTokenServiceInterface
-     */
-    private $adminTokenService;
-
-    /**
      * @inheritDoc
      */
     protected function setUp(): void
@@ -45,14 +37,12 @@ class StockItemUpdatePreservesLinksTest extends WebapiAbstract
         parent::setUp();
         $this->_markTestAsRestOnly();
         $this->fixtures = DataFixtureStorageManager::getStorage();
-        $this->adminTokenService = Bootstrap::getObjectManager()->get(AdminTokenServiceInterface::class);
     }
 
     /**
      * Test the complete workflow from Steps 1-16
      * Verify that REST-API updating product stock_item does not delete downloadable_product_links
      */
-    #[DataFixture(User::class, ['role_id' => 1], 'admin_user')]
     #[DataFixture(DownloadableProduct::class, [
         'sku' => 'downloadable-product',
         'name' => 'Downloadable Product Test',
@@ -91,9 +81,6 @@ class StockItemUpdatePreservesLinksTest extends WebapiAbstract
     ], 'downloadable_product')]
     public function testStockItemUpdatePreservesDownloadableLinks()
     {
-        // Steps 1-7: Generate admin access token using AdminTokenService directly
-        $adminToken = $this->generateAdminAccessToken();
-
         // Get the product SKU from the fixture
         $product = $this->fixtures->get('downloadable_product');
         $productSku = $product->getSku();
@@ -104,7 +91,7 @@ class StockItemUpdatePreservesLinksTest extends WebapiAbstract
         $originalLinks = $originalProduct['extension_attributes']['downloadable_product_links'];
 
         // Steps 8-14: Update product stock_item via catalogProductRepositoryV1 PUT endpoint
-        $updatedProduct = $this->updateProductStockItem($adminToken, $productSku);
+        $updatedProduct = $this->updateProductStockItem($productSku);
 
         // Verify the API call was successful (Step 14: Server response Code=200)
         $this->assertNotEmpty($updatedProduct, 'API response should not be empty');
@@ -117,34 +104,19 @@ class StockItemUpdatePreservesLinksTest extends WebapiAbstract
     }
 
     /**
-     * Generate Admin Access Token using AdminTokenService directly
-     */
-    private function generateAdminAccessToken(): string
-    {
-        $adminUser = $this->fixtures->get('admin_user');
-        
-        // Use AdminTokenService directly to bypass TwoFactorAuth issues
-        $accessToken = $this->adminTokenService->createAdminAccessToken(
-            $adminUser->getUsername(),
-            \Magento\TestFramework\Bootstrap::ADMIN_PASSWORD
-        );
-
-        $this->assertNotEmpty($accessToken, 'Admin access token should be generated');
-        $this->assertIsString($accessToken, 'Access token should be a string');
-
-        return $accessToken;
-    }
-
-    /**
      * Update Product Stock Item
      */
-    private function updateProductStockItem(string $adminToken, string $productSku): array
+    private function updateProductStockItem(string $productSku): array
     {
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::PRODUCT_RESOURCE_PATH . '/' . $productSku,
                 'httpMethod' => Request::HTTP_METHOD_PUT,
-                'token' => $adminToken,
+            ],
+            'soap' => [
+                'service' => 'catalogProductRepositoryV1',
+                'serviceVersion' => 'V1',
+                'operation' => 'catalogProductRepositoryV1Save',
             ],
         ];
 
@@ -225,8 +197,13 @@ class StockItemUpdatePreservesLinksTest extends WebapiAbstract
                 'resourcePath' => self::PRODUCT_RESOURCE_PATH . '/' . $sku,
                 'httpMethod' => Request::HTTP_METHOD_GET,
             ],
+            'soap' => [
+                'service' => 'catalogProductRepositoryV1',
+                'serviceVersion' => 'V1',
+                'operation' => 'catalogProductRepositoryV1Get',
+            ],
         ];
 
-        return $this->_webApiCall($serviceInfo, []);
+        return $this->_webApiCall($serviceInfo, ['sku' => $sku]);
     }
 }
