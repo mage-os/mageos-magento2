@@ -22,4 +22,4 @@
         <fillField selector="{{AdminEditUserSection.emailTextField}}" userInput="{{user.username}}@magento.com" stepKey="enterEmail"/>
         <fillField selector="{{AdminEditUserSection.currentPasswordField}}" userInput="{{_ENV.MAGENTO_ADMIN_PASSWORD}}" stepKey="enterCurrentPassword"/>
     </actionGroup>
-</actionGroups> 
+</actionGroups>
