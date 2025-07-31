@@ -111,7 +111,12 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH_GUEST_CART,
                 'httpMethod' => Request::HTTP_METHOD_POST
-            ]
+            ],
+            'soap' => [
+                'service' => self::SERVICE_NAME_GUEST_CART,
+                'serviceVersion' => self::SERVICE_VERSION_GUEST_CART,
+                'operation' => self::SERVICE_NAME_GUEST_CART . 'Save',
+            ],
         ];
 
         $requestData = ['storeId' => 1];
@@ -296,7 +301,12 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
             'rest' => [
                 'resourcePath' => $resourcePath,
                 'httpMethod' => $httpMethod
-            ]
+            ],
+            'soap' => [
+                'service' => self::SERVICE_NAME_GUEST_CART,
+                'serviceVersion' => self::SERVICE_VERSION_GUEST_CART,
+                'operation' => self::SERVICE_NAME_GUEST_CART . 'Save',
+            ],
         ];
     }
 }
