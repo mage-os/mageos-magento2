@@ -1,6 +1,6 @@
 /**
  * Copyright 2025 Adobe
- * All rights reserved.
+ * All Rights Reserved.
  */
 
 define([
@@ -20,10 +20,13 @@ define([
                 get: jasmine.createSpy('get')
             };
 
+            // Helper function to set up subscribe callback
+            function setupSubscribeCallback(callback) {
+                subscribeCallback = callback;
+            }
+
             wishlistDataMock = {
-                subscribe: jasmine.createSpy('subscribe').and.callFake(function (callback) {
-                    subscribeCallback = callback;
-                })
+                subscribe: jasmine.createSpy('subscribe').and.callFake(setupSubscribeCallback)
             };
 
             customerDataMock.get.and.returnValue(wishlistDataMock);
@@ -39,34 +42,39 @@ define([
                     return this;
                 }
             };
-            
+
             // Add the extend method that Magento components typically have
             WishlistComponent.extend = function (extensions) {
                 var ExtendedComponent = function () {};
+
                 ExtendedComponent.prototype = Object.create(WishlistComponent.prototype);
-                
+
                 // Copy the extensions to the prototype
                 for (var key in extensions) {
                     if (extensions.hasOwnProperty(key)) {
                         ExtendedComponent.prototype[key] = extensions[key];
                     }
                 }
-                
+
                 // Add the extend method to the new component
                 ExtendedComponent.extend = WishlistComponent.extend;
-                
+
                 // Add _super method for each extended method
                 for (var methodName in extensions) {
-                    if (extensions.hasOwnProperty(methodName) && typeof extensions[methodName] === 'function') {
-                        var originalMethod = WishlistComponent.prototype[methodName];
-                        if (originalMethod) {
-                            ExtendedComponent.prototype['_super'] = function () {
-                                return originalMethod.apply(this, arguments);
-                            };
-                        }
+                    if (!extensions.hasOwnProperty(methodName) || typeof extensions[methodName] !== 'function') {
+                        continue;
                     }
+
+                    var originalMethod = WishlistComponent.prototype[methodName];
+                    if (!originalMethod) {
+                        continue;
+                    }
+
+                    ExtendedComponent.prototype['_super'] = function () {
+                        return originalMethod.apply(this, arguments);
+                    };
                 }
-                
+
                 return ExtendedComponent;
             };
 
@@ -78,32 +86,32 @@ define([
             it('should call _super() during initialization', function () {
                 var instance = new mixin();
                 spyOn(instance, '_super').and.callThrough();
-                
+
                 instance.initialize();
-                
+
                 expect(instance._super).toHaveBeenCalled();
             });
 
             it('should reload wishlist customer data on initialization', function () {
                 var instance = new mixin();
-                
+
                 instance.initialize();
-                
+
                 expect(customerData.reload).toHaveBeenCalledWith(['wishlist'], true);
             });
 
             it('should get wishlist data from customer data', function () {
                 var instance = new mixin();
-                
+
                 instance.initialize();
-                
+
                 expect(customerData.get).toHaveBeenCalledWith('wishlist');
             });
 
             it('should return the instance after initialization', function () {
-                var instance = new mixin();
-                var result = instance.initialize();
-                
+                var instance = new mixin(),
+                    result = instance.initialize();
+
                 expect(result).toBe(instance);
             });
         });
@@ -111,17 +119,17 @@ define([
         describe('Wishlist subscription', function () {
             it('should subscribe to wishlist data updates', function () {
                 var instance = new mixin();
-                
+
                 instance.initialize();
-                
+
                 expect(wishlistDataMock.subscribe).toHaveBeenCalledWith(jasmine.any(Function));
             });
 
             it('should handle undefined counter gracefully', function () {
                 var instance = new mixin();
-                
+
                 instance.initialize();
-                
+
                 // Call with undefined counter
                 expect(function () {
                     subscribeCallback({ counter: undefined });
@@ -130,9 +138,9 @@ define([
 
             it('should handle null counter gracefully', function () {
                 var instance = new mixin();
-                
+
                 instance.initialize();
-                
+
                 // Call with null counter
                 expect(function () {
                     subscribeCallback({ counter: null });
@@ -141,9 +149,9 @@ define([
 
             it('should handle missing counter property gracefully', function () {
                 var instance = new mixin();
-                
+
                 instance.initialize();
-                
+
                 // Call with no counter property
                 expect(function () {
                     subscribeCallback({});
@@ -154,9 +162,9 @@ define([
         describe('Subscription callback behavior', function () {
             it('should handle counter updates when counters exist', function () {
                 var instance = new mixin();
-                
+
                 instance.initialize();
-                
+
                 // Call with counter update
                 expect(function () {
                     subscribeCallback({ counter: 3 });
@@ -165,9 +173,9 @@ define([
 
             it('should handle string counter values', function () {
                 var instance = new mixin();
-                
+
                 instance.initialize();
-                
+
                 // Call with string counter
                 expect(function () {
                     subscribeCallback({ counter: '7' });
@@ -176,9 +184,9 @@ define([
 
             it('should handle zero counter value', function () {
                 var instance = new mixin();
-                
+
                 instance.initialize();
-                
+
                 // Call with zero counter
                 expect(function () {
                     subscribeCallback({ counter: 0 });
@@ -187,9 +195,9 @@ define([
 
             it('should handle multiple counter updates', function () {
                 var instance = new mixin();
-                
+
                 instance.initialize();
-                
+
                 // Multiple updates
                 expect(function () {
                     subscribeCallback({ counter: 1 });
@@ -200,9 +208,9 @@ define([
 
             it('should handle rapid counter updates', function () {
                 var instance = new mixin();
-                
+
                 instance.initialize();
-                
+
                 // Rapid updates
                 expect(function () {
                     for (var i = 0; i < 10; i++) {
@@ -215,27 +223,24 @@ define([
         describe('Mixin functionality', function () {
             it('should extend the WishlistComponent correctly', function () {
                 var instance = new mixin();
-                
+
                 expect(instance).toBeDefined();
                 expect(typeof instance.initialize).toBe('function');
             });
 
             it('should maintain the original component structure', function () {
                 var instance = new mixin();
-                
+
                 // The mixin should add functionality but not break the original
                 expect(instance.initialize).toBeDefined();
             });
 
             it('should handle initialization multiple times', function () {
-                var instance = new mixin();
-                
-                // First initialization
-                var result1 = instance.initialize();
+                var instance = new mixin(),
+                    result1 = instance.initialize(), // First initialization
+                    result2 = instance.initialize(); // Second initialization
+
                 expect(result1).toBe(instance);
-                
-                // Second initialization
-                var result2 = instance.initialize();
                 expect(result2).toBe(instance);
             });
         });
@@ -243,9 +248,9 @@ define([
         describe('Error handling', function () {
             it('should throw error when customerData.get returns null', function () {
                 customerDataMock.get.and.returnValue(null);
-                
+
                 var instance = new mixin();
-                
+
                 expect(function () {
                     instance.initialize();
                 }).toThrow();
@@ -253,9 +258,9 @@ define([
 
             it('should throw error when customerData.get returns undefined', function () {
                 customerDataMock.get.and.returnValue(undefined);
-                
+
                 var instance = new mixin();
-                
+
                 expect(function () {
                     instance.initialize();
                 }).toThrow();
@@ -263,13 +268,13 @@ define([
 
             it('should throw error when wishlist data has no subscribe method', function () {
                 customerDataMock.get.and.returnValue({});
-                
+
                 var instance = new mixin();
-                
+
                 expect(function () {
                     instance.initialize();
                 }).toThrow();
             });
         });
     });
-}); 
+});
