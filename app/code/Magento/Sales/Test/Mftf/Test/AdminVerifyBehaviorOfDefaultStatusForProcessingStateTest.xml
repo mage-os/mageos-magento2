@@ -72,6 +72,6 @@
             <argument name="statusLabel" value="{{OrderStatus.processing}}"/>
             <argument name="statusCode" value="{{readyToPickup.state}}"/>
         </actionGroup>
-        <waitForText selector="{{AdminOrderStatusGridSection.gridCell('1', 'Default Status')}}" userInput="{{EnableClearShoppingCart.textValue}}" stepKey="seeOrderStatusInGrid"/>
+        <waitForText selector="{{AdminOrderStatusGridSection.gridCell('1', 'Default Status')}}" userInput="{{EnableClearShoppingCart.textValue}}" stepKey="seeStatusForOrderInOrderGrid"/>
     </test>
 </tests>
