@@ -205,6 +205,75 @@ QUERY;
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @dataProvider filterByNameWithMatchTypeSpecifiedDataProvider
+     */
+    #[
+        DataFixture(ProductFixture::class, ['price' => 10, 'name' => 'Cronus Yoga Pant'], 'prod1'),
+        DataFixture(ProductFixture::class, ['price' => 10, 'name' => 'Lucia Cross-Fit Bra'], 'prod2'),
+        DataFixture(ProductFixture::class, ['price' => 20, 'name' => 'Crown Summit Backpack'], 'prod3'),
+    ]
+    public function testFilterByNameWithMatchTypeSpecified($matchType, $expectedOrder, $expectedTotalCount): void
+    {
+        $expectedNames = [];
+        foreach ($expectedOrder as $productName) {
+            $expectedNames[] = $this->fixture->get($productName)->getName();
+        }
+        $query = <<<'QUERY'
+query GetProductsQuery(
+    $search: String,
+    $searchWord: String,
+    $matchType: FilterMatchTypeEnum
+    $pageSize: Int,
+    $currentPage: Int
+) {
+    products(
+        search: $search,
+        filter: {name: {match: $searchWord, match_type: $matchType} },
+        pageSize: $pageSize,
+        currentPage: $currentPage,
+        sort: {name: ASC}
+    ) {
+        total_count
+        page_info{total_pages}
+        items{
+            __typename
+            url_key
+            sku
+            name
+        }
+    }
+}
+QUERY;
+        $variables = [
+            'search' => null,
+            'searchWord' => 'Cros',
+            'matchType' => $matchType,
+            'pageSize' => 24,
+            'currentPage' => 1
+        ];
+
+        $response = $this->graphQlQuery($query, $variables);
+        $this->assertArrayNotHasKey('errors', $response);
+        $this->assertEquals($expectedTotalCount, $response['products']['total_count']);
+        $this->assertEquals($expectedNames, array_column($response['products']['items'], 'name'));
+    }
+
+    /**
+     * @return array
+     */
+    public function filterByNameWithMatchTypeSpecifiedDataProvider(): array
+    {
+        return [
+            [
+                'PARTIAL',
+                ['prod2'],
+                1
+            ],
+        ];
+    }
+
+    /**
      * Verify that filters for non-existing category are empty
      *
      * @throws \Exception
