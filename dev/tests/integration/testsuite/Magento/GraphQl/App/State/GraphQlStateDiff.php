@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2023 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -153,7 +153,7 @@ class GraphQlStateDiff
         } elseif ($operationName==='applyCouponToCart') {
             $this->removeCouponFromCart($variables);
         } elseif ($operationName==='resetPassword') {
-            $variables2['resetPasswordToken'] = $this->getResetPasswordToken($variables['email']);
+            $variables2['resetPasswordToken'] = $variables['resetPasswordToken'];
             $variables2['email'] = $variables['email'];
             $variables2['newPassword'] = $variables['newPassword'];
         }

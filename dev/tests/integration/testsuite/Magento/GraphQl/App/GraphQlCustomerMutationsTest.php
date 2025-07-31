@@ -12,6 +12,7 @@ use Magento\Customer\Api\AccountManagementInterface;
 use Magento\Framework\App\Area;
 use Magento\Framework\App\State;
 use Magento\Framework\Exception\SecurityViolationException;
+use Magento\Security\Model\ResourceModel\PasswordResetRequestEvent\Collection as PasswordResetRequestEventCollection;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Registry;
@@ -21,7 +22,7 @@ use Magento\GraphQl\App\State\GraphQlStateDiff;
  * Tests the dispatch method in the GraphQl Controller class using a simple product query
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @magentoDbIsolation enabled
+ * @magentoDbIsolation disabled
  * @magentoAppIsolation enabled
  * @magentoAppArea graphql
  */
@@ -50,6 +51,9 @@ class GraphQlCustomerMutationsTest extends \PHPUnit\Framework\TestCase
      */
     protected function tearDown(): void
     {
+        $this->graphQlStateDiff->getTestObjectManager()
+            ->create(PasswordResetRequestEventCollection::class)
+            ->deleteRecordsOlderThen(time() + 1);
         $this->graphQlStateDiff->tearDown();
         $this->graphQlStateDiff = null;
         parent::tearDown();
