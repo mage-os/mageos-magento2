@@ -50,10 +50,12 @@
             <argument name="orderId" value="{$grabOriginalOrderId}"/>
         </actionGroup>
         <!-- Step 2: Edit the order -->
+        <waitForElementClickable selector="{{AdminOrderDetailsMainActionsSection.edit}}" stepKey="waitForClickEditOrderButton"/>
         <click selector="{{AdminOrderDetailsMainActionsSection.edit}}" stepKey="clickEditOrderButton"/>
-        <waitForElement selector="{{AdminOrderDetailsMainActionsSection.ok}}" time="30" stepKey="waitForEditOrderConfirmation"/>
+        <waitForElementClickable selector="{{AdminOrderDetailsMainActionsSection.ok}}" time="30" stepKey="waitForEditOrderConfirmation"/>
         <click selector="{{AdminOrderDetailsMainActionsSection.ok}}" stepKey="confirmEditOrder"/>
         <!-- Step 3: Submit edited order -->
+        <waitForElementClickable selector="{{OrdersGridSection.submitOrder}}" stepKey="waitForSubmitEditedOrder"/>
         <click selector="{{OrdersGridSection.submitOrder}}" stepKey="submitEditedOrder"/>
         <!-- Step 4: Verify the link is displayed on child order view to parent order -->
         <grabTextFrom selector="{{AdminOrderDetailsMainActionsSection.linkToPreviousOrder}}" stepKey="grabLinkToPreviousOrderText"/>
