@@ -3,6 +3,8 @@
  * Copyright 2025 Adobe
  * All Rights Reserved.
  */
+declare(strict_types=1);
+
 namespace Magento\Framework\Stomp\UseCase;
 
 use Magento\Framework\MessageQueue\DefaultValueProvider;
@@ -57,7 +59,7 @@ class AsyncMultipleTopicsWithEachQueueTest extends QueueTestCaseAbstract
      *
      * Current test is not test of Web API framework itself, it just utilizes its infrastructure to test Message Queue.
      */
-    public function testAsyncMultipleTopicsPerQueue()
+    public function testAsyncMultipleTopicsPerQueue(): void
     {
         if ($this->connectionType === 'amqp') {
             $this->markTestSkipped('STOMP test skipped because AMQP connection is available.
