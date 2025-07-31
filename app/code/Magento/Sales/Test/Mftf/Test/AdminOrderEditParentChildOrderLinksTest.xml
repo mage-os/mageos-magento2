@@ -20,8 +20,8 @@
         </annotations>
         <before>
             <!-- Enable payment method one of "check/money order" and  shipping method one of "flat rate" -->
-            <magentoCLI command="config:set {{enabledCheckMoneyOrder.label}} 1" stepKey="enableCheckMoneyOrder"/>
-            <magentoCLI command="config:set carriers/flatrate/active 1" stepKey="enableFlatRate"/>
+            <actionGroup ref="CliEnableFlatRateShippingMethodActionGroup" stepKey="enableFlatRateShipping"/>
+            <actionGroup ref="CliEnableCheckMoneyOrderPaymentMethodActionGroup" stepKey="enableCheckMoneyOrderPaymentMethod"/>
             <!-- Create product and customer -->
             <createData entity="SimpleProduct2" stepKey="createProduct"/>
             <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
@@ -38,10 +38,10 @@
             <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
             <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
-            <!-- Disable payment method "Check/Money Order" -->
-            <magentoCLI command="config:set {{enabledCheckMoneyOrder.label}} 0" stepKey="disableCheckMoneyOrder"/>
             <!-- Disable shipping method "Flat Rate" -->
-            <magentoCLI command="config:set carriers/flatrate/active 0" stepKey="disableFlatRate"/>
+            <actionGroup ref="CliDisableFlatRateShippingMethodActionGroup" stepKey="disableFlatRateShipping"/>
+            <!-- Disable payment method "Check/Money Order" -->
+            <actionGroup ref="CliDisableCheckMoneyOrderPaymentMethodActionGroup" stepKey="disableCheckMoneyOrderPaymentMethod"/>
         </after>
         <!-- Grab original order ID -->
         <grabTextFrom selector="{{AdminOrderDetailsInformationSection.orderId}}" stepKey="grabOriginalOrderId"/>
