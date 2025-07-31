@@ -42,6 +42,8 @@ class StockItemUpdatePreservesLinksTest extends WebapiAbstract
     /**
      * Test the complete workflow from Steps 1-16
      * Verify that REST-API updating product stock_item does not delete downloadable_product_links
+     *
+     * @return void
      */
     #[DataFixture(DownloadableProduct::class, [
         'sku' => 'downloadable-product',
@@ -105,6 +107,9 @@ class StockItemUpdatePreservesLinksTest extends WebapiAbstract
 
     /**
      * Update Product Stock Item
+     *
+     * @param string $productSku
+     * @return array
      */
     private function updateProductStockItem(string $productSku): array
     {
@@ -139,6 +144,10 @@ class StockItemUpdatePreservesLinksTest extends WebapiAbstract
 
     /**
      * Verify Downloadable Links are Preserved
+     *
+     * @param array $originalLinks
+     * @param string $productSku
+     * @return void
      */
     private function verifyDownloadableLinksPreserved(array $originalLinks, string $productSku): void
     {
@@ -172,6 +181,10 @@ class StockItemUpdatePreservesLinksTest extends WebapiAbstract
 
     /**
      * Verify product has downloadable links
+     *
+     * @param array $product
+     * @param string $message
+     * @return void
      */
     private function verifyProductHasDownloadableLinks(array $product, string $message): void
     {
@@ -189,6 +202,9 @@ class StockItemUpdatePreservesLinksTest extends WebapiAbstract
 
     /**
      * Get product by SKU
+     *
+     * @param string $sku
+     * @return array
      */
     private function getProductBySku(string $sku): array
     {
