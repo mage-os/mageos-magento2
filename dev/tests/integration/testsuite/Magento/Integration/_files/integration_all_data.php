@@ -14,8 +14,8 @@ $integrationService = $objectManager->get(IntegrationServiceInterface::class);
 $data = [
     'name' => 'Fixture Integration',
     'email' => 'john.doe@example.com',
-    'endpoint' => 'https://example.com/endpoint',
-    'identity_link_url' => 'https://example.com/link',
+    'endpoint' => 'https://localhost/endpoint',
+    'identity_link_url' => 'https://localhost/link',
     'all_resources' => 0,
 ];
 $integrationService->create($data);
