@@ -68,10 +68,10 @@
         <waitForElementVisible selector="{{AdminMessagesSection.success}}" stepKey="waitForSuccessMessageVisible"/>
         <waitForText selector="{{AdminMessagesSection.success}}" time="30" userInput="{{readyToPickup.message}}" stepKey="seeAssertOrderStatusSuccessUnassignMessage"/>
         <!--Step 8: Verify the default status for the order status Processing -->
-        <actionGroup ref="FilterOrderStatusByLabelAndCodeActionGroup" stepKey="filterOrderStatusGrid1">
+        <actionGroup ref="FilterOrderStatusByLabelAndCodeActionGroup" stepKey="filterStatusForOrderInGrid">
             <argument name="statusLabel" value="{{OrderStatus.processing}}"/>
             <argument name="statusCode" value="{{readyToPickup.state}}"/>
         </actionGroup>
-        <waitForText selector="{{AdminOrderStatusGridSection.gridCell('1', 'Default Status')}}" userInput="{{EnableClearShoppingCart.textValue}}" stepKey="seeOrderStatusInOrderGrid1"/>
+        <waitForText selector="{{AdminOrderStatusGridSection.gridCell('1', 'Default Status')}}" userInput="{{EnableClearShoppingCart.textValue}}" stepKey="seeOrderStatusInGrid"/>
     </test>
 </tests>
