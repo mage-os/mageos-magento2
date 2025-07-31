@@ -1,9 +1,7 @@
 <?php
 /**
- * Application configuration object. Used to access configuration when application is initialized and installed.
- *
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2016 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\TestFramework\App;
 
@@ -77,7 +75,8 @@ class Config extends \Magento\Framework\App\Config
         }
 
         if (empty($scopeCode)) {
-            $scopeCode = $this->getScopeCodeResolver()->resolve($scope, $scopeCode);
+            $scopeCode = $this->getScopeCodeResolver()
+                ->resolve(ScopeConfigInterface::SCOPE_TYPE_DEFAULT, $scopeCode);
         }
 
         $keys = explode('/', $path);
