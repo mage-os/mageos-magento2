@@ -12,11 +12,11 @@ class CustomHandler
     /**
      * @param AsyncTestData $simpleDataItem
      */
-    public function process(AsyncTestData $simpleDataItem): void
+    public function process($simpleDataItem): void
     {
         file_put_contents(
             $simpleDataItem->getTextFilePath(),
-            'custom-string-' . $simpleDataItem->getValue() . PHP_EOL,
+            'stomp-string-' . $simpleDataItem->getValue() . PHP_EOL,
             FILE_APPEND
         );
     }
@@ -24,12 +24,12 @@ class CustomHandler
     /**
      * @param AsyncTestData[] $simpleDataItems
      */
-    public function processArray(array $simpleDataItems): void
+    public function processArray($simpleDataItems): void
     {
         foreach ($simpleDataItems as $objItem) {
             file_put_contents(
                 $objItem->getTextFilePath(),
-                'custom-array-' . $objItem->getValue() . PHP_EOL,
+                'stomp-array-' . $objItem->getValue() . PHP_EOL,
                 FILE_APPEND
             );
         }
@@ -38,7 +38,7 @@ class CustomHandler
     /**
      * @param mixed $simpleDataItems
      */
-    public function processMixed(mixed $simpleDataItems): void
+    public function processMixed($simpleDataItems): void
     {
         /** @var AsyncTestData[] $simpleDataItems */
         $simpleDataItems = is_array($simpleDataItems) ? $simpleDataItems : [$simpleDataItems];
@@ -53,7 +53,7 @@ class CustomHandler
             }
             file_put_contents(
                 $simpleDataItem->getTextFilePath(),
-                'custom-mixed-' . $simpleDataItem->getValue() . PHP_EOL,
+                'stomp-mixed-' . $simpleDataItem->getValue() . PHP_EOL,
                 FILE_APPEND
             );
         }
