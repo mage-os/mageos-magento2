@@ -122,4 +122,3 @@ class Integrity implements ProcessorInterface
         return true;
     }
 }
-
