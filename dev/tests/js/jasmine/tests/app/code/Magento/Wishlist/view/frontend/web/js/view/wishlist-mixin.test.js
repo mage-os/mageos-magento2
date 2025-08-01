@@ -69,7 +69,6 @@ define([
                     }
 
                     originalMethod = WishlistComponent.prototype[methodName];
-
                     if (!originalMethod) {
                         continue;
                     }
@@ -92,8 +91,8 @@ define([
         describe('Initialization', function () {
             it('should call _super() during initialization', function () {
                 var instance = new mixin();
-                spyOn(instance, '_super').and.callThrough();
 
+                spyOn(instance, '_super').and.callThrough();
                 instance.initialize();
 
                 expect(instance._super).toHaveBeenCalled();
@@ -103,7 +102,6 @@ define([
                 var instance = new mixin();
 
                 instance.initialize();
-
                 expect(customerData.reload).toHaveBeenCalledWith(['wishlist'], true);
             });
 
@@ -111,7 +109,6 @@ define([
                 var instance = new mixin();
 
                 instance.initialize();
-
                 expect(customerData.get).toHaveBeenCalledWith('wishlist');
             });
 
@@ -128,7 +125,6 @@ define([
                 var instance = new mixin();
 
                 instance.initialize();
-
                 expect(wishlistDataMock.subscribe).toHaveBeenCalledWith(jasmine.any(Function));
             });
 
@@ -136,7 +132,6 @@ define([
                 var instance = new mixin();
 
                 instance.initialize();
-
                 // Call with undefined counter
                 expect(function () {
                     subscribeCallback({ counter: undefined });
@@ -147,7 +142,6 @@ define([
                 var instance = new mixin();
 
                 instance.initialize();
-
                 // Call with null counter
                 expect(function () {
                     subscribeCallback({ counter: null });
@@ -158,7 +152,6 @@ define([
                 var instance = new mixin();
 
                 instance.initialize();
-
                 // Call with no counter property
                 expect(function () {
                     subscribeCallback({});
@@ -171,7 +164,6 @@ define([
                 var instance = new mixin();
 
                 instance.initialize();
-
                 // Call with counter update
                 expect(function () {
                     subscribeCallback({ counter: 3 });
@@ -182,7 +174,6 @@ define([
                 var instance = new mixin();
 
                 instance.initialize();
-
                 // Call with string counter
                 expect(function () {
                     subscribeCallback({ counter: '7' });
@@ -193,7 +184,6 @@ define([
                 var instance = new mixin();
 
                 instance.initialize();
-
                 // Call with zero counter
                 expect(function () {
                     subscribeCallback({ counter: 0 });
@@ -204,7 +194,6 @@ define([
                 var instance = new mixin();
 
                 instance.initialize();
-
                 // Multiple updates
                 expect(function () {
                     subscribeCallback({ counter: 1 });
@@ -217,7 +206,6 @@ define([
                 var instance = new mixin();
 
                 instance.initialize();
-
                 // Rapid updates
                 expect(function () {
                     for (var i = 0; i < 10; i++) {
@@ -254,30 +242,27 @@ define([
 
         describe('Error handling', function () {
             it('should throw error when customerData.get returns null', function () {
-                customerDataMock.get.and.returnValue(null);
-
                 var instance = new mixin();
 
+                customerDataMock.get.and.returnValue(null);
                 expect(function () {
                     instance.initialize();
                 }).toThrow();
             });
 
             it('should throw error when customerData.get returns undefined', function () {
-                customerDataMock.get.and.returnValue(undefined);
-
                 var instance = new mixin();
 
+                customerDataMock.get.and.returnValue(undefined);
                 expect(function () {
                     instance.initialize();
                 }).toThrow();
             });
 
             it('should throw error when wishlist data has no subscribe method', function () {
-                customerDataMock.get.and.returnValue({});
-
                 var instance = new mixin();
 
+                customerDataMock.get.and.returnValue({});
                 expect(function () {
                     instance.initialize();
                 }).toThrow();
