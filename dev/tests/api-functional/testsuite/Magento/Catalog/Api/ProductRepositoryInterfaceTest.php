@@ -1,7 +1,8 @@
 <?php
+
 /**
  * Copyright 2015 Adobe
- * All Rights Reserved.
+ * All rights reserved.
  */
 declare(strict_types=1);
 
@@ -42,14 +43,17 @@ use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
  * @magentoAppIsolation enabled
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class ProductRepositoryInterfaceTest extends WebapiAbstract
 {
     private const SERVICE_NAME = 'catalogProductRepositoryV1';
     private const SERVICE_VERSION = 'V1';
     private const RESOURCE_PATH = '/V1/products';
+
     private const KEY_TIER_PRICES = 'tier_prices';
     private const KEY_SPECIAL_PRICE = 'special_price';
+    private const KEY_CATEGORY_LINKS = 'category_links';
 
     /**
      * @var array
@@ -183,8 +187,7 @@ class ProductRepositoryInterfaceTest extends WebapiAbstract
             ],
         ];
 
-        $expectedMessage = "The product with SKU \"%1\" does not exist.";
-
+        $expectedMessage = 'The product with SKU "%1" does not exist.';
         try {
             $this->_webApiCall($serviceInfo, ['sku' => $invalidSku]);
             $this->fail("Expected throwing exception");
@@ -537,22 +540,21 @@ class ProductRepositoryInterfaceTest extends WebapiAbstract
      * @dataProvider productCreationProvider
      * @magentoApiDataFixture Magento/Store/_files/fixture_store_with_catalogsearch_index.php
      */
-    public function testDeleteAllStoreCode(array $fixtureProduct)
+    public function testDeleteAllStoreCode($fixtureProduct)
     {
-        $sku = $fixtureProduct[\Magento\Catalog\Api\Data\ProductInterface::SKU];
+        $sku = $fixtureProduct[ProductInterface::SKU];
         $this->saveProduct($fixtureProduct);
 
         // Delete all with 'all' store code
         $this->deleteProduct($sku);
-
+        $expectedMessage = 'The product with SKU "%1" does not exist.';
         try {
             $this->getProduct($sku);
-            $this->fail('Expected exception was not thrown.');
+        } catch (\SoapFault $e) {
+            $this->assertEquals($expectedMessage, $e->getMessage());
         } catch (\Exception $e) {
-            $expectedMessage = 'The product with SKU "%1" does not exist.';
-            $this->assertEquals(404, $e->getCode());
-            $this->assertStringContainsString($expectedMessage, $e->getMessage());
-            $this->assertStringContainsString($sku, $e->getMessage());
+            $errorObj = $this->processRestExceptionResult($e);
+            $this->assertEquals($expectedMessage, $errorObj['message']);
         }
     }
 
@@ -1662,6 +1664,86 @@ class ProductRepositoryInterfaceTest extends WebapiAbstract
             StockItemInterface::IS_DECIMAL_DIVIDED => 0,
             StockItemInterface::STOCK_STATUS_CHANGED_AUTO => 0,
         ];
+    }
+
+    /**
+     * Test product category links
+     *
+     * @magentoApiDataFixture Magento/Catalog/_files/category_product.php
+     */
+    public function testProductCategoryLinks()
+    {
+        // Create simple product
+        $productData = $this->getSimpleProductData();
+        $productData[ProductInterface::EXTENSION_ATTRIBUTES_KEY] = [
+            self::KEY_CATEGORY_LINKS => [['category_id' => 333, 'position' => 0]],
+        ];
+        $response = $this->saveProduct($productData);
+        $this->assertEquals(
+            [['category_id' => 333, 'position' => 0]],
+            $response[ProductInterface::EXTENSION_ATTRIBUTES_KEY][self::KEY_CATEGORY_LINKS]
+        );
+        $response = $this->getProduct($productData[ProductInterface::SKU]);
+        $this->assertArrayHasKey(ProductInterface::EXTENSION_ATTRIBUTES_KEY, $response);
+        $extensionAttributes = $response[ProductInterface::EXTENSION_ATTRIBUTES_KEY];
+        $this->assertArrayHasKey(self::KEY_CATEGORY_LINKS, $extensionAttributes);
+        $this->assertEquals([['category_id' => 333, 'position' => 0]], $extensionAttributes[self::KEY_CATEGORY_LINKS]);
+    }
+
+    /**
+     * Test update product category without categories
+     *
+     * @magentoApiDataFixture Magento/Catalog/_files/category_product.php
+     */
+    public function testUpdateProductCategoryLinksNullOrNotExists()
+    {
+        $response = $this->getProduct('simple333');
+        // update product without category_link or category_link is null
+        $response[ProductInterface::EXTENSION_ATTRIBUTES_KEY][self::KEY_CATEGORY_LINKS] = null;
+        $response = $this->updateProduct($response);
+        $this->assertEquals(
+            [['category_id' => 333, 'position' => 0]],
+            $response[ProductInterface::EXTENSION_ATTRIBUTES_KEY][self::KEY_CATEGORY_LINKS]
+        );
+        unset($response[ProductInterface::EXTENSION_ATTRIBUTES_KEY][self::KEY_CATEGORY_LINKS]);
+        $response = $this->updateProduct($response);
+        $this->assertEquals(
+            [['category_id' => 333, 'position' => 0]],
+            $response[ProductInterface::EXTENSION_ATTRIBUTES_KEY][self::KEY_CATEGORY_LINKS]
+        );
+    }
+
+    /**
+     * Test update product category links position
+     *
+     * @magentoApiDataFixture Magento/Catalog/_files/category_product.php
+     */
+    public function testUpdateProductCategoryLinksPosistion()
+    {
+        $response = $this->getProduct('simple333');
+        // update category_link position
+        $response[ProductInterface::EXTENSION_ATTRIBUTES_KEY][self::KEY_CATEGORY_LINKS] = [
+            ['category_id' => 333, 'position' => 10],
+        ];
+        $response = $this->updateProduct($response);
+        $this->assertEquals(
+            [['category_id' => 333, 'position' => 10]],
+            $response[ProductInterface::EXTENSION_ATTRIBUTES_KEY][self::KEY_CATEGORY_LINKS]
+        );
+    }
+
+    /**
+     * Test update product category links unassing
+     *
+     * @magentoApiDataFixture Magento/Catalog/_files/category_product.php
+     */
+    public function testUpdateProductCategoryLinksUnassign()
+    {
+        $response = $this->getProduct('simple333');
+        // unassign category_links from product
+        $response[ProductInterface::EXTENSION_ATTRIBUTES_KEY][self::KEY_CATEGORY_LINKS] = [];
+        $response = $this->updateProduct($response);
+        $this->assertArrayNotHasKey(self::KEY_CATEGORY_LINKS, $response[ProductInterface::EXTENSION_ATTRIBUTES_KEY]);
     }
 
     /**

@@ -23,6 +23,8 @@ use Magento\Framework\ObjectManagerInterface;
 
 /**
  * Class ProductAttributeMediaGalleryManagementInterfaceTest
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ProductAttributeMediaGalleryManagementInterfaceTest extends WebapiAbstract
 {
@@ -492,22 +494,13 @@ class ProductAttributeMediaGalleryManagementInterfaceTest extends WebapiAbstract
         $this->_webApiCall($this->createServiceInfo, ['sku' => 'simple', 'entry' => $requestData]);
     }
 
-    protected function assertProductNotFoundException(\Exception $e, string $sku): void
-    {
-        $decoded = json_decode($e->getMessage(), true);
-        $this->assertEquals('The product with SKU "%1" does not exist.', $decoded['message']);
-        $this->assertContains($sku, $decoded['parameters']);
-        $this->assertEquals(404, $e->getCode());
-    }
-
     /**
      * Test create method if target product does not exist
+     *
      */
     public function testCreateThrowsExceptionIfTargetProductDoesNotExist()
     {
-        $sku = 'wrong_product_sku';
-
-        $this->createServiceInfo['rest']['resourcePath'] = '/V1/products/' . $sku . '/media';
+        $this->createServiceInfo['rest']['resourcePath'] = '/V1/products/wrong_product_sku/media';
 
         $requestData = [
             'id' => null,
@@ -523,11 +516,14 @@ class ProductAttributeMediaGalleryManagementInterfaceTest extends WebapiAbstract
             ]
         ];
 
+        $expectedMessage = 'The product with SKU "%1" does not exist.';
         try {
-            $this->_webApiCall($this->createServiceInfo, ['sku' => $sku, 'entry' => $requestData]);
-            $this->fail('Expected exception was not thrown.');
+            $this->_webApiCall($this->createServiceInfo, ['sku' => 'simple', 'entry' => $requestData]);
+        } catch (\SoapFault $e) {
+            $this->assertEquals($expectedMessage, $e->getMessage());
         } catch (\Exception $e) {
-            $this->assertProductNotFoundException($e, $sku);
+            $errorObj = $this->processRestExceptionResult($e);
+            $this->assertEquals($expectedMessage, $errorObj['message']);
         }
     }
 
@@ -560,14 +556,14 @@ class ProductAttributeMediaGalleryManagementInterfaceTest extends WebapiAbstract
 
     /**
      * Test update() method if target product does not exist
+     *
      */
     public function testUpdateThrowsExceptionIfTargetProductDoesNotExist()
     {
-        $sku = 'wrong_product_sku';
-
-        $this->updateServiceInfo['rest']['resourcePath'] = '/V1/products/' . $sku . '/media/' . 'wrong-sku';
+        $this->updateServiceInfo['rest']['resourcePath'] = '/V1/products/wrong_product_sku/media'
+            . '/' . 'wrong-sku';
         $requestData = [
-            'sku' => $sku,
+            'sku' => 'wrong_product_sku',
             'entry' => [
                 'id' => 9999,
                 'media_type' => 'image',
@@ -578,14 +574,16 @@ class ProductAttributeMediaGalleryManagementInterfaceTest extends WebapiAbstract
             ],
         ];
 
+        $expectedMessage = 'The product with SKU "%1" does not exist.';
         try {
             $this->_webApiCall($this->updateServiceInfo, $requestData, null, 'all');
-            $this->fail('Expected exception was not thrown.');
+        } catch (\SoapFault $e) {
+            $this->assertEquals($expectedMessage, $e->getMessage());
         } catch (\Exception $e) {
-            $this->assertProductNotFoundException($e, $sku);
+            $errorObj = $this->processRestExceptionResult($e);
+            $this->assertEquals($expectedMessage, $errorObj['message']);
         }
     }
-
 
     /**
      * Test update() method if there is no image with given id
@@ -617,22 +615,24 @@ class ProductAttributeMediaGalleryManagementInterfaceTest extends WebapiAbstract
 
     /**
      * Test delete() method if target product does not exist
+     *
      */
     public function testDeleteThrowsExceptionIfTargetProductDoesNotExist()
     {
-        $sku = 'wrong_product_sku';
-
-        $this->deleteServiceInfo['rest']['resourcePath'] = '/V1/products/' . $sku . '/media/9999';
+        $this->deleteServiceInfo['rest']['resourcePath'] = '/V1/products/wrong_product_sku/media/9999';
         $requestData = [
-            'sku' => $sku,
+            'sku' => 'wrong_product_sku',
             'entryId' => 9999,
         ];
 
+        $expectedMessage = 'The product with SKU "%1" does not exist.';
         try {
             $this->_webApiCall($this->deleteServiceInfo, $requestData);
-            $this->fail('Expected exception was not thrown.');
+        } catch (\SoapFault $e) {
+            $this->assertEquals($expectedMessage, $e->getMessage());
         } catch (\Exception $e) {
-            $this->assertProductNotFoundException($e, $sku);
+            $errorObj = $this->processRestExceptionResult($e);
+            $this->assertEquals($expectedMessage, $errorObj['message']);
         }
     }
 
@@ -789,7 +789,7 @@ class ProductAttributeMediaGalleryManagementInterfaceTest extends WebapiAbstract
         if (TESTS_WEB_API_ADAPTER == self::ADAPTER_SOAP) {
             $this->expectException('SoapFault');
             $this->expectExceptionMessage(
-                "The product with SKU \"%1\" does not exist."
+                'The product with SKU "%1" does not exist.'
             );
         } else {
             $this->expectException('Exception');

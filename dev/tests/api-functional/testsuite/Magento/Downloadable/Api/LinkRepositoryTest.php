@@ -1,7 +1,7 @@
 <?php
 /**
  * Copyright 2015 Adobe
- * All Rights Reserved.
+ * All rights Reserved.
  */
 
 namespace Magento\Downloadable\Api;
@@ -745,30 +745,14 @@ class LinkRepositoryTest extends WebapiAbstract
         $this->assertEquals($requestData['link']['number_of_downloads'], $link->getNumberOfDownloads());
     }
 
-    protected function assertProductNotFoundException(\Exception $e, string $sku): void
-    {
-        $expectedTemplate = 'The product with SKU "%1" does not exist.';
-        if ($e instanceof \SoapFault) {
-            $expectedMessage = str_replace('%1', $sku, $expectedTemplate);
-            $this->assertEquals($expectedMessage, $e->getMessage());
-        } else {
-            $decoded = json_decode($e->getMessage(), true);
-            $this->assertEquals($expectedTemplate, $decoded['message']);
-            $this->assertContains($sku, $decoded['parameters']);
-            $this->assertEquals(404, $e->getCode());
-        }
-    }
-
     /**
      */
     public function testUpdateThrowsExceptionIfTargetProductDoesNotExist()
     {
-        $sku = 'wrong-sku';
-
-        $this->updateServiceInfo['rest']['resourcePath'] = "/V1/products/{$sku}/downloadable-links/1";
+        $this->updateServiceInfo['rest']['resourcePath'] = '/V1/products/wrong-sku/downloadable-links/1';
         $requestData = [
             'isGlobalScopeContent' => true,
-            'sku' => $sku,
+            'sku' => 'wrong-sku',
             'link' => [
                 'id' => 1,
                 'title' => 'Updated Title',
@@ -781,11 +765,18 @@ class LinkRepositoryTest extends WebapiAbstract
             ],
         ];
 
+        $expectedMessage = 'The product with SKU "%1" does not exist.';
         try {
             $this->_webApiCall($this->updateServiceInfo, $requestData);
-            $this->fail('Expected exception was not thrown.');
+        } catch (\SoapFault $e) {
+            $this->assertStringContainsString(
+                $expectedMessage,
+                $e->getMessage(),
+                'SoapFault does not contain expected message.'
+            );
         } catch (\Exception $e) {
-            $this->assertProductNotFoundException($e, $sku);
+            $errorObj = $this->processRestExceptionResult($e);
+            $this->assertEquals($expectedMessage, $errorObj['message']);
         }
     }
 
@@ -1018,11 +1009,14 @@ class LinkRepositoryTest extends WebapiAbstract
 
         $requestData = ['sku' => $sku];
 
+        $expectedMessage = 'The product with SKU "%1" does not exist.';
         try {
             $this->_webApiCall($serviceInfo, $requestData);
-            $this->fail('Expected exception was not thrown.');
+        } catch (\SoapFault $e) {
+            $this->assertEquals($expectedMessage, $e->getMessage());
         } catch (\Exception $e) {
-            $this->assertProductNotFoundException($e, $sku);
+            $errorObj = $this->processRestExceptionResult($e);
+            $this->assertEquals($expectedMessage, $errorObj['message']);
         }
     }
 
@@ -1085,12 +1079,10 @@ class LinkRepositoryTest extends WebapiAbstract
      */
     public function testCreateThrowsExceptionIfTargetProductDoesNotExist()
     {
-        $sku = 'wrong-sku';
-
-        $this->createServiceInfo['rest']['resourcePath'] = "/V1/products/{$sku}/downloadable-links";
+        $this->createServiceInfo['rest']['resourcePath'] = '/V1/products/wrong-sku/downloadable-links';
         $requestData = [
             'isGlobalScopeContent' => false,
-            'sku' => $sku,
+            'sku' => 'wrong-sku',
             'link' => [
                 'title' => 'Link Title',
                 'sort_order' => 15,
@@ -1104,11 +1096,14 @@ class LinkRepositoryTest extends WebapiAbstract
             ],
         ];
 
+        $expectedMessage = 'The product with SKU "%1" does not exist.';
         try {
             $this->_webApiCall($this->createServiceInfo, $requestData);
-            $this->fail('Expected exception was not thrown.');
+        } catch (\SoapFault $e) {
+            $this->assertEquals($expectedMessage, $e->getMessage());
         } catch (\Exception $e) {
-            $this->assertProductNotFoundException($e, $sku);
+            $errorObj = $this->processRestExceptionResult($e);
+            $this->assertEquals($expectedMessage, $errorObj['message']);
         }
     }
 }

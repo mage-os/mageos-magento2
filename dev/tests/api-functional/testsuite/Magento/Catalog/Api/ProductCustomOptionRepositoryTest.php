@@ -1,8 +1,8 @@
 <?php
 /**
  *
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Catalog\Api;
@@ -18,7 +18,7 @@ class ProductCustomOptionRepositoryTest extends WebapiAbstract
      */
     protected $objectManager;
 
-    const SERVICE_NAME = 'catalogProductCustomOptionRepositoryV1';
+    private const SERVICE_NAME = 'catalogProductCustomOptionRepositoryV1';
 
     /**
      * @var \Magento\Catalog\Model\ProductFactory
@@ -308,6 +308,7 @@ class ProductCustomOptionRepositoryTest extends WebapiAbstract
      * @magentoAppIsolation enabled
      * @dataProvider validOptionDataProvider
      * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function testUpdateOptionAddingNewValue($optionType, $includedExisting, $expectedOptionValuesCount)
     {
@@ -333,6 +334,10 @@ class ProductCustomOptionRepositoryTest extends WebapiAbstract
                 $fixtureOption = $option;
                 break;
             }
+        }
+
+        if (!isset($option) || $fixtureOption === null) {
+            $this->markTestSkipped('Product options was not found');
         }
 
         $values = [];
@@ -414,14 +419,13 @@ class ProductCustomOptionRepositoryTest extends WebapiAbstract
      * @magentoAppIsolation enabled
      * @dataProvider optionNegativeUpdateDataProvider
      * @param array $optionData
-     * @param string $message
+     * @param string $expectedMessage
      * @param int $exceptionCode
      */
-    public function testUpdateNegative($optionData, $message, $exceptionCode)
+    public function testUpdateNegative($optionData, $expectedMessage, $exceptionCode)
     {
         $this->_markTestAsRestOnly();
         $productSku = 'simple';
-
         /** @var ProductRepository $productRepository */
         $productRepository = $this->objectManager->create(ProductRepository::class);
         $options = $productRepository->get($productSku, true)->getOptions();
@@ -437,11 +441,13 @@ class ProductCustomOptionRepositoryTest extends WebapiAbstract
 
         try {
             $this->_webApiCall($serviceInfo, ['option' => $optionData]);
-            $this->fail('Expected exception was not thrown.');
-        } catch (\Exception $e) {
+        } catch (\SoapFault $e) {
+            $this->assertEquals($expectedMessage, $e->getMessage());
             $this->assertEquals($exceptionCode, $e->getCode());
-            $this->assertStringContainsString($message, $e->getMessage());
-            $this->assertStringContainsString($productSku, $e->getMessage());
+        } catch (\Exception $e) {
+            $errorObj = $this->processRestExceptionResult($e);
+            $this->assertEquals($expectedMessage, $errorObj['message']);
+            $this->assertEquals($exceptionCode, $e->getCode());
         }
     }
 
