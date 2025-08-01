@@ -120,7 +120,8 @@ class SearchCriteriaBuilder
                 if (in_array($matchItem['field'] ?? null, $partialMatchFilters, true)) {
                     $data['queries'][$queryName]['match'][$index]['matchCondition'] = 'match_phrase_prefix';
                     if (array_key_exists($matchItem['field'], $this->partial_search_analyzers)) {
-                        $data['queries'][$queryName]['match'][$index]['analyzer'] = $this->partial_search_analyzers[$matchItem['field']];
+                        $data['queries'][$queryName]['match'][$index]['analyzer']
+                            = $this->partial_search_analyzers[$matchItem['field']];
                     }
                 }
             }
