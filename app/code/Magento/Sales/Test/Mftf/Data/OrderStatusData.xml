@@ -31,8 +31,5 @@
     <entity name="readyToPickup">
         <data key="code" unique="suffix">readytopickup</data>
         <data key="label" unique="suffix">Ready To Pickup</data>
-        <data key="state">processing</data>
-        <data key="status">fraud</data>
-        <data key="message">You have unassigned the order status.</data>
     </entity>
 </entities>
