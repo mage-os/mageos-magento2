@@ -45,12 +45,15 @@ define([
 
             // Add the extend method that Magento components typically have
             WishlistComponent.extend = function (extensions) {
-                var ExtendedComponent = function () {};
+                var ExtendedComponent = function () {},
+                    key,
+                    methodName,
+                    originalMethod;
 
                 ExtendedComponent.prototype = Object.create(WishlistComponent.prototype);
 
                 // Copy the extensions to the prototype
-                for (var key in extensions) {
+                for (key in extensions) {
                     if (extensions.hasOwnProperty(key)) {
                         ExtendedComponent.prototype[key] = extensions[key];
                     }
@@ -60,19 +63,23 @@ define([
                 ExtendedComponent.extend = WishlistComponent.extend;
 
                 // Add _super method for each extended method
-                for (var methodName in extensions) {
+                for (methodName in extensions) {
                     if (!extensions.hasOwnProperty(methodName) || typeof extensions[methodName] !== 'function') {
                         continue;
                     }
 
-                    var originalMethod = WishlistComponent.prototype[methodName];
+                    originalMethod = WishlistComponent.prototype[methodName];
+
                     if (!originalMethod) {
                         continue;
                     }
 
-                    ExtendedComponent.prototype['_super'] = function () {
-                        return originalMethod.apply(this, arguments);
-                    };
+                    // Use IIFE to create proper closure for _super method
+                    (function (method) {
+                        ExtendedComponent.prototype['_super'] = function () {
+                            return method.apply(this, arguments);
+                        };
+                    })(originalMethod);
                 }
 
                 return ExtendedComponent;
