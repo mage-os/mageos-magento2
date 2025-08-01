@@ -1,8 +1,7 @@
 <?php
 /**
- *
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -95,18 +94,27 @@ class OptionRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstrac
         }
     }
 
+    protected function assertProductNotFoundException(\Exception $e, string $sku): void
+    {
+        $decoded = json_decode($e->getMessage(), true);
+        $this->assertEquals('The product with SKU "%1" does not exist.', $decoded['message']);
+        $this->assertContains($sku, $decoded['parameters']);
+        $this->assertEquals(404, $e->getCode());
+    }
+
     /**
      * @return void
      */
     public function testGetUndefinedProduct(): void
     {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage(
-            'The product that was requested doesn\'t exist. Verify the product and try again.'
-        );
-
         $productSku = 'product_not_exist';
-        $this->getList($productSku);
+
+        try {
+            $this->getList($productSku);
+            $this->fail('Expected exception was not thrown.');
+        } catch (\Exception $e) {
+            $this->assertProductNotFoundException($e, $productSku);
+        }
     }
 
     /**

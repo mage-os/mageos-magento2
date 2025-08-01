@@ -421,6 +421,7 @@ class ProductCustomOptionRepositoryTest extends WebapiAbstract
     {
         $this->_markTestAsRestOnly();
         $productSku = 'simple';
+
         /** @var ProductRepository $productRepository */
         $productRepository = $this->objectManager->create(ProductRepository::class);
         $options = $productRepository->get($productSku, true)->getOptions();
@@ -434,10 +435,14 @@ class ProductCustomOptionRepositoryTest extends WebapiAbstract
             ],
         ];
 
-        $this->expectException('Exception');
-        $this->expectExceptionMessage($message);
-        $this->expectExceptionCode($exceptionCode);
-        $this->_webApiCall($serviceInfo, ['option' => $optionData]);
+        try {
+            $this->_webApiCall($serviceInfo, ['option' => $optionData]);
+            $this->fail('Expected exception was not thrown.');
+        } catch (\Exception $e) {
+            $this->assertEquals($exceptionCode, $e->getCode());
+            $this->assertStringContainsString($message, $e->getMessage());
+            $this->assertStringContainsString($productSku, $e->getMessage());
+        }
     }
 
     /**

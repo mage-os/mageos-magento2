@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Downloadable\Api;
@@ -545,19 +545,25 @@ class SampleRepositoryTest extends WebapiAbstract
         $this->_webApiCall($this->createServiceInfo, $requestData);
     }
 
+    protected function assertProductNotFoundException(\Exception $e, string $sku): void
+    {
+        $decoded = json_decode($e->getMessage(), true);
+        $this->assertEquals('The product with SKU "%1" does not exist.', $decoded['message']);
+        $this->assertContains($sku, $decoded['parameters']);
+        $this->assertEquals(404, $e->getCode());
+    }
+
     /**
+     * Test create() method on downloadable sample when target product does not exist
      */
     public function testCreateThrowsExceptionIfTargetProductDoesNotExist()
     {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage(
-            'The product that was requested doesn\'t exist. Verify the product and try again.'
-        );
+        $sku = 'wrong-sku';
 
-        $this->createServiceInfo['rest']['resourcePath'] = '/V1/products/wrong-sku/downloadable-links/samples';
+        $this->createServiceInfo['rest']['resourcePath'] = '/V1/products/' . $sku . '/downloadable-links/samples';
         $requestData = [
             'isGlobalScopeContent' => false,
-            'sku' => 'wrong-sku',
+            'sku' => $sku,
             'sample' => [
                 'title' => 'Title',
                 'sort_order' => 15,
@@ -565,22 +571,26 @@ class SampleRepositoryTest extends WebapiAbstract
                 'sample_url' => 'http://example.com/',
             ],
         ];
-        $this->_webApiCall($this->createServiceInfo, $requestData);
+
+        try {
+            $this->_webApiCall($this->createServiceInfo, $requestData);
+            $this->fail('Expected exception was not thrown.');
+        } catch (\Exception $e) {
+            $this->assertProductNotFoundException($e, $sku);
+        }
     }
 
     /**
+     * Test update() method on downloadable sample when target product does not exist
      */
     public function testUpdateThrowsExceptionIfTargetProductDoesNotExist()
     {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage(
-            'The product that was requested doesn\'t exist. Verify the product and try again.'
-        );
+        $sku = 'wrong-sku';
 
-        $this->updateServiceInfo['rest']['resourcePath'] = '/V1/products/wrong-sku/downloadable-links/samples/1';
+        $this->updateServiceInfo['rest']['resourcePath'] = '/V1/products/' . $sku . '/downloadable-links/samples/1';
         $requestData = [
             'isGlobalScopeContent' => true,
-            'sku' => 'wrong-sku',
+            'sku' => $sku,
             'sample' => [
                 'id' => 1,
                 'title' => 'Updated Title',
@@ -588,6 +598,12 @@ class SampleRepositoryTest extends WebapiAbstract
                 'sample_type' => 'url',
             ],
         ];
-        $this->_webApiCall($this->updateServiceInfo, $requestData);
+
+        try {
+            $this->_webApiCall($this->updateServiceInfo, $requestData);
+            $this->fail('Expected exception was not thrown.');
+        } catch (\Exception $e) {
+            $this->assertProductNotFoundException($e, $sku);
+        }
     }
 }
