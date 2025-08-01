@@ -39,9 +39,9 @@
             <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
             <!-- Disable shipping method "Flat Rate" -->
-            <actionGroup ref="CliDisableFlatRateShippingMethodActionGroup" stepKey="disableFlatRateShipping"/>
+            <magentoCLI command="config:set carriers/flatrate/active 0" stepKey="disableFlatRate"/>
             <!-- Disable payment method "Check/Money Order" -->
-            <actionGroup ref="CliDisableCheckMoneyOrderPaymentMethodActionGroup" stepKey="disableCheckMoneyOrderPaymentMethod"/>
+            <magentoCLI command="config:set {{enabledCheckMoneyOrder.label}} 0" stepKey="disableCheckMoneyOrder"/>
         </after>
         <!-- Grab original order ID -->
         <grabTextFrom selector="{{AdminOrderDetailsInformationSection.orderId}}" stepKey="grabOriginalOrderId"/>
