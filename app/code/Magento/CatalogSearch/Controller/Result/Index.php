@@ -3,8 +3,10 @@
  * Copyright 2014 Adobe
  * All Rights Reserved.
  */
+
 namespace Magento\CatalogSearch\Controller\Result;
 
+use Magento\Catalog\Model\Product\ProductList\Toolbar;
 use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Catalog\Model\Layer\Resolver;
 use Magento\Catalog\Model\Session;
@@ -88,28 +90,37 @@ class Index extends \Magento\Framework\App\Action\Action implements HttpGetActio
 
         $queryText = $query->getQueryText();
 
-        if ($queryText != '') {
-            $catalogSearchHelper = $this->_objectManager->get(\Magento\CatalogSearch\Helper\Data::class);
-
-            $getAdditionalRequestParameters = $this->getRequest()->getParams();
-            unset($getAdditionalRequestParameters[QueryFactory::QUERY_VAR_NAME]);
-
-            $handles = null;
-            if ($query->getNumResults() == 0) {
-                $this->_view->getPage()->initLayout();
-                $handles = $this->_view->getLayout()->getUpdate()->getHandles();
-                $handles[] = static::DEFAULT_NO_RESULT_HANDLE;
-            }
-
-            if (empty($getAdditionalRequestParameters) &&
-                $this->_objectManager->get(PopularSearchTerms::class)->isCacheable($queryText, $storeId)
-            ) {
-                $this->getCacheableResult($catalogSearchHelper, $query, $handles);
-            } else {
-                $this->getNotCacheableResult($catalogSearchHelper, $query, $handles);
-            }
-        } else {
+        if (empty($queryText)) {
             $this->getResponse()->setRedirect($this->_redirect->getRedirectUrl());
+            return;
+        }
+
+        // Negative ?p= value is not supported, redirect to a base version of category page.
+        if ($this->_request->getParam(Toolbar::PAGE_PARM_NAME) < 0) {
+            $this->getResponse()->setRedirect(
+                $this->_url->getUrl('*/*', ['_current' => true, '_query' => [Toolbar::PAGE_PARM_NAME => null]])
+            );
+            return;
+        }
+
+        $catalogSearchHelper = $this->_objectManager->get(\Magento\CatalogSearch\Helper\Data::class);
+
+        $getAdditionalRequestParameters = $this->getRequest()->getParams();
+        unset($getAdditionalRequestParameters[QueryFactory::QUERY_VAR_NAME]);
+
+        $handles = null;
+        if ($query->getNumResults() == 0) {
+            $this->_view->getPage()->initLayout();
+            $handles = $this->_view->getLayout()->getUpdate()->getHandles();
+            $handles[] = static::DEFAULT_NO_RESULT_HANDLE;
+        }
+
+        if (empty($getAdditionalRequestParameters) &&
+            $this->_objectManager->get(PopularSearchTerms::class)->isCacheable($queryText, $storeId)
+        ) {
+            $this->getCacheableResult($catalogSearchHelper, $query, $handles);
+        } else {
+            $this->getNotCacheableResult($catalogSearchHelper, $query, $handles);
         }
     }
 
