@@ -40,13 +40,13 @@ class StockItemUpdatePreservesLinksTest extends WebapiAbstract
     }
 
     /**
-     * Test the complete workflow from Steps 1-16
+     * Test the complete workflow
      * Verify that REST-API updating product stock_item does not delete downloadable_product_links
      *
      * @return void
      */
-    #[DataFixture(DownloadableProduct::class, [
-        'sku' => 'downloadable-product',
+    #[
+        DataFixture(DownloadableProduct::class, [
         'name' => 'Downloadable Product Test',
         'price' => 50.00,
         'type_id' => 'downloadable',
@@ -81,27 +81,26 @@ class StockItemUpdatePreservesLinksTest extends WebapiAbstract
             ]
         ]
     ], 'downloadable_product')]
-    public function testStockItemUpdatePreservesDownloadableLinks()
+    public function testStockItemUpdatePreservesDownloadableLinks(): void
     {
         // Get the product SKU from the fixture
-        $product = $this->fixtures->get('downloadable_product');
-        $productSku = $product->getSku();
+        $productSku = $this->fixtures->get('downloadable_product')->getSku();
 
         // Get original product and verify it has downloadable links
         $originalProduct = $this->getProductBySku($productSku);
         $this->verifyProductHasDownloadableLinks($originalProduct, 'Original product should have downloadable links');
         $originalLinks = $originalProduct['extension_attributes']['downloadable_product_links'];
 
-        // Steps 8-14: Update product stock_item via catalogProductRepositoryV1 PUT endpoint
+        // Update product stock_item via catalogProductRepositoryV1 PUT endpoint
         $updatedProduct = $this->updateProductStockItem($productSku);
 
-        // Verify the API call was successful (Step 14: Server response Code=200)
+        // Verify the API call was successful
         $this->assertNotEmpty($updatedProduct, 'API response should not be empty');
         $this->assertEquals($productSku, $updatedProduct['sku']);
         $this->assertEquals('99.99', $updatedProduct['price']);
         $this->assertEquals('1', $updatedProduct['status']);
 
-        // Steps 15-16: Verify downloadable product links are preserved
+        // Verify downloadable product links are preserved
         $this->verifyDownloadableLinksPreserved($originalLinks, $productSku);
     }
 
