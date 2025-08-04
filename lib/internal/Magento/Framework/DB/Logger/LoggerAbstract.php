@@ -5,6 +5,7 @@
  */
 namespace Magento\Framework\DB\Logger;
 
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\DB\LoggerInterface;
 use Magento\Framework\Debug;
 use Zend_Db_Statement_Pdo;
@@ -39,9 +40,9 @@ abstract class LoggerAbstract implements LoggerInterface
     private bool $logIndexCheck;
 
     /**
-     * @var QueryAnalyzerInterface|null
+     * @var QueryAnalyzerInterface
      */
-    private ?QueryAnalyzerInterface $queryAnalyzer;
+    private QueryAnalyzerInterface $queryAnalyzer;
 
     /**
      * @param bool $logAllQueries
@@ -61,7 +62,8 @@ abstract class LoggerAbstract implements LoggerInterface
         $this->logQueryTime = $logQueryTime;
         $this->logCallStack = $logCallStack;
         $this->logIndexCheck = $logIndexCheck;
-        $this->queryAnalyzer = $queryAnalyzer;
+        $this->queryAnalyzer = $queryAnalyzer
+            ?: ObjectManager::getInstance()->get(QueryAnalyzerInterface::class);
     }
 
     /**
@@ -153,7 +155,7 @@ abstract class LoggerAbstract implements LoggerInterface
                 if ($result instanceof \Zend_Db_Statement_Pdo) {
                     $message .= 'AFF: ' . $result->rowCount() . self::LINE_DELIMITER;
                 }
-                if ($this->queryAnalyzer && $this->logIndexCheck) {
+                if ($this->logIndexCheck) {
                     try {
                         $message .= $this->processIndexCheck($sql, $bind) . self::LINE_DELIMITER;
                     } catch (\InvalidArgumentException|QueryAnalyzerException) {

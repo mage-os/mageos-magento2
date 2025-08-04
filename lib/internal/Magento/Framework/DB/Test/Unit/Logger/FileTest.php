@@ -61,8 +61,12 @@ class FileTest extends TestCase
 
         $this->object = new File(
             $this->filesystem,
+            self::DEBUG_FILE,
+            false,
+            0.05,
+            false,
+            true,
             $this->queryAnalyzer,
-            self::DEBUG_FILE
         );
     }
 
