@@ -39,29 +39,29 @@ abstract class LoggerAbstract implements LoggerInterface
     private bool $logIndexCheck;
 
     /**
-     * @var QueryAnalyzerInterface
+     * @var QueryAnalyzerInterface|null
      */
-    private QueryAnalyzerInterface $queryAnalyzer;
+    private ?QueryAnalyzerInterface $queryAnalyzer;
 
     /**
-     * @param QueryAnalyzerInterface $queryAnalyzer
      * @param bool $logAllQueries
      * @param float $logQueryTime
      * @param bool $logCallStack
      * @param bool $logIndexCheck
+     * @param QueryAnalyzerInterface|null $queryAnalyzer
      */
     public function __construct(
-        QueryAnalyzerInterface $queryAnalyzer,
         $logAllQueries = false,
         $logQueryTime = 0.05,
         $logCallStack = false,
-        $logIndexCheck = false
+        $logIndexCheck = false,
+        ?QueryAnalyzerInterface $queryAnalyzer = null,
     ) {
-        $this->queryAnalyzer = $queryAnalyzer;
         $this->logAllQueries = $logAllQueries;
         $this->logQueryTime = $logQueryTime;
         $this->logCallStack = $logCallStack;
         $this->logIndexCheck = $logIndexCheck;
+        $this->queryAnalyzer = $queryAnalyzer;
     }
 
     /**
@@ -153,10 +153,10 @@ abstract class LoggerAbstract implements LoggerInterface
                 if ($result instanceof \Zend_Db_Statement_Pdo) {
                     $message .= 'AFF: ' . $result->rowCount() . self::LINE_DELIMITER;
                 }
-                if ($this->logIndexCheck) {
+                if ($this->queryAnalyzer && $this->logIndexCheck) {
                     try {
                         $message .= $this->processIndexCheck($sql, $bind) . self::LINE_DELIMITER;
-                    } catch (\InvalidArgumentException) {
+                    } catch (\InvalidArgumentException|QueryAnalyzerException) {
                         $message .= 'INDEX CHECK: NA' . self::LINE_DELIMITER;
                     }
                 }

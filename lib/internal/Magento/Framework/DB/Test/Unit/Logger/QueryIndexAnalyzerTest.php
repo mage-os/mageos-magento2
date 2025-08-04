@@ -10,6 +10,7 @@ namespace Magento\Framework\DB\Test\Unit\Logger;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Logger\File;
+use Magento\Framework\DB\Logger\QueryAnalyzerException;
 use Magento\Framework\DB\Logger\QueryIndexAnalyzer;
 use Magento\Framework\DB\LoggerInterface;
 use Magento\Framework\Exception\FileSystemException;
@@ -41,16 +42,20 @@ class QueryIndexAnalyzerTest extends TestCase
     }
 
     /**
-     * @param $sql
-     * @param $bind
-     * @param $result
-     * @param $explainResult
-     * @param $expectedResult
+     * @param string $sql
+     * @param array $bind
+     * @param string $explainResult
+     * @param mixed $expectedResult
      * @return void
+     * @throws Exception|\Magento\Framework\DB\Logger\QueryAnalyzerException|\Zend_Db_Statement_Exception
      * @dataProvider statsDataProvider
      */
-    public function testProcess($sql, $bind, $result, $explainResult, $expectedResult): void
-    {
+    public function testProcess(
+        string $sql,
+        array $bind,
+        string $explainResult,
+        mixed $expectedResult
+    ): void {
         $statement = $this->createMock(\Zend_Db_Statement_Interface::class);
         $statement->expects($this->any())->method('fetchAll')->willReturn(json_decode($explainResult, true));
         $connection = $this->createMock(AdapterInterface::class);
@@ -60,8 +65,8 @@ class QueryIndexAnalyzerTest extends TestCase
             ->willReturn($statement);
         $this->resource->expects($this->any())->method('getConnection')->willReturn($connection);
 
-        if ($expectedResult instanceof \InvalidArgumentException) {
-            $this->expectException(\InvalidArgumentException::class);
+        if ($expectedResult instanceof \Exception) {
+            $this->expectException(\Exception::class);
             $this->expectExceptionMessage($expectedResult->getMessage());
             $this->queryAnalyzer->process($sql, $bind);
         } else {
@@ -79,7 +84,6 @@ class QueryIndexAnalyzerTest extends TestCase
             'no-stats-for-update-query' => [
                 "UPDATE `admin_user_session` SET `updated_at` = '2025-07-23 14:42:02' WHERE (id=5)",
                 [],
-                null,
                 '{}',
                 new \InvalidArgumentException("Can't process query type")
             ],
@@ -88,7 +92,6 @@ class QueryIndexAnalyzerTest extends TestCase
                             `status`, `user`, `user_id`, `fullaction`, `error_message`) VALUES
                             (?, ?, ?, '2025-07-23 14:42:02', ?, ?, ?, ?, ?, ?, ?)",
                 [],
-                null,
                 '{}',
                 new \InvalidArgumentException("Can't process query type")
             ],
@@ -97,7 +100,6 @@ class QueryIndexAnalyzerTest extends TestCase
                                       (SELECT `magento_sales_order_grid_archive`.`entity_id`
                                        FROM `magento_sales_order_grid_archive`))",
                 [],
-                null,
                 '{}',
                 new \InvalidArgumentException("Can't process query type")
             ],
@@ -105,11 +107,10 @@ class QueryIndexAnalyzerTest extends TestCase
                 "SELECT `main_table`.* FROM `admin_system_messages` AS `main_table`
                       ORDER BY severity ASC, created_at DESC",
                 [],
-                null,
                 '[{"id":"1","select_type":"SIMPLE","table":"admin_system_messages","partitions":null,"type":"ALL",
                 "possible_keys":null,"key":null,"key_len":null,"ref":null,"rows":"1","filtered":"100.00",
                 "Extra":"Using filesort"}]',
-                new \InvalidArgumentException("Small table")
+                new QueryAnalyzerException("Small table")
             ],
             'subselect-with-dependent-query' => [
                 "SELECT `main_table`.*, (IF(
@@ -122,7 +123,6 @@ class QueryIndexAnalyzerTest extends TestCase
             )) AS `status` FROM `magento_bulk` AS `main_table` WHERE (`user_id` = '1')
                                                                ORDER BY FIELD(status, 2,3,0,4,1), start_time DESC",
                 [],
-                null,
                 '[{"id":"1","select_type":"PRIMARY","table":"main_table","partitions":null,"type":"ref",
                 "possible_keys":"MAGENTO_BULK_USER_ID","key":"MAGENTO_BULK_USER_ID","key_len":"5","ref":"const",
                 "rows":"1","filtered":"100.00","Extra":"Using filesort"},{"id":"3","select_type":"DEPENDENT SUBQUERY",
@@ -133,7 +133,7 @@ class QueryIndexAnalyzerTest extends TestCase
                 "type":"ref","possible_keys":"MAGENTO_OPERATION_BULK_UUID_ERROR_CODE","key":
                 "MAGENTO_OPERATION_BULK_UUID_ERROR_CODE","key_len":"42","ref":
                 "magento24i2.main_table.uuid","rows":"1","filtered":"100.00","Extra":"Using index"}]',
-                ['DEPENDENT SUBQUERY', 'FILESORT', 'PARTIAL INDEX USED']
+                ['FILESORT', 'PARTIAL INDEX USED', 'DEPENDENT SUBQUERY']
             ],
             'simple-qeury-partial-index' => [
                 "SELECT `o`.`product_type`, COUNT(*) FROM `sales_order_item` AS `o` WHERE (o.order_id='67') AND
@@ -141,7 +141,6 @@ class QueryIndexAnalyzerTest extends TestCase
                  ('simple', 'virtual', 'bundle', 'downloadable', 'configurable', 'grouped')))
                                                                    GROUP BY `o`.`product_type`",
                 [],
-                null,
                 '[{"id":1,"select_type":"SIMPLE","table":"o","partitions":null,"type":"ref","possible_keys":
                 "SALES_ORDER_ITEM_ORDER_ID","key":"SALES_ORDER_ITEM_ORDER_ID","key_len":"4","ref":"const",
                 "rows":2,"filtered":45,"Extra":"Using where; Using temporary"}]',
@@ -159,7 +158,6 @@ class QueryIndexAnalyzerTest extends TestCase
                 OR (`is_visible_in_advanced_search` = '1') OR (((`is_filterable` = '1') OR (`is_filterable` = '2')))
                                                                OR (`is_filterable_in_search` = '1'))",
                 [],
-                null,
                 '[{"id":1,"select_type":"SIMPLE","table":"additional_table","partitions":null,"type":"ALL",
                 "possible_keys":"PRIMARY","key":null,"key_len":null,"ref":null,"rows":170,"filtered":40.95,"Extra":
                 "Using where"},{"id":1,"select_type":"SIMPLE","table":"main_table","partitions":null,"type":"eq_ref",

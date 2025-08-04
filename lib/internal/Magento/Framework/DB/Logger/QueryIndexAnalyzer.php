@@ -11,21 +11,24 @@ use Magento\Framework\App\ResourceConnection;
 
 class QueryIndexAnalyzer implements QueryAnalyzerInterface
 {
-    private const FULL_TABLE_SCAN = 'FULL TABLE SCAN';
+    private const DEFAULT_SMALL_TABLE_THRESHOLD = 100;
 
-    private const NO_INDEX = 'NO INDEX';
-
-    private const FILESORT = 'FILESORT';
-
-    private const DEPENDENT_SUBQUERY = 'DEPENDENT SUBQUERY';
-
-    private const PARTIAL_INDEX = 'PARTIAL INDEX USED';
+    /**
+     * @var int
+     */
+    private int $smallTableThreshold;
 
     /**
      * @param ResourceConnection $resource
+     * @param int|null $smallTableThreshold
      */
-    public function __construct(private readonly ResourceConnection $resource)
+    public function __construct(private readonly ResourceConnection $resource, ?int $smallTableThreshold = null)
     {
+        if ($smallTableThreshold !== null) {
+            $this->smallTableThreshold = $smallTableThreshold;
+        } else {
+            $this->smallTableThreshold = self::DEFAULT_SMALL_TABLE_THRESHOLD;
+        }
     }
 
     /**
@@ -34,7 +37,7 @@ class QueryIndexAnalyzer implements QueryAnalyzerInterface
      * @param string $sql
      * @param array $bindings
      * @return array
-     * @throws \Zend_Db_Statement_Exception|\InvalidArgumentException
+     * @throws \Zend_Db_Statement_Exception|\InvalidArgumentException|QueryAnalyzerException
      */
     public function process(string $sql, array $bindings): array
     {
@@ -51,7 +54,7 @@ class QueryIndexAnalyzer implements QueryAnalyzerInterface
 
         $issues = $this->analyzeQueries($explainOutput);
         if ($issues === null) {
-            throw new \InvalidArgumentException("Small table");
+            throw new QueryAnalyzerException("Small table");
         }
 
         return array_values(array_unique($issues));
@@ -84,27 +87,12 @@ class QueryIndexAnalyzer implements QueryAnalyzerInterface
      */
     private function analyzeQueries(array $explainOutput): ?array
     {
-        $issues = [];
-        $smallTableCount = 0;
-        foreach ($explainOutput as $key => $row) {
-            $result = $this->getQueryIssues($row);
-            if ($result === null) {
-                $smallTableCount++;
-            }
-            $issues[$key] = $result;
-        }
-
-        if ($smallTableCount == count($explainOutput)) {
+        $issues = array_map(fn (array $row) => $this->getQueryIssues($row), $explainOutput);
+        if (!array_filter($issues, 'is_array')) {
             return null;
         }
-        $result = [];
-        foreach ($issues as $queryIssues) {
-            if ($queryIssues) {
-                $result = [...$queryIssues, ...$result];
-            }
-        }
 
-        return $result;
+        return array_merge(...array_filter($issues));
     }
 
     /**
@@ -120,7 +108,7 @@ class QueryIndexAnalyzer implements QueryAnalyzerInterface
         $type = strtolower($selectDetails['type'] ?? '');
 
         // skip small tables
-        if ((int) $selectDetails['rows'] < 100 && $type === 'all') {
+        if ((int) $selectDetails['rows'] < $this->smallTableThreshold && $type === 'all') {
             return null;
         }
 
@@ -157,11 +145,7 @@ class QueryIndexAnalyzer implements QueryAnalyzerInterface
     {
         $selectType = strtolower($selectDetails['select_type'] ?? '');
 
-        if ($selectType === 'dependent subquery') {
-            return true;
-        }
-
-        return false;
+        return $selectType === 'dependent subquery';
     }
 
     /**
@@ -174,11 +158,7 @@ class QueryIndexAnalyzer implements QueryAnalyzerInterface
     {
         $extra = strtolower($selectDetails['extra'] ?? '');
 
-        if (str_contains($extra, 'using filesort')) {
-            return true;
-        }
-
-        return false;
+        return str_contains($extra, 'using filesort');
     }
 
     /**
@@ -192,11 +172,7 @@ class QueryIndexAnalyzer implements QueryAnalyzerInterface
         $extra = strtolower($selectDetails['extra'] ?? '');
         $key = $selectDetails['key'] ?? null;
 
-        if (empty($key) && !str_contains($extra, 'no matching row in const table')) {
-            return true;
-        }
-
-        return false;
+        return empty($key) && !str_contains($extra, 'no matching row in const table');
     }
 
     /**
@@ -210,11 +186,7 @@ class QueryIndexAnalyzer implements QueryAnalyzerInterface
         $key = $selectDetails['key'] ?? null;
         $type = $selectDetails['type'] ?? '';
 
-        if (strtolower($type) === 'all' && empty($key)) {
-            return true;
-        }
-
-        return false;
+        return strtolower($type) === 'all' && empty($key);
     }
 
     /**
@@ -261,17 +233,11 @@ class QueryIndexAnalyzer implements QueryAnalyzerInterface
      */
     private function checkForCoveringIndex(string $extra, string $type): bool
     {
-        if (str_contains($extra, 'using index') && !str_contains($extra, 'using where')) {
-            return true;
-        }
-
-        if (str_contains($extra, 'using index') &&
-            str_contains($extra, 'using where') &&
-            in_array($type, ['range', 'ref'])) {
-            return true;
-        }
-
-        return false;
+        return str_contains($extra, 'using index')
+            && !str_contains($extra, 'using where')
+            || str_contains($extra, 'using index')
+            && str_contains($extra, 'using where')
+            && in_array($type, ['range', 'ref']);
     }
 
     /**
@@ -282,10 +248,6 @@ class QueryIndexAnalyzer implements QueryAnalyzerInterface
      */
     private function checkEfficientAccessTypes(string $type): bool
     {
-        if (in_array($type, ['const', 'eq_ref'])) {
-            return true;
-        }
-
-        return false;
+        return in_array($type, ['const', 'eq_ref']);
     }
 }

@@ -29,24 +29,24 @@ class File extends LoggerAbstract
 
     /**
      * @param Filesystem $filesystem
-     * @param QueryAnalyzerInterface $queryAnalyzer
      * @param string $debugFile
      * @param bool $logAllQueries
      * @param float $logQueryTime
      * @param bool $logCallStack
      * @param bool $logIndexCheck
+     * @param QueryAnalyzerInterface|null $queryAnalyzer
      * @throws FileSystemException
      */
     public function __construct(
         Filesystem $filesystem,
-        QueryAnalyzerInterface $queryAnalyzer,
         $debugFile = 'debug/db.log',
         $logAllQueries = false,
         $logQueryTime = 0.05,
         $logCallStack = false,
-        $logIndexCheck = false
+        $logIndexCheck = false,
+        ?QueryAnalyzerInterface $queryAnalyzer = null,
     ) {
-        parent::__construct($queryAnalyzer, $logAllQueries, $logQueryTime, $logCallStack, $logIndexCheck);
+        parent::__construct($logAllQueries, $logQueryTime, $logCallStack, $logIndexCheck, $queryAnalyzer);
         $this->dir = $filesystem->getDirectoryWrite(DirectoryList::VAR_DIR);
         $this->debugFile = $debugFile;
     }

@@ -9,6 +9,16 @@ namespace Magento\Framework\DB\Logger;
 
 interface QueryAnalyzerInterface
 {
+    public const FULL_TABLE_SCAN = 'FULL TABLE SCAN';
+
+    public const NO_INDEX = 'NO INDEX';
+
+    public const FILESORT = 'FILESORT';
+
+    public const DEPENDENT_SUBQUERY = 'DEPENDENT SUBQUERY';
+
+    public const PARTIAL_INDEX = 'PARTIAL INDEX USED';
+
     /**
      * Analyze query
      *
