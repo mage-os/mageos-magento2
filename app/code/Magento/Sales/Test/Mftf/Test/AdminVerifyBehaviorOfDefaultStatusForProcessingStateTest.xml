@@ -66,11 +66,9 @@
             <argument name="statusLabel" value="{{readyToPickup.label}}"/>
             <argument name="statusCode" value="{{readyToPickup.code}}"/>
         </actionGroup>
-        <waitForElementClickable selector="{{AdminOrderStatusGridSection.unassign}}" stepKey="waitToClickUnassignOrderStatus"/>
-        <click selector="{{AdminOrderStatusGridSection.unassign}}" stepKey="clickUnassign"/>
-        <waitForElementVisible selector="{{AdminMessagesSection.success}}" stepKey="waitForSuccessMessageVisible"/>
-        <!-- "You have unassigned the order status." Message should be displayed -->
-        <waitForText selector="{{AdminMessagesSection.success}}" userInput="{{OrderMessage.value}}" stepKey="seeAssertOrderStatusSuccessUnassignMessage"/>
+        <actionGroup ref="AdminUnassignOrderStatusActionGroup" stepKey="unassignOrderStatus">
+            <argument name="message" value="{{OrderUnassignedStatusMessage.value}}"/>
+        </actionGroup>
         <!--Step 8: Verify the default status for the order status Processing -->
         <actionGroup ref="FilterOrderStatusByLabelAndCodeActionGroup" stepKey="filterStatusForOrderInGrid">
             <argument name="statusLabel" value="{{OrderStatus.processing}}"/>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
+ */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminUnassignOrderStatusActionGroup">
+        <annotations>
+            <description>Unassign order status from order state</description>
+        </annotations>
+        <arguments>
+            <argument name="message" type="string"/>
+        </arguments>
+        <waitForElementClickable selector="{{AdminOrderStatusGridSection.unassign}}" stepKey="waitToClickUnassignOrderStatus"/>
+        <click selector="{{AdminOrderStatusGridSection.unassign}}" stepKey="clickUnassign"/>
+        <waitForElementVisible selector="{{AdminMessagesSection.success}}" stepKey="waitForSuccessMessageVisible"/>
+        <!-- "You have unassigned the order status." Message should be displayed -->
+        <waitForText selector="{{AdminMessagesSection.success}}" userInput="{{message}}" stepKey="seeAssertOrderStatusSuccessUnassignMessage"/>
+    </actionGroup>
+</actionGroups>
