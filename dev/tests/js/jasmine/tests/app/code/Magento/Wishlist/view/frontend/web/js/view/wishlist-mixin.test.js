@@ -203,12 +203,13 @@ define([
             });
 
             it('should handle rapid counter updates', function () {
-                var instance = new mixin();
+                var instance = new mixin(),
+                    i;
 
                 instance.initialize();
                 // Rapid updates
                 expect(function () {
-                    for (var i = 0; i < 10; i++) {
+                    for (i = 0; i < 10; i++) {
                         subscribeCallback({ counter: i });
                     }
                 }).not.toThrow();
