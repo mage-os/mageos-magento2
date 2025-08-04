@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- /**
-  * Copyright © Magento, Inc. All rights reserved.
-  * See COPYING.txt for license details.
-  */
+/**
+ * Copyright 2023 Adobe
+ * All Rights Reserved.
+ */
 -->
 
 <tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -25,7 +25,6 @@
             <!--Set needed Timezone-->
             <selectOption userInput="New Zealand Standard Time (Antarctica/McMurdo)" selector="{{LocaleOptionsSection.timeZoneDropdown}}" stepKey="selectOption1"/>
             <actionGroup ref="AdminSaveConfigActionGroup" stepKey="saveConfiguration"/>
-            <comment userInput="BIC workaround" stepKey="waitForConfigurationPageSave"/>
             <!-- Wait for configuration to be applied-->
             <waitForPageLoad stepKey="waitForConfigurationSave"/>
             <!-- Clear cache to ensure timezone change takes effect-->
@@ -45,7 +44,6 @@
             </actionGroup>
             <!-- Logout customer from storefront (if logged in) -->
             <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutCustomer"/>
-            <comment userInput="BIC workaround" stepKey="seeIfCustomerIsDeleted"/>
             <!-- Delete customer -->
             <actionGroup ref="AdminDeleteCustomerActionGroup" stepKey="deleteCustomer">
                 <argument name="customerEmail" value="Simple_US_Customer.email"/>
@@ -57,7 +55,6 @@
         <actionGroup ref="SignUpNewUserFromStorefrontActionGroup" stepKey="signUpNewUser">
             <argument name="Customer" value="Simple_US_Customer"/>
         </actionGroup>
-        <comment userInput="BIC workaround" stepKey="waitForCustomerToBeCreated"/>
         <!--Go to *Customers > All Customers* page-->
         <amOnPage url="{{AdminCustomerPage.url}}" stepKey="GoToCustomerPage"/>
         <waitForPageLoad stepKey="waitForCustomersPage2"/>
