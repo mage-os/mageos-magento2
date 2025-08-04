@@ -1,7 +1,7 @@
 <?php
 /**
  * Copyright 2017 Adobe
- * All rights reserved.
+ * All Rights Reserved.
  */
 namespace Magento\Deploy\Package\Processor\PostProcessor;
 

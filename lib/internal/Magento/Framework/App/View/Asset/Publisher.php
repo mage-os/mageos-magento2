@@ -1,7 +1,7 @@
 <?php
 /**
  * Copyright 2011 Adobe
- * All rights reserved.
+ * All Rights Reserved.
  */
 
 namespace Magento\Framework\App\View\Asset;
