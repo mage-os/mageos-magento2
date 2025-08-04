@@ -51,7 +51,7 @@ class OrderResponseFormatter implements QueryResponseFormatterInterface
      * @param array $executionResult
      * @return array
      */
-    public function getErrors(array $executionResult): array
+    private function getErrors(array $executionResult): array
     {
         $dataErrors = [];
         if (!empty($executionResult['errors'])) {
