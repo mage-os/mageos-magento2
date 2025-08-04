@@ -35,8 +35,8 @@
         <!-- Go to category page with `-1` as a Page Number -->
         <amOnPage url="{{StorefrontCategoryPage.url($$createCategory.custom_attributes[url_key]$$)}}?p=-1" stepKey="goToStorefrontCreatedCategoryPage"/>
         <!-- Expect redirect to the base URL of category, without any pagination -->
-        <actionGroup ref="AdminGridAssertCurrentPageNumberActionGroup" stepKey="assertCurrentPageIsTwoOnProductGridFirstSearch">
-            <argument name="expectedCurrentPageNumber" value="1"/>
+        <actionGroup ref="AssertStorefrontCategoryCurrentPageIsNthActionGroup" stepKey="assertCurrentPageIsTwoOnProductGridFirstSearch">
+            <argument name="expectedPage" value="1"/>
         </actionGroup>
         <!-- Validate that "no products found" error message is not present -->
         <actionGroup ref="StorefrontDontSeeNoProductsFoundActionGroup" stepKey="dontSeeNoProdsFoundMessage"/>
