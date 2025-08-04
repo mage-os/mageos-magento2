@@ -31,13 +31,16 @@ use Magento\User\Model\User as UserModel;
  */
 class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
 {
-    private const RESOURCE_PATH_ADMIN_TOKEN = "/V1/integration/admin/token";
 
     private const RESOURCE_PATH_GUEST_CART = '/V1/guest-carts/';
 
     private const SERVICE_VERSION_GUEST_CART = 'V1';
 
     private const SERVICE_NAME_GUEST_CART = 'quoteGuestCartManagementV1';
+
+    private const SERVICE_NAME_GUEST_CART_ITEM = 'quoteGuestCartItemRepositoryV1';
+
+    private const SERVICE_VERSION_GUEST_CART_ITEM = 'V1';
 
     /**
      * @var AdminTokenServiceInterface
@@ -115,7 +118,7 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
             'soap' => [
                 'service' => self::SERVICE_NAME_GUEST_CART,
                 'serviceVersion' => self::SERVICE_VERSION_GUEST_CART,
-                'operation' => self::SERVICE_NAME_GUEST_CART . 'Save',
+                'operation' => self::SERVICE_NAME_GUEST_CART . 'CreateEmptyCart',
             ],
         ];
 
@@ -297,15 +300,22 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
             $httpMethod = Request::HTTP_METHOD_GET;
         }
 
+        // Determine SOAP operation based on action
+        $soapOperation = match ($action) {
+            'get' => self::SERVICE_NAME_GUEST_CART_ITEM . 'GetList',
+            'add', 'update' => self::SERVICE_NAME_GUEST_CART_ITEM . 'Save',
+            default => self::SERVICE_NAME_GUEST_CART_ITEM . 'Save'
+        };
+
         return [
             'rest' => [
                 'resourcePath' => $resourcePath,
                 'httpMethod' => $httpMethod
             ],
             'soap' => [
-                'service' => self::SERVICE_NAME_GUEST_CART,
-                'serviceVersion' => self::SERVICE_VERSION_GUEST_CART,
-                'operation' => self::SERVICE_NAME_GUEST_CART . 'Save',
+                'service' => self::SERVICE_NAME_GUEST_CART_ITEM,
+                'serviceVersion' => self::SERVICE_VERSION_GUEST_CART_ITEM,
+                'operation' => $soapOperation,
             ],
         ];
     }
