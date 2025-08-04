@@ -56,9 +56,10 @@ class WildcardTopicTest extends QueueTestCaseAbstract
             This test is STOMP-specific.');
         }
 
+        sleep(10);
         $testObject = $this->generateTestObject();
         $this->publisher->publish($topic, $testObject);
-
+        sleep(10);
         $this->waitForAsynchronousResult(count($matchingQueues), $this->logFilePath);
 
         $this->assertFileExists($this->logFilePath, "No handlers invoked (log file was not created).");
