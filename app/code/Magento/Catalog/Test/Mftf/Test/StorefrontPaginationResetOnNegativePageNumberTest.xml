@@ -35,7 +35,7 @@
         <!-- Go to category page with `-1` as a Page Number -->
         <amOnPage url="{{StorefrontCategoryPage.url($$createCategory.custom_attributes[url_key]$$)}}?p=-1" stepKey="goToStorefrontCreatedCategoryPage"/>
         <!-- Expect redirect to the base URL of category, without any pagination -->
-        <seeCurrentUrlEquals url="https://{$hostname}{{StorefrontCategoryPage.url($$createCategory.custom_attributes[url_key]$$)}}" stepKey="seeUrlWithNoPage"/>
+        <seeCurrentUrlMatches regex="~{{StorefrontCategoryPage.url($$createCategory.custom_attributes[url_key]$$)}}$~" stepKey="seeUrlWithNoPage"/>
         <!-- Validate that "no products found" error message is not present -->
         <actionGroup ref="StorefrontDontSeeNoProductsFoundActionGroup" stepKey="dontSeeNoProdsFoundMessage"/>
         <!-- Verify the products are visible on the Category Page -->
