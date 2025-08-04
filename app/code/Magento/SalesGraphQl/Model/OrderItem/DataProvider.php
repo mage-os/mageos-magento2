@@ -15,7 +15,6 @@ use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\OrderItemInterface;
 use Magento\Sales\Api\OrderItemRepositoryInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
-use Magento\SalesRule\Api\Data\DiscountAppliedToInterface as DiscountAppliedTo;
 use Magento\Tax\Helper\Data as TaxHelper;
 
 /**
@@ -23,6 +22,8 @@ use Magento\Tax\Helper\Data as TaxHelper;
  */
 class DataProvider
 {
+    public const APPLIED_TO_ITEM = 'ITEM';
+    public const APPLIED_TO_SHIPPING = 'SHIPPING';
     /**
      * @var OrderItemRepositoryInterface
      */
@@ -260,8 +261,8 @@ class DataProvider
     private function getAppliedTo($order)
     {
         if ((float) $order->getShippingDiscountAmount() > 0) {
-            return DiscountAppliedTo::APPLIED_TO_SHIPPING;
+            return self::APPLIED_TO_SHIPPING;
         }
-        return DiscountAppliedTo::APPLIED_TO_ITEM;
+        return self::APPLIED_TO_ITEM;
     }
 }
