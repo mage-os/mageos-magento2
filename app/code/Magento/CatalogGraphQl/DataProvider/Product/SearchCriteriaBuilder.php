@@ -38,7 +38,7 @@ class SearchCriteriaBuilder
      * @param RequestDataBuilder $localData
      * @param SearchCriteriaResolverFactory $criteriaResolverFactory
      * @param ArgumentApplierPool $argumentApplierPool
-     * @param array $partial_search_analyzers
+     * @param array $partialSearchAnalyzers
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -52,7 +52,7 @@ class SearchCriteriaBuilder
         private readonly RequestDataBuilder $localData,
         private readonly SearchCriteriaResolverFactory $criteriaResolverFactory,
         private readonly ArgumentApplierPool $argumentApplierPool,
-        private readonly array $partial_search_analyzers = []
+        private readonly array $partialSearchAnalyzers = []
     ) {
     }
 
@@ -119,9 +119,9 @@ class SearchCriteriaBuilder
             foreach ($query['match'] ?? [] as $index => $matchItem) {
                 if (in_array($matchItem['field'] ?? null, $partialMatchFilters, true)) {
                     $data['queries'][$queryName]['match'][$index]['matchCondition'] = 'match_phrase_prefix';
-                    if (array_key_exists($matchItem['field'], $this->partial_search_analyzers)) {
+                    if (array_key_exists($matchItem['field'], $this->partialSearchAnalyzers)) {
                         $data['queries'][$queryName]['match'][$index]['analyzer']
-                            = $this->partial_search_analyzers[$matchItem['field']];
+                            = $this->partialSearchAnalyzers[$matchItem['field']];
                     }
                 }
             }
