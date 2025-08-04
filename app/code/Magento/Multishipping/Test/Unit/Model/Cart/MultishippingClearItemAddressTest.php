@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2016 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -94,13 +94,15 @@ class MultishippingClearItemAddressTest extends TestCase
             'getAllShippingAddresses',
             'removeAddress',
             'getShippingAddress',
-            'getCustomer'
+            'getCustomer',
+            'addShippingAddress'
         ]);
         $requestMock->method('getActionName')
             ->willReturn($actionName);
         $this->checkoutSessionMock->method('getQuote')
             ->willReturn($quoteMock);
-
+        $this->checkoutSessionMock->method('clearQuote')
+            ->willReturnSelf();
         $addressMock = $this->createMock(Address::class);
         $addressMock->method('getId')
             ->willReturn($addressId);
@@ -118,6 +120,9 @@ class MultishippingClearItemAddressTest extends TestCase
         $customerMock = $this->getMockForAbstractClass(CustomerInterface::class);
         $quoteMock->method('getCustomer')
             ->willReturn($customerMock);
+        $quoteMock->method('addShippingAddress')
+            ->with($shippingAddressMock)
+            ->willReturnSelf();
         $customerMock->method('getDefaultShipping')
             ->willReturn($customerAddressId);
 
@@ -148,7 +153,7 @@ class MultishippingClearItemAddressTest extends TestCase
     /**
      * @return array
      */
-    public function getDataDataProvider()
+    public static function getDataDataProvider()
     {
         return [
             'test with `add` action and multi shipping address enabled' => ['add', 100, 200, true],

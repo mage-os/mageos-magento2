@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2011 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Rule\Model\Condition\Product;
@@ -112,7 +112,7 @@ abstract class AbstractProduct extends \Magento\Rule\Model\Condition\AbstractCon
         \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\Collection $attrSetCollection,
         \Magento\Framework\Locale\FormatInterface $localeFormat,
         array $data = [],
-        ProductCategoryList $categoryList = null
+        ?ProductCategoryList $categoryList = null
     ) {
         $this->_backendData = $backendData;
         $this->_config = $config;
@@ -243,7 +243,7 @@ abstract class AbstractProduct extends \Magento\Rule\Model\Condition\AbstractCon
                 } else {
                     $addEmptyOption = true;
                 }
-                $selectOptions = $attributeObject->getSource()->getAllOptions($addEmptyOption);
+                $selectOptions = $attributeObject->getSource()->getAllOptions($addEmptyOption, true);
             }
         }
 
@@ -516,7 +516,7 @@ abstract class AbstractProduct extends \Magento\Rule\Model\Condition\AbstractCon
             ) ? $this->_localeFormat->getNumber(
                 $arr['is_value_parsed']
             ) : false;
-        } elseif (!empty($arr['operator']) && $arr['operator'] == '()') {
+        } elseif (!empty($arr['operator']) && in_array($arr['operator'], ['()', '!()', true])) {
             if (isset($arr['value'])) {
                 $arr['value'] = preg_replace('/\s*,\s*/', ',', $arr['value']);
             }

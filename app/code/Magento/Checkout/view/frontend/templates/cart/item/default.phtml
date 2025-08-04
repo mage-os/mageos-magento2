@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 
 // phpcs:disable Magento2.Templates.ThisInTemplate
@@ -104,6 +104,7 @@ $canApplyMsrp = $helper->isShowBeforeOrderConfirm($product) && $helper->isMinima
                                data-cart-item-id="<?= $block->escapeHtmlAttr($_item->getSku()) ?>"
                                value="<?= $block->escapeHtmlAttr($block->getQty()) ?>"
                                type="number"
+                               min="0"
                                size="4"
                                step="any"
                                title="<?= $block->escapeHtmlAttr(__('Qty')) ?>"

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2011 Adobe
+ * All Rights Reserved.
  */
 
 declare(strict_types=1);
@@ -11,7 +11,6 @@ namespace Magento\Framework\HTTP\Client;
 /**
  * Class to work with HTTP protocol using curl library
  *
- * @author      Magento Core Team <core@magentocommerce.com>
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @api
  */
@@ -470,7 +469,7 @@ class Curl implements \Magento\Framework\HTTP\ClientInterface
      * Set curl option directly
      *
      * @param string $name
-     * @param string $value
+     * @param mixed $value
      * @return void
      */
     protected function curlOption($name, $value)
@@ -504,7 +503,7 @@ class Curl implements \Magento\Framework\HTTP\ClientInterface
      * Set curl option
      *
      * @param string $name
-     * @param string $value
+     * @param mixed $value
      * @return void
      */
     public function setOption($name, $value)

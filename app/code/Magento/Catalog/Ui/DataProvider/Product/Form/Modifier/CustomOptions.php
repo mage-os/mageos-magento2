@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2016 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Catalog\Ui\DataProvider\Product\Form\Modifier;
 
@@ -372,8 +372,8 @@ class CustomOptions extends AbstractModifier
                     'config' => [
                         'addButtonLabel' => __('Add Option'),
                         'componentType' => DynamicRows::NAME,
-                        'component' => 'Magento_Catalog/js/components/dynamic-rows-import-custom-options',
-                        'template' => 'ui/dynamic-rows/templates/collapsible',
+                        'component' => 'Magento_Catalog/js/components/dynamic-rows-import-custom-options-per-page',
+                        'template' => 'Magento_Catalog/components/dynamic-rows-import-custom-options-per-page',
                         'additionalClasses' => 'admin__field-wide',
                         'deleteProperty' => static::FIELD_IS_DELETE,
                         'deleteValue' => '1',
@@ -387,6 +387,9 @@ class CustomOptions extends AbstractModifier
                             'insertData' => '${ $.provider }:${ $.dataProvider }',
                             '__disableTmpl' => ['insertData' => false],
                         ],
+                        'sizesConfig' => [
+                            'enabled' => true
+                        ]
                     ],
                 ],
             ],

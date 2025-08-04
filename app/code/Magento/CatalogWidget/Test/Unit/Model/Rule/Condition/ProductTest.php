@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2017 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -168,7 +168,7 @@ class ProductTest extends TestCase
     /**
      * @return array
      */
-    public function getMappedSqlFieldPriceDataProvider(): array
+    public static function getMappedSqlFieldPriceDataProvider(): array
     {
         return [
             [
@@ -189,7 +189,12 @@ class ProductTest extends TestCase
             [
                 false,
                 false,
-                'e.entity_id'
+                'at_price.value'
+            ],
+            [
+                false,
+                true,
+                'price_index.min_price'
             ],
         ];
     }
@@ -223,7 +228,7 @@ class ProductTest extends TestCase
     /**
      * @return array
      */
-    public function getBindArgumentValueDataProvider(): array
+    public static function getBindArgumentValueDataProvider(): array
     {
         return [
             [
@@ -248,7 +253,7 @@ class ProductTest extends TestCase
                         1 => 2
                     ]
                 ],
-                new \Zend_Db_Expr('1, 3')
+                '2'
             ],
             [
                 [

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 ?>
 <?php
@@ -23,7 +23,9 @@
                     <?php if ($block->isLimitCurrent($_key)):?>
                         selected="selected"
                     <?php endif ?>>
-                    <?= $block->escapeHtml($localeFormatter->formatNumber((int) $_limit)) ?>
+                    <?= $block->escapeHtml(
+                        is_numeric($_limit) ? $localeFormatter->formatNumber((int) $_limit) : $_limit
+                    ) ?>
                 </option>
             <?php endforeach; ?>
         </select>

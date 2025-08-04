@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- /**
-  * Copyright © Magento, Inc. All rights reserved.
-  * See COPYING.txt for license details.
-  */
+/**
+ * Copyright 2022 Adobe
+ * All Rights Reserved.
+ */
 -->
 
 <tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -18,8 +18,11 @@
             <testCaseId value="AC-3216"/>
             <useCaseId value="ACP2E-862"/>
             <group value="checkout"/>
+            <group value="pr_exclude"/>
         </annotations>
         <before>
+            <!--Enable flat rate shipping-->
+            <magentoCLI command="config:set {{EnableFlatRateConfigData.path}} {{EnableFlatRateConfigData.value}}" stepKey="enableFlatRate"/>
             <!--Enable Cash On Delivery payment method-->
             <actionGroup ref="CashOnDeliverySpecificCountryActionGroup" stepKey="enableCashOnDelivery">
                 <argument name="path" value="{{CashOnDeliveryEnableConfigData.path}}"/>
@@ -34,6 +37,8 @@
             <createData entity="Simple_US_Customer_US_UK_Addresses" stepKey="createCustomer"/>
         </before>
         <after>
+            <!-- Disable shipping method for customer with default address -->
+            <comment userInput="config:set DisableFlatRateConfigData.path DisableFlatRateConfigData.value" stepKey="disableFlatRate"/>
             <!--Disable Cash On Delivery method-->
             <actionGroup ref="CashOnDeliverySpecificCountryActionGroup" stepKey="disableCashOnDelivery"/>
             <!--Customer log out-->
@@ -59,6 +64,7 @@
 
         <!-- Select Shipping Method-->
         <actionGroup ref="StorefrontSetShippingMethodActionGroup" stepKey="selectFlatRateShippingMethod"/>
+        <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="selectPaymentMethod"/>
         <!--Click next button to open payment section-->
         <actionGroup ref="StorefrontGuestCheckoutProceedToPaymentStepActionGroup" stepKey="clickNext"/>
 

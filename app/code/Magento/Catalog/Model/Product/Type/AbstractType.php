@@ -1,14 +1,15 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2013 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Catalog\Model\Product\Type;
 
 use Magento\Catalog\Api\ProductRepositoryInterface;
-use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\File\Http;
 use Magento\Framework\File\UploaderFactory;
 
 /**
@@ -195,8 +196,8 @@ abstract class AbstractType
         \Magento\Framework\Registry $coreRegistry,
         \Psr\Log\LoggerInterface $logger,
         ProductRepositoryInterface $productRepository,
-        \Magento\Framework\Serialize\Serializer\Json $serializer = null,
-        UploaderFactory $uploaderFactory = null
+        ?\Magento\Framework\Serialize\Serializer\Json $serializer = null,
+        ?UploaderFactory $uploaderFactory = null
     ) {
         $this->_catalogProductOption = $catalogProductOption;
         $this->_eavConfig = $eavConfig;
@@ -240,12 +241,13 @@ abstract class AbstractType
      *   group => array(ids)
      * )
      *
-     * @deplacated TODO: refactor to child relation manager
+     * @deprecated TODO: refactor to child relation manager
      *
      * @param int $parentId
      * @param bool $required
      * @return array
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @see Nothing
      */
     public function getChildrenIds($parentId, $required = true)
     {
@@ -493,7 +495,7 @@ abstract class AbstractType
                     case 'receive_uploaded_file':
                         $src = $queueOptions['src_name'] ?? '';
                         $dst = $queueOptions['dst_name'] ?? '';
-                        /** @var $uploader \Zend_File_Transfer_Adapter_Http */
+                        /** @var $uploader Http */
                         $uploader = $queueOptions['uploader'] ?? null;
                         $isUploaded = false;
                         if ($uploader && $uploader->isValid($src)) {
@@ -601,7 +603,6 @@ abstract class AbstractType
                             $transport->options[$option->getId()] = $optionsFromRequest[$option->getId()];
                         }
                     }
-
                 } catch (LocalizedException $e) {
                     $results[] = $e->getMessage();
                     continue;

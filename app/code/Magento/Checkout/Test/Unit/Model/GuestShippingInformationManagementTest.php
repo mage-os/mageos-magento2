@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -57,7 +57,7 @@ class GuestShippingInformationManagementTest extends TestCase
     public function testSaveAddressInformation()
     {
         $cartId = 'masked_id';
-        $quoteId = 100;
+        $quoteId = '100';
         $addressInformationMock = $this->getMockForAbstractClass(ShippingInformationInterface::class);
 
         $quoteIdMaskMock = $this->getMockBuilder(QuoteIdMask::class)
@@ -73,7 +73,10 @@ class GuestShippingInformationManagementTest extends TestCase
         $paymentInformationMock = $this->getMockForAbstractClass(PaymentDetailsInterface::class);
         $this->shippingInformationManagementMock->expects($this->once())
             ->method('saveAddressInformation')
-            ->with($quoteId, $addressInformationMock)
+            ->with(
+                self::callback(fn($actualQuoteId): bool => (int) $quoteId === $actualQuoteId),
+                $addressInformationMock
+            )
             ->willReturn($paymentInformationMock);
 
         $this->model->saveAddressInformation($cartId, $addressInformationMock);

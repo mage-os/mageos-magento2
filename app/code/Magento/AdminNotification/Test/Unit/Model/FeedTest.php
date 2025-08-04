@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -173,7 +173,7 @@ class FeedTest extends TestCase
         $this->curlFactory
             ->method('create')
             ->willReturn($this->curl);
-        $this->curl->expects($this->once())->method('setConfig')->with($configValues)->willReturnSelf();
+        $this->curl->expects($this->once())->method('setOptions')->with($configValues)->willReturnSelf();
         $this->curl->expects($this->once())->method('read')->willReturn($curlRequest);
         $this->backendConfig->expects($this->once())->method('isSetFlag')->willReturn(false);
         $this->backendConfig
@@ -217,7 +217,7 @@ class FeedTest extends TestCase
     /**
      * @return array
      */
-    public function checkUpdateDataProvider(): array
+    public static function checkUpdateDataProvider(): array
     {
         return [
             [

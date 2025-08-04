@@ -1,8 +1,9 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2017 Adobe
+ * All Rights Reserved.
  */
+declare(strict_types=1);
 
 namespace Magento\CatalogRule\Model\Indexer;
 
@@ -124,8 +125,20 @@ class ReindexRuleProduct
                 : $toTimeInAdminTz;
 
             foreach ($productIds as $productId => $validationByWebsite) {
-                if (!isset($validationByWebsite[$websiteId]) || $validationByWebsite[$websiteId] === null) {
+                if (empty($validationByWebsite[$websiteId])) {
                     continue;
+                }
+
+                if (isset($validationByWebsite['has_antecedent_rule'])) {
+                    $antecedentRuleProductList = array_keys(
+                        $connection->fetchAssoc(
+                            $connection->select()->from($indexTable)
+                                ->where('product_id = ?', $productId)
+                                ->where('rule_id NOT IN (?)', $rule->getId())
+                                ->where('sort_order = ?', $sortOrder)
+                        )
+                    );
+                    $connection->delete($indexTable, ['rule_product_id IN (?)' => $antecedentRuleProductList]);
                 }
 
                 foreach ($customerGroupIds as $customerGroupId) {
@@ -145,7 +158,7 @@ class ReindexRuleProduct
                             'sort_order' => $sortOrder,
                         ];
 
-                        if (count($rows) === $batchCount) {
+                        if (count($rows) === (int) $batchCount) {
                             $connection->insertMultiple($indexTable, $rows);
                             $rows = [];
                         }
