@@ -25,7 +25,7 @@
             <!--Set needed Timezone-->
             <selectOption userInput="New Zealand Standard Time (Antarctica/McMurdo)" selector="{{LocaleOptionsSection.timeZoneDropdown}}" stepKey="selectOption1"/>
             <actionGroup ref="AdminSaveConfigActionGroup" stepKey="saveConfiguration"/>
-            <comment userInput="BIC workaround" stepKey="waitForConfigurationSave"/>
+            <comment userInput="BIC workaround" stepKey="waitForConfigurationPageSave"/>
             <!-- Wait for configuration to be applied-->
             <waitForPageLoad stepKey="waitForConfigurationSave"/>
             <!-- Clear cache to ensure timezone change takes effect-->
