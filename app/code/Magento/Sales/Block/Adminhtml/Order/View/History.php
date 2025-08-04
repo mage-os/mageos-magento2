@@ -134,7 +134,7 @@ class History extends \Magento\Backend\Block\Template
      *
      * @param string|int|float|\Stringable|array<string|int|float|\Stringable> $data
      * @param null|array $allowedTags
-     * @return string
+     * @return ($data is array ? string[] : string)
      */
     public function escapeHtml($data, $allowedTags = null)
     {

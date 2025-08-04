@@ -156,7 +156,7 @@ class Admin extends \Magento\Framework\App\Helper\AbstractHelper
      *
      * @param string|int|float|\Stringable|array<string|int|float|\Stringable> $data
      * @param null|array $allowedTags
-     * @return string
+     * @return ($data is array ? string[] : string)
      */
     public function escapeHtmlWithLinks($data, $allowedTags = null)
     {

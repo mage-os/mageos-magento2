@@ -894,7 +894,7 @@ abstract class AbstractBlock extends \Magento\Framework\DataObject implements Bl
      *
      * @param string|int|float|\Stringable|array<string|int|float|\Stringable> $data
      * @param array|null $allowedTags
-     * @return string
+     * @return ($data is array ? string[] : string)
      * @deprecated 103.0.0 Use $escaper directly in templates and in blocks.
      * @see Escaper Usage
      */

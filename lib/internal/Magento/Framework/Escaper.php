@@ -72,7 +72,7 @@ class Escaper
      *
      * @param string|int|float|\Stringable|array<string|int|float|\Stringable> $data
      * @param array|null $allowedTags
-     * @return string|array
+     * @return ($data is array ? string[] : string)
      */
     public function escapeHtml($data, $allowedTags = null)
     {
