@@ -42,7 +42,7 @@ class OrderResponseFormatter implements QueryResponseFormatterInterface
      */
     private function isApplicable(array $executionResult): bool
     {
-        return key_exists(self::NODE_IDENTIFIER, $executionResult['data']);
+        return isset($executionResult['data']) && key_exists(self::NODE_IDENTIFIER, $executionResult['data']);
     }
 
     /**

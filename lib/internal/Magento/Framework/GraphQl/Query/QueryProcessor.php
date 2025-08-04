@@ -51,6 +51,7 @@ class QueryProcessor
      * @param ExceptionFormatter $exceptionFormatter
      * @param QueryComplexityLimiter $queryComplexityLimiter
      * @param ErrorHandlerInterface $errorHandler
+     * @param QueryDataFormatter $formatter
      * @param QueryParser|null $queryParser
      * @SuppressWarnings(PHPMD.LongVariable)
      */
