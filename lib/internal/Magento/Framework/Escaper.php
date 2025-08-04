@@ -70,7 +70,7 @@ class Escaper
      * AllowedTags will not be escaped, except the following: script, img, embed,
      * iframe, video, source, object, audio
      *
-     * @param string|array $data
+     * @param string|int|float|\Stringable|array<string|int|float|\Stringable> $data
      * @param array|null $allowedTags
      * @return string|array
      */
@@ -267,7 +267,7 @@ class Escaper
     /**
      * Escape a string for the HTML attribute context
      *
-     * @param string $string
+     * @param string|int|float|\Stringable $string
      * @param boolean $escapeSingleQuote
      * @return string
      * @since 101.0.0
@@ -313,7 +313,7 @@ class Escaper
     /**
      * Escape string for the JavaScript context
      *
-     * @param string $string
+     * @param string|int|float|\Stringable $string
      * @return string
      * @since 101.0.0
      */

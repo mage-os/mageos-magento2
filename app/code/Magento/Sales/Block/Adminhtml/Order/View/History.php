@@ -132,7 +132,7 @@ class History extends \Magento\Backend\Block\Template
     /**
      * Replace links in string
      *
-     * @param array|string $data
+     * @param string|int|float|\Stringable|array<string|int|float|\Stringable> $data
      * @param null|array $allowedTags
      * @return string
      */

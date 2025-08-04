@@ -892,7 +892,7 @@ abstract class AbstractBlock extends \Magento\Framework\DataObject implements Bl
     /**
      * Escape HTML entities
      *
-     * @param string|array $data
+     * @param string|int|float|\Stringable|array<string|int|float|\Stringable> $data
      * @param array|null $allowedTags
      * @return string
      * @deprecated 103.0.0 Use $escaper directly in templates and in blocks.
@@ -906,7 +906,7 @@ abstract class AbstractBlock extends \Magento\Framework\DataObject implements Bl
     /**
      * Escape string for the JavaScript context
      *
-     * @param string $string
+     * @param string|int|float|\Stringable $string
      * @return string
      * @since 101.0.0
      * @deprecated 103.0.0 Use $escaper directly in templates and in blocks.
@@ -920,7 +920,7 @@ abstract class AbstractBlock extends \Magento\Framework\DataObject implements Bl
     /**
      * Escape a string for the HTML attribute context
      *
-     * @param string $string
+     * @param string|int|float|\Stringable $string
      * @param boolean $escapeSingleQuote
      * @return string
      * @since 101.0.0

@@ -154,7 +154,7 @@ class Admin extends \Magento\Framework\App\Helper\AbstractHelper
     /**
      * Escape string preserving links
      *
-     * @param string $data
+     * @param string|int|float|\Stringable|array<string|int|float|\Stringable> $data
      * @param null|array $allowedTags
      * @return string
      */
