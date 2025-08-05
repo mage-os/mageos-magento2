@@ -18,6 +18,14 @@ class SubresourceIntegrityCollector
     private array $data = [];
 
     /**
+     * @param array $data
+     */
+    public function __construct(array $data = [])
+    {
+        $this->data = $data;
+    }
+
+    /**
      * Collects given Integrity object.
      *
      * @param SubresourceIntegrity $integrity
