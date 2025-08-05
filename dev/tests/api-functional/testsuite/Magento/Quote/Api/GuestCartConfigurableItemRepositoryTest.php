@@ -166,7 +166,8 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
     private function verifyCartItems(string $guestCartId, int $expectedItemId): void
     {
         $serviceInfo = $this->getCartServiceInfo($guestCartId, 'get');
-        $response = $this->_webApiCall($serviceInfo, []);
+        $requestData = ['cartId' => $guestCartId];
+        $response = $this->_webApiCall($serviceInfo, $requestData);
         $this->assertIsArray($response);
         $this->assertGreaterThan(0, count($response), 'Cart should contain at least one item');
 
