@@ -66,9 +66,7 @@
             <argument name="statusLabel" value="{{readyToPickup.label}}"/>
             <argument name="statusCode" value="{{readyToPickup.code}}"/>
         </actionGroup>
-        <actionGroup ref="AdminUnassignOrderStatusActionGroup" stepKey="unassignOrderStatus">
-            <argument name="message" value="{{OrderUnassignedStatusMessage.value}}"/>
-        </actionGroup>
+        <actionGroup ref="AdminUnassignOrderStatusActionGroup" stepKey="unassignOrderStatus"/>
         <!--Step 8: Verify the default status for the order status Processing -->
         <actionGroup ref="FilterOrderStatusByLabelAndCodeActionGroup" stepKey="filterStatusForOrderInGrid">
             <argument name="statusLabel" value="{{OrderStatus.processing}}"/>
