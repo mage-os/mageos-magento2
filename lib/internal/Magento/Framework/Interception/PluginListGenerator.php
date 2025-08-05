@@ -65,7 +65,7 @@ class PluginListGenerator implements ConfigWriterInterface, ConfigLoaderInterfac
         private LoggerInterface $logger,
         private DirectoryList $directoryList,
         private array $scopePriorityScheme = ['global'],
-        private string $mode = State::MODE_DEFAULT
+        private string $appMode = State::MODE_DEFAULT
     ) {
     }
 
@@ -291,7 +291,7 @@ class PluginListGenerator implements ConfigWriterInterface, ConfigLoaderInterfac
             if (!isset($plugin['instance'])) {
                 unset($plugins[$name]);
                 // Log the undeclared plugin when it is not disabled or when the app is in Developer mode.
-                if ($this->mode === State::MODE_DEVELOPER || !($plugin['disabled'] ?? false)) {
+                if ($this->appMode === State::MODE_DEVELOPER || !($plugin['disabled'] ?? false)) {
                     $this->logger->debug("Reference to undeclared plugin with name '{$name}'.");
                 }
             }
