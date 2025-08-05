@@ -15,7 +15,7 @@
             <title value="Unassign all websites from a product and set visibility to Not Visible Individually"/>
             <description value="Validate Removing a product from all websites in admin the product is saved successfully"/>
             <testCaseId value="AC-3653"/>
-            <severity value="MAJOR"/>
+            <severity value="AVERAGE"/>
             <group value="catalog"/>
         </annotations>
         <before>
@@ -74,7 +74,7 @@
             <argument name="website" value="{{_defaultWebsite.name}}"/>
         </actionGroup>
         <!-- Save the product -->
-        <click selector="{{AdminProductFormAdvancedPricingSection.save}}" stepKey="saveProductAfterUpdate"/>
+        <actionGroup ref="AdminProductFormSaveActionGroup" stepKey="saveProductAfterUpdate"/>
         <!-- Step 3: Verify the product is saved successfully -->
         <waitForElementVisible selector="{{AdminMessagesSection.success}}" stepKey="waitForSuccessMessage"/>
     </test>
