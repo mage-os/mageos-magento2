@@ -1,7 +1,7 @@
 <?php
 /**
  * Copyright 2015 Adobe
- * All rights Reserved.
+ * All Rights Reserved.
  */
 
 namespace Magento\Downloadable\Api;
