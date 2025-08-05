@@ -407,7 +407,7 @@ automations:
 
   - trigger: issues.closed
     actions:
-      - removeFromProject: [18]
+      - removeFromProject: [18] 
       - removeFromProject: [21]
       - removeFromProject: [20]
       - removeFromProject: [19]
