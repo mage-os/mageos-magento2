@@ -40,7 +40,7 @@
             <argument name="pageNumber" value="-1"/>
         </actionGroup>
 
-        <seeCurrentUrlMatches regex="~{{StorefrontCatalogSearchPage.url}}?q={{phrase}}$~" stepKey="seeUrlWithNoPage"/>
+        <seeCurrentUrlMatches regex="~{{StorefrontCatalogSearchPage.url}}?q=simple$~" stepKey="seeUrlWithNoPage"/>
         <!-- Validate that "no products found" error message is not present -->
         <actionGroup ref="StorefrontDontSeeNoProductsFoundActionGroup" stepKey="dontSeeNoProdsFoundMessage"/>
         <!-- Verify the products are visible on the Category Page -->
