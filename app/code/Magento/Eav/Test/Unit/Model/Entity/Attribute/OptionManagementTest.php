@@ -16,6 +16,7 @@ use Magento\Eav\Model\Entity\Attribute\OptionManagement;
 use Magento\Eav\Model\Entity\Attribute\Source\SourceInterface;
 use Magento\Eav\Model\Entity\Attribute\Source\Table as EavAttributeSource;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute;
+use Magento\Eav\Model\ResourceModel\Entity\Attribute\Option as AttributeOptionResource;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Exception\StateException;
@@ -45,7 +46,7 @@ class OptionManagementTest extends TestCase
     protected $resourceModelMock;
 
     /**
-     * @var MockObject|Attribute\Option
+     * @var MockObject|AttributeOptionResource
      */
     protected $optionResourceMock;
 
@@ -56,7 +57,7 @@ class OptionManagementTest extends TestCase
     {
         $this->attributeRepositoryMock = $this->createMock(AttributeRepository::class);
         $this->resourceModelMock = $this->createMock(Attribute::class);
-        $this->optionResourceMock =  $this->createMock(Attribute\Option::class);
+        $this->optionResourceMock =  $this->createMock(AttributeOptionResource::class);
         $this->model = new OptionManagement(
             $this->attributeRepositoryMock,
             $this->resourceModelMock,

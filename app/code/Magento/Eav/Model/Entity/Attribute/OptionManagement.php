@@ -13,7 +13,7 @@ use Magento\Eav\Api\Data\AttributeInterface as EavAttributeInterface;
 use Magento\Eav\Api\Data\AttributeOptionInterface;
 use Magento\Eav\Model\AttributeRepository;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute;
-use Magento\Eav\Model\ResourceModel\Entity\Attribute\Option;
+use Magento\Eav\Model\ResourceModel\Entity\Attribute\Option as AttributeOptionResource;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -35,24 +35,24 @@ class OptionManagement implements AttributeOptionManagementInterface, AttributeO
     protected $resourceModel;
 
     /**
-     * @var Attribute\Option
+     * @var AttributeOptionResource
      */
-    protected Attribute\Option $optionResource;
+    protected $optionResource;
 
     /**
      * @param AttributeRepository $attributeRepository
      * @param Attribute $resourceModel
-     * @param Option|null $optionResource
+     * @param AttributeOptionResource|null $optionResource
      * @codeCoverageIgnore
      */
     public function __construct(
         AttributeRepository $attributeRepository,
         Attribute $resourceModel,
-        ?Attribute\Option $optionResource = null
+        ?AttributeOptionResource $optionResource = null
     ) {
         $this->attributeRepository = $attributeRepository;
         $this->resourceModel = $resourceModel;
-        $this->optionResource = $optionResource ?: ObjectManager::getInstance()->get(Attribute\Option::class);
+        $this->optionResource = $optionResource ?: ObjectManager::getInstance()->get(AttributeOptionResource::class);
     }
 
     /**
