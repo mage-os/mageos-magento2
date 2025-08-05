@@ -65,7 +65,7 @@
             <argument name="productId" value="$$createSimpleProduct.id$$"/>
         </actionGroup>
         <!-- Set visibility to "not visible individually" -->
-        <selectOption selector="{{AdminProductFormSection.visibility}}" userInput="Not Visible Individually" stepKey="setVisibilityNotVisibleIndividually"/>
+        <selectOption selector="{{AdminProductFormSection.visibility}}" userInput="{{simpleProductNotVisibleIndividually.visibility}}" stepKey="setVisibilityNotVisibleIndividually"/>
         <!-- Uncheck all websites -->
         <actionGroup ref="UnassignWebsiteFromProductActionGroup" stepKey="unassignCreatedWebsiteInProduct">
             <argument name="website" value="{{secondCustomWebsite.name}}"/>
