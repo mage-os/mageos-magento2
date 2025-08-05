@@ -23,19 +23,36 @@ use Psr\Log\LoggerInterface;
  */
 class PluginListGenerator implements ConfigWriterInterface, ConfigLoaderInterface
 {
-
-    private State $appState;
-
+    /**
+     * Cache tag
+     *
+     * @var string
+     */
     private string $cacheId = 'plugin-list';
 
+    /**
+     * @var string[]
+     */
     private array $loadedScopes = [];
 
+    /**
+     * @var array
+     */
     private array $pluginData;
 
+    /**
+     * @var array
+     */
     private array $inherited = [];
 
+    /**
+     * @var array
+     */
     private array $processed;
 
+    /**
+     * @var array
+     */
     private array $globalScopePluginData = [];
 
     public function __construct(
@@ -48,9 +65,8 @@ class PluginListGenerator implements ConfigWriterInterface, ConfigLoaderInterfac
         private LoggerInterface $logger,
         private DirectoryList $directoryList,
         private array $scopePriorityScheme = ['global'],
-        ?State $appState = null
+        private string $mode = State::MODE_DEFAULT
     ) {
-        $this->appState = $appState ?? ObjectManager::getInstance()->get(State::class);
     }
 
     /**
@@ -275,7 +291,7 @@ class PluginListGenerator implements ConfigWriterInterface, ConfigLoaderInterfac
             if (!isset($plugin['instance'])) {
                 unset($plugins[$name]);
                 // Log the undeclared plugin when it is not disabled or when the app is in Developer mode.
-                if ($this->appState->getMode() === State::MODE_DEVELOPER || !($plugin['disabled'] ?? false)) {
+                if ($this->mode === State::MODE_DEVELOPER || !($plugin['disabled'] ?? false)) {
                     $this->logger->debug("Reference to undeclared plugin with name '{$name}'.");
                 }
             }
