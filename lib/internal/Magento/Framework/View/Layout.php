@@ -175,7 +175,7 @@ class Layout extends \Magento\Framework\Simplexml\Config implements \Magento\Fra
     protected $appState;
 
     /**
-     * @var \Psr\Log\LoggerInterface
+     * @var Logger
      */
     protected $logger;
 
@@ -204,8 +204,8 @@ class Layout extends \Magento\Framework\Simplexml\Config implements \Magento\Fra
      * @param FrontendInterface $cache
      * @param ContextFactory $readerContextFactory
      * @param Layout\Generator\ContextFactory $generatorContextFactory
-     * @param State $appState
-     * @param LoggerInterface $logger
+     * @param AppState $appState
+     * @param Logger $logger
      * @param bool $cacheable
      * @param SerializerInterface|null $serializer
      * @param int|null $cacheLifetime
@@ -785,10 +785,13 @@ class Layout extends \Magento\Framework\Simplexml\Config implements \Magento\Fra
     /**
      * Block Factory
      *
-     * @param string $type
+     * @template T of \Magento\Framework\View\Element\AbstractBlock
+     *
+     * @param class-string<T> $type
      * @param string $name
      * @param array $arguments
-     * @return \Magento\Framework\View\Element\AbstractBlock
+     *
+     * @return T
      */
     public function createBlock($type, $name = '', array $arguments = [])
     {
@@ -796,16 +799,20 @@ class Layout extends \Magento\Framework\Simplexml\Config implements \Magento\Fra
         $name = $this->structure->createStructuralElement($name, Element::TYPE_BLOCK, $type);
         $block = $this->_createBlock($type, $name, $arguments);
         $block->setLayout($this);
+
         return $block;
     }
 
     /**
      * Create block and add to layout
      *
-     * @param string $type
+     * @template T of \Magento\Framework\View\Element\AbstractBlock
+     *
+     * @param class-string<T> $type
      * @param string $name
      * @param array $arguments
-     * @return \Magento\Framework\View\Element\AbstractBlock
+     *
+     * @return T
      */
     protected function _createBlock($type, $name, array $arguments = [])
     {
@@ -813,17 +820,21 @@ class Layout extends \Magento\Framework\Simplexml\Config implements \Magento\Fra
         $blockGenerator = $this->generatorPool->getGenerator(Layout\Generator\Block::TYPE);
         $block = $blockGenerator->createBlock($type, $name, $arguments);
         $this->setBlock($name, $block);
+
         return $block;
     }
 
     /**
      * Add a block to registry, create new object if needed
      *
-     * @param string|\Magento\Framework\View\Element\AbstractBlock $block
+     * @template T of \Magento\Framework\View\Element\AbstractBlock
+     *
+     * @param class-string<T>|T $block
      * @param string $name
      * @param string $parent
      * @param string $alias
-     * @return \Magento\Framework\View\Element\AbstractBlock
+     *
+     * @return T
      */
     public function addBlock($block, $name = '', $parent = '', $alias = '')
     {
@@ -1012,8 +1023,12 @@ class Layout extends \Magento\Framework\Simplexml\Config implements \Magento\Fra
     /**
      * Get block singleton
      *
-     * @param string $type
-     * @return \Magento\Framework\App\Helper\AbstractHelper
+     * @template T of \Magento\Framework\View\Element\AbstractBlock
+     *
+     * @param class-string<T> $type
+     *
+     * @return T
+     *
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function getBlockSingleton($type)
@@ -1086,7 +1101,7 @@ class Layout extends \Magento\Framework\Simplexml\Config implements \Magento\Fra
         $this->build();
         if ($options = $this->getRendererOptions($namespace, $staticType, $dynamicType)) {
             $dictionary = [];
-            /** @var $block \Magento\Framework\View\Element\Template */
+            /** @var \Magento\Framework\View\Element\Template $block */
             $block = $this->createBlock($options['type'], '')
                 ->setData($data)
                 ->assign($dictionary)
