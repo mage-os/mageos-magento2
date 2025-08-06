@@ -38,7 +38,7 @@ class PluginListGenerator implements ConfigWriterInterface, ConfigLoaderInterfac
     /**
      * @var array
      */
-    private array $pluginData;
+    private array $pluginData = [];
 
     /**
      * @var array
@@ -48,7 +48,7 @@ class PluginListGenerator implements ConfigWriterInterface, ConfigLoaderInterfac
     /**
      * @var array
      */
-    private array $processed;
+    private array $processed = [];
 
     /**
      * @var array
