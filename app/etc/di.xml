@@ -359,11 +359,6 @@
             <argument name="appMode" xsi:type="init_parameter">Magento\Framework\App\State::PARAM_MODE</argument>
         </arguments>
     </type>
-    <type name="Magento\Framework\Interception\PluginListGenerator">
-        <arguments>
-            <argument name="appMode" xsi:type="init_parameter">Magento\Framework\App\State::PARAM_MODE</argument>
-        </arguments>
-    </type>
     <type name="Magento\Framework\App\Cache\Frontend\Factory">
         <arguments>
             <argument name="enforcedOptions" xsi:type="init_parameter">Magento\Framework\App\Cache\Frontend\Factory::PARAM_CACHE_FORCED_OPTIONS</argument>
@@ -476,6 +471,7 @@
                 <item name="primary" xsi:type="string">primary</item>
                 <item name="first" xsi:type="string">global</item>
             </argument>
+            <argument name="appMode" xsi:type="init_parameter">Magento\Framework\App\State::PARAM_MODE</argument>
         </arguments>
     </type>
     <type name="Magento\Framework\App\ResourceConnection">
