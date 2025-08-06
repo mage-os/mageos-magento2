@@ -27,10 +27,6 @@
             <actionGroup ref="AdminSaveConfigActionGroup" stepKey="saveConfiguration"/>
             <!-- Wait for configuration to be applied-->
             <waitForPageLoad stepKey="waitForConfigurationSave"/>
-            <!-- Clear cache to ensure timezone change takes effect-->
-            <actionGroup ref="CliCacheCleanActionGroup" stepKey="flushCacheAfterTimezoneChange">
-                <argument name="tags" value="config full_page"/>
-            </actionGroup>
         </before>
         <after>
             <!-- Go to *General > General > Locale Options* section -->
@@ -38,10 +34,6 @@
             <!-- Reset timezone to default-->
             <selectOption userInput="Central Standard Time (America/Chicago)" selector="{{LocaleOptionsSection.timeZoneDropdown}}" stepKey="selectDefaultoption"/>
             <actionGroup ref="AdminSaveConfigActionGroup" stepKey="saveConfiguration"/>
-            <!-- Clear cache to ensure default timezone change takes effect-->
-            <actionGroup ref="CliCacheCleanActionGroup" stepKey="flushCacheAfterDefaultTimezone">
-                <argument name="tags" value="config full_page"/>
-            </actionGroup>
             <!-- Logout customer from storefront (if logged in) -->
             <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutCustomer"/>
             <!-- Delete customer -->
