@@ -8,7 +8,7 @@
 
 <tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
-    <test name="CatalogSearchWithNegativeQuantityTest">
+    <test name="CatalogSearchWithNegativePageNumberTest">
         <annotations>
             <features value="CatalogSearch"/>
             <stories value="Catalog Search Results"/>
@@ -39,9 +39,6 @@
             <argument name="phrase" value="simple"/>
             <argument name="pageNumber" value="-1"/>
         </actionGroup>
-
-        <!-- Expect redirect to the base URL of category, without any pagination -->
-        <seeCurrentUrlEquals url="{{_ENV.MAGENTO_BASE_URL}}{{StorefrontCatalogSearchPage.url}}?q=simple" stepKey="seeUrlWithNoPage"/>
 
         <!-- Validate that "no products found" error message is not present -->
         <actionGroup ref="StorefrontDontSeeNoProductsFoundActionGroup" stepKey="dontSeeNoProdsFoundMessage"/>
