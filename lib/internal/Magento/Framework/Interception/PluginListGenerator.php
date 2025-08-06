@@ -55,6 +55,18 @@ class PluginListGenerator implements ConfigWriterInterface, ConfigLoaderInterfac
      */
     private array $globalScopePluginData = [];
 
+    /**
+     * @param ReaderInterface $reader
+     * @param ScopeInterface $scopeConfig
+     * @param ConfigInterface $omConfig
+     * @param RelationsInterface $relations
+     * @param DefinitionInterface $definitions
+     * @param ClassDefinitions $classDefinitions
+     * @param LoggerInterface $logger
+     * @param DirectoryList $directoryList
+     * @param array $scopePriorityScheme [optional]
+     * @param string $appMode [optional]
+     */
     public function __construct(
         private ReaderInterface $reader,
         private ScopeInterface $scopeConfig,
@@ -180,6 +192,9 @@ class PluginListGenerator implements ConfigWriterInterface, ConfigLoaderInterfac
 
     /**
      * Whether scope code is current scope code
+     *
+     * @param string $scopeCode
+     * @return bool
      */
     private function isCurrentScope(string $scopeCode): bool
     {
@@ -324,6 +339,8 @@ class PluginListGenerator implements ConfigWriterInterface, ConfigLoaderInterfac
     /**
      * Writes config in storage
      *
+     * @param string $key
+     * @param array $config
      * @throws FileSystemException
      */
     private function writeConfig(string $key, array $config): void
