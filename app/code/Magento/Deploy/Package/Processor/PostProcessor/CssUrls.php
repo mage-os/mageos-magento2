@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2017 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\Deploy\Package\Processor\PostProcessor;
 
@@ -66,7 +66,7 @@ class CssUrls implements ProcessorInterface
             return false;
         }
         $urlMap = [];
-        /** @var string $fileId */
+        /** @var PackageFile $file */
         foreach (array_keys($package->getMap()) as $fileId) {
             $filePath = str_replace(\Magento\Framework\View\Asset\Repository::FILE_ID_SEPARATOR, '/', $fileId);
             // phpcs:ignore Magento2.Functions.DiscouragedFunction
@@ -227,9 +227,7 @@ class CssUrls implements ProcessorInterface
         if (!$this->isFileExistsInPackage($filePath, $package)) {
             /** @var PackageFile $matchedFile */
             $matchedFile = $this->getFileFromParent($filePath, $package);
-            if ($matchedFile && $matchedFile->getPackage()) {
-                $package = $matchedFile->getPackage();
-            }
+            $package = $matchedFile->getPackage();
         }
         return preg_replace(
             '/(?<=}})(.*)(?=\/{{)/',

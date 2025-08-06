@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2014 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 declare(strict_types=1);
 
@@ -111,46 +111,6 @@ class PublisherTest extends TestCase
             ->method('publishFile')
             ->with($this->sourceDirWrite, $this->staticDirWrite, 'file.ext', 'some/file.ext')
             ->willReturn(true);
-
-        $this->assertTrue($this->object->publish($this->getAsset()));
-    }
-
-    public function testPublishWithSourceFileNewer()
-    {
-        $this->staticDirRead->expects($this->once())
-            ->method('isExist')
-            ->with('some/file.ext')
-            ->willReturn(true);
-        $this->staticDirRead->expects($this->once())
-            ->method('readFile')
-            ->with('some/file.ext')
-            ->willReturn('test');
-
-        $materializationStrategy =
-            $this->getMockForAbstractClass(StrategyInterface::class);
-
-        $this->materializationStrategyFactory->expects($this->once())
-            ->method('create')
-            ->with($this->getAsset())
-            ->willReturn($materializationStrategy);
-        $materializationStrategy->expects($this->once())
-            ->method('publishFile')
-            ->with($this->sourceDirWrite, $this->staticDirWrite, 'file.ext', 'some/file.ext')
-            ->willReturn(true);
-
-        $this->assertTrue($this->object->publish($this->getAsset()));
-    }
-
-    public function testPublishWithSourceFileOlder()
-    {
-        $this->staticDirRead->expects($this->once())
-            ->method('isExist')
-            ->with('some/file.ext')
-            ->willReturn(true);
-        $this->staticDirRead->expects($this->once())
-            ->method('readFile')
-            ->with('some/file.ext')
-            ->willReturn(null);
 
         $this->assertTrue($this->object->publish($this->getAsset()));
     }
