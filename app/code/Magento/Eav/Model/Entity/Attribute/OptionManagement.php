@@ -153,7 +153,7 @@ class OptionManagement implements AttributeOptionManagementInterface, AttributeO
 
         $existingLabels = $this->optionResource->getStoreLabelsByOptionId((int)$optionId);
         foreach ($existingLabels as $storeId => $labelText) {
-            $options['value'][$optionId][$storeId] = $labelText;
+            $options['value'][$optionId][$storeId] ??= $labelText;
         }
 
         if (is_array($option->getStoreLabels())) {
