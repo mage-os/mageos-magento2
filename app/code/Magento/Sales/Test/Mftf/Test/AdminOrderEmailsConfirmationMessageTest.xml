@@ -13,7 +13,7 @@
             <features value="Sales"/>
             <title value="Admin sees confirmation messages for invoice, shipment, and credit memo emails"/>
             <description value="Covers storefront order placement and admin sending invoice, shipment, and credit memo emails with confirmation message checks"/>
-            <stories value="Place order, send invoice,shipment,and credit memo emails and check confirmation messages"/>
+            <stories value="Place order, send invoice, shipment, and credit memo emails and check confirmation messages"/>
             <severity value="MAJOR"/>
             <testCaseId value="AC-9122"/>
             <group value="Sales"/>
