@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2017 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Sales\Model;
 
@@ -887,8 +887,16 @@ class Order extends AbstractModel implements EntityInterface, OrderInterface
     private function checkItemShipping(): bool
     {
         foreach ($this->getAllItems() as $item) {
-            $qtyToShip = !$item->getParentItem() || $item->getParentItem()->getProductType() !== Type::TYPE_BUNDLE ?
-                $item->getQtyToShip() : $item->getSimpleQtyToShip();
+            if (!$item->getParentItem() || $item->getParentItem()->getProductType() !== Type::TYPE_BUNDLE) {
+                $qtyToShip = $item->getQtyToShip();
+            } else {
+                if ($item->getParentItem()->getProductType() === Type::TYPE_BUNDLE &&
+                    $item->getParentItem()->getProduct()->getShipmentType() == Type\AbstractType::SHIPMENT_TOGETHER) {
+                    $qtyToShip = $item->getParentItem()->getQtyToShip();
+                } else {
+                    $qtyToShip = $item->getSimpleQtyToShip();
+                }
+            }
 
             if ($qtyToShip > 0 && !$item->getIsVirtual() && !$item->getLockedDoShip()) {
                 return true;
@@ -2001,7 +2009,7 @@ class Order extends AbstractModel implements EntityInterface, OrderInterface
     {
         if (empty($this->_shipments)) {
             if ($this->getId()) {
-                $this->_shipments = $this->_shipmentCollectionFactory->create()->setOrderFilter($this)->load();
+                $this->_shipments = $this->_shipmentCollectionFactory->create()->setOrderFilter($this);
             } else {
                 return false;
             }
@@ -2018,7 +2026,7 @@ class Order extends AbstractModel implements EntityInterface, OrderInterface
     {
         if (empty($this->_creditmemos)) {
             if ($this->getId()) {
-                $this->_creditmemos = $this->_memoCollectionFactory->create()->setOrderFilter($this)->load();
+                $this->_creditmemos = $this->_memoCollectionFactory->create()->setOrderFilter($this);
             } else {
                 return false;
             }
