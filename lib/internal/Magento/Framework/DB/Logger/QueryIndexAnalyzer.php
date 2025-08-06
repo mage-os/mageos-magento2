@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Framework\DB\Logger;
 
 use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\Serialize\Serializer\Json;
 
 class QueryIndexAnalyzer implements QueryAnalyzerInterface
 {
@@ -18,12 +19,18 @@ class QueryIndexAnalyzer implements QueryAnalyzerInterface
      */
     private int $smallTableThreshold;
 
+    private array $analyzerCache = [];
+
     /**
      * @param ResourceConnection $resource
+     * @param Json $serializer
      * @param int|null $smallTableThreshold
      */
-    public function __construct(private readonly ResourceConnection $resource, ?int $smallTableThreshold = null)
-    {
+    public function __construct(
+        private readonly ResourceConnection $resource,
+        private readonly Json $serializer,
+        ?int $smallTableThreshold = null
+    ) {
         if ($smallTableThreshold !== null) {
             $this->smallTableThreshold = $smallTableThreshold;
         } else {
@@ -45,8 +52,14 @@ class QueryIndexAnalyzer implements QueryAnalyzerInterface
             throw new \InvalidArgumentException("Can't process query type");
         }
 
-        $connection = $this->resource->getConnection();
-        $explainOutput = $connection->query('EXPLAIN ' . $sql, $bindings)->fetchAll();
+        $cacheKey = $this->generateCacheKey($sql, $bindings);
+        if(isset($this->analyzerCache[$cacheKey])) {
+            $explainOutput = $this->analyzerCache[$cacheKey];
+        } else {
+            $connection = $this->resource->getConnection();
+            $explainOutput = $connection->query('EXPLAIN ' . $sql, $bindings)->fetchAll();
+            $this->analyzerCache[$cacheKey] = $explainOutput;
+        }
 
         if (empty($explainOutput)) {
             throw new \InvalidArgumentException("No 'explain' output available");
@@ -58,6 +71,18 @@ class QueryIndexAnalyzer implements QueryAnalyzerInterface
         }
 
         return array_values(array_unique($issues));
+    }
+
+    /**
+     * Generate a cache key based on the SQL query and its bindings.
+     *
+     * @param string $sql
+     * @param array $bindings
+     * @return string
+     */
+    private function generateCacheKey(string $sql, array $bindings): string
+    {
+        return base64_encode(hash('sha256', $sql . '|' . $this->serializer->serialize($bindings), true));
     }
 
     /**

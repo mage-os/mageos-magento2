@@ -14,6 +14,7 @@ use Magento\Framework\DB\Logger\QueryAnalyzerException;
 use Magento\Framework\DB\Logger\QueryIndexAnalyzer;
 use Magento\Framework\DB\LoggerInterface;
 use Magento\Framework\Exception\FileSystemException;
+use Magento\Framework\Serialize\Serializer\Json;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -31,12 +32,18 @@ class QueryIndexAnalyzerTest extends TestCase
     private QueryIndexAnalyzer $queryAnalyzer;
 
     /**
+     * @var Json|MockObject
+     */
+    private Json $serializer;
+
+    /**
      * @inheritDoc
      */
     protected function setUp(): void
     {
         $this->resource = $this->createMock(ResourceConnection::class);
-        $this->queryAnalyzer = new QueryIndexAnalyzer($this->resource);
+        $this->serializer = $this->createMock(Json::class);
+        $this->queryAnalyzer = new QueryIndexAnalyzer($this->resource, $this->serializer);
 
         parent::setUp();
     }
