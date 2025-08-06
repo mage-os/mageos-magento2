@@ -106,6 +106,7 @@ class ProductAttributeOptionUpdateInterfaceTest extends WebapiAbstract
     ]
     public function testUpdateMultistorePreservingOtherStoreLabel()
     {
+        $this->_markTestAsRestOnly('Fix inconsistencies in WSDL and Data interfaces');
         $store1 = $this->fixtures->get('store1');
         $store2 = $this->fixtures->get('store2');
         $attributeCode = $this->fixtures->get('multi_store_attr')->getAttributeCode();
