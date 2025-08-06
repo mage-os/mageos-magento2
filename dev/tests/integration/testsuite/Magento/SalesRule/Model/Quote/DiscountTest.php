@@ -866,6 +866,7 @@ class DiscountTest extends TestCase
     }
 
     #[
+        AppIsolation(true),
         DataFixture(ProductFixture::class, ['price' => 100], 'p1'),
         DataFixture(
             RuleFixture::class,
@@ -938,6 +939,7 @@ class DiscountTest extends TestCase
     }
 
     #[
+        AppIsolation(true),
         DataFixture(ProductFixture::class, ['price' => 100], 'p1'),
         DataFixture(
             RuleFixture::class,
@@ -1015,6 +1017,7 @@ class DiscountTest extends TestCase
     }
 
     #[
+        AppIsolation(true),
         DataFixture(ProductFixture::class, ['price' => 100], 'p1'),
         DataFixture(ProductFixture::class, ['price' => 100], 'p2'),
         DataFixture(ProductFixture::class, ['price' => 100], 'p3'),
