@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Framework\GraphQl\Test\Unit\Query;
+namespace Magento\QuoteGraphQl\Test\Unit\Model;
 
 use Magento\QuoteGraphQl\Model\OrderResponseFormatter;
 use PHPUnit\Framework\TestCase;
