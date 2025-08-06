@@ -14,6 +14,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Implementation of the @magentoAppIsolation DocBlock annotation - isolation of global application objects in memory
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class AppIsolation
 {
