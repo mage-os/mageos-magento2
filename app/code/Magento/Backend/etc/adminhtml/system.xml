@@ -463,7 +463,7 @@
                 </field>
                 <field id="minimum_password_length" translate="label comment" type="text" sortOrder="8" showInDefault="1" canRestore="1">
                     <label>Minimum Admin Password Length</label>
-                    <comment>Minimum number of characters required for admin user passwords.</comment>
+                    <comment>Minimum number of characters required for admin user passwords. Values below 7 are not allowed.</comment>
                     <validate>required-entry validate-digits validate-digits-range digits-range-7-65535</validate>
                     <backend_model>Magento\Backend\Model\Config\Password\MinimumLength</backend_model>
                 </field>
