@@ -97,7 +97,7 @@ class CatalogRulePrice extends AbstractPrice implements BasePriceProviderInterfa
                 $this->value = $this->value ? (float)$this->value : false;
             }
             if ($this->value) {
-                $this->value = $this->priceCurrency->convertAndRound($this->value);
+                $this->value = $this->priceCurrency->convertAndRound($this->value, null, null, 4);
             }
         }
 

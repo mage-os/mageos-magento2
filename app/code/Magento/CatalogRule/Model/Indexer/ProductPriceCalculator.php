@@ -56,6 +56,6 @@ class ProductPriceCalculator
                 $productPrice = 0;
         }
 
-        return $this->priceCurrency->round($productPrice);
+        return $this->priceCurrency->roundPrice($productPrice, 4);
     }
 }

@@ -56,7 +56,7 @@ class UnitBaseCalculator extends AbstractCalculator
 
         // Calculate $priceInclTax
         $applyTaxAfterDiscount = $this->config->applyTaxAfterDiscount($this->storeId);
-        $priceInclTax = $this->calculationTool->round($item->getUnitPrice());
+        $priceInclTax = $item->getUnitPrice();
         if (!$this->isSameRateAsStore($rate, $storeRate)) {
             $priceInclTax = $this->calculatePriceInclTax($priceInclTax, $storeRate, $rate, $round);
         }
