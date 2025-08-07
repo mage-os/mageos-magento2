@@ -1,13 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\ConfigurableProduct\Pricing\Price;
 
 use Magento\Catalog\Model\Product;
-use Magento\ConfigurableProduct\Model\ConfigurableMaxPriceCalculator;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\ObjectManager\ResetAfterRequestInterface;
 use Magento\Framework\Pricing\Price\AbstractPrice;
@@ -56,17 +55,11 @@ class ConfigurableRegularPrice extends AbstractPrice implements
     private $lowestPriceOptionsProvider;
 
     /**
-     * @var ConfigurableMaxPriceCalculator
-     */
-    private $configurableMaxPriceCalculator;
-
-    /**
      * @param \Magento\Framework\Pricing\SaleableInterface $saleableItem
      * @param float $quantity
      * @param \Magento\Framework\Pricing\Adjustment\CalculatorInterface $calculator
      * @param \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency
      * @param PriceResolverInterface $priceResolver
-     * @param ConfigurableMaxPriceCalculator $configurableMaxPriceCalculator
      * @param LowestPriceOptionsProviderInterface $lowestPriceOptionsProvider
      */
     public function __construct(
@@ -75,14 +68,12 @@ class ConfigurableRegularPrice extends AbstractPrice implements
         \Magento\Framework\Pricing\Adjustment\CalculatorInterface $calculator,
         \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency,
         PriceResolverInterface $priceResolver,
-        ConfigurableMaxPriceCalculator $configurableMaxPriceCalculator,
         ?LowestPriceOptionsProviderInterface $lowestPriceOptionsProvider = null
     ) {
         parent::__construct($saleableItem, $quantity, $calculator, $priceCurrency);
         $this->priceResolver = $priceResolver;
         $this->lowestPriceOptionsProvider = $lowestPriceOptionsProvider ?:
             ObjectManager::getInstance()->get(LowestPriceOptionsProviderInterface::class);
-        $this->configurableMaxPriceCalculator = $configurableMaxPriceCalculator;
     }
 
     /**
@@ -196,26 +187,28 @@ class ConfigurableRegularPrice extends AbstractPrice implements
     }
 
     /**
-     * Check whether Configurable Product have more than one children products
+     * Check whether Configurable Product has more than one child product and if their prices are equal
      *
      * @param SaleableInterface $product
      * @return bool
      */
     public function isChildProductsOfEqualPrices(SaleableInterface $product): bool
     {
-        $minPrice = $this->getMinRegularAmount()->getValue();
-        $final_price = $product->getFinalPrice();
-        $productId = $product->getId();
-        if ($final_price < $minPrice) {
-            return false;
+        // Get all child products of the configurable product
+        $childProducts = $product->getTypeInstance()->getUsedProducts($product);
+        if (count($childProducts) <= 1) {
+            return false; // Not more than one child product
         }
-        $attributes = $product->getTypeInstance()->getConfigurableAttributes($product);
-        $items = $attributes->getItems();
-        $options = reset($items);
-        $maxPrice = $this->configurableMaxPriceCalculator->getMaxPriceForConfigurableProduct($productId);
-        if ($maxPrice == 0) {
-            $maxPrice = $this->getMaxRegularAmount()->getValue();
+
+        $prices = [];
+        foreach ($childProducts as $child) {
+            $prices[] = $child->getFinalPrice();
         }
-        return (count($options->getOptions()) > 1) && $minPrice == $maxPrice;
+
+        $minPrice = min($prices);
+        $maxPrice = max($prices);
+
+        // Return true only if all child prices are equal (min == max)
+        return $minPrice == $maxPrice;
     }
 }
