@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2020 Adobe
+ * Copyright 2020 Adobe.
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -243,8 +243,7 @@ class DataProvider
                 'amount' => [
                     'value' => abs((float) $orderItem->getDiscountAmount()),
                     'currency' => $associatedOrder->getOrderCurrencyCode()
-                ],
-                'order_model' => $associatedOrder,
+                ]
             ];
         }
         return $discounts;
