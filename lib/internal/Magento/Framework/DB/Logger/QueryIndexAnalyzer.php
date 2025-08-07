@@ -19,6 +19,9 @@ class QueryIndexAnalyzer implements QueryAnalyzerInterface
      */
     private int $smallTableThreshold;
 
+    /**
+     * @var array
+     */
     private array $analyzerCache = [];
 
     /**
@@ -53,7 +56,7 @@ class QueryIndexAnalyzer implements QueryAnalyzerInterface
         }
 
         $cacheKey = $this->generateCacheKey($sql, $bindings);
-        if(isset($this->analyzerCache[$cacheKey])) {
+        if (isset($this->analyzerCache[$cacheKey])) {
             $explainOutput = $this->analyzerCache[$cacheKey];
         } else {
             $connection = $this->resource->getConnection();
