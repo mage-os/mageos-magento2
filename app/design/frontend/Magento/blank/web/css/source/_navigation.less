@@ -1,7 +1,7 @@
-// /**
-//  * Copyright © Magento, Inc. All rights reserved.
-//  * See COPYING.txt for license details.
-//  */
+/**
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
+ */
 
 //
 //  Variables
@@ -145,21 +145,20 @@
         }
     }
 
-    // Mobile-specific hiding rules
+    //  Mobile-specific hiding rules
     .nav-sections-item-content {
         .lib-clearfix();
         box-sizing: border-box;
+        display: none; // Hide all content by default on mobile
         float: right;
         margin-left: -100%;
         margin-top: 71px;
+        padding: @indent__m 0;
         width: 100%;
-        display: none; // Hide all content by default on mobile
 
         &.active {
             display: block !important; // Show only active content on mobile
         }
-
-        padding: @indent__m 0;
     }
 
     .nav-sections-item-title {
@@ -177,7 +176,7 @@
             background: transparent;
             border-bottom: 0;
 
-            // Show corresponding content when tab is active on mobile
+            //  Show corresponding content when tab is active on mobile
             + .nav-sections-item-content {
                 display: block !important;
             }
