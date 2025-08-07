@@ -53,7 +53,9 @@ class UserValidationRules
      */
     private function getMinimumPasswordLength(): int
     {
-        $configValue = $this->scopeConfig->getValue(self::XML_PATH_MINIMUM_PASSWORD_LENGTH);
+        $configValue = $this->scopeConfig ?
+            $this->scopeConfig->getValue(self::XML_PATH_MINIMUM_PASSWORD_LENGTH) : null;
+
         return $configValue ? (int) $configValue : self::MIN_PASSWORD_LENGTH;
     }
 
