@@ -93,6 +93,7 @@ class QueryIndexAnalyzerTest extends TestCase
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
     public static function statsDataProvider(): array
