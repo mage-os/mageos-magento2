@@ -27,12 +27,7 @@
     }
 
     .nav-toggle {
-        .lib-icon-font(
-            @icon-menu,
-            @_icon-font-size: 28px,
-            @_icon-font-color: @header-icons-color,
-            @_icon-font-color-hover: @header-icons-color-hover
-        );
+        .lib-icon-font(@icon-menu, @_icon-font-size: 28px, @_icon-font-color: @header-icons-color, @_icon-font-color-hover: @header-icons-color-hover);
         .lib-icon-text-hide();
         cursor: pointer;
         display: block;
@@ -54,12 +49,7 @@
 
         .parent {
             .level-top {
-                .lib-icon-font(
-                    @_icon-font-content: @icon-down,
-                    @_icon-font-size: 42px,
-                    @_icon-font-position: after,
-                    @_icon-font-display: block
-                );
+                .lib-icon-font(@_icon-font-content: @icon-down, @_icon-font-size: 42px, @_icon-font-position: after, @_icon-font-display: block);
                 position: relative;
 
                 &:after {
@@ -69,10 +59,7 @@
                 }
 
                 &.ui-state-active {
-                    .lib-icon-font-symbol(
-                        @_icon-font-content: @icon-up,
-                        @_icon-font-position: after
-                    );
+                    .lib-icon-font-symbol(@_icon-font-content: @icon-up, @_icon-font-position: after);
                 }
             }
         }
