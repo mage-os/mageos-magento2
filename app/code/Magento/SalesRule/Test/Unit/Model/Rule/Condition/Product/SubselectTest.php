@@ -412,7 +412,7 @@ class SubselectTest extends TestCase
                         'baseRowTotal' => 100,
                         'valueParsed' => 100
                     ],
-                    true,
+                    false,
                     false
                 ],
             'validate true for bundle product
