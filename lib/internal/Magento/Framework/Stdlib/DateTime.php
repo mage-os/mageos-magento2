@@ -25,6 +25,8 @@ class DateTime
 
     public const DATE_PHP_FORMAT = 'Y-m-d';
 
+    public const DATETIME_SLASH_PHP_FORMAT = 'd/m/Y H:i:s';
+
     /**#@-*/
 
     /**

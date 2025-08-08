@@ -11,6 +11,7 @@ use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Exception\AuthenticationException;
 use Magento\Framework\Registry;
+use Magento\Framework\Stdlib\DateTime;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\GraphQl\GetCustomerAuthenticationHeader;
 use Magento\Sales\Api\OrderRepositoryInterface;
@@ -508,7 +509,7 @@ QUERY;
         for ($i = 1; $i <= 3; $i++) {
             $orderNumber = $this->fixtures->get('or' . $i)->getIncrementId();
             $orderCreatedAt = $this->timezone->date($this->fixtures->get('or' . $i)->getCreatedAt())
-                ->format('d/m/Y H:i:s');
+                ->format(DateTime::DATETIME_SLASH_PHP_FORMAT);
             $orderNumberCreatedAtExpected[$orderNumber] = $orderCreatedAt;
         }
 
