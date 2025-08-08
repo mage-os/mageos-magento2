@@ -158,8 +158,8 @@ abstract class LoggerAbstract implements LoggerInterface
                 if ($this->logIndexCheck) {
                     try {
                         $message .= $this->processIndexCheck($sql, $bind) . self::LINE_DELIMITER;
-                    } catch (\InvalidArgumentException|QueryAnalyzerException) {
-                        $message .= 'INDEX CHECK: NA' . self::LINE_DELIMITER;
+                    } catch (QueryAnalyzerException $e) {
+                        $message .= 'INDEX CHECK: ' . strtoupper($e->getMessage()) . self::LINE_DELIMITER;
                     }
                 }
                 break;
@@ -181,6 +181,7 @@ abstract class LoggerAbstract implements LoggerInterface
      * @param string $sql
      * @param array $bind
      * @return string
+     * @throws QueryAnalyzerException
      */
     private function processIndexCheck(string $sql, array $bind): string
     {

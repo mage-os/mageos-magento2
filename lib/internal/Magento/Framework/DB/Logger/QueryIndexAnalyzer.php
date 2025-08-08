@@ -34,11 +34,9 @@ class QueryIndexAnalyzer implements QueryAnalyzerInterface
         private readonly Json $serializer,
         ?int $smallTableThreshold = null
     ) {
-        if ($smallTableThreshold !== null) {
-            $this->smallTableThreshold = $smallTableThreshold;
-        } else {
-            $this->smallTableThreshold = self::DEFAULT_SMALL_TABLE_THRESHOLD;
-        }
+        $this->smallTableThreshold = ((int) $smallTableThreshold > 0)
+            ? (int) $smallTableThreshold
+            : self::DEFAULT_SMALL_TABLE_THRESHOLD;
     }
 
     /**
@@ -47,12 +45,12 @@ class QueryIndexAnalyzer implements QueryAnalyzerInterface
      * @param string $sql
      * @param array $bindings
      * @return array
-     * @throws \Zend_Db_Statement_Exception|\InvalidArgumentException|QueryAnalyzerException
+     * @throws \Zend_Db_Statement_Exception|QueryAnalyzerException
      */
     public function process(string $sql, array $bindings): array
     {
         if (!$this->isSelectQuery($sql)) {
-            throw new \InvalidArgumentException("Can't process query type");
+            throw new QueryAnalyzerException("Can't process query type");
         }
 
         $cacheKey = $this->generateCacheKey($sql, $bindings);
@@ -65,7 +63,7 @@ class QueryIndexAnalyzer implements QueryAnalyzerInterface
         }
 
         if (empty($explainOutput)) {
-            throw new \InvalidArgumentException("No 'explain' output available");
+            throw new QueryAnalyzerException("No 'explain' output available");
         }
 
         $issues = $this->analyzeQueries($explainOutput);

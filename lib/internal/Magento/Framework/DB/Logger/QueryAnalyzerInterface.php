@@ -17,7 +17,7 @@ interface QueryAnalyzerInterface
 
     public const DEPENDENT_SUBQUERY = 'DEPENDENT SUBQUERY';
 
-    public const PARTIAL_INDEX = 'PARTIAL INDEX USED';
+    public const PARTIAL_INDEX = 'PARTIAL INDEX';
 
     /**
      * Analyze query
@@ -25,6 +25,7 @@ interface QueryAnalyzerInterface
      * @param string $sql
      * @param array $bindings
      * @return array
+     * @throws QueryAnalyzerException
      */
     public function process(string $sql, array $bindings): array;
 }
