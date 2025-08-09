@@ -18,8 +18,6 @@ use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Store\Model\StoreManagerInterface;
 
 /**
- * Class CatalogRulePrice
- *
  * @SuppressWarnings(PHPMD.CookieAndSessionMisuse)
  */
 class CatalogRulePrice extends AbstractPrice implements BasePriceProviderInterface
@@ -27,7 +25,7 @@ class CatalogRulePrice extends AbstractPrice implements BasePriceProviderInterfa
     /**
      * Price type identifier string
      */
-    const PRICE_CODE = 'catalog_rule_price';
+    public const PRICE_CODE = 'catalog_rule_price';
 
     /**
      * @var TimezoneInterface
