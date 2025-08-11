@@ -19,6 +19,9 @@ class Directory implements CustomFilterInterface
      */
     private $logger;
 
+    /**
+     * @param LoggerInterface $logger
+     */
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
@@ -44,7 +47,10 @@ class Directory implements CustomFilterInterface
         } catch (\Exception $e) {
             // Log the error for debugging but continue with case-insensitive fallback
             // Note: This fallback means directory filtering will not be case-sensitive
-            $this->logger->error('MediaGallery Directory Filter: BINARY REGEXP not supported, using case-insensitive fallback: ' . $e->getMessage());
+            $this->logger->error(
+                'MediaGallery Directory Filter: BINARY REGEXP not supported, ' .
+                'using case-insensitive fallback: ' . $e->getMessage()
+            );
             $collection->getSelect()->where('path REGEXP ? ', '^' . $value . '/[^\/]*$');
         }
 

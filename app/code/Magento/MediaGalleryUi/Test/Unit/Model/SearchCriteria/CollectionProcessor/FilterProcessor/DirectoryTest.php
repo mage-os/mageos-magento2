@@ -44,7 +44,7 @@ class DirectoryTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->directoryFilterProcessor = new Directory();
+        $this->directoryFilterProcessor = new Directory($this->createMock(\Psr\Log\LoggerInterface::class));
         $this->collectionMock = $this->createMock(AbstractDb::class);
         $this->selectMock = $this->createMock(Select::class);
         $this->filterMock = $this->createMock(Filter::class);
