@@ -10,20 +10,18 @@ namespace Magento\Quote\Api;
 
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Test\Fixture\Product as ProductFixture;
+use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Magento\ConfigurableProduct\Test\Fixture\Attribute as AttributeFixture;
 use Magento\ConfigurableProduct\Test\Fixture\Product as ConfigurableProductFixture;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Webapi\Rest\Request;
 use Magento\Integration\Api\AdminTokenServiceInterface;
-use Magento\Integration\Model\AdminTokenService;
 use Magento\Integration\Model\Oauth\Token as TokenModel;
 use Magento\TestFramework\Fixture\DataFixture;
 use Magento\TestFramework\Fixture\DataFixtureStorage;
 use Magento\TestFramework\Fixture\DataFixtureStorageManager;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\TestCase\WebapiAbstract;
-use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
-use Magento\User\Model\User;
 use Magento\User\Model\User as UserModel;
 
 /**
@@ -43,21 +41,6 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
     private const SERVICE_VERSION_GUEST_CART_ITEM = 'V1';
 
     /**
-     * @var AdminTokenServiceInterface
-     */
-    private $tokenService;
-
-    /**
-     * @var TokenModel
-     */
-    private $tokenModel;
-
-    /**
-     * @var UserModel
-     */
-    private $userModel;
-
-    /**
      * @var array
      */
     private $simpleProductSkus=[];
@@ -73,9 +56,6 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
     protected function setUp(): void
     {
         parent::setUp();
-        $this->tokenService = Bootstrap::getObjectManager()->get(AdminTokenService::class);
-        $this->tokenModel = Bootstrap::getObjectManager()->get(TokenModel::class);
-        $this->userModel = Bootstrap::getObjectManager()->get(User::class);
         $this->fixtures = Bootstrap::getObjectManager()->get(DataFixtureStorageManager::class)->getStorage();
     }
 
@@ -106,6 +86,8 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
     }
 
     /**
+     * Create a guest cart and return its ID.
+     *
      * @return string
      */
     private function createGuestCart(): string
@@ -129,8 +111,11 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
     }
 
     /**
+     * Add a configurable product to the guest cart.
+     *
      * @param string $guestCartId
      * @return array
+     * @throws NoSuchEntityException
      */
     private function addConfigurableProductToCart(string $guestCartId): array
     {
@@ -159,6 +144,8 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
     }
 
     /**
+     * Verify that the cart contains the expected items.
+     *
      * @param string $guestCartId
      * @param int $expectedItemId
      * @return void
@@ -189,9 +176,12 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
     }
 
     /**
+     * Update a configurable product in the guest cart.
+     *
      * @param string $guestCartId
      * @param int $itemId
      * @return void
+     * @throws NoSuchEntityException
      */
     private function updateConfigurableProductInCart(string $guestCartId, int $itemId): void
     {
@@ -233,16 +223,18 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
     }
 
     /**
-     * @param $configurableProduct
-     * @param $selectedOption
+     * Get configurable option data for a configurable product.
+     *
+     * @param ProductInterface $configurableProduct
      * @return array
      */
-    private function getConfigurableOptionData($configurableProduct, $selectedOption = null): array
+    private function getConfigurableOptionData(ProductInterface $configurableProduct): array
     {
+        $selectedOption = null;
         $configOptions = $configurableProduct->getExtensionAttributes()->getConfigurableProductOptions();
 
         $options = $configOptions[0]->getOptions();
-        $optionKey = (isset($selectedOption) && isset($options[$selectedOption])) ? $selectedOption : 0;
+        $optionKey = (isset($selectedOption) && isset($options[null])) ? null : 0;
 
         return [
             'attribute_id' => $configOptions[0]->getAttributeId(),
@@ -251,6 +243,8 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
     }
 
     /**
+     * Build the request data for adding or updating a cart item.
+     *
      * @param string $cartId
      * @param string $sku
      * @param string $attributeId
@@ -279,6 +273,8 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
     }
 
     /**
+     * Get the service information for the cart operations.
+     *
      * @param string $cartId
      * @param string $action
      * @param int|null $itemId
