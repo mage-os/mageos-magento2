@@ -193,11 +193,12 @@ class PluginListGenerator implements ConfigWriterInterface, ConfigLoaderInterfac
     /**
      * Whether scope code is current scope code
      *
-     * @param string $scopeCode
+     * @param string|null $scopeCode
      * @return bool
      */
-    private function isCurrentScope(string $scopeCode): bool
+    private function isCurrentScope(?string $scopeCode): bool
     {
+        // ToDo: $scopeCode can be null in integration tests because of how scope is reset.
         return $this->scopeConfig->getCurrentScope() === $scopeCode;
     }
 
