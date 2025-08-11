@@ -33,6 +33,7 @@ class OrderCreationValidationTest extends WebapiAbstract
     protected function setUp(): void
     {
         parent::setUp();
+        $this->_markTestAsRestOnly();
         $this->fixtures = DataFixtureStorageManager::getStorage();
     }
 
