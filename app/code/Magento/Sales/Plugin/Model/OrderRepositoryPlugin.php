@@ -23,6 +23,7 @@ class OrderRepositoryPlugin
      * @param OrderInterface $entity
      * @return array
      * @throws LocalizedException
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function beforeSave(OrderRepository $subject, OrderInterface $entity): array
     {
@@ -59,13 +60,6 @@ class OrderRepositoryPlugin
 
         if (!$items || count($items) === 0) {
             throw new LocalizedException(__('Please specify order items.'));
-        }
-
-        // Validate each item has required data
-        foreach ($items as $item) {
-            if (!$item->getProductId() || !$item->getSku()) {
-                throw new LocalizedException(__('Order items must have valid product information.'));
-            }
         }
     }
 }
