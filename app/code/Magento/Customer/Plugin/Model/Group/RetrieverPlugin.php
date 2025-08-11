@@ -36,6 +36,11 @@ class RetrieverPlugin
     private $appState;
 
     /**
+     * @var array Cache for customer group IDs
+     */
+    private $customerGroupCache = [];
+
+    /**
      * @param UserContextInterface $userContext
      * @param CustomerRepositoryInterface $customerRepository
      * @param State $appState
@@ -72,9 +77,11 @@ class RetrieverPlugin
             if ($userType === UserContextInterface::USER_TYPE_CUSTOMER) {
                 $customerId = $this->userContext->getUserId();
                 if ($customerId) {
-                    $customer = $this->customerRepository->getById($customerId);
-                    $customerGroupId = (int)$customer->getGroupId();
-                    return $customerGroupId;
+                    if (!isset($this->customerGroupCache[$customerId])) {
+                        $customer = $this->customerRepository->getById($customerId);
+                        $this->customerGroupCache[$customerId] = (int)$customer->getGroupId();
+                    }
+                    return $this->customerGroupCache[$customerId];
                 }
             }
             return Group::NOT_LOGGED_IN_ID;

@@ -50,6 +50,11 @@ class ProductRenderListPlugin
     private $logger;
 
     /**
+     * @var array Cache for customer group IDs
+     */
+    private $customerGroupCache = [];
+
+    /**
      * @param UserContextInterface $userContext
      * @param CustomerRepositoryInterface $customerRepository
      * @param HttpContext $httpContext
@@ -125,8 +130,11 @@ class ProductRenderListPlugin
             if ($userType === UserContextInterface::USER_TYPE_CUSTOMER) {
                 $customerId = $this->userContext->getUserId();
                 if ($customerId) {
-                    $customer = $this->customerRepository->getById($customerId);
-                    return (int)$customer->getGroupId();
+                    if (!isset($this->customerGroupCache[$customerId])) {
+                        $customer = $this->customerRepository->getById($customerId);
+                        $this->customerGroupCache[$customerId] = (int)$customer->getGroupId();
+                    }
+                    return $this->customerGroupCache[$customerId];
                 }
             }
             // For guest users, return the not logged in group ID
