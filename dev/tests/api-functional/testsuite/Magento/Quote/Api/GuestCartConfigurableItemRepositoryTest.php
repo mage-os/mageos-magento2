@@ -230,11 +230,10 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
      */
     private function getConfigurableOptionData(ProductInterface $configurableProduct): array
     {
-        $selectedOption = null;
         $configOptions = $configurableProduct->getExtensionAttributes()->getConfigurableProductOptions();
 
         $options = $configOptions[0]->getOptions();
-        $optionKey = (isset($selectedOption) && isset($options[null])) ? null : 0;
+        $optionKey = isset($options[null]) ? null : 0;
 
         return [
             'attribute_id' => $configOptions[0]->getAttributeId(),
