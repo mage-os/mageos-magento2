@@ -272,7 +272,7 @@ abstract class AbstractItem extends AbstractExtensibleModel implements ItemInter
      * Get messages array of quote item
      *
      * @param bool $string flag for converting messages to string
-     * @return string[]|string
+     * @return array|string
      */
     public function getMessage($string = true)
     {
