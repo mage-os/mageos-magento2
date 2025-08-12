@@ -11,6 +11,7 @@ use Magento\Framework\Api\Filter;
 use Magento\Framework\Api\SearchCriteria\CollectionProcessor\FilterProcessor\CustomFilterInterface;
 use Magento\Framework\Data\Collection\AbstractDb;
 use Psr\Log\LoggerInterface;
+use Magento\Framework\App\ObjectManager;
 
 class Directory implements CustomFilterInterface
 {
@@ -20,11 +21,11 @@ class Directory implements CustomFilterInterface
     private $logger;
 
     /**
-     * @param LoggerInterface $logger
+     * @param LoggerInterface|null $logger
      */
-    public function __construct(LoggerInterface $logger)
+    public function __construct(LoggerInterface $logger = null)
     {
-        $this->logger = $logger;
+        $this->logger = $logger ?: ObjectManager::getInstance()->create(LoggerInterface::class);
     }
 
     /**
