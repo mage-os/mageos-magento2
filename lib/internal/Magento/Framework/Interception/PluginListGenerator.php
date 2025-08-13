@@ -66,6 +66,7 @@ class PluginListGenerator implements ConfigWriterInterface, ConfigLoaderInterfac
      * @param DirectoryList $directoryList
      * @param array $scopePriorityScheme [optional]
      * @param string $appMode [optional]
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         private ReaderInterface $reader,
