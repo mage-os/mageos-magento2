@@ -115,7 +115,7 @@ class ProductAttributeOptionUpdateInterfaceTest extends WebapiAbstract
         $store2Label = 'Store 2 Label';
         $store1LabelUpdated = 'Store 1 Label Updated';
 
-        // First, create an option with multiple store labels
+        // First, create an option with multiple store labels and add the option
         $initialOptionData = [
             AttributeOptionInterface::LABEL => $attributeLabel,
             AttributeOptionInterface::STORE_LABELS => [
@@ -129,8 +129,6 @@ class ProductAttributeOptionUpdateInterfaceTest extends WebapiAbstract
                 ],
             ],
         ];
-
-        // Add the option first
         $newOptionId = $this->webApiCallAttributeOptions(
             $attributeCode,
             Request::HTTP_METHOD_POST,
@@ -153,7 +151,6 @@ class ProductAttributeOptionUpdateInterfaceTest extends WebapiAbstract
                 ],
             ],
         ];
-
         $response = $this->webApiCallAttributeOptions(
             $attributeCode,
             Request::HTTP_METHOD_PUT,
@@ -167,8 +164,6 @@ class ProductAttributeOptionUpdateInterfaceTest extends WebapiAbstract
         );
         $this->assertTrue($response, 'Update should be successful');
 
-        // Test store labels preservation by checking labels in different store contexts
-        // This verifies that the fix for preserving store labels is working correctly
         $store1Options = $this->getAttributeOptions($attributeCode, $store1->getCode());
         $store2Options = $this->getAttributeOptions($attributeCode, $store2->getCode());
 
