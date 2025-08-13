@@ -70,7 +70,7 @@ class PreviewTest extends TestCase
 
     /** @var Session|MockObject */
     protected $backendSessionMock;
-
+    
     /** @var Escaper|MockObject */
     private $escaperMock;
 
@@ -91,7 +91,7 @@ class PreviewTest extends TestCase
             ->addMethods(['hasPreviewData'])
             ->disableOriginalConstructor()
             ->getMock();
-
+        
          $this->templateMock = $this->getMockBuilder(Template::class)
             ->addMethods(['setTemplateType', 'setTemplateText', 'setTemplateStyles'])
             ->onlyMethods(['isPlain', 'emulateDesign', 'revertDesign', 'getProcessedTemplate', 'load'])
