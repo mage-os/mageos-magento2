@@ -23,7 +23,7 @@ class Directory implements CustomFilterInterface
     /**
      * @param LoggerInterface|null $logger
      */
-    public function __construct(LoggerInterface $logger = null)
+    public function __construct(?LoggerInterface $logger = null)
     {
         $this->logger = $logger ?: ObjectManager::getInstance()->create(LoggerInterface::class);
     }
