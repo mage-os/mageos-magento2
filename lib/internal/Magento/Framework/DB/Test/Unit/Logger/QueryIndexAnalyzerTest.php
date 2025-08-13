@@ -9,12 +9,9 @@ namespace Magento\Framework\DB\Test\Unit\Logger;
 
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
-use Magento\Framework\DB\Logger\File;
 use Magento\Framework\DB\Logger\QueryAnalyzerException;
 use Magento\Framework\DB\Logger\QueryAnalyzerInterface;
 use Magento\Framework\DB\Logger\QueryIndexAnalyzer;
-use Magento\Framework\DB\LoggerInterface;
-use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Serialize\Serializer\Json;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -50,53 +47,87 @@ class QueryIndexAnalyzerTest extends TestCase
     }
 
     /**
-     * @param string $sql
-     * @param array $bind
-     * @param int $serializeCall
-     * @param string $explainResult
-     * @param mixed $expectedResult
      * @return void
      * @throws Exception
      * @throws QueryAnalyzerException
      * @throws \Zend_Db_Statement_Exception
-     * @testdox $sql with bindings $bind to get $expectedResult
-     * @dataProvider statsDataProvider
      */
-    public function testProcess(
-        string $sql,
-        array $bind,
-        int $serializeCall,
-        string $explainResult,
-        mixed $expectedResult
-    ): void {
-        $this->serializer->expects($this->exactly($serializeCall))
+    public function testQueryException(): void
+    {
+        $sql = "SELECT * FROM `admin_system_messages`";
+        $bind = [];
+        $this->serializer->expects($this->once())
+            ->method('serialize')
+            ->with($bind)
+            ->willReturn(json_encode($bind));
+        $connection = $this->createMock(AdapterInterface::class);
+        $connection->expects($this->once())
+            ->method('query')
+            ->with('EXPLAIN ' . $sql)
+            ->willThrowException(new \Zend_Db_Adapter_Exception("Query error"));
+        $this->resource->expects($this->once())->method('getConnection')->willReturn($connection);
+
+        $this->expectException(QueryAnalyzerException::class);
+        $this->expectExceptionMessage("No 'explain' output available");
+        $this->queryAnalyzer->process($sql, $bind);
+    }
+
+    /**
+     * @return void
+     * @throws Exception
+     * @throws QueryAnalyzerException
+     * @throws \Zend_Db_Statement_Exception
+     */
+    public function testProcessSmallTable(): void
+    {
+        $sql = "SELECT `main_table`.* FROM `admin_system_messages` AS `main_table`
+                ORDER BY severity ASC, created_at DESC";
+        $bind = [];
+        $explainResult = '[{"id":"1","select_type":"SIMPLE","table":"admin_system_messages","partitions":null,"type":"ALL",
+                "possible_keys":null,"key":null,"key_len":null,"ref":null,"rows":"1","filtered":"100.00",
+                "Extra":"Using filesort"}]';
+
+        $this->serializer->expects($this->once())
             ->method('serialize')
             ->with($bind)
             ->willReturn(json_encode($bind));
         $statement = $this->createMock(\Zend_Db_Statement_Interface::class);
-        $statement->expects($this->any())->method('fetchAll')->willReturn(json_decode($explainResult, true));
+        $statement->expects($this->once())
+            ->method('fetchAll')
+            ->willReturn(json_decode($explainResult, true));
         $connection = $this->createMock(AdapterInterface::class);
-        $connection->expects($this->any())
+        $connection->expects($this->once())
             ->method('query')
             ->with('EXPLAIN ' . $sql)
             ->willReturn($statement);
-        $this->resource->expects($this->any())->method('getConnection')->willReturn($connection);
+        $this->resource->expects($this->once())->method('getConnection')->willReturn($connection);
 
-        if ($expectedResult instanceof \Exception) {
-            $this->expectException(\Exception::class);
-            $this->expectExceptionMessage($expectedResult->getMessage());
-            $this->queryAnalyzer->process($sql, $bind);
-        } else {
-            $result = $this->queryAnalyzer->process($sql, $bind);
-            $this->assertSame($expectedResult, $result);
-        }
+        $this->expectException(QueryAnalyzerException::class);
+        $this->expectExceptionMessage("Small table");
+        $this->queryAnalyzer->process($sql, $bind);
     }
 
     /**
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @return array
+     * @param string $sql
+     * @param array $bind
+     * @return void
+     * @throws QueryAnalyzerException
+     * @throws \Zend_Db_Statement_Exception
+     * @dataProvider statsNonSelectDataProvider
+     * @testdox $sql with bindings $bind to get $expectedResult
      */
-    public static function statsDataProvider(): array
+    public function testProcessThrowsExceptionForNonSelectQuery(string $sql, array $bind): void {
+        $this->expectException(QueryAnalyzerException::class);
+        $this->expectExceptionMessage("Can't process query type");
+        $this->serializer->expects($this->never())->method('serialize');
+
+        $this->queryAnalyzer->process($sql, $bind);
+    }
+
+    /**
+     * @return array[]
+     */
+    public static function statsNonSelectDataProvider(): array
     {
         return [
             'no-stats-for-update-query' => [
@@ -123,17 +154,57 @@ class QueryIndexAnalyzerTest extends TestCase
                 0,
                 '{}',
                 new QueryAnalyzerException("Can't process query type")
-            ],
-            'small-table-query' => [
-                "SELECT `main_table`.* FROM `admin_system_messages` AS `main_table`
-                      ORDER BY severity ASC, created_at DESC",
-                [],
-                1,
-                '[{"id":"1","select_type":"SIMPLE","table":"admin_system_messages","partitions":null,"type":"ALL",
-                "possible_keys":null,"key":null,"key_len":null,"ref":null,"rows":"1","filtered":"100.00",
-                "Extra":"Using filesort"}]',
-                new QueryAnalyzerException("Small table")
-            ],
+            ]
+        ];
+    }
+
+    /**
+     * @param string $sql
+     * @param array $bind
+     * @param string $explainResult
+     * @param mixed $expectedResult
+     * @return void
+     * @throws Exception
+     * @throws QueryAnalyzerException
+     * @throws \Zend_Db_Statement_Exception
+     * @testdox $sql with bindings $bind to get $expectedResult
+     * @dataProvider statsDataProvider
+     */
+    public function testProcess(
+        string $sql,
+        array $bind,
+        string $explainResult,
+        mixed $expectedResult
+    ): void {
+        $this->serializer->expects($this->once())
+            ->method('serialize')
+            ->with($bind)
+            ->willReturn(json_encode($bind));
+        $statement = $this->createMock(\Zend_Db_Statement_Interface::class);
+        $statement->expects($this->any())->method('fetchAll')->willReturn(json_decode($explainResult, true));
+        $connection = $this->createMock(AdapterInterface::class);
+        $connection->expects($this->once())
+            ->method('query')
+            ->with('EXPLAIN ' . $sql)
+            ->willReturn($statement);
+        $this->resource->expects($this->once())->method('getConnection')->willReturn($connection);
+
+        if ($expectedResult instanceof \Exception) {
+            $this->expectException(\Exception::class);
+            $this->expectExceptionMessage($expectedResult->getMessage());
+            $this->queryAnalyzer->process($sql, $bind);
+        } else {
+            $result = $this->queryAnalyzer->process($sql, $bind);
+            $this->assertSame($expectedResult, $result);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public static function statsDataProvider(): array
+    {
+        return [
             'subselect-with-dependent-query' => [
                 "SELECT `main_table`.*, (IF(
                 (SELECT count(*)
@@ -145,7 +216,6 @@ class QueryIndexAnalyzerTest extends TestCase
             )) AS `status` FROM `magento_bulk` AS `main_table` WHERE (`user_id` = '1')
                                                                ORDER BY FIELD(status, 2,3,0,4,1), start_time DESC",
                 [],
-                1,
                 '[{"id":"1","select_type":"PRIMARY","table":"main_table","partitions":null,"type":"ref",
                 "possible_keys":"MAGENTO_BULK_USER_ID","key":"MAGENTO_BULK_USER_ID","key_len":"5","ref":"const",
                 "rows":"1","filtered":"100.00","Extra":"Using filesort"},{"id":"3","select_type":"DEPENDENT SUBQUERY",
@@ -168,7 +238,6 @@ class QueryIndexAnalyzerTest extends TestCase
                  ('simple', 'virtual', 'bundle', 'downloadable', 'configurable', 'grouped')))
                                                                    GROUP BY `o`.`product_type`",
                 [],
-                1,
                 '[{"id":1,"select_type":"SIMPLE","table":"o","partitions":null,"type":"ref","possible_keys":
                 "SALES_ORDER_ITEM_ORDER_ID","key":"SALES_ORDER_ITEM_ORDER_ID","key_len":"4","ref":"const",
                 "rows":2,"filtered":45,"Extra":"Using where; Using temporary"}]',
@@ -186,7 +255,6 @@ class QueryIndexAnalyzerTest extends TestCase
                 OR (`is_visible_in_advanced_search` = '1') OR (((`is_filterable` = '1') OR (`is_filterable` = '2')))
                                                                OR (`is_filterable_in_search` = '1'))",
                 [],
-                1,
                 '[{"id":1,"select_type":"SIMPLE","table":"additional_table","partitions":null,"type":"ALL",
                 "possible_keys":"PRIMARY","key":null,"key_len":null,"ref":null,"rows":170,"filtered":40.95,"Extra":
                 "Using where"},{"id":1,"select_type":"SIMPLE","table":"main_table","partitions":null,"type":"eq_ref",

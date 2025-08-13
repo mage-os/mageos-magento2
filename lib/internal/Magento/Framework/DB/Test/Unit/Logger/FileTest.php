@@ -83,20 +83,31 @@ class FileTest extends TestCase
     }
 
     /**
-     * @param $type
-     *
+     * @return void
+     */
+    public function testNothingToLog(): void
+    {
+        $this->stream->expects($this->never())->method('write');
+        $this->object->logStats(
+            LoggerInterface::TYPE_QUERY,
+            'EXPLAIN SELECT something',
+            ['data']
+        );
+    }
+
+    /**
+     * @param string $type
      * @param string $q
      * @param array $bind
-     * @param \Zend_Db_Statement_Pdo|null $result
      * @param string $expected
      * @dataProvider logStatsDataProvider
      */
-    public function testLogStats($type, $q, array $bind, $result, $expected)
+    public function testLogStats(string $type, string $q, array $bind, string $expected)
     {
-        $this->stream->expects($expected ? $this->once() : $this->never())
+        $this->stream->expects($this->once())
             ->method('write')
             ->with($this->matches($expected));
-        $this->object->logStats($type, $q, $bind, $result);
+        $this->object->logStats($type, $q, $bind);
     }
 
     /**
@@ -105,35 +116,25 @@ class FileTest extends TestCase
     public static function logStatsDataProvider()
     {
         return [
-            [LoggerInterface::TYPE_CONNECT, '', [], null, '%aCONNECT%a'],
+            [LoggerInterface::TYPE_CONNECT, '', [], '%aCONNECT%a'],
             [
                 LoggerInterface::TYPE_TRANSACTION,
                 'SELECT something',
                 [],
-                null,
                 '%aTRANSACTION SELECT something%a'
             ],
             [
                 LoggerInterface::TYPE_QUERY,
                 'SELECT something',
                 [],
-                null,
                 '%aSQL: SELECT something%a'
             ],
             [
                 LoggerInterface::TYPE_QUERY,
                 'SELECT something',
                 ['data'],
-                null,
                 "%aQUERY%aSQL: SELECT something%aBIND: array (%a0 => 'data',%a)%a"
-            ],
-            [
-                LoggerInterface::TYPE_QUERY,
-                'EXPLAIN SELECT something',
-                ['data'],
-                null,
-                ''
-            ],
+            ]
         ];
     }
 

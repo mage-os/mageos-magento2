@@ -91,7 +91,7 @@ class QueryLogEnableCommand extends Command
                         self::INPUT_ARG_LOG_INDEX_CHECK,
                         null,
                         InputOption::VALUE_OPTIONAL,
-                        'Include index check. [true|false]',
+                        'Include index check. Warning: may cause performance degradation. [true|false]',
                         "false"
                     )
                 ]

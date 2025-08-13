@@ -58,7 +58,11 @@ class QueryIndexAnalyzer implements QueryAnalyzerInterface
             $explainOutput = $this->analyzerCache[$cacheKey];
         } else {
             $connection = $this->resource->getConnection();
-            $explainOutput = $connection->query('EXPLAIN ' . $sql, $bindings)->fetchAll();
+            try {
+                $explainOutput = $connection->query('EXPLAIN ' . $sql, $bindings)->fetchAll();
+            } catch (\Zend_Db_Adapter_Exception) {
+                $explainOutput = [];
+            }
             $this->analyzerCache[$cacheKey] = $explainOutput;
         }
 
@@ -142,7 +146,7 @@ class QueryIndexAnalyzer implements QueryAnalyzerInterface
             $issues[] = self::FULL_TABLE_SCAN;
         }
 
-        if ($this->isUsingIndex($selectDetails)) {
+        if (false === $this->isUsingIndex($selectDetails)) {
             $issues[] = self::NO_INDEX;
         }
 
@@ -198,7 +202,7 @@ class QueryIndexAnalyzer implements QueryAnalyzerInterface
         $extra = strtolower($selectDetails['extra'] ?? '');
         $key = $selectDetails['key'] ?? null;
 
-        return empty($key) && !str_contains($extra, 'no matching row in const table');
+        return !(empty($key) && !str_contains($extra, 'no matching row in const table'));
     }
 
     /**
@@ -259,11 +263,11 @@ class QueryIndexAnalyzer implements QueryAnalyzerInterface
      */
     private function checkForCoveringIndex(string $extra, string $type): bool
     {
-        return str_contains($extra, 'using index')
+        return (str_contains($extra, 'using index')
             && !str_contains($extra, 'using where')
             || str_contains($extra, 'using index')
             && str_contains($extra, 'using where')
-            && in_array($type, ['range', 'ref']);
+            && in_array($type, ['range', 'ref']));
     }
 
     /**
