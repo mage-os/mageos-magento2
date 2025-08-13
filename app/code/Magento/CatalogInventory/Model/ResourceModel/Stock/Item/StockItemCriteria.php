@@ -10,7 +10,7 @@ use Magento\Framework\Data\AbstractCriteria;
 use Magento\CatalogInventory\Model\ResourceModel\Stock\Item\StockItemCriteriaMapper;
 
 /**
- * Class StockItemCriteria
+ * Build criteria to filter products on catalog_stockinventory table
  */
 class StockItemCriteria extends AbstractCriteria implements \Magento\CatalogInventory\Api\StockItemCriteriaInterface
 {
@@ -55,7 +55,11 @@ class StockItemCriteria extends AbstractCriteria implements \Magento\CatalogInve
      */
     public function setProductsFilter($products)
     {
-        $this->data['products_filter'] = [$products];
+        if (is_array($products)) {
+            $this->data['products_filter'] = $products;
+        } else {
+            $this->data['products_filter'] = [$products];
+        }
         return true;
     }
 

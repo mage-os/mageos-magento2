@@ -74,7 +74,6 @@ class Collection extends SearchResult
     {
         parent::_initSelect();
         $this->joinRegionNameTable();
-
         return $this;
     }
 
