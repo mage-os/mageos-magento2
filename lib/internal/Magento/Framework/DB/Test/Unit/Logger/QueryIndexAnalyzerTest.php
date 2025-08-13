@@ -83,8 +83,8 @@ class QueryIndexAnalyzerTest extends TestCase
         $sql = "SELECT `main_table`.* FROM `admin_system_messages` AS `main_table`
                 ORDER BY severity ASC, created_at DESC";
         $bind = [];
-        $explainResult = '[{"id":"1","select_type":"SIMPLE","table":"admin_system_messages","partitions":null,"type":"ALL",
-                "possible_keys":null,"key":null,"key_len":null,"ref":null,"rows":"1","filtered":"100.00",
+        $explainResult = '[{"id":"1","select_type":"SIMPLE","table":"admin_system_messages","partitions":null,
+        "type":"ALL","possible_keys":null,"key":null,"key_len":null,"ref":null,"rows":"1","filtered":"100.00",
                 "Extra":"Using filesort"}]';
 
         $this->serializer->expects($this->once())
@@ -116,7 +116,8 @@ class QueryIndexAnalyzerTest extends TestCase
      * @dataProvider statsNonSelectDataProvider
      * @testdox $sql with bindings $bind to get $expectedResult
      */
-    public function testProcessThrowsExceptionForNonSelectQuery(string $sql, array $bind): void {
+    public function testProcessThrowsExceptionForNonSelectQuery(string $sql, array $bind): void
+    {
         $this->expectException(QueryAnalyzerException::class);
         $this->expectExceptionMessage("Can't process query type");
         $this->serializer->expects($this->never())->method('serialize');
