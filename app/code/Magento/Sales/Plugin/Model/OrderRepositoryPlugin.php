@@ -56,7 +56,7 @@ class OrderRepositoryPlugin
      */
     private function validateOrderItems(OrderInterface $entity): void
     {
-        $items = $entity->getItems();
+        $items = $entity->getAllVisibleItems();
 
         if (!$items || count($items) === 0) {
             throw new LocalizedException(__('Please specify order items.'));
