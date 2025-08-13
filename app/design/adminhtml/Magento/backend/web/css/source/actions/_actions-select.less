@@ -33,6 +33,7 @@
         .lib-text-overflow-ellipsis();
 
         background-color: @color-white;
+        border-radius: @field-control__border-radius;
         font-weight: @font-weight__regular;
         text-align: left;
 
@@ -48,6 +49,7 @@
         &:before {
             background-color: @button__background-color;
             border: @button__border-size @button__border-style @_action-select__border-color;
+            border-radius: 0 @field-control__border-radius @field-control__border-radius 0;
             bottom: 0;
             content: '';
             position: absolute;

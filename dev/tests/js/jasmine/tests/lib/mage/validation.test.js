@@ -130,6 +130,12 @@ define([
             expect($.validator.methods['validate-cc-type-select'].call(
                 this, 'UN', null, $('<input id="un-invalid" type="text" value="6289981111111118"/>'))
             ).toEqual(false);
+            expect($.validator.methods['validate-cc-type-select'].call(
+                this, 'MD', null, $('<input id="md-valid" type="text" value="6767700000000005"/>'))
+            ).toEqual(true);
+            expect($.validator.methods['validate-cc-type-select'].call(
+                this, 'MD', null, $('<input id="md-invalid" type="text" value="4111676770111115"/>'))
+            ).toEqual(false);
         });
     });
 
@@ -885,6 +891,7 @@ define([
                 '</option><option value="DI">' +
                 '</option><option value="DN">' +
                 '</option><option value="JCB">' +
+                '</option><option value="MD">' +
                 '</option><option value="UP">' +
                 '</option>' +
                 '</select>');
@@ -924,6 +931,12 @@ define([
                 .call($.validator.prototype, '3528000000000007', null, select)).toEqual(true);
             expect($.validator.methods['validate-cc-type']
                 .call($.validator.prototype, '3095434000000001', null, select)).toEqual(false);
+
+            select.val('MD');
+            expect($.validator.methods['validate-cc-type']
+                .call($.validator.prototype, '6759411100000008', null, select)).toEqual(true);
+            expect($.validator.methods['validate-cc-type']
+                .call($.validator.prototype, '4111676770111115', null, select)).toEqual(false);
         });
     });
 

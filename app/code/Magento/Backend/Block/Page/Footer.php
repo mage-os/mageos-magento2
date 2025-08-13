@@ -5,6 +5,8 @@
  */
 namespace Magento\Backend\Block\Page;
 
+use Magento\Framework\App\DistributionMetadataInterface;
+
 /**
  * Adminhtml footer block
  *
@@ -20,7 +22,7 @@ class Footer extends \Magento\Backend\Block\Template
     protected $_template = 'Magento_Backend::page/footer.phtml';
 
     /**
-     * @var \Magento\Framework\App\ProductMetadataInterface
+     * @var \Magento\Framework\App\ProductMetadataInterface|DistributionMetadataInterface
      * @since 100.1.0
      */
     protected $productMetadata;
@@ -55,7 +57,17 @@ class Footer extends \Magento\Backend\Block\Template
      */
     public function getMagentoVersion()
     {
-        return $this->productMetadata->getVersion();
+        return $this->productMetadata->getDistributionVersion();
+    }
+
+    /**
+     * Get product name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->productMetadata->getDistributionName();
     }
 
     /**
