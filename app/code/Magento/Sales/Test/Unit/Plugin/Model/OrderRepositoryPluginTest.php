@@ -9,8 +9,8 @@ namespace Magento\Sales\Test\Unit\Plugin\Model;
 
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Sales\Api\Data\OrderAddressInterface;
-use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\OrderItemInterface;
+use Magento\Sales\Model\Order;
 use Magento\Sales\Model\OrderRepository;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -32,7 +32,7 @@ class OrderRepositoryPluginTest extends TestCase
     private $orderRepository;
 
     /**
-     * @var OrderInterface|MockObject
+     * @var Order|MockObject
      */
     private $order;
 
@@ -50,7 +50,7 @@ class OrderRepositoryPluginTest extends TestCase
     {
         $this->plugin = new OrderRepositoryPlugin();
         $this->orderRepository = $this->createMock(OrderRepository::class);
-        $this->order = $this->createMock(OrderInterface::class);
+        $this->order = $this->createMock(Order::class);
         $this->billingAddress = $this->createMock(OrderAddressInterface::class);
         $this->orderItem = $this->createMock(OrderItemInterface::class);
     }
@@ -74,7 +74,7 @@ class OrderRepositoryPluginTest extends TestCase
 
         // Setup order
         $this->order->method('getBillingAddress')->willReturn($this->billingAddress);
-        $this->order->method('getItems')->willReturn([$this->orderItem]);
+        $this->order->method('getAllVisibleItems')->willReturn([$this->orderItem]);
 
         $result = $this->plugin->beforeSave($this->orderRepository, $this->order);
 
@@ -123,7 +123,7 @@ class OrderRepositoryPluginTest extends TestCase
         $this->billingAddress->method('getCountryId')->willReturn('US');
 
         $this->order->method('getBillingAddress')->willReturn($this->billingAddress);
-        $this->order->method('getItems')->willReturn([]);
+        $this->order->method('getAllVisibleItems')->willReturn([]);
 
         $this->expectException(LocalizedException::class);
         $this->expectExceptionMessage('Please specify order items.');
