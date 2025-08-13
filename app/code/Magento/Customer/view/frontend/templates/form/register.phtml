@@ -33,7 +33,8 @@ $formData = $block->getFormData();
       method="post"
       id="form-validate"
       enctype="multipart/form-data"
-      autocomplete="off">
+      autocomplete="off"
+      data-mage-init='{"validation":{"errorClass":"mage-error","errorElement":"div"}}'>
     <?= /* @noEscape */ $block->getBlockHtml('formkey') ?>
     <fieldset class="fieldset create info">
         <legend class="legend"><span><?= $escaper->escapeHtml(__('Personal Information')) ?></span></legend><br>
@@ -314,20 +315,14 @@ $formData = $block->getFormData();
         </div>
     </div>
 </form>
-<?php $ignore = /* @noEscape */ $_dob->isEnabled() ? '\'input[id$="full"]\'' : 'null';
-$scriptString = <<<script
+<?php if ($_dob->isEnabled()): ?>
+<script>
 require([
     'jquery',
     'mage/mage'
 ], function($){
-
     var dataForm = $('#form-validate');
-    var ignore = {$ignore};
-
     dataForm.mage('validation', {
-script;
-if ($_dob->isEnabled()):
-    $scriptString .= <<<script
         errorPlacement: function(error, element) {
             if (element.prop('id').search('full') !== -1) {
                 var dobElement = $(element).parents('.customer-dob'),
@@ -340,19 +335,11 @@ if ($_dob->isEnabled()):
                 error.insertAfter(element);
             }
         },
-        ignore: ':hidden:not(' + ignore + ')'
-script;
-else:
-    $scriptString .= <<<script
-        ignore: ignore ? ':hidden:not(' + ignore + ')' : ':hidden'
-script;
-endif;
-$scriptString .= <<<script
+        ignore: ':hidden:not(input[id$="full"])'
     }).find('input:text').attr('autocomplete', 'off');
 });
-script;
-?>
-<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false) ?>
+</script>
+<?php endif; ?>
 <?php if ($block->getShowAddressFields()): ?>
     <?php
     $regionJson = /* @noEscape */ $regionProvider->getRegionJson();
