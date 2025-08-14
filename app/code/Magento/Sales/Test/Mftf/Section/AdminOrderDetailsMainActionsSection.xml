@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  /**
-  * Copyright 2024 Adobe
+  * Copyright 2017 Adobe
   * All Rights Reserved.
   */
 -->
@@ -31,5 +31,7 @@
         <element name="void" type="button" selector="#void_payment span"/>
         <element name="invoiceTabContent1" type="text" selector="#sales_order_view_tabs_order_invoices_content > div > div.admin__data-grid-wrap > table > tbody > tr > td"/>
         <element name="creditMemoWarning" type="text" selector="//div[@class='modal-content']//div[text()='This will create an offline refund. To create an online refund, open an invoice and create credit memo for it. Do you want to continue?']"/>
+        <element name="linkToNewOrder" type="text" selector="//*[@id='sales_order_view_tabs_order_info_content']/section[1]/div[2]/div[1]/div[2]/table/tbody/tr[4]/th"/>
+        <element name="linkToPreviousOrder" type="text" selector="//*[@id='sales_order_view_tabs_order_info_content']/section[1]/div[2]/div[1]/div[2]/table/tbody/tr[4]/th"/>
     </section>
 </sections>

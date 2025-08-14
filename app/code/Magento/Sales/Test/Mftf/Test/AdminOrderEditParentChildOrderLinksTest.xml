@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright 2025 Adobe
+  * All Rights Reserved.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminOrderEditParentChildOrderLinksTest">
+        <annotations>
+            <features value="Sales"/>
+            <title value="Verify parent-child order links are displayed when editing and submitting an order"/>
+            <stories value="Order parent-child link verification"/>
+            <description value="Verify parent-child order links are shown after editing and submitting an order."/>
+            <severity value="MINOR"/>
+            <testCaseId value="AC-8706"/>
+            <group value="Sales"/>
+        </annotations>
+        <before>
+            <!-- Enable payment method one of "check/money order" and  shipping method one of "flat rate" -->
+            <actionGroup ref="CliEnableFlatRateShippingMethodActionGroup" stepKey="enableFlatRateShipping"/>
+            <actionGroup ref="CliEnableCheckMoneyOrderPaymentMethodActionGroup" stepKey="enableCheckMoneyOrderPaymentMethod"/>
+            <!-- Create product and customer -->
+            <createData entity="SimpleProduct2" stepKey="createProduct"/>
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+            <!-- Login to Admin page -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!-- Create order in admin -->
+            <actionGroup ref="CreateOrderActionGroup" stepKey="createOrder">
+                <argument name="product" value="$$createProduct$$"/>
+                <argument name="customer" value="$$createCustomer$$"/>
+            </actionGroup>
+        </before>
+        <after>
+            <!-- Clean up test data -->
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
+            <!-- Disable shipping method "Flat Rate" -->
+            <magentoCLI command="config:set carriers/flatrate/active 0" stepKey="disableFlatRate"/>
+            <!-- Disable payment method "Check/Money Order" -->
+            <magentoCLI command="config:set {{enabledCheckMoneyOrder.label}} 0" stepKey="disableCheckMoneyOrder"/>
+        </after>
+        <!-- Grab original order ID -->
+        <grabTextFrom selector="{{AdminOrderDetailsInformationSection.orderId}}" stepKey="grabOriginalOrderId"/>
+        <!-- Step 1: Go to sales >> order and open the original order -->
+        <actionGroup ref="OpenOrderByIdActionGroup" stepKey="openOriginalOrderInAdmin">
+            <argument name="orderId" value="{$grabOriginalOrderId}"/>
+        </actionGroup>
+        <!-- Step 2: Edit the order -->
+        <waitForElementClickable selector="{{AdminOrderDetailsMainActionsSection.edit}}" stepKey="waitForClickEditOrderButton"/>
+        <click selector="{{AdminOrderDetailsMainActionsSection.edit}}" stepKey="clickEditOrderButton"/>
+        <waitForElementClickable selector="{{AdminOrderDetailsMainActionsSection.ok}}" time="30" stepKey="waitForEditOrderConfirmation"/>
+        <click selector="{{AdminOrderDetailsMainActionsSection.ok}}" stepKey="confirmEditOrder"/>
+        <!-- Step 3: Submit edited order -->
+        <waitForElementClickable selector="{{OrdersGridSection.submitOrder}}" stepKey="waitForSubmitEditedOrder"/>
+        <click selector="{{OrdersGridSection.submitOrder}}" stepKey="submitEditedOrder"/>
+        <!-- Step 4: Verify the link is displayed on child order view to parent order -->
+        <grabTextFrom selector="{{AdminOrderDetailsMainActionsSection.linkToPreviousOrder}}" stepKey="grabLinkToPreviousOrderText"/>
+        <assertEquals stepKey="assertPreviousOrderLinkText">
+            <expectedResult type="string">{{OrderLinks.linkToPreviousOrder}}</expectedResult>
+            <actualResult type="variable">grabLinkToPreviousOrderText</actualResult>
+        </assertEquals>
+        <!-- Step 5: Verify the link is displayed on parent order view to new order -->
+        <actionGroup ref="OpenOrderByIdActionGroup" stepKey="openOriginalOrderInAdminAgain">
+            <argument name="orderId" value="{$grabOriginalOrderId}"/>
+        </actionGroup>
+        <grabTextFrom selector="{{AdminOrderDetailsMainActionsSection.linkToNewOrder}}" stepKey="grabLinkToNewOrderText"/>
+        <assertEquals stepKey="assertNewOrderLinkText">
+            <expectedResult type="string">{{OrderLinks.linkToNewOrder}}</expectedResult>
+            <actualResult type="variable">grabLinkToNewOrderText</actualResult>
+        </assertEquals>
+    </test>
+</tests>
