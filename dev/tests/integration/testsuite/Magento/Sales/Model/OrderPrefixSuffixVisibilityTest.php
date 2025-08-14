@@ -25,6 +25,9 @@ class OrderPrefixSuffixVisibilityTest extends TestCase
     private const XML_PATH_PREFIX_SHOW = 'customer/address/prefix_show';
     private const XML_PATH_SUFFIX_SHOW = 'customer/address/suffix_show';
 
+    /**
+     * @var ObjectManagerInterface
+     */
     private ObjectManagerInterface $om;
 
     protected function setUp(): void
@@ -93,8 +96,12 @@ class OrderPrefixSuffixVisibilityTest extends TestCase
         return $order;
     }
 
-    private function setConfig(string $path, ?string $value, string $scope = ScopeInterface::SCOPE_STORE, string $scopeCode = 'default'): void
-    {
+    private function setConfig(
+        string $path,
+        ?string $value,
+        string $scope = ScopeInterface::SCOPE_STORE,
+        string $scopeCode = 'default'
+    ): void {
         $this->om->get(MutableScopeConfigInterface::class)->setValue($path, $value, $scope, $scopeCode);
     }
 }
