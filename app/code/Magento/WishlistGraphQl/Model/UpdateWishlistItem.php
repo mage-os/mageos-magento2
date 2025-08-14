@@ -78,7 +78,7 @@ class UpdateWishlistItem
 
             $wishlistItemToUpdate->setOptions($updatedOptions);
             $wishlistItemToUpdate->setQty($wishlistItemData->getQuantity());
-            $wishlistItemToUpdate->setDescription($wishlistItemData->getDescription());
+            $wishlistItemToUpdate->setDescription($wishlistItemData->getDescription() ?: "");
 
             $this->wishlistResource->save($wishlist);
         }
