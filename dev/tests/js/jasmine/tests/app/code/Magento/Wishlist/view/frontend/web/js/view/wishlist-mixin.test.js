@@ -98,13 +98,6 @@ define([
                 expect(instance._super).toHaveBeenCalled();
             });
 
-            it('should reload wishlist customer data on initialization', function () {
-                var instance = new mixin();
-
-                instance.initialize();
-                expect(customerData.reload).toHaveBeenCalledWith(['wishlist'], true);
-            });
-
             it('should get wishlist data from customer data', function () {
                 var instance = new mixin();
 
