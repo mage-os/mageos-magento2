@@ -169,36 +169,41 @@ class UpdateProductsFromWishlistTest extends GraphQlAbstract
           ],
           'name' => 'Test Wish List',
       ], as: 'wishlist')
-  ]
-  public function testClearWishlistDescription(): void
-  {
-    $customerEmail = $this->fixtures->get('customer')->getEmail();
-    $wishlist = $this->getWishlist($customerEmail);
+    ]
+    public function testClearWishlistDescription(): void
+    {
+        $customerEmail = $this->fixtures->get('customer')->getEmail();
+        $wishlist = $this->getWishlist($customerEmail);
 
-    $customerWishlist = $wishlist['customer']['wishlists'][0];
-    $wishlistId = $customerWishlist['id'];
-    $wishlistItem = $customerWishlist['items_v2']['items'][0];
-    $qty = 5;
-    $description = 'New Description';
+        $customerWishlist = $wishlist['customer']['wishlists'][0];
+        $wishlistId = $customerWishlist['id'];
+        $wishlistItem = $customerWishlist['items_v2']['items'][0];
+        $qty = 5;
+        $description = 'New Description';
 
-    $updateWishlistQuery = $this->getQuery($wishlistId, $wishlistItem['id'], $qty, $description);
-    $response = $this->graphQlMutation($updateWishlistQuery, [], '', $this->getHeaderMap($customerEmail));
+        $updateWishlistQuery = $this->getQuery($wishlistId, $wishlistItem['id'], $qty, $description);
+        $response = $this->graphQlMutation($updateWishlistQuery, [], '', $this->getHeaderMap($customerEmail));
 
-    $this->assertArrayHasKey('updateProductsInWishlist', $response);
-    $this->assertArrayHasKey('wishlist', $response['updateProductsInWishlist']);
-    $wishlistResponse = $response['updateProductsInWishlist']['wishlist'];
-    $this->assertEquals($qty, $wishlistResponse['items_v2']['items'][0]['quantity']);
-    $this->assertEquals($description, $wishlistResponse['items_v2']['items'][0]['description']);
+        $this->assertArrayHasKey('updateProductsInWishlist', $response);
+        $this->assertArrayHasKey('wishlist', $response['updateProductsInWishlist']);
+        $wishlistResponse = $response['updateProductsInWishlist']['wishlist'];
+        $this->assertEquals($qty, $wishlistResponse['items_v2']['items'][0]['quantity']);
+        $this->assertEquals($description, $wishlistResponse['items_v2']['items'][0]['description']);
 
-    $updateWishlistQueryNoDescription = $this->getQuery($wishlistId, $wishlistItem['id'], $qty, "");
-    $responseNoDescription = $this->graphQlMutation($updateWishlistQueryNoDescription, [], '', $this->getHeaderMap($customerEmail));
+        $updateWishlistQueryNoDescription = $this->getQuery($wishlistId, $wishlistItem['id'], $qty, "");
+        $responseNoDescription = $this->graphQlMutation(
+            $updateWishlistQueryNoDescription,
+            [],
+            '',
+            $this->getHeaderMap($customerEmail)
+        );
 
-    $this->assertArrayHasKey('updateProductsInWishlist', $responseNoDescription);
-    $this->assertArrayHasKey('wishlist', $responseNoDescription['updateProductsInWishlist']);
-    $wishlistResponseNoDescription = $responseNoDescription['updateProductsInWishlist']['wishlist'];
-    $this->assertEquals($qty, $wishlistResponseNoDescription['items_v2']['items'][0]['quantity']);
-    $this->assertEquals('', $wishlistResponseNoDescription['items_v2']['items'][0]['description']);
-  }
+        $this->assertArrayHasKey('updateProductsInWishlist', $responseNoDescription);
+        $this->assertArrayHasKey('wishlist', $responseNoDescription['updateProductsInWishlist']);
+        $wishlistResponseNoDescription = $responseNoDescription['updateProductsInWishlist']['wishlist'];
+        $this->assertEquals($qty, $wishlistResponseNoDescription['items_v2']['items'][0]['quantity']);
+        $this->assertEquals('', $wishlistResponseNoDescription['items_v2']['items'][0]['description']);
+    }
 
     /**
      * Authentication header map
