@@ -11,8 +11,8 @@ define(['jquery', 'Magento_Customer/js/customer-data'], function ($, customerDat
             initialize: function () {
                 this._super();
 
-                const wishlist = customerData.get('wishlist');
-                const selector = '.wishlist .counter.qty, .customer-menu .wishlist .counter, .link.wishlist .counter';
+                const wishlist = customerData.get('wishlist'),
+                      selector = '.wishlist .counter.qty, .customer-menu .wishlist .counter, .link.wishlist .counter';
 
                 wishlist.subscribe(function (updatedWishlist) {
                     if (typeof updatedWishlist.counter !== 'undefined') {
