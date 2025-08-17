@@ -89,7 +89,7 @@
             <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindexInvalidatedIndices">
                 <argument name="indices" value=""/>
             </actionGroup>
-        <deleteData createDataKey="categoryHandle" stepKey="deletecategoryHandle"/>
+            <deleteData createDataKey="categoryHandle" stepKey="deletecategoryHandle"/>
         </after>
     </test>
 </tests>

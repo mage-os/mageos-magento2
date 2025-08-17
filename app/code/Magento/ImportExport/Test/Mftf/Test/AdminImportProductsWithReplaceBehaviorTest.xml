@@ -39,7 +39,7 @@
         <after>
             <deleteData createDataKey="createSimpleProduct2" stepKey="deleteSimpleProduct2"/>
             <deleteData createDataKey="createSimpleProduct3" stepKey="deleteSimpleProduct3"/>
-        <actionGroup ref="AdminDeleteCategoryByNameActionGroup" stepKey="deleteImportedCategory">
+            <actionGroup ref="AdminDeleteCategoryByNameActionGroup" stepKey="deleteImportedCategory"/>
         </after>
 
         <!-- Import products with replace behavior -->
