@@ -32,6 +32,7 @@
         </before>
         <after>
             <!--Logging out-->
+            <actionGroup ref="DeleteCategoryActionGroup" stepKey="deleteCategory"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="amOnLogoutPage"/>
             <deleteData createDataKey="simpleProduct1" stepKey="deleteSimpleProduct1"/>
             <deleteData createDataKey="simpleProduct2" stepKey="deleteSimpleProduct2"/>

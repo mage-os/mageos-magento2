@@ -50,6 +50,10 @@
             <fillField selector="{{AdminCategoryBasicFieldSection.CategoryNameInput}}" userInput="Default Category" stepKey="enterCategoryNameAsDefaultCategory"/>
             <actionGroup ref="AdminSaveCategoryActionGroup" stepKey="saveCategoryDefaultCategory"/>
             <seeElement selector="{{AdminCategoryMessagesSection.SuccessMessage}}" stepKey="assertSuccessMessageAfterSaveDefaultCategory"/>
+            <deleteData createDataKey="createCategoryC" stepKey="deletecreateCategoryC"/>
+            <deleteData createDataKey="createSubCategory" stepKey="deletecreateSubCategory"/>
+            <deleteData createDataKey="createCategoryB" stepKey="deletecreateCategoryB"/>
+            <deleteData createDataKey="createNewRootCategoryA" stepKey="deletecreateNewRootCategoryA"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
             <deleteData createDataKey="createProduct1" stepKey="deleteProduct1"/>
             <deleteData createDataKey="createProduct2" stepKey="deleteProduct2"/>

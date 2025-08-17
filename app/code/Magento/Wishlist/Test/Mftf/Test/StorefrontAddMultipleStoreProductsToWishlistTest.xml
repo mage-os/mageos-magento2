@@ -57,6 +57,7 @@
             <actionGroup ref="AdminOpenProductIndexPageActionGroup" stepKey="navigateToProductIndex"/>
             <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearProductsFilters"/>
             <!--Logout everywhere-->
+            <deleteData createDataKey="categoryHandle" stepKey="deletecategoryHandle"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
             <comment userInput="BIC workaround" stepKey="customerLogout"/>
         </after>

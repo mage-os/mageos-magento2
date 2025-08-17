@@ -19,6 +19,7 @@
             <group value="cloud"/>
         </annotations>
         <after>
+            <actionGroup ref="DeleteCategoryActionGroup" stepKey="deleteCategory"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
         </after>
 
