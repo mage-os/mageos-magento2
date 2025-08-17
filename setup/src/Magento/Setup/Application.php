@@ -5,12 +5,12 @@
  */
 namespace Magento\Setup;
 
-use Laminas\Mvc\Application as LaminasApplication;
-use Laminas\Mvc\Service\ServiceManagerConfig;
+use Magento\Framework\Setup\Native\MvcApplication as NativeApplication;
+use Magento\Framework\Setup\Native\MvcServiceManagerConfig as ServiceManagerConfig;
 use Laminas\ServiceManager\ServiceManager;
 
 /**
- * This class is wrapper on \Laminas\Mvc\Application
+ * This class is wrapper on native Application
  *
  * It allows to do more customization like services loading, which
  * cannot be loaded via configuration.
@@ -18,36 +18,23 @@ use Laminas\ServiceManager\ServiceManager;
 class Application
 {
     /**
-     * Creates \Laminas\Mvc\Application and bootstrap it.
-     * This method is similar to \Laminas\Mvc\Application::init but allows to load
+     * Creates native Application and bootstrap it.
+     * This method is similar to native Application::init but allows to load
      * Magento specific services.
      *
      * @param array $configuration
-     * @return LaminasApplication
+     * @return NativeApplication
      */
     public function bootstrap(array $configuration)
     {
-        $managerConfig = isset($configuration['service_manager']) ? $configuration['service_manager'] : [];
-        $managerConfig = new ServiceManagerConfig($managerConfig);
-
-        $serviceManager = new ServiceManager();
-        $managerConfig->configureServiceManager($serviceManager);
-        $serviceManager->setService('ApplicationConfig', $configuration);
-
-        $serviceManager->get('ModuleManager')->loadModules();
+        $application = NativeApplication::init($configuration);
 
         // load specific services
         if (!empty($configuration['required_services'])) {
-            $this->loadServices($serviceManager, $configuration['required_services']);
+            $this->loadServices($application->getServiceManager(), $configuration['required_services']);
         }
 
-        $listeners = $this->getListeners($serviceManager, $configuration);
-        $application = new LaminasApplication(
-            $serviceManager,
-            $serviceManager->get('EventManager'),
-            $serviceManager->get('Request'),
-            $serviceManager->get('Response')
-        );
+        $listeners = $this->getListeners($application->getServiceManager(), $configuration);
         $application->bootstrap($listeners);
         return $application;
     }

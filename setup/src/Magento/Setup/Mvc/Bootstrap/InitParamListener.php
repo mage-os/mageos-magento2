@@ -11,12 +11,8 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\State;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Shell\ComplexParameter;
-use Laminas\EventManager\EventManagerInterface;
-use Laminas\EventManager\ListenerAggregateInterface;
-use Laminas\Mvc\Application;
-use Laminas\Mvc\MvcEvent;
-use Laminas\ServiceManager\Factory\FactoryInterface;
-use Laminas\ServiceManager\ServiceLocatorInterface;
+use Magento\Framework\Setup\Native\MvcApplication;
+use Magento\Framework\Setup\Native\MvcEvent;
 
 /**
  * A listener that injects relevant Magento initialization parameters and initializes filesystem
@@ -24,55 +20,14 @@ use Laminas\ServiceManager\ServiceLocatorInterface;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @codingStandardsIgnoreStart
  */
-class InitParamListener implements ListenerAggregateInterface, FactoryInterface
+class InitParamListener
 {
     /**
      * A CLI parameter for injecting bootstrap variables
      */
     const BOOTSTRAP_PARAM = 'magento-init-params';
 
-    /**
-     * @var callable[]
-     */
-    private $listeners = [];
 
-    /**
-     * @inheritdoc
-     *
-     * The $priority argument is added to support latest versions of Laminas Event Manager.
-     * Starting from Laminas Event Manager 3.0.0 release the ListenerAggregateInterface::attach()
-     * supports the `priority` argument.
-     *
-     * @param EventManagerInterface $events
-     * @param int                   $priority
-     * @return void
-     */
-    public function attach(EventManagerInterface $events, $priority = 1)
-    {
-        $sharedEvents = $events->getSharedManager();
-        $sharedEvents->attach(
-            Application::class,
-            MvcEvent::EVENT_BOOTSTRAP,
-            [$this, 'onBootstrap'],
-            $priority
-        );
-
-        $this->listeners = $sharedEvents->getListeners([Application::class], MvcEvent::EVENT_BOOTSTRAP);
-    }
-
-    /**
-     * @inheritdoc
-     *
-     * @param EventManagerInterface $events
-     * @return void
-     */
-    public function detach(EventManagerInterface $events)
-    {
-        foreach ($this->listeners as $index => $listener) {
-            $events->detach($listener);
-            unset($this->listeners[$index]);
-        }
-    }
 
     /**
      * An event subscriber that initializes DirectoryList and Filesystem objects in ZF application bootstrap
@@ -82,7 +37,7 @@ class InitParamListener implements ListenerAggregateInterface, FactoryInterface
      */
     public function onBootstrap(MvcEvent $e)
     {
-        /** @var Application $application */
+        /** @var MvcApplication $application */
         $application = $e->getApplication();
         $initParams = $application->getServiceManager()->get(self::BOOTSTRAP_PARAM);
         $directoryList = $this->createDirectoryList($initParams);
@@ -92,25 +47,22 @@ class InitParamListener implements ListenerAggregateInterface, FactoryInterface
     }
 
     /**
-     * Create service. Proxy to the __invoke method
+     * Factory method for creating init parameters (compatible with Laminas ServiceManager)
      *
-     * @deprecated use the __invoke method instead
-     *
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param mixed $serviceManager Laminas ServiceManager
+     * @param string $requestedName
      * @return array
-     * @throws \Interop\Container\Exception\ContainerException
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke($serviceManager, $requestedName)
     {
-        return $this($serviceLocator, 'Application');
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
-    {
-        return $this->extractInitParameters($container->get('Application'));
+        // For Laminas ServiceManager, extract parameters from merged config (which includes global.php)
+        $mergedConfig = $serviceManager->has('config') ? $serviceManager->get('config') : [];
+        $appConfig = $serviceManager->has('ApplicationConfig') ? $serviceManager->get('ApplicationConfig') : [];
+        
+        // Merge both configs to ensure we get bootstrap params from global.php
+        $fullConfig = array_merge_recursive($appConfig, $mergedConfig);
+        
+        return $this->extractInitParametersFromConfig($fullConfig);
     }
 
     /**
@@ -124,10 +76,9 @@ class InitParamListener implements ListenerAggregateInterface, FactoryInterface
      * @param Application $application
      * @return array
      */
-    private function extractInitParameters(Application $application)
+    private function extractInitParametersFromConfig(array $config)
     {
         $result = [];
-        $config = $application->getConfig();
         if (isset($config[self::BOOTSTRAP_PARAM])) {
             $result = $config[self::BOOTSTRAP_PARAM];
         }

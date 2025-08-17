@@ -9,11 +9,11 @@ namespace Magento\Setup\Test\Unit\Mvc\Bootstrap;
 
 use Laminas\EventManager\EventManagerInterface;
 use Laminas\EventManager\SharedEventManager;
-use Laminas\Mvc\Application;
-use Laminas\Mvc\MvcEvent;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\ServiceManager\ServiceManager;
 use Laminas\Stdlib\RequestInterface;
+use Magento\Framework\Setup\Native\MvcApplication;
+use Magento\Framework\Setup\Native\MvcEvent;
 use Magento\Framework\App\Bootstrap as AppBootstrap;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem;
@@ -59,7 +59,7 @@ class InitParamListenerTest extends TestCase
     {
         /** @var MvcEvent|MockObject $mvcEvent */
         $mvcEvent = $this->createMock(MvcEvent::class);
-        $mvcApplication = $this->getMockBuilder(Application::class)
+        $mvcApplication = $this->getMockBuilder(MvcApplication::class)
             ->disableOriginalConstructor()
             ->getMock();
         $mvcEvent->expects($this->once())->method('getApplication')->willReturn($mvcApplication);
@@ -120,7 +120,7 @@ class InitParamListenerTest extends TestCase
          * @var ServiceLocatorInterface|MockObject $serviceLocator
          */
         $serviceLocator = $this->getMockForAbstractClass(ServiceLocatorInterface::class);
-        $mvcApplication = $this->getMockBuilder(Application::class)
+        $mvcApplication = $this->getMockBuilder(MvcApplication::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -258,7 +258,7 @@ class InitParamListenerTest extends TestCase
 
         $sharedManager = $this->createMock(SharedEventManager::class);
         $sharedManager->expects($this->once())->method('attach')->with(
-            Application::class,
+            MvcApplication::class,
             MvcEvent::EVENT_BOOTSTRAP,
             [$this->listener, 'onBootstrap']
         );
