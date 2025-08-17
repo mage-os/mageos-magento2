@@ -12,7 +12,7 @@ define(['jquery', 'Magento_Customer/js/customer-data'], function ($, customerDat
                 this._super();
 
                 const wishlist = customerData.get('wishlist'),
-                      selector = '.wishlist .counter.qty, .customer-menu .wishlist .counter, .link.wishlist .counter';
+                    selector = '.wishlist .counter.qty, .customer-menu .wishlist .counter, .link.wishlist .counter';
 
                 wishlist.subscribe(function (updatedWishlist) {
                     if (typeof updatedWishlist.counter !== 'undefined') {
