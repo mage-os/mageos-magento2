@@ -59,8 +59,15 @@
             </actionGroup>
             <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProduct"/>
         </before>
-        <after>SimpleSubCategory<deleteData createDataKey="createCategory" stepKey="deletecreateCategory"/>
-            <deleteData createDataKey="deleteCreateCategory" stepKey="deletedeleteCreateCategory"/>
+        <after>
+            <!-- Delete created data -->
+            <actionGroup ref="RemoveDownloadableDomainActionGroup" stepKey="removeDownloadableDomain"/>
+            <createData entity="SimpleSubCategory" stepKey="deleteCreateCategory"/>
+            <deleteData createDataKey="createCustomerViaTheStorefront" stepKey="deleteCustomerViaTheStorefront"/>
+            <deleteData createDataKey="bundleProduct" stepKey="deleteBundleProduct"/>
+            <deleteData createDataKey="downloadableProduct" stepKey="deleteDownloadableProduct"/>
+            <!-- Log out -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
         </after>
         <!-- Pre-condition 1: Login to the storefront as customer -->
         <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer">
