@@ -33,8 +33,8 @@ class StockItemProcessor implements StockItemProcessorInterface
     {
         $importStockData = [];
         foreach ($stockData as $sku => $productStockData) {
-            if (isset($stockData[Product::SCOPE_DEFAULT])) {
-                $importStockData[$sku] = $productStockData[Product::SCOPE_DEFAULT];
+            if (isset($stockData[Store::DEFAULT_STORE_ID])) {
+                $importStockData[$sku] = $productStockData[Store::DEFAULT_STORE_ID];
             } else {
                 $importStockData[$sku] = reset($productStockData);
             }
