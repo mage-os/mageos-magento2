@@ -2530,12 +2530,12 @@ class Product extends AbstractEntity
 
                 $row = [];
                 $sku = $rowData[self::COL_SKU];
+                $storeId = $this->getRowStoreId($rowData);
                 if ($this->skuProcessor->getNewSku($sku) !== null) {
                     $stockItem = $this->getRowExistingStockItem($rowData);
                     $existingStockItemData = $stockItem->getData();
                     $row = $this->formatStockDataForRow($rowData);
                     $productIdsToReindex[] = $row['product_id'];
-                    $storeId = $this->getRowStoreId($rowData);
                     if (!empty(array_diff_assoc($row, $existingStockItemData))
                         || $this->statusProcessor->isStatusChanged($sku, $storeId)
                     ) {
@@ -2543,9 +2543,9 @@ class Product extends AbstractEntity
                     }
                 }
 
-                if (!isset($stockData[$sku])) {
-                    $stockData[$sku] = $row;
-                    $importedData[$sku] = $rowData;
+                if (!isset($stockData[$sku][$storeId])) {
+                    $stockData[$sku][$storeId] = $row;
+                    $importedData[$sku][$storeId] = $rowData;
                 }
             }
 
@@ -3399,7 +3399,7 @@ class Product extends AbstractEntity
     {
         $sku = $rowData[self::COL_SKU];
         $row['product_id'] = $this->skuProcessor->getNewSku($sku)['entity_id'];
-        $row['website_id'] = $this->stockConfiguration->getDefaultScopeId();
+        $row['website_id'] = $this->stockConfiguration->getDefaultScopeId();//here be the problem
         $row['stock_id'] = $this->stockRegistry->getStock($row['website_id'])->getStockId();
 
         $stockItemDo = $this->stockRegistry->getStockItem($row['product_id'], $row['website_id']);
