@@ -1,17 +1,19 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2021 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
 namespace Magento\CatalogImportExport\Model\Import\ProductTest;
 
+use Magento\Catalog\Test\Fixture\Product as ProductFixture;
 use Magento\CatalogImportExport\Model\Import\ProductTestBase;
 use Magento\CatalogInventory\Model\Stock;
 use Magento\CatalogInventory\Model\StockRegistry;
 use Magento\CatalogInventory\Model\StockRegistryStorage;
 use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\TestFramework\Fixture\DataFixture;
 
 /**
  * Integration test for \Magento\CatalogImportExport\Model\Import\Product class.
@@ -41,6 +43,35 @@ class ProductStockTest extends ProductTestBase
         parent::setUp();
         $this->stockRegistryStorage = $this->objectManager->get(StockRegistryStorage::class);
         $this->stockRegistry = $this->objectManager->get(StockRegistry::class);
+    }
+
+    #[
+        DataFixture(
+            ProductFixture::class,
+            [
+                'sku' => 'simple4',
+                'extension_attributes' => [
+                    'stock_item' => [
+                        'use_config_manage_stock' => true,
+                        'qty' => 100,
+                        'is_qty_decimal' => false,
+                        'is_in_stock' => false,
+                        'min_qty' => 200
+                    ]
+                ],
+            ]
+        )
+    ]
+    /**
+     * @return void
+     */
+    public function testImportProductAutoStockStatusAdjustment(): void
+    {
+        $this->importFile('products_to_import_out_of_stock_qty_auto_status_stock.csv');
+
+        $product = $this->getProductBySku('simple4');
+        $stockItem = $this->stockRegistry->getStockItem($product->getId(), 1);
+        $this->assertTrue($stockItem->getIsInStock());
     }
 
     /**

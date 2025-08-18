@@ -3405,14 +3405,17 @@ class Product extends AbstractEntity
         $stockItemDo = $this->stockRegistry->getStockItem($row['product_id'], $row['website_id']);
         $existStockData = $stockItemDo->getData();
 
-        $row = array_merge(
-            $this->defaultStockData,
-            array_intersect_key($existStockData, $this->defaultStockData),
-            array_intersect_key($rowData, $this->defaultStockData),
-            $row
-        );
+        foreach (array_flip($this->_fieldsMap) as $fileFieldName => $systemFieldName) {
+            if (isset($rowData[$fileFieldName]) && isset($this->defaultStockData[$systemFieldName])) {
+                $row[$systemFieldName] = $rowData[$fileFieldName];
+            }
+        }
 
         if ($this->stockConfiguration->isQty($this->skuProcessor->getNewSku($sku)['type_id'])) {
+            $initialStatusStock = $existStockData['is_in_stock'] ?? $this->defaultStockData['is_in_stock'];
+            unset($existStockData['is_in_stock']);
+
+            $row = $this->getMergedRowDetails($row, $existStockData, $rowData);
             $stockItemDo->setData($row);
             $row['is_in_stock'] = $this->stockStateProvider->verifyStock($stockItemDo)
                 ? (int) $row['is_in_stock']
@@ -3421,12 +3424,31 @@ class Product extends AbstractEntity
                 $date = $this->dateTimeFactory->create('now', new \DateTimeZone('UTC'));
                 $row['low_stock_date'] = $date->format(DateTime::DATETIME_PHP_FORMAT);
             }
-            $row['stock_status_changed_auto'] = (int)!$this->stockStateProvider->verifyStock($stockItemDo);
+            $row['stock_status_changed_auto'] = (int) $initialStatusStock != $row['is_in_stock'];
         } else {
+            $row = $this->getMergedRowDetails($row, $existStockData, $rowData);
             $row['qty'] = 0;
         }
 
         return $row;
+    }
+
+    /**
+     * Fill in row details with default stock data, existing stock data and import data.
+     *
+     * @param array $row
+     * @param array $existingStockData
+     * @param array $importData
+     * @return array
+     */
+    private function getMergedRowDetails(array $row, array $existingStockData, array $importData): array
+    {
+        return array_merge(
+            $this->defaultStockData,
+            array_intersect_key($existingStockData, $this->defaultStockData),
+            array_intersect_key($importData, $this->defaultStockData),
+            $row
+        );
     }
 
     /**
