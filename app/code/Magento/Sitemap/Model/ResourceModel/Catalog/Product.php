@@ -346,9 +346,11 @@ class Product extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         // First, collect all product data without loading images
         $productRows = [];
         $productIds = [];
+        $linkField = $this->_productResource->getLinkField();
+
         while ($row = $query->fetch()) {
             $productRows[] = $row;
-            $productIds[] = $row[$this->getIdFieldName()];
+            $productIds[] = $row[$linkField];
         }
 
         // Pre-load all images in batch to avoid N+1 queries
@@ -442,12 +444,13 @@ class Product extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     protected function _getAllProductImages($product, $storeId)
     {
-        $productId = $product->getId();
+        $linkField = $this->_productResource->getLinkField();
+        $productRowId = $product->getData($linkField);
         $imagesCollection = [];
 
         // Use cached images if available (from batch loading)
-        if (isset($this->_productImagesCache[$productId])) {
-            $gallery = $this->_productImagesCache[$productId];
+        if (isset($this->_productImagesCache[$productRowId])) {
+            $gallery = $this->_productImagesCache[$productRowId];
             foreach ($gallery as $image) {
                 $imagesCollection[] = new DataObject(
                     [
@@ -457,7 +460,7 @@ class Product extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
                 );
             }
         } else {
-            // Fallback to individual query (should rarely happen now)
+            // Fallback to individual query
             $product->setStoreId($storeId);
             $gallery = $this->mediaGalleryResourceModel->loadProductGalleryByAttributeId(
                 $product,
