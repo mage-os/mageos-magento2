@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\CatalogImportExport\Model;
 
+use Magento\CatalogImportExport\Model\Import\Product;
 use Magento\Store\Model\Store;
 
 class StockItemProcessor implements StockItemProcessorInterface
@@ -32,8 +33,8 @@ class StockItemProcessor implements StockItemProcessorInterface
     {
         $importStockData = [];
         foreach ($stockData as $sku => $productStockData) {
-            if (isset($stockData[Store::DEFAULT_STORE_ID])) {
-                $importStockData[$sku] = $productStockData[Store::DEFAULT_STORE_ID];
+            if (isset($stockData[Product::SCOPE_DEFAULT])) {
+                $importStockData[$sku] = $productStockData[Product::SCOPE_DEFAULT];
             } else {
                 $importStockData[$sku] = reset($productStockData);
             }

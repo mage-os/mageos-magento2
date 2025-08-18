@@ -3399,7 +3399,7 @@ class Product extends AbstractEntity
     {
         $sku = $rowData[self::COL_SKU];
         $row['product_id'] = $this->skuProcessor->getNewSku($sku)['entity_id'];
-        $row['website_id'] = $this->stockConfiguration->getDefaultScopeId();//here be the problem
+        $row['website_id'] = $this->stockConfiguration->getDefaultScopeId();
         $row['stock_id'] = $this->stockRegistry->getStock($row['website_id'])->getStockId();
 
         $stockItemDo = $this->stockRegistry->getStockItem($row['product_id'], $row['website_id']);
