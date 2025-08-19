@@ -26,6 +26,8 @@ use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Unit test for DeployRequireJsConfig service.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class DeployRequireJsConfigTest extends TestCase
 {
