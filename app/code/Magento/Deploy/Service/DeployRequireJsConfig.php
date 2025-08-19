@@ -120,9 +120,9 @@ class DeployRequireJsConfig
 
         if ($this->bundleConfig->isBundlingJsFiles()) {
             $fileManager->createStaticJsAsset();
+            $fileManager->createRequireJsMixinsAsset();
         }
         $fileManager->createRequireJsConfigAsset();
-        $fileManager->createRequireJsMixinsAsset();
         $fileManager->createMinResolverAsset();
 
         return true;

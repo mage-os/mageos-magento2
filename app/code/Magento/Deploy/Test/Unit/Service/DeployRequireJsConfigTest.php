@@ -289,12 +289,13 @@ class DeployRequireJsConfigTest extends TestCase
     {
         if ($bundlingEnabled) {
             $this->fileManager->expects($this->once())->method('createStaticJsAsset');
+            $this->fileManager->expects($this->once())->method('createRequireJsMixinsAsset');
         } else {
             $this->fileManager->expects($this->never())->method('createStaticJsAsset');
+            $this->fileManager->expects($this->never())->method('createRequireJsMixinsAsset');
         }
 
         $this->fileManager->expects($this->once())->method('createRequireJsConfigAsset');
-        $this->fileManager->expects($this->once())->method('createRequireJsMixinsAsset');
         $this->fileManager->expects($this->once())->method('createMinResolverAsset');
     }
 }

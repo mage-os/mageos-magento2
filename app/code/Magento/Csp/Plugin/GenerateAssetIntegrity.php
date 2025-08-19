@@ -105,7 +105,11 @@ class GenerateAssetIntegrity
     ): File {
         if (PHP_SAPI == 'cli') {
             if (in_array($result->getContentType(), self::CONTENT_TYPES)) {
-                $content = $result->getContent();
+                try {
+                    $content = $result->getContent();
+                } catch (\Exception $e) {
+                    $content = null;
+                }
                 $path = $result->getPath();
 
                 if ($content !== null) {
@@ -141,7 +145,11 @@ class GenerateAssetIntegrity
     ): File {
         if (PHP_SAPI == 'cli') {
             if (in_array($result->getContentType(), self::CONTENT_TYPES)) {
-                $content = $result->getContent();
+                try {
+                    $content = $result->getContent();
+                } catch (\Exception $e) {
+                    $content = null;
+                }
                 $path = $result->getPath();
 
                 if ($content !== null) {
