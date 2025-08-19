@@ -27,13 +27,9 @@
             <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
             <!-- Admin login -->
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
-            <!-- Set Customer Data Lifetime to 5 minutes -->
-            <actionGroup ref="SetCustomerDataLifetimeActionGroup" stepKey="setCustomerDataLifetimeToFiveMinutes">
+            <!-- Set Customer Data Lifetime to 2 minutes -->
+            <actionGroup ref="SetCustomerDataLifetimeActionGroup" stepKey="setCustomerDataLifetimeToTwoMinutes">
                 <argument name="minutes" value="2"/>
-            </actionGroup>
-            <!-- Flush cache to ensure configuration takes effect -->
-            <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushConfigCache">
-                <argument name="tags" value="config"/>
             </actionGroup>
         </before>
         <after>
