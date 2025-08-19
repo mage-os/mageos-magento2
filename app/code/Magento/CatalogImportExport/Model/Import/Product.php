@@ -3412,7 +3412,11 @@ class Product extends AbstractEntity
         }
 
         if ($this->stockConfiguration->isQty($this->skuProcessor->getNewSku($sku)['type_id'])) {
-            $initialStatusStock = $existStockData['is_in_stock'] ?? $this->defaultStockData['is_in_stock'];
+            if (empty($existStockData)) {
+                $initialStatusStock = 0;
+            } else {
+                $initialStatusStock = $existStockData['is_in_stock'] ?? $this->defaultStockData['is_in_stock'];
+            }
             unset($existStockData['is_in_stock']);
 
             $row = $this->getMergedRowDetails($row, $existStockData, $rowData);
