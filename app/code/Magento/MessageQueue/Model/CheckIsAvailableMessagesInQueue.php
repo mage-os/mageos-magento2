@@ -46,11 +46,16 @@ class CheckIsAvailableMessagesInQueue
         }
         if ($connectionName === 'stomp') {
             $queue->subscribeQueue();
-        }
-        $message = $queue->dequeue();
-        if ($message) {
-            $queue->reject($message);
-            return true;
+            $message = $queue->readMessage();
+            if ($message) {
+                return true;
+            }
+        } else {
+            $message = $queue->dequeue();
+            if ($message) {
+                $queue->reject($message);
+                return true;
+            }
         }
         return false;
     }

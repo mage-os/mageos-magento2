@@ -234,7 +234,7 @@ class Queue implements QueueInterface
      * @return Frame|null
      * @throws ConnectionLostException
      */
-    private function readMessage(): ?Frame
+    public function readMessage(): ?Frame
     {
         $message = null;
         $stompClient = $this->getStompConsumerClient();
