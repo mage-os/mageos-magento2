@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Framework\Console;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\State;
 use Magento\Framework\Shell\ComplexParameter;
 use Magento\TestFramework\Helper\Bootstrap as TestBootstrap;
