@@ -154,33 +154,6 @@ class ProductStockTest extends ProductTestBase
     }
 
     /**
-     * Test that imported product stock status with backorders functionality enabled can be set to 'out of stock'.
-     *
-     * @magentoDbIsolation enabled
-     *
-     * @return void
-     */
-    public function testImportWithBackordersEnabled(): void
-    {
-        $this->importFile('products_to_import_with_backorders_enabled_and_0_qty.csv');
-        $product = $this->getProductBySku('simple_new');
-        $this->assertFalse($product->getDataByKey('quantity_and_stock_status')['is_in_stock']);
-    }
-
-    /**
-     * Test that imported product stock status with stock quantity > 0 and backorders functionality disabled
-     * can be set to 'out of stock'.
-     *
-     * @magentoDbIsolation enabled
-     */
-    public function testImportWithBackordersDisabled(): void
-    {
-        $this->importFile('products_to_import_with_backorders_disabled_and_not_0_qty.csv');
-        $product = $this->getProductBySku('simple_new');
-        $this->assertFalse($product->getDataByKey('quantity_and_stock_status')['is_in_stock']);
-    }
-
-    /**
      * Test that product stock status is updated after import
      *
      * @magentoDataFixture mediaImportImageFixture

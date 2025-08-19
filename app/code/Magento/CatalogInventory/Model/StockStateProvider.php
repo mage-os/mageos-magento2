@@ -76,10 +76,7 @@ class StockStateProvider implements StockStateProviderInterface
      */
     public function verifyStock(StockItemInterface $stockItem)
     {
-        if ((int) $stockItem->getQty() === 0 &&
-            $stockItem->getManageStock() &&
-            $stockItem->getBackorders() == StockItemInterface::BACKORDERS_NO
-        ) {
+        if ($stockItem->getQty() === null && $stockItem->getManageStock()) {
             return false;
         }
         if ($stockItem->getBackorders() == StockItemInterface::BACKORDERS_NO
