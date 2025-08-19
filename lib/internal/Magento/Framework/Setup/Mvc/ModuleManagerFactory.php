@@ -1,10 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
+declare(strict_types=1);
 
-namespace Magento\Framework\Setup\Native;
+namespace Magento\Framework\Setup\Mvc;
 
 /**
  * Native ModuleManagerFactory that creates ModuleManager for setup application
@@ -19,10 +20,10 @@ class ModuleManagerFactory
      * @param array|null $options
      * @return ModuleManager
      */
-    public function __invoke($container, $name, ?array $options = null)
+    public function __invoke(mixed $container, string $name, ?array $options = null): ModuleManager
     {
         $configuration = $container->get('ApplicationConfig');
-        $modules = isset($configuration['modules']) ? $configuration['modules'] : [];
+        $modules = $configuration['modules'] ?? [];
         $eventManager = $container->get('EventManager');
 
         return new ModuleManager($modules, $eventManager);

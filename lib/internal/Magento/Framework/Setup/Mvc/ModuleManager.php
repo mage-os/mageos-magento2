@@ -1,10 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
+declare(strict_types=1);
 
-namespace Magento\Framework\Setup\Native;
+namespace Magento\Framework\Setup\Mvc;
+
+use Laminas\EventManager\EventManagerInterface;
 
 /**
  * Native ModuleManager that provides minimal module loading functionality for setup application
@@ -14,20 +17,20 @@ class ModuleManager
     /**
      * @var array
      */
-    private $modules;
+    private array $modules;
 
     /**
-     * @var \Laminas\EventManager\EventManagerInterface
+     * @var EventManagerInterface
      */
-    private $eventManager;
+    private EventManagerInterface $eventManager;
 
     /**
      * Constructor
      *
      * @param array $modules
-     * @param \Laminas\EventManager\EventManagerInterface $eventManager
+     * @param EventManagerInterface $eventManager
      */
-    public function __construct(array $modules, \Laminas\EventManager\EventManagerInterface $eventManager)
+    public function __construct(array $modules, EventManagerInterface $eventManager)
     {
         $this->modules = $modules;
         $this->eventManager = $eventManager;
@@ -38,16 +41,16 @@ class ModuleManager
      *
      * @return void
      */
-    public function loadModules()
+    public function loadModules(): void
     {
         $config = [];
-        
+
         // Load configuration from each module
         foreach ($this->modules as $moduleName) {
             if (class_exists($moduleName . '\Module')) {
                 $moduleClass = $moduleName . '\Module';
                 $moduleInstance = new $moduleClass();
-                
+
                 if (method_exists($moduleInstance, 'getConfig')) {
                     $moduleConfig = $moduleInstance->getConfig();
                     if (is_array($moduleConfig)) {
@@ -56,7 +59,7 @@ class ModuleManager
                 }
             }
         }
-        
+
         // Trigger event to allow modules to be loaded
         $this->eventManager->trigger('loadModules.post', $this, ['config' => $config]);
     }

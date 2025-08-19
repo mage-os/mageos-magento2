@@ -6,9 +6,7 @@
 
 namespace Magento\Setup;
 
-use Magento\Framework\Setup\Native\MvcEvent;
-use Magento\Framework\App\Response\HeaderProvider\XssProtection;
-use Magento\Setup\Mvc\View\Http\InjectTemplateListener;
+use Magento\Framework\Setup\Mvc\MvcEvent;
 
 /**
  * Native module declaration

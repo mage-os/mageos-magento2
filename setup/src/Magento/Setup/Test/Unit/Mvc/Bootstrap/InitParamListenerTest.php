@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -12,8 +12,8 @@ use Laminas\EventManager\SharedEventManager;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\ServiceManager\ServiceManager;
 use Laminas\Stdlib\RequestInterface;
-use Magento\Framework\Setup\Native\MvcApplication;
-use Magento\Framework\Setup\Native\MvcEvent;
+use Magento\Framework\Setup\Mvc\MvcApplication;
+use Magento\Framework\Setup\Mvc\MvcEvent;
 use Magento\Framework\App\Bootstrap as AppBootstrap;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem;

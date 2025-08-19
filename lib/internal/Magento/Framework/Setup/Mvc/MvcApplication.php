@@ -1,15 +1,15 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
+declare(strict_types=1);
 
-namespace Magento\Framework\Setup\Native;
+namespace Magento\Framework\Setup\Mvc;
 
 use Laminas\ServiceManager\ServiceManager;
 use Laminas\EventManager\EventManagerInterface;
 use Laminas\Stdlib\ArrayUtils;
-use Magento\Framework\Setup\ServiceManagerFactory;
 
 /**
  * Native MVC Application that replicates Laminas\Mvc\Application functionality
@@ -20,24 +20,17 @@ class MvcApplication
     /**
      * @var ServiceManager
      */
-    private $serviceManager;
+    private ServiceManager $serviceManager;
 
     /**
      * Constructor (compatible with Laminas\Mvc\Application)
      *
      * @param ServiceManager $serviceManager
-     * @param mixed $eventManager
-     * @param mixed $request
-     * @param mixed $response
      */
     public function __construct(
-        ServiceManager $serviceManager,
-        $eventManager = null,
-        $request = null,
-        $response = null
+        ServiceManager $serviceManager
     ) {
         $this->serviceManager = $serviceManager;
-        // For setup commands, we don't need eventManager, request, response
     }
 
     /**
@@ -45,9 +38,29 @@ class MvcApplication
      *
      * @return ServiceManager
      */
-    public function getServiceManager()
+    public function getServiceManager(): ServiceManager
     {
         return $this->serviceManager;
+    }
+
+    /**
+     * Get event manager (compatibility method for tests)
+     *
+     * @return EventManagerInterface
+     */
+    public function getEventManager(): EventManagerInterface
+    {
+        return $this->serviceManager->get('EventManager');
+    }
+
+    /**
+     * Get configuration (compatibility method for tests)
+     *
+     * @return array
+     */
+    public function getConfig(): array
+    {
+        return $this->serviceManager->get('config');
     }
 
     /**
@@ -56,7 +69,7 @@ class MvcApplication
      * @param array $listeners
      * @return self
      */
-    public function bootstrap(array $listeners = [])
+    public function bootstrap(array $listeners = []): static
     {
         // Bootstrap listeners for setup
         foreach ($listeners as $listener) {
@@ -80,19 +93,19 @@ class MvcApplication
      * @param array $configuration
      * @return self
      */
-    public static function init(array $configuration)
+    public static function init(array $configuration): MvcApplication
     {
         // Pre-load module configurations to get their service_manager configs
         $moduleConfigs = self::loadModuleConfigurations($configuration);
-        
+
         // Merge application service_manager config with module service_manager configs
-        $serviceManagerConfig = isset($configuration['service_manager']) ? $configuration['service_manager'] : [];
+        $serviceManagerConfig = $configuration['service_manager'] ?? [];
         foreach ($moduleConfigs as $moduleConfig) {
             if (isset($moduleConfig['service_manager'])) {
                 $serviceManagerConfig = ArrayUtils::merge($serviceManagerConfig, $moduleConfig['service_manager']);
             }
         }
-        
+
         $smConfig = new MvcServiceManagerConfig($serviceManagerConfig);
 
         $serviceManager = new ServiceManager();
@@ -118,17 +131,17 @@ class MvcApplication
      * @param array $configuration
      * @return array
      */
-    private static function loadModuleConfigurations(array $configuration)
+    private static function loadModuleConfigurations(array $configuration): array
     {
         $moduleConfigs = [];
-        $modules = isset($configuration['modules']) ? $configuration['modules'] : [];
-        
+        $modules = $configuration['modules'] ?? [];
+
         // Load configuration from each module
         foreach ($modules as $moduleName) {
             if (class_exists($moduleName . '\Module')) {
                 $moduleClass = $moduleName . '\Module';
                 $moduleInstance = new $moduleClass();
-                
+
                 if (method_exists($moduleInstance, 'getConfig')) {
                     $moduleConfig = $moduleInstance->getConfig();
                     if (is_array($moduleConfig)) {
@@ -137,7 +150,7 @@ class MvcApplication
                 }
             }
         }
-        
+
         return $moduleConfigs;
     }
 
@@ -147,10 +160,10 @@ class MvcApplication
      * @param ServiceManager $serviceManager
      * @param array $configuration
      */
-    private static function loadAutoloadConfig(ServiceManager $serviceManager, array $configuration)
+    private static function loadAutoloadConfig(ServiceManager $serviceManager, array $configuration): void
     {
         $mergedConfig = $configuration;
-        
+
         // Load global.php and local.php configurations from config_glob_paths
         if (isset($configuration['module_listener_options']['config_glob_paths'])) {
             foreach ($configuration['module_listener_options']['config_glob_paths'] as $globPath) {
@@ -172,7 +185,7 @@ class MvcApplication
             $moduleConfig = $module->getConfig();
             $mergedConfig = array_merge_recursive($mergedConfig, $moduleConfig);
         }
-        
+
         $serviceManager->setService('config', $mergedConfig);
     }
 }

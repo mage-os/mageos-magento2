@@ -5,8 +5,7 @@
  */
 namespace Magento\Setup;
 
-use Magento\Framework\Setup\Native\MvcApplication as NativeApplication;
-use Magento\Framework\Setup\Native\MvcServiceManagerConfig as ServiceManagerConfig;
+use Magento\Framework\Setup\Mvc\MvcApplication as NativeApplication;
 use Laminas\ServiceManager\ServiceManager;
 
 /**

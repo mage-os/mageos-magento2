@@ -1,10 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
+declare(strict_types=1);
 
-namespace Magento\Framework\Setup\Native;
+namespace Magento\Framework\Setup\Mvc;
 
 use Laminas\ServiceManager\ServiceManager;
 use Laminas\EventManager\EventManager;
@@ -23,7 +24,7 @@ class MvcServiceManagerConfig
     /**
      * @var array
      */
-    protected $config;
+    protected array $config;
 
     /**
      * Constructor
@@ -102,17 +103,17 @@ class MvcServiceManagerConfig
      * @param ServiceManager $serviceManager
      * @return ServiceManager
      */
-    public function configureServiceManager(ServiceManager $serviceManager)
+    public function configureServiceManager(ServiceManager $serviceManager): ServiceManager
     {
         // Add ServiceManager service reference (same as Laminas)
         $this->config['services'][ServiceManager::class] = $serviceManager;
 
         // Enable override during bootstrapping (same as Laminas)
         $serviceManager->setAllowOverride(true);
-        
+
         // Configure the service manager using Laminas ServiceManager's native configure method
         $serviceManager->configure($this->config);
-        
+
         // Disable override after configuration (same as Laminas)
         $serviceManager->setAllowOverride(false);
 
@@ -124,7 +125,7 @@ class MvcServiceManagerConfig
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return $this->config;
     }

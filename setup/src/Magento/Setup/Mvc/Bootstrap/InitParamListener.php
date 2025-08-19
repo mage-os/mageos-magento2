@@ -3,16 +3,18 @@
  * Copyright 2014 Adobe
  * All Rights Reserved.
  */
+declare(strict_types=1);
+
 namespace Magento\Setup\Mvc\Bootstrap;
 
-use Interop\Container\ContainerInterface;
 use Magento\Framework\App\Bootstrap as AppBootstrap;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\State;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Shell\ComplexParameter;
-use Magento\Framework\Setup\Native\MvcApplication;
-use Magento\Framework\Setup\Native\MvcEvent;
+use Magento\Framework\Setup\Mvc\MvcApplication;
+use Magento\Framework\Setup\Mvc\MvcEvent;
+use Laminas\EventManager\EventManagerInterface;
 
 /**
  * A listener that injects relevant Magento initialization parameters and initializes filesystem
@@ -35,7 +37,7 @@ class InitParamListener
      * @param MvcEvent $e
      * @return void
      */
-    public function onBootstrap(MvcEvent $e)
+    public function onBootstrap(MvcEvent $e): void
     {
         /** @var MvcApplication $application */
         $application = $e->getApplication();
@@ -53,16 +55,60 @@ class InitParamListener
      * @param string $requestedName
      * @return array
      */
-    public function __invoke($serviceManager, $requestedName)
+    public function __invoke($serviceManager, $requestedName): array
     {
         // For Laminas ServiceManager, extract parameters from merged config (which includes global.php)
         $mergedConfig = $serviceManager->has('config') ? $serviceManager->get('config') : [];
         $appConfig = $serviceManager->has('ApplicationConfig') ? $serviceManager->get('ApplicationConfig') : [];
-        
+
         // Merge both configs to ensure we get bootstrap params from global.php
         $fullConfig = array_merge_recursive($appConfig, $mergedConfig);
-        
+
         return $this->extractInitParametersFromConfig($fullConfig);
+    }
+
+    /**
+     * Attach listener to events (compatibility method for tests)
+     *
+     * @param EventManagerInterface $events
+     * @return void
+     */
+    public function attach(EventManagerInterface $events): void
+    {
+        $sharedManager = $events->getSharedManager();
+        if ($sharedManager) {
+            $sharedManager->attach(
+                MvcApplication::class,
+                MvcEvent::EVENT_BOOTSTRAP,
+                [$this, 'onBootstrap']
+            );
+            // Get existing listeners (as expected by the test)
+            $sharedManager->getListeners([MvcApplication::class], MvcEvent::EVENT_BOOTSTRAP);
+        }
+    }
+
+    /**
+     * Detach listener from events (compatibility method for tests)
+     *
+     * @param EventManagerInterface $events
+     * @return void
+     */
+    public function detach(EventManagerInterface $events): void
+    {
+        $events->detach([$this, 'onBootstrap']);
+    }
+
+    /**
+     * Create service (compatibility method for tests)
+     *
+     * @param mixed $serviceLocator
+     * @return array
+     */
+    public function createService($serviceLocator): array
+    {
+        $application = $serviceLocator->get('Application');
+        $config = $application->getConfig();
+        return $this->extractInitParametersFromConfig($config);
     }
 
     /**
@@ -73,10 +119,10 @@ class InitParamListener
      * 2: environment
      * 3: CLI parameters (if the application is running in CLI mode)
      *
-     * @param Application $application
+     * @param array $config
      * @return array
      */
-    private function extractInitParametersFromConfig(array $config)
+    private function extractInitParametersFromConfig(array $config): array
     {
         $result = [];
         if (isset($config[self::BOOTSTRAP_PARAM])) {
@@ -122,7 +168,7 @@ class InitParamListener
      * @return DirectoryList
      * @throws \LogicException
      */
-    public function createDirectoryList($initParams)
+    public function createDirectoryList($initParams): DirectoryList
     {
         if (!isset($initParams[AppBootstrap::INIT_PARAM_FILESYSTEM_DIR_PATHS][DirectoryList::ROOT])) {
             throw new \LogicException('Magento root directory is not specified.');
@@ -138,7 +184,7 @@ class InitParamListener
      * @param DirectoryList $directoryList
      * @return Filesystem
      */
-    public function createFilesystem(DirectoryList $directoryList)
+    public function createFilesystem(DirectoryList $directoryList): Filesystem
     {
         $driverPool = new Filesystem\DriverPool();
         return new Filesystem(

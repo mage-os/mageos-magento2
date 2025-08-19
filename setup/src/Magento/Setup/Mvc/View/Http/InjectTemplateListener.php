@@ -1,12 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
+declare(strict_types=1);
 
 namespace Magento\Setup\Mvc\View\Http;
 
-use Magento\Framework\Setup\Native\MvcEvent;
+use Magento\Framework\Setup\Mvc\MvcEvent;
 
 /**
  * Native InjectTemplateListener for HTTP request (replaces Laminas dependency)
@@ -19,7 +20,7 @@ class InjectTemplateListener
      * @param  string $controller
      * @return string
      */
-    protected function deriveModuleNamespace($controller)
+    protected function deriveModuleNamespace($controller): string
     {
         if (!strstr($controller, '\\')) {
             return '';
@@ -37,7 +38,7 @@ class InjectTemplateListener
      * @param string $namespace
      * @return string
      */
-    protected function deriveControllerSubNamespace($namespace)
+    protected function deriveControllerSubNamespace($namespace): string
     {
         if (!strstr($namespace, '\\')) {
             return '';
