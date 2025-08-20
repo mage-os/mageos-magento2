@@ -59,9 +59,9 @@ class GenerateAssetIntegrity
      * Generates integrity for RequireJs config.
      *
      * @param FileManager $subject
-     * @param File $result
+     * @param File|false $result
      *
-     * @return File
+     * @return File|false
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
