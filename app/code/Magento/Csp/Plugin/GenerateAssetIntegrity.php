@@ -103,27 +103,8 @@ class GenerateAssetIntegrity
         FileManager $subject,
         File $result
     ): File {
-        if (PHP_SAPI == 'cli') {
-            if (in_array($result->getContentType(), self::CONTENT_TYPES)) {
-                try {
-                    $content = $result->getContent();
-                } catch (\Exception $e) {
-                    $content = null;
-                }
-                $path = $result->getPath();
-
-                if ($content !== null) {
-                    $integrity = $this->integrityFactory->create(
-                        [
-                            "data" => [
-                                'hash' => $this->hashGenerator->generate($content),
-                                'path' => $path
-                            ]
-                        ]
-                    );
-                    $this->integrityCollector->collect($integrity);
-                }
-            }
+        if (PHP_SAPI === 'cli') {
+            $this->generateHash($result);
         }
 
         return $result;
@@ -133,7 +114,7 @@ class GenerateAssetIntegrity
      * Generates integrity for static JS asset.
      *
      * @param FileManager $subject
-     * @param File $result
+     * @param File|false $result
      *
      * @return File
      *
@@ -141,31 +122,42 @@ class GenerateAssetIntegrity
      */
     public function afterCreateStaticJsAsset(
         FileManager $subject,
-        File $result
+        File|false $result
     ): File {
-        if (PHP_SAPI == 'cli') {
-            if (in_array($result->getContentType(), self::CONTENT_TYPES)) {
-                try {
-                    $content = $result->getContent();
-                } catch (\Exception $e) {
-                    $content = null;
-                }
-                $path = $result->getPath();
-
-                if ($content !== null) {
-                    $integrity = $this->integrityFactory->create(
-                        [
-                            "data" => [
-                                'hash' => $this->hashGenerator->generate($content),
-                                'path' => $path
-                            ]
-                        ]
-                    );
-                    $this->integrityCollector->collect($integrity);
-                }
-            }
+        if ($result !== false && PHP_SAPI === 'cli') {
+            $this->generateHash($result);
         }
 
         return $result;
+    }
+
+    /**
+     * Generates hash for the given file result if it matches the supported content types.
+     *
+     * @param File $result
+     * @return void
+     */
+    private function generateHash(File $result): void
+    {
+        if (in_array($result->getContentType(), self::CONTENT_TYPES)) {
+            try {
+                $content = $result->getContent();
+            } catch (\Exception $e) {
+                $content = null;
+            }
+            $path = $result->getPath();
+
+            if ($content !== null) {
+                $integrity = $this->integrityFactory->create(
+                    [
+                        "data" => [
+                            'hash' => $this->hashGenerator->generate($content),
+                            'path' => $path
+                        ]
+                    ]
+                );
+                $this->integrityCollector->collect($integrity);
+            }
+        }
     }
 }
