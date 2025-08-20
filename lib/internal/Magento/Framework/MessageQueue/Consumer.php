@@ -134,16 +134,12 @@ class Consumer implements ConsumerInterface
         if (!isset($maxNumberOfMessages)) {
             $queue->subscribe($this->getTransactionCallback($queue));
         } else {
-            $connectionName = $this->consumerConfig
-                ->getConsumer($this->configuration->getConsumerName())
-                ->getConnection();
             $this->invoker->invoke(
                 $queue,
                 $maxNumberOfMessages,
                 $this->getTransactionCallback($queue),
                 $maxIdleTime,
-                $sleep,
-                $connectionName
+                $sleep
             );
         }
     }
@@ -214,7 +210,7 @@ class Consumer implements ConsumerInterface
         $messageProperties = $envelope->getProperties();
         $connectionName = $this->consumerConfig->getConsumer($this->configuration->getConsumerName())->getConnection();
         $queue = $this->queueRepository->get($connectionName, $messageProperties['reply_to']);
-        $queue->push($envelope);
+        $queue->callRpc($envelope);
     }
 
     /**

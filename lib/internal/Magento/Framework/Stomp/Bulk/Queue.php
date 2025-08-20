@@ -87,7 +87,7 @@ class Queue implements QueueInterface
         if ($isSync) {
             $responses = [];
             foreach ($envelopes as $envelope) {
-                $responses[] = $queue->push($envelope);
+                $responses[] = $queue->callRpc($envelope);
             }
             return $responses;
         }

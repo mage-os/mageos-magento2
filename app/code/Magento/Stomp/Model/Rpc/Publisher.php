@@ -111,7 +111,7 @@ class Publisher implements PublisherInterface
         $publisher = $this->publisherConfig->getPublisher($topicName);
         $connectionName = $publisher->getConnection()->getName();
         $queue = $this->queueRepository->get($connectionName, $replyTo);
-        $responseMessage = $queue->push($envelope);
+        $responseMessage = $queue->callRpc($envelope);
         return $this->messageEncoder->decode($topicName, $responseMessage, false);
     }
 }
