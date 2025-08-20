@@ -59,16 +59,16 @@ class GenerateAssetIntegrity
      * Generates integrity for RequireJs config.
      *
      * @param FileManager $subject
-     * @param File|false $result
+     * @param File $result
      *
-     * @return File|false
+     * @return File
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function afterCreateRequireJsConfigAsset(
         FileManager $subject,
-        mixed $result
-    ): mixed {
+        File $result
+    ): File {
         if (PHP_SAPI == 'cli') {
             if (in_array($result->getContentType(), self::CONTENT_TYPES)) {
                 $integrity = $this->integrityFactory->create(
@@ -122,8 +122,8 @@ class GenerateAssetIntegrity
      */
     public function afterCreateStaticJsAsset(
         FileManager $subject,
-        $result
-    ): false|File {
+        mixed $result
+    ): mixed {
         if ($result !== false && PHP_SAPI === 'cli') {
             $this->generateHash($result);
         }
