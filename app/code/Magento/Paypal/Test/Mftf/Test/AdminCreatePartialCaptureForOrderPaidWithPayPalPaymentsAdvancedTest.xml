@@ -80,6 +80,8 @@
             <actionGroup ref="AdminConfigPaymentsAdvancedActionGroup" stepKey="configurePayPalPaymentsAdvanced">
                 <argument name="credentials" value="SamplePaypalPaymentsAdvancedConfig"/>
             </actionGroup>
+            <!--Save Configuration-->
+            <actionGroup ref="AdminSaveConfigActionGroup" stepKey="saveConfigs"/>
             <!-- clean cache -->
             <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanCache">
                 <argument name="tags" value=""/>
