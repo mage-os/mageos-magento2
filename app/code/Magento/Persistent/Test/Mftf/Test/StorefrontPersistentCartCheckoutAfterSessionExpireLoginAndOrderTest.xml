@@ -15,6 +15,7 @@
             <title value="Cannot checkout after session expires with persistent shopping cart"/>
             <description value="This test case verifies that a user cannot checkout after the session expires when using a persistent shopping cart."/>
             <severity value="MAJOR"/>
+            <testCaseId value="AC-5489"/>
             <group value="persistent"/>
         </annotations>
         <before>
@@ -41,7 +42,7 @@
             </actionGroup>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogoutForCleanup"/>
         </after>
-        <!-- Step-5: Go to storefront and register new customer -->
+        <!-- Step 5: Go to storefront and register new customer -->
         <actionGroup ref="StorefrontOpenCustomerAccountCreatePageActionGroup" stepKey="openCreateAccountPage"/>
         <actionGroup ref="StorefrontFillCustomerAccountCreationFormActionGroup" stepKey="fillCreateAccountForm">
             <argument name="customer" value="Simple_US_Customer_NY"/>
@@ -55,11 +56,11 @@
         <actionGroup ref="EnterCustomerAddressInfoActionGroup" stepKey="addDefaultCustomerAddress">
             <argument name="Address" value="US_Address_NY"/>
         </actionGroup>
-        <!-- Step-6: Add first product to cart -->
+        <!-- Step 6: Add first product to cart -->
         <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="addFirstProductToCart">
             <argument name="product" value="$$createSimpleProductOne$$"/>
         </actionGroup>
-        <!-- Step-7: Go to checkout and finish flow -->
+        <!-- Step 7: Go to checkout and finish flow -->
         <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutAfterFirstProduct"/>
         <actionGroup ref="StorefrontSelectFirstShippingMethodActionGroup" stepKey="selectFirstShippingMethodForFirstOrder"/>
         <actionGroup ref="StorefrontCheckoutClickNextButtonActionGroup" stepKey="proceedToPaymentForFirstOrder"/>
@@ -68,19 +69,19 @@
         <waitForElementVisible selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="waitForOderNumber"/>
         <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="grabOrderNumber"/>
         <waitForText selector="{{CheckoutSuccessMainSection.orderNumberText}}" userInput="Your order number is: $grabOrderNumber." stepKey="assertFirstOrderSuccessMessage"/>
-        <!-- Step-8: Expire user session by removing PHPSESSID cookie -->
+        <!-- Step 8: Expire user session by removing PHPSESSID cookie -->
         <resetCookie userInput="PHPSESSID" stepKey="expireSessionByResetCookie"/>
-        <!-- Step-9: Add second product to the cart as guest -->
+        <!-- Step 9: Add second product to the cart as guest -->
         <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="addSecondProductToCartAsGuest">
             <argument name="product" value="$$createSimpleProductTwo$$"/>
         </actionGroup>
-        <!-- Step-10: Go to checkout -->
+        <!-- Step 10: Go to checkout -->
         <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutAfterSecondProduct"/>
-        <!-- Step-11: Login as current user on checkout page -->
+        <!-- Step 11: Login as current user on checkout page -->
         <actionGroup ref="LoginAsCustomerOnCheckoutPageActionGroup" stepKey="loginAsCustomerOnCheckout">
             <argument name="customer" value="Simple_US_Customer_NY"/>
         </actionGroup>
-        <!-- Step-12: Place order -->
+        <!-- Step 12: Place order -->
         <actionGroup ref="StorefrontCheckoutClickNextButtonActionGroup" stepKey="proceedToPaymentForSecondOrder"/>
         <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="selectCheckMoneyOrderPaymentForSecondOrder"/>
         <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="placeSecondOrder"/>
