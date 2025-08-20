@@ -67,8 +67,8 @@ class GenerateAssetIntegrity
      */
     public function afterCreateRequireJsConfigAsset(
         FileManager $subject,
-        File $result
-    ): File {
+        mixed $result
+    ): mixed {
         if (PHP_SAPI == 'cli') {
             if (in_array($result->getContentType(), self::CONTENT_TYPES)) {
                 $integrity = $this->integrityFactory->create(
@@ -116,14 +116,14 @@ class GenerateAssetIntegrity
      * @param FileManager $subject
      * @param File|false $result
      *
-     * @return File
+     * @return File|false
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function afterCreateStaticJsAsset(
         FileManager $subject,
-        File|false $result
-    ): File {
+        $result
+    ): false|File {
         if ($result !== false && PHP_SAPI === 'cli') {
             $this->generateHash($result);
         }
