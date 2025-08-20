@@ -82,7 +82,7 @@
             </actionGroup>
             <!-- clean cache -->
             <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanCache">
-                <argument name="tags" value="config full_page"/>
+                <argument name="tags" value=""/>
             </actionGroup>
             <!-- Login to storefront -->
             <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
