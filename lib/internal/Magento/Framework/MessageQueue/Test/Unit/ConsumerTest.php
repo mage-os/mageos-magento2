@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2017 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -199,7 +199,15 @@ class ConsumerTest extends TestCase
         $envelope->expects($this->once())->method('getProperties')->willReturn($properties);
         $this->communicationConfig->expects($this->once())->method('getTopic')->with($properties['topic_name'])
             ->willReturn($topicConfig);
-        $this->configuration->expects($this->once())->method('getConsumerName')->willReturn($consumerName);
+        $this->configuration->expects($this->atLeastOnce())->method('getConsumerName')->willReturn($consumerName);
+        $consumerConfigItem = $this->getMockBuilder(
+            \Magento\Framework\MessageQueue\Consumer\Config\ConsumerConfigItemInterface::class
+        )
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
+        $consumerConfigItem->expects($this->once())->method('getConnection')->willReturn('connection_name');
+        $this->consumerConfig->expects($this->once())->method('getConsumer')->with($consumerName)
+            ->willReturn($consumerConfigItem);
         $this->messageController->expects($this->once())->method('lock')->with($envelope, $consumerName)
             ->willThrowException(
                 new NotFoundException(
@@ -227,6 +235,16 @@ class ConsumerTest extends TestCase
         $queue->expects($this->atMost(2))->method('dequeue')->willReturn(null);
         $this->configuration->expects($this->once())->method('getMaxIdleTime')->willReturn('2');
         $this->configuration->expects($this->once())->method('getSleep')->willReturn('2');
+        $consumerName = 'consumer.name';
+        $this->configuration->expects($this->once())->method('getConsumerName')->willReturn($consumerName);
+        $consumerConfigItem = $this->getMockBuilder(
+            \Magento\Framework\MessageQueue\Consumer\Config\ConsumerConfigItemInterface::class
+        )
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
+        $consumerConfigItem->expects($this->once())->method('getConnection')->willReturn('connection_name');
+        $this->consumerConfig->expects($this->once())->method('getConsumer')->with($consumerName)
+            ->willReturn($consumerConfigItem);
         $this->consumer->process($numberOfMessages);
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Framework\MessageQueue;
@@ -56,22 +56,28 @@ class CallbackInvoker implements CallbackInvokerInterface
      * @param QueueInterface $queue
      * @param int $maxNumberOfMessages
      * @param \Closure $callback
-     * @param int|null $maxIdleTime
-     * @param int|null $sleep
+     * @param mixed $maxIdleTime
+     * @param mixed $sleep
+     * @param string $connectionName
      * @return void
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function invoke(
         QueueInterface $queue,
         $maxNumberOfMessages,
         $callback,
         $maxIdleTime = null,
-        $sleep = null
+        $sleep = null,
+        $connectionName = 'amqp'
     ) {
         $this->poisonPillVersion = $this->poisonPillRead->getLatestVersion();
         $sleep = (int) $sleep ?: 1;
         $maxIdleTime = $maxIdleTime ? (int) $maxIdleTime : PHP_INT_MAX;
+        if ($connectionName === 'stomp') {
+            $queue->subscribeQueue();
+        }
         for ($i = $maxNumberOfMessages; $i > 0; $i--) {
             $idleStartTime = microtime(true);
             do {

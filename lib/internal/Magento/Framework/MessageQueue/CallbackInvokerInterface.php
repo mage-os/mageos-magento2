@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -19,8 +19,9 @@ interface CallbackInvokerInterface
      * @param QueueInterface $queue
      * @param int $maxNumberOfMessages
      * @param \Closure $callback
-     * @param int|null $maxIdleTime
-     * @param int|null $sleep
+     * @param mixed $maxIdleTime
+     * @param mixed $sleep
+     * @param string $connectionName
      * @return void
      */
     public function invoke(
@@ -28,6 +29,7 @@ interface CallbackInvokerInterface
         $maxNumberOfMessages,
         $callback,
         $maxIdleTime = null,
-        $sleep = null
+        $sleep = null,
+        $connectionName = 'amqp'
     );
 }

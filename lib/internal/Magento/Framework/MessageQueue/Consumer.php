@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Framework\MessageQueue;
@@ -134,12 +134,16 @@ class Consumer implements ConsumerInterface
         if (!isset($maxNumberOfMessages)) {
             $queue->subscribe($this->getTransactionCallback($queue));
         } else {
+            $connectionName = $this->consumerConfig
+                ->getConsumer($this->configuration->getConsumerName())
+                ->getConnection();
             $this->invoker->invoke(
                 $queue,
                 $maxNumberOfMessages,
                 $this->getTransactionCallback($queue),
                 $maxIdleTime,
-                $sleep
+                $sleep,
+                $connectionName
             );
         }
     }
