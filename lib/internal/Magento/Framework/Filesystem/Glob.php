@@ -20,7 +20,10 @@ class Glob extends LaminasGlob
     private static $cache = [];
 
     /**
-     * Clear the cache.
+     * Clear the static cache for glob patterns.
+     * This method should be used primarily in testing environments
+     * or long-running processes where file system changes occur
+     * between glob() calls and fresh results are required.
      *
      * @return void
      */
