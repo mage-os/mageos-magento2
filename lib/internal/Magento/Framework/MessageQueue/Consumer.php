@@ -210,7 +210,11 @@ class Consumer implements ConsumerInterface
         $messageProperties = $envelope->getProperties();
         $connectionName = $this->consumerConfig->getConsumer($this->configuration->getConsumerName())->getConnection();
         $queue = $this->queueRepository->get($connectionName, $messageProperties['reply_to']);
-        $queue->callRpc($envelope);
+        if($connectionName === 'stomp') {
+            $queue->callRpc($envelope);
+        } else {
+            $queue->push($envelope);
+        }
     }
 
     /**
