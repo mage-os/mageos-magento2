@@ -74,15 +74,15 @@
                 <requiredEntity createDataKey="createConfigProduct"/>
                 <requiredEntity createDataKey="createConfigChildProduct2"/>
             </createData>
-            <!-- clean cache -->
-            <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanCache">
-                <argument name="tags" value="config full_page"/>
-            </actionGroup>
             <!-- Login to admin -->
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
             <!-- Configure PayPal Payments Advanced -->
             <actionGroup ref="AdminConfigPaymentsAdvancedActionGroup" stepKey="configurePayPalPaymentsAdvanced">
                 <argument name="credentials" value="SamplePaypalPaymentsAdvancedConfig"/>
+            </actionGroup>
+            <!-- clean cache -->
+            <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanCache">
+                <argument name="tags" value="config full_page"/>
             </actionGroup>
             <!-- Login to storefront -->
             <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
