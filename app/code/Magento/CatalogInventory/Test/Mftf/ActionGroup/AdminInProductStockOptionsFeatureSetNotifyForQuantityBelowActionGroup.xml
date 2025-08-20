@@ -15,7 +15,7 @@
         <arguments>
             <argument name="quantityValue" type="string" defaultValue="1"/>
         </arguments>
-        <scrollTo  selector="{{AdminInventoryProductStockOptionsConfigSection.notifyQty}}" x="0" y="-80" stepKey="scrollToElement"/>
+        <scrollTo  selector="{{AdminInventoryProductStockOptionsConfigSection.notifyQty}}" x="0" y="-80" stepKey="scrollToNotifyQuantityFieldToSetValue"/>
         <uncheckOption selector="{{AdminInventoryProductStockOptionsConfigSection.systemValue}}" stepKey="uncheckUseDefaultValue"/>
         <fillField selector="{{AdminInventoryProductStockOptionsConfigSection.notifyQty}}" userInput="{{quantityValue}}" stepKey="setNotifyForQtyBelow"/>
     </actionGroup>

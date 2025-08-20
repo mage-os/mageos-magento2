@@ -5,8 +5,9 @@
   * All Rights Reserved.
   */
 -->
-<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+<tests
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
     <test name="AdminVerifySubTotalRoundingForDecimalQuantityEnabledTest">
         <annotations>
             <features value="Catalog"/>
@@ -18,10 +19,11 @@
             <group value="catalog"/>
         </annotations>
         <before>
-            <!-- Step 2: Create product with price 20.67 -->
-            <createData entity="_defaultProduct" stepKey="createSimpleProduct">
-                <field key="price">20.67</field>
-            </createData>
+            <!--Pre-condition 1: Create customer -->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+            <actionGroup ref="LoginToStorefrontActionGroup" stepKey="storefrontCustomerLogin">
+                <argument name="Customer" value="$$createCustomer$$"/>
+            </actionGroup>
             <!-- Admin login -->
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
             <!--Step1: Set notify for quantity below = 0.5 in config -->
@@ -30,13 +32,20 @@
                 <argument name="quantityValue" value="0.5"/>
             </actionGroup>
             <actionGroup ref="AdminSaveConfigActionGroup" stepKey="saveConfig"/>
+            <!-- Step 2: Create product with price 20.67 -->
+            <createData entity="_defaultProduct" stepKey="createSimpleProduct">
+                <field key="price">20.67</field>
+            </createData>
         </before>
         <after>
-            <!-- Delete product  -->
+            <!-- Logout from storefront -->
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutStorefront"/>
+            <!-- Delete customer,product -->
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
             <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
             <!-- Reset notify for quantity below -->
             <actionGroup ref="AdminNavigateToProductStockOptionsFeatureActionGroup" stepKey="navigateToProductStockOption"/>
-            <actionGroup ref="AdminInProductStockOptionsFeatureResetNotifyForQuantityBelowActionGroup" stepKey="navigateToProductStockOptions"/>
+            <actionGroup ref="AdminInProductStockOptionsFeatureResetNotifyForQuantityBelowActionGroup" stepKey="resetNotifyForQuantityBelow"/>
             <!-- Admin logout -->
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutAdmin"/>
         </after>
@@ -48,7 +57,7 @@
         <fillField selector="{{AdminProductFormSection.productQuantity}}" userInput="1.5" stepKey="seeProductQuantity"/>
         <!--Step 2: Open advanced inventory Section -->
         <actionGroup ref="AdminClickOnAdvancedInventoryLinkActionGroup" stepKey="clickOnAdvancedInventoryLink"/>
-        <!-- Step 2: Set decimal qantity to yes -->
+        <!-- Step 2: Set decimal quantity to yes -->
         <actionGroup ref="AdminSetQtyUsesDecimalsConfigActionGroup" stepKey="setQtyUsesDecimalsConfig">
             <argument name="value" value="Yes"/>
         </actionGroup>
@@ -73,19 +82,25 @@
         <waitForPageLoad stepKey="waitForPriceLoad"/>
         <waitForText selector="{{StorefrontProductPageSection.subTotal}}" userInput="$10.34" stepKey="seeSubTotal"/>
         <waitForText selector="{{StorefrontProductPageSection.orderTotal}}" userInput="$12.84" stepKey="seeOrderTotal"/>
-        <!-- Step 4: Proceed to checkout and place order -->
+        <!-- Step 4: Proceed to checkout, place order and verify order placed successfully -->
         <actionGroup ref="StorefrontOpenCheckoutPageActionGroup" stepKey="goToCheckout"/>
-        <actionGroup ref="GuestCheckoutFillingShippingSectionActionGroup" stepKey="guestCheckoutFillingShipping"/>
-        <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="checkoutPlaceOrder"/>
-        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber}}" stepKey="grabOrderNumber"/>
-        <!-- Step 5,6: In admin check order details total in created order and no verify subtotal rounding issues for decimal enabled product -->
+        <actionGroup ref="CheckoutSelectFlatRateShippingMethodActionGroup" stepKey="selectFlatRate"/>
+        <actionGroup ref="StorefrontCheckoutClickNextOnShippingStepActionGroup" stepKey="goToPaymentPage"/>
+        <waitForPageLoad stepKey="waitForPaymentPageToLoad"/>
+        <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="selectCheckMoneyOrder"/>
+        <actionGroup ref="CheckoutPlaceOrderActionGroup" stepKey="clickOnPlaceOrder">
+            <argument name="orderNumberMessage" value="CONST.successCheckoutOrderNumberMessage"/>
+            <argument name="emailYouMessage" value="CONST.successCheckoutEmailYouMessage"/>
+        </actionGroup>
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="grabOrderNumber"/>
+        <!-- Step 5: In admin check order details total in created order and verify no subtotal rounding issues for decimal enabled product -->
         <actionGroup ref="AdminOpenOrderByEntityIdActionGroup" stepKey="addFilterToGridAndOpenOrder">
             <argument name="entityId" value="{$grabOrderNumber}"/>
         </actionGroup>
-        <actionGroup ref="AdminAssertTotalsOnOrderViewPageActionGroup" stepKey="checkSubtotal1">
+        <actionGroup ref="AdminAssertTotalsOnOrderViewPageActionGroup" stepKey="checkSubtotal">
             <argument name="subtotal" value="$10.34"/>
             <argument name="shippingAndHandling" value="$2.50"/>
-            <argument name="grandTotal" value="12.84"/>
+            <argument name="grandTotal" value="$12.84"/>
         </actionGroup>
     </test>
 </tests>
