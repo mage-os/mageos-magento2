@@ -106,23 +106,15 @@
             <actionGroup ref="StorefrontClickProceedToCheckoutActionGroup" stepKey="clickProceedToCheckout"/>
             <actionGroup ref="StorefrontCheckoutClickNextButtonActionGroup" stepKey="clickOnNextButton"/>
             <!-- Select PayPal Payments Advanced payment method -->
-
-            <actionGroup ref="StorefrontCheckoutSelectPaypalPaymentMethodActionGroup" stepKey="selectPaypalPaymentMethod"/>
-            <waitForPageLoad stepKey="waitForLoadingMaskAfterPaymentMethodSelection"/>
-            <actionGroup ref="StorefrontPaypalFillCardDataActionGroup" stepKey="payPalCardFillDetails">
-                <argument name="cardData" value="VisaDefaultCard"/>
-            </actionGroup>
-
-            <!--<conditionalClick selector="{{StorefrontCheckoutPaymentMethodSection.checkPaymentMethodByName('PayPal Payments Advanced')}}" dependentSelector="{{StorefrontCheckoutPaymentMethodSection.checkPaymentMethodByName('PayPal Payments Advanced')}}" visible="true" stepKey="selectPayPalPaymentsAdvanced"/>
-            <waitForPageLoad stepKey="waitForLoadingMaskAfterPaymentMethodSelection"/>
-            &lt;!&ndash; Fill card data and place order &ndash;&gt;
-            <actionGroup ref="StorefrontPaypalFillCardDataActionGroup" stepKey="fillCardData">
-                <argument name="cardData" value="VisaDefaultCard"/>
-            </actionGroup>-->
-
-            <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="clickOnPlaceOrder"/>
-            <!-- Get order number -->
-            <waitForElementVisible selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="waitForOrderNumber"/>
+            <waitForElementClickable selector="{{AdminConfigurepaymentsAdvancedSection.payflowEdition}}" stepKey="waitForPayPalRadioButton"/>
+            <click selector="{{AdminConfigurepaymentsAdvancedSection.payflowEdition}}" stepKey="selectPaypalPayment"/>
+            <waitForElementClickable selector="{{CheckoutPaymentSection.ContinuePayPalBtn}}" stepKey="waitForPayPalBtn"/>
+            <click selector="{{CheckoutPaymentSection.ContinuePayPalBtn}}" stepKey="clickPayPalBtn"/>
+            <actionGroup ref="StorefrontLoginToPayPalExpressCheckoutPayFlowEditionActionGroup" stepKey="loginToPayPal"/>
+            <!-- Submit payment on PayPal site -->
+            <actionGroup ref="StorefrontPaypalSwitchBackToMagentoFromCheckoutPageActionGroup" stepKey="submitAdvancedPayment"/>
+            <!-- Assert Order success -->
+            <actionGroup ref="AssertStorefrontCheckoutSuccessActionGroup" stepKey="assertCheckoutSuccessPayPalAdvanced"/>
             <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="grabOrderNumber"/>
         </before>
         <after>
@@ -171,14 +163,14 @@
         <waitForElementVisible selector="{{AdminOrderPaymentInformationSection.paymentInformationField('Last Transaction ID')}}" stepKey="waitForTransactionID"/>
         <grabTextFrom selector="{{AdminOrderPaymentInformationSection.paymentInformationField('Last Transaction ID')}}" stepKey="grabTransactionID"/>
         <actionGroup ref="AdminOpenOrderCommentsHistoryActionGroup" stepKey="clickOnCommentsHistory"/>
-        <waitForText selector="{{AdminOrderCommentsTabSection.orderCommentsWithType('refunded')}}" userInput="We refunded $139.07 online. Transaction ID: &quot;{$grabTransactionID}&quot;" stepKey="seeOrderHistoryNotesForRefund"/>
+        <waitForText selector="{{AdminOrderCommentsTabSection.orderCommentsWithType('refunded')}}" userInput="We refunded $5.00 online. Transaction ID: &quot;{$grabTransactionID}&quot;" stepKey="seeOrderHistoryNotesForRefund"/>
         <!-- Step 7: Go to Credit Memos tab -->
         <waitForElementClickable selector="{{AdminOrderDetailsOrderViewSection.creditMemos}}" stepKey="waitToClickCreditMemoTab"/>
         <click selector="{{AdminOrderDetailsOrderViewSection.creditMemos}}" stepKey="clickCreditMemoTab"/>
         <actionGroup ref="AdminOpenCreditMemoFromOrderPageActionGroup" stepKey="clickOnCreditMemosTab"/>
-        <!-- Verify Credit Memo is present in grid and Grand Total = $139.07 -->
+        <!-- Verify Credit Memo is present in grid and Grand Total = $5.00 -->
         <actionGroup ref="AssertAdminCreditMemoGrandTotalActionGroup" stepKey="assertGrandTotal">
-            <argument name="expectedGrandTotal" value="$139.07"/>
+            <argument name="expectedGrandTotal" value="$5.00"/>
         </actionGroup>
         <waitForElementClickable selector="{{AdminProductFormActionSection.backButton}}" stepKey="waitToClickBackButtonFromCreditMemo"/>
         <click selector="{{AdminProductFormActionSection.backButton}}" stepKey="clickBackButtonFromCreditMemo"/>
