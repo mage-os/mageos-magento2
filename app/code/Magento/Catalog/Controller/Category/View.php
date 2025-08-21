@@ -112,6 +112,8 @@ class View extends Action implements HttpGetActionInterface, HttpPostActionInter
     private $logger;
 
     /**
+     * Constructor
+     *
      * @param Context $context
      * @param Design $catalogDesign
      * @param Session $catalogSession
@@ -164,7 +166,9 @@ class View extends Action implements HttpGetActionInterface, HttpPostActionInter
     }
 
     /**
-     * @return Category|false
+     * Initialize requested category object
+     *
+     * @return Category|bool
      */
     protected function _initCategory()
     {
@@ -198,6 +202,8 @@ class View extends Action implements HttpGetActionInterface, HttpPostActionInter
     }
 
     /**
+     * Category view action
+     *
      * @return ResultInterface
      * @throws NoSuchEntityException
      */
@@ -294,6 +300,8 @@ class View extends Action implements HttpGetActionInterface, HttpPostActionInter
     }
 
     /**
+     * Get page type based on category
+     *
      * @param Category $category
      * @return string
      */
@@ -308,6 +316,8 @@ class View extends Action implements HttpGetActionInterface, HttpPostActionInter
     }
 
     /**
+     * Apply custom layout updates
+     *
      * @param Page $page
      * @param DataObject $settings
      * @return void
@@ -330,6 +340,8 @@ class View extends Action implements HttpGetActionInterface, HttpPostActionInter
     }
 
     /**
+     * Checks for toolbar actions
+     *
      * @return bool
      */
     private function shouldRedirectOnToolbarAction(): bool

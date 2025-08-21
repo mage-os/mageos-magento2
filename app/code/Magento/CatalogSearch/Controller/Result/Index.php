@@ -24,11 +24,9 @@ class Index extends \Magento\Framework\App\Action\Action implements HttpGetActio
     /**
      * No results default handle.
      */
-    const DEFAULT_NO_RESULT_HANDLE = 'catalogsearch_result_index_noresults';
+    public const DEFAULT_NO_RESULT_HANDLE = 'catalogsearch_result_index_noresults';
 
     /**
-     * Catalog session
-     *
      * @var Session
      */
     protected $_catalogSession;
@@ -44,8 +42,6 @@ class Index extends \Magento\Framework\App\Action\Action implements HttpGetActio
     private $_queryFactory;
 
     /**
-     * Catalog Layer Resolver
-     *
      * @var Resolver
      */
     private $layerResolver;
