@@ -210,7 +210,7 @@ class Validator extends AbstractValidator implements RowValidatorInterface
     {
         if (isset($rowData[$attrCode]) && is_array($rowData[$attrCode])) {
             $emptyConstant = $this->context->getEmptyAttributeValueConstant();
-            $filteredArray = array_filter($rowData[$attrCode], function($value) {
+            $filteredArray = array_filter($rowData[$attrCode], function ($value) {
                 return !empty(trim($value));
             });
             return !empty($filteredArray)
