@@ -84,7 +84,7 @@
             <actionGroup ref="AdminSaveConfigActionGroup" stepKey="saveConfigs"/>
             <!-- clean cache -->
             <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanCache">
-                <argument name="tags" value=""/>
+                <argument name="tags" value="config full_page"/>
             </actionGroup>
             <!-- Login to storefront -->
             <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
@@ -115,7 +115,6 @@
             <actionGroup ref="StorefrontPaypalSwitchBackToMagentoFromCheckoutPageActionGroup" stepKey="submitAdvancedPayment"/>
             <!-- Assert Order success -->
             <actionGroup ref="AssertStorefrontCheckoutSuccessActionGroup" stepKey="assertCheckoutSuccessPayPalAdvanced"/>
-            <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="grabOrderNumber"/>
         </before>
         <after>
             <magentoCLI command="config:set {{DisablePaymentAdvancedSolution.path}} {{DisablePaymentAdvancedSolution.value}}" stepKey="disablePaymentAdvanced"/>
@@ -130,8 +129,8 @@
             <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
         </after>
-        <!-- Step 1: Log in to Admin (already done in before section) -->
-        <!-- Step 2: Go to Sales > Orders and open Order from Preconditions -->
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="grabOrderNumber"/>
+        <!-- Step 1,2: Go to Sales > Orders and open Order from Preconditions -->
         <actionGroup ref="OpenOrderByIdActionGroup" stepKey="openOrder">
             <argument name="orderId" value="{$grabOrderNumber}"/>
         </actionGroup>
