@@ -106,12 +106,20 @@
             <actionGroup ref="StorefrontClickProceedToCheckoutActionGroup" stepKey="clickProceedToCheckout"/>
             <actionGroup ref="StorefrontCheckoutClickNextButtonActionGroup" stepKey="clickOnNextButton"/>
             <!-- Select PayPal Payments Advanced payment method -->
-            <conditionalClick selector="{{StorefrontCheckoutPaymentMethodSection.checkPaymentMethodByName('PayPal Payments Advanced')}}" dependentSelector="{{StorefrontCheckoutPaymentMethodSection.checkPaymentMethodByName('PayPal Payments Advanced')}}" visible="true" stepKey="selectPayPalPaymentsAdvanced"/>
+
+            <actionGroup ref="StorefrontCheckoutSelectPaypalPaymentMethodActionGroup" stepKey="selectPaypalPaymentMethod"/>
             <waitForPageLoad stepKey="waitForLoadingMaskAfterPaymentMethodSelection"/>
-            <!-- Fill card data and place order -->
-            <actionGroup ref="StorefrontPaypalFillCardDataActionGroup" stepKey="fillCardData">
+            <actionGroup ref="StorefrontPaypalFillCardDataActionGroup" stepKey="payPalCardFillDetails">
                 <argument name="cardData" value="VisaDefaultCard"/>
             </actionGroup>
+
+            <!--<conditionalClick selector="{{StorefrontCheckoutPaymentMethodSection.checkPaymentMethodByName('PayPal Payments Advanced')}}" dependentSelector="{{StorefrontCheckoutPaymentMethodSection.checkPaymentMethodByName('PayPal Payments Advanced')}}" visible="true" stepKey="selectPayPalPaymentsAdvanced"/>
+            <waitForPageLoad stepKey="waitForLoadingMaskAfterPaymentMethodSelection"/>
+            &lt;!&ndash; Fill card data and place order &ndash;&gt;
+            <actionGroup ref="StorefrontPaypalFillCardDataActionGroup" stepKey="fillCardData">
+                <argument name="cardData" value="VisaDefaultCard"/>
+            </actionGroup>-->
+
             <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="clickOnPlaceOrder"/>
             <!-- Get order number -->
             <waitForElementVisible selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="waitForOrderNumber"/>
