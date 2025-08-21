@@ -56,12 +56,10 @@
             <argument name="productName" value="$createSimpleProduct.name$"/>
         </actionGroup>
         <!-- Step 2: Reload product page several times to ensure caching -->
-        <reloadPage stepKey="reloadPage1"/>
-        <waitForPageLoad stepKey="waitForPageReload1"/>
-        <reloadPage stepKey="reloadPage2"/>
-        <waitForPageLoad stepKey="waitForPageReload2"/>
-        <reloadPage stepKey="reloadPage3"/>
-        <waitForPageLoad stepKey="waitForPageReload3"/>
+        <!-- Please check if ReloadPageActionGroup can be used here -->
+        <actionGroup ref="ReloadPageActionGroup" stepKey="reloadPage1"/>
+        <actionGroup ref="ReloadPageActionGroup" stepKey="reloadPage2"/>
+        <actionGroup ref="ReloadPageActionGroup" stepKey="reloadPage3"/>
         <!-- Step 3: Open Cart Sidebar and verify initial values -->
         <actionGroup ref="StorefrontClickOnMiniCartActionGroup" stepKey="openMiniCart"/>
         <waitForElementVisible selector="{{StorefrontMinicartSection.productLinkByName($createSimpleProduct.name$)}}" stepKey="verifyAppleProductInMiniCart"/>
@@ -83,7 +81,6 @@
             <argument name="product" value="$createSimpleProduct$"/>
         </actionGroup>
         <actionGroup ref="ReloadPageActionGroup" stepKey="reloadProductPageAfterFirstAdminChange"/>
-        <waitForPageLoad stepKey="waitForReloadAfterFirstChange"/>
         <actionGroup ref="StorefrontClickOnMiniCartActionGroup" stepKey="openMiniCartAfterProductChange"/>
         <waitForElementVisible selector="{{StorefrontMinicartSection.productLinkByName($createSimpleProduct.name$)}}" stepKey="verifyAppleProductInMiniCartAfterChange"/>
         <waitForText userInput="$10.00" selector="{{StorefrontMinicartSection.productPriceByName($createSimpleProduct.name$)}}" stepKey="verifyCachedProductPrice"/>
@@ -99,10 +96,9 @@
         <waitForText userInput="$20.00" selector="{{StorefrontMinicartSection.productPriceByName($createSimpleProduct.name$)}}" stepKey="verifyUpdatedProductPriceAfterLogin"/>
         <actionGroup ref="StorefrontClickOnMiniCartActionGroup" stepKey="closeMiniCartAfterLogin"/>
         <!-- Step 8: Reload page several times to ensure caching -->
-        <reloadPage stepKey="reloadPageAfterLogin1"/>
-        <waitForPageLoad stepKey="waitForPageReloadAfterLogin1"/>
-        <reloadPage stepKey="reloadPageAfterLogin2"/>
-        <waitForPageLoad stepKey="waitForPageReloadAfterLogin2"/>
+        <!-- Please check if ReloadPageActionGroup can be used here -->
+        <actionGroup ref="ReloadPageActionGroup" stepKey="reloadPageAfterLogin1"/>
+        <actionGroup ref="ReloadPageActionGroup" stepKey="reloadPageAfterLogin2"/>
         <!-- Step 9: Change product details again in admin -->
         <switchToNextTab stepKey="switchToAdminTab"/>
         <actionGroup ref="AdminProductPageOpenByIdActionGroup" stepKey="openProductEditPageAgain">
@@ -118,7 +114,6 @@
             <argument name="product" value="$createSimpleProduct$"/>
         </actionGroup>
         <actionGroup ref="ReloadPageActionGroup" stepKey="reloadProductPageAfterSecondAdminChange"/>
-        <waitForPageLoad stepKey="waitForReloadAfterSecondChange"/>
         <actionGroup ref="StorefrontClickOnMiniCartActionGroup" stepKey="openMiniCartAfterSecondChange"/>
         <waitForElementVisible selector="{{StorefrontMinicartSection.productLinkByName('Apple-X')}}" stepKey="verifyAppleProductInMiniCartAfterSecondChange"/>
         <waitForText userInput="$20.00" selector="{{StorefrontMinicartSection.productPriceByName('Apple-X')}}" stepKey="verifyCachedProductPriceAfterSecondChange"/>
@@ -126,8 +121,8 @@
         <!-- Step 11: Wait for Customer Data Lifetime to expire (6 minutes) -->
         <wait time="120" stepKey="waitForCustomerDataLifetimeExpiration"/>
         <!-- Step 12: Reload page and verify updated values -->
-        <reloadPage stepKey="reloadPageAfterWait"/>
-        <waitForPageLoad stepKey="waitForPageReloadAfterWait"/>
+        <!-- Please check if ReloadPageActionGroup can be used here -->
+        <actionGroup ref="ReloadPageActionGroup" stepKey="reloadPageAfterWait"/>
         <actionGroup ref="StorefrontClickOnMiniCartActionGroup" stepKey="openMiniCartAfterWait"/>
         <waitForElementVisible selector="{{StorefrontMinicartSection.productLinkByName('Apple-X-Y')}}" stepKey="verifyAppleProductInMiniCartAfterWait"/>
         <waitForText userInput="$30.00" selector="{{StorefrontMinicartSection.productPriceByName('Apple-X-Y')}}" stepKey="verifyUpdatedProductPriceAfterWait"/>
