@@ -174,18 +174,18 @@
         <waitForElementClickable selector="{{AdminProductFormActionSection.backButton}}" stepKey="waitToClickBackButtonFromCreditMemo"/>
         <click selector="{{AdminProductFormActionSection.backButton}}" stepKey="clickBackButtonFromCreditMemo"/>
         <!-- Step 8: Go to Transactions tab -->
-        <!-- Verify Authorization transaction is present, Closed = No -->
+        <!-- Verify Authorization transaction is present, Closed = Yes -->
         <actionGroup ref="AdminAssertTransactionTypeInTransactionTabActionGroup" stepKey="assertAuthorizationTransactionType">
             <argument name="transactionType" value="authorization"/>
         </actionGroup>
-        <waitForText selector="{{AdminTransactionsGridSection.transactionData('Is Closed')}}" userInput="No" stepKey="seeIfClosedHeaderIsSetAsNoForAuthorization"/>
+        <waitForText selector="{{AdminTransactionsGridSection.transactionData('Is Closed')}}" userInput="Yes" stepKey="seeIfClosedHeaderIsSetAsYesForAuthorization"/>
         <waitForElementClickable selector="{{AdminProductFormActionSection.backButton}}" stepKey="waitForBackButtonToBeClickedFromAuthorization"/>
         <click selector="{{AdminProductFormActionSection.backButton}}" stepKey="clickBackButtonFromAuthorization"/>
-        <!-- Verify Capture transaction is present, Closed = No -->
+        <!-- Verify Capture transaction is present, Closed = Yes -->
         <actionGroup ref="AdminAssertTransactionTypeInTransactionTabActionGroup" stepKey="assertCaptureTransactionType">
             <argument name="transactionType" value="capture"/>
         </actionGroup>
-        <waitForText selector="{{AdminTransactionsGridSection.transactionData('Is Closed')}}" userInput="No" stepKey="seeIfClosedHeaderIsSetAsNoForCapture"/>
+        <waitForText selector="{{AdminTransactionsGridSection.transactionData('Is Closed')}}" userInput="Yes" stepKey="seeIfClosedHeaderIsSetAsYesForCapture"/>
         <waitForElementClickable selector="{{AdminProductFormActionSection.backButton}}" stepKey="waitForBackButtonToBeClickedFromCapture"/>
         <click selector="{{AdminProductFormActionSection.backButton}}" stepKey="clickBackButtonFromCapture"/>
         <!-- Verify Refund transaction is present, Closed = Yes -->
