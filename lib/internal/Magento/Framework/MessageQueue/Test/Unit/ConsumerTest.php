@@ -14,6 +14,7 @@ use Magento\Framework\MessageQueue\CallbackInvoker;
 use Magento\Framework\MessageQueue\Consumer;
 use Magento\Framework\MessageQueue\Consumer\ConfigInterface;
 use Magento\Framework\MessageQueue\ConsumerConfigurationInterface;
+use Magento\Framework\MessageQueue\DefaultValueProvider;
 use Magento\Framework\MessageQueue\EnvelopeInterface;
 use Magento\Framework\MessageQueue\MessageController;
 use Magento\Framework\MessageQueue\MessageEncoder;
@@ -26,7 +27,6 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
-use Magento\Framework\MessageQueue\DefaultValueProvider;
 
 /**
  * Unit test for Consumer class.

@@ -6,10 +6,9 @@
 
 namespace Magento\Framework\MessageQueue;
 
-use Magento\Framework\App\ObjectManager;
+use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\MessageQueue\PoisonPill\PoisonPillCompareInterface;
 use Magento\Framework\MessageQueue\PoisonPill\PoisonPillReadInterface;
-use Magento\Framework\App\DeploymentConfig;
 
 /**
  * Class CallbackInvoker to invoke callbacks for consumer classes
@@ -37,27 +36,18 @@ class CallbackInvoker implements CallbackInvokerInterface
     private $deploymentConfig;
 
     /**
-     * @var DefaultValueProvider
-     */
-    private $defaultValueProvider;
-
-    /**
      * @param PoisonPillReadInterface $poisonPillRead
      * @param PoisonPillCompareInterface $poisonPillCompare
      * @param DeploymentConfig $deploymentConfig
-     * @param DefaultValueProvider|null $defaultValueProvider
      */
     public function __construct(
         PoisonPillReadInterface $poisonPillRead,
         PoisonPillCompareInterface $poisonPillCompare,
-        DeploymentConfig $deploymentConfig,
-        DefaultValueProvider $defaultValueProvider
+        DeploymentConfig $deploymentConfig
     ) {
         $this->poisonPillRead = $poisonPillRead;
         $this->poisonPillCompare = $poisonPillCompare;
         $this->deploymentConfig = $deploymentConfig;
-        $this->defaultValueProvider = $defaultValueProvider
-            ?? ObjectManager::getInstance()->get(DefaultValueProvider::class);
     }
 
     /**
@@ -84,7 +74,7 @@ class CallbackInvoker implements CallbackInvokerInterface
         $this->poisonPillVersion = $this->poisonPillRead->getLatestVersion();
         $sleep = (int) $sleep ?: 1;
         $maxIdleTime = $maxIdleTime ? (int) $maxIdleTime : PHP_INT_MAX;
-        $connectionName = $this->defaultValueProvider->getConnection();
+        $connectionName = method_exists($queue, 'getConnectionName') ? $queue->getConnectionName(): null;
         if ($connectionName === 'stomp') {
             $queue->subscribeQueue();
         }

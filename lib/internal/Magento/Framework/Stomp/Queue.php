@@ -12,13 +12,13 @@ use Exception;
 use Magento\Framework\Communication\ConfigInterface as CommunicationConfigInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\MessageQueue\ConnectionLostException;
+use Magento\Framework\MessageQueue\EnvelopeFactory;
 use Magento\Framework\MessageQueue\EnvelopeInterface;
 use Magento\Framework\MessageQueue\QueueInterface;
-use Magento\Framework\MessageQueue\EnvelopeFactory;
 use Magento\Framework\Phrase;
 use Psr\Log\LoggerInterface;
-use Stomp\Transport\Message;
 use Stomp\Transport\Frame;
+use Stomp\Transport\Message;
 
 /**
  * @api
@@ -366,5 +366,15 @@ class Queue implements QueueInterface
             $this->stompProducerClient = $this->stompClientFactory->create(['clientId' => 'producer']);
         }
         return $this->stompProducerClient;
+    }
+
+    /**
+     * Get connection name
+     *
+     * @return string
+     */
+    public function getConnectionName(): string
+    {
+        return $this->stompConfig->getConnectionName();
     }
 }

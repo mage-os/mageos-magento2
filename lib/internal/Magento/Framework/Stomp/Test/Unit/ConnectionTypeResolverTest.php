@@ -7,8 +7,8 @@ declare(strict_types=1);
 
 namespace Magento\Framework\Stomp\Test\Unit;
 
-use Magento\Framework\Stomp\ConnectionTypeResolver;
 use Magento\Framework\App\DeploymentConfig;
+use Magento\Framework\Stomp\ConnectionTypeResolver;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 

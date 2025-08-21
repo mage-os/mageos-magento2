@@ -220,4 +220,14 @@ class Queue implements QueueInterface
     {
         throw new \BadMethodCallException('clearQueue is not supported in amqp queue.');
     }
+
+    /**
+     * Get connection name
+     *
+     * @return string
+     */
+    public function getConnectionName(): string
+    {
+        return $this->amqpConfig->getConnectionName();
+    }
 }

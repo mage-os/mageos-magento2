@@ -7,11 +7,11 @@ declare(strict_types=1);
 
 namespace Magento\Framework\Stomp;
 
-use Magento\Framework\Stomp\Connection\Factory as ConnectionFactory;
-use Magento\Framework\Stomp\Connection\FactoryOptions;
 use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\ObjectManager\ResetAfterRequestInterface;
+use Magento\Framework\Stomp\Connection\Factory as ConnectionFactory;
+use Magento\Framework\Stomp\Connection\FactoryOptions;
 use Stomp\Exception\ConnectionException;
 use Stomp\Network\Connection;
 
@@ -210,5 +210,15 @@ class Config implements ResetAfterRequestInterface
             $this->connection->disconnect();
             unset($this->connection);
         }
+    }
+
+    /**
+     * Get connection name
+     *
+     * @return string
+     */
+    public function getConnectionName(): string
+    {
+        return$this->connectionName;
     }
 }

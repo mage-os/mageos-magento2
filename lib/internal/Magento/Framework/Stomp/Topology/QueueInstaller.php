@@ -10,8 +10,8 @@ namespace Magento\Framework\Stomp\Topology;
 use Magento\Framework\MessageQueue\Topology\Config\QueueConfigItemInterface;
 use Magento\Framework\Stomp\StompClient;
 use Magento\Framework\Stomp\StompClientFactory;
-use Stomp\Transport\Message;
 use Psr\Log\LoggerInterface;
+use Stomp\Transport\Message;
 
 /**
  * Queue installer to install queues in ActiveMq.

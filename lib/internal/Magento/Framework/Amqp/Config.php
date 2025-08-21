@@ -234,4 +234,14 @@ class Config implements ResetAfterRequestInterface
             unset($this->connection);
         }
     }
+
+    /**
+     * Get connection name
+     *
+     * @return string
+     */
+    public function getConnectionName(): string
+    {
+        return $this->connectionName;
+    }
 }

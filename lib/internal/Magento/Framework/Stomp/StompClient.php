@@ -7,13 +7,13 @@ declare(strict_types=1);
 
 namespace Magento\Framework\Stomp;
 
+use Psr\Log\LoggerInterface;
 use Stomp\Client;
 use Stomp\Exception\StompException;
-use Stomp\StatefulStomp;
-use Stomp\Transport\Message;
-use Stomp\Transport\Frame;
 use Stomp\Network\Observer\HeartbeatEmitter;
-use Psr\Log\LoggerInterface;
+use Stomp\StatefulStomp;
+use Stomp\Transport\Frame;
+use Stomp\Transport\Message;
 
 /**
  * Wrapper StompClient class for stomp connection

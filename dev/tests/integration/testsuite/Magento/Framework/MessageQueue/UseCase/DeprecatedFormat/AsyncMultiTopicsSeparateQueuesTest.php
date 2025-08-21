@@ -6,8 +6,8 @@
 namespace Magento\Framework\MessageQueue\UseCase\DeprecatedFormat;
 
 use Magento\Framework\MessageQueue\DefaultValueProvider;
-use Magento\TestFramework\Helper\Bootstrap;
 use Magento\Framework\MessageQueue\UseCase\QueueTestCaseAbstract;
+use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestModuleAsyncAmqp\Model\AsyncTestData;
 
 class AsyncMultiTopicsSeparateQueuesTest extends QueueTestCaseAbstract

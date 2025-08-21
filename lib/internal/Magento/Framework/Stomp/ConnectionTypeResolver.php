@@ -7,8 +7,8 @@ declare(strict_types=1);
 
 namespace Magento\Framework\Stomp;
 
-use Magento\Framework\MessageQueue\ConnectionTypeResolverInterface;
 use Magento\Framework\App\DeploymentConfig;
+use Magento\Framework\MessageQueue\ConnectionTypeResolverInterface;
 
 /**
  * Stomp connection type resolver.

@@ -7,13 +7,13 @@ declare(strict_types=1);
 
 namespace Magento\Framework\Stomp\Test\Unit\Bulk;
 
+use Magento\Framework\Communication\ConfigInterface as CommunicationConfigInterface;
+use Magento\Framework\MessageQueue\EnvelopeInterface;
+use Magento\Framework\MessageQueue\QueueInterface as BaseQueueInterface;
 use Magento\Framework\Stomp\Bulk\Queue;
 use Magento\Framework\Stomp\Config;
 use Magento\Framework\Stomp\StompClient;
 use Magento\Framework\Stomp\StompClientFactory;
-use Magento\Framework\MessageQueue\EnvelopeInterface;
-use Magento\Framework\MessageQueue\QueueInterface as BaseQueueInterface;
-use Magento\Framework\Communication\ConfigInterface as CommunicationConfigInterface;
 use PHPUnit\Framework\TestCase;
 use Stomp\Transport\Message;
 
