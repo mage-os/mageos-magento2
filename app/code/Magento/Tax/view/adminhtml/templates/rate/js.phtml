@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2014 Adobe
+ * Copyright 2013 Adobe
  * All Rights Reserved.
  */
 
@@ -43,7 +43,12 @@ require([
                         opt.value = '*';
                         opt.text = '*';
                         opt.title = '*';
-                        try { selectEl.options.add(opt, 1); } catch (e) { selectEl.insertBefore(opt, selectEl.options[1] || null); }
+                        try {
+                                selectEl.options.add(opt, 1);
+                            } catch (e)
+                            {
+                                selectEl.insertBefore(opt, selectEl.options[1] || null);
+                            }
                     }
                     selectEl.value = '*';
                     selectEl.disabled = true; // keep disable mode
