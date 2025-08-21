@@ -51,22 +51,17 @@ class ValidateProductWebsiteAssignment
             return;
         }
 
-        try {
-            $quote = $this->cartRepository->getActive($cartItem->getQuoteId());
-
-            foreach ($quote->getAllItems() as $item) {
-                if ($sku === $item->getSku()) {
-                    $this->checkProductWebsiteAssignment($item->getProductId(), $item->getStoreId());
-                    return;
-                }
+        $storeId = (int)($cartItem->getStoreId() ?? 0);
+        if (!$storeId) {
+            try {
+                $quote = $this->cartRepository->getActive($cartItem->getQuoteId());
+                $storeId = (int)$quote->getStoreId();
+            } catch (NoSuchEntityException $e) {
+                throw new LocalizedException(__('Product that you are trying to add is not available.'));
             }
-
-            // Fallback: product not in quote items yet
-            $this->checkProductWebsiteAssignmentBySku($sku, $quote->getStoreId());
-
-        } catch (NoSuchEntityException $e) {
-            throw new LocalizedException(__('Product that you are trying to add is not available.'));
         }
+
+        $this->checkProductWebsiteAssignmentBySku($sku, $storeId);
     }
 
     /**
@@ -80,26 +75,6 @@ class ValidateProductWebsiteAssignment
     {
         try {
             $product = $this->productRepository->get($sku, false, $storeId);
-            $this->validateWebsiteAssignment($product->getWebsiteIds(), $storeId);
-        } catch (NoSuchEntityException $e) {
-            throw new LocalizedException(__('Product that you are trying to add is not available.'));
-        }
-    }
-
-    /**
-     * Check product website assignment by product ID
-     *
-     * @param int $productId
-     * @param int|null $storeId
-     * @throws LocalizedException
-     */
-    private function checkProductWebsiteAssignment($productId, $storeId): void
-    {
-        try {
-            $product = $this->productRepository->getById($productId, false, $storeId);
-            if (empty($product->getWebsiteIds())) {
-                return;
-            }
             $this->validateWebsiteAssignment($product->getWebsiteIds(), $storeId);
         } catch (NoSuchEntityException $e) {
             throw new LocalizedException(__('Product that you are trying to add is not available.'));

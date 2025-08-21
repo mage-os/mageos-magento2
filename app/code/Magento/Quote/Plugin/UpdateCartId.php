@@ -74,31 +74,23 @@ class UpdateCartId
             return;
         }
 
-        $maskedQuoteId = $cartItem->getQuoteId();
-        $quoteIdMask = $this->quoteIdMaskFactory->create()->load($maskedQuoteId, 'masked_id');
-        $quoteId = $quoteIdMask->getQuoteId();
-
-        if (!$quoteId) {
-            return;
-        }
-
-        try {
-            $quote = $this->cartRepository->get($quoteId);
-            $storeId = $quote->getStoreId();
-
-            foreach ($quote->getAllItems() as $item) {
-                if ($sku === $item->getSku()) {
-                    $this->validateWebsiteAssignment($item->getProductId(), $storeId);
-                    return;
-                }
+        $storeId = (int)($cartItem->getStoreId() ?? 0);
+        if (!$storeId) {
+            $maskedQuoteId = $cartItem->getQuoteId();
+            $quoteIdMask = $this->quoteIdMaskFactory->create()->load($maskedQuoteId, 'masked_id');
+            $quoteId = (int)$quoteIdMask->getQuoteId();
+            if (!$quoteId) {
+                return;
             }
-
-            // Product not in quote yet
-            $this->validateWebsiteAssignmentBySku($sku, $storeId);
-
-        } catch (NoSuchEntityException) {
-            throw new LocalizedException(__('Product that you are trying to add is not available.'));
+            try {
+                $quote = $this->cartRepository->get($quoteId);
+                $storeId = (int)$quote->getStoreId();
+            } catch (NoSuchEntityException) {
+                throw new LocalizedException(__('Product that you are trying to add is not available.'));
+            }
         }
+
+        $this->validateWebsiteAssignmentBySku($sku, $storeId);
     }
 
     /**
@@ -113,27 +105,6 @@ class UpdateCartId
     {
         try {
             $product = $this->productRepository->get($sku, false, $storeId);
-            $this->checkProductInWebsite($product->getWebsiteIds(), $storeId);
-        } catch (NoSuchEntityException) {
-            throw new LocalizedException(__('Product that you are trying to add is not available.'));
-        }
-    }
-
-    /**
-     * Validate by product ID for existing items
-     *
-     * @param int $productId
-     * @param int $storeId
-     * @return void
-     * @throws LocalizedException
-     */
-    private function validateWebsiteAssignment(int $productId, int $storeId): void
-    {
-        try {
-            $product = $this->productRepository->getById($productId, false, $storeId);
-            if (empty($product->getWebsiteIds())) {
-                return;
-            }
             $this->checkProductInWebsite($product->getWebsiteIds(), $storeId);
         } catch (NoSuchEntityException) {
             throw new LocalizedException(__('Product that you are trying to add is not available.'));
