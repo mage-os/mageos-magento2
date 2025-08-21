@@ -181,11 +181,11 @@
         <waitForText selector="{{AdminTransactionsGridSection.transactionData('Is Closed')}}" userInput="Yes" stepKey="seeIfClosedHeaderIsSetAsYesForAuthorization"/>
         <waitForElementClickable selector="{{AdminProductFormActionSection.backButton}}" stepKey="waitForBackButtonToBeClickedFromAuthorization"/>
         <click selector="{{AdminProductFormActionSection.backButton}}" stepKey="clickBackButtonFromAuthorization"/>
-        <!-- Verify Capture transaction is present, Closed = Yes -->
+        <!-- Verify Capture transaction is present, Closed = No -->
         <actionGroup ref="AdminAssertTransactionTypeInTransactionTabActionGroup" stepKey="assertCaptureTransactionType">
             <argument name="transactionType" value="capture"/>
         </actionGroup>
-        <waitForText selector="{{AdminTransactionsGridSection.transactionData('Is Closed')}}" userInput="Yes" stepKey="seeIfClosedHeaderIsSetAsYesForCapture"/>
+        <waitForText selector="{{AdminTransactionsGridSection.transactionData('Is Closed')}}" userInput="No" stepKey="seeIfClosedHeaderIsSetAsNoForCapture"/>
         <waitForElementClickable selector="{{AdminProductFormActionSection.backButton}}" stepKey="waitForBackButtonToBeClickedFromCapture"/>
         <click selector="{{AdminProductFormActionSection.backButton}}" stepKey="clickBackButtonFromCapture"/>
         <!-- Verify Refund transaction is present, Closed = Yes -->
