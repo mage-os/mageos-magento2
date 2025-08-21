@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace Magento\CatalogImportExport\Model;
 
-use Magento\CatalogImportExport\Model\Import\Product;
 use Magento\Store\Model\Store;
 
 class StockItemProcessor implements StockItemProcessorInterface
