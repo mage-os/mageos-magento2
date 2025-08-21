@@ -14,7 +14,6 @@ use Magento\Framework\MessageQueue\CallbackInvoker;
 use Magento\Framework\MessageQueue\Consumer;
 use Magento\Framework\MessageQueue\Consumer\ConfigInterface;
 use Magento\Framework\MessageQueue\ConsumerConfigurationInterface;
-use Magento\Framework\MessageQueue\DefaultValueProvider;
 use Magento\Framework\MessageQueue\EnvelopeInterface;
 use Magento\Framework\MessageQueue\MessageController;
 use Magento\Framework\MessageQueue\MessageEncoder;
@@ -101,11 +100,6 @@ class ConsumerTest extends TestCase
     private $deploymentConfig;
 
     /**
-     * @var DefaultValueProvider|MockObject
-     */
-    private $defaultValueProvider;
-
-    /**
      * Set up.
      *
      * @return void
@@ -129,7 +123,6 @@ class ConsumerTest extends TestCase
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
         $this->deploymentConfig = $this->createMock(DeploymentConfig::class);
-        $this->defaultValueProvider = $this->createMock(DefaultValueProvider::class);
 
         $objectManager = new ObjectManager($this);
         $this->poisonPillCompare = $this->getMockBuilder(PoisonPillCompareInterface::class)
@@ -142,18 +135,17 @@ class ConsumerTest extends TestCase
         $this->callbackInvoker = new CallbackInvoker(
             $this->poisonPillRead,
             $this->poisonPillCompare,
-            $this->deploymentConfig,
-            $this->defaultValueProvider
+            $this->deploymentConfig
         );
         $this->consumer = $objectManager->getObject(
             Consumer::class,
             [
-                'configuration' => $this->configuration,
-                'messageEncoder' => $this->messageEncoder,
-                'queueRepository' => $this->queueRepository,
                 'invoker' => $this->callbackInvoker,
+                'messageEncoder' => $this->messageEncoder,
                 'resource' => $this->resource,
-                'logger' => $this->logger
+                'configuration' => $this->configuration,
+                'logger' => $this->logger,
+                'queueRepository' => $this->queueRepository
             ]
         );
 
@@ -196,7 +188,6 @@ class ConsumerTest extends TestCase
         $exceptionPhrase = new Phrase('Exception successfully thrown');
         $this->poisonPillRead->expects($this->atLeastOnce())->method('getLatestVersion')->willReturn('version-1');
         $this->poisonPillCompare->expects($this->atLeastOnce())->method('isLatestVersion')->willReturn(true);
-        $this->defaultValueProvider->expects($this->once())->method('getConnection')->willReturn('db');
         $this->deploymentConfig->expects($this->any())->method('get')
             ->with('queue/consumers_wait_for_messages', 1)->willReturn(1);
         $queue = $this->getMockBuilder(QueueInterface::class)
@@ -233,7 +224,6 @@ class ConsumerTest extends TestCase
         $numberOfMessages = 1;
         $this->poisonPillRead->expects($this->atLeastOnce())->method('getLatestVersion')->willReturn('version-1');
         $this->poisonPillCompare->expects($this->any())->method('isLatestVersion')->willReturn(true);
-        $this->defaultValueProvider->expects($this->once())->method('getConnection')->willReturn('db');
         $this->deploymentConfig->expects($this->any())->method('get')
             ->with('queue/consumers_wait_for_messages', 1)->willReturn(1);
         $queue = $this->getMockBuilder(\Magento\Framework\MessageQueue\QueueInterface::class)

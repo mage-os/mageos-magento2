@@ -58,7 +58,6 @@ class CallbackInvoker implements CallbackInvokerInterface
      * @param \Closure $callback
      * @param mixed $maxIdleTime
      * @param mixed $sleep
-     * @param string $connectionName
      * @return void
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)

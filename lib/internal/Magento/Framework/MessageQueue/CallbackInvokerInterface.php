@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2015 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 declare(strict_types=1);
 
@@ -19,9 +19,8 @@ interface CallbackInvokerInterface
      * @param QueueInterface $queue
      * @param int $maxNumberOfMessages
      * @param \Closure $callback
-     * @param mixed $maxIdleTime
-     * @param mixed $sleep
-     * @param string $connectionName
+     * @param int|null $maxIdleTime
+     * @param int|null $sleep
      * @return void
      */
     public function invoke(
