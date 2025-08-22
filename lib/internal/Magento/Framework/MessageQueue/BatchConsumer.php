@@ -6,8 +6,8 @@
 namespace Magento\Framework\MessageQueue;
 
 use Magento\Framework\App\ObjectManager;
-use Magento\Framework\MessageQueue\ConfigInterface as MessageQueueConfig;
 use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\MessageQueue\ConfigInterface as MessageQueueConfig;
 use Magento\Framework\MessageQueue\Consumer\ConfigInterface as ConsumerConfig;
 
 /**

@@ -7,8 +7,8 @@ declare(strict_types=1);
 
 namespace Magento\Framework\Stomp;
 
-use Magento\Framework\Stomp\Topology\QueueInstaller;
 use Magento\Framework\MessageQueue\Topology\ConfigInterface;
+use Magento\Framework\Stomp\Topology\QueueInstaller;
 
 /**
  * Class Topology creates topology for Stomp messaging

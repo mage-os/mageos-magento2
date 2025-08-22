@@ -11,9 +11,9 @@ use Magento\Framework\Stomp\Config;
 use Magento\Framework\Stomp\ConfigFactory;
 use Magento\Framework\Stomp\ConfigPool;
 use PHPUnit\Framework\MockObject\Exception;
-use Stomp\Network\Connection;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Stomp\Network\Connection;
 
 class ConfigPoolTest extends TestCase
 {

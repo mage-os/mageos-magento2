@@ -9,8 +9,8 @@ declare(strict_types=1);
 namespace Magento\Framework\Stomp;
 
 use Magento\Framework\MessageQueue\DefaultValueProvider;
-use Magento\TestFramework\Helper\Stomp;
 use Magento\TestFramework\Helper\Bootstrap;
+use Magento\TestFramework\Helper\Stomp;
 use Magento\TestFramework\ObjectManager;
 use PHPUnit\Framework\TestCase;
 

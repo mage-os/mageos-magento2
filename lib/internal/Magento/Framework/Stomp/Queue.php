@@ -12,13 +12,13 @@ use Exception;
 use Magento\Framework\Communication\ConfigInterface as CommunicationConfigInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\MessageQueue\ConnectionLostException;
+use Magento\Framework\MessageQueue\EnvelopeFactory;
 use Magento\Framework\MessageQueue\EnvelopeInterface;
 use Magento\Framework\MessageQueue\QueueInterface;
-use Magento\Framework\MessageQueue\EnvelopeFactory;
 use Magento\Framework\Phrase;
 use Psr\Log\LoggerInterface;
-use Stomp\Transport\Message;
 use Stomp\Transport\Frame;
+use Stomp\Transport\Message;
 
 /**
  * @api
@@ -207,6 +207,26 @@ class Queue implements QueueInterface
     public function push(EnvelopeInterface $envelope)
     {
         $stompClient = $this->getStompProducerClient();
+        $message = new Message($envelope->getBody(), $envelope->getProperties());
+        try{
+            $stompClient->send($this->queueName, $message);
+            $stompClient->disconnect();
+        }catch (\Stomp\Exception\StompException $e){
+            $this->logger->info("Stomp message push failed: '{$this->queueName}' error: {$e->getMessage()}");
+        }
+    }
+
+    /**
+     * Push message to queue and read message from queue
+     *
+     * @param EnvelopeInterface $envelope
+     * @return string|null
+     * @throws ConnectionLostException
+     * @throws LocalizedException
+     */
+    public function callRpc(EnvelopeInterface $envelope)
+    {
+        $stompClient = $this->getStompProducerClient();
         $properties = $envelope->getProperties();
         $topic = $properties['topic_name'];
         $topicData = $this->communicationConfig->getTopic($topic);
@@ -224,7 +244,7 @@ class Queue implements QueueInterface
                 return $message->getBody();
             }
         }catch (\Stomp\Exception\StompException $e){
-            return null;
+            $this->logger->info("Stomp rpc message push failed: '{$this->queueName}' error: '{$e->getMessage()}'");
         }
 
         return null;
@@ -346,5 +366,15 @@ class Queue implements QueueInterface
             $this->stompProducerClient = $this->stompClientFactory->create(['clientId' => 'producer']);
         }
         return $this->stompProducerClient;
+    }
+
+    /**
+     * Get connection name
+     *
+     * @return string
+     */
+    public function getConnectionName(): string
+    {
+        return $this->stompConfig->getConnectionName();
     }
 }

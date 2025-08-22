@@ -6,9 +6,9 @@
 
 namespace Magento\Framework\MessageQueue;
 
+use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\MessageQueue\PoisonPill\PoisonPillCompareInterface;
 use Magento\Framework\MessageQueue\PoisonPill\PoisonPillReadInterface;
-use Magento\Framework\App\DeploymentConfig;
 
 /**
  * Class CallbackInvoker to invoke callbacks for consumer classes
@@ -58,7 +58,6 @@ class CallbackInvoker implements CallbackInvokerInterface
      * @param \Closure $callback
      * @param mixed $maxIdleTime
      * @param mixed $sleep
-     * @param string $connectionName
      * @return void
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
@@ -69,12 +68,12 @@ class CallbackInvoker implements CallbackInvokerInterface
         $maxNumberOfMessages,
         $callback,
         $maxIdleTime = null,
-        $sleep = null,
-        $connectionName = 'amqp'
+        $sleep = null
     ) {
         $this->poisonPillVersion = $this->poisonPillRead->getLatestVersion();
         $sleep = (int) $sleep ?: 1;
         $maxIdleTime = $maxIdleTime ? (int) $maxIdleTime : PHP_INT_MAX;
+        $connectionName = method_exists($queue, 'getConnectionName') ? $queue->getConnectionName(): null;
         if ($connectionName === 'stomp') {
             $queue->subscribeQueue();
         }

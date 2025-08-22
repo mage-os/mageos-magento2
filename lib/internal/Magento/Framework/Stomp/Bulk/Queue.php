@@ -10,12 +10,12 @@ namespace Magento\Framework\Stomp\Bulk;
 use Magento\Framework\Communication\ConfigInterface as CommunicationConfigInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\MessageQueue\Bulk\Queue\QueueInterface;
+use Magento\Framework\MessageQueue\QueueInterface as BaseQueueInterface;
 use Magento\Framework\Stomp\Config;
-use Magento\Framework\Stomp\StompClientFactory;
 use Magento\Framework\Stomp\StompClient;
+use Magento\Framework\Stomp\StompClientFactory;
 use Stomp\Exception\StompException;
 use Stomp\Transport\Message;
-use Magento\Framework\MessageQueue\QueueInterface as BaseQueueInterface;
 
 /**
  * @api
@@ -87,7 +87,7 @@ class Queue implements QueueInterface
         if ($isSync) {
             $responses = [];
             foreach ($envelopes as $envelope) {
-                $responses[] = $queue->push($envelope);
+                $responses[] = $queue->callRpc($envelope);
             }
             return $responses;
         }
@@ -124,5 +124,15 @@ class Queue implements QueueInterface
             $this->stompClient = $this->stompClientFactory->create(['clientId' => 'producer']);
         }
         return $this->stompClient;
+    }
+
+    /**
+     * Get connection name
+     *
+     * @return string
+     */
+    public function getConnectionName(): string
+    {
+        return $this->stompConfig->getConnectionName();
     }
 }

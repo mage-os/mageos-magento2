@@ -7,12 +7,12 @@ declare(strict_types=1);
 
 namespace Magento\Stomp\Test\Unit\Setup;
 
-use Magento\Stomp\Setup\ConfigOptionsList;
-use Magento\Stomp\Setup\ConnectionValidator;
 use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\Config\Data\ConfigData;
 use Magento\Framework\Setup\Option\TextConfigOption;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Stomp\Setup\ConfigOptionsList;
+use Magento\Stomp\Setup\ConnectionValidator;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

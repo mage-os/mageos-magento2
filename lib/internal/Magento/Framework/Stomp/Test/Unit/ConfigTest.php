@@ -7,10 +7,10 @@ declare(strict_types=1);
 
 namespace Magento\Framework\Stomp\Test\Unit;
 
+use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\Stomp\Config;
 use Magento\Framework\Stomp\Connection\Factory as ConnectionFactory;
 use Magento\Framework\Stomp\Connection\FactoryOptions;
-use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;

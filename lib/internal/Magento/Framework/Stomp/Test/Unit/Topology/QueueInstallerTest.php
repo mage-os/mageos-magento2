@@ -7,15 +7,15 @@ declare(strict_types=1);
 
 namespace Magento\Framework\Stomp\Test\Unit\Topology;
 
-use Magento\Framework\Stomp\Topology\QueueInstaller;
-use Magento\Framework\Stomp\StompClientFactory;
 use Magento\Framework\MessageQueue\Topology\Config\QueueConfigItemInterface;
+use Magento\Framework\Stomp\StompClient;
+use Magento\Framework\Stomp\StompClientFactory;
+use Magento\Framework\Stomp\Topology\QueueInstaller;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Stomp\Transport\Message;
-use Magento\Framework\Stomp\StompClient;
 
 class QueueInstallerTest extends TestCase
 {

@@ -55,7 +55,7 @@ interface QueueInterface
      * Push message to queue directly, without using exchange
      *
      * @param EnvelopeInterface $envelope
-     * @return mixed
+     * @return void
      * @since 103.0.0
      */
     public function push(EnvelopeInterface $envelope);

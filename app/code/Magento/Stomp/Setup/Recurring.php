@@ -7,10 +7,10 @@ declare(strict_types=1);
 
 namespace Magento\Stomp\Setup;
 
-use Magento\Framework\Stomp\TopologyInstaller;
 use Magento\Framework\Setup\InstallSchemaInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
+use Magento\Framework\Stomp\TopologyInstaller;
 
 /**
  * Class Recurring used for installing queues in ActiveMq

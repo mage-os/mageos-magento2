@@ -7,8 +7,8 @@ declare(strict_types=1);
 
 namespace Magento\Framework\Stomp\Test\Unit;
 
-use Magento\Framework\Stomp\TopologyInstaller;
 use Magento\Framework\MessageQueue\Topology\ConfigInterface;
+use Magento\Framework\Stomp\TopologyInstaller;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

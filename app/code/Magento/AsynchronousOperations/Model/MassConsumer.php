@@ -9,12 +9,12 @@ namespace Magento\AsynchronousOperations\Model;
 
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\MessageQueue\CallbackInvokerInterface;
+use Magento\Framework\MessageQueue\Consumer\ConfigInterface as ConsumerConfig;
 use Magento\Framework\MessageQueue\ConsumerConfigurationInterface;
 use Magento\Framework\MessageQueue\ConsumerInterface;
 use Magento\Framework\MessageQueue\EnvelopeInterface;
 use Magento\Framework\MessageQueue\QueueInterface;
 use Magento\Framework\Registry;
-use Magento\Framework\MessageQueue\Consumer\ConfigInterface as ConsumerConfig;
 
 /**
  * Class Consumer used to process OperationInterface messages.
@@ -85,16 +85,12 @@ class MassConsumer implements ConsumerInterface
         if (!isset($maxNumberOfMessages)) {
             $queue->subscribe($this->getTransactionCallback($queue));
         } else {
-            $connectionName = $this->consumerConfig
-                              ->getConsumer($this->configuration->getConsumerName())
-                              ->getConnection();
             $this->invoker->invoke(
                 $queue,
                 $maxNumberOfMessages,
                 $this->getTransactionCallback($queue),
                 $maxIdleTime,
-                $sleep,
-                $connectionName
+                $sleep
             );
         }
 
