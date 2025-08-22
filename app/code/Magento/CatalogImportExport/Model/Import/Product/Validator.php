@@ -208,17 +208,18 @@ class Validator extends AbstractValidator implements RowValidatorInterface
      */
     private function validateRequiredAttributeValue(string $attrCode, array $rowData): bool
     {
+        $emptyConstant = $this->context->getEmptyAttributeValueConstant();
         if (isset($rowData[$attrCode]) && is_array($rowData[$attrCode])) {
-            $emptyConstant = $this->context->getEmptyAttributeValueConstant();
-            $filteredArray = array_filter($rowData[$attrCode], function ($value) {
-                return !empty(trim($value));
+            $trimmedValues = array_map('trim', $rowData[$attrCode]);
+            $filteredArray = array_filter($trimmedValues, function ($value) {
+                return !empty($value);
             });
             return !empty($filteredArray)
-                && !in_array($emptyConstant, array_map('trim', $rowData[$attrCode]), true);
+                && !in_array($emptyConstant, $trimmedValues, true);
         }
         return isset($rowData[$attrCode])
             && strlen(trim($rowData[$attrCode]))
-            && trim($rowData[$attrCode]) !== $this->context->getEmptyAttributeValueConstant();
+            && trim($rowData[$attrCode]) !== $emptyConstant;
     }
 
     /**
