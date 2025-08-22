@@ -214,7 +214,6 @@ class Validator extends AbstractValidator implements RowValidatorInterface
                 return !empty(trim($value));
             });
             return !empty($filteredArray)
-                && count($filteredArray) > 0
                 && !in_array($emptyConstant, array_map('trim', $rowData[$attrCode]), true);
         }
         return isset($rowData[$attrCode])
