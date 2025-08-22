@@ -245,6 +245,7 @@ class ValidateProductWebsiteAssignmentTest extends TestCase
         $quoteId = 1;
         $storeId = 1;
         $productId = 123;
+        $websiteId = 1;
         $productWebsiteIds = null; // Not an array
 
         $this->cartItemMock->expects($this->once())
@@ -398,6 +399,8 @@ class ValidateProductWebsiteAssignmentTest extends TestCase
         $quoteId = 1;
         $storeId = 1;
         $productId = 123;
+        $websiteId = 1;
+        $productWebsiteIds = []; // Empty array
 
         $this->cartItemMock->expects($this->once())
             ->method('getSku')
