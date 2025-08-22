@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Quote\Api;
+namespace Magento\Quote\Test\Api;
 
 use Magento\Catalog\Test\Fixture\Product;
 use Magento\Customer\Test\Fixture\Customer;

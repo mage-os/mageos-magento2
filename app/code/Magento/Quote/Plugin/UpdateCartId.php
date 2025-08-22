@@ -63,8 +63,6 @@ class UpdateCartId
     /**
      * Validate product's website assignment for guest cart item
      *
-     * @param CartItemInterface $cartItem
-     * @return void
      * @throws LocalizedException
      */
     private function validateProductWebsiteAssignment(CartItemInterface $cartItem): void
