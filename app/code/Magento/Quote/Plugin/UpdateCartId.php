@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace Magento\Quote\Plugin;
 
-use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Webapi\Rest\Request as RestRequest;
@@ -27,14 +26,14 @@ class UpdateCartId
 {
     /**
      * @param RestRequest $request
-     * @param ProductRepositoryInterface $productRepository
      * @param StoreManagerInterface $storeManager
      * @param QuoteIdMaskFactory $quoteIdMaskFactory
      * @param CartRepositoryInterface $cartRepository
+     * @param ProductResource $productResource
+     * @param ProductWebsiteLink $productWebsiteLink
      */
     public function __construct(
         private readonly RestRequest $request,
-        private readonly ProductRepositoryInterface $productRepository,
         private readonly StoreManagerInterface $storeManager,
         private readonly QuoteIdMaskFactory $quoteIdMaskFactory,
         private readonly CartRepositoryInterface $cartRepository,
@@ -78,22 +77,33 @@ class UpdateCartId
             return;
         }
 
-        $maskedQuoteId = $cartItem->getQuoteId();
-        $quoteIdMask = $this->quoteIdMaskFactory->create()->load($maskedQuoteId, 'masked_id');
-        $quoteId = $quoteIdMask->getQuoteId();
+        $storeId = (int)($cartItem->getStoreId() ?? 0);
 
-        if (!$quoteId) {
-            return;
+        if (!$storeId) {
+            try {
+                $storeId = (int)$this->storeManager->getStore()->getId();
+            } catch (\Throwable $e) {
+                // ignore; fallback to masked quote resolution below
+            }
         }
 
-        try {
-            $quote = $this->cartRepository->get($quoteId);
-            $storeId = $quote->getStoreId();
-            // Product not in quote yet
-            $this->validateWebsiteAssignmentBySku($sku, $storeId);
+        if (!$storeId) {
+            try {
+                $maskedQuoteId = $cartItem->getQuoteId();
+                if ($maskedQuoteId) {
+                    $quoteIdMask = $this->quoteIdMaskFactory->create()->load($maskedQuoteId, 'masked_id');
+                    $quoteId = (int)$quoteIdMask->getQuoteId();
+                    if ($quoteId) {
+                        $storeId = (int)$this->cartRepository->get($quoteId)->getStoreId();
+                    }
+                }
+            } catch (NoSuchEntityException) {
+                throw new LocalizedException(__('Product that you are trying to add is not available.'));
+            }
+        }
 
-        } catch (NoSuchEntityException) {
-            throw new LocalizedException(__('Product that you are trying to add is not available.'));
+        if ($storeId) {
+            $this->validateWebsiteAssignmentBySku($sku, $storeId);
         }
     }
 

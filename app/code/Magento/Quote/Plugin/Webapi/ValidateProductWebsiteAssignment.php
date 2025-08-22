@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace Magento\Quote\Plugin\Webapi;
 
-use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Api\CartItemRepositoryInterface;
@@ -23,12 +22,12 @@ use Magento\Catalog\Model\ResourceModel\Product\Website\Link as ProductWebsiteLi
 class ValidateProductWebsiteAssignment
 {
     /**
-     * @param ProductRepositoryInterface $productRepository
      * @param StoreManagerInterface $storeManager
      * @param CartRepositoryInterface $cartRepository
+     * @param ProductResource $productResource
+     * @param ProductWebsiteLink $productWebsiteLink
      */
     public function __construct(
-        private readonly ProductRepositoryInterface $productRepository,
         private readonly StoreManagerInterface $storeManager,
         private readonly CartRepositoryInterface $cartRepository,
         private readonly ProductResource $productResource,
