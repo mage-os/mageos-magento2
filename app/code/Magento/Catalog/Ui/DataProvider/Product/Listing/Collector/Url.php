@@ -20,21 +20,6 @@ use Magento\Framework\Data\Helper\PostHelper;
  */
 class Url implements ProductRenderCollectorInterface
 {
-    /** Compare Data key */
-    const KEY_COMPARE_URL_POST_DATA = "compare_url_post_data";
-
-    /** Add to cart url key post data */
-    const KEY_ADD_TO_CART_URL_POST_DATA = "add_to_cart_url_post_data";
-
-    /** Add to cart url key */
-    const KEY_ADD_TO_CART_URL = "add_to_cart_url";
-
-    /** Product Url */
-    const KEY_URL = "url";
-
-    /** Has Required options key */
-    const KEY_HAS_REQUIRED_OPTIONS = "has_required_options";
-
     /**
      * @var AbstractProduct
      */
