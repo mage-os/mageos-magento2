@@ -97,9 +97,6 @@ class ValidateProductWebsiteAssignment
     {
         try {
             $product = $this->productRepository->getById($productId, false, $storeId);
-            if (empty($product->getWebsiteIds())) {
-                return;
-            }
             $this->validateWebsiteAssignment($product->getWebsiteIds(), $storeId);
         } catch (NoSuchEntityException $e) {
             throw new LocalizedException(__('Product that you are trying to add is not available.'));
@@ -116,6 +113,7 @@ class ValidateProductWebsiteAssignment
     private function validateWebsiteAssignment(?array $websiteIds, int $storeId): void
     {
         $websiteId = $this->storeManager->getStore($storeId)->getWebsiteId();
+
         if (empty($websiteIds) || !in_array($websiteId, $websiteIds, true)) {
             throw new LocalizedException(__('Product that you are trying to add is not available.'));
         }
