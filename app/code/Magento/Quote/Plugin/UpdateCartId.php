@@ -17,6 +17,8 @@ use Magento\Quote\Api\Data\CartItemInterface;
 use Magento\Quote\Api\GuestCartItemRepositoryInterface;
 use Magento\Quote\Model\QuoteIdMaskFactory;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Catalog\Model\ResourceModel\Product as ProductResource;
+use Magento\Catalog\Model\ResourceModel\Product\Website\Link as ProductWebsiteLink;
 
 /**
  * Plugin to update cart ID from request and validate product website assignment
@@ -35,7 +37,9 @@ class UpdateCartId
         private readonly ProductRepositoryInterface $productRepository,
         private readonly StoreManagerInterface $storeManager,
         private readonly QuoteIdMaskFactory $quoteIdMaskFactory,
-        private readonly CartRepositoryInterface $cartRepository
+        private readonly CartRepositoryInterface $cartRepository,
+        private readonly ProductResource $productResource,
+        private readonly ProductWebsiteLink $productWebsiteLink
     ) {
     }
 
@@ -74,23 +78,23 @@ class UpdateCartId
             return;
         }
 
-        $storeId = (int)($cartItem->getStoreId() ?? 0);
-        if (!$storeId) {
-            $maskedQuoteId = $cartItem->getQuoteId();
-            $quoteIdMask = $this->quoteIdMaskFactory->create()->load($maskedQuoteId, 'masked_id');
-            $quoteId = (int)$quoteIdMask->getQuoteId();
-            if (!$quoteId) {
-                return;
-            }
-            try {
-                $quote = $this->cartRepository->get($quoteId);
-                $storeId = (int)$quote->getStoreId();
-            } catch (NoSuchEntityException) {
-                throw new LocalizedException(__('Product that you are trying to add is not available.'));
-            }
+        $maskedQuoteId = $cartItem->getQuoteId();
+        $quoteIdMask = $this->quoteIdMaskFactory->create()->load($maskedQuoteId, 'masked_id');
+        $quoteId = $quoteIdMask->getQuoteId();
+
+        if (!$quoteId) {
+            return;
         }
 
-        $this->validateWebsiteAssignmentBySku($sku, $storeId);
+        try {
+            $quote = $this->cartRepository->get($quoteId);
+            $storeId = $quote->getStoreId();
+            // Product not in quote yet
+            $this->validateWebsiteAssignmentBySku($sku, $storeId);
+
+        } catch (NoSuchEntityException) {
+            throw new LocalizedException(__('Product that you are trying to add is not available.'));
+        }
     }
 
     /**
@@ -103,12 +107,12 @@ class UpdateCartId
      */
     private function validateWebsiteAssignmentBySku(string $sku, int $storeId): void
     {
-        try {
-            $product = $this->productRepository->get($sku, false, $storeId);
-            $this->checkProductInWebsite($product->getWebsiteIds(), $storeId);
-        } catch (NoSuchEntityException) {
+        $productId = (int)$this->productResource->getIdBySku($sku);
+        if (!$productId) {
             throw new LocalizedException(__('Product that you are trying to add is not available.'));
         }
+        $websiteIds = $this->productWebsiteLink->getWebsiteIdsByProductId($productId);
+        $this->checkProductInWebsite($websiteIds, $storeId);
     }
 
     /**

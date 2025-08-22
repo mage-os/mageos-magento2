@@ -14,6 +14,8 @@ use Magento\Quote\Api\CartItemRepositoryInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\CartItemInterface;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Catalog\Model\ResourceModel\Product as ProductResource;
+use Magento\Catalog\Model\ResourceModel\Product\Website\Link as ProductWebsiteLink;
 
 /**
  * Plugin to validate product website assignment for REST API cart operations
@@ -28,7 +30,9 @@ class ValidateProductWebsiteAssignment
     public function __construct(
         private readonly ProductRepositoryInterface $productRepository,
         private readonly StoreManagerInterface $storeManager,
-        private readonly CartRepositoryInterface $cartRepository
+        private readonly CartRepositoryInterface $cartRepository,
+        private readonly ProductResource $productResource,
+        private readonly ProductWebsiteLink $productWebsiteLink
     ) {
     }
 
@@ -51,17 +55,13 @@ class ValidateProductWebsiteAssignment
             return;
         }
 
-        $storeId = (int)($cartItem->getStoreId() ?? 0);
-        if (!$storeId) {
-            try {
-                $quote = $this->cartRepository->getActive($cartItem->getQuoteId());
-                $storeId = (int)$quote->getStoreId();
-            } catch (NoSuchEntityException $e) {
-                throw new LocalizedException(__('Product that you are trying to add is not available.'));
-            }
-        }
+        try {
+            $quote = $this->cartRepository->getActive($cartItem->getQuoteId());
+            $this->checkProductWebsiteAssignmentBySku($sku, $quote->getStoreId());
 
-        $this->checkProductWebsiteAssignmentBySku($sku, $storeId);
+        } catch (NoSuchEntityException $e) {
+            throw new LocalizedException(__('Product that you are trying to add is not available.'));
+        }
     }
 
     /**
@@ -73,12 +73,12 @@ class ValidateProductWebsiteAssignment
      */
     private function checkProductWebsiteAssignmentBySku(string $sku, int $storeId): void
     {
-        try {
-            $product = $this->productRepository->get($sku, false, $storeId);
-            $this->validateWebsiteAssignment($product->getWebsiteIds(), $storeId);
-        } catch (NoSuchEntityException $e) {
+        $productId = (int)$this->productResource->getIdBySku($sku);
+        if (!$productId) {
             throw new LocalizedException(__('Product that you are trying to add is not available.'));
         }
+        $websiteIds = $this->productWebsiteLink->getWebsiteIdsByProductId($productId);
+        $this->validateWebsiteAssignment($websiteIds, $storeId);
     }
 
     /**
