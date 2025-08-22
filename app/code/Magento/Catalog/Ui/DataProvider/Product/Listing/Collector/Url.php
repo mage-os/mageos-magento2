@@ -79,7 +79,7 @@ class Url implements ProductRenderCollectorInterface
     public function collect(ProductInterface $product, ProductRenderInterface $productRender)
     {
         $addToCart = $productRender->getAddToCartButton();
-        $addToCompare = $productRender->getAddToCartButton();
+        $addToCompare = $productRender->getAddToCompareButton();
 
         if (!$addToCart) {
             $addToCart = $this->buttonFactory->create();
