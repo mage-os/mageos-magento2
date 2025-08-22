@@ -3,46 +3,39 @@
  * Copyright 2025 Adobe
  * All Rights Reserved.
  */
-
 declare(strict_types=1);
 
-namespace Magento\Quote\Plugin;
+namespace Magento\Quote\Plugin\Webapi;
 
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\Webapi\Rest\Request as RestRequest;
+use Magento\Quote\Api\CartItemRepositoryInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\CartItemInterface;
-use Magento\Quote\Api\GuestCartItemRepositoryInterface;
-use Magento\Quote\Model\QuoteIdMaskFactory;
 use Magento\Store\Model\StoreManagerInterface;
 
 /**
- * Plugin to update cart ID from request and validate product website assignment
+ * Plugin to validate product website assignment for REST API cart operations
  */
-class UpdateCartId
+class ValidateProductWebsiteAssignment
 {
     /**
-     * @param RestRequest $request
      * @param ProductRepositoryInterface $productRepository
      * @param StoreManagerInterface $storeManager
-     * @param QuoteIdMaskFactory $quoteIdMaskFactory
      * @param CartRepositoryInterface $cartRepository
      */
     public function __construct(
-        private readonly RestRequest $request,
         private readonly ProductRepositoryInterface $productRepository,
         private readonly StoreManagerInterface $storeManager,
-        private readonly QuoteIdMaskFactory $quoteIdMaskFactory,
         private readonly CartRepositoryInterface $cartRepository
     ) {
     }
 
     /**
-     * Before saving a guest cart item, set quote ID from request and validate website assignment
+     * Validate product website assignment before saving cart item
      *
-     * @param GuestCartItemRepositoryInterface $subject
+     * @param CartItemRepositoryInterface $subject
      * @param CartItemInterface $cartItem
      * @return void
      * @throws LocalizedException
@@ -50,109 +43,79 @@ class UpdateCartId
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function beforeSave(
-        GuestCartItemRepositoryInterface $subject,
+        CartItemRepositoryInterface $subject,
         CartItemInterface $cartItem
     ): void {
-        if ($cartId = $this->request->getParam('cartId')) {
-            $cartItem->setQuoteId($cartId);
-        }
-
-        $this->validateProductWebsiteAssignment($cartItem);
-    }
-
-    /**
-     * Validate product's website assignment for guest cart item
-     *
-     * @param CartItemInterface $cartItem
-     * @return void
-     * @throws LocalizedException
-     */
-    private function validateProductWebsiteAssignment(CartItemInterface $cartItem): void
-    {
         $sku = $cartItem->getSku();
         if (!$sku) {
             return;
         }
 
-        $maskedQuoteId = $cartItem->getQuoteId();
-        $quoteIdMask = $this->quoteIdMaskFactory->create()->load($maskedQuoteId, 'masked_id');
-        $quoteId = $quoteIdMask->getQuoteId();
-
-        if (!$quoteId) {
-            return;
-        }
-
         try {
-            $quote = $this->cartRepository->get($quoteId);
-            $storeId = $quote->getStoreId();
+            $quote = $this->cartRepository->getActive($cartItem->getQuoteId());
 
             foreach ($quote->getAllItems() as $item) {
                 if ($sku === $item->getSku()) {
-                    $this->validateWebsiteAssignment($item->getProductId(), $storeId);
+                    $this->checkProductWebsiteAssignment($item->getProductId(), $item->getStoreId());
                     return;
                 }
             }
 
-            // Product not in quote yet
-            $this->validateWebsiteAssignmentBySku($sku, $storeId);
+            // Fallback: product not in quote items yet
+            $this->checkProductWebsiteAssignmentBySku($sku, $quote->getStoreId());
 
-        } catch (NoSuchEntityException) {
+        } catch (NoSuchEntityException $e) {
             throw new LocalizedException(__('Product that you are trying to add is not available.'));
         }
     }
 
     /**
-     * Validate by SKU for new items
+     * Check product website assignment by SKU
      *
      * @param string $sku
      * @param int $storeId
-     * @return void
      * @throws LocalizedException
      */
-    private function validateWebsiteAssignmentBySku(string $sku, int $storeId): void
+    private function checkProductWebsiteAssignmentBySku(string $sku, int $storeId): void
     {
         try {
             $product = $this->productRepository->get($sku, false, $storeId);
-            $this->checkProductInWebsite($product->getWebsiteIds(), $storeId);
-        } catch (NoSuchEntityException) {
+            $this->validateWebsiteAssignment($product->getWebsiteIds(), $storeId);
+        } catch (NoSuchEntityException $e) {
             throw new LocalizedException(__('Product that you are trying to add is not available.'));
         }
     }
 
     /**
-     * Validate by product ID for existing items
+     * Check product website assignment by product ID
      *
      * @param int $productId
-     * @param int $storeId
-     * @return void
+     * @param int|null $storeId
      * @throws LocalizedException
      */
-    private function validateWebsiteAssignment(int $productId, int $storeId): void
+    private function checkProductWebsiteAssignment($productId, $storeId): void
     {
         try {
             $product = $this->productRepository->getById($productId, false, $storeId);
             if (empty($product->getWebsiteIds())) {
                 return;
             }
-            $this->checkProductInWebsite($product->getWebsiteIds(), $storeId);
-        } catch (NoSuchEntityException) {
+            $this->validateWebsiteAssignment($product->getWebsiteIds(), $storeId);
+        } catch (NoSuchEntityException $e) {
             throw new LocalizedException(__('Product that you are trying to add is not available.'));
         }
     }
 
     /**
-     * Validate by product ID for existing items
+     * Validate product website assignment
      *
      * @param array|null $websiteIds
      * @param int $storeId
-     * @return void
      * @throws LocalizedException
-     * @throws NoSuchEntityException
      */
-    private function checkProductInWebsite(?array $websiteIds, int $storeId): void
+    private function validateWebsiteAssignment(?array $websiteIds, int $storeId): void
     {
         $websiteId = $this->storeManager->getStore($storeId)->getWebsiteId();
-
         if (empty($websiteIds) || !in_array($websiteId, $websiteIds, true)) {
             throw new LocalizedException(__('Product that you are trying to add is not available.'));
         }
