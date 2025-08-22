@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Magento\Catalog\Model\Config\Source;
 
+use Magento\Catalog\Model\ResourceModel\Product\Collection;
+
 class SortOrder implements \Magento\Framework\Data\OptionSourceInterface
 {
     /**
@@ -21,8 +23,8 @@ class SortOrder implements \Magento\Framework\Data\OptionSourceInterface
     public function toOptionArray(): array
     {
         return [
-            ['value' => 'ASC', 'label' => __('Ascending')],
-            ['value' => 'DESC', 'label' => __('Descending')],
+            ['value' => Collection::SORT_ORDER_ASC, 'label' => __('Ascending')],
+            ['value' => Collection::SORT_ORDER_DESC, 'label' => __('Descending')],
         ];
     }
 }
