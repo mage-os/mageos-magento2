@@ -54,6 +54,11 @@ class ValidateProductWebsiteAssignment
             return;
         }
 
+        // Skip validation on update; website was already validated on add
+        if ($cartItem->getItemId()) {
+            return;
+        }
+
         try {
             $quote = $this->cartRepository->getActive($cartItem->getQuoteId());
             $this->checkProductWebsiteAssignmentBySku($sku, $quote->getStoreId());
@@ -77,6 +82,9 @@ class ValidateProductWebsiteAssignment
             throw new LocalizedException(__('Product that you are trying to add is not available.'));
         }
         $websiteIds = $this->productWebsiteLink->getWebsiteIdsByProductId($productId);
+        if (empty($websiteIds)) {
+            return;
+        }
         $this->validateWebsiteAssignment($websiteIds, $storeId);
     }
 

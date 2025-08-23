@@ -77,13 +77,18 @@ class UpdateCartId
             return;
         }
 
+        // Skip validation on update; website was already validated on add
+        if ($cartItem->getItemId()) {
+            return;
+        }
+
         $storeId = (int)($cartItem->getStoreId() ?? 0);
 
         if (!$storeId) {
             try {
                 $storeId = (int)$this->storeManager->getStore()->getId();
             } catch (\Throwable $e) {
-                // ignore; fallback to masked quote resolution below
+                $storeId = 0;
             }
         }
 
@@ -122,6 +127,9 @@ class UpdateCartId
             throw new LocalizedException(__('Product that you are trying to add is not available.'));
         }
         $websiteIds = $this->productWebsiteLink->getWebsiteIdsByProductId($productId);
+        if (empty($websiteIds)) {
+            return;
+        }
         $this->checkProductInWebsite($websiteIds, $storeId);
     }
 
