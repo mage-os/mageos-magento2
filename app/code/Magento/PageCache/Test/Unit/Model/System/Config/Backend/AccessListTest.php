@@ -48,6 +48,7 @@ class AccessListTest extends TestCase
     public static function getValidValues(): array
     {
         return [
+            ['', 'localhost'],
             ['localhost', 'localhost'],
             [null, 'localhost'],
             ['127.0.0.1', '127.0.0.1'],
@@ -74,9 +75,11 @@ class AccessListTest extends TestCase
     public static function getInvalidValues(): array
     {
         return [
+            [123],
             ['\\bull val\\'],
             ['{*I am not an IP*}'],
             ['{*I am not an IP*}, 127.0.0.1'],
+            ['172.16.0.1/33'],
         ];
     }
 
