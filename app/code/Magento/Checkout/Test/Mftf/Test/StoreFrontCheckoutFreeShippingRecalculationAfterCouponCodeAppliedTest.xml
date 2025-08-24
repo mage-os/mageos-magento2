@@ -40,7 +40,7 @@
             <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginToStoreFront">
                 <argument name="Customer" value="$createCustomer$"/>
             </actionGroup>
-            <!--Add product to cart-->
+            <!--Navigate to product page-->
             <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProductPage">
                 <argument name="productUrl" value="$simpleProduct.custom_attributes[url_key]$"/>
             </actionGroup>
@@ -55,13 +55,13 @@
             <actionGroup ref="AdminCartPriceRuleDeleteAllActionGroup" stepKey="deleteAllCartPriceRules"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
         </after>
-        <!--Step 1:Apply cart price discount-->
+        <!--Step 1:Add product to cart and apply cart price discount-->
         <actionGroup ref="ApplyCartRuleOnStorefrontActionGroup" stepKey="applyCartRule">
             <argument name="product" value="$simpleProduct$"/>
             <argument name="couponCode" value="{{CatPriceRule.coupon_code}}"/>
         </actionGroup>
         <!--Step 2:Navigate to checkout page and verify free shipping is not available-->
-        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart1"/>
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicartAfterCouponApplied"/>
         <waitForElementNotVisible selector="{{CheckoutShippingMethodsSection.shippingMethodRowByName('Free')}}" stepKey="verifyFreeShippingIsNotAvailable"/>
         <!--Step 3:Navigate back to shopping cart and cancel the discount-->
         <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="goToShoppingCartPage"/>
@@ -70,7 +70,7 @@
         <click selector="{{DiscountSection.CancelCoupon}}" stepKey="clickCancelCouponButton"/>
         <waitForElementVisible selector="{{CheckoutShippingSection.cancelCouponText('You canceled the coupon code.')}}" stepKey="seeCancellationMessage"/>
         <!--Step 4:Proceed to checkout-->
-        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart2"/>
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicartAfterCouponCancelled"/>
         <waitForPageLoad stepKey="waitForShippingMethods"/>
         <!--Step 5:Select free shipping method-->
         <actionGroup ref="StorefrontSetShippingMethodActionGroup" stepKey="selectFreeShipping">
