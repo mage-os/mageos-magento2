@@ -1,7 +1,7 @@
 <?php
 /**
  * Copyright 2016 Adobe
- * All rights reserved.
+ * All Rights Reserved.
  */
 
 namespace Magento\OfflineShipping\Model\ResourceModel\Carrier\Tablerate\CSV;
