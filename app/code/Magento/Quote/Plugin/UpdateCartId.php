@@ -69,6 +69,7 @@ class UpdateCartId
      * @param CartItemInterface $cartItem
      * @return void
      * @throws LocalizedException
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function validateProductWebsiteAssignment(CartItemInterface $cartItem): void
     {
