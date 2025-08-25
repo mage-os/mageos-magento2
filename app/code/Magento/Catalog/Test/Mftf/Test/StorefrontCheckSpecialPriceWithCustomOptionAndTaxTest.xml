@@ -57,7 +57,7 @@
            <magentoCLI command="config:set shipping/origin/country_id US" stepKey="setOriginCountryToUS"/>
 
             <!-- Display product price excluding tax in shopping cart -->
-            <magentoCLI command="config:set tax/cart_display/price 0" stepKey="disableShowIncludingTaxInCart"/>
+            <actionGroup ref="AdminResetPriceDisplaySettingsActionGroup" stepKey="resetPriceDisplaySettings"/>
 
             <!-- Display product price excluding tax in catalog -->
             <magentoCLI command="config:set tax/display/type 0" stepKey="disableShowIncludingTax"/>
