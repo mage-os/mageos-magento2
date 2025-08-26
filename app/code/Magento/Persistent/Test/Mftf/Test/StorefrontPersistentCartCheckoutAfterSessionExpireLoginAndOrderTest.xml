@@ -22,7 +22,9 @@
             <!-- Step 2: Enable Persistence shopping cart and set enable persistence to yes -->
             <createData entity="PersistentConfigSettings" stepKey="enablePersistentConfigSettings"/>
             <!-- Allow login during checkout-->
-            <actionGroup ref="AdminEnableLoginOnCheckoutActionGroup" stepKey="enableLoginInGuestCheckout"/>
+            <actionGroup ref="AdminEnableDisableLoginOnCheckoutActionGroup" stepKey="enableLoginInGuestCheckout">
+                <argument name="enableDisableValue" value="1"/>
+            </actionGroup>
             <!-- Step4: Create two simple products -->
             <createData entity="_defaultProduct" stepKey="createSimpleProductOne"></createData>
             <createData entity="_defaultProduct" stepKey="createSimpleProductTwo"></createData>
@@ -31,7 +33,9 @@
             <!-- Revert persistence to use system values -->
             <createData entity="PersistentConfigUseSystemValue" stepKey="restorePersistentDefaults"/>
             <!-- Disable login on checkout page -->
-            <actionGroup ref="AdminDisableLoginOnCheckoutActionGroup" stepKey="disableLoginInGuestCheckout"/>
+            <actionGroup ref="AdminEnableDisableLoginOnCheckoutActionGroup" stepKey="disableLoginInGuestCheckout">
+                <argument name="enableDisableValue" value="0"/>
+            </actionGroup>
             <!-- Delete products-->
             <deleteData createDataKey="createSimpleProductOne" stepKey="deleteSimpleProductOne"/>
             <deleteData createDataKey="createSimpleProductTwo" stepKey="deleteSimpleProductTwo"/>
