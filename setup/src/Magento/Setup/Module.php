@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Setup;
@@ -15,13 +15,18 @@ class Module
 {
     /**
      * Native bootstrap method
+     *
+     * @param MvcEvent $e
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
+    // phpcs:disable
     public function onBootstrap(MvcEvent $e)
     {
         // Simplified native bootstrap for CLI setup commands
         // Most of the original functionality (headers, routing) is not needed for setup commands
         // The main purpose is to initialize basic services for compatibility
     }
+    // phpcs:disable
 
     /**
      * @inheritDoc

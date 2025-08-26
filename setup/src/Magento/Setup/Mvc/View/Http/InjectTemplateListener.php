@@ -11,6 +11,9 @@ use Magento\Framework\Setup\Mvc\MvcEvent;
 
 /**
  * Native InjectTemplateListener for HTTP request (replaces Laminas dependency)
+ *
+ * @deprecated Not used anymore
+ * @see we don't use it anymore
  */
 class InjectTemplateListener
 {
@@ -61,11 +64,14 @@ class InjectTemplateListener
      *
      * @param  MvcEvent $e
      * @return void
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
+    // phpcs:disable
     public function injectTemplate(MvcEvent $e)
     {
         // Native implementation - simplified for setup context
         // In setup context, we don't need complex template injection
         // This method exists for API compatibility
     }
+    // phpcs:disable
 }

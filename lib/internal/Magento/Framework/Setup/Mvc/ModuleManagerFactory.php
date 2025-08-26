@@ -19,6 +19,7 @@ class ModuleManagerFactory
      * @param string $name
      * @param array|null $options
      * @return ModuleManager
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function __invoke(mixed $container, string $name, ?array $options = null): ModuleManager
     {

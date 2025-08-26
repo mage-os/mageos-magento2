@@ -6,6 +6,7 @@
 declare(strict_types=1);
 
 namespace Magento\Framework\Setup\Mvc;
+
 use Laminas\ModuleManager\Listener\ServiceListener;
 use Laminas\ServiceManager\ServiceManager;
 
@@ -21,6 +22,7 @@ class ServiceListenerFactory
      * @param string $name
      * @param array|null $options
      * @return ServiceListener
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function __invoke(ServiceManager $container, string $name, ?array $options = null): ServiceListener
     {

@@ -18,7 +18,8 @@ use Laminas\EventManager\EventManagerInterface;
 
 /**
  * A listener that injects relevant Magento initialization parameters and initializes filesystem
- *
+ * @deprecated Not used anymore
+ * @see we don't use it anymore
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @codingStandardsIgnoreStart
  */
@@ -28,44 +29,6 @@ class InitParamListener
      * A CLI parameter for injecting bootstrap variables
      */
     const BOOTSTRAP_PARAM = 'magento-init-params';
-
-
-
-    /**
-     * An event subscriber that initializes DirectoryList and Filesystem objects in ZF application bootstrap
-     *
-     * @param MvcEvent $e
-     * @return void
-     */
-    public function onBootstrap(MvcEvent $e): void
-    {
-        /** @var MvcApplication $application */
-        $application = $e->getApplication();
-        $initParams = $application->getServiceManager()->get(self::BOOTSTRAP_PARAM);
-        $directoryList = $this->createDirectoryList($initParams);
-        $serviceManager = $application->getServiceManager();
-        $serviceManager->setService(\Magento\Framework\App\Filesystem\DirectoryList::class, $directoryList);
-        $serviceManager->setService(\Magento\Framework\Filesystem::class, $this->createFilesystem($directoryList));
-    }
-
-    /**
-     * Factory method for creating init parameters (compatible with Laminas ServiceManager)
-     *
-     * @param mixed $serviceManager Laminas ServiceManager
-     * @param string $requestedName
-     * @return array
-     */
-    public function __invoke($serviceManager, $requestedName): array
-    {
-        // For Laminas ServiceManager, extract parameters from merged config (which includes global.php)
-        $mergedConfig = $serviceManager->has('config') ? $serviceManager->get('config') : [];
-        $appConfig = $serviceManager->has('ApplicationConfig') ? $serviceManager->get('ApplicationConfig') : [];
-
-        // Merge both configs to ensure we get bootstrap params from global.php
-        $fullConfig = array_merge_recursive($appConfig, $mergedConfig);
-
-        return $this->extractInitParametersFromConfig($fullConfig);
-    }
 
     /**
      * Attach listener to events (compatibility method for tests)
@@ -99,6 +62,23 @@ class InitParamListener
     }
 
     /**
+     * An event subscriber that initializes DirectoryList and Filesystem objects in ZF application bootstrap
+     *
+     * @param MvcEvent $e
+     * @return void
+     */
+    public function onBootstrap(MvcEvent $e): void
+    {
+        /** @var MvcApplication $application */
+        $application = $e->getApplication();
+        $initParams = $application->getServiceManager()->get(self::BOOTSTRAP_PARAM);
+        $directoryList = $this->createDirectoryList($initParams);
+        $serviceManager = $application->getServiceManager();
+        $serviceManager->setService(\Magento\Framework\App\Filesystem\DirectoryList::class, $directoryList);
+        $serviceManager->setService(\Magento\Framework\Filesystem::class, $this->createFilesystem($directoryList));
+    }
+
+    /**
      * Create service (compatibility method for tests)
      *
      * @param mixed $serviceLocator
@@ -109,6 +89,26 @@ class InitParamListener
         $application = $serviceLocator->get('Application');
         $config = $application->getConfig();
         return $this->extractInitParametersFromConfig($config);
+    }
+
+    /**
+     * Factory method for creating init parameters (compatible with Laminas ServiceManager)
+     *
+     * @param mixed $serviceManager Laminas ServiceManager
+     * @param string $requestedName
+     * @return array
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function __invoke($serviceManager, $requestedName): array
+    {
+        // For Laminas ServiceManager, extract parameters from merged config (which includes global.php)
+        $mergedConfig = $serviceManager->has('config') ? $serviceManager->get('config') : [];
+        $appConfig = $serviceManager->has('ApplicationConfig') ? $serviceManager->get('ApplicationConfig') : [];
+
+        // Merge both configs to ensure we get bootstrap params from global.php
+        $fullConfig = array_merge_recursive($appConfig, $mergedConfig);
+
+        return $this->extractInitParametersFromConfig($fullConfig);
     }
 
     /**

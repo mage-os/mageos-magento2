@@ -33,7 +33,9 @@ class InitParamListenerTest extends TestCase
      */
     private $listener;
 
-    /** callable[][] */
+    /**
+     * @var array
+     */
     private $callbacks = [];
 
     protected function setUp(): void
@@ -172,13 +174,16 @@ class InitParamListenerTest extends TestCase
             'one MAGE_DIRS CLI' => [
                 [],
                 [],
-                ['bin/magento', 'setup:install', '--magento-init-params=MAGE_MODE=developer&MAGE_DIRS[base][path]=/var/www/magento2'],
+                ['bin/magento', 'setup:install',
+                    '--magento-init-params=MAGE_MODE=developer&MAGE_DIRS[base][path]=/var/www/magento2'],
                 ['MAGE_DIRS' => ['base' => ['path' => '/var/www/magento2']], 'MAGE_MODE' => 'developer'],
             ],
             'two MAGE_DIRS CLI' => [
                 [],
                 [],
-                ['bin/magento', 'setup:install', '--magento-init-params=MAGE_MODE=developer&MAGE_DIRS[base][path]=/var/www/magento2&MAGE_DIRS[cache][path]=/tmp/cache'],
+                ['bin/magento', 'setup:install',
+                    '--magento-init-params=MAGE_MODE=developer&MAGE_DIRS[base][path]
+                    =/var/www/magento2&MAGE_DIRS[cache][path]=/tmp/cache'],
                 [
                     'MAGE_DIRS' => ['base' => ['path' => '/var/www/magento2'], 'cache' => ['path' => '/tmp/cache']],
                     'MAGE_MODE' => 'developer',
@@ -199,7 +204,9 @@ class InitParamListenerTest extends TestCase
             'two MAGE_DIRS' => [
                 [],
                 [],
-                ['bin/magento', 'setup:install', '--magento-init-params=MAGE_MODE=developer&MAGE_DIRS[base][path]=/var/www/magento2&MAGE_DIRS[cache][path]=/tmp/cache'],
+                ['bin/magento', 'setup:install',
+                    '--magento-init-params=MAGE_MODE=developer&MAGE_DIRS[base][path]
+                    =/var/www/magento2&MAGE_DIRS[cache][path]=/tmp/cache'],
                 [
                     'MAGE_DIRS' => ['base' => ['path' => '/var/www/magento2'], 'cache' => ['path' => '/tmp/cache']],
                     'MAGE_MODE' => 'developer',

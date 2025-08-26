@@ -180,7 +180,7 @@ class MvcApplication
         }
 
         // Load Setup module configuration
-        if (class_exists('Magento\Setup\Module')) {
+        if (class_exists(\Magento\Setup\Module::class)) {
             $module = new \Magento\Setup\Module();
             $moduleConfig = $module->getConfig();
             $mergedConfig = array_merge_recursive($mergedConfig, $moduleConfig);

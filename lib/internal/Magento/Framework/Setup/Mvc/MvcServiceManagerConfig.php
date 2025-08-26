@@ -47,8 +47,9 @@ class MvcServiceManagerConfig
             ],
             'delegators' => [],
             'factories' => [
-                'EventManager'            => function($container) {
-                    $sharedManager = $container->has('SharedEventManager') ? $container->get('SharedEventManager') : null;
+                'EventManager'            => function ($container) {
+                    $sharedManager = $container->has('SharedEventManager') ?
+                        $container->get('SharedEventManager') : null;
                     return new \Laminas\EventManager\EventManager($sharedManager);
                 },
                 'ModuleManager'           => ModuleManagerFactory::class,
@@ -64,17 +65,17 @@ class MvcServiceManagerConfig
         ];
 
         // Add ServiceManager factory (same as original)
-        $this->config['factories']['ServiceManager'] = function($container) {
+        $this->config['factories']['ServiceManager'] = function ($container) {
             return $container;
         };
 
         // Add SharedEventManager factory (same as original)
-        $this->config['factories']['SharedEventManager'] = function() {
+        $this->config['factories']['SharedEventManager'] = function () {
             return new \Laminas\EventManager\SharedEventManager();
         };
 
         // Add EventManagerAware initializer (same as original)
-        $this->config['initializers']['EventManagerAwareInitializer'] = function($container, $instance) {
+        $this->config['initializers']['EventManagerAwareInitializer'] = function ($container, $instance) {
             if (!$instance instanceof \Laminas\EventManager\EventManagerAwareInterface) {
                 return;
             }
@@ -92,9 +93,6 @@ class MvcServiceManagerConfig
         if (!empty($config)) {
             $this->config = array_merge_recursive($this->config, $config);
         }
-
-        // Add InitParamListener as an invokable service (same as Laminas does)
-        $this->config['invokables'][\Magento\Setup\Mvc\Bootstrap\InitParamListener::class] = \Magento\Setup\Mvc\Bootstrap\InitParamListener::class;
     }
 
     /**
