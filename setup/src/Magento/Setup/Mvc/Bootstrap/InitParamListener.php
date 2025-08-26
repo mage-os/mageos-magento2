@@ -18,7 +18,7 @@ use Laminas\EventManager\EventManagerInterface;
 
 /**
  * A listener that injects relevant Magento initialization parameters and initializes filesystem
- * @deprecated Not used anymore
+ * @deprecated Web Setup support has been removed, this class is no longer in use.
  * @see we don't use it anymore
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @codingStandardsIgnoreStart

@@ -12,7 +12,7 @@ use Magento\Framework\Setup\Mvc\MvcEvent;
 /**
  * Native InjectTemplateListener for HTTP request (replaces Laminas dependency)
  *
- * @deprecated Not used anymore
+ * @deprecated Web Setup support has been removed, this class is no longer in use.
  * @see we don't use it anymore
  */
 class InjectTemplateListener

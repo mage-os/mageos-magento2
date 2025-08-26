@@ -181,9 +181,10 @@ class InitParamListenerTest extends TestCase
             'two MAGE_DIRS CLI' => [
                 [],
                 [],
+                // phpcs:disable Generic.Files.LineLength
                 ['bin/magento', 'setup:install',
-                    '--magento-init-params=MAGE_MODE=developer&MAGE_DIRS[base][path]
-                    =/var/www/magento2&MAGE_DIRS[cache][path]=/tmp/cache'],
+                    '--magento-init-params=MAGE_MODE=developer&MAGE_DIRS[base][path]=/var/www/magento2&MAGE_DIRS[cache][path]=/tmp/cache'],
+                // phpcs:disable Generic.Files.LineLength
                 [
                     'MAGE_DIRS' => ['base' => ['path' => '/var/www/magento2'], 'cache' => ['path' => '/tmp/cache']],
                     'MAGE_MODE' => 'developer',
@@ -204,9 +205,10 @@ class InitParamListenerTest extends TestCase
             'two MAGE_DIRS' => [
                 [],
                 [],
+                // phpcs:disable Generic.Files.LineLength
                 ['bin/magento', 'setup:install',
-                    '--magento-init-params=MAGE_MODE=developer&MAGE_DIRS[base][path]
-                    =/var/www/magento2&MAGE_DIRS[cache][path]=/tmp/cache'],
+                    '--magento-init-params=MAGE_MODE=developer&MAGE_DIRS[base][path]=/var/www/magento2&MAGE_DIRS[cache][path]=/tmp/cache'],
+                // phpcs:disable Generic.Files.LineLength
                 [
                     'MAGE_DIRS' => ['base' => ['path' => '/var/www/magento2'], 'cache' => ['path' => '/tmp/cache']],
                     'MAGE_MODE' => 'developer',
