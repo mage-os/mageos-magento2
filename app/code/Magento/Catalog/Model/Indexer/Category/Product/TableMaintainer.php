@@ -74,6 +74,17 @@ class TableMaintainer
     }
 
     /**
+     * Expose write connection so callers can use the same adapter instance
+     * that created temporary tables.
+     *
+     * @return AdapterInterface
+     */
+    public function getWriteConnection(): AdapterInterface
+    {
+        return $this->getConnection();
+    }
+
+    /**
      * Return validated table name
      *
      * @param string|string[] $table

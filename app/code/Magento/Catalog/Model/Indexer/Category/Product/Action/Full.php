@@ -187,7 +187,6 @@ class Full extends AbstractAction
     protected function reindex(): void
     {
         $userFunctions = [];
-
         foreach ($this->storeManager->getStores() as $store) {
             if ($this->getPathFromCategoryId($store->getRootCategoryId())) {
                 $userFunctions[$store->getId()] = function () use ($store) {
@@ -195,7 +194,6 @@ class Full extends AbstractAction
                 };
             }
         }
-
         $this->processManager->execute($userFunctions);
     }
 
@@ -206,6 +204,8 @@ class Full extends AbstractAction
      */
     private function reindexStore($store): void
     {
+        // Ensure the same adapter instance that created the TEMP table is used for all operations
+        $this->connection = $this->tableMaintainer->getWriteConnection();
         $this->reindexRootCategory($store);
         $this->reindexAnchorCategories($store);
         $this->reindexNonAnchorCategories($store);

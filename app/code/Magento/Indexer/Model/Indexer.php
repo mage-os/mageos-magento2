@@ -468,6 +468,11 @@ class Indexer extends DataObject implements IndexerInterface, SuspendableIndexer
 
             try {
                 $this->getActionInstance()->executeFull();
+                // Re-acquire application lock if it was released by connection close during multi-process execution
+                // so that the working-state check below can succeed and mark the indexer as VALID.
+                $state->setStatus(StateInterface::STATUS_WORKING);
+                $state->save();
+
                 if ($this->workingStateProvider->isWorking($this->getId())) {
                     $state->setStatus(StateInterface::STATUS_VALID);
                     $state->save();
