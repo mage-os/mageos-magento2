@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -226,6 +226,7 @@ class CreatePost extends AbstractAccount implements CsrfAwareActionInterface, Ht
      * Retrieve cookie manager
      *
      * @deprecated 100.1.0
+     * @see https://jira.corp.magento.com/browse/MAGETWO-71174
      * @return \Magento\Framework\Stdlib\Cookie\PhpCookieManager
      */
     private function getCookieManager()
@@ -242,6 +243,7 @@ class CreatePost extends AbstractAccount implements CsrfAwareActionInterface, Ht
      * Retrieve cookie metadata factory
      *
      * @deprecated 100.1.0
+     * @see https://jira.corp.magento.com/browse/MAGETWO-71174
      * @return \Magento\Framework\Stdlib\Cookie\CookieMetadataFactory
      */
     private function getCookieMetadataFactory()
@@ -361,6 +363,8 @@ class CreatePost extends AbstractAccount implements CsrfAwareActionInterface, Ht
             return $this->resultRedirectFactory->create()
                 ->setUrl($this->_redirect->error($url));
         }
+
+        $this->decodePunycodeEmail();
         $this->session->regenerateId();
         try {
             $address = $this->extractAddress();
@@ -511,5 +515,28 @@ class CreatePost extends AbstractAccount implements CsrfAwareActionInterface, Ht
         }
 
         return $message;
+    }
+
+    /**
+     * Convert punycode email back to Unicode
+     *
+     * @return void
+     */
+    private function decodePunycodeEmail(): void
+    {
+        $email = $this->getRequest()->getParam('email');
+
+        // Split local part and domain
+        [$localPart, $domain] = explode('@', $email, 2);
+
+        // Decode only the domain part
+        if (function_exists('idn_to_utf8')) {
+            $decodedDomain = idn_to_utf8($domain, IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
+            if ($decodedDomain !== false) {
+                $domain = $decodedDomain;
+            }
+        }
+
+        $this->getRequest()->setParam('email', $localPart . '@' . $domain);
     }
 }
