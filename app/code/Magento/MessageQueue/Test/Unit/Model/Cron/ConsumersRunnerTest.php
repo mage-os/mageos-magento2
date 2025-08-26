@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2017 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -18,6 +18,7 @@ use Magento\MessageQueue\Model\CheckIsAvailableMessagesInQueue;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Process\PhpExecutableFinder;
+use Psr\Log\LoggerInterface;
 
 /**
  * Unit tests for ConsumersRunner.
@@ -65,6 +66,11 @@ class ConsumersRunnerTest extends TestCase
     private $consumersRunner;
 
     /**
+     * @var LoggerInterface
+     */
+    private $loggerMock;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp(): void
@@ -89,6 +95,10 @@ class ConsumersRunnerTest extends TestCase
             ->getMock();
         $this->connectionTypeResolver->method('getConnectionType')->willReturn('something');
 
+        $this->loggerMock = $this->getMockBuilder(LoggerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->consumersRunner = new ConsumersRunner(
             $this->phpExecutableFinderMock,
             $this->consumerConfigMock,
@@ -96,7 +106,7 @@ class ConsumersRunnerTest extends TestCase
             $this->shellBackgroundMock,
             $this->lockManagerMock,
             $this->connectionTypeResolver,
-            null,
+            $this->loggerMock,
             $this->checkIsAvailableMessagesMock
         );
     }
