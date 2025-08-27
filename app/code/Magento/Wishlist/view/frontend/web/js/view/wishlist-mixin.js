@@ -17,7 +17,10 @@ define(['jquery', 'Magento_Customer/js/customer-data'], function ($, customerDat
                 wishlist.subscribe(function (updatedWishlist) {
                     const counters = $(selector);
 
-                    if (typeof updatedWishlist.counter !== 'undefined' && updatedWishlist.counter !== null && counters.length) {
+                    if (typeof updatedWishlist.counter !== 'undefined'
+                        && updatedWishlist.counter !== null
+                        && counters.length
+                    ) {
                         counters.text(updatedWishlist.counter);
                     }
                     if (updatedWishlist.counter === null) {
