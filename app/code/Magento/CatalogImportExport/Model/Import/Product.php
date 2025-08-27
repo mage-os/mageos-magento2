@@ -2530,12 +2530,12 @@ class Product extends AbstractEntity
 
                 $row = [];
                 $sku = $rowData[self::COL_SKU];
-                $storeId = $this->getRowStoreId($rowData);
                 if ($this->skuProcessor->getNewSku($sku) !== null) {
                     $stockItem = $this->getRowExistingStockItem($rowData);
                     $existingStockItemData = $stockItem->getData();
                     $row = $this->formatStockDataForRow($rowData);
                     $productIdsToReindex[] = $row['product_id'];
+                    $storeId = $this->getRowStoreId($rowData);
                     if (!empty(array_diff_assoc($row, $existingStockItemData))
                         || $this->statusProcessor->isStatusChanged($sku, $storeId)
                     ) {
@@ -2543,9 +2543,9 @@ class Product extends AbstractEntity
                     }
                 }
 
-                if (!isset($stockData[$sku][$storeId])) {
-                    $stockData[$sku][$storeId] = $row;
-                    $importedData[$sku][$storeId] = $rowData;
+                if (!isset($stockData[$sku])) {
+                    $stockData[$sku] = $row;
+                    $importedData[$sku] = $rowData;
                 }
             }
 
@@ -3404,55 +3404,51 @@ class Product extends AbstractEntity
 
         $stockItemDo = $this->stockRegistry->getStockItem($row['product_id'], $row['website_id']);
         $existStockData = $stockItemDo->getData();
+        $isInStockOld = (bool) ($existStockData['is_in_stock'] ?? $this->defaultStockData['is_in_stock']);
 
-        foreach (array_flip($this->_fieldsMap) as $fileFieldName => $systemFieldName) {
-            if (isset($rowData[$fileFieldName]) && isset($this->defaultStockData[$systemFieldName])) {
-                $row[$systemFieldName] = $rowData[$fileFieldName];
-            }
-        }
+        $row = array_merge(
+            $this->defaultStockData,
+            array_intersect_key($existStockData, $this->defaultStockData),
+            array_intersect_key($rowData, $this->defaultStockData),
+            $row
+        );
 
         if ($this->stockConfiguration->isQty($this->skuProcessor->getNewSku($sku)['type_id'])) {
-            if (empty($existStockData)) {
-                $initialStatusStock = 0;
-            } else {
-                $initialStatusStock = $existStockData['is_in_stock'] ?? $this->defaultStockData['is_in_stock'];
-            }
-            unset($existStockData['is_in_stock']);
-
-            $row = $this->getMergedRowDetails($row, $existStockData, $rowData);
             $stockItemDo->setData($row);
-            $row['is_in_stock'] = $this->stockStateProvider->verifyStock($stockItemDo)
-                ? (int) $row['is_in_stock']
-                : 0;
+            $isInStock = $this->stockStateProvider->verifyStock($stockItemDo);
+            /**
+             * This following logic originates from
+             * @see \Magento\CatalogInventory\Model\Stock\StockItemRepository::updateStockStatus
+             * It is important to keep it for consistency
+             */
+            if ($stockItemDo->getManageStock()) {
+                if (!$isInStock) {
+                    if ($stockItemDo->getIsInStock() === true) {
+                        $stockItemDo->setIsInStock(false);
+                        $stockItemDo->setStockStatusChangedAuto(1);
+                    }
+                } else {
+                    if ($stockItemDo->getIsInStock() !== $isInStockOld) {
+                        $stockItemDo->setStockStatusChangedAuto(0);
+                    }
+                    if ($stockItemDo->getIsInStock() === false && $stockItemDo->getStockStatusChangedAuto()) {
+                        $stockItemDo->setIsInStock(true);
+                    }
+                }
+            } else {
+                $stockItemDo->setStockStatusChangedAuto(0);
+            }
+            $row['is_in_stock'] = (int) $stockItemDo->getIsInStock();
+            $row['stock_status_changed_auto'] = (int) $stockItemDo->getStockStatusChangedAuto();
             if ($this->stockStateProvider->verifyNotification($stockItemDo)) {
                 $date = $this->dateTimeFactory->create('now', new \DateTimeZone('UTC'));
                 $row['low_stock_date'] = $date->format(DateTime::DATETIME_PHP_FORMAT);
             }
-            $row['stock_status_changed_auto'] = (int) $initialStatusStock != $row['is_in_stock'];
         } else {
-            $row = $this->getMergedRowDetails($row, $existStockData, $rowData);
             $row['qty'] = 0;
         }
 
         return $row;
-    }
-
-    /**
-     * Fill in row details with default stock data, existing stock data and import data.
-     *
-     * @param array $row
-     * @param array $existingStockData
-     * @param array $importData
-     * @return array
-     */
-    private function getMergedRowDetails(array $row, array $existingStockData, array $importData): array
-    {
-        return array_merge(
-            $this->defaultStockData,
-            array_intersect_key($existingStockData, $this->defaultStockData),
-            array_intersect_key($importData, $this->defaultStockData),
-            $row
-        );
     }
 
     /**

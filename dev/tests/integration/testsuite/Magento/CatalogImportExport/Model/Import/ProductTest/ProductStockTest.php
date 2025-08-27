@@ -13,7 +13,9 @@ use Magento\CatalogInventory\Model\Stock;
 use Magento\CatalogInventory\Model\StockRegistry;
 use Magento\CatalogInventory\Model\StockRegistryStorage;
 use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\ImportExport\Test\Fixture\CsvFile as CsvFileFixture;
 use Magento\TestFramework\Fixture\DataFixture;
+use Magento\TestFramework\Fixture\DataFixtureStorageManager;
 
 /**
  * Integration test for \Magento\CatalogImportExport\Model\Import\Product class.
@@ -49,28 +51,43 @@ class ProductStockTest extends ProductTestBase
         DataFixture(
             ProductFixture::class,
             [
-                'sku' => 'simple4',
                 'extension_attributes' => [
                     'stock_item' => [
                         'use_config_manage_stock' => true,
                         'qty' => 100,
                         'is_qty_decimal' => false,
-                        'is_in_stock' => false,
+                        'is_in_stock' => true,
                         'min_qty' => 200
                     ]
                 ],
-            ]
-        )
+            ],
+            'product'
+        ),
+        DataFixture(
+            CsvFileFixture::class,
+            [
+                'rows' => [
+                    ['sku', 'store_view_code', 'out_of_stock_qty'],
+                    ['$product.sku$', '', '1'],
+                ]
+            ],
+            'file'
+        ),
     ]
-    /**
-     * @return void
-     */
+
     public function testImportProductAutoStockStatusAdjustment(): void
     {
-        $this->importFile('products_to_import_out_of_stock_qty_auto_status_stock.csv');
+        $fixtures = DataFixtureStorageManager::getStorage();
+        $id = $fixtures->get('product')->getId();
+        $pathToFile = $fixtures->get('file')->getAbsolutePath();
+        $stockItem = $this->stockRegistry->getStockItem($id, 1);
+        $this->assertFalse($stockItem->getIsInStock());
 
-        $product = $this->getProductBySku('simple4');
-        $stockItem = $this->stockRegistry->getStockItem($product->getId(), 1);
+        $import = $this->createImportModel($pathToFile);
+        $this->assertErrorsCount(0, $import->validateData());
+        $import->importData();
+
+        $stockItem = $this->stockRegistry->getStockItem($id, 1);
         $this->assertTrue($stockItem->getIsInStock());
     }
 
