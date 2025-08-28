@@ -52,4 +52,36 @@
         <data key="label">No</data>
         <data key="value">0</data>
     </entity>
+    <entity name="AdminSetUSPSTypeToUSPSRestAPIUSPSConfigData" type="usps_config">
+        <data key="path">carriers/usps/usps_type</data>
+        <data key="value">USPS_REST</data>
+    </entity>
+    <entity name="AdminSetUSPSTypeToUSPSWebToolUSPSConfigData" type="usps_config">
+        <data key="path">carriers/usps/usps_type</data>
+        <data key="value">USPS_XML</data>
+    </entity>
+    <entity name="AdminConsumerKeyUSPSConfigData" type="usps_config">
+        <data key="path">carriers/usps/client_id</data>
+        <data key="value">D71qxI00jx1m9xNqFVigpqrh4eBdqY6Y</data>
+    </entity>
+    <entity name="AdminConsumerSecretUSPSConfigData" type="usps_config">
+        <data key="path">carriers/usps/client_secret</data>
+        <data key="value">sDy3Q4lHk6T9AMwP</data>
+    </entity>
+    <entity name="AdminAccountNumberUSPSConfigData" type="usps_config">
+        <data key="path">carriers/usps/account_number</data>
+        <data key="value">1000236554</data>
+    </entity>
+    <entity name="AdminCRIDUSPSConfigData" type="usps_config">
+        <data key="path">carriers/usps/crid</data>
+        <data key="value">49547560</data>
+    </entity>
+    <entity name="AdminMIDUSPSConfigData" type="usps_config">
+        <data key="path">carriers/usps/mid</data>
+        <data key="value">903764662</data>
+    </entity>
+    <entity name="AdminMMIDUSPSConfigData" type="usps_config">
+        <data key="path">carriers/usps/mmid</data>
+        <data key="value">903764661</data>
+    </entity>
 </entities>
