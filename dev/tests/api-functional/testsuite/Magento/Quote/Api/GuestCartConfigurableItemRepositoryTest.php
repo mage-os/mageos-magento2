@@ -43,7 +43,7 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
     /**
      * @var array
      */
-    private $simpleProductSkus=[];
+    private $simpleProductSkus = [];
 
     /**
      * @var DataFixtureStorage
@@ -60,7 +60,7 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
     }
 
     /**
-     * Test guest cart update configurable item using modern fixtures
+     * Test guest cart update with configurable item
      */
     #[
         DataFixture(ProductFixture::class, ['price' => 10, 'sku' => 'simple-10'], as: 'p1'),
@@ -92,7 +92,8 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
      */
     private function createGuestCart(): string
     {
-        $serviceInfo = [
+        $requestData = ['storeId' => 1];
+        $quoteId = $this->_webApiCall([
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH_GUEST_CART,
                 'httpMethod' => Request::HTTP_METHOD_POST
@@ -102,11 +103,9 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
                 'serviceVersion' => self::SERVICE_VERSION_GUEST_CART,
                 'operation' => self::SERVICE_NAME_GUEST_CART . 'CreateEmptyCart',
             ],
-        ];
-
-        $requestData = ['storeId' => 1];
-        $quoteId = $this->_webApiCall($serviceInfo, $requestData);
+        ], $requestData);
         $this->assertTrue(strlen($quoteId) >= 32);
+
         return $quoteId;
     }
 
@@ -140,6 +139,7 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
             $response['product_option']['extension_attributes']['configurable_item_options'][0],
             $requestData['cartItem']['product_option']['extension_attributes']['configurable_item_options'][0]
         );
+
         return $response;
     }
 
@@ -219,6 +219,7 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
         foreach ($simpleProducts as $simpleProduct) {
             $this->simpleProductSkus[] = $simpleProduct->getSku();
         }
+        
         return $configurableProduct;
     }
 
