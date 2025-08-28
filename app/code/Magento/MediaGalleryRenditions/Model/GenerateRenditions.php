@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -25,6 +25,16 @@ use Psr\Log\LoggerInterface;
 class GenerateRenditions implements GenerateRenditionsInterface
 {
     private const IMAGE_FILE_NAME_PATTERN = '#\.(jpg|jpeg|gif|png)$# i';
+
+    /**
+     * Get image file name pattern for validation
+     *
+     * @return string
+     */
+    public function getImageFileNamePattern(): string
+    {
+        return self::IMAGE_FILE_NAME_PATTERN;
+    }
 
     /**
      * @var AdapterFactory
@@ -162,7 +172,7 @@ class GenerateRenditions implements GenerateRenditionsInterface
             );
         }
 
-        if (!preg_match(self::IMAGE_FILE_NAME_PATTERN, $path)) {
+        if (!preg_match($this->getImageFileNamePattern(), $path)) {
             throw new LocalizedException(
                 __('Could not create rendition for image, unsupported file type: %path.', ['path' => $path])
             );
