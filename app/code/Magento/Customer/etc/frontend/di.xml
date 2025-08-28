@@ -130,4 +130,7 @@
     <type name="Magento\Customer\Model\Session">
         <plugin name="afterLogout" type="Magento\Customer\Model\Plugin\ClearSessionsAfterLogoutPlugin"/>
     </type>
+    <type name="Magento\Customer\Api\CustomerRepositoryInterface">
+        <plugin name="customer_dobvalidation_plugin" type="Magento\Customer\Plugin\ValidateDobOnSave" sortOrder="10"/>
+    </type>
 </config>
