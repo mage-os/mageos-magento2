@@ -27,16 +27,6 @@ class GenerateRenditions implements GenerateRenditionsInterface
     private const IMAGE_FILE_NAME_PATTERN = '#\.(jpg|jpeg|gif|png)$# i';
 
     /**
-     * Get image file name pattern for validation
-     *
-     * @return string
-     */
-    public function getImageFileNamePattern(): string
-    {
-        return self::IMAGE_FILE_NAME_PATTERN;
-    }
-
-    /**
      * @var AdapterFactory
      */
     private $imageFactory;
@@ -231,5 +221,15 @@ class GenerateRenditions implements GenerateRenditionsInterface
     private function getMediaDirectory(): WriteInterface
     {
         return $this->filesystem->getDirectoryWrite(DirectoryList::MEDIA);
+    }
+    
+    /**
+     * Get image file name pattern for validation
+     *
+     * @return string
+     */
+    public function getImageFileNamePattern(): string
+    {
+        return self::IMAGE_FILE_NAME_PATTERN;
     }
 }
