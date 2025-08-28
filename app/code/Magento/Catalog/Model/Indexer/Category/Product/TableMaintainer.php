@@ -35,11 +35,15 @@ class TableMaintainer
 
     /**
      * Catalog tmp category index table name
+     *
+     * @var string
      */
     private $tmpTableSuffix = '_tmp';
 
     /**
      * Catalog tmp category index table name
+     *
+     * @var string
      */
     private $additionalTableSuffix = '_replica';
 
@@ -65,23 +69,12 @@ class TableMaintainer
      *
      * @return AdapterInterface
      */
-    private function getConnection()
+    public function getConnection()
     {
         if (!isset($this->connection)) {
             $this->connection = $this->resource->getConnection();
         }
         return $this->connection;
-    }
-
-    /**
-     * Expose write connection so callers can use the same adapter instance
-     * that created temporary tables.
-     *
-     * @return AdapterInterface
-     */
-    public function getWriteConnection(): AdapterInterface
-    {
-        return $this->getConnection();
     }
 
     /**
@@ -131,7 +124,7 @@ class TableMaintainer
     /**
      * Return main index table name
      *
-     * @param $storeId
+     * @param int $storeId
      *
      * @return string
      */
@@ -145,7 +138,7 @@ class TableMaintainer
     /**
      * Create main and replica index tables for store
      *
-     * @param $storeId
+     * @param int $storeId
      *
      * @return void
      *
@@ -172,7 +165,7 @@ class TableMaintainer
     /**
      * Drop main and replica index tables for store
      *
-     * @param $storeId
+     * @param int $storeId
      *
      * @return void
      */
@@ -188,7 +181,7 @@ class TableMaintainer
     /**
      * Return replica index table name
      *
-     * @param $storeId
+     * @param int $storeId
      *
      * @return string
      */
@@ -200,7 +193,7 @@ class TableMaintainer
     /**
      * Create temporary index table for store
      *
-     * @param $storeId
+     * @param int $storeId
      *
      * @return void
      */
@@ -217,7 +210,7 @@ class TableMaintainer
     /**
      * Return temporary index table name
      *
-     * @param $storeId
+     * @param int $storeId
      *
      * @return string
      *
