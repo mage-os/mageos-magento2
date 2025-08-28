@@ -94,12 +94,12 @@ class ApiMutableScopeConfig implements MutableScopeConfigInterface
      * Persist config in database
      *
      * @param string $path
-     * @param string $value
+     * @param string|null $value
      * @param string $scopeType
      * @param string|null $scopeCode
      * @return void
      */
-    private function persistConfig(string $path, string $value, string $scopeType, ?string $scopeCode): void
+    private function persistConfig(string $path, ?string $value, string $scopeType, ?string $scopeCode): void
     {
         $pathParts = explode('/', $path);
         $store = 0;
