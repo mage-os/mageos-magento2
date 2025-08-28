@@ -30,4 +30,8 @@
         <data key="label">''</data>
         <data key="value">.html</data>
     </entity>
+    <entity name="CategoryClassStatus">
+        <data key="scope">active</data>
+        <data key="value">has-active</data>
+    </entity>
 </entities>

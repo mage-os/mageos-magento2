@@ -12,7 +12,7 @@
         <annotations>
             <features value="Catalog"/>
             <stories value="Category Navigation Highlighting with Store Code in URLs"/>
-            <title value="Verify category highlighting in navigation with store code in URLs and URL suffixes"/>
+            <title value="Category highlighting in navigation with store code in URLs and URL suffixes"/>
             <description value="Correct category should be highlighted in the navigation menu when navigating through categories and products on the storefront based on store code"/>
             <severity value="MAJOR"/>
             <testCaseId value="AC-10852"/>
@@ -113,13 +113,13 @@
         <grabAttributeFrom selector="{{AdminCategorySidebarTreeSection.categoryHighlighted($$createCat11.name$$)}}" userInput="class" stepKey="grabCat11Class"/>
         <assertStringContainsString stepKey="assertCat11IsHighlighted">
             <actualResult type="const">$grabCat11Class</actualResult>
-            <expectedResult type="string">active</expectedResult>
+            <expectedResult type="string">{{CategoryClassStatus.scope}}</expectedResult>
         </assertStringContainsString>
         <!-- Verify parent Cat 1 has 'has-active' class -->
         <grabAttributeFrom selector="{{AdminCategorySidebarTreeSection.categoryHighlighted($$createCat1.name$$)}}" userInput="class" stepKey="grabCat1ParentClass"/>
         <assertStringContainsString stepKey="assertCat1HasActiveClass">
             <actualResult type="const">$grabCat1ParentClass</actualResult>
-            <expectedResult type="string">has-active</expectedResult>
+            <expectedResult type="string">{{CategoryClassStatus.value}}</expectedResult>
         </assertStringContainsString>
         <!-- Verify Cat 1.1 is highlighted with active class -->
         <executeJS function="return document.querySelectorAll('{{AdminCategorySidebarTreeSection.categoryNotHighlighted}}').length" stepKey="highlightedCategoryAmount_Try2"/>
@@ -139,13 +139,13 @@
         <grabAttributeFrom selector="{{AdminCategorySidebarTreeSection.categoryHighlighted($$createCat11.name$$)}}" userInput="class" stepKey="grabCat11ClassOnProduct"/>
         <assertStringContainsString stepKey="assertCat11IsHighlightedOnProduct">
             <actualResult type="const">$grabCat11ClassOnProduct</actualResult>
-            <expectedResult type="string">active</expectedResult>
+            <expectedResult type="string">{{CategoryClassStatus.scope}}</expectedResult>
         </assertStringContainsString>
         <!-- Verify parent Cat 1 still has 'has-active' class -->
         <grabAttributeFrom selector="{{AdminCategorySidebarTreeSection.categoryHighlighted($$createCat1.name$$)}}" userInput="class" stepKey="grabCat1ParentClassOnProduct"/>
         <assertStringContainsString stepKey="assertCat1HasActiveClassOnProduct">
             <actualResult type="const">$grabCat1ParentClassOnProduct</actualResult>
-            <expectedResult type="string">has-active</expectedResult>
+            <expectedResult type="string">{{CategoryClassStatus.value}}</expectedResult>
         </assertStringContainsString>
         <!-- Verify Cat 1.1 is still highlighted -->
         <executeJS function="return document.querySelectorAll('{{AdminCategorySidebarTreeSection.categoryNotHighlighted}}').length" stepKey="highlightedCategoryAmount_Try3"/>
@@ -174,13 +174,13 @@
         <grabAttributeFrom selector="{{AdminCategorySidebarTreeSection.categoryHighlighted($$createCat12.name$$)}}" userInput="class" stepKey="grabCat12Class"/>
         <assertStringContainsString stepKey="assertCat12IsHighlighted">
             <actualResult type="const">$grabCat12Class</actualResult>
-            <expectedResult type="string">active</expectedResult>
+            <expectedResult type="string">{{CategoryClassStatus.scope}}</expectedResult>
         </assertStringContainsString>
         <!-- Verify parent Cat 1 has 'has-active' class -->
         <grabAttributeFrom selector="{{AdminCategorySidebarTreeSection.categoryHighlighted($$createCat1.name$$)}}" userInput="class" stepKey="grabCat1ParentClassForCat12"/>
         <assertStringContainsString stepKey="assertCat1HasActiveClassForCat12">
             <actualResult type="const">$grabCat1ParentClassForCat12</actualResult>
-            <expectedResult type="string">has-active</expectedResult>
+            <expectedResult type="string">{{CategoryClassStatus.value}}</expectedResult>
         </assertStringContainsString>
         <!-- Verify Cat 1.2 is highlighted with active class -->
         <executeJS function="return document.querySelectorAll('{{AdminCategorySidebarTreeSection.categoryNotHighlighted}}').length" stepKey="highlightedCategoryAmount_Try5"/>
@@ -201,12 +201,12 @@
         <grabAttributeFrom selector="{{AdminCategorySidebarTreeSection.categoryHighlighted($$createCat1.name$$)}}" userInput="class" stepKey="grabCat1ParentClassDirectNav"/>
         <assertStringContainsString stepKey="assertCat1HasActiveClassDirectNav">
             <actualResult type="const">$grabCat1ParentClassDirectNav</actualResult>
-            <expectedResult type="string">has-active</expectedResult>
+            <expectedResult type="string">{{CategoryClassStatus.value}}</expectedResult>
         </assertStringContainsString>
         <grabAttributeFrom selector="{{AdminCategorySidebarTreeSection.categoryHighlighted($$createCat12.name$$)}}" userInput="class" stepKey="grabCat12ClassDirect"/>
         <assertStringContainsString stepKey="assertCat12IsHighlightedDirect">
             <actualResult type="const">$grabCat12ClassDirect</actualResult>
-            <expectedResult type="string">active</expectedResult>
+            <expectedResult type="string">{{CategoryClassStatus.scope}}</expectedResult>
         </assertStringContainsString>
         <!-- Verify Cat 1.2 is highlighted after direct navigation -->
         <executeJS function="return document.querySelectorAll('{{AdminCategorySidebarTreeSection.categoryNotHighlighted}}').length" stepKey="highlightedCategoryAmount_Try6"/>
@@ -226,13 +226,13 @@
         <grabAttributeFrom selector="{{AdminCategorySidebarTreeSection.categoryHighlighted($$createCat12.name$$)}}" userInput="class" stepKey="grabCat12ClassOnProduct"/>
         <assertStringContainsString stepKey="assertCat12IsHighlightedOnProduct">
             <actualResult type="const">$grabCat12ClassOnProduct</actualResult>
-            <expectedResult type="string">active</expectedResult>
+            <expectedResult type="string">{{CategoryClassStatus.scope}}</expectedResult>
         </assertStringContainsString>
         <!-- Verify parent Cat 1 still has 'has-active' class on product page -->
         <grabAttributeFrom selector="{{AdminCategorySidebarTreeSection.categoryHighlighted($$createCat1.name$$)}}" userInput="class" stepKey="grabCat1ParentClassOnProductFromCat12"/>
         <assertStringContainsString stepKey="assertCat1HasActiveClassOnProductFromCat12">
             <actualResult type="const">$grabCat1ParentClassOnProductFromCat12</actualResult>
-            <expectedResult type="string">has-active</expectedResult>
+            <expectedResult type="string">{{CategoryClassStatus.value}}</expectedResult>
         </assertStringContainsString>
         <!-- Verify Cat 1.2 is still highlighted on product page -->
         <executeJS function="return document.querySelectorAll('{{AdminCategorySidebarTreeSection.categoryNotHighlighted}}').length" stepKey="highlightedCategoryAmount_Try7"/>
