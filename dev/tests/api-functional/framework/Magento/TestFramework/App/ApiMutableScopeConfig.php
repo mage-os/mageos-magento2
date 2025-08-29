@@ -1,9 +1,7 @@
 <?php
 /**
- * Application configuration object. Used to access configuration when application is installed.
- *
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2019 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -17,7 +15,7 @@ use Magento\Store\Api\WebsiteRepositoryInterface;
 use Magento\Store\Model\ScopeInterface;
 
 /**
- * @inheritdoc
+ * Application configuration object. Used to access configuration when application is installed.
  */
 class ApiMutableScopeConfig implements MutableScopeConfigInterface
 {
