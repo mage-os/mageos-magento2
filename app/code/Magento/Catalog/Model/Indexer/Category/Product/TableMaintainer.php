@@ -69,12 +69,23 @@ class TableMaintainer
      *
      * @return AdapterInterface
      */
-    public function getConnection()
+    private function getConnection()
     {
         if (!isset($this->connection)) {
             $this->connection = $this->resource->getConnection();
         }
         return $this->connection;
+    }
+
+    /**
+     * Expose connection so callers can use the same adapter instance
+     * that created temporary tables.
+     *
+     * @return AdapterInterface
+     */
+    public function getSameAdapterConnection(): AdapterInterface
+    {
+        return $this->getConnection();
     }
 
     /**

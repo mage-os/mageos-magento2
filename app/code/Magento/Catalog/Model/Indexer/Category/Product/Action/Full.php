@@ -205,7 +205,8 @@ class Full extends AbstractAction
     private function reindexStore($store): void
     {
         // Ensure the same adapter instance that created the TEMP table is used for all operations
-        $this->connection = $this->tableMaintainer->getConnection();
+        // phpcs:ignore
+        $this->connection = $this->tableMaintainer->getSameAdapterConnection();
         $this->reindexRootCategory($store);
         $this->reindexAnchorCategories($store);
         $this->reindexNonAnchorCategories($store);
