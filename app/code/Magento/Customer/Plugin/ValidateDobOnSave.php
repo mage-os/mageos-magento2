@@ -26,6 +26,10 @@ class ValidateDobOnSave
      */
     private $json;
 
+    /**
+     * @param EavConfig $eavConfig
+     * @param JsonSerializer $json
+     */
     public function __construct(
         EavConfig $eavConfig,
         JsonSerializer $json
@@ -34,6 +38,16 @@ class ValidateDobOnSave
         $this->json = $json;
     }
 
+    /**
+     * @param CustomerRepositoryInterface $subject
+     * @param callable $proceed
+     * @param CustomerInterface $customer
+     * @param $passwordHash
+     * @return mixed
+     * @throws InputException
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function aroundSave(
         CustomerRepositoryInterface $subject,
         callable $proceed,
@@ -82,7 +96,9 @@ class ValidateDobOnSave
     }
 
     /**
-     * @param $value
+     * Parse a date value into DateTimeImmutable.
+     *
+     * @param mixed $value
      * @return \DateTimeImmutable|null
      * @throws \Exception
      */
