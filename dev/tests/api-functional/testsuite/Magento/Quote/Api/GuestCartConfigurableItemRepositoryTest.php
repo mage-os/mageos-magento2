@@ -92,7 +92,6 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
      */
     private function createGuestCart(): string
     {
-        $requestData = ['storeId' => 1];
         $quoteId = $this->_webApiCall([
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH_GUEST_CART,
@@ -103,8 +102,9 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
                 'serviceVersion' => self::SERVICE_VERSION_GUEST_CART,
                 'operation' => self::SERVICE_NAME_GUEST_CART . 'CreateEmptyCart',
             ],
-        ], $requestData);
+        ], ['storeId' => 1]);
         $this->assertTrue(strlen($quoteId) >= 32);
+
 
         return $quoteId;
     }
@@ -140,6 +140,7 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
             $requestData['cartItem']['product_option']['extension_attributes']['configurable_item_options'][0]
         );
 
+
         return $response;
     }
 
@@ -153,8 +154,7 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
     private function verifyCartItems(string $guestCartId, int $expectedItemId): void
     {
         $serviceInfo = $this->getCartServiceInfo($guestCartId, 'get');
-        $requestData = ['cartId' => $guestCartId];
-        $response = $this->_webApiCall($serviceInfo, $requestData);
+        $response = $this->_webApiCall($serviceInfo, ['cartId' => $guestCartId]);
         $this->assertIsArray($response);
         $this->assertGreaterThan(0, count($response), 'Cart should contain at least one item');
 
