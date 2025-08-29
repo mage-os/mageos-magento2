@@ -12,7 +12,6 @@
 namespace Magento\Cron\Model\Config\Backend;
 
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Sitemap\Model\Config\Source\GenerationMethod;
 
 /**
  * Sitemap configuration
@@ -80,9 +79,6 @@ class Sitemap extends \Magento\Framework\App\Config\Value
                 $this->_config->getValue('sitemap/generate/time', $this->getScope(), $this->getScopeId()) ?: '0,0,0'
             );
         $frequency = $this->getValue();
-        $generationMethod = $this->getData('groups/generate/fields/generation_method/value') ?:
-            $this->_config->getValue('sitemap/generate/generation_method', $this->getScope(), $this->getScopeId())
-                ?: GenerationMethod::STANDARD;
 
         $cronExprArray = [
             (int)($time[1] ?? 0), //Minute
@@ -95,60 +91,25 @@ class Sitemap extends \Magento\Framework\App\Config\Value
         $cronExprString = join(' ', $cronExprArray);
 
         try {
-            // Clear old cron configurations first to prevent conflicts
-            $this->clearCronConfiguration(self::CRON_STRING_PATH);
-            $this->clearCronConfiguration(self::CRON_MODEL_PATH);
-
-            // Configure the selected generation method with correct model class
-            if ($generationMethod === GenerationMethod::BATCH) {
-                $this->setCronConfiguration(self::CRON_STRING_PATH, $cronExprString);
-                $this->setCronConfiguration(
-                    self::CRON_MODEL_PATH,
-                    'Magento\Sitemap\Model\Batch\Observer::scheduledGenerateSitemaps'
-                );
-            } else {
-                $this->setCronConfiguration(self::CRON_STRING_PATH, $cronExprString);
-                $this->setCronConfiguration(
-                    self::CRON_MODEL_PATH,
-                    'Magento\Sitemap\Model\Observer::scheduledGenerateSitemaps'
-                );
-            }
+            $this->_configValueFactory->create()->load(
+                self::CRON_STRING_PATH,
+                'path'
+            )->setValue(
+                $cronExprString
+            )->setPath(
+                self::CRON_STRING_PATH
+            )->save();
+            $this->_configValueFactory->create()->load(
+                self::CRON_MODEL_PATH,
+                'path'
+            )->setValue(
+                $this->_runModelPath
+            )->setPath(
+                self::CRON_MODEL_PATH
+            )->save();
         } catch (\Exception $e) {
             throw new LocalizedException(__('We can\'t save the cron expression.'));
         }
         return parent::afterSave();
-    }
-
-    /**
-     * Set cron configuration value
-     *
-     * @param string $path
-     * @param string $value
-     * @return void
-     */
-    private function setCronConfiguration(string $path, string $value): void
-    {
-        $this->_configValueFactory->create()->load(
-            $path,
-            'path'
-        )->setValue(
-            $value
-        )->setPath(
-            $path
-        )->save();
-    }
-
-    /**
-     * Clear cron configuration value
-     *
-     * @param string $path
-     * @return void
-     */
-    private function clearCronConfiguration(string $path): void
-    {
-        $configValue = $this->_configValueFactory->create()->load($path, 'path');
-        if ($configValue->getId()) {
-            $configValue->delete();
-        }
     }
 }
