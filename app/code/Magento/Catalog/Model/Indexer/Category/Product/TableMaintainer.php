@@ -229,7 +229,7 @@ class TableMaintainer
     public function getMainTmpTable(int $storeId)
     {
         if (!isset($this->mainTmpTable[$storeId])) {
-            throw new \Magento\Framework\Exception\NoSuchEntityException('Temporary table does not exist');
+            throw new \Magento\Framework\Exception\NoSuchEntityException(__('Temporary table does not exist'));
         }
         return $this->mainTmpTable[$storeId];
     }
