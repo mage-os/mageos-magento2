@@ -11,5 +11,4 @@
 return [
     'Magento\Setup',
     'Laminas\Di',
-    'Laminas\Router',
 ];
