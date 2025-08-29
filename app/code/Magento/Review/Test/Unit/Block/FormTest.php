@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -119,6 +119,34 @@ class FormTest extends TestCase
             ->method('getParam')
             ->with('id', false)
             ->willReturn($productId);
+
+        $productMock = $this->getMockForAbstractClass(ProductInterface::class);
+        $this->productRepository->expects($this->once())
+            ->method('getById')
+            ->with($productId, false, $storeId)
+            ->willReturn($productMock);
+
+        $this->assertSame($productMock, $this->object->getProductInfo());
+    }
+
+    public function testGetProductInfoNonIntParam()
+    {
+        $productId = 3;
+        $productIdNonInt = "3abc";
+        $storeId = 1;
+
+        $this->storeManager->expects(
+            $this->any()
+        )->method(
+            'getStore'
+        )->willReturn(
+            new DataObject(['id' => $storeId])
+        );
+
+        $this->requestMock->expects($this->once())
+            ->method('getParam')
+            ->with('id', false)
+            ->willReturn($productIdNonInt);
 
         $productMock = $this->getMockForAbstractClass(ProductInterface::class);
         $this->productRepository->expects($this->once())
