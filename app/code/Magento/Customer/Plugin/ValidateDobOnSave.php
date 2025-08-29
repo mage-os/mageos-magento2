@@ -39,14 +39,17 @@ class ValidateDobOnSave
     }
 
     /**
+     * Enforce DOB min/max from attribute validate_rules on every save.
+     *
      * @param CustomerRepositoryInterface $subject
      * @param callable $proceed
      * @param CustomerInterface $customer
-     * @param $passwordHash
+     * @param string|null $passwordHash
      * @return mixed
      * @throws InputException
      * @throws \Magento\Framework\Exception\LocalizedException
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function aroundSave(
@@ -102,6 +105,7 @@ class ValidateDobOnSave
      * @param mixed $value
      * @return \DateTimeImmutable|null
      * @throws \Exception
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function parseDate($value): ?\DateTimeImmutable
     {
