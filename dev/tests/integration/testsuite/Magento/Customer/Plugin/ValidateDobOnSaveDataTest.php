@@ -24,6 +24,7 @@ use PHPUnit\Framework\TestCase;
  * @magentoAppArea frontend
  * @magentoAppIsolation enabled
  * @magentoDbIsolation enabled
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ValidateDobOnSaveDataTest extends TestCase
 {

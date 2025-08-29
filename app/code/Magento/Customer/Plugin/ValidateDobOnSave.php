@@ -46,6 +46,7 @@ class ValidateDobOnSave
      * @return mixed
      * @throws InputException
      * @throws \Magento\Framework\Exception\LocalizedException
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function aroundSave(
