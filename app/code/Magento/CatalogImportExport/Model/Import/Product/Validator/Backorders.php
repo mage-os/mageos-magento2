@@ -31,7 +31,7 @@ class Backorders extends AbstractImportValidator implements RowValidatorInterfac
         }
 
         $backorders = $value['allow_backorders'];
-        if ($this->context->getEmptyAttributeValueConstant() === $backorders) {
+        if (in_array($backorders, [$this->context->getEmptyAttributeValueConstant(), ''], true)) {
             return true;
         }
 
