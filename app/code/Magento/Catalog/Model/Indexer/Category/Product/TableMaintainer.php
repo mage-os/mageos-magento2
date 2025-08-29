@@ -78,8 +78,7 @@ class TableMaintainer
     }
 
     /**
-     * Expose connection so callers can use the same adapter instance
-     * that created temporary tables.
+     * Expose connection so callers can use the same adapter instance that created temporary tables.
      *
      * @return AdapterInterface
      */
