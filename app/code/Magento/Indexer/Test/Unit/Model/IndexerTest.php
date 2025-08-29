@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -247,7 +247,7 @@ class IndexerTest extends TestCase
         $stateMock->expects($this->once())->method('getId')->willReturn(1);
         $stateMock->expects($this->exactly(3))->method('setStatus')->willReturnSelf();
         $stateMock->expects($this->any())->method('getStatus')->willReturn('idle');
-        $stateMock->expects($this->exactly(2))->method('save')->willReturnSelf();
+        $stateMock->expects($this->exactly(3))->method('save')->willReturnSelf();
         $this->stateFactoryMock->expects($this->once())->method('create')->willReturn($stateMock);
 
         $this->viewMock->expects($this->once())->method('isEnabled')->willReturn(true);
@@ -286,7 +286,7 @@ class IndexerTest extends TestCase
             ->method('load')->with($indexId, 'indexer_id')->willReturnSelf();
         $stateMock->expects($this->never())->method('setIndexerId');
         $stateMock->expects($this->once())->method('getId')->willReturn(1);
-        $stateMock->expects($this->exactly(3))->method('setStatus')->willReturnSelf();
+        $stateMock->expects($this->exactly(2))->method('setStatus')->willReturnSelf();
         $stateMock->expects($this->any())->method('getStatus')->willReturn('idle');
         $stateMock->expects($this->exactly(2))->method('save')->willReturnSelf();
         $this->stateFactoryMock->expects($this->once())->method('create')->willReturn($stateMock);
@@ -332,7 +332,7 @@ class IndexerTest extends TestCase
             ->method('load')->with($indexId, 'indexer_id')->willReturnSelf();
         $stateMock->expects($this->never())->method('setIndexerId');
         $stateMock->expects($this->once())->method('getId')->willReturn(1);
-        $stateMock->expects($this->exactly(3))->method('setStatus')->willReturnSelf();
+        $stateMock->expects($this->exactly(2))->method('setStatus')->willReturnSelf();
         $stateMock->expects($this->any())->method('getStatus')->willReturn('idle');
         $stateMock->expects($this->exactly(2))->method('save')->willReturnSelf();
         $this->stateFactoryMock->expects($this->once())->method('create')->willReturn($stateMock);
@@ -420,7 +420,7 @@ class IndexerTest extends TestCase
         $stateMock->expects($this->once())->method('getId')->willReturn(1);
         $stateMock->expects($this->exactly(3))->method('setStatus')->willReturnSelf();
         $stateMock->expects($this->any())->method('getStatus')->willReturn('idle');
-        $stateMock->expects($this->exactly(2))->method('save')->willReturnSelf();
+        $stateMock->expects($this->exactly(3))->method('save')->willReturnSelf();
         $this->stateFactoryMock->expects($this->once())->method('create')->willReturn($stateMock);
 
         $stateMock = $this->createMock(\Magento\Framework\Mview\View\StateInterface::class);
