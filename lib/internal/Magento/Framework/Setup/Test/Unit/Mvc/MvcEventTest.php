@@ -23,5 +23,3 @@ class MvcEventTest extends TestCase
         $this->assertSame($app, $event->getApplication());
     }
 }
-
-

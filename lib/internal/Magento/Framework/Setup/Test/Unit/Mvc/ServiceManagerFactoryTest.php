@@ -34,5 +34,3 @@ class ServiceManagerFactoryTest extends TestCase
         $this->assertSame('b', $bridge->build('beta'));
     }
 }
-
-

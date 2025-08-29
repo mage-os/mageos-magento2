@@ -41,5 +41,3 @@ class ModuleManagerTest extends TestCase
         $this->assertSame('bar', $captured['config']['service_manager']['services']['foo'] ?? null);
     }
 }
-
-

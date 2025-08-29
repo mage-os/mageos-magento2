@@ -69,5 +69,3 @@ class MvcApplicationTest extends TestCase
         $this->assertTrue(TestBootstrapListener::$bootstrapped);
     }
 }
-
-

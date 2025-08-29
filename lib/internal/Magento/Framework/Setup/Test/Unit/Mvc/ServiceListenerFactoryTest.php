@@ -22,5 +22,3 @@ class ServiceListenerFactoryTest extends TestCase
         $this->assertInstanceOf(ServiceListener::class, $listener);
     }
 }
-
-

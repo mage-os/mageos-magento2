@@ -29,5 +29,3 @@ class ModuleManagerFactoryTest extends TestCase
         $this->assertInstanceOf(ModuleManager::class, $instance);
     }
 }
-
-

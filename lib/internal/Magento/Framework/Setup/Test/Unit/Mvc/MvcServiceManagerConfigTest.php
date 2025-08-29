@@ -42,5 +42,3 @@ class MvcServiceManagerConfigTest extends TestCase
         $this->assertArrayHasKey('aliases', $cfg->toArray());
     }
 }
-
-
