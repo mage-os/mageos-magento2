@@ -75,15 +75,15 @@ class Rule implements LoaderInterface
         ResourceConnection  $resource,
         CacheInterface      $aclDataCache,
         Json                $serializer,
-        array               $data = [],
-        string              $cacheKey = self::ACL_RULE_CACHE_KEY,
+        ?array              $data = [],
+        ?string             $cacheKey = self::ACL_RULE_CACHE_KEY,
         ?CurrentRoleContext $roleContext = null
     ) {
         $this->_rootResource = $rootResource;
         $this->_resource = $resource;
         $this->aclDataCache = $aclDataCache;
         $this->serializer = $serializer;
-        $this->cacheKey = $cacheKey;
+        $this->cacheKey = $cacheKey ?? self::ACL_RULE_CACHE_KEY;
 
         $this->roleContext = $roleContext ?? \Magento\Framework\App\ObjectManager::getInstance()
             ->get(CurrentRoleContext::class);
