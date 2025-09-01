@@ -239,14 +239,12 @@
                stepKey="selectSinglePrice"/>
         <fillField selector="{{AdminCreateProductConfigurationsPanel.singlePrice}}" userInput="100"
                    stepKey="enterPrice"/>
-
         <waitForElementClickable selector="{{AdminCreateProductConfigurationsPanel.applySingleQuantityToEachSkus}}"
                                  stepKey="waitForQuantityRadio"/>
         <click selector="{{AdminCreateProductConfigurationsPanel.applySingleQuantityToEachSkus}}"
                stepKey="selectSingleQuantity"/>
         <fillField selector="{{AdminCreateProductConfigurationsPanel.quantity}}" userInput="99"
                    stepKey="enterQuantity"/>
-
         <waitForElementClickable selector="{{AdminCreateProductConfigurationsPanel.next}}"
                                  stepKey="waitForNextButton2"/>
         <click selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="clickNextAfterPriceQuantity"/>
