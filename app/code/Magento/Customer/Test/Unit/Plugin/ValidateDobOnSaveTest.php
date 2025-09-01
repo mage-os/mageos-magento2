@@ -18,6 +18,11 @@ use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Unit test for validate date of birth plugin
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class ValidateDobOnSaveTest extends TestCase
 {
     /** @var EavConfig&MockObject */
@@ -89,6 +94,13 @@ class ValidateDobOnSaveTest extends TestCase
         $this->assertFalse($called);
     }
 
+    /**
+     * @return void
+     * @throws InputException
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \PHPUnit\Framework\MockObject\Exception
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function testDobWithinRangeCallsProceedAndReturnsResult(): void
     {
         $customer = $this->createCustomerMock('1990-06-15');
@@ -210,6 +222,7 @@ class ValidateDobOnSaveTest extends TestCase
      * @throws InputException
      * @throws \Magento\Framework\Exception\LocalizedException
      * @throws \PHPUnit\Framework\MockObject\Exception
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function testInvalidJsonRulesCaughtAndIgnored(): void
     {
