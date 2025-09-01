@@ -50,10 +50,7 @@ class ValidateDobOnSaveTest extends TestCase
         $this->mockAttributeRulesArray(['date_range_min' => '1980-01-01', 'date_range_max' => '2000-12-31']);
 
         $called = false;
-        $proceed = function (CustomerInterface $c, $hash = null) use (&$called) {
-            $called = true;
-            return $c;
-        };
+        $proceed = $this->proceedPlugin($called, $customer);
 
         $this->expectException(InputException::class);
         $this->expectExceptionMessage('Date of Birth is invalid.');
@@ -68,10 +65,7 @@ class ValidateDobOnSaveTest extends TestCase
         $this->mockAttributeRulesArray(['date_range_min' => '1980-01-01', 'date_range_max' => '2000-12-31']);
 
         $called = false;
-        $proceed = function (CustomerInterface $c, $hash = null) use (&$called) {
-            $called = true;
-            return $c;
-        };
+        $proceed = $this->proceedPlugin($called, $customer);
 
         $this->expectException(InputException::class);
         $this->expectExceptionMessage('on or after 1980-01-01');
@@ -86,10 +80,7 @@ class ValidateDobOnSaveTest extends TestCase
         $this->mockAttributeRulesArray(['date_range_min' => '1980-01-01', 'date_range_max' => '2000-12-31']);
 
         $called = false;
-        $proceed = function (CustomerInterface $c, $hash = null) use (&$called) {
-            $called = true;
-            return $c;
-        };
+        $proceed = $this->proceedPlugin($called, $customer);
 
         $this->expectException(InputException::class);
         $this->expectExceptionMessage('on or before 2000-12-31');
@@ -122,10 +113,7 @@ class ValidateDobOnSaveTest extends TestCase
         $this->mockAttributeRulesArray(['date_range_min' => '1980-01-01', 'date_range_max' => '2000-12-31']);
 
         $called = false;
-        $proceed = function (CustomerInterface $c, $hash = null) use (&$called) {
-            $called = true;
-            return $c;
-        };
+        $proceed = $this->proceedPlugin($called, $customer);
 
         $actual = $this->plugin->aroundSave($this->repo, $proceed, $customer, null);
 
@@ -144,10 +132,7 @@ class ValidateDobOnSaveTest extends TestCase
         $this->json->expects($this->once())->method('unserialize')->with($json)->willReturn($rules);
 
         $called = false;
-        $proceed = function (CustomerInterface $c, $hash = null) use (&$called) {
-            $called = true;
-            return $c;
-        };
+        $proceed = $this->proceedPlugin($called, $customer);
 
         $this->expectException(InputException::class);
         $this->expectExceptionMessage('on or after 1980-01-01');
@@ -165,10 +150,7 @@ class ValidateDobOnSaveTest extends TestCase
         $this->mockAttributeRulesArray(['date_range_min' => $minMs, 'date_range_max' => $maxMs]);
 
         $called = false;
-        $proceed = function (CustomerInterface $c, $hash = null) use (&$called) {
-            $called = true;
-            return $c;
-        };
+        $proceed = $this->proceedPlugin($called, $customer);
 
         $this->expectException(InputException::class);
         $this->expectExceptionMessage('on or after 1980-01-01');
@@ -184,10 +166,7 @@ class ValidateDobOnSaveTest extends TestCase
         $this->mockAttributeRulesArray(['date_range_min' => '1980-01-01', 'date_range_max' => '2000-12-31']);
 
         $called = false;
-        $proceed = function (CustomerInterface $c, $hash = null) use (&$called) {
-            $called = true;
-            return $c;
-        };
+        $proceed = $this->proceedPlugin($called, $customer);
 
         $this->expectException(InputException::class);
         $this->expectExceptionMessage('on or after 1980-01-01');
@@ -274,10 +253,7 @@ class ValidateDobOnSaveTest extends TestCase
         ]);
 
         $called = false;
-        $proceed = function (CustomerInterface $c, $hash = null) use (&$called) {
-            $called = true;
-            return $c;
-        };
+        $proceed = $this->proceedPlugin($called, $customer);
 
         $this->expectException(InputException::class);
         $this->expectExceptionMessage('on or after 1980-01-01');
@@ -324,16 +300,29 @@ class ValidateDobOnSaveTest extends TestCase
         ]);
 
         $called = false;
-        $proceed = function (CustomerInterface $c, $hash = null) use (&$called) {
-            $called = true;
-            return $c;
-        };
+        $proceed = $this->proceedPlugin($called, $customer);
 
         $this->expectException(InputException::class);
         $this->expectExceptionMessage('Date of Birth is invalid.');
         $this->plugin->aroundSave($this->repo, $proceed, $customer, null);
 
         $this->assertFalse($called);
+    }
+
+    /**
+     * Create a proceed closure that marks $called and returns either the given $result or the original $customer.
+     *
+     * @param bool $called Will be set to true when proceed is invoked
+     * @param CustomerInterface|null $result Optional value to return instead of $customer
+     * @return callable
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    private function proceedPlugin(bool &$called, ?CustomerInterface $result = null): callable
+    {
+        return function (CustomerInterface $c, $hash = null) use (&$called) {
+            $called = true;
+            return $c;
+        };
     }
 
     /**
