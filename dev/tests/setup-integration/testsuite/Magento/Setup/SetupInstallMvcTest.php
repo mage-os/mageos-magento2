@@ -8,9 +8,9 @@ declare(strict_types=1);
 namespace Magento\Setup;
 
 use Magento\Framework\App\ResourceConnection;
-use Magento\Framework\Setup\Mvc\MvcApplication;
-use Magento\Framework\Setup\Mvc\ServiceManagerFactory;
 
+use Magento\Framework\Shell;
+use Magento\Framework\Shell\CommandRenderer;
 use Magento\TestFramework\Deploy\CliCommand;
 use Magento\TestFramework\Deploy\TestModuleManager;
 use Magento\TestFramework\Helper\Bootstrap;
@@ -36,7 +36,10 @@ class SetupInstallMvcTest extends SetupTestCase
      */
     private $resourceConnection;
 
-
+    /**
+     * @var Shell
+     */
+    private $shell;
 
     protected function setUp(): void
     {
@@ -44,7 +47,9 @@ class SetupInstallMvcTest extends SetupTestCase
         $this->moduleManager = $objectManager->get(TestModuleManager::class);
         $this->cliCommand = $objectManager->get(CliCommand::class);
         $this->resourceConnection = $objectManager->get(ResourceConnection::class);
-
+        
+        // Create Shell instance manually to avoid DI circular dependency issues
+        $this->shell = new Shell(new CommandRenderer());
     }
 
     /**
@@ -54,22 +59,22 @@ class SetupInstallMvcTest extends SetupTestCase
     {
         // Verify that our custom MVC implementation is loaded and available
         $this->assertTrue(
-            class_exists(MvcApplication::class),
+            class_exists('Magento\Framework\Setup\Mvc\MvcApplication'),
             'Custom MvcApplication must be available for setup:install command'
         );
 
         $this->assertTrue(
-            class_exists(\Magento\Framework\Setup\Mvc\MvcEvent::class),
+            class_exists('Magento\Framework\Setup\Mvc\MvcEvent'),
             'Custom MvcEvent must be available for setup:install command'
         );
 
         $this->assertTrue(
-            class_exists(\Magento\Framework\Setup\Mvc\ModuleManager::class),
+            class_exists('Magento\Framework\Setup\Mvc\ModuleManager'),
             'Custom ModuleManager must be available for setup:install command'
         );
 
         $this->assertTrue(
-            class_exists(ServiceManagerFactory::class),
+            class_exists('Magento\Framework\Setup\Mvc\ServiceManagerFactory'),
             'Custom ServiceManagerFactory must be available for setup:install command'
         );
 
@@ -78,8 +83,9 @@ class SetupInstallMvcTest extends SetupTestCase
         $serviceManager->setService('EventManager', new \Laminas\EventManager\EventManager());
         $serviceManager->setService('config', ['setup' => ['mode' => 'install']]);
 
-        $mvcApplication = new MvcApplication($serviceManager);
-        $this->assertInstanceOf(MvcApplication::class, $mvcApplication);
+        $mvcApplicationClass = 'Magento\Framework\Setup\Mvc\MvcApplication';
+        $mvcApplication = new $mvcApplicationClass($serviceManager);
+        $this->assertInstanceOf($mvcApplicationClass, $mvcApplication);
     }
 
     /**
@@ -1022,15 +1028,7 @@ class SetupInstallMvcTest extends SetupTestCase
         }
 
         try {
-            $output = [];
-            $returnCode = 0;
-            exec($diCompileCommand . ' 2>&1', $output, $returnCode);
-            
-            if ($returnCode !== 0) {
-                throw new \Exception(implode("\n", $output));
-            }
-            
-            return implode("\n", $output);
+            return $this->shell->execute($diCompileCommand);
         } catch (\Exception $e) {
             // Check if this is the "modules are not enabled" error
             $errorMessage = $e->getMessage();
