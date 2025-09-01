@@ -187,6 +187,7 @@ class Full extends AbstractAction
     protected function reindex(): void
     {
         $userFunctions = [];
+        
         foreach ($this->storeManager->getStores() as $store) {
             if ($this->getPathFromCategoryId($store->getRootCategoryId())) {
                 $userFunctions[$store->getId()] = function () use ($store) {
@@ -195,6 +196,7 @@ class Full extends AbstractAction
             }
         }
         $this->processManager->execute($userFunctions);
+        
     }
 
     /**
