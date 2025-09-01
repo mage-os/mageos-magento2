@@ -194,7 +194,7 @@ class Full extends AbstractAction
                 };
             }
         }
-        $this->processManager->execute($userFunctions);    
+        $this->processManager->execute($userFunctions);
     }
 
     /**

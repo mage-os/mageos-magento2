@@ -121,7 +121,16 @@ class TableMaintainerTest extends TestCase
         $createByDdlCall = 0;
         $this->adapter->expects($this->exactly(2))
             ->method('createTableByDdl')
-            ->willReturnCallback(function ($base, $new) use ($baseReplica, $resolvedMain, $ddlMain, $ddlReplica, &$createByDdlCall) {
+            ->willReturnCallback(function (
+                $base,
+                $new
+            ) use (
+                $baseReplica,
+                $resolvedMain,
+                $ddlMain,
+                $ddlReplica,
+                &$createByDdlCall
+            ) {
                 if ($createByDdlCall === 0) {
                     \PHPUnit\Framework\Assert::assertSame($baseReplica, $base);
                     \PHPUnit\Framework\Assert::assertSame($resolvedMain, $new);
