@@ -95,4 +95,84 @@ class TableMaintainerTest extends TestCase
         $same = $this->maintainer->getSameAdapterConnection();
         $this->assertSame($this->adapter, $same);
     }
+
+    public function testCreateTablesForStoreCreatesMainAndReplicaWhenMissing(): void
+    {
+        $storeId = 2;
+        $resolvedMain = 'index_2';
+        $baseReplica = 'pref_' . AbstractAction::MAIN_INDEX_TABLE . '_replica';
+
+        $this->tableResolver->expects($this->any())
+            ->method('resolve')
+            ->willReturn($resolvedMain);
+
+        $expectedIsTableArgs = [$resolvedMain, $resolvedMain . '_replica'];
+        $this->adapter->expects($this->exactly(2))
+            ->method('isTableExists')
+            ->willReturnCallback(function ($arg) use (&$expectedIsTableArgs) {
+                $expected = array_shift($expectedIsTableArgs);
+                \PHPUnit\Framework\Assert::assertSame($expected, $arg);
+                return false;
+            });
+
+        $ddlMain = $this->createMock(DdlTable::class);
+        $ddlReplica = $this->createMock(DdlTable::class);
+
+        $createByDdlCall = 0;
+        $this->adapter->expects($this->exactly(2))
+            ->method('createTableByDdl')
+            ->willReturnCallback(function ($base, $new) use ($baseReplica, $resolvedMain, $ddlMain, $ddlReplica, &$createByDdlCall) {
+                if ($createByDdlCall === 0) {
+                    \PHPUnit\Framework\Assert::assertSame($baseReplica, $base);
+                    \PHPUnit\Framework\Assert::assertSame($resolvedMain, $new);
+                    $createByDdlCall++;
+                    return $ddlMain;
+                }
+                \PHPUnit\Framework\Assert::assertSame($baseReplica, $base);
+                \PHPUnit\Framework\Assert::assertSame($resolvedMain . '_replica', $new);
+                $createByDdlCall++;
+                return $ddlReplica;
+            });
+
+        $expectedCreateArgs = [$ddlMain, $ddlReplica];
+        $this->adapter->expects($this->exactly(2))
+            ->method('createTable')
+            ->willReturnCallback(function ($ddl) use (&$expectedCreateArgs) {
+                $expected = array_shift($expectedCreateArgs);
+                \PHPUnit\Framework\Assert::assertSame($expected, $ddl);
+                return null;
+            });
+
+        $this->maintainer->createTablesForStore($storeId);
+    }
+
+    public function testDropTablesForStoreDropsWhenExists(): void
+    {
+        $storeId = 4;
+        $resolvedMain = 'index_4';
+
+        $this->tableResolver->expects($this->any())
+            ->method('resolve')
+            ->willReturn($resolvedMain);
+
+        $expectedIsTableArgs = [$resolvedMain, $resolvedMain . '_replica'];
+        $this->adapter->expects($this->exactly(2))
+            ->method('isTableExists')
+            ->willReturnCallback(function ($arg) use (&$expectedIsTableArgs) {
+                $expected = array_shift($expectedIsTableArgs);
+                \PHPUnit\Framework\Assert::assertSame($expected, $arg);
+                return true;
+            });
+
+        $expectedDropArgs = [$resolvedMain, $resolvedMain . '_replica'];
+        $this->adapter->expects($this->exactly(2))
+            ->method('dropTable')
+            ->willReturnCallback(function ($arg) use (&$expectedDropArgs) {
+                $expected = array_shift($expectedDropArgs);
+                \PHPUnit\Framework\Assert::assertSame($expected, $arg);
+                return null;
+            });
+
+        $this->maintainer->dropTablesForStore($storeId);
+    }
 }
