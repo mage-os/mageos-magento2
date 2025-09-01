@@ -10,8 +10,7 @@ namespace Magento\Setup;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Setup\Mvc\MvcApplication;
 use Magento\Framework\Setup\Mvc\ServiceManagerFactory;
-use Magento\Framework\Shell;
-use Magento\Framework\Shell\CommandRenderer;
+
 use Magento\TestFramework\Deploy\CliCommand;
 use Magento\TestFramework\Deploy\TestModuleManager;
 use Magento\TestFramework\Helper\Bootstrap;
@@ -37,10 +36,7 @@ class SetupInstallMvcTest extends SetupTestCase
      */
     private $resourceConnection;
 
-    /**
-     * @var Shell
-     */
-    private $shell;
+
 
     protected function setUp(): void
     {
@@ -48,7 +44,7 @@ class SetupInstallMvcTest extends SetupTestCase
         $this->moduleManager = $objectManager->get(TestModuleManager::class);
         $this->cliCommand = $objectManager->get(CliCommand::class);
         $this->resourceConnection = $objectManager->get(ResourceConnection::class);
-        $this->shell = new Shell(new CommandRenderer());
+
     }
 
     /**
@@ -282,12 +278,6 @@ class SetupInstallMvcTest extends SetupTestCase
             $connection->isTableExists($patchListTable),
             'patch_list table should exist after installation with data patches'
         );
-
-        // Check for patch records (may or may not exist depending on module)
-        $select = $connection->select()
-            ->from($patchListTable)
-            ->where('patch_name LIKE ?', '%TestSetupDeclarationModule1%');
-        $patchRecords = $connection->fetchAll($select);
 
         // Data patches are optional, so we just verify the table exists
         $this->assertTrue(
@@ -1032,7 +1022,15 @@ class SetupInstallMvcTest extends SetupTestCase
         }
 
         try {
-            return $this->shell->execute($diCompileCommand);
+            $output = [];
+            $returnCode = 0;
+            exec($diCompileCommand . ' 2>&1', $output, $returnCode);
+            
+            if ($returnCode !== 0) {
+                throw new \Exception(implode("\n", $output));
+            }
+            
+            return implode("\n", $output);
         } catch (\Exception $e) {
             // Check if this is the "modules are not enabled" error
             $errorMessage = $e->getMessage();
