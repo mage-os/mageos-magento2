@@ -196,8 +196,10 @@ class Layout extends \Magento\Framework\Simplexml\Config implements \Magento\Fra
 
     /**
      * Property used to cache the results of the isCacheable() method.
+     *
+     * @var bool|null
      */
-    private bool|null $isCacheableCache = null;
+    private ?bool $isCacheableCache = null;
 
     /**
      * @param ProcessorFactory $processorFactory
@@ -1172,7 +1174,7 @@ class Layout extends \Magento\Framework\Simplexml\Config implements \Magento\Fra
      */
     public function isCacheable()
     {
-        if (!isset($this->isCacheableCache)) {
+        if ($this->isCacheableCache === null) {
             $this->build();
             $elements  = $this->getXml()->xpath('//' . Element::TYPE_BLOCK . '[@cacheable="false"]');
             $cacheable = $this->cacheable;
