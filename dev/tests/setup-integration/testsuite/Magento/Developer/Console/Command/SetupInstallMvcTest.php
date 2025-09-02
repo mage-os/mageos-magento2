@@ -5,10 +5,9 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Setup;
+namespace Magento\Developer\Console\Command;
 
 use Magento\Framework\App\ResourceConnection;
-
 use Magento\Framework\Shell;
 use Magento\Framework\Shell\CommandRenderer;
 use Magento\TestFramework\Deploy\CliCommand;
@@ -47,7 +46,7 @@ class SetupInstallMvcTest extends SetupTestCase
         $this->moduleManager = $objectManager->get(TestModuleManager::class);
         $this->cliCommand = $objectManager->get(CliCommand::class);
         $this->resourceConnection = $objectManager->get(ResourceConnection::class);
-        
+
         // Create Shell instance manually to avoid DI circular dependency issues
         $this->shell = new Shell(new CommandRenderer());
     }
