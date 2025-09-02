@@ -75,6 +75,9 @@ class ConfigModel
         $optionCollection = array_merge([], ...$optionCollection);
         foreach ($optionCollection as $option) {
             $currentValue = $this->deploymentConfig->get($option->getConfigPath());
+            if ($currentValue !== null) {
+                $option->setDefault();
+            }
         }
 
         return $optionCollection;
