@@ -1,6 +1,6 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
 
 define([
@@ -8,13 +8,13 @@ define([
     'underscore',
     'squire'
 ], function ($, _, Squire) {
-    //'use strict';
+    'use strict';
 
-    var injector = new Squire(),
+    let injector = new Squire(),
         component;
 
     describe('Magento_LoginAsCustomerAdminUi/js/confirmation-popup', function () {
-        
+
         beforeEach(function (done) {
             // Clear global function
             window.lacConfirmationPopup = undefined;
@@ -23,9 +23,10 @@ define([
             injector.mock({
                 'Magento_Ui/js/modal/confirm': jasmine.createSpy('confirm'),
                 'Magento_Ui/js/modal/alert': jasmine.createSpy('alert'),
-                'mage/translate': function(text) { return text; },
-                'mage/template': function(template, data) { return '<div>Mock Template</div>'; },
-                'text!Magento_LoginAsCustomerAdminUi/template/confirmation-popup/store-view-ptions.html': '<div>Mock Template</div>'
+                'mage/translate': function (text) { return text; },
+                'mage/template': function () { return '<div>Mock Template</div>'; },
+                'text!Magento_LoginAsCustomerAdminUi/template/confirmation-popup/store-view-ptions.html':
+                    '<div>Mock Template</div>'
             });
 
             injector.require([
@@ -41,6 +42,7 @@ define([
             try {
                 injector.clean();
                 injector.remove();
+                // eslint-disable-next-line no-unused-vars
             } catch (e) {
                 // Ignore cleanup errors
             }
@@ -53,7 +55,7 @@ define([
             });
 
             it('Should create lacConfirmationPopup global function after initialization', function () {
-                var instance = new component({
+                const instance = new component({
                     title: 'Test Title',
                     content: 'Test Content'
                 });
@@ -65,14 +67,16 @@ define([
             });
 
             it('Should return false when called', function () {
-                var instance = new component({
+                const instance = new component({
                     title: 'Test Title',
                     content: 'Test Content'
                 });
 
                 instance.initialize();
 
-                var result = window.lacConfirmationPopup('http://test.url');
+                // eslint-disable-next-line one-var
+                const result = window.lacConfirmationPopup('http://test.url');
+
                 expect(result).toBe(false);
             });
         });
@@ -80,37 +84,39 @@ define([
         describe('Modal configuration', function () {
             it('Should call confirm modal with correct configuration', function (done) {
                 // Create a fresh injector for this test
-                var testInjector = new Squire();
-                var confirmSpy = jasmine.createSpy('confirm');
+                const testInjector = new Squire(),
+                    confirmSpy = jasmine.createSpy('confirm');
 
                 testInjector.mock({
                     'Magento_Ui/js/modal/confirm': confirmSpy,
                     'Magento_Ui/js/modal/alert': jasmine.createSpy('alert'),
-                    'mage/translate': function(text) { return text; },
-                    'mage/template': function(template, data) { return '<div>Mock Template</div>'; },
-                    'text!Magento_LoginAsCustomerAdminUi/template/confirmation-popup/store-view-ptions.html': '<div>Mock Template</div>'
+                    'mage/translate': function (text) { return text; },
+                    'mage/template': function () { return '<div>Mock Template</div>'; },
+                    'text!Magento_LoginAsCustomerAdminUi/template/confirmation-popup/store-view-ptions.html':
+                        '<div>Mock Template</div>'
                 });
 
                 testInjector.require([
                     'Magento_LoginAsCustomerAdminUi/js/confirmation-popup'
                 ], function (TestComponent) {
-                    var instance = new TestComponent({
-                        title: 'Login as Customer',
-                        content: 'Are you sure?'
-                    });
+                    let instance = new TestComponent({
+                            title: 'Login as Customer',
+                            content: 'Are you sure?'
+                        }),
+                        modalConfig;
 
                     instance.initialize();
                     window.lacConfirmationPopup('http://test.url');
 
                     expect(confirmSpy).toHaveBeenCalled();
-                    
-                    var modalConfig = confirmSpy.calls.argsFor(0)[0];
+
+                    modalConfig = confirmSpy.calls.argsFor(0)[0];
                     expect(modalConfig.title).toBe('Login as Customer');
                     expect(modalConfig.modalClass).toBe('confirm lac-confirm');
                     expect(modalConfig.content).toContain('<div class="message message-warning">Are you sure?</div>');
                     expect(modalConfig.buttons).toBeDefined();
                     expect(modalConfig.buttons.length).toBe(2);
-                    
+
                     testInjector.clean();
                     testInjector.remove();
                     done();
@@ -121,41 +127,40 @@ define([
         describe('AJAX functionality', function () {
             it('Should make AJAX request when confirm action is triggered', function (done) {
                 // Mock AJAX FIRST, before creating the component
-                var ajaxSpy = jasmine.createSpy('ajax');
-                var originalAjax = $.ajax;
+                const ajaxSpy = jasmine.createSpy('ajax'),
+                    originalAjax = $.ajax,
+                    testInjector = new Squire(), // Create a fresh injector for this test
+                    confirmSpy = jasmine.createSpy('confirm').and.callFake(function (config) {
+                        // Simulate user clicking confirm - trigger the confirm action
+                        if (config.actions && config.actions.confirm) {
+                            config.actions.confirm();
+                        }
+                    }),
+                    mockJQuery = $; // Mock jQuery itself to ensure the component uses our mocked ajax
+
                 $.ajax = ajaxSpy;
+                mockJQuery.ajax = ajaxSpy;
 
                 // Mock DOM elements
                 $('body').append('<input name="form_key" value="test_form_key">');
-                $('body').append('<select id="lac-confirmation-popup-store-id"><option value="2" selected>Store 2</option></select>');
-
-                // Create a fresh injector for this test
-                var testInjector = new Squire();
-
-                var confirmSpy = jasmine.createSpy('confirm').and.callFake(function (config) {
-                    // Simulate user clicking confirm - trigger the confirm action
-                    if (config.actions && config.actions.confirm) {
-                        config.actions.confirm();
-                    }
-                });
-
-                // Mock jQuery itself to ensure the component uses our mocked ajax
-                var mockJQuery = $;
-                mockJQuery.ajax = ajaxSpy;
+                $('body').append(
+                    '<select id="lac-confirmation-popup-store-id"><option value="2" selected>Store 2</option></select>'
+                );
 
                 testInjector.mock({
                     'jquery': mockJQuery,
                     'Magento_Ui/js/modal/confirm': confirmSpy,
                     'Magento_Ui/js/modal/alert': jasmine.createSpy('alert'),
-                    'mage/translate': function(text) { return text; },
-                    'mage/template': function(template, data) { return '<div>Mock Template</div>'; },
-                    'text!Magento_LoginAsCustomerAdminUi/template/confirmation-popup/store-view-ptions.html': '<div>Mock Template</div>'
+                    'mage/translate': function (text) { return text; },
+                    'mage/template': function () { return '<div>Mock Template</div>'; },
+                    'text!Magento_LoginAsCustomerAdminUi/template/confirmation-popup/store-view-ptions.html':
+                        '<div>Mock Template</div>'
                 });
 
                 testInjector.require([
                     'Magento_LoginAsCustomerAdminUi/js/confirmation-popup'
                 ], function (TestComponent) {
-                    var instance = new TestComponent({
+                    const instance = new TestComponent({
                         title: 'Test Title',
                         content: 'Test Content'
                     });
@@ -165,15 +170,17 @@ define([
 
                     // Verify confirm was called
                     expect(confirmSpy).toHaveBeenCalled();
-                    
+
                     // Verify AJAX was called
                     expect(ajaxSpy).toHaveBeenCalled();
                     expect(ajaxSpy.calls.argsFor(0)[0].url).toBe('http://test.url/login');
                     expect(ajaxSpy.calls.argsFor(0)[0].type).toBe('POST');
                     expect(ajaxSpy.calls.argsFor(0)[0].dataType).toBe('json');
-                    
+
                     // Verify form data
-                    var ajaxData = ajaxSpy.calls.argsFor(0)[0].data;
+                    // eslint-disable-next-line one-var
+                    const ajaxData = ajaxSpy.calls.argsFor(0)[0].data;
+
                     expect(ajaxData.form_key).toBe('test_form_key');
                     expect(ajaxData.store_id).toBe('2');
 
@@ -188,19 +195,20 @@ define([
             });
 
             it('Should handle successful response with redirect URL', function (done) {
-                var ajaxSpy = jasmine.createSpy('ajax');
-                var originalAjax = $.ajax;
+                const ajaxSpy = jasmine.createSpy('ajax'),
+                    originalAjax = $.ajax;
+
                 $.ajax = ajaxSpy;
-                
                 spyOn(window, 'open');
 
-                var testInjector = new Squire();
-
-                var confirmSpy = jasmine.createSpy('confirm').and.callFake(function (config) {
-                    if (config.actions && config.actions.confirm) {
-                        config.actions.confirm();
-                    }
-                });
+                // eslint-disable-next-line one-var
+                const testInjector = new Squire(),
+                    confirmSpy = jasmine.createSpy('confirm').and.callFake(function (config) {
+                        if (config.actions && config.actions.confirm) {
+                            config.actions.confirm();
+                        }
+                    }),
+                    mockJQuery = $;
 
                 // Mock AJAX to call success callback
                 ajaxSpy.and.callFake(function (options) {
@@ -208,24 +216,22 @@ define([
                         redirectUrl: 'http://customer.frontend.url'
                     });
                 });
-
-                // Mock jQuery with our ajax spy
-                var mockJQuery = $;
                 mockJQuery.ajax = ajaxSpy;
 
                 testInjector.mock({
                     'jquery': mockJQuery,
                     'Magento_Ui/js/modal/confirm': confirmSpy,
                     'Magento_Ui/js/modal/alert': jasmine.createSpy('alert'),
-                    'mage/translate': function(text) { return text; },
-                    'mage/template': function(template, data) { return '<div>Mock Template</div>'; },
-                    'text!Magento_LoginAsCustomerAdminUi/template/confirmation-popup/store-view-ptions.html': '<div>Mock Template</div>'
+                    'mage/translate': function (text) { return text; },
+                    'mage/template': function () { return '<div>Mock Template</div>'; },
+                    'text!Magento_LoginAsCustomerAdminUi/template/confirmation-popup/store-view-ptions.html':
+                        '<div>Mock Template</div>'
                 });
 
                 testInjector.require([
                     'Magento_LoginAsCustomerAdminUi/js/confirmation-popup'
                 ], function (TestComponent) {
-                    var instance = new TestComponent({
+                    const instance = new TestComponent({
                         title: 'Test Title',
                         content: 'Test Content'
                     });
@@ -244,20 +250,17 @@ define([
             });
 
             it('Should handle error response', function (done) {
-                var ajaxSpy = jasmine.createSpy('ajax');
-                var originalAjax = $.ajax;
+                const ajaxSpy = jasmine.createSpy('ajax'),
+                    originalAjax = $.ajax,
+                    alertSpy = jasmine.createSpy('alert'),
+                    testInjector = new Squire(),
+                    confirmSpy = jasmine.createSpy('confirm').and.callFake(function (config) {
+                        if (config.actions && config.actions.confirm) {
+                            config.actions.confirm();
+                        }
+                    });
+
                 $.ajax = ajaxSpy;
-                
-                var alertSpy = jasmine.createSpy('alert');
-
-                var testInjector = new Squire();
-
-                var confirmSpy = jasmine.createSpy('confirm').and.callFake(function (config) {
-                    if (config.actions && config.actions.confirm) {
-                        config.actions.confirm();
-                    }
-                });
-
                 // Mock AJAX to call error callback
                 ajaxSpy.and.callFake(function (options) {
                     options.error({
@@ -267,22 +270,24 @@ define([
                 });
 
                 // Mock jQuery with our ajax spy
-                var mockJQuery = $;
-                mockJQuery.ajax = ajaxSpy;
+                // eslint-disable-next-line one-var
+                const mockJQuery = $;
 
+                mockJQuery.ajax = ajaxSpy;
                 testInjector.mock({
                     'jquery': mockJQuery,
                     'Magento_Ui/js/modal/confirm': confirmSpy,
                     'Magento_Ui/js/modal/alert': alertSpy,
-                    'mage/translate': function(text) { return text; },
-                    'mage/template': function(template, data) { return '<div>Mock Template</div>'; },
-                    'text!Magento_LoginAsCustomerAdminUi/template/confirmation-popup/store-view-ptions.html': '<div>Mock Template</div>'
+                    'mage/translate': function (text) { return text; },
+                    'mage/template': function () { return '<div>Mock Template</div>'; },
+                    'text!Magento_LoginAsCustomerAdminUi/template/confirmation-popup/store-view-ptions.html':
+                        '<div>Mock Template</div>'
                 });
 
                 testInjector.require([
                     'Magento_LoginAsCustomerAdminUi/js/confirmation-popup'
                 ], function (TestComponent) {
-                    var instance = new TestComponent({
+                    const instance = new TestComponent({
                         title: 'Test Title',
                         content: 'Test Content'
                     });
@@ -304,37 +309,35 @@ define([
 
         describe('Button click handlers', function () {
             it('Should handle button clicks correctly', function (done) {
-                var testInjector = new Squire();
-                var confirmSpy = jasmine.createSpy('confirm');
+                const testInjector = new Squire(),
+                    confirmSpy = jasmine.createSpy('confirm');
 
                 testInjector.mock({
                     'Magento_Ui/js/modal/confirm': confirmSpy,
                     'Magento_Ui/js/modal/alert': jasmine.createSpy('alert'),
-                    'mage/translate': function(text) { return text; },
-                    'mage/template': function(template, data) { return '<div>Mock Template</div>'; },
-                    'text!Magento_LoginAsCustomerAdminUi/template/confirmation-popup/store-view-ptions.html': '<div>Mock Template</div>'
+                    'mage/translate': function (text) { return text; },
+                    'mage/template': function () { return '<div>Mock Template</div>'; },
+                    'text!Magento_LoginAsCustomerAdminUi/template/confirmation-popup/store-view-ptions.html':
+                        '<div>Mock Template</div>'
                 });
 
                 testInjector.require([
                     'Magento_LoginAsCustomerAdminUi/js/confirmation-popup'
                 ], function (TestComponent) {
-                    var instance = new TestComponent({
-                        title: 'Test Title',
-                        content: 'Test Content'
-                    });
+                    const instance = new TestComponent({title: 'Test Title', content: 'Test Content'}),
+                        mockModal = { // Test cancel button
+                            closeModal: jasmine.createSpy('closeModal')
+                        };
 
                     instance.initialize();
                     window.lacConfirmationPopup('http://test.url');
 
-                    var modalConfig = confirmSpy.calls.argsFor(0)[0];
-                    
-                    // Test cancel button
-                    var mockModal = {
-                        closeModal: jasmine.createSpy('closeModal')
-                    };
+                    // eslint-disable-next-line one-var
+                    const modalConfig = confirmSpy.calls.argsFor(0)[0];
+
                     modalConfig.buttons[0].click.call(mockModal, {});
                     expect(mockModal.closeModal).toHaveBeenCalledWith({});
-                    
+
                     // Test confirm button
                     mockModal.closeModal.calls.reset();
                     modalConfig.buttons[1].click.call(mockModal, {});

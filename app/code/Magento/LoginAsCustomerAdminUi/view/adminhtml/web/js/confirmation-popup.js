@@ -1,6 +1,6 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
 
 define([
@@ -110,11 +110,13 @@ define([
                                  */
                                 error: function (jqXHR) {
                                     let message = jqXHR.responseText;
+
                                     // If it's HTML (403 page), show only the status text
                                     if (jqXHR.status === 403) {
                                         message = 'Access denied (403 Forbidden). ' +
                                             'You may not have permission or your session expired.';
                                     }
+
                                     alert({
                                         content: _.escape(message)
                                     });
