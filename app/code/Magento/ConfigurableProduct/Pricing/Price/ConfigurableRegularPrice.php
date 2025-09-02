@@ -253,7 +253,7 @@ class ConfigurableRegularPrice extends AbstractPrice implements
             }
         }
 
-        if ($saleableChildrenCount <= 1 || $firstFinal === null || !$allEqual) {
+        if ($saleableChildrenCount < 1 || $firstFinal === null || !$allEqual) {
             $product->setData($memoKey, false);
             $this->equalFinalPriceCache[$cacheKey] = false;
             return false;
