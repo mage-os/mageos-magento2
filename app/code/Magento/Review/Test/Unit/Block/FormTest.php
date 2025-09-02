@@ -26,6 +26,9 @@ use Magento\Review\Model\RatingFactory;
 use Magento\Review\Model\Rating;
 use Magento\Review\Model\ResourceModel\Rating\Collection as RatingCollection;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class FormTest extends TestCase
 {
     /** @var Form */
