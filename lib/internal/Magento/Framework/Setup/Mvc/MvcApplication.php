@@ -23,7 +23,7 @@ class MvcApplication
     private ServiceManager $serviceManager;
 
     /**
-     * Constructor (compatible with Laminas\Mvc\Application)
+     * Class constructor
      *
      * @param ServiceManager $serviceManager
      */
@@ -34,7 +34,7 @@ class MvcApplication
     }
 
     /**
-     * Get service manager (same API as Laminas\Mvc\Application)
+     * Get service manager
      *
      * @return ServiceManager
      */
@@ -64,7 +64,7 @@ class MvcApplication
     }
 
     /**
-     * Bootstrap the application (same API as Laminas\Mvc\Application)
+     * Bootstrap the application
      *
      * @param array $listeners
      * @return self
@@ -88,7 +88,7 @@ class MvcApplication
     }
 
     /**
-     * Initialize application (static method same as Laminas\Mvc\Application::init)
+     * Initializes the application instance with services and configuration
      *
      * @param array $configuration
      * @return self

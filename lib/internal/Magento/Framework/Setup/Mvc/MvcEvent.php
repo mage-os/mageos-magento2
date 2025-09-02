@@ -8,8 +8,8 @@ declare(strict_types=1);
 namespace Magento\Framework\Setup\Mvc;
 
 /**
- * Native MvcEvent class that provides minimal compatibility with Laminas MvcEvent
- * for Magento setup commands without requiring Laminas MVC
+ * Native MvcEvent class.
+ * Magento setup commands without requiring Laminas mvc dependencies
  */
 class MvcEvent
 {

@@ -16,8 +16,8 @@ use Laminas\ModuleManager\ModuleManager;
 use Laminas\ModuleManager\Listener\ServiceListener;
 
 /**
- * Native ServiceManagerConfig that replicates Laminas\Mvc\Service\ServiceManagerConfig
- * but without MVC dependencies - only the core service management functionality
+ * Native ServiceManagerConfig.
+ * Replicates the essential service management functionality while avoiding Laminas mvc dependencies.
  */
 class MvcServiceManagerConfig
 {
@@ -33,7 +33,7 @@ class MvcServiceManagerConfig
      */
     public function __construct(array $config = [])
     {
-        // Core configuration exactly matching original Laminas\Mvc\Service\ServiceManagerConfig
+        // Core configuration
         $this->config = [
             'abstract_factories' => [],
             'aliases' => [
@@ -50,7 +50,7 @@ class MvcServiceManagerConfig
                 'EventManager'            => function ($container) {
                     $sharedManager = $container->has('SharedEventManager') ?
                         $container->get('SharedEventManager') : null;
-                    return new \Laminas\EventManager\EventManager($sharedManager);
+                    return new EventManager($sharedManager);
                 },
                 'ModuleManager'           => ModuleManagerFactory::class,
                 'ServiceListener'         => ServiceListenerFactory::class,
@@ -64,17 +64,17 @@ class MvcServiceManagerConfig
             ],
         ];
 
-        // Add ServiceManager factory (same as original)
+        // Add ServiceManager factory
         $this->config['factories']['ServiceManager'] = function ($container) {
             return $container;
         };
 
-        // Add SharedEventManager factory (same as original)
+        // Add SharedEventManager factory
         $this->config['factories']['SharedEventManager'] = function () {
-            return new \Laminas\EventManager\SharedEventManager();
+            return new SharedEventManager();
         };
 
-        // Add EventManagerAware initializer (same as original)
+        // Add EventManagerAware initializer
         $this->config['initializers']['EventManagerAwareInitializer'] = function ($container, $instance) {
             if (!$instance instanceof \Laminas\EventManager\EventManagerAwareInterface) {
                 return;
@@ -96,30 +96,28 @@ class MvcServiceManagerConfig
     }
 
     /**
-     * Configure service manager (same API as Laminas\Mvc\Service\ServiceManagerConfig)
+     * Configure service manager
      *
      * @param ServiceManager $serviceManager
      * @return ServiceManager
      */
     public function configureServiceManager(ServiceManager $serviceManager): ServiceManager
     {
-        // Add ServiceManager service reference (same as Laminas)
+        // Add ServiceManager service reference
         $this->config['services'][ServiceManager::class] = $serviceManager;
 
-        // Enable override during bootstrapping (same as Laminas)
+        // Enable override during bootstrapping
         $serviceManager->setAllowOverride(true);
-
-        // Configure the service manager using Laminas ServiceManager's native configure method
         $serviceManager->configure($this->config);
 
-        // Disable override after configuration (same as Laminas)
+        // Disable override after configuration
         $serviceManager->setAllowOverride(false);
 
         return $serviceManager;
     }
 
     /**
-     * Return all service configuration (same API as Laminas)
+     * Return all service configuration
      *
      * @return array
      */
