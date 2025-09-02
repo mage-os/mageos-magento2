@@ -605,12 +605,35 @@ class AbstractEntityUrlTest extends TestCase
     public function testParseUrlHandlesVariousUrlFormats(): void
     {
         $testCases = [
+            // Simple URL without leading slash
             'simple-url' => ['path' => 'simple-url'],
+            // URL with leading slash (should be stripped)
             '/leading-slash' => ['path' => 'leading-slash'],
+            // URL with query parameters
             'url-with-query?param=value' => ['path' => 'url-with-query', 'query' => 'param=value'],
+            // Complex path structure
             'complex/path/structure' => ['path' => 'complex/path/structure'],
+            // Root URL (leading slash should be preserved)
             '/' => ['path' => '/'],
-            '' => ['path' => '']
+            // Empty string
+            '' => ['path' => ''],
+
+            // URL with fragment
+            'path-with-fragment#section' => ['path' => 'path-with-fragment', 'fragment' => 'section'],
+            // URL with query and fragment
+            '/path?query=value#fragment' => ['path' => 'path', 'query' => 'query=value', 'fragment' => 'fragment'],
+            // URL with host (should preserve path parsing)
+            'https://example.com/path' => ['scheme' => 'https', 'host' => 'example.com', 'path' => 'path'],
+            // URL with port
+            'http://example.com:8080/path' => ['scheme' => 'http', 'host' => 'example.com', 'port' => 8080, 'path' => 'path'],
+            // URL with user info
+            'https://user:pass@example.com/path' => ['scheme' => 'https', 'user' => 'user', 'pass' => 'pass', 'host' => 'example.com', 'path' => 'path'],
+            // Complex query string
+            'product?color=red&size=large&in_stock=1' => ['path' => 'product', 'query' => 'color=red&size=large&in_stock=1'],
+            // Path with encoded characters
+            'category/special%20products' => ['path' => 'category/special%20products'],
+            // Multiple slashes in path
+            '///multiple///slashes' => ['path' => 'multiple///slashes']
         ];
 
         $reflection = new \ReflectionClass($this->resolver);
@@ -620,6 +643,67 @@ class AbstractEntityUrlTest extends TestCase
         foreach ($testCases as $input => $expected) {
             $result = $method->invoke($this->resolver, $input);
             $this->assertEquals($expected, $result, "Failed for input: $input");
+        }
+    }
+
+    /**
+     * Test parseUrl method with malformed URLs
+     */
+    public function testParseUrlHandlesMalformedUrls(): void
+    {
+        $reflection = new \ReflectionClass($this->resolver);
+        $method = $reflection->getMethod('parseUrl');
+        $method->setAccessible(true);
+
+        // Test cases where parse_url might return false or fail
+        $malformedUrls = [
+            // Very malformed URL that might cause parse_url to return false
+            "http:///",
+            // URL with invalid characters
+            "test\x00url",
+            // Extremely long URL (though this might not fail parse_url)
+            str_repeat('a', 2000),
+        ];
+
+        foreach ($malformedUrls as $malformedUrl) {
+            $result = $method->invoke($this->resolver, $malformedUrl);
+            // Should always return an array with at least 'path' key
+            $this->assertIsArray($result);
+            $this->assertArrayHasKey('path', $result);
+            // When parse_url fails, the path should be the original URL
+            if (!is_array(parse_url($malformedUrl))) {
+                $this->assertEquals($malformedUrl, $result['path']);
+            }
+        }
+    }
+
+    /**
+     * Test parseUrl method with edge cases for path normalization
+     */
+    public function testParseUrlPathNormalization(): void
+    {
+        $reflection = new \ReflectionClass($this->resolver);
+        $method = $reflection->getMethod('parseUrl');
+        $method->setAccessible(true);
+
+        // Test edge cases for path normalization
+        $testCases = [
+            // Single slash should remain as is (root)
+            '/' => ['path' => '/'],
+            // Multiple leading slashes should be stripped to single path
+            '/////path' => ['path' => 'path'],
+            // Leading slash with query should strip slash from path
+            '/path?query=test' => ['path' => 'path', 'query' => 'query=test'],
+            // Leading slash with fragment should strip slash from path
+            '/path#fragment' => ['path' => 'path', 'fragment' => 'fragment'],
+            // Only slashes (not root) should be stripped
+            '//' => ['path' => ''],
+            '///' => ['path' => ''],
+        ];
+
+        foreach ($testCases as $input => $expected) {
+            $result = $method->invoke($this->resolver, $input);
+            $this->assertEquals($expected, $result, "Failed for input: '$input'");
         }
     }
 
