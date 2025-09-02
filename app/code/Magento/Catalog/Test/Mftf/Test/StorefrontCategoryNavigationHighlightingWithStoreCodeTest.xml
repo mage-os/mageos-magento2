@@ -8,17 +8,18 @@
 
 <tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
-    <test name="StorefrontCategoryPathWithStoreCodeTest" extends="StorefrontCategoryNavigationHighlightingTest">
+    <test name="StorefrontCategoryNavigationHighlightingWithStoreCodeTest" extends="StorefrontCategoryNavigationHighlightingTest">
         <annotations>
             <features value="Catalog"/>
             <stories value="Category Navigation Highlighting with Store Code in URLs"/>
-            <title value="Category highlighting in navigation with store code in URLs and URL suffixes"/>
+            <title value="Verify category highlighting in navigation with store code in URLs and no URL suffixes"/>
             <description value="Correct category should be highlighted in the navigation menu when navigating through categories and products on the storefront based on store code"/>
             <severity value="MAJOR"/>
-            <testCaseId value="AC-10852"/>
+            <testCaseId value="AC-10854"/>
             <group value="Catalog"/>
         </annotations>
         <before>
+            <remove keyForRemoval="enableUseCategoriesPathForProductUrlsDefault"/>
             <!-- Precondition Step 2: Set configuration: Add Store Code to Urls: Yes -->
             <magentoCLI command="config:set {{StorefrontEnableAddStoreCodeToUrls.path}} {{StorefrontEnableAddStoreCodeToUrls.value}}" stepKey="enableStoreCodeInUrl" after="clickSaveButton"/>
             <!-- Set configuration: Remove category URL suffix -->
