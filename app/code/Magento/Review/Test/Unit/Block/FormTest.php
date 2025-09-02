@@ -20,6 +20,9 @@ use Magento\Review\Helper\Data;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Review\Model\RatingFactory;
+use Magento\Review\Model\Rating;
+use Magento\Review\Model\ResourceModel\Rating\Collection as RatingCollection;
 
 class FormTest extends TestCase
 {
@@ -200,5 +203,160 @@ class FormTest extends TestCase
         $this->serializerMock->expects($this->once())->method('serialize')
             ->willReturn(json_encode($jsLayout));
         $this->assertEquals('{"some-layout":"layout information"}', $this->object->getJsLayout());
+    }
+
+    public function testGetRatingsReturnsPreparedCollection(): void
+    {
+        $storeId = 10;
+
+        $store = new DataObject(['id' => $storeId]);
+
+        $storeManager = $this->createMock(StoreManagerInterface::class);
+        $storeManager->method('getStore')->willReturn($store);
+
+        $ratingCollection = $this->createMock(RatingCollection::class);
+        $ratingCollection->expects($this->once())
+            ->method('addEntityFilter')
+            ->with('product')
+            ->willReturnSelf();
+        $ratingCollection->expects($this->once())
+            ->method('setPositionOrder')
+            ->willReturnSelf();
+        $ratingCollection->expects($this->once())
+            ->method('addRatingPerStoreName')
+            ->with($storeId)
+            ->willReturnSelf();
+        $ratingCollection->expects($this->once())
+            ->method('setStoreFilter')
+            ->with($storeId)
+            ->willReturnSelf();
+        $ratingCollection->expects($this->once())
+            ->method('setActiveFilter')
+            ->with(true)
+            ->willReturnSelf();
+        $ratingCollection->expects($this->once())
+            ->method('load')
+            ->willReturnSelf();
+        $ratingCollection->expects($this->once())
+            ->method('addOptionToItems')
+            ->willReturnSelf();
+
+        $rating = $this->createMock(Rating::class);
+        $rating->method('getResourceCollection')->willReturn($ratingCollection);
+
+        $ratingFactory = $this->createMock(RatingFactory::class);
+        $ratingFactory->method('create')->willReturn($rating);
+
+        $formBlock = $this->getFormBlockWithInjectedDependencies($storeManager, $ratingFactory);
+
+        $result = $formBlock->getRatings();
+
+        $this->assertSame($ratingCollection, $result);
+    }
+
+    public function testGetRegisterUrl(): void
+    {
+        $expectedUrl = 'https://example.com/customer/account/create/';
+
+        $customerUrl = $this->getMockBuilder(\Magento\Customer\Model\Url::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getRegisterUrl'])
+            ->getMock();
+
+        $customerUrl->expects($this->once())
+            ->method('getRegisterUrl')
+            ->willReturn($expectedUrl);
+
+        $formBlock = $this->getFormBlockWithInjectedDependencies(
+            $this->storeManager,
+            $this->createMock(RatingFactory::class)
+        );
+        $this->setProtectedProperty($formBlock, 'customerUrl', $customerUrl);
+
+        $this->assertSame($expectedUrl, $formBlock->getRegisterUrl());
+    }
+
+    public function testConstructSetsLoginLinkWhenGuestCannotWrite(): void
+    {
+        $currentUrl = 'https://example.com/current';
+        $encoded = 'ENCODED_REFERER';
+        $loginUrlBase = 'https://example.com/customer/account/login/';
+
+        $urlBuilder = $this->createMock(\Magento\Framework\UrlInterface::class);
+        $urlBuilder->method('getUrl')
+            ->willReturnCallback(function ($route, $params = []) use ($currentUrl, $encoded, $loginUrlBase) {
+                if ($route === '*/*/*') {
+                    $this->assertSame(['_current' => true], $params);
+                    return $currentUrl;
+                }
+                if ($route === 'customer/account/login/') {
+                    $this->assertArrayHasKey(\Magento\Customer\Model\Url::REFERER_QUERY_PARAM_NAME, $params);
+                    $this->assertSame($encoded, $params[\Magento\Customer\Model\Url::REFERER_QUERY_PARAM_NAME]);
+                    return $loginUrlBase . '?' . \Magento\Customer\Model\Url::REFERER_QUERY_PARAM_NAME . '=' . $encoded;
+                }
+                return '';
+            });
+
+        $urlEncoder = $this->createMock(\Magento\Framework\Url\EncoderInterface::class);
+        $urlEncoder->expects($this->once())
+            ->method('encode')
+            ->with($currentUrl . '#review-form')
+            ->willReturn($encoded);
+
+        $httpContext = $this->createMock(\Magento\Framework\App\Http\Context::class);
+        $httpContext->method('getValue')
+            ->with(\Magento\Customer\Model\Context::CONTEXT_AUTH)
+            ->willReturn(false);
+
+        $reviewData = $this->createMock(\Magento\Review\Helper\Data::class);
+        $reviewData->method('getIsGuestAllowToWrite')->willReturn(false);
+
+        $formBlock = $this->getMockBuilder(Form::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
+
+        $this->setProtectedProperty($formBlock, '_urlBuilder', $urlBuilder);
+        $this->setProtectedProperty($formBlock, 'urlEncoder', $urlEncoder);
+        $this->setProtectedProperty($formBlock, 'httpContext', $httpContext);
+        $this->setProtectedProperty($formBlock, '_reviewData', $reviewData);
+
+        $ref = new \ReflectionObject($formBlock);
+        $method = $ref->getMethod('_construct');
+        $method->setAccessible(true);
+        $method->invoke($formBlock);
+
+        $expectedLoginUrl = $loginUrlBase . '?' . \Magento\Customer\Model\Url::REFERER_QUERY_PARAM_NAME . '=' . $encoded;
+        $this->assertSame($expectedLoginUrl, $formBlock->getLoginLink());
+    }
+
+    private function getFormBlockWithInjectedDependencies(
+        StoreManagerInterface $storeManager,
+        RatingFactory $ratingFactory
+    ): Form {
+        $formBlock = $this->getMockBuilder(Form::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
+
+        // Inject protected properties via reflection to avoid full framework context construction
+        $this->setProtectedProperty($formBlock, '_storeManager', $storeManager);
+        $this->setProtectedProperty($formBlock, '_ratingFactory', $ratingFactory);
+
+        return $formBlock;
+    }
+
+    private function setProtectedProperty(object $object, string $property, mixed $value): void
+    {
+        $reflection = new \ReflectionObject($object);
+        while ($reflection && !$reflection->hasProperty($property)) {
+            $reflection = $reflection->getParentClass();
+            if ($reflection === false) {
+                $this->fail('Property ' . $property . ' not found in class hierarchy');
+            }
+        }
+        $prop = $reflection->getProperty($property);
+        $prop->setAccessible(true);
+        $prop->setValue($object, $value);
     }
 }
