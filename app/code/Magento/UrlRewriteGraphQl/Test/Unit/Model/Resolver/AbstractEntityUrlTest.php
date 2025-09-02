@@ -24,6 +24,10 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Unit test for AbstractEntityUrl resolver
+ *
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class AbstractEntityUrlTest extends TestCase
@@ -625,11 +629,25 @@ class AbstractEntityUrlTest extends TestCase
             // URL with host (should preserve path parsing)
             'https://example.com/path' => ['scheme' => 'https', 'host' => 'example.com', 'path' => 'path'],
             // URL with port
-            'http://example.com:8080/path' => ['scheme' => 'http', 'host' => 'example.com', 'port' => 8080, 'path' => 'path'],
+            'http://example.com:8080/path' => [
+                'scheme' => 'http',
+                'host' => 'example.com',
+                'port' => 8080,
+                'path' => 'path'
+            ],
             // URL with user info
-            'https://user:pass@example.com/path' => ['scheme' => 'https', 'user' => 'user', 'pass' => 'pass', 'host' => 'example.com', 'path' => 'path'],
+            'https://user:pass@example.com/path' => [
+                'scheme' => 'https',
+                'user' => 'user',
+                'pass' => 'pass',
+                'host' => 'example.com',
+                'path' => 'path'
+            ],
             // Complex query string
-            'product?color=red&size=large&in_stock=1' => ['path' => 'product', 'query' => 'color=red&size=large&in_stock=1'],
+            'product?color=red&size=large&in_stock=1' => [
+                'path' => 'product',
+                'query' => 'color=red&size=large&in_stock=1'
+            ],
             // Path with encoded characters
             'category/special%20products' => ['path' => 'category/special%20products'],
             // Multiple slashes in path
