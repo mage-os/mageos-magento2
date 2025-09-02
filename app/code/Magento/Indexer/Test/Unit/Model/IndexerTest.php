@@ -454,12 +454,10 @@ class IndexerTest extends TestCase
     public function testReindexAllWithSharedIndexers()
     {
         $indexId = 'indexer_internal_name';
-
         // Ensure dependencies considered up-to-date so reset flag is true
         $this->dependencyInfoProviderMock
             ->method('getIndexerIdsToRunBefore')
             ->willReturn([]);
-
         // Configure current indexer config to have a shared_index
         $sharedIndex = 'shared_idx';
         $this->configMock
@@ -482,7 +480,6 @@ class IndexerTest extends TestCase
                     default => ['shared_index' => null],
                 };
             });
-
         // Provide available indexers map for getSharedIndexers() iteration
         $this->configMock
             ->method('getIndexers')
@@ -492,7 +489,6 @@ class IndexerTest extends TestCase
                 'indexer_b' => [],
                 'indexer_c' => [],
             ]);
-
         // Prepare shared indexer mocks returned by factory
         $sharedIndexerA = $this->createMock(Indexer::class);
         $sharedViewA = $this->createMock(ViewInterface::class);
@@ -514,7 +510,6 @@ class IndexerTest extends TestCase
             ->expects($this->exactly(2))
             ->method('create')
             ->willReturnOnConsecutiveCalls($sharedIndexerA, $sharedIndexerB);
-
         // Model state expectations
         $this->workingStateProvider->method('isWorking')->willReturnOnConsecutiveCalls(false, true);
         $stateMock = $this->createPartialMock(
@@ -529,12 +524,10 @@ class IndexerTest extends TestCase
         $stateMock->expects($this->any())->method('getStatus')->willReturn('idle');
         $stateMock->expects($this->exactly(3))->method('save')->willReturnSelf();
         $this->stateFactoryMock->expects($this->once())->method('create')->willReturn($stateMock);
-
         // Current indexer view
         $this->viewMock->expects($this->once())->method('isEnabled')->willReturn(true);
         $this->viewMock->expects($this->once())->method('suspend');
         $this->viewMock->expects($this->once())->method('resume');
-
         // Action execution
         $actionMock = $this->createPartialMock(
             ActionInterface::class,
@@ -542,7 +535,6 @@ class IndexerTest extends TestCase
         );
         $this->actionFactoryMock->expects($this->once())->method('create')->with('Some\\Class\\Name')
             ->willReturn($actionMock);
-
         // Prepare model with ID set and required data
         $this->model->setId($indexId);
         $this->model->setData([
