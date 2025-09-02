@@ -9,10 +9,12 @@ namespace Magento\Review\Test\Unit\Block;
 
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Customer\Model\Url;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\DataObject;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\Framework\Url\EncoderInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Review\Block\Form;
@@ -258,7 +260,7 @@ class FormTest extends TestCase
     {
         $expectedUrl = 'https://example.com/customer/account/create/';
 
-        $customerUrl = $this->getMockBuilder(\Magento\Customer\Model\Url::class)
+        $customerUrl = $this->getMockBuilder(Url::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getRegisterUrl'])
             ->getMock();
@@ -290,14 +292,14 @@ class FormTest extends TestCase
                     return $currentUrl;
                 }
                 if ($route === 'customer/account/login/') {
-                    $this->assertArrayHasKey(\Magento\Customer\Model\Url::REFERER_QUERY_PARAM_NAME, $params);
-                    $this->assertSame($encoded, $params[\Magento\Customer\Model\Url::REFERER_QUERY_PARAM_NAME]);
-                    return $loginUrlBase . '?' . \Magento\Customer\Model\Url::REFERER_QUERY_PARAM_NAME . '=' . $encoded;
+                    $this->assertArrayHasKey(Url::REFERER_QUERY_PARAM_NAME, $params);
+                    $this->assertSame($encoded, $params[Url::REFERER_QUERY_PARAM_NAME]);
+                    return $loginUrlBase . '?' . Url::REFERER_QUERY_PARAM_NAME . '=' . $encoded;
                 }
                 return '';
             });
 
-        $urlEncoder = $this->createMock(\Magento\Framework\Url\EncoderInterface::class);
+        $urlEncoder = $this->createMock(EncoderInterface::class);
         $urlEncoder->expects($this->once())
             ->method('encode')
             ->with($currentUrl . '#review-form')
@@ -326,7 +328,7 @@ class FormTest extends TestCase
         $method->setAccessible(true);
         $method->invoke($formBlock);
 
-        $expectedLoginUrl = $loginUrlBase . '?' . \Magento\Customer\Model\Url::REFERER_QUERY_PARAM_NAME . '=' . $encoded;
+        $expectedLoginUrl = $loginUrlBase . '?' . Url::REFERER_QUERY_PARAM_NAME . '=' . $encoded;
         $this->assertSame($expectedLoginUrl, $formBlock->getLoginLink());
     }
 
