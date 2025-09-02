@@ -1,20 +1,23 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
 namespace Magento\Customer\Test\Unit\Model\Address\Validator;
 
+use Magento\Customer\Model\Address;
 use Magento\Customer\Model\Address\AbstractAddress;
 use Magento\Customer\Model\Address\Validator\General;
 use Magento\Directory\Helper\Data;
 use Magento\Eav\Model\Config;
 use Magento\Eav\Model\Entity\Attribute;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Customer\Model\AddressFactory;
+use Magento\Framework\Validator\Factory as ValidatorFactory;
+use Magento\Framework\Validator\ValidatorInterface;
 
 /**
  * Magento\Customer\Model\Address\Validator\General tests.
@@ -30,20 +33,37 @@ class GeneralTest extends TestCase
     /** @var General  */
     private $model;
 
-    /** @var ObjectManager */
-    private $objectManager;
+    /**
+     * @var ValidatorFactory|MockObject
+     */
+    protected $validatorFactoryMock;
+
+    /**
+     * @var AddressFactory|MockObject
+     */
+    protected $addressFactoryMock;
 
     protected function setUp(): void
     {
+        $this->validatorFactoryMock = $this->createMock(ValidatorFactory::class);
+        $this->addressFactoryMock = $this->createMock(AddressFactory::class);
+        $customerAddressMock = $this->createMock(Address::class);
+        $this->addressFactoryMock->expects($this->once())
+            ->method('create')
+            ->willReturn($customerAddressMock);
+        $validatorMock = $this->createMock(ValidatorInterface::class);
+        $this->validatorFactoryMock->expects($this->once())
+            ->method('createValidator')
+            ->with('customer_address', 'save')
+            ->willReturn($validatorMock);
+        $validatorMock->expects($this->once())->method('isValid')->willReturn(true);
         $this->directoryDataMock = $this->createMock(Data::class);
         $this->eavConfigMock = $this->createMock(Config::class);
-        $this->objectManager = new ObjectManager($this);
-        $this->model = $this->objectManager->getObject(
-            General::class,
-            [
-                'eavConfig' => $this->eavConfigMock,
-                'directoryData' => $this->directoryDataMock,
-            ]
+        $this->model = new General(
+            $this->eavConfigMock,
+            $this->directoryDataMock,
+            $this->validatorFactoryMock,
+            $this->addressFactoryMock
         );
     }
 
@@ -72,7 +92,8 @@ class GeneralTest extends TestCase
                 ]
             )->onlyMethods(
                 [
-                    'getStreetLine'
+                    'getStreetLine',
+                    'getRegionId'
                 ]
             )->getMock();
 
@@ -98,6 +119,7 @@ class GeneralTest extends TestCase
         $addressMock->method('getCompany')->willReturn($data['company']);
         $addressMock->method('getPostcode')->willReturn($data['postcode']);
         $addressMock->method('getCountryId')->willReturn($data['country_id']);
+        $addressMock->method('getRegionId')->willReturn($data['region_id']);
 
         $actual = $this->model->validate($addressMock);
         $this->assertEquals($expected, $actual);
@@ -119,6 +141,7 @@ class GeneralTest extends TestCase
             'postcode' => 07201,
             'company' => 'Magento',
             'fax' => '222-22-22',
+            'region_id' => 43,
         ];
         $result = [
             'firstname' => [
