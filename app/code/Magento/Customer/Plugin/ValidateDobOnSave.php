@@ -13,6 +13,7 @@ use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Eav\Model\Config as EavConfig;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
+use Magento\Framework\Stdlib\DateTime;
 
 class ValidateDobOnSave
 {
@@ -86,13 +87,19 @@ class ValidateDobOnSave
             $minDate = $this->parseDate($min);
             $maxDate = $this->parseDate($max);
 
-            $dobKey = $dobDate->format('Y-m-d');
+            $dobKey = $dobDate->format(DateTime::DATE_PHP_FORMAT);
 
-            if ($minDate && $dobKey < $minDate->format('Y-m-d')) {
-                throw new InputException(__('Date of Birth must be on or after %1.', $minDate->format('Y-m-d')));
+            if ($minDate && $dobKey < $minDate->format(DateTime::DATE_PHP_FORMAT)) {
+                throw new InputException(__(
+                    'Date of Birth must be on or after %1.',
+                    $minDate->format(DateTime::DATE_PHP_FORMAT)
+                ));
             }
-            if ($maxDate && $dobKey > $maxDate->format('Y-m-d')) {
-                throw new InputException(__('Date of Birth must be on or before %1.', $maxDate->format('Y-m-d')));
+            if ($maxDate && $dobKey > $maxDate->format(DateTime::DATE_PHP_FORMAT)) {
+                throw new InputException(__(
+                    'Date of Birth must be on or before %1.',
+                    $maxDate->format(DateTime::DATE_PHP_FORMAT)
+                ));
             }
         }
 
