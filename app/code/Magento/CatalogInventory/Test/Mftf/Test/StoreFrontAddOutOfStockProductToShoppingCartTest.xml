@@ -58,6 +58,10 @@
         </actionGroup>
         <!-- Save Product-->
         <actionGroup ref="SaveProductFormActionGroup" stepKey="clicksaveProduct"/>
+        <!-- Run indexer after product status change -->
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindexBrokenIndices">
+            <argument name="indices" value=""/>
+        </actionGroup>
         <!-- Switch to Previous tab and Check Error message Product that you are trying to add is not available -->
         <switchToPreviousTab stepKey="switchToPreviousTab"/>
         <!-- Mouse Hover Product On Category Page-->
