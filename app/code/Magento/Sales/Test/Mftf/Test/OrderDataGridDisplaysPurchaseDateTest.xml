@@ -124,7 +124,7 @@
         <!-- Click Place Order button -->
         <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="clickPlaceOrder"/>
         <!-- capture date at time of Placing Order -->
-        <generateDate date="now" format="M j, Y" timezone="America/Adak" stepKey="generateDateAtFirstOrderTime"/>
+        <generateDate date="now" format="M j, Y" stepKey="generateDateAtFirstOrderTime"/>
         <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="grabFirstOrderNumber"/>
         <amOnPage url="{{AdminDashboardPage.url}}" stepKey="amOnDashboardPage"/>
         <waitForPageLoad stepKey="waitForDashboardPageLoad"/>
@@ -159,7 +159,7 @@
         <wait time="75" stepKey="waitBeforePlaceOrder"/>
         <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="clickPlaceOrderSecondTime"/>
         <!-- capture date at time of Placing Order -->
-        <generateDate date="now" format="M j, Y" timezone="Asia/Taipei" stepKey="generateDateAtSecondOrderTime"/>
+        <generateDate date="now" format="M j, Y" stepKey="generateDateAtSecondOrderTime"/>
         <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="grabSecondOrderNumber"/>
         <!-- Go to admin and check order status -->
         <actionGroup ref="AdminOrdersPageOpenActionGroup" stepKey="navigateToSalesOrderPage"/>
