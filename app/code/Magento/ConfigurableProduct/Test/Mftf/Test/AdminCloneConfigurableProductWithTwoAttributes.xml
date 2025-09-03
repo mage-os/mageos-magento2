@@ -255,10 +255,6 @@
         <click selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="clickGenerateProducts"/>
         <waitForPageLoad stepKey="waitForProductsGeneration"/>
         <!-- Step 10: Click on Save button -->
-        <waitForElementClickable selector="{{AdminProductFormActionSection.saveButton}}" stepKey="waitForSaveButton"/>
-        <click selector="{{AdminProductFormActionSection.saveButton}}" stepKey="saveConfigurableProduct"/>
-        <waitForPageLoad stepKey="waitForProductSave"/>
-        <see selector="{{AdminProductMessagesSection.successMessage}}" userInput="You saved the product."
-             stepKey="seeSuccessMessage"/>
+        <actionGroup ref="SaveProductFormActionGroup" stepKey="saveConfigurableProduct"/>
     </test>
 </tests>
