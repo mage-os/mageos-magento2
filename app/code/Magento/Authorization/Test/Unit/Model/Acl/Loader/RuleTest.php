@@ -167,7 +167,7 @@ class RuleTest extends TestCase
         // Expect the role-specific cache key to be read
         $this->aclDataCacheMock->expects($this->once())
             ->method('load')
-            ->with(Rule::ACL_RULE_CACHE_KEY . '_' . $roleId)
+            ->with(hash('sha256', Rule::ACL_RULE_CACHE_KEY . '_' . $roleId))
             ->willReturn(json_encode($rules));
 
         // ACL expectations: allow for root, then for specific resource

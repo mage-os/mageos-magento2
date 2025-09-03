@@ -224,7 +224,7 @@ class Rule implements LoaderInterface
     private function getRulesArrayForRole(int $roleId): array
     {
         $groupRoleId = $this->resolveGroupRoleId($roleId);
-        $cacheKey = self::ACL_RULE_CACHE_KEY . '_' . $groupRoleId;
+        $cacheKey = hash('sha256', self::ACL_RULE_CACHE_KEY . '_' . $groupRoleId);
         $rulesCachedData = $this->aclDataCache->load($cacheKey);
         if ($rulesCachedData) {
             return $this->serializer->unserialize($rulesCachedData);

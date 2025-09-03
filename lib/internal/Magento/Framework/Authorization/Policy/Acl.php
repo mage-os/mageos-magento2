@@ -47,6 +47,9 @@ class Acl implements PolicyInterface
      */
     public function isAllowed($roleId, $resourceId, $privilege = null)
     {
+        if ($roleId === null || $roleId === '') { //no user is logged in
+            return false;
+        }
         try {
             $this->roleContext->setRoleId((int) $roleId);
             return $this->_aclBuilder->getAcl()->isAllowed($roleId, $resourceId, $privilege);
