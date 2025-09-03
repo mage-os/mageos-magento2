@@ -61,8 +61,12 @@
         <actionGroup ref="ReloadPageActionGroup" stepKey="reloadPage3"/>
         <!-- Step 3: Open Cart Sidebar and verify initial values -->
         <actionGroup ref="StorefrontClickOnMiniCartActionGroup" stepKey="openMiniCart"/>
-        <waitForElementVisible selector="{{StorefrontMinicartSection.productLinkByName($createSimpleProduct.name$)}}" stepKey="verifyAppleProductInMiniCart"/>
-        <waitForText userInput="$10.00" selector="{{StorefrontMinicartSection.productPriceByName($createSimpleProduct.name$)}}" stepKey="verifyInitialProductPrice"/>
+        <actionGroup ref="AssertStorefrontMiniCartItemsActionGroup" stepKey="verifyInitialProductInMiniCart">
+            <argument name="productName" value="$createSimpleProduct.name$"/>
+            <argument name="productPrice" value="$10.00"/>
+            <argument name="cartSubtotal" value="$10.00"/>
+            <argument name="qty" value="1"/>
+        </actionGroup>
         <actionGroup ref="StorefrontClickOnMiniCartActionGroup" stepKey="closeMiniCart"/>
         <!-- Step 4: Open new tab for Admin and change product details -->
         <openNewTab stepKey="openAdminTab"/>
@@ -70,8 +74,12 @@
             <argument name="productId" value="$createSimpleProduct.id$"/>
         </actionGroup>
         <!-- Change product name and price -->
-        <fillField selector="{{AdminProductFormSection.productName}}" userInput="Apple-X" stepKey="changeProductName"/>
-        <fillField selector="{{AdminProductFormSection.productPrice}}" userInput="20" stepKey="changeProductPrice"/>
+        <actionGroup ref="AdminFillProductNameOnProductFormActionGroup" stepKey="changeProductName">
+            <argument name="productName" value="Apple-X"/>
+        </actionGroup>
+        <actionGroup ref="AdminFillProductPriceFieldAndPressEnterOnProductEditPageActionGroup" stepKey="changeProductPrice">
+            <argument name="price" value="20"/>
+        </actionGroup>
         <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProduct"/>
         <!-- Step 5: Return to storefront, reload page and verify cached values -->
         <switchToPreviousTab stepKey="switchToStorefrontTab"/>
@@ -81,8 +89,12 @@
         </actionGroup>
         <actionGroup ref="ReloadPageActionGroup" stepKey="reloadProductPageAfterFirstAdminChange"/>
         <actionGroup ref="StorefrontClickOnMiniCartActionGroup" stepKey="openMiniCartAfterProductChange"/>
-        <waitForElementVisible selector="{{StorefrontMinicartSection.productLinkByName($createSimpleProduct.name$)}}" stepKey="verifyAppleProductInMiniCartAfterChange"/>
-        <waitForText userInput="$10.00" selector="{{StorefrontMinicartSection.productPriceByName($createSimpleProduct.name$)}}" stepKey="verifyCachedProductPrice"/>
+        <actionGroup ref="AssertStorefrontMiniCartItemsActionGroup" stepKey="verifyCachedProductInMiniCart">
+            <argument name="productName" value="$createSimpleProduct.name$"/>
+            <argument name="productPrice" value="$10.00"/>
+            <argument name="cartSubtotal" value="$10.00"/>
+            <argument name="qty" value="1"/>
+        </actionGroup>
         <actionGroup ref="StorefrontClickOnMiniCartActionGroup" stepKey="closeMiniCartAfterProductChange"/>
         <!-- Step 6: Logout and login again to invalidate cache -->
         <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutCustomer"/>
@@ -91,8 +103,12 @@
         </actionGroup>
         <!-- Step 7: Verify cart shows updated values after login -->
         <actionGroup ref="StorefrontClickOnMiniCartActionGroup" stepKey="openMiniCartAfterLogin"/>
-        <waitForElementVisible selector="{{StorefrontMinicartSection.productLinkByName('Apple-X')}}" stepKey="verifyAppleProductInMiniCartAfterLogin"/>
-        <waitForText userInput="$20.00" selector="{{StorefrontMinicartSection.productPriceByName($createSimpleProduct.name$)}}" stepKey="verifyUpdatedProductPriceAfterLogin"/>
+        <actionGroup ref="AssertStorefrontMiniCartItemsActionGroup" stepKey="verifyUpdatedProductInMiniCartAfterLogin">
+            <argument name="productName" value="Apple-X"/>
+            <argument name="productPrice" value="$20.00"/>
+            <argument name="cartSubtotal" value="$20.00"/>
+            <argument name="qty" value="1"/>
+        </actionGroup>
         <actionGroup ref="StorefrontClickOnMiniCartActionGroup" stepKey="closeMiniCartAfterLogin"/>
         <!-- Step 8: Reload page several times to ensure caching -->
         <actionGroup ref="ReloadPageActionGroup" stepKey="reloadPageAfterLogin1"/>
@@ -103,8 +119,12 @@
             <argument name="productId" value="$createSimpleProduct.id$"/>
         </actionGroup>
         <!-- Change product name and price again -->
-        <fillField selector="{{AdminProductFormSection.productName}}" userInput="Apple-X-Y" stepKey="changeProductNameAgain"/>
-        <fillField selector="{{AdminProductFormSection.productPrice}}" userInput="30" stepKey="changeProductPriceAgain"/>
+        <actionGroup ref="AdminFillProductNameOnProductFormActionGroup" stepKey="changeProductNameAgain">
+            <argument name="productName" value="Apple-X-Y"/>
+        </actionGroup>
+        <actionGroup ref="AdminFillProductPriceFieldAndPressEnterOnProductEditPageActionGroup" stepKey="changeProductPriceAgain">
+            <argument name="price" value="30"/>
+        </actionGroup>
         <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProductAgain"/>
         <!-- Step 10: Return to storefront and verify cached values -->
         <switchToPreviousTab stepKey="switchToStorefrontTabAgain"/>
@@ -113,16 +133,24 @@
         </actionGroup>
         <actionGroup ref="ReloadPageActionGroup" stepKey="reloadProductPageAfterSecondAdminChange"/>
         <actionGroup ref="StorefrontClickOnMiniCartActionGroup" stepKey="openMiniCartAfterSecondChange"/>
-        <waitForElementVisible selector="{{StorefrontMinicartSection.productLinkByName('Apple-X')}}" stepKey="verifyAppleProductInMiniCartAfterSecondChange"/>
-        <waitForText userInput="$20.00" selector="{{StorefrontMinicartSection.productPriceByName('Apple-X')}}" stepKey="verifyCachedProductPriceAfterSecondChange"/>
+        <actionGroup ref="AssertStorefrontMiniCartItemsActionGroup" stepKey="verifyCachedProductAfterSecondChange">
+            <argument name="productName" value="Apple-X"/>
+            <argument name="productPrice" value="$20.00"/>
+            <argument name="cartSubtotal" value="$20.00"/>
+            <argument name="qty" value="1"/>
+        </actionGroup>
         <actionGroup ref="StorefrontClickOnMiniCartActionGroup" stepKey="closeMiniCartAfterSecondChange"/>
         <!-- Step 11: Wait for Customer Data Lifetime to expire (6 minutes) -->
         <wait time="120" stepKey="waitForCustomerDataLifetimeExpiration"/>
         <!-- Step 12: Reload page and verify updated values -->
         <actionGroup ref="ReloadPageActionGroup" stepKey="reloadPageAfterWait"/>
         <actionGroup ref="StorefrontClickOnMiniCartActionGroup" stepKey="openMiniCartAfterWait"/>
-        <waitForElementVisible selector="{{StorefrontMinicartSection.productLinkByName('Apple-X-Y')}}" stepKey="verifyAppleProductInMiniCartAfterWait"/>
-        <waitForText userInput="$30.00" selector="{{StorefrontMinicartSection.productPriceByName('Apple-X-Y')}}" stepKey="verifyUpdatedProductPriceAfterWait"/>
+        <actionGroup ref="AssertStorefrontMiniCartItemsActionGroup" stepKey="verifyFinalUpdatedProductInMiniCart">
+            <argument name="productName" value="Apple-X-Y"/>
+            <argument name="productPrice" value="$30.00"/>
+            <argument name="cartSubtotal" value="$30.00"/>
+            <argument name="qty" value="1"/>
+        </actionGroup>
         <actionGroup ref="StorefrontClickOnMiniCartActionGroup" stepKey="closeCartSidebarFinal"/>
     </test>
 </tests>
