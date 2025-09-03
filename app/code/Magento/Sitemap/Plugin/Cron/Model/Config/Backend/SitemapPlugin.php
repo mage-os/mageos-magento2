@@ -53,22 +53,39 @@ class SitemapPlugin
         Sitemap $subject,
         mixed $result
     ) {
-        $time = $subject->getData('groups/generate/fields/time/value') ?:
-            explode(
-                ',',
-                $subject->getConfig()->getValue(
-                    'sitemap/generate/time',
-                    $subject->getScope(),
-                    $subject->getScopeId()
-                ) ?: '0,0,0'
+        $config = $subject->getConfig();
+
+        $time = $subject->getData('groups/generate/fields/time/value');
+        if (!$time && $config) {
+            $timeConfig = $config->getValue(
+                'sitemap/generate/time',
+                $subject->getScope(),
+                $subject->getScopeId()
             );
+            $time = $timeConfig ? explode(',', $timeConfig) : ['0', '0', '0'];
+        }
+
         $frequency = $subject->getValue();
-        $generationMethod = $subject->getData('groups/generate/fields/generation_method/value') ?:
-            $subject->getConfig()->getValue(
+
+        $generationMethod = $subject->getData('groups/generate/fields/generation_method/value');
+
+        if (!$generationMethod && $config) {
+            $generationMethod = $config->getValue(
                 'sitemap/generate/generation_method',
                 $subject->getScope(),
                 $subject->getScopeId()
-            ) ?: GenerationMethod::STANDARD;
+            );
+        } elseif (!$generationMethod && !$config) {
+            $configValue = $this->configValueFactory->create()->load(
+                'sitemap/generate/generation_method',
+                'path'
+            );
+            if ($configValue->getId()) {
+                $generationMethod = $configValue->getValue();
+            }
+        }
+
+        $generationMethod = $generationMethod ?: GenerationMethod::STANDARD;
 
         $cronExprArray = [
             (int)($time[1] ?? 0), //Minute
@@ -94,7 +111,6 @@ class SitemapPlugin
             throw new LocalizedException(__('We can\'t save the cron expression.'));
         }
 
-        // Return the original result from the afterSave method
         return $result;
     }
 
