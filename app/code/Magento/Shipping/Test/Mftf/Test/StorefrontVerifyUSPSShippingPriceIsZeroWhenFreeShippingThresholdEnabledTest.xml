@@ -45,13 +45,13 @@
             <argument name="productUrlKey" value="$createProduct.custom_attributes[url_key]$"/>
         </actionGroup>
         <actionGroup ref="StorefrontAddProductToCartActionGroup" stepKey="addProductToCart">
-            <argument name="product" value="$createProduct$" />
-            <argument name="productCount" value="1" />
+            <argument name="product" value="$createProduct$"/>
+            <argument name="productCount" value="1"/>
         </actionGroup>
         <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMiniCart"/>
         <actionGroup ref="GuestCheckoutFillNewShippingAddressActionGroup" stepKey="guestCheckoutFillingShippingSection">
-            <argument name="customer" value="CustomerEntityOne" />
-            <argument name="address" value="CustomerAddressSimple" />
+            <argument name="customer" value="CustomerEntityOne"/>
+            <argument name="address" value="CustomerAddressSimple"/>
         </actionGroup>
         <waitForPageLoad stepKey="waitForShippingPageToLoadShippingMethods"/>
         <!-- Step 8:Select USPS Shipping method which is configured with free shipping -->
