@@ -27,7 +27,7 @@
             </createData>
             <createData entity="Simple_US_Customer_CA" stepKey="simpleCustomer"/>
             <!-- Step 1&2: Disable payment method one of "Check/Money Order" and  "Zero Subtotal Checkout" -->
-            <actionGroup ref="CliDisableCheckMoneyOrderPaymentMethodActionGroup" stepKey="disabledCheckMoneyOrderValue"/>
+            <magentoCLI command="config:set payment/checkmo/active 0" stepKey="disabledCheckMoneyOrderValue"/>
             <magentoCLI command="config:set {{DisableZeroSubtotalCheckoutConfigData.path}} {{DisableZeroSubtotalCheckoutConfigData.value}}" stepKey="disabledZeroSubtotalCheckoutOrderValue"/>
             <!-- Step 3: Enable CashOnDelivery  -->
             <createData entity="CashOnDeliveryPaymentMethodDefault" stepKey="enableCashOnDeliveryPaymentMethod"/>
