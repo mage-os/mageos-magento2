@@ -67,7 +67,7 @@ class ConfigModel
         /** @var AbstractConfigOption[] $optionCollection */
         $optionCollection = [];
         $optionLists = $this->collector->collectOptionsLists();
-
+        $errors = [];
         foreach ($optionLists as $optionList) {
             $optionCollection[] = $optionList->getOptions();
         }
@@ -77,7 +77,11 @@ class ConfigModel
         foreach ($optionCollection as $option) {
             $currentValue = $this->deploymentConfig->get($option->getConfigPath());
             if ($currentValue !== null && $option->acceptValue()) {
-                $option->setDefault($currentValue);
+                try {
+                    $option->setDefault($currentValue);
+                } catch (\Throwable $e) {
+                    $errors[] = [$e->getMessage()];
+                }
             }
         }
 
