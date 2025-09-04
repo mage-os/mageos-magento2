@@ -8,7 +8,9 @@ namespace Magento\Checkout\Model;
 use Magento\Checkout\Api\Data\ShippingInformationInterface;
 use Magento\Customer\Model\AddressFactory;
 use Magento\Framework\Exception\InputException;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Validator\Factory as ValidatorFactory;
+use Magento\Quote\Api\Data\AddressInterface;
 
 class GuestShippingInformationManagement implements \Magento\Checkout\Api\GuestShippingInformationManagementInterface
 {
@@ -53,18 +55,24 @@ class GuestShippingInformationManagement implements \Magento\Checkout\Api\GuestS
 
     /**
      * @inheritDoc
+     * @throws InputException
      */
     public function saveAddressInformation(
         $cartId,
         ShippingInformationInterface $addressInformation
     ) {
         $shippingAddress = $addressInformation->getShippingAddress();
+        $extensionAttributes = null;
         if ($shippingAddress) {
-            $this->validateAddressAttributes($shippingAddress);
+            $extensionAttributes = $shippingAddress->getExtensionAttributes();
+            $this->validateAddressAttributes($shippingAddress, 'shipping');
         }
         $billingAddress = $addressInformation->getBillingAddress();
         if ($billingAddress) {
-            $this->validateAddressAttributes($billingAddress);
+            if ($extensionAttributes && empty($billingAddress->getExtensionAttributes()->__toArray())) {
+                $billingAddress->setExtensionAttributes($extensionAttributes);
+            }
+            $this->validateAddressAttributes($billingAddress, 'billing');
         }
 
         /** @var $quoteIdMask \Magento\Quote\Model\QuoteIdMask */
@@ -76,13 +84,14 @@ class GuestShippingInformationManagement implements \Magento\Checkout\Api\GuestS
     }
 
     /**
-     * Validate address attributes using customer_address validator
+     * Validate address attributes using customer_address validator with custom attributes
      *
-     * @param \Magento\Quote\Api\Data\AddressInterface $address
+     * @param AddressInterface $address
+     * @param string $addressType
      * @return void
      * @throws InputException
      */
-    private function validateAddressAttributes($address): void
+    private function validateAddressAttributes(AddressInterface $address, string $addressType): void
     {
         try {
             $customerAddress = $this->addressFactory->create();
@@ -98,8 +107,18 @@ class GuestShippingInformationManagement implements \Magento\Checkout\Api\GuestS
                 'country_id' => $address->getCountryId(),
                 'telephone' => $address->getTelephone(),
                 'company' => $address->getCompany(),
-                'email' => $address->getEmail()
+                'email' => $address->getEmail(),
+                'address_type' => $addressType
             ]);
+            $extensionAttributes = $address->getExtensionAttributes();
+            if ($extensionAttributes) {
+                $extensionAttributesData = $extensionAttributes->__toArray();
+                foreach ($extensionAttributesData as $attributeCode => $value) {
+                    if ($value !== null && $value !== '') {
+                        $customerAddress->setData($attributeCode, $value);
+                    }
+                }
+            }
             $validator = $this->validatorFactory->createValidator('customer_address', 'save');
             if (!$validator->isValid($customerAddress)) {
                 $errorMessages = [];
@@ -114,10 +133,14 @@ class GuestShippingInformationManagement implements \Magento\Checkout\Api\GuestS
                     }
                 }
                 throw new InputException(
-                    __('The address contains invalid data: %1', implode(', ', $errorMessages))
+                    __(
+                        'The %1 address contains invalid data: %2',
+                        $addressType,
+                        implode(', ', $errorMessages)
+                    )
                 );
             }
-        } catch (\Magento\Framework\Exception\LocalizedException $e) {
+        } catch (LocalizedException $e) {
             throw new InputException(__($e->getMessage()));
         }
     }

@@ -193,4 +193,4 @@ Changes you made to the cart will not be saved.,Changes you made to the cart wil
 Leave,Leave
 Cancel,Cancel
 VAT,VAT
-"The address contains invalid data: %1", "The address contains invalid data: %1"
+"The %1 address contains invalid data: %2", "The %1 address contains invalid data: %2"

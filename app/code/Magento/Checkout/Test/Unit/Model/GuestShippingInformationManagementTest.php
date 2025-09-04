@@ -83,6 +83,12 @@ class GuestShippingInformationManagementTest extends TestCase
         $addressInformationMock->expects($this->once())
             ->method('getBillingAddress')
             ->willReturn($billingAddressMock);
+        $shippingAddressMock->expects($this->exactly(2))
+            ->method('getExtensionAttributes')
+            ->willReturn(null);
+        $billingAddressMock->expects($this->once())
+            ->method('getExtensionAttributes')
+            ->willReturn(null);
         $customerAddressMock = $this->createMock(\Magento\Customer\Model\Address::class);
         $this->addressFactoryMock->expects($this->exactly(2))
             ->method('create')
@@ -93,17 +99,17 @@ class GuestShippingInformationManagementTest extends TestCase
             ->with('customer_address', 'save')
             ->willReturn($validatorMock);
         $validatorMock->expects($this->exactly(2))->method('isValid')->willReturn(true);
-
         $quoteIdMaskMock = $this->getMockBuilder(QuoteIdMask::class)
             ->addMethods(['getQuoteId'])
             ->onlyMethods(['load'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->quoteIdMaskFactoryMock->expects($this->once())->method('create')->willReturn($quoteIdMaskMock);
-
-        $quoteIdMaskMock->expects($this->once())->method('load')->with($cartId, 'masked_id')->willReturnSelf();
+        $quoteIdMaskMock->expects($this->once())
+            ->method('load')
+            ->with($cartId, 'masked_id')
+            ->willReturnSelf();
         $quoteIdMaskMock->expects($this->once())->method('getQuoteId')->willReturn($quoteId);
-
         $paymentInformationMock = $this->getMockForAbstractClass(PaymentDetailsInterface::class);
         $this->shippingInformationManagementMock->expects($this->once())
             ->method('saveAddressInformation')
@@ -112,7 +118,6 @@ class GuestShippingInformationManagementTest extends TestCase
                 $addressInformationMock
             )
             ->willReturn($paymentInformationMock);
-
         $this->model->saveAddressInformation($cartId, $addressInformationMock);
     }
 
@@ -132,6 +137,7 @@ class GuestShippingInformationManagementTest extends TestCase
             ->willReturn($shippingAddressMock);
         $addressInformationMock->expects($this->never())
             ->method('getBillingAddress');
+        $shippingAddressMock->method('getExtensionAttributes')->willReturn(null);
         $customerAddressMock = $this->createMock(\Magento\Customer\Model\Address::class);
         $this->addressFactoryMock->expects($this->once())->method('create')->willReturn($customerAddressMock);
         $validatorMock = $this->createMock(ValidatorInterface::class);
@@ -145,7 +151,7 @@ class GuestShippingInformationManagementTest extends TestCase
             ->willReturn(['First Name is not valid!', 'Last Name is not valid!']);
         $this->expectException(InputException::class);
         $this->expectExceptionMessage(
-            'The address contains invalid data: First Name is not valid!, Last Name is not valid!'
+            'The shipping address contains invalid data: First Name is not valid!, Last Name is not valid!'
         );
         $this->model->saveAddressInformation($cartId, $addressInformationMock);
     }
