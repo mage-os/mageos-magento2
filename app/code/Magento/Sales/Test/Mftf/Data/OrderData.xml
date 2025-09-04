@@ -45,4 +45,7 @@
         <data key="processing">Processing</data>
         <data key="ordered">Ordered</data>
     </entity>
+    <entity name="AdminPaymentErrorMessage" type="message">
+        <data key="error_Message">This payment method is not available.</data>
+    </entity>
 </entities>
