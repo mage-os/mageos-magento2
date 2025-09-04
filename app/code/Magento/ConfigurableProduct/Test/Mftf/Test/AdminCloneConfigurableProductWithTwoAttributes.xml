@@ -49,13 +49,7 @@
             <actionGroup ref="AdminAddSwatchOptionAndFillFieldsActionGroup" stepKey="addYellowSwatchOption">
                 <argument name="swatchOption" value="Yellow"/>
             </actionGroup>
-            <waitForElementVisible selector="{{AdminCreateNewProductAttributeSection.saveAttribute}}"
-                                   stepKey="waitForColorSaveButton"/>
-            <click selector="{{AdminCreateNewProductAttributeSection.saveAttribute}}"
-                   stepKey="clickOnColorSaveAttribute"/>
-            <waitForPageLoad stepKey="waitForColorAttributeToSave"/>
-            <waitForElement selector="{{AdminProductMessagesSection.successMessage}}"
-                            stepKey="seeColorSaveProductMessage"/>
+            <actionGroup ref="SaveProductAttributeActionGroup" stepKey="saveColorAttribute"/>
             <actionGroup ref="AdminOpenProductAttributePageActionGroup" stepKey="navigateToProductAttributeGrid1"/>
             <actionGroup ref="FillProductAttributeFieldsActionGroup" stepKey="fillSizeAttributeFields">
                 <argument name="attributeLabel" value="{{sizeProductAttributeWithOptions.default_label}}"/>
@@ -113,13 +107,7 @@
                 <argument name="swatchName" value="{{sizeProductAttributeWithOptions.option6}}"/>
                 <argument name="swatchDescription" value="{{sizeProductAttributeWithOptions.option6}}"/>
             </actionGroup>
-            <waitForElementVisible selector="{{AdminCreateNewProductAttributeSection.saveAttribute}}"
-                                   stepKey="waitForSizeSaveButton"/>
-            <click selector="{{AdminCreateNewProductAttributeSection.saveAttribute}}"
-                   stepKey="clickOnSizeSaveAttribute"/>
-            <waitForPageLoad stepKey="waitForSizeAttributeToSave"/>
-            <waitForElement selector="{{AdminProductMessagesSection.successMessage}}"
-                            stepKey="seeSizeSaveProductMessage"/>
+            <actionGroup ref="SaveProductAttributeActionGroup" stepKey="saveSizeAttribute"/>
             <actionGroup ref="AdminOpenAttributeSetGridPageActionGroup" stepKey="openAttributeSetPage"/>
             <actionGroup ref="AdminOpenAttributeSetByNameActionGroup" stepKey="openAttributeSetForColor">
                 <argument name="attributeSetName" value="Default"/>
@@ -183,14 +171,13 @@
         <actionGroup ref="FilterProductGridBySkuActionGroup" stepKey="searchForConfigurableProduct">
             <argument name="product" value="ApiConfigurableProduct"/>
         </actionGroup>
-        <click selector="{{AdminProductGridFilterSection.filters}}" stepKey="clickShowFilters"/>
-        <selectOption selector="{{AdminProductGridFilterSection.typeFilter}}"
-                      userInput="{{ApiConfigurableProduct.type_id}}" stepKey="selectConfigurableType"/>
-        <click selector="{{AdminProductGridFilterSection.applyFilters}}" stepKey="clickApplyFilters"/>
+        <actionGroup ref="FilterProductGridBySkuActionGroup" stepKey="seeConfigurableProductInGrid">
+            <argument name="product" value="ApiConfigurableProduct"/>
+        </actionGroup>
         <!-- Step 3: Open product and Save & Duplicate -->
-        <click selector="{{AdminProductGridSection.productGridNameProduct(ApiConfigurableProduct.name)}}"
-               stepKey="openConfigurableProductForEdit"/>
-        <waitForPageLoad stepKey="waitForProductEditPageLoad"/>
+        <actionGroup ref="NavigateToCreatedProductEditPageActionGroup" stepKey="openConfigurableProductForEdit">
+            <argument name="product" value="ApiConfigurableProduct"/>
+        </actionGroup>
         <actionGroup ref="AdminFormSaveAndDuplicateActionGroup" stepKey="saveAndDuplicateProduct"/>
         <!-- Step 4: Enable the product, set stock status to In Stock, and click Edit Configurations -->
         <waitForPageLoad stepKey="waitForProductEditPageLoadAfterDuplicateProduct"/>
@@ -201,58 +188,14 @@
         <click selector="{{AdminProductFormConfigurationsSection.createConfigurations}}"
                stepKey="clickEditConfigurations"/>
         <waitForPageLoad stepKey="waitForConfigurationsPageLoad"/>
-        <!-- Step 4: Skip Color and Size check box (since its already selected) and click on next -->
-        <waitForElementVisible selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="waitForNext"/>
-        <click selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="clickNextToSelectOptions"/>
-        <!-- Step 5: Select All options -->
-        <waitForElementVisible
-            selector="{{AdminCreateProductConfigurationsPanel.selectAllByAttribute(colorProductVisualAttributeWithOptions.default_label)}}"
-            stepKey="waitForSelectAllColor"/>
-        <click
-            selector="{{AdminCreateProductConfigurationsPanel.selectAllByAttribute(colorProductVisualAttributeWithOptions.default_label)}}"
-            stepKey="selectAllSwatchAttributeOptionsForColor"/>
-        <waitForElementVisible
-            selector="{{AdminCreateProductConfigurationsPanel.selectAllByAttribute(sizeProductAttributeWithOptions.default_label)}}"
-            stepKey="waitForSelectAllSize"/>
-        <click
-            selector="{{AdminCreateProductConfigurationsPanel.selectAllByAttribute(sizeProductAttributeWithOptions.default_label)}}"
-            stepKey="selectAllSwatchAttributeOptionsForSize"/>
-        <!-- Step 7: Next -->
-        <waitForElementClickable selector="{{AdminCreateProductConfigurationsPanel.next}}"
-                                 stepKey="waitForNextButton1"/>
-        <click selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="clickNextAfterSelectingOptions"/>
-        <!-- Step 8: Add images , price and quantity and click on next -->
-        <waitForPageLoad stepKey="waitForImagesPage"/>
-        <click selector="{{AdminCreateProductConfigurationsPanel.applySingleSetOfImages}}"
-               stepKey="clickApplySingleSetOfImages"/>
-        <waitForElementVisible selector="{{AdminCreateProductConfigurationsPanel.imageUploadButton}}"
-                               stepKey="waitForImageUploadSection"/>
-        <attachFile selector="{{AdminCreateProductConfigurationsPanel.imageFileUpload}}" userInput="magento-logo.png"
-                    stepKey="uploadImageForAllConfigurations"/>
-        <waitForElementNotVisible selector="{{AdminCreateProductConfigurationsPanel.uploadProgressBar}}"
-                                  stepKey="waitForImageUpload"/>
-        <waitForElementVisible selector="{{AdminCreateProductConfigurationsPanel.imageFile('magento-logo')}}"
-                               stepKey="waitForImageThumbnail"/>
-        <waitForElementClickable selector="{{AdminCreateProductConfigurationsPanel.applySinglePriceToAllSkus}}"
-                                 stepKey="waitForPriceRadio"/>
-        <click selector="{{AdminCreateProductConfigurationsPanel.applySinglePriceToAllSkus}}"
-               stepKey="selectSinglePrice"/>
-        <fillField selector="{{AdminCreateProductConfigurationsPanel.singlePrice}}" userInput="100"
-                   stepKey="enterPrice"/>
-        <waitForElementClickable selector="{{AdminCreateProductConfigurationsPanel.applySingleQuantityToEachSkus}}"
-                                 stepKey="waitForQuantityRadio"/>
-        <click selector="{{AdminCreateProductConfigurationsPanel.applySingleQuantityToEachSkus}}"
-               stepKey="selectSingleQuantity"/>
-        <fillField selector="{{AdminCreateProductConfigurationsPanel.quantity}}" userInput="99"
-                   stepKey="enterQuantity"/>
-        <waitForElementClickable selector="{{AdminCreateProductConfigurationsPanel.next}}"
-                                 stepKey="waitForNextButton2"/>
-        <click selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="clickNextAfterPriceQuantity"/>
-        <!-- Step 9: Click on Generate -->
-        <waitForPageLoad stepKey="waitForSummaryPage"/>
-        <waitForElementClickable selector="{{AdminCreateProductConfigurationsPanel.next}}"
-                                 stepKey="waitForGenerateButton"/>
-        <click selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="clickGenerateProducts"/>
+        <!-- Step 5,6,7,8,9: Select all options -->
+        <actionGroup ref="AdminSelectAllValueOfTwoAttributesAndSelectSingleImageAndPricePageActionGroup" stepKey="configureProductVariations">
+            <argument name="attributeLabel1" value="{{colorProductVisualAttributeWithOptions.default_label}}"/>
+            <argument name="attributeLabel2" value="{{sizeProductAttributeWithOptions.default_label}}"/>
+            <argument name="quantity" value="{{ImportProductSimple1_Configurable.quantity}}"/>
+            <argument name="price" value="{{ImportProductSimple1_Configurable.price}}"/>
+            <argument name="image" value="{{ImportProductSimple1_Configurable.baseImage}}"/>
+        </actionGroup>
         <waitForPageLoad stepKey="waitForProductsGeneration"/>
         <!-- Step 10: Click on Save button -->
         <actionGroup ref="SaveProductFormActionGroup" stepKey="saveConfigurableProduct"/>
