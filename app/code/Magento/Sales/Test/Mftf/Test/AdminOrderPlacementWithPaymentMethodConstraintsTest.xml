@@ -27,7 +27,7 @@
             </createData>
             <createData entity="Simple_US_Customer_CA" stepKey="simpleCustomer"/>
             <!-- Step 1&2: Disable payment method one of "Check/Money Order" and  "Zero Subtotal Checkout" -->
-            <actionGroup ref="CliDisableCheckMoneyOrderPaymentMethodActionGroup" stepKey="disabledCheckMoneyOrderValue"/>
+            <magentoCLI command="config:set {{DisableCheckMoneyOrderPaymentMethod.path}} {{DisableCheckMoneyOrderPaymentMethod.value}}" stepKey="disableCheckMoneyOrderPaymentMethod"/>
             <magentoCLI command="config:set {{DisableZeroSubtotalCheckoutConfigData.path}} {{DisableZeroSubtotalCheckoutConfigData.value}}" stepKey="disabledZeroSubtotalCheckoutOrderValue"/>
             <!-- Step 3: Enable CashOnDelivery  -->
             <createData entity="CashOnDeliveryPaymentMethodDefault" stepKey="enableCashOnDeliveryPaymentMethod"/>
@@ -59,7 +59,7 @@
             <argument name="productQty" value="1"/>
         </actionGroup>
         <waitForElementVisible selector="{{AdminOrderFormPaymentSection.verifyCashOnDelivery}}" stepKey="verifyCashOnDeliveryPaymentMethodIsAvaiable"/>
-        <!-- Step 7: Add more products or increase quantity more than 100$ and check COD is not avaiable -->
+        <!-- Step 7: Add more products or increase quantity more than 100$ and check COD is not available -->
         <actionGroup ref="AddSimpleProductToOrderActionGroup" stepKey="addSimpleProductAgainByChangingQuantity">
             <argument name="product" value="$$simpleProduct$$"/>
             <argument name="productQty" value="11"/>
@@ -69,6 +69,6 @@
         <actionGroup ref="OrderSelectFlatRateShippingActionGroup" stepKey="orderSelectFlatRateShippingMethod"/>
         <actionGroup ref="AdminCheckoutSelectCheckMoneyOrderBillingMethodActionGroup" stepKey="selectBillingMethod"/>
         <actionGroup ref="AdminOrderClickSubmitOrderActionGroup" stepKey="submitOrder"/>
-        <waitForText selector="{{AdminOrderFormPaymentSection.paymentErrorMessage}}" userInput="{{AdminPaymentErrorMessage.error_Message}}" stepKey="verifyOrderDonotPlacedAndSeeErrorMessage"/>
+        <waitForText selector="{{AdminOrderFormPaymentSection.paymentErrorMessage}}" userInput="{{AdminPaymentErrorMessage.error_Message}}" stepKey="verifyOrderDon'tPlacedAndSeeErrorMessage"/>
     </test>
 </tests>
