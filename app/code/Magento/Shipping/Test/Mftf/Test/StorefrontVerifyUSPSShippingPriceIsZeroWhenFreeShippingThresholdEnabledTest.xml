@@ -25,6 +25,12 @@
             <createData entity="SimpleProduct" stepKey="createProduct">
                 <field key="price">49.00</field>
             </createData>
+            <!-- Step 3:Enable Free Method select any shipping method -->
+            <magentoCLI command="config:set {{AdminEnableFreeMethodUSPSConfigData.path}} {{AdminEnableFreeMethodUSPSConfigData.value}}" stepKey="enableFreeMethodUSPS"/>
+            <!-- Step 4:Enable Free Shipping Threshold -->
+            <magentoCLI command="config:set {{AdminEnableFreeShippingThresholdUSPSConfigData.path}} {{AdminEnableFreeShippingThresholdUSPSConfigData.value}}" stepKey="enableFreeShippingThresholdUSPS"/>
+            <!-- Step 5:Fill Free Shipping Amount Threshold add amount -->
+            <magentoCLI command="config:set {{AdminFillFreeShippingAmountThresholdUSPSConfigData.path}} {{AdminFillFreeShippingAmountThresholdUSPSConfigData.value}}" stepKey="fillFreeShippingAmountThresholdUSPS"/>
         </before>
         <after>
             <!--delete product-->
@@ -34,12 +40,6 @@
             <!-- Disable Free Shipping Threshold -->
             <magentoCLI command="config:set {{AdminDisableFreeShippingThresholdUSPSConfigData.path}} {{AdminDisableFreeShippingThresholdUSPSConfigData.value}}" stepKey="disableFreeShippingThresholdUSPS"/>
         </after>
-        <!-- Step 3:Enable Free Method select any shipping method -->
-        <magentoCLI command="config:set {{AdminEnableFreeMethodUSPSConfigData.path}} {{AdminEnableFreeMethodUSPSConfigData.value}}" stepKey="enableFreeMethodUSPS"/>
-        <!-- Step 4:Enable Free Shipping Threshold -->
-        <magentoCLI command="config:set {{AdminEnableFreeShippingThresholdUSPSConfigData.path}} {{AdminEnableFreeShippingThresholdUSPSConfigData.value}}" stepKey="enableFreeShippingThresholdUSPS"/>
-        <!-- Step 5:Fill Free Shipping Amount Threshold add amount -->
-        <magentoCLI command="config:set {{AdminFillFreeShippingAmountThresholdUSPSConfigData.path}} {{AdminFillFreeShippingAmountThresholdUSPSConfigData.value}}" stepKey="fillFreeShippingAmountThresholdUSPS"/>
         <!-- Step 7:Navigate to storefront add product to cart and checkout to shipping page -->
         <actionGroup ref="OpenStoreFrontProductPageActionGroup" stepKey="navigateToProductPage">
             <argument name="productUrlKey" value="$createProduct.custom_attributes[url_key]$"/>
