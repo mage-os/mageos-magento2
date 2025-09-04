@@ -69,6 +69,6 @@
         <actionGroup ref="OrderSelectFlatRateShippingActionGroup" stepKey="orderSelectFlatRateShippingMethod"/>
         <actionGroup ref="AdminCheckoutSelectCheckMoneyOrderBillingMethodActionGroup" stepKey="selectBillingMethod"/>
         <actionGroup ref="AdminOrderClickSubmitOrderActionGroup" stepKey="submitOrder"/>
-        <waitForText selector="{{AdminOrderFormPaymentSection.paymentErrorMessage}}" userInput="{{AdminPaymentErrorMessage.error_Message}}" stepKey="verifyOrderDon'tPlacedAndSeeErrorMessage"/>
+        <waitForText selector="{{AdminOrderFormPaymentSection.paymentErrorMessage}}" userInput="{{AdminPaymentErrorMessage.error_Message}}" stepKey="verifyOrderDonotPlacedAndSeeErrorMessage"/>
     </test>
 </tests>
