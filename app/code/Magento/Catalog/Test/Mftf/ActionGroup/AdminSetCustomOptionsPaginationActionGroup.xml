@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright 2025 Adobe
+  * All Rights Reserved.
+  */
+-->
+
+<actionGroups
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminSetCustomOptionsPaginationActionGroup">
+        <annotations>
+            <description>On the admin product page, open the custom options and set the custom pagination number.</description>
+        </annotations>
+        <arguments>
+            <argument name="pageNumber" type="string"/>
+        </arguments>
+        <scrollTo selector="{{AdminProductCustomizableOptionsSection.customizableOptions}}" x="0" y="-80" stepKey="scrollToCustomOption"/>
+        <waitForElementClickable selector="{{AdminProductCustomizableOptionsSection.customizableOptions}}" stepKey="waitForCustomizableOption"/>
+        <click selector="{{AdminProductCustomizableOptionsSection.customizableOptions}}" stepKey="openCustomizableOption"/>
+        <waitForElementClickable selector="{{AdminProductCustomizableOptionsSection.customOptionPageDropdown}}" stepKey="waitForCustomizableOptionPageDropdown"/>
+        <click selector="{{AdminProductCustomizableOptionsSection.customOptionPageDropdown}}" stepKey="selectPaginationType"/>
+        <waitForElementClickable selector="{{AdminProductCustomizableOptionsSection.customPageOption}}" stepKey="waitForCustomPageOption"/>
+        <click selector="{{AdminProductCustomizableOptionsSection.customPageOption}}" stepKey="clickOnCustomOption"/>
+        <fillField selector="{{AdminProductCustomizableOptionsSection.customPageNumber}}" userInput="{{pageNumber}}" stepKey="fillCustomPaginationNumber"/>
+        <click selector="{{AdminProductCustomizableOptionsSection.customSave}}" stepKey="selectSaveTypeButton"/>
+        <waitForPageLoad stepKey="waitForCustomOptionsToAppear"/>
+    </actionGroup>
+</actionGroups>
