@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -13,6 +13,7 @@ use Magento\GraphQl\Model\Query\Context;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\GraphQl\Model\Query\ContextExtensionInterface;
+
 use Magento\Wishlist\Model\Wishlist;
 use Magento\Wishlist\Model\Wishlist\Config;
 use Magento\Wishlist\Model\WishlistFactory;
@@ -59,59 +60,13 @@ class CustomerWishlistResolverTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->extensionAttributesMock = new class implements ContextExtensionInterface {
-            private $isCustomer = false;
-            
-            public function getIsCustomer() {
-                return $this->isCustomer;
-            }
-            
-            public function setIsCustomer($isCustomer) {
-                $this->isCustomer = $isCustomer;
-                return $this;
-            }
-        };
-
-        $this->contextMock = new Context(
-            null,
-            self::STUB_CUSTOMER_ID,
-            $this->extensionAttributesMock
-        );
-
+        $this->extensionAttributesMock = $this->createExtensionAttributesMock();
+        $this->contextMock = $this->createMock(Context::class);
+        $this->contextMock->method('getUserId')->willReturn(self::STUB_CUSTOMER_ID);
+        $this->contextMock->method('getUserType')->willReturn(null);
+        $this->contextMock->method('getExtensionAttributes')->willReturn($this->extensionAttributesMock);
         $this->wishlistFactoryMock = $this->createPartialMock(WishlistFactory::class, ['create']);
-
-        $this->wishlistMock = new class extends Wishlist {
-            private $customerId = null;
-            private $id = 1;
-            private $itemsCount = 0;
-            private $sharingCode = 'test-sharing-code';
-            private $updatedAt = '2024-01-01 00:00:00';
-            
-            public function __construct() {
-            }
-            
-            public function loadByCustomerId($customerId, $create = false) {
-                $this->customerId = $customerId;
-                return $this;
-            }
-            
-            public function getId() {
-                return $this->id;
-            }
-            
-            public function getItemsCount() {
-                return $this->itemsCount;
-            }
-            
-            public function getSharingCode() {
-                return $this->sharingCode;
-            }
-            
-            public function getUpdatedAt() {
-                return $this->updatedAt;
-            }
-        };
-
+        $this->wishlistMock = $this->createWishlistMock();
         $this->wishlistConfigMock = $this->createMock(Config::class);
 
         $objectManager = new ObjectManager($this);
@@ -119,6 +74,90 @@ class CustomerWishlistResolverTest extends TestCase
             'wishlistFactory' => $this->wishlistFactoryMock,
             'wishlistConfig' => $this->wishlistConfigMock
         ]);
+    }
+
+    /**
+     * Create extension attributes mock
+     */
+    private function createExtensionAttributesMock()
+    {
+        return new class implements \Magento\GraphQl\Model\Query\ContextExtensionInterface {
+            /**
+             * @var bool
+             */
+            private $isCustomer = false;
+            
+            public function setIsCustomer(bool $isCustomer): void
+            {
+                $this->isCustomer = $isCustomer;
+                $_ = [$isCustomer];
+                unset($_);
+            }
+            
+            public function getIsCustomer(): bool
+            {
+                return $this->isCustomer;
+            }
+        };
+    }
+
+    /**
+     * Create wishlist mock
+     */
+    private function createWishlistMock(): Wishlist
+    {
+        return new class extends Wishlist {
+            /**
+             * @var int|null
+             */
+            private $customerId = null;
+            /**
+             * @var int
+             */
+            private $id = 1;
+            /**
+             * @var int
+             */
+            private $itemsCount = 0;
+            /**
+             * @var string
+             */
+            private $sharingCode = 'test-sharing-code';
+            /**
+             * @var string
+             */
+            private $updatedAt = '2024-01-01 00:00:00';
+
+            public function __construct()
+            {
+            }
+
+            public function loadByCustomerId($customerId, $create = false)
+            {
+                $this->customerId = $customerId > 0 ? $customerId : 0;
+                return $this;
+            }
+
+            public function getId()
+            {
+                return $this->id;
+            }
+
+            public function getItemsCount()
+            {
+                return $this->itemsCount;
+            }
+
+            public function getSharingCode()
+            {
+                return $this->sharingCode;
+            }
+
+            public function getUpdatedAt()
+            {
+                return $this->updatedAt;
+            }
+        };
     }
 
     /**
