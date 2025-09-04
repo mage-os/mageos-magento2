@@ -1,5 +1,9 @@
 <?php
 /**
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
+ */
+/**
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -10,7 +14,7 @@ namespace Magento\Wishlist\Test\Unit\Block\Rss;
 
 use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Framework\App\Rss\UrlBuilderInterface;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\Framework\View\Element\Template\Context;
 use Magento\Framework\Url\EncoderInterface;
 use Magento\Wishlist\Block\Rss\EmailLink;
 use Magento\Wishlist\Helper\Data;
@@ -23,8 +27,8 @@ class EmailLinkTest extends TestCase
     /** @var EmailLink */
     protected $link;
 
-    /** @var ObjectManagerHelper */
-    protected $objectManagerHelper;
+    /** @var Context|MockObject */
+    protected $context;
 
     /** @var Data|MockObject */
     protected $wishlistHelper;
@@ -39,22 +43,25 @@ class EmailLinkTest extends TestCase
 
     protected function setUp(): void
     {
-        $wishlist = $this->getMockBuilder(Wishlist::class)
-            ->addMethods(['getSharingCode'])
-            ->onlyMethods(['getId'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $wishlist->expects($this->any())->method('getId')->willReturn(5);
-        $wishlist->expects($this->any())->method('getSharingCode')->willReturn('somesharingcode');
-        $customer = $this->getMockForAbstractClass(CustomerInterface::class);
-        $customer->expects($this->any())->method('getId')->willReturn(8);
-        $customer->expects($this->any())->method('getEmail')->willReturn('test@example.com');
+        $wishlist = new class extends Wishlist {
+            public function __construct()
+            {
+ /* Skip parent constructor */
+            }
+            public function getSharingCode()
+            {
+                return 'somesharingcode';
+            }
+            public function getId()
+            {
+                return 5;
+            }
+        };
+        $customer = $this->createMock(CustomerInterface::class);
+        $customer->method('getId')->willReturn(8);
+        $customer->method('getEmail')->willReturn('test@example.com');
 
-        $this->wishlistHelper = $this->getMockBuilder(Data::class)
-            ->addMethods(['urlEncode'])
-            ->onlyMethods(['getWishlist', 'getCustomer'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->wishlistHelper = $this->createPartialMock(Data::class, ['getWishlist', 'getCustomer']);
         $this->urlEncoder = $this->createPartialMock(EncoderInterface::class, ['encode']);
 
         $this->wishlistHelper->expects($this->any())->method('getWishlist')->willReturn($wishlist);
@@ -65,15 +72,14 @@ class EmailLinkTest extends TestCase
                 return strtr(base64_encode($url), '+/=', '-_,');
             });
 
-        $this->urlBuilder = $this->getMockForAbstractClass(UrlBuilderInterface::class);
-        $this->objectManagerHelper = new ObjectManagerHelper($this);
-        $this->link = $this->objectManagerHelper->getObject(
-            EmailLink::class,
-            [
-                'wishlistHelper' => $this->wishlistHelper,
-                'rssUrlBuilder' => $this->urlBuilder,
-                'urlEncoder' => $this->urlEncoder,
-            ]
+        $this->urlBuilder = $this->createMock(UrlBuilderInterface::class);
+        $this->context = $this->createMock(Context::class);
+
+        $this->link = new EmailLink(
+            $this->context,
+            $this->wishlistHelper,
+            $this->urlBuilder,
+            $this->urlEncoder
         );
     }
 

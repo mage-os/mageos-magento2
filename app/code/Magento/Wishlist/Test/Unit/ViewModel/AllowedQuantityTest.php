@@ -1,5 +1,9 @@
 <?php
 /**
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
+ */
+/**
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -48,15 +52,7 @@ class AllowedQuantityTest extends TestCase
     protected function setUp(): void
     {
         $this->stockRegistryMock = $this->createMock(StockRegistry::class);
-        $this->itemMock = $this->getMockForAbstractClass(
-            ItemInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['getMinSaleQty', 'getMaxSaleQty']
-        );
+        $this->itemMock = $this->createMock(ItemInterface::class);
         $this->productMock = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -90,18 +86,11 @@ class AllowedQuantityTest extends TestCase
         $this->productMock->expects($this->atLeastOnce())
             ->method('getStore')
             ->willReturn($this->storeMock);
-        $this->itemMock->expects($this->any())
-            ->method('getProduct')
-            ->willReturn($this->productMock);
-        $this->itemMock->expects($this->any())
-            ->method('getMinSaleQty')
-            ->willReturn($minSaleQty);
-        $this->itemMock->expects($this->any())
-            ->method('getMaxSaleQty')
-            ->willReturn($maxSaleQty);
-        $this->stockRegistryMock->expects($this->any())
-            ->method('getStockItem')
-            ->willReturn($this->itemMock);
+        $this->itemMock->method('getProduct')->willReturn($this->productMock);
+        $stockItemMock = $this->createMock(\Magento\CatalogInventory\Api\Data\StockItemInterface::class);
+        $stockItemMock->method('getMinSaleQty')->willReturn($minSaleQty);
+        $stockItemMock->method('getMaxSaleQty')->willReturn($maxSaleQty);
+        $this->stockRegistryMock->method('getStockItem')->willReturn($stockItemMock);
 
         $result = $this->sut->getMinMaxQty();
 

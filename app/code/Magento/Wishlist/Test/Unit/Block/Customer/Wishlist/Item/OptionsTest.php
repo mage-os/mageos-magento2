@@ -1,5 +1,9 @@
 <?php
 /**
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
+ */
+/**
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -21,8 +25,8 @@ use PHPUnit\Framework\TestCase;
 
 class OptionsTest extends TestCase
 {
-    const TEST_PRODUCT_TYPE = 'testProductType';
-    const TEST_HELPER_CLASS_NAME = 'testHelperClass';
+    private const TEST_PRODUCT_TYPE = 'testProductType';
+    private const TEST_HELPER_CLASS_NAME = 'testHelperClass';
 
     /**
      * @var Escaper|MockObject
@@ -51,33 +55,30 @@ class OptionsTest extends TestCase
 
     protected function setUp(): void
     {
-        $productContextMock = $this->getMockBuilder(\Magento\Catalog\Block\Product\Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->escaperMock = $this->getMockBuilder(Escaper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $eventManagerMock = $this->getMockBuilder(ManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $productContextMock = $this->createMock(\Magento\Catalog\Block\Product\Context::class);
+        $this->escaperMock = $this->createMock(Escaper::class);
+        $eventManagerMock = $this->createMock(ManagerInterface::class);
         $productContextMock->method('getEscaper')
             ->willReturn($this->escaperMock);
         $productContextMock->method('getEventManager')
             ->willReturn($eventManagerMock);
 
-        $this->httpContextMock = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->httpContextMock = $this->createMock(Context::class);
 
-        $this->helperPoolMock = $this->getMockBuilder(ConfigurationPool::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->helperPoolMock = $this->createMock(ConfigurationPool::class);
 
-        $this->itemMock = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->itemMock = $this->createMock(Item::class);
 
         $objectManager = new ObjectManager($this);
+        
+        $objects = [
+            [
+                \Magento\Framework\View\Element\Template\Context::class,
+                $this->createMock(\Magento\Framework\View\Element\Template\Context::class)
+            ]
+        ];
+        $objectManager->prepareObjectManager($objects);
+        
         $this->block = $objectManager->getObject(
             Options::class,
             [
@@ -98,9 +99,7 @@ class OptionsTest extends TestCase
      */
     public function testGetConfiguredOptions($options, $callNum, $expected)
     {
-        $productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productMock = $this->createMock(Product::class);
         $productMock->expects($this->once())
             ->method('getTypeId')
             ->willReturn(self::TEST_PRODUCT_TYPE);

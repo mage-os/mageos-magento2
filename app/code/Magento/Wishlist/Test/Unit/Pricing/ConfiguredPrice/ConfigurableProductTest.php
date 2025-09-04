@@ -1,5 +1,9 @@
 <?php
 /**
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
+ */
+/**
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -58,10 +62,10 @@ class ConfigurableProductTest extends TestCase
         $this->priceInfoMock = $this->getMockBuilder(PriceInfoInterface::class)
             ->getMockForAbstractClass();
 
-        $this->saleableItem = $this->getMockBuilder(SaleableInterface::class)
-            ->addMethods(['getCustomOption'])
-            ->onlyMethods(['getPriceInfo'])
-            ->getMockForAbstractClass();
+        $this->saleableItem = $this->createPartialMock(
+            \Magento\Catalog\Model\Product::class,
+            ['getCustomOption', 'getPriceInfo']
+        );
 
         $this->calculator = $this->getMockBuilder(CalculatorInterface::class)
             ->getMockForAbstractClass();
@@ -94,24 +98,18 @@ class ConfigurableProductTest extends TestCase
             ->method('getValue')
             ->willReturn($priceValue);
 
-        $this->priceInfoMock = $this->getMockBuilder(Base::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->priceInfoMock = $this->createMock(Base::class);
         $this->priceInfoMock->expects($this->once())
             ->method('getPrice')
             ->with(ConfigurableProduct::PRICE_CODE)
             ->willReturn($priceMock);
 
-        $productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productMock = $this->createMock(Product::class);
         $productMock->expects($this->once())
             ->method('getPriceInfo')
             ->willReturn($this->priceInfoMock);
 
-        $wishlistItemOptionMock = $this->getMockBuilder(Option::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $wishlistItemOptionMock = $this->createMock(Option::class);
         $wishlistItemOptionMock->expects($this->exactly(2))
             ->method('getProduct')->willReturn($productMock);
 
@@ -131,13 +129,9 @@ class ConfigurableProductTest extends TestCase
         $wishlistItemOptionMock->expects($this->exactly(2))
             ->method('getProduct')->willReturn($productMock);
 
-        $productOptionMock = $this->getMockBuilder(ProductOption::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productOptionMock = $this->createMock(ProductOption::class);
 
-        $defaultTypeMock = $this->getMockBuilder(DefaultType::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $defaultTypeMock = $this->createMock(DefaultType::class);
 
         $productOptionMock->expects($this->any())
             ->method('getId')

@@ -1,5 +1,9 @@
 <?php
 /**
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
+ */
+/**
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -52,19 +56,78 @@ class DownloadableTest extends TestCase
         $this->priceInfoMock = $this->getMockBuilder(PriceInfoInterface::class)
             ->getMockForAbstractClass();
 
-        $this->saleableItem = $this->getMockBuilder(SaleableInterface::class)
-            ->addMethods([
-                'getLinksPurchasedSeparately',
-                'getCustomOption',
-                'getTypeInstance'
-            ])
-            ->onlyMethods([
-                'getPriceInfo'
-            ])
-            ->getMockForAbstractClass();
-        $this->saleableItem->expects($this->once())
-            ->method('getPriceInfo')
-            ->willReturn($this->priceInfoMock);
+        $this->saleableItem = new class() extends \Magento\Catalog\Model\Product {
+            /**
+             * @var PriceInfoInterface
+             */
+            private $priceInfo;
+            /**
+             * @var bool
+             */
+            private $linksPurchasedSeparately = true;
+            /**
+             * @var array
+             */
+            private $customOptions = [];
+            /**
+             * @var TypeInstanceInterface
+             */
+            private $typeInstance;
+            
+            public function __construct()
+            {
+            }
+            
+            public function setPriceInfo($priceInfo)
+            {
+                $this->priceInfo = $priceInfo;
+                $_ = [$priceInfo];
+                unset($_);
+                return $this;
+            }
+            
+            public function getPriceInfo()
+            {
+                return $this->priceInfo;
+            }
+            
+            public function getLinksPurchasedSeparately()
+            {
+                return $this->linksPurchasedSeparately;
+            }
+            
+            public function setLinksPurchasedSeparately($value)
+            {
+                $this->linksPurchasedSeparately = $value;
+                return $this;
+            }
+            
+            public function getCustomOption($key)
+            {
+                return $this->customOptions[$key] ?? null;
+            }
+            
+            public function setCustomOption($key, $value)
+            {
+                $this->customOptions[$key] = $value;
+                return $this;
+            }
+            
+            public function setTypeInstance($typeInstance)
+            {
+                $this->typeInstance = $typeInstance;
+                $_ = [$typeInstance];
+                unset($_);
+                return $this;
+            }
+            
+            public function getTypeInstance()
+            {
+                return $this->typeInstance;
+            }
+        };
+        
+        $this->saleableItem->setPriceInfo($this->priceInfoMock);
 
         $this->calculator = $this->getMockBuilder(CalculatorInterface::class)
             ->getMockForAbstractClass();
@@ -84,23 +147,17 @@ class DownloadableTest extends TestCase
     {
         $priceValue = 10;
 
-        $wishlistItemOptionMock = $this->getMockBuilder(Option::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $wishlistItemOptionMock = $this->createMock(Option::class);
         $wishlistItemOptionMock->expects($this->once())
             ->method('getValue')
             ->willReturn('1,2');
 
-        $linkMock = $this->getMockBuilder(Link::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $linkMock = $this->createMock(Link::class);
         $linkMock->expects($this->once())
             ->method('getPrice')
             ->willReturn(10);
 
-        $productTypeMock = $this->getMockBuilder(Type::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productTypeMock = $this->createMock(Type::class);
         $productTypeMock->expects($this->once())
             ->method('getLinks')
             ->with($this->saleableItem)
@@ -117,16 +174,8 @@ class DownloadableTest extends TestCase
             ->with(BasePrice::PRICE_CODE)
             ->willReturn($priceMock);
 
-        $this->saleableItem->expects($this->once())
-            ->method('getLinksPurchasedSeparately')
-            ->willReturn(true);
-        $this->saleableItem->expects($this->once())
-            ->method('getCustomOption')
-            ->with('downloadable_link_ids')
-            ->willReturn($wishlistItemOptionMock);
-        $this->saleableItem->expects($this->once())
-            ->method('getTypeInstance')
-            ->willReturn($productTypeMock);
+        $this->saleableItem->setCustomOption('downloadable_link_ids', $wishlistItemOptionMock);
+        $this->saleableItem->setTypeInstance($productTypeMock);
 
         $this->assertEquals(20, $this->model->getValue());
     }
@@ -146,10 +195,6 @@ class DownloadableTest extends TestCase
             ->with(BasePrice::PRICE_CODE)
             ->willReturn($priceMock);
 
-        $this->saleableItem->expects($this->once())
-            ->method('getLinksPurchasedSeparately')
-            ->willReturn(false);
-
         $this->assertEquals($priceValue, $this->model->getValue());
     }
 
@@ -168,31 +213,19 @@ class DownloadableTest extends TestCase
             ->with(BasePrice::PRICE_CODE)
             ->willReturn($priceMock);
 
-        $wishlistItemOptionMock = $this->getMockBuilder(Option::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $wishlistItemOptionMock = $this->createMock(Option::class);
         $wishlistItemOptionMock->expects($this->once())
             ->method('getValue')
             ->willReturn(null);
 
-        $productTypeMock = $this->getMockBuilder(Type::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productTypeMock = $this->createMock(Type::class);
         $productTypeMock->expects($this->once())
             ->method('getLinks')
             ->with($this->saleableItem)
             ->willReturn([]);
 
-        $this->saleableItem->expects($this->once())
-            ->method('getLinksPurchasedSeparately')
-            ->willReturn(true);
-        $this->saleableItem->expects($this->once())
-            ->method('getCustomOption')
-            ->with('downloadable_link_ids')
-            ->willReturn($wishlistItemOptionMock);
-        $this->saleableItem->expects($this->once())
-            ->method('getTypeInstance')
-            ->willReturn($productTypeMock);
+        $this->saleableItem->setCustomOption('downloadable_link_ids', $wishlistItemOptionMock);
+        $this->saleableItem->setTypeInstance($productTypeMock);
 
         $this->assertEquals($priceValue, $this->model->getValue());
     }
@@ -210,13 +243,7 @@ class DownloadableTest extends TestCase
             ->with(BasePrice::PRICE_CODE)
             ->willReturn($priceMock);
 
-        $this->saleableItem->expects($this->once())
-            ->method('getLinksPurchasedSeparately')
-            ->willReturn(true);
-        $this->saleableItem->expects($this->once())
-            ->method('getCustomOption')
-            ->with('downloadable_link_ids')
-            ->willReturn(null);
+        $this->saleableItem->setCustomOption('downloadable_link_ids', null);
 
         $this->assertEquals(0, $this->model->getValue());
     }

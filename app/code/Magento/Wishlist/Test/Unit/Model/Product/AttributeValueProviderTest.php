@@ -1,5 +1,9 @@
 <?php
 /**
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
+ */
+/**
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -69,21 +73,16 @@ class AttributeValueProviderTest extends TestCase
      */
     public function testGetAttributeTextWhenFlatIsDisabled(int $productId, string $attributeCode, string $attributeText)
     {
-        $this->productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getData'])
-            ->getMock();
+        $this->productMock = $this->createPartialMock(Product::class, ['getData']);
 
         $this->productMock->expects($this->any())
             ->method('getData')
             ->with($attributeCode)
             ->willReturn($attributeText);
 
-        $productCollection = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([
-                'addIdFilter', 'addStoreFilter', 'addAttributeToSelect', 'isEnabledFlat', 'getFirstItem'
-            ])->getMock();
+        $productCollection = $this->createPartialMock(Collection::class, [
+            'addIdFilter', 'addStoreFilter', 'addAttributeToSelect', 'isEnabledFlat', 'getFirstItem'
+        ]);
 
         $productCollection->expects($this->any())
             ->method('addIdFilter')
@@ -128,20 +127,15 @@ class AttributeValueProviderTest extends TestCase
             ->willReturn([
                 $attributeCode => $attributeText
             ]);
-        $this->productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getData'])
-            ->getMock();
+        $this->productMock = $this->createPartialMock(Product::class, ['getData']);
         $this->productMock->expects($this->any())
             ->method('getData')
             ->with($attributeCode)
             ->willReturn($attributeText);
 
-        $productCollection = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([
-                'addIdFilter', 'addStoreFilter', 'addAttributeToSelect', 'isEnabledFlat', 'getConnection'
-            ])->getMock();
+        $productCollection = $this->createPartialMock(Collection::class, [
+            'addIdFilter', 'addStoreFilter', 'addAttributeToSelect', 'isEnabledFlat', 'getConnection'
+        ]);
 
         $productCollection->expects($this->any())
             ->method('addIdFilter')

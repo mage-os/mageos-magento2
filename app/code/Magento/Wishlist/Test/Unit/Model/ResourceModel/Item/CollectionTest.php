@@ -1,5 +1,9 @@
 <?php
 /**
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
+ */
+/**
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -19,6 +23,7 @@ use Magento\Framework\EntityManager\EntityMetadata;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\TestFramework\Unit\Helper\SelectRendererTrait;
+use ReflectionClass;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManager;
 use Magento\Wishlist\Model\ResourceModel\Item;
@@ -78,14 +83,8 @@ class CollectionTest extends TestCase
             ->method('quote')
             ->willReturn('\'TestProductName\'');
         $connection
-            ->expects($this->any())
-            ->method('select')
-            ->willReturn($select);
-        $resource = $this->getMockBuilder(Item::class)
-            ->addMethods(['getTableName'])
-            ->onlyMethods(['getConnection', 'getMainTable', 'getTable'])
-            ->disableOriginalConstructor()
-            ->getMock();
+            ->method('select')->willReturn($select);
+        $resource = $this->createMock(Item::class);
 
         $resource
             ->expects($this->any())
@@ -137,7 +136,7 @@ class CollectionTest extends TestCase
             ->willReturn($this->attrId);
 
         $catalogAttrFactory = $this->createPartialMock(
-            AttributeFactory::class,
+            AttributeFactory::class, // @phpstan-ignore-line
             ['create']
         );
 
@@ -168,11 +167,9 @@ class CollectionTest extends TestCase
             ]
         );
 
-        $this->metadataPool = $this->getMockBuilder(MetadataPool::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->metadataPool = $this->createMock(MetadataPool::class);
 
-        $reflection = new \ReflectionClass(get_class($this->collection));
+        $reflection = new ReflectionClass(get_class($this->collection));
         $reflectionProperty = $reflection->getProperty('metadataPool');
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($this->collection, $this->metadataPool);
@@ -180,9 +177,7 @@ class CollectionTest extends TestCase
 
     public function testAddProductNameFilter()
     {
-        $entityMetadata = $this->getMockBuilder(EntityMetadata::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $entityMetadata = $this->createMock(EntityMetadata::class);
         $entityMetadata->expects($this->once())
             ->method('getLinkField')
             ->willReturn('entity_id');

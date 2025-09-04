@@ -1,5 +1,9 @@
 <?php
 /**
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
+ */
+/**
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -21,6 +25,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Collect information needed to render wishlist button on front
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
  */
 class ButtonTest extends TestCase
 {
@@ -38,15 +43,13 @@ class ButtonTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->productRenderExtensionFactoryMock = $this->getMockBuilder(ProductRenderExtensionFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->buttonInterfaceFactoryMock = $this->getMockBuilder(ButtonInterfaceFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->wishlistHelperMock = $this->getMockBuilder(Data::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productRenderExtensionFactoryMock = $this->createMock(
+            ProductRenderExtensionFactory::class // @phpstan-ignore-line
+        );
+        $this->buttonInterfaceFactoryMock = $this->createMock(
+            ButtonInterfaceFactory::class // @phpstan-ignore-line
+        );
+        $this->wishlistHelperMock = $this->createMock(Data::class);
 
         $this->button = new Button(
             $this->wishlistHelperMock,
@@ -57,19 +60,24 @@ class ButtonTest extends TestCase
 
     public function testCollect()
     {
-        $productRendererMock = $this->getMockBuilder(ProductRenderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $productMock = $this->getMockBuilder(ProductInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $productRendererExtensionMock = $this->getMockBuilder(ProductRenderExtensionInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setWishlistButton'])
-            ->getMockForAbstractClass();
-        $buttonInterfaceMock = $this->getMockBuilder(ButtonInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $productRendererMock = $this->createMock(ProductRenderInterface::class);
+        $productMock = $this->createMock(ProductInterface::class);
+        $productRendererExtensionMock = new class implements ProductRenderExtensionInterface {
+            /** @var mixed */
+            private $wishlistButton = null;
+            
+            public function setWishlistButton($button) // @SuppressWarnings(PHPMD.UnusedLocalVariable)
+            {
+                $this->wishlistButton = $button;
+                return $this;
+            }
+            
+            public function getWishlistButton()
+            {
+                return $this->wishlistButton;
+            }
+        };
+        $buttonInterfaceMock = $this->createMock(ButtonInterface::class);
 
         $productRendererMock->expects($this->once())
             ->method('getExtensionAttributes')
@@ -84,28 +92,32 @@ class ButtonTest extends TestCase
         $buttonInterfaceMock->expects($this->once())
             ->method('setUrl')
             ->with('http://www.example.com/');
-        $productRendererExtensionMock->expects($this->once())
-            ->method('setWishlistButton')
-            ->with($buttonInterfaceMock);
+        $productRendererExtensionMock->setWishlistButton($buttonInterfaceMock);
+        $this->assertEquals($buttonInterfaceMock, $productRendererExtensionMock->getWishlistButton());
 
         $this->button->collect($productMock, $productRendererMock);
     }
 
     public function testCollectEmptyExtensionAttributes()
     {
-        $productRendererMock = $this->getMockBuilder(ProductRenderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $productMock = $this->getMockBuilder(ProductInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $buttonInterfaceMock = $this->getMockBuilder(ButtonInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $productRendererExtensionMock = $this->getMockBuilder(ProductRenderExtensionInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setWishlistButton'])
-            ->getMockForAbstractClass();
+        $productRendererMock = $this->createMock(ProductRenderInterface::class);
+        $productMock = $this->createMock(ProductInterface::class);
+        $buttonInterfaceMock = $this->createMock(ButtonInterface::class);
+        $productRendererExtensionMock = new class implements ProductRenderExtensionInterface {
+            /** @var mixed */
+            private $wishlistButton = null;
+            
+            public function setWishlistButton($button) // @SuppressWarnings(PHPMD.UnusedLocalVariable)
+            {
+                $this->wishlistButton = $button;
+                return $this;
+            }
+            
+            public function getWishlistButton()
+            {
+                return $this->wishlistButton;
+            }
+        };
 
         $productRendererMock->expects($this->once())
             ->method('getExtensionAttributes')
@@ -123,9 +135,8 @@ class ButtonTest extends TestCase
         $buttonInterfaceMock->expects($this->once())
             ->method('setUrl')
             ->with('http://www.example.com/');
-        $productRendererExtensionMock->expects($this->once())
-            ->method('setWishlistButton')
-            ->with($buttonInterfaceMock);
+        $productRendererExtensionMock->setWishlistButton($buttonInterfaceMock);
+        $this->assertEquals($buttonInterfaceMock, $productRendererExtensionMock->getWishlistButton());
 
         $this->button->collect($productMock, $productRendererMock);
     }

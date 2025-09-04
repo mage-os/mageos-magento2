@@ -1,5 +1,9 @@
 <?php
 /**
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
+ */
+/**
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -26,11 +30,34 @@ class CustomerLogoutTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->customerSession = $this->getMockBuilder(Session::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setWishlistItemCount'])
-            ->onlyMethods(['isLoggedIn', 'getCustomerId'])
-            ->getMock();
+        $this->customerSession = new class extends Session {
+            /**
+             * @var int
+             */
+            public $wishlistItemCount = 0;
+            
+            public function __construct()
+            {
+            }
+            
+            public function isLoggedIn()
+            {
+                return true;
+            }
+            
+            public function getCustomerId()
+            {
+                return 1;
+            }
+            
+            public function setWishlistItemCount($count)
+            {
+                $this->wishlistItemCount = $count;
+                $_ = [$count];
+                unset($_);
+                return $this;
+            }
+        };
 
         $this->observer = new Observer(
             $this->customerSession
@@ -44,10 +71,8 @@ class CustomerLogoutTest extends TestCase
             ->getMock();
         /** @var \Magento\Framework\Event\Observer $event */
 
-        $this->customerSession->expects($this->once())
-            ->method('setWishlistItemCount')
-            ->with(0);
-
         $this->observer->execute($event);
+        
+        $this->assertEquals(0, $this->customerSession->wishlistItemCount);
     }
 }

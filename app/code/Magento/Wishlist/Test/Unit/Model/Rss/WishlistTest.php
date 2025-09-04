@@ -1,5 +1,9 @@
 <?php
 /**
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
+ */
+/**
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -92,7 +96,7 @@ class WishlistTest extends TestCase
     protected function setUp(): void
     {
         $this->catalogOutputMock = $this->createMock(Output::class);
-        $this->rssFactoryMock = $this->createPartialMock(RssFactory::class, ['create']);
+        $this->rssFactoryMock = $this->createPartialMock(RssFactory::class, ['create']); // @phpstan-ignore-line
         $this->wishlistBlock = $this->createMock(Wishlist::class);
         $this->wishlistHelperMock = $this->createPartialMock(
             Rss::class,
@@ -103,7 +107,7 @@ class WishlistTest extends TestCase
 
         $this->imageHelperMock = $this->createMock(Image::class);
 
-        $this->layoutMock = $this->getMockForAbstractClass(
+        $this->layoutMock = $this->createMock(
             LayoutInterface::class,
             [],
             '',
@@ -113,9 +117,7 @@ class WishlistTest extends TestCase
             ['getBlock']
         );
 
-        $this->customerFactory = $this->getMockBuilder(CustomerFactory::class)
-            ->onlyMethods(['create'])->disableOriginalConstructor()
-            ->getMock();
+        $this->customerFactory = $this->createPartialMock(CustomerFactory::class, ['create']);
 
         $requestMock = $this->getMockForAbstractClass(RequestInterface::class);
         $requestMock->expects($this->any())->method('getParam')->with('sharing_code')
@@ -144,43 +146,28 @@ class WishlistTest extends TestCase
         $wishlistId = 1;
         $customerName = 'Customer Name';
         $title = "$customerName's Wishlist";
-        $wishlistModelMock = $this->getMockBuilder(\Magento\Wishlist\Model\Wishlist::class)
-            ->addMethods(['getSharingCode'])
-            ->onlyMethods(['getId', '__wakeup', 'getCustomerId', 'getItemCollection'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $customerServiceMock = $this->getMockForAbstractClass(CustomerInterface::class);
+        $wishlistModelMock = $this->createWishlistModelMock($wishlistId);
+        $customerServiceMock = $this->createMock(CustomerInterface::class);
         $wishlistSharingUrl = 'wishlist/shared/index/1';
         $locale = 'en_US';
         $productUrl = 'http://product.url/';
         $productName = 'Product name';
 
-        $customer = $this->getMockBuilder(Customer::class)
-            ->onlyMethods(['getName', '__wakeup', 'load'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $customer = $this->createPartialMock(Customer::class, ['getName', '__wakeup', 'load']);
         $customer->expects($this->once())->method('load')->willReturnSelf();
         $customer->expects($this->once())->method('getName')->willReturn('Customer Name');
 
         $this->customerFactory->expects($this->once())->method('create')->willReturn($customer);
 
-        $this->wishlistHelperMock->expects($this->any())
-            ->method('getWishlist')
-            ->willReturn($wishlistModelMock);
-        $this->wishlistHelperMock->expects($this->any())
-            ->method('getCustomer')
-            ->willReturn($customerServiceMock);
-        $wishlistModelMock->expects($this->once())
-            ->method('getId')
-            ->willReturn($wishlistId);
+        $this->wishlistHelperMock->method('getWishlist')->willReturn($wishlistModelMock);
+        $this->wishlistHelperMock->method('getCustomer')->willReturn($customerServiceMock);
         $this->urlBuilderMock->expects($this->once())
             ->method('getUrl')
             ->willReturn($wishlistSharingUrl);
         $this->scopeConfig->expects($this->any())
             ->method('getValue')
             ->willReturnMap(
-
-                    [
+                [
                         [
                             'advanced/modules_disable_output/Magento_Rss',
                             ScopeInterface::SCOPE_STORE,
@@ -194,13 +181,21 @@ class WishlistTest extends TestCase
                             $locale
                         ],
                     ]
-
             );
 
         $staticArgs = [
             'productName' => $productName,
             'productUrl' => $productUrl,
         ];
+        
+        $wishlistItem = $this->createMock(Item::class);
+        $wishlistItemsCollection = [$wishlistItem];
+        $productMock = $this->createProductMock($staticArgs['productName']);
+        
+        $wishlistItem->method('getProduct')->willReturn($productMock);
+        
+        $wishlistModelMock->setItemCollection($wishlistItemsCollection);
+        
         $description = $this->processWishlistItemDescription($wishlistModelMock, $staticArgs);
 
         $expectedResult = [
@@ -231,34 +226,10 @@ class WishlistTest extends TestCase
     {
         $imgThumbSrc = 'http://source-for-thumbnail';
         $priceHtmlForTest = '<div class="price">Price is 10 for example</div>';
-        $productDescription = 'Product description';
-        $productShortDescription = 'Product short description';
 
-        $wishlistItem = $this->createMock(Item::class);
-        $wishlistItemsCollection = [
-            $wishlistItem,
-        ];
-        $productMock = $this->getMockBuilder(Product::class)
-            ->addMethods(['getAllowedInRss', 'getAllowedPriceInRss', 'getDescription', 'getShortDescription'])
-            ->onlyMethods(['getName', '__wakeup'])
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $wishlistModelMock->expects($this->once())
-            ->method('getItemCollection')
-            ->willReturn($wishlistItemsCollection);
-        $wishlistItem->expects($this->once())
-            ->method('getProduct')
-            ->willReturn($productMock);
-        $productMock->expects($this->once())
-            ->method('getAllowedPriceInRss')
-            ->willReturn(true);
-        $productMock->expects($this->once())
-            ->method('getName')
-            ->willReturn($staticArgs['productName']);
-        $productMock->expects($this->once())
-            ->method('getAllowedInRss')
-            ->willReturn(true);
+        $wishlistItemsCollection = $wishlistModelMock->getItemCollection();
+        $wishlistItem = $wishlistItemsCollection[0];
+        $productMock = $wishlistItem->getProduct();
         $this->imageHelperMock->expects($this->once())
             ->method('init')
             ->with($productMock, 'rss_thumbnail')
@@ -274,12 +245,7 @@ class WishlistTest extends TestCase
         $priceRendererMock->expects($this->once())
             ->method('render')
             ->willReturn($priceHtmlForTest);
-        $productMock->expects($this->any())
-            ->method('getDescription')
-            ->willReturn($productDescription);
-        $productMock->expects($this->any())
-            ->method('getShortDescription')
-            ->willReturn($productShortDescription);
+
         $this->catalogOutputMock->expects($this->any())
             ->method('productAttribute')
             ->willReturnArgument(1);
@@ -291,7 +257,7 @@ class WishlistTest extends TestCase
 
         $description = '<table><tr><td><a href="' . $staticArgs['productUrl'] . '"><img src="' . $imgThumbSrc .
             '" border="0" align="left" height="75" width="75"></a></td><td style="text-decoration:none;">' .
-            $productShortDescription . '<p>' . $priceHtmlForTest . '</p><p>Comment: ' . $productDescription . '<p>' .
+            'Product short description<p>' . $priceHtmlForTest . '</p><p>Comment: Product description<p>' .
             '</td></tr></table>';
 
         return $description;
@@ -300,12 +266,8 @@ class WishlistTest extends TestCase
     public function testIsAllowed()
     {
         $customerId = 1;
-        $customerServiceMock = $this->getMockForAbstractClass(CustomerInterface::class);
-        $wishlist = $this->getMockBuilder(\Magento\Wishlist\Model\Wishlist::class)
-            ->addMethods(['getSharingCode'])
-            ->onlyMethods(['getId', '__wakeup', 'getCustomerId', 'getItemCollection'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $customerServiceMock = $this->createMock(CustomerInterface::class);
+        $wishlist = $this->createMock(\Magento\Wishlist\Model\Wishlist::class);
         $wishlist->expects($this->once())->method('getCustomerId')->willReturn($customerId);
         $this->wishlistHelperMock->expects($this->any())->method('getWishlist')
             ->willReturn($wishlist);
@@ -323,11 +285,7 @@ class WishlistTest extends TestCase
     public function testGetCacheKey()
     {
         $wishlistId = 1;
-        $wishlist = $this->getMockBuilder(\Magento\Wishlist\Model\Wishlist::class)
-            ->addMethods(['getSharingCode'])
-            ->onlyMethods(['getId', '__wakeup', 'getCustomerId', 'getItemCollection'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $wishlist = $this->createMock(\Magento\Wishlist\Model\Wishlist::class);
         $wishlist->expects($this->once())->method('getId')->willReturn($wishlistId);
         $this->wishlistHelperMock->expects($this->any())->method('getWishlist')
             ->willReturn($wishlist);
@@ -341,15 +299,17 @@ class WishlistTest extends TestCase
 
     public function testIsAuthRequired()
     {
-        $wishlist = $this->getMockBuilder(\Magento\Wishlist\Model\Wishlist::class)
-            ->addMethods(['getSharingCode'])
-            ->onlyMethods(['getId', '__wakeup', 'getCustomerId', 'getItemCollection'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $wishlist->expects($this->any())->method('getSharingCode')
-            ->willReturn('somesharingcode');
-        $this->wishlistHelperMock->expects($this->any())->method('getWishlist')
-            ->willReturn($wishlist);
+        $wishlist = new class() extends \Magento\Wishlist\Model\Wishlist {
+            public function __construct()
+            {
+            }
+            
+            public function getSharingCode()
+            {
+                return 'somesharingcode';
+            }
+        };
+        $this->wishlistHelperMock->method('getWishlist')->willReturn($wishlist);
         $this->assertFalse($this->model->isAuthRequired());
     }
 
@@ -357,13 +317,9 @@ class WishlistTest extends TestCase
     {
         $price = 10.;
 
-        $productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productMock = $this->createMock(Product::class);
 
-        $renderBlockMock = $this->getMockBuilder(Render::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $renderBlockMock = $this->createMock(Render::class);
         $renderBlockMock->expects($this->once())
             ->method('render')
             ->with(
@@ -393,13 +349,9 @@ class WishlistTest extends TestCase
     {
         $price = 10.;
 
-        $productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productMock = $this->createMock(Product::class);
 
-        $renderBlockMock = $this->getMockBuilder(Render::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $renderBlockMock = $this->createMock(Render::class);
         $renderBlockMock->expects($this->once())
             ->method('render')
             ->with(
@@ -415,5 +367,113 @@ class WishlistTest extends TestCase
             ->willReturn($renderBlockMock);
 
         $this->assertEquals($price, $this->model->getProductPriceHtml($productMock));
+    }
+
+    private function createWishlistModelMock($wishlistId)
+    {
+        return new class($wishlistId) extends \Magento\Wishlist\Model\Wishlist {
+            /**
+             * @var int
+             */
+            private $id;
+            /**
+             * @var string
+             */
+            private $sharingCode = 'somesharingcode';
+            /**
+             * @var Collection
+             */
+            private $itemCollection;
+            
+            public function __construct($id)
+            {
+                $this->id = $id;
+                $_ = [$id];
+                unset($_);
+            }
+            
+            public function getId()
+            {
+                return $this->id;
+            }
+            
+            public function getSharingCode()
+            {
+                return $this->sharingCode;
+            }
+            
+            public function getCustomerId()
+            {
+                return 1;
+            }
+            
+            public function setItemCollection($collection)
+            {
+                $this->itemCollection = $collection;
+                $_ = [$collection];
+                unset($_);
+                return $this;
+            }
+            
+            public function getItemCollection()
+            {
+                return $this->itemCollection;
+            }
+            
+            public function save()
+            {
+                return $this;
+            }
+        };
+    }
+
+    private function createProductMock($productName)
+    {
+        return new class($productName) extends Product {
+            /**
+             * @var string
+             */
+            private $name;
+            
+            public function __construct($name)
+            {
+                $this->name = $name;
+                $_ = [$name];
+                unset($_);
+            }
+            
+            public function getName()
+            {
+                return $this->name;
+            }
+            public function setAllowedInRss($value)
+            {
+                return $this;
+            }
+            public function setAllowedPriceInRss($value)
+            {
+                return $this;
+            }
+            public function setProductUrl($url)
+            {
+                return $this;
+            }
+            public function getAllowedInRss()
+            {
+                return true;
+            }
+            public function getAllowedPriceInRss()
+            {
+                return true;
+            }
+            public function getShortDescription()
+            {
+                return 'Product short description';
+            }
+            public function getDescription()
+            {
+                return 'Product description';
+            }
+        };
     }
 }

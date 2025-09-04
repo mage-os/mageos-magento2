@@ -36,8 +36,8 @@ parameters:
         - '#Constant TESTS_MODULES_PATH not found.#'
         - '#Constant TESTS_INSTALLATION_DB_CONFIG_FILE not found.#'
         - '#Constant T_[A-Z_]+ not found.#'
-        # Ignore missing ContextExtensionInterface in GraphQl modules
-        - '#Anonymous class implements unknown interface Magento\\GraphQl\\Model\\Query\\ContextExtensionInterface#'
+        # Ignore missing interfaces in anonymous classes (general pattern for test files)
+        - '#Anonymous class implements unknown interface [a-zA-Z0-9\\_\\\\]+Interface#'
 
 services:
     -

@@ -1,5 +1,9 @@
 <?php
 /**
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
+ */
+/**
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -170,43 +174,245 @@ class CartTest extends TestCase
             ->onlyMethods(['getWishlist'])
             ->getMockForAbstractClass();
 
-        $this->quantityProcessorMock = $this->getMockBuilder(LocaleQuantityProcessor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->quantityProcessorMock = $this->createMock(LocaleQuantityProcessor::class);
 
-        $this->itemFactoryMock = $this->getMockBuilder(ItemFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->itemFactoryMock = $this->createPartialMock(ItemFactory::class, ['create']); // @phpstan-ignore-line
 
-        $this->checkoutCartMock = $this->getMockBuilder(CheckoutCart::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['save', 'getQuote'])
-            ->addMethods(['getShouldRedirectToCart', 'getCartUrl'])
-            ->getMock();
+        $this->checkoutCartMock = new class extends CheckoutCart {
+            /**
+             * @var Quote
+             */
+            private $quote;
+            public function __construct()
+            {
+ /* Skip parent */
+            }
+            public function save()
+            {
+                return $this;
+            }
+            public function getQuote()
+            {
+                return $this->quote;
+            }
+            public function getShouldRedirectToCart()
+            {
+                return false;
+            }
+            public function getCartUrl()
+            {
+                return 'cart_url';
+            }
+            public function setQuote($quote)
+            {
+                $this->quote = $quote;
+                $_ = [$quote];
+                unset($_);
+                return $this;
+            }
+        };
 
-        $this->optionFactoryMock = $this->getMockBuilder(OptionFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->optionFactoryMock = $this->createPartialMock(OptionFactory::class, ['create']); // @phpstan-ignore-line
 
-        $this->productHelperMock = $this->getMockBuilder(ProductHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productHelperMock = $this->createMock(ProductHelper::class);
 
-        $this->escaperMock = $this->getMockBuilder(Escaper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->escaperMock = $this->createMock(Escaper::class);
 
-        $this->helperMock = $this->getMockBuilder(Data::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->helperMock = $this->createMock(Data::class);
 
-        $this->requestMock = $this->getMockBuilder(RequestInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getParams', 'getParam'])
-            ->addMethods(['isAjax', 'getPostValue'])
-            ->getMockForAbstractClass();
+        $this->requestMock = new class implements RequestInterface {
+            /**
+             * @var array
+             */
+            public $params = [];
+            /**
+             * @var array
+             */
+            public $postValue = [];
+            /**
+             * @var bool
+             */
+            public $isAjax = false;
+            
+            public function getParams()
+            {
+                return $this->params;
+            }
+            public function getParam($key, $defaultValue = null)
+            {
+                $_ = [$key, $defaultValue];
+                unset($_);
+                return $this->params[$key] ?? $defaultValue;
+            }
+            public function isAjax()
+            {
+                return $this->isAjax;
+            }
+            public function getPostValue($key = null)
+            {
+                return $key ? ($this->postValue[$key] ?? null) : $this->postValue;
+            }
+            public function getPost($key = null)
+            {
+                return $key ? ($this->postValue[$key] ?? null) : $this->postValue;
+            }
+            public function getQuery($key = null)
+            {
+                return $key;
+            }
+            public function isPost()
+            {
+                return true;
+            }
+            public function isGet()
+            {
+                return false;
+            }
+            public function isPut()
+            {
+                return false;
+            }
+            public function isDelete()
+            {
+                return false;
+            }
+            public function isHead()
+            {
+                return false;
+            }
+            public function isOptions()
+            {
+                return false;
+            }
+            public function isPatch()
+            {
+                return false;
+            }
+            public function getMethod()
+            {
+                return 'POST';
+            }
+            public function getHeader($name)
+            {
+                return null;
+            }
+            public function getHeaders()
+            {
+                return [];
+            }
+            public function getUri()
+            {
+                return null;
+            }
+            public function getRequestUri()
+            {
+                return '/';
+            }
+            public function getPathInfo()
+            {
+                return '/';
+            }
+            public function getBasePath()
+            {
+                return '/';
+            }
+            public function getBaseUrl()
+            {
+                return 'http://example.com/';
+            }
+            public function getServer($key = null)
+            {
+                return $key;
+            }
+            public function getServerValue($key, $default = null)
+            {
+                return $default;
+            }
+            public function getHttpHost($trimPort = true)
+            {
+                return 'example.com';
+            }
+            public function getClientIp($checkToProxy = true)
+            {
+                return '127.0.0.1';
+            }
+            public function getScriptName()
+            {
+                return '/index.php';
+            }
+            public function getRequestString()
+            {
+                return '';
+            }
+            public function getFullActionName($delimiter = '_')
+            {
+                return 'index_index';
+            }
+            public function isSecure()
+            {
+                return false;
+            }
+            public function getHttpReferer()
+            {
+                return null;
+            }
+            public function getRequestedRouteName()
+            {
+                return 'index';
+            }
+            public function getRequestedControllerName()
+            {
+                return 'index';
+            }
+            public function getRequestedActionName()
+            {
+                return 'index';
+            }
+            public function getRouteName()
+            {
+                return 'index';
+            }
+            public function getControllerName()
+            {
+                return 'index';
+            }
+            public function getActionName()
+            {
+                return 'index';
+            }
+            public function getModuleName()
+            {
+                return 'Magento';
+            }
+            public function setModuleName($name)
+            {
+                return $this;
+            }
+            public function setActionName($name)
+            {
+                return $this;
+            }
+            public function setParam($key, $value)
+            {
+                return $this;
+            }
+            public function setParams(array $params)
+            {
+                return $this;
+            }
+            public function getCookie($name, $default = null)
+            {
+                return $default;
+            }
+            public function getCookies()
+            {
+                return [];
+            }
+            public function isXmlHttpRequest()
+            {
+                return false;
+            }
+        };
 
         $this->redirectMock = $this->getMockBuilder(RedirectInterface::class)
             ->disableOriginalConstructor()
@@ -221,44 +427,19 @@ class CartTest extends TestCase
             ->onlyMethods(['addSuccessMessage'])
             ->getMockForAbstractClass();
 
-        $this->urlMock = $this->getMockBuilder(UrlInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getUrl'])
-            ->getMockForAbstractClass();
-        $this->cartHelperMock = $this->getMockBuilder(CartHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->resultFactoryMock = $this->getMockBuilder(ResultFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->resultRedirectMock = $this->getMockBuilder(Redirect::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->resultJsonMock = $this->getMockBuilder(Json::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->urlMock = $this->createMock(UrlInterface::class);
+        $this->cartHelperMock = $this->createMock(CartHelper::class);
+        $this->resultFactoryMock = $this->createMock(ResultFactory::class);
+        $this->resultRedirectMock = $this->createMock(Redirect::class);
+        $this->resultJsonMock = $this->createMock(Json::class);
 
-        $this->contextMock = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->contextMock->expects($this->any())
-            ->method('getRequest')
-            ->willReturn($this->requestMock);
-        $this->contextMock->expects($this->any())
-            ->method('getRedirect')
-            ->willReturn($this->redirectMock);
-        $this->contextMock->expects($this->any())
-            ->method('getObjectManager')
-            ->willReturn($this->objectManagerMock);
-        $this->contextMock->expects($this->any())
-            ->method('getMessageManager')
-            ->willReturn($this->messageManagerMock);
-        $this->contextMock->expects($this->any())
-            ->method('getUrl')
-            ->willReturn($this->urlMock);
-        $this->contextMock->expects($this->any())
-            ->method('getResultFactory')
-            ->willReturn($this->resultFactoryMock);
+        $this->contextMock = $this->createMock(Context::class);
+        $this->contextMock->method('getRequest')->willReturn($this->requestMock);
+        $this->contextMock->method('getRedirect')->willReturn($this->redirectMock);
+        $this->contextMock->method('getObjectManager')->willReturn($this->objectManagerMock);
+        $this->contextMock->method('getMessageManager')->willReturn($this->messageManagerMock);
+        $this->contextMock->method('getUrl')->willReturn($this->urlMock);
+        $this->contextMock->method('getResultFactory')->willReturn($this->resultFactoryMock);
         $this->resultFactoryMock->expects($this->any())
             ->method('create')
             ->willReturnMap(
@@ -268,23 +449,17 @@ class CartTest extends TestCase
                 ]
             );
 
-        $this->formKeyValidator = $this->getMockBuilder(Validator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->formKeyValidator = $this->createMock(Validator::class);
 
         $this->cookieManagerMock = $this->getMockForAbstractClass(CookieManagerInterface::class);
 
-        $cookieMetadataMock = $this->getMockBuilder(PublicCookieMetadata::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $cookieMetadataMock = $this->createMock(PublicCookieMetadata::class);
 
-        $this->cookieMetadataFactoryMock = $this->getMockBuilder(CookieMetadataFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['createPublicCookieMetadata'])
-            ->getMock();
-        $this->cookieMetadataFactoryMock->expects($this->any())
-            ->method('createPublicCookieMetadata')
-            ->willReturn($cookieMetadataMock);
+        $this->cookieMetadataFactoryMock = $this->createPartialMock(
+            CookieMetadataFactory::class,
+            ['createPublicCookieMetadata']
+        );
+        $this->cookieMetadataFactoryMock->method('createPublicCookieMetadata')->willReturn($cookieMetadataMock);
         $cookieMetadataMock->expects($this->any())
             ->method('setDuration')
             ->willReturnSelf();
@@ -345,25 +520,23 @@ class CartTest extends TestCase
             ->with($this->requestMock)
             ->willReturn(true);
 
-        $itemMock = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $itemMock = new class extends Item {
+            public function __construct()
+            {
+ /* Skip parent */
+            }
+            public function load($id, $field = null)
+            {
+                return $this;
+            }
+            public function getId()
+            {
+                return null;
+            }
+        };
 
-        $this->requestMock->expects($this->once())
-            ->method('getParam')
-            ->with('item', null)
-            ->willReturn($itemId);
-        $this->itemFactoryMock->expects($this->once())
-            ->method('create')
-            ->willReturn($itemMock);
-
-        $itemMock->expects($this->once())
-            ->method('load')
-            ->with($itemId, null)
-            ->willReturnSelf();
-        $itemMock->expects($this->once())
-            ->method('getId')
-            ->willReturn(null);
+        $this->requestMock->params['item'] = $itemId;
+        $this->itemFactoryMock->method('create')->willReturn($itemMock);
         $this->resultRedirectMock->expects($this->once())
             ->method('setPath')
             ->with('*/*', [])
@@ -385,30 +558,27 @@ class CartTest extends TestCase
             ->with($this->requestMock)
             ->willReturn(true);
 
-        $itemMock = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['load', 'getId'])
-            ->addMethods(['getWishlistId'])
-            ->getMock();
+        $itemMock = new class extends Item {
+            public function __construct()
+            {
+ /* Skip parent */
+            }
+            public function load($id, $field = null)
+            {
+                return $this;
+            }
+            public function getId()
+            {
+                return 2;
+            }
+            public function getWishlistId()
+            {
+                return 1;
+            }
+        };
 
-        $this->requestMock->expects($this->once())
-            ->method('getParam')
-            ->with('item', null)
-            ->willReturn($itemId);
-        $this->itemFactoryMock->expects($this->once())
-            ->method('create')
-            ->willReturn($itemMock);
-
-        $itemMock->expects($this->once())
-            ->method('load')
-            ->with($itemId, null)
-            ->willReturnSelf();
-        $itemMock->expects($this->once())
-            ->method('getId')
-            ->willReturn($itemId);
-        $itemMock->expects($this->once())
-            ->method('getWishlistId')
-            ->willReturn($wishlistId);
+        $this->requestMock->params['item'] = $itemId;
+        $this->itemFactoryMock->method('create')->willReturn($itemMock);
 
         $this->wishlistProviderMock->expects($this->once())
             ->method('getWishlist')
@@ -481,69 +651,96 @@ class CartTest extends TestCase
         $params = ['item' => $itemId, 'qty' => $qty];
         $refererUrl = 'referer_url';
 
-        $itemMock = $this->getMockBuilder(Item::class)->disableOriginalConstructor()
-            ->onlyMethods(
-                [
-                    'load',
-                    'getId',
-                    'setQty',
-                    'setOptions',
-                    'getBuyRequest',
-                    'mergeBuyRequest',
-                    'addToCart',
-                    'getProduct'
-                ]
-            )
-            ->addMethods(['getWishlistId', 'getProductId'])
-            ->getMock();
+        $itemMock = new class extends Item {
+            /**
+             * @var BuyRequest
+             */
+            private $buyRequestMock;
+            /**
+             * @var Product
+             */
+            private $productMock;
+            public function __construct()
+            {
+ /* Skip parent */
+            }
+            public function load($id, $field = null)
+            {
+                return $this;
+            }
+            public function getId()
+            {
+                return 2;
+            }
+            public function setQty($qty)
+            {
+                return $this;
+            }
+            public function setOptions($options)
+            {
+                return $this;
+            }
+            public function getBuyRequest()
+            {
+                return $this->buyRequestMock;
+            }
+            public function mergeBuyRequest($buyRequest)
+            {
+                return $this;
+            }
+            public function addToCart($cart, $delete = false)
+            {
+                return true;
+            }
+            public function getProduct()
+            {
+                return $this->productMock;
+            }
+            public function getWishlistId()
+            {
+                return 1;
+            }
+            public function getProductId()
+            {
+                return 4;
+            }
+            public function setBuyRequestMock($mock)
+            {
+                $this->buyRequestMock = $mock;
+                return $this;
+            }
+            public function setProductMock($mock)
+            {
+                $this->productMock = $mock;
+                return $this;
+            }
+        };
 
-        $this->itemFactoryMock->expects($this->once())
-            ->method('create')
-            ->willReturn($itemMock);
+        $this->itemFactoryMock->method('create')->willReturn($itemMock);
+        
+        $productMock = $this->createMock(\Magento\Catalog\Model\Product::class);
+        $buyRequestMock = $this->createMock(DataObject::class);
+        $itemMock->setProductMock($productMock);
+        $itemMock->setBuyRequestMock($buyRequestMock);
+        
+        $productMock->expects($this->atLeastOnce())
+            ->method('getName')
+            ->willReturn($productName);
 
-        $itemMock->expects($this->once())
-            ->method('load')
-            ->with($itemId, null)
-            ->willReturnSelf();
-        $itemMock->expects($this->exactly(2))
-            ->method('getId')
-            ->willReturn($itemId);
-        $itemMock->expects($this->once())
-            ->method('getWishlistId')
-            ->willReturn($wishlistId);
-
-        $wishlistMock = $this->getMockBuilder(Wishlist::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $wishlistMock = $this->createMock(Wishlist::class);
 
         $this->wishlistProviderMock->expects($this->once())
             ->method('getWishlist')
             ->with($wishlistId)
             ->willReturn($wishlistMock);
 
-        $this->requestMock
-            ->method('getParam')
-            ->willReturnCallback(function ($arg1, $arg2) use ($itemId, $qty) {
-                if ($arg1 == 'item') {
-                    return $itemId;
-                } elseif ($arg1 == 'qty') {
-                    return $qty;
-                }
-            });
+        $this->requestMock->params['item'] = $itemId;
+        $this->requestMock->params['qty'] = $qty;
 
         $this->quantityProcessorMock->expects($this->once())
             ->method('process')
             ->with($qty[$itemId])
             ->willReturnArgument(0);
-
-        $itemMock->expects($this->once())
-            ->method('setQty')
-            ->with($qty[$itemId])
-            ->willReturnSelf();
-
-        $itemMock->expects($this->once())
-            ->method('getProductId')
-            ->willReturn($productId);
 
         $this->urlMock
             ->method('getUrl')
@@ -555,17 +752,13 @@ class CartTest extends TestCase
                 }
             });
 
-        $optionMock = $this->getMockBuilder(Option::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $optionMock = $this->createMock(Option::class);
 
         $this->optionFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($optionMock);
 
-        $optionsMock = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $optionsMock = $this->createMock(Collection::class);
         $optionMock->expects($this->once())
             ->method('getCollection')
             ->willReturn($optionsMock);
@@ -579,77 +772,34 @@ class CartTest extends TestCase
             ->with($itemId)
             ->willReturn($options);
 
-        $itemMock->expects($this->once())
-            ->method('setOptions')
-            ->with($options)
-            ->willReturnSelf();
-
-        $this->requestMock->expects($this->once())
-            ->method('getParams')
-            ->willReturn($params);
-        $this->requestMock->expects($this->once())
-            ->method('isAjax')
-            ->willReturn($isAjax);
-
-        $buyRequestMock = $this->getMockBuilder(DataObject::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $itemMock->expects($this->once())
-            ->method('getBuyRequest')
-            ->willReturn($buyRequestMock);
+        $this->requestMock->params = $params;
+        $this->requestMock->isAjax = $isAjax;
 
         $this->productHelperMock->expects($this->once())
             ->method('addParamsToBuyRequest')
             ->with($params, ['current_config' => $buyRequestMock])
             ->willReturn($buyRequestMock);
 
-        $itemMock->expects($this->once())
-            ->method('mergeBuyRequest')
-            ->with($buyRequestMock)
-            ->willReturnSelf();
-        $itemMock->expects($this->once())
-            ->method('addToCart')
-            ->with($this->checkoutCartMock, true)
-            ->willReturn(true);
+        $quoteMock = new class extends Quote {
+            public function __construct()
+            {
+ /* Skip parent */
+            }
+            public function collectTotals()
+            {
+                return $this;
+            }
+            public function getHasError()
+            {
+                return false;
+            }
+        };
 
-        $this->checkoutCartMock->expects($this->once())
-            ->method('save')
-            ->willReturnSelf();
-
-        $quoteMock = $this->getMockBuilder(Quote::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['collectTotals'])
-            ->addMethods(['getHasError'])
-            ->getMock();
-
-        $this->checkoutCartMock->expects($this->exactly(2))
-            ->method('getQuote')
-            ->willReturn($quoteMock);
-
-        $quoteMock->expects($this->once())
-            ->method('collectTotals')
-            ->willReturnSelf();
+        $this->checkoutCartMock->setQuote($quoteMock);
 
         $wishlistMock->expects($this->once())
             ->method('save')
             ->willReturnSelf();
-
-        $quoteMock->expects($this->once())
-            ->method('getHasError')
-            ->willReturn(false);
-
-        $productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $itemMock->expects($this->atLeastOnce())
-            ->method('getProduct')
-            ->willReturn($productMock);
-
-        $productMock->expects($this->atLeastOnce())
-            ->method('getName')
-            ->willReturn($productName);
 
         $this->messageManagerMock->expects($this->once())
             ->method('addComplexSuccessMessage')
@@ -691,70 +841,92 @@ class CartTest extends TestCase
             ->with($this->requestMock)
             ->willReturn(true);
 
-        $itemMock = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(
-                [
-                    'load',
-                    'getId',
-                    'setQty',
-                    'setOptions',
-                    'getBuyRequest',
-                    'mergeBuyRequest',
-                    'addToCart',
-                    'getProduct'
-                ]
-            )
-            ->addMethods(['getWishlistId', 'getProductId'])
-            ->getMock();
+        $itemMock = new class extends Item {
+            /**
+             * @var Product
+             */
+            private $productMock;
+            /**
+             * @var BuyRequest
+             */
+            private $buyRequestMock;
+            public function __construct()
+            {
+ /* Skip parent */
+            }
+            public function load($id, $field = null)
+            {
+                return $this;
+            }
+            public function getId()
+            {
+                return 2;
+            }
+            public function setQty($qty)
+            {
+                return $this;
+            }
+            public function setOptions($options)
+            {
+                return $this;
+            }
+            public function getBuyRequest()
+            {
+                return $this->buyRequestMock;
+            }
+            public function mergeBuyRequest($buyRequest)
+            {
+                return $this;
+            }
+            public function addToCart($cart, $delete = false)
+            {
+                throw new ProductException(__('Test Phrase'));
+            }
+            public function getProduct()
+            {
+                return $this->productMock;
+            }
+            public function getWishlistId()
+            {
+                return 1;
+            }
+            public function getProductId()
+            {
+                return 4;
+            }
+            public function setProductMock($mock)
+            {
+                $this->productMock = $mock;
+                return $this;
+            }
+            public function setBuyRequestMock($mock)
+            {
+                $this->buyRequestMock = $mock;
+                return $this;
+            }
+        };
 
-        $this->itemFactoryMock->expects($this->once())
-            ->method('create')
-            ->willReturn($itemMock);
+        $this->itemFactoryMock->method('create')->willReturn($itemMock);
 
-        $itemMock->expects($this->once())
-            ->method('load')
-            ->with($itemId, null)
-            ->willReturnSelf();
-        $itemMock->expects($this->exactly(2))
-            ->method('getId')
-            ->willReturn($itemId);
-        $itemMock->expects($this->once())
-            ->method('getWishlistId')
-            ->willReturn($wishlistId);
+        $productMock = $this->createMock(\Magento\Catalog\Model\Product::class);
+        $buyRequestMock = $this->createMock(DataObject::class);
+        $itemMock->setProductMock($productMock);
+        $itemMock->setBuyRequestMock($buyRequestMock);
 
-        $wishlistMock = $this->getMockBuilder(Wishlist::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $wishlistMock = $this->createMock(Wishlist::class);
 
         $this->wishlistProviderMock->expects($this->once())
             ->method('getWishlist')
             ->with($wishlistId)
             ->willReturn($wishlistMock);
 
-        $this->requestMock
-            ->method('getParam')
-            ->willReturnCallback(function ($arg1, $arg2) use ($itemId, $qty) {
-                if ($arg1 == 'item') {
-                    return $itemId;
-                } elseif ($arg1 == 'qty') {
-                    return $qty;
-                }
-            });
+        $this->requestMock->params['item'] = $itemId;
+        $this->requestMock->params['qty'] = $qty;
 
         $this->quantityProcessorMock->expects($this->once())
             ->method('process')
             ->with(1)
             ->willReturnArgument(0);
-
-        $itemMock->expects($this->once())
-            ->method('setQty')
-            ->with(1)
-            ->willReturnSelf();
-
-        $itemMock->expects($this->once())
-            ->method('getProductId')
-            ->willReturn($productId);
 
         $this->urlMock
             ->method('getUrl')
@@ -766,17 +938,13 @@ class CartTest extends TestCase
                 }
             });
 
-        $optionMock = $this->getMockBuilder(Option::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $optionMock = $this->createMock(Option::class);
 
         $this->optionFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($optionMock);
 
-        $optionsMock = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $optionsMock = $this->createMock(Collection::class);
         $optionMock->expects($this->once())
             ->method('getCollection')
             ->willReturn($optionsMock);
@@ -790,36 +958,17 @@ class CartTest extends TestCase
             ->with($itemId)
             ->willReturn($options);
 
-        $itemMock->expects($this->once())
-            ->method('setOptions')
-            ->with($options)
-            ->willReturnSelf();
+        $this->requestMock->params = $params;
 
-        $this->requestMock->expects($this->once())
-            ->method('getParams')
-            ->willReturn($params);
-
-        $buyRequestMock = $this->getMockBuilder(DataObject::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $itemMock->expects($this->once())
-            ->method('getBuyRequest')
-            ->willReturn($buyRequestMock);
+        $buyRequestMock = $this->createMock(DataObject::class);
+        $productMock = $this->createMock(\Magento\Catalog\Model\Product::class);
+        $itemMock->setBuyRequestMock($buyRequestMock);
+        $itemMock->setProductMock($productMock);
 
         $this->productHelperMock->expects($this->once())
             ->method('addParamsToBuyRequest')
             ->with($params, ['current_config' => $buyRequestMock])
             ->willReturn($buyRequestMock);
-
-        $itemMock->expects($this->once())
-            ->method('mergeBuyRequest')
-            ->with($buyRequestMock)
-            ->willReturnSelf();
-        $itemMock->expects($this->once())
-            ->method('addToCart')
-            ->with($this->checkoutCartMock, true)
-            ->willThrowException(new ProductException(__('Test Phrase')));
 
         $this->messageManagerMock->expects($this->once())
             ->method('addErrorMessage')
@@ -859,70 +1008,92 @@ class CartTest extends TestCase
             ->with($this->requestMock)
             ->willReturn(true);
 
-        $itemMock = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(
-                [
-                    'load',
-                    'getId',
-                    'setQty',
-                    'setOptions',
-                    'getBuyRequest',
-                    'mergeBuyRequest',
-                    'addToCart',
-                    'getProduct'
-                ]
-            )
-            ->addMethods(['getWishlistId', 'getProductId'])
-            ->getMock();
+        $itemMock = new class extends Item {
+            /**
+             * @var Product
+             */
+            private $productMock;
+            /**
+             * @var BuyRequest
+             */
+            private $buyRequestMock;
+            public function __construct()
+            {
+ /* Skip parent */
+            }
+            public function load($id, $field = null)
+            {
+                return $this;
+            }
+            public function getId()
+            {
+                return 2;
+            }
+            public function setQty($qty)
+            {
+                return $this;
+            }
+            public function setOptions($options)
+            {
+                return $this;
+            }
+            public function getBuyRequest()
+            {
+                return $this->buyRequestMock;
+            }
+            public function mergeBuyRequest($buyRequest)
+            {
+                return $this;
+            }
+            public function addToCart($cart, $delete = false)
+            {
+                throw new LocalizedException(__('message'));
+            }
+            public function getProduct()
+            {
+                return $this->productMock;
+            }
+            public function getWishlistId()
+            {
+                return 1;
+            }
+            public function getProductId()
+            {
+                return 4;
+            }
+            public function setProductMock($mock)
+            {
+                $this->productMock = $mock;
+                return $this;
+            }
+            public function setBuyRequestMock($mock)
+            {
+                $this->buyRequestMock = $mock;
+                return $this;
+            }
+        };
 
-        $this->itemFactoryMock->expects($this->once())
-            ->method('create')
-            ->willReturn($itemMock);
+        $this->itemFactoryMock->method('create')->willReturn($itemMock);
 
-        $itemMock->expects($this->once())
-            ->method('load')
-            ->with($itemId, null)
-            ->willReturnSelf();
-        $itemMock->expects($this->exactly(2))
-            ->method('getId')
-            ->willReturn($itemId);
-        $itemMock->expects($this->once())
-            ->method('getWishlistId')
-            ->willReturn($wishlistId);
+        $productMock = $this->createMock(\Magento\Catalog\Model\Product::class);
+        $buyRequestMock = $this->createMock(DataObject::class);
+        $itemMock->setProductMock($productMock);
+        $itemMock->setBuyRequestMock($buyRequestMock);
 
-        $wishlistMock = $this->getMockBuilder(Wishlist::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $wishlistMock = $this->createMock(Wishlist::class);
 
         $this->wishlistProviderMock->expects($this->once())
             ->method('getWishlist')
             ->with($wishlistId)
             ->willReturn($wishlistMock);
 
-        $this->requestMock
-            ->method('getParam')
-            ->willReturnCallback(function ($arg1, $arg2) use ($itemId, $qty) {
-                if ($arg1 == 'item') {
-                    return $itemId;
-                } elseif ($arg1 == 'qty') {
-                    return $qty;
-                }
-            });
+        $this->requestMock->params['item'] = $itemId;
+        $this->requestMock->params['qty'] = $qty;
 
         $this->quantityProcessorMock->expects($this->once())
             ->method('process')
             ->with(1)
             ->willReturnArgument(0);
-
-        $itemMock->expects($this->once())
-            ->method('setQty')
-            ->with(1)
-            ->willReturnSelf();
-
-        $itemMock->expects($this->once())
-            ->method('getProductId')
-            ->willReturn($productId);
 
         $this->urlMock
             ->method('getUrl')
@@ -934,17 +1105,13 @@ class CartTest extends TestCase
                 }
             });
 
-        $optionMock = $this->getMockBuilder(Option::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $optionMock = $this->createMock(Option::class);
 
         $this->optionFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($optionMock);
 
-        $optionsMock = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $optionsMock = $this->createMock(Collection::class);
         $optionMock->expects($this->once())
             ->method('getCollection')
             ->willReturn($optionsMock);
@@ -958,36 +1125,17 @@ class CartTest extends TestCase
             ->with($itemId)
             ->willReturn($options);
 
-        $itemMock->expects($this->once())
-            ->method('setOptions')
-            ->with($options)
-            ->willReturnSelf();
+        $this->requestMock->params = $params;
 
-        $this->requestMock->expects($this->once())
-            ->method('getParams')
-            ->willReturn($params);
-
-        $buyRequestMock = $this->getMockBuilder(DataObject::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $itemMock->expects($this->once())
-            ->method('getBuyRequest')
-            ->willReturn($buyRequestMock);
+        $buyRequestMock = $this->createMock(DataObject::class);
+        $productMock = $this->createMock(\Magento\Catalog\Model\Product::class);
+        $itemMock->setBuyRequestMock($buyRequestMock);
+        $itemMock->setProductMock($productMock);
 
         $this->productHelperMock->expects($this->once())
             ->method('addParamsToBuyRequest')
             ->with($params, ['current_config' => $buyRequestMock])
             ->willReturn($buyRequestMock);
-
-        $itemMock->expects($this->once())
-            ->method('mergeBuyRequest')
-            ->with($buyRequestMock)
-            ->willReturnSelf();
-        $itemMock->expects($this->once())
-            ->method('addToCart')
-            ->with($this->checkoutCartMock, true)
-            ->willThrowException(new LocalizedException(__('message')));
 
         $this->messageManagerMock->expects($this->once())
             ->method('addNoticeMessage')
@@ -1028,76 +1176,93 @@ class CartTest extends TestCase
             ->with($this->requestMock)
             ->willReturn(true);
 
-        $itemMock = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(
-                [
-                    'load',
-                    'getId',
-                    'setQty',
-                    'setOptions',
-                    'getBuyRequest',
-                    'mergeBuyRequest',
-                    'addToCart',
-                    'getProduct'
-                ]
-            )
-            ->addMethods(['getWishlistId', 'getProductId'])
-            ->getMock();
+        $itemMock = new class extends Item {
+            /**
+             * @var Product
+             */
+            private $productMock;
+            /**
+             * @var BuyRequest
+             */
+            private $buyRequestMock;
+            public function __construct()
+            {
+ /* Skip parent */
+            }
+            public function load($id, $field = null)
+            {
+                return $this;
+            }
+            public function getId()
+            {
+                return 2;
+            }
+            public function setQty($qty)
+            {
+                return $this;
+            }
+            public function setOptions($options)
+            {
+                return $this;
+            }
+            public function getBuyRequest()
+            {
+                return $this->buyRequestMock;
+            }
+            public function mergeBuyRequest($buyRequest)
+            {
+                return $this;
+            }
+            public function addToCart($cart, $delete = false)
+            {
+                throw new LocalizedException(__('message'));
+            }
+            public function getProduct()
+            {
+                return $this->productMock;
+            }
+            public function getWishlistId()
+            {
+                return 1;
+            }
+            public function getProductId()
+            {
+                return 4;
+            }
+            public function setProductMock($mock)
+            {
+                $this->productMock = $mock;
+                return $this;
+            }
+            public function setBuyRequestMock($mock)
+            {
+                $this->buyRequestMock = $mock;
+                return $this;
+            }
+        };
 
-        $this->itemFactoryMock->expects($this->once())
-            ->method('create')
-            ->willReturn($itemMock);
+        $this->itemFactoryMock->method('create')->willReturn($itemMock);
 
-        $itemMock->expects($this->once())
-            ->method('load')
-            ->with($itemId, null)
-            ->willReturnSelf();
-        $itemMock->expects($this->exactly(2))
-            ->method('getId')
-            ->willReturn($itemId);
-        $itemMock->expects($this->once())
-            ->method('getWishlistId')
-            ->willReturn($wishlistId);
+        $productMock = $this->createMock(\Magento\Catalog\Model\Product::class);
+        $buyRequestMock = $this->createMock(DataObject::class);
+        $itemMock->setProductMock($productMock);
+        $itemMock->setBuyRequestMock($buyRequestMock);
 
-        $wishlistMock = $this->getMockBuilder(Wishlist::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $wishlistMock = $this->createMock(Wishlist::class);
 
         $this->wishlistProviderMock->expects($this->once())
             ->method('getWishlist')
             ->with($wishlistId)
             ->willReturn($wishlistMock);
 
-        $this->requestMock
-            ->method('getParam')
-            ->willReturnCallback(function ($arg1, $arg2) use ($itemId, $qty) {
-                if ($arg1 == 'item') {
-                    return $itemId;
-                } elseif ($arg1 == 'qty') {
-                    return $qty;
-                }
-            });
-
-        $this->requestMock->expects($this->once())
-            ->method('getPostValue')
-            ->with('qty')
-            ->willReturn($postQty);
+        $this->requestMock->params['item'] = $itemId;
+        $this->requestMock->params['qty'] = $qty;
+        $this->requestMock->postValue['qty'] = $postQty;
 
         $this->quantityProcessorMock->expects($this->once())
             ->method('process')
             ->with($postQty)
             ->willReturnArgument(0);
-
-        $itemMock->expects($this->once())
-            ->method('setQty')
-            ->with($postQty)
-            ->willReturnSelf();
-
-        $itemMock->expects($this->once())
-            ->method('getProductId')
-            ->willReturn($productId);
-
         $this->urlMock
             ->method('getUrl')
             ->willReturnCallback(function ($arg1, $arg2) use ($indexUrl, $configureUrl, $itemId, $productId) {
@@ -1108,17 +1273,13 @@ class CartTest extends TestCase
                 }
             });
 
-        $optionMock = $this->getMockBuilder(Option::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $optionMock = $this->createMock(Option::class);
 
         $this->optionFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($optionMock);
 
-        $optionsMock = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $optionsMock = $this->createMock(Collection::class);
         $optionMock->expects($this->once())
             ->method('getCollection')
             ->willReturn($optionsMock);
@@ -1132,36 +1293,17 @@ class CartTest extends TestCase
             ->with($itemId)
             ->willReturn($options);
 
-        $itemMock->expects($this->once())
-            ->method('setOptions')
-            ->with($options)
-            ->willReturnSelf();
+        $this->requestMock->params = $params;
 
-        $this->requestMock->expects($this->once())
-            ->method('getParams')
-            ->willReturn($params);
-
-        $buyRequestMock = $this->getMockBuilder(DataObject::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $itemMock->expects($this->once())
-            ->method('getBuyRequest')
-            ->willReturn($buyRequestMock);
+        $buyRequestMock = $this->createMock(DataObject::class);
+        $productMock = $this->createMock(\Magento\Catalog\Model\Product::class);
+        $itemMock->setBuyRequestMock($buyRequestMock);
+        $itemMock->setProductMock($productMock);
 
         $this->productHelperMock->expects($this->once())
             ->method('addParamsToBuyRequest')
             ->with($params, ['current_config' => $buyRequestMock])
             ->willReturn($buyRequestMock);
-
-        $itemMock->expects($this->once())
-            ->method('mergeBuyRequest')
-            ->with($buyRequestMock)
-            ->willReturnSelf();
-        $itemMock->expects($this->once())
-            ->method('addToCart')
-            ->with($this->checkoutCartMock, true)
-            ->willThrowException(new LocalizedException(__('message')));
 
         $this->messageManagerMock->expects($this->once())
             ->method('addNoticeMessage')

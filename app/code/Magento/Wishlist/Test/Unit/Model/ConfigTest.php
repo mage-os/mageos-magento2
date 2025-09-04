@@ -1,5 +1,9 @@
 <?php
 /**
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
+ */
+/**
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -36,15 +40,9 @@ class ConfigTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->_scopeConfig = $this->getMockBuilder(
-            ScopeConfigInterface::class
-        )->getMock();
-        $this->_catalogConfig = $this->getMockBuilder(\Magento\Catalog\Model\Config::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->_attributeConfig = $this->getMockBuilder(\Magento\Catalog\Model\Attribute\Config::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->_scopeConfig = $this->createMock(ScopeConfigInterface::class);
+        $this->_catalogConfig = $this->createMock(\Magento\Catalog\Model\Config::class);
+        $this->_attributeConfig = $this->createMock(\Magento\Catalog\Model\Attribute\Config::class);
 
         $this->model = new Config($this->_scopeConfig, $this->_catalogConfig, $this->_attributeConfig);
     }

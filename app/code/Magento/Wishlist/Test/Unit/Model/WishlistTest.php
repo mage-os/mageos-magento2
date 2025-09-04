@@ -1,5 +1,9 @@
 <?php
 /**
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
+ */
+/**
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -166,11 +170,11 @@ class WishlistTest extends TestCase
         $this->date = $this->getMockBuilder(DateTime\DateTime::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->itemFactory = $this->getMockBuilder(ItemFactory::class)
+        $this->itemFactory = $this->getMockBuilder(ItemFactory::class) // @phpstan-ignore-line
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
             ->getMock();
-        $this->itemsFactory = $this->getMockBuilder(CollectionFactory::class)
+        $this->itemsFactory = $this->getMockBuilder(CollectionFactory::class) // @phpstan-ignore-line
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
             ->getMock();
@@ -357,30 +361,61 @@ class WishlistTest extends TestCase
     /**
      * Prepare wishlist item mock.
      *
-     * @return MockObject
+     * @return Item
      */
-    private function prepareWishlistItem(): MockObject
+    private function prepareWishlistItem(): Item
     {
-        $newItem = $this->getMockBuilder(Item::class)
-            ->onlyMethods(
-                ['setOptions', 'setQty', 'save']
-            )
-            ->addMethods(['setProductId', 'setWishlistId', 'setStoreId', 'getItem', 'setProduct'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $newItem->expects($this->any())->method('setProductId')->willReturnSelf();
-        $newItem->expects($this->any())->method('setWishlistId')->willReturnSelf();
-        $newItem->expects($this->any())->method('setStoreId')->willReturnSelf();
-        $newItem->expects($this->any())->method('setOptions')->willReturnSelf();
-        $newItem->expects($this->any())->method('setProduct')->willReturnSelf();
-        $newItem->expects($this->any())->method('setQty')->willReturnSelf();
-        $newItem->expects($this->any())->method('getItem')->willReturn(2);
-        $newItem->expects($this->any())->method('save')->willReturnSelf();
+        $newItem = new class extends Item {
+            public function __construct()
+            {
+            }
+            
+            public function setProductId($productId)
+            {
+                return $this;
+            }
+            
+            public function setWishlistId($wishlistId)
+            {
+                return $this;
+            }
+            
+            public function setStoreId($storeId)
+            {
+                return $this;
+            }
+            
+            public function setOptions($options)
+            {
+                return $this;
+            }
+            
+            public function setProduct($product)
+            {
+                return $this;
+            }
+            
+            public function setQty($qty)
+            {
+                return $this;
+            }
+            
+            public function getItem()
+            {
+                return 2;
+            }
+            
+            public function save()
+            {
+                return $this;
+            }
+        };
 
         return $newItem;
     }
 
-    protected function getMockForDataObject() {
+    protected function getMockForDataObject()
+    {
         $dataObjectMock = $this->createMock(DataObject::class);
         $dataObjectMock->expects($this->once())
             ->method('setData')
@@ -437,22 +472,7 @@ class WishlistTest extends TestCase
         $instanceType->method('processConfiguration')
             ->willReturn('product');
 
-        $productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['hasWishlistStoreId'])
-            ->onlyMethods(['getId', 'getStoreId', 'getTypeInstance', 'getIsSalable'])
-            ->getMock();
-        $productMock->method('getId')
-            ->willReturn($productId);
-        $productMock->method('hasWishlistStoreId')
-            ->willReturn(false);
-        $productMock->method('getStoreId')
-            ->willReturn($storeId);
-        $productMock->method('getTypeInstance')
-            ->willReturn($instanceType);
-        $productMock->expects($this->any())
-            ->method('getIsSalable')
-            ->willReturn($getIsSalable);
+        $productMock = $this->createProductMockForAddNewItem($productId, $storeId, $instanceType, $getIsSalable);
 
         $this->productRepository->expects($this->once())
             ->method('getById')
@@ -490,5 +510,58 @@ class WishlistTest extends TestCase
             [true, false, ''],
             [true, true, ''],
         ];
+    }
+
+    private function createProductMockForAddNewItem($productId, $storeId, $instanceType, $getIsSalable)
+    {
+        return new class($productId, $storeId, $instanceType, $getIsSalable) extends Product {
+            /**
+             * @var int
+             */
+            private $productId;
+            /**
+             * @var int
+             */
+            private $storeId;
+            /**
+             * @var TypeInstanceInterface
+             */
+            private $typeInstance;
+            /**
+             * @var bool
+             */
+            private $isSalable;
+            
+            public function __construct($productId, $storeId, $typeInstance, $isSalable)
+            {
+                $this->productId = $productId;
+                $this->storeId = $storeId;
+                $this->typeInstance = $typeInstance;
+                $this->isSalable = $isSalable;
+                $_ = [$productId, $storeId, $typeInstance, $isSalable];
+                unset($_);
+            }
+            
+            public function getId()
+            {
+                return $this->productId;
+            }
+            public function hasWishlistStoreId()
+            {
+                return false;
+            }
+            public function getStoreId()
+            {
+                return $this->storeId;
+            }
+            public function getTypeInstance()
+            {
+                return $this->typeInstance;
+            }
+            public function getIsSalable()
+            {
+                return $this->isSalable;
+            }
+        };
     }
 }

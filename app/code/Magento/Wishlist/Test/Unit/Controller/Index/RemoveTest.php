@@ -1,5 +1,9 @@
 <?php
 /**
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
+ */
+/**
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -15,6 +19,7 @@ use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Data\Form\FormKey\Validator;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Message\Manager;
+use Exception;
 use Magento\Framework\Url;
 use Magento\Store\App\Response\Redirect;
 use Magento\Wishlist\Controller\Index\Remove;
@@ -94,21 +99,15 @@ class RemoveTest extends TestCase
         $this->om = $this->createMock(ObjectManager::class);
         $this->messageManager = $this->createMock(Manager::class);
         $this->url = $this->createMock(Url::class);
-        $this->resultFactoryMock = $this->getMockBuilder(ResultFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->resultRedirectMock = $this->getMockBuilder(ResultRedirect::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->resultFactoryMock = $this->createMock(ResultFactory::class);
+        $this->resultRedirectMock = $this->createMock(ResultRedirect::class);
 
         $this->resultFactoryMock->expects($this->any())
             ->method('create')
             ->with(ResultFactory::TYPE_REDIRECT, [])
             ->willReturn($this->resultRedirectMock);
 
-        $this->formKeyValidator = $this->getMockBuilder(Validator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->formKeyValidator = $this->createMock(Validator::class);
     }
 
     /**
@@ -180,10 +179,13 @@ class RemoveTest extends TestCase
             ->with($this->request)
             ->willReturn(true);
 
+        $attributeValueProviderMock = $this->createMock(\Magento\Wishlist\Model\Product\AttributeValueProvider::class);
+        
         return new Remove(
             $this->context,
             $this->wishlistProvider,
-            $this->formKeyValidator
+            $this->formKeyValidator,
+            $attributeValueProviderMock
         );
     }
 
@@ -204,10 +206,13 @@ class RemoveTest extends TestCase
             ->with('*/*/')
             ->willReturnSelf();
 
+        $attributeValueProviderMock = $this->createMock(\Magento\Wishlist\Model\Product\AttributeValueProvider::class);
+        
         $controller = new Remove(
             $this->context,
             $this->wishlistProvider,
-            $this->formKeyValidator
+            $this->formKeyValidator,
+            $attributeValueProviderMock
         );
 
         $this->assertSame($this->resultRedirectMock, $controller->execute());
@@ -380,7 +385,7 @@ class RemoveTest extends TestCase
     {
         $referer = 'http://referer-url.com';
 
-        $exception = new \Exception('Message');
+        $exception = new Exception('Message');
         $wishlist = $this->createMock(Wishlist::class);
         $wishlist
             ->expects($this->once())

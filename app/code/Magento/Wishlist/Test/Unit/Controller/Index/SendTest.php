@@ -1,5 +1,9 @@
 <?php
 /**
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
+ */
+/**
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -22,13 +26,21 @@ use Magento\Framework\Exception\NotFoundException;
 use Magento\Framework\Mail\TransportInterface;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Phrase;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Result\Layout as ResultLayout;
 use Magento\Store\Model\Store;
 use Magento\Wishlist\Controller\Index\Send;
 use Magento\Wishlist\Controller\WishlistProviderInterface;
 use Magento\Wishlist\Model\Wishlist;
+use Magento\Wishlist\Model\Config;
+use Magento\Framework\Mail\Template\TransportBuilder;
+use Magento\Framework\Translate\Inline\StateInterface;
+use Magento\Customer\Helper\View;
+use Magento\Framework\Session\Generic as WishlistSession;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Store\Model\StoreManagerInterface;
+use Magento\Captcha\Observer\CaptchaStringResolver;
+use Magento\Framework\Escaper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -124,23 +136,60 @@ class SendTest extends TestCase
     protected $customerSession;
 
     /**
+     * @var Config|MockObject
+     */
+    protected $wishlistConfig;
+
+    /**
+     * @var TransportBuilder|MockObject
+     */
+    protected $transportBuilder;
+
+    /**
+     * @var StateInterface|MockObject
+     */
+    protected $inlineTranslation;
+
+    /**
+     * @var View|MockObject
+     */
+    protected $customerHelperView;
+
+    /**
+     * @var WishlistSession|MockObject
+     */
+    protected $wishlistSession;
+
+    /**
+     * @var ScopeConfigInterface|MockObject
+     */
+    protected $scopeConfig;
+
+    /**
+     * @var StoreManagerInterface|MockObject
+     */
+    protected $storeManager;
+
+    /**
+     * @var CaptchaStringResolver|MockObject
+     */
+    protected $captchaStringResolver;
+
+    /**
+     * @var Escaper|MockObject
+     */
+    protected $escaper;
+
+    /**
      * @inheritdoc
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     protected function setUp(): void
     {
-        $this->resultRedirect = $this->getMockBuilder(ResultRedirect::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->resultLayout = $this->getMockBuilder(ResultLayout::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->resultFactory = $this->getMockBuilder(ResultFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->resultRedirect = $this->createMock(ResultRedirect::class);
+        $this->resultLayout = $this->createMock(ResultLayout::class);
+        $this->resultFactory = $this->createMock(ResultFactory::class);
         $this->resultFactory->expects($this->any())
             ->method('create')
             ->willReturnMap([
@@ -148,9 +197,195 @@ class SendTest extends TestCase
                 [ResultFactory::TYPE_LAYOUT, [], $this->resultLayout],
             ]);
 
-        $this->request = $this->getMockBuilder(RequestInterface::class)
-            ->addMethods(['getPost', 'getPostValue'])
-            ->getMockForAbstractClass();
+        $this->request = new class implements RequestInterface {
+            /**
+             * @var array
+             */
+            public $postData = [];
+            /**
+             * @var array
+             */
+            public $postValue = [];
+            
+            public function getPost($key = null)
+            {
+                return $key ? ($this->postData[$key] ?? null) : $this->postData;
+            }
+            public function getPostValue($key = null)
+            {
+                return $key ? ($this->postValue[$key] ?? null) : $this->postValue;
+            }
+            public function getParam($key, $defaultValue = null)
+            {
+                $_ = [$key, $defaultValue];
+                unset($_);
+                return $defaultValue;
+            }
+            public function getParams()
+            {
+                return [];
+            }
+            public function getQuery($key = null)
+            {
+                return $key;
+            }
+            public function isPost()
+            {
+                return true;
+            }
+            public function isGet()
+            {
+                return false;
+            }
+            public function isPut()
+            {
+                return false;
+            }
+            public function isDelete()
+            {
+                return false;
+            }
+            public function isHead()
+            {
+                return false;
+            }
+            public function isOptions()
+            {
+                return false;
+            }
+            public function isPatch()
+            {
+                return false;
+            }
+            public function isAjax()
+            {
+                return false;
+            }
+            public function getMethod()
+            {
+                return 'POST';
+            }
+            public function getHeader($name)
+            {
+                return null;
+            }
+            public function getHeaders()
+            {
+                return [];
+            }
+            public function getUri()
+            {
+                return null;
+            }
+            public function getRequestUri()
+            {
+                return '/';
+            }
+            public function getPathInfo()
+            {
+                return '/';
+            }
+            public function getBasePath()
+            {
+                return '/';
+            }
+            public function getBaseUrl()
+            {
+                return 'http://example.com/';
+            }
+            public function getServer($key = null)
+            {
+                return $key;
+            }
+            public function getServerValue($key, $default = null)
+            {
+                return $default;
+            }
+            public function getHttpHost($trimPort = true)
+            {
+                return 'example.com';
+            }
+            public function getClientIp($checkToProxy = true)
+            {
+                return '127.0.0.1';
+            }
+            public function getScriptName()
+            {
+                return '/index.php';
+            }
+            public function getRequestString()
+            {
+                return '';
+            }
+            public function getFullActionName($delimiter = '_')
+            {
+                return 'index_index';
+            }
+            public function isSecure()
+            {
+                return false;
+            }
+            public function getHttpReferer()
+            {
+                return null;
+            }
+            public function getRequestedRouteName()
+            {
+                return 'index';
+            }
+            public function getRequestedControllerName()
+            {
+                return 'index';
+            }
+            public function getRequestedActionName()
+            {
+                return 'index';
+            }
+            public function getRouteName()
+            {
+                return 'index';
+            }
+            public function getControllerName()
+            {
+                return 'index';
+            }
+            public function getActionName()
+            {
+                return 'index';
+            }
+            public function getModuleName()
+            {
+                return 'Magento';
+            }
+            public function setModuleName($name)
+            {
+                return $this;
+            }
+            public function setActionName($name)
+            {
+                return $this;
+            }
+            public function setParam($key, $value)
+            {
+                return $this;
+            }
+            public function setParams(array $params)
+            {
+                return $this;
+            }
+            public function getCookie($name, $default = null)
+            {
+                return $default;
+            }
+            public function getCookies()
+            {
+                return [];
+            }
+            public function isXmlHttpRequest()
+            {
+                return false;
+            }
+        };
 
         $this->messageManager = $this->getMockBuilder(ManagerInterface::class)
             ->getMockForAbstractClass();
@@ -161,85 +396,104 @@ class SendTest extends TestCase
         $this->eventManager = $this->getMockBuilder(EventManagerInterface::class)
             ->getMockForAbstractClass();
 
-        $this->context = $this->getMockBuilder(ActionContext::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->context->expects($this->any())
-            ->method('getRequest')
-            ->willReturn($this->request);
-        $this->context->expects($this->any())
-            ->method('getResultFactory')
-            ->willReturn($this->resultFactory);
-        $this->context->expects($this->any())
-            ->method('getMessageManager')
-            ->willReturn($this->messageManager);
-        $this->context->expects($this->any())
-            ->method('getUrl')
-            ->willReturn($this->url);
-        $this->context->expects($this->any())
-            ->method('getEventManager')
-            ->willReturn($this->eventManager);
+        $this->context = $this->createMock(ActionContext::class);
+        $this->context->method('getRequest')->willReturn($this->request);
+        $this->context->method('getResultFactory')->willReturn($this->resultFactory);
+        $this->context->method('getMessageManager')->willReturn($this->messageManager);
+        $this->context->method('getUrl')->willReturn($this->url);
+        $this->context->method('getEventManager')->willReturn($this->eventManager);
 
-        $this->formKeyValidator = $this->getMockBuilder(FormKeyValidator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->formKeyValidator = $this->createMock(FormKeyValidator::class);
 
-        $customerMock = $this->getMockBuilder(Customer::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getId'])
-            ->addMethods(['getEmail'])
-            ->getMock();
+        $customerMock = new class extends Customer {
+            /**
+             * @var string
+             */
+            private $email = 'expamle@mail.com';
+            /**
+             * @var bool
+             */
+            private $id = false;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getEmail()
+            {
+                return $this->email;
+            }
+            public function getId()
+            {
+                return $this->id;
+            }
+        };
 
-        $customerMock->expects($this->any())
-            ->method('getEmail')
-            ->willReturn('expamle@mail.com');
-
-        $customerMock->expects($this->any())
-            ->method('getId')
-            ->willReturn(false);
-
-        $this->customerSession = $this->getMockBuilder(Session::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getCustomer', 'getData'])
-            ->getMock();
-
-        $this->customerSession->expects($this->any())
-            ->method('getCustomer')
-            ->willReturn($customerMock);
-
-        $this->customerSession->expects($this->any())
-            ->method('getData')
-            ->willReturn(false);
+        $this->customerSession = new class($customerMock) extends Session {
+            /**
+             * @var Customer
+             */
+            private $customer;
+            /**
+             * @var bool
+             */
+            private $data = false;
+            
+            public function __construct($customer)
+            {
+                $this->customer = $customer;
+                $_ = [$customer];
+                unset($_);
+            }
+            
+            public function getCustomer()
+            {
+                return $this->customer;
+            }
+            public function getData($key = '', $clear = false)
+            {
+                return $this->data;
+            }
+        };
 
         $this->wishlistProvider = $this->getMockBuilder(WishlistProviderInterface::class)
             ->getMockForAbstractClass();
 
-        $this->captchaHelper = $this->getMockBuilder(CaptchaHelper::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getCaptcha'])
-            ->getMock();
+        $this->captchaModel = $this->createMock(CaptchaModel::class);
+        
+        $this->captchaHelper = $this->createMock(CaptchaHelper::class);
 
-        $this->captchaModel = $this->getMockBuilder(CaptchaModel::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['isRequired', 'logAttempt'])
-            ->getMock();
+        $this->wishlistConfig = $this->createMock(Config::class);
+        $this->transportBuilder = $this->createMock(TransportBuilder::class);
+        $this->inlineTranslation = $this->createMock(StateInterface::class);
+        $this->customerHelperView = $this->createMock(View::class);
+        $this->wishlistSession = $this->createMock(WishlistSession::class);
+        $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
+        $this->storeManager = $this->createMock(StoreManagerInterface::class);
+        $this->captchaStringResolver = $this->createMock(CaptchaStringResolver::class);
+        $this->escaper = $this->createMock(Escaper::class);
 
-        $objectHelper = new ObjectManager($this);
-
-        $this->captchaHelper->expects($this->once())->method('getCaptcha')
+        $this->captchaHelper->expects($this->once())
+            ->method('getCaptcha')
             ->willReturn($this->captchaModel);
-        $this->captchaModel->expects($this->any())->method('isRequired')
-            ->willReturn(false);
+        $this->captchaModel->method('isRequired')->willReturn(false);
+        $this->captchaModel->method('logAttempt')->willReturn($this->captchaModel);
 
-        $this->model = $objectHelper->getObject(
-            Send::class,
-            [
-                'context' => $this->context,
-                'formKeyValidator' => $this->formKeyValidator,
-                'wishlistProvider' => $this->wishlistProvider,
-                'captchaHelper' => $this->captchaHelper,
-                '_customerSession' => $this->customerSession
-            ]
+        $this->model = new Send(
+            $this->context,
+            $this->formKeyValidator,
+            $this->customerSession,
+            $this->wishlistProvider,
+            $this->wishlistConfig,
+            $this->transportBuilder,
+            $this->inlineTranslation,
+            $this->customerHelperView,
+            $this->wishlistSession,
+            $this->scopeConfig,
+            $this->storeManager,
+            $this->captchaHelper,
+            $this->captchaStringResolver,
+            $this->escaper
         );
     }
 
@@ -277,15 +531,10 @@ class SendTest extends TestCase
             ->with($this->request)
             ->willReturn(true);
 
-        $this->request
-            ->method('getPost')
-            ->willReturnCallback(function ($arg) {
-                if ($arg == 'emails') {
-                    return 'some.email2@gmail.com';
-                } elseif ($arg == 'message') {
-                    return null;
-                }
-            });
+        $this->request->postData = [
+            'emails' => 'some.email2@gmail.com',
+            'message' => null
+        ];
 
         $wishlist = $this->createMock(Wishlist::class);
         $this->wishlistProvider->expects($this->once())

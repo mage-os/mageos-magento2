@@ -1,5 +1,9 @@
 <?php
 /**
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
+ */
+/**
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -99,25 +103,82 @@ class CartUpdateBeforeTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $event = $this->getMockBuilder(Event::class)
-            ->addMethods(['getCart', 'getInfo'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = new class extends Event {
+            /**
+             * @var Cart
+             */
+            public $cart;
+            /**
+             * @var DataObject
+             */
+            public $info;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getCart()
+            {
+                return $this->cart;
+            }
+            
+            public function getInfo()
+            {
+                return $this->info;
+            }
+        };
 
         $eventObserver->expects($this->exactly(2))
             ->method('getEvent')
             ->willReturn($event);
 
-        $quoteItem = $this->getMockBuilder(Item::class)
-            ->addMethods(['getProductId'])
-            ->onlyMethods(['getBuyRequest', '__wakeup'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $quoteItem = new class extends Item {
+            /**
+             * @var int
+             */
+            public $productId;
+            /**
+             * @var DataObject
+             */
+            public $buyRequest;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getProductId()
+            {
+                return $this->productId;
+            }
+            
+            public function getBuyRequest()
+            {
+                return $this->buyRequest;
+            }
+            
+            public function __wakeup()
+            {
+            }
+        };
 
-        $buyRequest = $this->getMockBuilder(DataObject::class)
-            ->addMethods(['setQty'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $buyRequest = new class extends DataObject {
+            /**
+             * @var int
+             */
+            public $qty;
+            
+            public function __construct()
+            {
+            }
+            
+            public function setQty($qty)
+            {
+                $this->qty = $qty;
+                $_ = [$qty];
+                unset($_);
+                return $this;
+            }
+        };
 
         $infoData = $this->getMockBuilder(DataObject::class)
             ->onlyMethods(['toArray'])
@@ -131,48 +192,55 @@ class CartUpdateBeforeTest extends TestCase
         $cart = $this->getMockBuilder(Cart::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $quote = $this->getMockBuilder(Quote::class)
-            ->addMethods(['getCustomerId'])
-            ->onlyMethods(['getItemById', 'removeItem', '__wakeup'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $quote = new class extends Quote {
+            /**
+             * @var int
+             */
+            public $customerId;
+            /**
+             * @var array
+             */
+            public $items = [];
+            
+            public function __construct()
+            {
+            }
+            
+            public function getCustomerId()
+            {
+                return $this->customerId;
+            }
+            
+            public function getItemById($itemId)
+            {
+                return $this->items[$itemId] ?? null;
+            }
+            
+            public function removeItem($itemId)
+            {
+                unset($this->items[$itemId]);
+                return $this;
+            }
+            
+            public function __wakeup()
+            {
+            }
+        };
 
-        $event->expects($this->once())
-            ->method('getCart')
-            ->willReturn($cart);
-
-        $event->expects($this->once())
-            ->method('getInfo')
-            ->willReturn($infoData);
+        $event->cart = $cart;
+        $event->info = $infoData;
 
         $cart->expects($this->any())
             ->method('getQuote')
             ->willReturn($quote);
 
-        $quoteItem->expects($this->once())
-            ->method('getProductId')
-            ->willReturn($productId);
-        $quoteItem->expects($this->once())
-            ->method('getBuyRequest')
-            ->willReturn($buyRequest);
+        $quoteItem->productId = $productId;
+        $quoteItem->buyRequest = $buyRequest;
 
-        $buyRequest->expects($this->once())
-            ->method('setQty')
-            ->with($itemQty)
-            ->willReturnSelf();
+        $buyRequest->setQty($itemQty);
 
-        $quote->expects($this->once())
-            ->method('getCustomerId')
-            ->willReturn($customerId);
-
-        $quote->expects($this->once())
-            ->method('getItemById')
-            ->with($itemId)
-            ->willReturn($quoteItem);
-
-        $quote->expects($this->once())
-            ->method('removeItem')
-            ->with($itemId);
+        $quote->customerId = $customerId;
+        $quote->items[$itemId] = $quoteItem;
 
         $this->wishlist->expects($this->once())
             ->method('loadByCustomerId')

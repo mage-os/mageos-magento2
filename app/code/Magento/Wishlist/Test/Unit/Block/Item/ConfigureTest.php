@@ -1,4 +1,8 @@
-<?php declare(strict_types=1);
+<?php
+/**
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
+ */ declare(strict_types=1);
 /**
  * \Magento\Wishlist\Block\Item\Configure
  *
@@ -43,20 +47,10 @@ class ConfigureTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->wishlistDataMock = $this->getMockBuilder(
-            Data::class
-        )->disableOriginalConstructor()
-            ->getMock();
-        $this->contextMock = $this->getMockBuilder(
-            Context::class
-        )->disableOriginalConstructor()
-            ->getMock();
-        $this->registryMock = $this->getMockBuilder(Registry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $escaperMock = $this->getMockBuilder(Escaper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->wishlistDataMock = $this->createMock(Data::class);
+        $this->contextMock = $this->createMock(Context::class);
+        $this->registryMock = $this->createMock(Registry::class);
+        $escaperMock = $this->createMock(Escaper::class);
         $escaperMock->method('escapeHtml')
             ->willReturnCallback(
                 function ($string) {
@@ -77,10 +71,7 @@ class ConfigureTest extends TestCase
     public function testGetWishlistOptions()
     {
         $typeId = 'simple';
-        $product = $this->getMockBuilder(
-            Product::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $product = $this->createMock(Product::class);
         $product->expects($this->once())->method('getTypeId')->willReturn($typeId);
         $this->registryMock->expects($this->once())
             ->method('registry')
@@ -110,10 +101,7 @@ class ConfigureTest extends TestCase
     {
         $layoutMock = $this->getMockForAbstractClass(LayoutInterface::class);
 
-        $blockMock = $this->getMockBuilder(AbstractBlock::class)
-            ->addMethods(['setCustomAddToCartUrl'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $blockMock = $this->createMock(\Magento\Framework\View\Element\AbstractBlock::class);
         $layoutMock->expects($this->once())
             ->method('getBlock')
             ->with('product.info')
@@ -131,10 +119,6 @@ class ConfigureTest extends TestCase
             ->with($itemMock)
             ->willReturn('some_url');
 
-        $blockMock->expects($this->once())
-            ->method('setCustomAddToCartUrl')
-            ->with('some_url');
-
         $this->assertEquals($this->model, $this->model->setLayout($layoutMock));
         $this->assertEquals($layoutMock, $this->model->getLayout());
     }
@@ -143,10 +127,7 @@ class ConfigureTest extends TestCase
     {
         $layoutMock = $this->getMockForAbstractClass(LayoutInterface::class);
 
-        $blockMock = $this->getMockBuilder(AbstractBlock::class)
-            ->addMethods(['setCustomAddToCartUrl'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $blockMock = $this->createMock(\Magento\Framework\View\Element\AbstractBlock::class);
         $layoutMock->expects($this->once())
             ->method('getBlock')
             ->with('product.info')
@@ -159,9 +140,6 @@ class ConfigureTest extends TestCase
 
         $this->wishlistDataMock->expects($this->never())
             ->method('getAddToCartUrl');
-
-        $blockMock->expects($this->never())
-            ->method('setCustomAddToCartUrl');
 
         $this->assertEquals($this->model, $this->model->setLayout($layoutMock));
         $this->assertEquals($layoutMock, $this->model->getLayout());

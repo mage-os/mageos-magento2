@@ -1,5 +1,9 @@
 <?php
 /**
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
+ */
+/**
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -70,20 +74,14 @@ class ConfiguredPriceBoxTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->templateContext = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->templateContext = $this->createMock(Context::class);
 
         $this->saleableItem = $this->getMockBuilder(SaleableInterface::class)
             ->getMockForAbstractClass();
 
-        $this->price = $this->getMockBuilder(PriceInterface::class)
-            ->addMethods(['setItem'])
-            ->getMockForAbstractClass();
+        $this->price = $this->createMock(\Magento\Catalog\Pricing\Price\ConfiguredPrice::class);
 
-        $this->rendererPool = $this->getMockBuilder(RendererPool::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->rendererPool = $this->createMock(RendererPool::class);
 
         $this->item = $this->getMockBuilder(ItemInterface::class)
             ->getMockForAbstractClass();

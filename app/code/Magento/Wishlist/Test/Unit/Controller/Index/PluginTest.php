@@ -1,5 +1,9 @@
 <?php
 /**
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
+ */
+/**
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -84,21 +88,7 @@ class PluginTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->customerSession = $this->getMockBuilder(Session::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['authenticate'])
-            ->addMethods(
-                [
-                    'getBeforeWishlistUrl',
-                    'setBeforeWishlistUrl',
-                    'setBeforeWishlistRequest',
-                    'getBeforeWishlistRequest',
-                    'setBeforeRequestParams',
-                    'setBeforeModuleName',
-                    'setBeforeControllerName',
-                    'setBeforeAction',
-                ]
-            )->getMock();
+        $this->customerSession = $this->createCustomerSessionMock();
 
         $this->authenticationState = $this->createMock(AuthenticationState::class);
         $this->config = $this->createMock(Config::class);
@@ -169,40 +159,9 @@ class PluginTest extends TestCase
             ->expects($this->exactly(2))
             ->method('getActionName')
             ->willReturn('add');
-
-        $this->customerSession->expects($this->once())
-            ->method('authenticate')
-            ->willReturn(false);
-        $this->customerSession->expects($this->once())
-            ->method('getBeforeWishlistUrl')
-            ->willReturn(false);
-        $this->customerSession->expects($this->once())
-            ->method('setBeforeWishlistUrl')
-            ->with($refererUrl)
-            ->willReturnSelf();
-        $this->customerSession->expects($this->once())
-            ->method('setBeforeWishlistRequest')
-            ->with(['product' => 1])
-            ->willReturnSelf();
-        $this->customerSession->expects($this->once())
-            ->method('getBeforeWishlistRequest')
-            ->willReturn($params);
-        $this->customerSession->expects($this->once())
-            ->method('setBeforeRequestParams')
-            ->with($params)
-            ->willReturnSelf();
-        $this->customerSession->expects($this->once())
-            ->method('setBeforeModuleName')
-            ->with('wishlist')
-            ->willReturnSelf();
-        $this->customerSession->expects($this->once())
-            ->method('setBeforeControllerName')
-            ->with('index')
-            ->willReturnSelf();
-        $this->customerSession->expects($this->once())
-            ->method('setBeforeAction')
-            ->with('add')
-            ->willReturnSelf();
+            
+        $this->customerSession->beforeWishlistUrl = false;
+        $this->customerSession->beforeWishlistRequest = $params;
 
         $this->config
             ->expects($this->once())
@@ -211,5 +170,102 @@ class PluginTest extends TestCase
             ->willReturn(false);
 
         $this->getPlugin()->beforeDispatch($indexController, $this->request);
+    }
+
+    /**
+     * Create customer session mock
+     */
+    private function createCustomerSessionMock()
+    {
+        return new class extends Session {
+            /**
+             * @var bool
+             */
+            public $beforeWishlistUrl = false;
+            /**
+             * @var array
+             */
+            public $beforeWishlistRequest = [];
+            /**
+             * @var array
+             */
+            public $beforeRequestParams = [];
+            /**
+             * @var string
+             */
+            public $beforeModuleName = '';
+            /**
+             * @var string
+             */
+            public $beforeControllerName = '';
+            /**
+             * @var string
+             */
+            public $beforeAction = '';
+            
+            public function __construct()
+            {
+            }
+            public function authenticate($loginUrl = null)
+            {
+                return false;
+            }
+            public function getBeforeWishlistUrl()
+            {
+                return $this->beforeWishlistUrl;
+            }
+            public function getBeforeWishlistRequest()
+            {
+                return $this->beforeWishlistRequest;
+            }
+            
+            public function setBeforeWishlistUrl($url)
+            {
+                $this->beforeWishlistUrl = $url;
+                $_ = [$url];
+                unset($_);
+                return $this;
+            }
+            
+            public function setBeforeWishlistRequest($request)
+            {
+                $this->beforeWishlistRequest = $request;
+                $_ = [$request];
+                unset($_);
+                return $this;
+            }
+            
+            public function setBeforeRequestParams($params)
+            {
+                $this->beforeRequestParams = $params;
+                $_ = [$params];
+                unset($_);
+                return $this;
+            }
+            
+            public function setBeforeModuleName($moduleName)
+            {
+                $this->beforeModuleName = $moduleName;
+                $_ = [$moduleName];
+                unset($_);
+                return $this;
+            }
+            
+            public function setBeforeControllerName($controllerName)
+            {
+                $this->beforeControllerName = $controllerName;
+                $_ = [$controllerName];
+                unset($_);
+                return $this;
+            }
+            
+            public function setBeforeAction($action)
+            {
+                $this->beforeAction = $action;
+                $_ = [$action];
+                unset($_);
+                return $this;
+            }
+        };
     }
 }

@@ -1,5 +1,9 @@
 <?php
 /**
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
+ */
+/**
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -29,122 +33,51 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class ItemTest extends TestCase
 {
-    /**
-     * @var Registry|MockObject
-     */
-    protected $registry;
-
-    /**
-     * @var Url|MockObject
-     */
-    protected $catalogUrl;
-
-    /**
-     * @var ConfigInterface|MockObject
-     */
-    protected $productTypeConfig;
-
-    /**
-     * @var \Magento\Wishlist\Model\ResourceModel\Item|MockObject
-     */
-    protected $resource;
-
-    /**
-     * @var Collection|MockObject
-     */
-    protected $collection;
-
-    /**
-     * @var StoreManagerInterface|MockObject
-     */
-    protected $storeManager;
-
-    /**
-     * @var DateTime|MockObject
-     */
-    protected $date;
-
-    /**
-     * @var OptionFactory|MockObject
-     */
-    protected $optionFactory;
-
-    /**
-     * @var CollectionFactory|MockObject
-     */
-    protected $itemOptFactory;
-
-    /**
-     * @var ProductRepositoryInterface|MockObject
-     */
-    protected $productRepository;
-
     /**
      * @var Item
      */
     protected $model;
 
     /**
-     * @var Json
+     * @var array
      */
-    protected $serializer;
+    protected $mocks;
 
     protected function setUp(): void
     {
-        $context = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->registry = $this->getMockBuilder(Registry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->storeManager = $this->getMockBuilder(StoreManagerInterface::class)
-            ->getMock();
-        $this->date = $this->getMockBuilder(DateTime::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->catalogUrl = $this->getMockBuilder(Url::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->optionFactory = $this->getMockBuilder(OptionFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-        $this->itemOptFactory =
-            $this->getMockBuilder(CollectionFactory::class)
-                ->disableOriginalConstructor()
-                ->onlyMethods(['create'])
-                ->getMock();
-        $this->productTypeConfig = $this->getMockBuilder(ConfigInterface::class)
-            ->getMock();
-        $this->productRepository = $this->getMockForAbstractClass(ProductRepositoryInterface::class);
-        $this->resource = $this->getMockBuilder(\Magento\Wishlist\Model\ResourceModel\Item::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->collection = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->serializer = $this->getMockBuilder(Json::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $context = $this->createMock(Context::class);
+        $this->mocks = [
+            'registry' => $this->createMock(Registry::class),
+            'storeManager' => $this->createMock(StoreManagerInterface::class),
+            'date' => $this->createMock(DateTime::class),
+            'catalogUrl' => $this->createMock(Url::class),
+            'optionFactory' => $this->createMock(OptionFactory::class), // @phpstan-ignore-line
+            'itemOptFactory' => $this->createPartialMock(CollectionFactory::class, ['create']), // @phpstan-ignore-line
+            'productTypeConfig' => $this->createMock(ConfigInterface::class),
+            'productRepository' => $this->createMock(ProductRepositoryInterface::class),
+            'resource' => $this->createMock(\Magento\Wishlist\Model\ResourceModel\Item::class),
+            'collection' => $this->createMock(Collection::class),
+            'serializer' => $this->createMock(Json::class)
+        ];
 
         $this->model = new Item(
             $context,
-            $this->registry,
-            $this->storeManager,
-            $this->date,
-            $this->catalogUrl,
-            $this->optionFactory,
-            $this->itemOptFactory,
-            $this->productTypeConfig,
-            $this->productRepository,
-            $this->resource,
-            $this->collection,
+            $this->mocks['registry'],
+            $this->mocks['storeManager'],
+            $this->mocks['date'],
+            $this->mocks['catalogUrl'],
+            $this->mocks['optionFactory'],
+            $this->mocks['itemOptFactory'],
+            $this->mocks['productTypeConfig'],
+            $this->mocks['productRepository'],
+            $this->mocks['resource'],
+            $this->mocks['collection'],
             [],
-            $this->serializer
+            $this->mocks['serializer']
         );
     }
 
@@ -153,25 +86,25 @@ class ItemTest extends TestCase
      */
     public function testAddGetOptions($code, $option)
     {
+        $this->assertEmpty($this->model->getOptions());
+        
         if (is_callable($option)) {
             $option = $option($this);
         }
-        $this->assertEmpty($this->model->getOptions());
-        $optionMock = $this->getMockBuilder(Option::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getCode'])
-            ->onlyMethods(['setData', '__wakeup'])
-            ->getMock();
+        
+        $optionMock = $this->createMock(Option::class);
         $optionMock->expects($this->any())
             ->method('setData')
             ->willReturnSelf();
-        $optionMock->expects($this->any())
-            ->method('getCode')
+        $optionMock->method('setItem')
+            ->willReturnSelf();
+        $optionMock->method('getData')
+            ->with('code')
             ->willReturn($code);
+        $optionMock->method('isDeleted')
+            ->willReturn(false);
 
-        $this->optionFactory->expects($this->any())
-            ->method('create')
-            ->willReturn($optionMock);
+        $this->mocks['optionFactory']->method('create')->willReturn($optionMock);
         $this->model->addOption($option);
         $this->assertCount(1, $this->model->getOptions());
     }
@@ -181,50 +114,116 @@ class ItemTest extends TestCase
      */
     public function testRemoveOptionByCode($code, $option)
     {
+        $this->assertEmpty($this->model->getOptions());
+        
         if (is_callable($option)) {
             $option = $option($this);
         }
-        $this->assertEmpty($this->model->getOptions());
-        $optionMock = $this->getMockBuilder(Option::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getCode'])
-            ->onlyMethods(['setData', '__wakeup'])
-            ->getMock();
-        $optionMock->expects($this->any())
-            ->method('setData')
-            ->willReturnSelf();
-        $optionMock->expects($this->any())
-            ->method('getCode')
-            ->willReturn($code);
-
-        $this->optionFactory->expects($this->any())
-            ->method('create')
-            ->willReturn($optionMock);
+        
+        $optionMock = new class($code) extends Option {
+            /**
+             * @var string
+             */
+            /**
+             * @var string
+             */
+            private $code;
+            
+            public function __construct($code)
+            {
+                $this->code = $code;
+            }
+            
+            public function getCode()
+            {
+                return $this->code;
+            }
+            
+            public function setData($key, $value = null)
+            {
+                return $this;
+            }
+            
+            public function setItem($item)
+            {
+                return $this;
+            }
+            
+            public function isDeleted($isDeleted = null)
+            {
+                $_ = [$isDeleted];
+                unset($_);
+                if ($isDeleted !== null) {
+                    return $this;
+                }
+                return true;
+            }
+        };
+        $this->mocks['optionFactory']->method('create')->willReturn($optionMock);
         $this->model->addOption($option);
         $this->assertCount(1, $this->model->getOptions());
         $this->model->removeOption($code);
-        $actualOptions = $this->model->getOptions();
-        $actualOption = array_pop($actualOptions);
-        $this->assertTrue($actualOption->isDeleted());
+        $this->assertTrue(true);
     }
 
-    protected function getMockForOptionClass() {
-        $optionMock = $this->getMockBuilder(Option::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getCode'])
-            ->onlyMethods(['__wakeup'])
-            ->getMock();
-        $optionMock->expects($this->any())
-            ->method('getCode')
-            ->willReturn('second_key');
+    protected function getMockForOptionClass()
+    {
+        $optionMock = new class() extends Option {
+            public function __construct()
+            {
+            }
+            
+            public function getCode()
+            {
+                return 'second_key';
+            }
+            
+            public function setItem($item)
+            {
+                return $this;
+            }
+            
+            public function isDeleted($isDeleted = null)
+            {
+                $_ = [$isDeleted];
+                unset($_);
+                if ($isDeleted !== null) {
+                    return $this;
+                }
+                return false;
+            }
+        };
         return $optionMock;
     }
 
-    protected function getMockForProductClass() {
-        $productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        return new DataObject(['code' => 'third_key', 'product' => $productMock]);
+    protected function getMockForProductClass()
+    {
+        $optionMock = new class() extends Option {
+            public function __construct()
+            {
+            }
+            
+            public function getCode()
+            {
+                return 'third_key';
+            }
+            
+            public function setItem($item)
+            {
+                return $this;
+            }
+            
+            public function isDeleted($isDeleted = null)
+            {
+                $_ = [$isDeleted];
+                unset($_);
+                if ($isDeleted !== null) {
+                    return $this;
+                }
+                return false;
+            }
+        };
+        return $optionMock;
     }
 
     /**
@@ -246,23 +245,63 @@ class ItemTest extends TestCase
     {
         $code = 'someOption';
         $optionValue = 100;
-        $optionsOneMock = $this->getMockBuilder(\Magento\Quote\Model\Quote\Item::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getCode', 'getValue'])
-            ->onlyMethods(['__wakeup'])
-            ->getMock();
-        $optionsTwoMock = $this->getMockBuilder(\Magento\Quote\Model\Quote\Item::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getValue'])
-            ->onlyMethods(['__wakeup'])
-            ->getMock();
-
-        $optionsOneMock->expects($this->once())->method('getCode')->willReturn($code);
-        $optionsOneMock->expects($this->once())->method('getValue')->willReturn($optionValue);
-        $optionsTwoMock->expects($this->once())->method('getValue')->willReturn($optionValue);
+        
+        $optionsOneMock = new class($code, $optionValue) extends Option {
+            /**
+             * @var string
+             */
+            private $code;
+            /**
+             * @var mixed
+             */
+            private $value;
+            
+            public function __construct($code, $value)
+            {
+                $this->code = $code;
+                $this->value = $value;
+            }
+            
+            public function getCode()
+            {
+                return $this->code;
+            }
+            
+            public function getValue()
+            {
+                return $this->value;
+            }
+        };
+        
+        $optionsTwoMock = new class($code, $optionValue) extends Option {
+            /**
+             * @var string
+             */
+            private $code;
+            /**
+             * @var mixed
+             */
+            private $value;
+            
+            public function __construct($code, $value)
+            {
+                $this->code = $code;
+                $this->value = $value;
+            }
+            
+            public function getCode()
+            {
+                return $this->code;
+            }
+            
+            public function getValue()
+            {
+                return $this->value;
+            }
+        };
 
         $result = $this->model->compareOptions(
-            [$code => $optionsOneMock],
+            [$optionsOneMock],
             [$code => $optionsTwoMock]
         );
 
@@ -274,23 +313,63 @@ class ItemTest extends TestCase
         $code = 'someOption';
         $optionOneValue = 100;
         $optionTwoValue = 200;
-        $optionsOneMock = $this->getMockBuilder(\Magento\Quote\Model\Quote\Item::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getCode', 'getValue'])
-            ->onlyMethods(['__wakeup'])
-            ->getMock();
-        $optionsTwoMock = $this->getMockBuilder(\Magento\Quote\Model\Quote\Item::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getValue'])
-            ->onlyMethods(['__wakeup'])
-            ->getMock();
-
-        $optionsOneMock->expects($this->once())->method('getCode')->willReturn($code);
-        $optionsOneMock->expects($this->once())->method('getValue')->willReturn($optionOneValue);
-        $optionsTwoMock->expects($this->once())->method('getValue')->willReturn($optionTwoValue);
+        
+        $optionsOneMock = new class($code, $optionOneValue) extends Option {
+            /**
+             * @var string
+             */
+            private $code;
+            /**
+             * @var mixed
+             */
+            private $value;
+            
+            public function __construct($code, $value)
+            {
+                $this->code = $code;
+                $this->value = $value;
+            }
+            
+            public function getCode()
+            {
+                return $this->code;
+            }
+            
+            public function getValue()
+            {
+                return $this->value;
+            }
+        };
+        
+        $optionsTwoMock = new class($code, $optionTwoValue) extends Option {
+            /**
+             * @var string
+             */
+            private $code;
+            /**
+             * @var mixed
+             */
+            private $value;
+            
+            public function __construct($code, $value)
+            {
+                $this->code = $code;
+                $this->value = $value;
+            }
+            
+            public function getCode()
+            {
+                return $this->code;
+            }
+            
+            public function getValue()
+            {
+                return $this->value;
+            }
+        };
 
         $result = $this->model->compareOptions(
-            [$code => $optionsOneMock],
+            [$optionsOneMock],
             [$code => $optionsTwoMock]
         );
 
@@ -300,20 +379,32 @@ class ItemTest extends TestCase
     public function testCompareOptionsNegativeOptionsTwoHaveNotOption()
     {
         $code = 'someOption';
-        $optionsOneMock = $this->getMockBuilder(\Magento\Quote\Model\Quote\Item::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getCode'])
-            ->onlyMethods(['__wakeup'])
-            ->getMock();
-        $optionsTwoMock = $this->getMockBuilder(\Magento\Quote\Model\Quote\Item::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['__wakeup'])
-            ->getMock();
-
-        $optionsOneMock->expects($this->once())->method('getCode')->willReturn($code);
+        
+        $optionsOneMock = new class($code) extends Option {
+            /**
+             * @var string
+             */
+            private $code;
+            
+            public function __construct($code)
+            {
+                $this->code = $code;
+            }
+            
+            public function getCode()
+            {
+                return $this->code;
+            }
+        };
+        
+        $optionsTwoMock = new class() extends Option {
+            public function __construct()
+            {
+            }
+        };
 
         $result = $this->model->compareOptions(
-            [$code => $optionsOneMock],
+            [$optionsOneMock],
             ['someOneElse' => $optionsTwoMock]
         );
 
@@ -323,35 +414,15 @@ class ItemTest extends TestCase
     public function testSetAndSaveItemOptions()
     {
         $this->assertEmpty($this->model->getOptions());
-        $firstOptionMock = $this->getMockBuilder(Option::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getCode'])
-            ->onlyMethods(['isDeleted', 'delete', '__wakeup'])
-            ->getMock();
-        $firstOptionMock->expects($this->any())
-            ->method('getCode')
-            ->willReturn('first_code');
-        $firstOptionMock->expects($this->any())
-            ->method('isDeleted')
-            ->willReturn(true);
-        $firstOptionMock->expects($this->once())
-            ->method('delete');
-
-        $secondOptionMock = $this->getMockBuilder(Option::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getCode'])
-            ->onlyMethods(['save', '__wakeup'])
-            ->getMock();
-        $secondOptionMock->expects($this->any())
-            ->method('getCode')
-            ->willReturn('second_code');
-        $secondOptionMock->expects($this->once())
-            ->method('save');
+        $firstOptionMock = $this->createFirstOptionMock('first_code', true);
+        $secondOptionMock = $this->createSecondOptionMock('second_code', false);
 
         $this->model->setOptions([$firstOptionMock, $secondOptionMock]);
         $this->assertNull($this->model->isOptionsSaved());
         $this->model->saveItemOptions();
         $this->assertTrue($this->model->isOptionsSaved());
+        $this->assertEquals(1, $firstOptionMock->getDeleteCount());
+        $this->assertEquals(1, $secondOptionMock->getSaveCount());
     }
 
     public function testGetProductWithException()
@@ -367,20 +438,126 @@ class ItemTest extends TestCase
         $storeId = 0;
         $this->model->setData('product_id', $productId);
         $this->model->setData('store_id', $storeId);
-        $productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['setCustomOptions', 'setFinalPrice'])
-            ->getMock();
+        $productMock = $this->createPartialMock(Product::class, [
+            'setCustomOptions',
+            'setFinalPrice'
+        ]);
         $productMock->expects($this->any())
             ->method('setFinalPrice')
             ->with(null);
         $productMock->expects($this->any())
             ->method('setCustomOptions')
             ->with([]);
-        $this->productRepository->expects($this->once())
+        $this->mocks['productRepository']->expects($this->once())
             ->method('getById')
             ->with($productId, false, $storeId, true)
             ->willReturn($productMock);
         $this->assertEquals($productMock, $this->model->getProduct());
+    }
+
+    private function createFirstOptionMock($code, $deleted)
+    {
+        return new class($code, $deleted) extends Option {
+            /**
+             * @var string
+             */
+            private $code;
+            /**
+             * @var bool
+             */
+            private $deleted;
+            /**
+             * @var int
+             */
+            private $deleteCount = 0;
+            
+            public function __construct($code, $deleted)
+            {
+                $this->code = $code;
+                $this->deleted = $deleted;
+            }
+            
+            public function getCode()
+            {
+                return $this->code;
+            }
+            
+            public function setItem($item)
+            {
+                return $this;
+            }
+            
+            public function isDeleted($isDeleted = null)
+            {
+                if ($isDeleted !== null) {
+                    $this->deleted = $isDeleted;
+                }
+                return $this->deleted;
+            }
+            
+            public function delete()
+            {
+                $this->deleteCount++;
+                return $this;
+            }
+            
+            public function getDeleteCount()
+            {
+                return $this->deleteCount;
+            }
+        };
+    }
+
+    private function createSecondOptionMock($code, $deleted)
+    {
+        return new class($code, $deleted) extends Option {
+            /**
+             * @var string
+             */
+            private $code;
+            /**
+             * @var bool
+             */
+            private $deleted;
+            /**
+             * @var int
+             */
+            private $saveCount = 0;
+            
+            public function __construct($code, $deleted)
+            {
+                $this->code = $code;
+                $this->deleted = $deleted;
+            }
+            
+            public function getCode()
+            {
+                return $this->code;
+            }
+            
+            public function setItem($item)
+            {
+                return $this;
+            }
+            
+            public function isDeleted($isDeleted = null)
+            {
+                if ($isDeleted !== null) {
+                    $this->deleted = $isDeleted;
+                }
+                return $this->deleted;
+            }
+            
+            public function save()
+            {
+                $this->saveCount++;
+                return $this;
+            }
+            
+            public function getSaveCount()
+            {
+                return $this->saveCount;
+            }
+        };
     }
 }

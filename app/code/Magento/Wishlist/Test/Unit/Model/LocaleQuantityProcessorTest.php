@@ -1,5 +1,9 @@
 <?php
 /**
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
+ */
+/**
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -32,11 +36,8 @@ class LocaleQuantityProcessorTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->resolver = $this->getMockBuilder(ResolverInterface::class)
-            ->getMock();
-        $this->filter   = $this->getMockBuilder(LocalizedToNormalized::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->resolver = $this->createMock(ResolverInterface::class);
+        $this->filter   = $this->createMock(LocalizedToNormalized::class);
         $this->processor = new LocaleQuantityProcessor($this->resolver, $this->filter);
     }
 

@@ -1,5 +1,9 @@
 <?php
 /**
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
+ */
+/**
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -8,7 +12,7 @@ declare(strict_types=1);
 namespace Magento\Wishlist\Test\Unit\Controller\Shared;
 
 use Magento\Catalog\Model\Product;
-use Magento\Catalog\Model\Product\Exception;
+use Magento\Catalog\Model\Product\Exception as ProductException;
 use Magento\Checkout\Helper\Cart as CartHelper;
 use Magento\Checkout\Model\Cart;
 use Magento\Framework\App\Action\Context as ActionContext;
@@ -19,6 +23,7 @@ use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Escaper;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Message\ManagerInterface;
+use Exception;
 use Magento\Quote\Model\Quote;
 use Magento\Wishlist\Controller\Shared\Cart as SharedCart;
 use Magento\Wishlist\Model\Item;
@@ -138,10 +143,29 @@ class CartTest extends TestCase
         $this->cart = $this->createMock(Cart::class);
         $this->cartHelper = $this->createMock(CartHelper::class);
 
-        $this->quote = $this->getMockBuilder(Quote::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getHasError'])
-            ->getMock();
+        $this->quote = new class extends Quote {
+            /**
+             * @var bool
+             */
+            private $hasError = false;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getHasError()
+            {
+                return $this->hasError;
+            }
+            
+            public function setHasError($hasError)
+            {
+                $this->hasError = $hasError;
+                $_ = [$hasError];
+                unset($_);
+                return $this;
+            }
+        };
 
         $this->optionCollection = $this->createMock(OptionCollection::class);
 
@@ -150,14 +174,14 @@ class CartTest extends TestCase
             ->getMock();
 
         /** @var OptionFactory|MockObject $optionFactory */
-        $optionFactory = $this->createMock(OptionFactory::class);
+        $optionFactory = $this->createMock(OptionFactory::class); // @phpstan-ignore-line
         $optionFactory->expects($this->once())
             ->method('create')
             ->willReturn($this->option);
 
         $this->item = $this->createMock(Item::class);
 
-        $itemFactory = $this->createMock(ItemFactory::class);
+        $itemFactory = $this->createMock(ItemFactory::class); // @phpstan-ignore-line
         $itemFactory->expects($this->once())
             ->method('create')
             ->willReturn($this->item);
@@ -233,9 +257,7 @@ class CartTest extends TestCase
             ->method('getProduct')
             ->willReturn($this->product);
 
-        $this->quote->expects($this->once())
-            ->method('getHasError')
-            ->willReturn($hasErrors);
+        $this->quote->setHasError($hasErrors);
 
         $this->cart->expects($this->once())
             ->method('getQuote')
@@ -349,7 +371,7 @@ class CartTest extends TestCase
 
         $this->option->expects($this->once())
             ->method('getCollection')
-            ->willThrowException(new Exception(__('LocalizedException')));
+            ->willThrowException(new Exception('LocalizedException'));
 
         $this->resultRedirect->expects($this->once())
             ->method('setUrl')
@@ -380,7 +402,7 @@ class CartTest extends TestCase
 
         $this->option->expects($this->once())
             ->method('getCollection')
-            ->willThrowException(new \Exception('Exception'));
+            ->willThrowException(new Exception('Exception'));
 
         $this->resultRedirect->expects($this->once())
             ->method('setUrl')

@@ -1,5 +1,9 @@
 <?php
 /**
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
+ */
+/**
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -18,6 +22,7 @@ use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Data\Form\FormKey\Validator;
 use Magento\Framework\DataObject;
 use Magento\Framework\Escaper;
+use Exception;
 use Magento\Framework\Message\Manager as MessageManager;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Item;
@@ -290,7 +295,7 @@ class FromcartTest extends TestCase
     {
         $cartUrl = 'cart_url';
         $exceptionMessage = 'exception_message';
-        $exception = new \Exception($exceptionMessage);
+        $exception = new Exception($exceptionMessage);
 
         $this->formKeyValidator->expects($this->once())
             ->method('validate')
@@ -380,23 +385,44 @@ class FromcartTest extends TestCase
             ->method('getName')
             ->willReturn($productName);
 
-        $quoteItemMock = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getProductId'])
-            ->onlyMethods([
-                'getBuyRequest',
-                'getProduct',
-            ])
-            ->getMock();
-        $quoteItemMock->expects($this->once())
-            ->method('getProductId')
-            ->willReturn($productId);
-        $quoteItemMock->expects($this->once())
-            ->method('getBuyRequest')
-            ->willReturn($dataObjectMock);
-        $quoteItemMock->expects($this->once())
-            ->method('getProduct')
-            ->willReturn($productMock);
+        $quoteItemMock = new class($productId, $dataObjectMock, $productMock) extends Item {
+            /**
+             * @var int
+             */
+            private $productId;
+            /**
+             * @var DataObject
+             */
+            private $buyRequest;
+            /**
+             * @var Product
+             */
+            private $product;
+            
+            public function __construct($productId, $buyRequest, $product)
+            {
+                $this->productId = $productId;
+                $this->buyRequest = $buyRequest;
+                $this->product = $product;
+                $_ = [$productId, $buyRequest, $product];
+                unset($_);
+            }
+            
+            public function getProductId()
+            {
+                return $this->productId;
+            }
+            
+            public function getBuyRequest()
+            {
+                return $this->buyRequest;
+            }
+            
+            public function getProduct()
+            {
+                return $this->product;
+            }
+        };
 
         $quoteMock = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()

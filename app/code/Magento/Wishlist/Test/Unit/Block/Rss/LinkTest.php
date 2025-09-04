@@ -1,5 +1,9 @@
 <?php
 /**
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
+ */
+/**
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -11,7 +15,7 @@ namespace Magento\Wishlist\Test\Unit\Block\Rss;
 use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Rss\UrlBuilderInterface;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\Framework\View\Element\Template\Context;
 use Magento\Framework\Url\EncoderInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Wishlist\Block\Rss\Link;
@@ -25,8 +29,8 @@ class LinkTest extends TestCase
     /** @var Link */
     protected $link;
 
-    /** @var ObjectManagerHelper */
-    protected $objectManagerHelper;
+    /** @var Context|MockObject */
+    protected $context;
 
     /** @var Data|MockObject */
     protected $wishlistHelper;
@@ -51,11 +55,7 @@ class LinkTest extends TestCase
         $customer->expects($this->any())->method('getId')->willReturn(8);
         $customer->expects($this->any())->method('getEmail')->willReturn('test@example.com');
 
-        $this->wishlistHelper = $this->getMockBuilder(Data::class)
-            ->addMethods(['urlEncode'])
-            ->onlyMethods(['getWishlist', 'getCustomer'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->wishlistHelper = $this->createPartialMock(Data::class, ['getWishlist', 'getCustomer']);
         $this->urlEncoder = $this->createPartialMock(EncoderInterface::class, ['encode']);
 
         $this->wishlistHelper->expects($this->any())->method('getWishlist')->willReturn($wishlist);
@@ -66,18 +66,17 @@ class LinkTest extends TestCase
                 return strtr(base64_encode($url), '+/=', '-_,');
             });
 
-        $this->urlBuilder = $this->getMockForAbstractClass(UrlBuilderInterface::class);
-        $this->scopeConfig = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $this->urlBuilder = $this->createMock(UrlBuilderInterface::class);
+        $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
+        $this->context = $this->createMock(Context::class);
 
-        $this->objectManagerHelper = new ObjectManagerHelper($this);
-        $this->link = $this->objectManagerHelper->getObject(
-            Link::class,
-            [
-                'wishlistHelper' => $this->wishlistHelper,
-                'rssUrlBuilder' => $this->urlBuilder,
-                'scopeConfig' => $this->scopeConfig,
-                'urlEncoder' => $this->urlEncoder,
-            ]
+        $this->context->method('getScopeConfig')->willReturn($this->scopeConfig);
+
+        $this->link = new Link(
+            $this->context,
+            $this->wishlistHelper,
+            $this->urlBuilder,
+            $this->urlEncoder
         );
     }
 

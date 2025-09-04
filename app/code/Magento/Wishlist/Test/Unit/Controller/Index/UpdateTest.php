@@ -1,5 +1,9 @@
 <?php
 /**
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
+ */
+/**
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -16,7 +20,6 @@ use Magento\Framework\Data\Form\FormKey\Validator;
 use Magento\Framework\Exception\NotFoundException;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\ObjectManagerInterface;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Wishlist\Controller\Index\Update;
 use Magento\Wishlist\Controller\WishlistProviderInterface;
 use Magento\Wishlist\Helper\Data;
@@ -97,11 +100,9 @@ class UpdateTest extends TestCase
         $this->contextMock = $this->createMock(Context::class);
         $this->resultRedirectMock = $this->createMock(Redirect::class);
         $this->resultFactoryMock = $this->createPartialMock(ResultFactory::class, ['create']);
-        $this->messageManagerMock = $this->getMockForAbstractClass(ManagerInterface::class);
-        $this->objectManagerMock = $this->getMockForAbstractClass(ObjectManagerInterface::class);
-        $this->requestMock = $this->getMockBuilder(RequestInterface::class)
-            ->addMethods(['getPostValue'])
-            ->getMockForAbstractClass();
+        $this->messageManagerMock = $this->createMock(ManagerInterface::class);
+        $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
+        $this->requestMock = $this->createPartialMock(\Magento\Framework\App\Request\Http::class, ['getPostValue']);
 
         $this->resultFactoryMock->expects($this->any())
             ->method('create')
@@ -119,16 +120,11 @@ class UpdateTest extends TestCase
             ->method('getMessageManager')
             ->willReturn($this->messageManagerMock);
 
-        $objectManager = new ObjectManagerHelper($this);
-
-        $this->updateController = $objectManager->getObject(
-            Update::class,
-            [
-                'context' => $this->contextMock,
-                '_formKeyValidator' => $this->formKeyValidatorMock,
-                'wishlistProvider' => $this->wishlistProviderMock,
-                'quantityProcessor' => $this->quantityProcessorMock
-            ]
+        $this->updateController = new Update(
+            $this->contextMock,
+            $this->formKeyValidatorMock,
+            $this->wishlistProviderMock,
+            $this->quantityProcessorMock
         );
     }
 
@@ -143,22 +139,11 @@ class UpdateTest extends TestCase
     public function testUpdate(array $wishlistDataProvider, array $postData): void
     {
         $wishlist = $this->createMock(Wishlist::class);
-        $itemMock = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getWishlistId', 'getName', 'getDescription', 'setDescription'])
-            ->onlyMethods(
-                [
-                    'load',
-                    'getId',
-                    'setQty',
-                    'save',
-                    'getProduct'
-                ]
-            )->getMock();
+        $itemMock = $this->createItemMock($wishlistDataProvider['id']);
         $dataMock = $this->createMock(Data::class);
-        $productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productMock = $this->createMock(Product::class);
+        
+        $itemMock->setProduct($productMock);
 
         $this->formKeyValidatorMock->expects($this->once())
             ->method('validate')
@@ -180,22 +165,7 @@ class UpdateTest extends TestCase
             ->method('create')
             ->with(Item::class)
             ->willReturn($itemMock);
-        $itemMock->expects($this->once())
-            ->method('load')
-            ->with(1)
-            ->willReturnSelf();
-        $itemMock->expects($this->once())
-            ->method('getWishLIstId')
-            ->willReturn($wishlistDataProvider['id']);
-        $itemMock->expects($this->once())
-            ->method('getDescription')
-            ->willReturn('');
-        $itemMock->expects($this->once())
-            ->method('setDescription')
-            ->willReturnSelf();
-        $itemMock->expects($this->once())
-            ->method('setQty')
-            ->willReturnSelf();
+
         $this->objectManagerMock->expects($this->exactly(2))
             ->method('get')
             ->with(Data::class)
@@ -208,9 +178,7 @@ class UpdateTest extends TestCase
         $this->quantityProcessorMock->expects($this->once())
             ->method('process')
             ->willReturn($postData['qty']);
-        $itemMock->expects($this->once())
-            ->method('getProduct')
-            ->willReturn($productMock);
+
         $productMock->expects($this->once())
             ->method('getName')
             ->willReturn('product');
@@ -286,5 +254,67 @@ class UpdateTest extends TestCase
                     ]
                 ]
             ];
+    }
+
+    private function createItemMock($id)
+    {
+        return new class($id) extends Item {
+            /**
+             * @var int
+             */
+            private $id;
+            /**
+             * @var int
+             */
+            private $wishlistId;
+            /**
+             * @var Product
+             */
+            private $product;
+            
+            public function __construct($id)
+            {
+                $this->id = $id;
+                $this->wishlistId = $id;
+            }
+            
+            public function load($modelId, $field = null)
+            {
+                return $this;
+            }
+            
+            public function getId()
+            {
+                return $this->id;
+            }
+            
+            public function getWishlistId()
+            {
+                return $this->wishlistId;
+            }
+            
+            public function setQty($qty)
+            {
+                return $this;
+            }
+            
+            public function save()
+            {
+                return $this;
+            }
+            
+            public function getProduct()
+            {
+                return $this->product;
+            }
+            
+            public function setProduct($product)
+            {
+                $this->product = $product;
+                $_ = [$product];
+                unset($_);
+                return $this;
+            }
+        };
     }
 }
