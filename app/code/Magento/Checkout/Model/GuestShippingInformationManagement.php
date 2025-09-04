@@ -55,6 +55,7 @@ class GuestShippingInformationManagement implements \Magento\Checkout\Api\GuestS
 
     /**
      * @inheritDoc
+     *
      * @throws InputException
      */
     public function saveAddressInformation(
@@ -94,22 +95,7 @@ class GuestShippingInformationManagement implements \Magento\Checkout\Api\GuestS
     private function validateAddressAttributes(AddressInterface $address, string $addressType): void
     {
         try {
-            $customerAddress = $this->addressFactory->create();
-            $customerAddress->setData([
-                'firstname' => $address->getFirstname(),
-                'lastname' => $address->getLastname(),
-                'street' => $address->getStreet(),
-                'city' => $address->getCity(),
-                'region' => $address->getRegion(),
-                'region_id' => $address->getRegionId(),
-                'region_code' => $address->getRegionCode(),
-                'postcode' => $address->getPostcode(),
-                'country_id' => $address->getCountryId(),
-                'telephone' => $address->getTelephone(),
-                'company' => $address->getCompany(),
-                'email' => $address->getEmail(),
-                'address_type' => $addressType
-            ]);
+            $customerAddress = $this->createCustomerAddressFromQuoteAddress($address, $addressType);
             $extensionAttributes = $address->getExtensionAttributes();
             if ($extensionAttributes) {
                 $extensionAttributesData = $extensionAttributes->__toArray();
@@ -143,5 +129,37 @@ class GuestShippingInformationManagement implements \Magento\Checkout\Api\GuestS
         } catch (LocalizedException $e) {
             throw new InputException(__($e->getMessage()));
         }
+    }
+
+    /**
+     * Create customer address object from quote address
+     *
+     * @param AddressInterface $address
+     * @param string $addressType
+     * @return \Magento\Customer\Model\Address
+     */
+    private function createCustomerAddressFromQuoteAddress(
+        AddressInterface $address,
+        string $addressType
+    ): \Magento\Customer\Model\Address
+    {
+        $customerAddress = $this->addressFactory->create();
+        $customerAddress->setData([
+            'firstname' => $address->getFirstname(),
+            'lastname' => $address->getLastname(),
+            'street' => $address->getStreet(),
+            'city' => $address->getCity(),
+            'region' => $address->getRegion(),
+            'region_id' => $address->getRegionId(),
+            'region_code' => $address->getRegionCode(),
+            'postcode' => $address->getPostcode(),
+            'country_id' => $address->getCountryId(),
+            'telephone' => $address->getTelephone(),
+            'company' => $address->getCompany(),
+            'email' => $address->getEmail(),
+            'address_type' => $addressType
+        ]);
+
+        return $customerAddress;
     }
 }

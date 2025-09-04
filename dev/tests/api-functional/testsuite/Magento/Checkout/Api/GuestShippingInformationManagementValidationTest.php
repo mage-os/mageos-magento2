@@ -295,7 +295,10 @@ class GuestShippingInformationManagementValidationTest extends WebapiAbstract
      * @param ShippingInformationInterface $shippingInformation
      * @return array
      */
-    private function callSaveAddressInformation(string $cartId, ShippingInformationInterface $shippingInformation): array
+    private function callSaveAddressInformation(
+        string $cartId,
+        ShippingInformationInterface $shippingInformation
+    ): array
     {
         $serviceInfo = [
             'rest' => [
