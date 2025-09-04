@@ -1,13 +1,15 @@
 <?php
 /**
- * Copyright 2025 Adobe
+ * Copyright 2021 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
 
 namespace Magento\QuoteGraphQl\Model\Cart\MergeCarts;
 
+use Magento\Catalog\Model\Product;
 use Magento\CatalogInventory\Api\StockRegistryInterface;
+use Magento\CatalogInventory\Model\Stock;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Api\CartItemRepositoryInterface;
@@ -55,41 +57,44 @@ class CartQuantityValidator implements CartQuantityValidatorInterface
         $modified = false;
         $this->cumulativeQty = [];
 
-        foreach ($guestCart->getAllVisibleItems() as $guestItem) {
-            foreach ($customerCart->getAllItems() as $customerItem) {
-                if (!$customerItem->compare($guestItem)) {
+        /** @var \Magento\Quote\Model\Quote $guestCart */
+        /** @var \Magento\Quote\Model\Quote $customerCart */
+        /** @var \Magento\Quote\Model\Quote\Item $guestCartItem */
+        foreach ($guestCart->getAllVisibleItems() as $guestCartItem) {
+            foreach ($customerCart->getAllItems() as $customerCartItem) {
+                if (!$customerCartItem->compare($guestCartItem)) {
                     continue;
                 }
 
                 $mergePreference = $this->config->getCartMergePreference();
 
                 if ($mergePreference === Config::CART_PREFERENCE_CUSTOMER) {
-                    $this->safeDeleteCartItem((int)$guestCart->getId(), (int)$guestItem->getItemId());
+                    $this->safeDeleteCartItem((int)$guestCart->getId(), (int)$guestCartItem->getItemId());
                     $modified = true;
                     break;
                 }
 
-                $product = $customerItem->getProduct();
+                $product = $customerCartItem->getProduct();
                 $sku = $product->getSku();
                 $websiteId = (int) $product->getStore()->getWebsiteId();
 
-                $isQtyValid = $customerItem->getChildren()
-                    ? $this->validateCompositeProductQty($guestItem, $customerItem)
+                $isQtyValid = $customerCartItem->getChildren()
+                    ? $this->validateCompositeProductQty($guestCartItem, $customerCartItem)
                     : $this->validateProductQty(
                         $product,
                         $sku,
-                        $guestItem->getQty(),
-                        $customerItem->getQty(),
+                        $guestCartItem->getQty(),
+                        $customerCartItem->getQty(),
                         $websiteId
                     );
 
                 if ($mergePreference === Config::CART_PREFERENCE_GUEST) {
-                    $this->safeDeleteCartItem((int)$customerCart->getId(), (int)$customerItem->getItemId());
+                    $this->safeDeleteCartItem((int)$customerCart->getId(), (int)$customerCartItem->getItemId());
                     $modified = true;
                 }
 
                 if (!$isQtyValid) {
-                    $this->safeDeleteCartItem((int)$guestCart->getId(), (int)$guestItem->getItemId());
+                    $this->safeDeleteCartItem((int)$guestCart->getId(), (int)$guestCartItem->getItemId());
                     $modified = true;
                 }
 
@@ -124,6 +129,11 @@ class CartQuantityValidator implements CartQuantityValidatorInterface
         $this->cumulativeQty[$sku] ??= 0;
         $this->cumulativeQty[$sku] += $this->getCurrentCartItemQty($guestItemQty, $customerItemQty);
 
+        // If backorders are enabled, allow quantities beyond available stock
+        if ($this->isBackordersEnabled($product)) {
+            return true;
+        }
+
         return $salableQty >= $this->cumulativeQty[$sku];
     }
 
@@ -149,6 +159,11 @@ class CartQuantityValidator implements CartQuantityValidatorInterface
             $product = $customerChild->getProduct();
             $websiteId = (int) $product->getStore()->getWebsiteId();
 
+            // If backorders are enabled for this product, skip quantity validation
+            if ($this->isBackordersEnabled($product)) {
+                continue;
+            }
+
             if (!$this->validateProductQty($product, $sku, $guestQty, $customerQty, $websiteId)) {
                 return false;
             }
@@ -167,6 +182,7 @@ class CartQuantityValidator implements CartQuantityValidatorInterface
     private function retrieveChildItem(array $children, string $sku): ?CartItemInterface
     {
         foreach ($children as $child) {
+            /** @var \Magento\Quote\Model\Quote\Item $child */
             if ($child->getProduct()->getSku() === $sku) {
                 return $child;
             }
@@ -205,5 +221,21 @@ class CartQuantityValidator implements CartQuantityValidatorInterface
         } catch (NoSuchEntityException | CouldNotSaveException $e) {
             $this->logger->error($e->getMessage());
         }
+    }
+
+    /**
+     * Check if backorders are enabled for the stock item
+     *
+     * @param Product $product
+     * @return bool
+     */
+    private function isBackordersEnabled(Product $product): bool
+    {
+        $backorders = $this->stockRegistry->getStockItem(
+            $product->getId(),
+            $product->getStore()->getWebsiteId()
+        )->getBackorders();
+        return $backorders == Stock::BACKORDERS_YES_NONOTIFY ||
+            $backorders == Stock::BACKORDERS_YES_NOTIFY;
     }
 }
