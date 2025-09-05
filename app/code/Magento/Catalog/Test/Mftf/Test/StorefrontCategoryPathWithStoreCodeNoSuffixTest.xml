@@ -8,12 +8,12 @@
 
 <tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
-    <test name="StorefrontCategoryPathWithStoreCodeTest" extends="StorefrontCategoryNavigationHighlightingTest">
+    <test name="StorefrontCategoryPathWithStoreCodeNoSuffixTest" extends="StorefrontCategoryNavigationHighlightingTest">
         <annotations>
             <features value="Catalog"/>
             <stories value="Category Navigation Highlighting with Store Code in URLs"/>
             <title value="Category highlighting in navigation with store code in URLs and URL suffixes"/>
-            <description value="Correct category should be highlighted in the navigation menu when navigating through categories and products on the storefront based on store code"/>
+            <description value="Correct category should be highlighted in the navigation menu when navigating through categories and products on the storefront based on store code and having no suffix"/>
             <severity value="MAJOR"/>
             <testCaseId value="AC-10852"/>
             <group value="Catalog"/>
