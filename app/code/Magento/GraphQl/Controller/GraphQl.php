@@ -10,6 +10,7 @@ namespace Magento\GraphQl\Controller;
 use Exception;
 use GraphQL\Error\FormattedError;
 use GraphQL\Error\SyntaxError;
+use GraphQL\Language\Source;
 use Magento\Framework\App\Area;
 use Magento\Framework\App\AreaList;
 use Magento\Framework\App\FrontControllerInterface;
@@ -239,25 +240,21 @@ class GraphQl implements FrontControllerInterface
     /**
      * Handle GraphQL Exceptions
      *
-     * @param Exception $error
+     * @param Exception $e
      * @return array
      * @throws Throwable
      */
-    private function handleGraphQlException(Exception $error): array
+    private function handleGraphQlException(Exception $e): array
     {
-        if ($error instanceof SyntaxError || $error instanceof GraphQlInputException) {
-            return [['errors' => [FormattedError::createFromException($error)]], 400];
-        }
-        if ($error instanceof GraphQlAuthenticationException) {
-            return [['errors' => [$this->graphQlError->create($error)]], 401];
-        }
-        if ($error instanceof GraphQlAuthorizationException) {
-            return [['errors' => [$this->graphQlError->create($error)]], 403];
-        }
-        return [
-            ['errors' => [$this->graphQlError->create($error)]],
-            ExceptionFormatter::HTTP_GRAPH_QL_SCHEMA_ERROR_STATUS
-        ];
+        [$error, $statusCode] = match (true) {
+            $e instanceof GraphQlInputException => [FormattedError::createFromException($e), 200],
+            $e instanceof SyntaxError => [FormattedError::createFromException($e), 400],
+            $e instanceof GraphQlAuthenticationException => [$this->graphQlError->create($e), 401],
+            $e instanceof GraphQlAuthorizationException => [$this->graphQlError->create($e), 403],
+            default => [$this->graphQlError->create($e), ExceptionFormatter::HTTP_GRAPH_QL_SCHEMA_ERROR_STATUS],
+        };
+
+        return [['errors' => [$error]], $statusCode];
     }
 
     /**
@@ -286,23 +283,30 @@ class GraphQl implements FrontControllerInterface
      *
      * @param RequestInterface $request
      * @return array
-     * @throws GraphQlInputException
+     * @throws SyntaxError
      */
     private function getDataFromRequest(RequestInterface $request): array
     {
         $data = [];
-        try {
-            /** @var Http $request */
-            if ($request->isPost()) {
-                $data = $request->getContent() ? $this->jsonSerializer->unserialize($request->getContent()) : [];
-            } elseif ($request->isGet()) {
-                $data = $request->getParams();
+        /** @var Http $request */
+        if ($request->isPost() && $request->getContent()) {
+            $content = $request->getContent();
+            try {
+                $data = $this->jsonSerializer->unserialize($content);
+            } catch (\InvalidArgumentException $e) {
+                $source = new Source($content);
+                throw new SyntaxError($source, 0, $e->getMessage());
+            }
+        } elseif ($request->isGet()) {
+            $data = $request->getParams();
+            try {
                 $data['variables'] = !empty($data['variables']) && is_string($data['variables'])
                     ? $this->jsonSerializer->unserialize($data['variables'])
                     : null;
+            } catch (\InvalidArgumentException $e) {
+                $source = new Source($data['variables']);
+                throw new SyntaxError($source, 0, $e->getMessage());
             }
-        } catch (\InvalidArgumentException $e) {
-            throw new GraphQlInputException(__('Unable to parse the request.'), $e);
         }
 
         return $data;
