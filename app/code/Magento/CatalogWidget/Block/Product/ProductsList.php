@@ -7,10 +7,12 @@
 namespace Magento\CatalogWidget\Block\Product;
 
 use Magento\Catalog\Api\CategoryRepositoryInterface;
+use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Block\Product\AbstractProduct;
 use Magento\Catalog\Block\Product\Context;
 use Magento\Catalog\Block\Product\Widget\Html\Pager;
 use Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\Product\Attribute\Source\Status as ProductStatus;
 use Magento\Catalog\Model\Product\Visibility;
 use Magento\Catalog\Model\ResourceModel\Product\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
@@ -371,6 +373,7 @@ class ProductsList extends AbstractProduct implements BlockInterface, IdentityIn
          */
         $collection = $this->_addProductAttributesAndPrices($collection)
             ->addStoreFilter()
+            ->addAttributeToFilter(ProductInterface::STATUS, ProductStatus::STATUS_ENABLED)
             ->addAttributeToSort('entity_id', 'desc')
             ->setPageSize($this->getPageSize())
             ->setCurPage($this->getRequest()->getParam($this->getData('page_var_name'), 1));
