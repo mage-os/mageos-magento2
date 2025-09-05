@@ -107,24 +107,7 @@ class GuestShippingInformationManagement implements \Magento\Checkout\Api\GuestS
             }
             $validator = $this->validatorFactory->createValidator('customer_address', 'save');
             if (!$validator->isValid($customerAddress)) {
-                $errorMessages = [];
-                $messages = $validator->getMessages();
-                foreach ($messages as $message) {
-                    if (is_array($message)) {
-                        foreach ($message as $msg) {
-                            $errorMessages[] = $msg;
-                        }
-                    } else {
-                        $errorMessages[] = $message;
-                    }
-                }
-                throw new InputException(
-                    __(
-                        'The %1 address contains invalid data: %2',
-                        $addressType,
-                        implode(', ', $errorMessages)
-                    )
-                );
+                $this->throwValidationException($validator->getMessages(), $addressType);
             }
         } catch (LocalizedException $e) {
             throw new InputException(__($e->getMessage()));
@@ -160,5 +143,34 @@ class GuestShippingInformationManagement implements \Magento\Checkout\Api\GuestS
         ]);
 
         return $customerAddress;
+    }
+
+    /**
+     * Process validator messages and throw validation exception
+     *
+     * @param array $messages
+     * @param string $addressType
+     * @return void
+     * @throws InputException
+     */
+    private function throwValidationException(array $messages, string $addressType): void
+    {
+        $errorMessages = [];
+        foreach ($messages as $message) {
+            if (is_array($message)) {
+                foreach ($message as $msg) {
+                    $errorMessages[] = $msg;
+                }
+            } else {
+                $errorMessages[] = $message;
+            }
+        }
+        throw new InputException(
+            __(
+                'The %1 address contains invalid data: %2',
+                $addressType,
+                implode(', ', $errorMessages)
+            )
+        );
     }
 }
