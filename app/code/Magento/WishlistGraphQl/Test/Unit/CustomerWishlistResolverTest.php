@@ -13,7 +13,6 @@ use Magento\GraphQl\Model\Query\Context;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\GraphQl\Model\Query\ContextExtensionInterface;
-
 use Magento\Wishlist\Model\Wishlist;
 use Magento\Wishlist\Model\Wishlist\Config;
 use Magento\Wishlist\Model\WishlistFactory;
@@ -100,58 +99,13 @@ class CustomerWishlistResolverTest extends TestCase
      */
     private function createWishlistMock(): Wishlist
     {
-        return new class extends Wishlist {
-            /**
-             * @var int|null
-             */
-            private $customerId = null;
-            /**
-             * @var int
-             */
-            private $id = 1;
-            /**
-             * @var int
-             */
-            private $itemsCount = 0;
-            /**
-             * @var string
-             */
-            private $sharingCode = 'test-sharing-code';
-            /**
-             * @var string
-             */
-            private $updatedAt = '2024-01-01 00:00:00';
-
-            public function __construct()
-            {
-            }
-
-            public function loadByCustomerId($customerId, $create = false)
-            {
-                $this->customerId = $customerId > 0 ? $customerId : 0;
-                return $this;
-            }
-
-            public function getId()
-            {
-                return $this->id;
-            }
-
-            public function getItemsCount()
-            {
-                return $this->itemsCount;
-            }
-
-            public function getSharingCode()
-            {
-                return $this->sharingCode;
-            }
-
-            public function getUpdatedAt()
-            {
-                return $this->updatedAt;
-            }
-        };
+        $wishlistMock = $this->createMock(Wishlist::class);
+        $wishlistMock->method('loadByCustomerId')->willReturnSelf();
+        $wishlistMock->method('getId')->willReturn(1);
+        $wishlistMock->method('getItemsCount')->willReturn(0);
+        $wishlistMock->method('getSharingCode')->willReturn('test-sharing-code');
+        $wishlistMock->method('getUpdatedAt')->willReturn('2024-01-01 00:00:00');
+        return $wishlistMock;
     }
 
     /**

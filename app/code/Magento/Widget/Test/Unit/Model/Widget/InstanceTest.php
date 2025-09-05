@@ -65,23 +65,11 @@ class InstanceTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->_widgetModelMock = $this->getMockBuilder(
-            Widget::class
-        )->disableOriginalConstructor()
-            ->getMock();
-        $this->_viewFileSystemMock = $this->getMockBuilder(
-            FilesystemView::class
-        )->disableOriginalConstructor()
-            ->getMock();
-        $this->_namespaceResolver = $this->getMockBuilder(
-            NamespaceResolver::class
-        )->disableOriginalConstructor()
-            ->getMock();
-        $this->_cacheTypesListMock = $this->getMockForAbstractClass(TypeListInterface::class);
-        $this->_readerMock = $this->getMockBuilder(
-            Reader::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $this->_widgetModelMock = $this->createMock(Widget::class);
+        $this->_viewFileSystemMock = $this->createMock(FilesystemView::class);
+        $this->_namespaceResolver = $this->createMock(NamespaceResolver::class);
+        $this->_cacheTypesListMock = $this->createMock(TypeListInterface::class);
+        $this->_readerMock = $this->createMock(Reader::class);
 
         $filesystemMock = $this->createMock(Filesystem::class);
         $this->_directoryMock = $this->createMock(Read::class);
@@ -111,10 +99,27 @@ class InstanceTest extends TestCase
         );
 
         /** @var Instance _model */
-        $this->_model = $this->getMockBuilder(Instance::class)
-            ->onlyMethods(['_construct'])
-            ->setConstructorArgs($args)
-            ->getMock();
+        $this->_model = $this->createPartialMock(Instance::class, ['_construct']);
+        $this->_model->__construct(
+            $args['context'],
+            $args['registry'],
+            $args['escaper'],
+            $args['viewFileSystem'],
+            $args['cacheTypeList'],
+            $args['productType'],
+            $args['reader'],
+            $args['widgetModel'],
+            $args['namespaceResolver'],
+            $args['mathRandom'],
+            $args['filesystem'],
+            $args['conditionsHelper'],
+            $args['resource'],
+            $args['resourceCollection'],
+            $args['relatedCacheTypes'] ?? [],
+            $args['data'] ?? [],
+            $args['serializer'],
+            $args['xmlValidatorFactory']
+        );
     }
 
     public function testGetWidgetConfigAsArray()

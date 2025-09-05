@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -22,7 +22,7 @@ class CollectionTest extends AbstractTestCase
     /**
      * Name of test table
      */
-    const TEST_TABLE = 'layout_update';
+    private const TEST_TABLE = 'layout_update';
 
     /**
      * Name of main table alias
@@ -56,10 +56,7 @@ class CollectionTest extends AbstractTestCase
      */
     public function testAddTemporaryFilter($flag)
     {
-        $select = $this->getMockBuilder(Select::class)
-            ->setConstructorArgs(['where'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $select = $this->createMock(Select::class);
         $select->expects($this->once())->method('where')->with(self::TEST_WHERE_CONDITION);
 
         $collection = $this->_getCollection($select);

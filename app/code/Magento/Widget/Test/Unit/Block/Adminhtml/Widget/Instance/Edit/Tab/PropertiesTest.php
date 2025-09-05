@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -33,10 +33,43 @@ class PropertiesTest extends TestCase
 
     protected function setUp(): void
     {
+        $objectManager = new ObjectManager($this);
+        
+        $objects = [
+            [
+                \Magento\Framework\View\Element\Template\Context::class,
+                $this->createMock(\Magento\Framework\View\Element\Template\Context::class)
+            ],
+            [
+                \Magento\Framework\App\ObjectManager::class,
+                $this->createMock(\Magento\Framework\App\ObjectManager::class)
+            ],
+            [
+                \Magento\Framework\View\Element\BlockFactory::class,
+                $this->createMock(\Magento\Framework\View\Element\BlockFactory::class)
+            ],
+            [
+                \Magento\Backend\Block\Template::class,
+                $this->createMock(\Magento\Backend\Block\Template::class)
+            ],
+            [
+                \Magento\Backend\Block\Widget\Form::class,
+                $this->createMock(\Magento\Backend\Block\Widget\Form::class)
+            ],
+            [
+                \Magento\Backend\Block\Widget\Form\Generic::class,
+                $this->createMock(\Magento\Backend\Block\Widget\Form\Generic::class)
+            ],
+            [
+                \Magento\Widget\Block\Adminhtml\Widget\Options::class,
+                $this->createMock(\Magento\Widget\Block\Adminhtml\Widget\Options::class)
+            ]
+        ];
+        $objectManager->prepareObjectManager($objects);
+        
         $this->widget = $this->createMock(Instance::class);
         $this->registry = $this->createMock(Registry::class);
 
-        $objectManager = new ObjectManager($this);
         $this->propertiesBlock = $objectManager->getObject(
             Properties::class,
             [

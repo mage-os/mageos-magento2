@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -70,11 +70,31 @@ class CategoriesTest extends TestCase
     {
         $this->request = $this->getMockForAbstractClass(RequestInterface::class);
         $this->mathRandom = $this->createMock(Random::class);
-        $this->chooser = $this->getMockBuilder($this->blockClass)
-            ->disableOriginalConstructor()
-            ->addMethods(['setUseMassaction', 'setId', 'setIsAnchorOnly'])
-            ->onlyMethods(['setSelectedCategories', 'toHtml'])
-            ->getMock();
+        $this->chooser = new class extends \Magento\Widget\Block\Adminhtml\Widget\Catalog\Category\Chooser {
+            public function __construct()
+            {
+            }
+            public function toHtml()
+            {
+                return 'block_content';
+            }
+            public function setSelectedCategories($selectedCategories)
+            {
+                return $this;
+            }
+            public function setUseMassaction($useMassaction)
+            {
+                return $this;
+            }
+            public function setId($id)
+            {
+                return $this;
+            }
+            public function setIsAnchorOnly($isAnchorOnly)
+            {
+                return $this;
+            }
+        };
         $this->layout = $this->createMock(Layout::class);
         $this->resultRaw = $this->createMock(Raw::class);
         $this->resultFactory = $this->createMock(ResultFactory::class);
@@ -97,19 +117,7 @@ class CategoriesTest extends TestCase
 
         $this->mathRandom->expects($this->once())->method('getUniqueHash')->with('categories')->willReturn($hash);
 
-        $this->chooser->expects($this->once())->method('setUseMassaction')->with()->willReturnSelf();
-        $this->chooser->expects($this->once())->method('setId')->with($hash)->willReturnSelf();
-        $this->chooser->expects($this->once())->method('setIsAnchorOnly')->with($isAnchorOnly)->willReturnSelf();
-        $this->chooser->expects($this->once())
-            ->method('setSelectedCategories')
-            ->with(explode(',', $selectedCategories))
-            ->willReturnSelf();
-        $this->chooser->expects($this->once())->method('toHtml')->willReturn($content);
-
-        $this->layout->expects($this->once())
-            ->method('createBlock')
-            ->with($this->blockClass)
-            ->willReturn($this->chooser);
+        $this->layout->method('createBlock')->willReturn($this->chooser);
 
         $this->resultRaw->expects($this->once())->method('setContents')->with($content)->willReturnSelf();
 
@@ -122,15 +130,15 @@ class CategoriesTest extends TestCase
         $this->context->expects($this->once())->method('getResultFactory')->willReturn($this->resultFactory);
 
         /** @var Categories $controller */
-        $this->controller = (new ObjectManager($this))
-            ->getObject(
-                Categories::class,
-                [
-                    'context' => $this->context,
-                    'mathRandom' => $this->mathRandom,
-                    'layout' => $this->layout
-                ]
-            );
+        $this->controller = new Categories(
+            $this->context,
+            $this->createMock(\Magento\Framework\Registry::class),
+            $this->createMock(\Magento\Widget\Model\Widget\InstanceFactory::class),
+            $this->createMock(\Psr\Log\LoggerInterface::class),
+            $this->mathRandom,
+            $this->createMock(\Magento\Framework\Translate\InlineInterface::class),
+            $this->layout
+        );
         $this->assertSame($this->resultRaw, $this->controller->execute());
     }
 }

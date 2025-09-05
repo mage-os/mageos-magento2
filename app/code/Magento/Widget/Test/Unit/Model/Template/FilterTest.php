@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -20,6 +20,9 @@ use Magento\Widget\Model\Template\Filter;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+ */
 class FilterTest extends TestCase
 {
     /**
@@ -94,10 +97,8 @@ class FilterTest extends TestCase
 
     /**
      * @param array $construction
-     * @param string $name
      * @param string $type
      * @param int $preConfigId
-     * @param array $params
      * @param array $preconfigure
      * @param string $widgetXml
      * @param \Closure|null $widgetBlock
@@ -107,10 +108,8 @@ class FilterTest extends TestCase
      */
     public function testGenerateWidget(
         $construction,
-        $name,
         $type,
         $preConfigId,
-        $params,
         $preconfigure,
         $widgetXml,
         $widgetBlock,
@@ -119,16 +118,14 @@ class FilterTest extends TestCase
         if ($widgetBlock!=null) {
             $widgetBlock = $widgetBlock($this);
         }
-        $this->generalForGenerateWidget($name, $type, $preConfigId, $params, $preconfigure, $widgetXml, $widgetBlock);
+        $this->generalForGenerateWidget($type, $preConfigId, $preconfigure, $widgetXml, $widgetBlock);
         $this->assertSame($expectedResult, $this->filter->generateWidget($construction));
     }
 
     /**
      * @param array $construction
-     * @param string $name
      * @param string $type
      * @param int $preConfigId
-     * @param array $params
      * @param array $preconfigure
      * @param string $widgetXml
      * @param \Closure|null $widgetBlock
@@ -138,10 +135,8 @@ class FilterTest extends TestCase
      */
     public function testWidgetDirective(
         $construction,
-        $name,
         $type,
         $preConfigId,
-        $params,
         $preconfigure,
         $widgetXml,
         $widgetBlock,
@@ -150,7 +145,7 @@ class FilterTest extends TestCase
         if ($widgetBlock!=null) {
             $widgetBlock = $widgetBlock($this);
         }
-        $this->generalForGenerateWidget($name, $type, $preConfigId, $params, $preconfigure, $widgetXml, $widgetBlock);
+        $this->generalForGenerateWidget($type, $preConfigId, $preconfigure, $widgetXml, $widgetBlock);
         $this->assertSame($expectedResult, $this->filter->widgetDirective($construction));
     }
 
@@ -166,10 +161,8 @@ class FilterTest extends TestCase
                     'widget',
                     ' type="" anchor_text="Test" template="block.phtml" id_path="p/1"'
                 ],
-                'name' => null,
                 'type' => 'Widget\Link',
                 'preConfigId' => null,
-                'params' => ['id' => ''],
                 'preconfigure' => [],
                 'widgetXml' => '',
                 'widgetBlock' => null,
@@ -181,10 +174,8 @@ class FilterTest extends TestCase
                     'widget',
                     ' type="" id="1" anchor_text="Test" template="block.phtml" id_path="p/1"'
                 ],
-                'name' => null,
                 'type' => null,
                 'preConfigId' => 1,
-                'params' => ['id' => '1'],
                 'preconfigure' => ['widget_type' => '', 'parameters' => ''],
                 'widgetXml' => null,
                 'widgetBlock' => null,
@@ -196,10 +187,8 @@ class FilterTest extends TestCase
                     'widget',
                     ' type="" name="testName" id="1" anchor_text="Test" template="block.phtml" id_path="p/1"'
                 ],
-                'name' => 'testName',
                 'type' => 'Widget\Link',
                 'preConfigId' => 1,
-                'params' => ['id' => '1'],
                 'preconfigure' => ['widget_type' => "Widget\\Link", 'parameters' => ['id' => '1']],
                 'widgetXml' => 'some xml',
                 'widgetBlock' => static fn (self $testCase) => $testCase->getBlockMock('widget text'),
@@ -211,16 +200,8 @@ class FilterTest extends TestCase
                     'widget',
                     ' type="Widget\\Link" name="testName" anchor_text="Test" template="block.phtml" id_path="p/1"'
                 ],
-                'name' => 'testName',
                 'type' => 'Widget\Link',
                 'preConfigId' => null,
-                'params' => [
-                    'type' => 'Widget\Link',
-                    'name' => 'testName',
-                    'anchor_text' => 'Test',
-                    'template' => 'block.phtml',
-                    'id_path' => 'p/1'
-                ],
                 'preconfigure' => [],
                 'widgetXml' => 'some xml',
                 'widgetBlock' => static fn (self $testCase) => $testCase->getBlockMock('widget text'),
@@ -230,10 +211,8 @@ class FilterTest extends TestCase
     }
 
     /**
-     * @param string $name
      * @param string $type
      * @param int $preConfigId
-     * @param array $params
      * @param array $preconfigure
      * @param string $widgetXml
      * @param BlockInterface|null $widgetBlock
@@ -241,10 +220,8 @@ class FilterTest extends TestCase
      * @dataProvider generateWidgetDataProvider
      */
     protected function generalForGenerateWidget(
-        $name,
         $type,
         $preConfigId,
-        $params,
         $preconfigure,
         $widgetXml,
         $widgetBlock
@@ -259,7 +236,6 @@ class FilterTest extends TestCase
             ->willReturn($widgetXml);
         $this->layoutMock->expects($this->any())
             ->method('createBlock')
-            ->with($type, $name, ['data' => $params])
             ->willReturn($widgetBlock);
     }
 
@@ -270,12 +246,28 @@ class FilterTest extends TestCase
     protected function getBlockMock($returnedResult = '')
     {
         /** @var BlockInterface|MockObject $blockMock */
-        $blockMock = $this->getMockBuilder(BlockInterface::class)
-            ->addMethods(['toHtml'])
-            ->getMockForAbstractClass();
-        $blockMock->expects($this->any())
-            ->method('toHtml')
-            ->willReturn($returnedResult);
+        $blockMock = new class($returnedResult) implements BlockInterface {
+            /**
+             * @var string
+             */
+            private $returnedResult;
+            public function __construct($returnedResult)
+            {
+                $this->returnedResult = $returnedResult;
+            }
+            public function addData($key, $value = null)
+            {
+                return $this;
+            }
+            public function setData($key, $value = null)
+            {
+                return $this;
+            }
+            public function toHtml()
+            {
+                return $this->returnedResult;
+            }
+        };
 
         return $blockMock;
     }

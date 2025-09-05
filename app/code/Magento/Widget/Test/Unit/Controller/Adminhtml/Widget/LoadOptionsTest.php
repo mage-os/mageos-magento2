@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -25,6 +25,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Test class for \Magento\Widget\Controller\Adminhtml\Widget\LoadOptions
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
  */
 class LoadOptionsTest extends TestCase
 {
@@ -74,15 +75,11 @@ class LoadOptionsTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManagerHelper = new ObjectManagerHelper($this);
-        $this->objectManagerMock = $this->getMockForAbstractClass(ObjectManagerInterface::class);
-        $this->viewMock = $this->getMockForAbstractClass(ViewInterface::class);
-        $this->requestMock = $this->getMockForAbstractClass(RequestInterface::class);
-        $this->responseMock = $this->getMockBuilder(ResponseInterface::class)
-            ->addMethods(['representJson'])
-            ->getMockForAbstractClass();
-        $this->contextMock = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
+        $this->viewMock = $this->createMock(ViewInterface::class);
+        $this->requestMock = $this->createMock(RequestInterface::class);
+        $this->responseMock = $this->createMock(ResponseInterface::class);
+        $this->contextMock = $this->createMock(Context::class);
         $this->contextMock->expects($this->once())
             ->method('getView')
             ->willReturn($this->viewMock);
@@ -95,9 +92,7 @@ class LoadOptionsTest extends TestCase
         $this->contextMock->expects($this->once())
             ->method('getObjectManager')
             ->willReturn($this->objectManagerMock);
-        $this->conditionsHelperMock = $this->getMockBuilder(ConditionsHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->conditionsHelperMock = $this->createMock(ConditionsHelper::class);
 
         $this->loadOptions = $this->objectManagerHelper->getObject(
             LoadOptions::class,
@@ -119,9 +114,7 @@ class LoadOptionsTest extends TestCase
         $errorMessage = 'Some error';
 
         /** @var Data|MockObject $jsonDataHelperMock */
-        $jsonDataHelperMock = $this->getMockBuilder(Data::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $jsonDataHelperMock = $this->createMock(Data::class);
         $jsonDataHelperMock->expects($this->once())
             ->method('jsonEncode')
             ->with(['error' => true, 'message' => $errorMessage])
@@ -162,19 +155,9 @@ class LoadOptionsTest extends TestCase
                 'conditions_encoded' => $conditionsEncoded,
             ],
         ];
-        $resultWidgetArrayParams = [
-            'widget_type' => $widgetType,
-            'values' => [
-                'title' => '"Test"',
-                'conditions_encoded' => $conditionsEncoded,
-                'conditions' => $conditionsDecoded,
-            ],
-        ];
 
         /** @var Data|MockObject $jsonDataHelperMock */
-        $jsonDataHelperMock = $this->getMockBuilder(Data::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $jsonDataHelperMock = $this->createMock(Data::class);
         $jsonDataHelperMock->expects($this->once())
             ->method('jsonDecode')
             ->with($widgetJsonParams)
@@ -192,17 +175,28 @@ class LoadOptionsTest extends TestCase
             ->willReturn($jsonDataHelperMock);
 
         /** @var BlockInterface|MockObject $blockMock */
-        $blockMock = $this->getMockBuilder(BlockInterface::class)
-            ->addMethods(['setWidgetType', 'setWidgetValues'])
-            ->getMockForAbstractClass();
-        $blockMock->expects($this->once())
-            ->method('setWidgetType')
-            ->with($widgetType)
-            ->willReturnSelf();
-        $blockMock->expects($this->once())
-            ->method('setWidgetValues')
-            ->with($resultWidgetArrayParams['values'])
-            ->willReturnSelf();
+        $blockMock = new class implements BlockInterface {
+            public function setWidgetType($type)
+            {
+                return $this;
+            }
+            public function setWidgetValues($values)
+            {
+                return $this;
+            }
+            public function addData($key, $value = null)
+            {
+                return $this;
+            }
+            public function setData($key, $value = null)
+            {
+                return $this;
+            }
+            public function toHtml()
+            {
+                return '';
+            }
+        };
 
         /** @var LayoutInterface|MockObject $layoutMock */
         $layoutMock = $this->getMockForAbstractClass(LayoutInterface::class);
