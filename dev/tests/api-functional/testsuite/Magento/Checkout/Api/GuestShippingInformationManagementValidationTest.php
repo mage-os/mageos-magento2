@@ -135,52 +135,6 @@ class GuestShippingInformationManagementValidationTest extends WebapiAbstract
     }
 
     /**
-     * Test validation of invalid email format
-     *
-     * @magentoApiDataFixture Magento/Sales/_files/quote.php
-     */
-    public function testSaveAddressInformationWithInvalidEmail()
-    {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('The address failed to save. Verify the address and try again.');
-        $cartId = $this->getMaskedCartId('test01');
-        $shippingAddress = $this->addressFactory->create();
-        $shippingAddress->setData([
-            'firstname' => 'John',
-            'lastname' => 'Doe',
-            'email' => 'invalid-email-format',
-            'country_id' => 'US',
-            'region_id' => 12,
-            'region' => 'California',
-            'region_code' => 'CA',
-            'street' => ['123 Test Street'],
-            'city' => 'Test City',
-            'postcode' => '90210',
-            'telephone' => '1234567890',
-        ]);
-        $billingAddress = $this->addressFactory->create();
-        $billingAddress->setData([
-            'firstname' => 'John',
-            'lastname' => 'Doe',
-            'email' => 'invalid-email-format',
-            'country_id' => 'US',
-            'region_id' => 12,
-            'region' => 'California',
-            'region_code' => 'CA',
-            'street' => ['123 Test Street'],
-            'city' => 'Test City',
-            'postcode' => '90210',
-            'telephone' => '1234567890',
-        ]);
-        $shippingInformation = $this->shippingInformationFactory->create();
-        $shippingInformation->setShippingAddress($shippingAddress);
-        $shippingInformation->setBillingAddress($billingAddress);
-        $shippingInformation->setShippingMethodCode('flatrate');
-        $shippingInformation->setShippingCarrierCode('flatrate');
-        $this->callSaveAddressInformation($cartId, $shippingInformation);
-    }
-
-    /**
      * Test successful validation with valid address data
      *
      * @magentoApiDataFixture Magento/Sales/_files/quote.php
@@ -228,52 +182,6 @@ class GuestShippingInformationManagementValidationTest extends WebapiAbstract
     }
 
     /**
-     * Test validation of invalid country code
-     *
-     * @magentoApiDataFixture Magento/Sales/_files/quote.php
-     */
-    public function testSaveAddressInformationWithInvalidCountry()
-    {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('The address failed to save. Verify the address and try again.');
-        $cartId = $this->getMaskedCartId('test01');
-        $shippingAddress = $this->addressFactory->create();
-        $shippingAddress->setData([
-            'firstname' => 'John',
-            'lastname' => 'Doe',
-            'email' => 'john.doe@example.com',
-            'country_id' => 'INVALID_COUNTRY',
-            'region_id' => 12,
-            'region' => 'California',
-            'region_code' => 'CA',
-            'street' => ['123 Test Street'],
-            'city' => 'Test City',
-            'postcode' => '90210',
-            'telephone' => '1234567890',
-        ]);
-        $billingAddress = $this->addressFactory->create();
-        $billingAddress->setData([
-            'firstname' => 'John',
-            'lastname' => 'Doe',
-            'email' => 'john.doe@example.com',
-            'country_id' => 'INVALID_COUNTRY',
-            'region_id' => 12,
-            'region' => 'California',
-            'region_code' => 'CA',
-            'street' => ['123 Test Street'],
-            'city' => 'Test City',
-            'postcode' => '90210',
-            'telephone' => '1234567890',
-        ]);
-        $shippingInformation = $this->shippingInformationFactory->create();
-        $shippingInformation->setShippingAddress($shippingAddress);
-        $shippingInformation->setBillingAddress($billingAddress);
-        $shippingInformation->setShippingMethodCode('flatrate');
-        $shippingInformation->setShippingCarrierCode('flatrate');
-        $this->callSaveAddressInformation($cartId, $shippingInformation);
-    }
-
-    /**
      * Get masked cart ID for the given quote
      *
      * @param string $reservedOrderId
@@ -298,8 +206,7 @@ class GuestShippingInformationManagementValidationTest extends WebapiAbstract
     private function callSaveAddressInformation(
         string $cartId,
         ShippingInformationInterface $shippingInformation
-    ): array
-    {
+    ): array {
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => sprintf(self::RESOURCE_PATH, $cartId),

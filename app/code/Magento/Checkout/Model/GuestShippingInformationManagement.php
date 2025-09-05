@@ -141,8 +141,7 @@ class GuestShippingInformationManagement implements \Magento\Checkout\Api\GuestS
     private function createCustomerAddressFromQuoteAddress(
         AddressInterface $address,
         string $addressType
-    ): \Magento\Customer\Model\Address
-    {
+    ): \Magento\Customer\Model\Address {
         $customerAddress = $this->addressFactory->create();
         $customerAddress->setData([
             'firstname' => $address->getFirstname(),
