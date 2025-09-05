@@ -356,6 +356,7 @@ class Layout extends \Magento\Framework\Simplexml\Config implements \Magento\Fra
     public function generateElements()
     {
         \Magento\Framework\Profiler::start(__CLASS__ . '::' . __METHOD__);
+        $this->isCacheableCache = null;
         $cacheId = 'structure_' . $this->getUpdate()->getCacheId();
         $result = $this->cache->load($cacheId);
         if ($result) {
