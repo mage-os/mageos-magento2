@@ -170,11 +170,11 @@ class WishlistTest extends TestCase
         $this->date = $this->getMockBuilder(DateTime\DateTime::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->itemFactory = $this->getMockBuilder(ItemFactory::class) // @phpstan-ignore-line
+        $this->itemFactory = $this->getMockBuilder(ItemFactory::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
             ->getMock();
-        $this->itemsFactory = $this->getMockBuilder(CollectionFactory::class) // @phpstan-ignore-line
+        $this->itemsFactory = $this->getMockBuilder(CollectionFactory::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
             ->getMock();
@@ -369,42 +369,42 @@ class WishlistTest extends TestCase
             public function __construct()
             {
             }
-            
+
             public function setProductId($productId)
             {
                 return $this;
             }
-            
+
             public function setWishlistId($wishlistId)
             {
                 return $this;
             }
-            
+
             public function setStoreId($storeId)
             {
                 return $this;
             }
-            
+
             public function setOptions($options)
             {
                 return $this;
             }
-            
+
             public function setProduct($product)
             {
                 return $this;
             }
-            
+
             public function setQty($qty)
             {
                 return $this;
             }
-            
+
             public function getItem()
             {
                 return 2;
             }
-            
+
             public function save()
             {
                 return $this;
@@ -531,7 +531,7 @@ class WishlistTest extends TestCase
              * @var bool
              */
             private $isSalable;
-            
+
             public function __construct($productId, $storeId, $typeInstance, $isSalable)
             {
                 $this->productId = $productId;
@@ -541,7 +541,7 @@ class WishlistTest extends TestCase
                 $_ = [$productId, $storeId, $typeInstance, $isSalable];
                 unset($_);
             }
-            
+
             public function getId()
             {
                 return $this->productId;

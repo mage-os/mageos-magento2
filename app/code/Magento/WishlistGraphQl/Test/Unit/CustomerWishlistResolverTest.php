@@ -81,24 +81,18 @@ class CustomerWishlistResolverTest extends TestCase
      */
     private function createExtensionAttributesMock()
     {
-        return new class implements \Magento\GraphQl\Model\Query\ContextExtensionInterface {
-            /**
-             * @var bool
-             */
-            private $isCustomer = false;
-            
-            public function setIsCustomer(bool $isCustomer): void
-            {
-                $this->isCustomer = $isCustomer;
-                $_ = [$isCustomer];
-                unset($_);
-            }
-            
-            public function getIsCustomer(): bool
-            {
-                return $this->isCustomer;
-            }
-        };
+        $extensionAttributes = $this->createMock(\Magento\GraphQl\Model\Query\ContextExtensionInterface::class);
+        $isCustomer = false;
+        $extensionAttributes->method('setIsCustomer')
+            ->willReturnCallback(function ($value) use (&$isCustomer, $extensionAttributes) {
+                $isCustomer = $value;
+                return $extensionAttributes;
+            });
+        $extensionAttributes->method('getIsCustomer')
+            ->willReturnCallback(function () use (&$isCustomer) {
+                return $isCustomer;
+            });
+        return $extensionAttributes;
     }
 
     /**

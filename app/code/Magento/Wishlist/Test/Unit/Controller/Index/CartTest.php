@@ -176,7 +176,7 @@ class CartTest extends TestCase
 
         $this->quantityProcessorMock = $this->createMock(LocaleQuantityProcessor::class);
 
-        $this->itemFactoryMock = $this->createPartialMock(ItemFactory::class, ['create']); // @phpstan-ignore-line
+        $this->itemFactoryMock = $this->createPartialMock(ItemFactory::class, ['create']);
 
         $this->checkoutCartMock = new class extends CheckoutCart {
             /**
@@ -212,7 +212,7 @@ class CartTest extends TestCase
             }
         };
 
-        $this->optionFactoryMock = $this->createPartialMock(OptionFactory::class, ['create']); // @phpstan-ignore-line
+        $this->optionFactoryMock = $this->createPartialMock(OptionFactory::class, ['create']);
 
         $this->productHelperMock = $this->createMock(ProductHelper::class);
 
@@ -233,7 +233,7 @@ class CartTest extends TestCase
              * @var bool
              */
             public $isAjax = false;
-            
+
             public function getParams()
             {
                 return $this->params;
@@ -717,12 +717,12 @@ class CartTest extends TestCase
         };
 
         $this->itemFactoryMock->method('create')->willReturn($itemMock);
-        
+
         $productMock = $this->createMock(\Magento\Catalog\Model\Product::class);
         $buyRequestMock = $this->createMock(DataObject::class);
         $itemMock->setProductMock($productMock);
         $itemMock->setBuyRequestMock($buyRequestMock);
-        
+
         $productMock->expects($this->atLeastOnce())
             ->method('getName')
             ->willReturn($productName);

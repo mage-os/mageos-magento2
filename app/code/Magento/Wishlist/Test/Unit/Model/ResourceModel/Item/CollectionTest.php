@@ -136,7 +136,7 @@ class CollectionTest extends TestCase
             ->willReturn($this->attrId);
 
         $catalogAttrFactory = $this->createPartialMock(
-            AttributeFactory::class, // @phpstan-ignore-line
+            AttributeFactory::class,
             ['create']
         );
 

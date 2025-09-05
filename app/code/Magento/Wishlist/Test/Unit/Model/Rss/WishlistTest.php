@@ -96,7 +96,7 @@ class WishlistTest extends TestCase
     protected function setUp(): void
     {
         $this->catalogOutputMock = $this->createMock(Output::class);
-        $this->rssFactoryMock = $this->createPartialMock(RssFactory::class, ['create']); // @phpstan-ignore-line
+        $this->rssFactoryMock = $this->createPartialMock(RssFactory::class, ['create']);
         $this->wishlistBlock = $this->createMock(Wishlist::class);
         $this->wishlistHelperMock = $this->createPartialMock(
             Rss::class,
@@ -187,15 +187,15 @@ class WishlistTest extends TestCase
             'productName' => $productName,
             'productUrl' => $productUrl,
         ];
-        
+
         $wishlistItem = $this->createMock(Item::class);
         $wishlistItemsCollection = [$wishlistItem];
         $productMock = $this->createProductMock($staticArgs['productName']);
-        
+
         $wishlistItem->method('getProduct')->willReturn($productMock);
-        
+
         $wishlistModelMock->setItemCollection($wishlistItemsCollection);
-        
+
         $description = $this->processWishlistItemDescription($wishlistModelMock, $staticArgs);
 
         $expectedResult = [
@@ -303,7 +303,7 @@ class WishlistTest extends TestCase
             public function __construct()
             {
             }
-            
+
             public function getSharingCode()
             {
                 return 'somesharingcode';
@@ -384,29 +384,29 @@ class WishlistTest extends TestCase
              * @var Collection
              */
             private $itemCollection;
-            
+
             public function __construct($id)
             {
                 $this->id = $id;
                 $_ = [$id];
                 unset($_);
             }
-            
+
             public function getId()
             {
                 return $this->id;
             }
-            
+
             public function getSharingCode()
             {
                 return $this->sharingCode;
             }
-            
+
             public function getCustomerId()
             {
                 return 1;
             }
-            
+
             public function setItemCollection($collection)
             {
                 $this->itemCollection = $collection;
@@ -414,12 +414,12 @@ class WishlistTest extends TestCase
                 unset($_);
                 return $this;
             }
-            
+
             public function getItemCollection()
             {
                 return $this->itemCollection;
             }
-            
+
             public function save()
             {
                 return $this;
@@ -434,14 +434,14 @@ class WishlistTest extends TestCase
              * @var string
              */
             private $name;
-            
+
             public function __construct($name)
             {
                 $this->name = $name;
                 $_ = [$name];
                 unset($_);
             }
-            
+
             public function getName()
             {
                 return $this->name;

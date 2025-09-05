@@ -65,45 +65,9 @@ class WishlistItemsTest extends TestCase
         $store->expects($this->once())->method('getWebsiteId')->willReturn($webId);
         $store->expects($this->any())->method('getId')->willReturn($storeId);
 
-        $extensionAttributes = new class implements ContextExtensionInterface {
-            /**
-             * @var mixed
-             */
-            private $store = null;
-            /**
-             * @var array
-             */
-            private $extensionAttributes = [];
-            
-            public function getStore()
-            {
-                return $this->store;
-            }
-            
-            public function setStore($store)
-            {
-                $this->store = $store;
-                return $this;
-            }
-            
-            public function getExtensionAttribute(string $key)
-            {
-                return $this->extensionAttributes[$key] ?? null;
-            }
-            
-            public function setExtensionAttribute(string $key, $value): void
-            {
-                $this->extensionAttributes[$key] = $value;
-                $_ = [$value];
-                unset($_);
-            }
-            
-            public function getExtensionAttributes(): array
-            {
-                return $this->extensionAttributes;
-            }
-        };
-        $extensionAttributes->setStore($store);
+        $extensionAttributes = $this->createMock(ContextExtensionInterface::class);
+        $extensionAttributes->method('getStore')
+            ->willReturn($store);
 
         $context->expects($this->exactly(2))
             ->method('getExtensionAttributes')
@@ -111,60 +75,20 @@ class WishlistItemsTest extends TestCase
         $info = $this->createMock(ResolveInfo::class);
         $wishlist = $this->createMock(Wishlist::class);
 
-        $item = new class extends Item {
-            /**
-             * @var int
-             */
-            private $id = 1;
-            /**
-             * @var array
-             */
-            private $data = ['qty' => 1];
-            /**
-             * @var string
-             */
-            private $description = 'Test description';
-            /**
-             * @var string
-             */
-            private $addedAt = '2024-01-01 00:00:00';
-            /**
-             * @var mixed
-             */
-            private $product = null;
-            
-            public function __construct()
-            {
-            }
-            
-            public function getId()
-            {
-                return $this->id;
-            }
-            
-            public function getData($key = '', $index = null)
-            {
-                if ($key === '') {
-                    return $this->data;
-                }
-                return $this->data[$key] ?? null;
-            }
-            
-            public function getDescription()
-            {
-                return $this->description;
-            }
-            
-            public function getAddedAt()
-            {
-                return $this->addedAt;
-            }
-            
-            public function getProduct()
-            {
-                return $this->product;
-            }
-        };
+        $item = $this->createPartialMock(Item::class, ['getId', 'getData', 'getProduct']);
+        $item->expects($this->once())
+            ->method('getId')
+            ->willReturn(1);
+        $item->expects($this->any())
+            ->method('getData')
+            ->willReturnMap([
+                ['qty', null, 1],
+                ['added_at', null, '2024-01-01 00:00:00'],
+                ['description', null, 'Test description']
+            ]);
+        $item->expects($this->once())
+            ->method('getProduct')
+            ->willReturn(null);
 
         $wishlistCollection = $this->createMock(WishlistItemCollection::class);
         $wishlistCollection->expects($this->once())

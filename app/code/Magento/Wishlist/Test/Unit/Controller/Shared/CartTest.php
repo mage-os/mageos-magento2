@@ -148,16 +148,16 @@ class CartTest extends TestCase
              * @var bool
              */
             private $hasError = false;
-            
+
             public function __construct()
             {
             }
-            
+
             public function getHasError()
             {
                 return $this->hasError;
             }
-            
+
             public function setHasError($hasError)
             {
                 $this->hasError = $hasError;
@@ -174,14 +174,14 @@ class CartTest extends TestCase
             ->getMock();
 
         /** @var OptionFactory|MockObject $optionFactory */
-        $optionFactory = $this->createMock(OptionFactory::class); // @phpstan-ignore-line
+        $optionFactory = $this->createMock(OptionFactory::class);
         $optionFactory->expects($this->once())
             ->method('create')
             ->willReturn($this->option);
 
         $this->item = $this->createMock(Item::class);
 
-        $itemFactory = $this->createMock(ItemFactory::class); // @phpstan-ignore-line
+        $itemFactory = $this->createMock(ItemFactory::class);
         $itemFactory->expects($this->once())
             ->method('create')
             ->willReturn($this->item);

@@ -55,8 +55,8 @@ class ItemTest extends TestCase
             'storeManager' => $this->createMock(StoreManagerInterface::class),
             'date' => $this->createMock(DateTime::class),
             'catalogUrl' => $this->createMock(Url::class),
-            'optionFactory' => $this->createMock(OptionFactory::class), // @phpstan-ignore-line
-            'itemOptFactory' => $this->createPartialMock(CollectionFactory::class, ['create']), // @phpstan-ignore-line
+            'optionFactory' => $this->createMock(OptionFactory::class),
+            'itemOptFactory' => $this->createPartialMock(CollectionFactory::class, ['create']),
             'productTypeConfig' => $this->createMock(ConfigInterface::class),
             'productRepository' => $this->createMock(ProductRepositoryInterface::class),
             'resource' => $this->createMock(\Magento\Wishlist\Model\ResourceModel\Item::class),
@@ -87,11 +87,11 @@ class ItemTest extends TestCase
     public function testAddGetOptions($code, $option)
     {
         $this->assertEmpty($this->model->getOptions());
-        
+
         if (is_callable($option)) {
             $option = $option($this);
         }
-        
+
         $optionMock = $this->createMock(Option::class);
         $optionMock->expects($this->any())
             ->method('setData')
@@ -115,11 +115,11 @@ class ItemTest extends TestCase
     public function testRemoveOptionByCode($code, $option)
     {
         $this->assertEmpty($this->model->getOptions());
-        
+
         if (is_callable($option)) {
             $option = $option($this);
         }
-        
+
         $optionMock = new class($code) extends Option {
             /**
              * @var string
@@ -128,27 +128,27 @@ class ItemTest extends TestCase
              * @var string
              */
             private $code;
-            
+
             public function __construct($code)
             {
                 $this->code = $code;
             }
-            
+
             public function getCode()
             {
                 return $this->code;
             }
-            
+
             public function setData($key, $value = null)
             {
                 return $this;
             }
-            
+
             public function setItem($item)
             {
                 return $this;
             }
-            
+
             public function isDeleted($isDeleted = null)
             {
                 $_ = [$isDeleted];
@@ -172,17 +172,17 @@ class ItemTest extends TestCase
             public function __construct()
             {
             }
-            
+
             public function getCode()
             {
                 return 'second_key';
             }
-            
+
             public function setItem($item)
             {
                 return $this;
             }
-            
+
             public function isDeleted($isDeleted = null)
             {
                 $_ = [$isDeleted];
@@ -202,17 +202,17 @@ class ItemTest extends TestCase
             public function __construct()
             {
             }
-            
+
             public function getCode()
             {
                 return 'third_key';
             }
-            
+
             public function setItem($item)
             {
                 return $this;
             }
-            
+
             public function isDeleted($isDeleted = null)
             {
                 $_ = [$isDeleted];
@@ -245,7 +245,7 @@ class ItemTest extends TestCase
     {
         $code = 'someOption';
         $optionValue = 100;
-        
+
         $optionsOneMock = new class($code, $optionValue) extends Option {
             /**
              * @var string
@@ -255,24 +255,24 @@ class ItemTest extends TestCase
              * @var mixed
              */
             private $value;
-            
+
             public function __construct($code, $value)
             {
                 $this->code = $code;
                 $this->value = $value;
             }
-            
+
             public function getCode()
             {
                 return $this->code;
             }
-            
+
             public function getValue()
             {
                 return $this->value;
             }
         };
-        
+
         $optionsTwoMock = new class($code, $optionValue) extends Option {
             /**
              * @var string
@@ -282,18 +282,18 @@ class ItemTest extends TestCase
              * @var mixed
              */
             private $value;
-            
+
             public function __construct($code, $value)
             {
                 $this->code = $code;
                 $this->value = $value;
             }
-            
+
             public function getCode()
             {
                 return $this->code;
             }
-            
+
             public function getValue()
             {
                 return $this->value;
@@ -313,7 +313,7 @@ class ItemTest extends TestCase
         $code = 'someOption';
         $optionOneValue = 100;
         $optionTwoValue = 200;
-        
+
         $optionsOneMock = new class($code, $optionOneValue) extends Option {
             /**
              * @var string
@@ -323,24 +323,24 @@ class ItemTest extends TestCase
              * @var mixed
              */
             private $value;
-            
+
             public function __construct($code, $value)
             {
                 $this->code = $code;
                 $this->value = $value;
             }
-            
+
             public function getCode()
             {
                 return $this->code;
             }
-            
+
             public function getValue()
             {
                 return $this->value;
             }
         };
-        
+
         $optionsTwoMock = new class($code, $optionTwoValue) extends Option {
             /**
              * @var string
@@ -350,18 +350,18 @@ class ItemTest extends TestCase
              * @var mixed
              */
             private $value;
-            
+
             public function __construct($code, $value)
             {
                 $this->code = $code;
                 $this->value = $value;
             }
-            
+
             public function getCode()
             {
                 return $this->code;
             }
-            
+
             public function getValue()
             {
                 return $this->value;
@@ -379,24 +379,24 @@ class ItemTest extends TestCase
     public function testCompareOptionsNegativeOptionsTwoHaveNotOption()
     {
         $code = 'someOption';
-        
+
         $optionsOneMock = new class($code) extends Option {
             /**
              * @var string
              */
             private $code;
-            
+
             public function __construct($code)
             {
                 $this->code = $code;
             }
-            
+
             public function getCode()
             {
                 return $this->code;
             }
         };
-        
+
         $optionsTwoMock = new class() extends Option {
             public function __construct()
             {
@@ -470,23 +470,23 @@ class ItemTest extends TestCase
              * @var int
              */
             private $deleteCount = 0;
-            
+
             public function __construct($code, $deleted)
             {
                 $this->code = $code;
                 $this->deleted = $deleted;
             }
-            
+
             public function getCode()
             {
                 return $this->code;
             }
-            
+
             public function setItem($item)
             {
                 return $this;
             }
-            
+
             public function isDeleted($isDeleted = null)
             {
                 if ($isDeleted !== null) {
@@ -494,13 +494,13 @@ class ItemTest extends TestCase
                 }
                 return $this->deleted;
             }
-            
+
             public function delete()
             {
                 $this->deleteCount++;
                 return $this;
             }
-            
+
             public function getDeleteCount()
             {
                 return $this->deleteCount;
@@ -523,23 +523,23 @@ class ItemTest extends TestCase
              * @var int
              */
             private $saveCount = 0;
-            
+
             public function __construct($code, $deleted)
             {
                 $this->code = $code;
                 $this->deleted = $deleted;
             }
-            
+
             public function getCode()
             {
                 return $this->code;
             }
-            
+
             public function setItem($item)
             {
                 return $this;
             }
-            
+
             public function isDeleted($isDeleted = null)
             {
                 if ($isDeleted !== null) {
@@ -547,13 +547,13 @@ class ItemTest extends TestCase
                 }
                 return $this->deleted;
             }
-            
+
             public function save()
             {
                 $this->saveCount++;
                 return $this;
             }
-            
+
             public function getSaveCount()
             {
                 return $this->saveCount;
