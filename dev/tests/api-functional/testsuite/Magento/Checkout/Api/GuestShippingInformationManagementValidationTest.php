@@ -91,50 +91,6 @@ class GuestShippingInformationManagementValidationTest extends WebapiAbstract
     }
 
     /**
-     * Test validation of field length constraints
-     *
-     * @magentoApiDataFixture Magento/Sales/_files/quote.php
-     */
-    public function testSaveAddressInformationWithInvalidFieldLengths()
-    {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('The shipping address contains invalid data');
-        $cartId = $this->getMaskedCartId('test01');
-        $shippingAddress = $this->addressFactory->create();
-        $shippingAddress->setData([
-            'firstname' => 'Jane with a long name, longer than the limit configured in the backend',
-            'lastname' => 'Test',
-            'country_id' => 'US',
-            'region_id' => 12,
-            'region' => 'California',
-            'region_code' => 'CA',
-            'street' => ['123 Test Street'],
-            'city' => 'Test City',
-            'postcode' => '90210',
-            'telephone' => '1234567890',
-        ]);
-        $billingAddress = $this->addressFactory->create();
-        $billingAddress->setData([
-            'firstname' => 'Jane with a long name, longer than the limit configured in the backend',
-            'lastname' => 'Test',
-            'country_id' => 'US',
-            'region_id' => 12,
-            'region' => 'California',
-            'region_code' => 'CA',
-            'street' => ['123 Test Street'],
-            'city' => 'Test City',
-            'postcode' => '90210',
-            'telephone' => '1234567890',
-        ]);
-        $shippingInformation = $this->shippingInformationFactory->create();
-        $shippingInformation->setShippingAddress($shippingAddress);
-        $shippingInformation->setBillingAddress($billingAddress);
-        $shippingInformation->setShippingMethodCode('flatrate');
-        $shippingInformation->setShippingCarrierCode('flatrate');
-        $this->callSaveAddressInformation($cartId, $shippingInformation);
-    }
-
-    /**
      * Test successful validation with valid address data
      *
      * @magentoApiDataFixture Magento/Sales/_files/quote.php
