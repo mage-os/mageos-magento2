@@ -24,6 +24,7 @@ use Magento\Framework\GraphQl\Exception\ExceptionFormatter;
 use Magento\Framework\GraphQl\Exception\GraphQlAuthenticationException;
 use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
+use Magento\Framework\GraphQl\Exception\InvalidRequestInterface;
 use Magento\Framework\GraphQl\Query\Fields as QueryFields;
 use Magento\Framework\GraphQl\Query\QueryParser;
 use Magento\Framework\GraphQl\Query\QueryProcessor;
@@ -34,7 +35,6 @@ use Magento\Framework\Webapi\Response;
 use Magento\GraphQl\Helper\Query\Logger\LogData;
 use Magento\GraphQl\Model\Query\ContextFactoryInterface;
 use Magento\GraphQl\Model\Query\Logger\LoggerPool;
-use Throwable;
 
 /**
  * Front controller for web API GraphQL area.
@@ -242,15 +242,15 @@ class GraphQl implements FrontControllerInterface
      *
      * @param Exception $e
      * @return array
-     * @throws Throwable
      */
     private function handleGraphQlException(Exception $e): array
     {
         [$error, $statusCode] = match (true) {
-            $e instanceof GraphQlInputException => [FormattedError::createFromException($e), 200],
+            $e instanceof InvalidRequestInterface => [FormattedError::createFromException($e), $e->getStatusCode()],
             $e instanceof SyntaxError => [FormattedError::createFromException($e), 400],
             $e instanceof GraphQlAuthenticationException => [$this->graphQlError->create($e), 401],
             $e instanceof GraphQlAuthorizationException => [$this->graphQlError->create($e), 403],
+            $e instanceof GraphQlInputException => [FormattedError::createFromException($e), 200],
             default => [$this->graphQlError->create($e), ExceptionFormatter::HTTP_GRAPH_QL_SCHEMA_ERROR_STATUS],
         };
 
@@ -293,9 +293,9 @@ class GraphQl implements FrontControllerInterface
             $content = $request->getContent();
             try {
                 $data = $this->jsonSerializer->unserialize($content);
-            } catch (\InvalidArgumentException $e) {
+            } catch (\InvalidArgumentException) {
                 $source = new Source($content);
-                throw new SyntaxError($source, 0, $e->getMessage());
+                throw new SyntaxError($source, 0, 'Unable to parse the request.');
             }
         } elseif ($request->isGet()) {
             $data = $request->getParams();
@@ -303,9 +303,9 @@ class GraphQl implements FrontControllerInterface
                 $data['variables'] = !empty($data['variables']) && is_string($data['variables'])
                     ? $this->jsonSerializer->unserialize($data['variables'])
                     : null;
-            } catch (\InvalidArgumentException $e) {
+            } catch (\InvalidArgumentException) {
                 $source = new Source($data['variables']);
-                throw new SyntaxError($source, 0, $e->getMessage());
+                throw new SyntaxError($source, 0, 'Unable to parse the variables.');
             }
         }
 
