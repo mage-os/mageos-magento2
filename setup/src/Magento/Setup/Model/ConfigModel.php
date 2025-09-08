@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Setup\Model;
@@ -67,17 +67,15 @@ class ConfigModel
         /** @var AbstractConfigOption[] $optionCollection */
         $optionCollection = [];
         $optionLists = $this->collector->collectOptionsLists();
-
         foreach ($optionLists as $optionList) {
             $optionCollection[] = $optionList->getOptions();
         }
 
         $optionCollection = array_merge([], ...$optionCollection);
-
         foreach ($optionCollection as $option) {
             $currentValue = $this->deploymentConfig->get($option->getConfigPath());
-            if ($currentValue !== null) {
-                $option->setDefault();
+            if ($currentValue !== null && $option->acceptValue()) {
+                $option->setDefault($currentValue);
             }
         }
 
