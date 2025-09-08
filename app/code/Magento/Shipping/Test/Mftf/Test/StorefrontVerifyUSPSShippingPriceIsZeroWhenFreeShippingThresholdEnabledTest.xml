@@ -25,7 +25,7 @@
             <createData entity="SimpleProduct" stepKey="createProduct">
                 <field key="price">49.00</field>
             </createData>
-            <!-- Step 3:Enable Free Method select any shipping method -->
+            <!-- Step 1to3:Enable Free Method select any shipping method -->
             <magentoCLI command="config:set {{AdminEnableFreeMethodUSPSConfigData.path}} {{AdminEnableFreeMethodUSPSConfigData.value}}" stepKey="enableFreeMethodUSPS"/>
             <!-- Step 4:Enable Free Shipping Threshold -->
             <magentoCLI command="config:set {{AdminEnableFreeShippingThresholdUSPSConfigData.path}} {{AdminEnableFreeShippingThresholdUSPSConfigData.value}}" stepKey="enableFreeShippingThresholdUSPS"/>
