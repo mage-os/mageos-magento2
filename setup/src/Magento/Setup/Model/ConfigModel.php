@@ -67,7 +67,6 @@ class ConfigModel
         /** @var AbstractConfigOption[] $optionCollection */
         $optionCollection = [];
         $optionLists = $this->collector->collectOptionsLists();
-        $errors = [];
         foreach ($optionLists as $optionList) {
             $optionCollection[] = $optionList->getOptions();
         }
@@ -80,7 +79,6 @@ class ConfigModel
                 try {
                     $option->setDefault($currentValue);
                 } catch (\Throwable $e) {
-                    $errors[] = [$e->getMessage()];
                 }
             }
         }
