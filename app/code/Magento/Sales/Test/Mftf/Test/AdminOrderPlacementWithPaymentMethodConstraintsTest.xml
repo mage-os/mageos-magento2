@@ -27,16 +27,14 @@
             </createData>
             <createData entity="Simple_US_Customer_CA" stepKey="simpleCustomer"/>
             <!-- Step 1&2: Disable payment method one of "Check/Money Order" and  "Zero Subtotal Checkout" -->
-            <magentoCLI command="config:set payment/checkmo/active 0" stepKey="disabledCheckMoneyOrderValue"/>
+            <actionGroup ref="CliDisableCheckMoneyOrderPaymentMethodActionGroup" stepKey="disableCheckMoneyOrderValue"/>
             <magentoCLI command="config:set {{DisableZeroSubtotalCheckoutConfigData.path}} {{DisableZeroSubtotalCheckoutConfigData.value}}" stepKey="disabledZeroSubtotalCheckoutOrderValue"/>
             <!-- Step 3: Enable CashOnDelivery  -->
             <createData entity="CashOnDeliveryPaymentMethodDefault" stepKey="enableCashOnDeliveryPaymentMethod"/>
             <!-- Step 4: Set the Maximum Order Total and Maximum Order Total CashOnDelivery -->
-            <magentoCLI command="config:set payment/cashondelivery/max_order_total 100" stepKey="cashOnDeliveryMaximumOrderTotalConfigData"/>
-            <magentoCLI command="config:set payment/cashondelivery/min_order_total 1" stepKey="cashOnDeliveryMinimumOrderTotalConfigData"/>
-            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="runCronReindex">
-                <argument name="indices" value=""/>
-            </actionGroup>
+            <magentoCLI command="config:set {{cashOnDeliveryMaximumOrderTotalOrderPayment.path}} {{cashOnDeliveryMaximumOrderTotalOrderPayment.value}}" stepKey="cashOnDeliveryMaximumOrderTotalConfigData"/>
+            <magentoCLI command="config:set {{cashOnDeliveryMinimumOrderTotalOrderPayment.path}} {{cashOnDeliveryMinimumOrderTotalOrderPayment.value}}" stepKey="cashOnDeliveryMinimumOrderTotalOrderPayment"/>
+            <magentoCLI command="config:set {{cashOnDeliveryMinimumOrderTotalOrderPayment.path}} {{cashOnDeliveryMinimumOrderTotalOrderPayment.value}}" stepKey="cashOnDeliveryMinimumOrderTotalOrderPayment"/>
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
         </before>
         <after>
@@ -45,7 +43,7 @@
             <deleteData createDataKey="simpleCustomer" stepKey="deleteCustomer"/>
             <!-- Restore original payment method configurations -->
             <magentoCLI command="config:set {{EnableCheckMoneyOrderPaymentMethod.path}} {{EnableCheckMoneyOrderPaymentMethod.value}}" stepKey="enableCheckMoneyOrderPaymentMethod"/>
-            <magentoCLI command="config:set payment/cashondelivery/active 0" stepKey="restoreCOD"/>
+            <magentoCLI command="config:set {{disabledCashOnDeliveryPayment.label}} {{disabledCashOnDeliveryPayment.value}}" stepKey="restoreCOD"/>
             <!-- Clear cache and logout -->
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
         </after>
