@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  /**
-  * Copyright 2023 Adobe
+  * Copyright 2024 Adobe
   * All Rights Reserved.
   */
 -->
@@ -62,26 +62,26 @@
     </entity>
     <entity name="AdminConsumerKeyUSPSConfigData" type="usps_config">
         <data key="path">carriers/usps/client_id</data>
-        <data key="value">D71qxI00jx1m9xNqFVigpqrh4eBdqY6Y</data>
+        <data key="value">{{_CREDS.magento/carriers_usps_rest_client_id}}</data>
     </entity>
     <entity name="AdminConsumerSecretUSPSConfigData" type="usps_config">
         <data key="path">carriers/usps/client_secret</data>
-        <data key="value">sDy3Q4lHk6T9AMwP</data>
+        <data key="value">{{_CREDS.magento/carriers_usps_rest_client_secret}}</data>
     </entity>
     <entity name="AdminAccountNumberUSPSConfigData" type="usps_config">
         <data key="path">carriers/usps/account_number</data>
-        <data key="value">1000236554</data>
+        <data key="value">{{_CREDS.magento/carriers_usps_rest_account_number}}</data>
     </entity>
     <entity name="AdminCRIDUSPSConfigData" type="usps_config">
         <data key="path">carriers/usps/crid</data>
-        <data key="value">49547560</data>
+        <data key="value">{{_CREDS.magento/carriers_usps_rest_crid}}</data>
     </entity>
     <entity name="AdminMIDUSPSConfigData" type="usps_config">
         <data key="path">carriers/usps/mid</data>
-        <data key="value">903764662</data>
+        <data key="value">{{_CREDS.magento/carriers_usps_rest_mid}}</data>
     </entity>
     <entity name="AdminMMIDUSPSConfigData" type="usps_config">
         <data key="path">carriers/usps/mmid</data>
-        <data key="value">903764661</data>
+        <data key="value">{{_CREDS.magento/carriers_usps_rest_mmid}}</data>
     </entity>
 </entities>
