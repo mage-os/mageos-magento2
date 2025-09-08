@@ -34,7 +34,6 @@
             <!-- Step 4: Set the Maximum Order Total and Maximum Order Total CashOnDelivery -->
             <magentoCLI command="config:set {{cashOnDeliveryMaximumOrderTotalOrderPayment.path}} {{cashOnDeliveryMaximumOrderTotalOrderPayment.value}}" stepKey="cashOnDeliveryMaximumOrderTotalConfigData"/>
             <magentoCLI command="config:set {{cashOnDeliveryMinimumOrderTotalOrderPayment.path}} {{cashOnDeliveryMinimumOrderTotalOrderPayment.value}}" stepKey="cashOnDeliveryMinimumOrderTotalOrderPayment"/>
-            <magentoCLI command="config:set {{cashOnDeliveryMinimumOrderTotalOrderPayment.path}} {{cashOnDeliveryMinimumOrderTotalOrderPayment.value}}" stepKey="cashOnDeliveryMinimumOrderTotalOrderPayment"/>
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
         </before>
         <after>
