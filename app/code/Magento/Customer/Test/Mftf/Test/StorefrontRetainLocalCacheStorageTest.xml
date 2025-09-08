@@ -46,7 +46,7 @@
         <see userInput="Welcome, $$createCustomer.firstname$$ $$createCustomer.lastname$$!" selector="{{StorefrontPanelHeaderSection.welcomeMessage}}" stepKey="checkWelcomeMessage"/>
 
         <!--Grab timezone offset-->
-        <executeJS function="return new Date().getTimezoneOffset();" stepKey="getTimezoneOffset"/>
+        <executeJS function="return -(new Date().getTimezoneOffset());" stepKey="getTimezoneOffset"/>
         <!--Verify default expiry date for cookies-->
         <actionGroup ref="StorefrontVerifyCustomerDefaultCookieExpiryDateActionGroup" stepKey="VerifyCookiesExpiryDate">
             <argument name="timezoneOffset" value="{$getTimezoneOffset}"/>
