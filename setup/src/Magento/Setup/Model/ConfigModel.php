@@ -72,15 +72,10 @@ class ConfigModel
         }
 
         $optionCollection = array_merge([], ...$optionCollection);
-        $errors = [];
         foreach ($optionCollection as $option) {
             $currentValue = $this->deploymentConfig->get($option->getConfigPath());
             if ($currentValue !== null && $option->acceptValue()) {
-                try {
-                    $option->setDefault($currentValue);
-                } catch (\Throwable $e) {
-                    $errors[] = [$e->getMessage()];
-                }
+                $option->setDefault($currentValue);
             }
         }
 
