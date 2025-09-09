@@ -246,6 +246,13 @@ class ServiceInputProcessor implements ServicePayloadConverterInterface, ResetAf
             if (isset($data[$parameter->getName()])) {
                 $parameterType = $this->typeProcessor->getParamType($parameter);
 
+                // Allow only simple types or Api Data Objects
+                if (!($this->typeProcessor->isTypeSimple($parameterType)
+                    || preg_match('~\\\\?\w+\\\\\w+\\\\Api\\\\Data\\\\~', $parameterType) === 1
+                )) {
+                    continue;
+                }
+
                 try {
                     $res[$parameter->getName()] = $this->convertValue($data[$parameter->getName()], $parameterType);
                 } catch (\ReflectionException $e) {
