@@ -1,17 +1,20 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2021 Adobe
+ * All Rights Reserved.
  */
 declare (strict_types = 1);
 
 namespace Magento\WishlistGraphQl\Model\Resolver\Wishlist;
 
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
+use Magento\Quote\Api\CartRepositoryInterface;
+use Magento\Quote\Model\MaskedQuoteIdToQuoteIdInterface;
 use Magento\QuoteGraphQl\Model\Cart\CreateEmptyCartForCustomer;
 use Magento\Quote\Model\Cart\AddProductsToCart as AddProductsToCartService;
 use Magento\Quote\Model\Cart\Data\CartItemFactory;
@@ -77,6 +80,16 @@ class AddToCart implements ResolverInterface
     private $cartItemsRequestBuilder;
 
     /**
+     * @var CartRepositoryInterface
+     */
+    private $cartRepository;
+
+    /**
+     * @var MaskedQuoteIdToQuoteIdInterface
+     */
+    private $maskedQuoteIdToQuoteId;
+
+    /**
      * @param WishlistResourceModel $wishlistResource
      * @param WishlistFactory $wishlistFactory
      * @param WishlistConfig $wishlistConfig
@@ -86,6 +99,8 @@ class AddToCart implements ResolverInterface
      * @param CreateEmptyCartForCustomer $createEmptyCartForCustomer
      * @param AddProductsToCartService $addProductsToCart
      * @param CartItemsRequestBuilder $cartItemsRequestBuilder
+     * @param CartRepositoryInterface $cartRepository
+     * @param MaskedQuoteIdToQuoteIdInterface $maskedQuoteIdToQuoteId
      */
     public function __construct(
         WishlistResourceModel $wishlistResource,
@@ -96,7 +111,9 @@ class AddToCart implements ResolverInterface
         LocaleQuantityProcessor $quantityProcessor,
         CreateEmptyCartForCustomer $createEmptyCartForCustomer,
         AddProductsToCartService $addProductsToCart,
-        CartItemsRequestBuilder $cartItemsRequestBuilder
+        CartItemsRequestBuilder $cartItemsRequestBuilder,
+        CartRepositoryInterface $cartRepository,
+        MaskedQuoteIdToQuoteIdInterface $maskedQuoteIdToQuoteId,
     ) {
         $this->wishlistResource = $wishlistResource;
         $this->wishlistFactory = $wishlistFactory;
@@ -107,6 +124,8 @@ class AddToCart implements ResolverInterface
         $this->createEmptyCartForCustomer = $createEmptyCartForCustomer;
         $this->addProductsToCartService = $addProductsToCart;
         $this->cartItemsRequestBuilder = $cartItemsRequestBuilder;
+        $this->cartRepository = $cartRepository;
+        $this->maskedQuoteIdToQuoteId = $maskedQuoteIdToQuoteId;
     }
 
     /**
@@ -151,7 +170,9 @@ class AddToCart implements ResolverInterface
         if (!empty($itemIds)) {
             $unknownItemIds = array_diff($itemIds, array_keys($collection->getItems()));
             if (!empty($unknownItemIds)) {
-                throw new GraphQlInputException(__('The wishlist item ids "'.implode(',', $unknownItemIds).'" were not found.'));
+                throw new GraphQlInputException(
+                    __('The wishlist item ids "'.implode(',', $unknownItemIds).'" were not found.')
+                );
             }
         }
         $maskedCartId = $this->createEmptyCartForCustomer->execute($customerId);
@@ -183,7 +204,10 @@ class AddToCart implements ResolverInterface
                 $item->delete();
                 $addedProducts[] = $item->getProductId();
             }
-            $cartErrors = array_merge($cartErrors, $errors);
+            if (!empty($errors)) {
+                $this->saveCart($maskedCartId);
+            }
+            $cartErrors = [...$cartErrors, ...$errors];
         }
         if (!empty($addedProducts)) {
             $wishlist->save();
@@ -219,9 +243,11 @@ class AddToCart implements ResolverInterface
     /**
      * Get customer wishlist items
      *
+     * @param Wishlist $wishlist
      * @param array $itemIds
      *
      * @return WishlistItemsCollection
+     * @throws NoSuchEntityException
      */
     private function getWishlistItems(Wishlist $wishlist, array $itemIds): WishlistItemsCollection
     {
@@ -232,5 +258,23 @@ class AddToCart implements ResolverInterface
             $collection = $wishlist->getItemCollection()->setVisibilityFilter();
         }
         return $collection;
+    }
+
+    /**
+     * Save cart on error while adding wishlist product to cart
+     *
+     * @param string $maskedCartId
+     * @return void
+     * @throws GraphQlInputException
+     */
+    private function saveCart(string $maskedCartId): void
+    {
+        try {
+            $cartId = $this->maskedQuoteIdToQuoteId->execute($maskedCartId);
+            $cart = $this->cartRepository->get($cartId);
+            $this->cartRepository->save($cart);
+        } catch (NoSuchEntityException $e) {
+            throw new GraphQlInputException(__('The wishlist could not be saved.'));
+        }
     }
 }
