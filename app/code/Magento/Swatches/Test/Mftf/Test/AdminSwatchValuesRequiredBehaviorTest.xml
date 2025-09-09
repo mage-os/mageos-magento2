@@ -65,10 +65,10 @@
             <!-- Cleanup products -->
             <actionGroup ref="AdminProductCatalogPageOpenActionGroup" stepKey="openCatalog"/>
             <actionGroup ref="DeleteProductBySkuActionGroup" stepKey="deleteSuccessProductBySku">
-                <argument name="sku" value="SwatchSuccSKU"/>
+                <argument name="sku" value="{{SimpleProduct.sku}}"/>
             </actionGroup>
             <actionGroup ref="DeleteProductBySkuActionGroup" stepKey="deleteOptionalProductBySku">
-                <argument name="sku" value="SwatchOptSKU"/>
+                <argument name="sku" value="{{SimpleProduct3.sku}}"/>
             </actionGroup>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutAdmin"/>
         </after>
@@ -77,15 +77,13 @@
             <argument name="productAttributeCode" value="{{textSwatchAttribute.attribute_code}}"/>
         </actionGroup>
         <selectOption selector="{{AttributePropertiesSection.ValueRequired}}" userInput="Yes" stepKey="setTextSwatchRequiredYes"/>
-        <waitForElementClickable selector="{{AttributePropertiesSection.Save}}" stepKey="waitToSaveTextSwatchAttributeYes"/>
-        <click selector="{{AttributePropertiesSection.Save}}" stepKey="saveTextSwatchAttributeYes"/>
+        <actionGroup ref="AdminProductAttributeSaveActionGroup" stepKey="saveTextSwatchAttributeYes"/>
         <waitForPageLoad stepKey="waitAfterSaveTextSwatchYes"/>
         <actionGroup ref="OpenProductAttributeFromSearchResultInGridActionGroup" stepKey="openVisualSwatchForEdit">
             <argument name="productAttributeCode" value="{{ProductAttributeFrontendLabel.label}}"/>
         </actionGroup>
         <selectOption selector="{{AttributePropertiesSection.ValueRequired}}" userInput="Yes" stepKey="setVisualSwatchRequiredYes"/>
-        <waitForElementClickable selector="{{AttributePropertiesSection.Save}}" stepKey="waitToSaveVisualSwatchAttributeYes"/>
-        <click selector="{{AttributePropertiesSection.Save}}" stepKey="saveVisualSwatchAttributeYes"/>
+        <actionGroup ref="AdminProductAttributeSaveActionGroup" stepKey="saveVisualSwatchAttributeYes"/>
         <waitForPageLoad stepKey="waitAfterSaveVisualSwatchYes"/>
         <!-- Step 3: Make sure a user is obliged to enter values during creation of the Product based on the attributes. -->
         <!-- Save with neither swatch selected → expect required error -->
@@ -96,8 +94,6 @@
         <actionGroup ref="FillMainProductFormNoWeightActionGroup" stepKey="fillMainFormRequired">
             <argument name="product" value="SimpleProduct"/>
         </actionGroup>
-        <fillField selector="{{AdminProductFormSection.productName}}" userInput="SwatchReqProd" stepKey="updateName"/>
-        <fillField selector="{{AdminProductFormSection.productSku}}" userInput="SwatchReqSKU" stepKey="updateSku"/>
         <actionGroup ref="AdminProductFormSaveButtonClickActionGroup" stepKey="saveWithoutAnySwatch"/>
         <waitForElementVisible selector="{{AdminProductFormSection.attributeFieldError}}" stepKey="seeRequiredErrorBothMissing"/>
         <!-- Select only visual swatch → expect required error (text missing) -->
@@ -132,8 +128,6 @@
         <actionGroup ref="FillMainProductFormNoWeightActionGroup" stepKey="fillMainFormBeforeSuccess">
             <argument name="product" value="SimpleProduct"/>
         </actionGroup>
-        <fillField selector="{{AdminProductFormSection.productName}}" userInput="SwatchSuccProd" stepKey="updateNameValue"/>
-        <fillField selector="{{AdminProductFormSection.productSku}}" userInput="SwatchSuccSKU" stepKey="updateSkuValue"/>
         <selectOption selector="{{AdminProductFormSection.attributeRequiredInputField(textSwatchAttribute.attribute_code)}}"
                       userInput="textSwatchOption1" stepKey="selectTextSwatchForSuccess"/>
         <selectOption selector="{{AdminProductFormSection.attributeRequiredInputField(ProductAttributeFrontendLabel.label)}}"
@@ -145,15 +139,13 @@
             <argument name="productAttributeCode" value="{{textSwatchAttribute.attribute_code}}"/>
         </actionGroup>
         <selectOption selector="{{AttributePropertiesSection.ValueRequired}}" userInput="No" stepKey="setTextSwatchRequiredToNo"/>
-        <waitForElementClickable selector="{{AttributePropertiesSection.Save}}" stepKey="waitToSaveTextSwatchAttributeToNo"/>
-        <click selector="{{AttributePropertiesSection.Save}}" stepKey="saveTextSwatchAttributeToNo"/>
+        <actionGroup ref="AdminProductAttributeSaveActionGroup" stepKey="saveTextSwatchAttributeToNo"/>
         <waitForPageLoad stepKey="waitAfterSaveTextSwatchToNo"/>
         <actionGroup ref="OpenProductAttributeFromSearchResultInGridActionGroup" stepKey="openVisualSwatchToUnrequire">
             <argument name="productAttributeCode" value="{{ProductAttributeFrontendLabel.label}}"/>
         </actionGroup>
         <selectOption selector="{{AttributePropertiesSection.ValueRequired}}" userInput="No" stepKey="setVisualSwatchRequiredToNo"/>
-        <waitForElementClickable selector="{{AttributePropertiesSection.Save}}" stepKey="waitToSaveVisualSwatchAttributeToNo"/>
-        <click selector="{{AttributePropertiesSection.Save}}" stepKey="saveVisualSwatchAttributeToNo"/>
+        <actionGroup ref="AdminProductAttributeSaveActionGroup" stepKey="saveVisualSwatchAttributeToNo"/>
         <waitForPageLoad stepKey="waitAfterSaveVisualSwatchToNo"/>
         <!-- Step 5: Leave both swatches empty and save: expect success -->
         <actionGroup ref="AdminOpenProductIndexPageActionGroup" stepKey="goProductIndexOptional"/>
@@ -161,10 +153,8 @@
             <argument name="product" value="SimpleProduct"/>
         </actionGroup>
         <actionGroup ref="FillMainProductFormNoWeightActionGroup" stepKey="fillMainFormOptional">
-            <argument name="product" value="SimpleProduct"/>
+            <argument name="product" value="SimpleProduct3"/>
         </actionGroup>
-        <fillField selector="{{AdminProductFormSection.productName}}" userInput="SwatchOptProd" stepKey="updateTheName"/>
-        <fillField selector="{{AdminProductFormSection.productSku}}" userInput="SwatchOptSKU" stepKey="updateTheSku"/>
         <actionGroup ref="AdminProductFormSaveButtonClickActionGroup" stepKey="saveNoSwatchesOptional"/>
         <waitForElementVisible selector="{{AdminProductMessagesSection.successMessage}}" stepKey="seeSavedProductBothOptional"/>
     </test>
