@@ -26,7 +26,7 @@
             <conditionalClick selector="{{AdminShippingMethodUSPSSection.USPSTab}}" dependentSelector="{{AdminShippingMethodUSPSSection.carriersUSPSActive}}" visible="false" stepKey="expandUSPSTab"/>
             <scrollTo selector="{{AdminShippingMethodUSPSSection.allowedMethodsForRestAPICheckbox}}" stepKey="scrollToAllowedMethodsCheckbox"/>
             <checkOption selector="{{AdminShippingMethodUSPSSection.allowedMethodsForRestAPICheckbox}}" stepKey="checkOnAllowedMethodsCheckboxForRestAPIUSPSType"/>
-            <waitForElementVisible selector="{{AdminConfigSection.saveButton}}" stepKey="waitForShippingMethodSaveButton"/>
+            <waitForElementClickable selector="{{AdminConfigSection.saveButton}}" stepKey="waitForShippingMethodSaveButton"/>
             <click selector="{{AdminConfigSection.saveButton}}" stepKey="saveConfig"/>
             <!--Flush cache post configuration-->
             <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCachePostConfiguring">
@@ -46,7 +46,7 @@
             <conditionalClick selector="{{AdminShippingMethodUSPSSection.USPSTab}}" dependentSelector="{{AdminShippingMethodUSPSSection.carriersUSPSActive}}" visible="false" stepKey="expandUSPSTab"/>
             <scrollTo selector="{{AdminShippingMethodUSPSSection.carriersUSPSAllowedMethods}}" stepKey="scrollToAllowedMethodsCheckbox"/>
             <click selector="{{AdminShippingMethodUSPSSection.carriersUSPSAllowedMethods}}" stepKey="checkOnAllowedMethodsCheckboxForWebToolUSPSType"/>
-            <waitForElementVisible selector="{{AdminConfigSection.saveButton}}" stepKey="waitForShippingMethodSaveButton"/>
+            <waitForElementClickable selector="{{AdminConfigSection.saveButton}}" stepKey="waitForShippingMethodSaveButton"/>
             <click selector="{{AdminConfigSection.saveButton}}" stepKey="saveConfig"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutAdmin"/>
         </after>

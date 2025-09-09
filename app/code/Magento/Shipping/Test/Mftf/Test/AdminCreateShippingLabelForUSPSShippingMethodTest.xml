@@ -28,9 +28,9 @@
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
             <!--Set Shipping settings origin data-->
             <actionGroup ref="AdminSetShippingOriginConfigActionGroup" stepKey="setShippingOriginConfigurationData">
-                <argument name="country" value="United States"/>
-                <argument name="state" value="Illinois"/>
-                <argument name="postcode" value="60031"/>
+                <argument name="country" value="{{US_Address_LI.country_id}}"/>
+                <argument name="state" value="{{US_Address_LI.state}}"/>
+                <argument name="postcode" value="{{US_Address_LI.postcode}}"/>
             </actionGroup>
             <magentoCLI command="config:set {{AdminShippingSettingsOriginCityConfigData.path}} '{{US_Address_LI.city}}'" stepKey="setOriginCity"/>
             <magentoCLI command="config:set {{AdminShippingSettingsOriginStreetAddressConfigData.path}} '{{US_Address_LI.street[0]}}'" stepKey="setOriginStreetAddress"/>
@@ -45,9 +45,6 @@
                 <argument name="street" value="{{US_Address_LI.street[0]}}"/>
             </actionGroup>
             <magentoCLI command="config:set {{AdminGeneralSetStreetAddress2ConfigData.path}} '{{US_Address_LI.street[1]}}'" stepKey="setStoreInformationStreetAddress"/>
-            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="runIndexCronJobs">
-                <argument name="indices" value=""/>
-            </actionGroup>
         </before>
         <after>
             <!--delete product-->
@@ -91,7 +88,7 @@
         </actionGroup>
         <!-- Step 4:Select Any  USPS Shipping method  -->
         <actionGroup ref="StorefrontSetShippingMethodActionGroup" stepKey="setShippingMethodFlatRate">
-            <argument name="shippingMethodName" value="Priority Mail International Flat Rate Envelope"/>
+            <argument name="shippingMethodName" value="{{ShippingTypeUSPSConfigData.value}}"/>
         </actionGroup>
         <!-- Step 5:Place order  -->
         <actionGroup ref="StorefrontCheckoutClickNextButtonActionGroup" stepKey="goToPaymentStep"/>

@@ -84,4 +84,7 @@
         <data key="path">carriers/usps/mmid</data>
         <data key="value">{{_CREDS.magento/carriers_usps_rest_mmid}}</data>
     </entity>
+    <entity name="ShippingTypeUSPSConfigData" type="usps_config">
+        <data key="value">Priority Mail International Flat Rate Envelope</data>
+    </entity>
 </entities>
