@@ -42,6 +42,12 @@
         <actionGroup ref="StorefrontCustomerAddProductToWishlistActionGroup" stepKey="addToWishlistProduct">
             <argument name="productVar" value="$createProduct$"/>
         </actionGroup>
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+            <argument name="indices" value=""/>
+        </actionGroup>
+        <actionGroup ref="CliCacheFlushActionGroup" stepKey="cleanCache">
+            <argument name="tags" value=""/>
+        </actionGroup>
         <!-- Step 3: Navigate to Store front home page-->
         <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToHomePage"/>
         <waitForPageLoad stepKey="waitToLoadHomePage"/>
@@ -49,12 +55,6 @@
         <waitForElementClickable selector="{{LoggedInCustomerHeaderLinksSection.customerDropdownMenu}}" stepKey="waitToOpenCustomerDropdownMenu"/>
         <click selector="{{LoggedInCustomerHeaderLinksSection.customerDropdownMenu}}" stepKey="openCustomerDropdownMenu"/>
         <waitForPageLoad stepKey="waitToLoadCustomerDropdownMenu"/>
-        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
-            <argument name="indices" value=""/>
-        </actionGroup>
-        <actionGroup ref="CliCacheFlushActionGroup" stepKey="cleanCache">
-            <argument name="tags" value=""/>
-        </actionGroup>
         <!-- Step 4 assertion:The wishlist item count should display-->
         <waitForElementVisible selector="{{StorefrontCustomerWishlistProductSection.wishListLink}}" stepKey="wishListLink"/>
         <waitForText userInput="1 item" selector="{{StorefrontCustomerWishlistProductSection.wishListCount}}" stepKey="seeWishListCount"/>
