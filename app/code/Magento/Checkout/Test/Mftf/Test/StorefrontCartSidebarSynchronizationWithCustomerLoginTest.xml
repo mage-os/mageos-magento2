@@ -29,7 +29,7 @@
             <!-- Precondition 2: Create customer -->
             <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
-            <!-- Precondition 3: Set Customer Data Lifetime to 5 minutes -->
+            <!-- Precondition 3: Set Customer Data Lifetime to 2 minutes -->
             <actionGroup ref="SetCustomerDataLifetimeActionGroup" stepKey="setCustomerDataLifetime">
                 <argument name="minutes" value="2"/>
             </actionGroup>
@@ -140,7 +140,7 @@
             <argument name="qty" value="1"/>
         </actionGroup>
         <actionGroup ref="StorefrontClickOnMiniCartActionGroup" stepKey="closeMiniCartAfterSecondChange"/>
-        <!-- Step 11: Wait for Customer Data Lifetime to expire (6 minutes) -->
+        <!-- Step 11: Wait for Customer Data Lifetime to expire -->
         <wait time="120" stepKey="waitForCustomerDataLifetimeExpiration"/>
         <!-- Step 12: Reload page and verify updated values -->
         <actionGroup ref="ReloadPageActionGroup" stepKey="reloadPageAfterWait"/>
