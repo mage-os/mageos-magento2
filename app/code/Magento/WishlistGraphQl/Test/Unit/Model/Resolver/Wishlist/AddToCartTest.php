@@ -462,6 +462,8 @@ class AddToCartTest extends TestCase
 
     /**
      * Test resolve with errors when adding to cart
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testResolveWithAddToCartErrors(): void
     {
