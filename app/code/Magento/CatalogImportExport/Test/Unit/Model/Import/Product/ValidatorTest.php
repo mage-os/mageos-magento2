@@ -256,7 +256,14 @@ class ValidatorTest extends TestCase
                 false,
                 'unique_attribute',
                 false
-            ]
+            ],
+            [
+                'any_behavior',
+                ['type' => 'text', 'is_required' => false],
+                ['product_type' => 'any', 'text_attribute' => str_repeat('a', 65536)],
+                true,
+                'text_attribute',
+            ],
         ];
     }
 
