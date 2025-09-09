@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Sales\Controller\Adminhtml\Order\Creditmemo;
 
@@ -10,6 +10,7 @@ use Magento\Backend\App\Action;
 use Magento\Sales\Helper\Data as SalesData;
 use Magento\Sales\Model\Order\Creditmemo;
 use Magento\Sales\Model\Order\Email\Sender\CreditmemoSender;
+use Magento\Catalog\Model\Product\Type\AbstractType;
 
 class Save extends \Magento\Backend\App\Action implements HttpPostActionInterface
 {
@@ -155,6 +156,13 @@ class Save extends \Magento\Backend\App\Action implements HttpPostActionInterfac
         $parentQuantities = [];
         foreach ($items as $item) {
             if ($parentId = $item->getOrderItem()->getParentItemId()) {
+                $parentOrderItem = $item->getOrderItem()->getParentItem();
+                if ($parentOrderItem && $parentOrderItem->getProductType() === 'bundle' &&
+                    ($parentOptions = $parentOrderItem->getProductOptions()) &&
+                    isset($parentOptions['product_calculations']) &&
+                    $parentOptions['product_calculations'] == AbstractType::CALCULATE_PARENT) {
+                    continue;
+                }
                 if (empty($parentQuantities[$parentId])) {
                     $parentQuantities[$parentId] = $item->getQty();
                 } else {
