@@ -11,7 +11,11 @@ use Magento\Sales\Helper\Data as SalesData;
 use Magento\Sales\Model\Order\Creditmemo;
 use Magento\Sales\Model\Order\Email\Sender\CreditmemoSender;
 use Magento\Catalog\Model\Product\Type\AbstractType;
+use Magento\Sales\Model\Order\Creditmemo\Item;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class Save extends \Magento\Backend\App\Action implements HttpPostActionInterface
 {
     /**
@@ -156,11 +160,7 @@ class Save extends \Magento\Backend\App\Action implements HttpPostActionInterfac
         $parentQuantities = [];
         foreach ($items as $item) {
             if ($parentId = $item->getOrderItem()->getParentItemId()) {
-                $parentOrderItem = $item->getOrderItem()->getParentItem();
-                if ($parentOrderItem && $parentOrderItem->getProductType() === 'bundle' &&
-                    ($parentOptions = $parentOrderItem->getProductOptions()) &&
-                    isset($parentOptions['product_calculations']) &&
-                    $parentOptions['product_calculations'] == AbstractType::CALCULATE_PARENT) {
+                if ($this->shouldSkipQuantityAccumulation($item)) {
                     continue;
                 }
                 if (empty($parentQuantities[$parentId])) {
@@ -178,5 +178,22 @@ class Save extends \Magento\Backend\App\Action implements HttpPostActionInterfac
                 }
             }
         }
+    }
+
+    /**
+     * Check if quantity accumulation should be skipped for bundle products with fixed pricing
+     *
+     * @param Item $item
+     * @return bool
+     */
+    private function shouldSkipQuantityAccumulation(Item $item): bool
+    {
+        $parentOrderItem = $item->getOrderItem()->getParentItem();
+        if (!$parentOrderItem || $parentOrderItem->getProductType() !== 'bundle') {
+            return false;
+        }
+        $parentOptions = $parentOrderItem->getProductOptions();
+        return isset($parentOptions['product_calculations']) &&
+            $parentOptions['product_calculations'] == AbstractType::CALCULATE_PARENT;
     }
 }
