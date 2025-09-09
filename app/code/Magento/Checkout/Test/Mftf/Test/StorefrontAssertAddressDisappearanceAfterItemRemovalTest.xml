@@ -11,7 +11,7 @@
             <features value="Checkout"/>
             <stories value="Ensure addresses do not disappear after item removal in multi-shipping flow"/>
             <title value="Checks address retention when items are deleted during multi-shipping checkout"/>
-            <description value="Validates that shipping addresses selected during multi-shipping checkout remain intact after removing one or more items from the cart."/>
+            <description value="Validates that shipping addresses selected during multi-shipping checkout remain intact after removing one or more items from the cart"/>
             <severity value="MAJOR"/>
             <testCaseId value="AC-15541"/>
             <group value="Multishipment"/>
