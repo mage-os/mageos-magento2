@@ -48,6 +48,7 @@
         <!-- Step 4: Click on customer menu-->
         <waitForElementClickable selector="{{LoggedInCustomerHeaderLinksSection.customerDropdownMenu}}" stepKey="waitToOpenCustomerDropdownMenu"/>
         <click selector="{{LoggedInCustomerHeaderLinksSection.customerDropdownMenu}}" stepKey="openCustomerDropdownMenu"/>
+        <waitForPageLoad stepKey="waitToLoadCustomerDropdownMenu"/>
         <!-- Step 4 assertion:The wishlist item count should display-->
         <waitForElementVisible selector="{{StorefrontCustomerWishlistProductSection.wishListLink}}" stepKey="wishListLink"/>
         <waitForText userInput="1 item" selector="{{StorefrontCustomerWishlistProductSection.wishListCount}}" stepKey="seeWishListCount"/>
