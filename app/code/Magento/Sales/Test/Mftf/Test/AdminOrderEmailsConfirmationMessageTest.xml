@@ -19,8 +19,6 @@
             <group value="Sales"/>
         </annotations>
         <before>
-            <!-- Enable payment method one of "check/money order" -->
-            <magentoCLI command="config:set {{enabledCheckMoneyOrder.label}} {{enabledCheckMoneyOrder.value}}" stepKey="enableCheckMoneyOrder"/>
             <!-- Create simple product -->
             <createData entity="SimpleProduct2" stepKey="createSimpleProduct"/>
             <!-- Create customer -->
@@ -63,7 +61,7 @@
         <!-- Assert invoice email confirmation -->
         <assertEquals stepKey="assertInvoiceEmailConfirmation">
             <actualResult type="const">$grabInvoiceSuccessMessage</actualResult>
-            <expectedResult type="string">{{AdminOrderEmailsSendMessage.message}}</expectedResult>
+            <expectedResult type="string">{{AdminOrderEmailsSendMessage.invoiceEmailSuccessMessage}}</expectedResult>
         </assertEquals>
         <!-- Step 9: Send shipment email -->
         <actionGroup ref="OpenOrderByIdActionGroup" stepKey="openOrderInAdmin1">
@@ -80,7 +78,7 @@
         <!-- Assert shipment email confirmation -->
         <assertEquals stepKey="assertShipmentEmailConfirmation">
             <actualResult type="const">$grabShipmentSuccessMessage</actualResult>
-            <expectedResult type="string">{{AdminOrderEmailsSendMessage.shipmentMessage}}</expectedResult>
+            <expectedResult type="string">{{AdminOrderEmailsSendMessage.shipmentEmailSuccessMessage}}</expectedResult>
         </assertEquals>
         <!-- Step 10: Send credit memo email -->
         <actionGroup ref="OpenOrderByIdActionGroup" stepKey="openOrderInAdmin2">
@@ -96,7 +94,7 @@
         <!-- Assert credit memo email confirmation -->
         <assertEquals stepKey="assertCreditMemoEmailConfirmation">
             <actualResult type="const">$grabCreditMemoSuccessMessage</actualResult>
-            <expectedResult type="string">{{AdminOrderEmailsSendMessage.message}}</expectedResult>
+            <expectedResult type="string">{{AdminOrderEmailsSendMessage.creditMemoEmailSuccessMessage}}</expectedResult>
         </assertEquals>
         <after>
             <!-- Delete product and customer -->
@@ -106,8 +104,6 @@
             <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
             <!-- Logout from storefront -->
             <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutCustomer"/>
-            <!-- Disable payment method "Check/Money Order" -->
-            <magentoCLI command="config:set {{disabledCheckMoneyOrder.label}} {{disabledCheckMoneyOrder.value}}" stepKey="disableCheckMoneyOrder"/>
         </after>
     </test>
 </tests>
