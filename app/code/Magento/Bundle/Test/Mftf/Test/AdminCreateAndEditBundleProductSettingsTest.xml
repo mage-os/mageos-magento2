@@ -142,12 +142,6 @@
         <!-- Assert Gift Option product settings  -->
         <actionGroup ref="StorefrontOpenCartFromMinicartActionGroup" stepKey="openCart"/>
         <dontSeeElement selector="{{StorefrontProductCartGiftOptionSection.giftOptions}}" stepKey="dontSeeGiftOptionBtn"/>
-
-        <!-- Delete created bundle product -->
-        <actionGroup ref="DeleteProductUsingProductGridActionGroup" stepKey="deleteProduct">
-            <argument name="product" value="BundleProduct"/>
-        </actionGroup>
-        <actionGroup ref="ResetAdminDataGridToDefaultViewActionGroup" stepKey="clearFilters"/>
     </test>
 </tests>
 
