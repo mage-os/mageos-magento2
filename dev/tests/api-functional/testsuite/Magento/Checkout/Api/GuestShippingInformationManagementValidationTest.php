@@ -66,7 +66,9 @@ class GuestShippingInformationManagementValidationTest extends WebapiAbstract
      */
     public function testSaveAddressInformationWithValidData()
     {
-        $cartId = $this->getMaskedCartId('test01');
+        $quote = Bootstrap::getObjectManager()->create(Quote::class);
+        $quote->load('test_order_1', 'reserved_order_id');
+        $cartId = $quote->getId();
         $shippingAddress = $this->addressFactory->create();
         $shippingAddress->setData([
             'firstname' => 'John',
@@ -104,21 +106,6 @@ class GuestShippingInformationManagementValidationTest extends WebapiAbstract
         $this->assertNotEmpty($result);
         $this->assertArrayHasKey('payment_methods', $result);
         $this->assertArrayHasKey('totals', $result);
-    }
-
-    /**
-     * Get masked cart ID for the given quote
-     *
-     * @param string $reservedOrderId
-     * @return string
-     */
-    private function getMaskedCartId(string $reservedOrderId): string
-    {
-        $quote = Bootstrap::getObjectManager()->create(Quote::class);
-        $quote->load($reservedOrderId, 'reserved_order_id');
-        $quoteIdMask = $this->quoteIdMaskFactory->create();
-        $quoteIdMask->load($quote->getId(), 'quote_id');
-        return $quoteIdMask->getMaskedId();
     }
 
     /**
