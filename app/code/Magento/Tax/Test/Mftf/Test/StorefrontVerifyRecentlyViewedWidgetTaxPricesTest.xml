@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  /**
-   * Copyright 2024 Adobe
+   * Copyright 2025 Adobe
   * All Rights Reserved.
   */
 -->
@@ -85,27 +85,50 @@
             </actionGroup>
             <deleteData createDataKey="createUSAllTaxRate20" stepKey="deleteTaxRate"/>
             <deleteData createDataKey="category" stepKey="deleteCategory"/>
-            <actionGroup ref="AdminEditCMSPageContentActionGroup" stepKey="clearRecentlyViewedWidgetsFromCMSContent">
-                <argument name="content" value="{{CmsHomePageContent.content}}"/>
-                <argument name="pageId" value="{{CmsHomePageContent.page_id}}"/>
+            <actionGroup ref="AdminOpenCmsPageActionGroup" stepKey="navigateToEditHomePageToReset">
+                <argument name="page_id" value="{{CmsHomePageContent.page_id}}"/>
             </actionGroup>
+            <conditionalClick selector="{{CmsNewPagePageActionsSection.contentSectionName}}" dependentSelector="{{CmsNewPagePageActionsSection.showHideEditor}}" visible="false" stepKey="expandContentSectionIfNotVisibleToReset"/>
+            <waitForPageLoad time="30" stepKey="waitForPageLoadContentSectionToReset"/>
+            <actionGroup ref="ClickEditWithPageBuilderButtonActionGroup" stepKey="clickEditWithPageBuilderButtonActionGroupToReset"/>
+            <actionGroup ref="openPageBuilderEditPanel" stepKey="openEditMenuOnStageToReset">
+                <argument name="contentType" value="PageBuilderHtmlContentType"/>
+            </actionGroup>
+            <actionGroup ref="fillSlideOutPanelTextArea" stepKey="clearRecentlyViewedWidgetsFromCMSContent">
+                <argument name="property" value="PageBuilderHtmlCmsHomePageContent"/>
+            </actionGroup>
+            <actionGroup ref="saveEditPanelSettings" stepKey="saveEditPanelSettingsBlockAfterReset"/>
+            <actionGroup ref="exitPageBuilderFullScreen" stepKey="exitPageBuilderFullScreenAfterReset"/>
+            <actionGroup ref="SaveAndContinueEditCmsPageActionGroup" stepKey="saveAndContinueEditCmsPageAfterReset"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
         </after>
         <!-- Step 2:- Create "Recently Viewed Widget" and add it to the home page -->
         <actionGroup ref="AdminOpenCmsPageActionGroup" stepKey="navigateToEditHomePage">
             <argument name="page_id" value="{{CmsHomePageContent.page_id}}"/>
         </actionGroup>
-        <actionGroup ref="AdminInsertRecentlyViewedWidgetActionGroup" stepKey="insertRecentlyViewedWidget">
+        <conditionalClick selector="{{CmsNewPagePageActionsSection.contentSectionName}}" dependentSelector="{{CmsNewPagePageActionsSection.showHideEditor}}" visible="false" stepKey="expandContentSectionIfNotVisible"/>
+        <waitForPageLoad time="30" stepKey="waitForPageLoadContentSection"/>
+        <actionGroup ref="ClickEditWithPageBuilderButtonActionGroup" stepKey="clickEditWithPageBuilderButtonActionGroup"/>
+        <actionGroup ref="openPageBuilderEditPanel" stepKey="openEditMenuOnStage">
+            <argument name="contentType" value="PageBuilderHtmlContentType"/>
+        </actionGroup>
+        <actionGroup ref="AdminSelectRecentlyViewedProductWidgetFromInsertWidgetSlideOutActionGroup" stepKey="insertRecentlyViewedWidget">
             <argument name="attributeSelector1" value="show_attributes"/>
             <argument name="attributeSelector2" value="show_buttons"/>
             <argument name="productAttributeSection1" value="1"/>
             <argument name="productAttributeSection2" value="4"/>
             <argument name="buttonToShowSection2" value="3"/>
         </actionGroup>
+        <actionGroup ref="saveEditPanelSettings" stepKey="saveEditPanelSettingsBlock"/>
+        <actionGroup ref="exitPageBuilderFullScreen" stepKey="exitPageBuilderFullScreen"/>
+        <actionGroup ref="SaveAndContinueEditCmsPageActionGroup" stepKey="saveAndContinueEditCmsPage"/>
         <!-- Step 3:- Create "Catalog Product List Widget" and add it to the home page (for comparison), limit the visible SKU to created bundle product sku -->
-        <conditionalClick selector="{{CmsNewPagePageActionsSection.contentSectionName}}" dependentSelector="{{CmsNewPagePageActionsSection.showHideEditor}}" visible="false" stepKey="expandContentSectionIfNotVisible"/>
-        <waitForPageLoad time="30" stepKey="waitForPageLoadContentSection"/>
-        <conditionalClick selector="{{CmsNewPagePageActionsSection.showHideEditor}}" dependentSelector="{{CatalogWidgetSection.insertWidgetButton}}" visible="false" stepKey="clickNextShowHideEditorIfVisible"/>
+        <conditionalClick selector="{{CmsNewPagePageActionsSection.contentSectionName}}" dependentSelector="{{CmsNewPagePageActionsSection.showHideEditor}}" visible="false" stepKey="expandContentSectionIfNotVisibleAgain"/>
+        <waitForPageLoad time="30" stepKey="waitForPageLoadContentSectionAgain"/>
+        <actionGroup ref="ClickEditWithPageBuilderButtonActionGroup" stepKey="clickEditWithPageBuilderButtonActionGroupAgain"/>
+        <actionGroup ref="openPageBuilderEditPanel" stepKey="openEditMenuOnStageAgain">
+            <argument name="contentType" value="PageBuilderHtmlContentType"/>
+        </actionGroup>
         <actionGroup ref="AdminInsertWidgetToCmsPageContentActionGroup" stepKey="insertCatalogProductsListWidget">
             <argument name="widgetType" value="Catalog Products List"/>
         </actionGroup>
@@ -113,6 +136,9 @@
             <argument name="sku" value="$$createSpriteYogaStrapsBundle.sku$$"/>
         </actionGroup>
         <actionGroup ref="AdminClickInsertWidgetActionGroup" stepKey="insertWidget"/>
+        <actionGroup ref="saveEditPanelSettings" stepKey="saveEditPanelSettingsBlockAgain"/>
+        <actionGroup ref="exitPageBuilderFullScreen" stepKey="exitPageBuilderFullScreenAgain"/>
+        <actionGroup ref="SaveAndContinueEditCmsPageActionGroup" stepKey="saveAndContinueEditCmsPageAgain"/>
         <actionGroup ref="AdminSaveAndContinueEditCmsPageActionGroup" stepKey="saveHomePageAfterCatalogProductListWidgetCreation"/>
         <!-- Step 4:- Search for "Set of Sprite Yoga Straps" product (the sample grouped product) and add to the cart -->
         <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
