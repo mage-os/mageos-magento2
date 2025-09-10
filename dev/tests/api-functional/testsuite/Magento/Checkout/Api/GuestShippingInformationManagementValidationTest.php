@@ -15,12 +15,12 @@ use Magento\Checkout\Test\Fixture\SetBillingAddress as SetBillingAddressFixture;
 use Magento\TestFramework\Fixture\DataFixture;
 use Magento\TestFramework\TestCase\WebapiAbstract;
 use Magento\TestFramework\Helper\Bootstrap;
-use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\QuoteIdMaskFactory;
 use Magento\Checkout\Api\Data\ShippingInformationInterface;
 use Magento\Checkout\Api\Data\ShippingInformationInterfaceFactory;
 use Magento\Quote\Api\Data\AddressInterface;
 use Magento\Quote\Api\Data\AddressInterfaceFactory;
+use Magento\TestFramework\Fixture\DataFixtureStorageManager;
 
 /**
  * Test GuestShippingInformationManagement API validation.
@@ -46,6 +46,11 @@ class GuestShippingInformationManagementValidationTest extends WebapiAbstract
      */
     private $quoteIdMaskFactory;
 
+    /**
+     * @var DataFixtureStorageManager
+     */
+    private $fixtures;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -53,6 +58,7 @@ class GuestShippingInformationManagementValidationTest extends WebapiAbstract
             ->get(ShippingInformationInterfaceFactory::class);
         $this->addressFactory = Bootstrap::getObjectManager()->get(AddressInterfaceFactory::class);
         $this->quoteIdMaskFactory = Bootstrap::getObjectManager()->get(QuoteIdMaskFactory::class);
+        $this->fixtures = DataFixtureStorageManager::getStorage();
     }
 
     #[
@@ -66,9 +72,9 @@ class GuestShippingInformationManagementValidationTest extends WebapiAbstract
      */
     public function testSaveAddressInformationWithValidData()
     {
-        $quote = Bootstrap::getObjectManager()->create(Quote::class);
-        $quote->load('test_order_1', 'reserved_order_id');
-        $cartId = $quote->getId();
+        $cart = $this->fixtures->get('cart');
+        $cartId = $cart->getId();
+        $maskedCartId = $this->getMaskedCartId($cartId);
         $shippingAddress = $this->addressFactory->create();
         $shippingAddress->setData([
             'firstname' => 'John',
@@ -102,10 +108,30 @@ class GuestShippingInformationManagementValidationTest extends WebapiAbstract
         $shippingInformation->setBillingAddress($billingAddress);
         $shippingInformation->setShippingMethodCode('flatrate');
         $shippingInformation->setShippingCarrierCode('flatrate');
-        $result = $this->callSaveAddressInformation($cartId, $shippingInformation);
+        $result = $this->callSaveAddressInformation($maskedCartId, $shippingInformation);
         $this->assertNotEmpty($result);
         $this->assertArrayHasKey('payment_methods', $result);
         $this->assertArrayHasKey('totals', $result);
+    }
+
+    /**
+     * Get masked cart ID for the given quote
+     *
+     * @param string $cartId
+     * @return string
+     */
+    private function getMaskedCartId(string $cartId): string
+    {
+        $quoteIdMask = $this->quoteIdMaskFactory->create();
+        $quoteIdMask->load($cartId, 'quote_id');
+
+        if (!$quoteIdMask->getMaskedId()) {
+            $quoteIdMask->setQuoteId($cartId);
+            $quoteIdMask->setMaskedId(uniqid('masked_', true));
+            $quoteIdMask->save();
+        }
+
+        return $quoteIdMask->getMaskedId();
     }
 
     /**
