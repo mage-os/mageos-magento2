@@ -105,6 +105,7 @@ class GuestShippingInformationManagement implements \Magento\Checkout\Api\GuestS
                     }
                 }
             }
+            $customerAddress->setSkipRequiredValidation(true);
             $validator = $this->validatorFactory->createValidator('customer_address', 'save');
             if (!$validator->isValid($customerAddress)) {
                 $this->throwValidationException($validator->getMessages(), $addressType);
