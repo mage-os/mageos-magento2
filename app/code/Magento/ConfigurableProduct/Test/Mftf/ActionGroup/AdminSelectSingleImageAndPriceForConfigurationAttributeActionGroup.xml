@@ -7,7 +7,7 @@
 -->
 <actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
-    <actionGroup name="AdminSelectAllValueOfTwoAttributesAndSelectSingleImageAndPricePageActionGroup" extends="AdminSelectAllValueOfTwoAttributesPageActionGroup">
+    <actionGroup name="AdminSelectSingleImageAndPriceForConfigurationAttributeActionGroup" extends="AdminSelectAllValueOfTwoAttributesPageActionGroup">
         <annotations>
             <description>Select values of each attribute to include in the product and assigns a image to the product.</description>
         </annotations>

@@ -8,14 +8,12 @@
 
 <tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
-    <test name="AdminCloneConfigurableProductWithTwoAttributes">
+    <test name="AdminCloneConfigurableProductWithTwoAttributesTest">
         <annotations>
             <features value="ConfigurableProduct"/>
             <stories value="Clone configurable product with two attribute"/>
-            <title
-                value="Clone configurable product with two attribute and verify the admin is able to save the product"/>
-            <description
-                value="Admin should be able to clone a configurable product using Save and Duplicate functionality, configure it with multiple attributes (color and size), and save it successfully"/>
+            <title value="Clone configurable product with two attribute and verify the admin is able to save the product"/>
+            <description value="Admin can clone configurable product with Save and Duplicate and configure multiple attributes"/>
             <severity value="CRITICAL"/>
             <testCaseId value="AC-8464"/>
             <group value="ConfigurableProduct"/>
@@ -139,7 +137,7 @@
             <actionGroup ref="SetCategoryByNameActionGroup" stepKey="assignToCategory">
                 <argument name="categoryName" value="$$createCategory.name$$"/>
             </actionGroup>
-            <actionGroup ref="CreateConfigurationsForTwoAttributesTwoOptionsActionGroup" stepKey="createConfigurations">
+            <actionGroup ref="AdminSelectTwoOptionsPerAttributeActionGroup" stepKey="createConfigurations">
                 <argument name="attributeCode" value="{{colorProductVisualAttributeWithOptions.default_label}}"/>
                 <argument name="secondAttributeCode" value="{{sizeProductAttributeWithOptions.default_label}}"/>
                 <argument name="firstAttributeOption1" value="{{Blue.default_label}}"/>
@@ -189,7 +187,7 @@
                stepKey="clickEditConfigurations"/>
         <waitForPageLoad stepKey="waitForConfigurationsPageLoad"/>
         <!-- Step 5,6,7,8,9: Select all options -->
-        <actionGroup ref="AdminSelectAllValueOfTwoAttributesAndSelectSingleImageAndPricePageActionGroup" stepKey="configureProductVariations">
+        <actionGroup ref="AdminSelectSingleImageAndPriceForConfigurationAttributeActionGroup" stepKey="configureProductVariations">
             <argument name="attributeLabel1" value="{{colorProductVisualAttributeWithOptions.default_label}}"/>
             <argument name="attributeLabel2" value="{{sizeProductAttributeWithOptions.default_label}}"/>
             <argument name="quantity" value="{{ImportProductSimple1_Configurable.quantity}}"/>
