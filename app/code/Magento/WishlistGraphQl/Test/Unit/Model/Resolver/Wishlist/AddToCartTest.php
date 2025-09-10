@@ -23,7 +23,6 @@ use Magento\Quote\Model\Cart\Data\Error;
 use Magento\WishlistGraphQl\Mapper\WishlistDataMapper;
 use Magento\WishlistGraphQl\Model\CartItems\CartItemsRequestBuilder;
 use Magento\WishlistGraphQl\Model\Resolver\Wishlist\AddToCart;
-use Magento\Wishlist\Model\LocaleQuantityProcessor;
 use Magento\Wishlist\Model\ResourceModel\Item\Collection as WishlistItemsCollection;
 use Magento\Wishlist\Model\ResourceModel\Wishlist as WishlistResourceModel;
 use Magento\Wishlist\Model\Wishlist;
@@ -66,11 +65,6 @@ class AddToCartTest extends TestCase
      * @var WishlistDataMapper|MockObject
      */
     private WishlistDataMapper $wishlistDataMapper;
-
-    /**
-     * @var LocaleQuantityProcessor|MockObject
-     */
-    private LocaleQuantityProcessor $quantityProcessor;
 
     /**
      * @var CreateEmptyCartForCustomer|MockObject
@@ -131,7 +125,6 @@ class AddToCartTest extends TestCase
         $this->wishlistFactory = $this->createMock(WishlistFactory::class);
         $this->wishlistConfig = $this->createMock(WishlistConfig::class);
         $this->wishlistDataMapper = $this->createMock(WishlistDataMapper::class);
-        $this->quantityProcessor = $this->createMock(LocaleQuantityProcessor::class);
         $this->createEmptyCartForCustomer = $this->createMock(CreateEmptyCartForCustomer::class);
         $this->addProductsToCartService = $this->createMock(AddProductsToCartService::class);
         $this->cartItemsRequestBuilder = $this->createMock(CartItemsRequestBuilder::class);
@@ -148,9 +141,7 @@ class AddToCartTest extends TestCase
             $this->wishlistResource,
             $this->wishlistFactory,
             $this->wishlistConfig,
-            $this->createMock(\Magento\Wishlist\Model\Wishlist\AddProductsToWishlist::class),
             $this->wishlistDataMapper,
-            $this->quantityProcessor,
             $this->createEmptyCartForCustomer,
             $this->addProductsToCartService,
             $this->cartItemsRequestBuilder,
