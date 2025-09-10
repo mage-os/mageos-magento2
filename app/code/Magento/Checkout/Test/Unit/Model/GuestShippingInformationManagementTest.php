@@ -11,6 +11,7 @@ use Magento\Checkout\Api\Data\PaymentDetailsInterface;
 use Magento\Checkout\Api\Data\ShippingInformationInterface;
 use Magento\Checkout\Api\ShippingInformationManagementInterface;
 use Magento\Checkout\Model\GuestShippingInformationManagement;
+use Magento\Customer\Model\Address;
 use Magento\Customer\Model\AddressFactory;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Validator\Factory as ValidatorFactory;
@@ -89,7 +90,7 @@ class GuestShippingInformationManagementTest extends TestCase
         $billingAddressMock->expects($this->once())
             ->method('getExtensionAttributes')
             ->willReturn(null);
-        $customerAddressMock = $this->createMock(\Magento\Customer\Model\Address::class);
+        $customerAddressMock = $this->createMock(Address::class);
         $this->addressFactoryMock->expects($this->exactly(2))
             ->method('create')
             ->willReturn($customerAddressMock);
@@ -138,7 +139,7 @@ class GuestShippingInformationManagementTest extends TestCase
         $addressInformationMock->expects($this->never())
             ->method('getBillingAddress');
         $shippingAddressMock->method('getExtensionAttributes')->willReturn(null);
-        $customerAddressMock = $this->createMock(\Magento\Customer\Model\Address::class);
+        $customerAddressMock = $this->createMock(Address::class);
         $this->addressFactoryMock->expects($this->once())->method('create')->willReturn($customerAddressMock);
         $validatorMock = $this->createMock(ValidatorInterface::class);
         $this->validatorFactoryMock->expects($this->once())

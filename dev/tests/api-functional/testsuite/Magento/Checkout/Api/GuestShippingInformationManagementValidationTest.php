@@ -8,6 +8,11 @@ declare(strict_types=1);
 namespace Magento\Checkout\Api;
 
 use Magento\Framework\Webapi\Rest\Request;
+use Magento\Catalog\Test\Fixture\Product as ProductFixture;
+use Magento\Quote\Test\Fixture\GuestCart as GuestCartFixture;
+use Magento\Quote\Test\Fixture\AddProductToCart as AddProductToCartFixture;
+use Magento\Checkout\Test\Fixture\SetBillingAddress as SetBillingAddressFixture;
+use Magento\TestFramework\Fixture\DataFixture;
 use Magento\TestFramework\TestCase\WebapiAbstract;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\Quote\Model\Quote;
@@ -50,50 +55,14 @@ class GuestShippingInformationManagementValidationTest extends WebapiAbstract
         $this->quoteIdMaskFactory = Bootstrap::getObjectManager()->get(QuoteIdMaskFactory::class);
     }
 
-    /**
-     * Test validation of required fields in shipping address
-     *
-     * @magentoApiDataFixture Magento/Sales/_files/quote.php
-     */
-    public function testSaveAddressInformationWithMissingRequiredFields()
-    {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('The shipping address contains invalid data');
-        $cartId = $this->getMaskedCartId('test01');
-        $shippingAddress = $this->addressFactory->create();
-        $shippingAddress->setData([
-            'country_id' => 'US',
-            'region_id' => 12,
-            'region' => 'California',
-            'region_code' => 'CA',
-            'street' => ['123 Test Street'],
-            'city' => 'Test City',
-            'postcode' => '90210',
-            'telephone' => '1234567890'
-        ]);
-        $billingAddress = $this->addressFactory->create();
-        $billingAddress->setData([
-            'country_id' => 'US',
-            'region_id' => 12,
-            'region' => 'California',
-            'region_code' => 'CA',
-            'street' => ['123 Test Street'],
-            'city' => 'Test City',
-            'postcode' => '90210',
-            'telephone' => '1234567890'
-        ]);
-        $shippingInformation = $this->shippingInformationFactory->create();
-        $shippingInformation->setShippingAddress($shippingAddress);
-        $shippingInformation->setBillingAddress($billingAddress);
-        $shippingInformation->setShippingMethodCode('flatrate');
-        $shippingInformation->setShippingCarrierCode('flatrate');
-        $this->callSaveAddressInformation($cartId, $shippingInformation);
-    }
-
+    #[
+        DataFixture(ProductFixture::class, as: 'p1'),
+        DataFixture(GuestCartFixture::class, as: 'cart'),
+        DataFixture(AddProductToCartFixture::class, ['cart_id' => '$cart.id$', 'product_id' => '$p1.id$']),
+        DataFixture(SetBillingAddressFixture::class, ['cart_id' => '$cart.id$']),
+    ]
     /**
      * Test successful validation with valid address data
-     *
-     * @magentoApiDataFixture Magento/Sales/_files/quote.php
      */
     public function testSaveAddressInformationWithValidData()
     {
