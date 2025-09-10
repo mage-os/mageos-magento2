@@ -5,6 +5,9 @@
  */
 namespace Magento\NewRelicReporting\Model;
 
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Encryption\EncryptorInterface;
+
 /**
  * NewRelic configuration model
  */
@@ -13,52 +16,53 @@ class Config
     /**#@+
      * Names of parameters to be sent to database tables
      */
-    const ORDER_ITEMS = 'lineItemCount';
-    const ORDER_VALUE = 'orderValue';
-    const ORDER_PLACED = 'Order';
-    const ADMIN_USER_ID = 'adminId';
-    const ADMIN_USER = 'adminUser';
-    const ADMIN_NAME = 'adminName';
-    const CUSTOMER_ID = 'customerId';
-    const CUSTOMER_NAME = 'CustomerName';
-    const CUSTOMER_COUNT = 'CustomerCount';
-    const FLUSH_CACHE = 'systemCacheFlush';
-    const STORE = 'store';
-    const STORE_VIEW_COUNT = 'StoreViewCount';
-    const WEBSITE = 'website';
-    const WEBSITE_COUNT = 'WebsiteCount';
-    const PRODUCT_CHANGE = 'adminProductChange';
-    const PRODUCT_COUNT = 'productCatalogSize';
-    const CONFIGURABLE_COUNT = 'productCatalogConfigurableSize';
-    const ACTIVE_COUNT = 'productCatalogActiveSize';
-    const CATEGORY_SIZE = 'productCatalogCategorySize';
-    const CATEGORY_COUNT = 'CatalogCategoryCount';
-    const ENABLED_MODULE_COUNT = 'enabledModuleCount';
-    const MODULES_ENABLED = 'ModulesEnabled';
-    const MODULES_DISABLED = 'ModulesDisabled';
-    const MODULES_INSTALLED = 'ModulesInstalled';
-    const MODULE_INSTALLED = 'moduleInstalled';
-    const MODULE_UNINSTALLED = 'moduleUninstalled';
-    const MODULE_ENABLED = 'moduleEnabled';
-    const MODULE_DISABLED = 'moduleDisabled';
+    public const ORDER_ITEMS = 'lineItemCount';
+    public const ORDER_VALUE = 'orderValue';
+    public const ORDER_PLACED = 'Order';
+    public const ADMIN_USER_ID = 'adminId';
+    public const ADMIN_USER = 'adminUser';
+    public const ADMIN_NAME = 'adminName';
+    public const CUSTOMER_ID = 'customerId';
+    public const CUSTOMER_NAME = 'CustomerName';
+    public const CUSTOMER_COUNT = 'CustomerCount';
+    public const FLUSH_CACHE = 'systemCacheFlush';
+    public const STORE = 'store';
+    public const STORE_VIEW_COUNT = 'StoreViewCount';
+    public const WEBSITE = 'website';
+    public const WEBSITE_COUNT = 'WebsiteCount';
+    public const PRODUCT_CHANGE = 'adminProductChange';
+    public const PRODUCT_COUNT = 'productCatalogSize';
+    public const CONFIGURABLE_COUNT = 'productCatalogConfigurableSize';
+    public const ACTIVE_COUNT = 'productCatalogActiveSize';
+    public const CATEGORY_SIZE = 'productCatalogCategorySize';
+    public const CATEGORY_COUNT = 'CatalogCategoryCount';
+    public const ENABLED_MODULE_COUNT = 'enabledModuleCount';
+    public const MODULES_ENABLED = 'ModulesEnabled';
+    public const MODULES_DISABLED = 'ModulesDisabled';
+    public const MODULES_INSTALLED = 'ModulesInstalled';
+    public const MODULE_INSTALLED = 'moduleInstalled';
+    public const MODULE_UNINSTALLED = 'moduleUninstalled';
+    public const MODULE_ENABLED = 'moduleEnabled';
+    public const MODULE_DISABLED = 'moduleDisabled';
     /**#@-*/
 
     /**#@+
      * Text flags for states
      */
-    const INSTALLED = 'installed';
-    const UNINSTALLED = 'uninstalled';
-    const ENABLED = 'enabled';
-    const DISABLED = 'disabled';
-    const TRUE = 'true';
-    const FALSE = 'false';
-    /**#@-*/
+    public const INSTALLED = 'installed';
+    public const UNINSTALLED = 'uninstalled';
+    public const ENABLED = 'enabled';
+    public const DISABLED = 'disabled';
+    public const TRUE = 'true';
+    public const FALSE = 'false';
 
-    /**#@-*/
+    /**
+     * @var ScopeConfigInterface
+     */
     protected $scopeConfig;
 
     /**
-     * @var \Magento\Framework\Encryption\EncryptorInterface
+     * @var EncryptorInterface
      */
     protected $encryptor;
 
@@ -70,13 +74,13 @@ class Config
     /**
      * Constructor
      *
-     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-     * @param \Magento\Framework\Encryption\EncryptorInterface $encryptor
+     * @param ScopeConfigInterface $scopeConfig
+     * @param EncryptorInterface $encryptor
      * @param \Magento\Config\Model\ResourceModel\Config $resourceConfig
      */
     public function __construct(
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Magento\Framework\Encryption\EncryptorInterface $encryptor,
+        ScopeConfigInterface $scopeConfig,
+        EncryptorInterface $encryptor,
         \Magento\Config\Model\ResourceModel\Config $resourceConfig
     ) {
         $this->scopeConfig = $scopeConfig;
@@ -206,5 +210,45 @@ class Config
     public function disableModule()
     {
         $this->setConfigValue('newrelicreporting/general/enable', 0);
+    }
+
+    /**
+     * Returns configured API mode for deployments
+     *
+     * @return string
+     */
+    public function getApiMode()
+    {
+        return (string)$this->scopeConfig->getValue('newrelicreporting/general/api_mode');
+    }
+
+    /**
+     * Returns configured Entity GUID for NerdGraph
+     *
+     * @return string
+     */
+    public function getEntityGuid()
+    {
+        return (string)$this->scopeConfig->getValue('newrelicreporting/general/entity_guid');
+    }
+
+    /**
+     * Check if current configuration is using NerdGraph mode
+     *
+     * @return bool
+     */
+    public function isNerdGraphMode()
+    {
+        return $this->getApiMode() === 'nerdgraph';
+    }
+
+    /**
+     * Get NerdGraph API URL
+     *
+     * @return string
+     */
+    public function getNerdGraphUrl()
+    {
+        return (string)$this->scopeConfig->getValue('newrelicreporting/general/nerd_graph_api_url');
     }
 }

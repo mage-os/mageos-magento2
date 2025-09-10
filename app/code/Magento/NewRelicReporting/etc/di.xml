@@ -17,6 +17,8 @@
                 <item name="newrelicreporting/general/account_id" xsi:type="string">1</item>
                 <item name="newrelicreporting/general/app_id" xsi:type="string">1</item>
                 <item name="newrelicreporting/general/api" xsi:type="string">1</item>
+                <item name="newrelicreporting/general/user_key" xsi:type="string">1</item>
+                <item name="newrelicreporting/general/entity_guid" xsi:type="string">1</item>
                 <item name="newrelicreporting/general/insights_insert_key" xsi:type="string">1</item>
                 <item name="newrelicreporting/general/insights_api_url" xsi:type="string">1</item>
                 <item name="newrelicreporting/general/api_url" xsi:type="string">1</item>
@@ -54,6 +56,13 @@
         </arguments>
     </type>
     <type name="Magento\NewRelicReporting\Model\Apm\Deployments">
+        <arguments>
+            <argument name="serializer" xsi:type="object">Magento\Framework\Serialize\Serializer\Json</argument>
+        </arguments>
+    </type>
+    
+    <!-- NerdGraph Client Dependencies -->
+    <type name="Magento\NewRelicReporting\Model\NerdGraph\Client">
         <arguments>
             <argument name="serializer" xsi:type="object">Magento\Framework\Serialize\Serializer\Json</argument>
         </arguments>
