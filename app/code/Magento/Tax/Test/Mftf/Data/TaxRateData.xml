@@ -204,4 +204,12 @@
         <data key="tax_postcode">*</data>
         <data key="rate">20</data>
     </entity>
+    <entity name="US_All_Rate_20" type="taxRate">
+        <data key="code" unique="suffix">US All States 20%</data>
+        <data key="tax_country_id">US</data>
+        <data key="tax_region_id">0</data>
+        <data key="tax_postcode">*</data>
+        <data key="rate">20</data>
+        <data key="zip_is_range">0</data>
+    </entity>
 </entities>

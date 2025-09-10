@@ -157,4 +157,58 @@
         <requiredEntity type="custom_attribute">CustomAttributeFixWeight</requiredEntity>
         <requiredEntity type="custom_attribute">CustomAttributeFixSku</requiredEntity>
     </entity>
+    <entity name="SpriteYogaStrapsBundle" type="product2">
+        <data key="name">Set of Sprite Yoga Straps</data>
+        <data key="sku" unique="suffix">24-WG085-bundle-dynamic</data>
+        <data key="type_id">bundle</data>
+        <data key="attribute_set_id">4</data>
+        <data key="visibility">4</data>
+        <data key="status">1</data>
+        <data key="price">52.00</data>
+        <data key="weight">3.35</data>
+        <data key="description">Great set of Sprite Yoga Straps for every stretch and hold you need. There are three straps in this set: 6', 8' and 10'.</data>
+        <data key="short_description">Complete yoga strap set with 6', 8' and 10' straps made from 100% organic cotton.</data>
+        <requiredEntity type="product_extension_attribute">EavStockItem</requiredEntity>
+        <requiredEntity type="custom_attribute">CustomAttributeDynamicPrice</requiredEntity>
+        <requiredEntity type="custom_attribute">CustomAttributePriceView</requiredEntity>
+    </entity>
+    <entity name="SpriteYogaStrap6Foot" type="product">
+        <data key="name">Sprite Yoga Strap 6 foot</data>
+        <data key="sku" unique="suffix">24-WG085</data>
+        <data key="type_id">simple</data>
+        <data key="attribute_set_id">4</data>
+        <data key="price">14.00</data>
+        <data key="weight">1.23</data>
+        <data key="status">1</data>
+        <data key="visibility">4</data>
+        <data key="quantity">100</data>
+        <requiredEntity type="product_extension_attribute">EavStockItem</requiredEntity>
+        <requiredEntity type="custom_attribute_array">CustomAttributeCategoryIds</requiredEntity>
+    </entity>
+    <entity name="SpriteYogaStrap8Foot" type="product">
+        <data key="name">Sprite Yoga Strap 8 foot</data>
+        <data key="sku" unique="suffix">24-WG086</data>
+        <data key="type_id">simple</data>
+        <data key="attribute_set_id">4</data>
+        <data key="price">17.00</data>
+        <data key="weight">1.00</data>
+        <data key="status">1</data>
+        <data key="visibility">4</data>
+        <data key="quantity">100</data>
+        <requiredEntity type="product_extension_attribute">EavStockItem</requiredEntity>
+        <requiredEntity type="custom_attribute_array">CustomAttributeCategoryIds</requiredEntity>
+    </entity>
+    <entity name="SpriteYogaStrap10Foot" type="product">
+        <data key="name">Sprite Yoga Strap 10 foot</data>
+        <data key="sku" unique="suffix">24-WG087</data>
+        <data key="type_id">simple</data>
+        <data key="attribute_set_id">4</data>
+        <data key="price">21.00</data>
+        <data key="weight">1.00</data>
+        <data key="status">1</data>
+        <data key="visibility">4</data>
+        <data key="quantity">100</data>
+        <requiredEntity type="product_extension_attribute">EavStockItem</requiredEntity>
+        <requiredEntity type="custom_attribute_array">CustomAttributeCategoryIds</requiredEntity>
+    </entity>
 </entities>
