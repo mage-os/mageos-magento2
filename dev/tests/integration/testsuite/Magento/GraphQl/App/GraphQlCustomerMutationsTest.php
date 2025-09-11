@@ -1,12 +1,18 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2023 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
 namespace Magento\GraphQl\App;
 
+use Magento\TestFramework\Helper\Bootstrap;
+use Magento\Customer\Api\AccountManagementInterface;
+use Magento\Framework\App\Area;
+use Magento\Framework\App\State;
+use Magento\Framework\Exception\SecurityViolationException;
+use Magento\Security\Model\ResourceModel\PasswordResetRequestEvent\Collection as PasswordResetRequestEventCollection;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Registry;
@@ -32,6 +38,10 @@ class GraphQlCustomerMutationsTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp(): void
     {
+        if (!class_exists(GraphQlStateDiff::class)) {
+            $this->markTestSkipped('GraphQlStateDiff class is not available on this version of Magento.');
+        }
+
         $this->graphQlStateDiff = new GraphQlStateDiff();
         parent::setUp();
     }
@@ -41,6 +51,9 @@ class GraphQlCustomerMutationsTest extends \PHPUnit\Framework\TestCase
      */
     protected function tearDown(): void
     {
+        $this->graphQlStateDiff->getTestObjectManager()
+            ->create(PasswordResetRequestEventCollection::class)
+            ->deleteRecordsOlderThen(time() + 1);
         $this->graphQlStateDiff->tearDown();
         $this->graphQlStateDiff = null;
         parent::tearDown();
@@ -60,7 +73,6 @@ class GraphQlCustomerMutationsTest extends \PHPUnit\Framework\TestCase
         string $operationName,
         string $expected,
     ) : void {
-        $this->markTestSkipped('Fix this later');
         if ($operationName === 'createCustomer') {
             $emails = [$variables['email'], $variables2['email']];
             $this->clearCustomerBeforeTest($emails);
@@ -120,7 +132,6 @@ class GraphQlCustomerMutationsTest extends \PHPUnit\Framework\TestCase
      */
     public function testRequestPasswordResetEmail(): void
     {
-        $this->markTestSkipped('Fix this later');
         $query = $this->getRequestPasswordResetEmailMutation();
         $this->graphQlStateDiff->testState(
             $query,
@@ -139,7 +150,6 @@ class GraphQlCustomerMutationsTest extends \PHPUnit\Framework\TestCase
      */
     public function testResetPassword(): void
     {
-        $this->markTestSkipped('Fix this later');
         $query = $this->getResetPasswordMutation();
         $email = 'customer@example.com';
         $this->graphQlStateDiff->testState(
@@ -155,12 +165,42 @@ class GraphQlCustomerMutationsTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Test that GraphQL password reset requests are subject to security checks (rate limiting)
+     * This test verifies our fix to include GraphQL area in security checks
+     *
+     * @magentoDataFixture Magento/Customer/_files/customer.php
+     * @magentoConfigFixture current_store customer/password/password_reset_protection_type 1
+     * @magentoConfigFixture current_store customer/password/max_number_password_reset_requests 1
+     * @magentoConfigFixture current_store customer/password/min_time_between_password_reset_requests 10
+     * @return void
+     */
+    public function testGraphQlPasswordResetSecurityLimiting(): void
+    {
+        $email = 'customer@example.com';
+        $query = $this->getRequestPasswordResetEmailMutation();
+        $this->graphQlStateDiff->testState(
+            $query,
+            ['email' => $email],
+            [],
+            [],
+            'requestPasswordResetEmail',
+            '"data":{"requestPasswordResetEmail":',
+            $this
+        );
+        $this->expectException(SecurityViolationException::class);
+        $objectManager = Bootstrap::getObjectManager();
+        $accountManagement = $objectManager->get(AccountManagementInterface::class);
+        $appState = $objectManager->get(State::class);
+        $appState->setAreaCode(Area::AREA_GRAPHQL);
+        $accountManagement->initiatePasswordReset($email, 'reset_password_template');
+    }
+
+    /**
      * @magentoDataFixture Magento/Customer/_files/customer.php
      * @return void
      */
     public function testChangePassword(): void
     {
-        $this->markTestSkipped('Fix this later');
         $query = $this->getChangePasswordMutation();
         $this->graphQlStateDiff->testState(
             $query,
@@ -198,39 +238,39 @@ class GraphQlCustomerMutationsTest extends \PHPUnit\Framework\TestCase
      * @return array[]
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function customerDataProvider(): array
+    public static function customerDataProvider(): array
     {
         return [
             'Create Customer' => [
                 <<<'QUERY'
                 mutation($firstname: String!, $lastname: String!, $email: String!, $password: String!) {
-                 createCustomerV2(
-                    input: {
-                     firstname: $firstname,
-                     lastname: $lastname,
-                     email: $email,
-                     password: $password
-                     }
-                ) {
-                    customer {
-                        created_at
-                        prefix
-                        firstname
-                        middlename
-                        lastname
-                        suffix
-                        email
-                        default_billing
-                        default_shipping
-                        date_of_birth
-                        taxvat
-                        is_subscribed
-                        gender
-                        allow_remote_shopping_assistance
+                    createCustomerV2(
+                        input: {
+                         firstname: $firstname,
+                         lastname: $lastname,
+                         email: $email,
+                         password: $password
+                         }
+                    ) {
+                        customer {
+                            created_at
+                            prefix
+                            firstname
+                            middlename
+                            lastname
+                            suffix
+                            email
+                            default_billing
+                            default_shipping
+                            date_of_birth
+                            taxvat
+                            is_subscribed
+                            gender
+                            allow_remote_shopping_assistance
+                        }
                     }
                 }
-            }
-            QUERY,
+                QUERY,
                 [
                     'firstname' => 'John',
                     'lastname' => 'Doe',
@@ -250,17 +290,18 @@ class GraphQlCustomerMutationsTest extends \PHPUnit\Framework\TestCase
             'Update Customer' => [
                 <<<'QUERY'
                     mutation($allow: Boolean!) {
-                       updateCustomerV2(
-                        input: {
-                            allow_remote_shopping_assistance: $allow
+                        updateCustomerV2(
+                            input: {
+                                allow_remote_shopping_assistance: $allow
+                            }
+                        )
+                        {
+                            customer {
+                                allow_remote_shopping_assistance
+                            }
                         }
-                    ) {
-                    customer {
-                        allow_remote_shopping_assistance
                     }
-                }
-            }
-            QUERY,
+                QUERY,
                 ['allow' => true],
                 ['allow' => false],
                 ['email' => 'customer@example.com', 'password' => 'password'],

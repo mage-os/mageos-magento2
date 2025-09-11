@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2013 Adobe
+ * All Rights Reserved.
  */
 
 /**
@@ -61,9 +61,9 @@ class Product extends Extended
         ProductFactory $productFactory,
         Registry $coreRegistry,
         array $data = [],
-        Visibility $visibility = null,
-        Status $status = null,
-        ProductCollectionFactory $productCollectionFactory = null
+        ?Visibility $visibility = null,
+        ?Status $status = null,
+        ?ProductCollectionFactory $productCollectionFactory = null
     ) {
         $this->_productFactory = $productFactory;
         $this->_coreRegistry = $coreRegistry;
