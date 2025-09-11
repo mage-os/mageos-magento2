@@ -46,8 +46,7 @@
         <data key="ordered">Ordered</data>
     </entity>
     <entity name="AdminOrderEmailsSendMessage" type="text">
-        <data key="invoiceEmailSuccessMessage">You sent the message.</data>
+        <data key="emailSuccessMessage">You sent the message.</data>
         <data key="shipmentEmailSuccessMessage">You sent the shipment.</data>
-        <data key="creditMemoEmailSuccessMessage">You sent the message.</data>
     </entity>
 </entities>

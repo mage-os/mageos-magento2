@@ -24,6 +24,15 @@
             <!-- Create customer -->
             <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
         </before>
+        <after>
+            <!-- Delete product and customer -->
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <!-- Logout from admin -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
+            <!-- Logout from storefront -->
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutCustomer"/>
+        </after>
         <!-- Step 1: Go to frontend and log in as customer -->
         <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginToStorefrontAccount">
             <argument name="Customer" value="$$createCustomer$$"/>
@@ -61,7 +70,7 @@
         <!-- Assert invoice email confirmation -->
         <assertEquals stepKey="assertInvoiceEmailConfirmation">
             <actualResult type="const">$grabInvoiceSuccessMessage</actualResult>
-            <expectedResult type="string">{{AdminOrderEmailsSendMessage.invoiceEmailSuccessMessage}}</expectedResult>
+            <expectedResult type="string">{{AdminOrderEmailsSendMessage.emailSuccessMessage}}</expectedResult>
         </assertEquals>
         <!-- Step 9: Send shipment email -->
         <actionGroup ref="OpenOrderByIdActionGroup" stepKey="openOrderInAdmin1">
@@ -94,16 +103,7 @@
         <!-- Assert credit memo email confirmation -->
         <assertEquals stepKey="assertCreditMemoEmailConfirmation">
             <actualResult type="const">$grabCreditMemoSuccessMessage</actualResult>
-            <expectedResult type="string">{{AdminOrderEmailsSendMessage.creditMemoEmailSuccessMessage}}</expectedResult>
+            <expectedResult type="string">{{AdminOrderEmailsSendMessage.emailSuccessMessage}}</expectedResult>
         </assertEquals>
-        <after>
-            <!-- Delete product and customer -->
-            <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
-            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
-            <!-- Logout from admin -->
-            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
-            <!-- Logout from storefront -->
-            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutCustomer"/>
-        </after>
     </test>
 </tests>
