@@ -3,6 +3,7 @@
  * Copyright 2025 Adobe
  * All Rights Reserved.
  */
+
 declare(strict_types=1);
 
 namespace Magento\GraphQl\Catalog;
@@ -14,6 +15,10 @@ use Magento\TestFramework\TestCase\GraphQlAbstract;
 
 class ProductVisibilitySearchTest extends GraphQlAbstract
 {
+    /**
+     * Verify that a product with "Catalog Only" visibility
+     * is not returned in GraphQL product search results.
+     */
     #[DataFixture(
         ProductFixture::class,
         ['price' => 1, 'name' => 'API_TEST', 'visibility' => Visibility::VISIBILITY_IN_CATALOG],
