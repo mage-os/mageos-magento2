@@ -77,17 +77,10 @@ class GuestShippingInformationManagementTest extends TestCase
         $quoteId = '100';
         $addressInformationMock = $this->getMockForAbstractClass(ShippingInformationInterface::class);
         $shippingAddressMock = $this->getMockForAbstractClass(AddressInterface::class);
-        $billingAddressMock = $this->getMockForAbstractClass(AddressInterface::class);
         $addressInformationMock->expects($this->once())
             ->method('getShippingAddress')
             ->willReturn($shippingAddressMock);
-        $addressInformationMock->expects($this->once())
-            ->method('getBillingAddress')
-            ->willReturn($billingAddressMock);
         $shippingAddressMock->expects($this->once())
-            ->method('getExtensionAttributes')
-            ->willReturn(null);
-        $billingAddressMock->expects($this->once())
             ->method('getExtensionAttributes')
             ->willReturn(null);
         $customerAddressMock = $this->createMock(Address::class);
@@ -99,7 +92,7 @@ class GuestShippingInformationManagementTest extends TestCase
             ->method('createValidator')
             ->with('customer_address', 'save')
             ->willReturn($validatorMock);
-        $validatorMock->expects($this->exactly(2))->method('isValid')->willReturn(true);
+        $validatorMock->expects($this->once())->method('isValid')->willReturn(true);
         $quoteIdMaskMock = $this->getMockBuilder(QuoteIdMask::class)
             ->addMethods(['getQuoteId'])
             ->onlyMethods(['load'])
