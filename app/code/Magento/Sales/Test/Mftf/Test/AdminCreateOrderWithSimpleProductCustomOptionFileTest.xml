@@ -47,6 +47,9 @@
         <actionGroup ref="AdminNavigateToNewOrderPageExistingCustomerActionGroup" stepKey="navigateToNewOrderWithExistingCustomer">
             <argument name="customer" value="$customer$"/>
         </actionGroup>
+
+        <conditionalClick selector="{{AdminOrderFormStoreSelectorSection.defaultStoreViewButton}}" dependentSelector="{{AdminOrderFormStoreSelectorSection.storeSelectorContainer}}" visible="true" stepKey="selectDefaultStoreView"/>
+        <waitForPageLoad stepKey="waitForAddProductPageOpened"/>
         <actionGroup ref="AdminAddSimpleProductWithCustomOptionFileToOrderActionGroup" stepKey="addSimpleProductToOrder">
             <argument name="product" value="$simpleProduct$"/>
             <argument name="productQty" value="$simpleProduct.quantity$"/>
