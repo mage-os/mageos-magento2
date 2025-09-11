@@ -84,18 +84,18 @@ class GuestShippingInformationManagementTest extends TestCase
         $addressInformationMock->expects($this->once())
             ->method('getBillingAddress')
             ->willReturn($billingAddressMock);
-        $shippingAddressMock->expects($this->exactly(2))
+        $shippingAddressMock->expects($this->once())
             ->method('getExtensionAttributes')
             ->willReturn(null);
         $billingAddressMock->expects($this->once())
             ->method('getExtensionAttributes')
             ->willReturn(null);
         $customerAddressMock = $this->createMock(Address::class);
-        $this->addressFactoryMock->expects($this->exactly(2))
+        $this->addressFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($customerAddressMock);
         $validatorMock = $this->createMock(ValidatorInterface::class);
-        $this->validatorFactoryMock->expects($this->exactly(2))
+        $this->validatorFactoryMock->expects($this->once())
             ->method('createValidator')
             ->with('customer_address', 'save')
             ->willReturn($validatorMock);
@@ -136,8 +136,6 @@ class GuestShippingInformationManagementTest extends TestCase
         $addressInformationMock->expects($this->once())
             ->method('getShippingAddress')
             ->willReturn($shippingAddressMock);
-        $addressInformationMock->expects($this->never())
-            ->method('getBillingAddress');
         $shippingAddressMock->method('getExtensionAttributes')->willReturn(null);
         $customerAddressMock = $this->createMock(Address::class);
         $this->addressFactoryMock->expects($this->once())->method('create')->willReturn($customerAddressMock);

@@ -63,17 +63,8 @@ class GuestShippingInformationManagement implements \Magento\Checkout\Api\GuestS
         ShippingInformationInterface $addressInformation
     ) {
         $shippingAddress = $addressInformation->getShippingAddress();
-        $extensionAttributes = null;
         if ($shippingAddress) {
-            $extensionAttributes = $shippingAddress->getExtensionAttributes();
             $this->validateAddressAttributes($shippingAddress, 'shipping');
-        }
-        $billingAddress = $addressInformation->getBillingAddress();
-        if ($billingAddress) {
-            if ($extensionAttributes && empty($billingAddress->getExtensionAttributes()->__toArray())) {
-                $billingAddress->setExtensionAttributes($extensionAttributes);
-            }
-            $this->validateAddressAttributes($billingAddress, 'billing');
         }
 
         /** @var $quoteIdMask \Magento\Quote\Model\QuoteIdMask */
