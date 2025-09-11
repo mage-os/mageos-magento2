@@ -11,7 +11,6 @@ use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 use Magento\GraphQl\Model\Query\Context;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\GraphQl\Model\Query\ContextExtensionInterface;
 use Magento\Wishlist\Model\Wishlist;
 use Magento\Wishlist\Model\Wishlist\Config;
@@ -68,11 +67,10 @@ class CustomerWishlistResolverTest extends TestCase
         $this->wishlistMock = $this->createWishlistMock();
         $this->wishlistConfigMock = $this->createMock(Config::class);
 
-        $objectManager = new ObjectManager($this);
-        $this->resolver = $objectManager->getObject(CustomerWishlistResolver::class, [
-            'wishlistFactory' => $this->wishlistFactoryMock,
-            'wishlistConfig' => $this->wishlistConfigMock
-        ]);
+        $this->resolver = new CustomerWishlistResolver(
+            $this->wishlistFactoryMock,
+            $this->wishlistConfigMock
+        );
     }
 
     /**
@@ -99,13 +97,56 @@ class CustomerWishlistResolverTest extends TestCase
      */
     private function createWishlistMock(): Wishlist
     {
-        $wishlistMock = $this->createMock(Wishlist::class);
-        $wishlistMock->method('loadByCustomerId')->willReturnSelf();
-        $wishlistMock->method('getId')->willReturn(1);
-        $wishlistMock->method('getItemsCount')->willReturn(0);
-        $wishlistMock->method('getSharingCode')->willReturn('test-sharing-code');
-        $wishlistMock->method('getUpdatedAt')->willReturn('2024-01-01 00:00:00');
-        return $wishlistMock;
+        return new class extends Wishlist {
+            /**
+             * @var int
+             */
+            private $id = 1;
+            
+            /**
+             * @var int
+             */
+            private $itemsCount = 0;
+            
+            /**
+             * @var string
+             */
+            private $sharingCode = 'test-sharing-code';
+            
+            /**
+             * @var string
+             */
+            private $updatedAt = '2024-01-01 00:00:00';
+
+            public function __construct()
+            {
+            }
+
+            public function loadByCustomerId($customerId, $create = false)
+            {
+                return $this;
+            }
+
+            public function getId()
+            {
+                return $this->id;
+            }
+
+            public function getItemsCount()
+            {
+                return $this->itemsCount;
+            }
+
+            public function getSharingCode()
+            {
+                return $this->sharingCode;
+            }
+
+            public function getUpdatedAt()
+            {
+                return $this->updatedAt;
+            }
+        };
     }
 
     /**
