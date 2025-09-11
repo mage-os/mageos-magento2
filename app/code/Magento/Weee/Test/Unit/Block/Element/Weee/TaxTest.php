@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -13,6 +13,7 @@ use Magento\Framework\Data\Form\Element\Factory;
 use Magento\Framework\DataObject;
 use Magento\Framework\Locale\Currency;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManagerHelper;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManager;
 use Magento\Weee\Block\Element\Weee\Tax;
@@ -28,6 +29,14 @@ class TaxTest extends TestCase
     public function testGetEscapedValue()
     {
         $objectManager = new ObjectManager($this);
+        
+        $objects = [
+            [
+                \Magento\Framework\View\Element\Template\Context::class,
+                $this->createMock(\Magento\Framework\View\Element\Template\Context::class)
+            ]
+        ];
+        $objectManager->prepareObjectManager($objects);
 
         $inputValue = [
             ['value' => '30000.4'],

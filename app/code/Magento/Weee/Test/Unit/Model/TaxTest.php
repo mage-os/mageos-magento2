@@ -17,7 +17,6 @@ use Magento\Framework\DataObject;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\Registry;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\Group;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
@@ -33,6 +32,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
  */
 class TaxTest extends TestCase
 {
@@ -107,48 +108,24 @@ class TaxTest extends TestCase
     protected $data;
 
     /**
-     * @var ObjectManager
-     */
-    protected $objectManager;
-
-    /**
      * @inheritdoc
      */
     protected function setUp(): void
     {
-        $this->objectManager = new ObjectManager($this);
-
         $this->context = $this->createMock(Context::class);
         $this->registry = $this->createMock(Registry::class);
 
-        $this->attributeFactory = $this->getMockBuilder(AttributeFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->attributeFactory = $this->createPartialMock(AttributeFactory::class, ['create']);
 
         $this->storeManager = $this->getMockForAbstractClass(StoreManagerInterface::class);
 
-        $this->calculationFactory = $this->getMockBuilder(CalculationFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->calculationFactory = $this->createPartialMock(CalculationFactory::class, ['create']);
 
-        $this->customerSession = $this->getMockBuilder(Session::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getCustomerId'])
-            ->addMethods(
-                [
-
-                    'getDefaultTaxShippingAddress',
-                    'getDefaultTaxBillingAddress',
-                    'getCustomerTaxClassId'
-                ]
-            )
-            ->getMock();
-        $this->customerSession->expects($this->any())->method('getCustomerId')->willReturn(null);
-        $this->customerSession->expects($this->any())->method('getDefaultTaxShippingAddress')->willReturn(null);
-        $this->customerSession->expects($this->any())->method('getDefaultTaxBillingAddress')->willReturn(null);
-        $this->customerSession->expects($this->any())->method('getCustomerTaxClassId')->willReturn(null);
+        $this->customerSession = $this->createCustomerSessionMock();
+        $this->customerSession->setCustomerId(null);
+        $this->customerSession->setDefaultTaxShippingAddress(null);
+        $this->customerSession->setDefaultTaxBillingAddress(null);
+        $this->customerSession->setCustomerTaxClassId(null);
 
         $className = AccountManagementInterface::class;
         $this->accountManagement = $this->createMock($className);
@@ -168,23 +145,95 @@ class TaxTest extends TestCase
         $className = AbstractDb::class;
         $this->resourceCollection = $this->createMock($className);
 
-        $this->model = $this->objectManager->getObject(
-            Tax::class,
-            [
-                'context' => $this->context,
-                'registry' => $this->registry,
-                'attributeFactory' => $this->attributeFactory,
-                'storeManager' => $this->storeManager,
-                'calculationFactory' => $this->calculationFactory,
-                'customerSession' => $this->customerSession,
-                'accountManagement' => $this->accountManagement,
-                'taxData' => $this->taxData,
-                'resource' => $this->resource,
-                'weeeConfig' => $this->weeeConfig,
-                'priceCurrency' => $this->priceCurrency,
-                'resourceCollection' => $this->resourceCollection
-            ]
+        $this->model = new Tax(
+            $this->context,
+            $this->registry,
+            $this->attributeFactory,
+            $this->storeManager,
+            $this->calculationFactory,
+            $this->customerSession,
+            $this->accountManagement,
+            $this->taxData,
+            $this->resource,
+            $this->weeeConfig,
+            $this->priceCurrency,
+            $this->resourceCollection
         );
+    }
+
+    /**
+     * Create customer session mock with all required methods
+     *
+     * @return Session
+     */
+    private function createCustomerSessionMock(): Session
+    {
+        return new class extends Session {
+            /**
+             * @var mixed
+             */
+            private $defaultTaxShippingAddress = null;
+            /**
+             * @var mixed
+             */
+            private $defaultTaxBillingAddress = null;
+            /**
+             * @var mixed
+             */
+            private $customerTaxClassId = null;
+            /**
+             * @var mixed
+             */
+            private $customerId = null;
+
+            public function __construct()
+            {
+            }
+
+            public function getDefaultTaxShippingAddress()
+            {
+                return $this->defaultTaxShippingAddress;
+            }
+
+            public function setDefaultTaxShippingAddress($address)
+            {
+                $this->defaultTaxShippingAddress = $address;
+                return $this;
+            }
+
+            public function getDefaultTaxBillingAddress()
+            {
+                return $this->defaultTaxBillingAddress;
+            }
+
+            public function setDefaultTaxBillingAddress($address)
+            {
+                $this->defaultTaxBillingAddress = $address;
+                return $this;
+            }
+
+            public function getCustomerTaxClassId()
+            {
+                return $this->customerTaxClassId;
+            }
+
+            public function setCustomerTaxClassId($id)
+            {
+                $this->customerTaxClassId = $id;
+                return $this;
+            }
+
+            public function getCustomerId()
+            {
+                return $this->customerId;
+            }
+
+            public function setCustomerId($id)
+            {
+                $this->customerId = $id;
+                return $this;
+            }
+        };
     }
 
     /**
@@ -304,19 +353,73 @@ class TaxTest extends TestCase
      */
     public function testGetWeeeAmountExclTax($productTypeId, $productPriceType): void
     {
-        $product = $this->getMockBuilder(Product::class)->disableOriginalConstructor()
-            ->onlyMethods(['getTypeId'])
-            ->addMethods(['getPriceType'])
-            ->getMock();
-        $product->expects($this->any())->method('getTypeId')->willReturn($productTypeId);
-        $product->expects($this->any())->method('getPriceType')->willReturn($productPriceType);
-        $weeeDataHelper = $this->getMockBuilder(DataObject::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getAmountExclTax'])
-            ->getMock();
-        $weeeDataHelper
-            ->method('getAmountExclTax')
-            ->willReturnOnConsecutiveCalls(10, 30);
+        $product = new class extends Product {
+            /**
+             * @var mixed
+             */
+            private $priceType = null;
+            /**
+             * @var mixed
+             */
+            private $typeId = null;
+
+            public function __construct()
+            {
+            }
+
+            public function getPriceType()
+            {
+                return $this->priceType;
+            }
+
+            public function setPriceType($type)
+            {
+                $this->priceType = $type;
+                return $this;
+            }
+
+            public function getTypeId()
+            {
+                return $this->typeId;
+            }
+
+            public function setTypeId($id)
+            {
+                $this->typeId = $id;
+                return $this;
+            }
+        };
+        $product->setTypeId($productTypeId);
+        $product->setPriceType($productPriceType);
+        $weeeDataHelper = new class extends DataObject {
+            /**
+             * @var array
+             */
+            private $amountExclTax = [];
+            /**
+             * @var int
+             */
+            private $callCount = 0;
+
+            public function __construct()
+            {
+            }
+
+            public function getAmountExclTax()
+            {
+                $value = $this->amountExclTax[$this->callCount] ?? null;
+                $this->callCount++;
+                return $value;
+            }
+
+            public function setAmountExclTax($amount)
+            {
+                $this->amountExclTax[] = $amount;
+                return $this;
+            }
+        };
+        $weeeDataHelper->setAmountExclTax(10);
+        $weeeDataHelper->setAmountExclTax(30);
         $tax = $this->getMockBuilder(Tax::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getProductWeeeAttributes'])
@@ -333,13 +436,44 @@ class TaxTest extends TestCase
      */
     public function testGetWeeeAmountExclTaxForDynamicBundleProduct(): void
     {
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getTypeId'])
-            ->addMethods(['getPriceType'])
-            ->getMock();
-        $product->expects($this->any())->method('getTypeId')->willReturn('bundle');
-        $product->expects($this->once())->method('getPriceType')->willReturn(0);
+        $product = new class extends Product {
+            /**
+             * @var mixed
+             */
+            private $priceType = null;
+            /**
+             * @var mixed
+             */
+            private $typeId = null;
+
+            public function __construct()
+            {
+            }
+
+            public function getPriceType()
+            {
+                return $this->priceType;
+            }
+
+            public function setPriceType($type)
+            {
+                $this->priceType = $type;
+                return $this;
+            }
+
+            public function getTypeId()
+            {
+                return $this->typeId;
+            }
+
+            public function setTypeId($id)
+            {
+                $this->typeId = $id;
+                return $this;
+            }
+        };
+        $product->setTypeId('bundle');
+        $product->setPriceType(0);
         $weeeDataHelper = $this->getMockBuilder(DataObject::class)
             ->disableOriginalConstructor()
             ->getMock();

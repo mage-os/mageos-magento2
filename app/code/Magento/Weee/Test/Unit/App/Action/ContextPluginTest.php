@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -30,6 +30,8 @@ use PHPUnit\Framework\TestCase;
  * Unit Tests to cover Context Plugin
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
  */
 class ContextPluginTest extends TestCase
 {
@@ -116,18 +118,7 @@ class ContextPluginTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->customerSessionMock = $this->getMockBuilder(CustomerSession::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['isLoggedIn'])
-            ->addMethods(
-                [
-                    'getDefaultTaxBillingAddress',
-                    'getDefaultTaxShippingAddress',
-                    'getCustomerTaxClassId',
-                    'getWebsiteId'
-                ]
-            )
-            ->getMock();
+        $this->customerSessionMock = $this->createCustomerSessionMock();
 
         $this->moduleManagerMock = $this->getMockBuilder(ModuleManager::class)
             ->disableOriginalConstructor()
@@ -162,13 +153,101 @@ class ContextPluginTest extends TestCase
     }
 
     /**
+     * Create customer session mock with all required methods
+     *
+     * @return CustomerSession
+     */
+    private function createCustomerSessionMock(): CustomerSession
+    {
+        return new class extends CustomerSession {
+            /**
+             * @var bool
+             */
+            private $isLoggedIn = false;
+            /**
+             * @var mixed
+             */
+            private $defaultTaxBillingAddress = null;
+            /**
+             * @var mixed
+             */
+            private $defaultTaxShippingAddress = null;
+            /**
+             * @var mixed
+             */
+            private $customerTaxClassId = null;
+            /**
+             * @var mixed
+             */
+            private $websiteId = null;
+
+            public function __construct()
+            {
+            }
+
+            public function isLoggedIn()
+            {
+                return $this->isLoggedIn;
+            }
+
+            public function setIsLoggedIn($isLoggedIn)
+            {
+                $this->isLoggedIn = $isLoggedIn;
+                return $this;
+            }
+
+            public function getDefaultTaxBillingAddress()
+            {
+                return $this->defaultTaxBillingAddress;
+            }
+
+            public function setDefaultTaxBillingAddress($address)
+            {
+                $this->defaultTaxBillingAddress = $address;
+                return $this;
+            }
+
+            public function getDefaultTaxShippingAddress()
+            {
+                return $this->defaultTaxShippingAddress;
+            }
+
+            public function setDefaultTaxShippingAddress($address)
+            {
+                $this->defaultTaxShippingAddress = $address;
+                return $this;
+            }
+
+            public function getCustomerTaxClassId()
+            {
+                return $this->customerTaxClassId;
+            }
+
+            public function setCustomerTaxClassId($id)
+            {
+                $this->customerTaxClassId = $id;
+                return $this;
+            }
+
+            public function getWebsiteId()
+            {
+                return $this->websiteId;
+            }
+
+            public function setWebsiteId($id)
+            {
+                $this->websiteId = $id;
+                return $this;
+            }
+        };
+    }
+
+    /**
      * @return void
      */
     public function testBeforeExecuteBasedOnDefault(): void
     {
-        $this->customerSessionMock->expects($this->once())
-            ->method('isLoggedIn')
-            ->willReturn(true);
+        $this->customerSessionMock->setIsLoggedIn(true);
 
         $this->moduleManagerMock->expects($this->once())
             ->method('isEnabled')
@@ -240,9 +319,7 @@ class ContextPluginTest extends TestCase
      */
     public function testBeforeExecuteBasedOnOrigin(): void
     {
-        $this->customerSessionMock->expects($this->once())
-            ->method('isLoggedIn')
-            ->willReturn(true);
+        $this->customerSessionMock->setIsLoggedIn(true);
 
         $this->moduleManagerMock->expects($this->once())
             ->method('isEnabled')
@@ -272,9 +349,7 @@ class ContextPluginTest extends TestCase
      */
     public function testBeforeExecuteBasedOnBilling(): void
     {
-        $this->customerSessionMock->expects($this->once())
-            ->method('isLoggedIn')
-            ->willReturn(true);
+        $this->customerSessionMock->setIsLoggedIn(true);
 
         $this->moduleManagerMock->expects($this->once())
             ->method('isEnabled')
@@ -326,9 +401,7 @@ class ContextPluginTest extends TestCase
                 return $args === $expectedArgs[$index - 1] ? $returnValue[$index - 1] : null;
             });
 
-        $this->customerSessionMock->expects($this->once())
-            ->method('getDefaultTaxBillingAddress')
-            ->willReturn(['country_id' => 'US', 'region_id' => 1]);
+        $this->customerSessionMock->setDefaultTaxBillingAddress(['country_id' => 'US', 'region_id' => 1]);
 
         $this->weeeTaxMock->expects($this->once())
             ->method('isWeeeInLocation')
@@ -350,9 +423,7 @@ class ContextPluginTest extends TestCase
      */
     public function testBeforeExecuterBasedOnShipping(): void
     {
-        $this->customerSessionMock->expects($this->once())
-            ->method('isLoggedIn')
-            ->willReturn(true);
+        $this->customerSessionMock->setIsLoggedIn(true);
 
         $this->moduleManagerMock->expects($this->once())
             ->method('isEnabled')
@@ -404,9 +475,7 @@ class ContextPluginTest extends TestCase
                 return $args === $expectedArgs[$index - 1] ? $returnValue[$index - 1] : null;
             });
 
-        $this->customerSessionMock->expects($this->once())
-            ->method('getDefaultTaxShippingAddress')
-            ->willReturn(['country_id' => 'US', 'region_id' => 1]);
+        $this->customerSessionMock->setDefaultTaxShippingAddress(['country_id' => 'US', 'region_id' => 1]);
 
         $this->weeeTaxMock->expects($this->once())
             ->method('isWeeeInLocation')

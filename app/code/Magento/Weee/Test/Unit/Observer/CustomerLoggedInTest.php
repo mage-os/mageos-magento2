@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -19,6 +19,12 @@ use Magento\Weee\Observer\CustomerLoggedIn;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Unit Tests to cover CustomerLoggedIn
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+ */
 class CustomerLoggedInTest extends TestCase
 {
     /**
@@ -58,11 +64,42 @@ class CustomerLoggedInTest extends TestCase
     protected function setUp(): void
     {
         $objectManager = new ObjectManager($this);
-        $this->observerMock = $this->getMockBuilder(Observer::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getData'])
-            ->addMethods(['getCustomerAddress'])
-            ->getMock();
+        $this->observerMock = new class extends Observer {
+            /**
+             * @var mixed
+             */
+            private $data = null;
+            /**
+             * @var mixed
+             */
+            private $customerAddress = null;
+
+            public function __construct()
+            {
+            }
+
+            public function getData($key = '', $index = null)
+            {
+                return $this->data;
+            }
+
+            public function setData($key, $value = null)
+            {
+                $this->data = $value;
+                return $this;
+            }
+
+            public function getCustomerAddress()
+            {
+                return $this->customerAddress;
+            }
+
+            public function setCustomerAddress($address)
+            {
+                $this->customerAddress = $address;
+                return $this;
+            }
+        };
 
         $this->moduleManagerMock = $this->getMockBuilder(Manager::class)
             ->disableOriginalConstructor()
@@ -123,10 +160,7 @@ class CustomerLoggedInTest extends TestCase
             ->method('getAddresses')
             ->willReturn([$address]);
 
-        $this->observerMock->expects($this->once())
-            ->method('getData')
-            ->with('customer')
-            ->willReturn($customerMock);
+        $this->observerMock->setData('customer', $customerMock);
 
         $this->addressManagerMock->expects($this->once())
             ->method('setDefaultAddressAfterLogIn')

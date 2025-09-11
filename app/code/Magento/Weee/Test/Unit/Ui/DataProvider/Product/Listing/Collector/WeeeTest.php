@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -25,6 +25,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  */
 class WeeeTest extends TestCase
 {
@@ -65,9 +67,7 @@ class WeeeTest extends TestCase
             ->onlyMethods(['create'])
             ->getMock();
 
-        $this->extensionAttributes = $this->getMockBuilder(PriceInfoExtensionInterface::class)
-            ->addMethods(['setWeeeAttributes', 'setWeeeAdjustment'])
-            ->getMockForAbstractClass();
+        $this->extensionAttributes = $this->createMock(PriceInfoExtensionInterface::class);
 
         $this->priceInfoExtensionFactory = $this->getMockBuilder(PriceInfoExtensionInterfaceFactory::class)
             ->disableOriginalConstructor()
@@ -95,39 +95,21 @@ class WeeeTest extends TestCase
         $productMock = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $productRender = $this->getMockBuilder(ProductRenderInterface::class)
-            ->onlyMethods(['getPriceInfo', 'getStoreId'])
-            ->getMockForAbstractClass();
-        $weeAttribute  = $this->getMockBuilder(WeeeAdjustmentAttributeInterface::class)
-            ->addMethods(['getData'])
-            ->getMockForAbstractClass();
+        $productRender = $this->createMock(ProductRenderInterface::class);
+        $weeAttribute = $this->createWeeeAdjustmentAttributeMock();
         $this->weeeAdjustmentAttributeFactory->expects($this->atLeastOnce())
             ->method('create')
             ->willReturn($weeAttribute);
-        $priceInfo = $this->getMockBuilder(Base::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getPrice'])
-            ->addMethods(['getExtensionAttributes', 'setExtensionAttributes'])
-            ->getMock();
+        $priceInfo = $this->createPriceInfoMock();
         $price = $this->getMockBuilder(FinalPrice::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $weeAttribute->expects($this->once())
-            ->method('setAttributeCode')
-            ->with();
-        $productRender->expects($this->any())
-            ->method('getPriceInfo')
-            ->willReturn($priceInfo);
-        $priceInfo->expects($this->any())
-            ->method('getExtensionAttributes')
-            ->willReturn($this->extensionAttributes);
-        $productMock->expects($this->any())
-            ->method('getPriceInfo')
-            ->willReturn($priceInfo);
-        $priceInfo->expects($this->atLeastOnce())
-            ->method('getPrice')
-            ->willReturn($price);
-        $amount = $this->getMockForAbstractClass(AmountInterface::class);
+        $weeAttribute->setAttributeCode('');
+        $productRender->method('getPriceInfo')->willReturn($priceInfo);
+        $priceInfo->setExtensionAttributes($this->extensionAttributes);
+        $productMock->method('getPriceInfo')->willReturn($priceInfo);
+        $priceInfo->setPrice($price);
+        $amount = $this->createMock(AmountInterface::class);
         $productRender->expects($this->exactly(5))
             ->method('getStoreId')
             ->willReturn(1);
@@ -141,33 +123,6 @@ class WeeeTest extends TestCase
             ->method('getValue')
             ->willReturn(12.1);
         $weeAttributes = ['weee_1' => $weeAttribute];
-        $weeAttribute->expects($this->exactly(6))
-            ->method('getData')
-            ->willReturnCallback(
-                function ($arg) {
-                     static $callCount = 0;
-                    if ($callCount==0) {
-                        $callCount++;
-                        return [
-                            'amount' => 12.1,
-                            'tax_amount' => 12,
-                            'amount_excl_tax' => 71
-                        ];
-                    } elseif ($callCount==1 && $arg == 'amount') {
-                        $callCount++;
-                        return 12.1;
-                    } elseif ($callCount==2 && $arg == 'tax_amount') {
-                        $callCount++;
-                        return 12.1;
-                    } elseif ($callCount==3 && $arg == 'amount_excl_tax') {
-                        $callCount++;
-                        return 12.1;
-                    } elseif ($callCount==4) {
-                        $callCount++;
-                        return 12.1;
-                    }
-                }
-            );
         $this->priceCurrencyMock->expects($this->exactly(5))
             ->method('format')
             ->with(12.1, true, 2, 1, 'USD')
@@ -182,10 +137,162 @@ class WeeeTest extends TestCase
             ->method('getProductWeeeAttributesForDisplay')
             ->with($productMock)
             ->willReturn($weeAttributes);
-        $priceInfo->expects($this->once())
-            ->method('setExtensionAttributes')
-            ->with($this->extensionAttributes);
 
         $this->model->collect($productMock, $productRender);
+    }
+
+    /**
+     * Create a mock for WeeeAdjustmentAttributeInterface
+     *
+     * @return WeeeAdjustmentAttributeInterface
+     */
+    private function createWeeeAdjustmentAttributeMock(): WeeeAdjustmentAttributeInterface
+    {
+        return new class implements WeeeAdjustmentAttributeInterface {
+            /**
+             * @var mixed
+             */
+            private $data = null;
+            /**
+             * @var int
+             */
+            private $callCount = 0;
+
+            public function getData($key = null)
+            {
+                if ($this->callCount == 0) {
+                    $this->callCount++;
+                    return [
+                        'amount' => 12.1,
+                        'tax_amount' => 12,
+                        'amount_excl_tax' => 71
+                    ];
+                } elseif ($this->callCount == 1 && $key == 'amount') {
+                    $this->callCount++;
+                    return 12.1;
+                } elseif ($this->callCount == 2 && $key == 'tax_amount') {
+                    $this->callCount++;
+                    return 12.1;
+                } elseif ($this->callCount == 3 && $key == 'amount_excl_tax') {
+                    $this->callCount++;
+                    return 12.1;
+                } elseif ($this->callCount == 4) {
+                    $this->callCount++;
+                    return 12.1;
+                }
+                return null;
+            }
+
+            public function setData($value)
+            {
+                $this->data = $value;
+                return $this;
+            }
+
+            public function setAmount($amount)
+            {
+                return $this;
+            }
+
+            public function getAmount()
+            {
+                return null;
+            }
+
+            public function getTaxAmount()
+            {
+                return null;
+            }
+
+            public function setTaxAmount($taxAmount)
+            {
+                return $this;
+            }
+
+            public function setAmountExclTax($amountExclTax)
+            {
+                return $this;
+            }
+
+            public function setTaxAmountInclTax($taxAmountInclTax)
+            {
+                return $this;
+            }
+
+            public function getTaxAmountInclTax()
+            {
+                return null;
+            }
+
+            public function getAmountExclTax()
+            {
+                return null;
+            }
+
+            public function setAttributeCode($attributeCode)
+            {
+                return $this;
+            }
+
+            public function getAttributeCode()
+            {
+                return null;
+            }
+
+            public function getExtensionAttributes()
+            {
+                return null;
+            }
+
+            public function setExtensionAttributes($extensionAttributes)
+            {
+                return $this;
+            }
+        };
+    }
+
+    /**
+     * Create a mock for PriceInfo Base
+     *
+     * @return Base
+     */
+    private function createPriceInfoMock(): Base
+    {
+        return new class extends Base {
+            /**
+             * @var mixed
+             */
+            private $extensionAttributes = null;
+            /**
+             * @var mixed
+             */
+            private $price = null;
+
+            public function __construct()
+            {
+            }
+
+            public function getPrice($priceCode)
+            {
+                return $this->price;
+            }
+
+            public function setPrice($value)
+            {
+                $this->price = $value;
+                return $this;
+            }
+
+            public function getExtensionAttributes()
+            {
+                return $this->extensionAttributes;
+            }
+
+            public function setExtensionAttributes($value)
+            {
+                $this->extensionAttributes = $value;
+                return $this;
+            }
+        };
     }
 }

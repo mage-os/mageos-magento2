@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -18,6 +18,12 @@ use Magento\Weee\Observer\AfterAddressSave;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Unit Tests to cover AfterAddressSave
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+ */
 class AfterAddressSaveTest extends TestCase
 {
     /**
@@ -62,10 +68,27 @@ class AfterAddressSaveTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
-        $this->observerMock = $this->getMockBuilder(Observer::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getCustomerAddress'])
-            ->getMock();
+        $this->observerMock = new class extends Observer {
+            /**
+             * @var mixed
+             */
+            private $customerAddress = null;
+
+            public function __construct()
+            {
+            }
+
+            public function getCustomerAddress()
+            {
+                return $this->customerAddress;
+            }
+
+            public function setCustomerAddress($address)
+            {
+                $this->customerAddress = $address;
+                return $this;
+            }
+        };
 
         $this->moduleManagerMock = $this->getMockBuilder(Manager::class)
             ->disableOriginalConstructor()
@@ -128,9 +151,7 @@ class AfterAddressSaveTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->observerMock->expects($this->any())
-            ->method('getCustomerAddress')
-            ->willReturn($address);
+        $this->observerMock->setCustomerAddress($address);
 
         $this->addressManagerMock->expects($isNeedSetAddress ? $this->once() : $this->never())
             ->method('setDefaultAddressAfterSave')

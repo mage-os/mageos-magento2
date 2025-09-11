@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -16,6 +16,14 @@ use Magento\Weee\Model\Tax as WeeeDisplayConfig;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Unit Tests to cover Renderer
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ */
 class RendererTest extends TestCase
 {
     /**
@@ -62,30 +70,8 @@ class RendererTest extends TestCase
             ->onlyMethods(['format'])
             ->getMock();
 
-        $this->item = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->addMethods([
-                'getWeeeTaxAppliedAmount',
-                'getPriceInclTax',
-                'getRowTotal',
-                'getRowTotalInclTax',
-                'getWeeeTaxAppliedRowAmount',
-                'getStoreId',
-                'getBaseRowTotalInclTax',
-                'getBaseRowTotal',
-                'getBaseWeeeTaxAppliedRowAmnt',
-                'getBasePrice',
-                'getBaseWeeeTaxAppliedAmount',
-                'getBaseWeeeTaxInclTax',
-                'getBasePriceInclTax',
-                'getQtyOrdered'
-            ])
-            ->onlyMethods(['getCalculationPrice'])
-            ->getMock();
-
-        $this->item->expects($this->any())
-            ->method('getStoreId')
-            ->willReturn(self::STORE_ID);
+        $this->item = $this->createItemMock();
+        $this->item->setStoreId(self::STORE_ID);
 
         $this->renderer = $objectManager->getObject(
             Renderer::class,
@@ -96,6 +82,217 @@ class RendererTest extends TestCase
         );
         $this->renderer->setItem($this->item);
         $this->renderer->setZone(self::ZONE);
+    }
+
+    /**
+     * Create item mock with all required methods
+     *
+     * @return Item
+     */
+    private function createItemMock(): Item
+    {
+        return new class extends Item {
+            /**
+             * @var mixed
+             */
+            private $weeeTaxAppliedAmount = null;
+            /**
+             * @var mixed
+             */
+            private $priceInclTax = null;
+            /**
+             * @var mixed
+             */
+            private $rowTotal = null;
+            /**
+             * @var mixed
+             */
+            private $rowTotalInclTax = null;
+            /**
+             * @var mixed
+             */
+            private $weeeTaxAppliedRowAmount = null;
+            /**
+             * @var mixed
+             */
+            private $storeId = null;
+            /**
+             * @var mixed
+             */
+            private $baseRowTotalInclTax = null;
+            /**
+             * @var mixed
+             */
+            private $baseRowTotal = null;
+            /**
+             * @var mixed
+             */
+            private $baseWeeeTaxAppliedRowAmnt = null;
+            /**
+             * @var mixed
+             */
+            private $basePrice = null;
+            /**
+             * @var mixed
+             */
+            private $baseWeeeTaxAppliedAmount = null;
+            /**
+             * @var mixed
+             */
+            private $baseWeeeTaxInclTax = null;
+            /**
+             * @var mixed
+             */
+            private $basePriceInclTax = null;
+            /**
+             * @var mixed
+             */
+            private $qtyOrdered = null;
+            /**
+             * @var mixed
+             */
+            private $calculationPrice = null;
+
+            public function __construct()
+            {
+            }
+
+            public function getWeeeTaxAppliedAmount()
+            {
+                return $this->weeeTaxAppliedAmount;
+            }
+            public function setWeeeTaxAppliedAmount($amount)
+            {
+                $this->weeeTaxAppliedAmount = $amount;
+                return $this;
+            }
+            public function getPriceInclTax()
+            {
+                return $this->priceInclTax;
+            }
+            public function setPriceInclTax($price)
+            {
+                $this->priceInclTax = $price;
+                return $this;
+            }
+            public function getRowTotal()
+            {
+                return $this->rowTotal;
+            }
+            public function setRowTotal($total)
+            {
+                $this->rowTotal = $total;
+                return $this;
+            }
+            public function getRowTotalInclTax()
+            {
+                return $this->rowTotalInclTax;
+            }
+            public function setRowTotalInclTax($total)
+            {
+                $this->rowTotalInclTax = $total;
+                return $this;
+            }
+            public function getWeeeTaxAppliedRowAmount()
+            {
+                return $this->weeeTaxAppliedRowAmount;
+            }
+            public function setWeeeTaxAppliedRowAmount($amount)
+            {
+                $this->weeeTaxAppliedRowAmount = $amount;
+                return $this;
+            }
+            public function getStoreId()
+            {
+                return $this->storeId;
+            }
+            public function setStoreId($id)
+            {
+                $this->storeId = $id;
+                return $this;
+            }
+            public function getBaseRowTotalInclTax()
+            {
+                return $this->baseRowTotalInclTax;
+            }
+            public function setBaseRowTotalInclTax($total)
+            {
+                $this->baseRowTotalInclTax = $total;
+                return $this;
+            }
+            public function getBaseRowTotal()
+            {
+                return $this->baseRowTotal;
+            }
+            public function setBaseRowTotal($total)
+            {
+                $this->baseRowTotal = $total;
+                return $this;
+            }
+            public function getBaseWeeeTaxAppliedRowAmnt()
+            {
+                return $this->baseWeeeTaxAppliedRowAmnt;
+            }
+            public function setBaseWeeeTaxAppliedRowAmnt($amount)
+            {
+                $this->baseWeeeTaxAppliedRowAmnt = $amount;
+                return $this;
+            }
+            public function getBasePrice()
+            {
+                return $this->basePrice;
+            }
+            public function setBasePrice($price)
+            {
+                $this->basePrice = $price;
+                return $this;
+            }
+            public function getBaseWeeeTaxAppliedAmount()
+            {
+                return $this->baseWeeeTaxAppliedAmount;
+            }
+            public function setBaseWeeeTaxAppliedAmount($amount)
+            {
+                $this->baseWeeeTaxAppliedAmount = $amount;
+                return $this;
+            }
+            public function getBaseWeeeTaxInclTax()
+            {
+                return $this->baseWeeeTaxInclTax;
+            }
+            public function setBaseWeeeTaxInclTax($tax)
+            {
+                $this->baseWeeeTaxInclTax = $tax;
+                return $this;
+            }
+            public function getBasePriceInclTax()
+            {
+                return $this->basePriceInclTax;
+            }
+            public function setBasePriceInclTax($price)
+            {
+                $this->basePriceInclTax = $price;
+                return $this;
+            }
+            public function getQtyOrdered()
+            {
+                return $this->qtyOrdered;
+            }
+            public function setQtyOrdered($qty)
+            {
+                $this->qtyOrdered = $qty;
+                return $this;
+            }
+            public function getCalculationPrice()
+            {
+                return $this->calculationPrice;
+            }
+            public function setCalculationPrice($price)
+            {
+                $this->calculationPrice = $price;
+                return $this;
+            }
+        };
     }
 
     /**
@@ -123,9 +320,7 @@ class RendererTest extends TestCase
                 self::STORE_ID
             )->willReturn($showWeeeDetails);
 
-        $this->item->expects($this->any())
-            ->method('getWeeeTaxAppliedAmount')
-            ->willReturn($hasWeeeAmount);
+        $this->item->setWeeeTaxAppliedAmount($hasWeeeAmount);
 
         $this->assertEquals($expectedValue, $this->renderer->displayPriceWithWeeeDetails());
     }
@@ -219,9 +414,7 @@ class RendererTest extends TestCase
             ->with($this->item)
             ->willReturn($weeeTax);
 
-        $this->item->expects($this->once())
-            ->method('getPriceInclTax')
-            ->willReturn($price);
+        $this->item->setPriceInclTax($price);
 
         $this->weeeHelper->expects($this->any())
             ->method('typeOfDisplay')
@@ -255,9 +448,7 @@ class RendererTest extends TestCase
             ->with($this->item)
             ->willReturn($weeeTax);
 
-        $this->item->expects($this->once())
-            ->method('getBasePriceInclTax')
-            ->willReturn($price);
+        $this->item->setBasePriceInclTax($price);
 
         $this->weeeHelper->expects($this->any())
             ->method('typeOfDisplay')
@@ -286,13 +477,9 @@ class RendererTest extends TestCase
             ->method('isEnabled')
             ->willReturn($weeeEnabled);
 
-        $this->item->expects($this->any())
-            ->method('getWeeeTaxAppliedAmount')
-            ->willReturn($weeeTax);
+        $this->item->setWeeeTaxAppliedAmount($weeeTax);
 
-        $this->item->expects($this->once())
-            ->method('getCalculationPrice')
-            ->willReturn($price);
+        $this->item->setCalculationPrice($price);
 
         $this->weeeHelper->expects($this->any())
             ->method('typeOfDisplay')
@@ -321,17 +508,11 @@ class RendererTest extends TestCase
             ->method('isEnabled')
             ->willReturn($weeeEnabled);
 
-        $this->item->expects($this->any())
-            ->method('getBaseWeeeTaxAppliedAmount')
-            ->willReturn($weeeTax);
+        $this->item->setBaseWeeeTaxAppliedAmount($weeeTax);
 
-        $this->item->expects($this->once())
-            ->method('getBaseRowTotal')
-            ->willReturn($price);
+        $this->item->setBaseRowTotal($price);
 
-        $this->item->expects($this->once())
-            ->method('getQtyOrdered')
-            ->willReturn(1);
+        $this->item->setQtyOrdered(1);
 
         $this->weeeHelper->expects($this->any())
             ->method('typeOfDisplay')
@@ -360,13 +541,9 @@ class RendererTest extends TestCase
             ->method('isEnabled')
             ->willReturn($weeeEnabled);
 
-        $this->item->expects($this->any())
-            ->method('getWeeeTaxAppliedRowAmount')
-            ->willReturn($weeeTax);
+        $this->item->setWeeeTaxAppliedRowAmount($weeeTax);
 
-        $this->item->expects($this->once())
-            ->method('getRowTotal')
-            ->willReturn($price);
+        $this->item->setRowTotal($price);
 
         $this->weeeHelper->expects($this->any())
             ->method('typeOfDisplay')
@@ -395,13 +572,9 @@ class RendererTest extends TestCase
             ->method('isEnabled')
             ->willReturn($weeeEnabled);
 
-        $this->item->expects($this->any())
-            ->method('getBaseWeeeTaxAppliedRowAmnt')
-            ->willReturn($weeeTax);
+        $this->item->setBaseWeeeTaxAppliedRowAmnt($weeeTax);
 
-        $this->item->expects($this->once())
-            ->method('getBaseRowTotal')
-            ->willReturn($price);
+        $this->item->setBaseRowTotal($price);
 
         $this->weeeHelper->expects($this->any())
             ->method('typeOfDisplay')
@@ -435,9 +608,7 @@ class RendererTest extends TestCase
             ->with($this->item)
             ->willReturn($weeeTax);
 
-        $this->item->expects($this->once())
-            ->method('getRowTotalInclTax')
-            ->willReturn($price);
+        $this->item->setRowTotalInclTax($price);
 
         $this->weeeHelper->expects($this->any())
             ->method('typeOfDisplay')
@@ -471,9 +642,7 @@ class RendererTest extends TestCase
             ->with($this->item)
             ->willReturn($weeeTax);
 
-        $this->item->expects($this->once())
-            ->method('getBaseRowTotalInclTax')
-            ->willReturn($price);
+        $this->item->setBaseRowTotalInclTax($price);
 
         $this->weeeHelper->expects($this->any())
             ->method('typeOfDisplay')
@@ -543,9 +712,7 @@ class RendererTest extends TestCase
             ->with($this->item)
             ->willReturn($weeeTax);
 
-        $this->item->expects($this->once())
-            ->method('getPriceInclTax')
-            ->willReturn($rowTotal);
+        $this->item->setPriceInclTax($rowTotal);
 
         $this->assertEquals($expectedValue, $this->renderer->getFinalUnitDisplayPriceInclTax());
     }
@@ -572,9 +739,7 @@ class RendererTest extends TestCase
             ->with($this->item)
             ->willReturn($weeeTax);
 
-        $this->item->expects($this->once())
-            ->method('getBasePriceInclTax')
-            ->willReturn($rowTotal);
+        $this->item->setBasePriceInclTax($rowTotal);
 
         $this->assertEquals($expectedValue, $this->renderer->getBaseFinalUnitDisplayPriceInclTax());
     }
@@ -596,13 +761,9 @@ class RendererTest extends TestCase
             ->method('isEnabled')
             ->willReturn($weeeEnabled);
 
-        $this->item->expects($this->any())
-            ->method('getWeeeTaxAppliedAmount')
-            ->willReturn($weeeTax);
+        $this->item->setWeeeTaxAppliedAmount($weeeTax);
 
-        $this->item->expects($this->once())
-            ->method('getCalculationPrice')
-            ->willReturn($rowTotal);
+        $this->item->setCalculationPrice($rowTotal);
 
         $this->assertEquals($expectedValue, $this->renderer->getFinalUnitDisplayPriceExclTax());
     }
@@ -624,17 +785,11 @@ class RendererTest extends TestCase
             ->method('isEnabled')
             ->willReturn($weeeEnabled);
 
-        $this->item->expects($this->any())
-            ->method('getBaseWeeeTaxAppliedAmount')
-            ->willReturn($weeeTax);
+        $this->item->setBaseWeeeTaxAppliedAmount($weeeTax);
 
-        $this->item->expects($this->once())
-            ->method('getBaseRowTotal')
-            ->willReturn($rowTotal);
+        $this->item->setBaseRowTotal($rowTotal);
 
-        $this->item->expects($this->once())
-            ->method('getQtyOrdered')
-            ->willReturn(1);
+        $this->item->setQtyOrdered(1);
 
         $this->assertEquals($expectedValue, $this->renderer->getBaseFinalUnitDisplayPriceExclTax());
     }
@@ -656,13 +811,9 @@ class RendererTest extends TestCase
             ->method('isEnabled')
             ->willReturn($weeeEnabled);
 
-        $this->item->expects($this->any())
-            ->method('getWeeeTaxAppliedRowAmount')
-            ->willReturn($weeeTax);
+        $this->item->setWeeeTaxAppliedRowAmount($weeeTax);
 
-        $this->item->expects($this->once())
-            ->method('getRowTotal')
-            ->willReturn($rowTotal);
+        $this->item->setRowTotal($rowTotal);
 
         $this->assertEquals($expectedValue, $this->renderer->getFinalRowDisplayPriceExclTax());
     }
@@ -684,13 +835,9 @@ class RendererTest extends TestCase
             ->method('isEnabled')
             ->willReturn($weeeEnabled);
 
-        $this->item->expects($this->any())
-            ->method('getBaseWeeeTaxAppliedRowAmnt')
-            ->willReturn($weeeTax);
+        $this->item->setBaseWeeeTaxAppliedRowAmnt($weeeTax);
 
-        $this->item->expects($this->once())
-            ->method('getBaseRowTotal')
-            ->willReturn($rowTotal);
+        $this->item->setBaseRowTotal($rowTotal);
 
         $this->assertEquals($expectedValue, $this->renderer->getBaseFinalRowDisplayPriceExclTax());
     }
@@ -717,9 +864,7 @@ class RendererTest extends TestCase
             ->with($this->item)
             ->willReturn($weeeTax);
 
-        $this->item->expects($this->once())
-            ->method('getRowTotalInclTax')
-            ->willReturn($rowTotal);
+        $this->item->setRowTotalInclTax($rowTotal);
 
         $this->assertEquals($expectedValue, $this->renderer->getFinalRowDisplayPriceInclTax());
     }
@@ -746,9 +891,7 @@ class RendererTest extends TestCase
             ->with($this->item)
             ->willReturn($weeeTax);
 
-        $this->item->expects($this->once())
-            ->method('getBaseRowTotalInclTax')
-            ->willReturn($rowTotal);
+        $this->item->setBaseRowTotalInclTax($rowTotal);
 
         $this->assertEquals($expectedValue, $this->renderer->getBaseFinalRowDisplayPriceInclTax());
     }

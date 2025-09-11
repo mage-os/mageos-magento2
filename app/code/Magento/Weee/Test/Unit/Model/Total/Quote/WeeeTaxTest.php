@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -25,14 +25,15 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
  */
 class WeeeTaxTest extends TestCase
 {
     /**#@+
      * Constants for array keys
      */
-    const KEY_WEEE_TOTALS = 'weee_total_excl_tax';
-    const KEY_WEEE_BASE_TOTALS = 'weee_base_total_excl_tax';
+    public const KEY_WEEE_TOTALS = 'weee_total_excl_tax';
+    public const KEY_WEEE_BASE_TOTALS = 'weee_base_total_excl_tax';
     /**#@-*/
     /**
      * @var WeeeTax
@@ -45,7 +46,7 @@ class WeeeTaxTest extends TestCase
     protected $quoteMock;
 
     /**
-     * \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
+     * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
      */
     protected $objectManagerHelper;
 
@@ -115,6 +116,81 @@ class WeeeTaxTest extends TestCase
     }
 
     /**
+     * Create total mock with all required methods
+     *
+     * @return Total
+     */
+    private function createTotalMock(): Total
+    {
+        return new class extends Total {
+            /**
+             * @var array
+             */
+            private $weeeCodeToItemMap = [];
+            /**
+             * @var array
+             */
+            private $extraTaxableDetails = [];
+            /**
+             * @var float
+             */
+            private $weeeTotalExclTax = 0;
+            /**
+             * @var float
+             */
+            private $weeeBaseTotalExclTax = 0;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getWeeeCodeToItemMap()
+            {
+                return $this->weeeCodeToItemMap;
+            }
+            
+            public function setWeeeCodeToItemMap($map)
+            {
+                $this->weeeCodeToItemMap = $map;
+                return $this;
+            }
+            
+            public function getExtraTaxableDetails()
+            {
+                return $this->extraTaxableDetails;
+            }
+            
+            public function setExtraTaxableDetails($details)
+            {
+                $this->extraTaxableDetails = $details;
+                return $this;
+            }
+            
+            public function getWeeeTotalExclTax()
+            {
+                return $this->weeeTotalExclTax;
+            }
+            
+            public function setWeeeTotalExclTax($total)
+            {
+                $this->weeeTotalExclTax = $total;
+                return $this;
+            }
+            
+            public function getWeeeBaseTotalExclTax()
+            {
+                return $this->weeeBaseTotalExclTax;
+            }
+            
+            public function setWeeeBaseTotalExclTax($total)
+            {
+                $this->weeeBaseTotalExclTax = $total;
+                return $this;
+            }
+        };
+    }
+
+    /**
      * Setup address mock
      *
      * @param MockObject|Item $itemMock
@@ -125,12 +201,7 @@ class WeeeTaxTest extends TestCase
      */
     protected function setupTotalMock($itemMock, $isWeeeTaxable, $itemWeeeTaxDetails, $addressData)
     {
-        $totalMock = $this->getMockBuilder(Total::class)
-            ->addMethods(
-                ['getWeeeCodeToItemMap', 'getExtraTaxableDetails', 'getWeeeTotalExclTax', 'getWeeeBaseTotalExclTax']
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $totalMock = $this->createTotalMock();
 
         $map = [];
         $extraDetails = [];
@@ -170,16 +241,10 @@ class WeeeTaxTest extends TestCase
             }
         }
 
-        $totalMock->expects($this->any())->method('getWeeeCodeToItemMap')->willReturn($map);
-        $totalMock->expects($this->any())->method('getExtraTaxableDetails')->willReturn($extraDetails);
-        $totalMock
-            ->expects($this->any())
-            ->method('getWeeeTotalExclTax')
-            ->willReturn($weeeTotals);
-        $totalMock
-            ->expects($this->any())
-            ->method('getWeeeBaseTotalExclTax')
-            ->willReturn($weeeBaseTotals);
+        $totalMock->setWeeeCodeToItemMap($map);
+        $totalMock->setExtraTaxableDetails($extraDetails);
+        $totalMock->setWeeeTotalExclTax($weeeTotals);
+        $totalMock->setWeeeBaseTotalExclTax($weeeBaseTotals);
 
         return $totalMock;
     }

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -17,6 +17,12 @@ use Magento\Weee\Helper\Data;
 use Magento\Weee\Observer\GetPriceConfigurationObserver;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Unit Tests to cover GetPriceConfigurationObserver
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+ */
 class GetPriceConfigurationObserverTest extends TestCase
 {
     /**
@@ -61,19 +67,10 @@ class GetPriceConfigurationObserverTest extends TestCase
 
         $productInstance=$this->createMock(Simple::class);
 
-        $product = $this->getMockBuilder(Type::class)
-            ->addMethods(['getTypeInstance', 'getTypeId', 'getStoreId'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $product->expects($this->any())
-            ->method('getTypeInstance')
-            ->willReturn($productInstance);
-        $product->expects($this->any())
-            ->method('getTypeId')
-            ->willReturn('simple');
-        $product->expects($this->any())
-            ->method('getStoreId')
-            ->willReturn(null);
+        $product = $this->createProductMock();
+        $product->setTypeInstance($productInstance);
+        $product->setTypeId('simple');
+        $product->setStoreId(null);
 
         $registry=$this->createMock(Registry::class);
         $registry->expects($this->any())
@@ -236,5 +233,65 @@ class GetPriceConfigurationObserverTest extends TestCase
                 ],
             ],
         ];
+    }
+
+    /**
+     * Create a mock for Product Type
+     *
+     * @return Type
+     */
+    private function createProductMock(): Type
+    {
+        return new class extends Type {
+            /**
+             * @var mixed
+             */
+            private $typeInstance = null;
+            /**
+             * @var mixed
+             */
+            private $typeId = null;
+            /**
+             * @var mixed
+             */
+            private $storeId = null;
+
+            public function __construct()
+            {
+            }
+
+            public function getTypeInstance()
+            {
+                return $this->typeInstance;
+            }
+
+            public function setTypeInstance($instance)
+            {
+                $this->typeInstance = $instance;
+                return $this;
+            }
+
+            public function getTypeId()
+            {
+                return $this->typeId;
+            }
+
+            public function setTypeId($id)
+            {
+                $this->typeId = $id;
+                return $this;
+            }
+
+            public function getStoreId()
+            {
+                return $this->storeId;
+            }
+
+            public function setStoreId($id)
+            {
+                $this->storeId = $id;
+                return $this;
+            }
+        };
     }
 }

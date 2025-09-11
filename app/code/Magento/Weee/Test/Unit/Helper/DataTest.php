@@ -13,7 +13,6 @@ use Magento\Catalog\Model\Product\Type\Simple;
 use Magento\Framework\DataObject;
 use Magento\Framework\Registry;
 use Magento\Framework\Serialize\Serializer\Json;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Quote\Model\Quote\Item as QuoteItem;
 use Magento\Sales\Model\Order\Item;
 use Magento\Store\Model\Store;
@@ -27,6 +26,8 @@ use PHPUnit\Framework\TestCase;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
  */
 class DataTest extends TestCase
 {
@@ -80,17 +81,17 @@ class DataTest extends TestCase
             ['getPriceDisplayType', 'priceIncludesTax']
         );
 
-        $this->serializerMock = $this->getMockBuilder(Json::class)
-            ->getMock();
+        $this->serializerMock = $this->createMock(Json::class);
 
-        $arguments = [
-            'weeeConfig' => $weeeConfig,
-            'weeeTax' => $this->weeeTax,
-            'taxData' => $this->taxData,
-            'serializer' => $this->serializerMock
-        ];
-        $helper = new ObjectManager($this);
-        $this->helperData = $helper->getObject(WeeeHelper::class, $arguments);
+        $this->helperData = new WeeeHelper(
+            $this->createMock(\Magento\Framework\App\Helper\Context::class),
+            $this->createMock(\Magento\Store\Model\StoreManagerInterface::class),
+            $this->weeeTax,
+            $weeeConfig,
+            $this->taxData,
+            $this->createMock(Registry::class),
+            $this->serializerMock
+        );
     }
 
     /**
@@ -109,10 +110,7 @@ class DataTest extends TestCase
      */
     private function setupOrderItem(): Item
     {
-        $orderItem = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['__wakeup'])
-            ->getMock();
+        $orderItem = $this->createPartialMock(Item::class, ['__wakeup']);
 
         $weeeTaxApplied = [
             [
@@ -291,13 +289,7 @@ class DataTest extends TestCase
             ->method('priceIncludesTax')
             ->willReturn($priceIncludesTax);
 
-        $productSimple = $this->getMockBuilder(Simple::class)
-            ->addMethods(['getId'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $productSimple
-            ->method('getId')
-            ->willReturnOnConsecutiveCalls($prodId1, $prodId2);
+        $productSimple = $this->createProductSimpleMock($prodId1, $prodId2);
 
         $productInstance = $this->createMock(Type::class);
         $productInstance
@@ -354,17 +346,44 @@ class DataTest extends TestCase
     public function testGetAppliedSimple(): void
     {
         $testArray = ['key' => 'value'];
-        $itemProductSimple = $this->getMockBuilder(QuoteItem::class)
-            ->addMethods(['getWeeeTaxApplied', 'getHasChildren'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $itemProductSimple
-            ->method('getHasChildren')
-            ->willReturn(false);
+        $itemProductSimple = new class extends QuoteItem {
+            /**
+             * @var mixed
+             */
+            private $weeeTaxApplied = null;
+            /**
+             * @var mixed
+             */
+            private $hasChildren = null;
 
-        $itemProductSimple
-            ->method('getWeeeTaxApplied')
-            ->willReturn(json_encode($testArray));
+            public function __construct()
+            {
+            }
+
+            public function getWeeeTaxApplied()
+            {
+                return $this->weeeTaxApplied;
+            }
+
+            public function setWeeeTaxApplied($value)
+            {
+                $this->weeeTaxApplied = $value;
+                return $this;
+            }
+
+            public function getHasChildren()
+            {
+                return $this->hasChildren;
+            }
+
+            public function setHasChildren($value)
+            {
+                $this->hasChildren = $value;
+                return $this;
+            }
+        };
+        $itemProductSimple->setHasChildren(false);
+        $itemProductSimple->setWeeeTaxApplied(json_encode($testArray));
 
         $this->serializerMock
             ->method('unserialize')
@@ -383,34 +402,15 @@ class DataTest extends TestCase
 
         $testArray = array_merge($testArray1, $testArray2);
 
-        $itemProductSimple1 = $this->getMockBuilder(QuoteItem::class)
-            ->addMethods(['getWeeeTaxApplied'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $itemProductSimple2 = $this->getMockBuilder(QuoteItem::class)
-            ->addMethods(['getWeeeTaxApplied'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $itemProductSimple1 = $this->createQuoteItemMock();
+        $itemProductSimple2 = $this->createQuoteItemMock();
 
-        $itemProductSimple1
-            ->method('getWeeeTaxApplied')
-            ->willReturn(json_encode($testArray1));
+        $itemProductSimple1->setWeeeTaxApplied(json_encode($testArray1));
+        $itemProductSimple2->setWeeeTaxApplied(json_encode($testArray2));
 
-        $itemProductSimple2
-            ->method('getWeeeTaxApplied')
-            ->willReturn(json_encode($testArray2));
-
-        $itemProductBundle = $this->getMockBuilder(QuoteItem::class)
-            ->addMethods(['getHasChildren'])
-            ->onlyMethods(['getChildren'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $itemProductBundle
-            ->method('getHasChildren')
-            ->willReturn(true);
-        $itemProductBundle
-            ->method('getChildren')
-            ->willReturn([$itemProductSimple1, $itemProductSimple2]);
+        $itemProductBundle = $this->createBundleQuoteItemMock();
+        $itemProductBundle->setHasChildren(true);
+        $itemProductBundle->setChildren([$itemProductSimple1, $itemProductSimple2]);
 
         $this->serializerMock
             ->method('unserialize')
@@ -427,20 +427,60 @@ class DataTest extends TestCase
         $testAmountUnit = 2;
         $testAmountRow = 34;
 
-        $itemProductSimple = $this->getMockBuilder(QuoteItem::class)
-            ->addMethods(['getHasChildren', 'getWeeeTaxAppliedAmount', 'getWeeeTaxAppliedRowAmount'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $itemProductSimple
-            ->method('getHasChildren')
-            ->willReturn(false);
+        $itemProductSimple = new class extends QuoteItem {
+            /**
+             * @var mixed
+             */
+            private $hasChildren = null;
+            /**
+             * @var mixed
+             */
+            private $weeeTaxAppliedAmount = null;
+            /**
+             * @var mixed
+             */
+            private $weeeTaxAppliedRowAmount = null;
 
-        $itemProductSimple
-            ->method('getWeeeTaxAppliedAmount')
-            ->willReturn($testAmountUnit);
-        $itemProductSimple
-            ->method('getWeeeTaxAppliedRowAmount')
-            ->willReturn($testAmountRow);
+            public function __construct()
+            {
+            }
+
+            public function getHasChildren()
+            {
+                return $this->hasChildren;
+            }
+
+            public function setHasChildren($value)
+            {
+                $this->hasChildren = $value;
+                return $this;
+            }
+
+            public function getWeeeTaxAppliedAmount()
+            {
+                return $this->weeeTaxAppliedAmount;
+            }
+
+            public function setWeeeTaxAppliedAmount($value)
+            {
+                $this->weeeTaxAppliedAmount = $value;
+                return $this;
+            }
+
+            public function getWeeeTaxAppliedRowAmount()
+            {
+                return $this->weeeTaxAppliedRowAmount;
+            }
+
+            public function setWeeeTaxAppliedRowAmount($value)
+            {
+                $this->weeeTaxAppliedRowAmount = $value;
+                return $this;
+            }
+        };
+        $itemProductSimple->setHasChildren(false);
+        $itemProductSimple->setWeeeTaxAppliedAmount($testAmountUnit);
+        $itemProductSimple->setWeeeTaxAppliedRowAmount($testAmountRow);
 
         $this->assertEquals($testAmountUnit, $this->helperData->getWeeeTaxAppliedAmount($itemProductSimple));
         $this->assertEquals($testAmountRow, $this->helperData->getWeeeTaxAppliedRowAmount($itemProductSimple));
@@ -459,40 +499,53 @@ class DataTest extends TestCase
         $testAmountRow2 = 444;
         $testTotalRow = $testAmountRow1 + $testAmountRow2;
 
-        $itemProductSimple1 = $this->getMockBuilder(QuoteItem::class)
-            ->addMethods(['getWeeeTaxAppliedAmount', 'getWeeeTaxAppliedRowAmount'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $itemProductSimple2 = $this->getMockBuilder(QuoteItem::class)
-            ->addMethods(['getWeeeTaxAppliedAmount', 'getWeeeTaxAppliedRowAmount'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $itemProductSimple1 = $this->createQuoteItemWithAmountsMock();
+        $itemProductSimple2 = $this->createQuoteItemWithAmountsMock();
 
-        $itemProductSimple1
-            ->method('getWeeeTaxAppliedAmount')
-            ->willReturn($testAmountUnit1);
-        $itemProductSimple1
-            ->method('getWeeeTaxAppliedRowAmount')
-            ->willReturn($testAmountRow1);
+        $itemProductSimple1->setWeeeTaxAppliedAmount($testAmountUnit1);
+        $itemProductSimple1->setWeeeTaxAppliedRowAmount($testAmountRow1);
 
-        $itemProductSimple2
-            ->method('getWeeeTaxAppliedAmount')
-            ->willReturn($testAmountUnit2);
-        $itemProductSimple2
-            ->method('getWeeeTaxAppliedRowAmount')
-            ->willReturn($testAmountRow2);
+        $itemProductSimple2->setWeeeTaxAppliedAmount($testAmountUnit2);
+        $itemProductSimple2->setWeeeTaxAppliedRowAmount($testAmountRow2);
 
-        $itemProductBundle = $this->getMockBuilder(QuoteItem::class)
-            ->addMethods(['getHasChildren'])
-            ->onlyMethods(['getChildren'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $itemProductBundle
-            ->method('getHasChildren')
-            ->willReturn(true);
-        $itemProductBundle
-            ->method('getChildren')
-            ->willReturn([$itemProductSimple1, $itemProductSimple2]);
+        $itemProductBundle = new class extends QuoteItem {
+            /**
+             * @var mixed
+             */
+            private $hasChildren = null;
+            /**
+             * @var mixed
+             */
+            private $children = null;
+
+            public function __construct()
+            {
+            }
+
+            public function getHasChildren()
+            {
+                return $this->hasChildren;
+            }
+
+            public function setHasChildren($value)
+            {
+                $this->hasChildren = $value;
+                return $this;
+            }
+
+            public function getChildren()
+            {
+                return $this->children;
+            }
+
+            public function setChildren($value)
+            {
+                $this->children = $value;
+                return $this;
+            }
+        };
+        $itemProductBundle->setHasChildren(true);
+        $itemProductBundle->setChildren([$itemProductSimple1, $itemProductSimple2]);
 
         $this->assertEquals($testTotalUnit, $this->helperData->getWeeeTaxAppliedAmount($itemProductBundle));
         $this->assertEquals($testTotalRow, $this->helperData->getWeeeTaxAppliedRowAmount($itemProductBundle));
@@ -520,11 +573,15 @@ class DataTest extends TestCase
         $expected = 1;
         $taxData = $this->createPartialMock(Data::class, ['getPriceDisplayType']);
         $taxData->method('getPriceDisplayType')->willReturn($expected);
-        $arguments = [
-            'taxData' => $taxData,
-        ];
-        $helper = new ObjectManager($this);
-        $helperData = $helper->getObject(WeeeHelper::class, $arguments);
+        $helperData = new WeeeHelper(
+            $this->createMock(\Magento\Framework\App\Helper\Context::class),
+            $this->createMock(\Magento\Store\Model\StoreManagerInterface::class),
+            $this->createMock(Tax::class),
+            $this->createMock(Config::class),
+            $taxData,
+            $this->createMock(Registry::class),
+            $this->serializerMock
+        );
 
         $this->assertEquals($expected, $helperData->getTaxDisplayConfig());
     }
@@ -537,22 +594,12 @@ class DataTest extends TestCase
         $item1Weee = 5;
         $item2Weee = 7;
         $expected = $item1Weee + $item2Weee;
-        $itemProductSimple1 = $this->getMockBuilder(QuoteItem::class)
-            ->addMethods(['getWeeeTaxAppliedRowAmount'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $itemProductSimple2 = $this->getMockBuilder(QuoteItem::class)
-            ->addMethods(['getWeeeTaxAppliedRowAmount'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $itemProductSimple1 = $this->createQuoteItemWithRowAmountMock();
+        $itemProductSimple2 = $this->createQuoteItemWithRowAmountMock();
         $items = [$itemProductSimple1, $itemProductSimple2];
 
-        $itemProductSimple1
-            ->method('getWeeeTaxAppliedRowAmount')
-            ->willReturn($item1Weee);
-        $itemProductSimple2
-            ->method('getWeeeTaxAppliedRowAmount')
-            ->willReturn($item2Weee);
+        $itemProductSimple1->setWeeeTaxAppliedRowAmount($item1Weee);
+        $itemProductSimple2->setWeeeTaxAppliedRowAmount($item2Weee);
 
         $this->assertEquals($expected, $this->helperData->getTotalAmounts($items));
     }
@@ -565,23 +612,232 @@ class DataTest extends TestCase
         $item1BaseWeee = 4;
         $item2BaseWeee = 3;
         $expected = $item1BaseWeee + $item2BaseWeee;
-        $itemProductSimple1 = $this->getMockBuilder(QuoteItem::class)
-            ->addMethods(['getBaseWeeeTaxAppliedRowAmnt'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $itemProductSimple2 = $this->getMockBuilder(QuoteItem::class)
-            ->addMethods(['getBaseWeeeTaxAppliedRowAmnt'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $itemProductSimple1 = $this->createQuoteItemWithBaseRowAmountMock();
+        $itemProductSimple2 = $this->createQuoteItemWithBaseRowAmountMock();
         $items = [$itemProductSimple1, $itemProductSimple2];
 
-        $itemProductSimple1
-            ->method('getBaseWeeeTaxAppliedRowAmnt')
-            ->willReturn($item1BaseWeee);
-        $itemProductSimple2
-            ->method('getBaseWeeeTaxAppliedRowAmnt')
-            ->willReturn($item2BaseWeee);
+        $itemProductSimple1->setBaseWeeeTaxAppliedRowAmnt($item1BaseWeee);
+        $itemProductSimple2->setBaseWeeeTaxAppliedRowAmnt($item2BaseWeee);
 
         $this->assertEquals($expected, $this->helperData->getBaseTotalAmounts($items));
+    }
+
+    /**
+     * Create a mock for Product Simple with ID tracking
+     *
+     * @param int $prodId1
+     * @param int $prodId2
+     * @return Simple
+     */
+    private function createProductSimpleMock(int $prodId1, int $prodId2): Simple
+    {
+        return new class($prodId1, $prodId2) extends Simple {
+            /**
+             * @var array
+             */
+            private $ids = [];
+            /**
+             * @var int
+             */
+            private $callCount = 0;
+
+            public function __construct(int $prodId1, int $prodId2)
+            {
+                $this->ids = [$prodId1, $prodId2];
+            }
+
+            public function getId()
+            {
+                $id = $this->ids[$this->callCount] ?? null;
+                $this->callCount++;
+                return $id;
+            }
+
+            public function setId($id)
+            {
+                $this->ids[] = $id;
+                return $this;
+            }
+        };
+    }
+
+    /**
+     * Create a mock for QuoteItem with weeeTaxApplied
+     *
+     * @return QuoteItem
+     */
+    private function createQuoteItemMock(): QuoteItem
+    {
+        return new class extends QuoteItem {
+            /**
+             * @var mixed
+             */
+            private $weeeTaxApplied = null;
+
+            public function __construct()
+            {
+            }
+
+            public function getWeeeTaxApplied()
+            {
+                return $this->weeeTaxApplied;
+            }
+
+            public function setWeeeTaxApplied($value)
+            {
+                $this->weeeTaxApplied = $value;
+                return $this;
+            }
+        };
+    }
+
+    /**
+     * Create a mock for Bundle QuoteItem with children
+     *
+     * @return QuoteItem
+     */
+    private function createBundleQuoteItemMock(): QuoteItem
+    {
+        return new class extends QuoteItem {
+            /**
+             * @var mixed
+             */
+            private $hasChildren = null;
+            /**
+             * @var mixed
+             */
+            private $children = null;
+
+            public function __construct()
+            {
+            }
+
+            public function getHasChildren()
+            {
+                return $this->hasChildren;
+            }
+
+            public function setHasChildren($value)
+            {
+                $this->hasChildren = $value;
+                return $this;
+            }
+
+            public function getChildren()
+            {
+                return $this->children;
+            }
+
+            public function setChildren($value)
+            {
+                $this->children = $value;
+                return $this;
+            }
+        };
+    }
+
+    /**
+     * Create a mock for QuoteItem with weee amounts
+     *
+     * @return QuoteItem
+     */
+    private function createQuoteItemWithAmountsMock(): QuoteItem
+    {
+        return new class extends QuoteItem {
+            /**
+             * @var mixed
+             */
+            private $weeeTaxAppliedAmount = null;
+            /**
+             * @var mixed
+             */
+            private $weeeTaxAppliedRowAmount = null;
+
+            public function __construct()
+            {
+            }
+
+            public function getWeeeTaxAppliedAmount()
+            {
+                return $this->weeeTaxAppliedAmount;
+            }
+
+            public function setWeeeTaxAppliedAmount($value)
+            {
+                $this->weeeTaxAppliedAmount = $value;
+                return $this;
+            }
+
+            public function getWeeeTaxAppliedRowAmount()
+            {
+                return $this->weeeTaxAppliedRowAmount;
+            }
+
+            public function setWeeeTaxAppliedRowAmount($value)
+            {
+                $this->weeeTaxAppliedRowAmount = $value;
+                return $this;
+            }
+        };
+    }
+
+    /**
+     * Create a mock for QuoteItem with row amount
+     *
+     * @return QuoteItem
+     */
+    private function createQuoteItemWithRowAmountMock(): QuoteItem
+    {
+        return new class extends QuoteItem {
+            /**
+             * @var mixed
+             */
+            private $weeeTaxAppliedRowAmount = null;
+
+            public function __construct()
+            {
+            }
+
+            public function getWeeeTaxAppliedRowAmount()
+            {
+                return $this->weeeTaxAppliedRowAmount;
+            }
+
+            public function setWeeeTaxAppliedRowAmount($value)
+            {
+                $this->weeeTaxAppliedRowAmount = $value;
+                return $this;
+            }
+        };
+    }
+
+    /**
+     * Create a mock for QuoteItem with base row amount
+     *
+     * @return QuoteItem
+     */
+    private function createQuoteItemWithBaseRowAmountMock(): QuoteItem
+    {
+        return new class extends QuoteItem {
+            /**
+             * @var mixed
+             */
+            private $baseWeeeTaxAppliedRowAmnt = null;
+
+            public function __construct()
+            {
+            }
+
+            public function getBaseWeeeTaxAppliedRowAmnt()
+            {
+                return $this->baseWeeeTaxAppliedRowAmnt;
+            }
+
+            public function setBaseWeeeTaxAppliedRowAmnt($value)
+            {
+                $this->baseWeeeTaxAppliedRowAmnt = $value;
+                return $this;
+            }
+        };
     }
 }

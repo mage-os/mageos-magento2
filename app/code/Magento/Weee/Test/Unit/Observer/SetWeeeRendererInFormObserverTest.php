@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -16,6 +16,12 @@ use Magento\Weee\Observer\SetWeeeRendererInFormObserver;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Unit Tests to cover SetWeeeRendererInFormObserver
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+ */
 class SetWeeeRendererInFormObserverTest extends TestCase
 {
     /**
@@ -57,19 +63,34 @@ class SetWeeeRendererInFormObserverTest extends TestCase
     {
         $attributes = new \ArrayIterator(['element_code_1', 'element_code_2']);
         /** @var Event|MockObject $eventMock */
-        $eventMock = $this->getMockBuilder(Event::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getForm'])
-            ->getMock();
+        $eventMock = new class extends Event {
+            /**
+             * @var mixed
+             */
+            private $form = null;
+
+            public function __construct()
+            {
+            }
+
+            public function getForm()
+            {
+                return $this->form;
+            }
+
+            public function setForm($form)
+            {
+                $this->form = $form;
+                return $this;
+            }
+        };
 
         /** @var Observer|MockObject $observerMock */
         $observerMock = $this->createMock(Observer::class);
         /** @var Form|MockObject $formMock */
         $formMock = $this->createMock(Form::class);
 
-        $eventMock->expects($this->once())
-            ->method('getForm')
-            ->willReturn($formMock);
+        $eventMock->setForm($formMock);
         $observerMock->expects($this->once())
             ->method('getEvent')
             ->willReturn($eventMock);

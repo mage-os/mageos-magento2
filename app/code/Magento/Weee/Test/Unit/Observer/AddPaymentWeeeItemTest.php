@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -20,6 +20,12 @@ use Magento\Weee\Observer\AddPaymentWeeeItem;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Unit Tests to cover AddPaymentWeeeItem
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+ */
 class AddPaymentWeeeItemTest extends TestCase
 {
     /**
@@ -66,17 +72,51 @@ class AddPaymentWeeeItemTest extends TestCase
         /** @var Observer|MockObject $observerMock */
         $observerMock = $this->createMock(Observer::class);
         $cartModelMock = $this->createMock(Cart::class);
-        $salesModelMock = $this->getMockForAbstractClass(SalesModelInterface::class);
-        $itemMock = $this->getMockBuilder(Item::class)
-            ->addMethods(['getOriginalItem'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $salesModelMock = $this->createMock(SalesModelInterface::class);
+        $itemMock = new class extends Item {
+            /**
+             * @var mixed
+             */
+            private $originalItem = null;
+
+            public function __construct()
+            {
+            }
+
+            public function getOriginalItem()
+            {
+                return $this->originalItem;
+            }
+
+            public function setOriginalItem($item)
+            {
+                $this->originalItem = $item;
+                return $this;
+            }
+        };
         $originalItemMock = $this->createPartialMock(Item::class, ['getParentItem']);
         $parentItemMock = $this->createMock(Item::class);
-        $eventMock = $this->getMockBuilder(Event::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getCart'])
-            ->getMock();
+        $eventMock = new class extends Event {
+            /**
+             * @var mixed
+             */
+            private $cart = null;
+
+            public function __construct()
+            {
+            }
+
+            public function getCart()
+            {
+                return $this->cart;
+            }
+
+            public function setCart($cart)
+            {
+                $this->cart = $cart;
+                return $this;
+            }
+        };
 
         $asCustomItem = $this->prepareShouldBeAddedAsCustomItem($isEnabled, $includeInSubtotal);
         $toBeCalled = 1;
@@ -84,15 +124,11 @@ class AddPaymentWeeeItemTest extends TestCase
             $toBeCalled = 0;
         }
 
-        $eventMock->expects($this->exactly($toBeCalled))
-            ->method('getCart')
-            ->willReturn($cartModelMock);
+        $eventMock->setCart($cartModelMock);
         $observerMock->expects($this->exactly($toBeCalled))
             ->method('getEvent')
             ->willReturn($eventMock);
-        $itemMock->expects($this->exactly($toBeCalled))
-            ->method('getOriginalItem')
-            ->willReturn($originalItemMock);
+        $itemMock->setOriginalItem($originalItemMock);
         $originalItemMock->expects($this->exactly($toBeCalled))
             ->method('getParentItem')
             ->willReturn($parentItemMock);

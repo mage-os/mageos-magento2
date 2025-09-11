@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 
 declare(strict_types=1);
@@ -19,13 +19,16 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Unit test for Magento\Weee\Observer\UpdateElementTypesObserver
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
  */
 class UpdateElementTypesObserverTest extends TestCase
 {
     /*
      * Stub response type
      */
-    const STUB_RESPONSE_TYPE = [];
+    public const STUB_RESPONSE_TYPE = [];
 
     /**
      * Testable Object
@@ -62,15 +65,49 @@ class UpdateElementTypesObserverTest extends TestCase
         $this->objectManager = new ObjectManager($this);
         $this->observerMock = $this->createMock(Observer::class);
 
-        $this->eventMock = $this->getMockBuilder(Event::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getResponse'])
-            ->getMock();
+        $this->eventMock = new class extends Event {
+            /**
+             * @var mixed
+             */
+            private $response = null;
 
-        $this->responseMock = $this->getMockBuilder(DataObject::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getTypes', 'setTypes'])
-            ->getMock();
+            public function __construct()
+            {
+            }
+
+            public function getResponse()
+            {
+                return $this->response;
+            }
+
+            public function setResponse($response)
+            {
+                $this->response = $response;
+                return $this;
+            }
+        };
+
+        $this->responseMock = new class extends DataObject {
+            /**
+             * @var mixed
+             */
+            private $types = null;
+
+            public function __construct()
+            {
+            }
+
+            public function getTypes()
+            {
+                return $this->types;
+            }
+
+            public function setTypes($types)
+            {
+                $this->types = $types;
+                return $this;
+            }
+        };
 
         $this->observer = $this->objectManager->getObject(UpdateElementTypesObserver::class);
     }
@@ -85,21 +122,12 @@ class UpdateElementTypesObserverTest extends TestCase
             ->method('getEvent')
             ->willReturn($this->eventMock);
 
-        $this->eventMock
-            ->expects($this->once())
-            ->method('getResponse')
-            ->willReturn($this->responseMock);
+        $this->eventMock->setResponse($this->responseMock);
 
-        $this->responseMock
-            ->expects($this->once())
-            ->method('getTypes')
-            ->willReturn(self::STUB_RESPONSE_TYPE);
-
-        $this->responseMock
-            ->expects($this->once())
-            ->method('setTypes')
-            ->with(['weee' => Tax::class]);
+        $this->responseMock->setTypes(self::STUB_RESPONSE_TYPE);
 
         $this->observer->execute($this->observerMock);
+
+        $this->assertEquals(['weee' => Tax::class], $this->responseMock->getTypes());
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -18,6 +18,13 @@ use Magento\Weee\Model\Tax as WeeeDisplayConfig;
 use Magento\Weee\Observer\UpdateProductOptionsObserver;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Unit Tests to cover UpdateProductOptionsObserver
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ */
 class UpdateProductOptionsObserverTest extends TestCase
 {
     /**
@@ -54,53 +61,67 @@ class UpdateProductOptionsObserverTest extends TestCase
         );
 
         $weeeHelper=$this->createMock(Data::class);
-        $weeeHelper->expects($this->any())
-            ->method('isEnabled')
-            ->willReturn($weeeEnabled);
-        $weeeHelper->expects($this->any())
-            ->method('isDisplayIncl')
+        $weeeHelper->method('isEnabled')->willReturn($weeeEnabled);
+        $weeeHelper->method('isDisplayIncl')
             ->willReturn($weeeDisplay == WeeeDisplayConfig::DISPLAY_INCL);
-        $weeeHelper->expects($this->any())
-            ->method('isDisplayExclDescIncl')
+        $weeeHelper->method('isDisplayExclDescIncl')
             ->willReturn($weeeDisplay == WeeeDisplayConfig::DISPLAY_EXCL_DESCR_INCL);
-        $weeeHelper->expects($this->any())
-            ->method('isDisplayExcl')
+        $weeeHelper->method('isDisplayExcl')
             ->willReturn($weeeDisplay == WeeeDisplayConfig::DISPLAY_EXCL);
-        $weeeHelper->expects($this->any())
-            ->method('getWeeeAttributesForBundle')
+        $weeeHelper->method('getWeeeAttributesForBundle')
             ->willReturn([['fpt1' => $weeeObject1], ['fpt1'=>$weeeObject1, 'fpt2'=>$weeeObject2]]);
 
         $taxHelper=$this->createMock(\Magento\Tax\Helper\Data::class);
-        $taxHelper->expects($this->any())
-            ->method('displayPriceExcludingTax')
+        $taxHelper->method('displayPriceExcludingTax')
             ->willReturn($priceDisplay == TaxConfig::DISPLAY_TYPE_EXCLUDING_TAX);
-        $taxHelper->expects($this->any())
-            ->method('priceIncludesTax')
-            ->willReturn(true);
+        $taxHelper->method('priceIncludesTax')->willReturn(true);
 
-        $responseObject=$this->getMockBuilder(Observer::class)
-            ->addMethods(['getResponseObject'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $responseObject->expects($this->any())
-            ->method('getResponseObject')
-            ->willReturn($configObj);
+        $responseObject = $this->createResponseObjectMock();
+        $responseObject->setResponseObject($configObj);
 
         $observerObject=$this->createPartialMock(Observer::class, ['getEvent']);
         $observerObject->expects($this->any())
             ->method('getEvent')
             ->willReturn($responseObject);
 
-        $product = $this->getMockBuilder(Type::class)
-            ->addMethods(['getTypeId', 'getStoreId'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $product->expects($this->any())
-            ->method('getStoreId')
-            ->willReturn(1);
-        $product->expects($this->any())
-            ->method('getTypeId')
-            ->willReturn('bundle');
+        $product = new class extends Type {
+            /**
+             * @var mixed
+             */
+            private $typeId = null;
+            /**
+             * @var mixed
+             */
+            private $storeId = null;
+
+            public function __construct()
+            {
+            }
+
+            public function getTypeId()
+            {
+                return $this->typeId;
+            }
+
+            public function setTypeId($id)
+            {
+                $this->typeId = $id;
+                return $this;
+            }
+
+            public function getStoreId()
+            {
+                return $this->storeId;
+            }
+
+            public function setStoreId($id)
+            {
+                $this->storeId = $id;
+                return $this;
+            }
+        };
+        $product->setStoreId(1);
+        $product->setTypeId('bundle');
 
         $registry=$this->createMock(Registry::class);
         $registry->expects($this->any())
@@ -227,5 +248,35 @@ class UpdateProductOptionsObserverTest extends TestCase
                 ],
             ],
         ];
+    }
+
+    /**
+     * Create a mock for Response Object
+     *
+     * @return Observer
+     */
+    private function createResponseObjectMock(): Observer
+    {
+        return new class extends Observer {
+            /**
+             * @var mixed
+             */
+            private $responseObject = null;
+
+            public function __construct()
+            {
+            }
+
+            public function getResponseObject()
+            {
+                return $this->responseObject;
+            }
+
+            public function setResponseObject($object)
+            {
+                $this->responseObject = $object;
+                return $this;
+            }
+        };
     }
 }

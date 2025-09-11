@@ -28,6 +28,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  */
 class WeeeTest extends TestCase
 {
@@ -122,6 +124,141 @@ class WeeeTest extends TestCase
     }
 
     /**
+     * Create item mock with all required methods
+     *
+     * @return Item
+     */
+    private function createItemMock(): Item
+    {
+        return new class extends Item {
+            /**
+             * @var bool
+             */
+            private $hasChildren = false;
+            /**
+             * @var mixed
+             */
+            private $product = null;
+            /**
+             * @var mixed
+             */
+            private $quote = null;
+            /**
+             * @var mixed
+             */
+            private $address = null;
+            /**
+             * @var int
+             */
+            private $totalQty = 0;
+            /**
+             * @var mixed
+             */
+            private $parentItem = null;
+            /**
+             * @var array
+             */
+            private $children = [];
+            /**
+             * @var bool
+             */
+            private $isChildrenCalculated = false;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getHasChildren()
+            {
+                return $this->hasChildren;
+            }
+            
+            public function setHasChildren($hasChildren)
+            {
+                $this->hasChildren = $hasChildren;
+                return $this;
+            }
+            
+            public function getProduct()
+            {
+                return $this->product;
+            }
+            
+            public function setProduct($product)
+            {
+                $this->product = $product;
+                return $this;
+            }
+            
+            public function getQuote()
+            {
+                return $this->quote;
+            }
+            
+            public function setQuote($quote)
+            {
+                $this->quote = $quote;
+                return $this;
+            }
+            
+            public function getAddress()
+            {
+                return $this->address;
+            }
+            
+            public function setAddress($address)
+            {
+                $this->address = $address;
+                return $this;
+            }
+            
+            public function getTotalQty()
+            {
+                return $this->totalQty;
+            }
+            
+            public function setTotalQty($totalQty)
+            {
+                $this->totalQty = $totalQty;
+                return $this;
+            }
+            
+            public function getParentItem()
+            {
+                return $this->parentItem;
+            }
+            
+            public function setParentItem($parentItem)
+            {
+                $this->parentItem = $parentItem;
+                return $this;
+            }
+            
+            public function getChildren()
+            {
+                return $this->children;
+            }
+            
+            public function setChildren($children)
+            {
+                $this->children = $children;
+                return $this;
+            }
+            
+            public function isChildrenCalculated()
+            {
+                return $this->isChildrenCalculated;
+            }
+            
+            public function setIsChildrenCalculated($isChildrenCalculated)
+            {
+                $this->isChildrenCalculated = $isChildrenCalculated;
+                return $this;
+            }
+        };
+    }
+
+    /**
      * Setup the basics of an item mock.
      *
      * @param float $itemTotalQty
@@ -130,25 +267,11 @@ class WeeeTest extends TestCase
      */
     protected function setupItemMockBasics($itemTotalQty): Item
     {
-        $itemMock = $this->getMockBuilder(Item::class)
-            ->addMethods(['getHasChildren'])
-            ->onlyMethods(
-                [
-                    'getProduct',
-                    'getQuote',
-                    'getAddress',
-                    'getTotalQty',
-                    'getParentItem',
-                    'getChildren',
-                    'isChildrenCalculated'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $itemMock = $this->createItemMock();
 
         $productMock = $this->createMock(Product::class);
-        $itemMock->expects($this->any())->method('getProduct')->willReturn($productMock);
-        $itemMock->expects($this->any())->method('getTotalQty')->willReturn($itemTotalQty);
+        $itemMock->setProduct($productMock);
+        $itemMock->setTotalQty($itemTotalQty);
 
         return $itemMock;
     }
@@ -164,10 +287,10 @@ class WeeeTest extends TestCase
     {
         $itemMock = $this->setupItemMockBasics($itemQty);
 
-        $itemMock->expects($this->any())->method('getParentItem')->willReturn(false);
-        $itemMock->expects($this->any())->method('getHasChildren')->willReturn(false);
-        $itemMock->expects($this->any())->method('getChildren')->willReturn([]);
-        $itemMock->expects($this->any())->method('isChildrenCalculated')->willReturn(false);
+        $itemMock->setParentItem(false);
+        $itemMock->setHasChildren(false);
+        $itemMock->setChildren([]);
+        $itemMock->setIsChildrenCalculated(false);
 
         return $itemMock;
     }
@@ -187,15 +310,15 @@ class WeeeTest extends TestCase
         $parentItemMock = $this->setupItemMockBasics($parentQty);
 
         $childItemMock = $this->setupItemMockBasics($parentQty * $itemQty);
-        $childItemMock->expects($this->any())->method('getParentItem')->willReturn($parentItemMock);
-        $childItemMock->expects($this->any())->method('getHasChildren')->willReturn(false);
-        $childItemMock->expects($this->any())->method('getChildren')->willReturn([]);
-        $childItemMock->expects($this->any())->method('isChildrenCalculated')->willReturn(false);
+        $childItemMock->setParentItem($parentItemMock);
+        $childItemMock->setHasChildren(false);
+        $childItemMock->setChildren([]);
+        $childItemMock->setIsChildrenCalculated(false);
 
-        $parentItemMock->expects($this->any())->method('getParentItem')->willReturn(false);
-        $parentItemMock->expects($this->any())->method('getHasChildren')->willReturn(true);
-        $parentItemMock->expects($this->any())->method('getChildren')->willReturn([$childItemMock]);
-        $parentItemMock->expects($this->any())->method('isChildrenCalculated')->willReturn(true);
+        $parentItemMock->setParentItem(false);
+        $parentItemMock->setHasChildren(true);
+        $parentItemMock->setChildren([$childItemMock]);
+        $parentItemMock->setIsChildrenCalculated(true);
 
         $items[] = $parentItemMock;
         $items[] = $childItemMock;

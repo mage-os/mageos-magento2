@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -24,6 +24,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
  */
 class AdjustmentTest extends TestCase
 {
@@ -38,7 +39,7 @@ class AdjustmentTest extends TestCase
     protected $weeeHelperMock;
 
     /**
-     * Context mock
+     * Context mock object
      *
      * @var \Magento\Framework\View\Element\Template\Context
      */
@@ -56,12 +57,58 @@ class AdjustmentTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->contextMock = $this->getMockBuilder(Context::class)
-            ->addMethods(['getStoreConfig'])
-            ->onlyMethods(['getEventManager', 'getScopeConfig'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->priceCurrencyMock = $this->getMockForAbstractClass(
+        $this->contextMock = new class extends Context {
+            /**
+             * @var mixed
+             */
+            private $storeConfig = null;
+            /**
+             * @var mixed
+             */
+            private $eventManager = null;
+            /**
+             * @var mixed
+             */
+            private $scopeConfig = null;
+
+            public function __construct()
+            {
+            }
+
+            public function getStoreConfig($path)
+            {
+                return $this->storeConfig;
+            }
+
+            public function setStoreConfig($config)
+            {
+                $this->storeConfig = $config;
+                return $this;
+            }
+
+            public function getEventManager()
+            {
+                return $this->eventManager;
+            }
+
+            public function setEventManager($manager)
+            {
+                $this->eventManager = $manager;
+                return $this;
+            }
+
+            public function getScopeConfig()
+            {
+                return $this->scopeConfig;
+            }
+
+            public function setScopeConfig($config)
+            {
+                $this->scopeConfig = $config;
+                return $this;
+            }
+        };
+        $this->priceCurrencyMock = $this->createMock(
             PriceCurrencyInterface::class,
             [],
             '',
@@ -77,12 +124,8 @@ class AdjustmentTest extends TestCase
 
         $scopeConfigMock = $this->getMockForAbstractClass(ScopeConfigInterface::class);
 
-        $this->contextMock->expects($this->any())
-            ->method('getEventManager')
-            ->willReturn($eventManagerMock);
-        $this->contextMock->expects($this->any())
-            ->method('getScopeConfig')
-            ->willReturn($scopeConfigMock);
+        $this->contextMock->setEventManager($eventManagerMock);
+        $this->contextMock->setScopeConfig($scopeConfigMock);
 
         $this->model = new Adjustment(
             $this->contextMock,
