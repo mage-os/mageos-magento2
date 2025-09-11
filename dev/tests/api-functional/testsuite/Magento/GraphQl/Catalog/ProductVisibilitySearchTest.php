@@ -27,18 +27,18 @@ class ProductVisibilitySearchTest extends GraphQlAbstract
     public function testProductNotReturnedWhenVisibilityIsCatalogOnly(): void
     {
         $query = <<<'QUERY'
-query {
-  products(
-    search: "API"
-    filter: { price: { from: "1" } }
-  ) {
-    items {
-      name
-      sku
-    }
-  }
-}
-QUERY;
+            query {
+              products(
+                search: "API"
+                filter: { price: { from: "1" } }
+              ) {
+                items {
+                  name
+                  sku
+                }
+              }
+            }
+            QUERY;
 
         $response = $this->graphQlQuery($query);
         $this->assertArrayNotHasKey('errors', $response);
