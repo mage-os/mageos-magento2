@@ -290,7 +290,7 @@ abstract class AbstractEntity
                 $attrFilterType = \Magento\ImportExport\Model\Export::getAttributeFilterType($attribute);
 
                 if (\Magento\ImportExport\Model\Export::FILTER_TYPE_SELECT == $attrFilterType) {
-                    if (is_scalar($exportFilter[$attrCode]) && trim($exportFilter[$attrCode])) {
+                    if (is_scalar($exportFilter[$attrCode]) && strlen(trim($exportFilter[$attrCode]))) {
                         $collection->addAttributeToFilter($attrCode, ['eq' => $exportFilter[$attrCode]]);
                     }
                 } elseif (\Magento\ImportExport\Model\Export::FILTER_TYPE_MULTISELECT == $attrFilterType) {
