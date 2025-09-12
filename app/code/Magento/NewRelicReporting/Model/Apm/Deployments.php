@@ -1,13 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\NewRelicReporting\Model\Apm;
 
 use Laminas\Http\Exception\RuntimeException;
 use Laminas\Http\Request;
-use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\HTTP\LaminasClientFactory;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\NewRelicReporting\Model\Config;
@@ -88,7 +87,6 @@ class Deployments
      * @param string|null $groupId Group ID (NerdGraph only)
      *
      * @return bool|string|array
-     * @throws LocalizedException
      */
     public function setDeployment(
         string      $description,
@@ -98,7 +96,8 @@ class Deployments
         ?string     $commit = null,
         ?string     $deepLink = null,
         ?string $groupId = null
-    ) {
+    ): bool|array|string
+    {
         // Check API mode configuration
         $apiMode = $this->config->getApiMode();
 
@@ -126,7 +125,8 @@ class Deployments
      * @param string|null $revision
      * @return bool|string
      */
-    private function createV2RestDeployment(string $description, bool|string $change, bool|string $user, ?string $revision): bool|string
+    private function createV2RestDeployment(string $description, bool|string $change, bool|string $user, ?string
+    $revision): bool|string
     {
         $apiUrl = $this->config->getNewRelicApiUrl();
         if (empty($apiUrl)) {
@@ -186,9 +186,9 @@ class Deployments
      * @param string|null $deepLink
      * @param string|null $groupId
      * @return array|false
-     * @throws LocalizedException
      */
-    private function createNerdGraphDeployment(string $description, bool|string $change, bool|string $user, ?string $revision, ?string $commit, ?string $deepLink, ?string $groupId): false|array
+    private function createNerdGraphDeployment(string $description, bool|string $change, bool|string $user, ?string
+    $revision, ?string $commit, ?string $deepLink, ?string $groupId): false|array
     {
         return $this->deploymentTracker->createDeployment(
             $description,

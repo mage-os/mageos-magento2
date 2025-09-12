@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -156,13 +156,16 @@ class DeployMarkerTest extends TestCase
 
         $this->assertEquals(0, $result);
         $outputContent = $this->output->fetch();
-        $this->assertMatchesRegularExpression('/(✓|OK) NewRelic deployment marker created successfully!/', $outputContent);
+        $this->assertMatchesRegularExpression(
+            '/(✓|OK) NewRelic deployment marker created successfully!/',
+            $outputContent
+        );
     }
 
     /**
      * Test successful execution with array result (NerdGraph style)
      */
-    public function testExecuteSuccessWithArrayResult_NerdGraphStyle()
+    public function testExecuteSuccessWithArrayResultNerdGraphStyle()
     {
         $message = 'Test NerdGraph deployment';
         $user = 'deploy-user';
@@ -217,8 +220,11 @@ class DeployMarkerTest extends TestCase
             $this->assertStringContainsString($expected, $outputContent);
         }
 
-        $this->assertMatchesRegularExpression('/(✓|OK) NewRelic deployment marker created successfully!/', $outputContent);
-        $this->assertMatchesRegularExpression('/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/', $outputContent); // timestamp converted (UTC)
+        $this->assertMatchesRegularExpression(
+            '/(✓|OK) NewRelic deployment marker created successfully!/',
+            $outputContent
+        );
+        $this->assertMatchesRegularExpression('/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/', $outputContent);
     }
 
     /**
@@ -253,7 +259,10 @@ class DeployMarkerTest extends TestCase
 
         $this->assertEquals(0, $result);
         $outputContent = $this->output->fetch();
-        $this->assertMatchesRegularExpression('/(✓|OK) NewRelic deployment marker created successfully!/', $outputContent);
+        $this->assertMatchesRegularExpression(
+            '/(✓|OK) NewRelic deployment marker created successfully!/',
+            $outputContent
+        );
     }
 
     /**
@@ -361,13 +370,16 @@ class DeployMarkerTest extends TestCase
 
         $this->assertEquals(1, $result);
         $outputContent = $this->output->fetch();
-        $this->assertMatchesRegularExpression('/(✗|ERROR) Error: ' . preg_quote($exceptionMessage, '/') . '/', $outputContent);
+        $this->assertMatchesRegularExpression(
+            '/(✗|ERROR) Error: ' . preg_quote($exceptionMessage, '/') . '/',
+            $outputContent
+        );
     }
 
     /**
      * Test successful execution with partial deployment data (v2 REST API style)
      */
-    public function testExecuteSuccessWithPartialDeploymentData_V2RestStyle()
+    public function testExecuteSuccessWithPartialDeploymentDataV2RestStyle()
     {
         $message = 'Test deployment';
 
@@ -413,8 +425,11 @@ class DeployMarkerTest extends TestCase
             $this->assertStringContainsString($expected, $outputContent);
         }
 
-        $this->assertMatchesRegularExpression('/(✓|OK) NewRelic deployment marker created successfully!/', $outputContent);
-        $this->assertMatchesRegularExpression('/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/', $outputContent); // UTC timezone
+        $this->assertMatchesRegularExpression(
+            '/(✓|OK) NewRelic deployment marker created successfully!/',
+            $outputContent
+        );
+        $this->assertMatchesRegularExpression('/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/', $outputContent);
 
         // Should show N/A for missing optional fields
         $excludedFields = ['Changelog', 'Commit', 'Deep Link', 'Group ID'];
@@ -426,7 +441,7 @@ class DeployMarkerTest extends TestCase
     /**
      * Test successful execution with complete deployment data (NerdGraph style)
      */
-    public function testExecuteSuccessWithCompleteDeploymentData_NerdGraphStyle()
+    public function testExecuteSuccessWithCompleteDeploymentDataNerdGraphStyle()
     {
         $message = 'Complete deployment';
 
@@ -488,8 +503,11 @@ class DeployMarkerTest extends TestCase
             $this->assertStringContainsString($expected, $outputContent);
         }
 
-        $this->assertMatchesRegularExpression('/(✓|OK) NewRelic deployment marker created successfully!/', $outputContent);
-        $this->assertMatchesRegularExpression('/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/', $outputContent); // UTC timezone
+        $this->assertMatchesRegularExpression(
+            '/(✓|OK) NewRelic deployment marker created successfully!/',
+            $outputContent
+        );
+        $this->assertMatchesRegularExpression('/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/', $outputContent);
 
         // Should show all optional fields
         $requiredFields = ['Changelog', 'Commit', 'Deep Link', 'Group ID'];
@@ -548,7 +566,10 @@ class DeployMarkerTest extends TestCase
 
         $this->assertEquals(0, $result);
         $outputContent = $this->output->fetch();
-        $this->assertMatchesRegularExpression('/(✓|OK) NewRelic deployment marker created successfully!/', $outputContent);
+        $this->assertMatchesRegularExpression(
+            '/(✓|OK) NewRelic deployment marker created successfully!/',
+            $outputContent
+        );
         $this->assertStringContainsString('N/A', $outputContent); // For null timestamp
     }
 
@@ -610,7 +631,10 @@ class DeployMarkerTest extends TestCase
         // Should process empty message (validation handled by deployment service)
         $this->assertEquals(0, $result);
         $outputContent = $this->output->fetch();
-        $this->assertMatchesRegularExpression('/(✓|OK) NewRelic deployment marker created successfully!/', $outputContent);
+        $this->assertMatchesRegularExpression(
+            '/(✓|OK) NewRelic deployment marker created successfully!/',
+            $outputContent
+        );
     }
 
     /**

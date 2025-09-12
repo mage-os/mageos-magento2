@@ -161,7 +161,10 @@ class DeploymentWorkflowTest extends TestCase
         $this->mutableScopeConfig->setValue('newrelicreporting/general/enable', '1');
         $this->mutableScopeConfig->setValue('newrelicreporting/general/api_mode', 'nerdgraph');
         $this->mutableScopeConfig->setValue('newrelicreporting/general/entity_guid', 'test-entity-guid');
-        $this->mutableScopeConfig->setValue('newrelicreporting/general/nerd_graph_api_url', 'https://api.newrelic.com/graphql');
+        $this->mutableScopeConfig->setValue(
+            'newrelicreporting/general/nerd_graph_api_url',
+            'https://api.newrelic.com/graphql'
+        );
 
         $this->assertTrue($this->config->isNerdGraphMode());
         $this->assertEquals('nerdgraph', $this->config->getApiMode());
@@ -331,7 +334,10 @@ class DeploymentWorkflowTest extends TestCase
         $this->mutableScopeConfig->setValue('newrelicreporting/general/api_mode', 'nerdgraph');
         $this->mutableScopeConfig->setValue('newrelicreporting/general/entity_guid', 'invalid-guid');
         $this->mutableScopeConfig->setValue('newrelicreporting/general/api', 'invalid_api_key');
-        $this->mutableScopeConfig->setValue('newrelicreporting/general/nerd_graph_api_url', 'https://invalid-url.example.com/graphql');
+        $this->mutableScopeConfig->setValue(
+            'newrelicreporting/general/nerd_graph_api_url',
+            'https://invalid-url.example.com/graphql'
+        );
 
         // This should fail gracefully and return false rather than throwing an exception
         $result = $this->deploymentTracker->createDeployment('Test deployment');

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -98,7 +98,16 @@ class DeploymentTrackerTest extends TestCase
             ->method('query')
             ->with(
                 $this->stringContains('mutation CreateDeployment'),
-                $this->callback(function ($variables) use ($entityGuid, $description, $version, $changelog, $user, $commit, $deepLink, $groupId) {
+                $this->callback(function ($variables) use (
+                    $entityGuid,
+                    $description,
+                    $version,
+                    $changelog,
+                    $user,
+                    $commit,
+                    $deepLink,
+                    $groupId
+                ) {
                     return isset($variables['deployment']) &&
                            $variables['deployment']['entityGuid'] === $entityGuid &&
                            $variables['deployment']['description'] === $description &&
@@ -142,7 +151,6 @@ class DeploymentTrackerTest extends TestCase
 
     /**
      * Test deployment creation with minimal parameters
-     * @throws LocalizedException
      */
     public function testCreateDeploymentWithMinimalParameters()
     {
@@ -190,7 +198,6 @@ class DeploymentTrackerTest extends TestCase
 
     /**
      * Test deployment creation with entity GUID fallback from app name
-     * @throws LocalizedException
      */
     public function testCreateDeploymentEntityGuidFallbackFromAppName()
     {
@@ -249,7 +256,6 @@ class DeploymentTrackerTest extends TestCase
 
     /**
      * Test deployment creation with entity GUID fallback from app ID
-     * @throws LocalizedException
      */
     public function testCreateDeploymentEntityGuidFallbackFromAppId()
     {
@@ -308,7 +314,6 @@ class DeploymentTrackerTest extends TestCase
 
     /**
      * Test deployment creation failure due to missing entity GUID
-     * @throws LocalizedException
      */
     public function testCreateDeploymentFailureMissingEntityGuid()
     {
@@ -336,7 +341,6 @@ class DeploymentTrackerTest extends TestCase
 
     /**
      * Test deployment creation failure due to entity GUID resolution failure
-     * @throws LocalizedException
      */
     public function testCreateDeploymentFailureEntityGuidResolutionFailed()
     {
@@ -369,7 +373,6 @@ class DeploymentTrackerTest extends TestCase
 
     /**
      * Test deployment creation with GraphQL errors
-     * @throws LocalizedException
      */
     public function testCreateDeploymentWithGraphQLErrors()
     {
@@ -452,7 +455,6 @@ class DeploymentTrackerTest extends TestCase
 
     /**
      * Test deployment creation with network failure
-     * @throws LocalizedException
      */
     public function testCreateDeploymentWithNetworkFailure()
     {
@@ -521,7 +523,6 @@ class DeploymentTrackerTest extends TestCase
 
     /**
      * Test deployment creation with very long parameters
-     * @throws LocalizedException
      */
     public function testCreateDeploymentWithLongParameters()
     {
@@ -563,7 +564,6 @@ class DeploymentTrackerTest extends TestCase
 
     /**
      * Test that GraphQL mutation includes all provided fields
-     * @throws LocalizedException
      */
     public function testCreateDeploymentMutationStructure()
     {
@@ -593,7 +593,16 @@ class DeploymentTrackerTest extends TestCase
             ->method('query')
             ->with(
                 $this->stringContains('mutation CreateDeployment'),
-                $this->callback(function ($variables) use ($entityGuid, $description, $changelog, $user, $version, $commit, $deepLink, $groupId) {
+                $this->callback(function ($variables) use (
+                    $entityGuid,
+                    $description,
+                    $changelog,
+                    $user,
+                    $version,
+                    $commit,
+                    $deepLink,
+                    $groupId
+                ) {
                     return isset($variables['deployment']) &&
                            $variables['deployment']['entityGuid'] === $entityGuid &&
                            $variables['deployment']['description'] === $description &&

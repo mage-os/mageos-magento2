@@ -30,20 +30,21 @@ class DeployMarker extends Command
     /**
      * @var Config
      */
-    private $config;
+    private Config $config;
 
     /**
      * Initialize dependencies.
      *
      * @param DeploymentsFactory $deploymentsFactory
      * @param ServiceShellUser $serviceShellUser
-     * @param ?string $name
+     * @param Config $config
+     * @param string|null $name
      */
     public function __construct(
         DeploymentsFactory $deploymentsFactory,
         ServiceShellUser $serviceShellUser,
         Config $config,
-        $name = null
+        string $name = null
     ) {
         $this->deploymentsFactory = $deploymentsFactory;
         $this->serviceShellUser = $serviceShellUser;

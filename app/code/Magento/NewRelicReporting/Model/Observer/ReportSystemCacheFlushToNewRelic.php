@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\NewRelicReporting\Model\Observer;
 
@@ -10,6 +10,7 @@ use Magento\Framework\Event\ObserverInterface;
 use Magento\NewRelicReporting\Model\Config;
 
 /**
+ * Observer to report system cache flush to New Relic
  * Class ReportSystemCacheFlushToNewRelic
  */
 class ReportSystemCacheFlushToNewRelic implements ObserverInterface

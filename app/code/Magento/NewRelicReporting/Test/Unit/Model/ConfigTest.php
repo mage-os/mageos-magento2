@@ -393,7 +393,7 @@ class ConfigTest extends TestCase
     public function testGetNerdGraphUrlWithEuEndpoint(): void
     {
         $euNerdGraphUrl = 'https://api.eu.newrelic.com/graphql';
-        
+
         $this->scopeConfigMock->expects($this->once())
             ->method('getValue')
             ->with('newrelicreporting/general/nerd_graph_api_url')
@@ -409,7 +409,7 @@ class ConfigTest extends TestCase
     public function testGetNewRelicApiUrlWithEuEndpoint(): void
     {
         $euApiUrl = 'https://api.eu.newrelic.com/v2/applications/%s/deployments.json';
-        
+
         $this->scopeConfigMock->expects($this->once())
             ->method('getValue')
             ->with('newrelicreporting/general/api_url')
@@ -425,7 +425,7 @@ class ConfigTest extends TestCase
     public function testGetInsightsApiUrlWithEuEndpoint(): void
     {
         $euInsightsUrl = 'https://insights-collector.eu01.nr-data.net/v1/accounts/%s/events';
-        
+
         $this->scopeConfigMock->expects($this->once())
             ->method('getValue')
             ->with('newrelicreporting/general/insights_api_url')
@@ -443,7 +443,8 @@ class ConfigTest extends TestCase
         $euEndpoints = [
             'newrelicreporting/general/nerd_graph_api_url' => 'https://api.eu.newrelic.com/graphql',
             'newrelicreporting/general/api_url' => 'https://api.eu.newrelic.com/v2/applications/%s/deployments.json',
-            'newrelicreporting/general/insights_api_url' => 'https://insights-collector.eu01.nr-data.net/v1/accounts/%s/events',
+            'newrelicreporting/general/insights_api_url' =>
+                'https://insights-collector.eu01.nr-data.net/v1/accounts/%s/events',
             'newrelicreporting/general/api_mode' => 'nerdgraph',
             'newrelicreporting/general/enable' => '1'
         ];
@@ -461,8 +462,14 @@ class ConfigTest extends TestCase
 
         // Test all EU endpoints are configured correctly
         $this->assertEquals('https://api.eu.newrelic.com/graphql', $this->config->getNerdGraphUrl());
-        $this->assertEquals('https://api.eu.newrelic.com/v2/applications/%s/deployments.json', $this->config->getNewRelicApiUrl());
-        $this->assertEquals('https://insights-collector.eu01.nr-data.net/v1/accounts/%s/events', $this->config->getInsightsApiUrl());
+        $this->assertEquals(
+            'https://api.eu.newrelic.com/v2/applications/%s/deployments.json',
+            $this->config->getNewRelicApiUrl()
+        );
+        $this->assertEquals(
+            'https://insights-collector.eu01.nr-data.net/v1/accounts/%s/events',
+            $this->config->getInsightsApiUrl()
+        );
         $this->assertEquals('nerdgraph', $this->config->getApiMode());
         $this->assertTrue($this->config->isNewRelicEnabled());
         $this->assertTrue($this->config->isNerdGraphMode());

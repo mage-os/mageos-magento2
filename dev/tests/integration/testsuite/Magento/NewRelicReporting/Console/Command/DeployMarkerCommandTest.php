@@ -86,7 +86,10 @@ class DeployMarkerCommandTest extends TestCase
 
         $this->assertEquals(1, $exitCode);
         $output = $this->commandTester->getDisplay();
-        $this->assertStringContainsString('✗ New Relic is not enabled. Please check your configuration.', $output);
+        $this->assertStringContainsString(
+            '✗ New Relic is not enabled. Please check your configuration.',
+            $output
+        );
     }
 
     /**
@@ -104,14 +107,21 @@ class DeployMarkerCommandTest extends TestCase
             'message' => 'Test deployment message'
         ]);
 
-        $this->assertTrue(in_array($exitCode, [0, 1], true), 'Command should exit with 0 (success) or 1 (graceful failure)');
+        $this->assertTrue(
+            in_array($exitCode, [0, 1], true),
+            'Command should exit with 0 (success) or 1 (graceful failure)'
+        );
         $output = $this->commandTester->getDisplay();
 
         // No fatal framework errors
         $this->assertStringNotContainsString('Fatal error', $output);
         $this->assertStringNotContainsString('Call to a member function', $output);
 
-        $this->assertMatchesRegularExpression('/(✓|✗)/', $output, 'Output should contain success (✓) or error (✗) indicator');
+        $this->assertMatchesRegularExpression(
+            '/(✓|✗)/',
+            $output,
+            'Output should contain success (✓) or error (✗) indicator'
+        );
     }
 
     /**
@@ -156,7 +166,10 @@ class DeployMarkerCommandTest extends TestCase
     {
         $this->mutableScopeConfig->setValue('newrelicreporting/general/enable', '1');
         $this->mutableScopeConfig->setValue('newrelicreporting/general/api_mode', 'nerdgraph');
-        $this->mutableScopeConfig->setValue('newrelicreporting/general/entity_guid', 'fake-guid-for-testing');
+        $this->mutableScopeConfig->setValue(
+            'newrelicreporting/general/entity_guid',
+            'fake-guid-for-testing'
+        );
         $this->mutableScopeConfig->setValue('newrelicreporting/general/api', 'fake_api_key_for_testing');
 
         $exitCode = $this->commandTester->execute([
@@ -170,12 +183,19 @@ class DeployMarkerCommandTest extends TestCase
         ]);
 
         // Framework integration: Should handle gracefully (success or graceful failure)
-        $this->assertTrue(in_array($exitCode, [0, 1], true), 'Command should exit with 0 (success) or 1 (graceful failure)');
+        $this->assertTrue(
+            in_array($exitCode, [0, 1], true),
+            'Command should exit with 0 (success) or 1 (graceful failure)'
+        );
         $output = $this->commandTester->getDisplay();
 
         $this->assertStringNotContainsString('Fatal error', $output);
         $this->assertStringNotContainsString('Call to a member function', $output);
-        $this->assertMatchesRegularExpression('/(✓|✗)/', $output, 'Output should contain success (✓) or error (✗) indicator');
+        $this->assertMatchesRegularExpression(
+            '/(✓|✗)/',
+            $output,
+            'Output should contain success (✓) or error (✗) indicator'
+        );
     }
 
     /**
@@ -193,7 +213,11 @@ class DeployMarkerCommandTest extends TestCase
         $output = $this->commandTester->getDisplay();
         $this->assertStringNotContainsString('Fatal error', $output);
 
-        $this->assertMatchesRegularExpression('/(✓|✗)/', $output, 'Output should contain success (✓) or error (✗) indicator');
+        $this->assertMatchesRegularExpression(
+            '/(✓|✗)/',
+            $output,
+            'Output should contain success (✓) or error (✗) indicator'
+        );
     }
 
     /**
