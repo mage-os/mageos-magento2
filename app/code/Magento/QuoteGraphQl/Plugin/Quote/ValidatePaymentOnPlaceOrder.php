@@ -15,21 +15,32 @@ use Magento\Quote\Model\QuoteManagement;
 
 class ValidatePaymentOnPlaceOrder
 {
+    /**
+     * @param CartRepositoryInterface $cartRepository
+     * @param PaymentHelper $paymentHelper
+     */
     public function __construct(
         private CartRepositoryInterface $cartRepository,
         private PaymentHelper $paymentHelper
-    ) {}
+    ) {
+    }
 
     /**
+     * Validate payment method
+     *
      * @param QuoteManagement $subject
-     * @param $cartId
+     * @param int $cartId
      * @param PaymentInterface|null $paymentMethod
      * @return array
      * @throws LocalizedException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function beforePlaceOrder(QuoteManagement $subject, $cartId, PaymentInterface $paymentMethod = null): array
-    {
+    public function beforePlaceOrder(
+        QuoteManagement $subject,
+        $cartId,
+        ?PaymentInterface $paymentMethod = null
+    ): array {
         $quote = $this->cartRepository->getActive((int)$cartId);
 
         $payment = $quote->getPayment();
