@@ -114,4 +114,9 @@
             </argument>
         </arguments>
     </type>
+    <type name="Magento\Quote\Model\QuoteManagement">
+        <plugin name="validate_payment_method_on_place_order"
+                type="Magento\QuoteGraphQl\Plugin\Quote\ValidatePaymentOnPlaceOrder"
+                sortOrder="10"/>
+    </type>
 </config>
