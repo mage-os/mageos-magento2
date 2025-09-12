@@ -25,6 +25,9 @@ class ValidatePaymentOnPlaceOrderTest extends TestCase
     /** @var PaymentHelper&MockObject */
     private PaymentHelper $paymentHelper;
 
+    /**
+     * @var ValidatePaymentOnPlaceOrder 
+     */
     private ValidatePaymentOnPlaceOrder $plugin;
 
     protected function setUp(): void
