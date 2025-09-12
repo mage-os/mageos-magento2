@@ -8,10 +8,10 @@
 <tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
     <test name="StorefrontAssertAddressDisappearanceAfterItemRemovalTest">
         <annotations>
-            <features value="Checkout"/>
-            <stories value="Ensure addresses do not disappear after item removal in multi-shipping flow"/>
-            <title value="Checks address retention when items are deleted during multi-shipping checkout"/>
-            <description value="Validates that shipping addresses selected during multi-shipping checkout remain intact after removing one or more items from the cart"/>
+            <features value="Multishipment"/>
+            <stories value="Checkout with multiple addresses"/>
+            <title value="Verifies address retention on item removal in multi-shipping checkout"/>
+            <description value="Addresses vanish from multi-shipping checkout when multiple items are removed from the cart"/>
             <severity value="MAJOR"/>
             <testCaseId value="AC-15541"/>
             <group value="Multishipment"/>
@@ -47,7 +47,7 @@
         <waitForPageLoad stepKey="waitForViewAndEditCartToOpen"/>
         <!-- Step 4: Click Link `Checkout with Multiple Addresses` -->
         <click stepKey="clickOnCheckoutWithMultipleAddresses" selector="{{MultishippingSection.checkoutWithMultipleAddresses}}"/>
-        <waitForPageLoad stepKey="waitForPageLoad1"/>
+        <waitForPageLoad stepKey="waitForMultiCheckoutPageToLoad"/>
         <actionGroup ref="StorefrontSelectAddressActionGroup" stepKey="selectCAAddress">
             <argument name="sequenceNumber" value="3"/>
             <argument name="option" value="{{Customer_Address.ca_address}}"/>
@@ -60,7 +60,7 @@
             <argument name="sequenceNumber" value="2"/>
             <argument name="option" value="{{Customer_Address.ny_address}}"/>
         </actionGroup>
-        <actionGroup ref="StorefrontUpdateMultishippingItemsQuantityAndAddressesActionGroup" stepKey="clickOnUpdateQtyAndAddress1"/>
+        <actionGroup ref="StorefrontUpdateMultishippingItemsQuantityAndAddressesActionGroup" stepKey="clickOnUpdateQtyAndNYAddress"/>
         <actionGroup ref="StorefrontRemoveProductsInMultiAddressCheckoutActionGroup" stepKey="removeSecondItem">
             <argument name="sequenceNumber" value="2"/>
         </actionGroup>
@@ -69,7 +69,7 @@
             <argument name="sequenceNumber" value="1"/>
             <argument name="option" value="{{Customer_Address.br_address}}"/>
         </actionGroup>
-        <actionGroup ref="StorefrontUpdateMultishippingItemsQuantityAndAddressesActionGroup" stepKey="clickOnUpdateQtyAndAddress2"/>
+        <actionGroup ref="StorefrontUpdateMultishippingItemsQuantityAndAddressesActionGroup" stepKey="clickOnUpdateQtyAndBRAddress"/>
         <!-- Remove the last item -->
         <actionGroup ref="StorefrontRemoveProductsInMultiAddressCheckoutActionGroup" stepKey="removeThirdItem"/>
     </test>

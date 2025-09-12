@@ -9,6 +9,9 @@
 <actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
     <actionGroup name="StorefrontRemoveProductsInMultiAddressCheckoutActionGroup">
+        <annotations>
+            <description>Removes the product in multi address checkout page.</description>
+        </annotations>
         <arguments>
             <argument name="sequenceNumber" type="string" defaultValue="1"/>
         </arguments>
