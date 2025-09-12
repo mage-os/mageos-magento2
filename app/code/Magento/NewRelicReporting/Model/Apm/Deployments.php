@@ -94,10 +94,10 @@ class Deployments
         string      $description,
         bool|string $change = false,
         bool|string $user = false,
-        string      $revision = null,
-        string      $commit = null,
-        string      $deepLink = null,
-        string $groupId = null
+        ?string     $revision = null,
+        ?string     $commit = null,
+        ?string     $deepLink = null,
+        ?string $groupId = null
     ) {
         // Check API mode configuration
         $apiMode = $this->config->getApiMode();

@@ -5,6 +5,7 @@
  */
 namespace Magento\NewRelicReporting\Console\Command;
 
+use Magento\Framework\Exception\LocalizedException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -132,7 +133,7 @@ class DeployMarker extends Command
                 return 1;
             }
 
-        } catch (\Magento\Framework\Exception\LocalizedException $e) {
+        } catch (LocalizedException $e) {
             $output->writeln('<error>✗ Configuration Error!</error>');
             $output->writeln('<error>' . $e->getMessage() . '</error>');
             $output->writeln('');

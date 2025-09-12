@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\NewRelicReporting\Test\Integration\Console\Command;
+namespace Magento\NewRelicReporting\Console\Command;
 
 use Magento\Framework\App\Config\MutableScopeConfigInterface;
 use Magento\Framework\ObjectManagerInterface;

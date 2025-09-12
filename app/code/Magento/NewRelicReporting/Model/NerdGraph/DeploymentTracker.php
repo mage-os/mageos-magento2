@@ -59,7 +59,6 @@ class DeploymentTracker
      * @param string|null $deepLink Deep link to deployment details
      * @param string|null $groupId Group ID for organizing deployments
      * @return array|false Deployment data on success, false on failure
-     * @throws LocalizedException
      */
     public function createDeployment(
         string $description,

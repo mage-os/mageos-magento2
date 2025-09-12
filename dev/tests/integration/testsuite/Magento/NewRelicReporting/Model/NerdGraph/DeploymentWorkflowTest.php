@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\NewRelicReporting\Test\Integration\Model\NerdGraph;
+namespace Magento\NewRelicReporting\Model\NerdGraph;
 
 use Magento\Framework\App\Config\MutableScopeConfigInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -187,7 +187,6 @@ class DeploymentWorkflowTest extends TestCase
             'logger',
             'clientFactory',
             'serializer',
-            'nerdGraphClient',
             'deploymentTracker'
         ];
 
