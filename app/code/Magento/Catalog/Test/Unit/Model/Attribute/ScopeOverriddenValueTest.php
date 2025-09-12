@@ -28,6 +28,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Unit test for ScopeOverriddenValue class with 100% coverage
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ScopeOverriddenValueTest extends TestCase
 {
