@@ -1,13 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2023 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
 namespace Magento\Customer\Test\Unit\ViewModel\Customer;
 
 use Magento\Customer\ViewModel\Customer\Auth;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Http\Context;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -18,6 +19,11 @@ class AuthTest extends TestCase
      * @var Context|MockObject
      */
     private mixed $contextMock;
+
+    /**
+     * @var ScopeConfigInterface|MockObject
+     */
+    private mixed $scopeConfigMock;
 
     /**
      * @var Auth
@@ -33,8 +39,13 @@ class AuthTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->scopeConfigMock = $this->getMockBuilder(ScopeConfigInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->model = new Auth(
-            $this->contextMock
+            $this->contextMock,
+            $this->scopeConfigMock
         );
         parent::setUp();
     }
