@@ -15,6 +15,7 @@ use Magento\Framework\HTTP\LaminasClientFactory;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\NewRelicReporting\Model\Apm\Deployments;
 use Magento\NewRelicReporting\Model\Config;
+use Magento\NewRelicReporting\Model\NerdGraph\DeploymentTracker;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -51,6 +52,12 @@ class DeploymentsTest extends TestCase
      */
     private $serializerMock;
 
+
+    /**
+     * @var DeploymentTracker|MockObject
+     */
+    private $deploymentTrackerMock;
+
     protected function setUp(): void
     {
         $this->httpClientFactoryMock = $this->createMock(LaminasClientFactory::class);
@@ -58,12 +65,14 @@ class DeploymentsTest extends TestCase
         $this->loggerMock = $this->createMock(LoggerInterface::class);
         $this->configMock = $this->createMock(Config::class);
         $this->serializerMock = $this->createMock(SerializerInterface::class);
+        $this->deploymentTrackerMock = $this->createMock(DeploymentTracker::class);
 
         $this->model = new Deployments(
             $this->configMock,
             $this->loggerMock,
             $this->httpClientFactoryMock,
-            $this->serializerMock
+            $this->serializerMock,
+            $this->deploymentTrackerMock
         );
     }
 
@@ -99,6 +108,10 @@ class DeploymentsTest extends TestCase
             ->method('setRawBody')
             ->with(json_encode($data['params']))
             ->willReturnSelf();
+
+        $this->configMock->expects($this->once())
+            ->method('getApiMode')
+            ->willReturn('v2_rest');
 
         $this->configMock->expects($this->once())
             ->method('getNewRelicApiUrl')
@@ -171,6 +184,10 @@ class DeploymentsTest extends TestCase
             ->willReturnSelf();
 
         $this->configMock->expects($this->once())
+            ->method('getApiMode')
+            ->willReturn('v2_rest');
+
+        $this->configMock->expects($this->once())
             ->method('getNewRelicApiUrl')
             ->willReturn($data['uri']);
 
@@ -237,6 +254,10 @@ class DeploymentsTest extends TestCase
             ->willReturnSelf();
 
         $this->configMock->expects($this->once())
+            ->method('getApiMode')
+            ->willReturn('v2_rest');
+
+        $this->configMock->expects($this->once())
             ->method('getNewRelicApiUrl')
             ->willReturn($data['uri']);
 
@@ -265,6 +286,181 @@ class DeploymentsTest extends TestCase
                 $data['revision']
             )
         );
+    }
+
+    /**
+     * Tests NerdGraph deployment creation with enhanced parameters
+     *
+     * @return void
+     */
+    public function testSetDeploymentNerdGraphMode()
+    {
+        $description = 'NerdGraph deployment test';
+        $change = 'Enhanced changelog';
+        $user = 'nerdgraph_user';
+        $revision = 'v2.0.0';
+        $commit = 'abc123';
+        $deepLink = 'https://github.com/test/releases/v2.0.0';
+        $groupId = 'staging';
+
+        $expectedNerdGraphResponse = [
+            'deploymentId' => '12345678-1234-1234-1234-123456789012',
+            'entityGuid' => 'TEST_ENTITY_GUID',
+            'version' => $revision,
+            'description' => $description,
+            'changelog' => $change,
+            'user' => $user,
+            'commit' => $commit,
+            'deepLink' => $deepLink,
+            'groupId' => $groupId,
+            'timestamp' => 1234567890000
+        ];
+
+        // Mock config to return NerdGraph mode
+        $this->configMock->expects($this->once())
+            ->method('getApiMode')
+            ->willReturn('nerdgraph');
+
+        // Mock DeploymentTracker to be called with correct parameters
+        $this->deploymentTrackerMock->expects($this->once())
+            ->method('createDeployment')
+            ->with($description, $change, $user, $revision, $commit, $deepLink, $groupId)
+            ->willReturn($expectedNerdGraphResponse);
+
+        $result = $this->model->setDeployment(
+            $description,
+            $change,
+            $user,
+            $revision,
+            $commit,
+            $deepLink,
+            $groupId
+        );
+
+        $this->assertIsArray($result);
+        $this->assertEquals($expectedNerdGraphResponse, $result);
+        $this->assertArrayHasKey('deploymentId', $result);
+        $this->assertArrayHasKey('entityGuid', $result);
+        $this->assertArrayHasKey('commit', $result);
+        $this->assertArrayHasKey('deepLink', $result);
+        $this->assertArrayHasKey('groupId', $result);
+    }
+
+    /**
+     * Tests NerdGraph deployment creation failure
+     *
+     * @return void
+     */
+    public function testSetDeploymentNerdGraphModeFailure()
+    {
+        $description = 'Failed NerdGraph deployment';
+        $change = 'Test changelog';
+        $user = 'test_user';
+        $revision = 'v1.0.0';
+
+        // Mock config to return NerdGraph mode
+        $this->configMock->expects($this->once())
+            ->method('getApiMode')
+            ->willReturn('nerdgraph');
+
+        // Mock DeploymentTracker to return false (failure)
+        $this->deploymentTrackerMock->expects($this->once())
+            ->method('createDeployment')
+            ->with($description, $change, $user, $revision, null, null, null)
+            ->willReturn(false);
+
+        $result = $this->model->setDeployment(
+            $description,
+            $change,
+            $user,
+            $revision
+        );
+
+        $this->assertFalse($result);
+    }
+
+    /**
+     * Tests mode detection for NerdGraph vs v2 REST
+     *
+     * @return void
+     */
+    public function testSetDeploymentModeDetectionNerdGraph()
+    {
+        $description = 'NerdGraph mode detection test';
+        $change = 'Test changelog';
+        $user = 'test_user';
+        $revision = 'v1.0.0';
+
+        // Test NerdGraph mode detection
+        $this->configMock->expects($this->once())
+            ->method('getApiMode')
+            ->willReturn('nerdgraph');
+
+        $expectedResult = ['deploymentId' => 'test-123', 'entityGuid' => 'test-guid'];
+        $this->deploymentTrackerMock->expects($this->once())
+            ->method('createDeployment')
+            ->with($description, $change, $user, $revision, null, null, null)
+            ->willReturn($expectedResult);
+
+        $result = $this->model->setDeployment($description, $change, $user, $revision);
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    /**
+     * Tests that enhanced parameters are properly passed to NerdGraph
+     *
+     * @return void
+     */
+    public function testSetDeploymentNerdGraphEnhancedParameters()
+    {
+        $description = 'Enhanced parameters test';
+        $change = 'changelog';
+        $user = 'test_user';
+        $revision = 'v2.1.0';
+        $commit = 'def456';
+        $deepLink = 'https://example.com/deploy';
+        $groupId = 'production';
+
+        $this->configMock->expects($this->once())
+            ->method('getApiMode')
+            ->willReturn('nerdgraph');
+
+        // Verify all enhanced parameters are passed correctly
+        $this->deploymentTrackerMock->expects($this->once())
+            ->method('createDeployment')
+            ->with(
+                $this->equalTo($description),
+                $this->equalTo($change),
+                $this->equalTo($user),
+                $this->equalTo($revision),
+                $this->equalTo($commit),
+                $this->equalTo($deepLink),
+                $this->equalTo($groupId)
+            )
+            ->willReturn([
+                'deploymentId' => 'enhanced-test',
+                'commit' => $commit,
+                'deepLink' => $deepLink,
+                'groupId' => $groupId
+            ]);
+
+        $result = $this->model->setDeployment(
+            $description,
+            $change,
+            $user,
+            $revision,
+            $commit,
+            $deepLink,
+            $groupId
+        );
+
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('commit', $result);
+        $this->assertArrayHasKey('deepLink', $result);
+        $this->assertArrayHasKey('groupId', $result);
+        $this->assertEquals($commit, $result['commit']);
+        $this->assertEquals($deepLink, $result['deepLink']);
+        $this->assertEquals($groupId, $result['groupId']);
     }
 
     /**

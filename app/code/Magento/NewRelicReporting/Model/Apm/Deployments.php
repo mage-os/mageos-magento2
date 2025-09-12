@@ -8,11 +8,10 @@ namespace Magento\NewRelicReporting\Model\Apm;
 use Laminas\Http\Exception\RuntimeException;
 use Laminas\Http\Request;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\HTTP\LaminasClient;
 use Magento\Framework\HTTP\LaminasClientFactory;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\NewRelicReporting\Model\Config;
-use Magento\NewRelicReporting\Model\NerdGraph\Client as NerdGraphClient;
+use Magento\NewRelicReporting\Model\Config\Source\ApiMode;
 use Magento\NewRelicReporting\Model\NerdGraph\DeploymentTracker;
 use Psr\Log\LoggerInterface;
 
@@ -21,10 +20,7 @@ use Psr\Log\LoggerInterface;
  */
 class Deployments
 {
-    /**
-     * API mode constant for NerdGraph (GraphQL) API
-     */
-    private const NERDGRAPH = 'nerdgraph';
+
     /**
      * API URL for New Relic deployments
      */
@@ -43,22 +39,17 @@ class Deployments
     /**
      * @var LaminasClientFactory $clientFactory
      */
-    protected $clientFactory;
+    protected LaminasClientFactory $clientFactory;
 
     /**
      * @var SerializerInterface
      */
-    private $serializer;
-
-    /**
-     * @var NerdGraphClient
-     */
-    private $nerdGraphClient;
+    private SerializerInterface $serializer;
 
     /**
      * @var DeploymentTracker
      */
-    private $deploymentTracker;
+    private DeploymentTracker $deploymentTracker;
 
     /**
      * Constructor
@@ -67,7 +58,6 @@ class Deployments
      * @param LoggerInterface $logger
      * @param LaminasClientFactory $clientFactory
      * @param SerializerInterface $serializer
-     * @param NerdGraphClient $nerdGraphClient
      * @param DeploymentTracker $deploymentTracker
      */
     public function __construct(
@@ -75,14 +65,12 @@ class Deployments
         LoggerInterface $logger,
         LaminasClientFactory $clientFactory,
         SerializerInterface $serializer,
-        NerdGraphClient $nerdGraphClient,
         DeploymentTracker $deploymentTracker
     ) {
         $this->config = $config;
         $this->logger = $logger;
         $this->clientFactory = $clientFactory;
         $this->serializer = $serializer;
-        $this->nerdGraphClient = $nerdGraphClient;
         $this->deploymentTracker = $deploymentTracker;
     }
 
@@ -100,6 +88,7 @@ class Deployments
      * @param string|null $groupId Group ID (NerdGraph only)
      *
      * @return bool|string|array
+     * @throws LocalizedException
      */
     public function setDeployment(
         string      $description,
@@ -113,7 +102,7 @@ class Deployments
         // Check API mode configuration
         $apiMode = $this->config->getApiMode();
 
-        if ($apiMode === self::NERDGRAPH) {
+        if ($apiMode === ApiMode::MODE_NERDGRAPH) {
             return $this->createNerdGraphDeployment(
                 $description,
                 $change,
@@ -137,7 +126,7 @@ class Deployments
      * @param string|null $revision
      * @return bool|string
      */
-    private function createV2RestDeployment($description, $change, $user, $revision)
+    private function createV2RestDeployment(string $description, bool|string $change, bool|string $user, ?string $revision): bool|string
     {
         $apiUrl = $this->config->getNewRelicApiUrl();
         if (empty($apiUrl)) {
@@ -147,7 +136,6 @@ class Deployments
 
         $apiUrl = sprintf($apiUrl, $this->config->getNewRelicAppId());
 
-        /** @var LaminasClient $client */
         $client = $this->clientFactory->create();
         $client->setUri($apiUrl);
         $client->setMethod(Request::METHOD_POST);
@@ -200,7 +188,7 @@ class Deployments
      * @return array|false
      * @throws LocalizedException
      */
-    private function createNerdGraphDeployment($description, $change, $user, $revision, $commit, $deepLink, $groupId)
+    private function createNerdGraphDeployment(string $description, bool|string $change, bool|string $user, ?string $revision, ?string $commit, ?string $deepLink, ?string $groupId): false|array
     {
         return $this->deploymentTracker->createDeployment(
             $description,

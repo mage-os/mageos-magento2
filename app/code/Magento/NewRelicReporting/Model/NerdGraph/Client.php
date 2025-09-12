@@ -80,7 +80,7 @@ class Client
             $client->setMethod(Request::METHOD_POST);
             $client->setHeaders([
                 'Content-Type' => 'application/json',
-                'API-Key' => $apiKey
+                'Api-Key' => $apiKey
             ]);
 
             $requestBody = [
@@ -185,8 +185,11 @@ class Client
             );
             return $firstEntity['guid'];
         } catch (\RuntimeException $e) {
-            $this->logger->error('Failed to get entity GUID: ' . $e->getMessage());
-            $this->logger->error('Search query was: ' . $searchQuery);
+            $this->logger->error(sprintf(
+                'Failed to get entity GUID. Search query: %s. Error: %s',
+                $searchQuery,
+                $e->getMessage()
+            ));
             return null;
         }
     }

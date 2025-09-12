@@ -69,7 +69,7 @@ class DeploymentTracker
         ?string $commit = null,
         ?string $deepLink = null,
         ?string $groupId = null
-    ) {
+    ): false|array {
         try {
             // Get entity GUID - this is required for NerdGraph deployment tracking
             $entityGuid = $this->getEntityGuid();
@@ -121,13 +121,14 @@ class DeploymentTracker
             $response = $this->nerdGraphClient->query($mutation, $variables);
 
             $deploymentData = $response['data']['changeTrackingCreateDeployment'] ?? null;
+            $deployedVersion = $variables['deployment']['version'];
             if ($deploymentData) {
                 $this->logger->info(
                     'NerdGraph deployment created successfully',
                     [
                         'deploymentId' => $deploymentData['deploymentId'],
                         'entityGuid' => $deploymentData['entityGuid'],
-                        'version' => $version,
+                        'version' => $deployedVersion,
                         'description' => $description
                     ]
                 );
@@ -135,7 +136,7 @@ class DeploymentTracker
                 return [
                     'deploymentId' => $deploymentData['deploymentId'],
                     'entityGuid' => $deploymentData['entityGuid'],
-                    'version' => $variables['deployment']['version'],
+                    'version' => $deployedVersion,
                     'description' => $description,
                     'changelog' => $changelog,
                     'user' => $user,
@@ -149,9 +150,6 @@ class DeploymentTracker
             $this->logger->error('NerdGraph deployment creation failed: No deployment data in response');
             return false;
 
-        } catch (LocalizedException $e) {
-            // Re-throw configuration/migration errors so they reach the user
-            throw $e;
         } catch (\Exception $e) {
             $this->logger->error('NerdGraph deployment creation failed: ' . $e->getMessage());
             return false;
