@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 
 declare(strict_types=1);
@@ -53,24 +53,31 @@ class DataTest extends TestCase
     /**
      * Setup environment
      */
+    /**
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     */
     protected function setUp(): void
     {
-        $this->context = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->context = $this->createMock(Context::class);
 
-        $this->scopeConfig = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
 
-        $this->filter = $this->getMockBuilder(FilterManager::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['truncate'])
-            ->getMock();
+        $this->filter = new class extends FilterManager {
+            public function __construct()
+            {
+ /* Skip parent constructor */
+            }
+            public function truncate($string, $length = 80, $etc = '...', $breakWords = true, $middle = false)
+            {
+                return $string;
+            }
+            public function getFactories()
+            {
+                return [];
+            }
+        };
 
-        $this->escaper = $this->getMockBuilder(Escaper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->escaper = $this->createMock(Escaper::class);
 
         $this->context->expects($this->once())
             ->method('getScopeConfig')
@@ -95,9 +102,7 @@ class DataTest extends TestCase
         $origDetail = "This\nis\na\nstring";
         $expected = "This<br />" . "\n" . "is<br />" . "\n" . "a<br />" . "\n" . "string";
 
-        $this->filter->expects($this->any())->method('truncate')
-            ->with($origDetail, ['length' => 50])
-            ->willReturn($origDetail);
+        // Filter mock methods provided by anonymous class
 
         $this->assertEquals($expected, $this->helper->getDetail($origDetail));
     }

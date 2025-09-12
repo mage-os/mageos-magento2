@@ -66,6 +66,9 @@ class MassUpdateStatusTest extends TestCase
     /**
      * @inheritdoc
      */
+    /**
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     */
     protected function setUp(): void
     {
         $this->collectionMock = $this->createMock(ReviewCollection::class);
@@ -100,6 +103,9 @@ class MassUpdateStatusTest extends TestCase
     /**
      * @return void
      */
+    /**
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     */
     public function testExecute(): void
     {
         $this->requestMock->expects(self::atLeastOnce())
@@ -122,17 +128,28 @@ class MassUpdateStatusTest extends TestCase
             ->method('addFieldToFilter')
             ->with('main_table.id', [1, 2])
             ->willReturnSelf();
-        $modelMock = $this->getMockBuilder(Review::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setStatusId'])
-            ->onlyMethods(['_getResource'])
-            ->getMock();
-        $modelMock->expects($this->once())
-            ->method('setStatusId')
-            ->with(Review::STATUS_APPROVED)
-            ->willReturnSelf();
-        $modelMock->method('_getResource')
-            ->willReturn($this->createMock(ReviewResourceModel::class));
+        $modelMock = new class extends Review {
+            /**
+             * @var mixed
+             */
+            private $resource;
+            public function __construct()
+            {
+            }
+            public function _getResource()
+            {
+                return $this->resource;
+            }
+            public function setResource($resource)
+            {
+                $this->resource = $resource;
+            }
+            public function setStatusId($statusId)
+            {
+                return $this;
+            }
+        };
+        $modelMock->setResource($this->createMock(ReviewResourceModel::class));
         $this->collectionMock->expects($this->once())->method('getIterator')
             ->willReturn(new \ArrayIterator([$modelMock]));
         $this->messageManagerMock->expects($this->once())

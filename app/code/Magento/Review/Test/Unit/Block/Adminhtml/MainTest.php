@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -56,11 +56,10 @@ class MainTest extends TestCase
      */
     public function testConstruct(): void
     {
-        $this->customerRepository = $this
-            ->getMockForAbstractClass(CustomerRepositoryInterface::class);
+        $this->customerRepository = $this->createMock(CustomerRepositoryInterface::class);
         $this->customerViewHelper = $this->createMock(ViewHelper::class);
         $this->collectionFactory = $this->createMock(CollectionFactory::class);
-        $dummyCustomer = $this->getMockForAbstractClass(CustomerInterface::class);
+        $dummyCustomer = $this->createMock(CustomerInterface::class);
 
         $this->customerRepository->expects($this->once())
             ->method('getById')
@@ -70,7 +69,7 @@ class MainTest extends TestCase
             ->method('getCustomerName')
             ->with($dummyCustomer)
             ->willReturn(new DataObject());
-        $this->request = $this->getMockForAbstractClass(RequestInterface::class);
+        $this->request = $this->createMock(RequestInterface::class);
         $this->request
             ->method('getParam')
             ->willReturnCallback(function ($arg1, $arg2) {
@@ -89,6 +88,16 @@ class MainTest extends TestCase
             ->willReturn($productCollection);
 
         $objectManagerHelper = new ObjectManagerHelper($this);
+        
+        // Fix ObjectManager initialization issue using existing helper method
+        $objects = [
+            [
+                \Magento\Backend\Block\Template\Context::class,
+                $this->createMock(\Magento\Backend\Block\Template\Context::class)
+            ]
+        ];
+        $objectManagerHelper->prepareObjectManager($objects);
+        
         $this->model = $objectManagerHelper->getObject(
             MainBlock::class,
             [

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -54,14 +54,30 @@ class ProcessProductAfterDeleteEventObserverTest extends TestCase
      *
      * @return void
      */
+    /**
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     */
     public function testCleanupProductReviewsWithProduct()
     {
         $productId = 1;
         $observerMock = $this->createMock(Observer::class);
-        $eventMock = $this->getMockBuilder(Event::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getProduct'])
-            ->getMock();
+        $eventMock = new class extends Event {
+            /**
+             * @var mixed
+             */
+            private $product;
+            public function __construct()
+            {
+            }
+            public function getProduct()
+            {
+                return $this->product;
+            }
+            public function setProduct($product)
+            {
+                $this->product = $product;
+            }
+        };
 
         $productMock = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
@@ -71,9 +87,7 @@ class ProcessProductAfterDeleteEventObserverTest extends TestCase
         $productMock->expects(self::exactly(3))
             ->method('getId')
             ->willReturn($productId);
-        $eventMock->expects($this->once())
-            ->method('getProduct')
-            ->willReturn($productMock);
+        $eventMock->setProduct($productMock);
         $observerMock->expects($this->once())
             ->method('getEvent')
             ->willReturn($eventMock);
@@ -92,17 +106,31 @@ class ProcessProductAfterDeleteEventObserverTest extends TestCase
      *
      * @return void
      */
+    /**
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     */
     public function testCleanupProductReviewsWithoutProduct()
     {
         $observerMock = $this->createMock(Observer::class);
-        $eventMock = $this->getMockBuilder(Event::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getProduct'])
-            ->getMock();
+        $eventMock = new class extends Event {
+            /**
+             * @var mixed
+             */
+            private $product;
+            public function __construct()
+            {
+            }
+            public function getProduct()
+            {
+                return $this->product;
+            }
+            public function setProduct($product)
+            {
+                $this->product = $product;
+            }
+        };
 
-        $eventMock->expects($this->once())
-            ->method('getProduct')
-            ->willReturn(null);
+        // Event mock methods provided by anonymous class (returns null by default)
         $observerMock->expects($this->once())
             ->method('getEvent')
             ->willReturn($eventMock);

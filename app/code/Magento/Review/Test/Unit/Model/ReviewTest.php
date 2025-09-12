@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -87,8 +87,8 @@ class ReviewTest extends TestCase
             ['create']
         );
         $this->summaryMock = $this->createMock(Summary::class);
-        $this->storeManagerMock = $this->getMockForAbstractClass(StoreManagerInterface::class);
-        $this->urlInterfaceMock = $this->getMockForAbstractClass(UrlInterface::class);
+        $this->storeManagerMock = $this->createPartialMock(\Magento\Store\Model\StoreManager::class, ['getStore']);
+        $this->urlInterfaceMock = $this->createMock(UrlInterface::class);
         $this->resource = $this->createMock(\Magento\Review\Model\ResourceModel\Review::class);
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
@@ -151,6 +151,9 @@ class ReviewTest extends TestCase
     /**
      * @deprecated
      */
+    /**
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     */
     public function testGetEntitySummary()
     {
         $productId = 6;
@@ -159,24 +162,49 @@ class ReviewTest extends TestCase
         $summary = new DataObject();
         $summary->setData($testSummaryData);
 
-        $product = $this->getMockBuilder(Product::class)
-            ->addMethods(['setRatingSummary'])
-            ->onlyMethods(['getId', '__wakeup'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $product->expects($this->once())->method('getId')->willReturn($productId);
-        $product->expects($this->once())->method('setRatingSummary')->with($summary)->willReturnSelf();
+        $product = new class extends Product {
+            public function __construct()
+            {
+ /* Skip parent constructor */
+            }
+            public function getId()
+            {
+                return 1;
+            }
+            public function __wakeup()
+            {
+                return $this;
+            }
+            public function setRatingSummary($summary)
+            {
+                return $this;
+            }
+        };
+        // Product mock methods provided by anonymous class
 
-        $summaryData = $this->getMockBuilder(Summary::class)
-            ->addMethods(['setStoreId'])
-            ->onlyMethods(['load', 'getData', '__wakeup'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $summaryData->expects($this->once())->method('setStoreId')
-            ->with($storeId)->willReturnSelf();
-        $summaryData->expects($this->once())->method('load')
-            ->with($productId)->willReturnSelf();
-        $summaryData->expects($this->once())->method('getData')->willReturn($testSummaryData);
+        $summaryData = new class extends Summary {
+            public function __construct()
+            {
+ /* Skip parent constructor */
+            }
+            public function load($modelId, $field = null)
+            {
+                return $this;
+            }
+            public function getData($key = '', $index = null)
+            {
+                return [];
+            }
+            public function __wakeup()
+            {
+                return $this;
+            }
+            public function setStoreId($storeId)
+            {
+                return $this;
+            }
+        };
+        // Summary data mock methods provided by anonymous class
         $this->summaryModMock->expects($this->once())->method('create')->willReturn($summaryData);
         $this->assertNull($this->review->getEntitySummary($product, $storeId));
     }

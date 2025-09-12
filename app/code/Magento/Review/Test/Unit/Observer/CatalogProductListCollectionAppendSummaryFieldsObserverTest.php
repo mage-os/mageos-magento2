@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types = 1);
 
@@ -70,12 +70,28 @@ class CatalogProductListCollectionAppendSummaryFieldsObserverTest extends TestCa
     /**
      * @inheritdoc
      */
+    /**
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     */
     protected function setUp(): void
     {
-        $this->eventMock = $this->getMockBuilder(Event::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getCollection'])
-            ->getMock();
+        $this->eventMock = new class extends Event {
+            /**
+             * @var mixed
+             */
+            private $collection;
+            public function __construct()
+            {
+            }
+            public function getCollection()
+            {
+                return $this->collection;
+            }
+            public function setCollection($collection)
+            {
+                $this->collection = $collection;
+            }
+        };
 
         $this->observerMock = $this->createMock(Observer::class);
 
@@ -83,15 +99,9 @@ class CatalogProductListCollectionAppendSummaryFieldsObserverTest extends TestCa
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getStore'])
-            ->getMockForAbstractClass();
+        $this->storeManagerMock = $this->createPartialMock(\Magento\Store\Model\StoreManager::class, ['getStore']);
 
-        $this->storeMock = $this->getMockBuilder(StoreInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getId'])
-            ->getMockForAbstractClass();
+        $this->storeMock = $this->createPartialMock(\Magento\Store\Model\Store::class, ['getId']);
 
         $this->sumResourceMock = $this->createPartialMock(
             Summary::class,
@@ -114,10 +124,7 @@ class CatalogProductListCollectionAppendSummaryFieldsObserverTest extends TestCa
      */
     public function testAddSummaryFieldToProductsCollection() : void
     {
-        $this->eventMock
-            ->expects($this->once())
-            ->method('getCollection')
-            ->willReturn($this->productCollectionMock);
+        $this->eventMock->setCollection($this->productCollectionMock);
 
         $this->observerMock
             ->expects($this->once())

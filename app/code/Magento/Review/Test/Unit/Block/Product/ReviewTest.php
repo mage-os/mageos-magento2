@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -71,6 +71,9 @@ class ReviewTest extends TestCase
     /** @var RequestInterface|MockObject */
     protected $requestMock;
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     */
     protected function setUp(): void
     {
         $this->initContextMock();
@@ -99,12 +102,15 @@ class ReviewTest extends TestCase
     /**
      * Create mocks for collection and its factory
      */
+    /**
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     */
     private function initCollectionMocks()
     {
-        $this->collection = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['addStoreFilter', 'addStatusFilter', 'addEntityFilter', 'getSize', '__wakeup'])
-            ->getMock();
+        $this->collection = $this->createPartialMock(
+            Collection::class,
+            ['addStoreFilter', 'addStatusFilter', 'addEntityFilter', 'getSize', '__wakeup']
+        );
 
         $this->collection->expects(static::any())
             ->method('addStoreFilter')
@@ -119,15 +125,29 @@ class ReviewTest extends TestCase
             ->method('addEntityFilter')
             ->willReturnSelf();
 
-        $this->collectionFactory = $this->getMockBuilder(CollectionFactory::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['__wakeup'])
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->collectionFactory = new class extends CollectionFactory {
+            /**
+             * @var mixed
+             */
+            private $collection;
+            public function __construct()
+            {
+            }
+            public function create(array $data = [])
+            {
+                return $this->collection;
+            }
+            public function setCollection($collection)
+            {
+                $this->collection = $collection;
+            }
+            public function __wakeup()
+            {
+                return $this;
+            }
+        };
 
-        $this->collectionFactory->expects(static::once())
-            ->method('create')
-            ->willReturn($this->collection);
+        $this->collectionFactory->setCollection($this->collection);
     }
 
     /**
@@ -136,10 +156,7 @@ class ReviewTest extends TestCase
     private function initRegistryMock()
     {
         $this->initProductMock();
-        $this->registry = $this->getMockBuilder(Registry::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['registry'])
-            ->getMock();
+        $this->registry = $this->createPartialMock(Registry::class, ['registry']);
 
         $this->registry->expects($this->any())
             ->method('registry')
@@ -152,38 +169,45 @@ class ReviewTest extends TestCase
      */
     private function initProductMock()
     {
-        $this->product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getId'])
-            ->getMock();
+        $this->product = $this->createPartialMock(Product::class, ['getId']);
     }
 
     /**
      * Create mock object for context
      */
+    /**
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     */
     private function initContextMock()
     {
-        $this->store = $this->getMockBuilder(Store::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getId', '__wakeup'])
-            ->getMock();
+        $this->store = $this->createPartialMock(Store::class, ['getId', '__wakeup']);
 
-        $this->storeManager = $this->getMockBuilder(StoreManager::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['__wakeup'])
-            ->onlyMethods(['getStore'])
-            ->getMock();
+        $this->storeManager = new class extends StoreManager {
+            /**
+             * @var mixed
+             */
+            private $store;
+            public function __construct()
+            {
+            }
+            public function getStore($storeId = null)
+            {
+                return $this->store;
+            }
+            public function setStore($store)
+            {
+                $this->store = $store;
+            }
+            public function __wakeup()
+            {
+                return $this;
+            }
+        };
 
-        $this->storeManager->expects(static::any())
-            ->method('getStore')
-            ->willReturn($this->store);
-        $this->urlBuilder = $this->getMockBuilder(UrlInterface::class)
-            ->getMockForAbstractClass();
-        $this->requestMock = $this->getMockBuilder(RequestInterface::class)
-            ->getMockForAbstractClass();
-        $this->context = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->storeManager->setStore($this->store);
+        $this->urlBuilder = $this->createMock(UrlInterface::class);
+        $this->requestMock = $this->createMock(RequestInterface::class);
+        $this->context = $this->createMock(Context::class);
         $this->context->expects($this->any())->method('getRequest')->willReturn($this->requestMock);
         $this->context->expects($this->any())->method('getUrlBuilder')->willReturn($this->urlBuilder);
         $this->context->expects($this->any())->method('getStoreManager')->willReturn($this->storeManager);

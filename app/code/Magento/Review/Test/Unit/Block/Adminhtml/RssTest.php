@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -51,9 +51,9 @@ class RssTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->storeManagerInterface = $this->getMockForAbstractClass(StoreManagerInterface::class);
+        $this->storeManagerInterface = $this->createPartialMock(\Magento\Store\Model\StoreManager::class, ['getStore']);
         $this->rss = $this->createPartialMock(\Magento\Review\Model\Rss::class, ['__wakeUp', 'getProductCollection']);
-        $this->urlBuilder = $this->getMockForAbstractClass(UrlInterface::class);
+        $this->urlBuilder = $this->createMock(UrlInterface::class);
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->block = $this->objectManagerHelper->getObject(
             Rss::class,
@@ -89,37 +89,50 @@ class RssTest extends TestCase
                 ],
             ],
         ];
-        $productModel = $this->getMockBuilder(Product::class)
-            ->addMethods([
-                'getStoreId',
-                'getId',
-                'getReviewId',
-                'getName',
-                'getDetail',
-                'getTitle',
-                'getNickname',
-                'getProductUrl'
-            ])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productModel = new class extends Product {
+            public function __construct()
+            {
+ /* Skip parent constructor */
+            }
+            public function getStoreId()
+            {
+                return 1;
+            }
+            public function getId()
+            {
+                return 1;
+            }
+            public function getReviewId()
+            {
+                return 1;
+            }
+            public function getNickName()
+            {
+                return 'Product Nick';
+            }
+            public function getName()
+            {
+                return 'Product Name';
+            }
+            public function getDetail()
+            {
+                return 'Product Detail';
+            }
+            public function getTitle()
+            {
+                return 'Product Title';
+            }
+            public function getProductUrl()
+            {
+                return 'http://product.magento.com';
+            }
+        };
         $storeModel = $this->createMock(Store::class);
         $this->storeManagerInterface->expects($this->once())->method('getStore')->willReturn($storeModel);
         $storeModel->expects($this->once())->method('getName')
             ->willReturn($rssData['entries']['description']['store']);
         $this->urlBuilder->expects($this->any())->method('getUrl')->willReturn($rssUrl);
         $this->urlBuilder->expects($this->once())->method('setScope')->willReturnSelf();
-        $productModel->expects($this->any())->method('getStoreId')->willReturn(1);
-        $productModel->expects($this->any())->method('getId')->willReturn(1);
-        $productModel->expects($this->once())->method('getReviewId')->willReturn(1);
-        $productModel->expects($this->any())->method('getNickName')->willReturn('Product Nick');
-        $productModel->expects($this->any())->method('getName')
-            ->willReturn($rssData['entries']['description']['name']);
-        $productModel->expects($this->once())->method('getDetail')
-            ->willReturn($rssData['entries']['description']['review']);
-        $productModel->expects($this->once())->method('getTitle')
-            ->willReturn($rssData['entries']['description']['summary']);
-        $productModel->expects($this->any())->method('getProductUrl')
-            ->willReturn('http://product.magento.com');
         $this->rss->expects($this->once())->method('getProductCollection')
             ->willReturn([$productModel]);
 

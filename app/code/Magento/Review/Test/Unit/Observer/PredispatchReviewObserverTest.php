@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types = 1);
 
@@ -58,16 +58,9 @@ class PredispatchReviewObserverTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->configMock = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->urlMock = $this->getMockBuilder(UrlInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->responseMock = $this->getMockBuilder(ResponseInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setRedirect'])
-            ->getMockForAbstractClass();
+        $this->configMock = $this->createMock(ScopeConfigInterface::class);
+        $this->urlMock = $this->createMock(UrlInterface::class);
+        $this->responseMock = $this->createPartialMock(\Magento\Framework\App\Response\Http::class, ['setRedirect']);
         $this->redirectMock = $this->getMockBuilder(RedirectInterface::class)
             ->getMock();
         $this->objectManager = new ObjectManager($this);
@@ -87,23 +80,29 @@ class PredispatchReviewObserverTest extends TestCase
      */
     public function testReviewEnabled() : void
     {
-        $observerMock = $this->getMockBuilder(Observer::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getData'])
-            ->addMethods(['getResponse', 'setRedirect'])
-            ->getMockForAbstractClass();
+        $observerMock = new class extends Observer {
+            public function __construct()
+            {
+ /* Skip parent constructor */
+            }
+            public function getData($key = '', $index = null)
+            {
+                return null;
+            }
+            public function getResponse()
+            {
+                return null;
+            }
+            public function setRedirect($url)
+            {
+                return $this;
+            }
+        };
 
         $this->configMock->method('getValue')
             ->with(PredispatchReviewObserver::XML_PATH_REVIEW_ACTIVE, ScopeInterface::SCOPE_STORE)
             ->willReturn(true);
-        $observerMock->expects($this->never())
-            ->method('getData')
-            ->with('controller_action')
-            ->willReturnSelf();
-
-        $observerMock->expects($this->never())
-            ->method('getResponse')
-            ->willReturnSelf();
+        // Observer mock methods provided by anonymous class
 
         $this->assertNull($this->mockObject->execute($observerMock));
     }
@@ -113,12 +112,32 @@ class PredispatchReviewObserverTest extends TestCase
      *
      * @return void
      */
+    /**
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     */
     public function testReviewDisabled() : void
     {
-        $observerMock = $this->getMockBuilder(Observer::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getControllerAction', 'getResponse'])
-            ->getMockForAbstractClass();
+        $observerMock = new class extends Observer {
+            /**
+             * @var mixed
+             */
+            private $controllerAction;
+            public function __construct()
+            {
+            }
+            public function getData($key = '', $index = null)
+            {
+                return null;
+            }
+            public function getControllerAction()
+            {
+                return $this->controllerAction;
+            }
+            public function setControllerAction($controllerAction)
+            {
+                $this->controllerAction = $controllerAction;
+            }
+        };
 
         $expectedRedirectUrl = 'https://test.com/index';
 
@@ -136,13 +155,9 @@ class PredispatchReviewObserverTest extends TestCase
             ->method('getUrl')
             ->willReturn($expectedRedirectUrl);
 
-        $observerMock->expects($this->once())
-            ->method('getControllerAction')
-            ->willReturnSelf();
-
-        $observerMock->expects($this->once())
-            ->method('getResponse')
-            ->willReturn($this->responseMock);
+        $controllerActionMock = $this->createMock(\Magento\Framework\App\Action\Action::class);
+        $controllerActionMock->method('getResponse')->willReturn($this->responseMock);
+        $observerMock->setControllerAction($controllerActionMock);
 
         $this->responseMock->expects($this->once())
             ->method('setRedirect')

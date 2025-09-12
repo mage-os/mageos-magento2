@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -80,7 +80,7 @@ class CollectionTest extends TestCase
         $universalFactory->expects($this->any())->method('create')->willReturn($entity);
         $store = $this->createMock(Store::class);
         $store->expects($this->any())->method('getId')->willReturn(1);
-        $storeManager = $this->getMockForAbstractClass(StoreManagerInterface::class);
+        $storeManager = $this->createMock(StoreManagerInterface::class);
         $storeManager->expects($this->any())->method('getStore')->willReturn($store);
         $fetchStrategy = $this->createMock(
             Query::class
@@ -89,9 +89,7 @@ class CollectionTest extends TestCase
         $productLimitationMock = $this->createMock(
             ProductLimitation::class
         );
-        $productLimitationFactoryMock = $this->getMockBuilder(ProductLimitationFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productLimitationFactoryMock = $this->createMock(ProductLimitationFactory::class);
         $productLimitationFactoryMock->method('create')
             ->willReturn($productLimitationMock);
         $this->objectManager = new ObjectManager($this);

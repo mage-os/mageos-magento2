@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -56,18 +56,15 @@ class FormTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->storeManager = $this->getMockForAbstractClass(StoreManagerInterface::class);
-        $this->requestMock = $this->getMockForAbstractClass(RequestInterface::class);
-        $this->reviewDataMock = $this->getMockBuilder(Data::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->storeManager = $this->createPartialMock(\Magento\Store\Model\StoreManager::class, ['getStore']);
+        $this->requestMock = $this->createMock(RequestInterface::class);
+        $this->reviewDataMock = $this->createMock(Data::class);
 
         $this->reviewDataMock->expects($this->once())
             ->method('getIsGuestAllowToWrite')
             ->willReturn(true);
 
-        $this->urlBuilder = $this->getMockBuilder(UrlInterface::class)
-            ->getMockForAbstractClass();
+        $this->urlBuilder = $this->createMock(UrlInterface::class);
         $this->context = $this->createMock(Context::class);
         $this->context->expects(
             $this->any()
@@ -80,10 +77,9 @@ class FormTest extends TestCase
             ->method('getRequest')
             ->willReturn($this->requestMock);
         $this->context->expects($this->any())->method('getUrlBuilder')->willReturn($this->urlBuilder);
-        $this->productRepository = $this->getMockForAbstractClass(ProductRepositoryInterface::class);
+        $this->productRepository = $this->createMock(ProductRepositoryInterface::class);
 
-        $this->serializerMock = $this->getMockBuilder(Json::class)
-            ->getMock();
+        $this->serializerMock = $this->createMock(Json::class);
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->object = $this->objectManagerHelper->getObject(
@@ -120,7 +116,7 @@ class FormTest extends TestCase
             ->with('id', false)
             ->willReturn($productId);
 
-        $productMock = $this->getMockForAbstractClass(ProductInterface::class);
+        $productMock = $this->createMock(ProductInterface::class);
         $this->productRepository->expects($this->once())
             ->method('getById')
             ->with($productId, false, $storeId)

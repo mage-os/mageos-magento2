@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -20,32 +20,30 @@ class PagerTest extends TestCase
     /**
      * Prepare helper object
      */
+    /**
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     */
     protected function setUp(): void
     {
-        $sessionMock = $this->getMockBuilder(
-            Session::class
-        )->disableOriginalConstructor()
-            ->addMethods(['setData'])
-            ->onlyMethods(
-                ['getData']
-            )->getMock();
-        $sessionMock->expects(
-            $this->any()
-        )->method(
-            'setData'
-        )->with(
-            'search_result_idsreviews',
-            $this->anything()
-        );
-        $sessionMock->expects(
-            $this->any()
-        )->method(
-            'getData'
-        )->with(
-            'search_result_idsreviews'
-        )->willReturn(
-            [3, 2, 6, 5]
-        );
+        $sessionMock = new class extends Session {
+            /**
+             * @var array
+             */
+            private $data = [];
+            public function __construct()
+            {
+            }
+            public function getData($key = '', $index = null)
+            {
+                return $this->data[$key] ?? [3, 2, 6, 5];
+            }
+            public function setData($key, $value = null)
+            {
+                $this->data[$key] = $value;
+                return $this;
+            }
+        };
+        // Session mock methods provided by anonymous class
 
         $contextMock = $this->createPartialMock(
             Context::class,

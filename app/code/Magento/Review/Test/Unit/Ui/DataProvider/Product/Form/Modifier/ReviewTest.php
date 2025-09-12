@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -29,8 +29,7 @@ class ReviewTest extends AbstractModifierTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->urlBuilderMock = $this->getMockBuilder(UrlInterface::class)
-            ->getMockForAbstractClass();
+        $this->urlBuilderMock = $this->createMock(UrlInterface::class);
         $this->moduleManagerMock = $this->createMock(ModuleManager::class);
     }
 
