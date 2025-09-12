@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Copyright 2013 Adobe
+ * Copyright 2011 Adobe
  * All Rights Reserved.
  */
 -->
@@ -129,5 +129,8 @@
     </type>
     <type name="Magento\Customer\Model\Session">
         <plugin name="afterLogout" type="Magento\Customer\Model\Plugin\ClearSessionsAfterLogoutPlugin"/>
+    </type>
+    <type name="Magento\Customer\Api\CustomerRepositoryInterface">
+        <plugin name="customer_dobvalidation_plugin" type="Magento\Customer\Plugin\ValidateDobOnSave" sortOrder="10"/>
     </type>
 </config>

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Copyright 2015 Adobe
+ * Copyright 2014 Adobe
  * All Rights Reserved.
  */
 -->
@@ -16,4 +16,12 @@
     <type name="Magento\Quote\Model\Quote">
         <plugin name="updateQuoteStoreId" type="Magento\Quote\Model\Quote\Plugin\UpdateQuoteStoreId" />
     </type>
+    <virtualType name="Magento\Quote\Model\Quote\Item\CartItemValidatorChainOnSave" type="Magento\Quote\Model\Quote\Item\CartItemValidatorChain">
+        <arguments>
+            <argument name="breakChainOnFailure" xsi:type="boolean">true</argument>
+            <argument name="validators" xsi:type="array">
+                <item name="cart_item_custom_options_validator" xsi:type="object">Magento\Quote\Model\Quote\Item\CartItemCustomOptionsValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
 </config>

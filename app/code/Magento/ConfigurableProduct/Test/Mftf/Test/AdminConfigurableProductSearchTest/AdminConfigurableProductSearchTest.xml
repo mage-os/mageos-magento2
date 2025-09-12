@@ -69,6 +69,7 @@
         <after>
             <actionGroup ref="AdminOpenProductIndexPageActionGroup" stepKey="goToProductList"/>
             <actionGroup ref="AdminClearGridFiltersActionGroup" stepKey="resetProductFilters"/>
+            <deleteData createDataKey="createCategory" stepKey="deletecreateCategory"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
             <deleteData createDataKey="createConfigProduct" stepKey="deleteConfigProduct"/>
             <deleteData createDataKey="createConfigChildProduct1" stepKey="deleteConfigChildProduct1"/>

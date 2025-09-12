@@ -38,6 +38,7 @@
             <comment userInput="BIC workaround" stepKey="clikDeleteSelectedButton"/>
             <comment userInput="BIC workaround" stepKey="deleteImage"/>
             <actionGroup ref="AdminMediaGalleryFolderDeleteActionGroup" stepKey="deleteCreatedFolder"/>
+            <deleteData createDataKey="category" stepKey="deletecategory"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
         </after>
 

@@ -37,7 +37,7 @@ abstract class AbstractEntity implements EntityInterface
 
     public const DB_MAX_VARCHAR_LENGTH = 256;
 
-    public const DB_MAX_TEXT_LENGTH = 65536;
+    public const DB_MAX_TEXT_LENGTH = 16_777_215;
 
     public const ERROR_CODE_SYSTEM_EXCEPTION = 'systemException';
     public const ERROR_CODE_COLUMN_NOT_FOUND = 'columnNotFound';

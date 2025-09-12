@@ -214,6 +214,6 @@ class Form extends \Magento\Framework\View\Element\Template
      */
     protected function getProductId()
     {
-        return $this->getRequest()->getParam('id', false);
+        return (int) $this->getRequest()->getParam('id', false);
     }
 }

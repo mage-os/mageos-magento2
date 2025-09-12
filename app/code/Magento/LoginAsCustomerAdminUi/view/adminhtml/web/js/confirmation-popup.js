@@ -109,8 +109,16 @@ define([
                                  * @param {Object} jqXHR
                                  */
                                 error: function (jqXHR) {
+                                    let message = jqXHR.responseText;
+
+                                    // If it's HTML (403 page), show only the status text
+                                    if (jqXHR.status === 403) {
+                                        message = 'Access denied (403 Forbidden). ' +
+                                            'You may not have permission or your session expired.';
+                                    }
+
                                     alert({
-                                        content: _.escape(jqXHR.responseText)
+                                        content: _.escape(message)
                                     });
                                 }
                             });
