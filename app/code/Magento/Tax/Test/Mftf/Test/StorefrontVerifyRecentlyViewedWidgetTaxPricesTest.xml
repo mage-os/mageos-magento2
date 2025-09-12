@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  /**
-   * Copyright 2025 Adobe
+  * Copyright 2025 Adobe
   * All Rights Reserved.
   */
 -->
@@ -12,7 +12,7 @@
         <annotations>
             <features value="Tax"/>
             <stories value="Recently Viewed Widget Tax Price Display"/>
-            <title value="Verify price including and excluding tax in Recently Viewed Widget"/>
+            <title value="Display tax inclusive and exclusive prices in Recently Viewed Widget"/>
             <description value="Verify that Recently Viewed Widget displays correct prices including and excluding tax based on tax configuration"/>
             <severity value="AVERAGE"/>
             <testCaseId value="AC-8327"/>
@@ -75,7 +75,7 @@
             <magentoCLI command="config:set {{CustomDisplayProductPricesInCatalog.path}} {{CustomDisplayProductPricesInCatalog.value}}" stepKey="setPriceDisplayToBothPrices"/>
         </before>
         <after>
-            <magentoCLI command="config:set tax/display/type 1" stepKey="resetTaxDisplayToDefault"/>
+            <magentoCLI command="config:set {{DisplayProductPricesInCatalog.path}} {{DisplayProductPricesInCatalog.value}}" stepKey="resetTaxDisplayToDefault"/>
             <deleteData createDataKey="createSpriteYogaStrapsBundle" stepKey="deleteBundleProduct"/>
             <deleteData createDataKey="createYogaStrap6Foot" stepKey="deleteYogaStrap6Foot"/>
             <deleteData createDataKey="createYogaStrap8Foot" stepKey="deleteYogaStrap8Foot"/>
@@ -89,7 +89,7 @@
                 <argument name="page_id" value="{{CmsHomePageContent.page_id}}"/>
             </actionGroup>
             <conditionalClick selector="{{CmsNewPagePageActionsSection.contentSectionName}}" dependentSelector="{{CmsNewPagePageActionsSection.showHideEditor}}" visible="false" stepKey="expandContentSectionIfNotVisibleToReset"/>
-            <waitForPageLoad time="30" stepKey="waitForPageLoadContentSectionToReset"/>
+            <waitForPageLoad stepKey="waitForPageLoadContentSectionToReset"/>
             <actionGroup ref="ClickEditWithPageBuilderButtonActionGroup" stepKey="clickEditWithPageBuilderButtonActionGroupToReset"/>
             <actionGroup ref="openPageBuilderEditPanel" stepKey="openEditMenuOnStageToReset">
                 <argument name="contentType" value="PageBuilderHtmlContentType"/>
@@ -99,7 +99,6 @@
             </actionGroup>
             <actionGroup ref="saveEditPanelSettings" stepKey="saveEditPanelSettingsBlockAfterReset"/>
             <actionGroup ref="exitPageBuilderFullScreen" stepKey="exitPageBuilderFullScreenAfterReset"/>
-            <actionGroup ref="SaveAndContinueEditCmsPageActionGroup" stepKey="saveAndContinueEditCmsPageAfterReset"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
         </after>
         <!-- Step 2:- Create "Recently Viewed Widget" and add it to the home page -->
@@ -107,7 +106,7 @@
             <argument name="page_id" value="{{CmsHomePageContent.page_id}}"/>
         </actionGroup>
         <conditionalClick selector="{{CmsNewPagePageActionsSection.contentSectionName}}" dependentSelector="{{CmsNewPagePageActionsSection.showHideEditor}}" visible="false" stepKey="expandContentSectionIfNotVisible"/>
-        <waitForPageLoad time="30" stepKey="waitForPageLoadContentSection"/>
+        <waitForPageLoad stepKey="waitForPageLoadContentSection"/>
         <actionGroup ref="ClickEditWithPageBuilderButtonActionGroup" stepKey="clickEditWithPageBuilderButtonActionGroup"/>
         <actionGroup ref="openPageBuilderEditPanel" stepKey="openEditMenuOnStage">
             <argument name="contentType" value="PageBuilderHtmlContentType"/>
@@ -121,16 +120,16 @@
         </actionGroup>
         <actionGroup ref="saveEditPanelSettings" stepKey="saveEditPanelSettingsBlock"/>
         <actionGroup ref="exitPageBuilderFullScreen" stepKey="exitPageBuilderFullScreen"/>
-        <actionGroup ref="SaveAndContinueEditCmsPageActionGroup" stepKey="saveAndContinueEditCmsPage"/>
+        <actionGroup ref="AdminSaveAndContinueEditCmsPageActionGroup" stepKey="saveAndContinueEditCmsPage"/>
         <!-- Step 3:- Create "Catalog Product List Widget" and add it to the home page (for comparison), limit the visible SKU to created bundle product sku -->
         <conditionalClick selector="{{CmsNewPagePageActionsSection.contentSectionName}}" dependentSelector="{{CmsNewPagePageActionsSection.showHideEditor}}" visible="false" stepKey="expandContentSectionIfNotVisibleAgain"/>
-        <waitForPageLoad time="30" stepKey="waitForPageLoadContentSectionAgain"/>
+        <waitForPageLoad stepKey="waitForPageLoadContentSectionAgain"/>
         <actionGroup ref="ClickEditWithPageBuilderButtonActionGroup" stepKey="clickEditWithPageBuilderButtonActionGroupAgain"/>
         <actionGroup ref="openPageBuilderEditPanel" stepKey="openEditMenuOnStageAgain">
             <argument name="contentType" value="PageBuilderHtmlContentType"/>
         </actionGroup>
         <actionGroup ref="AdminInsertWidgetToCmsPageContentActionGroup" stepKey="insertCatalogProductsListWidget">
-            <argument name="widgetType" value="Catalog Products List"/>
+            <argument name="widgetType" value="{{CatalogProductsListWidget.type}}"/>
         </actionGroup>
         <actionGroup ref="AdminFillCatalogProductsListWidgetSkuActionGroup" stepKey="addSkuCondition">
             <argument name="sku" value="$$createSpriteYogaStrapsBundle.sku$$"/>
@@ -138,7 +137,6 @@
         <actionGroup ref="AdminClickInsertWidgetActionGroup" stepKey="insertWidget"/>
         <actionGroup ref="saveEditPanelSettings" stepKey="saveEditPanelSettingsBlockAgain"/>
         <actionGroup ref="exitPageBuilderFullScreen" stepKey="exitPageBuilderFullScreenAgain"/>
-        <actionGroup ref="SaveAndContinueEditCmsPageActionGroup" stepKey="saveAndContinueEditCmsPageAgain"/>
         <actionGroup ref="AdminSaveAndContinueEditCmsPageActionGroup" stepKey="saveHomePageAfterCatalogProductListWidgetCreation"/>
         <!-- Step 4:- Search for "Set of Sprite Yoga Straps" product (the sample grouped product) and add to the cart -->
         <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
@@ -148,10 +146,10 @@
             <argument name="tags" value="full_page"/>
         </actionGroup>
         <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToHomepage"/>
-        <waitForElementVisible selector="{{StorefrontWidgetsSection.widgetProductsGrid}}" stepKey="waitForProductListWidget"/>
-        <click selector="{{StorefrontWidgetsSection.widgetProductsGrid}} .product-item-link[title*='Set of Sprite Yoga Straps']" stepKey="clickOnBundleProductFromWidget"/>
+        <waitForElementVisible selector="{{StorefrontCategoryProductSection.widgetProduct($$createSpriteYogaStrapsBundle.name$$)}}" stepKey="waitForProductListWidget"/>
+        <click selector="{{StorefrontCategoryProductSection.widgetProduct($$createSpriteYogaStrapsBundle.name$$)}}" stepKey="clickOnBundleProductFromWidget"/>
         <actionGroup ref="StorefrontAddBundleProductFromProductToCartActionGroup" stepKey="addBundleProductToCart">
-            <argument name="productName" value="Set of Sprite Yoga Straps"/>
+            <argument name="productName" value="$$createSpriteYogaStrapsBundle.name$$"/>
         </actionGroup>
         <!-- Step 4 Result:- Verify the price of the "Set of Sprite Yoga Straps" both including and excluding price should be displayed correctly.(including : 15.16 and excluding 14) -->
         <waitForElementVisible selector="{{StorefrontProductInfoMainSection.includingTaxPrice}}" stepKey="waitForIncludingTaxPrice"/>
