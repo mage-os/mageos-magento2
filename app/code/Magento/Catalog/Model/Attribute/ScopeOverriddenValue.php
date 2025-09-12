@@ -105,6 +105,7 @@ class ScopeOverriddenValue
      * @return array
      *
      * @deprecated 101.0.0
+     * @see MAGETWO-71174
      */
     public function getDefaultValues($entityType, $entity)
     {
