@@ -18,7 +18,7 @@
             <severity value="MAJOR"/>
             <group value="3rd_party_integration"/>
             <group value="EnableUSPSShippingForRestAPISuite"/>
-            <!--            <group value="pr_exclude"/>-->
+            <group value="pr_exclude"/>
         </annotations>
         <before>
             <!-- Create product -->
@@ -73,7 +73,7 @@
         <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
             <argument name="Customer" value="$createCustomer$" />
         </actionGroup>
-        <!-- Step 2:Add produuct to cart -->
+        <!-- Step 2:Add product to cart -->
         <actionGroup ref="OpenStoreFrontProductPageActionGroup" stepKey="navigateToProductPage">
             <argument name="productUrlKey" value="$createProduct.custom_attributes[url_key]$"/>
         </actionGroup>
@@ -87,7 +87,7 @@
             <argument name="address" value="Canada_Address"/>
         </actionGroup>
         <!-- Step 4:Select Any  USPS Shipping method  -->
-        <actionGroup ref="StorefrontSetShippingMethodActionGroup" stepKey="setShippingMethodFlatRate">
+        <actionGroup ref="StorefrontSetShippingMethodActionGroup" stepKey="setShippingUSPSShippingMethod">
             <argument name="shippingMethodName" value="{{ShippingTypeUSPSConfigData.value}}"/>
         </actionGroup>
         <!-- Step 5:Place order  -->
