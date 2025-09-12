@@ -21,7 +21,6 @@ use Symfony\Component\Console\Tester\CommandTester;
 /**
  * Integration test for DeployMarker console command.
  * Covers framework integration (DI, Config, CLI) for both v2_rest and NerdGraph modes.
- * API calls are not executed against real endpoints (fake credentials only).
  *
  * @magentoAppIsolation enabled
  */
@@ -51,8 +50,6 @@ class DeployMarkerCommandTest extends TestCase
     {
         $this->objectManager = Bootstrap::getObjectManager();
         $this->mutableScopeConfig = $this->objectManager->get(MutableScopeConfigInterface::class);
-
-        // Focus: Test Magento framework integration (DI, Config, CLI)
         $this->command = $this->objectManager->get(DeployMarker::class);
         $this->commandTester = new CommandTester($this->command);
     }
@@ -107,15 +104,13 @@ class DeployMarkerCommandTest extends TestCase
             'message' => 'Test deployment message'
         ]);
 
-        // Framework integration: Should handle gracefully (success or graceful failure)
         $this->assertTrue(in_array($exitCode, [0, 1], true), 'Command should exit with 0 (success) or 1 (graceful failure)');
         $output = $this->commandTester->getDisplay();
 
-        // Test: No fatal framework errors
+        // No fatal framework errors
         $this->assertStringNotContainsString('Fatal error', $output);
         $this->assertStringNotContainsString('Call to a member function', $output);
 
-        // Test: Command produces meaningful UX message
         $this->assertMatchesRegularExpression('/(✓|✗)/', $output, 'Output should contain success (✓) or error (✗) indicator');
     }
 
@@ -159,7 +154,6 @@ class DeployMarkerCommandTest extends TestCase
      */
     public function testCommandWithAllParametersNerdGraph()
     {
-        // Test: Magento config system integration
         $this->mutableScopeConfig->setValue('newrelicreporting/general/enable', '1');
         $this->mutableScopeConfig->setValue('newrelicreporting/general/api_mode', 'nerdgraph');
         $this->mutableScopeConfig->setValue('newrelicreporting/general/entity_guid', 'fake-guid-for-testing');
@@ -179,11 +173,8 @@ class DeployMarkerCommandTest extends TestCase
         $this->assertTrue(in_array($exitCode, [0, 1], true), 'Command should exit with 0 (success) or 1 (graceful failure)');
         $output = $this->commandTester->getDisplay();
 
-        // Test: No fatal framework errors
         $this->assertStringNotContainsString('Fatal error', $output);
         $this->assertStringNotContainsString('Call to a member function', $output);
-
-        // Test: Command produces meaningful UX message
         $this->assertMatchesRegularExpression('/(✓|✗)/', $output, 'Output should contain success (✓) or error (✗) indicator');
     }
 
@@ -198,12 +189,10 @@ class DeployMarkerCommandTest extends TestCase
             'message' => ''
         ]);
 
-        // Should process empty message (validation handled by deployment service)
         $this->assertIsInt($exitCode);
         $output = $this->commandTester->getDisplay();
         $this->assertStringNotContainsString('Fatal error', $output);
 
-        // Test: Command produces meaningful UX message even for empty input
         $this->assertMatchesRegularExpression('/(✓|✗)/', $output, 'Output should contain success (✓) or error (✗) indicator');
     }
 

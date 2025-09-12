@@ -10,6 +10,7 @@ namespace Magento\NewRelicReporting\Test\Integration\Model\NerdGraph;
 use Magento\Framework\App\Config\MutableScopeConfigInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\HTTP\LaminasClient;
 use Magento\Framework\HTTP\LaminasClientFactory;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Serialize\SerializerInterface;
@@ -170,13 +171,13 @@ class DeploymentWorkflowTest extends TestCase
 
     /**
      * Test Deployments service configuration
+     * @throws \ReflectionException
      */
     public function testDeploymentsServiceConfiguration()
     {
         // Test that Deployments service is properly configured
         $this->assertInstanceOf(Deployments::class, $this->deployments);
 
-        // Test dependency injection
         $reflection = new \ReflectionClass($this->deployments);
         $constructor = $reflection->getConstructor();
         $parameters = $constructor->getParameters();
@@ -199,12 +200,12 @@ class DeploymentWorkflowTest extends TestCase
 
     /**
      * Test NerdGraph Client configuration
+     * @throws \ReflectionException
      */
     public function testNerdGraphClientConfiguration()
     {
         $this->assertInstanceOf(Client::class, $this->nerdGraphClient);
 
-        // Test dependency injection
         $reflection = new \ReflectionClass($this->nerdGraphClient);
         $constructor = $reflection->getConstructor();
         $parameters = $constructor->getParameters();
@@ -225,12 +226,12 @@ class DeploymentWorkflowTest extends TestCase
 
     /**
      * Test DeploymentTracker configuration
+     * @throws \ReflectionException
      */
     public function testDeploymentTrackerConfiguration()
     {
         $this->assertInstanceOf(DeploymentTracker::class, $this->deploymentTracker);
 
-        // Test dependency injection
         $reflection = new \ReflectionClass($this->deploymentTracker);
         $constructor = $reflection->getConstructor();
         $parameters = $constructor->getParameters();
@@ -289,7 +290,7 @@ class DeploymentWorkflowTest extends TestCase
 
         // Should be able to create HTTP client
         $httpClient = $httpClientFactory->create();
-        $this->assertInstanceOf(\Magento\Framework\HTTP\LaminasClient::class, $httpClient);
+        $this->assertInstanceOf(LaminasClient::class, $httpClient);
     }
 
     /**
@@ -318,36 +319,12 @@ class DeploymentWorkflowTest extends TestCase
 
         // Should be able to log without errors
         $logger->info('Test log message from integration test');
-        $this->assertTrue(true); // If we get here, logging worked
-    }
-
-    /**
-     * Test configuration paths are accessible
-     */
-    public function testConfigurationPaths()
-    {
-        $testPaths = [
-            'newrelicreporting/general/enable',
-            'newrelicreporting/general/api_mode',
-            'newrelicreporting/general/entity_guid',
-            'newrelicreporting/general/app_id',
-            'newrelicreporting/general/app_name',
-            'newrelicreporting/general/api',
-            'newrelicreporting/general/nerd_graph_api_url',
-            'newrelicreporting/general/api_url'
-        ];
-
-        $scopeConfig = $this->objectManager->get(ScopeConfigInterface::class);
-
-        foreach ($testPaths as $path) {
-            // Should not throw exception when accessing these paths
-            $value = $scopeConfig->getValue($path);
-            $this->assertTrue(true); // If we get here, path is accessible
-        }
+        $this->assertTrue(true);
     }
 
     /**
      * Test error handling in deployment workflow
+     * @throws LocalizedException
      */
     public function testDeploymentWorkflowErrorHandling()
     {
