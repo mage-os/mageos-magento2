@@ -71,7 +71,10 @@
         <actionGroup ref="CheckingWithMultipleAddressesActionGroup" stepKey="checkoutWithMultipleAddresses"/>
         <waitForPageLoad stepKey="waitForShippingInfoPageLoad"/>
         <actionGroup ref="SelectMultiShippingInfoActionGroup" stepKey="checkoutWithMultipleShipping"/>
-        <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="selectCheckMoneyPayment"/>
+        <!-- Selects the 'Check / Money Order' Payment Method -->
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <conditionalClick selector="{{StorefrontCheckoutPaymentMethodSection.paymentMethod('Check / Money order')}}" dependentSelector="{{StorefrontCheckoutPaymentMethodSection.paymentMethod('Check / Money order')}}" visible="true" stepKey="selectCheckmoPaymentMethod"/>
+        <!-- Select Billing Info -->
         <actionGroup ref="SelectBillingInfoActionGroup" stepKey="checkoutWithPaymentMethod"/>
         <waitForPageLoad stepKey="waitForReviewOrderPageLoad"/>
         <actionGroup ref="ReviewOrderForMultiShipmentActionGroup" stepKey="reviewOrderForMultiShipment">
