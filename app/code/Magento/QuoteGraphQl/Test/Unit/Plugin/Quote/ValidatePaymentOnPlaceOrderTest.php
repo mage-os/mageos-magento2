@@ -26,7 +26,7 @@ class ValidatePaymentOnPlaceOrderTest extends TestCase
     private PaymentHelper $paymentHelper;
 
     /**
-     * @var ValidatePaymentOnPlaceOrder 
+     * @var ValidatePaymentOnPlaceOrder
      */
     private ValidatePaymentOnPlaceOrder $plugin;
 
