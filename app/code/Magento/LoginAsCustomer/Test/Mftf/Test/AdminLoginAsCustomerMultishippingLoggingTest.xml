@@ -44,9 +44,7 @@
             <actionGroup ref="CliDisableFreeShippingMethodActionGroup" stepKey="disableFreeShipping"/>
             <comment userInput="Adding the comment to replace 'cache:flush' command for preserving Backward Compatibility" stepKey="flushCacheAfterTestRun"/>
         </after>
-        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="runCronReindex">
-            <argument name="indices" value=""/>
-        </actionGroup>
+
         <!--Go to All Customers Page to open the customer-->
         <amOnPage url="{{AdminCustomerPage.url}}" stepKey="goToAllCustomersPage2"/>
         <actionGroup ref="OpenEditCustomerFromAdminActionGroup" stepKey="OpenEditCustomerFrom2">
