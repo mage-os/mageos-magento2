@@ -15,7 +15,7 @@
 
         <waitForPageLoad stepKey="waitForLoadingMask"/>
         <waitForPageLoad stepKey="waitForPageLoad"/>
-        <conditionalClick selector="{{StorefrontCheckoutPaymentMethodSection.checkPaymentMethodByName('Check / Money order')}}" dependentSelector="{{StorefrontCheckoutPaymentMethodSection.checkPaymentMethodByName('Check / Money order')}}" visible="true" stepKey="selectCheckmoPaymentMethod"/>
+        <conditionalClick selector="{{StorefrontCheckoutPaymentMethodSection.paymentMethod('Check / Money order')}}" dependentSelector="{{StorefrontCheckoutPaymentMethodSection.paymentMethod('Check / Money order')}}" visible="true" stepKey="selectCheckmoPaymentMethod"/>
         <waitForPageLoad stepKey="waitForLoadingMaskAfterPaymentMethodSelection"/>
     </actionGroup>
 </actionGroups>
