@@ -66,4 +66,33 @@ class AuthTest extends TestCase
             $this->model->isLoggedIn()
         );
     }
+
+    /**
+     * @dataProvider getCustomerShareScopeDataProvider
+     */
+    public function testGetCustomerShareScope($configValue, int $expected): void
+    {
+        $this->scopeConfigMock->expects($this->once())
+            ->method('getValue')
+            ->with(
+                'customer/account_share/scope',
+                \Magento\Store\Model\ScopeInterface::SCOPE_WEBSITE
+            )
+            ->willReturn($configValue);
+
+        $this->assertSame($expected, $this->model->getCustomerShareScope());
+    }
+
+    /**
+     * @return array
+     */
+    public function getCustomerShareScopeDataProvider(): array
+    {
+        return [
+            'global scope as string 0' => ['0', 0],
+            'website scope as string 1' => ['1', 1],
+            'null value defaults to 0' => [null, 0],
+            'empty string defaults to 0' => ['', 0],
+        ];
+    }
 }
