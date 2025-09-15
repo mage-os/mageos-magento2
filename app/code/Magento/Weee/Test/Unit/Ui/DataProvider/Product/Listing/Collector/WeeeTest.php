@@ -66,7 +66,39 @@ class WeeeTest extends TestCase
             ->onlyMethods(['create'])
             ->getMock();
 
-        $this->extensionAttributes = $this->createMock(PriceInfoExtensionInterface::class);
+        $this->extensionAttributes = new class implements PriceInfoExtensionInterface {
+            /**
+             * @var array|null
+             */
+            private $weeeAttributes = null;
+            
+            /**
+             * @var array|null
+             */
+            private $weeeAdjustment = null;
+            
+            public function setWeeeAttributes($attributes)
+            {
+                $this->weeeAttributes = $attributes;
+                return $this;
+            }
+            
+            public function getWeeeAttributes()
+            {
+                return $this->weeeAttributes;
+            }
+            
+            public function setWeeeAdjustment($adjustment)
+            {
+                $this->weeeAdjustment = $adjustment;
+                return $this;
+            }
+            
+            public function getWeeeAdjustment()
+            {
+                return $this->weeeAdjustment;
+            }
+        };
 
         $this->priceInfoExtensionFactory = $this->getMockBuilder(PriceInfoExtensionInterfaceFactory::class)
             ->disableOriginalConstructor()

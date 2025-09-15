@@ -65,9 +65,24 @@ class WishlistItemsTest extends TestCase
         $store->expects($this->once())->method('getWebsiteId')->willReturn($webId);
         $store->expects($this->any())->method('getId')->willReturn($storeId);
 
-        $extensionAttributes = $this->createMock(ContextExtensionInterface::class);
-        $extensionAttributes->method('getStore')
-            ->willReturn($store);
+        $extensionAttributes = new class implements ContextExtensionInterface {
+            /**
+             * @var StoreInterface|null
+             */
+            private $store = null;
+            
+            public function getStore()
+            {
+                return $this->store;
+            }
+            
+            public function setStore($store)
+            {
+                $this->store = $store;
+                return $this;
+            }
+        };
+        $extensionAttributes->setStore($store);
 
         $context->expects($this->exactly(2))
             ->method('getExtensionAttributes')

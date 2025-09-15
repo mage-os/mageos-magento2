@@ -56,10 +56,27 @@ class FixedProductTaxTest extends TestCase
 
     /**
      * Build the Testing Environment
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     protected function setUp(): void
     {
-        $this->extensionAttributesMock = $this->createMock(ContextExtensionInterface::class);
+        $this->extensionAttributesMock = new class implements ContextExtensionInterface { // @SuppressWarnings(PHPMD.UnusedLocalVariable)
+            /**
+             * @var int|null
+             */
+            private $storeId = null;
+            
+            public function getStore()
+            {
+                return $this->storeId;
+            }
+            
+            public function setStore($storeId)
+            {
+                $this->storeId = $storeId;
+                return $this;
+            }
+        };
 
         $this->contextMock = $this->createPartialMock(Context::class, ['getExtensionAttributes']);
         $this->contextMock->method('getExtensionAttributes')
@@ -97,8 +114,7 @@ class FixedProductTaxTest extends TestCase
     public function testNotGettingAttributesWhenWeeeDisabledForStore(): void
     {
         // Given
-        $this->extensionAttributesMock->method('getStore')
-            ->willreturn(self::STUB_STORE_ID);
+        $this->extensionAttributesMock->setStore(self::STUB_STORE_ID);
 
         // When
         $this->weeeHelperMock->method('isEnabled')

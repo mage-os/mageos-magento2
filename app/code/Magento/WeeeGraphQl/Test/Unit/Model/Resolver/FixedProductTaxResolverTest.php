@@ -111,10 +111,31 @@ class FixedProductTaxResolverTest extends TestCase
 
     /**
      * @inheritdoc
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     protected function setUp(): void
     {
-        $this->contextExtensionAttributesMock = $this->createMock(ContextExtensionInterface::class);
+        $this->contextExtensionAttributesMock = new class implements ContextExtensionInterface {
+            /**
+             * @var StoreInterface|null
+             */
+            private $store = null;
+            
+            public function getStore()
+            {
+                return $this->store;
+            }
+            
+            /**
+             * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+             * @param StoreInterface $store
+             */
+            public function setStore($store)
+            {
+                $this->store = $store;
+                return $this;
+            }
+        };
 
         $this->contextMock = $this->createPartialMock(Context::class, ['getExtensionAttributes']);
         $this->contextMock->method('getExtensionAttributes')
@@ -150,8 +171,7 @@ class FixedProductTaxResolverTest extends TestCase
      */
     public function testShouldReturnEmptyResult(): void
     {
-        $this->contextExtensionAttributesMock->method('getStore')
-            ->willreturn($this->storeMock);
+        $this->contextExtensionAttributesMock->setStore($this->storeMock);
         $this->contextMock->method('getExtensionAttributes')
             ->willReturn($this->contextExtensionAttributesMock);
 
@@ -182,8 +202,7 @@ class FixedProductTaxResolverTest extends TestCase
      */
     public function testShouldReturnResult(int $displayType, array $expected): void
     {
-        $this->contextExtensionAttributesMock->method('getStore')
-            ->willreturn($this->storeMock);
+        $this->contextExtensionAttributesMock->setStore($this->storeMock);
         $this->contextMock->method('getExtensionAttributes')
             ->willReturn($this->contextExtensionAttributesMock);
 
