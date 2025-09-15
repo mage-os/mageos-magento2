@@ -43,6 +43,9 @@ class Product extends Extended
      */
     private $visibility;
 
+    /**
+     * @var ProductCollectionFactory|mixed
+     */
     private ProductCollectionFactory $productCollectionFactory;
 
     /**
