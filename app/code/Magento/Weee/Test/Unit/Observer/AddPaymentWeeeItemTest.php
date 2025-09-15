@@ -51,7 +51,7 @@ class AddPaymentWeeeItemTest extends TestCase
     protected function setUp(): void
     {
         $this->weeeHelperMock = $this->createMock(Data::class);
-        $this->storeManagerMock = $this->getMockForAbstractClass(StoreManagerInterface::class);
+        $this->storeManagerMock = $this->createPartialMock(\Magento\Store\Model\StoreManager::class, ['getStore']);
 
         $this->observer = new AddPaymentWeeeItem(
             $this->weeeHelperMock,
@@ -164,9 +164,7 @@ class AddPaymentWeeeItemTest extends TestCase
      */
     private function prepareShouldBeAddedAsCustomItem(bool $isEnabled, bool $includeInSubtotal): bool
     {
-        $storeMock = $this->getMockBuilder(StoreInterface::class)
-            ->onlyMethods(['getId'])
-            ->getMockForAbstractClass();
+        $storeMock = $this->createPartialMock(\Magento\Store\Model\Store::class, ['getId']);
         $storeMock->expects($this->once())
             ->method('getId')
             ->willReturn(Store::DEFAULT_STORE_ID);

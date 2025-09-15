@@ -3,10 +3,6 @@
  * Copyright 2018 Adobe
  * All Rights Reserved.
  */
-/**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
- */
 declare(strict_types=1);
 
 
@@ -102,8 +98,8 @@ class WishlistTest extends TestCase
             Rss::class,
             ['getWishlist', 'getCustomer', 'getCustomerName']
         );
-        $this->urlBuilderMock = $this->getMockForAbstractClass(UrlInterface::class);
-        $this->scopeConfig = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $this->urlBuilderMock = $this->createMock(UrlInterface::class);
+        $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
 
         $this->imageHelperMock = $this->createMock(Image::class);
 
@@ -119,7 +115,7 @@ class WishlistTest extends TestCase
 
         $this->customerFactory = $this->createPartialMock(CustomerFactory::class, ['create']);
 
-        $requestMock = $this->getMockForAbstractClass(RequestInterface::class);
+        $requestMock = $this->createMock(RequestInterface::class);
         $requestMock->expects($this->any())->method('getParam')->with('sharing_code')
             ->willReturn('somesharingcode');
 

@@ -102,10 +102,10 @@ class AfterAddressSaveTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->addressManagerMock = $this->getMockBuilder(TaxAddressManagerInterface::class)
-            ->onlyMethods(['setDefaultAddressAfterSave', 'setDefaultAddressAfterLogIn'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->addressManagerMock = $this->createPartialMock(
+            TaxAddressManagerInterface::class,
+            ['setDefaultAddressAfterSave', 'setDefaultAddressAfterLogIn']
+        );
 
         $this->session = $this->objectManager->getObject(
             AfterAddressSave::class,

@@ -3,10 +3,6 @@
  * Copyright 2018 Adobe
  * All Rights Reserved.
  */
-/**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
- */
 declare(strict_types=1);
 
 namespace Magento\Wishlist\Test\Unit\Controller\Index;
@@ -169,10 +165,7 @@ class CartTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->wishlistProviderMock = $this->getMockBuilder(WishlistProviderInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getWishlist'])
-            ->getMockForAbstractClass();
+        $this->wishlistProviderMock = $this->createPartialMock(WishlistProviderInterface::class, ['getWishlist']);
 
         $this->quantityProcessorMock = $this->createMock(LocaleQuantityProcessor::class);
 
@@ -414,18 +407,19 @@ class CartTest extends TestCase
             }
         };
 
-        $this->redirectMock = $this->getMockBuilder(RedirectInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->redirectMock = $this->createMock(RedirectInterface::class);
 
-        $this->objectManagerMock = $this->getMockBuilder(ObjectManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
 
-        $this->messageManagerMock = $this->getMockBuilder(ManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['addSuccessMessage'])
-            ->getMockForAbstractClass();
+        $this->messageManagerMock = $this->createPartialMock(
+            \Magento\Framework\Message\Manager::class,
+            [
+                'addSuccessMessage',
+                'addComplexSuccessMessage',
+                'addErrorMessage',
+                'addNoticeMessage'
+            ]
+        );
 
         $this->urlMock = $this->createMock(UrlInterface::class);
         $this->cartHelperMock = $this->createMock(CartHelper::class);
@@ -451,7 +445,7 @@ class CartTest extends TestCase
 
         $this->formKeyValidator = $this->createMock(Validator::class);
 
-        $this->cookieManagerMock = $this->getMockForAbstractClass(CookieManagerInterface::class);
+        $this->cookieManagerMock = $this->createMock(CookieManagerInterface::class);
 
         $cookieMetadataMock = $this->createMock(PublicCookieMetadata::class);
 

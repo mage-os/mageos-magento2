@@ -44,8 +44,7 @@ class SidebarTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->layout = $this->getMockBuilder(LayoutInterface::class)
-            ->getMockForAbstractClass();
+        $this->layout = $this->createMock(LayoutInterface::class);
 
         $this->productContext = $this->createMock(Context::class);
         $this->productContext->method('getLayout')->willReturn($this->layout);

@@ -107,9 +107,7 @@ class OptionsTest extends TestCase
             ->method('getProduct')
             ->willReturn($productMock);
 
-        $helperMock = $this->getMockBuilder(ConfigurationInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $helperMock = $this->createMock(ConfigurationInterface::class);
         $helperMock->expects($this->once())
             ->method('getOptions')
             ->willReturn($options);

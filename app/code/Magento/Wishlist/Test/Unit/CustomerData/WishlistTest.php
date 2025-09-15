@@ -70,8 +70,7 @@ class WishlistTest extends TestCase
         $this->sidebarMock = $this->getMockBuilder(Sidebar::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->viewMock = $this->getMockBuilder(ViewInterface::class)
-            ->getMockForAbstractClass();
+        $this->viewMock = $this->createMock(ViewInterface::class);
 
         $this->catalogImageHelperMock = $this->getMockBuilder(Image::class)
             ->disableOriginalConstructor()
@@ -90,17 +89,11 @@ class WishlistTest extends TestCase
 
         $this->storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
-        $this->websiteMock = $this->getMockBuilder(WebsiteInterface::class)
-            ->onlyMethods(['getId',])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->websiteMock = $this->createStub(WebsiteInterface::class);
 
-        $this->storeMock = $this->getMockBuilder(StoreInterface::class)
-            ->onlyMethods(['getId',])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->storeMock = $this->createStub(StoreInterface::class);
 
         $this->model = new Wishlist(
             $this->wishlistHelperMock,
@@ -286,8 +279,8 @@ class WishlistTest extends TestCase
         /** @var AbstractType|MockObject $productTypeMock */
         $productTypeMock = $this->getMockBuilder(AbstractType::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['hasRequiredOptions'])
-            ->getMockForAbstractClass();
+            ->onlyMethods(['hasRequiredOptions', 'deleteTypeSpecificData'])
+            ->getMock();
 
         $productMock->expects($this->once())
             ->method('getTypeInstance')
@@ -503,8 +496,8 @@ class WishlistTest extends TestCase
         /** @var AbstractType|MockObject $productTypeMock */
         $productTypeMock = $this->getMockBuilder(AbstractType::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['hasRequiredOptions'])
-            ->getMockForAbstractClass();
+            ->onlyMethods(['hasRequiredOptions', 'deleteTypeSpecificData'])
+            ->getMock();
 
         $productMock->expects($this->exactly(2))
             ->method('getTypeInstance')

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -47,7 +47,7 @@ class TaxAdjustmentTest extends TestCase
     {
         $this->weeeHelperMock = $this->createMock(Data::class);
         $this->taxHelperMock = $this->createMock(\Magento\Tax\Helper\Data::class);
-        $this->priceCurrencyMock = $this->getMockForAbstractClass(PriceCurrencyInterface::class);
+        $this->priceCurrencyMock = $this->createMock(PriceCurrencyInterface::class);
         $this->priceCurrencyMock->expects($this->any())
             ->method('convertAndRound')
             ->willReturnCallback(
@@ -156,7 +156,7 @@ class TaxAdjustmentTest extends TestCase
      */
     public function testApplyAdjustment($amount, $weeeAttributes, $expectedResult)
     {
-        $object = $this->getMockForAbstractClass(SaleableInterface::class);
+        $object = $this->createMock(SaleableInterface::class);
 
         $this->weeeHelperMock->expects($this->any())
             ->method('getProductWeeeAttributes')

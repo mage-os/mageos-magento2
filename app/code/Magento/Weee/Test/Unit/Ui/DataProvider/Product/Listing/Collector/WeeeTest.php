@@ -59,8 +59,7 @@ class WeeeTest extends TestCase
         $this->weeeHelperMock = $this->getMockBuilder(Data::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->priceCurrencyMock = $this->getMockBuilder(PriceCurrencyInterface::class)
-            ->getMockForAbstractClass();
+        $this->priceCurrencyMock = $this->createMock(PriceCurrencyInterface::class);
 
         $this->weeeAdjustmentAttributeFactory = $this->getMockBuilder(WeeeAdjustmentAttributeInterfaceFactory::class)
             ->disableOriginalConstructor()
@@ -123,16 +122,21 @@ class WeeeTest extends TestCase
             ->method('getValue')
             ->willReturn(12.1);
         $weeAttributes = ['weee_1' => $weeAttribute];
+        $callCount = 0;
         $this->priceCurrencyMock->expects($this->exactly(5))
             ->method('format')
             ->with(12.1, true, 2, 1, 'USD')
-            ->willReturnOnConsecutiveCalls(
-                '<span>$12</span>',
-                '<span>$12</span>',
-                '<span>$71</span>',
-                '<span>$83</span>',
-                '<span>$12</span>'
-            );
+            ->willReturnCallback(function () use (&$callCount) {
+                $callCount++;
+                $values = [
+                    '<span>$12</span>',
+                    '<span>$12</span>',
+                    '<span>$71</span>',
+                    '<span>$83</span>',
+                    '<span>$12</span>'
+                ];
+                return $values[$callCount - 1];
+            });
         $this->weeeHelperMock->expects($this->once())
             ->method('getProductWeeeAttributesForDisplay')
             ->with($productMock)

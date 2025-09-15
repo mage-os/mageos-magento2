@@ -85,7 +85,7 @@ class DataTest extends TestCase
 
         $this->helperData = new WeeeHelper(
             $this->createMock(\Magento\Framework\App\Helper\Context::class),
-            $this->createMock(\Magento\Store\Model\StoreManagerInterface::class),
+            $this->createPartialMock(\Magento\Store\Model\StoreManager::class, []),
             $this->weeeTax,
             $weeeConfig,
             $this->taxData,
@@ -575,7 +575,7 @@ class DataTest extends TestCase
         $taxData->method('getPriceDisplayType')->willReturn($expected);
         $helperData = new WeeeHelper(
             $this->createMock(\Magento\Framework\App\Helper\Context::class),
-            $this->createMock(\Magento\Store\Model\StoreManagerInterface::class),
+            $this->createPartialMock(\Magento\Store\Model\StoreManager::class, []),
             $this->createMock(Tax::class),
             $this->createMock(Config::class),
             $taxData,

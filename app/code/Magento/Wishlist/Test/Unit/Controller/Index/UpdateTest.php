@@ -95,14 +95,23 @@ class UpdateTest extends TestCase
     protected function setUp(): void
     {
         $this->formKeyValidatorMock = $this->createMock(Validator::class);
-        $this->wishlistProviderMock = $this->getMockForAbstractClass(WishlistProviderInterface::class);
+        $this->wishlistProviderMock = $this->createMock(WishlistProviderInterface::class);
         $this->quantityProcessorMock = $this->createMock(LocaleQuantityProcessor::class);
         $this->contextMock = $this->createMock(Context::class);
         $this->resultRedirectMock = $this->createMock(Redirect::class);
-        $this->resultFactoryMock = $this->createPartialMock(ResultFactory::class, ['create']);
-        $this->messageManagerMock = $this->createMock(ManagerInterface::class);
+        $this->resultFactoryMock = $this->createPartialMock(
+            ResultFactory::class,
+            ['create']
+        );
+        $this->messageManagerMock = $this->createPartialMock(
+            \Magento\Framework\Message\Manager::class,
+            ['addSuccessMessage']
+        );
         $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
-        $this->requestMock = $this->createPartialMock(\Magento\Framework\App\Request\Http::class, ['getPostValue']);
+        $this->requestMock = $this->createPartialMock(
+            \Magento\Framework\App\Request\Http::class,
+            ['getPostValue']
+        );
 
         $this->resultFactoryMock->expects($this->any())
             ->method('create')
@@ -142,7 +151,7 @@ class UpdateTest extends TestCase
         $itemMock = $this->createItemMock($wishlistDataProvider['id']);
         $dataMock = $this->createMock(Data::class);
         $productMock = $this->createMock(Product::class);
-        
+
         $itemMock->setProduct($productMock);
 
         $this->formKeyValidatorMock->expects($this->once())
@@ -271,43 +280,43 @@ class UpdateTest extends TestCase
              * @var Product
              */
             private $product;
-            
+
             public function __construct($id)
             {
                 $this->id = $id;
                 $this->wishlistId = $id;
             }
-            
+
             public function load($modelId, $field = null)
             {
                 return $this;
             }
-            
+
             public function getId()
             {
                 return $this->id;
             }
-            
+
             public function getWishlistId()
             {
                 return $this->wishlistId;
             }
-            
+
             public function setQty($qty)
             {
                 return $this;
             }
-            
+
             public function save()
             {
                 return $this;
             }
-            
+
             public function getProduct()
             {
                 return $this->product;
             }
-            
+
             public function setProduct($product)
             {
                 $this->product = $product;

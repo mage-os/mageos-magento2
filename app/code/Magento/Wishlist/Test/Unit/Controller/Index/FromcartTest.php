@@ -102,8 +102,7 @@ class FromcartTest extends TestCase
     {
         $this->prepareContext();
 
-        $this->wishlistProvider = $this->getMockBuilder(WishlistProviderInterface::class)
-            ->getMockForAbstractClass();
+        $this->wishlistProvider = $this->createMock(WishlistProviderInterface::class);
 
         $this->wishlistHelper = $this->getMockBuilder(\Magento\Wishlist\Helper\Data::class)
             ->disableOriginalConstructor()

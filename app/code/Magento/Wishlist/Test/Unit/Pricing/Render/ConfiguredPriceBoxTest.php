@@ -76,25 +76,19 @@ class ConfiguredPriceBoxTest extends TestCase
     {
         $this->templateContext = $this->createMock(Context::class);
 
-        $this->saleableItem = $this->getMockBuilder(SaleableInterface::class)
-            ->getMockForAbstractClass();
+        $this->saleableItem = $this->createMock(SaleableInterface::class);
 
         $this->price = $this->createMock(\Magento\Catalog\Pricing\Price\ConfiguredPrice::class);
 
         $this->rendererPool = $this->createMock(RendererPool::class);
 
-        $this->item = $this->getMockBuilder(ItemInterface::class)
-            ->getMockForAbstractClass();
+        $this->item = $this->createMock(ItemInterface::class);
 
-        $this->salableResolverMock = $this->getMockBuilder(SalableResolverInterface::class)
-            ->getMockForAbstractClass();
+        $this->salableResolverMock = $this->createMock(SalableResolverInterface::class);
 
-        $this->priceCalculatorMock = $this->getMockBuilder(MinimalPriceCalculatorInterface::class)
-            ->getMockForAbstractClass();
+        $this->priceCalculatorMock = $this->createMock(MinimalPriceCalculatorInterface::class);
 
-        $this->configuredPriceMock = $this->getMockBuilder(ConfiguredPriceSelection::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->configuredPriceMock = $this->createMock(ConfiguredPriceSelection::class);
 
         $this->model = new ConfiguredPriceBox(
             $this->templateContext,
@@ -110,8 +104,7 @@ class ConfiguredPriceBoxTest extends TestCase
 
     public function testSetLayout()
     {
-        $layoutMock = $this->getMockBuilder(LayoutInterface::class)
-            ->getMockForAbstractClass();
+        $layoutMock = $this->createMock(LayoutInterface::class);
 
         $this->price->expects($this->once())
             ->method('setItem')

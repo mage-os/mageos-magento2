@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -57,19 +57,14 @@ class WebsiteTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
-        $this->locatorMock = $this->getMockBuilder(LocatorInterface::class)
-            ->getMockForAbstractClass();
-        $this->storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
-            ->onlyMethods(['hasSingleStore'])
-            ->getMockForAbstractClass();
-        $this->directoryHelperMock = $this->getMockBuilder(DirectoryHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->eavAttributeMock = $this->getMockBuilder(EavAttribute::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->productMock = $this->getMockBuilder(ProductInterface::class)
-            ->getMockForAbstractClass();
+        $this->locatorMock = $this->createMock(LocatorInterface::class);
+        $this->storeManagerMock = $this->createPartialMock(
+            \Magento\Store\Model\StoreManager::class,
+            ['hasSingleStore']
+        );
+        $this->directoryHelperMock = $this->createMock(DirectoryHelper::class);
+        $this->eavAttributeMock = $this->createMock(EavAttribute::class);
+        $this->productMock = $this->createMock(ProductInterface::class);
 
         $this->model = $this->objectManager->getObject(Website::class, [
             'locator' => $this->locatorMock,

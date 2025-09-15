@@ -53,8 +53,7 @@ class DownloadableTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->priceInfoMock = $this->getMockBuilder(PriceInfoInterface::class)
-            ->getMockForAbstractClass();
+        $this->priceInfoMock = $this->createMock(PriceInfoInterface::class);
 
         $this->saleableItem = new class() extends \Magento\Catalog\Model\Product {
             /**
@@ -129,11 +128,9 @@ class DownloadableTest extends TestCase
         
         $this->saleableItem->setPriceInfo($this->priceInfoMock);
 
-        $this->calculator = $this->getMockBuilder(CalculatorInterface::class)
-            ->getMockForAbstractClass();
+        $this->calculator = $this->createMock(CalculatorInterface::class);
 
-        $this->priceCurrency = $this->getMockBuilder(PriceCurrencyInterface::class)
-            ->getMockForAbstractClass();
+        $this->priceCurrency = $this->createMock(PriceCurrencyInterface::class);
 
         $this->model = new Downloadable(
             $this->saleableItem,
@@ -163,8 +160,7 @@ class DownloadableTest extends TestCase
             ->with($this->saleableItem)
             ->willReturn([1 => $linkMock]);
 
-        $priceMock = $this->getMockBuilder(PriceInterface::class)
-            ->getMockForAbstractClass();
+        $priceMock = $this->createMock(PriceInterface::class);
         $priceMock->expects($this->once())
             ->method('getValue')
             ->willReturn($priceValue);
@@ -184,8 +180,7 @@ class DownloadableTest extends TestCase
     {
         $priceValue = 10;
 
-        $priceMock = $this->getMockBuilder(PriceInterface::class)
-            ->getMockForAbstractClass();
+        $priceMock = $this->createMock(PriceInterface::class);
         $priceMock->expects($this->once())
             ->method('getValue')
             ->willReturn($priceValue);
@@ -202,8 +197,7 @@ class DownloadableTest extends TestCase
     {
         $priceValue = 10;
 
-        $priceMock = $this->getMockBuilder(PriceInterface::class)
-            ->getMockForAbstractClass();
+        $priceMock = $this->createMock(PriceInterface::class);
         $priceMock->expects($this->once())
             ->method('getValue')
             ->willReturn($priceValue);
@@ -232,8 +226,7 @@ class DownloadableTest extends TestCase
 
     public function testGetValueWithNoCustomOption()
     {
-        $priceMock = $this->getMockBuilder(PriceInterface::class)
-            ->getMockForAbstractClass();
+        $priceMock = $this->createMock(PriceInterface::class);
         $priceMock->expects($this->once())
             ->method('getValue')
             ->willReturn(0);

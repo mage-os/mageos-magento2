@@ -61,7 +61,10 @@ class ItemCarrierTest extends TestCase
             'wishlistHelper' => $this->createMock(Data::class),
             'cartHelper' => $this->createMock(HelperCart::class),
             'urlBuilder' => $this->createMock(UrlInterface::class),
-            'manager' => $this->createMock(ManagerInterface::class),
+            'manager' => $this->createPartialMock(
+                \Magento\Framework\Message\Manager::class,
+                ['addSuccessMessage', 'addErrorMessage']
+            ),
             'redirect' => $this->createMock(RedirectInterface::class)
         ];
 

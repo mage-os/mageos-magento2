@@ -117,7 +117,7 @@ class TaxTest extends TestCase
 
         $this->attributeFactory = $this->createPartialMock(AttributeFactory::class, ['create']);
 
-        $this->storeManager = $this->getMockForAbstractClass(StoreManagerInterface::class);
+        $this->storeManager = $this->createPartialMock(\Magento\Store\Model\StoreManager::class, ['getWebsite']);
 
         $this->calculationFactory = $this->createPartialMock(CalculationFactory::class, ['create']);
 

@@ -93,20 +93,20 @@ class DataTest extends TestCase
 
         $this->storeManager = $this->getMockBuilder(StoreManagerInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->storeManager->expects($this->any())
             ->method('getStore')
             ->willReturn($this->store);
 
         $this->urlEncoderMock = $this->getMockBuilder(EncoderInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->requestMock = $this->createMock(\Magento\Framework\HTTP\PhpEnvironment\Request::class);
 
         $this->urlBuilder = $this->getMockBuilder(UrlInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->context = $this->createMock(Context::class);
         $this->context->expects($this->once())
@@ -121,7 +121,7 @@ class DataTest extends TestCase
 
         $this->wishlistProvider = $this->getMockBuilder(WishlistProviderInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->coreRegistry = $this->createMock(Registry::class);
 

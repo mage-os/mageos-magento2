@@ -46,7 +46,7 @@ class SetWeeeRendererInFormObserverTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->layoutMock = $this->getMockForAbstractClass(LayoutInterface::class);
+        $this->layoutMock = $this->createMock(LayoutInterface::class);
         $this->taxModelMock = $this->createMock(Tax::class);
         $this->observer = new SetWeeeRendererInFormObserver(
             $this->layoutMock,

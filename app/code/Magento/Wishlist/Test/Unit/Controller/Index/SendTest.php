@@ -387,14 +387,11 @@ class SendTest extends TestCase
             }
         };
 
-        $this->messageManager = $this->getMockBuilder(ManagerInterface::class)
-            ->getMockForAbstractClass();
+        $this->messageManager = $this->createStub(ManagerInterface::class);
 
-        $this->url = $this->getMockBuilder(UrlInterface::class)
-            ->getMockForAbstractClass();
+        $this->url = $this->createMock(UrlInterface::class);
 
-        $this->eventManager = $this->getMockBuilder(EventManagerInterface::class)
-            ->getMockForAbstractClass();
+        $this->eventManager = $this->createMock(EventManagerInterface::class);
 
         $this->context = $this->createMock(ActionContext::class);
         $this->context->method('getRequest')->willReturn($this->request);
@@ -456,8 +453,7 @@ class SendTest extends TestCase
             }
         };
 
-        $this->wishlistProvider = $this->getMockBuilder(WishlistProviderInterface::class)
-            ->getMockForAbstractClass();
+        $this->wishlistProvider = $this->createMock(WishlistProviderInterface::class);
 
         $this->captchaModel = $this->createMock(CaptchaModel::class);
         

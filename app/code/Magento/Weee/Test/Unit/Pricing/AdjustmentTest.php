@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -41,7 +41,7 @@ class AdjustmentTest extends TestCase
     protected function setUp(): void
     {
         $this->weeeHelper = $this->createMock(Data::class);
-        $this->priceCurrencyMock = $this->getMockForAbstractClass(PriceCurrencyInterface::class);
+        $this->priceCurrencyMock = $this->createMock(PriceCurrencyInterface::class);
         $this->priceCurrencyMock->expects($this->any())
             ->method('convertAndRound')
             ->willReturnCallback(
@@ -104,7 +104,7 @@ class AdjustmentTest extends TestCase
      */
     public function testApplyAdjustment($amount, $amountOld, $expectedResult)
     {
-        $object = $this->getMockForAbstractClass(SaleableInterface::class);
+        $object = $this->createMock(SaleableInterface::class);
 
         $this->weeeHelper->expects($this->any())
             ->method('getAmountExclTax')

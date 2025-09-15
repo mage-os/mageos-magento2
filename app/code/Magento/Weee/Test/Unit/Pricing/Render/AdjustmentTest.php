@@ -118,11 +118,9 @@ class AdjustmentTest extends TestCase
             []
         );
         $this->weeeHelperMock = $this->createMock(Data::class);
-        $eventManagerMock = $this->getMockBuilder(ManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $eventManagerMock = $this->createMock(ManagerInterface::class);
 
-        $scopeConfigMock = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
 
         $this->contextMock->setEventManager($eventManagerMock);
         $this->contextMock->setScopeConfig($scopeConfigMock);

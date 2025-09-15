@@ -3,10 +3,6 @@
  * Copyright 2018 Adobe
  * All Rights Reserved.
  */
-/**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
- */
 declare(strict_types=1);
 
 namespace Magento\Wishlist\Test\Unit\Controller\Shared;
@@ -112,9 +108,9 @@ class CartTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->request = $this->getMockForAbstractClass(RequestInterface::class);
-        $this->redirect = $this->getMockForAbstractClass(RedirectInterface::class);
-        $this->messageManager = $this->getMockForAbstractClass(ManagerInterface::class);
+        $this->request = $this->createMock(RequestInterface::class);
+        $this->redirect = $this->createMock(RedirectInterface::class);
+        $this->messageManager = $this->createStub(ManagerInterface::class);
         $this->resultRedirect = $this->createMock(Redirect::class);
 
         $resultFactory = $this->createMock(ResultFactory::class);
@@ -124,9 +120,7 @@ class CartTest extends TestCase
             ->willReturn($this->resultRedirect);
 
         /** @var ActionContext|MockObject $context */
-        $context = $this->getMockBuilder(ActionContext::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $context = $this->createMock(ActionContext::class);
         $context->expects($this->any())
             ->method('getRequest')
             ->willReturn($this->request);
@@ -169,9 +163,7 @@ class CartTest extends TestCase
 
         $this->optionCollection = $this->createMock(OptionCollection::class);
 
-        $this->option = $this->getMockBuilder(Option::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->option = $this->createMock(Option::class);
 
         /** @var OptionFactory|MockObject $optionFactory */
         $optionFactory = $this->createMock(OptionFactory::class);

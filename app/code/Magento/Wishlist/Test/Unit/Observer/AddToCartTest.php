@@ -47,7 +47,7 @@ class AddToCartTest extends TestCase
             'customerSession' => $this->createCustomerSessionMock(),
             'wishlistFactory' => $this->createPartialMock(WishlistFactory::class, ['create']),
             'wishlist' => $this->createMock(Wishlist::class),
-            'messageManager' => $this->createMock(ManagerInterface::class)
+            'messageManager' => $this->createPartialMock(\Magento\Framework\Message\Manager::class, ['addError'])
         ];
 
         $this->mocks['wishlistFactory']->method('create')->willReturn($this->mocks['wishlist']);

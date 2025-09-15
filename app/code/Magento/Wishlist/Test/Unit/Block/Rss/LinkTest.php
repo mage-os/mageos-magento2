@@ -51,7 +51,7 @@ class LinkTest extends TestCase
         $wishlist = $this->createPartialMock(Wishlist::class, ['getId']);
         $wishlist->expects($this->any())->method('getId')->willReturn(5);
 
-        $customer = $this->getMockForAbstractClass(CustomerInterface::class);
+        $customer = $this->createStub(CustomerInterface::class);
         $customer->expects($this->any())->method('getId')->willReturn(8);
         $customer->expects($this->any())->method('getEmail')->willReturn('test@example.com');
 

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -51,11 +51,11 @@ class TaxTest extends TestCase
     {
         $objectManager = new ObjectManager($this);
 
-        $this->storeManagerMock = $this->getMockForAbstractClass(StoreManagerInterface::class);
+        $this->storeManagerMock = $this->createPartialMock(\Magento\Store\Model\StoreManager::class, []);
 
         $this->selectMock = $this->createMock(Select::class);
 
-        $this->connectionMock = $this->getMockForAbstractClass(AdapterInterface::class);
+        $this->connectionMock = $this->createMock(AdapterInterface::class);
         $this->connectionMock->expects($this->once())
             ->method('select')
             ->willReturn($this->selectMock);

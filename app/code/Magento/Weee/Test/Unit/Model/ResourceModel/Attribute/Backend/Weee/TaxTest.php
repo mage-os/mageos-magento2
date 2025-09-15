@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -40,8 +40,8 @@ class TaxTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->storeManagerMock = $this->getMockForAbstractClass(StoreManagerInterface::class);
-        $this->connectionMock = $this->getMockForAbstractClass(AdapterInterface::class);
+        $this->storeManagerMock = $this->createPartialMock(\Magento\Store\Model\StoreManager::class, []);
+        $this->connectionMock = $this->createMock(AdapterInterface::class);
 
         $this->resourceMock = $this->createMock(ResourceConnection::class);
         $this->resourceMock->expects($this->once())

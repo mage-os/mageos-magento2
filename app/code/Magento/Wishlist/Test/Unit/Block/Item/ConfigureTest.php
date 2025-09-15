@@ -99,7 +99,7 @@ class ConfigureTest extends TestCase
 
     public function testSetLayout()
     {
-        $layoutMock = $this->getMockForAbstractClass(LayoutInterface::class);
+        $layoutMock = $this->createMock(LayoutInterface::class);
 
         $blockMock = $this->createMock(\Magento\Framework\View\Element\AbstractBlock::class);
         $layoutMock->expects($this->once())
@@ -125,7 +125,7 @@ class ConfigureTest extends TestCase
 
     public function testSetLayoutWithNoItem()
     {
-        $layoutMock = $this->getMockForAbstractClass(LayoutInterface::class);
+        $layoutMock = $this->createMock(LayoutInterface::class);
 
         $blockMock = $this->createMock(\Magento\Framework\View\Element\AbstractBlock::class);
         $layoutMock->expects($this->once())
@@ -147,7 +147,7 @@ class ConfigureTest extends TestCase
 
     public function testSetLayoutWithNoBlockAndItem()
     {
-        $layoutMock = $this->getMockForAbstractClass(LayoutInterface::class);
+        $layoutMock = $this->createMock(LayoutInterface::class);
 
         $layoutMock->expects($this->once())
             ->method('getBlock')

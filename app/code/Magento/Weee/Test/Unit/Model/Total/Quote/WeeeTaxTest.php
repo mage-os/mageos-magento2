@@ -257,9 +257,9 @@ class WeeeTaxTest extends TestCase
      */
     protected function setupShippingAssignmentMock($addressMock, $itemMock)
     {
-        $shippingMock = $this->getMockForAbstractClass(ShippingInterface::class);
+        $shippingMock = $this->createMock(ShippingInterface::class);
         $shippingMock->expects($this->any())->method('getAddress')->willReturn($addressMock);
-        $shippingAssignmentMock = $this->getMockForAbstractClass(ShippingAssignmentInterface::class);
+        $shippingAssignmentMock = $this->createMock(ShippingAssignmentInterface::class);
         $itemMock = $itemMock ? [$itemMock] : [];
         $shippingAssignmentMock->expects($this->any())->method('getItems')->willReturn($itemMock);
         $shippingAssignmentMock->expects($this->any())->method('getShipping')->willReturn($shippingMock);

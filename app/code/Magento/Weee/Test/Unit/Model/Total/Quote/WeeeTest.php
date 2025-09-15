@@ -92,10 +92,14 @@ class WeeeTest extends TestCase
             ->method('getRateOriginRequest')
             ->willReturn($defaultRateRequest);
 
+        $callCount = 0;
         $taxCalculation
             ->expects($this->any())
             ->method('getRate')
-            ->will($this->onConsecutiveCalls($storeTaxRate, $customerTaxRate));
+            ->willReturnCallback(function () use (&$callCount, $storeTaxRate, $customerTaxRate) {
+                $callCount++;
+                return $callCount === 1 ? $storeTaxRate : $customerTaxRate;
+            });
 
         return $taxCalculation;
     }
@@ -367,9 +371,9 @@ class WeeeTest extends TestCase
      */
     protected function setupShippingAssignmentMock($addressMock, $itemMock): MockObject
     {
-        $shippingMock = $this->getMockForAbstractClass(ShippingInterface::class);
+        $shippingMock = $this->createMock(ShippingInterface::class);
         $shippingMock->expects($this->any())->method('getAddress')->willReturn($addressMock);
-        $shippingAssignmentMock = $this->getMockForAbstractClass(ShippingAssignmentInterface::class);
+        $shippingAssignmentMock = $this->createMock(ShippingAssignmentInterface::class);
         $shippingAssignmentMock->expects($this->any())->method('getItems')->willReturn($itemMock);
         $shippingAssignmentMock->expects($this->any())->method('getShipping')->willReturn($shippingMock);
 

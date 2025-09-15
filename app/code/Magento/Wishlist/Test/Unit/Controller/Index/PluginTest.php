@@ -93,7 +93,7 @@ class PluginTest extends TestCase
         $this->authenticationState = $this->createMock(AuthenticationState::class);
         $this->config = $this->createMock(Config::class);
         $this->redirector = $this->createMock(Redirect::class);
-        $this->messageManager = $this->getMockForAbstractClass(ManagerInterface::class);
+        $this->messageManager = $this->createStub(ManagerInterface::class);
         $this->request = $this->createMock(Http::class);
         $this->dataSerializer = $this->createMock(DataSerializer::class);
         $this->formKey = $this->createMock(FormKey::class);

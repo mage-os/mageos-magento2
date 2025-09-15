@@ -3,10 +3,6 @@
  * Copyright 2018 Adobe
  * All Rights Reserved.
  */
-/**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
- */
 declare(strict_types=1);
 
 namespace Magento\Wishlist\Test\Unit\Model;
@@ -144,60 +140,26 @@ class WishlistTest extends TestCase
 
     protected function setUp(): void
     {
-        $context = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $context = $this->createMock(Context::class);
 
-        $this->eventDispatcher = $this->getMockBuilder(ManagerInterface::class)
-            ->getMock();
-        $this->registry = $this->getMockBuilder(Registry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->productHelper = $this->getMockBuilder(HelperProduct::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->helper = $this->getMockBuilder(Data::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->resource = $this->getMockBuilder(WishlistResource::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->collection = $this->getMockBuilder(WishlistCollection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->storeManager = $this->getMockBuilder(StoreManagerInterface::class)
-            ->getMock();
-        $this->date = $this->getMockBuilder(DateTime\DateTime::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->itemFactory = $this->getMockBuilder(ItemFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-        $this->itemsFactory = $this->getMockBuilder(CollectionFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-        $this->productFactory = $this->getMockBuilder(ProductFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-        $this->mathRandom = $this->getMockBuilder(Random::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->dateTime = $this->getMockBuilder(DateTime::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->productRepository = $this->getMockForAbstractClass(ProductRepositoryInterface::class);
-        $this->stockRegistry = $this->getMockForAbstractClass(StockRegistryInterface::class);
-        $this->scopeConfig = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $this->eventDispatcher = $this->createMock(ManagerInterface::class);
+        $this->registry = $this->createMock(Registry::class);
+        $this->productHelper = $this->createMock(HelperProduct::class);
+        $this->helper = $this->createMock(Data::class);
+        $this->resource = $this->createMock(WishlistResource::class);
+        $this->collection = $this->createMock(WishlistCollection::class);
+        $this->storeManager = $this->createMock(StoreManagerInterface::class);
+        $this->date = $this->createMock(DateTime\DateTime::class);
+        $this->itemFactory = $this->createPartialMock(ItemFactory::class, ['create']);
+        $this->itemsFactory = $this->createPartialMock(CollectionFactory::class, ['create']);
+        $this->productFactory = $this->createPartialMock(ProductFactory::class, ['create']);
+        $this->mathRandom = $this->createMock(Random::class);
+        $this->dateTime = $this->createMock(DateTime::class);
+        $this->productRepository = $this->createMock(ProductRepositoryInterface::class);
+        $this->stockRegistry = $this->createMock(StockRegistryInterface::class);
+        $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
 
-        $this->scopeConfig = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->serializer = $this->getMockBuilder(Json::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->serializer = $this->createMock(Json::class);
 
         $context->expects($this->once())
             ->method('getEventDispatcher')
@@ -277,36 +239,24 @@ class WishlistTest extends TestCase
         $this->storeManager->expects($this->any())->method('getStores')->willReturn($stores);
         $this->storeManager->expects($this->any())->method('getStore')->willReturn($stores[0]);
 
-        $product = $this->getMockBuilder(
-            Product::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $product = $this->createMock(Product::class);
         $product->expects($this->any())->method('getId')->willReturn($productId);
         $product->expects($this->any())->method('getStoreId')->willReturn($storeId);
 
-        $stockItem = $this->getMockBuilder(StockItem::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $stockItem = $this->createMock(StockItem::class);
         $stockItem->expects($this->any())->method('getIsInStock')->willReturn(true);
         $this->stockRegistry->expects($this->any())
             ->method('getStockItem')
             ->willReturn($stockItem);
 
-        $instanceType = $this->getMockBuilder(AbstractType::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $instanceType = $this->createMock(AbstractType::class);
         $instanceType->expects($this->once())
             ->method('processConfiguration')
             ->willReturn(
-                $this->getMockBuilder(Product::class)
-                    ->disableOriginalConstructor()
-                    ->getMock()
+                $this->createMock(Product::class)
             );
 
-        $newProduct = $this->getMockBuilder(
-            Product::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $newProduct = $this->createMock(Product::class);
         $newProduct->expects($this->any())
             ->method('setStoreId')
             ->with($storeId)
@@ -316,16 +266,12 @@ class WishlistTest extends TestCase
             ->willReturn($instanceType);
         $newProduct->expects($this->any())->method('getIsSalable')->willReturn(true);
 
-        $item = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $item = $this->createMock(Item::class);
         $item->expects($this->once())
             ->method('getProduct')
             ->willReturn($product);
 
-        $items = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $items = $this->createMock(Collection::class);
 
         $items->expects($this->once())
             ->method('addWishlistFilter')
@@ -466,9 +412,7 @@ class WishlistTest extends TestCase
         );
         $result = 'product';
 
-        $instanceType = $this->getMockBuilder(AbstractType::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $instanceType = $this->createMock(AbstractType::class);
         $instanceType->method('processConfiguration')
             ->willReturn('product');
 
@@ -486,10 +430,7 @@ class WishlistTest extends TestCase
                 }
             );
 
-        $stockItem = $this->getMockBuilder(
-            StockItem::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $stockItem = $this->createMock(StockItem::class);
         $stockItem->expects($this->any())->method('getIsInStock')->willReturn(true);
 
         $this->stockRegistry->expects($this->any())
