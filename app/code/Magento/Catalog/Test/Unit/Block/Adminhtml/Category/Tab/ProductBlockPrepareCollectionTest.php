@@ -20,6 +20,11 @@ use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Magento\Framework\Math\Random;
 
+/**
+ * Class for product collection tests
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class ProductBlockPrepareCollectionTest extends TestCase
 {
     /**
