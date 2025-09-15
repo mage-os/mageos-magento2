@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Customer\Model;
 
@@ -144,6 +144,14 @@ class Vat
                 ScopeInterface::SCOPE_STORE,
                 $store
             );
+
+            if (!$groupId) {
+                $groupId = (int)$this->scopeConfig->getValue(
+                    GroupManagement::XML_PATH_DEFAULT_ID,
+                    ScopeInterface::SCOPE_STORE,
+                    $store
+                );
+            }
         }
 
         return $groupId;
