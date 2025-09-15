@@ -96,8 +96,7 @@ class Deployments
         ?string     $commit = null,
         ?string     $deepLink = null,
         ?string $groupId = null
-    ): bool|array|string
-    {
+    ): bool|array|string {
         // Check API mode configuration
         $apiMode = $this->config->getApiMode();
 
