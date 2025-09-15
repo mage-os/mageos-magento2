@@ -12,6 +12,7 @@ use Magento\NewRelicReporting\Model\Config;
 /**
  * Observer to report system cache flush to New Relic
  * Class ReportSystemCacheFlushToNewRelic
+ * @SuppressWarnings(PHPMD.CookieAndSessionMisuse)
  */
 class ReportSystemCacheFlushToNewRelic implements ObserverInterface
 {

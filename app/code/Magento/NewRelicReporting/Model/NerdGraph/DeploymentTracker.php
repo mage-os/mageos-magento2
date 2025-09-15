@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace Magento\NewRelicReporting\Model\NerdGraph;
 
-use Magento\Framework\Exception\LocalizedException;
 use Magento\NewRelicReporting\Model\Config;
 use Psr\Log\LoggerInterface;
 
@@ -70,85 +69,26 @@ class DeploymentTracker
         ?string $groupId = null
     ): false|array {
         try {
-            // Get entity GUID - this is required for NerdGraph deployment tracking
             $entityGuid = $this->getEntityGuid();
             if (!$entityGuid) {
                 $this->logger->error('Cannot create NerdGraph deployment: Entity GUID not found');
                 return false;
             }
 
-            $mutation = '
-                mutation CreateDeployment($deployment: ChangeTrackingDeploymentInput!) {
-                    changeTrackingCreateDeployment(deployment: $deployment) {
-                        deploymentId
-                        entityGuid
-                    }
-                }
-            ';
+            $variables = $this->buildDeploymentVariables(
+                $entityGuid,
+                $description,
+                $version,
+                $changelog,
+                $user,
+                $commit,
+                $deepLink,
+                $groupId
+            );
 
-            $variables = [
-                'deployment' => [
-                    'entityGuid' => $entityGuid,
-                    'version' => $version ?: $this->generateVersion(),
-                    'description' => $description,
-                    'deploymentType' => 'BASIC',
-                    'timestamp' => time() * 1000 // NerdGraph expects milliseconds
-                ]
-            ];
+            $response = $this->nerdGraphClient->query($this->getDeploymentMutation(), $variables);
 
-            // Add optional fields if provided
-            if ($changelog) {
-                $variables['deployment']['changelog'] = $changelog;
-            }
-
-            if ($user) {
-                $variables['deployment']['user'] = $user;
-            }
-
-            if ($commit) {
-                $variables['deployment']['commit'] = $commit;
-            }
-
-            if ($deepLink) {
-                $variables['deployment']['deepLink'] = $deepLink;
-            }
-
-            if ($groupId) {
-                $variables['deployment']['groupId'] = $groupId;
-            }
-
-            $response = $this->nerdGraphClient->query($mutation, $variables);
-
-            $deploymentData = $response['data']['changeTrackingCreateDeployment'] ?? null;
-            $deployedVersion = $variables['deployment']['version'];
-            if ($deploymentData) {
-                $this->logger->info(
-                    'NerdGraph deployment created successfully',
-                    [
-                        'deploymentId' => $deploymentData['deploymentId'],
-                        'entityGuid' => $deploymentData['entityGuid'],
-                        'version' => $deployedVersion,
-                        'description' => $description
-                    ]
-                );
-
-                return [
-                    'deploymentId' => $deploymentData['deploymentId'],
-                    'entityGuid' => $deploymentData['entityGuid'],
-                    'version' => $deployedVersion,
-                    'description' => $description,
-                    'changelog' => $changelog,
-                    'user' => $user,
-                    'commit' => $commit,
-                    'deepLink' => $deepLink,
-                    'groupId' => $groupId,
-                    'timestamp' => $variables['deployment']['timestamp']
-                ];
-            }
-
-            $this->logger->error('NerdGraph deployment creation failed: No deployment data in response');
-            return false;
-
+            return $this->processDeploymentResponse($response, $variables, $description, $changelog, $user, $commit, $deepLink, $groupId);
         } catch (\Exception $e) {
             $this->logger->error('NerdGraph deployment creation failed: ' . $e->getMessage());
             return false;
@@ -189,5 +129,155 @@ class DeploymentTracker
     private function generateVersion(): string
     {
         return date('Y-m-d_H-i-s') . '_' . substr(hash('sha256', (string)time()), 0, 8);
+    }
+
+    /**
+     * Get the GraphQL mutation for creating deployment
+     *
+     * @return string
+     */
+    private function getDeploymentMutation(): string
+    {
+        return '
+            mutation CreateDeployment($deployment: ChangeTrackingDeploymentInput!) {
+                changeTrackingCreateDeployment(deployment: $deployment) {
+                    deploymentId
+                    entityGuid
+                }
+            }
+        ';
+    }
+
+    /**
+     * Build deployment variables array
+     *
+     * @param string $entityGuid
+     * @param string $description
+     * @param string|null $version
+     * @param string|null $changelog
+     * @param string|null $user
+     * @param string|null $commit
+     * @param string|null $deepLink
+     * @param string|null $groupId
+     * @return array
+     */
+    private function buildDeploymentVariables(
+        string $entityGuid,
+        string $description,
+        ?string $version,
+        ?string $changelog,
+        ?string $user,
+        ?string $commit,
+        ?string $deepLink,
+        ?string $groupId
+    ): array {
+        $variables = [
+            'deployment' => [
+                'entityGuid' => $entityGuid,
+                'version' => $version ?: $this->generateVersion(),
+                'description' => $description,
+                'deploymentType' => 'BASIC',
+                'timestamp' => time() * 1000 // NerdGraph expects milliseconds
+            ]
+        ];
+
+        $this->addOptionalFields($variables, $changelog, $user, $commit, $deepLink, $groupId);
+
+        return $variables;
+    }
+
+    /**
+     * Add optional fields to deployment variables
+     *
+     * @param array $variables
+     * @param string|null $changelog
+     * @param string|null $user
+     * @param string|null $commit
+     * @param string|null $deepLink
+     * @param string|null $groupId
+     * @return void
+     */
+    private function addOptionalFields(
+        array &$variables,
+        ?string $changelog,
+        ?string $user,
+        ?string $commit,
+        ?string $deepLink,
+        ?string $groupId
+    ): void {
+        if ($changelog) {
+            $variables['deployment']['changelog'] = $changelog;
+        }
+
+        if ($user) {
+            $variables['deployment']['user'] = $user;
+        }
+
+        if ($commit) {
+            $variables['deployment']['commit'] = $commit;
+        }
+
+        if ($deepLink) {
+            $variables['deployment']['deepLink'] = $deepLink;
+        }
+
+        if ($groupId) {
+            $variables['deployment']['groupId'] = $groupId;
+        }
+    }
+
+    /**
+     * Process deployment response
+     *
+     * @param array $response
+     * @param array $variables
+     * @param string $description
+     * @param string|null $changelog
+     * @param string|null $user
+     * @param string|null $commit
+     * @param string|null $deepLink
+     * @param string|null $groupId
+     * @return array|false
+     */
+    private function processDeploymentResponse(
+        array $response,
+        array $variables,
+        string $description,
+        ?string $changelog,
+        ?string $user,
+        ?string $commit,
+        ?string $deepLink,
+        ?string $groupId
+    ): false|array {
+        $deploymentData = $response['data']['changeTrackingCreateDeployment'] ?? null;
+        $deployedVersion = $variables['deployment']['version'];
+        
+        if ($deploymentData) {
+            $this->logger->info(
+                'NerdGraph deployment created successfully',
+                [
+                    'deploymentId' => $deploymentData['deploymentId'],
+                    'entityGuid' => $deploymentData['entityGuid'],
+                    'version' => $deployedVersion,
+                    'description' => $description
+                ]
+            );
+
+            return [
+                'deploymentId' => $deploymentData['deploymentId'],
+                'entityGuid' => $deploymentData['entityGuid'],
+                'version' => $deployedVersion,
+                'description' => $description,
+                'changelog' => $changelog,
+                'user' => $user,
+                'commit' => $commit,
+                'deepLink' => $deepLink,
+                'groupId' => $groupId,
+                'timestamp' => $variables['deployment']['timestamp']
+            ];
+        }
+
+        $this->logger->error('NerdGraph deployment creation failed: No deployment data in response');
+        return false;
     }
 }
