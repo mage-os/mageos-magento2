@@ -26,7 +26,7 @@
                         <input class="admin__control-text <?= $_required ? 'required-entry' : '' ?>" type="text"
                                id="<?= $block->escapeHtmlAttr($block->getFieldId('sender')) ?>"
                                name="<?= $block->escapeHtmlAttr($block->getFieldName('sender')) ?>"
-                               value="<?= $block->escapeHtml($block->getMessage()->getSender()) ?>"/>
+                               value="<?= $_required ? $block->escapeHtml($block->getMessage()->getSender()):'' ?>"/>
                     </div>
                 </div>
 
@@ -38,10 +38,9 @@
                         <input class="admin__control-text <?= $_required ? 'required-entry' : '' ?>" type="text"
                                id="<?= $block->escapeHtmlAttr($block->getFieldId('recipient')) ?>"
                                name="<?= $block->escapeHtmlAttr($block->getFieldName('recipient')) ?>"
-                               value="<?= $block->escapeHtml($block->getMessage()->getRecipient()) ?>"/>
+                               value="<?= $_required ? $block->escapeHtml($block->getMessage()->getRecipient()):'' ?>"/>
                     </div>
                 </div>
-
                 <div class="admin__field field-gift-message">
                     <label class="admin__field-label"
                            for="<?= $block->escapeHtmlAttr($block->getFieldId('message')) ?>"><span><?= $block->escapeHtml(__('Gift Message')) ?></span></label>
