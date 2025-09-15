@@ -31,7 +31,28 @@
             <createData entity="SimpleProduct2" stepKey="createProduct1"/>
             <createData entity="SimpleProduct2" stepKey="createProduct2"/>
             <createData entity="Simple_US_Customer_Multiple_Addresses" stepKey="createCustomer"/>
-            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!-- Create new User -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="adminLogin"/>
+            <actionGroup ref="AdminCreateUserWithRoleActionGroup" stepKey="createAdminUser">
+                <argument name="user" value="activeAdmin"/>
+                <argument name="role" value="roleDefaultAdministrator"/>
+            </actionGroup>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutMasterAdmin"/>
+
+            <!-- Login as new User -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginToNewAdmin">
+                <argument name="username" value="{{activeAdmin.username}}"/>
+                <argument name="password" value="{{activeAdmin.password}}"/>
+            </actionGroup>
+
+            <!--Go to All Customers Page to open the customer-->
+            <amOnPage url="{{AdminCustomerPage.url}}" stepKey="goToAllCustomersPage2"/>
+            <actionGroup ref="OpenEditCustomerFromAdminActionGroup" stepKey="OpenEditCustomerFrom2">
+                <argument name="customer" value="$$createCustomer$$"/>
+            </actionGroup>
+            <actionGroup ref="AdminOpenAccountInformationTabFromCustomerEditPageAllowAssistanceActionGroup" stepKey="clickOnAllowAssistanceConfig2"/>
+            <!--Verify that changes are saved successfully-->
+            <actionGroup ref="AdminSaveCustomerAndAssertSuccessMessage" stepKey="assertThatChangesAreSavedSuccessfully2"/>
         </before>
 
         <after>
@@ -40,19 +61,18 @@
             <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutCustomer" />
             <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
             <actionGroup ref="AdminOrdersGridClearFiltersActionGroup" stepKey="clearAllOrdersGridFilters"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+
+            <!-- Delete new User -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="adminLogin"/>
+            <actionGroup ref="AdminDeleteUserActionGroup" stepKey="deleteUser">
+                <argument name="user" value="activeAdmin"/>
+            </actionGroup>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
             <actionGroup ref="CliDisableFreeShippingMethodActionGroup" stepKey="disableFreeShipping"/>
             <comment userInput="Adding the comment to replace 'cache:flush' command for preserving Backward Compatibility" stepKey="flushCacheAfterTestRun"/>
         </after>
 
-        <!--Go to All Customers Page to open the customer-->
-        <amOnPage url="{{AdminCustomerPage.url}}" stepKey="goToAllCustomersPage2"/>
-        <actionGroup ref="OpenEditCustomerFromAdminActionGroup" stepKey="OpenEditCustomerFrom2">
-            <argument name="customer" value="$$createCustomer$$"/>
-        </actionGroup>
-        <actionGroup ref="AdminOpenAccountInformationTabFromCustomerEditPageAllowAssistanceActionGroup" stepKey="clickOnAllowAssistanceConfig2"/>
-        <!--Verify that changes are saved successfully-->
-        <actionGroup ref="AdminSaveCustomerAndAssertSuccessMessage" stepKey="assertThatChangesAreSavedSuccessfully2"/>
         <!-- Login as Customer from Customer page -->
         <actionGroup ref="AdminLoginAsCustomerLoginFromCustomerPageActionGroup"
                      stepKey="loginAsCustomerFromCustomerPage">
@@ -107,11 +127,11 @@
         <!-- Assert Admin Order page contains message about Order created by a Store Administrator -->
         <actionGroup ref="AdminAssertContainsMessageOrderCreatedByAdminActionGroup" stepKey="verifyAdminMessageFirstOrder">
             <argument name="orderId" value="{$grabFirstOrderId}"/>
-            <argument name="adminUserFullName" value="Magento User"/>
+            <argument name="adminUserFullName" value="{{activeAdmin.firstname}} {{activeAdmin.lastname}}"/>
         </actionGroup>
         <actionGroup ref="AdminAssertContainsMessageOrderCreatedByAdminActionGroup" stepKey="verifyAdminMessageSecondOrder">
             <argument name="orderId" value="{$grabSecondOrderId}"/>
-            <argument name="adminUserFullName" value="Magento User"/>
+            <argument name="adminUserFullName" value="{{activeAdmin.firstname}} {{activeAdmin.lastname}}"/>
         </actionGroup>
     </test>
 </tests>
