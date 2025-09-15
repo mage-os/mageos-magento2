@@ -44,7 +44,7 @@ class DeployMarker extends Command
         DeploymentsFactory $deploymentsFactory,
         ServiceShellUser $serviceShellUser,
         Config $config,
-        string $name = null
+        ?string $name = null
     ) {
         $this->deploymentsFactory = $deploymentsFactory;
         $this->serviceShellUser = $serviceShellUser;
