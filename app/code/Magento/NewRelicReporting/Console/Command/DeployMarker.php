@@ -174,8 +174,8 @@ class DeployMarker extends Command
                 ) : 'N/A']
         ];
 
-        if (!empty($deployment['changelog'])) {
-            $rows[] = ['Changelog', $deployment['changelog']];
+        if (!empty($deployment['change_log'])) {
+            $rows[] = ['Change log', $deployment['change_log']];
         }
         if (!empty($deployment['commit'])) {
             $rows[] = ['Commit', $deployment['commit']];

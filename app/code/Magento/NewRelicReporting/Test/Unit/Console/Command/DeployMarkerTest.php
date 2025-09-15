@@ -181,7 +181,7 @@ class DeployMarkerTest extends TestCase
             'description' => $message,
             'user' => $user,
             'timestamp' => 1234567890000, // Feb 13, 2009 23:31:30 UTC
-            'changelog' => 'New features',
+            'change_log' => 'New features',
             'commit' => $commit,
             'deepLink' => $deepLink,
             'groupId' => $groupId
@@ -452,7 +452,7 @@ class DeployMarkerTest extends TestCase
             'description' => $message,
             'user' => 'complete-user',
             'timestamp' => 1640995200000, // 2022-01-01 00:00:00 UTC
-            'changelog' => 'Added new features',
+            'change_log' => 'Added new features',
             'commit' => 'abc123def456',
             'deepLink' => 'https://github.com/test/releases/v2.0.0',
             'groupId' => 'production'

@@ -51,7 +51,7 @@ class DeploymentTracker
      * Create a deployment marker via NerdGraph
      *
      * @param string $description Deployment description
-     * @param string|null $changelog Changelog or commit message
+     * @param string|null $change commit message
      * @param string|null $user User who performed the deployment
      * @param string|null $version Version or revision
      * @param string|null $commit Git commit hash
@@ -61,7 +61,7 @@ class DeploymentTracker
      */
     public function createDeployment(
         string $description,
-        ?string $changelog = null,
+        ?string $change = null,
         ?string $user = null,
         ?string $version = null,
         ?string $commit = null,
@@ -79,7 +79,7 @@ class DeploymentTracker
                 $entityGuid,
                 $description,
                 $version,
-                $changelog,
+                $change,
                 $user,
                 $commit,
                 $deepLink,
@@ -92,7 +92,7 @@ class DeploymentTracker
                 $response,
                 $variables,
                 $description,
-                $changelog,
+                $change,
                 $user,
                 $commit,
                 $deepLink,
@@ -163,7 +163,7 @@ class DeploymentTracker
      * @param string $entityGuid
      * @param string $description
      * @param string|null $version
-     * @param string|null $changelog
+     * @param string|null $change
      * @param string|null $user
      * @param string|null $commit
      * @param string|null $deepLink
@@ -174,7 +174,7 @@ class DeploymentTracker
         string $entityGuid,
         string $description,
         ?string $version,
-        ?string $changelog,
+        ?string $change,
         ?string $user,
         ?string $commit,
         ?string $deepLink,
@@ -190,7 +190,7 @@ class DeploymentTracker
             ]
         ];
 
-        $this->addOptionalFields($variables, $changelog, $user, $commit, $deepLink, $groupId);
+        $this->addOptionalFields($variables, $change, $user, $commit, $deepLink, $groupId);
 
         return $variables;
     }
@@ -199,7 +199,7 @@ class DeploymentTracker
      * Add optional fields to deployment variables
      *
      * @param array $variables
-     * @param string|null $changelog
+     * @param string|null $change
      * @param string|null $user
      * @param string|null $commit
      * @param string|null $deepLink
@@ -208,14 +208,14 @@ class DeploymentTracker
      */
     private function addOptionalFields(
         array &$variables,
-        ?string $changelog,
+        ?string $change,
         ?string $user,
         ?string $commit,
         ?string $deepLink,
         ?string $groupId
     ): void {
-        if ($changelog) {
-            $variables['deployment']['changelog'] = $changelog;
+        if ($change) {
+            $variables['deployment']['change_log'] = $change;
         }
 
         if ($user) {
@@ -241,7 +241,7 @@ class DeploymentTracker
      * @param array $response
      * @param array $variables
      * @param string $description
-     * @param string|null $changelog
+     * @param string|null $change
      * @param string|null $user
      * @param string|null $commit
      * @param string|null $deepLink
@@ -252,7 +252,7 @@ class DeploymentTracker
         array $response,
         array $variables,
         string $description,
-        ?string $changelog,
+        ?string $change,
         ?string $user,
         ?string $commit,
         ?string $deepLink,
@@ -277,7 +277,7 @@ class DeploymentTracker
                 'entityGuid' => $deploymentData['entityGuid'],
                 'version' => $deployedVersion,
                 'description' => $description,
-                'changelog' => $changelog,
+                'change_log' => $change,
                 'user' => $user,
                 'commit' => $commit,
                 'deepLink' => $deepLink,
