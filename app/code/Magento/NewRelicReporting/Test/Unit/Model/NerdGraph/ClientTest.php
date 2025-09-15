@@ -60,10 +60,10 @@ class ClientTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->httpClientFactoryMock = $this->createMock(LaminasClientFactory::class); // @phpstan-ignore-line
-        $this->serializerMock = $this->createMock(SerializerInterface::class); // @phpstan-ignore-line
-        $this->configMock = $this->createMock(Config::class); // @phpstan-ignore-line
-        $this->loggerMock = $this->createMock(LoggerInterface::class); // @phpstan-ignore-line
+        $this->httpClientFactoryMock = $this->createMock(LaminasClientFactory::class);
+        $this->serializerMock = $this->createMock(SerializerInterface::class);
+        $this->configMock = $this->createMock(Config::class);
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
         $this->httpClientMock = $this->createMock(LaminasClient::class);
         $this->responseMock = $this->createMock(Response::class);
 

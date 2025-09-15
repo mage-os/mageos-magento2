@@ -7,16 +7,15 @@ declare(strict_types=1);
 
 namespace Magento\NewRelicReporting\Test\Unit\Console\Command;
 
+use Exception;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\NewRelicReporting\Console\Command\DeployMarker;
 use Magento\NewRelicReporting\Model\Apm\Deployments;
 use Magento\NewRelicReporting\Model\Apm\DeploymentsFactory;
 use Magento\NewRelicReporting\Model\Config;
 use Magento\NewRelicReporting\Model\ServiceShellUser;
-use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\BufferedOutput;
 
@@ -62,10 +61,10 @@ class DeployMarkerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->deploymentsFactoryMock = $this->createMock(DeploymentsFactory::class); // @phpstan-ignore-line
+        $this->deploymentsFactoryMock = $this->createMock(DeploymentsFactory::class);
         $this->deploymentMock = $this->createMock(Deployments::class);
-        $this->configMock = $this->createMock(Config::class); // @phpstan-ignore-line
-        $this->serviceShellUserMock = $this->createMock(ServiceShellUser::class); // @phpstan-ignore-line
+        $this->configMock = $this->createMock(Config::class);
+        $this->serviceShellUserMock = $this->createMock(ServiceShellUser::class);
         $this->inputMock = $this->createMock(InputInterface::class);
         $this->output = new BufferedOutput();
 
@@ -364,7 +363,7 @@ class DeployMarkerTest extends TestCase
 
         $this->deploymentMock->expects($this->once())
             ->method('setDeployment')
-            ->willThrowException(new \Exception($exceptionMessage));
+            ->willThrowException(new Exception($exceptionMessage));
 
         $result = $this->command->run($this->inputMock, $this->output);
 

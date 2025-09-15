@@ -8,14 +8,18 @@ declare(strict_types=1);
 namespace Magento\NewRelicReporting\Model\NerdGraph;
 
 use Magento\Framework\App\Config\MutableScopeConfigInterface;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\HTTP\LaminasClient;
+use Magento\Framework\HTTP\LaminasClientFactory;
 use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\Serialize\SerializerInterface;
 use Magento\NewRelicReporting\Model\Apm\Deployments;
 use Magento\NewRelicReporting\Model\Config;
 use Magento\NewRelicReporting\Model\NerdGraph\Client;
 use Magento\NewRelicReporting\Model\NerdGraph\DeploymentTracker;
 use Magento\TestFramework\Helper\Bootstrap;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 /**
  * Integration test for the complete deployment workflow
@@ -57,6 +61,7 @@ class DeploymentWorkflowTest extends TestCase
 
     protected function setUp(): void
     {
+        /** @phpstan-ignore-next-line */
         $this->objectManager = Bootstrap::getObjectManager();
         $this->config = $this->objectManager->get(Config::class);
         $this->mutableScopeConfig = $this->objectManager->get(MutableScopeConfigInterface::class);

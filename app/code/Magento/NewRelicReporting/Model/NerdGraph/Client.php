@@ -63,12 +63,12 @@ class Client
      * @param string $query The GraphQL query string
      * @param array $variables Optional variables for the query
      * @return array The decoded response data
-     * @throws \RuntimeException on request or response errors
+     * @throws RuntimeException on request or response errors
      */
     public function query(string $query, array $variables = []): array
     {
         if (!$this->config->isNewRelicEnabled()) {
-            throw new \RuntimeException('New Relic is not enabled');
+            throw new RuntimeException('New Relic is not enabled');
         }
         try {
             // Use the same API key field for both v2 REST and NerdGraph modes
@@ -92,7 +92,7 @@ class Client
             $response = $client->send();
         } catch (RuntimeException $e) {
             $this->logger->error('NerdGraph API request failed: ' . $e->getMessage());
-            throw new \RuntimeException('NerdGraph API request failed: ' . $e->getMessage(), 0, $e);
+            throw new RuntimeException('NerdGraph API request failed: ' . $e->getMessage(), 0, $e);
         }
 
         if ($response->getStatusCode() !== 200) {
@@ -102,7 +102,7 @@ class Client
                 $response->getBody()
             );
             $this->logger->error($errorMsg);
-            throw new \RuntimeException($errorMsg);
+            throw new RuntimeException($errorMsg);
         }
 
         $responseData = $this->serializer->unserialize($response->getBody());
@@ -114,7 +114,7 @@ class Client
             );
             $errorMsg = 'NerdGraph GraphQL errors: ' . implode(', ', $errorMessages);
             $this->logger->error($errorMsg);
-            throw new \RuntimeException($errorMsg);
+            throw new RuntimeException($errorMsg);
         }
 
         return $responseData;
@@ -135,7 +135,6 @@ class Client
         $searchQuery = 'type = \'APPLICATION\'';
 
         if ($appName) {
-            // safer than addslashes
             $searchQuery .= sprintf(" AND name = '%s'", str_replace("'", "\\'", $appName));
         } elseif ($appId) {
             $searchQuery .= sprintf(" AND appId = '%s'", str_replace("'", "\\'", $appId));
@@ -184,7 +183,7 @@ class Client
                 ' (GUID: ' . $firstEntity['guid'] . ')'
             );
             return $firstEntity['guid'];
-        } catch (\RuntimeException $e) {
+        } catch (RuntimeException $e) {
             $this->logger->error(sprintf(
                 'Failed to get entity GUID. Search query: %s. Error: %s',
                 $searchQuery,

@@ -79,8 +79,8 @@ class Deployments
      * Supports both v2 REST and NerdGraph APIs based on configuration
      *
      * @param string $description
-     * @param bool|string $change
-     * @param bool|string $user
+     * @param string|null $change
+     * @param string|null $user
      * @param string|null $revision
      * @param string|null $commit Git commit hash (NerdGraph only)
      * @param string|null $deepLink Deep link URL (NerdGraph only)
@@ -90,8 +90,8 @@ class Deployments
      */
     public function setDeployment(
         string      $description,
-        bool|string $change = false,
-        bool|string $user = false,
+        ?string     $change = null,
+        ?string     $user = null,
         ?string     $revision = null,
         ?string     $commit = null,
         ?string     $deepLink = null,
@@ -178,15 +178,15 @@ class Deployments
      * Create deployment using NerdGraph (GraphQL) API
      *
      * @param string $description
-     * @param bool|string $change
-     * @param bool|string $user
+     * @param string|null $change
+     * @param string|null $user
      * @param string|null $revision
      * @param string|null $commit
      * @param string|null $deepLink
      * @param string|null $groupId
      * @return array|false
      */
-    private function createNerdGraphDeployment(string $description, bool|string $change, bool|string $user, ?string
+    private function createNerdGraphDeployment(string $description, ?string $change, ?string $user, ?string
     $revision, ?string $commit, ?string $deepLink, ?string $groupId): false|array
     {
         return $this->deploymentTracker->createDeployment(

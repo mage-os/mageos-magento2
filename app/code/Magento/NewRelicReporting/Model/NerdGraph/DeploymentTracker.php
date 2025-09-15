@@ -88,7 +88,16 @@ class DeploymentTracker
 
             $response = $this->nerdGraphClient->query($this->getDeploymentMutation(), $variables);
 
-            return $this->processDeploymentResponse($response, $variables, $description, $changelog, $user, $commit, $deepLink, $groupId);
+            return $this->processDeploymentResponse(
+                $response,
+                $variables,
+                $description,
+                $changelog,
+                $user,
+                $commit,
+                $deepLink,
+                $groupId
+            );
         } catch (\Exception $e) {
             $this->logger->error('NerdGraph deployment creation failed: ' . $e->getMessage());
             return false;
@@ -251,7 +260,7 @@ class DeploymentTracker
     ): false|array {
         $deploymentData = $response['data']['changeTrackingCreateDeployment'] ?? null;
         $deployedVersion = $variables['deployment']['version'];
-        
+
         if ($deploymentData) {
             $this->logger->info(
                 'NerdGraph deployment created successfully',

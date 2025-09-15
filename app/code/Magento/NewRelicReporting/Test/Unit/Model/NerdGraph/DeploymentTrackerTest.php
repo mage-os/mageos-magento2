@@ -47,9 +47,9 @@ class DeploymentTrackerTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->nerdGraphClientMock = $this->createMock(Client::class); // @phpstan-ignore-line
-        $this->configMock = $this->createMock(Config::class); // @phpstan-ignore-line
-        $this->loggerMock = $this->createMock(LoggerInterface::class); // @phpstan-ignore-line
+        $this->nerdGraphClientMock = $this->createMock(Client::class);
+        $this->configMock = $this->createMock(Config::class);
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
 
         $this->deploymentTracker = new DeploymentTracker(
             $this->nerdGraphClientMock,
