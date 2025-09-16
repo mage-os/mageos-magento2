@@ -1,5 +1,5 @@
 <!---
-    Thank you for contributing to Magento.
+    Thank you for contributing to Mage-OS.
     To help us process this pull request we recommend that you add the following information:
      - Summary of the pull request,
      - Issue(s) related to the changes made,
@@ -20,10 +20,10 @@
 
 ### Fixed Issues (if relevant)
 <!---
-    If relevant, please provide a list of fixed issues in the format magento/magento2#<issue_number>.
+    If relevant, please provide a list of fixed issues in the format mage-os/mageos-magento2#<issue_number>.
     There could be 1 or more issues linked here and it will help us find some more information about the reasoning behind this change.
 -->
-1. Fixes magento/magento2#<issue_number>
+1. Fixes mage-os/mageos-magento2#<issue_number>
 
 ### Manual testing scenarios (*)
 <!---

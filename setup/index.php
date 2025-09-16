@@ -41,7 +41,7 @@ $metaClass = $objectManager->create(ProductMetadata::class);
 /** @var License $license */
 $license = $licenseClass->getContents();
 /** @var ProductMetadata $version */
-$version = $metaClass->getVersion();
+$version = $metaClass->getDistributionVersion();
 
 $request = new Request();
 $basePath = $request->getBasePath();
