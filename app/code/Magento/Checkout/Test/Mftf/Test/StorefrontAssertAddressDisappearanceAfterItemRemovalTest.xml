@@ -45,14 +45,16 @@
         <actionGroup ref="StorefrontClickOnMiniCartActionGroup" stepKey="clickOnMiniCart"/>
         <actionGroup ref="ClickViewAndEditCartFromMiniCartActionGroup" stepKey="goToShoppingCartFromMiniCart"/>
         <waitForPageLoad stepKey="waitForViewAndEditCartToOpen"/>
-        <!-- Step 4: Click Link `Checkout with Multiple Addresses` -->
+        <!-- Step 4: Click Link `Checkout with Multiple Addresses -->
         <click stepKey="clickOnCheckoutWithMultipleAddresses" selector="{{MultishippingSection.checkoutWithMultipleAddresses}}"/>
         <waitForPageLoad stepKey="waitForMultiCheckoutPageToLoad"/>
+        <!-- Step 5: Select different addresses for each item -->
         <actionGroup ref="StorefrontSelectAddressActionGroup" stepKey="selectCAAddress">
             <argument name="sequenceNumber" value="3"/>
             <argument name="option" value="{{Customer_Address.ca_address}}"/>
         </actionGroup>
         <actionGroup ref="StorefrontUpdateMultishippingItemsQuantityAndAddressesActionGroup" stepKey="clickOnUpdateQtyAndAddress"/>
+        <!-- Step 6: Now click Remove Item link one by one for each item -->
         <actionGroup ref="StorefrontRemoveProductsInMultiAddressCheckoutActionGroup" stepKey="removeFirstItem">
             <argument name="sequenceNumber" value="1"/>
         </actionGroup>
