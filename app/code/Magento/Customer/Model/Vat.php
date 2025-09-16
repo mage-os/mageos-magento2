@@ -139,22 +139,14 @@ class Vat
         ];
 
         if (isset($vatClassToGroupXmlPathMap[$vatClass])) {
-            $groupId = (int)$this->scopeConfig->getValue(
+            $groupId = $this->scopeConfig->getValue(
                 $vatClassToGroupXmlPathMap[$vatClass],
                 ScopeInterface::SCOPE_STORE,
                 $store
             );
-
-            if (!$groupId) {
-                $groupId = (int)$this->scopeConfig->getValue(
-                    GroupManagement::XML_PATH_DEFAULT_ID,
-                    ScopeInterface::SCOPE_STORE,
-                    $store
-                );
-            }
         }
 
-        return $groupId;
+        return $groupId ? (int)$groupId : null;
     }
 
     /**

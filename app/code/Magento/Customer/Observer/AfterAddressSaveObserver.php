@@ -159,7 +159,10 @@ class AfterAddressSaveObserver implements ObserverInterface
                     $customer->getStore()
                 );
 
-                if (!$customer->getDisableAutoGroupChange() && $customer->getGroupId() != $newGroupId) {
+                if (!$customer->getDisableAutoGroupChange() &&
+                    $newGroupId !== null &&
+                    $customer->getGroupId() != $newGroupId
+                ) {
                     $customer->setGroupId($newGroupId);
                     $customer->save();
                     $this->customerSession->setCustomerGroupId($newGroupId);
