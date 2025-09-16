@@ -60,7 +60,8 @@ class FixedProductTaxTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->extensionAttributesMock = new class implements ContextExtensionInterface { // @SuppressWarnings(PHPMD.UnusedLocalVariable)
+        // @SuppressWarnings(PHPMD.UnusedLocalVariable)
+        $this->extensionAttributesMock = new class implements ContextExtensionInterface {
             /**
              * @var int|null
              */

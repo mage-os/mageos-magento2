@@ -104,13 +104,7 @@ class WishlistTest extends TestCase
         $this->imageHelperMock = $this->createMock(Image::class);
 
         $this->layoutMock = $this->createMock(
-            LayoutInterface::class,
-            [],
-            '',
-            true,
-            true,
-            true,
-            ['getBlock']
+            LayoutInterface::class
         );
 
         $this->customerFactory = $this->createPartialMock(CustomerFactory::class, ['create']);

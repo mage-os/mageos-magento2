@@ -109,13 +109,7 @@ class AdjustmentTest extends TestCase
             }
         };
         $this->priceCurrencyMock = $this->createMock(
-            PriceCurrencyInterface::class,
-            [],
-            '',
-            true,
-            true,
-            true,
-            []
+            PriceCurrencyInterface::class
         );
         $this->weeeHelperMock = $this->createMock(Data::class);
         $eventManagerMock = $this->createMock(ManagerInterface::class);
