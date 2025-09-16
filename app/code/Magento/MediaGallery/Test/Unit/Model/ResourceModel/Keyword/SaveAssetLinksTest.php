@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -48,10 +48,10 @@ class SaveAssetLinksTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->connectionMock = $this->getMockForAbstractClass(AdapterInterface::class);
+        $this->connectionMock = $this->createMock(AdapterInterface::class);
         $this->resourceConnectionMock = $this->createMock(ResourceConnection::class);
-        $this->getAssetsKeywords = $this->getMockForAbstractClass(GetAssetsKeywordsInterface::class);
-        $this->loggerMock = $this->getMockForAbstractClass(LoggerInterface::class);
+        $this->getAssetsKeywords = $this->createMock(GetAssetsKeywordsInterface::class);
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
 
         $this->sut = new SaveAssetLinks(
             $this->getAssetsKeywords,

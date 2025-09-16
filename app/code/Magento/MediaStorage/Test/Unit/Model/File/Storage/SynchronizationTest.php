@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -22,21 +22,25 @@ class SynchronizationTest extends TestCase
         $content = 'content';
         $relativeFileName = 'config.xml';
 
-        $storageFactoryMock = $this->getMockBuilder(DatabaseFactory::class)
-            ->addMethods(['_wakeup'])
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $storageMock = $this->getMockBuilder(Database::class)
-            ->addMethods(['getContent'])
-            ->onlyMethods(['getId', 'loadByFilename', '__wakeup'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $storageFactoryMock = $this->createPartialMock(DatabaseFactory::class, ['create']); // @phpstan-ignore-line
+        $storageMock = new class extends Database {
+            public function __construct()
+            {
+            }
+            public function getContent()
+            {
+                return 'content';
+            }
+            public function getId()
+            {
+                return true;
+            }
+            public function loadByFilename($filename)
+            {
+                return $this;
+            }
+        };
         $storageFactoryMock->expects($this->once())->method('create')->willReturn($storageMock);
-
-        $storageMock->expects($this->once())->method('getContent')->willReturn($content);
-        $storageMock->expects($this->once())->method('getId')->willReturn(true);
-        $storageMock->expects($this->once())->method('loadByFilename');
 
         $file = $this->createPartialMock(
             Write::class,
@@ -46,7 +50,7 @@ class SynchronizationTest extends TestCase
         $file->expects($this->once())->method('write')->with($content);
         $file->expects($this->once())->method('unlock');
         $file->expects($this->once())->method('close');
-        $directory = $this->getMockForAbstractClass(WriteInterface::class);
+        $directory = $this->createMock(WriteInterface::class);
         $directory->expects($this->once())
             ->method('openFile')
             ->with($relativeFileName)

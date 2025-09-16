@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -70,8 +70,8 @@ class GetByIdExceptionOnGetDataTest extends TestCase
     protected function setUp(): void
     {
         $resourceConnection = $this->createMock(ResourceConnection::class);
-        $assetFactory = $this->createMock(AssetInterfaceFactory::class);
-        $this->logger = $this->getMockForAbstractClass(LoggerInterface::class);
+        $assetFactory = $this->createMock(AssetInterfaceFactory::class); // @phpstan-ignore-line
+        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->getMediaAssetById = (new ObjectManager($this))->getObject(
             GetById::class,
@@ -81,7 +81,7 @@ class GetByIdExceptionOnGetDataTest extends TestCase
                 'logger' =>  $this->logger,
             ]
         );
-        $this->adapter = $this->getMockForAbstractClass(AdapterInterface::class);
+        $this->adapter = $this->createMock(AdapterInterface::class);
         $resourceConnection->method('getConnection')->willReturn($this->adapter);
 
         $this->selectStub = $this->createMock(Select::class);
@@ -89,7 +89,7 @@ class GetByIdExceptionOnGetDataTest extends TestCase
         $this->selectStub->method('where')->willReturnSelf();
         $this->adapter->method('select')->willReturn($this->selectStub);
 
-        $this->statementMock = $this->getMockBuilder(\Zend_Db_Statement_Interface::class)->getMock();
+        $this->statementMock = $this->createMock(\Zend_Db_Statement_Interface::class);
     }
 
     /**

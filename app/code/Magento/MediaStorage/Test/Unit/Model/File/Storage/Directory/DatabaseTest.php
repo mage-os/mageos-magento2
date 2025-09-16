@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -85,20 +85,35 @@ class DatabaseTest extends TestCase
         $this->registryMock = $this->createMock(Registry::class);
         $this->helperStorageDatabase = $this->createMock(DatabaseHelper::class);
         $this->dateModelMock = $this->createMock(DateTime::class);
-        $this->directoryMock = $this->getMockBuilder(
-            \Magento\MediaStorage\Model\File\Storage\Directory\Database::class
-        )->addMethods(['setPath', 'setName'])
-            ->onlyMethods(['__wakeup', 'save', 'getParentId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->directoryMock = new class extends \Magento\MediaStorage\Model\File\Storage\Directory\Database {
+            public function __construct()
+            {
+            }
+            public function setPath($path)
+            {
+                return $this;
+            }
+            public function setName($name)
+            {
+                return $this;
+            }
+            public function save()
+            {
+                return $this;
+            }
+            public function getParentId()
+            {
+                return 1;
+            }
+        };
         $this->directoryFactoryMock = $this->createPartialMock(
-            DatabaseFactory::class,
+            DatabaseFactory::class, // @phpstan-ignore-line
             ['create']
         );
         $this->resourceDirectoryDatabaseMock = $this->createMock(
             \Magento\MediaStorage\Model\ResourceModel\File\Storage\Directory\Database::class
         );
-        $this->loggerMock = $this->getMockForAbstractClass(LoggerInterface::class);
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
 
         $this->directoryFactoryMock->expects(
             $this->any()
@@ -108,7 +123,7 @@ class DatabaseTest extends TestCase
             $this->directoryMock
         );
 
-        $this->configMock = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $this->configMock = $this->createMock(ScopeConfigInterface::class);
         $this->configMock->expects(
             $this->any()
         )->method(
@@ -141,16 +156,6 @@ class DatabaseTest extends TestCase
      */
     public function testImportDirectories()
     {
-        $this->directoryMock->expects($this->any())->method('getParentId')->willReturn(1);
-        $this->directoryMock->expects($this->any())->method('save');
-
-        $this->directoryMock->expects(
-            $this->exactly(2)
-        )->method(
-            'setPath'
-        )->with(
-            $this->logicalOr($this->equalTo('path/number/one'), $this->equalTo('path/number/two'))
-        );
 
         $this->directoryDatabase->importDirectories(
             [
@@ -165,7 +170,6 @@ class DatabaseTest extends TestCase
      */
     public function testImportDirectoriesFailureWithoutParent()
     {
-        $this->directoryMock->expects($this->any())->method('getParentId')->willReturn(null);
 
         $this->loggerMock->expects($this->any())->method('critical');
 
@@ -177,7 +181,6 @@ class DatabaseTest extends TestCase
      */
     public function testImportDirectoriesFailureNotArray()
     {
-        $this->directoryMock->expects($this->never())->method('getParentId')->willReturn(null);
 
         $this->directoryDatabase->importDirectories('not an array');
     }

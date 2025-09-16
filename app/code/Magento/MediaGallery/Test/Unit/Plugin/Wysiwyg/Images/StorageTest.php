@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 
 declare(strict_types=1);
@@ -65,11 +65,11 @@ class StorageTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->deleteMediaAssetByPathMock = $this->getMockForAbstractClass(DeleteAssetsByPathsInterface::class);
+        $this->deleteMediaAssetByPathMock = $this->createMock(DeleteAssetsByPathsInterface::class);
         $this->filesystemMock = $this->createMock(Filesystem::class);
-        $this->loggerMock = $this->getMockForAbstractClass(LoggerInterface::class);
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
         $this->storageSubjectMock = $this->createMock(StorageSubject::class);
-        $this->readInterfaceMock = $this->getMockForAbstractClass(ReadInterface::class);
+        $this->readInterfaceMock = $this->createMock(ReadInterface::class);
 
         $this->storage = (new ObjectManager($this))->getObject(
             StoragePlugin::class,
@@ -88,7 +88,7 @@ class StorageTest extends TestCase
      */
     public function testAfterDeleteDirectory($path): void
     {
-        $directoryRead = $this->getMockForAbstractClass(ReadInterface::class);
+        $directoryRead = $this->createMock(ReadInterface::class);
         $this->filesystemMock->expects($this->any())
             ->method('getDirectoryRead')
             ->willReturn($directoryRead);

@@ -47,9 +47,9 @@ class GetAssetsByPathsTest extends TestCase
 
     protected function setUp(): void
     {
-        $logger = $this->getMockForAbstractClass(LoggerInterface::class);
+        $logger = $this->createMock(LoggerInterface::class);
         $resourceConnection = $this->createMock(ResourceConnection::class);
-        $this->assetInterfaceFactory = $this->createMock(AssetInterfaceFactory::class);
+        $this->assetInterfaceFactory = $this->createMock(AssetInterfaceFactory::class); // @phpstan-ignore-line
 
         $this->getAssetsByPaths = new GetAssetsByPaths(
             $resourceConnection,
@@ -57,7 +57,7 @@ class GetAssetsByPathsTest extends TestCase
             $logger
         );
 
-        $this->adapter = $this->getMockForAbstractClass(AdapterInterface::class);
+        $this->adapter = $this->createMock(AdapterInterface::class);
         $this->select = $this->createMock(Select::class);
         $this->statement = $this->createMock(\Zend_Db_Statement_Interface::class);
 

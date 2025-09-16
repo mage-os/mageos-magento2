@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -93,12 +93,12 @@ class MediaTest extends TestCase
     {
         $this->configMock = $this->createMock(Config::class);
         $this->sync = $this->createMock(Synchronization::class);
-        $this->configFactoryMock = $this->createPartialMock(ConfigFactory::class, ['create']);
+        $this->configFactoryMock = $this->createPartialMock(ConfigFactory::class, ['create']); // @phpstan-ignore-line
         $this->responseMock = $this->createMock(Response::class);
         $this->syncFactoryMock = $this->createPartialMock(SynchronizationFactory::class, ['create']);
         $this->filesystemMock = $this->createMock(Filesystem::class);
-        $this->directoryPubMock = $this->getMockForAbstractClass(WriteInterface::class);
-        $this->directoryMediaMock = $this->getMockForAbstractClass(WriteInterface::class);
+        $this->directoryPubMock = $this->createMock(WriteInterface::class);
+        $this->directoryMediaMock = $this->createMock(WriteInterface::class);
 
         $this->configFactoryMock->method('create')
             ->willReturn($this->configMock);
@@ -271,7 +271,7 @@ class MediaTest extends TestCase
         $driverFile->method('getRealPath')->willReturn('');
         $placeholder = $this->createMock(Placeholder::class);
         $placeholder->method('getRelativePath')->willReturn(self::RELATIVE_FILE_PATH);
-        $placeholderFactory = $this->createMock(PlaceholderFactory::class);
+        $placeholderFactory = $this->createMock(PlaceholderFactory::class); // @phpstan-ignore-line
         $placeholderFactory->method('create')
             ->willReturn($placeholder);
 

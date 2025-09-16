@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 
 class MediaTest extends TestCase
 {
-    const UPDATE_TIME = 'update_time';
+    private const UPDATE_TIME = 'update_time';
 
     /**
      * @var ObjectManager
@@ -34,19 +34,13 @@ class MediaTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
-        $this->dirMock = $this->getMockBuilder(ReadInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $filesystemMock = $this->getMockBuilder(Filesystem::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->dirMock = $this->createMock(ReadInterface::class);
+        $filesystemMock = $this->createMock(Filesystem::class);
         $filesystemMock->expects($this->any())
             ->method('getDirectoryRead')
             ->with(DirectoryList::MEDIA)
             ->willReturn($this->dirMock);
-        $dateMock = $this->getMockBuilder(DateTime::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $dateMock = $this->createMock(DateTime::class);
         $dateMock->expects($this->any())
             ->method('date')
             ->willReturn(self::UPDATE_TIME);

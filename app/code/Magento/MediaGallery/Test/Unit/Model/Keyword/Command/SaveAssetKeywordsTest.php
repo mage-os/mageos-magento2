@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -57,11 +57,9 @@ class SaveAssetKeywordsTest extends TestCase
     {
         $this->resourceConnectionMock = $this->createMock(ResourceConnection::class);
         $this->saveAssetLinksMock = $this->createMock(SaveAssetLinks::class);
-        $this->connectionMock = $this->getMockBuilder(Mysql::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->connectionMock = $this->createMock(Mysql::class);
         $this->selectMock = $this->createMock(Select::class);
-        $this->loggerMock = $this->getMockForAbstractClass(LoggerInterface::class);
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
 
         $this->sut = new SaveAssetKeywords(
             $this->resourceConnectionMock,

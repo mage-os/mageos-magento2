@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -70,8 +70,8 @@ class GetByIdExceptionDuringMediaAssetInitializationTest extends TestCase
     protected function setUp(): void
     {
         $resourceConnection = $this->createMock(ResourceConnection::class);
-        $this->assetFactory = $this->createMock(AssetInterfaceFactory::class);
-        $this->logger = $this->getMockForAbstractClass(LoggerInterface::class);
+        $this->assetFactory = $this->createMock(AssetInterfaceFactory::class); // @phpstan-ignore-line
+        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->getMediaAssetById = (new ObjectManager($this))->getObject(
             GetById::class,
@@ -81,7 +81,7 @@ class GetByIdExceptionDuringMediaAssetInitializationTest extends TestCase
                 'logger' =>  $this->logger,
             ]
         );
-        $this->adapter = $this->getMockForAbstractClass(AdapterInterface::class);
+        $this->adapter = $this->createMock(AdapterInterface::class);
         $resourceConnection->method('getConnection')->willReturn($this->adapter);
 
         $this->selectStub = $this->createMock(Select::class);

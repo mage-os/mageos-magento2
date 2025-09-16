@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -33,10 +33,16 @@ class ResponseTest extends TestCase
     protected function setUp(): void
     {
         $objectManager = new ObjectManager($this);
-        $this->transferAdapter = $this->getMockBuilder(Http::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['send'])
-            ->getMock();
+        
+        $objects = [
+            [
+                \Magento\Framework\View\Element\Template\Context::class,
+                $this->createMock(\Magento\Framework\View\Element\Template\Context::class)
+            ]
+        ];
+        $objectManager->prepareObjectManager($objects);
+        
+        $this->transferAdapter = $this->createPartialMock(Http::class, ['send']);
         $this->response = $objectManager->getObject(
             Response::class,
             [

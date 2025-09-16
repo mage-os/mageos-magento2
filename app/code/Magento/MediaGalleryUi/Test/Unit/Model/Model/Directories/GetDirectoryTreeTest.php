@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -89,8 +89,8 @@ class GetDirectoryTreeTest extends TestCase
     {
         parent::setUp();
         $this->filesystem = $this->createMock(Filesystem::class);
-        $this->isPathExcluded = $this->getMockForAbstractClass(IsPathExcludedInterface::class);
-        $this->coreConfig = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $this->isPathExcluded = $this->createMock(IsPathExcludedInterface::class);
+        $this->coreConfig = $this->createMock(ScopeConfigInterface::class);
         $this->model = new GetDirectoryTree(
             $this->filesystem,
             $this->isPathExcluded,
@@ -106,7 +106,7 @@ class GetDirectoryTreeTest extends TestCase
      */
     public function testExecute(array $allowedFolders, array $expected): void
     {
-        $directory = $this->getMockForAbstractClass(ReadInterface::class);
+        $directory = $this->createMock(ReadInterface::class);
         $directory->method('isDirectory')->willReturn(true);
         $directory->method('getAbsolutePath')->willReturnArgument(0);
         $directory->method('getRelativePath')->willReturnArgument(0);
@@ -114,17 +114,19 @@ class GetDirectoryTreeTest extends TestCase
         $this->filesystem->method('getDirectoryReadByPath')
             ->willReturnCallback(
                 function (string $path) {
-                    $directory = $this->getMockBuilder(ReadInterface::class)
-                        ->addMethods(['readRecursively'])
-                        ->getMockForAbstractClass();
+                    $directory = $this->createPartialMock(
+                        \Magento\Framework\Filesystem\Directory\Read::class,
+                        ['readRecursively', 'isDirectory', 'getAbsolutePath', 'getRelativePath']
+                    );
                     $directory->method('isDirectory')->willReturn(true);
+                    $directory->method('getAbsolutePath')->willReturnArgument(0);
+                    $directory->method('getRelativePath')->willReturnArgument(0);
                     $result = $this->foldersStruture;
                     $prefix = '';
                     foreach (explode('/', $path) as $folder) {
                         $prefix .= $folder . '/';
                         $result = $result[$folder] ?? [];
                     }
-                    $directory->method('getAbsolutePath')->willReturnArgument(0);
                     $directory->method('readRecursively')->willReturn($this->flattenFoldersStructure($result, $prefix));
                     return $directory;
                 }

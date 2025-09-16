@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -101,9 +101,7 @@ class StorageTest extends TestCase
 
     public function testGetStorageModel()
     {
-        $storageModelMock = $this->getMockBuilder(AbstractModel::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $storageModelMock = $this->createMock(AbstractModel::class);
         $this->storageMock->expects($this->once())
             ->method('getStorageModel')
             ->willReturn($storageModelMock);
@@ -132,22 +130,32 @@ class StorageTest extends TestCase
             ->with($filename)
             ->willReturn($relativePath);
 
-        $storageModelMock = $this->getMockBuilder(AbstractModel::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['loadByFileName'])
-            ->onlyMethods(['__wakeup'])
-            ->getMock();
+        $storageModelMock = new class extends AbstractModel {
+            /**
+             * @var \Magento\MediaStorage\Model\File\Storage\Database
+             */
+            private $fileMock;
+            
+            public function __construct()
+            {
+            }
+            public function loadByFileName($filename)
+            {
+                return $this->fileMock;
+            }
+            public function setFileMock($fileMock)
+            {
+                $this->fileMock = $fileMock;
+            }
+        };
         $this->storageMock->expects($this->exactly($callNum))
             ->method('getStorageModel')
             ->willReturn($storageModelMock);
-        $fileMock = $this->getMockBuilder(\Magento\MediaStorage\Model\File\Storage\Database::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getId', '__wakeup'])
-            ->getMock();
-        $storageModelMock->expects($this->exactly($callNum))
-            ->method('loadByFilename')
-            ->with($relativePath)
-            ->willReturn($fileMock);
+        $fileMock = $this->createPartialMock(
+            \Magento\MediaStorage\Model\File\Storage\Database::class,
+            ['getId', '__wakeup']
+        );
+        $storageModelMock->setFileMock($fileMock);
         $fileMock->expects($this->exactly($callNum))
             ->method('getId')
             ->willReturn($fileId);

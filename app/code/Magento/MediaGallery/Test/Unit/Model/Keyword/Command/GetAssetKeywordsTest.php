@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -43,8 +43,8 @@ class GetAssetKeywordsTest extends TestCase
     protected function setUp(): void
     {
         $this->resourceConnectionStub = $this->createMock(ResourceConnection::class);
-        $this->assetKeywordFactoryStub = $this->createMock(KeywordInterfaceFactory::class);
-        $this->loggerMock = $this->getMockForAbstractClass(LoggerInterface::class);
+        $this->assetKeywordFactoryStub = $this->createMock(KeywordInterfaceFactory::class); // @phpstan-ignore-line
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
 
         $this->sut = new GetAssetKeywords(
             $this->resourceConnectionStub,
@@ -123,7 +123,7 @@ class GetAssetKeywordsTest extends TestCase
      */
     private function configureResourceConnectionStub(array $queryResult): void
     {
-        $statementMock = $this->getMockBuilder(\Zend_Db_Statement_Interface::class)->getMock();
+        $statementMock = $this->createMock(\Zend_Db_Statement_Interface::class);
         $statementMock
             ->method('fetchAll')
             ->willReturn($queryResult);
@@ -133,8 +133,7 @@ class GetAssetKeywordsTest extends TestCase
         $selectStub->method('join')->willReturnSelf();
         $selectStub->method('where')->willReturnSelf();
 
-        $connectionMock = $this->getMockBuilder(AdapterInterface::class)
-            ->getMock();
+        $connectionMock = $this->createMock(AdapterInterface::class);
         $connectionMock
             ->method('select')
             ->willReturn($selectStub);
@@ -149,8 +148,7 @@ class GetAssetKeywordsTest extends TestCase
 
     private function configureAssetKeywordFactoryStub(): void
     {
-        $keywordStub = $this->getMockBuilder(KeywordInterface::class)
-            ->getMock();
+        $keywordStub = $this->createMock(KeywordInterface::class);
         $this->assetKeywordFactoryStub
             ->method('create')
             ->willReturn($keywordStub);
