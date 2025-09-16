@@ -11,7 +11,6 @@ use Magento\Framework\App\DistributionMetadataInterface;
  * Adminhtml footer block
  *
  * @api
- * @author      Magento Core Team <core@magentocommerce.com>
  * @since 100.0.2
  */
 class Footer extends \Magento\Backend\Block\Template
