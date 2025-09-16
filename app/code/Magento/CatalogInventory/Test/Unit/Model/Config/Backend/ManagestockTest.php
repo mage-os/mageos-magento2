@@ -7,10 +7,10 @@ declare(strict_types=1);
 
 namespace Magento\CatalogInventory\Test\Unit\Model\Config\Backend;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\CatalogInventory\Model\Config\Backend\Managestock;
 use Magento\CatalogInventory\Model\Indexer\Stock\Processor;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -29,20 +29,27 @@ class ManagestockTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->stockIndexerProcessor = $this->getMockBuilder(
-            Processor::class
-        )->disableOriginalConstructor()
-            ->getMock();
-        $this->configMock = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->stockIndexerProcessor = $this->createMock(Processor::class);
+        $this->configMock = $this->createMock(ScopeConfigInterface::class);
 
-        $this->model = (new ObjectManager($this))->getObject(
-            Managestock::class,
-            [
-                'config' => $this->configMock,
-                'stockIndexerProcessor' => $this->stockIndexerProcessor
-            ]
+        // Create all required mocks for the Managestock constructor
+        $contextMock = $this->createMock(\Magento\Framework\Model\Context::class);
+        $registryMock = $this->createMock(\Magento\Framework\Registry::class);
+        $cacheTypeListMock = $this->createMock(\Magento\Framework\App\Cache\TypeListInterface::class);
+        $stockIndexMock = $this->createMock(\Magento\CatalogInventory\Api\StockIndexInterface::class);
+
+        // Configure context mock to return event dispatcher
+        $eventDispatcherMock = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
+        $contextMock->method('getEventDispatcher')->willReturn($eventDispatcherMock);
+
+        // Direct instantiation instead of ObjectManagerHelper
+        $this->model = new Managestock(
+            $contextMock,
+            $registryMock,
+            $this->configMock,
+            $cacheTypeListMock,
+            $stockIndexMock,
+            $this->stockIndexerProcessor
         );
     }
 
@@ -59,11 +66,11 @@ class ManagestockTest extends TestCase
     }
 
     /**
-     * @dataProvider saveAndRebuildIndexDataProvider
      *
      * @param int $newStockValue new value for stock status
      * @param int $callCount count matcher
      */
+    #[DataProvider('saveAndRebuildIndexDataProvider')]
     public function testSaveAndRebuildIndex($newStockValue, $callCount)
     {
         $this->model->setValue($newStockValue);

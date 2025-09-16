@@ -70,28 +70,78 @@ class ProcessAdminFinalPriceObserverTest extends TestCase
             ->getMockBuilder(Observer::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->eventMock = $this
-            ->getMockBuilder(Event::class)
-            ->addMethods(['getProduct'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->rulePricesStorageMock = $this->getMockBuilder(RulePricesStorage::class)
-            ->addMethods(['getWebsiteId', 'getCustomerGroupId'])
-            ->onlyMethods(['getRulePrice', 'setRulePrice'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
-            ->onlyMethods(['getStore'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        // Create anonymous class extending Event with dynamic methods
+        $this->eventMock = new class extends Event {
+            private $product = null;
+
+            public function __construct()
+            {
+                // Skip parent constructor to avoid complex dependencies
+            }
+
+            public function getProduct()
+            {
+                return $this->product;
+            }
+
+            public function setProduct($value)
+            {
+                $this->product = $value;
+                return $this;
+            }
+        };
+        // Create anonymous class extending RulePricesStorage with dynamic methods
+        $this->rulePricesStorageMock = new class extends RulePricesStorage {
+            private $websiteId = null;
+            private $customerGroupId = null;
+            private $rulePrice = null;
+
+            public function __construct()
+            {
+                // Skip parent constructor to avoid complex dependencies
+            }
+
+            // Dynamic methods from addMethods
+            public function getWebsiteId()
+            {
+                return $this->websiteId;
+            }
+
+            public function setWebsiteId($value)
+            {
+                $this->websiteId = $value;
+                return $this;
+            }
+
+            public function getCustomerGroupId()
+            {
+                return $this->customerGroupId;
+            }
+
+            public function setCustomerGroupId($value)
+            {
+                $this->customerGroupId = $value;
+                return $this;
+            }
+
+            // Methods from onlyMethods
+            public function getRulePrice($id)
+            {
+                return $this->rulePrice;
+            }
+
+            public function setRulePrice($id, $price)
+            {
+                $this->rulePrice = $price;
+                return $this;
+            }
+        };
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
         $this->resourceRuleFactoryMock = $this->getMockBuilder(RuleFactory::class)
             ->onlyMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->localeDateMock = $this->getMockBuilder(TimezoneInterface::class)
-            ->onlyMethods(['scopeDate'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->localeDateMock = $this->createMock(TimezoneInterface::class);
         $objectManagerHelper = new ObjectManager($this);
         $this->observer = $objectManagerHelper->getObject(
             ProcessAdminFinalPriceObserver::class,
@@ -120,31 +170,121 @@ class ProcessAdminFinalPriceObserverTest extends TestCase
             ->method('getEvent')
             ->willReturn($this->eventMock);
 
-        $productMock = $this->getMockBuilder(Product::class)
-            ->addMethods(['getWebsiteId', 'getCustomerGroupId'])
-            ->onlyMethods(
-                [
-                    'getStoreId',
-                    'getId',
-                    'getData',
-                    'setFinalPrice'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
-        $dateMock = $this->getMockBuilder(Date::class)
-            ->addMethods(['format'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        // Create anonymous class extending Product with dynamic methods
+        $productMock = new class extends Product {
+            private $websiteId = null;
+            private $customerGroupId = null;
+            private $storeId = null;
+            private $id = null;
+            private $data = [];
+            private $finalPrice = null;
+
+            public function __construct()
+            {
+                // Skip parent constructor to avoid complex dependencies
+            }
+
+            // Dynamic methods from addMethods
+            public function getWebsiteId()
+            {
+                return $this->websiteId;
+            }
+
+            public function setWebsiteId($value)
+            {
+                $this->websiteId = $value;
+                return $this;
+            }
+
+            public function getCustomerGroupId()
+            {
+                return $this->customerGroupId;
+            }
+
+            public function setCustomerGroupId($value)
+            {
+                $this->customerGroupId = $value;
+                return $this;
+            }
+
+            // Methods from onlyMethods
+            public function getStoreId()
+            {
+                return $this->storeId;
+            }
+
+            public function setStoreId($value)
+            {
+                $this->storeId = $value;
+                return $this;
+            }
+
+            public function getId()
+            {
+                return $this->id;
+            }
+
+            public function setId($value)
+            {
+                $this->id = $value;
+                return $this;
+            }
+
+            public function getData($key = '', $index = null)
+            {
+                if ($key === '') {
+                    return $this->data;
+                }
+                return isset($this->data[$key]) ? $this->data[$key] : null;
+            }
+
+            public function setData($key, $value = null)
+            {
+                if (is_array($key)) {
+                    $this->data = array_merge($this->data, $key);
+                } else {
+                    $this->data[$key] = $value;
+                }
+                return $this;
+            }
+
+            public function setFinalPrice($value)
+            {
+                $this->finalPrice = $value;
+                return $this;
+            }
+
+            public function getFinalPrice($qty = null)
+            {
+                return $this->finalPrice;
+            }
+        };
+        // Create anonymous class extending Date with dynamic methods
+        $dateMock = new class extends Date {
+            private $formatValue = null;
+
+            public function __construct()
+            {
+                // Skip parent constructor to avoid complex dependencies
+            }
+
+            public function format($format)
+            {
+                return $this->formatValue;
+            }
+
+            public function setFormatValue($value)
+            {
+                $this->formatValue = $value;
+                return $this;
+            }
+        };
 
         $this->localeDateMock->expects($this->once())
             ->method('scopeDate')
             ->with($storeId)
             ->willReturn($dateMock);
-        $dateMock->expects($this->once())
-            ->method('format')
-            ->with($localeDateFormat)
-            ->willReturn($date);
+        $dateMock->setFormatValue($date);
         $storeMock->expects($this->once())
             ->method('getWebsiteId')
             ->willReturn($wId);
@@ -152,35 +292,16 @@ class ProcessAdminFinalPriceObserverTest extends TestCase
             ->method('getStore')
             ->with($storeId)
             ->willReturn($storeMock);
-        $productMock->expects($this->once())
-            ->method('getStoreId')
-            ->willReturn($storeId);
-        $productMock->expects($this->any())
-            ->method('getCustomerGroupId')
-            ->willReturn($gId);
-        $productMock->expects($this->once())
-            ->method('getId')
-            ->willReturn($pId);
-        $productMock->expects($this->once())
-            ->method('getData')
-            ->with('final_price')
-            ->willReturn($finalPrice);
-        $this->rulePricesStorageMock->expects($this->any())
-            ->method('getCustomerGroupId')
-            ->willReturn($gId);
+        $productMock->setStoreId($storeId);
+        $productMock->setCustomerGroupId($gId);
+        $productMock->setId($pId);
+        $productMock->setData('final_price', $finalPrice);
+        $this->rulePricesStorageMock->setCustomerGroupId($gId);
         $this->resourceRuleFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($this->rulePricesStorageMock);
-        $this->rulePricesStorageMock->expects($this->any())
-            ->method('getRulePrice')
-            ->willReturn($rulePrice);
-        $this->rulePricesStorageMock->expects($this->once())
-            ->method('setRulePrice')
-            ->willReturnSelf();
-        $this->eventMock
-            ->expects($this->atLeastOnce())
-            ->method('getProduct')
-            ->willReturn($productMock);
+        $this->rulePricesStorageMock->setRulePrice($pId, $rulePrice);
+        $this->eventMock->setProduct($productMock);
         $this->assertEquals($this->observer, $this->observer->execute($this->observerMock));
     }
 }

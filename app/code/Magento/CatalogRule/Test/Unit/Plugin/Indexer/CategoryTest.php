@@ -36,11 +36,31 @@ class CategoryTest extends TestCase
         $this->productRuleProcessor = $this->createMock(
             ProductRuleProcessor::class
         );
-        $this->subject = $this->getMockBuilder(Category::class)
-            ->addMethods(['getChangedProductIds'])
-            ->onlyMethods(['__wakeUp'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        // Create anonymous class extending Category with dynamic methods
+        $this->subject = new class extends Category {
+            private $changedProductIds = [];
+
+            public function __construct()
+            {
+                // Skip parent constructor to avoid complex dependencies
+            }
+
+            public function getChangedProductIds()
+            {
+                return $this->changedProductIds;
+            }
+
+            public function setChangedProductIds($value)
+            {
+                $this->changedProductIds = $value;
+                return $this;
+            }
+
+            public function __wakeUp()
+            {
+                // Implementation for __wakeUp method
+            }
+        };
 
         $this->plugin = (new ObjectManager($this))->getObject(
             \Magento\CatalogRule\Plugin\Indexer\Category::class,
@@ -52,9 +72,7 @@ class CategoryTest extends TestCase
 
     public function testAfterSaveWithoutAffectedProductIds()
     {
-        $this->subject->expects($this->any())
-            ->method('getChangedProductIds')
-            ->willReturn([]);
+        $this->subject->setChangedProductIds([]);
 
         $this->productRuleProcessor->expects($this->never())
             ->method('reindexList');
@@ -66,9 +84,7 @@ class CategoryTest extends TestCase
     {
         $productIds = [1, 2, 3];
 
-        $this->subject->expects($this->any())
-            ->method('getChangedProductIds')
-            ->willReturn($productIds);
+        $this->subject->setChangedProductIds($productIds);
 
         $this->productRuleProcessor->expects($this->once())
             ->method('reindexList')

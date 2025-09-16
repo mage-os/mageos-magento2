@@ -26,10 +26,10 @@ class ProductPriceCalculatorTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->priceCurrencyMock = $this->getMockBuilder(PriceCurrencyInterface::class)
+        $this->priceCurrencyMock = $this->getMockBuilder(\Magento\Directory\Model\PriceCurrency::class)
             ->disableOriginalConstructor()
-            ->addMethods(['roundPrice'])
-            ->getMockForAbstractClass();
+            ->onlyMethods(['roundPrice'])
+            ->getMock();
         $this->model = new ProductPriceCalculator($this->priceCurrencyMock);
     }
 

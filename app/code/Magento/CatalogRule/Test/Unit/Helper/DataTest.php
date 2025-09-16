@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace Magento\CatalogRule\Test\Unit\Helper;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\CatalogRule\Helper\Data;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\TestCase;
@@ -17,7 +18,7 @@ class DataTest extends TestCase
     /**
      * Helper object
      *
-     * @var \Magento\CatalogRule\Helper\Data
+     * @var Data
      */
     protected $helper;
 
@@ -33,9 +34,8 @@ class DataTest extends TestCase
      * @param int|float $ruleAmount
      * @param int|float $price
      * @param int|float $expectedAmount
-     *
-     * @dataProvider calcPriceRuleDataProvider
      */
+    #[DataProvider('calcPriceRuleDataProvider')]
     public function testCalcPriceRule($actionOperator, $ruleAmount, $price, $expectedAmount)
     {
         $this->assertEquals($expectedAmount, $this->helper->calcPriceRule($actionOperator, $ruleAmount, $price));

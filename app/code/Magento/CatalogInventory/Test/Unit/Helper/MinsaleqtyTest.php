@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\CatalogInventory\Test\Unit\Helper;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\CatalogInventory\Helper\Minsaleqty;
 use Magento\CatalogInventory\Model\Configuration;
 use Magento\Customer\Api\Data\GroupInterface;
@@ -14,7 +15,6 @@ use Magento\Customer\Api\GroupManagementInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Math\Random;
 use Magento\Framework\Serialize\Serializer\Json;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Store\Model\ScopeInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -23,9 +23,6 @@ class MinsaleqtyTest extends TestCase
 {
     /** @var Minsaleqty */
     protected $minsaleqty;
-
-    /** @var ObjectManagerHelper */
-    protected $objectManagerHelper;
 
     /** @var ScopeConfigInterface|MockObject */
     protected $scopeConfigMock;
@@ -38,40 +35,33 @@ class MinsaleqtyTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->scopeConfigMock = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        // Create minimal ObjectManager mock
+        $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        \Magento\Framework\App\ObjectManager::setInstance($objectManagerMock);
+        
+        $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
         $this->randomMock = $this->createMock(Random::class);
         $this->randomMock->expects($this->any())
             ->method('getUniqueHash')
             ->with('_')
             ->willReturn('unique_hash');
 
-        $groupManagement = $this->getMockBuilder(GroupManagementInterface::class)
-            ->onlyMethods(['getAllCustomersGroup'])
-            ->getMockForAbstractClass();
+        $groupManagement = $this->createMock(GroupManagementInterface::class);
 
-        $allGroup = $this->getMockBuilder(GroupInterface::class)
-            ->onlyMethods(['getId'])
-            ->getMockForAbstractClass();
+        $allGroup = $this->createMock(GroupInterface::class);
 
-        $allGroup->expects($this->any())
-            ->method('getId')
-            ->willReturn(32000);
+        $allGroup->method('getId')->willReturn(32000);
 
-        $groupManagement->expects($this->any())
-            ->method('getAllCustomersGroup')
-            ->willReturn($allGroup);
+        $groupManagement->method('getAllCustomersGroup')->willReturn($allGroup);
 
         $this->serializerMock = $this->createMock(Json::class);
 
-        $this->objectManagerHelper = new ObjectManagerHelper($this);
-        $this->minsaleqty = $this->objectManagerHelper->getObject(
-            Minsaleqty::class,
-            [
-                'scopeConfig' => $this->scopeConfigMock,
-                'mathRandom' => $this->randomMock,
-                'groupManagement' => $groupManagement,
-                'serializer' => $this->serializerMock
-            ]
+        // Instantiate Minsaleqty helper directly with mocks
+        $this->minsaleqty = new Minsaleqty(
+            $this->scopeConfigMock,
+            $this->randomMock,
+            $groupManagement,
+            $this->serializerMock
         );
     }
 
@@ -80,8 +70,8 @@ class MinsaleqtyTest extends TestCase
      * @param int|null $store
      * @param float $minSaleQty
      * @param float|null $result
-     * @dataProvider getConfigValueDataProvider
      */
+    #[DataProvider('getConfigValueDataProvider')]
     public function testGetConfigValue($customerGroupId, $store, $minSaleQty, $result, $minSaleQtyDecoded = null)
     {
         $this->scopeConfigMock->expects($this->once())
@@ -164,8 +154,8 @@ class MinsaleqtyTest extends TestCase
      * @param string|array $value
      * @param array $result
      * @param int $serializeCallCount
-     * @dataProvider makeArrayFieldValueDataProvider
      */
+    #[DataProvider('makeArrayFieldValueDataProvider')]
     public function testMakeArrayFieldValue($value, $result, $serializeCallCount = 0)
     {
         $this->serializerMock->expects($this->exactly($serializeCallCount))
@@ -206,8 +196,8 @@ class MinsaleqtyTest extends TestCase
      * @param string $result
      * @param int $serializeCallCount
      * @param null|array $decodedValue
-     * @dataProvider makeStorableArrayFieldValueDataProvider
      */
+    #[DataProvider('makeStorableArrayFieldValueDataProvider')]
     public function testMakeStorableArrayFieldValue($value, $result, $serializeCallCount = 0, $decodedValue = null)
     {
         $this->serializerMock->expects($this->exactly($serializeCallCount))

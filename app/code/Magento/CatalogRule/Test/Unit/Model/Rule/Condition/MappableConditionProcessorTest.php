@@ -45,11 +45,7 @@ class MappableConditionProcessorTest extends TestCase
             ->onlyMethods(['getAttribute'])
             ->getMock();
 
-        $this->customConditionProcessorBuilderMock = $this->getMockBuilder(
-            CustomConditionProviderInterface::class
-        )->disableOriginalConstructor()
-            ->onlyMethods(['hasProcessorForField'])
-            ->getMockForAbstractClass();
+        $this->customConditionProcessorBuilderMock = $this->createMock(CustomConditionProviderInterface::class);
 
         $this->objectManagerHelper = new ObjectManager($this);
 

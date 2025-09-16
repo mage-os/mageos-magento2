@@ -48,15 +48,38 @@ class ApplyRulesTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->model = $this->getMockForAbstractClass(
-            AbstractModel::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['getIsMassupdate', 'getId']
-        );
+        // Create anonymous class extending AbstractModel with dynamic methods
+        $this->model = new class extends AbstractModel {
+            private $isMassupdate = null;
+            private $id = null;
+
+            public function __construct()
+            {
+                // Skip parent constructor to avoid complex dependencies
+            }
+
+            public function getIsMassupdate()
+            {
+                return $this->isMassupdate;
+            }
+
+            public function setIsMassupdate($value)
+            {
+                $this->isMassupdate = $value;
+                return $this;
+            }
+
+            public function getId()
+            {
+                return $this->id;
+            }
+
+            public function setId($value)
+            {
+                $this->id = $value;
+                return $this;
+            }
+        };
 
         $this->plugin = (new ObjectManager($this))->getObject(
             ApplyRules::class,
@@ -68,8 +91,8 @@ class ApplyRulesTest extends TestCase
 
     public function testAfterSave()
     {
-        $this->model->expects($this->once())->method('getIsMassupdate')->willReturn(null);
-        $this->model->expects($this->once())->method('getId')->willReturn(1);
+        $this->model->setIsMassupdate(null);
+        $this->model->setId(1);
 
         $this->productRuleProcessor->expects($this->once())->method('reindexRow')->willReturnSelf();
 

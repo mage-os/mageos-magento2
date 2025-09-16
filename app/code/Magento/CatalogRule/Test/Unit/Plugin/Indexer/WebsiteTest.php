@@ -26,7 +26,7 @@ class WebsiteTest extends TestCase
     /**
      * Website mock
      *
-     * @var \Magento\Store\Model\Website|MockObject
+     * @var Website|MockObject
      */
     protected $subject;
 

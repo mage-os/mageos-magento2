@@ -63,13 +63,10 @@ class MassDeActivateTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->requestMock = $this->getMockBuilder(RequestInterface::class)
-            ->onlyMethods(['getParam'])
-            ->getMockForAbstractClass();
+        $this->requestMock = $this->createMock(RequestInterface::class);
         $this->contextMock = $this->createMock(Context::class);
 
-        $this->messageManagerMock = $this->getMockBuilder(ManagerInterface::class)
-            ->getMockForAbstractClass();
+        $this->messageManagerMock = $this->createMock(ManagerInterface::class);
 
         $this->resultRedirectMock = $this->getMockBuilder(Redirect::class)
             ->onlyMethods(['setPath'])
@@ -93,7 +90,7 @@ class MassDeActivateTest extends TestCase
         $this->requestMock->expects(self::any())
             ->method('getParam')
             ->willReturn($data);
-        $catalogRuleMock = $this->getMockForAbstractClass(RuleInterface::class);
+        $catalogRuleMock = $this->createMock(RuleInterface::class);
         $this->catalogRuleRepositoryMock->expects($this->once())
             ->method('get')
             ->with(1)

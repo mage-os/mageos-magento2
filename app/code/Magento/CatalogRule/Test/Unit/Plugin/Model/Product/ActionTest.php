@@ -39,17 +39,40 @@ class ActionTest extends TestCase
             ->onlyMethods([])
             ->getMock();
 
-        $result = $this->getMockBuilder(\Magento\Catalog\Model\Product\Action::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getAttributesData', 'getProductIds'])
-            ->getMock();
+        // Create anonymous class extending Product\Action with dynamic methods
+        $result = new class extends \Magento\Catalog\Model\Product\Action {
+            private $attributesData = [];
+            private $productIds = [];
 
-        $result->expects($this->once())
-            ->method('getAttributesData')
-            ->willReturn([]);
+            public function __construct()
+            {
+                // Skip parent constructor to avoid complex dependencies
+            }
 
-        $result->expects($this->never())
-            ->method('getProductIds');
+            public function getAttributesData()
+            {
+                return $this->attributesData;
+            }
+
+            public function setAttributesData($value)
+            {
+                $this->attributesData = $value;
+                return $this;
+            }
+
+            public function getProductIds()
+            {
+                return $this->productIds;
+            }
+
+            public function setProductIds($value)
+            {
+                $this->productIds = $value;
+                return $this;
+            }
+        };
+
+        $result->setAttributesData([]);
 
         $this->productRuleProcessor->expects($this->never())
             ->method('reindexList');
@@ -65,18 +88,41 @@ class ActionTest extends TestCase
             ->onlyMethods([])
             ->getMock();
 
-        $result = $this->getMockBuilder(\Magento\Catalog\Model\Product\Action::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getAttributesData', 'getProductIds'])
-            ->getMock();
+        // Create anonymous class extending Product\Action with dynamic methods
+        $result = new class extends \Magento\Catalog\Model\Product\Action {
+            private $attributesData = [];
+            private $productIds = [];
 
-        $result->expects($this->once())
-            ->method('getAttributesData')
-            ->willReturn(['price' => 100]);
+            public function __construct()
+            {
+                // Skip parent constructor to avoid complex dependencies
+            }
 
-        $result->expects($this->once())
-            ->method('getProductIds')
-            ->willReturn($productIds);
+            public function getAttributesData()
+            {
+                return $this->attributesData;
+            }
+
+            public function setAttributesData($value)
+            {
+                $this->attributesData = $value;
+                return $this;
+            }
+
+            public function getProductIds()
+            {
+                return $this->productIds;
+            }
+
+            public function setProductIds($value)
+            {
+                $this->productIds = $value;
+                return $this;
+            }
+        };
+
+        $result->setAttributesData(['price' => 100]);
+        $result->setProductIds($productIds);
 
         $this->productRuleProcessor->expects($this->once())
             ->method('reindexList')

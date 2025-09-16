@@ -59,9 +59,7 @@ class ReindexRuleGroupWebsiteTest extends TestCase
             $this->getMockBuilder(ActiveTableSwitcher::class)
                 ->disableOriginalConstructor()
                 ->getMock();
-        $this->tableSwapperMock = $this->getMockForAbstractClass(
-            IndexerTableSwapperInterface::class
-        );
+        $this->tableSwapperMock = $this->createMock(IndexerTableSwapperInterface::class);
         $this->model = new ReindexRuleGroupWebsite(
             $this->dateTimeMock,
             $this->resourceMock,

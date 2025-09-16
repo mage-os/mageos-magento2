@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\CatalogInventory\Test\Unit\Model;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\CatalogInventory\Model\Stock;
 use Magento\Framework\Api\AttributeValueFactory;
 use Magento\Framework\Api\ExtensionAttributesFactory;
@@ -66,13 +67,13 @@ class StockTest extends TestCase
         $this->eventDispatcher = $this->getMockBuilder(ManagerInterface::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['dispatch'])
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->context = $this->getMockBuilder(Context::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getEventDispatcher'])
             ->getMock();
-        $this->context->expects($this->any())->method('getEventDispatcher')->willReturn($this->eventDispatcher);
+        $this->context->method('getEventDispatcher')->willReturn($this->eventDispatcher);
 
         $this->registry = $this->getMockBuilder(Registry::class)
             ->disableOriginalConstructor()
@@ -86,14 +87,40 @@ class StockTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->resource = $this->getMockBuilder(AbstractResource::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getIdFieldName'])
-            ->getMockForAbstractClass();
+        // Create anonymous class extending AbstractResource with dynamic methods
+        $this->resource = new class extends AbstractResource {
+            private $idFieldName = null;
+
+            public function __construct() {
+                // Skip parent constructor to avoid complex dependencies
+            }
+
+            protected function _construct() {
+                // Required abstract method implementation
+            }
+
+            public function getIdFieldName() {
+                return $this->idFieldName;
+            }
+
+            public function setIdFieldName($value) {
+                $this->idFieldName = $value;
+                return $this;
+            }
+
+            // Required AbstractResource methods - simplified implementations
+            public function save(\Magento\Framework\Model\AbstractModel $object) { return $this; }
+            public function delete(\Magento\Framework\Model\AbstractModel $object) { return $this; }
+            public function load(\Magento\Framework\Model\AbstractModel $object, $value, $field = null) { return $this; }
+            public function getConnection() { return null; }
+            public function getTable($tableName) { return $tableName; }
+            public function getMainTable() { return 'main_table'; }
+            public function getTablePrefix() { return ''; }
+        };
 
         $this->resourceCollection = $this->getMockBuilder(AbstractDb::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->stockModel = new Stock(
             $this->context,
@@ -111,9 +138,8 @@ class StockTest extends TestCase
      * @param $eventName
      * @param $methodName
      * @param $objectName
-     *
-     * @dataProvider eventsDataProvider
      */
+    #[DataProvider('eventsDataProvider')]
     public function testDispatchEvents($eventName, $methodName, $objectName)
     {
         $isCalledWithRightPrefix = 0;

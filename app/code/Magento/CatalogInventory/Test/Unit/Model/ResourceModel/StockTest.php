@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\CatalogInventory\Test\Unit\Model\ResourceModel;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\CatalogInventory\Model\Configuration as StockConfiguration;
 use Magento\CatalogInventory\Model\ResourceModel\Stock;
 use Magento\Framework\App\Config;
@@ -94,11 +95,11 @@ class StockTest extends TestCase
             ->getMock();
         $this->storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->connectionMock = $this->getMockBuilder(Mysql::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->statementMock = $this->getMockForAbstractClass(\Zend_Db_Statement_Interface::class);
+        $this->statementMock = $this->createMock(\Zend_Db_Statement_Interface::class);
         $this->stock = $this->getMockBuilder(Stock::class)
             ->onlyMethods(['getTable', 'getConnection'])
             ->setConstructorArgs(
@@ -122,10 +123,10 @@ class StockTest extends TestCase
      * @param array $items
      *
      * @return void
-     * @dataProvider productsDataProvider
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
+    #[DataProvider('productsDataProvider')]
     public function testLockProductsStock(
         int $websiteId,
         array $productIds,

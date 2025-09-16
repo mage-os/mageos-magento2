@@ -12,7 +12,6 @@ use Magento\CatalogInventory\Helper\Stock;
 use Magento\CatalogInventory\Observer\AddInventoryDataObserver;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -40,39 +39,46 @@ class AddInventoryDataObserverTest extends TestCase
 
     protected function setUp(): void
     {
+        // Create minimal ObjectManager mock
+        $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        \Magento\Framework\App\ObjectManager::setInstance($objectManagerMock);
+        
         $this->stockHelper = $this->createMock(Stock::class);
 
-        $this->event = $this->getMockBuilder(Event::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getProduct'])
-            ->getMock();
+        // Create anonymous class for Event that extends Event and implements getProduct
+        $this->event = new class extends Event {
+            private $product = null;
 
-        $this->eventObserver = $this->getMockBuilder(Observer::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getEvent'])
-            ->getMock();
+            public function __construct() {
+                parent::__construct();
+            }
 
+            public function getProduct() {
+                return $this->product;
+            }
+
+            public function setProduct($product) {
+                $this->product = $product;
+                return $this;
+            }
+        };
+
+        $this->eventObserver = $this->createMock(Observer::class);
         $this->eventObserver->expects($this->atLeastOnce())
             ->method('getEvent')
             ->willReturn($this->event);
 
-        $this->observer = (new ObjectManager($this))->getObject(
-            AddInventoryDataObserver::class,
-            [
-                'stockHelper' => $this->stockHelper,
-            ]
+        // Instantiate AddInventoryDataObserver directly with mocks
+        $this->observer = new AddInventoryDataObserver(
+            $this->stockHelper
         );
     }
 
     public function testAddInventoryData()
     {
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $product = $this->createMock(Product::class);
 
-        $this->event->expects($this->once())
-            ->method('getProduct')
-            ->willReturn($product);
+        $this->event->setProduct($product);
 
         $this->stockHelper->expects($this->once())
             ->method('assignStatusToProduct')

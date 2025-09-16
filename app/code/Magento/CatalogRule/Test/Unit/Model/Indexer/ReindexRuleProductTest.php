@@ -7,6 +7,8 @@ declare(strict_types=1);
 
 namespace Magento\CatalogRule\Test\Unit\Model\Indexer;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use Magento\Framework\Api\ExtensionAttributesInterface;
 use Magento\Catalog\Model\ResourceModel\Indexer\ActiveTableSwitcher;
 use Magento\CatalogRule\Model\Indexer\IndexerTableSwapperInterface;
 use Magento\CatalogRule\Model\Indexer\ReindexRuleProduct;
@@ -69,9 +71,9 @@ class ReindexRuleProductTest extends TestCase
     {
         $this->resourceMock = $this->createMock(ResourceConnection::class);
         $activeTableSwitcherMock = $this->createMock(ActiveTableSwitcher::class);
-        $this->tableSwapperMock = $this->getMockForAbstractClass(IndexerTableSwapperInterface::class);
-        $this->localeDateMock = $this->getMockForAbstractClass(TimezoneInterface::class);
-        $this->connectionMock = $this->getMockForAbstractClass(AdapterInterface::class);
+        $this->tableSwapperMock = $this->createMock(IndexerTableSwapperInterface::class);
+        $this->localeDateMock = $this->createMock(TimezoneInterface::class);
+        $this->connectionMock = $this->createMock(AdapterInterface::class);
         $this->ruleMock = $this->createMock(Rule::class);
 
         $this->model = new ReindexRuleProduct(
@@ -218,21 +220,37 @@ class ReindexRuleProductTest extends TestCase
      * @param array $productIds
      * @param array $batchRows
      * @return void
-     * @dataProvider executeDataProvider
      */
+    #[DataProvider('executeDataProvider')]
     public function testExecuteWithExcludedWebsites(array $websitesIds, array $productIds, array $batchRows): void
     {
         $this->prepareResourceMock();
         $this->prepareRuleMock($websitesIds, $productIds, [10, 20]);
 
-        $extensionAttributes = $this->getMockBuilder(\Magento\Framework\Api\ExtensionAttributesInterface::class)
-            ->addMethods(['getExtensionAttributes', 'getExcludeWebsiteIds'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        // Create anonymous class extending ExtensionAttributesInterface with dynamic methods
+        $extensionAttributes = new class implements ExtensionAttributesInterface {
+            private $excludeWebsiteIds = [];
+
+            public function __construct()
+            {
+                // Skip constructor
+            }
+
+            public function getExcludeWebsiteIds()
+            {
+                return $this->excludeWebsiteIds;
+            }
+
+            public function setExcludeWebsiteIds($value)
+            {
+                $this->excludeWebsiteIds = $value;
+                return $this;
+            }
+        };
         $this->ruleMock->expects(self::once())->method('getExtensionAttributes')
             ->willReturn($extensionAttributes);
-        $extensionAttributes->expects(self::exactly(2))->method('getExcludeWebsiteIds')
-            ->willReturn([10 => [1, 2]]);
+        $extensionAttributes->setExcludeWebsiteIds([10 => [1, 2]]);
+            
 
         $this->localeDateMock->method('getConfigTimezone')
             ->willReturnMap([

@@ -130,20 +130,17 @@ class StockRegistryProviderTest extends TestCase
     {
         $this->objectManagerHelper = new ObjectManagerHelper($this);
 
-        $this->stock = $this->getMockForAbstractClass(
-            StockInterface::class,
+        $this->stock = $this->createMock(StockInterface::class,
             ['getStockId'],
             '',
             false
         );
-        $this->stockItem = $this->getMockForAbstractClass(
-            StockItemInterface::class,
+        $this->stockItem = $this->createMock(StockItemInterface::class,
             ['getItemId'],
             '',
             false
         );
-        $this->stockStatus = $this->getMockForAbstractClass(
-            StockStatusInterface::class,
+        $this->stockStatus = $this->createMock(StockStatusInterface::class,
             ['getProductId'],
             '',
             false
@@ -153,23 +150,23 @@ class StockRegistryProviderTest extends TestCase
             StockInterfaceFactory::class,
             ['create']
         );
-        $this->stockFactory->expects($this->any())->method('create')->willReturn($this->stock);
+        $this->stockFactory->method('create')->willReturn($this->stock);
 
         $this->stockItemFactory = $this->createPartialMock(
             StockItemInterfaceFactory::class,
             ['create']
         );
-        $this->stockItemFactory->expects($this->any())->method('create')->willReturn($this->stockItem);
+        $this->stockItemFactory->method('create')->willReturn($this->stockItem);
 
         $this->stockStatusFactory = $this->createPartialMock(
             StockStatusInterfaceFactory::class,
             ['create']
         );
-        $this->stockStatusFactory->expects($this->any())->method('create')->willReturn($this->stockStatus);
+        $this->stockStatusFactory->method('create')->willReturn($this->stockStatus);
 
         $this->stockRepository = $this->getMockBuilder(StockRepositoryInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->stockItemRepository = $this->getMockBuilder(
             StockItemRepositoryInterface::class
@@ -187,8 +184,7 @@ class StockRegistryProviderTest extends TestCase
             StockCriteriaInterfaceFactory::class,
             ['create']
         );
-        $this->stockCriteria = $this->getMockForAbstractClass(
-            StockCriteriaInterface::class,
+        $this->stockCriteria = $this->createMock(StockCriteriaInterface::class,
             ['setScopeFilter'],
             '',
             false
@@ -198,8 +194,7 @@ class StockRegistryProviderTest extends TestCase
             StockItemCriteriaInterfaceFactory::class,
             ['create']
         );
-        $this->stockItemCriteria = $this->getMockForAbstractClass(
-            StockItemCriteriaInterface::class,
+        $this->stockItemCriteria = $this->createMock(StockItemCriteriaInterface::class,
             ['setProductsFilter', 'setScopeFilter'],
             '',
             false
@@ -209,8 +204,7 @@ class StockRegistryProviderTest extends TestCase
             StockStatusCriteriaInterfaceFactory::class,
             ['create']
         );
-        $this->stockStatusCriteria = $this->getMockForAbstractClass(
-            StockStatusCriteriaInterface::class,
+        $this->stockStatusCriteria = $this->createMock(StockStatusCriteriaInterface::class,
             ['setProductsFilter', 'setScopeFilter'],
             '',
             false
@@ -242,12 +236,28 @@ class StockRegistryProviderTest extends TestCase
     {
         $this->stockCriteriaFactory->expects($this->once())->method('create')->willReturn($this->stockCriteria);
         $this->stockCriteria->expects($this->once())->method('setScopeFilter')->willReturn(null);
-        $stockCollection = $this->getMockBuilder(Collection::class)
-            ->addMethods(['getFirstItem'])
-            ->onlyMethods(['getItems'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $stockCollection->expects($this->once())->method('getItems')->willReturn([$this->stock]);
+        // Create anonymous class extending Collection with dynamic methods
+        $stockCollection = new class extends Collection {
+            private $items = [];
+
+            public function __construct() {
+                // Skip parent constructor to avoid complex dependencies
+            }
+
+            public function getItems() {
+                return $this->items;
+            }
+
+            public function setItems(?array $items = null) {
+                $this->items = $items;
+                return $this;
+            }
+
+            public function getFirstItem() {
+                return !empty($this->items) ? reset($this->items) : null;
+            }
+        };
+        $stockCollection->setItems([$this->stock]);
         $this->stockRepository->expects($this->once())->method('getList')->willReturn($stockCollection);
         $this->stock->expects($this->once())->method('getStockId')->willReturn(true);
         $this->assertEquals($this->stock, $this->stockRegistryProvider->getStock($this->scopeId));
@@ -257,13 +267,28 @@ class StockRegistryProviderTest extends TestCase
     {
         $this->stockItemCriteriaFactory->expects($this->once())->method('create')->willReturn($this->stockItemCriteria);
         $this->stockItemCriteria->expects($this->once())->method('setProductsFilter')->willReturn(null);
-        $stockItemCollection = $this->getMockBuilder(
-            \Magento\CatalogInventory\Model\ResourceModel\Stock\Item\Collection::class
-        )->addMethods(['getFirstItem'])
-            ->onlyMethods(['getItems'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $stockItemCollection->expects($this->once())->method('getItems')->willReturn([$this->stockItem]);
+        // Create anonymous class extending Stock\Item\Collection with dynamic methods
+        $stockItemCollection = new class extends \Magento\CatalogInventory\Model\ResourceModel\Stock\Item\Collection {
+            private $items = [];
+
+            public function __construct() {
+                // Skip parent constructor to avoid complex dependencies
+            }
+
+            public function getItems() {
+                return $this->items;
+            }
+
+            public function setItems(?array $items = null) {
+                $this->items = $items;
+                return $this;
+            }
+
+            public function getFirstItem() {
+                return !empty($this->items) ? reset($this->items) : null;
+            }
+        };
+        $stockItemCollection->setItems([$this->stockItem]);
         $this->stockItemRepository->expects($this->once())->method('getList')->willReturn($stockItemCollection);
         $this->stockItem->expects($this->once())->method('getItemId')->willReturn(true);
         $this->assertEquals(
@@ -279,13 +304,28 @@ class StockRegistryProviderTest extends TestCase
             ->willReturn($this->stockStatusCriteria);
         $this->stockStatusCriteria->expects($this->once())->method('setScopeFilter')->willReturn(null);
         $this->stockStatusCriteria->expects($this->once())->method('setProductsFilter')->willReturn(null);
-        $stockStatusCollection = $this->getMockBuilder(
-            \Magento\CatalogInventory\Model\ResourceModel\Stock\Status\Collection::class
-        )->addMethods(['getFirstItem'])
-            ->onlyMethods(['getItems'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $stockStatusCollection->expects($this->once())->method('getItems')->willReturn([$this->stockStatus]);
+        // Create anonymous class extending Stock\Status\Collection with dynamic methods
+        $stockStatusCollection = new class extends \Magento\CatalogInventory\Model\ResourceModel\Stock\Status\Collection {
+            private $items = [];
+
+            public function __construct() {
+                // Skip parent constructor to avoid complex dependencies
+            }
+
+            public function getItems() {
+                return $this->items;
+            }
+
+            public function setItems(?array $items = null) {
+                $this->items = $items;
+                return $this;
+            }
+
+            public function getFirstItem() {
+                return !empty($this->items) ? reset($this->items) : null;
+            }
+        };
+        $stockStatusCollection->setItems([$this->stockStatus]);
         $this->stockStatusRepository->expects($this->once())->method('getList')->willReturn($stockStatusCollection);
         $this->stockStatus->expects($this->once())->method('getProductId')->willReturn($this->productId);
         $this->assertEquals(

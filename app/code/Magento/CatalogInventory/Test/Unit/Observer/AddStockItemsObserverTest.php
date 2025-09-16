@@ -45,10 +45,7 @@ class AddStockItemsObserverTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->stockConfigurationMock = $this->getMockBuilder(StockConfigurationInterface::class)
-            ->onlyMethods(['getDefaultScopeId'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->stockConfigurationMock = $this->createMock(StockConfigurationInterface::class);
         $this->stockRegistryPreloader = $this->createMock(StockRegistryPreloader::class);
         $this->subject = new AddStockItemsObserver(
             $this->stockConfigurationMock,
@@ -64,10 +61,7 @@ class AddStockItemsObserverTest extends TestCase
         $productId = 1;
         $defaultScopeId = 0;
 
-        $stockItem = $this->getMockBuilder(StockItemInterface::class)
-            ->onlyMethods(['getProductId'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $stockItem = $this->createMock(StockItemInterface::class);
         $stockItem->expects(self::once())
             ->method('getProductId')
             ->willReturn($productId);
@@ -90,17 +84,23 @@ class AddStockItemsObserverTest extends TestCase
             ->method('getDefaultScopeId')
             ->willReturn($defaultScopeId);
 
-        $productExtension = $this->getMockBuilder(ProductExtensionInterface::class)
-            ->addMethods(['setStockItem'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $productExtension->expects(self::once())
-            ->method('setStockItem')
-            ->with(self::identicalTo($stockItem));
+        // Create anonymous class for ProductExtensionInterface
+        $productExtension = new class implements ProductExtensionInterface {
+            private $stockItem = null;
 
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+            public function __construct() {}
+
+            public function setStockItem($stockItem) {
+                $this->stockItem = $stockItem;
+                return $this;
+            }
+
+            public function getStockItem() {
+                return $this->stockItem;
+            }
+        };
+
+        $product = $this->createMock(Product::class);
         $product->expects(self::once())
             ->method('getExtensionAttributes')
             ->willReturn($productExtension);
@@ -110,9 +110,7 @@ class AddStockItemsObserverTest extends TestCase
             ->willReturnSelf();
 
         /** @var ProductCollection|MockObject $productCollection */
-        $productCollection = $this->getMockBuilder(ProductCollection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productCollection = $this->createMock(ProductCollection::class);
         $productCollection->expects(self::once())
             ->method('getItems')
             ->willReturn([$productId => $product]);
@@ -122,9 +120,7 @@ class AddStockItemsObserverTest extends TestCase
             ->willReturn($product);
 
         /** @var Observer|MockObject $observer */
-        $observer = $this->getMockBuilder(Observer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $observer = $this->createMock(Observer::class);
         $observer->expects(self::once())
             ->method('getData')
             ->with('collection')

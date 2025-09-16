@@ -42,14 +42,12 @@ class StockConfigurationTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->config = $this->getMockForAbstractClass(
-            ConfigInterface::class,
+        $this->config = $this->createMock(ConfigInterface::class,
             [],
             '',
             false
         );
-        $this->scopeConfig = $this->getMockForAbstractClass(
-            ScopeConfigInterface::class,
+        $this->scopeConfig = $this->createMock(ScopeConfigInterface::class,
             ['isSetFlag'],
             '',
             false

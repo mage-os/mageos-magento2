@@ -94,7 +94,7 @@ class OnlyXLeftInStockResolverTest extends TestCase
 
         $this->contextMock = $this->getMockBuilder(ContextInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->fieldMock = $this->getMockBuilder(Field::class)
             ->disableOriginalConstructor()
@@ -113,8 +113,7 @@ class OnlyXLeftInStockResolverTest extends TestCase
         $this->storeMock = $this->getMockBuilder(StoreInterface::class)->getMock();
         $this->stockItemMock = $this->getMockBuilder(StockItemInterface::class)->getMock();
         $this->stockStatusMock = $this->getMockBuilder(StockStatusInterface::class)->getMock();
-        $this->productModelMock->expects($this->any())->method('getId')
-            ->willReturn(1);
+        $this->productModelMock->method('getId')->willReturn(1);
         $this->productModelMock->expects($this->atMost(1))->method('getStore')
             ->willReturn($this->storeMock);
         $this->stockRegistryMock->expects($this->atMost(1))->method('getStockStatus')

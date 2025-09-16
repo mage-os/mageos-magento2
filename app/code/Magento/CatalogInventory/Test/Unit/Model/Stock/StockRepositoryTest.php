@@ -33,7 +33,7 @@ class StockRepositoryTest extends TestCase
     protected $model;
 
     /**
-     * @var \Magento\CatalogInventory\Model\Stock|MockObject
+     * @var Stock|MockObject
      */
     protected $stockMock;
 

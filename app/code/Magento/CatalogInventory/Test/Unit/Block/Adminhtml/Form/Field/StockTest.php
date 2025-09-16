@@ -13,7 +13,6 @@ use Magento\Framework\Data\Form\Element\CollectionFactory;
 use Magento\Framework\Data\Form\Element\Factory;
 use Magento\Framework\Data\Form\Element\Text;
 use Magento\Framework\Data\Form\Element\TextFactory;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -51,63 +50,105 @@ class StockTest extends TestCase
 
     protected function setUp(): void
     {
+        // Create minimal ObjectManager mock and set it up first
+        $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        \Magento\Framework\App\ObjectManager::setInstance($objectManagerMock);
+        
         $this->_factoryElementMock = $this->createMock(Factory::class);
         $this->_collectionFactoryMock = $this->createMock(
             CollectionFactory::class
         );
-        $this->_qtyMock = $this->getMockBuilder(Text::class)
-            ->addMethods(['setValue', 'setName'])
-            ->onlyMethods(['setForm'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $escaperMock = $this->createMock(\Magento\Framework\Escaper::class);
+        $secureHtmlRendererMock = $this->createMock(\Magento\Framework\View\Helper\SecureHtmlRenderer::class);
+        
+        // Configure ObjectManager mock to return the appropriate mocks when requested
+        $objectManagerMock->method('get')
+            ->willReturnMap([
+                [\Magento\Framework\Escaper::class, $escaperMock],
+                [\Magento\Framework\View\Helper\SecureHtmlRenderer::class, $secureHtmlRendererMock]
+            ]);
+        
+        $this->_qtyMock = new class($this->_factoryElementMock, $this->_collectionFactoryMock, $escaperMock) extends Text {
+            private $value = null;
+            private $name = null;
+            private $form = null;
+
+            public function __construct($factoryElement, $factoryCollection, $escaper) {
+                parent::__construct($factoryElement, $factoryCollection, $escaper);
+            }
+
+            public function setValue($value) {
+                $this->value = $value;
+                return $this;
+            }
+
+            public function setName($name) {
+                $this->name = $name;
+                return $this;
+            }
+
+            public function setForm($form) {
+                $this->form = $form;
+                return $this;
+            }
+
+            public function getValue() {
+                return $this->value;
+            }
+
+            public function getName() {
+                return $this->name;
+            }
+
+            public function getForm() {
+                return $this->form;
+            }
+        };
         $this->_factoryTextMock = $this->createMock(TextFactory::class);
 
-        $objectManagerHelper = new ObjectManager($this);
-        $this->_block = $objectManagerHelper->getObject(
-            Stock::class,
-            [
-                'factoryElement' => $this->_factoryElementMock,
-                'factoryCollection' => $this->_collectionFactoryMock,
-                'factoryText' => $this->_factoryTextMock,
-                'data' => ['qty' => $this->_qtyMock, 'name' => self::ATTRIBUTE_NAME]
-            ]
+        $coreRegistryMock = $this->createMock(\Magento\Framework\Registry::class);
+        
+        // Instantiate Stock block directly with mocks
+        $this->_block = new Stock(
+            $this->_factoryElementMock,
+            $this->_collectionFactoryMock,
+            $escaperMock,
+            $this->_factoryTextMock,
+            $coreRegistryMock,
+            ['qty' => $this->_qtyMock, 'name' => self::ATTRIBUTE_NAME]
         );
     }
 
     public function testSetForm()
     {
-        $this->_qtyMock->expects(
-            $this->once()
-        )->method(
-            'setForm'
-        )->with(
-            $this->isInstanceOf(AbstractElement::class)
+        $escaperMock = $this->createMock(\Magento\Framework\Escaper::class);
+        $formElement = new Text(
+            $this->_factoryElementMock,
+            $this->_collectionFactoryMock,
+            $escaperMock
         );
-
-        $objectManager = new ObjectManager($this);
-        $this->_block->setForm(
-            $objectManager->getObject(
-                Text::class,
-                [
-                    'factoryElement' => $this->_factoryElementMock,
-                    'factoryCollection' => $this->_collectionFactoryMock
-                ]
-            )
-        );
+        
+        $this->_block->setForm($formElement);
+        
+        // Verify that setForm was called on the qty mock
+        $this->assertSame($formElement, $this->_qtyMock->getForm());
     }
 
     public function testSetValue()
     {
         $value = ['qty' => 1, 'is_in_stock' => 0];
-        $this->_qtyMock->expects($this->once())->method('setValue')->with(1);
-
+        
         $this->_block->setValue($value);
+        
+        // Verify that setValue was called on the qty mock with the correct value
+        $this->assertEquals(1, $this->_qtyMock->getValue());
     }
 
     public function testSetName()
     {
-        $this->_qtyMock->expects($this->once())->method('setName')->with(self::ATTRIBUTE_NAME . '[qty]');
-
         $this->_block->setName(self::ATTRIBUTE_NAME);
+        
+        // Verify that setName was called on the qty mock with the correct value
+        $this->assertEquals(self::ATTRIBUTE_NAME . '[qty]', $this->_qtyMock->getName());
     }
 }

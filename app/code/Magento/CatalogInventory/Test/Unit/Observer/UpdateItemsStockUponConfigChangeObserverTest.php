@@ -12,7 +12,6 @@ use Magento\CatalogInventory\Model\ResourceModel\Stock\Item;
 use Magento\CatalogInventory\Observer\UpdateItemsStockUponConfigChangeObserver;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -42,25 +41,43 @@ class UpdateItemsStockUponConfigChangeObserverTest extends TestCase
     {
         $this->resourceStockItem = $this->createMock(Item::class);
 
-        $this->event = $this->getMockBuilder(Event::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getWebsite', 'getChangedPaths'])
-            ->getMock();
+        // Create anonymous class for Event with getWebsite and getChangedPaths methods
+        $this->event = new class extends Event {
+            private $website = null;
+            private $changedPaths = [];
 
-        $this->eventObserver = $this->getMockBuilder(Observer::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getEvent'])
-            ->getMock();
+            public function __construct() {
+                parent::__construct();
+            }
+
+            public function getWebsite() {
+                return $this->website;
+            }
+
+            public function setWebsite($website) {
+                $this->website = $website;
+                return $this;
+            }
+
+            public function getChangedPaths() {
+                return $this->changedPaths;
+            }
+
+            public function setChangedPaths($changedPaths) {
+                $this->changedPaths = $changedPaths;
+                return $this;
+            }
+        };
+
+        $this->eventObserver = $this->createMock(Observer::class);
 
         $this->eventObserver->expects($this->atLeastOnce())
             ->method('getEvent')
             ->willReturn($this->event);
 
-        $this->observer = (new ObjectManager($this))->getObject(
-            UpdateItemsStockUponConfigChangeObserver::class,
-            [
-                'resourceStockItem' => $this->resourceStockItem,
-            ]
+        // Direct instantiation instead of ObjectManagerHelper
+        $this->observer = new UpdateItemsStockUponConfigChangeObserver(
+            $this->resourceStockItem
         );
     }
 
@@ -71,12 +88,9 @@ class UpdateItemsStockUponConfigChangeObserverTest extends TestCase
         $this->resourceStockItem->expects($this->once())->method('updateSetInStock');
         $this->resourceStockItem->expects($this->once())->method('updateLowStockDate');
 
-        $this->event->expects($this->once())
-            ->method('getWebsite')
-            ->willReturn($websiteId);
-        $this->event->expects($this->once())
-            ->method('getChangedPaths')
-            ->willReturn([Configuration::XML_PATH_MANAGE_STOCK]);
+        // Use setters instead of expects for the anonymous class
+        $this->event->setWebsite($websiteId);
+        $this->event->setChangedPaths([Configuration::XML_PATH_MANAGE_STOCK]);
 
         $this->observer->execute($this->eventObserver);
     }

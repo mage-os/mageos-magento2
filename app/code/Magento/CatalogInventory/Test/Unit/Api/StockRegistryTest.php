@@ -77,58 +77,162 @@ class StockRegistryTest extends TestCase
         $this->objectManagerHelper = new ObjectManagerHelper($this);
 
         $this->product = $this->createPartialMock(Product::class, ['__wakeup', 'getIdBySku']);
-        $this->product->expects($this->any())
-            ->method('getIdBySku')
-            ->willReturn(self::PRODUCT_ID);
+        $this->product->method('getIdBySku')->willReturn(self::PRODUCT_ID);
         //getIdBySku
         $this->productFactory = $this->createPartialMock(ProductFactory::class, ['create']);
-        $this->productFactory->expects($this->any())
-            ->method('create')
-            ->willReturn($this->product);
+        $this->productFactory->method('create')->willReturn($this->product);
 
-        $this->stock = $this->getMockForAbstractClass(
-            StockInterface::class,
+        $this->stock = $this->createMock(StockInterface::class,
             ['__wakeup'],
             '',
             false
         );
-        $this->stockItem = $this->getMockBuilder(StockItemInterface::class)
-            ->addMethods(['getData', 'addData', 'getWebsiteId'])
-            ->onlyMethods(['setProductId', 'getItemId'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->stockStatus = $this->getMockForAbstractClass(
-            StockStatusInterface::class,
+        $this->stockItem = new class implements StockItemInterface {
+            private $data = [];
+            private $itemId = null;
+            private $productId = null;
+            private $stockId = null;
+            private $qty = null;
+            private $isInStock = null;
+            private $isQtyDecimal = null;
+            private $showDefaultNotificationMessage = null;
+            private $useConfigMinQty = null;
+            private $minQty = null;
+            private $useConfigMinSaleQty = null;
+            private $minSaleQty = null;
+            private $useConfigMaxSaleQty = null;
+            private $maxSaleQty = null;
+            private $useConfigBackorders = null;
+            private $backorders = null;
+            private $useConfigNotifyStockQty = null;
+            private $notifyStockQty = null;
+            private $useConfigQtyIncrements = null;
+            private $qtyIncrements = null;
+            private $useConfigEnableQtyInc = null;
+            private $enableQtyIncrements = null;
+            private $useConfigManageStock = null;
+            private $manageStock = null;
+            private $lowStockDate = null;
+            private $isDecimalDivided = null;
+            private $stockStatusChangedAuto = null;
+            private $extensionAttributes = null;
+            private $websiteId = null;
+
+            public function __construct() {}
+
+            // DataObject methods
+            public function getData($key = '', $index = null) { 
+                if ('' === $key) {
+                    return $this->data;
+                }
+                return $this->data[$key] ?? null;
+            }
+            public function setData($key, $value = null) { 
+                if (is_array($key)) {
+                    $this->data = $key;
+                } else {
+                    $this->data[$key] = $value;
+                }
+                return $this;
+            }
+            public function addData(array $arr) { 
+                foreach ($arr as $index => $value) {
+                    $this->setData($index, $value);
+                }
+                return $this;
+            }
+            public function unsetData($key = null) { 
+                if ($key === null) {
+                    $this->data = [];
+                } elseif (is_string($key)) {
+                    unset($this->data[$key]);
+                }
+                return $this;
+            }
+            public function hasData($key = '') { return isset($this->data[$key]); }
+            public function toArray(array $keys = []) { return $this->data; }
+            public function toJson(array $keys = []) { return json_encode($this->data); }
+            public function toString($format = '') { return json_encode($this->data); }
+            public function isEmpty() { return empty($this->data); }
+
+            // StockItemInterface methods
+            public function getItemId() { return $this->itemId; }
+            public function setItemId($itemId) { $this->itemId = $itemId; return $this; }
+            public function getProductId() { return $this->productId; }
+            public function setProductId($productId) { $this->productId = $productId; return $this; }
+            public function getStockId() { return $this->stockId; }
+            public function setStockId($stockId) { $this->stockId = $stockId; return $this; }
+            public function getQty() { return $this->qty; }
+            public function setQty($qty) { $this->qty = $qty; return $this; }
+            public function getIsInStock() { return $this->isInStock; }
+            public function setIsInStock($isInStock) { $this->isInStock = $isInStock; return $this; }
+            public function getIsQtyDecimal() { return $this->isQtyDecimal; }
+            public function setIsQtyDecimal($isQtyDecimal) { $this->isQtyDecimal = $isQtyDecimal; return $this; }
+            public function getShowDefaultNotificationMessage() { return $this->showDefaultNotificationMessage; }
+            public function getUseConfigMinQty() { return $this->useConfigMinQty; }
+            public function setUseConfigMinQty($useConfigMinQty) { $this->useConfigMinQty = $useConfigMinQty; return $this; }
+            public function getMinQty() { return $this->minQty; }
+            public function setMinQty($minQty) { $this->minQty = $minQty; return $this; }
+            public function getUseConfigMinSaleQty() { return $this->useConfigMinSaleQty; }
+            public function setUseConfigMinSaleQty($useConfigMinSaleQty) { $this->useConfigMinSaleQty = $useConfigMinSaleQty; return $this; }
+            public function getMinSaleQty() { return $this->minSaleQty; }
+            public function setMinSaleQty($minSaleQty) { $this->minSaleQty = $minSaleQty; return $this; }
+            public function getUseConfigMaxSaleQty() { return $this->useConfigMaxSaleQty; }
+            public function setUseConfigMaxSaleQty($useConfigMaxSaleQty) { $this->useConfigMaxSaleQty = $useConfigMaxSaleQty; return $this; }
+            public function getMaxSaleQty() { return $this->maxSaleQty; }
+            public function setMaxSaleQty($maxSaleQty) { $this->maxSaleQty = $maxSaleQty; return $this; }
+            public function getUseConfigBackorders() { return $this->useConfigBackorders; }
+            public function setUseConfigBackorders($useConfigBackorders) { $this->useConfigBackorders = $useConfigBackorders; return $this; }
+            public function getBackorders() { return $this->backorders; }
+            public function setBackorders($backOrders) { $this->backorders = $backOrders; return $this; }
+            public function getUseConfigNotifyStockQty() { return $this->useConfigNotifyStockQty; }
+            public function setUseConfigNotifyStockQty($useConfigNotifyStockQty) { $this->useConfigNotifyStockQty = $useConfigNotifyStockQty; return $this; }
+            public function getNotifyStockQty() { return $this->notifyStockQty; }
+            public function setNotifyStockQty($notifyStockQty) { $this->notifyStockQty = $notifyStockQty; return $this; }
+            public function getUseConfigQtyIncrements() { return $this->useConfigQtyIncrements; }
+            public function setUseConfigQtyIncrements($useConfigQtyIncrements) { $this->useConfigQtyIncrements = $useConfigQtyIncrements; return $this; }
+            public function getQtyIncrements() { return $this->qtyIncrements; }
+            public function setQtyIncrements($qtyIncrements) { $this->qtyIncrements = $qtyIncrements; return $this; }
+            public function getUseConfigEnableQtyInc() { return $this->useConfigEnableQtyInc; }
+            public function setUseConfigEnableQtyInc($useConfigEnableQtyInc) { $this->useConfigEnableQtyInc = $useConfigEnableQtyInc; return $this; }
+            public function getEnableQtyIncrements() { return $this->enableQtyIncrements; }
+            public function setEnableQtyIncrements($enableQtyIncrements) { $this->enableQtyIncrements = $enableQtyIncrements; return $this; }
+            public function getUseConfigManageStock() { return $this->useConfigManageStock; }
+            public function setUseConfigManageStock($useConfigManageStock) { $this->useConfigManageStock = $useConfigManageStock; return $this; }
+            public function getManageStock() { return $this->manageStock; }
+            public function setManageStock($manageStock) { $this->manageStock = $manageStock; return $this; }
+            public function getLowStockDate() { return $this->lowStockDate; }
+            public function setLowStockDate($lowStockDate) { $this->lowStockDate = $lowStockDate; return $this; }
+            public function getIsDecimalDivided() { return $this->isDecimalDivided; }
+            public function setIsDecimalDivided($isDecimalDivided) { $this->isDecimalDivided = $isDecimalDivided; return $this; }
+            public function getStockStatusChangedAuto() { return $this->stockStatusChangedAuto; }
+            public function setStockStatusChangedAuto($stockStatusChangedAuto) { $this->stockStatusChangedAuto = $stockStatusChangedAuto; return $this; }
+            public function getExtensionAttributes() { return $this->extensionAttributes; }
+            public function setExtensionAttributes($extensionAttributes) { $this->extensionAttributes = $extensionAttributes; return $this; }
+            public function getWebsiteId() { return $this->websiteId; }
+            public function setWebsiteId($websiteId) { $this->websiteId = $websiteId; return $this; }
+        };
+        $this->stockStatus = $this->createMock(StockStatusInterface::class,
             ['__wakeup'],
             '',
             false
         );
 
-        $this->stockRegistryProvider = $this->getMockForAbstractClass(
-            StockRegistryProviderInterface::class,
+        $this->stockRegistryProvider = $this->createMock(StockRegistryProviderInterface::class,
             ['getStock', 'getStockItem', 'getStockStatus'],
             '',
             false
         );
-        $this->stockRegistryProvider->expects($this->any())
-            ->method('getStock')
-            ->willReturn($this->stock);
-        $this->stockRegistryProvider->expects($this->any())
-            ->method('getStockItem')
-            ->willReturn($this->stockItem);
-        $this->stockRegistryProvider->expects($this->any())
-            ->method('getStockStatus')
-            ->willReturn($this->stockStatus);
+        $this->stockRegistryProvider->method('getStock')->willReturn($this->stock);
+        $this->stockRegistryProvider->method('getStockItem')->willReturn($this->stockItem);
+        $this->stockRegistryProvider->method('getStockStatus')->willReturn($this->stockStatus);
 
-        $this->stockItemRepository = $this->getMockForAbstractClass(
-            StockItemRepositoryInterface::class,
+        $this->stockItemRepository = $this->createMock(StockItemRepositoryInterface::class,
             ['save'],
             '',
             false
         );
-        $this->stockItemRepository->expects($this->any())
-            ->method('save')
-            ->willReturn($this->stockItem);
+        $this->stockItemRepository->method('save')->willReturn($this->stockItem);
 
         $this->stockRegistry = $this->objectManagerHelper->getObject(
             StockRegistry::class,
@@ -182,10 +286,10 @@ class StockRegistryTest extends TestCase
     public function testUpdateStockItemBySku()
     {
         $itemId = 1;
-        $this->stockItem->expects($this->once())->method('setProductId')->willReturnSelf();
-        $this->stockItem->expects($this->once())->method('getData')->willReturn([]);
-        $this->stockItem->expects($this->once())->method('addData')->willReturnSelf();
-        $this->stockItem->expects($this->atLeastOnce())->method('getItemId')->willReturn($itemId);
+        $this->stockItem->setProductId(self::PRODUCT_ID);
+        $this->stockItem->setData([]);
+        $this->stockItem->addData([]);
+        $this->stockItem->setItemId($itemId);
         $this->assertEquals(
             $itemId,
             $this->stockRegistry->updateStockItemBySku(self::PRODUCT_SKU, $this->stockItem)

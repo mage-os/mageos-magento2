@@ -11,7 +11,6 @@ use Magento\CatalogInventory\Model\Adminhtml\Stock\Item;
 use Magento\Customer\Api\Data\GroupInterface;
 use Magento\Customer\Api\GroupManagementInterface;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -27,35 +26,70 @@ class ItemTest extends TestCase
      */
     protected function setUp(): void
     {
-        $resourceMock = $this->getMockBuilder(AbstractResource::class)
-            ->addMethods(['getIdFieldName'])
-            ->onlyMethods(['getConnection'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $objectHelper = new ObjectManager($this);
+        // Create anonymous class for AbstractResource with getIdFieldName method
+        $resourceMock = new class extends AbstractResource {
+            private $idFieldName = null;
+            private $connection = null;
 
-        $groupManagement = $this->getMockBuilder(GroupManagementInterface::class)
-            ->onlyMethods(['getAllCustomersGroup'])
-            ->getMockForAbstractClass();
+            public function __construct() {
+                parent::__construct();
+            }
 
-        $allGroup = $this->getMockBuilder(GroupInterface::class)
-            ->onlyMethods(['getId'])
-            ->getMockForAbstractClass();
+            public function getIdFieldName() {
+                return $this->idFieldName;
+            }
 
-        $allGroup->expects($this->any())
-            ->method('getId')
-            ->willReturn(32000);
+            public function setIdFieldName($idFieldName) {
+                $this->idFieldName = $idFieldName;
+                return $this;
+            }
 
-        $groupManagement->expects($this->any())
-            ->method('getAllCustomersGroup')
-            ->willReturn($allGroup);
+            public function getConnection() {
+                return $this->connection;
+            }
 
-        $this->_model = $objectHelper->getObject(
-            Item::class,
-            [
-                'resource' => $resourceMock,
-                'groupManagement' => $groupManagement
-            ]
+            public function setConnection($connection) {
+                $this->connection = $connection;
+                return $this;
+            }
+
+            protected function _construct() {
+                // Required abstract method implementation
+            }
+        };
+
+        $groupManagement = $this->createMock(GroupManagementInterface::class);
+
+        $allGroup = $this->createMock(GroupInterface::class);
+
+        $allGroup->method('getId')->willReturn(32000);
+
+        $groupManagement->method('getAllCustomersGroup')->willReturn($allGroup);
+
+        // Create all required mocks for the Item constructor
+        $contextMock = $this->createMock(\Magento\Framework\Model\Context::class);
+        $registryMock = $this->createMock(\Magento\Framework\Registry::class);
+        $extensionFactoryMock = $this->createMock(\Magento\Framework\Api\ExtensionAttributesFactory::class);
+        $customAttributeFactoryMock = $this->createMock(\Magento\Framework\Api\AttributeValueFactory::class);
+        $customerSessionMock = $this->createMock(\Magento\Customer\Model\Session::class);
+        $storeManagerMock = $this->createMock(\Magento\Store\Model\StoreManagerInterface::class);
+        $stockConfigurationMock = $this->createMock(\Magento\CatalogInventory\Api\StockConfigurationInterface::class);
+        $stockRegistryMock = $this->createMock(\Magento\CatalogInventory\Api\StockRegistryInterface::class);
+        $stockItemRepositoryMock = $this->createMock(\Magento\CatalogInventory\Api\StockItemRepositoryInterface::class);
+
+        // Direct instantiation instead of ObjectManagerHelper
+        $this->_model = new Item(
+            $contextMock,
+            $registryMock,
+            $extensionFactoryMock,
+            $customAttributeFactoryMock,
+            $customerSessionMock,
+            $storeManagerMock,
+            $stockConfigurationMock,
+            $stockRegistryMock,
+            $stockItemRepositoryMock,
+            $groupManagement,
+            $resourceMock
         );
     }
 

@@ -46,21 +46,14 @@ class IndexerTableSwapperTest extends TestCase
     {
         $this->resourceConnectionMock = $this->createMock(ResourceConnection::class);
 
-        $this->adapterInterfaceMock = $this->getMockBuilder(AdapterInterface::class)
-            ->getMockForAbstractClass();
-        $zendDbStatementInterfaceMock = $this->getMockBuilder(\Zend_Db_Statement_Interface::class)
-            ->getMockForAbstractClass();
-        $this->adapterInterfaceMock->expects($this->any())
-            ->method('query')
-            ->willReturn($zendDbStatementInterfaceMock);
+        $this->adapterInterfaceMock = $this->createMock(AdapterInterface::class);
+        $zendDbStatementInterfaceMock = $this->createMock(\Zend_Db_Statement_Interface::class);
+        $this->adapterInterfaceMock->method('query')->willReturn($zendDbStatementInterfaceMock);
         /** @var \Zend_Db_Statement_Interface $statementInterfaceMock */
-        $this->statementInterfaceMock = $this->getMockBuilder(\Zend_Db_Statement_Interface::class)
-            ->getMockForAbstractClass();
+        $this->statementInterfaceMock = $this->createMock(\Zend_Db_Statement_Interface::class);
         /** @var Table $tableMock */
         $this->tableMock = $this->createMock(Table::class);
-        $this->resourceConnectionMock->expects($this->any())
-            ->method('getConnection')
-            ->willReturn($this->adapterInterfaceMock);
+        $this->resourceConnectionMock->method('getConnection')->willReturn($this->adapterInterfaceMock);
     }
 
     /**

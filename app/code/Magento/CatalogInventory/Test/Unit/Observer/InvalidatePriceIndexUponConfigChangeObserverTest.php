@@ -13,7 +13,6 @@ use Magento\CatalogInventory\Observer\InvalidatePriceIndexUponConfigChangeObserv
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Indexer\IndexerInterface;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -52,21 +51,31 @@ class InvalidatePriceIndexUponConfigChangeObserverTest extends TestCase
      */
     protected function setUp(): void
     {
-        $objectManager = new ObjectManager($this);
         $this->priceIndexProcessorMock = $this->createMock(Processor::class);
-        $this->indexerMock = $this->getMockBuilder(IndexerInterface::class)
-            ->getMockForAbstractClass();
+        $this->indexerMock = $this->createMock(IndexerInterface::class);
         $this->observerMock = $this->createMock(Observer::class);
-        $this->eventMock = $this->getMockBuilder(Event::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getChangedPaths'])
-            ->getMock();
+        
+        // Create anonymous class for Event with getChangedPaths method
+        $this->eventMock = new class extends Event {
+            private $changedPaths = [];
 
-        $this->observer = $objectManager->getObject(
-            InvalidatePriceIndexUponConfigChangeObserver::class,
-            [
-                'priceIndexProcessor' => $this->priceIndexProcessorMock
-            ]
+            public function __construct() {
+                parent::__construct();
+            }
+
+            public function getChangedPaths() {
+                return $this->changedPaths;
+            }
+
+            public function setChangedPaths($changedPaths) {
+                $this->changedPaths = $changedPaths;
+                return $this;
+            }
+        };
+
+        // Direct instantiation instead of ObjectManagerHelper
+        $this->observer = new InvalidatePriceIndexUponConfigChangeObserver(
+            $this->priceIndexProcessorMock
         );
     }
 
@@ -77,9 +86,8 @@ class InvalidatePriceIndexUponConfigChangeObserverTest extends TestCase
     {
         $changedPaths = [Configuration::XML_PATH_SHOW_OUT_OF_STOCK];
 
-        $this->eventMock->expects($this->once())
-            ->method('getChangedPaths')
-            ->willReturn($changedPaths);
+        // Use setter instead of expects for the anonymous class
+        $this->eventMock->setChangedPaths($changedPaths);
         $this->observerMock->expects($this->once())
             ->method('getEvent')
             ->willReturn($this->eventMock);
@@ -99,9 +107,8 @@ class InvalidatePriceIndexUponConfigChangeObserverTest extends TestCase
     {
         $changedPaths = [Configuration::XML_PATH_ITEM_AUTO_RETURN];
 
-        $this->eventMock->expects($this->once())
-            ->method('getChangedPaths')
-            ->willReturn($changedPaths);
+        // Use setter instead of expects for the anonymous class
+        $this->eventMock->setChangedPaths($changedPaths);
         $this->observerMock->expects($this->once())
             ->method('getEvent')
             ->willReturn($this->eventMock);

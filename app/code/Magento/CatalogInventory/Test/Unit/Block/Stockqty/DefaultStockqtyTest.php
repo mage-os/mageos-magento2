@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\CatalogInventory\Test\Unit\Block\Stockqty;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Product;
 use Magento\CatalogInventory\Api\Data\StockItemInterface;
 use Magento\CatalogInventory\Api\Data\StockStatusInterface;
@@ -14,7 +15,6 @@ use Magento\CatalogInventory\Api\StockRegistryInterface;
 use Magento\CatalogInventory\Block\Stockqty\DefaultStockqty;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Registry;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\Store;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -46,21 +46,28 @@ class DefaultStockqtyTest extends TestCase
 
     protected function setUp(): void
     {
-        $objectManager = new ObjectManager($this);
+        // Create minimal ObjectManager mock
+        $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        \Magento\Framework\App\ObjectManager::setInstance($objectManagerMock);
+        
+        // Create Context mock and configure it to provide scopeConfig
+        $contextMock = $this->createMock(\Magento\Framework\View\Element\Template\Context::class);
+        $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
+        $contextMock->method('getScopeConfig')->willReturn($this->scopeConfigMock);
+        
         $this->registryMock = $this->createMock(Registry::class);
-        $this->stockRegistryMock = $this->getMockBuilder(StockRegistryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->scopeConfigMock = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->block = $objectManager->getObject(
-            DefaultStockqty::class,
-            [
-                'registry' => $this->registryMock,
-                'stockRegistry' => $this->stockRegistryMock,
-                'scopeConfig' => $this->scopeConfigMock
-            ]
+        $this->stockRegistryMock = $this->createMock(StockRegistryInterface::class);
+        
+        // Create StockStateInterface mock
+        $stockStateMock = $this->createMock(\Magento\CatalogInventory\Api\StockStateInterface::class);
+        
+        // Instantiate DefaultStockqty block directly with mocks
+        $this->block = new DefaultStockqty(
+            $contextMock,
+            $this->registryMock,
+            $stockStateMock,
+            $this->stockRegistryMock,
+            []
         );
     }
 
@@ -87,8 +94,8 @@ class DefaultStockqtyTest extends TestCase
      * @param int|null $websiteId
      * @param int|null $dataQty
      * @param int $expectedQty
-     * @dataProvider getStockQtyDataProvider
      */
+    #[DataProvider('getStockQtyDataProvider')]
     public function testGetStockQty($productStockQty, $productId, $websiteId, $dataQty, $expectedQty)
     {
         $this->assertNull($this->block->getData('product_stock_qty'));
@@ -99,10 +106,10 @@ class DefaultStockqtyTest extends TestCase
                 Product::class,
                 ['getId', 'getStore', '__wakeup']
             );
-            $product->expects($this->any())->method('getId')->willReturn($productId);
+            $product->method('getId')->willReturn($productId);
             $store = $this->createPartialMock(Store::class, ['getWebsiteId', '__wakeup']);
-            $store->expects($this->any())->method('getWebsiteId')->willReturn($websiteId);
-            $product->expects($this->any())->method('getStore')->willReturn($store);
+            $store->method('getWebsiteId')->willReturn($websiteId);
+            $product->method('getStore')->willReturn($store);
 
             $this->registryMock->expects($this->any())
                 ->method('registry')
@@ -110,9 +117,8 @@ class DefaultStockqtyTest extends TestCase
                 ->willReturn($product);
 
             if ($productId) {
-                $stockStatus = $this->getMockBuilder(StockStatusInterface::class)
-                    ->getMockForAbstractClass();
-                $stockStatus->expects($this->any())->method('getQty')->willReturn($productStockQty);
+                $stockStatus = $this->createMock(StockStatusInterface::class);
+                $stockStatus->method('getQty')->willReturn($productStockQty);
                 $this->stockRegistryMock->expects($this->once())
                     ->method('getStockStatus')
                     ->with($productId, $websiteId)
@@ -130,9 +136,7 @@ class DefaultStockqtyTest extends TestCase
         $websiteId = 1;
         $stockQty = 2;
 
-        $storeMock = $this->getMockBuilder(Store::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $storeMock = $this->createMock(Store::class);
         $product = $this->createMock(Product::class);
         $product->expects($this->once())
             ->method('getStore')
@@ -140,26 +144,21 @@ class DefaultStockqtyTest extends TestCase
         $storeMock->expects($this->once())
             ->method('getWebsiteId')
             ->willReturn($websiteId);
-        $product->expects($this->any())
-            ->method('getId')
-            ->willReturn($productId);
+        $product->method('getId')->willReturn($productId);
         $this->registryMock->expects($this->any())
             ->method('registry')
             ->with('current_product')
             ->willReturn($product);
         if ($productId) {
-            $stockStatus = $this->getMockBuilder(StockStatusInterface::class)
-                ->getMockForAbstractClass();
-            $stockStatus->expects($this->any())->method('getQty')->willReturn($stockQty);
+            $stockStatus = $this->createMock(StockStatusInterface::class);
+            $stockStatus->method('getQty')->willReturn($stockQty);
             $this->stockRegistryMock->expects($this->once())
                 ->method('getStockStatus')
                 ->with($productId, $websiteId)
                 ->willReturn($stockStatus);
         }
 
-        $stockItemMock = $this->getMockBuilder(StockItemInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $stockItemMock = $this->createMock(StockItemInterface::class);
         $stockItemMock->expects($this->once())
             ->method('getMinQty')
             ->willReturn($minQty);

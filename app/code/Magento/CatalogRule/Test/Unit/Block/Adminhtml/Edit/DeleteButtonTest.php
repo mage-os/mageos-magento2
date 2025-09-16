@@ -36,11 +36,11 @@ class DeleteButtonTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->urlBuilderMock = $this->getMockForAbstractClass(UrlInterface::class);
+        $this->urlBuilderMock = $this->createMock(UrlInterface::class);
         $this->registryMock = $this->createMock(Registry::class);
         $contextMock = $this->createMock(Context::class);
 
-        $contextMock->expects($this->any())->method('getUrlBuilder')->willReturn($this->urlBuilderMock);
+        $contextMock->method('getUrlBuilder')->willReturn($this->urlBuilderMock);
 
         $this->model = new DeleteButton(
             $contextMock,

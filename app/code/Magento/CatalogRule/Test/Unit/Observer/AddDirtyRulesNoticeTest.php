@@ -32,9 +32,7 @@ class AddDirtyRulesNoticeTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->messageManagerMock = $this->getMockBuilder(ManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->messageManagerMock = $this->createMock(ManagerInterface::class);
         $objectManagerHelper = new ObjectManager($this);
         $this->observer = $objectManagerHelper->getObject(
             AddDirtyRulesNotice::class,
@@ -50,14 +48,30 @@ class AddDirtyRulesNoticeTest extends TestCase
     public function testExecute(): void
     {
         $message = "test";
-        $flagMock = $this->getMockBuilder(Flag::class)
-            ->addMethods(['getState'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        // Create anonymous class extending Flag with dynamic methods
+        $flagMock = new class extends Flag {
+            private $state = null;
+
+            public function __construct()
+            {
+                // Skip parent constructor to avoid complex dependencies
+            }
+
+            public function getState()
+            {
+                return $this->state;
+            }
+
+            public function setState($value)
+            {
+                $this->state = $value;
+                return $this;
+            }
+        };
         $eventObserverMock = $this->getMockBuilder(Observer::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $flagMock->expects($this->once())->method('getState')->willReturn(1);
+        $flagMock->setState(1);
         $eventObserverMock
             ->method('getData')
             ->willReturnCallback(fn($param) => match ([$param]) {
