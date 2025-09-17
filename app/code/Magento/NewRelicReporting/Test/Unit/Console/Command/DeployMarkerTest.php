@@ -509,7 +509,7 @@ class DeployMarkerTest extends TestCase
         $this->assertMatchesRegularExpression('/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/', $outputContent);
 
         // Should show all optional fields
-        $requiredFields = ['Changelog', 'Commit', 'Deep Link', 'Group ID'];
+        $requiredFields = ['Change log', 'Commit', 'Deep Link', 'Group ID'];
         foreach ($requiredFields as $field) {
             $this->assertStringContainsString($field, $outputContent);
         }
