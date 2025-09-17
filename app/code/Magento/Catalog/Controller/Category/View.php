@@ -234,6 +234,8 @@ class View extends Action implements HttpGetActionInterface, HttpPostActionInter
     }
 
     /**
+     * Category handle page redirect
+     *
      * @param Category $category
      * @return Redirect|null
      */
@@ -249,6 +251,8 @@ class View extends Action implements HttpGetActionInterface, HttpPostActionInter
     }
 
     /**
+     * Category prepare page
+     *
      * @param Category $category
      * @return Page
      */
@@ -279,6 +283,8 @@ class View extends Action implements HttpGetActionInterface, HttpPostActionInter
     }
 
     /**
+     * Category add page layout handle
+     *
      * @param Page $page
      * @param Category $category
      * @return void
