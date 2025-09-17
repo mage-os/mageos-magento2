@@ -295,7 +295,7 @@ class DeploymentsTest extends TestCase
     public function testSetDeploymentNerdGraphMode()
     {
         $description = 'NerdGraph deployment test';
-        $change = 'Enhanced changelog';
+        $changelog = 'Enhanced changelog';
         $user = 'nerdgraph_user';
         $revision = 'v2.0.0';
         $commit = 'abc123';
@@ -307,7 +307,7 @@ class DeploymentsTest extends TestCase
             'entityGuid' => 'TEST_ENTITY_GUID',
             'version' => $revision,
             'description' => $description,
-            'changelog' => $change,
+            'changelog' => $changelog,
             'user' => $user,
             'commit' => $commit,
             'deepLink' => $deepLink,
@@ -323,12 +323,12 @@ class DeploymentsTest extends TestCase
         // Mock DeploymentTracker to be called with correct parameters
         $this->deploymentTrackerMock->expects($this->once())
             ->method('createDeployment')
-            ->with($description, $change, $user, $revision, $commit, $deepLink, $groupId)
+            ->with($description, $changelog, $user, $revision, $commit, $deepLink, $groupId)
             ->willReturn($expectedNerdGraphResponse);
 
         $result = $this->model->setDeployment(
             $description,
-            $change,
+            $changelog,
             $user,
             $revision,
             $commit,
@@ -386,7 +386,7 @@ class DeploymentsTest extends TestCase
     public function testSetDeploymentModeDetectionNerdGraph()
     {
         $description = 'NerdGraph mode detection test';
-        $change = 'Test changelog';
+        $changelog = 'Test changelog';
         $user = 'test_user';
         $revision = 'v1.0.0';
 
@@ -398,10 +398,10 @@ class DeploymentsTest extends TestCase
         $expectedResult = ['deploymentId' => 'test-123', 'entityGuid' => 'test-guid'];
         $this->deploymentTrackerMock->expects($this->once())
             ->method('createDeployment')
-            ->with($description, $change, $user, $revision, null, null, null)
+            ->with($description, $changelog, $user, $revision, null, null, null)
             ->willReturn($expectedResult);
 
-        $result = $this->model->setDeployment($description, $change, $user, $revision);
+        $result = $this->model->setDeployment($description, $changelog, $user, $revision);
         $this->assertEquals($expectedResult, $result);
     }
 
@@ -413,7 +413,7 @@ class DeploymentsTest extends TestCase
     public function testSetDeploymentNerdGraphEnhancedParameters()
     {
         $description = 'Enhanced parameters test';
-        $change = 'changelog';
+        $changelog = 'changelog';
         $user = 'test_user';
         $revision = 'v2.1.0';
         $commit = 'def456';
@@ -429,7 +429,7 @@ class DeploymentsTest extends TestCase
             ->method('createDeployment')
             ->with(
                 $this->equalTo($description),
-                $this->equalTo($change),
+                $this->equalTo($changelog),
                 $this->equalTo($user),
                 $this->equalTo($revision),
                 $this->equalTo($commit),
@@ -445,7 +445,7 @@ class DeploymentsTest extends TestCase
 
         $result = $this->model->setDeployment(
             $description,
-            $change,
+            $changelog,
             $user,
             $revision,
             $commit,
@@ -468,7 +468,7 @@ class DeploymentsTest extends TestCase
     private function getDataVariables(): array
     {
         $description = 'Event description';
-        $change = 'flush the cache username';
+        $changelog = 'flush the cache username';
         $user = 'username';
         $uri = 'https://example.com/listener';
         $selfUri = 'https://api.newrelic.com/v2/applications/%s/deployments.json';
@@ -484,7 +484,7 @@ class DeploymentsTest extends TestCase
         $params = [
             'deployment' => [
                 'description' => $description,
-                'changelog' => $change,
+                'changelog' => $changelog,
                 'user' => $user,
                 'revision' => $revision
             ]
@@ -492,7 +492,7 @@ class DeploymentsTest extends TestCase
 
         $selfUri = sprintf($selfUri, $appId);
         return ['description' => $description,
-            'change' => $change,
+            'change' => $changelog,
             'user' => $user,
             'uri' => $uri,
             'self_uri' => $selfUri,

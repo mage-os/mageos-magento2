@@ -79,7 +79,7 @@ class Deployments
      * Supports both v2 REST and NerdGraph APIs based on configuration
      *
      * @param string $description
-     * @param string|null $change
+     * @param string|null $changelog
      * @param string|null $user
      * @param string|null $revision
      * @param string|null $commit Git commit hash (NerdGraph only)
@@ -90,7 +90,7 @@ class Deployments
      */
     public function setDeployment(
         string      $description,
-        ?string     $change = null,
+        ?string     $changelog = null,
         ?string     $user = null,
         ?string     $revision = null,
         ?string     $commit = null,
@@ -103,7 +103,7 @@ class Deployments
         if ($apiMode === ApiMode::MODE_NERDGRAPH) {
             return $this->createNerdGraphDeployment(
                 $description,
-                $change,
+                $changelog,
                 $user,
                 $revision,
                 $commit,
@@ -111,7 +111,7 @@ class Deployments
                 $groupId
             );
         } else {
-            return $this->createV2RestDeployment($description, $change, $user, $revision);
+            return $this->createV2RestDeployment($description, $changelog, $user, $revision);
         }
     }
 
@@ -119,12 +119,12 @@ class Deployments
      * Create deployment using v2 REST API (legacy)
      *
      * @param string $description
-     * @param bool|string $change
+     * @param bool|string $changelog
      * @param bool|string $user
      * @param string|null $revision
      * @return bool|string
      */
-    private function createV2RestDeployment(string $description, bool|string $change, bool|string $user, ?string
+    private function createV2RestDeployment(string $description, bool|string $changelog, bool|string $user, ?string
     $revision): bool|string
     {
         $apiUrl = $this->config->getNewRelicApiUrl();
@@ -152,7 +152,7 @@ class Deployments
         $params = [
             'deployment' => [
                 'description' => $description,
-                'changelog' => $change,
+                'changelog' => $changelog,
                 'user' => $user,
                 'revision' => $revision
             ]
@@ -178,7 +178,7 @@ class Deployments
      * Create deployment using NerdGraph (GraphQL) API
      *
      * @param string $description
-     * @param string|null $change
+     * @param string|null $changelog
      * @param string|null $user
      * @param string|null $revision
      * @param string|null $commit
@@ -186,12 +186,12 @@ class Deployments
      * @param string|null $groupId
      * @return array|false
      */
-    private function createNerdGraphDeployment(string $description, ?string $change, ?string $user, ?string
+    private function createNerdGraphDeployment(string $description, ?string $changelog, ?string $user, ?string
     $revision, ?string $commit, ?string $deepLink, ?string $groupId): false|array
     {
         return $this->deploymentTracker->createDeployment(
             $description,
-            $change ? (string)$change : null,
+            $changelog ? (string)$changelog : null,
             $user ? (string)$user : null,
             $revision,
             $commit,

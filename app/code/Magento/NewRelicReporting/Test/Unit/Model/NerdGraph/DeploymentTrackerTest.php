@@ -65,7 +65,7 @@ class DeploymentTrackerTest extends TestCase
     public function testCreateDeploymentSuccess()
     {
         $description = 'Test deployment';
-        $change = 'Bug fixes';
+        $changelog = 'Bug fixes';
         $user = 'deploy-user';
         $version = 'v1.0.0';
         $commit = 'abc123';
@@ -86,7 +86,7 @@ class DeploymentTrackerTest extends TestCase
                     'version' => $version,
                     'description' => $description,
                     'user' => $user,
-                    'changelog' => $change,
+                    'changelog' => $changelog,
                     'commit' => $commit,
                     'deepLink' => $deepLink,
                     'groupId' => $groupId
@@ -102,7 +102,7 @@ class DeploymentTrackerTest extends TestCase
                     $entityGuid,
                     $description,
                     $version,
-                    $change,
+                    $changelog,
                     $user,
                     $commit,
                     $deepLink,
@@ -112,7 +112,7 @@ class DeploymentTrackerTest extends TestCase
                            $variables['deployment']['entityGuid'] === $entityGuid &&
                            $variables['deployment']['description'] === $description &&
                            $variables['deployment']['version'] === $version &&
-                           $variables['deployment']['changelog'] === $change &&
+                           $variables['deployment']['changelog'] === $changelog &&
                            $variables['deployment']['user'] === $user &&
                            $variables['deployment']['commit'] === $commit &&
                            $variables['deployment']['deepLink'] === $deepLink &&
@@ -127,7 +127,7 @@ class DeploymentTrackerTest extends TestCase
 
         $result = $this->deploymentTracker->createDeployment(
             $description,
-            $change,
+            $changelog,
             $user,
             $version,
             $commit,
@@ -140,7 +140,7 @@ class DeploymentTrackerTest extends TestCase
         $this->assertEquals($entityGuid, $result['entityGuid']);
         $this->assertEquals($version, $result['version']);
         $this->assertEquals($description, $result['description']);
-        $this->assertEquals($change, $result['changelog']);
+        $this->assertEquals($changelog, $result['changelog']);
         $this->assertEquals($user, $result['user']);
         $this->assertEquals($commit, $result['commit']);
         $this->assertEquals($deepLink, $result['deepLink']);
@@ -527,7 +527,7 @@ class DeploymentTrackerTest extends TestCase
     public function testCreateDeploymentWithLongParameters()
     {
         $description = str_repeat('A', 1000);
-        $change = str_repeat('B', 2000);
+        $changelog = str_repeat('B', 2000);
         $user = str_repeat('C', 100);
         $entityGuid = 'TEST_ENTITY_GUID';
 
@@ -542,7 +542,7 @@ class DeploymentTrackerTest extends TestCase
                     'entityGuid' => $entityGuid,
                     'timestamp' => 1234567890000,
                     'description' => $description,
-                    'changelog' => $change,
+                    'changelog' => $changelog,
                     'user' => $user
                 ]
             ]
@@ -556,7 +556,7 @@ class DeploymentTrackerTest extends TestCase
             ->method('info')
             ->with('NerdGraph deployment created successfully');
 
-        $result = $this->deploymentTracker->createDeployment($description, $change, $user);
+        $result = $this->deploymentTracker->createDeployment($description, $changelog, $user);
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey('deploymentId', $result);
@@ -568,7 +568,7 @@ class DeploymentTrackerTest extends TestCase
     public function testCreateDeploymentMutationStructure()
     {
         $description = 'Test deployment';
-        $change = 'Bug fixes';
+        $changelog = 'Bug fixes';
         $user = 'deploy-user';
         $version = 'v1.0.0';
         $commit = 'abc123';
@@ -596,7 +596,7 @@ class DeploymentTrackerTest extends TestCase
                 $this->callback(function ($variables) use (
                     $entityGuid,
                     $description,
-                    $change,
+                    $changelog,
                     $user,
                     $version,
                     $commit,
@@ -606,7 +606,7 @@ class DeploymentTrackerTest extends TestCase
                     return isset($variables['deployment']) &&
                            $variables['deployment']['entityGuid'] === $entityGuid &&
                            $variables['deployment']['description'] === $description &&
-                           $variables['deployment']['changelog'] === $change &&
+                           $variables['deployment']['changelog'] === $changelog &&
                            $variables['deployment']['user'] === $user &&
                            $variables['deployment']['version'] === $version &&
                            $variables['deployment']['commit'] === $commit &&
@@ -622,7 +622,7 @@ class DeploymentTrackerTest extends TestCase
 
         $result = $this->deploymentTracker->createDeployment(
             $description,
-            $change,
+            $changelog,
             $user,
             $version,
             $commit,

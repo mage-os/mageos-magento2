@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2025 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\NewRelicReporting\Model\Observer;
 
@@ -10,9 +10,7 @@ use Magento\Framework\Event\ObserverInterface;
 use Magento\NewRelicReporting\Model\Config;
 
 /**
- * Observer to report system cache flush to New Relic
  * Class ReportSystemCacheFlushToNewRelic
- * @SuppressWarnings(PHPMD.CookieAndSessionMisuse)
  */
 class ReportSystemCacheFlushToNewRelic implements ObserverInterface
 {
@@ -51,7 +49,6 @@ class ReportSystemCacheFlushToNewRelic implements ObserverInterface
      *
      * @param Observer $observer
      * @return void
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function execute(Observer $observer)
     {
@@ -61,7 +58,7 @@ class ReportSystemCacheFlushToNewRelic implements ObserverInterface
                 $this->deploymentsFactory->create()->setDeployment(
                     'Cache Flush',
                     $user->getUserName() . ' flushed the cache.',
-                    $user->getUserName() ?: false
+                    $user->getUserName()
                 );
             }
         }
