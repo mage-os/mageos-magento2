@@ -639,9 +639,11 @@ class LinkManagementTest extends TestCase
      */
     public function testAddChild(): void
     {
+        $selectionId = 42;
+        $optionId = 1;
         $productLink = $this->getMockBuilder(LinkInterface::class)
-            ->onlyMethods(['getSku', 'getOptionId'])
-            ->addMethods(['getSelectionId'])
+            ->onlyMethods(['getSku', 'getOptionId', 'setOptionId', 'setId'])
+            ->addMethods(['getSelectionId', 'setSelectionId'])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
         $productLink->method('getSku')->willReturn('linked_product_sku');
@@ -698,10 +700,14 @@ class LinkManagementTest extends TestCase
 
         $selection = $this->createPartialMock(Selection::class, ['save', 'getId', 'load']);
         $selection->expects($this->once())->method('save');
-        $selection->expects($this->once())->method('getId')->willReturn(42);
+        $selection->expects($this->any())->method('getId')->willReturn($selectionId);
         $this->bundleSelectionMock->expects($this->once())->method('create')->willReturn($selection);
-        $result = $this->model->addChild($productMock, 1, $productLink);
-        $this->assertEquals(42, $result);
+        $productLink->expects($this->once())->method('setSelectionId')->with($selectionId)->willReturnSelf();
+        $productLink->expects($this->once())->method('setId')->with($selectionId)->willReturnSelf();
+        $productLink->expects($this->once())->method('setOptionId')->with($optionId)->willReturnSelf();
+
+        $result = $this->model->addChild($productMock, $optionId, $productLink);
+        $this->assertEquals($selectionId, $result);
     }
 
     /**
