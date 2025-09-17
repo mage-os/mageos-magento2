@@ -54,27 +54,27 @@ abstract class AbstractModifierTestCase extends TestCase
     protected function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
+        // Create base mock for LocatorInterface with all required methods
         $this->locatorMock = $this->getMockBuilder(LocatorInterface::class)
-            ->getMockForAbstractClass();
-        $this->productMock = $this->getMockBuilder(ProductInterface::class)
-            ->addMethods([
-                'getStoreId',
-                'getResource',
-                'getData',
-                'getAttributes',
-                'getStore',
-                'getAttributeDefaultValue',
-                'getExistsStoreValueFlag',
-                'isLockedAttribute'
-            ])
+            ->onlyMethods(['getProduct', 'getStore', 'getWebsiteIds', 'getBaseCurrencyCode'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        
+        // Create base mock for concrete Product class with all required methods
+        $this->productMock = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
             ->onlyMethods([
-                'getId',
-                'getTypeId'
-            ])->getMockForAbstractClass();
-        $this->storeMock = $this->getMockBuilder(StoreInterface::class)
-            ->addMethods(['load', 'getConfig'])
-            ->onlyMethods(['getId'])
-            ->getMockForAbstractClass();
+                'getId', 'getTypeId', 'getStoreId', 'getResource', 'getData', 
+                'getAttributes', 'getStore', 'getAttributeDefaultValue', 
+                'getExistsStoreValueFlag', 'isLockedAttribute'
+            ])
+            ->disableOriginalConstructor()
+            ->getMock();
+        
+        // Create base mock for concrete Store class with all required methods
+        $this->storeMock = $this->getMockBuilder(\Magento\Store\Model\Store::class)
+            ->onlyMethods(['getId', 'load', 'getConfig'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->arrayManagerMock = $this->getMockBuilder(ArrayManager::class)
             ->disableOriginalConstructor()
             ->getMock();
