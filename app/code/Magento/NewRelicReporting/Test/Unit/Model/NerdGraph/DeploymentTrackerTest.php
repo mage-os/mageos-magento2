@@ -86,7 +86,7 @@ class DeploymentTrackerTest extends TestCase
                     'version' => $version,
                     'description' => $description,
                     'user' => $user,
-                    'change_log' => $change,
+                    'changelog' => $change,
                     'commit' => $commit,
                     'deepLink' => $deepLink,
                     'groupId' => $groupId
@@ -140,7 +140,7 @@ class DeploymentTrackerTest extends TestCase
         $this->assertEquals($entityGuid, $result['entityGuid']);
         $this->assertEquals($version, $result['version']);
         $this->assertEquals($description, $result['description']);
-        $this->assertEquals($change, $result['change_log']);
+        $this->assertEquals($change, $result['changelog']);
         $this->assertEquals($user, $result['user']);
         $this->assertEquals($commit, $result['commit']);
         $this->assertEquals($deepLink, $result['deepLink']);
@@ -180,7 +180,7 @@ class DeploymentTrackerTest extends TestCase
                     return isset($variables['deployment']) &&
                            $variables['deployment']['entityGuid'] === $entityGuid &&
                            $variables['deployment']['description'] === $description &&
-                           !isset($variables['deployment']['change_log']) &&
+                           !isset($variables['deployment']['changelog']) &&
                            !isset($variables['deployment']['user']);
                 })
             )
@@ -542,7 +542,7 @@ class DeploymentTrackerTest extends TestCase
                     'entityGuid' => $entityGuid,
                     'timestamp' => 1234567890000,
                     'description' => $description,
-                    'change_log' => $change,
+                    'changelog' => $change,
                     'user' => $user
                 ]
             ]

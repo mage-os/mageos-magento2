@@ -103,8 +103,8 @@ class DeployMarkerTest extends TestCase
         $this->assertTrue($definition->getArgument('message')->isRequired());
 
         // Check optional arguments
-        $this->assertTrue($definition->hasArgument('change_log'));
-        $this->assertFalse($definition->getArgument('change_log')->isRequired());
+        $this->assertTrue($definition->hasArgument('changelog'));
+        $this->assertFalse($definition->getArgument('changelog')->isRequired());
 
         $this->assertTrue($definition->hasArgument('user'));
         $this->assertFalse($definition->getArgument('user')->isRequired());
@@ -137,7 +137,7 @@ class DeployMarkerTest extends TestCase
 
         $this->mockArguments([
             ['message', $message],
-            ['change_log', null],
+            ['changelog', null],
             ['user', $user],
             ['revision', $revision]
         ], [
@@ -181,7 +181,7 @@ class DeployMarkerTest extends TestCase
             'description' => $message,
             'user' => $user,
             'timestamp' => 1234567890000, // Feb 13, 2009 23:31:30 UTC
-            'change_log' => 'New features',
+            'changelog' => 'New features',
             'commit' => $commit,
             'deepLink' => $deepLink,
             'groupId' => $groupId
@@ -194,7 +194,7 @@ class DeployMarkerTest extends TestCase
 
         $this->mockArguments([
             ['message', $message],
-            ['change_log', 'New features'],
+            ['changelog', 'New features'],
             ['user', $user],
             ['revision', $revision]
         ], [
@@ -240,7 +240,7 @@ class DeployMarkerTest extends TestCase
 
         $this->mockArguments([
             ['message', $message],
-            ['change_log', null],
+            ['changelog', null],
             ['user', null],
             ['revision', null]
         ], [
@@ -278,7 +278,7 @@ class DeployMarkerTest extends TestCase
 
         $this->mockArguments([
             ['message', $message],
-            ['change_log', null],
+            ['changelog', null],
             ['user', null],
             ['revision', null]
         ], [
@@ -312,7 +312,7 @@ class DeployMarkerTest extends TestCase
 
         $this->mockArguments([
             ['message', $message],
-            ['change_log', null],
+            ['changelog', null],
             ['user', null],
             ['revision', null]
         ], [
@@ -352,7 +352,7 @@ class DeployMarkerTest extends TestCase
 
         $this->mockArguments([
             ['message', $message],
-            ['change_log', null],
+            ['changelog', null],
             ['user', null],
             ['revision', null]
         ], [
@@ -399,7 +399,7 @@ class DeployMarkerTest extends TestCase
 
         $this->mockArguments([
             ['message', $message],
-            ['change_log', null],
+            ['changelog', null],
             ['user', null],
             ['revision', 'v1.0.0']
         ], [
@@ -431,7 +431,7 @@ class DeployMarkerTest extends TestCase
         $this->assertMatchesRegularExpression('/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/', $outputContent);
 
         // Should show N/A for missing optional fields
-        $excludedFields = ['Change log', 'Commit', 'Deep Link', 'Group ID'];
+        $excludedFields = ['Changelog', 'Commit', 'Deep Link', 'Group ID'];
         foreach ($excludedFields as $field) {
             $this->assertStringNotContainsString($field, $outputContent);
         }
@@ -452,7 +452,7 @@ class DeployMarkerTest extends TestCase
             'description' => $message,
             'user' => 'complete-user',
             'timestamp' => 1640995200000, // 2022-01-01 00:00:00 UTC
-            'change_log' => 'Added new features',
+            'changelog' => 'Added new features',
             'commit' => 'abc123def456',
             'deepLink' => 'https://github.com/test/releases/v2.0.0',
             'groupId' => 'production'
@@ -465,7 +465,7 @@ class DeployMarkerTest extends TestCase
 
         $this->mockArguments([
             ['message', $message],
-            ['change_log', 'Added new features'],
+            ['changelog', 'Added new features'],
             ['user', 'complete-user'],
             ['revision', 'v2.0.0']
         ], [
@@ -539,7 +539,7 @@ class DeployMarkerTest extends TestCase
 
         $this->mockArguments([
             ['message', $message],
-            ['change_log', null],
+            ['changelog', null],
             ['user', null],
             ['revision', 'v1.0.0']
         ], [
@@ -587,7 +587,7 @@ class DeployMarkerTest extends TestCase
         $this->assertEquals('Deploy Message / Description', $messageArg->getDescription());
 
         // Verify optional arguments exist
-        $this->assertTrue($definition->hasArgument('change_log'));
+        $this->assertTrue($definition->hasArgument('changelog'));
         $this->assertTrue($definition->hasArgument('user'));
         $this->assertTrue($definition->hasArgument('revision'));
 
@@ -611,7 +611,7 @@ class DeployMarkerTest extends TestCase
 
         $this->mockArguments([
             ['message', $message],
-            ['change_log', null],
+            ['changelog', null],
             ['user', null],
             ['revision', null]
         ], [
@@ -655,7 +655,7 @@ class DeployMarkerTest extends TestCase
 
         $this->mockArguments([
             ['message', $message],
-            ['change_log', null],
+            ['changelog', null],
             ['user', null],
             ['revision', null]
         ], [

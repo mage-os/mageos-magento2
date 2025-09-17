@@ -149,7 +149,7 @@ class DeployMarkerCommandTest extends TestCase
         $this->assertTrue($messageArg->isRequired());
 
         // Verify optional arguments
-        $this->assertTrue($definition->hasArgument('change_log'));
+        $this->assertTrue($definition->hasArgument('changelog'));
         $this->assertTrue($definition->hasArgument('user'));
         $this->assertTrue($definition->hasArgument('revision'));
 
@@ -174,7 +174,7 @@ class DeployMarkerCommandTest extends TestCase
 
         $exitCode = $this->commandTester->execute([
             'message' => 'Full deployment test',
-            'change_log' => 'Added new features',
+            'changelog' => 'Added new features',
             'user' => 'deploy-user',
             'revision' => 'v2.0.0',
             '--commit' => 'abc123',

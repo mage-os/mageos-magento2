@@ -65,7 +65,7 @@ class DeployMarker extends Command
                 'Deploy Message / Description'
             )
             ->addArgument(
-                'change_log',
+                'changelog',
                 InputArgument::OPTIONAL,
                 'Change Log?'
             )
@@ -112,7 +112,7 @@ class DeployMarker extends Command
         try {
             $result = $this->deploymentsFactory->create()->setDeployment(
                 $input->getArgument('message'),
-                $input->getArgument('change_log') ?: false,
+                $input->getArgument('changelog') ?: false,
                 $this->serviceShellUser->get($input->getArgument('user')) ?: false,
                 $input->getArgument('revision'),
                 $input->getOption('commit'),
@@ -174,8 +174,8 @@ class DeployMarker extends Command
                 ) : 'N/A']
         ];
 
-        if (!empty($deployment['change_log'])) {
-            $rows[] = ['Change log', $deployment['change_log']];
+        if (!empty($deployment['changelog'])) {
+            $rows[] = ['Change log', $deployment['changelog']];
         }
         if (!empty($deployment['commit'])) {
             $rows[] = ['Commit', $deployment['commit']];

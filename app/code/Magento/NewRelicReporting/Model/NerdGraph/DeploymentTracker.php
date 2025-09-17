@@ -277,7 +277,7 @@ class DeploymentTracker
                 'entityGuid' => $deploymentData['entityGuid'],
                 'version' => $deployedVersion,
                 'description' => $description,
-                'change_log' => $change,
+                'changelog' => $change,
                 'user' => $user,
                 'commit' => $commit,
                 'deepLink' => $deepLink,
