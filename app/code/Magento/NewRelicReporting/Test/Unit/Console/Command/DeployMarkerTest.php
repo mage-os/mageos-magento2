@@ -431,7 +431,7 @@ class DeployMarkerTest extends TestCase
         $this->assertMatchesRegularExpression('/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/', $outputContent);
 
         // Should show N/A for missing optional fields
-        $excludedFields = ['Changelog', 'Commit', 'Deep Link', 'Group ID'];
+        $excludedFields = ['Change log', 'Commit', 'Deep Link', 'Group ID'];
         foreach ($excludedFields as $field) {
             $this->assertStringNotContainsString($field, $outputContent);
         }

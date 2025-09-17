@@ -215,7 +215,7 @@ class DeploymentTracker
         ?string $groupId
     ): void {
         if ($change) {
-            $variables['deployment']['change_log'] = $change;
+            $variables['deployment']['changelog'] = $change;
         }
 
         if ($user) {
