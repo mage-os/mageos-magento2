@@ -48,7 +48,7 @@ class RemoveFixtureTest extends AbstractOverridesTest
      * @magentoDataFixture Magento/TestModuleOverrideConfig/_files/fixture2_first_module.php
      * @magentoDataFixture Magento/TestModuleOverrideConfig/_files/fixture3_first_module.php
      *
-     * @dataProvider testDataProvider
+     * @dataProvider datasetDataProvider
      *
      * @param string $fixtureName
      * @return void
@@ -61,7 +61,7 @@ class RemoveFixtureTest extends AbstractOverridesTest
     /**
      * @return array
      */
-    public static function testDataProvider(): array
+    public static function datasetDataProvider(): array
     {
         return [
             'first_data_set' => ['fixture2_first_module.php'],

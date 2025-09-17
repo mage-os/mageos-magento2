@@ -48,7 +48,7 @@ class ReplaceFixtureTest extends AbstractOverridesTest
      *
      * @magentoAdminConfigFixture test_section/test_group/field_1 new_value
      *
-     * @dataProvider testDataProvider
+     * @dataProvider configDataProvider
      *
      * @param string $expectedConfigValue
      * @return void
@@ -62,7 +62,7 @@ class ReplaceFixtureTest extends AbstractOverridesTest
     /**
      * @return array
      */
-    public static function testDataProvider(): array
+    public static function configDataProvider(): array
     {
         return [
             'first_data_set' => [

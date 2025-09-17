@@ -58,7 +58,7 @@ class DeleteTest extends AbstractBackendController
      * Check that file can be removed under var/export directory.
      *
      * @param string $file
-     * @dataProvider testExecuteProvider
+     * @dataProvider csvExecuteProvider
      * @return void
      * @magentoConfigFixture default_store admin/security/use_form_key 1
      */
@@ -100,7 +100,7 @@ class DeleteTest extends AbstractBackendController
      *
      * @return array
      */
-    public static function testExecuteProvider(): array
+    public static function csvExecuteProvider(): array
     {
         return [
             ['catalog_product.csv'],

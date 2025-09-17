@@ -225,7 +225,7 @@ class EavTest extends AbstractEavTest
 
     /**
      * @magentoDataFixture Magento/Catalog/_files/attribute_page_layout_default.php
-     * @dataProvider testModifyMetaNewProductPageLayoutDefaultProvider
+     * @dataProvider attrModifyMetaNewProductPageLayoutDefaultProvider
      * @return void
      */
     public function testModifyMetaNewProductPageLayoutDefault($attributesMeta): void
@@ -245,7 +245,7 @@ class EavTest extends AbstractEavTest
     /**
      * @return array
      */
-    public static function testModifyMetaNewProductPageLayoutDefaultProvider(): array
+    public static function attrModifyMetaNewProductPageLayoutDefaultProvider(): array
     {
         return [
             'attributes_meta' => [

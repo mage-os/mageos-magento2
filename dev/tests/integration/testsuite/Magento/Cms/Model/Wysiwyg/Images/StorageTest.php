@@ -239,7 +239,7 @@ class StorageTest extends \PHPUnit\Framework\TestCase
      * @param string|null $storageType
      *
      * @return void
-     * @dataProvider testUploadFileWithWrongExtensionDataProvider
+     * @dataProvider filenameUploadFileWithWrongExtensionDataProvider
      */
     public function testUploadFileWithWrongExtension(string $fileName, string $fileType, ?string $storageType): void
     {
@@ -268,7 +268,7 @@ class StorageTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array
      */
-    public static function testUploadFileWithWrongExtensionDataProvider(): array
+    public static function filenameUploadFileWithWrongExtensionDataProvider(): array
     {
         return [
             [

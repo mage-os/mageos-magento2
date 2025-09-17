@@ -56,7 +56,7 @@ class AddFixtureTest extends AbstractOverridesTest
     /**
      * Checks that fixtures added in method and data set nodes successfully applied
      *
-     * @dataProvider testDataProvider
+     * @dataProvider configDataProvider
      *
      * @param string $expectedConfigValue
      * @return void
@@ -70,7 +70,7 @@ class AddFixtureTest extends AbstractOverridesTest
     /**
      * @return array
      */
-    public static function testDataProvider(): array
+    public static function configDataProvider(): array
     {
         return [
             'first_data_set' => ['expectedConfigValue' => 'overridden value for method'],

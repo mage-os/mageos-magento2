@@ -72,7 +72,7 @@ class DownloadTest extends AbstractBackendController
      * Check that file can be downloaded.
      *
      * @param string $file
-     * @dataProvider testExecuteProvider
+     * @dataProvider csvExecuteProvider
      * @return void
      * @magentoConfigFixture default_store admin/security/use_form_key 1
      * @magentoAppArea adminhtml
@@ -136,7 +136,7 @@ class DownloadTest extends AbstractBackendController
      *
      * @return array
      */
-    public static function testExecuteProvider(): array
+    public static function csvExecuteProvider(): array
     {
         return [
             ['catalog_product.csv'],
