@@ -196,23 +196,20 @@ class ObjectManager
     {
         if (!isset($arguments['objectFactory'])) {
             $reflection = new \ReflectionClass($this->_testObject);
-            $method = $reflection->getMethod('createPartialMock');
+            $method = $reflection->getMethod('getMockBuilder');
             $method->setAccessible(true);
-            $objectFactory = $method->invoke(
-                $this->_testObject,
-                \Magento\Framework\Api\ObjectFactory::class,
-                ['populateWithArray', 'populate', 'create']
-            );
+            $mockBuilder = $method->invoke($this->_testObject, \Magento\Framework\Api\ObjectFactory::class);
+            
+            // Use onlyMethods() with methods that actually exist in ObjectFactory
+            $objectFactory = $mockBuilder->onlyMethods(['create', 'get'])
+                ->disableOriginalConstructor()
+                ->getMock();
 
             $reflection = new \ReflectionClass($this->_testObject);
             $anyMethod = $reflection->getMethod('any');
             $anyMethod->setAccessible(true);
-            $objectFactory->expects($anyMethod->invoke($this->_testObject))
-                ->method('populateWithArray')
-                ->willReturnSelf();
-            $objectFactory->expects($anyMethod->invoke($this->_testObject))
-                ->method('populate')
-                ->willReturnSelf();
+            
+            // Only configure methods that actually exist in ObjectFactory
             $objectFactory->expects($anyMethod->invoke($this->_testObject))
                 ->method('create')
                 ->willReturnCallback(
@@ -238,6 +235,14 @@ class ObjectManager
                             }
                         }
                         return new $className(...array_values($args));
+                    }
+                );
+            
+            $objectFactory->expects($anyMethod->invoke($this->_testObject))
+                ->method('get')
+                ->willReturnCallback(
+                    function ($className) {
+                        return $this->_getMockWithoutConstructorCall($className);
                     }
                 );
 
