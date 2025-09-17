@@ -60,11 +60,9 @@ class CatalogInventoryTest extends TestCase
             ['setStockData']
         );
 
-        $this->stockItemDoMock = $this->createMock(StockItemInterface::class
-        );
+        $this->stockItemDoMock = $this->createMock(StockItemInterface::class);
 
-        $this->stockRegistry = $this->createMock(StockRegistryInterface::class
-        );
+        $this->stockRegistry = $this->createMock(StockRegistryInterface::class);
 
         $this->objectManager = new ObjectManager($this);
         $this->model = $this->objectManager->getObject(

@@ -49,7 +49,9 @@ class FullTest extends TestCase
         $metadataPoolMock = $this->createMock(\Magento\Framework\EntityManager\MetadataPool::class);
         $batchProviderMock = $this->createMock(\Magento\Framework\Indexer\BatchProviderInterface::class);
         $batchSizeManagementMock = $this->createMock(\Magento\Framework\Indexer\BatchSizeManagementInterface::class);
-        $activeTableSwitcherMock = $this->createMock(\Magento\Catalog\Model\ResourceModel\Indexer\ActiveTableSwitcher::class);
+        $activeTableSwitcherMock = $this->createMock(
+            \Magento\Catalog\Model\ResourceModel\Indexer\ActiveTableSwitcher::class
+        );
 
         // Configure ObjectManager mock to return the required instances
         $objectManagerMock->method('get')

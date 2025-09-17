@@ -119,8 +119,17 @@ class StockRegistryProviderTest extends TestCase
      */
     protected $stockStatusCriteria;
 
+    /**
+     * @var int
+     */
     protected $productId = 111;
+    /**
+     * @var string
+     */
     protected $productSku = 'simple';
+    /**
+     * @var int
+     */
     protected $scopeId = 111;
 
     /**
@@ -130,17 +139,20 @@ class StockRegistryProviderTest extends TestCase
     {
         $this->objectManagerHelper = new ObjectManagerHelper($this);
 
-        $this->stock = $this->createMock(StockInterface::class,
+        $this->stock = $this->createMock(
+            StockInterface::class,
             ['getStockId'],
             '',
             false
         );
-        $this->stockItem = $this->createMock(StockItemInterface::class,
+        $this->stockItem = $this->createMock(
+            StockItemInterface::class,
             ['getItemId'],
             '',
             false
         );
-        $this->stockStatus = $this->createMock(StockStatusInterface::class,
+        $this->stockStatus = $this->createMock(
+            StockStatusInterface::class,
             ['getProductId'],
             '',
             false
@@ -184,7 +196,8 @@ class StockRegistryProviderTest extends TestCase
             StockCriteriaInterfaceFactory::class,
             ['create']
         );
-        $this->stockCriteria = $this->createMock(StockCriteriaInterface::class,
+        $this->stockCriteria = $this->createMock(
+            StockCriteriaInterface::class,
             ['setScopeFilter'],
             '',
             false
@@ -194,7 +207,8 @@ class StockRegistryProviderTest extends TestCase
             StockItemCriteriaInterfaceFactory::class,
             ['create']
         );
-        $this->stockItemCriteria = $this->createMock(StockItemCriteriaInterface::class,
+        $this->stockItemCriteria = $this->createMock(
+            StockItemCriteriaInterface::class,
             ['setProductsFilter', 'setScopeFilter'],
             '',
             false
@@ -204,7 +218,8 @@ class StockRegistryProviderTest extends TestCase
             StockStatusCriteriaInterfaceFactory::class,
             ['create']
         );
-        $this->stockStatusCriteria = $this->createMock(StockStatusCriteriaInterface::class,
+        $this->stockStatusCriteria = $this->createMock(
+            StockStatusCriteriaInterface::class,
             ['setProductsFilter', 'setScopeFilter'],
             '',
             false
@@ -238,22 +253,27 @@ class StockRegistryProviderTest extends TestCase
         $this->stockCriteria->expects($this->once())->method('setScopeFilter')->willReturn(null);
         // Create anonymous class extending Collection with dynamic methods
         $stockCollection = new class extends Collection {
+            /** @var array */
             private $items = [];
 
-            public function __construct() {
+            public function __construct()
+            {
                 // Skip parent constructor to avoid complex dependencies
             }
 
-            public function getItems() {
+            public function getItems()
+            {
                 return $this->items;
             }
 
-            public function setItems(?array $items = null) {
+            public function setItems(?array $items = null)
+            {
                 $this->items = $items;
                 return $this;
             }
 
-            public function getFirstItem() {
+            public function getFirstItem()
+            {
                 return !empty($this->items) ? reset($this->items) : null;
             }
         };
@@ -269,22 +289,27 @@ class StockRegistryProviderTest extends TestCase
         $this->stockItemCriteria->expects($this->once())->method('setProductsFilter')->willReturn(null);
         // Create anonymous class extending Stock\Item\Collection with dynamic methods
         $stockItemCollection = new class extends \Magento\CatalogInventory\Model\ResourceModel\Stock\Item\Collection {
+            /** @var array */
             private $items = [];
 
-            public function __construct() {
+            public function __construct()
+            {
                 // Skip parent constructor to avoid complex dependencies
             }
 
-            public function getItems() {
+            public function getItems()
+            {
                 return $this->items;
             }
 
-            public function setItems(?array $items = null) {
+            public function setItems(?array $items = null)
+            {
                 $this->items = $items;
                 return $this;
             }
 
-            public function getFirstItem() {
+            public function getFirstItem()
+            {
                 return !empty($this->items) ? reset($this->items) : null;
             }
         };
@@ -305,23 +330,29 @@ class StockRegistryProviderTest extends TestCase
         $this->stockStatusCriteria->expects($this->once())->method('setScopeFilter')->willReturn(null);
         $this->stockStatusCriteria->expects($this->once())->method('setProductsFilter')->willReturn(null);
         // Create anonymous class extending Stock\Status\Collection with dynamic methods
-        $stockStatusCollection = new class extends \Magento\CatalogInventory\Model\ResourceModel\Stock\Status\Collection {
+        $stockStatusCollection = new class extends
+            \Magento\CatalogInventory\Model\ResourceModel\Stock\Status\Collection {
+            /** @var array */
             private $items = [];
 
-            public function __construct() {
+            public function __construct()
+            {
                 // Skip parent constructor to avoid complex dependencies
             }
 
-            public function getItems() {
+            public function getItems()
+            {
                 return $this->items;
             }
 
-            public function setItems(?array $items = null) {
+            public function setItems(?array $items = null)
+            {
                 $this->items = $items;
                 return $this;
             }
 
-            public function getFirstItem() {
+            public function getFirstItem()
+            {
                 return !empty($this->items) ? reset($this->items) : null;
             }
         };

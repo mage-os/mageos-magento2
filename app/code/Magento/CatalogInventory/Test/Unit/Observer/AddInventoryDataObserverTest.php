@@ -47,17 +47,16 @@ class AddInventoryDataObserverTest extends TestCase
 
         // Create anonymous class for Event that extends Event and implements getProduct
         $this->event = new class extends Event {
+            /** @var mixed */
             private $product = null;
 
-            public function __construct() {
-                parent::__construct();
-            }
-
-            public function getProduct() {
+            public function getProduct()
+            {
                 return $this->product;
             }
 
-            public function setProduct($product) {
+            public function setProduct($product)
+            {
                 $this->product = $product;
                 return $this;
             }

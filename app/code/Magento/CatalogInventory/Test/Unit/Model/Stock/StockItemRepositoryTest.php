@@ -127,16 +127,26 @@ class StockItemRepositoryTest extends TestCase
     {
         // Create anonymous class that extends Item and implements all required methods
         $this->stockItemMock = new class extends Item {
+            /** @var int|null */
             private $itemId = null;
+            /** @var int|null */
             private $productId = null;
+            /** @var bool|null */
             private $isInStock = null;
+            /** @var bool|null */
             private $stockStatusChangedAuto = null;
+            /** @var bool|null */
             private $manageStock = null;
+            /** @var int|null */
             private $websiteId = null;
+            /** @var int|null */
             private $stockId = null;
+            /** @var float|null */
             private $qty = null;
 
-            public function __construct() {}
+            public function __construct()
+            {
+            }
             
             public function getItemId()
             {
@@ -624,7 +634,7 @@ class StockItemRepositoryTest extends TestCase
             // Convert string expectations to PHPUnit expectation methods
             $expects = $config['expects'];
             if (is_string($expects)) {
-                $expects = match($expects) {
+                $expects = match ($expects) {
                     'once' => $this->once(),
                     'never' => $this->never(),
                     'any' => $this->any(),

@@ -62,8 +62,17 @@ class StockStateTest extends TestCase
      */
     protected $objectResult;
 
+    /**
+     * @var int
+     */
     protected $productId = 111;
+    /**
+     * @var int
+     */
     protected $websiteId = 111;
+    /**
+     * @var int
+     */
     protected $qty = 111;
 
     protected function setUp(): void

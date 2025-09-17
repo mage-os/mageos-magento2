@@ -28,32 +28,35 @@ class ItemTest extends TestCase
     {
         // Create anonymous class for AbstractResource with getIdFieldName method
         $resourceMock = new class extends AbstractResource {
+            /** @var string|null */
             private $idFieldName = null;
+            /** @var mixed */
             private $connection = null;
 
-            public function __construct() {
-                parent::__construct();
-            }
-
-            public function getIdFieldName() {
+            public function getIdFieldName()
+            {
                 return $this->idFieldName;
             }
 
-            public function setIdFieldName($idFieldName) {
+            public function setIdFieldName($idFieldName)
+            {
                 $this->idFieldName = $idFieldName;
                 return $this;
             }
 
-            public function getConnection() {
+            public function getConnection()
+            {
                 return $this->connection;
             }
 
-            public function setConnection($connection) {
+            public function setConnection($connection)
+            {
                 $this->connection = $connection;
                 return $this;
             }
 
-            protected function _construct() {
+            protected function _construct()
+            {
                 // Required abstract method implementation
             }
         };

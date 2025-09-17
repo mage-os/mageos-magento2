@@ -76,92 +76,116 @@ class CacheCleanerTest extends TestCase
             ->getMock();
         // Create anonymous class for StockConfigurationInterface with getStockThresholdQty method
         $this->stockConfigurationMock = new class implements StockConfigurationInterface {
+            /** @var float|null */
             private $stockThresholdQty = null;
 
-            public function __construct() {}
+            public function __construct()
+            {
+            }
 
-            public function getStockThresholdQty() {
+            public function getStockThresholdQty()
+            {
                 return $this->stockThresholdQty;
             }
 
-            public function setStockThresholdQty($stockThresholdQty) {
+            public function setStockThresholdQty($stockThresholdQty)
+            {
                 $this->stockThresholdQty = $stockThresholdQty;
                 return $this;
             }
 
-            public function getDefaultScopeId() {
+            public function getDefaultScopeId()
+            {
                 return null;
             }
 
-            public function getDefaultConfigValue($field, $storeId = null) {
+            public function getDefaultConfigValue($field, $storeId = null)
+            {
                 return null;
             }
 
-            public function getManageStock($storeId = null) {
+            public function getManageStock($storeId = null)
+            {
                 return null;
             }
 
-            public function getBackorders($storeId = null) {
+            public function getBackorders($storeId = null)
+            {
                 return null;
             }
 
-            public function getMinQty($storeId = null) {
+            public function getMinQty($storeId = null)
+            {
                 return null;
             }
 
-            public function getMinSaleQty($storeId = null, $customerGroupId = null) {
+            public function getMinSaleQty($storeId = null, $customerGroupId = null)
+            {
                 return null;
             }
 
-            public function getMaxSaleQty($storeId = null) {
+            public function getMaxSaleQty($storeId = null)
+            {
                 return null;
             }
 
-            public function getNotifyStockQty($storeId = null) {
+            public function getNotifyStockQty($storeId = null)
+            {
                 return null;
             }
 
-            public function getEnableQtyIncrements($storeId = null) {
+            public function getEnableQtyIncrements($storeId = null)
+            {
                 return null;
             }
 
-            public function getQtyIncrements($store = null) {
+            public function getQtyIncrements($store = null)
+            {
                 return null;
             }
 
-            public function isShowOutOfStock($storeId = null) {
+            public function isShowOutOfStock($storeId = null)
+            {
                 return null;
             }
 
-            public function isAutoReturnEnabled($storeId = null) {
+            public function isAutoReturnEnabled($storeId = null)
+            {
                 return null;
             }
 
-            public function isDisplayProductStockStatus($storeId = null) {
+            public function isDisplayProductStockStatus($storeId = null)
+            {
                 return null;
             }
 
-            public function getItemOptions() {
+            public function getItemOptions()
+            {
                 return null;
             }
 
-            public function getIsQtyTypeIds($filter = null) {
+            public function getIsQtyTypeIds($filter = null)
+            {
                 return null;
             }
 
-            public function isQty($productTypeId) {
+            public function isQty($productTypeId)
+            {
                 return null;
             }
 
-            public function canSubtractQty($storeId = null) {
+            public function canSubtractQty($storeId = null)
+            {
                 return null;
             }
 
-            public function getCanBackInStock($storeId = null) {
+            public function getCanBackInStock($storeId = null)
+            {
                 return null;
             }
 
-            public function getConfigItemOptions() {
+            public function getConfigItemOptions()
+            {
                 return null;
             }
         };
@@ -180,27 +204,34 @@ class CacheCleanerTest extends TestCase
         
         // Create anonymous class for MetadataPool with getLinkField method
         $this->metadataPoolMock = new class($objectManagerMock, $sequenceFactoryMock) extends MetadataPool {
+            /** @var string|null */
             private $linkField = null;
+            /** @var mixed */
             protected $metadata = null;
 
-            public function __construct($objectManager, $sequenceFactory) {
+            public function __construct($objectManager, $sequenceFactory)
+            {
                 parent::__construct($objectManager, $sequenceFactory, []);
             }
 
-            public function getLinkField() {
+            public function getLinkField()
+            {
                 return $this->linkField;
             }
 
-            public function setLinkField($linkField) {
+            public function setLinkField($linkField)
+            {
                 $this->linkField = $linkField;
                 return $this;
             }
 
-            public function getMetadata($entityType) {
+            public function getMetadata($entityType)
+            {
                 return $this->metadata;
             }
 
-            public function setMetadata($metadata) {
+            public function setMetadata($metadata)
+            {
                 $this->metadata = $metadata;
                 return $this;
             }

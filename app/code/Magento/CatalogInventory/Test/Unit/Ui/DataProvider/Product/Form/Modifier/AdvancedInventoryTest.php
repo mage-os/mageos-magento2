@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace Magento\CatalogInventory\Test\Unit\Ui\DataProvider\Product\Form\Modifier;
 
-use PHPUnit\Framework\Attributes\DataProvider as DataProviderAttribute;
 use Magento\Catalog\Test\Unit\Ui\DataProvider\Product\Form\Modifier\AbstractModifierTestCase;
 use Magento\CatalogInventory\Api\Data\StockItemInterface;
 use Magento\CatalogInventory\Api\StockConfigurationInterface;
@@ -48,21 +47,18 @@ class AdvancedInventoryTest extends AbstractModifierTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->stockRegistryMock = $this->getMockBuilder(\Magento\CatalogInventory\Model\StockRegistry::class)
+        $this->stockRegistryMock = $this->getMockBuilder(StockRegistryInterface::class)
             ->onlyMethods(['getStockItem'])
-            ->disableOriginalConstructor()
-            ->getMock();
+            ->getMockForAbstractClass();
         $this->storeMock = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->stockItemMock = $this->getMockBuilder(\Magento\CatalogInventory\Model\Stock\Item::class)
-            ->onlyMethods(['getData', 'getManageStock', 'getQty', 'getMinQty', 'getMinSaleQty', 'getMaxSaleQty', 'getIsQtyDecimal', 'getIsDecimalDivided', 'getBackorders', 'getNotifyStockQty', 'getEnableQtyIncrements', 'getQtyIncrements', 'getIsInStock'])
+        $this->stockItemMock = $this->getMockBuilder(StockItemInterface::class)
+            ->addMethods(['getData'])
+            ->getMockForAbstractClass();
+        $this->stockConfigurationMock = $this->getMockBuilder(StockConfigurationInterface::class)
             ->disableOriginalConstructor()
-            ->getMock();
-        $this->stockConfigurationMock = $this->getMockBuilder(\Magento\CatalogInventory\Model\Configuration::class)
-            ->onlyMethods(['getDefaultConfigValue'])
-            ->disableOriginalConstructor()
-            ->getMock();
+            ->getMockForAbstractClass();
 
         $this->stockRegistryMock->expects($this->any())
             ->method('getStockItem')
@@ -106,8 +102,8 @@ class AdvancedInventoryTest extends AbstractModifierTestCase
      * @param null|array $unserializedValue
      * @param int $serializeCalledNum
      * @param int $isValidCalledNum
+     * @dataProvider modifyDataProvider
      */
-    #[DataProviderAttribute('modifyDataProvider')]
     public function testModifyData(
         $modelId,
         $someData,

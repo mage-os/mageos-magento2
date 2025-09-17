@@ -21,7 +21,7 @@ use PHPUnit\Framework\TestCase;
  */
 class StockTest extends TestCase
 {
-    const ATTRIBUTE_NAME = 'quantity_and_stock_status';
+    public const ATTRIBUTE_NAME = 'quantity_and_stock_status';
 
     /**
      * @var Factory|MockObject
@@ -68,39 +68,48 @@ class StockTest extends TestCase
                 [\Magento\Framework\View\Helper\SecureHtmlRenderer::class, $secureHtmlRendererMock]
             ]);
         
-        $this->_qtyMock = new class($this->_factoryElementMock, $this->_collectionFactoryMock, $escaperMock) extends Text {
+        $this->_qtyMock = new class(
+            $this->_factoryElementMock,
+            $this->_collectionFactoryMock,
+            $escaperMock
+        ) extends Text {
+            /** @var mixed */
             private $value = null;
+            /** @var string|null */
             private $name = null;
+            /** @var mixed */
             private $form = null;
 
-            public function __construct($factoryElement, $factoryCollection, $escaper) {
-                parent::__construct($factoryElement, $factoryCollection, $escaper);
-            }
-
-            public function setValue($value) {
+            public function setValue($value)
+            {
                 $this->value = $value;
                 return $this;
             }
 
-            public function setName($name) {
+            public function setName($name)
+            {
                 $this->name = $name;
                 return $this;
             }
 
-            public function setForm($form) {
+            public function setForm($form)
+            {
                 $this->form = $form;
                 return $this;
             }
 
-            public function getValue() {
+            public function getValue()
+            {
                 return $this->value;
             }
 
-            public function getName() {
+            public function getName()
+            {
                 return $this->name;
             }
 
-            public function getForm() {
+            public function getForm()
+            {
                 return $this->form;
             }
         };

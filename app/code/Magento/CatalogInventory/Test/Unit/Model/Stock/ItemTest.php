@@ -109,14 +109,12 @@ class ItemTest extends TestCase
 
         $store = $this->createPartialMock(Store::class, ['getId', '__wakeup']);
         $store->method('getId')->willReturn(self::$storeId);
-        $this->storeManager = $this->createMock(StoreManagerInterface::class
-        );
+        $this->storeManager = $this->createMock(StoreManagerInterface::class);
         $this->storeManager->method('getStore')->willReturn($store);
 
         $this->stockConfiguration = $this->createMock(StockConfigurationInterface::class);
 
-        $this->stockItemRepository = $this->createMock(StockItemRepositoryInterface::class
-        );
+        $this->stockItemRepository = $this->createMock(StockItemRepositoryInterface::class);
 
         $this->resource = $this->createMock(\Magento\CatalogInventory\Model\ResourceModel\Stock\Item::class);
 
@@ -169,77 +167,97 @@ class ItemTest extends TestCase
     {
         // Create anonymous class extending Product with dynamic methods
         $product = new class extends Product {
+            /** @var bool */
             private $isChangedWebsites = false;
+            /** @var int|null */
             private $id = null;
+            /** @var string|null */
             private $name = null;
+            /** @var int|null */
             private $storeId = null;
+            /** @var string|null */
             private $typeId = null;
+            /** @var bool|null */
             private $statusChanged = null;
 
-            public function __construct() {
+            public function __construct()
+            {
                 // Skip parent constructor to avoid complex dependencies
             }
 
             // Dynamic method from addMethods
-            public function getIsChangedWebsites() {
+            public function getIsChangedWebsites()
+            {
                 return $this->isChangedWebsites;
             }
 
-            public function setIsChangedWebsites($value) {
+            public function setIsChangedWebsites($value)
+            {
                 $this->isChangedWebsites = $value;
                 return $this;
             }
 
             // Methods from onlyMethods
-            public function getId() {
+            public function getId()
+            {
                 return $this->id;
             }
 
-            public function setId($value) {
+            public function setId($value)
+            {
                 $this->id = $value;
                 return $this;
             }
 
-            public function getName() {
+            public function getName()
+            {
                 return $this->name;
             }
 
-            public function setName($value) {
+            public function setName($value)
+            {
                 $this->name = $value;
                 return $this;
             }
 
-            public function getStoreId() {
+            public function getStoreId()
+            {
                 return $this->storeId;
             }
 
-            public function setStoreId($value) {
+            public function setStoreId($value)
+            {
                 $this->storeId = $value;
                 return $this;
             }
 
-            public function getTypeId() {
+            public function getTypeId()
+            {
                 return $this->typeId;
             }
 
-            public function setTypeId($value) {
+            public function setTypeId($value)
+            {
                 $this->typeId = $value;
                 return $this;
             }
 
-            public function dataHasChangedFor($field) {
+            public function dataHasChangedFor($field)
+            {
                 if ($field === 'status') {
                     return $this->statusChanged;
                 }
                 return false;
             }
 
-            public function setStatusChanged($value) {
+            public function setStatusChanged($value)
+            {
                 $this->statusChanged = $value;
                 return $this;
             }
 
-            public function __wakeup() {
+            public function __wakeup()
+            {
                 // Required method implementation
             }
         };

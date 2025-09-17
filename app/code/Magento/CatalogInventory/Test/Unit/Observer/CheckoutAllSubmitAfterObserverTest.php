@@ -55,57 +55,68 @@ class CheckoutAllSubmitAfterObserverTest extends TestCase
 
         // Create anonymous class for Event with all required methods
         $this->event = new class extends Event {
+            /** @var mixed */
             private $product = null;
+            /** @var mixed */
             private $collection = null;
+            /** @var mixed */
             private $creditmemo = null;
+            /** @var mixed */
             private $quote = null;
+            /** @var mixed */
             private $website = null;
 
-            public function __construct() {
-                parent::__construct();
-            }
-
-            public function getProduct() {
+            public function getProduct()
+            {
                 return $this->product;
             }
 
-            public function setProduct($product) {
+            public function setProduct($product)
+            {
                 $this->product = $product;
                 return $this;
             }
 
-            public function getCollection() {
+            public function getCollection()
+            {
                 return $this->collection;
             }
 
-            public function setCollection($collection) {
+            public function setCollection($collection)
+            {
                 $this->collection = $collection;
                 return $this;
             }
 
-            public function getCreditmemo() {
+            public function getCreditmemo()
+            {
                 return $this->creditmemo;
             }
 
-            public function setCreditmemo($creditmemo) {
+            public function setCreditmemo($creditmemo)
+            {
                 $this->creditmemo = $creditmemo;
                 return $this;
             }
 
-            public function getQuote() {
+            public function getQuote()
+            {
                 return $this->quote;
             }
 
-            public function setQuote($quote) {
+            public function setQuote($quote)
+            {
                 $this->quote = $quote;
                 return $this;
             }
 
-            public function getWebsite() {
+            public function getWebsite()
+            {
                 return $this->website;
             }
 
-            public function setWebsite($website) {
+            public function setWebsite($website)
+            {
                 $this->website = $website;
                 return $this;
             }
@@ -128,17 +139,20 @@ class CheckoutAllSubmitAfterObserverTest extends TestCase
     {
         // Create anonymous class for Quote with getInventoryProcessed method
         $quote = new class extends Quote {
+            /** @var bool */
             private $inventoryProcessed = false;
 
-            public function __construct() {
-                
+            public function __construct()
+            {
             }
 
-            public function getInventoryProcessed() {
+            public function getInventoryProcessed()
+            {
                 return $this->inventoryProcessed;
             }
 
-            public function setInventoryProcessed($inventoryProcessed) {
+            public function setInventoryProcessed($inventoryProcessed)
+            {
                 $this->inventoryProcessed = $inventoryProcessed;
                 return $this;
             }

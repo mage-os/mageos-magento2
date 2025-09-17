@@ -43,27 +43,29 @@ class UpdateItemsStockUponConfigChangeObserverTest extends TestCase
 
         // Create anonymous class for Event with getWebsite and getChangedPaths methods
         $this->event = new class extends Event {
+            /** @var mixed */
             private $website = null;
+            /** @var array */
             private $changedPaths = [];
 
-            public function __construct() {
-                parent::__construct();
-            }
-
-            public function getWebsite() {
+            public function getWebsite()
+            {
                 return $this->website;
             }
 
-            public function setWebsite($website) {
+            public function setWebsite($website)
+            {
                 $this->website = $website;
                 return $this;
             }
 
-            public function getChangedPaths() {
+            public function getChangedPaths()
+            {
                 return $this->changedPaths;
             }
 
-            public function setChangedPaths($changedPaths) {
+            public function setChangedPaths($changedPaths)
+            {
                 $this->changedPaths = $changedPaths;
                 return $this;
             }

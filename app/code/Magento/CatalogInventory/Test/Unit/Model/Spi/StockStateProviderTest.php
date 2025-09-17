@@ -133,8 +133,7 @@ class StockStateProviderTest extends TestCase
 
         $this->mathDivision = $this->createPartialMock(Division::class, ['getExactDivision']);
 
-        $this->localeFormat = $this->createMock(FormatInterface::class
-        );
+        $this->localeFormat = $this->createMock(FormatInterface::class);
         $this->localeFormat->method('getNumber')->willReturn($this->qty);
 
         $this->object = $this->objectManagerHelper->getObject(DataObject::class);
@@ -352,102 +351,357 @@ class StockStateProviderTest extends TestCase
     {
         // Create anonymous class implementing StockItemInterface with dynamic methods
         $stockItem = new class implements StockItemInterface {
+            /** @var bool */
             private $suppressCheckQtyIncrements = false;
+            /** @var bool */
             private $isSaleable = true;
+            /** @var int */
             private $orderedItems = 0;
+            /** @var string */
             private $productName = '';
+            /** @var bool */
             private $isChildItem = false;
+            /** @var bool */
             private $hasStockQty = false;
+            /** @var float|null */
             private $stockQty = null;
+            /** @var array */
             private $values = [];
 
-            public function __construct() {}
+            public function __construct()
+            {
+            }
 
             // Dynamic methods from stockAddItemMethods
-            public function getSuppressCheckQtyIncrements() { return $this->suppressCheckQtyIncrements; }
-            public function setSuppressCheckQtyIncrements($value) { $this->suppressCheckQtyIncrements = $value; return $this; }
-            public function getIsSaleable() { return $this->isSaleable; }
-            public function setIsSaleable($value) { $this->isSaleable = $value; return $this; }
-            public function getOrderedItems() { return $this->orderedItems; }
-            public function setOrderedItems($value) { $this->orderedItems = $value; return $this; }
-            public function getProductName() { return $this->productName; }
-            public function setProductName($value) { $this->productName = $value; return $this; }
-            public function getIsChildItem() { return $this->isChildItem; }
-            public function setIsChildItem($value) { $this->isChildItem = $value; return $this; }
-            public function hasStockQty() { return $this->hasStockQty; }
-            public function setHasStockQty($value) { $this->hasStockQty = $value; return $this; }
-            public function setStockQty($value) { $this->stockQty = $value; return $this; }
-            public function getData($key = '', $index = null) { 
-                if ($key === 'stock_qty') return $this->stockQty;
-                return isset($this->values[$key]) ? $this->values[$key] : null; 
+            public function getSuppressCheckQtyIncrements()
+            {
+                return $this->suppressCheckQtyIncrements;
             }
-            public function setData($key, $value = null) { $this->values[$key] = $value; return $this; }
+            public function setSuppressCheckQtyIncrements($value)
+            {
+                $this->suppressCheckQtyIncrements = $value;
+                return $this;
+            }
+            public function getIsSaleable()
+            {
+                return $this->isSaleable;
+            }
+            public function setIsSaleable($value)
+            {
+                $this->isSaleable = $value;
+                return $this;
+            }
+            public function getOrderedItems()
+            {
+                return $this->orderedItems;
+            }
+            public function setOrderedItems($value)
+            {
+                $this->orderedItems = $value;
+                return $this;
+            }
+            public function getProductName()
+            {
+                return $this->productName;
+            }
+            public function setProductName($value)
+            {
+                $this->productName = $value;
+                return $this;
+            }
+            public function getIsChildItem()
+            {
+                return $this->isChildItem;
+            }
+            public function setIsChildItem($value)
+            {
+                $this->isChildItem = $value;
+                return $this;
+            }
+            public function hasStockQty()
+            {
+                return $this->hasStockQty;
+            }
+            public function setHasStockQty($value)
+            {
+                $this->hasStockQty = $value;
+                return $this;
+            }
+            public function setStockQty($value)
+            {
+                $this->stockQty = $value;
+                return $this;
+            }
+            public function getData($key = '', $index = null)
+            {
+                if ($key === 'stock_qty') {
+                    return $this->stockQty;
+                }
+                return isset($this->values[$key]) ? $this->values[$key] : null;
+            }
+            public function setData($key, $value = null)
+            {
+                $this->values[$key] = $value;
+                return $this;
+            }
 
             // Required StockItemInterface methods - these will return values from $values array
-            public function getItemId() { return $this->getData('getItemId'); }
-            public function setItemId($itemId) { return $this->setData('getItemId', $itemId); }
-            public function getProductId() { return $this->getData('getProductId'); }
-            public function setProductId($productId) { return $this->setData('getProductId', $productId); }
-            public function getWebsiteId() { return $this->getData('getWebsiteId'); }
-            public function setWebsiteId($websiteId) { return $this->setData('getWebsiteId', $websiteId); }
-            public function getStockId() { return $this->getData('getStockId'); }
-            public function setStockId($stockId) { return $this->setData('getStockId', $stockId); }
-            public function getQty() { return $this->getData('getQty'); }
-            public function setQty($qty) { return $this->setData('getQty', $qty); }
-            public function getStockQty() { return $this->stockQty; }
-            public function getMinQty() { return $this->getData('getMinQty'); }
-            public function setMinQty($minQty) { return $this->setData('getMinQty', $minQty); }
-            public function getMinSaleQty() { return $this->getData('getMinSaleQty'); }
-            public function setMinSaleQty($minSaleQty) { return $this->setData('getMinSaleQty', $minSaleQty); }
-            public function getMaxSaleQty() { return $this->getData('getMaxSaleQty'); }
-            public function setMaxSaleQty($maxSaleQty) { return $this->setData('getMaxSaleQty', $maxSaleQty); }
-            public function getIsInStock() { return $this->getData('getIsInStock'); }
-            public function setIsInStock($isInStock) { return $this->setData('getIsInStock', $isInStock); }
-            public function getLowStockDate() { return $this->getData('getLowStockDate'); }
-            public function setLowStockDate($lowStockDate) { return $this->setData('getLowStockDate', $lowStockDate); }
-            public function getNotifyStockQty() { return $this->getData('getNotifyStockQty'); }
-            public function setNotifyStockQty($notifyStockQty) { return $this->setData('getNotifyStockQty', $notifyStockQty); }
-            public function getManageStock() { return $this->getData('getManageStock'); }
-            public function setManageStock($manageStock) { return $this->setData('getManageStock', $manageStock); }
-            public function getBackorders() { return $this->getData('getBackorders'); }
-            public function setBackorders($backorders) { return $this->setData('getBackorders', $backorders); }
-            public function getQtyIncrements() { return $this->getData('getQtyIncrements'); }
-            public function setQtyIncrements($qtyIncrements) { return $this->setData('getQtyIncrements', $qtyIncrements); }
-            public function getEnableQtyIncrements() { return $this->getData('getEnableQtyIncrements'); }
-            public function setEnableQtyIncrements($enableQtyIncrements) { return $this->setData('getEnableQtyIncrements', $enableQtyIncrements); }
-            public function getIsQtyDecimal() { return $this->getData('getIsQtyDecimal'); }
-            public function setIsQtyDecimal($isQtyDecimal) { return $this->setData('getIsQtyDecimal', $isQtyDecimal); }
-            public function getIsDecimalDivided() { return $this->getData('getIsDecimalDivided'); }
-            public function setIsDecimalDivided($isDecimalDivided) { return $this->setData('getIsDecimalDivided', $isDecimalDivided); }
-            public function getShowDefaultNotificationMessage() { return $this->getData('getShowDefaultNotificationMessage'); }
-            public function setShowDefaultNotificationMessage($showDefaultNotificationMessage) { return $this->setData('getShowDefaultNotificationMessage', $showDefaultNotificationMessage); }
-            public function getUseConfigMinQty() { return $this->getData('getUseConfigMinQty'); }
-            public function setUseConfigMinQty($useConfigMinQty) { return $this->setData('getUseConfigMinQty', $useConfigMinQty); }
-            public function getUseConfigMinSaleQty() { return $this->getData('getUseConfigMinSaleQty'); }
-            public function setUseConfigMinSaleQty($useConfigMinSaleQty) { return $this->setData('getUseConfigMinSaleQty', $useConfigMinSaleQty); }
-            public function getUseConfigMaxSaleQty() { return $this->getData('getUseConfigMaxSaleQty'); }
-            public function setUseConfigMaxSaleQty($useConfigMaxSaleQty) { return $this->setData('getUseConfigMaxSaleQty', $useConfigMaxSaleQty); }
-            public function getUseConfigBackorders() { return $this->getData('getUseConfigBackorders'); }
-            public function setUseConfigBackorders($useConfigBackorders) { return $this->setData('getUseConfigBackorders', $useConfigBackorders); }
-            public function getUseConfigNotifyStockQty() { return $this->getData('getUseConfigNotifyStockQty'); }
-            public function setUseConfigNotifyStockQty($useConfigNotifyStockQty) { return $this->setData('getUseConfigNotifyStockQty', $useConfigNotifyStockQty); }
-            public function getUseConfigQtyIncrements() { return $this->getData('getUseConfigQtyIncrements'); }
-            public function setUseConfigQtyIncrements($useConfigQtyIncrements) { return $this->setData('getUseConfigQtyIncrements', $useConfigQtyIncrements); }
-            public function getUseConfigEnableQtyInc() { return $this->getData('getUseConfigEnableQtyInc'); }
-            public function setUseConfigEnableQtyInc($useConfigEnableQtyInc) { return $this->setData('getUseConfigEnableQtyInc', $useConfigEnableQtyInc); }
-            public function getUseConfigManageStock() { return $this->getData('getUseConfigManageStock'); }
-            public function setUseConfigManageStock($useConfigManageStock) { return $this->setData('getUseConfigManageStock', $useConfigManageStock); }
-            public function getStockStatusChangedAuto() { return $this->getData('getStockStatusChangedAuto'); }
-            public function setStockStatusChangedAuto($stockStatusChangedAuto) { return $this->setData('getStockStatusChangedAuto', $stockStatusChangedAuto); }
-            public function getExtensionAttributes() { return null; }
-            public function setExtensionAttributes($extensionAttributes) { return $this; }
-            public function addData(array $arr) { return $this; }
-            public function unsetData($key = null) { return $this; }
-            public function hasData($key = '') { return false; }
-            public function toArray($arrAttributes = []) { return []; }
-            public function toJson($arrAttributes = []) { return ''; }
-            public function toString($format = '') { return ''; }
-            public function isEmpty() { return true; }
+            public function getItemId()
+            {
+                return $this->getData('getItemId');
+            }
+            public function setItemId($itemId)
+            {
+                return $this->setData('getItemId', $itemId);
+            }
+            public function getProductId()
+            {
+                return $this->getData('getProductId');
+            }
+            public function setProductId($productId)
+            {
+                return $this->setData('getProductId', $productId);
+            }
+            public function getWebsiteId()
+            {
+                return $this->getData('getWebsiteId');
+            }
+            public function setWebsiteId($websiteId)
+            {
+                return $this->setData('getWebsiteId', $websiteId);
+            }
+            public function getStockId()
+            {
+                return $this->getData('getStockId');
+            }
+            public function setStockId($stockId)
+            {
+                return $this->setData('getStockId', $stockId);
+            }
+            public function getQty()
+            {
+                return $this->getData('getQty');
+            }
+            public function setQty($qty)
+            {
+                return $this->setData('getQty', $qty);
+            }
+            public function getStockQty()
+            {
+                return $this->stockQty;
+            }
+            public function getMinQty()
+            {
+                return $this->getData('getMinQty');
+            }
+            public function setMinQty($minQty)
+            {
+                return $this->setData('getMinQty', $minQty);
+            }
+            public function getMinSaleQty()
+            {
+                return $this->getData('getMinSaleQty');
+            }
+            public function setMinSaleQty($minSaleQty)
+            {
+                return $this->setData('getMinSaleQty', $minSaleQty);
+            }
+            public function getMaxSaleQty()
+            {
+                return $this->getData('getMaxSaleQty');
+            }
+            public function setMaxSaleQty($maxSaleQty)
+            {
+                return $this->setData('getMaxSaleQty', $maxSaleQty);
+            }
+            public function getIsInStock()
+            {
+                return $this->getData('getIsInStock');
+            }
+            public function setIsInStock($isInStock)
+            {
+                return $this->setData('getIsInStock', $isInStock);
+            }
+            public function getLowStockDate()
+            {
+                return $this->getData('getLowStockDate');
+            }
+            public function setLowStockDate($lowStockDate)
+            {
+                return $this->setData('getLowStockDate', $lowStockDate);
+            }
+            public function getNotifyStockQty()
+            {
+                return $this->getData('getNotifyStockQty');
+            }
+            public function setNotifyStockQty($notifyStockQty)
+            {
+                return $this->setData('getNotifyStockQty', $notifyStockQty);
+            }
+            public function getManageStock()
+            {
+                return $this->getData('getManageStock');
+            }
+            public function setManageStock($manageStock)
+            {
+                return $this->setData('getManageStock', $manageStock);
+            }
+            public function getBackorders()
+            {
+                return $this->getData('getBackorders');
+            }
+            public function setBackorders($backorders)
+            {
+                return $this->setData('getBackorders', $backorders);
+            }
+            public function getQtyIncrements()
+            {
+                return $this->getData('getQtyIncrements');
+            }
+            public function setQtyIncrements($qtyIncrements)
+            {
+                return $this->setData('getQtyIncrements', $qtyIncrements);
+            }
+            public function getEnableQtyIncrements()
+            {
+                return $this->getData('getEnableQtyIncrements');
+            }
+            public function setEnableQtyIncrements($enableQtyIncrements)
+            {
+                return $this->setData('getEnableQtyIncrements', $enableQtyIncrements);
+            }
+            public function getIsQtyDecimal()
+            {
+                return $this->getData('getIsQtyDecimal');
+            }
+            public function setIsQtyDecimal($isQtyDecimal)
+            {
+                return $this->setData('getIsQtyDecimal', $isQtyDecimal);
+            }
+            public function getIsDecimalDivided()
+            {
+                return $this->getData('getIsDecimalDivided');
+            }
+            public function setIsDecimalDivided($isDecimalDivided)
+            {
+                return $this->setData('getIsDecimalDivided', $isDecimalDivided);
+            }
+            public function getShowDefaultNotificationMessage()
+            {
+                return $this->getData('getShowDefaultNotificationMessage');
+            }
+            public function setShowDefaultNotificationMessage($showDefaultNotificationMessage)
+            {
+                return $this->setData('getShowDefaultNotificationMessage', $showDefaultNotificationMessage);
+            }
+            public function getUseConfigMinQty()
+            {
+                return $this->getData('getUseConfigMinQty');
+            }
+            public function setUseConfigMinQty($useConfigMinQty)
+            {
+                return $this->setData('getUseConfigMinQty', $useConfigMinQty);
+            }
+            public function getUseConfigMinSaleQty()
+            {
+                return $this->getData('getUseConfigMinSaleQty');
+            }
+            public function setUseConfigMinSaleQty($useConfigMinSaleQty)
+            {
+                return $this->setData('getUseConfigMinSaleQty', $useConfigMinSaleQty);
+            }
+            public function getUseConfigMaxSaleQty()
+            {
+                return $this->getData('getUseConfigMaxSaleQty');
+            }
+            public function setUseConfigMaxSaleQty($useConfigMaxSaleQty)
+            {
+                return $this->setData('getUseConfigMaxSaleQty', $useConfigMaxSaleQty);
+            }
+            public function getUseConfigBackorders()
+            {
+                return $this->getData('getUseConfigBackorders');
+            }
+            public function setUseConfigBackorders($useConfigBackorders)
+            {
+                return $this->setData('getUseConfigBackorders', $useConfigBackorders);
+            }
+            public function getUseConfigNotifyStockQty()
+            {
+                return $this->getData('getUseConfigNotifyStockQty');
+            }
+            public function setUseConfigNotifyStockQty($useConfigNotifyStockQty)
+            {
+                return $this->setData('getUseConfigNotifyStockQty', $useConfigNotifyStockQty);
+            }
+            public function getUseConfigQtyIncrements()
+            {
+                return $this->getData('getUseConfigQtyIncrements');
+            }
+            public function setUseConfigQtyIncrements($useConfigQtyIncrements)
+            {
+                return $this->setData('getUseConfigQtyIncrements', $useConfigQtyIncrements);
+            }
+            public function getUseConfigEnableQtyInc()
+            {
+                return $this->getData('getUseConfigEnableQtyInc');
+            }
+            public function setUseConfigEnableQtyInc($useConfigEnableQtyInc)
+            {
+                return $this->setData('getUseConfigEnableQtyInc', $useConfigEnableQtyInc);
+            }
+            public function getUseConfigManageStock()
+            {
+                return $this->getData('getUseConfigManageStock');
+            }
+            public function setUseConfigManageStock($useConfigManageStock)
+            {
+                return $this->setData('getUseConfigManageStock', $useConfigManageStock);
+            }
+            public function getStockStatusChangedAuto()
+            {
+                return $this->getData('getStockStatusChangedAuto');
+            }
+            public function setStockStatusChangedAuto($stockStatusChangedAuto)
+            {
+                return $this->setData('getStockStatusChangedAuto', $stockStatusChangedAuto);
+            }
+            public function getExtensionAttributes()
+            {
+                return null;
+            }
+            public function setExtensionAttributes($extensionAttributes)
+            {
+                return $this;
+            }
+            public function addData(array $arr)
+            {
+                return $this;
+            }
+            public function unsetData($key = null)
+            {
+                return $this;
+            }
+            public function hasData($key = '')
+            {
+                return false;
+            }
+            public function toArray($arrAttributes = [])
+            {
+                return [];
+            }
+            public function toJson($arrAttributes = [])
+            {
+                return '';
+            }
+            public function toString($format = '')
+            {
+                return '';
+            }
+            public function isEmpty()
+            {
+                return true;
+            }
         };
 
         // Configure the anonymous class with variation data
@@ -650,87 +904,310 @@ class StockStateProviderTest extends TestCase
         
         // Create anonymous class implementing StockItemInterface with dynamic methods
         $stockItem = new class implements StockItemInterface {
+            /** @var bool */
             private $suppressCheckQtyIncrements = false;
+            /** @var float|null */
             private $qtyIncrements = null;
+            /** @var bool */
             private $isChildItem = false;
+            /** @var string */
             private $productName = '';
 
-            public function __construct() {}
+            public function __construct()
+            {
+            }
 
             // Dynamic methods from stockAddItemMethods
-            public function getSuppressCheckQtyIncrements() { return $this->suppressCheckQtyIncrements; }
-            public function setSuppressCheckQtyIncrements($value) { $this->suppressCheckQtyIncrements = $value; return $this; }
-            public function getQtyIncrements() { return $this->qtyIncrements; }
-            public function setQtyIncrements($value) { $this->qtyIncrements = $value; return $this; }
-            public function getIsChildItem() { return $this->isChildItem; }
-            public function setIsChildItem($value) { $this->isChildItem = $value; return $this; }
-            public function getProductName() { return $this->productName; }
-            public function setProductName($value) { $this->productName = $value; return $this; }
+            public function getSuppressCheckQtyIncrements()
+            {
+                return $this->suppressCheckQtyIncrements;
+            }
+            public function setSuppressCheckQtyIncrements($value)
+            {
+                $this->suppressCheckQtyIncrements = $value;
+                return $this;
+            }
+            public function getQtyIncrements()
+            {
+                return $this->qtyIncrements;
+            }
+            public function setQtyIncrements($value)
+            {
+                $this->qtyIncrements = $value;
+                return $this;
+            }
+            public function getIsChildItem()
+            {
+                return $this->isChildItem;
+            }
+            public function setIsChildItem($value)
+            {
+                $this->isChildItem = $value;
+                return $this;
+            }
+            public function getProductName()
+            {
+                return $this->productName;
+            }
+            public function setProductName($value)
+            {
+                $this->productName = $value;
+                return $this;
+            }
 
             // Required StockItemInterface methods
-            public function getItemId() { return null; }
-            public function setItemId($itemId) { return $this; }
-            public function getProductId() { return null; }
-            public function setProductId($productId) { return $this; }
-            public function getWebsiteId() { return null; }
-            public function setWebsiteId($websiteId) { return $this; }
-            public function getStockId() { return null; }
-            public function setStockId($stockId) { return $this; }
-            public function getQty() { return null; }
-            public function setQty($qty) { return $this; }
-            public function getMinQty() { return null; }
-            public function setMinQty($minQty) { return $this; }
-            public function getMinSaleQty() { return null; }
-            public function setMinSaleQty($minSaleQty) { return $this; }
-            public function getMaxSaleQty() { return null; }
-            public function setMaxSaleQty($maxSaleQty) { return $this; }
-            public function getIsInStock() { return null; }
-            public function setIsInStock($isInStock) { return $this; }
-            public function getLowStockDate() { return null; }
-            public function setLowStockDate($lowStockDate) { return $this; }
-            public function getNotifyStockQty() { return null; }
-            public function setNotifyStockQty($notifyStockQty) { return $this; }
-            public function getManageStock() { return null; }
-            public function setManageStock($manageStock) { return $this; }
-            public function getBackorders() { return null; }
-            public function setBackorders($backorders) { return $this; }
-            public function getEnableQtyIncrements() { return null; }
-            public function setEnableQtyIncrements($enableQtyIncrements) { return $this; }
-            public function getIsQtyDecimal() { return null; }
-            public function setIsQtyDecimal($isQtyDecimal) { return $this; }
-            public function getIsDecimalDivided() { return null; }
-            public function setIsDecimalDivided($isDecimalDivided) { return $this; }
-            public function getShowDefaultNotificationMessage() { return null; }
-            public function setShowDefaultNotificationMessage($showDefaultNotificationMessage) { return $this; }
-            public function getUseConfigMinQty() { return null; }
-            public function setUseConfigMinQty($useConfigMinQty) { return $this; }
-            public function getUseConfigMinSaleQty() { return null; }
-            public function setUseConfigMinSaleQty($useConfigMinSaleQty) { return $this; }
-            public function getUseConfigMaxSaleQty() { return null; }
-            public function setUseConfigMaxSaleQty($useConfigMaxSaleQty) { return $this; }
-            public function getUseConfigBackorders() { return null; }
-            public function setUseConfigBackorders($useConfigBackorders) { return $this; }
-            public function getUseConfigNotifyStockQty() { return null; }
-            public function setUseConfigNotifyStockQty($useConfigNotifyStockQty) { return $this; }
-            public function getUseConfigQtyIncrements() { return null; }
-            public function setUseConfigQtyIncrements($useConfigQtyIncrements) { return $this; }
-            public function getUseConfigEnableQtyInc() { return null; }
-            public function setUseConfigEnableQtyInc($useConfigEnableQtyInc) { return $this; }
-            public function getUseConfigManageStock() { return null; }
-            public function setUseConfigManageStock($useConfigManageStock) { return $this; }
-            public function getStockStatusChangedAuto() { return null; }
-            public function setStockStatusChangedAuto($stockStatusChangedAuto) { return $this; }
-            public function getExtensionAttributes() { return null; }
-            public function setExtensionAttributes($extensionAttributes) { return $this; }
-            public function getData($key = '', $index = null) { return null; }
-            public function setData($key, $value = null) { return $this; }
-            public function addData(array $arr) { return $this; }
-            public function unsetData($key = null) { return $this; }
-            public function hasData($key = '') { return false; }
-            public function toArray($arrAttributes = []) { return []; }
-            public function toJson($arrAttributes = []) { return ''; }
-            public function toString($format = '') { return ''; }
-            public function isEmpty() { return true; }
+            public function getItemId()
+            {
+                return null;
+            }
+            public function setItemId($itemId)
+            {
+                return $this;
+            }
+            public function getProductId()
+            {
+                return null;
+            }
+            public function setProductId($productId)
+            {
+                return $this;
+            }
+            public function getWebsiteId()
+            {
+                return null;
+            }
+            public function setWebsiteId($websiteId)
+            {
+                return $this;
+            }
+            public function getStockId()
+            {
+                return null;
+            }
+            public function setStockId($stockId)
+            {
+                return $this;
+            }
+            public function getQty()
+            {
+                return null;
+            }
+            public function setQty($qty)
+            {
+                return $this;
+            }
+            public function getMinQty()
+            {
+                return null;
+            }
+            public function setMinQty($minQty)
+            {
+                return $this;
+            }
+            public function getMinSaleQty()
+            {
+                return null;
+            }
+            public function setMinSaleQty($minSaleQty)
+            {
+                return $this;
+            }
+            public function getMaxSaleQty()
+            {
+                return null;
+            }
+            public function setMaxSaleQty($maxSaleQty)
+            {
+                return $this;
+            }
+            public function getIsInStock()
+            {
+                return null;
+            }
+            public function setIsInStock($isInStock)
+            {
+                return $this;
+            }
+            public function getLowStockDate()
+            {
+                return null;
+            }
+            public function setLowStockDate($lowStockDate)
+            {
+                return $this;
+            }
+            public function getNotifyStockQty()
+            {
+                return null;
+            }
+            public function setNotifyStockQty($notifyStockQty)
+            {
+                return $this;
+            }
+            public function getManageStock()
+            {
+                return null;
+            }
+            public function setManageStock($manageStock)
+            {
+                return $this;
+            }
+            public function getBackorders()
+            {
+                return null;
+            }
+            public function setBackorders($backorders)
+            {
+                return $this;
+            }
+            public function getEnableQtyIncrements()
+            {
+                return null;
+            }
+            public function setEnableQtyIncrements($enableQtyIncrements)
+            {
+                return $this;
+            }
+            public function getIsQtyDecimal()
+            {
+                return null;
+            }
+            public function setIsQtyDecimal($isQtyDecimal)
+            {
+                return $this;
+            }
+            public function getIsDecimalDivided()
+            {
+                return null;
+            }
+            public function setIsDecimalDivided($isDecimalDivided)
+            {
+                return $this;
+            }
+            public function getShowDefaultNotificationMessage()
+            {
+                return null;
+            }
+            public function setShowDefaultNotificationMessage($showDefaultNotificationMessage)
+            {
+                return $this;
+            }
+            public function getUseConfigMinQty()
+            {
+                return null;
+            }
+            public function setUseConfigMinQty($useConfigMinQty)
+            {
+                return $this;
+            }
+            public function getUseConfigMinSaleQty()
+            {
+                return null;
+            }
+            public function setUseConfigMinSaleQty($useConfigMinSaleQty)
+            {
+                return $this;
+            }
+            public function getUseConfigMaxSaleQty()
+            {
+                return null;
+            }
+            public function setUseConfigMaxSaleQty($useConfigMaxSaleQty)
+            {
+                return $this;
+            }
+            public function getUseConfigBackorders()
+            {
+                return null;
+            }
+            public function setUseConfigBackorders($useConfigBackorders)
+            {
+                return $this;
+            }
+            public function getUseConfigNotifyStockQty()
+            {
+                return null;
+            }
+            public function setUseConfigNotifyStockQty($useConfigNotifyStockQty)
+            {
+                return $this;
+            }
+            public function getUseConfigQtyIncrements()
+            {
+                return null;
+            }
+            public function setUseConfigQtyIncrements($useConfigQtyIncrements)
+            {
+                return $this;
+            }
+            public function getUseConfigEnableQtyInc()
+            {
+                return null;
+            }
+            public function setUseConfigEnableQtyInc($useConfigEnableQtyInc)
+            {
+                return $this;
+            }
+            public function getUseConfigManageStock()
+            {
+                return null;
+            }
+            public function setUseConfigManageStock($useConfigManageStock)
+            {
+                return $this;
+            }
+            public function getStockStatusChangedAuto()
+            {
+                return null;
+            }
+            public function setStockStatusChangedAuto($stockStatusChangedAuto)
+            {
+                return $this;
+            }
+            public function getExtensionAttributes()
+            {
+                return null;
+            }
+            public function setExtensionAttributes($extensionAttributes)
+            {
+                return $this;
+            }
+            public function getData($key = '', $index = null)
+            {
+                return null;
+            }
+            public function setData($key, $value = null)
+            {
+                return $this;
+            }
+            public function addData(array $arr)
+            {
+                return $this;
+            }
+            public function unsetData($key = null)
+            {
+                return $this;
+            }
+            public function hasData($key = '')
+            {
+                return false;
+            }
+            public function toArray($arrAttributes = [])
+            {
+                return [];
+            }
+            public function toJson($arrAttributes = [])
+            {
+                return '';
+            }
+            public function toString($format = '')
+            {
+                return '';
+            }
+            public function isEmpty()
+            {
+                return true;
+            }
         };
 
         // Configure the anonymous class

@@ -86,16 +86,21 @@ class AddStockItemsObserverTest extends TestCase
 
         // Create anonymous class for ProductExtensionInterface
         $productExtension = new class implements ProductExtensionInterface {
+            /** @var mixed */
             private $stockItem = null;
 
-            public function __construct() {}
+            public function __construct()
+            {
+            }
 
-            public function setStockItem($stockItem) {
+            public function setStockItem($stockItem)
+            {
                 $this->stockItem = $stockItem;
                 return $this;
             }
 
-            public function getStockItem() {
+            public function getStockItem()
+            {
                 return $this->stockItem;
             }
         };

@@ -58,22 +58,33 @@ class AfterProductLoadTest extends TestCase
 
         // Create anonymous class extending ProductExtensionAttributes with setStockItem method
         $this->productExtensionMock = new class extends ProductExtensionAttributes {
+            /** @var mixed */
             private $stockItem = null;
 
-            public function __construct() {}
+            public function __construct()
+            {
+            }
 
-            public function setStockItem($stockItem) {
+            public function setStockItem($stockItem)
+            {
                 $this->stockItem = $stockItem;
                 return $this;
             }
 
-            public function getStockItem() {
+            public function getStockItem()
+            {
                 return $this->stockItem;
             }
 
             // Implement other interface methods as needed
-            public function getStockItems() { return null; }
-            public function setStockItems($stockItems) { return $this; }
+            public function getStockItems()
+            {
+                return null;
+            }
+            public function setStockItems($stockItems)
+            {
+                return $this;
+            }
         };
         
         // Use setter method instead of expects for anonymous class

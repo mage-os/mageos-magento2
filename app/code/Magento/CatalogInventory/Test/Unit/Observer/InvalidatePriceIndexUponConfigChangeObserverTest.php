@@ -57,17 +57,16 @@ class InvalidatePriceIndexUponConfigChangeObserverTest extends TestCase
         
         // Create anonymous class for Event with getChangedPaths method
         $this->eventMock = new class extends Event {
+            /** @var array */
             private $changedPaths = [];
 
-            public function __construct() {
-                parent::__construct();
-            }
-
-            public function getChangedPaths() {
+            public function getChangedPaths()
+            {
                 return $this->changedPaths;
             }
 
-            public function setChangedPaths($changedPaths) {
+            public function setChangedPaths($changedPaths)
+            {
                 $this->changedPaths = $changedPaths;
                 return $this;
             }

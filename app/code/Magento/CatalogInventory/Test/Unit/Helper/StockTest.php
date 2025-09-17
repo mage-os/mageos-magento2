@@ -106,23 +106,29 @@ class StockTest extends TestCase
         $this->stockConfiguration->expects($this->once())->method('getDefaultScopeId')->willReturn($websiteId);
 
         $productMock = new class extends Product {
+            /** @var bool|null */
             private $isSalable = null;
+            /** @var int|null */
             private $id = null;
 
-            public function __construct() {
+            public function __construct()
+            {
                 // Empty constructor for anonymous class
             }
 
-            public function setIsSalable($isSalable) {
+            public function setIsSalable($isSalable)
+            {
                 $this->isSalable = $isSalable;
                 return $this;
             }
 
-            public function getId() {
+            public function getId()
+            {
                 return $this->id;
             }
 
-            public function setId($id) {
+            public function setId($id)
+            {
                 $this->id = $id;
                 return $this;
             }
@@ -139,23 +145,29 @@ class StockTest extends TestCase
         $status = 'test';
 
         $productMock = new class extends Product {
+            /** @var bool|null */
             private $isSalable = null;
+            /** @var int|null */
             private $id = null;
 
-            public function __construct() {
+            public function __construct()
+            {
                 // Empty constructor for anonymous class
             }
 
-            public function setIsSalable($isSalable) {
+            public function setIsSalable($isSalable)
+            {
                 $this->isSalable = $isSalable;
                 return $this;
             }
 
-            public function getId() {
+            public function getId()
+            {
                 return $this->id;
             }
 
-            public function setId($id) {
+            public function setId($id)
+            {
                 $this->id = $id;
                 return $this;
             }
