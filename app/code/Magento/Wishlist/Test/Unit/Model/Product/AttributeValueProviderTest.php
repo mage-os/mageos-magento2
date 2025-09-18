@@ -18,6 +18,7 @@ use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Wishlist\Model\Product\AttributeValueProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Class AttributeValueProviderTest
@@ -65,12 +66,12 @@ class AttributeValueProviderTest extends TestCase
     /**
      * Get attribute text when the flat table is disabled
      *
-     * @param int $productId
-     * @param string $attributeCode
-     * @param string $attributeText
+     * @param  int    $productId
+     * @param  string $attributeCode
+     * @param  string $attributeText
      * @return void
-     * @dataProvider attributeDataProvider
      */
+    #[DataProvider('attributeDataProvider')]
     public function testGetAttributeTextWhenFlatIsDisabled(int $productId, string $attributeCode, string $attributeText)
     {
         $this->productMock = $this->createPartialMock(Product::class, ['getData']);
@@ -80,9 +81,12 @@ class AttributeValueProviderTest extends TestCase
             ->with($attributeCode)
             ->willReturn($attributeText);
 
-        $productCollection = $this->createPartialMock(Collection::class, [
+        $productCollection = $this->createPartialMock(
+            Collection::class,
+            [
             'addIdFilter', 'addStoreFilter', 'addAttributeToSelect', 'isEnabledFlat', 'getFirstItem'
-        ]);
+            ]
+        );
 
         $productCollection->expects($this->any())
             ->method('addIdFilter')
@@ -112,29 +116,34 @@ class AttributeValueProviderTest extends TestCase
     /**
      * Get attribute text when the flat table is enabled
      *
-     * @dataProvider attributeDataProvider
-     * @param int $productId
-     * @param string $attributeCode
-     * @param string $attributeText
+     * @param  int    $productId
+     * @param  string $attributeCode
+     * @param  string $attributeText
      * @return void
      */
+    #[DataProvider('attributeDataProvider')]
     public function testGetAttributeTextWhenFlatIsEnabled(int $productId, string $attributeCode, string $attributeText)
     {
         $this->connectionMock = $this->createMock(AdapterInterface::class);
         $this->connectionMock->expects($this->any())
             ->method('fetchRow')
-            ->willReturn([
+            ->willReturn(
+                [
                 $attributeCode => $attributeText
-            ]);
+                ]
+            );
         $this->productMock = $this->createPartialMock(Product::class, ['getData']);
         $this->productMock->expects($this->any())
             ->method('getData')
             ->with($attributeCode)
             ->willReturn($attributeText);
 
-        $productCollection = $this->createPartialMock(Collection::class, [
+        $productCollection = $this->createPartialMock(
+            Collection::class,
+            [
             'addIdFilter', 'addStoreFilter', 'addAttributeToSelect', 'isEnabledFlat', 'getConnection'
-        ]);
+            ]
+        );
 
         $productCollection->expects($this->any())
             ->method('addIdFilter')

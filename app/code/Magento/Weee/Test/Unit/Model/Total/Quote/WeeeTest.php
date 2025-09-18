@@ -24,6 +24,7 @@ use Magento\Tax\Model\Calculation;
 use Magento\Weee\Helper\Data as WeeeHelperData;
 use Magento\Weee\Model\Total\Quote\Weee;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -96,10 +97,12 @@ class WeeeTest extends TestCase
         $taxCalculation
             ->expects($this->any())
             ->method('getRate')
-            ->willReturnCallback(function () use (&$callCount, $storeTaxRate, $customerTaxRate) {
-                $callCount++;
-                return $callCount === 1 ? $storeTaxRate : $customerTaxRate;
-            });
+            ->willReturnCallback(
+                function () use (&$callCount, $storeTaxRate, $customerTaxRate) {
+                    $callCount++;
+                    return $callCount === 1 ? $storeTaxRate : $customerTaxRate;
+                }
+            );
 
         return $taxCalculation;
     }
@@ -107,7 +110,7 @@ class WeeeTest extends TestCase
     /**
      * Setup weee helper with an array of methodName, returnValue.
      *
-     * @param array $weeeConfig
+     * @param  array $weeeConfig
      * @return MockObject|WeeeHelperData
      */
     protected function setupWeeeHelper($weeeConfig): WeeeHelperData
@@ -339,11 +342,14 @@ class WeeeTest extends TestCase
      */
     protected function setupAddressMock(array $items): MockObject
     {
-        $addressMock = $this->createPartialMock(Address::class, [
+        $addressMock = $this->createPartialMock(
+            Address::class,
+            [
             'getAllItems',
             'getQuote',
             'getCustomAttributesCodes'
-        ]);
+            ]
+        );
 
         $quoteMock = $this->createMock(Quote::class);
         $storeMock = $this->createMock(Store::class);
@@ -420,11 +426,11 @@ class WeeeTest extends TestCase
      * @param float $itemQty
      * @param float $parentQty
      * @param array $addressData
-     * @param bool $assertSetApplied
+     * @param bool  $assertSetApplied
      *
      * @return void
-     * @dataProvider collectDataProvider
      */
+    #[DataProvider('collectDataProvider')]
     public function testCollect(
         $taxConfig,
         $weeeConfig,
@@ -970,11 +976,11 @@ class WeeeTest extends TestCase
         ];
 
         $data['price_excl_tax_weee_taxable_unit_included_in_subtotal_PARENT_ITEM'] = [
-            'tax_config' => [
+            'taxConfig' => [
                 'priceIncludesTax' => true,
                 'getCalculationAlgorithm' => Calculation::CALC_UNIT_BASE
             ],
-            'weee_config' => [
+            'weeeConfig' => [
                 'isEnabled' => true,
                 'includeInSubtotal' => true,
                 'isTaxable' => true,
@@ -988,11 +994,11 @@ class WeeeTest extends TestCase
                     )
                 ]
             ],
-            'tax_rates' => [
+            'taxRates' => [
                 'store_tax_rate' => 8.25,
                 'customer_tax_rate' => 8.25
             ],
-            'item' => [
+            'itemData' => [
                 'weee_tax_applied_amount' => 10,
                 'base_weee_tax_applied_amount' => 10,
                 'weee_tax_applied_row_amount' => 20,
@@ -1002,9 +1008,9 @@ class WeeeTest extends TestCase
                 'weee_tax_applied_row_amount_incl_tax' => 20,
                 'base_weee_tax_applied_row_amnt_incl_tax' => 20
             ],
-            'item_qty' => 2,
-            'parent_qty' => 1,
-            'address_data' => [
+            'itemQty' => 2,
+            'parentQty' => 1,
+            'addressData' => [
                 'subtotal_incl_tax' => 20,
                 'base_subtotal_incl_tax' => 20,
                 'weee_total_excl_tax' => 0,

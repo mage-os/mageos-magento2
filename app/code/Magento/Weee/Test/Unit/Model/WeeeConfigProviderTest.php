@@ -13,6 +13,7 @@ use Magento\Weee\Helper\Data;
 use Magento\Weee\Model\Config;
 use Magento\Weee\Model\WeeeConfigProvider;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class WeeeConfigProviderTest extends TestCase
@@ -59,8 +60,10 @@ class WeeeConfigProviderTest extends TestCase
     }
 
     /**
-     * @dataProvider getConfigDataProvider
      * @param array $expectedResult
+     */
+    #[DataProvider('getConfigDataProvider')]
+    /**
      * @param bool $weeeHelperEnabled
      * @param bool $displayWeeeDetails
      * @param bool $weeeConfigEnabled

@@ -17,6 +17,7 @@ use Magento\Store\Api\Data\StoreInterface;
 use Magento\Tax\Helper\Data as TaxHelper;
 use Magento\Weee\Helper\Data as WeeeHelper;
 use Magento\WeeeGraphQl\Model\Resolver\Quote\FixedProductTax;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -128,7 +129,7 @@ class FixedProductTaxResolverTest extends TestCase
             
             /**
              * @SuppressWarnings(PHPMD.UnusedLocalVariable)
-             * @param StoreInterface $store
+             * @param                                       StoreInterface $store
              */
             public function setStore($store)
             {
@@ -194,12 +195,12 @@ class FixedProductTaxResolverTest extends TestCase
     }
 
     /**
-     * @param int $displayType
+     * @param int   $displayType
      * @param array $expected
      *
      * @return void
-     * @dataProvider shouldReturnResultDataProvider
      */
+    #[DataProvider('shouldReturnResultDataProvider')]
     public function testShouldReturnResult(int $displayType, array $expected): void
     {
         $this->contextExtensionAttributesMock->setStore($this->storeMock);

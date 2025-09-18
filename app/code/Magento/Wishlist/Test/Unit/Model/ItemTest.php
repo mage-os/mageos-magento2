@@ -30,6 +30,7 @@ use Magento\Wishlist\Model\ResourceModel\Item\Collection;
 use Magento\Wishlist\Model\ResourceModel\Item\Option\CollectionFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -81,9 +82,7 @@ class ItemTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider getOptionsDataProvider
-     */
+    #[DataProvider('getOptionsDataProvider')]
     public function testAddGetOptions($code, $option)
     {
         $this->assertEmpty($this->model->getOptions());
@@ -109,9 +108,7 @@ class ItemTest extends TestCase
         $this->assertCount(1, $this->model->getOptions());
     }
 
-    /**
-     * @dataProvider getOptionsDataProvider
-     */
+    #[DataProvider('getOptionsDataProvider')]
     public function testRemoveOptionByCode($code, $option)
     {
         $this->assertEmpty($this->model->getOptions());
@@ -438,10 +435,13 @@ class ItemTest extends TestCase
         $storeId = 0;
         $this->model->setData('product_id', $productId);
         $this->model->setData('store_id', $storeId);
-        $productMock = $this->createPartialMock(Product::class, [
+        $productMock = $this->createPartialMock(
+            Product::class,
+            [
             'setCustomOptions',
             'setFinalPrice'
-        ]);
+            ]
+        );
         $productMock->expects($this->any())
             ->method('setFinalPrice')
             ->with(null);

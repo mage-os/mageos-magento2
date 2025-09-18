@@ -22,6 +22,7 @@ use Magento\Wishlist\Block\Customer\Wishlist\Item\Options;
 use Magento\Wishlist\Model\Item;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class OptionsTest extends TestCase
 {
@@ -93,10 +94,10 @@ class OptionsTest extends TestCase
 
     /**
      * @param array $options
-     * @param int $callNum
+     * @param int   $callNum
      * @param array $expected
-     * @dataProvider getConfiguredOptionsDataProvider
      */
+    #[DataProvider('getConfiguredOptionsDataProvider')]
     public function testGetConfiguredOptions($options, $callNum, $expected)
     {
         $productMock = $this->createMock(Product::class);

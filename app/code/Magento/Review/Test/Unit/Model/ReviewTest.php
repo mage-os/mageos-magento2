@@ -22,49 +22,76 @@ use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ReviewTest extends TestCase
 {
-    /** @var Review */
+    /**
+     * @var Review
+     */
     protected $review;
 
-    /** @var ObjectManagerHelper */
+    /**
+     * @var ObjectManagerHelper
+     */
     protected $objectManagerHelper;
 
-    /** @var Context|MockObject */
+    /**
+     * @var Context|MockObject
+     */
     protected $contextMock;
 
-    /** @var Registry|MockObject */
+    /**
+     * @var Registry|MockObject
+     */
     protected $registryMock;
 
-    /** @var MockObject */
+    /**
+     * @var MockObject
+     */
     protected $productFactoryMock;
 
-    /** @var MockObject */
+    /**
+     * @var MockObject
+     */
     protected $statusFactoryMock;
 
-    /** @var MockObject */
+    /**
+     * @var MockObject
+     */
     protected $reviewSummaryMock;
 
-    /** @var MockObject */
+    /**
+     * @var MockObject
+     */
     protected $summaryModMock;
 
-    /** @var Summary|MockObject */
+    /**
+     * @var Summary|MockObject
+     */
     protected $summaryMock;
 
-    /** @var StoreManagerInterface|MockObject */
+    /**
+     * @var StoreManagerInterface|MockObject
+     */
     protected $storeManagerMock;
 
-    /** @var UrlInterface|MockObject */
+    /**
+     * @var UrlInterface|MockObject
+     */
     protected $urlInterfaceMock;
 
-    /** @var \Magento\Review\Model\ResourceModel\Review|MockObject */
+    /**
+     * @var \Magento\Review\Model\ResourceModel\Review|MockObject
+     */
     protected $resource;
 
-    /** @var int */
+    /**
+     * @var int
+     */
     protected $reviewId = 8;
 
     protected function setUp(): void
@@ -165,7 +192,6 @@ class ReviewTest extends TestCase
         $product = new class extends Product {
             public function __construct()
             {
- /* Skip parent constructor */
             }
             public function getId()
             {
@@ -180,12 +206,10 @@ class ReviewTest extends TestCase
                 return $this;
             }
         };
-        // Product mock methods provided by anonymous class
 
         $summaryData = new class extends Summary {
             public function __construct()
             {
- /* Skip parent constructor */
             }
             public function load($modelId, $field = null)
             {
@@ -204,7 +228,6 @@ class ReviewTest extends TestCase
                 return $this;
             }
         };
-        // Summary data mock methods provided by anonymous class
         $this->summaryModMock->expects($this->once())->method('create')->willReturn($summaryData);
         $this->assertNull($this->review->getEntitySummary($product, $storeId));
     }
@@ -224,11 +247,11 @@ class ReviewTest extends TestCase
     }
 
     /**
-     * @param int $productId
-     * @param int $storeId
+     * @param int    $productId
+     * @param int    $storeId
      * @param string $result
-     * @dataProvider getProductUrlDataProvider
      */
+    #[DataProvider('getProductUrlDataProvider')]
     public function testGetProductUrl($productId, $storeId, $result)
     {
         if ($storeId) {
@@ -260,9 +283,9 @@ class ReviewTest extends TestCase
 
     /**
      * @param int|null $storeId
-     * @param bool $result
-     * @dataProvider isAvailableOnStoreDataProvider
+     * @param bool     $result
      */
+    #[DataProvider('isAvailableOnStoreDataProvider')]
     public function testIsAvailableOnStore($storeId, $result)
     {
         $store = $this->createMock(Store::class);

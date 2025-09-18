@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -16,6 +16,7 @@ use Magento\Sales\Model\Order\Invoice\Total\Tax;
 use Magento\Weee\Helper\Data;
 use Magento\Weee\Model\Total\Invoice\Weee;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class WeeeTest extends TestCase
@@ -36,7 +37,7 @@ class WeeeTest extends TestCase
     protected $order;
 
     /**
-     * @var  ObjectManager
+     * @var ObjectManager
      */
     protected $objectManager;
 
@@ -81,13 +82,16 @@ class WeeeTest extends TestCase
 
         $this->order = $this->createPartialMock(Order::class, ['__wakeup']);
 
-        $this->invoice = $this->createPartialMock(Invoice::class, [
+        $this->invoice = $this->createPartialMock(
+            Invoice::class,
+            [
             'getAllItems',
             'getOrder',
             'roundPrice',
             'isLast',
             'getStore'
-        ]);
+            ]
+        );
         $this->invoice->expects($this->atLeastOnce())->method('getOrder')->willReturn($this->order);
     }
 
@@ -96,7 +100,6 @@ class WeeeTest extends TestCase
      */
     private function setupOrder($orderData)
     {
-        //Set up order mock
         foreach ($orderData['data_fields'] as $key => $value) {
             $this->order->setData($key, $value);
         }
@@ -106,20 +109,18 @@ class WeeeTest extends TestCase
      * @param array $orderData
      * @param array $invoiceData
      * @param array $expectedResults
-     * @dataProvider collectDataProvider
      */
+    #[DataProvider('collectDataProvider')]
     public function testCollect($orderData, $invoiceData, $expectedResults)
     {
         $roundingDelta = [];
 
         $this->setupOrder($orderData);
 
-        //Set up weeeData mock
         $this->weeeData->expects($this->atLeastOnce())
             ->method('includeInSubtotal')
             ->willReturn($invoiceData['include_in_subtotal']);
 
-        //Set up invoice mock
         /** @var Item[] $invoiceItems */
         $invoiceItems = [];
         foreach ($invoiceData['items'] as $itemKey => $invoiceItemData) {
@@ -136,19 +137,20 @@ class WeeeTest extends TestCase
         }
         $this->invoice->expects($this->any())
             ->method('roundPrice')
-            ->willReturnCallback(function ($price, $type) use (&$roundingDelta) {
-                if (!isset($roundingDelta[$type])) {
-                    $roundingDelta[$type] = 0;
-                }
-                $roundedPrice = round($price + $roundingDelta[$type], 2);
-                $roundingDelta[$type] = $price - $roundedPrice;
+            ->willReturnCallback(
+                function ($price, $type) use (&$roundingDelta) {
+                    if (!isset($roundingDelta[$type])) {
+                        $roundingDelta[$type] = 0;
+                    }
+                    $roundedPrice = round($price + $roundingDelta[$type], 2);
+                    $roundingDelta[$type] = $price - $roundedPrice;
 
-                return $roundedPrice;
-            });
+                    return $roundedPrice;
+                }
+            );
 
         $this->model->collect($this->invoice);
 
-        //verify invoice data
         foreach ($expectedResults['invoice_data'] as $key => $value) {
             $this->assertEqualsWithDelta(
                 $value,
@@ -157,7 +159,7 @@ class WeeeTest extends TestCase
                 'Invoice data field ' . $key . ' is incorrect'
             );
         }
-        //verify invoice item data
+
         foreach ($expectedResults['invoice_items'] as $itemKey => $itemData) {
             $invoiceItem = $invoiceItems[$itemKey];
             foreach ($itemData as $key => $value) {
@@ -692,15 +694,18 @@ class WeeeTest extends TestCase
     }
 
     /**
-     * @param $invoiceItemData array
+     * @param  $invoiceItemData array
      * @return Item|MockObject
      */
     protected function getInvoiceItem($invoiceItemData)
     {
         /** @var \Magento\Sales\Model\Order\Item|MockObject $orderItem */
-        $orderItem = $this->createPartialMock(\Magento\Sales\Model\Order\Item::class, [
+        $orderItem = $this->createPartialMock(
+            \Magento\Sales\Model\Order\Item::class,
+            [
             'isDummy'
-        ]);
+            ]
+        );
         foreach ($invoiceItemData['order_item'] as $key => $value) {
             $orderItem->setData($key, $value);
         }
@@ -732,10 +737,13 @@ class WeeeTest extends TestCase
                 ->willReturn($orderItem->getBaseWeeeTaxAmountInvoiced());
         }
         /** @var Item|MockObject $invoiceItem */
-        $invoiceItem = $this->createPartialMock(Item::class, [
+        $invoiceItem = $this->createPartialMock(
+            Item::class,
+            [
             'getOrderItem',
             'isLast'
-        ]);
+            ]
+        );
         $invoiceItem->expects($this->any())->method('getOrderItem')->willReturn($orderItem);
         $invoiceItem->expects($this->any())
             ->method('isLast')
@@ -746,15 +754,19 @@ class WeeeTest extends TestCase
 
         $this->weeeData->expects($this->any())
             ->method('getApplied')
-            ->willReturnCallback(function ($item) {
-                return $item->getAppliedWeee();
-            });
+            ->willReturnCallback(
+                function ($item) {
+                    return $item->getAppliedWeee();
+                }
+            );
 
         $this->weeeData->expects($this->any())
             ->method('setApplied')
-            ->willReturnCallback(function ($item, $weee) {
-                return $item->setAppliedWeee($weee);
-            });
+            ->willReturnCallback(
+                function ($item, $weee) {
+                    return $item->setAppliedWeee($weee);
+                }
+            );
 
         return $invoiceItem;
     }

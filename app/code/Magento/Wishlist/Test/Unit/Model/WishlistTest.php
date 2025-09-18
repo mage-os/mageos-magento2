@@ -37,6 +37,7 @@ use Magento\Wishlist\Model\ResourceModel\Wishlist\Collection as WishlistCollecti
 use Magento\Wishlist\Model\Wishlist;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -217,13 +218,12 @@ class WishlistTest extends TestCase
     }
 
     /**
-     * @param int|Item|MockObject $itemId
-     * @param DataObject|\Closure $buyRequest
-     * @param null|array|DataObject $param
+     * @param  int|Item|MockObject   $itemId
+     * @param  DataObject|\Closure   $buyRequest
+     * @param  null|array|DataObject $param
      * @throws LocalizedException
-     *
-     * @dataProvider updateItemDataProvider
      */
+    #[DataProvider('updateItemDataProvider')]
     public function testUpdateItem($itemId, $buyRequest, $param): void
     {
         $buyRequest = $buyRequest($this);
@@ -386,12 +386,11 @@ class WishlistTest extends TestCase
     }
 
     /**
-     * @param bool $getIsSalable
-     * @param bool $isShowOutOfStock
+     * @param bool   $getIsSalable
+     * @param bool   $isShowOutOfStock
      * @param string $throwException
-     *
-     * @dataProvider addNewItemDataProvider
      */
+    #[DataProvider('addNewItemDataProvider')]
     public function testAddNewItem(bool $getIsSalable, bool $isShowOutOfStock, string $throwException): void
     {
         if ($throwException) {

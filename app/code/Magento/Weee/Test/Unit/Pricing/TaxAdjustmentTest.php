@@ -14,6 +14,7 @@ use Magento\Weee\Helper\Data;
 use Magento\Weee\Model\Tax;
 use Magento\Weee\Pricing\TaxAdjustment;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class TaxAdjustmentTest extends TestCase
@@ -86,8 +87,8 @@ class TaxAdjustmentTest extends TestCase
      * @param bool $isWeeeTaxable
      * @param bool $weeeDisplayConfig
      * @param bool $expectedResult
-     * @dataProvider isIncludedInDisplayPriceDataProvider
      */
+    #[DataProvider('isIncludedInDisplayPriceDataProvider')]
     public function testIsIncludedInDisplayPrice(
         $taxDisplayExclTax,
         $isWeeeTaxable,
@@ -149,11 +150,11 @@ class TaxAdjustmentTest extends TestCase
     }
 
     /**
-     * @param float $amount
+     * @param float        $amount
      * @param DataObject[] $weeeAttributes
-     * @param float $expectedResult
-     * @dataProvider applyAdjustmentDataProvider
+     * @param float        $expectedResult
      */
+    #[DataProvider('applyAdjustmentDataProvider')]
     public function testApplyAdjustment($amount, $weeeAttributes, $expectedResult)
     {
         $object = $this->createMock(SaleableInterface::class);

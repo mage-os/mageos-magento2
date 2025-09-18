@@ -21,6 +21,7 @@ use Magento\Tax\Model\Calculation;
 use Magento\Tax\Model\Sales\Total\Quote\CommonTaxCollector as CTC;
 use Magento\Weee\Model\Total\Quote\WeeeTax;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -29,12 +30,13 @@ use PHPUnit\Framework\TestCase;
  */
 class WeeeTaxTest extends TestCase
 {
-    /**#@+
+    /**
+     * #@+
      * Constants for array keys
      */
     public const KEY_WEEE_TOTALS = 'weee_total_excl_tax';
     public const KEY_WEEE_BASE_TOTALS = 'weee_base_total_excl_tax';
-    /**#@-*/
+
     /**
      * @var WeeeTax
      */
@@ -59,7 +61,7 @@ class WeeeTaxTest extends TestCase
     /**
      * Setup tax helper with an array of methodName, returnValue
      *
-     * @param array $taxConfig
+     * @param  array $taxConfig
      * @return MockObject|\Magento\Tax\Helper\Data
      */
     protected function setupTaxHelper($taxConfig)
@@ -76,7 +78,7 @@ class WeeeTaxTest extends TestCase
     /**
      * Setup weee helper with an array of methodName, returnValue
      *
-     * @param array $weeeConfig
+     * @param  array $weeeConfig
      * @return MockObject|\Magento\Weee\Helper\Data
      */
     protected function setupWeeeHelper($weeeConfig)
@@ -93,7 +95,7 @@ class WeeeTaxTest extends TestCase
     /**
      * Setup an item mock
      *
-     * @param float $itemQty
+     * @param  float $itemQty
      * @return MockObject|Item
      */
     protected function setupItemMock($itemQty)
@@ -139,49 +141,49 @@ class WeeeTaxTest extends TestCase
              * @var float
              */
             private $weeeBaseTotalExclTax = 0;
-            
+
             public function __construct()
             {
             }
-            
+
             public function getWeeeCodeToItemMap()
             {
                 return $this->weeeCodeToItemMap;
             }
-            
+
             public function setWeeeCodeToItemMap($map)
             {
                 $this->weeeCodeToItemMap = $map;
                 return $this;
             }
-            
+
             public function getExtraTaxableDetails()
             {
                 return $this->extraTaxableDetails;
             }
-            
+
             public function setExtraTaxableDetails($details)
             {
                 $this->extraTaxableDetails = $details;
                 return $this;
             }
-            
+
             public function getWeeeTotalExclTax()
             {
                 return $this->weeeTotalExclTax;
             }
-            
+
             public function setWeeeTotalExclTax($total)
             {
                 $this->weeeTotalExclTax = $total;
                 return $this;
             }
-            
+
             public function getWeeeBaseTotalExclTax()
             {
                 return $this->weeeBaseTotalExclTax;
             }
-            
+
             public function setWeeeBaseTotalExclTax($total)
             {
                 $this->weeeBaseTotalExclTax = $total;
@@ -193,10 +195,10 @@ class WeeeTaxTest extends TestCase
     /**
      * Setup address mock
      *
-     * @param MockObject|Item $itemMock
-     * @param boolean $isWeeeTaxable
-     * @param array   $itemWeeeTaxDetails
-     * @param array   $addressData
+     * @param  MockObject|Item $itemMock
+     * @param  boolean         $isWeeeTaxable
+     * @param  array           $itemWeeeTaxDetails
+     * @param  array           $addressData
      * @return MockObject
      */
     protected function setupTotalMock($itemMock, $isWeeeTaxable, $itemWeeeTaxDetails, $addressData)
@@ -251,8 +253,9 @@ class WeeeTaxTest extends TestCase
 
     /**
      * Setup shipping assignment mock.
-     * @param MockObject $addressMock
-     * @param MockObject $itemMock
+     *
+     * @param  MockObject $addressMock
+     * @param  MockObject $itemMock
      * @return MockObject
      */
     protected function setupShippingAssignmentMock($addressMock, $itemMock)
@@ -271,7 +274,7 @@ class WeeeTaxTest extends TestCase
      * Verify that correct fields of item has been set
      *
      * @param MockObject|null $item
-     * @param array $itemData
+     * @param array           $itemData
      */
     public function verifyItem($item, $itemData)
     {
@@ -287,7 +290,7 @@ class WeeeTaxTest extends TestCase
      * Verify that correct fields of address has been set
      *
      * @param MockObject|Address $address
-     * @param array $addressData
+     * @param array              $addressData
      */
     public function verifyTotals($address, $addressData)
     {
@@ -350,8 +353,8 @@ class WeeeTaxTest extends TestCase
      * @param array $itemWeeeTaxDetails
      * @param float $itemQty
      * @param array $addressData
-     * @dataProvider collectDataProvider
      */
+    #[DataProvider('collectDataProvider')]
     public function testCollect($taxConfig, $weeeConfig, $itemWeeeTaxDetails, $itemQty, $addressData = [])
     {
         //Setup

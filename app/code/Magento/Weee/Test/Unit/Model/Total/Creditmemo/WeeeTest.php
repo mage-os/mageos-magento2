@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -17,6 +17,7 @@ use Magento\Sales\Model\Order\Invoice\Total\Tax;
 use Magento\Weee\Helper\Data;
 use Magento\Weee\Model\Total\Creditmemo\Weee;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class WeeeTest extends TestCase
@@ -37,7 +38,7 @@ class WeeeTest extends TestCase
     protected $order;
 
     /**
-     * @var  ObjectManager
+     * @var ObjectManager
      */
     protected $objectManager;
 
@@ -91,29 +92,29 @@ class WeeeTest extends TestCase
 
         $this->order = $this->createMock(Order::class);
 
-        $this->creditmemo = $this->createPartialMock(Creditmemo::class, [
+        $this->creditmemo = $this->createPartialMock(
+            Creditmemo::class,
+            [
             'getAllItems',
             'getInvoice',
             'roundPrice',
             'getStore',
-        ]);
+            ]
+        );
     }
 
     /**
      * @param array $creditmemoData
      * @param array $expectedResults
-     * @dataProvider collectDataProvider
      */
+    #[DataProvider('collectDataProvider')]
     public function testCollect($creditmemoData, $expectedResults)
     {
         $roundingDelta = [];
-
-        //Set up weeeData mock
         $this->weeeData->expects($this->once())
             ->method('includeInSubtotal')
             ->willReturn($creditmemoData['include_in_subtotal']);
 
-        //Set up invoice mock
         /** @var Item[] $creditmemoItems */
         $creditmemoItems = [];
         foreach ($creditmemoData['items'] as $itemKey => $creditmemoItemData) {
@@ -127,19 +128,20 @@ class WeeeTest extends TestCase
         }
         $this->creditmemo->expects($this->any())
             ->method('roundPrice')
-            ->willReturnCallback(function ($price, $type) use (&$roundingDelta) {
-                if (!isset($roundingDelta[$type])) {
-                    $roundingDelta[$type] = 0;
-                }
-                $roundedPrice = round($price + $roundingDelta[$type], 2);
-                $roundingDelta[$type] = $price - $roundedPrice;
+            ->willReturnCallback(
+                function ($price, $type) use (&$roundingDelta) {
+                    if (!isset($roundingDelta[$type])) {
+                        $roundingDelta[$type] = 0;
+                    }
+                    $roundedPrice = round($price + $roundingDelta[$type], 2);
+                    $roundingDelta[$type] = $price - $roundedPrice;
 
-                return $roundedPrice;
-            });
+                    return $roundedPrice;
+                }
+            );
 
         $this->model->collect($this->creditmemo);
 
-        //verify invoice data
         foreach ($expectedResults['creditmemo_data'] as $key => $value) {
             $this->assertEqualsWithDelta(
                 $value,
@@ -148,7 +150,7 @@ class WeeeTest extends TestCase
                 'Creditmemo data field ' . $key . ' is incorrect'
             );
         }
-        //verify invoice item data
+
         foreach ($expectedResults['creditmemo_items'] as $itemKey => $itemData) {
             $creditmemoItem = $creditmemoItems[$itemKey];
             foreach ($itemData as $key => $value) {
@@ -174,7 +176,7 @@ class WeeeTest extends TestCase
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @return array
+     * @return                                        array
      */
     public static function collectDataProvider()
     {
@@ -503,15 +505,18 @@ class WeeeTest extends TestCase
     }
 
     /**
-     * @param $creditmemoItemData array
+     * @param  $creditmemoItemData array
      * @return \Magento\Sales\Model\Order\Creditmemo\Item|MockObject
      */
     protected function getInvoiceItem($creditmemoItemData)
     {
         /** @var \Magento\Sales\Model\Order\Item|MockObject $orderItem */
-        $orderItem = $this->createPartialMock(\Magento\Sales\Model\Order\Item::class, [
+        $orderItem = $this->createPartialMock(
+            \Magento\Sales\Model\Order\Item::class,
+            [
             'isDummy'
-        ]);
+            ]
+        );
         foreach ($creditmemoItemData['order_item'] as $key => $value) {
             $orderItem->setData($key, $value);
         }
@@ -558,10 +563,13 @@ class WeeeTest extends TestCase
             ->willReturn($orderItem->getBaseWeeeTaxAmountRefunded());
 
         /** @var Item|MockObject $invoiceItem */
-        $invoiceItem = $this->createPartialMock(Item::class, [
+        $invoiceItem = $this->createPartialMock(
+            Item::class,
+            [
             'getOrderItem',
             'isLast'
-        ]);
+            ]
+        );
         $invoiceItem->expects($this->any())->method('getOrderItem')->willReturn($orderItem);
         $invoiceItem->expects($this->any())
             ->method('isLast')
@@ -572,15 +580,19 @@ class WeeeTest extends TestCase
 
         $this->weeeData->expects($this->any())
             ->method('getApplied')
-            ->willReturnCallback(function ($item) {
-                return $item->getAppliedWeee();
-            });
+            ->willReturnCallback(
+                function ($item) {
+                    return $item->getAppliedWeee();
+                }
+            );
 
         $this->weeeData->expects($this->any())
             ->method('setApplied')
-            ->willReturnCallback(function ($item, $weee) {
-                return $item->setAppliedWeee($weee);
-            });
+            ->willReturnCallback(
+                function ($item, $weee) {
+                    return $item->setAppliedWeee($weee);
+                }
+            );
 
         return $invoiceItem;
     }

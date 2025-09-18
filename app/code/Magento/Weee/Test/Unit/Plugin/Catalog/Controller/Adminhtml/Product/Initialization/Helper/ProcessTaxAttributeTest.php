@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -14,6 +14,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Weee\Plugin\Catalog\Controller\Adminhtml\Product\Initialization\Helper\ProcessTaxAttribute;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Rule\InvokedCount as InvokedCountMatcher;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class ProcessTaxAttributeTest extends TestCase
@@ -106,10 +107,10 @@ class ProcessTaxAttributeTest extends TestCase
     /**
      * Test afterInitializeFromData when attributes include weee
      *
-     * @param array $productData
+     * @param array               $productData
      * @param InvokedCountMatcher $expected
-     * @dataProvider afterInitializeFromDataWhenAttributesIncludeWeeeDataProvider
      */
+    #[DataProvider('afterInitializeFromDataWhenAttributesIncludeWeeeDataProvider')]
     public function testAfterInitializeFromDataWhenAttributesIncludeWeee($productData, $expected)
     {
         /** @var AbstractAttribute|MockObject $attributeMock */
@@ -122,7 +123,8 @@ class ProcessTaxAttributeTest extends TestCase
         $this->resultMock->expects($this->any())->method('getAttributes')
             ->willReturn([$attributeMock]);
 
-        $this->resultMock->expects($expected)->method('setData')
+        $matcher = $expected === 'never' ? $this->never() : $this->once();
+        $this->resultMock->expects($matcher)->method('setData')
             ->with(self::STUB_WEEE_ATTRIBUTE_CODE, [])
             ->willReturnSelf();
 
@@ -146,11 +148,11 @@ class ProcessTaxAttributeTest extends TestCase
                 [
                     self::STUB_WEEE_ATTRIBUTE_CODE => self::STUB_WEEE_ATTRIBUTE_VALUE
                 ],
-                self::never()
+                'never'
             ],
             'Product data does not include wee' => [
                 [],
-                self::once()
+                'once'
             ]
         ];
     }

@@ -16,6 +16,7 @@ use Magento\Tax\Model\Config as TaxConfig;
 use Magento\Weee\Helper\Data;
 use Magento\Weee\Model\Tax as WeeeDisplayConfig;
 use Magento\Weee\Observer\UpdateProductOptionsObserver;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -30,14 +31,13 @@ class UpdateProductOptionsObserverTest extends TestCase
     /**
      * Tests the methods that rely on the ScopeConfigInterface object to provide their return values
      *
-     * @param array $initialArray The initial array that specifies the set of additional options
-     * @param bool $weeeEnabled Whether the Weee module is assumed to be enabled
-     * @param int $weeeDisplay Which Weee display is configured
-     * @param int $priceDisplay Values are: including tax, excluding tax, or both including and excluding tax
+     * @param array $initialArray  The initial array that specifies the set of additional options
+     * @param bool  $weeeEnabled   Whether the Weee module is assumed to be enabled
+     * @param int   $weeeDisplay   Which Weee display is configured
+     * @param int   $priceDisplay  Values are: including tax, excluding tax, or both including and excluding tax
      * @param array $expectedArray The revised array of the additional options
-     *
-     * @dataProvider updateProductOptionsProvider
      */
+    #[DataProvider('updateProductOptionsProvider')]
     public function testUpdateProductOptions($initialArray, $weeeEnabled, $weeeDisplay, $priceDisplay, $expectedArray)
     {
         $configObj = new DataObject(

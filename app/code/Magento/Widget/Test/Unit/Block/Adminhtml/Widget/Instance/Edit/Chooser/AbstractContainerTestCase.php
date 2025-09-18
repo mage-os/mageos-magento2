@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -128,8 +128,7 @@ abstract class AbstractContainerTestCase extends TestCase
         $this->contextMock->expects($this->once())->method('getScopeConfig')->willReturn($this->scopeConfigMock);
         $this->contextMock->expects($this->once())->method('getEscaper')->willReturn($this->escaperMock);
 
-        $this->pageLayoutConfigBuilderMock = $this->getMockBuilder(PageLayoutConfigBuilder::class)
-            ->getMockForAbstractClass();
+        $this->pageLayoutConfigBuilderMock = $this->createMock(PageLayoutConfigBuilder::class);
         $pageLayoutConfigMock = $this->getMockBuilder(PageLayoutConfig::class)
             ->onlyMethods(['getPageLayouts'])
             ->disableOriginalConstructor()

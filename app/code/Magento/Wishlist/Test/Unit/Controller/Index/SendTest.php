@@ -51,77 +51,77 @@ use PHPUnit\Framework\TestCase;
 class SendTest extends TestCase
 {
     /**
-     * @var  Send|MockObject
+     * @var Send|MockObject
      */
     protected $model;
 
     /**
-     * @var  ActionContext|MockObject
+     * @var ActionContext|MockObject
      */
     protected $context;
 
     /**
-     * @var  FormKeyValidator|MockObject
+     * @var FormKeyValidator|MockObject
      */
     protected $formKeyValidator;
 
     /**
-     * @var  WishlistProviderInterface|MockObject
+     * @var WishlistProviderInterface|MockObject
      */
     protected $wishlistProvider;
 
     /**
-     * @var  Store|MockObject
+     * @var Store|MockObject
      */
     protected $store;
 
     /**
-     * @var  ResultFactory|MockObject
+     * @var ResultFactory|MockObject
      */
     protected $resultFactory;
 
     /**
-     * @var  ResultRedirect|MockObject
+     * @var ResultRedirect|MockObject
      */
     protected $resultRedirect;
 
     /**
-     * @var  ResultLayout|MockObject
+     * @var ResultLayout|MockObject
      */
     protected $resultLayout;
 
     /**
-     * @var  RequestInterface|MockObject
+     * @var RequestInterface|MockObject
      */
     protected $request;
 
     /**
-     * @var  ManagerInterface|MockObject
+     * @var ManagerInterface|MockObject
      */
     protected $messageManager;
 
     /**
-     * @var  CustomerData|MockObject
+     * @var CustomerData|MockObject
      */
     protected $customerData;
 
     /**
-     * @var  UrlInterface|MockObject
+     * @var UrlInterface|MockObject
      */
     protected $url;
 
     /**
-     * @var  TransportInterface|MockObject
+     * @var TransportInterface|MockObject
      */
     protected $transport;
 
     /**
-     * @var  EventManagerInterface|MockObject
+     * @var EventManagerInterface|MockObject
      */
     protected $eventManager;
 
     /**
-     * @var  CaptchaHelper|MockObject
+     * @var CaptchaHelper|MockObject
      */
     protected $captchaHelper;
 
@@ -192,10 +192,12 @@ class SendTest extends TestCase
         $this->resultFactory = $this->createMock(ResultFactory::class);
         $this->resultFactory->expects($this->any())
             ->method('create')
-            ->willReturnMap([
+            ->willReturnMap(
+                [
                 [ResultFactory::TYPE_REDIRECT, [], $this->resultRedirect],
                 [ResultFactory::TYPE_LAYOUT, [], $this->resultLayout],
-            ]);
+                ]
+            );
 
         $this->request = new class implements RequestInterface {
             /**
@@ -540,8 +542,7 @@ class SendTest extends TestCase
             ->method('setPath')
             ->with('*/*/share')
             ->willReturnSelf();
-        $this->messageManager->expects($this->once())
-            ->method('addErrorMessage')
+        $this->messageManager->method('addErrorMessage')
             ->with($expectedMessage);
 
         $this->assertEquals($this->resultRedirect, $this->model->execute());

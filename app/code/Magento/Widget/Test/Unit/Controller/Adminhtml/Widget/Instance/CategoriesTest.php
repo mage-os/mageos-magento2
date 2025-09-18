@@ -68,7 +68,7 @@ class CategoriesTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->request = $this->getMockForAbstractClass(RequestInterface::class);
+        $this->request = $this->createMock(RequestInterface::class);
         $this->mathRandom = $this->createMock(Random::class);
         $this->chooser = new class extends \Magento\Widget\Block\Adminhtml\Widget\Catalog\Category\Chooser {
             public function __construct()

@@ -21,6 +21,7 @@ use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -62,13 +63,19 @@ class ReviewTest extends TestCase
      */
     private $store;
 
-    /** @var Context|MockObject */
+    /**
+     * @var Context|MockObject
+     */
     protected $context;
 
-    /** @var UrlInterface|MockObject */
+    /**
+     * @var UrlInterface|MockObject
+     */
     protected $urlBuilder;
 
-    /** @var RequestInterface|MockObject */
+    /**
+     * @var RequestInterface|MockObject
+     */
     protected $requestMock;
 
     /**
@@ -214,11 +221,11 @@ class ReviewTest extends TestCase
     }
 
     /**
-     * @param bool $isSecure
+     * @param bool   $isSecure
      * @param string $actionUrl
-     * @param int $productId
-     * @dataProvider getProductReviewUrlDataProvider
+     * @param int    $productId
      */
+    #[DataProvider('getProductReviewUrlDataProvider')]
     public function testGetProductReviewUrl($isSecure, $actionUrl, $productId)
     {
         $this->urlBuilder->expects($this->any())

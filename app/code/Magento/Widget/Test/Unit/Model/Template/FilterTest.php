@@ -17,6 +17,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use Magento\Widget\Block\BlockInterface;
 use Magento\Widget\Model\ResourceModel\Widget;
 use Magento\Widget\Model\Template\Filter;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -67,10 +68,10 @@ class FilterTest extends TestCase
     {
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->storeMock = $this->createMock(Store::class);
-        $this->storeManagerMock = $this->getMockForAbstractClass(StoreManagerInterface::class);
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
         $this->widgetResourceMock = $this->createMock(Widget::class);
         $this->widgetMock = $this->createMock(\Magento\Widget\Model\Widget::class);
-        $this->layoutMock = $this->getMockForAbstractClass(LayoutInterface::class);
+        $this->layoutMock = $this->createMock(LayoutInterface::class);
 
         $objects = [
             [
@@ -96,16 +97,16 @@ class FilterTest extends TestCase
     }
 
     /**
-     * @param array $construction
-     * @param string $type
-     * @param int $preConfigId
-     * @param array $preconfigure
-     * @param string $widgetXml
-     * @param \Closure|null $widgetBlock
-     * @param string $expectedResult
+     * @param  array         $construction
+     * @param  string        $type
+     * @param  int           $preConfigId
+     * @param  array         $preconfigure
+     * @param  string        $widgetXml
+     * @param  \Closure|null $widgetBlock
+     * @param  string        $expectedResult
      * @return void
-     * @dataProvider generateWidgetDataProvider
      */
+    #[DataProvider('generateWidgetDataProvider')]
     public function testGenerateWidget(
         $construction,
         $type,
@@ -123,16 +124,16 @@ class FilterTest extends TestCase
     }
 
     /**
-     * @param array $construction
-     * @param string $type
-     * @param int $preConfigId
-     * @param array $preconfigure
-     * @param string $widgetXml
-     * @param \Closure|null $widgetBlock
-     * @param string $expectedResult
+     * @param  array         $construction
+     * @param  string        $type
+     * @param  int           $preConfigId
+     * @param  array         $preconfigure
+     * @param  string        $widgetXml
+     * @param  \Closure|null $widgetBlock
+     * @param  string        $expectedResult
      * @return void
-     * @dataProvider generateWidgetDataProvider
      */
+    #[DataProvider('generateWidgetDataProvider')]
     public function testWidgetDirective(
         $construction,
         $type,
@@ -211,14 +212,14 @@ class FilterTest extends TestCase
     }
 
     /**
-     * @param string $type
-     * @param int $preConfigId
-     * @param array $preconfigure
-     * @param string $widgetXml
-     * @param BlockInterface|null $widgetBlock
+     * @param  string              $type
+     * @param  int                 $preConfigId
+     * @param  array               $preconfigure
+     * @param  string              $widgetXml
+     * @param  BlockInterface|null $widgetBlock
      * @return void
-     * @dataProvider generateWidgetDataProvider
      */
+    #[DataProvider('generateWidgetDataProvider')]
     protected function generalForGenerateWidget(
         $type,
         $preConfigId,
@@ -240,7 +241,7 @@ class FilterTest extends TestCase
     }
 
     /**
-     * @param string $returnedResult
+     * @param  string $returnedResult
      * @return BlockInterface|MockObject
      */
     protected function getBlockMock($returnedResult = '')

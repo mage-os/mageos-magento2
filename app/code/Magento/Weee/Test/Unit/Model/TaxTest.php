@@ -27,6 +27,7 @@ use Magento\Tax\Model\CalculationFactory;
 use Magento\Weee\Model\Config;
 use Magento\Weee\Model\ResourceModel\Tax as ResourceModelTax;
 use Magento\Weee\Model\Tax;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -237,13 +238,13 @@ class TaxTest extends TestCase
     }
 
     /**
-     * @param array $weeeTaxCalculationsByEntity
-     * @param mixed $websitePassed
+     * @param array  $weeeTaxCalculationsByEntity
+     * @param mixed  $websitePassed
      * @param string $expectedFptLabel
      *
      * @return void
-     * @dataProvider getProductWeeeAttributesDataProvider
      */
+    #[DataProvider('getProductWeeeAttributesDataProvider')]
     public function testGetProductWeeeAttributes(
         array $weeeTaxCalculationsByEntity,
         $websitePassed,
@@ -328,9 +329,11 @@ class TaxTest extends TestCase
 
         $this->resource->expects($this->any())
             ->method('fetchWeeeTaxCalculationsByEntity')
-            ->willReturn([
+            ->willReturn(
+                [
                 0 => $weeeTaxCalculationsByEntity
-            ]);
+                ]
+            );
 
         $result = $this->model->getProductWeeeAttributes($product, null, null, $websitePassed, true);
         $this->assertIsArray($result);
@@ -349,8 +352,8 @@ class TaxTest extends TestCase
      * @param string $productPriceType
      *
      * @return void
-     * @dataProvider getWeeeAmountExclTaxDataProvider
      */
+    #[DataProvider('getWeeeAmountExclTaxDataProvider')]
     public function testGetWeeeAmountExclTax($productTypeId, $productPriceType): void
     {
         $product = new class extends Product {

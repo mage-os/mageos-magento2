@@ -26,19 +26,29 @@ use PHPUnit\Framework\TestCase;
 
 class LinkTest extends TestCase
 {
-    /** @var Link */
+    /**
+     * @var Link
+     */
     protected $link;
 
-    /** @var Context|MockObject */
+    /**
+     * @var Context|MockObject
+     */
     protected $context;
 
-    /** @var Data|MockObject */
+    /**
+     * @var Data|MockObject
+     */
     protected $wishlistHelper;
 
-    /** @var UrlBuilderInterface|MockObject */
+    /**
+     * @var UrlBuilderInterface|MockObject
+     */
     protected $urlBuilder;
 
-    /** @var ScopeConfigInterface|MockObject */
+    /**
+     * @var ScopeConfigInterface|MockObject
+     */
     protected $scopeConfig;
 
     /**
@@ -52,8 +62,8 @@ class LinkTest extends TestCase
         $wishlist->expects($this->any())->method('getId')->willReturn(5);
 
         $customer = $this->createStub(CustomerInterface::class);
-        $customer->expects($this->any())->method('getId')->willReturn(8);
-        $customer->expects($this->any())->method('getEmail')->willReturn('test@example.com');
+        $customer->method('getId')->willReturn(8);
+        $customer->method('getEmail')->willReturn('test@example.com');
 
         $this->wishlistHelper = $this->createPartialMock(Data::class, ['getWishlist', 'getCustomer']);
         $this->urlEncoder = $this->createPartialMock(EncoderInterface::class, ['encode']);
@@ -62,9 +72,11 @@ class LinkTest extends TestCase
         $this->wishlistHelper->expects($this->any())->method('getCustomer')->willReturn($customer);
         $this->urlEncoder->expects($this->any())
             ->method('encode')
-            ->willReturnCallback(function ($url) {
-                return strtr(base64_encode($url), '+/=', '-_,');
-            });
+            ->willReturnCallback(
+                function ($url) {
+                    return strtr(base64_encode($url), '+/=', '-_,');
+                }
+            );
 
         $this->urlBuilder = $this->createMock(UrlBuilderInterface::class);
         $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
@@ -83,12 +95,14 @@ class LinkTest extends TestCase
     public function testGetLink()
     {
         $this->urlBuilder->expects($this->atLeastOnce())->method('getUrl')
-            ->with([
+            ->with(
+                [
                 'type' => 'wishlist',
                 'data' => 'OCx0ZXN0QGV4YW1wbGUuY29t',
                 '_secure' => false,
                 'wishlist_id' => 5,
-            ])
+                ]
+            )
             ->willReturn('http://url.com/rss/feed/index/type/wishlist/wishlist_id/5');
         $this->assertEquals('http://url.com/rss/feed/index/type/wishlist/wishlist_id/5', $this->link->getLink());
     }

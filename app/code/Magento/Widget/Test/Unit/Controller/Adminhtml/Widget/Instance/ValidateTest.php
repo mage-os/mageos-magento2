@@ -24,6 +24,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Test for \Magento\Widget\Controller\Adminhtml\Widget\Instance\Validate.
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.UnusedLocalVariable)
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
@@ -67,7 +68,7 @@ class ValidateTest extends TestCase
     {
         $objectManager = new ObjectManager($this);
 
-        $request = $this->getMockForAbstractClass(RequestInterface::class);
+        $request = $this->createMock(RequestInterface::class);
         $this->messageManagerMock = $this->createMock(ManagerInterface::class);
         $viewMock = $this->createMock(ViewInterface::class);
         $this->messagesBlock = $this->createMock(Messages::class);

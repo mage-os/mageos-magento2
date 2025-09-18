@@ -24,6 +24,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Test class for \Magento\Widget\Controller\Adminhtml\Widget\LoadOptions
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.UnusedLocalVariable)
  */
@@ -199,7 +200,7 @@ class LoadOptionsTest extends TestCase
         };
 
         /** @var LayoutInterface|MockObject $layoutMock */
-        $layoutMock = $this->getMockForAbstractClass(LayoutInterface::class);
+        $layoutMock = $this->createMock(LayoutInterface::class);
         $layoutMock->expects($this->once())
             ->method('getBlock')
             ->with('wysiwyg_widget.options')

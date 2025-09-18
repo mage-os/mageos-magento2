@@ -26,6 +26,7 @@ use Magento\Wishlist\Model\Wishlist;
 use Magento\Wishlist\Model\WishlistFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -108,9 +109,11 @@ class RssTest extends TestCase
         
         $objectManagerMock = $this->createMock(\Magento\Framework\App\ObjectManager::class);
         $objectManagerMock->method('get')
-            ->willReturnMap([
+            ->willReturnMap(
+                [
                 [\Magento\Framework\Escaper::class, $escaperMock],
-            ]);
+                ]
+            );
         
         \Magento\Framework\App\ObjectManager::setInstance($objectManagerMock);
         
@@ -187,13 +190,15 @@ class RssTest extends TestCase
 
         $this->requestMock
             ->method('getParam')
-            ->willReturnCallback(function ($arg1, $arg2) use ($data) {
-                if ($arg1 == 'wishlist_id' && empty($arg2)) {
-                    return '';
-                } elseif ($arg1 == 'data' && empty($arg2)) {
-                    return $data;
+            ->willReturnCallback(
+                function ($arg1, $arg2) use ($data) {
+                    if ($arg1 == 'wishlist_id' && empty($arg2)) {
+                        return '';
+                    } elseif ($arg1 == 'data' && empty($arg2)) {
+                        return $data;
+                    }
                 }
-            });
+            );
 
         $this->customerSessionMock->expects($this->once())
             ->method('getCustomerId')
@@ -265,8 +270,8 @@ class RssTest extends TestCase
      * @param bool $result
      *
      * @return void
-     * @dataProvider dataProviderIsRssAllow
      */
+    #[DataProvider('dataProviderIsRssAllow')]
     public function testIsRssAllow(
         bool $isModuleEnabled,
         bool $isWishlistActive,

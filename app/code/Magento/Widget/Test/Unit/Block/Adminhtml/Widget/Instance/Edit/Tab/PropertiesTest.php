@@ -11,6 +11,7 @@ use Magento\Framework\Registry;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Widget\Block\Adminhtml\Widget\Instance\Edit\Tab\Properties;
 use Magento\Widget\Model\Widget\Instance;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -79,11 +80,10 @@ class PropertiesTest extends TestCase
     }
 
     /**
-     * @param array $widgetConfig
+     * @param array   $widgetConfig
      * @param boolean $isHidden
-     *
-     * @dataProvider isHiddenDataProvider
      */
+    #[DataProvider('isHiddenDataProvider')]
     public function testIsHidden($widgetConfig, $isHidden)
     {
         $this->widget->expects($this->atLeastOnce())->method('getWidgetConfigAsArray')->willReturn($widgetConfig);

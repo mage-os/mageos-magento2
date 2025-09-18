@@ -14,6 +14,7 @@ use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Stdlib\DateTime;
 use Magento\Widget\Model\ResourceModel\Layout\Link\Collection;
 use Magento\Widget\Test\Unit\Model\ResourceModel\Layout\AbstractTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 
@@ -29,37 +30,37 @@ class CollectionTest extends AbstractTestCase
      *
      * @var string
      */
-    protected $_tableAlias = 'update';
+    protected $tableAlias = 'update';
 
     /**
-     * @param Select $select
+     * @param  Select $select
      * @return Collection
      */
-    protected function _getCollection(Select $select)
+    protected function getCollection(Select $select)
     {
-        $eventManager = $this->getMockForAbstractClass(ManagerInterface::class);
+        $eventManager = $this->createMock(ManagerInterface::class);
 
         return new Collection(
             $this->createMock(EntityFactory::class),
-            $this->getMockForAbstractClass(LoggerInterface::class),
-            $this->getMockForAbstractClass(FetchStrategyInterface::class),
+            $this->createMock(LoggerInterface::class),
+            $this->createMock(FetchStrategyInterface::class),
             $eventManager,
             $this->createPartialMock(DateTime::class, []),
             null,
-            $this->_getResource($select)
+            $this->getResource($select)
         );
     }
 
     /**
-     * @dataProvider filterFlagDataProvider
      * @param bool $flag
      */
+    #[DataProvider('filterFlagDataProvider')]
     public function testAddTemporaryFilter($flag)
     {
         $select = $this->createMock(Select::class);
         $select->expects($this->once())->method('where')->with(self::TEST_WHERE_CONDITION);
 
-        $collection = $this->_getCollection($select);
+        $collection = $this->getCollection($select);
 
         /** @var MockObject $connection */
         $connection = $collection->getResource()->getConnection();
@@ -104,7 +105,7 @@ class CollectionTest extends AbstractTestCase
             $this->isType('array')
         );
 
-        $collection = $this->_getCollection($select);
+        $collection = $this->getCollection($select);
 
         /** @var $resource \PHPUnit\Framework\MockObject\MockObject */
         $resource = $collection->getResource();

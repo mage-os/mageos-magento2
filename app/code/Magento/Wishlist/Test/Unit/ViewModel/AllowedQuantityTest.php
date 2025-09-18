@@ -18,6 +18,7 @@ use Magento\Store\Model\Store;
 use Magento\Wishlist\ViewModel\AllowedQuantity;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class AllowedQuantityTest extends TestCase
 {
@@ -69,12 +70,11 @@ class AllowedQuantityTest extends TestCase
     /**
      * Getting min and max qty test.
      *
-     * @dataProvider saleQuantityDataProvider
-     *
-     * @param int $minSaleQty
-     * @param int $maxSaleQty
+     * @param int   $minSaleQty
+     * @param int   $maxSaleQty
      * @param array $expectedResult
      */
+    #[DataProvider('saleQuantityDataProvider')]
     public function testGettingMinMaxQty(int $minSaleQty, int $maxSaleQty, array $expectedResult)
     {
         $this->storeMock->expects($this->atLeastOnce())

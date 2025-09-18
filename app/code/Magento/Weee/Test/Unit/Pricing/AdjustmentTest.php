@@ -14,6 +14,7 @@ use Magento\Weee\Model\Tax;
 use Magento\Weee\Pricing\Adjustment;
 use PHPUnit\Framework\MockObject\MockObject;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class AdjustmentTest extends TestCase
@@ -71,8 +72,8 @@ class AdjustmentTest extends TestCase
     }
 
     /**
-     * @dataProvider isIncludedInDisplayPriceDataProvider
      */
+    #[DataProvider('isIncludedInDisplayPriceDataProvider')]
     public function testIsIncludedInDisplayPrice($expectedResult)
     {
         $displayTypes = [
@@ -100,8 +101,8 @@ class AdjustmentTest extends TestCase
      * @param float $amount
      * @param float $amountOld
      * @param float $expectedResult
-     * @dataProvider applyAdjustmentDataProvider
      */
+    #[DataProvider('applyAdjustmentDataProvider')]
     public function testApplyAdjustment($amount, $amountOld, $expectedResult)
     {
         $object = $this->createMock(SaleableInterface::class);
@@ -126,7 +127,9 @@ class AdjustmentTest extends TestCase
     }
 
     /**
-     * @dataProvider isExcludedWithDataProvider
+     */
+    #[DataProvider('isExcludedWithDataProvider')]
+    /*
      * @param string $adjustmentCode
      * @param bool $expectedResult
      */
@@ -148,9 +151,11 @@ class AdjustmentTest extends TestCase
     }
 
     /**
-     * @dataProvider getSortOrderProvider
+     */
+    #[DataProvider('getSortOrderProvider')]
+    /**
      * @param bool $isTaxable
-     * @param int $expectedResult
+     * @param int  $expectedResult
      */
     public function testGetSortOrder($isTaxable, $expectedResult)
     {

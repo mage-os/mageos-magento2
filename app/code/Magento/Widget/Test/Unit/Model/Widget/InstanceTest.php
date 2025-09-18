@@ -20,6 +20,7 @@ use Magento\Widget\Model\Config\Reader;
 use Magento\Widget\Model\NamespaceResolver;
 use Magento\Widget\Model\Widget;
 use Magento\Widget\Model\Widget\Instance;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
@@ -39,7 +40,9 @@ class InstanceTest extends TestCase
      */
     protected $_viewFileSystemMock;
 
-    /** @var  NamespaceResolver|MockObject */
+    /**
+     * @var NamespaceResolver|MockObject
+     */
     protected $_namespaceResolver;
 
     /**
@@ -47,7 +50,9 @@ class InstanceTest extends TestCase
      */
     protected $_model;
 
-    /** @var  Reader */
+    /**
+     * @var Reader
+     */
     protected $_readerMock;
 
     /**
@@ -60,7 +65,9 @@ class InstanceTest extends TestCase
      */
     protected $_directoryMock;
 
-    /** @var Json|MockObject */
+    /**
+     * @var Json|MockObject
+     */
     private $serializer;
 
     protected function setUp(): void
@@ -410,11 +417,11 @@ class InstanceTest extends TestCase
     /**
      * Test case for beforeSave method with updated page groups with layout handles
      *
-     * @dataProvider beforeSavePageGroupDataProvider
-     * @param array $pageGroups
-     * @param array $expectedData
+     * @param  array $pageGroups
+     * @param  array $expectedData
      * @return void
      */
+    #[DataProvider('beforeSavePageGroupDataProvider')]
     public function testBeforeSaveWithUpdatedLayoutHandles(array $pageGroups, array $expectedData): void
     {
         $this->setLayoutHandles();

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -14,6 +14,7 @@ use Magento\Catalog\Model\Product;
 use Magento\Eav\Model\Attribute;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Weee\Model\Attribute\Backend\Weee\Tax;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class TaxTest extends TestCase
@@ -37,10 +38,10 @@ class TaxTest extends TestCase
     }
 
     /**
-     * @dataProvider dataProviderValidate
      * @param $data
      * @param $expected
      */
+    #[DataProvider('dataProviderValidate')]
     public function testValidate($data, $expected)
     {
         $attributeMock = $this->getMockBuilder(Attribute::class)
@@ -155,8 +156,8 @@ class TaxTest extends TestCase
      * @param array $origData
      * @param array $currentData
      * @param array $expectedData
-     * @dataProvider dataProviderAfterSaveWithRegion
      */
+    #[DataProvider('dataProviderAfterSaveWithRegion')]
     public function testAfterSaveWithRegion($origData, $currentData, $expectedData)
     {
         $productMock = $this->getMockBuilder(Product::class)

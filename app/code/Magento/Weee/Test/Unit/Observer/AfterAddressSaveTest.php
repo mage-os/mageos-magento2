@@ -16,6 +16,7 @@ use Magento\Tax\Api\TaxAddressManagerInterface;
 use Magento\Weee\Helper\Data;
 use Magento\Weee\Observer\AfterAddressSave;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -120,8 +121,9 @@ class AfterAddressSaveTest extends TestCase
 
     /**
      * @test
-     * @dataProvider getExecuteDataProvider
-     *
+     */
+    #[DataProvider('getExecuteDataProvider')]
+    /**
      * @param $isEnabledPageCache
      * @param $isEnabledConfigCache
      * @param $isEnabledWeee
@@ -146,7 +148,7 @@ class AfterAddressSaveTest extends TestCase
             ->method('isEnabled')
             ->willReturn($isEnabledWeee);
 
-        /* @var \Magento\Customer\Model\Address|MockObject $address */
+        /** @var \Magento\Customer\Model\Address|MockObject $address */
         $address = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()
             ->getMock();

@@ -20,6 +20,7 @@ use Magento\Weee\Helper\Data;
 use Magento\Weee\Model\Tax;
 use Magento\Weee\Pricing\Adjustment as PricingAdjustment;
 use Magento\Weee\Pricing\Render\Adjustment;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -173,9 +174,8 @@ class AdjustmentTest extends TestCase
 
     /**
      * Test for method showInclDescr
-     *
-     * @dataProvider showInclDescrDataProvider
      */
+    #[DataProvider('showInclDescrDataProvider')]
     public function testShowInclDescr($typeOfDisplay, $amount, $expectedResult)
     {
         /** @var Amount $amountRender */
@@ -243,11 +243,11 @@ class AdjustmentTest extends TestCase
     /**
      * Test method for showExclDescrIncl
      *
-     * @param int $typeOfDisplay
+     * @param int   $typeOfDisplay
      * @param float $amount
-     * @param bool $expectedResult
-     * @dataProvider showExclDescrInclDataProvider
+     * @param bool  $expectedResult
      */
+    #[DataProvider('showExclDescrInclDataProvider')]
     public function testShowExclDescrIncl($typeOfDisplay, $amount, $expectedResult)
     {
         /** @var Amount $amountRender */
@@ -314,11 +314,11 @@ class AdjustmentTest extends TestCase
     /**
      * Test for method getWeeeTaxAttributes
      *
-     * @param int $typeOfDisplay
+     * @param int   $typeOfDisplay
      * @param array $attributes
      * @param array $expectedResult
-     * @dataProvider getWeeeTaxAttributesDataProvider
      */
+    #[DataProvider('getWeeeTaxAttributesDataProvider')]
     public function testGetWeeeTaxAttributes($typeOfDisplay, $attributes, $expectedResult)
     {
         /** @var Amount $amountRender */
@@ -377,9 +377,9 @@ class AdjustmentTest extends TestCase
      * Test for method renderWeeeTaxAttribute
      *
      * @param DataObject $attribute
-     * @param string $expectedResult
-     * @dataProvider renderWeeeTaxAttributeAmountDataProvider
+     * @param string     $expectedResult
      */
+    #[DataProvider('renderWeeeTaxAttributeAmountDataProvider')]
     public function testRenderWeeeTaxAttributeAmount($attribute, $expectedResult)
     {
         $this->priceCurrencyMock->expects($this->any())->method('convertAndFormat')->willReturnArgument(0);
@@ -405,9 +405,9 @@ class AdjustmentTest extends TestCase
      * Test for method renderWeeeTaxAttributeName
      *
      * @param DataObject $attribute
-     * @param string $expectedResult
-     * @dataProvider renderWeeeTaxAttributeNameDataProvider
+     * @param string     $expectedResult
      */
+    #[DataProvider('renderWeeeTaxAttributeNameDataProvider')]
     public function testRenderWeeeTaxAttributeName($attribute, $expectedResult)
     {
         $this->priceCurrencyMock->expects($this->any())->method('convertAndFormat')->willReturnArgument(0);
@@ -433,9 +433,9 @@ class AdjustmentTest extends TestCase
      * Test for method renderWeeeTaxAttributeWithTax
      *
      * @param DataObject $attribute
-     * @param string $expectedResult
-     * @dataProvider renderWeeeTaxAttributeAmountWithTaxDataProvider
+     * @param string     $expectedResult
      */
+    #[DataProvider('renderWeeeTaxAttributeAmountWithTaxDataProvider')]
     public function testRenderWeeeTaxAttributeWithTax($attribute, $expectedResult)
     {
         $this->priceCurrencyMock->expects($this->any())->method('convertAndFormat')->willReturnArgument(0);

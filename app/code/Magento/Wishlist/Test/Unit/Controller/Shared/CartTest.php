@@ -29,6 +29,7 @@ use Magento\Wishlist\Model\ItemFactory;
 use Magento\Wishlist\Model\ResourceModel\Item\Option\Collection as OptionCollection;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Test for \Magento\Wishlist\Controller\Shared\Cart.
@@ -192,16 +193,15 @@ class CartTest extends TestCase
     }
 
     /**
-     * @param int $itemId
+     * @param int    $itemId
      * @param string $productName
-     * @param bool $hasErrors
-     * @param bool $redirectToCart
+     * @param bool   $hasErrors
+     * @param bool   $redirectToCart
      * @param string $refererUrl
      * @param string $cartUrl
      * @param string $redirectUrl
-     *
-     * @dataProvider dataProviderExecute
      */
+    #[DataProvider('dataProviderExecute')]
     public function testExecute(
         $itemId,
         $productName,
@@ -275,8 +275,7 @@ class CartTest extends TestCase
             ->willReturn($productName);
 
         $successMessage = __('You added %1 to your shopping cart.', $productName);
-        $this->messageManager->expects($this->any())
-            ->method('addSuccessMessage')
+        $this->messageManager->method('addSuccessMessage')
             ->with($successMessage)
             ->willReturnSelf();
 

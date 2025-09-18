@@ -18,6 +18,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use Magento\Weee\Helper\Data;
 use Magento\Weee\Observer\AddPaymentWeeeItem;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -61,10 +62,11 @@ class AddPaymentWeeeItemTest extends TestCase
 
     /**
      * Test execute
-     *
-     * @dataProvider dataProvider
-     * @param bool $isEnabled
-     * @param bool $includeInSubtotal
+     */
+    #[DataProvider('dataProvider')]
+    /**
+     * @param  bool $isEnabled
+     * @param  bool $includeInSubtotal
      * @return void
      */
     public function testExecute(bool $isEnabled, bool $includeInSubtotal): void
@@ -158,8 +160,8 @@ class AddPaymentWeeeItemTest extends TestCase
     /**
      * Prepare if FPT should be added to payment cart as custom item or not.
      *
-     * @param bool $isEnabled
-     * @param bool $includeInSubtotal
+     * @param  bool $isEnabled
+     * @param  bool $includeInSubtotal
      * @return bool
      */
     private function prepareShouldBeAddedAsCustomItem(bool $isEnabled, bool $includeInSubtotal): bool

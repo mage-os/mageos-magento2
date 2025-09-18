@@ -28,9 +28,11 @@ use Magento\Wishlist\Model\LocaleQuantityProcessor;
 use Magento\Wishlist\Model\Wishlist;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Test for upate controller wishlist
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class UpdateTest extends TestCase
@@ -60,7 +62,7 @@ class UpdateTest extends TestCase
     private $updateController;
 
     /**
-     * @var MockObject|Context$contextMock
+     * @var MockObject|Context $contextMock
      */
     private $contextMock;
 
@@ -70,7 +72,7 @@ class UpdateTest extends TestCase
     private $resultRedirectMock;
 
     /**
-     * @var MockObject|ResultFactory $resultFatoryMock
+     * @var MockObject|ResultFactory $resultFactoryMock
      */
     private $resultFactoryMock;
 
@@ -140,11 +142,11 @@ class UpdateTest extends TestCase
     /**
      * Test for update method Wishlist controller.
      *
-     * @dataProvider getWishlistDataProvider
-     * @param array $wishlistDataProvider
-     * @param array $postData
+     * @param  array $wishlistDataProvider
+     * @param  array $postData
      * @return void
      */
+    #[DataProvider('getWishlistDataProvider')]
     public function testUpdate(array $wishlistDataProvider, array $postData): void
     {
         $wishlist = $this->createMock(Wishlist::class);
@@ -200,11 +202,13 @@ class UpdateTest extends TestCase
     /**
      * Verify update method if post data not available
      *
-     * @dataProvider getWishlistDataProvider
-     * @param array $wishlistDataProvider
+     * @param  array $wishlistDataProvider
+     * @param  array $_postData
      * @return void
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function testUpdateRedirectWhenNoPostData(array $wishlistDataProvider): void
+    #[DataProvider('getWishlistDataProvider')]
+    public function testUpdateRedirectWhenNoPostData(array $wishlistDataProvider, array $_postData): void
     {
         $wishlist = $this->createMock(Wishlist::class);
 

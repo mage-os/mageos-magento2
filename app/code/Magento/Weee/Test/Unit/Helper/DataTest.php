@@ -20,6 +20,7 @@ use Magento\Tax\Helper\Data;
 use Magento\Weee\Helper\Data as WeeeHelper;
 use Magento\Weee\Model\Config;
 use Magento\Weee\Model\Tax;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -228,13 +229,13 @@ class DataTest extends TestCase
     }
 
     /**
-     * @param int $priceDisplay
-     * @param bool $priceIncludesTax
+     * @param int   $priceDisplay
+     * @param bool  $priceIncludesTax
      * @param array $expectedAmount
      *
      * @return void
-     * @dataProvider dataProviderGetWeeeAttributesForBundle
      */
+    #[DataProvider('dataProviderGetWeeeAttributesForBundle')]
     public function testGetWeeeAttributesForBundle(
         int $priceDisplay,
         bool $priceIncludesTax,
@@ -296,7 +297,7 @@ class DataTest extends TestCase
             ->method('getSelectionsCollection')
             ->willReturn([$productSimple]);
 
-        $store=$this->createMock(Store::class);
+        $store = $this->createMock(Store::class);
         /** @var Product $product */
         $product = $this->createPartialMock(
             Product::class,
@@ -625,8 +626,8 @@ class DataTest extends TestCase
     /**
      * Create a mock for Product Simple with ID tracking
      *
-     * @param int $prodId1
-     * @param int $prodId2
+     * @param  int $prodId1
+     * @param  int $prodId2
      * @return Simple
      */
     private function createProductSimpleMock(int $prodId1, int $prodId2): Simple

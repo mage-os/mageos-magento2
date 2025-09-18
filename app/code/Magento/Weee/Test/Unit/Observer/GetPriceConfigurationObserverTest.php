@@ -15,6 +15,7 @@ use Magento\Framework\Registry;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Weee\Helper\Data;
 use Magento\Weee\Observer\GetPriceConfigurationObserver;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -27,8 +28,10 @@ class GetPriceConfigurationObserverTest extends TestCase
 {
     /**
      * Tests the methods that rely on the ScopeConfigInterface object to provide their return values
-     * @dataProvider getPriceConfigurationProvider
-     * @param bool $hasWeeeAttributes
+     */
+    #[DataProvider('getPriceConfigurationProvider')]
+    /**
+     * @param bool  $hasWeeeAttributes
      * @param array $testArray
      * @param array $expectedArray
      */
@@ -81,13 +84,15 @@ class GetPriceConfigurationObserverTest extends TestCase
         if ($hasWeeeAttributes) {
             $weeeHelper->expects($this->any())
                 ->method('getWeeeAttributesForBundle')
-                ->willReturn([
+                ->willReturn(
+                    [
                     1 => ['fpt1' => $weeeObject1],
                     2 => [
                         'fpt1' => $weeeObject1,
                         'fpt2' => $weeeObject2
                     ]
-                ]);
+                    ]
+                );
         } else {
             $weeeHelper->expects($this->any())
                 ->method('getWeeeAttributesForBundle')

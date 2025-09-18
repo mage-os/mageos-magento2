@@ -22,6 +22,7 @@ use Magento\Review\Helper\Data;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Review\Model\RatingFactory;
 use Magento\Review\Model\Rating;
 use Magento\Review\Model\ResourceModel\Rating\Collection as RatingCollection;
@@ -31,10 +32,14 @@ use Magento\Review\Model\ResourceModel\Rating\Collection as RatingCollection;
  */
 class FormTest extends TestCase
 {
-    /** @var Form */
+    /**
+     * @var Form
+     */
     protected $object;
 
-    /** @var ObjectManagerHelper */
+    /**
+     * @var ObjectManagerHelper
+     */
     protected $objectManagerHelper;
 
     /**
@@ -42,7 +47,9 @@ class FormTest extends TestCase
      */
     protected $requestMock;
 
-    /** @var Context|MockObject */
+    /**
+     * @var Context|MockObject
+     */
     protected $context;
 
     /**
@@ -50,16 +57,24 @@ class FormTest extends TestCase
      */
     protected $reviewDataMock;
 
-    /** @var ProductRepositoryInterface|MockObject */
+    /**
+     * @var ProductRepositoryInterface|MockObject
+     */
     protected $productRepository;
 
-    /** @var StoreManagerInterface|MockObject */
+    /**
+     * @var StoreManagerInterface|MockObject
+     */
     protected $storeManager;
 
-    /** @var UrlInterface|MockObject */
+    /**
+     * @var UrlInterface|MockObject
+     */
     protected $urlBuilder;
 
-    /** @var Json|MockObject */
+    /**
+     * @var Json|MockObject
+     */
     private $serializerMock;
 
     protected function setUp(): void
@@ -152,7 +167,7 @@ class FormTest extends TestCase
             ->with('id', false)
             ->willReturn($productIdNonInt);
 
-        $productMock = $this->getMockForAbstractClass(ProductInterface::class);
+        $productMock = $this->createMock(ProductInterface::class);
         $this->productRepository->expects($this->once())
             ->method('getById')
             ->with($productId, false, $storeId)
@@ -162,11 +177,11 @@ class FormTest extends TestCase
     }
 
     /**
-     * @param bool $isSecure
+     * @param bool   $isSecure
      * @param string $actionUrl
-     * @param int $productId
-     * @dataProvider getActionDataProvider
+     * @param int    $productId
      */
+    #[DataProvider('getActionDataProvider')]
     public function testGetAction($isSecure, $actionUrl, $productId)
     {
         $this->urlBuilder->expects($this->any())
@@ -285,18 +300,20 @@ class FormTest extends TestCase
 
         $urlBuilder = $this->createMock(\Magento\Framework\UrlInterface::class);
         $urlBuilder->method('getUrl')
-            ->willReturnCallback(function ($route, $params = []) use ($currentUrl, $encoded, $loginUrlBase) {
-                if ($route === '*/*/*') {
-                    $this->assertSame(['_current' => true], $params);
-                    return $currentUrl;
+            ->willReturnCallback(
+                function ($route, $params = []) use ($currentUrl, $encoded, $loginUrlBase) {
+                    if ($route === '*/*/*') {
+                        $this->assertSame(['_current' => true], $params);
+                        return $currentUrl;
+                    }
+                    if ($route === 'customer/account/login/') {
+                        $this->assertArrayHasKey(Url::REFERER_QUERY_PARAM_NAME, $params);
+                        $this->assertSame($encoded, $params[Url::REFERER_QUERY_PARAM_NAME]);
+                        return $loginUrlBase . '?' . Url::REFERER_QUERY_PARAM_NAME . '=' . $encoded;
+                    }
+                    return '';
                 }
-                if ($route === 'customer/account/login/') {
-                    $this->assertArrayHasKey(Url::REFERER_QUERY_PARAM_NAME, $params);
-                    $this->assertSame($encoded, $params[Url::REFERER_QUERY_PARAM_NAME]);
-                    return $loginUrlBase . '?' . Url::REFERER_QUERY_PARAM_NAME . '=' . $encoded;
-                }
-                return '';
-            });
+            );
 
         $urlEncoder = $this->createMock(EncoderInterface::class);
         $urlEncoder->expects($this->once())

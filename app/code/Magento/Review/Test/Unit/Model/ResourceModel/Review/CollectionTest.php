@@ -17,6 +17,7 @@ use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class CollectionTest extends TestCase
 {
@@ -137,8 +138,8 @@ class CollectionTest extends TestCase
      * @param int $callNum
      *
      * @return void
-     * @dataProvider addEntityFilterDataProvider
      */
+    #[DataProvider('addEntityFilterDataProvider')]
     public function testAddEntityFilter(
         $entity,
         int $pkValue,
