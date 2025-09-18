@@ -53,17 +53,15 @@
             <argument name="sequenceNumber" value="3"/>
             <argument name="option" value="{{Customer_Address.ca_address}}"/>
         </actionGroup>
-        <actionGroup ref="StorefrontUpdateMultishippingItemsQuantityAndAddressesActionGroup" stepKey="clickOnUpdateQtyAndAddress"/>
         <actionGroup ref="StorefrontSelectAddressActionGroup" stepKey="selectNYAddress">
             <argument name="sequenceNumber" value="2"/>
             <argument name="option" value="{{Customer_Address.ny_address}}"/>
         </actionGroup>
-        <actionGroup ref="StorefrontUpdateMultishippingItemsQuantityAndAddressesActionGroup" stepKey="clickOnUpdateQtyAndNYAddress"/>
         <actionGroup ref="StorefrontSelectAddressActionGroup" stepKey="selectBRAddress">
             <argument name="sequenceNumber" value="1"/>
             <argument name="option" value="{{Customer_Address.br_address}}"/>
         </actionGroup>
-        <actionGroup ref="StorefrontUpdateMultishippingItemsQuantityAndAddressesActionGroup" stepKey="clickOnUpdateQtyAndBRAddress"/>
+        <actionGroup ref="StorefrontUpdateMultishippingItemsQuantityAndAddressesActionGroup" stepKey="clickOnUpdateQtyAndAddress"/>
         <!-- Step 6: Now click Remove Item link one by one for each item -->
         <actionGroup ref="StorefrontRemoveProductsInMultiAddressCheckoutActionGroup" stepKey="removeFirstItem">
             <argument name="sequenceNumber" value="1"/>
