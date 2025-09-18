@@ -568,6 +568,8 @@ return [
         \Magento\Framework\Stomp\StompClient::class => null,
         \Magento\Framework\MessageQueue\QueueRepository::class => null,
         Stomp\StatefulStomp::class => null,
+        \Magento\ProductVideo\Model\ResourceModel\Video::class => null,
+        \Magento\ProductVideo\Model\Plugin\ExternalVideoResourceBackend::class => null,
     ],
     'placeOrder-fromConstructed' => [
         Magento\Elasticsearch7\Model\Client\Elasticsearch::class => null,
@@ -586,6 +588,16 @@ return [
         \Magento\Framework\Stomp\StompClient::class => null,
         \Magento\Framework\MessageQueue\QueueRepository::class => null,
         \Stomp\StatefulStomp::class => null,
+    ],
+    'applyCouponToCart' => [
+        \Magento\ProductVideo\Model\ResourceModel\Video::class => null,
+        \Magento\ProductVideo\Model\Plugin\ExternalVideoResourceBackend::class => null,
+        \Magento\PageBuilder\Plugin\Catalog\Model\Product\Attribute\RepositoryPlugin::class => null,
+    ],
+    'mergeCarts' => [
+        \Magento\ProductVideo\Model\ResourceModel\Video::class => null,
+        \Magento\ProductVideo\Model\Plugin\ExternalVideoResourceBackend::class => null,
+        \Magento\PageBuilder\Plugin\Catalog\Model\Product\Attribute\RepositoryPlugin::class => null,
     ],
     'createCustomer' => [
         Magento\Framework\Session\SaveHandler\Redis\Config::class => null,
