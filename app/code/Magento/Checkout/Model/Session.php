@@ -277,7 +277,9 @@ class Session extends \Magento\Framework\Session\SessionManager
                      * need recalculate totals of quote. It is possible if customer use currency switcher or
                      * store switcher.
                      */
-                    if ($quote->getQuoteCurrencyCode() != $this->_storeManager->getStore()->getCurrentCurrencyCode()) {
+                    $currencyCode = $quote->getQuoteCurrencyCode();
+                    $currentCurrency = $this->_storeManager->getStore()->getCurrentCurrencyCode();
+                    if ($currencyCode !== null && $currencyCode !== $currentCurrency) {
                         $quote->setStore($this->_storeManager->getStore());
                         $this->quoteRepository->save($quote->collectTotals());
                         /*

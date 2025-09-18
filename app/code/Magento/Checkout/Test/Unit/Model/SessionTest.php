@@ -434,20 +434,24 @@ class SessionTest extends TestCase
         $customerSession = $this->createMock(\Magento\Customer\Model\Session::class);
         $quoteRepository = $this->getMockForAbstractClass(CartRepositoryInterface::class);
         $quoteFactory = $this->createMock(QuoteFactory::class);
-        $quote = $this->createMock(Quote::class);
+        $quote = $this->getMockBuilder(Quote::class)
+            ->disableOriginalConstructor()
+            ->addMethods(['getQuoteCurrencyCode', 'getTotalsCollectedFlag'])
+            ->onlyMethods(['collectTotals', 'setCustomer'])
+            ->getMock();
         $logger = $this->getMockForAbstractClass(LoggerInterface::class);
         $loggerMethods = get_class_methods(LoggerInterface::class);
 
         $quoteFactory->expects($this->once())
             ->method('create')
             ->willReturn($quote);
-        $customerSession->expects($this->exactly(3))
-            ->method('isLoggedIn')
-            ->willReturn(true);
+        $customerSession->expects($this->exactly(2))->method('isLoggedIn')->willReturn(true);
         $store = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getWebsiteId'])
+            ->onlyMethods(['getWebsiteId', 'getCurrentCurrencyCode'])
             ->getMock();
+        $store->expects($this->any())->method('getWebsiteId')->willReturn(1);
+        $store->expects($this->any())->method('getCurrentCurrencyCode')->willReturn('USD');
         $storeManager->expects($this->any())
             ->method('getStore')
             ->willReturn($store);
@@ -457,18 +461,24 @@ class SessionTest extends TestCase
             ->getMock();
         $storage
             ->method('getData')
-            ->willReturnOnConsecutiveCalls(null, null, 1);
+            ->willReturnCallback(function($key) {
+                if ($key === 'quote_id_1') {
+                    return 123;
+                }
+                return null;
+            });
         $quoteRepository->expects($this->once())
-            ->method('getActiveForCustomer')
-            ->willThrowException(new NoSuchEntityException());
+            ->method('getActive')
+            ->with(123)
+            ->willReturn($quote);
 
         foreach ($loggerMethods as $method) {
             $logger->expects($this->never())->method($method);
         }
-
-        $quote->expects($this->once())
-            ->method('setCustomer')
-            ->with(null);
+        $quote->expects($this->once())->method('getQuoteCurrencyCode')->willReturn(null);
+        $quote->expects($this->once())->method('getTotalsCollectedFlag')->willReturn(false);
+        $quote->expects($this->once())->method('collectTotals')->willReturnSelf();
+        $quote->expects($this->once())->method('setCustomer')->with(null);
 
         $constructArguments = $this->helper->getConstructArguments(
             Session::class,
