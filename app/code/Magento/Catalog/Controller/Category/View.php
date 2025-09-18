@@ -209,14 +209,14 @@ class View extends Action implements HttpGetActionInterface, HttpPostActionInter
      */
     public function execute()
     {
-        if ($this->_request->getParam(ActionInterface::PARAM_NAME_URL_ENCODED)) {
-            //phpcs:ignore Magento2.Legacy.ObsoleteResponse
-            return $this->resultRedirectFactory->create()->setUrl($this->_redirect->getRedirectUrl());
+        $urlEncodedRedirect = $this->handleUrlEncodedRedirect();
+        if ($urlEncodedRedirect) {
+            return $urlEncodedRedirect;
         }
 
         $category = $this->_initCategory();
         if (!$category) {
-            return $this->resultForwardFactory->create()->forward('noroute');
+            return $this->handleCategoryNotFound();
         }
 
         $pageRedirect = $this->handlePageRedirect($category);
@@ -234,13 +234,73 @@ class View extends Action implements HttpGetActionInterface, HttpPostActionInter
     }
 
     /**
+     * Handle URL encoded redirect
+     *
+     * @return \Magento\Framework\Controller\Result\Redirect|null
+     */
+    private function handleUrlEncodedRedirect()
+    {
+        if ($this->_request->getParam(ActionInterface::PARAM_NAME_URL_ENCODED)) {
+            //phpcs:ignore Magento2.Legacy.ObsoleteResponse
+            return $this->resultRedirectFactory->create()->setUrl($this->_redirect->getRedirectUrl());
+        }
+        return null;
+    }
+
+    /**
+     * Handle category not found scenarios
+     *
+     * @return ResultInterface
+     * @throws NoSuchEntityException
+     */
+    private function handleCategoryNotFound()
+    {
+        if ($this->getResponse()->isRedirect()) {
+            return $this->getResponse();
+        }
+        $categoryId = (int)$this->getRequest()->getParam('id', false);
+        if ($categoryId && $this->isB2BPermissionDenial($categoryId)) {
+            $this->getResponse()->setBody('');
+            return $this->getResponse();
+        }
+        $resultForward = $this->resultForwardFactory->create();
+        $resultForward->forward('noroute');
+        return $resultForward;
+    }
+
+    /**
+     * Check if this is a B2B permission denial case
+     *
+     * @param int $categoryId
+     * @return bool
+     */
+    private function isB2BPermissionDenial(int $categoryId): bool
+    {
+        try {
+            $existingCategory = $this->categoryRepository->get(
+                $categoryId,
+                $this->_storeManager->getStore()->getId()
+            );
+            return $existingCategory->getIsActive()
+                && $existingCategory->isInRootCategoryList()
+                && !$this->categoryHelper->canShow($existingCategory);
+        } catch (NoSuchEntityException $e) {
+            return false;
+        }
+    }
+
+    /**
      * Category handle page redirect
      *
-     * @param Category $category
+     * @param Category|false $category
      * @return Redirect|null
      */
-    private function handlePageRedirect(Category $category): ?Redirect
+    private function handlePageRedirect($category): ?Redirect
     {
+        if (!$category || !($category instanceof Category)) {
+            return null;
+        }
+
         if ($this->_request->getParam(Toolbar::PAGE_PARM_NAME) < 0) {
             return $this->resultRedirectFactory->create()
                 ->setHttpResponseCode(301)
