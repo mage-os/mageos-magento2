@@ -50,6 +50,7 @@ class AddDirtyRulesNoticeTest extends TestCase
         $message = "test";
         // Create anonymous class extending Flag with dynamic methods
         $flagMock = new class extends Flag {
+            /** @var mixed */
             private $state = null;
 
             public function __construct()

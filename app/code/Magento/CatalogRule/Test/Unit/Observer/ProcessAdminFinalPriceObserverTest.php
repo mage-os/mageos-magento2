@@ -72,6 +72,7 @@ class ProcessAdminFinalPriceObserverTest extends TestCase
             ->getMock();
         // Create anonymous class extending Event with dynamic methods
         $this->eventMock = new class extends Event {
+            /** @var mixed */
             private $product = null;
 
             public function __construct()
@@ -92,8 +93,11 @@ class ProcessAdminFinalPriceObserverTest extends TestCase
         };
         // Create anonymous class extending RulePricesStorage with dynamic methods
         $this->rulePricesStorageMock = new class extends RulePricesStorage {
+            /** @var int|null */
             private $websiteId = null;
+            /** @var int|null */
             private $customerGroupId = null;
+            /** @var float|null */
             private $rulePrice = null;
 
             public function __construct()
@@ -172,11 +176,17 @@ class ProcessAdminFinalPriceObserverTest extends TestCase
 
         // Create anonymous class extending Product with dynamic methods
         $productMock = new class extends Product {
+            /** @var int|null */
             private $websiteId = null;
+            /** @var int|null */
             private $customerGroupId = null;
+            /** @var int|null */
             private $storeId = null;
+            /** @var int|null */
             private $id = null;
+            /** @var array */
             private $data = [];
+            /** @var float|null */
             private $finalPrice = null;
 
             public function __construct()
@@ -261,6 +271,7 @@ class ProcessAdminFinalPriceObserverTest extends TestCase
         };
         // Create anonymous class extending Date with dynamic methods
         $dateMock = new class extends Date {
+            /** @var string|null */
             private $formatValue = null;
 
             public function __construct()

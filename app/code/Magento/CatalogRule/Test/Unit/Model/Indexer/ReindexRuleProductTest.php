@@ -229,6 +229,7 @@ class ReindexRuleProductTest extends TestCase
 
         // Create anonymous class extending ExtensionAttributesInterface with dynamic methods
         $extensionAttributes = new class implements ExtensionAttributesInterface {
+            /** @var array */
             private $excludeWebsiteIds = [];
 
             public function __construct()
@@ -250,7 +251,6 @@ class ReindexRuleProductTest extends TestCase
         $this->ruleMock->expects(self::once())->method('getExtensionAttributes')
             ->willReturn($extensionAttributes);
         $extensionAttributes->setExcludeWebsiteIds([10 => [1, 2]]);
-            
 
         $this->localeDateMock->method('getConfigTimezone')
             ->willReturnMap([

@@ -50,7 +50,9 @@ class ApplyRulesTest extends TestCase
 
         // Create anonymous class extending AbstractModel with dynamic methods
         $this->model = new class extends AbstractModel {
+            /** @var bool|null */
             private $isMassupdate = null;
+            /** @var int|null */
             private $id = null;
 
             public function __construct()

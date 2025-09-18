@@ -38,6 +38,7 @@ class CategoryTest extends TestCase
         );
         // Create anonymous class extending Category with dynamic methods
         $this->subject = new class extends Category {
+            /** @var array */
             private $changedProductIds = [];
 
             public function __construct()

@@ -79,10 +79,15 @@ class ProductTest extends TestCase
 
         // Create anonymous class extending Product with dynamic methods
         $this->productModel = new class($this->productResource) extends \Magento\Catalog\Model\Product {
+            /** @var array */
             private $attributesByCode = [];
+            /** @var array */
             private $attributeSelect = [];
+            /** @var array */
             private $dataValues = [];
+            /** @var int */
             private $dataCallCount = 0;
+            /** @var mixed */
             private $resource = null;
 
             public function __construct($resource = null)
@@ -160,12 +165,19 @@ class ProductTest extends TestCase
 
         // Create anonymous class extending Attribute with dynamic methods
         $this->eavAttributeResource = new class extends Attribute {
+            /** @var string|null */
             private $frontendLabel = null;
+            /** @var array */
             private $attributesByCode = [];
+            /** @var array */
             private $dataUsingMethod = [];
+            /** @var string|null */
             private $attributeCode = null;
+            /** @var bool */
             private $isScopeGlobal = false;
+            /** @var string|null */
             private $backendType = null;
+            /** @var string|null */
             private $frontendInput = null;
 
             public function __construct()

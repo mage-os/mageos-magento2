@@ -117,7 +117,9 @@ class RuleTest extends TestCase
         );
         // PHPUnit 12 compatible: Use anonymous class for Combine since setRule is a magic method
         $this->condition = new class extends Combine {
+            /** @var mixed */
             private $rule = null;
+            /** @var bool */
             private $validateResult = false;
             
             public function __construct()

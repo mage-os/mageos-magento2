@@ -41,7 +41,9 @@ class ActionTest extends TestCase
 
         // Create anonymous class extending Product\Action with dynamic methods
         $result = new class extends \Magento\Catalog\Model\Product\Action {
+            /** @var array */
             private $attributesData = [];
+            /** @var array */
             private $productIds = [];
 
             public function __construct()
@@ -90,7 +92,9 @@ class ActionTest extends TestCase
 
         // Create anonymous class extending Product\Action with dynamic methods
         $result = new class extends \Magento\Catalog\Model\Product\Action {
+            /** @var array */
             private $attributesData = [];
+            /** @var array */
             private $productIds = [];
 
             public function __construct()
