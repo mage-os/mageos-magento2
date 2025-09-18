@@ -148,17 +148,93 @@ class ShippingMethodManagementTest extends TestCase
         ConfigFixture('carriers/flatrate/active', '0', 'store', 'default'),
         ConfigFixture('carriers/freeshipping/active', '0', 'store', 'default'),
         ConfigFixture('carriers/tablerate/condition_name', 'package_value_with_discount', 'store'),
-        DataFixture(CategoryFixture::class, ['name' => 'Category 1', 'parent_id' => 2], 'cat3'),
-        DataFixture(CategoryFixture::class, ['name' => 'Category 2', 'parent_id' => 2], 'cat6'),
-        DataFixture(ProductFixture::class, ['sku' => 'simple-tablerate-1', 'price' => 30, 'category_ids' => ['$cat3.id$']], 'p1'),
-        DataFixture(ProductFixture::class, ['sku' => 'simple-tablerate-2', 'price' => 40, 'category_ids' => ['$cat6.id$']], 'p2'),
-        DataFixture(ProductFixture::class, ['sku' => 'simple-tablerate-3', 'price' => 50, 'category_ids' => ['$cat6.id$']], 'p3'),
-        DataFixture(GuestCartFixture::class, ['reserved_order_id' => 'tableRate'], 'cart'),
-        DataFixture(AddProductToCartFixture::class, ['cart_id' => '$cart.id$', 'product_id' => '$p1.id$']),
-        DataFixture(AddProductToCartFixture::class, ['cart_id' => '$cart.id$', 'product_id' => '$p2.id$']),
-        DataFixture(AddProductToCartFixture::class, ['cart_id' => '$cart.id$', 'product_id' => '$p3.id$']),
-        DataFixture(SetBillingAddressFixture::class, ['cart_id' => '$cart.id$']),
-        DataFixture(SetShippingAddressFixture::class, ['cart_id' => '$cart.id$']),
+        DataFixture(
+            CategoryFixture::class,
+            [
+                'name' => 'Category 1',
+                'parent_id' => 2
+            ],
+            'cat3'
+        ),
+        DataFixture(
+            CategoryFixture::class,
+            [
+                'name' => 'Category 2',
+                'parent_id' => 2
+            ],
+            'cat6'
+        ),
+
+        DataFixture(
+            ProductFixture::class,
+            [
+                'sku' => 'simple-tablerate-1',
+                'price' => 30,
+                'category_ids' => ['$cat3.id$']
+            ],
+            'p1'
+        ),
+        DataFixture(
+            ProductFixture::class,
+            [
+                'sku' => 'simple-tablerate-2',
+                'price' => 40,
+                'category_ids' => ['$cat6.id$']
+            ],
+            'p2'
+        ),
+        DataFixture(
+            ProductFixture::class,
+            [
+                'sku' => 'simple-tablerate-3',
+                'price' => 50,
+                'category_ids' => ['$cat6.id$']
+            ],
+            'p3'
+        ),
+
+        DataFixture(
+            GuestCartFixture::class,
+            [
+                'reserved_order_id' => 'tableRate'
+            ],
+            'cart'
+        ),
+
+        DataFixture(
+            AddProductToCartFixture::class,
+            [
+                'cart_id' => '$cart.id$',
+                'product_id' => '$p1.id$'
+            ]
+        ),
+        DataFixture(
+            AddProductToCartFixture::class,
+            [
+                'cart_id' => '$cart.id$',
+                'product_id' => '$p2.id$'
+            ]
+        ),
+        DataFixture(
+            AddProductToCartFixture::class,
+            [
+                'cart_id' => '$cart.id$',
+                'product_id' => '$p3.id$'
+            ]
+        ),
+
+        DataFixture(
+            SetBillingAddressFixture::class,
+            [
+                'cart_id' => '$cart.id$'
+            ]
+        ),
+        DataFixture(
+            SetShippingAddressFixture::class,
+            [
+                'cart_id' => '$cart.id$'
+            ]
+        ),
         DataFixture(
             RuleFixture::class,
             [
@@ -174,9 +250,30 @@ class ShippingMethodManagementTest extends TestCase
                 ]
             ]
         ),
-        DataFixture(TablerateFixture::class, ['condition_name' => 'package_value_with_discount', 'condition_value' => 0.00, 'price' => 15]),
-        DataFixture(TablerateFixture::class, ['condition_name' => 'package_value_with_discount', 'condition_value' => 50.00, 'price' => 10]),
-        DataFixture(TablerateFixture::class, ['condition_name' => 'package_value_with_discount', 'condition_value' => 100.00, 'price' => 5]),
+        DataFixture(
+            TablerateFixture::class,
+            [
+                'condition_name' => 'package_value_with_discount',
+                'condition_value' => 0.00,
+                'price' => 15
+            ]
+        ),
+        DataFixture(
+            TablerateFixture::class,
+            [
+                'condition_name' => 'package_value_with_discount',
+                'condition_value' => 50.00,
+                'price' => 10
+            ]
+        ),
+        DataFixture(
+            TablerateFixture::class,
+            [
+                'condition_name' => 'package_value_with_discount',
+                'condition_value' => 100.00,
+                'price' => 5
+            ]
+        )
     ]
     public function testTableRateWithCartRuleForFreeShipping()
     {
@@ -216,11 +313,25 @@ class ShippingMethodManagementTest extends TestCase
      * @throws NoSuchEntityException
      */
     #[
-        DataFixture(RuleFixture::class, ['discount_amount' => 100, 'simple_action' => 'by_percent', 'apply_to_shipping' => 1, 'simple_free_shipping' => 1]),
+        DataFixture(
+            RuleFixture::class,
+            [
+                'discount_amount' => 100,
+                'simple_action' => 'by_percent',
+                'apply_to_shipping' => 1,
+                'simple_free_shipping' => 1
+            ]
+        ),
         DataFixture(ProductFixture::class, as: 'prod'),
         DataFixture(CustomerFixture::class, ['email' => 'customer@example.com'], 'customer'),
         DataFixture(CustomerCartFixture::class, ['customer_id' => '$customer.id$'], 'ccart'),
-        DataFixture(AddProductToCartFixture::class, ['cart_id' => '$ccart.id$', 'product_id' => '$prod.id$']),
+        DataFixture(
+            AddProductToCartFixture::class,
+            [
+                'cart_id' => '$ccart.id$',
+                'product_id' => '$prod.id$'
+            ]
+        ),
     ]
     public function testRateAppliedToShipping(): void
     {
@@ -520,7 +631,14 @@ class ShippingMethodManagementTest extends TestCase
         ], 'customer'),
 
         // Customer cart with reserved order id and one physical item
-        DataFixture(CustomerCartFixture::class, ['customer_id' => '$customer.id$', 'reserved_order_id' => 'test01'], 'cart'),
+        DataFixture(
+            CustomerCartFixture::class,
+            [
+                'customer_id' => '$customer.id$',
+                'reserved_order_id' => 'test01'
+            ],
+            'cart'
+        ),
         DataFixture(ProductFixture::class, ['sku' => 'vat-simple', 'price' => 10], 'p1'),
         DataFixture(AddProductToCartFixture::class, ['cart_id' => '$cart.id$', 'product_id' => '$p1.id$']),
     ]
@@ -721,9 +839,30 @@ class ShippingMethodManagementTest extends TestCase
             ['stop_rules_processing' => 0, 'coupon_code' => '123', 'discount_amount' => 20],
             'r_discount'
         ),
-        DataFixture(TablerateFixture::class, ['condition_name' => 'package_value_with_discount', 'condition_value' => 0.00, 'price' => 15]),
-        DataFixture(TablerateFixture::class, ['condition_name' => 'package_value_with_discount', 'condition_value' => 50.00, 'price' => 10]),
-        DataFixture(TablerateFixture::class, ['condition_name' => 'package_value_with_discount', 'condition_value' => 100.00, 'price' => 5]),
+        DataFixture(
+            TablerateFixture::class,
+            [
+                'condition_name' => 'package_value_with_discount',
+                'condition_value' => 0.00,
+                'price' => 15
+            ]
+        ),
+        DataFixture(
+            TablerateFixture::class,
+            [
+                'condition_name' => 'package_value_with_discount',
+                'condition_value' => 50.00,
+                'price' => 10
+            ]
+        ),
+        DataFixture(
+            TablerateFixture::class,
+            [
+                'condition_name' => 'package_value_with_discount',
+                'condition_value' => 100.00,
+                'price' => 5
+            ]
+        ),
     ]
     public function testTableRateWithZeroPriceShownWhenDiscountCouponAndFreeShippingCartRuleApplied()
     {
