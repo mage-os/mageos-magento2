@@ -19,6 +19,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Unit test for Qtyincrements block
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
  */
 class QtyincrementsTest extends TestCase
 {

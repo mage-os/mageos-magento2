@@ -13,9 +13,12 @@ use Magento\CatalogInventory\Model\ResourceModel\Indexer\StockFactory;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Exception\LocalizedException;
-
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+ */
 class FullTest extends TestCase
 {
     public function testExecuteWithAdapterErrorThrowsException()

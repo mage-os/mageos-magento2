@@ -25,6 +25,7 @@ use PHPUnit\Framework\TestCase;
  * Unit tests for \Magento\CatalogInventory\Model\StockStateProvider class.
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
  */
 class StockStateProviderTest extends TestCase
 {

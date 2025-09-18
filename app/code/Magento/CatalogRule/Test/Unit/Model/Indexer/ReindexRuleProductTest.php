@@ -20,6 +20,10 @@ use Magento\Store\Model\ScopeInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+ */
 class ReindexRuleProductTest extends TestCase
 {
     private const ADMIN_WEBSITE_ID = 0;

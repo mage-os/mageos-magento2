@@ -24,6 +24,10 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Test for CacheCleaner
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+ *
  */
 class CacheCleanerTest extends TestCase
 {

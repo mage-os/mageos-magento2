@@ -18,6 +18,10 @@ use Magento\ConfigurableProduct\Test\Unit\Model\Product\ProductExtensionAttribut
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+ */
 class AfterProductLoadTest extends TestCase
 {
     /**

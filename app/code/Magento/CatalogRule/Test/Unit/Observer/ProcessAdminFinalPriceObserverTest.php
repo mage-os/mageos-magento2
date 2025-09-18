@@ -26,6 +26,7 @@ use PHPUnit\Framework\TestCase;
  *
  * Test class for Observer for applying catalog rules on product for admin area
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
  */
 class ProcessAdminFinalPriceObserverTest extends TestCase
 {

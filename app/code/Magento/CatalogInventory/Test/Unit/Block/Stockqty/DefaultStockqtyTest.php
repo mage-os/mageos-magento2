@@ -21,6 +21,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Unit test for DefaultStockqty
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class DefaultStockqtyTest extends TestCase
 {

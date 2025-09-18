@@ -18,6 +18,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Testing invalidating product price index onn config changing
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
  */
 class InvalidatePriceIndexUponConfigChangeObserverTest extends TestCase
 {

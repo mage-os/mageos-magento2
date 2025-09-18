@@ -14,6 +14,10 @@ use Magento\Framework\Model\ResourceModel\AbstractResource;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+ */
 class ItemTest extends TestCase
 {
     /**
