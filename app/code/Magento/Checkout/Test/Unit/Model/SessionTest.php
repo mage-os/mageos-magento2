@@ -461,7 +461,7 @@ class SessionTest extends TestCase
             ->getMock();
         $storage
             ->method('getData')
-            ->willReturnCallback(function($key) {
+            ->willReturnCallback(function ($key) {
                 if ($key === 'quote_id_1') {
                     return 123;
                 }
