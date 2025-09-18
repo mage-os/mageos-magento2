@@ -16,6 +16,8 @@ use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\ResourceModel\Order\CollectionFactory;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\TestCase\GraphQlAbstract;
+use Magento\TestFramework\Fixture\Config;
+use Magento\TestFramework\Fixture\DataFixture;
 
 /**
  * End to checkout tests for guest
@@ -90,17 +92,16 @@ class CheckoutEndToEndTest extends GraphQlAbstract
     /**
      * Test checkout workflow with null second street in shipping address
      * Validates that null values in street array are properly filtered and don't cause errors
-     *
-     * @magentoConfigFixture default_store checkout/options/guest_checkout 1
-     * @magentoApiDataFixture Magento/Catalog/_files/products_with_layered_navigation_attribute.php
      */
+    #[
+        Config('default_store', 'checkout/options/guest_checkout', 1),
+        DataFixture('Magento/Catalog/_files/products_with_layered_navigation_attribute.php')
+    ]
     public function testCheckoutWithNullSecondStreetInShippingAddress()
     {
-        $quantity = 1;
-        $sku = $this->findProduct();
         $cartId = $this->createEmptyCart();
         $this->setGuestEmailOnCart($cartId);
-        $this->addProductToCart($cartId, $quantity, $sku);
+        $this->addProductToCart($cartId, 1, $this->findProduct());
 
         $shippingMethod = $this->setShippingAddressWithNullSecondStreet($cartId);
 
@@ -478,31 +479,31 @@ QUERY;
 
         $response = $this->graphQlMutation($query);
 
-        self::assertArrayHasKey('setShippingAddressesOnCart', $response);
-        self::assertArrayHasKey('cart', $response['setShippingAddressesOnCart']);
-        self::assertArrayHasKey('shipping_addresses', $response['setShippingAddressesOnCart']['cart']);
-        self::assertCount(1, $response['setShippingAddressesOnCart']['cart']['shipping_addresses']);
+        $this->assertArrayHasKey('setShippingAddressesOnCart', $response);
+        $this->assertArrayHasKey('cart', $response['setShippingAddressesOnCart']);
+        $this->assertArrayHasKey('shipping_addresses', $response['setShippingAddressesOnCart']['cart']);
+        $this->assertCount(1, $response['setShippingAddressesOnCart']['cart']['shipping_addresses']);
 
         $shippingAddress = current($response['setShippingAddressesOnCart']['cart']['shipping_addresses']);
 
-        self::assertEquals('B', $shippingAddress['firstname']);
-        self::assertEquals('C', $shippingAddress['lastname']);
-        self::assertNull($shippingAddress['company']);
-        self::assertEquals(['Lorem ipsum dolor sit ame'], $shippingAddress['street']);
-        self::assertEquals('PARIS', $shippingAddress['city']);
-        self::assertEquals('56590', $shippingAddress['postcode']);
-        self::assertEquals('FR', $shippingAddress['country']['code']);
-        self::assertEquals('FR', $shippingAddress['country']['label']);
-        self::assertEquals('0601020304', $shippingAddress['telephone']);
+        $this->assertEquals('B', $shippingAddress['firstname']);
+        $this->assertEquals('C', $shippingAddress['lastname']);
+        $this->assertNull($shippingAddress['company']);
+        $this->assertEquals(['Lorem ipsum dolor sit ame'], $shippingAddress['street']);
+        $this->assertEquals('PARIS', $shippingAddress['city']);
+        $this->assertEquals('56590', $shippingAddress['postcode']);
+        $this->assertEquals('FR', $shippingAddress['country']['code']);
+        $this->assertEquals('FR', $shippingAddress['country']['label']);
+        $this->assertEquals('0601020304', $shippingAddress['telephone']);
 
-        self::assertArrayHasKey('available_shipping_methods', $shippingAddress);
-        self::assertGreaterThan(0, count($shippingAddress['available_shipping_methods']));
+        $this->assertArrayHasKey('available_shipping_methods', $shippingAddress);
+        $this->assertGreaterThan(0, count($shippingAddress['available_shipping_methods']));
 
         $availableShippingMethod = current($shippingAddress['available_shipping_methods']);
-        self::assertArrayHasKey('carrier_code', $availableShippingMethod);
-        self::assertNotEmpty($availableShippingMethod['carrier_code']);
-        self::assertArrayHasKey('method_code', $availableShippingMethod);
-        self::assertNotEmpty($availableShippingMethod['method_code']);
+        $this->assertArrayHasKey('carrier_code', $availableShippingMethod);
+        $this->assertNotEmpty($availableShippingMethod['carrier_code']);
+        $this->assertArrayHasKey('method_code', $availableShippingMethod);
+        $this->assertNotEmpty($availableShippingMethod['method_code']);
 
         return $availableShippingMethod;
     }
