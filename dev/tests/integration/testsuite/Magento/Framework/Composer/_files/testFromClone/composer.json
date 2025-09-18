@@ -1,5 +1,5 @@
 {
-    "name": "magento/magento2ce",
+    "name": "mage-os/magento2ce",
     "description": "Magento 2 (Community Edition)",
     "type": "project",
     "license": [

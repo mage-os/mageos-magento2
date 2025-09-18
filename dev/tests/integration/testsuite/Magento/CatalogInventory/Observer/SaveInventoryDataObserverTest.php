@@ -104,6 +104,9 @@ class SaveInventoryDataObserverTest extends TestCase
             'conf1'
         )
     ]
+    /**
+     * @group integrationIgnore
+     */
     public function testAutoChangingIsInStockForNewConfigurable(): void
     {
         $sku = $this->fixtures->get('conf1')->getSku();

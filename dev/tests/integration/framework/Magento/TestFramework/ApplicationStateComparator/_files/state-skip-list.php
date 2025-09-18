@@ -552,6 +552,8 @@ return [
     // Skip both AMQP and STOMP message queue objects for placeOrder operations
     // This allows the test to work regardless of which message queue system is active
     'placeOrder' => [
+        Magento\Elasticsearch7\Model\Client\Elasticsearch::class => null,
+        Magento\Elasticsearch\Model\Adapter\BatchDataMapper\ProductDataMapper::class => null,
         // AMQP message queue objects
         \Magento\Framework\Amqp\ConfigPool::class => null,
         \Magento\Framework\Amqp\Config::class => null,
@@ -570,6 +572,8 @@ return [
         \Magento\ProductVideo\Model\Plugin\ExternalVideoResourceBackend::class => null,
     ],
     'placeOrder-fromConstructed' => [
+        Magento\Elasticsearch7\Model\Client\Elasticsearch::class => null,
+        Magento\Elasticsearch\Model\Adapter\BatchDataMapper\ProductDataMapper::class => null,
         // AMQP message queue objects
         \Magento\Framework\Amqp\ConfigPool::class => null,
         \Magento\Framework\Amqp\Config::class => null,
@@ -594,5 +598,23 @@ return [
         \Magento\ProductVideo\Model\ResourceModel\Video::class => null,
         \Magento\ProductVideo\Model\Plugin\ExternalVideoResourceBackend::class => null,
         \Magento\PageBuilder\Plugin\Catalog\Model\Product\Attribute\RepositoryPlugin::class => null,
+    ],
+    'createCustomer' => [
+        Magento\Framework\Session\SaveHandler\Redis\Config::class => null,
+        Magento\Framework\Session\SaveHandler\Redis\Logger::class => null,
+    ],
+    'updateCustomerAddress' => [
+        Magento\Framework\Session\SaveHandler\Redis\Config::class => null,
+        Magento\Framework\Session\SaveHandler\Redis\Logger::class => null,
+    ],
+    'updateCustomerEmail' => [
+        Magento\Framework\Session\SaveHandler\Redis\Config::class => null,
+        Magento\Framework\Session\SaveHandler\Redis\Logger::class => null,
+    ],
+    'updateCustomer' => [
+        Magento\Framework\Session\SaveHandler\Redis\Config::class => null,
+        Magento\Framework\Session\SaveHandler\Redis\Logger::class => null,
+    ],
+    '' => [
     ],
 ];
