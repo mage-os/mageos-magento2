@@ -967,14 +967,7 @@ class AccountManagement implements AccountManagementInterface
             }
             $this->customerRegistry->remove($customer->getId());
         } catch (InputException $e) {
-            $originalValue = $this->registry->registry('isSecureArea');
-            $this->registry->unregister('isSecureArea');
-            $this->registry->register('isSecureArea', true);
-
-            $this->customerRepository->delete($customer);
-
-            $this->registry->unregister('isSecureArea');
-            $this->registry->register('isSecureArea', $originalValue);
+            $this->deleteCustomerInSecureArea($customer);
 
             throw $e;
         }
@@ -1685,5 +1678,17 @@ class AccountManagement implements AccountManagementInterface
         $allowedCountries = $this->allowedCountriesReader->getAllowedCountries(ScopeInterface::SCOPE_STORE, $storeId);
 
         return in_array($address->getCountryId(), $allowedCountries);
+    }
+
+    private function deleteCustomerInSecureArea(CustomerInterface $customer): void
+    {
+        $originalValue = $this->registry->registry('isSecureArea');
+        $this->registry->unregister('isSecureArea');
+        $this->registry->register('isSecureArea', true);
+
+        $this->customerRepository->delete($customer);
+
+        $this->registry->unregister('isSecureArea');
+        $this->registry->register('isSecureArea', $originalValue);
     }
 }
