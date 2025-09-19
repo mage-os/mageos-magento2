@@ -26,6 +26,8 @@ use PHPUnit\Framework\TestCase;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class StockStateProviderTest extends TestCase
 {

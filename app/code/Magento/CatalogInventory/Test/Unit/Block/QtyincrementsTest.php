@@ -20,6 +20,8 @@ use PHPUnit\Framework\TestCase;
 /**
  * Unit test for Qtyincrements block
  * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class QtyincrementsTest extends TestCase
 {

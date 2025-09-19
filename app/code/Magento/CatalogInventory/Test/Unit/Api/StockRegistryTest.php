@@ -23,6 +23,8 @@ use PHPUnit\Framework\TestCase;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class StockRegistryTest extends TestCase
 {
@@ -83,12 +85,7 @@ class StockRegistryTest extends TestCase
         $this->productFactory = $this->createPartialMock(ProductFactory::class, ['create']);
         $this->productFactory->method('create')->willReturn($this->product);
 
-        $this->stock = $this->createMock(
-            StockInterface::class,
-            ['__wakeup'],
-            '',
-            false
-        );
+        $this->stock = $this->createMock(StockInterface::class);
         $this->stockItem = new class implements StockItemInterface {
             /** @var array */
             private $data = [];
@@ -456,29 +453,14 @@ class StockRegistryTest extends TestCase
                 return $this;
             }
         };
-        $this->stockStatus = $this->createMock(
-            StockStatusInterface::class,
-            ['__wakeup'],
-            '',
-            false
-        );
+        $this->stockStatus = $this->createMock(StockStatusInterface::class);
 
-        $this->stockRegistryProvider = $this->createMock(
-            StockRegistryProviderInterface::class,
-            ['getStock', 'getStockItem', 'getStockStatus'],
-            '',
-            false
-        );
+        $this->stockRegistryProvider = $this->createMock(StockRegistryProviderInterface::class);
         $this->stockRegistryProvider->method('getStock')->willReturn($this->stock);
         $this->stockRegistryProvider->method('getStockItem')->willReturn($this->stockItem);
         $this->stockRegistryProvider->method('getStockStatus')->willReturn($this->stockStatus);
 
-        $this->stockItemRepository = $this->createMock(
-            StockItemRepositoryInterface::class,
-            ['save'],
-            '',
-            false
-        );
+        $this->stockItemRepository = $this->createMock(StockItemRepositoryInterface::class);
         $this->stockItemRepository->method('save')->willReturn($this->stockItem);
 
         $this->stockRegistry = $this->objectManagerHelper->getObject(

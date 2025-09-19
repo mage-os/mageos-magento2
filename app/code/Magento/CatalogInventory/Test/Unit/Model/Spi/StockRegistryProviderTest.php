@@ -140,24 +140,9 @@ class StockRegistryProviderTest extends TestCase
     {
         $this->objectManagerHelper = new ObjectManagerHelper($this);
 
-        $this->stock = $this->createMock(
-            StockInterface::class,
-            ['getStockId'],
-            '',
-            false
-        );
-        $this->stockItem = $this->createMock(
-            StockItemInterface::class,
-            ['getItemId'],
-            '',
-            false
-        );
-        $this->stockStatus = $this->createMock(
-            StockStatusInterface::class,
-            ['getProductId'],
-            '',
-            false
-        );
+        $this->stock = $this->createMock(StockInterface::class);
+        $this->stockItem = $this->createMock(StockItemInterface::class);
+        $this->stockStatus = $this->createMock(StockStatusInterface::class);
 
         $this->stockFactory = $this->createPartialMock(
             StockInterfaceFactory::class,
@@ -197,34 +182,19 @@ class StockRegistryProviderTest extends TestCase
             StockCriteriaInterfaceFactory::class,
             ['create']
         );
-        $this->stockCriteria = $this->createMock(
-            StockCriteriaInterface::class,
-            ['setScopeFilter'],
-            '',
-            false
-        );
+        $this->stockCriteria = $this->createMock(StockCriteriaInterface::class);
 
         $this->stockItemCriteriaFactory = $this->createPartialMock(
             StockItemCriteriaInterfaceFactory::class,
             ['create']
         );
-        $this->stockItemCriteria = $this->createMock(
-            StockItemCriteriaInterface::class,
-            ['setProductsFilter', 'setScopeFilter'],
-            '',
-            false
-        );
+        $this->stockItemCriteria = $this->createMock(StockItemCriteriaInterface::class);
 
         $this->stockStatusCriteriaFactory = $this->createPartialMock(
             StockStatusCriteriaInterfaceFactory::class,
             ['create']
         );
-        $this->stockStatusCriteria = $this->createMock(
-            StockStatusCriteriaInterface::class,
-            ['setProductsFilter', 'setScopeFilter'],
-            '',
-            false
-        );
+        $this->stockStatusCriteria = $this->createMock(StockStatusCriteriaInterface::class);
 
         $this->stockRegistryProvider = $this->objectManagerHelper->getObject(
             StockRegistryProvider::class,
