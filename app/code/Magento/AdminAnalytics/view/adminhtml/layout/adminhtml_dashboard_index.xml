@@ -15,7 +15,7 @@
             <block name="tracking_notification"
                    as="tracking_notification"
                    template="Magento_AdminAnalytics::notification.phtml"
-                   ifconfig="admin/usage/enabled">
+            >
                 <arguments>
                     <argument name="notification" xsi:type="object">Magento\AdminAnalytics\ViewModel\Notification</argument>
                 </arguments>
