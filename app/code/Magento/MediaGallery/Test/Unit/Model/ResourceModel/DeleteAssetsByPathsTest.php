@@ -12,6 +12,7 @@ use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
 use Magento\Framework\Exception\CouldNotDeleteException;
 use Magento\MediaGallery\Model\ResourceModel\DeleteAssetsByPaths;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -43,9 +44,9 @@ class DeleteAssetsByPathsTest extends TestCase
     /**
      * When deleting an asset by path with mixed case, the asset with exact same path should be deleted
      *
-     * @dataProvider assetDeleteByPathDataProvider
      * @throws CouldNotDeleteException
      */
+    #[DataProvider('assetDeleteByPathDataProvider')]
     public function testDeleteCorrectAssetByPathWithCaseSensitiveMatches(
         array  $assets,
         string $assetPathToDelete,

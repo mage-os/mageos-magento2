@@ -13,6 +13,7 @@ use Magento\Framework\Filesystem\Directory\ReadInterface;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\MediaStorage\Helper\File\Media;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -54,8 +55,8 @@ class MediaTest extends TestCase
      * @param string $path
      * @param string $expectedDir
      * @param string $expectedFile
-     * @dataProvider pathDataProvider
      */
+    #[DataProvider('pathDataProvider')]
     public function testCollectFileInfo($path, $expectedDir, $expectedFile)
     {
         $content = 'content';

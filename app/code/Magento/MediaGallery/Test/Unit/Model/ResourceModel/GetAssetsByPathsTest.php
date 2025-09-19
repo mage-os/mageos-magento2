@@ -12,6 +12,7 @@ use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
 use Magento\MediaGallery\Model\ResourceModel\GetAssetsByPaths;
 use Magento\MediaGalleryApi\Api\Data\AssetInterfaceFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -72,9 +73,8 @@ class GetAssetsByPathsTest extends TestCase
 
     /**
      * When getting an asset by path with mixed case, the asset with exact same path should be loaded
-     *
-     * @dataProvider assetDeleteByPathDataProvider
      */
+    #[DataProvider('assetDeleteByPathDataProvider')]
     public function testGetCorrectAssetByPathWithCaseSensitiveMatches(
         array $assets,
         int $assetIndex,

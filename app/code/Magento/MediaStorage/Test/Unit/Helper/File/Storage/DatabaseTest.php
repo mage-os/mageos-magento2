@@ -19,6 +19,7 @@ use Magento\MediaStorage\Helper\File\Storage\Database;
 use Magento\MediaStorage\Model\File\Storage;
 use Magento\MediaStorage\Model\File\Storage\DatabaseFactory;
 use Magento\MediaStorage\Model\File\Storage\File;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -78,8 +79,8 @@ class DatabaseTest extends TestCase
     /**
      * @param int $storage
      * @param bool $expected
-     * @dataProvider checkDbUsageDataProvider
      */
+    #[DataProvider('checkDbUsageDataProvider')]
     public function testCheckDbUsage($storage, $expected)
     {
         $this->configMock->expects($this->once())
@@ -135,8 +136,8 @@ class DatabaseTest extends TestCase
     /**
      * @param int $storage
      * @param int $callNum
-     * @dataProvider updateFileDataProvider
      */
+    #[DataProvider('updateFileDataProvider')]
     public function testSaveFile($storage, $callNum)
     {
         $this->configMock->expects($this->once())
@@ -168,8 +169,8 @@ class DatabaseTest extends TestCase
     /**
      * @param int $storage
      * @param int $callNum
-     * @dataProvider updateFileDataProvider
      */
+    #[DataProvider('updateFileDataProvider')]
     public function testRenameFile($storage, $callNum)
     {
         $this->configMock->expects($this->once())
@@ -190,8 +191,8 @@ class DatabaseTest extends TestCase
     /**
      * @param int $storage
      * @param int $callNum
-     * @dataProvider updateFileDataProvider
      */
+    #[DataProvider('updateFileDataProvider')]
     public function testCopyFile($storage, $callNum)
     {
         $this->configMock->expects($this->once())
@@ -213,8 +214,8 @@ class DatabaseTest extends TestCase
      * @param int $storage
      * @param int $callNum
      * @param bool|null $expected
-     * @dataProvider fileExistsDataProvider
      */
+    #[DataProvider('fileExistsDataProvider')]
     public function testFileExists($storage, $callNum, $expected)
     {
         $this->configMock->expects($this->once())
@@ -248,8 +249,8 @@ class DatabaseTest extends TestCase
      * @param int $storage
      * @param int $callNum
      * @param string $expected
-     * @dataProvider getUniqueFilenameDataProvider
      */
+    #[DataProvider('getUniqueFilenameDataProvider')]
     public function testGetUniqueFilename($storage, $callNum, $expected)
     {
         $this->configMock->expects($this->once())
@@ -289,8 +290,8 @@ class DatabaseTest extends TestCase
      * @param int $callNum
      * @param int $id
      * @param int $callSaveFile
-     * @dataProvider saveFileToFileSystemDataProvider
      */
+    #[DataProvider('saveFileToFileSystemDataProvider')]
     public function testSaveFileToFileSystem($expected, $storage, $callNum, $id = 0, $callSaveFile = 0)
     {
         $this->configMock->expects($this->once())
@@ -346,8 +347,8 @@ class DatabaseTest extends TestCase
     /**
      * @param int $storage
      * @param int $callNum
-     * @dataProvider updateFileDataProvider
      */
+    #[DataProvider('updateFileDataProvider')]
     public function testDeleteFolder($storage, $callNum)
     {
         $this->configMock->expects($this->once())
@@ -380,8 +381,8 @@ class DatabaseTest extends TestCase
     /**
      * @param int $storage
      * @param int $callNum
-     * @dataProvider updateFileDataProvider
      */
+    #[DataProvider('updateFileDataProvider')]
     public function testDeleteFile($storage, $callNum)
     {
         $this->configMock->expects($this->once())
@@ -405,8 +406,8 @@ class DatabaseTest extends TestCase
      * @param int $storage
      * @param int $callNum
      * @param int $callDirWrite
-     * @dataProvider saveUploadedFileDataProvider
      */
+    #[DataProvider('saveUploadedFileDataProvider')]
     public function testSaveUploadedFile($result, $expected, $expectedFullPath, $storage, $callNum, $callDirWrite = 0)
     {
         $this->configMock->expects($this->once())

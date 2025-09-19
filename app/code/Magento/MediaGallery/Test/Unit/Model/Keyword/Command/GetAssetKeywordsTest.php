@@ -14,6 +14,7 @@ use Magento\Framework\Exception\IntegrationException;
 use Magento\MediaGallery\Model\Keyword\Command\GetAssetKeywords;
 use Magento\MediaGalleryApi\Api\Data\KeywordInterface;
 use Magento\MediaGalleryApi\Api\Data\KeywordInterfaceFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -56,10 +57,10 @@ class GetAssetKeywordsTest extends TestCase
     /**
      * Posive test for the main case
      *
-     * @dataProvider casesProvider
      * @param array $databaseQueryResult
      * @param int $expectedNumberOfFoundKeywords
      */
+    #[DataProvider('casesProvider')]
     public function testFind(array $databaseQueryResult, int $expectedNumberOfFoundKeywords): void
     {
         $randomAssetId = 12345;

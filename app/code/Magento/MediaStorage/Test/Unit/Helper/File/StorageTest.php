@@ -14,6 +14,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\MediaStorage\Helper\File\Storage;
 use Magento\MediaStorage\Helper\File\Storage\Database as DatabaseHelper;
 use Magento\MediaStorage\Model\File\Storage\File;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -74,8 +75,8 @@ class StorageTest extends TestCase
      * @param int $storage
      * @param int $callNum
      * @param bool $expected
-     * @dataProvider isInternalStorageDataProvider
      */
+    #[DataProvider('isInternalStorageDataProvider')]
     public function testIsInternalStorage($storage, $callNum, $expected)
     {
         $currentStorage = '10';
@@ -114,8 +115,8 @@ class StorageTest extends TestCase
      * @param int $callNum
      * @param int $callSaveFileNum
      * @param int $fileId
-     * @dataProvider processStorageFileDataProvider
      */
+    #[DataProvider('processStorageFileDataProvider')]
     public function testProcessStorageFile($expected, $storage, $callNum, $callSaveFileNum, $fileId = null)
     {
         $this->configMock->expects($this->once())

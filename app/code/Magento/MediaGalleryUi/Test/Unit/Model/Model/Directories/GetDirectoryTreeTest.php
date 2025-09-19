@@ -13,6 +13,7 @@ use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\ReadInterface;
 use Magento\MediaGalleryApi\Api\IsPathExcludedInterface;
 use Magento\MediaGalleryUi\Model\Directories\GetDirectoryTree;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -102,8 +103,8 @@ class GetDirectoryTreeTest extends TestCase
      * @param array $allowedFolders
      * @param array $expected
      * @throws ValidatorException
-     * @dataProvider executeDataProvider
      */
+    #[DataProvider('executeDataProvider')]
     public function testExecute(array $allowedFolders, array $expected): void
     {
         $directory = $this->createMock(ReadInterface::class);

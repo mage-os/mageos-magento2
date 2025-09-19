@@ -12,6 +12,7 @@ use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Exception\CouldNotDeleteException;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\MediaGallery\Model\Asset\Command\DeleteByDirectoryPath;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -68,8 +69,8 @@ class DeleteByDirectoryPathTest extends TestCase
      *
      * @param string $directoryPath
      * @throws CouldNotDeleteException
-     * @dataProvider directoryPathDataProvider
      */
+    #[DataProvider('directoryPathDataProvider')]
     public function testDeleteByDirectoryPath(string $directoryPath): void
     {
         if (!empty($directoryPath)) {
