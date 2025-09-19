@@ -18,6 +18,7 @@ use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\TestCase\GraphQlAbstract;
 use Magento\TestFramework\Fixture\Config;
 use Magento\TestFramework\Fixture\DataFixture;
+use Magento\Catalog\Test\Fixture\Product as ProductFixture;
 
 /**
  * End to checkout tests for guest
@@ -94,8 +95,12 @@ class CheckoutEndToEndTest extends GraphQlAbstract
      * Validates that null values in street array are properly filtered and don't cause errors
      */
     #[
-        Config('default_store', 'checkout/options/guest_checkout', 1),
-        DataFixture('Magento/Catalog/_files/products_with_layered_navigation_attribute.php')
+        Config("checkout/options/guest_checkout", "1", "store", "default"),
+        DataFixture(
+            ProductFixture::class,
+            ['price' => 1, 'name' => 'simple1', 'sku' => 'simple1'],
+            'simple1'
+        )
     ]
     public function testCheckoutWithNullSecondStreetInShippingAddress()
     {
