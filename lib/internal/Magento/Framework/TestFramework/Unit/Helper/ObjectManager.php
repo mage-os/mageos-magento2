@@ -1,8 +1,8 @@
 <?php
 /**
-* Copyright 2012 Adobe
-* All Rights Reserved.
-*/
+ * Copyright 2012 Adobe
+ * All Rights Reserved.
+ */
 namespace Magento\Framework\TestFramework\Unit\Helper;
 
 use Magento\Framework\GetParameterClassTrait;
