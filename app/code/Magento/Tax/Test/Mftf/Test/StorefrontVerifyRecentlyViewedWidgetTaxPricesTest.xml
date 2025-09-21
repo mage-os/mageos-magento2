@@ -152,9 +152,6 @@
         <actionGroup ref="exitPageBuilderFullScreen" stepKey="exitPageBuilderFullScreenAgain"/>
         <actionGroup ref="AdminSaveAndContinueEditCmsPageActionGroup" stepKey="saveHomePageAfterCatalogProductListWidgetCreation"/>
         <!-- Step 4:- Search for "Set of Sprite Yoga Straps" product (the sample grouped product) and add to the cart -->
-        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
-            <argument name="indices" value=""/>
-        </actionGroup>
         <actionGroup ref="CliCacheCleanActionGroup" stepKey="flushCache">
             <argument name="tags" value="full_page"/>
         </actionGroup>
