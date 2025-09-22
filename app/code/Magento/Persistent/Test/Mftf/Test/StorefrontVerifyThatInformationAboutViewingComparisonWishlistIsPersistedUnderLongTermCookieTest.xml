@@ -148,8 +148,9 @@
         <actionGroup ref="StorefrontAssertProductInRecentlyViewedWidgetActionGroup" stepKey="checkSimpleProductInRecentlyViewedWidgetAfterLogout">
             <argument name="product" value="$$createSimpleProduct$$"/>
         </actionGroup>
-        <actionGroup ref="StorefrontCustomerCheckProductInWishlistSidebarActionGroup" stepKey="checkSimpleProductInWishlistSidebarAfterLogout">
-            <argument name="productVar" value="$$createSimpleProduct$$"/>
+
+        <actionGroup ref="StorefrontAssertProductInRecentlyComparedWidgetActionGroup" stepKey="checkSimpleProductInRecentlyComparedWidgetAfterLogout">
+            <argument name="product" value="$$createSimpleProduct$$"/>
         </actionGroup>
 
         <!--Click the *Not you?* link and check the price for Simple Product-->
