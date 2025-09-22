@@ -1680,6 +1680,13 @@ class AccountManagement implements AccountManagementInterface
         return in_array($address->getCountryId(), $allowedCountries);
     }
 
+    /**
+     * Set isSecureArea to true, then delete the customer and revert isSecureArea to original value
+     * 
+     * @param  CustomerInterface  $customer
+     * @return void
+     * @throws LocalizedException
+     */
     private function deleteCustomerInSecureArea(CustomerInterface $customer): void
     {
         $originalValue = $this->registry->registry('isSecureArea');
