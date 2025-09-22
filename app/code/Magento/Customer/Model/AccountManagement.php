@@ -1682,7 +1682,7 @@ class AccountManagement implements AccountManagementInterface
 
     /**
      * Set isSecureArea to true, then delete the customer and revert isSecureArea to original value
-     * 
+     *
      * @param  CustomerInterface  $customer
      * @return void
      * @throws LocalizedException
