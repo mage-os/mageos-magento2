@@ -764,77 +764,13 @@ class SaveTest extends AttributeTest
         $this->productHelperMock->method('getAttributeSourceModelByInputType')->with('text')->willReturn(null);
         $this->productHelperMock->method('getAttributeBackendModelByInputType')->with('text')->willReturn(null);
 
-        // Attribute model supporting the required setters
-        $attributeModel = $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Eav\Attribute::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([
-                'getDefaultValueByInput',
-                'getBackendType',
-                'getFrontendClass',
-                'addData',
-                'save',
-                'setEntityTypeId',
-                'setIsUserDefined',
-                'getId'
-            ])->getMock();
-        $attributeModel->method('getDefaultValueByInput')->with('text')->willReturn(null);
-        $attributeModel->method('addData')->willReturnSelf();
-        $attributeModel->method('save')->willReturnSelf();
-        $attributeModel->method('setEntityTypeId')->willReturnSelf();
-        $attributeModel->method('setIsUserDefined')->willReturnSelf();
-        $attributeModel->method('getId')->willReturn(null);
-        $localAttributeFactory = $this->getMockBuilder(AttributeFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $localAttributeFactory->method('create')->willReturn($attributeModel);
-
-        $collectionMock = $this->getMockBuilder(AttributeGroupCollection::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([
-                'setAttributeSetFilter',
-                'addFieldToFilter',
-                'setPageSize',
-                'load',
-                'getFirstItem'
-            ])->getMock();
-        $groupMock = $this->getMockBuilder(AttributeGroup::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getId','save'])
-            ->getMock();
-        $groupMock->expects($this->exactly(2))->method('getId')->willReturnOnConsecutiveCalls(null, 5);
-        $groupMock->expects($this->once())->method('save')->willReturnSelf();
-
-        $collectionMock->expects($this->once())->method('setAttributeSetFilter')->with(5)->willReturnSelf();
-        $collectionMock->expects($this->once())
-            ->method('addFieldToFilter')
-            ->with('attribute_group_code', 'group_code')
-            ->willReturnSelf();
-        $collectionMock->expects($this->once())->method('setPageSize')->with(1)->willReturnSelf();
-        $collectionMock->expects($this->once())->method('load')->willReturnSelf();
-        $collectionMock->expects($this->once())->method('getFirstItem')->willReturn($groupMock);
-
-        $this->groupCollectionFactoryMock->expects($this->once())->method('create')->willReturn($collectionMock);
+        $localAttributeFactory = $this->createAttributeFactoryForGroupCollectionTest();
+        $this->prepareGroupCollectionFactoryForGroupCreation();
 
         $this->resultFactoryMock->expects($this->any())->method('create')->willReturn($this->redirectMock);
         $this->redirectMock->expects($this->any())->method('setPath')->willReturnSelf();
 
-        $controller = $this->objectManager->getObject(Save::class, [
-            'context' => $this->contextMock,
-            'attributeLabelCache' => $this->attributeLabelCacheMock,
-            'coreRegistry' => $this->coreRegistryMock,
-            'resultPageFactory' => $this->resultPageFactoryMock,
-            'buildFactory' => $this->buildFactoryMock,
-            'filterManager' => $this->filterManagerMock,
-            'productHelper' => $this->productHelperMock,
-            'attributeFactory' => $localAttributeFactory,
-            'validatorFactory' => $this->validatorFactoryMock,
-            'groupCollectionFactory' => $this->groupCollectionFactoryMock,
-            'layoutFactory' => $this->layoutFactoryMock,
-            'formDataSerializer' => $this->formDataSerializerMock,
-            'presentation' => $this->presentationMock,
-            '_session' => $this->sessionMock
-        ]);
+        $controller = $this->createControllerWithAttributeFactory($localAttributeFactory);
 
         $this->assertInstanceOf(ResultRedirect::class, $controller->execute());
     }
@@ -1052,5 +988,85 @@ class SaveTest extends AttributeTest
         $this->redirectMock->expects($this->any())->method('setPath')->willReturnSelf();
 
         $this->assertInstanceOf(ResultRedirect::class, $this->getModel()->execute());
+    }
+
+    private function createAttributeFactoryForGroupCollectionTest()
+    {
+        $attributeModel = $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Eav\Attribute::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([
+                'getDefaultValueByInput',
+                'getBackendType',
+                'getFrontendClass',
+                'addData',
+                'save',
+                'setEntityTypeId',
+                'setIsUserDefined',
+                'getId'
+            ])->getMock();
+        $attributeModel->method('getDefaultValueByInput')->with('text')->willReturn(null);
+        $attributeModel->method('addData')->willReturnSelf();
+        $attributeModel->method('save')->willReturnSelf();
+        $attributeModel->method('setEntityTypeId')->willReturnSelf();
+        $attributeModel->method('setIsUserDefined')->willReturnSelf();
+        $attributeModel->method('getId')->willReturn(null);
+
+        $localAttributeFactory = $this->getMockBuilder(AttributeFactory::class)
+            ->onlyMethods(['create'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $localAttributeFactory->method('create')->willReturn($attributeModel);
+
+        return $localAttributeFactory;
+    }
+
+    private function prepareGroupCollectionFactoryForGroupCreation()
+    {
+        $collectionMock = $this->getMockBuilder(AttributeGroupCollection::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([
+                'setAttributeSetFilter',
+                'addFieldToFilter',
+                'setPageSize',
+                'load',
+                'getFirstItem'
+            ])->getMock();
+        $groupMock = $this->getMockBuilder(AttributeGroup::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getId','save'])
+            ->getMock();
+        $groupMock->expects($this->exactly(2))->method('getId')->willReturnOnConsecutiveCalls(null, 5);
+        $groupMock->expects($this->once())->method('save')->willReturnSelf();
+
+        $collectionMock->expects($this->once())->method('setAttributeSetFilter')->with(5)->willReturnSelf();
+        $collectionMock->expects($this->once())
+            ->method('addFieldToFilter')
+            ->with('attribute_group_code', 'group_code')
+            ->willReturnSelf();
+        $collectionMock->expects($this->once())->method('setPageSize')->with(1)->willReturnSelf();
+        $collectionMock->expects($this->once())->method('load')->willReturnSelf();
+        $collectionMock->expects($this->once())->method('getFirstItem')->willReturn($groupMock);
+
+        $this->groupCollectionFactoryMock->expects($this->once())->method('create')->willReturn($collectionMock);
+    }
+
+    private function createControllerWithAttributeFactory($localAttributeFactory)
+    {
+        return $this->objectManager->getObject(Save::class, [
+            'context' => $this->contextMock,
+            'attributeLabelCache' => $this->attributeLabelCacheMock,
+            'coreRegistry' => $this->coreRegistryMock,
+            'resultPageFactory' => $this->resultPageFactoryMock,
+            'buildFactory' => $this->buildFactoryMock,
+            'filterManager' => $this->filterManagerMock,
+            'productHelper' => $this->productHelperMock,
+            'attributeFactory' => $localAttributeFactory,
+            'validatorFactory' => $this->validatorFactoryMock,
+            'groupCollectionFactory' => $this->groupCollectionFactoryMock,
+            'layoutFactory' => $this->layoutFactoryMock,
+            'formDataSerializer' => $this->formDataSerializerMock,
+            'presentation' => $this->presentationMock,
+            '_session' => $this->sessionMock
+        ]);
     }
 }
