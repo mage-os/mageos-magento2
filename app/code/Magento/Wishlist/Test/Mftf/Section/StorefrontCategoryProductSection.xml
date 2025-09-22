@@ -10,6 +10,6 @@
           xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
     <section name="StorefrontCategoryProductSection">
         <element name="ProductAddToWishlistByNumber" type="text" selector="//main//li[{{var1}}]//a[contains(@class, 'towishlist')]" parameterized="true"/>
-        <element name="ProductAddToWishlistByName" type="text" selector="//main//li[.//a[contains(text(), '{{var1}}')]]//button[contains(@class, 'towishlist')]" parameterized="true"/>
+        <element name="ProductAddToWishlistByName" type="text" selector="//main//li[.//a[contains(text(), '{{var1}}')]]//*[(name()='a' or name()='button') and contains(@class, 'towishlist')]" parameterized="true"/>
     </section>
 </sections>
