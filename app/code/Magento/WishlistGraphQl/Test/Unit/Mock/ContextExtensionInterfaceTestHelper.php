@@ -28,12 +28,12 @@ class ContextExtensionInterfaceTestHelper implements ContextExtensionInterface
     /**
      * Set customer flag
      *
-     * @param bool $value
+     * @param mixed $isCustomer
      * @return self
      */
-    public function setIsCustomer(bool $value): self
+    public function setIsCustomer($isCustomer): self
     {
-        $this->isCustomer = $value;
+        $this->isCustomer = (bool) $isCustomer;
         return $this;
     }
     
