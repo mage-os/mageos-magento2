@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -49,7 +49,7 @@ class ShippingMethodValidationRule implements QuoteValidationRuleInterface
             $shippingAddress->setStoreId($quote->getStoreId());
             $shippingMethod = $shippingAddress->getShippingMethod();
             $shippingRate = $shippingAddress->getShippingRateByCode($shippingMethod);
-            $validationResult = $shippingMethod && $shippingRate;
+            $validationResult = $shippingMethod && $shippingRate && $shippingAddress->requestShippingRates();
             if (!$validationResult) {
                 $validationErrors = [__($this->generalMessage)];
             }
