@@ -10,6 +10,7 @@ namespace Magento\WishlistGraphQl\Test\Unit\Model\Resolver;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\GraphQl\Model\Query\ContextExtensionInterface;
 use Magento\GraphQl\Model\Query\ContextInterface;
+use Magento\WishlistGraphQl\Test\Unit\Mock\ContextExtensionInterfaceTestHelper;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -65,23 +66,7 @@ class WishlistItemsTest extends TestCase
         $store->expects($this->once())->method('getWebsiteId')->willReturn($webId);
         $store->expects($this->any())->method('getId')->willReturn($storeId);
 
-        $extensionAttributes = new class implements ContextExtensionInterface {
-            /**
-             * @var StoreInterface|null
-             */
-            private $store = null;
-            
-            public function getStore()
-            {
-                return $this->store;
-            }
-            
-            public function setStore($store)
-            {
-                $this->store = $store;
-                return $this;
-            }
-        };
+        $extensionAttributes = new ContextExtensionInterfaceTestHelper();
         $extensionAttributes->setStore($store);
 
         $context->expects($this->exactly(2))

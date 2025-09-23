@@ -16,6 +16,8 @@ use Magento\Wishlist\Model\Wishlist;
 use Magento\Wishlist\Model\Wishlist\Config;
 use Magento\Wishlist\Model\WishlistFactory;
 use Magento\WishlistGraphQl\Model\Resolver\CustomerWishlistResolver;
+use Magento\WishlistGraphQl\Test\Unit\Mock\ContextExtensionInterfaceTestHelper;
+use Magento\WishlistGraphQl\Test\Unit\Mock\WishlistTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -58,103 +60,19 @@ class CustomerWishlistResolverTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->extensionAttributesMock = $this->createExtensionAttributesMock();
+        $this->extensionAttributesMock = new ContextExtensionInterfaceTestHelper();
         $this->contextMock = $this->createMock(Context::class);
         $this->contextMock->method('getUserId')->willReturn(self::STUB_CUSTOMER_ID);
         $this->contextMock->method('getUserType')->willReturn(null);
         $this->contextMock->method('getExtensionAttributes')->willReturn($this->extensionAttributesMock);
         $this->wishlistFactoryMock = $this->createPartialMock(WishlistFactory::class, ['create']);
-        $this->wishlistMock = $this->createWishlistMock();
+        $this->wishlistMock = new WishlistTestHelper();
         $this->wishlistConfigMock = $this->createMock(Config::class);
 
         $this->resolver = new CustomerWishlistResolver(
             $this->wishlistFactoryMock,
             $this->wishlistConfigMock
         );
-    }
-
-    /**
-     * Create extension attributes mock
-     */
-    /**
-     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
-     */
-    private function createExtensionAttributesMock()
-    {
-        return new class implements \Magento\GraphQl\Model\Query\ContextExtensionInterface {
-            /**
-             * @var bool
-             */
-            private $isCustomer = false;
-            
-            public function setIsCustomer($value)
-            {
-                $this->isCustomer = $value;
-                return $this;
-            }
-            
-            public function getIsCustomer()
-            {
-                return $this->isCustomer;
-            }
-        };
-    }
-
-    /**
-     * Create wishlist mock
-     */
-    private function createWishlistMock(): Wishlist
-    {
-        return new class extends Wishlist {
-            /**
-             * @var int
-             */
-            private $id = 1;
-            
-            /**
-             * @var int
-             */
-            private $itemsCount = 0;
-            
-            /**
-             * @var string
-             */
-            private $sharingCode = 'test-sharing-code';
-            
-            /**
-             * @var string
-             */
-            private $updatedAt = '2024-01-01 00:00:00';
-
-            public function __construct()
-            {
-            }
-
-            public function loadByCustomerId($customerId, $create = false)
-            {
-                return $this;
-            }
-
-            public function getId()
-            {
-                return $this->id;
-            }
-
-            public function getItemsCount()
-            {
-                return $this->itemsCount;
-            }
-
-            public function getSharingCode()
-            {
-                return $this->sharingCode;
-            }
-
-            public function getUpdatedAt()
-            {
-                return $this->updatedAt;
-            }
-        };
     }
 
     /**
