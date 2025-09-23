@@ -122,5 +122,22 @@
         <see userInput="StorefrontSearchToolbarTestProduct C" selector="{{StorefrontCategoryMainSection.productNameByPosition('1')}}" stepKey="finalVerifyProductCFirst"/>
         <see userInput="StorefrontSearchToolbarTestProduct B" selector="{{StorefrontCategoryMainSection.productNameByPosition('2')}}" stepKey="finalVerifyProductBSecond"/>
         <see userInput="StorefrontSearchToolbarTestProduct A" selector="{{StorefrontCategoryMainSection.productNameByPosition('3')}}" stepKey="finalVerifyProductAThird"/>
+
+        <!-- Step 8: Verify sorting functionality still works after back button navigation -->
+        <comment userInput="Test that sorting functionality is still operational after back button navigation" stepKey="commentTestSortingStillWorks"/>
+
+        <!-- Change sort direction to ascending to test sorting still works -->
+        <click selector="{{StorefrontSearchTopToolbarSection.sortDirectionDesc}}" stepKey="changeSortToAscendingAfterBack"/>
+        <waitForPageLoad stepKey="waitForAscendingSortingAfterBack"/>
+
+        <!-- Verify Product A is now first (alphabetically first in ascending order) -->
+        <see userInput="StorefrontSearchToolbarTestProduct A" selector="{{StorefrontCategoryMainSection.productNameByPosition('1')}}" stepKey="verifyProductAFirstAfterSortChange"/>
+
+        <!-- Change sort back to price to test different sorting option -->
+        <selectOption selector="{{StorefrontSearchTopToolbarSection.sortByDropdown}}" userInput="price" stepKey="selectSortByPriceAfterBack"/>
+        <waitForPageLoad stepKey="waitForPriceSortingAfterBack"/>
+
+        <!-- Verify Product B is first (lowest price $10.00) -->
+        <see userInput="StorefrontSearchToolbarTestProduct B" selector="{{StorefrontCategoryMainSection.productNameByPosition('1')}}" stepKey="verifyProductBFirstByPriceAfterBack"/>
     </test>
 </tests>

@@ -10,8 +10,11 @@
               xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
     <actionGroup name="StorefrontSearchSetDefaultDisplaySettingsActionGroup">
         <annotations>
-            <description>Sets search display to default settings: grid mode, relevance descending, 12 items per page</description>
+            <description>Sets search display to default settings: grid mode, relevance descending, 12 items per page. Fails if not on search results page.</description>
         </annotations>
+
+        <!-- Check if we're on the search results page -->
+        <seeInCurrentUrl url="{{StorefrontCatalogSearchPage.url}}" stepKey="verifyOnSearchPage"/>
 
         <!-- Set display mode to grid (default) -->
         <click selector="{{StorefrontSearchTopToolbarSection.gridMode}}" stepKey="selectGridMode"/>
