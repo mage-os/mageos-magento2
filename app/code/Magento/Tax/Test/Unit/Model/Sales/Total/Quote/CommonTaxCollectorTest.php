@@ -447,7 +447,9 @@ class CommonTaxCollectorTest extends TestCase
         $quoteDetailsItem->method('setDiscountAmount')->willReturnSelf();
         $quoteDetailsItem->method('setParentCode')->willReturnSelf();
 
-        $extension = $this->createMock(QuoteDetailsItemExtensionInterface::class);
+        $extension = $this->getMockBuilder(QuoteDetailsItemExtensionInterface::class)
+            ->onlyMethods(['setPriceForTaxCalculation', 'getPriceForTaxCalculation'])
+            ->getMock();
         $extension->expects($this->once())
             ->method('setPriceForTaxCalculation')
             ->with(9.99)
@@ -1248,17 +1250,9 @@ class CommonTaxCollectorTest extends TestCase
 
         // mapItem should be called first for parent (no parentCode), then for child with parentCode 'parent-code'
         $sut->method('mapItem')->willReturnCallback(
-            function (
-                $factory,
-                $item,
-                $incl,
-                $base,
-                $parentCode
-            ) use (
-                $parentItem,
-                $parentMapped,
-                $childMapped
-            ) {
+            function (...$args) use ($parentItem, $parentMapped, $childMapped) {
+                $item = $args[1] ?? null;
+                $parentCode = $args[4] ?? null;
                 if ($item === $parentItem) {
                     // parent mapping: no parent code
                     return $parentMapped;
@@ -1288,7 +1282,9 @@ class CommonTaxCollectorTest extends TestCase
         // Do not call getInstance() in unit context; no original OM to restore
 
         $extFactory = $this->createMock(QuoteDetailsItemExtensionInterfaceFactory::class);
-        $ext = $this->createMock(QuoteDetailsItemExtensionInterface::class);
+        $ext = $this->getMockBuilder(QuoteDetailsItemExtensionInterface::class)
+            ->onlyMethods(['setPriceForTaxCalculation', 'getPriceForTaxCalculation'])
+            ->getMock();
         $extFactory->method('create')->willReturn($ext);
 
         $customerAccount = $this->createMock(CustomerAccountManagement::class);
@@ -1352,7 +1348,6 @@ class CommonTaxCollectorTest extends TestCase
                 ->willReturnSelf();
 
             $billingAddressFromQuote = $this->createMock(QuoteAddress::class);
-            $defaultBillingCustomerAddress = $this->createMock(CustomerAddress::class);
 
             $customerAccount->expects($this->once())
                 ->method('getDefaultBillingAddress')
