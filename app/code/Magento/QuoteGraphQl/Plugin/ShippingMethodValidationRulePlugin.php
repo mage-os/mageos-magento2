@@ -34,6 +34,7 @@ class ShippingMethodValidationRulePlugin
      * @param ValidationResult[] $result
      * @param Quote $quote
      * @return ValidationResult[]
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function afterValidate(
         ShippingMethodValidationRule $subject,
@@ -53,7 +54,6 @@ class ShippingMethodValidationRulePlugin
             return $result;
         }
 
-        // If previously valid, rebuild with a generic error to mark invalid
         $existing = $result[0] ?? null;
         if ($existing instanceof ValidationResult && $existing->isValid()) {
             $result[0] = $this->validationResultFactory->create([
