@@ -20,6 +20,7 @@ use Magento\Framework\Message\ManagerInterface;
 use Magento\LoginAsCustomerApi\Api\GetAuthenticationDataBySecretInterface;
 use Magento\LoginAsCustomerApi\Api\AuthenticateCustomerBySecretInterface;
 use Psr\Log\LoggerInterface;
+use Magento\Checkout\Model\Session as CheckoutSession;
 
 /**
  * Login as Customer storefront login action
@@ -69,6 +70,11 @@ class Index implements HttpGetActionInterface
     private $customerSession;
 
     /**
+     * @var CheckoutSession
+     */
+    private $checkoutSession;
+
+    /**
      * @param ResultFactory $resultFactory
      * @param RequestInterface $request
      * @param CustomerRepositoryInterface $customerRepository
@@ -77,6 +83,7 @@ class Index implements HttpGetActionInterface
      * @param ManagerInterface $messageManager
      * @param LoggerInterface $logger
      * @param Session|null $customerSession
+     * @param CheckoutSession|null $checkoutSession
      */
     public function __construct(
         ResultFactory $resultFactory,
@@ -86,7 +93,8 @@ class Index implements HttpGetActionInterface
         AuthenticateCustomerBySecretInterface $authenticateCustomerBySecret,
         ManagerInterface $messageManager,
         LoggerInterface $logger,
-        ?Session $customerSession = null
+        ?Session $customerSession = null,
+        ?CheckoutSession $checkoutSession = null
     ) {
         $this->resultFactory = $resultFactory;
         $this->request = $request;
@@ -96,6 +104,8 @@ class Index implements HttpGetActionInterface
         $this->messageManager = $messageManager;
         $this->logger = $logger;
         $this->customerSession = $customerSession ?? ObjectManager::getInstance()->get(Session::class);
+        $this->checkoutSession = $checkoutSession
+            ?? ObjectManager::getInstance()->get(CheckoutSession::class);
     }
 
     /**
@@ -109,6 +119,10 @@ class Index implements HttpGetActionInterface
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
 
         $secret = $this->request->getParam('secret');
+        if ($this->checkoutSession->getQuoteId()) {
+            $this->checkoutSession->clearQuote();
+            $this->checkoutSession->clearStorage();
+        }
         try {
             $this->authenticateCustomerBySecret->execute($secret);
             $customer = $this->customerSession->getCustomer();
