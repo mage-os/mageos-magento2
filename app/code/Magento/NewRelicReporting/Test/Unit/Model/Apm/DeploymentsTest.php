@@ -322,7 +322,7 @@ class DeploymentsTest extends TestCase
 
         // Mock DeploymentTracker to be called with correct parameters
         $this->deploymentTrackerMock->expects($this->once())
-            ->method('createDeployment')
+            ->method('setDeployment')
             ->with($description, $changelog, $user, $revision, $commit, $deepLink, $groupId)
             ->willReturn($expectedNerdGraphResponse);
 
@@ -364,7 +364,7 @@ class DeploymentsTest extends TestCase
 
         // Mock DeploymentTracker to return false (failure)
         $this->deploymentTrackerMock->expects($this->once())
-            ->method('createDeployment')
+            ->method('setDeployment')
             ->with($description, $change, $user, $revision, null, null, null)
             ->willReturn(false);
 
@@ -397,7 +397,7 @@ class DeploymentsTest extends TestCase
 
         $expectedResult = ['deploymentId' => 'test-123', 'entityGuid' => 'test-guid'];
         $this->deploymentTrackerMock->expects($this->once())
-            ->method('createDeployment')
+            ->method('setDeployment')
             ->with($description, $changelog, $user, $revision, null, null, null)
             ->willReturn($expectedResult);
 
@@ -426,7 +426,7 @@ class DeploymentsTest extends TestCase
 
         // Verify all enhanced parameters are passed correctly
         $this->deploymentTrackerMock->expects($this->once())
-            ->method('createDeployment')
+            ->method('setDeployment')
             ->with(
                 $this->equalTo($description),
                 $this->equalTo($changelog),
@@ -665,7 +665,7 @@ class DeploymentsTest extends TestCase
 
         // Verify that falsy string parameters are cast to null correctly
         $this->deploymentTrackerMock->expects($this->once())
-            ->method('createDeployment')
+            ->method('setDeployment')
             ->with(
                 $description,
                 null,    // empty string should become null
@@ -706,7 +706,7 @@ class DeploymentsTest extends TestCase
 
         // Verify that truthy strings are passed as-is (cast to string)
         $this->deploymentTrackerMock->expects($this->once())
-            ->method('createDeployment')
+            ->method('setDeployment')
             ->with(
                 $description,
                 'actual changelog',  // Should be cast to string
@@ -747,7 +747,7 @@ class DeploymentsTest extends TestCase
 
         // Verify that null parameters are passed through as null
         $this->deploymentTrackerMock->expects($this->once())
-            ->method('createDeployment')
+            ->method('setDeployment')
             ->with(
                 $description,
                 null,    // null should remain null

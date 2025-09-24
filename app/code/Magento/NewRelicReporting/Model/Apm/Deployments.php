@@ -100,7 +100,7 @@ class Deployments
         $apiMode = $this->config->getApiMode();
 
         if ($apiMode === ApiMode::MODE_NERDGRAPH) {
-            return $this->createNerdGraphDeployment(
+            return $this->setNerdGraphDeployment(
                 $description,
                 $changelog,
                 $user,
@@ -110,7 +110,7 @@ class Deployments
                 $groupId
             );
         } else {
-            return $this->createV2RestDeployment($description, $changelog, $user, $revision);
+            return $this->setV2RestDeployment($description, $changelog, $user, $revision);
         }
     }
 
@@ -123,7 +123,7 @@ class Deployments
      * @param string|null $revision
      * @return bool|string
      */
-    private function createV2RestDeployment(string $description, bool|string $changelog, bool|string $user, ?string
+    private function setV2RestDeployment(string $description, bool|string $changelog, bool|string $user, ?string
     $revision): bool|string
     {
         $apiUrl = $this->config->getNewRelicApiUrl();
@@ -185,10 +185,10 @@ class Deployments
      * @param string|null $groupId
      * @return array|false
      */
-    private function createNerdGraphDeployment(string $description, ?string $changelog, ?string $user, ?string
+    private function setNerdGraphDeployment(string $description, ?string $changelog, ?string $user, ?string
     $revision, ?string $commit, ?string $deepLink, ?string $groupId): false|array
     {
-        return $this->deploymentTracker->createDeployment(
+        return $this->deploymentTracker->setDeployment(
             $description,
             $changelog ? (string)$changelog : null,
             $user ? (string)$user : null,

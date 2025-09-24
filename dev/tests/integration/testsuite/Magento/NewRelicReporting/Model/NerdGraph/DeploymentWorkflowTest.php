@@ -122,7 +122,7 @@ class DeploymentWorkflowTest extends TestCase
      */
     public function testDeploymentWorkflowWithMissingConfiguration()
     {
-        $result = $this->deploymentTracker->createDeployment('Test deployment');
+        $result = $this->deploymentTracker->setDeployment('Test deployment');
 
         $this->assertFalse($result);
     }
@@ -322,7 +322,7 @@ class DeploymentWorkflowTest extends TestCase
     public function testDeploymentWorkflowErrorHandling()
     {
         // This should fail gracefully and return false rather than throwing an exception
-        $result = $this->deploymentTracker->createDeployment('Test deployment');
+        $result = $this->deploymentTracker->setDeployment('Test deployment');
         $this->assertFalse($result);
     }
 
@@ -371,7 +371,7 @@ class DeploymentWorkflowTest extends TestCase
         $this->assertEquals('MzgwNjUyNnxBUE18QVBQTElDQVRJT058OTE2OTk4', $entityGuid);
 
         // Test deployment with valid entity GUID format
-        $result = $this->deploymentTracker->createDeployment(
+        $result = $this->deploymentTracker->setDeployment(
             'Entity GUID validation test',
             'Testing entity GUID handling',
             'entity-tester'
@@ -408,7 +408,7 @@ class DeploymentWorkflowTest extends TestCase
      */
     public function testDeploymentWithAllNerdGraphParameters()
     {
-        $result = $this->deploymentTracker->createDeployment(
+        $result = $this->deploymentTracker->setDeployment(
             'Full NerdGraph deployment test',
             'Complete changelog with all features',
             'nerdgraph-user',
@@ -432,7 +432,7 @@ class DeploymentWorkflowTest extends TestCase
      */
     public function testDeploymentWithMinimalNerdGraphParameters()
     {
-        $result = $this->deploymentTracker->createDeployment('Minimal NerdGraph test');
+        $result = $this->deploymentTracker->setDeployment('Minimal NerdGraph test');
 
         // Should work with just description
         $this->assertFalse($result); // Fails with fake credentials
@@ -447,11 +447,11 @@ class DeploymentWorkflowTest extends TestCase
     public function testDeploymentTrackerErrorHandlingScenarios()
     {
         // Test with missing entity GUID
-        $result = $this->deploymentTracker->createDeployment('Error test 1');
+        $result = $this->deploymentTracker->setDeployment('Error test 1');
         $this->assertFalse($result);
 
         // Test with empty description
-        $result = $this->deploymentTracker->createDeployment('');
+        $result = $this->deploymentTracker->setDeployment('');
         $this->assertFalse($result);
     }
 

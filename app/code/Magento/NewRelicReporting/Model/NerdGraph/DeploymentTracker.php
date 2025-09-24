@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\NewRelicReporting\Model\NerdGraph;
 
+use Exception;
 use Magento\NewRelicReporting\Model\Config;
 use Psr\Log\LoggerInterface;
 
@@ -59,7 +60,7 @@ class DeploymentTracker
      * @param string|null $groupId Group ID for organizing deployments
      * @return array|false Deployment data on success, false on failure
      */
-    public function createDeployment(
+    public function setDeployment(
         string $description,
         ?string $changelog = null,
         ?string $user = null,
@@ -98,7 +99,7 @@ class DeploymentTracker
                 $deepLink,
                 $groupId
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->error('NerdGraph deployment creation failed: ' . $e->getMessage());
             return false;
         }

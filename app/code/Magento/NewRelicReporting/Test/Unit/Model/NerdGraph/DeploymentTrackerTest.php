@@ -97,7 +97,7 @@ class DeploymentTrackerTest extends TestCase
         $this->nerdGraphClientMock->expects($this->once())
             ->method('query')
             ->with(
-                $this->stringContains('mutation CreateDeployment'),
+                $this->stringContains('mutation createDeployment'),
                 $this->callback(function ($variables) use (
                     $entityGuid,
                     $description,
@@ -125,7 +125,7 @@ class DeploymentTrackerTest extends TestCase
             ->method('info')
             ->with('NerdGraph deployment created successfully');
 
-        $result = $this->deploymentTracker->createDeployment(
+        $result = $this->deploymentTracker->setDeployment(
             $description,
             $changelog,
             $user,
@@ -175,7 +175,7 @@ class DeploymentTrackerTest extends TestCase
         $this->nerdGraphClientMock->expects($this->once())
             ->method('query')
             ->with(
-                $this->stringContains('mutation CreateDeployment'),
+                $this->stringContains('mutation createDeployment'),
                 $this->callback(function ($variables) use ($entityGuid, $description) {
                     return isset($variables['deployment']) &&
                            $variables['deployment']['entityGuid'] === $entityGuid &&
@@ -190,7 +190,7 @@ class DeploymentTrackerTest extends TestCase
             ->method('info')
             ->with('NerdGraph deployment created successfully');
 
-        $result = $this->deploymentTracker->createDeployment($description);
+        $result = $this->deploymentTracker->setDeployment($description);
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey('deploymentId', $result);
@@ -236,7 +236,7 @@ class DeploymentTrackerTest extends TestCase
         $this->nerdGraphClientMock->expects($this->once())
             ->method('query')
             ->with(
-                $this->stringContains('mutation CreateDeployment'),
+                $this->stringContains('mutation createDeployment'),
                 $this->callback(function ($variables) use ($resolvedGuid, $description) {
                     return isset($variables['deployment']) &&
                            $variables['deployment']['entityGuid'] === $resolvedGuid &&
@@ -248,7 +248,7 @@ class DeploymentTrackerTest extends TestCase
         $this->loggerMock->expects($this->exactly(2))
             ->method('info');
 
-        $result = $this->deploymentTracker->createDeployment($description);
+        $result = $this->deploymentTracker->setDeployment($description);
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey('deploymentId', $result);
@@ -294,7 +294,7 @@ class DeploymentTrackerTest extends TestCase
         $this->nerdGraphClientMock->expects($this->once())
             ->method('query')
             ->with(
-                $this->stringContains('mutation CreateDeployment'),
+                $this->stringContains('mutation createDeployment'),
                 $this->callback(function ($variables) use ($resolvedGuid, $description) {
                     return isset($variables['deployment']) &&
                            $variables['deployment']['entityGuid'] === $resolvedGuid &&
@@ -306,7 +306,7 @@ class DeploymentTrackerTest extends TestCase
         $this->loggerMock->expects($this->exactly(2))
             ->method('info');
 
-        $result = $this->deploymentTracker->createDeployment($description);
+        $result = $this->deploymentTracker->setDeployment($description);
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey('deploymentId', $result);
@@ -334,7 +334,7 @@ class DeploymentTrackerTest extends TestCase
         $this->loggerMock->expects($this->atLeastOnce())
             ->method('error');
 
-        $result = $this->deploymentTracker->createDeployment($description);
+        $result = $this->deploymentTracker->setDeployment($description);
 
         $this->assertFalse($result);
     }
@@ -366,7 +366,7 @@ class DeploymentTrackerTest extends TestCase
 
         $this->loggerMock->expects($this->atLeastOnce())->method('error');
 
-        $result = $this->deploymentTracker->createDeployment($description);
+        $result = $this->deploymentTracker->setDeployment($description);
 
         $this->assertFalse($result);
     }
@@ -396,7 +396,7 @@ class DeploymentTrackerTest extends TestCase
 
         $this->loggerMock->expects($this->atLeastOnce())->method('error');
 
-        $result = $this->deploymentTracker->createDeployment($description);
+        $result = $this->deploymentTracker->setDeployment($description);
 
         $this->assertFalse($result);
     }
@@ -419,7 +419,7 @@ class DeploymentTrackerTest extends TestCase
 
         $this->loggerMock->expects($this->atLeastOnce())->method('error');
 
-        $result = $this->deploymentTracker->createDeployment($description);
+        $result = $this->deploymentTracker->setDeployment($description);
 
         $this->assertFalse($result);
     }
@@ -448,7 +448,7 @@ class DeploymentTrackerTest extends TestCase
 
         $this->loggerMock->expects($this->atLeastOnce())->method('error');
 
-        $result = $this->deploymentTracker->createDeployment($description);
+        $result = $this->deploymentTracker->setDeployment($description);
 
         $this->assertFalse($result);
     }
@@ -471,7 +471,7 @@ class DeploymentTrackerTest extends TestCase
 
         $this->loggerMock->expects($this->atLeastOnce())->method('error');
 
-        $result = $this->deploymentTracker->createDeployment($description);
+        $result = $this->deploymentTracker->setDeployment($description);
 
         $this->assertFalse($result);
     }
@@ -502,7 +502,7 @@ class DeploymentTrackerTest extends TestCase
         $this->nerdGraphClientMock->expects($this->once())
             ->method('query')
             ->with(
-                $this->stringContains('mutation CreateDeployment'),
+                $this->stringContains('mutation createDeployment'),
                 $this->callback(function ($variables) use ($entityGuid, $description) {
                     return isset($variables['deployment']) &&
                            $variables['deployment']['entityGuid'] === $entityGuid &&
@@ -515,7 +515,7 @@ class DeploymentTrackerTest extends TestCase
             ->method('info')
             ->with('NerdGraph deployment created successfully');
 
-        $result = $this->deploymentTracker->createDeployment($description);
+        $result = $this->deploymentTracker->setDeployment($description);
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey('deploymentId', $result);
@@ -556,7 +556,7 @@ class DeploymentTrackerTest extends TestCase
             ->method('info')
             ->with('NerdGraph deployment created successfully');
 
-        $result = $this->deploymentTracker->createDeployment($description, $changelog, $user);
+        $result = $this->deploymentTracker->setDeployment($description, $changelog, $user);
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey('deploymentId', $result);
@@ -592,7 +592,7 @@ class DeploymentTrackerTest extends TestCase
         $this->nerdGraphClientMock->expects($this->once())
             ->method('query')
             ->with(
-                $this->stringContains('mutation CreateDeployment'),
+                $this->stringContains('mutation createDeployment'),
                 $this->callback(function ($variables) use (
                     $entityGuid,
                     $description,
@@ -620,7 +620,7 @@ class DeploymentTrackerTest extends TestCase
             ->method('info')
             ->with('NerdGraph deployment created successfully');
 
-        $result = $this->deploymentTracker->createDeployment(
+        $result = $this->deploymentTracker->setDeployment(
             $description,
             $changelog,
             $user,
