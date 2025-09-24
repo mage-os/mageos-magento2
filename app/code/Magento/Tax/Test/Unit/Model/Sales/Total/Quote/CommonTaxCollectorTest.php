@@ -35,6 +35,9 @@ use Magento\Tax\Model\Sales\Total\Quote\CommonTaxCollector;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @SuppressWarnings("CouplingBetweenObjects")
+ */
 class CommonTaxCollectorTest extends TestCase
 {
     /** @var Config|MockObject */
@@ -1253,7 +1256,6 @@ class CommonTaxCollectorTest extends TestCase
                 $parentCode
             ) use (
                 $parentItem,
-                $childItem,
                 $parentMapped,
                 $childMapped
             ) {
@@ -1278,6 +1280,9 @@ class CommonTaxCollectorTest extends TestCase
         $this->assertSame([$parentMapped, $childMapped, $extra1, $extra2], $result);
     }
 
+    /**
+     * @SuppressWarnings("ExcessiveMethodLength")
+     */
     public function testConstructorFallsBackToObjectManagerForOptionalDependencies(): void
     {
         // Do not call getInstance() in unit context; no original OM to restore
