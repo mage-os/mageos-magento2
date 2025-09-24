@@ -69,4 +69,25 @@ class ContextExtensionInterfaceTestHelper implements ContextExtensionInterface
         $this->store = $store;
         return $this;
     }
+    
+    /**
+     * Get customer group ID
+     *
+     * @return int|null
+     */
+    public function getCustomerGroupId(): ?int
+    {
+        return null;
+    }
+    
+    /**
+     * Set customer group ID
+     *
+     * @param mixed $customerGroupId
+     * @return self
+     */
+    public function setCustomerGroupId($customerGroupId): self
+    {
+        return $this;
+    }
 }
