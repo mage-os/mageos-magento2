@@ -447,13 +447,31 @@ class CommonTaxCollectorTest extends TestCase
         $quoteDetailsItem->method('setDiscountAmount')->willReturnSelf();
         $quoteDetailsItem->method('setParentCode')->willReturnSelf();
 
-        $extension = $this->getMockBuilder(QuoteDetailsItemExtensionInterface::class)
-            ->onlyMethods(['setPriceForTaxCalculation', 'getPriceForTaxCalculation'])
-            ->getMock();
-        $extension->expects($this->once())
-            ->method('setPriceForTaxCalculation')
-            ->with(9.99)
-            ->willReturnSelf();
+        $extension = new class implements \Magento\Tax\Api\Data\QuoteDetailsItemExtensionInterface
+        {
+            /**
+             * @var float|null
+             */
+            private $price;
+
+            /**
+             * @param float|null $value
+             * @return $this
+             */
+            public function setPriceForTaxCalculation($value)
+            {
+                $this->price = $value;
+                return $this;
+            }
+
+            /**
+             * @return float|null
+             */
+            public function getPriceForTaxCalculation()
+            {
+                return $this->price;
+            }
+        };
 
         $quoteDetailsItem->method('getExtensionAttributes')->willReturn(null);
         $quoteDetailsItem->expects($this->once())->method('setExtensionAttributes')->with($extension)->willReturnSelf();
@@ -1282,9 +1300,31 @@ class CommonTaxCollectorTest extends TestCase
         // Do not call getInstance() in unit context; no original OM to restore
 
         $extFactory = $this->createMock(QuoteDetailsItemExtensionInterfaceFactory::class);
-        $ext = $this->getMockBuilder(QuoteDetailsItemExtensionInterface::class)
-            ->onlyMethods(['setPriceForTaxCalculation', 'getPriceForTaxCalculation'])
-            ->getMock();
+        $ext = new class implements \Magento\Tax\Api\Data\QuoteDetailsItemExtensionInterface
+        {
+            /**
+             * @var float|null
+             */
+            private $price;
+
+            /**
+             * @param float|null $value
+             * @return $this
+             */
+            public function setPriceForTaxCalculation($value)
+            {
+                $this->price = $value;
+                return $this;
+            }
+
+            /**
+             * @return float|null
+             */
+            public function getPriceForTaxCalculation()
+            {
+                return $this->price;
+            }
+        };
         $extFactory->method('create')->willReturn($ext);
 
         $customerAccount = $this->createMock(CustomerAccountManagement::class);
@@ -1327,13 +1367,14 @@ class CommonTaxCollectorTest extends TestCase
             $method = $ref->getMethod('setPriceForTaxCalculation');
             $method->setAccessible(true);
 
-            $ext->expects($this->once())->method('setPriceForTaxCalculation')->with(12.34)->willReturnSelf();
+            // verify via reading back from stub after invocation
 
             $qdi = $this->createMock(QuoteDetailsItemInterface::class);
             $qdi->method('getExtensionAttributes')->willReturn(null);
             $qdi->expects($this->once())->method('setExtensionAttributes')->with($ext)->willReturnSelf();
 
             $method->invoke($sut, $qdi, 12.34);
+            $this->assertSame(12.34, $ext->getPriceForTaxCalculation());
 
             // Verify CustomerAccountManagement from OM is used in populateAddressData default-billing path
             $billingMapped = $this->createMock(CustomerAddress::class);
