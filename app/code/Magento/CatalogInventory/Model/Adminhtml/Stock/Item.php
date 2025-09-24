@@ -77,7 +77,9 @@ class Item extends \Magento\CatalogInventory\Model\Stock\Item implements Identit
             $resourceCollection,
             $data
         );
-
+        if (!empty($data)) {
+            $this->setOrigData();
+        }
         $this->groupManagement = $groupManagement;
     }
 
@@ -142,5 +144,14 @@ class Item extends \Magento\CatalogInventory\Model\Stock\Item implements Identit
         }
 
         return $tags;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function afterLoad()
+    {
+        parent::afterLoad();
+        $this->setOrigData();
     }
 }
