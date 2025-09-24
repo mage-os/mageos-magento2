@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\ViewModel\Product\Checker;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\Catalog\ViewModel\Product\Checker\AddToCompareAvailability;
@@ -60,8 +61,8 @@ class AddToCompareAvailabilityTest extends TestCase
      * @param bool $isShowOutOfStock
      * @param bool $expectedBool
      * @return void
-     * @dataProvider isAvailableForCompareDataProvider
      */
+    #[DataProvider('isAvailableForCompareDataProvider')]
     public function testIsAvailableForCompare($status, $isSalable, $isInStock, $isShowOutOfStock, $expectedBool): void
     {
         $productMock = $this->getMockBuilder(Product::class)
@@ -72,17 +73,11 @@ class AddToCompareAvailabilityTest extends TestCase
             ->method('getStatus')
             ->willReturn($status);
 
-        $productMock->expects($this->any())
-            ->method('isSalable')
-            ->willReturn($isSalable);
+        $productMock->method('isSalable')->willReturn($isSalable);
 
-        $productMock->expects($this->any())
-            ->method('getQuantityAndStockStatus')
-            ->willReturn($isInStock);
+        $productMock->method('getQuantityAndStockStatus')->willReturn($isInStock);
 
-        $this->stockConfigurationMock->expects($this->any())
-            ->method('isShowOutOfStock')
-            ->willReturn($isShowOutOfStock);
+        $this->stockConfigurationMock->method('isShowOutOfStock')->willReturn($isShowOutOfStock);
 
         $this->assertEquals($expectedBool, $this->viewModel->isAvailableForCompare($productMock));
     }

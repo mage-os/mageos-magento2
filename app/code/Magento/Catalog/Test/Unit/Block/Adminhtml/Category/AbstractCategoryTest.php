@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Block\Adminhtml\Category;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use Magento\Backend\Block\Template\Context;
 use Magento\Catalog\Block\Adminhtml\Category\AbstractCategory;
 use Magento\Catalog\Model\Category;
@@ -20,6 +21,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+#[CoversClass(\Magento\Catalog\Block\Adminhtml\Category\AbstractCategory::class)]
 class AbstractCategoryTest extends TestCase
 {
     /**
@@ -81,9 +83,7 @@ class AbstractCategoryTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->contextMock->expects($this->any())
-            ->method('getRequest')
-            ->willReturn($this->requestMock);
+        $this->contextMock->method('getRequest')->willReturn($this->requestMock);
 
         $this->urlBuilderMock = $this->getMockBuilder(
             UrlInterface::class
@@ -97,17 +97,13 @@ class AbstractCategoryTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->contextMock->expects($this->any())
-            ->method('getStoreManager')
-            ->willReturn($this->storeManagerMock);
+        $this->contextMock->method('getStoreManager')->willReturn($this->storeManagerMock);
 
         $this->storeMock = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->contextMock->expects($this->any())
-            ->method('getUrlBuilder')
-            ->willReturn($this->urlBuilderMock);
+        $this->contextMock->method('getUrlBuilder')->willReturn($this->urlBuilderMock);
 
         $this->category = $this->objectManager->getObject(
             AbstractCategory::class,
@@ -117,10 +113,6 @@ class AbstractCategoryTest extends TestCase
         );
     }
 
-    /**
-     * @covers \Magento\Catalog\Block\Adminhtml\Category\AbstractCategory::getStore
-     * @covers \Magento\Catalog\Block\Adminhtml\Category\AbstractCategory::getSaveUrl
-     */
     public function testGetSaveUrl()
     {
         $storeId = 23;

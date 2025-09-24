@@ -76,7 +76,7 @@ class ReadHandlerTest extends TestCase
         $dataObjHelperWithArgs = $categoryLinkFactoryWillReturnArgs = [];
 
         foreach ($categoryLinks as $key => $categoryLink) {
-            $dtoCategoryLinks[$key] = $this->getMockBuilder(CategoryLinkInterface::class)->getMockForAbstractClass();
+            $dtoCategoryLinks[$key] = $this->createMock(CategoryLinkInterface::class);
             $dataObjHelperWithArgs[] = [$dtoCategoryLinks[$key], $categoryLink, CategoryLinkInterface::class];
             $categoryLinkFactoryWillReturnArgs[] = $dtoCategoryLinks[$key];
         }
@@ -95,11 +95,26 @@ class ReadHandlerTest extends TestCase
             ->onlyMethods(['getExtensionAttributes', 'setExtensionAttributes'])
             ->getMock();
 
-        $extensionAttributes = $this->getMockBuilder(ProductExtensionInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setCategoryLinks'])
-            ->getMockForAbstractClass();
-        $extensionAttributes->expects(static::once())->method('setCategoryLinks')->with($dtoCategoryLinks);
+        /** @var ProductExtensionInterface $extensionAttributes */
+        $extensionAttributes = new class implements ProductExtensionInterface {
+            private $categoryLinks = null;
+            
+            public function __construct()
+            {
+            }
+            
+            public function setCategoryLinks($categoryLinks)
+            {
+                $this->categoryLinks = $categoryLinks;
+                return $this;
+            }
+            
+            public function getCategoryLinks()
+            {
+                return $this->categoryLinks;
+            }
+        };
+        $extensionAttributes->setCategoryLinks($dtoCategoryLinks);
 
         $product->expects(static::once())
             ->method('getExtensionAttributes')
@@ -128,11 +143,26 @@ class ReadHandlerTest extends TestCase
             ->onlyMethods(['getExtensionAttributes', 'setExtensionAttributes'])
             ->getMock();
 
-        $extensionAttributes = $this->getMockBuilder(ProductExtensionInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setCategoryLinks'])
-            ->getMockForAbstractClass();
-        $extensionAttributes->expects(static::once())->method('setCategoryLinks')->with(null);
+        /** @var ProductExtensionInterface $extensionAttributes */
+        $extensionAttributes = new class implements ProductExtensionInterface {
+            private $categoryLinks = null;
+            
+            public function __construct()
+            {
+            }
+            
+            public function setCategoryLinks($categoryLinks)
+            {
+                $this->categoryLinks = $categoryLinks;
+                return $this;
+            }
+            
+            public function getCategoryLinks()
+            {
+                return $this->categoryLinks;
+            }
+        };
+        $extensionAttributes->setCategoryLinks(null);
 
         $product->expects(static::once())
             ->method('getExtensionAttributes')

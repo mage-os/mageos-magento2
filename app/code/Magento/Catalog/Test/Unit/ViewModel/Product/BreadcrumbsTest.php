@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\ViewModel\Product;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Helper\Data as CatalogHelper;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\ViewModel\Product\Breadcrumbs;
@@ -64,7 +65,7 @@ class BreadcrumbsTest extends TestCase
         $this->scopeConfigMock = $this->getMockBuilder(ScopeConfigInterface::class)
             ->onlyMethods(['getValue', 'isSetFlag'])
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $escaper = $this->getObjectManager()->getObject(Escaper::class);
 
@@ -108,13 +109,12 @@ class BreadcrumbsTest extends TestCase
     }
 
     /**
-     * @dataProvider productDataProvider
      *
      * @param $product
      * @param string $expectedName
-     *
      * @return void
      */
+    #[DataProvider('productDataProvider')]
     public function testGetProductName($product, string $expectedName) : void
     {
         if ($product!=null) {
@@ -145,13 +145,12 @@ class BreadcrumbsTest extends TestCase
     }
 
     /**
-     * @dataProvider productJsonEncodeDataProvider
      *
      * @param \Closure $product
      * @param string $expectedJson
-     *
      * @return void
      */
+    #[DataProvider('productJsonEncodeDataProvider')]
     public function testGetJsonConfigurationHtmlEscaped($product, string $expectedJson) : void
     {
         if ($product!=null) {

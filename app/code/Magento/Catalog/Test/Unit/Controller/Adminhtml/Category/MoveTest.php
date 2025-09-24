@@ -7,6 +7,8 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Controller\Adminhtml\Category;
 
+use Magento\Store\Model\StoreManagerInterface;
+use Magento\Backend\Model\Auth\Session;
 use Magento\Backend\App\Action\Context;
 use Magento\Catalog\Controller\Adminhtml\Category\Move;
 use Magento\Catalog\Model\Category;
@@ -77,20 +79,20 @@ class MoveTest extends TestCase
         $this->objectManager = new ObjectManager($this);
         $objects = [
             [
-                \Magento\Store\Model\StoreManagerInterface::class,
-                $this->createMock(\Magento\Store\Model\StoreManagerInterface::class)
+                StoreManagerInterface::class,
+                $this->createMock(StoreManagerInterface::class)
             ],
             [
-                \Magento\Framework\Registry::class,
-                $this->createMock(\Magento\Framework\Registry::class)
+                Registry::class,
+                $this->createMock(Registry::class)
             ],
             [
-                \Magento\Cms\Model\Wysiwyg\Config::class,
-                $this->createMock(\Magento\Cms\Model\Wysiwyg\Config::class)
+                Config::class,
+                $this->createMock(Config::class)
             ],
             [
-                \Magento\Backend\Model\Auth\Session::class,
-                $this->createMock(\Magento\Backend\Model\Auth\Session::class)
+                Session::class,
+                $this->createMock(Session::class)
             ]
         ];
         $this->objectManager->prepareObjectManager($objects);
@@ -103,7 +105,7 @@ class MoveTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->context = $this->createMock(Context::class);
-        $this->loggerMock = $this->getMockForAbstractClass(LoggerInterface::class);
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
         $this->fillContext();
 
         $this->moveController = new Move(
@@ -117,19 +119,257 @@ class MoveTest extends TestCase
 
     private function fillContext()
     {
-        $this->request = $this
-            ->getMockBuilder(RequestInterface::class)
-            ->addMethods(['getPost'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->request = new class implements RequestInterface {
+            private $getPostCallback = null;
+            
+            public function setGetPostCallback($callback)
+            {
+                $this->getPostCallback = $callback;
+                return $this;
+            }
+            
+            public function getPost($key = null, $defaultValue = null)
+            {
+                if ($this->getPostCallback) {
+                    return call_user_func($this->getPostCallback, $key, $defaultValue);
+                }
+                return $defaultValue;
+            }
+            
+            // Required RequestInterface methods
+            public function getModuleName()
+            {
+                return '';
+            }
+            public function getControllerName()
+            {
+                return '';
+            }
+            public function getActionName()
+            {
+                return '';
+            }
+            public function getRequestUri()
+            {
+                return '';
+            }
+            public function getMethod()
+            {
+                return '';
+            }
+            public function isGet()
+            {
+                return false;
+            }
+            public function isPost()
+            {
+                return false;
+            }
+            public function isPut()
+            {
+                return false;
+            }
+            public function isDelete()
+            {
+                return false;
+            }
+            public function isHead()
+            {
+                return false;
+            }
+            public function isOptions()
+            {
+                return false;
+            }
+            public function isXmlHttpRequest()
+            {
+                return false;
+            }
+            public function isFlashRequest()
+            {
+                return false;
+            }
+            public function getServer($key = null, $default = null)
+            {
+                return $default;
+            }
+            public function getCookie($key, $default = null)
+            {
+                return $default;
+            }
+            public function getHeader($name)
+            {
+                return '';
+            }
+            public function getScheme()
+            {
+                return '';
+            }
+            public function getHttpHost()
+            {
+                return '';
+            }
+            public function getClientIp($checkProxy = true)
+            {
+                return '';
+            }
+            public function getScriptName()
+            {
+                return '';
+            }
+            public function getPathInfo()
+            {
+                return '';
+            }
+            public function getBasePath()
+            {
+                return '';
+            }
+            public function getBaseUrl()
+            {
+                return '';
+            }
+            public function getUri()
+            {
+                return '';
+            }
+            public function getUrl($uri = null)
+            {
+                return '';
+            }
+            public function getFullActionName($delimiter = '_')
+            {
+                return '';
+            }
+            public function isSecure()
+            {
+                return false;
+            }
+            public function getHttpUserAgent()
+            {
+                return '';
+            }
+            public function getHttpAccept()
+            {
+                return '';
+            }
+            public function getHttpAcceptCharset()
+            {
+                return '';
+            }
+            public function getHttpAcceptLanguage()
+            {
+                return '';
+            }
+            public function getHttpAcceptEncoding()
+            {
+                return '';
+            }
+            public function getHttpConnection()
+            {
+                return '';
+            }
+            public function getHttpReferer()
+            {
+                return '';
+            }
+            public function getRequestString()
+            {
+                return '';
+            }
+            public function getDistroBaseUrl()
+            {
+                return '';
+            }
+            public function getRequestedRouteName()
+            {
+                return '';
+            }
+            public function getRequestedControllerName()
+            {
+                return '';
+            }
+            public function getRequestedActionName()
+            {
+                return '';
+            }
+            public function getRouteName()
+            {
+                return '';
+            }
+            public function getControllerModule()
+            {
+                return '';
+            }
+            public function getFrontName()
+            {
+                return '';
+            }
+            public function getBeforeForwardInfo()
+            {
+                return [];
+            }
+            public function getAfterForwardInfo()
+            {
+                return [];
+            }
+            public function isStraight()
+            {
+                return false;
+            }
+            public function getAlias($name)
+            {
+                return '';
+            }
+            public function getOriginalPathInfo()
+            {
+                return '';
+            }
+            public function getOriginalRequest()
+            {
+                return null;
+            }
+            public function getParam($param, $defaultValue = null)
+            {
+                return $defaultValue;
+            }
+            public function getParams()
+            {
+                return [];
+            }
+            public function getPostValue($key = null, $defaultValue = null)
+            {
+                return $defaultValue;
+            }
+            public function getQuery($key = null, $defaultValue = null)
+            {
+                return $defaultValue;
+            }
+            public function setModuleName($moduleName)
+            {
+                return $this;
+            }
+            public function setActionName($actionName)
+            {
+                return $this;
+            }
+            public function setParams(array $params)
+            {
+                return $this;
+            }
+            public function setParam($key, $value)
+            {
+                return $this;
+            }
+        };
         $this->context->expects($this->once())->method('getRequest')->willReturn($this->request);
-        $this->messageManager = $this->getMockForAbstractClass(ManagerInterface::class);
+        $this->messageManager = $this->createMock(ManagerInterface::class);
         $this->context->expects($this->once())->method('getMessageManager')->willReturn($this->messageManager);
     }
 
     private function initObjectManager()
     {
-        $this->objectManager = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        $this->objectManager = $this->createMock(ObjectManagerInterface::class);
         $moveController = new \ReflectionClass($this->moveController);
         $objectManagerProp = $moveController->getProperty('_objectManager');
         $objectManagerProp->setAccessible(true);
@@ -144,7 +384,7 @@ class MoveTest extends TestCase
         $messageBlock = $this->getMockBuilder(Messages::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $layoutMock = $this->getMockForAbstractClass(LayoutInterface::class);
+        $layoutMock = $this->createMock(LayoutInterface::class);
         $this->layoutFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($layoutMock);
@@ -160,15 +400,13 @@ class MoveTest extends TestCase
         $categoryMock = $this->getMockBuilder(Category::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->request->expects($this->exactly(2))
-            ->method('getPost')
-            ->willReturnCallback(function ($arg1, $arg2) {
-                if ($arg1 == 'pid' && $arg2 == false) {
-                    return 2;
-                } elseif ($arg1 == 'aid' && $arg2 == false) {
-                    return 1;
-                }
-            });
+        $this->request->setGetPostCallback(function ($arg1, $arg2) {
+            if ($arg1 == 'pid' && $arg2 == false) {
+                return 2;
+            } elseif ($arg1 == 'aid' && $arg2 == false) {
+                return 1;
+            }
+        });
         $this->objectManager->expects($this->once())
             ->method('create')
             ->with(Category::class)
@@ -220,7 +458,7 @@ class MoveTest extends TestCase
         $messageBlock = $this->getMockBuilder(Messages::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $layoutMock = $this->getMockForAbstractClass(LayoutInterface::class);
+        $layoutMock = $this->createMock(LayoutInterface::class);
         $this->layoutFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($layoutMock);
@@ -236,15 +474,13 @@ class MoveTest extends TestCase
         $categoryMock = $this->getMockBuilder(Category::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->request->expects($this->exactly(2))
-            ->method('getPost')
-            ->willReturnCallback(function ($arg1, $arg2) {
-                if ($arg1 == 'pid' && $arg2 == false) {
-                    return 2;
-                } elseif ($arg1 == 'aid' && $arg2 == false) {
-                    return 1;
-                }
-            });
+        $this->request->setGetPostCallback(function ($arg1, $arg2) {
+            if ($arg1 == 'pid' && $arg2 == false) {
+                return 2;
+            } elseif ($arg1 == 'aid' && $arg2 == false) {
+                return 1;
+            }
+        });
         $this->objectManager->expects($this->once())
             ->method('create')
             ->with(Category::class)
@@ -294,7 +530,7 @@ class MoveTest extends TestCase
         $messageBlock = $this->getMockBuilder(Messages::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $layoutMock = $this->getMockForAbstractClass(LayoutInterface::class);
+        $layoutMock = $this->createMock(LayoutInterface::class);
         $this->layoutFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($layoutMock);
@@ -310,15 +546,13 @@ class MoveTest extends TestCase
         $categoryMock = $this->getMockBuilder(Category::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->request->expects($this->exactly(2))
-            ->method('getPost')
-            ->willReturnCallback(function ($arg1, $arg2) {
-                if ($arg1 == 'pid' && $arg2 == false) {
-                    return 2;
-                } elseif ($arg1 == 'aid' && $arg2 == false) {
-                    return 1;
-                }
-            });
+        $this->request->setGetPostCallback(function ($arg1, $arg2) {
+            if ($arg1 == 'pid' && $arg2 == false) {
+                return 2;
+            } elseif ($arg1 == 'aid' && $arg2 == false) {
+                return 1;
+            }
+        });
         $this->objectManager->expects($this->once())
             ->method('create')
             ->with(Category::class)

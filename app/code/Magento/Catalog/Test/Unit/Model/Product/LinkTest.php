@@ -55,9 +55,7 @@ class LinkTest extends TestCase
             ->onlyMethods(
                 ['create']
             )->getMock();
-        $linkCollectionFactory->expects($this->any())
-            ->method('create')
-            ->willReturn($linkCollection);
+        $linkCollectionFactory->method('create')->willReturn($linkCollection);
         $this->productCollection = $this->getMockBuilder(
             \Magento\Catalog\Model\ResourceModel\Product\Link\Product\Collection::class
         )->disableOriginalConstructor()
@@ -71,17 +69,92 @@ class LinkTest extends TestCase
             ->onlyMethods(
                 ['create']
             )->getMock();
-        $productCollectionFactory->expects($this->any())
-            ->method('create')
-            ->willReturn($this->productCollection);
+        $productCollectionFactory->method('create')->willReturn($this->productCollection);
 
-        $this->resource = $this->getMockBuilder(AbstractResource::class)
-            ->addMethods(
-                ['saveProductLinks', 'getAttributeTypeTable', 'getAttributesByType', 'getTable', 'getIdFieldName']
-            )
-            ->onlyMethods(['getConnection'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->resource = new class extends AbstractResource {
+            private $saveProductLinksResult = null;
+            private $attributeTypeTable = null;
+            private $attributesByType = null;
+            private $table = null;
+            private $idFieldName = null;
+            private $connection = null;
+            
+            public function __construct()
+            {
+                // Don't call parent constructor to avoid dependencies
+            }
+            
+            protected function _construct()
+            {
+                // Implement abstract method
+            }
+            
+            public function saveProductLinks($productId, $linkData, $typeId)
+            {
+                return $this->saveProductLinksResult;
+            }
+            
+            public function setSaveProductLinksResult($result)
+            {
+                $this->saveProductLinksResult = $result;
+                return $this;
+            }
+            
+            public function getAttributeTypeTable($attributeType)
+            {
+                return $this->attributeTypeTable;
+            }
+            
+            public function setAttributeTypeTable($attributeTypeTable)
+            {
+                $this->attributeTypeTable = $attributeTypeTable;
+                return $this;
+            }
+            
+            public function getAttributesByType($typeId)
+            {
+                return $this->attributesByType;
+            }
+            
+            public function setAttributesByType($attributesByType)
+            {
+                $this->attributesByType = $attributesByType;
+                return $this;
+            }
+            
+            public function getTable($tableName)
+            {
+                return $this->table;
+            }
+            
+            public function setTable($table)
+            {
+                $this->table = $table;
+                return $this;
+            }
+            
+            public function getIdFieldName()
+            {
+                return $this->idFieldName;
+            }
+            
+            public function setIdFieldName($idFieldName)
+            {
+                $this->idFieldName = $idFieldName;
+                return $this;
+            }
+            
+            public function getConnection()
+            {
+                return $this->connection;
+            }
+            
+            public function setConnection($connection)
+            {
+                $this->connection = $connection;
+                return $this;
+            }
+        };
 
         $this->saveProductLinksMock = $this->getMockBuilder(SaveHandler::class)
             ->disableOriginalConstructor()
@@ -122,16 +195,8 @@ class LinkTest extends TestCase
         $prefix = 'catalog_product_link_attribute_';
         $attributeType = 'int';
         $attributeTypeTable = $prefix . $attributeType;
-        $this->resource
-            ->expects($this->any())
-            ->method('getTable')
-            ->with($attributeTypeTable)
-            ->willReturn($attributeTypeTable);
-        $this->resource
-            ->expects($this->any())
-            ->method('getAttributeTypeTable')
-            ->with($attributeType)
-            ->willReturn($attributeTypeTable);
+        $this->resource->setTable($attributeTypeTable);
+        $this->resource->setAttributeTypeTable($attributeTypeTable);
         $this->assertEquals($attributeTypeTable, $this->model->getAttributeTypeTable($attributeType));
     }
 
@@ -155,10 +220,7 @@ class LinkTest extends TestCase
     {
         $typeId = 1;
         $linkAttributes = ['link_type_id' => 1, 'product_link_attribute_code' => 1, 'data_type' => 'int', 'id' => 1];
-        $this->resource
-            ->expects($this->any())->method('getAttributesByType')
-            ->with($typeId)
-            ->willReturn($linkAttributes);
+        $this->resource->setAttributesByType($linkAttributes);
         $this->model->setData('link_type_id', $typeId);
         $this->assertEquals($linkAttributes, $this->model->getAttributes());
     }

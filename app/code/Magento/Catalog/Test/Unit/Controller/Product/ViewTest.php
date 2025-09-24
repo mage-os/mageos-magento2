@@ -7,6 +7,9 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Controller\Product;
 
+use Magento\Catalog\Helper\Product;
+use Magento\Framework\Controller\Result\Redirect;
+use Magento\Framework\UrlInterface;
 use Magento\Backend\Model\View\Result\RedirectFactory;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Controller\Product\View;
@@ -70,17 +73,17 @@ class ViewTest extends TestCase
     protected $storeManagerMock;
 
     /**
-     * @var \Magento\Catalog\Helper\Product|MockObject
+     * @var Product|MockObject
      */
     protected $helperProduct;
 
     /**
-     * @var Magento\Framework\Controller\Result\Redirect|MockObject
+     * @var Redirect|MockObject
      */
     protected $redirectMock;
 
     /**
-     * @var Magento\Framework\UrlInterface|MockObject
+     * @var UrlInterface|MockObject
      */
     protected $urlBuilder;
 
@@ -102,39 +105,295 @@ class ViewTest extends TestCase
         $contextMock = $this->getMockBuilder(Context::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->requestMock = $this->getMockBuilder(RequestInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getParam'])
-            ->addMethods(['isAjax', 'isPost'])
-            ->getMockForAbstractClass();
-        $contextMock->expects($this->any())
-            ->method('getRequest')
-            ->willReturn($this->requestMock);
+        $this->requestMock = new class implements RequestInterface {
+            private $isPostReturn = false;
+            private $isAjaxReturn = false;
+            private $getParamCallback = null;
+            private $getParamReturn = null;
+            
+            public function setReturnValues($isPost = false, $isAjax = false, $getParam = null)
+            {
+                $this->isPostReturn = $isPost;
+                $this->isAjaxReturn = $isAjax;
+                $this->getParamReturn = $getParam;
+                return $this;
+            }
+            
+            public function setGetParamCallback($callback)
+            {
+                $this->getParamCallback = $callback;
+                return $this;
+            }
+            
+            public function getParam($param, $defaultValue = null)
+            {
+                if ($this->getParamCallback) {
+                    return call_user_func($this->getParamCallback, $param);
+                }
+                return $this->getParamReturn;
+            }
+            public function isAjax()
+            {
+                return $this->isAjaxReturn;
+            }
+            public function isPost()
+            {
+                return $this->isPostReturn;
+            }
+            // Required interface methods
+            public function getModuleName()
+            {
+                return null;
+            }
+            public function setModuleName($moduleName)
+            {
+                return $this;
+            }
+            public function getActionName()
+            {
+                return null;
+            }
+            public function setActionName($actionName)
+            {
+                return $this;
+            }
+            public function getRequestUri()
+            {
+                return null;
+            }
+            public function getPathInfo()
+            {
+                return null;
+            }
+            public function getParams()
+            {
+                return [];
+            }
+            public function setParam($key, $value)
+            {
+                return $this;
+            }
+            public function setParams(array $params)
+            {
+                return $this;
+            }
+            public function getMethod()
+            {
+                return null;
+            }
+            public function isGet()
+            {
+                return false;
+            }
+            public function isPut()
+            {
+                return false;
+            }
+            public function isDelete()
+            {
+                return false;
+            }
+            public function isHead()
+            {
+                return false;
+            }
+            public function isOptions()
+            {
+                return false;
+            }
+            public function isXmlHttpRequest()
+            {
+                return false;
+            }
+            public function isFlashRequest()
+            {
+                return false;
+            }
+            public function isSecure()
+            {
+                return false;
+            }
+            public function getHttpHost()
+            {
+                return null;
+            }
+            public function getClientIp($checkProxy = true)
+            {
+                return null;
+            }
+            public function getScriptName()
+            {
+                return null;
+            }
+            public function getHttpReferer()
+            {
+                return null;
+            }
+            public function getRequestString()
+            {
+                return null;
+            }
+            public function getBaseUrl()
+            {
+                return null;
+            }
+            public function getDistroBaseUrl()
+            {
+                return null;
+            }
+            public function getRequestedRouteName()
+            {
+                return null;
+            }
+            public function getRequestedControllerName()
+            {
+                return null;
+            }
+            public function getRequestedActionName()
+            {
+                return null;
+            }
+            public function getRouteName()
+            {
+                return null;
+            }
+            public function getControllerName()
+            {
+                return null;
+            }
+            public function getFullActionName($delimiter = '_')
+            {
+                return null;
+            }
+            public function getForwarded()
+            {
+                return null;
+            }
+            public function setForwarded($flag)
+            {
+                return $this;
+            }
+            public function getDirectFrontNames()
+            {
+                return [];
+            }
+            public function setDirectFrontNames($directFrontNames)
+            {
+                return $this;
+            }
+            public function getBeforeForwardInfo()
+            {
+                return [];
+            }
+            public function setBeforeForwardInfo($beforeForwardInfo)
+            {
+                return $this;
+            }
+            public function getAlias($name)
+            {
+                return null;
+            }
+            public function setAlias($name, $alias)
+            {
+                return $this;
+            }
+            public function getAliases()
+            {
+                return [];
+            }
+            public function getCookie($name, $defaultValue = null)
+            {
+                return null;
+            }
+            public function getHeader($name)
+            {
+                return null;
+            }
+            public function getServer($name)
+            {
+                return null;
+            }
+            public function getEnv($name)
+            {
+                return null;
+            }
+            public function getQuery($name = null)
+            {
+                return null;
+            }
+            public function getPost($name = null)
+            {
+                return null;
+            }
+            public function getFiles($name = null)
+            {
+                return null;
+            }
+            public function getRawBody()
+            {
+                return null;
+            }
+            public function getContent()
+            {
+                return null;
+            }
+            public function getContentLength()
+            {
+                return null;
+            }
+            public function getContentType()
+            {
+                return null;
+            }
+            public function getAcceptTypes()
+            {
+                return null;
+            }
+            public function getAcceptLanguage()
+            {
+                return null;
+            }
+            public function getAcceptCharset()
+            {
+                return null;
+            }
+            public function getAcceptEncoding()
+            {
+                return null;
+            }
+            public function getAccept()
+            {
+                return null;
+            }
+            public function getExtensionAttributes()
+            {
+                return null;
+            }
+            public function setExtensionAttributes($extensionAttributes)
+            {
+                return $this;
+            }
+        };
+        $contextMock->method('getRequest')->willReturn($this->requestMock);
         $objectManagerMock = $this->createMock(ObjectManager::class);
-        $this->helperProduct = $this->createMock(\Magento\Catalog\Helper\Product::class);
+        $this->helperProduct = $this->createMock(Product::class);
         $objectManagerMock->expects($this->any())
             ->method('get')
-            ->with(\Magento\Catalog\Helper\Product::class)
+            ->with(Product::class)
             ->willReturn($this->helperProduct);
-        $contextMock->expects($this->any())
-            ->method('getObjectManager')
-            ->willReturn($objectManagerMock);
+        $contextMock->method('getObjectManager')->willReturn($objectManagerMock);
         $resultRedirectFactoryMock = $this->createPartialMock(
             RedirectFactory::class,
             ['create']
         );
-        $this->redirectMock = $this->createMock(\Magento\Framework\Controller\Result\Redirect::class);
+        $this->redirectMock = $this->createMock(Redirect::class);
         $resultRedirectFactoryMock->method('create')->willReturn($this->redirectMock);
-        $contextMock->expects($this->any())
-            ->method('getResultRedirectFactory')
-            ->willReturn($resultRedirectFactoryMock);
-        $this->urlBuilder = $this->getMockBuilder(\Magento\Framework\UrlInterface::class)
-            ->onlyMethods(['getUrl'])
+        $contextMock->method('getResultRedirectFactory')->willReturn($resultRedirectFactoryMock);
+        $this->urlBuilder = $this->getMockBuilder(UrlInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $contextMock->expects($this->any())
-            ->method('getUrl')
-            ->willReturn($this->urlBuilder);
+            ->getMock();
+        $this->urlBuilder->method('getUrl')->willReturn('productUrl');
+        $contextMock->method('getUrl')->willReturn($this->urlBuilder);
         $viewHelperMock = $this->getMockBuilder(ViewHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -156,7 +415,7 @@ class ViewTest extends TestCase
         $this->productInterfaceMock = $this->getMockBuilder(ProductInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->storeManagerMock = $this->getMockForAbstractClass(StoreManagerInterface::class);
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
         $storeMock = $this->createMock(Store::class);
         $this->storeManagerMock->method('getStore')->willReturn($storeMock);
 
@@ -182,16 +441,20 @@ class ViewTest extends TestCase
     public function testExecute(): void
     {
         $themeId = 3;
-        $this->requestMock->method('isPost')
-            ->willReturn(false);
+        $this->requestMock->setReturnValues(false, false, null);
         $this->productRepositoryMock->method('getById')
             ->willReturn($this->productInterfaceMock);
-        $dataObjectMock = $this->getMockBuilder(DataObject::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getCustomDesign'])
-            ->getMock();
-        $dataObjectMock->method('getCustomDesign')
-            ->willReturn($themeId);
+        $dataObjectMock = new class extends DataObject {
+            public function __construct()
+            {
+                // Empty constructor
+            }
+            
+            public function getCustomDesign()
+            {
+                return 3;
+            }
+        };
         $this->catalogDesignMock->method('getDesignSettings')
             ->willReturn($dataObjectMock);
         $this->catalogDesignMock->expects($this->once())
@@ -219,15 +482,14 @@ class ViewTest extends TestCase
             ->willReturn('true');
         $this->redirectMock->method('setUrl')->with('productUrl')->willReturnSelf();
 
-        $this->requestMock->method('isPost')
-            ->willReturn(true);
-        $this->requestMock->method('getParam')->willReturnCallback(
+        $this->requestMock->setReturnValues(true, false, null);
+        $this->requestMock->setGetParamCallback(
             function ($key) use ($post) {
                 return $post[$key];
             }
         );
 
-        $this->urlBuilder->expects($this->any())->method('getCurrentUrl')->willReturn('productUrl');
+        $this->urlBuilder->method('getCurrentUrl')->willReturn('productUrl');
         $this->view->execute();
     }
 }

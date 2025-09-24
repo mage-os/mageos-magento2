@@ -53,7 +53,7 @@ class FrontendStorageManagerTest extends TestCase
     {
         $dynamicStorage = $this->getMockBuilder(FrontendStorageConfigurationInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $configuration = [
             'first_key' => [
                 'first' => 'data_before',

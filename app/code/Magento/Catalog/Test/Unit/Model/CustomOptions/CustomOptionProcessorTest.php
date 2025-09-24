@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Model\CustomOptions;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use Magento\Catalog\Api\Data\CustomOptionInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\CustomOptions\CustomOption;
@@ -28,6 +29,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
+#[CoversClass(\Magento\Catalog\Model\CustomOptions\CustomOptionProcessor::class)]
 class CustomOptionProcessorTest extends TestCase
 {
     /**
@@ -95,25 +97,21 @@ class CustomOptionProcessorTest extends TestCase
             ->disableOriginalConstructor()
             ->addMethods(['getOptionByCode'])
             ->onlyMethods(['getProductOption', 'setProductOption'])
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->extensibleAttribute = $this->getMockBuilder(
             ProductOptionExtensionInterface::class
         )
             ->disableOriginalConstructor()
             ->addMethods(['setCustomOptions', 'getCustomOptions'])
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->productOption = $this->getMockBuilder(ProductOption::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->customOption = $this->getMockBuilder(CustomOptionInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->customOption = $this->createMock(CustomOptionInterface::class);
         $this->buyRequest = $this->getMockBuilder(DataObject::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->serializer = $this->getMockBuilder(Json::class)
-            ->onlyMethods(['unserialize'])
-            ->getMockForAbstractClass();
+        $this->serializer = $this->createMock(Json::class);
 
         $this->processor = new CustomOptionProcessor(
             $this->objectFactory,
@@ -133,12 +131,8 @@ class CustomOptionProcessorTest extends TestCase
         $this->objectFactory->expects($this->once())
             ->method('create')
             ->willReturn($this->buyRequest);
-        $this->cartItem->expects($this->any())
-            ->method('getProductOption')
-            ->willReturn($this->productOption);
-        $this->productOption->expects($this->any())
-            ->method('getExtensionAttributes')
-            ->willReturn($this->extensibleAttribute);
+        $this->cartItem->method('getProductOption')->willReturn($this->productOption);
+        $this->productOption->method('getExtensionAttributes')->willReturn($this->extensibleAttribute);
         $this->extensibleAttribute->expects($this->atLeastOnce())
             ->method('getCustomOptions')
             ->willReturn([$this->customOption]);
@@ -152,9 +146,6 @@ class CustomOptionProcessorTest extends TestCase
         $this->assertSame($this->buyRequest, $this->processor->convertToBuyRequest($this->cartItem));
     }
 
-    /**
-     * @covers \Magento\Catalog\Model\CustomOptions\CustomOptionProcessor::getOptions()
-     */
     public function testProcessCustomOptions()
     {
         $optionId = 23;
@@ -165,12 +156,8 @@ class CustomOptionProcessorTest extends TestCase
             ->method('getOptionByCode')
             ->with('info_buyRequest')
             ->willReturn($quoteItemOption);
-        $quoteItemOption->expects($this->any())
-            ->method('getValue')
-            ->willReturn('{"options":{"' . $optionId . '":["5","6"]}}');
-        $this->serializer->expects($this->any())
-            ->method('unserialize')
-            ->willReturn(json_decode($quoteItemOption->getValue(), true));
+        $quoteItemOption->method('getValue')->willReturn('{"options":{"' . $optionId . '":["5","6"]}}');
+        $this->serializer->method('unserialize')->willReturn(json_decode($quoteItemOption->getValue(), true));
         $this->customOptionFactory->expects($this->once())
             ->method('create')
             ->willReturn($this->customOption);

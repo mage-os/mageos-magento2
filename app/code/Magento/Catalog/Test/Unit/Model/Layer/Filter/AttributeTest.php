@@ -99,7 +99,7 @@ class AttributeTest extends TestCase
         $this->storeManager = $this->getMockBuilder(StoreManagerInterface::class)
             ->disableOriginalConstructor()
             ->addMethods([])
-            ->getMockForAbstractClass();
+            ->getMock();
         /** @var Layer $layer */
         $this->layer = $this->getMockBuilder(Layer::class)
             ->disableOriginalConstructor()
@@ -132,9 +132,7 @@ class AttributeTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['addFilter'])
             ->getMock();
-        $this->layer->expects($this->any())
-            ->method('getState')
-            ->willReturn($this->state);
+        $this->layer->method('getState')->willReturn($this->state);
 
         $this->frontend = $this->getMockBuilder(AbstractFrontend::class)
             ->disableOriginalConstructor()
@@ -152,7 +150,7 @@ class AttributeTest extends TestCase
         $this->request = $this->getMockBuilder(RequestInterface::class)
             ->disableOriginalConstructor()
             ->addMethods([])
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $stripTagsFilter = $this->getMockBuilder(StripTags::class)
             ->disableOriginalConstructor()
@@ -198,9 +196,7 @@ class AttributeTest extends TestCase
         $attributeValue = 'attributeValue';
         $attributeLabel = 'attributeLabel';
 
-        $this->attribute->expects($this->any())
-            ->method('getAttributeCode')
-            ->willReturn($attributeCode);
+        $this->attribute->method('getAttributeCode')->willReturn($attributeCode);
 
         $this->target->setAttributeModel($this->attribute);
 

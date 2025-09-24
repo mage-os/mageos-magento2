@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Controller\Adminhtml\Product;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Backend\Model\View\Result\Forward;
 use Magento\Backend\Model\View\Result\ForwardFactory;
 use Magento\Backend\Model\View\Result\Page;
@@ -73,9 +74,9 @@ class NewActionTest extends ProductTestCase
         $this->product = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['addData', 'getTypeId', 'getStoreId', '__sleep'])->getMock();
-        $this->product->expects($this->any())->method('getTypeId')->willReturn('simple');
-        $this->product->expects($this->any())->method('getStoreId')->willReturn('1');
-        $this->productBuilder->expects($this->any())->method('build')->willReturn($this->product);
+        $this->product->method('getTypeId')->willReturn('simple');
+        $this->product->method('getStoreId')->willReturn('1');
+        $this->productBuilder->method('build')->willReturn($this->product);
 
         $this->resultPage = $this->getMockBuilder(Page::class)
             ->disableOriginalConstructor()
@@ -120,24 +121,20 @@ class NewActionTest extends ProductTestCase
      *
      * @param string $value
      * @param bool $exceptionThrown
-     * @dataProvider validationCases
      */
+    #[DataProvider('validationCases')]
     public function testExecute(string $value, bool $exceptionThrown): void
     {
         if ($exceptionThrown) {
-            $this->action->getRequest()->expects($this->any())
-                ->method('getParam')
-                ->willReturn($value);
-            $this->resultForwardFactory->expects($this->any())
-                ->method('create')
-                ->willReturn($this->resultForward);
+            $this->action->getRequest()->method('getParam')->willReturn($value);
+            $this->resultForwardFactory->method('create')->willReturn($this->resultForward);
             $this->resultForward->expects($this->once())
                 ->method('forward')
                 ->with('noroute')
                 ->willReturn(true);
             $this->assertTrue($this->action->execute());
         } else {
-            $this->action->getRequest()->expects($this->any())->method('getParam')->willReturn($value);
+            $this->action->getRequest()->method('getParam')->willReturn($value);
             $this->regexValidatorMock->expects($this->any())
                 ->method('isValid')
                 ->with($value)

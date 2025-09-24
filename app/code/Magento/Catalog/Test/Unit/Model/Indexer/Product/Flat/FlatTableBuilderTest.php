@@ -85,27 +85,15 @@ class FlatTableBuilderTest extends TestCase
         $this->resourceMock = $this->getMockBuilder(ResourceConnection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->scopeConfigMock = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->tableDataMock = $this->getMockBuilder(
-            TableDataInterface::class
-        )->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->connectionMock = $this->getMockBuilder(AdapterInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
+        $this->tableDataMock = $this->createMock(TableDataInterface::class);
+        $this->connectionMock = $this->createMock(AdapterInterface::class);
         $this->metadataPoolMock = $this->getMockBuilder(MetadataPool::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->metadataMock = $this->getMockBuilder(
-            EntityMetadataInterface::class
-        )->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->metadataMock->expects($this->any())->method('getLinkField')->willReturn('entity_id');
+        $this->metadataMock = $this->createMock(EntityMetadataInterface::class);
+        $this->metadataMock->method('getLinkField')->willReturn('entity_id');
 
         $this->flatTableBuilder = $objectManagerHelper->getObject(
             FlatTableBuilder::class,
@@ -192,7 +180,7 @@ class FlatTableBuilderTest extends TestCase
         $tableMock = $this->getMockBuilder(Table::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->connectionMock->expects($this->any())->method('newTable')->willReturn($tableMock);
+        $this->connectionMock->method('newTable')->willReturn($tableMock);
         $selectMock = $this->getMockBuilder(Select::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -245,9 +233,7 @@ class FlatTableBuilderTest extends TestCase
             );
         $this->metadataPoolMock->expects($this->atLeastOnce())->method('getMetadata')->with(ProductInterface::class)
             ->willReturn($this->metadataMock);
-        $storeMock = $this->getMockBuilder(StoreInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $storeMock = $this->createMock(StoreInterface::class);
         $this->storeManagerMock->expects($this->once())->method('getStore')->with($storeId)->willReturn($storeMock);
         $this->flatTableBuilder->build($storeId, $changedIds, $valueFieldSuffix, $tableDropSuffix, $fillTmpTables);
     }

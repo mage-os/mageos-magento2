@@ -73,7 +73,7 @@ class SaveHandlerTest extends TestCase
      */
     public function testExecute(): void
     {
-        $this->optionMock->expects($this->any())->method('getOptionId')->willReturn(5);
+        $this->optionMock->method('getOptionId')->willReturn(5);
         $this->entity->expects($this->once())->method('getOptions')->willReturn([$this->optionMock]);
 
         $secondOptionMock = $this->getMockBuilder(Option::class)

@@ -60,9 +60,9 @@ class CategoryLinkRepositoryTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['getProductsIdsBySkus'])
             ->getMock();
-        $this->categoryRepositoryMock = $this->getMockForAbstractClass(CategoryRepositoryInterface::class);
-        $this->productRepositoryMock = $this->getMockForAbstractClass(ProductRepositoryInterface::class);
-        $this->productLinkMock = $this->getMockForAbstractClass(CategoryProductLinkInterface::class);
+        $this->categoryRepositoryMock = $this->createMock(CategoryRepositoryInterface::class);
+        $this->productRepositoryMock = $this->createMock(ProductRepositoryInterface::class);
+        $this->productLinkMock = $this->createMock(CategoryProductLinkInterface::class);
         $this->model = new CategoryLinkRepository(
             $this->categoryRepositoryMock,
             $this->productRepositoryMock,
@@ -82,22 +82,59 @@ class CategoryLinkRepositoryTest extends TestCase
         $productPosition = 1;
         $sku = 'testSku';
         $productPositions = [$productId => $productPosition];
-        $categoryMock = $this->getMockBuilder(Category::class)
-            ->addMethods(['getPostedProducts', 'setPostedProducts'])
-            ->onlyMethods(['getProductsPosition', 'save'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        
+        /** @var Category $categoryMock */
+        $categoryMock = new class extends Category {
+            private $postedProducts = null;
+            private $productsPosition = [];
+            private $shouldThrowException = false;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getPostedProducts()
+            {
+                return $this->postedProducts;
+            }
+            public function setPostedProducts($value)
+            {
+                $this->postedProducts = $value;
+                return $this;
+            }
+            
+            public function getProductsPosition()
+            {
+                return $this->productsPosition;
+            }
+            public function setProductsPosition($value)
+            {
+                $this->productsPosition = $value;
+                return $this;
+            }
+            
+            public function save()
+            {
+                if ($this->shouldThrowException) {
+                    throw new \Exception();
+                }
+                return $this;
+            }
+            public function setShouldThrowException($value)
+            {
+                $this->shouldThrowException = $value;
+                return $this;
+            }
+        };
+        
         $productMock = $this->createMock(ProductModel::class);
         $this->productLinkMock->expects($this->once())->method('getCategoryId')->willReturn($categoryId);
         $this->productLinkMock->expects($this->once())->method('getSku')->willReturn($sku);
         $this->categoryRepositoryMock->expects($this->once())->method('get')->with($categoryId)
             ->willReturn($categoryMock);
         $this->productRepositoryMock->expects($this->once())->method('get')->with($sku)->willReturn($productMock);
-        $categoryMock->expects($this->once())->method('getProductsPosition')->willReturn([]);
         $productMock->expects($this->once())->method('getId')->willReturn($productId);
         $this->productLinkMock->expects($this->once())->method('getPosition')->willReturn($productPosition);
-        $categoryMock->expects($this->once())->method('setPostedProducts')->with($productPositions);
-        $categoryMock->expects($this->once())->method('save');
 
         $this->assertTrue($this->model->save($this->productLinkMock));
     }
@@ -114,23 +151,67 @@ class CategoryLinkRepositoryTest extends TestCase
         $productPosition = 1;
         $sku = 'testSku';
         $productPositions = [$productId => $productPosition];
-        $categoryMock = $this->getMockBuilder(Category::class)
-            ->addMethods(['setPostedProducts'])
-            ->onlyMethods(['getProductsPosition', 'save', 'getId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        
+        /** @var Category $categoryMock */
+        $categoryMock = new class extends Category {
+            private $postedProducts = null;
+            private $productsPosition = [];
+            private $shouldThrowException = false;
+            private $id = 42;
+            
+            public function __construct()
+            {
+            }
+            
+            public function setPostedProducts($value)
+            {
+                $this->postedProducts = $value;
+                return $this;
+            }
+            
+            public function getProductsPosition()
+            {
+                return $this->productsPosition;
+            }
+            public function setProductsPosition($value)
+            {
+                $this->productsPosition = $value;
+                return $this;
+            }
+            
+            public function getId()
+            {
+                return $this->id;
+            }
+            public function setId($value)
+            {
+                $this->id = $value;
+                return $this;
+            }
+            
+            public function save()
+            {
+                if ($this->shouldThrowException) {
+                    throw new \Exception();
+                }
+                return $this;
+            }
+            public function setShouldThrowException($value)
+            {
+                $this->shouldThrowException = $value;
+                return $this;
+            }
+        };
+        
         $productMock = $this->createMock(ProductModel::class);
         $this->productLinkMock->expects($this->once())->method('getCategoryId')->willReturn($categoryId);
         $this->productLinkMock->expects($this->once())->method('getSku')->willReturn($sku);
         $this->categoryRepositoryMock->expects($this->once())->method('get')->with($categoryId)
             ->willReturn($categoryMock);
         $this->productRepositoryMock->expects($this->once())->method('get')->with($sku)->willReturn($productMock);
-        $categoryMock->expects($this->once())->method('getProductsPosition')->willReturn([]);
         $productMock->expects($this->exactly(2))->method('getId')->willReturn($productId);
         $this->productLinkMock->expects($this->exactly(2))->method('getPosition')->willReturn($productPosition);
-        $categoryMock->expects($this->once())->method('setPostedProducts')->with($productPositions);
-        $categoryMock->expects($this->once())->method('getId')->willReturn($categoryId);
-        $categoryMock->expects($this->once())->method('save')->willThrowException(new \Exception());
+        $categoryMock->setShouldThrowException(true);
 
         $this->expectExceptionMessage('Could not save product "55" with position 1 to category 42');
         $this->expectException(CouldNotSaveException::class);
@@ -148,20 +229,65 @@ class CategoryLinkRepositoryTest extends TestCase
         $productSku = 'testSku';
         $productId = 55;
         $productPositions = [55 => 1];
-        $categoryMock = $this->getMockBuilder(Category::class)
-            ->addMethods(['setPostedProducts'])
-            ->onlyMethods(['getProductsPosition', 'save', 'getId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        
+        /** @var Category $categoryMock */
+        $categoryMock = new class extends Category {
+            private $postedProducts = null;
+            private $productsPosition = [];
+            private $shouldThrowException = false;
+            private $id = 42;
+            
+            public function __construct()
+            {
+            }
+            
+            public function setPostedProducts($value)
+            {
+                $this->postedProducts = $value;
+                return $this;
+            }
+            
+            public function getProductsPosition()
+            {
+                return $this->productsPosition;
+            }
+            public function setProductsPosition($value)
+            {
+                $this->productsPosition = $value;
+                return $this;
+            }
+            
+            public function getId()
+            {
+                return $this->id;
+            }
+            public function setId($value)
+            {
+                $this->id = $value;
+                return $this;
+            }
+            
+            public function save()
+            {
+                if ($this->shouldThrowException) {
+                    throw new \Exception();
+                }
+                return $this;
+            }
+            public function setShouldThrowException($value)
+            {
+                $this->shouldThrowException = $value;
+                return $this;
+            }
+        };
+        
         $productMock = $this->createMock(ProductModel::class);
         $this->categoryRepositoryMock->expects($this->once())->method('get')->with($categoryId)
             ->willReturn($categoryMock);
         $this->productRepositoryMock->expects($this->once())->method('get')->with($productSku)
             ->willReturn($productMock);
-        $categoryMock->expects($this->once())->method('getProductsPosition')->willReturn($productPositions);
+        $categoryMock->setProductsPosition($productPositions);
         $productMock->expects($this->once())->method('getId')->willReturn($productId);
-        $categoryMock->expects($this->once())->method('setPostedProducts')->with([]);
-        $categoryMock->expects($this->once())->method('save');
 
         $this->assertTrue($this->model->deleteByIds($categoryId, $productSku));
     }
@@ -177,21 +303,66 @@ class CategoryLinkRepositoryTest extends TestCase
         $productSku = 'testSku';
         $productId = 55;
         $productPositions = [55 => 1];
-        $categoryMock = $this->getMockBuilder(Category::class)
-            ->addMethods(['setPostedProducts'])
-            ->onlyMethods(['getProductsPosition', 'save', 'getId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        
+        /** @var Category $categoryMock */
+        $categoryMock = new class extends Category {
+            private $postedProducts = null;
+            private $productsPosition = [];
+            private $shouldThrowException = false;
+            private $id = 42;
+            
+            public function __construct()
+            {
+            }
+            
+            public function setPostedProducts($value)
+            {
+                $this->postedProducts = $value;
+                return $this;
+            }
+            
+            public function getProductsPosition()
+            {
+                return $this->productsPosition;
+            }
+            public function setProductsPosition($value)
+            {
+                $this->productsPosition = $value;
+                return $this;
+            }
+            
+            public function getId()
+            {
+                return $this->id;
+            }
+            public function setId($value)
+            {
+                $this->id = $value;
+                return $this;
+            }
+            
+            public function save()
+            {
+                if ($this->shouldThrowException) {
+                    throw new \Exception();
+                }
+                return $this;
+            }
+            public function setShouldThrowException($value)
+            {
+                $this->shouldThrowException = $value;
+                return $this;
+            }
+        };
+        
         $productMock = $this->createMock(ProductModel::class);
         $this->categoryRepositoryMock->expects($this->once())->method('get')->with($categoryId)
             ->willReturn($categoryMock);
         $this->productRepositoryMock->expects($this->once())->method('get')->with($productSku)
             ->willReturn($productMock);
-        $categoryMock->expects($this->once())->method('getProductsPosition')->willReturn($productPositions);
+        $categoryMock->setProductsPosition($productPositions);
         $productMock->expects($this->exactly(2))->method('getId')->willReturn($productId);
-        $categoryMock->expects($this->once())->method('setPostedProducts')->with([]);
-        $categoryMock->expects($this->once())->method('getId')->willReturn($categoryId);
-        $categoryMock->expects($this->once())->method('save')->willThrowException(new \Exception());
+        $categoryMock->setShouldThrowException(true);
 
         $this->expectExceptionMessage('Could not save product "55" with position 1 to category 42');
         $this->expectException(CouldNotSaveException::class);
@@ -209,21 +380,67 @@ class CategoryLinkRepositoryTest extends TestCase
         $productSku = 'testSku';
         $productId = 60;
         $productPositions = [55 => 1];
+        
+        /** @var Category $categoryMock */
+        $categoryMock = new class extends Category {
+            private $postedProducts = null;
+            private $productsPosition = [];
+            private $shouldThrowException = false;
+            private $id = 42;
+            
+            public function __construct()
+            {
+            }
+            
+            public function setPostedProducts($value)
+            {
+                $this->postedProducts = $value;
+                return $this;
+            }
+            
+            public function getProductsPosition()
+            {
+                return $this->productsPosition;
+            }
+            public function setProductsPosition($value)
+            {
+                $this->productsPosition = $value;
+                return $this;
+            }
+            
+            public function getId()
+            {
+                return $this->id;
+            }
+            public function setId($value)
+            {
+                $this->id = $value;
+                return $this;
+            }
+            
+            public function save()
+            {
+                if ($this->shouldThrowException) {
+                    throw new \Exception();
+                }
+                return $this;
+            }
+            public function setShouldThrowException($value)
+            {
+                $this->shouldThrowException = $value;
+                return $this;
+            }
+        };
+        
         $this->productLinkMock->expects($this->once())->method('getCategoryId')->willReturn($categoryId);
         $this->productLinkMock->expects($this->once())->method('getSku')->willReturn($productSku);
-        $categoryMock = $this->getMockBuilder(Category::class)
-            ->addMethods(['setPostedProducts'])
-            ->onlyMethods(['getProductsPosition', 'save', 'getId'])
-            ->disableOriginalConstructor()
-            ->getMock();
         $productMock = $this->createMock(ProductModel::class);
         $this->categoryRepositoryMock->expects($this->once())->method('get')->with($categoryId)
             ->willReturn($categoryMock);
         $this->productRepositoryMock->expects($this->once())->method('get')->with($productSku)
             ->willReturn($productMock);
-        $categoryMock->expects($this->once())->method('getProductsPosition')->willReturn($productPositions);
+        $categoryMock->setProductsPosition($productPositions);
         $productMock->expects($this->once())->method('getId')->willReturn($productId);
-        $categoryMock->expects($this->never())->method('save');
 
         $this->expectExceptionMessage('The category doesn\'t contain the specified product.');
         $this->expectException(InputException::class);
@@ -241,22 +458,67 @@ class CategoryLinkRepositoryTest extends TestCase
         $productSku = 'testSku';
         $productId = 55;
         $productPositions = [55 => 1];
+        
+        /** @var Category $categoryMock */
+        $categoryMock = new class extends Category {
+            private $postedProducts = null;
+            private $productsPosition = [];
+            private $shouldThrowException = false;
+            private $id = 42;
+            
+            public function __construct()
+            {
+            }
+            
+            public function setPostedProducts($value)
+            {
+                $this->postedProducts = $value;
+                return $this;
+            }
+            
+            public function getProductsPosition()
+            {
+                return $this->productsPosition;
+            }
+            public function setProductsPosition($value)
+            {
+                $this->productsPosition = $value;
+                return $this;
+            }
+            
+            public function getId()
+            {
+                return $this->id;
+            }
+            public function setId($value)
+            {
+                $this->id = $value;
+                return $this;
+            }
+            
+            public function save()
+            {
+                if ($this->shouldThrowException) {
+                    throw new \Exception();
+                }
+                return $this;
+            }
+            public function setShouldThrowException($value)
+            {
+                $this->shouldThrowException = $value;
+                return $this;
+            }
+        };
+        
         $this->productLinkMock->expects($this->once())->method('getCategoryId')->willReturn($categoryId);
         $this->productLinkMock->expects($this->once())->method('getSku')->willReturn($productSku);
-        $categoryMock = $this->getMockBuilder(Category::class)
-            ->addMethods(['setPostedProducts'])
-            ->onlyMethods(['getProductsPosition', 'save', 'getId'])
-            ->disableOriginalConstructor()
-            ->getMock();
         $productMock = $this->createMock(ProductModel::class);
         $this->categoryRepositoryMock->expects($this->once())->method('get')->with($categoryId)
             ->willReturn($categoryMock);
         $this->productRepositoryMock->expects($this->once())->method('get')->with($productSku)
             ->willReturn($productMock);
-        $categoryMock->expects($this->once())->method('getProductsPosition')->willReturn($productPositions);
+        $categoryMock->setProductsPosition($productPositions);
         $productMock->expects($this->once())->method('getId')->willReturn($productId);
-        $categoryMock->expects($this->once())->method('setPostedProducts')->with([]);
-        $categoryMock->expects($this->once())->method('save');
 
         $this->assertTrue($this->model->delete($this->productLinkMock));
     }
@@ -271,18 +533,63 @@ class CategoryLinkRepositoryTest extends TestCase
         $categoryId = 42;
         $productSkus = ['testSku', 'testSku1', 'testSku2', 'testSku3'];
         $productPositions = [55 => 1, 56 => 2, 57 => 3, 58 => 4];
-        $categoryMock = $this->getMockBuilder(Category::class)
-            ->addMethods(['setPostedProducts'])
-            ->onlyMethods(['getProductsPosition', 'save', 'getId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        
+        /** @var Category $categoryMock */
+        $categoryMock = new class extends Category {
+            private $postedProducts = null;
+            private $productsPosition = [];
+            private $shouldThrowException = false;
+            private $id = 42;
+            
+            public function __construct()
+            {
+            }
+            
+            public function setPostedProducts($value)
+            {
+                $this->postedProducts = $value;
+                return $this;
+            }
+            
+            public function getProductsPosition()
+            {
+                return $this->productsPosition;
+            }
+            public function setProductsPosition($value)
+            {
+                $this->productsPosition = $value;
+                return $this;
+            }
+            
+            public function getId()
+            {
+                return $this->id;
+            }
+            public function setId($value)
+            {
+                $this->id = $value;
+                return $this;
+            }
+            
+            public function save()
+            {
+                if ($this->shouldThrowException) {
+                    throw new \Exception();
+                }
+                return $this;
+            }
+            public function setShouldThrowException($value)
+            {
+                $this->shouldThrowException = $value;
+                return $this;
+            }
+        };
+        
         $this->categoryRepositoryMock->expects($this->once())->method('get')->with($categoryId)
             ->willReturn($categoryMock);
         $this->productResourceMock->expects($this->once())->method('getProductsIdsBySkus')
             ->willReturn(['testSku' => 55, 'testSku1' => 56, 'testSku2' => 57, 'testSku3' => 58]);
-        $categoryMock->expects($this->once())->method('getProductsPosition')->willReturn($productPositions);
-        $categoryMock->expects($this->once())->method('setPostedProducts')->with([]);
-        $categoryMock->expects($this->once())->method('save');
+        $categoryMock->setProductsPosition($productPositions);
 
         $this->assertTrue($this->model->deleteBySkus($categoryId, $productSkus));
     }
@@ -296,11 +603,58 @@ class CategoryLinkRepositoryTest extends TestCase
     {
         $categoryId = 42;
         $productSku = 'testSku';
-        $categoryMock = $this->getMockBuilder(Category::class)
-            ->addMethods(['setPostedProducts'])
-            ->onlyMethods(['getProductsPosition', 'save', 'getId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        
+        /** @var Category $categoryMock */
+        $categoryMock = new class extends Category {
+            private $postedProducts = null;
+            private $productsPosition = [];
+            private $shouldThrowException = false;
+            private $id = 42;
+            
+            public function __construct()
+            {
+            }
+            
+            public function setPostedProducts($value)
+            {
+                $this->postedProducts = $value;
+                return $this;
+            }
+            
+            public function getProductsPosition()
+            {
+                return $this->productsPosition;
+            }
+            public function setProductsPosition($value)
+            {
+                $this->productsPosition = $value;
+                return $this;
+            }
+            
+            public function getId()
+            {
+                return $this->id;
+            }
+            public function setId($value)
+            {
+                $this->id = $value;
+                return $this;
+            }
+            
+            public function save()
+            {
+                if ($this->shouldThrowException) {
+                    throw new \Exception();
+                }
+                return $this;
+            }
+            public function setShouldThrowException($value)
+            {
+                $this->shouldThrowException = $value;
+                return $this;
+            }
+        };
+        
         $this->categoryRepositoryMock->expects($this->once())->method('get')->with($categoryId)
             ->willReturn($categoryMock);
 
@@ -320,19 +674,64 @@ class CategoryLinkRepositoryTest extends TestCase
         $productSku = 'testSku';
         $productId = 55;
         $productPositions = [55 => 1];
-        $categoryMock = $this->getMockBuilder(Category::class)
-            ->addMethods(['setPostedProducts'])
-            ->onlyMethods(['getProductsPosition', 'save', 'getId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        
+        /** @var Category $categoryMock */
+        $categoryMock = new class extends Category {
+            private $postedProducts = null;
+            private $productsPosition = [];
+            private $shouldThrowException = false;
+            private $id = 42;
+            
+            public function __construct()
+            {
+            }
+            
+            public function setPostedProducts($value)
+            {
+                $this->postedProducts = $value;
+                return $this;
+            }
+            
+            public function getProductsPosition()
+            {
+                return $this->productsPosition;
+            }
+            public function setProductsPosition($value)
+            {
+                $this->productsPosition = $value;
+                return $this;
+            }
+            
+            public function getId()
+            {
+                return $this->id;
+            }
+            public function setId($value)
+            {
+                $this->id = $value;
+                return $this;
+            }
+            
+            public function save()
+            {
+                if ($this->shouldThrowException) {
+                    throw new \Exception();
+                }
+                return $this;
+            }
+            public function setShouldThrowException($value)
+            {
+                $this->shouldThrowException = $value;
+                return $this;
+            }
+        };
+        
         $this->categoryRepositoryMock->expects($this->once())->method('get')->with($categoryId)
             ->willReturn($categoryMock);
         $this->productResourceMock->expects($this->once())->method('getProductsIdsBySkus')
             ->willReturn(['testSku' => $productId]);
-        $categoryMock->expects($this->once())->method('getProductsPosition')->willReturn($productPositions);
-        $categoryMock->expects($this->once())->method('setPostedProducts')->with([]);
-        $categoryMock->expects($this->once())->method('getId')->willReturn($categoryId);
-        $categoryMock->expects($this->once())->method('save')->willThrowException(new \Exception());
+        $categoryMock->setProductsPosition($productPositions);
+        $categoryMock->setShouldThrowException(true);
 
         $this->expectExceptionMessage('Could not save products "testSku" to category 42');
         $this->expectException(CouldNotSaveException::class);

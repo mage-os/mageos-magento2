@@ -94,15 +94,39 @@ class AttributeTest extends TestCase
             ->onlyMethods(['from', 'where', 'join', 'deleteFromSelect'])
             ->getMock();
 
-        $this->connectionMock = $this->getMockBuilder(Adapter::class)
-            ->getMockForAbstractClass();
+        $this->connectionMock = $this->createMock(Adapter::class);
         $this->connectionMock->expects($this->once())->method('delete')->willReturn($this->selectMock);
 
-        $this->resourceMock = $this->getMockBuilder(ResourceConnection::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['delete'])
-            ->onlyMethods(['getConnection'])
-            ->getMock();
+        $this->resourceMock = new class extends ResourceConnection {
+            private $deleteResult = null;
+            private $connection = null;
+            
+            public function __construct()
+            {
+            }
+            
+            public function delete($table, $where = '', $adapter = null)
+            {
+                return $this->deleteResult;
+            }
+            
+            public function setDeleteResult($result)
+            {
+                $this->deleteResult = $result;
+                return $this;
+            }
+            
+            public function getConnection($connectionName = ResourceConnection::DEFAULT_CONNECTION)
+            {
+                return $this->connection;
+            }
+            
+            public function setConnection($connection)
+            {
+                $this->connection = $connection;
+                return $this;
+            }
+        };
 
         $this->contextMock = $this->getMockBuilder(Context::class)
             ->disableOriginalConstructor()
@@ -116,10 +140,7 @@ class AttributeTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['getAttribute'])
             ->getMock();
-        $this->lockValidatorMock = $this->getMockBuilder(LockValidatorInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['validate'])
-            ->getMockForAbstractClass();
+        $this->lockValidatorMock = $this->createMock(LockValidatorInterface::class);
         $this->removeProductAttributeDataMock = $this->getMockBuilder(RemoveProductAttributeData::class)
             ->onlyMethods(['removeData'])
             ->disableOriginalConstructor()
@@ -164,46 +185,94 @@ class AttributeTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $eavAttributeMock->expects($this->any())->method('getId')->willReturn($result['attribute_id']);
+        $eavAttributeMock->method('getId')->willReturn($result['attribute_id']);
 
         $this->eavConfigMock->expects($this->any())
             ->method('getAttribute')
             ->with($entityTypeId, $result['attribute_id'])
             ->willReturn($eavAttributeMock);
 
-        $abstractModelMock = $this->getMockBuilder(AbstractModel::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getEntityAttributeId','getEntityTypeId'])
-            ->getMockForAbstractClass();
-        $abstractModelMock->expects($this->any())->method('getEntityAttributeId')->willReturn($entityAttributeId);
-        $abstractModelMock->expects($this->any())->method('getEntityTypeId')->willReturn($entityTypeId);
+        $abstractModelMock = new class extends AbstractModel {
+            private $entityAttributeId = null;
+            private $entityTypeId = null;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getEntityAttributeId()
+            {
+                return $this->entityAttributeId;
+            }
+            
+            public function setEntityAttributeId($entityAttributeId)
+            {
+                $this->entityAttributeId = $entityAttributeId;
+                return $this;
+            }
+            
+            public function getEntityTypeId()
+            {
+                return $this->entityTypeId;
+            }
+            
+            public function setEntityTypeId($entityTypeId)
+            {
+                $this->entityTypeId = $entityTypeId;
+                return $this;
+            }
+        };
+        $abstractModelMock->setEntityAttributeId($entityAttributeId);
+        $abstractModelMock->setEntityTypeId($entityTypeId);
 
         $this->lockValidatorMock->expects($this->any())
             ->method('validate')
             ->with($eavAttributeMock, $result['attribute_set_id'])
             ->willReturn(true);
 
-        $backendModelMock = $this->getMockBuilder(AbstractBackend::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getBackend'])
-            ->onlyMethods(['getTable'])
-            ->getMock();
+        $backendModelMock = new class extends AbstractBackend {
+            private $backend = null;
+            private $table = null;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getBackend()
+            {
+                return $this->backend;
+            }
+            
+            public function setBackend($backend)
+            {
+                $this->backend = $backend;
+                return $this;
+            }
+            
+            public function getTable()
+            {
+                return $this->table;
+            }
+            
+            public function setTable($table)
+            {
+                $this->table = $table;
+                return $this;
+            }
+        };
 
-        $abstractAttributeMock = $this->getMockBuilder(AbstractAttribute::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getEntity'])
-            ->getMockForAbstractClass();
+        $abstractAttributeMock = $this->createMock(AbstractAttribute::class);
 
-        $eavAttributeMock->expects($this->any())->method('getBackend')->willReturn($backendModelMock);
-        $eavAttributeMock->expects($this->any())->method('getEntity')->willReturn($abstractAttributeMock);
+        $eavAttributeMock->method('getBackend')->willReturn($backendModelMock);
+        $eavAttributeMock->method('getEntity')->willReturn($abstractAttributeMock);
 
-        $backendModelMock->expects($this->any())->method('getTable')->willReturn($backendTableName);
+        $backendModelMock->setTable($backendTableName);
 
         $this->removeProductAttributeDataMock->expects($this->once())
             ->method('removeData')
             ->with($abstractModelMock, $result['attribute_set_id']);
 
-        $attributeModel->expects($this->any())->method('getConnection')->willReturn($this->connectionMock);
+        $attributeModel->method('getConnection')->willReturn($this->connectionMock);
         $attributeModel->expects($this->any())
             ->method('getTable')
             ->with('eav_entity_attribute')

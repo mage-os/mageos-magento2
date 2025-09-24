@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\CatalogGraphQl\Test\Unit\Model\Config;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection as AttributeCollection;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory as AttributeCollectionFactory;
@@ -40,13 +41,13 @@ class FilterAttributeReaderTest extends TestCase
     }
 
     /**
-     * @dataProvider readDataProvider
      * @param string $filterableAttrCode
      * @param string $filterableAttrInput
      * @param string $searchableAttrCode
      * @param string $searchableAttrInput
      * @param array $fieldsType
      */
+    #[DataProvider('readDataProvider')]
     public function testRead(
         string $filterableAttrCode,
         string $filterableAttrInput,

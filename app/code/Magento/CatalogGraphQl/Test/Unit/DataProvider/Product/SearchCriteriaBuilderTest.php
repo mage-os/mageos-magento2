@@ -126,9 +126,10 @@ class SearchCriteriaBuilderTest extends TestCase
         $searchCriteria = $this->createMock(SearchCriteria::class);
         $attributeInterface = $this->getMockBuilder(Attribute::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
-        $attributeInterface->setData(['is_filterable' => 0]);
+        $attributeInterface->method('getData')
+            ->willReturn(['is_filterable' => 0]);
 
         $searchCriteriaResolver = $this->createMock(SearchCriteriaResolverInterface::class);
         $this->criteriaResolverFactory->expects(self::once())
@@ -137,7 +138,7 @@ class SearchCriteriaBuilderTest extends TestCase
         $searchCriteriaResolver->expects(self::once())
             ->method('resolve')
             ->willReturn($searchCriteria);
-        $searchCriteria->expects($this->any())->method('getFilterGroups')->willReturn([]);
+        $searchCriteria->method('getFilterGroups')->willReturn([]);
         $this->productAttributeRepository->expects(self::once())
             ->method('get')
             ->with('price')

@@ -7,6 +7,8 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Model\Attribute\Backend\TierPrice;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use Magento\Framework\DataObject;
 use Magento\Catalog\Api\Data\ProductAttributeInterface;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductAttributeRepositoryInterface;
@@ -69,18 +71,9 @@ class SaveHandlerTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
-        $this->storeManager = $this->getMockBuilder(StoreManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getStore'])
-            ->getMockForAbstractClass();
-        $this->attributeRepository = $this->getMockBuilder(ProductAttributeRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['get'])
-            ->getMockForAbstractClass();
-        $this->groupManagement = $this->getMockBuilder(GroupManagementInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getAllCustomersGroup'])
-            ->getMockForAbstractClass();
+        $this->storeManager = $this->createMock(StoreManagerInterface::class);
+        $this->attributeRepository = $this->createMock(ProductAttributeRepositoryInterface::class);
+        $this->groupManagement = $this->createMock(GroupManagementInterface::class);
         $this->metadataPoll = $this->getMockBuilder(MetadataPool::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getMetadata'])
@@ -114,46 +107,98 @@ class SaveHandlerTest extends TestCase
         $linkField = 'entity_id';
         $productId = 10;
 
-        /** @var MockObject $product */
-        $product = $this->getMockBuilder(ProductInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getData', 'setData', 'getStoreId'])
-            ->getMockForAbstractClass();
-        $product->expects($this->atLeastOnce())->method('getData')->willReturnMap(
-            [
-                ['tier_price', $tierPrices],
-                ['entity_id', $productId]
-            ]
-        );
-        $product->expects($this->atLeastOnce())->method('getStoreId')->willReturn(0);
-        $product->expects($this->atLeastOnce())->method('setData')->with('tier_price_changed', 1);
-        $store = $this->getMockBuilder(StoreInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getWebsiteId'])
-            ->getMockForAbstractClass();
+        /** @var ProductInterface $product */
+        $product = new class {
+            private $data = [];
+            private $storeId = 0;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getData($key = null)
+            {
+                if ($key === null) {
+                    return $this->data;
+                }
+                return $this->data[$key] ?? null;
+            }
+            
+            public function setData($key, $value = null)
+            {
+                if (is_array($key)) {
+                    $this->data = array_merge($this->data, $key);
+                } else {
+                    $this->data[$key] = $value;
+                }
+                return $this;
+            }
+            
+            public function getStoreId()
+            {
+                return $this->storeId;
+            }
+            
+            public function setStoreId($storeId)
+            {
+                $this->storeId = $storeId;
+                return $this;
+            }
+            
+            public function setGetDataResult($key, $value)
+            {
+                $this->data[$key] = $value;
+                return $this;
+            }
+        };
+        $product->setGetDataResult('tier_price', $tierPrices);
+        $product->setGetDataResult('entity_id', $productId);
+        $product->setStoreId(0);
+        $product->setData('tier_price_changed', 1);
+        $store = $this->createMock(StoreInterface::class);
         $store->expects($this->atLeastOnce())->method('getWebsiteId')->willReturn(0);
         $this->storeManager->expects($this->atLeastOnce())->method('getStore')->willReturn($store);
-        /** @var MockObject $attribute */
-        $attribute = $this->getMockBuilder(ProductAttributeInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getName', 'isScopeGlobal'])
-            ->getMockForAbstractClass();
-        $attribute->expects($this->atLeastOnce())->method('getName')->willReturn('tier_price');
-        $attribute->expects($this->atLeastOnce())->method('isScopeGlobal')->willReturn(true);
+        /** @var ProductAttributeInterface $attribute */
+        $attribute = new class {
+            private $name = '';
+            private $isScopeGlobal = false;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getName()
+            {
+                return $this->name;
+            }
+            
+            public function setName($name)
+            {
+                $this->name = $name;
+                return $this;
+            }
+            
+            public function isScopeGlobal()
+            {
+                return $this->isScopeGlobal;
+            }
+            
+            public function setIsScopeGlobal($isScopeGlobal)
+            {
+                $this->isScopeGlobal = $isScopeGlobal;
+                return $this;
+            }
+        };
+        $attribute->setName('tier_price');
+        $attribute->setIsScopeGlobal(true);
         $this->attributeRepository->expects($this->atLeastOnce())->method('get')->with('tier_price')
             ->willReturn($attribute);
-        $productMetadata = $this->getMockBuilder(EntityMetadataInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getLinkField'])
-            ->getMockForAbstractClass();
+        $productMetadata = $this->createMock(EntityMetadataInterface::class);
         $productMetadata->expects($this->atLeastOnce())->method('getLinkField')->willReturn($linkField);
         $this->metadataPoll->expects($this->atLeastOnce())->method('getMetadata')
             ->with(ProductInterface::class)
             ->willReturn($productMetadata);
-        $customerGroup = $this->getMockBuilder(GroupInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getId'])
-            ->getMockForAbstractClass();
+        $customerGroup = $this->createMock(GroupInterface::class);
         $customerGroup->expects($this->atLeastOnce())->method('getId')->willReturn(3200);
         $this->groupManagement->expects($this->atLeastOnce())->method('getAllCustomersGroup')
             ->willReturn($customerGroup);
@@ -169,20 +214,104 @@ class SaveHandlerTest extends TestCase
     {
         $this->expectException('Magento\Framework\Exception\InputException');
         $this->expectExceptionMessage('Tier prices data should be array, but actually other type is received');
-        /** @var MockObject $attribute */
-        $attribute = $this->getMockBuilder(ProductAttributeInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getName', 'isScopeGlobal'])
-            ->getMockForAbstractClass();
-        $attribute->expects($this->atLeastOnce())->method('getName')->willReturn('tier_price');
+        /** @var ProductAttributeInterface $attribute */
+        $attribute = new class {
+            private $name = '';
+            private $isScopeGlobal = false;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getName()
+            {
+                return $this->name;
+            }
+            
+            public function setName($name)
+            {
+                $this->name = $name;
+                return $this;
+            }
+            
+            public function isScopeGlobal()
+            {
+                return $this->isScopeGlobal;
+            }
+            
+            public function setIsScopeGlobal($isScopeGlobal)
+            {
+                $this->isScopeGlobal = $isScopeGlobal;
+                return $this;
+            }
+        };
+        $attribute->setName('tier_price');
         $this->attributeRepository->expects($this->atLeastOnce())->method('get')->with('tier_price')
             ->willReturn($attribute);
-        /** @var MockObject $product */
-        $product = $this->getMockBuilder(ProductInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getData', 'setData', 'getStoreId', 'getOrigData'])
-            ->getMockForAbstractClass();
-        $product->expects($this->atLeastOnce())->method('getData')->with('tier_price')->willReturn(1);
+        /** @var ProductInterface $product */
+        $product = new class {
+            private $data = [];
+            private $storeId = 0;
+            private $origData = [];
+            
+            public function __construct()
+            {
+            }
+            
+            public function getData($key = null)
+            {
+                if ($key === null) {
+                    return $this->data;
+                }
+                return $this->data[$key] ?? null;
+            }
+            
+            public function setData($key, $value = null)
+            {
+                if (is_array($key)) {
+                    $this->data = array_merge($this->data, $key);
+                } else {
+                    $this->data[$key] = $value;
+                }
+                return $this;
+            }
+            
+            public function getStoreId()
+            {
+                return $this->storeId;
+            }
+            
+            public function setStoreId($storeId)
+            {
+                $this->storeId = $storeId;
+                return $this;
+            }
+            
+            public function getOrigData($key = null)
+            {
+                if ($key === null) {
+                    return $this->origData;
+                }
+                return $this->origData[$key] ?? null;
+            }
+            
+            public function setOrigData($key, $value = null)
+            {
+                if (is_array($key)) {
+                    $this->origData = array_merge($this->origData, $key);
+                } else {
+                    $this->origData[$key] = $value;
+                }
+                return $this;
+            }
+            
+            public function setGetDataResult($key, $value)
+            {
+                $this->data[$key] = $value;
+                return $this;
+            }
+        };
+        $product->setGetDataResult('tier_price', 1);
 
         $this->saveHandler->execute($product);
     }
@@ -193,8 +322,8 @@ class SaveHandlerTest extends TestCase
      * @param array $tierPricesExpected
      *
      * @return void
-     * @dataProvider executeWithWebsitePriceDataProvider
      */
+    #[DataProvider('executeWithWebsitePriceDataProvider')]
     public function testExecuteWithWebsitePrice(
         array $tierPrices,
         array $tierPricesStored,
@@ -203,46 +332,98 @@ class SaveHandlerTest extends TestCase
         $productId = 10;
         $linkField = 'entity_id';
 
-        /** @var MockObject $product */
-        $product = $this->getMockBuilder(ProductInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getData', 'setData', 'getStoreId'])
-            ->getMockForAbstractClass();
-        $product->expects($this->atLeastOnce())->method('getData')->willReturnMap(
-            [
-                ['tier_price', $tierPrices],
-                ['entity_id', $productId]
-            ]
-        );
-        $product->expects($this->atLeastOnce())->method('getStoreId')->willReturn(0);
-        $product->expects($this->atLeastOnce())->method('setData')->with('tier_price_changed', 1);
-        $store = $this->getMockBuilder(StoreInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getWebsiteId'])
-            ->getMockForAbstractClass();
+        /** @var ProductInterface $product */
+        $product = new class {
+            private $data = [];
+            private $storeId = 0;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getData($key = null)
+            {
+                if ($key === null) {
+                    return $this->data;
+                }
+                return $this->data[$key] ?? null;
+            }
+            
+            public function setData($key, $value = null)
+            {
+                if (is_array($key)) {
+                    $this->data = array_merge($this->data, $key);
+                } else {
+                    $this->data[$key] = $value;
+                }
+                return $this;
+            }
+            
+            public function getStoreId()
+            {
+                return $this->storeId;
+            }
+            
+            public function setStoreId($storeId)
+            {
+                $this->storeId = $storeId;
+                return $this;
+            }
+            
+            public function setGetDataResult($key, $value)
+            {
+                $this->data[$key] = $value;
+                return $this;
+            }
+        };
+        $product->setGetDataResult('tier_price', $tierPrices);
+        $product->setGetDataResult('entity_id', $productId);
+        $product->setStoreId(0);
+        $product->setData('tier_price_changed', 1);
+        $store = $this->createMock(StoreInterface::class);
         $store->expects($this->atLeastOnce())->method('getWebsiteId')->willReturn(1);
         $this->storeManager->expects($this->atLeastOnce())->method('getStore')->willReturn($store);
-        /** @var MockObject $attribute */
-        $attribute = $this->getMockBuilder(ProductAttributeInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getName', 'isScopeGlobal'])
-            ->getMockForAbstractClass();
-        $attribute->expects($this->atLeastOnce())->method('getName')->willReturn('tier_price');
-        $attribute->expects($this->atLeastOnce())->method('isScopeGlobal')->willReturn(false);
+        /** @var ProductAttributeInterface $attribute */
+        $attribute = new class {
+            private $name = '';
+            private $isScopeGlobal = false;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getName()
+            {
+                return $this->name;
+            }
+            
+            public function setName($name)
+            {
+                $this->name = $name;
+                return $this;
+            }
+            
+            public function isScopeGlobal()
+            {
+                return $this->isScopeGlobal;
+            }
+            
+            public function setIsScopeGlobal($isScopeGlobal)
+            {
+                $this->isScopeGlobal = $isScopeGlobal;
+                return $this;
+            }
+        };
+        $attribute->setName('tier_price');
+        $attribute->setIsScopeGlobal(false);
         $this->attributeRepository->expects($this->atLeastOnce())->method('get')->with('tier_price')
             ->willReturn($attribute);
-        $productMetadata = $this->getMockBuilder(EntityMetadataInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getLinkField'])
-            ->getMockForAbstractClass();
+        $productMetadata = $this->createMock(EntityMetadataInterface::class);
         $productMetadata->expects($this->atLeastOnce())->method('getLinkField')->willReturn($linkField);
         $this->metadataPoll->expects($this->atLeastOnce())->method('getMetadata')
             ->with(ProductInterface::class)
             ->willReturn($productMetadata);
-        $customerGroup = $this->getMockBuilder(GroupInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getId'])
-            ->getMockForAbstractClass();
+        $customerGroup = $this->createMock(GroupInterface::class);
         $customerGroup->expects($this->atLeastOnce())->method('getId')->willReturn(3200);
         $this->groupManagement->expects($this->atLeastOnce())->method('getAllCustomersGroup')
             ->willReturn($customerGroup);
@@ -251,9 +432,9 @@ class SaveHandlerTest extends TestCase
             ->willReturnCallback(function (...$args) use ($tierPricesExpected) {
                 static $index = 0;
                 $expectedArgs = [
-                    [new \Magento\Framework\DataObject($tierPricesExpected[0])],
-                    [new \Magento\Framework\DataObject($tierPricesExpected[1])],
-                    [new \Magento\Framework\DataObject($tierPricesExpected[2])]
+                    [new DataObject($tierPricesExpected[0])],
+                    [new DataObject($tierPricesExpected[1])],
+                    [new DataObject($tierPricesExpected[2])]
                 ];
                 $returnValue = $this->tierPriceResource;
                 $index++;

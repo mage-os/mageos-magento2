@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Model\Category\Link;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Api\Data\CategoryLinkInterface;
 use Magento\Catalog\Api\Data\ProductExtensionInterface;
 use Magento\Catalog\Model\Category\Link\SaveHandler;
@@ -47,8 +48,7 @@ class SaveHandlerTest extends TestCase
         $this->productCategoryLink = $this->getMockBuilder(CategoryLink::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->hydrator = $this->getMockBuilder(HydratorInterface::class)
-            ->getMockForAbstractClass();
+        $this->hydrator = $this->createMock(HydratorInterface::class);
         $this->hydratorPool = $this->getMockBuilder(HydratorPool::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -67,8 +67,8 @@ class SaveHandlerTest extends TestCase
      * @param array $affectedIds
      *
      * @return void
-     * @dataProvider getCategoryDataProvider
      */
+    #[DataProvider('getCategoryDataProvider')]
     public function testExecute(
         array $categoryIds,
         ?array $categoryLinks,
@@ -89,7 +89,7 @@ class SaveHandlerTest extends TestCase
         $extensionAttributes = $this->getMockBuilder(ProductExtensionInterface::class)
             ->disableOriginalConstructor()
             ->addMethods(['setCategoryLinks', 'getCategoryLinks'])
-            ->getMockForAbstractClass();
+            ->getMock();
         $extensionAttributes->expects(static::any())
             ->method('getCategoryLinks')
             ->willReturn($categoryLinks);

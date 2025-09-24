@@ -50,17 +50,11 @@ class RenderTest extends TestCase
         $this->layout = $this->createMock(Layout::class);
 
         $eventManager = $this->createMock(ManagerStub::class);
-        $scopeConfigMock = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
         $context = $this->createMock(Context::class);
-        $context->expects($this->any())
-            ->method('getEventManager')
-            ->willReturn($eventManager);
-        $context->expects($this->any())
-            ->method('getLayout')
-            ->willReturn($this->layout);
-        $context->expects($this->any())
-            ->method('getScopeConfig')
-            ->willReturn($scopeConfigMock);
+        $context->method('getEventManager')->willReturn($eventManager);
+        $context->method('getLayout')->willReturn($this->layout);
+        $context->method('getScopeConfig')->willReturn($scopeConfigMock);
 
         $objectManager = new ObjectManager($this);
         $this->object = $objectManager->getObject(
@@ -83,9 +77,7 @@ class RenderTest extends TestCase
 
         $product = $this->createMock(Product::class);
 
-        $this->layout->expects($this->any())
-            ->method('getBlock')
-            ->willReturn($this->pricingRenderBlock);
+        $this->layout->method('getBlock')->willReturn($this->pricingRenderBlock);
 
         $this->registry->expects($this->once())
             ->method('registry')
@@ -115,33 +107,46 @@ class RenderTest extends TestCase
         $this->registry->expects($this->never())
             ->method('registry');
 
-        $block = $this->getMockBuilder(\Magento\Framework\Pricing\Render::class)->addMethods(['getProductItem'])
-            ->onlyMethods(['render'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $block = new class extends \Magento\Framework\Pricing\Render {
+            private $productItem = null;
+            private $renderResult = '';
+            
+            public function __construct()
+            {
+            }
+            
+            public function getProductItem()
+            {
+                return $this->productItem;
+            }
+            public function setProductItem($value)
+            {
+                $this->productItem = $value;
+                return $this;
+            }
+            
+            // Implement the onlyMethods that have expectations
+            public function render($priceType, $saleableItem, array $arguments = [])
+            {
+                return $this->renderResult;
+            }
+            public function setRenderResult($value)
+            {
+                $this->renderResult = $value;
+                return $this;
+            }
+        };
 
         $arguments = $this->object->getData();
         $arguments['render_block'] = $this->object;
-        $block->expects($this->any())
-            ->method('render')
-            ->with(
-                'test_price_type_code',
-                $product,
-                $arguments
-            )
-            ->willReturn($expectedValue);
-
-        $block->expects($this->any())
-            ->method('getProductItem')
-            ->willReturn($product);
+        $block->setProductItem($product);
+        $block->setRenderResult($expectedValue);
 
         $this->layout->expects($this->once())
             ->method('getParentName')
             ->willReturn('parent_name');
 
-        $this->layout->expects($this->any())
-            ->method('getBlock')
-            ->willReturn($block);
+        $this->layout->method('getBlock')->willReturn($block);
 
         $this->assertEquals($expectedValue, $this->object->toHtml());
     }

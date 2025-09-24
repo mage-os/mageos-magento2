@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Ui\DataProvider\Product\Form\Modifier;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductLinkRepositoryInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
@@ -97,8 +98,8 @@ class RelatedTest extends AbstractModifierTestCase
 
     /**
      * @return void
-     * @dataProvider sortingDataProvider
      */
+    #[DataProvider('sortingDataProvider')]
     public function testSorting(array $productLinks, array $expectedLinks): void
     {
         $currentProductId = 1;

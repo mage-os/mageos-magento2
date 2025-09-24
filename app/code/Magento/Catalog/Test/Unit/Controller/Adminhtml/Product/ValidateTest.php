@@ -80,10 +80,10 @@ class ValidateTest extends ProductTestCase
                 'setAttributeSetId',
             ])
             ->getMock();
-        $this->product->expects($this->any())->method('getTypeId')->willReturn('simple');
-        $this->product->expects($this->any())->method('getStoreId')->willReturn('1');
-        $this->product->expects($this->any())->method('getAttributes')->willReturn([]);
-        $this->productBuilder->expects($this->any())->method('build')->willReturn($this->product);
+        $this->product->method('getTypeId')->willReturn('simple');
+        $this->product->method('getStoreId')->willReturn('1');
+        $this->product->method('getAttributes')->willReturn([]);
+        $this->productBuilder->method('build')->willReturn($this->product);
 
         $this->resultPage = $this->getMockBuilder(Page::class)
             ->disableOriginalConstructor()
@@ -93,7 +93,7 @@ class ValidateTest extends ProductTestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
             ->getMock();
-        $resultPageFactory->expects($this->any())->method('create')->willReturn($this->resultPage);
+        $resultPageFactory->method('create')->willReturn($this->resultPage);
 
         $this->resultForward = $this->getMockBuilder(Forward::class)
             ->disableOriginalConstructor()
@@ -102,16 +102,14 @@ class ValidateTest extends ProductTestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
             ->getMock();
-        $resultForwardFactory->expects($this->any())
-            ->method('create')
-            ->willReturn($this->resultForward);
-        $this->resultPage->expects($this->any())->method('getLayout')->willReturn($this->layout);
+        $resultForwardFactory->method('create')->willReturn($this->resultForward);
+        $this->resultPage->method('getLayout')->willReturn($this->layout);
         $this->resultRedirectFactory = $this->createPartialMock(
             RedirectFactory::class,
             ['create']
         );
         $this->resultRedirect = $this->createMock(Redirect::class);
-        $this->resultRedirectFactory->expects($this->any())->method('create')->willReturn($this->resultRedirect);
+        $this->resultRedirectFactory->method('create')->willReturn($this->resultRedirect);
 
         $this->initializationHelper = $this->createMock(
             Helper::class
@@ -121,16 +119,16 @@ class ValidateTest extends ProductTestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
             ->getMock();
-        $this->productFactory->expects($this->any())->method('create')->willReturn($this->product);
+        $this->productFactory->method('create')->willReturn($this->product);
 
         $this->resultJson = $this->createMock(Json::class);
         $this->resultJsonFactory = $this->getMockBuilder(JsonFactory::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
             ->getMock();
-        $this->resultJsonFactory->expects($this->any())->method('create')->willReturn($this->resultJson);
+        $this->resultJsonFactory->method('create')->willReturn($this->resultJson);
 
-        $storeManagerInterfaceMock = $this->getMockForAbstractClass(
+        $storeManagerInterfaceMock = $this->createMock(
             StoreManagerInterface::class,
             [],
             '',
@@ -167,7 +165,7 @@ class ValidateTest extends ProductTestCase
             ['product', [], []],
         ]);
         $this->product->expects($this->once())->method('setAttributeSetId')->with(9);
-        $this->initializationHelper->expects($this->any())->method('initializeFromData')->willReturn($this->product);
+        $this->initializationHelper->method('initializeFromData')->willReturn($this->product);
 
         $this->action->execute();
     }
@@ -180,7 +178,7 @@ class ValidateTest extends ProductTestCase
             ['product', [], []],
         ]);
         $this->product->expects($this->once())->method('setAttributeSetId')->with(4);
-        $this->initializationHelper->expects($this->any())->method('initializeFromData')->willReturn($this->product);
+        $this->initializationHelper->method('initializeFromData')->willReturn($this->product);
 
         $this->action->execute();
     }

@@ -7,6 +7,14 @@ declare(strict_types=1);
 
 namespace Magento\CatalogImportExport\Test\Unit\Model\Import;
 
+use Magento\CatalogImportExport\Model\Import\Proxy\Product\ResourceModelFactory;
+use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory;
+use Magento\Catalog\Model\ResourceModel\Product\LinkFactory;
+use Magento\CatalogImportExport\Model\Import\Proxy\ProductFactory;
+use Magento\CatalogImportExport\Model\Import\UploaderFactory;
+use Magento\CatalogInventory\Model\ResourceModel\Stock\ItemFactory;
+use Magento\CatalogImportExport\Model\Import\Product\OptionFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\Product\Url;
 use Magento\CatalogImportExport\Model\Import\Product;
@@ -86,7 +94,7 @@ class ProductTest extends AbstractImportTestCase
     protected $_connection;
 
     /**
-     * @var \Magento\Framework\Json\Helper\Data|MockObject
+     * @var Data|MockObject
      */
     protected $jsonHelper;
 
@@ -186,7 +194,7 @@ class ProductTest extends AbstractImportTestCase
     protected $_resourceFactory;
 
     /**
-     * @var \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory|MockObject
+     * @var CollectionFactory|MockObject
      */
     protected $_setColFactory;
 
@@ -271,7 +279,7 @@ class ProductTest extends AbstractImportTestCase
     protected $transactionManager;
 
     /**
-     * @var \Magento\CatalogImportExport\Model\Import\Product\TaxClassProcessor|MockObject
+     * @var TaxClassProcessor|MockObject
      */
     protected $taxClassProcessor;
 
@@ -333,9 +341,7 @@ class ProductTest extends AbstractImportTestCase
             ->method('getMetadata')
             ->with(ProductInterface::class)
             ->willReturn($entityMetadataMock);
-        $entityMetadataMock->expects($this->any())
-            ->method('getLinkField')
-            ->willReturn('entity_id');
+        $entityMetadataMock->method('getLinkField')->willReturn('entity_id');
 
         /* For parent object construct */
         $this->jsonHelper =
@@ -389,11 +395,11 @@ class ProductTest extends AbstractImportTestCase
                 ->disableOriginalConstructor()
                 ->getMock();
         $this->_resourceFactory = $this->createPartialMock(
-            \Magento\CatalogImportExport\Model\Import\Proxy\Product\ResourceModelFactory::class,
+            ResourceModelFactory::class,
             ['create']
         );
         $this->_setColFactory = $this->createPartialMock(
-            \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory::class,
+            CollectionFactory::class,
             ['create']
         );
         $this->_productTypeFactory = $this->createPartialMock(
@@ -401,15 +407,15 @@ class ProductTest extends AbstractImportTestCase
             ['create']
         );
         $this->_linkFactory = $this->createPartialMock(
-            \Magento\Catalog\Model\ResourceModel\Product\LinkFactory::class,
+            LinkFactory::class,
             ['create']
         );
         $this->_proxyProdFactory = $this->createPartialMock(
-            \Magento\CatalogImportExport\Model\Import\Proxy\ProductFactory::class,
+            ProductFactory::class,
             ['create']
         );
         $this->_uploaderFactory = $this->createPartialMock(
-            \Magento\CatalogImportExport\Model\Import\UploaderFactory::class,
+            UploaderFactory::class,
             ['create']
         );
         $this->_filesystem =
@@ -420,7 +426,7 @@ class ProductTest extends AbstractImportTestCase
             $this->getMockBuilder(WriteInterface::class)
                 ->getMock();
         $this->_stockResItemFac = $this->createPartialMock(
-            \Magento\CatalogInventory\Model\ResourceModel\Stock\ItemFactory::class,
+            ItemFactory::class,
             ['create']
         );
         $this->_localeDate =
@@ -475,7 +481,7 @@ class ProductTest extends AbstractImportTestCase
 
         $this->scopeConfig = $this->getMockBuilder(ScopeConfigInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->productUrl = $this->getMockBuilder(Url::class)
             ->disableOriginalConstructor()
@@ -561,7 +567,7 @@ class ProductTest extends AbstractImportTestCase
     protected function _objectConstructor()
     {
         $this->optionFactory = $this->createPartialMock(
-            \Magento\CatalogImportExport\Model\Import\Product\OptionFactory::class,
+            OptionFactory::class,
             ['create']
         );
         $this->optionEntity = $this->getMockBuilder(Option::class)
@@ -586,18 +592,18 @@ class ProductTest extends AbstractImportTestCase
         $type = $this->getMockBuilder(Type::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $type->expects($this->any())->method('getEntityTypeId')->willReturn(self::ENTITY_TYPE_ID);
+        $type->method('getEntityTypeId')->willReturn(self::ENTITY_TYPE_ID);
         $this->config->expects($this->any())->method('getEntityType')->with(self::ENTITY_TYPE_CODE)->willReturn($type);
 
-        $this->_connection = $this->getMockForAbstractClass(AdapterInterface::class);
+        $this->_connection = $this->createMock(AdapterInterface::class);
         $this->select = $this->getMockBuilder(Select::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['from', 'where', 'joinLeft'])
             ->getMock();
         $this->select->expects($this->any())->method('from')->willReturnSelf();
         //$this->select->expects($this->any())->method('where')->willReturnSelf();
-        $this->_connection->expects($this->any())->method('select')->willReturn($this->select);
-        $this->resource->expects($this->any())->method('getConnection')->willReturn($this->_connection);
+        $this->_connection->method('select')->willReturn($this->select);
+        $this->resource->method('getConnection')->willReturn($this->_connection);
         return $this;
     }
 
@@ -609,21 +615,13 @@ class ProductTest extends AbstractImportTestCase
         $attributeSetOne = $this->getMockBuilder(Set::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $attributeSetOne->expects($this->any())
-            ->method('getAttributeSetName')
-            ->willReturn('attributeSet1');
-        $attributeSetOne->expects($this->any())
-            ->method('getId')
-            ->willReturn('1');
+        $attributeSetOne->method('getAttributeSetName')->willReturn('attributeSet1');
+        $attributeSetOne->method('getId')->willReturn('1');
         $attributeSetTwo = $this->getMockBuilder(Set::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $attributeSetTwo->expects($this->any())
-            ->method('getAttributeSetName')
-            ->willReturn('attributeSet2');
-        $attributeSetTwo->expects($this->any())
-            ->method('getId')
-            ->willReturn('2');
+        $attributeSetTwo->method('getAttributeSetName')->willReturn('attributeSet2');
+        $attributeSetTwo->method('getId')->willReturn('2');
         $attributeSetCol = [$attributeSetOne, $attributeSetTwo];
         $collection = $this->getMockBuilder(Collection::class)
             ->disableOriginalConstructor()
@@ -722,7 +720,7 @@ class ProductTest extends AbstractImportTestCase
         $attribute = $this->getMockBuilder(AbstractAttribute::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getId'])
-            ->getMockForAbstractClass();
+            ->getMock();
         $attribute->expects($this->once())->method('getId')->willReturn(1);
         $resource = $this->getMockBuilder(ResourceModel::class)
             ->disableOriginalConstructor()
@@ -743,8 +741,8 @@ class ProductTest extends AbstractImportTestCase
 
     /**
      * @return void
-     * @dataProvider isAttributeValidAssertAttrValidDataProvider
      */
+    #[DataProvider('isAttributeValidAssertAttrValidDataProvider')]
     public function testIsAttributeValidAssertAttrValid($attrParams, $rowData): void
     {
         $attrCode = 'code';
@@ -760,8 +758,8 @@ class ProductTest extends AbstractImportTestCase
 
     /**
      * @return void
-     * @dataProvider isAttributeValidAssertAttrInvalidDataProvider
      */
+    #[DataProvider('isAttributeValidAssertAttrInvalidDataProvider')]
     public function testIsAttributeValidAssertAttrInvalid($attrParams, $rowData): void
     {
         $attrCode = 'code';
@@ -874,7 +872,7 @@ class ProductTest extends AbstractImportTestCase
         $expectedId = '100';
         $attribute = $this->getMockBuilder(AbstractAttribute::class)->disableOriginalConstructor()
             ->onlyMethods(['getId'])
-            ->getMockForAbstractClass();
+            ->getMock();
         $attribute->expects($this->once())->method('getId')->willReturn($expectedId);
         $resource = $this->getMockBuilder(ResourceModel::class)
             ->disableOriginalConstructor()
@@ -889,8 +887,8 @@ class ProductTest extends AbstractImportTestCase
 
     /**
      * @return void
-     * @dataProvider getRowScopeDataProvider
      */
+    #[DataProvider('getRowScopeDataProvider')]
     public function testGetRowScope($rowData, $expectedResult): void
     {
         $result = $this->importProduct->getRowScope($rowData);
@@ -911,17 +909,15 @@ class ProductTest extends AbstractImportTestCase
 
     /**
      * @return void
-     * @dataProvider validateRowDataProvider
      */
+    #[DataProvider('validateRowDataProvider')]
     public function testValidateRow($rowScope, $oldSku, $expectedResult, $behaviour = Import::BEHAVIOR_DELETE): void
     {
         $importProduct = $this->getMockBuilder(Product::class)->disableOriginalConstructor()
             ->onlyMethods(['getBehavior', 'getRowScope', 'getErrorAggregator'])
             ->getMock();
         $importProduct
-            ->expects($this->any())
-            ->method('getBehavior')
-            ->willReturn($behaviour);
+            ->method('getBehavior')->willReturn($behaviour);
         $importProduct
             ->method('getErrorAggregator')
             ->willReturn($this->getErrorAggregatorObject());
@@ -1046,14 +1042,12 @@ class ProductTest extends AbstractImportTestCase
      * Cover getStoreIdByCode().
      *
      * @return void
-     * @dataProvider getStoreIdByCodeDataProvider
      */
+    #[DataProvider('getStoreIdByCodeDataProvider')]
     public function testGetStoreIdByCode($storeCode, $expectedResult): void
     {
         $this->storeResolver
-            ->expects($this->any())
-            ->method('getStoreCodeToId')
-            ->willReturn('getStoreCodeToId value');
+            ->method('getStoreCodeToId')->willReturn('getStoreCodeToId value');
 
         $actualResult = $this->importProduct->getStoreIdByCode($storeCode);
         $this->assertEquals($expectedResult, $actualResult);
@@ -1112,8 +1106,8 @@ class ProductTest extends AbstractImportTestCase
 
     /**
      * @return void
-     * @dataProvider validateRowCheckSpecifiedSkuDataProvider
      */
+    #[DataProvider('validateRowCheckSpecifiedSkuDataProvider')]
     public function testValidateRowCheckSpecifiedSku($sku): void
     {
         $importProduct = $this->createModelMockWithErrorAggregator(
@@ -1274,8 +1268,8 @@ class ProductTest extends AbstractImportTestCase
      * @param string $error
      *
      * @return void
-     * @dataProvider validateRowValidateNewProductTypeAddRowErrorCallDataProvider
      */
+    #[DataProvider('validateRowValidateNewProductTypeAddRowErrorCallDataProvider')]
     public function testValidateRowValidateNewProductTypeAddRowErrorCall(
         $colType,
         $productTypeModelsColType,
@@ -1407,7 +1401,7 @@ class ProductTest extends AbstractImportTestCase
         $importProduct = $this->createModelMockWithErrorAggregator(['getOptionEntity']);
 
         $this->setPropertyValue($importProduct, '_oldSku', $oldSku);
-        $this->skuProcessor->expects($this->any())->method('getNewSku')->willReturn($newSku);
+        $this->skuProcessor->method('getNewSku')->willReturn($newSku);
         $this->setPropertyValue($importProduct, 'skuProcessor', $this->skuProcessor);
         $this->setPrivatePropertyValue($importProduct, 'skuStorage', $this->skuStorageMock);
 
@@ -1469,8 +1463,8 @@ class ProductTest extends AbstractImportTestCase
 
     /**
      * @return void
-     * @dataProvider getImagesFromRowDataProvider
      */
+    #[DataProvider('getImagesFromRowDataProvider')]
     public function testGetImagesFromRow($rowData, $expectedResult): void
     {
         $this->assertEquals(
@@ -1521,7 +1515,7 @@ class ProductTest extends AbstractImportTestCase
     {
         $attribute1 = $this->getMockBuilder(AbstractAttribute::class)->disableOriginalConstructor()
             ->onlyMethods(['getFrontendInput'])
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $attribute1->expects($this->once())
             ->method('getFrontendInput')
@@ -1529,7 +1523,7 @@ class ProductTest extends AbstractImportTestCase
 
         $attribute2 = $this->getMockBuilder(AbstractAttribute::class)->disableOriginalConstructor()
             ->onlyMethods(['getFrontendInput'])
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $attribute2->expects($this->once())
             ->method('getFrontendInput')
@@ -1565,8 +1559,8 @@ class ProductTest extends AbstractImportTestCase
      * @param string $message
      *
      * @return void
-     * @dataProvider fillUploaderObjectDataProvider
      */
+    #[DataProvider('fillUploaderObjectDataProvider')]
     public function testFillUploaderObject($isRead, $isWrite, $message): void
     {
         $dir = $this->createMock(WriteInterface::class);
@@ -1630,8 +1624,8 @@ class ProductTest extends AbstractImportTestCase
      * @param bool $throwException
      *
      * @return void
-     * @dataProvider uploadMediaFilesDataProvider
      */
+    #[DataProvider('uploadMediaFilesDataProvider')]
     public function testUploadMediaFiles(string $fileName, bool $throwException): void
     {
         $exception = new \Exception();
@@ -1678,8 +1672,8 @@ class ProductTest extends AbstractImportTestCase
      * @param array $categoriesData
      * @param string $tableName
      * @param array $result
-     * @dataProvider productCategoriesDataProvider
      */
+    #[DataProvider('productCategoriesDataProvider')]
     public function testGetProductCategoriesDataSave(array $categoriesData, string $tableName, array $result)
     {
         $this->_connection->method('fetchOne')->willReturnOnConsecutiveCalls('0', '-2');
@@ -2216,9 +2210,7 @@ class ProductTest extends AbstractImportTestCase
         return $importProduct;
     }
 
-    /**
-     * @dataProvider valuesDataProvider
-     */
+    #[DataProvider('valuesDataProvider')]
     public function testParseMultiselectValues($value, $fieldSeparator, $valueSeparator)
     {
         $this->importProduct->setParameters(
@@ -2288,9 +2280,9 @@ class ProductTest extends AbstractImportTestCase
      *
      * @param array $dataProvider
      *
-     * @dataProvider duplicatedUrlCheckDataProvider
      * @return void
      */
+    #[DataProvider('duplicatedUrlCheckDataProvider')]
     public function testImportProductOnDuplicatedUrlKey(array $dataProvider): void
     {
         $tableName = $dataProvider['table_name'];
@@ -2399,7 +2391,7 @@ class ProductTest extends AbstractImportTestCase
     {
         return [
             'Record duplicated by category. Should Throw Validation Error' => [
-                'data' => [
+                'dataProvider' => [
                     'is_error_expected' => true,
                     'store_id' => 0,
                     'table_name' => 'url_rewrite',
@@ -2423,7 +2415,7 @@ class ProductTest extends AbstractImportTestCase
                 ]
             ],
             'Record duplicated by product. Should Throw Validation Error' => [
-                'data' => [
+                'dataProvider' => [
                     'is_error_expected' => true,
                     'store_id' => 0,
                     'table_name' => 'url_rewrite',

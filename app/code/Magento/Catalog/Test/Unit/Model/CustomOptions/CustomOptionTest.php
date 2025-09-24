@@ -58,7 +58,7 @@ class CustomOptionTest extends TestCase
             ->getMock();
 
         $this->fileProcessor = $this->getMockBuilder(
-            \Magento\Catalog\Model\Webapi\Product\Option\Type\File\Processor::class
+            FileProcessor::class
         )
             ->disableOriginalConstructor()
             ->getMock();
@@ -71,9 +71,25 @@ class CustomOptionTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->extensionMock = $this->getMockBuilder(CustomOptionExtensionInterface::class)
-            ->addMethods(['getFileInfo'])
-            ->getMockForAbstractClass();
+        /** @var CustomOptionExtensionInterface $this->extensionMock */
+        $this->extensionMock = new class implements \Magento\Framework\Api\ExtensionAttributesInterface {
+            private $fileInfo = null;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getFileInfo()
+            {
+                return $this->fileInfo;
+            }
+            
+            public function setFileInfo($fileInfo)
+            {
+                $this->fileInfo = $fileInfo;
+                return $this;
+            }
+        };
 
         $this->extensionAttributesFactoryMock->expects(self::any())
             ->method('create')->willReturn($this->extensionMock);
@@ -110,12 +126,9 @@ class CustomOptionTest extends TestCase
 
     public function testGetOptionValueWithFileInfo()
     {
-        $imageContent = $this->getMockBuilder(ImageContentInterface::class)
-            ->getMockForAbstractClass();
+        $imageContent = $this->createMock(ImageContentInterface::class);
 
-        $this->extensionMock->expects($this->once())
-            ->method('getFileInfo')
-            ->willReturn($imageContent);
+        $this->extensionMock->setFileInfo($imageContent);
 
         $imageResult = [
             'type' => 'type',

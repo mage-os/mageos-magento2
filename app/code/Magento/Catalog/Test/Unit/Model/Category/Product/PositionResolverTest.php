@@ -76,9 +76,7 @@ class PositionResolverTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->connection = $this->getMockBuilder(AdapterInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->connection = $this->createMock(AdapterInterface::class);
 
         $this->select = $this->getMockBuilder(Select::class)
             ->disableOriginalConstructor()

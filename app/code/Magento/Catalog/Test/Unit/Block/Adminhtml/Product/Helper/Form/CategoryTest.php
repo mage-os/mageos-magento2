@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Block\Adminhtml\Product\Helper\Form;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Category;
 use Magento\Framework\AuthorizationInterface;
 use Magento\Framework\Math\Random;
@@ -30,7 +31,7 @@ class CategoryTest extends TestCase
     {
         $this->authorization = $this->getMockBuilder(AuthorizationInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->objectManager = new ObjectManager($this);
         $objects = [
             [
@@ -46,14 +47,12 @@ class CategoryTest extends TestCase
     }
 
     /**
-     * @dataProvider isAllowedDataProvider
      * @param $isAllowed
      */
+    #[DataProvider('isAllowedDataProvider')]
     public function testIsAllowed($isAllowed)
     {
-        $this->authorization->expects($this->any())
-            ->method('isAllowed')
-            ->willReturn($isAllowed);
+        $this->authorization->method('isAllowed')->willReturn($isAllowed);
         $model = $this->objectManager->getObject(
             Category::class,
             ['authorization' => $this->authorization]
@@ -87,9 +86,7 @@ class CategoryTest extends TestCase
             Category::class,
             ['authorization' => $this->authorization]
         );
-        $this->authorization->expects($this->any())
-            ->method('isAllowed')
-            ->willReturn(false);
+        $this->authorization->method('isAllowed')->willReturn(false);
         $this->assertEmpty($model->getAfterElementHtml());
     }
 }

@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Model\Indexer\Product\Eav\Plugin;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Indexer\Product\Eav\Plugin\StoreView;
 use Magento\Catalog\Model\Indexer\Product\Eav\Processor;
 use Magento\Framework\Model\AbstractModel;
@@ -44,19 +45,58 @@ class StoreViewTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->objectMock = $this->getMockBuilder(AbstractModel::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getIsActive'])
-            ->onlyMethods(['getId', 'dataHasChangedFor'])
-            ->getMock();
+        /** @var AbstractModel $this->objectMock */
+        $this->objectMock = new class extends AbstractModel {
+            private $id = null;
+            private $dataHasChangedForResult = null;
+            private $isActive = null;
+            
+            public function __construct()
+            {
+                // Don't call parent constructor to avoid dependencies
+            }
+            
+            public function getId()
+            {
+                return $this->id;
+            }
+            
+            public function setId($id)
+            {
+                $this->id = $id;
+                return $this;
+            }
+            
+            public function dataHasChangedFor($field)
+            {
+                return $this->dataHasChangedForResult;
+            }
+            
+            public function setDataHasChangedForResult($result)
+            {
+                $this->dataHasChangedForResult = $result;
+                return $this;
+            }
+            
+            public function getIsActive()
+            {
+                return $this->isActive;
+            }
+            
+            public function setIsActive($isActive)
+            {
+                $this->isActive = $isActive;
+                return $this;
+            }
+        };
 
         $this->storeViewPlugin = new StoreView($this->eavProcessorMock);
     }
 
     /**
      * @param array $data
-     * @dataProvider beforeSaveDataProvider
      */
+    #[DataProvider('beforeSaveDataProvider')]
     public function testAfterSave(array $data): void
     {
         $matcher = $data['matcher'];
@@ -64,18 +104,9 @@ class StoreViewTest extends TestCase
         $this->eavProcessorMock->expects($this->$matcher())
             ->method('markIndexerAsInvalid');
 
-        $this->objectMock->expects($this->any())
-            ->method('getId')
-            ->willReturn($data['object_id']);
-
-        $this->objectMock->expects($this->any())
-            ->method('dataHasChangedFor')
-            ->with('group_id')
-            ->willReturn($data['has_group_id_changed']);
-
-        $this->objectMock->expects($this->any())
-            ->method('getIsActive')
-            ->willReturn($data['is_active']);
+        $this->objectMock->setId($data['object_id']);
+        $this->objectMock->setDataHasChangedForResult($data['has_group_id_changed']);
+        $this->objectMock->setIsActive($data['is_active']);
 
         $this->assertSame(
             $this->subjectMock,

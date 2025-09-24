@@ -27,7 +27,7 @@ class CategoryTest extends TestCase
     private $categoryCollection;
 
     /**
-     * @var \Magento\Catalog\Model\ResourceModel\Category|MockObject
+     * @var Category|MockObject
      */
     private $category;
 
@@ -39,10 +39,36 @@ class CategoryTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->category = $this->getMockBuilder(Category::class)
-            ->addMethods(['getName', 'getId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->category = new class extends Category {
+            private $name = '';
+            private $id = 0;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getName()
+            {
+                return $this->name;
+            }
+            
+            public function setName($name)
+            {
+                $this->name = $name;
+                return $this;
+            }
+            
+            public function getId()
+            {
+                return $this->id;
+            }
+            
+            public function setId($id)
+            {
+                $this->id = $id;
+                return $this;
+            }
+        };
 
         /**
          * @var CollectionFactory|MockObject $categoryCollectionFactory
@@ -52,7 +78,7 @@ class CategoryTest extends TestCase
                 ->onlyMethods(['create'])
                 ->disableOriginalConstructor()
                 ->getMock();
-        $categoryCollectionFactory->expects($this->any())->method('create')->willReturn(
+        $categoryCollectionFactory->method('create')->willReturn(
             $this->categoryCollection
         );
 
@@ -77,12 +103,12 @@ class CategoryTest extends TestCase
             $this->categoryCollection
         );
         $this->categoryCollection->expects($this->once())->method('load');
-        $this->categoryCollection->expects($this->any())->method('getIterator')->willReturn(
+        $this->categoryCollection->method('getIterator')->willReturn(
             new \ArrayIterator([$this->category])
         );
 
-        $this->category->expects($this->once())->method('getName')->willReturn('name');
-        $this->category->expects($this->once())->method('getId')->willReturn(3);
+        $this->category->setName('name');
+        $this->category->setId(3);
 
         $this->assertEquals($expect, $this->model->toOptionArray());
     }

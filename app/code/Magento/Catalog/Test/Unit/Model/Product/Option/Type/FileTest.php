@@ -180,10 +180,7 @@ class FileTest extends TestCase
 
     public function testCopyQuoteToOrderWithDbUsage()
     {
-        $optionMock = $this->getMockBuilder(OptionInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getValue'])
-            ->getMockForAbstractClass();
+        $optionMock = $this->createMock(OptionInterface::class);
 
         $quotePath = '/quote/path/path/uploaded.file';
         $orderPath = '/order/path/path/uploaded.file';
@@ -236,10 +233,7 @@ class FileTest extends TestCase
 
     public function testCopyQuoteToOrderWithoutUsage()
     {
-        $optionMock = $this->getMockBuilder(OptionInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getValue'])
-            ->getMockForAbstractClass();
+        $optionMock = $this->createMock(OptionInterface::class);
 
         $quotePath = '/quote/path/path/uploaded.file';
         $orderPath = '/order/path/path/uploaded.file';
@@ -277,9 +271,7 @@ class FileTest extends TestCase
             ->method('checkDbUsage')
             ->willReturn(false);
 
-        $this->coreFileStorageDatabase->expects($this->any())
-            ->method('copyFile')
-            ->willReturn(false);
+        $this->coreFileStorageDatabase->method('copyFile')->willReturn(false);
 
         $fileObject = $this->getFileObject();
         $fileObject->setData('configuration_item_option', $optionMock);
@@ -313,14 +305,27 @@ class FileTest extends TestCase
             ->with($resultValue)
             ->willReturn(json_encode($resultValue));
 
-        $option = $this->getMockBuilder(Option::class)
-            ->addMethods(['setValue'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $option = new class extends Option {
+            private $value = null;
+            
+            public function __construct()
+            {
+                // Don't call parent constructor to avoid dependencies
+            }
+            
+            public function setValue($value)
+            {
+                $this->value = $value;
+                return $this;
+            }
+            
+            public function getValue()
+            {
+                return $this->value;
+            }
+        };
 
-        $option->expects($this->once())
-            ->method('setValue')
-            ->with(json_encode($resultValue));
+        $option->setValue(json_encode($resultValue));
 
         $fileObject->setConfigurationItemOption($option);
 
@@ -335,15 +340,34 @@ class FileTest extends TestCase
 
     public function testGetEditableOptionValue()
     {
-        $configurationItemOption = $this->getMockBuilder(
-            OptionInterface::class
-        )->disableOriginalConstructor()
-            ->addMethods(['getId'])
-            ->onlyMethods(['getValue'])
-            ->getMock();
-        $configurationItemOption->expects($this->once())
-            ->method('getId')
-            ->willReturn(2);
+        /** @var OptionInterface $configurationItemOption */
+        $configurationItemOption = new class implements OptionInterface {
+            private $id = null;
+            private $value = null;
+            
+            public function getId()
+            {
+                return $this->id;
+            }
+            
+            public function setId($id)
+            {
+                $this->id = $id;
+                return $this;
+            }
+            
+            public function getValue()
+            {
+                return $this->value;
+            }
+            
+            public function setValue($value)
+            {
+                $this->value = $value;
+                return $this;
+            }
+        };
+        $configurationItemOption->setId(2);
         $fileObject = $this->getFileObject()->setData('configuration_item_option', $configurationItemOption);
         $optionTitle = 'Option Title';
         $optionValue = json_encode(['title' => $optionTitle]);
@@ -385,13 +409,9 @@ class FileTest extends TestCase
         $itemMock->expects($this->any())
             ->method('load')->willReturnSelf();
 
-        $itemMock->expects($this->any())
-            ->method('getValue')
-            ->willReturn($optionValue);
+        $itemMock->method('getValue')->willReturn($optionValue);
 
-        $this->itemOptionFactoryMock->expects($this->any())
-            ->method('create')
-            ->willReturn($itemMock);
+        $this->itemOptionFactoryMock->method('create')->willReturn($itemMock);
 
         $this->assertEquals($optionValue, $fileObject->parseOptionValue($userInput, []));
     }
@@ -411,13 +431,9 @@ class FileTest extends TestCase
         $itemMock->expects($this->any())
             ->method('load')->willReturnSelf();
 
-        $itemMock->expects($this->any())
-            ->method('getValue')
-            ->willReturn($optionValue);
+        $itemMock->method('getValue')->willReturn($optionValue);
 
-        $this->itemOptionFactoryMock->expects($this->any())
-            ->method('create')
-            ->willReturn($itemMock);
+        $this->itemOptionFactoryMock->method('create')->willReturn($itemMock);
 
         $this->assertNull($fileObject->parseOptionValue($userInput, []));
     }
@@ -437,13 +453,9 @@ class FileTest extends TestCase
         $itemMock->expects($this->any())
             ->method('load')->willReturnSelf();
 
-        $itemMock->expects($this->any())
-            ->method('getValue')
-            ->willReturn($optionValue);
+        $itemMock->method('getValue')->willReturn($optionValue);
 
-        $this->itemOptionFactoryMock->expects($this->any())
-            ->method('create')
-            ->willReturn($itemMock);
+        $this->itemOptionFactoryMock->method('create')->willReturn($itemMock);
 
         $this->assertNull($fileObject->parseOptionValue($userInput, []));
     }

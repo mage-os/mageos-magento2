@@ -88,34 +88,102 @@ class SaveTest extends TestCase
         $productFactory->method('create')->willReturn($product);
 
         // Attribute for special_from_date
-        $fromAttrBackend = $this->getMockBuilder(\stdClass::class)
-            ->addMethods(['validate'])
-            ->getMock();
-        $fromAttrBackend->method('validate')->willThrowException(
-            new EavAttributeException(__('Make sure the To Date is later than or the same as the From Date.'))
-        );
+        /** @var \stdClass $fromAttrBackend */
+        $fromAttrBackend = new class {
+            private $shouldThrowException = true;
+            
+            public function __construct()
+            {
+            }
+            
+            public function validate()
+            {
+                if ($this->shouldThrowException) {
+                    throw new EavAttributeException(__('Make sure the To Date is later than or the same as the From Date.'));
+                }
+                return true;
+            }
+            public function setShouldThrowException($value)
+            {
+                $this->shouldThrowException = $value;
+                return $this;
+            }
+        };
 
-        $fromAttribute = $this->getMockBuilder(\Magento\Eav\Model\Entity\Attribute\AbstractAttribute::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getBackend'])
-            ->addMethods(['setMaxValue'])
-            ->getMockForAbstractClass();
-        $fromAttribute->expects($this->once())
-            ->method('setMaxValue')
-            ->with('2025-09-01 00:00:00');
-        $fromAttribute->method('getBackend')->willReturn($fromAttrBackend);
+        /** @var \Magento\Eav\Model\Entity\Attribute\AbstractAttribute $fromAttribute */
+        $fromAttribute = new class extends \Magento\Eav\Model\Entity\Attribute\AbstractAttribute {
+            private $maxValue = null;
+            private $backend = null;
+            
+            public function __construct()
+            {
+            }
+            
+            public function setMaxValue($value)
+            {
+                $this->maxValue = $value;
+                return $this;
+            }
+            public function getMaxValue()
+            {
+                return $this->maxValue;
+            }
+            
+            public function getBackend()
+            {
+                return $this->backend;
+            }
+            public function setBackend($value)
+            {
+                $this->backend = $value;
+                return $this;
+            }
+        };
+        $fromAttribute->setMaxValue('2025-09-01 00:00:00');
+        $fromAttribute->setBackend($fromAttrBackend);
 
         // Attribute for special_to_date
-        $toAttrBackend = $this->getMockBuilder(\stdClass::class)
-            ->addMethods(['validate'])
-            ->getMock();
-        $toAttrBackend->method('validate')->willReturn(true);
+        /** @var \stdClass $toAttrBackend */
+        $toAttrBackend = new class {
+            private $shouldThrowException = false;
+            
+            public function __construct()
+            {
+            }
+            
+            public function validate()
+            {
+                if ($this->shouldThrowException) {
+                    throw new EavAttributeException(__('Make sure the To Date is later than or the same as the From Date.'));
+                }
+                return true;
+            }
+            public function setShouldThrowException($value)
+            {
+                $this->shouldThrowException = $value;
+                return $this;
+            }
+        };
 
-        $toAttribute = $this->getMockBuilder(\Magento\Eav\Model\Entity\Attribute\AbstractAttribute::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getBackend'])
-            ->getMockForAbstractClass();
-        $toAttribute->method('getBackend')->willReturn($toAttrBackend);
+        /** @var \Magento\Eav\Model\Entity\Attribute\AbstractAttribute $toAttribute */
+        $toAttribute = new class extends \Magento\Eav\Model\Entity\Attribute\AbstractAttribute {
+            private $backend = null;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getBackend()
+            {
+                return $this->backend;
+            }
+            public function setBackend($value)
+            {
+                $this->backend = $value;
+                return $this;
+            }
+        };
+        $toAttribute->setBackend($toAttrBackend);
 
         // eavConfig should return attributes for 'special_from_date' and 'special_to_date'
         $eavConfig->method('getAttribute')
@@ -175,24 +243,79 @@ class SaveTest extends TestCase
         $product->method('getSpecialToDate')->willReturn('2025-09-10 00:00:00');
         $productFactory->method('create')->willReturn($product);
 
-        $okBackend = $this->getMockBuilder(\stdClass::class)
-            ->addMethods(['validate'])
-            ->getMock();
-        $okBackend->method('validate')->willReturn(true);
+        /** @var \stdClass $okBackend */
+        $okBackend = new class {
+            private $shouldThrowException = false;
+            
+            public function __construct()
+            {
+            }
+            
+            public function validate()
+            {
+                if ($this->shouldThrowException) {
+                    throw new EavAttributeException(__('Make sure the To Date is later than or the same as the From Date.'));
+                }
+                return true;
+            }
+            public function setShouldThrowException($value)
+            {
+                $this->shouldThrowException = $value;
+                return $this;
+            }
+        };
 
-        $fromAttribute = $this->getMockBuilder(\Magento\Eav\Model\Entity\Attribute\AbstractAttribute::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getBackend'])
-            ->addMethods(['setMaxValue'])
-            ->getMockForAbstractClass();
-        $fromAttribute->expects($this->once())->method('setMaxValue')->with('2025-09-10 00:00:00');
-        $fromAttribute->method('getBackend')->willReturn($okBackend);
+        /** @var \Magento\Eav\Model\Entity\Attribute\AbstractAttribute $fromAttribute */
+        $fromAttribute = new class extends \Magento\Eav\Model\Entity\Attribute\AbstractAttribute {
+            private $maxValue = null;
+            private $backend = null;
+            
+            public function __construct()
+            {
+            }
+            
+            public function setMaxValue($value)
+            {
+                $this->maxValue = $value;
+                return $this;
+            }
+            public function getMaxValue()
+            {
+                return $this->maxValue;
+            }
+            
+            public function getBackend()
+            {
+                return $this->backend;
+            }
+            public function setBackend($value)
+            {
+                $this->backend = $value;
+                return $this;
+            }
+        };
+        $fromAttribute->setMaxValue('2025-09-10 00:00:00');
+        $fromAttribute->setBackend($okBackend);
 
-        $toAttribute = $this->getMockBuilder(\Magento\Eav\Model\Entity\Attribute\AbstractAttribute::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getBackend'])
-            ->getMockForAbstractClass();
-        $toAttribute->method('getBackend')->willReturn($okBackend);
+        /** @var \Magento\Eav\Model\Entity\Attribute\AbstractAttribute $toAttribute */
+        $toAttribute = new class extends \Magento\Eav\Model\Entity\Attribute\AbstractAttribute {
+            private $backend = null;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getBackend()
+            {
+                return $this->backend;
+            }
+            public function setBackend($value)
+            {
+                $this->backend = $value;
+                return $this;
+            }
+        };
+        $toAttribute->setBackend($okBackend);
 
         $eavConfig->method('getAttribute')
         ->willReturnCallback(function ($entity, $code) use ($fromAttribute, $toAttribute) {

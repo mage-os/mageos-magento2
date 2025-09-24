@@ -73,12 +73,9 @@ class AdvancedPricingTest extends AbstractModifierTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
-            ->getMockForAbstractClass();
-        $this->groupRepositoryMock = $this->getMockBuilder(GroupRepositoryInterface::class)
-            ->getMockForAbstractClass();
-        $this->groupManagementMock = $this->getMockBuilder(GroupManagementInterface::class)
-            ->getMockForAbstractClass();
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
+        $this->groupRepositoryMock = $this->createMock(GroupRepositoryInterface::class);
+        $this->groupManagementMock = $this->createMock(GroupManagementInterface::class);
         $this->searchCriteriaBuilderMock = $this->getMockBuilder(SearchCriteriaBuilder::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -94,12 +91,9 @@ class AdvancedPricingTest extends AbstractModifierTestCase
         $this->attributeMock = $this->getMockBuilder(Attribute::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->customerGroupMock = $this->getMockBuilder(CustomerGroupInterface::class)
-            ->getMockForAbstractClass();
+        $this->customerGroupMock = $this->createMock(CustomerGroupInterface::class);
 
-        $this->groupManagementMock->expects($this->any())
-            ->method('getAllCustomersGroup')
-            ->willReturn($this->customerGroupMock);
+        $this->groupManagementMock->method('getAllCustomersGroup')->willReturn($this->customerGroupMock);
     }
 
     /**

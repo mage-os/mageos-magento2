@@ -45,9 +45,7 @@ class SortbyTest extends TestCase
         $mockBuilder->disableOriginalConstructor();
         $mock = $mockBuilder->getMock();
 
-        $mock->expects($this->any())
-            ->method('getAttributesUsedForSortBy')
-            ->willReturn([['frontend_label' => 'fl', 'attribute_code' => 'fc']]);
+        $mock->method('getAttributesUsedForSortBy')->willReturn([['frontend_label' => 'fl', 'attribute_code' => 'fc']]);
 
         return $mock;
     }

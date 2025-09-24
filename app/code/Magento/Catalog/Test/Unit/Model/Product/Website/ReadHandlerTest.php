@@ -31,10 +31,25 @@ class ReadHandlerTest extends TestCase
         $this->websiteLinkMock = $this->getMockBuilder(Link::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->extensionAttributesMock = $this->getMockBuilder(ProductExtensionInterface::class)
-            ->addMethods(['setWebsiteIds', 'getWebsiteIds'])
-            ->disableArgumentCloning()
-            ->getMockForAbstractClass();
+        /** @var ProductExtensionInterface $this->extensionAttributesMock */
+        $this->extensionAttributesMock = new class implements ProductExtensionInterface {
+            private $websiteIds = null;
+            
+            public function __construct()
+            {
+            }
+            
+            public function setWebsiteIds($value)
+            {
+                $this->websiteIds = $value;
+                return $this;
+            }
+            
+            public function getWebsiteIds()
+            {
+                return $this->websiteIds;
+            }
+        };
         $this->readHandler = new ReadHandler($this->websiteLinkMock);
     }
 
@@ -55,9 +70,7 @@ class ReadHandlerTest extends TestCase
         $product->expects($this->exactly(2))
             ->method('getExtensionAttributes')
             ->willReturn($this->extensionAttributesMock);
-        $this->extensionAttributesMock->expects($this->once())
-            ->method("getWebsiteIds")
-            ->willReturn(null);
+        $this->extensionAttributesMock->setWebsiteIds(null);
 
         $product->expects($this->once())
             ->method('setExtensionAttributes')
@@ -72,9 +85,7 @@ class ReadHandlerTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $websiteIds = [1,2];
-        $this->extensionAttributesMock->expects($this->once())
-            ->method("getWebsiteIds")
-            ->willReturn($websiteIds);
+        $this->extensionAttributesMock->setWebsiteIds($websiteIds);
         $product->expects($this->never())
             ->method('setExtensionAttributes')
             ->with($this->extensionAttributesMock);

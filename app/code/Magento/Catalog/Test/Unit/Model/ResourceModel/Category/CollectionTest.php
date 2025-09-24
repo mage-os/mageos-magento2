@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Model\ResourceModel\Category;
 
+use Magento\Framework\DB\Ddl\Table;
 use Magento\Catalog\Model\Category;
 use Magento\Framework\Data\Collection\EntityFactory;
 use Magento\Store\Model\Store;
@@ -163,28 +164,18 @@ class CollectionTest extends TestCase
         $this->categoryEntity = $this->getMockBuilder(CategoryEntity::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->universalFactory->expects($this->any())
-            ->method('create')
-            ->willReturn($this->categoryEntity);
-        $this->categoryEntity->expects($this->any())
-            ->method('getConnection')
-            ->willReturn($this->connection);
-        $this->categoryEntity->expects($this->any())
-            ->method('getDefaultAttributes')
-            ->willReturn([]);
+        $this->universalFactory->method('create')->willReturn($this->categoryEntity);
+        $this->categoryEntity->method('getConnection')->willReturn($this->connection);
+        $this->categoryEntity->method('getDefaultAttributes')->willReturn([]);
 
         $this->select = $this->getMockBuilder(Select::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->connection->expects($this->any())
-            ->method('select')
-            ->willReturn($this->select);
+        $this->connection->method('select')->willReturn($this->select);
 
         $this->store = $this->getMockBuilder(StoreInterface::class)
             ->getMock();
-        $this->storeManager->expects($this->any())
-            ->method('getStore')
-            ->willReturn($this->store);
+        $this->storeManager->method('getStore')->willReturn($this->store);
 
         $this->collection = new Collection(
             $this->entityFactory,
@@ -245,7 +236,7 @@ class CollectionTest extends TestCase
         $this->storeManager->method('getStore')->with($storeId)->willReturn($storeMock);
         $this->connection->method('select')->willReturn($this->select);
         $counts = array_fill_keys($categoryIds, 5);
-        $tableMock = $this->createMock(\Magento\Framework\DB\Ddl\Table::class);
+        $tableMock = $this->createMock(Table::class);
         $tableMock->method('addColumn')->willReturnSelf();
         $tableMock->method('addIndex')->willReturnSelf();
         $this->connection->method('newTable')

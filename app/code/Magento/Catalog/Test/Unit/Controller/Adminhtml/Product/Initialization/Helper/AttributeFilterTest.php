@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Controller\Adminhtml\Product\Initialization\Helper;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Controller\Adminhtml\Product\Initialization\Helper\AttributeFilter;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
@@ -44,8 +45,8 @@ class AttributeFilterTest extends TestCase
      * @param array $expectedProductData
      * @param array $initialProductData
      * @param mixed $attributeList
-     * @dataProvider setupInputDataProvider
      */
+    #[DataProvider('setupInputDataProvider')]
     public function testPrepareProductAttributes(
         array $requestProductData,
         array $useDefaults,
@@ -351,9 +352,7 @@ class AttributeFilterTest extends TestCase
                 $attribute = $this->getMockBuilder(Attribute::class)
                     ->disableOriginalConstructor()
                     ->getMock();
-                $attribute->expects($this->any())
-                    ->method('getBackendType')
-                    ->willReturn('varchar');
+                $attribute->method('getBackendType')->willReturn('varchar');
 
                 $returnArray[$attributecode] = $attribute;
             }

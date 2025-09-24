@@ -10,6 +10,7 @@ declare(strict_types=1);
  */
 namespace Magento\Catalog\Test\Unit\Model\ResourceModel\Attribute;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Entity\Attribute;
 use Magento\Catalog\Model\ResourceModel\Attribute\ConditionBuilder;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute as CatalogEavAttribute;
@@ -60,8 +61,8 @@ class ConditionBuilderTest extends TestCase
      * @param array $scopes
      * @param string $linkFieldValue
      * @throws NoSuchEntityException
-     * @dataProvider buildExistingAttributeWebsiteScopeInappropriateAttributeDataProvider
      */
+    #[DataProvider('buildExistingAttributeWebsiteScopeInappropriateAttributeDataProvider')]
     public function testBuildExistingAttributeWebsiteScopeInappropriateAttribute(
         \Closure $attribute,
         \Closure $metadata,
@@ -112,8 +113,8 @@ class ConditionBuilderTest extends TestCase
      * @param array $scopes
      * @param string $linkFieldValue
      * @throws NoSuchEntityException
-     * @dataProvider buildExistingAttributeWebsiteScopeStoreScopeNotFoundDataProvider
      */
+    #[DataProvider('buildExistingAttributeWebsiteScopeStoreScopeNotFoundDataProvider')]
     public function testBuildExistingAttributeWebsiteScopeStoreScopeNotFound(
         \Closure $attribute,
         \Closure $metadata,
@@ -164,8 +165,8 @@ class ConditionBuilderTest extends TestCase
      * @param array $scopes
      * @param string $linkFieldValue
      * @throws NoSuchEntityException
-     * @dataProvider buildExistingAttributeWebsiteScopeStoreWebsiteNotFoundDataProvider
      */
+    #[DataProvider('buildExistingAttributeWebsiteScopeStoreWebsiteNotFoundDataProvider')]
     public function testBuildExistingAttributeWebsiteScopeStoreWebsiteNotFound(
         \Closure $attribute,
         \Closure $metadata,
@@ -228,8 +229,8 @@ class ConditionBuilderTest extends TestCase
      * @param array $expectedConditions
      * @param string $linkFieldValue
      * @throws NoSuchEntityException
-     * @dataProvider buildExistingAttributeWebsiteScopeStoreWithStoreIdsEmpty
      */
+    #[DataProvider('buildExistingAttributeWebsiteScopeStoreWithStoreIdsEmpty')]
     public function testBuildExistingAttributeWebsiteScopeStoreWithStoreIdsEmpty(
         \Closure $attribute,
         \Closure $metadata,
@@ -242,9 +243,7 @@ class ConditionBuilderTest extends TestCase
         $metadata = $metadata($this);
         $store = $store($this);
         $scopes = $scopes($this);
-        self::$storeManagerMock->expects($this->any())
-            ->method('getStore')
-            ->willReturn($store);
+        self::$storeManagerMock->method('getStore')->willReturn($store);
         $result = self::$model->buildExistingAttributeWebsiteScope(
             $attribute,
             $metadata,
@@ -298,8 +297,8 @@ class ConditionBuilderTest extends TestCase
      * @param array $expectedConditions
      * @param string $linkFieldValue
      * @throws NoSuchEntityException
-     * @dataProvider buildExistingAttributeWebsiteScopeSuccessDataProvider
      */
+    #[DataProvider('buildExistingAttributeWebsiteScopeSuccessDataProvider')]
     public function testBuildExistingAttributeWebsiteScopeSuccess(
         \Closure $attribute,
         \Closure $metadata,
@@ -312,11 +311,9 @@ class ConditionBuilderTest extends TestCase
         $metadata = $metadata($this);
         $store = $store($this);
         $scopes[0] = $scopes[0]($this);
-        self::$storeManagerMock->expects($this->any())
-            ->method('getStore')
-            ->willReturn(
-                $store
-            );
+        self::$storeManagerMock->method('getStore')->willReturn(
+            $store
+        );
         $result = self::$model->buildExistingAttributeWebsiteScope(
             $attribute,
             $metadata,
@@ -380,8 +377,8 @@ class ConditionBuilderTest extends TestCase
      * @param array $scopes
      * @param string $linkFieldValue
      * @throws NoSuchEntityException
-     * @dataProvider buildNewAttributeWebsiteScopeUnappropriateAttributeDataProvider
      */
+    #[DataProvider('buildNewAttributeWebsiteScopeUnappropriateAttributeDataProvider')]
     public function testBuildNewAttributeWebsiteScopeUnappropriateAttribute(
         \Closure $attribute,
         \Closure $metadata,
@@ -433,8 +430,8 @@ class ConditionBuilderTest extends TestCase
      * @param array $expectedConditions
      * @param string $linkFieldValue
      * @throws NoSuchEntityException
-     * @dataProvider buildNewAttributeWebsiteScopeSuccessDataProvider
      */
+    #[DataProvider('buildNewAttributeWebsiteScopeSuccessDataProvider')]
     public function testBuildNewAttributeWebsiteScopeSuccess(
         \Closure $attribute,
         \Closure $metadata,
@@ -447,9 +444,7 @@ class ConditionBuilderTest extends TestCase
         $metadata = $metadata($this);
         $store = $store($this);
         $scopes[0] = $scopes[0]($this);
-        self::$storeManagerMock->expects($this->any())
-            ->method('getStore')
-            ->willReturn($store);
+        self::$storeManagerMock->method('getStore')->willReturn($store);
         $result = self::$model->buildNewAttributesWebsiteScope(
             $attribute,
             $metadata,
@@ -517,8 +512,8 @@ class ConditionBuilderTest extends TestCase
      * @param array $expectedConditions
      * @param string $linkFieldValue
      * @throws NoSuchEntityException
-     * @dataProvider buildNewAttributeWebsiteScopeStoreWithStoreIdsEmptyDataProvider
      */
+    #[DataProvider('buildNewAttributeWebsiteScopeStoreWithStoreIdsEmptyDataProvider')]
     public function testBuildNewAttributeWebsiteScopeStoreWithStoreIdsEmpty(
         \Closure $attribute,
         \Closure $metadata,
@@ -531,9 +526,7 @@ class ConditionBuilderTest extends TestCase
         $metadata = $metadata($this);
         $store = $store($this);
         $scopes[0] = $scopes[0]($this);
-        self::$storeManagerMock->expects($this->any())
-            ->method('getStore')
-            ->willReturn($store);
+        self::$storeManagerMock->method('getStore')->willReturn($store);
         $result = self::$model->buildNewAttributesWebsiteScope(
             $attribute,
             $metadata,
@@ -599,11 +592,9 @@ class ConditionBuilderTest extends TestCase
             ->willReturn(
                 true
             );
-        $attribute->expects($this->any())
-            ->method('getAttributeId')
-            ->willReturn(
-                12
-            );
+        $attribute->method('getAttributeId')->willReturn(
+            12
+        );
 
         return $attribute;
     }
@@ -619,15 +610,13 @@ class ConditionBuilderTest extends TestCase
                 'getStoreIds',
             ])
             ->getMock();
-        $website->expects($this->any())
-            ->method('getStoreIds')
-            ->willReturn(
-                [
+        $website->method('getStoreIds')->willReturn(
+            [
                     1,
                     2,
                     3,
                 ]
-            );
+        );
 
         $store = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
@@ -635,11 +624,9 @@ class ConditionBuilderTest extends TestCase
                 'getWebsite',
             ])
             ->getMock();
-        $store->expects($this->any())
-            ->method('getWebsite')
-            ->willReturn(
-                $website
-            );
+        $store->method('getWebsite')->willReturn(
+            $website
+        );
 
         return $store;
     }
@@ -649,22 +636,11 @@ class ConditionBuilderTest extends TestCase
      */
     protected function getValidScopeMock()
     {
-        $scope = $this->getMockBuilder(ScopeInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([
-                'getIdentifier',
-                'getValue',
-                'getFallback',
-            ])
-            ->getMockForAbstractClass();
-        $scope->expects($this->any())
-            ->method('getIdentifier')
-            ->willReturn(
-                Store::STORE_ID
-            );
-        $scope->expects($this->any())
-            ->method('getValue')
-            ->willReturn(1);
+        $scope = $this->createMock(ScopeInterface::class);
+        $scope->method('getIdentifier')->willReturn(
+            Store::STORE_ID
+        );
+        $scope->method('getValue')->willReturn(1);
 
         return $scope;
     }
@@ -697,9 +673,7 @@ class ConditionBuilderTest extends TestCase
     protected function getMockForMetadataClass($return)
     {
         if ($return == null) {
-            return $this->getMockBuilder(EntityMetadataInterface::class)
-                ->disableOriginalConstructor()
-                ->getMockForAbstractClass();
+            return $this->createMock(EntityMetadataInterface::class);
         } elseif ($return == 'entity_id') {
             $metadata = $this->getMockBuilder(EntityMetadata::class)
                 ->disableOriginalConstructor()
@@ -730,36 +704,21 @@ class ConditionBuilderTest extends TestCase
                     'getEntityConnection',
                 ])
                 ->getMock();
-            $metadata->expects($this->any())
-                ->method('getLinkField')
-                ->willReturn('entity_id');
-            $metadata->expects($this->any())
-                ->method('getEntityConnection')
-                ->willReturn($dbAdapater);
+            $metadata->method('getLinkField')->willReturn('entity_id');
+            $metadata->method('getEntityConnection')->willReturn($dbAdapater);
             return $metadata;
         }
     }
 
     protected function getMockForScopeClass()
     {
-        $scope = $this->getMockBuilder(ScopeInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([
-                'getIdentifier',
-                'getValue',
-                'getFallback',
-            ])
-            ->getMockForAbstractClass();
-        $scope->expects($this->any())
-            ->method('getIdentifier')
-            ->willReturn(
-                Store::STORE_ID
-            );
-        $scope->expects($this->any())
-            ->method('getValue')
-            ->willReturn(
-                1
-            );
+        $scope = $this->createMock(ScopeInterface::class);
+        $scope->method('getIdentifier')->willReturn(
+            Store::STORE_ID
+        );
+        $scope->method('getValue')->willReturn(
+            1
+        );
         $scopes = [
             $scope,
         ];
@@ -776,27 +735,19 @@ class ConditionBuilderTest extends TestCase
             ])
             ->getMock();
         if (!$return) {
-            $store->expects($this->any())
-                ->method('getWebsite')
-                ->willReturn(
-                    false
-                );
+            $store->method('getWebsite')->willReturn(
+                false
+            );
         } else {
             $website = $this->getMockBuilder(Website::class)
                 ->disableOriginalConstructor()
                 ->onlyMethods(['getStoreIds', 'getCode'])
                 ->getMock();
-            $website->expects($this->any())
-                ->method('getStoreIds')
-                ->willReturn([]);
-            $website->expects($this->any())
-                ->method('getCode')
-                ->willReturn(Website::ADMIN_CODE);
-            $store->expects($this->any())
-                ->method('getWebsite')
-                ->willReturn(
-                    $website
-                );
+            $website->method('getStoreIds')->willReturn([]);
+            $website->method('getCode')->willReturn(Website::ADMIN_CODE);
+            $store->method('getWebsite')->willReturn(
+                $website
+            );
         }
         return $store;
     }

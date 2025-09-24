@@ -34,8 +34,7 @@ class FormattedPriceInfoBuilderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->priceCurrencyMock = $this->getMockBuilder(PriceCurrencyInterface::class)
-            ->getMockForAbstractClass();
+        $this->priceCurrencyMock = $this->createMock(PriceCurrencyInterface::class);
         $this->formattedPriceInfoFactoryMock = $this->getMockBuilder(FormattedPriceInfoInterfaceFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -54,14 +53,12 @@ class FormattedPriceInfoBuilderTest extends TestCase
         $formattedPriceInfoInterfaceMock = $this->getMockBuilder(FormattedPriceInfoInterface::class)
             ->disableOriginalConstructor()
             ->addMethods(['setData'])
-            ->getMockForAbstractClass();
+            ->getMock();
         $priceInfoMock = $this->getMockBuilder(PriceInfoInterface::class)
             ->disableOriginalConstructor()
             ->addMethods(['getData'])
-            ->getMockForAbstractClass();
-        $priceInfoMock->expects($this->any())
-            ->method('getData')
-            ->willReturn([
+            ->getMock();
+        $priceInfoMock->method('getData')->willReturn([
                 'key'=>'1233123'
             ]);
         $this->priceCurrencyMock->expects($this->atLeastOnce())

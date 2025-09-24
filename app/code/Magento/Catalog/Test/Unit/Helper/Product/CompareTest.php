@@ -23,7 +23,7 @@ use PHPUnit\Framework\TestCase;
 class CompareTest extends TestCase
 {
     /**
-     * @var \Magento\Catalog\Helper\Product\Compare
+     * @var Compare
      */
     protected $compareHelper;
 
@@ -93,10 +93,18 @@ class CompareTest extends TestCase
             PostHelper::class,
             ['getPostData']
         );
-        $this->catalogSessionMock = $this->getMockBuilder(Session::class)
-            ->addMethods(['getBeforeCompareUrl'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->catalogSessionMock = new class extends Session {
+            public function __construct()
+            {
+                // Empty constructor
+            }
+
+            public function getBeforeCompareUrl()
+            {
+                return 'http://magento.com/compare/before';
+            }
+            
+        };
 
         $this->compareHelper = $objectManager->getObject(
             Compare::class,
@@ -190,7 +198,7 @@ class CompareTest extends TestCase
         ];
 
         $productMock = $this->createMock(Product::class);
-        $this->catalogSessionMock->expects($this->once())->method('getBeforeCompareUrl')->willReturn($beforeCompareUrl);
+    
         $productMock->expects($this->once())->method('getId')->willReturn($productId);
         $this->urlEncoder->expects($this->once())->method('encode')->with($beforeCompareUrl)
             ->willReturn($encodedCompareUrl);

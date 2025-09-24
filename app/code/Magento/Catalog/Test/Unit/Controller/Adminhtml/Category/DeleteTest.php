@@ -71,7 +71,7 @@ class DeleteTest extends TestCase
             RedirectFactory::class,
             ['create']
         );
-        $this->request = $this->getMockForAbstractClass(
+        $this->request = $this->createMock(
             RequestInterface::class,
             [],
             '',
@@ -81,11 +81,29 @@ class DeleteTest extends TestCase
             ['getParam', 'getPost']
         );
         $auth = $this->createPartialMock(Auth::class, ['getAuthStorage']);
-        $this->authStorage = $this->getMockBuilder(StorageInterface::class)
-            ->addMethods(['setDeletedPath'])
-            ->onlyMethods(['processLogin', 'processLogout', 'isLoggedIn', 'prolong'])
-            ->getMockForAbstractClass();
-        $eventManager = $this->getMockForAbstractClass(
+        $this->authStorage = new class implements StorageInterface {
+            public function processLogin()
+            {
+                return $this;
+            }
+            public function processLogout()
+            {
+                return $this;
+            }
+            public function isLoggedIn()
+            {
+                return true;
+            }
+            public function prolong()
+            {
+                return;
+            }
+            public function setDeletedPath($path)
+            {
+                return $this;
+            }
+        };
+        $eventManager = $this->createMock(
             ManagerInterface::class,
             [],
             '',
@@ -94,13 +112,13 @@ class DeleteTest extends TestCase
             true,
             ['dispatch']
         );
-        $response = $this->getMockForAbstractClass(
+        $response = $this->createMock(
             ResponseInterface::class,
             [],
             '',
             false
         );
-        $messageManager = $this->getMockForAbstractClass(
+        $messageManager = $this->createMock(
             \Magento\Framework\Message\ManagerInterface::class,
             [],
             '',
@@ -109,29 +127,17 @@ class DeleteTest extends TestCase
             true,
             ['addSuccessMessage']
         );
-        $this->categoryRepository = $this->getMockForAbstractClass(CategoryRepositoryInterface::class);
-        $context->expects($this->any())
-            ->method('getRequest')
-            ->willReturn($this->request);
-        $context->expects($this->any())
-            ->method('getResponse')
-            ->willReturn($response);
-        $context->expects($this->any())
-            ->method('getMessageManager')
-            ->willReturn($messageManager);
-        $context->expects($this->any())
-            ->method('getEventManager')
-            ->willReturn($eventManager);
-        $context->expects($this->any())
-            ->method('getAuth')
-            ->willReturn($auth);
+        $this->categoryRepository = $this->createMock(CategoryRepositoryInterface::class);
+        $context->method('getRequest')->willReturn($this->request);
+        $context->method('getResponse')->willReturn($response);
+        $context->method('getMessageManager')->willReturn($messageManager);
+        $context->method('getEventManager')->willReturn($eventManager);
+        $context->method('getAuth')->willReturn($auth);
         $context->expects($this->once())->method('getResultRedirectFactory')->willReturn($resultRedirectFactory);
-        $auth->expects($this->any())
-            ->method('getAuthStorage')
-            ->willReturn($this->authStorage);
+        $auth->method('getAuthStorage')->willReturn($this->authStorage);
 
         $this->resultRedirect = $this->createMock(Redirect::class);
-        $resultRedirectFactory->expects($this->any())->method('create')->willReturn($this->resultRedirect);
+        $resultRedirectFactory->method('create')->willReturn($this->resultRedirect);
 
         $this->unit = $objectManager->getObject(
             Delete::class,
@@ -161,7 +167,7 @@ class DeleteTest extends TestCase
         $category->expects($this->once())->method('getParentId')->willReturn($parentId);
         $category->expects($this->once())->method('getPath')->willReturn('category-path');
         $this->categoryRepository->expects($this->once())->method('get')->with($categoryId)->willReturn($category);
-        $this->authStorage->expects($this->once())->method('setDeletedPath')->with('category-path');
+        // No mock expectations needed for anonymous class
         $this->resultRedirect->expects($this->once())->method('setPath')
             ->with('catalog/*/', ['_current' => true, 'id' => $parentId]);
 

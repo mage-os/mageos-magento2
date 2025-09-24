@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Block\Product\ProductList;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Block\Product\ProductList\Related;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -50,22 +51,60 @@ class RelatedTest extends TestCase
     }
 
     /**
-     * @dataProvider canItemsAddToCartDataProvider
      * @param bool $isComposite
      * @param bool $isSaleable
      * @param bool $hasRequiredOptions
      * @param bool $canItemsAddToCart
      */
+    #[DataProvider('canItemsAddToCartDataProvider')]
     public function testCanItemsAddToCart($isComposite, $isSaleable, $hasRequiredOptions, $canItemsAddToCart)
     {
-        $product = $this->getMockBuilder(Product::class)
-            ->addMethods(['getRequiredOptions'])
-            ->onlyMethods(['isComposite', 'isSaleable'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $product->expects($this->any())->method('isComposite')->willReturn($isComposite);
-        $product->expects($this->any())->method('isSaleable')->willReturn($isSaleable);
-        $product->expects($this->any())->method('getRequiredOptions')->willReturn($hasRequiredOptions);
+        $product = new class extends Product {
+            private $isComposite = false;
+            private $isSaleable = false;
+            private $hasRequiredOptions = false;
+            
+            public function __construct()
+            {
+                // Empty constructor for test
+            }
+            
+            public function isComposite()
+            {
+                return $this->isComposite;
+            }
+            
+            public function isSaleable()
+            {
+                return $this->isSaleable;
+            }
+            
+            public function getRequiredOptions()
+            {
+                return $this->hasRequiredOptions;
+            }
+            
+            public function setIsComposite($isComposite)
+            {
+                $this->isComposite = $isComposite;
+                return $this;
+            }
+            
+            public function setIsSaleable($isSaleable)
+            {
+                $this->isSaleable = $isSaleable;
+                return $this;
+            }
+            
+            public function setHasRequiredOptions($hasRequiredOptions)
+            {
+                $this->hasRequiredOptions = $hasRequiredOptions;
+                return $this;
+            }
+        };
+        $product->setIsComposite($isComposite);
+        $product->setIsSaleable($isSaleable);
+        $product->setHasRequiredOptions($hasRequiredOptions);
 
         $itemsCollection = new \ReflectionProperty(
             Related::class,

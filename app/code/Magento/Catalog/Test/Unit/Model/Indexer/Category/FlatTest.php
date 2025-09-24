@@ -67,7 +67,7 @@ class FlatTest extends TestCase
             ['create']
         );
 
-        $this->indexerMock = $this->getMockForAbstractClass(
+        $this->indexerMock = $this->createMock(
             IndexerInterface::class,
             [],
             '',

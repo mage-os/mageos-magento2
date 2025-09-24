@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Model\Indexer\Product\Eav;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Indexer\Product\Eav\AbstractAction;
 use Magento\Catalog\Model\ResourceModel\Product\Indexer\Eav\Decimal;
 use Magento\Catalog\Model\ResourceModel\Product\Indexer\Eav\DecimalFactory;
@@ -53,10 +54,8 @@ class AbstractActionTest extends TestCase
             SourceFactory::class,
             ['create']
         );
-        $this->scopeConfig = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->_model = $this->getMockForAbstractClass(
+        $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
+        $this->_model = $this->createMock(
             AbstractAction::class,
             [
                 $this->_eavDecimalFactoryMock,
@@ -159,8 +158,8 @@ class AbstractActionTest extends TestCase
      * @param array $parentIds
      * @param array $childIds
      * @return void
-     * @dataProvider reindexEntitiesDataProvider
      */
+    #[DataProvider('reindexEntitiesDataProvider')]
     public function testReindexWithNotNullArgumentExecutesReindexEntities(
         array $ids,
         array $parentIds,
@@ -168,8 +167,7 @@ class AbstractActionTest extends TestCase
     ) : void {
         $reindexIds = array_unique(array_merge($ids, $parentIds, $childIds));
 
-        $connectionMock = $this->getMockBuilder(AdapterInterface::class)
-            ->getMockForAbstractClass();
+        $connectionMock = $this->createMock(AdapterInterface::class);
 
         $eavSource = $this->getMockBuilder(Source::class)
             ->disableOriginalConstructor()

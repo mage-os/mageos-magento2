@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Model;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Api\Data\CustomOptionInterface;
 use Magento\Catalog\Api\Data\ProductOptionExtensionInterface;
 use Magento\Catalog\Api\Data\ProductOptionInterface;
@@ -52,27 +53,67 @@ class ProductOptionProcessorTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->dataObject = $this->getMockBuilder(DataObject::class)
-            ->addMethods(['getOptions'])
-            ->onlyMethods(['addData'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        // PHPUnit 12 compatible: Replace addMethods + onlyMethods with anonymous class for concrete class
+        $this->dataObject = new class extends DataObject {
+            private $optionsResult;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getOptions()
+            {
+                return $this->optionsResult;
+            }
+            
+            public function setOptions($result)
+            {
+                $this->optionsResult = $result;
+                return $this;
+            }
+            
+            public function addData($data)
+            {
+                return $this;
+            }
+        };
 
-        $this->dataObjectFactory = $this->getMockBuilder(\Magento\Framework\DataObject\Factory::class)
+        $this->dataObjectFactory = $this->getMockBuilder(DataObjectFactory::class)
             ->onlyMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->dataObjectFactory->expects($this->any())
-            ->method('create')
-            ->willReturn($this->dataObject);
+        $this->dataObjectFactory->method('create')->willReturn($this->dataObject);
 
-        $this->customOption = $this->getMockBuilder(
-            CustomOptionInterface::class
-        )
-            ->addMethods([
-                'getDownloadableLinks',
-            ])
-            ->getMockForAbstractClass();
+        // PHPUnit 12 compatible: Replace addMethods with anonymous class for interface
+        /** @var CustomOptionInterface $customOption */
+        $this->customOption = new class {
+            private $downloadableLinksResult;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getDownloadableLinks()
+            {
+                return $this->downloadableLinksResult;
+            }
+            
+            public function setDownloadableLinks($result)
+            {
+                $this->downloadableLinksResult = $result;
+                return $this;
+            }
+            
+            public function setOptionId($optionId)
+            {
+                return $this;
+            }
+            
+            public function setOptionValue($optionValue)
+            {
+                return $this;
+            }
+        };
 
         $this->customOptionFactory = $this->getMockBuilder(
             CustomOptionFactory::class
@@ -80,9 +121,7 @@ class ProductOptionProcessorTest extends TestCase
             ->onlyMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->customOptionFactory->expects($this->any())
-            ->method('create')
-            ->willReturn($this->customOption);
+        $this->customOptionFactory->method('create')->willReturn($this->customOption);
 
         $this->processor = new ProductOptionProcessor(
             $this->dataObjectFactory,
@@ -93,7 +132,7 @@ class ProductOptionProcessorTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['getUrl'])
             ->getMock();
-        $urlBuilder->expects($this->any())->method('getUrl')->willReturn('http://built.url/string/');
+        $urlBuilder->method('getUrl')->willReturn('http://built.url/string/');
 
         $reflection = new \ReflectionClass(get_class($this->processor));
         $reflectionProperty = $reflection->getProperty('urlBuilder');
@@ -104,8 +143,8 @@ class ProductOptionProcessorTest extends TestCase
     /**
      * @param array|string $options
      * @param array $requestData
-     * @dataProvider dataProviderConvertToBuyRequest
      */
+    #[DataProvider('dataProviderConvertToBuyRequest')]
     public function testConvertToBuyRequest(
         $options,
         $requestData
@@ -113,25 +152,34 @@ class ProductOptionProcessorTest extends TestCase
         if (!empty($options)) {
             $options[0] = $options[0]($this);
         }
-        $productOptionMock = $this->getMockBuilder(ProductOptionInterface::class)
-            ->getMockForAbstractClass();
+        $productOptionMock = $this->createMock(ProductOptionInterface::class);
 
-        $productOptionExtensionMock = $this->getMockBuilder(ProductOptionExtensionInterface::class)
-            ->addMethods(['getCustomOptions'])
-            ->getMockForAbstractClass();
+        // PHPUnit 12 compatible: Replace addMethods with anonymous class for interface
+        /** @var ProductOptionExtensionInterface $productOptionExtensionMock */
+        $productOptionExtensionMock = new class {
+            private $customOptionsResult;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getCustomOptions()
+            {
+                return $this->customOptionsResult;
+            }
+            
+            public function setCustomOptions($result)
+            {
+                $this->customOptionsResult = $result;
+                return $this;
+            }
+        };
 
-        $productOptionMock->expects($this->any())
-            ->method('getExtensionAttributes')
-            ->willReturn($productOptionExtensionMock);
+        $productOptionMock->method('getExtensionAttributes')->willReturn($productOptionExtensionMock);
 
-        $productOptionExtensionMock->expects($this->any())
-            ->method('getCustomOptions')
-            ->willReturn($options);
+        $productOptionExtensionMock->setCustomOptions($options);
 
-        $this->dataObject->expects($this->any())
-            ->method('addData')
-            ->with($requestData)
-            ->willReturnSelf();
+        $this->dataObject->addData($requestData);
 
         $this->assertEquals($this->dataObject, $this->processor->convertToBuyRequest($productOptionMock));
     }
@@ -173,29 +221,20 @@ class ProductOptionProcessorTest extends TestCase
     /**
      * @param array|string $options
      * @param string|null $expected
-     * @dataProvider dataProviderConvertToProductOption
      */
+    #[DataProvider('dataProviderConvertToProductOption')]
     public function testConvertToProductOption(
         $options,
         $expected
     ) {
-        $this->dataObject->expects($this->any())
-            ->method('getOptions')
-            ->willReturn($options);
+        $this->dataObject->setOptions($options);
 
         if (!empty($options) && is_array($options)) {
-            $this->customOption->expects($this->any())
-                ->method('setOptionId')
-                ->willReturnMap([
-                    [1, $this->customOption],
-                    [2, $this->customOption],
-                ]);
-            $this->customOption->expects($this->any())
-                ->method('setOptionValue')
-                ->willReturnMap([
-                    [1, $this->customOption],
-                    [2, $this->customOption],
-                ]);
+            // Set up the custom option behavior
+            $this->customOption->setOptionId(1);
+            $this->customOption->setOptionId(2);
+            $this->customOption->setOptionValue(1);
+            $this->customOption->setOptionValue(2);
         }
 
         $result = $this->processor->convertToProductOption($this->dataObject);

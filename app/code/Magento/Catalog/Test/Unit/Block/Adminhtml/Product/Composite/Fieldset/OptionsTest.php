@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Block\Adminhtml\Product\Composite\Fieldset;
 
+use Magento\Catalog\Model\Product\Option\ValueFactory;
 use Magento\Catalog\Block\Adminhtml\Product\Composite\Fieldset\Options;
 use Magento\Catalog\Model\CategoryFactory;
 use Magento\Catalog\Model\Product;
@@ -59,28 +60,49 @@ class OptionsTest extends TestCase
             Context::class,
             ['layout' => $layout]
         );
-        $optionFactoryMock = $this->getMockBuilder(\Magento\Catalog\Model\Product\Option\ValueFactory::class)
+        $optionFactoryMock = $this->getMockBuilder(ValueFactory::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
             ->getMock();
-        $option = $this->_objectHelper->getObject(
-            \Magento\Catalog\Model\Product\Option::class,
-            ['resource' => $this->_optionResource, 'optionValueFactory' => $optionFactoryMock]
-        );
-        $dateBlock = $this->getMockBuilder(Options::class)
-            ->addMethods(['setSkipJsReloadPrice'])
-            ->setConstructorArgs(['context' => $context, 'option' => $option])
+        $option = $this->getMockBuilder(\Magento\Catalog\Model\Product\Option::class)
             ->disableOriginalConstructor()
+            ->onlyMethods(['getGroupByType'])
             ->getMock();
-        $dateBlock->expects($this->any())->method('setSkipJsReloadPrice')->willReturn($dateBlock);
+        $option->method('getGroupByType')->willReturn('date');
+        
+        // Create an anonymous subclass that extends Options and implements setSkipJsReloadPrice
+        $dateBlock = new class extends Options {
+            public function __construct()
+            {
+                // Empty constructor to avoid parent constructor dependencies
+            }
+            
+            public function setSkipJsReloadPrice($value)
+            {
+                return $this;
+            }
 
-        $layout->expects($this->any())->method('getChildName')->willReturn('date');
+            public function setOption($option)
+            {
+                return $this;
+            }
+        };
+
+        $layout->method('getChildName')->willReturn('date');
         $layout->expects($this->any())->method('getBlock')->with('date')->willReturn($dateBlock);
         $layout->expects($this->any())->method('renderElement')->with('date', false)->willReturn('html');
 
         $this->_optionsBlock = $this->_objectHelper->getObject(
             Options::class,
-            ['context' => $context, 'option' => $option]
+            [
+                'context' => $context,
+                'pricingHelper' => $this->createMock(\Magento\Framework\Pricing\Helper\Data::class),
+                'catalogData' => $this->createMock(\Magento\Catalog\Helper\Data::class),
+                'jsonEncoder' => $this->createMock(\Magento\Framework\Json\EncoderInterface::class),
+                'option' => $option,
+                'registry' => $this->createMock(\Magento\Framework\Registry::class),
+                'arrayUtils' => $this->createMock(\Magento\Framework\Stdlib\ArrayUtils::class)
+            ]
         );
 
         $itemOptFactoryMock = $this->createPartialMock(
@@ -107,11 +129,12 @@ class OptionsTest extends TestCase
             )
         );
 
-        $option = $this->_objectHelper->getObject(
-            \Magento\Catalog\Model\Product\Option::class,
-            ['resource' => $this->_optionResource, 'optionValueFactory' => $optionFactoryMock]
-        );
-        $option->setType('date');
+        $option = $this->getMockBuilder(\Magento\Catalog\Model\Product\Option::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getGroupByType', 'getType'])
+            ->getMock();
+        $option->method('getGroupByType')->willReturn('date');
+        $option->method('getType')->willReturn('date');
         $this->assertEquals('html', $this->_optionsBlock->getOptionHtml($option));
     }
 }

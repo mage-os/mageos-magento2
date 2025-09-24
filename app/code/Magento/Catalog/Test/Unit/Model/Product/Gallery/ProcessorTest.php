@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Model\Product\Gallery;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Attribute\Repository;
 use Magento\Catalog\Model\Product\Gallery\Processor;
@@ -82,16 +83,53 @@ class ProcessorTest extends TestCase
             Gallery::class,
             ['getMainTable']
         );
-        $resourceModel->expects($this->any())
-            ->method('getMainTable')
-            ->willReturn(
-                Gallery::GALLERY_TABLE
-            );
+        $resourceModel->method('getMainTable')->willReturn(
+            Gallery::GALLERY_TABLE
+        );
 
-        $this->dataObject = $this->getMockBuilder(DataObject::class)
-            ->addMethods(['getIsDuplicate', 'isLockedAttribute', 'getMediaAttributes'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->dataObject = new class extends DataObject {
+            private $isDuplicate = null;
+            private $lockedAttribute = null;
+            private $mediaAttributes = null;
+            
+            public function __construct()
+            {
+                // Don't call parent constructor to avoid dependencies
+            }
+            
+            public function getIsDuplicate()
+            {
+                return $this->isDuplicate;
+            }
+            
+            public function setIsDuplicate($value)
+            {
+                $this->isDuplicate = $value;
+                return $this;
+            }
+            
+            public function isLockedAttribute($attribute)
+            {
+                return $this->lockedAttribute;
+            }
+            
+            public function setLockedAttribute($value)
+            {
+                $this->lockedAttribute = $value;
+                return $this;
+            }
+            
+            public function getMediaAttributes()
+            {
+                return $this->mediaAttributes;
+            }
+            
+            public function setMediaAttributes($attributes)
+            {
+                $this->mediaAttributes = $attributes;
+                return $this;
+            }
+        };
 
         $this->model = $this->objectHelper->getObject(
             Processor::class,
@@ -114,10 +152,10 @@ class ProcessorTest extends TestCase
             Attribute::class,
             ['getBackendTable', 'isStatic', 'getAttributeId', 'getName']
         );
-        $attribute->expects($this->any())->method('getName')->willReturn('image');
-        $attribute->expects($this->any())->method('getAttributeId')->willReturn($attributeId);
-        $attribute->expects($this->any())->method('isStatic')->willReturn(false);
-        $attribute->expects($this->any())->method('getBackendTable')->willReturn('table');
+        $attribute->method('getName')->willReturn('image');
+        $attribute->method('getAttributeId')->willReturn($attributeId);
+        $attribute->method('isStatic')->willReturn(false);
+        $attribute->method('getBackendTable')->willReturn('table');
 
         $this->attributeRepository->expects($this->once())
             ->method('get')
@@ -139,9 +177,9 @@ class ProcessorTest extends TestCase
     }
 
     /**
-     * @dataProvider validateDataProvider
      * @param bool $value
      */
+    #[DataProvider('validateDataProvider')]
     public function testValidate($value)
     {
         $attributeCode = 'attr_code';
@@ -149,16 +187,49 @@ class ProcessorTest extends TestCase
             Attribute::class,
             ['getAttributeCode', 'getIsRequired', 'isValueEmpty', 'getIsUnique', 'getEntity']
         );
-        $attributeEntity = $this->getMockBuilder(AbstractResource::class)
-            ->addMethods(['checkAttributeUniqueValue'])
-            ->getMockForAbstractClass();
+        $attributeEntity = new class extends AbstractResource {
+            private $checkAttributeUniqueValueResult = null;
+            private $connection = null;
+            
+            public function __construct()
+            {
+                // Don't call parent constructor to avoid dependencies
+            }
+            
+            public function checkAttributeUniqueValue($attribute, $object)
+            {
+                return $this->checkAttributeUniqueValueResult;
+            }
+            
+            public function setCheckAttributeUniqueValueResult($result)
+            {
+                $this->checkAttributeUniqueValueResult = $result;
+                return $this;
+            }
+            
+            public function getConnection()
+            {
+                return $this->connection;
+            }
+            
+            public function setConnection($connection)
+            {
+                $this->connection = $connection;
+                return $this;
+            }
+            
+            protected function _construct()
+            {
+                // Abstract method implementation
+            }
+        };
 
-        $attribute->expects($this->any())->method('getAttributeCode')->willReturn($attributeCode);
-        $attribute->expects($this->any())->method('getIsRequired')->willReturn(true);
-        $attribute->expects($this->any())->method('isValueEmpty')->willReturn($value);
-        $attribute->expects($this->any())->method('getIsUnique')->willReturn(true);
-        $attribute->expects($this->any())->method('getEntity')->willReturn($attributeEntity);
-        $attributeEntity->expects($this->any())->method('checkAttributeUniqueValue')->willReturn(true);
+        $attribute->method('getAttributeCode')->willReturn($attributeCode);
+        $attribute->method('getIsRequired')->willReturn(true);
+        $attribute->method('isValueEmpty')->willReturn($value);
+        $attribute->method('getIsUnique')->willReturn(true);
+        $attribute->method('getEntity')->willReturn($attributeEntity);
+        $attributeEntity->setCheckAttributeUniqueValueResult(true);
 
         $this->attributeRepository->expects($this->once())
             ->method('get')
@@ -184,8 +255,8 @@ class ProcessorTest extends TestCase
      * @param int $setDataExpectsCalls
      * @param string|null $setDataArgument
      * @param array|string $mediaAttribute
-     * @dataProvider clearMediaAttributeDataProvider
      */
+    #[DataProvider('clearMediaAttributeDataProvider')]
     public function testClearMediaAttribute($setDataExpectsCalls, $setDataArgument, $mediaAttribute)
     {
         $productMock = $this->getMockBuilder(Product::class)

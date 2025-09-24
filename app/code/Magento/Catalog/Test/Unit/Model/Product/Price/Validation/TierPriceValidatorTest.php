@@ -7,6 +7,9 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Model\Product\Price\Validation;
 
+use Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\Product\Type\AbstractType;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Api\Data\TierPriceInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\Product\Price\Validation\InvalidSkuProcessor;
@@ -81,12 +84,8 @@ class TierPriceValidatorTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->productIdLocator = $this->getMockBuilder(ProductIdLocatorInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->websiteRepository = $this->getMockBuilder(WebsiteRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->productIdLocator = $this->createMock(ProductIdLocatorInterface::class);
+        $this->websiteRepository = $this->createMock(WebsiteRepositoryInterface::class);
         $this->validationResult = $this->getMockBuilder(Result::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -94,19 +93,13 @@ class TierPriceValidatorTest extends TestCase
             ->getMockBuilder(InvalidSkuProcessor::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->tierPrice = $this->getMockBuilder(TierPriceInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->productRepository = $this->getMockBuilder(ProductRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->tierPrice = $this->createMock(TierPriceInterface::class);
+        $this->productRepository = $this->createMock(ProductRepositoryInterface::class);
         $this->resourceConnectionMock = $this->getMockBuilder(ResourceConnection::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->adapterInterface = $this->getMockBuilder(AdapterInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->adapterInterface = $this->createMock(AdapterInterface::class);
 
         $objectManagerHelper = new ObjectManager($this);
         $this->tierPriceValidator = $objectManagerHelper->getObject(
@@ -189,13 +182,10 @@ class TierPriceValidatorTest extends TestCase
         $this->productIdLocator->expects($this->atLeastOnce())->method('retrieveProductIdsBySkus')
             ->willReturn($idsBySku);
 
-        $product = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+        $product = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $type = $this->getMockBuilder(\Magento\Catalog\Model\Product\Type\AbstractType::class)
-            ->onlyMethods(['canUseQtyDecimals'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $type = $this->createMock(AbstractType::class);
 
         $this->productRepository->expects($this->once())
             ->method('get')
@@ -231,18 +221,16 @@ class TierPriceValidatorTest extends TestCase
      * Test for retrieveValidationResult().
      *
      * @param array $returned
-     * @dataProvider retrieveValidationResultDataProvider
      * @return void
      */
+    #[DataProvider('retrieveValidationResultDataProvider')]
     public function testRetrieveValidationResult(array $returned)
     {
         $sku = 'ASDF234234';
         $prices = [$this->tierPrice];
         $existingPrices = [$this->tierPrice];
         $this->prepareRetrieveValidationResultMethod($sku, $returned);
-        $website = $this->getMockBuilder(WebsiteInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $website = $this->createMock(WebsiteInterface::class);
         $this->websiteRepository->expects($this->atLeastOnce())->method('getById')->willReturn($website);
         $this->prepareCustomerGroupRepositoryMock();
 

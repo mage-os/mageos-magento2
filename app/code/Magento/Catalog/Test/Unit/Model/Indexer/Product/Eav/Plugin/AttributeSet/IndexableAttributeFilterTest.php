@@ -44,9 +44,7 @@ class IndexableAttributeFilterTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['getId', 'getAttributeId', 'getAttributeCode', 'load'])
             ->getMock();
-        $attributeMock1->expects($this->any())
-            ->method('getAttributeCode')
-            ->willReturn('indexable_attribute');
+        $attributeMock1->method('getAttributeCode')->willReturn('indexable_attribute');
         $attributeMock1->expects($this->any())
             ->method('load')
             ->willReturnSelf();
@@ -55,9 +53,7 @@ class IndexableAttributeFilterTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['getId', 'getAttributeId', 'getAttributeCode', 'load'])
             ->getMock();
-        $attributeMock2->expects($this->any())
-            ->method('getAttributeCode')
-            ->willReturn('non_indexable_attribute');
+        $attributeMock2->method('getAttributeCode')->willReturn('non_indexable_attribute');
         $attributeMock2->expects($this->any())
             ->method('load')
             ->willReturnSelf();

@@ -65,11 +65,60 @@ class MediaGalleryProcessorTest extends TestCase
         $this->deleteValidatorMock = $this->getMockBuilder(DeleteValidator::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->productMock = $this->getMockBuilder(Product::class)
-            ->addMethods(['getMediaGallery'])
-            ->onlyMethods(['hasGalleryAttribute', 'getMediaConfig', 'getMediaAttributes'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productMock = new class extends Product {
+            private $mediaGallery = [];
+            private $mediaAttributes = [];
+            private $hasGalleryAttribute = true;
+            private $mediaConfig = null;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getMediaGallery()
+            {
+                return $this->mediaGallery;
+            }
+            
+            public function setMediaGallery($mediaGallery)
+            {
+                $this->mediaGallery = $mediaGallery;
+                return $this;
+            }
+            
+            public function hasGalleryAttribute()
+            {
+                return $this->hasGalleryAttribute;
+            }
+            
+            public function setHasGalleryAttribute($hasGalleryAttribute)
+            {
+                $this->hasGalleryAttribute = $hasGalleryAttribute;
+                return $this;
+            }
+            
+            public function getMediaConfig()
+            {
+                return $this->mediaConfig;
+            }
+            
+            public function setMediaConfig($mediaConfig)
+            {
+                $this->mediaConfig = $mediaConfig;
+                return $this;
+            }
+            
+            public function getMediaAttributes()
+            {
+                return $this->mediaAttributes;
+            }
+            
+            public function setMediaAttributes($mediaAttributes)
+            {
+                $this->mediaAttributes = $mediaAttributes;
+                return $this;
+            }
+        };
 
         $this->galleryProcessor = new MediaGalleryProcessor(
             $this->processorMock,
@@ -127,15 +176,9 @@ class MediaGalleryProcessorTest extends TestCase
                 ]
             ]
         ];
-        $this->productMock->method('getMediaGallery')
-            ->willReturnOnConsecutiveCalls(
-                $newExitingEntriesData['images'],
-                $newExitingEntriesData['images']
-            );
-        $this->productMock->expects($this->any())
-            ->method('getMediaAttributes')
-            ->willReturn(["image" => "imageAttribute", "small_image" => "small_image_attribute"]);
-        $this->productMock->method('hasGalleryAttribute')->willReturn(true);
+        $this->productMock->setMediaGallery($newExitingEntriesData['images']);
+        $this->productMock->setMediaAttributes(["image" => "imageAttribute", "small_image" => "small_image_attribute"]);
+        $this->productMock->setHasGalleryAttribute(true);
         $mediaTmpPath = '/tmp';
         $absolutePath = '/a/b/filename.jpg';
         $this->processorMock->expects($this->once())->method('clearMediaAttribute')
@@ -143,7 +186,7 @@ class MediaGalleryProcessorTest extends TestCase
         $mediaConfigMock = $this->getMockBuilder(Config::class)->disableOriginalConstructor()->getMock();
         $mediaConfigMock->expects($this->once())->method('getTmpMediaShortUrl')->with($absolutePath)
             ->willReturn($mediaTmpPath . $absolutePath);
-        $this->productMock->expects($this->once())->method('getMediaConfig')->willReturn($mediaConfigMock);
+        $this->productMock->setMediaConfig($mediaConfigMock);
         //verify new entries
         $contentDataObject = $this->getMockBuilder(ImageContent::class)
             ->disableOriginalConstructor()

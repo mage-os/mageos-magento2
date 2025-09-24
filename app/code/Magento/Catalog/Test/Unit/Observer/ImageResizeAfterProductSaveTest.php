@@ -70,10 +70,25 @@ class ImageResizeAfterProductSaveTest extends TestCase
         $this->imagePath = 'path/to/image.jpg';
         $images = [new DataObject(['file' => $this->imagePath])];
         $this->observerMock = $this->createMock(Observer::class);
-        $this->eventMock = $this->getMockBuilder(Event::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getProduct'])
-            ->getMock();
+        $this->eventMock = new class extends Event {
+            private $productMock;
+            
+            public function __construct()
+            {
+                // Empty constructor
+            }
+            
+            public function setProductMock($productMock)
+            {
+                $this->productMock = $productMock;
+                return $this;
+            }
+            
+            public function getProduct()
+            {
+                return $this->productMock;
+            }
+        };
         $this->productMock = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getId', 'getMediaGalleryImages'])
@@ -99,14 +114,9 @@ class ImageResizeAfterProductSaveTest extends TestCase
             ->expects($this->once())
             ->method('getEvent')
             ->willReturn($this->eventMock);
-        $this->eventMock
-            ->expects($this->once())
-            ->method('getProduct')
-            ->willReturn($this->productMock);
+        $this->eventMock->setProductMock($this->productMock);
         $this->productMock
-            ->expects($this->any())
-            ->method('getId')
-            ->willReturn(null);
+            ->method('getId')->willReturn(null);
         $this->productMock
             ->expects($this->once())
             ->method('getMediaGalleryImages')

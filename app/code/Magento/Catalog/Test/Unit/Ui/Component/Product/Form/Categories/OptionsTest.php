@@ -163,9 +163,7 @@ class OptionsTest extends TestCase
             ->method('setStoreId')
             ->willReturnSelf();
 
-        $categoryCollectionMock->expects($this->any())
-            ->method('getIterator')
-            ->willReturn(new \ArrayIterator($categories));
+        $categoryCollectionMock->method('getIterator')->willReturn(new \ArrayIterator($categories));
 
         return $categoryCollectionMock;
     }

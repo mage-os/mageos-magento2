@@ -96,7 +96,7 @@ class AdvancedTest extends TestCase
         $this->registry = $this->createMock(Registry::class);
         $this->formFactory = $this->createMock(FormFactory::class);
         $this->yesNo = $this->createMock(Yesno::class);
-        $this->localeDate = $this->getMockForAbstractClass(TimezoneInterface::class);
+        $this->localeDate = $this->createMock(TimezoneInterface::class);
         $this->eavData = $this->createMock(EavHelper::class);
         $this->filesystem = $this->createMock(Filesystem::class);
         $this->propertyLocker = $this->createMock(PropertyLocker::class);
@@ -130,7 +130,6 @@ class AdvancedTest extends TestCase
         $fieldSet = $this->createMock(Fieldset::class);
         $form = $this->createMock(Form::class);
         $attributeModel = $this->getMockBuilder(Attribute::class)
-            ->addMethods(['setDisabled'])
             ->onlyMethods(
                 [
                     'getDefaultValue',
@@ -145,24 +144,23 @@ class AdvancedTest extends TestCase
             ->getMock();
         $entityType = $this->createMock(EntityType::class);
         $formElement = $this->getMockBuilder(Text::class)
-            ->addMethods(['setDisabled'])
             ->disableOriginalConstructor()
             ->getMock();
-        $directoryReadInterface = $this->getMockForAbstractClass(ReadInterface::class);
+        $directoryReadInterface = $this->createMock(ReadInterface::class);
 
         $this->registry->expects($this->any())->method('registry')->with('entity_attribute')
             ->willReturn($attributeModel);
-        $this->formFactory->expects($this->any())->method('create')->willReturn($form);
-        $form->expects($this->any())->method('addFieldset')->willReturn($fieldSet);
-        $form->expects($this->any())->method('getElement')->willReturn($formElement);
+        $this->formFactory->method('create')->willReturn($form);
+        $form->method('addFieldset')->willReturn($fieldSet);
+        $form->method('getElement')->willReturn($formElement);
         $fieldSet->expects($this->any())->method('addField')->willReturnSelf();
-        $attributeModel->expects($this->any())->method('getDefaultValue')->willReturn($defaultValue);
-        $attributeModel->expects($this->any())->method('setDisabled')->willReturnSelf();
-        $attributeModel->expects($this->any())->method('getId')->willReturn(1);
-        $attributeModel->expects($this->any())->method('getEntityType')->willReturn($entityType);
-        $attributeModel->expects($this->any())->method('getIsUserDefined')->willReturn(false);
-        $attributeModel->expects($this->any())->method('getAttributeCode')->willReturn('attribute_code');
-        $attributeModel->expects($this->any())->method('getFrontendInput')->willReturn($frontendInput);
+        $attributeModel->method('getDefaultValue')->willReturn($defaultValue);
+        // $attributeModel->expects($this->any())->method('setDisabled')->willReturnSelf();
+        $attributeModel->method('getId')->willReturn(1);
+        $attributeModel->method('getEntityType')->willReturn($entityType);
+        $attributeModel->method('getIsUserDefined')->willReturn(false);
+        $attributeModel->method('getAttributeCode')->willReturn('attribute_code');
+        $attributeModel->method('getFrontendInput')->willReturn($frontendInput);
 
         $dateTimeMock = $this->createMock(\DateTime::class);
         $dateTimeMock->expects($this->once())->method('setTimezone')->with(new \DateTimeZone($timeZone));
@@ -170,20 +168,20 @@ class AdvancedTest extends TestCase
             ->method('format')
             ->with(DateTime::DATETIME_PHP_FORMAT)
             ->willReturn($localizedDefaultValue);
-        $this->localeDate->expects($this->any())->method('getDateFormat')->willReturn($dateFormat);
-        $this->localeDate->expects($this->any())->method('getTimeFormat')->willReturn($timeFormat);
+        $this->localeDate->method('getDateFormat')->willReturn($dateFormat);
+        $this->localeDate->method('getTimeFormat')->willReturn($timeFormat);
         $this->localeDate->expects($this->once())->method('getConfigTimezone')->willReturn($timeZone);
         $this->localeDate->expects($this->once())
             ->method('date')
             ->with($defaultValue, null, false)
             ->willReturn($dateTimeMock);
 
-        $entityType->expects($this->any())->method('getEntityTypeCode')->willReturn('entity_type_code');
-        $this->eavData->expects($this->any())->method('getFrontendClasses')->willReturn([]);
-        $formElement->expects($this->exactly(2))->method('setDisabled')->willReturnSelf();
-        $this->yesNo->expects($this->any())->method('toOptionArray')->willReturn(['yes', 'no']);
-        $this->filesystem->expects($this->any())->method('getDirectoryRead')->willReturn($directoryReadInterface);
-        $directoryReadInterface->expects($this->any())->method('getRelativePath')->willReturn('relative_path');
+        $entityType->method('getEntityTypeCode')->willReturn('entity_type_code');
+        $this->eavData->method('getFrontendClasses')->willReturn([]);
+        // $formElement->expects($this->exactly(2))->method('setDisabled')->willReturnSelf();
+        $this->yesNo->method('toOptionArray')->willReturn(['yes', 'no']);
+        $this->filesystem->method('getDirectoryRead')->willReturn($directoryReadInterface);
+        $directoryReadInterface->method('getRelativePath')->willReturn('relative_path');
         $this->propertyLocker->expects($this->once())->method('lock')->with($form);
 
         $this->block->setData(['action' => 'save']);

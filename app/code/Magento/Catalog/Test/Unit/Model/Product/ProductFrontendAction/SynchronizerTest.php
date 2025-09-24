@@ -127,7 +127,7 @@ class SynchronizerTest extends TestCase
                 'product_id' => 3
             ]
         ];
-        $frontendConfiguration = $this->getMockForAbstractClass(FrontendStorageConfigurationInterface::class);
+        $frontendConfiguration = $this->createMock(FrontendStorageConfigurationInterface::class);
         $frontendConfiguration->expects($this->once())
             ->method('get')
             ->willReturn([
@@ -137,19 +137,14 @@ class SynchronizerTest extends TestCase
             ->method('get')
             ->with('recently_compared_product')
             ->willReturn($frontendConfiguration);
-        $action1 = $this->getMockBuilder(ProductFrontendActionInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $action2 = $this->getMockBuilder(ProductFrontendActionInterface::class)
-            ->getMockForAbstractClass();
+        $action1 = $this->createMock(ProductFrontendActionInterface::class);
+        $action2 = $this->createMock(ProductFrontendActionInterface::class);
 
-        $frontendAction = $this->getMockForAbstractClass(ProductFrontendActionInterface::class);
+        $frontendAction = $this->createMock(ProductFrontendActionInterface::class);
         $collection = $this->getMockBuilder(Collection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->sessionMock->expects($this->any())
-            ->method('getCustomerId')
-            ->willReturn(1);
+        $this->sessionMock->method('getCustomerId')->willReturn(1);
         $this->visitorMock->expects($this->exactly(2))
             ->method('getId')
             ->willReturn(34);

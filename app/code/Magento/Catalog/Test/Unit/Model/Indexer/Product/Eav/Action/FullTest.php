@@ -86,13 +86,11 @@ class FullTest extends TestCase
         $this->eavDecimalFactory = $this->createPartialMock(DecimalFactory::class, ['create']);
         $this->eavSourceFactory = $this->createPartialMock(SourceFactory::class, ['create']);
         $this->metadataPool = $this->createMock(MetadataPool::class);
-        $this->batchProvider = $this->getMockForAbstractClass(BatchProviderInterface::class);
+        $this->batchProvider = $this->createMock(BatchProviderInterface::class);
         $this->batchQueryGenerator = $this->createMock(Generator::class);
         $this->batchSizeCalculator = $this->createMock(BatchSizeCalculator::class);
         $this->activeTableSwitcher = $this->createMock(ActiveTableSwitcher::class);
-        $this->scopeConfig = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
 
         $objectManager = new ObjectManager($this);
         $this->model = $objectManager->getObject(
@@ -118,8 +116,7 @@ class FullTest extends TestCase
         $this->scopeConfig->expects($this->once())->method('getValue')->willReturn(1);
 
         $ids = [1, 2, 3];
-        $connectionMock = $this->getMockBuilder(AdapterInterface::class)
-            ->getMockForAbstractClass();
+        $connectionMock = $this->createMock(AdapterInterface::class);
 
         $connectionMock->expects($this->atLeastOnce())->method('describeTable')->willReturn(['id' => []]);
         $eavSource = $this->getMockBuilder(Source::class)
@@ -147,8 +144,7 @@ class FullTest extends TestCase
 
         $this->eavSourceFactory->expects($this->once())->method('create')->willReturn($eavDecimal);
 
-        $entityMetadataMock = $this->getMockBuilder(EntityMetadataInterface::class)
-            ->getMockForAbstractClass();
+        $entityMetadataMock = $this->createMock(EntityMetadataInterface::class);
 
         $this->metadataPool->expects($this->atLeastOnce())
             ->method('getMetadata')

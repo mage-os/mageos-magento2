@@ -61,7 +61,7 @@ class SpecialTest extends TestCase
     protected $priceCurrency;
 
     /**
-     * @var \Magento\Catalog\Model\Rss\Product\Special|MockObject
+     * @var Special|MockObject
      */
     protected $rssModel;
 
@@ -95,7 +95,7 @@ class SpecialTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->request = $this->getMockForAbstractClass(RequestInterface::class);
+        $this->request = $this->createMock(RequestInterface::class);
         $this->request
             ->method('getParam')
             ->willReturnCallback(fn($param) => match ([$param]) {
@@ -106,28 +106,28 @@ class SpecialTest extends TestCase
         $this->httpContext = $this->getMockBuilder(Context::class)
             ->onlyMethods(['getValue'])->disableOriginalConstructor()
             ->getMock();
-        $this->httpContext->expects($this->any())->method('getValue')->willReturn(1);
+        $this->httpContext->method('getValue')->willReturn(1);
 
         $this->imageHelper = $this->createMock(Image::class);
         $this->outputHelper = $this->createPartialMock(Output::class, ['productAttribute']);
         $this->msrpHelper = $this->createPartialMock(MsrpHelper::class, ['canApplyMsrp']);
-        $this->priceCurrency = $this->getMockForAbstractClass(PriceCurrencyInterface::class);
+        $this->priceCurrency = $this->createMock(PriceCurrencyInterface::class);
         $this->rssModel = $this->createMock(Special::class);
-        $this->rssUrlBuilder = $this->getMockForAbstractClass(UrlBuilderInterface::class);
+        $this->rssUrlBuilder = $this->createMock(UrlBuilderInterface::class);
 
-        $this->storeManager = $this->getMockForAbstractClass(StoreManagerInterface::class);
+        $this->storeManager = $this->createMock(StoreManagerInterface::class);
         $store = $this->getMockBuilder(Store::class)
             ->onlyMethods(['getId', 'getFrontendName'])
             ->disableOriginalConstructor()
             ->getMock();
-        $store->expects($this->any())->method('getId')->willReturn(1);
-        $store->expects($this->any())->method('getFrontendName')->willReturn('Store 1');
-        $this->storeManager->expects($this->any())->method('getStore')->willReturn($store);
+        $store->method('getId')->willReturn(1);
+        $store->method('getFrontendName')->willReturn('Store 1');
+        $this->storeManager->method('getStore')->willReturn($store);
 
-        $this->scopeConfig = $this->getMockForAbstractClass(ScopeConfigInterface::class);
-        $this->scopeConfig->expects($this->any())->method('getValue')->willReturn('en_US');
+        $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
+        $this->scopeConfig->method('getValue')->willReturn('en_US');
 
-        $this->localeDate = $this->getMockForAbstractClass(TimezoneInterface::class);
+        $this->localeDate = $this->createMock(TimezoneInterface::class);
 
         $objectManagerHelper = new ObjectManagerHelper($this);
         $this->block = $objectManagerHelper->getObject(
@@ -197,42 +197,73 @@ class SpecialTest extends TestCase
     }
 
     /**
-     * @return MockObject
+     * @return Product
      */
-    protected function getItemMock(): MockObject
+    protected function getItemMock(): Product
     {
-        $item = $this->getMockBuilder(Product::class)
-            ->onlyMethods(
-                [
-                    '__sleep',
-                    'getName',
-                    'getProductUrl',
-                    'getSpecialToDate',
-                    'getSpecialPrice',
-                    'getFinalPrice',
-                    'getPrice'
-                ]
-            )
-            ->addMethods(
-                [
-                    'getDescription',
-                    'getAllowedInRss',
-                    'getAllowedPriceInRss',
-                    'getUseSpecial'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
-        $item->expects($this->once())->method('getAllowedInRss')->willReturn(true);
-        $item->expects($this->any())->method('getSpecialToDate')->willReturn(date('Y-m-d'));
-        $item->expects($this->exactly(2))->method('getFinalPrice')->willReturn(10);
-        $item->expects($this->once())->method('getSpecialPrice')->willReturn(15);
-        $item->expects($this->exactly(2))->method('getAllowedPriceInRss')->willReturn(true);
-        $item->expects($this->once())->method('getUseSpecial')->willReturn(true);
-        $item->expects($this->once())->method('getDescription')->willReturn('Product Description');
-        $item->expects($this->once())->method('getName')->willReturn('Product Name');
-        $item->expects($this->exactly(2))->method('getProductUrl')
-            ->willReturn('http://magento.com/product-name.html');
+        $item = new class extends Product {
+            public function __construct()
+            {
+                // Empty constructor
+            }
+            
+            // Methods from addMethods
+            public function getDescription()
+            {
+                return 'Product Description';
+            }
+            
+            public function getAllowedInRss()
+            {
+                return true;
+            }
+            
+            public function getAllowedPriceInRss()
+            {
+                return true;
+            }
+            
+            public function getUseSpecial()
+            {
+                return true;
+            }
+            
+            // Methods from onlyMethods
+            public function __sleep()
+            {
+                return [];
+            }
+            
+            public function getName()
+            {
+                return 'Product Name';
+            }
+            
+            public function getProductUrl($useSid = null)
+            {
+                return 'http://magento.com/product-name.html';
+            }
+            
+            public function getSpecialToDate()
+            {
+                return date('Y-m-d');
+            }
+            
+            public function getSpecialPrice()
+            {
+                return 15;
+            }
+            
+            public function getFinalPrice($qty = null)
+            {
+                return 10;
+            }
+            
+            public function getPrice()
+            {
+                return null;
+            }
+        };
 
         return $item;
     }

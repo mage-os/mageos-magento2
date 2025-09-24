@@ -54,7 +54,7 @@ class AjaxTest extends TestCase
             ->onlyMethods(['getEventManager', 'getScopeConfig', 'getLayout', 'getRequest'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->encoderInterface = $this->getMockForAbstractClass(EncoderInterface::class);
+        $this->encoderInterface = $this->createMock(EncoderInterface::class);
         $this->productFactory = $this->createPartialMock(ProductFactory::class, ['create']);
         $this->registry = $this->createMock(Registry::class);
 
@@ -87,19 +87,26 @@ class AjaxTest extends TestCase
         $product->expects($this->once())->method('load')->willReturnSelf();
         $product->expects($this->once())->method('getId')->willReturn(1);
 
-        $optionsBlock = $this->getMockBuilder(Option::class)
-            ->addMethods(['setIgnoreCaching'])
-            ->onlyMethods(['setProduct', 'getOptionValues'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $optionsBlock->expects($this->once())->method('setIgnoreCaching')->with(true)->willReturnSelf();
-        $optionsBlock->expects($this->once())->method('setProduct')->with($product)->willReturnSelf();
-        $optionsBlock->expects($this->once())->method('getOptionValues')->willReturn([]);
+        $optionsBlock = new class extends Option {
+            public function __construct()
+            {
+                // Empty constructor
+            }
+            public function setIgnoreCaching($ignoreCaching)
+            {
+                return $this;
+            }
+            public function setProduct($product)
+            {
+                return $this;
+            }
+            public function getOptionValues()
+            {
+                return [];
+            }
+        };
 
-        $layout = $this->getMockBuilder(LayoutInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['createBlock'])
-            ->getMockForAbstractClass();
+        $layout = $this->createMock(LayoutInterface::class);
         $layout->expects($this->once())->method('createBlock')
             ->with(Option::class)
             ->willReturn($optionsBlock);

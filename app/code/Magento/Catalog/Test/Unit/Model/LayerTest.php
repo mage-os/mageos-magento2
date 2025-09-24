@@ -127,18 +127,40 @@ class LayerTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->store = $this->getMockBuilder(Store::class)
-            ->addMethods(['getFilters'])
-            ->onlyMethods(['getRootCategoryId'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        // PHPUnit 12 compatible: Replace addMethods + onlyMethods with anonymous class
+        $this->store = new class extends Store {
+            private $filtersResult;
+            private $rootCategoryIdResult;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getFilters()
+            {
+                return $this->filtersResult;
+            }
+            
+            public function setFilters($result)
+            {
+                $this->filtersResult = $result;
+                return $this;
+            }
+            
+            public function getRootCategoryId()
+            {
+                return $this->rootCategoryIdResult;
+            }
+            
+            public function setRootCategoryId($result)
+            {
+                $this->rootCategoryIdResult = $result;
+                return $this;
+            }
+        };
 
-        $this->storeManager = $this->getMockBuilder(StoreManagerInterface::class)
-            ->onlyMethods(['getStore'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->storeManager->expects($this->any())->method('getStore')
-            ->willReturn($this->store);
+        $this->storeManager = $this->createMock(StoreManagerInterface::class);
+        $this->storeManager->method('getStore')->willReturn($this->store);
 
         $this->stateKeyGenerator = $this->getMockBuilder(StateKey::class)
             ->onlyMethods(['toString'])
@@ -150,10 +172,7 @@ class LayerTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->collectionProvider = $this->getMockBuilder(
-            ItemCollectionProviderInterface::class
-        )->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->collectionProvider = $this->createMock(ItemCollectionProviderInterface::class);
 
         $this->filter = $this->getMockBuilder(Item::class)
             ->onlyMethods(['getFilter', 'getValueString'])
@@ -165,16 +184,10 @@ class LayerTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->context = $this->getMockBuilder(ContextInterface::class)
-            ->onlyMethods(['getStateKey', 'getCollectionFilter'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->context->expects($this->any())->method('getStateKey')
-            ->willReturn($this->stateKeyGenerator);
-        $this->context->expects($this->any())->method('getCollectionFilter')
-            ->willReturn($this->collectionFilter);
-        $this->context->expects($this->any())->method('getCollectionProvider')
-            ->willReturn($this->collectionProvider);
+        $this->context = $this->createMock(ContextInterface::class);
+        $this->context->method('getStateKey')->willReturn($this->stateKeyGenerator);
+        $this->context->method('getCollectionFilter')->willReturn($this->collectionFilter);
+        $this->context->method('getCollectionProvider')->willReturn($this->collectionProvider);
 
         $this->state = $this->getMockBuilder(State::class)
             ->disableOriginalConstructor()
@@ -184,13 +197,13 @@ class LayerTest extends TestCase
             ->onlyMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->stateFactory->expects($this->any())->method('create')->willReturn($this->state);
+        $this->stateFactory->method('create')->willReturn($this->state);
 
         $this->collection = $this->getMockBuilder(Collection::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->categoryRepository = $this->getMockForAbstractClass(CategoryRepositoryInterface::class);
+        $this->categoryRepository = $this->createMock(CategoryRepositoryInterface::class);
         $this->currentCategory = $this->createPartialMock(
             Category::class,
             ['getId']
@@ -231,7 +244,7 @@ class LayerTest extends TestCase
         $this->registry->expects($this->once())->method('registry')->with('current_category')
             ->willReturn($this->category);
 
-        $this->category->expects($this->any())->method('getId')->willReturn(333);
+        $this->category->method('getId')->willReturn(333);
 
         $this->collectionFilter->expects($this->once())->method('filter')
             ->with($this->collection, $this->category);
@@ -256,7 +269,7 @@ class LayerTest extends TestCase
             ->with($this->category)
             ->willReturn($stateKey);
 
-        $this->state->expects($this->any())->method('getFilters')->willReturn([$this->filter]);
+        $this->state->method('getFilters')->willReturn([$this->filter]);
 
         $this->filter->expects($this->once())->method('getFilter')->willReturn($this->abstractFilter);
         $this->filter->expects($this->once())->method('getValueString')->willReturn('t');
@@ -289,11 +302,11 @@ class LayerTest extends TestCase
         $categoryId = 333;
         $currentCategoryId = 334;
 
-        $this->category->expects($this->any())->method('getId')->willReturn($categoryId);
+        $this->category->method('getId')->willReturn($categoryId);
         $this->categoryRepository->expects($this->once())->method('get')->with($categoryId)
             ->willReturn($this->currentCategory);
 
-        $this->currentCategory->expects($this->any())->method('getId')->willReturn($currentCategoryId);
+        $this->currentCategory->method('getId')->willReturn($currentCategoryId);
         $this->registry->expects($this->once())->method('registry')->with('current_category')
             ->willReturn($this->currentCategory);
 
@@ -305,7 +318,7 @@ class LayerTest extends TestCase
     {
         $categoryId = 333;
 
-        $this->category->expects($this->any())->method('getId')->willReturn($categoryId);
+        $this->category->method('getId')->willReturn($categoryId);
 
         $this->categoryRepository->expects($this->once())->method('get')->with($categoryId)
             ->willReturn($this->category);
@@ -362,8 +375,7 @@ class LayerTest extends TestCase
             ->willReturn(null);
         $this->categoryRepository->expects($this->once())->method('get')->with($rootCategoryId)
             ->willReturn($this->currentCategory);
-        $this->store->expects($this->any())->method('getRootCategoryId')
-            ->willReturn($rootCategoryId);
+        $this->store->setRootCategoryId($rootCategoryId);
 
         $this->assertEquals($this->currentCategory, $this->model->getCurrentCategory());
         $this->assertEquals($this->currentCategory, $this->model->getData('current_category'));

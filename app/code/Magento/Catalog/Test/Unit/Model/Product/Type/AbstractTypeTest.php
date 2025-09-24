@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Model\Product\Type;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Entity\Attribute;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
@@ -47,39 +48,102 @@ class AbstractTypeTest extends TestCase
         $this->objectManagerHelper = new ObjectManager($this);
         $this->model = $this->objectManagerHelper->getObject(Simple::class);
 
-        $this->product = $this->getMockBuilder(Product::class)
-            ->addMethods(['getHasOptions'])
-            ->onlyMethods(['__sleep', 'getResource', 'getStatus'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->productResource = $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Product::class)
-            ->onlyMethods(['getSortedAttributes', 'loadAllAttributes'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->product = new class extends Product {
+            private $hasOptions = null;
+            private $resource = null;
+            private $status = null;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getHasOptions()
+            {
+                return $this->hasOptions;
+            }
+            
+            public function setHasOptions($value)
+            {
+                $this->hasOptions = $value;
+                return $this;
+            }
+            
+            public function __sleep()
+            {
+                return [];
+            }
+            
+            public function getResource()
+            {
+                return $this->resource;
+            }
+            
+            public function setResource($value)
+            {
+                $this->resource = $value;
+                return $this;
+            }
+            
+            public function getStatus()
+            {
+                return $this->status;
+            }
+            
+            public function setStatus($value)
+            {
+                $this->status = $value;
+                return $this;
+            }
+        };
+        $this->productResource = $this->createMock(\Magento\Catalog\Model\ResourceModel\Product::class);
 
-        $this->product->expects($this->any())->method('getResource')->willReturn($this->productResource);
+        $this->product->setResource($this->productResource);
 
-        $this->attribute = $this->getMockBuilder(Attribute::class)
-            ->addMethods(['getGroupSortPath', 'getSortPath'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->attribute = new class extends Attribute {
+            private $groupSortPath = null;
+            private $sortPath = null;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getGroupSortPath()
+            {
+                return $this->groupSortPath;
+            }
+            
+            public function setGroupSortPath($value)
+            {
+                $this->groupSortPath = $value;
+                return $this;
+            }
+            
+            public function getSortPath()
+            {
+                return $this->sortPath;
+            }
+            
+            public function setSortPath($value)
+            {
+                $this->sortPath = $value;
+                return $this;
+            }
+        };
     }
 
     public function testIsSalable()
     {
-        $this->product->expects($this->any())->method('getStatus')->willReturn(
-            Status::STATUS_ENABLED
-        );
+        $this->product->setStatus(Status::STATUS_ENABLED);
         $this->product->setData('is_salable', 3);
         $this->assertTrue($this->model->isSalable($this->product));
     }
 
     public function testGetAttributeById()
     {
-        $this->productResource->expects($this->any())->method('loadAllAttributes')->willReturn(
+        $this->productResource->method('loadAllAttributes')->willReturn(
             $this->productResource
         );
-        $this->productResource->expects($this->any())->method('getSortedAttributes')->willReturn(
+        $this->productResource->method('getSortedAttributes')->willReturn(
             [$this->attribute]
         );
         $this->attribute->setId(1);
@@ -88,18 +152,16 @@ class AbstractTypeTest extends TestCase
         $this->assertNull($this->model->getAttributeById(0, $this->product));
     }
 
-    /**
-     * @dataProvider attributeCompareProvider
-     */
+    #[DataProvider('attributeCompareProvider')]
     public function testAttributesCompare($attr1, $attr2, $expectedResult)
     {
         $attribute = $this->attribute;
-        $attribute->expects($this->any())->method('getSortPath')->willReturn(1);
+        $attribute->setSortPath(1);
 
         $attribute2 = clone $attribute;
 
-        $attribute->expects($this->any())->method('getGroupSortPath')->willReturn($attr1);
-        $attribute2->expects($this->any())->method('getGroupSortPath')->willReturn($attr2);
+        $attribute->setGroupSortPath($attr1);
+        $attribute2->setGroupSortPath($attr2);
 
         $this->assertEquals($expectedResult, $this->model->attributesCompare($attribute, $attribute2));
     }
@@ -129,7 +191,7 @@ class AbstractTypeTest extends TestCase
 
     public function testHasOptions()
     {
-        $this->product->expects($this->once())->method('getHasOptions')->willReturn(true);
+        $this->product->setHasOptions(true);
         $this->assertTrue($this->model->hasOptions($this->product));
     }
 }

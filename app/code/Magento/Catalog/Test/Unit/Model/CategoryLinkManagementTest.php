@@ -44,9 +44,7 @@ class CategoryLinkManagementTest extends TestCase
     {
         $this->categoryRepositoryMock = $this->createMock(CategoryRepository::class);
         $productResource = $this->createMock(Product::class);
-        $categoryLinkRepository = $this->getMockBuilder(CategoryLinkRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $categoryLinkRepository = $this->createMock(CategoryLinkRepositoryInterface::class);
         $indexerRegistry = $this->getMockBuilder(IndexerRegistry::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -74,7 +72,7 @@ class CategoryLinkManagementTest extends TestCase
         $productId = 55;
         $position = 25;
         $productSku = 'testSku';
-        $categoryProductLinkMock = $this->getMockForAbstractClass(CategoryProductLinkInterface::class);
+        $categoryProductLinkMock = $this->createMock(CategoryProductLinkInterface::class);
         $categoryMock = $this->createMock(Category::class);
         $productMock = $this->createMock(\Magento\Catalog\Model\Product::class);
         $productMock->expects($this->once())->method('getSku')->willReturn($productSku);

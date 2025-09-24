@@ -33,7 +33,7 @@ class FactoryTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->_objectManagerMock = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        $this->_objectManagerMock = $this->createMock(ObjectManagerInterface::class);
 
         $objectManagerHelper = new ObjectManager($this);
         $this->_factory = $objectManagerHelper->getObject(

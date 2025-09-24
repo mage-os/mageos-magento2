@@ -73,16 +73,66 @@ class RemoveProductsTest extends TestCase
         /** @var AttributeSetRepositoryInterface|MockObject $attributeSetRepository */
         $attributeSetRepository = $this->getMockBuilder(AttributeSetRepositoryInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         /** @var AttributeSetInterface|MockObject $attributeSet */
-        $attributeSet = $this->getMockBuilder(AttributeSetInterface::class)
-            ->addMethods(['getId'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $attributeSet->expects(self::once())
-            ->method('getId')
-            ->willReturn($attributeSetId);
+        $attributeSet = new class implements AttributeSetInterface {
+            private $idReturn = null;
+            
+            public function setIdReturn($return)
+            {
+                $this->idReturn = $return;
+                return $this;
+            }
+            
+            public function getId()
+            {
+                return $this->idReturn;
+            }
+            
+            // Required AttributeSetInterface methods
+            public function getAttributeSetId()
+            {
+                return null;
+            }
+            public function setAttributeSetId($attributeSetId)
+            {
+                return $this;
+            }
+            public function getAttributeSetName()
+            {
+                return '';
+            }
+            public function setAttributeSetName($attributeSetName)
+            {
+                return $this;
+            }
+            public function getSortOrder()
+            {
+                return 0;
+            }
+            public function setSortOrder($sortOrder)
+            {
+                return $this;
+            }
+            public function getEntityTypeId()
+            {
+                return null;
+            }
+            public function setEntityTypeId($entityTypeId)
+            {
+                return $this;
+            }
+            public function getExtensionAttributes()
+            {
+                return null;
+            }
+            public function setExtensionAttributes($extensionAttributes)
+            {
+                return $this;
+            }
+        };
+        $attributeSet->setIdReturn($attributeSetId);
 
         self::assertTrue($this->testSubject->afterDelete($attributeSetRepository, true, $attributeSet));
     }

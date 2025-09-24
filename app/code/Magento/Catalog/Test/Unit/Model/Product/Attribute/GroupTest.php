@@ -52,9 +52,7 @@ class GroupTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $mock->expects($this->any())
-            ->method('create')
-            ->willReturn($mockedCollection);
+        $mock->method('create')->willReturn($mockedCollection);
 
         return $mock;
     }
@@ -71,12 +69,8 @@ class GroupTest extends TestCase
         $item = new DataObject();
         $item->setIsUserDefine(false);
 
-        $mock->expects($this->any())
-            ->method('setAttributeGroupFilter')
-            ->willReturn($mock);
-        $mock->expects($this->any())
-            ->method('getIterator')
-            ->willReturn(new \ArrayIterator([$item]));
+        $mock->method('setAttributeGroupFilter')->willReturn($mock);
+        $mock->method('getIterator')->willReturn(new \ArrayIterator([$item]));
 
         return $mock;
     }

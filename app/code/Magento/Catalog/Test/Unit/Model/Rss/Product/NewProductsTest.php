@@ -54,7 +54,7 @@ class NewProductsTest extends TestCase
     {
         $this->product = $this->createMock(Product::class);
         $this->productFactory = $this->createPartialMock(ProductFactory::class, ['create']);
-        $this->productFactory->expects($this->any())->method('create')->willReturn($this->product);
+        $this->productFactory->method('create')->willReturn($this->product);
         $this->visibility = $this->createMock(Visibility::class);
         $this->timezone = $this->createMock(Timezone::class);
 
@@ -75,9 +75,7 @@ class NewProductsTest extends TestCase
         $dateObject = $this->createMock(\DateTime::class);
         $dateObject->expects($this->any())
             ->method('setTime')->willReturnSelf();
-        $dateObject->expects($this->any())
-            ->method('format')
-            ->willReturn(date(\Magento\Framework\Stdlib\DateTime::DATETIME_INTERNAL_FORMAT));
+        $dateObject->method('format')->willReturn(date(\Magento\Framework\Stdlib\DateTime::DATETIME_INTERNAL_FORMAT));
 
         $this->timezone->expects($this->exactly(2))
             ->method('date')
@@ -101,7 +99,6 @@ class NewProductsTest extends TestCase
             $visibleIds
         );
         $productCollection->expects($this->once())->method('setVisibility')->with($visibleIds)->willReturnSelf(
-            
         );
 
         $products = $this->newProducts->getProductsCollection($storeId);

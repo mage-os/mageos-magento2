@@ -70,8 +70,8 @@ class ResultTest extends TestCase
      */
     public function testGetFailedItems(): void
     {
-        $priceUpdateResult1 = $this->getMockForAbstractClass(PriceUpdateResultInterface::class);
-        $priceUpdateResult2 = $this->getMockForAbstractClass(PriceUpdateResultInterface::class);
+        $priceUpdateResult1 = $this->createMock(PriceUpdateResultInterface::class);
+        $priceUpdateResult2 = $this->createMock(PriceUpdateResultInterface::class);
 
         $this->priceUpdateResultFactory
             ->method('create')

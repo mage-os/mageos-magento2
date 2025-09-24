@@ -40,7 +40,7 @@ class ContextTest extends TestCase
     {
         $objectManager = new ObjectManager($this);
 
-        $this->stockRegistryMock = $this->getMockForAbstractClass(
+        $this->stockRegistryMock = $this->createMock(
             StockRegistryInterface::class,
             [],
             '',

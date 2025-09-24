@@ -62,11 +62,9 @@ class SynchronizeTest extends TestCase
 
         $this->requestMock = $this->getMockBuilder(RequestInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
-        $this->contextMock->expects($this->any())
-            ->method('getRequest')
-            ->willReturn($this->requestMock);
+        $this->contextMock->method('getRequest')->willReturn($this->requestMock);
 
         $this->synchronize = new Synchronize(
             $this->contextMock,

@@ -71,8 +71,7 @@ class CacheTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->viewConfig = $this->getMockBuilder(ConfigInterface::class)
-            ->getMockForAbstractClass();
+        $this->viewConfig = $this->createMock(ConfigInterface::class);
 
         $this->config = $this->getMockBuilder(View::class)
             ->disableOriginalConstructor()
@@ -117,9 +116,7 @@ class CacheTest extends TestCase
             ->method('getIterator')
             ->willReturn(new \ArrayIterator([$imageItem]));
 
-        $this->product->expects($this->any())
-            ->method('getMediaGalleryImages')
-            ->willReturn($this->mediaGalleryCollection);
+        $this->product->method('getMediaGalleryImages')->willReturn($this->mediaGalleryCollection);
 
         $data = $this->getTestData();
         $this->config->expects($this->once())

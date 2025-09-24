@@ -64,20 +64,40 @@ class TierpriceTest extends TestCase
             ->getMockBuilder(Tierprice::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->attribute = $this->getMockBuilder(AbstractAttribute::class)
-            ->addMethods(['isScopeGlobal'])
-            ->onlyMethods(['getName'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->localeFormat = $this->getMockBuilder(FormatInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->storeManager = $this->getMockBuilder(StoreManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->groupManagement = $this->getMockBuilder(GroupManagementInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->attribute = new class extends AbstractAttribute {
+            private $isScopeGlobal = null;
+            private $name = null;
+            
+            public function __construct()
+            {
+                // Don't call parent constructor to avoid dependencies
+            }
+            
+            public function isScopeGlobal()
+            {
+                return $this->isScopeGlobal;
+            }
+            
+            public function setIsScopeGlobal($isScopeGlobal)
+            {
+                $this->isScopeGlobal = $isScopeGlobal;
+                return $this;
+            }
+            
+            public function getName()
+            {
+                return $this->name;
+            }
+            
+            public function setName($name)
+            {
+                $this->name = $name;
+                return $this;
+            }
+        };
+        $this->localeFormat = $this->createMock(FormatInterface::class);
+        $this->storeManager = $this->createMock(StoreManagerInterface::class);
+        $this->groupManagement = $this->createMock(GroupManagementInterface::class);
 
         $objectHelper = new ObjectManager($this);
         $this->tierprice = $objectHelper->getObject(
@@ -117,7 +137,7 @@ class TierpriceTest extends TestCase
         $object = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->attribute->expects($this->atLeastOnce())->method('getName')->willReturn($attributeName);
+        $this->attribute->setName($attributeName);
         $object->expects($this->atLeastOnce())->method('getData')->with($attributeName)->willReturn($tierPrices);
         $this->localeFormat->expects($this->atLeastOnce())
             ->method('getNumber')
@@ -151,7 +171,7 @@ class TierpriceTest extends TestCase
             ]
         ];
         $object = $this->createMock(Product::class);
-        $this->attribute->expects($this->atLeastOnce())->method('getName')->willReturn($attributeName);
+        $this->attribute->setName($attributeName);
         $object->expects($this->atLeastOnce())->method('getData')->with($attributeName)->willReturn($tierPrices);
         $this->localeFormat->expects($this->once())->method('getNumber')->with(-10)->willReturnArgument(0);
         $this->assertTrue($this->tierprice->validate($object));
@@ -204,18 +224,16 @@ class TierpriceTest extends TestCase
         $object = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $allCustomersGroup = $this->getMockBuilder(GroupInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $allCustomersGroup = $this->createMock(GroupInterface::class);
         $this->groupManagement
             ->expects($this->exactly(2))
             ->method('getAllCustomersGroup')
             ->willReturn($allCustomersGroup);
         $allCustomersGroup->expects($this->exactly(2))->method('getId')->willReturn($allCustomersGroupId);
         $object->expects($this->once())->method('getPrice')->willReturn($productPrice);
-        $this->attribute->expects($this->atLeastOnce())->method('isScopeGlobal')->willReturn(true);
+        $this->attribute->setIsScopeGlobal(true);
         $object->expects($this->once())->method('getStoreId')->willReturn(null);
-        $this->attribute->expects($this->atLeastOnce())->method('getName')->willReturn($attributeName);
+        $this->attribute->setName($attributeName);
         $object->expects($this->atLeastOnce())->method('setData')
             ->willReturnCallback(function ($arg1, $arg2) use ($attributeName, $finalTierPrices, $object) {
                 if ($arg1 === $attributeName && $arg2 === $finalTierPrices) {

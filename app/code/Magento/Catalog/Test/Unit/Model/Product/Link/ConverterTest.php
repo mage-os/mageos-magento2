@@ -31,11 +31,57 @@ class ConverterTest extends TestCase
         $linkedProductSku = 'linkedProductSample';
         $linkedProductId = '2016';
         $linkType = 'associated';
-        $linkMock = $this->getMockBuilder(ProductLinkInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getData'])
-            ->onlyMethods(['getLinkType', 'getLinkedProductSku', 'getExtensionAttributes'])
-            ->getMockForAbstractClass();
+        /** @var ProductLinkInterface $linkMock */
+        $linkMock = new class {
+            private $data = null;
+            private $linkType = null;
+            private $linkedProductSku = null;
+            private $extensionAttributes = null;
+            
+            public function getData()
+            {
+                return $this->data;
+            }
+            
+            public function setData($data)
+            {
+                $this->data = $data;
+                return $this;
+            }
+            
+            public function getLinkType()
+            {
+                return $this->linkType;
+            }
+            
+            public function setLinkType($linkType)
+            {
+                $this->linkType = $linkType;
+                return $this;
+            }
+            
+            public function getLinkedProductSku()
+            {
+                return $this->linkedProductSku;
+            }
+            
+            public function setLinkedProductSku($sku)
+            {
+                $this->linkedProductSku = $sku;
+                return $this;
+            }
+            
+            public function getExtensionAttributes()
+            {
+                return $this->extensionAttributes;
+            }
+            
+            public function setExtensionAttributes($attributes)
+            {
+                $this->extensionAttributes = $attributes;
+                return $this;
+            }
+        };
         $basicData = [$linkMock];
         $linkedProductMock = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
@@ -45,10 +91,7 @@ class ConverterTest extends TestCase
         $infoFinal = [100, 300, 500, 'id' => $linkedProductId, 'qty' => 33];
         $linksAsArray = [$linkType => [$infoFinal]];
 
-        $typeMock = $this->getMockBuilder(AbstractType::class)
-            ->onlyMethods(['getAssociatedProducts'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $typeMock = $this->createMock(AbstractType::class);
 
         $productMock = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
@@ -66,27 +109,29 @@ class ConverterTest extends TestCase
         $linkedProductMock->expects($this->once())
             ->method('getSku')
             ->willReturn($linkedProductSku);
-        $linkMock->expects($this->once())
-            ->method('getData')
-            ->willReturn($info);
-        $linkMock->expects($this->exactly(2))
-            ->method('getLinkType')
-            ->willReturn($linkType);
-        $linkMock->expects($this->once())
-            ->method('getLinkedProductSku')
-            ->willReturn($linkedProductSku);
+        $linkMock->setData($info);
+        $linkMock->setLinkType($linkType);
+        $linkMock->setLinkedProductSku($linkedProductSku);
         $linkedProductMock->expects($this->once())
             ->method('getId')
             ->willReturn($linkedProductId);
-        $attributeMock = $this->getMockBuilder(ExtensionAttributesInterface::class)
-            ->addMethods(['__toArray'])
-            ->getMockForAbstractClass();
-        $linkMock->expects($this->once())
-            ->method('getExtensionAttributes')
-            ->willReturn($attributeMock);
-        $attributeMock->expects($this->once())
-            ->method('__toArray')
-            ->willReturn(['qty' => 33]);
+        /** @var ExtensionAttributesInterface $attributeMock */
+        $attributeMock = new class {
+            private $arrayData = null;
+            
+            public function __toArray()
+            {
+                return $this->arrayData;
+            }
+            
+            public function setArrayData($data)
+            {
+                $this->arrayData = $data;
+                return $this;
+            }
+        };
+        $linkMock->setExtensionAttributes($attributeMock);
+        $attributeMock->setArrayData(['qty' => 33]);
 
         $this->assertEquals($linksAsArray, $this->converter->convertLinksToGroupedArray($productMock));
     }

@@ -148,7 +148,7 @@ class TreeTest extends TestCase
             ->getMock();
         $store->expects($this->once())->method('getRootCategoryId')->willReturn(2);
         $store->expects($this->once())->method('getId')->willReturn(1);
-        $this->storeManagerMock->expects($this->any())->method('getStore')->willReturn($store);
+        $this->storeManagerMock->method('getStore')->willReturn($store);
 
         $this->categoryCollection->expects($this->any())->method('addAttributeToSelect')->willReturnSelf();
         $this->categoryCollection->expects($this->once())->method('setProductStoreId')->willReturnSelf();
@@ -173,7 +173,7 @@ class TreeTest extends TestCase
         $depth = 2;
         $currentLevel = 1;
 
-        $treeNodeMock1 = $this->getMockForAbstractClass(CategoryTreeInterface::class);
+        $treeNodeMock1 = $this->createMock(CategoryTreeInterface::class);
         $treeNodeMock1->expects($this->once())->method('setId')->with($currentLevel)->willReturnSelf();
         $treeNodeMock1->expects($this->once())->method('setParentId')->with($currentLevel - 1)->willReturnSelf();
         $treeNodeMock1->expects($this->once())->method('setName')->with('Name' . $currentLevel)->willReturnSelf();
@@ -183,7 +183,7 @@ class TreeTest extends TestCase
         $treeNodeMock1->expects($this->once())->method('setProductCount')->with(4)->willReturnSelf();
         $treeNodeMock1->expects($this->once())->method('setChildrenData')->willReturnSelf();
 
-        $treeNodeMock2 = $this->getMockForAbstractClass(CategoryTreeInterface::class);
+        $treeNodeMock2 = $this->createMock(CategoryTreeInterface::class);
         $treeNodeMock2->expects($this->once())->method('setId')->with($currentLevel)->willReturnSelf();
         $treeNodeMock2->expects($this->once())->method('setParentId')->with($currentLevel - 1)->willReturnSelf();
         $treeNodeMock2->expects($this->once())->method('setName')->with('Name' . $currentLevel)->willReturnSelf();
@@ -195,45 +195,138 @@ class TreeTest extends TestCase
 
         $this->treeFactoryMock->expects($this->exactly(2))
             ->method('create')
-            ->will($this->onConsecutiveCalls($treeNodeMock1, $treeNodeMock2));
-        $node = $this->getMockBuilder(Node::class)
-            ->disableOriginalConstructor()
-            ->addMethods(
-                [
-                    'getParentId',
-                    'getPosition',
-                    'getLevel',
-                    'getProductCount',
-                ]
-            )
-            ->onlyMethods(
-                [
-                    'hasChildren',
-                    'getChildren',
-                    'getId',
-                    'getName',
-                    'getIsActive'
-                ]
-            )
-            ->getMock();
-        $node->expects($this->any())->method('hasChildren')->willReturn(true);
-        $node->expects($this->any())->method('getChildren')->willReturn([$node]);
-
-        $node->expects($this->any())->method('getId')->willReturn($currentLevel);
-        $node->expects($this->any())->method('getParentId')->willReturn($currentLevel - 1);
-        $node->expects($this->any())->method('getName')->willReturn('Name' . $currentLevel);
-        $node->expects($this->any())->method('getPosition')->willReturn($currentLevel);
-        $node->expects($this->any())->method('getLevel')->willReturn($currentLevel);
-        $node->expects($this->any())->method('getIsActive')->willReturn(true);
-        $node->expects($this->any())->method('getProductCount')->willReturn(4);
+            ->willReturnOnConsecutiveCalls($treeNodeMock1, $treeNodeMock2);
+        $node = new class extends Node {
+            private $parentId = 0;
+            private $position = 0;
+            private $level = 0;
+            private $productCount = 0;
+            private $hasChildren = false;
+            private $children = [];
+            private $id = 0;
+            private $name = '';
+            private $isActive = false;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getParentId()
+            {
+                return $this->parentId;
+            }
+            
+            public function setParentId($parentId)
+            {
+                $this->parentId = $parentId;
+                return $this;
+            }
+            
+            public function getPosition()
+            {
+                return $this->position;
+            }
+            
+            public function setPosition($position)
+            {
+                $this->position = $position;
+                return $this;
+            }
+            
+            public function getLevel()
+            {
+                return $this->level;
+            }
+            
+            public function setLevel($level)
+            {
+                $this->level = $level;
+                return $this;
+            }
+            
+            public function getProductCount()
+            {
+                return $this->productCount;
+            }
+            
+            public function setProductCount($productCount)
+            {
+                $this->productCount = $productCount;
+                return $this;
+            }
+            
+            public function hasChildren()
+            {
+                return $this->hasChildren;
+            }
+            
+            public function setHasChildren($hasChildren)
+            {
+                $this->hasChildren = $hasChildren;
+                return $this;
+            }
+            
+            public function getChildren()
+            {
+                return $this->children;
+            }
+            
+            public function setChildren($children)
+            {
+                $this->children = $children;
+                return $this;
+            }
+            
+            public function getId()
+            {
+                return $this->id;
+            }
+            
+            public function setId($id)
+            {
+                $this->id = $id;
+                return $this;
+            }
+            
+            public function getName()
+            {
+                return $this->name;
+            }
+            
+            public function setName($name)
+            {
+                $this->name = $name;
+                return $this;
+            }
+            
+            public function getIsActive()
+            {
+                return $this->isActive;
+            }
+            
+            public function setIsActive($isActive)
+            {
+                $this->isActive = $isActive;
+                return $this;
+            }
+        };
+        $node->setHasChildren(true);
+        $node->setChildren([$node]);
+        $node->setId($currentLevel);
+        $node->setParentId($currentLevel - 1);
+        $node->setName('Name' . $currentLevel);
+        $node->setPosition($currentLevel);
+        $node->setLevel($currentLevel);
+        $node->setIsActive(true);
+        $node->setProductCount(4);
         $this->tree->getTree($node, $depth, $currentLevel);
     }
 
     public function testGetTreeWhenChildrenAreNotExist()
     {
         $currentLevel = 1;
-        $treeNodeMock = $this->getMockForAbstractClass(CategoryTreeInterface::class);
-        $this->treeFactoryMock->expects($this->any())->method('create')->willReturn($treeNodeMock);
+        $treeNodeMock = $this->createMock(CategoryTreeInterface::class);
+        $this->treeFactoryMock->method('create')->willReturn($treeNodeMock);
         $treeNodeMock->expects($this->once())->method('setId')->with($currentLevel)->willReturnSelf();
         $treeNodeMock->expects($this->once())->method('setParentId')->with($currentLevel - 1)->willReturnSelf();
         $treeNodeMock->expects($this->once())->method('setName')->with('Name' . $currentLevel)->willReturnSelf();
@@ -243,36 +336,128 @@ class TreeTest extends TestCase
         $treeNodeMock->expects($this->once())->method('setProductCount')->with(4)->willReturnSelf();
         $treeNodeMock->expects($this->once())->method('setChildrenData')->willReturnSelf();
 
-        $node = $this->getMockBuilder(Node::class)
-            ->disableOriginalConstructor()
-            ->addMethods(
-                [
-                    'getParentId',
-                    'getPosition',
-                    'getLevel',
-                    'getProductCount'
-                ]
-            )
-            ->onlyMethods(
-                [
-                    'hasChildren',
-                    'getChildren',
-                    'getId',
-                    'getName',
-                    'getIsActive'
-                ]
-            )
-            ->getMock();
-        $node->expects($this->any())->method('hasChildren')->willReturn(false);
-        $node->expects($this->never())->method('getChildren');
-
-        $node->expects($this->once())->method('getId')->willReturn($currentLevel);
-        $node->expects($this->once())->method('getParentId')->willReturn($currentLevel - 1);
-        $node->expects($this->once())->method('getName')->willReturn('Name' . $currentLevel);
-        $node->expects($this->once())->method('getPosition')->willReturn($currentLevel);
-        $node->expects($this->once())->method('getLevel')->willReturn($currentLevel);
-        $node->expects($this->once())->method('getIsActive')->willReturn(true);
-        $node->expects($this->once())->method('getProductCount')->willReturn(4);
+        $node = new class extends Node {
+            private $parentId = 0;
+            private $position = 0;
+            private $level = 0;
+            private $productCount = 0;
+            private $hasChildren = false;
+            private $children = [];
+            private $id = 0;
+            private $name = '';
+            private $isActive = false;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getParentId()
+            {
+                return $this->parentId;
+            }
+            
+            public function setParentId($parentId)
+            {
+                $this->parentId = $parentId;
+                return $this;
+            }
+            
+            public function getPosition()
+            {
+                return $this->position;
+            }
+            
+            public function setPosition($position)
+            {
+                $this->position = $position;
+                return $this;
+            }
+            
+            public function getLevel()
+            {
+                return $this->level;
+            }
+            
+            public function setLevel($level)
+            {
+                $this->level = $level;
+                return $this;
+            }
+            
+            public function getProductCount()
+            {
+                return $this->productCount;
+            }
+            
+            public function setProductCount($productCount)
+            {
+                $this->productCount = $productCount;
+                return $this;
+            }
+            
+            public function hasChildren()
+            {
+                return $this->hasChildren;
+            }
+            
+            public function setHasChildren($hasChildren)
+            {
+                $this->hasChildren = $hasChildren;
+                return $this;
+            }
+            
+            public function getChildren()
+            {
+                return $this->children;
+            }
+            
+            public function setChildren($children)
+            {
+                $this->children = $children;
+                return $this;
+            }
+            
+            public function getId()
+            {
+                return $this->id;
+            }
+            
+            public function setId($id)
+            {
+                $this->id = $id;
+                return $this;
+            }
+            
+            public function getName()
+            {
+                return $this->name;
+            }
+            
+            public function setName($name)
+            {
+                $this->name = $name;
+                return $this;
+            }
+            
+            public function getIsActive()
+            {
+                return $this->isActive;
+            }
+            
+            public function setIsActive($isActive)
+            {
+                $this->isActive = $isActive;
+                return $this;
+            }
+        };
+        $node->setHasChildren(false);
+        $node->setId($currentLevel);
+        $node->setParentId($currentLevel - 1);
+        $node->setName('Name' . $currentLevel);
+        $node->setPosition($currentLevel);
+        $node->setLevel($currentLevel);
+        $node->setIsActive(true);
+        $node->setProductCount(4);
         $this->tree->getTree($node);
     }
 }

@@ -45,7 +45,7 @@ class StoreViewTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->indexerMock = $this->getMockForAbstractClass(
+        $this->indexerMock = $this->createMock(
             IndexerInterface::class,
             [],
             '',

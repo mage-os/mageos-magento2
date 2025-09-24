@@ -96,7 +96,7 @@ class CompareProductsTest extends TestCase
             ->getMock();
         $this->scopeConfigMock = $this->getMockBuilder(ScopeConfigInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->urlBuilder = $this->getMockBuilder(UrlInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -104,7 +104,7 @@ class CompareProductsTest extends TestCase
         $this->storeManagerMock = $this->getMockBuilder(
             StoreManagerInterface::class
         )->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->websiteMock = $this->getMockBuilder(
             Website::class
@@ -140,9 +140,7 @@ class CompareProductsTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $itemCollectionMock->expects($this->any())
-            ->method('getIterator')
-            ->willReturn(new \ArrayIterator($items));
+        $itemCollectionMock->method('getIterator')->willReturn(new \ArrayIterator($items));
 
         return $itemCollectionMock;
     }
@@ -235,8 +233,8 @@ class CompareProductsTest extends TestCase
             ->method('getUrl')
             ->willReturn('http://list.url');
 
-        $this->storeManagerMock->expects($this->any())->method('getWebsite')->willReturn($this->websiteMock);
-        $this->websiteMock->expects($this->any())->method('getId')->willReturn(1);
+        $this->storeManagerMock->method('getWebsite')->willReturn($this->websiteMock);
+        $this->websiteMock->method('getId')->willReturn(1);
         $this->assertEquals(
             [
                 'count' => $count,
@@ -286,8 +284,8 @@ class CompareProductsTest extends TestCase
             ->method('getUrl')
             ->willReturn('http://list.url');
 
-        $this->storeManagerMock->expects($this->any())->method('getWebsite')->willReturn($this->websiteMock);
-        $this->websiteMock->expects($this->any())->method('getId')->willReturn(1);
+        $this->storeManagerMock->method('getWebsite')->willReturn($this->websiteMock);
+        $this->websiteMock->method('getId')->willReturn(1);
 
         $this->assertEquals(
             [
@@ -309,8 +307,8 @@ class CompareProductsTest extends TestCase
             ->method('getItemCount')
             ->willReturn($count);
 
-        $this->storeManagerMock->expects($this->any())->method('getWebsite')->willReturn($this->websiteMock);
-        $this->websiteMock->expects($this->any())->method('getId')->willReturn(1);
+        $this->storeManagerMock->method('getWebsite')->willReturn($this->websiteMock);
+        $this->websiteMock->method('getId')->willReturn(1);
 
         $items = $this->prepareProductsWithCorrespondingMocks(
             [

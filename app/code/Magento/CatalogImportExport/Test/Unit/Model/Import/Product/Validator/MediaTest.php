@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\CatalogImportExport\Test\Unit\Model\Import\Product\Validator;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\CatalogImportExport\Model\Import\Product;
 use Magento\CatalogImportExport\Model\Import\Product\Validator\Media;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
@@ -36,9 +37,7 @@ class MediaTest extends TestCase
         $contextMock = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $contextMock->expects($this->any())
-            ->method('getMultipleValueSeparator')
-            ->willReturn(Import::DEFAULT_GLOBAL_MULTI_VALUE_SEPARATOR);
+        $contextMock->method('getMultipleValueSeparator')->willReturn(Import::DEFAULT_GLOBAL_MULTI_VALUE_SEPARATOR);
         $contextMock->expects($this->any())
             ->method('retrieveMessageTemplate')
             ->with(Media::ERROR_INVALID_MEDIA_URL_OR_PATH)
@@ -63,8 +62,8 @@ class MediaTest extends TestCase
     /**
      * @param array $data
      * @param array $expected
-     * @dataProvider isMediaValidDataProvider
      */
+    #[DataProvider('isMediaValidDataProvider')]
     public function testIsValid($data, $expected)
     {
         $this->validatorMock->expects($this->never())
@@ -87,8 +86,8 @@ class MediaTest extends TestCase
     /**
      * @param array $data
      * @param array $expected
-     * @dataProvider isValidAdditionalImagesPathDataProvider
      */
+    #[DataProvider('isValidAdditionalImagesPathDataProvider')]
     public function testIsValidAdditionalImagesPath($data, $expected)
     {
         if ($expected['result']) {
@@ -110,8 +109,8 @@ class MediaTest extends TestCase
     /**
      * @param array $data
      * @param array $expected
-     * @dataProvider isValidAdditionalImagesUrlDataProvider
      */
+    #[DataProvider('isValidAdditionalImagesUrlDataProvider')]
     public function testIsValidAdditionalImagesUrl($data, $expected)
     {
         $this->validatorMock->expects($this->once())

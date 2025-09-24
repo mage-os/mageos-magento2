@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Model;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Catalog\Model\Category as CategoryModel;
 use Magento\Catalog\Model\CategoryFactory;
@@ -80,12 +81,9 @@ class CategoryRepositoryTest extends TestCase
         );
         $this->categoryResourceMock =
             $this->createMock(\Magento\Catalog\Model\ResourceModel\Category::class);
-        $this->storeManagerMock = $this->getMockForAbstractClass(StoreManagerInterface::class);
-        $this->storeMock = $this->getMockBuilder(StoreInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getId'])
-            ->getMockForAbstractClass();
-        $this->storeManagerMock->expects($this->any())->method('getStore')->willReturn($this->storeMock);
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
+        $this->storeMock = $this->createMock(StoreInterface::class);
+        $this->storeManagerMock->method('getStore')->willReturn($this->storeMock);
         $this->extensibleDataObjectConverterMock = $this
             ->getMockBuilder(ExtensibleDataObjectConverter::class)
             ->onlyMethods(['toNestedArray'])
@@ -93,9 +91,7 @@ class CategoryRepositoryTest extends TestCase
             ->getMock();
 
         $metadataMock = $this->createMock(EntityMetadata::class);
-        $metadataMock->expects($this->any())
-            ->method('getLinkField')
-            ->willReturn('entity_id');
+        $metadataMock->method('getLinkField')->willReturn('entity_id');
 
         $this->metadataPoolMock = $this->createMock(MetadataPool::class);
         $this->metadataPoolMock->expects($this->any())
@@ -208,11 +204,11 @@ class CategoryRepositoryTest extends TestCase
      * @param $categoryId
      * @param $categoryData
      * @param $dataForSave
-     * @dataProvider filterExtraFieldsOnUpdateCategoryDataProvider
      */
+    #[DataProvider('filterExtraFieldsOnUpdateCategoryDataProvider')]
     public function testFilterExtraFieldsOnUpdateCategory($categoryId, $categoryData, $dataForSave)
     {
-        $this->storeMock->expects($this->any())->method('getId')->willReturn(1);
+        $this->storeMock->method('getId')->willReturn(1);
         $categoryMock = $this->createMock(CategoryModel::class);
         $categoryMock->expects(
             $this->atLeastOnce()
@@ -236,7 +232,7 @@ class CategoryRepositoryTest extends TestCase
 
     public function testCreateNewCategory()
     {
-        $this->storeMock->expects($this->any())->method('getId')->willReturn(1);
+        $this->storeMock->method('getId')->willReturn(1);
         $categoryId = null;
         $parentCategoryId = 15;
         $newCategoryId = 25;
@@ -288,9 +284,7 @@ class CategoryRepositoryTest extends TestCase
         $this->model->save($categoryMock);
     }
 
-    /**
-     * @dataProvider saveWithValidateCategoryExceptionDataProvider
-     */
+    #[DataProvider('saveWithValidateCategoryExceptionDataProvider')]
     public function testSaveWithValidateCategoryException($error, $expectedException, $expectedExceptionMessage)
     {
         $this->expectException($expectedException);
@@ -301,10 +295,39 @@ class CategoryRepositoryTest extends TestCase
             ->expects($this->once())
             ->method('toNestedArray')
             ->willReturn([]);
-        $objectMock = $this->getMockBuilder(DataObject::class)
-            ->addMethods(['getFrontend', 'getLabel'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        
+        // PHPUnit 12 compatible: Replace addMethods with anonymous class
+        $objectMock = new class extends DataObject {
+            private $frontendResult;
+            private $labelResult;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getFrontend()
+            {
+                return $this->frontendResult;
+            }
+            
+            public function setFrontend($result)
+            {
+                $this->frontendResult = $result;
+                return $this;
+            }
+            
+            public function getLabel()
+            {
+                return $this->labelResult;
+            }
+            
+            public function setLabel($result)
+            {
+                $this->labelResult = $result;
+                return $this;
+            }
+        };
+        
         $categoryMock->expects(
             $this->atLeastOnce()
         )->method('getId')->willReturn($categoryId);
@@ -313,8 +336,8 @@ class CategoryRepositoryTest extends TestCase
         )->method('create')->willReturn(
             $categoryMock
         );
-        $objectMock->expects($this->any())->method('getFrontend')->willReturn($objectMock);
-        $objectMock->expects($this->any())->method('getLabel')->willReturn('ValidateCategoryTest');
+        $objectMock->setFrontend($objectMock);
+        $objectMock->setLabel('ValidateCategoryTest');
         $categoryMock->expects($this->once())->method('validate')->willReturn([42 => $error]);
         $this->categoryResourceMock->expects($this->any())->method('getAttribute')->with(42)->willReturn($objectMock);
         $categoryMock->expects($this->never())->method('unsetData');
@@ -359,9 +382,7 @@ class CategoryRepositoryTest extends TestCase
     {
         $categoryId = 5;
         $categoryMock = $this->createMock(CategoryModel::class);
-        $categoryMock->expects(
-            $this->any()
-        )->method('getId')->willReturn(
+        $categoryMock->method('getId')->willReturn(
             $categoryId
         );
         $this->categoryFactoryMock->expects(

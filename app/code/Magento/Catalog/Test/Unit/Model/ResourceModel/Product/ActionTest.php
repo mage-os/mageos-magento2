@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Model\ResourceModel\Product;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Api\Data\ProductAttributeInterface;
 use Magento\Catalog\Model\Factory;
 use Magento\Catalog\Model\Product;
@@ -123,13 +124,11 @@ class ActionTest extends TestCase
         $this->contextMock = $this->getMockBuilder(Context::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
-            ->getMockForAbstractClass();
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
         $this->factoryMock = $this->getMockBuilder(Factory::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->uniqueValidatorMock = $this->getMockBuilder(UniqueValidationInterface::class)
-            ->getMockForAbstractClass();
+        $this->uniqueValidatorMock = $this->createMock(UniqueValidationInterface::class);
         $this->productCollectionFactoryMock = $this->getMockBuilder(ProductCollectionFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -157,9 +156,7 @@ class ActionTest extends TestCase
             ->willReturn($this->resourceMock);
         $this->eavConfigMock->method('getEntityType')
             ->willReturn($this->entityTypeMock);
-        $updatedAtAttributeMock = $this->getMockBuilder(AbstractAttribute::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $updatedAtAttributeMock = $this->createMock(AbstractAttribute::class);
         $this->eavConfigMock->method('getAttribute')
             ->willReturn($updatedAtAttributeMock);
 
@@ -184,8 +181,7 @@ class ActionTest extends TestCase
      */
     private function prepareAdapter(): void
     {
-        $this->connectionMock = $this->getMockBuilder(AdapterInterface::class)
-            ->getMockForAbstractClass();
+        $this->connectionMock = $this->createMock(AdapterInterface::class);
         $this->resourceMock->method('getConnection')
             ->willReturn($this->connectionMock);
         $this->resourceMock->method('getTableName')
@@ -222,8 +218,8 @@ class ActionTest extends TestCase
      * @param int[] $entityIds
      *
      * @return void
-     * @dataProvider updateProductHasWeightAttributesDataProvider
      */
+    #[DataProvider('updateProductHasWeightAttributesDataProvider')]
     public function testUpdateProductHasWeightAttributes($hasWeight, $typeId, $items, $entityIds): void
     {
         $items = $items($this);

@@ -135,8 +135,7 @@ class DataProviderTest extends TestCase
         $this->categoryCollectionFactory->method('create')
             ->willReturn($this->collection);
 
-        $this->storeManager = $this->getMockBuilder(StoreManagerInterface::class)
-            ->getMockForAbstractClass();
+        $this->storeManager = $this->createMock(StoreManagerInterface::class);
 
         $this->registry = $this->getMockBuilder(Registry::class)
             ->disableOriginalConstructor()
@@ -150,9 +149,7 @@ class DataProviderTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->request = $this->getMockBuilder(RequestInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->request = $this->createMock(RequestInterface::class);
 
         $this->categoryFactory = $this->getMockBuilder(CategoryFactory::class)
             ->disableOriginalConstructor()
@@ -171,11 +168,9 @@ class DataProviderTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->modifierPool = $this->getMockBuilder(PoolInterface::class)
-            ->getMockForAbstractClass();
+        $this->modifierPool = $this->createMock(PoolInterface::class);
 
-        $this->auth = $this->getMockBuilder(AuthorizationInterface::class)
-            ->getMockForAbstractClass();
+        $this->auth = $this->createMock(AuthorizationInterface::class);
 
         $this->arrayUtils = $this->getMockBuilder(ArrayUtils::class)
             ->onlyMethods(['flatten'])
@@ -193,9 +188,7 @@ class DataProviderTest extends TestCase
      */
     private function getModel()
     {
-        $this->eavEntityMock->expects($this->any())
-            ->method('getAttributeCollection')
-            ->willReturn([]);
+        $this->eavEntityMock->method('getAttributeCollection')->willReturn([]);
 
         $this->eavConfig->method('getEntityType')
             ->with('catalog_category')

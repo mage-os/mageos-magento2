@@ -85,7 +85,7 @@ class EditTest extends TestCase
         $resultPageFactory = $this->getMockBuilder(PageFactory::class)
             ->onlyMethods(['create'])->disableOriginalConstructor()
             ->getMock();
-        $resultPageFactory->expects($this->any())->method('create')->willReturn($this->resultPage);
+        $resultPageFactory->method('create')->willReturn($this->resultPage);
 
         $this->prepareContext();
 
@@ -108,7 +108,7 @@ class EditTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $objectManager = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        $objectManager = $this->createMock(ObjectManagerInterface::class);
         $product = $this->getMockBuilder(Product::class)
             ->onlyMethods(['isProductsHasSku'])
             ->disableOriginalConstructor()
@@ -122,23 +122,22 @@ class EditTest extends TestCase
             ->willReturn($product);
         $messageManager = $this->getMockBuilder(ManagerInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $messageManager->expects($this->any())->method('addErrorMessage')->willReturn(true);
+            ->getMock();
+        $messageManager->method('addErrorMessage')->willReturn(true);
         $this->context = $this->getMockBuilder(Context::class)
             ->onlyMethods(['getRequest', 'getObjectManager', 'getMessageManager', 'getResultRedirectFactory'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->context->expects($this->any())->method('getRequest')->willReturn($this->request);
-        $this->context->expects($this->any())->method('getObjectManager')->willReturn($objectManager);
-        $this->context->expects($this->any())->method('getMessageManager')->willReturn($messageManager);
-        $this->context->expects($this->any())->method('getResultRedirectFactory')
-            ->willReturn($this->resultRedirectFactory);
+        $this->context->method('getRequest')->willReturn($this->request);
+        $this->context->method('getObjectManager')->willReturn($objectManager);
+        $this->context->method('getMessageManager')->willReturn($messageManager);
+        $this->context->method('getResultRedirectFactory')->willReturn($this->resultRedirectFactory);
     }
 
     public function testExecutePageRequested()
     {
         $this->request->expects($this->any())->method('getParam')->with('filters')->willReturn(['placeholder' => true]);
-        $this->request->expects($this->any())->method('getParams')->willReturn(
+        $this->request->method('getParams')->willReturn(
             [
                 'namespace' => 'product_listing',
                 'exclude' => true,
@@ -146,16 +145,16 @@ class EditTest extends TestCase
             ]
         );
 
-        $this->attributeHelper->expects($this->any())->method('getProductIds')->willReturn([1, 2, 3]);
+        $this->attributeHelper->method('getProductIds')->willReturn([1, 2, 3]);
         $this->attributeHelper->expects($this->any())->method('setProductIds')->with([1, 2, 3]);
 
         $collection = $this->getMockBuilder(Collection::class)
             ->onlyMethods(['getAllIds'])
             ->disableOriginalConstructor()
             ->getMock();
-        $collection->expects($this->any())->method('getAllIds')->willReturn([1, 2, 3]);
+        $collection->method('getAllIds')->willReturn([1, 2, 3]);
         $this->filter->expects($this->any())->method('getCollection')->with($collection)->willReturn($collection);
-        $this->collectionFactory->expects($this->any())->method('create')->willReturn($collection);
+        $this->collectionFactory->method('create')->willReturn($collection);
 
         $title = $this->getMockBuilder(Title::class)
             ->onlyMethods(['prepend'])
@@ -165,8 +164,8 @@ class EditTest extends TestCase
             ->onlyMethods(['getTitle'])
             ->disableOriginalConstructor()
             ->getMock();
-        $config->expects($this->any())->method('getTitle')->willReturn($title);
-        $this->resultPage->expects($this->any())->method('getConfig')->willReturn($config);
+        $config->method('getTitle')->willReturn($title);
+        $this->resultPage->method('getConfig')->willReturn($config);
 
         $this->assertSame($this->resultPage, $this->object->execute());
     }
@@ -174,9 +173,9 @@ class EditTest extends TestCase
     public function testExecutePageReload()
     {
         $this->request->expects($this->any())->method('getParam')->with('filters')->willReturn(null);
-        $this->request->expects($this->any())->method('getParams')->willReturn([]);
+        $this->request->method('getParams')->willReturn([]);
 
-        $this->attributeHelper->expects($this->any())->method('getProductIds')->willReturn([1, 2, 3]);
+        $this->attributeHelper->method('getProductIds')->willReturn([1, 2, 3]);
         $this->attributeHelper->expects($this->any())->method('setProductIds')->with([1, 2, 3]);
 
         $title = $this->getMockBuilder(Title::class)
@@ -187,8 +186,8 @@ class EditTest extends TestCase
             ->onlyMethods(['getTitle'])
             ->disableOriginalConstructor()
             ->getMock();
-        $config->expects($this->any())->method('getTitle')->willReturn($title);
-        $this->resultPage->expects($this->any())->method('getConfig')->willReturn($config);
+        $config->method('getTitle')->willReturn($title);
+        $this->resultPage->method('getConfig')->willReturn($config);
 
         $this->assertSame($this->resultPage, $this->object->execute());
     }
@@ -196,8 +195,8 @@ class EditTest extends TestCase
     public function testExecutePageDirectAccess()
     {
         $this->request->expects($this->any())->method('getParam')->with('filters')->willReturn(null);
-        $this->request->expects($this->any())->method('getParams')->willReturn([]);
-        $this->attributeHelper->expects($this->any())->method('getProductIds')->willReturn(null);
+        $this->request->method('getParams')->willReturn([]);
+        $this->attributeHelper->method('getProductIds')->willReturn(null);
 
         $resultRedirect = $this->getMockBuilder(Redirect::class)
             ->onlyMethods(['setPath'])
@@ -206,9 +205,7 @@ class EditTest extends TestCase
         $resultRedirect->expects($this->any())->method('setPath')
             ->with('catalog/product/', ['_current' => true])
             ->willReturnSelf();
-        $this->resultRedirectFactory->expects($this->any())
-            ->method('create')
-            ->willReturn($resultRedirect);
+        $this->resultRedirectFactory->method('create')->willReturn($resultRedirect);
 
         $this->assertSame($resultRedirect, $this->object->execute());
     }

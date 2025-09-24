@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Ui\DataProvider\Product\Form\Modifier;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\ResourceModel\Product as ProductResource;
 use Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\AbstractModifier;
 use Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\AttributeSet;
@@ -51,19 +52,13 @@ class AttributeSetTest extends AbstractModifierTestCase
         $this->attributeSetCollectionMock = $this->getMockBuilder(Collection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->urlBuilderMock = $this->getMockBuilder(UrlInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->urlBuilderMock = $this->createMock(UrlInterface::class);
         $this->productResourceMock = $this->getMockBuilder(ProductResource::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->attributeSetCollectionFactoryMock->expects($this->any())
-            ->method('create')
-            ->willReturn($this->attributeSetCollectionMock);
-        $this->productMock->expects($this->any())
-            ->method('getResource')
-            ->willReturn($this->productResourceMock);
+        $this->attributeSetCollectionFactoryMock->method('create')->willReturn($this->attributeSetCollectionMock);
+        $this->productMock->method('getResource')->willReturn($this->productResourceMock);
         $this->attributeSetCollectionMock->expects($this->any())
             ->method('setEntityTypeFilter')
             ->willReturnSelf();
@@ -92,13 +87,11 @@ class AttributeSetTest extends AbstractModifierTestCase
 
     /**
      * @param bool $locked
-     * @dataProvider modifyMetaLockedDataProvider
      */
+    #[DataProvider('modifyMetaLockedDataProvider')]
     public function testModifyMetaLocked($locked)
     {
-        $this->productMock->expects($this->any())
-            ->method('isLockedAttribute')
-            ->willReturn($locked);
+        $this->productMock->method('isLockedAttribute')->willReturn($locked);
         $modifyMeta = $this->getModel()->modifyMeta([AbstractModifier::DEFAULT_GENERAL_PANEL => []]);
         $children = $modifyMeta[AbstractModifier::DEFAULT_GENERAL_PANEL]['children'];
         $this->assertEquals(

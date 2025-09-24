@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\CatalogGraphQl\Test\Unit\Model\Resolver\Product;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Exception;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Gallery\Entry;
@@ -47,7 +48,7 @@ class MediaGalleryTest extends TestCase
     protected function setUp(): void
     {
         $this->fieldMock = $this->createMock(Field::class);
-        $this->contextMock = $this->getMockForAbstractClass(ContextInterface::class);
+        $this->contextMock = $this->createMock(ContextInterface::class);
         $this->infoMock = $this->createMock(ResolveInfo::class);
         $this->productMock = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
@@ -56,26 +57,113 @@ class MediaGalleryTest extends TestCase
     }
 
     /**
-     * @dataProvider dataProviderForResolve
      * @param $expected
      * @param $productName
      * @return void
      * @throws Exception
      */
+    #[DataProvider('dataProviderForResolve')]
     public function testResolve($expected, $productName): void
     {
-        $existingEntryMock = $this->getMockBuilder(Entry::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getName'])
-            ->onlyMethods(['getData', 'getExtensionAttributes'])
-            ->getMock();
-        $existingEntryMock->expects($this->any())->method('getData')->willReturn($expected);
-        $existingEntryMock->expects($this->any())->method(
-            'getExtensionAttributes'
-        )->willReturn(false);
-        $this->productMock->expects($this->any())->method('getName')->willReturn($productName);
-        $this->productMock->expects($this->any())->method('getMediaGalleryEntries')
-            ->willReturn([$existingEntryMock]);
+        $existingEntryMock = new class implements \Magento\Catalog\Api\Data\ProductAttributeMediaGalleryEntryInterface {
+            private $data = [];
+            private $extensionAttributes = null;
+            
+            public function __construct() {}
+            
+            public function getData($key = '', $index = null) {
+                if ($key === '') {
+                    return $this->data;
+                }
+                return $this->data[$key] ?? null;
+            }
+            
+            public function setData($key, $value = null) {
+                if (is_array($key)) {
+                    $this->data = array_merge($this->data, $key);
+                } else {
+                    $this->data[$key] = $value;
+                }
+                return $this;
+            }
+            
+            public function getExtensionAttributes() {
+                return $this->extensionAttributes;
+            }
+            
+            public function setExtensionAttributes($extensionAttributes) {
+                $this->extensionAttributes = $extensionAttributes;
+                return $this;
+            }
+            
+            public function getId() {
+                return $this->getData('id');
+            }
+            
+            public function setId($id) {
+                return $this->setData('id', $id);
+            }
+            
+            public function getMediaType() {
+                return $this->getData('media_type');
+            }
+            
+            public function setMediaType($mediaType) {
+                return $this->setData('media_type', $mediaType);
+            }
+            
+            public function getLabel() {
+                return $this->getData('label');
+            }
+            
+            public function setLabel($label) {
+                return $this->setData('label', $label);
+            }
+            
+            public function getPosition() {
+                return $this->getData('position');
+            }
+            
+            public function setPosition($position) {
+                return $this->setData('position', $position);
+            }
+            
+            public function isDisabled() {
+                return $this->getData('disabled');
+            }
+            
+            public function setDisabled($disabled) {
+                return $this->setData('disabled', $disabled);
+            }
+            
+            public function getTypes() {
+                return $this->getData('types');
+            }
+            
+            public function setTypes(?array $types = null) {
+                return $this->setData('types', $types);
+            }
+            
+            public function getFile() {
+                return $this->getData('file');
+            }
+            
+            public function setFile($file) {
+                return $this->setData('file', $file);
+            }
+            
+            public function getContent() {
+                return $this->getData('content');
+            }
+            
+            public function setContent($content) {
+                return $this->setData('content', $content);
+            }
+        };
+        $existingEntryMock->setData($expected);
+        $existingEntryMock->setExtensionAttributes(false);
+        $this->productMock->method('getName')->willReturn($productName);
+        $this->productMock->method('getMediaGalleryEntries')->willReturn([$existingEntryMock]);
         $result = $this->mediaGallery->resolve(
             $this->fieldMock,
             $this->contextMock,

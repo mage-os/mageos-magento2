@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Observer;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Attribute\Backend\WebsiteSpecific\Scheduler;
 use Magento\Catalog\Observer\SynchronizeWebsiteAttributesOnStoreChange;
 use Magento\Framework\Event\Observer;
@@ -17,8 +18,8 @@ class SynchronizeWebsiteAttributesOnStoreChangeTest extends TestCase
 {
     /**
      * @param $invalidDataObject
-     * @dataProvider executeInvalidStoreDataProvider
      */
+    #[DataProvider('executeInvalidStoreDataProvider')]
     public function testExecuteInvalidStore($invalidDataObject)
     {
         $eventObserver = new Observer([
@@ -48,8 +49,8 @@ class SynchronizeWebsiteAttributesOnStoreChangeTest extends TestCase
 
     /**
      * @param \Closure $store
-     * @dataProvider executeStoreHasNoChangesDataProvider
      */
+    #[DataProvider('executeStoreHasNoChangesDataProvider')]
     public function testExecuteStoreHasNoChanges(\Closure $store)
     {
         $store = $store($this);
@@ -103,8 +104,8 @@ class SynchronizeWebsiteAttributesOnStoreChangeTest extends TestCase
 
     /**
      * @param \Closure $store
-     * @dataProvider executeWebsiteIdIsNoChangedAndNotNewDataProvider
      */
+    #[DataProvider('executeWebsiteIdIsNoChangedAndNotNewDataProvider')]
     public function testExecuteWebsiteIdIsNoChangedAndNotNew(\Closure $store)
     {
         $store = $store($this);
@@ -137,8 +138,8 @@ class SynchronizeWebsiteAttributesOnStoreChangeTest extends TestCase
 
     /**
      * @param \Closure $store
-     * @dataProvider executeSuccessDataProvider
      */
+    #[DataProvider('executeSuccessDataProvider')]
     public function testExecuteSuccess(\Closure $store)
     {
         $store = $store($this);

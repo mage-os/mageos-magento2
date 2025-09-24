@@ -113,9 +113,7 @@ class CategoriesJsonTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
             ->getMock();
-        $layoutFactory->expects($this->any())
-            ->method('create')
-            ->willReturn($this->layoutMock);
+        $layoutFactory->method('create')->willReturn($this->layoutMock);
 
         $context->expects($this->once())->method('getRequest')->willReturn($this->requestMock);
         $context->expects($this->once())->method('getResponse')->willReturn($this->responseMock);
@@ -141,7 +139,7 @@ class CategoriesJsonTest extends TestCase
         $this->_getTreeBlock();
         $testCategoryId = 1;
 
-        $this->requestMock->expects($this->any())->method('getPost')->willReturn($testCategoryId);
+        $this->requestMock->method('getPost')->willReturn($testCategoryId);
         $categoryMock = $this->createMock(Category::class);
         $categoryMock->expects($this->once())->method('load')->willReturn($categoryMock);
         $categoryMock->expects($this->once())->method('getId')->willReturn($testCategoryId);

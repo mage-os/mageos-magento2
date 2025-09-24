@@ -50,7 +50,7 @@ class ShowUpdateResultTest extends TestCase
     protected function getSession()
     {
         $session = $this->getMockBuilder(Session::class)
-            ->addMethods(['hasCompositeProductResult', 'getCompositeProductResult', 'unsCompositeProductResult'])
+            ->onlyMethods(['hasCompositeProductResult', 'getCompositeProductResult', 'unsCompositeProductResult'])
             ->disableOriginalConstructor()
             ->getMock();
         $session->expects($this->once())
@@ -73,15 +73,13 @@ class ShowUpdateResultTest extends TestCase
     protected function getContext()
     {
         $productActionMock = $this->createMock(Action::class);
-        $objectManagerMock = $this->getMockForAbstractClass(ObjectManagerInterface::class);
-        $objectManagerMock->expects($this->any())
-            ->method('get')
-            ->willReturn($productActionMock);
+        $objectManagerMock = $this->createMock(ObjectManagerInterface::class);
+        $objectManagerMock->method('get')->willReturn($productActionMock);
 
         $eventManager = $this->getMockBuilder(Manager::class)
             ->onlyMethods(['dispatch'])
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $eventManager->expects($this->any())
             ->method('dispatch')
@@ -93,16 +91,14 @@ class ShowUpdateResultTest extends TestCase
         );
 
         $responseInterfaceMock = $this->getMockBuilder(ResponseInterface::class)
-            ->addMethods(['setRedirect'])
-            ->onlyMethods(['sendResponse'])
-            ->getMockForAbstractClass();
+            ->onlyMethods(['sendResponse', 'setRedirect'])
+            ->getMock();
 
-        $managerInterfaceMock = $this->getMockForAbstractClass(ManagerInterface::class);
+        $managerInterfaceMock = $this->createMock(ManagerInterface::class);
         $this->session = $this->getSession();
         $actionFlagMock = $this->createMock(ActionFlag::class);
         $helperDataMock = $this->createMock(Data::class);
         $this->context = $this->getMockBuilder(Context::class)
-            ->addMethods(['getTitle'])
             ->onlyMethods(
                 [
                     'getRequest',
@@ -114,37 +110,22 @@ class ShowUpdateResultTest extends TestCase
                     'getActionFlag',
                     'getHelper',
                     'getView',
-                    'getResultRedirectFactory'
+                    'getResultRedirectFactory',
+                    'getTitle'
                 ]
             )
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->context->expects($this->any())
-            ->method('getEventManager')
-            ->willReturn($eventManager);
-        $this->context->expects($this->any())
-            ->method('getRequest')
-            ->willReturn($this->request);
-        $this->context->expects($this->any())
-            ->method('getResponse')
-            ->willReturn($responseInterfaceMock);
-        $this->context->expects($this->any())
-            ->method('getObjectManager')
-            ->willReturn($objectManagerMock);
+        $this->context->method('getEventManager')->willReturn($eventManager);
+        $this->context->method('getRequest')->willReturn($this->request);
+        $this->context->method('getResponse')->willReturn($responseInterfaceMock);
+        $this->context->method('getObjectManager')->willReturn($objectManagerMock);
 
-        $this->context->expects($this->any())
-            ->method('getMessageManager')
-            ->willReturn($managerInterfaceMock);
-        $this->context->expects($this->any())
-            ->method('getSession')
-            ->willReturn($this->session);
-        $this->context->expects($this->any())
-            ->method('getActionFlag')
-            ->willReturn($actionFlagMock);
-        $this->context->expects($this->any())
-            ->method('getHelper')
-            ->willReturn($helperDataMock);
+        $this->context->method('getMessageManager')->willReturn($managerInterfaceMock);
+        $this->context->method('getSession')->willReturn($this->session);
+        $this->context->method('getActionFlag')->willReturn($actionFlagMock);
+        $this->context->method('getHelper')->willReturn($helperDataMock);
 
         return $this->context;
     }

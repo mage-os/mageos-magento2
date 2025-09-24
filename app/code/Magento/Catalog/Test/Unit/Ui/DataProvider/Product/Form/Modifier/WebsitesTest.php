@@ -103,59 +103,136 @@ class WebsitesTest extends AbstractModifierTestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->websitesList = [$this->websiteMock, $this->secondWebsiteMock];
-        $this->websiteRepositoryMock = $this->getMockBuilder(WebsiteRepositoryInterface::class)
-            ->onlyMethods(['getList'])
-            ->getMockForAbstractClass();
-        $this->websiteRepositoryMock->expects($this->any())
-            ->method('getDefault')
-            ->willReturn($this->websiteMock);
-        $this->groupRepositoryMock = $this->getMockBuilder(GroupRepositoryInterface::class)
-            ->onlyMethods(['getList'])
-            ->getMockForAbstractClass();
-        $this->storeRepositoryMock = $this->getMockBuilder(StoreRepositoryInterface::class)
-            ->onlyMethods(['getList'])
-            ->getMockForAbstractClass();
-        $this->storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
-            ->onlyMethods(['isSingleStoreMode', 'getWebsites'])
-            ->getMockForAbstractClass();
-        $this->storeManagerMock->expects($this->any())
-            ->method('isSingleStoreMode')
-            ->willReturn(false);
-        $this->groupMock = $this->getMockBuilder(Collection::class)
-            ->addMethods(['getId', 'getName', 'getWebsiteId'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->groupMock->expects($this->any())
-            ->method('getWebsiteId')
-            ->willReturn(self::WEBSITE_ID);
-        $this->groupMock->expects($this->any())
-            ->method('getId')
-            ->willReturn(self::GROUP_ID);
-        $this->groupRepositoryMock->expects($this->any())
-            ->method('getList')
-            ->willReturn([$this->groupMock]);
-        $this->storeViewMock = $this->getMockBuilder(\Magento\Store\Model\Store::class)
+        $this->websiteRepositoryMock = $this->createMock(WebsiteRepositoryInterface::class);
+        $this->websiteRepositoryMock->method('getDefault')->willReturn($this->websiteMock);
+        $this->groupRepositoryMock = $this->createMock(GroupRepositoryInterface::class);
+        $this->storeRepositoryMock = $this->createMock(StoreRepositoryInterface::class);
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
+        $this->storeManagerMock->method('isSingleStoreMode')->willReturn(false);
+        
+        // PHPUnit 12 compatible: Replace addMethods with anonymous class
+        $this->groupMock = new class extends Collection {
+            private $id;
+            private $name;
+            private $websiteId;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getId()
+            {
+                return $this->id;
+            }
+            public function setId($id)
+            {
+                $this->id = $id;
+                return $this;
+            }
+            public function getName()
+            {
+                return $this->name;
+            }
+            public function setName($name)
+            {
+                $this->name = $name;
+                return $this;
+            }
+            public function getWebsiteId()
+            {
+                return $this->websiteId;
+            }
+            public function setWebsiteId($websiteId)
+            {
+                $this->websiteId = $websiteId;
+                return $this;
+            }
+        };
+        
+        $this->groupMock->setWebsiteId(self::WEBSITE_ID);
+        $this->groupMock->setId(self::GROUP_ID);
+        $this->groupRepositoryMock->method('getList')->willReturn([$this->groupMock]);
+        $this->storeViewMock = $this->getMockBuilder(StoreView::class)
             ->onlyMethods(['getName', 'getId', 'getStoreGroupId'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->storeViewMock->expects($this->any())
-            ->method('getName')
-            ->willReturn(self::STORE_VIEW_NAME);
-        $this->storeViewMock->expects($this->any())
-            ->method('getStoreGroupId')
-            ->willReturn(self::GROUP_ID);
-        $this->storeViewMock->expects($this->any())
-            ->method('getId')
-            ->willReturn(self::STORE_VIEW_ID);
-        $this->storeRepositoryMock->expects($this->any())
-            ->method('getList')
-            ->willReturn([$this->storeViewMock]);
-        $this->secondWebsiteMock->expects($this->any())
-            ->method('getId')
-            ->willReturn($this->assignedWebsites[0]);
-        $this->websiteMock->expects($this->any())
-            ->method('getId')
-            ->willReturn(self::WEBSITE_ID);
+        $this->storeViewMock->method('getName')->willReturn(self::STORE_VIEW_NAME);
+        $this->storeViewMock->method('getStoreGroupId')->willReturn(self::GROUP_ID);
+        $this->storeViewMock->method('getId')->willReturn(self::STORE_VIEW_ID);
+        $this->storeRepositoryMock->method('getList')->willReturn([$this->storeViewMock]);
+        $this->secondWebsiteMock->method('getId')->willReturn($this->assignedWebsites[0]);
+        $this->websiteMock->method('getId')->willReturn(self::WEBSITE_ID);
+        
+        // Override parent mocks with anonymous classes that have setter methods
+        /** @var \Magento\Catalog\Api\Data\ProductInterface $productMock */
+        $this->productMock = new class {
+            private $id;
+            private $lockedAttribute;
+            
+            public function getId()
+            {
+                return $this->id;
+            }
+            public function setId($id)
+            {
+                $this->id = $id;
+                return $this;
+            }
+            public function isLockedAttribute($attribute)
+            {
+                return $this->lockedAttribute;
+            }
+            public function setLockedAttribute($lockedAttribute)
+            {
+                $this->lockedAttribute = $lockedAttribute;
+                return $this;
+            }
+        };
+        
+        /** @var \Magento\Catalog\Model\Locator\LocatorInterface $locatorMock */
+        $this->locatorMock = new class implements \Magento\Catalog\Model\Locator\LocatorInterface {
+            private $websiteIds;
+            private $product;
+            private $store;
+            private $baseCurrencyCode;
+            
+            public function getWebsiteIds()
+            {
+                return $this->websiteIds;
+            }
+            public function setWebsiteIds($websiteIds)
+            {
+                $this->websiteIds = $websiteIds;
+                return $this;
+            }
+            public function getProduct()
+            {
+                return $this->product;
+            }
+            public function setProduct($product)
+            {
+                $this->product = $product;
+                return $this;
+            }
+            public function getStore()
+            {
+                return $this->store;
+            }
+            public function setStore($store)
+            {
+                $this->store = $store;
+                return $this;
+            }
+            public function getBaseCurrencyCode()
+            {
+                return $this->baseCurrencyCode;
+            }
+            public function setBaseCurrencyCode($baseCurrencyCode)
+            {
+                $this->baseCurrencyCode = $baseCurrencyCode;
+                return $this;
+            }
+        };
     }
 
     /**
@@ -163,15 +240,13 @@ class WebsitesTest extends AbstractModifierTestCase
      */
     protected function createModel()
     {
-        return $this->objectManager->getObject(
-            Websites::class,
-            [
-                'locator' => $this->locatorMock,
-                'storeManager' => $this->storeManagerMock,
-                'websiteRepository' => $this->websiteRepositoryMock,
-                'groupRepository' => $this->groupRepositoryMock,
-                'storeRepository' => $this->storeRepositoryMock,
-            ]
+        // Create the model directly instead of using objectManager
+        return new Websites(
+            $this->locatorMock,
+            $this->storeManagerMock,
+            $this->websiteRepositoryMock,
+            $this->groupRepositoryMock,
+            $this->storeRepositoryMock
         );
     }
 
@@ -181,12 +256,9 @@ class WebsitesTest extends AbstractModifierTestCase
      */
     private function init()
     {
-        $this->productMock->expects($this->any())
-            ->method('getId')
-            ->willReturn($this->productId);
-        $this->locatorMock->expects($this->any())
-            ->method('getWebsiteIds')
-            ->willReturn($this->assignedWebsites);
+        $this->productMock->setId($this->productId);
+        $this->locatorMock->setWebsiteIds($this->assignedWebsites);
+        $this->locatorMock->setProduct($this->productMock);
         $this->storeManagerMock->method('getWebsites')
             ->willReturn($this->websitesList);
     }
@@ -263,9 +335,7 @@ class WebsitesTest extends AbstractModifierTestCase
         $this->websitesList = [$this->websiteMock];
         $this->productId = false;
         $this->init();
-        $this->productMock->expects($this->any())
-            ->method('getId')
-            ->willReturn(false);
+        $this->productMock->setId(false);
 
         $meta = $this->getModel()->modifyMeta([]);
 

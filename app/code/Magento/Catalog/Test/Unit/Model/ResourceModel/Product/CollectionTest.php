@@ -111,15 +111,9 @@ class CollectionTest extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
         $this->entityFactory = $this->createMock(EntityFactory::class);
-        $logger = $this->getMockBuilder(LoggerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $fetchStrategy = $this->getMockBuilder(FetchStrategyInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $eventManager = $this->getMockBuilder(ManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $logger = $this->createMock(LoggerInterface::class);
+        $fetchStrategy = $this->createMock(FetchStrategyInterface::class);
+        $eventManager = $this->createMock(ManagerInterface::class);
         $eavConfig = $this->getMockBuilder(Config::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -139,38 +133,32 @@ class CollectionTest extends TestCase
             ->disableOriginalConstructor()
             ->addMethods(['getId', 'getWebsiteId'])
             ->onlyMethods(['getStore'])
-            ->getMockForAbstractClass();
+            ->getMock();
         $moduleManager = $this->getMockBuilder(Manager::class)
             ->disableOriginalConstructor()
             ->getMock();
         $catalogProductFlatState = $this->getMockBuilder(State::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $scopeConfig = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $scopeConfig = $this->createMock(ScopeConfigInterface::class);
         $productOptionFactory = $this->getMockBuilder(OptionFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
         $catalogUrl = $this->getMockBuilder(Url::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $localeDate = $this->getMockBuilder(TimezoneInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $localeDate = $this->createMock(TimezoneInterface::class);
         $customerSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
             ->getMock();
         $dateTime = $this->getMockBuilder(DateTime::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $groupManagement = $this->getMockBuilder(GroupManagementInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $groupManagement = $this->createMock(GroupManagementInterface::class);
         $this->connectionMock = $this->getMockBuilder(AdapterInterface::class)
             ->addMethods(['getId'])
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->selectMock = $this->getMockBuilder(Select::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -189,7 +177,7 @@ class CollectionTest extends TestCase
             ReadHandler::class
         )->disableOriginalConstructor()
             ->getMock();
-        $this->storeManager->expects($this->any())->method('getId')->willReturn(1);
+        $this->storeManager->method('getId')->willReturn(1);
         $this->storeManager->expects($this->any())->method('getStore')->willReturnSelf();
         $universalFactory->expects($this->exactly(1))->method('create')->willReturnOnConsecutiveCalls(
             $this->entityMock
@@ -257,7 +245,7 @@ class CollectionTest extends TestCase
         $conditionType = 'nin';
         $preparedSql = "category_id IN(1,2)";
         $tableName = "catalog_category_product";
-        $this->connectionMock->expects($this->any())->method('getId')->willReturn(1);
+        $this->connectionMock->method('getId')->willReturn(1);
         $this->connectionMock->expects($this->exactly(2))->method('prepareSqlCondition')
             ->willReturnCallback(function ($arg1, $arg2) use ($preparedSql, $conditionType, $condition) {
                 if ($arg1 == 'cat.category_id' && $arg2 == $condition) {
@@ -297,9 +285,7 @@ class CollectionTest extends TestCase
         $selectMock = $this->getMockBuilder(Select::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $metadataMock = $this->getMockBuilder(EntityMetadataInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $metadataMock = $this->createMock(EntityMetadataInterface::class);
         $this->collection->addItem($itemMock);
         $this->galleryResourceMock->expects($this->once())->method('createBatchBaseSelect')->willReturn($selectMock);
         $attributeMock->expects($this->once())->method('getAttributeId')->willReturn($attributeId);

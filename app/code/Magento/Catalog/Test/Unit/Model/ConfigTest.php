@@ -7,6 +7,9 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Model;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Depends;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Config;
 use Magento\Catalog\Model\Product\Type;
 use Magento\Catalog\Model\Product\TypeFactory;
@@ -26,10 +29,10 @@ use PHPUnit\Framework\TestCase;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
+#[CoversClass(\Magento\Catalog\Model\Config::class)]
 class ConfigTest extends TestCase
 {
     /**
-     * @covers \Magento\Catalog\Model\Config::loadAttributeSets
      * @return object
      */
     public function testLoadAttributeSets()
@@ -54,25 +57,19 @@ class ConfigTest extends TestCase
             ['load']
         );
         $setCollection->expects($this->once())->method('load')->willReturn([1 => $setItem]);
-        $setCollectionFactory->expects($this->any())->method('create')->willReturn($setCollection);
+        $setCollectionFactory->method('create')->willReturn($setCollection);
         $model->loadAttributeSets();
         return $model;
     }
 
-    /**
-     * @depends testLoadAttributeSets
-     * @covers \Magento\Catalog\Model\Config::getAttributeSetName
-     */
+    #[Depends('testLoadAttributeSets')]
     public function testGetAttributeSetName($model)
     {
         $this->assertEquals('name', $model->getAttributeSetName(1, 1));
         $this->assertFalse($model->getAttributeSetName(2, 1));
     }
 
-    /**
-     * @depends testLoadAttributeSets
-     * @covers \Magento\Catalog\Model\Config::getAttributeSetId
-     */
+    #[Depends('testLoadAttributeSets')]
     public function testGetAttributeSetId($model)
     {
         $this->assertEquals(1, $model->getAttributeSetId(1, 'name'));
@@ -80,7 +77,6 @@ class ConfigTest extends TestCase
     }
 
     /**
-     * @covers \Magento\Catalog\Model\Config::loadAttributeGroups
      * @return object
      */
     public function testLoadAttributeGroups()
@@ -106,27 +102,19 @@ class ConfigTest extends TestCase
         );
         $groupCollection->expects($this->once())->method('load')->willReturn([1 => $setItem]);
         $groupCollectionFactory
-            ->expects($this->any())
-            ->method('create')
-            ->willReturn($groupCollection);
+            ->method('create')->willReturn($groupCollection);
         $model->loadAttributeGroups();
         return $model;
     }
 
-    /**
-     * @depends testLoadAttributeGroups
-     * @covers \Magento\Catalog\Model\Config::getAttributeGroupName
-     */
+    #[Depends('testLoadAttributeGroups')]
     public function testGetAttributeGroupName($model)
     {
         $this->assertEquals('name', $model->getAttributeGroupName(1, 1));
         $this->assertFalse($model->getAttributeGroupName(2, 1));
     }
 
-    /**
-     * @depends testLoadAttributeGroups
-     * @covers \Magento\Catalog\Model\Config::getAttributeGroupId
-     */
+    #[Depends('testLoadAttributeGroups')]
     public function testGetAttributeGroupId($model)
     {
         $this->assertEquals(1, $model->getAttributeGroupId(1, 'name'));
@@ -134,7 +122,6 @@ class ConfigTest extends TestCase
     }
 
     /**
-     * @covers \Magento\Catalog\Model\Config::loadProductTypes
      * @return object
      */
     public function testLoadProductTypes()
@@ -148,27 +135,19 @@ class ConfigTest extends TestCase
         $typeCollection = $this->createPartialMock(Type::class, ['getOptionArray']);
         $typeCollection->expects($this->once())->method('getOptionArray')->willReturn([1 => 'name']);
         $productTypeFactory
-            ->expects($this->any())
-            ->method('create')
-            ->willReturn($typeCollection);
+            ->method('create')->willReturn($typeCollection);
         $model->loadProductTypes();
         return $model;
     }
 
-    /**
-     * @depends testLoadProductTypes
-     * @covers \Magento\Catalog\Model\Config::getProductTypeId
-     */
+    #[Depends('testLoadProductTypes')]
     public function testGetProductTypeId($model)
     {
         $this->assertEquals(1, $model->getProductTypeId('name'));
         $this->assertFalse($model->getProductTypeId('noname'));
     }
 
-    /**
-     * @depends testLoadProductTypes
-     * @covers \Magento\Catalog\Model\Config::getProductTypeName
-     */
+    #[Depends('testLoadProductTypes')]
     public function testGetProductTypeName($model)
     {
         $this->assertEquals('name', $model->getProductTypeName(1));
@@ -179,17 +158,31 @@ class ConfigTest extends TestCase
      * @param $expected
      * @param $data
      * @param $search
-     *
-     * @covers \Magento\Catalog\Model\Config::getSourceOptionId
-     * @dataProvider getSourceOptionIdDataProvider
      */
+    #[DataProvider('getSourceOptionIdDataProvider')]
     public function testGetSourceOptionId($expected, $data, $search)
     {
-        $object = $this->getMockBuilder(DataObject::class)
-            ->addMethods(['getAllOptions'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $object->expects($this->once())->method('getAllOptions')->willReturn($data);
+        // PHPUnit 12 compatible: Replace addMethods with anonymous class
+        $object = new class extends DataObject {
+            private $allOptionsResult;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getAllOptions()
+            {
+                return $this->allOptionsResult;
+            }
+            
+            public function setAllOptions($result)
+            {
+                $this->allOptionsResult = $result;
+                return $this;
+            }
+        };
+        
+        $object->setAllOptions($data);
         $objectManager = new ObjectManager($this);
         $model = $objectManager->getObject(Config::class);
         $this->assertEquals($expected, $model->getSourceOptionId($object, $search));
@@ -219,26 +212,53 @@ class ConfigTest extends TestCase
         $storeLabel = 'label';
         $attributeCode = 'code';
 
-        $attribute = $this->getMockBuilder(AbstractAttribute::class)
-            ->addMethods(['getStoreLabel'])
-            ->onlyMethods(['getAttributeCode'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $attribute->expects($this->any())->method('getStoreLabel')->willReturn($storeLabel);
-        $attribute->expects($this->any())->method('getAttributeCode')->willReturn($attributeCode);
+        // PHPUnit 12 compatible: Replace addMethods + onlyMethods with anonymous class
+        $attribute = new class extends AbstractAttribute {
+            private $storeLabelResult;
+            private $attributeCodeResult;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getStoreLabel()
+            {
+                return $this->storeLabelResult;
+            }
+            
+            public function setStoreLabel($result)
+            {
+                $this->storeLabelResult = $result;
+                return $this;
+            }
+            
+            public function getAttributeCode()
+            {
+                return $this->attributeCodeResult;
+            }
+            
+            public function setAttributeCode($result)
+            {
+                $this->attributeCodeResult = $result;
+                return $this;
+            }
+        };
+        
+        $attribute->setStoreLabel($storeLabel);
+        $attribute->setAttributeCode($attributeCode);
 
-        $storeManager = $this->getMockForAbstractClass(StoreManagerInterface::class);
+        $storeManager = $this->createMock(StoreManagerInterface::class);
         $store = $this->createMock(Store::class);
-        $storeManager->expects($this->any())->method('getStore')->willReturn($store);
-        $store->expects($this->any())->method('getId')->willReturn($storeId);
+        $storeManager->method('getStore')->willReturn($store);
+        $store->method('getId')->willReturn($storeId);
 
         $config = $this->createPartialMock(
             \Magento\Catalog\Model\ResourceModel\Config::class,
             ['setStoreId', 'getAttributesUsedInListing', 'getAttributesUsedForSortBy']
         );
         $config->expects($this->any())->method('setStoreId')->with($storeId)->willReturnSelf();
-        $config->expects($this->any())->method('getAttributesUsedInListing')->willReturn($attributesData);
-        $config->expects($this->any())->method('getAttributesUsedForSortBy')->willReturn($attributesData);
+        $config->method('getAttributesUsedInListing')->willReturn($attributesData);
+        $config->method('getAttributesUsedForSortBy')->willReturn($attributesData);
 
         $configFactory =
             $this->createPartialMock(ConfigFactory::class, ['create']);
@@ -264,10 +284,6 @@ class ConfigTest extends TestCase
         return [$model, $attribute];
     }
 
-    /**
-     * @covers \Magento\Catalog\Model\Config::getAttributesUsedInProductListing
-     * return object
-     */
     public function testGetAttributesUsedInProductListing()
     {
         list($model, $attribute) = $this->prepareConfigModelForAttributes();
@@ -275,36 +291,24 @@ class ConfigTest extends TestCase
         return $model;
     }
 
-    /**
-     * @depends testGetAttributesUsedInProductListing
-     * @covers \Magento\Catalog\Model\Config::getProductAttributes
-     */
+    #[Depends('testGetAttributesUsedInProductListing')]
     public function testGetProductAttributes($model)
     {
         $this->assertEquals([1], $model->getProductAttributes());
     }
 
-    /**
-     * @covers \Magento\Catalog\Model\Config::getAttributesUsedForSortBy
-     */
     public function testGetAttributesUsedForSortBy()
     {
         list($model, $attribute) = $this->prepareConfigModelForAttributes();
         $this->assertEquals([1 => $attribute], $model->getAttributesUsedForSortBy());
     }
 
-    /**
-     * @covers \Magento\Catalog\Model\Config::getAttributeUsedForSortByArray
-     */
     public function testGetAttributeUsedForSortByArray()
     {
         list($model) = $this->prepareConfigModelForAttributes();
         $this->assertEquals(['position' => 'Position', 'code' => 'label'], $model->getAttributeUsedForSortByArray());
     }
 
-    /**
-     * @covers \Magento\Catalog\Model\Config::getProductListDefaultSortBy
-     */
     public function testGetProductListDefaultSortBy()
     {
         $scopeConfig = $this->createPartialMock(

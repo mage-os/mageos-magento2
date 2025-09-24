@@ -55,9 +55,7 @@ class PageTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $mock->expects($this->any())
-            ->method('create')
-            ->willReturn($mockedCollection);
+        $mock->method('create')->willReturn($mockedCollection);
 
         return $mock;
     }
@@ -71,13 +69,9 @@ class PageTest extends TestCase
         $mock = $mockBuilder->disableOriginalConstructor()
             ->getMock();
 
-        $mock->expects($this->any())
-            ->method('load')
-            ->willReturn($mock);
+        $mock->method('load')->willReturn($mock);
 
-        $mock->expects($this->any())
-            ->method('toOptionArray')
-            ->willReturn($this->testArray);
+        $mock->method('toOptionArray')->willReturn($this->testArray);
 
         return $mock;
     }

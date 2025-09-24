@@ -7,6 +7,8 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Block\Product;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Block\Product\Context;
 use Magento\Catalog\Block\Product\Image;
 use Magento\Catalog\Block\Product\ImageBuilder;
@@ -25,6 +27,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
+#[CoversClass(\Magento\Catalog\Block\Product\AbstractProduct::class)]
 class AbstractProductTest extends TestCase
 {
     /**
@@ -64,7 +67,7 @@ class AbstractProductTest extends TestCase
         );
         $arrayUtilsMock = $this->createMock(ArrayUtils::class);
         $this->layoutMock = $this->createPartialMock(Layout::class, ['getBlock']);
-        $this->stockRegistryMock = $this->getMockForAbstractClass(
+        $this->stockRegistryMock = $this->createMock(
             StockRegistryInterface::class,
             [],
             '',
@@ -94,9 +97,6 @@ class AbstractProductTest extends TestCase
 
     /**
      * Test for method getProductPrice
-     *
-     * @covers \Magento\Catalog\Block\Product\AbstractProduct::getProductPriceHtml
-     * @covers \Magento\Catalog\Block\Product\AbstractProduct::getProductPrice
      */
     public function testGetProductPrice()
     {
@@ -145,9 +145,8 @@ class AbstractProductTest extends TestCase
      * @param int $minSale
      * @param int|null $result
      * @return void
-     *
-     * @dataProvider dataProviderGetMinimalQty
      */
+    #[DataProvider('dataProviderGetMinimalQty')]
     public function testGetMinimalQty($minSale, $result)
     {
         $id = 10;
@@ -155,7 +154,7 @@ class AbstractProductTest extends TestCase
 
         $productMock = $this->createPartialMock(Product::class, ['getId', 'getStore']);
         $storeMock = $this->createPartialMock(Store::class, ['getWebsiteId']);
-        $stockItemMock = $this->getMockForAbstractClass(
+        $stockItemMock = $this->createMock(
             StockItemInterface::class,
             [],
             '',

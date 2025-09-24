@@ -106,7 +106,7 @@ class CollectionTest extends TestCase
             EntityFactory::class,
             ['create']
         );
-        $this->loggerMock = $this->getMockForAbstractClass(LoggerInterface::class);
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
         $this->fetchStrategyMock = $this->createPartialMock(
             Query::class,
             ['fetchAll']
@@ -117,10 +117,7 @@ class CollectionTest extends TestCase
             ['create']
         );
         $this->storeManagerMock = $this->createMock(StoreManager::class);
-        $this->joinProcessor = $this->getMockBuilder(
-            JoinProcessorInterface::class
-        )->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->joinProcessor = $this->createMock(JoinProcessorInterface::class);
         $this->resourceMock = $this->createPartialMock(
             Option::class,
             ['getConnection', 'getMainTable', 'getTable']
@@ -145,8 +142,8 @@ class CollectionTest extends TestCase
             });
         $this->metadataPoolMock = $this->createMock(MetadataPool::class);
         $metadata = $this->createMock(EntityMetadata::class);
-        $metadata->expects($this->any())->method('getLinkField')->willReturn('id');
-        $this->metadataPoolMock->expects($this->any())->method('getMetadata')->willReturn($metadata);
+        $metadata->method('getLinkField')->willReturn('id');
+        $this->metadataPoolMock->method('getMetadata')->willReturn($metadata);
         $this->selectMock->expects($this->exactly(2))->method('join');
 
         $this->collection = new Collection(

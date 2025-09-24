@@ -40,12 +40,12 @@ class EntryConverterPoolTest extends TestCase
         $this->imageMock =
             $this->createMock(ImageEntryConverter::class);
 
-        $this->imageMock->expects($this->any())->method('getMediaEntryType')->willReturn('image');
+        $this->imageMock->method('getMediaEntryType')->willReturn('image');
 
         $this->videoMock =
             $this->createMock(ExternalVideoEntryConverter::class);
 
-        $this->videoMock->expects($this->any())->method('getMediaEntryType')->willReturn('external-video');
+        $this->videoMock->method('getMediaEntryType')->willReturn('external-video');
 
         $this->dataObjectMock = $this->createMock(DataObject::class);
     }

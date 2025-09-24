@@ -86,7 +86,7 @@ class GalleryTest extends TestCase
         );
 
         $this->arrayUtils = $this->createMock(ArrayUtils::class);
-        $this->jsonEncoderMock = $this->getMockForAbstractClass(EncoderInterface::class);
+        $this->jsonEncoderMock = $this->createMock(EncoderInterface::class);
         $this->imagesConfigFactoryMock = $this->getImagesConfigFactory();
         $this->urlBuilder = $this->createMock(UrlBuilder::class);
 
@@ -150,15 +150,9 @@ class GalleryTest extends TestCase
             ->with($productMock)
             ->willReturn($storeMock);
 
-        $productMock->expects($this->any())
-            ->method('getTypeInstance')
-            ->willReturn($productTypeMock);
-        $productMock->expects($this->any())
-            ->method('getMediaGalleryImages')
-            ->willReturn($this->getImagesCollectionWithPopulatedDataObject($hasLabel));
-        $productMock->expects($this->any())
-            ->method('getName')
-            ->willReturn('test_product_name');
+        $productMock->method('getTypeInstance')->willReturn($productTypeMock);
+        $productMock->method('getMediaGalleryImages')->willReturn($this->getImagesCollectionWithPopulatedDataObject($hasLabel));
+        $productMock->method('getName')->willReturn('test_product_name');
 
         $this->registry->expects($this->any())
             ->method('registry')
@@ -290,9 +284,7 @@ class GalleryTest extends TestCase
             ]),
         ];
 
-        $collectionMock->expects($this->any())
-            ->method('getIterator')
-            ->willReturn(new \ArrayIterator($items));
+        $collectionMock->method('getIterator')->willReturn(new \ArrayIterator($items));
 
         return $collectionMock;
     }

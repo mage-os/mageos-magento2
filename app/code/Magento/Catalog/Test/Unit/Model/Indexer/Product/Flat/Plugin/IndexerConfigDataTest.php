@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Model\Indexer\Product\Flat\Plugin;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Indexer\Product\Flat\Plugin\IndexerConfigData as IndexerConfigDataPlugin;
 use Magento\Catalog\Model\Indexer\Product\Flat\State as ProductFlatIndexerState;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
@@ -58,9 +59,8 @@ class IndexerConfigDataTest extends TestCase
      * @param mixed $default
      * @param array $inputData
      * @param array $outputData
-     *
-     * @dataProvider afterGetDataProvider
      */
+    #[DataProvider('afterGetDataProvider')]
     public function testAfterGet($isFlat, $path, $default, $inputData, $outputData)
     {
         $this->indexerStateMock->expects(static::once())

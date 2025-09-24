@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Controller\Adminhtml\Product\Attribute;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Controller\Adminhtml\Product\Attribute\Validate;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Catalog\Test\Unit\Controller\Adminhtml\Product\AttributeTest;
@@ -89,8 +90,7 @@ class ValidateTest extends AttributeTest
         $this->layoutFactoryMock = $this->getMockBuilder(LayoutFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->objectManagerMock = $this->getMockBuilder(ObjectManagerInterface::class)
-            ->getMockForAbstractClass();
+        $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         $this->attributeMock = $this->getMockBuilder(Attribute::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -101,7 +101,7 @@ class ValidateTest extends AttributeTest
             ->disableOriginalConstructor()
             ->getMock();
         $this->layoutMock = $this->getMockBuilder(LayoutInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->formDataSerializerMock = $this->getMockBuilder(FormData::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -109,9 +109,7 @@ class ValidateTest extends AttributeTest
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->contextMock->expects($this->any())
-            ->method('getObjectManager')
-            ->willReturn($this->objectManagerMock);
+        $this->contextMock->method('getObjectManager')->willReturn($this->objectManagerMock);
     }
 
     /**
@@ -252,11 +250,11 @@ class ValidateTest extends AttributeTest
     }
 
     /**
-     * @dataProvider provideUniqueData
      * @param        array   $options
      * @param        boolean $isError
      * @throws       NotFoundException
      */
+    #[DataProvider('provideUniqueData')]
     public function testUniqueValidation(array $options, $isError)
     {
         $serializedOptions = '{"key":"value"}';
@@ -395,10 +393,10 @@ class ValidateTest extends AttributeTest
     /**
      * Check that empty admin scope labels will trigger error.
      *
-     * @dataProvider provideEmptyOption
      * @param        array $options
      * @throws       NotFoundException
      */
+    #[DataProvider('provideEmptyOption')]
     public function testEmptyOption(array $options, $result)
     {
         $serializedOptions = '{"key":"value"}';
@@ -517,11 +515,11 @@ class ValidateTest extends AttributeTest
     /**
      * Check that admin scope labels which only contain spaces will trigger error.
      *
-     * @dataProvider provideWhitespaceOption
      * @param        array  $options
      * @param        $result
      * @throws       NotFoundException
      */
+    #[DataProvider('provideWhitespaceOption')]
     public function testWhitespaceOption(array $options, $result)
     {
         $serializedOptions = '{"key":"value"}';
@@ -703,11 +701,11 @@ class ValidateTest extends AttributeTest
     /**
      * Test execute with an invalid attribute code
      *
-     * @dataProvider provideInvalidAttributeCodes
      * @param        string $attributeCode
      * @param        $result
      * @throws       NotFoundException
      */
+    #[DataProvider('provideInvalidAttributeCodes')]
     public function testExecuteWithInvalidAttributeCode($attributeCode, $result)
     {
         $serializedOptions = '{"key":"value"}';

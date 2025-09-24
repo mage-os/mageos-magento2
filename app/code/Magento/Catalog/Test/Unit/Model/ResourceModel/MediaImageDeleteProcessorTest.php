@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Model\ResourceModel;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ResourceModel\MediaImageDeleteProcessor;
 use Magento\Catalog\Model\Product\Gallery\Processor;
@@ -78,10 +79,58 @@ class MediaImageDeleteProcessorTest extends TestCase
             ->onlyMethods(['getBaseMediaUrl', 'getMediaUrl', 'getBaseMediaPath', 'getMediaPath'])
             ->getMock();
 
-        $this->mediaDirectory = $this->getMockBuilder(Filesystem::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getRelativePath', 'isFile', 'delete'])
-            ->getMock();
+        $this->mediaDirectory = new class extends Filesystem {
+            private $relativePath = null;
+            private $relativePathCallback = null;
+            private $isFile = false;
+            private $deleteResult = null;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getRelativePath($path)
+            {
+                if ($this->relativePathCallback) {
+                    return call_user_func($this->relativePathCallback, $path);
+                }
+                return $this->relativePath;
+            }
+            
+            public function setRelativePath($relativePath)
+            {
+                $this->relativePath = $relativePath;
+                return $this;
+            }
+            
+            public function setRelativePathCallback($callback)
+            {
+                $this->relativePathCallback = $callback;
+                return $this;
+            }
+            
+            public function isFile($path)
+            {
+                return $this->isFile;
+            }
+            
+            public function setIsFile($isFile)
+            {
+                $this->isFile = $isFile;
+                return $this;
+            }
+            
+            public function delete($path)
+            {
+                return $this->deleteResult;
+            }
+            
+            public function setDeleteResult($result)
+            {
+                $this->deleteResult = $result;
+                return $this;
+            }
+        };
 
         $this->imageProcessor = $this->getMockBuilder(Processor::class)
             ->disableOriginalConstructor()
@@ -107,43 +156,34 @@ class MediaImageDeleteProcessorTest extends TestCase
     /**
      * Test mediaImageDeleteProcessor execute method
      *
-     * @dataProvider executeCategoryProductMediaDeleteDataProvider
      * @param int $productId
      * @param array $productImages
      * @param bool $isValidFile
      * @param bool $imageUsedBefore
      */
+    #[DataProvider('executeCategoryProductMediaDeleteDataProvider')]
     public function testExecuteCategoryProductMediaDelete(
         int $productId,
         array $productImages,
         bool $isValidFile,
         bool $imageUsedBefore
     ): void {
-        $this->productMock->expects($this->any())
-            ->method('getId')
-            ->willReturn($productId);
+        $this->productMock->method('getId')->willReturn($productId);
 
-        $this->productMock->expects($this->any())
-            ->method('getMediaGalleryImages')
-            ->willReturn($productImages);
+        $this->productMock->method('getMediaGalleryImages')->willReturn($productImages);
 
-        $this->mediaDirectory->expects($this->any())
-            ->method('isFile')
-            ->willReturn($isValidFile);
+        $this->mediaDirectory->setIsFile($isValidFile);
 
-        $this->mediaDirectory->expects($this->any())
-            ->method('getRelativePath')
-            ->willReturnCallback(function ($arg) use ($productImages) {
-                if ($arg == $productImages[0]->getFile()) {
-                    return $productImages[0]->getPath();
-                } elseif ($arg == $productImages[1]->getFile()) {
-                    return $productImages[1]->getPath();
-                }
-            });
+        // Set up the getRelativePath behavior using a callback
+        $this->mediaDirectory->setRelativePathCallback(function ($arg) use ($productImages) {
+            if ($arg == $productImages[0]->getFile()) {
+                return $productImages[0]->getPath();
+            } elseif ($arg == $productImages[1]->getFile()) {
+                return $productImages[1]->getPath();
+            }
+        });
 
-        $this->productGallery->expects($this->any())
-            ->method('countImageUses')
-            ->willReturn($imageUsedBefore);
+        $this->productGallery->method('countImageUses')->willReturn($imageUsedBefore);
 
         $this->productGallery->expects($this->any())
             ->method('deleteGallery')

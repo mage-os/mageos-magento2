@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Model\ResourceModel\Product\Collection;
 
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Catalog\Model\Indexer\Category\Product\TableMaintainer;
 use Magento\Catalog\Model\ResourceModel\Product\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\Collection\JoinMinimalPosition;
@@ -46,7 +47,7 @@ class JoinMinimalPositionTest extends TestCase
      * Test that correct SQL is generated
      *
      * @return void
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws LocalizedException
      * @throws \Zend_Db_Select_Exception
      */
     public function testExecute(): void
@@ -98,17 +99,9 @@ class JoinMinimalPositionTest extends TestCase
             ]
         ];
         $categoryIds = [3, 5];
-        $collection = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getConnection', 'getSelect', 'getStoreId'])
-            ->getMockForAbstractClass();
-        $connection = $this->getMockBuilder(Mysql::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['_connect'])
-            ->getMockForAbstractClass();
-        $select = $this->getMockBuilder(Select::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $collection = $this->createMock(Collection::class);
+        $connection = $this->createMock(Mysql::class);
+        $select = $this->createMock(Select::class);
 
         $select->reset();
         $select->from(['e' => 'catalog_product_entity']);

@@ -40,9 +40,7 @@ class SalableResolverTest extends TestCase
 
     public function testSalableItem()
     {
-        $this->product->expects($this->any())
-            ->method('getCanShowPrice')
-            ->willReturn(true);
+        $this->product->method('getCanShowPrice')->willReturn(true);
 
         $result = $this->object->isSalable($this->product);
         $this->assertTrue($result);
@@ -50,9 +48,7 @@ class SalableResolverTest extends TestCase
 
     public function testNotSalableItem()
     {
-        $this->product->expects($this->any())
-            ->method('getCanShowPrice')
-            ->willReturn(false);
+        $this->product->method('getCanShowPrice')->willReturn(false);
 
         $result = $this->object->isSalable($this->product);
         $this->assertFalse($result);

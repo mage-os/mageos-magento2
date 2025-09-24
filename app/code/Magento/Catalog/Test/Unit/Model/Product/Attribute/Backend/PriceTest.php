@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Model\Product\Attribute\Backend;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Attribute\Backend\Price;
 use Magento\Directory\Model\CurrencyFactory;
@@ -42,8 +43,7 @@ class PriceTest extends TestCase
     {
         $objectHelper = new ObjectManager($this);
         $localeFormat = $objectHelper->getObject(Format::class);
-        $this->storeManager = $this->getMockBuilder(StoreManagerInterface::class)
-            ->getMockForAbstractClass();
+        $this->storeManager = $this->createMock(StoreManagerInterface::class);
         $this->currencyFactory = $this->getMockBuilder(CurrencyFactory::class)
             ->onlyMethods(['create'])
             ->disableOriginalConstructor()
@@ -56,19 +56,56 @@ class PriceTest extends TestCase
                 'currencyFactory' => $this->currencyFactory
             ]
         );
-        $this->attribute = $this->getMockBuilder(AbstractAttribute::class)
-            ->addMethods(['isScopeWebsite', 'getIsGlobal'])
-            ->onlyMethods(['getAttributeCode'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->attribute = new class extends AbstractAttribute {
+            private $isScopeWebsite = null;
+            private $isGlobal = null;
+            private $attributeCode = null;
+            
+            public function __construct()
+            {
+                // Don't call parent constructor to avoid dependencies
+            }
+            
+            public function isScopeWebsite()
+            {
+                return $this->isScopeWebsite;
+            }
+            
+            public function setIsScopeWebsite($isScopeWebsite)
+            {
+                $this->isScopeWebsite = $isScopeWebsite;
+                return $this;
+            }
+            
+            public function getIsGlobal()
+            {
+                return $this->isGlobal;
+            }
+            
+            public function setIsGlobal($isGlobal)
+            {
+                $this->isGlobal = $isGlobal;
+                return $this;
+            }
+            
+            public function getAttributeCode()
+            {
+                return $this->attributeCode;
+            }
+            
+            public function setAttributeCode($attributeCode)
+            {
+                $this->attributeCode = $attributeCode;
+                return $this;
+            }
+        };
         $this->model->setAttribute($this->attribute);
     }
 
     /**
      * Tests for the cases that expect to pass validation
-     *
-     * @dataProvider dataProviderValidate
      */
+    #[DataProvider('dataProviderValidate')]
     public function testValidate($value)
     {
         $object = $this->createMock(Product::class);
@@ -95,9 +132,8 @@ class PriceTest extends TestCase
 
     /**
      * Tests for the cases that expect to fail validation
-     *
-     * @dataProvider dataProviderValidateForFailure
      */
+    #[DataProvider('dataProviderValidateForFailure')]
     public function testValidateForFailure($value)
     {
         $this->expectException('Magento\Framework\Exception\LocalizedException');
@@ -137,12 +173,11 @@ class PriceTest extends TestCase
             ->getMock();
         $object->expects($this->any())->method('getData')->with($attributeCode)->willReturn($newPrice);
         $object->expects($this->any())->method('getOrigData')->with($attributeCode)->willReturn('7.77');
-        $object->expects($this->any())->method('getStoreId')->willReturn($defaultStoreId);
+        $object->method('getStoreId')->willReturn($defaultStoreId);
         $object->expects($this->never())->method('getStoreIds');
         $object->expects($this->never())->method('getWebsiteStoreIds');
-        $this->attribute->expects($this->any())->method('getAttributeCode')->willReturn($attributeCode);
-        $this->attribute->expects($this->any())->method('isScopeWebsite')
-            ->willReturn(ScopedAttributeInterface::SCOPE_WEBSITE);
+        $this->attribute->setAttributeCode($attributeCode);
+        $this->attribute->setIsScopeWebsite(ScopedAttributeInterface::SCOPE_WEBSITE);
         $this->storeManager->expects($this->never())->method('getStore');
 
         $object->expects($this->any())->method('addAttributeUpdate')
@@ -167,9 +202,8 @@ class PriceTest extends TestCase
             ->getMock();
         $object->expects($this->any())->method('getData')->with($attributeCode)->willReturn('7.77');
         $object->expects($this->any())->method('getOrigData')->with($attributeCode)->willReturn('7.77');
-        $this->attribute->expects($this->any())->method('getAttributeCode')->willReturn($attributeCode);
-        $this->attribute->expects($this->any())->method('getIsGlobal')
-            ->willReturn(ScopedAttributeInterface::SCOPE_WEBSITE);
+        $this->attribute->setAttributeCode($attributeCode);
+        $this->attribute->setIsGlobal(ScopedAttributeInterface::SCOPE_WEBSITE);
 
         $object->expects($this->never())->method('addAttributeUpdate');
         $this->assertEquals($this->model, $this->model->afterSave($object));
@@ -184,9 +218,8 @@ class PriceTest extends TestCase
             ->getMock();
         $object->expects($this->any())->method('getData')->with($attributeCode)->willReturn('9.99');
         $object->expects($this->any())->method('getOrigData')->with($attributeCode)->willReturn('7.77');
-        $this->attribute->expects($this->any())->method('getAttributeCode')->willReturn($attributeCode);
-        $this->attribute->expects($this->any())->method('getIsGlobal')
-            ->willReturn(ScopedAttributeInterface::SCOPE_GLOBAL);
+        $this->attribute->setAttributeCode($attributeCode);
+        $this->attribute->setIsGlobal(ScopedAttributeInterface::SCOPE_GLOBAL);
 
         $object->expects($this->never())->method('addAttributeUpdate');
         $this->assertEquals($this->model, $this->model->afterSave($object));

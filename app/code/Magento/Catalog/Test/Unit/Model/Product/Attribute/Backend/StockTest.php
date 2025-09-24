@@ -51,20 +51,31 @@ class StockTest extends TestCase
             ['getIsInStock', 'getQty']
         );
 
-        $this->stockRegistry->expects($this->any())
-            ->method('getStockItem')
-            ->willReturn($this->stockItemMock);
+        $this->stockRegistry->method('getStockItem')->willReturn($this->stockItemMock);
         $this->model = $this->objectHelper->getObject(
             Stock::class,
             ['stockRegistry' => $this->stockRegistry]
         );
-        $attribute = $this->getMockBuilder(DataObject::class)
-            ->addMethods(['getAttributeCode'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $attribute->expects($this->atLeastOnce())
-            ->method('getAttributeCode')
-            ->willReturn(self::ATTRIBUTE_NAME);
+        $attribute = new class extends DataObject {
+            private $attributeCode = null;
+            
+            public function __construct()
+            {
+                // Don't call parent constructor to avoid dependencies
+            }
+            
+            public function getAttributeCode()
+            {
+                return $this->attributeCode;
+            }
+            
+            public function setAttributeCode($attributeCode)
+            {
+                $this->attributeCode = $attributeCode;
+                return $this;
+            }
+        };
+        $attribute->setAttributeCode(self::ATTRIBUTE_NAME);
         $this->model->setAttribute($attribute);
     }
 

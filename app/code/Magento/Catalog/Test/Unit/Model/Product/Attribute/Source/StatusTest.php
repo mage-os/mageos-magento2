@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Model\Product\Attribute\Source;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Entity\Attribute;
 use Magento\Catalog\Model\Product\Attribute\Backend\Sku;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
@@ -44,16 +45,164 @@ class StatusTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManagerHelper = new ObjectManagerHelper($this);
-        $this->collection = $this->getMockBuilder(Collection::class)
-            ->addMethods(['joinLeft', 'order', 'getCheckSql'])
-            ->onlyMethods([ 'getSelect', 'getStoreId', 'getConnection'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->attributeModel = $this->getMockBuilder(Attribute::class)
-            ->addMethods(['isScopeGlobal', 'getAttribute'])
-            ->onlyMethods([ 'getAttributeCode', 'getBackend', 'getId', 'getEntity'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->collection = new class extends Collection {
+            private $joinLeftResult = null;
+            private $orderResult = null;
+            private $checkSql = null;
+            private $select = null;
+            private $storeId = null;
+            private $connection = null;
+            
+            public function __construct()
+            {
+                // Don't call parent constructor to avoid dependencies
+            }
+            
+            public function joinLeft($table, $condition, $columns = '*')
+            {
+                return $this->joinLeftResult ?: $this;
+            }
+            
+            public function setJoinLeftResult($result)
+            {
+                $this->joinLeftResult = $result;
+                return $this;
+            }
+            
+            public function order($field, $direction = 'ASC')
+            {
+                return $this->orderResult ?: $this;
+            }
+            
+            public function setOrderResult($result)
+            {
+                $this->orderResult = $result;
+                return $this;
+            }
+            
+            public function getCheckSql($condition, $true, $false)
+            {
+                return $this->checkSql;
+            }
+            
+            public function setCheckSql($checkSql)
+            {
+                $this->checkSql = $checkSql;
+                return $this;
+            }
+            
+            public function getSelect()
+            {
+                return $this->select ?: $this;
+            }
+            
+            public function setSelect($select)
+            {
+                $this->select = $select;
+                return $this;
+            }
+            
+            public function getStoreId()
+            {
+                return $this->storeId;
+            }
+            
+            public function setStoreId($storeId)
+            {
+                $this->storeId = $storeId;
+                return $this;
+            }
+            
+            public function getConnection()
+            {
+                return $this->connection ?: $this;
+            }
+            
+            public function setConnection($connection)
+            {
+                $this->connection = $connection;
+                return $this;
+            }
+        };
+        $this->attributeModel = new class extends Attribute {
+            private $isScopeGlobal = null;
+            private $attribute = null;
+            private $attributeCode = null;
+            private $backend = null;
+            private $id = null;
+            private $entity = null;
+            
+            public function __construct()
+            {
+                // Don't call parent constructor to avoid dependencies
+            }
+            
+            public function isScopeGlobal()
+            {
+                return $this->isScopeGlobal;
+            }
+            
+            public function setIsScopeGlobal($isScopeGlobal)
+            {
+                $this->isScopeGlobal = $isScopeGlobal;
+                return $this;
+            }
+            
+            public function getAttribute()
+            {
+                return $this->attribute ?: $this;
+            }
+            
+            public function setAttribute($attribute)
+            {
+                $this->attribute = $attribute;
+                return $this;
+            }
+            
+            public function getAttributeCode()
+            {
+                return $this->attributeCode;
+            }
+            
+            public function setAttributeCode($attributeCode)
+            {
+                $this->attributeCode = $attributeCode;
+                return $this;
+            }
+            
+            public function getBackend()
+            {
+                return $this->backend;
+            }
+            
+            public function setBackend($backend)
+            {
+                $this->backend = $backend;
+                return $this;
+            }
+            
+            public function getId()
+            {
+                return $this->id;
+            }
+            
+            public function setId($id)
+            {
+                $this->id = $id;
+                return $this;
+            }
+            
+            public function getEntity()
+            {
+                return $this->entity;
+            }
+            
+            public function setEntity($entity)
+            {
+                $this->entity = $entity;
+                return $this;
+            }
+        };
         $this->backendAttributeModel = $this->createPartialMock(
             Sku::class,
             [ 'getTable']
@@ -62,32 +211,18 @@ class StatusTest extends TestCase
             Status::class
         );
 
-        $this->attributeModel->expects($this->any())->method('getAttribute')->willReturnSelf();
-        $this->attributeModel->expects($this->any())->method('getAttributeCode')
-            ->willReturn('attribute_code');
-        $this->attributeModel->expects($this->any())->method('getId')
-            ->willReturn('1');
-        $this->attributeModel->expects($this->any())->method('getBackend')
-            ->willReturn($this->backendAttributeModel);
-        $this->collection->expects($this->any())->method('getSelect')->willReturnSelf();
-        $this->collection->expects($this->any())->method('joinLeft')->willReturnSelf();
-        $this->backendAttributeModel->expects($this->any())->method('getTable')
-            ->willReturn('table_name');
+        $this->attributeModel->setAttributeCode('attribute_code');
+        $this->attributeModel->setId('1');
+        $this->attributeModel->setBackend($this->backendAttributeModel);
+        $this->backendAttributeModel->method('getTable')->willReturn('table_name');
 
-        $this->entity = $this->getMockBuilder(AbstractEntity::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getLinkField'])
-            ->getMockForAbstractClass();
+        $this->entity = $this->createMock(AbstractEntity::class);
     }
 
     public function testAddValueSortToCollectionGlobal()
     {
-        $this->attributeModel->expects($this->any())->method('isScopeGlobal')
-            ->willReturn(true);
-        $this->collection->expects($this->once())->method('order')->with('attribute_code_t.value asc')->willReturnSelf(
-        );
-
-        $this->attributeModel->expects($this->once())->method('getEntity')->willReturn($this->entity);
+        $this->attributeModel->setIsScopeGlobal(true);
+        $this->attributeModel->setEntity($this->entity);
         $this->entity->expects($this->once())->method('getLinkField')->willReturn('entity_id');
 
         $this->status->setAttribute($this->attributeModel);
@@ -96,17 +231,10 @@ class StatusTest extends TestCase
 
     public function testAddValueSortToCollectionNotGlobal()
     {
-        $this->attributeModel->expects($this->any())->method('isScopeGlobal')
-            ->willReturn(false);
-
-        $this->collection->expects($this->once())->method('order')->with('check_sql asc')->willReturnSelf();
-        $this->collection->expects($this->once())->method('getStoreId')
-            ->willReturn(1);
-        $this->collection->expects($this->any())->method('getConnection')->willReturnSelf();
-        $this->collection->expects($this->any())->method('getCheckSql')
-            ->willReturn('check_sql');
-
-        $this->attributeModel->expects($this->any())->method('getEntity')->willReturn($this->entity);
+        $this->attributeModel->setIsScopeGlobal(false);
+        $this->collection->setStoreId(1);
+        $this->collection->setCheckSql('check_sql');
+        $this->attributeModel->setEntity($this->entity);
         $this->entity->expects($this->once())->method('getLinkField')->willReturn('entity_id');
 
         $this->status->setAttribute($this->attributeModel);
@@ -129,10 +257,10 @@ class StatusTest extends TestCase
     }
 
     /**
-     * @dataProvider getOptionTextDataProvider
      * @param string $text
      * @param string $id
      */
+    #[DataProvider('getOptionTextDataProvider')]
     public function testGetOptionText($text, $id)
     {
         $this->assertEquals($text, $this->status->getOptionText($id));

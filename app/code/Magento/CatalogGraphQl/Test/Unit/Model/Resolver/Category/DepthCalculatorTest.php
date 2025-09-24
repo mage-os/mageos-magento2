@@ -126,7 +126,7 @@ class DepthCalculatorTest extends TestCase
     }
 
     /**
-     * @return \GraphQL\Language\AST\SelectionSetNode
+     * @return SelectionSetNode
      */
     protected function getSelectionSetNode($nodes = []): SelectionSetNode
     {
@@ -134,7 +134,7 @@ class DepthCalculatorTest extends TestCase
     }
 
     /**
-     * @return \GraphQL\Language\AST\NodeList
+     * @return NodeList
      */
     protected function getNodeList(): NodeList
     {

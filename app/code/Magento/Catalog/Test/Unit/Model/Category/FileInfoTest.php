@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Model\Category;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Category\FileInfo;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\File\Mime;
@@ -65,24 +66,17 @@ class FileInfoTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->mediaDirectory = $this->getMockBuilder(WriteInterface::class)
-            ->getMockForAbstractClass();
+        $this->mediaDirectory = $this->createMock(WriteInterface::class);
 
-        $this->baseDirectory = $baseDirectory = $this->getMockBuilder(ReadInterface::class)
-            ->getMockForAbstractClass();
+        $this->baseDirectory = $baseDirectory = $this->createMock(ReadInterface::class);
 
-        $this->pubDirectory = $pubDirectory = $this->getMockBuilder(ReadInterface::class)
-            ->getMockForAbstractClass();
+        $this->pubDirectory = $pubDirectory = $this->createMock(ReadInterface::class);
 
         $this->store = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->storeManager = $this->getMockBuilder(StoreManagerInterface::class)
-            ->onlyMethods(['getStore'])
-            ->getMockForAbstractClass();
-        $this->storeManager->expects($this->any())
-            ->method('getStore')
-            ->willReturn($this->store);
+        $this->storeManager = $this->createMock(StoreManagerInterface::class);
+        $this->storeManager->method('getStore')->willReturn($this->store);
 
         $this->filesystem = $this->getMockBuilder(Filesystem::class)
             ->disableOriginalConstructor()
@@ -174,8 +168,8 @@ class FileInfoTest extends TestCase
     /**
      * @param $fileName
      * @param $fileMediaPath
-     * @dataProvider isExistProvider
      */
+    #[DataProvider('isExistProvider')]
     public function testIsExist($fileName, $fileMediaPath)
     {
         $this->mediaDirectory->method('getAbsolutePath')
@@ -203,8 +197,8 @@ class FileInfoTest extends TestCase
     /**
      * @param $fileName
      * @param $expected
-     * @dataProvider isBeginsWithMediaDirectoryPathProvider
      */
+    #[DataProvider('isBeginsWithMediaDirectoryPathProvider')]
     public function testIsBeginsWithMediaDirectoryPath($fileName, $expected)
     {
         $this->mediaDirectory->method('getAbsolutePath')

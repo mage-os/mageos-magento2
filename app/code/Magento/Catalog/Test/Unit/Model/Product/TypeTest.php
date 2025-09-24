@@ -251,9 +251,7 @@ class TypeTest extends TestCase
             ->onlyMethods(['create']);
         $mock = $mockBuilder->getMock();
 
-        $mock->expects($this->any())
-            ->method('create')
-            ->willReturn($mockedPriceInfoInterface);
+        $mock->method('create')->willReturn($mockedPriceInfoInterface);
 
         return $mock;
     }
@@ -265,7 +263,7 @@ class TypeTest extends TestCase
     {
         $mockBuilder = $this->getMockBuilder(PriceInfoInterface::class)
             ->disableOriginalConstructor();
-        $mock = $mockBuilder->getMockForAbstractClass();
+        $mock = $mockBuilder->getMock();
 
         return $mock;
     }
@@ -332,11 +330,9 @@ class TypeTest extends TestCase
         $mockBuild = $this->getMockBuilder(ConfigInterface::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getAll']);
-        $mock = $mockBuild->getMockForAbstractClass();
+        $mock = $mockBuild->getMock();
 
-        $mock->expects($this->any())
-            ->method('getAll')
-            ->willReturn($this->_productTypes);
+        $mock->method('getAll')->willReturn($this->_productTypes);
 
         return $mock;
     }
@@ -346,10 +342,10 @@ class TypeTest extends TestCase
      */
     private function getMockedTypePriceFactory(): PriceFactory
     {
-        $mockBuild = $this->getMockBuilder(\Magento\Catalog\Model\Product\Type\Price\Factory::class)
+        $mockBuild = $this->getMockBuilder(PriceFactory::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['create']);
-        $mock = $mockBuild->getMockForAbstractClass();
+        $mock = $mockBuild->getMock();
 
         $mock->expects($this->any())
             ->method('create')

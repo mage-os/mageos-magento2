@@ -103,7 +103,7 @@ class ProductViewCounterTest extends TestCase
             ->getMock();
         $this->serializeMock = $this->getMockBuilder(SerializerInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->urlMock = $this->getMockBuilder(Url::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -115,7 +115,7 @@ class ProductViewCounterTest extends TestCase
             ->getMock();
         $this->scopeConfigMock = $this->getMockBuilder(ScopeConfigInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->productViewCounter = new ProductViewCounter(
             $this->contextMock,
@@ -135,7 +135,7 @@ class ProductViewCounterTest extends TestCase
     {
         $productMock = $this->getMockBuilder(ProductInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $storeMock = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
@@ -164,13 +164,160 @@ class ProductViewCounterTest extends TestCase
 
     public function testGetCurrentProductDataWithNonEmptyProduct()
     {
-        $productMock = $this->getMockBuilder(ProductInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['isAvailable'])
-            ->getMockForAbstractClass();
+        $productMock = new class implements ProductInterface {
+            public function getId()
+            {
+                return 123;
+            }
+            public function setId($id)
+            {
+                return $this;
+            }
+            public function getSku()
+            {
+                return 'test-sku';
+            }
+            public function setSku($sku)
+            {
+                return $this;
+            }
+            public function getName()
+            {
+                return 'Test Product';
+            }
+            public function setName($name)
+            {
+                return $this;
+            }
+            public function getPrice()
+            {
+                return 10.00;
+            }
+            public function setPrice($price)
+            {
+                return $this;
+            }
+            public function getWeight()
+            {
+                return 1.0;
+            }
+            public function setWeight($weight)
+            {
+                return $this;
+            }
+            public function getStatus()
+            {
+                return 1;
+            }
+            public function setStatus($status)
+            {
+                return $this;
+            }
+            public function getVisibility()
+            {
+                return 4;
+            }
+            public function setVisibility($visibility)
+            {
+                return $this;
+            }
+            public function getAttributeSetId()
+            {
+                return 4;
+            }
+            public function setAttributeSetId($attributeSetId)
+            {
+                return $this;
+            }
+            public function getTypeId()
+            {
+                return 'simple';
+            }
+            public function setTypeId($typeId)
+            {
+                return $this;
+            }
+            public function getCreatedAt()
+            {
+                return '2023-01-01 00:00:00';
+            }
+            public function setCreatedAt($createdAt)
+            {
+                return $this;
+            }
+            public function getUpdatedAt()
+            {
+                return '2023-01-01 00:00:00';
+            }
+            public function setUpdatedAt($updatedAt)
+            {
+                return $this;
+            }
+            public function getMediaGalleryEntries()
+            {
+                return null;
+            }
+            public function setMediaGalleryEntries(?array $mediaGalleryEntries = null)
+            {
+                return $this;
+            }
+            public function getTierPrices()
+            {
+                return null;
+            }
+            public function setTierPrices(?array $tierPrices = null)
+            {
+                return $this;
+            }
+            public function getCustomAttributes()
+            {
+                return [];
+            }
+            public function setCustomAttributes($customAttributes)
+            {
+                return $this;
+            }
+            public function getCustomAttribute($attributeCode)
+            {
+                return null;
+            }
+            public function setCustomAttribute($attributeCode, $attributeValue)
+            {
+                return $this;
+            }
+            public function getExtensionAttributes()
+            {
+                return null;
+            }
+            public function setExtensionAttributes($extensionAttributes)
+            {
+                return $this;
+            }
+            public function getProductLinks()
+            {
+                return null;
+            }
+            public function setProductLinks(?array $links = null)
+            {
+                return $this;
+            }
+            public function getOptions()
+            {
+                return null;
+            }
+            public function setOptions(?array $options = null)
+            {
+                return $this;
+            }
+            
+            public function isAvailable()
+            {
+                return true;
+            }
+        };
         $productRendererMock = $this->getMockBuilder(ProductRenderInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $storeMock = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -181,9 +328,6 @@ class ProductViewCounterTest extends TestCase
         $this->productRenderFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($productRendererMock);
-        $productMock->expects($this->exactly(2))
-            ->method('getId')
-            ->willReturn(123);
         $this->productRenderCollectorCompositeMock->expects($this->once())
             ->method('collect')
             ->with($productMock, $productRendererMock);

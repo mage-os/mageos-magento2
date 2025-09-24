@@ -33,7 +33,7 @@ class AbstractTest extends TestCase
                 ->addMethods(['getApplyTo'])
                 ->onlyMethods(['isInSet', 'getBackend'])
                 ->disableOriginalConstructor()
-                ->getMockForAbstractClass();
+                ->getMock();
 
             $mock->setAttributeId($code);
             $mock->setAttributeCode($code);

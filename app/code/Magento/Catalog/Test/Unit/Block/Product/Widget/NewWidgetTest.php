@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Block\Product\Widget;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Block\Product\Context as ProductBlockContext;
 use Magento\Catalog\Block\Product\Widget\NewWidget;
 use Magento\Catalog\Model\Product;
@@ -85,7 +86,7 @@ class NewWidgetTest extends TestCase
         $this->layout = $this->createMock(Layout::class);
         $this->requestMock = $this->getMockBuilder(RequestInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->context = $this->getMockBuilder(ProductBlockContext::class)
             ->onlyMethods(
@@ -96,15 +97,10 @@ class NewWidgetTest extends TestCase
                 ]
             )
             ->disableOriginalConstructor()
-            ->disableArgumentCloning()
             ->getMock();
 
-        $this->context->expects($this->any())
-            ->method('getLayout')
-            ->willReturn($this->layout);
-        $this->context->expects($this->any())
-            ->method('getRequest')
-            ->willReturn($this->requestMock);
+        $this->context->method('getLayout')->willReturn($this->layout);
+        $this->context->method('getRequest')->willReturn($this->requestMock);
 
         $this->block = $this->objectManager->getObject(
             NewWidget::class,
@@ -162,8 +158,8 @@ class NewWidgetTest extends TestCase
     /**
      * @param int $pageNumber
      * @param int $expectedResult
-     * @dataProvider getCurrentPageDataProvider
      */
+    #[DataProvider('getCurrentPageDataProvider')]
     public function testGetCurrentPage($pageNumber, $expectedResult)
     {
         $this->block->setData('page_var_name', 'page_number');
@@ -208,8 +204,7 @@ class NewWidgetTest extends TestCase
             ->willReturn(false);
         $this->catalogConfig->expects($this->once())->method('getProductAttributes')
             ->willReturn([]);
-        $this->localDate->expects($this->any())->method('date')
-            ->willReturn(new \DateTime('now', new \DateTimeZone('UTC')));
+        $this->localDate->method('date')->willReturn(new \DateTime('now', new \DateTimeZone('UTC')));
 
         $this->context->expects($this->once())->method('getEventManager')->willReturn($this->eventManager);
         $this->context->expects($this->once())->method('getScopeConfig')->willReturn($this->scopeConfig);
@@ -293,8 +288,8 @@ class NewWidgetTest extends TestCase
      * @param int $productsCount
      * @param int $productsPerPage
      * @param int $expectedPageSize
-     * @dataProvider getProductCollectionDataProvider
      */
+    #[DataProvider('getProductCollectionDataProvider')]
     public function testGetProductNewCollection($pagerEnable, $productsCount, $productsPerPage, $expectedPageSize)
     {
         $this->generalGetProductCollection();
@@ -324,8 +319,8 @@ class NewWidgetTest extends TestCase
      * @param int $productsCount
      * @param int $productsPerPage
      * @param int $expectedPageSize
-     * @dataProvider getProductCollectionDataProvider
      */
+    #[DataProvider('getProductCollectionDataProvider')]
     public function testGetProductAllCollection($pagerEnable, $productsCount, $productsPerPage, $expectedPageSize)
     {
         $this->generalGetProductCollection();

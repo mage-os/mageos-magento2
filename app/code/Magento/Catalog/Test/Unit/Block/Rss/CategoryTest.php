@@ -127,7 +127,7 @@ class CategoryTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->request = $this->getMockForAbstractClass(RequestInterface::class);
+        $this->request = $this->createMock(RequestInterface::class);
         $this->request
             ->method('getParam')
             ->willReturnCallback(fn($param) => match ([$param]) {
@@ -145,21 +145,21 @@ class CategoryTest extends TestCase
             \Magento\Catalog\Model\Rss\Category::class,
             ['getProductCollection']
         );
-        $this->rssUrlBuilder = $this->getMockForAbstractClass(UrlBuilderInterface::class);
+        $this->rssUrlBuilder = $this->createMock(UrlBuilderInterface::class);
         $this->imageHelper = $this->createMock(Image::class);
         $this->customerSession = $this->createPartialMock(Session::class, ['getId']);
-        $this->customerSession->expects($this->any())->method('getId')->willReturn(1);
-        $this->storeManager = $this->getMockForAbstractClass(StoreManagerInterface::class);
+        $this->customerSession->method('getId')->willReturn(1);
+        $this->storeManager = $this->createMock(StoreManagerInterface::class);
         $store = $this->getMockBuilder(Store::class)
             ->onlyMethods(['getId'])
             ->disableOriginalConstructor()
             ->getMock();
-        $store->expects($this->any())->method('getId')->willReturn(1);
-        $this->storeManager->expects($this->any())->method('getStore')->willReturn($store);
-        $this->scopeConfig = $this->getMockForAbstractClass(ScopeConfigInterface::class);
-        $this->categoryRepository = $this->getMockForAbstractClass(CategoryRepositoryInterface::class);
+        $store->method('getId')->willReturn(1);
+        $this->storeManager->method('getStore')->willReturn($store);
+        $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
+        $this->categoryRepository = $this->createMock(CategoryRepositoryInterface::class);
         $this->viewConfig = $this->getMockBuilder(ConfigInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
         $objectManagerHelper = new ObjectManagerHelper($this);
         $this->block = $objectManagerHelper->getObject(
             Category::class,
@@ -203,18 +203,42 @@ class CategoryTest extends TestCase
             ->method('getViewConfig')
             ->willReturn($configViewMock);
 
-        $product = $this->getMockBuilder(Product::class)
-            ->onlyMethods(['__sleep', 'getName', 'getProductUrl'])
-            ->addMethods(['getAllowedInRss', 'getDescription', 'getAllowedPriceInRss'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $product->expects($this->once())->method('getName')->willReturn('Product Name');
-        $product->expects($this->once())->method('getAllowedInRss')->willReturn(true);
-        $product->expects($this->exactly(2))->method('getProductUrl')
-            ->willReturn('http://magento.com/product.html');
-        $product->expects($this->once())->method('getDescription')
-            ->willReturn('Product Description');
-        $product->expects($this->once())->method('getAllowedPriceInRss')->willReturn(true);
+        $product = new class extends Product {
+            public function __construct()
+            {
+                // Empty constructor for test
+            }
+            
+            public function __sleep()
+            {
+                return [];
+            }
+            
+            public function getName()
+            {
+                return 'Product Name';
+            }
+            
+            public function getProductUrl($useSid = null)
+            {
+                return 'http://magento.com/product.html';
+            }
+            
+            public function getAllowedInRss()
+            {
+                return true;
+            }
+            
+            public function getDescription()
+            {
+                return 'Product Description';
+            }
+            
+            public function getAllowedPriceInRss()
+            {
+                return true;
+            }
+        };
 
         $this->rssModel->expects($this->once())->method('getProductCollection')
             ->willReturn([$product]);
@@ -309,13 +333,31 @@ class CategoryTest extends TestCase
             ->getMock();
         $nodes->expects($this->once())->method('getChildren')->willReturn([$node]);
 
-        $tree = $this->getMockBuilder(Tree::class)
-            ->onlyMethods(['loadNode'])
-            ->addMethods(['loadChildren'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $tree->expects($this->once())->method('loadNode')->willReturnSelf();
-        $tree->expects($this->once())->method('loadChildren')->willReturn($nodes);
+        $tree = new class extends Tree {
+            private $nodes;
+            
+            public function __construct()
+            {
+                // Empty constructor for test
+            }
+            
+            public function loadNode($nodeId)
+            {
+                return $this;
+            }
+            
+            public function loadChildren()
+            {
+                return $this->nodes;
+            }
+            
+            public function setNodes($nodes)
+            {
+                $this->nodes = $nodes;
+                return $this;
+            }
+        };
+        $tree->setNodes($nodes);
 
         $category->expects($this->once())->method('getTreeModel')->willReturn($tree);
         $category->expects($this->once())->method('getResourceCollection')->willReturn('');

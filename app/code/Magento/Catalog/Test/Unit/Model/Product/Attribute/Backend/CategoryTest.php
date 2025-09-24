@@ -17,30 +17,73 @@ class CategoryTest extends TestCase
     {
         $categoryIds = [1, 2, 3, 4, 5];
 
-        $product = $this->getMockBuilder(DataObject::class)
-            ->addMethods(['getCategoryIds'])
-            ->onlyMethods(['setData'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $product->expects($this->once())->method('getCategoryIds')->willReturn($categoryIds);
+        $product = new class extends DataObject {
+            private $categoryIds = null;
+            private $data = [];
+            
+            public function __construct()
+            {
+                // Don't call parent constructor to avoid dependencies
+            }
+            
+            public function getCategoryIds()
+            {
+                return $this->categoryIds;
+            }
+            
+            public function setCategoryIds($categoryIds)
+            {
+                $this->categoryIds = $categoryIds;
+                return $this;
+            }
+            
+            public function setData($key, $value = null)
+            {
+                if (is_array($key)) {
+                    $this->data = array_merge($this->data, $key);
+                } else {
+                    $this->data[$key] = $value;
+                }
+                return $this;
+            }
+            
+            public function getData($key = '', $index = null)
+            {
+                if ($key === '') {
+                    return $this->data;
+                }
+                return isset($this->data[$key]) ? $this->data[$key] : null;
+            }
+        };
+        $product->setCategoryIds($categoryIds);
 
-        $product->expects($this->once())->method('setData')->with('category_ids', $categoryIds);
-
-        $categoryAttribute = $this->getMockBuilder(DataObject::class)
-            ->addMethods(['getAttributeCode'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $categoryAttribute->expects(
-            $this->once()
-        )->method(
-            'getAttributeCode'
-        )->willReturn(
-            'category_ids'
-        );
+        $categoryAttribute = new class extends DataObject {
+            private $attributeCode = null;
+            
+            public function __construct()
+            {
+                // Don't call parent constructor to avoid dependencies
+            }
+            
+            public function getAttributeCode()
+            {
+                return $this->attributeCode;
+            }
+            
+            public function setAttributeCode($attributeCode)
+            {
+                $this->attributeCode = $attributeCode;
+                return $this;
+            }
+        };
+        $categoryAttribute->setAttributeCode('category_ids');
 
         $model = new Category();
         $model->setAttribute($categoryAttribute);
 
         $model->afterLoad($product);
+        
+        // Verify that the product data was set correctly
+        $this->assertEquals($categoryIds, $product->getData('category_ids'));
     }
 }

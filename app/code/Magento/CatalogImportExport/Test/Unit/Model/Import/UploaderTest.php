@@ -6,6 +6,7 @@
  */
 namespace Magento\CatalogImportExport\Test\Unit\Model\Import;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\CatalogImportExport\Model\Import\Uploader;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Filesystem;
@@ -112,9 +113,7 @@ class UploaderTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['getDirectoryWrite'])
             ->getMock();
-        $this->filesystem->expects($this->any())
-            ->method('getDirectoryWrite')
-            ->willReturn($this->directoryMock);
+        $this->filesystem->method('getDirectoryWrite')->willReturn($this->directoryMock);
 
         $this->random = $this->getMockBuilder(Random::class)
             ->disableOriginalConstructor()
@@ -147,13 +146,13 @@ class UploaderTest extends TestCase
     }
 
     /**
-     * @dataProvider moveFileUrlDataProvider
      * @param $fileUrl
      * @param $expectedHost
      * @param $expectedFileName
      * @param $checkAllowedExtension
      * @throws LocalizedException
      */
+    #[DataProvider('moveFileUrlDataProvider')]
     public function testMoveFileUrl($fileUrl, $expectedHost, $expectedFileName, $checkAllowedExtension)
     {
         $tmpDir = 'var/tmp';
@@ -187,8 +186,7 @@ class UploaderTest extends TestCase
             ->willReturn(null);
 
         // Expected invocation to write the temp file
-        $this->directoryMock->expects($this->any())->method('writeFile')
-            ->willReturn($expectedFileName);
+        $this->directoryMock->method('writeFile')->willReturn($expectedFileName);
 
         // Expected invocations save the downloaded file to temp file
         // and move the temp file to the destination directory
@@ -280,19 +278,35 @@ class UploaderTest extends TestCase
         $this->uploader->move($fileName);
     }
 
-    /**
-     * @dataProvider moveFileUrlDriverPoolDataProvider
-     */
+    #[DataProvider('moveFileUrlDriverPoolDataProvider')]
     public function testMoveFileUrlDrivePool($fileUrl, $expectedHost, $expectedDriverPool, $expectedScheme)
     {
         $driverPool = $this->createPartialMock(DriverPool::class, ['getDriver']);
-        $driverMock = $this->getMockBuilder($expectedDriverPool)
-            ->disableOriginalConstructor()
-            ->addMethods(['readAll'])
-            ->onlyMethods(['isExists'])
-            ->getMock();
-        $driverMock->method('isExists')->willReturn(true);
-        $driverMock->method('readAll')->willReturn(null);
+        $driverMock = match($expectedDriverPool) {
+            \Magento\Framework\Filesystem\Driver\Http::class => new class extends \Magento\Framework\Filesystem\Driver\Http {
+                public function __construct() {}
+                
+                public function isExists($path) {
+                    return true;
+                }
+                
+                public function readAll() {
+                    return null;
+                }
+            },
+            \Magento\Framework\Filesystem\Driver\Https::class => new class extends \Magento\Framework\Filesystem\Driver\Https {
+                public function __construct() {}
+                
+                public function isExists($path) {
+                    return true;
+                }
+                
+                public function readAll() {
+                    return null;
+                }
+            },
+            default => throw new \InvalidArgumentException("Unsupported driver pool: $expectedDriverPool")
+        };
         $driverPool->method('getDriver')->willReturn($driverMock);
 
         $readFactory = $this->getMockBuilder(ReadFactory::class)

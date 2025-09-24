@@ -72,8 +72,8 @@ class NotifyStockTest extends TestCase
             ->onlyMethods(['getProductsCollection'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->rssUrlBuilder = $this->getMockForAbstractClass(UrlBuilderInterface::class);
-        $this->urlBuilder = $this->getMockForAbstractClass(UrlInterface::class);
+        $this->rssUrlBuilder = $this->createMock(UrlBuilderInterface::class);
+        $this->urlBuilder = $this->createMock(UrlInterface::class);
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->block = $this->objectManagerHelper->getObject(
             NotifyStock::class,
@@ -95,7 +95,7 @@ class NotifyStockTest extends TestCase
             ->getMock();
         $item->expects($this->once())->method('getId')->willReturn(1);
         $item->expects($this->once())->method('getQty')->willReturn(1);
-        $item->expects($this->any())->method('getName')->willReturn('Low Stock Product');
+        $item->method('getName')->willReturn('Low Stock Product');
 
         $this->rssModel->expects($this->once())->method('getProductsCollection')
             ->willReturn([$item]);

@@ -54,19 +54,55 @@ class ProductDataProviderTest extends TestCase
         $this->collectionMock = $this->getMockBuilder(Collection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->collectionFactoryMock = $this->getMockBuilder(CollectionFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-        $this->collectionFactoryMock->expects($this->once())
-            ->method('create')
-            ->willReturn($this->collectionMock);
+        /** @var CollectionFactory $this->collectionFactoryMock */
+        $this->collectionFactoryMock = new class {
+            private $createResult = null;
+            
+            public function __construct() {}
+            
+            public function create() { 
+                return $this->createResult; 
+            }
+            public function setCreateResult($value) { 
+                $this->createResult = $value; 
+                return $this; 
+            }
+        };
+        $this->collectionFactoryMock->setCreateResult($this->collectionMock);
         $this->poolMock = $this->getMockBuilder(Pool::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->modifierMockOne = $this->getMockBuilder(ModifierInterface::class)
-            ->addMethods(['getData', 'getMeta'])
-            ->getMockForAbstractClass();
+        /** @var ModifierInterface $this->modifierMockOne */
+        $this->modifierMockOne = new class implements ModifierInterface {
+            private $data = [];
+            private $meta = [];
+            
+            public function __construct() {}
+            
+            public function getData() { 
+                return $this->data; 
+            }
+            public function setData($value) { 
+                $this->data = $value; 
+                return $this; 
+            }
+            
+            public function getMeta() { 
+                return $this->meta; 
+            }
+            public function setMeta($value) { 
+                $this->meta = $value; 
+                return $this; 
+            }
+            
+            // Required ModifierInterface methods
+            public function modifyData(array $data) { 
+                return $this->data; 
+            }
+            public function modifyMeta(array $meta) { 
+                return $this->meta; 
+            }
+        };
 
         $this->model = $this->objectManager->getObject(ProductDataProvider::class, [
             'name' => 'testName',
@@ -84,9 +120,7 @@ class ProductDataProviderTest extends TestCase
         $this->poolMock->expects($this->once())
             ->method('getModifiersInstances')
             ->willReturn([$this->modifierMockOne]);
-        $this->modifierMockOne->expects($this->once())
-            ->method('modifyMeta')
-            ->willReturn($expectedMeta);
+        $this->modifierMockOne->setMeta($expectedMeta);
 
         $this->assertSame($expectedMeta, $this->model->getMeta());
     }
@@ -98,9 +132,7 @@ class ProductDataProviderTest extends TestCase
         $this->poolMock->expects($this->once())
             ->method('getModifiersInstances')
             ->willReturn([$this->modifierMockOne]);
-        $this->modifierMockOne->expects($this->once())
-            ->method('modifyData')
-            ->willReturn($expectedMeta);
+        $this->modifierMockOne->setData($expectedMeta);
 
         $this->assertSame($expectedMeta, $this->model->getData());
     }

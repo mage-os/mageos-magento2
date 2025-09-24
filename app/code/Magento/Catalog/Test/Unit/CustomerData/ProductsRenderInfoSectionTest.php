@@ -93,24 +93,20 @@ class ProductsRenderInfoSectionTest extends TestCase
 
     private function prepareProductIds()
     {
-        $actionFirst = $this->getMockForAbstractClass(ProductFrontendActionInterface::class);
-        $actionSecond = $this->getMockForAbstractClass(ProductFrontendActionInterface::class);
+        $actionFirst = $this->createMock(ProductFrontendActionInterface::class);
+        $actionSecond = $this->createMock(ProductFrontendActionInterface::class);
         $actions = [$actionFirst, $actionSecond];
         $this->synchronizerMock->expects($this->once())
             ->method('getAllActions')
             ->willReturn($actions);
-        $actionFirst->expects($this->any())
-            ->method('getProductId')
-            ->willReturn(1);
-        $actionSecond->expects($this->any())
-            ->method('getProductId')
-            ->willReturn(2);
+        $actionFirst->method('getProductId')->willReturn(1);
+        $actionSecond->method('getProductId')->willReturn(2);
     }
 
     public function testGetSectionData()
     {
-        $productRender = $this->getMockForAbstractClass(ProductRenderInterface::class);
-        $searchResult = $this->getMockForAbstractClass(ProductRenderSearchResultsInterface::class);
+        $productRender = $this->createMock(ProductRenderInterface::class);
+        $searchResult = $this->createMock(ProductRenderSearchResultsInterface::class);
 
         $store = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
@@ -158,9 +154,7 @@ class ProductsRenderInfoSectionTest extends TestCase
             ->method('getList')
             ->with($searchCriteria, 3, 'UAH')
             ->willReturn($searchResult);
-        $searchResult->expects($this->any())
-            ->method('getItems')
-            ->willReturn([$productRender]);
+        $searchResult->method('getItems')->willReturn([$productRender]);
         $this->hydratorMock->expects($this->once())
             ->method('extract')
             ->with($productRender)

@@ -72,18 +72,54 @@ class ProductIdLocatorTest extends TestCase
     {
         $skus = ['sku_1', 'sku_2'];
 
-        $product = $this->getMockBuilder(ProductInterface::class)
-            ->addMethods(['getData'])
-            ->onlyMethods(['getSku', 'getTypeId'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $product->method('getSku')
-            ->willReturn('sku_1');
-        $product->method('getData')
-            ->with($this->linkField)
-            ->willReturn(1);
-        $product->method('getTypeId')
-            ->willReturn('simple');
+        // PHPUnit 12 compatible: Replace addMethods + onlyMethods with anonymous class for interface
+        /** @var ProductInterface $product */
+        $product = new class {
+            private $skuResult;
+            private $dataResult;
+            private $typeIdResult;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getSku()
+            {
+                return $this->skuResult;
+            }
+            
+            public function setSku($result)
+            {
+                $this->skuResult = $result;
+                return $this;
+            }
+            
+            public function getData($field)
+            {
+                return $this->dataResult;
+            }
+            
+            public function setData($result)
+            {
+                $this->dataResult = $result;
+                return $this;
+            }
+            
+            public function getTypeId()
+            {
+                return $this->typeIdResult;
+            }
+            
+            public function setTypeId($result)
+            {
+                $this->typeIdResult = $result;
+                return $this;
+            }
+        };
+        
+        $product->setSku('sku_1');
+        $product->setData(1);
+        $product->setTypeId('simple');
 
         $this->collection->expects($this->once())
             ->method('addFieldToFilter')
@@ -117,18 +153,54 @@ class ProductIdLocatorTest extends TestCase
         $skus = ['111', '222', '333', '444', '555'];
         $products = [];
         foreach ($skus as $sku) {
-            $product = $this->getMockBuilder(ProductInterface::class)
-                ->addMethods(['getData'])
-                ->onlyMethods(['getSku', 'getTypeId'])
-                ->disableOriginalConstructor()
-                ->getMockForAbstractClass();
-            $product->method('getSku')
-                ->willReturn($sku);
-            $product->method('getData')
-                ->with($this->linkField)
-                ->willReturn((int) $sku);
-            $product->method('getTypeId')
-                ->willReturn('simple');
+            // PHPUnit 12 compatible: Replace addMethods + onlyMethods with anonymous class for interface
+            /** @var ProductInterface $product */
+            $product = new class {
+                private $skuResult;
+                private $dataResult;
+                private $typeIdResult;
+                
+                public function __construct()
+                {
+                }
+                
+                public function getSku()
+                {
+                    return $this->skuResult;
+                }
+                
+                public function setSku($result)
+                {
+                    $this->skuResult = $result;
+                    return $this;
+                }
+                
+                public function getData($field)
+                {
+                    return $this->dataResult;
+                }
+                
+                public function setData($result)
+                {
+                    $this->dataResult = $result;
+                    return $this;
+                }
+                
+                public function getTypeId()
+                {
+                    return $this->typeIdResult;
+                }
+                
+                public function setTypeId($result)
+                {
+                    $this->typeIdResult = $result;
+                    return $this;
+                }
+            };
+            
+            $product->setSku($sku);
+            $product->setData((int) $sku);
+            $product->setTypeId('simple');
             $products[] = $product;
         }
 

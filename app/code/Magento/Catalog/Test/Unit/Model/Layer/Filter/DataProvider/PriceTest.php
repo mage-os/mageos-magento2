@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Model\Layer\Filter\DataProvider;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Layer;
 use Magento\Catalog\Model\Layer\Filter\DataProvider\Price;
@@ -54,17 +55,12 @@ class PriceTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['getProductCollection'])
             ->getMock();
-        $this->layer->expects($this->any())
-            ->method('getProductCollection')
-            ->willReturn($this->productCollection);
+        $this->layer->method('getProductCollection')->willReturn($this->productCollection);
         $this->coreRegistry = $this->getMockBuilder(Registry::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['registry'])
             ->getMock();
-        $this->scopeConfig = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getValue'])
-            ->getMockForAbstractClass();
+        $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
         $this->resource = $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Layer\Filter\Price::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getCount'])
@@ -115,14 +111,27 @@ class PriceTest extends TestCase
     public function testGetPriceRangeWithRangeInFilter()
     {
         /** @var Category|MockObject $category */
-        $category = $this->getMockBuilder(Category::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getFilterPriceRange'])
-            ->getMock();
+        $category = new class extends Category {
+            private $filterPriceRange = null;
+            
+            public function __construct()
+            {
+                // Don't call parent constructor to avoid dependencies
+            }
+            
+            public function getFilterPriceRange()
+            {
+                return $this->filterPriceRange;
+            }
+            
+            public function setFilterPriceRange($filterPriceRange)
+            {
+                $this->filterPriceRange = $filterPriceRange;
+                return $this;
+            }
+        };
         $priceRange = 10;
-        $category->expects($this->once())
-            ->method('getFilterPriceRange')
-            ->willReturn($priceRange);
+        $category->setFilterPriceRange($priceRange);
         $this->coreRegistry->expects($this->once())
             ->method('registry')
             ->with('current_category_filter')
@@ -133,14 +142,27 @@ class PriceTest extends TestCase
     public function testGetPriceRangeWithRangeCalculation()
     {
         /** @var Category|MockObject $category */
-        $category = $this->getMockBuilder(Category::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getFilterPriceRange'])
-            ->getMock();
+        $category = new class extends Category {
+            private $filterPriceRange = null;
+            
+            public function __construct()
+            {
+                // Don't call parent constructor to avoid dependencies
+            }
+            
+            public function getFilterPriceRange()
+            {
+                return $this->filterPriceRange;
+            }
+            
+            public function setFilterPriceRange($filterPriceRange)
+            {
+                $this->filterPriceRange = $filterPriceRange;
+                return $this;
+            }
+        };
         $priceRange = 0;
-        $category->expects($this->once())
-            ->method('getFilterPriceRange')
-            ->willReturn($priceRange);
+        $category->setFilterPriceRange($priceRange);
         $this->coreRegistry->expects($this->once())
             ->method('registry')
             ->with('current_category_filter')
@@ -162,10 +184,10 @@ class PriceTest extends TestCase
     }
 
     /**
-     * @dataProvider validateFilterDataProvider
      * @param $filter
      * @param $expectedResult
      */
+    #[DataProvider('validateFilterDataProvider')]
     public function testValidateFilter($filter, $expectedResult)
     {
         $this->assertSame($expectedResult, $this->target->validateFilter($filter));

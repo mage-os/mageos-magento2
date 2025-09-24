@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Controller\Adminhtml\Product;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Backend\Model\View\Result\Forward;
 use Magento\Backend\Model\View\Result\ForwardFactory;
 use Magento\Backend\Model\View\Result\Page;
@@ -68,13 +69,11 @@ class SaveTest extends ProductTestCase
         $this->product = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['addData', 'getSku', 'getTypeId', 'getStoreId', '__sleep'])->getMock();
-        $this->product->expects($this->any())->method('getTypeId')->willReturn('simple');
-        $this->product->expects($this->any())->method('getStoreId')->willReturn('1');
-        $this->productBuilder->expects($this->any())->method('build')->willReturn($this->product);
+        $this->product->method('getTypeId')->willReturn('simple');
+        $this->product->method('getStoreId')->willReturn('1');
+        $this->productBuilder->method('build')->willReturn($this->product);
 
-        $this->messageManagerMock = $this->getMockForAbstractClass(
-            ManagerInterface::class
-        );
+        $this->messageManagerMock = $this->createMock(ManagerInterface::class);
 
         $this->resultPage = $this->getMockBuilder(Page::class)
             ->disableOriginalConstructor()
@@ -84,7 +83,7 @@ class SaveTest extends ProductTestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
             ->getMock();
-        $resultPageFactory->expects($this->any())->method('create')->willReturn($this->resultPage);
+        $resultPageFactory->method('create')->willReturn($this->resultPage);
 
         $this->resultForward = $this->getMockBuilder(Forward::class)
             ->disableOriginalConstructor()
@@ -93,16 +92,14 @@ class SaveTest extends ProductTestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
             ->getMock();
-        $resultForwardFactory->expects($this->any())
-            ->method('create')
-            ->willReturn($this->resultForward);
-        $this->resultPage->expects($this->any())->method('getLayout')->willReturn($this->layout);
+        $resultForwardFactory->method('create')->willReturn($this->resultForward);
+        $this->resultPage->method('getLayout')->willReturn($this->layout);
         $this->resultRedirectFactory = $this->createPartialMock(
             RedirectFactory::class,
             ['create']
         );
         $this->resultRedirect = $this->createMock(Redirect::class);
-        $this->resultRedirectFactory->expects($this->any())->method('create')->willReturn($this->resultRedirect);
+        $this->resultRedirectFactory->method('create')->willReturn($this->resultRedirect);
 
         $this->initializationHelper = $this->createMock(
             Helper::class
@@ -110,7 +107,7 @@ class SaveTest extends ProductTestCase
 
         $additionalParams = ['resultRedirectFactory' => $this->resultRedirectFactory];
 
-        $storeManagerInterfaceMock = $this->getMockForAbstractClass(
+        $storeManagerInterfaceMock = $this->createMock(
             StoreManagerInterface::class,
             [],
             '',
@@ -142,15 +139,14 @@ class SaveTest extends ProductTestCase
      * @param \Exception $exception
      * @param string $methodExpected
      * @return void
-     * @dataProvider exceptionTypeDataProvider
      */
+    #[DataProvider('exceptionTypeDataProvider')]
     public function testExecuteSetsProductDataToSessionAndRedirectsToNewActionOnError($exception, $methodExpected)
     {
         $productData = ['product' => ['name' => 'test-name']];
 
-        $this->request->expects($this->any())->method('getPostValue')->willReturn($productData);
-        $this->initializationHelper->expects($this->any())->method('initialize')
-            ->willReturn($this->product);
+        $this->request->method('getPostValue')->willReturn($productData);
+        $this->initializationHelper->method('initialize')->willReturn($this->product);
         $this->product->expects($this->any())->method('getSku')->willThrowException($exception);
 
         $this->resultRedirect->expects($this->once())->method('setPath')->with('catalog/*/new');

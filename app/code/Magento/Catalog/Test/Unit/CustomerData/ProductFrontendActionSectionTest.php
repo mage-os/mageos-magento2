@@ -39,7 +39,7 @@ class ProductFrontendActionSectionTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->loggerMock = $this->getMockBuilder(LoggerInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->model = new ProductFrontendActionSection(
             $this->synchronizerMock,
@@ -56,9 +56,9 @@ class ProductFrontendActionSectionTest extends TestCase
             ->with(Synchronizer::ALLOW_SYNC_WITH_BACKEND_PATH)
             ->willReturn(1);
         $actionFirst = $this->getMockBuilder(ProductFrontendActionInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
         $actionSecond = $this->getMockBuilder(ProductFrontendActionInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
         $actions = [$actionFirst, $actionSecond];
         $actionFirst->expects($this->exactly(2))
             ->method('getProductId')

@@ -65,13 +65,53 @@ class CategoryManagementTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManagerHelper = new ObjectManager($this);
-        $this->categoryRepositoryMock = $this->getMockForAbstractClass(CategoryRepositoryInterface::class);
+        $this->categoryRepositoryMock = $this->createMock(CategoryRepositoryInterface::class);
         $this->categoryTreeMock = $this->createMock(Tree::class);
-        $this->categoriesFactoryMock = $this->getMockBuilder(CollectionFactory::class)
-            ->addMethods(['addFilter', 'getFirstItem'])
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        
+        // PHPUnit 12 compatible: Replace addMethods with anonymous class
+        $this->categoriesFactoryMock = new class extends CollectionFactory {
+            private $addFilterResult;
+            private $getFirstItemResult;
+            private $createResult;
+            
+            public function __construct()
+            {
+            }
+            
+            public function addFilter($field, $condition = null)
+            {
+                $this->addFilterResult = ['field' => $field, 'condition' => $condition];
+                return $this;
+            }
+            
+            public function setAddFilter($field, $condition = null)
+            {
+                $this->addFilterResult = ['field' => $field, 'condition' => $condition];
+                return $this;
+            }
+            
+            public function getFirstItem()
+            {
+                return $this->getFirstItemResult;
+            }
+            
+            public function setGetFirstItem($result)
+            {
+                $this->getFirstItemResult = $result;
+                return $this;
+            }
+            
+            public function create(array $data = [])
+            {
+                return $this->createResult;
+            }
+            
+            public function setCreate($result)
+            {
+                $this->createResult = $result;
+                return $this;
+            }
+        };
 
         $this->model = $this->objectManagerHelper->getObject(
             CategoryManagement::class,
@@ -82,9 +122,9 @@ class CategoryManagementTest extends TestCase
             ]
         );
 
-        $this->scopeResolverMock = $this->getMockForAbstractClass(ScopeResolverInterface::class);
+        $this->scopeResolverMock = $this->createMock(ScopeResolverInterface::class);
 
-        $this->scopeMock = $this->getMockForAbstractClass(ScopeInterface::class);
+        $this->scopeMock = $this->createMock(ScopeInterface::class);
 
         $this->objectManagerHelper->setBackwardCompatibleProperty(
             $this->model,
@@ -166,10 +206,7 @@ class CategoryManagementTest extends TestCase
             ->method('addFilter')
             ->with('level', ['eq' => 0])
             ->willReturnSelf();
-        $this->categoriesFactoryMock
-            ->expects($this->once())
-            ->method('create')
-            ->willReturn($categoriesMock);
+        $this->categoriesFactoryMock->setCreate($categoriesMock);
         $nodeMock = $this->createMock(Node::class);
 
         $this->categoryTreeMock
@@ -212,7 +249,7 @@ class CategoryManagementTest extends TestCase
         $mockBuilder = $this->getMockBuilder($class);
         $mockBuilder->setMockClassName($mockClassName);
         $mockBuilder->disableOriginalConstructor();
-        return $mockBuilder->getMockForAbstractClass();
+        return $mockBuilder->getMock();
     }
 
     public function testMove()
@@ -314,10 +351,8 @@ class CategoryManagementTest extends TestCase
     {
         $categoriesMock = $this->createMock(Collection::class);
 
-        $this->categoriesFactoryMock
-            ->expects($this->once())
-            ->method('create')
-            ->willReturn($categoriesMock);
+        $this->categoriesFactoryMock->setCreate($categoriesMock);
+
         $categoriesMock
             ->expects($this->once())
             ->method('addAttributeToFilter')

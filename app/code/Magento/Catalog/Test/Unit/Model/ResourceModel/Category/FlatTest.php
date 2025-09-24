@@ -99,8 +99,7 @@ class FlatTest extends TestCase
         $this->selectMock->expects($this->once())
             ->method('from')
             ->willReturn($this->selectMock);
-        $this->connectionMock = $this->getMockBuilder(Adapter::class)
-            ->getMockForAbstractClass();
+        $this->connectionMock = $this->createMock(Adapter::class);
         $this->connectionMock->expects($this->once())
             ->method('select')
             ->willReturn($this->selectMock);
@@ -112,32 +111,21 @@ class FlatTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['getConnection', 'getTableName'])
             ->getMock();
-        $this->resourceMock->expects($this->any())
-            ->method('getConnection')
-            ->willReturn($this->connectionMock);
-        $this->resourceMock->expects($this->any())
-            ->method('getTableName')
-            ->willReturn(self::TABLE_NAME);
+        $this->resourceMock->method('getConnection')->willReturn($this->connectionMock);
+        $this->resourceMock->method('getTableName')->willReturn(self::TABLE_NAME);
         $this->contextMock = $this->getMockBuilder(Context::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getResources'])
             ->getMock();
-        $this->contextMock->expects($this->any())
-            ->method('getResources')
-            ->willReturn($this->resourceMock);
+        $this->contextMock->method('getResources')->willReturn($this->resourceMock);
 
         $this->storeMock = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getId'])
             ->getMock();
-        $this->storeMock->expects($this->any())
-            ->method('getId')
-            ->willReturn(self::STORE_ID);
-        $this->storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
-            ->getMockForAbstractClass();
-        $this->storeManagerMock->expects($this->any())
-            ->method('getStore')
-            ->willReturn($this->storeMock);
+        $this->storeMock->method('getId')->willReturn(self::STORE_ID);
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
+        $this->storeManagerMock->method('getStore')->willReturn($this->storeMock);
     }
 
     public function testGetCategories()

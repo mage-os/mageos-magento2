@@ -108,11 +108,11 @@ class CollectionTest extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
         $this->entityFactoryMock = $this->createMock(EntityFactory::class);
-        $this->loggerMock = $this->getMockForAbstractClass(LoggerInterface::class);
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
         $this->fetchStrategyMock = $this->createMock(
             FetchStrategyInterface::class
         );
-        $this->managerInterfaceMock = $this->getMockForAbstractClass(ManagerInterface::class);
+        $this->managerInterfaceMock = $this->createMock(ManagerInterface::class);
         $this->configMock = $this->createMock(Config::class);
         $this->resourceMock = $this->createMock(ResourceConnection::class);
         $this->entityFactoryMock2 = $this->createMock(\Magento\Eav\Model\EntityFactory::class);
@@ -124,14 +124,12 @@ class CollectionTest extends TestCase
         $connection = $this->getMockBuilder(Mysql::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())
-            ->method('select')
-            ->willReturn($select);
-        $entity->expects($this->any())->method('getConnection')->willReturn($connection);
-        $entity->expects($this->any())->method('getDefaultAttributes')->willReturn([]);
+        $connection->method('select')->willReturn($select);
+        $entity->method('getConnection')->willReturn($connection);
+        $entity->method('getDefaultAttributes')->willReturn([]);
         $this->universalFactoryMock = $this->createMock(UniversalFactory::class);
-        $this->universalFactoryMock->expects($this->any())->method('create')->willReturn($entity);
-        $this->storeManagerMock = $this->getMockForAbstractClass(StoreManagerInterface::class);
+        $this->universalFactoryMock->method('create')->willReturn($entity);
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
         $this->storeManagerMock
             ->expects($this->any())
             ->method('getStore')
@@ -142,10 +140,10 @@ class CollectionTest extends TestCase
             );
         $this->catalogHelperMock = $this->createMock(Data::class);
         $this->stateMock = $this->createMock(State::class);
-        $this->scopeConfigInterfaceMock = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $this->scopeConfigInterfaceMock = $this->createMock(ScopeConfigInterface::class);
         $this->optionFactoryMock = $this->createMock(OptionFactory::class);
         $this->urlMock = $this->createMock(Url::class);
-        $this->timezoneInterfaceMock = $this->getMockForAbstractClass(TimezoneInterface::class);
+        $this->timezoneInterfaceMock = $this->createMock(TimezoneInterface::class);
         $this->sessionMock = $this->createMock(Session::class);
         $this->dateTimeMock = $this->createMock(DateTime::class);
         $productLimitationFactoryMock = $this->getMockBuilder(
@@ -156,7 +154,7 @@ class CollectionTest extends TestCase
         $productLimitationFactoryMock->method('create')
             ->willReturn($this->createMock(ProductLimitation::class));
 
-        $metadataMock = $this->getMockForAbstractClass(EntityMetadataInterface::class);
+        $metadataMock = $this->createMock(EntityMetadataInterface::class);
         $metadataMock->method('getLinkField')->willReturn('entity_id');
         $metadataPoolMock = $this->getMockBuilder(MetadataPool::class)
             ->disableOriginalConstructor()
@@ -194,9 +192,9 @@ class CollectionTest extends TestCase
     {
         /** @var Product|MockObject $product */
         $product = $this->createMock(Product::class);
-        $product->expects($this->any())->method('getId')->willReturn('5');
+        $product->method('getId')->willReturn('5');
         $productStore = new DataObject(['id' => 33]);
-        $product->expects($this->any())->method('getStore')->willReturn($productStore);
+        $product->method('getStore')->willReturn($productStore);
         $this->collection->setProduct($product);
         $this->assertEquals(33, $this->collection->getStoreId());
     }

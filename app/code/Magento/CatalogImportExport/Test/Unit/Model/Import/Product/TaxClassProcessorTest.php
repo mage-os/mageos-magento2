@@ -7,9 +7,11 @@ declare(strict_types=1);
 
 namespace Magento\CatalogImportExport\Test\Unit\Model\Import\Product;
 
+use Magento\Tax\Model\ResourceModel\TaxClass\CollectionFactory;
+use Magento\Tax\Model\ClassModelFactory;
 use Magento\CatalogImportExport\Model\Import\Product\TaxClassProcessor;
 use Magento\CatalogImportExport\Model\Import\Product\Type\AbstractType;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+
 use Magento\Tax\Model\ClassModel;
 use Magento\Tax\Model\ResourceModel\TaxClass\Collection;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -23,13 +25,7 @@ class TaxClassProcessorTest extends TestCase
 
     const TEST_JUST_CREATED_TAX_CLASS_ID = 2;
 
-    /**
-     * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
-     */
-    protected $objectManager;
 
-    /** @var ObjectManagerHelper */
-    protected $objectManagerHelper;
 
     /**
      * @var TaxClassProcessor|MockObject
@@ -43,8 +39,9 @@ class TaxClassProcessorTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->objectManagerHelper = new ObjectManagerHelper($this);
+        // Create minimal ObjectManager mock
+        $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        \Magento\Framework\App\ObjectManager::setInstance($objectManagerMock);
 
         $taxClass = $this->getMockBuilder(ClassModel::class)
             ->disableOriginalConstructor()
@@ -52,14 +49,31 @@ class TaxClassProcessorTest extends TestCase
         $taxClass->method('getClassName')->willReturn(self::TEST_TAX_CLASS_NAME);
         $taxClass->method('getId')->willReturn(self::TEST_TAX_CLASS_ID);
 
-        $taxClassCollection =
-            $this->objectManagerHelper->getCollectionMock(
-                Collection::class,
-                [$taxClass]
-            );
+        // Create collection mock that supports iteration
+        $taxClassCollection = new class($taxClass) extends Collection {
+            private $taxClass;
+            private $items = [];
+            
+            public function __construct($taxClass) {
+                $this->taxClass = $taxClass;
+                $this->items = [$taxClass];
+            }
+            
+            public function addFieldToFilter($field, $condition = null) {
+                return $this;
+            }
+            
+            public function getItems() {
+                return $this->items;
+            }
+            
+            public function getIterator() {
+                return new \ArrayIterator($this->items);
+            }
+        };
 
         $taxClassCollectionFactory = $this->createPartialMock(
-            \Magento\Tax\Model\ResourceModel\TaxClass\CollectionFactory::class,
+            CollectionFactory::class,
             ['create']
         );
 
@@ -71,7 +85,7 @@ class TaxClassProcessorTest extends TestCase
         $anotherTaxClass->method('getClassName')->willReturn(self::TEST_TAX_CLASS_NAME);
         $anotherTaxClass->method('getId')->willReturn(self::TEST_JUST_CREATED_TAX_CLASS_ID);
 
-        $taxClassFactory = $this->createPartialMock(\Magento\Tax\Model\ClassModelFactory::class, ['create']);
+        $taxClassFactory = $this->createPartialMock(ClassModelFactory::class, ['create']);
 
         $taxClassFactory->method('create')->willReturn($anotherTaxClass);
 
@@ -81,13 +95,7 @@ class TaxClassProcessorTest extends TestCase
                 $taxClassFactory
             );
 
-        $this->product =
-            $this->getMockForAbstractClass(
-                AbstractType::class,
-                [],
-                '',
-                false
-            );
+        $this->product = $this->createMock(AbstractType::class);
     }
 
     public function testUpsertTaxClassExist()

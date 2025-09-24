@@ -36,8 +36,8 @@ class SaveHandlerTest extends TestCase
         $this->productWebsiteLink = $this->getMockBuilder(Link::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->storeManager = $this->getMockForAbstractClass(StoreManagerInterface::class);
-        $this->product = $this->getMockForAbstractClass(ProductInterface::class);
+        $this->storeManager = $this->createMock(StoreManagerInterface::class);
+        $this->product = $this->createMock(ProductInterface::class);
         $this->saveHandler = new SaveHandler($this->productWebsiteLink, $this->storeManager);
     }
 
@@ -47,13 +47,26 @@ class SaveHandlerTest extends TestCase
         $this->storeManager->expects($this->once())
             ->method("isSingleStoreMode")
             ->willReturn(false);
-        $extensionAttributes = $this->getMockBuilder(ExtensionAttributesInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getWebsiteIds', 'setWebsiteIds'])
-            ->getMockForAbstractClass();
-        $extensionAttributes->expects($this->once())
-            ->method('getWebsiteIds')
-            ->willReturn($websiteIds);
+        /** @var ExtensionAttributesInterface $extensionAttributes */
+        $extensionAttributes = new class {
+            private $websiteIds = null;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getWebsiteIds()
+            {
+                return $this->websiteIds;
+            }
+            
+            public function setWebsiteIds($value)
+            {
+                $this->websiteIds = $value;
+                return $this;
+            }
+        };
+        $extensionAttributes->setWebsiteIds($websiteIds);
         $this->product->expects($this->once())
             ->method('getExtensionAttributes')
             ->willReturn($extensionAttributes);
@@ -66,10 +79,25 @@ class SaveHandlerTest extends TestCase
 
     public function testWithEmptyWebsiteIds()
     {
-        $extensionAttributes = $this->getMockBuilder(ExtensionAttributesInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getWebsiteIds', 'setWebsiteIds'])
-            ->getMockForAbstractClass();
+        /** @var ExtensionAttributesInterface $extensionAttributes */
+        $extensionAttributes = new class {
+            private $websiteIds = null;
+            
+            public function __construct()
+            {
+            }
+            
+            public function getWebsiteIds()
+            {
+                return $this->websiteIds;
+            }
+            
+            public function setWebsiteIds($value)
+            {
+                $this->websiteIds = $value;
+                return $this;
+            }
+        };
         $this->product->expects($this->once())
             ->method('getExtensionAttributes')
             ->willReturn($extensionAttributes);
@@ -84,7 +112,7 @@ class SaveHandlerTest extends TestCase
     public function testWithSingleStoreMode()
     {
         $defaultWebsiteId = 1;
-        $store = $this->getMockForAbstractClass(StoreInterface::class);
+        $store = $this->createMock(StoreInterface::class);
         $store->expects($this->once())
             ->method('getWebsiteId')
             ->willReturn($defaultWebsiteId);

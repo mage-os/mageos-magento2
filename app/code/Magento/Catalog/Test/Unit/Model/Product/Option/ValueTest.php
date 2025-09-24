@@ -135,9 +135,7 @@ class ValueTest extends TestCase
                 ->disableOriginalConstructor();
         $mock = $mockBuilder->getMock();
 
-        $mock->expects($this->any())
-            ->method('create')
-            ->willReturn($mockedCollection);
+        $mock->method('create')->willReturn($mockedCollection);
 
         return $mock;
     }
@@ -152,17 +150,11 @@ class ValueTest extends TestCase
         )->onlyMethods(['addFieldToFilter', 'getValuesByOption', 'getValues'])->disableOriginalConstructor();
         $mock = $mockBuilder->getMock();
 
-        $mock->expects($this->any())
-            ->method('addFieldToFilter')
-            ->willReturn($mock);
+        $mock->method('addFieldToFilter')->willReturn($mock);
 
-        $mock->expects($this->any())
-            ->method('getValuesByOption')
-            ->willReturn($mock);
+        $mock->method('getValuesByOption')->willReturn($mock);
 
-        $mock->expects($this->any())
-            ->method('getValues')
-            ->willReturn($mock);
+        $mock->method('getValues')->willReturn($mock);
 
         return $mock;
     }
@@ -178,9 +170,7 @@ class ValueTest extends TestCase
             ->disableOriginalConstructor();
         $mock = $mockBuilder->getMock();
 
-        $mock->expects($this->any())
-            ->method('getProduct')
-            ->willReturn($mockedProduct);
+        $mock->method('getProduct')->willReturn($mockedProduct);
 
         return $mock;
     }
@@ -195,7 +185,7 @@ class ValueTest extends TestCase
             ->disableOriginalConstructor();
         $mock = $mockBuilder->getMock();
 
-        $priceInfoMock = $this->getMockForAbstractClass(
+        $priceInfoMock = $this->createMock(
             PriceInfoInterface::class,
             [],
             '',
@@ -205,13 +195,13 @@ class ValueTest extends TestCase
             ['getPrice']
         );
 
-        $priceMock = $this->getMockForAbstractClass(PriceInterface::class);
+        $priceMock = $this->createMock(PriceInterface::class);
 
-        $priceInfoMock->expects($this->any())->method('getPrice')->willReturn($priceMock);
+        $priceInfoMock->method('getPrice')->willReturn($priceMock);
 
-        $mock->expects($this->any())->method('getPriceInfo')->willReturn($priceInfoMock);
+        $mock->method('getPriceInfo')->willReturn($priceInfoMock);
 
-        $priceMock->expects($this->any())->method('getValue')->willReturn(10);
+        $priceMock->method('getValue')->willReturn(10);
 
         return $mock;
     }
@@ -256,16 +246,12 @@ class ValueTest extends TestCase
         $mock->expects($this->any())
             ->method('commit');
 
-        $mock->expects($this->any())
-            ->method('addCommitCallback')
-            ->willReturn($mock);
+        $mock->method('addCommitCallback')->willReturn($mock);
 
         $mock->expects($this->any())
             ->method('beginTransaction');
 
-        $mock->expects($this->any())
-            ->method('getIdFieldName')
-            ->willReturn('testField');
+        $mock->method('getIdFieldName')->willReturn('testField');
 
         return $mock;
     }

@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\CatalogGraphQl\Test\Unit\Model\Resolver\Products\Query;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\AdvancedSearch\Model\Client\ClientException;
 use Magento\CatalogGraphQl\DataProvider\Product\SearchCriteriaBuilder;
 use Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\ProductSearch;
@@ -86,7 +87,7 @@ class SearchTest extends TestCase
         parent::setUp();
         $this->search = $this->getMockBuilder(SearchInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->searchResultFactory = $this->getMockBuilder(SearchResultFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -95,7 +96,7 @@ class SearchTest extends TestCase
             ->getMock();
         $this->argsSelection = $this->getMockBuilder(ArgumentsProcessorInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->productsProvider = $this->getMockBuilder(ProductSearch::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -125,26 +126,24 @@ class SearchTest extends TestCase
         $args = ['search' => 'test', 'pageSize' => 10, 'currentPage' => 1];
         $context = $this->getMockBuilder(ContextInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $resolveInfo = $this->getMockBuilder(ResolveInfo::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $searchCriteria = $this->getMockBuilder(SearchCriteriaInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->searchCriteriaBuilder->expects($this->any())
-            ->method('build')
-            ->willReturn($searchCriteria);
+            ->getMock();
+        $this->searchCriteriaBuilder->method('build')->willReturn($searchCriteria);
         $results = $this->getMockBuilder(SearchResultInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->search->expects($this->once())
             ->method('search')
             ->with($searchCriteria)
             ->willReturn($results);
-        $this->productsProvider->expects($this->any())->method('getList')->willReturn($results);
-        $results->expects($this->any())->method('getItems')->willReturn([]);
+        $this->productsProvider->method('getList')->willReturn($results);
+        $results->method('getItems')->willReturn([]);
 
         $this->queryPopularity->expects($this->once())
             ->method('execute')
@@ -158,8 +157,8 @@ class SearchTest extends TestCase
      * @return void
      * @throws Exception
      * @throws GraphQlInputException
-     * @dataProvider exceptionDataProvider
      */
+    #[DataProvider('exceptionDataProvider')]
     public function testEmptyResultException($exception): void
     {
         $args = ['search' => 'test', 'pageSize' => 10, 'currentPage' => 1];

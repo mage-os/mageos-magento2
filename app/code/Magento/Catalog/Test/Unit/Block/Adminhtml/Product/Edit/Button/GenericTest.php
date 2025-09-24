@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Block\Adminhtml\Product\Edit\Button;
 
-use Magento\Catalog\Api\Data\ProductInterface;
+use Magento\Catalog\Model\Product;
 use Magento\Catalog\Block\Adminhtml\Product\Edit\Button\Generic;
 use Magento\Framework\Registry;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -33,7 +33,7 @@ class GenericTest extends TestCase
     protected $registryMock;
 
     /**
-     * @var ProductInterface|MockObject
+     * @var Product|MockObject
      */
     protected $productMock;
 
@@ -46,9 +46,11 @@ class GenericTest extends TestCase
         $this->registryMock = $this->getMockBuilder(Registry::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->productMock = $this->getMockBuilder(ProductInterface::class)
-            ->addMethods(['isReadonly', 'isDuplicable'])
-            ->getMockForAbstractClass();
+        // Create a mock that implements ProductInterface with the required methods
+        $this->productMock = $this->getMockBuilder(Product::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['isReadonly', 'isDuplicable'])
+            ->getMock();
 
         $this->registryMock->expects($this->any())
             ->method('registry')
@@ -79,6 +81,6 @@ class GenericTest extends TestCase
 
     public function testGetProduct()
     {
-        $this->assertInstanceOf(ProductInterface::class, $this->getModel()->getProduct());
+        $this->assertInstanceOf(Product::class, $this->getModel()->getProduct());
     }
 }

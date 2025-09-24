@@ -104,9 +104,7 @@ class ChooserTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
             ->getMock();
-        $layoutFactory->expects($this->any())
-            ->method('create')
-            ->willReturn($this->layoutMock);
+        $layoutFactory->method('create')->willReturn($this->layoutMock);
 
         $context->expects($this->once())->method('getRequest')->willReturn($this->requestMock);
         $context->expects($this->once())->method('getResponse')->willReturn($this->responseMock);

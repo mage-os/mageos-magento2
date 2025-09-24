@@ -100,10 +100,20 @@ class ImageTest extends TestCase
     public function testResolve(): void
     {
         $this->valueMock = ['model' => $this->categoryMock];
-        $contextExtensionInterfaceMock = $this->getMockBuilder(ContextExtensionInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getStore'])
-            ->getMockForAbstractClass();
+        $contextExtensionInterfaceMock = new class implements ContextExtensionInterface {
+            private $store = null;
+            
+            public function __construct() {}
+            
+            public function getStore() {
+                return $this->store;
+            }
+            
+            public function setStore($store) {
+                $this->store = $store;
+                return $this;
+            }
+        };
         $storeMock = $this->createMock(Store::class);
         $this->categoryMock
             ->expects($this->once())
@@ -114,10 +124,7 @@ class ImageTest extends TestCase
             ->expects($this->once())
             ->method('getExtensionAttributes')
             ->willReturn($contextExtensionInterfaceMock);
-        $contextExtensionInterfaceMock
-            ->expects($this->once())
-            ->method('getStore')
-            ->willReturn($storeMock);
+        $contextExtensionInterfaceMock->setStore($storeMock);
         $storeMock
             ->expects($this->once())
             ->method('getBaseUrl')
@@ -152,10 +159,20 @@ class ImageTest extends TestCase
     public function testResolveWhenImageFileDoesntExist(): void
     {
         $this->valueMock = ['model' => $this->categoryMock];
-        $contextExtensionInterfaceMock = $this->getMockBuilder(ContextExtensionInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getStore'])
-            ->getMockForAbstractClass();
+        $contextExtensionInterfaceMock = new class implements ContextExtensionInterface {
+            private $store = null;
+            
+            public function __construct() {}
+            
+            public function getStore() {
+                return $this->store;
+            }
+            
+            public function setStore($store) {
+                $this->store = $store;
+                return $this;
+            }
+        };
         $storeMock = $this->createMock(Store::class);
         $this->categoryMock
             ->expects($this->once())
@@ -166,10 +183,7 @@ class ImageTest extends TestCase
             ->expects($this->once())
             ->method('getExtensionAttributes')
             ->willReturn($contextExtensionInterfaceMock);
-        $contextExtensionInterfaceMock
-            ->expects($this->once())
-            ->method('getStore')
-            ->willReturn($storeMock);
+        $contextExtensionInterfaceMock->setStore($storeMock);
         $storeMock
             ->expects($this->once())
             ->method('getBaseUrl')

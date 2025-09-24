@@ -132,7 +132,7 @@ class ListProductTest extends TestCase
         $this->cartHelperMock = $this->createMock(Cart::class);
         $this->catCollectionMock = $this->createMock(Collection::class);
         $this->prodCollectionMock = $this->createMock(\Magento\Catalog\Model\ResourceModel\Product\Collection::class);
-        $this->layoutMock = $this->getMockForAbstractClass(LayoutInterface::class);
+        $this->layoutMock = $this->createMock(LayoutInterface::class);
         $this->toolbarMock = $this->createMock(Toolbar::class);
 
         $this->urlHelperMock = $this->getMockBuilder(Data::class)
@@ -144,7 +144,7 @@ class ListProductTest extends TestCase
         $this->renderer = $this->getMockBuilder(Render::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $eventManager = $this->getMockForAbstractClass(ManagerInterface::class, [], '', false);
+        $eventManager = $this->createMock(ManagerInterface::class);
 
         $this->context->expects($this->any())->method('getRegistry')->willReturn($this->registryMock);
         $this->context->expects($this->any())->method('getCartHelper')->willReturn($this->cartHelperMock);
@@ -193,7 +193,7 @@ class ListProductTest extends TestCase
         $this->layerMock->expects($this->once())
             ->method('getProductCollection')
             ->willReturn($this->prodCollectionMock);
-        $collection = $this->createMock(Collection::class);
+        $collection = $this->createMock(\Magento\Catalog\Model\ResourceModel\Product\Collection::class);
         $this->collectionFactory->expects($this->once())->method('create')->willReturn($collection);
         $collection->expects($this->once())->method('addFieldToFilter');
         $currentCategory = $this->createMock(\Magento\Catalog\Model\Category::class);

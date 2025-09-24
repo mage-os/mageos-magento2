@@ -39,40 +39,85 @@ class ProductLinksTest extends TestCase
      */
     private function getMockedProduct()
     {
-        $mockBuilder = $this->getMockBuilder(Product::class)
-            ->addMethods(
-                [
-                    'getRelatedReadonly',
-                    'getUpsellReadonly',
-                    'getCrosssellReadonly',
-                    'setCrossSellLinkData',
-                    'setUpSellLinkData',
-                    'setRelatedLinkData',
-                ]
-            )
-            ->disableOriginalConstructor();
-        $mock = $mockBuilder->getMock();
-
-        $mock->expects($this->any())
-            ->method('getRelatedReadonly')
-            ->willReturn(false);
-
-        $mock->expects($this->any())
-            ->method('getUpsellReadonly')
-            ->willReturn(false);
-
-        $mock->expects($this->any())
-            ->method('getCrosssellReadonly')
-            ->willReturn(false);
-
-        $mock->expects($this->any())
-            ->method('setCrossSellLinkData');
-
-        $mock->expects($this->any())
-            ->method('setUpSellLinkData');
-
-        $mock->expects($this->any())
-            ->method('setRelatedLinkData');
+        $mock = new class extends Product {
+            private $relatedReadonly = false;
+            private $upsellReadonly = false;
+            private $crosssellReadonly = false;
+            private $crossSellLinkData = null;
+            private $upSellLinkData = null;
+            private $relatedLinkData = null;
+            
+            public function __construct()
+            {
+                // Don't call parent constructor to avoid dependencies
+            }
+            
+            public function getRelatedReadonly()
+            {
+                return $this->relatedReadonly;
+            }
+            
+            public function setRelatedReadonly($value)
+            {
+                $this->relatedReadonly = $value;
+                return $this;
+            }
+            
+            public function getUpsellReadonly()
+            {
+                return $this->upsellReadonly;
+            }
+            
+            public function setUpsellReadonly($value)
+            {
+                $this->upsellReadonly = $value;
+                return $this;
+            }
+            
+            public function getCrosssellReadonly()
+            {
+                return $this->crosssellReadonly;
+            }
+            
+            public function setCrosssellReadonly($value)
+            {
+                $this->crosssellReadonly = $value;
+                return $this;
+            }
+            
+            public function setCrossSellLinkData($data)
+            {
+                $this->crossSellLinkData = $data;
+                return $this;
+            }
+            
+            public function getCrossSellLinkData()
+            {
+                return $this->crossSellLinkData;
+            }
+            
+            public function setUpSellLinkData($data)
+            {
+                $this->upSellLinkData = $data;
+                return $this;
+            }
+            
+            public function getUpSellLinkData()
+            {
+                return $this->upSellLinkData;
+            }
+            
+            public function setRelatedLinkData($data)
+            {
+                $this->relatedLinkData = $data;
+                return $this;
+            }
+            
+            public function getRelatedLinkData()
+            {
+                return $this->relatedLinkData;
+            }
+        };
 
         return $mock;
     }

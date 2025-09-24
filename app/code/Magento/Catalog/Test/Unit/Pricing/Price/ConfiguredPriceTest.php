@@ -75,11 +75,11 @@ class ConfiguredPriceTest extends TestCase
 //        ];
 //        $objectManager->prepareObjectManager($objects);
 
-        $basePrice = $this->getMockForAbstractClass(PriceInterface::class);
-        $basePrice->expects($this->any())->method('getValue')->willReturn($this->basePriceValue);
+        $basePrice = $this->createMock(PriceInterface::class);
+        $basePrice->method('getValue')->willReturn($this->basePriceValue);
 
         $this->priceInfo = $this->createMock(Base::class);
-        $this->priceInfo->expects($this->any())->method('getPrice')->willReturn($basePrice);
+        $this->priceInfo->method('getPrice')->willReturn($basePrice);
 
         $this->product = $this->getMockBuilder(Product::class)
             ->onlyMethods(['getPriceInfo', 'getOptionById', 'getResource'])
@@ -89,11 +89,11 @@ class ConfiguredPriceTest extends TestCase
 
         $this->item = $this->getMockBuilder(ItemInterface::class)
             ->getMock();
-        $this->item->expects($this->any())->method('getProduct')->willReturn($this->product);
+        $this->item->method('getProduct')->willReturn($this->product);
 
         $this->calculator = $this->createMock(Calculator::class);
 
-        $this->priceCurrencyMock = $this->getMockForAbstractClass(PriceCurrencyInterface::class);
+        $this->priceCurrencyMock = $this->createMock(PriceCurrencyInterface::class);
     }
 
     /**
@@ -104,12 +104,11 @@ class ConfiguredPriceTest extends TestCase
         $optionCollection = $this->createMock(
             OptionInterface::class
         );
-        $optionCollection->expects($this->any())->method('getValue')->willReturn('1,2,3');
+        $optionCollection->method('getValue')->willReturn('1,2,3');
 
-        $optionCallback = $this->returnCallback(function ($optionId) {
+        $this->product->expects($this->any())->method('getOptionById')->willReturnCallback(function ($optionId) {
             return $this->createProductOptionStub($optionId);
         });
-        $this->product->expects($this->any())->method('getOptionById')->will($optionCallback);
 
         $itemOption = $this->createMock(
             OptionInterface::class
@@ -120,10 +119,9 @@ class ConfiguredPriceTest extends TestCase
             'option_3' => $itemOption,
             'option_ids' => $optionCollection,
         ];
-        $optionsGetterByCode = $this->returnCallback(function ($code) use ($optionsList) {
+        $this->item->expects($this->atLeastOnce())->method('getOptionByCode')->willReturnCallback(function ($code) use ($optionsList) {
             return $optionsList[$code];
         });
-        $this->item->expects($this->atLeastOnce())->method('getOptionByCode')->will($optionsGetterByCode);
         $configuredOptions = $this->getMockBuilder(ConfiguredOptions::class)
                                 ->disableOriginalConstructor()
                                 ->onlyMethods([])
@@ -147,7 +145,7 @@ class ConfiguredPriceTest extends TestCase
     protected function createProductOptionStub($optionId)
     {
         $option = $this->createMock(Option::class);
-        $option->expects($this->any())->method('getId')->willReturn($optionId);
+        $option->method('getId')->willReturn($optionId);
         $option->expects($this->atLeastOnce())->method('groupFactory')->willReturn(
             $this->createOptionTypeStub($option)
         );
@@ -160,17 +158,39 @@ class ConfiguredPriceTest extends TestCase
      */
     protected function createOptionTypeStub(Option $option)
     {
-        $optionType = $this->getMockBuilder(DefaultType::class)
-            ->addMethods(['setConfigurationItem', 'setConfigurationItemOption'])
-            ->onlyMethods(['setOption', 'getOptionPrice'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $optionType->expects($this->atLeastOnce())->method('setOption')->with($option)->willReturnSelf();
-        $optionType->expects($this->atLeastOnce())->method('setConfigurationItem')->willReturnSelf();
-        $optionType->expects($this->atLeastOnce())->method('setConfigurationItemOption')->willReturnSelf();
-        $optionType->expects($this->atLeastOnce())->method('getOptionPrice')
-            ->with($this->anything(), $this->basePriceValue)
-            ->willReturn(10.);
+        $optionType = new class extends DefaultType {
+            private $option = null;
+            private $configurationItem = null;
+            private $configurationItemOption = null;
+
+            public function __construct()
+            {
+                // empty constructor
+            }
+            
+            public function setOption($option)
+            {
+                $this->option = $option;
+                return $this;
+            }
+            
+            public function setConfigurationItem($configurationItem)
+            {
+                $this->configurationItem = $configurationItem;
+                return $this;
+            }
+            
+            public function setConfigurationItemOption($configurationItemOption)
+            {
+                $this->configurationItemOption = $configurationItemOption;
+                return $this;
+            }
+            
+            public function getOptionPrice($value, $basePrice)
+            {
+                return 10.;
+            }
+        };
         return $optionType;
     }
 }

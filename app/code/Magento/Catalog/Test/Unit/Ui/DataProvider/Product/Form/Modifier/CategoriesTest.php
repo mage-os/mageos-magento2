@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Ui\DataProvider\Product\Form\Modifier;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Authorization\Model\Role;
 use Magento\Backend\Model\Auth\Session;
 use Magento\Catalog\Model\ResourceModel\Category\Collection as CategoryCollection;
@@ -70,24 +71,19 @@ class CategoriesTest extends AbstractModifierTestCase
         $this->dbHelperMock = $this->getMockBuilder(DbHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->urlBuilderMock = $this->getMockBuilder(UrlInterface::class)
-            ->getMockForAbstractClass();
+        $this->urlBuilderMock = $this->createMock(UrlInterface::class);
         $this->storeMock = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->categoryCollectionMock = $this->getMockBuilder(CategoryCollection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->authorizationMock = $this->getMockBuilder(AuthorizationInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->authorizationMock = $this->createMock(AuthorizationInterface::class);
         $this->sessionMock = $this->getMockBuilder(Session::class)
             ->addMethods(['getUser'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->categoryCollectionFactoryMock->expects($this->any())
-            ->method('create')
-            ->willReturn($this->categoryCollectionMock);
+        $this->categoryCollectionFactoryMock->method('create')->willReturn($this->categoryCollectionMock);
         $this->categoryCollectionMock->expects($this->any())
             ->method('addAttributeToSelect')
             ->willReturnSelf();
@@ -100,29 +96,21 @@ class CategoriesTest extends AbstractModifierTestCase
         $this->categoryCollectionMock->expects($this->any())
             ->method('setStoreId')
             ->willReturnSelf();
-        $this->categoryCollectionMock->expects($this->any())
-            ->method('getIterator')
-            ->willReturn(new \ArrayIterator([]));
+        $this->categoryCollectionMock->method('getIterator')->willReturn(new \ArrayIterator([]));
 
         $roleAdmin = $this->getMockBuilder(Role::class)
             ->onlyMethods(['getId'])
             ->disableOriginalConstructor()
             ->getMock();
-        $roleAdmin->expects($this->any())
-            ->method('getId')
-            ->willReturn(0);
+        $roleAdmin->method('getId')->willReturn(0);
 
         $userAdmin = $this->getMockBuilder(User::class)
             ->onlyMethods(['getRole'])
             ->disableOriginalConstructor()
             ->getMock();
-        $userAdmin->expects($this->any())
-            ->method('getRole')
-            ->willReturn($roleAdmin);
+        $userAdmin->method('getRole')->willReturn($roleAdmin);
 
-        $this->sessionMock->expects($this->any())
-            ->method('getUser')
-            ->willReturn($userAdmin);
+        $this->sessionMock->method('getUser')->willReturn($userAdmin);
     }
 
     /**
@@ -188,8 +176,8 @@ class CategoriesTest extends AbstractModifierTestCase
 
     /**
      * @param bool $locked
-     * @dataProvider modifyMetaLockedDataProvider
      */
+    #[DataProvider('modifyMetaLockedDataProvider')]
     public function testModifyMetaLocked($locked)
     {
         $groupCode = 'test_group_code';
@@ -205,13 +193,9 @@ class CategoriesTest extends AbstractModifierTestCase
         $this->authorizationMock->expects($this->exactly(2))
             ->method('isAllowed')
             ->willReturn(true);
-        $this->arrayManagerMock->expects($this->any())
-            ->method('findPath')
-            ->willReturn('path');
+        $this->arrayManagerMock->method('findPath')->willReturn('path');
 
-        $this->productMock->expects($this->any())
-            ->method('isLockedAttribute')
-            ->willReturn($locked);
+        $this->productMock->method('isLockedAttribute')->willReturn($locked);
 
         $this->arrayManagerMock->expects($this->any())
             ->method('merge')
@@ -250,9 +234,7 @@ class CategoriesTest extends AbstractModifierTestCase
         $roleAclUser = $this->getMockBuilder(Role::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $roleAclUser->expects($this->any())
-            ->method('getId')
-            ->willReturn(1);
+        $roleAclUser->method('getId')->willReturn(1);
 
         $userAclUser = $this->getMockBuilder(User::class)
             ->disableOriginalConstructor()

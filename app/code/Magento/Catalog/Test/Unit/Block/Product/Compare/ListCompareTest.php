@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Block\Product\Compare;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Block\Product\Compare\ListCompare;
 use Magento\Catalog\Block\Product\Context;
 use Magento\Catalog\Model\Product;
@@ -36,9 +37,7 @@ class ListCompareTest extends TestCase
         $this->layout = $this->createPartialMock(Layout::class, ['getBlock']);
 
         $context = $this->createPartialMock(Context::class, ['getLayout']);
-        $context->expects($this->any())
-            ->method('getLayout')
-            ->willReturn($this->layout);
+        $context->method('getLayout')->willReturn($this->layout);
 
         $objectManager = new ObjectManager($this);
         $this->block = $objectManager->getObject(
@@ -53,15 +52,175 @@ class ListCompareTest extends TestCase
     }
 
     /**
-     * @dataProvider attributeDataProvider
      * @param array $attributeData
      * @param string $expectedResult
      */
+    #[DataProvider('attributeDataProvider')]
     public function testProductAttributeValue($attributeData, $expectedResult)
     {
-        $attribute = $this->getMockBuilder(AttributeInterface::class)
-            ->addMethods(['getAttributeCode', 'getSourceModel', 'getFrontendInput', 'getFrontend'])
-            ->getMockForAbstractClass();
+        $attribute = new class implements AttributeInterface {
+            private $attributeCode = 'test_attribute';
+            private $sourceModel = null;
+            private $frontendInput = 'text';
+            private $frontend = null;
+            
+            public function getAttributeId()
+            {
+                return 1;
+            }
+            public function setAttributeId($attributeId)
+            {
+                return $this;
+            }
+            public function getAttributeCode()
+            {
+                return $this->attributeCode;
+            }
+            public function setAttributeCode($attributeCode)
+            {
+                $this->attributeCode = $attributeCode;
+                return $this;
+            }
+            public function getFrontendInput()
+            {
+                return $this->frontendInput;
+            }
+            public function setFrontendInput($frontendInput)
+            {
+                $this->frontendInput = $frontendInput;
+                return $this;
+            }
+            public function getEntityTypeId()
+            {
+                return 1;
+            }
+            public function setEntityTypeId($entityTypeId)
+            {
+                return $this;
+            }
+            public function getIsRequired()
+            {
+                return false;
+            }
+            public function setIsRequired($isRequired)
+            {
+                return $this;
+            }
+            public function getOptions()
+            {
+                return null;
+            }
+            public function setOptions(?array $options = null)
+            {
+                return $this;
+            }
+            public function getIsUserDefined()
+            {
+                return true;
+            }
+            public function setIsUserDefined($isUserDefined)
+            {
+                return $this;
+            }
+            public function getDefaultFrontendLabel()
+            {
+                return 'Test Attribute';
+            }
+            public function setDefaultFrontendLabel($defaultFrontendLabel)
+            {
+                return $this;
+            }
+            public function getFrontendLabels()
+            {
+                return [];
+            }
+            public function setFrontendLabels(?array $frontendLabels = null)
+            {
+                return $this;
+            }
+            public function getNote()
+            {
+                return '';
+            }
+            public function setNote($note)
+            {
+                return $this;
+            }
+            public function getBackendType()
+            {
+                return 'varchar';
+            }
+            public function setBackendType($backendType)
+            {
+                return $this;
+            }
+            public function getBackendModel()
+            {
+                return null;
+            }
+            public function setBackendModel($backendModel)
+            {
+                return $this;
+            }
+            public function getSourceModel()
+            {
+                return $this->sourceModel;
+            }
+            public function setSourceModel($sourceModel)
+            {
+                $this->sourceModel = $sourceModel;
+                return $this;
+            }
+            public function getDefaultValue()
+            {
+                return '';
+            }
+            public function setDefaultValue($defaultValue)
+            {
+                return $this;
+            }
+            public function getIsUnique()
+            {
+                return false;
+            }
+            public function setIsUnique($isUnique)
+            {
+                return $this;
+            }
+            public function getFrontendClass()
+            {
+                return '';
+            }
+            public function setFrontendClass($frontendClass)
+            {
+                return $this;
+            }
+            public function getValidationRules()
+            {
+                return null;
+            }
+            public function setValidationRules(?array $validationRules = null)
+            {
+                return $this;
+            }
+            public function getExtensionAttributes()
+            {
+                return null;
+            }
+            public function setExtensionAttributes(\Magento\Eav\Api\Data\AttributeExtensionInterface $extensionAttributes)
+            {
+                return $this;
+            }
+            public function getFrontend()
+            {
+                return $this->frontend;
+            }
+            public function setFrontend($frontend)
+            {
+                $this->frontend = $frontend;
+                return $this;
+            }
+        };
         $frontEndModel = $this->createPartialMock(AbstractFrontend::class, ['getValue']);
         $productMock = $this->createPartialMock(Product::class, ['getId', 'getData', 'hasData']);
         $productMock->expects($this->any())
@@ -72,22 +231,14 @@ class ListCompareTest extends TestCase
             ->method('getData')
             ->with($attributeData['attribute_code'])
             ->willReturn($attributeData['attribute_value']);
-        $attribute->expects($this->any())
-            ->method('getAttributeCode')
-            ->willReturn($attributeData['attribute_code']);
-        $attribute->expects($this->any())
-            ->method('getSourceModel')
-            ->willReturn($attributeData['source_model']);
-        $attribute->expects($this->any())
-            ->method('getFrontendInput')
-            ->willReturn($attributeData['frontend_input']);
+        $attribute->setAttributeCode($attributeData['attribute_code']);
+        $attribute->setSourceModel($attributeData['source_model']);
+        $attribute->setFrontendInput($attributeData['frontend_input']);
         $frontEndModel->expects($this->any())
             ->method('getValue')
             ->with($productMock)
             ->willReturn($attributeData['attribute_value']);
-        $attribute->expects($this->any())
-            ->method('getFrontend')
-            ->willReturn($frontEndModel);
+        $attribute->setFrontend($frontEndModel);
         $this->assertEquals(
             $expectedResult,
             $this->block->getProductAttributeValue($productMock, $attribute)

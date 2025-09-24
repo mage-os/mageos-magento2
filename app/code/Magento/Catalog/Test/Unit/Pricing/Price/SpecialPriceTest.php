@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Pricing\Price;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Pricing\Price\SpecialPrice;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
@@ -30,7 +31,7 @@ class SpecialPriceTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->priceCurrencyMock = $this->getMockForAbstractClass(PriceCurrencyInterface::class);
+        $this->priceCurrencyMock = $this->createMock(PriceCurrencyInterface::class);
 
         $this->objectManager = new ObjectManager($this);
     }
@@ -39,9 +40,8 @@ class SpecialPriceTest extends TestCase
      * @param bool $isValidInterval
      * @param float $specialPrice
      * @param float|bool $specialPriceValue
-     *
-     * @dataProvider specialPriceDataProvider
      */
+    #[DataProvider('specialPriceDataProvider')]
     public function testGetValue($isValidInterval, $specialPrice, $specialPriceValue)
     {
         $expected = 56.34;
@@ -77,22 +77,16 @@ class SpecialPriceTest extends TestCase
             ['getSpecialPrice', 'getPriceInfo', 'getStore']
         );
 
-        $saleableItemMock->expects($this->any())
-            ->method('getSpecialPrice')
-            ->willReturn($specialPrice);
+        $saleableItemMock->method('getSpecialPrice')->willReturn($specialPrice);
 
         $priceInfo = $this->getMockBuilder(
             PriceInfoInterface::class
         )->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
-        $priceInfo->expects($this->any())
-            ->method('getAdjustments')
-            ->willReturn([]);
+        $priceInfo->method('getAdjustments')->willReturn([]);
 
-        $saleableItemMock->expects($this->any())
-            ->method('getPriceInfo')
-            ->willReturn($priceInfo);
+        $saleableItemMock->method('getPriceInfo')->willReturn($priceInfo);
 
         return $saleableItemMock;
     }
@@ -106,11 +100,9 @@ class SpecialPriceTest extends TestCase
         $localeDate = $this->getMockBuilder(
             TimezoneInterface::class
         )->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
-        $localeDate->expects($this->any())
-            ->method('isScopeDateInInterval')
-            ->willReturn($isValidInterval);
+        $localeDate->method('isScopeDateInInterval')->willReturn($isValidInterval);
 
         return $localeDate;
     }

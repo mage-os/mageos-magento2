@@ -7,6 +7,9 @@ declare(strict_types=1);
 
 namespace Magento\CatalogImportExport\Test\Unit\Model\Export;
 
+use Magento\Catalog\Model\ResourceModel\ProductFactory;
+use Magento\CatalogInventory\Model\ResourceModel\Stock\ItemFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Product\LinkTypeProvider;
 use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory as CategoryCollectionFactory;
 use Magento\CatalogImportExport\Model\Export\Product;
@@ -172,8 +175,7 @@ class ProductTest extends TestCase
         $this->logger = $this->createMock(Monolog::class);
 
         $this->collection = $this->createMock(\Magento\Catalog\Model\ResourceModel\Product\CollectionFactory::class);
-        $this->abstractCollection = $this->getMockForAbstractClass(
-            AbstractCollection::class,
+        $this->abstractCollection = $this->createMock(AbstractCollection::class,
             [],
             '',
             false,
@@ -189,25 +191,56 @@ class ProductTest extends TestCase
         );
         $this->exportConfig = $this->createMock(\Magento\ImportExport\Model\Export\Config::class);
 
-        $this->productFactory = $this->getMockBuilder(
-            \Magento\Catalog\Model\ResourceModel\ProductFactory::class
-        )->disableOriginalConstructor()
-            ->addMethods(['getTypeId'])
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->productFactory = new class extends ProductFactory {
+            private $typeId = null;
+            
+            public function __construct() {
+                // Empty constructor to avoid complex dependencies
+            }
+            
+            public function getTypeId() {
+                return $this->typeId;
+            }
+            
+            public function setTypeId($typeId) {
+                $this->typeId = $typeId;
+                return $this;
+            }
+            
+            public function create($data = []) {
+                return $this->createMock(\Magento\Catalog\Model\Product::class);
+            }
+        };
 
-        $this->attrSetColFactory = $this->getMockBuilder(AttributeSetCollectionFactory::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setEntityTypeFilter'])
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->attrSetColFactory = new class extends AttributeSetCollectionFactory {
+            public function __construct() {
+                // Empty constructor to avoid complex dependencies
+            }
+            
+            public function setEntityTypeFilter($entityType) {
+                return $this;
+            }
+            
+            public function create($data = []) {
+                return $this->createMock(\Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\Collection::class);
+            }
+        };
 
-        $this->categoryColFactory = $this->getMockBuilder(CategoryCollectionFactory::class)
-            ->disableOriginalConstructor()->addMethods(['addNameToResult'])
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->categoryColFactory = new class extends CategoryCollectionFactory {
+            public function __construct() {
+                // Empty constructor to avoid complex dependencies
+            }
+            
+            public function addNameToResult() {
+                return $this;
+            }
+            
+            public function create($data = []) {
+                return $this->createMock(\Magento\Catalog\Model\ResourceModel\Category\Collection::class);
+            }
+        };
 
-        $this->itemFactory = $this->createMock(\Magento\CatalogInventory\Model\ResourceModel\Stock\ItemFactory::class);
+        $this->itemFactory = $this->createMock(ItemFactory::class);
         $this->optionColFactory = $this->createMock(
             \Magento\Catalog\Model\ResourceModel\Product\Option\CollectionFactory::class
         );
@@ -434,9 +467,8 @@ class ProductTest extends TestCase
      *
      * @return void
      * @throws \ReflectionException
-     *
-     * @dataProvider getItemsPerPageDataProvider
      */
+    #[DataProvider('getItemsPerPageDataProvider')]
     public function testGetItemsPerPage($scenarios)
     {
 

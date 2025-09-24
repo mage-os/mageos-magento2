@@ -59,9 +59,7 @@ class CategoryTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
             ->getMock();
-        $this->categoryFactory->expects($this->any())
-            ->method('create')
-            ->willReturn($this->category);
+        $this->categoryFactory->method('create')->willReturn($this->category);
         $this->store = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getId'])
@@ -70,9 +68,7 @@ class CategoryTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['getCurrentStore', 'getCurrentCategory'])
             ->getMock();
-        $this->layer->expects($this->any())
-            ->method('getCurrentStore')
-            ->willReturn($this->store);
+        $this->layer->method('getCurrentStore')->willReturn($this->store);
         $objectManagerHelper = new ObjectManagerHelper($this);
         $this->target = $objectManagerHelper->getObject(
             \Magento\Catalog\Model\Layer\Filter\DataProvider\Category::class,
@@ -94,21 +90,15 @@ class CategoryTest extends TestCase
         $this->store->expects($this->once())
             ->method('getId')
             ->willReturn($storeId);
-        $this->layer->expects($this->any())
-            ->method('getCurrentCategory')
-            ->willReturn($this->category);
+        $this->layer->method('getCurrentCategory')->willReturn($this->category);
         $this->category->expects($this->once())
             ->method('setStoreId')
             ->with($storeId)->willReturnSelf();
         $this->category->expects($this->once())
             ->method('load')
             ->with($categoryId)->willReturnSelf();
-        $this->category->expects($this->any())
-            ->method('getId')
-            ->willReturn($categoryId);
-        $this->category->expects($this->any())
-            ->method('getPathIds')
-            ->willReturn([20, 10]);
+        $this->category->method('getId')->willReturn($categoryId);
+        $this->category->method('getPathIds')->willReturn([20, 10]);
         $this->coreRegistry->expects($this->once())
             ->method('register')
             ->with(

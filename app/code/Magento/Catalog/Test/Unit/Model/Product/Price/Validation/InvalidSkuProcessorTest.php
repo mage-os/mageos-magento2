@@ -41,12 +41,8 @@ class InvalidSkuProcessorTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->productIdLocator = $this->getMockBuilder(ProductIdLocatorInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->productRepository = $this->getMockBuilder(ProductRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->productIdLocator = $this->createMock(ProductIdLocatorInterface::class);
+        $this->productRepository = $this->createMock(ProductRepositoryInterface::class);
 
         $objectManager = new ObjectManager($this);
         $this->invalidSkuProcessor = $objectManager->getObject(
@@ -70,12 +66,169 @@ class InvalidSkuProcessorTest extends TestCase
         $idsBySku = [$productSku => [235235235 => $productType]];
         $this->productIdLocator->expects($this->atLeastOnce())->method('retrieveProductIdsBySkus')
             ->willReturn($idsBySku);
-        $product = $this->getMockBuilder(ProductInterface::class)
-            ->addMethods(['getPriceType'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        /** @var ProductInterface $product */
+        $product = new class implements ProductInterface {
+            private $priceType = null;
+            
+            public function getPriceType()
+            {
+                return $this->priceType;
+            }
+            
+            public function setPriceType($priceType)
+            {
+                $this->priceType = $priceType;
+                return $this;
+            }
+            
+            // Required ProductInterface methods with default implementations
+            public function getId()
+            {
+                return null;
+            }
+            public function setId($id)
+            {
+                return $this;
+            }
+            public function getSku()
+            {
+                return null;
+            }
+            public function setSku($sku)
+            {
+                return $this;
+            }
+            public function getName()
+            {
+                return null;
+            }
+            public function setName($name)
+            {
+                return $this;
+            }
+            public function getAttributeSetId()
+            {
+                return null;
+            }
+            public function setAttributeSetId($attributeSetId)
+            {
+                return $this;
+            }
+            public function getPrice()
+            {
+                return null;
+            }
+            public function setPrice($price)
+            {
+                return $this;
+            }
+            public function getStatus()
+            {
+                return null;
+            }
+            public function setStatus($status)
+            {
+                return $this;
+            }
+            public function getVisibility()
+            {
+                return null;
+            }
+            public function setVisibility($visibility)
+            {
+                return $this;
+            }
+            public function getTypeId()
+            {
+                return null;
+            }
+            public function setTypeId($typeId)
+            {
+                return $this;
+            }
+            public function getCreatedAt()
+            {
+                return null;
+            }
+            public function setCreatedAt($createdAt)
+            {
+                return $this;
+            }
+            public function getUpdatedAt()
+            {
+                return null;
+            }
+            public function setUpdatedAt($updatedAt)
+            {
+                return $this;
+            }
+            public function getWeight()
+            {
+                return null;
+            }
+            public function setWeight($weight)
+            {
+                return $this;
+            }
+            public function getExtensionAttributes()
+            {
+                return null;
+            }
+            public function setExtensionAttributes($extensionAttributes)
+            {
+                return $this;
+            }
+            public function getProductLinks()
+            {
+                return null;
+            }
+            public function setProductLinks(?array $links = null)
+            {
+                return $this;
+            }
+            public function getOptions()
+            {
+                return null;
+            }
+            public function setOptions(?array $options = null)
+            {
+                return $this;
+            }
+            public function getMediaGalleryEntries()
+            {
+                return null;
+            }
+            public function setMediaGalleryEntries(?array $mediaGalleryEntries = null)
+            {
+                return $this;
+            }
+            public function getTierPrices()
+            {
+                return null;
+            }
+            public function setTierPrices(?array $tierPrices = null)
+            {
+                return $this;
+            }
+            public function getCustomAttributes()
+            {
+                return null;
+            }
+            public function setCustomAttributes($customAttributes)
+            {
+                return $this;
+            }
+            public function getCustomAttribute($attributeCode)
+            {
+                return null;
+            }
+            public function setCustomAttribute($attributeCode, $attributeValue)
+            {
+                return $this;
+            }
+        };
         $productPriceType = 0;
-        $product->expects($this->atLeastOnce())->method('getPriceType')->willReturn($productPriceType);
+        $product->setPriceType($productPriceType);
         $this->productRepository->expects($this->atLeastOnce())->method('get')->willReturn($product);
     }
 

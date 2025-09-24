@@ -77,15 +77,9 @@ class MassStatusTest extends ProductTestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['getTypeId', 'getStoreId', '__sleep'])
             ->getMock();
-        $productMock->expects($this->any())
-            ->method('getTypeId')
-            ->willReturn('simple');
-        $productMock->expects($this->any())
-            ->method('getStoreId')
-            ->willReturn('1');
-        $this->productBuilderMock->expects($this->any())
-            ->method('build')
-            ->willReturn($productMock);
+        $productMock->method('getTypeId')->willReturn('simple');
+        $productMock->method('getStoreId')->willReturn('1');
+        $this->productBuilderMock->method('build')->willReturn($productMock);
 
         $this->resultRedirectMock = $this->getMockBuilder(Redirect::class)
             ->disableOriginalConstructor()
@@ -120,9 +114,7 @@ class MassStatusTest extends ProductTestCase
                 ->disableOriginalConstructor()
                 ->onlyMethods(['create'])
                 ->getMock();
-        $collectionFactoryMock->expects($this->any())
-            ->method('create')
-            ->willReturn($this->abstractDbMock);
+        $collectionFactoryMock->method('create')->willReturn($this->abstractDbMock);
 
         $additionalParams = [
             'resultFactory' => $resultFactory

@@ -39,7 +39,7 @@ class InventoryTest extends TestCase
     protected $requestMock;
 
     /**
-     * @var \Magento\Catalog\Block\Adminhtml\Product\Edit\Action\Attribute\Tab\Inventory
+     * @var Inventory
      */
     protected $inventory;
 
@@ -51,16 +51,29 @@ class InventoryTest extends TestCase
     protected function setUp(): void
     {
         $objectManager = new ObjectManager($this);
+        
+        // Prepare ObjectManager with required dependencies
+        $objects = [
+            [
+                \Magento\Framework\Json\Helper\Data::class,
+                $this->createMock(\Magento\Framework\Json\Helper\Data::class)
+            ],
+            [
+                \Magento\Directory\Helper\Data::class,
+                $this->createMock(\Magento\Directory\Helper\Data::class)
+            ]
+        ];
+        $objectManager->prepareObjectManager($objects);
 
         $this->contextMock = $this->createPartialMock(Context::class, ['getRequest']);
         $this->backordersMock = $this->createMock(Backorders::class);
-        $this->stockConfigurationMock = $this->getMockForAbstractClass(
+        $this->stockConfigurationMock = $this->createMock(
             StockConfigurationInterface::class,
             [],
             '',
             false
         );
-        $this->requestMock = $this->getMockForAbstractClass(
+        $this->requestMock = $this->createMock(
             RequestInterface::class,
             ['getParam'],
             '',

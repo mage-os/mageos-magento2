@@ -67,12 +67,12 @@ class CategoryListTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
             ->getMock();
-        $this->extensionAttributesJoinProcessor = $this->getMockForAbstractClass(JoinProcessorInterface::class);
+        $this->extensionAttributesJoinProcessor = $this->createMock(JoinProcessorInterface::class);
         $this->categorySearchResultsFactory = $this->getMockBuilder(CategorySearchResultsInterfaceFactory::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
             ->getMock();
-        $this->categoryRepository = $this->getMockForAbstractClass(CategoryRepositoryInterface::class);
+        $this->categoryRepository = $this->createMock(CategoryRepositoryInterface::class);
         $this->collectionProcessorMock = $this->getMockBuilder(CollectionProcessorInterface::class)
             ->getMock();
 
@@ -102,7 +102,7 @@ class CategoryListTest extends TestCase
             ->getMock();
 
         /** @var SearchCriteriaInterface|MockObject $searchCriteria */
-        $searchCriteria = $this->getMockForAbstractClass(SearchCriteriaInterface::class);
+        $searchCriteria = $this->createMock(SearchCriteriaInterface::class);
 
         $collection = $this->getMockBuilder(Collection::class)
             ->disableOriginalConstructor()
@@ -111,7 +111,7 @@ class CategoryListTest extends TestCase
         $collection->expects($this->once())->method('getData')->willReturn(
             [['entity_id' => $categoryIdFirst], ['entity_id' => $categoryIdSecond]]
         );
-        $collection->expects($this->any())->method('getEntity')->willReturn(
+        $collection->method('getEntity')->willReturn(
             new DataObject(['id_field_name' => 'entity_id'])
         );
 
@@ -119,7 +119,7 @@ class CategoryListTest extends TestCase
             ->method('process')
             ->with($searchCriteria, $collection);
 
-        $searchResult = $this->getMockForAbstractClass(CategorySearchResultsInterface::class);
+        $searchResult = $this->createMock(CategorySearchResultsInterface::class);
         $searchResult->expects($this->once())->method('setSearchCriteria')->with($searchCriteria);
         $searchResult->expects($this->once())->method('setItems')->with([$categoryFirst, $categorySecond]);
         $searchResult->expects($this->once())->method('setTotalCount')->with($totalCount);

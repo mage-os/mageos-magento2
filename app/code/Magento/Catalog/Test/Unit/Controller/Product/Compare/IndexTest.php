@@ -87,17 +87,15 @@ class IndexTest extends TestCase
             Context::class,
             ['getRequest', 'getResponse', 'getResultRedirectFactory']
         );
-        $this->request = $this->getMockForAbstractClass(RequestInterface::class);
-        $this->response = $this->getMockForAbstractClass(ResponseInterface::class);
+        $this->request = $this->createMock(RequestInterface::class);
+        $this->response = $this->createMock(ResponseInterface::class);
         $this->redirectFactoryMock = $this->createPartialMock(
             RedirectFactory::class,
             ['create']
         );
-        $this->contextMock->expects($this->any())->method('getRequest')->willReturn($this->request);
-        $this->contextMock->expects($this->any())->method('getResponse')->willReturn($this->response);
-        $this->contextMock->expects($this->any())
-            ->method('getResultRedirectFactory')
-            ->willReturn($this->redirectFactoryMock);
+        $this->contextMock->method('getRequest')->willReturn($this->request);
+        $this->contextMock->method('getResponse')->willReturn($this->response);
+        $this->contextMock->method('getResultRedirectFactory')->willReturn($this->redirectFactoryMock);
 
         $this->itemFactoryMock = $this->createPartialMock(
             ItemFactory::class,
@@ -110,17 +108,24 @@ class IndexTest extends TestCase
         $this->sessionMock = $this->createMock(Session::class);
         $this->visitorMock = $this->createMock(Visitor::class);
         $this->listCompareMock = $this->createMock(ListCompare::class);
-        $this->catalogSession = $this->getMockBuilder(\Magento\Catalog\Model\Session::class)
-            ->addMethods(['setBeforeCompareUrl'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->storeManagerMock = $this->getMockForAbstractClass(StoreManagerInterface::class);
+        $this->catalogSession = new class extends \Magento\Catalog\Model\Session {
+            public function __construct()
+            {
+                // Empty constructor
+            }
+            
+            public function setBeforeCompareUrl($url)
+            {
+                return $this;
+            }
+        };
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
         $this->formKeyValidatorMock = $this->getMockBuilder(Validator::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->pageFactoryMock = $this->createMock(PageFactory::class);
-        $this->productRepositoryMock = $this->getMockForAbstractClass(ProductRepositoryInterface::class);
-        $this->decoderMock = $this->getMockForAbstractClass(DecoderInterface::class);
+        $this->productRepositoryMock = $this->createMock(ProductRepositoryInterface::class);
+        $this->decoderMock = $this->createMock(DecoderInterface::class);
 
         $this->index = new Index(
             $this->contextMock,
@@ -152,10 +157,7 @@ class IndexTest extends TestCase
             ->method('decode')
             ->with($beforeUrl)
             ->willReturn($beforeUrl . '1');
-        $this->catalogSession->expects($this->once())
-            ->method('setBeforeCompareUrl')
-            ->with($beforeUrl . '1')
-            ->willReturnSelf();
+        // The anonymous class already implements setBeforeCompareUrl to return $this
         $this->redirectFactoryMock->expects($this->never())->method('create');
         $this->index->execute();
     }

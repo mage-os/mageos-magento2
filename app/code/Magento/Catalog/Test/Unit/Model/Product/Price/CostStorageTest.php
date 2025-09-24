@@ -94,15 +94,9 @@ class CostStorageTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
             ->getMock();
-        $this->costInterface = $this->getMockBuilder(CostInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->productIdLocator = $this->getMockBuilder(ProductIdLocatorInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->storeRepository = $this->getMockBuilder(StoreRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->costInterface = $this->createMock(CostInterface::class);
+        $this->productIdLocator = $this->createMock(ProductIdLocatorInterface::class);
+        $this->storeRepository = $this->createMock(StoreRepositoryInterface::class);
         $this->validationResult = $this->getMockBuilder(Result::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -201,9 +195,7 @@ class CostStorageTest extends TestCase
      */
     public function testUpdate()
     {
-        $store = $this->getMockBuilder(StoreInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $store = $this->createMock(StoreInterface::class);
         $sku = 'sku_1';
         $idsBySku = [
             'sku_1' => [
@@ -266,9 +258,7 @@ class CostStorageTest extends TestCase
             ->method('create')
             ->with(['attributeCode' => 'cost'])
             ->willReturn($this->pricePersistence);
-        $priceUpdateResult = $this->getMockBuilder(PriceUpdateResultInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $priceUpdateResult = $this->createMock(PriceUpdateResultInterface::class);
         $this->validationResult->expects($this->atLeastOnce())
             ->method('addFailedItem')
             ->willReturnCallback(function ($arg1, $arg2, $arg3) {

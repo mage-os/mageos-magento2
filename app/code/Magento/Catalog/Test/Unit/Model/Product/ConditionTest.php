@@ -54,7 +54,7 @@ class ConditionTest extends TestCase
         $mockBuilder = $this->getMockBuilder(AbstractCollection::class)
             ->onlyMethods(['joinTable'])
             ->disableOriginalConstructor();
-        $mock = $mockBuilder->getMockForAbstractClass();
+        $mock = $mockBuilder->getMock();
 
         $mock->expects($this->any())
             ->method('joinTable');
@@ -72,11 +72,9 @@ class ConditionTest extends TestCase
         $mockBuilder = $this->getMockBuilder(AdapterInterface::class)
             ->onlyMethods(['select'])
             ->disableOriginalConstructor();
-        $mock = $mockBuilder->getMockForAbstractClass();
+        $mock = $mockBuilder->getMock();
 
-        $mock->expects($this->any())
-            ->method('select')
-            ->willReturn($mockedDbSelect);
+        $mock->method('select')->willReturn($mockedDbSelect);
 
         return $mock;
     }
@@ -89,11 +87,9 @@ class ConditionTest extends TestCase
         $mockBuilder = $this->getMockBuilder(Select::class)
             ->onlyMethods(['from'])
             ->disableOriginalConstructor();
-        $mock = $mockBuilder->getMockForAbstractClass();
+        $mock = $mockBuilder->getMock();
 
-        $mock->expects($this->any())
-            ->method('from')
-            ->willReturn($mock);
+        $mock->method('from')->willReturn($mock);
 
         return $mock;
     }

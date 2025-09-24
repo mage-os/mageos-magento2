@@ -39,7 +39,7 @@ class ActiveTableSwitcherTest extends TestCase
         $connectionMock = $this->getMockBuilder(AdapterInterface::class)
             ->addMethods(['changeTableComment'])
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $statement = $this->createMock(\Zend_Db_Statement_Interface::class);
         $tableName = 'tableName';
         $tableData = ['Comment' => 'Table comment'];

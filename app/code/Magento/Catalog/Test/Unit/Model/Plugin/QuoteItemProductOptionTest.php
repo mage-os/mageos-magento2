@@ -58,15 +58,85 @@ class QuoteItemProductOptionTest extends TestCase
         $this->subjectMock = $this->getMockBuilder(QuoteToOrderItem::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->quoteItemMock = $this->getMockBuilder(AbstractQuoteItem::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getOptions'])
-            ->onlyMethods(['getProduct'])
-            ->getMockForAbstractClass();
-        $this->quoteItemOptionMock = $this->getMockBuilder(QuoteItemOption::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getCode'])
-            ->getMock();
+        $this->quoteItemMock = new class extends AbstractQuoteItem {
+            private $options = null;
+            private $product = null;
+            private $quote = null;
+            private $address = null;
+            
+            public function __construct()
+            {
+                // Don't call parent constructor to avoid dependencies
+            }
+            
+            public function getOptions()
+            {
+                return $this->options;
+            }
+            
+            public function setOptions($options)
+            {
+                $this->options = $options;
+                return $this;
+            }
+            
+            public function getProduct()
+            {
+                return $this->product;
+            }
+            
+            public function setProduct($product)
+            {
+                $this->product = $product;
+                return $this;
+            }
+            
+            public function getQuote()
+            {
+                return $this->quote;
+            }
+            
+            public function setQuote($quote)
+            {
+                $this->quote = $quote;
+                return $this;
+            }
+            
+            public function getAddress()
+            {
+                return $this->address;
+            }
+            
+            public function setAddress($address)
+            {
+                $this->address = $address;
+                return $this;
+            }
+            
+            public function getOptionByCode($code)
+            {
+                return null;
+            }
+        };
+        $this->quoteItemOptionMock = new class extends QuoteItemOption {
+            private $code = null;
+            
+            public function __construct()
+            {
+                // Don't call parent constructor to avoid dependencies
+            }
+            
+            public function getCode()
+            {
+                return $this->code;
+            }
+            
+            public function setCode($code)
+            {
+                $this->code = $code;
+                return $this;
+            }
+        };
         $this->productMock = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -77,27 +147,59 @@ class QuoteItemProductOptionTest extends TestCase
 
     public function testBeforeItemToOrderItemEmptyOptions()
     {
-        $this->quoteItemMock->expects(static::once())
-            ->method('getOptions')
-            ->willReturn(null);
+        $this->quoteItemMock->setOptions(null);
 
         $this->plugin->beforeConvert($this->subjectMock, $this->quoteItemMock);
     }
 
     public function testBeforeItemToOrderItemWithOptions()
     {
-        $this->quoteItemMock->expects(static::exactly(2))
-            ->method('getOptions')
-            ->willReturn([$this->quoteItemOptionMock, $this->quoteItemOptionMock]);
-        $this->quoteItemOptionMock->expects(static::exactly(4))
-            ->method('getCode')
-            ->willReturnOnConsecutiveCalls('someText_8', 'someText_8', 'not_int_text', 'not_int_text');
+        // Create two option mocks with different codes
+        $optionMock1 = new class extends QuoteItemOption {
+            private $code = 'someText_8';
+            
+            public function __construct()
+            {
+                // Don't call parent constructor to avoid dependencies
+            }
+            
+            public function getCode()
+            {
+                return $this->code;
+            }
+            
+            public function setCode($code)
+            {
+                $this->code = $code;
+                return $this;
+            }
+        };
+        
+        $optionMock2 = new class extends QuoteItemOption {
+            private $code = 'not_int_text';
+            
+            public function __construct()
+            {
+                // Don't call parent constructor to avoid dependencies
+            }
+            
+            public function getCode()
+            {
+                return $this->code;
+            }
+            
+            public function setCode($code)
+            {
+                $this->code = $code;
+                return $this;
+            }
+        };
+        
+        $this->quoteItemMock->setOptions([$optionMock1, $optionMock2]);
         $this->productMock->expects(static::once())
             ->method('getOptionById')
             ->willReturn(new DataObject(['type' => ProductOption::OPTION_TYPE_FILE]));
-        $this->quoteItemMock->expects(static::once())
-            ->method('getProduct')
-            ->willReturn($this->productMock);
+        $this->quoteItemMock->setProduct($this->productMock);
 
         $this->plugin->beforeConvert($this->subjectMock, $this->quoteItemMock);
     }

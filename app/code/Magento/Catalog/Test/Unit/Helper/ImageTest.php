@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Helper;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Helper\Image;
 use Magento\Catalog\Model\Config\CatalogMediaConfig;
 use Magento\Catalog\Model\Product;
@@ -89,8 +90,7 @@ class ImageTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->viewConfig = $this->getMockBuilder(ConfigInterface::class)
-            ->getMockForAbstractClass();
+        $this->viewConfig = $this->createMock(ConfigInterface::class);
 
         $this->placeholderFactory = $this->getMockBuilder(PlaceholderFactory::class)
             ->disableOriginalConstructor()
@@ -114,11 +114,8 @@ class ImageTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->scopeConfig = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->getMockForAbstractClass();
-        $this->context->expects($this->any())
-            ->method('getScopeConfig')
-            ->willReturn($this->scopeConfig);
+        $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
+        $this->context->method('getScopeConfig')->willReturn($this->scopeConfig);
     }
 
     protected function mockImage()
@@ -131,15 +128,13 @@ class ImageTest extends TestCase
         $this->image = $this->getMockBuilder(\Magento\Catalog\Model\Product\Image::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->imageFactory->expects($this->any())
-            ->method('create')
-            ->willReturn($this->image);
+        $this->imageFactory->method('create')->willReturn($this->image);
     }
 
     /**
      * @param array $data
-     * @dataProvider initDataProvider
      */
+    #[DataProvider('initDataProvider')]
     public function testInit($data)
     {
         $imageId = 'test_image_id';
@@ -189,8 +184,8 @@ class ImageTest extends TestCase
      * @param array $data - optional 'frame' key
      * @param bool $whiteBorders view config
      * @param bool $expectedKeepFrame
-     * @dataProvider initKeepFrameDataProvider
      */
+    #[DataProvider('initKeepFrameDataProvider')]
     public function testInitKeepFrame($data, $whiteBorders, $expectedKeepFrame)
     {
         $imageId = 'test_image_id';
@@ -279,9 +274,7 @@ class ImageTest extends TestCase
             ->method('setDestinationSubdir')
             ->with($data['type'])
             ->willReturnSelf();
-        $this->image->expects($this->any())
-            ->method('getDestinationSubdir')
-            ->willReturn($data['type']);
+        $this->image->method('getDestinationSubdir')->willReturn($data['type']);
         $this->image->expects($this->once())
             ->method('setWidth')
             ->with($data['width'])
@@ -415,8 +408,8 @@ class ImageTest extends TestCase
 
     /**
      * @param array $data
-     * @dataProvider getHeightDataProvider
      */
+    #[DataProvider('getHeightDataProvider')]
     public function testGetHeight($data)
     {
         $imageId = 'test_image_id';
@@ -440,14 +433,18 @@ class ImageTest extends TestCase
     public static function getHeightDataProvider()
     {
         return [
-            'data' => [
+            'height_only' => [
                 [
                     'height' => 100,
                 ],
+            ],
+            'width_and_height' => [
                 [
                     'width' => 100,
                     'height' => 100,
                 ],
+            ],
+            'width_only' => [
                 [
                     'width' => 100,
                 ],
@@ -457,8 +454,8 @@ class ImageTest extends TestCase
 
     /**
      * @param array $data
-     * @dataProvider getFrameDataProvider
      */
+    #[DataProvider('getFrameDataProvider')]
     public function testGetFrame($data)
     {
         $imageId = 'test_image_id';
@@ -480,10 +477,12 @@ class ImageTest extends TestCase
     public static function getFrameDataProvider()
     {
         return [
-            'data' => [
+            'frame_0' => [
                 [
                     'frame' => 0,
                 ],
+            ],
+            'frame_1' => [
                 [
                     'frame' => 1,
                 ],
@@ -494,8 +493,8 @@ class ImageTest extends TestCase
     /**
      * @param array $data
      * @param string $expected
-     * @dataProvider getLabelDataProvider
      */
+    #[DataProvider('getLabelDataProvider')]
     public function testGetLabel($data, $expected)
     {
         $imageId = 'test_image_id';
@@ -509,9 +508,7 @@ class ImageTest extends TestCase
             ->method('getData')
             ->with($data['type'] . '_' . 'label')
             ->willReturn($data['label']);
-        $productMock->expects($this->any())
-            ->method('getName')
-            ->willReturn($expected);
+        $productMock->method('getName')->willReturn($expected);
 
         $this->prepareAttributes($data, $imageId);
 
@@ -530,14 +527,14 @@ class ImageTest extends TestCase
                     'type' => 'image',
                     'label' => 'test_label',
                 ],
-                'test_label',
+                "expected" => 'test_label',
             ],
             [
                 'data' => [
                     'type' => 'image',
                     'label' => null,
                 ],
-                'test_label',
+                "expected" => 'test_label',
             ],
         ];
     }
@@ -551,8 +548,8 @@ class ImageTest extends TestCase
      * @param boolean $isCached
      * @param boolean $isBaseFilePlaceholder
      * @param array $resizedImageInfo
-     * @dataProvider getResizedImageInfoDataProvider
      */
+    #[DataProvider('getResizedImageInfoDataProvider')]
     public function testGetResizedImageInfo(
         $imageId,
         $imageFile,
@@ -579,12 +576,8 @@ class ImageTest extends TestCase
         $this->image->expects($this->once())
             ->method('getBaseFile')
             ->willReturn($baseFile);
-        $this->image->expects($this->any())
-            ->method('getDestinationSubdir')
-            ->willReturn($destination);
-        $this->image->expects($this->any())
-            ->method('isCached')
-            ->willReturn($isCached);
+        $this->image->method('getDestinationSubdir')->willReturn($destination);
+        $this->image->method('isCached')->willReturn($isCached);
         $this->image->expects($this->any())
             ->method('resize')
             ->willReturnSelf();
@@ -594,9 +587,7 @@ class ImageTest extends TestCase
         $this->image->expects($this->once())
             ->method('getResizedImageInfo')
             ->willReturn($resizedImageInfo);
-        $this->image->expects($this->any())
-            ->method('isBaseFilePlaceholder')
-            ->willReturn($isBaseFilePlaceholder);
+        $this->image->method('isBaseFilePlaceholder')->willReturn($isBaseFilePlaceholder);
 
         $this->prepareAttributes([], $imageId);
 

@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Model\Indexer\Category\Product\Plugin;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Indexer\Category\Product;
 use Magento\Catalog\Model\Indexer\Category\Product\Plugin\StoreGroup;
 use Magento\Catalog\Model\Indexer\Category\Product\TableMaintainer;
@@ -55,7 +56,7 @@ class StoreGroupTest extends TestCase
             GroupModel::class,
             ['dataHasChangedFor', 'isObjectNew']
         );
-        $this->indexerMock = $this->getMockForAbstractClass(
+        $this->indexerMock = $this->createMock(
             IndexerInterface::class,
             [],
             '',
@@ -73,8 +74,8 @@ class StoreGroupTest extends TestCase
 
     /**
      * @param array $valueMap
-     * @dataProvider changedDataProvider
      */
+    #[DataProvider('changedDataProvider')]
     public function testAfterSave(array $valueMap): void
     {
         $this->mockIndexerMethods();
@@ -89,8 +90,8 @@ class StoreGroupTest extends TestCase
 
     /**
      * @param array $valueMap
-     * @dataProvider changedDataProvider
      */
+    #[DataProvider('changedDataProvider')]
     public function testAfterSaveNotNew(array $valueMap): void
     {
         $this->groupModelMock->expects($this->exactly(2))->method('dataHasChangedFor')->willReturnMap($valueMap);

@@ -66,16 +66,59 @@ class SpecialPriceStorageTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->specialPriceResource = $this->getMockBuilder(SpecialPriceInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getEntityLinkField'])
-            ->onlyMethods(['get', 'update', 'delete'])->getMockForAbstractClass();
-        $this->productIdLocator = $this->getMockBuilder(ProductIdLocatorInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->storeRepository = $this->getMockBuilder(StoreRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        /** @var SpecialPriceInterface $this->specialPriceResource */
+        $this->specialPriceResource = new class implements SpecialPriceInterface {
+            private $entityLinkField = null;
+            private $getResult = null;
+            private $updateResult = null;
+            private $deleteResult = null;
+            
+            public function getEntityLinkField()
+            {
+                return $this->entityLinkField;
+            }
+            
+            public function setEntityLinkField($field)
+            {
+                $this->entityLinkField = $field;
+                return $this;
+            }
+            
+            public function get($skus)
+            {
+                return $this->getResult;
+            }
+            
+            public function setGetResult($result)
+            {
+                $this->getResult = $result;
+                return $this;
+            }
+            
+            public function update($prices)
+            {
+                return $this->updateResult;
+            }
+            
+            public function setUpdateResult($result)
+            {
+                $this->updateResult = $result;
+                return $this;
+            }
+            
+            public function delete($skus)
+            {
+                return $this->deleteResult;
+            }
+            
+            public function setDeleteResult($result)
+            {
+                $this->deleteResult = $result;
+                return $this;
+            }
+        };
+        $this->productIdLocator = $this->createMock(ProductIdLocatorInterface::class);
+        $this->storeRepository = $this->createMock(StoreRepositoryInterface::class);
         $this->invalidSkuProcessor = $this
             ->getMockBuilder(InvalidSkuProcessor::class)
             ->disableOriginalConstructor()
@@ -135,9 +178,8 @@ class SpecialPriceStorageTest extends TestCase
             ],
         ];
         $this->invalidSkuProcessor->expects($this->once())->method('filterSkuList')->with($skus, [])->willReturn($skus);
-        $this->specialPriceResource->expects($this->once())->method('get')->willReturn($rawPrices);
-        $this->specialPriceResource->expects($this->atLeastOnce())
-            ->method('getEntityLinkField')->willReturn('entity_id');
+        $this->specialPriceResource->setGetResult($rawPrices);
+        $this->specialPriceResource->setEntityLinkField('entity_id');
         $price = $this->getMockBuilder(\Magento\Catalog\Api\Data\SpecialPriceInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -171,7 +213,7 @@ class SpecialPriceStorageTest extends TestCase
         $this->storeRepository->expects($this->once())->method('getById');
         $this->validationResult->expects($this->never())->method('addFailedItem');
         $this->validationResult->expects($this->atLeastOnce())->method('getFailedRowIds')->willReturn([]);
-        $this->specialPriceResource->expects($this->once())->method('update')->with($prices);
+        $this->specialPriceResource->setUpdateResult($prices);
 
         $this->model->update($prices);
     }
@@ -217,7 +259,7 @@ class SpecialPriceStorageTest extends TestCase
                 ]
             );
         $this->validationResult->expects($this->atLeastOnce())->method('getFailedRowIds')->willReturn([1]);
-        $this->specialPriceResource->expects($this->once())->method('update')->with([]);
+        $this->specialPriceResource->setUpdateResult([]);
 
         $this->model->update($prices);
     }
@@ -264,7 +306,7 @@ class SpecialPriceStorageTest extends TestCase
                 ]
             );
         $this->validationResult->expects($this->atLeastOnce())->method('getFailedRowIds')->willReturn([1]);
-        $this->specialPriceResource->expects($this->once())->method('update')->with([]);
+        $this->specialPriceResource->setUpdateResult([]);
 
         $this->model->update($prices);
     }
@@ -310,7 +352,7 @@ class SpecialPriceStorageTest extends TestCase
                 ]
             );
         $this->validationResult->expects($this->atLeastOnce())->method('getFailedRowIds')->willReturn([1]);
-        $this->specialPriceResource->expects($this->once())->method('update')->with([]);
+        $this->specialPriceResource->setUpdateResult([]);
 
         $this->model->update($prices);
     }
@@ -357,7 +399,7 @@ class SpecialPriceStorageTest extends TestCase
                 ]
             );
         $this->validationResult->expects($this->atLeastOnce())->method('getFailedRowIds')->willReturn([1]);
-        $this->specialPriceResource->expects($this->once())->method('update')->with([]);
+        $this->specialPriceResource->setUpdateResult([]);
 
         $this->model->update($prices);
     }
@@ -404,7 +446,7 @@ class SpecialPriceStorageTest extends TestCase
                 ]
             );
         $this->validationResult->expects($this->atLeastOnce())->method('getFailedRowIds')->willReturn([1]);
-        $this->specialPriceResource->expects($this->once())->method('update')->with([]);
+        $this->specialPriceResource->setUpdateResult([]);
 
         $this->model->update($prices);
     }

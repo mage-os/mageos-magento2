@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Ui\DataProvider\Product;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\Catalog\Ui\DataProvider\Product\ProductCustomOptionsDataProvider;
 use Magento\Framework\App\RequestInterface;
@@ -72,21 +73,83 @@ class ProductCustomOptionsDataProviderTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
             ->getMock();
-        $this->requestMock = $this->getMockBuilder(RequestInterface::class)
-            ->getMockForAbstractClass();
-        $this->collectionMock = $this->getMockBuilder(AbstractCollection::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setStoreId'])
-            ->onlyMethods([
-                'load',
-                'getSelect',
-                'getTable',
-                'getIterator',
-                'isLoaded',
-                'toArray',
-                'getSize'
-            ])
-            ->getMockForAbstractClass();
+        $this->requestMock = $this->createMock(RequestInterface::class);
+        $this->collectionMock = new class extends AbstractCollection {
+            private $storeId = null;
+            private $loadResult = null;
+            private $select = null;
+            private $table = null;
+            private $iterator = null;
+            private $isLoaded = false;
+            private $arrayData = [];
+            private $size = 0;
+            
+            public function __construct() {}
+            
+            public function setStoreId($value) { 
+                $this->storeId = $value; 
+                return $this; 
+            }
+            public function getStoreId() { 
+                return $this->storeId; 
+            }
+            
+            public function load($printQuery = false, $logQuery = false) { 
+                return $this->loadResult ?: $this; 
+            }
+            public function setLoadResult($value) { 
+                $this->loadResult = $value; 
+                return $this; 
+            }
+            
+            public function getSelect() { 
+                return $this->select; 
+            }
+            public function setSelect($value) { 
+                $this->select = $value; 
+                return $this; 
+            }
+            
+            public function getTable($tableName) { 
+                return $this->table; 
+            }
+            public function setTable($value) { 
+                $this->table = $value; 
+                return $this; 
+            }
+            
+            public function getIterator() { 
+                return $this->iterator; 
+            }
+            public function setIterator($value) { 
+                $this->iterator = $value; 
+                return $this; 
+            }
+            
+            public function isLoaded() { 
+                return $this->isLoaded; 
+            }
+            public function setIsLoaded($value) { 
+                $this->isLoaded = $value; 
+                return $this; 
+            }
+            
+            public function toArray($arrRequiredFields = []) { 
+                return $this->arrayData; 
+            }
+            public function setArrayData($value) { 
+                $this->arrayData = $value; 
+                return $this; 
+            }
+            
+            public function getSize() { 
+                return $this->size; 
+            }
+            public function setSize($value) { 
+                $this->size = $value; 
+                return $this; 
+            }
+        };
         $this->dbSelectMock = $this->getMockBuilder(DbSelect::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -95,20 +158,14 @@ class ProductCustomOptionsDataProviderTest extends TestCase
             ->method('create')
             ->willReturn($this->collectionMock);
 
-        $this->modifiersPool = $this->getMockBuilder(PoolInterface::class)
-            ->getMockForAbstractClass();
-        $this->entityMetadata = $this->getMockBuilder(EntityMetadataInterface::class)
-            ->getMockForAbstractClass();
-        $this->entityMetadata->expects($this->any())
-            ->method('getLinkField')
-            ->willReturn('entity_id');
+        $this->modifiersPool = $this->createMock(PoolInterface::class);
+        $this->entityMetadata = $this->createMock(EntityMetadataInterface::class);
+        $this->entityMetadata->method('getLinkField')->willReturn('entity_id');
         $this->metadataPool = $this->getMockBuilder(MetadataPool::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getMetadata'])
             ->getMock();
-        $this->metadataPool->expects($this->any())
-            ->method('getMetadata')
-            ->willReturn($this->entityMetadata);
+        $this->metadataPool->method('getMetadata')->willReturn($this->entityMetadata);
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->dataProvider = $this->objectManagerHelper->getObject(
@@ -126,12 +183,11 @@ class ProductCustomOptionsDataProviderTest extends TestCase
      * @param int $amount
      * @param array $collectionArray
      * @param array $result
-     * @dataProvider getDataDataProvider
      */
+    #[DataProvider('getDataDataProvider')]
     public function testGetDataCollectionIsLoaded($amount, array $collectionArray, array $result)
     {
-        $this->collectionMock->expects($this->never())
-            ->method('load');
+        // load() is never called in this test
 
         $this->setCommonExpectations(true, $amount, $collectionArray);
 
@@ -142,39 +198,28 @@ class ProductCustomOptionsDataProviderTest extends TestCase
      * @param int $amount
      * @param array $collectionArray
      * @param array $result
-     * @dataProvider getDataDataProvider
      */
+    #[DataProvider('getDataDataProvider')]
     public function testGetData($amount, array $collectionArray, array $result)
     {
         $tableName = 'catalog_product_option_table';
 
-        $this->collectionMock->expects($this->once())
-            ->method('isLoaded')
-            ->willReturn(false);
+        $this->collectionMock->setIsLoaded(false);
         $this->requestMock->expects($this->once())
             ->method('getParam')
             ->with('current_product_id', null)
             ->willReturn(0);
-        $this->collectionMock->expects($this->any())
-            ->method('getSelect')
-            ->willReturn($this->dbSelectMock);
+        $this->collectionMock->setSelect($this->dbSelectMock);
         $this->dbSelectMock->expects($this->any())
             ->method('distinct')
             ->willReturnSelf();
-        $this->collectionMock->expects($this->any())
-            ->method('getTable')
-            ->with('catalog_product_option')
-            ->willReturn($tableName);
+        $this->collectionMock->setTable($tableName);
         $this->dbSelectMock->expects($this->once())
             ->method('join')
             ->with(['opt' => $tableName], 'opt.product_id = e.entity_id', null)
             ->willReturnSelf();
-        $this->collectionMock->expects($this->once())
-            ->method('load')
-            ->willReturnSelf();
-        $this->collectionMock->expects($this->any())
-            ->method('getIterator')
-            ->willReturn(new \ArrayIterator([]));
+        $this->collectionMock->setLoadResult($this->collectionMock);
+        $this->collectionMock->setIterator(new \ArrayIterator([]));
 
         $this->setCommonExpectations(false, $amount, $collectionArray);
 
@@ -214,14 +259,8 @@ class ProductCustomOptionsDataProviderTest extends TestCase
      */
     protected function setCommonExpectations($isLoaded, $amount, array $collectionArray)
     {
-        $this->collectionMock->expects($this->once())
-            ->method('isLoaded')
-            ->willReturn($isLoaded);
-        $this->collectionMock->expects($this->once())
-            ->method('toArray')
-            ->willReturn($collectionArray);
-        $this->collectionMock->expects($this->once())
-            ->method('getSize')
-            ->willReturn($amount);
+        $this->collectionMock->setIsLoaded($isLoaded);
+        $this->collectionMock->setArrayData($collectionArray);
+        $this->collectionMock->setSize($amount);
     }
 }

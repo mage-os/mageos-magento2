@@ -62,9 +62,7 @@ class UrlTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->buttonMock = $this->getMockBuilder(ButtonInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->buttonMock = $this->createMock(ButtonInterface::class);
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->model = $this->objectManagerHelper->getObject(
@@ -83,7 +81,8 @@ class UrlTest extends TestCase
         $product = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $productRenderInfoDto = $this->getMockForAbstractClass(ProductRenderInterface::class);
+      
+        $productRenderInfoDto = $this->createMock(ProductRenderInterface::class);
 
         // Mock both getAddToCartButton and getAddToCompareButton returning null (line 81-82)
         $productRenderInfoDto->expects($this->once())

@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\CatalogImportExport\Test\Unit\Model\Import\Product;
 
+use Magento\CatalogImportExport\Model\Import\Proxy\Product\ResourceModelFactory;
 use Magento\CatalogImportExport\Model\Import\Product\ImageTypeProcessor;
 use Magento\CatalogImportExport\Model\Import\Proxy\Product\ResourceModel;
 use Magento\Framework\DB\Adapter\AdapterInterface;
@@ -18,7 +19,7 @@ class ImageTypeProcessorTest extends TestCase
     public function testGetImageTypes()
     {
         $resourceFactory = $this->createPartialMock(
-            \Magento\CatalogImportExport\Model\Import\Proxy\Product\ResourceModelFactory::class,
+            ResourceModelFactory::class,
             ['create']
         );
 
@@ -30,10 +31,8 @@ class ImageTypeProcessorTest extends TestCase
             ->method('getTable')
             ->with('eav_attribute')
             ->willReturnArgument(0);
-        $connection = $this->getMockForAbstractClass(AdapterInterface::class);
-        $resource->expects($this->any())
-            ->method('getConnection')
-            ->willReturn($connection);
+        $connection = $this->createMock(AdapterInterface::class);
+        $resource->method('getConnection')->willReturn($connection);
         $resourceFactory->expects($this->once())
             ->method('create')
             ->willReturn($resource);
@@ -49,12 +48,8 @@ class ImageTypeProcessorTest extends TestCase
             ->method('where')
             ->with('frontend_input = :frontend_input')
             ->willReturnSelf();
-        $connection->expects($this->any())
-            ->method('fetchCol')
-            ->willReturn(['image', 'small_image', 'thumbnail', 'swatch_image']);
-        $connection->expects($this->any())
-            ->method('select')
-            ->willReturn($selectMock);
+        $connection->method('fetchCol')->willReturn(['image', 'small_image', 'thumbnail', 'swatch_image']);
+        $connection->method('select')->willReturn($selectMock);
 
         $typeProcessor = new ImageTypeProcessor($resourceFactory);
         $this->assertEquals(

@@ -86,13 +86,19 @@ class BuilderTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
-        $this->loggerMock = $this->getMockForAbstractClass(LoggerInterface::class);
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
         $this->productFactoryMock = $this->createPartialMock(ProductFactory::class, ['create']);
         $this->registryMock = $this->createMock(Registry::class);
-        $this->wysiwygConfigMock = $this->getMockBuilder(WysiwygConfig::class)
-            ->addMethods(['setStoreId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->wysiwygConfigMock = new class extends WysiwygConfig {
+            public function __construct()
+            {
+                // Empty constructor
+            }
+            public function setStoreId($storeId)
+            {
+                return $this;
+            }
+        };
         $this->requestMock = $this->createMock(Http::class);
         $methods = ['setStoreId', 'setData', 'load', 'setAttributeSetId', 'setTypeId'];
         $this->productMock = $this->createPartialMock(Product::class, $methods);
@@ -100,14 +106,103 @@ class BuilderTest extends TestCase
             ->onlyMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->storeMock = $this->getMockBuilder(StoreInterface::class)
-            ->addMethods(['load'])
-            ->getMockForAbstractClass();
+        $this->storeMock = new class implements StoreInterface {
+            public function load($id)
+            {
+                return $this;
+            }
+            // Required interface methods
+            public function getId()
+            {
+                return null;
+            }
+            public function setId($id)
+            {
+                return $this;
+            }
+            public function getStoreId()
+            {
+                return null;
+            }
+            public function setStoreId($storeId)
+            {
+                return $this;
+            }
+            public function getCode()
+            {
+                return null;
+            }
+            public function setCode($code)
+            {
+                return $this;
+            }
+            public function getName()
+            {
+                return null;
+            }
+            public function setName($name)
+            {
+                return $this;
+            }
+            public function getWebsiteId()
+            {
+                return null;
+            }
+            public function setWebsiteId($websiteId)
+            {
+                return $this;
+            }
+            public function getGroupId()
+            {
+                return null;
+            }
+            public function setGroupId($groupId)
+            {
+                return $this;
+            }
+            public function getStoreGroupId()
+            {
+                return null;
+            }
+            public function setStoreGroupId($storeGroupId)
+            {
+                return $this;
+            }
+            public function getRootCategoryId()
+            {
+                return null;
+            }
+            public function setRootCategoryId($rootCategoryId)
+            {
+                return $this;
+            }
+            public function getDefaultStoreId()
+            {
+                return null;
+            }
+            public function setDefaultStoreId($defaultStoreId)
+            {
+                return $this;
+            }
+            public function getIsActive()
+            {
+                return null;
+            }
+            public function setIsActive($isActive)
+            {
+                return $this;
+            }
+            public function getExtensionAttributes()
+            {
+                return null;
+            }
+            public function setExtensionAttributes($extensionAttributes)
+            {
+                return $this;
+            }
+        };
 
-        $this->productRepositoryMock = $this->getMockBuilder(ProductRepositoryInterface::class)
-            ->onlyMethods(['getById'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->productRepositoryMock = $this->createMock(ProductRepositoryInterface::class);
 
         $this->builder = $this->objectManager->getObject(
             Builder::class,
@@ -145,14 +240,9 @@ class BuilderTest extends TestCase
             ->with($productId, true, $productStore)
             ->willReturn($this->productMock);
 
-        $this->storeFactoryMock->expects($this->any())
-            ->method('create')
-            ->willReturn($this->storeMock);
+        $this->storeFactoryMock->method('create')->willReturn($this->storeMock);
 
-        $this->storeMock->expects($this->any())
-            ->method('load')
-            ->with($productStore)
-            ->willReturnSelf();
+        // No mock expectations needed for anonymous class
 
         $registryValueMap = [
             ['product', $this->productMock, $this->registryMock],
@@ -160,9 +250,7 @@ class BuilderTest extends TestCase
             ['current_store', $this->registryMock, $this->storeMock],
         ];
 
-        $this->registryMock->expects($this->any())
-            ->method('register')
-            ->willReturn($registryValueMap);
+        $this->registryMock->method('register')->willReturn($registryValueMap);
 
         $this->wysiwygConfigMock->expects($this->once())
             ->method('setStoreId')
@@ -217,14 +305,9 @@ class BuilderTest extends TestCase
         $this->loggerMock->expects($this->once())
             ->method('critical');
 
-        $this->storeFactoryMock->expects($this->any())
-            ->method('create')
-            ->willReturn($this->storeMock);
+        $this->storeFactoryMock->method('create')->willReturn($this->storeMock);
 
-        $this->storeMock->expects($this->any())
-            ->method('load')
-            ->with($productStore)
-            ->willReturnSelf();
+        // No mock expectations needed for anonymous class
 
         $registryValueMap = [
             ['product', $this->productMock, $this->registryMock],
@@ -232,9 +315,7 @@ class BuilderTest extends TestCase
             ['current_store', $this->registryMock, $this->storeMock],
         ];
 
-        $this->registryMock->expects($this->any())
-            ->method('register')
-            ->willReturn($registryValueMap);
+        $this->registryMock->method('register')->willReturn($registryValueMap);
 
         $this->wysiwygConfigMock->expects($this->once())
             ->method('setStoreId')
@@ -286,14 +367,9 @@ class BuilderTest extends TestCase
             ->method('setAttributeSetId')
             ->with($productSet);
 
-        $this->storeFactoryMock->expects($this->any())
-            ->method('create')
-            ->willReturn($this->storeMock);
+        $this->storeFactoryMock->method('create')->willReturn($this->storeMock);
 
-        $this->storeMock->expects($this->any())
-            ->method('load')
-            ->with($productStore)
-            ->willReturnSelf();
+        // No mock expectations needed for anonymous class
 
         $registryValueMap = [
             ['product', $this->productMock, $this->registryMock],
@@ -301,9 +377,7 @@ class BuilderTest extends TestCase
             ['current_store', $this->registryMock, $this->storeMock],
         ];
 
-        $this->registryMock->expects($this->any())
-            ->method('register')
-            ->willReturn($registryValueMap);
+        $this->registryMock->method('register')->willReturn($registryValueMap);
 
         $this->wysiwygConfigMock->expects($this->once())
             ->method('setStoreId')

@@ -66,7 +66,7 @@ class ProductRenderListTest extends TestCase
         $this->collectionProcessorMock = $this
             ->getMockBuilder(CollectionProcessorInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->productRenderCollectorCompositeMock = $this
             ->getMockBuilder(ProductRenderCollectorComposite::class)
             ->disableOriginalConstructor()
@@ -111,16 +111,10 @@ class ProductRenderListTest extends TestCase
         $storeId = 1;
         $currencyCode = 'USD';
 
-        $product = $this->getMockBuilder(ProductInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $product = $this->createMock(ProductInterface::class);
         $iterator = new \IteratorIterator(new \ArrayIterator([$product]));
-        $productRender = $this->getMockBuilder(ProductRenderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $searchResult = $this->getMockBuilder(SearchResultInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $productRender = $this->createMock(ProductRenderInterface::class);
+        $searchResult = $this->createMock(SearchResultInterface::class);
         $searchCriteria = $this->getMockBuilder(SearchCriteria::class)
             ->disableOriginalConstructor()
             ->getMock();

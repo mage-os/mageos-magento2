@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Model\ResourceModel\Product;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Catalog\Api\Data\CategoryLinkInterface;
 use Magento\Catalog\Api\Data\ProductInterface;
@@ -66,22 +67,17 @@ class CategoryLinkTest extends TestCase
         $this->dbSelectMock = $this->getMockBuilder(Select::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->connectionMock = $this->getMockBuilder(AdapterInterface::class)
-            ->getMockForAbstractClass();
-        $this->connectionMock->expects($this->any())->method('select')->willReturn($this->dbSelectMock);
-        $this->resourceMock->expects($this->any())
-            ->method('getConnection')
-            ->willReturn($this->connectionMock);
+        $this->connectionMock = $this->createMock(AdapterInterface::class);
+        $this->connectionMock->method('select')->willReturn($this->dbSelectMock);
+        $this->resourceMock->method('getConnection')->willReturn($this->connectionMock);
     }
 
     private function prepareMetadata()
     {
-        $categoryLinkMetadata = $this->getMockBuilder(EntityMetadataInterface::class)
-            ->getMockForAbstractClass();
-        $categoryLinkMetadata->expects($this->any())->method('getEntityTable')->willReturn('category_link_table');
-        $categoryEntityMetadata = $this->getMockBuilder(EntityMetadataInterface::class)
-            ->getMockForAbstractClass();
-        $categoryEntityMetadata->expects($this->any())->method('getEntityTable')->willReturn('category_entity_table');
+        $categoryLinkMetadata = $this->createMock(EntityMetadataInterface::class);
+        $categoryLinkMetadata->method('getEntityTable')->willReturn('category_link_table');
+        $categoryEntityMetadata = $this->createMock(EntityMetadataInterface::class);
+        $categoryEntityMetadata->method('getEntityTable')->willReturn('category_entity_table');
         $this->metadataPoolMock->expects($this->any())->method('getMetadata')->willReturnMap(
             [
                 [CategoryLinkInterface::class, $categoryLinkMetadata],
@@ -94,9 +90,8 @@ class CategoryLinkTest extends TestCase
     {
         $this->prepareAdapter();
         $this->prepareMetadata();
-        $product = $this->getMockBuilder(ProductInterface::class)
-            ->getMockForAbstractClass();
-        $product->expects($this->any())->method('getId')->willReturn(1);
+        $product = $this->createMock(ProductInterface::class);
+        $product->method('getId')->willReturn(1);
         $this->connectionMock->expects($this->once())->method('fetchAll')->with($this->dbSelectMock)->willReturn(
             [
                 ['category_id' => 3, 'position' => 10],
@@ -117,15 +112,14 @@ class CategoryLinkTest extends TestCase
      * @param array $newCategoryLinks
      * @param array $dbCategoryLinks
      * @param array $affectedIds
-     * @dataProvider getCategoryLinksDataProvider
      */
+    #[DataProvider('getCategoryLinksDataProvider')]
     public function testSaveCategoryLinks($newCategoryLinks, $dbCategoryLinks, $affectedIds)
     {
         $this->prepareAdapter();
         $this->prepareMetadata();
-        $product = $this->getMockBuilder(ProductInterface::class)
-            ->getMockForAbstractClass();
-        $product->expects($this->any())->method('getId')->willReturn(1);
+        $product = $this->createMock(ProductInterface::class);
+        $product->method('getId')->willReturn(1);
         $this->connectionMock->expects($this->once())
             ->method('fetchAll')
             ->with($this->dbSelectMock)

@@ -88,7 +88,7 @@ class StatusBaseSelectProcessorTest extends TestCase
         $attributeId = 2;
         $currentStoreId = 1;
 
-        $metadata = $this->getMockForAbstractClass(EntityMetadataInterface::class);
+        $metadata = $this->createMock(EntityMetadataInterface::class);
         $metadata->expects($this->once())
             ->method('getLinkField')
             ->willReturn($linkField);
@@ -97,16 +97,36 @@ class StatusBaseSelectProcessorTest extends TestCase
             ->with(ProductInterface::class)
             ->willReturn($metadata);
 
-        /** @var AttributeInterface|MockObject $statusAttribute */
-        $statusAttribute = $this->getMockBuilder(AttributeInterface::class)
-            ->addMethods(['getBackendTable', 'getAttributeId'])
-            ->getMockForAbstractClass();
-        $statusAttribute->expects($this->atLeastOnce())
-            ->method('getBackendTable')
-            ->willReturn($backendTable);
-        $statusAttribute->expects($this->atLeastOnce())
-            ->method('getAttributeId')
-            ->willReturn($attributeId);
+        /** @var AttributeInterface $statusAttribute */
+        $statusAttribute = new class {
+            private $backendTable = '';
+            private $attributeId = '';
+            
+            public function __construct()
+            {
+            }
+            
+            public function getBackendTable()
+            {
+                return $this->backendTable;
+            }
+            public function setBackendTable($value)
+            {
+                $this->backendTable = $value;
+                return $this;
+            }
+            public function getAttributeId()
+            {
+                return $this->attributeId;
+            }
+            public function setAttributeId($value)
+            {
+                $this->attributeId = $value;
+                return $this;
+            }
+        };
+        $statusAttribute->setBackendTable($backendTable);
+        $statusAttribute->setAttributeId($attributeId);
         $this->eavConfig->expects($this->once())
             ->method('getAttribute')
             ->with(Product::ENTITY, ProductInterface::STATUS)

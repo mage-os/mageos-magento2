@@ -56,13 +56,9 @@ class FactoryTest extends TestCase
             ->onlyMethods(['getAttribute'])
             ->getMock();
 
-        $this->eavAttrConditionBuilderMock = $this->getMockBuilder(CustomConditionInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->eavAttrConditionBuilderMock = $this->createMock(CustomConditionInterface::class);
 
-        $this->nativeAttrConditionBuilderMock = $this->getMockBuilder(CustomConditionInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->nativeAttrConditionBuilderMock = $this->createMock(CustomConditionInterface::class);
 
         $objectManagerHelper = new ObjectManager($this);
 

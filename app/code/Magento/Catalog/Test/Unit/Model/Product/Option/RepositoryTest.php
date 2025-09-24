@@ -77,7 +77,7 @@ class RepositoryTest extends TestCase
         $metadata = $this->getMockBuilder(EntityMetadata::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $metadataPool->expects($this->any())->method('getMetadata')->willReturn($metadata);
+        $metadataPool->method('getMetadata')->willReturn($metadata);
 
         $this->optionRepository = new Repository(
             $this->productRepositoryMock,
@@ -254,8 +254,8 @@ class RepositoryTest extends TestCase
             ->with($productSku)
             ->willReturn($this->productMock);
         $productOption = clone $this->optionMock;
-        $this->optionMock->expects($this->any())->method('getOptionId')->willReturn($optionId);
-        $productOption->expects($this->any())->method('getOptionId')->willReturn($productOptionId);
+        $this->optionMock->method('getOptionId')->willReturn($optionId);
+        $productOption->method('getOptionId')->willReturn($productOptionId);
         $this->productMock->expects($this->once())->method('getOptions')->willReturn([$productOption]);
         $this->optionRepository->save($this->optionMock);
     }
@@ -291,7 +291,7 @@ class RepositoryTest extends TestCase
             ->method('get')
             ->with($productSku)
             ->willReturn($this->productMock);
-        $this->optionMock->expects($this->any())->method('getOptionId')->willReturn($optionId);
+        $this->optionMock->method('getOptionId')->willReturn($optionId);
         $this->productMock->expects($this->once())->method('getOptions')->willReturn([]);
         $this->optionMock->expects($this->once())->method('getData')->with('values')->willReturn([
             ['option_type_id' => 4],
@@ -323,7 +323,7 @@ class RepositoryTest extends TestCase
             ->method('get')
             ->with($productSku)
             ->willReturn($this->productMock);
-        $this->optionMock->expects($this->any())->method('getOptionId')->willReturn($optionId);
+        $this->optionMock->method('getOptionId')->willReturn($optionId);
         $this->productMock->expects($this->once())->method('getOptions')->willReturn([]);
         $this->optionMock->expects($this->once())->method('getData')->with('values')->willReturn([
             ['option_type_id' => 4],

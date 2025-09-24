@@ -210,22 +210,62 @@ class AttributeTest extends TestCase
             DateTimeFormatterInterface::class
         );
 
-        $this->resourceMock = $this->getMockBuilder(AbstractResource::class)
-            ->addMethods(['getIdFieldName', 'saveInSetIncluding'])
-            ->onlyMethods(['_construct', 'getConnection'])
-            ->getMockForAbstractClass();
+        $this->resourceMock = new class extends AbstractResource {
+            private $idFieldName = null;
+            private $saveInSetIncludingResult = null;
+            private $connection = null;
+            
+            public function __construct()
+            {
+                // Don't call parent constructor to avoid _construct() call
+            }
+            
+            protected function _construct()
+            {
+                // Empty implementation for abstract method
+            }
+            
+            public function getConnection()
+            {
+                return $this->connection;
+            }
+            
+            public function setConnection($connection)
+            {
+                $this->connection = $connection;
+                return $this;
+            }
+            
+            public function getIdFieldName()
+            {
+                return $this->idFieldName;
+            }
+            
+            public function setIdFieldName($idFieldName)
+            {
+                $this->idFieldName = $idFieldName;
+                return $this;
+            }
+            
+            public function saveInSetIncluding()
+            {
+                return $this->saveInSetIncludingResult;
+            }
+            
+            public function setSaveInSetIncludingResult($result)
+            {
+                $this->saveInSetIncludingResult = $result;
+                return $this;
+            }
+        };
         $this->cacheManager = $this->getMockBuilder(CacheInterface::class)
             ->getMock();
         $this->eventDispatcher = $this->getMockBuilder(ManagerInterface::class)
             ->getMock();
         $this->contextMock
-            ->expects($this->any())
-            ->method('getCacheManager')
-            ->willReturn($this->cacheManager);
+            ->method('getCacheManager')->willReturn($this->cacheManager);
         $this->contextMock
-            ->expects($this->any())
-            ->method('getEventDispatcher')
-            ->willReturn($this->eventDispatcher);
+            ->method('getEventDispatcher')->willReturn($this->eventDispatcher);
         $objectManagerHelper = new ObjectManagerHelper($this);
         $objectManagerHelper->prepareObjectManager();
         $this->attribute = $objectManagerHelper->getObject(

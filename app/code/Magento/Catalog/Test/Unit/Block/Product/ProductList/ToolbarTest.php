@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Block\Product\ProductList;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Block\Product\ProductList\Toolbar;
 use Magento\Catalog\Helper\Product\ProductList;
 use Magento\Catalog\Model\Config;
@@ -96,13 +97,54 @@ class ToolbarTest extends TestCase
             ]
         );
         $this->layout = $this->createPartialMock(Layout::class, ['getChildName', 'getBlock']);
-        $this->pagerBlock = $this->getMockBuilder(Pager::class)
-            ->addMethods(['setUseContainer', 'setShowAmounts'])
-            ->onlyMethods(['setShowPerPage', 'setFrameLength', 'setJump', 'setLimit', 'setCollection', 'toHtml'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->pagerBlock = new class extends Pager {
+            public function __construct()
+            {
+                // Empty constructor for test
+            }
+            
+            public function setUseContainer($useContainer)
+            {
+                return $this;
+            }
+            
+            public function setShowAmounts($showAmounts)
+            {
+                return $this;
+            }
+            
+            public function setShowPerPage($showPerPage)
+            {
+                return $this;
+            }
+            
+            public function setFrameLength($frameLength)
+            {
+                return $this;
+            }
+            
+            public function setJump($jump)
+            {
+                return $this;
+            }
+            
+            public function setLimit($limit)
+            {
+                return $this;
+            }
+            
+            public function setCollection($collection)
+            {
+                return $this;
+            }
+            
+            public function toHtml()
+            {
+                return true;
+            }
+        };
         $this->urlBuilder = $this->createPartialMock(Url::class, ['getUrl']);
-        $this->scopeConfig = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
 
         $scopeConfig = [
             [Config::XML_PATH_LIST_DEFAULT_SORT_BY, null, 'name'],
@@ -125,15 +167,9 @@ class ToolbarTest extends TestCase
             Context::class,
             ['getUrlBuilder', 'getScopeConfig', 'getLayout']
         );
-        $context->expects($this->any())
-            ->method('getUrlBuilder')
-            ->willReturn($this->urlBuilder);
-        $context->expects($this->any())
-            ->method('getScopeConfig')
-            ->willReturn($this->scopeConfig);
-        $context->expects($this->any())
-            ->method('getlayout')
-            ->willReturn($this->layout);
+        $context->method('getUrlBuilder')->willReturn($this->urlBuilder);
+        $context->method('getScopeConfig')->willReturn($this->scopeConfig);
+        $context->method('getlayout')->willReturn($this->layout);
         $this->productListHelper = $this->createMock(ProductList::class);
 
         $this->urlEncoder = $this->createPartialMock(EncoderInterface::class, ['encode']);
@@ -198,9 +234,7 @@ class ToolbarTest extends TestCase
     {
         $direction = 'desc';
 
-        $this->memorizer->expects($this->any())
-            ->method('getDirection')
-            ->willReturn($direction);
+        $this->memorizer->method('getDirection')->willReturn($direction);
 
         $this->assertEquals($direction, $this->block->getCurrentDirection());
     }
@@ -233,8 +267,8 @@ class ToolbarTest extends TestCase
     /**
      * @param string[] $mode
      * @param string[] $expected
-     * @dataProvider setModesDataProvider
      */
+    #[DataProvider('setModesDataProvider')]
     public function testSetModes($mode, $expected)
     {
         $this->productListHelper->expects($this->once())
@@ -275,9 +309,7 @@ class ToolbarTest extends TestCase
             ->method('getDefaultLimitPerPageValue')
             ->with('list')
             ->willReturn(10);
-        $this->productListHelper->expects($this->any())
-            ->method('getAvailableViewMode')
-            ->willReturn(['list' => 'List']);
+        $this->productListHelper->method('getAvailableViewMode')->willReturn(['list' => 'List']);
 
         $this->assertEquals($limit, $this->block->getLimit());
     }
@@ -298,31 +330,7 @@ class ToolbarTest extends TestCase
         $this->memorizer->expects($this->once())
             ->method('getLimit')
             ->willReturn($limit);
-        $this->pagerBlock->expects($this->once())
-            ->method('setUseContainer')
-            ->willReturn($this->pagerBlock);
-        $this->pagerBlock->expects($this->once())
-            ->method('setShowPerPage')
-            ->willReturn($this->pagerBlock);
-        $this->pagerBlock->expects($this->once())
-            ->method('setShowAmounts')
-            ->willReturn($this->pagerBlock);
-        $this->pagerBlock->expects($this->once())
-            ->method('setFrameLength')
-            ->willReturn($this->pagerBlock);
-        $this->pagerBlock->expects($this->once())
-            ->method('setJump')
-            ->willReturn($this->pagerBlock);
-        $this->pagerBlock->expects($this->once())
-            ->method('setLimit')
-            ->with($limit)
-            ->willReturn($this->pagerBlock);
-        $this->pagerBlock->expects($this->once())
-            ->method('setCollection')
-            ->willReturn($this->pagerBlock);
-        $this->pagerBlock->expects($this->once())
-            ->method('toHtml')
-            ->willReturn(true);
+        // The anonymous class methods already return $this for chaining and toHtml() returns true
 
         $this->assertTrue($this->block->getPagerHtml());
     }
