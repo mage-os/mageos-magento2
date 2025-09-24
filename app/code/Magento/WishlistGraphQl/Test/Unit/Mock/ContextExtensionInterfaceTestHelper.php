@@ -85,6 +85,7 @@ class ContextExtensionInterfaceTestHelper implements ContextExtensionInterface
      *
      * @param mixed $customerGroupId
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setCustomerGroupId($customerGroupId): self
     {
