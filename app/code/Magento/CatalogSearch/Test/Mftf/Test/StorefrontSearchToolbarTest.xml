@@ -14,8 +14,8 @@
             <stories value="Search Result Toolbar"/>
             <title value="Verify sorting toolbar changes on search results work as expected and don't cause form resubmission dialog"/>
             <description value="Test that sorting toolbar changes apply properly and redirect properly to prevent 'Confirm Form Resubmission' dialog when using back button, and toolbar settings are preserved"/>
-            <severity value="AVERAGE"/>
-            <testCaseId value="AC-15666"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="AC-15666,AC-8905"/>
             <useCaseId value="ACP2E-4208"/>
             <group value="CatalogSearch"/>
         </annotations>
