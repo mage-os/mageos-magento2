@@ -107,7 +107,7 @@ class DeployMarker extends Command
         $isEnabled = $this->config->isNewRelicEnabled();
         if (!$isEnabled) {
             $output->writeln('<error>✗ New Relic is not enabled. Please check your configuration.</error>');
-            return 1;
+            return Command::FAILURE;
         }
         try {
             $result = $this->deploymentsFactory->create()->setDeployment(
@@ -128,22 +128,14 @@ class DeployMarker extends Command
                     $this->displayDeploymentDetails($output, $result);
                 }
 
-                return 0;
+                return Command::SUCCESS;
             } else {
                 $output->writeln('<error>✗ Failed to create deployment marker</error>');
-                return 1;
+                return Command::FAILURE;
             }
-
-        } catch (LocalizedException $e) {
-            $output->writeln('<error>✗ Configuration Error!</error>');
-            $output->writeln('<error>' . $e->getMessage() . '</error>');
-            $output->writeln('');
-            $output->writeln('<comment>Please check your New Relic configuration at:</comment>');
-            $output->writeln('<comment>Admin → Stores → Configuration → General → New Relic Reporting</comment>');
-            return 1;
         } catch (\Exception $e) {
             $output->writeln('<error>✗ Error: ' . $e->getMessage() . '</error>');
-            return 1;
+            return Command::FAILURE;
         }
     }
 
@@ -174,8 +166,8 @@ class DeployMarker extends Command
                 ) : 'N/A']
         ];
 
-        if (!empty($deployment['changelog'])) {
-            $rows[] = ['Change log', $deployment['changelog']];
+        if (!empty($deployment['change_log'])) {
+            $rows[] = ['Change log', $deployment['change_log']];
         }
         if (!empty($deployment['commit'])) {
             $rows[] = ['Commit', $deployment['commit']];

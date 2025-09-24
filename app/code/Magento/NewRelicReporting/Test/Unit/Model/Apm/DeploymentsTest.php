@@ -307,7 +307,7 @@ class DeploymentsTest extends TestCase
             'entityGuid' => 'TEST_ENTITY_GUID',
             'version' => $revision,
             'description' => $description,
-            'changelog' => $changelog,
+            'change_log' => $changelog,
             'user' => $user,
             'commit' => $commit,
             'deepLink' => $deepLink,
@@ -463,6 +463,394 @@ class DeploymentsTest extends TestCase
     }
 
     /**
+     * Tests revision generation when null is passed
+     *
+     * @return void
+     */
+    public function testSetDeploymentWithNullRevision()
+    {
+        $data = $this->getDataVariables();
+
+        $this->configMock->expects($this->once())
+            ->method('getApiMode')
+            ->willReturn('v2_rest');
+
+        $this->configMock->expects($this->once())
+            ->method('getNewRelicApiUrl')
+            ->willReturn($data['uri']);
+
+        $this->configMock->expects($this->once())
+            ->method('getNewRelicApiKey')
+            ->willReturn($data['api_key']);
+
+        $this->configMock->expects($this->once())
+            ->method('getNewRelicAppId')
+            ->willReturn($data['app_id']);
+
+        $this->httpClientFactoryMock->expects($this->once())
+            ->method('create')
+            ->willReturn($this->httpClientMock);
+
+        $this->httpClientMock->expects($this->once())
+            ->method('setUri')
+            ->willReturnSelf();
+
+        $this->httpClientMock->expects($this->once())
+            ->method('setMethod')
+            ->willReturnSelf();
+
+        $this->httpClientMock->expects($this->once())
+            ->method('setHeaders')
+            ->willReturnSelf();
+
+        // Capture the serialized data to verify revision was generated
+        $capturedParams = null;
+        $this->serializerMock->expects($this->once())
+            ->method('serialize')
+            ->willReturnCallback(function ($params) use (&$capturedParams) {
+                $capturedParams = $params;
+                return json_encode($params);
+            });
+
+        $this->httpClientMock->expects($this->once())
+            ->method('setRawBody')
+            ->willReturnSelf();
+
+        $httpResponseMock = $this->createMock(Response::class);
+        $httpResponseMock->expects($this->any())
+            ->method('getStatusCode')
+            ->willReturn(200);
+        $httpResponseMock->expects($this->once())
+            ->method('getBody')
+            ->willReturn('success');
+
+        $this->httpClientMock->expects($this->once())
+            ->method('send')
+            ->willReturn($httpResponseMock);
+
+        // Test with null revision
+        $result = $this->model->setDeployment(
+            $data['description'],
+            $data['change'],
+            $data['user'],
+            null  // null revision should trigger generation
+        );
+
+        $this->assertIsString($result);
+
+        // Verify that a revision was generated (should be a hash)
+        $this->assertNotNull($capturedParams['deployment']['revision']);
+        $this->assertIsString($capturedParams['deployment']['revision']);
+        $this->assertEquals(64, strlen($capturedParams['deployment']['revision'])); // SHA256 hash length
+    }
+
+    /**
+     * Tests status code boundary conditions (200-210 range)
+     *
+     * @dataProvider statusCodeBoundaryProvider
+     * @param int $statusCode
+     * @param bool $expectedSuccess
+     * @return void
+     */
+    public function testSetDeploymentStatusCodeBoundaries($statusCode, $expectedSuccess)
+    {
+        $data = $this->getDataVariables();
+
+        $this->configMock->expects($this->once())
+            ->method('getApiMode')
+            ->willReturn('v2_rest');
+
+        $this->configMock->expects($this->once())
+            ->method('getNewRelicApiUrl')
+            ->willReturn($data['uri']);
+
+        $this->configMock->expects($this->once())
+            ->method('getNewRelicApiKey')
+            ->willReturn($data['api_key']);
+
+        $this->configMock->expects($this->once())
+            ->method('getNewRelicAppId')
+            ->willReturn($data['app_id']);
+
+        $this->httpClientFactoryMock->expects($this->once())
+            ->method('create')
+            ->willReturn($this->httpClientMock);
+
+        $this->httpClientMock->expects($this->once())
+            ->method('setUri')
+            ->willReturnSelf();
+
+        $this->httpClientMock->expects($this->once())
+            ->method('setMethod')
+            ->willReturnSelf();
+
+        $this->httpClientMock->expects($this->once())
+            ->method('setHeaders')
+            ->willReturnSelf();
+
+        $this->serializerMock->expects($this->once())
+            ->method('serialize')
+            ->willReturn(json_encode($data['params']));
+
+        $this->httpClientMock->expects($this->once())
+            ->method('setRawBody')
+            ->willReturnSelf();
+
+        $httpResponseMock = $this->createMock(Response::class);
+        $httpResponseMock->expects($this->any())
+            ->method('getStatusCode')
+            ->willReturn($statusCode);
+
+        if ($expectedSuccess) {
+            $httpResponseMock->expects($this->once())
+                ->method('getBody')
+                ->willReturn('success');
+        } else {
+            $this->loggerMock->expects($this->once())
+                ->method('warning');
+        }
+
+        $this->httpClientMock->expects($this->once())
+            ->method('send')
+            ->willReturn($httpResponseMock);
+
+        $result = $this->model->setDeployment(
+            $data['description'],
+            $data['change'],
+            $data['user'],
+            $data['revision']
+        );
+
+        if ($expectedSuccess) {
+            $this->assertIsString($result);
+        } else {
+            $this->assertFalse($result);
+        }
+    }
+
+    /**
+     * Data provider for status code boundary testing
+     *
+     * @return array
+     */
+    public function statusCodeBoundaryProvider(): array
+    {
+        return [
+            'Status 199 (just below valid range)' => [199, false],
+            'Status 200 (valid start)' => [200, true],
+            'Status 201 (valid middle)' => [201, true],
+            'Status 210 (valid end)' => [210, true],
+            'Status 211 (just above valid range)' => [211, false],
+            'Status 300 (redirect)' => [300, false],
+            'Status 404 (not found)' => [404, false],
+            'Status 500 (server error)' => [500, false]
+        ];
+    }
+
+    /**
+     * Tests NerdGraph with null/empty parameter casting
+     *
+     * @return void
+     */
+    public function testSetDeploymentNerdGraphParameterCasting()
+    {
+        $description = 'Parameter casting test';
+        $changelog = '';    // Empty string should become null
+        $user = '0';        // String '0' should become null (falsy)
+        $revision = 'v1.0.0';
+
+        $this->configMock->expects($this->once())
+            ->method('getApiMode')
+            ->willReturn('nerdgraph');
+
+        // Verify that falsy string parameters are cast to null correctly
+        $this->deploymentTrackerMock->expects($this->once())
+            ->method('createDeployment')
+            ->with(
+                $description,
+                null,    // empty string should become null
+                null,    // '0' should become null (falsy)
+                $revision,
+                null,
+                null,
+                null
+            )
+            ->willReturn(['deploymentId' => 'test-cast']);
+
+        $result = $this->model->setDeployment(
+            $description,
+            $changelog,
+            $user,
+            $revision
+        );
+
+        $this->assertIsArray($result);
+        $this->assertEquals('test-cast', $result['deploymentId']);
+    }
+
+    /**
+     * Tests NerdGraph with truthy string parameters
+     *
+     * @return void
+     */
+    public function testSetDeploymentNerdGraphTruthyStrings()
+    {
+        $description = 'Truthy strings test';
+        $changelog = 'actual changelog';  // Truthy string
+        $user = 'actual user';           // Truthy string
+        $revision = 'v1.0.0';
+
+        $this->configMock->expects($this->once())
+            ->method('getApiMode')
+            ->willReturn('nerdgraph');
+
+        // Verify that truthy strings are passed as-is (cast to string)
+        $this->deploymentTrackerMock->expects($this->once())
+            ->method('createDeployment')
+            ->with(
+                $description,
+                'actual changelog',  // Should be cast to string
+                'actual user',       // Should be cast to string
+                $revision,
+                null,
+                null,
+                null
+            )
+            ->willReturn(['deploymentId' => 'test-truthy']);
+
+        $result = $this->model->setDeployment(
+            $description,
+            $changelog,
+            $user,
+            $revision
+        );
+
+        $this->assertIsArray($result);
+        $this->assertEquals('test-truthy', $result['deploymentId']);
+    }
+
+    /**
+     * Tests NerdGraph with explicitly null parameters
+     *
+     * @return void
+     */
+    public function testSetDeploymentNerdGraphNullParameters()
+    {
+        $description = 'Null parameters test';
+        $changelog = null;  // Explicit null
+        $user = null;       // Explicit null
+        $revision = 'v1.0.0';
+
+        $this->configMock->expects($this->once())
+            ->method('getApiMode')
+            ->willReturn('nerdgraph');
+
+        // Verify that null parameters are passed through as null
+        $this->deploymentTrackerMock->expects($this->once())
+            ->method('createDeployment')
+            ->with(
+                $description,
+                null,    // null should remain null
+                null,    // null should remain null
+                $revision,
+                null,
+                null,
+                null
+            )
+            ->willReturn(['deploymentId' => 'test-null']);
+
+        $result = $this->model->setDeployment(
+            $description,
+            $changelog,
+            $user,
+            $revision
+        );
+
+        $this->assertIsArray($result);
+        $this->assertEquals('test-null', $result['deploymentId']);
+    }
+
+    /**
+     * Tests explicit fallback URL usage when config URL is empty
+     *
+     * @return void
+     */
+    public function testSetDeploymentEmptyApiUrlFallback()
+    {
+        $data = $this->getDataVariables();
+
+        $this->configMock->expects($this->once())
+            ->method('getApiMode')
+            ->willReturn('v2_rest');
+
+        // Explicitly test empty string URL
+        $this->configMock->expects($this->once())
+            ->method('getNewRelicApiUrl')
+            ->willReturn('');
+
+        // Should log the fallback notice
+        $this->loggerMock->expects($this->once())
+            ->method('notice')
+            ->with('New Relic API URL is blank, using fallback URL');
+
+        $this->configMock->expects($this->once())
+            ->method('getNewRelicApiKey')
+            ->willReturn($data['api_key']);
+
+        $this->configMock->expects($this->once())
+            ->method('getNewRelicAppId')
+            ->willReturn($data['app_id']);
+
+        $this->httpClientFactoryMock->expects($this->once())
+            ->method('create')
+            ->willReturn($this->httpClientMock);
+
+        // Verify the fallback URL is used (with app_id substitution)
+        $expectedFallbackUrl = sprintf('https://api.newrelic.com/v2/applications/%s/deployments.json', $data['app_id']);
+        $this->httpClientMock->expects($this->once())
+            ->method('setUri')
+            ->with($expectedFallbackUrl)
+            ->willReturnSelf();
+
+        $this->httpClientMock->expects($this->once())
+            ->method('setMethod')
+            ->willReturnSelf();
+
+        $this->httpClientMock->expects($this->once())
+            ->method('setHeaders')
+            ->willReturnSelf();
+
+        $this->serializerMock->expects($this->once())
+            ->method('serialize')
+            ->willReturn(json_encode($data['params']));
+
+        $this->httpClientMock->expects($this->once())
+            ->method('setRawBody')
+            ->willReturnSelf();
+
+        $httpResponseMock = $this->createMock(Response::class);
+        $httpResponseMock->expects($this->any())
+            ->method('getStatusCode')
+            ->willReturn(200);
+        $httpResponseMock->expects($this->once())
+            ->method('getBody')
+            ->willReturn('fallback success');
+
+        $this->httpClientMock->expects($this->once())
+            ->method('send')
+            ->willReturn($httpResponseMock);
+
+        $result = $this->model->setDeployment(
+            $data['description'],
+            $data['change'],
+            $data['user'],
+            $data['revision']
+        );
+
+        $this->assertEquals('fallback success', $result);
+    }
+
+    /**
      * @return array
      */
     private function getDataVariables(): array
@@ -484,7 +872,7 @@ class DeploymentsTest extends TestCase
         $params = [
             'deployment' => [
                 'description' => $description,
-                'changelog' => $changelog,
+                'change_log' => $changelog,
                 'user' => $user,
                 'revision' => $revision
             ]

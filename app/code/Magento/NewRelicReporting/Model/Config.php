@@ -55,6 +55,24 @@ class Config
     public const DISABLED = 'disabled';
     public const TRUE = 'true';
     public const FALSE = 'false';
+    /**#@-*/
+
+    /**#@+
+     * Configuration paths
+     */
+    public const XML_PATH_ENABLED = 'newrelicreporting/general/enable';
+    public const XML_PATH_API_URL = 'newrelicreporting/general/api_url';
+    public const XML_PATH_INSIGHTS_API_URL = 'newrelicreporting/general/insights_api_url';
+    public const XML_PATH_ACCOUNT_ID = 'newrelicreporting/general/account_id';
+    public const XML_PATH_APP_ID = 'newrelicreporting/general/app_id';
+    public const XML_PATH_API_KEY = 'newrelicreporting/general/api';
+    public const XML_PATH_INSIGHTS_INSERT_KEY = 'newrelicreporting/general/insights_insert_key';
+    public const XML_PATH_APP_NAME = 'newrelicreporting/general/app_name';
+    public const XML_PATH_SEPARATE_APPS = 'newrelicreporting/general/separate_apps';
+    public const XML_PATH_CRON_ENABLED = 'newrelicreporting/cron/enable_cron';
+    public const XML_PATH_API_MODE = 'newrelicreporting/general/api_mode';
+    public const XML_PATH_ENTITY_GUID = 'newrelicreporting/general/entity_guid';
+    public const XML_PATH_NERD_GRAPH_API_URL = 'newrelicreporting/general/nerd_graph_api_url';
 
     /**
      * @var ScopeConfigInterface
@@ -95,7 +113,7 @@ class Config
      */
     public function isNewRelicEnabled()
     {
-        return $this->scopeConfig->isSetFlag('newrelicreporting/general/enable');
+        return $this->scopeConfig->isSetFlag(self::XML_PATH_ENABLED);
     }
 
     /**
@@ -105,7 +123,7 @@ class Config
      */
     public function getNewRelicApiUrl()
     {
-        return (string)$this->scopeConfig->getValue('newrelicreporting/general/api_url');
+        return (string)$this->scopeConfig->getValue(self::XML_PATH_API_URL);
     }
 
     /**
@@ -115,7 +133,7 @@ class Config
      */
     public function getInsightsApiUrl()
     {
-        return (string)$this->scopeConfig->getValue('newrelicreporting/general/insights_api_url');
+        return (string)$this->scopeConfig->getValue(self::XML_PATH_INSIGHTS_API_URL);
     }
 
     /**
@@ -125,7 +143,7 @@ class Config
      */
     public function getNewRelicAccountId()
     {
-        return (string)$this->scopeConfig->getValue('newrelicreporting/general/account_id');
+        return (string)$this->scopeConfig->getValue(self::XML_PATH_ACCOUNT_ID);
     }
 
     /**
@@ -135,7 +153,7 @@ class Config
      */
     public function getNewRelicAppId()
     {
-        return (int)$this->scopeConfig->getValue('newrelicreporting/general/app_id');
+        return (int)$this->scopeConfig->getValue(self::XML_PATH_APP_ID);
     }
 
     /**
@@ -145,7 +163,7 @@ class Config
      */
     public function getNewRelicApiKey()
     {
-        return $this->encryptor->decrypt($this->scopeConfig->getValue('newrelicreporting/general/api'));
+        return $this->encryptor->decrypt($this->scopeConfig->getValue(self::XML_PATH_API_KEY));
     }
 
     /**
@@ -155,7 +173,7 @@ class Config
      */
     public function getInsightsInsertKey()
     {
-        return $this->encryptor->decrypt($this->scopeConfig->getValue('newrelicreporting/general/insights_insert_key'));
+        return $this->encryptor->decrypt($this->scopeConfig->getValue(self::XML_PATH_INSIGHTS_INSERT_KEY));
     }
 
     /**
@@ -165,7 +183,7 @@ class Config
      */
     public function getNewRelicAppName()
     {
-        return (string)$this->scopeConfig->getValue('newrelicreporting/general/app_name');
+        return (string)$this->scopeConfig->getValue(self::XML_PATH_APP_NAME);
     }
 
     /**
@@ -175,7 +193,7 @@ class Config
      */
     public function isSeparateApps()
     {
-        return (bool)$this->scopeConfig->getValue('newrelicreporting/general/separate_apps');
+        return (bool)$this->scopeConfig->getValue(self::XML_PATH_SEPARATE_APPS);
     }
 
     /**
@@ -185,7 +203,7 @@ class Config
      */
     public function isCronEnabled()
     {
-        return $this->scopeConfig->isSetFlag('newrelicreporting/cron/enable_cron');
+        return $this->scopeConfig->isSetFlag(self::XML_PATH_CRON_ENABLED);
     }
 
     /**
@@ -209,7 +227,7 @@ class Config
      */
     public function disableModule()
     {
-        $this->setConfigValue('newrelicreporting/general/enable', 0);
+        $this->setConfigValue(self::XML_PATH_ENABLED, 0);
     }
 
     /**
@@ -219,7 +237,7 @@ class Config
      */
     public function getApiMode()
     {
-        return (string)$this->scopeConfig->getValue('newrelicreporting/general/api_mode');
+        return (string)$this->scopeConfig->getValue(self::XML_PATH_API_MODE);
     }
 
     /**
@@ -229,7 +247,7 @@ class Config
      */
     public function getEntityGuid()
     {
-        return (string)$this->scopeConfig->getValue('newrelicreporting/general/entity_guid');
+        return (string)$this->scopeConfig->getValue(self::XML_PATH_ENTITY_GUID);
     }
 
     /**
@@ -249,6 +267,6 @@ class Config
      */
     public function getNerdGraphUrl()
     {
-        return (string)$this->scopeConfig->getValue('newrelicreporting/general/nerd_graph_api_url');
+        return (string)$this->scopeConfig->getValue(self::XML_PATH_NERD_GRAPH_API_URL);
     }
 }

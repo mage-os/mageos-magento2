@@ -19,7 +19,6 @@ use Psr\Log\LoggerInterface;
  */
 class Deployments
 {
-
     /**
      * API URL for New Relic deployments
      */
@@ -152,7 +151,7 @@ class Deployments
         $params = [
             'deployment' => [
                 'description' => $description,
-                'changelog' => $changelog,
+                'change_log' => $changelog,
                 'user' => $user,
                 'revision' => $revision
             ]
