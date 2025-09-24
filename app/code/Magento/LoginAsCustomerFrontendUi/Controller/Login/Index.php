@@ -1,13 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
 namespace Magento\LoginAsCustomerFrontendUi\Controller\Login;
 
-use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Model\Session;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\RequestInterface;
@@ -17,7 +16,6 @@ use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\Message\ManagerInterface;
-use Magento\LoginAsCustomerApi\Api\GetAuthenticationDataBySecretInterface;
 use Magento\LoginAsCustomerApi\Api\AuthenticateCustomerBySecretInterface;
 use Psr\Log\LoggerInterface;
 use Magento\Checkout\Model\Session as CheckoutSession;
@@ -36,18 +34,6 @@ class Index implements HttpGetActionInterface
      * @var RequestInterface
      */
     private $request;
-
-    /**
-     * @var CustomerRepositoryInterface
-     * @deprecated
-     */
-    private $customerRepository;
-
-    /**
-     * @var GetAuthenticationDataBySecretInterface
-     * @deprecated
-     */
-    private $getAuthenticationDataBySecret;
 
     /**
      * @var AuthenticateCustomerBySecretInterface
@@ -77,8 +63,6 @@ class Index implements HttpGetActionInterface
     /**
      * @param ResultFactory $resultFactory
      * @param RequestInterface $request
-     * @param CustomerRepositoryInterface $customerRepository
-     * @param GetAuthenticationDataBySecretInterface $getAuthenticationDataBySecret
      * @param AuthenticateCustomerBySecretInterface $authenticateCustomerBySecret
      * @param ManagerInterface $messageManager
      * @param LoggerInterface $logger
@@ -88,8 +72,6 @@ class Index implements HttpGetActionInterface
     public function __construct(
         ResultFactory $resultFactory,
         RequestInterface $request,
-        CustomerRepositoryInterface $customerRepository,
-        GetAuthenticationDataBySecretInterface $getAuthenticationDataBySecret,
         AuthenticateCustomerBySecretInterface $authenticateCustomerBySecret,
         ManagerInterface $messageManager,
         LoggerInterface $logger,
@@ -98,8 +80,6 @@ class Index implements HttpGetActionInterface
     ) {
         $this->resultFactory = $resultFactory;
         $this->request = $request;
-        $this->customerRepository = $customerRepository;
-        $this->getAuthenticationDataBySecret = $getAuthenticationDataBySecret;
         $this->authenticateCustomerBySecret = $authenticateCustomerBySecret;
         $this->messageManager = $messageManager;
         $this->logger = $logger;
