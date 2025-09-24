@@ -103,8 +103,8 @@ class DeployMarkerTest extends TestCase
         $this->assertTrue($definition->getArgument('message')->isRequired());
 
         // Check optional arguments
-        $this->assertTrue($definition->hasArgument('changelog'));
-        $this->assertFalse($definition->getArgument('changelog')->isRequired());
+        $this->assertTrue($definition->hasArgument('change_log'));
+        $this->assertTrue($definition->getArgument('change_log')->isRequired());
 
         $this->assertTrue($definition->hasArgument('user'));
         $this->assertFalse($definition->getArgument('user')->isRequired());
@@ -194,7 +194,7 @@ class DeployMarkerTest extends TestCase
 
         $this->mockArguments([
             ['message', $message],
-            ['changelog', 'New features'],
+            ['change_log', 'New features'],
             ['user', $user],
             ['revision', $revision]
         ], [
@@ -465,7 +465,7 @@ class DeployMarkerTest extends TestCase
 
         $this->mockArguments([
             ['message', $message],
-            ['changelog', 'Added new features'],
+            ['change_log', 'Added new features'],
             ['user', 'complete-user'],
             ['revision', 'v2.0.0']
         ], [
@@ -587,7 +587,7 @@ class DeployMarkerTest extends TestCase
         $this->assertEquals('Deploy Message / Description', $messageArg->getDescription());
 
         // Verify optional arguments exist
-        $this->assertTrue($definition->hasArgument('changelog'));
+        $this->assertTrue($definition->hasArgument('change_log'));
         $this->assertTrue($definition->hasArgument('user'));
         $this->assertTrue($definition->hasArgument('revision'));
 

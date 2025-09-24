@@ -53,7 +53,7 @@ class DeployMarkerCommandTest extends TestCase
     public function testCommandWithMissingArgument()
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Not enough arguments (missing: "message")');
+        $this->expectExceptionMessage('Not enough arguments (missing: "message, change_log")');
 
         $this->commandTester->execute([]);
     }
@@ -66,7 +66,8 @@ class DeployMarkerCommandTest extends TestCase
     public function testCommandWithDisabledNewRelic()
     {
         $exitCode = $this->commandTester->execute([
-            'message' => 'Test deployment'
+            'message' => 'Test deployment',
+            'change_log' => 'Test changelog'
         ]);
 
         $this->assertEquals(1, $exitCode);
@@ -88,7 +89,8 @@ class DeployMarkerCommandTest extends TestCase
     public function testCommandWithMinimalArgumentsV2Rest()
     {
         $exitCode = $this->commandTester->execute([
-            'message' => 'Test deployment message'
+            'message' => 'Test deployment message',
+            'change_log' => 'Test changelog'
         ]);
 
         $this->assertTrue(
@@ -133,7 +135,7 @@ class DeployMarkerCommandTest extends TestCase
         $this->assertTrue($messageArg->isRequired());
 
         // Verify optional arguments
-        $this->assertTrue($definition->hasArgument('changelog'));
+        $this->assertTrue($definition->hasArgument('change_log'));
         $this->assertTrue($definition->hasArgument('user'));
         $this->assertTrue($definition->hasArgument('revision'));
 
@@ -156,7 +158,7 @@ class DeployMarkerCommandTest extends TestCase
     {
         $exitCode = $this->commandTester->execute([
             'message' => 'Full deployment test',
-            'changelog' => 'Added new features',
+            'change_log' => 'Added new features',
             'user' => 'deploy-user',
             'revision' => 'v2.0.0',
             '--commit' => 'abc123',
@@ -188,7 +190,8 @@ class DeployMarkerCommandTest extends TestCase
     public function testCommandWithEmptyMessage()
     {
         $exitCode = $this->commandTester->execute([
-            'message' => ''
+            'message' => '',
+            "change_log" => "Test changelog"
         ]);
 
         $this->assertIsInt($exitCode);
@@ -235,7 +238,8 @@ class DeployMarkerCommandTest extends TestCase
     public function testV2RestDoesNotShowNerdGraphDetails()
     {
         $exitCode = $this->commandTester->execute([
-            'message' => 'v2 rest test'
+            'message' => 'v2 rest test',
+            'change_log' => 'Test changelog'
         ]);
 
         $this->assertTrue(in_array($exitCode, [0, 1], true));
@@ -252,7 +256,8 @@ class DeployMarkerCommandTest extends TestCase
     public function testV2RestMisconfiguredFailsGracefully()
     {
         $exitCode = $this->commandTester->execute([
-            'message' => 'misconfig v2'
+            'message' => 'misconfig v2',
+            'change_log' => 'Test changelog'
         ]);
 
         $this->assertEquals(1, $exitCode);
@@ -270,7 +275,8 @@ class DeployMarkerCommandTest extends TestCase
     public function testNerdGraphMisconfiguredFailsGracefully()
     {
         $exitCode = $this->commandTester->execute([
-            'message' => 'misconfig nerdgraph'
+            'message' => 'misconfig nerdgraph',
+            'change_log' => 'Test changelog'
         ]);
 
         $this->assertEquals(1, $exitCode);
