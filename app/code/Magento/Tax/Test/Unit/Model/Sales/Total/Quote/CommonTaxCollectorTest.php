@@ -457,6 +457,7 @@ class CommonTaxCollectorTest extends TestCase
             /**
              * @param mixed ...$args
              * @return $this
+             * @SuppressWarnings(PHPMD.UnusedLocalVariable)
              */
             public function setPriceForTaxCalculation(...$args)
             {
@@ -1310,6 +1311,7 @@ class CommonTaxCollectorTest extends TestCase
             /**
              * @param mixed ...$args
              * @return $this
+             * @SuppressWarnings(PHPMD.UnusedLocalVariable)
              */
             public function setPriceForTaxCalculation(...$args)
             {
