@@ -153,6 +153,7 @@ class InvoiceService implements InvoiceManagementInterface
         $totalQty = 0;
         $invoice = $this->orderConverter->toInvoice($order);
         $preparedItemsQty = $this->prepareItemsQty($order, $orderItemsQtyToInvoice);
+        $originalEntityType = $order->getEntityType() ?? null;
 
         foreach ($order->getAllItems() as $orderItem) {
             if (!$this->canInvoiceItem($orderItem, $preparedItemsQty)) {
@@ -177,6 +178,9 @@ class InvoiceService implements InvoiceManagementInterface
 
         $invoice->setTotalQty($totalQty);
         $invoice->collectTotals();
+        if ($originalEntityType) {
+            $order->setHistoryEntityName($originalEntityType);
+        }
         $order->getInvoiceCollection()->addItem($invoice);
 
         return $invoice;
