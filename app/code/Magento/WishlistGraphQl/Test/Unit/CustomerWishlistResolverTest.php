@@ -16,8 +16,8 @@ use Magento\Wishlist\Model\Wishlist;
 use Magento\Wishlist\Model\Wishlist\Config;
 use Magento\Wishlist\Model\WishlistFactory;
 use Magento\WishlistGraphQl\Model\Resolver\CustomerWishlistResolver;
-use Magento\WishlistGraphQl\Test\Unit\Mock\ContextExtensionInterfaceTestHelper;
-use Magento\WishlistGraphQl\Test\Unit\Mock\WishlistTestHelper;
+use Magento\CustomerGraphQl\Test\Unit\Helper\ContextExtensionInterfaceTestHelper;
+use Magento\Wishlist\Test\Unit\Helper\WishlistTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
