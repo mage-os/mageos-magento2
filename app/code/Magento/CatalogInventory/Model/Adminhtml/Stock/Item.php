@@ -22,6 +22,7 @@ use Magento\Catalog\Model\Product;
  * @since 100.0.2
  *
  * @deprecated 100.3.0 Replaced with Multi Source Inventory
+ * @see Nothing
  * @link https://developer.adobe.com/commerce/webapi/rest/inventory/index.html
  * @link https://developer.adobe.com/commerce/webapi/rest/inventory/inventory-api-reference.html
  */
@@ -117,6 +118,8 @@ class Item extends \Magento\CatalogInventory\Model\Stock\Item implements Identit
     }
 
     /**
+     * Check if model is used in admin area
+     *
      * @return bool
      */
     public function hasAdminArea()
@@ -125,6 +128,8 @@ class Item extends \Magento\CatalogInventory\Model\Stock\Item implements Identit
     }
 
     /**
+     * Flg to show default notification message
+     *
      * @return bool
      * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
@@ -153,5 +158,7 @@ class Item extends \Magento\CatalogInventory\Model\Stock\Item implements Identit
     {
         parent::afterLoad();
         $this->setOrigData();
+
+        return $this;
     }
 }
