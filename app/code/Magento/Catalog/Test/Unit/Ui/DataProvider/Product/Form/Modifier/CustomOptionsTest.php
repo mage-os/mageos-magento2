@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Catalog\Test\Unit\Ui\DataProvider\Product\Form\Modifier;
 
 use Magento\Catalog\Model\Config\Source\Product\Options\Price as ProductOptionsPrice;
+use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Option as ProductOption;
 use Magento\Catalog\Model\ProductOptions\ConfigInterface;
 use Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\CustomOptions;
@@ -19,6 +20,11 @@ use PHPUnit\Framework\MockObject\MockObject;
 
 class CustomOptionsTest extends AbstractModifierTestCase
 {
+    /**
+     * @var ObjectManager
+     */
+    protected $objectManager;
+
     /**
      * @var ConfigInterface|MockObject
      */
@@ -47,6 +53,7 @@ class CustomOptionsTest extends AbstractModifierTestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->objectManager = new ObjectManager($this);
         $this->productOptionsConfigMock = $this->createMock(ConfigInterface::class);
         $this->productOptionsPriceMock = $this->getMockBuilder(ProductOptionsPrice::class)
             ->disableOriginalConstructor()
@@ -88,6 +95,23 @@ class CustomOptionsTest extends AbstractModifierTestCase
 
         $this->storeManagerMock->method('getStore')->willReturn($this->storeMock);
         $this->storeMock->setBaseCurrency($this->priceCurrency);
+        
+        // Override the parent's productMock with a proper mock of Product class
+        $this->productMock = $this->createPartialMock(Product::class, ['getId', 'setId', 'getOptions', 'setOptions']);
+        
+        // Configure getOptions to return the data set via setOptions
+        $this->productMock->method('setOptions')->willReturnCallback(function($options) {
+            $this->productMock->method('getOptions')->willReturn($options);
+            return $this->productMock;
+        });
+        
+        // Configure getId to return the ID set via setId
+        $this->productMock->method('setId')->willReturnCallback(function($id) {
+            $this->productMock->method('getId')->willReturn($id);
+            return $this->productMock;
+        });
+        
+        $this->locatorMock->method('getProduct')->willReturn($this->productMock);
     }
 
     /**
