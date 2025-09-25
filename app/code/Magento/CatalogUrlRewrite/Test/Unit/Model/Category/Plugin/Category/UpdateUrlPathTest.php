@@ -100,10 +100,7 @@ class UpdateUrlPathTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['doesEntityHaveOverriddenUrlPathForStore'])
             ->getMock();
-        $this->urlPersist = $this->getMockBuilder(UrlPersistInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['replace'])
-            ->getMockForAbstractClass();
+        $this->urlPersist = $this->createMock(UrlPersistInterface::class);
 
         $this->updateUrlPathPlugin = $this->objectManager->getObject(
             UpdateUrlPath::class,

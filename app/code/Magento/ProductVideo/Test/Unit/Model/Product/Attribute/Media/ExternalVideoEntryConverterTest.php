@@ -88,7 +88,7 @@ class ExternalVideoEntryConverterTest extends TestCase
                 ]
             );
 
-        $this->mediaGalleryEntryFactoryMock->expects($this->any())->method('create')->willReturn(
+        $this->mediaGalleryEntryFactoryMock->method('create')->willReturn(
             $this->mediaGalleryEntryMock
         );
 
@@ -97,9 +97,9 @@ class ExternalVideoEntryConverterTest extends TestCase
         $this->videoEntryFactoryMock =
             $this->createPartialMock(VideoContentInterfaceFactory::class, ['create']);
 
-        $this->videoEntryMock = $this->getMockForAbstractClass(VideoContentInterface::class);
+        $this->videoEntryMock = $this->createMock(VideoContentInterface::class);
 
-        $this->videoEntryFactoryMock->expects($this->any())->method('create')->willReturn($this->videoEntryMock);
+        $this->videoEntryFactoryMock->method('create')->willReturn($this->videoEntryMock);
 
         $this->mediaGalleryEntryExtensionFactoryMock =
             $this->createPartialMock(
@@ -109,8 +109,8 @@ class ExternalVideoEntryConverterTest extends TestCase
 
         $this->mediaGalleryEntryExtensionMock = $this->getProductAttributeMediaGalleryEntryExtensionMock();
 
-        $this->mediaGalleryEntryExtensionMock->expects($this->any())->method('setVideoContent')->willReturn(null);
-        $this->mediaGalleryEntryExtensionFactoryMock->expects($this->any())->method('create')->willReturn(
+        $this->mediaGalleryEntryExtensionMock->method('setVideoContent')->willReturn(null);
+        $this->mediaGalleryEntryExtensionFactoryMock->method('create')->willReturn(
             $this->mediaGalleryEntryExtensionMock
         );
 

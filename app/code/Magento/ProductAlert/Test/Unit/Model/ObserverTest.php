@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\ProductAlert\Test\Unit\Model;
 
+use Magento\Store\Model\Group;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\ProductAlert\Model\EmailFactory;
 use Magento\ProductAlert\Model\Mailing\Publisher;
@@ -105,7 +106,7 @@ class ObserverTest extends TestCase
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage($message);
 
-        $groupMock = $this->createMock(\Magento\Store\Model\Group::class);
+        $groupMock = $this->createMock(Group::class);
         $storeMock = $this->createMock(Store::class);
         $groupMock->method('getDefaultStore')->willReturn($storeMock);
 
@@ -133,7 +134,7 @@ class ObserverTest extends TestCase
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage($message);
 
-        $groupMock = $this->createMock(\Magento\Store\Model\Group::class);
+        $groupMock = $this->createMock(Group::class);
         $storeMock = $this->createMock(Store::class);
         $groupMock->method('getDefaultStore')->willReturn($storeMock);
 

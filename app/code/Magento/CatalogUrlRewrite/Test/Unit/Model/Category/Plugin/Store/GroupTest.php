@@ -88,14 +88,11 @@ class GroupTest extends TestCase
             ->disableOriginalConstructor()
             ->addMethods(['getStoreIds', 'getWebsiteId'])
             ->onlyMethods(['isObjectNew', 'dataHasChangedFor'])
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->subjectMock = $this->getMockBuilder(Group::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['reinitStores'])
-            ->getMockForAbstractClass();
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
         $this->categoryMock = $this->getMockBuilder(Category::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getCategories'])
@@ -136,9 +133,7 @@ class GroupTest extends TestCase
         $this->abstractModelMock->expects($this->once())
             ->method('isObjectNew')
             ->willReturn(false);
-        $this->abstractModelMock->expects($this->any())
-            ->method('getStoreIds')
-            ->willReturn(['1']);
+        $this->abstractModelMock->method('getStoreIds')->willReturn(['1']);
         $this->abstractModelMock->expects($this->once())
             ->method('getWebsiteId')
             ->willReturn(1);
@@ -166,9 +161,7 @@ class GroupTest extends TestCase
         $this->abstractModelMock->expects($this->once())
             ->method('isObjectNew')
             ->willReturn(false);
-        $this->abstractModelMock->expects($this->any())
-            ->method('getStoreIds')
-            ->willReturn([]);
+        $this->abstractModelMock->method('getStoreIds')->willReturn([]);
         $this->abstractModelMock->expects($this->any())
             ->method('dataHasChangedFor')
             ->with('website_id')

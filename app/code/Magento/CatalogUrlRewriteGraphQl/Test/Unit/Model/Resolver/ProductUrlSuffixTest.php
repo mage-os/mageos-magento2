@@ -68,7 +68,7 @@ class ProductUrlSuffixTest extends TestCase
                     'getExtensionAttributes'
                 ]
             )
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->contextExtensionMock = $this->getMockBuilder(ContextExtensionInterface::class)
             ->addMethods(
@@ -76,7 +76,7 @@ class ProductUrlSuffixTest extends TestCase
                     'getStore'
                 ]
             )
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->storeMock = $this->getMockBuilder(StoreInterface::class)
             ->onlyMethods(
@@ -84,7 +84,7 @@ class ProductUrlSuffixTest extends TestCase
                     'getId'
                 ]
             )
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->fieldMock = $this->getMockBuilder(Field::class)
             ->disableOriginalConstructor()
@@ -95,7 +95,7 @@ class ProductUrlSuffixTest extends TestCase
             ->getMock();
 
         $this->scopeConfigMock = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->resolver = new ProductUrlSuffix(
             $this->scopeConfigMock

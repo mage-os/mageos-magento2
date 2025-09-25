@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\ProductAlert\Test\Unit\Block\Product\View;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\Registry;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -58,7 +59,7 @@ class PriceTest extends TestCase
             ->onlyMethods(['getId', '__wakeup'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->_product->expects($this->any())->method('getId')->willReturn(1);
+        $this->_product->method('getId')->willReturn(1);
         $this->_registry = $this->getMockBuilder(
             Registry::class
         )->disableOriginalConstructor()
@@ -107,15 +108,14 @@ class PriceTest extends TestCase
     /**
      * @param bool $priceAllowed
      * @param bool $showProductPrice
-     *
-     * @dataProvider setTemplatePriceAlertNotAllowedDataProvider
      */
+    #[DataProvider('setTemplatePriceAlertNotAllowedDataProvider')]
     public function testSetTemplatePriceAlertNotAllowed($priceAllowed, $showProductPrice)
     {
         $this->_helper->expects($this->once())->method('isPriceAlertAllowed')->willReturn($priceAllowed);
         $this->_helper->expects($this->never())->method('getSaveUrl');
 
-        $this->_product->expects($this->any())->method('getCanShowPrice')->willReturn($showProductPrice);
+        $this->_product->method('getCanShowPrice')->willReturn($showProductPrice);
 
         $this->_registry->expects(
             $this->any()

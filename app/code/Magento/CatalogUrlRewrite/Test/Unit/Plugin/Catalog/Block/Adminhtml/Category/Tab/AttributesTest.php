@@ -53,9 +53,7 @@ class AttributesTest extends TestCase
 
         $this->categoryMock = $this->createMock(Category::class);
         $this->dataProviderMock = $this->createMock(CategoryDataProvider::class);
-        $this->dataProviderMock->expects($this->any())
-            ->method('getCurrentCategory')
-            ->willReturn($this->categoryMock);
+        $this->dataProviderMock->method('getCurrentCategory')->willReturn($this->categoryMock);
 
         $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
         $this->model = $objectManager->getObject(Attributes::class, ['scopeConfig' => $this->scopeConfigMock]);
@@ -64,13 +62,13 @@ class AttributesTest extends TestCase
     /**
      * Test get attributes meta
      *
-     * @dataProvider attributesMetaDataProvider
      *
      * @param bool $configEnabled
      * @param string $expectedValue
      * @param string $expectedValueMap
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('attributesMetaDataProvider')]
     public function testGetAttributesMeta(bool $configEnabled, string $expectedValue, string $expectedValueMap): void
     {
         $this->categoryMock->expects($this->once())

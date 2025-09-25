@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\CatalogSearch\Test\Unit\Model\Indexer;
 
+use Magento\Framework\Registry;
 use Magento\CatalogSearch\Model\Indexer\Fulltext;
 use Magento\CatalogSearch\Model\Indexer\Fulltext\Action\Full;
 use Magento\CatalogSearch\Model\Indexer\Fulltext\Action\FullFactory;
@@ -66,13 +67,13 @@ class FulltextTest extends TestCase
             FullFactory::class,
             ['create']
         );
-        $fullActionFactory->expects($this->any())->method('create')->willReturn($this->fullAction);
+        $fullActionFactory->method('create')->willReturn($this->fullAction);
         $this->saveHandler = $this->getClassMock(IndexerHandler::class);
         $indexerHandlerFactory = $this->createPartialMock(
             IndexerHandlerFactory::class,
             ['create']
         );
-        $indexerHandlerFactory->expects($this->any())->method('create')->willReturn($this->saveHandler);
+        $indexerHandlerFactory->method('create')->willReturn($this->saveHandler);
 
         $this->fulltextResource = $this->getClassMock(\Magento\CatalogSearch\Model\ResourceModel\Fulltext::class);
 
@@ -84,8 +85,8 @@ class FulltextTest extends TestCase
 
         $objects = [
             [
-                \Magento\Framework\Registry::class,
-                $this->createMock(\Magento\Framework\Registry::class)
+                Registry::class,
+                $this->createMock(Registry::class)
             ],
             [
                 LoggerInterface::class,
@@ -210,9 +211,7 @@ class FulltextTest extends TestCase
                     $dimension = $this->getMockBuilder(Dimension::class)
                         ->disableOriginalConstructor()
                         ->getMock();
-                    $dimension->expects($this->any())
-                        ->method('getValue')
-                        ->willReturn($storeId);
+                    $dimension->method('getValue')->willReturn($storeId);
 
                     yield ['scope' => $dimension];
                 }

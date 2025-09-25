@@ -38,9 +38,7 @@ class DataCategoryHashMapTest extends TestCase
         $this->categoryResourceFactory = $this->createPartialMock(CategoryFactory::class, ['create']);
         $this->categoryResource = $this->createPartialMock(Category::class, ['getConnection', 'getEntityTable']);
 
-        $this->categoryResourceFactory->expects($this->any())
-            ->method('create')
-            ->willReturn($this->categoryResource);
+        $this->categoryResourceFactory->method('create')->willReturn($this->categoryResource);
 
         $this->model = (new ObjectManager($this))->getObject(
             DataCategoryHashMap::class,
@@ -61,25 +59,15 @@ class DataCategoryHashMapTest extends TestCase
 
         $categoryMock = $this->getMockBuilder(CategoryInterface::class)
             ->addMethods(['getResource'])
-            ->getMockForAbstractClass();
-        $connectionAdapterMock = $this->getMockForAbstractClass(AdapterInterface::class);
+            ->getMock();
+        $connectionAdapterMock = $this->createMock(AdapterInterface::class);
         $selectMock = $this->createMock(Select::class);
 
-        $this->categoryRepository->expects($this->any())
-            ->method('get')
-            ->willReturn($categoryMock);
-        $categoryMock->expects($this->any())
-            ->method('getResource')
-            ->willReturn($this->categoryResource);
-        $this->categoryResource->expects($this->any())
-            ->method('getConnection')
-            ->willReturn($connectionAdapterMock);
-        $this->categoryResource->expects($this->any())
-            ->method('getEntityTable')
-            ->willReturn('category_entity');
-        $connectionAdapterMock->expects($this->any())
-            ->method('select')
-            ->willReturn($selectMock);
+        $this->categoryRepository->method('get')->willReturn($categoryMock);
+        $categoryMock->method('getResource')->willReturn($this->categoryResource);
+        $this->categoryResource->method('getConnection')->willReturn($connectionAdapterMock);
+        $this->categoryResource->method('getEntityTable')->willReturn('category_entity');
+        $connectionAdapterMock->method('select')->willReturn($selectMock);
         $selectMock->expects($this->any())
             ->method('from')
             ->willReturnSelf();

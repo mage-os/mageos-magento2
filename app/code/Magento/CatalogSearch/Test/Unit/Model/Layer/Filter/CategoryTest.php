@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\CatalogSearch\Test\Unit\Model\Layer\Filter;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Layer;
 use Magento\Catalog\Model\Layer\Filter\DataProvider\CategoryFactory;
@@ -71,10 +72,7 @@ class CategoryTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->request = $this->getMockBuilder(RequestInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getParam'])
-            ->getMockForAbstractClass();
+        $this->request = $this->createMock(RequestInterface::class);
 
         $dataProviderFactory = $this->getMockBuilder(CategoryFactory::class)
             ->disableOriginalConstructor()
@@ -94,9 +92,7 @@ class CategoryTest extends TestCase
             ->onlyMethods(['getId', 'getChildrenCategories', 'getIsActive'])
             ->getMock();
 
-        $this->dataProvider->expects($this->any())
-            ->method('getCategory')
-            ->willReturn($this->category);
+        $this->dataProvider->method('getCategory')->willReturn($this->category);
 
         $this->layer = $this->getMockBuilder(Layer::class)
             ->disableOriginalConstructor()
@@ -108,9 +104,7 @@ class CategoryTest extends TestCase
             ->onlyMethods(['addCategoryFilter', 'getFacetedData', 'getSize'])
             ->getMock();
 
-        $this->layer->expects($this->any())
-            ->method('getProductCollection')
-            ->willReturn($this->fulltextCollection);
+        $this->layer->method('getProductCollection')->willReturn($this->fulltextCollection);
 
         $this->itemDataBuilder = $this->getMockBuilder(DataBuilder::class)
             ->disableOriginalConstructor()
@@ -128,9 +122,7 @@ class CategoryTest extends TestCase
             ->getMock();
         $filterItem->expects($this->any())
             ->method($this->anything())->willReturnSelf();
-        $this->filterItemFactory->expects($this->any())
-            ->method('create')
-            ->willReturn($filterItem);
+        $this->filterItemFactory->method('create')->willReturn($filterItem);
 
         $escaper = $this->getMockBuilder(Escaper::class)
             ->disableOriginalConstructor()
@@ -159,8 +151,8 @@ class CategoryTest extends TestCase
      * @param $isIdUsed
      *
      * @return void
-     * @dataProvider applyWithEmptyRequestDataProvider
      */
+    #[DataProvider('applyWithEmptyRequestDataProvider')]
     public function testApplyWithEmptyRequest($requestValue, $idValue): void
     {
         $requestField = 'test_request_var';
@@ -250,9 +242,7 @@ class CategoryTest extends TestCase
      */
     public function testGetItems(): void
     {
-        $this->category->expects($this->any())
-            ->method('getIsActive')
-            ->willReturn(true);
+        $this->category->method('getIsActive')->willReturn(true);
 
         $category1 = $this->getMockBuilder(Category::class)
             ->disableOriginalConstructor()

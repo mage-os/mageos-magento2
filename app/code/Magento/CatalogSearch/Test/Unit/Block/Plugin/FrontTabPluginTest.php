@@ -77,13 +77,11 @@ class FrontTabPluginTest extends TestCase
         $this->fieldsetMock = $this->getMockBuilder(Fieldset::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->childElementMock = $this->getMockBuilder(AbstractElement::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->childElementMock = $this->createMock(AbstractElement::class);
         $this->childBlockMock = $this->getMockBuilder(AbstractBlock::class)
             ->disableOriginalConstructor()
             ->addMethods(['addFieldMap', 'addFieldDependence'])
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->plugin = $this->objectManagerHelper->getObject(

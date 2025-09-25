@@ -49,13 +49,9 @@ class DataProductHashMapTest extends TestCase
             ['getSelect', 'getConnection', 'getAllIds']
         );
 
-        $this->collectionFactoryMock->expects($this->any())
-            ->method('create')
-            ->willReturn($this->productCollectionMock);
+        $this->collectionFactoryMock->method('create')->willReturn($this->productCollectionMock);
 
-        $this->hashMapPoolMock->expects($this->any())
-            ->method('getDataMap')
-            ->willReturn($this->dataCategoryMapMock);
+        $this->hashMapPoolMock->method('getDataMap')->willReturn($this->dataCategoryMapMock);
 
         $this->model = (new ObjectManager($this))->getObject(
             DataProductHashMap::class,
@@ -74,21 +70,15 @@ class DataProductHashMapTest extends TestCase
         $productIds = ['1' => [1, 2, 3], '2' => [2, 3], '3' => 3];
         $productIdsOther = ['2' => [2, 3, 4]];
 
-        $connectionMock = $this->getMockForAbstractClass(AdapterInterface::class);
+        $connectionMock = $this->createMock(AdapterInterface::class);
         $selectMock = $this->createMock(Select::class);
 
         $this->productCollectionMock->expects($this->exactly(3))
             ->method('getAllIds')
             ->willReturnOnConsecutiveCalls($productIds, $productIdsOther, $productIds);
-        $this->productCollectionMock->expects($this->any())
-            ->method('getConnection')
-            ->willReturn($connectionMock);
-        $connectionMock->expects($this->any())
-            ->method('getTableName')
-            ->willReturn($this->returnValue($this->returnArgument(0)));
-        $this->productCollectionMock->expects($this->any())
-            ->method('getSelect')
-            ->willReturn($selectMock);
+        $this->productCollectionMock->method('getConnection')->willReturn($connectionMock);
+        $connectionMock->method('getTableName')->willReturn($this->returnValue($this->returnArgument(0)));
+        $this->productCollectionMock->method('getSelect')->willReturn($selectMock);
         $selectMock->expects($this->any())
             ->method('from')
             ->willReturnSelf();
@@ -98,9 +88,7 @@ class DataProductHashMapTest extends TestCase
         $selectMock->expects($this->any())
             ->method('where')
             ->willReturnSelf();
-        $this->dataCategoryMapMock->expects($this->any())
-            ->method('getAllData')
-            ->willReturn([]);
+        $this->dataCategoryMapMock->method('getAllData')->willReturn([]);
         $this->hashMapPoolMock->expects($this->any())
             ->method('resetMap')
             ->with(DataCategoryHashMap::class, 1);

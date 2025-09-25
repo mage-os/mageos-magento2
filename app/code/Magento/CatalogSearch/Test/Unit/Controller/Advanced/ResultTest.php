@@ -110,9 +110,7 @@ class ResultTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $redirectFactoryMock->expects($this->any())
-            ->method('create')
-            ->willReturn($redirectResultMock);
+        $redirectFactoryMock->method('create')->willReturn($redirectResultMock);
 
         $catalogSearchAdvanced = $this->createPartialMock(
             Advanced::class,
@@ -130,34 +128,22 @@ class ResultTest extends TestCase
             Http::class,
             ['getQueryValue']
         );
-        $requestMock->expects($this->any())->method('getQueryValue')->willReturn(['key' => 'value']);
+        $requestMock->method('getQueryValue')->willReturn(['key' => 'value']);
 
-        $redirectMock = $this->getMockForAbstractClass(RedirectInterface::class);
+        $redirectMock = $this->createMock(RedirectInterface::class);
         $redirectMock->expects($this->any())->method('error')->with('urlstring');
 
         $messageManagerMock = $this->createMock(Manager::class);
 
-        $eventManagerMock = $this->getMockForAbstractClass(ManagerInterface::class);
+        $eventManagerMock = $this->createMock(ManagerInterface::class);
 
         $contextMock = $this->createMock(Context::class);
-        $contextMock->expects($this->any())
-            ->method('getRequest')
-            ->willReturn($requestMock);
-        $contextMock->expects($this->any())
-            ->method('getResponse')
-            ->willReturn($responseMock);
-        $contextMock->expects($this->any())
-            ->method('getRedirect')
-            ->willReturn($redirectMock);
-        $contextMock->expects($this->any())
-            ->method('getMessageManager')
-            ->willReturn($messageManagerMock);
-        $contextMock->expects($this->any())
-            ->method('getEventManager')
-            ->willReturn($eventManagerMock);
-        $contextMock->expects($this->any())
-            ->method('getResultRedirectFactory')
-            ->willReturn($redirectFactoryMock);
+        $contextMock->method('getRequest')->willReturn($requestMock);
+        $contextMock->method('getResponse')->willReturn($responseMock);
+        $contextMock->method('getRedirect')->willReturn($redirectMock);
+        $contextMock->method('getMessageManager')->willReturn($messageManagerMock);
+        $contextMock->method('getEventManager')->willReturn($eventManagerMock);
+        $contextMock->method('getResultRedirectFactory')->willReturn($redirectFactoryMock);
 
         $urlMock = $this->createMock(Url::class);
         $urlMock->expects($this->once())

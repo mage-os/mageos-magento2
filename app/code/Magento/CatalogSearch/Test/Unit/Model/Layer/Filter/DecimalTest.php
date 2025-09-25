@@ -7,6 +7,9 @@ declare(strict_types=1);
 
 namespace Magento\CatalogSearch\Test\Unit\Model\Layer\Filter;
 
+use Magento\Framework\UrlInterface;
+use Magento\Theme\Block\Html\Pager;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Layer;
 use Magento\Catalog\Model\Layer\Filter\Item;
 use Magento\Catalog\Model\Layer\Filter\ItemFactory;
@@ -73,10 +76,7 @@ class DecimalTest extends TestCase
      */
     protected function setUp(): void
     {
-        self::$request = $this->getMockBuilder(RequestInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getParam'])
-            ->getMockForAbstractClass();
+        self::$request = $this->createMock(RequestInterface::class);
 
         $this->layer = $this->getMockBuilder(Layer::class)
             ->disableOriginalConstructor()
@@ -98,8 +98,8 @@ class DecimalTest extends TestCase
             ->willReturnCallback(
                 function (array $data) {
                     return new Item(
-                        $this->createMock(\Magento\Framework\UrlInterface::class),
-                        $this->createMock(\Magento\Theme\Block\Html\Pager::class),
+                        $this->createMock(UrlInterface::class),
+                        $this->createMock(Pager::class),
                         $data
                     );
                 }
@@ -111,9 +111,7 @@ class DecimalTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->layer->expects($this->any())
-            ->method('getProductCollection')
-            ->willReturn($this->fulltextCollection);
+        $this->layer->method('getProductCollection')->willReturn($this->fulltextCollection);
 
         $filterDecimalFactory =
             $this->getMockBuilder(DecimalFactory::class)
@@ -138,9 +136,7 @@ class DecimalTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['addFilter'])
             ->getMock();
-        $this->layer->expects($this->any())
-            ->method('getState')
-            ->willReturn($this->state);
+        $this->layer->method('getState')->willReturn($this->state);
 
         $objectManagerHelper = new ObjectManagerHelper($this);
         $priceFormatter = $this->createMock(PriceCurrencyInterface::class);
@@ -168,8 +164,8 @@ class DecimalTest extends TestCase
      * @param int|null|bool $idValue
      *
      * @return void
-     * @dataProvider applyWithEmptyRequestDataProvider
      */
+    #[DataProvider('applyWithEmptyRequestDataProvider')]
     public static function testApplyWithEmptyRequest(?int $requestValue, $idValue): void
     {
         $requestField = 'test_request_var';
@@ -235,9 +231,7 @@ class DecimalTest extends TestCase
             );
 
         $attributeCode = 'AttributeCode';
-        $this->attribute->expects($this->any())
-            ->method('getAttributeCode')
-            ->willReturn($attributeCode);
+        $this->attribute->method('getAttributeCode')->willReturn($attributeCode);
 
         $this->fulltextCollection->expects($this->once())
             ->method('addFieldToFilter')
@@ -249,18 +243,14 @@ class DecimalTest extends TestCase
     /**
      * @param array $facets
      * @param array $expected
-     * @dataProvider itemDataDataProvider
      * @return void
      */
+    #[DataProvider('itemDataDataProvider')]
     public function testItemData(array $facets, array $expected): void
     {
-        $this->fulltextCollection->expects($this->any())
-            ->method('getSize')
-            ->willReturn(5);
+        $this->fulltextCollection->method('getSize')->willReturn(5);
 
-        $this->fulltextCollection->expects($this->any())
-            ->method('getFacetedData')
-            ->willReturn($facets);
+        $this->fulltextCollection->method('getFacetedData')->willReturn($facets);
         $actual = [];
         foreach (self::$target->getItems() as $item) {
             $actual[] = ['label' => $item->getLabel(), 'value' => $item->getValue(), 'count' => $item->getCount()];

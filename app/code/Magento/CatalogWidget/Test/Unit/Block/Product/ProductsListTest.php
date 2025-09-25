@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\CatalogWidget\Test\Unit\Block\Product;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Block\Product\Widget\Html\Pager;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Attribute\Source\Status as ProductStatus;
@@ -150,7 +151,7 @@ class ProductsListTest extends TestCase
         $store->expects($this->once())->method('getId')->willReturn(1);
         $this->storeManager->expects($this->once())->method('getStore')->willReturn($store);
 
-        $theme = $this->getMockForAbstractClass(ThemeInterface::class);
+        $theme = $this->createMock(ThemeInterface::class);
         $theme->expects($this->once())->method('getId')->willReturn('blank');
         $this->design->expects($this->once())->method('getDesignTheme')->willReturn($theme);
 
@@ -282,9 +283,8 @@ class ProductsListTest extends TestCase
      * @param int  $productsCount
      * @param int  $productsPerPage
      * @param int  $expectedPageSize
-     *
-     * @dataProvider createCollectionDataProvider
      */
+    #[DataProvider('createCollectionDataProvider')]
     public function testCreateCollection($pagerEnable, $productsCount, $productsPerPage, $expectedPageSize)
     {
         $this->visibility->expects($this->once())->method('getVisibleInCatalogIds')

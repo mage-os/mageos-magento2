@@ -66,7 +66,7 @@ class GalleryTest extends TestCase
         $this->contextMock = $this->createMock(Context::class);
         $this->arrayUtilsMock = $this->createMock(ArrayUtils::class);
         $this->mediaHelperMock = $this->createMock(Media::class);
-        $this->jsonEncoderMock = $this->getMockForAbstractClass(EncoderInterface::class);
+        $this->jsonEncoderMock = $this->createMock(EncoderInterface::class);
         $this->coreRegistry = $this->createMock(Registry::class);
         $this->contextMock->expects($this->once())->method('getRegistry')->willReturn($this->coreRegistry);
 
@@ -110,11 +110,11 @@ class GalleryTest extends TestCase
         ];
         $mediaGalleryData->setData($data);
 
-        $this->coreRegistry->expects($this->any())->method('registry')->willReturn($this->productModelMock);
+        $this->coreRegistry->method('registry')->willReturn($this->productModelMock);
         $typeInstance = $this->createMock(AbstractType::class);
-        $typeInstance->expects($this->any())->method('getStoreFilter')->willReturn('_cache_instance_store_filter');
-        $this->productModelMock->expects($this->any())->method('getTypeInstance')->willReturn($typeInstance);
-        $this->productModelMock->expects($this->any())->method('getMediaGalleryImages')->willReturn(
+        $typeInstance->method('getStoreFilter')->willReturn('_cache_instance_store_filter');
+        $this->productModelMock->method('getTypeInstance')->willReturn($typeInstance);
+        $this->productModelMock->method('getMediaGalleryImages')->willReturn(
             [$mediaGalleryData]
         );
         $this->gallery->getMediaGalleryDataJson();
@@ -126,11 +126,11 @@ class GalleryTest extends TestCase
     public function testGetMediaEmptyGalleryDataJson()
     {
         $mediaGalleryData = [];
-        $this->coreRegistry->expects($this->any())->method('registry')->willReturn($this->productModelMock);
+        $this->coreRegistry->method('registry')->willReturn($this->productModelMock);
         $typeInstance = $this->createMock(AbstractType::class);
-        $typeInstance->expects($this->any())->method('getStoreFilter')->willReturn('_cache_instance_store_filter');
-        $this->productModelMock->expects($this->any())->method('getTypeInstance')->willReturn($typeInstance);
-        $this->productModelMock->expects($this->any())->method('getMediaGalleryImages')->willReturn($mediaGalleryData);
+        $typeInstance->method('getStoreFilter')->willReturn('_cache_instance_store_filter');
+        $this->productModelMock->method('getTypeInstance')->willReturn($typeInstance);
+        $this->productModelMock->method('getMediaGalleryImages')->willReturn($mediaGalleryData);
         $this->gallery->getMediaGalleryDataJson();
     }
 

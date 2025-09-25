@@ -58,16 +58,14 @@ class ProductTest extends TestCase
         $this->subjectMock = $this->getMockBuilder(ProductResourceModel::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection = $this->getMockBuilder(AdapterInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $connection = $this->createMock(AdapterInterface::class);
         $this->subjectMock->method('getConnection')->willReturn($connection);
 
         $this->indexerMock = $this->getMockBuilder(IndexerInterface::class)
             ->disableOriginalConstructor()
             ->addMethods(['__wakeup'])
             ->onlyMethods(['getId', 'getState'])
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->indexerRegistryMock = $this->getMockBuilder(IndexerRegistry::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['get'])

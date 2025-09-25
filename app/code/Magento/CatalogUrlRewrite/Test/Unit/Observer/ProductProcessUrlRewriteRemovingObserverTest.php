@@ -79,9 +79,7 @@ class ProductProcessUrlRewriteRemovingObserverTest extends TestCase
             ->onlyMethods(['getId'])
             ->getMock();
 
-        $this->urlPersistMock = $this->getMockBuilder(UrlPersistInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->urlPersistMock = $this->createMock(UrlPersistInterface::class);
 
         $this->observer = $this->objectManager->getObject(
             ProductProcessUrlRewriteRemovingObserver::class,

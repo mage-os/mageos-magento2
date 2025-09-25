@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\CatalogUrlRewrite\Test\Unit\Service\V1;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\CatalogUrlRewrite\Service\V1\StoreViewService;
 use Magento\Eav\Model\Config;
 use Magento\Eav\Model\Entity\AbstractEntity;
@@ -43,11 +44,9 @@ class StoreViewServiceTest extends TestCase
             ->onlyMethods(['from', 'where', 'join'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->connection = $this->getMockBuilder(AdapterInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->connection = $this->createMock(AdapterInterface::class);
         $this->resource = $this->createMock(ResourceConnection::class);
-        $this->resource->expects($this->any())->method('getConnection')->willReturn($this->connection);
+        $this->resource->method('getConnection')->willReturn($this->connection);
 
         $this->storeViewService = (new ObjectManager($this))->getObject(
             StoreViewService::class,
@@ -83,19 +82,16 @@ class StoreViewServiceTest extends TestCase
     }
 
     /**
-     * @dataProvider overriddenUrlKeyForStoreDataProvider
      * @param int $storeId
      * @param array $fetchedStoreIds
      * @param bool $result
      */
+    #[DataProvider('overriddenUrlKeyForStoreDataProvider')]
     public function testDoesEntityHaveOverriddenUrlKeyForStore($storeId, $fetchedStoreIds, $result)
     {
         $entityType = 'entity_type';
         $productId = 'product_id';
-        $attribute = $this->getMockBuilder(AbstractAttribute::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['__wakeup', 'getBackendTable', 'getId', 'getEntity'])
-            ->getMockForAbstractClass();
+        $attribute = $this->createMock(AbstractAttribute::class);
         $this->config->expects($this->once())->method('getAttribute')->with($entityType, 'url_key')
             ->willReturn($attribute);
         $entity = $this->getMockBuilder(AbstractEntity::class)

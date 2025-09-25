@@ -71,8 +71,7 @@ class CombineTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $productCondition->expects($this->any())->method('loadAttributeOptions')->willReturnSelf();
-        $productCondition->expects($this->any())->method('getAttributeOption')
-            ->willReturn($attributeOptions);
+        $productCondition->method('getAttributeOption')->willReturn($attributeOptions);
 
         $this->conditionFactory->expects($this->atLeastOnce())->method('create')->willReturn($productCondition);
 
