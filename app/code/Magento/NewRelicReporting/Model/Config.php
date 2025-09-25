@@ -265,7 +265,7 @@ class Config
      *
      * @return string
      */
-    public function getNerdGraphUrl()
+    public function getNerdGraphUrl(): string
     {
         return (string)$this->scopeConfig->getValue(self::XML_PATH_NERD_GRAPH_API_URL);
     }

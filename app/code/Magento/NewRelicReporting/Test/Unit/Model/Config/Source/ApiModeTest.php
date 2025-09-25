@@ -46,16 +46,16 @@ class ApiModeTest extends TestCase
 
         // Assert it's an array
         $this->assertIsArray($result);
-        
+
         // Assert it has exactly 2 options
         $this->assertCount(2, $result);
-        
+
         // Assert structure of first option (v2 REST)
         $this->assertArrayHasKey('value', $result[0]);
         $this->assertArrayHasKey('label', $result[0]);
         $this->assertEquals(ApiMode::MODE_V2_REST, $result[0]['value']);
         $this->assertEquals('v2 REST (Legacy)', $result[0]['label']->render());
-        
+
         // Assert structure of second option (NerdGraph)
         $this->assertArrayHasKey('value', $result[1]);
         $this->assertArrayHasKey('label', $result[1]);
@@ -69,9 +69,9 @@ class ApiModeTest extends TestCase
     public function testToOptionArrayUsesConstants(): void
     {
         $result = $this->apiMode->toOptionArray();
-        
+
         $values = array_column($result, 'value');
-        
+
         $this->assertContains(ApiMode::MODE_V2_REST, $values);
         $this->assertContains(ApiMode::MODE_NERDGRAPH, $values);
     }
@@ -85,14 +85,14 @@ class ApiModeTest extends TestCase
 
         // Assert it's an array
         $this->assertIsArray($result);
-        
+
         // Assert it has exactly 2 options
         $this->assertCount(2, $result);
-        
+
         // Assert keys match constants
         $this->assertArrayHasKey(ApiMode::MODE_V2_REST, $result);
         $this->assertArrayHasKey(ApiMode::MODE_NERDGRAPH, $result);
-        
+
         // Assert values are correct
         $this->assertEquals('v2 REST (Legacy)', $result[ApiMode::MODE_V2_REST]->render());
         $this->assertEquals('NerdGraph (GraphQL) - Recommended', $result[ApiMode::MODE_NERDGRAPH]->render());
@@ -114,7 +114,7 @@ class ApiModeTest extends TestCase
     {
         $optionArray = $this->apiMode->toOptionArray();
         $array = $this->apiMode->toArray();
-        
+
         $this->assertCount(count($optionArray), $array);
     }
 
@@ -125,19 +125,19 @@ class ApiModeTest extends TestCase
     {
         $optionArray = $this->apiMode->toOptionArray();
         $array = $this->apiMode->toArray();
-        
+
         // Get values from toOptionArray
         $optionValues = array_column($optionArray, 'value');
-        
-        // Get keys from toArray  
+
+        // Get keys from toArray
         $arrayKeys = array_keys($array);
-        
+
         // Both should contain the same constants
         $this->assertEqualsCanonicalizing($optionValues, $arrayKeys);
-        
+
         // Verify specific constants are present
         $expectedConstants = [ApiMode::MODE_V2_REST, ApiMode::MODE_NERDGRAPH];
-        
+
         foreach ($expectedConstants as $constant) {
             $this->assertContains($constant, $optionValues);
             $this->assertArrayHasKey($constant, $array);
@@ -151,19 +151,19 @@ class ApiModeTest extends TestCase
     {
         $optionArray = $this->apiMode->toOptionArray();
         $array = $this->apiMode->toArray();
-        
+
         // Create mapping from toOptionArray
         $optionLabels = [];
         foreach ($optionArray as $option) {
             $optionLabels[$option['value']] = $option['label']->render();
         }
-        
+
         // Create mapping from toArray
         $arrayLabels = [];
         foreach ($array as $key => $label) {
             $arrayLabels[$key] = $label->render();
         }
-        
+
         // Labels should be identical for same keys
         $this->assertEquals($optionLabels, $arrayLabels);
     }
@@ -175,16 +175,16 @@ class ApiModeTest extends TestCase
     {
         $optionArray = $this->apiMode->toOptionArray();
         $array = $this->apiMode->toArray();
-        
+
         // Both should return arrays
         $this->assertIsArray($optionArray);
         $this->assertIsArray($array);
-        
+
         // toOptionArray should return array of arrays
         foreach ($optionArray as $option) {
             $this->assertIsArray($option);
         }
-        
+
         // toArray should have string keys
         foreach (array_keys($array) as $key) {
             $this->assertIsString($key);
@@ -198,12 +198,12 @@ class ApiModeTest extends TestCase
     {
         $firstCall = $this->apiMode->toOptionArray();
         $secondCall = $this->apiMode->toOptionArray();
-        
+
         $this->assertEquals($firstCall, $secondCall);
-        
+
         $firstArrayCall = $this->apiMode->toArray();
         $secondArrayCall = $this->apiMode->toArray();
-        
+
         $this->assertEquals($firstArrayCall, $secondArrayCall);
     }
 
@@ -213,11 +213,11 @@ class ApiModeTest extends TestCase
     public function testSpecificLabelContent(): void
     {
         $optionArray = $this->apiMode->toOptionArray();
-        
+
         // Find v2 REST option
         $v2RestOption = null;
         $nerdGraphOption = null;
-        
+
         foreach ($optionArray as $option) {
             if ($option['value'] === ApiMode::MODE_V2_REST) {
                 $v2RestOption = $option;
@@ -225,14 +225,14 @@ class ApiModeTest extends TestCase
                 $nerdGraphOption = $option;
             }
         }
-        
+
         $this->assertNotNull($v2RestOption);
         $this->assertNotNull($nerdGraphOption);
-        
+
         // Test specific label content
         $this->assertStringContainsString('Legacy', $v2RestOption['label']->render());
         $this->assertStringContainsString('v2 REST', $v2RestOption['label']->render());
-        
+
         $this->assertStringContainsString('Recommended', $nerdGraphOption['label']->render());
         $this->assertStringContainsString('NerdGraph', $nerdGraphOption['label']->render());
         $this->assertStringContainsString('GraphQL', $nerdGraphOption['label']->render());

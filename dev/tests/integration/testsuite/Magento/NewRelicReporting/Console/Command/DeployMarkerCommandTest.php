@@ -9,6 +9,7 @@ namespace Magento\NewRelicReporting\Console\Command;
 
 use Magento\Framework\ObjectManagerInterface;
 use Magento\NewRelicReporting\Console\Command\DeployMarker;
+use Magento\TestFramework\Fixture\Config as ConfigFixture;
 use Magento\TestFramework\Helper\Bootstrap;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Application;
@@ -60,9 +61,8 @@ class DeployMarkerCommandTest extends TestCase
 
     /**
      * Test command with valid arguments but disabled NewRelic
-     *
-     * @magentoConfigFixture default/newrelicreporting/general/enable 0
      */
+    #[ConfigFixture('newrelicreporting/general/enable', '0')]
     public function testCommandWithDisabledNewRelic()
     {
         $exitCode = $this->commandTester->execute([
@@ -80,12 +80,11 @@ class DeployMarkerCommandTest extends TestCase
 
     /**
      * Test command with minimal arguments (v2 REST mode)
-     *
-     * @magentoConfigFixture default/newrelicreporting/general/enable 1
-     * @magentoConfigFixture default/newrelicreporting/general/api_mode v2_rest
-     * @magentoConfigFixture default/newrelicreporting/general/app_id 12345
-     * @magentoConfigFixture default/newrelicreporting/general/api fake_api_key_for_testing
      */
+    #[ConfigFixture('newrelicreporting/general/enable', '1')]
+    #[ConfigFixture('newrelicreporting/general/api_mode', 'v2_rest')]
+    #[ConfigFixture('newrelicreporting/general/app_id', '12345')]
+    #[ConfigFixture('newrelicreporting/general/api', 'fake_api_key_for_testing')]
     public function testCommandWithMinimalArgumentsV2Rest()
     {
         $exitCode = $this->commandTester->execute([
@@ -147,13 +146,12 @@ class DeployMarkerCommandTest extends TestCase
 
     /**
      * Test command with all arguments and options (NerdGraph mode)
-     *
-     * @magentoConfigFixture default/newrelicreporting/general/enable 1
-     * @magentoConfigFixture default/newrelicreporting/general/api_mode nerdgraph
-     * @magentoConfigFixture default/newrelicreporting/general/entity_guid fake-guid-for-testing
-     * @magentoConfigFixture default/newrelicreporting/general/nerd_graph_api_url https://api.newrelic.com/graphql
-     * @magentoConfigFixture default/newrelicreporting/general/api fake_api_key_for_testing
      */
+    #[ConfigFixture('newrelicreporting/general/enable', '1')]
+    #[ConfigFixture('newrelicreporting/general/api_mode', 'nerdgraph')]
+    #[ConfigFixture('newrelicreporting/general/entity_guid', 'fake-guid-for-testing')]
+    #[ConfigFixture('newrelicreporting/general/nerd_graph_api_url', 'https://api.newrelic.com/graphql')]
+    #[ConfigFixture('newrelicreporting/general/api', 'fake_api_key_for_testing')]
     public function testCommandWithAllParametersNerdGraph()
     {
         $exitCode = $this->commandTester->execute([
@@ -184,9 +182,8 @@ class DeployMarkerCommandTest extends TestCase
 
     /**
      * Test command with empty message
-     *
-     * @magentoConfigFixture default/newrelicreporting/general/enable 1
      */
+    #[ConfigFixture('newrelicreporting/general/enable', '1')]
     public function testCommandWithEmptyMessage()
     {
         $exitCode = $this->commandTester->execute([
@@ -229,12 +226,11 @@ class DeployMarkerCommandTest extends TestCase
 
     /**
      * Ensure v2_rest mode never prints NerdGraph details section
-     *
-     * @magentoConfigFixture default/newrelicreporting/general/enable 1
-     * @magentoConfigFixture default/newrelicreporting/general/api_mode v2_rest
-     * @magentoConfigFixture default/newrelicreporting/general/app_id 9999
-     * @magentoConfigFixture default/newrelicreporting/general/api fake_api_key
      */
+    #[ConfigFixture('newrelicreporting/general/enable', '1')]
+    #[ConfigFixture('newrelicreporting/general/api_mode', 'v2_rest')]
+    #[ConfigFixture('newrelicreporting/general/app_id', '9999')]
+    #[ConfigFixture('newrelicreporting/general/api', 'fake_api_key')]
     public function testV2RestDoesNotShowNerdGraphDetails()
     {
         $exitCode = $this->commandTester->execute([
@@ -249,10 +245,9 @@ class DeployMarkerCommandTest extends TestCase
 
     /**
      * Enabled but missing required config should fail gracefully (v2_rest)
-     *
-     * @magentoConfigFixture default/newrelicreporting/general/enable 1
-     * @magentoConfigFixture default/newrelicreporting/general/api_mode v2_rest
      */
+    #[ConfigFixture('newrelicreporting/general/enable', '1')]
+    #[ConfigFixture('newrelicreporting/general/api_mode', 'v2_rest')]
     public function testV2RestMisconfiguredFailsGracefully()
     {
         $exitCode = $this->commandTester->execute([
@@ -268,10 +263,9 @@ class DeployMarkerCommandTest extends TestCase
 
     /**
      * Enabled but missing required config should fail gracefully (nerdgraph)
-     *
-     * @magentoConfigFixture default/newrelicreporting/general/enable 1
-     * @magentoConfigFixture default/newrelicreporting/general/api_mode nerdgraph
      */
+    #[ConfigFixture('newrelicreporting/general/enable', '1')]
+    #[ConfigFixture('newrelicreporting/general/api_mode', 'nerdgraph')]
     public function testNerdGraphMisconfiguredFailsGracefully()
     {
         $exitCode = $this->commandTester->execute([

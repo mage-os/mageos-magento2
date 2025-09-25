@@ -12,9 +12,12 @@ use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\NewRelicReporting\Model\Config;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
 /**
  * Test for Config model
+ *
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class ConfigTest extends TestCase
 {
@@ -695,13 +698,13 @@ class ConfigTest extends TestCase
 
     /**
      * Test disableModule with custom scope and scope ID
+     * @throws ReflectionException
      */
     public function testDisableModuleCustomScope()
     {
         // We need to use reflection to test the protected setConfigValue method with custom parameters
         $reflection = new \ReflectionClass($this->config);
         $setConfigValueMethod = $reflection->getMethod('setConfigValue');
-        $setConfigValueMethod->setAccessible(true);
 
         $this->resourceConfigMock->expects($this->once())
             ->method('saveConfig')
@@ -782,7 +785,7 @@ class ConfigTest extends TestCase
 
     /**
      * Test all string casting methods with various input types
-     * 
+     *
      * @dataProvider stringCastingProvider
      */
     public function testStringCastingMethods($method, $configPath, $inputValue, $expectedOutput)
@@ -798,7 +801,7 @@ class ConfigTest extends TestCase
     /**
      * Data provider for string casting methods
      */
-    public function stringCastingProvider(): array
+    public static function stringCastingProvider(): array
     {
         return [
             // getNewRelicApiUrl tests
@@ -843,7 +846,7 @@ class ConfigTest extends TestCase
 
     /**
      * Test integer casting for getNewRelicAppId with various input types
-     * 
+     *
      * @dataProvider integerCastingProvider
      */
     public function testGetNewRelicAppIdCasting($inputValue, $expectedOutput)
@@ -859,7 +862,7 @@ class ConfigTest extends TestCase
     /**
      * Data provider for integer casting
      */
-    public function integerCastingProvider(): array
+    public static function integerCastingProvider(): array
     {
         return [
             [null, 0],
@@ -876,7 +879,7 @@ class ConfigTest extends TestCase
 
     /**
      * Test boolean casting for isSeparateApps with various input types
-     * 
+     *
      * @dataProvider booleanCastingProvider
      */
     public function testIsSeparateAppsCasting($inputValue, $expectedOutput)
@@ -892,7 +895,7 @@ class ConfigTest extends TestCase
     /**
      * Data provider for boolean casting
      */
-    public function booleanCastingProvider(): array
+    public static function booleanCastingProvider(): array
     {
         return [
             [null, false],
@@ -917,17 +920,14 @@ class ConfigTest extends TestCase
     {
         // Use reflection to verify private properties are set correctly
         $reflection = new \ReflectionClass($this->config);
-        
+
         $scopeConfigProperty = $reflection->getProperty('scopeConfig');
-        $scopeConfigProperty->setAccessible(true);
         $this->assertSame($this->scopeConfigMock, $scopeConfigProperty->getValue($this->config));
-        
+
         $encryptorProperty = $reflection->getProperty('encryptor');
-        $encryptorProperty->setAccessible(true);
         $this->assertSame($this->encryptorMock, $encryptorProperty->getValue($this->config));
-        
+
         $resourceConfigProperty = $reflection->getProperty('resourceConfig');
-        $resourceConfigProperty->setAccessible(true);
         $this->assertSame($this->resourceConfigMock, $resourceConfigProperty->getValue($this->config));
     }
 
@@ -981,8 +981,14 @@ class ConfigTest extends TestCase
 
         // Test all methods return expected values
         $this->assertTrue($this->config->isNewRelicEnabled());
-        $this->assertEquals('https://api.newrelic.com/v2/applications/%s/deployments.json', $this->config->getNewRelicApiUrl());
-        $this->assertEquals('https://insights-collector.newrelic.com/v1/accounts/%s/events', $this->config->getInsightsApiUrl());
+        $this->assertEquals(
+            'https://api.newrelic.com/v2/applications/%s/deployments.json',
+            $this->config->getNewRelicApiUrl()
+        );
+        $this->assertEquals(
+            'https://insights-collector.newrelic.com/v1/accounts/%s/events',
+            $this->config->getInsightsApiUrl()
+        );
         $this->assertEquals('123456', $this->config->getNewRelicAccountId());
         $this->assertEquals(789012, $this->config->getNewRelicAppId());
         $this->assertEquals('NRAK-DECRYPTED-API-KEY', $this->config->getNewRelicApiKey());

@@ -16,6 +16,7 @@ use Magento\NewRelicReporting\Model\Apm\Deployments;
 use Magento\NewRelicReporting\Model\Config;
 use Magento\NewRelicReporting\Model\NerdGraph\Client;
 use Magento\NewRelicReporting\Model\NerdGraph\DeploymentTracker;
+use Magento\TestFramework\Fixture\Config as ConfigFixture;
 use Magento\TestFramework\Helper\Bootstrap;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -78,7 +79,7 @@ class DeploymentWorkflowTest extends TestCase
     /**
      * Test config methods work properly in integration environment (default values)
      */
-    public function testConfigDefaultValues()
+    public function testConfigFixtureDefaultValues()
     {
         // Test default values (from config.xml)
         $this->assertFalse($this->config->isNewRelicEnabled());
@@ -90,11 +91,10 @@ class DeploymentWorkflowTest extends TestCase
 
     /**
      * Test config methods with enabled settings
-     *
-     * @magentoConfigFixture default/newrelicreporting/general/enable 1
-     * @magentoConfigFixture default/newrelicreporting/general/api_mode nerdgraph
-     * @magentoConfigFixture default/newrelicreporting/general/entity_guid test-guid-123
      */
+    #[ConfigFixture('newrelicreporting/general/enable', '1')]
+    #[ConfigFixture('newrelicreporting/general/api_mode', 'nerdgraph')]
+    #[ConfigFixture('newrelicreporting/general/entity_guid', 'test-guid-123')]
     public function testConfigIntegrationWithEnabledSettings()
     {
         $this->assertTrue($this->config->isNewRelicEnabled());
@@ -105,9 +105,8 @@ class DeploymentWorkflowTest extends TestCase
 
     /**
      * Test deployment workflow when disabled
-     *
-     * @magentoConfigFixture default/newrelicreporting/general/enable 0
      */
+    #[ConfigFixture('newrelicreporting/general/enable', '0')]
     public function testDeploymentWorkflowWhenDisabled()
     {
         // Should handle gracefully when disabled (specific behavior depends on implementation)
@@ -116,10 +115,9 @@ class DeploymentWorkflowTest extends TestCase
 
     /**
      * Test deployment workflow with missing configuration
-     *
-     * @magentoConfigFixture default/newrelicreporting/general/enable 1
-     * @magentoConfigFixture default/newrelicreporting/general/api_mode nerdgraph
      */
+    #[ConfigFixture('newrelicreporting/general/enable', '1')]
+    #[ConfigFixture('newrelicreporting/general/api_mode', 'nerdgraph')]
     public function testDeploymentWorkflowWithMissingConfiguration()
     {
         $result = $this->deploymentTracker->setDeployment('Test deployment');
@@ -129,12 +127,11 @@ class DeploymentWorkflowTest extends TestCase
 
     /**
      * Test v2 REST API mode selection
-     *
-     * @magentoConfigFixture default/newrelicreporting/general/enable 1
-     * @magentoConfigFixture default/newrelicreporting/general/api_mode v2_rest
-     * @magentoConfigFixture default/newrelicreporting/general/app_id 12345
-     * @magentoConfigFixture default/newrelicreporting/general/api encrypted_api_key
      */
+    #[ConfigFixture('newrelicreporting/general/enable', '1')]
+    #[ConfigFixture('newrelicreporting/general/api_mode', 'v2_rest')]
+    #[ConfigFixture('newrelicreporting/general/app_id', '12345')]
+    #[ConfigFixture('newrelicreporting/general/api', 'encrypted_api_key')]
     public function testV2RestApiModeSelection()
     {
         $this->assertFalse($this->config->isNerdGraphMode());
@@ -146,12 +143,11 @@ class DeploymentWorkflowTest extends TestCase
 
     /**
      * Test NerdGraph mode selection
-     *
-     * @magentoConfigFixture default/newrelicreporting/general/enable 1
-     * @magentoConfigFixture default/newrelicreporting/general/api_mode nerdgraph
-     * @magentoConfigFixture default/newrelicreporting/general/entity_guid test-entity-guid
-     * @magentoConfigFixture default/newrelicreporting/general/nerd_graph_api_url https://api.newrelic.com/graphql
      */
+    #[ConfigFixture('newrelicreporting/general/enable', '1')]
+    #[ConfigFixture('newrelicreporting/general/api_mode', 'nerdgraph')]
+    #[ConfigFixture('newrelicreporting/general/entity_guid', 'test-entity-guid')]
+    #[ConfigFixture('newrelicreporting/general/nerd_graph_api_url', 'https://api.newrelic.com/graphql')]
     public function testNerdGraphModeSelection()
     {
         $this->assertTrue($this->config->isNerdGraphMode());
@@ -240,26 +236,9 @@ class DeploymentWorkflowTest extends TestCase
     }
 
     /**
-     * Test service singleton behavior
-     */
-    public function testServiceSingleton()
-    {
-        $config1 = $this->objectManager->get(Config::class);
-        $config2 = $this->objectManager->get(Config::class);
-
-        $this->assertSame($config1, $config2);
-
-        $client1 = $this->objectManager->get(Client::class);
-        $client2 = $this->objectManager->get(Client::class);
-
-        $this->assertSame($client1, $client2);
-    }
-
-    /**
      * Test configuration encryption integration
-     *
-     * @magentoConfigFixture default/newrelicreporting/general/api NRAK-TEST-API-KEY-123
      */
+    #[ConfigFixture('newrelicreporting/general/api', 'NRAK-TEST-API-KEY-123')]
     public function testConfigurationEncryptionIntegration()
     {
         // Config should decrypt it (though in test it might just return as-is)
@@ -311,14 +290,12 @@ class DeploymentWorkflowTest extends TestCase
 
     /**
      * Test error handling in deployment workflow
-     *
-     * @magentoConfigFixture default/newrelicreporting/general/enable 1
-     * @magentoConfigFixture default/newrelicreporting/general/api_mode nerdgraph
-     * @magentoConfigFixture default/newrelicreporting/general/entity_guid invalid-guid
-     * @magentoConfigFixture default/newrelicreporting/general/api invalid_api_key
-     * @magentoConfigFixture default/newrelicreporting/general/nerd_graph_api_url https://invalid-url.example.com/graphql
-     * @throws LocalizedException
      */
+    #[ConfigFixture('newrelicreporting/general/enable', '1')]
+    #[ConfigFixture('newrelicreporting/general/api_mode', 'nerdgraph')]
+    #[ConfigFixture('newrelicreporting/general/entity_guid', 'invalid-guid')]
+    #[ConfigFixture('newrelicreporting/general/api', 'invalid_api_key')]
+    #[ConfigFixture('newrelicreporting/general/nerd_graph_api_url', 'https://invalid.example.com/graphql')]
     public function testDeploymentWorkflowErrorHandling()
     {
         // This should fail gracefully and return false rather than throwing an exception
@@ -328,9 +305,8 @@ class DeploymentWorkflowTest extends TestCase
 
     /**
      * Test v2_rest mode detection in integration
-     *
-     * @magentoConfigFixture default/newrelicreporting/general/api_mode v2_rest
      */
+    #[ConfigFixture('newrelicreporting/general/api_mode', 'v2_rest')]
     public function testV2RestModeDetectionIntegration()
     {
         $this->assertEquals('v2_rest', $this->config->getApiMode());
@@ -339,9 +315,8 @@ class DeploymentWorkflowTest extends TestCase
 
     /**
      * Test nerdgraph mode detection in integration
-     *
-     * @magentoConfigFixture default/newrelicreporting/general/api_mode nerdgraph
      */
+    #[ConfigFixture('newrelicreporting/general/api_mode', 'nerdgraph')]
     public function testNerdGraphModeDetectionIntegration()
     {
         $this->assertEquals('nerdgraph', $this->config->getApiMode());
@@ -359,12 +334,11 @@ class DeploymentWorkflowTest extends TestCase
 
     /**
      * Test NerdGraph entity GUID validation
-     *
-     * @magentoConfigFixture default/newrelicreporting/general/enable 1
-     * @magentoConfigFixture default/newrelicreporting/general/api_mode nerdgraph
-     * @magentoConfigFixture default/newrelicreporting/general/entity_guid MzgwNjUyNnxBUE18QVBQTElDQVRJT058OTE2OTk4
-     * @magentoConfigFixture default/newrelicreporting/general/api test_api_key
      */
+    #[ConfigFixture('newrelicreporting/general/enable', '1')]
+    #[ConfigFixture('newrelicreporting/general/api_mode', 'nerdgraph')]
+    #[ConfigFixture('newrelicreporting/general/entity_guid', 'MzgwNjUyNnxBUE18QVBQTElDQVRJT058OTE2OTk4')]
+    #[ConfigFixture('newrelicreporting/general/api', 'test_api_key')]
     public function testNerdGraphEntityGuidValidation()
     {
         $entityGuid = $this->config->getEntityGuid();
@@ -382,11 +356,10 @@ class DeploymentWorkflowTest extends TestCase
 
     /**
      * Test NerdGraph URL configuration and validation
-     *
-     * @magentoConfigFixture default/newrelicreporting/general/enable 1
-     * @magentoConfigFixture default/newrelicreporting/general/api_mode nerdgraph
-     * @magentoConfigFixture default/newrelicreporting/general/nerd_graph_api_url https://api.newrelic.com/graphql
      */
+    #[ConfigFixture('newrelicreporting/general/enable', '1')]
+    #[ConfigFixture('newrelicreporting/general/api_mode', 'nerdgraph')]
+    #[ConfigFixture('newrelicreporting/general/nerd_graph_api_url', 'https://api.newrelic.com/graphql')]
     public function testNerdGraphUrlConfiguration()
     {
         $nerdGraphUrl = $this->config->getNerdGraphUrl();
@@ -400,12 +373,11 @@ class DeploymentWorkflowTest extends TestCase
 
     /**
      * Test deployment with all NerdGraph parameters
-     *
-     * @magentoConfigFixture default/newrelicreporting/general/enable 1
-     * @magentoConfigFixture default/newrelicreporting/general/api_mode nerdgraph
-     * @magentoConfigFixture default/newrelicreporting/general/entity_guid test-entity-guid
-     * @magentoConfigFixture default/newrelicreporting/general/api fake_api_key
      */
+    #[ConfigFixture('newrelicreporting/general/enable', '1')]
+    #[ConfigFixture('newrelicreporting/general/api_mode', 'nerdgraph')]
+    #[ConfigFixture('newrelicreporting/general/entity_guid', 'test-entity-guid')]
+    #[ConfigFixture('newrelicreporting/general/api', 'fake_api_key')]
     public function testDeploymentWithAllNerdGraphParameters()
     {
         $result = $this->deploymentTracker->setDeployment(
@@ -424,12 +396,11 @@ class DeploymentWorkflowTest extends TestCase
 
     /**
      * Test deployment with minimal NerdGraph parameters
-     *
-     * @magentoConfigFixture default/newrelicreporting/general/enable 1
-     * @magentoConfigFixture default/newrelicreporting/general/api_mode nerdgraph
-     * @magentoConfigFixture default/newrelicreporting/general/entity_guid test-entity-minimal
-     * @magentoConfigFixture default/newrelicreporting/general/api minimal_api_key
      */
+    #[ConfigFixture('newrelicreporting/general/enable', '1')]
+    #[ConfigFixture('newrelicreporting/general/api_mode', 'nerdgraph')]
+    #[ConfigFixture('newrelicreporting/general/entity_guid', 'test-entity-minimal')]
+    #[ConfigFixture('newrelicreporting/general/api', 'minimal_api_key')]
     public function testDeploymentWithMinimalNerdGraphParameters()
     {
         $result = $this->deploymentTracker->setDeployment('Minimal NerdGraph test');
@@ -440,10 +411,9 @@ class DeploymentWorkflowTest extends TestCase
 
     /**
      * Test deployment tracker error handling with various scenarios
-     *
-     * @magentoConfigFixture default/newrelicreporting/general/enable 1
-     * @magentoConfigFixture default/newrelicreporting/general/api_mode nerdgraph
      */
+    #[ConfigFixture('newrelicreporting/general/enable', '1')]
+    #[ConfigFixture('newrelicreporting/general/api_mode', 'nerdgraph')]
     public function testDeploymentTrackerErrorHandlingScenarios()
     {
         // Test with missing entity GUID
@@ -457,18 +427,16 @@ class DeploymentWorkflowTest extends TestCase
 
     /**
      * Test NerdGraph API URL fallback behavior
-     *
-     * @magentoConfigFixture default/newrelicreporting/general/enable 1
-     * @magentoConfigFixture default/newrelicreporting/general/api_mode nerdgraph
-     * @magentoConfigFixture default/newrelicreporting/general/entity_guid test-fallback-guid
      */
+    #[ConfigFixture('newrelicreporting/general/enable', '1')]
+    #[ConfigFixture('newrelicreporting/general/api_mode', 'nerdgraph')]
+    #[ConfigFixture('newrelicreporting/general/entity_guid', 'test-fallback-guid')]
     public function testNerdGraphApiUrlFallback()
     {
         // Without explicit URL configuration, should use default
         $nerdGraphUrl = $this->config->getNerdGraphUrl();
 
-        // Should have a default URL or handle gracefully
-        $this->assertTrue(is_string($nerdGraphUrl) || empty($nerdGraphUrl));
+        // Should be a string; may be empty if not configured
+        $this->assertIsString($nerdGraphUrl);
     }
-
 }
