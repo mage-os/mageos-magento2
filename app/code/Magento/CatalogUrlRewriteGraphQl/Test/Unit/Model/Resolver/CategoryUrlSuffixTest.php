@@ -61,30 +61,25 @@ class CategoryUrlSuffixTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->contextMock = $this->getMockBuilder(ContextInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(
-                [
-                    'getExtensionAttributes'
-                ]
-            )
-            ->getMockForAbstractClass();
+        $this->contextMock = $this->createMock(ContextInterface::class);
+        
+        // Create anonymous class that implements ContextExtensionInterface
+        $this->contextExtensionMock = new class implements ContextExtensionInterface {
+            private $store = null;
+            
+            public function __construct() {}
+            
+            public function getStore() {
+                return $this->store;
+            }
+            
+            public function setStore($store) {
+                $this->store = $store;
+                return $this;
+            }
+        };
 
-        $this->contextExtensionMock = $this->getMockBuilder(ContextExtensionInterface::class)
-            ->addMethods(
-                [
-                    'getStore'
-                ]
-            )
-            ->getMockForAbstractClass();
-
-        $this->storeMock = $this->getMockBuilder(StoreInterface::class)
-            ->onlyMethods(
-                [
-                    'getId'
-                ]
-            )
-            ->getMockForAbstractClass();
+        $this->storeMock = $this->createMock(StoreInterface::class);
 
         $this->fieldMock = $this->getMockBuilder(Field::class)
             ->disableOriginalConstructor()
@@ -95,7 +90,7 @@ class CategoryUrlSuffixTest extends TestCase
             ->getMock();
 
         $this->scopeConfigMock = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->resolver = new CategoryUrlSuffix(
             $this->scopeConfigMock

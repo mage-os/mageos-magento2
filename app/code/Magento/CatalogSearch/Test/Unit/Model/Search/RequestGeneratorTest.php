@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\CatalogSearch\Test\Unit\Model\Search;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute as AttributeResourceModel;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory;
@@ -42,15 +43,9 @@ class RequestGeneratorTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['getGeneratorForType'])
             ->getMock();
-        $generator = $this->getMockBuilder(GeneratorInterface::class)
-            ->onlyMethods(['getFilterData', 'getAggregationData'])
-            ->getMockForAbstractClass();
-        $generator->expects($this->any())
-            ->method('getFilterData')
-            ->willReturn(['some filter data goes here']);
-        $generator->expects($this->any())
-            ->method('getAggregationData')
-            ->willReturn(['some aggregation data goes here']);
+        $generator = $this->createMock(GeneratorInterface::class);
+        $generator->method('getFilterData')->willReturn(['some filter data goes here']);
+        $generator->method('getAggregationData')->willReturn(['some aggregation data goes here']);
         $generatorResolver->method('getGeneratorForType')
             ->willReturn($generator);
 
@@ -132,16 +127,14 @@ class RequestGeneratorTest extends TestCase
     /**
      * @param array $countResult
      * @param $attributeOptions
-     * @dataProvider attributesProvider
      */
+    #[DataProvider('attributesProvider')]
     public function testGenerate($countResult, $attributeOptions)
     {
         $collection = $this->getMockBuilder(Collection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $collection->expects($this->any())
-            ->method('getIterator')
-            ->willReturn(
+        $collection->method('getIterator')->willReturn(
                 new \ArrayIterator(
                     [
                         $this->createAttributeMock($attributeOptions),
@@ -155,9 +148,7 @@ class RequestGeneratorTest extends TestCase
                 [1, 1, [1, 2], 1]
             )->willReturnSelf();
 
-        $this->productAttributeCollectionFactory->expects($this->any())
-            ->method('create')
-            ->willReturn($collection);
+        $this->productAttributeCollectionFactory->method('create')->willReturn($collection);
         $result = $this->object->generate();
 
         $this->assertEquals(
@@ -215,23 +206,13 @@ class RequestGeneratorTest extends TestCase
                 ]
             )
             ->getMock();
-        $attribute->expects($this->any())
-            ->method('getAttributeCode')
-            ->willReturn($attributeOptions[0]);
-        $attribute->expects($this->any())
-            ->method('getBackendType')
-            ->willReturn($attributeOptions[1]);
-        $attribute->expects($this->any())
-            ->method('getFrontendInput')
-            ->willReturn($attributeOptions[1]);
+        $attribute->method('getAttributeCode')->willReturn($attributeOptions[0]);
+        $attribute->method('getBackendType')->willReturn($attributeOptions[1]);
+        $attribute->method('getFrontendInput')->willReturn($attributeOptions[1]);
 
-        $attribute->expects($this->any())
-            ->method('getSearchWeight')
-            ->willReturn(1);
+        $attribute->method('getSearchWeight')->willReturn(1);
 
-        $attribute->expects($this->any())
-            ->method('getIsVisibleInAdvancedSearch')
-            ->willReturn($attributeOptions[4]);
+        $attribute->method('getIsVisibleInAdvancedSearch')->willReturn($attributeOptions[4]);
 
         $attribute->expects($this->any())
             ->method('getData')
@@ -242,9 +223,7 @@ class RequestGeneratorTest extends TestCase
                 ]
             );
 
-        $attribute->expects($this->any())
-            ->method('getIsSearchable')
-            ->willReturn(1);
+        $attribute->method('getIsSearchable')->willReturn(1);
 
         return $attribute;
     }

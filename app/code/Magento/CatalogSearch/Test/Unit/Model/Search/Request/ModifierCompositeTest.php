@@ -39,8 +39,8 @@ class ModifierCompositeTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->modifier1 = $this->getMockForAbstractClass(ModifierInterface::class);
-        $this->modifier2 = $this->getMockForAbstractClass(ModifierInterface::class);
+        $this->modifier1 = $this->createMock(ModifierInterface::class);
+        $this->modifier2 = $this->createMock(ModifierInterface::class);
         $this->model = new ModifierComposite(
             [
                 $this->modifier1,

@@ -39,7 +39,7 @@ class ImportTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->indexer = $this->getMockForAbstractClass(
+        $this->indexer = $this->createMock(
             IndexerInterface::class,
             [],
             '',
@@ -48,7 +48,7 @@ class ImportTest extends TestCase
         $this->indexerRegistry = $this->createMock(
             IndexerRegistry::class
         );
-        $this->import = new \Magento\AdvancedPricingImportExport\Model\Indexer\Product\Price\Plugin\Import(
+        $this->import = new Import(
             $this->indexerRegistry
         );
         $this->advancedPricing = $this->createMock(

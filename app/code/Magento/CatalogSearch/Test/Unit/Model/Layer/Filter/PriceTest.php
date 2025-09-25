@@ -7,6 +7,10 @@ declare(strict_types=1);
 
 namespace Magento\CatalogSearch\Test\Unit\Model\Layer\Filter;
 
+use Magento\Framework\UrlInterface;
+use Magento\Theme\Block\Html\Pager;
+use Magento\Framework\Pricing\PriceCurrencyInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Layer;
 use Magento\Catalog\Model\Layer\Filter\DataProvider\Price;
 use Magento\Catalog\Model\Layer\Filter\DataProvider\PriceFactory;
@@ -79,10 +83,7 @@ class PriceTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->request = $this->getMockBuilder(RequestInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getParam'])
-            ->getMockForAbstractClass();
+        $this->request = $this->createMock(RequestInterface::class);
 
         $dataProviderFactory = $this->getMockBuilder(PriceFactory::class)
             ->disableOriginalConstructor()
@@ -103,18 +104,14 @@ class PriceTest extends TestCase
             ->getMock();
 
         $this->state = new State();
-        $this->layer->expects($this->any())
-            ->method('getState')
-            ->willReturn($this->state);
+        $this->layer->method('getState')->willReturn($this->state);
 
         $this->fulltextCollection = $this->getMockBuilder(Collection::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['addFieldToFilter', 'getFacetedData'])
             ->getMock();
 
-        $this->layer->expects($this->any())
-            ->method('getProductCollection')
-            ->willReturn($this->fulltextCollection);
+        $this->layer->method('getProductCollection')->willReturn($this->fulltextCollection);
 
         $this->itemDataBuilder = $this->getMockBuilder(DataBuilder::class)
             ->disableOriginalConstructor()
@@ -131,13 +128,13 @@ class PriceTest extends TestCase
             ->willReturnCallback(
                 function (array $data) {
                     return new Item(
-                        $this->createMock(\Magento\Framework\UrlInterface::class),
-                        $this->createMock(\Magento\Theme\Block\Html\Pager::class),
+                        $this->createMock(UrlInterface::class),
+                        $this->createMock(Pager::class),
                         $data
                     );
                 }
             );
-        $priceFormatter = $this->createMock(\Magento\Framework\Pricing\PriceCurrencyInterface::class);
+        $priceFormatter = $this->createMock(PriceCurrencyInterface::class);
         $priceFormatter->method('format')
             ->willReturnCallback(
                 function ($number) {
@@ -177,8 +174,8 @@ class PriceTest extends TestCase
      * @param int|bool|null $idValue
      *
      * @return void
-     * @dataProvider applyWithEmptyRequestDataProvider
      */
+    #[DataProvider('applyWithEmptyRequestDataProvider')]
     public function testApplyWithEmptyRequest(?int $requestValue, $idValue): void
     {
         $requestField = 'test_request_var';
@@ -221,9 +218,7 @@ class PriceTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider applyDataProvider
-     */
+    #[DataProvider('applyDataProvider')]
     public function testApply(string $filter, array $expected): void
     {
         $requestVar = 'price';
@@ -281,9 +276,7 @@ class PriceTest extends TestCase
         $this->target->setAttributeModel($this->attribute);
 
         $attributeCode = 'attributeCode';
-        $this->attribute->expects($this->any())
-            ->method('getAttributeCode')
-            ->willReturn($attributeCode);
+        $this->attribute->method('getAttributeCode')->willReturn($attributeCode);
 
         $this->fulltextCollection->expects($this->once())
             ->method('getFacetedData')

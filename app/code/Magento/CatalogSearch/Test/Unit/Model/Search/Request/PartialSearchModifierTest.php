@@ -7,6 +7,8 @@ declare(strict_types=1);
 
 namespace Magento\CatalogSearch\Test\Unit\Model\Search\Request;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory;
 use Magento\CatalogSearch\Model\Search\Request\PartialSearchModifier;
@@ -50,14 +52,14 @@ class PartialSearchModifierTest extends TestCase
      * @param array $attributes
      * @param array $requests
      * @param array $expected
-     * @dataProvider modifyDataProvider
      */
+    #[DataProvider('modifyDataProvider')]
     public function testModify(array $attributes, array $requests, array $expected): void
     {
         $items = [];
         $searchWeight = 10;
         foreach ($attributes as $attribute) {
-            $item = $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Eav\Attribute::class)
+            $item = $this->getMockBuilder(Attribute::class)
                 ->addMethods(['getSearchWeight'])
                 ->onlyMethods(['getAttributeCode'])
                 ->disableOriginalConstructor()

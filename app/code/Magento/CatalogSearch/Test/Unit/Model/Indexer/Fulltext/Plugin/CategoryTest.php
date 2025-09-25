@@ -58,16 +58,14 @@ class CategoryTest extends TestCase
         $this->categoryResourceMock = $this->getMockBuilder(CategoryResourceModel::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection = $this->getMockBuilder(AdapterInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $connection = $this->createMock(AdapterInterface::class);
         $this->categoryResourceMock->method('getConnection')->willReturn($connection);
 
         $this->indexerMock = $this->getMockBuilder(IndexerInterface::class)
             ->disableOriginalConstructor()
             ->addMethods(['__wakeup'])
             ->onlyMethods(['getId', 'getState'])
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->indexerRegistryMock = $this->getMockBuilder(IndexerRegistry::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['get'])

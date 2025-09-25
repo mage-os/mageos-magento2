@@ -108,10 +108,7 @@ class CategoryProcessUrlRewriteSavingObserverTest extends TestCase
             ->onlyMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->scopeConfigMock = $this->getMockBuilder(ScopeConfigInterfaceAlias::class)
-            ->onlyMethods(['getValue'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->scopeConfigMock = $this->createMock(ScopeConfigInterfaceAlias::class);
         $this->scopeConfigMock->method('getValue')->willReturn(true);
 
         $this->categoryProcessUrlRewriteSavingObserver = (new ObjectManagerHelper($this))->getObject(
@@ -223,9 +220,7 @@ class CategoryProcessUrlRewriteSavingObserverTest extends TestCase
                     ['is_anchor', false]
                 ]
             );
-        $this->category->expects($this->any())
-            ->method('getChangedProductIds')
-            ->willReturn([]);
+        $this->category->method('getChangedProductIds')->willReturn([]);
         $this->category->method('getStoreId')->willReturn(1);
 
         $result1 = ['test'];

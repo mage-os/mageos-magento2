@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\CatalogUrlRewrite\Test\Unit\Observer;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Category;
 use Magento\CatalogUrlRewrite\Block\UrlKeyRenderer;
 use Magento\CatalogUrlRewrite\Model\CategoryUrlRewriteGenerator;
@@ -64,8 +65,8 @@ class CategoryProcessUrlRewriteMovingObserverTest extends TestCase
     protected function setUp(): void
     {
         $this->categoryUrlRewriteGeneratorMock = $this->createMock(CategoryUrlRewriteGenerator::class);
-        $this->urlPersistMock = $this->getMockForAbstractClass(UrlPersistInterface::class);
-        $this->scopeConfigMock = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $this->urlPersistMock = $this->createMock(UrlPersistInterface::class);
+        $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
         $this->urlRewriteHandlerMock = $this->createMock(UrlRewriteHandler::class);
         /** @var UrlRewriteBunchReplacer|MockObject $urlRewriteMock */
         $urlRewriteMock = $this->createMock(UrlRewriteBunchReplacer::class);
@@ -89,8 +90,8 @@ class CategoryProcessUrlRewriteMovingObserverTest extends TestCase
      * Test category process rewrite url by changing the parent
      *
      * @return void
-     * @dataProvider getCategoryRewritesConfigProvider
      */
+    #[DataProvider('getCategoryRewritesConfigProvider')]
     public function testCategoryProcessUrlRewriteAfterMovingWithChangedParentId(bool $isCatRewritesEnabled)
     {
         /** @var Observer|MockObject $observerMock */

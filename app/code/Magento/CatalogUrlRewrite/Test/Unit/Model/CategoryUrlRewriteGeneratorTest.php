@@ -91,7 +91,7 @@ class CategoryUrlRewriteGeneratorTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->category = $this->createMock(Category::class);
-        $this->categoryRepository = $this->getMockForAbstractClass(CategoryRepositoryInterface::class);
+        $this->categoryRepository = $this->createMock(CategoryRepositoryInterface::class);
         $mergeDataProviderFactory = $this->createPartialMock(
             MergeDataProviderFactory::class,
             ['create']
@@ -118,15 +118,14 @@ class CategoryUrlRewriteGeneratorTest extends TestCase
     public function testGenerationForGlobalScope()
     {
         $categoryId = 1;
-        $this->category->expects($this->any())->method('getStoreId')->willReturn(null);
-        $this->category->expects($this->any())->method('getStoreIds')->willReturn([1]);
+        $this->category->method('getStoreId')->willReturn(null);
+        $this->category->method('getStoreIds')->willReturn([1]);
         $this->storeViewService->expects($this->once())->method('doesEntityHaveOverriddenUrlKeyForStore')
             ->willReturn(false);
         $canonical = new UrlRewrite([], $this->serializer);
         $canonical->setRequestPath('category-1')
             ->setStoreId(1);
-        $this->canonicalUrlRewriteGenerator->expects($this->any())->method('generate')
-            ->willReturn(['category-1' => $canonical]);
+        $this->canonicalUrlRewriteGenerator->method('generate')->willReturn(['category-1' => $canonical]);
         $children1 = new UrlRewrite([], $this->serializer);
         $children1->setRequestPath('category-2')
             ->setStoreId(2);
@@ -166,17 +165,14 @@ class CategoryUrlRewriteGeneratorTest extends TestCase
      */
     public function testGenerationForSpecificStore()
     {
-        $this->category->expects($this->any())->method('getStoreId')->willReturn(1);
+        $this->category->method('getStoreId')->willReturn(1);
         $this->category->expects($this->never())->method('getStoreIds');
         $canonical = new UrlRewrite([], $this->serializer);
         $canonical->setRequestPath('category-1')
             ->setStoreId(1);
-        $this->canonicalUrlRewriteGenerator->expects($this->any())->method('generate')
-            ->willReturn([$canonical]);
-        $this->childrenUrlRewriteGenerator->expects($this->any())->method('generate')
-            ->willReturn([]);
-        $this->currentUrlRewritesRegenerator->expects($this->any())->method('generate')
-            ->willReturn([]);
+        $this->canonicalUrlRewriteGenerator->method('generate')->willReturn([$canonical]);
+        $this->childrenUrlRewriteGenerator->method('generate')->willReturn([]);
+        $this->currentUrlRewritesRegenerator->method('generate')->willReturn([]);
 
         $this->assertEquals(
             ['category-1_1' => $canonical],
@@ -189,7 +185,7 @@ class CategoryUrlRewriteGeneratorTest extends TestCase
      */
     public function testSkipGenerationForGlobalScope()
     {
-        $this->category->expects($this->any())->method('getStoreIds')->willReturn([1, 2]);
+        $this->category->method('getStoreIds')->willReturn([1, 2]);
         $this->storeViewService->expects($this->exactly(2))->method('doesEntityHaveOverriddenUrlKeyForStore')
             ->willReturn(true);
 
@@ -201,9 +197,9 @@ class CategoryUrlRewriteGeneratorTest extends TestCase
      */
     public function testSkipGenerationForGlobalScopeWithCategory()
     {
-        $this->category->expects($this->any())->method('getStoreIds')->willReturn([1, 2]);
-        $this->category->expects($this->any())->method('getEntityId')->willReturn(1);
-        $this->category->expects($this->any())->method('getStoreId')->willReturn(false);
+        $this->category->method('getStoreIds')->willReturn([1, 2]);
+        $this->category->method('getEntityId')->willReturn(1);
+        $this->category->method('getStoreId')->willReturn(false);
         $this->storeViewService->expects($this->exactly(2))->method('doesEntityHaveOverriddenUrlKeyForStore')
             ->willReturn(true);
 

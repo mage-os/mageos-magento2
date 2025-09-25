@@ -27,10 +27,8 @@ class EngineProviderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->objectManagerMock = $this->getMockBuilder(ObjectManagerInterface::class)
-            ->getMockForAbstractClass();
-        $this->engineResolverMock = $this->getMockBuilder(EngineResolverInterface::class)
-            ->getMockForAbstractClass();
+        $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
+        $this->engineResolverMock = $this->createMock(EngineResolverInterface::class);
     }
 
     public function testGet()
@@ -47,7 +45,7 @@ class EngineProviderTest extends TestCase
 
         $engineMock = $this->getMockBuilder($currentEngineClass)
             ->addMethods(['isAvailable'])
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->objectManagerMock->expects($this->once())
             ->method('create')
@@ -105,8 +103,7 @@ class EngineProviderTest extends TestCase
             ->method('getCurrentSearchEngine')
             ->willReturn($currentEngine);
 
-        $engineMock = $this->getMockBuilder($currentEngineClass)
-            ->getMockForAbstractClass();
+        $engineMock = $this->createMock($currentEngineClass);
 
         $this->objectManagerMock->expects($this->once())
             ->method('create')
@@ -138,7 +135,7 @@ class EngineProviderTest extends TestCase
 
         $engineMock = $this->getMockBuilder($currentEngineClass)
             ->addMethods(['isAvailable'])
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->objectManagerMock->expects($this->once())
             ->method('create')

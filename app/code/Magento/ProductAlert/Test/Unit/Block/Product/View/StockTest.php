@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\ProductAlert\Test\Unit\Block\Product\View;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\Registry;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -57,7 +58,7 @@ class StockTest extends TestCase
             Product::class,
             ['isAvailable', 'getId', '__wakeup']
         );
-        $this->_product->expects($this->any())->method('getId')->willReturn(1);
+        $this->_product->method('getId')->willReturn(1);
         $this->_registry = $this->getMockBuilder(
             Registry::class
         )->disableOriginalConstructor()
@@ -106,8 +107,8 @@ class StockTest extends TestCase
     /**
      * @param bool $stockAlertAllowed
      * @param bool $productAvailable
-     * @dataProvider setTemplateStockUrlNotAllowedDataProvider
      */
+    #[DataProvider('setTemplateStockUrlNotAllowedDataProvider')]
     public function testSetTemplateStockUrlNotAllowed($stockAlertAllowed, $productAvailable)
     {
         $this->_helper->expects(
@@ -119,7 +120,7 @@ class StockTest extends TestCase
         );
         $this->_helper->expects($this->never())->method('getSaveUrl');
 
-        $this->_product->expects($this->any())->method('isAvailable')->willReturn($productAvailable);
+        $this->_product->method('isAvailable')->willReturn($productAvailable);
 
         $this->_registry->expects(
             $this->any()

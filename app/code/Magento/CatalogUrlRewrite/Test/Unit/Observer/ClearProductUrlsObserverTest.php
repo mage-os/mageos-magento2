@@ -92,9 +92,7 @@ class ClearProductUrlsObserverTest extends TestCase
         $this->observer->expects($this->exactly(1))
             ->method('getEvent')
             ->willReturn($this->event);
-        $this->urlPersist = $this->getMockBuilder(UrlPersistInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->urlPersist = $this->createMock(UrlPersistInterface::class);
 
         $this->clearProductUrlsObserver = new ClearProductUrlsObserver($this->urlPersist, $this->skuStorage);
     }

@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\CatalogSearch\Test\Unit\Model\Layer\Filter;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Layer;
 use Magento\Catalog\Model\Layer\Filter\AbstractFilter;
 use Magento\Catalog\Model\Layer\Filter\Item;
@@ -102,7 +103,7 @@ class AttributeTest extends TestCase
         $this->storeManager = $this->getMockBuilder(StoreManagerInterface::class)
             ->disableOriginalConstructor()
             ->addMethods([])
-            ->getMockForAbstractClass();
+            ->getMock();
         /** @var Layer $layer */
         $this->layer = $this->getMockBuilder(Layer::class)
             ->disableOriginalConstructor()
@@ -131,9 +132,7 @@ class AttributeTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['addFilter'])
             ->getMock();
-        $this->layer->expects($this->any())
-            ->method('getState')
-            ->willReturn($this->state);
+        $this->layer->method('getState')->willReturn($this->state);
 
         $this->frontend = $this->getMockBuilder(AbstractFrontend::class)
             ->disableOriginalConstructor()
@@ -149,9 +148,7 @@ class AttributeTest extends TestCase
             ])
             ->getMock();
 
-        $this->request = $this->getMockBuilder(RequestInterface::class)
-            ->onlyMethods(['getParam'])
-            ->getMockForAbstractClass();
+        $this->request = $this->createMock(RequestInterface::class);
 
         $stripTagsFilter = $this->getMockBuilder(StripTags::class)
             ->disableOriginalConstructor()
@@ -179,8 +176,8 @@ class AttributeTest extends TestCase
      * @param array $attributeData
      *
      * @return void
-     * @dataProvider attributeDataProvider
      */
+    #[DataProvider('attributeDataProvider')]
     public function testApplyFilter(array $attributeData): void
     {
         $this->attribute->expects($this->exactly(2))

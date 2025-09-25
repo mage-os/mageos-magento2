@@ -88,16 +88,11 @@ class ViewTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->abstractModelMock = $this->getMockBuilder(AbstractModel::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['isObjectNew'])
-            ->getMockForAbstractClass();
+        $this->abstractModelMock = $this->createMock(AbstractModel::class);
         $this->subjectMock = $this->getMockBuilder(StoreResourceModel::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->urlPersistMock = $this->getMockBuilder(UrlPersistInterface::class)
-            ->onlyMethods(['deleteByData'])
-            ->getMockForAbstractClass();
+        $this->urlPersistMock = $this->createMock(UrlPersistInterface::class);
         $this->categoryMock = $this->getMockBuilder(Category::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getCategories'])
@@ -158,16 +153,12 @@ class ViewTest extends TestCase
             ->method('isObjectNew')
             ->willReturn(true);
 
-        $this->abstractModelMock->expects($this->any())
-            ->method('isObjectNew')
-            ->willReturn(true);
+        $this->abstractModelMock->method('isObjectNew')->willReturn(true);
         $categoryCollection = $this->getMockBuilder(CategoryCollection::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getIterator'])
             ->getMock();
-        $categoryCollection->expects($this->any())
-            ->method('getIterator')
-            ->willReturn(new \ArrayIterator([]));
+        $categoryCollection->method('getIterator')->willReturn(new \ArrayIterator([]));
         $this->categoryMock->expects($this->once())
             ->method('getCategories')
             ->willReturn($categoryCollection);
@@ -219,20 +210,14 @@ class ViewTest extends TestCase
             ->with('group_id')
             ->willReturn(null);
 
-        $origStoreMock->expects($this->any())
-            ->method('isObjectNew')
-            ->willReturn(true);
+        $origStoreMock->method('isObjectNew')->willReturn(true);
 
-        $this->abstractModelMock->expects($this->any())
-            ->method('isObjectNew')
-            ->willReturn(true);
+        $this->abstractModelMock->method('isObjectNew')->willReturn(true);
         $categoryCollection = $this->getMockBuilder(CategoryCollection::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getIterator'])
             ->getMock();
-        $categoryCollection->expects($this->any())
-            ->method('getIterator')
-            ->willReturn(new \ArrayIterator([]));
+        $categoryCollection->method('getIterator')->willReturn(new \ArrayIterator([]));
         $this->categoryMock->expects($this->never())
             ->method('getCategories');
         $this->categoryFactoryMock->expects($this->never())->method('create');

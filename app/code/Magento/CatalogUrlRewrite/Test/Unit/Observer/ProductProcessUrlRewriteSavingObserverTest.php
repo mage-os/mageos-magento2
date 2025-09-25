@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace Magento\CatalogUrlRewrite\Test\Unit\Observer;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Visibility;
 use Magento\CatalogUrlRewrite\Model\GetVisibleForStores;
@@ -93,23 +94,17 @@ class ProductProcessUrlRewriteSavingObserverTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->urlPersist = $this->getMockForAbstractClass(UrlPersistInterface::class);
-        $this->product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getStoreIds'])
-            ->getMockForAbstractClass();
+        $this->urlPersist = $this->createMock(UrlPersistInterface::class);
+        $this->product = $this->createMock(Product::class);
         $this->event = $this->getMockBuilder(Event::class)
             ->addMethods(['getProduct'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->event->expects($this->any())->method('getProduct')->willReturn($this->product);
+        $this->event->method('getProduct')->willReturn($this->product);
         $this->observer = $this->createPartialMock(Observer::class, ['getEvent']);
-        $this->observer->expects($this->any())->method('getEvent')->willReturn($this->event);
+        $this->observer->method('getEvent')->willReturn($this->event);
 
-        $this->scopeConfig = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->onlyMethods(['isSetFlag'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
 
         $this->appendRewrites = $this->getMockBuilder(AppendUrlRewritesToProducts::class)
             ->onlyMethods(['execute'])
@@ -332,8 +327,8 @@ class ProductProcessUrlRewriteSavingObserverTest extends TestCase
      * @param array $doesEntityHaveOverriddenVisibilityForStore
      * @param array $expectedStoresToRemove
      * @throws UrlAlreadyExistsException
-     * @dataProvider urlKeyDataProvider
      */
+    #[DataProvider('urlKeyDataProvider')]
     public function testExecuteUrlKey(
         array $origData,
         array $newData,
@@ -359,9 +354,7 @@ class ProductProcessUrlRewriteSavingObserverTest extends TestCase
                     $doesEntityHaveOverriddenVisibilityForStore
                 )
             );
-        $this->scopeConfig->expects($this->any())
-            ->method('isSetFlag')
-            ->willReturn(true);
+        $this->scopeConfig->method('isSetFlag')->willReturn(true);
 
         if (!$expectedExecutionCount) {
             $this->appendRewrites->expects($this->never())
@@ -387,9 +380,7 @@ class ProductProcessUrlRewriteSavingObserverTest extends TestCase
                 );
         }
 
-        $this->product->expects($this->any())
-            ->method('getStoreIds')
-            ->willReturn($currentData['store_ids'] ?? [1]);
+        $this->product->method('getStoreIds')->willReturn($currentData['store_ids'] ?? [1]);
 
         $this->model->execute($this->observer);
     }

@@ -78,9 +78,7 @@ class MoveTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['saveAttribute'])
             ->getMock();
-        $this->storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
         $this->categoryMock = $this->getMockBuilder(Category::class)
             ->disableOriginalConstructor()
             ->onlyMethods(

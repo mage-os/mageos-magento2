@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\CatalogUrlRewrite\Test\Unit\Model;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Product;
@@ -57,13 +58,13 @@ class ProductUrlPathGeneratorTest extends TestCase
             ->onlyMethods(['__wakeup', 'getData', 'getName', 'formatUrlKey', 'getId', 'load', 'setStoreId'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->storeManager = $this->getMockForAbstractClass(StoreManagerInterface::class);
-        $this->scopeConfig = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $this->storeManager = $this->createMock(StoreManagerInterface::class);
+        $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
         $this->categoryUrlPathGenerator = $this->createMock(
             CategoryUrlPathGenerator::class
         );
-        $this->productRepository = $this->getMockForAbstractClass(ProductRepositoryInterface::class);
-        $this->productRepository->expects($this->any())->method('getById')->willReturn($this->product);
+        $this->productRepository = $this->createMock(ProductRepositoryInterface::class);
+        $this->productRepository->method('getById')->willReturn($this->product);
 
         $this->productUrlPathGenerator = (new ObjectManager($this))->getObject(
             ProductUrlPathGenerator::class,
@@ -95,19 +96,19 @@ class ProductUrlPathGeneratorTest extends TestCase
     /**
      * Verify get url path.
      *
-     * @dataProvider getUrlPathDataProvider
      * @param string|null|bool $urlKey
      * @param string|null|bool $productName
      * @param int $formatterCalled
      * @param string $result
      * @return void
      */
+    #[DataProvider('getUrlPathDataProvider')]
     public function testGetUrlPath($urlKey, $productName, $formatterCalled, $result): void
     {
         $this->product->expects($this->once())->method('getData')->with('url_path')
             ->willReturn(null);
-        $this->product->expects($this->any())->method('getUrlKey')->willReturn($urlKey);
-        $this->product->expects($this->any())->method('getName')->willReturn($productName);
+        $this->product->method('getUrlKey')->willReturn($urlKey);
+        $this->product->method('getName')->willReturn($productName);
         $this->product->expects($this->exactly($formatterCalled))
             ->method('formatUrlKey')->willReturnArgument(0);
 
@@ -120,12 +121,12 @@ class ProductUrlPathGeneratorTest extends TestCase
      * @param string|bool $productUrlKey
      * @param string|bool $expectedUrlKey
      * @return void
-     * @dataProvider getUrlKeyDataProvider
      */
+    #[DataProvider('getUrlKeyDataProvider')]
     public function testGetUrlKey($productUrlKey, $expectedUrlKey): void
     {
-        $this->product->expects($this->any())->method('getUrlKey')->willReturn($productUrlKey);
-        $this->product->expects($this->any())->method('formatUrlKey')->willReturn($productUrlKey);
+        $this->product->method('getUrlKey')->willReturn($productUrlKey);
+        $this->product->method('formatUrlKey')->willReturn($productUrlKey);
         $this->assertSame($expectedUrlKey, $this->productUrlPathGenerator->getUrlKey($this->product));
     }
 
@@ -149,14 +150,14 @@ class ProductUrlPathGeneratorTest extends TestCase
      * @param string|null|bool $productName
      * @param string $expectedUrlKey
      * @return void
-     * @dataProvider getUrlPathDefaultUrlKeyDataProvider
      */
+    #[DataProvider('getUrlPathDefaultUrlKeyDataProvider')]
     public function testGetUrlPathDefaultUrlKey($storedUrlKey, $productName, $expectedUrlKey): void
     {
         $this->product->expects($this->once())->method('getData')->with('url_path')
             ->willReturn(null);
         $this->product->expects($this->any())->method('getUrlKey')->willReturnOnConsecutiveCalls(false, $storedUrlKey);
-        $this->product->expects($this->any())->method('getName')->willReturn($productName);
+        $this->product->method('getName')->willReturn($productName);
         $this->product->expects($this->any())->method('formatUrlKey')->willReturnArgument(0);
         $this->assertEquals($expectedUrlKey, $this->productUrlPathGenerator->getUrlPath($this->product, null));
     }

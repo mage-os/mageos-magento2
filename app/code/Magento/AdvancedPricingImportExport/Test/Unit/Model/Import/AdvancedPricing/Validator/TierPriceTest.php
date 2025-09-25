@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\AdvancedPricingImportExport\Test\Unit\Model\Import\AdvancedPricing\Validator;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\AdvancedPricingImportExport\Model\Import\AdvancedPricing as AdvancedPricing;
 use Magento\AdvancedPricingImportExport\Model\Import\AdvancedPricing\Validator;
 use Magento\AdvancedPricingImportExport\Model\Import\AdvancedPricing\Validator\TierPrice;
@@ -52,10 +53,7 @@ class TierPriceTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->groupRepository = $this->getMockBuilder(GroupRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getList'])
-            ->getMockForAbstractClass();
+        $this->groupRepository = $this->createMock(GroupRepositoryInterface::class);
 
         $this->searchCriteriaBuilder = $this->createMock(SearchCriteriaBuilder::class);
         $this->storeResolver = $this->createMock(
@@ -74,7 +72,7 @@ class TierPriceTest extends TestCase
     {
         $searchCriteria = $this->createMock(SearchCriteria::class);
         $this->searchCriteriaBuilder->method('create')->willReturn($searchCriteria);
-        $groupSearchResult = $this->getMockForAbstractClass(
+        $groupSearchResult = $this->createMock(
             GroupSearchResultsInterface::class,
             [],
             '',
@@ -85,10 +83,7 @@ class TierPriceTest extends TestCase
             ->with($searchCriteria)
             ->willReturn($groupSearchResult);
 
-        $groupTest = $this->getMockBuilder(GroupInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getCode', 'getId'])
-            ->getMockForAbstractClass();
+        $groupTest = $this->createMock(GroupInterface::class);
         $groupTest->expects($this->once())->method('getCode');
         $groupTest->method('getId');
         $groups = [$groupTest];
@@ -101,7 +96,7 @@ class TierPriceTest extends TestCase
     {
         $searchCriteria = $this->createMock(SearchCriteria::class);
         $this->searchCriteriaBuilder->method('create')->willReturn($searchCriteria);
-        $groupSearchResult = $this->getMockForAbstractClass(
+        $groupSearchResult = $this->createMock(
             GroupSearchResultsInterface::class,
             [],
             '',
@@ -112,10 +107,7 @@ class TierPriceTest extends TestCase
             ->with($searchCriteria)
             ->willReturn($groupSearchResult);
 
-        $groupTest = $this->getMockBuilder(GroupInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getCode', 'getId'])
-            ->getMockForAbstractClass();
+        $groupTest = $this->createMock(GroupInterface::class);
 
         $expectedCode = 'code';
         $expectedId = 'id';
@@ -142,13 +134,13 @@ class TierPriceTest extends TestCase
     }
 
     /**
-     * @dataProvider isValidAddMessagesCallDataProvider
      *
      * @param array $value
      * @param bool  $hasEmptyColumns
      * @param array $customerGroups
      * @param array $expectedMessages
      */
+    #[DataProvider('isValidAddMessagesCallDataProvider')]
     public function testIsValidAddMessagesCall($value, $hasEmptyColumns, $customerGroups, $expectedMessages)
     {
         $priceContextMock = $this->getMockBuilder(Product::class)
@@ -171,7 +163,7 @@ class TierPriceTest extends TestCase
 
         $searchCriteria = $this->createMock(SearchCriteria::class);
         $this->searchCriteriaBuilder->method('create')->willReturn($searchCriteria);
-        $groupSearchResult = $this->getMockForAbstractClass(
+        $groupSearchResult = $this->createMock(
             GroupSearchResultsInterface::class,
             [],
             '',
@@ -182,10 +174,7 @@ class TierPriceTest extends TestCase
             ->with($searchCriteria)
             ->willReturn($groupSearchResult);
 
-        $groupTest = $this->getMockBuilder(GroupInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getCode', 'getId'])
-            ->getMockForAbstractClass();
+        $groupTest = $this->createMock(GroupInterface::class);
         $groupTest->expects($this->once())->method('getCode');
         $groupTest->method('getId');
         $groups = [$groupTest];

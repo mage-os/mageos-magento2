@@ -85,7 +85,7 @@ class ConditionsTest extends TestCase
         $this->registryMock = $this->getMockBuilder(Registry::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->layoutMock = $this->getMockForAbstractClass(LayoutInterface::class);
+        $this->layoutMock = $this->createMock(LayoutInterface::class);
         $this->blockMock = $this->getMockBuilder(BlockInterface::class)
             ->addMethods(['getWidgetValues'])
             ->getMockForAbstractClass();
@@ -208,20 +208,20 @@ class ConditionsTest extends TestCase
             ->addMethods(['getContainer'])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
-        $eventManagerMock = $this->getMockForAbstractClass(ManagerInterface::class);
-        $scopeConfigMock = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $eventManagerMock = $this->createMock(ManagerInterface::class);
+        $scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
         $fieldsetMock = $this->createMock(Fieldset::class);
         $combineMock = $this->createMock(Combine::class);
         $resolverMock = $this->createMock(Resolver::class);
         $filesystemMock = $this->createPartialMock(Filesystem::class, ['getDirectoryRead']);
         $validatorMock = $this->createMock(Validator::class);
         $templateEnginePoolMock = $this->createMock(TemplateEnginePool::class);
-        $templateEngineMock = $this->getMockForAbstractClass(TemplateEngineInterface::class);
-        $directoryReadMock = $this->getMockForAbstractClass(ReadInterface::class);
+        $templateEngineMock = $this->createMock(TemplateEngineInterface::class);
+        $directoryReadMock = $this->createMock(ReadInterface::class);
 
         $this->ruleMock->expects($this->once())->method('getConditions')->willReturn($combineMock);
         $combineMock->expects($this->once())->method('setJsFormObject')->willReturnSelf();
-        $abstractElementMock->expects($this->any())->method('getContainer')->willReturn($fieldsetMock);
+        $abstractElementMock->method('getContainer')->willReturn($fieldsetMock);
         $filesystemMock->expects($this->once())->method('getDirectoryRead')->willReturn($directoryReadMock);
         $validatorMock->expects($this->once())->method('isValid')->willReturn(true);
         $this->contextMock->expects($this->once())->method('getEnginePool')->willReturn($templateEnginePoolMock);
@@ -232,7 +232,7 @@ class ConditionsTest extends TestCase
         $storeMock = $this->createMock(StoreInterface::class);
         $storeManager = $this->createMock(StoreManagerInterface::class);
         $storeManager->expects($this->once())->method('getStore')->willReturn($storeMock);
-        $this->contextMock->expects($this->any())->method('getStoreManager')->willReturn($storeManager);
+        $this->contextMock->method('getStoreManager')->willReturn($storeManager);
         $this->widgetConditions = $this->objectManagerHelper->getObject(
             Conditions::class,
             [

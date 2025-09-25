@@ -85,15 +85,11 @@ class DataCategoryUsedInProductsHashMapTest extends TestCase
         $categoryIds = ['1' => [1, 2, 3], '2' => [2, 3], '3' => 3];
         $categoryIdsOther = ['2' => [2, 3, 4]];
 
-        $connectionMock = $this->getMockForAbstractClass(AdapterInterface::class);
+        $connectionMock = $this->createMock(AdapterInterface::class);
         $selectMock = $this->createMock(Select::class);
 
-        $this->connectionMock->expects($this->any())
-            ->method('getConnection')
-            ->willReturn($connectionMock);
-        $connectionMock->expects($this->any())
-            ->method('select')
-            ->willReturn($selectMock);
+        $this->connectionMock->method('getConnection')->willReturn($connectionMock);
+        $connectionMock->method('select')->willReturn($selectMock);
         $connectionMock->expects($this->any())
             ->method('fetchCol')
             ->willReturnOnConsecutiveCalls($categoryIds, $categoryIdsOther, $categoryIds);

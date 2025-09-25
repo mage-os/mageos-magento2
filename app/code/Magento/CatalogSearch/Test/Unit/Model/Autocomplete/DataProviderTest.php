@@ -59,30 +59,21 @@ class DataProviderTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['getQueryText', 'getSuggestCollection'])
             ->getMock();
-        $this->query->expects($this->any())
-            ->method('getSuggestCollection')
-            ->willReturn($this->suggestCollection);
+        $this->query->method('getSuggestCollection')->willReturn($this->suggestCollection);
 
         $queryFactory = $this->getMockBuilder(QueryFactory::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['get'])
             ->getMock();
-        $queryFactory->expects($this->any())
-            ->method('get')
-            ->willReturn($this->query);
+        $queryFactory->method('get')->willReturn($this->query);
 
         $this->itemFactory = $this->getMockBuilder(ItemFactory::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
             ->getMock();
 
-        $scopeConfig = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->onlyMethods(['getValue'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $scopeConfig->expects($this->any())
-            ->method('getValue')
-            ->willReturn($this->limit);
+        $scopeConfig = $this->createMock(ScopeConfigInterface::class);
+        $scopeConfig->method('getValue')->willReturn($this->limit);
 
         $this->model = $helper->getObject(
             DataProvider::class,
@@ -123,11 +114,9 @@ class DataProviderTest extends TestCase
                 'string11',
                 'string100'
             ));
-        $itemMock->expects($this->any())
-            ->method('toArray')
-            ->willReturn($expected);
+        $itemMock->method('toArray')->willReturn($expected);
 
-        $this->itemFactory->expects($this->any())->method('create')->willReturn($itemMock);
+        $this->itemFactory->method('create')->willReturn($itemMock);
 
         $result = $this->model->getItems();
         $this->assertEquals($expected, $result[0]->toArray());
@@ -143,9 +132,7 @@ class DataProviderTest extends TestCase
         foreach ($data as $collectionItem) {
             $collectionData[] = new DataObject($collectionItem);
         }
-        $this->suggestCollection->expects($this->any())
-            ->method('getIterator')
-            ->willReturn(new \ArrayIterator($collectionData));
+        $this->suggestCollection->method('getIterator')->willReturn(new \ArrayIterator($collectionData));
     }
 
     public function testGetItemsWithEmptyQueryText()
