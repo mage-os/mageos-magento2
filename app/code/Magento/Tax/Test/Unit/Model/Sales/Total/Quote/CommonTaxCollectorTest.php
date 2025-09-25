@@ -432,6 +432,9 @@ class CommonTaxCollectorTest extends TestCase
         $this->assertSame($customerAddress, $result);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     */
     public function testMapItemSetsExtensionAttributePriceForTaxCalculation(): void
     {
         $priceIncludesTax = true;
