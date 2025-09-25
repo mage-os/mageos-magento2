@@ -22,6 +22,7 @@ use Magento\Framework\Event\Manager;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\View\Layout;
+use Magento\Framework\Session\Storage;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -49,19 +50,32 @@ class ShowUpdateResultTest extends TestCase
      */
     protected function getSession()
     {
-        $session = $this->getMockBuilder(Session::class)
-            ->onlyMethods(['hasCompositeProductResult', 'getCompositeProductResult', 'unsCompositeProductResult'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $session->expects($this->once())
-            ->method('hasCompositeProductResult')
-            ->willReturn(true);
-        $session->expects($this->once())
-            ->method('unsCompositeProductResult');
-        $session->expects($this->atLeastOnce())
-            ->method('getCompositeProductResult')
-            ->willReturn(new DataObject());
-
+        // Create a custom storage class that implements the required methods
+        $storage = new class extends Storage {
+            public function hasCompositeProductResult()
+            {
+                return true;
+            }
+            
+            public function getCompositeProductResult()
+            {
+                return new DataObject();
+            }
+            
+            public function unsCompositeProductResult()
+            {
+                return $this;
+            }
+        };
+        
+        $session = $this->createPartialMock(Session::class, []);
+        
+        // Use reflection to set the storage property
+        $reflection = new \ReflectionClass($session);
+        $storageProperty = $reflection->getProperty('storage');
+        $storageProperty->setAccessible(true);
+        $storageProperty->setValue($session, $storage);
+        
         return $session;
     }
 
@@ -90,32 +104,13 @@ class ShowUpdateResultTest extends TestCase
             ['getParam', 'getPost', 'getFullActionName', 'getPostValue']
         );
 
-        $responseInterfaceMock = $this->getMockBuilder(ResponseInterface::class)
-            ->onlyMethods(['sendResponse', 'setRedirect'])
-            ->getMock();
+        $responseInterfaceMock = $this->createMock(ResponseInterface::class);
 
         $managerInterfaceMock = $this->createMock(ManagerInterface::class);
         $this->session = $this->getSession();
         $actionFlagMock = $this->createMock(ActionFlag::class);
         $helperDataMock = $this->createMock(Data::class);
-        $this->context = $this->getMockBuilder(Context::class)
-            ->onlyMethods(
-                [
-                    'getRequest',
-                    'getResponse',
-                    'getObjectManager',
-                    'getEventManager',
-                    'getMessageManager',
-                    'getSession',
-                    'getActionFlag',
-                    'getHelper',
-                    'getView',
-                    'getResultRedirectFactory',
-                    'getTitle'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->context = $this->createMock(Context::class);
 
         $this->context->method('getEventManager')->willReturn($eventManager);
         $this->context->method('getRequest')->willReturn($this->request);
@@ -133,14 +128,19 @@ class ShowUpdateResultTest extends TestCase
     public function testExecute()
     {
         $productCompositeHelper = $this->createMock(Composite::class);
+        $layoutResult = $this->createMock(\Magento\Framework\View\Result\Layout::class);
         $productCompositeHelper->expects($this->once())
-            ->method('renderUpdateResult');
+            ->method('renderUpdateResult')
+            ->willReturn($layoutResult);
 
         $productBuilder = $this->createMock(Builder::class);
         $context = $this->getContext();
 
         /** @var ShowUpdateResult $controller */
         $controller = new ShowUpdateResult($context, $productBuilder, $productCompositeHelper);
-        $controller->execute();
+        $result = $controller->execute();
+        
+        // The controller should return the result from renderUpdateResult
+        $this->assertSame($layoutResult, $result);
     }
 }

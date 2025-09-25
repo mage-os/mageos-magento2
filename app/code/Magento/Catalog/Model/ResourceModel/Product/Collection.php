@@ -26,6 +26,7 @@ use Magento\Store\Model\Indexer\WebsiteDimensionProvider;
 use Magento\Store\Model\Store;
 use Magento\Catalog\Model\ResourceModel\Category;
 use Zend_Db_Expr;
+use Magento\Catalog\Model\ResourceModel\Product\Gallery;
 
 /**
  * Product collection
@@ -721,10 +722,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Collection\Abstrac
 
         $this->_prepareUrlDataObject();
         $this->prepareStoreId();
-
-        if (isset($this->_selectAttributes['media_gallery'])) {
-            $this->addMediaGalleryData();
-        }
 
         if (count($this)) {
             $this->_eventManager->dispatch('catalog_product_collection_load_after', ['collection' => $this]);

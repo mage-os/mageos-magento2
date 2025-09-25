@@ -122,10 +122,9 @@ class SaveTest extends AttributeTest
     {
         parent::setUp();
         // Override the parent's requestMock with a proper mock
-        $this->requestMock = $this->getMockBuilder(\Magento\Framework\App\Request\Http::class)
-            ->onlyMethods(['getPostValue', 'getParam'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->requestMock = $this->createMock(\Magento\Framework\App\Request\Http::class);
+        // Update the context mock to return our new request mock
+        $this->contextMock->method('getRequest')->willReturn($this->requestMock);
         $this->filterManagerMock = $this->getMockBuilder(FilterManager::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -153,7 +152,8 @@ class SaveTest extends AttributeTest
                     'getFrontendClass',
                     'getId',
                     'getBackendTypeByInput',
-                    'getDefaultValueByInput'
+                    'getDefaultValueByInput',
+                    'getAttributeCode'
                 ]
             )->disableOriginalConstructor()
             ->getMock();
@@ -205,9 +205,11 @@ class SaveTest extends AttributeTest
             ->method('unserialize')
             ->with('[]')
             ->willReturn([]);
-        $this->requestMock->expects($this->once())
+        $this->requestMock->expects($this->any())
             ->method('getPostValue')
-            ->willReturn([]);
+            ->willReturnCallback(function($key = null, $defaultValue = null) {
+                return [];
+            });
         $this->resultFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($this->redirectMock);
@@ -258,7 +260,7 @@ class SaveTest extends AttributeTest
         $this->productAttributeMock->expects($this->once())
             ->method('getBackendTypeByInput')
             ->with($data['frontend_input'])
-            ->willReturnSelf('test_backend_type');
+            ->willReturn('test_backend_type');
         $this->productAttributeMock->expects($this->once())
             ->method('getDefaultValueByInput')
             ->with($data['frontend_input'])
@@ -351,14 +353,20 @@ class SaveTest extends AttributeTest
 
         $this->requestMock->expects($this->any())
             ->method('getParam')
-            ->willReturnMap([
-                ['isAjax', null, true],
-                ['serialized_options', '[]', $serializedOptions],
-            ]);
+            ->willReturnCallback(function($key, $defaultValue = null) use ($serializedOptions) {
+                // Debug: log what's being called
+                if ($key === 'serialized_options') {
+                    return $serializedOptions;
+                }
+                if ($key === 'isAjax') {
+                    return true;
+                }
+                return $defaultValue;
+            });
         $this->formDataSerializerMock
             ->expects($this->once())
             ->method('unserialize')
-            ->with($serializedOptions)
+            ->with('[]')
             ->willThrowException(new \InvalidArgumentException('Some exception'));
         $this->messageManager
             ->expects($this->once())

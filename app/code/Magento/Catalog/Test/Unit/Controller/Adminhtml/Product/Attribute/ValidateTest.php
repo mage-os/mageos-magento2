@@ -78,9 +78,18 @@ class ValidateTest extends AttributeTest
      */
     private $attributeCodeValidatorMock;
 
+    /**
+     * @var \Magento\Catalog\Model\Product\Url|MockObject
+     */
+    private $urlMock;
+
     protected function setUp(): void
     {
         parent::setUp();
+        // Override the parent's requestMock with a proper mock
+        $this->requestMock = $this->createMock(\Magento\Framework\App\Request\Http::class);
+        // Update the context mock to return our new request mock
+        $this->contextMock->method('getRequest')->willReturn($this->requestMock);
         $this->resultJsonFactoryMock = $this->getMockBuilder(ResultJsonFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -106,6 +115,9 @@ class ValidateTest extends AttributeTest
             ->disableOriginalConstructor()
             ->getMock();
         $this->attributeCodeValidatorMock = $this->getMockBuilder(AttributeCodeValidator::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->urlMock = $this->getMockBuilder(\Magento\Catalog\Model\Product\Url::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -146,12 +158,13 @@ class ValidateTest extends AttributeTest
                     ['serialized_options', '[]', $serializedOptions],
                 ]
             );
-        $this->objectManagerMock->expects($this->exactly(2))
+        $this->objectManagerMock->expects($this->exactly(3))
             ->method('create')
             ->willReturnMap(
                 [
                     [Attribute::class, [], $this->attributeMock],
-                    [AttributeSet::class, [], $this->attributeSetMock]
+                    [AttributeSet::class, [], $this->attributeSetMock],
+                    [\Magento\Catalog\Model\Product\Url::class, [], $this->urlMock]
                 ]
             );
         $this->attributeMock->expects($this->once())
@@ -206,12 +219,13 @@ class ValidateTest extends AttributeTest
                     ['serialized_options', '[]', $serializedOptions],
                 ]
             );
-        $this->objectManagerMock->expects($this->exactly(2))
+        $this->objectManagerMock->expects($this->exactly(3))
             ->method('create')
             ->willReturnMap(
                 [
                     [Attribute::class, [], $this->attributeMock],
-                    [AttributeSet::class, [], $this->attributeSetMock]
+                    [AttributeSet::class, [], $this->attributeSetMock],
+                    [\Magento\Catalog\Model\Product\Url::class, [], $this->urlMock]
                 ]
             );
         $this->attributeMock->expects($this->once())
@@ -261,20 +275,29 @@ class ValidateTest extends AttributeTest
         $countFunctionCalls = ($isError) ? 6 : 5;
         $this->requestMock->expects($this->exactly($countFunctionCalls))
             ->method('getParam')
-            ->willReturnMap(
-                [
-                    ['frontend_label', null, null],
-                    ['attribute_code', null, "test_attribute_code"],
-                    ['new_attribute_set_name', null, 'test_attribute_set_name'],
-                    ['message_key', null, Validate::DEFAULT_MESSAGE_KEY],
-                    ['serialized_options', '[]', $serializedOptions],
-                ]
-            );
+            ->willReturnCallback(function($key, $defaultValue = null) use ($serializedOptions) {
+                if ($key === 'serialized_options') {
+                    return $serializedOptions;
+                }
+                if ($key === 'frontend_label') {
+                    return null;
+                }
+                if ($key === 'attribute_code') {
+                    return 'test_attribute_code';
+                }
+                if ($key === 'new_attribute_set_name') {
+                    return 'test_attribute_set_name';
+                }
+                if ($key === 'message_key') {
+                    return Validate::DEFAULT_MESSAGE_KEY;
+                }
+                return $defaultValue;
+            });
 
         $this->formDataSerializerMock
             ->expects($this->once())
             ->method('unserialize')
-            ->with($serializedOptions)
+            ->with('[]')
             ->willReturn($options);
 
         $this->attributeCodeValidatorMock->expects($this->once())
@@ -282,9 +305,17 @@ class ValidateTest extends AttributeTest
             ->with('test_attribute_code')
             ->willReturn(true);
 
-        $this->objectManagerMock->expects($this->once())
+        $this->objectManagerMock->expects($this->exactly(2))
             ->method('create')
-            ->willReturn($this->attributeMock);
+            ->willReturnMap([
+                [Attribute::class, [], $this->attributeMock],
+                [\Magento\Catalog\Model\Product\Url::class, [], $this->urlMock]
+            ]);
+
+        $this->urlMock->expects($this->once())
+            ->method('formatUrlKey')
+            ->with(null)  // frontend_label is null in this test
+            ->willReturn('test_attribute_code');
 
         $this->attributeMock->expects($this->once())
             ->method('loadByCode')

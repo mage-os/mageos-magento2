@@ -128,18 +128,12 @@ class ValidateTest extends ProductTestCase
             ->getMock();
         $this->resultJsonFactory->method('create')->willReturn($this->resultJson);
 
-        $storeManagerInterfaceMock = $this->createMock(
-            StoreManagerInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['getStore', 'getCode']
-        );
-
+        $storeMock = $this->createMock(\Magento\Store\Model\Store::class);
+        $storeMock->method('getCode')->willReturn('default');
+        
+        $storeManagerInterfaceMock = $this->createMock(StoreManagerInterface::class);
         $storeManagerInterfaceMock->expects($this->any())
-            ->method('getStore')->willReturnSelf();
+            ->method('getStore')->willReturn($storeMock);
 
         $additionalParams = ['resultRedirectFactory' => $this->resultRedirectFactory];
         $this->action = (new ObjectManagerHelper($this))->getObject(

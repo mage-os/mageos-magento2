@@ -16,6 +16,7 @@ use Magento\Customer\Api\GroupRepositoryInterface;
 use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Module\Manager as ModuleManager;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 
@@ -25,6 +26,11 @@ use PHPUnit\Framework\MockObject\MockObject;
  */
 class AdvancedPricingTest extends AbstractModifierTestCase
 {
+    /**
+     * @var ObjectManager
+     */
+    protected $objectManager;
+
     /**
      * @var StoreManagerInterface|MockObject
      */
@@ -73,6 +79,7 @@ class AdvancedPricingTest extends AbstractModifierTestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->objectManager = new ObjectManager($this);
         $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
         $this->groupRepositoryMock = $this->createMock(GroupRepositoryInterface::class);
         $this->groupManagementMock = $this->createMock(GroupManagementInterface::class);

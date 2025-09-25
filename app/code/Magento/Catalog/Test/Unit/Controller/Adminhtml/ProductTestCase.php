@@ -87,36 +87,13 @@ abstract class ProductTestCase extends TestCase
             )->disableOriginalConstructor()
             ->getMock();
 
-        $responseInterfaceMock = $this->getMockBuilder(ResponseInterface::class)
-            ->onlyMethods(['sendResponse', 'setRedirect'])
-            ->getMock();
+        $responseInterfaceMock = $this->createMock(ResponseInterface::class);
 
         $managerInterfaceMock = $this->createMock(ManagerInterface::class);
-        $sessionMock = $this->getMockBuilder(Session::class)
-            ->onlyMethods(['getProductData', 'setProductData'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $sessionMock = $this->createMock(Session::class);
         $actionFlagMock = $this->createMock(ActionFlag::class);
         $helperDataMock = $this->createMock(Data::class);
-        $this->context = $this->getMockBuilder(Context::class)
-            ->onlyMethods(
-                [
-                    'getRequest',
-                    'getResponse',
-                    'getObjectManager',
-                    'getEventManager',
-                    'getMessageManager',
-                    'getSession',
-                    'getActionFlag',
-                    'getHelper',
-                    'getView',
-                    'getResultRedirectFactory',
-                    'getResultFactory',
-                    'getTitle'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->context = $this->createMock(Context::class);
 
         $this->context->method('getEventManager')->willReturn($eventManager);
         $this->context->method('getRequest')->willReturn($requestInterfaceMock);

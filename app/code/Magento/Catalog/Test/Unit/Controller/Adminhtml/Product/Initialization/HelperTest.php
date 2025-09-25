@@ -131,9 +131,7 @@ class HelperTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->productRepositoryMock = $this->createMock(ProductRepository::class);
-        $this->requestMock = $this->getMockBuilder(RequestInterface::class)
-            ->onlyMethods(['getPost'])
-            ->getMock();
+        $this->requestMock = $this->createMock(\Magento\Framework\App\Request\Http::class);
         $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
         $this->stockFilterMock = $this->createMock(StockDataFilter::class);
 
@@ -146,14 +144,11 @@ class HelperTest extends TestCase
                     'getAttributes',
                     'unlockAttribute',
                     'getSku',
-                    'getOptionsReadOnly',
                 ]
             )
             ->disableOriginalConstructor()
             ->getMock();
-        $productExtensionAttributes = $this->getMockBuilder(ProductExtensionInterface::class)
-            ->onlyMethods(['getCategoryLinks', 'setCategoryLinks'])
-            ->getMock();
+        $productExtensionAttributes = $this->createMock(ProductExtensionInterface::class);
         $this->productMock->setExtensionAttributes($productExtensionAttributes);
 
         $this->customOptionFactoryMock = $this->getMockBuilder(ProductCustomOptionInterfaceFactory::class)
@@ -292,7 +287,6 @@ class HelperTest extends TestCase
         $this->productMock->expects($this->once())->method('unlockAttribute')->with('media');
         $this->productMock->expects($this->once())->method('lockAttribute')->with('media');
         $this->productMock->method('getSku')->willReturn('sku');
-        $this->productMock->method('getOptionsReadOnly')->willReturn(false);
 
         $customOptionMock = $this->getMockBuilder(Option::class)
             ->disableOriginalConstructor()
@@ -589,9 +583,9 @@ class HelperTest extends TestCase
                 'linkTypes' => ['related', 'upsell', 'crosssell'],
                 'expectedLinks' => [],
                 'tierPrice' => [],
-                true,
-                true,
-                true
+                'isReadOnlyRelatedItems' => true,
+                'isReadOnlyUpSellItems' => true,
+                'ignoreLinksFlag' => true
             ],
         ];
     }

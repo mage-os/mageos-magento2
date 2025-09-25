@@ -49,9 +49,9 @@ class MassStatusTest extends ProductTestCase
     private $productBuilderMock;
 
     /**
-     * @var AbstractDb|MockObject
+     * @var \Magento\Catalog\Model\ResourceModel\Product\Collection|MockObject
      */
-    private $abstractDbMock;
+    private $productCollectionMock;
 
     /**
      * @var Action|MockObject
@@ -93,7 +93,7 @@ class MassStatusTest extends ProductTestCase
             ->with(ResultFactory::TYPE_REDIRECT)
             ->willReturn($this->resultRedirectMock);
 
-        $this->abstractDbMock = $this->getMockBuilder(AbstractDb::class)
+        $this->productCollectionMock = $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Product\Collection::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getAllIds', 'getResource'])
             ->getMock();
@@ -114,7 +114,7 @@ class MassStatusTest extends ProductTestCase
                 ->disableOriginalConstructor()
                 ->onlyMethods(['create'])
                 ->getMock();
-        $collectionFactoryMock->method('create')->willReturn($this->abstractDbMock);
+        $collectionFactoryMock->method('create')->willReturn($this->productCollectionMock);
 
         $additionalParams = [
             'resultFactory' => $resultFactory
@@ -144,8 +144,8 @@ class MassStatusTest extends ProductTestCase
 
         $this->filterMock->expects($this->once())
             ->method('getCollection')
-            ->willReturn($this->abstractDbMock);
-        $this->abstractDbMock->expects($this->once())
+            ->willReturn($this->productCollectionMock);
+        $this->productCollectionMock->expects($this->once())
             ->method('getAllIds')
             ->willReturn($productIds);
         $this->request->expects($this->exactly(3))

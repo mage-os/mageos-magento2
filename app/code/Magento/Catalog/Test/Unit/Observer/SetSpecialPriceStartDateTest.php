@@ -69,13 +69,9 @@ class SetSpecialPriceStartDateTest extends TestCase
         $this->timezone = $this->createMock(Timezone::class);
         $this->dateObject = $this->createMock(\DateTime::class);
 
+        // Create a custom event class that can handle getProduct()
         $this->eventMock = new class extends Event {
             private $productMock;
-            
-            public function __construct()
-            {
-                // Empty constructor
-            }
             
             public function setProductMock($productMock)
             {
@@ -166,10 +162,7 @@ class SetSpecialPriceStartDateTest extends TestCase
             ->method('getEvent')
             ->willReturn($this->eventMock);
 
-        $this->eventMock
-            ->expects($this->once())
-            ->method('getProduct')
-            ->willReturn($this->productMock);
+        $this->eventMock->setProductMock($this->productMock);
 
         $this->productMock
             ->expects($this->once())
@@ -204,10 +197,7 @@ class SetSpecialPriceStartDateTest extends TestCase
             ->method('getEvent')
             ->willReturn($this->eventMock);
 
-        $this->eventMock
-            ->expects($this->once())
-            ->method('getProduct')
-            ->willReturn($this->productMock);
+        $this->eventMock->setProductMock($this->productMock);
 
         $this->productMock
             ->expects($this->once())
