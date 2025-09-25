@@ -1297,7 +1297,7 @@ class CommonTaxCollectorTest extends TestCase
     }
 
     /**
-     * @SuppressWarnings("ExcessiveMethodLength")
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     public function testConstructorFallsBackToObjectManagerForOptionalDependencies(): void
     {
