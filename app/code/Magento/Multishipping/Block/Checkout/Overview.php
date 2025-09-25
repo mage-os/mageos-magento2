@@ -234,9 +234,11 @@ class Overview extends \Magento\Sales\Block\Items\AbstractItems
     public function getShippingPriceInclTax($address)
     {
         $rate = $address->getShippingRateByCode($address->getShippingMethod());
-        $exclTax = $rate->getPrice();
-        $taxAmount = $address->getShippingTaxAmount();
-        return $this->formatPrice($exclTax + $taxAmount);
+        $baseAmount = (float)$rate->getPrice();
+        $baseTaxAmount = (float)$address->getBaseShippingTaxAmount();
+        $store = $this->getQuote()->getStore();
+        $converted = $store->getBaseCurrency()->convert($baseAmount + $baseTaxAmount, $store->getCurrentCurrencyCode());
+        return $this->formatPrice($converted);
     }
 
     /**
@@ -248,8 +250,10 @@ class Overview extends \Magento\Sales\Block\Items\AbstractItems
     public function getShippingPriceExclTax($address)
     {
         $rate = $address->getShippingRateByCode($address->getShippingMethod());
-        $shippingAmount = $rate->getPrice();
-        return $this->formatPrice($shippingAmount);
+        $baseAmount = (float)$rate->getPrice();
+        $store = $this->getQuote()->getStore();
+        $converted = $store->getBaseCurrency()->convert($baseAmount, $store->getCurrentCurrencyCode());
+        return $this->formatPrice($converted);
     }
 
     /**
