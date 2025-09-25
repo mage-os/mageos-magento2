@@ -457,6 +457,7 @@ class CommonTaxCollectorTest extends TestCase
             /**
              * @param float|null $priceForTaxCalculation
              * @return $this
+             * @SuppressWarnings(PHPMD.UnusedLocalVariable)
              */
             public function setPriceForTaxCalculation($priceForTaxCalculation)
             {
@@ -1310,6 +1311,7 @@ class CommonTaxCollectorTest extends TestCase
             /**
              * @param float|null $priceForTaxCalculation
              * @return $this
+             * @SuppressWarnings(PHPMD.UnusedLocalVariable)
              */
             public function setPriceForTaxCalculation($priceForTaxCalculation)
             {
