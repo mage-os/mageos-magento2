@@ -455,13 +455,12 @@ class CommonTaxCollectorTest extends TestCase
             private $price;
 
             /**
-             * @param float|null $priceForTaxCalculation
+             * @param mixed ...$args
              * @return $this
-             * @SuppressWarnings(PHPMD.UnusedLocalVariable)
              */
-            public function setPriceForTaxCalculation($priceForTaxCalculation)
+            public function setPriceForTaxCalculation(...$args)
             {
-                $this->price = $priceForTaxCalculation;
+                $this->price = $args[0] ?? null;
                 return $this;
             }
 
@@ -1309,13 +1308,12 @@ class CommonTaxCollectorTest extends TestCase
             private $price;
 
             /**
-             * @param float|null $priceForTaxCalculation
+             * @param mixed ...$args
              * @return $this
-             * @SuppressWarnings(PHPMD.UnusedLocalVariable)
              */
-            public function setPriceForTaxCalculation($priceForTaxCalculation)
+            public function setPriceForTaxCalculation(...$args)
             {
-                $this->price = $priceForTaxCalculation;
+                $this->price = $args[0] ?? null;
                 return $this;
             }
 
