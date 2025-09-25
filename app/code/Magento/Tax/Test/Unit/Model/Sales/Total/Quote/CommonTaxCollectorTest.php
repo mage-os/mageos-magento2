@@ -455,12 +455,12 @@ class CommonTaxCollectorTest extends TestCase
             private $price;
 
             /**
-             * @param float|null $value
+             * @param float|null $priceForTaxCalculation
              * @return $this
              */
-            public function setPriceForTaxCalculation($value)
+            public function setPriceForTaxCalculation($priceForTaxCalculation)
             {
-                $this->price = $value;
+                $this->price = $priceForTaxCalculation;
                 return $this;
             }
 
@@ -1308,12 +1308,12 @@ class CommonTaxCollectorTest extends TestCase
             private $price;
 
             /**
-             * @param float|null $value
+             * @param float|null $priceForTaxCalculation
              * @return $this
              */
-            public function setPriceForTaxCalculation($value)
+            public function setPriceForTaxCalculation($priceForTaxCalculation)
             {
-                $this->price = $value;
+                $this->price = $priceForTaxCalculation;
                 return $this;
             }
 
