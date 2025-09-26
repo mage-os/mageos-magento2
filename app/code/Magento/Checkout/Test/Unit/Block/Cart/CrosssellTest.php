@@ -78,11 +78,15 @@ class CrosssellTest extends TestCase
                 'storeManager' => $this->storeManager
             ]
         );
-        $this->checkoutSession = $this->getMockBuilder(Session::class)
-            ->addMethods(['getLastAddedProductId'])
-            ->onlyMethods(['getQuote'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->checkoutSession = new class extends Session {
+            private $quote;
+            private $lastAddedProductId;
+            public function __construct() {}
+            public function setQuote($quote) { $this->quote = $quote; return $this; }
+            public function getQuote() { return $this->quote; }
+            public function setLastAddedProductId($id) { $this->lastAddedProductId = $id; return $this; }
+            public function getLastAddedProductId() { return $this->lastAddedProductId; }
+        };
         $this->productRepository = $this->createMock(
             ProductRepositoryInterface::class
         );
@@ -134,10 +138,8 @@ class CrosssellTest extends TestCase
             $cartProducts
         );
         $quote = new DataObject(['all_items' => $cartItems]);
-        $this->checkoutSession->method('getQuote')
-            ->willReturn($quote);
-        $this->checkoutSession->method('getLastAddedProductId')
-            ->willReturn($lastAddedProductId);
+        $this->checkoutSession->setQuote($quote);
+        $this->checkoutSession->setLastAddedProductId($lastAddedProductId);
         $this->productRepository->method('getById')
             ->willReturnCallback(
                 function ($id) {

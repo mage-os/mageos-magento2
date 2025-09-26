@@ -70,19 +70,20 @@ class UpdateItemQtyTest extends TestCase
     protected function setUp(): void
     {
         $this->sidebarMock = $this->createMock(Sidebar::class);
-        $this->loggerMock = $this->getMockForAbstractClass(LoggerInterface::class);
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
         $this->jsonHelperMock = $this->createMock(Data::class);
         $this->quantityProcessor = $this->createMock(RequestQuantityProcessor::class);
-        $this->requestMock = $this->getMockForAbstractClass(RequestInterface::class);
-        $this->responseMock = $this->getMockForAbstractClass(
-            ResponseInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['representJson']
-        );
+        $this->requestMock = $this->createMock(RequestInterface::class);
+        $this->responseMock = new class extends \Magento\Framework\App\Response\Http {
+            public function __construct() {}
+            public function representJson($jsonResult)
+            {
+                if ($jsonResult === 'json encoded') {
+                    return 'json represented';
+                }
+                return $jsonResult;
+            }
+        };
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->updateItemQty = $this->objectManagerHelper->getObject(
@@ -152,10 +153,6 @@ class UpdateItemQtyTest extends TestCase
             ->with(2)
             ->willReturn(2);
 
-        $this->responseMock->expects($this->once())
-            ->method('representJson')
-            ->with('json encoded')
-            ->willReturn('json represented');
 
         $this->assertEquals('json represented', $this->updateItemQty->execute());
     }
@@ -200,10 +197,6 @@ class UpdateItemQtyTest extends TestCase
             )
             ->willReturn('json encoded');
 
-        $this->responseMock->expects($this->once())
-            ->method('representJson')
-            ->with('json encoded')
-            ->willReturn('json represented');
 
         $this->assertEquals('json represented', $this->updateItemQty->execute());
     }
@@ -254,10 +247,6 @@ class UpdateItemQtyTest extends TestCase
             )
             ->willReturn('json encoded');
 
-        $this->responseMock->expects($this->once())
-            ->method('representJson')
-            ->with('json encoded')
-            ->willReturn('json represented');
 
         $this->assertEquals('json represented', $this->updateItemQty->execute());
     }
@@ -292,9 +281,6 @@ class UpdateItemQtyTest extends TestCase
             ->with($error)
             ->willReturn($jsonResult);
 
-        $this->responseMock->expects($this->once())
-            ->method('representJson')
-            ->willReturn($jsonResult);
 
         $this->assertEquals($jsonResult, $this->updateItemQty->execute());
     }

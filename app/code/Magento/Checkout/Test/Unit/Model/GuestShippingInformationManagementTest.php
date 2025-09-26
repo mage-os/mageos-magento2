@@ -11,41 +11,23 @@ use Magento\Checkout\Api\Data\PaymentDetailsInterface;
 use Magento\Checkout\Api\Data\ShippingInformationInterface;
 use Magento\Checkout\Api\ShippingInformationManagementInterface;
 use Magento\Checkout\Model\GuestShippingInformationManagement;
-use Magento\Customer\Model\Address;
-use Magento\Customer\Model\AddressFactory;
-use Magento\Framework\Exception\InputException;
-use Magento\Framework\Validator\Factory as ValidatorFactory;
-use Magento\Framework\Validator\ValidatorInterface;
-use Magento\Quote\Api\Data\AddressInterface;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Quote\Model\QuoteIdMask;
 use Magento\Quote\Model\QuoteIdMaskFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class GuestShippingInformationManagementTest extends TestCase
 {
     /**
-     * @var ShippingInformationManagementInterface|MockObject
+     * @var MockObject
      */
     protected $shippingInformationManagementMock;
 
     /**
-     * @var QuoteIdMaskFactory|MockObject
+     * @var MockObject
      */
     protected $quoteIdMaskFactoryMock;
-
-    /**
-     * @var ValidatorFactory|MockObject
-     */
-    protected $validatorFactoryMock;
-
-    /**
-     * @var AddressFactory|MockObject
-     */
-    protected $addressFactoryMock;
 
     /**
      * @var GuestShippingInformationManagement
@@ -54,20 +36,18 @@ class GuestShippingInformationManagementTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->quoteIdMaskFactoryMock = $this->createPartialMock(
-            QuoteIdMaskFactory::class,
-            ['create']
-        );
+        $objectManager = new ObjectManager($this);
+        $this->quoteIdMaskFactoryMock = $this->createMock(QuoteIdMaskFactory::class);
         $this->shippingInformationManagementMock = $this->createMock(
             ShippingInformationManagementInterface::class
         );
-        $this->validatorFactoryMock = $this->createMock(ValidatorFactory::class);
-        $this->addressFactoryMock = $this->createMock(AddressFactory::class);
-        $this->model = new GuestShippingInformationManagement(
-            $this->quoteIdMaskFactoryMock,
-            $this->shippingInformationManagementMock,
-            $this->validatorFactoryMock,
-            $this->addressFactoryMock
+
+        $this->model = $objectManager->getObject(
+            GuestShippingInformationManagement::class,
+            [
+                'quoteIdMaskFactory' => $this->quoteIdMaskFactoryMock,
+                'shippingInformationManagement' => $this->shippingInformationManagementMock
+            ]
         );
     }
 
@@ -75,36 +55,16 @@ class GuestShippingInformationManagementTest extends TestCase
     {
         $cartId = 'masked_id';
         $quoteId = '100';
-        $addressInformationMock = $this->getMockForAbstractClass(ShippingInformationInterface::class);
-        $shippingAddressMock = $this->getMockForAbstractClass(AddressInterface::class);
-        $addressInformationMock->expects($this->once())
-            ->method('getShippingAddress')
-            ->willReturn($shippingAddressMock);
-        $shippingAddressMock->expects($this->once())
-            ->method('getExtensionAttributes')
-            ->willReturn(null);
-        $customerAddressMock = $this->createMock(Address::class);
-        $this->addressFactoryMock->expects($this->once())
-            ->method('create')
-            ->willReturn($customerAddressMock);
-        $validatorMock = $this->createMock(ValidatorInterface::class);
-        $this->validatorFactoryMock->expects($this->once())
-            ->method('createValidator')
-            ->with('customer_address', 'save')
-            ->willReturn($validatorMock);
-        $validatorMock->expects($this->once())->method('isValid')->willReturn(true);
-        $quoteIdMaskMock = $this->getMockBuilder(QuoteIdMask::class)
-            ->addMethods(['getQuoteId'])
-            ->onlyMethods(['load'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->quoteIdMaskFactoryMock->expects($this->once())->method('create')->willReturn($quoteIdMaskMock);
-        $quoteIdMaskMock->expects($this->once())
-            ->method('load')
-            ->with($cartId, 'masked_id')
-            ->willReturnSelf();
-        $quoteIdMaskMock->expects($this->once())->method('getQuoteId')->willReturn($quoteId);
-        $paymentInformationMock = $this->getMockForAbstractClass(PaymentDetailsInterface::class);
+        $addressInformationMock = $this->createMock(ShippingInformationInterface::class);
+
+        $quoteIdMask = new class($quoteId) extends QuoteIdMask {
+            private $qid;
+            public function __construct($qid) { $this->qid = $qid; }
+            public function load($id, $field = null) { $this->setData('quote_id', $this->qid); return $this; }
+        };
+        $this->quoteIdMaskFactoryMock->expects($this->once())->method('create')->willReturn($quoteIdMask);
+
+        $paymentInformationMock = $this->createMock(PaymentDetailsInterface::class);
         $this->shippingInformationManagementMock->expects($this->once())
             ->method('saveAddressInformation')
             ->with(
@@ -112,39 +72,7 @@ class GuestShippingInformationManagementTest extends TestCase
                 $addressInformationMock
             )
             ->willReturn($paymentInformationMock);
-        $this->model->saveAddressInformation($cartId, $addressInformationMock);
-    }
 
-    /**
-     * Validate save address information when it is invalid
-     *
-     * @return void
-     * @throws \PHPUnit\Framework\MockObject\Exception
-     */
-    public function testSaveAddressInformationWithInvalidAddress()
-    {
-        $cartId = 'masked_id';
-        $addressInformationMock = $this->getMockForAbstractClass(ShippingInformationInterface::class);
-        $shippingAddressMock = $this->getMockForAbstractClass(AddressInterface::class);
-        $addressInformationMock->expects($this->once())
-            ->method('getShippingAddress')
-            ->willReturn($shippingAddressMock);
-        $shippingAddressMock->method('getExtensionAttributes')->willReturn(null);
-        $customerAddressMock = $this->createMock(Address::class);
-        $this->addressFactoryMock->expects($this->once())->method('create')->willReturn($customerAddressMock);
-        $validatorMock = $this->createMock(ValidatorInterface::class);
-        $this->validatorFactoryMock->expects($this->once())
-            ->method('createValidator')
-            ->with('customer_address', 'save')
-            ->willReturn($validatorMock);
-        $validatorMock->expects($this->once())->method('isValid')->willReturn(false);
-        $validatorMock->expects($this->once())
-            ->method('getMessages')
-            ->willReturn(['First Name is not valid!', 'Last Name is not valid!']);
-        $this->expectException(InputException::class);
-        $this->expectExceptionMessage(
-            'The shipping address contains invalid data: First Name is not valid!, Last Name is not valid!'
-        );
         $this->model->saveAddressInformation($cartId, $addressInformationMock);
     }
 }

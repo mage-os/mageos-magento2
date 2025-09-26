@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Checkout\Test\Unit\Model;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Captcha\Api\CaptchaConfigPostProcessorInterface;
 use Magento\Catalog\Helper\Image;
 use Magento\Catalog\Helper\Product\ConfigurationPool;
@@ -104,9 +105,13 @@ class DefaultConfigProviderTest extends TestCase
         $httpContext = $this->createMock(HttpContext::class);
         $quoteRepository = $this->createMock(CartRepositoryInterface::class);
         $quoteItemRepository = $this->createMock(QuoteItemRepository::class);
-        $this->shippingMethodManager = $this->getMockBuilder(ShippingMethodManager::class)
-            ->addMethods(['get'])
-            ->getMockForAbstractClass();
+        $this->shippingMethodManager = new class implements \Magento\Quote\Api\ShippingMethodManagementInterface, \Magento\Quote\Model\ShippingMethodManagementInterface {
+            public function estimateByAddress($cartId, \Magento\Quote\Api\Data\EstimateAddressInterface $address) { return []; }
+            public function estimateByAddressId($cartId, $addressId) { return []; }
+            public function getList($cartId) { return []; }
+            public function set($cartId, $carrierCode, $methodCode) { return true; }
+            public function get($cartId) { return null; }
+        };
         $configurationPool = $this->createMock(ConfigurationPool::class);
         $quoteIdMaskFactory = $this->createMock(QuoteIdMaskFactory::class);
         $localeFormat = $this->createMock(LocaleFormat::class);
@@ -168,8 +173,8 @@ class DefaultConfigProviderTest extends TestCase
      * @param array $shippingAddressData
      * @param array $billingAddressData
      * @param array $expected
-     * @dataProvider getConfigQuoteAddressDataDataProvider
      */
+    #[DataProvider('getConfigQuoteAddressDataDataProvider')]
     public function testGetConfigQuoteAddressData(
         array $shippingAddressData,
         array $billingAddressData,
@@ -184,20 +189,18 @@ class DefaultConfigProviderTest extends TestCase
             'billingAddressFromData',
         ];
         $quote = $this->createMock(Quote::class);
-        $shippingAddress = $this->getMockBuilder(Address::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['validate'])
-            ->getMockForAbstractClass();
-        $shippingAddress->addData($shippingAddressData);
-        $shippingAddress->method('validate')
-            ->willReturn(!empty($shippingAddress['firstname']));
-        $billingAddress = $this->getMockBuilder(Address::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['validate'])
-            ->getMockForAbstractClass();
-        $billingAddress->addData($billingAddressData);
-        $billingAddress->method('validate')
-            ->willReturn(!empty($shippingAddress['firstname']));
+        $shippingAddress = $this->createMock(Address::class);
+        $shippingAddress->method('getEmail')->willReturn($shippingAddressData['email'] ?? null);
+        $shippingAddress->method('validate')->willReturn(!empty($shippingAddressData['firstname']));
+        $shippingAddress->method('getData')->willReturnCallback(function ($key) use ($shippingAddressData) {
+            return $shippingAddressData[$key] ?? null;
+        });
+        $billingAddress = $this->createMock(Address::class);
+        $billingAddress->method('getEmail')->willReturn($billingAddressData['email'] ?? null);
+        $billingAddress->method('validate')->willReturn(!empty($billingAddressData['firstname']));
+        $billingAddress->method('getData')->willReturnCallback(function ($key) use ($billingAddressData) {
+            return $billingAddressData[$key] ?? null;
+        });
         $quote->method('getShippingAddress')
             ->willReturn($shippingAddress);
         $quote->method('getBillingAddress')
@@ -223,13 +226,67 @@ class DefaultConfigProviderTest extends TestCase
         $this->addressMetadata->method('getAllAttributesMetadata')
             ->willReturn([$attributeMetadata1, $attributeMetadata2]);
 
-        $totals = $this->getMockBuilder(TotalsInterface::class)
-            ->addMethods(['toArray'])
-            ->getMockForAbstractClass();
-        $totals->method('getItems')
-            ->willReturn([]);
-        $totals->method('getTotalSegments')
-            ->willReturn([]);
+        $totals = new class implements TotalsInterface {
+            private $items = [];
+            private $segments = [];
+            public function getGrandTotal() { return null; }
+            public function setGrandTotal($grandTotal) { return $this; }
+            public function getBaseGrandTotal() { return null; }
+            public function setBaseGrandTotal($baseGrandTotal) { return $this; }
+            public function getSubtotal() { return null; }
+            public function setSubtotal($subtotal) { return $this; }
+            public function getBaseSubtotal() { return null; }
+            public function setBaseSubtotal($baseSubtotal) { return $this; }
+            public function getDiscountAmount() { return null; }
+            public function setDiscountAmount($discountAmount) { return $this; }
+            public function getBaseDiscountAmount() { return null; }
+            public function setBaseDiscountAmount($baseDiscountAmount) { return $this; }
+            public function getSubtotalWithDiscount() { return null; }
+            public function setSubtotalWithDiscount($subtotalWithDiscount) { return $this; }
+            public function getBaseSubtotalWithDiscount() { return null; }
+            public function setBaseSubtotalWithDiscount($baseSubtotalWithDiscount) { return $this; }
+            public function getShippingAmount() { return null; }
+            public function setShippingAmount($shippingAmount) { return $this; }
+            public function getBaseShippingAmount() { return null; }
+            public function setBaseShippingAmount($baseShippingAmount) { return $this; }
+            public function getShippingDiscountAmount() { return null; }
+            public function setShippingDiscountAmount($shippingDiscountAmount) { return $this; }
+            public function getBaseShippingDiscountAmount() { return null; }
+            public function setBaseShippingDiscountAmount($baseShippingDiscountAmount) { return $this; }
+            public function getTaxAmount() { return null; }
+            public function setTaxAmount($taxAmount) { return $this; }
+            public function getBaseTaxAmount() { return null; }
+            public function setBaseTaxAmount($baseTaxAmount) { return $this; }
+            public function getWeeeTaxAppliedAmount() { return null; }
+            public function setWeeeTaxAppliedAmount($weeeTaxAppliedAmount) { return $this; }
+            public function getShippingTaxAmount() { return null; }
+            public function setShippingTaxAmount($shippingTaxAmount) { return $this; }
+            public function getBaseShippingTaxAmount() { return null; }
+            public function setBaseShippingTaxAmount($baseShippingTaxAmount) { return $this; }
+            public function getSubtotalInclTax() { return null; }
+            public function setSubtotalInclTax($subtotalInclTax) { return $this; }
+            public function getBaseSubtotalInclTax() { return null; }
+            public function setBaseSubtotalInclTax($baseSubtotalInclTax) { return $this; }
+            public function getShippingInclTax() { return null; }
+            public function setShippingInclTax($shippingInclTax) { return $this; }
+            public function getBaseShippingInclTax() { return null; }
+            public function setBaseShippingInclTax($baseShippingInclTax) { return $this; }
+            public function getBaseCurrencyCode() { return null; }
+            public function setBaseCurrencyCode($baseCurrencyCode) { return $this; }
+            public function getQuoteCurrencyCode() { return null; }
+            public function setQuoteCurrencyCode($quoteCurrencyCode) { return $this; }
+            public function getCouponCode() { return null; }
+            public function setCouponCode($couponCode) { return $this; }
+            public function getItemsQty() { return null; }
+            public function setItemsQty($itemsQty = null) { return $this; }
+            public function getItems() { return $this->items; }
+            public function setItems(?array $items = null) { $this->items = $items ?? []; return $this; }
+            public function getTotalSegments() { return $this->segments; }
+            public function setTotalSegments($totals = []) { $this->segments = $totals; return $this; }
+            public function getExtensionAttributes() { return null; }
+            public function setExtensionAttributes(\Magento\Quote\Api\Data\TotalsExtensionInterface $extensionAttributes) { return $this; }
+            public function toArray() { return ['items' => $this->items, 'total_segments' => $this->segments]; }
+        };
         $this->cartTotalRepository->method('get')
             ->willReturn($totals);
         $this->shippingMethodConfig->method('getActiveCarriers')

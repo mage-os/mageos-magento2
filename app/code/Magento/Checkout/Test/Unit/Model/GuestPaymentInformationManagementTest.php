@@ -89,16 +89,13 @@ class GuestPaymentInformationManagementTest extends TestCase
         $this->paymentMethodManagementMock = $this->createMock(
             GuestPaymentMethodManagementInterface::class
         );
-        $this->cartManagementMock = $this->getMockForAbstractClass(GuestCartManagementInterface::class);
-        $this->cartRepositoryMock = $this->getMockForAbstractClass(CartRepositoryInterface::class);
+        $this->cartManagementMock = $this->createMock(GuestCartManagementInterface::class);
+        $this->cartRepositoryMock = $this->createMock(CartRepositoryInterface::class);
 
-        $this->quoteIdMaskFactoryMock = $this->createPartialMock(
-            QuoteIdMaskFactory::class,
-            ['create']
-        );
-        $this->loggerMock = $this->getMockForAbstractClass(LoggerInterface::class);
-        $this->limiterMock = $this->getMockForAbstractClass(PaymentProcessingRateLimiterInterface::class);
-        $this->saveLimiterMock = $this->getMockForAbstractClass(PaymentSavingRateLimiterInterface::class);
+        $this->quoteIdMaskFactoryMock = $this->createMock(QuoteIdMaskFactory::class);
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
+        $this->limiterMock = $this->createMock(PaymentProcessingRateLimiterInterface::class);
+        $this->saveLimiterMock = $this->createMock(PaymentSavingRateLimiterInterface::class);
         $this->model = $objectManager->getObject(
             GuestPaymentInformationManagement::class,
             [
@@ -108,10 +105,10 @@ class GuestPaymentInformationManagementTest extends TestCase
                 'cartRepository' => $this->cartRepositoryMock,
                 'quoteIdMaskFactory' => $this->quoteIdMaskFactoryMock,
                 'paymentsRateLimiter' => $this->limiterMock,
-                'savingRateLimiter' => $this->saveLimiterMock
+                'savingRateLimiter' => $this->saveLimiterMock,
+                'logger' => $this->loggerMock
             ]
         );
-        $objectManager->setBackwardCompatibleProperty($this->model, 'logger', $this->loggerMock);
     }
 
     public function testSavePaymentInformationAndPlaceOrder()
@@ -138,8 +135,8 @@ class GuestPaymentInformationManagementTest extends TestCase
         $this->expectException('Magento\Framework\Exception\CouldNotSaveException');
         $cartId = 100;
         $email = 'email@magento.com';
-        $paymentMock = $this->getMockForAbstractClass(PaymentInterface::class);
-        $billingAddressMock = $this->getMockForAbstractClass(AddressInterface::class);
+        $paymentMock = $this->createMock(PaymentInterface::class);
+        $billingAddressMock = $this->createMock(AddressInterface::class);
 
         $this->getMockForAssignBillingAddress($cartId, $billingAddressMock);
         $billingAddressMock->expects($this->once())->method('setEmail')->with($email)->willReturnSelf();
@@ -177,23 +174,24 @@ class GuestPaymentInformationManagementTest extends TestCase
     {
         $cartId = 100;
         $email = 'email@magento.com';
-        $paymentMock = $this->getMockForAbstractClass(PaymentInterface::class);
-        $billingAddressMock = $this->getMockForAbstractClass(AddressInterface::class);
+        $paymentMock = $this->createMock(PaymentInterface::class);
+        $billingAddressMock = $this->createMock(AddressInterface::class);
         $quoteMock = $this->createMock(Quote::class);
-        $quoteMock->expects($this->any())->method('getItemsQty')->willReturn(1);
+        $quoteMock->method('getItemsQty')->willReturn(1);
 
         $billingAddressMock->expects($this->once())->method('setEmail')->with($email)->willReturnSelf();
 
         $this->billingAddressManagementMock->expects($this->never())->method('assign');
         $this->paymentMethodManagementMock->expects($this->once())->method('set')->with($cartId, $paymentMock);
-        $quoteIdMaskMock = $this->getMockBuilder(QuoteIdMask::class)
-            ->addMethods(['getQuoteId'])
-            ->onlyMethods(['load'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->quoteIdMaskFactoryMock->expects($this->once())->method('create')->willReturn($quoteIdMaskMock);
-        $quoteIdMaskMock->expects($this->once())->method('load')->with($cartId, 'masked_id')->willReturnSelf();
-        $quoteIdMaskMock->expects($this->once())->method('getQuoteId')->willReturn($cartId);
+        $quoteIdMask = new class extends QuoteIdMask {
+            public function __construct() {}
+            public function load($id, $field = null)
+            {
+                $this->setData('quote_id', $id);
+                return $this;
+            }
+        };
+        $this->quoteIdMaskFactoryMock->expects($this->once())->method('create')->willReturn($quoteIdMask);
         $this->cartRepositoryMock->expects($this->once())->method('getActive')->with($cartId)->willReturn($quoteMock);
         $quoteMock->expects($this->once())->method('getBillingAddress')->willReturn($billingAddressMock);
         $billingAddressMock->expects($this->once())->method('setEmail')->with($email);
@@ -206,22 +204,23 @@ class GuestPaymentInformationManagementTest extends TestCase
         $this->expectExceptionMessage('DB exception');
         $cartId = 100;
         $email = 'email@magento.com';
-        $paymentMock = $this->getMockForAbstractClass(PaymentInterface::class);
-        $billingAddressMock = $this->getMockForAbstractClass(AddressInterface::class);
+        $paymentMock = $this->createMock(PaymentInterface::class);
+        $billingAddressMock = $this->createMock(AddressInterface::class);
 
         $quoteMock = $this->createMock(Quote::class);
         $quoteMock->method('getBillingAddress')->willReturn($billingAddressMock);
-        $quoteMock->expects($this->any())->method('getItemsQty')->willReturn(1);
+        $quoteMock->method('getItemsQty')->willReturn(1);
         $this->cartRepositoryMock->method('getActive')->with($cartId)->willReturn($quoteMock);
 
-        $quoteIdMask = $this->getMockBuilder(QuoteIdMask::class)
-            ->addMethods(['getQuoteId'])
-            ->onlyMethods(['load'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $quoteIdMask = new class extends QuoteIdMask {
+            public function __construct() {}
+            public function load($id, $field = null)
+            {
+                $this->setData('quote_id', $id);
+                return $this;
+            }
+        };
         $this->quoteIdMaskFactoryMock->method('create')->willReturn($quoteIdMask);
-        $quoteIdMask->method('load')->with($cartId, 'masked_id')->willReturnSelf();
-        $quoteIdMask->method('getQuoteId')->willReturn($cartId);
 
         $billingAddressMock->expects($this->once())->method('setEmail')->with($email)->willReturnSelf();
 
@@ -239,22 +238,23 @@ class GuestPaymentInformationManagementTest extends TestCase
         $this->expectExceptionMessage('Some of the products are disabled.');
         $cartId = 100;
         $email = 'email@magento.com';
-        $paymentMock = $this->getMockForAbstractClass(PaymentInterface::class);
-        $billingAddressMock = $this->getMockForAbstractClass(AddressInterface::class);
+        $paymentMock = $this->createMock(PaymentInterface::class);
+        $billingAddressMock = $this->createMock(AddressInterface::class);
 
         $quoteMock = $this->createMock(Quote::class);
         $quoteMock->method('getBillingAddress')->willReturn($billingAddressMock);
-        $quoteMock->expects($this->any())->method('getItemsQty')->willReturn(0);
+        $quoteMock->method('getItemsQty')->willReturn(0);
         $this->cartRepositoryMock->method('getActive')->with($cartId)->willReturn($quoteMock);
 
-        $quoteIdMask = $this->getMockBuilder(QuoteIdMask::class)
-            ->addMethods(['getQuoteId'])
-            ->onlyMethods(['load'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $quoteIdMask = new class extends QuoteIdMask {
+            public function __construct() {}
+            public function load($id, $field = null)
+            {
+                $this->setData('quote_id', $id);
+                return $this;
+            }
+        };
         $this->quoteIdMaskFactoryMock->method('create')->willReturn($quoteIdMask);
-        $quoteIdMask->method('load')->with($cartId, 'masked_id')->willReturnSelf();
-        $quoteIdMask->method('getQuoteId')->willReturn($cartId);
 
         $billingAddressMock->expects($this->once())->method('setEmail')->with($email)->willReturnSelf();
 
@@ -287,45 +287,26 @@ class GuestPaymentInformationManagementTest extends TestCase
         $billingAddressId = 1;
         $quote = $this->createMock(Quote::class);
         $quoteBillingAddress = $this->createMock(Address::class);
-        $shippingRate = $this->createPartialMock(Rate::class, []);
-        $shippingRate->setCarrier('flatrate');
-        $quoteShippingAddress = $this->getMockBuilder(Address::class)
-            ->addMethods(['setLimitCarrier'])
-            ->onlyMethods(['getShippingMethod', 'getShippingRateByCode'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $quoteShippingAddress = $this->createMock(Address::class);
         $this->cartRepositoryMock->method('getActive')
             ->with($cartId)
             ->willReturn($quote);
-        $quote->expects($this->any())
-            ->method('getItemsQty')
-            ->willReturn(1);
-        $quote->expects($this->any())
-            ->method('getBillingAddress')
-            ->willReturn($quoteBillingAddress);
-        $quote->expects($this->any())
-            ->method('getShippingAddress')
-            ->willReturn($quoteShippingAddress);
-        $quoteBillingAddress->expects($this->any())
-            ->method('getId')
-            ->willReturn($billingAddressId);
+        $quote->method('getItemsQty')->willReturn(1);
+        $quote->method('getBillingAddress')->willReturn($quoteBillingAddress);
+        $quote->method('getShippingAddress')->willReturn($quoteShippingAddress);
+        $quoteBillingAddress->method('getId')->willReturn($billingAddressId);
         $quote->expects($this->any())
             ->method('removeAddress')
             ->with($billingAddressId);
         $quote->expects($this->any())
             ->method('setBillingAddress')
             ->with($billingAddressMock);
-        $quoteShippingAddress->expects($this->any())
-            ->method('getShippingRateByCode')
-            ->willReturn($shippingRate);
+        $quoteShippingAddress->method('getShippingRateByCode')->willReturn(null);
         $quote->expects($this->any())
             ->method('setDataChanges')
             ->willReturnSelf();
         $quoteShippingAddress->method('getShippingMethod')
-            ->willReturn('flatrate_flatrate');
-        $quoteShippingAddress->expects($this->any())
-            ->method('setLimitCarrier')
-            ->with('flatrate');
+            ->willReturn(null);
     }
 
     /**
@@ -338,8 +319,8 @@ class GuestPaymentInformationManagementTest extends TestCase
     {
         $cartId = 100;
         $email = 'email@magento.com';
-        $paymentMock = $this->getMockForAbstractClass(PaymentInterface::class);
-        $billingAddressMock = $this->getMockForAbstractClass(AddressInterface::class);
+        $paymentMock = $this->createMock(PaymentInterface::class);
+        $billingAddressMock = $this->createMock(AddressInterface::class);
         $this->getMockForAssignBillingAddress($cartId, $billingAddressMock);
 
         $billingAddressMock->expects($this->any())->method('setEmail')->with($email)->willReturnSelf();
@@ -362,8 +343,8 @@ class GuestPaymentInformationManagementTest extends TestCase
     {
         $cartId = 100;
         $email = 'email@magento.com';
-        $paymentMock = $this->getMockForAbstractClass(PaymentInterface::class);
-        $billingAddressMock = $this->getMockForAbstractClass(AddressInterface::class);
+        $paymentMock = $this->createMock(PaymentInterface::class);
+        $billingAddressMock = $this->createMock(AddressInterface::class);
         $this->getMockForAssignBillingAddress($cartId, $billingAddressMock);
         $billingAddressMock->expects($this->any())->method('setEmail')->with($email)->willReturnSelf();
 

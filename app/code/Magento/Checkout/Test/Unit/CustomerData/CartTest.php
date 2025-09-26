@@ -72,8 +72,8 @@ class CartTest extends TestCase
         );
         $this->checkoutCartMock = $this->createMock(\Magento\Checkout\Model\Cart::class);
         $this->checkoutHelperMock = $this->createMock(Data::class);
-        $this->layoutMock = $this->getMockForAbstractClass(LayoutInterface::class);
-        $this->itemPoolInterfaceMock = $this->getMockForAbstractClass(ItemPoolInterface::class);
+        $this->layoutMock = $this->createMock(LayoutInterface::class);
+        $this->itemPoolInterfaceMock = $this->createMock(ItemPoolInterface::class);
 
         $this->model = new Cart(
             $this->checkoutSessionMock,
@@ -106,21 +106,22 @@ class CartTest extends TestCase
         $shortcutButtonsHtml = '<span>Buttons</span>';
         $websiteId = 100;
 
-        $subtotalMock = $this->getMockBuilder(DataObject::class)
-            ->addMethods(['getValue'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $subtotalMock->expects($this->once())->method('getValue')->willReturn($subtotalValue);
+        $subtotalMock = new class($subtotalValue) extends DataObject { private $v; public function __construct($v){$this->v=$v;} public function getValue(){return $this->v;} };
         $totals = ['subtotal' => $subtotalMock];
 
-        $quoteMock = $this->getMockBuilder(Quote::class)
-            ->addMethods(['getHasError'])
-            ->onlyMethods(['getTotals', 'getAllVisibleItems', 'getStore'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $quoteMock = new class extends Quote {
+            private $totals; private $items; private $store;
+            public function __construct() {}
+            public function setFixtureTotals($t){ $this->totals = $t; return $this; }
+            public function setFixtureItems($i){ $this->items = $i; return $this; }
+            public function setFixtureStore($s){ $this->store = $s; return $this; }
+            public function getTotals(){ return $this->totals; }
+            public function getAllVisibleItems(){ return $this->items; }
+            public function getStore(){ return $this->store; }
+            public function getHasError(){ return false; }
+        };
         $this->checkoutSessionMock->expects($this->exactly(2))->method('getQuote')->willReturn($quoteMock);
-        $quoteMock->expects($this->once())->method('getTotals')->willReturn($totals);
-        $quoteMock->expects($this->once())->method('getHasError')->willReturn(false);
+        $quoteMock->setFixtureTotals($totals);
 
         $this->checkoutCartMock->expects($this->once())->method('getSummaryQty')->willReturn($summaryQty);
         $this->checkoutHelperMock->expects($this->once())
@@ -129,34 +130,20 @@ class CartTest extends TestCase
             ->willReturn($subtotalValue);
         $this->checkoutHelperMock->expects($this->once())->method('canOnepageCheckout')->willReturn(true);
 
-        $quoteItemMock = $this->getMockBuilder(Item::class)
-            ->addMethods(['getStoreId'])
-            ->onlyMethods(['getProduct'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $quoteMock->expects($this->once())->method('getAllVisibleItems')->willReturn([$quoteItemMock]);
+        $quoteItemMock = new class($storeId) extends Item {
+            private $storeId; private $product;
+            public function __construct($storeId){ $this->storeId = $storeId; }
+            public function getStoreId(){ return $this->storeId; }
+            public function setProduct($p){ $this->product = $p; return $this; }
+            public function getProduct(){ return $this->product; }
+        };
+        $quoteMock->setFixtureItems([$quoteItemMock]);
 
-        $storeMock = $this->getMockBuilder(Store::class)
-            ->addMethods(['getWebsiteId'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $storeMock->expects($this->once())->method('getWebsiteId')->willReturn($websiteId);
-        $quoteMock->expects($this->any())->method('getStore')->willReturn($storeMock);
+        $storeMock = new class($websiteId) extends Store { private $id; public function __construct($id){ $this->id=$id; } public function getWebsiteId(){ return $this->id; } };
+        $quoteMock->setFixtureStore($storeMock);
 
-        $productMock = $this->getMockBuilder(Product::class)
-            ->addMethods(['setUrlDataObject'])
-            ->onlyMethods(['isVisibleInSiteVisibility', 'getId'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $quoteItemMock->expects($this->exactly(3))->method('getProduct')->willReturn($productMock);
-        $quoteItemMock->expects($this->once())->method('getStoreId')->willReturn($storeId);
-
-        $productMock->expects($this->once())->method('isVisibleInSiteVisibility')->willReturn(false);
-        $productMock->expects($this->exactly(3))->method('getId')->willReturn($productId);
-        $productMock->expects($this->once())
-            ->method('setUrlDataObject')
-            ->with(new DataObject($productRewrite[$productId]))
-            ->willReturnSelf();
+        $productMock = new class($productId) extends Product { private $id; private $urlData; public function __construct($id){$this->id=$id;} public function isVisibleInSiteVisibility(){ return false; } public function getId(){ return $this->id; } public function setUrlDataObject($data){ $this->urlData = $data; return $this; } public function getUrlDataObject(){ return $this->urlData; } };
+        $quoteItemMock->setProduct($productMock);
 
         $this->catalogUrlMock->expects($this->once())
             ->method('getRewriteByProductStore')
@@ -210,34 +197,35 @@ class CartTest extends TestCase
         $productRewrite = [$productId => ['rewrite' => 'product']];
         $itemData = ['item' => 'data'];
         $shortcutButtonsHtml = '<span>Buttons</span>';
-        $subtotalMock = $this->getMockBuilder(DataObject::class)
-            ->addMethods(['getValue'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $subtotalMock->expects($this->once())->method('getValue')->willReturn($subtotalValue);
+        $subtotalMock = new class($subtotalValue) extends DataObject { private $v; public function __construct($v){$this->v=$v;} public function getValue(){return $this->v;} };
         $totals = ['subtotal' => $subtotalMock];
 
-        $quoteMock = $this->getMockBuilder(Quote::class)
-            ->addMethods(['getHasError'])
-            ->onlyMethods(['getTotals', 'getAllVisibleItems', 'getStore'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $quoteItemMock = $this->getMockBuilder(Item::class)
-            ->addMethods(['getStoreId'])
-            ->onlyMethods(['getProduct', 'getOptionByCode'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $quoteMock = new class extends Quote {
+            private $totals; private $items; private $store;
+            public function __construct() {}
+            public function setFixtureTotals($t){ $this->totals = $t; return $this; }
+            public function setFixtureItems($i){ $this->items = $i; return $this; }
+            public function setFixtureStore($s){ $this->store = $s; return $this; }
+            public function getTotals(){ return $this->totals; }
+            public function getAllVisibleItems(){ return $this->items; }
+            public function getStore(){ return $this->store; }
+            public function getHasError(){ return false; }
+        };
+        $quoteItemMock = new class($storeId) extends Item {
+            private $storeId; private $product; private $options;
+            public function __construct($storeId){ $this->storeId = $storeId; }
+            public function getStoreId(){ return $this->storeId; }
+            public function setProduct($p){ $this->product = $p; return $this; }
+            public function getProduct(){ return $this->product; }
+            public function setOption($code, $option){ $this->options[$code] = $option; return $this; }
+            public function getOptionByCode($code){ return $this->options[$code] ?? null; }
+        };
 
         $this->checkoutSessionMock->expects($this->exactly(2))->method('getQuote')->willReturn($quoteMock);
-        $quoteMock->expects($this->once())->method('getTotals')->willReturn($totals);
-        $quoteMock->expects($this->once())->method('getHasError')->willReturn(false);
+        $quoteMock->setFixtureTotals($totals);
 
-        $storeMock = $this->getMockBuilder(Store::class)
-            ->addMethods(['getWebsiteId'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $storeMock->expects($this->once())->method('getWebsiteId')->willReturn($websiteId);
-        $quoteMock->expects($this->any())->method('getStore')->willReturn($storeMock);
+        $storeMock = new class($websiteId) extends Store { private $id; public function __construct($id){ $this->id=$id; } public function getWebsiteId(){ return $this->id; } };
+        $quoteMock->setFixtureStore($storeMock);
 
         $this->checkoutCartMock->expects($this->once())->method('getSummaryQty')->willReturn($summaryQty);
         $this->checkoutHelperMock->expects($this->once())
@@ -246,30 +234,14 @@ class CartTest extends TestCase
             ->willReturn($subtotalValue);
         $this->checkoutHelperMock->expects($this->once())->method('canOnepageCheckout')->willReturn(true);
 
-        $quoteMock->expects($this->once())->method('getAllVisibleItems')->willReturn([$quoteItemMock]);
+        $quoteMock->setFixtureItems([$quoteItemMock]);
 
-        $productMock = $this->getMockBuilder(Product::class)
-            ->addMethods(['setUrlDataObject'])
-            ->onlyMethods(['isVisibleInSiteVisibility', 'getId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productMock = new class($productId) extends Product { private $id; private $urlData; public function __construct($id){$this->id=$id;} public function isVisibleInSiteVisibility(){ return false; } public function getId(){ return $this->id; } public function setUrlDataObject($data){ $this->urlData = $data; return $this; } public function getUrlDataObject(){ return $this->urlData; } };
 
         $optionsMock = $this->createMock(Option::class);
         $optionsMock->expects($this->once())->method('getProduct')->willReturn($productMock);
 
-        $quoteItemMock->expects($this->exactly(2))->method('getProduct')->willReturn($productMock);
-        $quoteItemMock->expects($this->exactly(2))
-            ->method('getOptionByCode')
-            ->with('product_type')
-            ->willReturn($optionsMock);
-        $quoteItemMock->expects($this->once())->method('getStoreId')->willReturn($storeId);
-
-        $productMock->expects($this->once())->method('isVisibleInSiteVisibility')->willReturn(false);
-        $productMock->expects($this->exactly(3))->method('getId')->willReturn($productId);
-        $productMock->expects($this->once())
-            ->method('setUrlDataObject')
-            ->with(new DataObject($productRewrite[$productId]))
-            ->willReturnSelf();
+        $quoteItemMock->setProduct($productMock)->setOption('product_type', $optionsMock);
 
         $this->catalogUrlMock->expects($this->once())
             ->method('getRewriteByProductStore')

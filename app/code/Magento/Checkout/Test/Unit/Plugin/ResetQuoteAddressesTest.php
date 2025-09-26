@@ -68,14 +68,7 @@ class ResetQuoteAddressesTest extends TestCase
             'getExtensionAttributes',
             'isVirtual',
         ]);
-        $this->extensionAttributesMock = $this->getMockBuilder(CartExtensionInterface::class)
-            ->addMethods(
-                [
-                    'getShippingAssignments',
-                    'setShippingAssignments'
-                ]
-            )
-            ->getMockForAbstractClass();
+        $this->extensionAttributesMock = $this->createMock(CartExtensionInterface::class);
 
         $this->plugin = new ResetQuoteAddresses();
     }

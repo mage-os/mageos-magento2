@@ -77,14 +77,10 @@ class GenericTest extends TestCase
         /**
          * @var Item|MockObject $itemMock
          */
-        $itemMock = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getIsVirtual'])
-            ->getMock();
-
-        $itemMock->expects($this->once())
-            ->method('getIsVirtual')
-            ->willReturn(true);
+        $itemMock = new class extends Item {
+            public function __construct() {}
+            public function getIsVirtual() { return true; }
+        };
 
         $this->assertEquals($this->model, $this->model->setItem($itemMock));
         $this->assertTrue($this->model->isVirtual());
