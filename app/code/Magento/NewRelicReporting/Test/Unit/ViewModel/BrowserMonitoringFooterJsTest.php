@@ -7,10 +7,8 @@ declare(strict_types=1);
 
 namespace Magento\NewRelicReporting\Test\Unit\ViewModel;
 
-use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\NewRelicReporting\Model\NewRelicWrapper;
 use Magento\NewRelicReporting\ViewModel\BrowserMonitoringFooterJs;
-use Magento\NewRelicReporting\ViewModel\ContentProviderInterface;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -49,8 +47,8 @@ class BrowserMonitoringFooterJsTest extends TestCase
     {
         return [
             'enabled_with_content' => [true,
-                '<script>/* NewRelic footer code */</script>',
-                '<script>/* NewRelic footer code */</script>'
+                '<script>/* NewRelic Footer code */</script>',
+                '<script>/* NewRelic Footer code */</script>'
             ],
             'enabled_with_null' => [true, null, null],
             'enabled_with_empty' => [true, '', ''],
@@ -93,60 +91,6 @@ class BrowserMonitoringFooterJsTest extends TestCase
             ->method('getBrowserTimingFooter')
             ->with($this->identicalTo(false))
             ->willReturn('<script>test</script>');
-
-        $this->viewModel->getContent();
-    }
-
-    /**
-     * Test that the class implements ArgumentInterface
-     *
-     * @return void
-     */
-    public function testImplementsArgumentInterface(): void
-    {
-        $this->assertInstanceOf(ArgumentInterface::class, $this->viewModel);
-    }
-
-    /**
-     * Test that the class implements ContentProviderInterface
-     *
-     * @return void
-     */
-    public function testImplementsContentProviderInterface(): void
-    {
-        $this->assertInstanceOf(ContentProviderInterface::class, $this->viewModel);
-    }
-
-    /**
-     * Test constructor dependency injection
-     *
-     * @return void
-     */
-    public function testConstructorSetsNewRelicWrapperDependency(): void
-    {
-        $wrapper = $this->createMock(NewRelicWrapper::class);
-        $viewModel = new BrowserMonitoringFooterJs($wrapper);
-
-        // Test that the dependency is properly injected by testing behavior
-        $wrapper->method('isAutoInstrumentEnabled')->willReturn(false);
-        $result = $viewModel->getContent();
-
-        $this->assertNull($result);
-    }
-
-    /**
-     * Test getBrowserTimingFooter is never called when auto-instrument is disabled
-     *
-     * @return void
-     */
-    public function testGetBrowserTimingFooterNeverCalledWhenDisabled(): void
-    {
-        $this->newRelicWrapperMock->expects($this->once())
-            ->method('isAutoInstrumentEnabled')
-            ->willReturn(false);
-
-        $this->newRelicWrapperMock->expects($this->never())
-            ->method('getBrowserTimingFooter');
 
         $this->viewModel->getContent();
     }

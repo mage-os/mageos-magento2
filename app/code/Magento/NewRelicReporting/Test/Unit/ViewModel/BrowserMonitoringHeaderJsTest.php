@@ -81,7 +81,7 @@ class BrowserMonitoringHeaderJsTest extends TestCase
      *
      * @return void
      */
-    public function testGetContentCallsBrowserTimingFooterWithCorrectParameter(): void
+    public function testGetContentCallsBrowserTimingHeaderWithCorrectParameter(): void
     {
         $this->newRelicWrapperMock->expects($this->once())
             ->method('isAutoInstrumentEnabled')
