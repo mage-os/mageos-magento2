@@ -17,7 +17,7 @@ use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Invoice;
 
 /**
- * Class InvoiceService
+ * Service for creating and managing invoices
  *
  * @api
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
