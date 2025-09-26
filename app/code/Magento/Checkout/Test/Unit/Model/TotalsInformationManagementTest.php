@@ -14,6 +14,7 @@ use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\CartTotalRepositoryInterface;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class TotalsInformationManagementTest extends \PHPUnit\Framework\TestCase
 {
