@@ -14,6 +14,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Layout;
 use Magento\ProductAlert\Block\Product\View\Price;
 use Magento\ProductAlert\Helper\Data;
+use Magento\ProductAlert\Test\Unit\Block\Product\View\Mock\ProductMock;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -54,9 +55,8 @@ class PriceTest extends TestCase
             Data::class,
             ['isPriceAlertAllowed', 'getSaveUrl']
         );
-        $this->_product = $this->getMockBuilder(Product::class)
-            ->addMethods(['getCanShowPrice'])
-            ->onlyMethods(['getId', '__wakeup'])
+        $this->_product = $this->getMockBuilder(ProductMock::class)
+            ->onlyMethods(['getId', '__wakeup', 'getCanShowPrice'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->_product->method('getId')->willReturn(1);

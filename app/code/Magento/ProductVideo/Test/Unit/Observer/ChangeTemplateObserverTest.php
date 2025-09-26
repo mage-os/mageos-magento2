@@ -11,6 +11,7 @@ use Magento\Framework\Event\Observer;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\ProductVideo\Block\Adminhtml\Product\Edit\NewVideo;
 use Magento\ProductVideo\Observer\ChangeTemplateObserver;
+use Magento\ProductVideo\Test\Unit\Observer\Mock\ObserverMock;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -24,8 +25,8 @@ class ChangeTemplateObserverTest extends TestCase
     public function testChangeTemplate()
     {
         /** @var MockObject|Observer $observer */
-        $observer = $this->getMockBuilder(Observer::class)
-            ->addMethods(['getBlock'])
+        $observer = $this->getMockBuilder(ObserverMock::class)
+            ->onlyMethods(['getBlock'])
             ->disableOriginalConstructor()
             ->getMock();
 

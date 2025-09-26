@@ -18,6 +18,7 @@ use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\ProductVideo\Model\Product\Attribute\Media\ExternalVideoEntryConverter;
 use Magento\ProductVideo\Model\Product\Attribute\Media\VideoEntry;
+use Magento\ProductVideo\Test\Unit\Model\Product\Attribute\Media\Mock\ProductAttributeMediaGalleryEntryExtensionMock;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\RuntimeException;
 use PHPUnit\Framework\TestCase;
@@ -234,20 +235,9 @@ class ExternalVideoEntryConverterTest extends TestCase
      */
     private function getProductAttributeMediaGalleryEntryExtensionMock(): MockObject
     {
-        $mockBuilder = $this->getMockBuilder(ProductAttributeMediaGalleryEntryExtension::class)
-            ->disableOriginalConstructor();
-        try {
-            $mockBuilder->addMethods(
-                [
-                    'setVideoContent',
-                    'getVideoContent',
-                    'getVideoProvider'
-                ]
-            );
-        } catch (RuntimeException $e) {
-            // ProductAttributeMediaGalleryEntryExtension already generated and has all necessary methods.
-        }
-
-        return $mockBuilder->getMock();
+        return $this->getMockBuilder(ProductAttributeMediaGalleryEntryExtensionMock::class)
+            ->onlyMethods(['setVideoContent', 'getVideoContent', 'getVideoProvider'])
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 }
