@@ -1,0 +1,57 @@
+<?php
+/**
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
+ */
+declare(strict_types=1);
+
+namespace Magento\CatalogUrlRewrite\Test\Unit\Mock;
+
+use Magento\Catalog\Model\ResourceModel\Product\Collection;
+
+/**
+ * Mock class for ProductCollection with consecutive calls support
+ */
+class ProductCollectionMock extends Collection
+{
+    private $allIdsSequence = [];
+    private $allIdsCallCount = 0;
+
+    /**
+     * Mock method for getAllIds with sequence support
+     *
+     * @param int|null $limit
+     * @param int|null $offset
+     * @return mixed
+     */
+    public function getAllIds($limit = null, $offset = null)
+    {
+        if (isset($this->allIdsSequence[$this->allIdsCallCount])) {
+            $result = $this->allIdsSequence[$this->allIdsCallCount];
+            $this->allIdsCallCount++;
+            return $result;
+        }
+        return [];
+    }
+
+    /**
+     * Set the sequence for getAllIds calls
+     *
+     * @param array $sequence
+     * @return $this
+     */
+    public function setAllIdsSequence(array $sequence)
+    {
+        $this->allIdsSequence = $sequence;
+        $this->allIdsCallCount = 0;
+        return $this;
+    }
+
+    /**
+     * Required method from Collection
+     */
+    protected function _construct(): void
+    {
+        // Mock implementation
+    }
+}

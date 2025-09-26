@@ -13,6 +13,7 @@ use Magento\Catalog\Model\ResourceModel\Category as CategoryResourceModel;
 use Magento\CatalogUrlRewrite\Model\Category\ChildrenCategoriesProvider;
 use Magento\CatalogUrlRewrite\Model\Category\Plugin\Category\Move as CategoryMovePlugin;
 use Magento\CatalogUrlRewrite\Model\CategoryUrlPathGenerator;
+use Magento\CatalogUrlRewrite\Test\Unit\Mock\CategoryMock;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -79,7 +80,7 @@ class MoveTest extends TestCase
             ->onlyMethods(['saveAttribute'])
             ->getMock();
         $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
-        $this->categoryMock = $this->getMockBuilder(Category::class)
+        $this->categoryMock = $this->getMockBuilder(CategoryMock::class)
             ->disableOriginalConstructor()
             ->onlyMethods(
                 [
@@ -90,10 +91,12 @@ class MoveTest extends TestCase
                     'getData',
                     'getOrigData',
                     'getId',
-                    'getUrlKey'
+                    'getUrlKey',
+                    'setUrlPath',
+                    'unsUrlPath',
+                    'setUrlKey'
                 ]
             )
-            ->addMethods(['setUrlPath', 'unsUrlPath', 'setUrlKey'])
             ->getMock();
         $this->plugin = $this->objectManager->getObject(
             CategoryMovePlugin::class,

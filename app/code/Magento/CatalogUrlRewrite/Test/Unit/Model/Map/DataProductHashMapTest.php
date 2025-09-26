@@ -12,6 +12,7 @@ use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\CatalogUrlRewrite\Model\Map\DataCategoryHashMap;
 use Magento\CatalogUrlRewrite\Model\Map\DataProductHashMap;
 use Magento\CatalogUrlRewrite\Model\Map\HashMapPool;
+use Magento\CatalogUrlRewrite\Test\Unit\Mock\ProductCollectionMock;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -44,10 +45,10 @@ class DataProductHashMapTest extends TestCase
         $this->hashMapPoolMock = $this->createMock(HashMapPool::class);
         $this->dataCategoryMapMock = $this->createMock(DataCategoryHashMap::class);
         $this->collectionFactoryMock = $this->createPartialMock(CollectionFactory::class, ['create']);
-        $this->productCollectionMock = $this->createPartialMock(
-            ProductCollection::class,
-            ['getSelect', 'getConnection', 'getAllIds']
-        );
+        $this->productCollectionMock = $this->getMockBuilder(ProductCollectionMock::class)
+            ->onlyMethods(['getSelect', 'getConnection', 'getAllIds'])
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->collectionFactoryMock->method('create')->willReturn($this->productCollectionMock);
 
@@ -73,11 +74,21 @@ class DataProductHashMapTest extends TestCase
         $connectionMock = $this->createMock(AdapterInterface::class);
         $selectMock = $this->createMock(Select::class);
 
+        $callCount = 0;
         $this->productCollectionMock->expects($this->exactly(3))
             ->method('getAllIds')
-            ->willReturnOnConsecutiveCalls($productIds, $productIdsOther, $productIds);
+            ->willReturnCallback(function() use (&$callCount, $productIds, $productIdsOther) {
+                $callCount++;
+                if ($callCount === 1) {
+                    return $productIds;
+                } elseif ($callCount === 2) {
+                    return $productIdsOther;
+                } else {
+                    return $productIds;
+                }
+            });
         $this->productCollectionMock->method('getConnection')->willReturn($connectionMock);
-        $connectionMock->method('getTableName')->willReturn($this->returnValue($this->returnArgument(0)));
+        $connectionMock->method('getTableName')->willReturnArgument(0);
         $this->productCollectionMock->method('getSelect')->willReturn($selectMock);
         $selectMock->expects($this->any())
             ->method('from')

@@ -14,6 +14,7 @@ use Magento\Catalog\Model\ProductFactory;
 use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
 use Magento\CatalogUrlRewrite\Model\Category\Plugin\Store\Group as GroupPlugin;
 use Magento\CatalogUrlRewrite\Model\ProductUrlRewriteGenerator;
+use Magento\CatalogUrlRewrite\Test\Unit\Mock\AbstractModelMock;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\ResourceModel\Group;
@@ -84,10 +85,9 @@ class GroupTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
-        $this->abstractModelMock = $this->getMockBuilder(AbstractModel::class)
+        $this->abstractModelMock = $this->getMockBuilder(AbstractModelMock::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getStoreIds', 'getWebsiteId'])
-            ->onlyMethods(['isObjectNew', 'dataHasChangedFor'])
+            ->onlyMethods(['getStoreIds', 'getWebsiteId', 'isObjectNew', 'dataHasChangedFor'])
             ->getMock();
         $this->subjectMock = $this->getMockBuilder(Group::class)
             ->disableOriginalConstructor()

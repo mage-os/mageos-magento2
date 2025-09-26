@@ -40,7 +40,6 @@ class StoreViewServiceTest extends TestCase
     {
         $this->config = $this->createMock(Config::class);
         $this->select = $this->getMockBuilder(DbSelect::class)
-            ->addMethods(['select'])
             ->onlyMethods(['from', 'where', 'join'])
             ->disableOriginalConstructor()
             ->getMock();

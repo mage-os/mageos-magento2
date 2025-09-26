@@ -16,6 +16,7 @@ use Magento\CatalogUrlRewrite\Model\CategoryProductUrlPathGenerator;
 use Magento\CatalogUrlRewrite\Model\CategoryUrlRewriteGenerator;
 use Magento\CatalogUrlRewrite\Model\ProductUrlRewriteGenerator;
 use Magento\CatalogUrlRewrite\Observer\UrlRewriteHandler;
+use Magento\CatalogUrlRewrite\Test\Unit\Mock\CategoryMock;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\UrlRewrite\Model\MergeDataProvider;
 use Magento\UrlRewrite\Model\MergeDataProviderFactory;
@@ -147,9 +148,8 @@ class UrlRewriteHandlerTest extends TestCase
     public function testGenerateProductUrlRewrites()
     {
         /* @var \Magento\Catalog\Model\Category|MockObject $category */
-        $category = $this->getMockBuilder(Category::class)
-            ->addMethods(['getChangedProductIds'])
-            ->onlyMethods(['getEntityId', 'getStoreId', 'getData'])
+        $category = $this->getMockBuilder(CategoryMock::class)
+            ->onlyMethods(['getEntityId', 'getStoreId', 'getData', 'getChangedProductIds'])
             ->disableOriginalConstructor()
             ->getMock();
         $category->method('getEntityId')->willReturn(2);

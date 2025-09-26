@@ -12,6 +12,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Model\Category;
 use Magento\CatalogUrlRewrite\Model\CategoryUrlPathGenerator;
+use Magento\CatalogUrlRewrite\Test\Unit\Mock\CategoryMock;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\ScopeInterface;
@@ -39,8 +40,7 @@ class CategoryUrlPathGeneratorTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->category = $this->getMockBuilder(Category::class)
-            ->addMethods(['getUrlPath'])
+        $this->category = $this->getMockBuilder(CategoryMock::class)
             ->onlyMethods(
                 [
                     '__wakeup',
@@ -53,7 +53,8 @@ class CategoryUrlPathGeneratorTest extends TestCase
                     'formatUrlKey',
                     'getName',
                     'isObjectNew',
-                    'getParentCategories'
+                    'getParentCategories',
+                    'getUrlPath'
                 ]
             )
             ->disableOriginalConstructor()
@@ -158,8 +159,7 @@ class CategoryUrlPathGeneratorTest extends TestCase
         $this->category->method('isObjectNew')->willReturn($isCategoryNew);
         $this->category->method('getStoreId')->willReturn(Store::DEFAULT_STORE_ID);
 
-        $parentCategory = $this->getMockBuilder(Category::class)
-            ->addMethods(['getUrlPath'])
+        $parentCategory = $this->getMockBuilder(CategoryMock::class)
             ->onlyMethods(
                 [
                     '__wakeup',
@@ -168,7 +168,8 @@ class CategoryUrlPathGeneratorTest extends TestCase
                     'dataHasChangedFor',
                     'load',
                     'getStoreId',
-                    'getParentCategories'
+                    'getParentCategories',
+                    'getUrlPath'
                 ]
             )
             ->disableOriginalConstructor()

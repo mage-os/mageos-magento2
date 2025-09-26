@@ -16,6 +16,8 @@ use Magento\CatalogUrlRewrite\Model\CategoryUrlPathGenerator;
 use Magento\CatalogUrlRewrite\Model\ResourceModel\Category\GetDefaultUrlKey;
 use Magento\CatalogUrlRewrite\Observer\CategoryUrlPathAutogeneratorObserver;
 use Magento\CatalogUrlRewrite\Service\V1\StoreViewService;
+use Magento\CatalogUrlRewrite\Test\Unit\Mock\CategoryMock;
+use Magento\CatalogUrlRewrite\Test\Unit\Mock\ObserverMock;
 use Magento\Framework\EntityManager\EntityMetadataInterface;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\Event\Observer;
@@ -93,13 +95,12 @@ class CategoryUrlPathAutogeneratorObserverTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->observer = $this->getMockBuilder(Observer::class)
-            ->addMethods(['getCategory'])
-            ->onlyMethods(['getEvent'])
+        $this->observer = $this->getMockBuilder(ObserverMock::class)
+            ->onlyMethods(['getEvent', 'getCategory'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->categoryResource = $this->createMock(CategoryResource::class);
-        $this->category = $this->getMockBuilder(Category::class)
+        $this->category = $this->getMockBuilder(CategoryMock::class)
             ->onlyMethods(
                 [
                     'dataHasChangedFor',
@@ -108,10 +109,10 @@ class CategoryUrlPathAutogeneratorObserverTest extends TestCase
                     'formatUrlKey',
                     'hasChildren',
                     'getData',
-                    'getUrlKey'
+                    'getUrlKey',
+                    'getUrlPath'
                 ]
             )
-            ->addMethods(['getUrlPath'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->category->method('getResource')->willReturn($this->categoryResource);
@@ -294,17 +295,13 @@ class CategoryUrlPathAutogeneratorObserverTest extends TestCase
             ->with('url_path')
             ->willReturn(true);
 
-        $childCategory = $this->getMockBuilder(Category::class)
+        $childCategory = $this->getMockBuilder(CategoryMock::class)
             ->onlyMethods(
                 [
                     'getResource',
                     'getStore',
                     'getStoreId',
                     'setStoreId',
-                ]
-            )
-            ->addMethods(
-                [
                     'getUrlPath',
                     'setUrlPath',
                 ]
@@ -410,14 +407,15 @@ class CategoryUrlPathAutogeneratorObserverTest extends TestCase
         $childCategoryResource = $this->getMockBuilder(CategoryResource::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $childCategory = $this->getMockBuilder(Category::class)
-            ->addMethods(['setUrlPath', 'getUrlPath'])
+        $childCategory = $this->getMockBuilder(CategoryMock::class)
             ->onlyMethods(
                 [
                     'getResource',
                     'getStore',
                     'getStoreId',
-                    'setStoreId'
+                    'setStoreId',
+                    'setUrlPath',
+                    'getUrlPath',
                 ]
             )
             ->disableOriginalConstructor()

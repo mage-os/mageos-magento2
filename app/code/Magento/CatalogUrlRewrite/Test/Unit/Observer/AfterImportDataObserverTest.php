@@ -22,6 +22,9 @@ use Magento\CatalogUrlRewrite\Model\ProductUrlPathGenerator;
 use Magento\CatalogUrlRewrite\Model\ProductUrlRewriteGenerator;
 use Magento\CatalogUrlRewrite\Observer\AfterImportDataObserver;
 use Magento\CatalogUrlRewrite\Service\V1\StoreViewService;
+use Magento\CatalogUrlRewrite\Test\Unit\Mock\EventMock;
+use Magento\CatalogUrlRewrite\Test\Unit\Mock\StoreManagerInterfaceMock;
+use Magento\CatalogUrlRewrite\Test\Unit\Mock\UrlFinderInterfaceMock;
 use Magento\Framework\Event;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Event\Observer;
@@ -210,7 +213,7 @@ class AfterImportDataObserverTest extends TestCase
         );
         $this->storeManager = $this
             ->getMockBuilder(
-                StoreManagerInterface::class
+                StoreManagerInterfaceMock::class
             )
             ->disableOriginalConstructor()
             ->onlyMethods(
@@ -219,8 +222,8 @@ class AfterImportDataObserverTest extends TestCase
                 ]
             )
             ->getMock();
-        $this->event = $this->getMockBuilder(Event::class)
-            ->addMethods(['getAdapter', 'getBunch'])
+        $this->event = $this->getMockBuilder(EventMock::class)
+            ->onlyMethods(['getAdapter', 'getBunch'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->event->method('getAdapter')->willReturn($this->importProduct);
@@ -246,7 +249,7 @@ class AfterImportDataObserverTest extends TestCase
             ]
         );
         $this->urlFinder = $this
-            ->getMockBuilder(UrlFinderInterface::class)
+            ->getMockBuilder(UrlFinderInterfaceMock::class)
             ->onlyMethods(
                 [
                     'findAllByData',

@@ -46,3 +46,4 @@ class AttributeResourceModelMock extends Attribute
         // Mock implementation
     }
 }
+

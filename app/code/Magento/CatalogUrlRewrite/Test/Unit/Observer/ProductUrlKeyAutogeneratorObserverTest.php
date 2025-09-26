@@ -10,6 +10,8 @@ namespace Magento\CatalogUrlRewrite\Test\Unit\Observer;
 use Magento\Catalog\Model\Product;
 use Magento\CatalogUrlRewrite\Model\ProductUrlPathGenerator;
 use Magento\CatalogUrlRewrite\Observer\ProductUrlKeyAutogeneratorObserver;
+use Magento\CatalogUrlRewrite\Test\Unit\Mock\EventMock;
+use Magento\CatalogUrlRewrite\Test\Unit\Mock\ProductMock;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
@@ -66,14 +68,14 @@ class ProductUrlKeyAutogeneratorObserverTest extends TestCase
     {
         $urlKey = 'product_url_key';
 
-        $product = $this->getMockBuilder(Product::class)
+        $product = $this->getMockBuilder(ProductMock::class)
             ->disableOriginalConstructor()
-            ->addMethods(['setUrlKey'])
+            ->onlyMethods(['setUrlKey'])
             ->getMock();
         $product->expects($this->atLeastOnce())->method('setUrlKey')->with($urlKey);
-        $event = $this->getMockBuilder(Event::class)
+        $event = $this->getMockBuilder(EventMock::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getProduct'])
+            ->onlyMethods(['getProduct'])
             ->getMock();
         $event->expects($this->atLeastOnce())->method('getProduct')->willReturn($product);
         /** @var Observer|MockObject $observer */
@@ -95,14 +97,14 @@ class ProductUrlKeyAutogeneratorObserverTest extends TestCase
      */
     public function testExecuteWithEmptyUrlKey(): void
     {
-        $product = $this->getMockBuilder(Product::class)
+        $product = $this->getMockBuilder(ProductMock::class)
             ->disableOriginalConstructor()
-            ->addMethods(['setUrlKey'])
+            ->onlyMethods(['setUrlKey'])
             ->getMock();
         $product->expects($this->never())->method('setUrlKey');
-        $event = $this->getMockBuilder(Event::class)
+        $event = $this->getMockBuilder(EventMock::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getProduct'])
+            ->onlyMethods(['getProduct'])
             ->getMock();
         $event->expects($this->atLeastOnce())->method('getProduct')->willReturn($product);
         /** @var Observer|MockObject $observer */

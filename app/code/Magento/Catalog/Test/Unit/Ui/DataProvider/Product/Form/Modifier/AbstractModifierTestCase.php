@@ -9,6 +9,8 @@ namespace Magento\Catalog\Test\Unit\Ui\DataProvider\Product\Form\Modifier;
 
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\Locator\LocatorInterface;
+use Magento\Catalog\Test\Unit\Ui\DataProvider\Product\Form\Modifier\Mock\ProductInterfaceMock;
+use Magento\Catalog\Test\Unit\Ui\DataProvider\Product\Form\Modifier\Mock\StoreInterfaceMock;
 use Magento\Framework\Stdlib\ArrayManager;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Api\Data\StoreInterface;
@@ -54,10 +56,11 @@ abstract class AbstractModifierTestCase extends TestCase
     protected function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
-        $this->locatorMock = $this->getMockBuilder(LocatorInterface::class)
-            ->getMockForAbstractClass();
-        $this->productMock = $this->getMockBuilder(ProductInterface::class)
-            ->addMethods([
+        $this->locatorMock = $this->createMock(LocatorInterface::class);
+        $this->productMock = $this->getMockBuilder(ProductInterfaceMock::class)
+            ->onlyMethods([
+                'getId',
+                'getTypeId',
                 'getStoreId',
                 'getResource',
                 'getData',
@@ -67,14 +70,10 @@ abstract class AbstractModifierTestCase extends TestCase
                 'getExistsStoreValueFlag',
                 'isLockedAttribute'
             ])
-            ->onlyMethods([
-                'getId',
-                'getTypeId'
-            ])->getMockForAbstractClass();
-        $this->storeMock = $this->getMockBuilder(StoreInterface::class)
-            ->addMethods(['load', 'getConfig'])
-            ->onlyMethods(['getId'])
-            ->getMockForAbstractClass();
+            ->getMock();
+        $this->storeMock = $this->getMockBuilder(StoreInterfaceMock::class)
+            ->onlyMethods(['getId', 'load', 'getConfig'])
+            ->getMock();
         $this->arrayManagerMock = $this->getMockBuilder(ArrayManager::class)
             ->disableOriginalConstructor()
             ->getMock();

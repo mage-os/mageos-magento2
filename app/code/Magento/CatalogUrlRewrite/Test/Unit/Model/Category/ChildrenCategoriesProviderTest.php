@@ -10,6 +10,7 @@ namespace Magento\CatalogUrlRewrite\Test\Unit\Model\Category;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\ResourceModel\Collection\AbstractCollection;
 use Magento\CatalogUrlRewrite\Model\Category\ChildrenCategoriesProvider;
+use Magento\CatalogUrlRewrite\Test\Unit\Mock\AbstractCollectionMock;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -56,10 +57,9 @@ class ChildrenCategoriesProviderTest extends TestCase
                 ]
             )
             ->getMock();
-        $categoryCollection = $this->getMockBuilder(AbstractCollection::class)
+        $categoryCollection = $this->getMockBuilder(AbstractCollectionMock::class)
+            ->onlyMethods(['addAttributeToSelect', 'addIdFilter'])
             ->disableOriginalConstructor()
-            ->onlyMethods(['addAttributeToSelect'])
-            ->addMethods(['addIdFilter'])
             ->getMock();
         $this->category->method('getPath')->willReturn('category-path');
         $this->category->method('getResourceCollection')->willReturn($categoryCollection);

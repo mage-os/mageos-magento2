@@ -17,6 +17,7 @@ use Magento\CatalogUrlRewrite\Model\Map\DataProductUrlRewriteDatabaseMap;
 use Magento\CatalogUrlRewrite\Model\UrlRewriteBunchReplacer;
 use Magento\CatalogUrlRewrite\Observer\CategoryProcessUrlRewriteMovingObserver;
 use Magento\CatalogUrlRewrite\Observer\UrlRewriteHandler;
+use Magento\CatalogUrlRewrite\Test\Unit\Mock\EventMock;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
@@ -96,9 +97,9 @@ class CategoryProcessUrlRewriteMovingObserverTest extends TestCase
     {
         /** @var Observer|MockObject $observerMock */
         $observerMock = $this->createMock(Observer::class);
-        $eventMock = $this->getMockBuilder(Event::class)
+        $eventMock = $this->getMockBuilder(EventMock::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getCategory'])
+            ->onlyMethods(['getCategory'])
             ->getMock();
         $categoryMock = $this->createPartialMock(
             Category::class,
@@ -150,9 +151,9 @@ class CategoryProcessUrlRewriteMovingObserverTest extends TestCase
     {
         /** @var Observer|MockObject $observerMock */
         $observerMock = $this->createMock(Observer::class);
-        $eventMock = $this->getMockBuilder(Event::class)
+        $eventMock = $this->getMockBuilder(EventMock::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getCategory'])
+            ->onlyMethods(['getCategory'])
             ->getMock();
         $categoryMock = $this->createPartialMock(Category::class, ['dataHasChangedFor']);
         $observerMock->expects($this->once())->method('getEvent')->willReturn($eventMock);
