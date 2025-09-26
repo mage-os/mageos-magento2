@@ -15,6 +15,7 @@ use Magento\Catalog\Model\Layer\Filter\Item;
 use Magento\Catalog\Model\Layer\Filter\Item\DataBuilder;
 use Magento\Catalog\Model\Layer\Filter\ItemFactory;
 use Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection;
+use Magento\CatalogSearch\Test\Unit\Mock\FilterItemMock;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Escaper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
@@ -116,9 +117,9 @@ class CategoryTest extends TestCase
             ->onlyMethods(['create'])
             ->getMock();
 
-        $filterItem = $this->getMockBuilder(Item::class)
+        $filterItem = $this->getMockBuilder(FilterItemMock::class)
+            ->onlyMethods(['setFilter', 'setLabel', 'setValue', 'setCount'])
             ->disableOriginalConstructor()
-            ->addMethods(['setFilter', 'setLabel', 'setValue', 'setCount'])
             ->getMock();
         $filterItem->expects($this->any())
             ->method($this->anything())->willReturnSelf();

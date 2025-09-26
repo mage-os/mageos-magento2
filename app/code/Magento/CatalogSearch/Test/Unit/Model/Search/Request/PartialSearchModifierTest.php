@@ -12,6 +12,7 @@ use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory;
 use Magento\CatalogSearch\Model\Search\Request\PartialSearchModifier;
+use Magento\CatalogSearch\Test\Unit\Mock\AttributeMock;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -59,9 +60,8 @@ class PartialSearchModifierTest extends TestCase
         $items = [];
         $searchWeight = 10;
         foreach ($attributes as $attribute) {
-            $item = $this->getMockBuilder(Attribute::class)
-                ->addMethods(['getSearchWeight'])
-                ->onlyMethods(['getAttributeCode'])
+            $item = $this->getMockBuilder(AttributeMock::class)
+                ->onlyMethods(['getSearchWeight', 'getAttributeCode'])
                 ->disableOriginalConstructor()
                 ->getMock();
             $item->method('getAttributeCode')

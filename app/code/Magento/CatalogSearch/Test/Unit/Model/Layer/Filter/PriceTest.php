@@ -19,6 +19,8 @@ use Magento\Catalog\Model\Layer\Filter\Item\DataBuilder;
 use Magento\Catalog\Model\Layer\Filter\ItemFactory;
 use Magento\Catalog\Model\Layer\State;
 use Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection;
+use Magento\CatalogSearch\Test\Unit\Mock\AttributeMock;
+use Magento\CatalogSearch\Test\Unit\Mock\PriceDataProviderMock;
 use Magento\Eav\Model\Entity\Attribute;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Escaper;
@@ -89,9 +91,9 @@ class PriceTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])->getMock();
 
-        $this->dataProvider = $this->getMockBuilder(Price::class)
+        $this->dataProvider = $this->getMockBuilder(PriceDataProviderMock::class)
+            ->onlyMethods(['setPriceId', 'getPrice'])
             ->disableOriginalConstructor()
-            ->addMethods(['setPriceId', 'getPrice'])
             ->getMock();
 
         $dataProviderFactory->expects($this->once())
@@ -150,10 +152,9 @@ class PriceTest extends TestCase
             ->method('escapeHtml')
             ->willReturnArgument(0);
 
-        $this->attribute = $this->getMockBuilder(Attribute::class)
+        $this->attribute = $this->getMockBuilder(AttributeMock::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getAttributeCode', 'getFrontend'])
-            ->addMethods(['getIsFilterable'])
+            ->onlyMethods(['getAttributeCode', 'getFrontend', 'getIsFilterable'])
             ->getMock();
         $objectManagerHelper = new ObjectManagerHelper($this);
         $this->target = $objectManagerHelper->getObject(

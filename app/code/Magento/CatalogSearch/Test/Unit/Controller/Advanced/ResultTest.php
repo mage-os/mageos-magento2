@@ -27,6 +27,8 @@ use Magento\Framework\View\Model\Layout\Merge;
 use Magento\Framework\View\Result\Layout;
 use Magento\Framework\View\Result\Page;
 use Magento\Framework\Webapi\Response;
+use Magento\CatalogSearch\Test\Unit\Mock\LayoutMock;
+use Magento\CatalogSearch\Test\Unit\Mock\RequestMock;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -50,8 +52,8 @@ class ResultTest extends TestCase
         );
         $update = $this->createPartialMock(Merge::class, ['getHandles']);
         $update->expects($this->once())->method('getHandles')->willReturn([]);
-        $layout = $this->getMockBuilder(Layout::class)
-            ->addMethods(['getUpdate'])
+        $layout = $this->getMockBuilder(LayoutMock::class)
+            ->onlyMethods(['getUpdate'])
             ->disableOriginalConstructor()
             ->getMock();
         $layout->expects($this->once())->method('getUpdate')->willReturn($update);
@@ -64,8 +66,8 @@ class ResultTest extends TestCase
             }
         );
 
-        $request = $this->getMockBuilder(Request::class)
-            ->addMethods(['getQueryValue'])
+        $request = $this->getMockBuilder(RequestMock::class)
+            ->onlyMethods(['getQueryValue'])
             ->disableOriginalConstructor()
             ->getMock();
         $request->expects($this->once())->method('getQueryValue')->willReturn($expectedQuery);
@@ -184,8 +186,8 @@ class ResultTest extends TestCase
         $update = $this->createPartialMock(Merge::class, ['getHandles']);
         $update->expects($this->once())->method('getHandles')->willReturn([]);
 
-        $layout = $this->getMockBuilder(Layout::class)
-            ->addMethods(['getUpdate'])
+        $layout = $this->getMockBuilder(LayoutMock::class)
+            ->onlyMethods(['getUpdate'])
             ->disableOriginalConstructor()
             ->getMock();
         $layout->expects($this->once())->method('getUpdate')->willReturn($update);
@@ -203,8 +205,8 @@ class ResultTest extends TestCase
         $view->expects($this->once())->method('getPage')->willReturn($page);
         $view->expects($this->once())->method('getLayout')->willReturn($layout);
 
-        $request = $this->getMockBuilder(Request::class)
-            ->addMethods(['getQueryValue'])
+        $request = $this->getMockBuilder(RequestMock::class)
+            ->onlyMethods(['getQueryValue'])
             ->disableOriginalConstructor()
             ->getMock();
         $request->expects($this->once())->method('getQueryValue')->willReturn($expectedQuery);

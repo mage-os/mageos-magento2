@@ -15,6 +15,7 @@ use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Framework\Data\Form\Element\Fieldset;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Framework\View\Element\AbstractBlock;
+use Magento\CatalogSearch\Test\Unit\Mock\AbstractBlockMock;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -78,9 +79,9 @@ class FrontTabPluginTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->childElementMock = $this->createMock(AbstractElement::class);
-        $this->childBlockMock = $this->getMockBuilder(AbstractBlock::class)
+        $this->childBlockMock = $this->getMockBuilder(AbstractBlockMock::class)
+            ->onlyMethods(['addFieldMap', 'addFieldDependence'])
             ->disableOriginalConstructor()
-            ->addMethods(['addFieldMap', 'addFieldDependence'])
             ->getMock();
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);

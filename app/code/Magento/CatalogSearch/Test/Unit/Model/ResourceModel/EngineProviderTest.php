@@ -9,6 +9,7 @@ namespace Magento\CatalogSearch\Test\Unit\Model\ResourceModel;
 
 use Magento\CatalogSearch\Model\ResourceModel\EngineInterface;
 use Magento\CatalogSearch\Model\ResourceModel\EngineProvider;
+use Magento\CatalogSearch\Test\Unit\Mock\EngineInterfaceMock;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Search\EngineResolverInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -43,8 +44,8 @@ class EngineProviderTest extends TestCase
             ->method('getCurrentSearchEngine')
             ->willReturn($currentEngine);
 
-        $engineMock = $this->getMockBuilder($currentEngineClass)
-            ->addMethods(['isAvailable'])
+        $engineMock = $this->getMockBuilder(EngineInterfaceMock::class)
+            ->onlyMethods(['isAvailable'])
             ->getMock();
 
         $this->objectManagerMock->expects($this->once())
@@ -133,8 +134,8 @@ class EngineProviderTest extends TestCase
             ->method('getCurrentSearchEngine')
             ->willReturn($currentEngine);
 
-        $engineMock = $this->getMockBuilder($currentEngineClass)
-            ->addMethods(['isAvailable'])
+        $engineMock = $this->getMockBuilder(EngineInterfaceMock::class)
+            ->onlyMethods(['isAvailable'])
             ->getMock();
 
         $this->objectManagerMock->expects($this->once())

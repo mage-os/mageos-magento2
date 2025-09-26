@@ -11,6 +11,7 @@ use Magento\Catalog\Model\Category as CategoryModel;
 use Magento\Catalog\Model\ResourceModel\Category as CategoryResourceModel;
 use Magento\CatalogSearch\Model\Indexer\Fulltext;
 use Magento\CatalogSearch\Model\Indexer\Fulltext\Plugin\Category as CategoryPlugin;
+use Magento\CatalogSearch\Test\Unit\Mock\IndexerInterfaceMock;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Indexer\IndexerInterface;
 use Magento\Framework\Indexer\IndexerRegistry;
@@ -61,10 +62,9 @@ class CategoryTest extends TestCase
         $connection = $this->createMock(AdapterInterface::class);
         $this->categoryResourceMock->method('getConnection')->willReturn($connection);
 
-        $this->indexerMock = $this->getMockBuilder(IndexerInterface::class)
+        $this->indexerMock = $this->getMockBuilder(IndexerInterfaceMock::class)
+            ->onlyMethods(['getId', 'getState', '__wakeup'])
             ->disableOriginalConstructor()
-            ->addMethods(['__wakeup'])
-            ->onlyMethods(['getId', 'getState'])
             ->getMock();
         $this->indexerRegistryMock = $this->getMockBuilder(IndexerRegistry::class)
             ->disableOriginalConstructor()

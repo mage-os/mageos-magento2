@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\CatalogSearch\Test\Unit\Model\Autocomplete;
 
 use Magento\CatalogSearch\Model\Autocomplete\DataProvider;
+use Magento\CatalogSearch\Test\Unit\Mock\ItemMock;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DataObject;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -101,19 +102,17 @@ class DataProviderTest extends TestCase
             ->method('getQueryText')
             ->willReturn($queryString);
 
-        $itemMock =  $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
+        $itemMock =  $this->getMockBuilder(ItemMock::class)
             ->onlyMethods(['getTitle', 'toArray'])
+            ->disableOriginalConstructor()
             ->getMock();
-        $itemMock->expects($this->any())
-            ->method('getTitle')
-            ->will($this->onConsecutiveCalls(
-                $queryString,
-                'string1',
-                'string2',
-                'string11',
-                'string100'
-            ));
+        $itemMock->setTitleSequence([
+            $queryString,
+            'string1',
+            'string2',
+            'string11',
+            'string100'
+        ]);
         $itemMock->method('toArray')->willReturn($expected);
 
         $this->itemFactory->method('create')->willReturn($itemMock);

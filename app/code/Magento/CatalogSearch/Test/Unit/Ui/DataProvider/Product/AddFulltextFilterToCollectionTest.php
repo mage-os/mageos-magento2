@@ -10,6 +10,7 @@ namespace Magento\CatalogSearch\Test\Unit\Ui\DataProvider\Product;
 use Magento\CatalogSearch\Model\ResourceModel\Search\Collection as SearchCollection;
 use Magento\CatalogSearch\Ui\DataProvider\Product\AddFulltextFilterToCollection;
 use Magento\Framework\Data\Collection;
+use Magento\CatalogSearch\Test\Unit\Mock\CollectionMock;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -47,8 +48,8 @@ class AddFulltextFilterToCollectionTest extends TestCase
         $this->searchCollection->expects($this->any())
             ->method('load')
             ->willReturnSelf();
-        $this->collection = $this->getMockBuilder(Collection::class)
-            ->addMethods(['addIdFilter'])
+        $this->collection = $this->getMockBuilder(CollectionMock::class)
+            ->onlyMethods(['addIdFilter'])
             ->disableOriginalConstructor()
             ->getMock();
 
