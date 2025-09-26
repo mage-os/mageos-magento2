@@ -1299,7 +1299,7 @@ class CommonTaxCollectorTest extends TestCase
     /**
      * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
-    public function testConstructorFallsBackToObjectManagerForOptionalDependencies(): void
+    public function testConstructorFallsBackToOmForOptionalDependencies(): void
     {
         // Do not call getInstance() in unit context; no original OM to restore
 
