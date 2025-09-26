@@ -51,7 +51,7 @@ class RendererTest extends TestCase
     {
         $objectManagerHelper = new ObjectManager($this);
 
-        $this->layout = $this->getMockForAbstractClass(LayoutInterface::class);
+        $this->layout = $this->createMock(LayoutInterface::class);
 
         $context = $this->getMockBuilder(Context::class)
             ->disableOriginalConstructor()
@@ -97,11 +97,11 @@ class RendererTest extends TestCase
             Product::class,
             ['getName', 'getIdentities']
         );
-        $product->expects($this->any())->method('getName')->willReturn('Parent Product');
+        $product->method('getName')->willReturn('Parent Product');
 
         /** @var Item|MockObject $item */
         $item = $this->createMock(Item::class);
-        $item->expects($this->any())->method('getProduct')->willReturn($product);
+        $item->method('getProduct')->willReturn($product);
 
         $this->itemResolver->expects($this->any())
             ->method('getFinalProduct')

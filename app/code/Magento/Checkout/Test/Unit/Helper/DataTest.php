@@ -128,9 +128,7 @@ class DataTest extends TestCase
             );
 
         $this->checkoutSession = $arguments['checkoutSession'];
-        $arguments['localeDate']->expects($this->any())
-            ->method('formatDateTime')
-            ->willReturn('Oct 02, 2013');
+        $arguments['localeDate']->method('formatDateTime')->willReturn('Oct 02, 2013');
 
         $this->transportBuilder = $arguments['transportBuilder'];
 
@@ -148,7 +146,7 @@ class DataTest extends TestCase
             ->onlyMethods(['getId'])
             ->disableOriginalConstructor()
             ->getMock();
-        $quoteMock->expects($this->any())->method('getId')->willReturn(1);
+        $quoteMock->method('getId')->willReturn(1);
 
         $this->assertSame($this->helper, $this->helper->sendPaymentFailedEmail($quoteMock, 'test message'));
     }
@@ -231,7 +229,7 @@ class DataTest extends TestCase
         $rowTotal = 15;
         $roundPrice = 17;
         $expected = 17;
-        $storeManager = $this->getMockForAbstractClass(StoreManagerInterface::class);
+        $storeManager = $this->createMock(StoreManagerInterface::class);
         $objectManagerHelper = new ObjectManager($this);
         $helper = $objectManagerHelper->getObject(
             Data::class,
@@ -274,7 +272,7 @@ class DataTest extends TestCase
 
     public function testGetBasePriceInclTaxWithoutQty()
     {
-        $storeManager = $this->getMockForAbstractClass(StoreManagerInterface::class);
+        $storeManager = $this->createMock(StoreManagerInterface::class);
         $objectManagerHelper = new ObjectManager($this);
         $helper = $objectManagerHelper->getObject(
             Data::class,
@@ -290,7 +288,7 @@ class DataTest extends TestCase
 
     public function testGetBasePriceInclTax()
     {
-        $storeManager = $this->getMockForAbstractClass(StoreManagerInterface::class);
+        $storeManager = $this->createMock(StoreManagerInterface::class);
         $objectManagerHelper = new ObjectManager($this);
         $helper = $objectManagerHelper->getObject(
             Data::class,

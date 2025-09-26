@@ -40,11 +40,9 @@ class ActionsTest extends TestCase
     {
         $objectManagerHelper = new ObjectManager($this);
 
-        $this->scopeConfigMock = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->getMockForAbstractClass();
+        $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
 
-        $this->layoutMock = $this->getMockBuilder(LayoutInterface::class)
-            ->getMockForAbstractClass();
+        $this->layoutMock = $this->createMock(LayoutInterface::class);
 
         $this->model = $objectManagerHelper->getObject(
             Actions::class,

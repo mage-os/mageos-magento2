@@ -78,9 +78,7 @@ class ResetQuoteAddressesTest extends TestCase
      */
     public function testRemovingTheAddressesFromNonEmptyQuote()
     {
-        $this->quoteMock->expects($this->any())
-            ->method('getAllVisibleItems')
-            ->willReturn(static::STUB_QUOTE_ITEMS);
+        $this->quoteMock->method('getAllVisibleItems')->willReturn(static::STUB_QUOTE_ITEMS);
         $this->quoteMock->expects($this->never())
             ->method('getAllAddresses')
             ->willReturnSelf();
@@ -100,21 +98,15 @@ class ResetQuoteAddressesTest extends TestCase
         bool $isVirtualQuote,
         array $extensionAttributes
     ) {
-        $this->quoteMock->expects($this->any())
-            ->method('getAllVisibleItems')
-            ->willReturn([]);
+        $this->quoteMock->method('getAllVisibleItems')->willReturn([]);
 
         $address = $this->createPartialMock(Address::class, ['getId']);
 
-        $address->expects($this->any())
-            ->method('getId')
-            ->willReturn(static::STUB_ADDRESS_ID);
+        $address->method('getId')->willReturn(static::STUB_ADDRESS_ID);
 
         $addresses = [$address];
 
-        $this->quoteMock->expects($this->any())
-            ->method('getAllAddresses')
-            ->willReturn($addresses);
+        $this->quoteMock->method('getAllAddresses')->willReturn($addresses);
 
         $this->quoteMock->expects($this->exactly(count($addresses)))
             ->method('removeAddress')
@@ -129,9 +121,7 @@ class ResetQuoteAddressesTest extends TestCase
             ->willReturn($isVirtualQuote);
 
         if (!$isVirtualQuote && $extensionAttributes) {
-            $this->extensionAttributesMock->expects($this->any())
-                ->method('getShippingAssignments')
-                ->willReturn([static::STUB_SHIPPING_ASSIGNMENTS]);
+            $this->extensionAttributesMock->method('getShippingAssignments')->willReturn([static::STUB_SHIPPING_ASSIGNMENTS]);
 
             $this->extensionAttributesMock->expects($this->once())
                 ->method('setShippingAssignments')
@@ -156,13 +146,9 @@ class ResetQuoteAddressesTest extends TestCase
         $quoteVisibleItems = [];
         $addresses = [];
 
-        $this->quoteMock->expects($this->any())
-            ->method('getAllVisibleItems')
-            ->willReturn($quoteVisibleItems);
+        $this->quoteMock->method('getAllVisibleItems')->willReturn($quoteVisibleItems);
 
-        $this->quoteMock->expects($this->any())
-            ->method('getAllAddresses')
-            ->willReturn($addresses);
+        $this->quoteMock->method('getAllAddresses')->willReturn($addresses);
 
         $this->quoteMock->expects($this->once())
             ->method('getExtensionAttributes')
@@ -173,9 +159,7 @@ class ResetQuoteAddressesTest extends TestCase
             ->willReturn($isVirtualQuote);
 
         if (!$isVirtualQuote && $extensionAttributes) {
-            $this->extensionAttributesMock->expects($this->any())
-                ->method('getShippingAssignments')
-                ->willReturn($extensionAttributes);
+            $this->extensionAttributesMock->method('getShippingAssignments')->willReturn($extensionAttributes);
 
             $this->extensionAttributesMock->expects($this->once())
                 ->method('setShippingAssignments')

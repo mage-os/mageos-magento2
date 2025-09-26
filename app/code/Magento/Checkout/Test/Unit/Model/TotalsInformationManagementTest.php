@@ -62,8 +62,8 @@ class TotalsInformationManagementTest extends \PHPUnit\Framework\TestCase
      * @param string|null $carrierCode
      * @param string|null $carrierMethod
      * @param int $methodSetCount
-     * @dataProvider dataProviderCalculate
      */
+    #[DataProvider('dataProviderCalculate')]
     public function testCalculate(?string $carrierCode, ?string $carrierMethod, int $methodSetCount)
     {
         $cartId = 1;
@@ -90,8 +90,8 @@ class TotalsInformationManagementTest extends \PHPUnit\Framework\TestCase
         };
 
         $addressInformationMock->expects($this->once())->method('getAddress')->willReturn($addressMock);
-        $addressInformationMock->expects($this->any())->method('getShippingCarrierCode')->willReturn($carrierCode);
-        $addressInformationMock->expects($this->any())->method('getShippingMethodCode')->willReturn($carrierMethod);
+        $addressInformationMock->method('getShippingCarrierCode')->willReturn($carrierCode);
+        $addressInformationMock->method('getShippingMethodCode')->willReturn($carrierMethod);
         $cartMock->expects($this->once())->method('setShippingAddress')->with($addressMock);
         $cartMock->expects($this->exactly($methodSetCount))->method('getShippingAddress')->willReturn($addressMock);
         $cartMock->expects($this->once())->method('collectTotals');
