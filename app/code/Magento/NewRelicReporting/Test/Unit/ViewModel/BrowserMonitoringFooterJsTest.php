@@ -13,6 +13,11 @@ use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Test for BrowserMonitoringFooterJs ViewModel
+ *
+ * @covers \Magento\NewRelicReporting\ViewModel\BrowserMonitoringFooterJs
+ */
 class BrowserMonitoringFooterJsTest extends TestCase
 {
     /**
@@ -47,8 +52,8 @@ class BrowserMonitoringFooterJsTest extends TestCase
     {
         return [
             'enabled_with_content' => [true,
-                '<script>/* NewRelic Footer code */</script>',
-                '<script>/* NewRelic Footer code */</script>'
+                '<script type="text/x-magento-init">{"*":{"newRelicFooter":{"enabled":true}}}</script>',
+                '<script type="text/x-magento-init">{"*":{"newRelicFooter":{"enabled":true}}}</script>'
             ],
             'enabled_with_null' => [true, null, null],
             'enabled_with_empty' => [true, '', ''],
@@ -70,7 +75,8 @@ class BrowserMonitoringFooterJsTest extends TestCase
         $this->newRelicWrapperMock->method('isAutoInstrumentEnabled')->willReturn($isEnabled);
 
         if ($isEnabled) {
-            $this->newRelicWrapperMock->method('getBrowserTimingFooter')->with(false)->willReturn($footerContent);
+            $this->newRelicWrapperMock->method('getBrowserTimingFooter')
+                ->with(false)->willReturn($footerContent);
         }
 
         $this->assertEquals($expected, $this->viewModel->getContent());
@@ -90,7 +96,7 @@ class BrowserMonitoringFooterJsTest extends TestCase
         $this->newRelicWrapperMock->expects($this->once())
             ->method('getBrowserTimingFooter')
             ->with($this->identicalTo(false))
-            ->willReturn('<script>test</script>');
+            ->willReturn('<script type="text/x-magento-init">{"*":{"newRelicFooter":{"enabled":true}}}</script>');
 
         $this->viewModel->getContent();
     }

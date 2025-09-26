@@ -13,6 +13,11 @@ use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Test for BrowserMonitoringHeaderJs ViewModel
+ *
+ * @covers \Magento\NewRelicReporting\ViewModel\BrowserMonitoringHeaderJs
+ */
 class BrowserMonitoringHeaderJsTest extends TestCase
 {
     /**
@@ -47,8 +52,8 @@ class BrowserMonitoringHeaderJsTest extends TestCase
     {
         return [
             'enabled_with_content' => [true,
-                '<script>/* NewRelic Header code */</script>',
-                '<script>/* NewRelic Header code */</script>'
+                '<script type="text/x-magento-init">{"*":{"newRelicHeader":{"enabled":true}}}</script>',
+                '<script type="text/x-magento-init">{"*":{"newRelicHeader":{"enabled":true}}}</script>'
             ],
             'enabled_with_null' => [true, null, null],
             'enabled_with_empty' => [true, '', ''],
@@ -70,7 +75,8 @@ class BrowserMonitoringHeaderJsTest extends TestCase
         $this->newRelicWrapperMock->method('isAutoInstrumentEnabled')->willReturn($isEnabled);
 
         if ($isEnabled) {
-            $this->newRelicWrapperMock->method('getBrowserTimingHeader')->with(false)->willReturn($headerContent);
+            $this->newRelicWrapperMock->method('getBrowserTimingHeader')
+                ->with(false)->willReturn($headerContent);
         }
 
         $this->assertEquals($expected, $this->viewModel->getContent());
@@ -90,7 +96,7 @@ class BrowserMonitoringHeaderJsTest extends TestCase
         $this->newRelicWrapperMock->expects($this->once())
             ->method('getBrowserTimingHeader')
             ->with($this->identicalTo(false))
-            ->willReturn('<script>test</script>');
+            ->willReturn('<script type="text/x-magento-init">{"*":{"newRelicHeader":{"enabled":true}}}</script>');
 
         $this->viewModel->getContent();
     }
