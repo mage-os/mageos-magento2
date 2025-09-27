@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\CompareListGraphQl\Model\Service;
 
+use Exception;
 use Magento\Framework\Stdlib\CookieManagerInterface;
 use Magento\Framework\Stdlib\Cookie\CookieMetadataFactory;
 use Magento\Framework\Exception\InputException;
@@ -37,33 +38,15 @@ class CompareCookieManager
     public const COOKIE_LIFETIME = 86400;
 
     /**
-     * @var CookieManagerInterface
-     */
-    private CookieManagerInterface $cookieManager;
-
-    /**
-     * @var CookieMetadataFactory
-     */
-    private CookieMetadataFactory $cookieMetadataFactory;
-
-    /**
-     * @var LoggerInterface
-     */
-    private LoggerInterface $logger;
-
-    /**
      * @param CookieManagerInterface $cookieManager
      * @param CookieMetadataFactory $cookieMetadataFactory
      * @param LoggerInterface $logger
      */
     public function __construct(
-        CookieManagerInterface $cookieManager,
-        CookieMetadataFactory  $cookieMetadataFactory,
-        LoggerInterface        $logger
+        private readonly CookieManagerInterface $cookieManager,
+        private readonly CookieMetadataFactory  $cookieMetadataFactory,
+        private readonly LoggerInterface        $logger
     ) {
-        $this->cookieManager = $cookieManager;
-        $this->cookieMetadataFactory = $cookieMetadataFactory;
-        $this->logger = $logger;
     }
 
     /**
@@ -76,7 +59,7 @@ class CompareCookieManager
         try {
             $cookieValue = json_encode(['compare-products' => time()]);
             $this->setCookie($cookieValue);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->error('Error invalidating compare products cookie: ' . $e->getMessage());
         }
     }
