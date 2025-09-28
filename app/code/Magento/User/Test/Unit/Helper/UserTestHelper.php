@@ -14,6 +14,9 @@ use Magento\User\Model\User;
  */
 class UserTestHelper extends User
 {
+    /**
+     * @var mixed
+     */
     private $role = null;
     
     public function __construct()
@@ -23,7 +26,7 @@ class UserTestHelper extends User
     
     /**
      * Set role
-     * 
+     *
      * @param mixed $role
      * @return $this
      */
@@ -35,7 +38,7 @@ class UserTestHelper extends User
     
     /**
      * Get role
-     * 
+     *
      * @return mixed
      */
     public function getRole()

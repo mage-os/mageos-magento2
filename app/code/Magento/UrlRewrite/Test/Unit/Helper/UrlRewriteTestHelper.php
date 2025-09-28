@@ -11,7 +11,14 @@ use Magento\UrlRewrite\Model\UrlRewrite;
 
 class UrlRewriteTestHelper extends UrlRewrite
 {
+    /**
+     * @var int
+     */
     private $id = 1;
+    
+    /**
+     * @var int
+     */
     private $storeId = 1;
     
     public function __construct()
@@ -21,6 +28,8 @@ class UrlRewriteTestHelper extends UrlRewrite
     
     public function load($id, $field = null)
     {
+        // Suppress unused parameter warnings for test helper
+        unset($id, $field);
         return $this;
     }
     

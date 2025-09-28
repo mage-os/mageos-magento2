@@ -14,19 +14,74 @@ use Magento\Catalog\Model\Product;
  */
 class ProductTestHelper extends Product
 {
+    /**
+     * @var bool
+     */
     private $isObjectNew = false;
+    
+    /**
+     * @var bool
+     */
     private $isRecurring = false;
+    
+    /**
+     * @var int
+     */
     private $isObjectNewCallCount = 0;
+    
+    /**
+     * @var mixed
+     */
     private $price = null;
+    
+    /**
+     * @var mixed
+     */
     private $status = null;
+    
+    /**
+     * @var string
+     */
     private $typeId = 'simple';
+    
+    /**
+     * @var mixed
+     */
     private $downloadableData = null;
+    
+    /**
+     * @var mixed
+     */
     private $typeInstance = null;
+    
+    /**
+     * @var mixed
+     */
     private $bundleSelectionsData = null;
+    
+    /**
+     * @var int
+     */
     private $storeId = 1;
+    
+    /**
+     * @var array
+     */
     private $data = [];
+    
+    /**
+     * @var int
+     */
     private $priceType = 0;
+    
+    /**
+     * @var mixed
+     */
     private $giftcardAmounts = null;
+    
+    /**
+     * @var mixed
+     */
     private $msrpDisplayActualPriceType = null;
     
     public function __construct()
@@ -36,7 +91,7 @@ class ProductTestHelper extends Product
     
     /**
      * Set is object new
-     * 
+     *
      * @param bool $flag
      * @return $this
      */
@@ -48,9 +103,10 @@ class ProductTestHelper extends Product
     
     /**
      * Is object new
-     * 
+     *
      * @param bool|null $flag
      * @return bool
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function isObjectNew($flag = null)
     {
@@ -60,7 +116,7 @@ class ProductTestHelper extends Product
     
     /**
      * Get is object new call count
-     * 
+     *
      * @return int
      */
     public function getIsObjectNewCallCount()
@@ -70,7 +126,7 @@ class ProductTestHelper extends Product
     
     /**
      * Reset is object new call count
-     * 
+     *
      * @return $this
      */
     public function resetIsObjectNewCallCount()
@@ -81,7 +137,7 @@ class ProductTestHelper extends Product
     
     /**
      * Set is recurring
-     * 
+     *
      * @param bool $value
      * @return $this
      */
@@ -92,18 +148,29 @@ class ProductTestHelper extends Product
     }
     
     /**
-     * Get is recurring
-     * 
+     * Is recurring
+     *
      * @return bool
      */
-    public function getIsRecurring()
+    public function isRecurring()
     {
         return $this->isRecurring;
     }
     
     /**
+     * Get is recurring (alias for compatibility)
+     *
+     * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     */
+    public function getIsRecurring()
+    {
+        return $this->isRecurring();
+    }
+    
+    /**
      * Set price
-     * 
+     *
      * @param mixed $price
      * @return $this
      */
@@ -115,7 +182,7 @@ class ProductTestHelper extends Product
     
     /**
      * Get price
-     * 
+     *
      * @return mixed
      */
     public function getPrice()
@@ -125,7 +192,7 @@ class ProductTestHelper extends Product
     
     /**
      * Set status
-     * 
+     *
      * @param mixed $status
      * @return $this
      */
@@ -137,7 +204,7 @@ class ProductTestHelper extends Product
     
     /**
      * Get status
-     * 
+     *
      * @return mixed
      */
     public function getStatus()
@@ -147,7 +214,7 @@ class ProductTestHelper extends Product
     
     /**
      * Set type ID
-     * 
+     *
      * @param string $typeId
      * @return $this
      */
@@ -159,7 +226,7 @@ class ProductTestHelper extends Product
     
     /**
      * Get type ID
-     * 
+     *
      * @return string
      */
     public function getTypeId()
@@ -169,7 +236,7 @@ class ProductTestHelper extends Product
     
     /**
      * Set downloadable data
-     * 
+     *
      * @param array $data
      * @return $this
      */
@@ -181,7 +248,7 @@ class ProductTestHelper extends Product
     
     /**
      * Get downloadable data
-     * 
+     *
      * @return array|null
      */
     public function getDownloadableData()
@@ -191,7 +258,7 @@ class ProductTestHelper extends Product
     
     /**
      * Set type instance
-     * 
+     *
      * @param mixed $typeInstance
      * @return $this
      */
@@ -203,7 +270,7 @@ class ProductTestHelper extends Product
     
     /**
      * Get type instance
-     * 
+     *
      * @return mixed
      */
     public function getTypeInstance()
@@ -213,7 +280,7 @@ class ProductTestHelper extends Product
     
     /**
      * Set bundle selections data
-     * 
+     *
      * @param array $data
      * @return $this
      */
@@ -225,7 +292,7 @@ class ProductTestHelper extends Product
     
     /**
      * Get bundle selections data
-     * 
+     *
      * @return array|null
      */
     public function getBundleSelectionsData()
@@ -235,7 +302,7 @@ class ProductTestHelper extends Product
     
     /**
      * Set store ID
-     * 
+     *
      * @param mixed $storeId
      * @return $this
      */
@@ -247,7 +314,7 @@ class ProductTestHelper extends Product
     
     /**
      * Get store ID
-     * 
+     *
      * @return mixed
      */
     public function getStoreId()
@@ -257,7 +324,7 @@ class ProductTestHelper extends Product
     
     /**
      * Set data
-     * 
+     *
      * @param string|array $key
      * @param mixed $value
      * @return $this
@@ -274,10 +341,11 @@ class ProductTestHelper extends Product
     
     /**
      * Get data
-     * 
+     *
      * @param string $key
      * @param mixed $index
      * @return mixed
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getData($key = '', $index = null)
     {
@@ -289,7 +357,7 @@ class ProductTestHelper extends Product
     
     /**
      * Set price type
-     * 
+     *
      * @param mixed $priceType
      * @return $this
      */
@@ -301,7 +369,7 @@ class ProductTestHelper extends Product
     
     /**
      * Get price type
-     * 
+     *
      * @return mixed
      */
     public function getPriceType()
@@ -311,7 +379,7 @@ class ProductTestHelper extends Product
     
     /**
      * Set giftcard amounts
-     * 
+     *
      * @param mixed $amounts
      * @return $this
      */
@@ -323,7 +391,7 @@ class ProductTestHelper extends Product
     
     /**
      * Get giftcard amounts
-     * 
+     *
      * @return mixed
      */
     public function getGiftcardAmounts()
@@ -333,7 +401,7 @@ class ProductTestHelper extends Product
     
     /**
      * Set MSRP display actual price type
-     * 
+     *
      * @param mixed $type
      * @return $this
      */
@@ -345,7 +413,7 @@ class ProductTestHelper extends Product
     
     /**
      * Get MSRP display actual price type
-     * 
+     *
      * @return mixed
      */
     public function getMsrpDisplayActualPriceType()

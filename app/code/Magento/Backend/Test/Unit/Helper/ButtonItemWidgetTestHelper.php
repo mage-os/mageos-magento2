@@ -14,6 +14,9 @@ use Magento\Backend\Block\Widget\Button\Item as ButtonItemWidget;
  */
 class ButtonItemWidgetTestHelper extends ButtonItemWidget
 {
+    /**
+     * @var string
+     */
     private $id = 'default';
     
     public function __construct()
@@ -23,7 +26,7 @@ class ButtonItemWidgetTestHelper extends ButtonItemWidget
     
     /**
      * Get ID
-     * 
+     *
      * @return string
      */
     public function getId()
@@ -33,7 +36,7 @@ class ButtonItemWidgetTestHelper extends ButtonItemWidget
     
     /**
      * Set ID
-     * 
+     *
      * @param string $id
      * @return $this
      */

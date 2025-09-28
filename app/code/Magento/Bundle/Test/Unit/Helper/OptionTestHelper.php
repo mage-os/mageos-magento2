@@ -14,7 +14,14 @@ use Magento\Bundle\Model\Option;
  */
 class OptionTestHelper extends Option
 {
+    /**
+     * @var mixed
+     */
     private $optionId = null;
+    
+    /**
+     * @var array
+     */
     private $selections = [];
     
     public function __construct($selections = [])
@@ -24,7 +31,7 @@ class OptionTestHelper extends Option
     
     /**
      * Set option ID
-     * 
+     *
      * @param mixed $optionId
      * @return $this
      */
@@ -36,7 +43,7 @@ class OptionTestHelper extends Option
     
     /**
      * Get option ID
-     * 
+     *
      * @return mixed
      */
     public function getOptionId()
@@ -46,7 +53,7 @@ class OptionTestHelper extends Option
     
     /**
      * Set selections
-     * 
+     *
      * @param array $selections
      * @return $this
      */
@@ -58,7 +65,7 @@ class OptionTestHelper extends Option
     
     /**
      * Get selections
-     * 
+     *
      * @return array
      */
     public function getSelections()

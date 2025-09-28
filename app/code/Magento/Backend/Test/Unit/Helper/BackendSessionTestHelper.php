@@ -12,6 +12,9 @@ use Magento\Framework\DataObject;
 
 class BackendSessionTestHelper extends Session
 {
+    /**
+     * @var DataObject|null
+     */
     private $sessionData;
     
     public function __construct(DataObject $sessionData = null)
@@ -31,7 +34,9 @@ class BackendSessionTestHelper extends Session
     public function getData($key = '', $index = null)
     {
         if ($this->sessionData) {
-            return $this->sessionData->getData($key, $index);
+            // Ensure $index is the correct type for DataObject::getData()
+            $validIndex = is_bool($index) ? null : $index;
+            return $this->sessionData->getData($key, $validIndex);
         }
         return null;
     }

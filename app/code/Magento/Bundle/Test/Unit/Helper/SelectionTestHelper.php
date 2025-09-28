@@ -14,8 +14,19 @@ use Magento\Bundle\Model\Selection;
  */
 class SelectionTestHelper extends Selection
 {
+    /**
+     * @var mixed
+     */
     private $productId = null;
+    
+    /**
+     * @var mixed
+     */
     private $selectionPriceType = null;
+    
+    /**
+     * @var mixed
+     */
     private $selectionPriceValue = null;
     
     public function __construct()
@@ -25,7 +36,7 @@ class SelectionTestHelper extends Selection
     
     /**
      * Set product ID
-     * 
+     *
      * @param mixed $productId
      * @return $this
      */
@@ -37,7 +48,7 @@ class SelectionTestHelper extends Selection
     
     /**
      * Get product ID
-     * 
+     *
      * @return mixed
      */
     public function getProductId()
@@ -47,7 +58,7 @@ class SelectionTestHelper extends Selection
     
     /**
      * Set selection price type
-     * 
+     *
      * @param mixed $priceType
      * @return $this
      */
@@ -59,7 +70,7 @@ class SelectionTestHelper extends Selection
     
     /**
      * Get selection price type
-     * 
+     *
      * @return mixed
      */
     public function getSelectionPriceType()
@@ -69,7 +80,7 @@ class SelectionTestHelper extends Selection
     
     /**
      * Set selection price value
-     * 
+     *
      * @param mixed $priceValue
      * @return $this
      */
@@ -81,7 +92,7 @@ class SelectionTestHelper extends Selection
     
     /**
      * Get selection price value
-     * 
+     *
      * @return mixed
      */
     public function getSelectionPriceValue()

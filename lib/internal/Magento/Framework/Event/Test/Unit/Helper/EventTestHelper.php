@@ -12,7 +12,7 @@ use Magento\Framework\Event;
 
 /**
  * Test helper for creating Event mocks with getRequest and getObject methods
- * 
+ *
  * This helper extends the concrete Event class directly, providing a clean
  * way to add test-specific methods without using anonymous classes.
  */
@@ -48,7 +48,7 @@ class EventTestHelper extends Event
     
     /**
      * Get request
-     * 
+     *
      * @return RequestInterface|null
      */
     public function getRequest()
@@ -58,7 +58,7 @@ class EventTestHelper extends Event
     
     /**
      * Set request
-     * 
+     *
      * @param RequestInterface|null $request
      * @return $this
      */
@@ -70,7 +70,7 @@ class EventTestHelper extends Event
     
     /**
      * Get object
-     * 
+     *
      * @return mixed
      */
     public function getObject()
@@ -80,7 +80,7 @@ class EventTestHelper extends Event
     
     /**
      * Set object
-     * 
+     *
      * @param mixed $object
      * @return $this
      */
@@ -92,7 +92,7 @@ class EventTestHelper extends Event
     
     /**
      * Get data object
-     * 
+     *
      * @return mixed
      */
     public function getDataObject()
@@ -102,7 +102,7 @@ class EventTestHelper extends Event
     
     /**
      * Set controller action
-     * 
+     *
      * @param mixed $action
      * @return $this
      */
@@ -114,7 +114,7 @@ class EventTestHelper extends Event
     
     /**
      * Get controller action
-     * 
+     *
      * @return mixed
      */
     public function getControllerAction()
@@ -124,7 +124,7 @@ class EventTestHelper extends Event
     
     /**
      * Set layout
-     * 
+     *
      * @param mixed $layout
      * @return $this
      */
@@ -136,7 +136,7 @@ class EventTestHelper extends Event
     
     /**
      * Get layout
-     * 
+     *
      * @return mixed
      */
     public function getLayout()

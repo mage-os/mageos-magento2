@@ -14,7 +14,7 @@ use Magento\User\Model\User;
 
 /**
  * Test helper for creating Session mocks with various methods
- * 
+ *
  * This helper extends the concrete Session class directly, providing a clean
  * way to add test-specific methods without using anonymous classes.
  * Supports both Auth\Session and regular Session functionality.
@@ -54,7 +54,7 @@ class SessionTestHelper extends Session
     
     /**
      * Get user
-     * 
+     *
      * @return User|null
      */
     public function getUser()
@@ -64,7 +64,7 @@ class SessionTestHelper extends Session
     
     /**
      * Set user
-     * 
+     *
      * @param User $user
      * @return $this
      */
@@ -75,10 +75,9 @@ class SessionTestHelper extends Session
         return $this;
     }
     
-    
     /**
      * Set data
-     * 
+     *
      * @param string|array $key
      * @param mixed $value
      * @return $this
@@ -93,7 +92,7 @@ class SessionTestHelper extends Session
     
     /**
      * Get data
-     * 
+     *
      * @param string $key
      * @param mixed $index
      * @return mixed
@@ -108,7 +107,7 @@ class SessionTestHelper extends Session
     
     /**
      * Get skip logging action
-     * 
+     *
      * @return mixed
      */
     public function getSkipLoggingAction()
@@ -118,7 +117,7 @@ class SessionTestHelper extends Session
     
     /**
      * Set skip logging action
-     * 
+     *
      * @param mixed $value
      * @return $this
      */
@@ -130,7 +129,7 @@ class SessionTestHelper extends Session
     
     /**
      * Set is logged in callback
-     * 
+     *
      * @param callable $callback
      * @return $this
      */
@@ -142,7 +141,7 @@ class SessionTestHelper extends Session
     
     /**
      * Override isLoggedIn to use callback if set
-     * 
+     *
      * @return bool
      */
     public function isLoggedIn()
@@ -155,7 +154,7 @@ class SessionTestHelper extends Session
     
     /**
      * Set is logged in
-     * 
+     *
      * @param bool $value
      * @return $this
      */

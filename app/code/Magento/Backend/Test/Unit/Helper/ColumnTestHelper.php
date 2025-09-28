@@ -11,6 +11,9 @@ use Magento\Backend\Block\Widget\Grid\Column;
 
 class ColumnTestHelper extends Column
 {
+    /**
+     * @var array
+     */
     private $columnData = [];
     
     public function __construct()

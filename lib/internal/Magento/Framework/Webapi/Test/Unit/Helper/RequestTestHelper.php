@@ -11,6 +11,9 @@ use Magento\Framework\Webapi\Request;
 
 class RequestTestHelper extends Request
 {
+    /**
+     * @var array
+     */
     private $postData = [];
     
     public function __construct()

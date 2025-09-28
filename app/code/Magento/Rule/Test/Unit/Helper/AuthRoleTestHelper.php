@@ -11,7 +11,7 @@ use Magento\Authorization\Model\Role as AuthRole;
 
 /**
  * Test helper for creating AuthRole mocks with GWS methods
- * 
+ *
  * This helper extends the concrete AuthRole class directly, providing a clean
  * way to add test-specific GWS methods without using anonymous classes.
  */
@@ -29,10 +29,11 @@ class AuthRoleTestHelper extends AuthRole
     
     /**
      * Load method for testing
-     * 
+     *
      * @param mixed $modelId
      * @param mixed $field
      * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function load($modelId, $field = null)
     {
@@ -40,18 +41,29 @@ class AuthRoleTestHelper extends AuthRole
     }
     
     /**
-     * Get GWS data isset flag
-     * 
+     * Is GWS data isset flag
+     *
      * @return bool
      */
-    public function getGwsDataIsset()
+    public function isGwsDataIsset()
     {
         return $this->gwsDataIsset;
     }
     
     /**
+     * Get GWS data isset flag (alias for compatibility)
+     *
+     * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     */
+    public function getGwsDataIsset()
+    {
+        return $this->isGwsDataIsset();
+    }
+    
+    /**
      * Set GWS data isset flag
-     * 
+     *
      * @param bool $value
      * @return $this
      */

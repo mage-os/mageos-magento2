@@ -11,7 +11,14 @@ use Magento\CheckoutAgreements\Model\Agreement;
 
 class AgreementTestHelper extends Agreement
 {
+    /**
+     * @var int
+     */
     private $id = 1;
+    
+    /**
+     * @var array
+     */
     private $storeId = [1];
     
     public function __construct()
@@ -19,6 +26,9 @@ class AgreementTestHelper extends Agreement
         // Skip parent constructor for testing
     }
     
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function load($id, $field = null)
     {
         return $this;

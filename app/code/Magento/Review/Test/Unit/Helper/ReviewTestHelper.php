@@ -11,6 +11,9 @@ use Magento\Review\Model\Review;
 
 class ReviewTestHelper extends Review
 {
+    /**
+     * @var array
+     */
     private $stores = [];
     
     public function __construct($stores = [])
@@ -19,6 +22,9 @@ class ReviewTestHelper extends Review
         $this->stores = $stores;
     }
     
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function load($id, $field = null)
     {
         return $this;

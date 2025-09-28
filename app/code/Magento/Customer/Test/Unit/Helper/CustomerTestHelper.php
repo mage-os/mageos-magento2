@@ -11,9 +11,24 @@ use Magento\Customer\Model\Customer;
 
 class CustomerTestHelper extends Customer
 {
+    /**
+     * @var int
+     */
     private $storeId = 1;
+    
+    /**
+     * @var int
+     */
     private $callCount = 0;
+    
+    /**
+     * @var mixed
+     */
     private $websiteId = null;
+    
+    /**
+     * @var mixed
+     */
     private $id = null;
     
     public function __construct()
@@ -56,6 +71,9 @@ class CustomerTestHelper extends Customer
         return $this;
     }
     
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function load($id, $field = null)
     {
         $this->id = $id;

@@ -11,9 +11,24 @@ use Magento\CatalogRule\Model\ResourceModel\Rule;
 
 class RuleTestHelper extends Rule
 {
+    /**
+     * @var bool
+     */
     private $isObjectNew = false;
+    
+    /**
+     * @var int
+     */
     private $id = 1;
+    
+    /**
+     * @var array
+     */
     private $data = [];
+    
+    /**
+     * @var array
+     */
     private $origData = [];
     
     public function __construct()
@@ -41,6 +56,9 @@ class RuleTestHelper extends Rule
         return $this;
     }
     
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function getData($key = '', $index = null)
     {
         if ($key === 'website_ids') {

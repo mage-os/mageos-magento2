@@ -14,6 +14,9 @@ use Magento\Authorization\Model\Role;
  */
 class AuthRoleTestHelper extends Role
 {
+    /**
+     * @var bool
+     */
     private $gwsDataIsset = false;
     
     public function __construct()
@@ -23,10 +26,11 @@ class AuthRoleTestHelper extends Role
     
     /**
      * Load role
-     * 
+     *
      * @param mixed $modelId
      * @param string $field
      * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function load($modelId, $field = null)
     {
@@ -34,18 +38,29 @@ class AuthRoleTestHelper extends Role
     }
     
     /**
-     * Get GWS data isset flag
-     * 
+     * Is GWS data isset flag
+     *
      * @return bool
      */
-    public function getGwsDataIsset()
+    public function isGwsDataIsset()
     {
         return $this->gwsDataIsset;
     }
     
     /**
+     * Get GWS data isset flag (alias for compatibility)
+     *
+     * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     */
+    public function getGwsDataIsset()
+    {
+        return $this->isGwsDataIsset();
+    }
+    
+    /**
      * Set GWS data isset flag
-     * 
+     *
      * @param bool $value
      * @return $this
      */

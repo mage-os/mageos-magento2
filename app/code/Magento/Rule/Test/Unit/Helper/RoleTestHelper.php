@@ -11,7 +11,7 @@ use Magento\Authorization\Model\Role;
 
 /**
  * Test helper for creating Role mocks with GWS (Global Website Store) methods
- * 
+ *
  * This helper extends the concrete Role class directly, providing a clean
  * way to add test-specific GWS methods without using anonymous classes.
  */
@@ -59,10 +59,11 @@ class RoleTestHelper extends Role
     
     /**
      * Get data by key
-     * 
+     *
      * @param string $key
      * @param mixed $index
      * @return mixed
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getData($key = '', $index = null)
     {
@@ -74,7 +75,7 @@ class RoleTestHelper extends Role
     
     /**
      * Set data
-     * 
+     *
      * @param string|array $key
      * @param mixed $value
      * @return $this
@@ -91,7 +92,7 @@ class RoleTestHelper extends Role
     
     /**
      * Set GWS is all flag
-     * 
+     *
      * @param bool $value
      * @return $this
      */
@@ -103,7 +104,7 @@ class RoleTestHelper extends Role
     
     /**
      * Get GWS websites
-     * 
+     *
      * @return array
      */
     public function getGwsWebsites()
@@ -113,7 +114,7 @@ class RoleTestHelper extends Role
     
     /**
      * Set GWS websites
-     * 
+     *
      * @param array $websites
      * @return $this
      */
@@ -125,7 +126,7 @@ class RoleTestHelper extends Role
     
     /**
      * Get GWS store groups
-     * 
+     *
      * @return array
      */
     public function getGwsStoreGroups()
@@ -135,7 +136,7 @@ class RoleTestHelper extends Role
     
     /**
      * Set GWS store groups
-     * 
+     *
      * @param array $storeGroups
      * @return $this
      */
@@ -147,7 +148,7 @@ class RoleTestHelper extends Role
     
     /**
      * Set GWS stores
-     * 
+     *
      * @param array $stores
      * @return $this
      */
@@ -159,7 +160,7 @@ class RoleTestHelper extends Role
     
     /**
      * Set GWS relevant websites
-     * 
+     *
      * @param array $websites
      * @return $this
      */
@@ -171,7 +172,7 @@ class RoleTestHelper extends Role
     
     /**
      * Set GWS data isset flag
-     * 
+     *
      * @param bool $value
      * @return $this
      */

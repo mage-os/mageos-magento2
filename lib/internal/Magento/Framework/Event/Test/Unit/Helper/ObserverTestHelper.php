@@ -14,7 +14,14 @@ use Magento\Framework\Event\Observer;
  */
 class ObserverTestHelper extends Observer
 {
+    /**
+     * @var mixed
+     */
     private $block = null;
+    
+    /**
+     * @var mixed
+     */
     private $event = null;
     
     public function __construct($block = null, $event = null)
@@ -25,7 +32,7 @@ class ObserverTestHelper extends Observer
     
     /**
      * Set block
-     * 
+     *
      * @param mixed $block
      * @return $this
      */
@@ -37,7 +44,7 @@ class ObserverTestHelper extends Observer
     
     /**
      * Get block
-     * 
+     *
      * @return mixed
      */
     public function getBlock()
@@ -47,7 +54,7 @@ class ObserverTestHelper extends Observer
     
     /**
      * Set event
-     * 
+     *
      * @param mixed $event
      * @return $this
      */
@@ -59,7 +66,7 @@ class ObserverTestHelper extends Observer
     
     /**
      * Get event
-     * 
+     *
      * @return mixed
      */
     public function getEvent()

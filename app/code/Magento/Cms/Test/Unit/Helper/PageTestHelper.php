@@ -11,8 +11,19 @@ use Magento\Cms\Model\Page;
 
 class PageTestHelper extends Page
 {
+    /**
+     * @var mixed
+     */
     private $storeId;
+    
+    /**
+     * @var mixed
+     */
     private $resource;
+    
+    /**
+     * @var int
+     */
     private $id = 1;
     
     public function __construct()

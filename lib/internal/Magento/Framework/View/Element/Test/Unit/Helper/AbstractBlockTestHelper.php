@@ -14,11 +14,34 @@ use Magento\Framework\View\Element\AbstractBlock;
  */
 class AbstractBlockTestHelper extends AbstractBlock
 {
+    /**
+     * @var string
+     */
     private $nameInLayout = '';
+    
+    /**
+     * @var mixed
+     */
     private $productEntity = null;
+    
+    /**
+     * @var bool
+     */
     private $isReadonly = false;
+    
+    /**
+     * @var array
+     */
     private $configOptions = [];
+    
+    /**
+     * @var array
+     */
     private $fieldDependencies = [];
+    
+    /**
+     * @var bool
+     */
     private $canEditPrice = false;
     
     public function __construct()
@@ -28,7 +51,7 @@ class AbstractBlockTestHelper extends AbstractBlock
     
     /**
      * Set name in layout
-     * 
+     *
      * @param string $name
      * @return $this
      */
@@ -40,7 +63,7 @@ class AbstractBlockTestHelper extends AbstractBlock
     
     /**
      * Get name in layout
-     * 
+     *
      * @return string
      */
     public function getNameInLayout()
@@ -50,7 +73,7 @@ class AbstractBlockTestHelper extends AbstractBlock
     
     /**
      * Set product entity
-     * 
+     *
      * @param mixed $entity
      * @return $this
      */
@@ -62,7 +85,7 @@ class AbstractBlockTestHelper extends AbstractBlock
     
     /**
      * Get product entity
-     * 
+     *
      * @return mixed
      */
     public function getProductEntity()
@@ -72,7 +95,7 @@ class AbstractBlockTestHelper extends AbstractBlock
     
     /**
      * Set is readonly
-     * 
+     *
      * @param bool $readonly
      * @return $this
      */
@@ -83,18 +106,18 @@ class AbstractBlockTestHelper extends AbstractBlock
     }
     
     /**
-     * Get is readonly
-     * 
+     * Is readonly
+     *
      * @return bool
      */
-    public function getIsReadonly()
+    public function isReadonly()
     {
         return $this->isReadonly;
     }
     
     /**
      * Add config options
-     * 
+     *
      * @param array $options
      * @return $this
      */
@@ -106,7 +129,7 @@ class AbstractBlockTestHelper extends AbstractBlock
     
     /**
      * Get config options
-     * 
+     *
      * @return array
      */
     public function getConfigOptions()
@@ -116,7 +139,7 @@ class AbstractBlockTestHelper extends AbstractBlock
     
     /**
      * Add field dependence
-     * 
+     *
      * @param string $field
      * @param string $dependence
      * @return $this
@@ -129,7 +152,7 @@ class AbstractBlockTestHelper extends AbstractBlock
     
     /**
      * Get field dependencies
-     * 
+     *
      * @return array
      */
     public function getFieldDependencies()
@@ -139,7 +162,7 @@ class AbstractBlockTestHelper extends AbstractBlock
     
     /**
      * Set can edit price
-     * 
+     *
      * @param bool $canEdit
      * @return $this
      */
@@ -150,11 +173,11 @@ class AbstractBlockTestHelper extends AbstractBlock
     }
     
     /**
-     * Get can edit price
-     * 
+     * Can edit price
+     *
      * @return bool
      */
-    public function getCanEditPrice()
+    public function canEditPrice()
     {
         return $this->canEditPrice;
     }

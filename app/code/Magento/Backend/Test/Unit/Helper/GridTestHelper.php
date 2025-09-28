@@ -14,15 +14,54 @@ use Magento\Backend\Block\Widget\Grid;
  */
 class GridTestHelper extends Grid
 {
+    /**
+     * @var string
+     */
     private $nameInLayout = '';
+    
+    /**
+     * @var mixed
+     */
     private $massactionBlock = null;
+    
+    /**
+     * @var array
+     */
     private $childBlocks = [];
+    
+    /**
+     * @var mixed
+     */
     private $parentBlock = null;
+    
+    /**
+     * @var bool
+     */
     private $canReadPrice = false;
+    
+    /**
+     * @var bool
+     */
     private $canEditPrice = false;
+    
+    /**
+     * @var array
+     */
     private $tabData = [];
+    
+    /**
+     * @var mixed
+     */
     private $defaultProductPrice = null;
+    
+    /**
+     * @var mixed
+     */
     private $form = null;
+    
+    /**
+     * @var mixed
+     */
     private $group = null;
     
     public function __construct()
@@ -32,7 +71,7 @@ class GridTestHelper extends Grid
     
     /**
      * Set name in layout
-     * 
+     *
      * @param string $name
      * @return $this
      */
@@ -44,7 +83,7 @@ class GridTestHelper extends Grid
     
     /**
      * Get name in layout
-     * 
+     *
      * @return string
      */
     public function getNameInLayout()
@@ -54,7 +93,7 @@ class GridTestHelper extends Grid
     
     /**
      * Set massaction block
-     * 
+     *
      * @param mixed $block
      * @return $this
      */
@@ -66,7 +105,7 @@ class GridTestHelper extends Grid
     
     /**
      * Get massaction block
-     * 
+     *
      * @return mixed
      */
     public function getMassactionBlock()
@@ -76,7 +115,7 @@ class GridTestHelper extends Grid
     
     /**
      * Set child block
-     * 
+     *
      * @param string $name
      * @param mixed $block
      * @return $this
@@ -89,7 +128,7 @@ class GridTestHelper extends Grid
     
     /**
      * Get child block
-     * 
+     *
      * @param string $name
      * @return mixed
      */
@@ -100,7 +139,7 @@ class GridTestHelper extends Grid
     
     /**
      * Set parent block
-     * 
+     *
      * @param mixed $block
      * @return $this
      */
@@ -112,7 +151,7 @@ class GridTestHelper extends Grid
     
     /**
      * Get parent block
-     * 
+     *
      * @return mixed
      */
     public function getParentBlock()
@@ -122,7 +161,7 @@ class GridTestHelper extends Grid
     
     /**
      * Set can read price
-     * 
+     *
      * @param bool $canRead
      * @return $this
      */
@@ -133,18 +172,29 @@ class GridTestHelper extends Grid
     }
     
     /**
-     * Get can read price
-     * 
+     * Is can read price
+     *
      * @return bool
      */
-    public function getCanReadPrice()
+    public function isCanReadPrice()
     {
         return $this->canReadPrice;
     }
     
     /**
+     * Get can read price (alias for compatibility)
+     *
+     * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     */
+    public function getCanReadPrice()
+    {
+        return $this->isCanReadPrice();
+    }
+    
+    /**
      * Set can edit price
-     * 
+     *
      * @param bool $canEdit
      * @return $this
      */
@@ -155,18 +205,29 @@ class GridTestHelper extends Grid
     }
     
     /**
-     * Get can edit price
-     * 
+     * Is can edit price
+     *
      * @return bool
      */
-    public function getCanEditPrice()
+    public function isCanEditPrice()
     {
         return $this->canEditPrice;
     }
     
     /**
+     * Get can edit price (alias for compatibility)
+     *
+     * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     */
+    public function getCanEditPrice()
+    {
+        return $this->isCanEditPrice();
+    }
+    
+    /**
      * Set tab data
-     * 
+     *
      * @param array $data
      * @return $this
      */
@@ -178,7 +239,7 @@ class GridTestHelper extends Grid
     
     /**
      * Get tab data
-     * 
+     *
      * @return array
      */
     public function getTabData()
@@ -188,7 +249,7 @@ class GridTestHelper extends Grid
     
     /**
      * Set default product price
-     * 
+     *
      * @param mixed $price
      * @return $this
      */
@@ -200,7 +261,7 @@ class GridTestHelper extends Grid
     
     /**
      * Get default product price
-     * 
+     *
      * @return mixed
      */
     public function getDefaultProductPrice()
@@ -210,7 +271,7 @@ class GridTestHelper extends Grid
     
     /**
      * Set form
-     * 
+     *
      * @param mixed $form
      * @return $this
      */
@@ -222,7 +283,7 @@ class GridTestHelper extends Grid
     
     /**
      * Get form
-     * 
+     *
      * @return mixed
      */
     public function getForm()
@@ -232,7 +293,7 @@ class GridTestHelper extends Grid
     
     /**
      * Set group
-     * 
+     *
      * @param mixed $group
      * @return $this
      */
@@ -244,7 +305,7 @@ class GridTestHelper extends Grid
     
     /**
      * Get group
-     * 
+     *
      * @return mixed
      */
     public function getGroup()

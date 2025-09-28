@@ -14,6 +14,9 @@ use Magento\Downloadable\Model\Product\Type;
  */
 class TypeInstanceTestHelper extends Type
 {
+    /**
+     * @var array
+     */
     private $links = [];
     
     public function __construct()
@@ -23,7 +26,7 @@ class TypeInstanceTestHelper extends Type
     
     /**
      * Set links
-     * 
+     *
      * @param array $links
      * @return $this
      */
@@ -35,9 +38,10 @@ class TypeInstanceTestHelper extends Type
     
     /**
      * Get links
-     * 
+     *
      * @param mixed $product
      * @return array
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getLinks($product)
     {

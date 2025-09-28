@@ -14,7 +14,14 @@ use Magento\ConfigurableProduct\Block\Adminhtml\Product\Edit\Tab\Variations\Conf
  */
 class ConfigTestHelper extends Config
 {
+    /**
+     * @var bool
+     */
     private $canEditPrice = false;
+    
+    /**
+     * @var bool
+     */
     private $canReadPrice = false;
     
     public function __construct()
@@ -24,7 +31,7 @@ class ConfigTestHelper extends Config
     
     /**
      * Set can edit price
-     * 
+     *
      * @param bool $value
      * @return $this
      */
@@ -35,18 +42,29 @@ class ConfigTestHelper extends Config
     }
     
     /**
-     * Get can edit price
-     * 
+     * Is can edit price
+     *
      * @return bool
      */
-    public function getCanEditPrice()
+    public function isCanEditPrice()
     {
         return $this->canEditPrice;
     }
     
     /**
+     * Get can edit price (alias for compatibility)
+     *
+     * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     */
+    public function getCanEditPrice()
+    {
+        return $this->isCanEditPrice();
+    }
+    
+    /**
      * Set can read price
-     * 
+     *
      * @param bool $value
      * @return $this
      */
@@ -57,12 +75,23 @@ class ConfigTestHelper extends Config
     }
     
     /**
-     * Get can read price
-     * 
+     * Is can read price
+     *
      * @return bool
+     */
+    public function isCanReadPrice()
+    {
+        return $this->canReadPrice;
+    }
+    
+    /**
+     * Get can read price (alias for compatibility)
+     *
+     * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getCanReadPrice()
     {
-        return $this->canReadPrice;
+        return $this->isCanReadPrice();
     }
 }

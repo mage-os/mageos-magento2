@@ -21,10 +21,11 @@ class TypeTestHelper extends Type
     
     /**
      * Set store filter
-     * 
+     *
      * @param mixed $storeId
      * @param mixed $product
      * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setStoreFilter($storeId, $product)
     {
@@ -34,9 +35,10 @@ class TypeTestHelper extends Type
     
     /**
      * Get options IDs
-     * 
+     *
      * @param mixed $product
      * @return array
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getOptionsIds($product)
     {
@@ -45,9 +47,10 @@ class TypeTestHelper extends Type
     
     /**
      * Get options collection
-     * 
+     *
      * @param mixed $product
      * @return mixed
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getOptionsCollection($product)
     {
@@ -61,10 +64,11 @@ class TypeTestHelper extends Type
     
     /**
      * Get selections collection
-     * 
+     *
      * @param mixed $optionIds
      * @param mixed $product
      * @return mixed
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getSelectionsCollection($optionIds, $product)
     {

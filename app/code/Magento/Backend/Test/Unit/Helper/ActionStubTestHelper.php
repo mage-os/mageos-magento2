@@ -9,6 +9,9 @@ namespace Magento\Backend\Test\Unit\Helper;
 
 use Magento\Backend\Test\Unit\App\Action\Stub\ActionStub;
 
+/**
+ * @SuppressWarnings(PHPMD.AllPurposeAction)
+ */
 class ActionStubTestHelper extends ActionStub
 {
     public function __construct()
@@ -16,6 +19,9 @@ class ActionStubTestHelper extends ActionStub
         // Skip parent constructor for testing
     }
     
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function setDirtyRulesNoticeMessage($message)
     {
         return $this;

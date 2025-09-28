@@ -14,12 +14,39 @@ use Magento\Authorization\Model\Role;
  */
 class RoleTestHelper extends Role
 {
+    /**
+     * @var bool
+     */
     private $gwsIsAll = false;
+    
+    /**
+     * @var array
+     */
     private $gwsWebsites = [];
+    
+    /**
+     * @var array
+     */
     private $gwsStoreGroups = [];
+    
+    /**
+     * @var array
+     */
     private $gwsStores = [];
+    
+    /**
+     * @var bool
+     */
     private $gwsRelevant = false;
+    
+    /**
+     * @var bool
+     */
     private $gwsDataIsset = false;
+    
+    /**
+     * @var array
+     */
     private $data = [];
     
     public function __construct()
@@ -28,18 +55,29 @@ class RoleTestHelper extends Role
     }
     
     /**
-     * Get GWS is all flag
+     * Is GWS is all flag
      * 
      * @return bool
      */
-    public function getGwsIsAll()
+    public function isGwsIsAll()
     {
         return $this->gwsIsAll;
     }
     
     /**
-     * Set GWS is all flag
+     * Get GWS is all flag (alias for compatibility)
      * 
+     * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     */
+    public function getGwsIsAll()
+    {
+        return $this->isGwsIsAll();
+    }
+    
+    /**
+     * Set GWS is all flag
+     *
      * @param bool $value
      * @return $this
      */
@@ -51,7 +89,7 @@ class RoleTestHelper extends Role
     
     /**
      * Get GWS websites
-     * 
+     *
      * @return array
      */
     public function getGwsWebsites()
@@ -61,7 +99,7 @@ class RoleTestHelper extends Role
     
     /**
      * Set GWS websites
-     * 
+     *
      * @param array $websites
      * @return $this
      */
@@ -73,7 +111,7 @@ class RoleTestHelper extends Role
     
     /**
      * Get GWS store groups
-     * 
+     *
      * @return array
      */
     public function getGwsStoreGroups()
@@ -83,7 +121,7 @@ class RoleTestHelper extends Role
     
     /**
      * Set GWS store groups
-     * 
+     *
      * @param array $storeGroups
      * @return $this
      */
@@ -95,7 +133,7 @@ class RoleTestHelper extends Role
     
     /**
      * Get GWS stores
-     * 
+     *
      * @return array
      */
     public function getGwsStores()
@@ -105,7 +143,7 @@ class RoleTestHelper extends Role
     
     /**
      * Set GWS stores
-     * 
+     *
      * @param array $stores
      * @return $this
      */
@@ -116,18 +154,29 @@ class RoleTestHelper extends Role
     }
     
     /**
-     * Get GWS relevant flag
+     * Is GWS relevant flag
      * 
      * @return bool
      */
-    public function getGwsRelevant()
+    public function isGwsRelevant()
     {
         return $this->gwsRelevant;
     }
     
     /**
-     * Set GWS relevant flag
+     * Get GWS relevant flag (alias for compatibility)
      * 
+     * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     */
+    public function getGwsRelevant()
+    {
+        return $this->isGwsRelevant();
+    }
+    
+    /**
+     * Set GWS relevant flag
+     *
      * @param bool $value
      * @return $this
      */
@@ -138,18 +187,29 @@ class RoleTestHelper extends Role
     }
     
     /**
-     * Get GWS data isset flag
+     * Is GWS data isset flag
      * 
      * @return bool
      */
-    public function getGwsDataIsset()
+    public function isGwsDataIsset()
     {
         return $this->gwsDataIsset;
     }
     
     /**
-     * Set GWS data isset flag
+     * Get GWS data isset flag (alias for compatibility)
      * 
+     * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     */
+    public function getGwsDataIsset()
+    {
+        return $this->isGwsDataIsset();
+    }
+    
+    /**
+     * Set GWS data isset flag
+     *
      * @param bool $value
      * @return $this
      */
@@ -165,6 +225,7 @@ class RoleTestHelper extends Role
      * @param string $key
      * @param mixed $index
      * @return mixed
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getData($key = '', $index = null)
     {
@@ -176,7 +237,7 @@ class RoleTestHelper extends Role
     
     /**
      * Set data
-     * 
+     *
      * @param string|array $key
      * @param mixed $value
      * @return $this
@@ -197,6 +258,7 @@ class RoleTestHelper extends Role
      * @param mixed $modelId
      * @param string $field
      * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function load($modelId, $field = null)
     {
