@@ -1301,8 +1301,6 @@ class CommonTaxCollectorTest extends TestCase
      */
     public function testConstructorFallsBackToOmForOptionalDependencies(): void
     {
-        // Do not call getInstance() in unit context; no original OM to restore
-
         $extFactory = $this->createMock(QuoteDetailsItemExtensionInterfaceFactory::class);
         $ext = new class implements \Magento\Tax\Api\Data\QuoteDetailsItemExtensionInterface
         {
@@ -1331,13 +1329,10 @@ class CommonTaxCollectorTest extends TestCase
             }
         };
         $extFactory->method('create')->willReturn($ext);
-
         $customerAccount = $this->createMock(CustomerAccountManagement::class);
-
         $om = $this->getMockBuilder(\Magento\Framework\App\ObjectManager::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['get'])
-            ->getMock();
+            ->onlyMethods(['get'])->getMock();
         $om->method('get')->willReturnCallback(function ($class) use ($extFactory, $customerAccount) {
             if ($class === QuoteDetailsItemExtensionInterfaceFactory::class) {
                 return $extFactory;
@@ -1347,10 +1342,8 @@ class CommonTaxCollectorTest extends TestCase
             }
             $this->fail('Unexpected ObjectManager::get call for ' . $class);
         });
-
         \Magento\Framework\App\ObjectManager::setInstance($om);
         try {
-            // Partially mock to safely execute populateAddressData without touching real mapAddress internals
             $sut = $this->getMockBuilder(CommonTaxCollector::class)
                 ->setConstructorArgs([
                     $this->taxConfig,
@@ -1361,69 +1354,47 @@ class CommonTaxCollectorTest extends TestCase
                     $this->customerAddressFactory,
                     $this->customerAddressRegionFactory,
                     $this->taxHelper,
-                    null, // force fallback to OM for QuoteDetailsItemExtensionInterfaceFactory
-                    null  // force fallback to OM for CustomerAccountManagement
-                ])
-                ->onlyMethods(['mapAddress'])
-                ->getMock();
-
-            // Verify setPriceForTaxCalculation uses the ext factory from OM
+                    null, null])
+                ->onlyMethods(['mapAddress'])->getMock();
             $ref = new \ReflectionClass(CommonTaxCollector::class);
             $method = $ref->getMethod('setPriceForTaxCalculation');
             $method->setAccessible(true);
-
-            // verify via reading back from stub after invocation
-
             $qdi = $this->createMock(QuoteDetailsItemInterface::class);
             $qdi->method('getExtensionAttributes')->willReturn(null);
             $qdi->expects($this->once())->method('setExtensionAttributes')->with($ext)->willReturnSelf();
 
             $method->invoke($sut, $qdi, 12.34);
             $this->assertSame(12.34, $ext->getPriceForTaxCalculation());
-
-            // Verify CustomerAccountManagement from OM is used in populateAddressData default-billing path
             $billingMapped = $this->createMock(CustomerAddress::class);
             $shippingMapped = $this->createMock(CustomerAddress::class);
             $sut->method('mapAddress')->willReturnOnConsecutiveCalls($billingMapped, $shippingMapped);
-
             $quoteDetails = $this->createMock(\Magento\Tax\Api\Data\QuoteDetailsInterface::class);
             $quoteDetails->expects($this->once())->method('setBillingAddress')->with($billingMapped)->willReturnSelf();
             $quoteDetails->expects($this->once())
-                ->method('setShippingAddress')
-                ->with($shippingMapped)
-                ->willReturnSelf();
-
+                ->method('setShippingAddress')->with($shippingMapped)->willReturnSelf();
             $billingAddressFromQuote = $this->createMock(QuoteAddress::class);
-
             $customerAccount->expects($this->once())
                 ->method('getDefaultBillingAddress')
-                ->with(15)
-                ->willReturn(null);
+                ->with(15)->willReturn(null);
 
             $quote = $this->getMockBuilder(\stdClass::class)
-                ->addMethods(['isVirtual', 'getCustomerId', 'getBillingAddress'])
-                ->getMock();
+                ->addMethods(['isVirtual', 'getCustomerId', 'getBillingAddress'])->getMock();
             $quote->method('isVirtual')->willReturn(true);
             $quote->method('getCustomerId')->willReturn(15);
             $quote->method('getBillingAddress')->willReturn($billingAddressFromQuote);
-
             $address = $this->getMockBuilder(QuoteAddress::class)
                 ->onlyMethods(['getQuote', 'getCountryId'])
                 ->addMethods(['getAddressType'])
-                ->disableOriginalConstructor()
-                ->getMock();
+                ->disableOriginalConstructor()->getMock();
             $address->method('getAddressType')->willReturn(QuoteAddress::ADDRESS_TYPE_BILLING);
             $address->method('getCountryId')->willReturn(null);
             $address->method('getQuote')->willReturn($quote);
-
             $sut->populateAddressData($quoteDetails, $address);
             $this->assertTrue(true);
         } finally {
-            // Reset ObjectManager to a dummy mock implementing ObjectManagerInterface
             $resetOm = $this->getMockBuilder(\Magento\Framework\App\ObjectManager::class)
                 ->disableOriginalConstructor()
-                ->onlyMethods(['get'])
-                ->getMock();
+                ->onlyMethods(['get'])->getMock();
             \Magento\Framework\App\ObjectManager::setInstance($resetOm);
         }
     }
