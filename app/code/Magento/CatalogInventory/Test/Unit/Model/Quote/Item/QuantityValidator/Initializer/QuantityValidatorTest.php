@@ -28,6 +28,16 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Item;
 use Magento\Quote\Model\Quote\Item\Option as OptionItem;
+use Magento\Quote\Test\Unit\Helper\QuoteTestHelperExtended;
+use Magento\Quote\Test\Unit\Helper\QuoteItemTestHelper;
+use Magento\Quote\Test\Unit\Helper\OptionItemTestHelper;
+use Magento\Quote\Test\Unit\Helper\QuoteTestHelperForValidator;
+use Magento\Quote\Test\Unit\Helper\QuoteItemTestHelperForValidator;
+use Magento\Catalog\Test\Unit\Helper\StockItemTestHelperForValidator;
+use Magento\Framework\Test\Unit\Helper\DataObjectTestHelperForValidator;
+use Magento\Catalog\Test\Unit\Helper\StockItemInterfaceTestHelper;
+use Magento\Framework\Test\Unit\Helper\EventTestHelper;
+use Magento\Framework\Test\Unit\Helper\DataObjectTestHelper;
 use Magento\Store\Model\Store;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -149,334 +159,23 @@ class QuantityValidatorTest extends TestCase
             ]
         );
         $this->observerMock = $this->createMock(Observer::class);
-        // Create anonymous class for Event with getItem method
-        $this->eventMock = new class extends Event {
-            /** @var mixed */
-            private $item = null;
-
-            public function __construct()
-            {
-                // Skip parent constructor to avoid complex dependencies
-            }
-
-            public function getItem()
-            {
-                return $this->item;
-            }
-            public function setItem($item)
-            {
-                $this->item = $item;
-                return $this;
-            }
-        };
-        // Create anonymous class for Quote with dynamic methods
-        $this->quoteMock = new class extends Quote {
-            /** @var bool */
-            private $hasError = false;
-            /** @var bool */
-            private $isSuperMode = false;
-            /** @var mixed */
-            private $quote = null;
-            /** @var array */
-            private $itemsCollection = [];
-            /** @var array */
-            private $errorInfos = [];
-
-            public function __construct()
-            {
-                // Skip parent constructor to avoid complex dependencies
-            }
-
-            public function getHasError()
-            {
-                return $this->hasError;
-            }
-            public function setHasError($hasError)
-            {
-                $this->hasError = $hasError;
-                return $this;
-            }
-            public function getIsSuperMode()
-            {
-                return $this->isSuperMode;
-            }
-            public function setIsSuperMode($isSuperMode)
-            {
-                $this->isSuperMode = $isSuperMode;
-                return $this;
-            }
-            public function getQuote()
-            {
-                return $this->quote;
-            }
-            public function setQuote($quote)
-            {
-                $this->quote = $quote;
-                return $this;
-            }
-            public function getItemsCollection($useCache = true)
-            {
-                return $this->itemsCollection;
-            }
-            public function setItemsCollection($items)
-            {
-                $this->itemsCollection = $items;
-                return $this;
-            }
-            public function removeErrorInfosByParams($origin, $params)
-            {
-                return $this;
-            }
-            public function addErrorInfo(
-                $type = 'error',
-                $origin = null,
-                $code = null,
-                $message = null,
-                $additionalData = null
-            ) {
-                $this->errorInfos[] = [
-                    'type' => $type,
-                    'origin' => $origin,
-                    'code' => $code,
-                    'message' => $message,
-                    'additionalData' => $additionalData
-                ];
-                return $this;
-            }
-        };
+        // Use EventTestHelper extending Event with dynamic methods
+        $this->eventMock = new EventTestHelper();
+        // Use QuoteTestHelperForValidator extending Quote with dynamic methods
+        $this->quoteMock = new QuoteTestHelperForValidator();
         $this->storeMock = $this->createMock(Store::class);
-        // Create anonymous class for Quote Item with dynamic methods
-        $this->quoteItemMock = new class extends Item {
-            /** @var int|null */
-            private $productId = null;
-            /** @var bool */
-            private $hasError = false;
-            /** @var mixed */
-            private $stockStateResult = null;
-            /** @var mixed */
-            private $quote = null;
-            /** @var float|null */
-            private $qty = null;
-            /** @var mixed */
-            private $product = null;
-            /** @var mixed */
-            private $parentItem = null;
-            /** @var array */
-            private $data = [];
-            /** @var mixed */
-            private $qtyOptions = null;
-            /** @var int|null */
-            private $itemId = null;
-            /** @var array */
-            private $errorInfos = [];
-
-            public function __construct()
-            {
-                // Skip parent constructor to avoid complex dependencies
-            }
-
-            public function getProductId()
-            {
-                return $this->productId;
-            }
-            public function setProductId($productId)
-            {
-                $this->productId = $productId;
-                return $this;
-            }
-            public function getHasError()
-            {
-                return $this->hasError;
-            }
-            public function setHasError($hasError)
-            {
-                $this->hasError = $hasError;
-                return $this;
-            }
-            public function getStockStateResult()
-            {
-                return $this->stockStateResult;
-            }
-            public function setStockStateResult($result)
-            {
-                $this->stockStateResult = $result;
-                return $this;
-            }
-            public function getQuote()
-            {
-                return $this->quote;
-            }
-            public function setQuote($quote)
-            {
-                $this->quote = $quote;
-                return $this;
-            }
-            public function getQty()
-            {
-                return $this->qty;
-            }
-            public function setQty($qty)
-            {
-                $this->qty = $qty;
-                return $this;
-            }
-            public function getProduct()
-            {
-                return $this->product;
-            }
-            public function setProduct($product)
-            {
-                $this->product = $product;
-                return $this;
-            }
-            public function getParentItem()
-            {
-                return $this->parentItem;
-            }
-            public function setParentItem($parentItem)
-            {
-                $this->parentItem = $parentItem;
-                return $this;
-            }
-            public function addErrorInfo($origin = null, $code = null, $message = null, $additionalData = null)
-            {
-                $this->errorInfos[] = [
-                    'origin' => $origin,
-                    'code' => $code,
-                    'message' => $message,
-                    'additionalData' => $additionalData
-                ];
-                return $this;
-            }
-            public function setData($key, $value = null)
-            {
-                if (is_array($key)) {
-                    $this->data = array_merge($this->data, $key);
-                } else {
-                    $this->data[$key] = $value;
-                }
-                return $this;
-            }
-            public function getQtyOptions()
-            {
-                return $this->qtyOptions;
-            }
-            public function setQtyOptions($options)
-            {
-                $this->qtyOptions = $options;
-                return $this;
-            }
-            public function getItemId()
-            {
-                return $this->itemId;
-            }
-            public function setItemId($itemId)
-            {
-                $this->itemId = $itemId;
-                return $this;
-            }
-        };
+        // Use QuoteItemTestHelperForValidator extending Item with dynamic methods
+        $this->quoteItemMock = new QuoteItemTestHelperForValidator();
         $this->parentItemMock = $this->createPartialMock(Item::class, ['getProduct', 'getId', 'getStore']);
         $this->productMock = $this->createMock(Product::class);
         $this->stockItemMock = $this->createMock(StockMock::class);
-        // Create anonymous class for Stock Item with dynamic methods
-        $this->parentStockItemMock = new class extends StockMock {
-            /** @var mixed */
-            private $stockStatus = null;
-            /** @var bool */
-            private $isInStock = false;
-
-            public function __construct()
-            {
-                // Skip parent constructor to avoid complex dependencies
-            }
-
-            public function getStockStatus()
-            {
-                return $this->stockStatus;
-            }
-            public function setStockStatus($status)
-            {
-                $this->stockStatus = $status;
-                return $this;
-            }
-            public function getIsInStock()
-            {
-                return $this->isInStock;
-            }
-            public function setIsInStock($isInStock)
-            {
-                $this->isInStock = $isInStock;
-                return $this;
-            }
-        };
+        // Use StockItemTestHelperForValidator extending StockMock with dynamic methods
+        $this->parentStockItemMock = new StockItemTestHelperForValidator();
 
         $this->typeInstanceMock = $this->createMock(Type::class);
 
-        // Create anonymous class for DataObject with dynamic methods
-        $this->resultMock = new class extends DataObject {
-            /** @var bool|null */
-            private $checkQtyIncrements = null;
-            /** @var string|null */
-            private $message = null;
-            /** @var string|null */
-            private $quoteMessage = null;
-            /** @var bool */
-            private $hasError = false;
-            /** @var int|null */
-            private $quoteMessageIndex = null;
-
-            public function __construct()
-            {
-                // Skip parent constructor to avoid complex dependencies
-            }
-
-            public function checkQtyIncrements()
-            {
-                return $this->checkQtyIncrements;
-            }
-            public function setCheckQtyIncrements($value)
-            {
-                $this->checkQtyIncrements = $value;
-                return $this;
-            }
-            public function getMessage()
-            {
-                return $this->message;
-            }
-            public function setMessage($message)
-            {
-                $this->message = $message;
-                return $this;
-            }
-            public function getQuoteMessage()
-            {
-                return $this->quoteMessage;
-            }
-            public function setQuoteMessage($message)
-            {
-                $this->quoteMessage = $message;
-                return $this;
-            }
-            public function getHasError()
-            {
-                return $this->hasError;
-            }
-            public function setHasError($hasError)
-            {
-                $this->hasError = $hasError;
-                return $this;
-            }
-            public function getQuoteMessageIndex()
-            {
-                return $this->quoteMessageIndex;
-            }
-            public function setQuoteMessageIndex($index)
-            {
-                $this->quoteMessageIndex = $index;
-                return $this;
-            }
-        };
+        // Use DataObjectTestHelperForValidator extending DataObject with dynamic methods
+        $this->resultMock = new DataObjectTestHelperForValidator();
     }
 
     /**
@@ -546,43 +245,7 @@ class QuantityValidatorTest extends TestCase
     public function testValidateWithOptions(): void
     {
         // Create anonymous class for Option Item with dynamic methods
-        $optionMock = new class extends OptionItem {
-            /** @var bool */
-            private $hasError = false;
-            /** @var mixed */
-            private $stockStateResult = null;
-            /** @var mixed */
-            private $product = null;
-
-            public function __construct()
-            {
-                // Skip parent constructor to avoid complex dependencies
-            }
-
-            public function getProduct()
-            {
-                return $this->product;
-            }
-            public function setProduct($product)
-            {
-                $this->product = $product;
-                return $this;
-            }
-            public function setHasError($hasError)
-            {
-                $this->hasError = $hasError;
-                return $this;
-            }
-            public function getStockStateResult()
-            {
-                return $this->stockStateResult;
-            }
-            public function setStockStateResult($result)
-            {
-                $this->stockStateResult = $result;
-                return $this;
-            }
-        };
+        $optionMock = new OptionItemTestHelper();
         $optionMock->setStockStateResult($this->resultMock);
         $optionMock->setProduct($this->productMock);
         $this->stockRegistryMock
@@ -618,43 +281,7 @@ class QuantityValidatorTest extends TestCase
     public function testValidateWithOptionsAndError(int $quantity, int $productStatus, int $productStockStatus): void
     {
         // Create anonymous class for Option Item with dynamic methods
-        $optionMock = new class extends OptionItem {
-            /** @var bool */
-            private $hasError = false;
-            /** @var mixed */
-            private $stockStateResult = null;
-            /** @var mixed */
-            private $product = null;
-
-            public function __construct()
-            {
-                // Skip parent constructor to avoid complex dependencies
-            }
-
-            public function getProduct()
-            {
-                return $this->product;
-            }
-            public function setProduct($product)
-            {
-                $this->product = $product;
-                return $this;
-            }
-            public function setHasError($hasError)
-            {
-                $this->hasError = $hasError;
-                return $this;
-            }
-            public function getStockStateResult()
-            {
-                return $this->stockStateResult;
-            }
-            public function setStockStateResult($result)
-            {
-                $this->stockStateResult = $result;
-                return $this;
-            }
-        };
+        $optionMock = new OptionItemTestHelper();
         $this->stockRegistryMock
             ->method('getStockItem')
             ->willReturnOnConsecutiveCalls($this->stockItemMock);
@@ -702,43 +329,7 @@ class QuantityValidatorTest extends TestCase
     public function testValidateAndRemoveErrorsFromQuote(): void
     {
         // Create anonymous class for Option Item with dynamic methods
-        $optionMock = new class extends OptionItem {
-            /** @var bool */
-            private $hasError = false;
-            /** @var mixed */
-            private $stockStateResult = null;
-            /** @var mixed */
-            private $product = null;
-
-            public function __construct()
-            {
-                // Skip parent constructor to avoid complex dependencies
-            }
-
-            public function getProduct()
-            {
-                return $this->product;
-            }
-            public function setProduct($product)
-            {
-                $this->product = $product;
-                return $this;
-            }
-            public function setHasError($hasError)
-            {
-                $this->hasError = $hasError;
-                return $this;
-            }
-            public function getStockStateResult()
-            {
-                return $this->stockStateResult;
-            }
-            public function setStockStateResult($result)
-            {
-                $this->stockStateResult = $result;
-                return $this;
-            }
-        };
+        $optionMock = new OptionItemTestHelper();
         $quoteItem = $this->createMock(Item::class);
         $quoteItem->method('getItemId')->willReturn(4);
         $quoteItem->method('getErrorInfos')->willReturn([['code' => 2]]);
@@ -820,59 +411,8 @@ class QuantityValidatorTest extends TestCase
     public function testValidateOutStockWithAlreadyErrorInQuoteItem(): void
     {
         $this->createInitialStub(1);
-        // Create anonymous class for DataObject with dynamic methods
-        $resultMock = new class extends DataObject {
-            /** @var bool|null */
-            private $checkQtyIncrements = null;
-            /** @var string|null */
-            private $message = null;
-            /** @var string|null */
-            private $quoteMessage = null;
-            /** @var bool */
-            private $hasError = false;
-
-            public function __construct()
-            {
-                // Skip parent constructor to avoid complex dependencies
-            }
-
-            public function checkQtyIncrements()
-            {
-                return $this->checkQtyIncrements;
-            }
-            public function setCheckQtyIncrements($value)
-            {
-                $this->checkQtyIncrements = $value;
-                return $this;
-            }
-            public function getMessage()
-            {
-                return $this->message;
-            }
-            public function setMessage($message)
-            {
-                $this->message = $message;
-                return $this;
-            }
-            public function getQuoteMessage()
-            {
-                return $this->quoteMessage;
-            }
-            public function setQuoteMessage($message)
-            {
-                $this->quoteMessage = $message;
-                return $this;
-            }
-            public function getHasError()
-            {
-                return $this->hasError;
-            }
-            public function setHasError($hasError)
-            {
-                $this->hasError = $hasError;
-                return $this;
-            }
-        };
+        // Use DataObjectTestHelperForValidator extending DataObject with dynamic methods
+        $resultMock = new DataObjectTestHelperForValidator();
         $resultMock->setHasError(true);
         $this->stockRegistryMock->method('getStockItem')
             ->willReturn($this->stockItemMock);

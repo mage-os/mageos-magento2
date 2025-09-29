@@ -16,6 +16,7 @@ use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
 use Magento\Framework\Registry;
+use Magento\Framework\Test\Unit\Helper\AbstractResourceTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -91,62 +92,8 @@ class StockTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        // Create anonymous class extending AbstractResource with dynamic methods
-        $this->resource = new class extends AbstractResource {
-            /** @var string|null */
-            private $idFieldName = null;
-
-            public function __construct()
-            {
-                // Skip parent constructor to avoid complex dependencies
-            }
-
-            protected function _construct()
-            {
-                // Required abstract method implementation
-            }
-
-            public function getIdFieldName()
-            {
-                return $this->idFieldName;
-            }
-
-            public function setIdFieldName($value)
-            {
-                $this->idFieldName = $value;
-                return $this;
-            }
-
-            // Required AbstractResource methods - simplified implementations
-            public function save(\Magento\Framework\Model\AbstractModel $object)
-            {
-                return $this;
-            }
-            public function delete(\Magento\Framework\Model\AbstractModel $object)
-            {
-                return $this;
-            }
-            public function load(\Magento\Framework\Model\AbstractModel $object, $value, $field = null)
-            {
-                return $this;
-            }
-            public function getConnection()
-            {
-                return null;
-            }
-            public function getTable($tableName)
-            {
-                return $tableName;
-            }
-            public function getMainTable()
-            {
-                return 'main_table';
-            }
-            public function getTablePrefix()
-            {
-                return '';
-            }
-        };
+        // Create AbstractResourceTestHelper extending AbstractResource with dynamic methods
+        $this->resource = new AbstractResourceTestHelper();
 
         $this->resourceCollection = $this->getMockBuilder(AbstractDb::class)
             ->disableOriginalConstructor()

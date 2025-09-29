@@ -13,6 +13,7 @@ use Magento\Framework\Data\Form\Element\CollectionFactory;
 use Magento\Framework\Data\Form\Element\Factory;
 use Magento\Framework\Data\Form\Element\Text;
 use Magento\Framework\Data\Form\Element\TextFactory;
+use Magento\Framework\Test\Unit\Helper\TextTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -69,51 +70,11 @@ class StockTest extends TestCase
                 [\Magento\Framework\View\Helper\SecureHtmlRenderer::class, $secureHtmlRendererMock]
             ]);
         
-        $this->_qtyMock = new class(
+        $this->_qtyMock = new TextTestHelper(
             $this->_factoryElementMock,
             $this->_collectionFactoryMock,
             $escaperMock
-        ) extends Text {
-            /** @var mixed */
-            private $value = null;
-            /** @var string|null */
-            private $name = null;
-            /** @var mixed */
-            private $form = null;
-
-            public function setValue($value)
-            {
-                $this->value = $value;
-                return $this;
-            }
-
-            public function setName($name)
-            {
-                $this->name = $name;
-                return $this;
-            }
-
-            public function setForm($form)
-            {
-                $this->form = $form;
-                return $this;
-            }
-
-            public function getValue()
-            {
-                return $this->value;
-            }
-
-            public function getName()
-            {
-                return $this->name;
-            }
-
-            public function getForm()
-            {
-                return $this->form;
-            }
-        };
+        );
         $this->_factoryTextMock = $this->createMock(TextFactory::class);
 
         $coreRegistryMock = $this->createMock(\Magento\Framework\Registry::class);

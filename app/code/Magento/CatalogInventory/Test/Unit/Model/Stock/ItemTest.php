@@ -10,6 +10,7 @@ namespace Magento\CatalogInventory\Test\Unit\Model\Stock;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Product;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\CatalogInventory\Api\StockConfigurationInterface;
 use Magento\CatalogInventory\Api\StockItemRepositoryInterface;
 use Magento\CatalogInventory\Model\ResourceModel\Stock\Item\Collection;
@@ -168,102 +169,8 @@ class ItemTest extends TestCase
 
     public function testSetProduct()
     {
-        // Create anonymous class extending Product with dynamic methods
-        $product = new class extends Product {
-            /** @var bool */
-            private $isChangedWebsites = false;
-            /** @var int|null */
-            private $id = null;
-            /** @var string|null */
-            private $name = null;
-            /** @var int|null */
-            private $storeId = null;
-            /** @var string|null */
-            private $typeId = null;
-            /** @var bool|null */
-            private $statusChanged = null;
-
-            public function __construct()
-            {
-                // Skip parent constructor to avoid complex dependencies
-            }
-
-            // Dynamic method from addMethods
-            public function getIsChangedWebsites()
-            {
-                return $this->isChangedWebsites;
-            }
-
-            public function setIsChangedWebsites($value)
-            {
-                $this->isChangedWebsites = $value;
-                return $this;
-            }
-
-            // Methods from onlyMethods
-            public function getId()
-            {
-                return $this->id;
-            }
-
-            public function setId($value)
-            {
-                $this->id = $value;
-                return $this;
-            }
-
-            public function getName()
-            {
-                return $this->name;
-            }
-
-            public function setName($value)
-            {
-                $this->name = $value;
-                return $this;
-            }
-
-            public function getStoreId()
-            {
-                return $this->storeId;
-            }
-
-            public function setStoreId($value)
-            {
-                $this->storeId = $value;
-                return $this;
-            }
-
-            public function getTypeId()
-            {
-                return $this->typeId;
-            }
-
-            public function setTypeId($value)
-            {
-                $this->typeId = $value;
-                return $this;
-            }
-
-            public function dataHasChangedFor($field)
-            {
-                if ($field === 'status') {
-                    return $this->statusChanged;
-                }
-                return false;
-            }
-
-            public function setStatusChanged($value)
-            {
-                $this->statusChanged = $value;
-                return $this;
-            }
-
-            public function __wakeup()
-            {
-                // Required method implementation
-            }
-        };
+        // Create ProductTestHelper extending Product with dynamic methods
+        $product = new ProductTestHelper();
         $productId = 2;
         $productName = 'Some Name';
         $storeId = 3;

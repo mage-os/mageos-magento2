@@ -12,7 +12,9 @@ use Magento\CatalogInventory\Observer\ReindexQuoteInventoryObserver;
 use Magento\CatalogInventory\Observer\SubtractQuoteInventoryObserver;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
+use Magento\Framework\Test\Unit\Helper\EventTestHelper;
 use Magento\Quote\Model\Quote;
+use Magento\Quote\Test\Unit\Helper\QuoteTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -57,74 +59,8 @@ class CheckoutAllSubmitAfterObserverTest extends TestCase
             ReindexQuoteInventoryObserver::class
         );
 
-        // Create anonymous class for Event with all required methods
-        $this->event = new class extends Event {
-            /** @var mixed */
-            private $product = null;
-            /** @var mixed */
-            private $collection = null;
-            /** @var mixed */
-            private $creditmemo = null;
-            /** @var mixed */
-            private $quote = null;
-            /** @var mixed */
-            private $website = null;
-
-            public function getProduct()
-            {
-                return $this->product;
-            }
-
-            public function setProduct($product)
-            {
-                $this->product = $product;
-                return $this;
-            }
-
-            public function getCollection()
-            {
-                return $this->collection;
-            }
-
-            public function setCollection($collection)
-            {
-                $this->collection = $collection;
-                return $this;
-            }
-
-            public function getCreditmemo()
-            {
-                return $this->creditmemo;
-            }
-
-            public function setCreditmemo($creditmemo)
-            {
-                $this->creditmemo = $creditmemo;
-                return $this;
-            }
-
-            public function getQuote()
-            {
-                return $this->quote;
-            }
-
-            public function setQuote($quote)
-            {
-                $this->quote = $quote;
-                return $this;
-            }
-
-            public function getWebsite()
-            {
-                return $this->website;
-            }
-
-            public function setWebsite($website)
-            {
-                $this->website = $website;
-                return $this;
-            }
-        };
+        // Create EventTestHelper for Event with all required methods
+        $this->event = new EventTestHelper();
 
         $this->eventObserver = $this->createMock(Observer::class);
 
@@ -141,26 +77,8 @@ class CheckoutAllSubmitAfterObserverTest extends TestCase
 
     public function testCheckoutAllSubmitAfter()
     {
-        // Create anonymous class for Quote with getInventoryProcessed method
-        $quote = new class extends Quote {
-            /** @var bool */
-            private $inventoryProcessed = false;
-
-            public function __construct()
-            {
-            }
-
-            public function getInventoryProcessed()
-            {
-                return $this->inventoryProcessed;
-            }
-
-            public function setInventoryProcessed($inventoryProcessed)
-            {
-                $this->inventoryProcessed = $inventoryProcessed;
-                return $this;
-            }
-        };
+        // Create QuoteTestHelper for Quote with getInventoryProcessed method
+        $quote = new QuoteTestHelper();
 
         // Use setter instead of expects for the anonymous class
         $quote->setInventoryProcessed(false);

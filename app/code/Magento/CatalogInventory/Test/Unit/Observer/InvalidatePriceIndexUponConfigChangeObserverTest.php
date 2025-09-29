@@ -13,6 +13,7 @@ use Magento\CatalogInventory\Observer\InvalidatePriceIndexUponConfigChangeObserv
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Indexer\IndexerInterface;
+use Magento\Framework\Test\Unit\Helper\EventTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -57,22 +58,8 @@ class InvalidatePriceIndexUponConfigChangeObserverTest extends TestCase
         $this->indexerMock = $this->createMock(IndexerInterface::class);
         $this->observerMock = $this->createMock(Observer::class);
         
-        // Create anonymous class for Event with getChangedPaths method
-        $this->eventMock = new class extends Event {
-            /** @var array */
-            private $changedPaths = [];
-
-            public function getChangedPaths()
-            {
-                return $this->changedPaths;
-            }
-
-            public function setChangedPaths($changedPaths)
-            {
-                $this->changedPaths = $changedPaths;
-                return $this;
-            }
-        };
+        // Create EventTestHelper for Event with getChangedPaths method
+        $this->eventMock = new EventTestHelper();
 
         // Direct instantiation instead of ObjectManagerHelper
         $this->observer = new InvalidatePriceIndexUponConfigChangeObserver(

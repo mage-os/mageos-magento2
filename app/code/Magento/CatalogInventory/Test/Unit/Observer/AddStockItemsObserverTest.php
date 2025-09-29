@@ -10,6 +10,7 @@ namespace Magento\CatalogInventory\Test\Unit\Observer;
 use Magento\Catalog\Api\Data\ProductExtensionInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
+use Magento\Catalog\Test\Unit\Helper\ProductExtensionInterfaceTestHelper;
 use Magento\CatalogInventory\Api\Data\StockItemInterface;
 use Magento\CatalogInventory\Api\StockConfigurationInterface;
 use Magento\CatalogInventory\Api\StockItemCriteriaInterfaceFactory;
@@ -84,26 +85,8 @@ class AddStockItemsObserverTest extends TestCase
             ->method('getDefaultScopeId')
             ->willReturn($defaultScopeId);
 
-        // Create anonymous class for ProductExtensionInterface
-        $productExtension = new class implements ProductExtensionInterface {
-            /** @var mixed */
-            private $stockItem = null;
-
-            public function __construct()
-            {
-            }
-
-            public function setStockItem($stockItem)
-            {
-                $this->stockItem = $stockItem;
-                return $this;
-            }
-
-            public function getStockItem()
-            {
-                return $this->stockItem;
-            }
-        };
+        // Create ProductExtensionInterfaceTestHelper for ProductExtensionInterface
+        $productExtension = new ProductExtensionInterfaceTestHelper();
 
         $product = $this->createMock(Product::class);
         $product->expects(self::once())

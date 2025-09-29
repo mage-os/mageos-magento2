@@ -11,10 +11,10 @@ use Magento\Catalog\Api\Data\ProductExtensionFactory;
 use Magento\Catalog\Api\Data\ProductExtensionInterface;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\Product;
+use Magento\Catalog\Test\Unit\Helper\ProductExtensionInterfaceTestHelper;
 use Magento\CatalogInventory\Api\Data\StockItemInterface;
 use Magento\CatalogInventory\Api\StockRegistryInterface;
 use Magento\CatalogInventory\Model\Plugin\AfterProductLoad;
-use Magento\ConfigurableProduct\Test\Unit\Model\Product\ProductExtensionAttributes;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -60,36 +60,8 @@ class AfterProductLoadTest extends TestCase
             ->with($productId)
             ->willReturn($this->stockItemMock);
 
-        // Create anonymous class extending ProductExtensionAttributes with setStockItem method
-        $this->productExtensionMock = new class extends ProductExtensionAttributes {
-            /** @var mixed */
-            private $stockItem = null;
-
-            public function __construct()
-            {
-            }
-
-            public function setStockItem($stockItem)
-            {
-                $this->stockItem = $stockItem;
-                return $this;
-            }
-
-            public function getStockItem()
-            {
-                return $this->stockItem;
-            }
-
-            // Implement other interface methods as needed
-            public function getStockItems()
-            {
-                return null;
-            }
-            public function setStockItems($stockItems)
-            {
-                return $this;
-            }
-        };
+        // Use ProductExtensionInterfaceTestHelper implementing ProductExtensionInterface with dynamic methods
+        $this->productExtensionMock = new ProductExtensionInterfaceTestHelper();
         
         // Use setter method instead of expects for anonymous class
         $this->productExtensionMock->setStockItem($this->stockItemMock);

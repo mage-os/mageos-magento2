@@ -23,6 +23,7 @@ use Magento\CatalogInventory\Model\Spi\StockStateProviderInterface;
 use Magento\CatalogInventory\Model\Stock\Item;
 use Magento\CatalogInventory\Model\Stock\StockItemRepository;
 use Magento\CatalogInventory\Model\StockRegistryStorage;
+use Magento\Catalog\Test\Unit\Helper\ItemTestHelper;
 use Magento\Framework\DB\MapperFactory;
 use Magento\Framework\DB\QueryBuilder;
 use Magento\Framework\DB\QueryBuilderFactory;
@@ -126,137 +127,8 @@ class StockItemRepositoryTest extends TestCase
      */
     protected function setUp(): void
     {
-        // Create anonymous class that extends Item and implements all required methods
-        $this->stockItemMock = new class extends Item {
-            /** @var int|null */
-            private $itemId = null;
-            /** @var int|null */
-            private $productId = null;
-            /** @var bool|null */
-            private $isInStock = null;
-            /** @var bool|null */
-            private $stockStatusChangedAuto = null;
-            /** @var bool|null */
-            private $manageStock = null;
-            /** @var int|null */
-            private $websiteId = null;
-            /** @var int|null */
-            private $stockId = null;
-            /** @var float|null */
-            private $qty = null;
-
-            public function __construct()
-            {
-            }
-            
-            public function getItemId()
-            {
-                return $this->itemId;
-            }
-            
-            public function setItemId($value)
-            {
-                $this->itemId = $value;
-                return $this;
-            }
-            
-            public function getProductId()
-            {
-                return $this->productId;
-            }
-            
-            public function setProductId($value)
-            {
-                $this->productId = $value;
-                return $this;
-            }
-            
-            public function setIsInStock($isInStock)
-            {
-                $this->isInStock = $isInStock;
-                return $this;
-            }
-            
-            public function getIsInStock()
-            {
-                return $this->isInStock;
-            }
-            
-            public function getStockStatusChangedAuto()
-            {
-                return $this->stockStatusChangedAuto;
-            }
-            
-            public function setStockStatusChangedAuto($stockStatusChangedAuto)
-            {
-                $this->stockStatusChangedAuto = $stockStatusChangedAuto;
-                return $this;
-            }
-            
-            public function getManageStock()
-            {
-                return $this->manageStock;
-            }
-            
-            public function setManageStock($value)
-            {
-                $this->manageStock = $value;
-                return $this;
-            }
-            
-            public function setLowStockDate($lowStockDate)
-            {
-                return $this;
-            }
-            
-            public function setQty($qty)
-            {
-                $this->qty = $qty;
-                return $this;
-            }
-            
-            public function getQty()
-            {
-                return $this->qty;
-            }
-            
-            public function getWebsiteId()
-            {
-                return $this->websiteId;
-            }
-            
-            public function setWebsiteId($websiteId)
-            {
-                $this->websiteId = $websiteId;
-                return $this;
-            }
-            
-            public function getStockId()
-            {
-                return $this->stockId;
-            }
-            
-            public function setStockId($stockId)
-            {
-                $this->stockId = $stockId;
-                return $this;
-            }
-            
-            public function setStockStatusChangedAutomaticallyFlag($flag)
-            {
-                return $this;
-            }
-            
-            public function hasStockStatusChangedAutomaticallyFlag()
-            {
-                return false;
-            }
-            
-            public function getStockStatusChangedAutomaticallyFlag()
-            {
-                return false;
-            }
-        };
+        // Create ItemTestHelper that extends Item and implements all required methods
+        $this->stockItemMock = new ItemTestHelper();
             
         $this->stockConfigurationMock = $this->getMockBuilder(
             StockConfigurationInterface::class

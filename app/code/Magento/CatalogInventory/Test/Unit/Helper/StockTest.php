@@ -9,6 +9,7 @@ namespace Magento\CatalogInventory\Test\Unit\Helper;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Product;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Catalog\Model\ResourceModel\Collection\AbstractCollection;
 use Magento\Catalog\Model\ResourceModel\Product\Link\Product\Collection;
 use Magento\CatalogInventory\Api\Data\StockStatusInterface;
@@ -106,34 +107,7 @@ class StockTest extends TestCase
         $this->stockRegistryProviderMock->method('getStockStatus')->willReturn($stockStatusMock);
         $this->stockConfiguration->expects($this->once())->method('getDefaultScopeId')->willReturn($websiteId);
 
-        $productMock = new class extends Product {
-            /** @var bool|null */
-            private $isSalable = null;
-            /** @var int|null */
-            private $id = null;
-
-            public function __construct()
-            {
-                // Empty constructor for anonymous class
-            }
-
-            public function setIsSalable($isSalable)
-            {
-                $this->isSalable = $isSalable;
-                return $this;
-            }
-
-            public function getId()
-            {
-                return $this->id;
-            }
-
-            public function setId($id)
-            {
-                $this->id = $id;
-                return $this;
-            }
-        };
+        $productMock = new ProductTestHelper();
         
         $productMock->setIsSalable($status);
         $this->assertNull($this->stock->assignStatusToProduct($productMock));
@@ -145,34 +119,7 @@ class StockTest extends TestCase
         $productId = 2;
         $status = 'test';
 
-        $productMock = new class extends Product {
-            /** @var bool|null */
-            private $isSalable = null;
-            /** @var int|null */
-            private $id = null;
-
-            public function __construct()
-            {
-                // Empty constructor for anonymous class
-            }
-
-            public function setIsSalable($isSalable)
-            {
-                $this->isSalable = $isSalable;
-                return $this;
-            }
-
-            public function getId()
-            {
-                return $this->id;
-            }
-
-            public function setId($id)
-            {
-                $this->id = $id;
-                return $this;
-            }
-        };
+        $productMock = new ProductTestHelper();
         
         $productMock->setIsSalable($status);
         $productMock->setId($productId);

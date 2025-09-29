@@ -12,6 +12,7 @@ use Magento\CatalogInventory\Model\ResourceModel\Stock\Item;
 use Magento\CatalogInventory\Observer\UpdateItemsStockUponConfigChangeObserver;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
+use Magento\Framework\Test\Unit\Helper\EventTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -45,35 +46,8 @@ class UpdateItemsStockUponConfigChangeObserverTest extends TestCase
     {
         $this->resourceStockItem = $this->createMock(Item::class);
 
-        // Create anonymous class for Event with getWebsite and getChangedPaths methods
-        $this->event = new class extends Event {
-            /** @var mixed */
-            private $website = null;
-            /** @var array */
-            private $changedPaths = [];
-
-            public function getWebsite()
-            {
-                return $this->website;
-            }
-
-            public function setWebsite($website)
-            {
-                $this->website = $website;
-                return $this;
-            }
-
-            public function getChangedPaths()
-            {
-                return $this->changedPaths;
-            }
-
-            public function setChangedPaths($changedPaths)
-            {
-                $this->changedPaths = $changedPaths;
-                return $this;
-            }
-        };
+        // Create EventTestHelper for Event with getWebsite and getChangedPaths methods
+        $this->event = new EventTestHelper();
 
         $this->eventObserver = $this->createMock(Observer::class);
 

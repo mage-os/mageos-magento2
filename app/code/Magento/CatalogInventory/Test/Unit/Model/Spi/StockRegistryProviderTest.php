@@ -23,6 +23,9 @@ use Magento\CatalogInventory\Api\StockStatusCriteriaInterface;
 use Magento\CatalogInventory\Api\StockStatusCriteriaInterfaceFactory;
 use Magento\CatalogInventory\Api\StockStatusRepositoryInterface;
 use Magento\CatalogInventory\Model\ResourceModel\Stock\Collection;
+use Magento\Catalog\Test\Unit\Helper\CollectionTestHelper;
+use Magento\Catalog\Test\Unit\Helper\StockItemCollectionTestHelper;
+use Magento\Catalog\Test\Unit\Helper\StockStatusCollectionTestHelper;
 use Magento\CatalogInventory\Model\Spi\StockRegistryProviderInterface;
 use Magento\CatalogInventory\Model\StockRegistryProvider;
 use Magento\CatalogInventory\Model\StockRegistryStorage;
@@ -222,32 +225,8 @@ class StockRegistryProviderTest extends TestCase
     {
         $this->stockCriteriaFactory->expects($this->once())->method('create')->willReturn($this->stockCriteria);
         $this->stockCriteria->expects($this->once())->method('setScopeFilter')->willReturn(null);
-        // Create anonymous class extending Collection with dynamic methods
-        $stockCollection = new class extends Collection {
-            /** @var array */
-            private $items = [];
-
-            public function __construct()
-            {
-                // Skip parent constructor to avoid complex dependencies
-            }
-
-            public function getItems()
-            {
-                return $this->items;
-            }
-
-            public function setItems(?array $items = null)
-            {
-                $this->items = $items;
-                return $this;
-            }
-
-            public function getFirstItem()
-            {
-                return !empty($this->items) ? reset($this->items) : null;
-            }
-        };
+        // Create CollectionTestHelper extending Collection with dynamic methods
+        $stockCollection = new CollectionTestHelper();
         $stockCollection->setItems([$this->stock]);
         $this->stockRepository->expects($this->once())->method('getList')->willReturn($stockCollection);
         $this->stock->expects($this->once())->method('getStockId')->willReturn(true);
@@ -258,32 +237,8 @@ class StockRegistryProviderTest extends TestCase
     {
         $this->stockItemCriteriaFactory->expects($this->once())->method('create')->willReturn($this->stockItemCriteria);
         $this->stockItemCriteria->expects($this->once())->method('setProductsFilter')->willReturn(null);
-        // Create anonymous class extending Stock\Item\Collection with dynamic methods
-        $stockItemCollection = new class extends \Magento\CatalogInventory\Model\ResourceModel\Stock\Item\Collection {
-            /** @var array */
-            private $items = [];
-
-            public function __construct()
-            {
-                // Skip parent constructor to avoid complex dependencies
-            }
-
-            public function getItems()
-            {
-                return $this->items;
-            }
-
-            public function setItems(?array $items = null)
-            {
-                $this->items = $items;
-                return $this;
-            }
-
-            public function getFirstItem()
-            {
-                return !empty($this->items) ? reset($this->items) : null;
-            }
-        };
+        // Create StockItemCollectionTestHelper extending Stock\Item\Collection with dynamic methods
+        $stockItemCollection = new StockItemCollectionTestHelper();
         $stockItemCollection->setItems([$this->stockItem]);
         $this->stockItemRepository->expects($this->once())->method('getList')->willReturn($stockItemCollection);
         $this->stockItem->expects($this->once())->method('getItemId')->willReturn(true);
@@ -300,33 +255,8 @@ class StockRegistryProviderTest extends TestCase
             ->willReturn($this->stockStatusCriteria);
         $this->stockStatusCriteria->expects($this->once())->method('setScopeFilter')->willReturn(null);
         $this->stockStatusCriteria->expects($this->once())->method('setProductsFilter')->willReturn(null);
-        // Create anonymous class extending Stock\Status\Collection with dynamic methods
-        $stockStatusCollection = new class extends
-            \Magento\CatalogInventory\Model\ResourceModel\Stock\Status\Collection {
-            /** @var array */
-            private $items = [];
-
-            public function __construct()
-            {
-                // Skip parent constructor to avoid complex dependencies
-            }
-
-            public function getItems()
-            {
-                return $this->items;
-            }
-
-            public function setItems(?array $items = null)
-            {
-                $this->items = $items;
-                return $this;
-            }
-
-            public function getFirstItem()
-            {
-                return !empty($this->items) ? reset($this->items) : null;
-            }
-        };
+        // Create StockStatusCollectionTestHelper extending Stock\Status\Collection with dynamic methods
+        $stockStatusCollection = new StockStatusCollectionTestHelper();
         $stockStatusCollection->setItems([$this->stockStatus]);
         $this->stockStatusRepository->expects($this->once())->method('getList')->willReturn($stockStatusCollection);
         $this->stockStatus->expects($this->once())->method('getProductId')->willReturn($this->productId);

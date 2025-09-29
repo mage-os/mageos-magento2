@@ -11,6 +11,7 @@ use Magento\CatalogInventory\Model\Adminhtml\Stock\Item;
 use Magento\Customer\Api\Data\GroupInterface;
 use Magento\Customer\Api\GroupManagementInterface;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
+use Magento\Framework\Test\Unit\Helper\AbstractResourceTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -30,40 +31,8 @@ class ItemTest extends TestCase
      */
     protected function setUp(): void
     {
-        // Create anonymous class for AbstractResource with getIdFieldName method
-        $resourceMock = new class extends AbstractResource {
-            /** @var string|null */
-            private $idFieldName = null;
-            /** @var mixed */
-            private $connection = null;
-
-            public function getIdFieldName()
-            {
-                return $this->idFieldName;
-            }
-
-            public function setIdFieldName($idFieldName)
-            {
-                $this->idFieldName = $idFieldName;
-                return $this;
-            }
-
-            public function getConnection()
-            {
-                return $this->connection;
-            }
-
-            public function setConnection($connection)
-            {
-                $this->connection = $connection;
-                return $this;
-            }
-
-            protected function _construct()
-            {
-                // Required abstract method implementation
-            }
-        };
+        // Create AbstractResourceTestHelper for AbstractResource
+        $resourceMock = new AbstractResourceTestHelper();
 
         $groupManagement = $this->createMock(GroupManagementInterface::class);
 
