@@ -13,6 +13,7 @@ namespace Magento\Wishlist\Test\Unit\Observer;
 
 use Magento\Customer\Model\Session;
 use Magento\Wishlist\Observer\CustomerLogout as Observer;
+use Magento\Customer\Test\Unit\Helper\SessionTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -30,34 +31,9 @@ class CustomerLogoutTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->customerSession = new class extends Session {
-            /**
-             * @var int
-             */
-            public $wishlistItemCount = 0;
-            
-            public function __construct()
-            {
-            }
-            
-            public function isLoggedIn()
-            {
-                return true;
-            }
-            
-            public function getCustomerId()
-            {
-                return 1;
-            }
-            
-            public function setWishlistItemCount($count)
-            {
-                $this->wishlistItemCount = $count;
-                $_ = [$count];
-                unset($_);
-                return $this;
-            }
-        };
+        $this->customerSession = new SessionTestHelper();
+        $this->customerSession->setIsLoggedIn(true);
+        $this->customerSession->setCustomerId(1);
 
         $this->observer = new Observer(
             $this->customerSession

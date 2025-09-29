@@ -28,6 +28,9 @@ use Magento\Wishlist\Model\ItemCarrier;
 use Magento\Wishlist\Model\LocaleQuantityProcessor;
 use Magento\Wishlist\Model\ResourceModel\Item\Collection;
 use Magento\Wishlist\Model\Wishlist;
+use Magento\Catalog\Test\Unit\Helper\ProductCarrierTestHelper;
+use Magento\Wishlist\Test\Unit\Helper\ItemCarrierTestHelper;
+use Magento\Wishlist\Test\Unit\Helper\WishlistCarrierTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -100,177 +103,32 @@ class ItemCarrierTest extends TestCase
         $redirectUrl = 'redirect_url';
         $sharingCode = 'sharingcode';
 
-        /** @var Item|MockObject $itemOneMock */
-        $itemOneMock = $this->createMock(Item::class);
         /** @var Product|MockObject $productOneMock */
-        $productOneMock = new class($productOneName) extends Product {
-            /**
-             * @var string
-             */
-            private $name;
-
-            public function __construct($name)
-            {
-                $this->name = $name;
-            }
-
-            public function getName()
-            {
-                return $this->name;
-            }
-            public function getDisableAddToCart()
-            {
-                return true;
-            }
-            public function setDisableAddToCart($value)
-            {
-                return $this;
-            }
-        };
+        $productOneMock = new ProductCarrierTestHelper();
+        $productOneMock->setName($productOneName);
+        $productOneMock->setDisableAddToCart(true);
 
         /** @var Product|MockObject $productTwoMock */
-        $productTwoMock = new class($productTwoName) extends Product {
-            /**
-             * @var string
-             */
-            private $name;
+        $productTwoMock = new ProductCarrierTestHelper();
+        $productTwoMock->setName($productTwoName);
+        $productTwoMock->setDisableAddToCart(false);
 
-            public function __construct($name)
-            {
-                $this->name = $name;
-            }
-
-            public function getName()
-            {
-                return $this->name;
-            }
-            public function getDisableAddToCart()
-            {
-                return false;
-            }
-            public function setDisableAddToCart($value)
-            {
-                return $this;
-            }
-        };
-
+        /** @var Item|MockObject $itemOneMock */
+        $itemOneMock = new ItemCarrierTestHelper();
+        $itemOneMock->setId($itemOneId);
+        $itemOneMock->setProduct($productOneMock);
         /** @var Item|MockObject $itemTwoMock */
-        $itemTwoMock = new class($itemTwoId, $productTwoMock) extends Item {
-            /**
-             * @var int
-             */
-            private $id;
-            /**
-             * @var Product
-             */
-            private $product;
+        $itemTwoMock = new ItemCarrierTestHelper();
+        $itemTwoMock->setId($itemTwoId);
+        $itemTwoMock->setProduct($productTwoMock);
 
-            public function __construct($id, $product)
-            {
-                $this->id = $id;
-                $this->product = $product;
-                $_ = [$id, $product];
-                unset($_);
-            }
-
-            public function getId()
-            {
-                return $this->id;
-            }
-            public function getProduct()
-            {
-                return $this->product;
-            }
-            public function setQty($qty)
-            {
-                return $this;
-            }
-            public function addToCart($cart, $delete = false)
-            {
-                return true;
-            }
-            public function delete()
-            {
-                return $this;
-            }
-            public function getProductUrl()
-            {
-                return '';
-            }
-            public function unsProduct()
-            {
-                return $this;
-            }
-        };
-
-        $itemOneMock->method('getProduct')->willReturn($productOneMock);
-        $itemOneMock->method('getId')->willReturn($itemOneId);
-        $itemOneMock->method('setQty')->willReturnSelf();
-        $itemOneMock->method('addToCart')->willReturnSelf();
-        $itemOneMock->method('delete')->willReturnSelf();
-        $itemOneMock->method('getProductUrl')->willReturn('');
-
-        $collection = [$itemTwoMock];
+        $collection = [$itemOneMock, $itemTwoMock];
 
         /** @var Wishlist|MockObject $wishlistMock */
-        $wishlistMock = new class($sharingCode, $isOwner, $wishlistId) extends Wishlist {
-            /**
-             * @var string
-             */
-            private $sharingCode;
-            /**
-             * @var bool
-             */
-            private $isOwner;
-            /**
-             * @var int
-             */
-            private $id;
-            /**
-             * @var Collection
-             */
-            private $itemCollection;
-
-            public function __construct($sharingCode, $isOwner, $id)
-            {
-                $this->sharingCode = $sharingCode;
-                $this->isOwner = $isOwner;
-                $this->id = $id;
-                $_ = [$sharingCode, $isOwner, $id];
-                unset($_);
-            }
-
-            public function getSharingCode()
-            {
-                return $this->sharingCode;
-            }
-
-            public function isOwner($customerId)
-            {
-                return $this->isOwner;
-            }
-
-            public function getId()
-            {
-                return $this->id;
-            }
-
-            public function setItemCollection($collection)
-            {
-                $this->itemCollection = $collection;
-                return $this;
-            }
-
-            public function getItemCollection()
-            {
-                return $this->itemCollection;
-            }
-
-            public function save()
-            {
-                return $this;
-            }
-        };
+        $wishlistMock = new WishlistCarrierTestHelper();
+        $wishlistMock->setSharingCode($sharingCode);
+        $wishlistMock->setIsOwner($isOwner);
+        $wishlistMock->setId($wishlistId);
 
         $this->mocks['session']->expects($this->once())
             ->method('getCustomerId')
@@ -374,59 +232,10 @@ class ItemCarrierTest extends TestCase
         $collection = [$itemOneMock, $itemTwoMock];
 
         /** @var Wishlist|MockObject $wishlistMock */
-        $wishlistMock = new class($sharingCode, $isOwner, $wishlistId) extends Wishlist {
-            /**
-             * @var string
-             */
-            private $sharingCode;
-            /**
-             * @var bool
-             */
-            private $isOwner;
-            /**
-             * @var int
-             */
-            private $id;
-            /**
-             * @var Collection
-             */
-            private $itemCollection;
-
-            public function __construct($sharingCode, $isOwner, $id)
-            {
-                $this->sharingCode = $sharingCode;
-                $this->isOwner = $isOwner;
-                $this->id = $id;
-                $_ = [$sharingCode, $isOwner, $id];
-                unset($_);
-            }
-
-            public function getSharingCode()
-            {
-                return $this->sharingCode;
-            }
-
-            public function isOwner($customerId)
-            {
-                return $this->isOwner;
-            }
-
-            public function getId()
-            {
-                return $this->id;
-            }
-
-            public function setItemCollection($collection)
-            {
-                $this->itemCollection = $collection;
-                return $this;
-            }
-
-            public function getItemCollection()
-            {
-                return $this->itemCollection;
-            }
-        };
+        $wishlistMock = new WishlistCarrierTestHelper();
+        $wishlistMock->setSharingCode($sharingCode);
+        $wishlistMock->setIsOwner($isOwner);
+        $wishlistMock->setId($wishlistId);
 
         $this->mocks['session']->expects($this->once())
             ->method('getCustomerId')
@@ -554,224 +363,21 @@ class ItemCarrierTest extends TestCase
         $isOwner = true;
         $indexUrl = 'index_url';
 
-        $itemOneMock = new class extends Item {
-            /**
-             * @var Product
-             */
-            public $product;
-            /**
-             * @var int
-             */
-            public $id;
-            /**
-             * @var int
-             */
-            public $qty;
-            /**
-             * @var string
-             */
-            public $productUrl = '';
-            /**
-             * @var Product
-             */
-            private $originalProduct;
+        $itemOneMock = new ItemCarrierTestHelper();
+        $itemOneMock->setId($itemOneId);
 
-            public function __construct()
-            {
-            }
+        $itemTwoMock = new ItemCarrierTestHelper();
+        $itemTwoMock->setId($itemTwoId);
 
-            public function setOriginalProduct($product)
-            {
-                $this->originalProduct = $product;
-                $this->product = $product;
-            }
+        $productOneMock = new ProductCarrierTestHelper();
+        $productOneMock->setName($productOneName);
 
-            public function getProduct()
-            {
-                // Always return the original product for testing purposes
-                return $this->originalProduct;
-            }
+        $productTwoMock = new ProductCarrierTestHelper();
+        $productTwoMock->setName($productTwoName);
 
-            public function getId()
-            {
-                return $this->id;
-            }
-
-            public function setQty($qty)
-            {
-                $this->qty = $qty;
-                return $this;
-            }
-
-            public function addToCart($cart, $delete = false)
-            {
-                return true;
-            }
-
-            public function delete()
-            {
-                return $this;
-            }
-
-            public function getProductUrl()
-            {
-                return $this->productUrl;
-            }
-
-            public function unsProduct()
-            {
-                $this->product = null;
-                return $this;
-            }
-        };
-
-        $itemTwoMock = new class extends Item {
-            /**
-             * @var Product
-             */
-            public $product;
-            /**
-             * @var int
-             */
-            public $id;
-            /**
-             * @var int
-             */
-            public $qty;
-            /**
-             * @var string
-             */
-            public $productUrl = '';
-            /**
-             * @var bool
-             */
-            public $shouldThrowException = false;
-            /**
-             * @var \Exception
-             */
-            public $exception;
-            /**
-             * @var Product
-             */
-            private $originalProduct;
-
-            public function __construct()
-            {
-            }
-
-            public function setOriginalProduct($product)
-            {
-                $this->originalProduct = $product;
-                $this->product = $product;
-            }
-
-            public function getProduct()
-            {
-                // Always return the original product for testing purposes
-                return $this->originalProduct;
-            }
-
-            public function getId()
-            {
-                return $this->id;
-            }
-
-            public function setQty($qty)
-            {
-                $this->qty = $qty;
-                return $this;
-            }
-
-            public function addToCart($cart, $delete = false)
-            {
-                if ($this->shouldThrowException && $this->exception) {
-                    throw $this->exception;
-                }
-                return true;
-            }
-
-            public function delete()
-            {
-                return $this;
-            }
-
-            public function getProductUrl()
-            {
-                return $this->productUrl;
-            }
-
-            public function unsProduct()
-            {
-                $this->product = null;
-                return $this;
-            }
-        };
-
-        $productOneMock = new class extends Product {
-            /**
-             * @var string
-             */
-            public $name;
-            /**
-             * @var bool
-             */
-            public $disableAddToCart = false;
-
-            public function __construct()
-            {
-            }
-
-            public function getName()
-            {
-                return $this->name;
-            }
-
-            public function getDisableAddToCart()
-            {
-                return $this->disableAddToCart;
-            }
-
-            public function setDisableAddToCart($value)
-            {
-                $this->disableAddToCart = $value;
-                return $this;
-            }
-        };
-
-        $productTwoMock = new class extends Product {
-            /**
-             * @var string
-             */
-            public $name;
-            /**
-             * @var bool
-             */
-            public $disableAddToCart = false;
-
-            public function __construct()
-            {
-            }
-
-            public function getName()
-            {
-                return $this->name;
-            }
-
-            public function getDisableAddToCart()
-            {
-                return $this->disableAddToCart;
-            }
-
-            public function setDisableAddToCart($value)
-            {
-                $this->disableAddToCart = $value;
-                return $this;
-            }
-        };
-
-        $itemOneMock->product = $productOneMock;
+        $itemOneMock->setProduct($productOneMock);
         $itemOneMock->setOriginalProduct($productOneMock);
-        $itemTwoMock->product = $productTwoMock;
+        $itemTwoMock->setProduct($productTwoMock);
         $itemTwoMock->setOriginalProduct($productTwoMock);
 
         $collection = [$itemOneMock, $itemTwoMock];
@@ -806,11 +412,11 @@ class ItemCarrierTest extends TestCase
             ->method('setVisibilityFilter')
             ->with(true)
             ->willReturn($collection);
-        $itemOneMock->id = $itemOneId;
-        $itemTwoMock->id = $itemTwoId;
-        $itemOneMock->product = $productOneMock;
+        $itemOneMock->setId($itemOneId);
+        $itemTwoMock->setId($itemTwoId);
+        $itemOneMock->setProduct($productOneMock);
         $itemOneMock->setOriginalProduct($productOneMock);
-        $itemTwoMock->product = $productTwoMock;
+        $itemTwoMock->setProduct($productTwoMock);
         $itemTwoMock->setOriginalProduct($productTwoMock);
 
         $this->mocks['quantityProcessor']->expects($this->once())
@@ -854,8 +460,8 @@ class ItemCarrierTest extends TestCase
                 }
             });
 
-        $productOneMock->name = $productOneName;
-        $productTwoMock->name = $productTwoName;
+        $productOneMock->setName($productOneName);
+        $productTwoMock->setName($productTwoName);
 
         $this->mocks['manager']->expects($this->once())
             ->method('addSuccessMessage')

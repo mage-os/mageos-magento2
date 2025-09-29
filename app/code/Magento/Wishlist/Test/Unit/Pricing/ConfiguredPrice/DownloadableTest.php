@@ -21,6 +21,7 @@ use Magento\Framework\Pricing\PriceInfoInterface;
 use Magento\Framework\Pricing\SaleableInterface;
 use Magento\Wishlist\Model\Item\Option;
 use Magento\Wishlist\Pricing\ConfiguredPrice\Downloadable;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -55,76 +56,7 @@ class DownloadableTest extends TestCase
     {
         $this->priceInfoMock = $this->createMock(PriceInfoInterface::class);
 
-        $this->saleableItem = new class() extends \Magento\Catalog\Model\Product {
-            /**
-             * @var PriceInfoInterface
-             */
-            private $priceInfo;
-            /**
-             * @var bool
-             */
-            private $linksPurchasedSeparately = true;
-            /**
-             * @var array
-             */
-            private $customOptions = [];
-            /**
-             * @var TypeInstanceInterface
-             */
-            private $typeInstance;
-            
-            public function __construct()
-            {
-            }
-            
-            public function setPriceInfo($priceInfo)
-            {
-                $this->priceInfo = $priceInfo;
-                $_ = [$priceInfo];
-                unset($_);
-                return $this;
-            }
-            
-            public function getPriceInfo()
-            {
-                return $this->priceInfo;
-            }
-            
-            public function getLinksPurchasedSeparately()
-            {
-                return $this->linksPurchasedSeparately;
-            }
-            
-            public function setLinksPurchasedSeparately($value)
-            {
-                $this->linksPurchasedSeparately = $value;
-                return $this;
-            }
-            
-            public function getCustomOption($key)
-            {
-                return $this->customOptions[$key] ?? null;
-            }
-            
-            public function setCustomOption($key, $value)
-            {
-                $this->customOptions[$key] = $value;
-                return $this;
-            }
-            
-            public function setTypeInstance($typeInstance)
-            {
-                $this->typeInstance = $typeInstance;
-                $_ = [$typeInstance];
-                unset($_);
-                return $this;
-            }
-            
-            public function getTypeInstance()
-            {
-                return $this->typeInstance;
-            }
-        };
+        $this->saleableItem = new ProductTestHelper();
         
         $this->saleableItem->setPriceInfo($this->priceInfoMock);
 
@@ -144,8 +76,8 @@ class DownloadableTest extends TestCase
     {
         $priceValue = 10;
 
-        $wishlistItemOptionMock = $this->createMock(Option::class);
-        $wishlistItemOptionMock->expects($this->once())
+        $optionMock = $this->createMock(Option::class);
+        $optionMock->expects($this->once())
             ->method('getValue')
             ->willReturn('1,2');
 
@@ -170,7 +102,7 @@ class DownloadableTest extends TestCase
             ->with(BasePrice::PRICE_CODE)
             ->willReturn($priceMock);
 
-        $this->saleableItem->setCustomOption('downloadable_link_ids', $wishlistItemOptionMock);
+        $this->saleableItem->setCustomOption('downloadable_link_ids', $optionMock);
         $this->saleableItem->setTypeInstance($productTypeMock);
 
         $this->assertEquals(20, $this->model->getValue());
@@ -207,8 +139,8 @@ class DownloadableTest extends TestCase
             ->with(BasePrice::PRICE_CODE)
             ->willReturn($priceMock);
 
-        $wishlistItemOptionMock = $this->createMock(Option::class);
-        $wishlistItemOptionMock->expects($this->once())
+        $optionMock = $this->createMock(Option::class);
+        $optionMock->expects($this->once())
             ->method('getValue')
             ->willReturn(null);
 
@@ -218,7 +150,7 @@ class DownloadableTest extends TestCase
             ->with($this->saleableItem)
             ->willReturn([]);
 
-        $this->saleableItem->setCustomOption('downloadable_link_ids', $wishlistItemOptionMock);
+        $this->saleableItem->setCustomOption('downloadable_link_ids', $optionMock);
         $this->saleableItem->setTypeInstance($productTypeMock);
 
         $this->assertEquals($priceValue, $this->model->getValue());

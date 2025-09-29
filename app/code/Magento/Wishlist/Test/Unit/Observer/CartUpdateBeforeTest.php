@@ -23,6 +23,10 @@ use Magento\Wishlist\Helper\Data;
 use Magento\Wishlist\Model\Wishlist;
 use Magento\Wishlist\Model\WishlistFactory;
 use Magento\Wishlist\Observer\CartUpdateBefore as Observer;
+use Magento\Framework\Test\Unit\Helper\EventTestHelper;
+use Magento\Wishlist\Test\Unit\Helper\ItemTestHelper;
+use Magento\Framework\Test\Unit\Helper\DataObjectTestHelper;
+use Magento\Quote\Test\Unit\Helper\QuoteTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -103,82 +107,15 @@ class CartUpdateBeforeTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $event = new class extends Event {
-            /**
-             * @var Cart
-             */
-            public $cart;
-            /**
-             * @var DataObject
-             */
-            public $info;
-            
-            public function __construct()
-            {
-            }
-            
-            public function getCart()
-            {
-                return $this->cart;
-            }
-            
-            public function getInfo()
-            {
-                return $this->info;
-            }
-        };
+        $event = new EventTestHelper();
 
         $eventObserver->expects($this->exactly(2))
             ->method('getEvent')
             ->willReturn($event);
 
-        $quoteItem = new class extends Item {
-            /**
-             * @var int
-             */
-            public $productId;
-            /**
-             * @var DataObject
-             */
-            public $buyRequest;
-            
-            public function __construct()
-            {
-            }
-            
-            public function getProductId()
-            {
-                return $this->productId;
-            }
-            
-            public function getBuyRequest()
-            {
-                return $this->buyRequest;
-            }
-            
-            public function __wakeup()
-            {
-            }
-        };
+        $quoteItem = new ItemTestHelper();
 
-        $buyRequest = new class extends DataObject {
-            /**
-             * @var int
-             */
-            public $qty;
-            
-            public function __construct()
-            {
-            }
-            
-            public function setQty($qty)
-            {
-                $this->qty = $qty;
-                $_ = [$qty];
-                unset($_);
-                return $this;
-            }
-        };
+        $buyRequest = new DataObjectTestHelper();
 
         $infoData = $this->getMockBuilder(DataObject::class)
             ->onlyMethods(['toArray'])
@@ -192,40 +129,7 @@ class CartUpdateBeforeTest extends TestCase
         $cart = $this->getMockBuilder(Cart::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $quote = new class extends Quote {
-            /**
-             * @var int
-             */
-            public $customerId;
-            /**
-             * @var array
-             */
-            public $items = [];
-            
-            public function __construct()
-            {
-            }
-            
-            public function getCustomerId()
-            {
-                return $this->customerId;
-            }
-            
-            public function getItemById($itemId)
-            {
-                return $this->items[$itemId] ?? null;
-            }
-            
-            public function removeItem($itemId)
-            {
-                unset($this->items[$itemId]);
-                return $this;
-            }
-            
-            public function __wakeup()
-            {
-            }
-        };
+        $quote = new QuoteTestHelper();
 
         $event->cart = $cart;
         $event->info = $infoData;

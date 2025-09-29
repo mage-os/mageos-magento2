@@ -22,6 +22,10 @@ use Magento\Wishlist\Model\ResourceModel\Wishlist\Collection;
 use Magento\Wishlist\Model\Wishlist;
 use Magento\Wishlist\Model\WishlistFactory;
 use Magento\Wishlist\Observer\AddToCart as Observer;
+use Magento\Framework\Test\Unit\Helper\EventTestHelper;
+use Magento\Framework\Test\Unit\Helper\ResponseInterfaceTestHelper;
+use Magento\Checkout\Test\Unit\Helper\SessionTestHelper as CheckoutSessionTestHelper;
+use Magento\Customer\Test\Unit\Helper\SessionTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -115,30 +119,7 @@ class AddToCartTest extends TestCase
 
     private function createEventMock()
     {
-        return new class extends Event {
-            /**
-             * @var RequestInterface
-             */
-            public $request;
-            /**
-             * @var ResponseInterface
-             */
-            public $response;
-            
-            public function __construct()
-            {
-                // Skip parent constructor
-            }
-            
-            public function getRequest()
-            {
-                return $this->request;
-            }
-            public function getResponse()
-            {
-                return $this->response;
-            }
-        };
+        return new EventTestHelper();
     }
 
     /**
@@ -146,177 +127,16 @@ class AddToCartTest extends TestCase
      */
     private function createResponseMock()
     {
-        return new class implements ResponseInterface {
-            /**
-             * @var string
-             */
-            private $redirectUrl;
-            
-            public function setRedirect($url)
-            {
-                $this->redirectUrl = $url;
-                $_ = [$url];
-                unset($_);
-                return $this;
-            }
-            public function sendResponse()
-            {
-                return $this;
-            }
-            public function setHttpResponseCode($code)
-            {
-                return $this;
-            }
-            public function setHeader($name, $value, $replace = false)
-            {
-                return $this;
-            }
-            public function clearHeader($name)
-            {
-                return $this;
-            }
-            public function clearHeaders()
-            {
-                return $this;
-            }
-            public function setRedirectUrl($url)
-            {
-                return $this;
-            }
-            public function setStatusHeader($httpCode, $version = null, $phrase = null)
-            {
-                return $this;
-            }
-        };
+        return new ResponseInterfaceTestHelper();
     }
 
     private function createCheckoutSessionMock()
     {
-        return new class extends Session {
-            /**
-             * @var string
-             */
-            public $sharedWishlist;
-            /**
-             * @var array
-             */
-            public $wishlistPendingMessages;
-            /**
-             * @var array
-             */
-            public $wishlistPendingUrls;
-            /**
-             * @var array
-             */
-            public $wishlistIds;
-            /**
-             * @var int
-             */
-            public $singleWishlistId;
-            /**
-             * @var bool
-             */
-            public $noCartRedirect;
-            
-            public function __construct()
-            {
-                // Skip parent constructor
-            }
-            
-            public function getSharedWishlist()
-            {
-                return $this->sharedWishlist;
-            }
-            public function getWishlistPendingMessages()
-            {
-                return $this->wishlistPendingMessages;
-            }
-            public function getWishlistPendingUrls()
-            {
-                return $this->wishlistPendingUrls;
-            }
-            public function getWishlistIds()
-            {
-                return $this->wishlistIds;
-            }
-            public function getSingleWishlistId()
-            {
-                return $this->singleWishlistId;
-            }
-            public function setSingleWishlistId($id)
-            {
-                $this->singleWishlistId = $id;
-                $_ = [$id];
-                unset($_);
-                return $this;
-            }
-            public function setWishlistIds($ids)
-            {
-                $this->wishlistIds = $ids;
-                $_ = [$ids];
-                unset($_);
-                return $this;
-            }
-            public function setWishlistPendingUrls($urls)
-            {
-                $this->wishlistPendingUrls = $urls;
-                $_ = [$urls];
-                unset($_);
-                return $this;
-            }
-            public function setWishlistPendingMessages($messages)
-            {
-                $this->wishlistPendingMessages = $messages;
-                $_ = [$messages];
-                unset($_);
-                return $this;
-            }
-            public function setNoCartRedirect($redirect)
-            {
-                $this->noCartRedirect = $redirect;
-                $_ = [$redirect];
-                unset($_);
-                return $this;
-            }
-        };
+        return new CheckoutSessionTestHelper();
     }
 
     private function createCustomerSessionMock()
     {
-        return new class extends \Magento\Customer\Model\Session {
-            /**
-             * @var int
-             */
-            public $wishlistItemCount;
-            /**
-             * @var bool
-             */
-            public $loggedIn;
-            /**
-             * @var int
-             */
-            public $customerId;
-            
-            public function __construct()
-            {
-                // Skip parent constructor
-            }
-            
-            public function setWishlistItemCount($count)
-            {
-                $this->wishlistItemCount = $count;
-                $_ = [$count];
-                unset($_);
-                return $this;
-            }
-            public function isLoggedIn()
-            {
-                return $this->loggedIn;
-            }
-            public function getCustomerId()
-            {
-                return $this->customerId;
-            }
-        };
+        return new SessionTestHelper();
     }
 }

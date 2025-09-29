@@ -35,6 +35,8 @@ use Magento\Wishlist\Model\ResourceModel\Item\CollectionFactory;
 use Magento\Wishlist\Model\ResourceModel\Wishlist as WishlistResource;
 use Magento\Wishlist\Model\ResourceModel\Wishlist\Collection as WishlistCollection;
 use Magento\Wishlist\Model\Wishlist;
+use Magento\Wishlist\Test\Unit\Helper\ItemTestHelper;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -311,51 +313,7 @@ class WishlistTest extends TestCase
      */
     private function prepareWishlistItem(): Item
     {
-        $newItem = new class extends Item {
-            public function __construct()
-            {
-            }
-
-            public function setProductId($productId)
-            {
-                return $this;
-            }
-
-            public function setWishlistId($wishlistId)
-            {
-                return $this;
-            }
-
-            public function setStoreId($storeId)
-            {
-                return $this;
-            }
-
-            public function setOptions($options)
-            {
-                return $this;
-            }
-
-            public function setProduct($product)
-            {
-                return $this;
-            }
-
-            public function setQty($qty)
-            {
-                return $this;
-            }
-
-            public function getItem()
-            {
-                return 2;
-            }
-
-            public function save()
-            {
-                return $this;
-            }
-        };
+        $newItem = new ItemTestHelper();
 
         return $newItem;
     }
@@ -454,54 +412,11 @@ class WishlistTest extends TestCase
 
     private function createProductMockForAddNewItem($productId, $storeId, $instanceType, $getIsSalable)
     {
-        return new class($productId, $storeId, $instanceType, $getIsSalable) extends Product {
-            /**
-             * @var int
-             */
-            private $productId;
-            /**
-             * @var int
-             */
-            private $storeId;
-            /**
-             * @var TypeInstanceInterface
-             */
-            private $typeInstance;
-            /**
-             * @var bool
-             */
-            private $isSalable;
-
-            public function __construct($productId, $storeId, $typeInstance, $isSalable)
-            {
-                $this->productId = $productId;
-                $this->storeId = $storeId;
-                $this->typeInstance = $typeInstance;
-                $this->isSalable = $isSalable;
-                $_ = [$productId, $storeId, $typeInstance, $isSalable];
-                unset($_);
-            }
-
-            public function getId()
-            {
-                return $this->productId;
-            }
-            public function hasWishlistStoreId()
-            {
-                return false;
-            }
-            public function getStoreId()
-            {
-                return $this->storeId;
-            }
-            public function getTypeInstance()
-            {
-                return $this->typeInstance;
-            }
-            public function getIsSalable()
-            {
-                return $this->isSalable;
-            }
-        };
+        $product = new ProductTestHelper();
+        $product->setId($productId);
+        $product->setStoreId($storeId);
+        $product->setTypeInstance($instanceType);
+        $product->setIsSalable($getIsSalable);
+        return $product;
     }
 }

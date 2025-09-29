@@ -9,12 +9,6 @@
  */
 declare(strict_types=1);
 
-
-
-
-
-
-
 namespace Magento\Wishlist\Test\Unit\DataProvider\Product\Collector;
 
 use Magento\Catalog\Api\Data\ProductInterface;
@@ -25,6 +19,7 @@ use Magento\Catalog\Api\Data\ProductRenderExtensionInterface;
 use Magento\Catalog\Api\Data\ProductRenderInterface;
 use Magento\Wishlist\Helper\Data;
 use Magento\Wishlist\Ui\DataProvider\Product\Collector\Button;
+use Magento\Catalog\Test\Unit\Helper\ProductRenderExtensionInterfaceTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -49,10 +44,10 @@ class ButtonTest extends TestCase
     protected function setUp(): void
     {
         $this->productRenderExtensionFactoryMock = $this->createMock(
-            ProductRenderExtensionFactory::class // @phpstan-ignore-line
+            ProductRenderExtensionFactory::class
         );
         $this->buttonInterfaceFactoryMock = $this->createMock(
-            ButtonInterfaceFactory::class // @phpstan-ignore-line
+            ButtonInterfaceFactory::class
         );
         $this->wishlistHelperMock = $this->createMock(Data::class);
 
@@ -69,23 +64,7 @@ class ButtonTest extends TestCase
         $productMock = $this->createMock(ProductInterface::class);
         $wishlistButton = null;
         /** @var ProductRenderExtensionInterface $productRendererExtensionMock */
-        $productRendererExtensionMock = new class implements ProductRenderExtensionInterface {
-            /**
-             * @var ButtonInterface|null
-             */
-            private $wishlistButton = null;
-            
-            public function setWishlistButton($button)
-            {
-                $this->wishlistButton = $button;
-                return $this;
-            }
-            
-            public function getWishlistButton()
-            {
-                return $this->wishlistButton;
-            }
-        };
+        $productRendererExtensionMock = new ProductRenderExtensionInterfaceTestHelper();
         $buttonInterfaceMock = $this->createMock(ButtonInterface::class);
 
         $productRendererMock->expects($this->once())
@@ -114,23 +93,7 @@ class ButtonTest extends TestCase
         $buttonInterfaceMock = $this->createMock(ButtonInterface::class);
         $wishlistButton = null;
         /** @var ProductRenderExtensionInterface $productRendererExtensionMock */
-        $productRendererExtensionMock = new class implements ProductRenderExtensionInterface {
-            /**
-             * @var ButtonInterface|null
-             */
-            private $wishlistButton = null;
-            
-            public function setWishlistButton($button)
-            {
-                $this->wishlistButton = $button;
-                return $this;
-            }
-            
-            public function getWishlistButton()
-            {
-                return $this->wishlistButton;
-            }
-        };
+        $productRendererExtensionMock = new ProductRenderExtensionInterfaceTestHelper();
 
         $productRendererMock->expects($this->once())
             ->method('getExtensionAttributes')

@@ -26,6 +26,7 @@ use Magento\Wishlist\Helper\Data;
 use Magento\Wishlist\Model\Item;
 use Magento\Wishlist\Model\LocaleQuantityProcessor;
 use Magento\Wishlist\Model\Wishlist;
+use Magento\Wishlist\Test\Unit\Helper\ItemUpdateTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -271,63 +272,8 @@ class UpdateTest extends TestCase
 
     private function createItemMock($id)
     {
-        return new class($id) extends Item {
-            /**
-             * @var int
-             */
-            private $id;
-            /**
-             * @var int
-             */
-            private $wishlistId;
-            /**
-             * @var Product
-             */
-            private $product;
-
-            public function __construct($id)
-            {
-                $this->id = $id;
-                $this->wishlistId = $id;
-            }
-
-            public function load($modelId, $field = null)
-            {
-                return $this;
-            }
-
-            public function getId()
-            {
-                return $this->id;
-            }
-
-            public function getWishlistId()
-            {
-                return $this->wishlistId;
-            }
-
-            public function setQty($qty)
-            {
-                return $this;
-            }
-
-            public function save()
-            {
-                return $this;
-            }
-
-            public function getProduct()
-            {
-                return $this->product;
-            }
-
-            public function setProduct($product)
-            {
-                $this->product = $product;
-                $_ = [$product];
-                unset($_);
-                return $this;
-            }
-        };
+        $item = new ItemUpdateTestHelper();
+        $item->setId($id);
+        return $item;
     }
 }

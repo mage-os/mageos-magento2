@@ -27,12 +27,17 @@ class WishlistTestHelper extends Wishlist
     /**
      * @var string
      */
-    private string $sharingCode = 'test-sharing-code';
+    private string $sharingCode = 'somesharingcode';
     
     /**
      * @var string
      */
     private string $updatedAt = '2024-01-01 00:00:00';
+    
+    /**
+     * @var mixed
+     */
+    private $itemCollection;
 
     /**
      * Constructor - skip parent constructor to avoid dependencies
@@ -140,6 +145,48 @@ class WishlistTestHelper extends Wishlist
     public function setUpdatedAt(string $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+        return $this;
+    }
+
+    /**
+     * Get customer ID
+     *
+     * @return int
+     */
+    public function getCustomerId(): int
+    {
+        return 1;
+    }
+
+    /**
+     * Set item collection
+     *
+     * @param mixed $collection
+     * @return self
+     */
+    public function setItemCollection($collection): self
+    {
+        $this->itemCollection = $collection;
+        return $this;
+    }
+
+    /**
+     * Get item collection
+     *
+     * @return mixed
+     */
+    public function getItemCollection()
+    {
+        return $this->itemCollection;
+    }
+
+    /**
+     * Save
+     *
+     * @return self
+     */
+    public function save(): self
+    {
         return $this;
     }
 }

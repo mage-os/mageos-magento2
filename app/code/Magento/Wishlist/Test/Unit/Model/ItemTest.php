@@ -28,6 +28,7 @@ use Magento\Wishlist\Model\Item\Option;
 use Magento\Wishlist\Model\Item\OptionFactory;
 use Magento\Wishlist\Model\ResourceModel\Item\Collection;
 use Magento\Wishlist\Model\ResourceModel\Item\Option\CollectionFactory;
+use Magento\Wishlist\Test\Unit\Helper\OptionTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -117,45 +118,8 @@ class ItemTest extends TestCase
             $option = $option($this);
         }
 
-        $optionMock = new class($code) extends Option {
-            /**
-             * @var string
-             */
-            /**
-             * @var string
-             */
-            private $code;
-
-            public function __construct($code)
-            {
-                $this->code = $code;
-            }
-
-            public function getCode()
-            {
-                return $this->code;
-            }
-
-            public function setData($key, $value = null)
-            {
-                return $this;
-            }
-
-            public function setItem($item)
-            {
-                return $this;
-            }
-
-            public function isDeleted($isDeleted = null)
-            {
-                $_ = [$isDeleted];
-                unset($_);
-                if ($isDeleted !== null) {
-                    return $this;
-                }
-                return true;
-            }
-        };
+        $optionMock = new OptionTestHelper();
+        $optionMock->setCode($code);
         $this->mocks['optionFactory']->method('create')->willReturn($optionMock);
         $this->model->addOption($option);
         $this->assertCount(1, $this->model->getOptions());
@@ -165,61 +129,15 @@ class ItemTest extends TestCase
 
     protected function getMockForOptionClass()
     {
-        $optionMock = new class() extends Option {
-            public function __construct()
-            {
-            }
-
-            public function getCode()
-            {
-                return 'second_key';
-            }
-
-            public function setItem($item)
-            {
-                return $this;
-            }
-
-            public function isDeleted($isDeleted = null)
-            {
-                $_ = [$isDeleted];
-                unset($_);
-                if ($isDeleted !== null) {
-                    return $this;
-                }
-                return false;
-            }
-        };
+        $optionMock = new OptionTestHelper();
+        $optionMock->setCode('second_key');
         return $optionMock;
     }
 
     protected function getMockForProductClass()
     {
-        $optionMock = new class() extends Option {
-            public function __construct()
-            {
-            }
-
-            public function getCode()
-            {
-                return 'third_key';
-            }
-
-            public function setItem($item)
-            {
-                return $this;
-            }
-
-            public function isDeleted($isDeleted = null)
-            {
-                $_ = [$isDeleted];
-                unset($_);
-                if ($isDeleted !== null) {
-                    return $this;
-                }
-                return false;
-            }
-        };
+        $optionMock = new OptionTestHelper();
+        $optionMock->setCode('third_key');
         return $optionMock;
     }
 
@@ -243,59 +161,13 @@ class ItemTest extends TestCase
         $code = 'someOption';
         $optionValue = 100;
 
-        $optionsOneMock = new class($code, $optionValue) extends Option {
-            /**
-             * @var string
-             */
-            private $code;
-            /**
-             * @var mixed
-             */
-            private $value;
+        $optionsOneMock = new OptionTestHelper();
+        $optionsOneMock->setCode($code);
+        $optionsOneMock->setValue($optionValue);
 
-            public function __construct($code, $value)
-            {
-                $this->code = $code;
-                $this->value = $value;
-            }
-
-            public function getCode()
-            {
-                return $this->code;
-            }
-
-            public function getValue()
-            {
-                return $this->value;
-            }
-        };
-
-        $optionsTwoMock = new class($code, $optionValue) extends Option {
-            /**
-             * @var string
-             */
-            private $code;
-            /**
-             * @var mixed
-             */
-            private $value;
-
-            public function __construct($code, $value)
-            {
-                $this->code = $code;
-                $this->value = $value;
-            }
-
-            public function getCode()
-            {
-                return $this->code;
-            }
-
-            public function getValue()
-            {
-                return $this->value;
-            }
-        };
+        $optionsTwoMock = new OptionTestHelper();
+        $optionsTwoMock->setCode($code);
+        $optionsTwoMock->setValue($optionValue);
 
         $result = $this->model->compareOptions(
             [$optionsOneMock],
@@ -311,59 +183,13 @@ class ItemTest extends TestCase
         $optionOneValue = 100;
         $optionTwoValue = 200;
 
-        $optionsOneMock = new class($code, $optionOneValue) extends Option {
-            /**
-             * @var string
-             */
-            private $code;
-            /**
-             * @var mixed
-             */
-            private $value;
+        $optionsOneMock = new OptionTestHelper();
+        $optionsOneMock->setCode($code);
+        $optionsOneMock->setValue($optionOneValue);
 
-            public function __construct($code, $value)
-            {
-                $this->code = $code;
-                $this->value = $value;
-            }
-
-            public function getCode()
-            {
-                return $this->code;
-            }
-
-            public function getValue()
-            {
-                return $this->value;
-            }
-        };
-
-        $optionsTwoMock = new class($code, $optionTwoValue) extends Option {
-            /**
-             * @var string
-             */
-            private $code;
-            /**
-             * @var mixed
-             */
-            private $value;
-
-            public function __construct($code, $value)
-            {
-                $this->code = $code;
-                $this->value = $value;
-            }
-
-            public function getCode()
-            {
-                return $this->code;
-            }
-
-            public function getValue()
-            {
-                return $this->value;
-            }
-        };
+        $optionsTwoMock = new OptionTestHelper();
+        $optionsTwoMock->setCode($code);
+        $optionsTwoMock->setValue($optionTwoValue);
 
         $result = $this->model->compareOptions(
             [$optionsOneMock],
@@ -377,28 +203,10 @@ class ItemTest extends TestCase
     {
         $code = 'someOption';
 
-        $optionsOneMock = new class($code) extends Option {
-            /**
-             * @var string
-             */
-            private $code;
+        $optionsOneMock = new OptionTestHelper();
+        $optionsOneMock->setCode($code);
 
-            public function __construct($code)
-            {
-                $this->code = $code;
-            }
-
-            public function getCode()
-            {
-                return $this->code;
-            }
-        };
-
-        $optionsTwoMock = new class() extends Option {
-            public function __construct()
-            {
-            }
-        };
+        $optionsTwoMock = new OptionTestHelper();
 
         $result = $this->model->compareOptions(
             [$optionsOneMock],
@@ -457,107 +265,17 @@ class ItemTest extends TestCase
 
     private function createFirstOptionMock($code, $deleted)
     {
-        return new class($code, $deleted) extends Option {
-            /**
-             * @var string
-             */
-            private $code;
-            /**
-             * @var bool
-             */
-            private $deleted;
-            /**
-             * @var int
-             */
-            private $deleteCount = 0;
-
-            public function __construct($code, $deleted)
-            {
-                $this->code = $code;
-                $this->deleted = $deleted;
-            }
-
-            public function getCode()
-            {
-                return $this->code;
-            }
-
-            public function setItem($item)
-            {
-                return $this;
-            }
-
-            public function isDeleted($isDeleted = null)
-            {
-                if ($isDeleted !== null) {
-                    $this->deleted = $isDeleted;
-                }
-                return $this->deleted;
-            }
-
-            public function delete()
-            {
-                $this->deleteCount++;
-                return $this;
-            }
-
-            public function getDeleteCount()
-            {
-                return $this->deleteCount;
-            }
-        };
+        $option = new OptionTestHelper();
+        $option->setCode($code);
+        $option->setDeleted($deleted);
+        return $option;
     }
 
     private function createSecondOptionMock($code, $deleted)
     {
-        return new class($code, $deleted) extends Option {
-            /**
-             * @var string
-             */
-            private $code;
-            /**
-             * @var bool
-             */
-            private $deleted;
-            /**
-             * @var int
-             */
-            private $saveCount = 0;
-
-            public function __construct($code, $deleted)
-            {
-                $this->code = $code;
-                $this->deleted = $deleted;
-            }
-
-            public function getCode()
-            {
-                return $this->code;
-            }
-
-            public function setItem($item)
-            {
-                return $this;
-            }
-
-            public function isDeleted($isDeleted = null)
-            {
-                if ($isDeleted !== null) {
-                    $this->deleted = $isDeleted;
-                }
-                return $this->deleted;
-            }
-
-            public function save()
-            {
-                $this->saveCount++;
-                return $this;
-            }
-
-            public function getSaveCount()
-            {
-                return $this->saveCount;
-            }
-        };
+        $option = new OptionTestHelper();
+        $option->setCode($code);
+        $option->setDeleted($deleted);
+        return $option;
     }
 }

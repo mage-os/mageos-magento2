@@ -27,6 +27,7 @@ use Magento\Framework\Message\Manager as MessageManager;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Item;
 use Magento\Wishlist\Controller\Index\Fromcart;
+use Magento\Quote\Test\Unit\Helper\QuoteItemTestHelper;
 use Magento\Wishlist\Controller\WishlistProviderInterface;
 use Magento\Wishlist\Helper\Data as WishlistHelper;
 use Magento\Wishlist\Model\Wishlist;
@@ -384,44 +385,10 @@ class FromcartTest extends TestCase
             ->method('getName')
             ->willReturn($productName);
 
-        $quoteItemMock = new class($productId, $dataObjectMock, $productMock) extends Item {
-            /**
-             * @var int
-             */
-            private $productId;
-            /**
-             * @var DataObject
-             */
-            private $buyRequest;
-            /**
-             * @var Product
-             */
-            private $product;
-            
-            public function __construct($productId, $buyRequest, $product)
-            {
-                $this->productId = $productId;
-                $this->buyRequest = $buyRequest;
-                $this->product = $product;
-                $_ = [$productId, $buyRequest, $product];
-                unset($_);
-            }
-            
-            public function getProductId()
-            {
-                return $this->productId;
-            }
-            
-            public function getBuyRequest()
-            {
-                return $this->buyRequest;
-            }
-            
-            public function getProduct()
-            {
-                return $this->product;
-            }
-        };
+        $quoteItemMock = new QuoteItemTestHelper();
+        $quoteItemMock->setProductId($productId);
+        $quoteItemMock->setBuyRequest($dataObjectMock);
+        $quoteItemMock->setProduct($productMock);
 
         $quoteMock = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()

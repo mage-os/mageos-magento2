@@ -27,6 +27,7 @@ use Magento\Wishlist\Model\Item\Option;
 use Magento\Wishlist\Model\Item\OptionFactory;
 use Magento\Wishlist\Model\ItemFactory;
 use Magento\Wishlist\Model\ResourceModel\Item\Option\Collection as OptionCollection;
+use Magento\Quote\Test\Unit\Helper\QuoteTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -138,29 +139,7 @@ class CartTest extends TestCase
         $this->cart = $this->createMock(Cart::class);
         $this->cartHelper = $this->createMock(CartHelper::class);
 
-        $this->quote = new class extends Quote {
-            /**
-             * @var bool
-             */
-            private $hasError = false;
-
-            public function __construct()
-            {
-            }
-
-            public function getHasError()
-            {
-                return $this->hasError;
-            }
-
-            public function setHasError($hasError)
-            {
-                $this->hasError = $hasError;
-                $_ = [$hasError];
-                unset($_);
-                return $this;
-            }
-        };
+        $this->quote = new QuoteTestHelper();
 
         $this->optionCollection = $this->createMock(OptionCollection::class);
 

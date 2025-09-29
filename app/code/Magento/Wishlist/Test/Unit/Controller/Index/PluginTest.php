@@ -28,6 +28,7 @@ use Magento\Wishlist\Controller\Index\Plugin;
 use Magento\Wishlist\Model\AuthenticationState;
 use Magento\Wishlist\Model\AuthenticationStateInterface;
 use Magento\Wishlist\Model\DataSerializer;
+use Magento\Customer\Test\Unit\Helper\CustomerSessionTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -177,95 +178,6 @@ class PluginTest extends TestCase
      */
     private function createCustomerSessionMock()
     {
-        return new class extends Session {
-            /**
-             * @var bool
-             */
-            public $beforeWishlistUrl = false;
-            /**
-             * @var array
-             */
-            public $beforeWishlistRequest = [];
-            /**
-             * @var array
-             */
-            public $beforeRequestParams = [];
-            /**
-             * @var string
-             */
-            public $beforeModuleName = '';
-            /**
-             * @var string
-             */
-            public $beforeControllerName = '';
-            /**
-             * @var string
-             */
-            public $beforeAction = '';
-            
-            public function __construct()
-            {
-            }
-            public function authenticate($loginUrl = null)
-            {
-                return false;
-            }
-            public function getBeforeWishlistUrl()
-            {
-                return $this->beforeWishlistUrl;
-            }
-            public function getBeforeWishlistRequest()
-            {
-                return $this->beforeWishlistRequest;
-            }
-            
-            public function setBeforeWishlistUrl($url)
-            {
-                $this->beforeWishlistUrl = $url;
-                $_ = [$url];
-                unset($_);
-                return $this;
-            }
-            
-            public function setBeforeWishlistRequest($request)
-            {
-                $this->beforeWishlistRequest = $request;
-                $_ = [$request];
-                unset($_);
-                return $this;
-            }
-            
-            public function setBeforeRequestParams($params)
-            {
-                $this->beforeRequestParams = $params;
-                $_ = [$params];
-                unset($_);
-                return $this;
-            }
-            
-            public function setBeforeModuleName($moduleName)
-            {
-                $this->beforeModuleName = $moduleName;
-                $_ = [$moduleName];
-                unset($_);
-                return $this;
-            }
-            
-            public function setBeforeControllerName($controllerName)
-            {
-                $this->beforeControllerName = $controllerName;
-                $_ = [$controllerName];
-                unset($_);
-                return $this;
-            }
-            
-            public function setBeforeAction($action)
-            {
-                $this->beforeAction = $action;
-                $_ = [$action];
-                unset($_);
-                return $this;
-            }
-        };
+        return new CustomerSessionTestHelper();
     }
 }

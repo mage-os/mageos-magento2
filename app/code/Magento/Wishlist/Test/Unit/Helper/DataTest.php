@@ -3,10 +3,6 @@
  * Copyright 2018 Adobe
  * All Rights Reserved.
  */
-/**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
- */
 declare(strict_types=1);
 
 namespace Magento\Wishlist\Test\Unit\Helper;
@@ -28,6 +24,7 @@ use Magento\Wishlist\Controller\WishlistProviderInterface;
 use Magento\Wishlist\Helper\Data;
 use Magento\Wishlist\Model\Item as WishlistItem;
 use Magento\Wishlist\Model\Wishlist;
+use Magento\Wishlist\Test\Unit\Helper\WishlistItemDataTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -127,78 +124,7 @@ class DataTest extends TestCase
 
         $this->postDataHelper = $this->createMock(PostHelper::class);
 
-        $this->wishlistItem = new class extends WishlistItem {
-            /** @var int */
-            private $wishlistItemId = 1;
-            /** @var int|null */
-            private $productId = null;
-            /** @var int|null */
-            private $qty = null;
-            /** @var int */
-            private $id = 1;
-            /** @var mixed */
-            private $product = null;
-
-            public function __construct()
-            {
-                // Don't call parent constructor to avoid dependency issues
-            }
-
-            public function getWishlistItemId()
-            {
-                return $this->wishlistItemId;
-            }
-
-            public function getProductId()
-            {
-                return $this->productId;
-            }
-
-            public function getQty()
-            {
-                return $this->qty;
-            }
-
-            public function getId()
-            {
-                return $this->id;
-            }
-
-            public function getProduct()
-            {
-                return $this->product;
-            }
-
-            public function setWishlistItemId($id)
-            {
-                $this->wishlistItemId = $id;
-                return $this;
-            }
-
-            public function setProductId($id)
-            {
-                $this->productId = $id;
-                return $this;
-            }
-
-            public function setQty($qty) // @SuppressWarnings(PHPMD.UnusedLocalVariable)
-            {
-                $this->qty = $qty;
-                return $this;
-            }
-
-            public function setId($id)
-            {
-                $this->id = $id;
-                return $this;
-            }
-
-            public function setProduct($product) // @SuppressWarnings(PHPMD.UnusedLocalVariable)
-            {
-                $this->product = $product;
-                return $this;
-            }
-        };
+        $this->wishlistItem = new WishlistItemDataTestHelper();
         $this->wishlistItem->setId(1);
         $this->wishlistItem->setWishlistItemId(1);
         $this->wishlistItem->setProductId(null);
@@ -247,33 +173,10 @@ class DataTest extends TestCase
         $url = 'http://magento2ce/wishlist/index/configure/id/4/product_id/30/qty/1000';
 
         /** @var WishlistItem $wishlistItem */
-        $wishlistItem = new class extends WishlistItem {
-            /** @var int */
-            private $wishlistItemId = 4;
-            /** @var int|null */
-            private $productId = null;
-            /** @var int */
-            private $qty = 0;
-
-            public function __construct()
-            {
-            }
-
-            public function getWishlistItemId()
-            {
-                return $this->wishlistItemId;
-            }
-
-            public function getProductId()
-            {
-                return $this->productId;
-            }
-
-            public function getQty()
-            {
-                return $this->qty;
-            }
-        };
+        $wishlistItem = new WishlistItemDataTestHelper();
+        $wishlistItem->setWishlistItemId(4);
+        $wishlistItem->setProductId(null);
+        $wishlistItem->setQty(0);
 
         $this->urlBuilder->expects($this->once())
             ->method('getUrl')
@@ -393,35 +296,7 @@ class DataTest extends TestCase
         $url = 'result url';
         $wishlistItemId = 1;
 
-        $wishlistItem = new class extends WishlistItem {
-            /** @var int */
-            private $id = 1;
-            /** @var int */
-            private $wishlistItemId = 1;
-
-            public function __construct()
-            {
-            }
-
-            public function getId()
-            {
-                return $this->id;
-            }
-            public function getWishlistItemId()
-            {
-                return $this->wishlistItemId;
-            }
-            public function setId($id)
-            {
-                $this->id = $id;
-                return $this;
-            }
-            public function setWishlistItemId($id)
-            {
-                $this->wishlistItemId = $id;
-                return $this;
-            }
-        };
+        $wishlistItem = new WishlistItemDataTestHelper();
         $wishlistItem->setId($wishlistItemId);
         $wishlistItem->setWishlistItemId($wishlistItemId);
 
@@ -448,35 +323,7 @@ class DataTest extends TestCase
         $referer = 'referer';
         $refererEncoded = 'referer_encoded';
 
-        $wishlistItem = new class extends WishlistItem {
-            /** @var int */
-            private $id = 1;
-            /** @var int */
-            private $wishlistItemId = 1;
-
-            public function __construct()
-            {
-            }
-
-            public function getId()
-            {
-                return $this->id;
-            }
-            public function getWishlistItemId()
-            {
-                return $this->wishlistItemId;
-            }
-            public function setId($id)
-            {
-                $this->id = $id;
-                return $this;
-            }
-            public function setWishlistItemId($id)
-            {
-                $this->wishlistItemId = $id;
-                return $this;
-            }
-        };
+        $wishlistItem = new WishlistItemDataTestHelper();
         $wishlistItem->setId($wishlistItemId);
         $wishlistItem->setWishlistItemId($wishlistItemId);
 

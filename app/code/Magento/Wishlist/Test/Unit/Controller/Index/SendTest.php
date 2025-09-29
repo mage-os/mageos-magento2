@@ -41,6 +41,9 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Captcha\Observer\CaptchaStringResolver;
 use Magento\Framework\Escaper;
+use Magento\Framework\Test\Unit\Helper\RequestInterfaceTestHelper;
+use Magento\Customer\Test\Unit\Helper\CustomerTestHelper;
+use Magento\Customer\Test\Unit\Helper\SessionTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -199,195 +202,7 @@ class SendTest extends TestCase
                 ]
             );
 
-        $this->request = new class implements RequestInterface {
-            /**
-             * @var array
-             */
-            public $postData = [];
-            /**
-             * @var array
-             */
-            public $postValue = [];
-            
-            public function getPost($key = null)
-            {
-                return $key ? ($this->postData[$key] ?? null) : $this->postData;
-            }
-            public function getPostValue($key = null)
-            {
-                return $key ? ($this->postValue[$key] ?? null) : $this->postValue;
-            }
-            public function getParam($key, $defaultValue = null)
-            {
-                $_ = [$key, $defaultValue];
-                unset($_);
-                return $defaultValue;
-            }
-            public function getParams()
-            {
-                return [];
-            }
-            public function getQuery($key = null)
-            {
-                return $key;
-            }
-            public function isPost()
-            {
-                return true;
-            }
-            public function isGet()
-            {
-                return false;
-            }
-            public function isPut()
-            {
-                return false;
-            }
-            public function isDelete()
-            {
-                return false;
-            }
-            public function isHead()
-            {
-                return false;
-            }
-            public function isOptions()
-            {
-                return false;
-            }
-            public function isPatch()
-            {
-                return false;
-            }
-            public function isAjax()
-            {
-                return false;
-            }
-            public function getMethod()
-            {
-                return 'POST';
-            }
-            public function getHeader($name)
-            {
-                return null;
-            }
-            public function getHeaders()
-            {
-                return [];
-            }
-            public function getUri()
-            {
-                return null;
-            }
-            public function getRequestUri()
-            {
-                return '/';
-            }
-            public function getPathInfo()
-            {
-                return '/';
-            }
-            public function getBasePath()
-            {
-                return '/';
-            }
-            public function getBaseUrl()
-            {
-                return 'http://example.com/';
-            }
-            public function getServer($key = null)
-            {
-                return $key;
-            }
-            public function getServerValue($key, $default = null)
-            {
-                return $default;
-            }
-            public function getHttpHost($trimPort = true)
-            {
-                return 'example.com';
-            }
-            public function getClientIp($checkToProxy = true)
-            {
-                return '127.0.0.1';
-            }
-            public function getScriptName()
-            {
-                return '/index.php';
-            }
-            public function getRequestString()
-            {
-                return '';
-            }
-            public function getFullActionName($delimiter = '_')
-            {
-                return 'index_index';
-            }
-            public function isSecure()
-            {
-                return false;
-            }
-            public function getHttpReferer()
-            {
-                return null;
-            }
-            public function getRequestedRouteName()
-            {
-                return 'index';
-            }
-            public function getRequestedControllerName()
-            {
-                return 'index';
-            }
-            public function getRequestedActionName()
-            {
-                return 'index';
-            }
-            public function getRouteName()
-            {
-                return 'index';
-            }
-            public function getControllerName()
-            {
-                return 'index';
-            }
-            public function getActionName()
-            {
-                return 'index';
-            }
-            public function getModuleName()
-            {
-                return 'Magento';
-            }
-            public function setModuleName($name)
-            {
-                return $this;
-            }
-            public function setActionName($name)
-            {
-                return $this;
-            }
-            public function setParam($key, $value)
-            {
-                return $this;
-            }
-            public function setParams(array $params)
-            {
-                return $this;
-            }
-            public function getCookie($name, $default = null)
-            {
-                return $default;
-            }
-            public function getCookies()
-            {
-                return [];
-            }
-            public function isXmlHttpRequest()
-            {
-                return false;
-            }
-        };
+        $this->request = new RequestInterfaceTestHelper();
 
         $this->messageManager = $this->createStub(ManagerInterface::class);
 
@@ -404,56 +219,10 @@ class SendTest extends TestCase
 
         $this->formKeyValidator = $this->createMock(FormKeyValidator::class);
 
-        $customerMock = new class extends Customer {
-            /**
-             * @var string
-             */
-            private $email = 'expamle@mail.com';
-            /**
-             * @var bool
-             */
-            private $id = false;
-            
-            public function __construct()
-            {
-            }
-            
-            public function getEmail()
-            {
-                return $this->email;
-            }
-            public function getId()
-            {
-                return $this->id;
-            }
-        };
+        $customerMock = new CustomerTestHelper();
 
-        $this->customerSession = new class($customerMock) extends Session {
-            /**
-             * @var Customer
-             */
-            private $customer;
-            /**
-             * @var bool
-             */
-            private $data = false;
-            
-            public function __construct($customer)
-            {
-                $this->customer = $customer;
-                $_ = [$customer];
-                unset($_);
-            }
-            
-            public function getCustomer()
-            {
-                return $this->customer;
-            }
-            public function getData($key = '', $clear = false)
-            {
-                return $this->data;
-            }
-        };
+        $this->customerSession = new SessionTestHelper();
+        $this->customerSession->setCustomer($customerMock);
 
         $this->wishlistProvider = $this->createMock(WishlistProviderInterface::class);
 

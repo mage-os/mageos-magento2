@@ -26,6 +26,8 @@ use Magento\Store\Model\ScopeInterface;
 use Magento\Wishlist\Block\Customer\Wishlist;
 use Magento\Wishlist\Helper\Rss;
 use Magento\Wishlist\Model\Item;
+use Magento\Wishlist\Test\Unit\Helper\WishlistTestHelper;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -179,12 +181,12 @@ class WishlistTest extends TestCase
         ];
 
         $wishlistItem = $this->createMock(Item::class);
-        $wishlistItemsCollection = [$wishlistItem];
+        $itemsCollection = [$wishlistItem];
         $productMock = $this->createProductMock($staticArgs['productName']);
 
         $wishlistItem->method('getProduct')->willReturn($productMock);
 
-        $wishlistModelMock->setItemCollection($wishlistItemsCollection);
+        $wishlistModelMock->setItemCollection($itemsCollection);
 
         $description = $this->processWishlistItemDescription($wishlistModelMock, $staticArgs);
 
@@ -217,8 +219,8 @@ class WishlistTest extends TestCase
         $imgThumbSrc = 'http://source-for-thumbnail';
         $priceHtmlForTest = '<div class="price">Price is 10 for example</div>';
 
-        $wishlistItemsCollection = $wishlistModelMock->getItemCollection();
-        $wishlistItem = $wishlistItemsCollection[0];
+        $itemsCollection = $wishlistModelMock->getItemCollection();
+        $wishlistItem = $itemsCollection[0];
         $productMock = $wishlistItem->getProduct();
         $this->imageHelperMock->expects($this->once())
             ->method('init')
@@ -289,16 +291,7 @@ class WishlistTest extends TestCase
 
     public function testIsAuthRequired()
     {
-        $wishlist = new class() extends \Magento\Wishlist\Model\Wishlist {
-            public function __construct()
-            {
-            }
-
-            public function getSharingCode()
-            {
-                return 'somesharingcode';
-            }
-        };
+        $wishlist = new WishlistTestHelper();
         $this->wishlistHelperMock->method('getWishlist')->willReturn($wishlist);
         $this->assertFalse($this->model->isAuthRequired());
     }
@@ -361,109 +354,15 @@ class WishlistTest extends TestCase
 
     private function createWishlistModelMock($wishlistId)
     {
-        return new class($wishlistId) extends \Magento\Wishlist\Model\Wishlist {
-            /**
-             * @var int
-             */
-            private $id;
-            /**
-             * @var string
-             */
-            private $sharingCode = 'somesharingcode';
-            /**
-             * @var Collection
-             */
-            private $itemCollection;
-
-            public function __construct($id)
-            {
-                $this->id = $id;
-                $_ = [$id];
-                unset($_);
-            }
-
-            public function getId()
-            {
-                return $this->id;
-            }
-
-            public function getSharingCode()
-            {
-                return $this->sharingCode;
-            }
-
-            public function getCustomerId()
-            {
-                return 1;
-            }
-
-            public function setItemCollection($collection)
-            {
-                $this->itemCollection = $collection;
-                $_ = [$collection];
-                unset($_);
-                return $this;
-            }
-
-            public function getItemCollection()
-            {
-                return $this->itemCollection;
-            }
-
-            public function save()
-            {
-                return $this;
-            }
-        };
+        $wishlist = new WishlistTestHelper();
+        $wishlist->setId($wishlistId);
+        return $wishlist;
     }
 
     private function createProductMock($productName)
     {
-        return new class($productName) extends Product {
-            /**
-             * @var string
-             */
-            private $name;
-
-            public function __construct($name)
-            {
-                $this->name = $name;
-                $_ = [$name];
-                unset($_);
-            }
-
-            public function getName()
-            {
-                return $this->name;
-            }
-            public function setAllowedInRss($value)
-            {
-                return $this;
-            }
-            public function setAllowedPriceInRss($value)
-            {
-                return $this;
-            }
-            public function setProductUrl($url)
-            {
-                return $this;
-            }
-            public function getAllowedInRss()
-            {
-                return true;
-            }
-            public function getAllowedPriceInRss()
-            {
-                return true;
-            }
-            public function getShortDescription()
-            {
-                return 'Product short description';
-            }
-            public function getDescription()
-            {
-                return 'Product description';
-            }
-        };
+        $product = new ProductTestHelper();
+        $product->setName($productName);
+        return $product;
     }
 }
