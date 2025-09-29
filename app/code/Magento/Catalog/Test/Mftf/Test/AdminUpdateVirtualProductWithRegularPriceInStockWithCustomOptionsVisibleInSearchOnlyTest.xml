@@ -34,6 +34,7 @@
             <actionGroup ref="ClearFiltersAdminProductGridActionGroup" stepKey="clearFilterFromProductIndex"/>
             <deleteData stepKey="deleteSimpleSubCategory" createDataKey="initialCategoryEntity"/>
             <deleteData stepKey="deleteSimpleSubCategory2" createDataKey="categoryEntity"/>
+            <deleteData createDataKey="initialVirtualProduct" stepKey="deleteProduct"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
         </after>
 
