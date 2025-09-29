@@ -10,6 +10,7 @@ use Magento\Quote\Model\Quote;
 
 /**
  * TestHelper for Quote with validator-specific dynamic methods
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class QuoteTestHelperForValidator extends Quote
 {
@@ -29,7 +30,7 @@ class QuoteTestHelperForValidator extends Quote
         // Skip parent constructor to avoid complex dependencies
     }
 
-    public function getHasError()
+    public function hasError()
     {
         return $this->hasError;
     }

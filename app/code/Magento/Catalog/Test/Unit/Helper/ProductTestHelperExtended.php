@@ -11,6 +11,7 @@ use Magento\Catalog\Model\Product;
 
 /**
  * TestHelper for Product with constructor parameter and dynamic methods
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class ProductTestHelperExtended extends Product
 {

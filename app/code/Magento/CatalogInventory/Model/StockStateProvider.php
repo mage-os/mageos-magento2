@@ -187,7 +187,7 @@ class StockStateProvider implements StockStateProviderInterface
         } else {
             if ($stockItem->getQty() - $summaryQty < 0) {
                 if ($stockItem->getProductName()) {
-                    if ($stockItem->getIsChildItem()) {
+                    if ($stockItem->isChildItem()) {
                         $backOrderQty = $stockItem->getQty() > 0 ? ($summaryQty - $stockItem->getQty()) * 1 : $qty * 1;
                         if ($backOrderQty > $qty) {
                             $backOrderQty = $qty;
@@ -212,7 +212,7 @@ class StockStateProvider implements StockStateProviderInterface
                     }
 
                     if ($stockItem->getBackorders() == \Magento\CatalogInventory\Model\Stock::BACKORDERS_YES_NOTIFY) {
-                        if (!$stockItem->getIsChildItem()) {
+                        if (!$stockItem->isChildItem()) {
                             $result->setMessage(
                                 __(
                                     'We don\'t have as many "%1" as you requested, '
@@ -238,7 +238,7 @@ class StockStateProvider implements StockStateProviderInterface
                     }
                 }
             } else {
-                if (!$stockItem->getIsChildItem()) {
+                if (!$stockItem->isChildItem()) {
                     $stockItem->setOrderedItems($qty + (int)$stockItem->getOrderedItems());
                 }
             }
@@ -329,7 +329,7 @@ class StockStateProvider implements StockStateProviderInterface
     public function checkQtyIncrements(StockItemInterface $stockItem, $qty)
     {
         $result = new \Magento\Framework\DataObject();
-        if ($stockItem->getSuppressCheckQtyIncrements()) {
+        if ($stockItem->isSuppressCheckQtyIncrements()) {
             return $result;
         }
 
@@ -340,7 +340,7 @@ class StockStateProvider implements StockStateProviderInterface
                 ->setQuoteMessage(__('Please correct the quantity for some products.'))
                 ->setErrorCode('qty_increments')
                 ->setQuoteMessageIndex('qty');
-            if ($stockItem->getIsChildItem()) {
+            if ($stockItem->isChildItem()) {
                 $result->setMessage(
                     __(
                         'You can buy %1 only in quantities of %2 at a time.',

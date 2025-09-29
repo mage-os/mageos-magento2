@@ -89,9 +89,9 @@ class StockStateProviderTest extends TestCase
         'hasStockQty',
         'setStockQty',
         'getData',
-        'getSuppressCheckQtyIncrements',
-        'getIsChildItem',
-        'getIsSaleable',
+        'isSuppressCheckQtyIncrements',
+        'isChildItem',
+        'isSaleable',
         'getOrderedItems',
         'setOrderedItems',
         'getProductName'

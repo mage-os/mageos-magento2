@@ -508,7 +508,7 @@ class Item extends AbstractExtensibleModel implements StockItemInterface
             ->setProductTypeId($product->getTypeId())
             ->setProductName($product->getName())
             ->setProductStatusChanged($product->dataHasChangedFor('status'))
-            ->setProductChangedWebsites($product->getIsChangedWebsites());
+            ->setProductChangedWebsites($product->isChangedWebsites());
         return $this;
     }
 

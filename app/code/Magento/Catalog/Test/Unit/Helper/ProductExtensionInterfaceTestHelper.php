@@ -12,6 +12,7 @@ use Magento\Catalog\Api\Data\ProductExtensionInterface;
 /**
  * TestHelper for ProductExtensionInterface
  * Provides implementation for ProductExtensionInterface with additional test methods
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class ProductExtensionInterfaceTestHelper implements ProductExtensionInterface
 {

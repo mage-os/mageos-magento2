@@ -12,6 +12,7 @@ use Magento\Quote\Model\Quote\Item;
 /**
  * TestHelper for Quote Item
  * Provides implementation for Quote Item with additional test methods
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class QuoteItemTestHelper extends Item
 {

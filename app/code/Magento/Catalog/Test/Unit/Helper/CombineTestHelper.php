@@ -11,6 +11,7 @@ use Magento\Rule\Model\Condition\Combine;
 
 /**
  * TestHelper for Combine with dynamic methods
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class CombineTestHelper extends Combine
 {

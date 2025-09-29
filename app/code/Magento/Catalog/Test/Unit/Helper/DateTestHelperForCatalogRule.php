@@ -11,6 +11,7 @@ use Magento\Framework\Stdlib\DateTime\DateTime;
 
 /**
  * TestHelper for Date with dynamic methods
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class DateTestHelperForCatalogRule extends DateTime
 {

@@ -10,6 +10,7 @@ use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 
 /**
  * TestHelper for Attribute with dynamic methods
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class AttributeTestHelper extends Attribute
 {

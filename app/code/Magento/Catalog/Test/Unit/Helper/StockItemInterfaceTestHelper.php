@@ -12,6 +12,12 @@ use Magento\CatalogInventory\Api\Data\StockItemInterface;
 /**
  * TestHelper for StockItemInterface
  * Provides implementation for StockItemInterface with DataObject methods
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.ComplexMethod)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class StockItemInterfaceTestHelper implements StockItemInterface
 {
@@ -524,7 +530,7 @@ class StockItemInterfaceTestHelper implements StockItemInterface
      *
      * @return bool
      */
-    public function getSuppressCheckQtyIncrements()
+    public function isSuppressCheckQtyIncrements()
     {
         return $this->suppressCheckQtyIncrements;
     }
@@ -546,7 +552,7 @@ class StockItemInterfaceTestHelper implements StockItemInterface
      *
      * @return bool
      */
-    public function getIsSaleable()
+    public function isSaleable()
     {
         return $this->isSaleable;
     }
@@ -612,7 +618,7 @@ class StockItemInterfaceTestHelper implements StockItemInterface
      *
      * @return bool
      */
-    public function getIsChildItem()
+    public function isChildItem()
     {
         return $this->isChildItem;
     }

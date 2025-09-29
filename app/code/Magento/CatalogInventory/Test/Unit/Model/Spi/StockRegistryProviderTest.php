@@ -23,7 +23,7 @@ use Magento\CatalogInventory\Api\StockStatusCriteriaInterface;
 use Magento\CatalogInventory\Api\StockStatusCriteriaInterfaceFactory;
 use Magento\CatalogInventory\Api\StockStatusRepositoryInterface;
 use Magento\CatalogInventory\Model\ResourceModel\Stock\Collection;
-use Magento\Catalog\Test\Unit\Helper\CollectionTestHelper;
+use Magento\CatalogInventory\Test\Unit\Helper\CollectionTestHelper;
 use Magento\Catalog\Test\Unit\Helper\StockItemCollectionTestHelper;
 use Magento\Catalog\Test\Unit\Helper\StockStatusCollectionTestHelper;
 use Magento\CatalogInventory\Model\Spi\StockRegistryProviderInterface;

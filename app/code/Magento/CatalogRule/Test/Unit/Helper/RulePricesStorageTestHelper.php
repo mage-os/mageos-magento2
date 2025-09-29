@@ -11,6 +11,7 @@ use Magento\CatalogRule\Observer\RulePricesStorage;
 
 /**
  * TestHelper for RulePricesStorage with dynamic methods
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class RulePricesStorageTestHelper extends RulePricesStorage
 {

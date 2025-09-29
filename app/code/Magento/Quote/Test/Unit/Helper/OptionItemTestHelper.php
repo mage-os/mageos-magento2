@@ -11,6 +11,7 @@ use Magento\Quote\Model\Quote\Item\Option;
 
 /**
  * TestHelper for OptionItem (actually Option)
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  * Provides implementation for Option with additional test methods
  */
 class OptionItemTestHelper extends Option
@@ -53,7 +54,7 @@ class OptionItemTestHelper extends Option
      *
      * @return bool
      */
-    public function getHasError()
+    public function hasError()
     {
         return $this->hasError;
     }

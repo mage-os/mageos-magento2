@@ -1241,7 +1241,7 @@ class ItemTest extends TestCase
 
         $this->assertEquals($this->model, $this->model->setHasError(false));
 
-        $this->assertFalse($this->model->getHasError());
+        $this->assertFalse($this->model->hasError());
     }
 
     /**
@@ -1255,7 +1255,7 @@ class ItemTest extends TestCase
 
         $this->assertEquals($this->model, $this->model->setHasError(true));
 
-        $this->assertTrue($this->model->getHasError());
+        $this->assertTrue($this->model->hasError());
         $this->assertEquals('', $this->model->getMessage());
     }
 
@@ -1276,7 +1276,7 @@ class ItemTest extends TestCase
 
         $this->assertEquals($this->model, $this->model->addErrorInfo($origin, $code, $message, $additionalData));
 
-        $this->assertTrue($this->model->getHasError());
+        $this->assertTrue($this->model->hasError());
         $this->assertEquals($message, $this->model->getMessage());
     }
 
@@ -1367,7 +1367,7 @@ class ItemTest extends TestCase
             ->willReturn([]);
 
         $this->assertEquals($this->model, $this->model->removeErrorInfosByParams($params));
-        $this->assertFalse($this->model->getHasError());
+        $this->assertFalse($this->model->hasError());
         $this->assertEquals('', $this->model->getMessage());
     }
 

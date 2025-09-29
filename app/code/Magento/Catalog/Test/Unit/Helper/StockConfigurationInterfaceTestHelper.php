@@ -12,6 +12,7 @@ use Magento\CatalogInventory\Api\StockConfigurationInterface;
 /**
  * TestHelper for StockConfigurationInterface
  * Provides implementation for StockConfigurationInterface with additional test methods
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class StockConfigurationInterfaceTestHelper implements StockConfigurationInterface
 {

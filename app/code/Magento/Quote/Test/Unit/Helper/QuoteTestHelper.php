@@ -27,11 +27,11 @@ class QuoteTestHelper extends Quote
     }
 
     /**
-     * Get inventory processed
+     * Check if inventory processed
      *
      * @return bool
      */
-    public function getInventoryProcessed()
+    public function isInventoryProcessed()
     {
         return $this->inventoryProcessed;
     }

@@ -12,6 +12,7 @@ use Magento\Quote\Model\Quote;
 /**
  * Extended TestHelper for Quote
  * Provides implementation for Quote with additional test methods beyond the base QuoteTestHelper
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class QuoteTestHelperExtended extends Quote
 {
@@ -35,11 +36,11 @@ class QuoteTestHelperExtended extends Quote
     }
 
     /**
-     * Get has error
+     * Check if has error
      *
      * @return bool
      */
-    public function getHasError()
+    public function hasError()
     {
         return $this->hasError;
     }
@@ -57,11 +58,11 @@ class QuoteTestHelperExtended extends Quote
     }
 
     /**
-     * Get is super mode
+     * Check if is super mode
      *
      * @return bool
      */
-    public function getIsSuperMode()
+    public function isSuperMode()
     {
         return $this->isSuperMode;
     }
@@ -105,7 +106,7 @@ class QuoteTestHelperExtended extends Quote
      *
      * @return array
      */
-    public function getItemsCollection()
+    public function getItemsCollection($useCache = true)
     {
         return $this->itemsCollection;
     }

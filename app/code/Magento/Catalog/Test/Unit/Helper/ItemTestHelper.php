@@ -12,6 +12,7 @@ use Magento\CatalogInventory\Model\Stock\Item;
 /**
  * TestHelper for Item
  * Provides implementation for Item with additional test methods
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class ItemTestHelper extends Item
 {
@@ -253,7 +254,7 @@ class ItemTestHelper extends Item
      *
      * @return bool
      */
-    public function getStockStatusChangedAutomaticallyFlag()
+    public function isStockStatusChangedAutomaticallyFlag()
     {
         return false;
     }

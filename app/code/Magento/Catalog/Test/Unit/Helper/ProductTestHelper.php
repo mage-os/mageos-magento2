@@ -12,6 +12,7 @@ use Magento\Catalog\Model\Product;
 /**
  * TestHelper for Product
  * Provides implementation for Product with additional test methods
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class ProductTestHelper extends Product
 {
@@ -43,7 +44,7 @@ class ProductTestHelper extends Product
      *
      * @return bool
      */
-    public function getIsChangedWebsites()
+    public function isChangedWebsites()
     {
         return $this->isChangedWebsites;
     }

@@ -459,7 +459,7 @@ class StockItemRepositoryTest extends TestCase
                     'setIsInStock' => ['expects' => 'never',],
                     'setStockStatusChangedAuto' => ['expects' => 'once', 'with' => [1],],
                     'hasStockStatusChangedAutomaticallyFlag' => ['expects' => 'once', 'willReturn' => true,],
-                    'getStockStatusChangedAutomaticallyFlag' => ['expects' => 'once', 'willReturn' => true,],
+                    'isStockStatusChangedAutomaticallyFlag' => ['expects' => 'once', 'willReturn' => true,],
                 ],
                 'existingStockItemMockConfig' => [
                 ],

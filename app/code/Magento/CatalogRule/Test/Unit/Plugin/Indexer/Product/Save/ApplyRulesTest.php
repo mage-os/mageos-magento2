@@ -12,7 +12,7 @@ use Magento\CatalogRule\Model\Indexer\Product\ProductRuleProcessor;
 use Magento\CatalogRule\Plugin\Indexer\Product\Save\ApplyRules;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Catalog\Test\Unit\Helper\AbstractModelTestHelper;
+use Magento\Framework\Test\Unit\Helper\AbstractModelTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

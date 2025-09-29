@@ -4,7 +4,7 @@
  * All Rights Reserved.
  */
 
-namespace Magento\Catalog\Test\Unit\Helper;
+namespace Magento\Framework\Test\Unit\Helper;
 
 use Magento\Framework\Model\AbstractModel;
 
