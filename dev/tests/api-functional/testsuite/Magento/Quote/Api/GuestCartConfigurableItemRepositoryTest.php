@@ -15,14 +15,11 @@ use Magento\ConfigurableProduct\Test\Fixture\Attribute as AttributeFixture;
 use Magento\ConfigurableProduct\Test\Fixture\Product as ConfigurableProductFixture;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Webapi\Rest\Request;
-use Magento\Integration\Api\AdminTokenServiceInterface;
-use Magento\Integration\Model\Oauth\Token as TokenModel;
 use Magento\TestFramework\Fixture\DataFixture;
 use Magento\TestFramework\Fixture\DataFixtureStorage;
 use Magento\TestFramework\Fixture\DataFixtureStorageManager;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\TestCase\WebapiAbstract;
-use Magento\User\Model\User as UserModel;
 
 /**
  * Test for Magento\Quote\Api\GuestCartConfigurableItemRepositoryTest.
@@ -37,8 +34,6 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
     private const SERVICE_NAME_GUEST_CART = 'quoteGuestCartManagementV1';
 
     private const SERVICE_NAME_GUEST_CART_ITEM = 'quoteGuestCartItemRepositoryV1';
-
-    private const SERVICE_VERSION_GUEST_CART_ITEM = 'V1';
 
     /**
      * @var array
@@ -61,6 +56,9 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
 
     /**
      * Test guest cart update with configurable item
+     *
+     * @return void
+     * @throws NoSuchEntityException
      */
     #[
         DataFixture(ProductFixture::class, ['price' => 10, 'sku' => 'simple-10'], as: 'p1'),
@@ -77,7 +75,7 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
             'configurableProduct'
         )
     ]
-    public function testGuestCartUpdateConfigurableItem()
+    public function testGuestCartUpdateConfigurableItem(): void
     {
         $guestCartId = $this->createGuestCart();
         $response = $this->addConfigurableProductToCart($guestCartId);
@@ -219,7 +217,7 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
         foreach ($simpleProducts as $simpleProduct) {
             $this->simpleProductSkus[] = $simpleProduct->getSku();
         }
-        
+
         return $configurableProduct;
     }
 
@@ -311,7 +309,7 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
             ],
             'soap' => [
                 'service' => self::SERVICE_NAME_GUEST_CART_ITEM,
-                'serviceVersion' => self::SERVICE_VERSION_GUEST_CART_ITEM,
+                'serviceVersion' => self::SERVICE_VERSION_GUEST_CART,
                 'operation' => $soapOperation,
             ],
         ];
