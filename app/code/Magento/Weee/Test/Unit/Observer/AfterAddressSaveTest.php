@@ -11,6 +11,7 @@ use Magento\Customer\Model\Address;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Module\Manager;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\Test\Unit\Helper\EventObserverTestHelper;
 use Magento\PageCache\Model\Config;
 use Magento\Tax\Api\TaxAddressManagerInterface;
 use Magento\Weee\Helper\Data;
@@ -69,27 +70,7 @@ class AfterAddressSaveTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
-        $this->observerMock = new class extends Observer {
-            /**
-             * @var mixed
-             */
-            private $customerAddress = null;
-
-            public function __construct()
-            {
-            }
-
-            public function getCustomerAddress()
-            {
-                return $this->customerAddress;
-            }
-
-            public function setCustomerAddress($address)
-            {
-                $this->customerAddress = $address;
-                return $this;
-            }
-        };
+        $this->observerMock = new EventObserverTestHelper();
 
         $this->moduleManagerMock = $this->getMockBuilder(Manager::class)
             ->disableOriginalConstructor()

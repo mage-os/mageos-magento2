@@ -12,6 +12,7 @@ use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\GraphQl\Model\Query\Context;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\GraphQl\Model\Query\ContextExtensionInterface;
+use Magento\GraphQl\Test\Unit\Helper\ContextExtensionInterfaceTestHelper;
 use Magento\Quote\Api\Data\CartItemInterface;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Tax\Helper\Data as TaxHelper;
@@ -116,27 +117,7 @@ class FixedProductTaxResolverTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->contextExtensionAttributesMock = new class implements ContextExtensionInterface {
-            /**
-             * @var StoreInterface|null
-             */
-            private $store = null;
-            
-            public function getStore()
-            {
-                return $this->store;
-            }
-            
-            /**
-             * @SuppressWarnings(PHPMD.UnusedLocalVariable)
-             * @param                                       StoreInterface $store
-             */
-            public function setStore($store)
-            {
-                $this->store = $store;
-                return $this;
-            }
-        };
+        $this->contextExtensionAttributesMock = new ContextExtensionInterfaceTestHelper();
 
         $this->contextMock = $this->createPartialMock(Context::class, ['getExtensionAttributes']);
         $this->contextMock->method('getExtensionAttributes')

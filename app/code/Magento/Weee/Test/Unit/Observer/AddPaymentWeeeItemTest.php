@@ -9,9 +9,11 @@ namespace Magento\Weee\Test\Unit\Observer;
 
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
+use Magento\Framework\Test\Unit\Helper\EventTestHelper;
 use Magento\Payment\Model\Cart;
 use Magento\Payment\Model\Cart\SalesModel\SalesModelInterface;
 use Magento\Quote\Model\Quote\Item;
+use Magento\Quote\Test\Unit\Helper\QuoteItemTestHelper;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
@@ -75,50 +77,10 @@ class AddPaymentWeeeItemTest extends TestCase
         $observerMock = $this->createMock(Observer::class);
         $cartModelMock = $this->createMock(Cart::class);
         $salesModelMock = $this->createMock(SalesModelInterface::class);
-        $itemMock = new class extends Item {
-            /**
-             * @var mixed
-             */
-            private $originalItem = null;
-
-            public function __construct()
-            {
-            }
-
-            public function getOriginalItem()
-            {
-                return $this->originalItem;
-            }
-
-            public function setOriginalItem($item)
-            {
-                $this->originalItem = $item;
-                return $this;
-            }
-        };
+        $itemMock = new QuoteItemTestHelper();
         $originalItemMock = $this->createPartialMock(Item::class, ['getParentItem']);
         $parentItemMock = $this->createMock(Item::class);
-        $eventMock = new class extends Event {
-            /**
-             * @var mixed
-             */
-            private $cart = null;
-
-            public function __construct()
-            {
-            }
-
-            public function getCart()
-            {
-                return $this->cart;
-            }
-
-            public function setCart($cart)
-            {
-                $this->cart = $cart;
-                return $this;
-            }
-        };
+        $eventMock = new EventTestHelper();
 
         $asCustomItem = $this->prepareShouldBeAddedAsCustomItem($isEnabled, $includeInSubtotal);
         $toBeCalled = 1;

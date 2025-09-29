@@ -10,6 +10,7 @@ namespace Magento\Weee\Test\Unit\Observer;
 use Magento\Framework\Data\Form;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
+use Magento\Framework\Test\Unit\Helper\EventTestHelper;
 use Magento\Framework\View\LayoutInterface;
 use Magento\Weee\Model\Tax;
 use Magento\Weee\Observer\SetWeeeRendererInFormObserver;
@@ -63,27 +64,7 @@ class SetWeeeRendererInFormObserverTest extends TestCase
     {
         $attributes = new \ArrayIterator(['element_code_1', 'element_code_2']);
         /** @var Event|MockObject $eventMock */
-        $eventMock = new class extends Event {
-            /**
-             * @var mixed
-             */
-            private $form = null;
-
-            public function __construct()
-            {
-            }
-
-            public function getForm()
-            {
-                return $this->form;
-            }
-
-            public function setForm($form)
-            {
-                $this->form = $form;
-                return $this;
-            }
-        };
+        $eventMock = new EventTestHelper();
 
         /** @var Observer|MockObject $observerMock */
         $observerMock = $this->createMock(Observer::class);

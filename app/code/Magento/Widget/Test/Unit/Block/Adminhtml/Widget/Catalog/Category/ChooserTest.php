@@ -15,6 +15,7 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Data\Tree\Node;
 use Magento\Framework\Escaper;
 use Magento\Framework\Event\ManagerInterface;
+use Magento\Framework\Test\Unit\Helper\NodeTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
@@ -111,51 +112,16 @@ class ChooserTest extends TestCase
 
         $this->collection = $this->createMock(Collection::class);
 
-        $this->childNode = new class extends Node {
-            public function __construct()
-            {
-            }
-            public function hasChildren()
-            {
-                return false;
-            }
-            public function getIdField()
-            {
-                return 'id';
-            }
-            public function getLevel()
-            {
-                return 3;
-            }
-        };
+        $this->childNode = new NodeTestHelper();
+        $this->childNode->setHasChildren(false)
+                        ->setIdField('id')
+                        ->setLevel(3);
 
-        $this->rootNode = new class($this->childNode) extends Node {
-            /**
-             * @var Node
-             */
-            private $childNode;
-            public function __construct($childNode)
-            {
-                $this->childNode = $childNode;
-                unset($childNode);
-            }
-            public function hasChildren()
-            {
-                return true;
-            }
-            public function getChildren()
-            {
-                return [$this->childNode];
-            }
-            public function getIdField()
-            {
-                return 'id';
-            }
-            public function getLevel()
-            {
-                return 1;
-            }
-        };
+        $this->rootNode = new NodeTestHelper();
+        $this->rootNode->setHasChildren(true)
+                       ->setIdField('id')
+                       ->setLevel(1)
+                       ->setChildren([$this->childNode]);
         $this->categoryTree = $this->createMock(Tree::class);
         $this->store = $this->createMock(Store::class);
         $this->storeManager = $this->createMock(StoreManagerInterface::class);

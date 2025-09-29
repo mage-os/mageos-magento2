@@ -27,6 +27,9 @@ use Magento\Tax\Model\CalculationFactory;
 use Magento\Weee\Model\Config;
 use Magento\Weee\Model\ResourceModel\Tax as ResourceModelTax;
 use Magento\Weee\Model\Tax;
+use Magento\Customer\Test\Unit\Helper\SessionTestHelper;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
+use Magento\Framework\Test\Unit\Helper\DataObjectTestHelper;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -169,72 +172,7 @@ class TaxTest extends TestCase
      */
     private function createCustomerSessionMock(): Session
     {
-        return new class extends Session {
-            /**
-             * @var mixed
-             */
-            private $defaultTaxShippingAddress = null;
-            /**
-             * @var mixed
-             */
-            private $defaultTaxBillingAddress = null;
-            /**
-             * @var mixed
-             */
-            private $customerTaxClassId = null;
-            /**
-             * @var mixed
-             */
-            private $customerId = null;
-
-            public function __construct()
-            {
-            }
-
-            public function getDefaultTaxShippingAddress()
-            {
-                return $this->defaultTaxShippingAddress;
-            }
-
-            public function setDefaultTaxShippingAddress($address)
-            {
-                $this->defaultTaxShippingAddress = $address;
-                return $this;
-            }
-
-            public function getDefaultTaxBillingAddress()
-            {
-                return $this->defaultTaxBillingAddress;
-            }
-
-            public function setDefaultTaxBillingAddress($address)
-            {
-                $this->defaultTaxBillingAddress = $address;
-                return $this;
-            }
-
-            public function getCustomerTaxClassId()
-            {
-                return $this->customerTaxClassId;
-            }
-
-            public function setCustomerTaxClassId($id)
-            {
-                $this->customerTaxClassId = $id;
-                return $this;
-            }
-
-            public function getCustomerId()
-            {
-                return $this->customerId;
-            }
-
-            public function setCustomerId($id)
-            {
-                $this->customerId = $id;
-                return $this;
-            }
-        };
+        return new SessionTestHelper();
     }
 
     /**
@@ -356,71 +294,10 @@ class TaxTest extends TestCase
     #[DataProvider('getWeeeAmountExclTaxDataProvider')]
     public function testGetWeeeAmountExclTax($productTypeId, $productPriceType): void
     {
-        $product = new class extends Product {
-            /**
-             * @var mixed
-             */
-            private $priceType = null;
-            /**
-             * @var mixed
-             */
-            private $typeId = null;
-
-            public function __construct()
-            {
-            }
-
-            public function getPriceType()
-            {
-                return $this->priceType;
-            }
-
-            public function setPriceType($type)
-            {
-                $this->priceType = $type;
-                return $this;
-            }
-
-            public function getTypeId()
-            {
-                return $this->typeId;
-            }
-
-            public function setTypeId($id)
-            {
-                $this->typeId = $id;
-                return $this;
-            }
-        };
+        $product = new ProductTestHelper();
         $product->setTypeId($productTypeId);
         $product->setPriceType($productPriceType);
-        $weeeDataHelper = new class extends DataObject {
-            /**
-             * @var array
-             */
-            private $amountExclTax = [];
-            /**
-             * @var int
-             */
-            private $callCount = 0;
-
-            public function __construct()
-            {
-            }
-
-            public function getAmountExclTax()
-            {
-                $value = $this->amountExclTax[$this->callCount] ?? null;
-                $this->callCount++;
-                return $value;
-            }
-
-            public function setAmountExclTax($amount)
-            {
-                $this->amountExclTax[] = $amount;
-                return $this;
-            }
-        };
+        $weeeDataHelper = new DataObjectTestHelper();
         $weeeDataHelper->setAmountExclTax(10);
         $weeeDataHelper->setAmountExclTax(30);
         $tax = $this->getMockBuilder(Tax::class)
@@ -439,42 +316,7 @@ class TaxTest extends TestCase
      */
     public function testGetWeeeAmountExclTaxForDynamicBundleProduct(): void
     {
-        $product = new class extends Product {
-            /**
-             * @var mixed
-             */
-            private $priceType = null;
-            /**
-             * @var mixed
-             */
-            private $typeId = null;
-
-            public function __construct()
-            {
-            }
-
-            public function getPriceType()
-            {
-                return $this->priceType;
-            }
-
-            public function setPriceType($type)
-            {
-                $this->priceType = $type;
-                return $this;
-            }
-
-            public function getTypeId()
-            {
-                return $this->typeId;
-            }
-
-            public function setTypeId($id)
-            {
-                $this->typeId = $id;
-                return $this;
-            }
-        };
+        $product = new ProductTestHelper();
         $product->setTypeId('bundle');
         $product->setPriceType(0);
         $weeeDataHelper = $this->getMockBuilder(DataObject::class)

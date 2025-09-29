@@ -20,6 +20,7 @@ use Magento\Tax\Helper\Data;
 use Magento\Tax\Model\Calculation;
 use Magento\Tax\Model\Sales\Total\Quote\CommonTaxCollector as CTC;
 use Magento\Weee\Model\Total\Quote\WeeeTax;
+use Magento\Framework\Test\Unit\Helper\QuoteAddressTotalTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -124,72 +125,7 @@ class WeeeTaxTest extends TestCase
      */
     private function createTotalMock(): Total
     {
-        return new class extends Total {
-            /**
-             * @var array
-             */
-            private $weeeCodeToItemMap = [];
-            /**
-             * @var array
-             */
-            private $extraTaxableDetails = [];
-            /**
-             * @var float
-             */
-            private $weeeTotalExclTax = 0;
-            /**
-             * @var float
-             */
-            private $weeeBaseTotalExclTax = 0;
-
-            public function __construct()
-            {
-            }
-
-            public function getWeeeCodeToItemMap()
-            {
-                return $this->weeeCodeToItemMap;
-            }
-
-            public function setWeeeCodeToItemMap($map)
-            {
-                $this->weeeCodeToItemMap = $map;
-                return $this;
-            }
-
-            public function getExtraTaxableDetails()
-            {
-                return $this->extraTaxableDetails;
-            }
-
-            public function setExtraTaxableDetails($details)
-            {
-                $this->extraTaxableDetails = $details;
-                return $this;
-            }
-
-            public function getWeeeTotalExclTax()
-            {
-                return $this->weeeTotalExclTax;
-            }
-
-            public function setWeeeTotalExclTax($total)
-            {
-                $this->weeeTotalExclTax = $total;
-                return $this;
-            }
-
-            public function getWeeeBaseTotalExclTax()
-            {
-                return $this->weeeBaseTotalExclTax;
-            }
-
-            public function setWeeeBaseTotalExclTax($total)
-            {
-                $this->weeeBaseTotalExclTax = $total;
-                return $this;
-            }
-        };
+        return new QuoteAddressTotalTestHelper();
     }
 
     /**

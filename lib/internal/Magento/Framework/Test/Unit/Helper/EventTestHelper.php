@@ -129,4 +129,31 @@ class EventTestHelper extends Event
         $this->response = $response;
         return $this;
     }
+
+    /**
+     * @var mixed
+     */
+    private $form = null;
+
+    /**
+     * Get form
+     *
+     * @return mixed
+     */
+    public function getForm()
+    {
+        return $this->form;
+    }
+
+    /**
+     * Set form
+     *
+     * @param mixed $form
+     * @return $this
+     */
+    public function setForm($form): self
+    {
+        $this->form = $form;
+        return $this;
+    }
 }

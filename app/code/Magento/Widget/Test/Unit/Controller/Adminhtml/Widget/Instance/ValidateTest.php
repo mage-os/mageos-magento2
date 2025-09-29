@@ -19,6 +19,7 @@ use Magento\Framework\View\LayoutInterface;
 use Magento\Widget\Controller\Adminhtml\Widget\Instance\Validate;
 use Magento\Widget\Model\Widget\Instance;
 use Magento\Widget\Model\Widget\InstanceFactory;
+use Magento\Widget\Test\Unit\Helper\InstanceTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -85,35 +86,7 @@ class ValidateTest extends TestCase
         $context->method('getView')->willReturn($viewMock);
         $context->method('getResponse')->willReturn($this->responseMock);
 
-        $this->widgetMock = new class extends Instance {
-            public function __construct()
-            {
-            }
-            public function getType()
-            {
-                return 'some type';
-            }
-            public function isCompleteToCreate()
-            {
-                return true;
-            }
-            public function setType($type)
-            {
-                return $this;
-            }
-            public function setCode($code)
-            {
-                return $this;
-            }
-            public function getThemeId()
-            {
-                return 777;
-            }
-            public function setThemeId($themeId)
-            {
-                return $this;
-            }
-        };
+        $this->widgetMock = new InstanceTestHelper();
         $widgetFactoryMock = $this->createMock(InstanceFactory::class);
         $widgetFactoryMock->method('create')->willReturn($this->widgetMock);
 

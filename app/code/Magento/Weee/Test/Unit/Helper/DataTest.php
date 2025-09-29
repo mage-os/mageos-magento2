@@ -10,10 +10,12 @@ namespace Magento\Weee\Test\Unit\Helper;
 use Magento\Bundle\Model\Product\Type;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Type\Simple;
+use Magento\Catalog\Test\Unit\Helper\ProductTypeSimpleTestHelper;
 use Magento\Framework\DataObject;
 use Magento\Framework\Registry;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Quote\Model\Quote\Item as QuoteItem;
+use Magento\Quote\Test\Unit\Helper\QuoteItemTestHelper;
 use Magento\Sales\Model\Order\Item;
 use Magento\Store\Model\Store;
 use Magento\Tax\Helper\Data;
@@ -347,42 +349,7 @@ class DataTest extends TestCase
     public function testGetAppliedSimple(): void
     {
         $testArray = ['key' => 'value'];
-        $itemProductSimple = new class extends QuoteItem {
-            /**
-             * @var mixed
-             */
-            private $weeeTaxApplied = null;
-            /**
-             * @var mixed
-             */
-            private $hasChildren = null;
-
-            public function __construct()
-            {
-            }
-
-            public function getWeeeTaxApplied()
-            {
-                return $this->weeeTaxApplied;
-            }
-
-            public function setWeeeTaxApplied($value)
-            {
-                $this->weeeTaxApplied = $value;
-                return $this;
-            }
-
-            public function getHasChildren()
-            {
-                return $this->hasChildren;
-            }
-
-            public function setHasChildren($value)
-            {
-                $this->hasChildren = $value;
-                return $this;
-            }
-        };
+        $itemProductSimple = new QuoteItemTestHelper();
         $itemProductSimple->setHasChildren(false);
         $itemProductSimple->setWeeeTaxApplied(json_encode($testArray));
 
@@ -428,57 +395,7 @@ class DataTest extends TestCase
         $testAmountUnit = 2;
         $testAmountRow = 34;
 
-        $itemProductSimple = new class extends QuoteItem {
-            /**
-             * @var mixed
-             */
-            private $hasChildren = null;
-            /**
-             * @var mixed
-             */
-            private $weeeTaxAppliedAmount = null;
-            /**
-             * @var mixed
-             */
-            private $weeeTaxAppliedRowAmount = null;
-
-            public function __construct()
-            {
-            }
-
-            public function getHasChildren()
-            {
-                return $this->hasChildren;
-            }
-
-            public function setHasChildren($value)
-            {
-                $this->hasChildren = $value;
-                return $this;
-            }
-
-            public function getWeeeTaxAppliedAmount()
-            {
-                return $this->weeeTaxAppliedAmount;
-            }
-
-            public function setWeeeTaxAppliedAmount($value)
-            {
-                $this->weeeTaxAppliedAmount = $value;
-                return $this;
-            }
-
-            public function getWeeeTaxAppliedRowAmount()
-            {
-                return $this->weeeTaxAppliedRowAmount;
-            }
-
-            public function setWeeeTaxAppliedRowAmount($value)
-            {
-                $this->weeeTaxAppliedRowAmount = $value;
-                return $this;
-            }
-        };
+        $itemProductSimple = new QuoteItemTestHelper();
         $itemProductSimple->setHasChildren(false);
         $itemProductSimple->setWeeeTaxAppliedAmount($testAmountUnit);
         $itemProductSimple->setWeeeTaxAppliedRowAmount($testAmountRow);
@@ -509,42 +426,7 @@ class DataTest extends TestCase
         $itemProductSimple2->setWeeeTaxAppliedAmount($testAmountUnit2);
         $itemProductSimple2->setWeeeTaxAppliedRowAmount($testAmountRow2);
 
-        $itemProductBundle = new class extends QuoteItem {
-            /**
-             * @var mixed
-             */
-            private $hasChildren = null;
-            /**
-             * @var mixed
-             */
-            private $children = null;
-
-            public function __construct()
-            {
-            }
-
-            public function getHasChildren()
-            {
-                return $this->hasChildren;
-            }
-
-            public function setHasChildren($value)
-            {
-                $this->hasChildren = $value;
-                return $this;
-            }
-
-            public function getChildren()
-            {
-                return $this->children;
-            }
-
-            public function setChildren($value)
-            {
-                $this->children = $value;
-                return $this;
-            }
-        };
+        $itemProductBundle = new QuoteItemTestHelper();
         $itemProductBundle->setHasChildren(true);
         $itemProductBundle->setChildren([$itemProductSimple1, $itemProductSimple2]);
 
@@ -632,34 +514,9 @@ class DataTest extends TestCase
      */
     private function createProductSimpleMock(int $prodId1, int $prodId2): Simple
     {
-        return new class($prodId1, $prodId2) extends Simple {
-            /**
-             * @var array
-             */
-            private $ids = [];
-            /**
-             * @var int
-             */
-            private $callCount = 0;
-
-            public function __construct(int $prodId1, int $prodId2)
-            {
-                $this->ids = [$prodId1, $prodId2];
-            }
-
-            public function getId()
-            {
-                $id = $this->ids[$this->callCount] ?? null;
-                $this->callCount++;
-                return $id;
-            }
-
-            public function setId($id)
-            {
-                $this->ids[] = $id;
-                return $this;
-            }
-        };
+        $helper = new ProductTypeSimpleTestHelper();
+        $helper->setIds([$prodId1, $prodId2]);
+        return $helper;
     }
 
     /**
@@ -669,27 +526,7 @@ class DataTest extends TestCase
      */
     private function createQuoteItemMock(): QuoteItem
     {
-        return new class extends QuoteItem {
-            /**
-             * @var mixed
-             */
-            private $weeeTaxApplied = null;
-
-            public function __construct()
-            {
-            }
-
-            public function getWeeeTaxApplied()
-            {
-                return $this->weeeTaxApplied;
-            }
-
-            public function setWeeeTaxApplied($value)
-            {
-                $this->weeeTaxApplied = $value;
-                return $this;
-            }
-        };
+        return new QuoteItemTestHelper();
     }
 
     /**
@@ -699,42 +536,7 @@ class DataTest extends TestCase
      */
     private function createBundleQuoteItemMock(): QuoteItem
     {
-        return new class extends QuoteItem {
-            /**
-             * @var mixed
-             */
-            private $hasChildren = null;
-            /**
-             * @var mixed
-             */
-            private $children = null;
-
-            public function __construct()
-            {
-            }
-
-            public function getHasChildren()
-            {
-                return $this->hasChildren;
-            }
-
-            public function setHasChildren($value)
-            {
-                $this->hasChildren = $value;
-                return $this;
-            }
-
-            public function getChildren()
-            {
-                return $this->children;
-            }
-
-            public function setChildren($value)
-            {
-                $this->children = $value;
-                return $this;
-            }
-        };
+        return new QuoteItemTestHelper();
     }
 
     /**
@@ -744,42 +546,7 @@ class DataTest extends TestCase
      */
     private function createQuoteItemWithAmountsMock(): QuoteItem
     {
-        return new class extends QuoteItem {
-            /**
-             * @var mixed
-             */
-            private $weeeTaxAppliedAmount = null;
-            /**
-             * @var mixed
-             */
-            private $weeeTaxAppliedRowAmount = null;
-
-            public function __construct()
-            {
-            }
-
-            public function getWeeeTaxAppliedAmount()
-            {
-                return $this->weeeTaxAppliedAmount;
-            }
-
-            public function setWeeeTaxAppliedAmount($value)
-            {
-                $this->weeeTaxAppliedAmount = $value;
-                return $this;
-            }
-
-            public function getWeeeTaxAppliedRowAmount()
-            {
-                return $this->weeeTaxAppliedRowAmount;
-            }
-
-            public function setWeeeTaxAppliedRowAmount($value)
-            {
-                $this->weeeTaxAppliedRowAmount = $value;
-                return $this;
-            }
-        };
+        return new QuoteItemTestHelper();
     }
 
     /**
@@ -789,27 +556,7 @@ class DataTest extends TestCase
      */
     private function createQuoteItemWithRowAmountMock(): QuoteItem
     {
-        return new class extends QuoteItem {
-            /**
-             * @var mixed
-             */
-            private $weeeTaxAppliedRowAmount = null;
-
-            public function __construct()
-            {
-            }
-
-            public function getWeeeTaxAppliedRowAmount()
-            {
-                return $this->weeeTaxAppliedRowAmount;
-            }
-
-            public function setWeeeTaxAppliedRowAmount($value)
-            {
-                $this->weeeTaxAppliedRowAmount = $value;
-                return $this;
-            }
-        };
+        return new QuoteItemTestHelper();
     }
 
     /**
@@ -819,26 +566,6 @@ class DataTest extends TestCase
      */
     private function createQuoteItemWithBaseRowAmountMock(): QuoteItem
     {
-        return new class extends QuoteItem {
-            /**
-             * @var mixed
-             */
-            private $baseWeeeTaxAppliedRowAmnt = null;
-
-            public function __construct()
-            {
-            }
-
-            public function getBaseWeeeTaxAppliedRowAmnt()
-            {
-                return $this->baseWeeeTaxAppliedRowAmnt;
-            }
-
-            public function setBaseWeeeTaxAppliedRowAmnt($value)
-            {
-                $this->baseWeeeTaxAppliedRowAmnt = $value;
-                return $this;
-            }
-        };
+        return new QuoteItemTestHelper();
     }
 }

@@ -13,12 +13,15 @@ use Magento\Catalog\Api\Data\ProductRenderInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ProductRender\FormattedPriceInfoBuilder;
 use Magento\Catalog\Pricing\Price\FinalPrice;
+use Magento\Catalog\Test\Unit\Helper\PriceInfoExtensionInterfaceTestHelper;
 use Magento\Framework\Pricing\Amount\AmountInterface;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\Pricing\PriceInfo\Base;
+use Magento\Framework\Test\Unit\Helper\PriceInfoBaseTestHelper;
 use Magento\Weee\Api\Data\ProductRender\WeeeAdjustmentAttributeInterface;
 use Magento\Weee\Api\Data\ProductRender\WeeeAdjustmentAttributeInterfaceFactory;
 use Magento\Weee\Helper\Data;
+use Magento\Weee\Test\Unit\Helper\WeeeAdjustmentAttributeInterfaceTestHelper;
 use Magento\Weee\Ui\DataProvider\Product\Listing\Collector\Weee;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -66,39 +69,7 @@ class WeeeTest extends TestCase
             ->onlyMethods(['create'])
             ->getMock();
 
-        $this->extensionAttributes = new class implements PriceInfoExtensionInterface {
-            /**
-             * @var array|null
-             */
-            private $weeeAttributes = null;
-            
-            /**
-             * @var array|null
-             */
-            private $weeeAdjustment = null;
-            
-            public function setWeeeAttributes($attributes)
-            {
-                $this->weeeAttributes = $attributes;
-                return $this;
-            }
-            
-            public function getWeeeAttributes()
-            {
-                return $this->weeeAttributes;
-            }
-            
-            public function setWeeeAdjustment($adjustment)
-            {
-                $this->weeeAdjustment = $adjustment;
-                return $this;
-            }
-            
-            public function getWeeeAdjustment()
-            {
-                return $this->weeeAdjustment;
-            }
-        };
+        $this->extensionAttributes = new PriceInfoExtensionInterfaceTestHelper();
 
         $this->priceInfoExtensionFactory = $this->getMockBuilder(PriceInfoExtensionInterfaceFactory::class)
             ->disableOriginalConstructor()
@@ -184,107 +155,7 @@ class WeeeTest extends TestCase
      */
     private function createWeeeAdjustmentAttributeMock(): WeeeAdjustmentAttributeInterface
     {
-        return new class implements WeeeAdjustmentAttributeInterface {
-            /**
-             * @var mixed
-             */
-            private $data = null;
-            /**
-             * @var int
-             */
-            private $callCount = 0;
-
-            public function getData($key = null)
-            {
-                if ($this->callCount == 0) {
-                    $this->callCount++;
-                    return [
-                        'amount' => 12.1,
-                        'tax_amount' => 12,
-                        'amount_excl_tax' => 71
-                    ];
-                } elseif ($this->callCount == 1 && $key == 'amount') {
-                    $this->callCount++;
-                    return 12.1;
-                } elseif ($this->callCount == 2 && $key == 'tax_amount') {
-                    $this->callCount++;
-                    return 12.1;
-                } elseif ($this->callCount == 3 && $key == 'amount_excl_tax') {
-                    $this->callCount++;
-                    return 12.1;
-                } elseif ($this->callCount == 4) {
-                    $this->callCount++;
-                    return 12.1;
-                }
-                return null;
-            }
-
-            public function setData($value)
-            {
-                $this->data = $value;
-                return $this;
-            }
-
-            public function setAmount($amount)
-            {
-                return $this;
-            }
-
-            public function getAmount()
-            {
-                return null;
-            }
-
-            public function getTaxAmount()
-            {
-                return null;
-            }
-
-            public function setTaxAmount($taxAmount)
-            {
-                return $this;
-            }
-
-            public function setAmountExclTax($amountExclTax)
-            {
-                return $this;
-            }
-
-            public function setTaxAmountInclTax($taxAmountInclTax)
-            {
-                return $this;
-            }
-
-            public function getTaxAmountInclTax()
-            {
-                return null;
-            }
-
-            public function getAmountExclTax()
-            {
-                return null;
-            }
-
-            public function setAttributeCode($attributeCode)
-            {
-                return $this;
-            }
-
-            public function getAttributeCode()
-            {
-                return null;
-            }
-
-            public function getExtensionAttributes()
-            {
-                return null;
-            }
-
-            public function setExtensionAttributes($extensionAttributes)
-            {
-                return $this;
-            }
-        };
+        return new WeeeAdjustmentAttributeInterfaceTestHelper();
     }
 
     /**
@@ -294,41 +165,6 @@ class WeeeTest extends TestCase
      */
     private function createPriceInfoMock(): Base
     {
-        return new class extends Base {
-            /**
-             * @var mixed
-             */
-            private $extensionAttributes = null;
-            /**
-             * @var mixed
-             */
-            private $price = null;
-
-            public function __construct()
-            {
-            }
-
-            public function getPrice($priceCode)
-            {
-                return $this->price;
-            }
-
-            public function setPrice($value)
-            {
-                $this->price = $value;
-                return $this;
-            }
-
-            public function getExtensionAttributes()
-            {
-                return $this->extensionAttributes;
-            }
-
-            public function setExtensionAttributes($value)
-            {
-                $this->extensionAttributes = $value;
-                return $this;
-            }
-        };
+        return new PriceInfoBaseTestHelper();
     }
 }

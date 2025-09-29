@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Weee\Test\Unit\App\Action;
 
 use Magento\Customer\Model\Session as CustomerSession;
+use Magento\Customer\Test\Unit\Helper\SessionTestHelper;
 use Magento\Framework\App\Config;
 use Magento\Framework\App\Http\Context as HttpContext;
 use Magento\Framework\App\Test\Unit\Action\Stub\ActionStub;
@@ -159,87 +160,7 @@ class ContextPluginTest extends TestCase
      */
     private function createCustomerSessionMock(): CustomerSession
     {
-        return new class extends CustomerSession {
-            /**
-             * @var bool
-             */
-            private $isLoggedIn = false;
-            /**
-             * @var mixed
-             */
-            private $defaultTaxBillingAddress = null;
-            /**
-             * @var mixed
-             */
-            private $defaultTaxShippingAddress = null;
-            /**
-             * @var mixed
-             */
-            private $customerTaxClassId = null;
-            /**
-             * @var mixed
-             */
-            private $websiteId = null;
-
-            public function __construct()
-            {
-            }
-
-            public function isLoggedIn()
-            {
-                return $this->isLoggedIn;
-            }
-
-            public function setIsLoggedIn($isLoggedIn)
-            {
-                $this->isLoggedIn = $isLoggedIn;
-                return $this;
-            }
-
-            public function getDefaultTaxBillingAddress()
-            {
-                return $this->defaultTaxBillingAddress;
-            }
-
-            public function setDefaultTaxBillingAddress($address)
-            {
-                $this->defaultTaxBillingAddress = $address;
-                return $this;
-            }
-
-            public function getDefaultTaxShippingAddress()
-            {
-                return $this->defaultTaxShippingAddress;
-            }
-
-            public function setDefaultTaxShippingAddress($address)
-            {
-                $this->defaultTaxShippingAddress = $address;
-                return $this;
-            }
-
-            public function getCustomerTaxClassId()
-            {
-                return $this->customerTaxClassId;
-            }
-
-            public function setCustomerTaxClassId($id)
-            {
-                $this->customerTaxClassId = $id;
-                return $this;
-            }
-
-            public function getWebsiteId()
-            {
-                return $this->websiteId;
-            }
-
-            public function setWebsiteId($id)
-            {
-                $this->websiteId = $id;
-                return $this;
-            }
-        };
+        return new SessionTestHelper();
     }
 
     /**

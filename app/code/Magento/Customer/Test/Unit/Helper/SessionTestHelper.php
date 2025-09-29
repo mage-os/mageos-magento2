@@ -30,6 +30,36 @@ class SessionTestHelper extends Session
     public int $wishlistItemCount = 0;
 
     /**
+     * @var mixed
+     */
+    private $defaultTaxShippingAddress = null;
+
+    /**
+     * @var mixed
+     */
+    private $defaultTaxBillingAddress = null;
+
+    /**
+     * @var mixed
+     */
+    private $customerTaxClassId = null;
+
+    /**
+     * @var mixed
+     */
+    private $websiteId = null;
+
+    /**
+     * @var mixed
+     */
+    public $beforeWishlistUrl = null;
+
+    /**
+     * @var mixed
+     */
+    public $beforeWishlistRequest = null;
+
+    /**
      * Constructor - skip parent constructor to avoid dependencies
      */
     public function __construct()
@@ -141,5 +171,93 @@ class SessionTestHelper extends Session
     public function getData($key = '', $clear = false)
     {
         return false;
+    }
+
+    /**
+     * Get default tax shipping address
+     *
+     * @return mixed
+     */
+    public function getDefaultTaxShippingAddress()
+    {
+        return $this->defaultTaxShippingAddress;
+    }
+
+    /**
+     * Set default tax shipping address
+     *
+     * @param mixed $address
+     * @return $this
+     */
+    public function setDefaultTaxShippingAddress($address)
+    {
+        $this->defaultTaxShippingAddress = $address;
+        return $this;
+    }
+
+    /**
+     * Get default tax billing address
+     *
+     * @return mixed
+     */
+    public function getDefaultTaxBillingAddress()
+    {
+        return $this->defaultTaxBillingAddress;
+    }
+
+    /**
+     * Set default tax billing address
+     *
+     * @param mixed $address
+     * @return $this
+     */
+    public function setDefaultTaxBillingAddress($address)
+    {
+        $this->defaultTaxBillingAddress = $address;
+        return $this;
+    }
+
+    /**
+     * Get customer tax class ID
+     *
+     * @return mixed
+     */
+    public function getCustomerTaxClassId()
+    {
+        return $this->customerTaxClassId;
+    }
+
+    /**
+     * Set customer tax class ID
+     *
+     * @param mixed $id
+     * @return $this
+     */
+    public function setCustomerTaxClassId($id)
+    {
+        $this->customerTaxClassId = $id;
+        return $this;
+    }
+
+    /**
+     * Get website ID
+     *
+     * @return mixed
+     */
+    public function getWebsiteId()
+    {
+        return $this->websiteId;
+    }
+
+    /**
+     * Set website ID
+     *
+     * @param mixed $id
+     * @return $this
+     */
+    public function setWebsiteId($id)
+    {
+        $this->websiteId = $id;
+        return $this;
     }
 }

@@ -28,7 +28,7 @@ use Magento\Wishlist\Controller\Index\Plugin;
 use Magento\Wishlist\Model\AuthenticationState;
 use Magento\Wishlist\Model\AuthenticationStateInterface;
 use Magento\Wishlist\Model\DataSerializer;
-use Magento\Customer\Test\Unit\Helper\CustomerSessionTestHelper;
+use Magento\Customer\Test\Unit\Helper\SessionTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -178,6 +178,6 @@ class PluginTest extends TestCase
      */
     private function createCustomerSessionMock()
     {
-        return new CustomerSessionTestHelper();
+        return new SessionTestHelper();
     }
 }

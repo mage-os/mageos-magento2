@@ -48,6 +48,16 @@ class ProductTestHelper extends Product
     private $priceInfo;
 
     /**
+     * @var mixed
+     */
+    private $priceType = null;
+
+    /**
+     * @var mixed
+     */
+    private $typeId = null;
+
+    /**
      * @var bool
      */
     private $linksPurchasedSeparately = true;
@@ -68,19 +78,16 @@ class ProductTestHelper extends Product
     private $allowedPriceInRss = true;
 
     /**
-     * Constructor
-     *
-     * @param mixed $productId
-     * @param int $storeId
-     * @param mixed $typeInstance
-     * @param bool $isSalable
+     * @var bool
      */
-    public function __construct($productId = null, $storeId = 1, $typeInstance = null, $isSalable = true)
+    private $disableAddToCart = false;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
     {
-        $this->productId = $productId;
-        $this->storeId = $storeId;
-        $this->typeInstance = $typeInstance;
-        $this->isSalable = $isSalable;
+        // Skip parent constructor to avoid dependency injection issues
     }
 
     /**
@@ -407,5 +414,82 @@ class ProductTestHelper extends Product
     public function getDescription()
     {
         return 'Product description';
+    }
+
+    /**
+     * Get price type
+     *
+     * @return mixed
+     */
+    public function getPriceType()
+    {
+        return $this->priceType;
+    }
+
+    /**
+     * Set price type
+     *
+     * @param mixed $type
+     * @return $this
+     */
+    public function setPriceType($type)
+    {
+        $this->priceType = $type;
+        return $this;
+    }
+
+    /**
+     * Get type ID
+     *
+     * @return mixed
+     */
+    public function getTypeId()
+    {
+        return $this->typeId;
+    }
+
+    /**
+     * Set type ID
+     *
+     * @param mixed $id
+     * @return $this
+     */
+    public function setTypeId($id)
+    {
+        $this->typeId = $id;
+        return $this;
+    }
+
+    /**
+     * Set disable add to cart
+     *
+     * @param bool $value
+     * @return $this
+     */
+    public function setDisableAddToCart($value)
+    {
+        $this->disableAddToCart = $value;
+        return $this;
+    }
+
+    /**
+     * Is disable add to cart
+     *
+     * @return bool
+     */
+    public function isDisableAddToCart()
+    {
+        return $this->disableAddToCart;
+    }
+
+    /**
+     * Get disable add to cart (alias for compatibility)
+     *
+     * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     */
+    public function getDisableAddToCart()
+    {
+        return $this->disableAddToCart;
     }
 }

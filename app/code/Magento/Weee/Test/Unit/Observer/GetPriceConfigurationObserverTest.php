@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Weee\Test\Unit\Observer;
 
 use Magento\Bundle\Model\Product\Type;
+use Magento\Bundle\Test\Unit\Helper\ProductTypeTestHelper;
 use Magento\Catalog\Model\Product\Type\Simple;
 use Magento\Framework\DataObject;
 use Magento\Framework\Event\Observer;
@@ -247,56 +248,6 @@ class GetPriceConfigurationObserverTest extends TestCase
      */
     private function createProductMock(): Type
     {
-        return new class extends Type {
-            /**
-             * @var mixed
-             */
-            private $typeInstance = null;
-            /**
-             * @var mixed
-             */
-            private $typeId = null;
-            /**
-             * @var mixed
-             */
-            private $storeId = null;
-
-            public function __construct()
-            {
-            }
-
-            public function getTypeInstance()
-            {
-                return $this->typeInstance;
-            }
-
-            public function setTypeInstance($instance)
-            {
-                $this->typeInstance = $instance;
-                return $this;
-            }
-
-            public function getTypeId()
-            {
-                return $this->typeId;
-            }
-
-            public function setTypeId($id)
-            {
-                $this->typeId = $id;
-                return $this;
-            }
-
-            public function getStoreId()
-            {
-                return $this->storeId;
-            }
-
-            public function setStoreId($id)
-            {
-                $this->storeId = $id;
-                return $this;
-            }
-        };
+        return new ProductTypeTestHelper();
     }
 }

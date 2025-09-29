@@ -8,10 +8,12 @@ declare(strict_types=1);
 namespace Magento\Weee\Test\Unit\Observer;
 
 use Magento\Bundle\Model\Product\Type;
+use Magento\Bundle\Test\Unit\Helper\ProductTypeTestHelper;
 use Magento\Framework\DataObject;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Registry;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\Test\Unit\Helper\EventObserverTestHelper;
 use Magento\Tax\Model\Config as TaxConfig;
 use Magento\Weee\Helper\Data;
 use Magento\Weee\Model\Tax as WeeeDisplayConfig;
@@ -84,42 +86,7 @@ class UpdateProductOptionsObserverTest extends TestCase
             ->method('getEvent')
             ->willReturn($responseObject);
 
-        $product = new class extends Type {
-            /**
-             * @var mixed
-             */
-            private $typeId = null;
-            /**
-             * @var mixed
-             */
-            private $storeId = null;
-
-            public function __construct()
-            {
-            }
-
-            public function getTypeId()
-            {
-                return $this->typeId;
-            }
-
-            public function setTypeId($id)
-            {
-                $this->typeId = $id;
-                return $this;
-            }
-
-            public function getStoreId()
-            {
-                return $this->storeId;
-            }
-
-            public function setStoreId($id)
-            {
-                $this->storeId = $id;
-                return $this;
-            }
-        };
+        $product = new ProductTypeTestHelper();
         $product->setStoreId(1);
         $product->setTypeId('bundle');
 
@@ -257,26 +224,6 @@ class UpdateProductOptionsObserverTest extends TestCase
      */
     private function createResponseObjectMock(): Observer
     {
-        return new class extends Observer {
-            /**
-             * @var mixed
-             */
-            private $responseObject = null;
-
-            public function __construct()
-            {
-            }
-
-            public function getResponseObject()
-            {
-                return $this->responseObject;
-            }
-
-            public function setResponseObject($object)
-            {
-                $this->responseObject = $object;
-                return $this;
-            }
-        };
+        return new EventObserverTestHelper();
     }
 }

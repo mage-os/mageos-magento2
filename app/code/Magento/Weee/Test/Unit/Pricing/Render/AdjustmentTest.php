@@ -15,6 +15,7 @@ use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Pricing\Amount\Base;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\Pricing\Render\Amount;
+use Magento\Framework\Test\Unit\Helper\ViewElementTemplateContextTestHelper;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Weee\Helper\Data;
 use Magento\Weee\Model\Tax;
@@ -58,57 +59,7 @@ class AdjustmentTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->contextMock = new class extends Context {
-            /**
-             * @var mixed
-             */
-            private $storeConfig = null;
-            /**
-             * @var mixed
-             */
-            private $eventManager = null;
-            /**
-             * @var mixed
-             */
-            private $scopeConfig = null;
-
-            public function __construct()
-            {
-            }
-
-            public function getStoreConfig($path)
-            {
-                return $this->storeConfig;
-            }
-
-            public function setStoreConfig($config)
-            {
-                $this->storeConfig = $config;
-                return $this;
-            }
-
-            public function getEventManager()
-            {
-                return $this->eventManager;
-            }
-
-            public function setEventManager($manager)
-            {
-                $this->eventManager = $manager;
-                return $this;
-            }
-
-            public function getScopeConfig()
-            {
-                return $this->scopeConfig;
-            }
-
-            public function setScopeConfig($config)
-            {
-                $this->scopeConfig = $config;
-                return $this;
-            }
-        };
+        $this->contextMock = new ViewElementTemplateContextTestHelper();
         $this->priceCurrencyMock = $this->createMock(
             PriceCurrencyInterface::class
         );

@@ -28,7 +28,7 @@ use Magento\Wishlist\Model\ItemCarrier;
 use Magento\Wishlist\Model\LocaleQuantityProcessor;
 use Magento\Wishlist\Model\ResourceModel\Item\Collection;
 use Magento\Wishlist\Model\Wishlist;
-use Magento\Catalog\Test\Unit\Helper\ProductCarrierTestHelper;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Wishlist\Test\Unit\Helper\ItemCarrierTestHelper;
 use Magento\Wishlist\Test\Unit\Helper\WishlistCarrierTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -104,12 +104,12 @@ class ItemCarrierTest extends TestCase
         $sharingCode = 'sharingcode';
 
         /** @var Product|MockObject $productOneMock */
-        $productOneMock = new ProductCarrierTestHelper();
+        $productOneMock = new ProductTestHelper();
         $productOneMock->setName($productOneName);
         $productOneMock->setDisableAddToCart(true);
 
         /** @var Product|MockObject $productTwoMock */
-        $productTwoMock = new ProductCarrierTestHelper();
+        $productTwoMock = new ProductTestHelper();
         $productTwoMock->setName($productTwoName);
         $productTwoMock->setDisableAddToCart(false);
 
@@ -369,10 +369,10 @@ class ItemCarrierTest extends TestCase
         $itemTwoMock = new ItemCarrierTestHelper();
         $itemTwoMock->setId($itemTwoId);
 
-        $productOneMock = new ProductCarrierTestHelper();
+        $productOneMock = new ProductTestHelper();
         $productOneMock->setName($productOneName);
 
-        $productTwoMock = new ProductCarrierTestHelper();
+        $productTwoMock = new ProductTestHelper();
         $productTwoMock->setName($productTwoName);
 
         $itemOneMock->setProduct($productOneMock);

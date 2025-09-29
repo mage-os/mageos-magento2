@@ -14,6 +14,7 @@ use Magento\GraphQl\Model\Query\Context;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\GraphQl\Model\Query\ContextExtensionInterface;
+use Magento\GraphQl\Test\Unit\Helper\ContextExtensionInterfaceTestHelper;
 use Magento\Tax\Helper\Data as TaxHelper;
 use Magento\Weee\Helper\Data as WeeeHelper;
 use Magento\WeeeGraphQl\Model\Resolver\FixedProductTax;
@@ -60,24 +61,7 @@ class FixedProductTaxTest extends TestCase
      */
     protected function setUp(): void
     {
-        // @SuppressWarnings(PHPMD.UnusedLocalVariable)
-        $this->extensionAttributesMock = new class implements ContextExtensionInterface {
-            /**
-             * @var int|null
-             */
-            private $storeId = null;
-            
-            public function getStore()
-            {
-                return $this->storeId;
-            }
-            
-            public function setStore($storeId)
-            {
-                $this->storeId = $storeId;
-                return $this;
-            }
-        };
+        $this->extensionAttributesMock = new ContextExtensionInterfaceTestHelper();
 
         $this->contextMock = $this->createPartialMock(Context::class, ['getExtensionAttributes']);
         $this->contextMock->method('getExtensionAttributes')
@@ -119,7 +103,7 @@ class FixedProductTaxTest extends TestCase
 
         // When
         $this->weeeHelperMock->method('isEnabled')
-            ->with(self::STUB_STORE_ID)
+            ->with($this->isInstanceOf(\Magento\Store\Api\Data\StoreInterface::class))
             ->willReturn(false);
 
         // Then

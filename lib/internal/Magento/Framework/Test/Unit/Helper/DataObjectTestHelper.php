@@ -10,17 +10,18 @@ namespace Magento\Framework\Test\Unit\Helper;
 use Magento\Framework\DataObject;
 
 /**
- * Test helper class for DataObject used across Framework and related module tests
+ * Test helper for Framework DataObject
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class DataObjectTestHelper extends DataObject
 {
     /**
-     * @var int
+     * @var mixed
      */
-    private int $qty = 1;
+    private $types = null;
 
     /**
-     * Constructor - skip parent constructor to avoid dependencies
+     * Constructor
      */
     public function __construct()
     {
@@ -28,24 +29,58 @@ class DataObjectTestHelper extends DataObject
     }
 
     /**
-     * Set quantity
+     * Get types
      *
-     * @param int $qty
+     * @return mixed
+     */
+    public function getTypes()
+    {
+        return $this->types;
+    }
+
+    /**
+     * Set types
+     *
+     * @param mixed $types
      * @return $this
      */
-    public function setQty($qty): self
+    public function setTypes($types): self
     {
-        $this->qty = $qty;
+        $this->types = $types;
         return $this;
     }
 
     /**
-     * Get quantity
-     *
-     * @return int
+     * @var array
      */
-    public function getQty(): int
+    private $amountExclTax = [];
+
+    /**
+     * @var int
+     */
+    private $callCount = 0;
+
+    /**
+     * Get amount excl tax
+     *
+     * @return mixed
+     */
+    public function getAmountExclTax()
     {
-        return $this->qty;
+        $value = $this->amountExclTax[$this->callCount] ?? null;
+        $this->callCount++;
+        return $value;
+    }
+
+    /**
+     * Set amount excl tax
+     *
+     * @param mixed $amount
+     * @return $this
+     */
+    public function setAmountExclTax($amount)
+    {
+        $this->amountExclTax[] = $amount;
+        return $this;
     }
 }

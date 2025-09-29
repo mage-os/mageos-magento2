@@ -16,6 +16,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Layout;
 use Magento\Widget\Block\Adminhtml\Widget\Catalog\Category\Chooser;
 use Magento\Widget\Controller\Adminhtml\Widget\Instance\Categories;
+use Magento\Widget\Test\Unit\Helper\CategoryChooserTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -70,31 +71,7 @@ class CategoriesTest extends TestCase
     {
         $this->request = $this->createMock(RequestInterface::class);
         $this->mathRandom = $this->createMock(Random::class);
-        $this->chooser = new class extends \Magento\Widget\Block\Adminhtml\Widget\Catalog\Category\Chooser {
-            public function __construct()
-            {
-            }
-            public function toHtml()
-            {
-                return 'block_content';
-            }
-            public function setSelectedCategories($selectedCategories)
-            {
-                return $this;
-            }
-            public function setUseMassaction($useMassaction)
-            {
-                return $this;
-            }
-            public function setId($id)
-            {
-                return $this;
-            }
-            public function setIsAnchorOnly($isAnchorOnly)
-            {
-                return $this;
-            }
-        };
+        $this->chooser = new CategoryChooserTestHelper();
         $this->layout = $this->createMock(Layout::class);
         $this->resultRaw = $this->createMock(Raw::class);
         $this->resultFactory = $this->createMock(ResultFactory::class);

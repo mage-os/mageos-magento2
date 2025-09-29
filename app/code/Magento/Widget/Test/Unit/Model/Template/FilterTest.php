@@ -14,6 +14,7 @@ use Magento\Framework\View\LayoutInterface;
 use Magento\Store\Model\Information as StoreInformation;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Framework\Test\Unit\Helper\BlockInterfaceTestHelper;
 use Magento\Widget\Block\BlockInterface;
 use Magento\Widget\Model\ResourceModel\Widget;
 use Magento\Widget\Model\Template\Filter;
@@ -246,31 +247,7 @@ class FilterTest extends TestCase
      */
     protected function getBlockMock($returnedResult = '')
     {
-        /** @var BlockInterface|MockObject $blockMock */
-        $blockMock = new class($returnedResult) implements BlockInterface {
-            /**
-             * @var string
-             */
-            private $returnedResult;
-            public function __construct($returnedResult)
-            {
-                $this->returnedResult = $returnedResult;
-            }
-            public function addData($key, $value = null)
-            {
-                return $this;
-            }
-            public function setData($key, $value = null)
-            {
-                return $this;
-            }
-            public function toHtml()
-            {
-                return $this->returnedResult;
-            }
-        };
-
-        return $blockMock;
+        return (new BlockInterfaceTestHelper())->setReturnedResult($returnedResult);
     }
 
     /**
