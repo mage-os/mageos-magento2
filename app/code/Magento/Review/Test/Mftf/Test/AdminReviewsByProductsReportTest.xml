@@ -25,6 +25,9 @@
             <createData stepKey="createProduct1" entity="SimpleProduct">
                 <requiredEntity createDataKey="category"/>
             </createData>
+            <createData stepKey="createProduct2" entity="SimpleProduct">
+                <requiredEntity createDataKey="category"/>
+            </createData>
         </before>
         <after>
             <!-- Delete reviews -->
