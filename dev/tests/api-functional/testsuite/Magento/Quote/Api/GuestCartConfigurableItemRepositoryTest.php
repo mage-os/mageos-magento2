@@ -103,7 +103,6 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
         ], ['storeId' => 1]);
         $this->assertTrue(strlen($quoteId) >= 32);
 
-
         return $quoteId;
     }
 
