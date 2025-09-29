@@ -18,6 +18,10 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Ui\Component\Form\Element\DataType\Date;
+use Magento\CatalogRule\Test\Unit\Helper\RulePricesStorageTestHelper;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelperForCatalogRule;
+use Magento\Catalog\Test\Unit\Helper\DateTestHelperForCatalogRule;
+use Magento\Framework\Test\Unit\Helper\EventTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -73,76 +77,8 @@ class ProcessAdminFinalPriceObserverTest extends TestCase
             ->getMockBuilder(Observer::class)
             ->disableOriginalConstructor()
             ->getMock();
-        // Create anonymous class extending Event with dynamic methods
-        $this->eventMock = new class extends Event {
-            /** @var mixed */
-            private $product = null;
-
-            public function __construct()
-            {
-                // Skip parent constructor to avoid complex dependencies
-            }
-
-            public function getProduct()
-            {
-                return $this->product;
-            }
-
-            public function setProduct($value)
-            {
-                $this->product = $value;
-                return $this;
-            }
-        };
-        // Create anonymous class extending RulePricesStorage with dynamic methods
-        $this->rulePricesStorageMock = new class extends RulePricesStorage {
-            /** @var int|null */
-            private $websiteId = null;
-            /** @var int|null */
-            private $customerGroupId = null;
-            /** @var float|null */
-            private $rulePrice = null;
-
-            public function __construct()
-            {
-                // Skip parent constructor to avoid complex dependencies
-            }
-
-            // Dynamic methods from addMethods
-            public function getWebsiteId()
-            {
-                return $this->websiteId;
-            }
-
-            public function setWebsiteId($value)
-            {
-                $this->websiteId = $value;
-                return $this;
-            }
-
-            public function getCustomerGroupId()
-            {
-                return $this->customerGroupId;
-            }
-
-            public function setCustomerGroupId($value)
-            {
-                $this->customerGroupId = $value;
-                return $this;
-            }
-
-            // Methods from onlyMethods
-            public function getRulePrice($id)
-            {
-                return $this->rulePrice;
-            }
-
-            public function setRulePrice($id, $price)
-            {
-                $this->rulePrice = $price;
-                return $this;
-            }
-        };
+        $this->eventMock = new EventTestHelper();
+        $this->rulePricesStorageMock = new RulePricesStorageTestHelper();
         $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
         $this->resourceRuleFactoryMock = $this->getMockBuilder(RuleFactory::class)
             ->onlyMethods(['create'])
@@ -177,122 +113,8 @@ class ProcessAdminFinalPriceObserverTest extends TestCase
             ->method('getEvent')
             ->willReturn($this->eventMock);
 
-        // Create anonymous class extending Product with dynamic methods
-        $productMock = new class extends Product {
-            /** @var int|null */
-            private $websiteId = null;
-            /** @var int|null */
-            private $customerGroupId = null;
-            /** @var int|null */
-            private $storeId = null;
-            /** @var int|null */
-            private $id = null;
-            /** @var array */
-            private $data = [];
-            /** @var float|null */
-            private $finalPrice = null;
-
-            public function __construct()
-            {
-                // Skip parent constructor to avoid complex dependencies
-            }
-
-            // Dynamic methods from addMethods
-            public function getWebsiteId()
-            {
-                return $this->websiteId;
-            }
-
-            public function setWebsiteId($value)
-            {
-                $this->websiteId = $value;
-                return $this;
-            }
-
-            public function getCustomerGroupId()
-            {
-                return $this->customerGroupId;
-            }
-
-            public function setCustomerGroupId($value)
-            {
-                $this->customerGroupId = $value;
-                return $this;
-            }
-
-            // Methods from onlyMethods
-            public function getStoreId()
-            {
-                return $this->storeId;
-            }
-
-            public function setStoreId($value)
-            {
-                $this->storeId = $value;
-                return $this;
-            }
-
-            public function getId()
-            {
-                return $this->id;
-            }
-
-            public function setId($value)
-            {
-                $this->id = $value;
-                return $this;
-            }
-
-            public function getData($key = '', $index = null)
-            {
-                if ($key === '') {
-                    return $this->data;
-                }
-                return isset($this->data[$key]) ? $this->data[$key] : null;
-            }
-
-            public function setData($key, $value = null)
-            {
-                if (is_array($key)) {
-                    $this->data = array_merge($this->data, $key);
-                } else {
-                    $this->data[$key] = $value;
-                }
-                return $this;
-            }
-
-            public function setFinalPrice($value)
-            {
-                $this->finalPrice = $value;
-                return $this;
-            }
-
-            public function getFinalPrice($qty = null)
-            {
-                return $this->finalPrice;
-            }
-        };
-        // Create anonymous class extending Date with dynamic methods
-        $dateMock = new class extends Date {
-            /** @var string|null */
-            private $formatValue = null;
-
-            public function __construct()
-            {
-                // Skip parent constructor to avoid complex dependencies
-            }
-
-            public function format($format)
-            {
-                return $this->formatValue;
-            }
-
-            public function setFormatValue($value)
-            {
-                $this->formatValue = $value;
-                return $this;
-            }
-        };
+        $productMock = new ProductTestHelperForCatalogRule();
+        $dateMock = new DateTestHelperForCatalogRule();
 
         $this->localeDateMock->expects($this->once())
             ->method('scopeDate')

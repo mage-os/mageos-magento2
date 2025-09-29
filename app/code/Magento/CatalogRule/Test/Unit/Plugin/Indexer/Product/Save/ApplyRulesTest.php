@@ -12,6 +12,7 @@ use Magento\CatalogRule\Model\Indexer\Product\ProductRuleProcessor;
 use Magento\CatalogRule\Plugin\Indexer\Product\Save\ApplyRules;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Catalog\Test\Unit\Helper\AbstractModelTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -48,40 +49,7 @@ class ApplyRulesTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        // Create anonymous class extending AbstractModel with dynamic methods
-        $this->model = new class extends AbstractModel {
-            /** @var bool|null */
-            private $isMassupdate = null;
-            /** @var int|null */
-            private $id = null;
-
-            public function __construct()
-            {
-                // Skip parent constructor to avoid complex dependencies
-            }
-
-            public function getIsMassupdate()
-            {
-                return $this->isMassupdate;
-            }
-
-            public function setIsMassupdate($value)
-            {
-                $this->isMassupdate = $value;
-                return $this;
-            }
-
-            public function getId()
-            {
-                return $this->id;
-            }
-
-            public function setId($value)
-            {
-                $this->id = $value;
-                return $this;
-            }
-        };
+        $this->model = new AbstractModelTestHelper();
 
         $this->plugin = (new ObjectManager($this))->getObject(
             ApplyRules::class,

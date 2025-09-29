@@ -23,6 +23,7 @@ use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Rule\Model\Condition\Combine;
 use Magento\Store\Model\Store;
+use Magento\Catalog\Test\Unit\Helper\CombineTestHelper;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Model\Website;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -116,40 +117,7 @@ class RuleTest extends TestCase
                 'setData'
             ]
         );
-        // PHPUnit 12 compatible: Use anonymous class for Combine since setRule is a magic method
-        $this->condition = new class extends Combine {
-            /** @var mixed */
-            private $rule = null;
-            /** @var bool */
-            private $validateResult = false;
-            
-            public function __construct()
-            {
-                // Skip parent constructor to avoid complex dependencies
-            }
-            
-            public function setRule($rule)
-            {
-                $this->rule = $rule;
-                return $this;
-            }
-            
-            public function getRule()
-            {
-                return $this->rule;
-            }
-            
-            public function validate($object)
-            {
-                return $this->validateResult;
-            }
-            
-            public function setValidateResult($result)
-            {
-                $this->validateResult = $result;
-                return $this;
-            }
-        };
+        $this->condition = new CombineTestHelper();
         $this->websiteModel = $this->createPartialMock(
             Website::class,
             [
@@ -488,3 +456,4 @@ class RuleTest extends TestCase
         $this->rule->reindex();
     }
 }
+

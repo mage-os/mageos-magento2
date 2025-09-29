@@ -11,6 +11,7 @@ namespace Magento\CatalogRule\Test\Unit\Plugin\Indexer;
 use Magento\Catalog\Model\Category;
 use Magento\CatalogRule\Model\Indexer\Product\ProductRuleProcessor;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Catalog\Test\Unit\Helper\CategoryTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -40,32 +41,7 @@ class CategoryTest extends TestCase
         $this->productRuleProcessor = $this->createMock(
             ProductRuleProcessor::class
         );
-        // Create anonymous class extending Category with dynamic methods
-        $this->subject = new class extends Category {
-            /** @var array */
-            private $changedProductIds = [];
-
-            public function __construct()
-            {
-                // Skip parent constructor to avoid complex dependencies
-            }
-
-            public function getChangedProductIds()
-            {
-                return $this->changedProductIds;
-            }
-
-            public function setChangedProductIds($value)
-            {
-                $this->changedProductIds = $value;
-                return $this;
-            }
-
-            public function __wakeUp()
-            {
-                // Implementation for __wakeUp method
-            }
-        };
+        $this->subject = new CategoryTestHelper();
 
         $this->plugin = (new ObjectManager($this))->getObject(
             \Magento\CatalogRule\Plugin\Indexer\Category::class,

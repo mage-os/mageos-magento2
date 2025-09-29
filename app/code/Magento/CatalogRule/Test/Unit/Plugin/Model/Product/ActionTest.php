@@ -10,6 +10,7 @@ namespace Magento\CatalogRule\Test\Unit\Plugin\Model\Product;
 
 use Magento\CatalogRule\Model\Indexer\Product\ProductRuleProcessor;
 use Magento\CatalogRule\Plugin\Model\Product\Action;
+use Magento\Catalog\Test\Unit\Helper\ProductActionTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -35,44 +36,11 @@ class ActionTest extends TestCase
     public function testAfterUpdateAttributes()
     {
         $subject = $this->getMockBuilder(\Magento\Catalog\Model\Product\Action::class)
-            ->disableOriginalConstructor()
+            ->disableOriginalConstructor()  
             ->onlyMethods([])
             ->getMock();
 
-        // Create anonymous class extending Product\Action with dynamic methods
-        $result = new class extends \Magento\Catalog\Model\Product\Action {
-            /** @var array */
-            private $attributesData = [];
-            /** @var array */
-            private $productIds = [];
-
-            public function __construct()
-            {
-                // Skip parent constructor to avoid complex dependencies
-            }
-
-            public function getAttributesData()
-            {
-                return $this->attributesData;
-            }
-
-            public function setAttributesData($value)
-            {
-                $this->attributesData = $value;
-                return $this;
-            }
-
-            public function getProductIds()
-            {
-                return $this->productIds;
-            }
-
-            public function setProductIds($value)
-            {
-                $this->productIds = $value;
-                return $this;
-            }
-        };
+        $result = new ProductActionTestHelper();
 
         $result->setAttributesData([]);
 
@@ -90,40 +58,7 @@ class ActionTest extends TestCase
             ->onlyMethods([])
             ->getMock();
 
-        // Create anonymous class extending Product\Action with dynamic methods
-        $result = new class extends \Magento\Catalog\Model\Product\Action {
-            /** @var array */
-            private $attributesData = [];
-            /** @var array */
-            private $productIds = [];
-
-            public function __construct()
-            {
-                // Skip parent constructor to avoid complex dependencies
-            }
-
-            public function getAttributesData()
-            {
-                return $this->attributesData;
-            }
-
-            public function setAttributesData($value)
-            {
-                $this->attributesData = $value;
-                return $this;
-            }
-
-            public function getProductIds()
-            {
-                return $this->productIds;
-            }
-
-            public function setProductIds($value)
-            {
-                $this->productIds = $value;
-                return $this;
-            }
-        };
+        $result = new ProductActionTestHelper();
 
         $result->setAttributesData(['price' => 100]);
         $result->setProductIds($productIds);

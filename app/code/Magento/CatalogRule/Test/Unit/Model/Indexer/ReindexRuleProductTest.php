@@ -17,6 +17,7 @@ use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Store\Model\ScopeInterface;
+use Magento\Catalog\Test\Unit\Helper\ExtensionAttributesInterfaceTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -231,27 +232,7 @@ class ReindexRuleProductTest extends TestCase
         $this->prepareResourceMock();
         $this->prepareRuleMock($websitesIds, $productIds, [10, 20]);
 
-        // Create anonymous class extending ExtensionAttributesInterface with dynamic methods
-        $extensionAttributes = new class implements ExtensionAttributesInterface {
-            /** @var array */
-            private $excludeWebsiteIds = [];
-
-            public function __construct()
-            {
-                // Skip constructor
-            }
-
-            public function getExcludeWebsiteIds()
-            {
-                return $this->excludeWebsiteIds;
-            }
-
-            public function setExcludeWebsiteIds($value)
-            {
-                $this->excludeWebsiteIds = $value;
-                return $this;
-            }
-        };
+        $extensionAttributes = new ExtensionAttributesInterfaceTestHelper();
         $this->ruleMock->expects(self::once())->method('getExtensionAttributes')
             ->willReturn($extensionAttributes);
         $extensionAttributes->setExcludeWebsiteIds([10 => [1, 2]]);
@@ -517,3 +498,4 @@ class ReindexRuleProductTest extends TestCase
         $this->ruleMock->expects(self::once())->method('getStopRulesProcessing')->willReturn(true);
     }
 }
+
