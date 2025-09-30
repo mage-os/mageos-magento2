@@ -20,7 +20,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use Magento\Ui\Component\Form\Element\DataType\Date;
 use Magento\CatalogRule\Test\Unit\Helper\RulePricesStorageTestHelper;
 use Magento\Catalog\Test\Unit\Helper\ProductTestHelperForCatalogRule;
-use Magento\Catalog\Test\Unit\Helper\DateTestHelperForCatalogRule;
+use Magento\Framework\Test\Unit\Helper\DateTestHelperForCatalogRule;
 use Magento\Framework\Test\Unit\Helper\EventTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

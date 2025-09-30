@@ -9,7 +9,7 @@ namespace Magento\CatalogInventory\Test\Unit\Api;
 
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ProductFactory;
-use Magento\Catalog\Test\Unit\Helper\StockItemInterfaceTestHelper;
+use Magento\CatalogInventory\Test\Unit\Helper\StockItemInterfaceTestHelper;
 use Magento\CatalogInventory\Api\Data\StockInterface;
 use Magento\CatalogInventory\Api\Data\StockItemInterface;
 use Magento\CatalogInventory\Api\Data\StockStatusInterface;

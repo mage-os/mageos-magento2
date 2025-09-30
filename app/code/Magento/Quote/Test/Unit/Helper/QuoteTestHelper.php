@@ -31,7 +31,7 @@ class QuoteTestHelper extends Quote
      *
      * @return bool
      */
-    public function isInventoryProcessed()
+    public function getInventoryProcessed()
     {
         return $this->inventoryProcessed;
     }

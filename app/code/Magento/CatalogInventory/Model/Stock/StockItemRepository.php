@@ -182,7 +182,7 @@ class StockItemRepository implements StockItemRepositoryInterface
                     $stockItem->setLowStockDate($this->dateTime->gmtDate());
                 }
 
-                if ($stockItem->hasStockStatusChangedAutomaticallyFlag()) {
+                if ($stockItem->getStockStatusChangedAutomaticallyFlag()) {
                     $stockItem->setStockStatusChangedAuto((int)$stockItem->getStockStatusChangedAutomaticallyFlag());
                 }
             } else {

@@ -10,7 +10,7 @@ namespace Magento\CatalogInventory\Test\Unit\Model\Spi;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ProductFactory;
-use Magento\Catalog\Test\Unit\Helper\StockItemInterfaceTestHelper;
+use Magento\CatalogInventory\Test\Unit\Helper\StockItemInterfaceTestHelper;
 use Magento\CatalogInventory\Api\Data\StockItemInterface;
 use Magento\CatalogInventory\Model\Spi\StockStateProviderInterface;
 use Magento\CatalogInventory\Model\StockStateProvider;
@@ -89,9 +89,9 @@ class StockStateProviderTest extends TestCase
         'hasStockQty',
         'setStockQty',
         'getData',
-        'isSuppressCheckQtyIncrements',
-        'isChildItem',
-        'isSaleable',
+        'getSuppressCheckQtyIncrements',
+        'getIsChildItem',
+        'getIsSaleable',
         'getOrderedItems',
         'setOrderedItems',
         'getProductName'

@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Catalog\Test\Unit\Helper;
+namespace Magento\CatalogInventory\Test\Unit\Helper;
 
 use Magento\CatalogInventory\Api\StockConfigurationInterface;
 

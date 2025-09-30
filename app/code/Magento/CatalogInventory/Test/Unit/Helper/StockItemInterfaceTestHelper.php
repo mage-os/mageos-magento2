@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Catalog\Test\Unit\Helper;
+namespace Magento\CatalogInventory\Test\Unit\Helper;
 
 use Magento\CatalogInventory\Api\Data\StockItemInterface;
 
@@ -530,7 +530,7 @@ class StockItemInterfaceTestHelper implements StockItemInterface
      *
      * @return bool
      */
-    public function isSuppressCheckQtyIncrements()
+    public function getSuppressCheckQtyIncrements()
     {
         return $this->suppressCheckQtyIncrements;
     }
@@ -552,7 +552,7 @@ class StockItemInterfaceTestHelper implements StockItemInterface
      *
      * @return bool
      */
-    public function isSaleable()
+    public function getIsSaleable()
     {
         return $this->isSaleable;
     }
@@ -618,7 +618,7 @@ class StockItemInterfaceTestHelper implements StockItemInterface
      *
      * @return bool
      */
-    public function isChildItem()
+    public function getIsChildItem()
     {
         return $this->isChildItem;
     }

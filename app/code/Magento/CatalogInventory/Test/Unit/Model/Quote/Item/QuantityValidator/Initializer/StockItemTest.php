@@ -11,7 +11,7 @@ use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Configuration\Item\Option;
 use Magento\Catalog\Model\Product\Type\AbstractType;
 use Magento\Catalog\Model\ProductTypes\ConfigInterface;
-use Magento\Catalog\Test\Unit\Helper\StockItemInterfaceTestHelper;
+use Magento\CatalogInventory\Test\Unit\Helper\StockItemInterfaceTestHelper;
 use Magento\CatalogInventory\Api\StockStateInterface;
 use Magento\CatalogInventory\Model\Quote\Item\QuantityValidator\Initializer\StockItem;
 use Magento\CatalogInventory\Model\Quote\Item\QuantityValidator\QuoteItemQtyList;

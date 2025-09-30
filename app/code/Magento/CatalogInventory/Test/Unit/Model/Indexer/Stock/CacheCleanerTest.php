@@ -10,7 +10,7 @@ namespace Magento\CatalogInventory\Test\Unit\Model\Indexer\Stock;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Product;
-use Magento\Catalog\Test\Unit\Helper\StockConfigurationInterfaceTestHelper;
+use Magento\CatalogInventory\Test\Unit\Helper\StockConfigurationInterfaceTestHelper;
 use Magento\CatalogInventory\Api\StockConfigurationInterface;
 use Magento\CatalogInventory\Model\Indexer\Stock\CacheCleaner;
 use Magento\Framework\App\ResourceConnection;

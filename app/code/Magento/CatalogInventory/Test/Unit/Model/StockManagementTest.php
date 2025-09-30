@@ -9,7 +9,7 @@ namespace Magento\CatalogInventory\Test\Unit\Model;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Api\ProductRepositoryInterface;
-use Magento\Catalog\Test\Unit\Helper\StockItemInterfaceTestHelper;
+use Magento\CatalogInventory\Test\Unit\Helper\StockItemInterfaceTestHelper;
 use Magento\CatalogInventory\Api\Data\StockItemInterface;
 use Magento\CatalogInventory\Api\StockConfigurationInterface;
 use Magento\CatalogInventory\Model\ResourceModel\QtyCounterInterface;

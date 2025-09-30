@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Catalog\Test\Unit\Helper;
+namespace Magento\CatalogInventory\Test\Unit\Helper;
 
 use Magento\CatalogInventory\Model\Stock\Item;
 
@@ -240,21 +240,11 @@ class ItemTestHelper extends Item
     }
 
     /**
-     * Has stock status changed automatically flag
-     *
-     * @return bool
-     */
-    public function hasStockStatusChangedAutomaticallyFlag()
-    {
-        return false;
-    }
-
-    /**
      * Get stock status changed automatically flag
      *
      * @return bool
      */
-    public function isStockStatusChangedAutomaticallyFlag()
+    public function getStockStatusChangedAutomaticallyFlag()
     {
         return false;
     }

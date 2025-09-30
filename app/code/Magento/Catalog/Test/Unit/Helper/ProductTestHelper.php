@@ -44,7 +44,7 @@ class ProductTestHelper extends Product
      *
      * @return bool
      */
-    public function isChangedWebsites()
+    public function getIsChangedWebsites()
     {
         return $this->isChangedWebsites;
     }

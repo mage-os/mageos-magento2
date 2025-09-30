@@ -4,7 +4,7 @@
  * All Rights Reserved.
  */
 
-namespace Magento\Catalog\Test\Unit\Helper;
+namespace Magento\CatalogInventory\Test\Unit\Helper;
 
 use Magento\CatalogInventory\Model\Stock\Item as StockItem;
 

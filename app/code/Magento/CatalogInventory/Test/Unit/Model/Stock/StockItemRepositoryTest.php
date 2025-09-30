@@ -23,7 +23,7 @@ use Magento\CatalogInventory\Model\Spi\StockStateProviderInterface;
 use Magento\CatalogInventory\Model\Stock\Item;
 use Magento\CatalogInventory\Model\Stock\StockItemRepository;
 use Magento\CatalogInventory\Model\StockRegistryStorage;
-use Magento\Catalog\Test\Unit\Helper\ItemTestHelper;
+use Magento\CatalogInventory\Test\Unit\Helper\ItemTestHelper;
 use Magento\Framework\DB\MapperFactory;
 use Magento\Framework\DB\QueryBuilder;
 use Magento\Framework\DB\QueryBuilderFactory;
@@ -319,7 +319,7 @@ class StockItemRepositoryTest extends TestCase
                 'willReturnCallback' => [[null], [self::$date]],
                 'willReturnSelf' => true,
             ],
-            'hasStockStatusChangedAutomaticallyFlag' => ['expects' => $this->once(), 'willReturn' => false,],
+            'getStockStatusChangedAutomaticallyFlag' => ['expects' => $this->once(), 'willReturn' => false,],
 
         ];
         $existingStockItem = $this->createMock(Item::class);
@@ -458,8 +458,7 @@ class StockItemRepositoryTest extends TestCase
                     'getStockStatusChangedAuto' => ['expects' =>'once', 'willReturn' => false,],
                     'setIsInStock' => ['expects' => 'never',],
                     'setStockStatusChangedAuto' => ['expects' => 'once', 'with' => [1],],
-                    'hasStockStatusChangedAutomaticallyFlag' => ['expects' => 'once', 'willReturn' => true,],
-                    'isStockStatusChangedAutomaticallyFlag' => ['expects' => 'once', 'willReturn' => true,],
+                    'getStockStatusChangedAutomaticallyFlag' => ['expects' => 'once', 'willReturn' => true,]
                 ],
                 'existingStockItemMockConfig' => [
                 ],
