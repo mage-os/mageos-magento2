@@ -14,11 +14,17 @@ use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\ReadInterface;
 use Magento\Framework\Registry;
 use Magento\Framework\Session\Generic;
+use Magento\Framework\Test\Unit\Helper\ElementTestHelper;
+use Magento\Framework\Test\Unit\Helper\FieldsetTestHelper;
+use Magento\Framework\Test\Unit\Helper\FormTestHelper;
+use Magento\Framework\Test\Unit\Helper\GenericTestHelper;
+use Magento\Framework\Test\Unit\Helper\TextTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Framework\View\FileSystem as FilesystemView;
 use Magento\Review\Model\Rating;
 use Magento\Review\Model\Rating\Option;
 use Magento\Review\Model\Rating\OptionFactory;
+use Magento\Review\Test\Unit\Helper\RatingTestHelper;
 use Magento\Review\Model\ResourceModel\Rating\Option\Collection;
 use Magento\Store\Model\Store;
 use PHPUnit\Framework\TestCase;
@@ -119,124 +125,12 @@ class FormTest extends TestCase
         $this->ratingOptionCollection = $this->createMock(
             Collection::class
         );
-        $this->element = new class extends Text {
-            public function __construct()
-            {
-            }
-            public function setValue($value)
-            {
-                return $this;
-            }
-            public function setIsChecked($checked)
-            {
-                return $this;
-            }
-        };
-        $this->session = new class extends Generic {
-            public function __construct()
-            {
-            }
-            public function getRatingData()
-            {
-                return null;
-            }
-            public function setRatingData($data)
-            {
-                return $this;
-            }
-        };
-        $this->rating = new class extends Rating {
-            public function __construct()
-            {
-            }
-            public function getId()
-            {
-                return 1;
-            }
-            public function getRatingCodes()
-            {
-                return [];
-            }
-        };
+        $this->element = new TextTestHelper();
+        $this->session = new GenericTestHelper();
+        $this->rating = new RatingTestHelper();
         $this->optionRating = $this->createMock(Option::class);
         $this->store = $this->createMock(Store::class);
-        $this->form = new class extends Form {
-            /**
-             * @var mixed
-             */
-            private $element;
-            /**
-             * @var array
-             */
-            private $fieldset = [];
-            public function __construct()
-            {
-            }
-            public function getForm()
-            {
-                return $this;
-            }
-            public function addFieldset($elementId, $config, $after = false, $isAdvanced = false)
-            {
-                $fieldsetMock = new class {
-                    public function addField($elementId, $type, $config, $after = false)
-                    {
-                        return new class {
-                            public function setRenderer($renderer)
-                            {
-                                return $this;
-                            }
-                            public function setValue($value)
-                            {
-                                return $this;
-                            }
-                        };
-                    }
-                };
-                $this->fieldset[$elementId] = $fieldsetMock;
-                return $fieldsetMock;
-            }
-            public function getFieldset($elementId)
-            {
-                return $this->fieldset[$elementId] ?? null;
-            }
-            public function addField($elementId, $type, $config, $after = false)
-            {
-                return $this;
-            }
-            public function getElement($elementId)
-            {
-                if (in_array($elementId, ['stores', 'position', 'is_active'])) {
-                    return new class {
-                        public function setValue($value)
-                        {
-                            return $this;
-                        }
-                        public function setIsChecked($value)
-                        {
-                            return $this;
-                        }
-                    };
-                }
-                return null;
-            }
-            public function setElement($element)
-            {
-                $this->element = $element;
-            }
-            public function setValues($values)
-            {
-                return $this;
-            }
-            public function setForm($form)
-            {
-                return $this;
-            }
-            public function setRenderer($renderer)
-            {
-                return $this;
-            }
-        };
+        $this->form = new FormTestHelper();
         $this->directoryReadInterface = $this->createMock(ReadInterface::class);
         $this->registry = $this->createMock(Registry::class);
         $this->formFactory = $this->createMock(FormFactory::class);

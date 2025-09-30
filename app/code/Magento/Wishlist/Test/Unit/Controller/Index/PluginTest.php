@@ -178,6 +178,35 @@ class PluginTest extends TestCase
      */
     private function createCustomerSessionMock()
     {
-        return new SessionTestHelper();
+        $sessionHelper = new SessionTestHelper();
+        
+        // Create mock URL factory
+        $urlFactoryMock = $this->createMock(\Magento\Framework\UrlFactory::class);
+        $urlMock = $this->createMock(\Magento\Framework\Url::class);
+        $urlFactoryMock->method('create')->willReturn($urlMock);
+        $sessionHelper->_urlFactory = $urlFactoryMock;
+        
+        // Create mock customer factory
+        $customerFactoryMock = $this->createMock(\Magento\Customer\Model\CustomerFactory::class);
+        $customerMock = $this->createMock(\Magento\Customer\Model\Customer::class);
+        $customerFactoryMock->method('create')->willReturn($customerMock);
+        $sessionHelper->_customerFactory = $customerFactoryMock;
+        
+        // Create mock storage
+        $storageMock = $this->createMock(\Magento\Framework\Session\Storage::class);
+        $storageMock->method('setData')->willReturnSelf();
+        $sessionHelper->storage = $storageMock;
+        
+        // Create mock customer URL
+        $customerUrlMock = $this->createMock(\Magento\Customer\Model\Url::class);
+        $customerUrlMock->method('getLoginUrlParams')->willReturn([]);
+        $sessionHelper->_customerUrl = $customerUrlMock;
+        
+        // Create mock response
+        $responseMock = $this->createMock(\Magento\Framework\App\Response\Http::class);
+        $responseMock->method('setRedirect')->willReturnSelf();
+        $sessionHelper->response = $responseMock;
+        
+        return $sessionHelper;
     }
 }

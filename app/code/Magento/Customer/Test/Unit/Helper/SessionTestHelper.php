@@ -60,6 +60,41 @@ class SessionTestHelper extends Session
     public $beforeWishlistRequest = null;
 
     /**
+     * @var mixed
+     */
+    private $urlFactory = null;
+
+    /**
+     * @var mixed
+     */
+    private $customerFactory = null;
+
+    /**
+     * @var mixed
+     */
+    public $_urlFactory = null;
+
+    /**
+     * @var mixed
+     */
+    public $_customerFactory = null;
+
+    /**
+     * @var mixed
+     */
+    public $storage = null;
+
+    /**
+     * @var mixed
+     */
+    public $_customerUrl = null;
+
+    /**
+     * @var mixed
+     */
+    public $response = null;
+
+    /**
      * Constructor - skip parent constructor to avoid dependencies
      */
     public function __construct()
@@ -259,5 +294,49 @@ class SessionTestHelper extends Session
     {
         $this->websiteId = $id;
         return $this;
+    }
+
+    /**
+     * Set URL factory
+     *
+     * @param mixed $urlFactory
+     * @return $this
+     */
+    public function setUrlFactory($urlFactory): self
+    {
+        $this->urlFactory = $urlFactory;
+        return $this;
+    }
+
+    /**
+     * Get URL factory
+     *
+     * @return mixed
+     */
+    public function getUrlFactory()
+    {
+        return $this->urlFactory;
+    }
+
+    /**
+     * Set customer factory
+     *
+     * @param mixed $customerFactory
+     * @return $this
+     */
+    public function setCustomerFactory($customerFactory): self
+    {
+        $this->customerFactory = $customerFactory;
+        return $this;
+    }
+
+    /**
+     * Get customer factory
+     *
+     * @return mixed
+     */
+    public function getCustomerFactory()
+    {
+        return $this->customerFactory;
     }
 }

@@ -890,4 +890,48 @@ class QuoteItemTestHelper extends Item
         }
         return $this;
     }
+
+    /**
+     * Set product ID
+     *
+     * @param mixed $productId
+     * @return $this
+     */
+    public function setProductId($productId): self
+    {
+        $this->productId = $productId;
+        return $this;
+    }
+
+    /**
+     * Get product ID
+     *
+     * @return mixed
+     */
+    public function getProductId()
+    {
+        return $this->productId;
+    }
+
+    /**
+     * Set buy request
+     *
+     * @param mixed $buyRequest
+     * @return $this
+     */
+    public function setBuyRequest($buyRequest): self
+    {
+        $this->buyRequest = $buyRequest;
+        return $this;
+    }
+
+    /**
+     * Get buy request
+     *
+     * @return mixed
+     */
+    public function getBuyRequest()
+    {
+        return $this->buyRequest;
+    }
 }

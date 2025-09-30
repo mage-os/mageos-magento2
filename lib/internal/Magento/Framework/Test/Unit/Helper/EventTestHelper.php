@@ -136,6 +136,26 @@ class EventTestHelper extends Event
     private $form = null;
 
     /**
+     * @var mixed
+     */
+    private $product = null;
+
+    /**
+     * @var mixed
+     */
+    private $collection = null;
+
+    /**
+     * @var mixed
+     */
+    private $formData = null;
+
+    /**
+     * @var mixed
+     */
+    private $redirectUrl = null;
+
+    /**
      * Get form
      *
      * @return mixed
@@ -154,6 +174,95 @@ class EventTestHelper extends Event
     public function setForm($form): self
     {
         $this->form = $form;
+        return $this;
+    }
+
+    /**
+     * Get product
+     *
+     * @return mixed
+     */
+    public function getProduct()
+    {
+        return $this->product;
+    }
+
+    /**
+     * Set product
+     *
+     * @param mixed $product
+     * @return $this
+     */
+    public function setProduct($product): self
+    {
+        $this->product = $product;
+        return $this;
+    }
+
+    /**
+     * Get collection
+     *
+     * @return mixed
+     */
+    public function getCollection()
+    {
+        return $this->collection;
+    }
+
+    /**
+     * Set collection
+     *
+     * @param mixed $collection
+     * @return $this
+     */
+    public function setCollection($collection): self
+    {
+        $this->collection = $collection;
+        return $this;
+    }
+
+    /**
+     * Get form data
+     *
+     * @param bool $clear
+     * @return mixed
+     */
+    public function getFormData($clear = false)
+    {
+        return $this->formData;
+    }
+
+    /**
+     * Set form data
+     *
+     * @param mixed $data
+     * @return $this
+     */
+    public function setFormData($data): self
+    {
+        $this->formData = $data;
+        return $this;
+    }
+
+    /**
+     * Get redirect URL
+     *
+     * @return mixed
+     */
+    public function getRedirectUrl()
+    {
+        return $this->redirectUrl;
+    }
+
+    /**
+     * Set redirect URL
+     *
+     * @param mixed $url
+     * @return $this
+     */
+    public function setRedirectUrl($url): self
+    {
+        $this->redirectUrl = $url;
         return $this;
     }
 }

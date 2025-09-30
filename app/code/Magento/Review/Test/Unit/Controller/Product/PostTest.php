@@ -18,13 +18,15 @@ use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Data\Form\FormKey\Validator;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Registry;
-use Magento\Framework\Session\Generic;
+use Magento\Framework\Test\Unit\Helper\GenericTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Review\Controller\Product\Post;
 use Magento\Review\Model\Rating;
 use Magento\Review\Model\RatingFactory;
 use Magento\Review\Model\Review;
 use Magento\Review\Model\ReviewFactory;
+use Magento\Review\Test\Unit\Helper\RatingTestHelper;
+use Magento\Review\Test\Unit\Helper\ReviewTestHelper;
 use Magento\Review\Model\Review\Config;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
@@ -149,121 +151,15 @@ class PostTest extends TestCase
             Config::class,
             ['isEnabled']
         );
-        $this->reviewSession = new class extends Generic {
-            /**
-             * @var mixed
-             */
-            private $formData;
-            /**
-             * @var mixed
-             */
-            private $redirectUrl;
-            public function __construct()
-            {
-            }
-            public function getFormData($clear = false)
-            {
-                return $this->formData;
-            }
-            public function setFormData($data)
-            {
-                $this->formData = $data;
-            }
-            public function getRedirectUrl($clear = false)
-            {
-                return $this->redirectUrl;
-            }
-            public function setRedirectUrl($url)
-            {
-                $this->redirectUrl = $url;
-            }
-        };
+        $this->reviewSession = new GenericTestHelper();
         $this->eventManager = $this->createMock(ManagerInterface::class);
         $this->productRepository = $this->createMock(ProductRepositoryInterface::class);
         $this->coreRegistry = $this->createMock(Registry::class);
-        $this->review = new class extends Review {
-            public function __construct()
-            {
- /* Skip parent constructor */
-            }
-            public function setData($key, $value = null)
-            {
-                return $this;
-            }
-            public function validate()
-            {
-                return true;
-            }
-            public function setEntityId($entityId)
-            {
-                return $this;
-            }
-            public function getEntityIdByCode($entityCode)
-            {
-                return 1;
-            }
-            public function save()
-            {
-                return $this;
-            }
-            public function getId()
-            {
-                return 1;
-            }
-            public function aggregate()
-            {
-                return $this;
-            }
-            public function unsetData($key = null)
-            {
-                return $this;
-            }
-            public function setEntityPkValue($entityPkValue)
-            {
-                return $this;
-            }
-            public function setStatusId($statusId)
-            {
-                return $this;
-            }
-            public function setCustomerId($customerId)
-            {
-                return $this;
-            }
-            public function setStoreId($storeId)
-            {
-                return $this;
-            }
-            public function setStores($stores)
-            {
-                return $this;
-            }
-        };
+        $this->review = new ReviewTestHelper();
         $reviewFactory = $this->createPartialMock(ReviewFactory::class, ['create']);
         $reviewFactory->expects($this->once())->method('create')->willReturn($this->review);
         $this->customerSession = $this->createPartialMock(Session::class, ['getCustomerId']);
-        $this->rating = new class extends Rating {
-            public function __construct()
-            {
- /* Skip parent constructor */
-            }
-            public function addOptionVote($optionId, $entityPkValue)
-            {
-                return $this;
-            }
-            public function setRatingId($ratingId)
-            {
-                return $this;
-            }
-            public function setReviewId($reviewId)
-            {
-                return $this;
-            }
-            public function setCustomerId($customerId)
-            {
-                return $this;
-            }
-        };
+        $this->rating = new RatingTestHelper();
         $ratingFactory = $this->createPartialMock(RatingFactory::class, ['create']);
         $ratingFactory->expects($this->once())->method('create')->willReturn($this->rating);
         $this->messageManager = $this->createMock(\Magento\Framework\Message\ManagerInterface::class);

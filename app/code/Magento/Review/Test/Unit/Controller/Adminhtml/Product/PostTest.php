@@ -18,6 +18,7 @@ use Magento\Review\Model\Rating;
 use Magento\Review\Model\RatingFactory;
 use Magento\Review\Model\Review;
 use Magento\Review\Model\ReviewFactory;
+use Magento\Review\Test\Unit\Helper\RatingTestHelper;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -128,23 +129,7 @@ class PostTest extends TestCase
             ['save', 'getId', 'aggregate', 'getEntityIdByCode']
         );
         $this->reviewFactoryMock = $this->createPartialMock(ReviewFactory::class, ['create']);
-        $this->ratingMock = new class extends Rating {
-            public function __construct()
-            {
-            }
-            public function setRatingId($ratingId)
-            {
-                return $this;
-            }
-            public function setReviewId($reviewId)
-            {
-                return $this;
-            }
-            public function addOptionVote($optionId, $value)
-            {
-                return $this;
-            }
-        };
+        $this->ratingMock = new RatingTestHelper();
         $this->ratingFactoryMock = $this->createPartialMock(RatingFactory::class, ['create']);
         $this->resultFactoryMock = $this->getMockBuilder(ResultFactory::class)
             ->disableOriginalConstructor()

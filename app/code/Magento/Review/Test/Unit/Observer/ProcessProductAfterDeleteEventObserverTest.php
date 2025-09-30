@@ -8,8 +8,8 @@ declare(strict_types=1);
 namespace Magento\Review\Test\Unit\Observer;
 
 use Magento\Catalog\Model\Product;
-use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
+use Magento\Framework\Test\Unit\Helper\EventTestHelper;
 use Magento\Review\Model\ResourceModel\Rating;
 use Magento\Review\Model\ResourceModel\Review;
 use Magento\Review\Observer\ProcessProductAfterDeleteEventObserver;
@@ -61,23 +61,7 @@ class ProcessProductAfterDeleteEventObserverTest extends TestCase
     {
         $productId = 1;
         $observerMock = $this->createMock(Observer::class);
-        $eventMock = new class extends Event {
-            /**
-             * @var mixed
-             */
-            private $product;
-            public function __construct()
-            {
-            }
-            public function getProduct()
-            {
-                return $this->product;
-            }
-            public function setProduct($product)
-            {
-                $this->product = $product;
-            }
-        };
+        $eventMock = new EventTestHelper();
 
         $productMock = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
@@ -112,23 +96,7 @@ class ProcessProductAfterDeleteEventObserverTest extends TestCase
     public function testCleanupProductReviewsWithoutProduct()
     {
         $observerMock = $this->createMock(Observer::class);
-        $eventMock = new class extends Event {
-            /**
-             * @var mixed
-             */
-            private $product;
-            public function __construct()
-            {
-            }
-            public function getProduct()
-            {
-                return $this->product;
-            }
-            public function setProduct($product)
-            {
-                $this->product = $product;
-            }
-        };
+        $eventMock = new EventTestHelper();
 
         // Event mock methods provided by anonymous class (returns null by default)
         $observerMock->expects($this->once())

@@ -10,7 +10,7 @@ namespace Magento\Review\Test\Unit\Observer;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Response\RedirectInterface;
 use Magento\Framework\App\ResponseInterface;
-use Magento\Framework\Event\Observer;
+use Magento\Framework\Test\Unit\Helper\EventObserverTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\UrlInterface;
 use Magento\Review\Observer\PredispatchReviewObserver;
@@ -80,24 +80,7 @@ class PredispatchReviewObserverTest extends TestCase
      */
     public function testReviewEnabled() : void
     {
-        $observerMock = new class extends Observer {
-            public function __construct()
-            {
- /* Skip parent constructor */
-            }
-            public function getData($key = '', $index = null)
-            {
-                return null;
-            }
-            public function getResponse()
-            {
-                return null;
-            }
-            public function setRedirect($url)
-            {
-                return $this;
-            }
-        };
+        $observerMock = new EventObserverTestHelper();
 
         $this->configMock->method('getValue')
             ->with(PredispatchReviewObserver::XML_PATH_REVIEW_ACTIVE, ScopeInterface::SCOPE_STORE)
@@ -117,27 +100,7 @@ class PredispatchReviewObserverTest extends TestCase
      */
     public function testReviewDisabled() : void
     {
-        $observerMock = new class extends Observer {
-            /**
-             * @var mixed
-             */
-            private $controllerAction;
-            public function __construct()
-            {
-            }
-            public function getData($key = '', $index = null)
-            {
-                return null;
-            }
-            public function getControllerAction()
-            {
-                return $this->controllerAction;
-            }
-            public function setControllerAction($controllerAction)
-            {
-                $this->controllerAction = $controllerAction;
-            }
-        };
+        $observerMock = new EventObserverTestHelper();
 
         $expectedRedirectUrl = 'https://test.com/index';
 

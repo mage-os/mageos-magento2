@@ -10,7 +10,7 @@ namespace Magento\WishlistGraphQl\Test\Unit\Model\Resolver;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\GraphQl\Model\Query\ContextExtensionInterface;
 use Magento\GraphQl\Model\Query\ContextInterface;
-use Magento\CustomerGraphQl\Test\Unit\Helper\ContextExtensionInterfaceTestHelper;
+use Magento\GraphQl\Test\Unit\Helper\ContextExtensionInterfaceTestHelper;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;

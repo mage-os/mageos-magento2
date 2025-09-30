@@ -492,4 +492,65 @@ class ProductTestHelper extends Product
     {
         return $this->disableAddToCart;
     }
+
+    /**
+     * Set rating summary
+     *
+     * @param mixed $summary
+     * @return $this
+     */
+    public function setRatingSummary($summary)
+    {
+        return $this;
+    }
+
+    /**
+     * Wakeup method
+     *
+     * @return $this
+     */
+    public function __wakeup()
+    {
+        return $this;
+    }
+
+    /**
+     * Get review ID
+     *
+     * @return int
+     */
+    public function getReviewId()
+    {
+        return 1;
+    }
+
+    /**
+     * Get nick name
+     *
+     * @return string
+     */
+    public function getNickName()
+    {
+        return 'Product Nick';
+    }
+
+    /**
+     * Get detail
+     *
+     * @return string
+     */
+    public function getDetail()
+    {
+        return 'Product Detail';
+    }
+
+    /**
+     * Get title
+     *
+     * @return string
+     */
+    public function getTitle()
+    {
+        return 'Product Title';
+    }
 }

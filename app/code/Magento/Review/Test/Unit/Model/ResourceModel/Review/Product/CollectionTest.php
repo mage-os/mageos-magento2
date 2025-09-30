@@ -20,6 +20,7 @@ use Magento\Framework\Validator\UniversalFactory;
 use Magento\Review\Model\ResourceModel\Review\Product\Collection;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -109,8 +110,8 @@ class CollectionTest extends TestCase
      * @param $attribute
      *
      * @return void
-     * @dataProvider addAttributeToFilterDataProvider
      */
+    #[DataProvider('addAttributeToFilterDataProvider')]
     public function testAddAttributeToFilter($attribute): void
     {
         $conditionSqlQuery = 'sqlQuery';
@@ -162,8 +163,8 @@ class CollectionTest extends TestCase
      * @param $doubleConditionSqlQuery
      *
      * @return void
-     * @dataProvider addAttributeToFilterWithAttributeTypeDataProvider
      */
+    #[DataProvider('addAttributeToFilterWithAttributeTypeDataProvider')]
     public function testAddAttributeToFilterWithAttributeType(
         $condition,
         $sqlConditionWith,

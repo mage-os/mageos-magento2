@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Review\Test\Unit\Block\Adminhtml;
 
 use Magento\Catalog\Model\ResourceModel\Product;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Framework\UrlInterface;
 use Magento\Review\Block\Adminhtml\Rss;
@@ -78,7 +79,7 @@ class RssTest extends TestCase
             'charset' => 'UTF-8',
             'entries' => [
                 'title' => 'Product: "Product Name" reviewed by: Product Nick',
-                'link' => 'http://product.magento.com',
+                'link' => 'http://example.com/product',
                 'description' => [
                     'rss_url' => $rssUrl,
                     'name' => 'Product Name',
@@ -89,50 +90,14 @@ class RssTest extends TestCase
                 ],
             ],
         ];
-        $productModel = new class extends Product {
-            public function __construct()
-            {
- /* Skip parent constructor */
-            }
-            public function getStoreId()
-            {
-                return 1;
-            }
-            public function getId()
-            {
-                return 1;
-            }
-            public function getReviewId()
-            {
-                return 1;
-            }
-            public function getNickName()
-            {
-                return 'Product Nick';
-            }
-            public function getName()
-            {
-                return 'Product Name';
-            }
-            public function getDetail()
-            {
-                return 'Product Detail';
-            }
-            public function getTitle()
-            {
-                return 'Product Title';
-            }
-            public function getProductUrl()
-            {
-                return 'http://product.magento.com';
-            }
-        };
+        $productModel = new ProductTestHelper();
+        $productModel->setName('Product Name');
+        $productModel->setProductUrl('http://product.magento.com');
         $storeModel = $this->createMock(Store::class);
         $this->storeManagerInterface->expects($this->once())->method('getStore')->willReturn($storeModel);
         $storeModel->expects($this->once())->method('getName')
             ->willReturn($rssData['entries']['description']['store']);
         $this->urlBuilder->expects($this->any())->method('getUrl')->willReturn($rssUrl);
-        $this->urlBuilder->expects($this->once())->method('setScope')->willReturnSelf();
         $this->rss->expects($this->once())->method('getProductCollection')
             ->willReturn([$productModel]);
 

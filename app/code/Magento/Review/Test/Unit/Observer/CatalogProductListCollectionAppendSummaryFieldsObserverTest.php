@@ -8,8 +8,8 @@ declare(strict_types = 1);
 namespace Magento\Review\Test\Unit\Observer;
 
 use Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection;
-use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
+use Magento\Framework\Test\Unit\Helper\EventTestHelper;
 use Magento\Review\Model\ResourceModel\Review\Summary;
 use Magento\Review\Model\ResourceModel\Review\SummaryFactory;
 use Magento\Review\Observer\CatalogProductListCollectionAppendSummaryFieldsObserver;
@@ -75,23 +75,7 @@ class CatalogProductListCollectionAppendSummaryFieldsObserverTest extends TestCa
      */
     protected function setUp(): void
     {
-        $this->eventMock = new class extends Event {
-            /**
-             * @var mixed
-             */
-            private $collection;
-            public function __construct()
-            {
-            }
-            public function getCollection()
-            {
-                return $this->collection;
-            }
-            public function setCollection($collection)
-            {
-                $this->collection = $collection;
-            }
-        };
+        $this->eventMock = new EventTestHelper();
 
         $this->observerMock = $this->createMock(Observer::class);
 

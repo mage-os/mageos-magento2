@@ -17,8 +17,10 @@ use Magento\Review\Block\Product\Review as ReviewBlock;
 use Magento\Review\Model\ResourceModel\Review\Collection;
 use Magento\Review\Model\ResourceModel\Review\CollectionFactory;
 use Magento\Review\Model\Review;
+use Magento\Review\Test\Unit\Helper\CollectionFactoryTestHelper;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManager;
+use Magento\Store\Test\Unit\Helper\StoreManagerTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -132,27 +134,7 @@ class ReviewTest extends TestCase
             ->method('addEntityFilter')
             ->willReturnSelf();
 
-        $this->collectionFactory = new class extends CollectionFactory {
-            /**
-             * @var mixed
-             */
-            private $collection;
-            public function __construct()
-            {
-            }
-            public function create(array $data = [])
-            {
-                return $this->collection;
-            }
-            public function setCollection($collection)
-            {
-                $this->collection = $collection;
-            }
-            public function __wakeup()
-            {
-                return $this;
-            }
-        };
+        $this->collectionFactory = new CollectionFactoryTestHelper();
 
         $this->collectionFactory->setCollection($this->collection);
     }
@@ -189,27 +171,7 @@ class ReviewTest extends TestCase
     {
         $this->store = $this->createPartialMock(Store::class, ['getId', '__wakeup']);
 
-        $this->storeManager = new class extends StoreManager {
-            /**
-             * @var mixed
-             */
-            private $store;
-            public function __construct()
-            {
-            }
-            public function getStore($storeId = null)
-            {
-                return $this->store;
-            }
-            public function setStore($store)
-            {
-                $this->store = $store;
-            }
-            public function __wakeup()
-            {
-                return $this;
-            }
-        };
+        $this->storeManager = new StoreManagerTestHelper();
 
         $this->storeManager->setStore($this->store);
         $this->urlBuilder = $this->createMock(UrlInterface::class);

@@ -31,6 +31,16 @@ class EventObserverTestHelper extends Observer
     private $customerAddress = null;
 
     /**
+     * @var mixed
+     */
+    private $response = null;
+
+    /**
+     * @var mixed
+     */
+    private $controllerAction = null;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -104,6 +114,61 @@ class EventObserverTestHelper extends Observer
     public function setCustomerAddress($address): self
     {
         $this->customerAddress = $address;
+        return $this;
+    }
+
+    /**
+     * Get response
+     *
+     * @return mixed
+     */
+    public function getResponse()
+    {
+        return $this->response;
+    }
+
+    /**
+     * Set response
+     *
+     * @param mixed $response
+     * @return $this
+     */
+    public function setResponse($response): self
+    {
+        $this->response = $response;
+        return $this;
+    }
+
+    /**
+     * Set redirect
+     *
+     * @param mixed $url
+     * @return $this
+     */
+    public function setRedirect($url): self
+    {
+        return $this;
+    }
+
+    /**
+     * Get controller action
+     *
+     * @return mixed
+     */
+    public function getControllerAction()
+    {
+        return $this->controllerAction;
+    }
+
+    /**
+     * Set controller action
+     *
+     * @param mixed $controllerAction
+     * @return $this
+     */
+    public function setControllerAction($controllerAction): self
+    {
+        $this->controllerAction = $controllerAction;
         return $this;
     }
 }

@@ -55,7 +55,7 @@ abstract class AbstractModifierTestCase extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
         $this->locatorMock = $this->createMock(LocatorInterface::class);
-        $this->productMock = $this->createStub(ProductInterface::class);
+        $this->productMock = $this->createMock(ProductInterface::class);
         $this->storeMock = $this->createStub(StoreInterface::class);
         $this->arrayManagerMock = $this->getMockBuilder(ArrayManager::class)
             ->disableOriginalConstructor()

@@ -11,7 +11,7 @@ namespace Magento\Review\Test\Unit\Helper;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\Escaper;
-use Magento\Framework\Filter\FilterManager;
+use Magento\Framework\Test\Unit\Helper\FilterManagerTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Review\Helper\Data as HelperData;
 use Magento\Store\Model\ScopeInterface;
@@ -62,20 +62,7 @@ class DataTest extends TestCase
 
         $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
 
-        $this->filter = new class extends FilterManager {
-            public function __construct()
-            {
- /* Skip parent constructor */
-            }
-            public function truncate($string, $length = 80, $etc = '...', $breakWords = true, $middle = false)
-            {
-                return $string;
-            }
-            public function getFactories()
-            {
-                return [];
-            }
-        };
+        $this->filter = new FilterManagerTestHelper();
 
         $this->escaper = $this->createMock(Escaper::class);
 

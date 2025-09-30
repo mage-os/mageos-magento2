@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Review\Test\Unit\Helper\Action;
 
-use Magento\Backend\Model\Session;
+use Magento\Backend\Test\Unit\Helper\SessionTestHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Review\Helper\Action\Pager;
 use PHPUnit\Framework\TestCase;
@@ -25,24 +25,7 @@ class PagerTest extends TestCase
      */
     protected function setUp(): void
     {
-        $sessionMock = new class extends Session {
-            /**
-             * @var array
-             */
-            private $data = [];
-            public function __construct()
-            {
-            }
-            public function getData($key = '', $index = null)
-            {
-                return $this->data[$key] ?? [3, 2, 6, 5];
-            }
-            public function setData($key, $value = null)
-            {
-                $this->data[$key] = $value;
-                return $this;
-            }
-        };
+        $sessionMock = new SessionTestHelper();
         // Session mock methods provided by anonymous class
 
         $contextMock = $this->createPartialMock(

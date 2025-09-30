@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Review\Test\Unit\Model;
 
 use Magento\Catalog\Model\Product;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\DataObject;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Registry;
@@ -18,6 +19,7 @@ use Magento\Review\Model\ResourceModel\Review\Product\CollectionFactory;
 use Magento\Review\Model\Review;
 use Magento\Review\Model\Review\Summary;
 use Magento\Review\Model\Review\SummaryFactory;
+use Magento\Review\Test\Unit\Helper\SummaryTestHelper;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -189,45 +191,10 @@ class ReviewTest extends TestCase
         $summary = new DataObject();
         $summary->setData($testSummaryData);
 
-        $product = new class extends Product {
-            public function __construct()
-            {
-            }
-            public function getId()
-            {
-                return 1;
-            }
-            public function __wakeup()
-            {
-                return $this;
-            }
-            public function setRatingSummary($summary)
-            {
-                return $this;
-            }
-        };
+        $product = new ProductTestHelper();
+        $product->setId(1);
 
-        $summaryData = new class extends Summary {
-            public function __construct()
-            {
-            }
-            public function load($modelId, $field = null)
-            {
-                return $this;
-            }
-            public function getData($key = '', $index = null)
-            {
-                return [];
-            }
-            public function __wakeup()
-            {
-                return $this;
-            }
-            public function setStoreId($storeId)
-            {
-                return $this;
-            }
-        };
+        $summaryData = new SummaryTestHelper();
         $this->summaryModMock->expects($this->once())->method('create')->willReturn($summaryData);
         $this->assertNull($this->review->getEntitySummary($product, $storeId));
     }
