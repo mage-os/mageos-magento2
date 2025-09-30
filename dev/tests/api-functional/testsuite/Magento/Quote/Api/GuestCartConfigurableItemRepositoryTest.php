@@ -117,16 +117,13 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
     {
         $configurableProduct = $this->getConfigurableProduct();
         $optionData = $this->getConfigurableOptionData($configurableProduct);
-
         $requestData = $this->buildCartItemRequestData(
             $guestCartId,
             $configurableProduct->getSku(),
             $optionData['attribute_id'],
             $optionData['option_id']
         );
-
         $serviceInfo = $this->getCartServiceInfo($guestCartId, 'add');
-
         $response = $this->_webApiCall($serviceInfo, $requestData);
         $this->assertNotNull($response['item_id']);
         $this->assertEquals(Configurable::TYPE_CODE, $response['product_type']);
@@ -136,7 +133,6 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
             $response['product_option']['extension_attributes']['configurable_item_options'][0],
             $requestData['cartItem']['product_option']['extension_attributes']['configurable_item_options'][0]
         );
-
 
         return $response;
     }
@@ -164,7 +160,10 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
                 $this->assertArrayHasKey('product_option', $item);
                 $this->assertContains($item['sku'], $this->simpleProductSkus);
                 $this->assertArrayHasKey('extension_attributes', $item['product_option']);
-                $this->assertArrayHasKey('configurable_item_options', $item['product_option']['extension_attributes']);
+                $this->assertArrayHasKey(
+                    'configurable_item_options',
+                    $item['product_option']['extension_attributes']
+                );
                 break;
             }
         }
@@ -229,7 +228,6 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
     private function getConfigurableOptionData(ProductInterface $configurableProduct): array
     {
         $configOptions = $configurableProduct->getExtensionAttributes()->getConfigurableProductOptions();
-
         $options = $configOptions[0]->getOptions();
         $optionKey = isset($options[null]) ? null : 0;
 
@@ -248,8 +246,12 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
      * @param string $optionId
      * @return array[]
      */
-    private function buildCartItemRequestData(string $cartId, string $sku, string $attributeId, string $optionId): array
-    {
+    private function buildCartItemRequestData(
+        string $cartId,
+        string $sku,
+        string $attributeId,
+        string $optionId
+    ): array {
         return [
             'cartItem' => [
                 'sku' => $sku,
@@ -286,15 +288,12 @@ class GuestCartConfigurableItemRepositoryTest extends WebapiAbstract
         if ($action === 'update' && $itemId !== null) {
             $resourcePath .= '/' . $itemId;
         }
-
         $httpMethod = Request::HTTP_METHOD_POST;
         if ($action === 'update') {
             $httpMethod = Request::HTTP_METHOD_PUT;
         } elseif ($action === 'get') {
             $httpMethod = Request::HTTP_METHOD_GET;
         }
-
-        // Determine SOAP operation based on action
         $soapOperation = match ($action) {
             'get' => self::SERVICE_NAME_GUEST_CART_ITEM . 'GetList',
             'add', 'update' => self::SERVICE_NAME_GUEST_CART_ITEM . 'Save',
