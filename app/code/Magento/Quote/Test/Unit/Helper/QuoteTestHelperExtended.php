@@ -13,6 +13,7 @@ use Magento\Quote\Model\Quote;
  * Extended TestHelper for Quote
  * Provides implementation for Quote with additional test methods beyond the base QuoteTestHelper
  * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+ * @SuppressWarnings(PHPMD.BooleanGetMethodName)
  */
 class QuoteTestHelperExtended extends Quote
 {

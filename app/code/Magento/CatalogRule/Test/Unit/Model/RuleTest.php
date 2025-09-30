@@ -456,4 +456,3 @@ class RuleTest extends TestCase
         $this->rule->reindex();
     }
 }
-

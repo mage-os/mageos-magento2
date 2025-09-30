@@ -36,7 +36,7 @@ class ActionTest extends TestCase
     public function testAfterUpdateAttributes()
     {
         $subject = $this->getMockBuilder(\Magento\Catalog\Model\Product\Action::class)
-            ->disableOriginalConstructor()  
+            ->disableOriginalConstructor()
             ->onlyMethods([])
             ->getMock();
 

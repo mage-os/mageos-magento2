@@ -88,8 +88,6 @@ class ProductTest extends TestCase
         $this->productModel = new ProductTestHelperExtended($this->productResource);
 
         $this->eavAttributeResource = new AttributeTestHelper();
-
-
         $this->productResource->expects($this->any())->method('loadAllAttributes')->willReturnSelf();
         $this->productResource->method('getAttributesByCode')->willReturn([$this->eavAttributeResource]);
         $this->eavAttributeResource->setScopeGlobal(false);

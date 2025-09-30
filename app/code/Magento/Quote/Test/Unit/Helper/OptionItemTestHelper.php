@@ -12,6 +12,7 @@ use Magento\Quote\Model\Quote\Item\Option;
 /**
  * TestHelper for OptionItem (actually Option)
  * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+ * @SuppressWarnings(PHPMD.BooleanGetMethodName)
  * Provides implementation for Option with additional test methods
  */
 class OptionItemTestHelper extends Option
@@ -136,8 +137,6 @@ class OptionItemTestHelper extends Option
         $this->product = $product;
         return $this;
     }
-
-
 
     /**
      * Get parent item

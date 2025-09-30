@@ -30,7 +30,7 @@ class ProductListTest extends TestCase
     {
         $objectManager = new ObjectManager($this);
 
-        $this->scopeConfigMock = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
         $this->productListHelper = $objectManager->getObject(ProductList::class, [
             'scopeConfig' => $this->scopeConfigMock
         ]);

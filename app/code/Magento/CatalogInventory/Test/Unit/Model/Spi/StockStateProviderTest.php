@@ -556,8 +556,6 @@ class StockStateProviderTest extends TestCase
         
         // Create StockItemInterfaceTestHelper implementing StockItemInterface with dynamic methods
         $stockItem = new StockItemInterfaceTestHelper();
-
-
         $stockItem->setSuppressCheckQtyIncrements(false);
         $stockItem->setQtyIncrements($qtyIncrements);
         $stockItem->setIsChildItem($isChildItem);

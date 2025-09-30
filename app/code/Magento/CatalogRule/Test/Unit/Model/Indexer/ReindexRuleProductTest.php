@@ -498,4 +498,3 @@ class ReindexRuleProductTest extends TestCase
         $this->ruleMock->expects(self::once())->method('getStopRulesProcessing')->willReturn(true);
     }
 }
-
