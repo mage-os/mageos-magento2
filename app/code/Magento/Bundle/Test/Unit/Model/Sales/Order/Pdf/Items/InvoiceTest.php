@@ -7,6 +7,8 @@ declare(strict_types=1);
 
 namespace Magento\Bundle\Test\Unit\Model\Sales\Order\Pdf\Items;
 
+use Magento\Framework\Filesystem\Directory\Read;
+use PHPUnit\Framework\Attributes\DataProviderExternal;
 use Magento\Bundle\Model\Sales\Order\Pdf\Items\Invoice;
 use Magento\Framework\Data\Collection\AbstractDb;
 use Magento\Framework\DataObject;
@@ -48,10 +50,10 @@ class InvoiceTest extends TestCase
         $contextMock = $this->createMock(Context::class);
         $registryMock = $this->createMock(Registry::class);
         $this->taxDataMock = $this->createMock(Data::class);
-        $directoryMock = $this->createMock(Filesystem\Directory\Read::class);
-        $directoryMock->expects($this->any())->method('getAbsolutePath')->willReturn('');
+        $directoryMock = $this->createMock(Read::class);
+        $directoryMock->method('getAbsolutePath')->willReturn('');
         $filesystemMock = $this->createMock(Filesystem::class);
-        $filesystemMock->expects($this->any())->method('getDirectoryRead')->willReturn($directoryMock);
+        $filesystemMock->method('getDirectoryRead')->willReturn($directoryMock);
         $filterManagerMock = $this->createMock(FilterManager::class);
         $stringUtilsMock = $this->createMock(StringUtils::class);
         $stringUtilsMock->expects($this->any())->method('split')->willReturnArgument(0);
@@ -92,8 +94,8 @@ class InvoiceTest extends TestCase
      * @param string $method
      *
      * @return void
-     * @dataProvider \Magento\Bundle\Test\Unit\Model\Sales\Order\Pdf\Items\InvoiceTestProvider::getData
      */
+    #[DataProviderExternal(\Magento\Bundle\Test\Unit\Model\Sales\Order\Pdf\Items\InvoiceTestProvider::class, 'getData')]
     public function testDrawPrice(array $expected, string $method): void
     {
         $this->taxDataMock->expects($this->any())->method($method)->willReturn(true);
@@ -167,9 +169,9 @@ class InvoiceTest extends TestCase
         ];
         $orderMock = $this->createMock(Order::class);
 
-        $this->model->expects($this->any())->method('getChildren')->willReturn($items);
-        $this->model->expects($this->any())->method('isShipmentSeparately')->willReturn(false);
-        $this->model->expects($this->any())->method('isChildCalculated')->willReturn(true);
+        $this->model->method('getChildren')->willReturn($items);
+        $this->model->method('isShipmentSeparately')->willReturn(false);
+        $this->model->method('isChildCalculated')->willReturn(true);
         $this->model
             ->method('getSelectionAttributes')
             ->willReturnOnConsecutiveCalls(

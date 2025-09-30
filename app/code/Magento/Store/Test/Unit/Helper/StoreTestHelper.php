@@ -1,0 +1,80 @@
+<?php
+/**
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
+ */
+declare(strict_types=1);
+
+namespace Magento\Store\Test\Unit\Helper;
+
+use Magento\Store\Model\Store;
+
+/**
+ * Test helper for Magento\Store\Model\Store
+ * 
+ * Extends the Store class to add custom methods for testing
+ */
+class StoreTestHelper extends Store
+{
+    /**
+     * @var array
+     */
+    private $data = [];
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        // Skip parent constructor to avoid dependencies
+    }
+
+    /**
+     * Custom roundPrice method for testing
+     *
+     * @param float $price
+     * @return float
+     */
+    public function roundPrice($price)
+    {
+        return $this->data['round_price_callback'] ? 
+            call_user_func($this->data['round_price_callback'], $price) : 
+            $price;
+    }
+
+    /**
+     * Set round price callback for testing
+     *
+     * @param callable $callback
+     * @return self
+     */
+    public function setRoundPriceCallback(callable $callback): self
+    {
+        $this->data['round_price_callback'] = $callback;
+        return $this;
+    }
+
+    /**
+     * Set test data for flexible state management
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return self
+     */
+    public function setTestData(string $key, $value): self
+    {
+        $this->data[$key] = $value;
+        return $this;
+    }
+
+    /**
+     * Get test data
+     *
+     * @param string $key
+     * @return mixed
+     */
+    public function getTestData(string $key)
+    {
+        return $this->data[$key] ?? null;
+    }
+}

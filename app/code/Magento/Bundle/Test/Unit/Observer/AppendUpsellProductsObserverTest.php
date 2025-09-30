@@ -51,7 +51,7 @@ class AppendUpsellProductsObserverTest extends TestCase
     private $configMock;
 
     /**
-     * @var Event|MockObject
+     * @var Event
      */
     private $eventMock;
 
@@ -75,7 +75,7 @@ class AppendUpsellProductsObserverTest extends TestCase
     private $observerMock;
 
     /**
-     * @var ProductLinkCollection|MockObject
+     * @var Event
      */
     private $collectionMock;
 
@@ -128,15 +128,31 @@ class AppendUpsellProductsObserverTest extends TestCase
             ->onlyMethods(['getProductAttributes'])
             ->getMock();
 
-        $this->eventMock = $this->getMockBuilder(Event::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getProduct', 'getCollection', 'getLimit'])
-            ->getMock();
+        /** @var Event $eventMock */
+        $this->eventMock = new class extends Event {
+            private $product;
+            private $collection;
+            private $limit;
+            
+            public function __construct() {}
+            
+            public function getProduct() { return $this->product; }
+            public function setProduct($product) { $this->product = $product; return $this; }
+            public function getCollection() { return $this->collection; }
+            public function setCollection($collection) { $this->collection = $collection; return $this; }
+            public function getLimit() { return $this->limit; }
+            public function setLimit($limit) { $this->limit = $limit; return $this; }
+        };
 
-        $this->collectionMock = $this->getMockBuilder(Event::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setItems', 'getItems'])
-            ->getMock();
+        /** @var Event $collectionMock */
+        $this->collectionMock = new class extends Event {
+            private $items;
+            
+            public function __construct() {}
+            
+            public function setItems($items) { $this->items = $items; return $this; }
+            public function getItems() { return $this->items; }
+        };
 
         $this->productMock = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
@@ -178,10 +194,7 @@ class AppendUpsellProductsObserverTest extends TestCase
             ->method('getEvent')
             ->willReturn($this->eventMock);
 
-        $this->eventMock
-            ->expects($this->once())
-            ->method('getProduct')
-            ->willReturn($this->productMock);
+        $this->eventMock->setProduct($this->productMock);
 
         $this->bundleDataMock
             ->expects($this->once())
@@ -193,20 +206,10 @@ class AppendUpsellProductsObserverTest extends TestCase
             ->method('getTypeId')
             ->willReturn(ProductType::TYPE_SIMPLE);
 
-        $this->eventMock
-            ->expects($this->once())
-            ->method('getCollection')
-            ->willReturn($this->collectionMock);
+        $this->eventMock->setCollection($this->collectionMock);
+        $this->eventMock->setLimit($limit);
 
-        $this->eventMock
-            ->expects($this->once())
-            ->method('getLimit')
-            ->willReturn($limit);
-
-        $this->collectionMock
-            ->expects($this->exactly(2))
-            ->method('getItems')
-            ->willReturn($collectionItems);
+        $this->collectionMock->setItems($collectionItems);
 
         $this->productMock
             ->expects($this->once())
@@ -253,10 +256,7 @@ class AppendUpsellProductsObserverTest extends TestCase
             ->method('setFlag')
             ->willReturn($this->bundleCollectionMock);
 
-        $this->collectionMock
-            ->expects($this->once())
-            ->method('setItems')
-            ->willReturn($collectionItems);
+        $this->collectionMock->setItems($collectionItems);
 
         $this->observer->execute($this->observerMock);
     }
@@ -278,10 +278,7 @@ class AppendUpsellProductsObserverTest extends TestCase
             ->method('getEvent')
             ->willReturn($this->eventMock);
 
-        $this->eventMock
-            ->expects($this->once())
-            ->method('getProduct')
-            ->willReturn($this->productMock);
+        $this->eventMock->setProduct($this->productMock);
 
         $this->bundleDataMock
             ->expects($this->once())
@@ -293,20 +290,10 @@ class AppendUpsellProductsObserverTest extends TestCase
             ->method('getTypeId')
             ->willReturn(ProductType::TYPE_SIMPLE);
 
-        $this->eventMock
-            ->expects($this->once())
-            ->method('getCollection')
-            ->willReturn($this->collectionMock);
+        $this->eventMock->setCollection($this->collectionMock);
+        $this->eventMock->setLimit($limit);
 
-        $this->eventMock
-            ->expects($this->once())
-            ->method('getLimit')
-            ->willReturn($limit);
-
-        $this->collectionMock
-            ->expects($this->once())
-            ->method('getItems')
-            ->willReturn($collectionItems);
+        $this->collectionMock->setItems($collectionItems);
 
         $this->productMock
             ->expects($this->once())
@@ -336,10 +323,7 @@ class AppendUpsellProductsObserverTest extends TestCase
             ->method('getEvent')
             ->willReturn($this->eventMock);
 
-        $this->eventMock
-            ->expects($this->once())
-            ->method('getProduct')
-            ->willReturn($this->productMock);
+        $this->eventMock->setProduct($this->productMock);
 
         $this->bundleDataMock
             ->expects($this->once())
@@ -351,20 +335,10 @@ class AppendUpsellProductsObserverTest extends TestCase
             ->method('getTypeId')
             ->willReturn(ProductType::TYPE_SIMPLE);
 
-        $this->eventMock
-            ->expects($this->once())
-            ->method('getCollection')
-            ->willReturn($this->collectionMock);
+        $this->eventMock->setCollection($this->collectionMock);
+        $this->eventMock->setLimit($limit);
 
-        $this->eventMock
-            ->expects($this->once())
-            ->method('getLimit')
-            ->willReturn($limit);
-
-        $this->collectionMock
-            ->expects($this->once())
-            ->method('getItems')
-            ->willReturn($collectionItems);
+        $this->collectionMock->setItems($collectionItems);
 
         $this->observer->execute($this->observerMock);
     }
@@ -379,10 +353,7 @@ class AppendUpsellProductsObserverTest extends TestCase
             ->method('getAllowedSelectionTypes')
             ->willReturn($this->getAllowedSelectionTypes());
 
-        $this->eventMock
-            ->expects($this->once())
-            ->method('getProduct')
-            ->willReturn($this->productMock);
+        $this->eventMock->setProduct($this->productMock);
 
         $this->observerMock
             ->expects($this->once())

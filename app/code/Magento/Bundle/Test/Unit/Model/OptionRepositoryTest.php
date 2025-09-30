@@ -91,7 +91,7 @@ class OptionRepositoryTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
-        $this->productRepositoryMock = $this->getMockForAbstractClass(ProductRepositoryInterface::class);
+        $this->productRepositoryMock = $this->createMock(ProductRepositoryInterface::class);
         $this->typeMock = $this->createMock(Type::class);
         $this->optionFactoryMock = $this->getMockBuilder(OptionInterfaceFactory::class)
             ->disableOriginalConstructor()
@@ -101,13 +101,9 @@ class OptionRepositoryTest extends TestCase
         $this->dataObjectHelperMock = $this->getMockBuilder(DataObjectHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->optionResourceMock = $this->getMockBuilder(Option::class)
-            ->addMethods(['get'])
-            ->onlyMethods(['delete', '__wakeup', 'save', 'removeOptionSelections'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->storeManagerMock = $this->getMockForAbstractClass(StoreManagerInterface::class);
-        $this->linkManagementMock = $this->getMockForAbstractClass(ProductLinkManagementInterface::class);
+        $this->optionResourceMock = $this->createPartialMock(Option::class, ['delete', 'save', 'removeOptionSelections']);
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
+        $this->linkManagementMock = $this->createMock(ProductLinkManagementInterface::class);
         $this->optionListMock = $this->createMock(OptionList::class);
         $this->optionSaveActionMock = $this->createMock(SaveAction::class);
 
@@ -129,7 +125,7 @@ class OptionRepositoryTest extends TestCase
         $this->expectExceptionMessage('This is implemented for bundle products only.');
 
         $productSku = 'sku';
-        $productMock = $this->getMockForAbstractClass(ProductInterface::class);
+        $productMock = $this->createMock(ProductInterface::class);
         $productMock->expects($this->once())
             ->method('getTypeId')
             ->willReturn(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE);
@@ -147,7 +143,7 @@ class OptionRepositoryTest extends TestCase
 
         $productSku = 'sku';
         $optionId = 100;
-        $productMock = $this->getMockForAbstractClass(ProductInterface::class);
+        $productMock = $this->createMock(ProductInterface::class);
         $productMock->expects($this->once())
             ->method('getTypeId')
             ->willReturn(\Magento\Catalog\Model\Product\Type::TYPE_BUNDLE);
@@ -174,11 +170,7 @@ class OptionRepositoryTest extends TestCase
         $optionId = 100;
         $optionData = ['title' => 'option title'];
 
-        $productMock = $this->getMockBuilder(Product::class)
-            ->addMethods(['getPriceType'])
-            ->onlyMethods(['getTypeId', 'getTypeInstance', 'getStoreId', '__wakeup', 'getSku'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productMock = $this->createPartialMock(Product::class, ['getTypeId', 'getTypeInstance', 'getStoreId', 'getSku']);
         $productMock->expects($this->once())
             ->method('getTypeId')
             ->willReturn(\Magento\Catalog\Model\Product\Type::TYPE_BUNDLE);
@@ -203,7 +195,7 @@ class OptionRepositoryTest extends TestCase
 
         $linkMock = ['item'];
 
-        $newOptionMock = $this->getMockForAbstractClass(OptionInterface::class);
+        $newOptionMock = $this->createMock(OptionInterface::class);
         $this->dataObjectHelperMock->expects($this->once())
             ->method('populateWithArray')
             ->with($newOptionMock, $optionData, OptionInterface::class)
@@ -271,11 +263,7 @@ class OptionRepositoryTest extends TestCase
             ->method('create')
             ->willReturn($optionMock);
 
-        $productMock = $this->getMockBuilder(Product::class)
-            ->addMethods(['getPriceType'])
-            ->onlyMethods(['getTypeId', 'getTypeInstance', 'getStoreId', '__wakeup', 'getSku'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productMock = $this->createPartialMock(Product::class, ['getTypeId', 'getTypeInstance', 'getStoreId', 'getSku']);
         $productMock->expects($this->once())
             ->method('getTypeId')
             ->willReturn(\Magento\Catalog\Model\Product\Type::TYPE_BUNDLE);
@@ -310,11 +298,7 @@ class OptionRepositoryTest extends TestCase
             ->method('getId')
             ->willReturn($optionId);
 
-        $productMock = $this->getMockBuilder(Product::class)
-            ->addMethods(['getPriceType'])
-            ->onlyMethods(['getTypeId', 'getTypeInstance', 'getStoreId', '__wakeup', 'getSku'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productMock = $this->createPartialMock(Product::class, ['getTypeId', 'getTypeInstance', 'getStoreId', 'getSku']);
         $productMock->expects($this->once())
             ->method('getTypeId')
             ->willReturn(\Magento\Catalog\Model\Product\Type::TYPE_BUNDLE);
@@ -349,11 +333,7 @@ class OptionRepositoryTest extends TestCase
         $productMock = $this->createMock(Product::class);
         $productMock->expects($this->once())->method('getSku')->willReturn($productSku);
 
-        $optionMock = $this->getMockBuilder(\Magento\Bundle\Model\Option::class)
-            ->addMethods(['setStoreId', 'setParentId'])
-            ->onlyMethods(['getProductLinks', 'getOptionId', 'getResource'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $optionMock = $this->createPartialMock(\Magento\Bundle\Model\Option::class, ['getProductLinks', 'getOptionId', 'getResource']);
 
         $optionMock->expects($this->atLeastOnce())->method('getOptionId')->willReturn($optionId);
 
@@ -383,12 +363,7 @@ class OptionRepositoryTest extends TestCase
         $productMock = $this->createMock(Product::class);
         $productMock->expects($this->once())->method('getSku')->willReturn($productSku);
 
-        $optionMock = $this->getMockBuilder(\Magento\Bundle\Model\Option::class)->addMethods(
-            ['setStoreId', 'setParentId']
-        )
-            ->onlyMethods(['getProductLinks', 'getOptionId', 'getResource'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $optionMock = $this->createPartialMock(\Magento\Bundle\Model\Option::class, ['getProductLinks', 'getOptionId', 'getResource']);
 
         $optionMock->expects($this->atLeastOnce())->method('getOptionId')->willReturn($optionId);
 
@@ -411,7 +386,7 @@ class OptionRepositoryTest extends TestCase
     public function testGetList()
     {
         $productSku = 'simple';
-        $productMock = $this->getMockForAbstractClass(ProductInterface::class);
+        $productMock = $this->createMock(ProductInterface::class);
         $productMock->expects($this->once())->method('getTypeId')->willReturn('bundle');
         $this->productRepositoryMock
             ->expects($this->once())
@@ -428,7 +403,7 @@ class OptionRepositoryTest extends TestCase
         $this->expectExceptionMessage('This is implemented for bundle products only.');
 
         $productSku = 'simple';
-        $productMock = $this->getMockForAbstractClass(ProductInterface::class);
+        $productMock = $this->createMock(ProductInterface::class);
         $productMock->expects($this->once())->method('getTypeId')->willReturn('simple');
         $this->productRepositoryMock
             ->expects($this->once())

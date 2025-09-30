@@ -41,7 +41,7 @@ class SetAttributeTabBlockObserverTest extends TestCase
     private $observerMock;
 
     /**
-     * @var Event|MockObject
+     * @var Event
      */
     private $eventMock;
 
@@ -58,10 +58,15 @@ class SetAttributeTabBlockObserverTest extends TestCase
         $objectManager = new ObjectManager($this);
         $this->helperCatalogMock = $this->createMock(Catalog::class);
         $this->observerMock = $this->createMock(Observer::class);
-        $this->eventMock = $this->getMockBuilder(Event::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getProduct'])
-            ->getMock();
+        /** @var Event $eventMock */
+        $this->eventMock = new class extends Event {
+            private $product;
+            
+            public function __construct() {}
+            
+            public function getProduct() { return $this->product; }
+            public function setProduct($product) { $this->product = $product; return $this; }
+        };
         $this->productMock = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -79,15 +84,9 @@ class SetAttributeTabBlockObserverTest extends TestCase
      */
     public function testAddingAttributeTabForBundleProduct()
     {
-        $this->productMock->expects($this->any())
-            ->method('getTypeId')
-            ->willReturn(Type::TYPE_BUNDLE);
-        $this->eventMock->expects($this->any())
-            ->method('getProduct')
-            ->willReturn($this->productMock);
-        $this->observerMock->expects($this->any())
-            ->method('getEvent')
-            ->willReturn($this->eventMock);
+        $this->productMock->method('getTypeId')->willReturn(Type::TYPE_BUNDLE);
+        $this->eventMock->setProduct($this->productMock);
+        $this->observerMock->method('getEvent')->willReturn($this->eventMock);
         $this->helperCatalogMock->expects($this->once())
             ->method('setAttributeTabBlock')
             ->with(Attributes::class);
@@ -100,15 +99,9 @@ class SetAttributeTabBlockObserverTest extends TestCase
      */
     public function testAddingAttributeTabForNonBundleProduct()
     {
-        $this->productMock->expects($this->any())
-            ->method('getTypeId')
-            ->willReturn(Type::TYPE_VIRTUAL);
-        $this->eventMock->expects($this->any())
-            ->method('getProduct')
-            ->willReturn($this->productMock);
-        $this->observerMock->expects($this->any())
-            ->method('getEvent')
-            ->willReturn($this->eventMock);
+        $this->productMock->method('getTypeId')->willReturn(Type::TYPE_VIRTUAL);
+        $this->eventMock->setProduct($this->productMock);
+        $this->observerMock->method('getEvent')->willReturn($this->eventMock);
         $this->helperCatalogMock->expects($this->never())
             ->method('setAttributeTabBlock');
 

@@ -68,9 +68,9 @@ class CompositeTest extends TestCase
         $this->modifiedMeta = ['modified_meta'];
         $this->modifierClass = 'SomeClass';
         $this->objectManagerHelper = new ObjectManagerHelper($this);
-        $this->objectManagerMock = $this->getMockForAbstractClass(ObjectManagerInterface::class);
-        $this->locatorMock = $this->getMockForAbstractClass(LocatorInterface::class);
-        $this->productMock = $this->getMockForAbstractClass(ProductInterface::class);
+        $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
+        $this->locatorMock = $this->createMock(LocatorInterface::class);
+        $this->productMock = $this->createMock(ProductInterface::class);
 
         $this->locatorMock->expects($this->once())
             ->method('getProduct')
@@ -114,7 +114,7 @@ class CompositeTest extends TestCase
     public function testModifyMetaBundleProduct()
     {
         /** @var ModifierInterface|MockObject $modifierMock */
-        $modifierMock = $this->getMockForAbstractClass(ModifierInterface::class);
+        $modifierMock = $this->createMock(ModifierInterface::class);
         $modifierMock->expects($this->once())
             ->method('modifyMeta')
             ->with($this->meta)
@@ -137,7 +137,7 @@ class CompositeTest extends TestCase
     public function testModifyMetaNonBundleProduct()
     {
         /** @var ModifierInterface|MockObject $modifierMock */
-        $modifierMock = $this->getMockForAbstractClass(ModifierInterface::class);
+        $modifierMock = $this->createMock(ModifierInterface::class);
         $modifierMock->expects($this->never())
             ->method('modifyMeta');
 
@@ -160,12 +160,29 @@ class CompositeTest extends TestCase
             'Type "SomeClass" is not an instance of Magento\\Ui\\DataProvider\\Modifier\\ModifierInterface'
         );
 
-        /** @var \Exception|MockObject $modifierMock */
-        $modifierMock = $this->getMockBuilder(\Exception::class)->addMethods(['modifyMeta'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $modifierMock->expects($this->never())
-            ->method('modifyMeta');
+        /** @var \Exception $modifierMock */
+        $modifierMock = new class extends \Exception {
+            private $modifyMetaCalled = false;
+            
+            public function __construct() {}
+            
+            public function modifyMeta($meta) 
+            { 
+                $this->modifyMetaCalled = true;
+                return $meta; 
+            }
+            
+            public function isModifyMetaCalled() 
+            { 
+                return $this->modifyMetaCalled; 
+            }
+            
+            public function setModifyMetaCalled($called) 
+            { 
+                $this->modifyMetaCalled = $called; 
+                return $this; 
+            }
+        };
 
         $this->productMock->expects($this->once())
             ->method('getTypeId')

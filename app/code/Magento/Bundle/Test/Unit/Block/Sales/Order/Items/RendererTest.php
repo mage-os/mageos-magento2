@@ -7,6 +7,8 @@ declare(strict_types=1);
 
 namespace Magento\Bundle\Test\Unit\Block\Sales\Order\Items;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use Magento\Sales\Model\Order;
 use Magento\Bundle\Block\Sales\Order\Items\Renderer;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -30,11 +32,27 @@ class RendererTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->orderItem = $this->getMockBuilder(Item::class)
-            ->addMethods(['getOrderItem', 'getOrderItemId'])
-            ->onlyMethods(['getProductOptions', '__wakeup', 'getParentItem', 'getId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        /** @var Item $orderItem */
+        $this->orderItem = new class extends Item {
+            private $orderItem = null;
+            private $orderItemId = null;
+            private $productOptions = [];
+            private $parentItem = null;
+            private $id = null;
+            
+            public function __construct() {}
+            
+            public function getOrderItem() { return $this->orderItem; }
+            public function setOrderItem($orderItem) { $this->orderItem = $orderItem; return $this; }
+            public function getOrderItemId() { return $this->orderItemId; }
+            public function setOrderItemId($orderItemId) { $this->orderItemId = $orderItemId; return $this; }
+            public function getProductOptions() { return $this->productOptions; }
+            public function setProductOptions(?array $options = null) { $this->productOptions = $options; return $this; }
+            public function getParentItem() { return $this->parentItem; }
+            public function setParentItem($parentItem) { $this->parentItem = $parentItem; return $this; }
+            public function getId() { return $this->id; }
+            public function setId($id) { $this->id = $id; return $this; }
+        };
 
         $this->serializer = $this->createMock(Json::class);
         $objectManager = new ObjectManager($this);
@@ -44,24 +62,85 @@ class RendererTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider getChildrenEmptyItemsDataProvider
-     */
+    #[DataProvider('getChildrenEmptyItemsDataProvider')]
     public function testGetChildrenEmptyItems($class, $method, $returnClass)
     {
-        $salesModel = $this->getMockBuilder($returnClass)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getAllItems'])
-            ->getMock();
-        $salesModel->expects($this->once())->method('getAllItems')->willReturn([]);
+        if ($returnClass === Invoice::class) {
+            /** @var Invoice $salesModel */
+            $salesModel = new class extends Invoice {
+                private $allItems = [];
+                
+                public function __construct() {}
+                
+                public function getAllItems() { return $this->allItems; }
+                public function setAllItems($allItems) { $this->allItems = $allItems; return $this; }
+            };
+        } elseif ($returnClass === Shipment::class) {
+            /** @var Shipment $salesModel */
+            $salesModel = new class extends Shipment {
+                private $allItems = [];
+                
+                public function __construct() {}
+                
+                public function getAllItems() { return $this->allItems; }
+                public function setAllItems($allItems) { $this->allItems = $allItems; return $this; }
+            };
+        } else {
+            /** @var Creditmemo $salesModel */
+            $salesModel = new class extends Creditmemo {
+                private $allItems = [];
+                
+                public function __construct() {}
+                
+                public function getAllItems() { return $this->allItems; }
+                public function setAllItems($allItems) { $this->allItems = $allItems; return $this; }
+            };
+        }
+        $salesModel->setAllItems([]);
 
-        $item = $this->getMockBuilder($class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([$method, 'getOrderItem'])
-            ->getMock();
-        $item->expects($this->once())->method($method)->willReturn($salesModel);
-        $item->expects($this->once())->method('getOrderItem')->willReturn($this->orderItem);
-        $this->orderItem->expects($this->any())->method('getId')->willReturn(1);
+        if ($class === \Magento\Sales\Model\Order\Invoice\Item::class) {
+            /** @var \Magento\Sales\Model\Order\Invoice\Item $item */
+            $item = new class extends \Magento\Sales\Model\Order\Invoice\Item {
+                private $methodResult = null;
+                private $orderItem = null;
+                
+                public function __construct() {}
+                
+                public function getInvoice() { return $this->methodResult; }
+                public function setMethodResult($result) { $this->methodResult = $result; return $this; }
+                public function getOrderItem() { return $this->orderItem; }
+                public function setOrderItem($orderItem) { $this->orderItem = $orderItem; return $this; }
+            };
+        } elseif ($class === \Magento\Sales\Model\Order\Shipment\Item::class) {
+            /** @var \Magento\Sales\Model\Order\Shipment\Item $item */
+            $item = new class extends \Magento\Sales\Model\Order\Shipment\Item {
+                private $methodResult = null;
+                private $orderItem = null;
+                
+                public function __construct() {}
+                
+                public function getShipment() { return $this->methodResult; }
+                public function setMethodResult($result) { $this->methodResult = $result; return $this; }
+                public function getOrderItem() { return $this->orderItem; }
+                public function setOrderItem($orderItem) { $this->orderItem = $orderItem; return $this; }
+            };
+        } else {
+            /** @var \Magento\Sales\Model\Order\Creditmemo\Item $item */
+            $item = new class extends \Magento\Sales\Model\Order\Creditmemo\Item {
+                private $methodResult = null;
+                private $orderItem = null;
+                
+                public function __construct() {}
+                
+                public function getCreditmemo() { return $this->methodResult; }
+                public function setMethodResult($result) { $this->methodResult = $result; return $this; }
+                public function getOrderItem() { return $this->orderItem; }
+                public function setOrderItem($orderItem) { $this->orderItem = $orderItem; return $this; }
+            };
+        }
+        $item->setMethodResult($salesModel);
+        $item->setOrderItem($this->orderItem);
+        $this->orderItem->setId(1);
 
         $this->assertNull($this->model->getChildren($item));
     }
@@ -90,30 +169,51 @@ class RendererTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider getChildrenDataProvider
-     */
+    #[DataProvider('getChildrenDataProvider')]
     public function testGetChildren($parentItem)
     {
         if ($parentItem) {
-            $parentItem = $this->createPartialMock(Item::class, ['getId', '__wakeup']);
-            $parentItem->expects($this->any())->method('getId')->willReturn(1);
+            /** @var Item $parentItem */
+            $parentItem = new class extends Item {
+                private $id = null;
+                
+                public function __construct() {}
+                
+                public function getId() { return $this->id; }
+                public function setId($id) { $this->id = $id; return $this; }
+            };
+            $parentItem->setId(1);
         }
-        $this->orderItem->expects($this->any())->method('getOrderItem')->willReturnSelf();
-        $this->orderItem->expects($this->any())->method('getParentItem')->willReturn($parentItem);
-        $this->orderItem->expects($this->any())->method('getOrderItemId')->willReturn(2);
-        $this->orderItem->expects($this->any())->method('getId')->willReturn(1);
+        $this->orderItem->setOrderItem($this->orderItem);
+        $this->orderItem->setParentItem($parentItem);
+        $this->orderItem->setOrderItemId(2);
+        $this->orderItem->setId(1);
 
-        $salesModel = $this->createPartialMock(Invoice::class, ['getAllItems',
-            '__wakeup']);
-        $salesModel->expects($this->once())->method('getAllItems')->willReturn([$this->orderItem]);
+        /** @var Invoice $salesModel */
+        $salesModel = new class extends Invoice {
+            private $allItems = [];
+            
+            public function __construct() {}
+            
+            public function getAllItems() { return $this->allItems; }
+            public function setAllItems($allItems) { $this->allItems = $allItems; return $this; }
+        };
+        $salesModel->setAllItems([$this->orderItem]);
 
-        $item = $this->createPartialMock(
-            \Magento\Sales\Model\Order\Invoice\Item::class,
-            ['getInvoice', 'getOrderItem', '__wakeup']
-        );
-        $item->expects($this->once())->method('getInvoice')->willReturn($salesModel);
-        $item->expects($this->any())->method('getOrderItem')->willReturn($this->orderItem);
+        /** @var \Magento\Sales\Model\Order\Invoice\Item $item */
+        $item = new class extends \Magento\Sales\Model\Order\Invoice\Item {
+            private $invoice = null;
+            private $orderItem = null;
+            
+            public function __construct() {}
+            
+            public function getInvoice() { return $this->invoice; }
+            public function setInvoice($invoice) { $this->invoice = $invoice; return $this; }
+            public function getOrderItem() { return $this->orderItem; }
+            public function setOrderItem($orderItem) { $this->orderItem = $orderItem; return $this; }
+        };
+        $item->setInvoice($salesModel);
+        $item->setOrderItem($this->orderItem);
 
         $this->assertSame([2 => $this->orderItem], $this->model->getChildren($item));
     }
@@ -129,13 +229,11 @@ class RendererTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider isShipmentSeparatelyWithoutItemDataProvider
-     */
+    #[DataProvider('isShipmentSeparatelyWithoutItemDataProvider')]
     public function testIsShipmentSeparatelyWithoutItem($productOptions, $result)
     {
         $this->model->setItem($this->orderItem);
-        $this->orderItem->expects($this->any())->method('getProductOptions')->willReturn($productOptions);
+        $this->orderItem->setProductOptions($productOptions);
 
         $this->assertSame($result, $this->model->isShipmentSeparately());
     }
@@ -152,22 +250,25 @@ class RendererTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider isShipmentSeparatelyWithItemDataProvider
-     */
+    #[DataProvider('isShipmentSeparatelyWithItemDataProvider')]
     public function testIsShipmentSeparatelyWithItem($productOptions, $result, $parentItem)
     {
         if ($parentItem) {
-            $parentItem =
-                $this->createPartialMock(Item::class, ['getProductOptions',
-                    '__wakeup']);
-            $parentItem->expects($this->any())->method('getProductOptions')->willReturn($productOptions);
+            /** @var Item $parentItem */
+            $parentItem = new class extends Item {
+                private $productOptions = [];
+                
+                public function __construct() {}
+                
+                public function getProductOptions() { return $this->productOptions; }
+                public function setProductOptions(?array $options = null) { $this->productOptions = $options; return $this; }
+            };
+            $parentItem->setProductOptions($productOptions);
         } else {
-            $this->orderItem->expects($this->any())->method('getProductOptions')
-                ->willReturn($productOptions);
+            $this->orderItem->setProductOptions($productOptions);
         }
-        $this->orderItem->expects($this->any())->method('getParentItem')->willReturn($parentItem);
-        $this->orderItem->expects($this->any())->method('getOrderItem')->willReturnSelf();
+        $this->orderItem->setParentItem($parentItem);
+        $this->orderItem->setOrderItem($this->orderItem);
 
         $this->assertSame($result, $this->model->isShipmentSeparately($this->orderItem));
     }
@@ -185,13 +286,11 @@ class RendererTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider isChildCalculatedWithoutItemDataProvider
-     */
+    #[DataProvider('isChildCalculatedWithoutItemDataProvider')]
     public function testIsChildCalculatedWithoutItem($productOptions, $result)
     {
         $this->model->setItem($this->orderItem);
-        $this->orderItem->expects($this->any())->method('getProductOptions')->willReturn($productOptions);
+        $this->orderItem->setProductOptions($productOptions);
 
         $this->assertSame($result, $this->model->isChildCalculated());
     }
@@ -208,22 +307,25 @@ class RendererTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider isChildCalculatedWithItemDataProvider
-     */
+    #[DataProvider('isChildCalculatedWithItemDataProvider')]
     public function testIsChildCalculatedWithItem($productOptions, $result, $parentItem)
     {
         if ($parentItem) {
-            $parentItem =
-                $this->createPartialMock(Item::class, ['getProductOptions',
-                    '__wakeup']);
-            $parentItem->expects($this->any())->method('getProductOptions')->willReturn($productOptions);
+            /** @var Item $parentItem */
+            $parentItem = new class extends Item {
+                private $productOptions = [];
+                
+                public function __construct() {}
+                
+                public function getProductOptions() { return $this->productOptions; }
+                public function setProductOptions(?array $options = null) { $this->productOptions = $options; return $this; }
+            };
+            $parentItem->setProductOptions($productOptions);
         } else {
-            $this->orderItem->expects($this->any())->method('getProductOptions')
-                ->willReturn($productOptions);
+            $this->orderItem->setProductOptions($productOptions);
         }
-        $this->orderItem->expects($this->any())->method('getParentItem')->willReturn($parentItem);
-        $this->orderItem->expects($this->any())->method('getOrderItem')->willReturnSelf();
+        $this->orderItem->setParentItem($parentItem);
+        $this->orderItem->setOrderItem($this->orderItem);
 
         $this->assertSame($result, $this->model->isChildCalculated($this->orderItem));
     }
@@ -243,7 +345,7 @@ class RendererTest extends TestCase
 
     public function testGetSelectionAttributes()
     {
-        $this->orderItem->expects($this->any())->method('getProductOptions')->willReturn([]);
+        $this->orderItem->setProductOptions([]);
         $this->assertNull($this->model->getSelectionAttributes($this->orderItem));
     }
 
@@ -257,20 +359,18 @@ class RendererTest extends TestCase
             ->method('unserialize')
             ->with($bundleAttributes)
             ->willReturn($unserializedResult);
-        $this->orderItem->expects($this->any())->method('getProductOptions')->willReturn($options);
+        $this->orderItem->setProductOptions($options);
 
         $this->assertEquals($unserializedResult, $this->model->getSelectionAttributes($this->orderItem));
     }
 
-    /**
-     * @dataProvider canShowPriceInfoDataProvider
-     */
+    #[DataProvider('canShowPriceInfoDataProvider')]
     public function testCanShowPriceInfo($parentItem, $productOptions, $result)
     {
         $this->model->setItem($this->orderItem);
-        $this->orderItem->expects($this->any())->method('getOrderItem')->willReturnSelf();
-        $this->orderItem->expects($this->any())->method('getParentItem')->willReturn($parentItem);
-        $this->orderItem->expects($this->any())->method('getProductOptions')->willReturn($productOptions);
+        $this->orderItem->setOrderItem($this->orderItem);
+        $this->orderItem->setParentItem($parentItem);
+        $this->orderItem->setProductOptions($productOptions);
 
         $this->assertSame($result, $this->model->canShowPriceInfo($this->orderItem));
     }
@@ -287,26 +387,39 @@ class RendererTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider getValueHtmlWithAttributesDataProvider
-     */
+    #[DataProvider('getValueHtmlWithAttributesDataProvider')]
     public function testGetValueHtmlWithAttributes($qty)
     {
         $price = 100;
-        $orderModel = $this->getMockBuilder(\Magento\Sales\Model\Order::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['formatPrice'])
-            ->getMock();
-        $orderModel->expects($this->any())->method('formatPrice')->willReturn($price);
+        /** @var Order $orderModel */
+        $orderModel = new class extends Order {
+            private $formatPriceResult = '';
+            
+            public function __construct() {}
+            
+            public function formatPrice($price, $addBrackets = false) { return $this->formatPriceResult; }
+            public function setFormatPriceResult($result) { $this->formatPriceResult = $result; return $this; }
+        };
+        $orderModel->setFormatPriceResult($price);
 
-        $model = $this->getMockBuilder(Renderer::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getOrder', 'getSelectionAttributes', 'escapeHtml'])
-            ->getMock();
-        $model->expects($this->any())->method('escapeHtml')->willReturn('Test');
-        $model->expects($this->any())->method('getOrder')->willReturn($orderModel);
-        $model->expects($this->any())->method('getSelectionAttributes')
-            ->willReturn([
+        /** @var Renderer $model */
+        $model = new class extends Renderer {
+            private $order = null;
+            private $selectionAttributes = [];
+            private $escapeHtmlResult = '';
+            
+            public function __construct() {}
+            
+            public function getOrder() { return $this->order; }
+            public function setOrder($order) { $this->order = $order; return $this; }
+            public function getSelectionAttributes($item) { return $this->selectionAttributes; }
+            public function setSelectionAttributes($attributes) { $this->selectionAttributes = $attributes; return $this; }
+            public function escapeHtml($data, $allowedTags = null) { return $this->escapeHtmlResult; }
+            public function setEscapeHtmlResult($result) { $this->escapeHtmlResult = $result; return $this; }
+        };
+        $model->setEscapeHtmlResult('Test');
+        $model->setOrder($orderModel);
+        $model->setSelectionAttributes([
                 'qty' => $qty ,
                 'price' => $price,
             ]);

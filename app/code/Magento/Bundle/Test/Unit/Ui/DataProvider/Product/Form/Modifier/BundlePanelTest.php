@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Bundle\Test\Unit\Ui\DataProvider\Product\Form\Modifier;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Bundle\Model\Product\Attribute\Source\Shipment\Type as ShipmentType;
 use Magento\Bundle\Ui\DataProvider\Product\Form\Modifier\BundlePanel;
 use Magento\Bundle\Ui\DataProvider\Product\Form\Modifier\BundlePrice;
@@ -44,7 +45,7 @@ class BundlePanelTest extends TestCase
     private $locatorMock;
 
     /**
-     * @var ProductInterface|MockObject
+     * @var ProductInterface
      */
     private $productMock;
 
@@ -67,23 +68,20 @@ class BundlePanelTest extends TestCase
         $this->arrayManagerMock = $this->getMockBuilder(ArrayManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->arrayManagerMock->expects($this->any())
-            ->method('get')
-            ->willReturn([]);
-        $this->urlBuilder = $this->getMockBuilder(UrlInterface::class)
-            ->getMockForAbstractClass();
-        $this->shipmentType = $this->getMockBuilder(ShipmentType::class)
-            ->getMockForAbstractClass();
-        $this->productMock = $this->getMockBuilder(ProductInterface::class)
-            ->addMethods(['getStoreId'])
-            ->getMockForAbstractClass();
-        $this->productMock->method('getId')
-            ->willReturn(true);
-        $this->productMock->method('getStoreId')
-            ->willReturn(0);
-        $this->locatorMock = $this->getMockBuilder(LocatorInterface::class)
-            ->onlyMethods(['getProduct'])
-            ->getMockForAbstractClass();
+        $this->arrayManagerMock->method('get')->willReturn([]);
+        $this->urlBuilder = $this->createMock(UrlInterface::class);
+        $this->shipmentType = $this->createMock(ShipmentType::class);
+        /** @var ProductInterface $productMock */
+        $this->productMock = new class {
+            private $id = true;
+            private $storeId = 0;
+            
+            public function getId() { return $this->id; }
+            public function setId($id) { $this->id = $id; return $this; }
+            public function getStoreId() { return $this->storeId; }
+            public function setStoreId($storeId) { $this->storeId = $storeId; return $this; }
+        };
+        $this->locatorMock = $this->createMock(LocatorInterface::class);
         $this->locatorMock->method('getProduct')
             ->willReturn($this->productMock);
 
@@ -105,8 +103,8 @@ class BundlePanelTest extends TestCase
      * @param string $dataScope
      *
      * @return void
-     * @dataProvider getDataModifyMeta
      */
+    #[DataProvider('getDataModifyMeta')]
     public function testModifyMeta(string $shipmentTypePath, string $dataScope): void
     {
         $sourceMeta = [

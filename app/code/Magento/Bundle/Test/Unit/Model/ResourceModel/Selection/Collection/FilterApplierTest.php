@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Bundle\Test\Unit\Model\ResourceModel\Selection\Collection;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Bundle\Model\ResourceModel\Selection\Collection;
 use Magento\Bundle\Model\ResourceModel\Selection\Collection\FilterApplier;
 use Magento\Framework\DB\Select;
@@ -38,9 +39,9 @@ class FilterApplierTest extends TestCase
      * @param $conditionType
      * @param $expectedCondition
      * @param $expectedValue
-     * @dataProvider applyDataProvider
      * @throws Zend_Db_Select_Exception
      */
+    #[DataProvider('applyDataProvider')]
     public function testApply($field, $value, $conditionType, $expectedCondition, $expectedValue): void
     {
         $tableName = 'catalog_product_bundle_selection';

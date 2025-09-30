@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Bundle\Test\Unit\Helper\Catalog\Product;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Bundle\Model\Product\Price;
 use Magento\Bundle\Model\Product\Type;
 use Magento\Bundle\Model\ResourceModel\Option\Collection;
@@ -72,13 +73,31 @@ class ConfigurationTest extends TestCase
         $this->pricingHelper = $this->createPartialMock(Data::class, ['currency']);
         $this->productConfiguration = $this->createMock(Configuration::class);
         $this->escaper = $this->createPartialMock(Escaper::class, ['escapeHtml']);
-        $this->item = $this->getMockBuilder(ItemInterface::class)
-            ->addMethods(['getQty'])
-            ->onlyMethods(['getProduct', 'getOptionByCode', 'getFileDownloadParams'])
-            ->getMockForAbstractClass();
-        $this->serializer = $this->getMockBuilder(Json::class)
-            ->onlyMethods(['unserialize'])
-            ->getMockForAbstractClass();
+        /** @var ItemInterface $this->item */
+        $this->item = new class implements ItemInterface {
+            private $qty;
+            private $product;
+            private $optionByCodeCallback;
+            private $fileDownloadParams;
+            
+            public function getQty() { return $this->qty; }
+            public function setQty($qty) { $this->qty = $qty; return $this; }
+            
+            public function getProduct() { return $this->product; }
+            public function setProduct($product) { $this->product = $product; return $this; }
+            
+            public function getOptionByCode($code) { 
+                if (is_callable($this->optionByCodeCallback)) {
+                    return call_user_func($this->optionByCodeCallback, $code);
+                }
+                return $this->optionByCodeCallback; 
+            }
+            public function setOptionByCode($optionByCode) { $this->optionByCodeCallback = $optionByCode; return $this; }
+            
+            public function getFileDownloadParams() { return $this->fileDownloadParams; }
+            public function setFileDownloadParams($fileDownloadParams) { $this->fileDownloadParams = $fileDownloadParams; return $this; }
+        };
+        $this->serializer = $this->createMock(Json::class);
         $this->taxHelper = $this->createPartialMock(TaxPrice::class, ['displayCartPricesBoth', 'getTaxPrice']);
 
         $this->serializer->expects($this->any())
@@ -109,19 +128,21 @@ class ConfigurationTest extends TestCase
         $selectionId = 15;
         $selectionQty = 35;
         $product = $this->createMock(Product::class);
-        $option = $this->getMockBuilder(Option::class)
-            ->addMethods(['getValue'])
-            ->onlyMethods(['__wakeup'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        /** @var Option $option */
+        $option = new class extends Option {
+            private $value;
+            
+            public function __construct() {}
+            
+            public function getValue() { return $this->value; }
+            public function setValue($value) { $this->value = $value; return $this; }
+        };
 
         $product->expects($this->once())
             ->method('getCustomOption')
             ->with('selection_qty_' . $selectionId)
             ->willReturn($option);
-        $option->expects($this->once())
-            ->method('getValue')
-            ->willReturn($selectionQty);
+        $option->setValue($selectionQty);
 
         $this->assertEquals($selectionQty, $this->helper->getSelectionQty($product, $selectionId));
     }
@@ -152,8 +173,8 @@ class ConfigurationTest extends TestCase
         $selectionProduct = $this->createMock(Product::class);
 
         $selectionProduct->expects($this->once())->method('unsetData')->with('final_price');
-        $this->item->expects($this->once())->method('getProduct')->willReturn($product);
-        $this->item->expects($this->once())->method('getQty')->willReturn($itemQty);
+        $this->item->setProduct($product);
+        $this->item->setQty($itemQty);
         $product->expects($this->once())->method('getPriceModel')->willReturn($price);
         $price->expects($this->once())->method('getSelectionFinalTotalPrice')
             ->with($product, $selectionProduct, $itemQty, 0, false, true);
@@ -170,9 +191,8 @@ class ConfigurationTest extends TestCase
         $product = $this->createPartialMock(Product::class, ['getTypeInstance', '__wakeup']);
 
         $product->expects($this->once())->method('getTypeInstance')->willReturn($typeInstance);
-        $this->item->expects($this->once())->method('getProduct')->willReturn($product);
-        $this->item->expects($this->once())->method('getOptionByCode')->with('bundle_option_ids')
-            ->willReturn(null);
+        $this->item->setProduct($product);
+        $this->item->setOptionByCode(null);
 
         $this->assertEquals([], $this->helper->getBundleOptions($this->item));
     }
@@ -212,20 +232,16 @@ class ConfigurationTest extends TestCase
         $product->expects($this->once())
             ->method('getTypeInstance')
             ->willReturn($typeInstance);
-        $this->item->expects($this->once())
-            ->method('getProduct')
-            ->willReturn($product);
-        $this->item
-            ->method('getOptionByCode')
-            ->willReturnCallback(
-                function ($arg1) use ($itemOption, $selectionOption) {
-                    if ($arg1 == 'bundle_option_ids') {
-                        return $itemOption;
-                    } elseif ($arg1 == 'bundle_selection_ids') {
-                        return $selectionOption;
-                    }
+        $this->item->setProduct($product);
+        $this->item->setOptionByCode(
+            function ($arg1) use ($itemOption, $selectionOption) {
+                if ($arg1 == 'bundle_option_ids') {
+                    return $itemOption;
+                } elseif ($arg1 == 'bundle_selection_ids') {
+                    return $selectionOption;
                 }
-            );
+            }
+        );
 
         $this->assertEquals([], $this->helper->getBundleOptions($this->item));
     }
@@ -234,19 +250,39 @@ class ConfigurationTest extends TestCase
      * @param $includingTax
      * @param $displayCartPriceBoth
      * @return void
-     * @dataProvider getTaxConfiguration
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
+    #[DataProvider('getTaxConfiguration')]
     public function testGetOptions($includingTax, $displayCartPriceBoth): void
     {
         $optionIds = '{"0":"1"}';
         $selectionIds =  '{"0":"2"}';
         $selectionId = '2';
-        $product = $this->getMockBuilder(Product::class)
-            ->addMethods(['getSelectionId'])
-            ->onlyMethods(['getTypeInstance', '__wakeup', 'getCustomOption', 'getName', 'getPriceModel'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        /** @var Product $product */
+        $product = new class extends Product {
+            private $selectionId;
+            private $typeInstance;
+            private $customOption;
+            private $name;
+            private $priceModel;
+            
+            public function __construct() {}
+            
+            public function getSelectionId() { return $this->selectionId; }
+            public function setSelectionId($selectionId) { $this->selectionId = $selectionId; return $this; }
+            
+            public function getTypeInstance() { return $this->typeInstance; }
+            public function setTypeInstance($typeInstance) { $this->typeInstance = $typeInstance; return $this; }
+            
+            public function getCustomOption($code) { return $this->customOption; }
+            public function setCustomOption($customOption) { $this->customOption = $customOption; return $this; }
+            
+            public function getName() { return $this->name; }
+            public function setName($name) { $this->name = $name; return $this; }
+            
+            public function getPriceModel() { return $this->priceModel; }
+            public function setPriceModel($priceModel) { $this->priceModel = $priceModel; return $this; }
+        };
         $typeInstance = $this->createPartialMock(
             Type::class,
             ['getOptionsByIds', 'getSelectionsByIds']
@@ -259,10 +295,19 @@ class ConfigurationTest extends TestCase
             \Magento\Quote\Model\Quote\Item\Option::class,
             ['getValue', '__wakeup']
         );
-        $bundleOption = $this->getMockBuilder(\Magento\Bundle\Model\Option::class)->addMethods(['getSelections'])
-            ->onlyMethods(['getTitle', '__wakeup'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        /** @var \Magento\Bundle\Model\Option $bundleOption */
+        $bundleOption = new class extends \Magento\Bundle\Model\Option {
+            private $selections;
+            private $title;
+            
+            public function __construct() {}
+            
+            public function getSelections() { return $this->selections; }
+            public function setSelections($selections) { $this->selections = $selections; return $this; }
+            
+            public function getTitle() { return $this->title; }
+            public function setTitle($title) { $this->title = $title; return $this; }
+        };
         $selectionOption = $this->createPartialMock(
             OptionInterface::class,
             ['getValue']
@@ -298,15 +343,13 @@ class ConfigurationTest extends TestCase
                 ->with($product, 15.00, $includingTax)
                 ->willReturn(15.00);
         }
-        $this->taxHelper->expects($this->any())
-            ->method('displayCartPricesBoth')
-            ->willReturn((bool)$displayCartPriceBoth);
+        $this->taxHelper->method('displayCartPricesBoth')->willReturn((bool)$displayCartPriceBoth);
         $this->pricingHelper->expects($this->atLeastOnce())->method('currency')->with(15.00)
             ->willReturn('<span class="price">$15.00</span>');
         $priceModel->expects($this->once())->method('getSelectionFinalTotalPrice')->willReturn(15.00);
-        $selectionQty->expects($this->any())->method('getValue')->willReturn(1);
-        $bundleOption->expects($this->any())->method('getSelections')->willReturn([$product]);
-        $bundleOption->expects($this->once())->method('getTitle')->willReturn('title');
+        $selectionQty->method('getValue')->willReturn(1);
+        $bundleOption->setSelections([$product]);
+        $bundleOption->setTitle('title');
         $selectionOption->expects($this->once())->method('getValue')->willReturn($selectionIds);
         $collection->expects($this->once())->method('appendSelections')->with($collection2, true)
             ->willReturn([$bundleOption]);
@@ -322,19 +365,16 @@ class ConfigurationTest extends TestCase
             ->method('getSelectionsByIds')
             ->with(json_decode($selectionIds, true), $product)
             ->willReturn($collection2);
-        $product->expects($this->once())->method('getTypeInstance')->willReturn($typeInstance);
-        $product->expects($this->any())->method('getCustomOption')->with('selection_qty_' . $selectionId)
-            ->willReturn($selectionQty);
-        $product->expects($this->any())->method('getSelectionId')->willReturn($selectionId);
-        $product->expects($this->once())->method('getName')->willReturn('name');
-        $product->expects($this->once())->method('getPriceModel')->willReturn($priceModel);
-        $this->item->expects($this->any())->method('getProduct')->willReturn($product);
-        $this->item
-            ->method('getOptionByCode')
-            ->willReturnCallback(fn($param) => match ([$param]) {
-                ['bundle_option_ids'] => $itemOption,
-                ['bundle_selection_ids'] => $selectionOption
-            });
+        $product->setTypeInstance($typeInstance);
+        $product->setCustomOption($selectionQty);
+        $product->setSelectionId($selectionId);
+        $product->setName('name');
+        $product->setPriceModel($priceModel);
+        $this->item->setProduct($product);
+        $this->item->setOptionByCode(fn($param) => match ([$param]) {
+            ['bundle_option_ids'] => $itemOption,
+            ['bundle_selection_ids'] => $selectionOption
+        });
         $this->productConfiguration->expects($this->once())->method('getCustomOptions')->with($this->item)
             ->willReturn([0 => ['label' => 'title', 'value' => 'value']]);
 

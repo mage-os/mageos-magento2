@@ -7,6 +7,13 @@ declare(strict_types=1);
 
 namespace Magento\Bundle\Test\Unit\Model\Product;
 
+use Magento\Bundle\Test\Unit\Helper\OptionCollectionTestHelper;
+use Magento\Bundle\Test\Unit\Helper\OptionTestHelper;
+use Magento\Catalog\Test\Unit\Helper\DefaultTypeTestHelper;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
+use Magento\Framework\Test\Unit\Helper\AbstractCollectionTestHelper;
+use Magento\Framework\Test\Unit\Helper\DataObjectTestHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Bundle\Model\OptionFactory;
 use Magento\Bundle\Model\Product\Type;
 use Magento\Bundle\Model\ResourceModel\BundleFactory;
@@ -70,7 +77,7 @@ class TypeTest extends TestCase
     protected $bundleCollectionFactory;
 
     /**
-     * @var \Magento\Catalog\Helper\Data|MockObject
+     * @var Data|MockObject
      */
     protected $catalogData;
 
@@ -125,75 +132,32 @@ class TypeTest extends TestCase
     private $catalogRuleProcessor;
 
     /**
+     * @var MockObject|null
+     */
+    private $selectionCollectionMock = null;
+
+    /**
      * @inheritDoc
      */
     protected function setUp(): void
     {
-        $this->bundleCollectionFactory =
-            $this->getMockBuilder(CollectionFactory::class)
-                ->onlyMethods(['create'])
-                ->addMethods(
-                    [
-                        'addFilterByRequiredOptions',
-                        'addAttributeToSelect',
-                        'getItemById',
-                        'setOptionIdsFilter',
-                        'setFlag',
-                        'setPositionOrder',
-                        'addStoreFilter',
-                        'setStoreId'
-                    ]
-                )
-                ->disableOriginalConstructor()
-                ->getMock();
-        $this->catalogData = $this->getMockBuilder(Data::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->storeManager = $this->getMockBuilder(StoreManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->bundleOptionFactory = $this->getMockBuilder(OptionFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->stockRegistry = $this->getMockBuilder(StockRegistry::class)
-            ->onlyMethods(['getStockItem'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->stockState = $this->getMockBuilder(StockState::class)
-            ->onlyMethods(['getStockQty'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->catalogProduct = $this->getMockBuilder(\Magento\Catalog\Helper\Product::class)
-            ->onlyMethods(['getSkipSaleableCheck'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->priceCurrency = $this->getMockBuilder(PriceCurrencyInterface::class)
-            ->onlyMethods(['convert'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->bundleModelSelection = $this->getMockBuilder(SelectionFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->bundleFactory = $this->getMockBuilder(BundleFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->serializer = $this->getMockBuilder(Json::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([])
-            ->getMock();
-        $this->metadataPool = $this->getMockBuilder(MetadataPool::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->arrayUtility = $this->getMockBuilder(ArrayUtils::class)
-            ->onlyMethods(['flatten'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->catalogRuleProcessor = $this->getMockBuilder(CollectionProcessor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->bundleCollectionFactory = $this->createPartialMock(CollectionFactory::class, ['create']);
+        $this->catalogData = $this->createMock(Data::class);
+        $this->storeManager = $this->createMock(StoreManagerInterface::class);
+        $this->bundleOptionFactory = $this->createPartialMock(OptionFactory::class, ['create']);
+        $this->stockRegistry = $this->createPartialMock(StockRegistry::class, ['getStockItem']);
+        $this->stockState = $this->createPartialMock(StockState::class, ['getStockQty']);
+        $this->catalogProduct = $this->createPartialMock(\Magento\Catalog\Helper\Product::class, ['getSkipSaleableCheck']);
+        $this->priceCurrency = $this->createMock(PriceCurrencyInterface::class);
+        $this->bundleModelSelection = $this->createPartialMock(SelectionFactory::class, ['create']);
+        $this->bundleFactory = $this->createPartialMock(BundleFactory::class, ['create']);
+        $this->serializer = $this->createMock(Json::class);
+        // Set up serializer to use real JSON encode/decode
+        $this->serializer->method('serialize')->willReturnCallback(fn($data) => json_encode($data));
+        $this->serializer->method('unserialize')->willReturnCallback(fn($data) => json_decode($data, true));
+        $this->metadataPool = $this->createMock(MetadataPool::class);
+        $this->arrayUtility = $this->createPartialMock(ArrayUtils::class, ['flatten']);
+        $this->catalogRuleProcessor = $this->createMock(CollectionProcessor::class);
 
         $objectHelper = new ObjectManager($this);
         $this->model = $objectHelper->getObject(
@@ -222,74 +186,25 @@ class TypeTest extends TestCase
      */
     public function testPrepareForCartAdvancedWithoutOptions(): void
     {
-        /** @var MockObject|DefaultType $group */
-        $group = $this->getMockBuilder(DefaultType::class)
-            ->onlyMethods(['setOption', 'setProduct', 'validateUserValue', 'prepareForCart'])
-            ->addMethods(['setRequest', 'setProcessMode'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var MockObject|DataObject $buyRequest */
-        $buyRequest = $this->getMockBuilder(DataObject::class)
-            ->onlyMethods(['unsetData', 'getData'])
-            ->addMethods(
-                [
-                    '__wakeup',
-                    'getOptions',
-                    'getSuperProductConfig',
-                    'getQty',
-                    'getBundleOption',
-                    'getBundleOptionsData'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
-        /* @var \PHPUnit\Framework\MockObject\MockObject|\Magento\Catalog\Model\Product\Option $option */
-        $option = $this->getMockBuilder(Option::class)
-            ->onlyMethods(['groupFactory', 'getType', 'getId'])
-            ->addMethods(['getRequired', 'isMultiSelection'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        /** @var MockObject|DefaultTypeTestHelper $group */
+        $group = $this->createPartialMock(DefaultTypeTestHelper::class, ['setOption', 'setProduct', 'validateUserValue', 'prepareForCart', 'setRequest', 'setProcessMode']);
+        /** @var MockObject|DataObjectTestHelper $buyRequest */
+        $buyRequest = $this->createPartialMock(DataObjectTestHelper::class, ['unsetData', 'getData', 'getOptions', 'getSuperProductConfig', 'getQty', 'getBundleOption', 'getBundleOptionsData']);
+        /* @var MockObject|OptionTestHelper $option */
+        $option = $this->createPartialMock(OptionTestHelper::class, ['groupFactory', 'getType', 'getId', 'getRequired', 'isMultiSelection']);
         /** @var MockObject|SelectionCollection $selectionCollection */
-        $selectionCollection = $this->getMockBuilder(\Magento\Bundle\Model\ResourceModel\Selection\Collection::class)
-            ->onlyMethods(['getItems'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var MockObject|Product $product */
-        $product = $this->getMockBuilder(Product::class)
-            ->onlyMethods(
-                [
-                    'getOptions',
-                    'prepareCustomOptions',
-                    'addCustomOption',
-                    'setQty',
-                    'getTypeInstance',
-                    'getStoreId',
-                    'hasData',
-                    'getData'
-                ]
-            )
-            ->addMethods(['getHasOptions', 'setCartQty', 'getSkipCheckRequiredOption'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $selectionCollection = $this->createPartialMock(SelectionCollection::class, ['getItems']);
+        /** @var MockObject|ProductTestHelper $product */
+        $product = $this->createPartialMock(ProductTestHelper::class, ['getOptions', 'prepareCustomOptions', 'addCustomOption', 'setQty', 'getTypeInstance', 'getStoreId', 'hasData', 'getData', 'getHasOptions', 'setCartQty', 'getSkipCheckRequiredOption']);
         /** @var MockObject|Type $productType */
-        $productType = $this->getMockBuilder(Type::class)
-            ->onlyMethods(['setStoreFilter', 'getOptionsCollection', 'getOptionsIds', 'getSelectionsCollection'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productType = $this->createPartialMock(Type::class, ['setStoreFilter', 'getOptionsCollection', 'getOptionsIds', 'getSelectionsCollection']);
         /** @var MockObject|Collection $optionCollection */
-        $optionCollection = $this->getMockBuilder(\Magento\Bundle\Model\ResourceModel\Option\Collection::class)
-            ->onlyMethods(['getItems', 'getItemById', 'appendSelections'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $optionCollection = $this->createPartialMock(Collection::class, ['getItems', 'getItemById', 'appendSelections']);
 
         $this->parentClass($group, $option, $buyRequest, $product);
 
-        $product->expects($this->any())
-            ->method('getSkipCheckRequiredOption')
-            ->willReturn(true);
-        $product->expects($this->any())
-            ->method('getTypeInstance')
-            ->willReturn($productType);
+        $product->method('getSkipCheckRequiredOption')->willReturn(true);
+        $product->method('getTypeInstance')->willReturn($productType);
         $optionCollection->expects($this->any())
             ->method('appendSelections')
             ->with($selectionCollection, true, true)
@@ -325,98 +240,28 @@ class TypeTest extends TestCase
      */
     public function testPrepareForCartAdvancedWithShoppingCart(): void
     {
-        /** @var MockObject|Price $priceModel */
-        $priceModel = $this->getMockBuilder(Price::class)
-            ->addMethods(['getSelectionFinalTotalPrice'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var MockObject|DefaultType $group */
-        $group = $this->getMockBuilder(DefaultType::class)
-            ->onlyMethods(['setOption', 'setProduct', 'validateUserValue', 'prepareForCart'])
-            ->addMethods(['setRequest', 'setProcessMode'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var MockObject|DataObject $buyRequest */
-        $buyRequest = $this->getMockBuilder(DataObject::class)
-            ->onlyMethods(['unsetData', 'getData'])
-            ->addMethods(
-                [
-                    '__wakeup',
-                    'getOptions',
-                    'getSuperProductConfig',
-                    'getQty',
-                    'getBundleOption',
-                    'getBundleOptionQty',
-                    'getBundleOptionsData'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
-        /* @var \PHPUnit\Framework\MockObject\MockObject|\Magento\Catalog\Model\Product\Option $option */
-        $option = $this->getMockBuilder(Option::class)
-            ->onlyMethods(['groupFactory', 'getType', 'getId', 'getProduct', 'getTitle'])
-            ->addMethods(['getRequired', 'isMultiSelection', 'getValue'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        /** @var MockObject|\Magento\Catalog\Test\Unit\Helper\PriceTestHelper $priceModel */
+        $priceModel = $this->createPartialMock(\Magento\Catalog\Test\Unit\Helper\PriceTestHelper::class, ['getSelectionFinalTotalPrice']);
+        /** @var MockObject|DefaultTypeTestHelper $group */
+        $group = $this->createPartialMock(DefaultTypeTestHelper::class, ['setOption', 'setProduct', 'validateUserValue', 'prepareForCart', 'setRequest', 'setProcessMode']);
+        /** @var MockObject|DataObjectTestHelper $buyRequest */
+        $buyRequest = $this->createPartialMock(DataObjectTestHelper::class, ['unsetData', 'getData', 'getOptions', 'getSuperProductConfig', 'getQty', 'getBundleOption', 'getBundleOptionQty', 'getBundleOptionsData']);
+        /* @var MockObject|OptionTestHelper $option */
+        $option = $this->createPartialMock(OptionTestHelper::class, ['groupFactory', 'getType', 'getId', 'getProduct', 'getTitle', 'getRequired', 'isMultiSelection', 'getValue']);
         /** @var MockObject|SelectionCollection $selectionCollection */
-        $selectionCollection = $this->getMockBuilder(\Magento\Bundle\Model\ResourceModel\Selection\Collection::class)
-            ->onlyMethods(['getItems', 'getSize'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var MockObject|DataObject $buyRequest */
-        $selection = $this->getMockBuilder(DataObject::class)
-            ->addMethods(
-                [
-                    '__wakeup',
-                    'isSalable',
-                    'getOptionId',
-                    'getSelectionCanChangeQty',
-                    'getSelectionId',
-                    'addCustomOption',
-                    'getId',
-                    'getOption',
-                    'getTypeInstance'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var MockObject|Product $product */
-        $product = $this->getMockBuilder(Product::class)
-            ->onlyMethods(
-                [
-                    'getOptions',
-                    'prepareCustomOptions',
-                    'addCustomOption',
-                    'setQty',
-                    'getTypeInstance',
-                    'getStoreId',
-                    'hasData',
-                    'getData',
-                    'getId',
-                    'getCustomOption',
-                    'getPriceModel'
-                ]
-            )
-            ->addMethods(['getHasOptions', 'setCartQty', 'getSkipCheckRequiredOption'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var MockObject|Type $productType */
-        $productType = $this->getMockBuilder(Type::class)
-            ->onlyMethods(['setStoreFilter', 'prepareForCart'])
-            ->addMethods(['setParentProductId', 'addCustomOption', 'setCartQty', 'getSelectionId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $selectionCollection = $this->createPartialMock(SelectionCollection::class, ['getItems', 'getSize']);
+        /** @var MockObject|DataObjectTestHelper $selection */
+        $selection = $this->createPartialMock(DataObjectTestHelper::class, ['isSalable', 'getOptionId', 'getSelectionCanChangeQty', 'getSelectionId', 'getOption', 'getTypeInstance', 'getId']);
+        /** @var MockObject|ProductTestHelper $product */
+        $product = $this->createPartialMock(ProductTestHelper::class, ['getOptions', 'prepareCustomOptions', 'addCustomOption', 'setQty', 'getTypeInstance', 'getStoreId', 'hasData', 'getData', 'getId', 'getCustomOption', 'getPriceModel', 'getHasOptions', 'setCartQty', 'getSkipCheckRequiredOption']);
+        /** @var MockObject|\Magento\Bundle\Test\Unit\Helper\TypeTestHelper $productType */
+        $productType = $this->createPartialMock(\Magento\Bundle\Test\Unit\Helper\TypeTestHelper::class, ['setStoreFilter', 'prepareForCart', 'setParentProductId', 'addCustomOption', 'setCartQty', 'getSelectionId']);
         /** @var MockObject|Collection $optionCollection */
-        $optionCollection = $this->getMockBuilder(\Magento\Bundle\Model\ResourceModel\Option\Collection::class)
-            ->onlyMethods(['getItems', 'getItemById', 'appendSelections'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $optionCollection = $this->createPartialMock(Collection::class, ['getItems', 'getItemById', 'appendSelections']);
 
         $this->parentClass($group, $option, $buyRequest, $product);
 
-        $product->expects($this->any())
-            ->method('getSkipCheckRequiredOption')
-            ->willReturn(true);
+        $product->method('getSkipCheckRequiredOption')->willReturn(true);
         $product->expects($this->once())
             ->method('getTypeInstance')
             ->willReturn($productType);
@@ -445,9 +290,7 @@ class TypeTest extends TestCase
             );
         $bundleOptions = [3 => 5];
 
-        $product->expects($this->any())
-            ->method('getId')
-            ->willReturn(333);
+        $product->method('getId')->willReturn(333);
         $product->expects($this->once())
             ->method('getCustomOption')
             ->willReturn($option);
@@ -463,32 +306,19 @@ class TypeTest extends TestCase
         $productType->expects($this->once())
             ->method('setStoreFilter');
         $buyRequest->expects($this->once())->method('getBundleOption')->willReturn($bundleOptions);
-        $selectionCollection->expects($this->any())
-            ->method('getItems')
-            ->willReturn([$selection]);
-        $selectionCollection->expects($this->any())
-            ->method('getSize')
-            ->willReturn(1);
+        $selectionCollection->method('getItems')->willReturn([$selection]);
+        $selectionCollection->method('getSize')->willReturn(1);
         $selection->expects($this->once())
             ->method('isSalable')
             ->willReturn(false);
-        $selection->expects($this->any())
-            ->method('getOptionId')
-            ->willReturn(3);
-        $selection->expects($this->any())
-            ->method('getOption')
-            ->willReturn($option);
+        $selection->method('getOptionId')->willReturn(3);
+        $selection->method('getOption')->willReturn($option);
         $selection->expects($this->once())
             ->method('getSelectionCanChangeQty')
             ->willReturn(true);
         $selection->expects($this->once())
             ->method('getSelectionId');
-        $selection->expects($this->once())
-            ->method('addCustomOption')
-            ->willReturnSelf();
-        $selection->expects($this->any())
-            ->method('getId')
-            ->willReturn(333);
+        $selection->method('getId')->willReturn(333);
         $selection->expects($this->once())
             ->method('getTypeInstance')
             ->willReturn($productType);
@@ -545,97 +375,28 @@ class TypeTest extends TestCase
      */
     public function testPrepareForCartAdvancedEmptyShoppingCart(): void
     {
-        /** @var MockObject|Price $priceModel */
-        $priceModel = $this->getMockBuilder(Price::class)
-            ->addMethods(['getSelectionFinalTotalPrice'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var MockObject|DefaultType $group */
-        $group = $this->getMockBuilder(DefaultType::class)
-            ->onlyMethods(['setOption', 'setProduct', 'validateUserValue', 'prepareForCart'])
-            ->addMethods(['setRequest', 'setProcessMode'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var MockObject|DataObject $buyRequest */
-        $buyRequest = $this->getMockBuilder(DataObject::class)
-            ->onlyMethods(['unsetData', 'getData'])
-            ->addMethods(
-                [
-                    '__wakeup',
-                    'getOptions',
-                    'getSuperProductConfig',
-                    'getQty',
-                    'getBundleOption',
-                    'getBundleOptionQty',
-                    'getBundleOptionsData'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
-        /* @var \PHPUnit\Framework\MockObject\MockObject|\Magento\Catalog\Model\Product\Option $option */
-        $option = $this->getMockBuilder(Option::class)
-            ->onlyMethods(['groupFactory', 'getType', 'getId', 'getProduct', 'getTitle'])
-            ->addMethods(['getRequired', 'isMultiSelection', 'getValue'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        /** @var MockObject|\Magento\Catalog\Test\Unit\Helper\PriceTestHelper $priceModel */
+        $priceModel = $this->createPartialMock(\Magento\Catalog\Test\Unit\Helper\PriceTestHelper::class, ['getSelectionFinalTotalPrice']);
+        /** @var MockObject|DefaultTypeTestHelper $group */
+        $group = $this->createPartialMock(DefaultTypeTestHelper::class, ['setOption', 'setProduct', 'validateUserValue', 'prepareForCart', 'setRequest', 'setProcessMode']);
+        /** @var MockObject|DataObjectTestHelper $buyRequest */
+        $buyRequest = $this->createPartialMock(DataObjectTestHelper::class, ['unsetData', 'getData', 'getOptions', 'getSuperProductConfig', 'getQty', 'getBundleOption', 'getBundleOptionQty', 'getBundleOptionsData']);
+        /* @var MockObject|OptionTestHelper $option */
+        $option = $this->createPartialMock(OptionTestHelper::class, ['groupFactory', 'getType', 'getId', 'getProduct', 'getTitle', 'getRequired', 'isMultiSelection', 'getValue']);
         /** @var MockObject|SelectionCollection $selectionCollection */
-        $selectionCollection = $this->getMockBuilder(\Magento\Bundle\Model\ResourceModel\Selection\Collection::class)
-            ->onlyMethods(['getItems', 'getSize'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var MockObject|DataObject $buyRequest */
-        $selection = $this->getMockBuilder(DataObject::class)
-            ->addMethods(
-                [
-                    '__wakeup',
-                    'isSalable',
-                    'getOptionId',
-                    'getSelectionCanChangeQty',
-                    'getSelectionId',
-                    'addCustomOption',
-                    'getId',
-                    'getOption',
-                    'getTypeInstance'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var MockObject|Product $product */
-        $product = $this->getMockBuilder(Product::class)
-            ->onlyMethods(
-                [
-                    'getOptions',
-                    'prepareCustomOptions',
-                    'addCustomOption',
-                    'setQty',
-                    'getTypeInstance',
-                    'getStoreId',
-                    'hasData',
-                    'getData',
-                    'getId',
-                    'getCustomOption',
-                    'getPriceModel'
-                ]
-            )
-            ->addMethods(['getHasOptions', 'setCartQty', 'getSkipCheckRequiredOption'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $selectionCollection = $this->createPartialMock(SelectionCollection::class, ['getItems', 'getSize']);
+        /** @var MockObject|DataObjectTestHelper $selection */
+        $selection = $this->createPartialMock(DataObjectTestHelper::class, ['isSalable', 'getOptionId', 'getSelectionCanChangeQty', 'getSelectionId', 'getOption', 'getTypeInstance', 'getId']);
+        /** @var MockObject|ProductTestHelper $product */
+        $product = $this->createPartialMock(ProductTestHelper::class, ['getOptions', 'prepareCustomOptions', 'addCustomOption', 'setQty', 'getTypeInstance', 'getStoreId', 'hasData', 'getData', 'getId', 'getCustomOption', 'getPriceModel', 'getHasOptions', 'setCartQty', 'getSkipCheckRequiredOption']);
         /** @var MockObject|Type $productType */
-        $productType = $this->getMockBuilder(Type::class)
-            ->onlyMethods(['setStoreFilter', 'prepareForCart'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productType = $this->createPartialMock(Type::class, ['setStoreFilter', 'prepareForCart']);
         /** @var MockObject|Collection $optionCollection */
-        $optionCollection = $this->getMockBuilder(\Magento\Bundle\Model\ResourceModel\Option\Collection::class)
-            ->onlyMethods(['getItems', 'getItemById', 'appendSelections'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $optionCollection = $this->createPartialMock(Collection::class, ['getItems', 'getItemById', 'appendSelections']);
 
         $this->parentClass($group, $option, $buyRequest, $product);
 
-        $product->expects($this->any())
-            ->method('getSkipCheckRequiredOption')
-            ->willReturn(true);
+        $product->method('getSkipCheckRequiredOption')->willReturn(true);
         $product->expects($this->once())
             ->method('getTypeInstance')
             ->willReturn($productType);
@@ -664,9 +425,7 @@ class TypeTest extends TestCase
             );
         $bundleOptions = [3 => 5];
 
-        $product->expects($this->any())
-            ->method('getId')
-            ->willReturn(333);
+        $product->method('getId')->willReturn(333);
         $product->expects($this->once())
             ->method('getCustomOption')
             ->willReturn($option);
@@ -687,32 +446,19 @@ class TypeTest extends TestCase
 
         $this->arrayUtility->expects($this->once())->method('flatten')->willReturn($bundleOptions);
 
-        $selectionCollection->expects($this->any())
-            ->method('getItems')
-            ->willReturn([$selection]);
-        $selectionCollection->expects($this->any())
-            ->method('getSize')
-            ->willReturn(1);
+        $selectionCollection->method('getItems')->willReturn([$selection]);
+        $selectionCollection->method('getSize')->willReturn(1);
         $selection->expects($this->once())
             ->method('isSalable')
             ->willReturn(false);
-        $selection->expects($this->any())
-            ->method('getOptionId')
-            ->willReturn(3);
-        $selection->expects($this->any())
-            ->method('getOption')
-            ->willReturn($option);
+        $selection->method('getOptionId')->willReturn(3);
+        $selection->method('getOption')->willReturn($option);
         $selection->expects($this->once())
             ->method('getSelectionCanChangeQty')
             ->willReturn(true);
         $selection->expects($this->once())
             ->method('getSelectionId');
-        $selection->expects($this->once())
-            ->method('addCustomOption')
-            ->willReturnSelf();
-        $selection->expects($this->any())
-            ->method('getId')
-            ->willReturn(333);
+        $selection->method('getId')->willReturn(333);
         $selection->expects($this->once())
             ->method('getTypeInstance')
             ->willReturn($productType);
@@ -754,97 +500,28 @@ class TypeTest extends TestCase
      */
     public function testPrepareForCartAdvancedStringInResult(): void
     {
-        /** @var MockObject|Price $priceModel */
-        $priceModel = $this->getMockBuilder(Price::class)
-            ->addMethods(['getSelectionFinalTotalPrice'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var MockObject|DefaultType $group */
-        $group = $this->getMockBuilder(DefaultType::class)
-            ->onlyMethods(['setOption', 'setProduct', 'validateUserValue', 'prepareForCart'])
-            ->addMethods(['setRequest', 'setProcessMode'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var MockObject|DataObject $buyRequest */
-        $buyRequest = $this->getMockBuilder(DataObject::class)
-            ->onlyMethods(['unsetData', 'getData'])
-            ->addMethods(
-                [
-                    '__wakeup',
-                    'getOptions',
-                    'getSuperProductConfig',
-                    'getQty',
-                    'getBundleOption',
-                    'getBundleOptionQty',
-                    'getBundleOptionsData'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
-        /* @var \PHPUnit\Framework\MockObject\MockObject|\Magento\Catalog\Model\Product\Option $option */
-        $option = $this->getMockBuilder(Option::class)
-            ->onlyMethods(['groupFactory', 'getType', 'getId', 'getProduct', 'getTitle'])
-            ->addMethods(['getRequired', 'isMultiSelection', 'getValue'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        /** @var MockObject|\Magento\Catalog\Test\Unit\Helper\PriceTestHelper $priceModel */
+        $priceModel = $this->createPartialMock(\Magento\Catalog\Test\Unit\Helper\PriceTestHelper::class, ['getSelectionFinalTotalPrice']);
+        /** @var MockObject|DefaultTypeTestHelper $group */
+        $group = $this->createPartialMock(DefaultTypeTestHelper::class, ['setOption', 'setProduct', 'validateUserValue', 'prepareForCart', 'setRequest', 'setProcessMode']);
+        /** @var MockObject|DataObjectTestHelper $buyRequest */
+        $buyRequest = $this->createPartialMock(DataObjectTestHelper::class, ['unsetData', 'getData', 'getOptions', 'getSuperProductConfig', 'getQty', 'getBundleOption', 'getBundleOptionQty', 'getBundleOptionsData']);
+        /* @var MockObject|OptionTestHelper $option */
+        $option = $this->createPartialMock(OptionTestHelper::class, ['groupFactory', 'getType', 'getId', 'getProduct', 'getTitle', 'getRequired', 'isMultiSelection', 'getValue']);
         /** @var MockObject|SelectionCollection $selectionCollection */
-        $selectionCollection = $this->getMockBuilder(\Magento\Bundle\Model\ResourceModel\Selection\Collection::class)
-            ->onlyMethods(['getItems', 'getSize'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var MockObject|DataObject $buyRequest */
-        $selection = $this->getMockBuilder(DataObject::class)
-            ->addMethods(
-                [
-                    '__wakeup',
-                    'isSalable',
-                    'getOptionId',
-                    'getSelectionCanChangeQty',
-                    'getSelectionId',
-                    'addCustomOption',
-                    'getId',
-                    'getOption',
-                    'getTypeInstance'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var MockObject|Product $product */
-        $product = $this->getMockBuilder(Product::class)
-            ->onlyMethods(
-                [
-                    'getOptions',
-                    'prepareCustomOptions',
-                    'addCustomOption',
-                    'setQty',
-                    'getTypeInstance',
-                    'getStoreId',
-                    'hasData',
-                    'getData',
-                    'getId',
-                    'getCustomOption',
-                    'getPriceModel'
-                ]
-            )
-            ->addMethods(['getHasOptions', 'setCartQty', 'getSkipCheckRequiredOption'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $selectionCollection = $this->createPartialMock(SelectionCollection::class, ['getItems', 'getSize']);
+        /** @var MockObject|DataObjectTestHelper $selection */
+        $selection = $this->createPartialMock(DataObjectTestHelper::class, ['isSalable', 'getOptionId', 'getSelectionCanChangeQty', 'getSelectionId', 'getOption', 'getTypeInstance', 'getId']);
+        /** @var MockObject|ProductTestHelper $product */
+        $product = $this->createPartialMock(ProductTestHelper::class, ['getOptions', 'prepareCustomOptions', 'addCustomOption', 'setQty', 'getTypeInstance', 'getStoreId', 'hasData', 'getData', 'getId', 'getCustomOption', 'getPriceModel', 'getHasOptions', 'setCartQty', 'getSkipCheckRequiredOption']);
         /** @var MockObject|Type $productType */
-        $productType = $this->getMockBuilder(Type::class)
-            ->onlyMethods(['setStoreFilter', 'prepareForCart'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productType = $this->createPartialMock(Type::class, ['setStoreFilter', 'prepareForCart']);
         /** @var MockObject|Collection $optionCollection */
-        $optionCollection = $this->getMockBuilder(\Magento\Bundle\Model\ResourceModel\Option\Collection::class)
-            ->onlyMethods(['getItems', 'getItemById', 'appendSelections'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $optionCollection = $this->createPartialMock(Collection::class, ['getItems', 'getItemById', 'appendSelections']);
 
         $this->parentClass($group, $option, $buyRequest, $product);
 
-        $product->expects($this->any())
-            ->method('getSkipCheckRequiredOption')
-            ->willReturn(true);
+        $product->method('getSkipCheckRequiredOption')->willReturn(true);
         $product->expects($this->once())
             ->method('getTypeInstance')
             ->willReturn($productType);
@@ -871,9 +548,7 @@ class TypeTest extends TestCase
                     return $resultValue;
                 }
             );
-        $product->expects($this->any())
-            ->method('getId')
-            ->willReturn(333);
+        $product->method('getId')->willReturn(333);
         $product->expects($this->once())
             ->method('getCustomOption')
             ->willReturn($option);
@@ -892,32 +567,19 @@ class TypeTest extends TestCase
         $bundleOptions = [3 => 5];
         $buyRequest->expects($this->once())->method('getBundleOption')->willReturn($bundleOptions);
 
-        $selectionCollection->expects($this->any())
-            ->method('getItems')
-            ->willReturn([$selection]);
-        $selectionCollection->expects($this->any())
-            ->method('getSize')
-            ->willReturn(1);
+        $selectionCollection->method('getItems')->willReturn([$selection]);
+        $selectionCollection->method('getSize')->willReturn(1);
         $selection->expects($this->once())
             ->method('isSalable')
             ->willReturn(false);
-        $selection->expects($this->any())
-            ->method('getOptionId')
-            ->willReturn(3);
-        $selection->expects($this->any())
-            ->method('getOption')
-            ->willReturn($option);
+        $selection->method('getOptionId')->willReturn(3);
+        $selection->method('getOption')->willReturn($option);
         $selection->expects($this->once())
             ->method('getSelectionCanChangeQty')
             ->willReturn(true);
         $selection->expects($this->once())
             ->method('getSelectionId');
-        $selection->expects($this->once())
-            ->method('addCustomOption')
-            ->willReturnSelf();
-        $selection->expects($this->any())
-            ->method('getId')
-            ->willReturn(333);
+        $selection->method('getId')->willReturn(333);
         $selection->expects($this->once())
             ->method('getTypeInstance')
             ->willReturn($productType);
@@ -962,69 +624,23 @@ class TypeTest extends TestCase
      */
     public function testPrepareForCartAdvancedWithoutSelections(): void
     {
-        /** @var MockObject|DefaultType $group */
-        $group = $this->getMockBuilder(DefaultType::class)
-            ->onlyMethods(['setOption', 'setProduct', 'validateUserValue', 'prepareForCart'])
-            ->addMethods(['setRequest', 'setProcessMode'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var MockObject|DataObject $buyRequest */
-        $buyRequest = $this->getMockBuilder(DataObject::class)
-            ->onlyMethods(['unsetData', 'getData'])
-            ->addMethods(
-                [
-                    '__wakeup',
-                    'getOptions',
-                    'getSuperProductConfig',
-                    'getQty',
-                    'getBundleOption',
-                    'getBundleOptionQty',
-                    'getBundleOptionsData'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
-        /* @var \PHPUnit\Framework\MockObject\MockObject|\Magento\Catalog\Model\Product\Option $option */
-        $option = $this->getMockBuilder(Option::class)
-            ->onlyMethods(['groupFactory', 'getType', 'getId'])
-            ->addMethods(['getRequired', 'isMultiSelection'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        /** @var MockObject|DefaultTypeTestHelper $group */
+        $group = $this->createPartialMock(DefaultTypeTestHelper::class, ['setOption', 'setProduct', 'validateUserValue', 'prepareForCart', 'setRequest', 'setProcessMode']);
+        /** @var MockObject|DataObjectTestHelper $buyRequest */
+        $buyRequest = $this->createPartialMock(DataObjectTestHelper::class, ['unsetData', 'getData', 'getOptions', 'getSuperProductConfig', 'getQty', 'getBundleOption', 'getBundleOptionQty', 'getBundleOptionsData']);
+        /* @var MockObject|OptionTestHelper $option */
+        $option = $this->createPartialMock(OptionTestHelper::class, ['groupFactory', 'getType', 'getId', 'getRequired', 'isMultiSelection']);
 
-        /** @var MockObject|Product $product */
-        $product = $this->getMockBuilder(Product::class)
-            ->onlyMethods(
-                [
-                    'getOptions',
-                    'prepareCustomOptions',
-                    'addCustomOption',
-                    'setQty',
-                    'getTypeInstance',
-                    'getStoreId',
-                    'hasData',
-                    'getData',
-                    'getId'
-                ]
-            )
-            ->addMethods(['getHasOptions', 'setCartQty', 'getSkipCheckRequiredOption'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        /** @var MockObject|ProductTestHelper $product */
+        $product = $this->createPartialMock(ProductTestHelper::class, ['getOptions', 'prepareCustomOptions', 'addCustomOption', 'setQty', 'getTypeInstance', 'getStoreId', 'hasData', 'getData', 'getId', 'getHasOptions', 'setCartQty', 'getSkipCheckRequiredOption']);
         /** @var MockObject|Type $productType */
-        $productType = $this->getMockBuilder(Type::class)
-            ->onlyMethods(['setStoreFilter'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productType = $this->createPartialMock(Type::class, ['setStoreFilter']);
         /** @var MockObject|Collection $optionCollection */
-        $optionCollection = $this->getMockBuilder(\Magento\Bundle\Model\ResourceModel\Option\Collection::class)
-            ->onlyMethods(['getItems', 'getItemById', 'appendSelections'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $optionCollection = $this->createPartialMock(Collection::class, ['getItems', 'getItemById', 'appendSelections']);
 
         $this->parentClass($group, $option, $buyRequest, $product);
 
-        $product->expects($this->any())
-            ->method('getSkipCheckRequiredOption')
-            ->willReturn(true);
+        $product->method('getSkipCheckRequiredOption')->willReturn(true);
         $product->expects($this->once())
             ->method('getTypeInstance')
             ->willReturn($productType);
@@ -1072,76 +688,26 @@ class TypeTest extends TestCase
      */
     public function testPrepareForCartAdvancedSelectionsSelectionIdsExists(): void
     {
-        /** @var MockObject|DefaultType $group */
-        $group = $this->getMockBuilder(DefaultType::class)
-            ->onlyMethods(['setOption', 'setProduct', 'validateUserValue', 'prepareForCart'])
-            ->addMethods(['setRequest', 'setProcessMode'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var MockObject|DataObject $buyRequest */
-        $buyRequest = $this->getMockBuilder(DataObject::class)
-            ->onlyMethods(['unsetData', 'getData'])
-            ->addMethods(
-                [
-                    '__wakeup',
-                    'getOptions',
-                    'getSuperProductConfig',
-                    'getQty',
-                    'getBundleOption',
-                    'getBundleOptionsData'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
-        /* @var \PHPUnit\Framework\MockObject\MockObject|\Magento\Catalog\Model\Product\Option $option */
-        $option = $this->getMockBuilder(Option::class)
-            ->onlyMethods(['groupFactory', 'getType', 'getId'])
-            ->addMethods(['getRequired', 'isMultiSelection'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        /** @var MockObject|DefaultTypeTestHelper $group */
+        $group = $this->createPartialMock(DefaultTypeTestHelper::class, ['setOption', 'setProduct', 'validateUserValue', 'prepareForCart', 'setRequest', 'setProcessMode']);
+        /** @var MockObject|DataObjectTestHelper $buyRequest */
+        $buyRequest = $this->createPartialMock(DataObjectTestHelper::class, ['unsetData', 'getData', 'getOptions', 'getSuperProductConfig', 'getQty', 'getBundleOption', 'getBundleOptionsData']);
+        /* @var MockObject|OptionTestHelper $option */
+        $option = $this->createPartialMock(OptionTestHelper::class, ['groupFactory', 'getType', 'getId', 'getRequired', 'isMultiSelection']);
         /** @var MockObject|SelectionCollection $selectionCollection */
-        $selectionCollection = $this->getMockBuilder(\Magento\Bundle\Model\ResourceModel\Selection\Collection::class)
-            ->onlyMethods(['getItems', 'getSize'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var MockObject|DataObject $buyRequest */
-        $selection = $this->getMockBuilder(DataObject::class)
-            ->addMethods(['__wakeup', 'isSalable', 'getOptionId'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var MockObject|Product $product */
-        $product = $this->getMockBuilder(Product::class)
-            ->onlyMethods(
-                [
-                    'getOptions',
-                    'prepareCustomOptions',
-                    'addCustomOption',
-                    'setQty',
-                    'getTypeInstance',
-                    'getStoreId',
-                    'hasData',
-                    'getData'
-                ]
-            )
-            ->addMethods(['getHasOptions', 'setCartQty', 'getSkipCheckRequiredOption'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $selectionCollection = $this->createPartialMock(SelectionCollection::class, ['getItems', 'getSize']);
+        /** @var MockObject|DataObjectTestHelper $selection */
+        $selection = $this->createPartialMock(DataObjectTestHelper::class, ['isSalable', 'getOptionId']);
+        /** @var MockObject|ProductTestHelper $product */
+        $product = $this->createPartialMock(ProductTestHelper::class, ['getOptions', 'prepareCustomOptions', 'addCustomOption', 'setQty', 'getTypeInstance', 'getStoreId', 'hasData', 'getData', 'getHasOptions', 'setCartQty', 'getSkipCheckRequiredOption']);
         /** @var MockObject|Type $productType */
-        $productType = $this->getMockBuilder(Type::class)
-            ->onlyMethods(['setStoreFilter'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productType = $this->createPartialMock(Type::class, ['setStoreFilter']);
         /** @var MockObject|Collection $optionCollection */
-        $optionCollection = $this->getMockBuilder(\Magento\Bundle\Model\ResourceModel\Option\Collection::class)
-            ->onlyMethods(['getItems', 'getItemById', 'appendSelections'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $optionCollection = $this->createPartialMock(Collection::class, ['getItems', 'getItemById', 'appendSelections']);
 
         $this->parentClass($group, $option, $buyRequest, $product);
 
-        $product->expects($this->any())
-            ->method('getSkipCheckRequiredOption')
-            ->willReturn(true);
+        $product->method('getSkipCheckRequiredOption')->willReturn(true);
         $product->expects($this->once())
             ->method('getTypeInstance')
             ->willReturn($productType);
@@ -1187,9 +753,7 @@ class TypeTest extends TestCase
         $selectionCollection
             ->method('getSize')
             ->willReturnOnConsecutiveCalls(1, 0);
-        $option->expects($this->any())
-            ->method('getId')
-            ->willReturn(3);
+        $option->method('getId')->willReturn(3);
 
         $result = $this->model->prepareForCartAdvanced($buyRequest, $product);
         $this->assertEquals('Please specify product option(s).', $result);
@@ -1201,76 +765,26 @@ class TypeTest extends TestCase
      */
     public function testPrepareForCartAdvancedSelectRequiredOptions(): void
     {
-        /** @var MockObject|DefaultType $group */
-        $group = $this->getMockBuilder(DefaultType::class)
-            ->onlyMethods(['setOption', 'setProduct', 'validateUserValue', 'prepareForCart'])
-            ->addMethods(['setRequest', 'setProcessMode'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var MockObject|DataObject $buyRequest */
-        $buyRequest = $this->getMockBuilder(DataObject::class)
-            ->onlyMethods(['unsetData', 'getData'])
-            ->addMethods(
-                [
-                    '__wakeup',
-                    'getOptions',
-                    'getSuperProductConfig',
-                    'getQty',
-                    'getBundleOption',
-                    'getBundleOptionsData'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
-        /* @var \PHPUnit\Framework\MockObject\MockObject|\Magento\Catalog\Model\Product\Option $option */
-        $option = $this->getMockBuilder(Option::class)
-            ->onlyMethods(['groupFactory', 'getType', 'getId'])
-            ->addMethods(['getRequired', 'isMultiSelection'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        /** @var MockObject|DefaultTypeTestHelper $group */
+        $group = $this->createPartialMock(DefaultTypeTestHelper::class, ['setOption', 'setProduct', 'validateUserValue', 'prepareForCart', 'setRequest', 'setProcessMode']);
+        /** @var MockObject|DataObjectTestHelper $buyRequest */
+        $buyRequest = $this->createPartialMock(DataObjectTestHelper::class, ['unsetData', 'getData', 'getOptions', 'getSuperProductConfig', 'getQty', 'getBundleOption', 'getBundleOptionsData']);
+        /* @var MockObject|OptionTestHelper $option */
+        $option = $this->createPartialMock(OptionTestHelper::class, ['groupFactory', 'getType', 'getId', 'getRequired', 'isMultiSelection']);
         /** @var MockObject|SelectionCollection $selectionCollection */
-        $selectionCollection = $this->getMockBuilder(\Magento\Bundle\Model\ResourceModel\Selection\Collection::class)
-            ->onlyMethods(['getItems', 'getSize'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var MockObject|DataObject $buyRequest */
-        $selection = $this->getMockBuilder(DataObject::class)
-            ->addMethods(['__wakeup', 'isSalable', 'getOptionId'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var MockObject|Product $product */
-        $product = $this->getMockBuilder(Product::class)
-            ->onlyMethods(
-                [
-                    'getOptions',
-                    'prepareCustomOptions',
-                    'addCustomOption',
-                    'setQty',
-                    'getTypeInstance',
-                    'getStoreId',
-                    'hasData',
-                    'getData'
-                ]
-            )
-            ->addMethods(['getHasOptions', 'setCartQty', 'getSkipCheckRequiredOption'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $selectionCollection = $this->createPartialMock(SelectionCollection::class, ['getItems', 'getSize']);
+        /** @var MockObject|DataObjectTestHelper $selection */
+        $selection = $this->createPartialMock(DataObjectTestHelper::class, ['isSalable', 'getOptionId']);
+        /** @var MockObject|ProductTestHelper $product */
+        $product = $this->createPartialMock(ProductTestHelper::class, ['getOptions', 'prepareCustomOptions', 'addCustomOption', 'setQty', 'getTypeInstance', 'getStoreId', 'hasData', 'getData', 'getHasOptions', 'setCartQty', 'getSkipCheckRequiredOption']);
         /** @var MockObject|Type $productType */
-        $productType = $this->getMockBuilder(Type::class)
-            ->onlyMethods(['setStoreFilter'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productType = $this->createPartialMock(Type::class, ['setStoreFilter']);
         /** @var MockObject|Collection $optionCollection */
-        $optionCollection = $this->getMockBuilder(\Magento\Bundle\Model\ResourceModel\Option\Collection::class)
-            ->onlyMethods(['getItems', 'getItemById'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $optionCollection = $this->createPartialMock(Collection::class, ['getItems', 'getItemById']);
 
         $this->parentClass($group, $option, $buyRequest, $product);
 
-        $product->expects($this->any())
-            ->method('getSkipCheckRequiredOption')
-            ->willReturn(true);
+        $product->method('getSkipCheckRequiredOption')->willReturn(true);
         $product->expects($this->once())
             ->method('getTypeInstance')
             ->willReturn($productType);
@@ -1308,12 +822,8 @@ class TypeTest extends TestCase
 
         $this->arrayUtility->expects($this->once())->method('flatten')->willReturn($bundleOptions);
 
-        $selectionCollection->expects($this->any())
-            ->method('getItems')
-            ->willReturn([$selection]);
-        $selectionCollection->expects($this->any())
-            ->method('getSize')
-            ->willReturn(1);
+        $selectionCollection->method('getItems')->willReturn([$selection]);
+        $selectionCollection->method('getSize')->willReturn(1);
         $selection->expects($this->once())
             ->method('isSalable')
             ->willReturn(false);
@@ -1338,18 +848,11 @@ class TypeTest extends TestCase
     {
         $exceptedResult = 'String message';
 
-        /** @var MockObject|DataObject $buyRequest */
-        $buyRequest = $this->getMockBuilder(DataObject::class)
-            ->addMethods(['getItems', '__wakeup'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        /** @var MockObject|DataObjectTestHelper $buyRequest */
+        $buyRequest = $this->createPartialMock(DataObjectTestHelper::class, ['getItems']);
 
-        /** @var MockObject|Product $product */
-        $product = $this->getMockBuilder(Product::class)
-            ->onlyMethods(['getOptions'])
-            ->addMethods(['getHasOptions'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        /** @var MockObject|ProductTestHelper $product */
+        $product = $this->createPartialMock(ProductTestHelper::class, ['getOptions', 'getHasOptions']);
         $product->expects($this->any())
             ->method('getOptions')
             ->willThrowException(new LocalizedException(__($exceptedResult)));
@@ -1368,63 +871,21 @@ class TypeTest extends TestCase
      */
     public function testPrepareForCartAdvancedAllRequiredOption(): void
     {
-        /** @var MockObject|DefaultType $group */
-        $group = $this->getMockBuilder(DefaultType::class)
-            ->onlyMethods(['setOption', 'setProduct', 'validateUserValue', 'prepareForCart'])
-            ->addMethods(['setRequest', 'setProcessMode'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var MockObject|DataObject $buyRequest */
-        $buyRequest = $this->getMockBuilder(DataObject::class)
-            ->onlyMethods(['unsetData', 'getData'])
-            ->addMethods(
-                [
-                    '__wakeup',
-                    'getOptions',
-                    'getSuperProductConfig',
-                    'getQty',
-                    'getBundleOption',
-                    'getBundleOptionsData'
-                ]
-            )->disableOriginalConstructor()
-            ->getMock();
-        /* @var \PHPUnit\Framework\MockObject\MockObject|\Magento\Catalog\Model\Product\Option $option */
-        $option = $this->getMockBuilder(Option::class)
-            ->onlyMethods(['groupFactory', 'getType', 'getId'])
-            ->addMethods(['getRequired'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var MockObject|Product $product */
-        $product = $this->getMockBuilder(Product::class)
-            ->onlyMethods(
-                [
-                    'getOptions',
-                    'prepareCustomOptions',
-                    'addCustomOption',
-                    'setQty',
-                    'getTypeInstance',
-                    'getStoreId',
-                    'hasData',
-                    'getData'
-                ]
-            )->addMethods(['getHasOptions', 'setCartQty', 'getSkipCheckRequiredOption'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        /** @var MockObject|DefaultTypeTestHelper $group */
+        $group = $this->createPartialMock(DefaultTypeTestHelper::class, ['setOption', 'setProduct', 'validateUserValue', 'prepareForCart', 'setRequest', 'setProcessMode']);
+        /** @var MockObject|DataObjectTestHelper $buyRequest */
+        $buyRequest = $this->createPartialMock(DataObjectTestHelper::class, ['unsetData', 'getData', 'getOptions', 'getSuperProductConfig', 'getQty', 'getBundleOption', 'getBundleOptionsData']);
+        /* @var MockObject|OptionTestHelper $option */
+        $option = $this->createPartialMock(OptionTestHelper::class, ['groupFactory', 'getType', 'getId', 'getRequired']);
+        /** @var MockObject|ProductTestHelper $product */
+        $product = $this->createPartialMock(ProductTestHelper::class, ['getOptions', 'prepareCustomOptions', 'addCustomOption', 'setQty', 'getTypeInstance', 'getStoreId', 'hasData', 'getData', 'getHasOptions', 'setCartQty', 'getSkipCheckRequiredOption']);
         /** @var MockObject|Type $productType */
-        $productType = $this->getMockBuilder(Type::class)
-            ->onlyMethods(['setStoreFilter'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productType = $this->createPartialMock(Type::class, ['setStoreFilter']);
         /** @var MockObject|Collection $optionCollection */
-        $optionCollection = $this->getMockBuilder(\Magento\Bundle\Model\ResourceModel\Option\Collection::class)
-            ->onlyMethods(['getItems'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $optionCollection = $this->createPartialMock(Collection::class, ['getItems']);
         $this->parentClass($group, $option, $buyRequest, $product);
 
-        $product->expects($this->any())
-            ->method('getSkipCheckRequiredOption')
-            ->willReturn(false);
+        $product->method('getSkipCheckRequiredOption')->willReturn(false);
         $product->expects($this->once())
             ->method('getTypeInstance')
             ->willReturn($productType);
@@ -1472,38 +933,14 @@ class TypeTest extends TestCase
      */
     public function testPrepareForCartAdvancedSpecifyProductOptions(): void
     {
-        /** @var MockObject|DefaultType $group */
-        $group = $this->getMockBuilder(DefaultType::class)
-            ->onlyMethods(['setOption', 'setProduct', 'validateUserValue', 'prepareForCart'])
-            ->addMethods(['setRequest', 'setProcessMode'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var MockObject|DataObject $buyRequest */
-        $buyRequest = $this->getMockBuilder(DataObject::class)
-            ->onlyMethods(['unsetData', 'getData'])
-            ->addMethods(
-                [
-                    '__wakeup',
-                    'getOptions',
-                    'getSuperProductConfig',
-                    'getQty',
-                    'getBundleOption',
-                    'getBundleOptionsData'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
-        /* @var \PHPUnit\Framework\MockObject\MockObject|\Magento\Catalog\Model\Product\Option $option */
-        $option = $this->getMockBuilder(Option::class)
-            ->onlyMethods(['groupFactory', 'getType', 'getId'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var MockObject|Product $product */
-        $product = $this->getMockBuilder(Product::class)
-            ->onlyMethods(['getOptions', 'prepareCustomOptions', 'addCustomOption', 'setQty'])
-            ->addMethods(['getHasOptions', 'setCartQty', 'getSkipCheckRequiredOption'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        /** @var MockObject|DefaultTypeTestHelper $group */
+        $group = $this->createPartialMock(DefaultTypeTestHelper::class, ['setOption', 'setProduct', 'validateUserValue', 'prepareForCart', 'setRequest', 'setProcessMode']);
+        /** @var MockObject|DataObjectTestHelper $buyRequest */
+        $buyRequest = $this->createPartialMock(DataObjectTestHelper::class, ['unsetData', 'getData', 'getOptions', 'getSuperProductConfig', 'getQty', 'getBundleOption', 'getBundleOptionsData']);
+        /* @var MockObject|OptionTestHelper $option */
+        $option = $this->createPartialMock(OptionTestHelper::class, ['groupFactory', 'getType', 'getId']);
+        /** @var MockObject|ProductTestHelper $product */
+        $product = $this->createPartialMock(ProductTestHelper::class, ['getOptions', 'prepareCustomOptions', 'addCustomOption', 'setQty', 'getHasOptions', 'setCartQty', 'getSkipCheckRequiredOption']);
 
         $buyRequest->method('getOptions')
             ->willReturn([333 => ['type' => 'image/jpeg']]);
@@ -1511,9 +948,7 @@ class TypeTest extends TestCase
             ->willReturn(333);
         $this->parentClass($group, $option, $buyRequest, $product);
 
-        $product->expects($this->any())
-            ->method('getSkipCheckRequiredOption')
-            ->willReturn(true);
+        $product->method('getSkipCheckRequiredOption')->willReturn(true);
         $buyRequest->expects($this->once())
             ->method('getBundleOption')
             ->willReturn([0, '', 'str']);
@@ -1539,11 +974,8 @@ class TypeTest extends TestCase
     {
         $identities = ['id1', 'id2'];
         $productMock = $this->createMock(Product::class);
-        $optionMock = $this->getMockBuilder(\Magento\Bundle\Model\Option::class)->addMethods(['getSelections'])
-            ->onlyMethods(['__wakeup'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $optionCollectionMock = $this->createMock(\Magento\Bundle\Model\ResourceModel\Option\Collection::class);
+        $optionMock = $this->createPartialMock(\Magento\Bundle\Test\Unit\Helper\BundleOptionTestHelper::class, ['getSelections']);
+        $optionCollectionMock = $this->createMock(Collection::class);
         $cacheKey = '_cache_instance_options_collection';
         $productMock->expects($this->once())
             ->method('getIdentities')
@@ -1599,15 +1031,8 @@ class TypeTest extends TestCase
             ->onlyMethods(['__wakeup', 'getData', 'hasCustomOptions', 'getCustomOption'])
             ->disableOriginalConstructor()
             ->getMock();
-        $customOptionMock = $this->getMockBuilder(\Magento\Catalog\Model\Product\Configuration\Item\Option::class)
-            ->onlyMethods(['getValue'])
-            ->addMethods(['__wakeup'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $selectionItemMock = $this->getMockBuilder(DataObject::class)
-            ->addMethods(['getSku', 'getEntityId', '__wakeup'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $customOptionMock = $this->createPartialMock(\Magento\Catalog\Test\Unit\Helper\ItemOptionTestHelper::class, ['getValue']);
+        $selectionItemMock = $this->createPartialMock(DataObjectTestHelper::class, ['getSku', 'getEntityId']);
 
         $productMock->expects($this->once())
             ->method('hasCustomOptions')
@@ -1618,10 +1043,8 @@ class TypeTest extends TestCase
                 ['option_ids'] => false,
                 ['bundle_selection_ids'] => $customOptionMock
             });
-        $customOptionMock->expects($this->any())
-            ->method('getValue')
-            ->willReturn($serializeIds);
-        $selectionMock = $this->getMockBuilder(\Magento\Bundle\Model\ResourceModel\Selection\Collection::class)
+        $customOptionMock->method('getValue')->willReturn($serializeIds);
+        $selectionMock = $this->getMockBuilder(SelectionCollection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $productMock
@@ -1680,15 +1103,8 @@ class TypeTest extends TestCase
             ->onlyMethods(['__wakeup', 'getData', 'hasCustomOptions', 'getCustomOption'])
             ->disableOriginalConstructor()
             ->getMock();
-        $customOptionMock = $this->getMockBuilder(\Magento\Catalog\Model\Product\Configuration\Item\Option::class)
-            ->onlyMethods(['getValue'])
-            ->addMethods(['__wakeup'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $selectionItemMock = $this->getMockBuilder(DataObject::class)
-            ->addMethods(['getSelectionId', 'getWeight', '__wakeup'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $customOptionMock = $this->createPartialMock(\Magento\Catalog\Test\Unit\Helper\ItemOptionTestHelper::class, ['getValue']);
+        $selectionItemMock = $this->createPartialMock(DataObjectTestHelper::class, ['getSelectionId', 'getWeight']);
         $productMock->expects($this->once())
             ->method('hasCustomOptions')
             ->willReturn(true);
@@ -1696,9 +1112,9 @@ class TypeTest extends TestCase
             ->method('getValue')
             ->willReturn($serializeIds);
 
-        $selectionMock = $this->getMockBuilder(\Magento\Bundle\Model\ResourceModel\Selection\Collection::class)
-        ->disableOriginalConstructor()
-        ->getMock();
+        $selectionMock = $this->getMockBuilder(SelectionCollection::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $productMock
             ->method('getData')
             ->willReturnCallback(fn($param) => match ([$param]) {
@@ -1709,14 +1125,16 @@ class TypeTest extends TestCase
         $selectionMock->expects($this->once())
             ->method('getItems')
             ->willReturn([$selectionItemMock]);
-        $selectionItemMock->expects($this->any())
-            ->method('getSelectionId')
-            ->willReturn('id');
+        $selectionItemMock->method('getSelectionId')->willReturn('id');
         $productMock
             ->method('getCustomOption')
-            ->willReturnCallback(fn($param) => match ([$param]) {
-                ['bundle_selection_ids'] => $customOptionMock,
-                ['selection_qty_' . 'id'] => null
+            ->willReturnCallback(function($param) use ($customOptionMock) {
+                if ($param === 'bundle_selection_ids') {
+                    return $customOptionMock;
+                } elseif ($param === 'selection_qty_id') {
+                    return null;
+                }
+                return null;
             });
 
         $selectionItemMock->expects($this->once())
@@ -1739,20 +1157,9 @@ class TypeTest extends TestCase
             ->onlyMethods(['__wakeup', 'getData', 'hasCustomOptions', 'getCustomOption'])
             ->disableOriginalConstructor()
             ->getMock();
-        $customOptionMock = $this->getMockBuilder(\Magento\Catalog\Model\Product\Configuration\Item\Option::class)
-            ->onlyMethods(['getValue'])
-            ->addMethods(['__wakeup'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $qtyOptionMock = $this->getMockBuilder(\Magento\Catalog\Model\Product\Configuration\Item\Option::class)
-            ->onlyMethods(['getValue'])
-            ->addMethods(['__wakeup'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $selectionItemMock = $this->getMockBuilder(DataObject::class)
-            ->addMethods(['getSelectionId', 'getWeight', '__wakeup'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $customOptionMock = $this->createPartialMock(\Magento\Catalog\Test\Unit\Helper\ItemOptionTestHelper::class, ['getValue']);
+        $qtyOptionMock = $this->createPartialMock(\Magento\Catalog\Test\Unit\Helper\ItemOptionTestHelper::class, ['getValue']);
+        $selectionItemMock = $this->createPartialMock(DataObjectTestHelper::class, ['getSelectionId', 'getWeight']);
 
         $productMock->expects($this->once())
             ->method('hasCustomOptions')
@@ -1761,9 +1168,9 @@ class TypeTest extends TestCase
             ->method('getValue')
             ->willReturn($serializeIds);
 
-        $selectionMock = $this->getMockBuilder(\Magento\Bundle\Model\ResourceModel\Selection\Collection::class)
-        ->disableOriginalConstructor()
-        ->getMock();
+        $selectionMock = $this->getMockBuilder(SelectionCollection::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $productMock
             ->method('getData')
             ->willReturnCallback(
@@ -1780,9 +1187,7 @@ class TypeTest extends TestCase
         $selectionMock->expects($this->once())
             ->method('getItems')
             ->willReturn([$selectionItemMock]);
-        $selectionItemMock->expects($this->any())
-            ->method('getSelectionId')
-            ->willReturn('id');
+        $selectionItemMock->method('getSelectionId')->willReturn('id');
         $productMock
             ->method('getCustomOption')
             ->willReturnCallback(
@@ -1831,15 +1236,8 @@ class TypeTest extends TestCase
         $productMock = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $customOptionMock = $this->getMockBuilder(\Magento\Catalog\Model\Product\Configuration\Item\Option::class)
-            ->onlyMethods(['getValue'])
-            ->addMethods(['__wakeup'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $selectionItemMock = $this->getMockBuilder(DataObject::class)
-            ->addMethods(['isVirtual', 'getItems', '__wakeup'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $customOptionMock = $this->createPartialMock(\Magento\Catalog\Test\Unit\Helper\ItemOptionTestHelper::class, ['getValue']);
+        $selectionItemMock = $this->createPartialMock(DataObjectTestHelper::class, ['isVirtual', 'getItems']);
 
         $productMock->expects($this->once())
             ->method('hasCustomOptions')
@@ -1852,7 +1250,7 @@ class TypeTest extends TestCase
             ->method('getValue')
             ->willReturn($serializeIds);
 
-        $selectionMock = $this->getMockBuilder(\Magento\Bundle\Model\ResourceModel\Selection\Collection::class)
+        $selectionMock = $this->getMockBuilder(SelectionCollection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $productMock
@@ -1888,20 +1286,12 @@ class TypeTest extends TestCase
      * @param int $secondId
      *
      * @return void
-     * @dataProvider shakeSelectionsDataProvider
      */
+    #[DataProvider('shakeSelectionsDataProvider')]
     public function testShakeSelections($expected, $firstId, $secondId): void
     {
-        $firstItemMock = $this->getMockBuilder(Product::class)
-            ->onlyMethods(['__wakeup'])
-            ->addMethods(['getOption', 'getOptionId', 'getPosition', 'getSelectionId'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $secondItemMock = $this->getMockBuilder(Product::class)
-            ->onlyMethods(['__wakeup'])
-            ->addMethods(['getOption', 'getOptionId', 'getPosition', 'getSelectionId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $firstItemMock = $this->createPartialMock(ProductTestHelper::class, ['getOption', 'getOptionId', 'getPosition', 'getSelectionId']);
+        $secondItemMock = $this->createPartialMock(ProductTestHelper::class, ['getOption', 'getOptionId', 'getPosition', 'getSelectionId']);
         $optionFirstMock = $this->getMockBuilder(\Magento\Bundle\Model\Option::class)
             ->onlyMethods(['getPosition', '__wakeup'])
             ->disableOriginalConstructor()
@@ -1929,9 +1319,7 @@ class TypeTest extends TestCase
         $secondItemMock->expects($this->once())
             ->method('getOption')
             ->willReturn($optionSecondMock);
-        $optionSecondMock->expects($this->any())
-            ->method('getPosition')
-            ->willReturn('option_position');
+        $optionSecondMock->method('getPosition')->willReturn('option_position');
         $secondItemMock->expects($this->once())
             ->method('getOptionId')
             ->willReturn('option_id');
@@ -1972,7 +1360,7 @@ class TypeTest extends TestCase
         $productMock = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $usedSelectionsMock = $this->getMockBuilder(\Magento\Bundle\Model\ResourceModel\Selection\Collection::class)
+        $usedSelectionsMock = $this->getMockBuilder(SelectionCollection::class)
             ->onlyMethods(
                 [
                     'addAttributeToSelect',
@@ -2075,15 +1463,8 @@ class TypeTest extends TestCase
         $productMock = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $usedOptionsMock = $this->getMockBuilder(\Magento\Bundle\Model\ResourceModel\Option\Collection::class)
-            ->addMethods(['getResourceCollection'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $resourceClassName = AbstractCollection::class;
-        $dbResourceMock = $this->getMockBuilder($resourceClassName)
-            ->addMethods(['setProductIdFilter', 'setPositionOrder', 'joinValues', 'setIdFilter'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $usedOptionsMock = $this->createPartialMock(OptionCollectionTestHelper::class, ['getResourceCollection']);
+        $dbResourceMock = $this->createPartialMock(AbstractCollectionTestHelper::class, ['setProductIdFilter', 'setPositionOrder', 'joinValues', 'setIdFilter']);
         $storeMock = $this->getMockBuilder(Store::class)
             ->onlyMethods(['getId', '__wakeup'])
             ->disableOriginalConstructor()
@@ -2183,14 +1564,12 @@ class TypeTest extends TestCase
     private function getSelectionCollectionMock(array $selectedOptions): MockObject
     {
         $selectionCollectionMock = $this->getMockBuilder(
-            \Magento\Bundle\Model\ResourceModel\Selection\Collection::class
+            SelectionCollection::class
         )->disableOriginalConstructor()
             ->getMock();
 
         $selectionCollectionMock
-            ->expects($this->any())
-            ->method('getIterator')
-            ->willReturn(new \ArrayIterator($selectedOptions));
+            ->method('getIterator')->willReturn(new \ArrayIterator($selectedOptions));
 
         return $selectionCollectionMock;
     }
@@ -2286,7 +1665,6 @@ class TypeTest extends TestCase
         $product = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getStoreId', 'getData', 'hasData', 'setData', 'getId'])
-            ->addMethods(['_wakeup'])
             ->getMock();
         $this->expectProductEntityMetadata();
         $store = $this->getMockBuilder(Store::class)
@@ -2309,7 +1687,7 @@ class TypeTest extends TestCase
      */
     private function getSelectionCollection(): MockObject
     {
-        $selectionCollection = $this->getMockBuilder(\Magento\Bundle\Model\ResourceModel\Selection\Collection::class)
+        $selectionCollection = $this->getMockBuilder(SelectionCollection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $selectionCollection->expects($this->any())->method('addAttributeToSelect')->willReturnSelf();
@@ -2334,10 +1712,7 @@ class TypeTest extends TestCase
         $product = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $buyRequest = $this->getMockBuilder(DataObject::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getBundleOption', 'getBundleOptionQty'])
-            ->getMock();
+        $buyRequest = $this->createPartialMock(DataObjectTestHelper::class, ['getBundleOption', 'getBundleOptionQty']);
 
         $buyRequest->expects($this->once())->method('getBundleOption')->willReturn('bundleOption');
         $buyRequest->expects($this->once())->method('getBundleOptionQty')->willReturn('optionId');
@@ -2359,10 +1734,7 @@ class TypeTest extends TestCase
             ->onlyMethods(['getItems'])
             ->disableOriginalConstructor()
             ->getMock();
-        $item = $this->getMockBuilder(DataObject::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getId', 'getRequired'])
-            ->getMock();
+        $item = $this->createPartialMock(DataObjectTestHelper::class, ['getId', 'getRequired']);
         $selectionCollection = $this->getSelectionCollection();
         $this->bundleCollectionFactory->expects($this->once())->method('create')->willReturn($selectionCollection);
 
@@ -2370,7 +1742,7 @@ class TypeTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $product->expects($this->any())->method('hasData')->willReturn(true);
+        $product->method('hasData')->willReturn(true);
         $product
             ->method('getData')
             ->willReturnCallback(
@@ -2385,9 +1757,7 @@ class TypeTest extends TestCase
         $item->expects($this->once())->method('getRequired')->willReturn(true);
 
         $selectionCollection
-            ->expects($this->any())
-            ->method('getIterator')
-            ->willReturn(new \ArrayIterator([$selectionItem]));
+            ->method('getIterator')->willReturn(new \ArrayIterator([$selectionItem]));
         $this->assertEquals([[$selectionItem]], $this->model->getProductsToPurchaseByReqGroups($product));
     }
 
@@ -2396,11 +1766,7 @@ class TypeTest extends TestCase
      */
     public function testGetSearchableData(): void
     {
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getId', 'getStoreId'])
-            ->addMethods(['_wakeup', 'getHasOptions'])
-            ->getMock();
+        $product = $this->createPartialMock(ProductTestHelper::class, ['getId', 'getStoreId', 'getHasOptions']);
         $option = $this->getMockBuilder(\Magento\Bundle\Model\Option::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getSearchableData'])
@@ -2423,26 +1789,23 @@ class TypeTest extends TestCase
         $product = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['hasData', 'getData', 'setData', 'getId', 'getStoreId'])
-            ->addMethods(['_wakeup'])
             ->getMock();
         $this->expectProductEntityMetadata();
-        $optionCollection = $this->getMockBuilder(\Magento\Bundle\Model\ResourceModel\Option\Collection::class)
+        $optionCollection = $this->getMockBuilder(Collection::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getAllIds'])
             ->getMock();
         $selectionCollection = $this->getSelectionCollection();
         $selectionCollection
-            ->expects($this->any())
-            ->method('getSize')
-            ->willReturn(1);
+            ->method('getSize')->willReturn(1);
         $this->bundleCollectionFactory->expects($this->once())->method('create')->willReturn($selectionCollection);
 
-        $product->expects($this->any())->method('getStoreId')->willReturn(0);
+        $product->method('getStoreId')->willReturn(0);
         $product->expects($this->once())
             ->method('setData')
             ->with('_cache_instance_store_filter', 0)
             ->willReturnSelf();
-        $product->expects($this->any())->method('hasData')->willReturn(true);
+        $product->method('hasData')->willReturn(true);
         $product
             ->method('getData')
             ->willReturnCallback(
@@ -2488,8 +1851,8 @@ class TypeTest extends TestCase
      *
      * @return void
      * @throws LocalizedException
-     * @dataProvider notAvailableOptionProvider
      */
+    #[DataProvider('notAvailableOptionProvider')]
     public function testCheckProductBuyStateMissedOptionException($element, $expectedMessage, $check): void
     {
         if (is_callable($element)) {
@@ -2506,7 +1869,7 @@ class TypeTest extends TestCase
         ]);
         $product->setCustomOption(json_encode([]));
 
-        $this->bundleCollectionFactory->method('getItemById')->willReturn($element);
+        $this->selectionCollectionMock->method('getItemById')->willReturn($element);
         $this->catalogProduct->setSkipSaleableCheck($check);
 
         try {
@@ -2538,12 +1901,10 @@ class TypeTest extends TestCase
         ]);
         $product->setCustomOption(json_encode([]));
 
-        $falseSelection = $this->getMockBuilder(Selection::class)->disableOriginalConstructor()
-            ->addMethods(['isSalable'])
-            ->getMock();
+        $falseSelection = $this->createPartialMock(\Magento\Bundle\Test\Unit\Helper\SelectionTestHelper::class, ['isSalable']);
         $falseSelection->method('isSalable')->willReturn(false);
 
-        $this->bundleCollectionFactory->method('getItemById')->willReturn($falseSelection);
+        $this->selectionCollectionMock->method('getItemById')->willReturn($falseSelection);
         $this->catalogProduct->setSkipSaleableCheck(false);
 
         try {
@@ -2565,11 +1926,7 @@ class TypeTest extends TestCase
      */
     public function getProductMock(): MockObject
     {
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getId', 'getStoreId', 'getCustomOption', 'getTypeInstance'])
-            ->addMethods(['_wakeup', 'getHasOptions', 'setStoreFilter', 'setCustomOption'])
-            ->getMock();
+        $product = $this->createPartialMock(ProductTestHelper::class, ['getId', 'getStoreId', 'getCustomOption', 'getTypeInstance', 'getHasOptions', 'setStoreFilter', 'setCustomOption']);
         $product->method('getTypeInstance')->willReturn($product);
         $product->method('setStoreFilter')->willReturn($product);
         $optionCollectionCache = new DataObject();
@@ -2592,25 +1949,23 @@ class TypeTest extends TestCase
      */
     public function mockBundleCollection(): void
     {
-        $selectionCollectionMock = $this->getSelectionCollectionMock([]);
+        $this->selectionCollectionMock = $this->getSelectionCollectionMock([]);
         $this->bundleCollectionFactory->expects($this->once())
             ->method('create')
-            ->willReturn($selectionCollectionMock);
-        $this->bundleCollectionFactory->method('create')->willReturn($selectionCollectionMock);
-        $selectionCollectionMock->method('addAttributeToSelect')->willReturn($selectionCollectionMock);
-        $selectionCollectionMock->method('setFlag')->willReturn($selectionCollectionMock);
-        $selectionCollectionMock->method('setPositionOrder')->willReturn($selectionCollectionMock);
-        $selectionCollectionMock->method('addStoreFilter')->willReturn($selectionCollectionMock);
-        $selectionCollectionMock->method('setStoreId')->willReturn($selectionCollectionMock);
-        $selectionCollectionMock->method('addFilterByRequiredOptions')->willReturn($selectionCollectionMock);
-        $selectionCollectionMock->method('setOptionIdsFilter')->willReturn($selectionCollectionMock);
+            ->willReturn($this->selectionCollectionMock);
+        $this->bundleCollectionFactory->method('create')->willReturn($this->selectionCollectionMock);
+        $this->selectionCollectionMock->method('addAttributeToSelect')->willReturn($this->selectionCollectionMock);
+        $this->selectionCollectionMock->method('setFlag')->willReturn($this->selectionCollectionMock);
+        $this->selectionCollectionMock->method('setPositionOrder')->willReturn($this->selectionCollectionMock);
+        $this->selectionCollectionMock->method('addStoreFilter')->willReturn($this->selectionCollectionMock);
+        $this->selectionCollectionMock->method('setStoreId')->willReturn($this->selectionCollectionMock);
+        $this->selectionCollectionMock->method('addFilterByRequiredOptions')->willReturn($this->selectionCollectionMock);
+        $this->selectionCollectionMock->method('setOptionIdsFilter')->willReturn($this->selectionCollectionMock);
     }
 
     protected function getMockForSectionClass()
     {
-        $falseSelection = $this->getMockBuilder(Selection::class)->disableOriginalConstructor()
-            ->addMethods(['isSalable'])
-            ->getMock();
+        $falseSelection = $this->createPartialMock(\Magento\Bundle\Test\Unit\Helper\SelectionTestHelper::class, ['isSalable']);
         $falseSelection->method('isSalable')->willReturn(false);
         return $falseSelection;
     }
@@ -2643,9 +1998,7 @@ class TypeTest extends TestCase
      */
     private function expectProductEntityMetadata(): void
     {
-        $entityMetadataMock = $this->getMockBuilder(EntityMetadataInterface::class)
-            ->onlyMethods(['getLinkField'])
-            ->getMockForAbstractClass();
+        $entityMetadataMock = $this->createMock(EntityMetadataInterface::class);
         $entityMetadataMock->method('getLinkField')->willReturn('test_link_field');
         $this->metadataPool->expects($this->any())->method('getMetadata')
             ->with(ProductInterface::class)

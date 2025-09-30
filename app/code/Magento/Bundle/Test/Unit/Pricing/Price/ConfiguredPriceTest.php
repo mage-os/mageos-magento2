@@ -87,17 +87,17 @@ class ConfiguredPriceTest extends TestCase
      */
     protected function setUp(): void
     {
-        $basePrice = $this->getMockForAbstractClass(PriceInterface::class);
-        $basePrice->expects($this->any())->method('getValue')->willReturn($this->basePriceValue);
+        $basePrice = $this->createMock(PriceInterface::class);
+        $basePrice->method('getValue')->willReturn($this->basePriceValue);
 
         $this->priceInfoMock = $this->createMock(Base::class);
-        $this->priceInfoMock->expects($this->any())->method('getPrice')->willReturn($basePrice);
+        $this->priceInfoMock->method('getPrice')->willReturn($basePrice);
         $this->productMock = $this->getMockBuilder(Product::class)
             ->onlyMethods(['getPriceInfo', 'getOptionById', 'getResource', 'getId'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->productMock->expects($this->once())->method('getPriceInfo')->willReturn($this->priceInfoMock);
-        $this->priceCurrencyMock = $this->getMockForAbstractClass(PriceCurrencyInterface::class);
+        $this->priceCurrencyMock = $this->createMock(PriceCurrencyInterface::class);
 
         $this->jsonSerializerMock = $this->getMockBuilder(Json::class)
             ->getMock();
@@ -105,21 +105,17 @@ class ConfiguredPriceTest extends TestCase
             ->onlyMethods(['getSelectionPriceList'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->configuredPriceSelectionMock->expects($this->any())->method('getSelectionPriceList')
-            ->willReturn($this->prepareAndReturnSelectionPriceDataStub());
-        $this->amountInterfaceMock = $this->getMockBuilder(AmountInterface::class)->getMock();
-        $this->amountInterfaceMock->expects($this->any())->method('getBaseAmount')
-            ->willReturn(100.00);
+        $this->configuredPriceSelectionMock->method('getSelectionPriceList')->willReturn($this->prepareAndReturnSelectionPriceDataStub());
+        $this->amountInterfaceMock = $this->createAmountInterfaceMock();
+        $this->amountInterfaceMock->method('getBaseAmount')->willReturn(100.00);
         $this->calculatorMock = $this->getMockBuilder(Calculator::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->calculatorMock->expects($this->any())->method('calculateBundleAmount')
-            ->willReturn($this->amountInterfaceMock);
+        $this->calculatorMock->method('calculateBundleAmount')->willReturn($this->amountInterfaceMock);
         $this->discountCalculatorMock = $this->getMockBuilder(DiscountCalculator::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->discountCalculatorMock->expects($this->any())->method('calculateDiscount')
-            ->willReturn(-5.00);
+        $this->discountCalculatorMock->method('calculateDiscount')->willReturn(-5.00);
         $this->model = new ConfiguredPrice(
             $this->productMock,
             1,
@@ -137,10 +133,10 @@ class ConfiguredPriceTest extends TestCase
      */
     public function testGetValueMethod(): void
     {
-        $this->productMock->expects($this->any())->method('getId')->willReturn(123);
+        $this->productMock->method('getId')->willReturn(123);
         $this->itemMock = $this->getMockBuilder(ItemInterface::class)
             ->getMock();
-        $this->itemMock->expects($this->any())->method('getProduct')->willReturn($this->productMock);
+        $this->itemMock->method('getProduct')->willReturn($this->productMock);
         $this->model->setItem($this->itemMock);
         $valueFromMock = $this->model->getValue();
         $this->assertEquals(95.00, $valueFromMock);
@@ -156,8 +152,8 @@ class ConfiguredPriceTest extends TestCase
             ->getMock();
         $this->itemMock = $this->getMockBuilder(ItemInterface::class)
             ->getMock();
-        $this->itemMock->expects($this->any())->method('getProduct')->willReturn($this->productMock);
-        $this->productMock->expects($this->any())->method('getId')->willReturn(false);
+        $this->itemMock->method('getProduct')->willReturn($this->productMock);
+        $this->productMock->method('getId')->willReturn(false);
         $this->model->setItem($this->itemMock);
         $valueFromMock = $this->model->getValue();
         $this->assertEquals(100.00, $valueFromMock);
@@ -165,7 +161,7 @@ class ConfiguredPriceTest extends TestCase
 
     /**
      * Stub data for calculation amount of bundle
-     * @return \Magento\Framework\DataObject[]
+     * @return DataObject[]
      */
     private function prepareAndReturnSelectionPriceDataStub(): array
     {
@@ -179,5 +175,24 @@ class ConfiguredPriceTest extends TestCase
             $first,
             $second
         ];
+    }
+
+    /**
+     * Create a mock that implements all AmountInterface abstract methods
+     *
+     * @return AmountInterface
+     */
+    private function createAmountInterfaceMock(): AmountInterface
+    {
+        $mock = $this->createMock(AmountInterface::class);
+        
+        // Mock all abstract methods with default values
+        $mock->method('__toString')->willReturn('0');
+        $mock->method('getAdjustmentAmount')->willReturn(0.0);
+        $mock->method('getTotalAdjustmentAmount')->willReturn(0.0);
+        $mock->method('getAdjustmentAmounts')->willReturn([]);
+        $mock->method('hasAdjustment')->willReturn(false);
+        
+        return $mock;
     }
 }

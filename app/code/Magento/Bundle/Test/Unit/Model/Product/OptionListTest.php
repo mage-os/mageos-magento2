@@ -21,6 +21,8 @@ use Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Bundle\Test\Unit\Helper\OptionTestHelper;
+use Magento\Bundle\Test\Unit\Helper\OptionInterfaceTestHelper;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -94,56 +96,39 @@ class OptionListTest extends TestCase
         $optionData = ['title' => 'test title'];
         $productSku = 'product_sku';
 
-        $productMock = $this->getMockForAbstractClass(ProductInterface::class);
+        $productMock = $this->createMock(ProductInterface::class);
         $productMock->expects($this->once())->method('getSku')->willReturn($productSku);
 
-        $optionMock = $this->getMockBuilder(Option::class)
-            ->addMethods(['getDefaultTitle'])
-            ->onlyMethods(['getOptionId', 'getData', 'getTitle'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $optionMock = new OptionTestHelper();
         $optionsCollMock = $this->getMockBuilder(Collection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $optionsCollMock->expects($this->any())
-            ->method('getIterator')
-            ->willReturn(new \ArrayIterator([$optionMock]));
+        $optionsCollMock->method('getIterator')->willReturn(new \ArrayIterator([$optionMock]));
         $this->typeMock->expects($this->once())
             ->method('getOptionsCollection')
             ->with($productMock)
             ->willReturn($optionsCollMock);
 
-        $optionMock->expects($this->exactly(2))->method('getOptionId')->willReturn($optionId);
-        $optionMock->expects($this->once())->method('getData')->willReturn($optionData);
-        $optionMock->expects($this->once())->method('getTitle')->willReturn(null);
-        $optionMock->expects($this->exactly(2))->method('getDefaultTitle')->willReturn($optionData['title']);
+        $optionMock->setOptionId($optionId);
+        $optionMock->setTestData('getData_return', $optionData);
+        $optionMock->setTitle(null);
+        $optionMock->setDefaultTitle($optionData['title']);
 
-        $linkMock = $this->getMockForAbstractClass(LinkInterface::class);
+        $linkMock = $this->createMock(LinkInterface::class);
         $this->linkListMock->expects($this->once())
             ->method('getItems')
             ->with($productMock, $optionId)
             ->willReturn([$linkMock]);
-        $newOptionMock = $this->getMockBuilder(OptionInterface::class)
-            ->addMethods(['setDefaultTitle'])
-            ->getMockForAbstractClass();
+        $newOptionMock = new OptionInterfaceTestHelper();
         $this->dataObjectHelperMock->expects($this->once())
             ->method('populateWithArray')
             ->with($newOptionMock, $optionData, OptionInterface::class)
             ->willReturnSelf();
-        $newOptionMock->expects($this->once())->method('setOptionId')->with($optionId)->willReturnSelf();
-        $newOptionMock->expects($this->once())
-            ->method('setTitle')
-            ->with($optionData['title'])
-            ->willReturnSelf();
-        $newOptionMock->expects($this->once())
-            ->method('setDefaultTitle')
-            ->with($optionData['title'])
-            ->willReturnSelf();
-        $newOptionMock->expects($this->once())->method('setSku')->with($productSku)->willReturnSelf();
-        $newOptionMock->expects($this->once())
-            ->method('setProductLinks')
-            ->with([$linkMock])
-            ->willReturnSelf();
+        $newOptionMock->setOptionId($optionId);
+        $newOptionMock->setTitle($optionData['title']);
+        $newOptionMock->setDefaultTitle($optionData['title']);
+        $newOptionMock->setSku($productSku);
+        $newOptionMock->setProductLinks([$linkMock]);
         $this->optionFactoryMock->expects($this->once())->method('create')->willReturn($newOptionMock);
 
         $this->assertEquals(

@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Bundle\Test\Unit\Model\Product\Attribute\Source\Price;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use Magento\Bundle\Model\Product\Attribute\Source\Price\View;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Option;
@@ -16,6 +17,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+#[CoversClass(\Magento\Bundle\Model\Product\Attribute\Source\Price\View::class)]
 class ViewTest extends TestCase
 {
     /**
@@ -45,9 +47,7 @@ class ViewTest extends TestCase
             OptionFactory::class,
             ['create']
         );
-        $this->optionFactory->expects($this->any())
-            ->method('create')
-            ->willReturn($this->option);
+        $this->optionFactory->method('create')->willReturn($this->option);
         $this->attribute = $this->createMock(AbstractAttribute::class);
 
         $this->model = (new ObjectManager($this))
@@ -73,9 +73,6 @@ class ViewTest extends TestCase
         }
     }
 
-    /**
-     * @covers \Magento\Bundle\Model\Product\Attribute\Source\Price\View::getOptionText
-     */
     public function testGetOptionTextForExistLabel()
     {
         $existValue = 1;
@@ -83,9 +80,6 @@ class ViewTest extends TestCase
         $this->assertInstanceOf(Phrase::class, $this->model->getOptionText($existValue));
     }
 
-    /**
-     * @covers \Magento\Bundle\Model\Product\Attribute\Source\Price\View::getOptionText
-     */
     public function testGetOptionTextForNotExistLabel()
     {
         $notExistValue = -1;
@@ -96,9 +90,7 @@ class ViewTest extends TestCase
     public function testGetFlatColumns()
     {
         $code = 'attribute-code';
-        $this->attribute->expects($this->any())
-            ->method('getAttributeCode')
-            ->willReturn($code);
+        $this->attribute->method('getAttributeCode')->willReturn($code);
 
         $columns = $this->model->getFlatColumns();
 

@@ -51,7 +51,7 @@ class ItemTest extends TestCase
             ->expects($this->once())
             ->method('getProductType')
             ->willReturn(Type::TYPE_SIMPLE);
-        $this->itemMock->expects($this->any())->method('getParentItem')->willReturn($parentItemMock);
+        $this->itemMock->method('getParentItem')->willReturn($parentItemMock);
         $parentItemMock->expects($this->once())
             ->method('getProductType')
             ->willReturn(Type::TYPE_BUNDLE);
@@ -67,7 +67,7 @@ class ItemTest extends TestCase
             ->expects($this->once())
             ->method('getProductType')
             ->willReturn(Type::TYPE_SIMPLE);
-        $this->itemMock->expects($this->any())->method('getParentItem')->willReturn(false);
+        $this->itemMock->method('getParentItem')->willReturn(false);
         $this->itemMock->expects($this->never())->method('isDummy');
         $this->itemMock->expects($this->never())->method('getQtyToInvoice');
         $this->assertEquals($result, $this->plugin->afterGetQtyToCancel($this->itemMock, $result));
@@ -84,7 +84,7 @@ class ItemTest extends TestCase
         $parentItemMock = $this->getMockBuilder(Item::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->itemMock->expects($this->any())->method('getParentItem')->willReturn($parentItemMock);
+        $this->itemMock->method('getParentItem')->willReturn($parentItemMock);
         $parentItemMock->expects($this->once())
             ->method('getProductType')
             ->willReturn(Type::TYPE_BUNDLE);

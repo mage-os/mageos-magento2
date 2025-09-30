@@ -7,6 +7,8 @@ declare(strict_types=1);
 
 namespace Magento\Bundle\Test\Unit\Model\Product;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Bundle\Model\Product\Price;
 use Magento\Bundle\Model\Product\Type;
 use Magento\Bundle\Model\ResourceModel\Selection\Collection;
@@ -29,10 +31,13 @@ use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Store\Test\Unit\Helper\StoreTestHelper;
+use Magento\Framework\Test\Unit\Helper\DataObjectTestHelper;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
+#[CoversClass(\Magento\Bundle\Model\Product\Price::class)]
 class PriceTest extends TestCase
 {
     /**
@@ -61,12 +66,12 @@ class PriceTest extends TestCase
     private $eventManagerMock;
 
     /**
-     * @var \Magento\Catalog\Helper\Data|MockObject
+     * @var Data|MockObject
      */
     private $catalogHelperMock;
 
     /**
-     * @var Store|MockObject
+     * @var StoreTestHelper
      */
     private $storeMock;
 
@@ -103,25 +108,21 @@ class PriceTest extends TestCase
             RuleFactory::class,
             ['create']
         );
-        $this->storeManagerMock = $this->getMockForAbstractClass(StoreManagerInterface::class);
-        $this->localeDateMock = $this->getMockForAbstractClass(TimezoneInterface::class);
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
+        $this->localeDateMock = $this->createMock(TimezoneInterface::class);
         $this->customerSessionMock = $this->createMock(Session::class);
-        $this->eventManagerMock = $this->getMockForAbstractClass(ManagerInterface::class);
+        $this->eventManagerMock = $this->createMock(ManagerInterface::class);
         $this->catalogHelperMock = $this->createMock(Data::class);
-        $this->storeMock = $this->getMockBuilder(Store::class)
-            ->addMethods(['roundPrice'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->storeMock = new StoreTestHelper();
         $this->priceCurrency = $this->getMockBuilder(
             PriceCurrencyInterface::class
         )->getMock();
-        $this->groupManagement = $this->getMockBuilder(GroupManagementInterface::class)
-            ->getMockForAbstractClass();
+        $this->groupManagement = $this->createMock(GroupManagementInterface::class);
         $tpFactory = $this->createPartialMock(
             ProductTierPriceInterfaceFactory::class,
             ['create']
         );
-        $scopeConfig = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $scopeConfig = $this->createMock(ScopeConfigInterface::class);
         $this->serializer = $this->getMockBuilder(Json::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -177,21 +178,17 @@ class PriceTest extends TestCase
      * @param bool $dateInInterval
      * @param float $expected
      *
-     * @covers \Magento\Bundle\Model\Product\Price::calculateSpecialPrice
-     * @covers \Magento\Bundle\Model\Product\Price::__construct
-     * @dataProvider calculateSpecialPrice
      * @return void
      */
+    #[DataProvider('calculateSpecialPrice')]
     public function testCalculateSpecialPrice($finalPrice, $specialPrice, $callsNumber, $dateInInterval, $expected)
     {
         $this->localeDateMock->expects($this->exactly($callsNumber))
             ->method('isScopeDateInInterval')->willReturn($dateInInterval);
 
-        $this->storeManagerMock->expects($this->any())
-            ->method('getStore')->willReturn($this->storeMock);
+        $this->storeManagerMock->method('getStore')->willReturn($this->storeMock);
 
-        $this->storeMock->expects($this->any())
-            ->method('roundPrice')->willReturnArgument(0);
+        $this->storeMock->setRoundPriceCallback(function($price) { return $price; });
 
         $this->assertEquals(
             $expected,
@@ -238,15 +235,12 @@ class PriceTest extends TestCase
      * Test for getTotalBundleItemsPrice() with empty options.
      *
      * @param string|null $value
-     * @dataProvider dataProviderWithEmptyOptions
      * @return void
      */
+    #[DataProvider('dataProviderWithEmptyOptions')]
     public function testGetTotalBundleItemsPriceWithEmptyOptions($value)
     {
-        $dataObjectMock = $this->getMockBuilder(DataObject::class)
-            ->addMethods(['getValue'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $dataObjectMock = new DataObjectTestHelper();
 
         $productMock = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
@@ -260,9 +254,7 @@ class PriceTest extends TestCase
             ->with('bundle_selection_ids')
             ->willReturn($dataObjectMock);
 
-        $dataObjectMock->expects($this->once())
-            ->method('getValue')
-            ->willReturn($value);
+        $dataObjectMock->setValue($value);
         $this->assertEquals(0, $this->model->getTotalBundleItemsPrice($productMock));
     }
 
@@ -289,10 +281,7 @@ class PriceTest extends TestCase
     {
         $storeId = 1;
 
-        $dataObjectMock = $this->getMockBuilder(DataObject::class)
-            ->addMethods(['getValue'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $dataObjectMock = new DataObjectTestHelper();
 
         $productMock = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
@@ -320,9 +309,7 @@ class PriceTest extends TestCase
             ->method('getStoreId')
             ->willReturn($storeId);
 
-        $dataObjectMock->expects($this->once())
-            ->method('getValue')
-            ->willReturn('{"0":1}');
+        $dataObjectMock->setValue('{"0":1}');
 
         $productTypeMock->expects($this->once())
             ->method('getSelectionsByIds')

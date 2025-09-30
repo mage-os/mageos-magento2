@@ -59,11 +59,9 @@ class BundleDataProviderTest extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
 
-        $this->modifierPool = $this->getMockBuilder(PoolInterface::class)
-            ->getMockForAbstractClass();
+        $this->modifierPool = $this->createMock(PoolInterface::class);
 
-        $this->requestMock = $this->getMockBuilder(RequestInterface::class)
-            ->getMockForAbstractClass();
+        $this->requestMock = $this->createMock(RequestInterface::class);
         $this->collectionMock = $this->getMockBuilder(Collection::class)
             ->disableOriginalConstructor()
             ->onlyMethods(
@@ -81,9 +79,7 @@ class BundleDataProviderTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
             ->getMock();
-        $this->collectionFactoryMock->expects($this->any())
-            ->method('create')
-            ->willReturn($this->collectionMock);
+        $this->collectionFactoryMock->method('create')->willReturn($this->collectionMock);
         $this->dataHelperMock = $this->getMockBuilder(Data::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getAllowedSelectionTypes'])

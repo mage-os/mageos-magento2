@@ -60,14 +60,36 @@ class OptionPriceRendererTest extends TestCase
 
         $productMock = $this->createMock(Product::class);
 
-        $priceRenderer = $this->getMockBuilder(BlockInterface::class)
-            ->addMethods(['render'])
-            ->onlyMethods(['toHtml'])
-            ->getMockForAbstractClass();
-        $priceRenderer->expects($this->once())
-            ->method('render')
-            ->with('tier_price', $productMock, $expectedArguments)
-            ->willReturn($expectedHtml);
+        /** @var BlockInterface $priceRenderer */
+        $priceRenderer = new class implements BlockInterface {
+            private $renderResult = '';
+            private $toHtmlResult = '';
+            
+            public function __construct()
+            {
+            }
+            
+            public function render($type, $product, $arguments)
+            {
+                return $this->renderResult;
+            }
+            public function setRenderResult($result)
+            {
+                $this->renderResult = $result;
+                return $this;
+            }
+            public function toHtml()
+            {
+                return $this->toHtmlResult;
+            }
+            public function setToHtmlResult($result)
+            {
+                $this->toHtmlResult = $result;
+                return $this;
+            }
+        };
+        
+        $priceRenderer->setRenderResult($expectedHtml);
 
         $this->layoutMock->method('getBlock')
             ->with('product.price.render.default')

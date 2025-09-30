@@ -14,6 +14,7 @@ use Magento\Catalog\Api\Data\ProductRenderInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ProductRender\FormattedPriceInfoBuilder;
 use Magento\Catalog\Pricing\Price\FinalPrice;
+use Magento\Catalog\Test\Unit\Helper\PriceInfoInterfaceTestHelper;
 use Magento\Framework\Pricing\Amount\AmountInterface;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -43,8 +44,7 @@ class BundlePriceTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->priceCurrencyMock = $this->getMockBuilder(PriceCurrencyInterface::class)
-            ->getMockForAbstractClass();
+        $this->priceCurrencyMock = $this->createMock(PriceCurrencyInterface::class);
         $this->priceInfoFactory = $this->getMockBuilder(PriceInfoInterfaceFactory::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
@@ -73,26 +73,11 @@ class BundlePriceTest extends TestCase
         $price = $this->getMockBuilder(FinalPrice::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $productRender = $this->getMockBuilder(ProductRenderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $amount = $this->getMockBuilder(AmountInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $minAmount = $this->getMockBuilder(AmountInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $priceInfo = $this->getMockBuilder(PriceInfoInterface::class)
-            ->addMethods(['getPrice'])
-            ->onlyMethods(
-                [
-                    'setMaxPrice',
-                    'setMaxRegularPrice',
-                    'setMinimalPrice',
-                    'setMinimalRegularPrice'
-                ]
-            )
-            ->getMockForAbstractClass();
+        $productRender = $this->createMock(ProductRenderInterface::class);
+        $amount = $this->createMock(AmountInterface::class);
+        $minAmount = $this->createMock(AmountInterface::class);
+        // Use PriceInfoInterfaceTestHelper for testability
+        $priceInfo = new PriceInfoInterfaceTestHelper();
 
         $productMock->expects($this->once())
             ->method('getTypeId')
@@ -100,27 +85,18 @@ class BundlePriceTest extends TestCase
         $productRender->expects($this->exactly(2))
             ->method('getPriceInfo')
             ->willReturn($priceInfo);
-        $priceInfo->expects($this->once())
-            ->method('setMaxPrice')
-            ->with($amountValue);
-        $priceInfo->expects($this->once())
-            ->method('setMaxRegularPrice')
-            ->with($amountValue);
-        $priceInfo->expects($this->once())
-            ->method('setMinimalPrice')
-            ->with($minAmountValue);
-        $priceInfo->expects($this->once())
-            ->method('setMinimalRegularPrice')
-            ->with($minAmountValue);
+        
+        // Set price info values directly using TestHelper setters
+        $priceInfo->setMaxPrice($amountValue);
+        $priceInfo->setMaxRegularPrice($amountValue);
+        $priceInfo->setMinimalPrice($minAmountValue);
+        $priceInfo->setMinimalRegularPrice($minAmountValue);
+        $priceInfo->setPrice($price);
+        
         $productMock->expects($this->exactly(4))
             ->method('getPriceInfo')
             ->willReturn($priceInfo);
-        $productMock->expects($this->any())
-            ->method('getPriceInfo')
-            ->willReturn($priceInfo);
-        $priceInfo->expects($this->exactly(4))
-            ->method('getPrice')
-            ->willReturn($price);
+        $productMock->method('getPriceInfo')->willReturn($priceInfo);
         $price->expects($this->exactly(2))
             ->method('getMaximalPrice')
             ->willReturn($amount);

@@ -21,6 +21,8 @@ use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\EntityManager\EntityMetadataInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
+use Magento\Catalog\Test\Unit\Helper\ProductExtensionInterfaceTestHelper;
 
 class SaveHandlerTest extends TestCase
 {
@@ -55,7 +57,7 @@ class SaveHandlerTest extends TestCase
     private $productRelationsProcessorComposite;
 
     /**
-     * @var ProductInterface|MockObject
+     * @var ProductTestHelper
      */
     private $entity;
 
@@ -84,12 +86,8 @@ class SaveHandlerTest extends TestCase
         $this->productRelationsProcessorComposite = $this->getMockBuilder(ProductRelationsProcessorComposite::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->entity = $this->getMockBuilder(ProductInterface::class)
-            ->addMethods(['getCopyFromView', 'getData'])
-            ->getMockForAbstractClass();
-        $this->entity->expects($this->any())
-            ->method('getTypeId')
-            ->willReturn(Type::TYPE_CODE);
+        $this->entity = new ProductTestHelper();
+        $this->entity->setTypeId(Type::TYPE_CODE);
 
         $this->saveHandler = new SaveHandler(
             $this->optionRepository,
@@ -107,31 +105,18 @@ class SaveHandlerTest extends TestCase
      */
     public function testExecuteWithBulkOptionsProcessing(): void
     {
-        $option = $this->getMockBuilder(OptionInterface::class)
-            ->onlyMethods(['getOptionId'])
-            ->getMockForAbstractClass();
-        $option->expects($this->any())
-            ->method('getOptionId')
-            ->willReturn(1);
+        $option = $this->createMock(OptionInterface::class);
+        $option->method('getOptionId')->willReturn(1);
         $bundleOptions = [$option];
 
-        $extensionAttributes = $this->getMockBuilder(ProductExtensionInterface::class)
-            ->addMethods(['getBundleProductOptions'])
-            ->getMockForAbstractClass();
-        $extensionAttributes->expects($this->any())
-            ->method('getBundleProductOptions')
-            ->willReturn($bundleOptions);
-        $this->entity->expects($this->once())
-            ->method('getExtensionAttributes')
-            ->willReturn($extensionAttributes);
-        $metadata = $this->getMockBuilder(EntityMetadataInterface::class)
-            ->getMockForAbstractClass();
+        $extensionAttributes = new ProductExtensionInterfaceTestHelper();
+        $extensionAttributes->setBundleProductOptions($bundleOptions);
+        $this->entity->setExtensionAttributes($extensionAttributes);
+        $metadata = $this->createMock(EntityMetadataInterface::class);
         $this->metadataPool->expects($this->once())
             ->method('getMetadata')
             ->willReturn($metadata);
-        $this->optionRepository->expects($this->any())
-            ->method('getList')
-            ->willReturn($bundleOptions);
+        $this->optionRepository->method('getList')->willReturn($bundleOptions);
 
         $this->optionSave->expects($this->once())
             ->method('saveBulk');

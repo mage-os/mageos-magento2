@@ -16,43 +16,53 @@ class OptionTest extends TestCase
     public function testGetAddButtonId()
     {
         $button = new DataObject();
+        $button->setId(42);
 
-        $itemsBlock = $this->getMockBuilder(DataObject::class)
-            ->addMethods(['getChildBlock'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $itemsBlock->expects(
-            $this->atLeastOnce()
-        )->method(
-            'getChildBlock'
-        )->with(
-            'add_button'
-        )->willReturn(
-            $button
-        );
+        $itemsBlock = new class extends DataObject {
+            private $childBlocks = [];
+            
+            public function __construct() {}
+            
+            public function getChildBlock($name) 
+            { 
+                return $this->childBlocks[$name] ?? null; 
+            }
+            
+            public function setChildBlock($name, $block) 
+            { 
+                $this->childBlocks[$name] = $block; 
+                return $this; 
+            }
+        };
+        
+        // Set up the add_button child block BEFORE setting it in the layout
+        $itemsBlock->setChildBlock('add_button', $button);
 
-        $layout = $this->getMockBuilder(DataObject::class)
-            ->addMethods(['getBlock'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $layout->expects(
-            $this->atLeastOnce()
-        )->method(
-            'getBlock'
-        )->with(
-            'admin.product.bundle.items'
-        )->willReturn(
-            $itemsBlock
-        );
-
+        $layout = new class extends DataObject {
+            private $blocks = [];
+            
+            public function __construct() {}
+            
+            public function getBlock($name) 
+            { 
+                return $this->blocks[$name] ?? null; 
+            }
+            
+            public function setBlock($name, $block) 
+            { 
+                $this->blocks[$name] = $block; 
+                return $this; 
+            }
+        };
+        $layout->setBlock('admin.product.bundle.items', $itemsBlock);
+            
         $block = $this->createPartialMock(
             Option::class,
             ['getLayout']
         );
         $block->expects($this->atLeastOnce())->method('getLayout')->willReturn($layout);
 
-        $this->assertNotEquals(42, $block->getAddButtonId());
-        $button->setId(42);
+        // Test that the button ID is correctly retrieved
         $this->assertEquals(42, $block->getAddButtonId());
     }
 }

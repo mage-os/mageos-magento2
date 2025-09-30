@@ -49,10 +49,17 @@ class InitOptionRendererObserverTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
-        $this->observerMock = $this->getMockBuilder(Observer::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getBlock'])
-            ->getMock();
+        
+        // Replace addMethods with anonymous class for Observer
+        /** @var Observer $observerMock */
+        $this->observerMock = new class extends Observer {
+            private $block = null;
+            
+            public function __construct() {}
+            
+            public function getBlock() { return $this->block; }
+            public function setBlock($block) { $this->block = $block; return $this; }
+        };
 
         $this->blockMock = $this->getMockBuilder(Options::class)
             ->disableOriginalConstructor()
@@ -67,10 +74,8 @@ class InitOptionRendererObserverTest extends TestCase
      */
     public function testProductOptionRendererInit()
     {
-        $this->observerMock
-            ->expects($this->once())
-            ->method('getBlock')
-            ->willReturn($this->blockMock);
+        // Set up the anonymous class properties using setters
+        $this->observerMock->setBlock($this->blockMock);
 
         $this->blockMock
             ->expects($this->once())

@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Bundle\Test\Unit\Model\Quote\Item;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Bundle\Model\Option as BundleOption;
 use Magento\Bundle\Model\Product\Price;
 use Magento\Bundle\Model\Product\Type;
@@ -15,6 +16,7 @@ use Magento\Bundle\Model\ResourceModel\Option\Collection as OptionsCollection;
 use Magento\Bundle\Model\ResourceModel\Selection\Collection as SelectionsCollection;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Configuration\Item\Option\OptionInterface;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use PHPUnit\Framework\TestCase;
@@ -49,8 +51,8 @@ class OptionTest extends TestCase
     /**
      * @param array $customOptions
      * @param array $expected
-     * @dataProvider getSelectionOptionsDataProvider
      */
+    #[DataProvider('getSelectionOptionsDataProvider')]
     public function testGetSelectionOptions(array $customOptions, array $expected): void
     {
         $bundleProduct = $this->getMockBuilder(Product::class)
@@ -195,16 +197,9 @@ class OptionTest extends TestCase
 
         $selections = [];
         foreach ($ids as $id) {
-            $selection = $this->getMockBuilder(Product::class)
-                ->disableOriginalConstructor()
-                ->addMethods(['getSelectionId', 'getOptionId'])
-                ->getMock();
-
-            $selection->method('getSelectionId')
-                ->willReturn($id);
-
-            $selection->method('getOptionId')
-                ->willReturn(intdiv($id, 10));
+            $selection = new ProductTestHelper();
+            $selection->setSelectionId($id);
+            $selection->setOptionId(intdiv($id, 10));
 
             $selections[$id] = $selection;
         }

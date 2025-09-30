@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Bundle\Test\Unit\Model\Option;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Bundle\Model\Option;
 use Magento\Bundle\Model\Option\Validator;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -51,8 +52,8 @@ class ValidatorTest extends TestCase
      * @param string $type
      * @param bool $isValid
      * @param string[] $expectedMessages
-     * @dataProvider providerIsValid
      */
+    #[DataProvider('providerIsValid')]
     public function testIsValid($title, $type, $isValid, $expectedMessages)
     {
         /** @var MockObject|Option $option */
