@@ -333,4 +333,48 @@ class ProductExtensionInterfaceTestHelper implements ProductExtensionInterface
         $this->discounts = $discounts;
         return $this;
     }
+
+    /**
+     * Get test stock item
+     *
+     * @return mixed
+     */
+    public function getTestStockItem()
+    {
+        return $this->data['test_stock_item'] ?? null;
+    }
+
+    /**
+     * Set test stock item
+     *
+     * @param mixed $testStockItem
+     * @return $this
+     */
+    public function setTestStockItem($testStockItem)
+    {
+        $this->data['test_stock_item'] = $testStockItem;
+        return $this;
+    }
+
+    /**
+     * Get test stock item qty
+     *
+     * @return mixed
+     */
+    public function getTestStockItemQty()
+    {
+        return $this->data['test_stock_item_qty'] ?? null;
+    }
+
+    /**
+     * Set test stock item qty
+     *
+     * @param mixed $testStockItemQty
+     * @return $this
+     */
+    public function setTestStockItemQty($testStockItemQty)
+    {
+        $this->data['test_stock_item_qty'] = $testStockItemQty;
+        return $this;
+    }
 }
