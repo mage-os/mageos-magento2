@@ -17,7 +17,6 @@ use Magento\Framework\Api\SearchCriteria;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\AddressInterface;
-use Magento\Quote\Api\Data\PaymentExtensionInterface;
 use Magento\Quote\Api\Data\PaymentInterface;
 use Magento\Quote\Api\GuestCartRepositoryInterface;
 use Magento\Quote\Model\MaskedQuoteIdToQuoteId;
@@ -25,8 +24,8 @@ use Magento\Quote\Model\Quote;
 use Magento\Store\Model\App\Emulation;
 use Magento\Store\Model\ScopeInterface;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\MockObject\RuntimeException;
 use PHPUnit\Framework\TestCase;
+use Magento\Quote\Test\Unit\Helper\PaymentExtensionAgreementIdsTestHelper;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -59,7 +58,7 @@ class GuestValidationTest extends TestCase
     private $addressMock;
 
     /**
-     * @var MockObject
+     * @var object
      */
     private $extensionAttributesMock;
 
@@ -100,12 +99,12 @@ class GuestValidationTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->agreementsValidatorMock = $this->getMockForAbstractClass(AgreementsValidatorInterface::class);
-        $this->subjectMock = $this->getMockForAbstractClass(GuestPaymentInformationManagementInterface::class);
-        $this->paymentMock = $this->getMockForAbstractClass(PaymentInterface::class);
-        $this->addressMock = $this->getMockForAbstractClass(AddressInterface::class);
+        $this->agreementsValidatorMock = $this->createMock(AgreementsValidatorInterface::class);
+        $this->subjectMock = $this->createMock(GuestPaymentInformationManagementInterface::class);
+        $this->paymentMock = $this->createMock(PaymentInterface::class);
+        $this->addressMock = $this->createMock(AddressInterface::class);
         $this->extensionAttributesMock = $this->getPaymentExtension();
-        $this->scopeConfigMock = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
         $this->checkoutAgreementsListMock = $this->createMock(
             CheckoutAgreementsListInterface::class
         );
@@ -155,7 +154,9 @@ class GuestValidationTest extends TestCase
             ->method('getList')
             ->with($searchCriteriaMock)
             ->willReturn([1]);
-        $this->extensionAttributesMock->expects($this->once())->method('getAgreementIds')->willReturn($agreements);
+        if (method_exists($this->extensionAttributesMock, 'setAgreementIds')) {
+            $this->extensionAttributesMock->setAgreementIds($agreements);
+        }
         $this->agreementsValidatorMock->expects($this->once())->method('isValid')->with($agreements)->willReturn(true);
         $this->paymentMock->expects(static::atLeastOnce())
             ->method('getExtensionAttributes')
@@ -194,7 +195,9 @@ class GuestValidationTest extends TestCase
             ->method('getList')
             ->with($searchCriteriaMock)
             ->willReturn([1]);
-        $this->extensionAttributesMock->expects($this->once())->method('getAgreementIds')->willReturn($agreements);
+        if (method_exists($this->extensionAttributesMock, 'setAgreementIds')) {
+            $this->extensionAttributesMock->setAgreementIds($agreements);
+        }
         $this->agreementsValidatorMock->expects($this->once())->method('isValid')->with($agreements)->willReturn(false);
         $this->paymentMock->expects(static::atLeastOnce())
             ->method('getExtensionAttributes')
@@ -218,20 +221,10 @@ class GuestValidationTest extends TestCase
     }
 
     /**
-     * Build payment extension mock.
-     *
-     * @return MockObject
+     * Build payment extension attributes stub.
      */
-    private function getPaymentExtension(): MockObject
+    private function getPaymentExtension(): object
     {
-        $mockBuilder = $this->getMockBuilder(PaymentExtensionInterface::class)
-            ->disableOriginalConstructor();
-        try {
-            $mockBuilder->addMethods(['getAgreementIds', 'setAgreementIds']);
-        } catch (RuntimeException $e) {
-            // Payment extension already generated.
-        }
-
-        return $mockBuilder->getMock();
+        return new PaymentExtensionAgreementIdsTestHelper();
     }
 }

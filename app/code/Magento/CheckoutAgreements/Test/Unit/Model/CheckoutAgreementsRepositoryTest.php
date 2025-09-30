@@ -8,7 +8,6 @@ declare(strict_types=1);
 namespace Magento\CheckoutAgreements\Test\Unit\Model;
 
 use Magento\CheckoutAgreements\Api\CheckoutAgreementsListInterface;
-use Magento\CheckoutAgreements\Model\Agreement as AgreementModel;
 use Magento\CheckoutAgreements\Model\AgreementFactory;
 use Magento\CheckoutAgreements\Model\Api\SearchCriteria\ActiveStoreAgreementsFilter;
 use Magento\CheckoutAgreements\Model\CheckoutAgreementsRepository;
@@ -23,6 +22,7 @@ use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\CheckoutAgreements\Test\Unit\Helper\AgreementModelSetStoresTestHelper;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -97,16 +97,15 @@ class CheckoutAgreementsRepositoryTest extends TestCase
             CollectionFactory::class,
             ['create']
         );
-        $this->storeManagerMock = $this->getMockForAbstractClass(StoreManagerInterface::class);
-        $this->scopeConfigMock = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
+        $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
         $this->resourceMock = $this->createMock(Agreement::class);
         $this->agrFactoryMock = $this->createPartialMock(
             AgreementFactory::class,
             ['create']
         );
-        $this->agreementMock = $this->getMockBuilder(AgreementModel::class)
-            ->addMethods(['setStores'])
-            ->onlyMethods(['addData', 'getData', 'getAgreementId', 'getId'])
+        $this->agreementMock = $this->getMockBuilder(AgreementModelSetStoresTestHelper::class)
+            ->onlyMethods(['addData', 'getData', 'getAgreementId', 'getId', 'setStores'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->storeMock = $this->createMock(Store::class);
@@ -188,7 +187,7 @@ class CheckoutAgreementsRepositoryTest extends TestCase
         $this->storeManagerMock->expects($this->never())->method('getStore');
         $this->agreementMock->expects($this->once())->method('setStores');
         $this->agreementMock->expects($this->once())->method('getId')->willReturn($agreementId);
-        $this->agreementMock->expects($this->any())->method('getData')->willReturn(['data']);
+        $this->agreementMock->method('getData')->willReturn(['data']);
         $this->agreementMock
             ->expects($this->once())
             ->method('addData')->with(['data'])
