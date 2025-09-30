@@ -226,6 +226,7 @@ class EventTestHelper extends Event
      *
      * @param bool $clear
      * @return mixed
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getFormData($clear = false)
     {

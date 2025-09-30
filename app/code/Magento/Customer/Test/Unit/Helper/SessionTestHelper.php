@@ -108,6 +108,8 @@ class SessionTestHelper extends Session
         // Skip parent constructor to avoid dependency injection issues
         // Set up basic mock for groupManagement to prevent integration test failures
         $this->groupManagement = $this->createMockGroupManagement();
+        // Set up basic mock for storage to prevent integration test failures
+        $this->storage = $this->createMockStorage();
     }
 
     /**
@@ -126,6 +128,29 @@ class SessionTestHelper extends Session
                         return 0;
                     }
                 };
+            }
+        };
+    }
+
+    /**
+     * Create a mock storage object
+     *
+     * @return object
+     */
+    private function createMockStorage()
+    {
+        return new class {
+            private $data = [];
+
+            public function setData($key, $value)
+            {
+                $this->data[$key] = $value;
+                return $this;
+            }
+
+            public function getData($key)
+            {
+                return $this->data[$key] ?? null;
             }
         };
     }
@@ -366,5 +391,119 @@ class SessionTestHelper extends Session
     public function getCustomerFactory()
     {
         return $this->customerFactory;
+    }
+
+    /**
+     * Set data
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return $this
+     */
+    public function setData($key, $value = null)
+    {
+        if ($this->storage) {
+            $this->storage->setData($key, $value);
+        }
+        return $this;
+    }
+
+    /**
+     * Get customer group ID
+     *
+     * @return int
+     */
+    public function getCustomerGroupId()
+    {
+        if ($this->storage) {
+            return $this->storage->getData('customer_group_id') ?? 0;
+        }
+        return 0;
+    }
+
+    /**
+     * Set customer group ID
+     *
+     * @param int $groupId
+     * @return $this
+     */
+    public function setCustomerGroupId($groupId)
+    {
+        if ($this->storage) {
+            $this->storage->setData('customer_group_id', $groupId);
+        }
+        return $this;
+    }
+
+    /**
+     * Get customer data
+     *
+     * @return mixed
+     */
+    public function getCustomerData()
+    {
+        return $this->customer;
+    }
+
+    /**
+     * Check customer ID
+     *
+     * @param int $customerId
+     * @return bool
+     */
+    public function checkCustomerId($customerId)
+    {
+        return $customerId > 0;
+    }
+
+    /**
+     * Get ID
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->customerId;
+    }
+
+    /**
+     * Get is customer emulated
+     *
+     * @return bool
+     */
+    public function getIsCustomerEmulated()
+    {
+        return false;
+    }
+
+    /**
+     * Reset state after request
+     *
+     * @return void
+     */
+    public function _resetState(): void
+    {
+        // Reset all properties to their default values
+        $this->loggedIn = false;
+        $this->customerId = 1;
+        $this->wishlistItemCount = 0;
+        $this->defaultTaxShippingAddress = null;
+        $this->defaultTaxBillingAddress = null;
+        $this->customerTaxClassId = null;
+        $this->websiteId = null;
+        $this->beforeWishlistUrl = null;
+        $this->beforeWishlistRequest = null;
+        $this->customer = null;
+        $this->urlFactory = null;
+        $this->customerFactory = null;
+        $this->_urlFactory = null;
+        $this->_customerFactory = null;
+        $this->_customerUrl = null;
+        $this->response = null;
+        
+        // Reset storage data if available
+        if ($this->storage) {
+            $this->storage->setData('customer_group_id', null);
+        }
     }
 }
