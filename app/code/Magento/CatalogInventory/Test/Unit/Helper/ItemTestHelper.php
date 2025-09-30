@@ -13,6 +13,7 @@ use Magento\CatalogInventory\Model\Stock\Item;
  * TestHelper for Item
  * Provides implementation for Item with additional test methods
  * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+ * @SuppressWarnings(PHPMD.BooleanGetMethodName)
  */
 class ItemTestHelper extends Item
 {

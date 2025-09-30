@@ -13,6 +13,7 @@ use Magento\Catalog\Model\Product;
  * TestHelper for Product
  * Provides implementation for Product with additional test methods
  * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+ * @SuppressWarnings(PHPMD.BooleanGetMethodName)
  */
 class ProductTestHelper extends Product
 {

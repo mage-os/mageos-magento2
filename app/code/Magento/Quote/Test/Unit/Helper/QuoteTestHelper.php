@@ -12,6 +12,7 @@ use Magento\Quote\Model\Quote;
 /**
  * TestHelper for Quote
  * Provides implementation for Quote with additional test methods
+ * @SuppressWarnings(PHPMD.BooleanGetMethodName)
  */
 class QuoteTestHelper extends Quote
 {

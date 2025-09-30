@@ -18,6 +18,7 @@ use Magento\CatalogInventory\Api\Data\StockItemInterface;
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.BooleanGetMethodName)
  */
 class StockItemInterfaceTestHelper implements StockItemInterface
 {
