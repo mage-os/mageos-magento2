@@ -25,8 +25,9 @@ use Magento\Quote\Api\Data\PaymentMethodInterface;
 use Magento\Quote\Api\Data\TotalsInterface;
 use Magento\Quote\Api\PaymentMethodManagementInterface;
 use Magento\Quote\Model\Quote;
-use Magento\Quote\Model\Quote\Address;
+use Magento\Quote\Test\Unit\Helper\AddressShippingInfoTestHelper;
 use Magento\Quote\Model\QuoteAddressValidator;
+use Magento\Quote\Model\Quote\Address;
 use Magento\Quote\Model\Shipping;
 use Magento\Quote\Model\ShippingAssignment;
 use Magento\Quote\Model\ShippingAssignmentFactory;
@@ -136,19 +137,7 @@ class ShippingInformationManagementTest extends TestCase
         );
         $this->cartTotalsRepositoryMock = $this->createMock(CartTotalRepositoryInterface::class);
         $this->quoteRepositoryMock = $this->createMock(CartRepositoryInterface::class);
-        $this->shippingAddressMock = new class extends Address {
-            private $countryId;
-            private $shippingMethod;
-            private $rateByCode;
-            public function __construct() {}
-            public function setLimitCarrier($carrier) { return $this; }
-            public function setCountryIdVal($val) { $this->countryId = $val; }
-            public function getCountryId() { return $this->countryId; }
-            public function setShippingMethodVal($val) { $this->shippingMethod = $val; }
-            public function getShippingMethod() { return $this->shippingMethod; }
-            public function setShippingRateByCodeVal($val) { $this->rateByCode = $val; }
-            public function getShippingRateByCode($code) { return $this->rateByCode; }
-        };
+        $this->shippingAddressMock = new AddressShippingInfoTestHelper();
 
         $this->quoteMock = $this->createMock(Quote::class);
 

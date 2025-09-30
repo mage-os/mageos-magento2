@@ -24,6 +24,7 @@ use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Checkout\Test\Unit\Helper\SessionQuoteLastAddedProductTestHelper;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -78,15 +79,7 @@ class CrosssellTest extends TestCase
                 'storeManager' => $this->storeManager
             ]
         );
-        $this->checkoutSession = new class extends Session {
-            private $quote;
-            private $lastAddedProductId;
-            public function __construct() {}
-            public function setQuote($quote) { $this->quote = $quote; return $this; }
-            public function getQuote() { return $this->quote; }
-            public function setLastAddedProductId($id) { $this->lastAddedProductId = $id; return $this; }
-            public function getLastAddedProductId() { return $this->lastAddedProductId; }
-        };
+        $this->checkoutSession = new SessionQuoteLastAddedProductTestHelper();
         $this->productRepository = $this->createMock(
             ProductRepositoryInterface::class
         );

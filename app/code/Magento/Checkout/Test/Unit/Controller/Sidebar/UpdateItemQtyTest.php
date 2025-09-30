@@ -18,6 +18,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Magento\Framework\Test\Unit\Helper\HttpResponseJsonRepresentTestHelper;
 
 /**
  * Class used to execute test cases for update item quantity
@@ -74,16 +75,7 @@ class UpdateItemQtyTest extends TestCase
         $this->jsonHelperMock = $this->createMock(Data::class);
         $this->quantityProcessor = $this->createMock(RequestQuantityProcessor::class);
         $this->requestMock = $this->createMock(RequestInterface::class);
-        $this->responseMock = new class extends \Magento\Framework\App\Response\Http {
-            public function __construct() {}
-            public function representJson($jsonResult)
-            {
-                if ($jsonResult === 'json encoded') {
-                    return 'json represented';
-                }
-                return $jsonResult;
-            }
-        };
+        $this->responseMock = new HttpResponseJsonRepresentTestHelper();
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->updateItemQty = $this->objectManagerHelper->getObject(

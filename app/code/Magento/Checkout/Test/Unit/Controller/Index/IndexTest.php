@@ -33,6 +33,7 @@ use PHPUnit\Framework\MockObject\Builder\InvocationMocker as InvocationMocker;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Rule\InvokedCount as InvokedCount;
 use PHPUnit\Framework\TestCase;
+use Magento\Quote\Test\Unit\Helper\QuoteMutableFlagsTestHelper;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyFields)
@@ -131,19 +132,7 @@ class IndexTest extends TestCase
         $this->objectManager = new ObjectManager($this);
         $this->objectManagerMock = $this->basicMock(ObjectManagerInterface::class);
         $this->data = $this->basicMock(Data::class);
-        $this->quote = new class extends Quote {
-            private $hasItemsVal = false;
-            private $hasErrorVal = false;
-            private $validateMinimumVal = false;
-            public function __construct() {}
-            public function hasItems() { return $this->hasItemsVal; }
-            public function setHasItemsVal($v) { $this->hasItemsVal = (bool)$v; return $this; }
-            public function getHasError() { return $this->hasErrorVal; }
-            public function hasError() { return $this->hasErrorVal; }
-            public function setHasErrorVal($v) { $this->hasErrorVal = (bool)$v; return $this; }
-            public function validateMinimumAmount($multishipping = false) { return $this->validateMinimumVal; }
-            public function setValidateMinimumAmountVal($v) { $this->validateMinimumVal = (bool)$v; return $this; }
-        };
+        $this->quote = new QuoteMutableFlagsTestHelper();
         $this->contextMock = $this->basicMock(Context::class);
         $this->session = $this->basicMock(Session::class);
         $this->onepageMock = $this->basicMock(Onepage::class);

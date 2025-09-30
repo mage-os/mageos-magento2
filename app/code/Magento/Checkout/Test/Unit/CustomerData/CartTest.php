@@ -22,6 +22,11 @@ use Magento\Quote\Model\Quote\Item\Option;
 use Magento\Store\Model\System\Store;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Checkout\Test\Unit\Helper\SubtotalValueObjectTestHelper;
+use Magento\Quote\Test\Unit\Helper\QuoteFixtureTestHelper;
+use Magento\Quote\Test\Unit\Helper\QuoteItemTestHelper;
+use Magento\Store\Test\Unit\Helper\StoreWebsiteIdTestHelper;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -106,20 +111,10 @@ class CartTest extends TestCase
         $shortcutButtonsHtml = '<span>Buttons</span>';
         $websiteId = 100;
 
-        $subtotalMock = new class($subtotalValue) extends DataObject { private $v; public function __construct($v){$this->v=$v;} public function getValue(){return $this->v;} };
+        $subtotalMock = new SubtotalValueObjectTestHelper($subtotalValue);
         $totals = ['subtotal' => $subtotalMock];
 
-        $quoteMock = new class extends Quote {
-            private $totals; private $items; private $store;
-            public function __construct() {}
-            public function setFixtureTotals($t){ $this->totals = $t; return $this; }
-            public function setFixtureItems($i){ $this->items = $i; return $this; }
-            public function setFixtureStore($s){ $this->store = $s; return $this; }
-            public function getTotals(){ return $this->totals; }
-            public function getAllVisibleItems(){ return $this->items; }
-            public function getStore(){ return $this->store; }
-            public function getHasError(){ return false; }
-        };
+        $quoteMock = new QuoteFixtureTestHelper();
         $this->checkoutSessionMock->expects($this->exactly(2))->method('getQuote')->willReturn($quoteMock);
         $quoteMock->setFixtureTotals($totals);
 
@@ -130,19 +125,13 @@ class CartTest extends TestCase
             ->willReturn($subtotalValue);
         $this->checkoutHelperMock->expects($this->once())->method('canOnepageCheckout')->willReturn(true);
 
-        $quoteItemMock = new class($storeId) extends Item {
-            private $storeId; private $product;
-            public function __construct($storeId){ $this->storeId = $storeId; }
-            public function getStoreId(){ return $this->storeId; }
-            public function setProduct($p){ $this->product = $p; return $this; }
-            public function getProduct(){ return $this->product; }
-        };
+        $quoteItemMock = new QuoteItemTestHelper($storeId);
         $quoteMock->setFixtureItems([$quoteItemMock]);
 
-        $storeMock = new class($websiteId) extends Store { private $id; public function __construct($id){ $this->id=$id; } public function getWebsiteId(){ return $this->id; } };
+        $storeMock = new StoreWebsiteIdTestHelper($websiteId);
         $quoteMock->setFixtureStore($storeMock);
 
-        $productMock = new class($productId) extends Product { private $id; private $urlData; public function __construct($id){$this->id=$id;} public function isVisibleInSiteVisibility(){ return false; } public function getId(){ return $this->id; } public function setUrlDataObject($data){ $this->urlData = $data; return $this; } public function getUrlDataObject(){ return $this->urlData; } };
+        $productMock = new ProductTestHelper($productId);
         $quoteItemMock->setProduct($productMock);
 
         $this->catalogUrlMock->expects($this->once())
@@ -197,34 +186,16 @@ class CartTest extends TestCase
         $productRewrite = [$productId => ['rewrite' => 'product']];
         $itemData = ['item' => 'data'];
         $shortcutButtonsHtml = '<span>Buttons</span>';
-        $subtotalMock = new class($subtotalValue) extends DataObject { private $v; public function __construct($v){$this->v=$v;} public function getValue(){return $this->v;} };
+        $subtotalMock = new SubtotalValueObjectTestHelper($subtotalValue);
         $totals = ['subtotal' => $subtotalMock];
 
-        $quoteMock = new class extends Quote {
-            private $totals; private $items; private $store;
-            public function __construct() {}
-            public function setFixtureTotals($t){ $this->totals = $t; return $this; }
-            public function setFixtureItems($i){ $this->items = $i; return $this; }
-            public function setFixtureStore($s){ $this->store = $s; return $this; }
-            public function getTotals(){ return $this->totals; }
-            public function getAllVisibleItems(){ return $this->items; }
-            public function getStore(){ return $this->store; }
-            public function getHasError(){ return false; }
-        };
-        $quoteItemMock = new class($storeId) extends Item {
-            private $storeId; private $product; private $options;
-            public function __construct($storeId){ $this->storeId = $storeId; }
-            public function getStoreId(){ return $this->storeId; }
-            public function setProduct($p){ $this->product = $p; return $this; }
-            public function getProduct(){ return $this->product; }
-            public function setOption($code, $option){ $this->options[$code] = $option; return $this; }
-            public function getOptionByCode($code){ return $this->options[$code] ?? null; }
-        };
+        $quoteMock = new QuoteFixtureTestHelper();
+        $quoteItemMock = new QuoteItemTestHelper($storeId);
 
         $this->checkoutSessionMock->expects($this->exactly(2))->method('getQuote')->willReturn($quoteMock);
         $quoteMock->setFixtureTotals($totals);
 
-        $storeMock = new class($websiteId) extends Store { private $id; public function __construct($id){ $this->id=$id; } public function getWebsiteId(){ return $this->id; } };
+        $storeMock = new StoreWebsiteIdTestHelper($websiteId);
         $quoteMock->setFixtureStore($storeMock);
 
         $this->checkoutCartMock->expects($this->once())->method('getSummaryQty')->willReturn($summaryQty);
@@ -236,7 +207,7 @@ class CartTest extends TestCase
 
         $quoteMock->setFixtureItems([$quoteItemMock]);
 
-        $productMock = new class($productId) extends Product { private $id; private $urlData; public function __construct($id){$this->id=$id;} public function isVisibleInSiteVisibility(){ return false; } public function getId(){ return $this->id; } public function setUrlDataObject($data){ $this->urlData = $data; return $this; } public function getUrlDataObject(){ return $this->urlData; } };
+        $productMock = new ProductTestHelper($productId);
 
         $optionsMock = $this->createMock(Option::class);
         $optionsMock->expects($this->once())->method('getProduct')->willReturn($productMock);

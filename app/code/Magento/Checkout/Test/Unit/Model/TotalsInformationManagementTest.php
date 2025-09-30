@@ -14,6 +14,7 @@ use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\CartTotalRepositoryInterface;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address;
+use Magento\Quote\Test\Unit\Helper\AddressShippingInfoTestHelper;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class TotalsInformationManagementTest extends \PHPUnit\Framework\TestCase
@@ -79,16 +80,7 @@ class TotalsInformationManagementTest extends \PHPUnit\Framework\TestCase
         $addressInformationMock = $this->createMock(
             TotalsInformationInterface::class
         );
-        $addressMock = new class extends Address {
-            private $collectShippingRatesFlag = null;
-            private $shippingMethod = null;
-            public function __construct() {}
-            public function setCollectShippingRates($flag) { $this->collectShippingRatesFlag = $flag; return $this; }
-            public function setShippingMethod($value, $alreadyExclTax = false) { $this->shippingMethod = $value; return $this; }
-            public function getCollectShippingRatesFlag() { return $this->collectShippingRatesFlag; }
-            public function getShippingMethod() { return $this->shippingMethod; }
-            public function save() { return $this; }
-        };
+        $addressMock = new AddressShippingInfoTestHelper();
 
         $addressInformationMock->expects($this->once())->method('getAddress')->willReturn($addressMock);
         $addressInformationMock->method('getShippingCarrierCode')->willReturn($carrierCode);
@@ -123,22 +115,9 @@ class TotalsInformationManagementTest extends \PHPUnit\Framework\TestCase
         $this->cartTotalRepositoryMock->method('get')->with($cartId);
 
         $addressInformationMock = $this->createMock(TotalsInformationInterface::class);
-        $addressMock = new class extends Address {
-            private $collectShippingRatesFlag = null;
-            private $shippingMethod = 'flatrate_flatrate';
-            private $shippingAmount = null;
-            private $baseShippingAmount = null;
-            public function __construct() {}
-            public function setCollectShippingRates($flag) { $this->collectShippingRatesFlag = $flag; return $this; }
-            public function setShippingMethod($value, $alreadyExclTax = false) { $this->shippingMethod = $value; return $this; }
-            public function setShippingAmount($value, $alreadyExclTax = false) { $this->shippingAmount = $value; return $this; }
-            public function setBaseShippingAmount($value, $alreadyExclTax = false) { $this->baseShippingAmount = $value; return $this; }
-            public function getShippingMethod() { return $this->shippingMethod; }
-            public function getCollectShippingRatesFlag() { return $this->collectShippingRatesFlag; }
-            public function getShippingAmount() { return $this->shippingAmount; }
-            public function getBaseShippingAmount() { return $this->baseShippingAmount; }
-            public function save() { return $this; }
-        };
+        $addressMock = new AddressShippingInfoTestHelper();
+        $addressMock->setShippingMethod('flatrate_flatrate');
+
         $addressInformationMock->method('getAddress')
             ->willReturn($addressMock);
         $addressInformationMock->method('getShippingCarrierCode')

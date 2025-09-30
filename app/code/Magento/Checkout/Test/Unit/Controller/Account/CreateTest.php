@@ -15,7 +15,9 @@ use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\Test\Unit\Helper\ResultJsonTestHelper;
 use Magento\Sales\Api\OrderCustomerManagementInterface;
+use Magento\Checkout\Test\Unit\Helper\SessionOrderIdTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -62,12 +64,7 @@ class CreateTest extends TestCase
     protected function setUp(): void
     {
         $objectManagerHelper = new ObjectManager($this);
-        $this->checkoutSession = new class extends Session {
-            private $lastOrderId;
-            public function __construct() {}
-            public function setLastOrderId($id) { $this->lastOrderId = $id; return $this; }
-            public function getLastOrderId() { return $this->lastOrderId; }
-        };
+        $this->checkoutSession = new SessionOrderIdTestHelper();
         $this->customerSession = $this->createMock(\Magento\Customer\Model\Session::class);
         $this->orderCustomerService = $this->createMock(OrderCustomerManagementInterface::class);
         $this->messageManager = $this->createMock(ManagerInterface::class);
@@ -82,14 +79,7 @@ class CreateTest extends TestCase
         $contextMock->expects($this->once())
             ->method('getResultFactory')
             ->willReturn($this->resultFactory);
-        $this->resultPage = new class implements ResultInterface {
-            private $returnJson;
-            public function setReturnJson($json) { $this->returnJson = $json; return $this; }
-            public function setData($data) { return $this->returnJson; }
-            public function renderResult(\Magento\Framework\App\ResponseInterface $response) { return $this; }
-            public function setHttpResponseCode($code) { return $this; }
-            public function setHeader($name, $value, $replace = false) { return $this; }
-        };
+        $this->resultPage = new ResultJsonTestHelper();
 
         $this->action = $objectManagerHelper->getObject(
             Create::class,

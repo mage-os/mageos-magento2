@@ -39,6 +39,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 use Psr\Log\LoggerInterface;
+use Magento\Checkout\Test\Unit\Helper\SessionLastOrderIdGetterTestHelper;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyFields)
@@ -332,7 +333,16 @@ class OnepageTest extends TestCase
     {
         $orderIncrementId = 100001;
         $orderId = 1;
-        $sessionStub = new class($orderId) extends Session { public function __construct(private $id) {} public function getLastOrderId() { return $this->id; } };
+        $sessionStub = new SessionLastOrderIdGetterTestHelper($orderId);
+        $orderMock = $this->createPartialMock(
+            Order::class,
+            ['load', 'getIncrementId']
+        );
+        $orderMock->expects($this->once())->method('load')->with($orderId)->willReturnSelf();
+        $orderMock->expects($this->once())->method('getIncrementId')->willReturn($orderIncrementId);
+        $this->orderFactoryMock->expects($this->once())->method('create')->willReturn($orderMock);
+
+        // Recreate Onepage with the session stub to ensure getLastOrderId() reads correct value
         $this->onepage = $this->objectManagerHelper->getObject(
             Onepage::class,
             [
@@ -356,6 +366,7 @@ class OnepageTest extends TestCase
                 'encryptor' => $this->encryptorMock,
                 'addressRepository' => $this->addressRepositoryMock,
                 'accountManagement' => $this->accountManagementMock,
+                'orderSenderMock' => $this->createMock(OrderSender::class),
                 'customerRepository' => $this->customerRepositoryMock,
                 'extensibleDataObjectConverter' => $this->extensibleDataObjectConverterMock,
                 'quoteRepository' => $this->quoteRepositoryMock,
@@ -363,13 +374,7 @@ class OnepageTest extends TestCase
                 'totalsCollector' => $this->totalsCollectorMock
             ]
         );
-        $orderMock = $this->createPartialMock(
-            Order::class,
-            ['load', 'getIncrementId']
-        );
-        $orderMock->expects($this->once())->method('load')->with($orderId)->willReturnSelf();
-        $orderMock->expects($this->once())->method('getIncrementId')->willReturn($orderIncrementId);
-        $this->orderFactoryMock->expects($this->once())->method('create')->willReturn($orderMock);
+
         $this->assertEquals($orderIncrementId, $this->onepage->getLastOrderId());
     }
 }

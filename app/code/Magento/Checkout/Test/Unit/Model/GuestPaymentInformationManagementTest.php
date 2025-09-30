@@ -29,6 +29,7 @@ use Magento\Quote\Model\QuoteIdMaskFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Magento\Quote\Test\Unit\Helper\QuoteIdMaskTestHelper;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -183,14 +184,7 @@ class GuestPaymentInformationManagementTest extends TestCase
 
         $this->billingAddressManagementMock->expects($this->never())->method('assign');
         $this->paymentMethodManagementMock->expects($this->once())->method('set')->with($cartId, $paymentMock);
-        $quoteIdMask = new class extends QuoteIdMask {
-            public function __construct() {}
-            public function load($id, $field = null)
-            {
-                $this->setData('quote_id', $id);
-                return $this;
-            }
-        };
+        $quoteIdMask = new QuoteIdMaskTestHelper();
         $this->quoteIdMaskFactoryMock->expects($this->once())->method('create')->willReturn($quoteIdMask);
         $this->cartRepositoryMock->expects($this->once())->method('getActive')->with($cartId)->willReturn($quoteMock);
         $quoteMock->expects($this->once())->method('getBillingAddress')->willReturn($billingAddressMock);
@@ -212,14 +206,7 @@ class GuestPaymentInformationManagementTest extends TestCase
         $quoteMock->method('getItemsQty')->willReturn(1);
         $this->cartRepositoryMock->method('getActive')->with($cartId)->willReturn($quoteMock);
 
-        $quoteIdMask = new class extends QuoteIdMask {
-            public function __construct() {}
-            public function load($id, $field = null)
-            {
-                $this->setData('quote_id', $id);
-                return $this;
-            }
-        };
+        $quoteIdMask = new QuoteIdMaskTestHelper();
         $this->quoteIdMaskFactoryMock->method('create')->willReturn($quoteIdMask);
 
         $billingAddressMock->expects($this->once())->method('setEmail')->with($email)->willReturnSelf();
@@ -246,14 +233,7 @@ class GuestPaymentInformationManagementTest extends TestCase
         $quoteMock->method('getItemsQty')->willReturn(0);
         $this->cartRepositoryMock->method('getActive')->with($cartId)->willReturn($quoteMock);
 
-        $quoteIdMask = new class extends QuoteIdMask {
-            public function __construct() {}
-            public function load($id, $field = null)
-            {
-                $this->setData('quote_id', $id);
-                return $this;
-            }
-        };
+        $quoteIdMask = new QuoteIdMaskTestHelper();
         $this->quoteIdMaskFactoryMock->method('create')->willReturn($quoteIdMask);
 
         $billingAddressMock->expects($this->once())->method('setEmail')->with($email)->willReturnSelf();

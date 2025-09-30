@@ -13,6 +13,7 @@ use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Checkout\Test\Unit\Helper\ExtensionAttributesTestHelper;
 
 /**
  * Class ResetQuoteAddressesTest
@@ -68,7 +69,7 @@ class ResetQuoteAddressesTest extends TestCase
             'getExtensionAttributes',
             'isVirtual',
         ]);
-        $this->extensionAttributesMock = $this->createMock(CartExtensionInterface::class);
+        $this->extensionAttributesMock = new ExtensionAttributesTestHelper();
 
         $this->plugin = new ResetQuoteAddresses();
     }
@@ -121,14 +122,13 @@ class ResetQuoteAddressesTest extends TestCase
             ->willReturn($isVirtualQuote);
 
         if (!$isVirtualQuote && $extensionAttributes) {
-            $this->extensionAttributesMock->method('getShippingAssignments')->willReturn([static::STUB_SHIPPING_ASSIGNMENTS]);
-
-            $this->extensionAttributesMock->expects($this->once())
-                ->method('setShippingAssignments')
-                ->willReturnSelf();
+            $this->extensionAttributesMock->setShippingAssignments([static::STUB_SHIPPING_ASSIGNMENTS]);
         }
 
         $this->plugin->afterRemoveItem($this->quoteMock, $this->quoteMock, static::STUB_ITEM_ID);
+        if (!$isVirtualQuote && $extensionAttributes) {
+            $this->assertSame([], $this->extensionAttributesMock->getShippingAssignments());
+        }
     }
 
     /**
@@ -159,14 +159,13 @@ class ResetQuoteAddressesTest extends TestCase
             ->willReturn($isVirtualQuote);
 
         if (!$isVirtualQuote && $extensionAttributes) {
-            $this->extensionAttributesMock->method('getShippingAssignments')->willReturn($extensionAttributes);
-
-            $this->extensionAttributesMock->expects($this->once())
-                ->method('setShippingAssignments')
-                ->willReturnSelf();
+            $this->extensionAttributesMock->setShippingAssignments($extensionAttributes);
         }
 
         $this->plugin->afterRemoveItem($this->quoteMock, $this->quoteMock, static::STUB_ITEM_ID);
+        if (!$isVirtualQuote && $extensionAttributes) {
+            $this->assertSame([], $this->extensionAttributesMock->getShippingAssignments());
+        }
     }
 
     /**

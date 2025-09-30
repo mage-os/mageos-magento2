@@ -18,6 +18,11 @@ use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Checkout\Test\Unit\Helper\StoreFormatPriceTestHelper;
+use Magento\Checkout\Test\Unit\Helper\ItemPriceInclTaxFixedTestHelper;
+use Magento\Checkout\Test\Unit\Helper\ItemPriceInclTaxContextTestHelper;
+use Magento\Checkout\Test\Unit\Helper\RowTotalInclTaxFixedTestHelper;
+use Magento\Checkout\Test\Unit\Helper\SubtotalInclTaxNegativeTestHelper;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -217,7 +222,7 @@ class DataTest extends TestCase
 
     public function testGetPriceInclTax()
     {
-        $itemMock = new class extends DataObject { public function __construct() {} public function getPriceInclTax() { return 5.5; } };
+        $itemMock = new ItemPriceInclTaxFixedTestHelper(5.5);
         $this->assertEquals(5.5, $this->helper->getPriceInclTax($itemMock));
     }
 
@@ -238,16 +243,7 @@ class DataTest extends TestCase
                 'priceCurrency' => $this->priceCurrency,
             ]
         );
-        $itemMock = new class($qty, $taxAmount, $discountTaxCompensation, $rowTotal) extends DataObject {
-            private $qty; private $tax; private $comp; private $row;
-            public function __construct($qty, $tax, $comp, $row) { $this->qty=$qty; $this->tax=$tax; $this->comp=$comp; $this->row=$row; }
-            public function getPriceInclTax() { return false; }
-            public function getQty() { return $this->qty; }
-            public function getQtyOrdered() { return null; }
-            public function getTaxAmount() { return $this->tax; }
-            public function getDiscountTaxCompensation() { return $this->comp; }
-            public function getRowTotal() { return $this->row; }
-        };
+        $itemMock = new ItemPriceInclTaxContextTestHelper($qty, $taxAmount, $discountTaxCompensation, $rowTotal);
         $this->priceCurrency->expects($this->once())->method('round')->with($roundPrice)->willReturn($roundPrice);
         $this->assertEquals($expected, $helper->getPriceInclTax($itemMock));
     }
@@ -256,7 +252,7 @@ class DataTest extends TestCase
     {
         $rowTotalInclTax = 5.5;
         $expected = 5.5;
-        $itemMock = new class($rowTotalInclTax) extends DataObject { private $row; public function __construct($row) { $this->row=$row; } public function getRowTotalInclTax() { return $this->row; } };
+        $itemMock = new RowTotalInclTaxFixedTestHelper($rowTotalInclTax);
         $this->assertEquals($expected, $this->helper->getSubtotalInclTax($itemMock));
     }
 
@@ -266,7 +262,7 @@ class DataTest extends TestCase
         $discountTaxCompensation = 1;
         $rowTotal = 15;
         $expected = 17;
-        $itemMock = new class($taxAmount, $discountTaxCompensation, $rowTotal) extends DataObject { private $tax; private $comp; private $row; public function __construct($tax, $comp, $row) { $this->tax=$tax; $this->comp=$comp; $this->row=$row; } public function getRowTotalInclTax() { return false; } public function getTaxAmount() { return $this->tax; } public function getDiscountTaxCompensation() { return $this->comp; } public function getRowTotal() { return $this->row; } };
+        $itemMock = new SubtotalInclTaxNegativeTestHelper($taxAmount, $discountTaxCompensation, $rowTotal);
         $this->assertEquals($expected, $this->helper->getSubtotalInclTax($itemMock));
     }
 

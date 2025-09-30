@@ -14,6 +14,7 @@ use Magento\Checkout\Model\GuestShippingInformationManagement;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Quote\Model\QuoteIdMask;
 use Magento\Quote\Model\QuoteIdMaskFactory;
+use Magento\Quote\Test\Unit\Helper\QuoteIdMaskLoadByMaskedIdTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -57,11 +58,7 @@ class GuestShippingInformationManagementTest extends TestCase
         $quoteId = '100';
         $addressInformationMock = $this->createMock(ShippingInformationInterface::class);
 
-        $quoteIdMask = new class($quoteId) extends QuoteIdMask {
-            private $qid;
-            public function __construct($qid) { $this->qid = $qid; }
-            public function load($id, $field = null) { $this->setData('quote_id', $this->qid); return $this; }
-        };
+        $quoteIdMask = new QuoteIdMaskLoadByMaskedIdTestHelper($quoteId);
         $this->quoteIdMaskFactoryMock->expects($this->once())->method('create')->willReturn($quoteIdMask);
 
         $paymentInformationMock = $this->createMock(PaymentDetailsInterface::class);
