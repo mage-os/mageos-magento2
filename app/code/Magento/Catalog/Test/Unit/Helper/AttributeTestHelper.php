@@ -3,6 +3,7 @@
  * Copyright 2015 Adobe
  * All Rights Reserved.
  */
+declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Helper;
 
