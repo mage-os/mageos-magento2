@@ -35,6 +35,18 @@ class ItemTestHelper extends Item
      */
     public function getOrderItem(): self
     {
+        return $this->data['order_item'] ?? $this;
+    }
+
+    /**
+     * Set order item for testing
+     *
+     * @param mixed $item
+     * @return self
+     */
+    public function setOrderItem($item): self
+    {
+        $this->data['order_item'] = $item;
         return $this;
     }
 
