@@ -279,6 +279,7 @@ class InvoiceService implements InvoiceManagementInterface
         } else {
             return $item->getQtyToInvoice() > 0;
         }
+        return false;
     }
 
     /**
