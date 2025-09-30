@@ -12,6 +12,7 @@ use Magento\Customer\Model\Session;
 /**
  * Test helper class for Customer Session used across Customer and related module tests
  * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class SessionTestHelper extends Session
 {
@@ -140,11 +141,16 @@ class SessionTestHelper extends Session
     private function createMockStorage()
     {
         return new class {
+            /**
+             * @var array
+             */
             private $data = [];
 
-            public function setData($key, $value)
+            public function setData($key, $dataValue = null)
             {
-                $this->data[$key] = $value;
+                if ($dataValue !== null) {
+                    $this->data[$key] = $dataValue;
+                }
                 return $this;
             }
 
@@ -467,13 +473,24 @@ class SessionTestHelper extends Session
     }
 
     /**
-     * Get is customer emulated
+     * Check if customer is emulated
      *
      * @return bool
      */
-    public function getIsCustomerEmulated()
+    public function isCustomerEmulated()
     {
         return false;
+    }
+
+    /**
+     * Get is customer emulated (alias for compatibility)
+     *
+     * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     */
+    public function getIsCustomerEmulated()
+    {
+        return $this->isCustomerEmulated();
     }
 
     /**
