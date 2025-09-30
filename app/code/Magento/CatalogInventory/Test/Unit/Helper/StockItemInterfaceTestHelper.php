@@ -730,6 +730,4 @@ class StockItemInterfaceTestHelper implements StockItemInterface
         $this->isChildItem = false;
         return $this;
     }
-
 }
-

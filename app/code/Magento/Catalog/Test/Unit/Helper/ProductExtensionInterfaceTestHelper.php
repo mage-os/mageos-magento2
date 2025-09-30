@@ -16,6 +16,8 @@ use Magento\Catalog\Api\Data\ProductExtensionInterface;
  */
 class ProductExtensionInterfaceTestHelper implements ProductExtensionInterface
 {
+    /** @var array */
+    private $data = [];
     /** @var mixed */
     private $stockItem = null;
     /** @var array */

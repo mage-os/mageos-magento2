@@ -62,7 +62,7 @@ class DataObjectTestHelperForValidator extends DataObject
         return $this;
     }
 
-    public function hasError()
+    public function getHasError()
     {
         return $this->hasError;
     }

@@ -53,7 +53,7 @@ class QuoteItemTestHelperForValidator extends Item
         return $this;
     }
 
-    public function hasError()
+    public function getHasError()
     {
         return $this->hasError;
     }

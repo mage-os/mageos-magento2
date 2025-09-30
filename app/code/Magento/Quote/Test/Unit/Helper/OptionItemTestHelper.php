@@ -54,7 +54,7 @@ class OptionItemTestHelper extends Option
      *
      * @return bool
      */
-    public function hasError()
+    public function getHasError()
     {
         return $this->hasError;
     }

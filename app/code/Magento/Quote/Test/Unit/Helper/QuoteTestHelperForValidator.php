@@ -30,7 +30,7 @@ class QuoteTestHelperForValidator extends Quote
         // Skip parent constructor to avoid complex dependencies
     }
 
-    public function hasError()
+    public function getHasError()
     {
         return $this->hasError;
     }

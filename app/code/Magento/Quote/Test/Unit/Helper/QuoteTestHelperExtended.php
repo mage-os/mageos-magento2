@@ -40,7 +40,7 @@ class QuoteTestHelperExtended extends Quote
      *
      * @return bool
      */
-    public function hasError()
+    public function getHasError()
     {
         return $this->hasError;
     }
@@ -62,7 +62,7 @@ class QuoteTestHelperExtended extends Quote
      *
      * @return bool
      */
-    public function isSuperMode()
+    public function getIsSuperMode()
     {
         return $this->isSuperMode;
     }
