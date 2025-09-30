@@ -11,6 +11,7 @@ use Magento\Customer\Model\Session;
 
 /**
  * Test helper class for Customer Session used across Customer and related module tests
+ * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class SessionTestHelper extends Session
 {
@@ -95,11 +96,38 @@ class SessionTestHelper extends Session
     public $response = null;
 
     /**
+     * @var mixed
+     */
+    public $groupManagement = null;
+
+    /**
      * Constructor - skip parent constructor to avoid dependencies
      */
     public function __construct()
     {
         // Skip parent constructor to avoid dependency injection issues
+        // Set up basic mock for groupManagement to prevent integration test failures
+        $this->groupManagement = $this->createMockGroupManagement();
+    }
+
+    /**
+     * Create a mock group management object
+     *
+     * @return object
+     */
+    private function createMockGroupManagement()
+    {
+        return new class {
+            public function getNotLoggedInGroup()
+            {
+                return new class {
+                    public function getId()
+                    {
+                        return 0;
+                    }
+                };
+            }
+        };
     }
 
     /**

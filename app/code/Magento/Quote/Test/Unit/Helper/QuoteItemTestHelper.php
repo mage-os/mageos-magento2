@@ -168,6 +168,16 @@ class QuoteItemTestHelper extends Item
     private $isChildrenCalculated = false;
 
     /**
+     * @var mixed
+     */
+    private $productId = null;
+
+    /**
+     * @var mixed
+     */
+    private $buyRequest = null;
+
+    /**
      * Constructor
      */
     public function __construct()
