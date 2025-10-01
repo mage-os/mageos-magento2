@@ -165,8 +165,6 @@ class SaveAction
 
         /** @var LinkInterface $linkedProduct */
         foreach ($linksToAdd as $linkedProduct) {
-            $linkedProduct->setId(null);
-            $linkedProduct->setSelectionId(null);
             $this->linkManagement->addChild($bundleProduct, $option->getOptionId(), $linkedProduct);
         }
     }

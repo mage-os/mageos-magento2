@@ -453,14 +453,16 @@ class LinkManagement implements ProductLinkManagementInterface, ProductLinkManag
         $excludeSelectionIds = [];
         $usedProductIds = [];
         $removeSelectionIds = [];
+        $removeProductIds = [];
         foreach ($this->getOptions($product) as $option) {
             /** @var Selection $selection */
             foreach ($option->getSelections() as $selection) {
                 if ((strcasecmp($selection->getSku(), $childSku) == 0) && ($selection->getOptionId() == $optionId)) {
                     $removeSelectionIds[] = $selection->getSelectionId();
-                    $usedProductIds[] = $selection->getProductId();
+                    $removeProductIds[] = $selection->getProductId();
                     continue;
                 }
+                $usedProductIds[] = $selection->getProductId();
                 $excludeSelectionIds[] = $selection->getSelectionId();
             }
         }
@@ -473,7 +475,10 @@ class LinkManagement implements ProductLinkManagementInterface, ProductLinkManag
         /* @var $resource Bundle */
         $resource = $this->bundleFactory->create();
         $resource->dropAllUnneededSelections($product->getData($linkField), $excludeSelectionIds);
-        $resource->removeProductRelations($product->getData($linkField), array_unique($usedProductIds));
+        $productRelationsToRemove = array_diff($removeProductIds, $usedProductIds);
+        if ($productRelationsToRemove) {
+            $resource->removeProductRelations($product->getData($linkField), array_unique($productRelationsToRemove));
+        }
 
         return true;
     }

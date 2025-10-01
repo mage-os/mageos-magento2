@@ -641,14 +641,9 @@ class LinkManagementTest extends TestCase
     {
         $selectionId = 42;
         $optionId = 1;
-        $productLink = $this->getMockBuilder(LinkInterface::class)
-            ->onlyMethods(['getSku', 'getOptionId', 'setOptionId', 'setId'])
-            ->addMethods(['getSelectionId', 'setSelectionId'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $productLink->method('getSku')->willReturn('linked_product_sku');
-        $productLink->method('getOptionId')->willReturn(1);
-        $productLink->method('getSelectionId')->willReturn(1);
+        $sku = 'linked_product_sku';
+        $productLink = $this->createPartialMock(\Magento\Bundle\Model\Link::class, []);
+        $productLink->setSku($sku);
 
         $this->metadataMock->expects($this->exactly(2))->method('getLinkField')->willReturn($this->linkField);
         $productMock = $this->createMock(Product::class);
@@ -664,7 +659,7 @@ class LinkManagementTest extends TestCase
         $this->productRepository
             ->expects($this->once())
             ->method('get')
-            ->with('linked_product_sku')
+            ->with($sku)
             ->willReturn($linkedProductMock);
 
         $store = $this->createMock(Store::class);
@@ -702,12 +697,12 @@ class LinkManagementTest extends TestCase
         $selection->expects($this->once())->method('save');
         $selection->expects($this->any())->method('getId')->willReturn($selectionId);
         $this->bundleSelectionMock->expects($this->once())->method('create')->willReturn($selection);
-        $productLink->expects($this->once())->method('setSelectionId')->with($selectionId)->willReturnSelf();
-        $productLink->expects($this->once())->method('setId')->with($selectionId)->willReturnSelf();
-        $productLink->expects($this->once())->method('setOptionId')->with($optionId)->willReturnSelf();
 
         $result = $this->model->addChild($productMock, $optionId, $productLink);
         $this->assertEquals($selectionId, $result);
+        $this->assertEquals($selectionId, $productLink->getId());
+        $this->assertEquals($selectionId, $productLink->getSelectionId());
+        $this->assertEquals($optionId, $productLink->getOptionId());
     }
 
     /**
