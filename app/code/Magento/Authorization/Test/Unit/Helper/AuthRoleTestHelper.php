@@ -7,12 +7,15 @@ declare(strict_types=1);
 
 namespace Magento\Authorization\Test\Unit\Helper;
 
-use Magento\Authorization\Model\Role;
+use Magento\Authorization\Model\Role as AuthRole;
 
 /**
- * Test helper for Magento\Authorization\Model\Role (AuthRole alias)
+ * Test helper for creating AuthRole mocks with GWS methods
+ *
+ * This helper extends the concrete AuthRole class directly, providing a clean
+ * way to add test-specific GWS methods without using anonymous classes.
  */
-class AuthRoleTestHelper extends Role
+class AuthRoleTestHelper extends AuthRole
 {
     /**
      * @var bool
@@ -25,10 +28,10 @@ class AuthRoleTestHelper extends Role
     }
     
     /**
-     * Load role
+     * Load method for testing
      *
      * @param mixed $modelId
-     * @param string $field
+     * @param mixed $field
      * @return $this
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */

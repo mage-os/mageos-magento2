@@ -56,7 +56,7 @@ class RoleTestHelper extends Role
     
     /**
      * Is GWS is all flag
-     * 
+     *
      * @return bool
      */
     public function isGwsIsAll()
@@ -66,7 +66,7 @@ class RoleTestHelper extends Role
     
     /**
      * Get GWS is all flag (alias for compatibility)
-     * 
+     *
      * @return bool
      * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
@@ -155,7 +155,7 @@ class RoleTestHelper extends Role
     
     /**
      * Is GWS relevant flag
-     * 
+     *
      * @return bool
      */
     public function isGwsRelevant()
@@ -165,7 +165,7 @@ class RoleTestHelper extends Role
     
     /**
      * Get GWS relevant flag (alias for compatibility)
-     * 
+     *
      * @return bool
      * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
@@ -188,7 +188,7 @@ class RoleTestHelper extends Role
     
     /**
      * Is GWS data isset flag
-     * 
+     *
      * @return bool
      */
     public function isGwsDataIsset()
@@ -198,7 +198,7 @@ class RoleTestHelper extends Role
     
     /**
      * Get GWS data isset flag (alias for compatibility)
-     * 
+     *
      * @return bool
      * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
@@ -221,7 +221,7 @@ class RoleTestHelper extends Role
     
     /**
      * Get data
-     * 
+     *
      * @param string $key
      * @param mixed $index
      * @return mixed
@@ -254,7 +254,7 @@ class RoleTestHelper extends Role
     
     /**
      * Load role
-     * 
+     *
      * @param mixed $modelId
      * @param string $field
      * @return $this

@@ -17,7 +17,7 @@ class BackendSessionTestHelper extends Session
      */
     private $sessionData;
     
-    public function __construct(DataObject $sessionData = null)
+    public function __construct(?DataObject $sessionData = null)
     {
         // Skip parent constructor for testing
         $this->sessionData = $sessionData;
