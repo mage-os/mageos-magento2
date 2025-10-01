@@ -108,7 +108,7 @@ class CheckoutEndToEndTest extends GraphQlAbstract
         $this->setGuestEmailOnCart($cartId);
         $this->addProductToCart($cartId, 1, $this->findProduct());
 
-        $shippingMethod = $this->setShippingAddressWithNullSecondStreet($cartId);
+        $shippingMethod = $this->setAndVerifyShippingAddressWithNullSecondStreet($cartId);
 
         $this->setBillingAddress($cartId);
         $paymentMethod = $this->setShippingMethod($cartId, $shippingMethod);
@@ -433,7 +433,7 @@ QUERY;
      * @param string $cartId
      * @return array
      */
-    private function setShippingAddressWithNullSecondStreet(string $cartId): array
+    private function setAndVerifyShippingAddressWithNullSecondStreet(string $cartId): array
     {
         $query = <<<QUERY
             mutation {
