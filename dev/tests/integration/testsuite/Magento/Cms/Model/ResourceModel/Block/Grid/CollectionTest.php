@@ -47,9 +47,11 @@ class CollectionTest extends TestCase
                 'resourceModel' => Page::class
             ]
         );
+        $filterDate = new \DateTime($filterDate);
+        $filterDate->setTimezone(new \DateTimeZone($timeZone->getConfigTimezone()));
         $convertedDate = $timeZone->convertConfigTimeToUtc($filterDate);
 
-        $collection = $gridCollection->addFieldToFilter($field, ['qteq' => $filterDate]);
+        $collection = $gridCollection->addFieldToFilter($field, ['qteq' => $filterDate->format('Y-m-d H:i:s')]);
         $expectedSelectCondition = "`{$field}` = '{$convertedDate}'";
 
         $this->assertStringContainsString($expectedSelectCondition, $collection->getSelectSql(true));
