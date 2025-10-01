@@ -224,7 +224,7 @@ class DateTest extends TestCase
     ): void {
         if (is_string($filterData[$name])) {
             $uiComponent->expects(static::once())
-                ->method($showsTime ? 'convertDatetime' : 'convertDate')
+                ->method($showsTime ? 'convertDatetime' : 'convertDateWithTimezone')
                 ->with($filterData[$name])
                 ->willReturn(new \DateTime($filterData[$name]));
         } else {
@@ -241,7 +241,7 @@ class DateTest extends TestCase
             } else {
                 $from = new \DateTime($filterData[$name]['from'] ?? 'now');
                 $to = new \DateTime($filterData[$name]['to'] ? $filterData[$name]['to'] . ' 23:59:59' : 'now');
-                $uiComponent->method('convertDate')
+                $uiComponent->method('convertDateWithTimezone')
                     ->willReturnMap(
                         [
                             [$filterData[$name]['from'], 0, 0, 0, true, $from],

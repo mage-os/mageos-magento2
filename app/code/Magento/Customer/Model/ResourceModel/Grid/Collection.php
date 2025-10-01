@@ -26,12 +26,12 @@ class Collection extends SearchResult
     private $localeResolver;
 
     /**
-     * @inheritdoc
+     * @var string
      */
     protected $document = Document::class;
 
     /**
-     * @inheritdoc
+     * @var array
      */
     protected $_map = ['fields' => ['entity_id' => 'main_table.entity_id']];
 
