@@ -62,13 +62,19 @@ class OptionPriceRendererTest extends TestCase
 
         /** @var BlockInterface $priceRenderer */
         $priceRenderer = new class implements BlockInterface {
+            /**
+             * @var string
+             */
             private $renderResult = '';
+            /**
+             * @var string
+             */
             private $toHtmlResult = '';
-            
+
             public function __construct()
             {
             }
-            
+
             public function render($type, $product, $arguments)
             {
                 return $this->renderResult;
@@ -88,7 +94,7 @@ class OptionPriceRendererTest extends TestCase
                 return $this;
             }
         };
-        
+
         $priceRenderer->setRenderResult($expectedHtml);
 
         $this->layoutMock->method('getBlock')

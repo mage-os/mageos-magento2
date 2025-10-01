@@ -19,6 +19,7 @@ use Magento\Catalog\Model\Product\Configuration\Item\Option\OptionInterface;
 use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -51,6 +52,7 @@ class OptionTest extends TestCase
     /**
      * @param array $customOptions
      * @param array $expected
+     * @throws Exception
      */
     #[DataProvider('getSelectionOptionsDataProvider')]
     public function testGetSelectionOptions(array $customOptions, array $expected): void
@@ -133,6 +135,7 @@ class OptionTest extends TestCase
     /**
      * @param array $configuration
      * @return OptionInterface[]
+     * @throws Exception
      */
     private function getCustomOptions(array $configuration): array
     {

@@ -11,7 +11,7 @@ use Magento\Catalog\Model\Product;
 
 /**
  * Test helper class for Catalog Product with custom methods
- * 
+ *
  * This helper is placed in Magento_Catalog module as it's the core module
  * that contains the Product class and is used by many other modules
  * including Bundle, ConfigurableProduct, GroupedProduct, etc.

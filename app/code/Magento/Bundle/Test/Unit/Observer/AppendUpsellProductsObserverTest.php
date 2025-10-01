@@ -18,6 +18,7 @@ use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
 use Magento\Catalog\Model\ResourceModel\Product\Link\Product\Collection as ProductLinkCollection;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
+use Magento\Framework\Test\Unit\Helper\EventTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\GroupedProduct\Model\Product\Type\Grouped;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -51,7 +52,7 @@ class AppendUpsellProductsObserverTest extends TestCase
     private $configMock;
 
     /**
-     * @var Event
+     * @var EventTestHelper
      */
     private $eventMock;
 
@@ -75,7 +76,7 @@ class AppendUpsellProductsObserverTest extends TestCase
     private $observerMock;
 
     /**
-     * @var Event
+     * @var EventTestHelper
      */
     private $collectionMock;
 
@@ -97,72 +98,32 @@ class AppendUpsellProductsObserverTest extends TestCase
         $this->objectManager = new ObjectManager($this);
         $this->observerMock = $this->createMock(Observer::class);
 
-        $this->bundleCollectionMock = $this->getMockBuilder(ProductCollection::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([
-                'addAttributeToSelect',
-                'addFieldToFilter',
-                'addFinalPrice',
-                'addMinimalPrice',
-                'addStoreFilter',
-                'addTaxPercents',
-                'load',
-                'setFlag',
-                'setPageSize',
-                'setVisibility'
-            ])
-            ->getMock();
+        $this->bundleCollectionMock = $this->createPartialMock(ProductCollection::class, [
+            'addAttributeToSelect',
+            'addFieldToFilter',
+            'addFinalPrice',
+            'addMinimalPrice',
+            'addStoreFilter',
+            'addTaxPercents',
+            'load',
+            'setFlag',
+            'setPageSize',
+            'setVisibility'
+        ]);
 
-        $this->bundleDataMock = $this->getMockBuilder(BundleHelper::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getAllowedSelectionTypes'])
-            ->getMock();
+        $this->bundleDataMock = $this->createPartialMock(BundleHelper::class, ['getAllowedSelectionTypes']);
 
-        $this->bundleSelectionMock = $this->getMockBuilder(Selection::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getParentIdsByChild'])
-            ->getMock();
+        $this->bundleSelectionMock = $this->createPartialMock(Selection::class, ['getParentIdsByChild']);
 
-        $this->configMock = $this->getMockBuilder(CatalogConfig::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getProductAttributes'])
-            ->getMock();
+        $this->configMock = $this->createPartialMock(CatalogConfig::class, ['getProductAttributes']);
 
-        /** @var Event $eventMock */
-        $this->eventMock = new class extends Event {
-            private $product;
-            private $collection;
-            private $limit;
-            
-            public function __construct() {}
-            
-            public function getProduct() { return $this->product; }
-            public function setProduct($product) { $this->product = $product; return $this; }
-            public function getCollection() { return $this->collection; }
-            public function setCollection($collection) { $this->collection = $collection; return $this; }
-            public function getLimit() { return $this->limit; }
-            public function setLimit($limit) { $this->limit = $limit; return $this; }
-        };
+        $this->eventMock = new EventTestHelper();
 
-        /** @var Event $collectionMock */
-        $this->collectionMock = new class extends Event {
-            private $items;
-            
-            public function __construct() {}
-            
-            public function setItems($items) { $this->items = $items; return $this; }
-            public function getItems() { return $this->items; }
-        };
+        $this->collectionMock = new EventTestHelper();
 
-        $this->productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getCollection', 'getId', 'getTypeId'])
-            ->getMock();
+        $this->productMock = $this->createPartialMock(Product::class, ['getCollection', 'getId', 'getTypeId']);
 
-        $this->productVisibilityMock = $this->getMockBuilder(Visibility::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getVisibleInCatalogIds'])
-            ->getMock();
+        $this->productVisibilityMock = $this->createPartialMock(Visibility::class, ['getVisibleInCatalogIds']);
 
         $this->observer = $this->objectManager->getObject(
             AppendUpsellProductsObserver::class,

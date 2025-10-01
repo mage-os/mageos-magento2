@@ -13,6 +13,7 @@ use Magento\Bundle\Model\Product\LinksList;
 use Magento\Bundle\Model\Product\Type;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\Api\DataObjectHelper;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
@@ -49,6 +50,10 @@ class LinksListTest extends TestCase
      */
     protected $dataObjectHelperMock;
 
+    /**
+     * @return void
+     * @throws Exception
+     */
     protected function setUp(): void
     {
         $this->linkFactoryMock = $this->createPartialMock(
@@ -66,6 +71,10 @@ class LinksListTest extends TestCase
         $this->model = new LinksList($this->linkFactoryMock, $this->productTypeMock, $this->dataObjectHelperMock);
     }
 
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function testLinksList()
     {
         $optionId = 665;

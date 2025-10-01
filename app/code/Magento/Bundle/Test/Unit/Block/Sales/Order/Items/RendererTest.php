@@ -16,12 +16,13 @@ use Magento\Sales\Model\Order\Creditmemo;
 use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\Order\Item;
 use Magento\Sales\Model\Order\Shipment;
+use Magento\Sales\Test\Unit\Helper\ItemTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class RendererTest extends TestCase
 {
-    /** @var Item|MockObject */
+    /** @var ItemTestHelper */
     protected $orderItem;
 
     /** @var Renderer $model */
@@ -33,26 +34,7 @@ class RendererTest extends TestCase
     protected function setUp(): void
     {
         /** @var Item $orderItem */
-        $this->orderItem = new class extends Item {
-            private $orderItem = null;
-            private $orderItemId = null;
-            private $productOptions = [];
-            private $parentItem = null;
-            private $id = null;
-            
-            public function __construct() {}
-            
-            public function getOrderItem() { return $this->orderItem; }
-            public function setOrderItem($orderItem) { $this->orderItem = $orderItem; return $this; }
-            public function getOrderItemId() { return $this->orderItemId; }
-            public function setOrderItemId($orderItemId) { $this->orderItemId = $orderItemId; return $this; }
-            public function getProductOptions() { return $this->productOptions; }
-            public function setProductOptions(?array $options = null) { $this->productOptions = $options; return $this; }
-            public function getParentItem() { return $this->parentItem; }
-            public function setParentItem($parentItem) { $this->parentItem = $parentItem; return $this; }
-            public function getId() { return $this->id; }
-            public function setId($id) { $this->id = $id; return $this; }
-        };
+        $this->orderItem = new ItemTestHelper();
 
         $this->serializer = $this->createMock(Json::class);
         $objectManager = new ObjectManager($this);
@@ -65,81 +47,12 @@ class RendererTest extends TestCase
     #[DataProvider('getChildrenEmptyItemsDataProvider')]
     public function testGetChildrenEmptyItems($class, $method, $returnClass)
     {
-        if ($returnClass === Invoice::class) {
-            /** @var Invoice $salesModel */
-            $salesModel = new class extends Invoice {
-                private $allItems = [];
-                
-                public function __construct() {}
-                
-                public function getAllItems() { return $this->allItems; }
-                public function setAllItems($allItems) { $this->allItems = $allItems; return $this; }
-            };
-        } elseif ($returnClass === Shipment::class) {
-            /** @var Shipment $salesModel */
-            $salesModel = new class extends Shipment {
-                private $allItems = [];
-                
-                public function __construct() {}
-                
-                public function getAllItems() { return $this->allItems; }
-                public function setAllItems($allItems) { $this->allItems = $allItems; return $this; }
-            };
-        } else {
-            /** @var Creditmemo $salesModel */
-            $salesModel = new class extends Creditmemo {
-                private $allItems = [];
-                
-                public function __construct() {}
-                
-                public function getAllItems() { return $this->allItems; }
-                public function setAllItems($allItems) { $this->allItems = $allItems; return $this; }
-            };
-        }
-        $salesModel->setAllItems([]);
+        $salesModel = $this->createMock($returnClass);
+        $salesModel->method('getAllItems')->willReturn([]);
 
-        if ($class === \Magento\Sales\Model\Order\Invoice\Item::class) {
-            /** @var \Magento\Sales\Model\Order\Invoice\Item $item */
-            $item = new class extends \Magento\Sales\Model\Order\Invoice\Item {
-                private $methodResult = null;
-                private $orderItem = null;
-                
-                public function __construct() {}
-                
-                public function getInvoice() { return $this->methodResult; }
-                public function setMethodResult($result) { $this->methodResult = $result; return $this; }
-                public function getOrderItem() { return $this->orderItem; }
-                public function setOrderItem($orderItem) { $this->orderItem = $orderItem; return $this; }
-            };
-        } elseif ($class === \Magento\Sales\Model\Order\Shipment\Item::class) {
-            /** @var \Magento\Sales\Model\Order\Shipment\Item $item */
-            $item = new class extends \Magento\Sales\Model\Order\Shipment\Item {
-                private $methodResult = null;
-                private $orderItem = null;
-                
-                public function __construct() {}
-                
-                public function getShipment() { return $this->methodResult; }
-                public function setMethodResult($result) { $this->methodResult = $result; return $this; }
-                public function getOrderItem() { return $this->orderItem; }
-                public function setOrderItem($orderItem) { $this->orderItem = $orderItem; return $this; }
-            };
-        } else {
-            /** @var \Magento\Sales\Model\Order\Creditmemo\Item $item */
-            $item = new class extends \Magento\Sales\Model\Order\Creditmemo\Item {
-                private $methodResult = null;
-                private $orderItem = null;
-                
-                public function __construct() {}
-                
-                public function getCreditmemo() { return $this->methodResult; }
-                public function setMethodResult($result) { $this->methodResult = $result; return $this; }
-                public function getOrderItem() { return $this->orderItem; }
-                public function setOrderItem($orderItem) { $this->orderItem = $orderItem; return $this; }
-            };
-        }
-        $item->setMethodResult($salesModel);
-        $item->setOrderItem($this->orderItem);
+        $item = $this->createMock($class);
+        $item->method($method)->willReturn($salesModel);
+        $item->method('getOrderItem')->willReturn($this->orderItem);
         $this->orderItem->setId(1);
 
         $this->assertNull($this->model->getChildren($item));
@@ -174,14 +87,7 @@ class RendererTest extends TestCase
     {
         if ($parentItem) {
             /** @var Item $parentItem */
-            $parentItem = new class extends Item {
-                private $id = null;
-                
-                public function __construct() {}
-                
-                public function getId() { return $this->id; }
-                public function setId($id) { $this->id = $id; return $this; }
-            };
+            $parentItem = new ItemTestHelper();
             $parentItem->setId(1);
         }
         $this->orderItem->setOrderItem($this->orderItem);
@@ -190,30 +96,13 @@ class RendererTest extends TestCase
         $this->orderItem->setId(1);
 
         /** @var Invoice $salesModel */
-        $salesModel = new class extends Invoice {
-            private $allItems = [];
-            
-            public function __construct() {}
-            
-            public function getAllItems() { return $this->allItems; }
-            public function setAllItems($allItems) { $this->allItems = $allItems; return $this; }
-        };
-        $salesModel->setAllItems([$this->orderItem]);
+        $salesModel = $this->createMock(Invoice::class);
+        $salesModel->method('getAllItems')->willReturn([$this->orderItem]);
 
         /** @var \Magento\Sales\Model\Order\Invoice\Item $item */
-        $item = new class extends \Magento\Sales\Model\Order\Invoice\Item {
-            private $invoice = null;
-            private $orderItem = null;
-            
-            public function __construct() {}
-            
-            public function getInvoice() { return $this->invoice; }
-            public function setInvoice($invoice) { $this->invoice = $invoice; return $this; }
-            public function getOrderItem() { return $this->orderItem; }
-            public function setOrderItem($orderItem) { $this->orderItem = $orderItem; return $this; }
-        };
-        $item->setInvoice($salesModel);
-        $item->setOrderItem($this->orderItem);
+        $item = $this->createMock(\Magento\Sales\Model\Order\Invoice\Item::class);
+        $item->method('getInvoice')->willReturn($salesModel);
+        $item->method('getOrderItem')->willReturn($this->orderItem);
 
         $this->assertSame([2 => $this->orderItem], $this->model->getChildren($item));
     }
@@ -255,14 +144,7 @@ class RendererTest extends TestCase
     {
         if ($parentItem) {
             /** @var Item $parentItem */
-            $parentItem = new class extends Item {
-                private $productOptions = [];
-                
-                public function __construct() {}
-                
-                public function getProductOptions() { return $this->productOptions; }
-                public function setProductOptions(?array $options = null) { $this->productOptions = $options; return $this; }
-            };
+            $parentItem = new ItemTestHelper();
             $parentItem->setProductOptions($productOptions);
         } else {
             $this->orderItem->setProductOptions($productOptions);
@@ -312,14 +194,7 @@ class RendererTest extends TestCase
     {
         if ($parentItem) {
             /** @var Item $parentItem */
-            $parentItem = new class extends Item {
-                private $productOptions = [];
-                
-                public function __construct() {}
-                
-                public function getProductOptions() { return $this->productOptions; }
-                public function setProductOptions(?array $options = null) { $this->productOptions = $options; return $this; }
-            };
+            $parentItem = new ItemTestHelper();
             $parentItem->setProductOptions($productOptions);
         } else {
             $this->orderItem->setProductOptions($productOptions);
@@ -392,37 +267,17 @@ class RendererTest extends TestCase
     {
         $price = 100;
         /** @var Order $orderModel */
-        $orderModel = new class extends Order {
-            private $formatPriceResult = '';
-            
-            public function __construct() {}
-            
-            public function formatPrice($price, $addBrackets = false) { return $this->formatPriceResult; }
-            public function setFormatPriceResult($result) { $this->formatPriceResult = $result; return $this; }
-        };
-        $orderModel->setFormatPriceResult($price);
+        $orderModel = $this->createMock(Order::class);
+        $orderModel->method('formatPrice')->willReturn($price);
 
         /** @var Renderer $model */
-        $model = new class extends Renderer {
-            private $order = null;
-            private $selectionAttributes = [];
-            private $escapeHtmlResult = '';
-            
-            public function __construct() {}
-            
-            public function getOrder() { return $this->order; }
-            public function setOrder($order) { $this->order = $order; return $this; }
-            public function getSelectionAttributes($item) { return $this->selectionAttributes; }
-            public function setSelectionAttributes($attributes) { $this->selectionAttributes = $attributes; return $this; }
-            public function escapeHtml($data, $allowedTags = null) { return $this->escapeHtmlResult; }
-            public function setEscapeHtmlResult($result) { $this->escapeHtmlResult = $result; return $this; }
-        };
-        $model->setEscapeHtmlResult('Test');
-        $model->setOrder($orderModel);
-        $model->setSelectionAttributes([
-                'qty' => $qty ,
-                'price' => $price,
-            ]);
+        $model = $this->createPartialMock(Renderer::class, ['getOrder', 'getSelectionAttributes', 'escapeHtml']);
+        $model->method('getOrder')->willReturn($orderModel);
+        $model->method('getSelectionAttributes')->willReturn([
+            'qty' => $qty,
+            'price' => $price,
+        ]);
+        $model->method('escapeHtml')->willReturn('Test');
         $this->assertSame($qty . ' x Test ' . $price, $model->getValueHtml($this->orderItem));
     }
 

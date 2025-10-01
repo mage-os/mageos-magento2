@@ -64,6 +64,9 @@ class OptionListTest extends TestCase
      */
     protected $objectManager;
 
+    /**
+     * @inheritdoc
+     */
     protected function setUp(): void
     {
         $this->typeMock = $this->createMock(Type::class);
@@ -90,6 +93,10 @@ class OptionListTest extends TestCase
         );
     }
 
+    /**
+     * @return void
+     * @throws \Exception
+     */
     public function testGetItems()
     {
         $optionId = 1;

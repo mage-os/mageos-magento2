@@ -9,6 +9,7 @@ namespace Magento\Bundle\Test\Unit\Observer;
 
 use Magento\Bundle\Observer\InitOptionRendererObserver;
 use Magento\Framework\Event\Observer;
+use Magento\Framework\Test\Unit\Helper\ObserverTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Wishlist\Block\Customer\Wishlist\Item\Options;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -39,7 +40,7 @@ class InitOptionRendererObserverTest extends TestCase
     private $observer;
 
     /**
-     * @var Observer|MockObject
+     * @var ObserverTestHelper
      */
     private $observerMock;
 
@@ -49,22 +50,10 @@ class InitOptionRendererObserverTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
-        
-        // Replace addMethods with anonymous class for Observer
-        /** @var Observer $observerMock */
-        $this->observerMock = new class extends Observer {
-            private $block = null;
-            
-            public function __construct() {}
-            
-            public function getBlock() { return $this->block; }
-            public function setBlock($block) { $this->block = $block; return $this; }
-        };
 
-        $this->blockMock = $this->getMockBuilder(Options::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['addOptionsRenderCfg'])
-            ->getMock();
+        $this->observerMock = new ObserverTestHelper();
+
+        $this->blockMock = $this->createPartialMock(Options::class, ['addOptionsRenderCfg']);
 
         $this->observer = $this->objectManager->getObject(InitOptionRendererObserver::class);
     }
@@ -74,7 +63,6 @@ class InitOptionRendererObserverTest extends TestCase
      */
     public function testProductOptionRendererInit()
     {
-        // Set up the anonymous class properties using setters
         $this->observerMock->setBlock($this->blockMock);
 
         $this->blockMock

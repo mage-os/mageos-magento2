@@ -11,7 +11,7 @@ use Magento\Framework\Pricing\PriceCurrencyInterface;
 
 /**
  * Test helper for Magento\Framework\Pricing\PriceCurrencyInterface
- * 
+ *
  * Implements PriceCurrencyInterface for testing with custom methods
  */
 class PriceCurrencyInterfaceTestHelper implements PriceCurrencyInterface
@@ -29,8 +29,8 @@ class PriceCurrencyInterfaceTestHelper implements PriceCurrencyInterface
      */
     public function roundPrice($price)
     {
-        return $this->data['round_price_callback'] ? 
-            call_user_func($this->data['round_price_callback'], $price) : 
+        return $this->data['round_price_callback'] ?
+            call_user_func($this->data['round_price_callback'], $price) :
             round($price, 2);
     }
 

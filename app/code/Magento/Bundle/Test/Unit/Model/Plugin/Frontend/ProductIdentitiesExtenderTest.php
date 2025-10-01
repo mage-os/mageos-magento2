@@ -45,6 +45,11 @@ class ProductIdentitiesExtenderTest extends TestCase
         $this->plugin = new ProductPlugin($this->type);
     }
 
+    /**
+     * Verify after get identities
+     *
+     * @return void
+     */
     public function testAfterGetIdentities(): void
     {
         $baseIdentities = [

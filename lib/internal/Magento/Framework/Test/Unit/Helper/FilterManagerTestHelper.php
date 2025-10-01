@@ -11,7 +11,7 @@ use Magento\Framework\Filter\FilterManager;
 
 /**
  * Test helper class for FilterManager with custom methods
- * 
+ *
  * This helper is placed in Magento_Framework as it's the core module
  * that contains the FilterManager class and is used by many other modules.
  */

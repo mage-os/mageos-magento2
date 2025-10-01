@@ -11,7 +11,7 @@ use Magento\Bundle\Api\Data\OptionInterface;
 
 /**
  * Test helper for Magento\Bundle\Api\Data\OptionInterface
- * 
+ *
  * Implements the OptionInterface to add custom methods for testing
  */
 class OptionInterfaceTestHelper implements OptionInterface

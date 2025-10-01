@@ -11,7 +11,7 @@ use Magento\Catalog\Model\Product\Option;
 
 /**
  * Test helper for Magento\Catalog\Model\Product\Option (used in Bundle tests)
- * 
+ *
  * Extends Option to add custom methods for testing both Bundle and Catalog options
  */
 class OptionTestHelper extends Option

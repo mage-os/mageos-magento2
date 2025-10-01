@@ -19,8 +19,10 @@ use Magento\Framework\EntityManager\EntityMetadataInterface;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Module\Manager;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
 /**
  * Class to test Bundle products Price indexer resource model
@@ -99,7 +101,7 @@ class PriceTest extends TestCase
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException|Exception
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
@@ -289,7 +291,7 @@ class PriceTest extends TestCase
      * @param string $methodName
      * @param array $args
      * @return string
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private function invokeMethodViaReflection(string $methodName, array $args = []): string
     {

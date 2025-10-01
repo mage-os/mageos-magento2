@@ -13,6 +13,7 @@ use Magento\Catalog\Model\Product\Type\Price;
 use Magento\Framework\Registry;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
@@ -86,6 +87,7 @@ class CatalogPriceTest extends TestCase
 
     /**
      * @return void
+     * @throws Exception
      */
     public function testGetCatalogPriceWithCustomStore(): void
     {

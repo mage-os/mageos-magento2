@@ -11,7 +11,7 @@ use Magento\Bundle\Model\Link;
 
 /**
  * Test helper for Magento\Bundle\Model\Link
- * 
+ *
  * Extends the Link class to add custom methods for testing
  */
 class LinkTestHelper extends Link

@@ -11,7 +11,7 @@ use Magento\Bundle\Model\ResourceModel\Option\Collection;
 
 /**
  * Test helper for Magento\Bundle\Model\ResourceModel\Option\Collection
- * 
+ *
  * Extends Collection to add custom methods for testing
  */
 class OptionCollectionTestHelper extends Collection

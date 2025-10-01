@@ -12,11 +12,13 @@ use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Configuration\Item\Option;
 use Magento\Quote\Model\Quote\Item\AbstractItem;
 use Magento\Quote\Model\Quote\Item\ToOrderItem;
-use Magento\Sales\Api\Data\OrderItemInterface;
 use Magento\Sales\Model\Order\Item;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Test class for \Magento\Bundle\Model\Plugin\QuoteItem
+ */
 class QuoteItemTest extends TestCase
 {
     /**
@@ -40,7 +42,6 @@ class QuoteItemTest extends TestCase
 
     protected function setUp(): void
     {
-        // ✅ CLEAN: createPartialMock on concrete class
         $this->orderItemMock = $this->createPartialMock(Item::class, [
             'getProductOptions', 'setProductOptions'
         ]);

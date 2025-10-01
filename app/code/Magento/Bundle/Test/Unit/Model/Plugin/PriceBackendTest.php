@@ -7,10 +7,10 @@ declare(strict_types=1);
 
 namespace Magento\Bundle\Test\Unit\Model\Plugin;
 
+use Closure;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Bundle\Model\Plugin\PriceBackend;
 use Magento\Bundle\Model\Product\Price;
-use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Type;
 use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 
@@ -28,7 +28,7 @@ class PriceBackendTest extends TestCase
     /** @var  MockObject */
     private $priceAttributeMock;
 
-    /** @var  \Closure */
+    /** @var  Closure */
     private $closure;
 
     /** @var  ProductTestHelper */
@@ -42,10 +42,11 @@ class PriceBackendTest extends TestCase
         $this->closure = function () {
             return static::CLOSURE_VALUE;
         };
-        $this->priceAttributeMock = $this->getMockBuilder(\Magento\Catalog\Model\Product\Attribute\Backend\Price::class)
+        $this->priceAttributeMock = $this->getMockBuilder(
+            \Magento\Catalog\Model\Product\Attribute\Backend\Price::class
+        )
             ->disableOriginalConstructor()
             ->getMock();
-        // ✅ CLEAN: Test helper for non-existent method (getPriceType)
         $this->productMock = new ProductTestHelper();
     }
 
@@ -61,7 +62,7 @@ class PriceBackendTest extends TestCase
         // Configure test helper with setter methods
         $this->productMock->setTypeId($typeId);
         $this->productMock->setPriceType($priceType);
-        
+
         $result = $this->priceBackendPlugin->aroundValidate(
             $this->priceAttributeMock,
             $this->closure,

@@ -14,10 +14,11 @@ use Magento\Eav\Model\ResourceModel\Entity\Attribute\Option;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\OptionFactory;
 use Magento\Framework\Phrase;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(\Magento\Bundle\Model\Product\Attribute\Source\Price\View::class)]
+#[CoversClass(View::class)]
 class ViewTest extends TestCase
 {
     /**
@@ -40,6 +41,10 @@ class ViewTest extends TestCase
      */
     protected $attribute;
 
+    /**
+     * @return void
+     * @throws Exception
+     */
     protected function setUp(): void
     {
         $this->option = $this->createMock(Option::class);
@@ -60,6 +65,9 @@ class ViewTest extends TestCase
         $this->model->setAttribute($this->attribute);
     }
 
+    /**
+     * @return void
+     */
     public function testGetAllOptions()
     {
         $options = $this->model->getAllOptions();
@@ -73,6 +81,9 @@ class ViewTest extends TestCase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testGetOptionTextForExistLabel()
     {
         $existValue = 1;
@@ -80,6 +91,9 @@ class ViewTest extends TestCase
         $this->assertInstanceOf(Phrase::class, $this->model->getOptionText($existValue));
     }
 
+    /**
+     * @return void
+     */
     public function testGetOptionTextForNotExistLabel()
     {
         $notExistValue = -1;
@@ -87,6 +101,9 @@ class ViewTest extends TestCase
         $this->assertFalse($this->model->getOptionText($notExistValue));
     }
 
+    /**
+     * @return void
+     */
     public function testGetFlatColumns()
     {
         $code = 'attribute-code';
@@ -107,6 +124,9 @@ class ViewTest extends TestCase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testGetFlatUpdateSelect()
     {
         $store = 1;

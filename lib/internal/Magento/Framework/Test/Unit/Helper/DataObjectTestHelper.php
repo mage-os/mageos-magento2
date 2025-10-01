@@ -11,7 +11,7 @@ use Magento\Framework\DataObject;
 
 /**
  * Test helper for Magento\Framework\DataObject
- * 
+ *
  * Extends the DataObject class to add custom methods for testing
  */
 class DataObjectTestHelper extends DataObject

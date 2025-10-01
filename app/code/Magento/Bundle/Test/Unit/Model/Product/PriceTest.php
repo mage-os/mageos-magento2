@@ -29,6 +29,7 @@ use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Store\Test\Unit\Helper\StoreTestHelper;
@@ -37,7 +38,7 @@ use Magento\Framework\Test\Unit\Helper\DataObjectTestHelper;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-#[CoversClass(\Magento\Bundle\Model\Product\Price::class)]
+#[CoversClass(Price::class)]
 class PriceTest extends TestCase
 {
     /**
@@ -101,6 +102,7 @@ class PriceTest extends TestCase
      * Set up.
      *
      * @return void
+     * @throws Exception
      */
     protected function setUp(): void
     {
@@ -188,7 +190,9 @@ class PriceTest extends TestCase
 
         $this->storeManagerMock->method('getStore')->willReturn($this->storeMock);
 
-        $this->storeMock->setRoundPriceCallback(function($price) { return $price; });
+        $this->storeMock->setRoundPriceCallback(function ($price) {
+            return $price;
+        });
 
         $this->assertEquals(
             $expected,

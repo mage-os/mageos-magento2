@@ -444,7 +444,7 @@ class BundleTest extends TestCase
         
         // Mock getOptionSelectionAmount to return AmountInterface with proper values
         $bundleOptionPrice->method('getOptionSelectionAmount')->willReturnCallback(
-            function($selection) use ($selectionAmounts, $value, $baseAmount) {
+            function ($selection) use ($selectionAmounts, $value, $baseAmount) {
                 // Check if this selection has specific amounts configured
                 foreach ($selectionAmounts as $selectionAmount) {
                     if ($selection === $selectionAmount['item']) {

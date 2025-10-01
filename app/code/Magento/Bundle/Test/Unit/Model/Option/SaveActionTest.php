@@ -13,9 +13,6 @@ use Magento\Bundle\Model\Option\SaveAction;
 use Magento\Bundle\Model\Product\Type;
 use Magento\Bundle\Model\ResourceModel\Option as OptionResource;
 use Magento\Bundle\Model\ResourceModel\Option\Collection;
-use Magento\Bundle\Test\Unit\Helper\OptionTestHelper;
-use Magento\Catalog\Api\Data\ProductInterface;
-use Magento\Catalog\Model\Product;
 use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\EntityManager\EntityMetadataInterface;
@@ -24,6 +21,9 @@ use PHPUnit\Framework\TestCase;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Bundle\Api\ProductLinkManagementAddChildrenInterface;
 
+/**
+ * Test class for \Magento\Bundle\Model\Option\SaveAction
+ */
 class SaveActionTest extends TestCase
 {
     /**
@@ -86,7 +86,6 @@ class SaveActionTest extends TestCase
         $this->storeManager = $this->getMockBuilder(StoreManagerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        // ✅ CLEAN: Test helper only for non-existent methods (setIsRelationsChanged)
         $this->product = new ProductTestHelper();
 
         $this->saveAction = new SaveAction(
@@ -101,7 +100,6 @@ class SaveActionTest extends TestCase
 
     public function testSaveBulk()
     {
-        // ✅ CLEAN: Standard createMock for existing methods
         $option = $this->createMock(Option::class);
         $option->method('getOptionId')->willReturn(1);
         $option->method('getData')->willReturn([]);

@@ -9,14 +9,24 @@ namespace Magento\Bundle\Test\Unit\Model\Sales\Order\Plugin;
 
 use Magento\Catalog\Model\Product\Type;
 use Magento\Sales\Model\Order\Item;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ItemTest extends TestCase
 {
+    /**
+     * @var \Magento\Bundle\Model\Sales\Order\Plugin\Item
+     */
     private $plugin;
 
+    /**
+     * @var (Item&MockObject)|MockObject
+     */
     private $itemMock;
 
+    /**
+     * @return void
+     */
     protected function setUp(): void
     {
         $this->itemMock = $this->getMockBuilder(Item::class)
@@ -25,6 +35,9 @@ class ItemTest extends TestCase
         $this->plugin = new \Magento\Bundle\Model\Sales\Order\Plugin\Item();
     }
 
+    /**
+     * @return void
+     */
     public function testAfterGetQtyToCancelIfProductIsBundle()
     {
         $qtyToCancel = 10;
@@ -40,6 +53,9 @@ class ItemTest extends TestCase
         $this->assertEquals($qtyToCancel, $this->plugin->afterGetQtyToCancel($this->itemMock, $result));
     }
 
+    /**
+     * @return void
+     */
     public function testAfterGetQtyToCancelIfParentProductIsBundle()
     {
         $qtyToCancel = 10;

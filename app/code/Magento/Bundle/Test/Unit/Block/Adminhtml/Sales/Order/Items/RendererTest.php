@@ -57,7 +57,6 @@ class RendererTest extends TestCase
         );
     }
 
-
     #[DataProvider('getChildrenEmptyItemsDataProvider')]
     public function testGetChildrenEmptyItems($class, $method, $returnClass)
     {
@@ -112,7 +111,7 @@ class RendererTest extends TestCase
             Invoice::class,
             ['getAllItems', '__wakeup']
         );
-        
+
         // Create a mock item that will be returned by getAllItems
         $mockItem = $this->createPartialMock(
             \Magento\Sales\Model\Order\Invoice\Item::class,
@@ -120,7 +119,7 @@ class RendererTest extends TestCase
         );
         $mockItem->method('getOrderItem')->willReturn($this->orderItem);
         $mockItem->method('getOrderItemId')->willReturn(2);
-        
+
         $salesModel->method('getAllItems')->willReturn([$mockItem]);
 
         $item = $this->createPartialMock(
@@ -132,17 +131,17 @@ class RendererTest extends TestCase
         $item->method('getOrderItemId')->willReturn($this->orderItem->getOrderItemId());
 
         $orderItem = $this->model->getChildren($item);
-        
+
         // Check that we get an array with the expected structure
         $this->assertIsArray($orderItem);
-        
+
         // The getChildren method returns an array keyed by orderItemId (2), not order item ID (1)
         $this->assertArrayHasKey(2, $orderItem);
-        
+
         // The returned item should have the expected properties
         $this->assertEquals(2, $orderItem[2]->getOrderItemId());
         $this->assertEquals($this->orderItem, $orderItem[2]->getOrderItem());
-        
+
         // Verify it's the same type of object
         $this->assertInstanceOf(\Magento\Sales\Model\Order\Invoice\Item::class, $orderItem[2]);
     }
@@ -325,7 +324,8 @@ class RendererTest extends TestCase
     #[DataProvider('getValueHtmlWithoutShipmentSeparatelyDataProvider')]
     public function testGetValueHtmlWithoutShipmentSeparately($qty)
     {
-        $model = $this->createPartialMock(Renderer::class, ['escapeHtml', 'isShipmentSeparately', 'getSelectionAttributes', 'isChildCalculated']);
+        $model = $this->createPartialMock(Renderer::class, ['escapeHtml', 'isShipmentSeparately',
+            'getSelectionAttributes', 'isChildCalculated']);
         $model->method('escapeHtml')->willReturn('Test');
         $model->method('isShipmentSeparately')->willReturn(false);
         $model->method('isChildCalculated')->willReturn(true);

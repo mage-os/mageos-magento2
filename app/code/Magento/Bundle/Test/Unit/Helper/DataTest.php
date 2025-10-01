@@ -14,6 +14,9 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Test class for \Magento\Bundle\Helper\Data
+ */
 class DataTest extends TestCase
 {
     /**

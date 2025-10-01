@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Bundle\Test\Unit\Ui\DataProvider\Product\Form\Modifier;
 
+use Exception;
 use Magento\Bundle\Model\Product\Type;
 use Magento\Bundle\Ui\DataProvider\Product\Form\Modifier\Composite;
 use Magento\Catalog\Api\Data\ProductInterface;
@@ -160,27 +161,25 @@ class CompositeTest extends TestCase
             'Type "SomeClass" is not an instance of Magento\\Ui\\DataProvider\\Modifier\\ModifierInterface'
         );
 
-        /** @var \Exception $modifierMock */
-        $modifierMock = new class extends \Exception {
+        /** @var Exception $modifierMock */
+        $modifierMock = new class extends Exception {
+            /**
+             * @var bool
+             */
             private $modifyMetaCalled = false;
-            
-            public function __construct() {}
-            
-            public function modifyMeta($meta) 
-            { 
+
+            public function __construct()
+            {
+            }
+
+            /**
+             * @param $meta
+             * @return mixed
+             */
+            public function modifyMeta($meta)
+            {
                 $this->modifyMetaCalled = true;
-                return $meta; 
-            }
-            
-            public function isModifyMetaCalled() 
-            { 
-                return $this->modifyMetaCalled; 
-            }
-            
-            public function setModifyMetaCalled($called) 
-            { 
-                $this->modifyMetaCalled = $called; 
-                return $this; 
+                return $meta;
             }
         };
 

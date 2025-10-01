@@ -11,7 +11,7 @@ use Magento\Bundle\Model\Selection;
 
 /**
  * Test helper for Magento\Bundle\Model\Selection
- * 
+ *
  * Extends Selection to add custom methods for testing
  */
 class SelectionTestHelper extends Selection

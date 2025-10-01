@@ -20,6 +20,9 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Test class for \Magento\Bundle\Model\Product\CopyConstructor\Bundle
+ */
 class BundleTest extends TestCase
 {
     /**
@@ -27,12 +30,18 @@ class BundleTest extends TestCase
      */
     protected $model;
 
+    /**
+     * @inheritdoc
+     */
     protected function setUp(): void
     {
         $objectManager = new ObjectManager($this);
         $this->model = $objectManager->getObject(Bundle::class);
     }
 
+    /**
+     * @return void
+     */
     public function testBuildNegative()
     {
         $product = $this->getMockBuilder(Product::class)
@@ -68,11 +77,9 @@ class BundleTest extends TestCase
 
         $productLink = new LinkTestHelper();
         // Configure the test helper (setSelectionId will be called by the code under test)
-        // ✅ CLEAN: Test helper for non-existent methods
         $firstOption = new BundleOptionInterfaceTestHelper();
         $firstOption->setProductLinks([$productLink]);
         // setOptionId will be called by the code under test
-        // ✅ CLEAN: Test helper for non-existent methods
         $secondOption = new BundleOptionInterfaceTestHelper();
         $secondOption->setProductLinks([$productLink]);
         // setOptionId will be called by the code under test
@@ -87,7 +94,6 @@ class BundleTest extends TestCase
         $duplicate = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
             ->getMock();
-        // ✅ CLEAN: Test helper for non-existent methods
         $extensionAttributesDuplicate = new ProductExtensionInterfaceTestHelper();
 
         $duplicate->expects($this->once())
@@ -106,7 +112,6 @@ class BundleTest extends TestCase
         $product = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
             ->getMock();
-        // ✅ CLEAN: Test helper for non-existent methods
         $extensionAttributesProduct = new ProductExtensionInterfaceTestHelper();
 
         $product->expects($this->once())
@@ -122,7 +127,6 @@ class BundleTest extends TestCase
         $duplicate = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
             ->getMock();
-        // ✅ CLEAN: Test helper for non-existent methods
         $extensionAttributesDuplicate = new ProductExtensionInterfaceTestHelper();
 
         $duplicate->expects($this->once())

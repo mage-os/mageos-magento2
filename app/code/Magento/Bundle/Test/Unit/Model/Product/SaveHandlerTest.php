@@ -19,11 +19,17 @@ use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\Data\ProductExtensionInterface;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\EntityManager\EntityMetadataInterface;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Catalog\Test\Unit\Helper\ProductExtensionInterfaceTestHelper;
 
+/**
+ * Test class for \Magento\Bundle\Model\Product\SaveHandler
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class SaveHandlerTest extends TestCase
 {
     /**
@@ -83,8 +89,9 @@ class SaveHandlerTest extends TestCase
         $this->checkOptionLinkIfExist = $this->getMockBuilder(CheckOptionLinkIfExist::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->productRelationsProcessorComposite = $this->getMockBuilder(ProductRelationsProcessorComposite::class)
-            ->disableOriginalConstructor()
+        $this->productRelationsProcessorComposite = $this->getMockBuilder(
+            ProductRelationsProcessorComposite::class
+        )->disableOriginalConstructor()
             ->getMock();
         $this->entity = new ProductTestHelper();
         $this->entity->setTypeId(Type::TYPE_CODE);
@@ -102,6 +109,7 @@ class SaveHandlerTest extends TestCase
     /**
      * @return void
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @throws Exception
      */
     public function testExecuteWithBulkOptionsProcessing(): void
     {

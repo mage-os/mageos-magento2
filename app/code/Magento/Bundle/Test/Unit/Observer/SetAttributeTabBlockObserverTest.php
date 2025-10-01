@@ -14,6 +14,7 @@ use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Type;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
+use Magento\Framework\Test\Unit\Helper\EventTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -59,18 +60,8 @@ class SetAttributeTabBlockObserverTest extends TestCase
         $this->helperCatalogMock = $this->createMock(Catalog::class);
         $this->observerMock = $this->createMock(Observer::class);
         /** @var Event $eventMock */
-        $this->eventMock = new class extends Event {
-            private $product;
-            
-            public function __construct() {}
-            
-            public function getProduct() { return $this->product; }
-            public function setProduct($product) { $this->product = $product; return $this; }
-        };
-        $this->productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->eventMock = new EventTestHelper($this);
+        $this->productMock = $this->createMock(Product::class);
         $this->observer = $objectManager->getObject(
             SetAttributeTabBlockObserver::class,
             [

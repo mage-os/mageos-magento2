@@ -44,7 +44,10 @@ class OptionTest extends TestCase
     {
         $this->selectionFirst = new ProductTestHelper();
         $this->selectionSecond = new ProductTestHelper();
-        $this->resource = $this->createPartialMock(OptionResource::class, ['getSearchableData', 'getConnection', 'getIdFieldName', '_construct']);
+        $this->resource = $this->createPartialMock(
+            OptionResource::class,
+            ['getSearchableData', 'getConnection', 'getIdFieldName', '_construct']
+        );
         $this->resource->method('getIdFieldName')->willReturn('option_id');
         $this->model = (new ObjectManager($this))->getObject(Option::class, [
             'resource' => $this->resource,
@@ -118,6 +121,9 @@ class OptionTest extends TestCase
         ];
     }
 
+    /**
+     * @return void
+     */
     public function testGetSearchableData()
     {
         $productId = 15;
@@ -130,6 +136,9 @@ class OptionTest extends TestCase
         $this->assertEquals($data, $this->model->getSearchableData($productId, $storeId));
     }
 
+    /**
+     * @return void
+     */
     public function testGetSelectionById()
     {
         $selectionId = 15;
@@ -141,6 +150,9 @@ class OptionTest extends TestCase
         $this->assertEquals($this->selectionFirst, $this->model->getSelectionById($selectionId));
     }
 
+    /**
+     * @return void
+     */
     public function testGetSelectionByIdNegative()
     {
         $selectionId = 15;

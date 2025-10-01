@@ -11,7 +11,7 @@ use Magento\Bundle\Model\Option;
 
 /**
  * Test helper for Magento\Bundle\Model\Option
- * 
+ *
  * Extends Bundle Option to add custom methods for testing
  */
 class BundleOptionTestHelper extends Option

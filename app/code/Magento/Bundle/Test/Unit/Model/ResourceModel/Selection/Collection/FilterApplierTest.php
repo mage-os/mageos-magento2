@@ -11,6 +11,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Bundle\Model\ResourceModel\Selection\Collection;
 use Magento\Bundle\Model\ResourceModel\Selection\Collection\FilterApplier;
 use Magento\Framework\DB\Select;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 use Zend_Db_Select_Exception;
 
@@ -39,7 +40,7 @@ class FilterApplierTest extends TestCase
      * @param $conditionType
      * @param $expectedCondition
      * @param $expectedValue
-     * @throws Zend_Db_Select_Exception
+     * @throws Zend_Db_Select_Exception|Exception
      */
     #[DataProvider('applyDataProvider')]
     public function testApply($field, $value, $conditionType, $expectedCondition, $expectedValue): void
