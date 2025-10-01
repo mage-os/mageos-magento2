@@ -1,18 +1,17 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2016 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Customer\Model\ResourceModel\Grid;
 
 use Magento\Customer\Model\ResourceModel\Customer;
 use Magento\Customer\Ui\Component\DataProvider\Document;
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Data\Collection\Db\FetchStrategyInterface as FetchStrategy;
 use Magento\Framework\Data\Collection\EntityFactoryInterface as EntityFactory;
 use Magento\Framework\Event\ManagerInterface as EventManager;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Locale\ResolverInterface;
-use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult;
 use Psr\Log\LoggerInterface as Logger;
 
@@ -25,11 +24,6 @@ class Collection extends SearchResult
      * @var ResolverInterface
      */
     private $localeResolver;
-
-    /**
-     * @var TimezoneInterface
-     */
-    private $timeZone;
 
     /**
      * @inheritdoc
@@ -49,7 +43,7 @@ class Collection extends SearchResult
      * @param ResolverInterface $localeResolver
      * @param string $mainTable
      * @param string $resourceModel
-     * @param TimezoneInterface|null $timeZone
+     * @throws LocalizedException
      */
     public function __construct(
         EntityFactory $entityFactory,
@@ -58,13 +52,10 @@ class Collection extends SearchResult
         EventManager $eventManager,
         ResolverInterface $localeResolver,
         $mainTable = 'customer_grid_flat',
-        $resourceModel = Customer::class,
-        ?TimezoneInterface $timeZone = null
+        $resourceModel = Customer::class
     ) {
         $this->localeResolver = $localeResolver;
         parent::__construct($entityFactory, $logger, $fetchStrategy, $eventManager, $mainTable, $resourceModel);
-        $this->timeZone = $timeZone ?: ObjectManager::getInstance()
-            ->get(TimezoneInterface::class);
     }
 
     /**
@@ -90,14 +81,6 @@ class Collection extends SearchResult
             );
             $this->getSelect()->where($conditionSql);
             return $this;
-        }
-
-        if ($field === 'created_at') {
-            if (is_array($condition)) {
-                foreach ($condition as $key => $value) {
-                    $condition[$key] = $this->timeZone->convertConfigTimeToUtc($value);
-                }
-            }
         }
 
         if (is_string($field) && count(explode('.', $field)) === 1) {

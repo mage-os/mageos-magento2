@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Ui\Component\Filters\Type;
@@ -16,9 +16,9 @@ use Magento\Ui\Component\Form\Element\DataType\Date as DataTypeDate;
  */
 class Date extends AbstractFilter
 {
-    const NAME = 'filter_date';
+    public const NAME = 'filter_date';
 
-    const COMPONENT = 'date';
+    public const COMPONENT = 'date';
 
     /**
      * Wrapped component
@@ -128,7 +128,7 @@ class Date extends AbstractFilter
      * @param int $hour
      * @param int $minute
      * @param int $second
-     * @return \DateTime
+     * @return \DateTime|null
      */
     private function convertDatetime(string $value, int $hour = 0, int $minute = 0, int $second = 0): ?\DateTime
     {
@@ -137,7 +137,7 @@ class Date extends AbstractFilter
                 $value,
                 !$this->getData('config/skipTimeZoneConversion')
             )
-            : $this->wrappedComponent->convertDate(
+            : $this->wrappedComponent->convertDateWithTimezone(
                 $value,
                 $hour,
                 $minute,
