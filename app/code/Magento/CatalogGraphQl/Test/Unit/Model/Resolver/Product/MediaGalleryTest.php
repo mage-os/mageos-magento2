@@ -13,6 +13,7 @@ use Magento\Catalog\Model\Product\Gallery\Entry;
 use Magento\CatalogGraphQl\Model\Resolver\Product\MediaGallery;
 use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\GraphQl\Config\Element\Field;
@@ -47,7 +48,7 @@ class MediaGalleryTest extends TestCase
     protected function setUp(): void
     {
         $this->fieldMock = $this->createMock(Field::class);
-        $this->contextMock = $this->getMockForAbstractClass(ContextInterface::class);
+        $this->contextMock = $this->createMock(ContextInterface::class);
         $this->infoMock = $this->createMock(ResolveInfo::class);
         $this->productMock = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
@@ -56,12 +57,12 @@ class MediaGalleryTest extends TestCase
     }
 
     /**
-     * @dataProvider dataProviderForResolve
      * @param $expected
      * @param $productName
      * @return void
      * @throws Exception
      */
+    #[DataProvider('dataProviderForResolve')]
     public function testResolve($expected, $productName): void
     {
         $existingEntryMock = $this->getMockBuilder(Entry::class)

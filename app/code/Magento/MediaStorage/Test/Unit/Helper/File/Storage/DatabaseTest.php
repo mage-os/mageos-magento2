@@ -18,6 +18,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\MediaStorage\Helper\File\Storage\Database;
 use Magento\MediaStorage\Model\File\Storage;
 use Magento\MediaStorage\Model\File\Storage\DatabaseFactory;
+use Magento\Framework\Model\Test\Unit\Helper\AbstractDbTestHelper;
 use Magento\MediaStorage\Model\File\Storage\File;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -359,18 +360,7 @@ class DatabaseTest extends TestCase
         $this->dbStorageFactoryMock->expects($this->exactly($callNum))
             ->method('create')
             ->willReturn($dbModelMock);
-        $resourceModelMock = new class extends AbstractDb {
-            public function __construct()
-            {
-            }
-            protected function _construct()
-            {
-            }
-            public function deleteFolder($path)
-            {
-                return true;
-            }
-        };
+        $resourceModelMock = new AbstractDbTestHelper();
         $dbModelMock->expects($this->exactly($callNum))
             ->method('getResource')
             ->willReturn($resourceModelMock);

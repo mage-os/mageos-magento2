@@ -58,8 +58,7 @@ class ResponseTest extends TestCase
     public function testSendResponse(): void
     {
         $filePath = 'file_path';
-        $headers = $this->getMockBuilder(Headers::class)
-            ->getMock();
+        $headers = $this->createMock(Headers::class);
         $this->response->setFilePath($filePath);
         $this->response->setHeaders($headers);
         $this->transferAdapter

@@ -14,6 +14,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\MediaStorage\Helper\File\Storage;
 use Magento\MediaStorage\Helper\File\Storage\Database as DatabaseHelper;
 use Magento\MediaStorage\Model\File\Storage\File;
+use Magento\Framework\Model\Test\Unit\Helper\AbstractModelTestHelper;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -131,24 +132,7 @@ class StorageTest extends TestCase
             ->with($filename)
             ->willReturn($relativePath);
 
-        $storageModelMock = new class extends AbstractModel {
-            /**
-             * @var \Magento\MediaStorage\Model\File\Storage\Database
-             */
-            private $fileMock;
-            
-            public function __construct()
-            {
-            }
-            public function loadByFileName($filename)
-            {
-                return $this->fileMock;
-            }
-            public function setFileMock($fileMock)
-            {
-                $this->fileMock = $fileMock;
-            }
-        };
+        $storageModelMock = new AbstractModelTestHelper();
         $this->storageMock->expects($this->exactly($callNum))
             ->method('getStorageModel')
             ->willReturn($storageModelMock);

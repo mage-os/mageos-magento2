@@ -13,6 +13,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\MediaStorage\Model\File\Storage\Database;
 use Magento\MediaStorage\Model\File\Storage\DatabaseFactory;
 use Magento\MediaStorage\Model\File\Storage\Synchronization;
+use Magento\MediaStorage\Test\Unit\Helper\DatabaseTestHelper;
 use PHPUnit\Framework\TestCase;
 
 class SynchronizationTest extends TestCase
@@ -23,23 +24,7 @@ class SynchronizationTest extends TestCase
         $relativeFileName = 'config.xml';
 
         $storageFactoryMock = $this->createPartialMock(DatabaseFactory::class, ['create']); // @phpstan-ignore-line
-        $storageMock = new class extends Database {
-            public function __construct()
-            {
-            }
-            public function getContent()
-            {
-                return 'content';
-            }
-            public function getId()
-            {
-                return true;
-            }
-            public function loadByFilename($filename)
-            {
-                return $this;
-            }
-        };
+        $storageMock = new DatabaseTestHelper();
         $storageFactoryMock->expects($this->once())->method('create')->willReturn($storageMock);
 
         $file = $this->createPartialMock(

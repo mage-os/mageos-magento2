@@ -15,6 +15,7 @@ use Magento\MediaStorage\Helper\File\Storage\Database as DatabaseHelper;
 use Magento\MediaStorage\Model\File\Storage;
 use Magento\MediaStorage\Model\File\Storage\Directory\DatabaseFactory;
 use Magento\MediaStorage\Model\ResourceModel\File\Storage\Directory\Database;
+use Magento\MediaStorage\Test\Unit\Helper\DirectoryDatabaseTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -85,27 +86,7 @@ class DatabaseTest extends TestCase
         $this->registryMock = $this->createMock(Registry::class);
         $this->helperStorageDatabase = $this->createMock(DatabaseHelper::class);
         $this->dateModelMock = $this->createMock(DateTime::class);
-        $this->directoryMock = new class extends \Magento\MediaStorage\Model\File\Storage\Directory\Database {
-            public function __construct()
-            {
-            }
-            public function setPath($path)
-            {
-                return $this;
-            }
-            public function setName($name)
-            {
-                return $this;
-            }
-            public function save()
-            {
-                return $this;
-            }
-            public function getParentId()
-            {
-                return 1;
-            }
-        };
+        $this->directoryMock = new DirectoryDatabaseTestHelper();
         $this->directoryFactoryMock = $this->createPartialMock(
             DatabaseFactory::class, // @phpstan-ignore-line
             ['create']
