@@ -219,10 +219,12 @@ class RendererTest extends TestCase
     #[DataProvider('getValueHtmlWithoutShipmentSeparatelyDataProvider')]
     public function testGetValueHtmlWithoutShipmentSeparately($qty)
     {
-        $model = $this->getMockBuilder(Renderer::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['escapeHtml', 'isShipmentSeparately', 'getSelectionAttributes', 'isChildCalculated'])
-            ->getMock();
+        $model = $this->createPartialMock(Renderer::class, [
+            'escapeHtml',
+            'isShipmentSeparately',
+            'getSelectionAttributes',
+            'isChildCalculated'
+        ]);
         $model->method('escapeHtml')->willReturn('Test');
         $model->method('isShipmentSeparately')->willReturn(false);
         $model->method('isChildCalculated')->willReturn(true);

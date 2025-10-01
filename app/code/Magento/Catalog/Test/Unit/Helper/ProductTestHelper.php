@@ -230,6 +230,28 @@ class ProductTestHelper extends Product
     }
 
     /**
+     * Get price
+     *
+     * @return mixed
+     */
+    public function getPrice()
+    {
+        return $this->data['price'] ?? null;
+    }
+
+    /**
+     * Set price
+     *
+     * @param mixed $price
+     * @return $this
+     */
+    public function setPrice($price): self
+    {
+        $this->data['price'] = $price;
+        return $this;
+    }
+
+    /**
      * Override getStoreId for testing
      *
      * @return mixed
@@ -771,7 +793,7 @@ class ProductTestHelper extends Product
     }
 
     /**
-     * Set options for testing
+     * Set options for testing with call tracking
      *
      * @param ?array $options
      * @return self
@@ -779,6 +801,8 @@ class ProductTestHelper extends Product
     public function setOptions(?array $options = null): self
     {
         $this->data['options'] = $options;
+        $this->setOptionsCalled = true;
+        $this->setOptionsParams = $options;
         return $this;
     }
 
@@ -1114,6 +1138,192 @@ class ProductTestHelper extends Product
     {
         $this->data['position'] = $position;
         return $this;
+    }
+
+    // Bundle-specific methods with call tracking
+    private $setBundleOptionsDataCalled = false;
+    private $setBundleOptionsDataParams = [];
+    private $setBundleSelectionsDataCalled = false;
+    private $setBundleSelectionsDataParams = [];
+    private $setCanSaveCustomOptionsCalled = false;
+    private $setCanSaveCustomOptionsParams = [];
+    private $setCanSaveBundleSelectionsCalled = false;
+    private $setCanSaveBundleSelectionsParams = [];
+    private $setOptionsCalled = false;
+    private $setOptionsParams = [];
+
+    /**
+     * Get composite readonly for testing
+     *
+     * @return mixed
+     */
+    public function getCompositeReadonly()
+    {
+        return $this->data['composite_readonly'] ?? false;
+    }
+
+    /**
+     * Set composite readonly for testing
+     *
+     * @param mixed $value
+     * @return self
+     */
+    public function setCompositeReadonly($value): self
+    {
+        $this->data['composite_readonly'] = $value;
+        return $this;
+    }
+
+    /**
+     * Set bundle options data with call tracking
+     *
+     * @param mixed $data
+     * @return self
+     */
+    public function setBundleOptionsData($data): self
+    {
+        $this->data['bundle_options_data'] = $data;
+        $this->setBundleOptionsDataCalled = true;
+        $this->setBundleOptionsDataParams = $data;
+        return $this;
+    }
+
+    /**
+     * Set bundle selections data with call tracking
+     *
+     * @param mixed $data
+     * @return self
+     */
+    public function setBundleSelectionsData($data): self
+    {
+        $this->data['bundle_selections_data'] = $data;
+        $this->setBundleSelectionsDataCalled = true;
+        $this->setBundleSelectionsDataParams = $data;
+        return $this;
+    }
+
+    /**
+     * Set can save custom options with call tracking
+     *
+     * @param mixed $value
+     * @return self
+     */
+    public function setCanSaveCustomOptions($value): self
+    {
+        $this->data['can_save_custom_options'] = $value;
+        $this->setCanSaveCustomOptionsCalled = true;
+        $this->setCanSaveCustomOptionsParams = $value;
+        return $this;
+    }
+
+    /**
+     * Set can save bundle selections with call tracking
+     *
+     * @param mixed $value
+     * @return self
+     */
+    public function setCanSaveBundleSelections($value): self
+    {
+        $this->data['can_save_bundle_selections'] = $value;
+        $this->setCanSaveBundleSelectionsCalled = true;
+        $this->setCanSaveBundleSelectionsParams = $value;
+        return $this;
+    }
+
+    /**
+     * Get options readonly for testing
+     *
+     * @return mixed
+     */
+    public function getOptionsReadonly()
+    {
+        return $this->data['options_readonly'] ?? false;
+    }
+
+    /**
+     * Set options readonly for testing
+     *
+     * @param mixed $value
+     * @return self
+     */
+    public function setOptionsReadonly($value): self
+    {
+        $this->data['options_readonly'] = $value;
+        return $this;
+    }
+
+    /**
+     * Get bundle options data for testing
+     *
+     * @return mixed
+     */
+    public function getBundleOptionsData()
+    {
+        return $this->data['bundle_options_data_result'] ?? [];
+    }
+
+    /**
+     * Set bundle options data result for testing
+     *
+     * @param mixed $data
+     * @return self
+     */
+    public function setBundleOptionsDataResult($data): self
+    {
+        $this->data['bundle_options_data_result'] = $data;
+        return $this;
+    }
+
+
+    // Verification methods for call tracking
+    public function wasSetBundleOptionsDataCalled(): bool
+    {
+        return $this->setBundleOptionsDataCalled;
+    }
+
+    public function getSetBundleOptionsDataParams()
+    {
+        return $this->setBundleOptionsDataParams;
+    }
+
+    public function wasSetBundleSelectionsDataCalled(): bool
+    {
+        return $this->setBundleSelectionsDataCalled;
+    }
+
+    public function getSetBundleSelectionsDataParams()
+    {
+        return $this->setBundleSelectionsDataParams;
+    }
+
+    public function wasSetCanSaveCustomOptionsCalled(): bool
+    {
+        return $this->setCanSaveCustomOptionsCalled;
+    }
+
+    public function getSetCanSaveCustomOptionsParams()
+    {
+        return $this->setCanSaveCustomOptionsParams;
+    }
+
+    public function wasSetCanSaveBundleSelectionsCalled(): bool
+    {
+        return $this->setCanSaveBundleSelectionsCalled;
+    }
+
+    public function getSetCanSaveBundleSelectionsParams()
+    {
+        return $this->setCanSaveBundleSelectionsParams;
+    }
+
+    public function wasSetOptionsCalled(): bool
+    {
+        return $this->setOptionsCalled;
+    }
+
+    public function getSetOptionsParams()
+    {
+        return $this->setOptionsParams;
     }
 
 }

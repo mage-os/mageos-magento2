@@ -62,28 +62,18 @@ class BundleDataProviderTest extends TestCase
         $this->modifierPool = $this->createMock(PoolInterface::class);
 
         $this->requestMock = $this->createMock(RequestInterface::class);
-        $this->collectionMock = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(
-                [
-                    'toArray',
-                    'isLoaded',
-                    'addAttributeToFilter',
-                    'load',
-                    'getSize',
-                    'addFilterByRequiredOptions',
-                    'addStoreFilter'
-                ]
-            )->getMock();
-        $this->collectionFactoryMock = $this->getMockBuilder(CollectionFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->collectionMock = $this->createPartialMock(Collection::class, [
+            'toArray',
+            'isLoaded',
+            'addAttributeToFilter',
+            'load',
+            'getSize',
+            'addFilterByRequiredOptions',
+            'addStoreFilter'
+        ]);
+        $this->collectionFactoryMock = $this->createPartialMock(CollectionFactory::class, ['create']);
         $this->collectionFactoryMock->method('create')->willReturn($this->collectionMock);
-        $this->dataHelperMock = $this->getMockBuilder(Data::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getAllowedSelectionTypes'])
-            ->getMock();
+        $this->dataHelperMock = $this->createPartialMock(Data::class, ['getAllowedSelectionTypes']);
     }
 
     /**

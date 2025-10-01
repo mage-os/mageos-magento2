@@ -31,7 +31,7 @@ class OptionTest extends TestCase
     protected $block;
 
     /**
-     * @var Product|MockObject
+     * @var ProductTestHelper
      */
     protected $product;
 
@@ -42,17 +42,9 @@ class OptionTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getPriceInfo', 'getPreconfiguredValues', '__wakeup'])
-            ->getMock();
+        $this->product = new ProductTestHelper();
 
-        // Add missing methods using dynamic method assignment
-        $this->product = $this->addCustomProductMethods($this->product);
-
-        $registry = $this->getMockBuilder(Registry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $registry = $this->createMock(Registry::class);
 
         $registry->expects($this->once())
             ->method('registry')
@@ -61,9 +53,7 @@ class OptionTest extends TestCase
 
         $this->layout = $this->createMock(LayoutInterface::class);
 
-        $context = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $context = $this->createMock(Context::class);
         $context->expects($this->atLeastOnce())
             ->method('getLayout')
             ->willReturn($this->layout);
@@ -83,9 +73,7 @@ class OptionTest extends TestCase
         $option = $this->createMock(\Magento\Bundle\Model\Option::class);
         $option->method('getId')->willReturn(15);
 
-        $otherOption = $this->getMockBuilder(\Magento\Bundle\Model\Option::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $otherOption = $this->createMock(\Magento\Bundle\Model\Option::class);
         $otherOption->method('getId')->willReturn(16);
 
         // Create anonymous class for selection with all required methods
@@ -117,24 +105,15 @@ class OptionTest extends TestCase
         $includeContainer = false;
         $priceHtml = 'price-html';
 
-        $selection = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $bundlePrice = $this->getMockBuilder(BundleOptionPrice::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $selection = $this->createMock(Product::class);
+        $bundlePrice = $this->createMock(BundleOptionPrice::class);
 
         $priceInfo = $this->createMock(Base::class);
         $amount = $this->createAmountInterfaceMock();
 
-        $priceRenderBlock = $this->getMockBuilder(Render::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['renderAmount'])
-            ->getMock();
+        $priceRenderBlock = $this->createPartialMock(Render::class, ['renderAmount']);
 
-        $this->product->expects($this->atLeastOnce())
-            ->method('getPriceInfo')
-            ->willReturn($priceInfo);
+        $this->product->setPriceInfo($priceInfo);
 
         $priceInfo->expects($this->atLeastOnce())
             ->method('getPrice')
@@ -157,31 +136,6 @@ class OptionTest extends TestCase
             ->willReturn($priceHtml);
 
         $this->assertEquals($priceHtml, $this->block->renderPriceString($selection, $includeContainer));
-    }
-
-    /**
-     * Add custom methods to a product mock object
-     *
-     * @param $mockObject The base mock object to extend
-     * @return object The enhanced mock object with additional methods
-     */
-    private function addCustomProductMethods($mockObject)
-    {
-        // Store values for the custom methods
-        $hasPreconfiguredValues = false;
-
-        // Add hasPreconfiguredValues method using closure
-        $mockObject->hasPreconfiguredValues = function () use (&$hasPreconfiguredValues) {
-            return $hasPreconfiguredValues;
-        };
-
-        // Add setHasPreconfiguredValues method using closure
-        $mockObject->setHasPreconfiguredValues = function ($value) use (&$hasPreconfiguredValues, $mockObject) {
-            $hasPreconfiguredValues = $value;
-            return $mockObject; // Enable method chaining
-        };
-
-        return $mockObject;
     }
 
     /**

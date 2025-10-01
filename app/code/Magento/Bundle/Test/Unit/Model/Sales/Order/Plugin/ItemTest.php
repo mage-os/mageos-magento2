@@ -29,9 +29,7 @@ class ItemTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->itemMock = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->itemMock = $this->createMock(Item::class);
         $this->plugin = new \Magento\Bundle\Model\Sales\Order\Plugin\Item();
     }
 
@@ -60,9 +58,7 @@ class ItemTest extends TestCase
     {
         $qtyToCancel = 10;
         $result = 5;
-        $parentItemMock = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $parentItemMock = $this->createMock(Item::class);
         $this->itemMock
             ->expects($this->once())
             ->method('getProductType')
@@ -97,9 +93,7 @@ class ItemTest extends TestCase
 
     public function testAfterIsProcessingAvailableForProductWhenParentIsBundle()
     {
-        $parentItemMock = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $parentItemMock = $this->createMock(Item::class);
         $this->itemMock->method('getParentItem')->willReturn($parentItemMock);
         $parentItemMock->expects($this->once())
             ->method('getProductType')

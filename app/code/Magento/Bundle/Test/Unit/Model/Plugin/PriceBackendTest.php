@@ -42,11 +42,9 @@ class PriceBackendTest extends TestCase
         $this->closure = function () {
             return static::CLOSURE_VALUE;
         };
-        $this->priceAttributeMock = $this->getMockBuilder(
+        $this->priceAttributeMock = $this->createMock(
             \Magento\Catalog\Model\Product\Attribute\Backend\Price::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
+        );
         $this->productMock = new ProductTestHelper();
     }
 

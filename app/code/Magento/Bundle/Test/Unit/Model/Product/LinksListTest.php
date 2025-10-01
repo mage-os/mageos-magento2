@@ -62,9 +62,7 @@ class LinksListTest extends TestCase
                 'create',
             ]
         );
-        $this->dataObjectHelperMock = $this->getMockBuilder(DataObjectHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->dataObjectHelperMock = $this->createMock(DataObjectHelper::class);
         $this->selectionMock = new ProductTestHelper();
         $this->productMock = new ProductTestHelper();
         $this->productTypeMock = $this->createMock(Type::class);

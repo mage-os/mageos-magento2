@@ -11,6 +11,7 @@ use Magento\Bundle\Model\Product\Price;
 use Magento\Bundle\Pricing\Adjustment\BundleCalculatorInterface;
 use Magento\Bundle\Pricing\Price\BundleRegularPrice;
 use Magento\Catalog\Model\Product;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Catalog\Pricing\Price\CustomOptionPrice;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\Pricing\PriceInfo\Base;
@@ -54,32 +55,15 @@ class BundleRegularPriceTest extends TestCase
      */
     protected function setUp(): void
     {
-        /** @var Product $this->saleableInterfaceMock */
-        $this->saleableInterfaceMock = new class extends Product {
-            private $priceType;
-            private $priceInfo;
-            private $price;
-            
-            public function __construct() {}
-            
-            public function getPriceType() { return $this->priceType; }
-            public function setPriceType($priceType) { $this->priceType = $priceType; return $this; }
-            
-            public function getPriceInfo() { return $this->priceInfo; }
-            public function setPriceInfo($priceInfo) { $this->priceInfo = $priceInfo; return $this; }
-            
-            public function getPrice() { return $this->price; }
-            public function setPrice($price) { $this->price = $price; return $this; }
-        };
+        /** @var Product */
+        $this->saleableInterfaceMock = new ProductTestHelper();
         $this->bundleCalculatorMock = $this->createMock(
             BundleCalculatorInterface::class
         );
 
         $this->priceInfoMock = $this->createMock(Base::class);
 
-        $this->customOptionPriceMock = $this->getMockBuilder(CustomOptionPrice::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->customOptionPriceMock = $this->createMock(CustomOptionPrice::class);
 
         $this->saleableInterfaceMock->setPriceInfo($this->priceInfoMock);
 

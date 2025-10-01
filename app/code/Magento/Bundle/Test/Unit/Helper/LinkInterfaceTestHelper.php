@@ -17,6 +17,9 @@ use Magento\Bundle\Api\Data\LinkInterface;
  */
 class LinkInterfaceTestHelper implements LinkInterface
 {
+    /**
+     * @var array Data storage for properties
+     */
     private $data = [];
 
     /**
@@ -28,7 +31,7 @@ class LinkInterfaceTestHelper implements LinkInterface
     }
 
     /**
-     * @inheritdoc
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setSku($sku): self
     {
@@ -115,6 +118,14 @@ class LinkInterfaceTestHelper implements LinkInterface
     /**
      * @inheritdoc
      */
+    public function isDefault(): ?bool
+    {
+        return $this->getIsDefault();
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function setIsDefault($isDefault): self
     {
         $this->data['is_default'] = $isDefault;
@@ -161,6 +172,14 @@ class LinkInterfaceTestHelper implements LinkInterface
     public function getCanChangeQuantity(): ?bool
     {
         return $this->data['can_change_quantity'] ?? null;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function canChangeQuantity(): ?bool
+    {
+        return $this->getCanChangeQuantity();
     }
 
     /**

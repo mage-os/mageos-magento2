@@ -17,7 +17,9 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\App\ViewInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\Framework\Test\Unit\Helper\ResponseInterfaceTestHelper;
 use Magento\Framework\View\LayoutInterface;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -66,44 +68,17 @@ class FormTest extends TestCase
     {
         $this->objectManagerHelper = new ObjectManagerHelper($this);
 
-        $this->context = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->context = $this->createMock(Context::class);
         $this->request = $this->createMock(RequestInterface::class);
         
         /** @var ResponseInterface $response */
-        $this->response = new class implements ResponseInterface {
-            private $body = '';
-            
-            public function __construct()
-            {
-            }
-            
-            public function setBody($body)
-            {
-                $this->body = $body;
-                return $this;
-            }
-            public function getBody()
-            {
-                return $this->body;
-            }
-            public function sendResponse()
-            {
-                return $this;
-            }
-        };
+        $this->response = new ResponseInterfaceTestHelper();
         
-        $this->productBuilder = $this->getMockBuilder(Builder::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['build'])
-            ->getMock();
-        $this->initializationHelper = $this->getMockBuilder(
-            Helper::class
-        )
-            ->disableOriginalConstructor()
-            ->onlyMethods(['initialize'])
-            ->getMock();
+        $this->productBuilder = $this->createPartialMock(Builder::class, ['build']);
+        $this->initializationHelper = $this->createPartialMock(
+            Helper::class,
+            ['initialize']
+        );
         $this->view = $this->createMock(ViewInterface::class);
 
         $this->context->method('getRequest')->willReturn($this->request);
@@ -123,29 +98,19 @@ class FormTest extends TestCase
     public function testExecute()
     {
         /** @var Product $product */
-        $product = new class extends Product {
-            private $id = null;
-            
-            public function __construct()
-            {
-            }
-            
-            public function getId()
-            {
-                return $this->id;
-            }
-            public function setId($id)
-            {
-                $this->id = $id;
-                return $this;
-            }
-        };
+        $product = new ProductTestHelper();
         
         $layout = $this->createMock(LayoutInterface::class);
         
         /** @var Bundle $block */
         $block = new class extends Bundle {
+            /**
+             * @var mixed $index
+             */
             private $index = null;
+            /**
+             * @var mixed $htmlResult
+             */
             private $htmlResult = '';
             
             public function __construct()

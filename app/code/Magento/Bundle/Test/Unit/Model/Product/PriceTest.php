@@ -116,18 +116,14 @@ class PriceTest extends TestCase
         $this->eventManagerMock = $this->createMock(ManagerInterface::class);
         $this->catalogHelperMock = $this->createMock(Data::class);
         $this->storeMock = new StoreTestHelper();
-        $this->priceCurrency = $this->getMockBuilder(
-            PriceCurrencyInterface::class
-        )->getMock();
+        $this->priceCurrency = $this->createMock(PriceCurrencyInterface::class);
         $this->groupManagement = $this->createMock(GroupManagementInterface::class);
         $tpFactory = $this->createPartialMock(
             ProductTierPriceInterfaceFactory::class,
             ['create']
         );
         $scopeConfig = $this->createMock(ScopeConfigInterface::class);
-        $this->serializer = $this->getMockBuilder(Json::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->serializer = $this->createMock(Json::class);
         $this->serializer->expects($this->any())
             ->method('unserialize')
             ->willReturnCallback(
@@ -135,14 +131,9 @@ class PriceTest extends TestCase
                     return json_decode((string)$value, true);
                 }
             );
-        $tierPriceExtensionFactoryMock = $this->getMockBuilder(ProductTierPriceExtensionFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $tierPriceExtensionFactoryMock = $this->createPartialMock(ProductTierPriceExtensionFactory::class, ['create']);
 
-        $specialPriceService = $this->getMockBuilder(SpecialPriceService::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $specialPriceService = $this->createMock(SpecialPriceService::class);
 
         $specialPriceService->expects($this->any())
             ->method('execute')
@@ -224,9 +215,7 @@ class PriceTest extends TestCase
      */
     public function testGetTotalBundleItemsPriceWithNoCustomOptions()
     {
-        $productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productMock = $this->createMock(Product::class);
 
         $productMock->expects($this->once())
             ->method('hasCustomOptions')
@@ -246,9 +235,7 @@ class PriceTest extends TestCase
     {
         $dataObjectMock = new DataObjectTestHelper();
 
-        $productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productMock = $this->createMock(Product::class);
 
         $productMock->expects($this->once())
             ->method('hasCustomOptions')
@@ -287,17 +274,11 @@ class PriceTest extends TestCase
 
         $dataObjectMock = new DataObjectTestHelper();
 
-        $productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productMock = $this->createMock(Product::class);
 
-        $productTypeMock = $this->getMockBuilder(Type::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productTypeMock = $this->createMock(Type::class);
 
-        $selectionsMock = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $selectionsMock = $this->createMock(Collection::class);
 
         $productMock->expects($this->once())
             ->method('hasCustomOptions')

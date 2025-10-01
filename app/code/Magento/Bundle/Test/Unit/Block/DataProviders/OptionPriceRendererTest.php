@@ -56,45 +56,30 @@ class OptionPriceRendererTest extends TestCase
     public function testRenderTierPrice(): void
     {
         $expectedHtml = 'tier price html';
-        $expectedArguments = ['zone' => Render::ZONE_ITEM_OPTION];
 
         $productMock = $this->createMock(Product::class);
 
         /** @var BlockInterface $priceRenderer */
         $priceRenderer = new class implements BlockInterface {
-            /**
-             * @var string
-             */
             private $renderResult = '';
-            /**
-             * @var string
-             */
-            private $toHtmlResult = '';
-
-            public function __construct()
-            {
-            }
-
+            
             public function render($type, $product, $arguments)
             {
                 return $this->renderResult;
             }
+            
             public function setRenderResult($result)
             {
                 $this->renderResult = $result;
                 return $this;
             }
+            
             public function toHtml()
             {
-                return $this->toHtmlResult;
-            }
-            public function setToHtmlResult($result)
-            {
-                $this->toHtmlResult = $result;
-                return $this;
+                return '';
             }
         };
-
+        
         $priceRenderer->setRenderResult($expectedHtml);
 
         $this->layoutMock->method('getBlock')

@@ -74,25 +74,14 @@ class SaveHandlerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->productLinkManagement = $this->getMockBuilder(ProductLinkManagementInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->optionRepository = $this->getMockBuilder(OptionRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->optionSave = $this->getMockBuilder(SaveAction::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->metadataPool = $this->getMockBuilder(MetadataPool::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->checkOptionLinkIfExist = $this->getMockBuilder(CheckOptionLinkIfExist::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->productRelationsProcessorComposite = $this->getMockBuilder(
+        $this->productLinkManagement = $this->createMock(ProductLinkManagementInterface::class);
+        $this->optionRepository = $this->createMock(OptionRepository::class);
+        $this->optionSave = $this->createMock(SaveAction::class);
+        $this->metadataPool = $this->createMock(MetadataPool::class);
+        $this->checkOptionLinkIfExist = $this->createMock(CheckOptionLinkIfExist::class);
+        $this->productRelationsProcessorComposite = $this->createMock(
             ProductRelationsProcessorComposite::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        );
         $this->entity = new ProductTestHelper();
         $this->entity->setTypeId(Type::TYPE_CODE);
 

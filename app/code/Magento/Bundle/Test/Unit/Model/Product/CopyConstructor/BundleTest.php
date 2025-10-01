@@ -44,12 +44,8 @@ class BundleTest extends TestCase
      */
     public function testBuildNegative()
     {
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $duplicate = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $product = $this->createMock(Product::class);
+        $duplicate = $this->createMock(Product::class);
         $product->expects($this->once())
             ->method('getTypeId')
             ->willReturn('other product type');
@@ -63,9 +59,7 @@ class BundleTest extends TestCase
     public function testBuildPositive()
     {
         /** @var Product|MockObject $product */
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $product = $this->createMock(Product::class);
         $extensionAttributesProduct = new ProductExtensionInterfaceTestHelper();
 
         $product->expects($this->once())
@@ -91,9 +85,7 @@ class BundleTest extends TestCase
         $extensionAttributesProduct->setBundleProductOptions($bundleOptions);
 
         /** @var Product|MockObject $duplicate */
-        $duplicate = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $duplicate = $this->createMock(Product::class);
         $extensionAttributesDuplicate = new ProductExtensionInterfaceTestHelper();
 
         $duplicate->expects($this->once())
@@ -109,9 +101,7 @@ class BundleTest extends TestCase
      */
     public function testBuildWithoutOptions()
     {
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $product = $this->createMock(Product::class);
         $extensionAttributesProduct = new ProductExtensionInterfaceTestHelper();
 
         $product->expects($this->once())
@@ -124,9 +114,7 @@ class BundleTest extends TestCase
         // Configure test helper with setter method
         $extensionAttributesProduct->setBundleProductOptions(null);
 
-        $duplicate = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $duplicate = $this->createMock(Product::class);
         $extensionAttributesDuplicate = new ProductExtensionInterfaceTestHelper();
 
         $duplicate->expects($this->once())

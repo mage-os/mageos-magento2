@@ -100,9 +100,7 @@ class OptionRepositoryTest extends TestCase
             ->onlyMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->dataObjectHelperMock = $this->getMockBuilder(DataObjectHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->dataObjectHelperMock = $this->createMock(DataObjectHelper::class);
         $this->optionResourceMock = $this->createPartialMock(Option::class, ['delete', 'save',
             'removeOptionSelections']);
         $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);

@@ -57,12 +57,8 @@ class FinalPriceBoxTest extends TestCase
         $enableCustomOptionMocks = ($optMinValue == $optMaxValue);
 
         $priceInfo = $this->createMock(Base::class);
-        $bundlePrice = $this->getMockBuilder(FinalPrice::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $customOptionPrice = $this->getMockBuilder(CustomOptionPrice::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $bundlePrice = $this->createMock(FinalPrice::class);
+        $customOptionPrice = $this->createMock(CustomOptionPrice::class);
 
         $this->saleableItem->expects($this->atLeastOnce())
             ->method('getPriceInfo')

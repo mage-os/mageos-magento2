@@ -108,13 +108,9 @@ class FinalPriceTest extends TestCase
         $this->basePriceMock->method('getValue')
             ->willReturn($this->baseAmount);
 
-        $this->bundleOptionMock = $this->getMockBuilder(BundleOptionPrice::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->bundleOptionMock = $this->createMock(BundleOptionPrice::class);
 
-        $this->customOptionPriceMock = $this->getMockBuilder(CustomOptionPrice::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->customOptionPriceMock = $this->createMock(CustomOptionPrice::class);
 
         $this->priceInfoMock = $this->createMock(Base::class);
 

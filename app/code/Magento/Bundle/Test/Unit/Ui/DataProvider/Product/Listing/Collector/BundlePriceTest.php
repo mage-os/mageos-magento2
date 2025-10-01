@@ -45,13 +45,8 @@ class BundlePriceTest extends TestCase
     protected function setUp(): void
     {
         $this->priceCurrencyMock = $this->createMock(PriceCurrencyInterface::class);
-        $this->priceInfoFactory = $this->getMockBuilder(PriceInfoInterfaceFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-        $this->formattedPriceInfoBuilder = $this->getMockBuilder(FormattedPriceInfoBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->priceInfoFactory = $this->createPartialMock(PriceInfoInterfaceFactory::class, ['create']);
+        $this->formattedPriceInfoBuilder = $this->createMock(FormattedPriceInfoBuilder::class);
 
         $this->model = new BundlePrice(
             $this->priceCurrencyMock,
@@ -67,12 +62,8 @@ class BundlePriceTest extends TestCase
         $storeId = 1;
         $currencyCode = 'usd';
 
-        $productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $price = $this->getMockBuilder(FinalPrice::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productMock = $this->createMock(Product::class);
+        $price = $this->createMock(FinalPrice::class);
         $productRender = $this->createMock(ProductRenderInterface::class);
         $amount = $this->createMock(AmountInterface::class);
         $minAmount = $this->createMock(AmountInterface::class);

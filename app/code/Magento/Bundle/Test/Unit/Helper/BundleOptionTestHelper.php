@@ -41,6 +41,9 @@ class BundleOptionTestHelper extends Option
      * @param mixed $index
      * @return mixed
      */
+        /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function getData($key = null, $index = null)
     {
         if ($key === null) {

@@ -68,24 +68,12 @@ class SaveActionTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->linkManagement = $this->getMockBuilder(ProductLinkManagementInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->metadataPool = $this->getMockBuilder(MetadataPool::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->type = $this->getMockBuilder(Type::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->optionResource = $this->getMockBuilder(OptionResource::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->addChildren = $this->getMockBuilder(ProductLinkManagementAddChildrenInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->storeManager = $this->getMockBuilder(StoreManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->linkManagement = $this->createMock(ProductLinkManagementInterface::class);
+        $this->metadataPool = $this->createMock(MetadataPool::class);
+        $this->type = $this->createMock(Type::class);
+        $this->optionResource = $this->createMock(OptionResource::class);
+        $this->addChildren = $this->createMock(ProductLinkManagementAddChildrenInterface::class);
+        $this->storeManager = $this->createMock(StoreManagerInterface::class);
         $this->product = new ProductTestHelper();
 
         $this->saveAction = new SaveAction(
@@ -105,9 +93,7 @@ class SaveActionTest extends TestCase
         $option->method('getData')->willReturn([]);
         $bundleOptions = [$option];
 
-        $collection = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $collection = $this->createMock(Collection::class);
         $collection->expects($this->once())
             ->method('getItemById')
             ->with(1)

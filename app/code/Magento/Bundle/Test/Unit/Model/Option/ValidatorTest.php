@@ -32,10 +32,7 @@ class ValidatorTest extends TestCase
         $helper = new ObjectManager($this);
         $validate = $helper->getObject(NotEmpty::class, ['options' => NotEmpty::ALL]);
 
-        $validateFactory = $this->getMockBuilder(NotEmptyFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $validateFactory = $this->createPartialMock(NotEmptyFactory::class, ['create']);
         $validateFactory->expects($this->once())
             ->method('create')
             ->willReturn($validate);
@@ -59,10 +56,7 @@ class ValidatorTest extends TestCase
     public function testIsValid($title, $type, $isValid, $expectedMessages)
     {
         /** @var MockObject|Option $option */
-        $option = $this->getMockBuilder(Option::class)
-            ->onlyMethods(['getTitle', 'getType'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $option = $this->createPartialMock(Option::class, ['getTitle', 'getType']);
         $option->expects($this->once())
             ->method('getTitle')
             ->willReturn($title);

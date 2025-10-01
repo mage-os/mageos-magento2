@@ -67,16 +67,10 @@ class AbstractItemsTest extends TestCase
     #[DataProvider('getChildrenEmptyItemsDataProvider')]
     public function testGetChildrenEmptyItems($class, $method, $returnClass)
     {
-        $salesModel = $this->getMockBuilder($returnClass)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getAllItems'])
-            ->getMock();
+        $salesModel = $this->createPartialMock($returnClass, ['getAllItems']);
         $salesModel->expects($this->once())->method('getAllItems')->willReturn([]);
 
-        $item = $this->getMockBuilder($class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([$method, 'getOrderItem'])
-            ->getMock();
+        $item = $this->createPartialMock($class, [$method, 'getOrderItem']);
         $item->expects($this->once())->method($method)->willReturn($salesModel);
         $item->expects($this->once())->method('getOrderItem')->willReturn($this->orderItemMock);
         $this->orderItemMock->setId(1);

@@ -107,9 +107,7 @@ class OptionListTest extends TestCase
         $productMock->expects($this->once())->method('getSku')->willReturn($productSku);
 
         $optionMock = new OptionTestHelper();
-        $optionsCollMock = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $optionsCollMock = $this->createMock(Collection::class);
         $optionsCollMock->method('getIterator')->willReturn(new \ArrayIterator([$optionMock]));
         $this->typeMock->expects($this->once())
             ->method('getOptionsCollection')

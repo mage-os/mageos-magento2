@@ -14,6 +14,7 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\App\ViewInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\Framework\Test\Unit\Helper\ResponseInterfaceTestHelper;
 use Magento\Framework\View\LayoutInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -50,33 +51,11 @@ class GridTest extends TestCase
     {
         $this->objectManagerHelper = new ObjectManagerHelper($this);
 
-        $this->context = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->context = $this->createMock(Context::class);
         $this->request = $this->createMock(RequestInterface::class);
         
         /** @var ResponseInterface $response */
-        $this->response = new class implements ResponseInterface {
-            private $body = '';
-            
-            public function __construct()
-            {
-            }
-            
-            public function setBody($body)
-            {
-                $this->body = $body;
-                return $this;
-            }
-            public function getBody()
-            {
-                return $this->body;
-            }
-            public function sendResponse()
-            {
-                return $this;
-            }
-        };
+        $this->response = new ResponseInterfaceTestHelper();
         
         $this->view = $this->createMock(ViewInterface::class);
 
@@ -98,7 +77,13 @@ class GridTest extends TestCase
         
         /** @var SearchGrid $block */
         $block = new class extends SearchGrid {
+            /**
+             * @var mixed $index
+             */
             private $index = null;
+            /**
+             * @var mixed $htmlResult
+             */
             private $htmlResult = '';
             
             public function __construct()

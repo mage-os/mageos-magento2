@@ -10,6 +10,7 @@ namespace Magento\Bundle\Test\Unit\Controller\Adminhtml\Product\Initialization\H
 use Magento\Bundle\Controller\Adminhtml\Product\Initialization\Helper\Plugin\Bundle;
 use Magento\Catalog\Controller\Adminhtml\Product\Initialization\Helper;
 use Magento\Catalog\Model\Product;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\App\Request\Http;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -27,7 +28,7 @@ class BundleTest extends TestCase
     protected $requestMock;
 
     /**
-     * @var MockObject
+     * @var ProductTestHelper
      */
     protected $productMock;
 
@@ -55,90 +56,7 @@ class BundleTest extends TestCase
     {
         $this->requestMock = $this->createMock(Http::class);
         
-        /** @var Product $productMock */
-        $this->productMock = new class extends Product {
-            private $compositeReadonly = false;
-            private $bundleOptionsData = [];
-            private $bundleSelectionsData = [];
-            private $priceType = 0;
-            private $canSaveCustomOptions = false;
-            private $productOptions = [];
-            private $canSaveBundleSelections = false;
-            private $optionsReadonly = false;
-            private $bundleOptionsDataResult = [];
-            protected $extensionAttributes = null;
-            
-            // Track method calls for verification
-            private $setBundleOptionsDataCalled = false;
-            private $setBundleOptionsDataParams = [];
-            private $setBundleSelectionsDataCalled = false;
-            private $setBundleSelectionsDataParams = [];
-            private $setCanSaveCustomOptionsCalled = false;
-            private $setCanSaveCustomOptionsParams = [];
-            private $setCanSaveBundleSelectionsCalled = false;
-            private $setCanSaveBundleSelectionsParams = [];
-            private $setOptionsCalled = false;
-            private $setOptionsParams = [];
-            
-            public function __construct() {}
-            
-            // Methods that don't exist in parent class - use addMethods equivalent
-            public function getCompositeReadonly() { return $this->compositeReadonly; }
-            public function setCompositeReadonly($value) { $this->compositeReadonly = $value; return $this; }
-            public function setBundleOptionsData($data) { 
-                $this->bundleOptionsData = $data; 
-                $this->setBundleOptionsDataCalled = true;
-                $this->setBundleOptionsDataParams = $data;
-                return $this; 
-            }
-            public function setBundleSelectionsData($data) { 
-                $this->bundleSelectionsData = $data; 
-                $this->setBundleSelectionsDataCalled = true;
-                $this->setBundleSelectionsDataParams = $data;
-                return $this; 
-            }
-            public function setCanSaveCustomOptions($value) { 
-                $this->canSaveCustomOptions = $value; 
-                $this->setCanSaveCustomOptionsCalled = true;
-                $this->setCanSaveCustomOptionsParams = $value;
-                return $this; 
-            }
-            public function setCanSaveBundleSelections($value) { 
-                $this->canSaveBundleSelections = $value; 
-                $this->setCanSaveBundleSelectionsCalled = true;
-                $this->setCanSaveBundleSelectionsParams = $value;
-                return $this; 
-            }
-            public function getOptionsReadonly() { return $this->optionsReadonly; }
-            public function setOptionsReadonly($value) { $this->optionsReadonly = $value; return $this; }
-            public function getBundleOptionsData() { return $this->bundleOptionsDataResult; }
-            public function setBundleOptionsDataResult($data) { $this->bundleOptionsDataResult = $data; return $this; }
-            
-            // Methods that exist in parent class - override to return test values
-            public function getPriceType() { return $this->priceType; }
-            public function setPriceType($value) { $this->priceType = $value; return $this; }
-            public function getProductOptions() { return $this->productOptions; }
-            public function setProductOptions($options) { $this->productOptions = $options; return $this; }
-            public function setOptions(?array $options = null) { 
-                $this->setOptionsCalled = true;
-                $this->setOptionsParams = $options;
-                return $this; 
-            }
-            public function getExtensionAttributes() { return $this->extensionAttributes; }
-            public function setExtensionAttributes($extensionAttributes) { $this->extensionAttributes = $extensionAttributes; return $this; }
-            
-            // Verification methods
-            public function wasSetBundleOptionsDataCalled() { return $this->setBundleOptionsDataCalled; }
-            public function getSetBundleOptionsDataParams() { return $this->setBundleOptionsDataParams; }
-            public function wasSetBundleSelectionsDataCalled() { return $this->setBundleSelectionsDataCalled; }
-            public function getSetBundleSelectionsDataParams() { return $this->setBundleSelectionsDataParams; }
-            public function wasSetCanSaveCustomOptionsCalled() { return $this->setCanSaveCustomOptionsCalled; }
-            public function getSetCanSaveCustomOptionsParams() { return $this->setCanSaveCustomOptionsParams; }
-            public function wasSetCanSaveBundleSelectionsCalled() { return $this->setCanSaveBundleSelectionsCalled; }
-            public function getSetCanSaveBundleSelectionsParams() { return $this->setCanSaveBundleSelectionsParams; }
-            public function wasSetOptionsCalled() { return $this->setOptionsCalled; }
-            public function getSetOptionsParams() { return $this->setOptionsParams; }
-        };
+        $this->productMock = new ProductTestHelper();
         
         $this->subjectMock = $this->createMock(
             Helper::class
@@ -149,7 +67,7 @@ class BundleTest extends TestCase
         
         // Configure the mock to simulate the afterInitialize behavior
         $this->model->method('afterInitialize')
-            ->willReturnCallback(function($subject, $product) {
+            ->willReturnCallback(function ($subject, $product) {
                 // Simulate the behavior of afterInitialize based on the test scenario
                 if ($product instanceof Product) {
                     // Get the request data to determine what to do
@@ -203,12 +121,14 @@ class BundleTest extends TestCase
         $this->productMock->setBundleOptionsDataResult(['option_1' => ['delete' => 1]]);
         
         $extensionAttribute = new class {
-            private $bundleProductOptions = [];
-            
-            public function __construct() {}
-            
-            public function setBundleProductOptions($options) { $this->bundleProductOptions = $options; return $this; }
-            public function getBundleProductOptions() { return $this->bundleProductOptions; }
+            public function setBundleProductOptions($options)
+            {
+                return $this;
+            }
+            public function getBundleProductOptions()
+            {
+                return [];
+            }
         };
         $extensionAttribute->setBundleProductOptions([]);
         $this->productMock->setExtensionAttributes($extensionAttribute);
@@ -252,12 +172,14 @@ class BundleTest extends TestCase
         $this->productMock->setOptionsReadonly(true);
         
         $extensionAttribute = new class {
-            private $bundleProductOptions = [];
-            
-            public function __construct() {}
-            
-            public function setBundleProductOptions($options) { $this->bundleProductOptions = $options; return $this; }
-            public function getBundleProductOptions() { return $this->bundleProductOptions; }
+            public function setBundleProductOptions($options)
+            {
+                return $this;
+            }
+            public function getBundleProductOptions()
+            {
+                return [];
+            }
         };
         $extensionAttribute->setBundleProductOptions([]);
         $this->productMock->setExtensionAttributes($extensionAttribute);
@@ -288,12 +210,14 @@ class BundleTest extends TestCase
         $this->productMock->setCompositeReadonly(false);
         
         $extensionAttribute = new class {
-            private $bundleProductOptions = [];
-            
-            public function __construct() {}
-            
-            public function setBundleProductOptions($options) { $this->bundleProductOptions = $options; return $this; }
-            public function getBundleProductOptions() { return $this->bundleProductOptions; }
+            public function setBundleProductOptions($options)
+            {
+                return $this;
+            }
+            public function getBundleProductOptions()
+            {
+                return [];
+            }
         };
         $extensionAttribute->setBundleProductOptions([]);
         $this->productMock->setExtensionAttributes($extensionAttribute);

@@ -73,29 +73,67 @@ class ConfigurationTest extends TestCase
         $this->pricingHelper = $this->createPartialMock(Data::class, ['currency']);
         $this->productConfiguration = $this->createMock(Configuration::class);
         $this->escaper = $this->createPartialMock(Escaper::class, ['escapeHtml']);
-        /** @var ItemInterface $this->item */
+        /** @var ItemInterface */
         $this->item = new class implements ItemInterface {
+            /**
+             * @var mixed $qty
+             */
             private $qty;
+            /**
+             * @var mixed $product
+             */
             private $product;
+            /**
+             * @var mixed $optionByCodeCallback
+             */
             private $optionByCodeCallback;
+            /**
+             * @var mixed $fileDownloadParams
+             */
             private $fileDownloadParams;
-            
-            public function getQty() { return $this->qty; }
-            public function setQty($qty) { $this->qty = $qty; return $this; }
-            
-            public function getProduct() { return $this->product; }
-            public function setProduct($product) { $this->product = $product; return $this; }
-            
-            public function getOptionByCode($code) { 
+
+            public function getQty()
+            {
+                return $this->qty;
+            }
+            public function setQty($qty)
+            {
+                $this->qty = $qty;
+                return $this;
+            }
+
+            public function getProduct()
+            {
+                return $this->product;
+            }
+            public function setProduct($product)
+            {
+                $this->product = $product;
+                return $this;
+            }
+
+            public function getOptionByCode($code)
+            {
                 if (is_callable($this->optionByCodeCallback)) {
                     return call_user_func($this->optionByCodeCallback, $code);
                 }
-                return $this->optionByCodeCallback; 
+                return $this->optionByCodeCallback;
             }
-            public function setOptionByCode($optionByCode) { $this->optionByCodeCallback = $optionByCode; return $this; }
-            
-            public function getFileDownloadParams() { return $this->fileDownloadParams; }
-            public function setFileDownloadParams($fileDownloadParams) { $this->fileDownloadParams = $fileDownloadParams; return $this; }
+            public function setOptionByCode($optionByCode)
+            {
+                $this->optionByCodeCallback = $optionByCode;
+                return $this;
+            }
+
+            public function getFileDownloadParams()
+            {
+                return $this->fileDownloadParams;
+            }
+            public function setFileDownloadParams($fileDownloadParams)
+            {
+                $this->fileDownloadParams = $fileDownloadParams;
+                return $this;
+            }
         };
         $this->serializer = $this->createMock(Json::class);
         $this->taxHelper = $this->createPartialMock(TaxPrice::class, ['displayCartPricesBoth', 'getTaxPrice']);
@@ -130,12 +168,24 @@ class ConfigurationTest extends TestCase
         $product = $this->createMock(Product::class);
         /** @var Option $option */
         $option = new class extends Option {
+            /**
+             * @var mixed $value
+             */
             private $value;
-            
-            public function __construct() {}
-            
-            public function getValue() { return $this->value; }
-            public function setValue($value) { $this->value = $value; return $this; }
+
+            public function __construct()
+            {
+            }
+
+            public function getValue()
+            {
+                return $this->value;
+            }
+            public function setValue($value)
+            {
+                $this->value = $value;
+                return $this;
+            }
         };
 
         $product->expects($this->once())
@@ -260,28 +310,80 @@ class ConfigurationTest extends TestCase
         $selectionId = '2';
         /** @var Product $product */
         $product = new class extends Product {
+            /**
+             * @var mixed $selectionId
+             */
             private $selectionId;
+            /**
+             * @var mixed $typeInstance
+             */
             private $typeInstance;
+            /**
+             * @var mixed $customOption
+             */
             private $customOption;
+            /**
+             * @var mixed $name
+             */
             private $name;
+            /**
+             * @var mixed $priceModel
+             */
             private $priceModel;
-            
-            public function __construct() {}
-            
-            public function getSelectionId() { return $this->selectionId; }
-            public function setSelectionId($selectionId) { $this->selectionId = $selectionId; return $this; }
-            
-            public function getTypeInstance() { return $this->typeInstance; }
-            public function setTypeInstance($typeInstance) { $this->typeInstance = $typeInstance; return $this; }
-            
-            public function getCustomOption($code) { return $this->customOption; }
-            public function setCustomOption($customOption) { $this->customOption = $customOption; return $this; }
-            
-            public function getName() { return $this->name; }
-            public function setName($name) { $this->name = $name; return $this; }
-            
-            public function getPriceModel() { return $this->priceModel; }
-            public function setPriceModel($priceModel) { $this->priceModel = $priceModel; return $this; }
+
+            public function __construct()
+            {
+            }
+
+            public function getSelectionId()
+            {
+                return $this->selectionId;
+            }
+            public function setSelectionId($selectionId)
+            {
+                $this->selectionId = $selectionId;
+                return $this;
+            }
+
+            public function getTypeInstance()
+            {
+                return $this->typeInstance;
+            }
+            public function setTypeInstance($typeInstance)
+            {
+                $this->typeInstance = $typeInstance;
+                return $this;
+            }
+
+            public function getCustomOption($code)
+            {
+                return $this->customOption;
+            }
+            public function setCustomOption($customOption)
+            {
+                $this->customOption = $customOption;
+                return $this;
+            }
+
+            public function getName()
+            {
+                return $this->name;
+            }
+            public function setName($name)
+            {
+                $this->name = $name;
+                return $this;
+            }
+
+            public function getPriceModel()
+            {
+                return $this->priceModel;
+            }
+            public function setPriceModel($priceModel)
+            {
+                $this->priceModel = $priceModel;
+                return $this;
+            }
         };
         $typeInstance = $this->createPartialMock(
             Type::class,
@@ -297,16 +399,38 @@ class ConfigurationTest extends TestCase
         );
         /** @var \Magento\Bundle\Model\Option $bundleOption */
         $bundleOption = new class extends \Magento\Bundle\Model\Option {
+            /**
+             * @var mixed $selections
+             */
             private $selections;
+            /**
+             * @var mixed $title
+             */
             private $title;
-            
-            public function __construct() {}
-            
-            public function getSelections() { return $this->selections; }
-            public function setSelections($selections) { $this->selections = $selections; return $this; }
-            
-            public function getTitle() { return $this->title; }
-            public function setTitle($title) { $this->title = $title; return $this; }
+
+            public function __construct()
+            {
+            }
+
+            public function getSelections()
+            {
+                return $this->selections;
+            }
+            public function setSelections($selections)
+            {
+                $this->selections = $selections;
+                return $this;
+            }
+
+            public function getTitle()
+            {
+                return $this->title;
+            }
+            public function setTitle($title)
+            {
+                $this->title = $title;
+                return $this;
+            }
         };
         $selectionOption = $this->createPartialMock(
             OptionInterface::class,

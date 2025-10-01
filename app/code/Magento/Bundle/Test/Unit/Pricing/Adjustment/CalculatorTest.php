@@ -10,6 +10,7 @@ namespace Magento\Bundle\Test\Unit\Pricing\Adjustment;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Bundle\Model\Option;
 use Magento\Bundle\Model\Product\Price as ProductPrice;
+use Magento\Bundle\Test\Unit\Helper\BundleOptionTestHelper;
 use Magento\Bundle\Pricing\Adjustment\Calculator;
 use Magento\Bundle\Pricing\Adjustment\SelectionPriceListProviderInterface;
 use Magento\Bundle\Pricing\Price;
@@ -20,6 +21,7 @@ use Magento\Catalog\Model\Product;
 use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\Pricing\Adjustment\Calculator as PricingAdjustmentCalculator;
 use Magento\Framework\Pricing\Amount\AmountFactory;
+use Magento\Framework\Test\Unit\Helper\AmountTestHelper;
 use Magento\Framework\Pricing\Price\PriceInterface;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\Pricing\PriceInfo\Base;
@@ -108,18 +110,12 @@ class CalculatorTest extends TestCase
         $this->baseCalculator = $this->createMock(PricingAdjustmentCalculator::class);
         $this->amountFactory = $this->createMock(AmountFactory::class);
 
-        $this->selectionFactory = $this->getMockBuilder(BundleSelectionFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->selectionFactory = $this->createMock(BundleSelectionFactory::class);
         $this->selectionFactory->expects($this->any())->method('create')->willReturnArgument(1);
 
-        $this->taxData = $this->getMockBuilder(Data::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->taxData = $this->createMock(Data::class);
 
-        $this->selectionPriceListProvider = $this->getMockBuilder(
-            SelectionPriceListProviderInterface::class
-        )->getMock();
+        $this->selectionPriceListProvider = $this->createMock(SelectionPriceListProviderInterface::class);
 
         $this->model = (new ObjectManager($this))->getObject(
             Calculator::class,
@@ -136,16 +132,8 @@ class CalculatorTest extends TestCase
 
     public function testEmptySelectionPriceList()
     {
-        /** @var Option $option */
-        $option = new class extends Option {
-            private $selections;
-            
-            public function __construct() {}
-            
-            public function getSelections() { return $this->selections; }
-            public function setSelections($selections) { $this->selections = $selections; return $this; }
-        };
-        $option->setSelections(null);
+        $option = new BundleOptionTestHelper();
+        $option->setSelections([]);
         $bundleProduct = $this->createMock(Product::class);
         $this->assertSame([], $this->model->createSelectionPriceList($option, $bundleProduct));
     }
@@ -216,19 +204,7 @@ class CalculatorTest extends TestCase
      */
     protected function createAmountMock($amountData)
     {
-        /** @var \Magento\Framework\Pricing\Amount\Base $amount */
-        $amount = new class extends \Magento\Framework\Pricing\Amount\Base {
-            protected $adjustmentAmounts;
-            protected $value;
-            
-            public function __construct() {}
-            
-            public function __wakeup() {}
-            public function getAdjustmentAmounts() { return $this->adjustmentAmounts; }
-            public function setAdjustmentAmounts($adjustmentAmounts) { $this->adjustmentAmounts = $adjustmentAmounts; return $this; }
-            public function getValue($exclude = null) { return $this->value; }
-            public function setValue($value) { $this->value = $value; return $this; }
-        };
+        $amount = new AmountTestHelper();
         $amount->setAdjustmentAmounts($amountData['adjustmentsAmounts']);
         $amount->setValue($amountData['amount']);
         return $amount;
@@ -276,16 +252,7 @@ class CalculatorTest extends TestCase
         $selection->setAmount($amountMock);
         $selection->setQuantity(1);
 
-        /** @var Product $innerProduct */
-        $innerProduct = new class extends Product {
-            private $selectionCanChangeQty;
-            
-            public function __construct() {}
-            
-            public function __wakeup() {}
-            public function getSelectionCanChangeQty() { return $this->selectionCanChangeQty; }
-            public function setSelectionCanChangeQty($selectionCanChangeQty) { $this->selectionCanChangeQty = $selectionCanChangeQty; return $this; }
-        };
+        $innerProduct = new ProductTestHelper();
         $innerProduct->setSelectionCanChangeQty(false);
         $selection->setProduct($innerProduct);
 
@@ -511,10 +478,7 @@ class CalculatorTest extends TestCase
         $result = 5;
 
         /** @var Calculator|MockObject $calculatorMock */
-        $calculatorMock = $this->getMockBuilder(Calculator::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['calculateBundleAmount'])
-            ->getMock();
+        $calculatorMock = $this->createPartialMock(Calculator::class, ['calculateBundleAmount']);
 
         $calculatorMock->expects($this->once())
             ->method('calculateBundleAmount')
@@ -532,10 +496,7 @@ class CalculatorTest extends TestCase
         $exclude = 'false';
 
         /** @var Calculator|MockObject $calculatorMock */
-        $calculatorMock = $this->getMockBuilder(Calculator::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getOptionsAmount'])
-            ->getMock();
+        $calculatorMock = $this->createPartialMock(Calculator::class, ['getOptionsAmount']);
 
         $calculatorMock->expects($this->once())
             ->method('getOptionsAmount')
@@ -555,10 +516,7 @@ class CalculatorTest extends TestCase
         $exclude = 'false';
 
         /** @var Calculator|MockObject $calculatorMock */
-        $calculatorMock = $this->getMockBuilder(Calculator::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getOptionsAmount'])
-            ->getMock();
+        $calculatorMock = $this->createPartialMock(Calculator::class, ['getOptionsAmount']);
 
         $calculatorMock->expects($this->once())
             ->method('getOptionsAmount')
@@ -579,14 +537,9 @@ class CalculatorTest extends TestCase
         $exclude = 'false';
 
         /** @var Calculator|MockObject $calculatorMock */
-        $calculatorMock = $this->getMockBuilder(Calculator::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['calculateBundleAmount', 'getSelectionAmounts'])
-            ->getMock();
+        $calculatorMock = $this->createPartialMock(Calculator::class, ['calculateBundleAmount', 'getSelectionAmounts']);
 
-        $selections[] = $this->getMockBuilder(BundleSelectionPrice::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $selections[] = $this->createMock(BundleSelectionPrice::class);
         $calculatorMock->expects($this->once())
             ->method('getSelectionAmounts')
             ->with($this->saleableItem, $searchMin, $useRegularPrice)

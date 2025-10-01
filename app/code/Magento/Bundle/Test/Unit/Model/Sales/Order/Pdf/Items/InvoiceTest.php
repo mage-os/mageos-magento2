@@ -62,30 +62,26 @@ class InvoiceTest extends TestCase
         $serializerMock = $this->createMock(Json::class);
 
         $this->model = $this->getMockBuilder(Invoice::class)
-            ->setConstructorArgs(
-                [
-                    $contextMock,
-                    $registryMock,
-                    $this->taxDataMock,
-                    $filesystemMock,
-                    $filterManagerMock,
-                    $stringUtilsMock,
-                    $serializerMock,
-                    $resourceMock,
-                    $collectionMock,
-                    []
-                ]
-            )
-            ->onlyMethods(
-                [
-                    '_setFontRegular',
-                    'getChildren',
-                    'isShipmentSeparately',
-                    'isChildCalculated',
-                    'getValueHtml',
-                    'getSelectionAttributes'
-                ]
-            )
+            ->setConstructorArgs([
+                $contextMock,
+                $registryMock,
+                $this->taxDataMock,
+                $filesystemMock,
+                $filterManagerMock,
+                $stringUtilsMock,
+                $serializerMock,
+                $resourceMock,
+                $collectionMock,
+                []
+            ])
+            ->onlyMethods([
+                '_setFontRegular',
+                'getChildren',
+                'isShipmentSeparately',
+                'isChildCalculated',
+                'getValueHtml',
+                'getSelectionAttributes'
+            ])
             ->getMock();
     }
 

@@ -53,20 +53,15 @@ class ProductOptionProcessorTest extends TestCase
     {
         $this->dataObject = new DataObjectTestHelper();
 
-        $this->dataObjectFactory = $this->getMockBuilder(DataObjectFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->dataObjectFactory = $this->createPartialMock(DataObjectFactory::class, ['create']);
         $this->dataObjectFactory->method('create')->willReturn($this->dataObject);
 
         $this->bundleOption = $this->createMock(BundleOptionInterface::class);
 
-        $this->bundleOptionInterfaceFactory = $this->getMockBuilder(
-            BundleOptionInterfaceFactory::class
-        )
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->bundleOptionInterfaceFactory = $this->createPartialMock(
+            BundleOptionInterfaceFactory::class,
+            ['create']
+        );
         $this->bundleOptionInterfaceFactory->method('create')->willReturn($this->bundleOption);
 
         $this->processor = new ProductOptionProcessor(

@@ -57,10 +57,7 @@ class OptionTest extends TestCase
     #[DataProvider('getSelectionOptionsDataProvider')]
     public function testGetSelectionOptions(array $customOptions, array $expected): void
     {
-        $bundleProduct = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getTypeInstance', 'getPriceModel', 'getStore'])
-            ->getMock();
+        $bundleProduct = $this->createPartialMock(Product::class, ['getTypeInstance', 'getPriceModel', 'getStore']);
 
         $typeInstance = $this->createMock(Type::class);
         $typeInstance->method('getOptionsByIds')
@@ -159,17 +156,11 @@ class OptionTest extends TestCase
      */
     public function getOptionsCollectionMock(array $ids): OptionsCollection
     {
-        $optionsCollection = $this->getMockBuilder(OptionsCollection::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['load'])
-            ->getMock();
+        $optionsCollection = $this->createPartialMock(OptionsCollection::class, ['load']);
 
         $options = [];
         foreach ($ids as $id) {
-            $option = $this->getMockBuilder(BundleOption::class)
-                ->disableOriginalConstructor()
-                ->onlyMethods(['getId', 'getTitle'])
-                ->getMock();
+            $option = $this->createPartialMock(BundleOption::class, ['getId', 'getTitle']);
 
             $option->method('getId')
                 ->willReturn($id);
@@ -193,10 +184,7 @@ class OptionTest extends TestCase
      */
     public function getSelectionsCollectionMock(array $ids): SelectionsCollection
     {
-        $selectionsCollection = $this->getMockBuilder(SelectionsCollection::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['load'])
-            ->getMock();
+        $selectionsCollection = $this->createPartialMock(SelectionsCollection::class, ['load']);
 
         $selections = [];
         foreach ($ids as $id) {

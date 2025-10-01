@@ -18,6 +18,7 @@ use Magento\Bundle\Pricing\Price\BundleSelectionFactory;
 use Magento\Bundle\Pricing\Price\BundleSelectionPrice;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Type\AbstractType;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\Pricing\Adjustment\Calculator as AdjustmentCalculator;
 use Magento\Framework\Pricing\Amount\AmountFactory;
 use Magento\Framework\Pricing\Amount\AmountInterface;
@@ -214,14 +215,7 @@ class BundleOptionsTest extends TestCase
     public function testGetOptionSelectionAmount(float $selectionQty, $selectionAmount, bool $useRegularPrice)
     {
         /** @var Product $selection */
-        $selection = new class extends Product {
-            private $selectionQty;
-
-            public function __construct() {}
-
-            public function getSelectionQty() { return $this->selectionQty; }
-            public function setSelectionQty($selectionQty) { $this->selectionQty = $selectionQty; return $this; }
-        };
+        $selection = new ProductTestHelper();
         $amountInterfaceMock = $this->createAmountInterfaceMock();
         $amountInterfaceMock->expects($this->once())
             ->method('getValue')
@@ -306,26 +300,7 @@ class BundleOptionsTest extends TestCase
     private function createSelectionMock(array $selectionData)
     {
         /** @var Product $selection */
-        $selection = new class extends Product {
-            private $amount;
-            private $quantity;
-            private $product;
-            private $isSalable;
-
-            public function __construct() {}
-
-            public function getAmount() { return $this->amount; }
-            public function setAmount($amount) { $this->amount = $amount; return $this; }
-
-            public function getQuantity() { return $this->quantity; }
-            public function setQuantity($quantity) { $this->quantity = $quantity; return $this; }
-
-            public function getProduct() { return $this->product; }
-            public function setProduct($product) { $this->product = $product; return $this; }
-
-            public function isSalable() { return $this->isSalable; }
-            public function setIsSalable($isSalable) { $this->isSalable = $isSalable; return $this; }
-        };
+        $selection = new ProductTestHelper();
 
         // All items are saleable
         $selection->setIsSalable(true);
@@ -337,14 +312,7 @@ class BundleOptionsTest extends TestCase
         $selection->setQuantity(1);
 
         /** @var Product $innerProduct */
-        $innerProduct = new class extends Product {
-            private $selectionCanChangeQty;
-
-            public function __construct() {}
-
-            public function getSelectionCanChangeQty() { return $this->selectionCanChangeQty; }
-            public function setSelectionCanChangeQty($selectionCanChangeQty) { $this->selectionCanChangeQty = $selectionCanChangeQty; return $this; }
-        };
+        $innerProduct = new ProductTestHelper();
         $innerProduct->setSelectionCanChangeQty(true);
         $selection->setProduct($innerProduct);
 

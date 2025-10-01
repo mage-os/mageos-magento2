@@ -53,9 +53,7 @@ abstract class AbstractModifierTestCase extends TestCase
 
         $this->locatorMock->method('getProduct')->willReturn($this->productMock);
 
-        $this->arrayManagerMock = $this->getMockBuilder(ArrayManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->arrayManagerMock = $this->createMock(ArrayManager::class);
         $this->arrayManagerMock->expects($this->any())
             ->method('get')
             ->willReturnArgument(3);

@@ -35,6 +35,9 @@ class TypeTestHelper extends Type
      * @param mixed $productId
      * @return self
      */
+        /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function setParentProductId($productId): self
     {
         $this->data['parent_product_id'] = $productId;
@@ -262,5 +265,4 @@ class TypeTestHelper extends Type
         $this->data['selections_collection'] = $collection;
         return $this;
     }
-
 }

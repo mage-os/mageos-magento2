@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Bundle\Test\Unit\Pricing\Adjustment;
 
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Bundle\Model\Option;
 use Magento\Bundle\Model\Product\Price;
@@ -98,47 +99,18 @@ class DefaultSelectionPriceListProviderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->selectionFactory = $this->getMockBuilder(BundleSelectionFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->catalogData = $this->getMockBuilder(CatalogData::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->selectionFactory = $this->createMock(BundleSelectionFactory::class);
+        $this->catalogData = $this->createMock(CatalogData::class);
         $this->storeManager = $this->createMock(StoreManagerInterface::class);
         $this->websiteRepository = $this->createMock(WebsiteRepositoryInterface::class);
 
-        /** @var Product $this->product */
-        $this->product = new class extends Product {
-            private $priceType;
-            private $typeInstance;
-            private $isSalable;
-            
-            public function __construct() {}
-            
-            public function getPriceType() { return $this->priceType; }
-            public function setPriceType($priceType) { $this->priceType = $priceType; return $this; }
-            
-            public function getTypeInstance() { return $this->typeInstance; }
-            public function setTypeInstance($typeInstance) { $this->typeInstance = $typeInstance; return $this; }
-            
-            public function isSalable() { return $this->isSalable; }
-            public function setIsSalable($isSalable) { $this->isSalable = $isSalable; return $this; }
-        };
-        $this->optionsCollection = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->typeInstance = $this->getMockBuilder(Type::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->option = $this->getMockBuilder(Option::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->selectionCollection = $this->getMockBuilder(SelectionCollection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->selection = $this->getMockBuilder(DataObject::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        /** @var Product */
+        $this->product = new ProductTestHelper();
+        $this->optionsCollection = $this->createMock(Collection::class);
+        $this->typeInstance = $this->createMock(Type::class);
+        $this->option = $this->createMock(Option::class);
+        $this->selectionCollection = $this->createMock(SelectionCollection::class);
+        $this->selection = $this->createMock(DataObject::class);
         $this->store = $this->createMock(StoreInterface::class);
         $this->website = $this->createMock(WebsiteInterface::class);
 

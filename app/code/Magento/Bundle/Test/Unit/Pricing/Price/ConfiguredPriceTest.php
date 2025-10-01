@@ -92,29 +92,25 @@ class ConfiguredPriceTest extends TestCase
 
         $this->priceInfoMock = $this->createMock(Base::class);
         $this->priceInfoMock->method('getPrice')->willReturn($basePrice);
-        $this->productMock = $this->getMockBuilder(Product::class)
-            ->onlyMethods(['getPriceInfo', 'getOptionById', 'getResource', 'getId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productMock = $this->createPartialMock(
+            Product::class,
+            ['getPriceInfo', 'getOptionById', 'getResource', 'getId']
+        );
         $this->productMock->expects($this->once())->method('getPriceInfo')->willReturn($this->priceInfoMock);
         $this->priceCurrencyMock = $this->createMock(PriceCurrencyInterface::class);
 
-        $this->jsonSerializerMock = $this->getMockBuilder(Json::class)
-            ->getMock();
-        $this->configuredPriceSelectionMock = $this->getMockBuilder(ConfiguredPriceSelection::class)
-            ->onlyMethods(['getSelectionPriceList'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->configuredPriceSelectionMock->method('getSelectionPriceList')->willReturn($this->prepareAndReturnSelectionPriceDataStub());
+        $this->jsonSerializerMock = $this->createMock(Json::class);
+        $this->configuredPriceSelectionMock = $this->createPartialMock(
+            ConfiguredPriceSelection::class,
+            ['getSelectionPriceList']
+        );
+        $this->configuredPriceSelectionMock->method('getSelectionPriceList')
+            ->willReturn($this->prepareAndReturnSelectionPriceDataStub());
         $this->amountInterfaceMock = $this->createAmountInterfaceMock();
         $this->amountInterfaceMock->method('getBaseAmount')->willReturn(100.00);
-        $this->calculatorMock = $this->getMockBuilder(Calculator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->calculatorMock = $this->createMock(Calculator::class);
         $this->calculatorMock->method('calculateBundleAmount')->willReturn($this->amountInterfaceMock);
-        $this->discountCalculatorMock = $this->getMockBuilder(DiscountCalculator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->discountCalculatorMock = $this->createMock(DiscountCalculator::class);
         $this->discountCalculatorMock->method('calculateDiscount')->willReturn(-5.00);
         $this->model = new ConfiguredPrice(
             $this->productMock,
@@ -134,8 +130,7 @@ class ConfiguredPriceTest extends TestCase
     public function testGetValueMethod(): void
     {
         $this->productMock->method('getId')->willReturn(123);
-        $this->itemMock = $this->getMockBuilder(ItemInterface::class)
-            ->getMock();
+        $this->itemMock = $this->createMock(ItemInterface::class);
         $this->itemMock->method('getProduct')->willReturn($this->productMock);
         $this->model->setItem($this->itemMock);
         $valueFromMock = $this->model->getValue();
@@ -147,11 +142,8 @@ class ConfiguredPriceTest extends TestCase
      */
     public function testGetValueMethodNoItem(): void
     {
-        $this->productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->itemMock = $this->getMockBuilder(ItemInterface::class)
-            ->getMock();
+        $this->productMock = $this->createMock(Product::class);
+        $this->itemMock = $this->createMock(ItemInterface::class);
         $this->itemMock->method('getProduct')->willReturn($this->productMock);
         $this->productMock->method('getId')->willReturn(false);
         $this->model->setItem($this->itemMock);

@@ -56,9 +56,7 @@ class SpecialPriceTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->saleable = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->saleable = $this->createMock(Product::class);
 
         $this->localeDate = $this->createMock(TimezoneInterface::class);
         $this->priceInfo = $this->createMock(Base::class);
@@ -69,9 +67,7 @@ class SpecialPriceTest extends TestCase
 
         $this->priceCurrencyMock = $this->createMock(PriceCurrencyInterface::class);
 
-        $this->specialPriceService = $this->getMockBuilder(SpecialPriceService::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->specialPriceService = $this->createMock(SpecialPriceService::class);
 
         $objectHelper = new ObjectManager($this);
         $this->model = $objectHelper->getObject(
