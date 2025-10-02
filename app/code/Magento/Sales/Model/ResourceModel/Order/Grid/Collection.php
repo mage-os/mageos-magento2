@@ -28,6 +28,7 @@ class Collection extends SearchResult
      * @param string $mainTable
      * @param string $resourceModel
      * @throws LocalizedException
+     * phpcs:disable Generic.CodeAnalysis.UselessOverridingMethod.Found
      */
     public function __construct(
         EntityFactory $entityFactory,

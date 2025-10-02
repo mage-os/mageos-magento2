@@ -21,15 +21,11 @@ class Date extends AbstractFilter
     public const COMPONENT = 'date';
 
     /**
-     * Wrapped component
-     *
      * @var DataTypeDate
      */
     protected $wrappedComponent;
 
     /**
-     * Date format
-     *
      * @var string
      * @since 100.1.2
      */
