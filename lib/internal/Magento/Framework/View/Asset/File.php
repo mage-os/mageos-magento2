@@ -16,6 +16,8 @@ namespace Magento\Framework\View\Asset;
  */
 class File implements MergeableInterface
 {
+    private const MAX_READ_ATTEMPTS = 3;
+
     /**
      * @var string
      */
@@ -183,12 +185,29 @@ class File implements MergeableInterface
      */
     public function getContent()
     {
-        $content = $this->source->getContent($this);
-        if (false === $content) {
-            throw new File\NotFoundException("Unable to get content for '{$this->getPath()}'");
+        $attempt    = 0;
+        while ($attempt < self::MAX_READ_ATTEMPTS) {
+            $attempt++;
+            $content = trim($this->source->getContent($this));
+
+            if ($content) {
+                return $content;
+            }
+
+            if ($attempt < self::MAX_READ_ATTEMPTS) {
+                usleep(random_int(10000, 1000000));
+            }
         }
-        return $content;
+
+        throw new File\NotFoundException(
+            sprintf(
+                "Unable to get content for '%s' after %d attempts.",
+                $this->getPath(),
+                self::MAX_READ_ATTEMPTS
+            )
+        );
     }
+
 
     /**
      * @inheritdoc
