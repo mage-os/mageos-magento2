@@ -1233,9 +1233,27 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
                     throw $e;
                 }
 
+                $attributeCode = $data = [];
+                $entityIdField = $entity->getEntityIdField();
+
                 foreach ($values as $value) {
-                    $this->_setItemAttributeValue($value);
+                    $entityId = $value[$entityIdField];
+                    $attributeId = $value['attribute_id'];
+                    if(!isset($attributeCode[$attributeId])) {
+                        $attributeCode[$attributeId] = array_search($attributeId, $this->_selectAttributes);
+                        if (!$attributeCode[$attributeId]) {
+                            $attribute = $this->_eavConfig->getAttribute(
+                                $this->getEntity()->getType(),
+                                $attributeId
+                            );
+                            $attributeCode[$attributeId] = $attribute->getAttributeCode();
+                        }
+                        $data[$entityId][$attributeCode[$attributeId]] = $value['value'];
+                    }
                 }
+
+                if($data)
+                    $this->_setItemAttributeValue($data);
             }
         }
 
@@ -1303,7 +1321,7 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
     /**
      * Initialize entity object property value
      *
-     * Parameter $valueInfo is _getLoadAttributesSelect fetch result row
+     * Parameter $valueInfo is [product_id => [attribute_code => value]]
      *
      * @param array $valueInfo
      * @return $this
@@ -1311,24 +1329,15 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
      */
     protected function _setItemAttributeValue($valueInfo)
     {
-        $entityIdField = $this->getEntity()->getEntityIdField();
-        $entityId = $valueInfo[$entityIdField];
-        if (!isset($this->_itemsById[$entityId])) {
-            throw new LocalizedException(
-                __('A header row is missing for an attribute. Verify the header row and try again.')
-            );
-        }
-        $attributeCode = array_search($valueInfo['attribute_id'], $this->_selectAttributes);
-        if (!$attributeCode) {
-            $attribute = $this->_eavConfig->getAttribute(
-                $this->getEntity()->getType(),
-                $valueInfo['attribute_id']
-            );
-            $attributeCode = $attribute->getAttributeCode();
-        }
-
-        foreach ($this->_itemsById[$entityId] as $object) {
-            $object->setData($attributeCode, $valueInfo['value']);
+        foreach ($valueInfo as $entityId => $value) {
+            if (!isset($this->_itemsById[$entityId])) {
+                throw new LocalizedException(
+                    __('A header row is missing for an attribute. Verify the header row and try again.')
+                );
+            }
+            $object =$this->_itemsById[$entityId][0];
+            $value = array_replace($object->getData(), $value);
+            $object->setData($value);
         }
 
         return $this;
