@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Eav\Model\Entity\Collection;
@@ -1239,7 +1239,7 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
                 foreach ($values as $value) {
                     $entityId = $value[$entityIdField];
                     $attributeId = $value['attribute_id'];
-                    if(!isset($attributeCode[$attributeId])) {
+                    if (!isset($attributeCode[$attributeId])) {
                         $attributeCode[$attributeId] = array_search($attributeId, $this->_selectAttributes);
                         if (!$attributeCode[$attributeId]) {
                             $attribute = $this->_eavConfig->getAttribute(
@@ -1252,8 +1252,9 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
                     }
                 }
 
-                if($data)
+                if ($data) {
                     $this->_setItemAttributeValue($data);
+                }
             }
         }
 
@@ -1336,8 +1337,7 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
                 );
             }
             $object =$this->_itemsById[$entityId][0];
-            $value = array_replace($object->getData(), $value);
-            $object->setData($value);
+            $object->setData($value+$object->getData());
         }
 
         return $this;
