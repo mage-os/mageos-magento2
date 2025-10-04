@@ -108,7 +108,7 @@ class ProductTestHelper extends Product
         if (isset($this->data['lowest_price_callback']) && is_callable($this->data['lowest_price_callback'])) {
             return call_user_func($this->data['lowest_price_callback'], $product, $price);
         }
-        
+
         return $this->data['lowest_price'] ?? null;
     }
 
@@ -575,7 +575,7 @@ class ProductTestHelper extends Product
         if (isset($this->data['get_data_callback'])) {
             return call_user_func($this->data['get_data_callback'], $key);
         }
-        
+
         // Use separate productData array for getData/setData to avoid conflicts
         if ($key === '' || $key === null) {
             return $this->data['product_data'] ?? [];
@@ -597,7 +597,7 @@ class ProductTestHelper extends Product
         if (!isset($this->data['product_data'])) {
             $this->data['product_data'] = [];
         }
-        
+
         if (is_array($key)) {
             $this->data['product_data'] = array_merge($this->data['product_data'], $key);
         } else {
@@ -761,12 +761,12 @@ class ProductTestHelper extends Product
     /**
      * Set selection price value for testing
      *
-     * @param mixed $priceValue
+     * @param mixed $selectionPriceValue
      * @return self
      */
-    public function setSelectionPriceValue($priceValue): self
+    public function setSelectionPriceValue($selectionPriceValue): self
     {
-        $this->data['selection_price_value'] = $priceValue;
+        $this->data['selection_price_value'] = $selectionPriceValue;
         return $this;
     }
 
@@ -856,7 +856,7 @@ class ProductTestHelper extends Product
         if (isset($this->data['custom_option'])) {
             return $this->data['custom_option'];
         }
-        
+
         if ($code === null) {
             return $this->data['custom_options'] ?? [];
         }
@@ -950,30 +950,6 @@ class ProductTestHelper extends Product
     public function hasData($key = '')
     {
         return $this->data['has_data'] ?? true;
-    }
-
-    /**
-     * Set hasData return value for testing
-     *
-     * @param mixed $value
-     * @return self
-     */
-    public function setHasData($value): self
-    {
-        $this->data['has_data'] = $value;
-        return $this;
-    }
-
-    /**
-     * Set getData callback for testing
-     *
-     * @param callable $callback
-     * @return self
-     */
-    public function setGetDataCallback(callable $callback): self
-    {
-        $this->data['get_data_callback'] = $callback;
-        return $this;
     }
 
     /**
@@ -1324,6 +1300,150 @@ class ProductTestHelper extends Product
     public function getSetOptionsParams()
     {
         return $this->setOptionsParams;
+    }
+
+    /**
+     * Custom getSkuType method for Bundle testing
+     *
+     * @return mixed
+     */
+    public function getSkuType()
+    {
+        return $this->data['sku_type'] ?? null;
+    }
+
+    /**
+     * Set SKU type for testing
+     *
+     * @param mixed $skuType
+     * @return self
+     */
+    public function setSkuType($skuType): self
+    {
+        $this->data['sku_type'] = $skuType;
+        return $this;
+    }
+
+    /**
+     * Custom getPriceView method for Bundle testing
+     *
+     * @return mixed
+     */
+    public function getPriceView()
+    {
+        return $this->data['price_view'] ?? null;
+    }
+
+    /**
+     * Set price view for testing
+     *
+     * @param mixed $priceView
+     * @return self
+     */
+    public function setPriceView($priceView): self
+    {
+        $this->data['price_view'] = $priceView;
+        return $this;
+    }
+
+    /**
+     * Custom getWeightType method for Bundle testing
+     *
+     * @return mixed
+     */
+    public function getWeightType()
+    {
+        return $this->data['weight_type'] ?? null;
+    }
+
+    /**
+     * Set weight type for testing
+     *
+     * @param mixed $weightType
+     * @return self
+     */
+    public function setWeightType($weightType): self
+    {
+        $this->data['weight_type'] = $weightType;
+        return $this;
+    }
+
+    /**
+     * Custom getSelectionsCollection method for Bundle testing
+     *
+     * @return mixed
+     */
+    public function getSelectionsCollection()
+    {
+        return $this->data['selections_collection'] ?? null;
+    }
+
+    /**
+     * Set selections collection for testing
+     *
+     * @param mixed $selectionsCollection
+     * @return self
+     */
+    public function setSelectionsCollection($selectionsCollection): self
+    {
+        $this->data['selections_collection'] = $selectionsCollection;
+        return $this;
+    }
+
+    /**
+     * Set options collection for testing
+     *
+     * @param mixed $optionsCollection
+     * @return self
+     */
+    public function setOptionsCollection($optionsCollection): self
+    {
+        $this->data['options_collection'] = $optionsCollection;
+        return $this;
+    }
+
+    /**
+     * Override getStoreIds to work without resource
+     *
+     * @return array
+     */
+    public function getStoreIds()
+    {
+        return $this->data['store_ids'] ?? [];
+    }
+
+    /**
+     * Override setStoreIds to work without resource
+     *
+     * @param array $storeIds
+     * @return self
+     */
+    public function setStoreIds(array $storeIds): self
+    {
+        $this->data['store_ids'] = $storeIds;
+        return $this;
+    }
+
+    /**
+     * Override getEntityId to work without resource
+     *
+     * @return mixed
+     */
+    public function getEntityId()
+    {
+        return $this->data['entity_id'] ?? $this->data['id'] ?? null;
+    }
+
+    /**
+     * Override setEntityId to work without resource
+     *
+     * @param mixed $entityId
+     * @return self
+     */
+    public function setEntityId($entityId): self
+    {
+        $this->data['entity_id'] = $entityId;
+        return $this;
     }
 
 }
