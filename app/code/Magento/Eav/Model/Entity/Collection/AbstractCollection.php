@@ -1248,8 +1248,8 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
                             );
                             $attributeCode[$attributeId] = $attribute->getAttributeCode();
                         }
-                        $data[$entityId][$attributeCode[$attributeId]] = $value['value'];
                     }
+                    $data[$entityId][$attributeCode[$attributeId]] = $value['value'];
                 }
 
                 if ($data) {
