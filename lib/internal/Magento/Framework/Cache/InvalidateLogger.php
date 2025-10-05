@@ -43,8 +43,7 @@ class InvalidateLogger
     {
         $context = $this->makeParams($invalidateInfo);
         if (isset($invalidateInfo['tags'], $invalidateInfo['mode'])) {
-            if (
-                $invalidateInfo['mode'] === 'all'
+            if ($invalidateInfo['mode'] === 'all'
                 && is_array($invalidateInfo['tags'])
                 && empty($invalidateInfo['tags'])
             ) {
