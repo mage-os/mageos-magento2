@@ -1337,7 +1337,7 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
                 );
             }
             $object =$this->_itemsById[$entityId][0];
-            $object->setData($value+$object->getData());
+            $object->setData($object->getData()+$value);
         }
 
         return $this;
