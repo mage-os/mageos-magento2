@@ -50,7 +50,7 @@ class InvalidateLogger
             ) {
                 // If we are sending a purge request to all cache storage capture the trace
                 // This is not a usual flow, and likely a bug is causing a performance issue
-                $context['trace'] = (new \Exception)->getTrace();
+                $context['trace'] = (string)(new \Exception('full purge of cache storage triggered'));
             }
         }
         $this->logger->debug('cache_invalidate: ', $context);
