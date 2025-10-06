@@ -21,6 +21,29 @@ class ProductTestHelper extends Product
     private $data = [];
 
     /**
+     * Tracking variables for method calls and parameters
+     */
+    private $setBundleOptionsDataCalled = false;
+    /** @var array */
+    private $setBundleOptionsDataParams = [];
+    /** @var bool */
+    private $setBundleSelectionsDataCalled = false;
+    /** @var array */
+    private $setBundleSelectionsDataParams = [];
+    /** @var bool */
+    private $setCanSaveCustomOptionsCalled = false;
+    /** @var array */
+    private $setCanSaveCustomOptionsParams = [];
+    /** @var bool */
+    private $setCanSaveBundleSelectionsCalled = false;
+    /** @var array */
+    private $setCanSaveBundleSelectionsParams = [];
+    /** @var bool */
+    private $setOptionsCalled = false;
+    /** @var array */
+    private $setOptionsParams = [];
+
+    /**
      * Skip parent constructor to avoid dependencies
      */
     public function __construct()
@@ -108,7 +131,7 @@ class ProductTestHelper extends Product
         if (isset($this->data['lowest_price_callback']) && is_callable($this->data['lowest_price_callback'])) {
             return call_user_func($this->data['lowest_price_callback'], $product, $price);
         }
-        
+
         return $this->data['lowest_price'] ?? null;
     }
 
@@ -146,7 +169,10 @@ class ProductTestHelper extends Product
         // Return from internal data array since parent's getTypeInstance()
         // relies on _catalogProductType which is null when constructor is skipped
         return $this->data['type_instance'] ?? new class {
-            public function getSetAttributes($product) { return []; }
+            public function getSetAttributes($product)
+            {
+                return [];
+            }
         };
     }
 
@@ -602,7 +628,7 @@ class ProductTestHelper extends Product
         if (isset($this->data['get_data_callback'])) {
             return call_user_func($this->data['get_data_callback'], $key);
         }
-        
+
         // Use separate productData array for getData/setData to avoid conflicts
         if ($key === '' || $key === null) {
             return $this->data['product_data'] ?? [];
@@ -624,7 +650,7 @@ class ProductTestHelper extends Product
         if (!isset($this->data['product_data'])) {
             $this->data['product_data'] = [];
         }
-        
+
         if (is_array($key)) {
             $this->data['product_data'] = array_merge($this->data['product_data'], $key);
         } else {
@@ -883,7 +909,7 @@ class ProductTestHelper extends Product
         if (isset($this->data['custom_option'])) {
             return $this->data['custom_option'];
         }
-        
+
         if ($code === null) {
             return $this->data['custom_options'] ?? [];
         }
@@ -1167,18 +1193,6 @@ class ProductTestHelper extends Product
         return $this;
     }
 
-    // Bundle-specific methods with call tracking
-    private $setBundleOptionsDataCalled = false;
-    private $setBundleOptionsDataParams = [];
-    private $setBundleSelectionsDataCalled = false;
-    private $setBundleSelectionsDataParams = [];
-    private $setCanSaveCustomOptionsCalled = false;
-    private $setCanSaveCustomOptionsParams = [];
-    private $setCanSaveBundleSelectionsCalled = false;
-    private $setCanSaveBundleSelectionsParams = [];
-    private $setOptionsCalled = false;
-    private $setOptionsParams = [];
-
     /**
      * Get composite readonly for testing
      *
@@ -1301,53 +1315,81 @@ class ProductTestHelper extends Product
         return $this;
     }
 
-
-    // Verification methods for call tracking
+    /**
+     * @return bool
+     */
     public function wasSetBundleOptionsDataCalled(): bool
     {
         return $this->setBundleOptionsDataCalled;
     }
 
+    /**
+     * @return array
+     */
     public function getSetBundleOptionsDataParams()
     {
         return $this->setBundleOptionsDataParams;
     }
 
+    /**
+     * @return bool
+     */
     public function wasSetBundleSelectionsDataCalled(): bool
     {
         return $this->setBundleSelectionsDataCalled;
     }
 
+    /**
+     * @return array
+     */
     public function getSetBundleSelectionsDataParams()
     {
         return $this->setBundleSelectionsDataParams;
     }
 
+    /**
+     * @return bool
+     */
     public function wasSetCanSaveCustomOptionsCalled(): bool
     {
         return $this->setCanSaveCustomOptionsCalled;
     }
 
+    /**
+     * @return array
+     */
     public function getSetCanSaveCustomOptionsParams()
     {
         return $this->setCanSaveCustomOptionsParams;
     }
 
+    /**
+     * @return bool
+     */
     public function wasSetCanSaveBundleSelectionsCalled(): bool
     {
         return $this->setCanSaveBundleSelectionsCalled;
     }
 
+    /**
+     * @return array
+     */
     public function getSetCanSaveBundleSelectionsParams()
     {
         return $this->setCanSaveBundleSelectionsParams;
     }
 
+    /**
+     * @return bool
+     */
     public function wasSetOptionsCalled(): bool
     {
         return $this->setOptionsCalled;
     }
 
+    /**
+     * @return array
+     */
     public function getSetOptionsParams()
     {
         return $this->setOptionsParams;
@@ -1632,6 +1674,28 @@ class ProductTestHelper extends Product
     public function setMediaGalleryImages($images): self
     {
         $this->data['media_gallery_images'] = $images;
+        return $this;
+    }
+
+    /**
+     * Get configurable product links
+     *
+     * @return array
+     */
+    public function getConfigurableProductLinks(): array
+    {
+        return $this->data['configurable_product_links'] ?? [];
+    }
+
+    /**
+     * Set configurable product links
+     *
+     * @param array $links
+     * @return self
+     */
+    public function setConfigurableProductLinks(array $links): self
+    {
+        $this->data['configurable_product_links'] = $links;
         return $this;
     }
 
