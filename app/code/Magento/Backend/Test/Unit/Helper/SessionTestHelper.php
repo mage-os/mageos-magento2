@@ -10,6 +10,7 @@ namespace Magento\Backend\Test\Unit\Helper;
 use Magento\Backend\Model\Auth\Session;
 use Magento\Backend\Model\Session as BackendSession;
 use Magento\Framework\DataObject;
+use Magento\Framework\Session\Test\Unit\Helper\StorageTestHelper;
 use Magento\User\Model\User;
 
 /**
@@ -49,6 +50,8 @@ class SessionTestHelper extends Session
     public function __construct(?DataObject $sessionData = null)
     {
         // Skip parent constructor for testing
+        // Initialize storage with the StorageTestHelper
+        $this->storage = new StorageTestHelper();
         $this->sessionData = $sessionData;
     }
     
