@@ -74,28 +74,19 @@ class ProductRepositorySaveTest extends TestCase
     protected function setUp(): void
     {
         $this->productAttributeRepository =
-            $this->getMockForAbstractClass(ProductAttributeRepositoryInterface::class);
+            $this->createMock(ProductAttributeRepositoryInterface::class);
 
-        $this->product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getTypeId', 'getExtensionAttributes'])
-            ->getMock();
+        $this->product = $this->createPartialMock(Product::class, ['getTypeId', 'getExtensionAttributes']);
 
-        $this->result = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getExtensionAttributes'])
-            ->getMock();
+        $this->result = $this->createPartialMock(Product::class, ['getExtensionAttributes']);
 
-        $this->productRepository = $this->getMockForAbstractClass(ProductRepositoryInterface::class);
+        $this->productRepository = $this->createMock(ProductRepositoryInterface::class);
 
-        $this->extensionAttributes = $this->getMockBuilder(ProductExtensionAttributes::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getConfigurableProductOptions', 'getConfigurableProductLinks'])
-            ->getMockForAbstractClass();
+        $this->extensionAttributes = new \Magento\ConfigurableProduct\Test\Unit\Helper\ProductExtensionAttributesTestHelper();
 
-        $this->eavAttribute = $this->getMockForAbstractClass(ProductAttributeInterface::class);
+        $this->eavAttribute = $this->createMock(ProductAttributeInterface::class);
 
-        $this->option = $this->getMockForAbstractClass(OptionInterface::class);
+        $this->option = $this->createMock(OptionInterface::class);
 
         $this->plugin = (new ObjectManager($this))->getObject(
             ProductRepositorySave::class,
@@ -137,12 +128,8 @@ class ProductRepositorySaveTest extends TestCase
             ->method('getExtensionAttributes')
             ->willReturn($this->extensionAttributes);
 
-        $this->extensionAttributes->expects(static::once())
-            ->method('getConfigurableProductOptions')
-            ->willReturn([]);
-        $this->extensionAttributes->expects(static::once())
-            ->method('getConfigurableProductLinks')
-            ->willReturn([]);
+        $this->extensionAttributes->setConfigurableProductOptions([]);
+        $this->extensionAttributes->setConfigurableProductLinks([]);
 
         $this->productAttributeRepository->expects(static::never())
             ->method('get');
@@ -175,12 +162,8 @@ class ProductRepositorySaveTest extends TestCase
         $this->product->expects(static::once())
             ->method('getExtensionAttributes')
             ->willReturn($this->extensionAttributes);
-        $this->extensionAttributes->expects(static::once())
-            ->method('getConfigurableProductOptions')
-            ->willReturn([$this->option]);
-        $this->extensionAttributes->expects(static::once())
-            ->method('getConfigurableProductLinks')
-            ->willReturn($links);
+        $this->extensionAttributes->setConfigurableProductOptions([$this->option]);
+        $this->extensionAttributes->setConfigurableProductLinks($links);
 
         $this->productAttributeRepository->expects(static::once())
             ->method('get')
@@ -190,10 +173,7 @@ class ProductRepositorySaveTest extends TestCase
             ->method('getAttributeCode')
             ->willReturn($attributeCode);
 
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getData'])
-            ->getMock();
+        $product = $this->createPartialMock(Product::class, ['getData']);
 
         $this->productRepository->expects(static::once())
             ->method('getById')
@@ -231,12 +211,8 @@ class ProductRepositorySaveTest extends TestCase
         $this->product->expects(static::once())
             ->method('getExtensionAttributes')
             ->willReturn($this->extensionAttributes);
-        $this->extensionAttributes->expects(static::once())
-            ->method('getConfigurableProductOptions')
-            ->willReturn([$this->option]);
-        $this->extensionAttributes->expects(static::once())
-            ->method('getConfigurableProductLinks')
-            ->willReturn($links);
+        $this->extensionAttributes->setConfigurableProductOptions([$this->option]);
+        $this->extensionAttributes->setConfigurableProductLinks($links);
 
         $this->productAttributeRepository->expects(static::once())
             ->method('get')
@@ -246,10 +222,7 @@ class ProductRepositorySaveTest extends TestCase
             ->method('getAttributeCode')
             ->willReturn($attributeCode);
 
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getData'])
-            ->getMock();
+        $product = $this->createPartialMock(Product::class, ['getData']);
 
         $this->productRepository->expects(static::exactly(2))
             ->method('getById')

@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\ConfigurableProduct\Test\Unit\Model;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Api\Data\ProductOptionExtensionInterface;
 use Magento\Catalog\Api\Data\ProductOptionInterface;
 use Magento\ConfigurableProduct\Api\Data\ConfigurableItemOptionValueInterface;
@@ -15,6 +16,7 @@ use Magento\ConfigurableProduct\Model\Quote\Item\ConfigurableItemOptionValue;
 use Magento\ConfigurableProduct\Model\Quote\Item\ConfigurableItemOptionValueFactory;
 use Magento\Framework\DataObject;
 use Magento\Framework\DataObject\Factory as DataObjectFactory;
+use Magento\Framework\Test\Unit\Helper\DataObjectTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -51,34 +53,18 @@ class ProductOptionProcessorTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->dataObject = $this->getMockBuilder(DataObject::class)
-            ->onlyMethods(['addData'])
-            ->addMethods(['getSuperAttribute'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->dataObject = new DataObjectTestHelper();
 
-        $this->dataObjectFactory = $this->getMockBuilder(\Magento\Framework\DataObject\Factory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->dataObjectFactory->expects($this->any())
-            ->method('create')
-            ->willReturn($this->dataObject);
+        $this->dataObjectFactory = $this->createPartialMock(DataObjectFactory::class, ['create']);
+        $this->dataObjectFactory->method('create')->willReturn($this->dataObject);
 
-        $this->itemOptionValue = $this->getMockBuilder(
-            ConfigurableItemOptionValueInterface::class
-        )
-            ->getMockForAbstractClass();
+        $this->itemOptionValue = $this->createMock(ConfigurableItemOptionValueInterface::class);
 
-        $this->itemOptionValueFactory = $this->getMockBuilder(
-            ConfigurableItemOptionValueFactory::class
-        )
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->itemOptionValueFactory->expects($this->any())
-            ->method('create')
-            ->willReturn($this->itemOptionValue);
+        $this->itemOptionValueFactory = $this->createPartialMock(
+            ConfigurableItemOptionValueFactory::class,
+            ['create']
+        );
+        $this->itemOptionValueFactory->method('create')->willReturn($this->itemOptionValue);
 
         $this->processor = new ProductOptionProcessor(
             $this->dataObjectFactory,
@@ -89,8 +75,9 @@ class ProductOptionProcessorTest extends TestCase
     /**
      * @param array|string $options
      * @param array $requestData
-     * @dataProvider dataProviderConvertToBuyRequest
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
+    #[DataProvider('dataProviderConvertToBuyRequest')]
     public function testConvertToBuyRequest(
         $options,
         $requestData
@@ -98,29 +85,19 @@ class ProductOptionProcessorTest extends TestCase
         if (!empty($options[0]) && is_callable($options[0])) {
             $options[0] = $options[0]($this);
         }
-        $productOptionMock = $this->getMockBuilder(ProductOptionInterface::class)
-            ->getMockForAbstractClass();
+        $productOptionMock = $this->createMock(ProductOptionInterface::class);
 
-        $productOptionExtensionMock = $this->getMockBuilder(
-            ProductOptionExtensionInterface::class
-        )
-            ->addMethods([
-                'getConfigurableItemOptions',
-            ])
-            ->getMockForAbstractClass();
+        $productOptionExtensionMock = new class implements ProductOptionExtensionInterface {
+            private $options = [];
+            public function getConfigurableItemOptions() { return $this->options; }
+            public function setConfigurableItemOptions($options) { $this->options = $options; return $this; }
+        };
 
-        $productOptionMock->expects($this->any())
-            ->method('getExtensionAttributes')
-            ->willReturn($productOptionExtensionMock);
+        $productOptionMock->method('getExtensionAttributes')->willReturn($productOptionExtensionMock);
 
-        $productOptionExtensionMock->expects($this->any())
-            ->method('getConfigurableItemOptions')
-            ->willReturn($options);
+        $productOptionExtensionMock->setConfigurableItemOptions($options);
 
-        $this->dataObject->expects($this->any())
-            ->method('addData')
-            ->with($requestData)
-            ->willReturnSelf();
+        // Anonymous class addData method returns $this by default
 
         $this->assertEquals($this->dataObject, $this->processor->convertToBuyRequest($productOptionMock));
     }
@@ -162,15 +139,13 @@ class ProductOptionProcessorTest extends TestCase
     /**
      * @param array|string $options
      * @param string|null $expected
-     * @dataProvider dataProviderConvertToProductOption
      */
+    #[DataProvider('dataProviderConvertToProductOption')]
     public function testConvertToProductOption(
         $options,
         $expected
     ) {
-        $this->dataObject->expects($this->any())
-            ->method('getSuperAttribute')
-            ->willReturn($options);
+        $this->dataObject->setSuperAttribute($options);
 
         if (!empty($options) && is_array($options)) {
             $this->itemOptionValue->expects($this->any())

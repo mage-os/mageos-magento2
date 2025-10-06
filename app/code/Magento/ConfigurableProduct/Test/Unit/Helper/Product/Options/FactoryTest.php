@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\ConfigurableProduct\Test\Unit\Helper\Product\Options;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use Magento\Catalog\Api\ProductAttributeRepositoryInterface;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute as EavAttribute;
 use Magento\ConfigurableProduct\Api\Data\OptionValueInterface;
@@ -22,6 +23,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
+#[CoversClass(\Magento\ConfigurableProduct\Helper\Product\Options\Factory::class)]
 class FactoryTest extends TestCase
 {
     /**
@@ -76,7 +78,7 @@ class FactoryTest extends TestCase
             ->onlyMethods(['create'])
             ->getMock();
 
-        $this->productAttributeRepository = $this->getMockForAbstractClass(ProductAttributeRepositoryInterface::class);
+        $this->productAttributeRepository = $this->createMock(ProductAttributeRepositoryInterface::class);
 
         $this->factory = new Factory(
             $this->configurable,
@@ -86,9 +88,6 @@ class FactoryTest extends TestCase
         );
     }
 
-    /**
-     * @covers \Magento\ConfigurableProduct\Helper\Product\Options\Factory::create
-     */
     public function testCreateWithException()
     {
         $this->expectException('InvalidArgumentException');
@@ -125,9 +124,6 @@ class FactoryTest extends TestCase
         $this->factory->create($data);
     }
 
-    /**
-     * @covers \Magento\ConfigurableProduct\Helper\Product\Options\Factory::create
-     */
     public function testCreate()
     {
         $attributeId = 90;
@@ -157,7 +153,7 @@ class FactoryTest extends TestCase
             ->with($eavAttribute)
             ->willReturn(true);
 
-        $option = $this->getMockForAbstractClass(OptionValueInterface::class);
+        $option = $this->createMock(OptionValueInterface::class);
         $option->expects(static::once())
             ->method('setValueIndex')
             ->with($valueIndex)

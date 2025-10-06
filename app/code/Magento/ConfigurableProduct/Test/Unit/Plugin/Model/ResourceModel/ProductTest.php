@@ -68,11 +68,8 @@ class ProductTest extends TestCase
     protected function setUp(): void
     {
         $this->configurableMock = $this->createMock(Configurable::class);
-        $this->actionMock = $this->getMockForAbstractClass(ActionInterface::class);
-        $this->productAttributeRepositoryMock = $this->getMockBuilder(ProductAttributeRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getList'])
-            ->getMockForAbstractClass();
+        $this->actionMock = $this->createMock(ActionInterface::class);
+        $this->productAttributeRepositoryMock = $this->createMock(ProductAttributeRepositoryInterface::class);
         $this->searchCriteriaBuilderMock = $this->createPartialMock(
             SearchCriteriaBuilder::class,
             ['addFilters', 'create']
@@ -112,17 +109,25 @@ class ProductTest extends TestCase
             Configurable::class,
             ['getSetAttributes']
         );
-        $extensionAttributes = $this->getMockBuilder(ExtensionAttributesInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getConfigurableProductOptions'])
-            ->getMock();
         $option = $this->createPartialMock(
             ConfigurableAttribute::class,
             ['getAttributeId']
         );
-        $extensionAttributes->expects($this->exactly(2))
-            ->method('getConfigurableProductOptions')
-            ->willReturn([$option]);
+        $extensionAttributes = new class($option) implements ExtensionAttributesInterface {
+            private $option;
+            public function __construct($option)
+            {
+                $this->option = $option;
+            }
+            public function getConfigurableProductOptions()
+            {
+                return [$this->option];
+            }
+            public function setConfigurableProductOptions($options)
+            {
+                return $this;
+            }
+        };
         $object->expects($this->once())
             ->method('getExtensionAttributes')
             ->willReturn($extensionAttributes);
@@ -163,10 +168,10 @@ class ProductTest extends TestCase
             ->with($object);
         $object->expects($this->once())
             ->method('getTypeId')
-            ->will($this->returnValue(Configurable::TYPE_CODE));
+            ->willReturn(Configurable::TYPE_CODE);
         $object->expects($this->once())
             ->method('getTypeInstance')
-            ->will($this->returnValue($type));
+            ->willReturn($type);
         $object->expects($this->once())
             ->method('setData');
         $option->expects($this->once())
@@ -194,7 +199,7 @@ class ProductTest extends TestCase
         );
         $object->expects($this->once())
             ->method('getTypeId')
-            ->will($this->returnValue(Type::TYPE_SIMPLE));
+            ->willReturn(Type::TYPE_SIMPLE);
         $object->expects($this->never())
             ->method('getTypeInstance');
 

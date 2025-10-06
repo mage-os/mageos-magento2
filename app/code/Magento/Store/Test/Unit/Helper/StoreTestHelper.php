@@ -77,4 +77,48 @@ class StoreTestHelper extends Store
     {
         return $this->data[$key] ?? null;
     }
+
+    /**
+     * Get base currency code (custom method for testing)
+     *
+     * @return string
+     */
+    public function getBaseCurrencyCode(): string
+    {
+        return $this->data['base_currency_code'] ?? 'USD';
+    }
+
+    /**
+     * Set base currency code (custom method for testing)
+     *
+     * @param string $code
+     * @return self
+     */
+    public function setBaseCurrencyCode(string $code): self
+    {
+        $this->data['base_currency_code'] = $code;
+        return $this;
+    }
+
+    /**
+     * Get base currency (custom method for testing)
+     *
+     * @return mixed
+     */
+    public function getBaseCurrency()
+    {
+        return $this->data['base_currency'] ?? null;
+    }
+
+    /**
+     * Set base currency (custom method for testing)
+     *
+     * @param mixed $currency
+     * @return self
+     */
+    public function setBaseCurrency($currency): self
+    {
+        $this->data['base_currency'] = $currency;
+        return $this;
+    }
 }

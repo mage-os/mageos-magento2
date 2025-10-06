@@ -524,4 +524,92 @@ class DataObjectTestHelper extends DataObject
         $this->testData['required'] = $required;
         return $this;
     }
+
+    /**
+     * Get super attribute
+     *
+     * @return mixed
+     */
+    public function getSuperAttribute()
+    {
+        return $this->testData['super_attribute'] ?? null;
+    }
+
+    /**
+     * Set super attribute
+     *
+     * @param mixed $value
+     * @return self
+     */
+    public function setSuperAttribute($value): self
+    {
+        $this->testData['super_attribute'] = $value;
+        return $this;
+    }
+
+    /**
+     * Get error
+     *
+     * @return mixed
+     */
+    public function getError()
+    {
+        return $this->testData['error'] ?? null;
+    }
+
+    /**
+     * Set error
+     *
+     * @param mixed $error
+     * @return self
+     */
+    public function setError($error): self
+    {
+        $this->testData['error'] = $error;
+        return $this;
+    }
+
+    /**
+     * Get message
+     *
+     * @return mixed
+     */
+    public function getMessage()
+    {
+        return $this->testData['message'] ?? null;
+    }
+
+    /**
+     * Set message
+     *
+     * @param mixed $message
+     * @return self
+     */
+    public function setMessage($message): self
+    {
+        $this->testData['message'] = $message;
+        return $this;
+    }
+
+    /**
+     * Get attributes
+     *
+     * @return array
+     */
+    public function getAttributes(): array
+    {
+        return $this->testData['attributes'] ?? [];
+    }
+
+    /**
+     * Set attributes
+     *
+     * @param array $attributes
+     * @return self
+     */
+    public function setAttributes($attributes): self
+    {
+        $this->testData['attributes'] = $attributes;
+        return $this;
+    }
 }

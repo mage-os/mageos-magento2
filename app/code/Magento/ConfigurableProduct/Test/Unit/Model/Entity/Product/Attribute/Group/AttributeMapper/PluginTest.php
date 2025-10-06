@@ -17,6 +17,9 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+ */
 class PluginTest extends TestCase
 {
     /**
@@ -48,30 +51,34 @@ class PluginTest extends TestCase
     {
         $helper = new ObjectManager($this);
 
-        $this->registry = $this->getMockBuilder(Registry::class)
-            ->onlyMethods(['registry'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->registry = $this->createPartialMock(Registry::class, ['registry']);
 
-        $this->attributeFactory = $this->getMockBuilder(
-            AttributeFactory::class
-        )
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->attributeFactory = $this->createPartialMock(
+            AttributeFactory::class,
+            ['create']
+        );
 
-        $this->attribute = $this->getMockBuilder(
-            \Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable\Attribute::class
-        )
-            ->addMethods(['getAttributeId'])
-            ->onlyMethods(['getUsedAttributes'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->attribute = $this->createPartialMock(
+            \Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable\Attribute::class,
+            ['getUsedAttributes']
+        );
 
-        $this->magentoObject = $this->getMockBuilder(DataObject::class)
-            ->addMethods(['getId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->magentoObject = new class extends DataObject {
+            private $id;
+            public function __construct()
+            {
+ /* Skip parent constructor */
+            }
+            public function getId()
+            {
+                return $this->id;
+            }
+            public function setId($id)
+            {
+                $this->id = $id;
+                return $this;
+            }
+        };
 
         $this->model = $helper->getObject(
             Plugin::class,
@@ -85,16 +92,12 @@ class PluginTest extends TestCase
         $expected = ['is_configurable' => 1];
 
         /** @var MockObject $attributeMapper */
-        $attributeMapper = $this->getMockBuilder(
+        $attributeMapper = $this->createMock(
             AttributeMapperInterface::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
+        );
 
         /** @var Attribute|MockObject $attribute */
-        $attribute = $this->getMockBuilder(Attribute::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $attribute = $this->createMock(Attribute::class);
 
         $proceed = function (Attribute $attribute) {
             return [];
@@ -114,7 +117,7 @@ class PluginTest extends TestCase
             ->with('current_attribute_set')
             ->willReturn($this->magentoObject);
 
-        $this->magentoObject->expects($this->once())->method('getId')->willReturn($attrSetId);
+        $this->magentoObject->setId($attrSetId);
 
         $result = $this->model->aroundMap($attributeMapper, $proceed, $attribute);
         $this->assertEquals($expected, $result);

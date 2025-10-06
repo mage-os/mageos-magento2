@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\ConfigurableProduct\Test\Unit\Plugin\Catalog\Model\Product\Pricing\Renderer;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Product\Pricing\Renderer\SalableResolver;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable as TypeConfigurable;
 use Magento\ConfigurableProduct\Plugin\Catalog\Model\Product\Pricing\Renderer\SalableResolver as SalableResolverPlugin;
@@ -38,8 +39,8 @@ class SalableResolverTest extends TestCase
      * @param bool $typeIsSalable
      * @param bool $expectedResult
      * @return void
-     * @dataProvider afterIsSalableDataProvider
      */
+    #[DataProvider('afterIsSalableDataProvider')]
     public function testAfterIsSalable(\Closure $salableItem, bool $isSalable, bool $typeIsSalable, bool $expectedResult): void
     {
         $salableItem = $salableItem($this);
@@ -54,7 +55,7 @@ class SalableResolverTest extends TestCase
 
     protected function getMockForSalableInterface($type)
     {
-        $salableItem = $this->getMockForAbstractClass(SaleableInterface::class);
+        $salableItem = $this->createMock(SaleableInterface::class);
         $salableItem->expects($this->once())
             ->method('getTypeId')
             ->willReturn($type);

@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\ConfigurableProduct\Test\Unit\Helper\Product\Options;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use Magento\Catalog\Model\Product;
 use Magento\ConfigurableProduct\Api\Data\OptionValueInterface;
 use Magento\ConfigurableProduct\Api\Data\OptionValueInterfaceFactory;
@@ -18,6 +19,7 @@ use Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+#[CoversClass(\Magento\ConfigurableProduct\Helper\Product\Options\Loader::class)]
 class LoaderTest extends TestCase
 {
     /**
@@ -57,15 +59,11 @@ class LoaderTest extends TestCase
             ->onlyMethods(['getConfigurableAttributeCollection'])
             ->getMock();
 
-        $extensionAttributesJoinProcessor = $this->getMockBuilder(JoinProcessorInterface::class)
-            ->getMockForAbstractClass();
+        $extensionAttributesJoinProcessor = $this->createMock(JoinProcessorInterface::class);
 
         $this->loader = new Loader($this->optionValueFactory, $extensionAttributesJoinProcessor);
     }
 
-    /**
-     * @covers \Magento\ConfigurableProduct\Helper\Product\Options\Loader::load
-     */
     public function testLoad()
     {
         $option = [
@@ -98,7 +96,7 @@ class LoaderTest extends TestCase
             ->method('getOptions')
             ->willReturn([$option]);
 
-        $optionValue = $this->getMockForAbstractClass(OptionValueInterface::class);
+        $optionValue = $this->createMock(OptionValueInterface::class);
         $this->optionValueFactory->expects(static::once())
             ->method('create')
             ->willReturn($optionValue);

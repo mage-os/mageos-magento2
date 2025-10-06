@@ -42,4 +42,31 @@ class ObserverTestHelper extends Observer
         $this->block = $block;
         return $this;
     }
+
+    /**
+     * @var mixed
+     */
+    private $form;
+
+    /**
+     * Get form (custom method for testing)
+     *
+     * @return mixed
+     */
+    public function getForm()
+    {
+        return $this->form;
+    }
+
+    /**
+     * Set form (custom method for testing)
+     *
+     * @param mixed $form
+     * @return self
+     */
+    public function setForm($form): self
+    {
+        $this->form = $form;
+        return $this;
+    }
 }
