@@ -439,3 +439,4 @@ class RequestTestHelper implements RequestInterface
         return '';
     }
 }
+

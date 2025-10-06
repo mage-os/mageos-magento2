@@ -7,12 +7,12 @@ declare(strict_types=1);
 
 namespace Magento\Backend\Test\Unit\Helper;
 
-use Magento\Backend\Block\Widget\Grid;
+use Magento\Backend\Block\Widget;
 
 /**
  * Test helper for Magento\Backend\Block\Widget\Grid
  */
-class GridTestHelper extends Grid
+class GridTestHelper extends Widget
 {
     /**
      * @var string
