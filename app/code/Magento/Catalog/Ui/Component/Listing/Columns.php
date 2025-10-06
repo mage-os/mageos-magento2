@@ -71,6 +71,7 @@ class Columns extends \Magento\Ui\Component\Listing\Columns
                 $config['sortOrder'] = ++$columnSortOrder;
                 if ($attribute->getIsFilterableInGrid()) {
                     $config['filter'] = $this->getFilterType($attribute->getFrontendInput());
+                    $config['userDefined'] = $attribute->getIsUserDefined();
                 }
                 $column = $this->columnFactory->create($attribute, $this->getContext(), $config);
                 $column->prepare();
