@@ -77,9 +77,7 @@ class BuilderTest extends TestCase
             ->onlyMethods(['create'])
             ->getMock();
 
-        $this->sampleMock = $this->getMockBuilder(SampleInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->sampleMock = $this->createMock(SampleInterface::class);
 
         $this->service = $objectManagerHelper->getObject(
             Builder::class,

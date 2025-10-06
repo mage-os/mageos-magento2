@@ -57,8 +57,12 @@ class PriceCurrencyInterfaceTestHelper implements PriceCurrencyInterface
     /**
      * {@inheritdoc}
      */
-    public function convertAndRound($amount, $store = null, $currency = null, $precision = PriceCurrencyInterface::DEFAULT_PRECISION)
-    {
+    public function convertAndRound(
+        $amount,
+        $store = null,
+        $currency = null,
+        $precision = PriceCurrencyInterface::DEFAULT_PRECISION
+    ) {
         return round($amount, $precision);
     }
 

@@ -14,9 +14,24 @@ use Magento\Framework\Event;
  */
 class EventTestHelper extends Event
 {
+    /**
+     * @var mixed
+     */
     private $product;
+    
+    /**
+     * @var mixed
+     */
     private $collection;
+    
+    /**
+     * @var mixed
+     */
     private $limit;
+    
+    /**
+     * @var mixed
+     */
     private $items;
 
     public function __construct()

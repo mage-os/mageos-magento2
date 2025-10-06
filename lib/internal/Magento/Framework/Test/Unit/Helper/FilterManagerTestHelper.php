@@ -17,6 +17,9 @@ use Magento\Framework\Filter\FilterManager;
  */
 class FilterManagerTestHelper extends FilterManager
 {
+    /**
+     * @var array
+     */
     private $data = [];
 
     /**

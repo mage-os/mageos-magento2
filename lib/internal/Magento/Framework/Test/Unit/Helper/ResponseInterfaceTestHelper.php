@@ -54,4 +54,48 @@ class ResponseInterfaceTestHelper implements ResponseInterface
     {
         return $this;
     }
+
+    /**
+     * Set HTTP response code (custom method for testing)
+     *
+     * @param int $code
+     * @return $this
+     */
+    public function setHttpResponseCode($code)
+    {
+        return $this;
+    }
+
+    /**
+     * Clear response body (custom method for testing)
+     *
+     * @return $this
+     */
+    public function clearBody()
+    {
+        return $this;
+    }
+
+    /**
+     * Send headers (custom method for testing)
+     *
+     * @return $this
+     */
+    public function sendHeaders()
+    {
+        return $this;
+    }
+
+    /**
+     * Set header (custom method for testing)
+     *
+     * @param string $name
+     * @param string $value
+     * @param bool $replace
+     * @return $this
+     */
+    public function setHeader($name, $value, $replace = false)
+    {
+        return $this;
+    }
 }

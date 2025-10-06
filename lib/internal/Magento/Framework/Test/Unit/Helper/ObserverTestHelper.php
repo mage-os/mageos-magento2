@@ -14,6 +14,9 @@ use Magento\Framework\Event\Observer;
  */
 class ObserverTestHelper extends Observer
 {
+    /**
+     * @var mixed
+     */
     private $block;
 
     public function __construct()

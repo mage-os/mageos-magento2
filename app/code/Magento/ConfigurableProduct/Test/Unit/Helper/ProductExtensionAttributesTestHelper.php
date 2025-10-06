@@ -88,6 +88,26 @@ class ProductExtensionAttributesTestHelper implements ProductExtensionInterface
     }
 
     /**
+     * Get Downloadable Product Links
+     *
+     * @return mixed|null
+     */
+    public function getDownloadableProductLinks()
+    {
+        return $this->data['downloadable_product_links'] ?? null;
+    }
+
+    /**
+     * Get Downloadable Product Samples
+     *
+     * @return mixed|null
+     */
+    public function getDownloadableProductSamples()
+    {
+        return $this->data['downloadable_product_samples'] ?? null;
+    }
+
+    /**
      * Set Bundle Options
      *
      * @param mixed $bundleOptions
@@ -100,16 +120,6 @@ class ProductExtensionAttributesTestHelper implements ProductExtensionInterface
     }
 
     /**
-     * Get Downloadable Product Links
-     *
-     * @return mixed|null
-     */
-    public function getDownloadableProductLinks()
-    {
-        return $this->data['downloadable_product_links'] ?? null;
-    }
-
-    /**
      * Set Downloadable Product Links
      *
      * @param mixed $downloadableProductLinks
@@ -119,16 +129,6 @@ class ProductExtensionAttributesTestHelper implements ProductExtensionInterface
     {
         $this->data['downloadable_product_links'] = $downloadableProductLinks;
         return $this;
-    }
-
-    /**
-     * Get Downloadable Product Samples
-     *
-     * @return mixed|null
-     */
-    public function getDownloadableProductSamples()
-    {
-        return $this->data['downloadable_product_samples'] ?? null;
     }
 
     /**

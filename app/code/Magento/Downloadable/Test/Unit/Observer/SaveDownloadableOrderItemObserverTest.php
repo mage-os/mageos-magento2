@@ -124,19 +124,19 @@ class SaveDownloadableOrderItemObserverTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->resultMock = $this->getMockBuilder(DataObject::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setIsAllowed'])
-            ->getMock();
+        $this->resultMock = $this->createPartialMock(
+            \Magento\Downloadable\Test\Unit\Helper\DataObjectTestHelper::class,
+            ['setIsAllowed']
+        );
 
         $this->storeMock = $this->getMockBuilder(DataObject::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->eventMock = $this->getMockBuilder(Event::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getStore', 'getResult', 'getQuote', 'getOrder'])
-            ->getMock();
+        $this->eventMock = $this->createPartialMock(
+            \Magento\Downloadable\Test\Unit\Helper\EventTestHelper::class,
+            ['getStore', 'getResult', 'getQuote', 'getOrder']
+        );
 
         $this->orderMock = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
@@ -170,15 +170,9 @@ class SaveDownloadableOrderItemObserverTest extends TestCase
         $itemMock->expects($this->atLeastOnce())
             ->method('getOrder')
             ->willReturn($this->orderMock);
-        $itemMock->expects($this->any())
-            ->method('getId')
-            ->willReturn($itemId);
-        $itemMock->expects($this->any())
-            ->method('getProductType')
-            ->willReturn(DownloadableProductType::TYPE_DOWNLOADABLE);
-        $itemMock->expects($this->any())
-            ->method('getRealProductType')
-            ->willReturn(DownloadableProductType::TYPE_DOWNLOADABLE);
+        $itemMock->method('getId')->willReturn($itemId);
+        $itemMock->method('getProductType')->willReturn(DownloadableProductType::TYPE_DOWNLOADABLE);
+        $itemMock->method('getRealProductType')->willReturn(DownloadableProductType::TYPE_DOWNLOADABLE);
 
         $this->orderMock->method('getStoreId')
             ->willReturn(10500);
@@ -189,7 +183,7 @@ class SaveDownloadableOrderItemObserverTest extends TestCase
         $product->expects($this->once())
             ->method('getTypeId')
             ->willReturn(DownloadableProductType::TYPE_DOWNLOADABLE);
-        $productType = $this->getMockBuilder(\Magento\Downloadable\Model\Product\Type::class)
+        $productType = $this->getMockBuilder(DownloadableProductType::class)
             ->disableOriginalConstructor()
             ->getMock();
         $product->expects($this->once())
@@ -222,11 +216,10 @@ class SaveDownloadableOrderItemObserverTest extends TestCase
             ->method('getProduct')
             ->willReturn(null);
 
-        $purchasedLink = $this->getMockBuilder(Purchased::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setLinkSectionTitle'])
-            ->onlyMethods(['load', 'save'])
-            ->getMock();
+        $purchasedLink = $this->createPartialMock(
+            \Magento\Downloadable\Test\Unit\Helper\PurchasedTestHelper::class,
+            ['setLinkSectionTitle', 'load', 'save']
+        );
         $purchasedLink->expects($this->once())
             ->method('load')
             ->with($itemId, 'order_item_id')
@@ -237,9 +230,7 @@ class SaveDownloadableOrderItemObserverTest extends TestCase
         $purchasedLink->expects($this->once())
             ->method('save')
             ->willReturnSelf();
-        $this->purchasedFactory->expects($this->any())
-            ->method('create')
-            ->willReturn($purchasedLink);
+        $this->purchasedFactory->method('create')->willReturn($purchasedLink);
         $event = new DataObject(
             [
                 'item' => $itemMock,
@@ -259,12 +250,8 @@ class SaveDownloadableOrderItemObserverTest extends TestCase
         $itemMock = $this->getMockBuilder(Item::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $itemMock->expects($this->any())
-            ->method('getId')
-            ->willReturn($itemId);
-        $itemMock->expects($this->any())
-            ->method('getProductType')
-            ->willReturn('simple');
+        $itemMock->method('getId')->willReturn($itemId);
+        $itemMock->method('getProductType')->willReturn('simple');
         $itemMock->expects($this->never())
             ->method('getProduct');
         $event = new DataObject(
@@ -285,9 +272,7 @@ class SaveDownloadableOrderItemObserverTest extends TestCase
         $itemMock = $this->getMockBuilder(Item::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $itemMock->expects($this->any())
-            ->method('getId')
-            ->willReturn(null);
+        $itemMock->method('getId')->willReturn(null);
         $event = new DataObject(
             [
                 'item' => $itemMock,
@@ -308,21 +293,14 @@ class SaveDownloadableOrderItemObserverTest extends TestCase
         $itemMock = $this->getMockBuilder(Item::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $itemMock->expects($this->any())
-            ->method('getId')
-            ->willReturn($itemId);
-        $itemMock->expects($this->any())
-            ->method('getProductType')
-            ->willReturn(DownloadableProductType::TYPE_DOWNLOADABLE);
-        $itemMock->expects($this->any())
-            ->method('getRealProductType')
-            ->willReturn(DownloadableProductType::TYPE_DOWNLOADABLE);
+        $itemMock->method('getId')->willReturn($itemId);
+        $itemMock->method('getProductType')->willReturn(DownloadableProductType::TYPE_DOWNLOADABLE);
+        $itemMock->method('getRealProductType')->willReturn(DownloadableProductType::TYPE_DOWNLOADABLE);
 
-        $purchasedLink = $this->getMockBuilder(Purchased::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setLinkSectionTitle'])
-            ->onlyMethods(['load', 'save', 'getId'])
-            ->getMock();
+        $purchasedLink = $this->createPartialMock(
+            \Magento\Downloadable\Test\Unit\Helper\PurchasedTestHelper::class,
+            ['setLinkSectionTitle', 'load', 'save', 'getId']
+        );
         $purchasedLink->expects($this->once())
             ->method('load')
             ->with($itemId, 'order_item_id')
@@ -330,9 +308,7 @@ class SaveDownloadableOrderItemObserverTest extends TestCase
         $purchasedLink->expects($this->once())
             ->method('getId')
             ->willReturn(123);
-        $this->purchasedFactory->expects($this->any())
-            ->method('create')
-            ->willReturn($purchasedLink);
+        $this->purchasedFactory->method('create')->willReturn($purchasedLink);
 
         $event = new DataObject(
             [
@@ -356,14 +332,11 @@ class SaveDownloadableOrderItemObserverTest extends TestCase
      */
     private function createLinkItem($status, $orderItemId, $isSaved = false, $expectedStatus = null)
     {
-        $linkItem = $this->getMockBuilder(\Magento\Downloadable\Model\Link\Purchased\Item::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getStatus', 'getOrderItemId', 'setStatus', 'setNumberOfDownloadsBought'])
-            ->onlyMethods(['save'])
-            ->getMock();
-        $linkItem->expects($this->any())
-            ->method('getStatus')
-            ->willReturn($status);
+        $linkItem = $this->createPartialMock(
+            \Magento\Downloadable\Test\Unit\Helper\ItemTestHelper::class,
+            ['getStatus', 'getOrderItemId', 'setStatus', 'setNumberOfDownloadsBought', 'save']
+        );
+        $linkItem->method('getStatus')->willReturn($status);
         if ($isSaved) {
             $linkItem->expects($this->once())
                 ->method('setStatus')
@@ -378,9 +351,7 @@ class SaveDownloadableOrderItemObserverTest extends TestCase
             ->method('setNumberOfDownloadsBought')
             ->willReturnSelf();
 
-        $linkItem->expects($this->any())
-            ->method('getOrderItemId')
-            ->willReturn($orderItemId);
+        $linkItem->method('getOrderItemId')->willReturn($orderItemId);
 
         return $linkItem;
     }

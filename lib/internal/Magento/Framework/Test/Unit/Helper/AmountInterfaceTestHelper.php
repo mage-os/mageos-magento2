@@ -17,6 +17,9 @@ use Magento\Framework\Pricing\Amount\AmountInterface;
  */
 class AmountInterfaceTestHelper implements AmountInterface
 {
+    /**
+     * @var array
+     */
     private $data = [];
 
     /**

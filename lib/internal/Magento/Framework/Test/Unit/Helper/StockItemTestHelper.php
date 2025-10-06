@@ -17,6 +17,9 @@ use Magento\CatalogInventory\Model\Stock\Item as StockItem;
  */
 class StockItemTestHelper extends StockItem
 {
+    /**
+     * @var array
+     */
     private $data = [];
 
     /**

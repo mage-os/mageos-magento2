@@ -262,4 +262,41 @@ class ItemTestHelper extends Item
         $this->data['sku'] = $sku;
         return $this;
     }
+
+    /**
+     * Add data to the item (like DataObject::addData)
+     *
+     * @param array $data
+     * @return self
+     */
+    public function addData(array $data): self
+    {
+        $this->data = array_merge($this->data, $data);
+        return $this;
+    }
+
+    /**
+     * Add child item for testing
+     *
+     * @param mixed $childItem
+     * @return self
+     */
+    public function addChildItem($childItem): self
+    {
+        if (!isset($this->data['child_items'])) {
+            $this->data['child_items'] = [];
+        }
+        $this->data['child_items'][] = $childItem;
+        return $this;
+    }
+
+    /**
+     * Get child items for testing
+     *
+     * @return array
+     */
+    public function getChildrenItems(): array
+    {
+        return $this->data['child_items'] ?? [];
+    }
 }

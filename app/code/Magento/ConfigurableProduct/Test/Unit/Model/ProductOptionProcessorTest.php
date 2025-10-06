@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\ConfigurableProduct\Test\Unit\Model;
 
+use Magento\Quote\Test\Unit\Helper\ProductOptionExtensionInterfaceTestHelper;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Api\Data\ProductOptionExtensionInterface;
 use Magento\Catalog\Api\Data\ProductOptionInterface;
@@ -87,13 +88,10 @@ class ProductOptionProcessorTest extends TestCase
         }
         $productOptionMock = $this->createMock(ProductOptionInterface::class);
 
-        $productOptionExtensionMock = new \Magento\Quote\Test\Unit\Helper\ProductOptionExtensionInterfaceTestHelper();
-
+        $productOptionExtensionMock = new ProductOptionExtensionInterfaceTestHelper();
         $productOptionMock->method('getExtensionAttributes')->willReturn($productOptionExtensionMock);
 
         $productOptionExtensionMock->setConfigurableItemOptions($options);
-
-        // Anonymous class addData method returns $this by default
 
         $this->assertEquals($this->dataObject, $this->processor->convertToBuyRequest($productOptionMock));
     }

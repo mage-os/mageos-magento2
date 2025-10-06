@@ -52,17 +52,17 @@ class UpdateHandlerTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->sampleRepositoryMock = $this->getMockBuilder(SampleRepositoryInterface::class)
-            ->getMockForAbstractClass();
+        $this->sampleRepositoryMock = $this->createMock(SampleRepositoryInterface::class);
         $this->sampleMock = $this->getMockBuilder(SampleInterface::class)
             ->getMock();
         $this->productExtensionMock = $this->getProductExtensionMock();
         $this->productExtensionMock//->expects($this->once())
             ->method('getDownloadableProductSamples')
             ->willReturn([$this->sampleMock]);
-        $this->entityMock = $this->getMockBuilder(ProductInterface::class)
-            ->addMethods(['getStoreId'])
-            ->getMockForAbstractClass();
+        $this->entityMock = $this->createPartialMock(
+            \Magento\Downloadable\Test\Unit\Helper\ProductTestHelper::class,
+            ['getStoreId', 'getTypeId', 'getExtensionAttributes', 'getSku']
+        );
 
         $this->model = new UpdateHandler(
             $this->sampleRepositoryMock
@@ -153,14 +153,9 @@ class UpdateHandlerTest extends TestCase
      */
     private function getProductExtensionMock(): MockObject
     {
-        $mockBuilder = $this->getMockBuilder(ProductExtensionInterface::class)
-            ->disableOriginalConstructor();
-        try {
-            $mockBuilder->addMethods(['getDownloadableProductSamples']);
-        } catch (RuntimeException $e) {
-            // Product extension already generated.
-        }
-
-        return $mockBuilder->getMockForAbstractClass();
+        return $this->createPartialMock(
+            \Magento\ConfigurableProduct\Test\Unit\Helper\ProductExtensionAttributesTestHelper::class,
+            ['getDownloadableProductSamples']
+        );
     }
 }

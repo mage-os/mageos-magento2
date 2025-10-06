@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Downloadable\Test\Unit\Model\Link;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Downloadable\Api\Data\LinkInterface;
 use Magento\Downloadable\Helper\Download;
 use Magento\Downloadable\Helper\File;
@@ -80,7 +81,7 @@ class BuilderTest extends TestCase
 
         $this->linkMock = $this->getMockBuilder(LinkInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->service = $objectManagerHelper->getObject(
             Builder::class,
@@ -94,13 +95,13 @@ class BuilderTest extends TestCase
     }
 
     /**
-     * @dataProvider buildProvider
      * @param array $data
      * @param float $expectedPrice
      * @throws LocalizedException
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
+    #[DataProvider('buildProvider')]
     public function testBuild($data, $expectedPrice)
     {
         $downloadableData = ['sort_order' => 1];
@@ -241,7 +242,7 @@ class BuilderTest extends TestCase
         $expectedPrice = 0;
         return [
             'price_0' => [
-                [
+                "data" => [
                     'file' => 'cXVlIHRhbA==',
                     'type' => 'file',
                     'use_default_title' => '1',
@@ -253,7 +254,7 @@ class BuilderTest extends TestCase
                 'expectedPrice' => $expectedPrice
             ],
             'price_declared' => [
-                [
+                "data" => [
                     'file' => 'cXVlIHRhbA==',
                     'type' => 'file',
                     'price' => 150,

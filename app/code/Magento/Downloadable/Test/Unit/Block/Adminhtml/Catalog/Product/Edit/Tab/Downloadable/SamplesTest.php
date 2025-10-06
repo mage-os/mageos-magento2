@@ -83,11 +83,20 @@ class SamplesTest extends TestCase
             'getTypeInstance',
             'getStoreId'
         ]);
-        $this->downloadableProductModel = $this->getMockBuilder(Type::class)
-            ->addMethods(['__wakeup'])
-            ->onlyMethods(['getSamples'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->downloadableProductModel = new class extends Type {
+            public function __construct()
+            {
+                // Skip parent constructor to avoid dependencies
+            }
+            public function __wakeup()
+            {
+                // Custom method for testing
+            }
+            public function getSamples($product = null)
+            {
+                return [];
+            }
+        };
         $this->downloadableSampleModel = $this->createPartialMock(Sample::class, [
             '__wakeup',
             'getId',
@@ -97,11 +106,20 @@ class SamplesTest extends TestCase
             'getSortOrder',
             'getSampleUrl'
         ]);
-        $this->coreRegistry = $this->getMockBuilder(Registry::class)
-            ->addMethods(['__wakeup'])
-            ->onlyMethods(['registry'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->coreRegistry = new class extends Registry {
+            public function __construct()
+            {
+                // Skip parent constructor to avoid dependencies
+            }
+            public function __wakeup()
+            {
+                // Custom method for testing
+            }
+            public function registry($key)
+            {
+                return null;
+            }
+        };
         $this->escaper = $this->createPartialMock(Escaper::class, ['escapeHtml']);
         $this->block = $objectManagerHelper->getObject(
             Samples::class,
@@ -133,38 +151,22 @@ class SamplesTest extends TestCase
             ],
         ];
 
-        $this->productModel->expects($this->any())->method('getTypeId')
-            ->willReturn('downloadable');
-        $this->productModel->expects($this->any())->method('getTypeInstance')
-            ->willReturn($this->downloadableProductModel);
-        $this->productModel->expects($this->any())->method('getStoreId')
-            ->willReturn(0);
-        $this->downloadableProductModel->expects($this->any())->method('getSamples')
-            ->willReturn([$this->downloadableSampleModel]);
-        $this->coreRegistry->expects($this->any())->method('registry')
-            ->willReturn($this->productModel);
-        $this->downloadableSampleModel->expects($this->any())->method('getId')
-            ->willReturn(1);
-        $this->downloadableSampleModel->expects($this->any())->method('getTitle')
-            ->willReturn('Sample Title');
-        $this->downloadableSampleModel->expects($this->any())->method('getSampleUrl')
-            ->willReturn(null);
-        $this->downloadableSampleModel->expects($this->any())->method('getSampleFile')
-            ->willReturn('file/sample.gif');
-        $this->downloadableSampleModel->expects($this->any())->method('getSampleType')
-            ->willReturn('file');
-        $this->downloadableSampleModel->expects($this->any())->method('getSortOrder')
-            ->willReturn(0);
-        $this->escaper->expects($this->any())->method('escapeHtml')
-            ->willReturn('Sample Title');
-        $this->fileHelper->expects($this->any())->method('getFilePath')
-            ->willReturn('/file/path/sample.gif');
-        $this->fileHelper->expects($this->any())->method('ensureFileInFilesystem')
-            ->willReturn(true);
-        $this->fileHelper->expects($this->any())->method('getFileSize')
-            ->willReturn('1.1');
-        $this->urlBuilder->expects($this->any())->method('getUrl')
-            ->willReturn('final_url');
+        $this->productModel->method('getTypeId')->willReturn('downloadable');
+        $this->productModel->method('getTypeInstance')->willReturn($this->downloadableProductModel);
+        $this->productModel->method('getStoreId')->willReturn(0);
+        $this->downloadableProductModel->method('getSamples')->willReturn([$this->downloadableSampleModel]);
+        $this->coreRegistry->method('registry')->willReturn($this->productModel);
+        $this->downloadableSampleModel->method('getId')->willReturn(1);
+        $this->downloadableSampleModel->method('getTitle')->willReturn('Sample Title');
+        $this->downloadableSampleModel->method('getSampleUrl')->willReturn(null);
+        $this->downloadableSampleModel->method('getSampleFile')->willReturn('file/sample.gif');
+        $this->downloadableSampleModel->method('getSampleType')->willReturn('file');
+        $this->downloadableSampleModel->method('getSortOrder')->willReturn(0);
+        $this->escaper->method('escapeHtml')->willReturn('Sample Title');
+        $this->fileHelper->method('getFilePath')->willReturn('/file/path/sample.gif');
+        $this->fileHelper->method('ensureFileInFilesystem')->willReturn(true);
+        $this->fileHelper->method('getFileSize')->willReturn('1.1');
+        $this->urlBuilder->method('getUrl')->willReturn('final_url');
         $sampleData = $this->block->getSampleData();
         foreach ($sampleData as $sample) {
             $fileSave = $sample->getFileSave(0);

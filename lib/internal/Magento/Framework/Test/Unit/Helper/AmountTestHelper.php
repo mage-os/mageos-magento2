@@ -14,7 +14,14 @@ use Magento\Framework\Pricing\Amount\Base;
  */
 class AmountTestHelper extends Base
 {
+    /**
+     * @var array
+     */
     protected $adjustmentAmounts;
+    
+    /**
+     * @var float
+     */
     protected $value;
 
     public function __construct()

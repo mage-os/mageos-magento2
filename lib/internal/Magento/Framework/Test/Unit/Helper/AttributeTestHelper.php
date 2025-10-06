@@ -429,9 +429,18 @@ class AttributeTestHelper extends Attribute
     {
         if (!isset($this->data['source'])) {
             $this->data['source'] = new class {
-                public function getAllOptions($withEmpty = true) { return []; }
-                public function getOptionText($value) { return 'Test Option'; }
-                public function create() { return $this; }
+                public function getAllOptions($withEmpty = true)
+                {
+                    return [];
+                }
+                public function getOptionText($value)
+                {
+                    return 'Test Option';
+                }
+                public function create()
+                {
+                    return $this;
+                }
             };
         }
         return $this->data['source'];
@@ -518,18 +527,43 @@ class AttributeTestHelper extends Attribute
     {
         if (!isset($this->data['store_manager'])) {
             $this->data['store_manager'] = new class {
-                public function getStore($storeId = null) {
+                public function getStore($storeId = null)
+                {
                     return new class {
-                        public function getId() { return 1; }
-                        public function getCode() { return 'default'; }
-                        public function getName() { return 'Default Store'; }
-                        public function getWebsiteId() { return 1; }
-                        public function getGroupId() { return 1; }
+                        public function getId()
+                        {
+                            return 1;
+                        }
+                        public function getCode()
+                        {
+                            return 'default';
+                        }
+                        public function getName()
+                        {
+                            return 'Default Store';
+                        }
+                        public function getWebsiteId()
+                        {
+                            return 1;
+                        }
+                        public function getGroupId()
+                        {
+                            return 1;
+                        }
                     };
                 }
-                public function getStores($withDefault = false) { return [$this->getStore()]; }
-                public function getWebsite($websiteId = null) { return $this->getStore(); }
-                public function getGroup($groupId = null) { return $this->getStore(); }
+                public function getStores($withDefault = false)
+                {
+                    return [$this->getStore()];
+                }
+                public function getWebsite($websiteId = null)
+                {
+                    return $this->getStore();
+                }
+                public function getGroup($groupId = null)
+                {
+                    return $this->getStore();
+                }
             };
         }
         return $this->data['store_manager'];
@@ -554,30 +588,75 @@ class AttributeTestHelper extends Attribute
     {
         if (!isset($this->data['resource'])) {
             $this->data['resource'] = new class {
-                public function getStoreManager() {
+                public function getStoreManager()
+                {
                     return new class {
-                        public function getStore($storeId = null) {
+                        public function getStore($storeId = null)
+                        {
                             return new class {
-                                public function getId() { return 1; }
-                                public function getCode() { return 'default'; }
-                                public function getName() { return 'Default Store'; }
-                                public function getWebsiteId() { return 1; }
-                                public function getGroupId() { return 1; }
+                                public function getId()
+                                {
+                                    return 1;
+                                }
+                                public function getCode()
+                                {
+                                    return 'default';
+                                }
+                                public function getName()
+                                {
+                                    return 'Default Store';
+                                }
+                                public function getWebsiteId()
+                                {
+                                    return 1;
+                                }
+                                public function getGroupId()
+                                {
+                                    return 1;
+                                }
                             };
                         }
-                        public function getStores($withDefault = false) { return [$this->getStore()]; }
-                        public function getWebsite($websiteId = null) { return $this->getStore(); }
-                        public function getGroup($groupId = null) { return $this->getStore(); }
+                        public function getStores($withDefault = false)
+                        {
+                            return [$this->getStore()];
+                        }
+                        public function getWebsite($websiteId = null)
+                        {
+                            return $this->getStore();
+                        }
+                        public function getGroup($groupId = null)
+                        {
+                            return $this->getStore();
+                        }
                     };
                 }
-                public function getConnection() {
+                public function getConnection()
+                {
                     return new class {
-                        public function select() { return $this; }
-                        public function from($table) { return $this; }
-                        public function where($condition) { return $this; }
-                        public function fetchAll() { return []; }
-                        public function fetchRow() { return []; }
-                        public function fetchOne() { return null; }
+                        public function select()
+                        {
+                            return $this;
+                        }
+                        public function from($table)
+                        {
+                            return $this;
+                        }
+                        public function where($condition)
+                        {
+                            return $this;
+                        }
+                        public function fetchAll()
+                        {
+                            return [];
+                        }
+                        public function fetchRow()
+                        {
+                            return [];
+                        }
+                        public function fetchOne()
+                        {
+                            return null;
+                        }
                     };
                 }
             };
@@ -594,13 +673,34 @@ class AttributeTestHelper extends Attribute
     {
         if (!isset($this->data['entity_type'])) {
             $this->data['entity_type'] = new class {
-                public function getEntityTypeCode() { return 'catalog_product'; }
-                public function getId() { return 1; }
-                public function getEntityTable() { return 'catalog_product_entity'; }
-                public function getEntity() { return $this; }
-                public function getEntityIdField() { return 'entity_id'; }
-                public function getValueTablePrefix() { return 'catalog_product_entity'; }
-                public function getDefaultAttributeSourceModel() { return null; }
+                public function getEntityTypeCode()
+                {
+                    return 'catalog_product';
+                }
+                public function getId()
+                {
+                    return 1;
+                }
+                public function getEntityTable()
+                {
+                    return 'catalog_product_entity';
+                }
+                public function getEntity()
+                {
+                    return $this;
+                }
+                public function getEntityIdField()
+                {
+                    return 'entity_id';
+                }
+                public function getValueTablePrefix()
+                {
+                    return 'catalog_product_entity';
+                }
+                public function getDefaultAttributeSourceModel()
+                {
+                    return null;
+                }
             };
         }
         return $this->data['entity_type'];

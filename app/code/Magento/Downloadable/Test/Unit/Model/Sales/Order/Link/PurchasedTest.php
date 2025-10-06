@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Downloadable\Test\Unit\Model\Sales\Order\Link;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Downloadable\Model\Link\Purchased as PurchasedEntity;
 use Magento\Downloadable\Model\ResourceModel\Link\Purchased\Item\Collection;
 use Magento\Downloadable\Model\Sales\Order\Link\Purchased;
@@ -61,8 +62,8 @@ class PurchasedTest extends TestCase
      * @param int $expectedItemId
      * @param array $itemData
      * @param array $childItemData
-     * @dataProvider getLinkDataProvider
      */
+    #[DataProvider('getLinkDataProvider')]
     public function testGetLink(
         bool $hasChildItem,
         int $expectedItemId,
@@ -70,14 +71,10 @@ class PurchasedTest extends TestCase
         array $childItemData = []
     ): void {
         /** @var Item $orderItem */
-        $orderItem = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $orderItem = new \Magento\Sales\Test\Unit\Helper\ItemTestHelper();
         $orderItem->addData($itemData);
         /** @var Item $childOrderItem */
-        $childOrderItem = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $childOrderItem = new \Magento\Sales\Test\Unit\Helper\ItemTestHelper();
         $childOrderItem->addData($childItemData);
         if ($hasChildItem) {
             $orderItem->addChildItem($childOrderItem);

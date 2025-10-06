@@ -52,10 +52,10 @@ class CreditmemoTest extends TestCase
             ['drawLineBlocks', 'getPdf']
         );
 
-        $filterManager = $this->getMockBuilder(FilterManager::class)
-            ->addMethods(['stripTags'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $filterManager = $this->createPartialMock(
+            \Magento\Framework\Test\Unit\Helper\FilterManagerTestHelper::class,
+            ['stripTags']
+        );
         $filterManager->expects($this->any())->method('stripTags')->willReturnArgument(0);
 
         $modelConstructorArgs = $objectManager->getConstructArguments(
@@ -136,19 +136,13 @@ class CreditmemoTest extends TestCase
                 ]
             )
         );
-        $this->model->expects($this->any())->method('getLinksTitle')->willReturn('Download Links');
-        $this->model->expects(
-            $this->any()
-        )->method(
-            'getLinks'
-        )->willReturn(
-
-                new DataObject(
-                    ['purchased_items' => [
+        $this->model->method('getLinksTitle')->willReturn('Download Links');
+        $this->model->method('getLinks')->willReturn(
+            new DataObject(
+                ['purchased_items' => [
                         new DataObject(['link_title' => 'Magento User Guide']), ],
                     ]
-                )
-
+            )
         );
         $this->pdf->expects(
             $this->once()

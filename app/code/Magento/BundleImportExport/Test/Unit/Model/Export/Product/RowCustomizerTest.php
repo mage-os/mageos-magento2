@@ -9,9 +9,10 @@ namespace Magento\BundleImportExport\Test\Unit\Model\Export\Product;
 
 use Magento\Bundle\Model\Option;
 use Magento\BundleImportExport\Model\Export\RowCustomizer;
+use Magento\BundleImportExport\Test\Unit\Helper\BundleProductTestHelper;
+use Magento\BundleImportExport\Test\Unit\Helper\SelectionProductTestHelper;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ResourceModel\Product\Collection;
-use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\App\ScopeInterface;
 use Magento\Framework\App\ScopeResolverInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
@@ -69,7 +70,7 @@ class RowCustomizerTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManagerHelper = new ObjectManagerHelper($this);
-        $this->scopeResolver = $this->createMock(ScopeResolverInterface::class);
+        $this->scopeResolver = $this->createPartialMock(ScopeResolverInterface::class, ['getScope', 'getScopes']);
         $this->rowCustomizerMock = $this->objectManagerHelper->getObject(
             RowCustomizer::class,
             [
@@ -80,20 +81,16 @@ class RowCustomizerTest extends TestCase
             Collection::class,
             ['addAttributeToFilter', 'getIterator']
         );
-        $this->product = new ProductTestHelper();
         $this->optionsCollection = $this->createPartialMock(
             \Magento\Bundle\Model\ResourceModel\Option\Collection::class,
             ['setOrder', 'getItems']
         );
-        $this->product->setStoreIds([1])
-                      ->setId(1)
-                      ->setPriceType(1)
-                      ->setShipmentType('1')
-                      ->setSkuType(1)
-                      ->setPriceView(1)
-                      ->setWeightType(1)
-                      ->setOptionsCollection($this->optionsCollection)
-                      ->setTestData('type_instance', $this->product);
+        $this->selectionsCollection = $this->createPartialMock(
+            \Magento\Bundle\Model\ResourceModel\Selection\Collection::class,
+            ['getIterator', 'addAttributeToSort']
+        );
+        
+        $this->product = new BundleProductTestHelper($this->optionsCollection, $this->selectionsCollection);
         $this->optionsCollection->method('setOrder')->willReturnSelf();
         $this->option = $this->createPartialMock(
             Option::class,
@@ -107,22 +104,11 @@ class RowCustomizerTest extends TestCase
         $this->optionsCollection->method('getItems')->willReturn(
             new \ArrayIterator([$this->option])
         );
-        $this->selection = new ProductTestHelper();
-        $this->selection->setSku('1')
-                        ->setSelectionPriceValue(1)
-                        ->setSelectionQty(1)
-                        ->setSelectionPriceType(1)
-                        ->setSelectionCanChangeQty(1);
-        $this->selectionsCollection = $this->createPartialMock(
-            \Magento\Bundle\Model\ResourceModel\Selection\Collection::class,
-            ['getIterator', 'addAttributeToSort']
-        );
+        $this->selection = new SelectionProductTestHelper();
         $this->selectionsCollection->method('getIterator')->willReturn(
             new \ArrayIterator([$this->selection])
         );
         $this->selectionsCollection->method('addAttributeToSort')->willReturnSelf();
-        $this->product->setSelectionsCollection($this->selectionsCollection);
-        $this->product->setSku('1');
         $this->productResourceCollection->method('addAttributeToFilter')->willReturnSelf();
         $this->productResourceCollection->method('getIterator')->willReturn(
             new \ArrayIterator([$this->product])
@@ -134,7 +120,7 @@ class RowCustomizerTest extends TestCase
      */
     public function testPrepareData()
     {
-        $scope = $this->createMock(ScopeInterface::class);
+        $scope = $this->createPartialMock(ScopeInterface::class, []);
         $this->scopeResolver->method('getScope')->willReturn($scope);
         $result = $this->rowCustomizerMock->prepareData($this->productResourceCollection, [1]);
         $this->assertNotNull($result);
@@ -163,7 +149,7 @@ class RowCustomizerTest extends TestCase
      */
     public function testAddData()
     {
-        $scope = $this->createMock(ScopeInterface::class);
+        $scope = $this->createPartialMock(ScopeInterface::class, []);
         $this->scopeResolver->method('getScope')->willReturn($scope);
         $preparedData = $this->rowCustomizerMock->prepareData($this->productResourceCollection, [1]);
         $attributes = 'attribute=1,sku_type=1,attribute2="Text",price_type=1,price_view=1,weight_type=1,'
