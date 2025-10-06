@@ -7,6 +7,8 @@ declare(strict_types=1);
 
 namespace Magento\ConfigurableImportExport\Test\Unit\Model\Import\Product\Type;
 
+use Magento\CatalogImportExport\Model\Import\Product\SkuStorage;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\ProductTypes\ConfigInterface;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
@@ -32,7 +34,7 @@ use ReflectionClass;
  */
 class ConfigurableTest extends AbstractImportTestCase
 {
-    /** @var ConfigurableImportExport\Model\Import\Product\Type\Configurable */
+    /** @var Configurable */
     protected $configurable;
 
     /**
@@ -76,7 +78,7 @@ class ConfigurableTest extends AbstractImportTestCase
     protected $params;
 
     /**
-     * @var \Magento\CatalogImportExport\Model\Import\Product|MockObject
+     * @var Product|MockObject
      */
     protected $_entityModel;
 
@@ -97,7 +99,7 @@ class ConfigurableTest extends AbstractImportTestCase
     /**
      * @var Product\SkuStorage|MockObject
      */
-    private Product\SkuStorage $skuStorage;
+    private SkuStorage $skuStorage;
 
     /**
      * @inheritdoc
@@ -145,11 +147,7 @@ class ConfigurableTest extends AbstractImportTestCase
 
         $superAttributes = [];
         foreach ($this->_getSuperAttributes() as $superAttribute) {
-            $item = $this->getMockBuilder(AbstractAttribute::class)
-                ->onlyMethods(['isStatic'])
-                ->disableOriginalConstructor()
-                ->setConstructorArgs($superAttribute)
-                ->getMock();
+            $item = $this->createPartialMock(AbstractAttribute::class, ['isStatic']);
             $item->setData($superAttribute);
             $item->method('isStatic')
                 ->willReturn(false);
@@ -177,7 +175,7 @@ class ConfigurableTest extends AbstractImportTestCase
                 'getAttributeOptions'
             ]
         );
-        $this->skuStorage = $this->createMock(Product\SkuStorage::class);
+        $this->skuStorage = $this->createMock(SkuStorage::class);
         $this->_entityModel->method('getErrorAggregator')->willReturn($this->getErrorAggregatorObject());
 
         $this->params = [
@@ -185,21 +183,6 @@ class ConfigurableTest extends AbstractImportTestCase
             1 => 'configurable'
         ];
 
-        $this->_connection = $this->getMockBuilder(Mysql::class)
-            ->addMethods(['joinLeft'])
-            ->onlyMethods(
-                [
-                    'select',
-                    'fetchAll',
-                    'fetchPairs',
-                    'insertOnDuplicate',
-                    'quoteIdentifier',
-                    'delete',
-                    'quoteInto'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
         $this->select = $this->createPartialMock(
             Select::class,
             [
@@ -209,17 +192,33 @@ class ConfigurableTest extends AbstractImportTestCase
                 'getConnection'
             ]
         );
+        
+        $selectMock = $this->select;
+        $this->_connection = new class($selectMock) extends Mysql {
+            private $selectMock;
+            
+            public function __construct($selectMock) {
+                $this->selectMock = $selectMock;
+                // Skip parent constructor to avoid dependencies
+            }
+            public function joinLeft() { return $this; }
+            public function select() { return $this->selectMock; }
+            public function fetchAll($sql, $bind = [], $fetchMode = null) { return []; }
+            public function fetchPairs($sql, $bind = []) { return []; }
+            public function insertOnDuplicate($table, array $data, array $fields = []) { return $this; }
+            public function quoteIdentifier($ident, $auto = false) { return $ident; }
+            public function delete($table, $where = '') { return $this; }
+            public function quoteInto($text, $value, $type = null, $count = null) { return ''; }
+        };
         $this->select->expects($this->any())->method('from')->willReturnSelf();
         $this->select->expects($this->any())->method('where')->willReturnSelf();
         $this->select->expects($this->any())->method('joinLeft')->willReturnSelf();
-        $this->_connection->expects($this->any())->method('select')->willReturn($this->select);
+        
         $connectionMock = $this->createMock(Mysql::class);
         $connectionMock->expects($this->any())->method('quoteInto')->willReturn('query');
         $this->select->expects($this->any())->method('getConnection')->willReturn($connectionMock);
-        $this->_connection->expects($this->any())->method('insertOnDuplicate')->willReturnSelf();
-        $this->_connection->expects($this->any())->method('delete')->willReturnSelf();
-        $this->_connection->expects($this->any())->method('quoteInto')->willReturn('');
-        $this->_connection->expects($this->any())->method('fetchAll')->willReturn([]);
+        
+        // Anonymous class methods are already implemented above
 
         $this->resource = $this->createPartialMock(
             ResourceConnection::class,
@@ -255,12 +254,15 @@ class ConfigurableTest extends AbstractImportTestCase
             ['id' => 20, 'attribute_set_id' => 4, 'testattr2'=> 1, 'testattr3'=> 1]
         ];
         foreach ($testProducts as $product) {
-            $item = $this->getMockBuilder(DataObject::class)
-                ->addMethods(['getAttributeSetId'])
-                ->disableOriginalConstructor()
-                ->getMock();
+            $item = new class extends DataObject {
+                public function __construct() {
+                    // Skip parent constructor to avoid dependencies
+                }
+                public function getAttributeSetId() {
+                    return 4;
+                }
+            };
             $item->setData($product);
-            $item->expects($this->any())->method('getAttributeSetId')->willReturn(4);
 
             $products[] = $item;
         }
@@ -648,11 +650,11 @@ class ConfigurableTest extends AbstractImportTestCase
     /**
      * Verify is row valid method
      *
-     * @dataProvider getProductDataIsValidRow
      * @param array $productData
      *
      * @return void
      */
+    #[DataProvider('getProductDataIsValidRow')]
     public function testIsRowValid(array $productData): void
     {
         $bunch = $this->_getBunch();
