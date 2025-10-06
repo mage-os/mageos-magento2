@@ -87,11 +87,7 @@ class ProductOptionProcessorTest extends TestCase
         }
         $productOptionMock = $this->createMock(ProductOptionInterface::class);
 
-        $productOptionExtensionMock = new class implements ProductOptionExtensionInterface {
-            private $options = [];
-            public function getConfigurableItemOptions() { return $this->options; }
-            public function setConfigurableItemOptions($options) { $this->options = $options; return $this; }
-        };
+        $productOptionExtensionMock = new \Magento\Quote\Test\Unit\Helper\ProductOptionExtensionInterfaceTestHelper();
 
         $productOptionMock->method('getExtensionAttributes')->willReturn($productOptionExtensionMock);
 
