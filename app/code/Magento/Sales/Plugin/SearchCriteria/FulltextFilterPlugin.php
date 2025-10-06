@@ -14,7 +14,11 @@ use Magento\Framework\View\Element\UiComponent\DataProvider\FulltextFilter as Ui
 
 class FulltextFilterPlugin
 {
+
     /**
+     * For the sales order grid only, replace MATCH AGAINST with LIKE across key columns
+     * to avoid MySQL stopword issues
+     *
      * @param UiFulltextFilter $subject
      * @param \Closure $proceed
      * @param Collection $collection
