@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\QuoteGraphQl\Test\Unit\Model\CartItem;
 
-use Magento\Catalog\Api\Data\ProductInterface;
+use Magento\Catalog\Model\Product;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\CatalogInventory\Api\Data\StockStatusInterface;
 use Magento\CatalogInventory\Api\StockRegistryInterface;
@@ -19,69 +19,29 @@ use Magento\QuoteGraphQl\Model\CartItem\ProductStock;
 use Magento\Store\Api\Data\StoreInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Quote\Test\Unit\Helper\QuoteItemQtyMethodsTestHelper;
 
 /**
  * Unit test for ProductStock::isProductAvailable()
  */
 class ProductStockTest extends TestCase
 {
-    /**
-     * @var ProductStock
-     */
     private $productStock;
-
-    /**
-     * @var ProductRepositoryInterface|MockObject
-     */
     private $productRepositoryMock;
-
-    /**
-     * @var StockState|MockObject
-     */
     private $stockStateMock;
-
-    /**
-     * @var ScopeConfigInterface|MockObject
-     */
     private $scopeConfigMock;
-
-    /**
-     * @var StockRegistryInterface|MockObject
-     */
     private $stockRegistryMock;
-
-    /**
-     * @var Item|MockObject
-     */
     private $cartItemMock;
-
-    /**
-     * @var ProductInterface|MockObject
-     */
     private $productMock;
-
-    /**
-     * @var StoreInterface|MockObject
-     */
     private $storeMock;
-
-    /**
-     * @var StockStatusInterface|MockObject
-     */
     private $stockStatusMock;
-
-    /**
-     * @var ProductInterface|MockObject
-     */
     private $optionProductMock;
-
-    /**
-     * @var Option|MockObject
-     */
     private $qtyOptionMock;
 
     /**
-     * Set up mocks and initialize the ProductStock class
+     * Set up test dependencies.
+     *
+     * @return void
      */
     protected function setUp(): void
     {
@@ -95,31 +55,18 @@ class ProductStockTest extends TestCase
             $this->scopeConfigMock,
             $this->stockRegistryMock
         );
-        $this->stockStatusMock = $this->getMockBuilder(StockStatusInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getQty', 'getStockStatus'])
-            ->getMockForAbstractClass();
-        $this->cartItemMock = $this->getMockBuilder(Item::class)
-            ->addMethods(['getQtyToAdd', 'getPreviousQty'])
-            ->onlyMethods(['getStore', 'getProductType', 'getProduct', 'getChildren', 'getQtyOptions'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->productMock = $this->getMockBuilder(ProductInterface::class)
-            ->onlyMethods(['getId'])
-            ->addMethods(['getStore'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->optionProductMock = $this->getMockBuilder(ProductInterface::class)
-            ->onlyMethods(['getId'])
-            ->addMethods(['getStore'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->stockStatusMock = $this->createMock(StockStatusInterface::class);
+        $this->cartItemMock = $this->createMock(QuoteItemQtyMethodsTestHelper::class);
+        $this->productMock = $this->createMock(Product::class);
+        $this->optionProductMock = $this->createMock(Product::class);
         $this->storeMock = $this->createMock(StoreInterface::class);
         $this->qtyOptionMock = $this->createMock(Option::class);
     }
 
     /**
-     * Test isProductAvailable() for a simple product with sufficient stock
+     * Ensure simple product with sufficient stock is available.
+     *
+     * @return void
      */
     public function testIsProductAvailableForSimpleProductWithStock(): void
     {
@@ -166,7 +113,9 @@ class ProductStockTest extends TestCase
     }
 
     /**
-     * Test isProductAvailable() for a simple product with insufficient stock
+     * Ensure simple product without stock is not available.
+     *
+     * @return void
      */
     public function testIsProductAvailableForSimpleProductWithoutStock()
     {
@@ -210,7 +159,9 @@ class ProductStockTest extends TestCase
     }
 
     /**
-     * Test isStockAvailableBundle when stock is available
+     * Ensure bundle option stock availability returns true when stock is sufficient.
+     *
+     * @return void
      */
     public function testIsStockAvailableBundleStockAvailable()
     {
@@ -253,7 +204,9 @@ class ProductStockTest extends TestCase
     }
 
     /**
-     * Test isStockAvailableBundle when stock is not available
+     * Ensure bundle option stock availability returns false when stock is insufficient.
+     *
+     * @return void
      */
     public function testIsStockAvailableBundleStockNotAvailable()
     {
