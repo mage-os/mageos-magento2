@@ -16,14 +16,14 @@ class FulltextFilterPlugin
 {
 
     /**
-     * For the sales order grid only, replace MATCH AGAINST with LIKE across key columns
-     * to avoid MySQL stopword issues
+     * Use LIKE instead of MATCH AGAINST in sales order grid to bypass MySQL stopword limitations
      *
      * @param UiFulltextFilter $subject
      * @param \Closure $proceed
      * @param Collection $collection
      * @param Filter $filter
      * @return void
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function aroundApply(
         UiFulltextFilter $subject,
@@ -36,6 +36,14 @@ class FulltextFilterPlugin
             if ($value === '') {
                 return;
             }
+
+            if (preg_match('/^\{+\s*(\d+)\s*\}+$/', $value, $m)) {
+                $term = $m[1];
+                $collection->addFieldToFilter('increment_id', ['eq' => $term]);
+                return;
+            }
+
+            $value = trim($value, '{}');
             $like = '%' . str_replace(['%', '_'], ['\\%', '\\_'], $value) . '%';
 
             $fields = ['increment_id', 'billing_name', 'shipping_name', 'customer_email'];
