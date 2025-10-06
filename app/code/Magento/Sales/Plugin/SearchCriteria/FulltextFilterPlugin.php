@@ -32,19 +32,27 @@ class FulltextFilterPlugin
         Filter $filter
     ): void {
         if ($collection instanceof OrderGridCollection) {
-            $value = trim((string) $filter->getValue());
-            if ($value === '') {
+            $raw = trim((string) $filter->getValue());
+            if ($raw === '') {
                 return;
             }
 
-            if (preg_match('/^\{+\s*(\d+)\s*\}+$/', $value, $m)) {
-                $term = $m[1];
-                $collection->addFieldToFilter('increment_id', ['eq' => $term]);
+            $normalized = preg_replace('/^\{+|\}+$/', '', $raw);
+            $normalized = ltrim($normalized);
+            $normalized = ltrim($normalized, '#');
+
+            // Exact increment_id search when normalized is all digits
+            if ($normalized !== '' && ctype_digit($normalized)) {
+                $collection->addFieldToFilter('increment_id', ['eq' => $normalized]);
                 return;
             }
 
-            $value = trim($value, '{}');
-            $like = '%' . str_replace(['%', '_'], ['\\%', '\\_'], $value) . '%';
+            // LIKE across key columns (for names, emails, non-digit terms)
+            $valueForLike = trim($raw, '{}');
+            $valueForLike = ltrim($valueForLike);
+            $valueForLike = ltrim($valueForLike, '#');
+
+            $like = '%' . str_replace(['%', '_'], ['\\%', '\\_'], $valueForLike) . '%';
 
             $fields = ['increment_id', 'billing_name', 'shipping_name', 'customer_email'];
             $conditions = array_fill(0, count($fields), ['like' => $like]);
