@@ -8,7 +8,6 @@ declare(strict_types=1);
 namespace Magento\Backend\Test\Unit\Helper;
 
 use Magento\Backend\Model\Auth\Session;
-use Magento\Backend\Model\Session as BackendSession;
 use Magento\Framework\DataObject;
 use Magento\Framework\Session\Test\Unit\Helper\StorageTestHelper;
 use Magento\User\Model\User;
