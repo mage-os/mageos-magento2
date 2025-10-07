@@ -96,7 +96,6 @@ class SpecialPrice extends AbstractPrice implements SpecialPriceInterface, BaseP
 
         if ($specialPrice !== null && $specialPrice !== false && !$this->isPercentageDiscount()) {
             $specialPrice = $this->priceCurrency->convertAndRound($specialPrice);
-            $this->product->setData('special_price', $specialPrice);
         }
         return $specialPrice;
     }
