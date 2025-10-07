@@ -17,6 +17,7 @@
             <severity value="MAJOR"/>
             <testCaseId value="AC-5299"/>
             <group value="3rd_party_integration"/>
+            <group value="pr_exclude"/>
         </annotations>
         <before>
             <!-- Simple product is created -->
@@ -45,8 +46,7 @@
             </actionGroup>
             <!-- Go to Checkout Page -->
             <actionGroup ref="StorefrontOpenCheckoutPageActionGroup" stepKey="goToCheckout"/>
-            <actionGroup ref="CheckoutSelectFlatRateShippingMethodActionGroup" stepKey="selectFlatRateShipping"/>
-            <actionGroup ref="StorefrontCheckoutClickNextOnShippingStepActionGroup" stepKey="clickNext"/>
+            <actionGroup ref="StorefrontGuestCheckoutProceedToPaymentStepActionGroup" stepKey="clickNext"/>
             <!-- Click on PayPal payment radio button -->
             <waitForElementClickable selector="{{CheckoutPaymentSection.PayPalPaymentRadio}}" stepKey="waitForPayPalRadioButton"/>
             <click selector="{{CheckoutPaymentSection.PayPalPaymentRadio}}" stepKey="selectPaypalPayment"/>
