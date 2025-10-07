@@ -143,17 +143,17 @@ class SuperAttributeDataProviderTest extends TestCase
         $productMock->setWebsiteIds([$websiteId]);
         $productMock->setId(1);
         $productMock->setData('entity_id', 1);
-        
+
         // Use existing helper for extension attributes
-        $extensionAttributes = new ProductExtensionAttributesTestHelper();
+        $extensionAttributes = new ProductExtensionInterfaceTestHelper();
         $extensionAttributes->setConfigurableProductLinks([1]);
         $productMock->setExtensionAttributes($extensionAttributes);
-        
+
         // Create child product mock
         $childProductMock = new ProductTestHelper();
         $childProductMock->setId(1);
         $childProductMock->setData('code', 1); // Set the attribute value that matches the option
-        
+
         $this->productRepository->method('get')
             ->willReturnCallback(function ($sku, $editMode = false, $storeId = null, $forceReload = false) use ($productMock, $childProductMock) {
                 if ($sku === 'configurable') {
