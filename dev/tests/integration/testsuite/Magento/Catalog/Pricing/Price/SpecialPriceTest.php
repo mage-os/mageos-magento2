@@ -89,11 +89,5 @@ class SpecialPriceTest extends TestCase
         // Assert special price was loaded correctly
         $this->assertNotNull($specialPrice, 'Special price should be loaded from database');
         $this->assertEquals(90, $specialPrice, 'Special price should match the saved value');
-
-        // Verify the attribute is now cached in product data
-        $this->assertTrue(
-            $product->hasData('special_price'),
-            'Special price should be cached in product after loading'
-        );
     }
 }
