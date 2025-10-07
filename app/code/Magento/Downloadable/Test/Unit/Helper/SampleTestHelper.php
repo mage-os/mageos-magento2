@@ -10,90 +10,174 @@ namespace Magento\Downloadable\Test\Unit\Helper;
 use Magento\Downloadable\Model\Sample;
 
 /**
- * Test helper class for Downloadable Sample with custom methods
- *
- * This helper extends Sample and adds custom methods that can be mocked
- * using PHPUnit's createPartialMock() for behavior verification.
+ * Test helper for Downloadable Sample Model
  */
 class SampleTestHelper extends Sample
 {
     /**
-     * Skip parent constructor to avoid dependencies
+     * @var array
+     */
+    private $data = [];
+
+    /**
+     * Constructor
      */
     public function __construct()
     {
-        // Skip parent constructor
+        // Skip parent constructor to avoid dependencies
     }
 
     /**
-     * Override load method
+     * Get ID
      *
-     * @param mixed $id
-     * @param string|null $field
-     * @return self
+     * @return int|null
      */
-    public function load($id, $field = null): self
+    public function getId()
     {
+        return $this->data['id'] ?? null;
+    }
+
+    /**
+     * Set ID
+     *
+     * @param int $id
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->data['id'] = $id;
         return $this;
     }
 
     /**
-     * Override getId method
+     * Get title
      *
-     * @return mixed
+     * @return string|null
      */
-    public function getId()
+    public function getTitle()
     {
-        return 1;
+        return $this->data['title'] ?? null;
     }
 
     /**
-     * Override getSampleType method
+     * Set title
      *
-     * @return string
+     * @param string $title
+     * @return $this
      */
-    public function getSampleType(): string
+    public function setTitle($title)
     {
-        return 'url';
+        $this->data['title'] = $title;
+        return $this;
     }
 
     /**
-     * Override getSampleUrl method
+     * Get sample URL
      *
-     * @return string
+     * @return string|null
      */
-    public function getSampleUrl(): string
+    public function getSampleUrl()
     {
-        return 'http://example.com/sample';
+        return $this->data['sample_url'] ?? null;
     }
 
     /**
-     * Override getBasePath method
+     * Set sample URL
      *
-     * @return string
+     * @param string $sampleUrl
+     * @return $this
      */
-    public function getBasePath(): string
+    public function setSampleUrl($sampleUrl)
     {
-        return '/base/path';
+        $this->data['sample_url'] = $sampleUrl;
+        return $this;
     }
 
     /**
-     * Override getBaseSamplePath method
+     * Get sample file
      *
-     * @return string
+     * @return string|null
      */
-    public function getBaseSamplePath(): string
+    public function getSampleFile()
     {
-        return '/base/sample/path';
+        return $this->data['sample_file'] ?? null;
     }
 
     /**
-     * Override getSampleFile method
+     * Set sample file
      *
-     * @return string
+     * @param string $sampleFile
+     * @return $this
      */
-    public function getSampleFile(): string
+    public function setSampleFile($sampleFile)
     {
-        return 'sample.pdf';
+        $this->data['sample_file'] = $sampleFile;
+        return $this;
+    }
+
+    /**
+     * Get sample type
+     *
+     * @return string|null
+     */
+    public function getSampleType()
+    {
+        return $this->data['sample_type'] ?? null;
+    }
+
+    /**
+     * Set sample type
+     *
+     * @param string $sampleType
+     * @return $this
+     */
+    public function setSampleType($sampleType)
+    {
+        $this->data['sample_type'] = $sampleType;
+        return $this;
+    }
+
+    /**
+     * Get sort order
+     *
+     * @return int|null
+     */
+    public function getSortOrder()
+    {
+        return $this->data['sort_order'] ?? null;
+    }
+
+    /**
+     * Set sort order
+     *
+     * @param int $sortOrder
+     * @return $this
+     */
+    public function setSortOrder($sortOrder)
+    {
+        $this->data['sort_order'] = $sortOrder;
+        return $this;
+    }
+
+    /**
+     * Get store title
+     *
+     * @return string|null
+     */
+    public function getStoreTitle()
+    {
+        return $this->data['store_title'] ?? 'Test Store Title';
+    }
+
+    /**
+     * Set store title
+     *
+     * @param string $storeTitle
+     * @return $this
+     */
+    public function setStoreTitle($storeTitle)
+    {
+        $this->data['store_title'] = $storeTitle;
+        return $this;
     }
 }

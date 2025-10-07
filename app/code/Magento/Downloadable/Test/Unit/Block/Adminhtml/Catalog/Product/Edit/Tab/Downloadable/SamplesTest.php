@@ -14,6 +14,8 @@ use Magento\Downloadable\Block\Adminhtml\Catalog\Product\Edit\Tab\Downloadable\S
 use Magento\Downloadable\Helper\File;
 use Magento\Downloadable\Model\Product\Type;
 use Magento\Downloadable\Model\Sample;
+use Magento\Downloadable\Test\Unit\Helper\SampleTestHelper;
+use Magento\Downloadable\Test\Unit\Helper\TypeTestHelper;
 use Magento\Framework\DataObject;
 use Magento\Framework\Escaper;
 use Magento\Framework\Registry;
@@ -83,43 +85,9 @@ class SamplesTest extends TestCase
             'getTypeInstance',
             'getStoreId'
         ]);
-        $this->downloadableProductModel = new class extends Type {
-            public function __construct()
-            {
-                // Skip parent constructor to avoid dependencies
-            }
-            public function __wakeup()
-            {
-                // Custom method for testing
-            }
-            public function getSamples($product = null)
-            {
-                return [];
-            }
-        };
-        $this->downloadableSampleModel = $this->createPartialMock(Sample::class, [
-            '__wakeup',
-            'getId',
-            'getTitle',
-            'getSampleFile',
-            'getSampleType',
-            'getSortOrder',
-            'getSampleUrl'
-        ]);
-        $this->coreRegistry = new class extends Registry {
-            public function __construct()
-            {
-                // Skip parent constructor to avoid dependencies
-            }
-            public function __wakeup()
-            {
-                // Custom method for testing
-            }
-            public function registry($key)
-            {
-                return null;
-            }
-        };
+        $this->downloadableProductModel = new TypeTestHelper();
+        $this->downloadableSampleModel = new SampleTestHelper();
+        $this->coreRegistry = $this->createPartialMock(Registry::class, ['registry']);
         $this->escaper = $this->createPartialMock(Escaper::class, ['escapeHtml']);
         $this->block = $objectManagerHelper->getObject(
             Samples::class,
@@ -154,14 +122,16 @@ class SamplesTest extends TestCase
         $this->productModel->method('getTypeId')->willReturn('downloadable');
         $this->productModel->method('getTypeInstance')->willReturn($this->downloadableProductModel);
         $this->productModel->method('getStoreId')->willReturn(0);
-        $this->downloadableProductModel->method('getSamples')->willReturn([$this->downloadableSampleModel]);
+        // Configure the sample model for this test
+        $this->downloadableSampleModel->setId(1)
+            ->setTitle('Sample Title')
+            ->setSampleUrl(null)
+            ->setSampleFile('file/sample.gif')
+            ->setSampleType('file')
+            ->setSortOrder(0);
+        
+        $this->downloadableProductModel->setSamples([$this->downloadableSampleModel]);
         $this->coreRegistry->method('registry')->willReturn($this->productModel);
-        $this->downloadableSampleModel->method('getId')->willReturn(1);
-        $this->downloadableSampleModel->method('getTitle')->willReturn('Sample Title');
-        $this->downloadableSampleModel->method('getSampleUrl')->willReturn(null);
-        $this->downloadableSampleModel->method('getSampleFile')->willReturn('file/sample.gif');
-        $this->downloadableSampleModel->method('getSampleType')->willReturn('file');
-        $this->downloadableSampleModel->method('getSortOrder')->willReturn(0);
         $this->escaper->method('escapeHtml')->willReturn('Sample Title');
         $this->fileHelper->method('getFilePath')->willReturn('/file/path/sample.gif');
         $this->fileHelper->method('ensureFileInFilesystem')->willReturn(true);

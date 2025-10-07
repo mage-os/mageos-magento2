@@ -220,4 +220,29 @@ class ProductExtensionInterfaceTestHelper implements ProductExtensionInterface
     {
         $this->data = $data;
     }
+
+    /**
+     * @return mixed|null
+     */
+    public function getTestStockItem()
+    {
+        return $this->data['test_stock_item'] ?? null;
+    }
+
+    public function setTestStockItem($testStockItem)
+    {
+        $this->data['test_stock_item'] = $testStockItem;
+        return $this;
+    }
+
+    public function getTestStockItemQty()
+    {
+        return $this->data['test_stock_item_qty'] ?? null;
+    }
+
+    public function setTestStockItemQty($qty)
+    {
+        $this->data['test_stock_item_qty'] = $qty;
+        return $this;
+    }
 }

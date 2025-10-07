@@ -14,11 +14,14 @@ use Magento\Downloadable\Block\Adminhtml\Catalog\Product\Edit\Tab\Downloadable\L
 use Magento\Downloadable\Helper\File;
 use Magento\Downloadable\Model\Link;
 use Magento\Downloadable\Model\Product\Type;
+use Magento\Downloadable\Test\Unit\Helper\LinkModelTestHelper;
+use Magento\Downloadable\Test\Unit\Helper\TypeTestHelper;
 use Magento\Eav\Model\Entity\AttributeFactory;
 use Magento\Framework\DataObject;
 use Magento\Framework\Escaper;
 use Magento\Framework\Registry;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -101,76 +104,23 @@ class LinksTest extends TestCase
      * Setup downloadable product model mock
      *
      * @return void
+     * @throws Exception
      */
     private function setupDownloadableProductModel(): void
     {
-        $this->downloadableProductModel = new class extends Type {
-            public function __construct()
-            {
-                // Skip parent constructor to avoid dependencies
-            }
-            public function __wakeup()
-            {
-                // Custom method for testing
-            }
-            public function getLinks($product = null)
-            {
-                return [];
-            }
-        };
-        $this->downloadableLinkModel = new class extends Link {
-            public function __construct()
-            {
-                // Skip parent constructor to avoid dependencies
-            }
-            public function getStoreTitle()
-            {
-                return 'Test Store Title';
-            }
-            public function __wakeup()
-            {
-            }
-            public function getId()
-            {
-                return 1;
-            }
-            public function getTitle()
-            {
-                return 'Test Title';
-            }
-            public function getPrice()
-            {
-                return 10.00;
-            }
-            public function getNumberOfDownloads()
-            {
-                return 5;
-            }
-            public function getLinkUrl()
-            {
-                return 'http://example.com';
-            }
-            public function getLinkType()
-            {
-                return 'url';
-            }
-            public function getSampleFile()
-            {
-                return 'sample.pdf';
-            }
-            public function getSampleType()
-            {
-                return 'file';
-            }
-            public function getSortOrder()
-            {
-                return 1;
-            }
-            public function getLinkFile()
-            {
-                return 'link.pdf';
-            }
-        };
+        $this->downloadableProductModel = new TypeTestHelper();
+        $this->downloadableLinkModel = new LinkModelTestHelper();
+        // Set up the test data
+        $this->downloadableLinkModel->setId(1)
+            ->setTitle('Test Title')
+            ->setPrice('10.00')
+            ->setNumberOfDownloads('5')
+            ->setLinkUrl('http://example.com')
+            ->setLinkType('url')
+            ->setSampleFile('sample.pdf')
+            ->setSampleType('file')
+            ->setSortOrder(1)
+            ->setLinkFile('link.pdf');
 
         $this->coreRegistry = $this->createPartialMock(Registry::class, ['registry']);
 
@@ -229,19 +179,21 @@ class LinksTest extends TestCase
         $this->productModel->method('getTypeId')->willReturn('downloadable');
         $this->productModel->method('getTypeInstance')->willReturn($this->downloadableProductModel);
         $this->productModel->method('getStoreId')->willReturn(0);
-        $this->downloadableProductModel->method('getLinks')->willReturn([$this->downloadableLinkModel]);
+        // Configure the link model for this test
+        $this->downloadableLinkModel->setId(1)
+            ->setTitle('Link Title')
+            ->setPrice('10')
+            ->setNumberOfDownloads('6')
+            ->setLinkUrl(null)
+            ->setLinkType('file')
+            ->setSampleFile('file/sample.gif')
+            ->setSampleType('file')
+            ->setSortOrder(0)
+            ->setLinkFile('file/link.gif')
+            ->setStoreTitle('Store Title');
+
+        $this->downloadableProductModel->setLinks([$this->downloadableLinkModel]);
         $this->coreRegistry->method('registry')->willReturn($this->productModel);
-        $this->downloadableLinkModel->method('getId')->willReturn(1);
-        $this->downloadableLinkModel->method('getTitle')->willReturn('Link Title');
-        $this->downloadableLinkModel->method('getPrice')->willReturn('10');
-        $this->downloadableLinkModel->method('getNumberOfDownloads')->willReturn('6');
-        $this->downloadableLinkModel->method('getLinkUrl')->willReturn(null);
-        $this->downloadableLinkModel->method('getLinkType')->willReturn('file');
-        $this->downloadableLinkModel->method('getSampleFile')->willReturn('file/sample.gif');
-        $this->downloadableLinkModel->method('getSampleType')->willReturn('file');
-        $this->downloadableLinkModel->method('getSortOrder')->willReturn(0);
-        $this->downloadableLinkModel->method('getLinkFile')->willReturn('file/link.gif');
-        $this->downloadableLinkModel->method('getStoreTitle')->willReturn('Store Title');
         $this->escaper->method('escapeHtml')->willReturn('Link Title');
         $this->fileHelper->method('getFilePath')->willReturn('/file/path/link.gif');
         $this->fileHelper->method('ensureFileInFilesystem')->willReturn(true);
