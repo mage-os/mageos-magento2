@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace Magento\GroupedProduct\Test\Unit\Model\Product\Initialization\Helper\ProductLinks\Plugin;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Api\Data\ProductLinkExtensionFactory;
 use Magento\Catalog\Api\Data\ProductLinkExtensionInterface;
 use Magento\Catalog\Api\Data\ProductLinkInterface;
@@ -54,27 +55,16 @@ class GroupedTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->productMock = $this->getMockBuilder(Product::class)
-            ->addMethods(['getGroupedReadonly', 'setGroupedLinkData'])
-            ->onlyMethods(['__wakeup', 'getTypeId', 'getSku', 'getProductLinks', 'setProductLinks'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productMock = $this->createPartialMock(
+            \Magento\Catalog\Test\Unit\Helper\ProductTestHelper::class,
+            ['__wakeup', 'getTypeId', 'getSku', 'getProductLinks', 'setProductLinks', 'getGroupedReadonly', 'setGroupedLinkData']
+        );
         $this->subjectMock = $this->createMock(
             ProductLinks::class
         );
-        $this->productLinkExtensionFactory = $this->getMockBuilder(
-            ProductLinkExtensionFactory::class
-        )
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMockForAbstractClass();
-        $this->productLinkFactory = $this->getMockBuilder(ProductLinkInterfaceFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMockForAbstractClass();
-        $this->productRepository = $this->getMockBuilder(ProductRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->productLinkExtensionFactory = $this->createMock(ProductLinkExtensionFactory::class);
+        $this->productLinkFactory = $this->createMock(ProductLinkInterfaceFactory::class);
+        $this->productRepository = $this->createMock(ProductRepositoryInterface::class);
         $this->model = new \Magento\GroupedProduct\Model\Product\Initialization\Helper\ProductLinks\Plugin\Grouped(
             $this->productLinkFactory,
             $this->productRepository,
@@ -82,9 +72,7 @@ class GroupedTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider productTypeDataProvider
-     */
+    #[DataProvider('productTypeDataProvider')]
     public function testBeforeInitializeLinksRequestDoesNotHaveGrouped($productType)
     {
         $this->productMock->expects($this->once())->method('getTypeId')->willReturn($productType);
@@ -105,9 +93,7 @@ class GroupedTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider linksDataProvider
-     */
+    #[DataProvider('linksDataProvider')]
     public function testBeforeInitializeLinksRequestHasGrouped($linksData)
     {
         $this->productMock->expects($this->once())->method('getTypeId')->willReturn(Grouped::TYPE_CODE);
@@ -115,20 +101,14 @@ class GroupedTest extends TestCase
         $this->productMock->expects($this->once())->method('setProductLinks')->with($this->arrayHasKey(0));
         $this->productMock->expects($this->once())->method('getProductLinks')->willReturn([]);
         $this->productMock->expects($this->once())->method('getSku')->willReturn('sku');
-        $linkedProduct = $this->getMockBuilder(Product::class)
-            ->addMethods(['getGroupedReadonly'])
-            ->onlyMethods(['__wakeup', 'getTypeId', 'getSku', 'getProductLinks', 'setProductLinks'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $extensionAttributes = $this->getMockBuilder(ProductLinkExtensionInterface::class)
-            ->addMethods(['setQty', 'getQty'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $linkedProduct = $this->createPartialMock(
+            \Magento\Catalog\Test\Unit\Helper\ProductTestHelper::class,
+            ['__wakeup', 'getTypeId', 'getSku', 'getProductLinks', 'setProductLinks', 'getGroupedReadonly']
+        );
+        $extensionAttributes = new \Magento\Catalog\Test\Unit\Helper\ProductLinkExtensionInterfaceTestHelper();
         $linkedProduct->expects($this->once())->method('getTypeId')->willReturn(Grouped::TYPE_CODE);
         $linkedProduct->expects($this->once())->method('getSku')->willReturn('sku');
-        $productLink = $this->getMockBuilder(ProductLinkInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $productLink = $this->createMock(ProductLinkInterface::class);
         $this->productRepository->expects($this->once())
             ->method('getById')
             ->willReturn($linkedProduct);
@@ -142,7 +122,7 @@ class GroupedTest extends TestCase
         $productLink->expects($this->once())->method('setPosition')->willReturnSelf();
         $productLink->expects($this->once())->method('getExtensionAttributes')
             ->willReturn($extensionAttributes);
-        $extensionAttributes->expects($this->once())->method('setQty')->willReturnSelf();
+        $extensionAttributes->setQty(1);
         $this->model->beforeInitializeLinks($this->subjectMock, $this->productMock, ['associated' => $linksData]);
     }
 

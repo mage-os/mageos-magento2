@@ -47,7 +47,7 @@ class CreateHandlerTest extends TestCase
 
         /** @var ProductExtensionInterface|MockObject $productExtensionMock */
         $productExtensionMock = $this->createPartialMock(
-            \Magento\ConfigurableProduct\Test\Unit\Helper\ProductExtensionAttributesTestHelper::class,
+            \Magento\Catalog\Test\Unit\Helper\ProductExtensionInterfaceTestHelper::class,
             ['getDownloadableProductSamples']
         );
         $productExtensionMock->expects($this->once())

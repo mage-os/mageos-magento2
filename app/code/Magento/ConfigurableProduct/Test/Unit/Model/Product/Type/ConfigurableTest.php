@@ -247,7 +247,7 @@ class ConfigurableTest extends TestCase
         $product->setStoreId(1);
         $product->setAssociatedProductIds([2]);
         $product->setHasData('_cache_instance_used_product_attribute_ids', true);
-        $extensionAttributes = new \Magento\ConfigurableProduct\Test\Unit\Helper\ProductExtensionAttributesTestHelper();
+        $extensionAttributes = new \Magento\Catalog\Test\Unit\Helper\ProductExtensionInterfaceTestHelper();
         $extensionAttributes->setConfigurableProductOptions([]);
         $extensionAttributes->setConfigurableProductLinks([]);
         

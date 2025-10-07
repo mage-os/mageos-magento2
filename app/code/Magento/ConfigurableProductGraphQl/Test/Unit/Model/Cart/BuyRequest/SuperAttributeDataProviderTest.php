@@ -9,7 +9,7 @@ namespace Magento\ConfigurableProductGraphQl\Test\Unit\Model\Cart\BuyRequest;
 
 use Magento\Framework\DataObject;
 use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
-use Magento\ConfigurableProduct\Test\Unit\Helper\ProductExtensionAttributesTestHelper;
+use Magento\Catalog\Test\Unit\Helper\ProductExtensionInterfaceTestHelper;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\Product;

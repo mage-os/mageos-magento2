@@ -82,7 +82,7 @@ class ProductRepositorySaveTest extends TestCase
 
         $this->productRepository = $this->createMock(ProductRepositoryInterface::class);
 
-        $this->extensionAttributes = new \Magento\ConfigurableProduct\Test\Unit\Helper\ProductExtensionAttributesTestHelper();
+        $this->extensionAttributes = new \Magento\Catalog\Test\Unit\Helper\ProductExtensionInterfaceTestHelper();
 
         $this->eavAttribute = $this->createMock(ProductAttributeInterface::class);
 

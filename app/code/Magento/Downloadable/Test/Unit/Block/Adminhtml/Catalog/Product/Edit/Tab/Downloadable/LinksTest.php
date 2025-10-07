@@ -104,10 +104,20 @@ class LinksTest extends TestCase
      */
     private function setupDownloadableProductModel(): void
     {
-        $this->downloadableProductModel = $this->createPartialMock(
-            Type::class,
-            ['getLinks']
-        );
+        $this->downloadableProductModel = new class extends Type {
+            public function __construct()
+            {
+                // Skip parent constructor to avoid dependencies
+            }
+            public function __wakeup()
+            {
+                // Custom method for testing
+            }
+            public function getLinks($product = null)
+            {
+                return [];
+            }
+        };
         $this->downloadableLinkModel = new class extends Link {
             public function __construct()
             {
@@ -162,20 +172,7 @@ class LinksTest extends TestCase
             }
         };
 
-        $this->coreRegistry = new class extends Registry {
-            public function __construct()
-            {
-                // Skip parent constructor to avoid dependencies
-            }
-            public function __wakeup()
-            {
-                // Custom method for testing
-            }
-            public function registry($key)
-            {
-                return null;
-            }
-        };
+        $this->coreRegistry = $this->createPartialMock(Registry::class, ['registry']);
 
         $this->escaper = $this->createPartialMock(Escaper::class, ['escapeHtml']);
     }

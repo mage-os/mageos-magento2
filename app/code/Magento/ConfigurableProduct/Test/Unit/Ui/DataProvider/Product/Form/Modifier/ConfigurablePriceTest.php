@@ -30,7 +30,7 @@ class ConfigurablePriceTest extends AbstractModifierTestCase
     #[DataProvider('metaDataProvider')]
     public function testModifyMeta($metaInput, $metaOutput)
     {
-        $this->productMock->method('getTypeId')->willReturn(Configurable::TYPE_CODE);
+            $this->productMock->setTypeId(Configurable::TYPE_CODE);
 
         $metaResult = $this->getModel()->modifyMeta($metaInput);
         $this->assertEquals($metaResult, $metaOutput);

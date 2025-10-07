@@ -83,10 +83,20 @@ class SamplesTest extends TestCase
             'getTypeInstance',
             'getStoreId'
         ]);
-        $this->downloadableProductModel = $this->createPartialMock(
-            Type::class,
-            ['getSamples']
-        );
+        $this->downloadableProductModel = new class extends Type {
+            public function __construct()
+            {
+                // Skip parent constructor to avoid dependencies
+            }
+            public function __wakeup()
+            {
+                // Custom method for testing
+            }
+            public function getSamples($product = null)
+            {
+                return [];
+            }
+        };
         $this->downloadableSampleModel = $this->createPartialMock(Sample::class, [
             '__wakeup',
             'getId',
@@ -96,10 +106,20 @@ class SamplesTest extends TestCase
             'getSortOrder',
             'getSampleUrl'
         ]);
-        $this->coreRegistry = $this->createPartialMock(
-            Registry::class,
-            ['registry']
-        );
+        $this->coreRegistry = new class extends Registry {
+            public function __construct()
+            {
+                // Skip parent constructor to avoid dependencies
+            }
+            public function __wakeup()
+            {
+                // Custom method for testing
+            }
+            public function registry($key)
+            {
+                return null;
+            }
+        };
         $this->escaper = $this->createPartialMock(Escaper::class, ['escapeHtml']);
         $this->block = $objectManagerHelper->getObject(
             Samples::class,

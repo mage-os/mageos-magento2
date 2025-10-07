@@ -168,7 +168,7 @@ class LinkManagementTest extends TestCase
 
         $configurable = $this->createPartialMock(Product::class, ['getId', 'getExtensionAttributes']);
         $simple = $this->createPartialMock(Product::class, ['getId', 'getData']);
-        $extensionAttributesMock = new \Magento\ConfigurableProduct\Test\Unit\Helper\ProductExtensionAttributesTestHelper();
+        $extensionAttributesMock = new \Magento\Catalog\Test\Unit\Helper\ProductExtensionInterfaceTestHelper();
         $productAttributeMock = $this->createPartialMock(AbstractAttribute::class, ['getAttributeCode']);
         $optionMock = new ConfigurableAttributeTestHelper($productAttributeMock);
         $optionsFactoryMock = $this->createPartialMock(Factory::class, ['create']);

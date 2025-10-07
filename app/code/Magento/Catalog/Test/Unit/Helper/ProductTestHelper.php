@@ -1172,6 +1172,16 @@ class ProductTestHelper extends Product
     }
 
     /**
+     * Get image for testing
+     *
+     * @return mixed
+     */
+    public function getImage()
+    {
+        return $this->data['image'] ?? null;
+    }
+
+    /**
      * Get position for testing
      *
      * @return mixed
@@ -1696,6 +1706,72 @@ class ProductTestHelper extends Product
     public function setConfigurableProductLinks(array $links): self
     {
         $this->data['configurable_product_links'] = $links;
+        return $this;
+    }
+
+    /**
+     * Get tax class ID for testing
+     *
+     * @return mixed
+     */
+    public function getTaxClassId()
+    {
+        return $this->data['tax_class_id'] ?? null;
+    }
+
+    /**
+     * Set tax class ID for testing
+     *
+     * @param mixed $taxClassId
+     * @return self
+     */
+    public function setTaxClassId($taxClassId): self
+    {
+        $this->data['tax_class_id'] = $taxClassId;
+        return $this;
+    }
+
+    /**
+     * Get grouped readonly for testing
+     *
+     * @return mixed
+     */
+    public function getGroupedReadonly()
+    {
+        return $this->data['grouped_readonly'] ?? null;
+    }
+
+    /**
+     * Set grouped readonly for testing
+     *
+     * @param mixed $groupedReadonly
+     * @return self
+     */
+    public function setGroupedReadonly($groupedReadonly): self
+    {
+        $this->data['grouped_readonly'] = $groupedReadonly;
+        return $this;
+    }
+
+    /**
+     * Get grouped link data for testing
+     *
+     * @return mixed
+     */
+    public function getGroupedLinkData()
+    {
+        return $this->data['grouped_link_data'] ?? null;
+    }
+
+    /**
+     * Set grouped link data for testing
+     *
+     * @param mixed $groupedLinkData
+     * @return self
+     */
+    public function setGroupedLinkData($groupedLinkData): self
+    {
+        $this->data['grouped_link_data'] = $groupedLinkData;
         return $this;
     }
 

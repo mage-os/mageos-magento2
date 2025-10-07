@@ -54,7 +54,7 @@ class ProductOptionProcessorTest extends TestCase
     protected function setUp(): void
     {
         $this->dataObject = $this->createPartialMock(
-            \Magento\Downloadable\Test\Unit\Helper\DataObjectTestHelper::class,
+            \Magento\Framework\Test\Unit\Helper\DataObjectTestHelper::class,
             ['getLinks', 'addData']
         );
 

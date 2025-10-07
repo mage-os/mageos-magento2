@@ -14,7 +14,7 @@ use Magento\ConfigurableProduct\Controller\Adminhtml\Product\Initialization\Help
 use Magento\ConfigurableProduct\Helper\Product\Options\Factory;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable as ConfigurableProduct;
 use Magento\ConfigurableProduct\Model\Product\VariationHandler;
-use Magento\ConfigurableProduct\Test\Unit\Helper\ProductExtensionAttributesTestHelper;
+use Magento\Catalog\Test\Unit\Helper\ProductExtensionInterfaceTestHelper;
 use Magento\Framework\App\Request\Http;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

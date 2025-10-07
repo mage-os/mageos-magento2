@@ -70,7 +70,7 @@ class ReadHandlerTest extends TestCase
             ->method('getTypeId')
             ->willReturn(Configurable::TYPE_CODE);
 
-        $extensionAttributes = new \Magento\ConfigurableProduct\Test\Unit\Helper\ProductExtensionAttributesTestHelper();
+        $extensionAttributes = new \Magento\Catalog\Test\Unit\Helper\ProductExtensionInterfaceTestHelper();
 
         $product->expects(static::once())
             ->method('getExtensionAttributes')

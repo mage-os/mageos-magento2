@@ -612,4 +612,124 @@ class DataObjectTestHelper extends DataObject
         $this->testData['attributes'] = $attributes;
         return $this;
     }
+
+    /**
+     * Custom setIsAllowed method for testing
+     *
+     * @param bool $allowed
+     * @return self
+     */
+    public function setIsAllowed($allowed): self
+    {
+        return $this;
+    }
+
+    /**
+     * Custom getLinks method for testing
+     *
+     * @return mixed
+     */
+    public function getLinks()
+    {
+        return null;
+    }
+
+    /**
+     * Override addData method
+     *
+     * @param array $data
+     * @return self
+     */
+    public function addData($data): self
+    {
+        return $this;
+    }
+
+    /**
+     * Get name method for testing
+     *
+     * @return mixed
+     */
+    public function getName()
+    {
+        return $this->data['name'] ?? null;
+    }
+
+    /**
+     * Set name method for testing
+     *
+     * @param mixed $name
+     * @return self
+     */
+    public function setName($name): self
+    {
+        $this->data['name'] = $name;
+        return $this;
+    }
+
+    /**
+     * Get price method for testing
+     *
+     * @return mixed
+     */
+    public function getPrice()
+    {
+        return $this->data['price'] ?? null;
+    }
+
+    /**
+     * Set price method for testing
+     *
+     * @param mixed $price
+     * @return self
+     */
+    public function setPrice($price): self
+    {
+        $this->data['price'] = $price;
+        return $this;
+    }
+
+    /**
+     * Get image method for testing
+     *
+     * @return mixed
+     */
+    public function getImage()
+    {
+        return $this->data['image'] ?? null;
+    }
+
+    /**
+     * Set image method for testing
+     *
+     * @param mixed $image
+     * @return self
+     */
+    public function setImage($image): self
+    {
+        $this->data['image'] = $image;
+        return $this;
+    }
+
+    /**
+     * Get position method for testing
+     *
+     * @return mixed
+     */
+    public function getPosition()
+    {
+        return $this->data['position'] ?? null;
+    }
+
+    /**
+     * Set position method for testing
+     *
+     * @param mixed $position
+     * @return self
+     */
+    public function setPosition($position): self
+    {
+        $this->data['position'] = $position;
+        return $this;
+    }
 }
