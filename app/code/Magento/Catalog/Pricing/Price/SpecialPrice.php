@@ -85,7 +85,7 @@ class SpecialPrice extends AbstractPrice implements SpecialPriceInterface, BaseP
         $specialPrice = $this->product->getSpecialPrice();
 
         // If special_price is not loaded (null and attribute not loaded), load it from resource
-        if ($specialPrice === null) {
+        if ($specialPrice === null && $this->product->getTypeId() === 'simple') {
             $specialPrice = $this->getSpecialPriceFromResource();
         }
 
