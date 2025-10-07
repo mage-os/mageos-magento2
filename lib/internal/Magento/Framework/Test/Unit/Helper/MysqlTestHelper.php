@@ -5,16 +5,20 @@
  */
 declare(strict_types=1);
 
-namespace Magento\BundleImportExport\Test\Unit\Helper;
+namespace Magento\Framework\Test\Unit\Helper;
 
 use Magento\Framework\DB\Adapter\Pdo\Mysql;
 
 /**
  * Test helper class for MySQL adapter with custom methods
+ *
+ * This helper extends the MySQL adapter and provides mockable methods
+ * for testing database operations without actual database connections.
  */
 class MysqlTestHelper extends Mysql
 {
     private $data = [];
+    private $quoteIdentifierCallback;
 
     /**
      * Skip parent constructor to avoid dependencies
@@ -22,6 +26,33 @@ class MysqlTestHelper extends Mysql
     public function __construct()
     {
         // Skip parent constructor
+    }
+
+    /**
+     * Set callback for quoteIdentifier method
+     *
+     * @param callable $callback
+     * @return $this
+     */
+    public function setQuoteIdentifierCallback($callback)
+    {
+        $this->quoteIdentifierCallback = $callback;
+        return $this;
+    }
+
+    /**
+     * Mock quoteIdentifier method
+     *
+     * @param string|array $ident
+     * @param bool $auto
+     * @return string|array
+     */
+    public function quoteIdentifier($ident, $auto = false)
+    {
+        if ($this->quoteIdentifierCallback) {
+            return call_user_func($this->quoteIdentifierCallback, $ident);
+        }
+        return $this->data['quote_identifier'] ?? $ident;
     }
 
     /**

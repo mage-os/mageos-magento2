@@ -104,20 +104,10 @@ class LinksTest extends TestCase
      */
     private function setupDownloadableProductModel(): void
     {
-        $this->downloadableProductModel = new class extends Type {
-            public function __construct()
-            {
-                // Skip parent constructor to avoid dependencies
-            }
-            public function __wakeup()
-            {
-                // Custom method for testing
-            }
-            public function getLinks($product = null)
-            {
-                return [];
-            }
-        };
+        $this->downloadableProductModel = $this->createPartialMock(
+            Type::class,
+            ['getLinks']
+        );
         $this->downloadableLinkModel = new class extends Link {
             public function __construct()
             {

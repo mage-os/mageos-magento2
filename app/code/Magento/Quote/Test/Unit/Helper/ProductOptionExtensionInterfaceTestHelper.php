@@ -154,4 +154,26 @@ class ProductOptionExtensionInterfaceTestHelper implements ProductOptionExtensio
     {
         return $this->data[$key] ?? $default;
     }
+
+    /**
+     * Get giftcard item option for testing
+     *
+     * @return \Magento\GiftCard\Api\Data\GiftCardOptionInterface|null
+     */
+    public function getGiftcardItemOption()
+    {
+        return $this->data['giftcard_item_option'] ?? null;
+    }
+
+    /**
+     * Set giftcard item option for testing
+     *
+     * @param \Magento\GiftCard\Api\Data\GiftCardOptionInterface $giftcardItemOption
+     * @return $this
+     */
+    public function setGiftcardItemOption(\Magento\GiftCard\Api\Data\GiftCardOptionInterface $giftcardItemOption)
+    {
+        $this->data['giftcard_item_option'] = $giftcardItemOption;
+        return $this;
+    }
 }

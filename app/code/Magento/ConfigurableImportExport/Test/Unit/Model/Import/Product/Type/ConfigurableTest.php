@@ -192,32 +192,17 @@ class ConfigurableTest extends AbstractImportTestCase
                 'getConnection'
             ]
         );
-        
-        $selectMock = $this->select;
-        $this->_connection = new class($selectMock) extends Mysql {
-            private $selectMock;
-            
-            public function __construct($selectMock) {
-                $this->selectMock = $selectMock;
-                // Skip parent constructor to avoid dependencies
-            }
-            public function joinLeft() { return $this; }
-            public function select() { return $this->selectMock; }
-            public function fetchAll($sql, $bind = [], $fetchMode = null) { return []; }
-            public function fetchPairs($sql, $bind = []) { return []; }
-            public function insertOnDuplicate($table, array $data, array $fields = []) { return $this; }
-            public function quoteIdentifier($ident, $auto = false) { return $ident; }
-            public function delete($table, $where = '') { return $this; }
-            public function quoteInto($text, $value, $type = null, $count = null) { return ''; }
-        };
+
+        $this->_connection = new \Magento\Framework\Test\Unit\Helper\MysqlTestHelper();
+        $this->_connection->setTestData('select', $this->select);
         $this->select->expects($this->any())->method('from')->willReturnSelf();
         $this->select->expects($this->any())->method('where')->willReturnSelf();
         $this->select->expects($this->any())->method('joinLeft')->willReturnSelf();
-        
+
         $connectionMock = $this->createMock(Mysql::class);
         $connectionMock->expects($this->any())->method('quoteInto')->willReturn('query');
         $this->select->expects($this->any())->method('getConnection')->willReturn($connectionMock);
-        
+
         // Anonymous class methods are already implemented above
 
         $this->resource = $this->createPartialMock(
@@ -556,21 +541,20 @@ class ConfigurableTest extends AbstractImportTestCase
             ->method('getNewSku')
             ->willReturn($newSkus);
 
-        // at(0) is select() call, quoteIdentifier() is invoked at(1) and at(2)
-        $this->_connection
-            ->method('quoteIdentifier')
-            ->willReturnCallback(
-                function ($arg) {
-                    if ($arg == 'm.attribute_id') {
-                        return 'a';
-                    } elseif ($arg == 'o.attribute_id') {
-                        return 'b';
-                    }
+        // Configure quoteIdentifier callback for the helper
+        $this->_connection->setQuoteIdentifierCallback(
+            function ($arg) {
+                if ($arg == 'm.attribute_id') {
+                    return 'a';
+                } elseif ($arg == 'o.attribute_id') {
+                    return 'b';
                 }
-            );
+                return $arg;
+            }
+        );
 
-        $this->_connection->expects($this->any())->method('select')->willReturn($this->select);
-        $this->_connection->expects($this->any())->method('fetchAll')->with($this->select)->willReturn(
+        // Configure helper data instead of using expects()
+        $this->_connection->setTestData('fetch_all_responses', [
             [
                 ['attribute_id' => 131, 'product_id' => 1, 'option_id' => 1, 'product_super_attribute_id' => 131],
 
@@ -592,9 +576,9 @@ class ConfigurableTest extends AbstractImportTestCase
                 ['attribute_id' => 132, 'product_id' => 3, 'option_id' => 3, 'product_super_attribute_id' => 132],
                 ['attribute_id' => 132, 'product_id' => 4, 'option_id' => 4, 'product_super_attribute_id' => 132],
                 ['attribute_id' => 132, 'product_id' => 5, 'option_id' => 5, 'product_super_attribute_id' => 132]
-            ]
-        );
-        $this->_connection->expects($this->any())->method('fetchAll')->with($this->select)->willReturn([]);
+            ],
+            [] // Second call returns empty array
+        ]);
 
         $bunch = $this->_getBunch();
         $this->_entityModel

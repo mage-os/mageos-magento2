@@ -75,8 +75,6 @@ class ProductExtensionInterfaceTestHelper implements ProductExtensionInterface
         return $this->data[$key] ?? null;
     }
 
-    // Required interface methods (implement as needed for testing)
-
     /**
      * @inheritdoc
      */
@@ -196,14 +194,24 @@ class ProductExtensionInterfaceTestHelper implements ProductExtensionInterface
         return $this;
     }
 
+    /**
+     * @return mixed|null
+     */
     public function getDiscounts()
     {
-        // TODO: Implement getDiscounts() method.
+        return $this->data['discounts'] ?? null;
     }
+
+    /**
+     * @param $discounts
+     * @return $this
+     */
     public function setDiscounts($discounts)
     {
-        // TODO: Implement setDiscounts() method.
+        $this->data['discounts'] = $discounts;
+        return $this;
     }
+
 
     /**
      * @return array
@@ -219,5 +227,41 @@ class ProductExtensionInterfaceTestHelper implements ProductExtensionInterface
     public function setData(array $data): void
     {
         $this->data = $data;
+    }
+
+    /**
+     * @return mixed|null
+     */
+    public function getTestStockItem()
+    {
+        return $this->data['test_stock_item'] ?? null;
+    }
+
+    /**
+     * @param $testStockItem
+     * @return $this
+     */
+    public function setTestStockItem($testStockItem)
+    {
+        $this->data['test_stock_item'] = $testStockItem;
+        return $this;
+    }
+
+    /**
+     * @return mixed|null
+     */
+    public function getTestStockItemQty()
+    {
+        return $this->data['test_stock_item_qty'] ?? null;
+    }
+
+    /**
+     * @param $qty
+     * @return $this
+     */
+    public function setTestStockItemQty($qty)
+    {
+        $this->data['test_stock_item_qty'] = $qty;
+        return $this;
     }
 }
