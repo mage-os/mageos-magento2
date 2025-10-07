@@ -21,7 +21,7 @@ class SynonymGroupTest extends TestCase
     {
         $context = $this->createMock(Context::class);
         $resources = $this->createMock(ResourceConnection::class);
-        $connection = $this->getMockForAbstractClass(
+        $connection = $this->createMock(
             AdapterInterface::class,
             [],
             '',

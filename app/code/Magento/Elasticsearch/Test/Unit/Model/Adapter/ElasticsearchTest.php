@@ -14,7 +14,7 @@ use Magento\AdvancedSearch\Model\Client\ClientInterface as ElasticsearchClient;
 use Magento\AdvancedSearch\Model\Client\ClientOptionsInterface;
 use Magento\Catalog\Api\ProductAttributeRepositoryInterface;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
-use Magento\Elasticsearch7\Model\Client\Elasticsearch;
+use Magento\Elasticsearch\Model\Client\Elasticsearch;
 use Magento\Elasticsearch\Model\Adapter\BatchDataMapperInterface;
 use Magento\Elasticsearch\Model\Adapter\Elasticsearch as ElasticsearchAdapter;
 use Magento\Elasticsearch\Model\Adapter\FieldMapperInterface;
@@ -111,7 +111,7 @@ class ElasticsearchTest extends TestCase
      */
     protected function setUp(): void
     {
-        if (!class_exists(\Elasticsearch\ClientBuilder::class)) { /** @phpstan-ignore-line */
+        if (!class_exists(\Elasticsearch\ClientBuilder::class)) {
             $this->markTestSkipped('AC-6597: Skipped as Elasticsearch 8 is configured');
         }
 
@@ -122,21 +122,21 @@ class ElasticsearchTest extends TestCase
             ->getMock();
         $this->fieldMapper = $this->getMockBuilder(FieldMapperInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->clientConfig = $this->getMockBuilder(Config::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getIndexPrefix', 'getEntityType'])->getMock();
         $this->indexBuilder = $this->getMockBuilder(BuilderInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->logger = $this->getMockBuilder(LoggerInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $elasticsearchClientMock = $this->getMockBuilder(Client::class)
+            ->getMock();
+        $elasticsearchClientMock = $this->getMockBuilder(Client::class) // @phpstan-ignore-line
             ->onlyMethods(['indices', 'ping', 'bulk', 'search'])
             ->disableOriginalConstructor()
             ->getMock();
-        $indicesMock = $this->getMockBuilder(IndicesNamespace::class)
+        $indicesMock = $this->getMockBuilder(IndicesNamespace::class) // @phpstan-ignore-line
             ->onlyMethods(
                 [
                     'exists',
@@ -154,7 +154,7 @@ class ElasticsearchTest extends TestCase
         $elasticsearchClientMock->expects($this->any())
             ->method('indices')
             ->willReturn($indicesMock);
-        $this->client = $this->createMock(Elasticsearch::class);
+        $this->client = $this->createMock(Elasticsearch::class); // @phpstan-ignore-line
         $this->connectionManager->expects($this->any())
             ->method('getConnection')
             ->willReturn($this->client);
@@ -198,10 +198,10 @@ class ElasticsearchTest extends TestCase
             ->getMock();
         $this->batchDocumentDataMapper = $this->getMockBuilder(BatchDataMapperInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->productAttributeRepository = $this->getMockBuilder(ProductAttributeRepositoryInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->staticFieldProvider = $this->getMockBuilder(StaticField::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -629,7 +629,7 @@ class ElasticsearchTest extends TestCase
 
         $attribute = $this->getMockBuilder(AbstractAttribute::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->productAttributeRepository->expects($this->once())
             ->method('get')

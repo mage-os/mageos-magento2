@@ -21,6 +21,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Rule\InvokedCount as InvokedCountMatcher;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Tests for catalog search indexer plugin.
@@ -61,8 +62,7 @@ class AttributeTest extends TestCase
 
         $this->configMock = $this->createMock(Config::class);
         $this->indexerProcessorMock = $this->createMock(Processor::class);
-        $this->dimensionProviderMock = $this->getMockBuilder(DimensionProviderInterface::class)
-            ->getMockForAbstractClass();
+        $this->dimensionProviderMock = $this->createMock(DimensionProviderInterface::class);
         $this->indexerHandlerFactoryMock = $this->createMock(IndexerHandlerFactory::class);
 
         $this->attributePlugin = (new ObjectManager($this))->getObject(
@@ -83,9 +83,8 @@ class AttributeTest extends TestCase
      * @param bool $isElasticsearchEnabled
      * @param array $dimensions
      * @return void
-     * @dataProvider afterSaveDataProvider
-     *
      */
+    #[DataProvider('afterSaveDataProvider')]
     public function testAfterSave(bool $isNewObject, bool $isElasticsearchEnabled, array $dimensions): void
     {
         /** @var AttributeModel|MockObject $attributeMock */
@@ -105,14 +104,8 @@ class AttributeTest extends TestCase
         $indexerData = ['indexer_example_data'];
 
         /** @var IndexerInterface|MockObject $indexerMock */
-        $indexerMock = $this->getMockBuilder(IndexerInterface::class)
-            ->addMethods(['getData'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-
-        $indexerMock->expects($this->getExpectsCount($isNewObject, $isElasticsearchEnabled))
-            ->method('getData')
-            ->willReturn($indexerData);
+        $indexerMock = new \Magento\Framework\Indexer\Test\Unit\Helper\IndexerInterfaceTestHelper();
+        $indexerMock->setData($indexerData);
 
         $this->indexerProcessorMock->expects($this->once())
             ->method('getIndexer')

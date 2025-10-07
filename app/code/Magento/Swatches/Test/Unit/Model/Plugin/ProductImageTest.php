@@ -18,6 +18,7 @@ use Magento\Swatches\Helper\Data;
 use Magento\Swatches\Model\Plugin\ProductImage;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class ProductImageTest extends TestCase
 {
@@ -76,9 +77,7 @@ class ProductImageTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider dataForTest
-     */
+    #[DataProvider('dataForTest')]
     public function testBeforeGetImage($expected)
     {
         $expected['product'] = $expected['product']($this);

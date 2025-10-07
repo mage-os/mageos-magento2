@@ -11,7 +11,7 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\Response\Http\FileFactory;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
-use Magento\Framework\View\Element\AbstractBlock;
+use Magento\Framework\View\Test\Unit\Helper\AbstractBlockTestHelper;
 use Magento\Framework\View\LayoutInterface;
 use Magento\Framework\View\Result\Layout;
 use Magento\Search\Controller\Adminhtml\Term\ExportSearchCsv;
@@ -59,11 +59,8 @@ class ExportSearchCsvTest extends TestCase
     public function testExecute()
     {
         $resultLayoutMock = $this->createMock(Layout::class);
-        $layoutMock = $this->getMockForAbstractClass(LayoutInterface::class);
-        $contentMock = $this->getMockBuilder(AbstractBlock::class)
-            ->addMethods(['getCsvFile'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $layoutMock = $this->createMock(LayoutInterface::class);
+        $contentMock = $this->createMock(AbstractBlockTestHelper::class);
         $this->resultFactoryMock
             ->expects($this->once())
             ->method('create')

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -10,6 +10,7 @@ namespace Magento\Swatches\Test\Unit\Model;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory;
+use Magento\Catalog\Test\Unit\Helper\AttributeTestHelper;
 use Magento\Eav\Model\Entity\Attribute\Source\AbstractSource;
 use Magento\Swatches\Helper\Data;
 use Magento\Swatches\Model\AttributesList;
@@ -51,11 +52,7 @@ class AttributesListTest extends TestCase
         );
         $collectionFactoryMock->expects($this->once())->method('create')->willReturn($this->collectionMock);
 
-        $this->attributeMock = $this->getMockBuilder(Attribute::class)
-            ->onlyMethods(['getId', 'getAttributeCode', 'getSource'])
-            ->addMethods(['getFrontendLabel'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->attributeMock = new AttributeTestHelper();
         $this->collectionMock
             ->expects($this->once())
             ->method('getItems')
@@ -84,14 +81,6 @@ class AttributesListTest extends TestCase
             ->expects($this->any())
             ->method('addFieldToFilter')
             ->with('main_table.attribute_id', $ids);
-
-        $this->attributeMock->expects($this->once())->method('getId')->willReturn('id');
-        $this->attributeMock->expects($this->once())->method('getFrontendLabel')->willReturn('label');
-        $this->attributeMock->expects($this->once())->method('getAttributeCode')->willReturn('code');
-
-        $source = $this->createMock(AbstractSource::class);
-        $source->expects($this->once())->method('getAllOptions')->with(false)->willReturn(['options']);
-        $this->attributeMock->expects($this->once())->method('getSource')->willReturn($source);
 
         $this->swatchHelper->expects($this->once())->method('isSwatchAttribute')
             ->with($this->attributeMock)

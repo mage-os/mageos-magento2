@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2015 Adobe
+ * Copyright 2018 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -13,6 +13,7 @@ use Magento\Catalog\Model\ProductFactory;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ResponseInterface;
+use Magento\Framework\App\Test\Unit\Helper\ResponseInterfaceTestHelper;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -22,6 +23,9 @@ use Magento\Swatches\Helper\Data;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class MediaTest extends TestCase
 {
     /** @var array */
@@ -88,13 +92,10 @@ class MediaTest extends TestCase
         $this->productMock = $this->createMock(Product::class);
         $this->contextMock = $this->createMock(Context::class);
 
-        $this->requestMock = $this->getMockForAbstractClass(RequestInterface::class);
+        $this->requestMock = $this->createMock(RequestInterface::class);
         $this->contextMock->method('getRequest')->willReturn($this->requestMock);
-        $this->responseMock = $this->getMockBuilder(ResponseInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setPublicHeaders'])
-            ->getMockForAbstractClass();
-        $this->responseMock->method('setPublicHeaders')->willReturnSelf();
+        $this->responseMock = new ResponseInterfaceTestHelper();
+        // setPublicHeaders() is directly implemented, no method() call needed
         $this->contextMock->method('getResponse')->willReturn($this->responseMock);
         $this->resultFactory = $this->createPartialMock(ResultFactory::class, ['create']);
         $this->contextMock->method('getResultFactory')->willReturn($this->resultFactory);

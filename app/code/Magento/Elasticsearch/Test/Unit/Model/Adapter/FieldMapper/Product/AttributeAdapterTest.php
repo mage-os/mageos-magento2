@@ -12,6 +12,7 @@ use Magento\Framework\Api\CustomAttributesDataInterface;
 use Magento\Framework\Model\AbstractExtensibleModel;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * @SuppressWarnings(PHPMD)
@@ -35,18 +36,7 @@ class AttributeAdapterTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->attribute = $this->getMockBuilder(CustomAttributesDataInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods([
-                'getIsFilterable',
-                'getIsFilterableInSearch',
-                'getIsSearchable',
-                'getIsVisibleInAdvancedSearch',
-                'getBackendType',
-                'getFrontendInput',
-                'usesSource',
-            ])
-            ->getMockForAbstractClass();
+        $this->attribute = new \Magento\Framework\Api\Test\Unit\Helper\CustomAttributesDataInterfaceTestHelper();
 
         $objectManager = new ObjectManagerHelper($this);
 
@@ -60,20 +50,12 @@ class AttributeAdapterTest extends TestCase
     }
 
     /**
-     * @dataProvider isFilterableProvider
-     * @param $isFilterable
-     * @param $isFilterableInSearch
-     * @param $expected
-     * @return void
      */
+    #[DataProvider('isFilterableProvider')]
     public function testIsFilterable($isFilterable, $isFilterableInSearch, $expected)
     {
-        $this->attribute
-            ->method('getIsFilterable')
-            ->willReturn($isFilterable);
-        $this->attribute
-            ->method('getIsFilterableInSearch')
-            ->willReturn($isFilterableInSearch);
+        $this->attribute->setIsFilterable($isFilterable);
+        $this->attribute->setIsFilterableInSearch($isFilterableInSearch);
         $this->assertEquals(
             $expected,
             $this->adapter->isFilterable()
@@ -81,14 +63,8 @@ class AttributeAdapterTest extends TestCase
     }
 
     /**
-     * @dataProvider isSearchableProvider
-     * @param $isSearchable
-     * @param $isVisibleInAdvancedSearch
-     * @param $isFilterable
-     * @param $isFilterableInSearch
-     * @param $expected
-     * @return void
      */
+    #[DataProvider('isSearchableProvider')]
     public function testIsSearchable(
         $isSearchable,
         $isVisibleInAdvancedSearch,
@@ -96,18 +72,10 @@ class AttributeAdapterTest extends TestCase
         $isFilterableInSearch,
         $expected
     ) {
-        $this->attribute
-            ->method('getIsSearchable')
-            ->willReturn($isSearchable);
-        $this->attribute
-            ->method('getIsVisibleInAdvancedSearch')
-            ->willReturn($isVisibleInAdvancedSearch);
-        $this->attribute
-            ->method('getIsFilterable')
-            ->willReturn($isFilterable);
-        $this->attribute
-            ->method('getIsFilterableInSearch')
-            ->willReturn($isFilterableInSearch);
+        $this->attribute->setIsSearchable($isSearchable);
+        $this->attribute->setIsVisibleInAdvancedSearch($isVisibleInAdvancedSearch);
+        $this->attribute->setIsFilterable($isFilterable);
+        $this->attribute->setIsFilterableInSearch($isFilterableInSearch);
         $this->assertEquals(
             $expected,
             $this->adapter->isSearchable()
@@ -115,10 +83,8 @@ class AttributeAdapterTest extends TestCase
     }
 
     /**
-     * @dataProvider isAlwaysIndexableProvider
-     * @param $expected
-     * @return void
      */
+    #[DataProvider('isAlwaysIndexableProvider')]
     public function testIsAlwaysIndexable($expected)
     {
         $this->assertEquals(
@@ -128,16 +94,11 @@ class AttributeAdapterTest extends TestCase
     }
 
     /**
-     * @dataProvider isDateTimeTypeProvider
-     * @param $backendType
-     * @param $expected
-     * @return void
      */
+    #[DataProvider('isDateTimeTypeProvider')]
     public function testIsDateTimeType($backendType, $expected)
     {
-        $this->attribute
-            ->method('getBackendType')
-            ->willReturn($backendType);
+        $this->attribute->setBackendType($backendType);
         $this->assertEquals(
             $expected,
             $this->adapter->isDateTimeType()
@@ -145,16 +106,11 @@ class AttributeAdapterTest extends TestCase
     }
 
     /**
-     * @dataProvider isFloatTypeProvider
-     * @param $backendType
-     * @param $expected
-     * @return void
      */
+    #[DataProvider('isFloatTypeProvider')]
     public function testIsFloatType($backendType, $expected)
     {
-        $this->attribute
-            ->method('getBackendType')
-            ->willReturn($backendType);
+        $this->attribute->setBackendType($backendType);
         $this->assertEquals(
             $expected,
             $this->adapter->isFloatType()
@@ -162,16 +118,11 @@ class AttributeAdapterTest extends TestCase
     }
 
     /**
-     * @dataProvider isIntegerTypeProvider
-     * @param $backendType
-     * @param $expected
-     * @return void
      */
+    #[DataProvider('isIntegerTypeProvider')]
     public function testIsIntegerType($backendType, $expected)
     {
-        $this->attribute
-            ->method('getBackendType')
-            ->willReturn($backendType);
+        $this->attribute->setBackendType($backendType);
         $this->assertEquals(
             $expected,
             $this->adapter->isIntegerType()
@@ -179,20 +130,12 @@ class AttributeAdapterTest extends TestCase
     }
 
     /**
-     * @dataProvider isBooleanTypeProvider
-     * @param $frontendInput
-     * @param $backendType
-     * @param $expected
-     * @return void
      */
+    #[DataProvider('isBooleanTypeProvider')]
     public function testIsBooleanType($frontendInput, $backendType, $expected)
     {
-        $this->attribute
-            ->method('getBackendType')
-            ->willReturn($backendType);
-        $this->attribute
-            ->method('getFrontendInput')
-            ->willReturn($frontendInput);
+        $this->attribute->setBackendType($backendType);
+        $this->attribute->setFrontendInput($frontendInput);
         $this->assertEquals(
             $expected,
             $this->adapter->isBooleanType()
@@ -200,20 +143,12 @@ class AttributeAdapterTest extends TestCase
     }
 
     /**
-     * @dataProvider isComplexTypeProvider
-     * @param $frontendInput
-     * @param $usesSource
-     * @param $expected
-     * @return void
      */
+    #[DataProvider('isComplexTypeProvider')]
     public function testIsComplexType($frontendInput, $usesSource, $expected)
     {
-        $this->attribute
-            ->method('usesSource')
-            ->willReturn($usesSource);
-        $this->attribute
-            ->method('getFrontendInput')
-            ->willReturn($frontendInput);
+        $this->attribute->setUsesSource($usesSource);
+        $this->attribute->setFrontendInput($frontendInput);
         $this->assertEquals(
             $expected,
             $this->adapter->isComplexType()
@@ -221,10 +156,8 @@ class AttributeAdapterTest extends TestCase
     }
 
     /**
-     * @dataProvider isEavAttributeProvider
-     * @param $expected
-     * @return void
      */
+    #[DataProvider('isEavAttributeProvider')]
     public function testIsEavAttribute($expected)
     {
         $this->assertEquals(

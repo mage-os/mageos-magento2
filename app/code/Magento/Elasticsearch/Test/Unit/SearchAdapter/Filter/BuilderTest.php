@@ -13,9 +13,11 @@ use Magento\Elasticsearch\SearchAdapter\Filter\Builder\Term;
 use Magento\Elasticsearch\SearchAdapter\Filter\Builder\Wildcard;
 use Magento\Framework\Search\Request\Filter\BoolExpression;
 use Magento\Framework\Search\Request\FilterInterface;
+use Magento\Framework\Search\Test\Unit\Helper\FilterInterfaceTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class BuilderTest extends TestCase
 {
@@ -78,9 +80,7 @@ class BuilderTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        $filter = $this->getMockBuilder(FilterInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $filter = $this->createMock(FilterInterface::class);
         $filter->expects($this->any())
             ->method('getType')
             ->willReturn('unknown');
@@ -92,41 +92,35 @@ class BuilderTest extends TestCase
      * Test build() method
      * @param string $filterMock
      * @param string $filterType
-     * @dataProvider buildDataProvider
      */
+    #[DataProvider('buildDataProvider')]
     public function testBuild($filterMock, $filterType)
     {
-        $filter = $this->getMockBuilder($filterMock);
         if($filterMock=="Magento\Framework\Search\Request\FilterInterface")
         {
-            $filter = $filter->onlyMethods(['getType'])
-                ->addMethods(['getMust', 'getShould', 'getMustNot'])
-                ->disableOriginalConstructor()
-                ->getMockForAbstractClass();
+            $childFilter = (new FilterInterfaceTestHelper())->setType('termFilter');
+            $filter = (new FilterInterfaceTestHelper())
+                ->setType($filterType)
+                ->setMust([$childFilter])
+                ->setShould([$childFilter])
+                ->setMustNot([$childFilter]);
         }
         else{
-            $filter = $filter->onlyMethods(['getMust', 'getType', 'getShould', 'getMustNot'])
-                ->disableOriginalConstructor()
-                ->getMockForAbstractClass();
+            $filter = $this->createPartialMock($filterMock, ['getMust', 'getType', 'getShould', 'getMustNot']);
+            $filter->expects($this->any())
+                ->method('getType')
+                ->willReturn($filterType);
+            $childFilter = (new FilterInterfaceTestHelper())->setType('termFilter');
+            $filter->expects($this->any())
+                ->method('getMust')
+                ->willReturn([$childFilter]);
+            $filter->expects($this->any())
+                ->method('getShould')
+                ->willReturn([$childFilter]);
+            $filter->expects($this->any())
+                ->method('getMustNot')
+                ->willReturn([$childFilter]);
         }
-        $filter->expects($this->any())
-            ->method('getType')
-            ->willReturn($filterType);
-        $childFilter = $this->getMockBuilder(FilterInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $childFilter->expects($this->any())
-            ->method('getType')
-            ->willReturn('termFilter');
-        $filter->expects($this->any())
-            ->method('getMust')
-            ->willReturn([$childFilter]);
-        $filter->expects($this->any())
-            ->method('getShould')
-            ->willReturn([$childFilter]);
-        $filter->expects($this->any())
-            ->method('getMustNot')
-            ->willReturn([$childFilter]);
 
         $result = $this->model->build($filter, 'must');
         $this->assertNotNull($result);
@@ -136,42 +130,34 @@ class BuilderTest extends TestCase
      * Test build() method with negation
      * @param string $filterMock
      * @param string $filterType
-     * @dataProvider buildDataProvider
-     */
+    #[DataProvider('buildDataProvider')]
     public function testBuildNegation($filterMock, $filterType)
     {
-        $filter = $this->getMockBuilder($filterMock);
         if($filterMock=="Magento\Framework\Search\Request\Filter\BoolExpression")
         {
-            $filter = $filter->onlyMethods(['getType', 'getMust', 'getShould', 'getMustNot'])
-                ->disableOriginalConstructor()
-                ->getMockForAbstractClass();
+            $filter = $this->createPartialMock($filterMock, ['getType', 'getMust', 'getShould', 'getMustNot']);
+            $filter->expects($this->any())
+                ->method('getType')
+                ->willReturn($filterType);
+            $childFilter = (new FilterInterfaceTestHelper())->setType('termFilter');
+            $filter->expects($this->any())
+                ->method('getMust')
+                ->willReturn([$childFilter]);
+            $filter->expects($this->any())
+                ->method('getShould')
+                ->willReturn([$childFilter]);
+            $filter->expects($this->any())
+                ->method('getMustNot')
+                ->willReturn([$childFilter]);
         }
         else{
-            $filter = $filter->onlyMethods(['getType'])
-                ->addMethods(['getMust', 'getShould', 'getMustNot'])
-                ->disableOriginalConstructor()
-                ->getMockForAbstractClass();
+            $childFilter = (new FilterInterfaceTestHelper())->setType('termFilter');
+            $filter = (new FilterInterfaceTestHelper())
+                ->setType($filterType)
+                ->setMust([$childFilter])
+                ->setShould([$childFilter])
+                ->setMustNot([$childFilter]);
         }
-
-        $filter->expects($this->any())
-            ->method('getType')
-            ->willReturn($filterType);
-        $childFilter = $this->getMockBuilder(FilterInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $childFilter->expects($this->any())
-            ->method('getType')
-            ->willReturn('termFilter');
-        $filter->expects($this->any())
-            ->method('getMust')
-            ->willReturn([$childFilter]);
-        $filter->expects($this->any())
-            ->method('getShould')
-            ->willReturn([$childFilter]);
-        $filter->expects($this->any())
-            ->method('getMustNot')
-            ->willReturn([$childFilter]);
 
         $result = $this->model->build($filter, 'must_not');
         $this->assertNotNull($result);

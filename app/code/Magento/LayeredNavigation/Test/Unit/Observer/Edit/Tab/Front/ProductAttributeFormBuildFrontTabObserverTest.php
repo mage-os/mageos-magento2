@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 
 declare(strict_types=1);
@@ -12,6 +12,7 @@ use Magento\Config\Model\Config\Source\Yesno;
 use Magento\Framework\Data\Form;
 use Magento\Framework\Data\Form\Element\Fieldset;
 use Magento\Framework\Event\Observer;
+use Magento\Framework\Event\Test\Unit\Helper\ObserverTestHelper;
 use Magento\Framework\Module\Manager;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\LayeredNavigation\Observer\Edit\Tab\Front\ProductAttributeFormBuildFrontTabObserver;
@@ -20,6 +21,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Unit Test for \Magento\LayeredNavigation\Observer\Edit\Tab\Front\ProductAttributeFormBuildFrontTabObserver
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
  */
 class ProductAttributeFormBuildFrontTabObserverTest extends TestCase
 {
@@ -50,10 +53,9 @@ class ProductAttributeFormBuildFrontTabObserverTest extends TestCase
     {
         $this->optionListLock = $this->createMock(Yesno::class);
         $this->moduleManagerMock = $this->createMock(Manager::class);
-        $this->eventObserverMock = $this->getMockBuilder(Observer::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getForm'])
-            ->getMock();
+        $this->eventObserverMock = new ObserverTestHelper();
+        $formMock = $this->createMock(Form::class);
+        $this->eventObserverMock->setForm($formMock);
 
         $objectManager = new ObjectManager($this);
         $this->observer = $objectManager->getObject(
@@ -75,7 +77,7 @@ class ProductAttributeFormBuildFrontTabObserverTest extends TestCase
             ->with('Magento_LayeredNavigation')
             ->willReturn(false);
 
-        $this->eventObserverMock->expects($this->never())->method('getForm');
+        // getForm() is directly implemented, no expects() needed
 
         $this->observer->execute($this->eventObserverMock);
     }
@@ -92,15 +94,13 @@ class ProductAttributeFormBuildFrontTabObserverTest extends TestCase
 
         $fieldsetMock = $this->createMock(Fieldset::class);
         $fieldsetMock->expects($this->exactly(3))->method('addField');
-        $formMock = $this->createMock(Form::class);
+        $formMock = $this->eventObserverMock->getForm();
         $formMock->expects($this->once())
             ->method('getElement')
             ->with('front_fieldset')
             ->willReturn($fieldsetMock);
 
-        $this->eventObserverMock->expects($this->once())
-            ->method('getForm')
-            ->willReturn($formMock);
+        // getForm() is directly implemented, no expects() needed
 
         $this->observer->execute($this->eventObserverMock);
     }

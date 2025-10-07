@@ -92,13 +92,10 @@ class CategoryProductIndexerTest extends TestCase
     public function testExecuteIfCategoryHasNoneChangedProducts(): void
     {
         /** @var Event|MockObject $eventMock */
-        $eventMock = $this->getMockBuilder(Event::class)
-            ->addMethods(['getProductIds'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $eventMock = new \Magento\Framework\Event\Test\Unit\Helper\EventTestHelper();
         $this->configMock->expects($this->once())->method('isElasticsearchEnabled')->willReturn(true);
 
-        $eventMock->expects($this->once())->method('getProductIds')->willReturn([]);
+        $eventMock->setProductIds([]);
         $this->observerMock->expects($this->once())->method('getEvent')->willReturn($eventMock);
 
         $this->processorMock->expects($this->never())->method('isIndexerScheduled');
@@ -115,12 +112,9 @@ class CategoryProductIndexerTest extends TestCase
     public function testExecuteIfElasticSearchIsDisabled(): void
     {
         /** @var Event|MockObject $eventMock */
-        $eventMock = $this->getMockBuilder(Event::class)
-            ->addMethods(['getProductIds'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $eventMock = new \Magento\Framework\Event\Test\Unit\Helper\EventTestHelper();
         $this->configMock->expects($this->once())->method('isElasticsearchEnabled')->willReturn(false);
-        $eventMock->expects($this->never())->method('getProductIds')->willReturn([]);
+        $eventMock->setProductIds([]);
         $this->observer->execute($this->observerMock);
     }
 
@@ -132,12 +126,9 @@ class CategoryProductIndexerTest extends TestCase
     private function getProductIdsWithEnabledElasticSearch(): void
     {
         /** @var Event|MockObject $eventMock */
-        $eventMock = $this->getMockBuilder(Event::class)
-            ->addMethods(['getProductIds'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $eventMock = new \Magento\Framework\Event\Test\Unit\Helper\EventTestHelper();
         $this->configMock->expects($this->once())->method('isElasticsearchEnabled')->willReturn(true);
-        $eventMock->expects($this->once())->method('getProductIds')->willReturn([1]);
+        $eventMock->setProductIds([1]);
         $this->observerMock->expects($this->once())->method('getEvent')->willReturn($eventMock);
     }
 }

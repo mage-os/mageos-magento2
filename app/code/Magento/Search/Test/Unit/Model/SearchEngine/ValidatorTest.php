@@ -27,7 +27,7 @@ class ValidatorTest extends TestCase
     protected function setUp(): void
     {
         $objectManager = new ObjectManager($this);
-        $this->otherEngineValidatorMock = $this->getMockForAbstractClass(ValidatorInterface::class);
+        $this->otherEngineValidatorMock = $this->createMock(ValidatorInterface::class);
         $this->scopeConfigMock = $this->getMockBuilder(ScopeConfigInterface::class)->getMock();
         $this->validator = $objectManager->getObject(
             Validator::class,

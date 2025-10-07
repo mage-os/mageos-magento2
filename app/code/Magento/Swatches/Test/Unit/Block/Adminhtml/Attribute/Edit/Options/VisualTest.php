@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 
 declare(strict_types=1);
@@ -10,6 +10,7 @@ namespace Magento\Swatches\Test\Unit\Block\Adminhtml\Attribute\Edit\Options;
 
 use Magento\Framework\DataObject;
 use Magento\Swatches\Block\Adminhtml\Attribute\Edit\Options\Visual;
+use Magento\Swatches\Test\Unit\Helper\VisualTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -25,11 +26,7 @@ class VisualTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->model = $this->getMockBuilder(Visual::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getReadOnly'])
-            ->onlyMethods(['canManageOptionDefaultOnly', 'getOptionValues', 'getUrl'])
-            ->getMock();
+        $this->model = new VisualTestHelper();
     }
 
     /**
@@ -82,15 +79,8 @@ class VisualTest extends TestCase
      */
     public function executeTest($testCase)
     {
-        $this->model->expects($this->any())->method('getReadOnly')
-            ->willReturn($testCase['dataSet']['read_only']);
-        $this->model->expects($this->any())->method('canManageOptionDefaultOnly')
-            ->willReturn($testCase['dataSet']['can_manage_option_default_only']);
-        $this->model->expects($this->any())->method('getOptionValues')->willReturn(
-            $testCase['dataSet']['option_values']
-        );
-        $this->model->expects($this->any())->method('getUrl')
-            ->willReturn($testCase['dataSet']['upload_action_url']);
+        // Override methods for this test
+        $this->model = new VisualTestHelper($testCase['dataSet']);
 
         $this->assertEquals($testCase['expectedResult'], $this->model->getJsonConfig());
     }

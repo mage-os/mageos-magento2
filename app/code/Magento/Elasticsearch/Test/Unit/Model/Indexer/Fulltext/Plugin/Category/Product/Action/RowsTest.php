@@ -63,10 +63,8 @@ class RowsTest extends TestCase
     {
         parent::setUp();
         $this->indexerRegistryMock = $this->createMock(IndexerRegistry::class);
-        $this->storeManagerMock =
-            $this->getMockBuilder(StoreManagerInterface::class)->getMockForAbstractClass();
-        $this->connectionMock =
-            $this->getMockBuilder(AdapterInterface::class)->getMockForAbstractClass();
+        $this->storeManagerMock = $this->createPartialMock(\Magento\Store\Model\StoreManager::class, ['getStores']);
+        $this->connectionMock = $this->createMock(AdapterInterface::class);
         $this->selectMock = $this->createMock(Select::class);
         $this->connectionMock->expects($this->any())->method('select')->willReturn($this->selectMock);
         $this->tableMaintainerMock = $this->createMock(TableMaintainer::class);

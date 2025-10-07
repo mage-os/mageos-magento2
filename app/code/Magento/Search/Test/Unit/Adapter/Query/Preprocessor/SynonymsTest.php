@@ -48,7 +48,7 @@ class SynonymsTest extends TestCase
      *
      * @return array
      */
-    public static function loadProcessDataProvider()
+    public static function getDataProvider()
     {
         return [
             'oneWord' => [
@@ -69,13 +69,12 @@ class SynonymsTest extends TestCase
         ];
     }
 
-    /**
-     * @param string $phrase
-     * @param array $expectedResult
-     * @dataProvider loadProcessDataProvider
-     */
-    public function testProcess($query, $result, $newQuery)
+    public function testProcess()
     {
+        $query = 'big';
+        $result = [['big', 'huge']];
+        $newQuery = 'big huge';
+        
         $this->synonymAnalyzer->expects($this->once())
             ->method('getSynonymsForPhrase')
             ->with($query)

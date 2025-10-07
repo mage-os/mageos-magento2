@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -10,6 +10,7 @@ namespace Magento\Swatches\Test\Unit\Model;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
+use Magento\ConfigurableProduct\Test\Unit\Helper\ConfigurableAttributeTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Swatches\Model\SwatchAttributeCodes;
 use Magento\Swatches\Model\SwatchAttributesProvider;
@@ -17,6 +18,10 @@ use Magento\Swatches\Model\SwatchAttributeType;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+ */
 class SwatchAttributesProviderTest extends TestCase
 {
     /**
@@ -46,11 +51,7 @@ class SwatchAttributesProviderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->typeConfigurable = $this->getMockBuilder(Configurable::class)
-            ->addMethods(['getCodes', 'getProductAttribute'])
-            ->onlyMethods(['getConfigurableAttributes'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->typeConfigurable = $this->createPartialMock(Configurable::class, ['getConfigurableAttributes']);
 
         $this->swatchAttributeCodes = $this->createMock(SwatchAttributeCodes::class);
 
@@ -70,23 +71,11 @@ class SwatchAttributesProviderTest extends TestCase
         $this->productMock->method('getTypeId')
             ->willReturn(Configurable::TYPE_CODE);
 
-        $attributeMock =  $this->getMockBuilder(Attribute::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setStoreId'])
-            ->onlyMethods(['getData', 'setData', 'getSource', 'hasData'])
-            ->getMock();
+        $attributeMock = $this->createPartialMock(Attribute::class, ['getData', 'setData', 'getSource', 'hasData']);
 
-        $configAttributeMock = $this->getMockBuilder(Configurable\Attribute::class)->addMethods(['getProductAttribute'])
-            ->onlyMethods(['getAttributeId'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $configAttributeMock
-            ->method('getAttributeId')
-            ->willReturn(1);
-
-        $configAttributeMock
-            ->method('getProductAttribute')
-            ->willReturn($attributeMock);
+        $configAttributeMock = new ConfigurableAttributeTestHelper();
+        $configAttributeMock->setAttributeId(1);
+        $configAttributeMock->setProductAttribute($attributeMock);
 
         $this->typeConfigurable
             ->method('getConfigurableAttributes')
