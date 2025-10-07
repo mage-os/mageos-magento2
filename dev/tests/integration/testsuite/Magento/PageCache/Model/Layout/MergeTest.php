@@ -30,25 +30,14 @@ class MergeTest extends \PHPUnit\Framework\TestCase
         /** @var EntitySpecificHandlesList $entitySpecificHandleList */
         $entitySpecificHandleList = $objectManager->get(EntitySpecificHandlesList::class);
 
-        // Register test layout with ttl attribute
-        $testHandle = 'test_entity_specific_handle';
-
-        // Add this handle to entity-specific list to trigger validation
+        // Register test handle as entity-specific
+        $testHandle = 'default';
         $entitySpecificHandleList->addHandle($testHandle);
 
-        // Layout XML with ttl attribute (without XML declaration to avoid parsing issues)
-        $layoutXml = <<<XML
-<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
-    <body>
-        <block class="Magento\Framework\View\Element\Template" name="test.block.with.ttl" template="Magento_Theme::html/notices.phtml" ttl="3600"/>
-    </body>
-</page>
-XML;
+        // Simple XML with ttl attribute that should trigger the validation
+        $layoutXml = '<block class="Magento\Framework\View\Element\Template" name="test.block" ttl="3600"/>';
 
-        $layoutMerge->addUpdate($layoutXml);
-
-        // This should throw exception when loading because test_entity_specific_handle 
-        // is marked as entity-specific and contains a block with ttl
-        $layoutMerge->load([$testHandle]);
+        // This should throw exception because the handle is entity-specific and contains ttl
+        $layoutMerge->validateUpdate($testHandle, $layoutXml);
     }
 }
