@@ -153,7 +153,7 @@ class ConfigurableTest extends TestCase
             ->method('getParam')
             ->willReturnMap($paramValueMap);
 
-        $extensionAttributes = new ProductExtensionAttributesTestHelper();
+        $extensionAttributes = new ProductExtensionInterfaceTestHelper();
         $this->product->expects(static::once())
             ->method('getExtensionAttributes')
             ->willReturn($extensionAttributes);
@@ -162,9 +162,7 @@ class ConfigurableTest extends TestCase
             ->method('create')
             ->with($attributes)
             ->willReturn($attributes);
-
-        // Helper directly implements setConfigurableProductOptions
-
+        
         $this->variationHandler->expects(static::once())
             ->method('prepareAttributeSet')
             ->with($this->product);
@@ -174,7 +172,6 @@ class ConfigurableTest extends TestCase
             ->with($this->product, $variationMatrix)
             ->willReturn($simpleProductsIds);
 
-        // Helper directly implements setConfigurableProductLinks
 
         $this->product->expects(static::once())
             ->method('setExtensionAttributes')
@@ -212,7 +209,7 @@ class ConfigurableTest extends TestCase
             ->method('getParam')
             ->willReturnMap($paramValueMap);
 
-        $extensionAttributes = new ProductExtensionAttributesTestHelper();
+        $extensionAttributes = new ProductExtensionInterfaceTestHelper();
         $this->product->expects(static::once())
             ->method('getExtensionAttributes')
             ->willReturn($extensionAttributes);
@@ -222,7 +219,6 @@ class ConfigurableTest extends TestCase
             ->with($attributes)
             ->willReturn($attributes);
 
-        // Helper directly implements setConfigurableProductOptions
 
         $this->variationHandler->expects(static::never())
             ->method('prepareAttributeSet');
