@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "303370c12bc329a855c200dfb0086984",
+    "content-hash": "06fbe190a21c115b98c3b79eefd7138e",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -4136,6 +4136,77 @@
             "time": "2024-12-18T09:52:06+00:00"
         },
         {
+            "name": "magento/framework",
+            "version": "dev-AC-15170",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/glo71317/php72-framwork.git",
+                "reference": "ef222b246bac7a19a9289dfde72b69845b18e63e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/glo71317/php72-framwork/zipball/ef222b246bac7a19a9289dfde72b69845b18e63e",
+                "reference": "ef222b246bac7a19a9289dfde72b69845b18e63e",
+                "shasum": ""
+            },
+            "require": {
+                "colinmollenhour/php-redis-session-abstract": "^2.0",
+                "composer/composer": "^2.0, !=2.2.16",
+                "ext-curl": "*",
+                "ext-dom": "*",
+                "ext-gd": "*",
+                "ext-hash": "*",
+                "ext-iconv": "*",
+                "ext-openssl": "*",
+                "ext-simplexml": "*",
+                "ext-spl": "*",
+                "ext-xsl": "*",
+                "guzzlehttp/guzzle": "^7.5",
+                "laminas/laminas-code": "^4.13.0",
+                "laminas/laminas-escaper": "^2.13.0",
+                "laminas/laminas-http": "^2.19.0",
+                "laminas/laminas-servicemanager": "^3.22.1",
+                "laminas/laminas-stdlib": "^3.18.0",
+                "laminas/laminas-uri": "^2.11.0",
+                "laminas/laminas-validator": "^2.43.0",
+                "lib-libxml": "*",
+                "magento/composer-dependency-version-audit-plugin": "^0.1",
+                "magento/zendframework1": "^1.15",
+                "monolog/monolog": "^3.6",
+                "php": "~8.2.0||~8.3.0||~8.4.0",
+                "ramsey/uuid": "^4.2",
+                "symfony/console": "^7.0",
+                "symfony/process": "^7.0",
+                "tedivm/jshrink": "^1.4",
+                "webonyx/graphql-php": "^15.0",
+                "wikimedia/less.php": "^5.1"
+            },
+            "require-dev": {
+                "nikic/php-parser": "^5.5"
+            },
+            "suggest": {
+                "ext-imagick": "Use Image Magick >=3.0.0 as an optional alternative image processing library"
+            },
+            "type": "magento2-library",
+            "autoload": {
+                "psr-4": {
+                    "Magento\\Framework\\": ""
+                },
+                "files": [
+                    "registration.php"
+                ]
+            },
+            "license": [
+                "OSL-3.0",
+                "AFL-3.0"
+            ],
+            "description": "N/A",
+            "support": {
+                "source": "https://github.com/glo71317/php72-framwork/tree/AC-15170"
+            },
+            "time": "2025-10-08T10:01:20+00:00"
+        },
+        {
             "name": "magento/magento-composer-installer",
             "version": "0.4.0",
             "source": {
@@ -4648,6 +4719,57 @@
                 "source": "https://github.com/magento/magento-zend-pdf/tree/1.16.5"
             },
             "time": "2025-06-20T07:55:02+00:00"
+        },
+        {
+            "name": "magento/zendframework1",
+            "version": "1.15.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/magento/zf1.git",
+                "reference": "2381396d2a9a528be2f367b5ce2dddf650eac1d0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/magento/zf1/zipball/2381396d2a9a528be2f367b5ce2dddf650eac1d0",
+                "reference": "2381396d2a9a528be2f367b5ce2dddf650eac1d0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0.0"
+            },
+            "require-dev": {
+                "phpunit/dbunit": "1.3.*",
+                "phpunit/phpunit": "3.7.*"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.12.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Zend_": "library/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "include-path": [
+                "library/"
+            ],
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "Magento Zend Framework 1",
+            "homepage": "http://framework.zend.com/",
+            "keywords": [
+                "ZF1",
+                "framework"
+            ],
+            "support": {
+                "issues": "https://github.com/magento/zf1/issues",
+                "source": "https://github.com/magento/zf1/tree/1.15.1"
+            },
+            "time": "2022-06-21T01:22:39+00:00"
         },
         {
             "name": "marc-mabe/php-enum",
@@ -14964,6 +15086,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "magento/composer": 20,
+        "magento/framework": 20,
         "magento/magento2-functional-testing-framework": 20,
         "pdepend/pdepend": 20,
         "phpmd/phpmd": 20
