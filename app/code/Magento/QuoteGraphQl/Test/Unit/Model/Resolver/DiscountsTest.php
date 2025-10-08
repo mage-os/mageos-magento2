@@ -79,7 +79,9 @@ class DiscountsTest extends TestCase
         $this->quoteMock = $this->createMock(Quote::class);
         $this->billingAddressMock = $this->createMock(Address::class);
         $this->shippingAddressMock = $this->createMock(Address::class);
-        $this->extensionAttributesMock = $this->createMock(AddressExtensionInterface::class);
+        $this->extensionAttributesMock = $this->getMockBuilder(AddressExtensionInterface::class)
+            ->onlyMethods(['getDiscounts'])
+            ->getMockForAbstractClass();
         $this->extensionAttributesMock->method('getDiscounts')->willReturn(['discount1', 'discount2']);
     }
 
