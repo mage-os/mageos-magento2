@@ -11,7 +11,7 @@ use Magento\Sales\Model\Order\Item;
 
 /**
  * Test helper class for Order Item with custom methods
- * 
+ *
  * This helper is placed in Magento_Sales module as it's the core module
  * that contains the Order\Item class and is used by many other modules
  * including Bundle, Weee, Tax, SalesGraphQl, etc.
@@ -102,7 +102,7 @@ class ItemTestHelper extends Item
     public function getParentItem(): ?Item
     {
         $parentItem = $this->data['parent_item'] ?? null;
-        
+
         // Handle boolean values from test data providers
         if ($parentItem === true) {
             // Return a mock Item when true is passed
@@ -112,7 +112,7 @@ class ItemTestHelper extends Item
             // Return null when false is passed
             return null;
         }
-        
+
         return $parentItem;
     }
 
@@ -179,6 +179,7 @@ class ItemTestHelper extends Item
      * Custom getHasChildren method for Bundle testing
      *
      * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getHasChildren(): bool
     {

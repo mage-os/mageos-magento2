@@ -15,8 +15,8 @@ use Magento\Bundle\Model\Option;
 use Magento\Bundle\Model\Product\Type as BundleProductType;
 use Magento\Bundle\Model\ResourceModel\Bundle;
 use Magento\Bundle\Model\ResourceModel\BundleFactory;
+use Magento\Bundle\Test\Unit\Helper\BundleOptionTestHelper;
 use Magento\Bundle\Test\Unit\Helper\LinkInterfaceTestHelper;
-use Magento\Bundle\Test\Unit\Helper\OptionTestHelper;
 use Magento\Bundle\Test\Unit\Helper\SelectionTestHelper;
 use Magento\Bundle\Model\ResourceModel\Option\Collection as OptionCollection;
 use Magento\Bundle\Model\ResourceModel\Option\CollectionFactory as OptionCollectionFactory;
@@ -155,7 +155,7 @@ class LinkManagementTest extends TestCase
                 'setStoreFilter',
                 'getSelectionsCollection',
                 'getOptionsIds']);
-        $this->option = new OptionTestHelper();
+        $this->option = new BundleOptionTestHelper();
         $this->optionCollection = $this->createPartialMock(OptionCollection::class, ['appendSelections']);
         $this->selectionCollection = $this->createMock(SelectionCollection::class);
         $this->product = new ProductTestHelper();

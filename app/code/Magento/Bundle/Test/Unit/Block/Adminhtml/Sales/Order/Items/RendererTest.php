@@ -23,6 +23,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Test Renderer order item
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class RendererTest extends TestCase
 {

@@ -42,8 +42,8 @@ class OptionTestHelper extends Option
      * @return mixed
      */
         /**
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
+         * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+         */
     public function getData($key = null, $index = null)
     {
         if ($key === null) {

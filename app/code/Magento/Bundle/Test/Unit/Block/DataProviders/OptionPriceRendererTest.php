@@ -10,9 +10,10 @@ namespace Magento\Bundle\Test\Unit\Block\DataProviders;
 use Magento\Bundle\Block\DataProviders\OptionPriceRenderer;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\Pricing\Render;
+use Magento\Framework\Test\Unit\Helper\BlockTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Framework\View\Element\BlockInterface;
 use Magento\Framework\View\LayoutInterface;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -52,6 +53,7 @@ class OptionPriceRendererTest extends TestCase
      * Test to render Tier price html
      *
      * @return void
+     * @throws Exception
      */
     public function testRenderTierPrice(): void
     {
@@ -59,27 +61,8 @@ class OptionPriceRendererTest extends TestCase
 
         $productMock = $this->createMock(Product::class);
 
-        /** @var BlockInterface $priceRenderer */
-        $priceRenderer = new class implements BlockInterface {
-            private $renderResult = '';
-            
-            public function render($type, $product, $arguments)
-            {
-                return $this->renderResult;
-            }
-            
-            public function setRenderResult($result)
-            {
-                $this->renderResult = $result;
-                return $this;
-            }
-            
-            public function toHtml()
-            {
-                return '';
-            }
-        };
-        
+        /** @var BlockTestHelper $priceRenderer */
+        $priceRenderer = new BlockTestHelper();
         $priceRenderer->setRenderResult($expectedHtml);
 
         $this->layoutMock->method('getBlock')
@@ -97,6 +80,7 @@ class OptionPriceRendererTest extends TestCase
      * Test to render Tier price html when render block is not exists
      *
      * @return void
+     * @throws Exception
      */
     public function testRenderTierPriceNotExist(): void
     {

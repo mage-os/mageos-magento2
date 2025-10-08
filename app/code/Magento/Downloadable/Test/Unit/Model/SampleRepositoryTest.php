@@ -91,7 +91,7 @@ class SampleRepositoryTest extends TestCase
     protected function setUp(): void
     {
         $this->productMock = $this->createPartialMock(
-            \Magento\Downloadable\Test\Unit\Helper\ProductTestHelper::class,
+            \Magento\Catalog\Test\Unit\Helper\ProductTestHelper::class,
             ['setDownloadableData', '__wakeup', 'getTypeId', 'save', 'getId', 'getStoreId', 'getData']
         );
         $this->repositoryMock = $this->createMock(ProductRepository::class);

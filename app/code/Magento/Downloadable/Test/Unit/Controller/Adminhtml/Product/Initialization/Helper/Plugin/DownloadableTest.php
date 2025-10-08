@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace Magento\Downloadable\Test\Unit\Controller\Adminhtml\Product\Initialization\Helper\Plugin;
 
 use Magento\Catalog\Test\Unit\Helper\ProductExtensionInterfaceTestHelper;
-use Magento\Downloadable\Test\Unit\Helper\ProductTestHelper;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Api\Data\ProductExtensionInterface;
 use Magento\Catalog\Controller\Adminhtml\Product\Initialization\Helper;

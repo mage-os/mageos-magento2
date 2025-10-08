@@ -110,6 +110,7 @@ class ItemTestHelper extends Item
      *
      * @param int $count
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setNumberOfDownloadsUsed($count): self
     {
@@ -121,6 +122,7 @@ class ItemTestHelper extends Item
      *
      * @param string $status
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setStatus($status): self
     {
@@ -133,6 +135,7 @@ class ItemTestHelper extends Item
      * @param mixed $id
      * @param string|null $field
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function load($id, $field = null): self
     {
@@ -174,6 +177,7 @@ class ItemTestHelper extends Item
      *
      * @param int $number
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setNumberOfDownloadsBought($number): self
     {

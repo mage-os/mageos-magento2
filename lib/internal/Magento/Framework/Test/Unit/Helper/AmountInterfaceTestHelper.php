@@ -14,7 +14,7 @@ use Magento\Framework\Pricing\Amount\AmountInterface;
  *
  * This helper implements AmountInterface and adds custom methods
  * that don't exist on the interface for testing purposes.
- */
+     */
 class AmountInterfaceTestHelper implements AmountInterface
 {
     /**
@@ -27,6 +27,7 @@ class AmountInterfaceTestHelper implements AmountInterface
      *
      * @param mixed $exclude
      * @return float
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getValue($exclude = null): float
     {

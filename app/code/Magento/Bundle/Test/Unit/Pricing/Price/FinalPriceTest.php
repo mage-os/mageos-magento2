@@ -177,6 +177,7 @@ class FinalPriceTest extends TestCase
      * @param $baseAmount
      * @param $optionsValue
      * @param $expectedValue
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     #[DataProvider('getValueDataProvider')]
     public function testGetMaximalPrice($baseAmount, $optionsValue, $expectedValue)
@@ -257,6 +258,7 @@ class FinalPriceTest extends TestCase
      * @param $baseAmount
      * @param $optionsValue
      * @param $expectedValue
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     #[DataProvider('getValueDataProvider')]
     public function testGetMinimalPrice($baseAmount, $optionsValue, $expectedValue)

@@ -110,17 +110,9 @@ class LinkInterfaceTestHelper implements LinkInterface
     /**
      * @inheritdoc
      */
-    public function getIsDefault(): ?bool
+    public function getIsDefault()
     {
         return $this->data['is_default'] ?? null;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function isDefault(): ?bool
-    {
-        return $this->getIsDefault();
     }
 
     /**
@@ -169,7 +161,7 @@ class LinkInterfaceTestHelper implements LinkInterface
     /**
      * @inheritdoc
      */
-    public function getCanChangeQuantity(): ?bool
+    public function getCanChangeQuantity()
     {
         return $this->data['can_change_quantity'] ?? null;
     }

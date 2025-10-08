@@ -60,7 +60,7 @@ class UpdateHandlerTest extends TestCase
             ->method('getDownloadableProductLinks')
             ->willReturn([$this->linkMock]);
         $this->entityMock = $this->createPartialMock(
-            \Magento\Downloadable\Test\Unit\Helper\ProductTestHelper::class,
+            \Magento\Catalog\Test\Unit\Helper\ProductTestHelper::class,
             ['getStoreId', 'getTypeId', 'getExtensionAttributes', 'getSku']
         );
 

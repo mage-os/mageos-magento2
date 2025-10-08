@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
 
 class PriceBackendTest extends TestCase
 {
-    const CLOSURE_VALUE = 'CLOSURE';
+    private const CLOSURE_VALUE = 'CLOSURE';
 
     /**
      * @var PriceBackend

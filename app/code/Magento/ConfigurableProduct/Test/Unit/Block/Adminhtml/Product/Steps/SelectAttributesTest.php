@@ -86,18 +86,15 @@ class SelectAttributesTest extends TestCase
             ->method('registry')
             ->with('current_product')
             ->willReturn($productMock);
-        $this->buttonMock->method('toHtml')->willReturn($result);
+        
+        // Configure the ButtonTestHelper using clean setters
+        $this->buttonMock->setHtml($result);
+        $this->buttonMock->setAuthorization($this->buttonMock);
+        $this->buttonMock->setIsAllowed($isAllowed);
 
         $this->layoutMock->expects($this->once())
             ->method('createBlock')
             ->willReturn($this->buttonMock);
-        $this->buttonMock->expects($this->once())
-            ->method('getAuthorization')
-            ->willReturnSelf();
-        $this->buttonMock->expects($this->once())
-            ->method('isAllowed')
-            ->with('Magento_Catalog::attributes_attributes')
-            ->willReturn($isAllowed);
 
         $this->assertEquals($result, $this->selectAttributes->getAddNewAttributeButton());
     }

@@ -11,12 +11,15 @@ use Magento\Catalog\Pricing\Price\BasePrice;
 
 /**
  * Test helper class for BasePrice with custom methods
- * 
+ *
  * This helper extends BasePrice to add custom methods
  * that don't exist on the base class for testing purposes.
  */
 class BasePriceTestHelper extends BasePrice
 {
+    /**
+     * @var array
+     */
     private $data = [];
 
     /**
@@ -110,14 +113,14 @@ class BasePriceTestHelper extends BasePrice
             $key = strtolower(substr($method, 3));
             return $this->data[$key] ?? null;
         }
-        
+
         // If it's a setter, store the data
         if (strpos($method, 'set') === 0) {
             $key = strtolower(substr($method, 3));
             $this->data[$key] = $args[0] ?? null;
             return $this;
         }
-        
+
         return null;
     }
 }

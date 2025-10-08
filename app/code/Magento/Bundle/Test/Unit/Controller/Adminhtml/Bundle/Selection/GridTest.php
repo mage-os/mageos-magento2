@@ -14,6 +14,7 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\App\ViewInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\Framework\Test\Unit\Helper\BlockTestHelper;
 use Magento\Framework\Test\Unit\Helper\ResponseInterfaceTestHelper;
 use Magento\Framework\View\LayoutInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -53,10 +54,10 @@ class GridTest extends TestCase
 
         $this->context = $this->createMock(Context::class);
         $this->request = $this->createMock(RequestInterface::class);
-        
+
         /** @var ResponseInterface $response */
         $this->response = new ResponseInterfaceTestHelper();
-        
+
         $this->view = $this->createMock(ViewInterface::class);
 
         $this->context->method('getRequest')->willReturn($this->request);
@@ -74,48 +75,16 @@ class GridTest extends TestCase
     public function testExecute()
     {
         $layout = $this->createMock(LayoutInterface::class);
-        
-        /** @var SearchGrid $block */
-        $block = new class extends SearchGrid {
-            /**
-             * @var mixed $index
-             */
-            private $index = null;
-            /**
-             * @var mixed $htmlResult
-             */
-            private $htmlResult = '';
-            
-            public function __construct()
-            {
-            }
-            
-            public function setIndex($index)
-            {
-                $this->index = $index;
-                return $this;
-            }
-            public function getIndex()
-            {
-                return $this->index;
-            }
-            public function toHtml()
-            {
-                return $this->htmlResult;
-            }
-            public function setHtmlResult($result)
-            {
-                $this->htmlResult = $result;
-                return $this;
-            }
-        };
 
-        $this->response->setBody(''); // Use setter instead of expects
+        /** @var BlockTestHelper $block */
+        $block = new BlockTestHelper();
+
+        $this->response->setBody('');
         $this->request->expects($this->once())->method('getParam')->with('index')->willReturn('index');
         $this->view->expects($this->once())->method('getLayout')->willReturn($layout);
         $layout->expects($this->once())->method('createBlock')->willReturn($block);
-        $block->setIndex('index'); // Use setter instead of expects
-        $block->setHtmlResult(''); // Use setter instead of expects
+        $block->setIndex('index');
+        $block->setHtmlResult('');
 
         $this->assertEquals($this->response, $this->controller->execute());
     }

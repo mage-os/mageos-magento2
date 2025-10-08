@@ -40,6 +40,7 @@ class TypeTestHelper extends Type
      *
      * @param mixed $product
      * @return array
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getLinks($product = null)
     {
@@ -63,6 +64,7 @@ class TypeTestHelper extends Type
      *
      * @param mixed $product
      * @return array
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getSamples($product = null)
     {

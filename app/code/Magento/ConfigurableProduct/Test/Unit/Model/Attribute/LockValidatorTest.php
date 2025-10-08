@@ -126,6 +126,7 @@ class LockValidatorTest extends TestCase
 
         /** @var AbstractModel $object */
         $object = new class($attributeId) extends AbstractModel {
+            /** @var int */
             private $attributeId;
             public function __construct($attributeId)
             {

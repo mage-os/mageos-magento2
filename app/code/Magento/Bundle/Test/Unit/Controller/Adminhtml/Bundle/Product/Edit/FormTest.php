@@ -17,6 +17,7 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\App\ViewInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\Framework\Test\Unit\Helper\BlockTestHelper;
 use Magento\Framework\Test\Unit\Helper\ResponseInterfaceTestHelper;
 use Magento\Framework\View\LayoutInterface;
 use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
@@ -102,40 +103,8 @@ class FormTest extends TestCase
         
         $layout = $this->createMock(LayoutInterface::class);
         
-        /** @var Bundle $block */
-        $block = new class extends Bundle {
-            /**
-             * @var mixed $index
-             */
-            private $index = null;
-            /**
-             * @var mixed $htmlResult
-             */
-            private $htmlResult = '';
-            
-            public function __construct()
-            {
-            }
-            
-            public function setIndex($index)
-            {
-                $this->index = $index;
-                return $this;
-            }
-            public function getIndex()
-            {
-                return $this->index;
-            }
-            public function toHtml()
-            {
-                return $this->htmlResult;
-            }
-            public function setHtmlResult($result)
-            {
-                $this->htmlResult = $result;
-                return $this;
-            }
-        };
+        /** @var BlockTestHelper $block */
+        $block = new BlockTestHelper();
 
         $this->productBuilder->expects($this->once())->method('build')->with($this->request)->willReturn($product);
         $this->initializationHelper->method('initialize')->willReturn($product);

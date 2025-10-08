@@ -22,136 +22,12 @@ class BundleOptionTestHelper extends Option
     private $data = [];
 
     /**
-     * @var array
-     */
-    private $testData = [];
-
-    /**
-     * Constructor
+     * Skip parent constructor to avoid dependencies
      */
     public function __construct()
     {
-        // Skip parent constructor to avoid dependencies
-    }
-
-    /**
-     * Override getData for testing
-     *
-     * @param string|null $key
-     * @param mixed $index
-     * @return mixed
-     */
-        /**
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function getData($key = null, $index = null)
-    {
-        if ($key === null) {
-            // Return test data when no key specified
-            return $this->testData['getData_return'] ?? $this->data;
-        }
-        return $this->data[$key] ?? null;
-    }
-
-    /**
-     * Set test data for getData() method
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return self
-     */
-    public function setTestData(string $key, $value): self
-    {
-        $this->testData[$key] = $value;
-        return $this;
-    }
-
-    /**
-     * Get option ID for testing
-     *
-     * @return mixed
-     */
-    public function getOptionId()
-    {
-        return $this->data['option_id'] ?? null;
-    }
-
-    /**
-     * Set option ID for testing
-     *
-     * @param mixed $optionId
-     * @return self
-     */
-    public function setOptionId($optionId): self
-    {
-        $this->data['option_id'] = $optionId;
-        return $this;
-    }
-
-    /**
-     * Get title for testing
-     *
-     * @return mixed
-     */
-    public function getTitle()
-    {
-        return $this->data['title'] ?? null;
-    }
-
-    /**
-     * Set title for testing
-     *
-     * @param mixed $title
-     * @return self
-     */
-    public function setTitle($title): self
-    {
-        $this->data['title'] = $title;
-        return $this;
-    }
-
-    /**
-     * Get default title for testing
-     *
-     * @return mixed
-     */
-    public function getDefaultTitle()
-    {
-        return $this->data['default_title'] ?? null;
-    }
-
-    /**
-     * Set default title for testing
-     *
-     * @param mixed $defaultTitle
-     * @return self
-     */
-    public function setDefaultTitle($defaultTitle): self
-    {
-        $this->data['default_title'] = $defaultTitle;
-        return $this;
-    }
-
-    /**
-     * Get required for testing
-     *
-     * @return mixed
-     */
-    public function getRequired()
-    {
-        return $this->data['required'] ?? false;
-    }
-
-    /**
-     * Set required for testing
-     *
-     * @param mixed $required
-     * @return self
-     */
-    public function setRequired($required): self
-    {
-        $this->data['required'] = $required;
-        return $this;
+        // Skip parent constructor - clean initialization
+        $this->data = [];
     }
 
     /**
@@ -159,7 +35,7 @@ class BundleOptionTestHelper extends Option
      *
      * @return array
      */
-    public function getSelections(): array
+    public function getSelections()
     {
         return $this->data['selections'] ?? [];
     }
@@ -170,31 +46,55 @@ class BundleOptionTestHelper extends Option
      * @param array $selections
      * @return self
      */
-    public function setSelections(array $selections): self
+    public function setSelections($selections): self
     {
         $this->data['selections'] = $selections;
         return $this;
     }
 
     /**
-     * Get type for testing
+     * Get title for testing
      *
-     * @return mixed
+     * @return string|null
      */
-    public function getType()
+    public function getTitle()
     {
-        return $this->data['type'] ?? null;
+        return $this->data['title'] ?? null;
     }
 
     /**
-     * Set type for testing
+     * Set title for testing
      *
-     * @param mixed $type
+     * @param string $title
      * @return self
      */
-    public function setType($type): self
+    public function setTitle($title): self
     {
-        $this->data['type'] = $type;
+        $this->data['title'] = $title;
         return $this;
+    }
+
+    /**
+     * Set test data for flexible state management
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return self
+     */
+    public function setTestData(string $key, $value): self
+    {
+        $this->data[$key] = $value;
+        return $this;
+    }
+
+    /**
+     * Get test data
+     *
+     * @param string $key
+     * @return mixed
+     */
+    public function getTestData(string $key)
+    {
+        return $this->data[$key] ?? null;
     }
 }

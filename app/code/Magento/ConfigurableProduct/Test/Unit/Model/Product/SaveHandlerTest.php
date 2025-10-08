@@ -127,7 +127,10 @@ class SaveHandlerTest extends TestCase
         $attributeIdNew = 22;
         $configurableProductLinks = [1, 2, 3];
 
-        $product = $this->createPartialMock(Product::class, ['getTypeId', 'getSku', 'getData', 'getExtensionAttributes']);
+        $product = $this->createPartialMock(
+            Product::class,
+            ['getTypeId', 'getSku', 'getData', 'getExtensionAttributes']
+        );
         $product->expects(static::once())
             ->method('getTypeId')
             ->willReturn(ConfigurableModel::TYPE_CODE);
@@ -142,9 +145,13 @@ class SaveHandlerTest extends TestCase
             ->willReturn($extensionAttributes);
 
         $this->productRepository->expects($this->once())
-            ->method('get')->with($sku, false, null, true);
+            ->method('get')
+            ->with($sku, false, null, true);
 
-        $attributeNew = $this->createPartialMock(Attribute::class, ['getAttributeId', 'loadByProductAndAttribute', 'setId', 'getId']);
+        $attributeNew = $this->createPartialMock(
+            Attribute::class,
+            ['getAttributeId', 'loadByProductAndAttribute', 'setId', 'getId']
+        );
         $attributeNew->expects(static::atLeastOnce())
             ->method('getAttributeId')
             ->willReturn($attributeIdNew);

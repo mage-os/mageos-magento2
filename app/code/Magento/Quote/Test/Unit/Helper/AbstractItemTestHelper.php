@@ -8,13 +8,14 @@ declare(strict_types=1);
 namespace Magento\Quote\Test\Unit\Helper;
 
 use Magento\Quote\Model\Quote\Item\AbstractItem;
+use Magento\Quote\Model\Quote\Address;
 
 /**
  * Test helper for AbstractItem mocking
  */
 class AbstractItemTestHelper extends AbstractItem
 {
-    private $data = [];
+    private array $data = [];
 
     public function __construct($product = null, $children = null)
     {
@@ -27,262 +28,150 @@ class AbstractItemTestHelper extends AbstractItem
         }
     }
 
-    /**
-     * Get item ID
-     *
-     * @return int|null
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->data['id'] ?? null;
     }
 
-    /**
-     * Set item ID
-     *
-     * @param int $id
-     * @return $this
-     */
-    public function setId($id)
+    public function setId(int $id): self
     {
         $this->data['id'] = $id;
         return $this;
     }
 
-    /**
-     * Get product
-     *
-     * @return \Magento\Catalog\Model\Product|null
-     */
     public function getProduct()
     {
         return $this->data['product'] ?? null;
     }
 
-    /**
-     * Set product
-     *
-     * @param \Magento\Catalog\Model\Product $product
-     * @return $this
-     */
-    public function setProduct($product)
+    public function setProduct($product): self
     {
         $this->data['product'] = $product;
         return $this;
     }
 
-    /**
-     * Get quote
-     *
-     * @return \Magento\Quote\Model\Quote|null
-     */
     public function getQuote()
     {
         return $this->data['quote'] ?? null;
     }
 
-    /**
-     * Set quote
-     *
-     * @param \Magento\Quote\Model\Quote $quote
-     * @return $this
-     */
-    public function setQuote($quote)
+    public function setQuote($quote): self
     {
         $this->data['quote'] = $quote;
         return $this;
     }
 
-    /**
-     * Get parent item
-     *
-     * @return AbstractItem|null
-     */
-    public function getParentItem()
+    public function getParentItem(): ?AbstractItem
     {
         return $this->data['parent_item'] ?? null;
     }
 
-    /**
-     * Set parent item
-     *
-     * @param AbstractItem $parentItem
-     * @return $this
-     */
-    public function setParentItem($parentItem)
+    public function setParentItem(AbstractItem $parentItem): self
     {
         $this->data['parent_item'] = $parentItem;
         return $this;
     }
 
-    /**
-     * Get children items
-     *
-     * @return array
-     */
-    public function getChildren()
+    public function getChildren(): array
     {
         return $this->data['children'] ?? [];
     }
 
-    /**
-     * Set children items
-     *
-     * @param array $children
-     * @return $this
-     */
-    public function setChildren($children)
+    public function setChildren(array $children): self
     {
         $this->data['children'] = $children;
         return $this;
     }
 
-    /**
-     * Check if item has children
-     *
-     * @return bool
-     */
-    public function getHasChildren()
+    public function getHasChildren(): bool
     {
         return !empty($this->data['children']);
     }
 
-    /**
-     * Get quantity
-     *
-     * @return float
-     */
-    public function getQty()
+    public function getQty(): float
     {
         return $this->data['qty'] ?? 1.0;
     }
 
-    /**
-     * Set quantity
-     *
-     * @param float $qty
-     * @return $this
-     */
-    public function setQty($qty)
+    public function setQty(float $qty): self
     {
         $this->data['qty'] = $qty;
         return $this;
     }
 
-    /**
-     * Get product type
-     *
-     * @return string|null
-     */
-    public function getProductType()
+    public function getProductType(): ?string
     {
         return $this->data['product_type'] ?? null;
     }
 
-    /**
-     * Set product type
-     *
-     * @param string $productType
-     * @return $this
-     */
-    public function setProductType($productType)
+    public function setProductType(string $productType): self
     {
         $this->data['product_type'] = $productType;
         return $this;
     }
 
-    /**
-     * Get option by code
-     *
-     * @param string $code
-     * @return mixed|null
-     */
-    public function getOptionByCode($code)
+    public function getOptionByCode(string $code)
     {
         return $this->data['options'][$code] ?? null;
     }
 
-    /**
-     * Set option
-     *
-     * @param string $code
-     * @param mixed $value
-     * @return $this
-     */
-    public function setOption($code, $value)
+    public function setOption(string $code, $value): self
     {
         $this->data['options'][$code] = $value;
         return $this;
     }
 
-    /**
-     * Get all options
-     *
-     * @return array
-     */
-    public function getOptions()
+    public function getOptions(): array
     {
         return $this->data['options'] ?? [];
     }
 
-    /**
-     * Set all options
-     *
-     * @param array $options
-     * @return $this
-     */
-    public function setOptions($options)
+    public function setOptions(array $options): self
     {
         $this->data['options'] = $options;
         return $this;
     }
 
-    /**
-     * Check if item represents product
-     *
-     * @return bool
-     */
-    public function representProduct($product)
+    public function representProduct($product): bool
     {
         return $this->getProduct() === $product;
     }
 
-    /**
-     * Compare item
-     *
-     * @param AbstractItem $item
-     * @return bool
-     */
-    public function compare($item)
+    public function compare(AbstractItem $item): bool
     {
         return $this->getId() === $item->getId();
     }
 
-    /**
-     * Check if item is deleted
-     *
-     * @param null $isDeleted
-     * @return bool
-     */
     public function isDeleted($isDeleted = null): bool
     {
         return $this->data['is_deleted'] ?? false;
     }
 
-    /**
-     * Set deleted flag
-     *
-     * @param bool $flag
-     * @return $this
-     */
-    public function setIsDeleted($flag)
+    public function setIsDeleted(bool $flag): self
     {
         $this->data['is_deleted'] = $flag;
         return $this;
     }
 
-    public function getAddress()
+    /**
+     * Return the quote address for the item.
+     *
+     * @return Address|null
+     */
+    public function getAddress(): ?Address
     {
-        // TODO: Implement getAddress() method.
+        return $this->data['address'] ?? null;
+    }
+
+    /**
+     * Set quote address for the item (useful for testing)
+     *
+     * @param Address $address
+     * @return $this
+     */
+    public function setAddress(Address $address): self
+    {
+        $this->data['address'] = $address;
+        return $this;
     }
 }

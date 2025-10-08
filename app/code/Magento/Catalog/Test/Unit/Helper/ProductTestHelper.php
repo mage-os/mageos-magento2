@@ -15,13 +15,18 @@ use Magento\Catalog\Model\Product;
  * This helper is placed in Magento_Catalog module as it's the core module
  * that contains the Product class and is used by many other modules
  * including Bundle, ConfigurableProduct, GroupedProduct, etc.
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class ProductTestHelper extends Product
 {
+    /**
+     * @var array
+     */
     private $data = [];
 
     /**
-     * Tracking variables for method calls and parameters
+     * @var bool
      */
     private $setBundleOptionsDataCalled = false;
     /** @var array */
@@ -194,6 +199,7 @@ class ProductTestHelper extends Product
      * @param int|null $groupId
      * @param bool $skipSuper
      * @return array
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getAttributes($groupId = null, $skipSuper = false)
     {
@@ -229,6 +235,7 @@ class ProductTestHelper extends Product
      *
      * @param mixed $product
      * @return mixed
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getOptionsCollection($product = null)
     {
@@ -240,6 +247,7 @@ class ProductTestHelper extends Product
      *
      * @param mixed $product
      * @return array
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getOptionsIds($product = null)
     {
@@ -253,6 +261,7 @@ class ProductTestHelper extends Product
      * @param mixed $selectionIds
      * @param mixed $product
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function appendSelections($optionCollection, $selectionIds = [], $product = null): self
     {
@@ -268,7 +277,6 @@ class ProductTestHelper extends Product
     {
         return $this->data['price_info'] ?? null;
     }
-
 
     /**
      * Set price info for testing
@@ -465,8 +473,9 @@ class ProductTestHelper extends Product
      * Custom getIsDefault method for Bundle testing
      *
      * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
-    public function getIsDefault(): bool
+    public function getIsDefault()
     {
         return $this->data['is_default'] ?? false;
     }
@@ -575,8 +584,9 @@ class ProductTestHelper extends Product
      * Custom getCopyFromView method for Bundle testing
      *
      * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
-    public function getCopyFromView(): bool
+    public function getCopyFromView()
     {
         return $this->data['copy_from_view'] ?? false;
     }
@@ -697,8 +707,9 @@ class ProductTestHelper extends Product
      * Get is relations changed for testing
      *
      * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
-    public function getIsRelationsChanged(): bool
+    public function getIsRelationsChanged()
     {
         return $this->data['is_relations_changed'] ?? false;
     }
@@ -887,6 +898,7 @@ class ProductTestHelper extends Product
      * @param mixed $value
      * @param mixed $product
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function addCustomOption($code, $value, $product = null): self
     {
@@ -999,6 +1011,7 @@ class ProductTestHelper extends Product
      *
      * @param string $key
      * @return mixed
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function hasData($key = '')
     {
@@ -1507,6 +1520,7 @@ class ProductTestHelper extends Product
      * Custom method for ConfigurableProduct tests
      *
      * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getIsDuplicate()
     {
@@ -1591,7 +1605,6 @@ class ProductTestHelper extends Product
         return $this;
     }
 
-
     /**
      * Custom method for ConfigurableProduct tests
      *
@@ -1628,7 +1641,6 @@ class ProductTestHelper extends Product
         return $this;
     }
 
-
     /**
      * Custom method for ConfigurableAttributeData tests
      *
@@ -1647,6 +1659,7 @@ class ProductTestHelper extends Product
      * @param mixed $qty
      * @param mixed $customerGroupId
      * @return mixed
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getTierPrice($qty = null, $customerGroupId = null)
     {
@@ -1775,4 +1788,275 @@ class ProductTestHelper extends Product
         return $this;
     }
 
+    // ========== DOWNLOADABLE-SPECIFIC METHODS ==========
+
+    /**
+     * Set downloadable data for testing
+     *
+     * @param mixed $data
+     * @return self
+     */
+    public function setDownloadableData($data): self
+    {
+        $this->data['downloadable_data'] = $data;
+        return $this;
+    }
+
+    /**
+     * Get downloadable data for testing
+     *
+     * @return mixed
+     */
+    public function getDownloadableData()
+    {
+        return $this->data['downloadable_data'] ?? null;
+    }
+
+    /**
+     * Get links title for downloadable products
+     *
+     * @return string|null
+     */
+    public function getLinksTitle()
+    {
+        return $this->data['links_title'] ?? null;
+    }
+
+    /**
+     * Set links title for downloadable products
+     *
+     * @param string|null $title
+     * @return self
+     */
+    public function setLinksTitle($title): self
+    {
+        $this->data['links_title'] = $title;
+        return $this;
+    }
+
+    /**
+     * Get samples title for downloadable products
+     *
+     * @return string|null
+     */
+    public function getSamplesTitle()
+    {
+        return $this->data['samples_title'] ?? null;
+    }
+
+    /**
+     * Set samples title for downloadable products
+     *
+     * @param string|null $title
+     * @return self
+     */
+    public function setSamplesTitle($title): self
+    {
+        $this->data['samples_title'] = $title;
+        return $this;
+    }
+
+    /**
+     * Get links purchased separately flag
+     *
+     * @return bool|null
+     */
+    public function getLinksPurchasedSeparately()
+    {
+        return $this->data['links_purchased_separately'] ?? null;
+    }
+
+    /**
+     * Set links purchased separately flag
+     *
+     * @param bool $flag
+     * @return self
+     */
+    public function setLinksPurchasedSeparately(bool $flag): self
+    {
+        $this->data['links_purchased_separately'] = $flag;
+        return $this;
+    }
+
+    /**
+     * Set custom option changed flag
+     *
+     * @param bool $changed
+     * @return self
+     */
+    public function setIsCustomOptionChanged($changed = true): self
+    {
+        $this->data['is_custom_option_changed'] = $changed;
+        return $this;
+    }
+
+    /**
+     * Get custom option changed flag
+     *
+     * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     */
+    public function getIsCustomOptionChanged()
+    {
+        return $this->data['is_custom_option_changed'] ?? false;
+    }
+
+    /**
+     * Set type has required options flag
+     *
+     * @param bool $hasRequired
+     * @return self
+     */
+    public function setTypeHasRequiredOptions($hasRequired): self
+    {
+        $this->data['type_has_required_options'] = $hasRequired;
+        return $this;
+    }
+
+    /**
+     * Get type has required options flag
+     *
+     * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     */
+    public function getTypeHasRequiredOptions()
+    {
+        return $this->data['type_has_required_options'] ?? false;
+    }
+
+    /**
+     * Set required options
+     *
+     * @param mixed $required
+     * @return self
+     */
+    public function setRequiredOptions($required): self
+    {
+        $this->data['required_options'] = $required;
+        return $this;
+    }
+
+    /**
+     * Get required options
+     *
+     * @return mixed
+     */
+    public function getRequiredOptions()
+    {
+        return $this->data['required_options'] ?? null;
+    }
+
+    /**
+     * Set type has options flag
+     *
+     * @param bool $hasOptions
+     * @return self
+     */
+    public function setTypeHasOptions($hasOptions): self
+    {
+        $this->data['type_has_options'] = $hasOptions;
+        return $this;
+    }
+
+    /**
+     * Get type has options flag
+     *
+     * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     */
+    public function getTypeHasOptions()
+    {
+        return $this->data['type_has_options'] ?? false;
+    }
+
+    /**
+     * Set links exist flag
+     *
+     * @param bool $exist
+     * @return self
+     */
+    public function setLinksExist($exist): self
+    {
+        $this->data['links_exist'] = $exist;
+        return $this;
+    }
+
+    /**
+     * Get links exist flag
+     *
+     * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     */
+    public function getLinksExist()
+    {
+        return $this->data['links_exist'] ?? false;
+    }
+
+    /**
+     * Get downloadable links
+     *
+     * @return array
+     */
+    public function getDownloadableLinks()
+    {
+        return $this->data['downloadable_links'] ?? [];
+    }
+
+    /**
+     * Set downloadable links
+     *
+     * @param array $links
+     * @return self
+     */
+    public function setDownloadableLinks(array $links): self
+    {
+        $this->data['downloadable_links'] = $links;
+        return $this;
+    }
+
+    /**
+     * Check if product can affect options
+     *
+     * @param mixed $value
+     * @return bool
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function canAffectOptions($value = null)
+    {
+        return $this->data['can_affect_options'] ?? false;
+    }
+
+    /**
+     * Set can affect options flag
+     *
+     * @param bool $canAffect
+     * @return self
+     */
+    public function setCanAffectOptions(bool $canAffect): self
+    {
+        $this->data['can_affect_options'] = $canAffect;
+        return $this;
+    }
+
+    /**
+     * Override getResource method for testing
+     *
+     * @return mixed
+     */
+    public function getResource()
+    {
+        return $this->data['resource'] ?? null;
+    }
+
+    /**
+     * Set resource for testing
+     *
+     * @param mixed $resource
+     * @return self
+     */
+    public function setResource($resource): self
+    {
+        $this->data['resource'] = $resource;
+        return $this;
+    }
 }

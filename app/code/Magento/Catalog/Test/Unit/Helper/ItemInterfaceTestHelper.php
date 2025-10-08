@@ -11,7 +11,7 @@ use Magento\Catalog\Model\Product\Configuration\Item\ItemInterface;
 
 /**
  * Test helper for Magento\Catalog\Model\Product\Configuration\Item\ItemInterface
- * 
+ *
  * Implements ItemInterface to provide custom methods for testing
  */
 class ItemInterfaceTestHelper implements ItemInterface
@@ -81,19 +81,31 @@ class ItemInterfaceTestHelper implements ItemInterface
      */
     public function getOptionByCode($code)
     {
-        return $this->data['options'][$code] ?? null;
+        // Support callback pattern used in Bundle tests
+        if (isset($this->data['option_by_code_callback']) && is_callable($this->data['option_by_code_callback'])) {
+            return call_user_func($this->data['option_by_code_callback'], $code);
+        }
+        
+        return $this->data['options'][$code] ?? $this->data['option_by_code_callback'] ?? null;
     }
 
     /**
      * Set option by code for testing
+     * Supports both individual options and callback patterns
      *
-     * @param string $code
+     * @param string|callable|null $codeOrCallback
      * @param mixed $option
      * @return self
      */
-    public function setOptionByCode($code, $option): self
+    public function setOptionByCode($codeOrCallback, $option = null): self
     {
-        $this->data['options'][$code] = $option;
+        // If only one parameter is provided, it's either a callback or null
+        if (func_num_args() === 1) {
+            $this->data['option_by_code_callback'] = $codeOrCallback;
+        } else {
+            // Two parameters: traditional code => option mapping
+            $this->data['options'][$codeOrCallback] = $option;
+        }
         return $this;
     }
 
@@ -116,6 +128,28 @@ class ItemInterfaceTestHelper implements ItemInterface
     public function setFileDownloadParams($params): self
     {
         $this->data['file_download_params'] = $params;
+        return $this;
+    }
+
+    /**
+     * Get quantity for testing
+     *
+     * @return mixed
+     */
+    public function getQty()
+    {
+        return $this->data['qty'] ?? null;
+    }
+
+    /**
+     * Set quantity for testing
+     *
+     * @param mixed $qty
+     * @return self
+     */
+    public function setQty($qty): self
+    {
+        $this->data['qty'] = $qty;
         return $this;
     }
 }

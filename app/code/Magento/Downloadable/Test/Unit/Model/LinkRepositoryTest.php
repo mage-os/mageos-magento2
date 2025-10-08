@@ -110,7 +110,7 @@ class LinkRepositoryTest extends TestCase
         );
         $this->linkFactoryMock = $this->createPartialMock(LinkFactory::class, ['create']);
         $this->productMock = $this->createPartialMock(
-            \Magento\Downloadable\Test\Unit\Helper\ProductTestHelper::class,
+            \Magento\Catalog\Test\Unit\Helper\ProductTestHelper::class,
             [
                 'setDownloadableData',
                 '__wakeup',

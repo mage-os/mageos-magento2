@@ -37,6 +37,7 @@ class CheckoutSessionTestHelper extends Session
      *
      * @param bool $hasDownloadableProducts
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setHasDownloadableProducts($hasDownloadableProducts): self
     {

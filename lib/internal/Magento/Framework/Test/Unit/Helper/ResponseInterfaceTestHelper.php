@@ -60,6 +60,7 @@ class ResponseInterfaceTestHelper implements ResponseInterface
      *
      * @param int $code
      * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setHttpResponseCode($code)
     {
@@ -93,6 +94,7 @@ class ResponseInterfaceTestHelper implements ResponseInterface
      * @param string $value
      * @param bool $replace
      * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setHeader($name, $value, $replace = false)
     {

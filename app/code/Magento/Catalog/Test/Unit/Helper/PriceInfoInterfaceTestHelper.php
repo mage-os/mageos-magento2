@@ -13,7 +13,7 @@ use Magento\Catalog\Api\Data\ProductRender\PriceInfoInterface;
 
 /**
  * Test helper for ProductRender PriceInfoInterface
- * 
+ *
  * Provides a testable implementation of PriceInfoInterface with support for:
  * - Custom getPrice() method (not in interface)
  * - All required interface methods

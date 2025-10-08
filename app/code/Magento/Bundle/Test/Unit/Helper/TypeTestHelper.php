@@ -36,8 +36,8 @@ class TypeTestHelper extends Type
      * @return self
      */
         /**
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
+         * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+         */
     public function setParentProductId($productId): self
     {
         $this->data['parent_product_id'] = $productId;
@@ -153,6 +153,7 @@ class TypeTestHelper extends Type
      * @param mixed $store
      * @param mixed $product
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setStoreFilter($store = null, $product = null): self
     {
@@ -165,6 +166,7 @@ class TypeTestHelper extends Type
      *
      * @param mixed $product
      * @return mixed
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getStoreFilter($product = null)
     {
@@ -178,6 +180,7 @@ class TypeTestHelper extends Type
      * @param mixed $product
      * @param mixed $processMode
      * @return mixed
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function prepareForCart($buyRequest, $product, $processMode = null)
     {
@@ -201,6 +204,7 @@ class TypeTestHelper extends Type
      *
      * @param mixed $product
      * @return mixed
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getOptionsCollection($product = null)
     {
@@ -224,6 +228,7 @@ class TypeTestHelper extends Type
      *
      * @param mixed $product
      * @return array
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getOptionsIds($product = null)
     {
@@ -248,6 +253,7 @@ class TypeTestHelper extends Type
      * @param array $optionIds
      * @param mixed $product
      * @return mixed
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getSelectionsCollection($optionIds = null, $product = null)
     {

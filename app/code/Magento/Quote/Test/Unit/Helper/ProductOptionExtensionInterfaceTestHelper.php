@@ -154,7 +154,7 @@ class ProductOptionExtensionInterfaceTestHelper implements ProductOptionExtensio
     public function getTestData(string $key, $default = null)
     {
         return $this->data[$key] ?? $default;
-    }
+    }   
 
     /**
      * Get gift item option for testing

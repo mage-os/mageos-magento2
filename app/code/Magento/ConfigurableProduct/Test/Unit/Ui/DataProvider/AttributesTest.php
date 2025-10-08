@@ -40,7 +40,10 @@ class AttributesTest extends TestCase
     {
         $this->collectionMock = $this->createMock(Collection::class);
         $this->selectMock = $this->createPartialMock(Select::class, ['where']);
-        $collectionAttributeHandlerMock = $this->createPartialMock(ConfigurableAttributeHandler::class, ['getApplicableAttributes']);
+        $collectionAttributeHandlerMock = $this->createPartialMock(
+            ConfigurableAttributeHandler::class,
+            ['getApplicableAttributes']
+        );
         $collectionAttributeHandlerMock->expects($this->once())
             ->method('getApplicableAttributes')
             ->willReturn($this->collectionMock);

@@ -59,7 +59,10 @@ class PriceTest extends TestCase
         $qty = 1;
 
         /** @var Product|MockObject $configurableProduct */
-        $configurableProduct = $this->createPartialMock(Product::class, ['getCustomOption', 'getPriceInfo', 'setFinalPrice']);
+        $configurableProduct = $this->createPartialMock(
+            Product::class,
+            ['getCustomOption', 'getPriceInfo', 'setFinalPrice']
+        );
         /** @var PriceInfoBase|MockObject $priceInfo */
         $priceInfo = $this->createPartialMock(PriceInfoBase::class, ['getPrice']);
         /** @var PriceInterface|MockObject $price */

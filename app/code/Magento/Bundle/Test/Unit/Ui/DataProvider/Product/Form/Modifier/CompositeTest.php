@@ -9,6 +9,7 @@ namespace Magento\Bundle\Test\Unit\Ui\DataProvider\Product\Form\Modifier;
 
 use Exception;
 use Magento\Bundle\Model\Product\Type;
+use Magento\Bundle\Test\Unit\Helper\ModifierTestHelper;
 use Magento\Bundle\Ui\DataProvider\Product\Form\Modifier\Composite;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\Locator\LocatorInterface;
@@ -153,6 +154,7 @@ class CompositeTest extends TestCase
 
     /**
      * @return void
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function testModifyMetaWithException()
     {
@@ -161,27 +163,7 @@ class CompositeTest extends TestCase
             'Type "SomeClass" is not an instance of Magento\\Ui\\DataProvider\\Modifier\\ModifierInterface'
         );
 
-        /** @var Exception $modifierMock */
-        $modifierMock = new class extends Exception {
-            /**
-             * @var bool
-             */
-            private $modifyMetaCalled = false;
-
-            public function __construct()
-            {
-            }
-
-            /**
-             * @param $meta
-             * @return mixed
-             */
-            public function modifyMeta($meta)
-            {
-                $this->modifyMetaCalled = true;
-                return $meta;
-            }
-        };
+        $modifierMock = new ModifierTestHelper();
 
         $this->productMock->expects($this->once())
             ->method('getTypeId')

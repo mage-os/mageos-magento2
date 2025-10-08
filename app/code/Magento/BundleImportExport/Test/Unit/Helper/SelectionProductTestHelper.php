@@ -37,7 +37,6 @@ class SelectionProductTestHelper extends Product
         return $this->data['sku'] ?? 1;
     }
 
-
     /**
      * Get selection price value for testing
      *

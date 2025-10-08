@@ -2,7 +2,7 @@
 /**
  * Copyright 2025 Adobe
  * All Rights Reserved.
- */
+     */
 declare(strict_types=1);
 
 namespace Magento\Framework\Test\Unit\Helper;
@@ -11,7 +11,7 @@ use Magento\Framework\Event\Observer;
 
 /**
  * Test helper for Observer class
- */
+     */
 class ObserverTestHelper extends Observer
 {
     /**

@@ -25,6 +25,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @deprecated Class replaced by other element
  * @see \Magento\Downloadable\Ui\DataProvider\Product\Form\Modifier\Samples
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class SamplesTest extends TestCase
 {

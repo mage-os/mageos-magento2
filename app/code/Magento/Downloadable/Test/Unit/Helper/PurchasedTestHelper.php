@@ -27,6 +27,7 @@ class PurchasedTestHelper extends Purchased
      *
      * @param string $title
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setLinkSectionTitle($title): self
     {
@@ -39,6 +40,7 @@ class PurchasedTestHelper extends Purchased
      * @param mixed $id
      * @param mixed $field
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function load($id, $field = null): self
     {

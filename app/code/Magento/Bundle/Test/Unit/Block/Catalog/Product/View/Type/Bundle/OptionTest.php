@@ -22,7 +22,11 @@ use Magento\Framework\View\LayoutInterface;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-
+/**
+ * Test class for \Magento\Bundle\Block\Catalog\Product\View\Type\Bundle\Option
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class OptionTest extends TestCase
 {
     /**

@@ -265,10 +265,6 @@ class GroupedTest extends TestCase
      */
     public function testGetAssociatedProductIdsNonCached(): void
     {
-        $args = $this->objectHelper->getConstructArguments(
-            Grouped::class,
-            []
-        );
 
         /** @var Grouped $model */
         $model = $this->createPartialMock(Grouped::class, ['getAssociatedProducts']);

@@ -11,7 +11,7 @@ use Magento\Framework\Model\AbstractModel;
 
 /**
  * Test helper for Magento\Catalog\Model\ResourceModel\Product\Link
- * 
+ *
  * Extends AbstractModel to add custom methods for testing
  */
 class ProductResourceLinkTestHelper extends AbstractModel
@@ -56,6 +56,7 @@ class ProductResourceLinkTestHelper extends AbstractModel
      *
      * @param array $keys
      * @return array
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function toArray(array $keys = [])
     {

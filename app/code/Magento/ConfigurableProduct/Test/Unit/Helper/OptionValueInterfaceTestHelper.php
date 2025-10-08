@@ -14,6 +14,7 @@ use Magento\ConfigurableProduct\Api\Data\OptionValueInterface;
  */
 class OptionValueInterfaceTestHelper implements OptionValueInterface
 {
+    /** @var array */
     private $data = [];
 
     /**

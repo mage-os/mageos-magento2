@@ -57,6 +57,7 @@ use PHPUnit\Framework\TestCase;
  * Test for bundle product type
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class TypeTest extends TestCase
 {

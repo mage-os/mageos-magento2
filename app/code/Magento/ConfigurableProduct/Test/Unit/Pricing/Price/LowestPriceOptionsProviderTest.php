@@ -68,8 +68,14 @@ class LowestPriceOptionsProviderTest extends TestCase
         $this->connection = $this->createMock(AdapterInterface::class);
         $this->resourceConnection = $this->createPartialMock(ResourceConnection::class, ['getConnection']);
         $this->resourceConnection->expects($this->once())->method('getConnection')->willReturn($this->connection);
-        $this->linkedProductSelectBuilder = $this->createPartialMock(LinkedProductSelectBuilderInterface::class, ['build']);
-        $this->productCollection = $this->createPartialMock(Collection::class, ['addAttributeToSelect', 'addIdFilter', 'getItems']);
+        $this->linkedProductSelectBuilder = $this->createPartialMock(
+            LinkedProductSelectBuilderInterface::class,
+            ['build']
+        );
+        $this->productCollection = $this->createPartialMock(
+            Collection::class,
+            ['addAttributeToSelect', 'addIdFilter', 'getItems']
+        );
         $this->collectionFactory = $this->createPartialMock(CollectionFactory::class, ['create']);
         $this->collectionFactory->expects($this->once())->method('create')->willReturn($this->productCollection);
         $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);

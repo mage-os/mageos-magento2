@@ -75,7 +75,7 @@ class SamplesTest extends TestCase
     {
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->productMock = $this->createPartialMock(
-            \Magento\Downloadable\Test\Unit\Helper\ProductTestHelper::class,
+            \Magento\Catalog\Test\Unit\Helper\ProductTestHelper::class,
             ['getSamplesTitle', 'getId', 'getTypeId']
         );
         $this->locatorMock = $this->createMock(LocatorInterface::class);

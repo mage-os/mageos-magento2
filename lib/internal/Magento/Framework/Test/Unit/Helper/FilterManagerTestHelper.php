@@ -35,6 +35,7 @@ class FilterManagerTestHelper extends FilterManager
      *
      * @param string $value
      * @return string
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function stripTags($value = '')
     {
@@ -47,6 +48,7 @@ class FilterManagerTestHelper extends FilterManager
      * @param string $format
      * @param mixed ...$args
      * @return string
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function sprintf($format, ...$args)
     {

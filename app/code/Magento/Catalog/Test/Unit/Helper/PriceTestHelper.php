@@ -11,7 +11,7 @@ use Magento\Catalog\Model\Product\Type\Price;
 
 /**
  * Test helper for Magento\Catalog\Model\Product\Type\Price
- * 
+ *
  * Extends Price to add custom methods for testing
  */
 class PriceTestHelper extends Price
@@ -35,6 +35,7 @@ class PriceTestHelper extends Price
      * @param mixed $product
      * @param mixed $qty
      * @return mixed
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getSelectionFinalTotalPrice($product = null, $qty = null)
     {
@@ -59,6 +60,7 @@ class PriceTestHelper extends Price
      * @param mixed $product
      * @param mixed $which
      * @return mixed
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getTotalPrices($product = null, $which = null)
     {

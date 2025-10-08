@@ -17,81 +17,15 @@ class ButtonTestHelper extends Button
     /**
      * @var array
      */
-    private $expectations = [];
-    
-    /**
-     * @var array
-     */
-    private $returnValues = [];
-    
-    /**
-     * @var string|null
-     */
-    private $currentMethod;
+    private $data = [];
 
     /**
      * Skip parent constructor to avoid dependencies
      */
     public function __construct()
     {
-        // Skip parent constructor
-    }
-
-    /**
-     * Mock expects() method
-     *
-     * @param mixed $matcher
-     * @return $this
-     */
-    public function expects($matcher)
-    {
-        return $this;
-    }
-
-    /**
-     * Mock method() method
-     *
-     * @param string $method
-     * @return $this
-     */
-    public function method($method)
-    {
-        $this->currentMethod = $method;
-        return $this;
-    }
-
-    /**
-     * Mock with() method
-     *
-     * @param mixed ...$args
-     * @return $this
-     */
-    public function with(...$args)
-    {
-        return $this;
-    }
-
-    /**
-     * Mock willReturn() method
-     *
-     * @param mixed $value
-     * @return $this
-     */
-    public function willReturn($value)
-    {
-        $this->returnValues[$this->currentMethod] = $value;
-        return $this;
-    }
-
-    /**
-     * Mock willReturnSelf() method
-     *
-     * @return $this
-     */
-    public function willReturnSelf()
-    {
-        $this->returnValues[$this->currentMethod] = $this;
-        return $this;
+        // Skip parent constructor - clean initialization
+        $this->data = [];
     }
 
     /**
@@ -102,7 +36,23 @@ class ButtonTestHelper extends Button
      */
     public function isAllowed($resource = null): bool
     {
-        return $this->returnValues['isAllowed'] ?? true;
+        // Store resource for testing validation if provided
+        if ($resource !== null) {
+            $this->data['last_resource'] = $resource;
+        }
+        return $this->data['is_allowed'] ?? true;
+    }
+
+    /**
+     * Set is allowed for testing
+     *
+     * @param bool $isAllowed
+     * @return self
+     */
+    public function setIsAllowed(bool $isAllowed): self
+    {
+        $this->data['is_allowed'] = $isAllowed;
+        return $this;
     }
 
     /**
@@ -112,7 +62,19 @@ class ButtonTestHelper extends Button
      */
     public function getAuthorization()
     {
-        return $this->returnValues['getAuthorization'] ?? $this;
+        return $this->data['authorization'] ?? null;
+    }
+
+    /**
+     * Set authorization for testing
+     *
+     * @param mixed $authorization
+     * @return self
+     */
+    public function setAuthorization($authorization): self
+    {
+        $this->data['authorization'] = $authorization;
+        return $this;
     }
 
     /**
@@ -122,6 +84,42 @@ class ButtonTestHelper extends Button
      */
     public function toHtml(): string
     {
-        return $this->returnValues['toHtml'] ?? '';
+        return $this->data['html'] ?? '';
+    }
+
+    /**
+     * Set HTML output for testing
+     *
+     * @param string $html
+     * @return self
+     */
+    public function setHtml(string $html): self
+    {
+        $this->data['html'] = $html;
+        return $this;
+    }
+
+    /**
+     * Set test data for flexible state management
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return self
+     */
+    public function setTestData(string $key, $value): self
+    {
+        $this->data[$key] = $value;
+        return $this;
+    }
+
+    /**
+     * Get test data
+     *
+     * @param string $key
+     * @return mixed
+     */
+    public function getTestData(string $key)
+    {
+        return $this->data[$key] ?? null;
     }
 }

@@ -11,7 +11,7 @@ use Magento\Catalog\Model\Product\Option\Type\DefaultType;
 
 /**
  * Test helper for Magento\Catalog\Model\Product\Option\Type\DefaultType
- * 
+ *
  * Extends DefaultType to add custom methods for testing
  */
 class DefaultTypeTestHelper extends DefaultType

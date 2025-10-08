@@ -59,8 +59,7 @@ class SetAttributeTabBlockObserverTest extends TestCase
         $objectManager = new ObjectManager($this);
         $this->helperCatalogMock = $this->createMock(Catalog::class);
         $this->observerMock = $this->createMock(Observer::class);
-        /** @var Event $eventMock */
-        $this->eventMock = new EventTestHelper($this);
+        $this->eventMock = new EventTestHelper();
         $this->productMock = $this->createMock(Product::class);
         $this->observer = $objectManager->getObject(
             SetAttributeTabBlockObserver::class,

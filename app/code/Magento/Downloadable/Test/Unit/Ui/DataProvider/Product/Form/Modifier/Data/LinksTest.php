@@ -82,7 +82,7 @@ class LinksTest extends TestCase
     {
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->productMock = $this->createPartialMock(
-            \Magento\Downloadable\Test\Unit\Helper\ProductTestHelper::class,
+            \Magento\Catalog\Test\Unit\Helper\ProductTestHelper::class,
             ['getId', 'getTypeId', 'getLinksTitle', 'getTypeInstance', 'getStoreId']
         );
         $this->locatorMock = $this->createMock(LocatorInterface::class);

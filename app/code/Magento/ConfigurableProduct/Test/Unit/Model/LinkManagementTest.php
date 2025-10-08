@@ -182,7 +182,10 @@ class LinkManagementTest extends TestCase
         $attributeFactoryReflectionProperty->setAccessible(true);
         $attributeFactoryReflectionProperty->setValue($this->object, $attributeFactoryMock);
 
-        $attributeMock = $this->createPartialMock(Attribute::class, ['getCollection', 'getOptions', 'getId', 'getAttributeCode', 'getStoreLabel']);
+        $attributeMock = $this->createPartialMock(
+            Attribute::class,
+            ['getCollection', 'getOptions', 'getId', 'getAttributeCode', 'getStoreLabel']
+        );
         $attributeOptionMock = $this->createPartialMock(Option::class, ['getValue', 'getLabel']);
         $attributeCollectionMock = $this->createPartialMock(Collection::class, ['addFieldToFilter', 'getItems']);
 
@@ -261,7 +264,10 @@ class LinkManagementTest extends TestCase
         $productSku = 'configurable';
         $childSku = 'simple_10';
 
-        $product = $this->createPartialMock(Product::class, ['getTypeInstance', 'save', 'getTypeId', 'addData', 'getExtensionAttributes']);
+        $product = $this->createPartialMock(
+            Product::class,
+            ['getTypeInstance', 'save', 'getTypeId', 'addData', 'getExtensionAttributes']
+        );
 
         $productType = $this->createPartialMock(Configurable::class, ['getUsedProducts']);
         $product->expects($this->once())->method('getTypeInstance')->willReturn($productType);

@@ -11,7 +11,7 @@ use Magento\Catalog\Model\Product\Configuration\Item\Option;
 
 /**
  * Test helper for Magento\Catalog\Model\Product\Configuration\Item\Option
- * 
+ *
  * Extends Option to add custom methods for testing
  */
 class ItemOptionTestHelper extends Option

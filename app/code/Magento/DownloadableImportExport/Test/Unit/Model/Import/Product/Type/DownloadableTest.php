@@ -705,23 +705,6 @@ class DownloadableTest extends AbstractImportTestCase
     {
         // Configure MysqlTestHelper for fetchAll call
         $this->connectionMock->setTestData('fetch_all', []);
-
-        $metadataPoolMock = new class extends MetadataPool {
-            public function __construct()
-            {
-                // Skip parent constructor to avoid dependencies
-            }
-            
-            public function getMetadata($entityType)
-            {
-                return $this;
-            }
-            
-            public function getLinkField()
-            {
-                return 'entity_id';
-            }
-        };
         $this->downloadableHelper->expects($this->atLeastOnce())
             ->method('fillExistOptions')->willReturn($parsedOptions['link']);
         $this->uploaderHelper->method('isFileExist')->willReturn(false);

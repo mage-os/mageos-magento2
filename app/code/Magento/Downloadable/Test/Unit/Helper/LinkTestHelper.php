@@ -31,6 +31,7 @@ class LinkTestHelper extends Link
      * @param mixed $id
      * @param string|null $field
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function load($id, $field = null): self
     {
@@ -183,6 +184,7 @@ class LinkTestHelper extends Link
      * @param string $key
      * @param mixed $index
      * @return mixed
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getData($key = '', $index = null)
     {
@@ -204,6 +206,7 @@ class LinkTestHelper extends Link
      *
      * @param int $productId
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setProductId($productId): self
     {
@@ -215,6 +218,7 @@ class LinkTestHelper extends Link
      *
      * @param int $storeId
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setStoreId($storeId): self
     {
@@ -226,6 +230,7 @@ class LinkTestHelper extends Link
      *
      * @param int $websiteId
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setWebsiteId($websiteId): self
     {
@@ -237,6 +242,7 @@ class LinkTestHelper extends Link
      *
      * @param array $websiteIds
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setProductWebsiteIds($websiteIds): self
     {
@@ -247,6 +253,7 @@ class LinkTestHelper extends Link
      * Custom getIsUnlimited method for testing
      *
      * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getIsUnlimited()
     {
@@ -259,6 +266,7 @@ class LinkTestHelper extends Link
      * @param mixed $key
      * @param mixed $value
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setData($key, $value = null): self
     {

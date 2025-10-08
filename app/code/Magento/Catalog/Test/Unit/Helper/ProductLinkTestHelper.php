@@ -11,7 +11,7 @@ use Magento\Catalog\Model\Product\Link;
 
 /**
  * Test helper for Magento\Catalog\Model\Product\Link
- * 
+ *
  * Extends Link to add custom methods for testing
  */
 class ProductLinkTestHelper extends Link

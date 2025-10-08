@@ -2,12 +2,13 @@
 /**
  * Copyright 2025 Adobe
  * All Rights Reserved.
- */
+     */
 declare(strict_types=1);
 
 namespace Magento\Framework\Test\Unit\Helper;
 
 use Magento\Framework\DB\Adapter\Pdo\Mysql;
+use Magento\Framework\DB\Select;
 
 /**
  * Test helper class for MySQL adapter with custom methods
@@ -17,7 +18,13 @@ use Magento\Framework\DB\Adapter\Pdo\Mysql;
  */
 class MysqlTestHelper extends Mysql
 {
+    /**
+     * @var array
+     */
     private $data = [];
+    /**
+     * @var callable|null
+     */
     private $quoteIdentifierCallback;
 
     /**
@@ -46,6 +53,7 @@ class MysqlTestHelper extends Mysql
      * @param string|array $ident
      * @param bool $auto
      * @return string|array
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function quoteIdentifier($ident, $auto = false)
     {
@@ -62,6 +70,7 @@ class MysqlTestHelper extends Mysql
      * @param mixed $cond
      * @param mixed $cols
      * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function joinLeft($name, $cond, $cols = '*')
     {
@@ -81,10 +90,11 @@ class MysqlTestHelper extends Mysql
     /**
      * Mock fetchAll method
      *
-     * @param string|\Magento\Framework\DB\Select $sql
+     * @param string|Select $sql
      * @param mixed $bind
      * @param mixed $fetchMode
      * @return array
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function fetchAll($sql, $bind = [], $fetchMode = null)
     {
@@ -100,9 +110,10 @@ class MysqlTestHelper extends Mysql
     /**
      * Mock fetchPairs method
      *
-     * @param string|\Magento\Framework\DB\Select $sql
+     * @param string|Select $sql
      * @param mixed $bind
      * @return array
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function fetchPairs($sql, $bind = [])
     {
@@ -116,6 +127,7 @@ class MysqlTestHelper extends Mysql
      * @param mixed $data
      * @param mixed $fields
      * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function insertOnDuplicate($table, $data, $fields = [])
     {
@@ -128,6 +140,7 @@ class MysqlTestHelper extends Mysql
      * @param mixed $table
      * @param mixed $where
      * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function delete($table, $where = '')
     {
@@ -142,6 +155,7 @@ class MysqlTestHelper extends Mysql
      * @param mixed $type
      * @param mixed $count
      * @return string
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function quoteInto($text, $value, $type = null, $count = null)
     {
@@ -151,9 +165,10 @@ class MysqlTestHelper extends Mysql
     /**
      * Mock fetchAssoc method
      *
-     * @param string|\Magento\Framework\DB\Select $sql
+     * @param string|Select $sql
      * @param mixed $bind
      * @return array
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function fetchAssoc($sql, $bind = [])
     {

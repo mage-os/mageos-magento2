@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\GroupedProduct\Test\Unit\Model\Product\Initialization\Helper\ProductLinks\Plugin;
 
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Api\Data\ProductLinkExtensionFactory;
 use Magento\Catalog\Api\Data\ProductLinkExtensionInterface;
@@ -55,8 +56,9 @@ class GroupedTest extends TestCase
     protected function setUp(): void
     {
         $this->productMock = $this->createPartialMock(
-            \Magento\Catalog\Test\Unit\Helper\ProductTestHelper::class,
-            ['__wakeup', 'getTypeId', 'getSku', 'getProductLinks', 'setProductLinks', 'getGroupedReadonly', 'setGroupedLinkData']
+            ProductTestHelper::class,
+            ['__wakeup', 'getTypeId', 'getSku', 'getProductLinks', 'setProductLinks',
+                'getGroupedReadonly', 'setGroupedLinkData']
         );
         $this->subjectMock = $this->createMock(
             ProductLinks::class
@@ -97,11 +99,12 @@ class GroupedTest extends TestCase
     {
         $this->productMock->expects($this->once())->method('getTypeId')->willReturn(Grouped::TYPE_CODE);
         $this->productMock->expects($this->once())->method('getGroupedReadonly')->willReturn(false);
-        $this->productMock->expects($this->once())->method('setProductLinks')->with($this->arrayHasKey(0));
+        $this->productMock->expects($this->once())->method('setProductLinks')
+            ->with($this->arrayHasKey(0));
         $this->productMock->expects($this->once())->method('getProductLinks')->willReturn([]);
         $this->productMock->expects($this->once())->method('getSku')->willReturn('sku');
         $linkedProduct = $this->createPartialMock(
-            \Magento\Catalog\Test\Unit\Helper\ProductTestHelper::class,
+            ProductTestHelper::class,
             ['__wakeup', 'getTypeId', 'getSku', 'getProductLinks', 'setProductLinks', 'getGroupedReadonly']
         );
         $extensionAttributes = new \Magento\Catalog\Test\Unit\Helper\ProductLinkExtensionInterfaceTestHelper();
@@ -113,8 +116,10 @@ class GroupedTest extends TestCase
             ->willReturn($linkedProduct);
         $this->productLinkFactory->expects($this->once())->method('create')->willReturn($productLink);
         $productLink->expects($this->once())->method('setSku')->with('sku')->willReturnSelf();
-        $productLink->expects($this->once())->method('setLinkType')->with('associated')->willReturnSelf();
-        $productLink->expects($this->once())->method('setLinkedProductSku')->with('sku')->willReturnSelf();
+        $productLink->expects($this->once())->method('setLinkType')
+            ->with('associated')->willReturnSelf();
+        $productLink->expects($this->once())->method('setLinkedProductSku')
+            ->with('sku')->willReturnSelf();
         $productLink->expects($this->once())->method('setLinkedProductType')
             ->with(Grouped::TYPE_CODE)
             ->willReturnSelf();

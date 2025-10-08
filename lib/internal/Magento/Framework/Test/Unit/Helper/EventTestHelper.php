@@ -2,7 +2,7 @@
 /**
  * Copyright 2025 Adobe
  * All Rights Reserved.
- */
+     */
 declare(strict_types=1);
 
 namespace Magento\Framework\Test\Unit\Helper;
@@ -11,7 +11,7 @@ use Magento\Framework\Event;
 
 /**
  * Test helper for Event class
- */
+     */
 class EventTestHelper extends Event
 {
     /**

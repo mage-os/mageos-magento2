@@ -164,7 +164,9 @@ class HideUnsupportedAttributeTypesTest extends TestCase
     {
         $form = $this->createPartialMock(Form::class, ['getElement']);
         $frontendInput = new class($originalValues, $expectedValues) extends Select {
+            /** @var array */
             private $originalValues;
+            /** @var array */
             private $expectedValues;
             
             public function __construct($originalValues, $expectedValues)

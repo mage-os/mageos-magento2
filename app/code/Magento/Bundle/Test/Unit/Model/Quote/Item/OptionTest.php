@@ -24,6 +24,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Test bundle product options model
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class OptionTest extends TestCase
 {

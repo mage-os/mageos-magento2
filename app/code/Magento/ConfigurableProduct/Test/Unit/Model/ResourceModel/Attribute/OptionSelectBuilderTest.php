@@ -63,17 +63,26 @@ class OptionSelectBuilderTest extends TestCase
     protected function setUp(): void
     {
         $this->connectionMock = $this->createMock(AdapterInterface::class);
-        $this->select = $this->createPartialMock(Select::class, ['from', 'joinInner', 'joinLeft', 'where', 'columns', 'order']);
+        $this->select = $this->createPartialMock(
+            Select::class,
+            ['from', 'joinInner', 'joinLeft', 'where', 'columns', 'order']
+        );
         $this->connectionMock->expects($this->atLeastOnce())
             ->method('select', 'getIfNullSql')
             ->willReturn($this->select);
 
-        $this->attributeResourceMock = $this->createPartialMock(Attribute::class, ['getTable', 'getConnection']);
+        $this->attributeResourceMock = $this->createPartialMock(
+            Attribute::class,
+            ['getTable', 'getConnection']
+        );
         $this->attributeResourceMock->expects($this->atLeastOnce())
             ->method('getConnection')
             ->willReturn($this->connectionMock);
 
-        $this->attributeOptionProviderMock = $this->createPartialMock(OptionProvider::class, ['getProductEntityLinkField']);
+        $this->attributeOptionProviderMock = $this->createPartialMock(
+            OptionProvider::class,
+            ['getProductEntityLinkField']
+        );
 
         $this->abstractAttributeMock = $this->createMock(AbstractAttribute::class);
 

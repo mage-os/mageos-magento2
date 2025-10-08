@@ -375,7 +375,6 @@ class BundleTest extends TestCase
         return $priceMock;
     }
 
-
     /**
      * Create a BundleOptionPrice mock with getOptionSelectionAmount method
      *

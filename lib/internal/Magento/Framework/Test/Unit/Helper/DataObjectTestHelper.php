@@ -13,9 +13,14 @@ use Magento\Framework\DataObject;
  * Test helper for Magento\Framework\DataObject
  *
  * Extends the DataObject class to add custom methods for testing
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class DataObjectTestHelper extends DataObject
 {
+    /**
+     * @var array
+     */
+    private $data = [];
     /**
      * @var array
      */
@@ -27,7 +32,6 @@ class DataObjectTestHelper extends DataObject
     public function __construct()
     {
         // Skip parent constructor to avoid dependencies
-        parent::__construct();
     }
 
     /**
@@ -294,6 +298,7 @@ class DataObjectTestHelper extends DataObject
      * Get selection can change qty for testing
      *
      * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getSelectionCanChangeQty(): bool
     {
@@ -618,6 +623,7 @@ class DataObjectTestHelper extends DataObject
      *
      * @param bool $allowed
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setIsAllowed($allowed): self
     {
@@ -639,6 +645,7 @@ class DataObjectTestHelper extends DataObject
      *
      * @param array $data
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function addData($data): self
     {

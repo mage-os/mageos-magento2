@@ -11,7 +11,7 @@ use Magento\Catalog\Api\Data\ProductCustomOptionInterface;
 
 /**
  * Test helper for Magento\Catalog\Api\Data\ProductCustomOptionInterface
- * 
+ *
  * Implements ProductCustomOptionInterface for testing with custom methods
  */
 class ProductCustomOptionInterfaceTestHelper implements ProductCustomOptionInterface

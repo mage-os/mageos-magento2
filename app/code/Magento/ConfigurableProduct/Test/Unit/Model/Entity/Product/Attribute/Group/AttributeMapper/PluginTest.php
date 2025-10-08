@@ -64,6 +64,7 @@ class PluginTest extends TestCase
         );
 
         $this->magentoObject = new class extends DataObject {
+            /** @var int|null */
             private $id;
             public function __construct()
             {

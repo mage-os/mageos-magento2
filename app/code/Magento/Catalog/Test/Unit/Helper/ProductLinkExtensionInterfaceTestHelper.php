@@ -11,7 +11,7 @@ use Magento\Catalog\Api\Data\ProductLinkExtensionInterface;
 
 /**
  * Test helper for Magento\Catalog\Api\Data\ProductLinkExtensionInterface
- * 
+ *
  * Implements ProductLinkExtensionInterface to provide custom methods for testing
  */
 class ProductLinkExtensionInterfaceTestHelper implements ProductLinkExtensionInterface

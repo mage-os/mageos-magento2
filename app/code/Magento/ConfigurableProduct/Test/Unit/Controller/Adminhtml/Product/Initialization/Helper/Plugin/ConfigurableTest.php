@@ -172,7 +172,6 @@ class ConfigurableTest extends TestCase
             ->with($this->product, $variationMatrix)
             ->willReturn($simpleProductsIds);
 
-
         $this->product->expects(static::once())
             ->method('setExtensionAttributes')
             ->with($extensionAttributes);
@@ -218,7 +217,6 @@ class ConfigurableTest extends TestCase
             ->method('create')
             ->with($attributes)
             ->willReturn($attributes);
-
 
         $this->variationHandler->expects(static::never())
             ->method('prepareAttributeSet');

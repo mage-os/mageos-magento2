@@ -287,7 +287,7 @@ class LinkTest extends TestCase
     protected function createProductMock($id, $storeId, $storeWebsiteId, array $websiteIds)
     {
         $product = $this->createPartialMock(
-            \Magento\Downloadable\Test\Unit\Helper\ProductTestHelper::class,
+            \Magento\Catalog\Test\Unit\Helper\ProductTestHelper::class,
             [
                 'getLinksPurchasedSeparately',
                 'setIsCustomOptionChanged',

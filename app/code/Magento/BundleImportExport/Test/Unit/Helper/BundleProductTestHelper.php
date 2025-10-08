@@ -74,7 +74,6 @@ class BundleProductTestHelper extends Product
         return $this->data['entity_id'] ?? 1;
     }
 
-
     /**
      * Get price type for testing
      *
@@ -194,7 +193,6 @@ class BundleProductTestHelper extends Product
     {
         return $this->data['sku'] ?? 1;
     }
-
 
     /**
      * Get type instance for testing (returns self)

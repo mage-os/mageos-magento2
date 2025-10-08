@@ -196,13 +196,38 @@ class ProductExtensionInterfaceTestHelper implements ProductExtensionInterface
         return $this;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getDiscounts()
     {
-        // TODO: Implement getDiscounts() method.
+        return $this->data['discounts'] ?? null;
     }
+
+    /**
+     * @inheritdoc
+     */
     public function setDiscounts($discounts)
     {
-        // TODO: Implement setDiscounts() method.
+        $this->data['discounts'] = $discounts;
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getGiftcardAmounts()
+    {
+        return $this->data['giftcard_amounts'] ?? null;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setGiftcardAmounts($giftcardAmounts)
+    {
+        $this->data['giftcard_amounts'] = $giftcardAmounts;
+        return $this;
     }
 
     /**
@@ -245,4 +270,5 @@ class ProductExtensionInterfaceTestHelper implements ProductExtensionInterface
         $this->data['test_stock_item_qty'] = $qty;
         return $this;
     }
+
 }

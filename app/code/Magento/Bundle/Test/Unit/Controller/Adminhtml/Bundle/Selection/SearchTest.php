@@ -14,6 +14,7 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\App\ViewInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\Bundle\Test\Unit\Helper\SearchTestHelper;
 use Magento\Framework\Test\Unit\Helper\ResponseInterfaceTestHelper;
 use Magento\Framework\View\LayoutInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -75,53 +76,8 @@ class SearchTest extends TestCase
     {
         $layout = $this->createMock(LayoutInterface::class);
         
-        /** @var SearchBlock $block */
-        $block = new class extends SearchBlock {
-            /**
-             * @var mixed $index
-             */
-            private $index = null;
-            /**
-             * @var mixed $firstShow
-             */
-            private $firstShow = null;
-            /**
-             * @var mixed $htmlResult
-             */
-            private $htmlResult = '';
-            
-            public function __construct()
-            {
-            }
-            
-            public function setIndex($index)
-            {
-                $this->index = $index;
-                return $this;
-            }
-            public function getIndex()
-            {
-                return $this->index;
-            }
-            public function setFirstShow($firstShow)
-            {
-                $this->firstShow = $firstShow;
-                return $this;
-            }
-            public function getFirstShow()
-            {
-                return $this->firstShow;
-            }
-            public function toHtml()
-            {
-                return $this->htmlResult;
-            }
-            public function setHtmlResult($result)
-            {
-                $this->htmlResult = $result;
-                return $this;
-            }
-        };
+        /** @var SearchTestHelper $block */
+        $block = new SearchTestHelper();
 
         $this->response->setBody(''); // Use setter instead of expects
         $this->request->expects($this->once())->method('getParam')->with('index')->willReturn('index');

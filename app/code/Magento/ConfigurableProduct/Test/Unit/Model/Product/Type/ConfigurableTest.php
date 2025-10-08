@@ -429,7 +429,10 @@ class ConfigurableTest extends TestCase
         $product->expects($this->once())->method('hasData')->with($configurableAttributes)->willReturn(false);
         $product->expects($this->once())->method('getId')->willReturn(1);
 
-        $attributeCollection = $this->createPartialMock(Collection::class, ['setProductFilter', 'orderByPosition', 'load']);
+        $attributeCollection = $this->createPartialMock(
+            Collection::class,
+            ['setProductFilter', 'orderByPosition', 'load']
+        );
         $attributeCollection->expects($this->once())->method('setProductFilter')->willReturnSelf();
         $attributeCollection->expects($this->once())->method('orderByPosition')->willReturnSelf();
         $attributeCollection->expects($this->once())->method('load')->willReturnSelf();
@@ -513,7 +516,10 @@ class ConfigurableTest extends TestCase
      */
     public function testIsSalable(): void
     {
-        $productMock = $this->createPartialMock(Product::class, ['getStatus', 'hasData', 'getData', 'getStoreId', 'setData', 'getSku']);
+        $productMock = $this->createPartialMock(
+            Product::class,
+            ['getStatus', 'hasData', 'getData', 'getStoreId', 'setData', 'getSku']
+        );
         $productMock->expects($this->once())->method('getStatus')->willReturn(1);
         $productMock->method('hasData')->willReturn(true);
         $productMock
@@ -530,7 +536,10 @@ class ConfigurableTest extends TestCase
         $productMock
             ->method('getSku')
             ->willReturn('SKU-CODE');
-        $productCollection = $this->createPartialMock(ProductCollection::class, ['setFlag', 'setProductFilter', 'addStoreFilter', 'getSize']);
+        $productCollection = $this->createPartialMock(
+            ProductCollection::class,
+            ['setFlag', 'setProductFilter', 'addStoreFilter', 'getSize']
+        );
         $productCollection->expects($this->any())->method('setFlag')->willReturnSelf();
         $productCollection
             ->expects($this->once())

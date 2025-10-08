@@ -59,7 +59,7 @@ class DataTest extends TestCase
         $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
         $this->_imageHelperMock = $this->createMock(Image::class);
         $this->_productMock = $this->createMock(Product::class);
-        $this->_productMock->setTypeId(Configurable::TYPE_CODE);
+        $this->_productMock->method('getTypeId')->willReturn(Configurable::TYPE_CODE);
         $this->_model = $objectManager->getObject(
             Data::class,
             [
@@ -149,7 +149,9 @@ class DataTest extends TestCase
         $attributes = [];
         for ($i = 1; $i < $attributesCount; $i++) {
             $productAttribute = new class extends DataObject {
+                /** @var int */
                 private $id;
+                /** @var string */
                 private $attributeCode;
                 public function __construct()
                 {
@@ -178,6 +180,7 @@ class DataTest extends TestCase
             $productAttribute->setAttributeCode('attribute_code_' . $i);
 
             $attribute = new class($productAttribute) extends DataObject {
+                /** @var DataObject */
                 private $productAttribute;
                 public function __construct($productAttribute)
                 {

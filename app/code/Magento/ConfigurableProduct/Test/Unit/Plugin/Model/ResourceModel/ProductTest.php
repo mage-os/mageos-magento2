@@ -114,6 +114,9 @@ class ProductTest extends TestCase
             ['getAttributeId']
         );
         $extensionAttributes = new class($option) implements ExtensionAttributesInterface {
+            /**
+             * @var OptionInterface
+             */
             private $option;
             public function __construct($option)
             {

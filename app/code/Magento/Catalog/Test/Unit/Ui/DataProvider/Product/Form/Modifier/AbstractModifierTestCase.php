@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Ui\DataProvider\Product\Form\Modifier;
 
+use Magento\Catalog\Api\Data\ProductExtensionInterface;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\Locator\LocatorInterface;
 use Magento\Framework\Stdlib\ArrayManager;
@@ -55,27 +56,84 @@ abstract class AbstractModifierTestCase extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
         $this->locatorMock = $this->createMock(LocatorInterface::class);
-        
+
         // Create anonymous class for ProductInterface with all required methods
         $this->productMock = new class implements ProductInterface {
+            /**
+             * @var null
+             */
             private $id = null;
+            /**
+             * @var null
+             */
             private $typeId = null;
+            /**
+             * @var null
+             */
             private $storeId = null;
+            /**
+             * @var null
+             */
             private $resource = null;
+            /**
+             * @var array
+             */
             private $data = [];
+            /**
+             * @var array
+             */
             private $attributes = [];
+            /**
+             * @var null
+             */
             private $store = null;
+            /**
+             * @var null
+             */
             private $attributeDefaultValue = null;
+            /**
+             * @var null
+             */
             private $existsStoreValueFlag = null;
+            /**
+             * @var null
+             */
             private $lockedAttribute = null;
+            /**
+             * @var null
+             */
             private $sku = null;
+            /**
+             * @var null
+             */
             private $name = null;
+            /**
+             * @var null
+             */
             private $attributeSetId = null;
+            /**
+             * @var null
+             */
             private $price = null;
+            /**
+             * @var null
+             */
             private $status = null;
+            /**
+             * @var null
+             */
             private $visibility = null;
+            /**
+             * @var null
+             */
             private $typeInstance = null;
+            /**
+             * @var null
+             */
             private $extensionAttributes = null;
+            /**
+             * @var null
+             */
             private $weight = null;
 
             public function __construct()
@@ -274,7 +332,7 @@ abstract class AbstractModifierTestCase extends TestCase
                 return $this->extensionAttributes;
             }
 
-            public function setExtensionAttributes(\Magento\Catalog\Api\Data\ProductExtensionInterface $extensionAttributes)
+            public function setExtensionAttributes(ProductExtensionInterface $extensionAttributes)
             {
                 $this->extensionAttributes = $extensionAttributes;
                 return $this;
@@ -531,14 +589,25 @@ abstract class AbstractModifierTestCase extends TestCase
                 return $this;
             }
 
-
         };
 
         // Create anonymous class for StoreInterface with all required methods
         $this->storeMock = new class implements StoreInterface {
+            /**
+             * @var null
+             */
             private $id = null;
+            /**
+             * @var null
+             */
             private $loadResult = null;
+            /**
+             * @var null
+             */
             private $config = null;
+            /**
+             * @var null
+             */
             private $extensionAttributes = null;
 
             public function __construct()

@@ -2,7 +2,7 @@
 /**
  * Copyright 2025 Adobe
  * All Rights Reserved.
- */
+     */
 declare(strict_types=1);
 
 namespace Magento\Framework\Test\Unit\Helper;
@@ -11,7 +11,7 @@ use Magento\Framework\Pricing\Amount\Base;
 
 /**
  * Test helper for Amount class
- */
+     */
 class AmountTestHelper extends Base
 {
     /**
@@ -61,6 +61,7 @@ class AmountTestHelper extends Base
      *
      * @param mixed $exclude
      * @return mixed
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getValue($exclude = null)
     {

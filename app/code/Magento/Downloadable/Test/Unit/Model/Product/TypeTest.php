@@ -123,7 +123,7 @@ class TypeTest extends TestCase
             );
 
         $this->product = $this->createPartialMock(
-            \Magento\Downloadable\Test\Unit\Helper\ProductTestHelper::class,
+            \Magento\Catalog\Test\Unit\Helper\ProductTestHelper::class,
             [
                 'getLinksPurchasedSeparately',
                 'setTypeHasRequiredOptions',

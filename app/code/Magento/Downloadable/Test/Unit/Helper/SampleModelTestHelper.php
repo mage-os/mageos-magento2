@@ -68,6 +68,7 @@ class SampleModelTestHelper extends Sample
      * @param mixed $id
      * @param mixed $field
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function load($id, $field = null): self
     {
@@ -78,6 +79,7 @@ class SampleModelTestHelper extends Sample
      * Override save method
      *
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function save(): self
     {
@@ -90,6 +92,7 @@ class SampleModelTestHelper extends Sample
      * @param string $key
      * @param mixed $index
      * @return mixed
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getData($key = '', $index = null)
     {
@@ -173,6 +176,7 @@ class SampleModelTestHelper extends Sample
      *
      * @param array $websiteIds
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setProductWebsiteIds($websiteIds): self
     {
@@ -184,6 +188,7 @@ class SampleModelTestHelper extends Sample
      *
      * @param int $downloads
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setNumberOfDownloads($downloads): self
     {
@@ -195,6 +200,7 @@ class SampleModelTestHelper extends Sample
      *
      * @param string $file
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setLinkFile($file): self
     {
@@ -207,6 +213,7 @@ class SampleModelTestHelper extends Sample
      * @param mixed $key
      * @param mixed $value
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setData($key, $value = null): self
     {
@@ -218,6 +225,7 @@ class SampleModelTestHelper extends Sample
      *
      * @param string $type
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setSampleType($type): self
     {
@@ -229,6 +237,7 @@ class SampleModelTestHelper extends Sample
      *
      * @param string $url
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setSampleUrl($url): self
     {
@@ -240,6 +249,7 @@ class SampleModelTestHelper extends Sample
      *
      * @param string $file
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setSampleFile($file): self
     {
@@ -251,6 +261,7 @@ class SampleModelTestHelper extends Sample
      *
      * @param string $title
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setTitle($title): self
     {
@@ -262,6 +273,7 @@ class SampleModelTestHelper extends Sample
      *
      * @param int $sortOrder
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setSortOrder($sortOrder): self
     {

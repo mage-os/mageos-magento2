@@ -240,10 +240,12 @@ class ConfigurableTest extends AbstractImportTestCase
         ];
         foreach ($testProducts as $product) {
             $item = new class extends DataObject {
-                public function __construct() {
+                public function __construct()
+                {
                     // Skip parent constructor to avoid dependencies
                 }
-                public function getAttributeSetId() {
+                public function getAttributeSetId()
+                {
                     return 4;
                 }
             };

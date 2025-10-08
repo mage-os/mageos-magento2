@@ -56,7 +56,7 @@ class CreateHandlerTest extends TestCase
 
         /** @var ProductInterface|MockObject $entityMock */
         $entityMock = $this->createPartialMock(
-            \Magento\Downloadable\Test\Unit\Helper\ProductTestHelper::class,
+            \Magento\Catalog\Test\Unit\Helper\ProductTestHelper::class,
             ['getStoreId', 'getTypeId', 'getExtensionAttributes', 'getSku']
         );
         $entityMock->expects($this->once())
@@ -87,7 +87,7 @@ class CreateHandlerTest extends TestCase
     {
         /** @var ProductInterface|MockObject $entityMock */
         $entityMock = $this->createPartialMock(
-            \Magento\Downloadable\Test\Unit\Helper\ProductTestHelper::class,
+            \Magento\Catalog\Test\Unit\Helper\ProductTestHelper::class,
             ['getStoreId', 'getTypeId', 'getExtensionAttributes', 'getSku']
         );
         $entityMock->expects($this->once())

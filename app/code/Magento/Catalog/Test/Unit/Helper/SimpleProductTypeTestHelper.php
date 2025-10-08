@@ -32,6 +32,7 @@ class SimpleProductTypeTestHelper extends Simple
      *
      * @param $product
      * @return string
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getSku($product)
     {

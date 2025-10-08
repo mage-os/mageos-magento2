@@ -67,6 +67,7 @@ class PriceTest extends TestCase
      * @param $expectedFinalPrice
      *
      * @return void
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     #[DataProvider('getFinalPriceDataProvider')]
     public function testGetFinalPrice(
