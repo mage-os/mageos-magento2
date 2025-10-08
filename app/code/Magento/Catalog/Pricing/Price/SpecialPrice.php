@@ -83,7 +83,6 @@ class SpecialPrice extends AbstractPrice implements SpecialPriceInterface, BaseP
     public function getSpecialPrice()
     {
         $specialPrice = $this->product->getSpecialPrice();
-
         if ($specialPrice !== null && $specialPrice !== false && !$this->isPercentageDiscount()) {
             $specialPrice = $this->priceCurrency->convertAndRound($specialPrice);
         }
@@ -131,5 +130,4 @@ class SpecialPrice extends AbstractPrice implements SpecialPriceInterface, BaseP
     {
         return false;
     }
-
 }
