@@ -49,10 +49,8 @@ class QuoteAddressValidationService
      * @param AddressInterface|null $billingAddress
      * @return void
      * @throws InputException
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function validateAddressesWithRules(
-        Quote $quote,
         ?AddressInterface $shippingAddress = null,
         ?AddressInterface $billingAddress = null
     ): void {
@@ -106,45 +104,6 @@ class QuoteAddressValidationService
         $address->setShouldIgnoreValidation(true);
 
         return true;
-    }
-
-    /**
-     * Validate shipping addresses using validation rules
-     *
-     * @param Quote $quote
-     * @return void
-     * @throws InputException
-     */
-    public function validateShippingAddressWithRules(Quote $quote): void
-    {
-        $shippingAddress = $quote->getShippingAddress();
-
-        if ($shippingAddress) {
-            $this->addressAttributeValidator->validate($shippingAddress, 'shipping');
-        }
-    }
-
-    /**
-     * Validate billing addresses using validation rules
-     *
-     * @param Quote $quote
-     * @return void
-     * @throws InputException
-     */
-    public function validateBillingAddressWithRules(Quote $quote): void
-    {
-        $billingAddress = $quote->getBillingAddress();
-        $shippingAddress = $quote->getShippingAddress();
-
-        if (!$billingAddress) {
-            return;
-        }
-
-        if ($shippingAddress && $this->addressComparator->isEqual($billingAddress, $shippingAddress)) {
-            return;
-        }
-
-        $this->addressAttributeValidator->validate($billingAddress, 'billing');
     }
 
     /**

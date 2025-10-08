@@ -213,7 +213,7 @@ class ShippingInformationManagement implements ShippingInformationManagementInte
 
             $quote->setIsMultiShipping(false);
 
-            $this->quoteAddressValidationService->validateAddressesWithRules($quote, $address, $billingAddress);
+            $this->quoteAddressValidationService->validateAddressesWithRules($address, $billingAddress);
 
             $this->quoteRepository->save($quote);
         } catch (LocalizedException $e) {

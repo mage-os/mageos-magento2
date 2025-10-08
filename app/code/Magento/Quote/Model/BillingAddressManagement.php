@@ -130,7 +130,7 @@ class BillingAddressManagement implements BillingAddressManagementInterface
         $quote->removeAddress($quote->getBillingAddress()->getId());
         $quote->setBillingAddress($address);
 
-        $this->quoteAddressValidationService->validateAddressesWithRules($quote, null, $address);
+        $this->quoteAddressValidationService->validateAddressesWithRules(null, $address);
 
         try {
             $this->getShippingAddressAssignment()->setAddress($quote, $address, $useForShipping);

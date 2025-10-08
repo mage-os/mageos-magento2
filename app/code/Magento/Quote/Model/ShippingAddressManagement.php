@@ -125,7 +125,7 @@ class ShippingAddressManagement implements \Magento\Quote\Model\ShippingAddressM
         $address->setSaveInAddressBook($saveInAddressBook);
         $address->setCollectShippingRates(true);
 
-        $this->quoteAddressValidationService->validateAddressesWithRules($quote, $address, null);
+        $this->quoteAddressValidationService->validateAddressesWithRules($address, null);
 
         try {
             $address->save();
