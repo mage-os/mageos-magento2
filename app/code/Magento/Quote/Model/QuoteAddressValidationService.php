@@ -44,7 +44,6 @@ class QuoteAddressValidationService
     /**
      * Validate addresses using validation rules
      *
-     * @param Quote $quote
      * @param AddressInterface|null $shippingAddress
      * @param AddressInterface|null $billingAddress
      * @return void
