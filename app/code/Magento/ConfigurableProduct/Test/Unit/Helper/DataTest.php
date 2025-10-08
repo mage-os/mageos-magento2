@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2017 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -176,7 +176,7 @@ class DataTest extends TestCase
             };
             $productAttribute->setId('attribute_id_' . $i);
             $productAttribute->setAttributeCode('attribute_code_' . $i);
-            
+
             $attribute = new class($productAttribute) extends DataObject {
                 private $productAttribute;
                 public function __construct($productAttribute)

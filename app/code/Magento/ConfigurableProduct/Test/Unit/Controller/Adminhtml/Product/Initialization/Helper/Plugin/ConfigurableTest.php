@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2017 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -162,7 +162,7 @@ class ConfigurableTest extends TestCase
             ->method('create')
             ->with($attributes)
             ->willReturn($attributes);
-        
+
         $this->variationHandler->expects(static::once())
             ->method('prepareAttributeSet')
             ->with($this->product);

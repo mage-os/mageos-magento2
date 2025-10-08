@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2017 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -250,13 +250,13 @@ class ConfigurableTest extends TestCase
         $extensionAttributes = new \Magento\Catalog\Test\Unit\Helper\ProductExtensionInterfaceTestHelper();
         $extensionAttributes->setConfigurableProductOptions([]);
         $extensionAttributes->setConfigurableProductLinks([]);
-        
+
         $this->entityMetadata->method('getLinkField')->willReturn('link');
         // Configure ProductTestHelper with extension attributes
         $product->setExtensionAttributes($extensionAttributes);
         $product->setData('_cache_instance_used_product_attribute_ids', 1);
         $product->setData('link', 1);
-        
+
         $attribute = new \Magento\Framework\Test\Unit\Helper\AttributeTestHelper();
         $expectedAttributeData = $this->attributeData[1];
         unset($expectedAttributeData['id']);

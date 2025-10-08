@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2017 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -96,9 +96,9 @@ class PriceTest extends TestCase
         $configurableProduct->setCustomOption('simple_product', $customOption);
         $configurableProduct->setCustomOption('option_ids', false);
         $configurableProduct->setCustomerGroupId($customerGroupId);
-        
+
         $customOption->setProduct($simpleProduct);
-        
+
         $simpleProduct->setCustomerGroupId($customerGroupId);
         $simpleProduct->setPrice($finalPrice);
         $simpleProduct->setData('final_price', $finalPrice);

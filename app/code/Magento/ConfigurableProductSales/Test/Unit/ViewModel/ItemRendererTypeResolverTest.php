@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2021 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -41,12 +41,12 @@ class ItemRendererTypeResolverTest extends TestCase
     {
         $orderItem = $this->getOrderItemMock();
         $orderItem->method('getProductType')->willReturn('configurable');
-        
+
         $childOrderItem = $this->getOrderItemMock();
         $childOrderItem->method('getRealProductType')->willReturn($realProductType);
-        
+
         $orderItem->method('getChildrenItems')->willReturn([$childOrderItem]);
-        
+
         $this->assertEquals($expectedProductType, $this->model->resolve($orderItem));
         $this->assertEquals($expectedProductType, $this->model->resolve(new DataObject(['order_item' => $orderItem])));
     }
