@@ -180,4 +180,48 @@ class SampleTestHelper extends Sample
         $this->data['store_title'] = $storeTitle;
         return $this;
     }
+
+    /**
+     * Get base path
+     *
+     * @return string|null
+     */
+    public function getBasePath()
+    {
+        return $this->data['base_path'] ?? null;
+    }
+
+    /**
+     * Set base path
+     *
+     * @param string $basePath
+     * @return $this
+     */
+    public function setBasePath($basePath)
+    {
+        $this->data['base_path'] = $basePath;
+        return $this;
+    }
+
+    /**
+     * Get base sample path
+     *
+     * @return string|null
+     */
+    public function getBaseSamplePath()
+    {
+        return $this->data['base_sample_path'] ?? null;
+    }
+
+    /**
+     * Set base sample path
+     *
+     * @param string $baseSamplePath
+     * @return $this
+     */
+    public function setBaseSamplePath($baseSamplePath)
+    {
+        $this->data['base_sample_path'] = $baseSamplePath;
+        return $this;
+    }
 }

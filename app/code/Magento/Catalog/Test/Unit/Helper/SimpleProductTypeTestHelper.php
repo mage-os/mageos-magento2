@@ -30,9 +30,10 @@ class SimpleProductTypeTestHelper extends Simple
     /**
      * Get SKU for testing
      *
+     * @param $product
      * @return string
      */
-    public function getSku()
+    public function getSku($product)
     {
         return $this->data['sku'] ?? 'Simple Product 1';
     }
