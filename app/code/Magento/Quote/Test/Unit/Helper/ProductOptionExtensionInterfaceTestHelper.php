@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Quote\Test\Unit\Helper;
 
+use Magento\GiftCard\Api\Data\GiftCardOptionInterface;
 use Magento\Quote\Api\Data\ProductOptionExtensionInterface;
 
 /**
@@ -156,9 +157,9 @@ class ProductOptionExtensionInterfaceTestHelper implements ProductOptionExtensio
     }
 
     /**
-     * Get giftcard item option for testing
+     * Get gift item option for testing
      *
-     * @return \Magento\GiftCard\Api\Data\GiftCardOptionInterface|null
+     * @return GiftCardOptionInterface|null
      */
     public function getGiftcardItemOption()
     {
@@ -166,12 +167,12 @@ class ProductOptionExtensionInterfaceTestHelper implements ProductOptionExtensio
     }
 
     /**
-     * Set giftcard item option for testing
+     * Set gift item option for testing
      *
-     * @param \Magento\GiftCard\Api\Data\GiftCardOptionInterface $giftcardItemOption
+     * @param GiftCardOptionInterface $giftcardItemOption
      * @return $this
      */
-    public function setGiftcardItemOption(\Magento\GiftCard\Api\Data\GiftCardOptionInterface $giftcardItemOption)
+    public function setGiftcardItemOption(GiftCardOptionInterface $giftcardItemOption)
     {
         $this->data['giftcard_item_option'] = $giftcardItemOption;
         return $this;
