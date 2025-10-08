@@ -84,11 +84,6 @@ class SpecialPrice extends AbstractPrice implements SpecialPriceInterface, BaseP
     {
         $specialPrice = $this->product->getSpecialPrice();
 
-        // If special_price is not loaded (null and attribute not loaded), load it from resource
-        if ($specialPrice === null && $this->product->getTypeId() === 'simple') {
-            $specialPrice = $this->getSpecialPriceFromResource();
-        }
-
         if ($specialPrice !== null && $specialPrice !== false && !$this->isPercentageDiscount()) {
             $specialPrice = $this->priceCurrency->convertAndRound($specialPrice);
         }
@@ -137,19 +132,4 @@ class SpecialPrice extends AbstractPrice implements SpecialPriceInterface, BaseP
         return false;
     }
 
-    /**
-     * Get special price from resource
-     *
-     * @return float|null
-     */
-    private function getSpecialPriceFromResource(): ?float
-    {
-        $resource = $this->product->getResource();
-        $specialPrice = $resource->getAttributeRawValue(
-            $this->product->getId(),
-            'special_price',
-            $this->product->getStoreId()
-        );
-        return !is_array($specialPrice) ? $specialPrice : null;
-    }
 }
