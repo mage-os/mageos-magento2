@@ -15,5 +15,7 @@ return [
     'app/i18n/*/*/registration.php',
     'lib/internal/*/*/registration.php',
     'lib/internal/*/*/*/registration.php',
+    // Exclude framework registrations to avoid conflicts with VCS framework
+    '!lib/internal/Magento/Framework/*/registration.php',
     'setup/src/*/*/registration.php'
 ];
