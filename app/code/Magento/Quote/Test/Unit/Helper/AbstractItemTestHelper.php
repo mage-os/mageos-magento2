@@ -66,7 +66,7 @@ class AbstractItemTestHelper extends AbstractItem
         return $this->data['parent_item'] ?? null;
     }
 
-    public function setParentItem(AbstractItem $parentItem): self
+    public function setParentItem($parentItem): self
     {
         $this->data['parent_item'] = $parentItem;
         return $this;
