@@ -11,7 +11,6 @@ use Magento\Store\Model\Store;
 
 /**
  * Test helper for Magento\Store\Model\Store
- * 
  * Extends the Store class to add custom methods for testing
  */
 class StoreTestHelper extends Store
@@ -37,8 +36,8 @@ class StoreTestHelper extends Store
      */
     public function roundPrice($price)
     {
-        return $this->data['round_price_callback'] ? 
-            call_user_func($this->data['round_price_callback'], $price) : 
+        return $this->data['round_price_callback'] ?
+            call_user_func($this->data['round_price_callback'], $price) :
             $price;
     }
 

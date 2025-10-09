@@ -73,7 +73,10 @@ class UpdateCustomizedOptionsTest extends TestCase
         $this->superAttributeDataProviderMock = $this->createMock(SuperAttributeDataProvider::class);
 
         $this->quote = $this->createPartialMock(Quote::class, ['getStore', 'getItemById']);
-        $this->quoteItem = $this->createPartialMock(QuoteItem::class, ['getProduct', 'getProductType', 'getChildren', 'getQty', 'getSku']);
+        $this->quoteItem = $this->createPartialMock(
+            QuoteItem::class,
+            ['getProduct', 'getProductType', 'getChildren', 'getQty', 'getSku']
+        );
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->model = $this->objectManagerHelper->getObject(
             UpdateCustomizedOptions::class,

@@ -11,7 +11,7 @@ use Magento\Bundle\Block\Adminhtml\Catalog\Product\Edit\Tab\Bundle\Option\Search
 
 /**
  * Test helper for Bundle Search block with custom methods
- * 
+ *
  * Follows PHPUnit 12 migration rules:
  * - Simple data array pattern
  * - Clean setters/getters only
@@ -166,5 +166,3 @@ class SearchTestHelper extends Search
         return $this->toHtml();
     }
 }
-
-

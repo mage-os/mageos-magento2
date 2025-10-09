@@ -2,7 +2,7 @@
 /**
  * Copyright 2025 Adobe
  * All Rights Reserved.
-     */
+ */
 declare(strict_types=1);
 
 namespace Magento\Framework\Test\Unit\Helper;
@@ -13,7 +13,7 @@ use Magento\Framework\Pricing\PriceCurrencyInterface;
  * Test helper for Magento\Framework\Pricing\PriceCurrencyInterface
  *
  * Implements PriceCurrencyInterface for testing with custom methods
-     */
+ */
 class PriceCurrencyInterfaceTestHelper implements PriceCurrencyInterface
 {
     /**

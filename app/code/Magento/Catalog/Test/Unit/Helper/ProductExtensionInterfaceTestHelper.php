@@ -286,3 +286,4 @@ class ProductExtensionInterfaceTestHelper implements ProductExtensionInterface
     }
 
 }
+

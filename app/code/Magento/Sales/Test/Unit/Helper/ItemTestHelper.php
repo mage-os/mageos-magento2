@@ -18,6 +18,9 @@ use Magento\Sales\Model\Order\Item;
  */
 class ItemTestHelper extends Item
 {
+    /**
+     * @var array
+     */
     private $data = [];
 
     /**

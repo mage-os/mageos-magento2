@@ -155,14 +155,24 @@ class SuperAttributeDataProviderTest extends TestCase
         $childProductMock->setData('code', 1); // Set the attribute value that matches the option
 
         $this->productRepository->method('get')
-            ->willReturnCallback(function ($sku, $editMode = false, $storeId = null, $forceReload = false) use ($productMock, $childProductMock) {
-                if ($sku === 'configurable') {
-                    return $productMock;
-                } elseif ($sku === 'simple1') {
-                    return $childProductMock;
+            ->willReturnCallback(
+                function (
+                    $sku,
+                    $editMode = false,
+                    $storeId = null,
+                    $forceReload = false
+                ) use (
+                    $productMock,
+                    $childProductMock
+                ) {
+                    if ($sku === 'configurable') {
+                        return $productMock;
+                    } elseif ($sku === 'simple1') {
+                        return $childProductMock;
+                    }
+                    return null;
                 }
-                return null;
-            });
+            );
         $checkResult = new DataObject();
         $checkResult->setHasError(false);
         $this->stockState->method('checkQuoteItemQty')

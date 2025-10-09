@@ -2,7 +2,7 @@
 /**
  * Copyright 2025 Adobe
  * All Rights Reserved.
-     */
+ */
 declare(strict_types=1);
 
 namespace Magento\Framework\Test\Unit\Helper;
@@ -11,14 +11,14 @@ use Magento\Framework\Pricing\Amount\Base;
 
 /**
  * Test helper for Amount class
-     */
+ */
 class AmountTestHelper extends Base
 {
     /**
      * @var array
      */
     protected $adjustmentAmounts;
-    
+
     /**
      * @var float
      */

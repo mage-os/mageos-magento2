@@ -18,6 +18,9 @@ use Magento\Quote\Api\Data\ProductOptionExtensionInterface;
  */
 class ProductOptionExtensionInterfaceTestHelper implements ProductOptionExtensionInterface
 {
+    /**
+     * @var array
+     */
     private $data = [];
 
     /**

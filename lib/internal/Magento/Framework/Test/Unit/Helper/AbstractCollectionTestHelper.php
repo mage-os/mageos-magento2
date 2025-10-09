@@ -2,7 +2,7 @@
 /**
  * Copyright 2025 Adobe
  * All Rights Reserved.
-     */
+ */
 declare(strict_types=1);
 
 namespace Magento\Framework\Test\Unit\Helper;
@@ -13,7 +13,7 @@ use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
  * Test helper for Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
  *
  * Extends AbstractCollection to add custom methods for testing
-     */
+ */
 class AbstractCollectionTestHelper extends AbstractCollection
 {
     /**
