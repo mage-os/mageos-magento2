@@ -24,10 +24,6 @@
         {
             "type": "vcs",
             "url": "git@github.com:magento-gl/magento2-functional-testing-framework.git"
-        },
-        {
-            "type": "vcs",
-            "url": "git@github.com:glo71317/php72-framwork.git"
         }
     ],
     "require": {
@@ -83,7 +79,6 @@
         "magento/composer": "dev-AC-15170",
         "magento/composer-dependency-version-audit-plugin": "^0.1",
         "magento/magento-composer-installer": ">=0.4.0",
-        "magento/framework": "dev-AC-15170",
         "magento/zend-cache": "^1.16",
         "magento/zend-db": "^1.16",
         "magento/zend-pdf": "^1.16",
@@ -351,6 +346,7 @@
         "magento/language-nl_nl": "*",
         "magento/language-pt_br": "*",
         "magento/language-zh_hans_cn": "*",
+        "magento/framework": "*",
         "magento/framework-amqp": "*",
         "magento/framework-bulk": "*",
         "magento/framework-message-queue": "*",
