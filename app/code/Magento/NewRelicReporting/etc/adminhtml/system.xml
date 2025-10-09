@@ -33,7 +33,7 @@
                         <field id="api_mode">nerdgraph</field>
                     </depends>
                 </field>
-                <field id="entity_guid" translate="label comment" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="entity_guid" translate="label comment" type="obscure" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Entity GUID (NerdGraph)</label>
                     <comment>Application Entity GUID for NerdGraph. Leave empty for auto-detection from App ID.</comment>
                     <depends>
