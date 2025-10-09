@@ -12,7 +12,8 @@ use Magento\Bundle\Model\ResourceModel\Option\Collection;
 /**
  * Test helper for Magento\Bundle\Model\ResourceModel\Option\Collection
  *
- * Extends Collection to add custom methods for testing
+ * Extends Collection to add custom methods for testing.
+ * Overrides methods that require database connection to work in unit test environment.
  */
 class OptionCollectionTestHelper extends Collection
 {
@@ -27,6 +28,31 @@ class OptionCollectionTestHelper extends Collection
     public function __construct()
     {
         // Skip parent constructor to avoid dependencies
+    }
+
+    /**
+     * Override setConnection to handle null values in test environment
+     *
+     * @param \Magento\Framework\DB\Adapter\AdapterInterface|null $conn
+     * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function setConnection($conn): self
+    {
+        // In unit test environment, we don't need an actual connection
+        // Just return self to maintain fluent interface
+        return $this;
+    }
+
+    /**
+     * Override _resetState to prevent issues with null connection
+     *
+     * @return void
+     */
+    public function _resetState(): void
+    {
+        // Skip parent _resetState which calls setConnection with potentially null _conn
+        // In unit tests, we don't need to reset database-related state
     }
 
     /**

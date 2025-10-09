@@ -284,6 +284,4 @@ class ProductExtensionInterfaceTestHelper implements ProductExtensionInterface
         $this->data['test_stock_item_qty'] = $qty;
         return $this;
     }
-
 }
-

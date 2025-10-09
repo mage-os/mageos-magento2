@@ -87,6 +87,7 @@ class SuperAttributeDataProviderTest extends TestCase
     /**
      * Check that website id is correctly retrieved
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testExecute(): void
     {
@@ -156,6 +157,7 @@ class SuperAttributeDataProviderTest extends TestCase
 
         $this->productRepository->method('get')
             ->willReturnCallback(
+                /** @param mixed $editMode @param mixed $storeId @param mixed $forceReload */
                 function (
                     $sku,
                     $editMode = false,
@@ -165,6 +167,7 @@ class SuperAttributeDataProviderTest extends TestCase
                     $productMock,
                     $childProductMock
                 ) {
+                    unset($editMode, $storeId, $forceReload);
                     if ($sku === 'configurable') {
                         return $productMock;
                     } elseif ($sku === 'simple1') {
