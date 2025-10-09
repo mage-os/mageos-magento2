@@ -216,7 +216,7 @@ class DeploymentTracker
         ?string $groupId
     ): void {
         if ($changelog) {
-            $variables['deployment']['change_log'] = $changelog;
+            $variables['deployment']['changelog'] = $changelog;
         }
 
         if ($user) {
@@ -278,7 +278,7 @@ class DeploymentTracker
                 'entityGuid' => $deploymentData['entityGuid'],
                 'version' => $deployedVersion,
                 'description' => $description,
-                'change_log' => $changelog,
+                'changelog' => $changelog,
                 'user' => $user,
                 'commit' => $commit,
                 'deepLink' => $deepLink,

@@ -151,7 +151,7 @@ class Deployments
         $params = [
             'deployment' => [
                 'description' => $description,
-                'change_log' => $changelog,
+                'changelog' => $changelog,
                 'user' => $user,
                 'revision' => $revision
             ]
@@ -166,7 +166,15 @@ class Deployments
         }
 
         if ($response->getStatusCode() < 200 || $response->getStatusCode() > 210) {
-            $this->logger->warning('Deployment marker request did not send a 200 status code.');
+            $this->logger->warning(
+                'Deployment marker request did not send a 200 status code.',
+                [
+                    'status_code' => $response->getStatusCode(),
+                    'response_body' => $response->getBody(),
+                    'request_url' => $apiUrl,
+                    'request_params' => $params
+                ]
+            );
             return false;
         }
 

@@ -872,7 +872,7 @@ class DeploymentsTest extends TestCase
         $params = [
             'deployment' => [
                 'description' => $description,
-                'change_log' => $changelog,
+                'changelog' => $changelog,
                 'user' => $user,
                 'revision' => $revision
             ]
