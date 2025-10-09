@@ -60,7 +60,13 @@ class Iterator implements \Iterator
         $this->_scope = $scope;
         if (count($elements)) {
             $lastElement = end($elements);
-            $this->_lastId = $lastElement['id'];
+            if (isset($lastElement['id'])) {
+                $this->_lastId = $lastElement['id'];
+            } else {
+                throw new \InvalidArgumentException(
+                    'Missing id key in config structure element. LastElement: ' . json_encode($lastElement)
+                );
+            }
         }
     }
 
