@@ -1330,7 +1330,6 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
      */
     protected function _setItemAttributeValue($valueInfo)
     {
-        // Run only once
         foreach ($valueInfo as $entityId => $value) {
             if (!isset($this->_itemsById[$entityId])) {
                 throw new LocalizedException(
