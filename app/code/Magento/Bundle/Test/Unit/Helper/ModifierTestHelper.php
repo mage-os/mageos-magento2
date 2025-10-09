@@ -35,3 +35,4 @@ class ModifierTestHelper extends Exception
         return $meta;
     }
 }
+

@@ -26,6 +26,7 @@ class CheckoutSessionTestHelper extends Session
      * Custom getHasDownloadableProducts method for testing
      *
      * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getHasDownloadableProducts()
     {

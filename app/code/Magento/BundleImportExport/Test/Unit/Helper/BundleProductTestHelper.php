@@ -209,6 +209,7 @@ class BundleProductTestHelper extends Product
      *
      * @param mixed $product
      * @return mixed
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getOptionsCollection($product = null)
     {
@@ -233,6 +234,7 @@ class BundleProductTestHelper extends Product
      * @param array|null $optionIds
      * @param mixed $product
      * @return mixed
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getSelectionsCollection($optionIds = null, $product = null)
     {

@@ -154,6 +154,7 @@ class SampleModelTestHelper extends Sample
      *
      * @param int $productId
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setProductId($productId): self
     {
@@ -165,6 +166,7 @@ class SampleModelTestHelper extends Sample
      *
      * @param int $storeId
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setStoreId($storeId): self
     {
