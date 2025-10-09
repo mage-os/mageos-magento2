@@ -154,7 +154,7 @@ class ProductOptionExtensionInterfaceTestHelper implements ProductOptionExtensio
     public function getTestData(string $key, $default = null)
     {
         return $this->data[$key] ?? $default;
-    }   
+    }
 
     /**
      * Get gift item option for testing
@@ -169,12 +169,12 @@ class ProductOptionExtensionInterfaceTestHelper implements ProductOptionExtensio
     /**
      * Set gift item option for testing
      *
-     * @param GiftCardOptionInterface $giftcardItemOption
+     * @param GiftCardOptionInterface $giftItemOption
      * @return $this
      */
-    public function setGiftcardItemOption(GiftCardOptionInterface $giftcardItemOption)
+    public function setGiftcardItemOption(GiftCardOptionInterface $giftItemOption)
     {
-        $this->data['giftcard_item_option'] = $giftcardItemOption;
+        $this->data['giftcard_item_option'] = $giftItemOption;
         return $this;
     }
 }

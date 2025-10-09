@@ -75,8 +75,6 @@ class ProductExtensionInterfaceTestHelper implements ProductExtensionInterface
         return $this->data[$key] ?? null;
     }
 
-    // Required interface methods (implement as needed for testing)
-
     /**
      * @inheritdoc
      */
@@ -214,7 +212,7 @@ class ProductExtensionInterfaceTestHelper implements ProductExtensionInterface
     }
 
     /**
-     * @inheritdoc
+     * @return mixed|null
      */
     public function getGiftcardAmounts()
     {
@@ -222,11 +220,12 @@ class ProductExtensionInterfaceTestHelper implements ProductExtensionInterface
     }
 
     /**
-     * @inheritdoc
+     * @param $amounts
+     * @return $this
      */
-    public function setGiftcardAmounts($giftcardAmounts)
+    public function setGiftcardAmounts($amounts)
     {
-        $this->data['giftcard_amounts'] = $giftcardAmounts;
+        $this->data['giftcard_amounts'] = $amounts;
         return $this;
     }
 
@@ -254,16 +253,31 @@ class ProductExtensionInterfaceTestHelper implements ProductExtensionInterface
         return $this->data['test_stock_item'] ?? null;
     }
 
+    /**
+     * @param $testStockItem
+     * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function setTestStockItem($testStockItem)
     {
         $this->data['test_stock_item'] = $testStockItem;
         return $this;
     }
 
+    /**
+     * @return mixed|null
+     */
+
     public function getTestStockItemQty()
     {
         return $this->data['test_stock_item_qty'] ?? null;
     }
+
+    /**
+     * @param $qty
+     * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
 
     public function setTestStockItemQty($qty)
     {
