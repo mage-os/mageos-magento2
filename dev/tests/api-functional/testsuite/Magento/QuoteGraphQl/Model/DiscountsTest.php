@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\QuoteGraphQl\Model\Resolver;
+namespace Magento\QuoteGraphQl\Model;
 
 use Magento\Catalog\Test\Fixture\Product as ProductFixture;
 use Magento\Customer\Test\Fixture\Customer;

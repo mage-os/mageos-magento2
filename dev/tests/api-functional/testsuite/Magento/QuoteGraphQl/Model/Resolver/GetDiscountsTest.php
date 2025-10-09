@@ -70,7 +70,6 @@ class GetDiscountsTest extends GraphQlAbstract
         $this->assertEquals('USD', $discount['amount']['currency']);
     }
 
-
     #[
         DataFixture(ProductFixture::class, as: 'product'),
         DataFixture(Customer::class, ['email' => 'customer@example.com'], as: 'customer'),
