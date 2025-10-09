@@ -21,6 +21,7 @@ use Magento\CatalogRule\Model\Rule;
 use Magento\Eav\Model\Config;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\DB\Sql\Expression;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Indexer\IndexerRegistry;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
@@ -421,15 +422,148 @@ class IndexBuilder
     }
 
     /**
-     * Clean product index
+     * Cleanup product index.
+     *
+     * Two different strategies in use depending on how much data to be deleted.
+     * 1. If more than 25% of the table rows consider to be deleted, copy-and-swap strategy is in use.
+     *    This strategy helps to minimize time while table is locked, also skipping InnoDB index from recalculation.
+     * 2. If less than 25% of the table rows consider to be deleted, batch deletion strategy is in use.
+     *    For not a significant chunk of data to be deleted, to avoid heavy operation just splitting query to batches.
      *
      * @param array $productIds
      * @return void
+     * @throws Zend_Db_Statement_Exception
+     * @throws \Zend_Db_Exception
      */
     private function cleanProductIndex(array $productIds): void
     {
-        $where = ['product_id IN (?)' => $productIds];
-        $this->connection->delete($this->getTable('catalogrule_product'), $where);
+        $tableName = $this->getTable('catalogrule_product');
+
+        $this->deleteRatio($tableName, $productIds) > 0.25
+            ? $this->copyAndSwapTable($tableName, $productIds)
+            : $this->batchRowsDelete($tableName, $productIds);
+    }
+
+    /**
+     * Deletion ratio for the table.
+     *
+     * Alternatively, information_schema can be used:
+     * ```
+     * $sql = $this->connection->select();
+     * $sql->from(
+     *     ['information_schema.TABLES'],
+     *     ['TABLE_ROWS']
+     * );
+     * $sql->where('TABLE_SCHEMA = ?', $this->resource->getSchemaName(ResourceConnection::DEFAULT_CONNECTION));
+     * $sql->where('TABLE_NAME = ?', $table);
+     * $this->connection->fetchOne($sql);
+     * ```
+     *
+     * @param string $tableName
+     * @param array $productIds
+     * @return float
+     */
+    private function deleteRatio(string $tableName, array $productIds): float
+    {
+        $sql = $this->connection->select();
+        $sql->from(
+            $tableName,
+            new Expression(
+                sprintf('COUNT(*) / (SELECT COUNT(*) FROM `%s`) as count', $tableName)
+            )
+        );
+        $sql->where('product_id IN (?)', $productIds);
+
+        return (float) $this->connection->fetchOne($sql);
+    }
+
+    /**
+     * Copy-and-swap table strategy for large deletion chunks.
+     *
+     * @link https://dev.mysql.com/doc/refman/8.4/en/delete.html#id246642
+     * @param string $tableName
+     * @param array $productIds
+     * @return void
+     * @throws \Exception
+     */
+    private function copyAndSwapTable(string $tableName, array $productIds): void
+    {
+        //#0. Create backup and temporary table names with random suffixes
+        $backupTable = $this->connection->getTableName($tableName . '_bak' . $this->getRandomSuffix());
+        $temporaryTable = $this->connection->getTableName($tableName . '_tmp' . $this->getRandomSuffix());
+
+        //#1. Create clone of the original table
+        $this->connection->createTable(
+            $this->connection->createTableByDdl($tableName, $temporaryTable)
+        );
+
+        //#2. Fill the temporary table with rows NOT to be deleted
+        $this->connection->beginTransaction();
+        try {
+            $select = $this->connection->select();
+            $select->from($tableName);
+            $select->where('product_id NOT IN (?)', $productIds);
+            $this->connection->query(
+                $this->connection->insertFromSelect($select, $temporaryTable)
+            );
+            $this->connection->commit();
+        } catch (\Exception $exception) {
+            $this->connection->rollBack();
+            $this->connection->dropTable($temporaryTable);
+            throw $exception;
+        }
+
+        //#3. Rename tables, original moves away as backup, temporary becomes the original.
+        $renameTables = [
+            [
+                'oldName' => $tableName,
+                'newName' => $backupTable
+            ],
+            [
+                'oldName' => $temporaryTable,
+                'newName' => $tableName
+            ]
+        ];
+        $this->connection->renameTablesBatch($renameTables);
+
+        //#4. Drop the backup table
+        $this->connection->dropTable($backupTable);
+    }
+
+    /**
+     * Create random suffix.
+     *
+     * @return string
+     * @throws \Random\RandomException
+     */
+    private function getRandomSuffix(): string
+    {
+        return bin2hex(random_bytes(4));
+    }
+
+    /**
+     * Batch deletion strategy for row deletion in small chunks.
+     *
+     * @param string $tableName
+     * @param array $productIds
+     * @return void
+     * @throws Zend_Db_Statement_Exception
+     */
+    private function batchRowsDelete(string $tableName, array $productIds): void
+    {
+        $sql = sprintf(
+            'DELETE FROM %s WHERE product_id IN (%s) LIMIT %d',
+            $tableName,
+            implode(', ', $productIds),
+            $this->batchCount
+        );
+
+        while (true) {
+            $stmt = $this->connection->query($sql);
+            if ($stmt->rowCount() === 0) {
+                break;
+            }
+        }
     }
 
     /**
