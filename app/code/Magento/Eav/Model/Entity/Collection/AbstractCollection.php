@@ -1330,14 +1330,17 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
      */
     protected function _setItemAttributeValue($valueInfo)
     {
+        // Run only once
         foreach ($valueInfo as $entityId => $value) {
             if (!isset($this->_itemsById[$entityId])) {
                 throw new LocalizedException(
                     __('A header row is missing for an attribute. Verify the header row and try again.')
                 );
             }
-            $object =$this->_itemsById[$entityId][0];
-            $object->setData($object->getData()+$value);
+            // Run only once
+            foreach ($this->_itemsById[$entityId] as $object) {
+                $object->setData($object->getData()+$value);
+            }
         }
 
         return $this;
