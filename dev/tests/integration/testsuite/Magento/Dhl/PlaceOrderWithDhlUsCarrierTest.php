@@ -1,8 +1,4 @@
 <?php
-/**
- * Copyright 2025 Adobe
- * All Rights Reserved.
- */
 declare(strict_types=1);
 
 namespace Magento\Dhl;
@@ -40,7 +36,7 @@ use Magento\Framework\Exception\LocalizedException;
  * @magentoAppIsolation enabled
  * @magentoAppArea frontend
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
-*/
+ */
 class PlaceOrderWithDhlUsCarrierTest extends TestCase
 {
     /**
