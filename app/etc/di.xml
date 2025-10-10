@@ -2046,4 +2046,12 @@
             </argument>
         </arguments>
     </type>
+    <!-- SQLite adapter registration for development mode -->
+    <type name="Magento\Framework\App\ResourceConnection\ConnectionFactory">
+        <arguments>
+            <argument name="typeMapping" xsi:type="array">
+                <item name="pdo_sqlite" xsi:type="string">Magento\Framework\Model\ResourceModel\Type\Db\Pdo\Sqlite</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

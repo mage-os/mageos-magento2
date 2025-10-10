@@ -262,7 +262,7 @@ class AutoInstaller
             '--timezone=UTC',
             '--use-rewrites=1',
             '--session-save=files',
-            '--cleanup-database',
+            '--skip-db-validation',
         ];
 
         return escapeshellcmd($phpBinary) . ' ' . escapeshellarg($magentoScript) . ' ' . implode(' ', $params);

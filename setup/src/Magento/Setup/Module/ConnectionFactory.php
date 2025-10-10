@@ -7,6 +7,7 @@
 namespace Magento\Setup\Module;
 
 use Magento\Framework\Model\ResourceModel\Type\Db\Pdo\Mysql;
+use Magento\Framework\Model\ResourceModel\Type\Db\Pdo\Sqlite;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 
 /**
@@ -94,8 +95,23 @@ class ConnectionFactory implements \Magento\Framework\Model\ResourceModel\Type\D
             )
         );
         $objectManagerProvider = $this->serviceLocator->get(\Magento\Setup\Model\ObjectManagerProvider::class);
-        $mysqlFactory = new \Magento\Framework\DB\Adapter\Pdo\MysqlFactory($objectManagerProvider->get());
-        $resourceInstance = new Mysql($connectionConfig, $mysqlFactory);
+
+        // Detect connection type and create appropriate adapter
+        $connectionType = $connectionConfig['type'] ?? 'pdo_mysql';
+
+        if ($connectionType === 'pdo_sqlite') {
+            // Use SQLite adapter
+            $sqliteFactory = new \Magento\Framework\DB\Adapter\Pdo\SqliteFactory(
+                $objectManagerProvider->get(),
+                $selectFactory
+            );
+            $resourceInstance = new Sqlite($connectionConfig, $sqliteFactory);
+        } else {
+            // Use MySQL adapter (default)
+            $mysqlFactory = new \Magento\Framework\DB\Adapter\Pdo\MysqlFactory($objectManagerProvider->get());
+            $resourceInstance = new Mysql($connectionConfig, $mysqlFactory);
+        }
+
         return $resourceInstance->getConnection(
             $this->serviceLocator->get(\Magento\Framework\DB\Logger\Quiet::class),
             $selectFactory
