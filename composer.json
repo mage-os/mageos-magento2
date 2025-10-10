@@ -19,7 +19,7 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/magento-gl/composer.git"
+            "url": "git@github.com:magento-gl/composer.git"
         },
         {
             "type": "vcs",
