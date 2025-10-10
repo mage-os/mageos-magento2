@@ -131,10 +131,17 @@ class SqlVersionProvider
      */
     private function fetchSqlVersion(string $resource): string
     {
-        $versionOutput = $this->resourceConnection->getConnection($resource)
-            ->fetchPairs(sprintf('SHOW variables LIKE "%s"', self::VERSION_VAR_NAME));
+        $connection = $this->resourceConnection->getConnection($resource);
 
-        return $versionOutput[self::VERSION_VAR_NAME];
+        // Check if SQLite adapter
+        if ($connection instanceof \Magento\Framework\DB\Adapter\Pdo\Sqlite) {
+            return $connection->fetchOne('SELECT sqlite_version()');
+        }
+
+        // MySQL/MariaDB
+        $versionOutput = $connection->fetchPairs(sprintf('SHOW variables LIKE "%s"', self::VERSION_VAR_NAME));
+
+        return $versionOutput[self::VERSION_VAR_NAME] ?? '';
     }
 
     /**
@@ -145,6 +152,13 @@ class SqlVersionProvider
      */
     public function isMysqlGte8029(): bool
     {
+        $connection = $this->resourceConnection->getConnection(ResourceConnection::DEFAULT_CONNECTION);
+
+        // SQLite is not MySQL 8.0.29+
+        if ($connection instanceof \Magento\Framework\DB\Adapter\Pdo\Sqlite) {
+            return false;
+        }
+
         $isMariaDB = $this->isMariaDbEngine();
         $sqlExactVersion = $this->fetchSqlVersion(ResourceConnection::DEFAULT_CONNECTION);
         if (!$isMariaDB && version_compare($sqlExactVersion, '8.0.29', '>=')) {
@@ -187,6 +201,13 @@ class SqlVersionProvider
      */
     public function isMariaDbEngine(): bool
     {
+        $connection = $this->resourceConnection->getConnection(ResourceConnection::DEFAULT_CONNECTION);
+
+        // SQLite is not MariaDB
+        if ($connection instanceof \Magento\Framework\DB\Adapter\Pdo\Sqlite) {
+            return false;
+        }
+
         // check current version else send exception
         $this->getSqlVersion();
 

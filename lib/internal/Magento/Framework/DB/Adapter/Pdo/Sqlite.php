@@ -204,9 +204,6 @@ class Sqlite extends Mysql
         // Disable foreign key checks during setup
         $this->rawQuery('PRAGMA foreign_keys=OFF');
 
-        // Set mysqlversion to empty to avoid SHOW VARIABLES queries
-        $this->mysqlversion = '';
-
         return $this;
     }
 

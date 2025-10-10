@@ -126,6 +126,13 @@ class Table implements FactoryInterface
      */
     public function getDefaultCharset(): string
     {
+        $connection = $this->resourceConnection->getConnection();
+
+        // SQLite doesn't use charset
+        if ($connection instanceof \Magento\Framework\DB\Adapter\Pdo\Sqlite) {
+            return '';
+        }
+
         if ($this->sqlVersionProvider->isMysqlGte8029()) {
             return self::$defaultCharset['mysql_8_29'];
         }
@@ -141,6 +148,13 @@ class Table implements FactoryInterface
      */
     public function getDefaultCollation(): string
     {
+        $connection = $this->resourceConnection->getConnection();
+
+        // SQLite doesn't use collation
+        if ($connection instanceof \Magento\Framework\DB\Adapter\Pdo\Sqlite) {
+            return '';
+        }
+
         if ($this->sqlVersionProvider->isMysqlGte8029()) {
             return self::$defaultCollation['mysql_8_29'];
         }
