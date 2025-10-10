@@ -2046,4 +2046,11 @@
             </argument>
         </arguments>
     </type>
+    <type name="Magento\Framework\Console\CommandListInterface">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="devServe" xsi:type="object">Magento\Framework\Console\DevServeCommand</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
