@@ -6,6 +6,7 @@
 
 namespace Magento\Framework\Console;
 
+use Magento\Framework\Setup\AutoInstaller;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -15,6 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Development server command
  *
  * Starts PHP's built-in web server for local development.
+ * Includes auto-installation if Magento is not yet installed.
  * Inspired by Laravel's `php artisan serve`.
  *
  * @api
@@ -92,17 +94,60 @@ class DevServeCommand extends Command
         $port = (int)$input->getOption('port');
         $shouldOpen = $input->getOption('open');
 
-        // Find available port
-        $port = $this->findAvailablePort($host, $port, $output);
+        // Initialize auto-installer
+        $installer = new AutoInstaller();
 
-        if ($port === null) {
-            $output->writeln('<error>Could not find an available port between ' .
-                self::DEFAULT_PORT . ' and ' . self::MAX_PORT . '</error>');
+        // Check system requirements
+        if (!$installer->checkRequirements($output)) {
             return Command::FAILURE;
         }
 
-        // Display banner
-        $this->displayBanner($output, $host, $port);
+        // Check if installation is needed
+        if ($installer->needsInstall()) {
+            $helper = $this->getHelper('question');
+
+            // Prompt for installation
+            if (!$installer->promptForInstall($input, $output, $helper)) {
+                $output->writeln('<comment>Installation cancelled. Server not started.</comment>');
+                return Command::SUCCESS;
+            }
+
+            // Prepare environment files
+            $installer->prepareEnvironment();
+
+            // Collect credentials
+            $credentials = $installer->collectCredentials($input, $output, $helper);
+
+            // Determine base URL (need to find port first)
+            $port = $this->findAvailablePort($host, $port, $output);
+            if ($port === null) {
+                $output->writeln('<error>Could not find an available port between ' .
+                    self::DEFAULT_PORT . ' and ' . self::MAX_PORT . '</error>');
+                return Command::FAILURE;
+            }
+
+            $baseUrl = "http://{$host}:{$port}";
+
+            // Run installation
+            if (!$installer->install($credentials, $baseUrl, $output)) {
+                return Command::FAILURE;
+            }
+
+            // Display banner with credentials (just installed)
+            $this->displayBanner($output, $host, $port, $credentials);
+        } else {
+            // Find available port
+            $port = $this->findAvailablePort($host, $port, $output);
+
+            if ($port === null) {
+                $output->writeln('<error>Could not find an available port between ' .
+                    self::DEFAULT_PORT . ' and ' . self::MAX_PORT . '</error>');
+                return Command::FAILURE;
+            }
+
+            // Display banner without credentials (already installed)
+            $this->displayBanner($output, $host, $port);
+        }
 
         // Open browser if requested
         if ($shouldOpen) {
@@ -162,10 +207,15 @@ class DevServeCommand extends Command
      * @param OutputInterface $output
      * @param string $host
      * @param int $port
+     * @param array|null $credentials
      * @return void
      */
-    private function displayBanner(OutputInterface $output, string $host, int $port): void
-    {
+    private function displayBanner(
+        OutputInterface $output,
+        string $host,
+        int $port,
+        ?array $credentials = null
+    ): void {
         $url = "http://{$host}:{$port}";
         $adminUrl = "{$url}/admin";
 
@@ -177,6 +227,14 @@ class DevServeCommand extends Command
         $output->writeln("  <fg=green>→</> <fg=white;options=bold>Storefront:</> <fg=cyan>{$url}</>");
         $output->writeln("  <fg=green>→</> <fg=white;options=bold>Admin Panel:</> <fg=cyan>{$adminUrl}</>");
         $output->writeln("  <fg=green>→</> <fg=white;options=bold>Database:</> <fg=cyan>var/dev.sqlite</>");
+
+        // Show credentials if just installed
+        if ($credentials !== null) {
+            $output->writeln('');
+            $output->writeln("  <fg=green>→</> <fg=white;options=bold>Admin User:</> <fg=cyan>{$credentials['admin_user']}</>");
+            $output->writeln("  <fg=green>→</> <fg=white;options=bold>Admin Pass:</> <fg=cyan>{$credentials['admin_password']}</>");
+        }
+
         $output->writeln('');
         $output->writeln('  <fg=yellow>Press CTRL+C to stop the server</>');
         $output->writeln('');
