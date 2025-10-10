@@ -17,7 +17,6 @@
             <severity value="MAJOR"/>
             <testCaseId value="AC-3995"/>
             <group value="paypalExpress"/>
-            <group value="pr_exclude"/>
         </annotations>
         <before>
             <!--Login as Admin-->
