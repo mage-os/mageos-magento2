@@ -53,6 +53,17 @@ class DbSchemaReader implements DbSchemaReaderInterface
     public function getTableOptions($tableName, $resource)
     {
         $adapter = $this->resourceConnection->getConnection($resource);
+
+        // SQLite doesn't use collation/charset - return minimal options
+        if ($adapter instanceof \Magento\Framework\DB\Adapter\Pdo\Sqlite) {
+            return [
+                'engine' => 'sqlite',
+                'collation' => '',
+                'comment' => '',
+            ];
+        }
+
+        // MySQL/MariaDB
         $dbName = $this->resourceConnection->getSchemaName($resource);
         $collationNameColumn = 'charset_applicability.collation_name';
 
