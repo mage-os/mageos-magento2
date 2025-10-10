@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Quote\Test\Unit\Model;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Customer\Api\AddressRepositoryInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Exception\InputException;
@@ -87,8 +88,8 @@ class ShippingAddressManagementTest extends TestCase
     /**
      * @throws InputException
      * @throws NoSuchEntityException
-     * @dataProvider assignDataProvider
      */
+    #[DataProvider('assignDataProvider')]
     public function testAssign(bool $saveInAddressBook, bool $showCompany): void
     {
         $cartId = $customerId = 123;

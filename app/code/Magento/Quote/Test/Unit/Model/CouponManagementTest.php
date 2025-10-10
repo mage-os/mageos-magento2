@@ -47,7 +47,7 @@ class CouponManagementTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->quoteRepositoryMock = $this->getMockForAbstractClass(CartRepositoryInterface::class);
+        $this->quoteRepositoryMock = $this->createMock(CartRepositoryInterface::class);
         $this->storeMock = $this->createMock(Store::class);
         $this->quoteMock = $this->getMockBuilder(Quote::class)
             ->addMethods(['setCouponCode', 'getCouponCode'])
@@ -74,7 +74,7 @@ class CouponManagementTest extends TestCase
             ->onlyMethods(['__wakeup'])
             ->disableOriginalConstructor()
             ->getMock();
-        $quoteMock->expects($this->any())->method('getCouponCode')->willReturn($couponCode);
+        $quoteMock->method('getCouponCode')->willReturn($couponCode);
 
         $this->quoteRepositoryMock->expects($this->once())
             ->method('getActive')
@@ -104,7 +104,7 @@ class CouponManagementTest extends TestCase
         $cartId = 33;
         $couponCode = '153a-ABC';
 
-        $this->storeMock->expects($this->any())->method('getId')->willReturn(1);
+        $this->storeMock->method('getId')->willReturn(1);
         $this->quoteMock->expects($this->once())->method('getStoreId')->willReturn($this->returnValue(1));
 
         $this->quoteRepositoryMock->expects($this->once())
@@ -132,7 +132,7 @@ class CouponManagementTest extends TestCase
         $cartId = 33;
         $couponCode = '153a-ABC';
 
-        $this->storeMock->expects($this->any())->method('getId')->willReturn(1);
+        $this->storeMock->method('getId')->willReturn(1);
         $this->quoteMock->expects($this->once())->method('getStoreId')->willReturn($this->returnValue(1));
 
         $this->quoteRepositoryMock->expects($this->once())
@@ -154,7 +154,7 @@ class CouponManagementTest extends TestCase
         $cartId = 33;
         $couponCode = '153a-ABC';
 
-        $this->storeMock->expects($this->any())->method('getId')->willReturn(1);
+        $this->storeMock->method('getId')->willReturn(1);
         $this->quoteMock->expects($this->once())->method('getStoreId')->willReturn($this->returnValue(1));
 
         $this->quoteRepositoryMock->expects($this->once())

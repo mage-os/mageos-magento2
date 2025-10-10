@@ -46,8 +46,7 @@ class AccessChangeQuoteControlTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->userContextMock = $this->getMockBuilder(UserContextInterface::class)
-            ->getMockForAbstractClass();
+        $this->userContextMock = $this->createMock(UserContextInterface::class);
         $this->userContextMock->method('getUserId')
             ->willReturn(1);
 

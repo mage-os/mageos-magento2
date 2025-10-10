@@ -48,9 +48,7 @@ class ValidatorTest extends TestCase
             ['getCountryId', 'getEmail']
         );
         $this->countryFactoryMock
-            ->expects($this->any())
-            ->method('create')
-            ->willReturn($this->countryMock);
+            ->method('create')->willReturn($this->countryMock);
         $this->model = $objectManager->getObject(
             Validator::class,
             [

@@ -36,7 +36,7 @@ class ChangeQuoteControlTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->userContextMock = $this->getMockForAbstractClass(UserContextInterface::class);
+        $this->userContextMock = $this->createMock(UserContextInterface::class);
 
         $this->model = new ChangeQuoteControl($this->userContextMock);
 

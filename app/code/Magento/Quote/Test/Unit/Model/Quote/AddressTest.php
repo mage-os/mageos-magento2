@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Quote\Test\Unit\Model\Quote;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Directory\Model\Currency;
 use Magento\Directory\Model\Region;
 use Magento\Directory\Model\RegionFactory;
@@ -31,9 +32,11 @@ use Magento\Shipping\Model\Rate\Result;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Api\Data\WebsiteInterface;
 use Magento\Store\Model\ScopeInterface;
+use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Quote\Test\Unit\Helper\RateCollectorForAddressTestHelper;
 
 /**
  * Test class for sales quote address model
@@ -150,10 +153,7 @@ class AddressTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->rateCollection = $this->getMockBuilder(RateCollectorInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getResult'])
-            ->getMockForAbstractClass();
+        $this->rateCollection = new RateCollectorForAddressTestHelper();
 
         $this->itemCollectionFactory = $this->getMockBuilder(CollectionFactory::class)
             ->disableOriginalConstructor()
@@ -167,18 +167,14 @@ class AddressTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->storeManager = $this->getMockBuilder(StoreManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->storeManager = $this->createMock(StoreManagerInterface::class);
 
-        $this->store = $this->getMockBuilder(StoreInterface::class)
+        $this->store = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getBaseCurrency', 'getCurrentCurrency', 'getCurrentCurrencyCode'])
-            ->getMockForAbstractClass();
+            ->onlyMethods(['getBaseCurrency', 'getCurrentCurrency', 'getCurrentCurrencyCode', 'getWebsiteId'])
+            ->getMock();
 
-        $this->website = $this->getMockBuilder(WebsiteInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->website = $this->createMock(WebsiteInterface::class);
 
         $this->attributeList = $this->createMock(
             CustomAttributeListInterface::class
@@ -305,10 +301,10 @@ class AddressTest extends TestCase
      * @param array $address
      * @param array $quote
      * @param bool $result
-     * @dataProvider getDataProvider
      *
      * @return void
      */
+    #[DataProvider('getDataProvider')]
     public function testValidateMinimumAmount(
         array $scopeConfigValues,
         array $address,
@@ -421,24 +417,18 @@ class AddressTest extends TestCase
         $baseCurrency = $this->getMockBuilder(Currency::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['convert'])
-            ->addMethods(['getCurrentCurrencyCode'])
             ->getMockForAbstractClass();
 
         $currentCurrency = $this->getMockBuilder(Currency::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['convert'])
-            ->addMethods(['getCurrentCurrencyCode'])
             ->getMockForAbstractClass();
 
         $currentCurrencyCode = 'UAH';
 
-        $this->quote->expects($this->any())
-            ->method('getStoreId')
-            ->willReturn($storeId);
+        $this->quote->method('getStoreId')->willReturn($storeId);
 
-        $this->store->expects($this->any())
-            ->method('getWebsiteId')
-            ->willReturn($webSiteId);
+        $this->store->method('getWebsiteId')->willReturn($webSiteId);
 
         $this->scopeConfig->expects($this->exactly(1))
             ->method('getValue')
@@ -488,9 +478,7 @@ class AddressTest extends TestCase
             ->getMock();
 
         /** @var  AbstractResult */
-        $rateItem = $this->getMockBuilder(AbstractResult::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $rateItem = $this->createMock(AbstractResult::class);
 
         /** @var Rate */
         $rate = $this->getMockBuilder(Rate::class)
@@ -517,13 +505,7 @@ class AddressTest extends TestCase
             ->method('create')
             ->willReturn($this->rateCollection);
 
-        $this->rateCollection->expects($this->once())
-            ->method('collectRates')
-            ->willReturnSelf();
-
-        $this->rateCollection->expects($this->once())
-            ->method('getResult')
-            ->willReturn($rates);
+        $this->rateCollection->setResult($rates);
 
         $this->itemCollectionFactory->expects($this->once())
             ->method('create')

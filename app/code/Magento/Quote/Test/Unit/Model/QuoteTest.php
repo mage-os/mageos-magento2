@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Quote\Test\Unit\Model;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Type\Simple;
 use Magento\Customer\Api\AddressRepositoryInterface;
@@ -223,33 +224,23 @@ class QuoteTest extends TestCase
             ExtensibleDataObjectConverter::class,
             ['toFlatArray']
         );
-        $this->customerRepositoryMock = $this->getMockForAbstractClass(
-            CustomerRepositoryInterface::class,
+        $this->customerRepositoryMock = $this->createMock(CustomerRepositoryInterface::class,
             [],
             '',
             false,
             true,
             true,
-            ['getById', 'save']
-        );
+            ['getById', 'save']);
         $this->objectCopyServiceMock = $this->createPartialMock(
             Copy::class,
             ['copyFieldsetToTarget']
         );
         $this->productMock = $this->createMock(Product::class);
         $this->objectFactoryMock = $this->createPartialMock(Factory::class, ['create']);
-        $this->quoteAddressFactoryMock->expects(
-            $this->any()
-        )->method(
-            'create'
-        )->willReturn(
+        $this->quoteAddressFactoryMock->method('create')->willReturn(
             $this->quoteAddressMock
         );
-        $this->quoteAddressMock->expects(
-            $this->any()
-        )->method(
-            'getCollection'
-        )->willReturn(
+        $this->quoteAddressMock->method('getCollection')->willReturn(
             $this->quoteAddressCollectionMock
         );
         $this->eventManagerMock = $this->getMockBuilder(Manager::class)
@@ -268,12 +259,8 @@ class QuoteTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
             ->getMock();
-        $this->groupRepositoryMock = $this->getMockBuilder(GroupRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->contextMock->expects($this->any())
-            ->method('getEventDispatcher')
-            ->willReturn($this->eventManagerMock);
+        $this->groupRepositoryMock = $this->createMock(GroupRepositoryInterface::class);
+        $this->contextMock->method('getEventDispatcher')->willReturn($this->eventManagerMock);
         $this->quoteItemCollectionFactoryMock = $this->createPartialMock(
             CollectionFactory::class,
             ['create']
@@ -290,12 +277,10 @@ class QuoteTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->addressRepositoryMock = $this->getMockForAbstractClass(
-            AddressRepositoryInterface::class,
+        $this->addressRepositoryMock = $this->createMock(AddressRepositoryInterface::class,
             [],
             '',
-            false
-        );
+            false);
 
         $this->criteriaBuilderMock = $this->getMockBuilder(SearchCriteriaBuilder::class)
             ->disableOriginalConstructor()
@@ -352,8 +337,8 @@ class QuoteTest extends TestCase
      * @param bool $expected
      *
      * @return void
-     * @dataProvider isMultipleShippingAddressesDataProvider
      */
+    #[DataProvider('isMultipleShippingAddressesDataProvider')]
     public function testIsMultipleShippingAddresses($addresses, $expected): void
     {
         $finalAddress = [];
@@ -361,11 +346,7 @@ class QuoteTest extends TestCase
             $finalAddress[] = $address($this);
         }
 
-        $this->quoteAddressCollectionMock->expects(
-            $this->any()
-        )->method(
-            'setQuoteFilter'
-        )->willReturn(
+        $this->quoteAddressCollectionMock->method('setQuoteFilter')->willReturn(
             $this->quoteAddressCollectionMock
         );
         $this->quoteAddressCollectionMock->expects(
@@ -438,8 +419,8 @@ class QuoteTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $shippingAddressMock->expects($this->any())->method('getAddressType')->willReturn($type);
-        $shippingAddressMock->expects($this->any())->method('isDeleted')->willReturn(false);
+        $shippingAddressMock->method('getAddressType')->willReturn($type);
+        $shippingAddressMock->method('isDeleted')->willReturn(false);
         return $shippingAddressMock;
     }
 
@@ -609,53 +590,37 @@ class QuoteTest extends TestCase
     public function testSetCustomerAddressData(): void
     {
         $customerId = 1;
-        $addressMock = $this->getMockForAbstractClass(
-            AddressInterface::class,
+        $addressMock = $this->createMock(AddressInterface::class,
             [],
             '',
             false,
             true,
             true,
-            ['getId']
-        );
-        $addressMock->expects($this->any())
-            ->method('getId')
-            ->willReturn(null);
+            ['getId']);
+        $addressMock->method('getId')->willReturn(null);
 
         $addresses = [$addressMock];
 
-        $customerMock = $this->getMockForAbstractClass(
-            CustomerInterface::class,
+        $customerMock = $this->createMock(CustomerInterface::class,
             [],
             '',
-            false
-        );
-        $customerResultMock = $this->getMockForAbstractClass(
-            CustomerInterface::class,
+            false);
+        $customerResultMock = $this->createMock(CustomerInterface::class,
             [],
             '',
-            false
-        );
+            false);
         $requestMock = $this->createMock(
             DataObject::class
         );
 
-        $this->extensibleDataObjectConverterMock->expects($this->any())
-            ->method('toFlatArray')
-            ->willReturn(['customer_id' => $customerId]);
+        $this->extensibleDataObjectConverterMock->method('toFlatArray')->willReturn(['customer_id' => $customerId]);
 
-        $this->customerRepositoryMock->expects($this->any())
-            ->method('getById')
-            ->willReturn($customerMock);
-        $this->customerDataFactoryMock->expects($this->any())
-            ->method('create')
-            ->willReturn($customerMock);
+        $this->customerRepositoryMock->method('getById')->willReturn($customerMock);
+        $this->customerDataFactoryMock->method('create')->willReturn($customerMock);
         $this->customerRepositoryMock->expects($this->never())
             ->method('save')
             ->willReturn($customerMock);
-        $customerMock->expects($this->any())
-            ->method('getAddresses')
-            ->willReturn($addresses);
+        $customerMock->method('getAddresses')->willReturn($addresses);
         $this->objectFactoryMock->expects($this->once())
             ->method('create')
             ->with(['customer_id' => $customerId])
@@ -672,7 +637,7 @@ class QuoteTest extends TestCase
     {
         $groupId = 1;
         $taxClassId = 1;
-        $groupMock = $this->getMockForAbstractClass(GroupInterface::class, [], '', false);
+        $groupMock = $this->createMock(GroupInterface::class, [], '', false);
         $groupMock->expects($this->once())
             ->method('getTaxClassId')
             ->willReturn($taxClassId);
@@ -698,14 +663,12 @@ class QuoteTest extends TestCase
         $nonExistentGroupId = 100;
         $groupId = 1;
         $taxClassId = 1;
-        $groupMock = $this->getMockForAbstractClass(GroupInterface::class, [], '', false);
+        $groupMock = $this->createMock(GroupInterface::class, [], '', false);
 
-        $customerMock = $this->getMockForAbstractClass(
-            CustomerInterface::class,
+        $customerMock = $this->createMock(CustomerInterface::class,
             [],
             '',
-            false
-        );
+            false);
         $customerMock->expects($this->once())
             ->method('getGroupId')
             ->willReturn($groupId);
@@ -750,9 +713,7 @@ class QuoteTest extends TestCase
             ->willReturn(false);
 
         $iterator = new \ArrayIterator([$this->quoteAddressMock]);
-        $this->quoteAddressCollectionMock->expects($this->any())
-            ->method('getIterator')
-            ->willReturn($iterator);
+        $this->quoteAddressCollectionMock->method('getIterator')->willReturn($iterator);
 
         $this->quote->setId($id);
         $result = $this->quote->getAllAddresses();
@@ -761,8 +722,8 @@ class QuoteTest extends TestCase
 
     /**
      * @return void
-     * @dataProvider dataProviderGetAddress
      */
+    #[DataProvider('dataProviderGetAddress')]
     public function testGetAddressById($addressId, $expected): void
     {
         $id = 1;
@@ -775,9 +736,7 @@ class QuoteTest extends TestCase
             ->willReturn($id);
 
         $iterator = new \ArrayIterator([$this->quoteAddressMock]);
-        $this->quoteAddressCollectionMock->expects($this->any())
-            ->method('getIterator')
-            ->willReturn($iterator);
+        $this->quoteAddressCollectionMock->method('getIterator')->willReturn($iterator);
 
         $this->quote->setId($id);
         $result = $this->quote->getAddressById($addressId);
@@ -802,8 +761,8 @@ class QuoteTest extends TestCase
      * @param $expected
      *
      * @return void
-     * @dataProvider dataProviderGetAddressByCustomer
      */
+    #[DataProvider('dataProviderGetAddressByCustomer')]
     public function testGetAddressByCustomerAddressId($isDeleted, $customerAddressId, $expected): void
     {
         $id = 1;
@@ -819,9 +778,7 @@ class QuoteTest extends TestCase
             ->willReturn($customerAddressId);
 
         $iterator = new \ArrayIterator([$this->quoteAddressMock]);
-        $this->quoteAddressCollectionMock->expects($this->any())
-            ->method('getIterator')
-            ->willReturn($iterator);
+        $this->quoteAddressCollectionMock->method('getIterator')->willReturn($iterator);
 
         $this->quote->setId($id);
         $result = $this->quote->getAddressByCustomerAddressId($id);
@@ -847,8 +804,8 @@ class QuoteTest extends TestCase
      * @param $expected
      *
      * @return void
-     * @dataProvider dataProviderShippingAddress
      */
+    #[DataProvider('dataProviderShippingAddress')]
     public function testGetShippingAddressByCustomerAddressId(
         $isDeleted,
         $addressType,
@@ -872,9 +829,7 @@ class QuoteTest extends TestCase
             ->willReturn($addressType);
 
         $iterator = new \ArrayIterator([$this->quoteAddressMock]);
-        $this->quoteAddressCollectionMock->expects($this->any())
-            ->method('getIterator')
-            ->willReturn($iterator);
+        $this->quoteAddressCollectionMock->method('getIterator')->willReturn($iterator);
 
         $this->quote->setId($id);
 
@@ -912,9 +867,7 @@ class QuoteTest extends TestCase
             ->willReturn($id);
 
         $iterator = new \ArrayIterator([$this->quoteAddressMock]);
-        $this->quoteAddressCollectionMock->expects($this->any())
-            ->method('getIterator')
-            ->willReturn($iterator);
+        $this->quoteAddressCollectionMock->method('getIterator')->willReturn($iterator);
 
         $this->quote->setId($id);
 
@@ -933,15 +886,9 @@ class QuoteTest extends TestCase
             ->method('setQuoteFilter')
             ->with($id)->willReturnSelf();
 
-        $this->quoteAddressMock->expects($this->any())
-            ->method('getAddressType')
-            ->willReturn(AbstractAddress::TYPE_SHIPPING);
-        $this->quoteAddressMock->expects($this->any())
-            ->method('getAddressType')
-            ->willReturn(AbstractAddress::TYPE_SHIPPING);
-        $this->quoteAddressMock->expects($this->any())
-            ->method('isDeleted')
-            ->willReturn(false);
+        $this->quoteAddressMock->method('getAddressType')->willReturn(AbstractAddress::TYPE_SHIPPING);
+        $this->quoteAddressMock->method('getAddressType')->willReturn(AbstractAddress::TYPE_SHIPPING);
+        $this->quoteAddressMock->method('isDeleted')->willReturn(false);
         $this->quoteAddressMock->expects($this->any())
             ->method('setData')->willReturnSelf();
         $this->quoteAddressMock->expects($this->once())
@@ -952,9 +899,7 @@ class QuoteTest extends TestCase
             ->willReturn(true);
 
         $iterator = new \ArrayIterator([$id => $this->quoteAddressMock]);
-        $this->quoteAddressCollectionMock->expects($this->any())
-            ->method('getIterator')
-            ->willReturn($iterator);
+        $this->quoteAddressCollectionMock->method('getIterator')->willReturn($iterator);
         $this->quoteAddressCollectionMock->expects($this->once())
             ->method('removeItemByKey')
             ->with($id)
@@ -1041,21 +986,13 @@ class QuoteTest extends TestCase
 
         $collectionMock = $this->createMock(\Magento\Quote\Model\ResourceModel\Quote\Item\Collection::class);
 
-        $itemMock->expects($this->any())
-            ->method('representProduct')
-            ->willReturn(true);
-        $itemMock->expects($this->any())
-            ->method('getProduct')
-            ->willReturn($this->productMock);
+        $itemMock->method('representProduct')->willReturn(true);
+        $itemMock->method('getProduct')->willReturn($this->productMock);
 
         $iterator = new \ArrayIterator([$itemMock]);
-        $collectionMock->expects($this->any())
-            ->method('getIterator')
-            ->willReturn($iterator);
+        $collectionMock->method('getIterator')->willReturn($iterator);
 
-        $productMock->expects($this->any())
-            ->method('getId')
-            ->willReturn(123);
+        $productMock->method('getId')->willReturn(123);
 
         $collectionMock->expects($this->any())
             ->method('getItemsByColumnValue')
@@ -1086,8 +1023,8 @@ class QuoteTest extends TestCase
      * @param $hasError
      * @return void
      * @throws LocalizedException
-     * @dataProvider dataProviderForTestAddProductItem
      */
+    #[DataProvider('dataProviderForTestAddProductItem')]
     public function testAddProductItemNew($request, $hasError): void
     {
         $itemMock = $this->getMockBuilder(Item::class)
@@ -1097,7 +1034,7 @@ class QuoteTest extends TestCase
             ->getMock();
         $itemMock->expects($this->once())->method('getHasError')->willReturn($hasError);
         $product = $this->createMock(Product::class);
-        $itemMock->expects($this->any())->method('getProduct')->willReturn($product);
+        $itemMock->method('getProduct')->willReturn($product);
 
         $expectedResult = $itemMock;
         $requestMock = $this->createMock(
@@ -1123,18 +1060,12 @@ class QuoteTest extends TestCase
 
         $collectionMock = $this->createMock(\Magento\Quote\Model\ResourceModel\Quote\Item\Collection::class);
 
-        $itemMock->expects($this->any())
-            ->method('representProduct')
-            ->willReturn(false);
+        $itemMock->method('representProduct')->willReturn(false);
 
         $iterator = new \ArrayIterator([$itemMock]);
-        $collectionMock->expects($this->any())
-            ->method('getIterator')
-            ->willReturn($iterator);
+        $collectionMock->method('getIterator')->willReturn($iterator);
 
-        $productMock->expects($this->any())
-            ->method('getId')
-            ->willReturn(123);
+        $productMock->method('getId')->willReturn(123);
 
         $collectionMock->expects($this->any())
             ->method('getItemsByColumnValue')
@@ -1355,20 +1286,16 @@ class QuoteTest extends TestCase
      * @param int $expected
      *
      * @return void
-     * @dataProvider dataProviderForTestBeforeSaveIsVirtualQuote
      */
+    #[DataProvider('dataProviderForTestBeforeSaveIsVirtualQuote')]
     public function testBeforeSaveIsVirtualQuote(array $productTypes, $expected): void
     {
         $storeId = 1;
         $currencyMock = $this->getMockBuilder(Currency::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $currencyMock->expects($this->any())
-            ->method('getCode')
-            ->willReturn('test_code');
-        $currencyMock->expects($this->any())
-            ->method('getRate')
-            ->willReturn('test_rate');
+        $currencyMock->method('getCode')->willReturn('test_code');
+        $currencyMock->method('getRate')->willReturn('test_rate');
         $storeMock = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -1389,28 +1316,20 @@ class QuoteTest extends TestCase
         $items = [];
         foreach ($productTypes as $type) {
             $productMock = $this->createMock(Product::class);
-            $productMock->expects($this->any())->method('getIsVirtual')->willReturn($type);
+            $productMock->method('getIsVirtual')->willReturn($type);
 
             $itemMock = $this->getMockBuilder(Item::class)
                 ->addMethods(['getParentItemId'])
                 ->onlyMethods(['isDeleted', 'getProduct'])
                 ->disableOriginalConstructor()
                 ->getMock();
-            $itemMock->expects($this->any())
-                ->method('isDeleted')
-                ->willReturn(false);
-            $itemMock->expects($this->any())
-                ->method('getParentItemId')
-                ->willReturn(false);
-            $itemMock->expects($this->any())
-                ->method('getProduct')
-                ->willReturn($productMock);
+            $itemMock->method('isDeleted')->willReturn(false);
+            $itemMock->method('getParentItemId')->willReturn(false);
+            $itemMock->method('getProduct')->willReturn($productMock);
             $items[] = $itemMock;
         }
         $iterator = new \ArrayIterator($items);
-        $collectionMock->expects($this->any())
-            ->method('getIterator')
-            ->willReturn($iterator);
+        $collectionMock->method('getIterator')->willReturn($iterator);
         $this->quoteItemCollectionFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($collectionMock);
@@ -1498,15 +1417,15 @@ class QuoteTest extends TestCase
      * @param int $reservedOrderId
      *
      * @return void
-     * @dataProvider reservedOrderIdDataProvider
      */
+    #[DataProvider('reservedOrderIdDataProvider')]
     public function testReserveOrderId(bool $isReservedOrderIdExist, int $reservedOrderId): void
     {
         $this->orderIncrementIdChecker
             ->expects($this->once())
             ->method('isIncrementIdUsed')
             ->with(1000001)->willReturn($isReservedOrderIdExist);
-        $this->resourceMock->expects($this->any())->method('getReservedOrderId')->willReturn($reservedOrderId);
+        $this->resourceMock->method('getReservedOrderId')->willReturn($reservedOrderId);
         $this->quote->reserveOrderId();
         $this->assertEquals($reservedOrderId, $this->quote->getReservedOrderId());
     }

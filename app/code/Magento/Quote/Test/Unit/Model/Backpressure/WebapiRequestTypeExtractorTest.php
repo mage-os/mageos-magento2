@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Quote\Test\Unit\Model\Backpressure;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Quote\Model\Backpressure\WebapiRequestTypeExtractor;
 use PHPUnit\Framework\MockObject\MockObject;
 use Magento\Quote\Model\Backpressure\OrderLimitConfigManager;
@@ -45,8 +46,8 @@ class WebapiRequestTypeExtractorTest extends TestCase
      * @param string $method
      * @param bool $isEnforcementEnabled
      * @param mixed $expected
-     * @dataProvider dataProvider
      */
+    #[DataProvider('dataProvider')]
     public function testExtract(string $service, string $method, bool $isEnforcementEnabled, $expected)
     {
         $this->configManagerMock->method('isEnforcementEnabled')

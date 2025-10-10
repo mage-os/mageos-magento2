@@ -75,13 +75,9 @@ class QuoteAddressTest extends TestCase
         $this->relationCompositeMock = $this->createMock(
             RelationComposite::class
         );
-        $this->appResourceMock->expects($this->any())
-            ->method('getConnection')
-            ->willReturn($this->connectionMock);
+        $this->appResourceMock->method('getConnection')->willReturn($this->connectionMock);
         $objectManager = new ObjectManager($this);
-        $this->connectionMock->expects($this->any())
-            ->method('describeTable')
-            ->willReturn([]);
+        $this->connectionMock->method('describeTable')->willReturn([]);
         $this->connectionMock->expects($this->any())
             ->method('insert');
         $this->connectionMock->expects($this->any())

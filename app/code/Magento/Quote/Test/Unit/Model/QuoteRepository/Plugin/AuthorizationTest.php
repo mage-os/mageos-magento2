@@ -28,7 +28,7 @@ class AuthorizationTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->userContextMock = $this->getMockForAbstractClass(UserContextInterface::class);
+        $this->userContextMock = $this->createMock(UserContextInterface::class);
         $this->authorization = new Authorization($this->userContextMock);
     }
 
@@ -41,11 +41,9 @@ class AuthorizationTest extends TestCase
             ->addMethods(['getCustomerId'])
             ->disableOriginalConstructor()
             ->getMock();
-        $quoteRepositoryMock = $this->getMockForAbstractClass(CartRepositoryInterface::class);
-        $this->userContextMock->expects($this->any())
-            ->method('getUserType')
-            ->willReturn(UserContextInterface::USER_TYPE_CUSTOMER);
-        $this->userContextMock->expects($this->any())->method('getUserId')->willReturn(1);
+        $quoteRepositoryMock = $this->createMock(CartRepositoryInterface::class);
+        $this->userContextMock->method('getUserType')->willReturn(UserContextInterface::USER_TYPE_CUSTOMER);
+        $this->userContextMock->method('getUserId')->willReturn(1);
         $quoteMock->expects($this->exactly(2))->method('getCustomerId')->willReturn(2);
         $this->authorization->afterGetActive($quoteRepositoryMock, $quoteMock);
     }
@@ -53,10 +51,8 @@ class AuthorizationTest extends TestCase
     public function testAfterGetActiveReturnsQuoteIfQuoteIsAllowedForCurrentUserContext()
     {
         $quoteMock = $this->createMock(Quote::class);
-        $quoteRepositoryMock = $this->getMockForAbstractClass(CartRepositoryInterface::class);
-        $this->userContextMock->expects($this->any())
-            ->method('getUserType')
-            ->willReturn(UserContextInterface::USER_TYPE_GUEST);
+        $quoteRepositoryMock = $this->createMock(CartRepositoryInterface::class);
+        $this->userContextMock->method('getUserType')->willReturn(UserContextInterface::USER_TYPE_GUEST);
         $this->assertEquals($quoteMock, $this->authorization->afterGetActive($quoteRepositoryMock, $quoteMock));
     }
 
@@ -69,22 +65,20 @@ class AuthorizationTest extends TestCase
             ->addMethods(['getCustomerId'])
             ->disableOriginalConstructor()
             ->getMock();
-        $quoteRepositoryMock = $this->getMockForAbstractClass(CartRepositoryInterface::class);
-        $this->userContextMock->expects($this->any())->method('getUserType')->willReturn(
+        $quoteRepositoryMock = $this->createMock(CartRepositoryInterface::class);
+        $this->userContextMock->method('getUserType')->willReturn(
             UserContextInterface::USER_TYPE_CUSTOMER
         );
         $quoteMock->expects($this->exactly(2))->method('getCustomerId')->willReturn(2);
-        $this->userContextMock->expects($this->any())->method('getUserId')->willReturn(1);
+        $this->userContextMock->method('getUserId')->willReturn(1);
         $this->authorization->afterGetActive($quoteRepositoryMock, $quoteMock);
     }
 
     public function testAfterGetActiveForCustomerReturnsQuoteIfQuoteIsAllowedForCurrentUserContext()
     {
         $quoteMock = $this->createMock(Quote::class);
-        $quoteRepositoryMock = $this->getMockForAbstractClass(CartRepositoryInterface::class);
-        $this->userContextMock->expects($this->any())
-            ->method('getUserType')
-            ->willReturn(UserContextInterface::USER_TYPE_GUEST);
+        $quoteRepositoryMock = $this->createMock(CartRepositoryInterface::class);
+        $this->userContextMock->method('getUserType')->willReturn(UserContextInterface::USER_TYPE_GUEST);
         $this->assertEquals($quoteMock, $this->authorization->afterGetActive($quoteRepositoryMock, $quoteMock));
     }
 }

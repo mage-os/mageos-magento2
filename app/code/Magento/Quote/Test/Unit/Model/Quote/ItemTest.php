@@ -98,23 +98,16 @@ class ItemTest extends TestCase
     {
         $this->objectManagerHelper = new ObjectManager($this);
 
-        $this->localeFormat = $this->getMockBuilder(FormatInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->localeFormat = $this->createMock(FormatInterface::class);
 
         $this->modelContext = $this->getMockBuilder(Context::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getEventDispatcher'])
             ->getMock();
 
-        $this->eventDispatcher = $this->getMockBuilder(ManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['dispatch'])
-            ->getMockForAbstractClass();
+        $this->eventDispatcher = $this->createMock(ManagerInterface::class);
 
-        $this->modelContext->expects($this->any())
-            ->method('getEventDispatcher')
-            ->willReturn($this->eventDispatcher);
+        $this->modelContext->method('getEventDispatcher')->willReturn($this->eventDispatcher);
 
         $this->errorInfos = $this->getMockBuilder(ListStatus::class)
             ->disableOriginalConstructor()
@@ -126,9 +119,7 @@ class ItemTest extends TestCase
             ->onlyMethods(['create'])
             ->getMock();
 
-        $statusListFactory->expects($this->any())
-            ->method('create')
-            ->willReturn($this->errorInfos);
+        $statusListFactory->method('create')->willReturn($this->errorInfos);
 
         $this->itemOptionFactory = $this->getMockBuilder(OptionFactory::class)
             ->disableOriginalConstructor()
@@ -142,9 +133,7 @@ class ItemTest extends TestCase
             ['getIsQtyDecimal', '__wakeup']
         );
 
-        $this->serializer = $this->getMockBuilder(Json::class)
-            ->onlyMethods(['unserialize'])
-            ->getMockForAbstractClass();
+        $this->serializer = $this->createMock(Json::class);
 
         $this->model = $this->objectManagerHelper->getObject(
             Item::class,
@@ -175,9 +164,7 @@ class ItemTest extends TestCase
         $quote->expects($this->once())
             ->method('getBillingAddress')
             ->willReturn('billing');
-        $quote->expects($this->any())
-            ->method('getStoreId')
-            ->willReturn(1);
+        $quote->method('getStoreId')->willReturn(1);
         $quote->expects($this->exactly(2))
             ->method('isVirtual')
             ->willReturnOnConsecutiveCalls(false, true);
@@ -201,9 +188,7 @@ class ItemTest extends TestCase
         $quote->expects($this->once())
             ->method('getId')
             ->willReturn($idValue);
-        $quote->expects($this->any())
-            ->method('getStoreId')
-            ->willReturn(1);
+        $quote->method('getStoreId')->willReturn(1);
 
         $this->model->setQuote($quote);
 
@@ -311,9 +296,7 @@ class ItemTest extends TestCase
         $quoteMock->expects($this->once())
             ->method('getIgnoreOldQty')
             ->willReturn(true);
-        $quoteMock->expects($this->any())
-            ->method('getStoreId')
-            ->willReturn(1);
+        $quoteMock->method('getStoreId')->willReturn(1);
 
         $this->model->setQuote($quoteMock);
 
@@ -424,9 +407,7 @@ class ItemTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['getStoreId', 'getCustomerGroupId', '__wakeup'])
             ->getMock();
-        $quoteMock->expects($this->any())
-            ->method('getStoreId')
-            ->willReturn($storeId);
+        $quoteMock->method('getStoreId')->willReturn($storeId);
         $quoteMock->expects($this->once())
             ->method('getCustomerGroupId')
             ->willReturn($customerGroupId);
@@ -502,35 +483,17 @@ class ItemTest extends TestCase
             )
             ->getMock();
 
-        $productMock->expects($this->any())
-            ->method('getId')
-            ->willReturn($productId);
-        $productMock->expects($this->any())
-            ->method('getTypeId')
-            ->willReturn($productType);
-        $productMock->expects($this->any())
-            ->method('getSku')
-            ->willReturn($productSku);
-        $productMock->expects($this->any())
-            ->method('getName')
-            ->willReturn($productName);
-        $productMock->expects($this->any())
-            ->method('getWeight')
-            ->willReturn($productWeight);
-        $productMock->expects($this->any())
-            ->method('getTaxClassId')
-            ->willReturn($productTaxClassId);
-        $productMock->expects($this->any())
-            ->method('getCost')
-            ->willReturn($productCost);
+        $productMock->method('getId')->willReturn($productId);
+        $productMock->method('getTypeId')->willReturn($productType);
+        $productMock->method('getSku')->willReturn($productSku);
+        $productMock->method('getName')->willReturn($productName);
+        $productMock->method('getWeight')->willReturn($productWeight);
+        $productMock->method('getTaxClassId')->willReturn($productTaxClassId);
+        $productMock->method('getCost')->willReturn($productCost);
         $store = $this->createPartialMock(Store::class, ['getWebsiteId']);
-        $store->expects($this->any())
-            ->method('getWebsiteId')
-            ->willReturn(10);
+        $store->method('getWebsiteId')->willReturn(10);
 
-        $productMock->expects($this->any())
-            ->method('getStore')
-            ->willReturn($store);
+        $productMock->method('getStore')->willReturn($store);
         $extensionAttribute = $this->getMockBuilder(ProductExtensionInterface::class)
             ->addMethods(['getStockItem'])
             ->disableOriginalConstructor()
@@ -617,15 +580,11 @@ class ItemTest extends TestCase
 
         $optionCode1 = 1234;
         $optionMock1 = $this->createOptionMock($optionCode1);
-        $optionMock1->expects($this->any())
-            ->method('getValue')
-            ->willReturn(1234);
+        $optionMock1->method('getValue')->willReturn(1234);
 
         $optionCode2 = 7890;
         $optionMock2 = $this->createOptionMock($optionCode2);
-        $optionMock2->expects($this->any())
-            ->method('getValue')
-            ->willReturn(7890);
+        $optionMock2->method('getValue')->willReturn(7890);
         $this->model->setOptions([$optionMock1, $optionMock2]);
 
         $productMock->expects($this->once())
@@ -663,15 +622,11 @@ class ItemTest extends TestCase
 
         $optionCode1 = 1234;
         $optionMock1 = $this->createOptionMock($optionCode1);
-        $optionMock1->expects($this->any())
-            ->method('getValue')
-            ->willReturn(1234);
+        $optionMock1->method('getValue')->willReturn(1234);
 
         $optionCode2 = 7890;
         $optionMock2 = $this->createOptionMock($optionCode2);
-        $optionMock2->expects($this->any())
-            ->method('getValue')
-            ->willReturn(7890);
+        $optionMock2->method('getValue')->willReturn(7890);
         $this->model->setOptions([$optionMock1]);
 
         $productMock->expects($this->once())
@@ -709,15 +664,11 @@ class ItemTest extends TestCase
 
         $optionCode1 = 1234;
         $optionMock1 = $this->createOptionMock($optionCode1);
-        $optionMock1->expects($this->any())
-            ->method('getValue')
-            ->willReturn(1234);
+        $optionMock1->method('getValue')->willReturn(1234);
 
         $optionCode2 = 7890;
         $optionMock2 = $this->createOptionMock($optionCode2);
-        $optionMock2->expects($this->any())
-            ->method('getValue')
-            ->willReturn(7890);
+        $optionMock2->method('getValue')->willReturn(7890);
         $this->model->setOptions([$optionMock1, $optionMock2]);
 
         $productMock->expects($this->once())
@@ -752,9 +703,7 @@ class ItemTest extends TestCase
     {
         $optionCode1 = 1234;
         $optionMock1 = $this->createOptionMock($optionCode1);
-        $optionMock1->expects($this->any())
-            ->method('getValue')
-            ->willReturn(1234);
+        $optionMock1->method('getValue')->willReturn(1234);
 
         $this->assertTrue(
             $this->model->compareOptions([$optionCode1 => $optionMock1], [$optionCode1 => $optionMock1])
@@ -768,15 +717,11 @@ class ItemTest extends TestCase
     {
         $optionCode1 = 1234;
         $optionMock1 = $this->createOptionMock($optionCode1);
-        $optionMock1->expects($this->any())
-            ->method('getValue')
-            ->willReturn(1234);
+        $optionMock1->method('getValue')->willReturn(1234);
 
         $optionCode2 = 1234;
         $optionMock2 = $this->createOptionMock($optionCode1);
-        $optionMock2->expects($this->any())
-            ->method('getValue')
-            ->willReturn(7890);
+        $optionMock2->method('getValue')->willReturn(7890);
 
         $this->assertFalse(
             $this->model->compareOptions([$optionCode1 => $optionMock1], [$optionCode2 => $optionMock2])
@@ -790,15 +735,11 @@ class ItemTest extends TestCase
     {
         $optionCode1 = 1234;
         $optionMock1 = $this->createOptionMock($optionCode1);
-        $optionMock1->expects($this->any())
-            ->method('getValue')
-            ->willReturn(1234);
+        $optionMock1->method('getValue')->willReturn(1234);
 
         $optionCode2 = 1234;
         $optionMock2 = $this->createOptionMock($optionCode1);
-        $optionMock2->expects($this->any())
-            ->method('getValue')
-            ->willReturn(null);
+        $optionMock2->method('getValue')->willReturn(null);
 
         $this->assertFalse(
             $this->model->compareOptions([$optionCode1 => $optionMock1], [$optionCode2 => $optionMock2])
@@ -812,15 +753,11 @@ class ItemTest extends TestCase
     {
         $optionCode1 = 1234;
         $optionMock1 = $this->createOptionMock($optionCode1);
-        $optionMock1->expects($this->any())
-            ->method('getValue')
-            ->willReturn(1234);
+        $optionMock1->method('getValue')->willReturn(1234);
 
         $optionCode2 = 7890;
         $optionMock2 = $this->createOptionMock($optionCode1);
-        $optionMock2->expects($this->any())
-            ->method('getValue')
-            ->willReturn(7890);
+        $optionMock2->method('getValue')->willReturn(7890);
 
         $this->assertFalse(
             $this->model->compareOptions(
@@ -846,9 +783,7 @@ class ItemTest extends TestCase
             self::PRODUCT_TAX_CLASS_ID,
             self::PRODUCT_COST
         );
-        $optionMock1->expects($this->any())
-            ->method('getProduct')
-            ->willReturn($productMock);
+        $optionMock1->method('getProduct')->willReturn($productMock);
 
         $optionCode2 = 'product_qty_' . self::PRODUCT_ID;
         $optionMock2 = $this->createOptionMock($optionCode2);
@@ -988,9 +923,7 @@ class ItemTest extends TestCase
             ->method('setItem')
             ->with($this->model)
             ->willReturn($optionMock);
-        $optionMock->expects($this->any())
-            ->method('getCode')
-            ->willReturn($optionCode);
+        $optionMock->method('getCode')->willReturn($optionCode);
 
         return $optionMock;
     }
@@ -1045,15 +978,13 @@ class ItemTest extends TestCase
             self::PRODUCT_COST
         );
 
-        $typeInstanceMock = $this->getMockForAbstractClass(
-            AbstractType::class,
+        $typeInstanceMock = $this->createMock(AbstractType::class,
             [],
             '',
             false,
             false,
             true,
-            ['updateQtyOption']
-        );
+            ['updateQtyOption']);
         $productMock->expects($this->once())
             ->method('getTypeInstance')
             ->willReturn($typeInstanceMock);
@@ -1210,9 +1141,7 @@ class ItemTest extends TestCase
         $optionMock->expects($this->exactly(3))
             ->method('getCode')
             ->willReturn($optionCode);
-        $optionMock->expects($this->any())
-            ->method('getValue')
-            ->willReturn('{"qty":23}');
+        $optionMock->method('getValue')->willReturn('{"qty":23}');
 
         $this->model->addOption($optionMock);
 
@@ -1223,9 +1152,7 @@ class ItemTest extends TestCase
             ->willReturn($quantity);
         $this->model->setQty($quantity);
         $this->assertEquals($quantity, $this->model->getQty());
-        $this->serializer->expects($this->any())
-            ->method('unserialize')
-            ->willReturn(json_decode($optionMock->getValue(), true));
+        $this->serializer->method('unserialize')->willReturn(json_decode($optionMock->getValue(), true));
         $buyRequest = $this->model->getBuyRequest();
         $this->assertEquals($buyRequestQuantity, $buyRequest->getOriginalQty());
         $this->assertEquals($quantity, $buyRequest->getQty());

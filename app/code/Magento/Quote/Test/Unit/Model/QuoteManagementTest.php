@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Quote\Test\Unit\Model;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Authorization\Model\UserContextInterface;
 use Magento\Checkout\Model\Session;
 use Magento\Checkout\Model\Type\Onepage;
@@ -25,6 +26,7 @@ use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Exception\StateException;
 use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
+use Magento\Framework\App\Request\Http as HttpRequest;
 use Magento\Framework\Lock\LockManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Quote\Api\CartRepositoryInterface;
@@ -51,7 +53,9 @@ use Magento\Sales\Api\Data\OrderItemInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
 use Magento\Sales\Api\OrderManagementInterface;
 use Magento\Sales\Model\Order;
+use Magento\Sales\Model\Order\Address as SalesOrderAddress;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Store\Model\Store;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -217,7 +221,7 @@ class QuoteManagementTest extends TestCase
         $objectManager = new ObjectManager($this);
 
         $this->submitQuoteValidator = $this->createMock(SubmitQuoteValidator::class);
-        $this->eventManager = $this->getMockForAbstractClass(ManagerInterface::class);
+        $this->eventManager = $this->createMock(ManagerInterface::class);
         $this->orderFactory = $this->getMockBuilder(OrderInterfaceFactory::class)
             ->addMethods(['populate'])
             ->onlyMethods(['create'])
@@ -227,11 +231,11 @@ class QuoteManagementTest extends TestCase
         $this->quotePaymentToOrderPayment = $this->createMock(ToOrderPayment::class);
         $this->quoteAddressToOrderAddress = $this->createMock(ToOrderAddress::class);
         $this->quoteItemToOrderItem = $this->createMock(ToOrderItem::class);
-        $this->orderManagement = $this->getMockForAbstractClass(OrderManagementInterface::class);
+        $this->orderManagement = $this->createMock(OrderManagementInterface::class);
         $this->customerManagement = $this->createMock(CustomerManagement::class);
-        $this->quoteRepositoryMock = $this->getMockForAbstractClass(CartRepositoryInterface::class);
+        $this->quoteRepositoryMock = $this->createMock(CartRepositoryInterface::class);
 
-        $this->userContextMock = $this->getMockForAbstractClass(UserContextInterface::class);
+        $this->userContextMock = $this->createMock(UserContextInterface::class);
         $this->customerRepositoryMock = $this->getMockBuilder(CustomerRepositoryInterface::class)
             ->addMethods(['create'])
             ->onlyMethods(['save', 'get', 'getById', 'getList', 'delete', 'deleteById'])
@@ -240,15 +244,7 @@ class QuoteManagementTest extends TestCase
             CustomerFactory::class,
             ['create']
         );
-        $this->storeManagerMock = $this->getMockForAbstractClass(
-            StoreManagerInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['getStore', 'getStoreId']
-        );
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
 
         $this->quoteMock = $this->getMockBuilder(Quote::class)
             ->addMethods(
@@ -303,17 +299,14 @@ class QuoteManagementTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->customerSessionMock = $this->createMock(CustomerSession::class);
-        $this->accountManagementMock = $this->getMockForAbstractClass(AccountManagementInterface::class);
+        $this->accountManagementMock = $this->createMock(AccountManagementInterface::class);
 
         $this->quoteFactoryMock = $this->createPartialMock(QuoteFactory::class, ['create']);
-        $this->addressRepositoryMock = $this->getMockBuilder(AddressRepositoryInterface::class)
-            ->getMockForAbstractClass();
+        $this->addressRepositoryMock = $this->createMock(AddressRepositoryInterface::class);
 
-        $this->lockManagerMock = $this->getMockBuilder(LockManagerInterface::class)
-            ->getMockForAbstractClass();
+        $this->lockManagerMock = $this->createMock(LockManagerInterface::class);
 
-        $this->cartMutexMock = $this->getMockBuilder(CartMutexInterface::class)
-            ->getMockForAbstractClass();
+        $this->cartMutexMock = $this->createMock(CartMutexInterface::class);
 
         $this->model = $objectManager->getObject(
             QuoteManagement::class,
@@ -348,7 +341,7 @@ class QuoteManagementTest extends TestCase
         $this->quoteIdMaskFactoryMock = $this->createPartialMock(QuoteIdMaskFactory::class, ['create']);
         $this->setPropertyValue($this->model, 'quoteIdMaskFactory', $this->quoteIdMaskFactoryMock);
 
-        $this->requestMock = $this->createPartialMockForAbstractClass(RequestInterface::class, ['getServer']);
+        $this->requestMock = $this->createMock(HttpRequest::class);
         $this->remoteAddressMock = $this->createMock(RemoteAddress::class);
     }
 
@@ -369,9 +362,9 @@ class QuoteManagementTest extends TestCase
 
         $quoteMock->expects($this->any())->method('setBillingAddress')->with($quoteAddress)->willReturnSelf();
         $quoteMock->expects($this->any())->method('setShippingAddress')->with($quoteAddress)->willReturnSelf();
-        $quoteMock->expects($this->any())->method('getShippingAddress')->willReturn($quoteAddress);
+        $quoteMock->method('getShippingAddress')->willReturn($quoteAddress);
 
-        $this->quoteAddressFactory->expects($this->any())->method('create')->willReturn($quoteAddress);
+        $this->quoteAddressFactory->method('create')->willReturn($quoteAddress);
 
         $this->quoteFactoryMock->expects($this->once())->method('create')->willReturn($quoteMock);
         $quoteMock->expects($this->any())->method('setStoreId')->with($storeId);
@@ -379,8 +372,11 @@ class QuoteManagementTest extends TestCase
         $this->quoteRepositoryMock->expects($this->once())->method('save')->with($quoteMock);
         $quoteMock->expects($this->once())->method('getId')->willReturn($quoteId);
 
-        $this->storeManagerMock->expects($this->once())->method('getStore')->willReturnSelf();
-        $this->storeManagerMock->expects($this->once())->method('getStoreId')->willReturn($storeId);
+        $storeObj = new class($storeId) {
+            private $id; public function __construct($id){ $this->id = $id; }
+            public function getStoreId(){ return $this->id; }
+        };
+        $this->storeManagerMock->expects($this->once())->method('getStore')->willReturn($storeObj);
 
         $this->assertEquals($quoteId, $this->model->createEmptyCart());
     }
@@ -401,10 +397,7 @@ class QuoteManagementTest extends TestCase
             ->method('getActiveForCustomer')
             ->with($userId)
             ->willThrowException(new NoSuchEntityException());
-        $customer = $this->getMockBuilder(CustomerInterface::class)
-            ->onlyMethods(['getDefaultBilling'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $customer = $this->createMock(CustomerInterface::class);
         $quoteAddress = $this->createPartialMock(
             Address::class,
             ['getCustomerId']
@@ -421,8 +414,11 @@ class QuoteManagementTest extends TestCase
         $this->customerRepositoryMock->expects($this->atLeastOnce())->method('getById')->willReturn($customer);
         $customer->expects($this->atLeastOnce())->method('getDefaultBilling')->willReturn(0);
 
-        $this->storeManagerMock->expects($this->once())->method('getStore')->willReturnSelf();
-        $this->storeManagerMock->expects($this->once())->method('getStoreId')->willReturn($storeId);
+        $storeObj = new class($storeId) {
+            private $id; public function __construct($id){ $this->id = $id; }
+            public function getStoreId(){ return $this->id; }
+        };
+        $this->storeManagerMock->expects($this->once())->method('getStore')->willReturn($storeObj);
 
         $this->assertEquals($quoteId, $this->model->createEmptyCartForCustomer($userId));
     }
@@ -442,10 +438,7 @@ class QuoteManagementTest extends TestCase
             ->method('getActiveForCustomer')
             ->with($userId)->willReturn($quoteMock);
 
-        $customer = $this->getMockBuilder(CustomerInterface::class)
-            ->onlyMethods(['getDefaultBilling'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $customer = $this->createMock(CustomerInterface::class);
         $quoteAddress = $this->createPartialMock(
             Address::class,
             ['getCustomerId']
@@ -458,8 +451,11 @@ class QuoteManagementTest extends TestCase
         $this->quoteFactoryMock->expects($this->never())->method('create')->willReturn($quoteMock);
         $this->quoteRepositoryMock->expects($this->once())->method('save')->with($quoteMock);
 
-        $this->storeManagerMock->expects($this->once())->method('getStore')->willReturnSelf();
-        $this->storeManagerMock->expects($this->once())->method('getStoreId')->willReturn($storeId);
+        $storeObj = new class($storeId) {
+            private $id; public function __construct($id){ $this->id = $id; }
+            public function getStoreId(){ return $this->id; }
+        };
+        $this->storeManagerMock->expects($this->once())->method('getStore')->willReturn($storeObj);
 
         $this->model->createEmptyCartForCustomer($userId);
     }
@@ -478,7 +474,7 @@ class QuoteManagementTest extends TestCase
         $storeId = 5;
 
         $quoteMock = $this->createMock(Quote::class);
-        $customerMock = $this->getMockForAbstractClass(CustomerInterface::class);
+        $customerMock = $this->createMock(CustomerInterface::class);
 
         $this->quoteRepositoryMock
             ->expects($this->once())
@@ -527,7 +523,7 @@ class QuoteManagementTest extends TestCase
             ->onlyMethods(['setCustomer', 'setCustomerIsGuest'])
             ->disableOriginalConstructor()
             ->getMock();
-        $customerMock = $this->getMockForAbstractClass(CustomerInterface::class);
+        $customerMock = $this->createMock(CustomerInterface::class);
 
         $this->quoteRepositoryMock
             ->expects($this->once())
@@ -623,7 +619,7 @@ class QuoteManagementTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $customerMock = $this->getMockForAbstractClass(CustomerInterface::class);
+        $customerMock = $this->createMock(CustomerInterface::class);
 
         $this->quoteRepositoryMock
             ->expects($this->once())
@@ -696,7 +692,7 @@ class QuoteManagementTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $customerMock = $this->getMockForAbstractClass(CustomerInterface::class);
+        $customerMock = $this->createMock(CustomerInterface::class);
         $this->quoteRepositoryMock
             ->expects($this->once())
             ->method('getActive')
@@ -770,11 +766,11 @@ class QuoteManagementTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $payment = $this->createMock(Payment::class);
-        $baseOrder = $this->getMockForAbstractClass(OrderInterface::class);
-        $convertedBilling = $this->createPartialMockForAbstractClass(OrderAddressInterface::class, ['setData']);
-        $convertedShipping = $this->createPartialMockForAbstractClass(OrderAddressInterface::class, ['setData']);
-        $convertedPayment = $this->getMockForAbstractClass(OrderPaymentInterface::class);
-        $convertedQuoteItem = $this->getMockForAbstractClass(OrderItemInterface::class);
+        $baseOrder = $this->createMock(OrderInterface::class);
+        $convertedBilling = $this->createMock(SalesOrderAddress::class);
+        $convertedShipping = $this->createMock(SalesOrderAddress::class);
+        $convertedPayment = $this->createMock(OrderPaymentInterface::class);
+        $convertedQuoteItem = $this->createMock(OrderItemInterface::class);
         $addresses = [$convertedShipping, $convertedBilling];
         $quoteItems = [$quoteItem];
         $convertedItems = [$convertedQuoteItem];
@@ -850,10 +846,10 @@ class QuoteManagementTest extends TestCase
     }
 
     /**
-     * @dataProvider guestPlaceOrderDataProvider
      * @return void
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
+    #[DataProvider('guestPlaceOrderDataProvider')]
     public function testPlaceOrderIfCustomerIsGuest(?string $settledEmail, int $countSetAddress): void
     {
         $cartId = 100;
@@ -1154,27 +1150,19 @@ class QuoteManagementTest extends TestCase
                 ->method('setIsActive')
                 ->with(false);
         }
-        $quote->expects($this->any())
-            ->method('getAllVisibleItems')
-            ->willReturn($quoteItems);
+        $quote->method('getAllVisibleItems')->willReturn($quoteItems);
         $quote->expects($this->once())
             ->method('getAllItems')
             ->willReturn($quoteItems);
         $quote->expects($this->once())
             ->method('getCustomerIsGuest')
             ->willReturn($isGuest);
-        $quote->expects($this->any())
-            ->method('isVirtual')
-            ->willReturn($isVirtual);
+        $quote->method('isVirtual')->willReturn($isVirtual);
         if ($shippingAddress) {
-            $quote->expects($this->any())
-                ->method('getShippingAddress')
-                ->willReturn($shippingAddress);
-            $shippingAddress->expects($this->any())->method('getQuoteId')->willReturn($id);
+            $quote->method('getShippingAddress')->willReturn($shippingAddress);
+            $shippingAddress->method('getQuoteId')->willReturn($id);
         }
-        $quote->expects($this->any())
-            ->method('getBillingAddress')
-            ->willReturn($billingAddress);
+        $quote->method('getBillingAddress')->willReturn($billingAddress);
         $quote->expects($this->once())
             ->method('getPayment')
             ->willReturn($payment);
@@ -1184,7 +1172,7 @@ class QuoteManagementTest extends TestCase
             ->onlyMethods(['getId'])
             ->disableOriginalConstructor()
             ->getMock();
-        $quote->expects($this->any())->method('getCustomerId')->willReturn($customerId);
+        $quote->method('getCustomerId')->willReturn($customerId);
 
         $customer->expects($this->once())
             ->method('getId')
@@ -1192,15 +1180,13 @@ class QuoteManagementTest extends TestCase
         $quote->expects($this->atLeastOnce())
             ->method('getCustomerEmail')
             ->willReturn('customer@example.com');
-        $quote->expects($this->any())
-            ->method('getCustomer')
-            ->willReturn($customer);
+        $quote->method('getCustomer')->willReturn($customer);
         $quote->expects($this->once())
             ->method('getId')
             ->willReturn($id);
-        $this->customerRepositoryMock->expects($this->any())->method('getById')->willReturn($customer);
+        $this->customerRepositoryMock->method('getById')->willReturn($customer);
 
-        $customer->expects($this->any())->method('getDefaultBilling')->willReturn(1);
+        $customer->method('getDefaultBilling')->willReturn(1);
         return $quote;
     }
 
@@ -1260,7 +1246,7 @@ class QuoteManagementTest extends TestCase
         }
         $order->expects($this->any())->method('getAddressesCollection');
         $order->expects($this->any())->method('getAddresses');
-        $order->expects($this->any())->method('getBillingAddress')->willReturn(false);
+        $order->method('getBillingAddress')->willReturn(false);
         $order->expects($this->any())->method('addAddresses')->withAnyParameters()->willReturnSelf();
         $order->expects($this->once())->method('setBillingAddress')->with($billingAddress);
         $order->expects($this->once())->method('setAddresses')->with($addresses);
@@ -1342,11 +1328,11 @@ class QuoteManagementTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $payment = $this->createMock(Payment::class);
-        $baseOrder = $this->getMockForAbstractClass(OrderInterface::class);
-        $convertedBilling = $this->createPartialMockForAbstractClass(OrderAddressInterface::class, ['setData']);
-        $convertedShipping = $this->createPartialMockForAbstractClass(OrderAddressInterface::class, ['setData']);
-        $convertedPayment = $this->getMockForAbstractClass(OrderPaymentInterface::class);
-        $convertedQuoteItem = $this->getMockForAbstractClass(OrderItemInterface::class);
+        $baseOrder = $this->createMock(OrderInterface::class);
+        $convertedBilling = $this->createMock(SalesOrderAddress::class);
+        $convertedShipping = $this->createMock(SalesOrderAddress::class);
+        $convertedPayment = $this->createMock(OrderPaymentInterface::class);
+        $convertedQuoteItem = $this->createMock(OrderItemInterface::class);
 
         $addresses = [$convertedShipping, $convertedBilling];
         $quoteItems = [$quoteItem];
@@ -1402,8 +1388,7 @@ class QuoteManagementTest extends TestCase
             $quoteId,
             $convertedShipping
         );
-        $customerAddressMock = $this->getMockBuilder(AddressInterface::class)
-            ->getMockForAbstractClass();
+        $customerAddressMock = $this->createMock(AddressInterface::class);
         $shippingAddress->expects($this->once())->method('exportCustomerAddress')->willReturn($customerAddressMock);
         $this->addressRepositoryMock->expects($this->once())->method('save')->with($customerAddressMock);
         $quote->expects($this->any())->method('addCustomerAddress')->with($customerAddressMock);
@@ -1442,15 +1427,13 @@ class QuoteManagementTest extends TestCase
      */
     private function createPartialMockForAbstractClass(string $className, array $methods = []): MockObject
     {
-        return $this->getMockForAbstractClass(
-            $className,
+        return $this->createMock($className,
             [],
             '',
             true,
             true,
             true,
-            $methods
-        );
+            $methods);
     }
 
     /**

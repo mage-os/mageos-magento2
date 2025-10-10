@@ -1,7 +1,8 @@
 <?php
 /**
- * Copyright 2014 Adobe
- * All Rights Reserved.
+ *
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 declare(strict_types=1);
 
@@ -17,7 +18,6 @@ use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Quote\Model\Quote\Item;
 use Magento\Quote\Model\Quote\Item\CartItemOptionsProcessor;
-use Magento\Quote\Model\Quote\Item\CartItemValidatorInterface;
 use Magento\Quote\Model\Quote\Item\Repository;
 use Magento\Quote\Model\QuoteMutexInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -88,8 +88,8 @@ class RepositoryTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->quoteRepositoryMock = $this->getMockForAbstractClass(CartRepositoryInterface::class);
-        $this->productRepositoryMock = $this->getMockForAbstractClass(ProductRepositoryInterface::class);
+        $this->quoteRepositoryMock = $this->createMock(CartRepositoryInterface::class);
+        $this->productRepositoryMock = $this->createMock(ProductRepositoryInterface::class);
         $this->itemDataFactoryMock = $this->createPartialMock(CartItemInterfaceFactory::class, ['create']);
         $this->itemMock = $this->createMock(Item::class);
         $this->quoteMock = $this->createMock(Quote::class);
@@ -113,8 +113,7 @@ class RepositoryTest extends TestCase
             $this->itemDataFactoryMock,
             $this->optionsProcessorMock,
             ['custom_options' => $this->customOptionProcessor],
-            $this->createMock(QuoteMutexInterface::class),
-            $this->createMock(CartItemValidatorInterface::class)
+            $this->createMock(QuoteMutexInterface::class)
         );
     }
 

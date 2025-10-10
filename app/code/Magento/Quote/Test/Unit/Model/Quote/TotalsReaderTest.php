@@ -96,7 +96,7 @@ class TotalsReaderTest extends TestCase
             ->with($this->quoteMock, $this->totalMock)
             ->willReturn($data);
         $testedTotalMock->expects($this->once())->method('setData')->with($data)->willReturnSelf();
-        $testedTotalMock->expects($this->any())->method('getCode')->willReturn('my_total_type');
+        $testedTotalMock->method('getCode')->willReturn('my_total_type');
         $this->assertEquals($expected, $this->model->fetch($this->quoteMock, $total));
     }
 
@@ -162,8 +162,8 @@ class TotalsReaderTest extends TestCase
             ->willReturn($data);
         $firstTotalMock->expects($this->once())->method('setData')->with($data[0])->willReturnSelf();
         $secondTotalMock->expects($this->once())->method('setData')->with($data[1])->willReturnSelf();
-        $firstTotalMock->expects($this->any())->method('getCode')->willReturn('first_total_type');
-        $secondTotalMock->expects($this->any())->method('getCode')->willReturn('second_total_type');
+        $firstTotalMock->method('getCode')->willReturn('first_total_type');
+        $secondTotalMock->method('getCode')->willReturn('second_total_type');
         $this->assertEquals($expected, $this->model->fetch($this->quoteMock, $total));
     }
 
@@ -197,7 +197,7 @@ class TotalsReaderTest extends TestCase
             ->with($this->quoteMock, $this->totalMock)
             ->willReturn($testedTotalMock);
         $testedTotalMock->expects($this->never())->method('setData');
-        $testedTotalMock->expects($this->any())->method('getCode')->willReturn('my_total_type');
+        $testedTotalMock->method('getCode')->willReturn('my_total_type');
         $this->assertEquals($expected, $this->model->fetch($this->quoteMock, $total));
     }
 }

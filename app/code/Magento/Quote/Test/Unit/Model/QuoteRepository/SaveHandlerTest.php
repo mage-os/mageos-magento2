@@ -91,8 +91,7 @@ class SaveHandlerTest extends TestCase
         $this->shippingAssignmentPersisterMock = $this->getMockBuilder(ShippingAssignmentPersister::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->addressRepositoryMock = $this->getMockBuilder(AddressRepositoryInterface::class)
-            ->getMockForAbstractClass();
+        $this->addressRepositoryMock = $this->createMock(AddressRepositoryInterface::class);
         $this->quoteMock = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
             ->addMethods(['setLastAddedItem'])

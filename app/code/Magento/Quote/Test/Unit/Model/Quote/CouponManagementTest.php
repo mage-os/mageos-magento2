@@ -30,7 +30,7 @@ class CouponManagementTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->quoteRepository = $this->getMockForAbstractClass(CartRepositoryInterface::class);
+        $this->quoteRepository = $this->createMock(CartRepositoryInterface::class);
         $this->couponManagement = new CouponManagement($this->quoteRepository);
 
         parent::setUp();

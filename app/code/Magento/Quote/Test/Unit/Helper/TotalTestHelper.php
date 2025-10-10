@@ -9,71 +9,29 @@ namespace Magento\Quote\Test\Unit\Helper;
 
 use Magento\Quote\Model\Quote\Address\Total;
 
-/**
- * Helper class for providing Total getters in unit tests.
- */
 class TotalTestHelper extends Total
 {
-    /** @var float */
-    private float $subtotal = 0.0;
+    public function __construct()
+    {
+        // Intentionally skip parent constructor to avoid ObjectManager usage
+    }
 
     /** @var float */
-    private float $subtotalInclTax = 0.0;
+    private $grandTotal = 0.0;
 
     /** @var float */
-    private float $grandTotal = 0.0;
+    private $baseGrandTotal = 0.0;
 
-    /** @var float */
-    private float $discountTaxCompensationAmount = 0.0;
-
-    /** @var float */
-    private float $discountAmount = 0.0;
-
-    /** @var string|null */
-    private ?string $discountDescription = null;
-
-    /** @var array */
-    private array $appliedTaxes = [];
-
-    public function __construct(
-        float $subtotal = 0.0,
-        float $subtotalInclTax = 0.0,
-        float $grandTotal = 0.0
-    ) {
-        // Skip parent constructor
-        $this->subtotal = $subtotal;
-        $this->subtotalInclTax = $subtotalInclTax;
+    public function setGrandTotal($grandTotal)
+    {
         $this->grandTotal = $grandTotal;
+        return $this;
     }
 
-    public function setDiscountDescription(?string $description): void
+    public function setBaseGrandTotal($baseGrandTotal)
     {
-        $this->discountDescription = $description;
-    }
-
-    public function setAppliedTaxes(array $appliedTaxes): void
-    {
-        $this->appliedTaxes = $appliedTaxes;
-    }
-
-    public function setDiscountAmount(float $amount): void
-    {
-        $this->discountAmount = $amount;
-    }
-
-    public function setDiscountTaxCompensationAmount(float $amount): void
-    {
-        $this->discountTaxCompensationAmount = $amount;
-    }
-
-    public function getSubtotal()
-    {
-        return $this->subtotal;
-    }
-
-    public function getSubtotalInclTax()
-    {
-        return $this->subtotalInclTax;
+        $this->baseGrandTotal = $baseGrandTotal;
+        return $this;
     }
 
     public function getGrandTotal()
@@ -81,28 +39,10 @@ class TotalTestHelper extends Total
         return $this->grandTotal;
     }
 
-    public function getDiscountTaxCompensationAmount()
+    public function getBaseGrandTotal()
     {
-        return $this->discountTaxCompensationAmount;
-    }
-
-    public function getDiscountAmount()
-    {
-        return $this->discountAmount;
-    }
-
-    public function getDiscountDescription()
-    {
-        return $this->discountDescription;
-    }
-
-    public function getAppliedTaxes()
-    {
-        return $this->appliedTaxes;
+        return $this->baseGrandTotal;
     }
 }
-
-
-
 
 
