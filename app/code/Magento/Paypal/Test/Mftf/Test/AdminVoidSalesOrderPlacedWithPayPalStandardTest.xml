@@ -87,11 +87,11 @@
         <actionGroup ref="AdminOrderViewCheckStatusActionGroup" stepKey="checkOrderStatusAfterVoid">
             <argument name="status" value="Processing"/>
         </actionGroup>
+         <!-- Grab transaction ID for validation -->
+        <waitForElementVisible selector="{{AdminOrderPaymentInformationSection.paymentInformationField('Last Transaction ID')}}" stepKey="waitForGrabLastTransactionID"/>
+        <grabTextFrom selector="{{AdminOrderPaymentInformationSection.paymentInformationField('Last Transaction ID')}}" stepKey="grabLastTransactionID"/>
         <!-- Verify void authorization message in comments history -->
         <actionGroup ref="AdminOpenOrderCommentsHistoryActionGroup" stepKey="clickOnCommentsHistory"/>
-        <!-- Grab transaction ID for validation -->
-        <waitForElementVisible selector="{{AdminOrderDetailsInformationSection.paymentInformationField('Last Transaction ID')}}" stepKey="waitForGrabLastTransactionID"/>
-        <grabTextFrom selector="{{AdminOrderDetailsInformationSection.paymentInformationField('Last Transaction ID')}}" stepKey="grabLastTransactionID"/>
         <!-- Verify void authorization message with amount and transaction ID in comments -->
         <waitForText selector="{{AdminOrderCommentsTabSection.authorizationNotes('Voided authorization')}}" userInput="{{BillingAgreement.amount_note}} Transaction ID: &quot;$grabLastTransactionID&quot;" stepKey="seeVoidAuthorizationMessageWithAmount"/>
         <!-- Verify transactions tab shows both authorization and void transactions -->
