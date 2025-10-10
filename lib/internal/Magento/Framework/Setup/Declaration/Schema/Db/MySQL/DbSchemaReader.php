@@ -109,6 +109,32 @@ class DbSchemaReader implements DbSchemaReaderInterface
     {
         $columns = [];
         $adapter = $this->resourceConnection->getConnection($resource);
+
+        // SQLite uses describeTable() which is already implemented
+        if ($adapter instanceof \Magento\Framework\DB\Adapter\Pdo\Sqlite) {
+            $columnsData = $adapter->describeTable($tableName);
+
+            foreach ($columnsData as $columnData) {
+                $column = [
+                    'name' => $columnData['COLUMN_NAME'],
+                    'default' => $columnData['DEFAULT'],
+                    'type' => $columnData['DATA_TYPE'],
+                    'nullable' => $columnData['NULLABLE'],
+                    'definition' => $columnData['DATA_TYPE'],
+                    'extra' => $columnData['IDENTITY'] ? 'auto_increment' : '',
+                    'comment' => '',
+                    'charset' => '',
+                    'collation' => '',
+                ];
+
+                $processedColumn = $this->definitionAggregator->fromDefinition($column);
+                $columns[$processedColumn['name']] = $processedColumn;
+            }
+
+            return $columns;
+        }
+
+        // MySQL/MariaDB
         $dbName = $this->resourceConnection->getSchemaName($resource);
         $stmt = $adapter->select()
             ->from(
