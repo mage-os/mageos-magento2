@@ -57,7 +57,8 @@ class CommandLoader implements CommandLoaderInterface
         Command\RollbackCommand::NAME => Command\RollbackCommand::class,
         Command\UpgradeCommand::NAME => Command\UpgradeCommand::class,
         Command\UninstallCommand::NAME => Command\UninstallCommand::class,
-        Command\DeployStaticContentCommand::NAME => Command\DeployStaticContentCommand::class
+        Command\DeployStaticContentCommand::NAME => Command\DeployStaticContentCommand::class,
+        Command\DevServeCommand::NAME => Command\DevServeCommand::class
     ];
 
     /**

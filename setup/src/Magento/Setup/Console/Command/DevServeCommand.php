@@ -4,9 +4,9 @@
  * See COPYING.txt for license details.
  */
 
-namespace Magento\Framework\Console;
+namespace Magento\Setup\Console\Command;
 
-use Magento\Framework\Setup\AutoInstaller;
+use Magento\Setup\Model\AutoInstaller;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -23,6 +23,11 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class DevServeCommand extends Command
 {
+    /**
+     * Command name
+     */
+    public const NAME = 'dev:serve';
+
     /**
      * Default server host
      */
@@ -59,7 +64,7 @@ class DevServeCommand extends Command
      */
     protected function configure()
     {
-        $this->setName('dev:serve')
+        $this->setName(self::NAME)
             ->setDescription('Start development server with SQLite')
             ->addOption(
                 'host',
