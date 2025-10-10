@@ -7,9 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Quote\Test\Unit\Helper;
 
-use Magento\Catalog\Api\Data\ProductExtensionInterface;
-
-class ProductExtensionForSubtotalTestHelper implements ProductExtensionInterface
+class ProductExtensionForSubtotalTestHelper
 {
     private $stockItem;
 
