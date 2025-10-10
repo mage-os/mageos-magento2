@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\QuoteGraphQl\Model;
 
 use Magento\Catalog\Test\Fixture\Product as ProductFixture;
+use Magento\Catalog\Test\Fixture\Virtual as VirtualProductFixture;
 use Magento\Customer\Test\Fixture\Customer;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Integration\Api\CustomerTokenServiceInterface;
@@ -73,7 +74,7 @@ class DiscountsTest extends GraphQlAbstract
     }
 
     #[
-        DataFixture(ProductFixture::class, ['is_virtual' => true], as: 'product'),
+        DataFixture(VirtualProductFixture::class, as: 'product'),
         DataFixture(Customer::class, ['email' => 'customer@example.com'], as: 'customer'),
         DataFixture(CustomerCart::class, ['customer_id' => '$customer.id$'], as: 'cart'),
         DataFixture(AddProductToCartFixture::class, ['cart_id' => '$cart.id$', 'product_id' => '$product.id$']),
