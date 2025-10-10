@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Mage-OS, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ *
+ * SQLite-specific DI configuration for development mode
+ * This file is automatically included when using SQLite adapter
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- Register SQLite connection adapter -->
+    <type name="Magento\Framework\App\ResourceConnection\ConnectionFactory">
+        <arguments>
+            <argument name="typeMapping" xsi:type="array">
+                <item name="pdo_sqlite" xsi:type="string">Magento\Framework\Model\ResourceModel\Type\Db\Pdo\Sqlite</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

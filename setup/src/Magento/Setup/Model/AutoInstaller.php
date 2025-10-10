@@ -250,10 +250,6 @@ class AutoInstaller
 
         $params = [
             'setup:install',
-            '--db-host=""',
-            '--db-name="var/dev.sqlite"',
-            '--db-user=""',
-            '--db-password=""',
             '--base-url="' . $baseUrl . '"',
             '--backend-frontname=admin',
             '--admin-user="' . $credentials['admin_user'] . '"',
@@ -334,8 +330,18 @@ PHP;
             @file_put_contents($configPath, $configContent);
         }
 
-        // Create env.php with SQLite config if doesn't exist
+        // Create minimal env.php with db config pointing to SQLite file path
+        // setup:install will use this configuration
         if (!file_exists($envPath)) {
+            // Create SQLite database file first so PDO can connect
+            $dbPath = $this->baseDir . '/var/dev.sqlite';
+            $dbDir = dirname($dbPath);
+            if (!is_dir($dbDir)) {
+                mkdir($dbDir, 0770, true);
+            }
+            // Touch the file so it exists
+            touch($dbPath);
+
             $envContent = <<<'PHP'
 <?php
 return [
@@ -351,6 +357,7 @@ return [
                 'engine' => 'innodb',
                 'initStatements' => '',
                 'active' => '1',
+                'type' => 'pdo_sqlite',
                 'driver_options' => [
                     'sqlite_query_logging' => true
                 ]
@@ -361,7 +368,7 @@ return [
         'frontName' => 'admin'
     ],
     'crypt' => [
-        'key' => ''
+        'key' => bin2hex(random_bytes(16))
     ],
     'session' => [
         'save' => 'files'
@@ -375,9 +382,6 @@ return [
                 'backend' => 'Magento\\Framework\\Cache\\Backend\\File'
             ]
         ]
-    ],
-    'install' => [
-        'date' => 'Wed, 10 Oct 2025 00:00:00 +0000'
     ]
 ];
 PHP;
