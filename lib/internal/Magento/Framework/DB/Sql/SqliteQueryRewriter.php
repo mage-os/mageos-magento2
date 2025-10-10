@@ -126,6 +126,13 @@ class SqliteQueryRewriter
         // STRAIGHT_JOIN → JOIN
         $sql = preg_replace('/STRAIGHT_JOIN/i', 'JOIN', $sql);
 
+        // SHOW commands → return empty/dummy results
+        if (preg_match('/^\s*SHOW\s+/i', $sql)) {
+            // Replace SHOW with SELECT that returns empty result
+            // This is a workaround - MySQL-specific SHOW commands aren't needed for dev
+            $sql = 'SELECT NULL LIMIT 0';
+        }
+
         return trim($sql);
     }
 

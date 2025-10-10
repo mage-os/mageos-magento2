@@ -151,12 +151,45 @@ class Sqlite extends Mysql
     /**
      * Setup connection and apply SQLite-specific optimizations
      *
+     * Override to use SQLite PDO instead of MySQL
+     *
      * @return void
      */
     public function _connect()
     {
-        parent::_connect();
-        $this->_applyDevOptimizations();
+        if ($this->_connection) {
+            return;
+        }
+
+        // Build SQLite DSN
+        $dbPath = $this->_config['dbname'] ?? 'var/dev.sqlite';
+
+        // Ensure absolute path
+        if (!str_starts_with($dbPath, '/')) {
+            $dbPath = (defined('BP') ? BP . '/' : '') . $dbPath;
+        }
+
+        // Ensure directory exists
+        $dir = dirname($dbPath);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0770, true);
+        }
+
+        $dsn = 'sqlite:' . $dbPath;
+
+        // Create PDO connection
+        try {
+            $this->_connection = new \PDO(
+                $dsn,
+                null,
+                null,
+                [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]
+            );
+
+            $this->_applyDevOptimizations();
+        } catch (\PDOException $e) {
+            throw new \Zend_Db_Adapter_Exception($e->getMessage(), $e->getCode(), $e);
+        }
     }
 
     /**
@@ -170,7 +203,50 @@ class Sqlite extends Mysql
     {
         // Disable foreign key checks during setup
         $this->rawQuery('PRAGMA foreign_keys=OFF');
+
+        // Set mysqlversion to empty to avoid SHOW VARIABLES queries
+        $this->mysqlversion = '';
+
         return $this;
+    }
+
+    /**
+     * Override showTableStatus for SQLite
+     *
+     * SQLite doesn't have SHOW TABLE STATUS, return minimal info
+     *
+     * @param string $tableName
+     * @param string $schemaName
+     * @return array|false
+     */
+    public function showTableStatus($tableName, $schemaName = null)
+    {
+        if (!$this->isTableExists($tableName, $schemaName)) {
+            return false;
+        }
+
+        $table = $this->_getTableName($tableName, $schemaName);
+
+        return [
+            'name' => $table,
+            'engine' => 'sqlite',
+            'version' => null,
+            'row_format' => null,
+            'rows' => 0,
+            'avg_row_length' => 0,
+            'data_length' => 0,
+            'max_data_length' => 0,
+            'index_length' => 0,
+            'data_free' => 0,
+            'auto_increment' => null,
+            'create_time' => null,
+            'update_time' => null,
+            'check_time' => null,
+            'collation' => null,
+            'checksum' => null,
+            'create_options' => null,
+            'comment' => '',
+        ];
     }
 
     /**
@@ -745,8 +821,9 @@ class Sqlite extends Mysql
 
         // Add length/precision for certain types
         if (isset($columnData['LENGTH']) && $columnData['LENGTH'] && in_array($sqliteType, ['TEXT', 'BLOB'])) {
-            // SQLite doesn't enforce length but we keep it for compatibility
-            $definition .= '(' . $columnData['LENGTH'] . ')';
+            //SQLite doesn't understand size suffixes like 2M, 16M
+            // Skip length entirely for BLOB/TEXT as SQLite doesn't enforce it anyway
+            // This avoids "unrecognized token" errors
         } elseif (isset($columnData['PRECISION']) && isset($columnData['SCALE'])) {
             $definition .= '(' . $columnData['PRECISION'] . ',' . $columnData['SCALE'] . ')';
         }
@@ -804,13 +881,18 @@ class Sqlite extends Mysql
 
         if (!empty($indexes)) {
             foreach ($indexes as $indexData) {
+                // Check if INDEX_TYPE key exists (some old code might not set it)
+                $indexType = $indexData['INDEX_TYPE'] ?? AdapterInterface::INDEX_TYPE_INDEX;
+
                 // Only add UNIQUE constraints here; regular indexes created separately
-                if ($indexData['INDEX_TYPE'] === AdapterInterface::INDEX_TYPE_UNIQUE) {
-                    $columns = $indexData['COLUMNS_LIST'];
-                    $definition[] = sprintf(
-                        '  UNIQUE (%s)',
-                        implode(', ', array_map([$this, 'quoteIdentifier'], $columns))
-                    );
+                if ($indexType === AdapterInterface::INDEX_TYPE_UNIQUE) {
+                    $columns = $indexData['COLUMNS_LIST'] ?? $indexData['fields'] ?? [];
+                    if (!empty($columns)) {
+                        $definition[] = sprintf(
+                            '  UNIQUE (%s)',
+                            implode(', ', array_map([$this, 'quoteIdentifier'], $columns))
+                        );
+                    }
                 }
                 // Skip FULLTEXT indexes - will handle in Stage 6
             }
@@ -833,19 +915,26 @@ class Sqlite extends Mysql
 
         if (!empty($indexes)) {
             foreach ($indexes as $indexData) {
+                // Check if INDEX_TYPE key exists
+                $indexType = $indexData['INDEX_TYPE'] ?? AdapterInterface::INDEX_TYPE_INDEX;
+
                 // Skip primary and unique (already in CREATE TABLE)
-                if ($indexData['INDEX_TYPE'] === AdapterInterface::INDEX_TYPE_PRIMARY ||
-                    $indexData['INDEX_TYPE'] === AdapterInterface::INDEX_TYPE_UNIQUE) {
+                if ($indexType === AdapterInterface::INDEX_TYPE_PRIMARY ||
+                    $indexType === AdapterInterface::INDEX_TYPE_UNIQUE) {
                     continue;
                 }
 
                 // Skip fulltext for now (Stage 6)
-                if ($indexData['INDEX_TYPE'] === AdapterInterface::INDEX_TYPE_FULLTEXT) {
+                if ($indexType === AdapterInterface::INDEX_TYPE_FULLTEXT) {
                     continue;
                 }
 
-                $indexName = $indexData['INDEX_NAME'];
-                $columns = $indexData['COLUMNS_LIST'];
+                $indexName = $indexData['INDEX_NAME'] ?? $indexData['KEY_NAME'] ?? null;
+                $columns = $indexData['COLUMNS_LIST'] ?? $indexData['fields'] ?? [];
+
+                if (!$indexName || empty($columns)) {
+                    continue;
+                }
 
                 $sql = sprintf(
                     'CREATE INDEX IF NOT EXISTS %s ON %s (%s)',

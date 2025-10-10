@@ -99,7 +99,40 @@ class DbValidator
         $dbPass = '',
         $driverOptions = []
     ) {
-        // establish connection to information_schema view to retrieve information about user and table privileges
+        // Detect SQLite - for SQLite, dbName is a file path
+        $isSqlite = (strpos($dbName, '.sqlite') !== false || strpos($dbName, '.db') !== false);
+
+        if ($isSqlite) {
+            // For SQLite, skip MySQL-specific validation
+            // Just verify the SQLite file can be created/accessed
+            $connection = $this->connectionFactory->create(
+                [
+                    ConfigOptionsListConstants::KEY_NAME => $dbName,
+                    ConfigOptionsListConstants::KEY_HOST => $dbHost,
+                    ConfigOptionsListConstants::KEY_USER => $dbUser,
+                    ConfigOptionsListConstants::KEY_PASSWORD => $dbPass,
+                    ConfigOptionsListConstants::KEY_ACTIVE => true,
+                    'type' => 'pdo_sqlite',
+                    ConfigOptionsListConstants::KEY_DRIVER_OPTIONS => $driverOptions,
+                ]
+            );
+
+            if (!$connection) {
+                throw new \Magento\Setup\Exception('SQLite database connection failure.');
+            }
+
+            // SQLite version check
+            $sqliteVersion = $connection->fetchOne('SELECT sqlite_version()');
+            if ($sqliteVersion && version_compare($sqliteVersion, '3.24.0') < 0) {
+                throw new \Magento\Setup\Exception(
+                    'SQLite 3.24.0 or later is required. Found: ' . $sqliteVersion
+                );
+            }
+
+            return true; // Skip database name/privilege checks for SQLite
+        }
+
+        // MySQL validation (original code)
         $connection = $this->connectionFactory->create(
             [
                 ConfigOptionsListConstants::KEY_NAME => 'information_schema',
