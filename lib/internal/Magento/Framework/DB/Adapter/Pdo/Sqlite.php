@@ -9,6 +9,8 @@ namespace Magento\Framework\DB\Adapter\Pdo;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Ddl\Table;
 use Magento\Framework\DB\Sql\Expression;
+use Magento\Framework\DB\Sql\SqliteQueryRewriter;
+use Psr\Log\LoggerInterface as PsrLoggerInterface;
 
 /**
  * SQLite database adapter for development environments
@@ -36,6 +38,20 @@ class Sqlite extends Mysql
      * @var string
      */
     protected $_defaultStmtClass = \Magento\Framework\DB\Statement\Pdo\Mysql::class;
+
+    /**
+     * Query rewriter for MySQL → SQLite translation
+     *
+     * @var SqliteQueryRewriter
+     */
+    protected $queryRewriter;
+
+    /**
+     * Query logging enabled flag
+     *
+     * @var bool
+     */
+    protected $queryLoggingEnabled = false;
 
     /**
      * Type mapping from MySQL to SQLite
@@ -88,6 +104,23 @@ class Sqlite extends Mysql
     }
 
     /**
+     * Initialize query rewriter and logging
+     *
+     * @return void
+     */
+    protected function _initializeQueryRewriter()
+    {
+        if ($this->queryRewriter === null) {
+            $this->queryRewriter = new SqliteQueryRewriter();
+        }
+
+        // Check if query logging is enabled
+        if (isset($this->_config['driver_options']['sqlite_query_logging'])) {
+            $this->queryLoggingEnabled = (bool)$this->_config['driver_options']['sqlite_query_logging'];
+        }
+    }
+
+    /**
      * Enable SQLite optimizations for development
      *
      * @return $this
@@ -108,6 +141,9 @@ class Sqlite extends Mysql
 
         // Enable foreign keys
         $this->_connection->exec('PRAGMA foreign_keys=ON');
+
+        // Initialize query rewriter
+        $this->_initializeQueryRewriter();
 
         return $this;
     }
@@ -584,5 +620,441 @@ class Sqlite extends Mysql
         }
 
         return $checksums;
+    }
+
+    /**
+     * Create table from DDL object - SQLite version
+     *
+     * Generates native SQLite CREATE TABLE statements from Table DDL objects.
+     * This avoids MySQL-specific syntax and provides better compatibility.
+     *
+     * @param Table $table
+     * @throws \Zend_Db_Exception
+     * @return \Zend_Db_Statement_Interface
+     */
+    public function createTable(Table $table)
+    {
+        $this->getSchemaListener()->createTable($table);
+
+        $sqlFragment = array_merge(
+            $this->_getSqliteColumnsDefinition($table),
+            $this->_getSqliteIndexesDefinition($table),
+            $this->_getSqliteForeignKeysDefinition($table)
+        );
+
+        $sql = sprintf(
+            "CREATE TABLE IF NOT EXISTS %s (\n%s\n)",
+            $this->quoteIdentifier($table->getName()),
+            implode(",\n", $sqlFragment)
+        );
+
+        if ($this->getTransactionLevel() > 0) {
+            $result = $this->createConnection()->query($sql);
+        } else {
+            $result = $this->query($sql);
+        }
+
+        $this->resetDdlCache($table->getName(), $table->getSchema());
+
+        // Create non-primary key indexes separately
+        $this->_createSqliteIndexes($table);
+
+        return $result;
+    }
+
+    /**
+     * Generate SQLite-compatible column definitions
+     *
+     * @param Table $table
+     * @return array
+     * @throws \Zend_Db_Exception
+     */
+    protected function _getSqliteColumnsDefinition(Table $table)
+    {
+        $definition = [];
+        $primary = [];
+        $columns = $table->getColumns();
+
+        if (empty($columns)) {
+            throw new \Zend_Db_Exception('Table columns are not defined');
+        }
+
+        foreach ($columns as $columnData) {
+            $columnDefinition = $this->_getSqliteColumnDefinition($columnData);
+
+            if ($columnData['PRIMARY']) {
+                $primary[$columnData['COLUMN_NAME']] = $columnData['PRIMARY_POSITION'];
+            }
+
+            $definition[] = sprintf(
+                '  %s %s',
+                $this->quoteIdentifier($columnData['COLUMN_NAME']),
+                $columnDefinition
+            );
+        }
+
+        // Add composite primary key if needed
+        if (count($primary) > 0) {
+            asort($primary);
+            $primaryColumns = array_keys($primary);
+
+            // For single primary key with AUTOINCREMENT, it's already in column definition
+            // For composite or non-auto primary keys, add PRIMARY KEY constraint
+            if (count($primary) > 1 || !$this->_hasAutoIncrement($table, $primaryColumns[0])) {
+                $definition[] = sprintf(
+                    '  PRIMARY KEY (%s)',
+                    implode(', ', array_map([$this, 'quoteIdentifier'], $primaryColumns))
+                );
+            }
+        }
+
+        return $definition;
+    }
+
+    /**
+     * Check if column has autoincrement
+     *
+     * @param Table $table
+     * @param string $columnName
+     * @return bool
+     */
+    protected function _hasAutoIncrement(Table $table, $columnName)
+    {
+        $columns = $table->getColumns();
+        foreach ($columns as $col) {
+            if ($col['COLUMN_NAME'] === $columnName && $col['IDENTITY']) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Generate SQLite-compatible column definition
+     *
+     * @param array $columnData
+     * @return string
+     * @throws \Zend_Db_Exception
+     */
+    protected function _getSqliteColumnDefinition($columnData)
+    {
+        $type = $columnData['DATA_TYPE'];
+        $sqliteType = $this->typeMapping[strtolower($type)] ?? 'TEXT';
+
+        $definition = $sqliteType;
+
+        // Add length/precision for certain types
+        if (isset($columnData['LENGTH']) && $columnData['LENGTH'] && in_array($sqliteType, ['TEXT', 'BLOB'])) {
+            // SQLite doesn't enforce length but we keep it for compatibility
+            $definition .= '(' . $columnData['LENGTH'] . ')';
+        } elseif (isset($columnData['PRECISION']) && isset($columnData['SCALE'])) {
+            $definition .= '(' . $columnData['PRECISION'] . ',' . $columnData['SCALE'] . ')';
+        }
+
+        // Primary key with autoincrement (only for single column primary key)
+        if ($columnData['PRIMARY'] && $columnData['IDENTITY']) {
+            $definition .= ' PRIMARY KEY AUTOINCREMENT';
+        }
+
+        // NOT NULL constraint
+        if ($columnData['NULLABLE'] === false) {
+            $definition .= ' NOT NULL';
+        }
+
+        // Default value
+        if (array_key_exists('DEFAULT', $columnData) && $columnData['DEFAULT'] !== null) {
+            if ($columnData['DEFAULT'] instanceof Expression) {
+                $definition .= ' DEFAULT ' . $columnData['DEFAULT'];
+            } else {
+                $defaultValue = $columnData['DEFAULT'];
+
+                // Handle special timestamp defaults
+                if ($columnData['DATA_TYPE'] === Table::TYPE_TIMESTAMP) {
+                    if ($defaultValue === Table::TIMESTAMP_INIT) {
+                        $definition .= ' DEFAULT CURRENT_TIMESTAMP';
+                    } elseif ($defaultValue === Table::TIMESTAMP_INIT_UPDATE) {
+                        // SQLite doesn't support ON UPDATE, just use CURRENT_TIMESTAMP
+                        $definition .= ' DEFAULT CURRENT_TIMESTAMP';
+                    } else {
+                        $definition .= ' DEFAULT ' . $this->quote($defaultValue);
+                    }
+                } elseif (is_numeric($defaultValue)) {
+                    $definition .= ' DEFAULT ' . $defaultValue;
+                } else {
+                    $definition .= ' DEFAULT ' . $this->quote($defaultValue);
+                }
+            }
+        }
+
+        return $definition;
+    }
+
+    /**
+     * Generate SQLite-compatible index definitions (for CREATE TABLE)
+     *
+     * Only UNIQUE constraints go in CREATE TABLE for SQLite
+     *
+     * @param Table $table
+     * @return array
+     */
+    protected function _getSqliteIndexesDefinition(Table $table)
+    {
+        $definition = [];
+        $indexes = $table->getIndexes();
+
+        if (!empty($indexes)) {
+            foreach ($indexes as $indexData) {
+                // Only add UNIQUE constraints here; regular indexes created separately
+                if ($indexData['INDEX_TYPE'] === AdapterInterface::INDEX_TYPE_UNIQUE) {
+                    $columns = $indexData['COLUMNS_LIST'];
+                    $definition[] = sprintf(
+                        '  UNIQUE (%s)',
+                        implode(', ', array_map([$this, 'quoteIdentifier'], $columns))
+                    );
+                }
+                // Skip FULLTEXT indexes - will handle in Stage 6
+            }
+        }
+
+        return $definition;
+    }
+
+    /**
+     * Create regular (non-unique) indexes separately
+     *
+     * SQLite requires indexes to be created with separate CREATE INDEX statements
+     *
+     * @param Table $table
+     * @return void
+     */
+    protected function _createSqliteIndexes(Table $table)
+    {
+        $indexes = $table->getIndexes();
+
+        if (!empty($indexes)) {
+            foreach ($indexes as $indexData) {
+                // Skip primary and unique (already in CREATE TABLE)
+                if ($indexData['INDEX_TYPE'] === AdapterInterface::INDEX_TYPE_PRIMARY ||
+                    $indexData['INDEX_TYPE'] === AdapterInterface::INDEX_TYPE_UNIQUE) {
+                    continue;
+                }
+
+                // Skip fulltext for now (Stage 6)
+                if ($indexData['INDEX_TYPE'] === AdapterInterface::INDEX_TYPE_FULLTEXT) {
+                    continue;
+                }
+
+                $indexName = $indexData['INDEX_NAME'];
+                $columns = $indexData['COLUMNS_LIST'];
+
+                $sql = sprintf(
+                    'CREATE INDEX IF NOT EXISTS %s ON %s (%s)',
+                    $this->quoteIdentifier($indexName),
+                    $this->quoteIdentifier($table->getName()),
+                    implode(', ', array_map([$this, 'quoteIdentifier'], $columns))
+                );
+
+                $this->query($sql);
+            }
+        }
+    }
+
+    /**
+     * Generate SQLite-compatible foreign key definitions
+     *
+     * @param Table $table
+     * @return array
+     */
+    protected function _getSqliteForeignKeysDefinition(Table $table)
+    {
+        $definition = [];
+        $foreignKeys = $table->getForeignKeys();
+
+        if (!empty($foreignKeys)) {
+            foreach ($foreignKeys as $fkData) {
+                $definition[] = sprintf(
+                    '  FOREIGN KEY (%s) REFERENCES %s (%s) ON DELETE %s',
+                    $this->quoteIdentifier($fkData['COLUMN_NAME']),
+                    $this->quoteIdentifier($fkData['REF_TABLE_NAME']),
+                    $this->quoteIdentifier($fkData['REF_COLUMN_NAME']),
+                    $fkData['ON_DELETE']
+                );
+            }
+        }
+
+        return $definition;
+    }
+
+    /**
+     * Create temporary table - SQLite version
+     *
+     * @param Table $table
+     * @throws \Zend_Db_Exception
+     * @return \Zend_Db_Statement_Interface
+     */
+    public function createTemporaryTable(Table $table)
+    {
+        $sqlFragment = array_merge(
+            $this->_getSqliteColumnsDefinition($table),
+            $this->_getSqliteIndexesDefinition($table),
+            $this->_getSqliteForeignKeysDefinition($table)
+        );
+
+        $sql = sprintf(
+            "CREATE TEMPORARY TABLE %s (\n%s\n)",
+            $this->quoteIdentifier($table->getName()),
+            implode(",\n", $sqlFragment)
+        );
+
+        return $this->query($sql);
+    }
+
+    /**
+     * Execute SQL query with automatic MySQL → SQLite translation
+     *
+     * @param string|\Magento\Framework\DB\Select $sql
+     * @param array $bind
+     * @return \Zend_Db_Statement_Interface
+     */
+    public function query($sql, $bind = [])
+    {
+        // Initialize rewriter if not already done
+        if ($this->queryRewriter === null) {
+            $this->_initializeQueryRewriter();
+        }
+
+        // Convert Select object to string
+        $originalSql = $sql instanceof \Magento\Framework\DB\Select ? $sql->__toString() : $sql;
+
+        // Translate query
+        $translatedSql = $this->queryRewriter->translate($originalSql);
+
+        // Log if enabled
+        if ($this->queryLoggingEnabled && $originalSql !== $translatedSql) {
+            $this->_logQueryTranslation($originalSql, $translatedSql);
+        }
+
+        // Execute translated query
+        try {
+            return parent::query($translatedSql, $bind);
+        } catch (\Exception $e) {
+            // Log failed queries
+            if ($this->queryLoggingEnabled) {
+                $this->_logQueryError($originalSql, $translatedSql, $e->getMessage());
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Log query translation
+     *
+     * @param string $original
+     * @param string $translated
+     * @return void
+     */
+    protected function _logQueryTranslation(string $original, string $translated): void
+    {
+        $logEntry = [
+            'timestamp' => date('Y-m-d H:i:s'),
+            'type' => 'translation',
+            'original' => $this->_truncateForLog($original),
+            'translated' => $this->_truncateForLog($translated),
+            'backtrace' => $this->_getBacktraceForLog(),
+        ];
+
+        $this->_writeQueryLog($logEntry, 'var/log/sqlite-queries.log');
+    }
+
+    /**
+     * Log query error
+     *
+     * @param string $original
+     * @param string $translated
+     * @param string $error
+     * @return void
+     */
+    protected function _logQueryError(string $original, string $translated, string $error): void
+    {
+        $logEntry = [
+            'timestamp' => date('Y-m-d H:i:s'),
+            'type' => 'error',
+            'original' => $this->_truncateForLog($original),
+            'translated' => $this->_truncateForLog($translated),
+            'error' => $error,
+            'backtrace' => $this->_getBacktraceForLog(),
+        ];
+
+        $this->_writeQueryLog($logEntry, 'var/log/sqlite-incompatible.log');
+    }
+
+    /**
+     * Write log entry
+     *
+     * @param array $entry
+     * @param string $file
+     * @return void
+     */
+    protected function _writeQueryLog(array $entry, string $file): void
+    {
+        $logFile = defined('BP') ? BP . '/' . $file : $file;
+        $logDir = dirname($logFile);
+
+        if (!is_dir($logDir)) {
+            @mkdir($logDir, 0770, true);
+        }
+
+        $json = json_encode($entry, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n";
+        @file_put_contents($logFile, $json, FILE_APPEND | LOCK_EX);
+    }
+
+    /**
+     * Truncate SQL for logging
+     *
+     * @param string $sql
+     * @param int $maxLength
+     * @return string
+     */
+    protected function _truncateForLog(string $sql, int $maxLength = 1000): string
+    {
+        if (strlen($sql) <= $maxLength) {
+            return $sql;
+        }
+
+        return substr($sql, 0, $maxLength) . '... [truncated]';
+    }
+
+    /**
+     * Get backtrace for logging
+     *
+     * @param int $limit
+     * @return array
+     */
+    protected function _getBacktraceForLog(int $limit = 5): array
+    {
+        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, $limit + 5);
+
+        // Skip internal adapter frames
+        $filtered = [];
+        foreach ($trace as $frame) {
+            if (isset($frame['class']) &&
+                (strpos($frame['class'], 'Magento\\Framework\\DB\\Adapter') === 0 ||
+                 strpos($frame['class'], 'Zend_Db') === 0)) {
+                continue;
+            }
+
+            $filtered[] = sprintf(
+                '%s%s%s',
+                $frame['class'] ?? '',
+                $frame['type'] ?? '',
+                $frame['function'] ?? ''
+            );
+
+            if (count($filtered) >= $limit) {
+                break;
+            }
+        }
+
+        return $filtered;
     }
 }
