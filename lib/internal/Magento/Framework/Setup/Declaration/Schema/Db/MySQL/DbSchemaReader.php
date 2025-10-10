@@ -231,6 +231,14 @@ class DbSchemaReader implements DbSchemaReaderInterface
     public function readTables($resource)
     {
         $adapter = $this->resourceConnection->getConnection($resource);
+
+        // SQLite uses sqlite_master instead of information_schema
+        if ($adapter instanceof \Magento\Framework\DB\Adapter\Pdo\Sqlite) {
+            $sql = "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name";
+            return $adapter->fetchCol($sql);
+        }
+
+        // MySQL/MariaDB
         $dbName = $this->resourceConnection->getSchemaName($resource);
         $stmt = $adapter->select()
             ->from(

@@ -70,6 +70,11 @@ class Sqlite extends \Magento\Framework\Model\ResourceModel\Type\Db implements
      */
     protected function getDbConnectionInstance(?DB\LoggerInterface $logger = null, ?SelectFactory $selectFactory = null)
     {
+        // Ensure logger is never null
+        if ($logger === null) {
+            $logger = ObjectManager::getInstance()->get(DB\LoggerInterface::class);
+        }
+
         return $this->sqliteFactory->create(
             $this->connectionConfig,
             $logger,
