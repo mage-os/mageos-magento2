@@ -269,6 +269,11 @@ class Sqlite extends Mysql
      */
     public function describeTable($tableName, $schemaName = null)
     {
+        // SQLite doesn't have information_schema - return empty for these queries
+        if ($schemaName === 'information_schema' || strpos($tableName, 'information_schema') !== false) {
+            return [];
+        }
+
         $cacheKey = $this->_getTableName($tableName, $schemaName);
         $ddl = $this->loadDdlCache($cacheKey, self::DDL_DESCRIBE);
         if ($ddl === false) {

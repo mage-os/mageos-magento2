@@ -92,6 +92,15 @@ class RuntimeConfigSource implements ConfigSourceInterface
         } catch (TableNotFoundException $exception) {
             // database is empty or not setup
             $collection = [];
+        } catch (\Exception $e) {
+            // Catch SQLite "no such table" and other DB errors during setup
+            // This happens when setup:install tries to validate before DB is created
+            if (strpos($e->getMessage(), 'no such table') !== false ||
+                strpos($e->getMessage(), 'core_config_data') !== false) {
+                $collection = [];
+            } else {
+                throw $e;
+            }
         }
         $config = [];
         foreach ($collection as $item) {
