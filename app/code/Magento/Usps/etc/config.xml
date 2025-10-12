@@ -18,7 +18,7 @@
                 <cutoff_cost />
                 <free_method />
                 <gateway_url>https://production.shippingapis.com/ShippingAPI.dll</gateway_url>
-                <gateway_rest_prod_url>https://api.usps.com/</gateway_rest_prod_url>
+                <gateway_rest_prod_url>https://apis.usps.com/</gateway_rest_prod_url>
                 <gateway_rest_dev_url>https://apis-tem.usps.com/</gateway_rest_dev_url>
                 <gateway_secure_url>https://secure.shippingapis.com/ShippingAPI.dll</gateway_secure_url>
                 <shipment_requesttype>0</shipment_requesttype>
