@@ -81,14 +81,14 @@ class RowCustomizer implements RowCustomizerInterface
             $variationsLabels = [];
 
             /** @var \Magento\Eav\Model\Entity\Attribute\AbstractAttribute[] $superAttributes */
-            $superAttributes = $configurableInstance->getUsedProductAttributes($product);
+            $superAttributes = $configurableInstance->getUsedProductAttributes($product) ?? [];
             foreach ($superAttributes as $superAttribute) {
                 $code = $superAttribute->getAttributeCode();
                 $variationsLabels[$code] = $code . '=' . $superAttribute->getDefaultFrontendLabel();
             }
 
             /** @var \Magento\Catalog\Model\Product[] $childProducts */
-            $childProducts = $configurableInstance->getUsedProducts($product);
+            $childProducts = $configurableInstance->getUsedProducts($product) ?? [];
             foreach ($childProducts as $childProduct) {
                 foreach ($superAttributes as $superAttribute) {
                     $code = $superAttribute->getAttributeCode();
