@@ -67,25 +67,32 @@ class RowCustomizer implements RowCustomizerInterface
     {
         $productCollection = clone $collection;
         $productCollection->addAttributeToFilter('entity_id', ['in' => $productIds])
-            ->addAttributeToFilter('type_id', ['eq' => ConfigurableProductType::TYPE_CODE]);
+                          ->addAttributeToFilter('type_id', ['eq' => ConfigurableProductType::TYPE_CODE]);
 
         // set global scope during export
         $this->storeManager->setCurrentStore(Store::DEFAULT_STORE_ID);
 
         while ($product = $productCollection->fetchItem()) {
-            $productAttributesOptions = $product->getTypeInstance()->getConfigurableOptions($product);
+            /** @var \Magento\ConfigurableProduct\Model\Product\Type\Configurable $configurableInstance */
+            $configurableInstance = $product->getTypeInstance();
+            $productAttributesOptions = $configurableInstance->getConfigurableOptions($product);
             $this->configurableData[$product->getId()] = [];
             $variations = [];
             $variationsLabels = [];
 
-            foreach ($productAttributesOptions as $productAttributeOption) {
-                foreach ($productAttributeOption as $optValues) {
-                    $variations[$optValues['sku']][] = $optValues['attribute_code'] . '=' . $optValues['option_title'];
+            /** @var \Magento\Eav\Model\Entity\Attribute\AbstractAttribute[] $superAttributes */
+            $superAttributes = $configurableInstance->getUsedProductAttributes($product);
+            foreach ($superAttributes as $superAttribute) {
+                $code = $superAttribute->getAttributeCode();
+                $variationsLabels[$code] = $code . '=' . $superAttribute->getDefaultFrontendLabel();
+            }
 
-                    if (!empty($optValues['super_attribute_label'])) {
-                        $variationsLabels[$optValues['attribute_code']] = $optValues['attribute_code'] . '='
-                            . $optValues['super_attribute_label'];
-                    }
+            /** @var \Magento\Catalog\Model\Product[] $childProducts */
+            $childProducts = $configurableInstance->getUsedProducts($product);
+            foreach ($childProducts as $childProduct) {
+                foreach ($superAttributes as $superAttribute) {
+                    $code = $superAttribute->getAttributeCode();
+                    $variations[$childProduct->getSku()][] = $code . '=' . $childProduct->getAttributeText($code);
                 }
             }
 
