@@ -8,16 +8,11 @@ declare(strict_types=1);
 namespace Magento\Sales\Model;
 
 use PHPUnit\Framework\TestCase;
-use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\ObjectManagerInterface;
-use Magento\Backend\Block\Widget\Grid\Column\Renderer\Store as StoreRenderer;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Sales\Api\CreditmemoRepositoryInterface;
-use Magento\Sales\Api\Data\CreditmemoInterface;
-use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order\CreditmemoFactory;
-use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\TestFramework\Helper\Bootstrap;
 
@@ -55,10 +50,6 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
      */
     private $creditmemoFactory;
 
-    /**
-     * @var SearchCriteriaBuilder
-     */
-    private $searchCriteriaBuilder;
 
     /**
      * @var ProductRepositoryInterface
@@ -79,18 +70,10 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
     private const ORDER_QTY = 2;
     private const STORE_SORT_ORDER = 10;
 
-    // Class name constants to reduce coupling
-    private const WEBSITE_FACTORY_CLASS = \Magento\Store\Api\Data\WebsiteInterfaceFactory::class;
-    private const GROUP_FACTORY_CLASS = \Magento\Store\Api\Data\GroupInterfaceFactory::class;
-    private const STORE_FACTORY_CLASS = \Magento\Store\Api\Data\StoreInterfaceFactory::class;
-    private const WEBSITE_RESOURCE_CLASS = \Magento\Store\Model\ResourceModel\Website::class;
-    private const GROUP_RESOURCE_CLASS = \Magento\Store\Model\ResourceModel\Group::class;
-    private const STORE_RESOURCE_CLASS = \Magento\Store\Model\ResourceModel\Store::class;
-    private const ORDER_CLASS = \Magento\Sales\Model\Order::class;
-    private const ADDRESS_TYPE_BILLING = \Magento\Sales\Model\Order\Address::TYPE_BILLING;
-    private const ADDRESS_TYPE_SHIPPING = \Magento\Sales\Model\Order\Address::TYPE_SHIPPING;
-    private const CHECKMO_METHOD = \Magento\OfflinePayments\Model\Checkmo::PAYMENT_METHOD_CHECKMO_CODE;
-    private const CREDITMEMO_STATE_OPEN = \Magento\Sales\Model\Order\Creditmemo::STATE_OPEN;
+    // String constants to reduce coupling
+    private const PAYMENT_METHOD = 'checkmo';
+    private const ORDER_STATE = 'processing';
+    private const CREDITMEMO_STATE = 1;
 
     /**
      * @inheritdoc
@@ -103,7 +86,6 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
         $this->orderRepository = $this->objectManager->get(OrderRepositoryInterface::class);
         $this->creditmemoRepository = $this->objectManager->get(CreditmemoRepositoryInterface::class);
         $this->creditmemoFactory = $this->objectManager->get(CreditmemoFactory::class);
-        $this->searchCriteriaBuilder = $this->objectManager->get(SearchCriteriaBuilder::class);
         $this->productRepository = $this->objectManager->get(ProductRepositoryInterface::class);
     }
 
@@ -134,46 +116,46 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
     /**
      * Create store configuration with numeric names programmatically
      *
-     * @return StoreInterface
+     * @return \Magento\Store\Api\Data\StoreInterface
      */
-    private function createStoreConfigurationWithNumericNames(): StoreInterface
+    private function createStoreConfigurationWithNumericNames()
     {
         // Create website with numeric name
-        $website = $this->objectManager->get(self::WEBSITE_FACTORY_CLASS)->create()
+        $website = $this->objectManager->get('Magento\Store\Api\Data\WebsiteInterfaceFactory')->create()
             ->setCode(self::WEBSITE_CODE)
             ->setName(self::WEBSITE_NAME);
-        $this->objectManager->get(self::WEBSITE_RESOURCE_CLASS)->save($website);
+        $this->objectManager->get('Magento\Store\Model\ResourceModel\Website')->save($website);
         $this->assertEntityCreated($website, self::WEBSITE_CODE, self::WEBSITE_NAME);
 
         // Create store group with numeric name
-        $storeGroup = $this->objectManager->get(self::GROUP_FACTORY_CLASS)->create()
+        $storeGroup = $this->objectManager->get('Magento\Store\Api\Data\GroupInterfaceFactory')->create()
             ->setCode(self::STORE_GROUP_CODE)
             ->setName(self::STORE_GROUP_NAME)
             ->setWebsiteId($website->getId())
             ->setRootCategoryId(self::DEFAULT_ROOT_CATEGORY_ID);
-        $this->objectManager->get(self::GROUP_RESOURCE_CLASS)->save($storeGroup);
+        $this->objectManager->get('Magento\Store\Model\ResourceModel\Group')->save($storeGroup);
         $this->assertEntityCreated($storeGroup, self::STORE_GROUP_CODE, self::STORE_GROUP_NAME);
 
         // Link website to store group
         $website->setDefaultGroupId($storeGroup->getId());
-        $this->objectManager->get(self::WEBSITE_RESOURCE_CLASS)->save($website);
+        $this->objectManager->get('Magento\Store\Model\ResourceModel\Website')->save($website);
         $this->storeManager->reinitStores();
 
         // Create store view with numeric name
-        $store = $this->objectManager->get(self::STORE_FACTORY_CLASS)->create()
+        $store = $this->objectManager->get('Magento\Store\Api\Data\StoreInterfaceFactory')->create()
             ->setCode(self::STORE_CODE)
             ->setWebsiteId($website->getId())
             ->setGroupId($storeGroup->getId())
             ->setName(self::STORE_NAME)
             ->setSortOrder(self::STORE_SORT_ORDER)
             ->setIsActive(1);
-        $this->objectManager->get(self::STORE_RESOURCE_CLASS)->save($store);
+        $this->objectManager->get('Magento\Store\Model\ResourceModel\Store')->save($store);
         $this->assertEntityCreated($store, self::STORE_CODE, self::STORE_NAME);
         $this->assertEquals(1, $store->getIsActive());
 
         // Link store group to store
         $storeGroup->setDefaultStoreId($store->getId());
-        $this->objectManager->get(self::GROUP_RESOURCE_CLASS)->save($storeGroup);
+        $this->objectManager->get('Magento\Store\Model\ResourceModel\Group')->save($storeGroup);
 
         // Final verification
         $this->storeManager->reinitStores();
@@ -201,10 +183,10 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
     /**
      * Create order on the numeric store using existing product fixture
      *
-     * @param StoreInterface $store
-     * @return OrderInterface
+     * @param \Magento\Store\Api\Data\StoreInterface $store
+     * @return \Magento\Sales\Api\Data\OrderInterface
      */
-    private function createOrderOnNumericStore(StoreInterface $store): OrderInterface
+    private function createOrderOnNumericStore($store)
     {
         $product = $this->productRepository->get('simple');
         $this->assertNotNull($product->getId());
@@ -218,8 +200,8 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
         $addresses = $this->createOrderAddresses();
 
         // Create payment using cached factory
-        $payment = $this->objectManager->get(\Magento\Sales\Api\Data\OrderPaymentInterfaceFactory::class)->create()
-            ->setMethod(self::CHECKMO_METHOD)
+        $payment = $this->objectManager->get('Magento\Sales\Api\Data\OrderPaymentInterfaceFactory')->create()
+            ->setMethod(self::PAYMENT_METHOD)
             ->setAdditionalInformation('last_trans_id', '11122')
             ->setAdditionalInformation('metadata', ['type' => 'free', 'fraudulent' => false]);
 
@@ -227,10 +209,10 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
         $orderItem = $this->createOrderItem($product, $productPrice, $orderTotal);
 
         // Create and configure order
-        $order = $this->objectManager->create(self::ORDER_CLASS);
+        $order = $this->objectManager->create('Magento\Sales\Model\Order');
         $order->setIncrementId(self::ORDER_INCREMENT_ID)
-            ->setState(\Magento\Sales\Model\Order::STATE_PROCESSING)
-            ->setStatus($order->getConfig()->getStateDefaultStatus(\Magento\Sales\Model\Order::STATE_PROCESSING))
+            ->setState(self::ORDER_STATE)
+            ->setStatus($order->getConfig()->getStateDefaultStatus(self::ORDER_STATE))
             ->setSubtotal($orderTotal)
             ->setBaseSubtotal($orderTotal)
             ->setGrandTotal($orderTotal)
@@ -271,7 +253,7 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
      */
     private function createOrderAddresses(): array
     {
-        $billingAddress = $this->objectManager->get(\Magento\Sales\Model\Order\AddressFactory::class)
+        $billingAddress = $this->objectManager->get('Magento\Sales\Model\Order\AddressFactory')
             ->create()->setData([
             'region' => 'CA',
             'region_id' => '12',
@@ -283,11 +265,11 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
             'email' => 'admin@example.com',
             'telephone' => '11111111',
             'country_id' => 'US',
-            'address_type' => self::ADDRESS_TYPE_BILLING
+            'address_type' => 'billing'
         ]);
 
         $shippingAddress = clone $billingAddress;
-        $shippingAddress->setId(null)->setAddressType(self::ADDRESS_TYPE_SHIPPING);
+        $shippingAddress->setId(null)->setAddressType('shipping');
 
         return [
             'billing' => $billingAddress,
@@ -305,7 +287,7 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
      */
     private function createOrderItem($product, float $productPrice, float $orderTotal)
     {
-        return $this->objectManager->get(\Magento\Sales\Api\Data\OrderItemInterfaceFactory::class)->create()
+        return $this->objectManager->get('Magento\Sales\Api\Data\OrderItemInterfaceFactory')->create()
             ->setProductId($product->getId())
             ->setQtyOrdered(self::ORDER_QTY)
             ->setBasePrice($productPrice)
@@ -324,16 +306,16 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
      * @return void
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    private function createAndSaveInvoice(OrderInterface $order): void
+    private function createAndSaveInvoice($order): void
     {
-        $invoice = $this->objectManager->get(\Magento\Sales\Api\InvoiceManagementInterface::class)
+        $invoice = $this->objectManager->get('Magento\Sales\Api\InvoiceManagementInterface')
             ->prepareInvoice($order);
         $invoice->register();
         $invoice->setIncrementId($order->getIncrementId());
         $order = $invoice->getOrder();
         $order->setIsInProcess(true);
 
-        $transactionSave = $this->objectManager->create(\Magento\Framework\DB\Transaction::class);
+        $transactionSave = $this->objectManager->create('Magento\Framework\DB\Transaction');
         $transactionSave->addObject($invoice)->addObject($order)->save();
     }
 
@@ -343,21 +325,21 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
      * @param OrderInterface $order
      * @return CreditmemoInterface
      */
-    private function createCreditmemoForOrder(OrderInterface $order): CreditmemoInterface
+    private function createCreditmemoForOrder($order)
     {
         $this->assertNotNull($order->getId());
         $this->assertTrue($order->canCreditmemo());
 
         $creditmemo = $this->creditmemoFactory->createByOrder($order, $order->getData());
         $creditmemo->setOrder($order);
-        $creditmemo->setState(self::CREDITMEMO_STATE_OPEN);
+        $creditmemo->setState(self::CREDITMEMO_STATE);
         $creditmemo->setIncrementId($order->getIncrementId() . '-CM');
 
         $this->creditmemoRepository->save($creditmemo);
 
         $this->assertNotNull($creditmemo->getId());
         $this->assertEquals($order->getId(), $creditmemo->getOrderId());
-        $this->assertEquals(self::CREDITMEMO_STATE_OPEN, $creditmemo->getState());
+        $this->assertEquals(self::CREDITMEMO_STATE, $creditmemo->getState());
         $this->assertGreaterThan(0, $creditmemo->getGrandTotal());
 
         return $creditmemo;
@@ -370,7 +352,7 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
      * @param OrderInterface $order
      * @return void
      */
-    private function verifyCreditMemoGridDisplaysRecords(CreditmemoInterface $creditmemo, OrderInterface $order): void
+    private function verifyCreditMemoGridDisplaysRecords($creditmemo, $order): void
     {
         // Test credit memo retrieval by order ID
         $creditmemoByOrder = $this->getCreditmemosByFilter('order_id', $order->getId());
@@ -402,7 +384,7 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
      */
     private function getCreditmemosByFilter(string $field, $value): array
     {
-        $searchCriteria = $this->searchCriteriaBuilder
+        $searchCriteria = $this->objectManager->get('Magento\Framework\Api\SearchCriteriaBuilder')
             ->addFilter($field, $value)
             ->create();
 
@@ -416,7 +398,7 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
      * @param array $creditmemoList
      * @return bool
      */
-    private function findCreditmemoInList(CreditmemoInterface $targetCreditmemo, array $creditmemoList): bool
+    private function findCreditmemoInList($targetCreditmemo, array $creditmemoList): bool
     {
         foreach ($creditmemoList as $creditmemo) {
             if ($creditmemo->getId() === $targetCreditmemo->getId()) {
@@ -434,13 +416,13 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
      * @param StoreInterface $store
      * @return void
      */
-    private function verifyStoreNameRenderingInGrid(CreditmemoInterface $creditmemo, StoreInterface $store): void
+    private function verifyStoreNameRenderingInGrid($creditmemo, $store): void
     {
         // Test store name rendering using the store renderer that would be used in grids
-        $storeRenderer = $this->objectManager->create(StoreRenderer::class);
+        $storeRenderer = $this->objectManager->create('Magento\Backend\Block\Widget\Grid\Column\Renderer\Store');
 
         // Create a mock grid column for the renderer
-        $mockColumn = $this->objectManager->create(\Magento\Framework\DataObject::class);
+        $mockColumn = $this->objectManager->create('Magento\Framework\DataObject');
         $mockColumn->setData([
             'index' => 'store_id',
             'type' => 'store',
@@ -451,7 +433,7 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
         $storeRenderer->setColumn($mockColumn);
 
         // Create a mock row data object representing a grid row
-        $mockRow = $this->objectManager->create(\Magento\Framework\DataObject::class);
+        $mockRow = $this->objectManager->create('Magento\Framework\DataObject');
         $mockRow->setData([
             'store_id' => $store->getId(),
             'entity_id' => $creditmemo->getId()
@@ -481,7 +463,7 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
         $this->assertNotEmpty(trim($flattenedOutput));
 
         // Test alternative rendering scenario - what happens with just store ID array
-        $mockRowWithArray = $this->objectManager->create(\Magento\Framework\DataObject::class);
+        $mockRowWithArray = $this->objectManager->create('Magento\Framework\DataObject');
         $mockRowWithArray->setData([
             'store_id' => [$store->getId()], // Array format
             'entity_id' => $creditmemo->getId()
