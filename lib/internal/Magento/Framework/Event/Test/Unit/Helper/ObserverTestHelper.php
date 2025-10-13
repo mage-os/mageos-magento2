@@ -11,6 +11,16 @@ use Magento\Framework\Event\Observer;
 
 /**
  * Test helper for Magento\Framework\Event\Observer
+ *
+ * WHY THIS HELPER EXISTS:
+ * - Observer extends DataObject which has __call magic methods
+ * - Observer already has explicit setEvent()/getEvent() methods
+ * - setBlock()/getBlock() work automatically via DataObject's __call
+ * - This helper provides explicit methods for better IDE support and type clarity
+ * - Used by multiple test files in magento2ee for observer mocking
+ *
+ * NOTE: Technically redundant as all methods exist in parent or via __call,
+ * but kept for backward compatibility and explicit method signatures in tests.
  */
 class ObserverTestHelper extends Observer
 {

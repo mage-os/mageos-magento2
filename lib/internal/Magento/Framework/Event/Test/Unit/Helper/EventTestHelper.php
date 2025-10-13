@@ -15,6 +15,12 @@ use Magento\Framework\Event;
  *
  * This helper extends the concrete Event class directly, providing a clean
  * way to add test-specific methods without using anonymous classes.
+ *
+ * WHY THIS HELPER IS REQUIRED:
+ * - Event extends DataObject which has __call magic methods
+ * - However, tests need explicit methods for better IDE support and type safety
+ * - This helper provides explicit getters/setters that delegate to parent's __call
+ * - Used by multiple test files in magento2ee for event mocking
  */
 class EventTestHelper extends Event
 {

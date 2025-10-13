@@ -14,6 +14,15 @@ use Magento\Framework\Session\StorageInterface;
  *
  * This helper implements StorageInterface and provides a simple
  * data storage mechanism for testing purposes.
+ *
+ * WHY THIS HELPER IS REQUIRED:
+ * - Concrete Storage class accesses global $_SESSION (line 51: $_SESSION[$namespace] = & $this->_data;)
+ * - This creates side effects and dependencies unsuitable for unit tests
+ * - StorageTestHelper provides clean, isolated storage without $_SESSION access
+ * - Used by SessionTestHelper for constructor initialization
+ * - Provides __call magic method for dynamic get/set/uns/has operations
+ *
+ * Cannot be replaced with concrete Storage class due to $_SESSION dependency.
  */
 class StorageTestHelper implements StorageInterface
 {

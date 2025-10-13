@@ -11,23 +11,38 @@ use Magento\Framework\Webapi\Request;
 
 /**
  * Test helper for Magento\Framework\Webapi\Request
- * 
- * Provides test-specific methods for Request without complex constructor dependencies
+ *
+ * WHY THIS HELPER IS REQUIRED:
+ * - Parent Webapi\Request has complex constructor requiring 4 dependencies:
+ *   CookieReaderInterface, StringUtils, AreaList, ScopeInterface (line 42-48)
+ * - Parent getPostValue() EXISTS (inherited from PhpEnvironment\Request line 564)
+ * - Parent setPostValue() EXISTS but takes key-value pairs, not full array replacement
+ * - setPostData() does NOT exist in parent - this is a custom test method
+ * - Provides simple array-based post data storage for unit tests
+ *
+ * Used By:
+ * - magento2ee/app/code/Magento/AdminGws/Test/Unit/Model/Plugin/SaveRoleTest.php
+ *
+ * Cannot be replaced with:
+ * - createMock(Request::class) → Constructor has 4 required dependencies
+ * - Parent setPostValue() → Takes key-value pairs, not full array
  */
 class RequestTestHelper extends Request
 {
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     private $postData = [];
-    
+
     public function __construct()
     {
-        // Skip parent constructor for testing
+        // Skip parent constructor to avoid dependency injection issues
     }
-    
+
     /**
      * Get post value
+     *
+     * Override parent to use simple array storage instead of Parameters object
      *
      * @param string|null $name
      * @param mixed $default
@@ -40,11 +55,14 @@ class RequestTestHelper extends Request
         }
         return $this->postData[$name] ?? $default;
     }
-    
+
     /**
-     * Set post data
+     * Set post data (custom test method)
      *
-     * @param array $data
+     * This method does NOT exist in parent Request class.
+     * Provides convenient way to set entire post data array for testing.
+     *
+     * @param array<string, mixed> $data
      * @return $this
      */
     public function setPostData($data)
@@ -53,4 +71,3 @@ class RequestTestHelper extends Request
         return $this;
     }
 }
-
