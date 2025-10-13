@@ -13,7 +13,7 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Data\Form;
 use Magento\Framework\Data\Form\Element\Select;
 use Magento\Framework\Event\Observer as EventObserver;
-use Magento\Framework\Test\Unit\Helper\ObserverTestHelper;
+use Magento\Framework\Event\Test\Unit\Helper\ObserverTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -168,19 +168,19 @@ class HideUnsupportedAttributeTypesTest extends TestCase
             private $originalValues;
             /** @var array */
             private $expectedValues;
-            
+
             public function __construct($originalValues, $expectedValues)
             {
                 $this->originalValues = $originalValues;
                 $this->expectedValues = $expectedValues;
                 /* Skip parent constructor */
             }
-            
+
             public function getValues()
             {
                 return $this->originalValues;
             }
-            
+
             public function setValues($values)
             {
                 // The test logic expects this method to be called with expectedValues

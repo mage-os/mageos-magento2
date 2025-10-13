@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\ConfigurableProduct\Test\Unit\Model;
 
+use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Catalog\Model\ResourceModel\Helper;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection;
 use Magento\ConfigurableProduct\Model\ConfigurableAttributeHandler;

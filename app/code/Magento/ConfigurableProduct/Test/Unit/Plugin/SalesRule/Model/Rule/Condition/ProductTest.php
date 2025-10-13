@@ -109,38 +109,29 @@ class ProductTest extends TestCase
     public function testChildIsUsedForValidation()
     {
         $item = $this->configurableProductTestSetUp();
-        // Note: setProduct method will be called by the plugin
+        $item->expects($this->once())->method('setProduct');
         $this->validator->setAttribute('special_price');
         $this->validatorPlugin->beforeValidate($this->validator, $item);
     }
 
-    /**
-     * @return Product|MockObject
-     */
-    private function createProductMock(): ProductTestHelper
-    {
-        $productMock = new ProductTestHelper();
-        // ProductTestHelper already has setQuoteItemQty and setQuoteItemPrice methods
-        return $productMock;
-    }
-
     public function configurableProductTestSetUp()
     {
-        $configurableProductMock = $this->createProductMock();
-        $configurableProductMock->setTypeId(Configurable::TYPE_CODE);
-        $configurableProductMock->setData('special_price', null); // hasData will return false for null values
+        $configurableProductMock = $this->createPartialMock(ProductTestHelper::class, ['getTypeId', 'hasData']);
+        $configurableProductMock->expects($this->any())->method('getTypeId')->willReturn(Configurable::TYPE_CODE);
+        $configurableProductMock->expects($this->any())->method('hasData')->with('special_price')->willReturn(false);
 
-        /* @var AbstractItemTestHelper $item */
-        $item = new AbstractItemTestHelper($configurableProductMock);
+        /* @var AbstractItemTestHelper|MockObject $item */
+        $item = $this->createPartialMock(AbstractItemTestHelper::class, ['setProduct', 'getProduct', 'getChildren']);
+        $item->expects($this->any())->method('getProduct')->willReturn($configurableProductMock);
 
-        $simpleProductMock = $this->createProductMock();
-        $simpleProductMock->setTypeId(Type::TYPE_SIMPLE);
-        $simpleProductMock->setData('special_price', 'some_value'); // hasData will return true for non-null values
+        $simpleProductMock = $this->createPartialMock(ProductTestHelper::class, ['getTypeId', 'hasData']);
+        $simpleProductMock->expects($this->any())->method('getTypeId')->willReturn(Type::TYPE_SIMPLE);
+        $simpleProductMock->expects($this->any())->method('hasData')->with('special_price')->willReturn(true);
 
         $childItem = $this->createMock(AbstractItem::class);
-        $childItem->method('getProduct')->willReturn($simpleProductMock);
+        $childItem->expects($this->any())->method('getProduct')->willReturn($simpleProductMock);
 
-        $item->setChildren([$childItem]);
+        $item->expects($this->any())->method('getChildren')->willReturn([$childItem]);
 
         return $item;
     }
@@ -148,7 +139,7 @@ class ProductTest extends TestCase
     public function testChildIsNotUsedForValidation()
     {
         $item = $this->configurableProductTestSetUp();
-        // Note: setProduct method should not be called in this test scenario
+        $item->expects($this->never())->method('setProduct');
         $this->validator->setAttribute('special_price');
         $this->validator->setAttributeScope('parent');
         $this->validatorPlugin->beforeValidate($this->validator, $item);
@@ -159,15 +150,17 @@ class ProductTest extends TestCase
      */
     public function testChildIsNotUsedForValidationWhenConfigurableProductIsMissingChildren()
     {
-        $configurableProductMock = $this->createProductMock();
-        $configurableProductMock->setTypeId(Configurable::TYPE_CODE);
-        $configurableProductMock->setData('special_price', null); // hasData will return false for null values
+        $configurableProductMock = $this->createPartialMock(ProductTestHelper::class, ['getTypeId', 'hasData']);
+        $configurableProductMock->expects($this->any())->method('getTypeId')->willReturn(Configurable::TYPE_CODE);
+        $configurableProductMock->expects($this->any())->method('hasData')->with('special_price')->willReturn(false);
 
-        /* @var AbstractItemTestHelper $item */
-        $item = new AbstractItemTestHelper($configurableProductMock);
+        /* @var AbstractItemTestHelper|MockObject $item */
+        $item = $this->createPartialMock(AbstractItemTestHelper::class, ['setProduct', 'getProduct', 'getChildren']);
+        $item->expects($this->any())->method('getProduct')->willReturn($configurableProductMock);
+        $item->expects($this->any())->method('getChildren')->willReturn([]);
 
         $this->validator->setAttribute('special_price');
-        // Note: setProduct method exists but we don't expect it to be called in this test
+        $item->expects($this->never())->method('setProduct');
         $this->validatorPlugin->beforeValidate($this->validator, $item);
     }
 }

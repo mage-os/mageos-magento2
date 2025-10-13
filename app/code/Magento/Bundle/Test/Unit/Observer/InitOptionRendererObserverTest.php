@@ -8,8 +8,7 @@ declare(strict_types=1);
 namespace Magento\Bundle\Test\Unit\Observer;
 
 use Magento\Bundle\Observer\InitOptionRendererObserver;
-use Magento\Framework\Event\Observer;
-use Magento\Framework\Test\Unit\Helper\ObserverTestHelper;
+use Magento\Framework\Event\Test\Unit\Helper\ObserverTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Wishlist\Block\Customer\Wishlist\Item\Options;
 use PHPUnit\Framework\MockObject\MockObject;

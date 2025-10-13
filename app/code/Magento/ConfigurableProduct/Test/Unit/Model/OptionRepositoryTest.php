@@ -347,7 +347,7 @@ class OptionRepositoryTest extends TestCase
     {
         $this->expectException(InputException::class);
         $this->expectExceptionMessage($msg);
-        $optionValueMock = new \Magento\ConfigurableProduct\Test\Unit\Helper\OptionValueInterfaceTestHelper();
+        $optionValueMock = new \Magento\ConfigurableProduct\Test\Unit\Helper\OptionValueTestHelper();
         $optionValuesMock = [];
         if (!empty($optionValues)) {
             $optionValueMock->setValueIndex($optionValues['v']);

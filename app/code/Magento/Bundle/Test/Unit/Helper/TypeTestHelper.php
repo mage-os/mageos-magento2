@@ -12,32 +12,29 @@ use Magento\Bundle\Model\Product\Type;
 /**
  * Test helper for Magento\Bundle\Model\Product\Type
  *
- * Extends the Type class to add custom methods for testing
  */
 class TypeTestHelper extends Type
 {
     /**
-     * @var array
+     * @var array Internal data storage
      */
     private $data = [];
 
     /**
-     * Constructor
+     * Skip parent constructor to avoid dependencies
      */
     public function __construct()
     {
-        // Skip parent constructor to avoid dependencies
+        // Skip parent constructor to avoid dependency injection issues
     }
 
     /**
-     * Custom setParentProductId method for testing
+     * Set parent product ID (custom method not in parent)
      *
-     * @param mixed $productId
+     * @param int $productId
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-        /**
-         * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-         */
     public function setParentProductId($productId): self
     {
         $this->data['parent_product_id'] = $productId;
@@ -45,45 +42,25 @@ class TypeTestHelper extends Type
     }
 
     /**
-     * Custom getParentProductId method for testing
+     * Add custom option (custom method not in parent)
      *
-     * @return mixed
-     */
-    public function getParentProductId()
-    {
-        return $this->data['parent_product_id'] ?? null;
-    }
-
-    /**
-     * Custom addCustomOption method for testing
-     *
-     * @param mixed $option
+     * @param string $option
+     * @param mixed $value
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function addCustomOption($option): self
+    public function addCustomOption($option, $value): self
     {
-        if (!isset($this->data['custom_options'])) {
-            $this->data['custom_options'] = [];
-        }
-        $this->data['custom_options'][] = $option;
+        $this->data['custom_options'][$option] = $value;
         return $this;
     }
 
     /**
      * Custom getCustomOptions method for testing
      *
-     * @return array
-     */
-    public function getCustomOptions(): array
-    {
-        return $this->data['custom_options'] ?? [];
-    }
-
-    /**
-     * Custom setCartQty method for testing
-     *
-     * @param mixed $qty
+     * @param float $qty
      * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setCartQty($qty): self
     {
@@ -94,181 +71,13 @@ class TypeTestHelper extends Type
     /**
      * Custom getCartQty method for testing
      *
-     * @return mixed
-     */
-    public function getCartQty()
-    {
-        return $this->data['cart_qty'] ?? null;
-    }
-
-    /**
-     * Custom getSelectionId method for testing
-     *
-     * @return mixed
+     * @return int|null
      */
     public function getSelectionId()
     {
         return $this->data['selection_id'] ?? null;
     }
-
-    /**
-     * Custom setSelectionId method for testing
-     *
-     * @param mixed $selectionId
-     * @return self
-     */
-    public function setSelectionId($selectionId): self
-    {
-        $this->data['selection_id'] = $selectionId;
-        return $this;
-    }
-
-    /**
-     * Set test data for flexible state management
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return self
-     */
-    public function setTestData(string $key, $value): self
-    {
-        $this->data[$key] = $value;
-        return $this;
-    }
-
-    /**
-     * Get test data
-     *
-     * @param string $key
-     * @return mixed
-     */
-    public function getTestData(string $key)
-    {
-        return $this->data[$key] ?? null;
-    }
-
-    /**
-     * Custom setStoreFilter method for testing
-     *
-     * @param mixed $store
-     * @param mixed $product
-     * @return self
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function setStoreFilter($store = null, $product = null): self
-    {
-        $this->data['store_filter'] = $store;
-        return $this;
-    }
-
-    /**
-     * Custom getStoreFilter method for testing
-     *
-     * @param mixed $product
-     * @return mixed
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function getStoreFilter($product = null)
-    {
-        return $this->data['store_filter'] ?? null;
-    }
-
-    /**
-     * Custom prepareForCart method for testing
-     *
-     * @param mixed $buyRequest
-     * @param mixed $product
-     * @param mixed $processMode
-     * @return mixed
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function prepareForCart($buyRequest, $product, $processMode = null)
-    {
-        return $this->data['prepare_for_cart'] ?? [$this];
-    }
-
-    /**
-     * Set prepareForCart return value for testing
-     *
-     * @param mixed $value
-     * @return self
-     */
-    public function setPrepareForCart($value): self
-    {
-        $this->data['prepare_for_cart'] = $value;
-        return $this;
-    }
-
-    /**
-     * Get options collection for testing
-     *
-     * @param mixed $product
-     * @return mixed
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function getOptionsCollection($product = null)
-    {
-        return $this->data['options_collection'] ?? null;
-    }
-
-    /**
-     * Set options collection for testing
-     *
-     * @param mixed $collection
-     * @return self
-     */
-    public function setOptionsCollection($collection): self
-    {
-        $this->data['options_collection'] = $collection;
-        return $this;
-    }
-
-    /**
-     * Get options IDs for testing
-     *
-     * @param mixed $product
-     * @return array
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function getOptionsIds($product = null)
-    {
-        return $this->data['options_ids'] ?? [];
-    }
-
-    /**
-     * Set options IDs for testing
-     *
-     * @param array $ids
-     * @return self
-     */
-    public function setOptionsIds(array $ids): self
-    {
-        $this->data['options_ids'] = $ids;
-        return $this;
-    }
-
-    /**
-     * Get selections collection for testing
-     *
-     * @param array $optionIds
-     * @param mixed $product
-     * @return mixed
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function getSelectionsCollection($optionIds = null, $product = null)
-    {
-        return $this->data['selections_collection'] ?? null;
-    }
-
-    /**
-     * Set selections collection for testing
-     *
-     * @param mixed $collection
-     * @return self
-     */
-    public function setSelectionsCollection($collection): self
-    {
-        $this->data['selections_collection'] = $collection;
-        return $this;
-    }
 }
+
+
+

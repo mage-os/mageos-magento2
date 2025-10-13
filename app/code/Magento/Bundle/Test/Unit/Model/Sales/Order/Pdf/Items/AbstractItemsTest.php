@@ -9,8 +9,7 @@ namespace Magento\Bundle\Test\Unit\Model\Sales\Order\Pdf\Items;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Bundle\Model\Sales\Order\Pdf\Items\Shipment;
-use Magento\Framework\Filter\FilterManager;
-use Magento\Framework\Test\Unit\Helper\FilterManagerTestHelper;
+use Magento\Framework\Filter\Test\Unit\Helper\FilterManagerTestHelper;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Sales\Model\Order\Creditmemo;

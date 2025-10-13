@@ -13,11 +13,10 @@ use Magento\Catalog\Test\Unit\Helper\OptionTestHelper;
 use Magento\Bundle\Test\Unit\Helper\SelectionTestHelper;
 use Magento\Bundle\Test\Unit\Helper\TypeTestHelper;
 use Magento\Catalog\Test\Unit\Helper\DefaultTypeTestHelper;
-use Magento\Catalog\Test\Unit\Helper\ItemOptionTestHelper;
 use Magento\Catalog\Test\Unit\Helper\PriceTestHelper;
 use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
-use Magento\Framework\Test\Unit\Helper\AbstractCollectionTestHelper;
-use Magento\Framework\Test\Unit\Helper\DataObjectTestHelper;
+use Magento\Framework\Model\Test\Unit\Helper\AbstractCollectionTestHelper;
+use Magento\Framework\DataObject\Test\Unit\Helper\DataObjectTestHelper;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Bundle\Model\OptionFactory;
 use Magento\Bundle\Model\Product\Type;
@@ -30,6 +29,7 @@ use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Helper\Data;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
+use Magento\Catalog\Model\Product\Configuration\Item\Option as ProductConfigurationItemOption;
 use Magento\Catalog\Model\Product\Option;
 use Magento\Catalog\Model\Product\Option\Type\DefaultType;
 use Magento\CatalogInventory\Api\Data\StockItemInterface;
@@ -334,7 +334,7 @@ class TypeTest extends TestCase
             'getSkipCheckRequiredOption']);
         /** @var MockObject|TypeTestHelper $productType */
         $productType = $this->createPartialMock(TypeTestHelper::class, ['setStoreFilter',
-            'prepareForCart',
+                'prepareForCart',
                 'setParentProductId',
                 'addCustomOption',
                 'setCartQty',
@@ -1324,7 +1324,7 @@ class TypeTest extends TestCase
         $serializeIds = json_encode($selectionIds);
         $productMock = $this->createPartialMock(Product::class, ['__wakeup', 'getData', 'hasCustomOptions',
             'getCustomOption']);
-        $customOptionMock = $this->createPartialMock(ItemOptionTestHelper::class, ['getValue']);
+        $customOptionMock = $this->createPartialMock(ProductConfigurationItemOption::class, ['getValue']);
         $selectionItemMock = $this->createPartialMock(DataObjectTestHelper::class, ['getSku',
             'getEntityId']);
 
@@ -1391,7 +1391,7 @@ class TypeTest extends TestCase
         $serializeIds = json_encode($selectionIds);
         $productMock = $this->createPartialMock(Product::class, ['__wakeup', 'getData', 'hasCustomOptions',
             'getCustomOption']);
-        $customOptionMock = $this->createPartialMock(ItemOptionTestHelper::class, ['getValue']);
+        $customOptionMock = $this->createPartialMock(ProductConfigurationItemOption::class, ['getValue']);
         $selectionItemMock = $this->createPartialMock(DataObjectTestHelper::class, ['getSelectionId',
             'getWeight']);
         $productMock->expects($this->once())
@@ -1443,8 +1443,8 @@ class TypeTest extends TestCase
         $serializeIds = json_encode($selectionIds);
         $productMock = $this->createPartialMock(Product::class, ['__wakeup', 'getData', 'hasCustomOptions',
             'getCustomOption']);
-        $customOptionMock = $this->createPartialMock(ItemOptionTestHelper::class, ['getValue']);
-        $qtyOptionMock = $this->createPartialMock(ItemOptionTestHelper::class, ['getValue']);
+        $customOptionMock = $this->createPartialMock(ProductConfigurationItemOption::class, ['getValue']);
+        $qtyOptionMock = $this->createPartialMock(ProductConfigurationItemOption::class, ['getValue']);
         $selectionItemMock = $this->createPartialMock(DataObjectTestHelper::class, ['getSelectionId',
             'getWeight']);
 
@@ -1518,7 +1518,7 @@ class TypeTest extends TestCase
         $serializeIds = json_encode($selectionIds);
 
         $productMock = $this->createMock(Product::class);
-        $customOptionMock = $this->createPartialMock(ItemOptionTestHelper::class, ['getValue']);
+        $customOptionMock = $this->createPartialMock(ProductConfigurationItemOption::class, ['getValue']);
         $selectionItemMock = $this->createPartialMock(DataObjectTestHelper::class, ['isVirtual',
             'getItems']);
 

@@ -9,8 +9,7 @@ namespace Magento\Bundle\Test\Unit\Block\DataProviders;
 
 use Magento\Bundle\Block\DataProviders\OptionPriceRenderer;
 use Magento\Catalog\Model\Product;
-use Magento\Framework\Pricing\Render;
-use Magento\Framework\Test\Unit\Helper\BlockTestHelper;
+use Magento\Framework\View\Test\Unit\Helper\AbstractBlockTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\LayoutInterface;
 use PHPUnit\Framework\MockObject\Exception;
@@ -61,8 +60,8 @@ class OptionPriceRendererTest extends TestCase
 
         $productMock = $this->createMock(Product::class);
 
-        /** @var BlockTestHelper $priceRenderer */
-        $priceRenderer = new BlockTestHelper();
+        /** @var AbstractBlockTestHelper $priceRenderer */
+        $priceRenderer = new AbstractBlockTestHelper();
         $priceRenderer->setRenderResult($expectedHtml);
 
         $this->layoutMock->method('getBlock')

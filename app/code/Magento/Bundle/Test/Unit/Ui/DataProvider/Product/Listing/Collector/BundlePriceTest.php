@@ -14,7 +14,7 @@ use Magento\Catalog\Api\Data\ProductRenderInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ProductRender\FormattedPriceInfoBuilder;
 use Magento\Catalog\Pricing\Price\FinalPrice;
-use Magento\Catalog\Test\Unit\Helper\PriceInfoInterfaceTestHelper;
+use Magento\Catalog\Test\Unit\Helper\PriceInfoTestHelper;
 use Magento\Framework\Pricing\Amount\AmountInterface;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -67,8 +67,8 @@ class BundlePriceTest extends TestCase
         $productRender = $this->createMock(ProductRenderInterface::class);
         $amount = $this->createMock(AmountInterface::class);
         $minAmount = $this->createMock(AmountInterface::class);
-        // Use PriceInfoInterfaceTestHelper for testability
-        $priceInfo = new PriceInfoInterfaceTestHelper();
+        // Use PriceInfoTestHelper for testability
+        $priceInfo = new PriceInfoTestHelper();
 
         $productMock->expects($this->once())
             ->method('getTypeId')
@@ -76,14 +76,14 @@ class BundlePriceTest extends TestCase
         $productRender->expects($this->exactly(2))
             ->method('getPriceInfo')
             ->willReturn($priceInfo);
-        
+
         // Set price info values directly using TestHelper setters
         $priceInfo->setMaxPrice($amountValue);
         $priceInfo->setMaxRegularPrice($amountValue);
         $priceInfo->setMinimalPrice($minAmountValue);
         $priceInfo->setMinimalRegularPrice($minAmountValue);
         $priceInfo->setPrice($price);
-        
+
         $productMock->expects($this->exactly(4))
             ->method('getPriceInfo')
             ->willReturn($priceInfo);

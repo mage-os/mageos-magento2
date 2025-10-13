@@ -227,7 +227,7 @@ class FinalPriceTest extends TestCase
         $this->prepareMock();
         $customOptions = [
             $this->createPartialMock(
-                \Magento\Catalog\Test\Unit\Helper\ProductCustomOptionInterfaceTestHelper::class,
+                \Magento\Catalog\Model\Product\Option::class,
                 ['setProduct']
             )
         ];

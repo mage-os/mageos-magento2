@@ -17,7 +17,7 @@ use Magento\ConfigurableProduct\Model\Quote\Item\ConfigurableItemOptionValue;
 use Magento\ConfigurableProduct\Model\Quote\Item\ConfigurableItemOptionValueFactory;
 use Magento\Framework\DataObject;
 use Magento\Framework\DataObject\Factory as DataObjectFactory;
-use Magento\Framework\Test\Unit\Helper\DataObjectTestHelper;
+use Magento\Framework\DataObject\Test\Unit\Helper\DataObjectTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

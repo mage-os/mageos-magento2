@@ -9,8 +9,7 @@ namespace Magento\ConfigurableProduct\Test\Unit\Model\Quote\Item\QuantityValidat
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\CatalogInventory\Model\Quote\Item\QuantityValidator\Initializer\Option;
-use Magento\CatalogInventory\Model\Stock\Item as StockItemModel;
-use Magento\Framework\Test\Unit\Helper\StockItemTestHelper;
+use Magento\CatalogInventory\Test\Unit\Helper\ItemTestHelper;
 use Magento\ConfigurableProduct\Model\Quote\Item\QuantityValidator\Initializer\Option\Plugin\ConfigurableProduct
     as InitializerOptionPlugin;
 use Magento\Quote\Model\Quote\Item;
@@ -36,8 +35,7 @@ class ConfigurableProductTest extends TestCase
             ->method('getProductType')
             ->willReturn($data['product_type']);
 
-        $stockItemMock = new StockItemTestHelper();
-        // StockItemTestHelper setProductName method available for call
+        $stockItemMock = new ItemTestHelper();
 
         $optionMock = $this->createPartialMock(
             \Magento\Quote\Model\Quote\Item\Option::class,

@@ -14,7 +14,7 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\App\ViewInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
-use Magento\Framework\Test\Unit\Helper\BlockTestHelper;
+use Magento\Framework\View\Test\Unit\Helper\AbstractBlockTestHelper;
 use Magento\Framework\Test\Unit\Helper\ResponseInterfaceTestHelper;
 use Magento\Framework\View\LayoutInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -76,8 +76,8 @@ class GridTest extends TestCase
     {
         $layout = $this->createMock(LayoutInterface::class);
 
-        /** @var BlockTestHelper $block */
-        $block = new BlockTestHelper();
+        /** @var AbstractBlockTestHelper $block */
+        $block = new AbstractBlockTestHelper();
 
         $this->response->setBody('');
         $this->request->expects($this->once())->method('getParam')->with('index')->willReturn('index');

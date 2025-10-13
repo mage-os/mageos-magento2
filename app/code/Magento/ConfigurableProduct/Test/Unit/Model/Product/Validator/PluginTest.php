@@ -15,7 +15,7 @@ use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\DataObject;
 use Magento\Framework\Event\Manager;
-use Magento\Framework\Test\Unit\Helper\DataObjectTestHelper;
+use Magento\Framework\DataObject\Test\Unit\Helper\DataObjectTestHelper;
 use Magento\Framework\Json\Helper\Data;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

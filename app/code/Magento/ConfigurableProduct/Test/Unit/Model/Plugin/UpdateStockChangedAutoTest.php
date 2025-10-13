@@ -51,8 +51,8 @@ class UpdateStockChangedAutoTest extends TestCase
     public function testBeforeSaveForInStock()
     {
         $itemResourceModel = $this->createMock(ItemResourceModel::class);
-        $stockItem = new \Magento\Framework\Test\Unit\Helper\StockItemTestHelper();
-        // Configure StockItemTestHelper with expected values
+        $stockItem = new \Magento\CatalogInventory\Test\Unit\Helper\ItemTestHelper();
+        // Configure ItemTestHelper with expected values
         $stockItem->setIsInStock(true);
         $this->plugin->beforeSave($itemResourceModel, $stockItem);
     }
@@ -67,8 +67,8 @@ class UpdateStockChangedAutoTest extends TestCase
         $productType = Configurable::TYPE_CODE;
         $productId = 1;
         $itemResourceModel = $this->createMock(ItemResourceModel::class);
-        $stockItem = new \Magento\Framework\Test\Unit\Helper\StockItemTestHelper();
-        // Configure StockItemTestHelper with expected values
+        $stockItem = new \Magento\CatalogInventory\Test\Unit\Helper\ItemTestHelper();
+        // Configure ItemTestHelper with expected values
         $stockItem->setIsInStock(false);
         $stockItem->setHasStockStatusChangedAutomaticallyFlag(false);
         $stockItem->setProductId($productId);
@@ -76,8 +76,6 @@ class UpdateStockChangedAutoTest extends TestCase
             ->method('execute')
             ->with($productId)
             ->willReturn($productType);
-        // StockItemTestHelper setStockStatusChangedAuto method returns $this by default
-
         $this->plugin->beforeSave($itemResourceModel, $stockItem);
     }
 }

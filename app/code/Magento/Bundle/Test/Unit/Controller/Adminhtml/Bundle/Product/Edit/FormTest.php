@@ -17,7 +17,7 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\App\ViewInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
-use Magento\Framework\Test\Unit\Helper\BlockTestHelper;
+use Magento\Framework\View\Test\Unit\Helper\AbstractBlockTestHelper;
 use Magento\Framework\Test\Unit\Helper\ResponseInterfaceTestHelper;
 use Magento\Framework\View\LayoutInterface;
 use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
@@ -71,10 +71,10 @@ class FormTest extends TestCase
 
         $this->context = $this->createMock(Context::class);
         $this->request = $this->createMock(RequestInterface::class);
-        
+
         /** @var ResponseInterface $response */
         $this->response = new ResponseInterfaceTestHelper();
-        
+
         $this->productBuilder = $this->createPartialMock(Builder::class, ['build']);
         $this->initializationHelper = $this->createPartialMock(
             Helper::class,
@@ -100,11 +100,11 @@ class FormTest extends TestCase
     {
         /** @var Product $product */
         $product = new ProductTestHelper();
-        
+
         $layout = $this->createMock(LayoutInterface::class);
-        
-        /** @var BlockTestHelper $block */
-        $block = new BlockTestHelper();
+
+        /** @var AbstractBlockTestHelper $block */
+        $block = new AbstractBlockTestHelper();
 
         $this->productBuilder->expects($this->once())->method('build')->with($this->request)->willReturn($product);
         $this->initializationHelper->method('initialize')->willReturn($product);

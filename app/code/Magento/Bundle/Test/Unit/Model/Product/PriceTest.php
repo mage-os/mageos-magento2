@@ -33,7 +33,7 @@ use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Store\Test\Unit\Helper\StoreTestHelper;
-use Magento\Framework\Test\Unit\Helper\DataObjectTestHelper;
+use Magento\Framework\DataObject\Test\Unit\Helper\DataObjectTestHelper;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)

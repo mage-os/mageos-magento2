@@ -16,7 +16,7 @@ use Magento\Catalog\Api\Data\ProductOptionExtensionInterface;
 use Magento\Catalog\Api\Data\ProductOptionInterface;
 use Magento\Framework\DataObject;
 use Magento\Framework\DataObject\Factory as DataObjectFactory;
-use Magento\Framework\Test\Unit\Helper\DataObjectTestHelper;
+use Magento\Framework\DataObject\Test\Unit\Helper\DataObjectTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Quote\Test\Unit\Helper\ProductOptionExtensionInterfaceTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;

@@ -18,7 +18,7 @@ use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
 use Magento\Catalog\Model\ResourceModel\Product\Link\Product\Collection as ProductLinkCollection;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
-use Magento\Framework\Test\Unit\Helper\EventTestHelper;
+use Magento\Framework\Event\Test\Unit\Helper\EventTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\GroupedProduct\Model\Product\Type\Grouped;
 use PHPUnit\Framework\MockObject\MockObject;
