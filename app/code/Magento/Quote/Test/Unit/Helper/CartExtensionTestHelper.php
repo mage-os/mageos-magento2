@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -12,7 +12,7 @@ use Magento\Quote\Api\Data\CartExtensionInterface;
 /**
  * Test helper that implements CartExtensionInterface
  * 
- * Provides getNegotiableQuote/setNegotiableQuote methods for testing
+ * Provides stub implementations for all extension attribute methods
  */
 class CartExtensionTestHelper implements CartExtensionInterface
 {
@@ -20,6 +20,21 @@ class CartExtensionTestHelper implements CartExtensionInterface
      * @var mixed
      */
     private $negotiableQuote;
+
+    /**
+     * @var mixed
+     */
+    private $shippingAssignments;
+
+    /**
+     * @var mixed
+     */
+    private $couponCodes;
+
+    /**
+     * @var mixed
+     */
+    private $companyId;
 
     /**
      * Constructor
@@ -52,5 +67,70 @@ class CartExtensionTestHelper implements CartExtensionInterface
         $this->negotiableQuote = $negotiableQuote;
         return $this;
     }
-}
 
+    /**
+     * Get shipping assignments
+     *
+     * @return mixed
+     */
+    public function getShippingAssignments()
+    {
+        return $this->shippingAssignments;
+    }
+
+    /**
+     * Set shipping assignments
+     *
+     * @param mixed $shippingAssignments
+     * @return $this
+     */
+    public function setShippingAssignments($shippingAssignments)
+    {
+        $this->shippingAssignments = $shippingAssignments;
+        return $this;
+    }
+
+    /**
+     * Get coupon codes
+     *
+     * @return mixed
+     */
+    public function getCouponCodes()
+    {
+        return $this->couponCodes;
+    }
+
+    /**
+     * Set coupon codes
+     *
+     * @param mixed $couponCodes
+     * @return $this
+     */
+    public function setCouponCodes($couponCodes)
+    {
+        $this->couponCodes = $couponCodes;
+        return $this;
+    }
+
+    /**
+     * Get company ID
+     *
+     * @return mixed
+     */
+    public function getCompanyId()
+    {
+        return $this->companyId;
+    }
+
+    /**
+     * Set company ID
+     *
+     * @param mixed $companyId
+     * @return $this
+     */
+    public function setCompanyId($companyId)
+    {
+        $this->companyId = $companyId;
+        return $this;
+    }
+}

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -12,7 +12,7 @@ use Magento\Customer\Api\Data\CustomerExtensionInterface;
 /**
  * Test helper that implements CustomerExtensionInterface
  * 
- * Provides getCompanyAttributes/setCompanyAttributes methods for testing
+ * Provides stub implementations for all extension attribute methods
  */
 class CustomerExtensionTestHelper implements CustomerExtensionInterface
 {
@@ -20,6 +20,16 @@ class CustomerExtensionTestHelper implements CustomerExtensionInterface
      * @var mixed
      */
     private $companyAttributes;
+
+    /**
+     * @var mixed
+     */
+    private $assistanceAllowed;
+
+    /**
+     * @var mixed
+     */
+    private $isSubscribed;
 
     /**
      * Constructor
@@ -52,5 +62,48 @@ class CustomerExtensionTestHelper implements CustomerExtensionInterface
         $this->companyAttributes = $companyAttributes;
         return $this;
     }
-}
 
+    /**
+     * Get assistance allowed
+     *
+     * @return mixed
+     */
+    public function getAssistanceAllowed()
+    {
+        return $this->assistanceAllowed;
+    }
+
+    /**
+     * Set assistance allowed
+     *
+     * @param mixed $assistanceAllowed
+     * @return $this
+     */
+    public function setAssistanceAllowed($assistanceAllowed)
+    {
+        $this->assistanceAllowed = $assistanceAllowed;
+        return $this;
+    }
+
+    /**
+     * Get is subscribed
+     *
+     * @return mixed
+     */
+    public function getIsSubscribed()
+    {
+        return $this->isSubscribed;
+    }
+
+    /**
+     * Set is subscribed
+     *
+     * @param mixed $isSubscribed
+     * @return $this
+     */
+    public function setIsSubscribed($isSubscribed)
+    {
+        $this->isSubscribed = $isSubscribed;
+        return $this;
+    }
+}
