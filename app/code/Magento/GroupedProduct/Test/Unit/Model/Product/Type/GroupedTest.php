@@ -338,7 +338,7 @@ class GroupedTest extends TestCase
     #[DataProvider('processBuyRequestDataProvider')]
     public function testProcessBuyRequest($superGroup, $result)
     {
-        $buyRequest = new \Magento\Framework\Test\Unit\Helper\DataObjectTestHelper();
+        $buyRequest = new \Magento\Framework\DataObject\Test\Unit\Helper\DataObjectTestHelper();
         $buyRequest->setSuperGroup($superGroup);
 
         $this->assertEquals($result, $this->_model->processBuyRequest($this->product, $buyRequest));

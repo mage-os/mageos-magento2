@@ -30,28 +30,6 @@ class ItemOptionTestHelper extends Option
     }
 
     /**
-     * Get value for testing
-     *
-     * @return mixed
-     */
-    public function getValue()
-    {
-        return $this->data['value'] ?? null;
-    }
-
-    /**
-     * Set value for testing
-     *
-     * @param mixed $value
-     * @return self
-     */
-    public function setValue($value): self
-    {
-        $this->data['value'] = $value;
-        return $this;
-    }
-
-    /**
      * Get product for testing
      *
      * @return mixed
@@ -70,50 +48,6 @@ class ItemOptionTestHelper extends Option
     public function setProduct($product): self
     {
         $this->data['product'] = $product;
-        return $this;
-    }
-
-    /**
-     * Get code for testing
-     *
-     * @return mixed
-     */
-    public function getCode()
-    {
-        return $this->data['code'] ?? null;
-    }
-
-    /**
-     * Set code for testing
-     *
-     * @param mixed $code
-     * @return self
-     */
-    public function setCode($code): self
-    {
-        $this->data['code'] = $code;
-        return $this;
-    }
-
-    /**
-     * Get item for testing
-     *
-     * @return mixed
-     */
-    public function getItem()
-    {
-        return $this->data['item'] ?? null;
-    }
-
-    /**
-     * Set item for testing
-     *
-     * @param mixed $item
-     * @return self
-     */
-    public function setItem($item): self
-    {
-        $this->data['item'] = $item;
         return $this;
     }
 }

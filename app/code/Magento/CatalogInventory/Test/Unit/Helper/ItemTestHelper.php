@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Framework\Test\Unit\Helper;
+namespace Magento\CatalogInventory\Test\Unit\Helper;
 
 use Magento\CatalogInventory\Model\Stock\Item as StockItem;
 
@@ -15,7 +15,7 @@ use Magento\CatalogInventory\Model\Stock\Item as StockItem;
  * This helper extends the StockItem class to provide custom methods
  * needed for testing that don't exist in the parent class.
  */
-class StockItemTestHelper extends StockItem
+class ItemTestHelper extends StockItem
 {
     /**
      * @var array

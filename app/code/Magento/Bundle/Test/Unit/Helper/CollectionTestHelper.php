@@ -15,7 +15,7 @@ use Magento\Bundle\Model\ResourceModel\Option\Collection;
  * Extends Collection to add custom methods for testing.
  * Overrides methods that require database connection to work in unit test environment.
  */
-class OptionCollectionTestHelper extends Collection
+class CollectionTestHelper extends Collection
 {
     /**
      * @var array
@@ -63,17 +63,5 @@ class OptionCollectionTestHelper extends Collection
     public function getResourceCollection()
     {
         return $this->data['resource_collection'] ?? null;
-    }
-
-    /**
-     * Set resource collection for testing
-     *
-     * @param mixed $collection
-     * @return self
-     */
-    public function setResourceCollection($collection): self
-    {
-        $this->data['resource_collection'] = $collection;
-        return $this;
     }
 }

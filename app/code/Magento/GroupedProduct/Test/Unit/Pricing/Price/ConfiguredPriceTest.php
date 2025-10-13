@@ -16,7 +16,7 @@ use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\Pricing\PriceInfo\Base;
 use Magento\Framework\Pricing\PriceInfoInterface;
 use Magento\Framework\Pricing\SaleableInterface;
-use Magento\GroupedProduct\Test\Unit\Helper\SaleableInterfaceTestHelper;
+use Magento\Framework\Pricing\Test\Unit\Helper\SaleableInterfaceTestHelper;
 use Magento\GroupedProduct\Model\Product\Type\Grouped;
 use Magento\GroupedProduct\Pricing\Price\ConfiguredPrice;
 use Magento\GroupedProduct\Pricing\Price\FinalPrice;

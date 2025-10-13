@@ -21,7 +21,7 @@ use Magento\Catalog\Model\Product;
 use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\Pricing\Adjustment\Calculator as PricingAdjustmentCalculator;
 use Magento\Framework\Pricing\Amount\AmountFactory;
-use Magento\Framework\Test\Unit\Helper\AmountTestHelper;
+use Magento\Framework\Pricing\Test\Unit\Helper\AmountTestHelper;
 use Magento\Framework\Pricing\Price\PriceInterface;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\Pricing\PriceInfo\Base;

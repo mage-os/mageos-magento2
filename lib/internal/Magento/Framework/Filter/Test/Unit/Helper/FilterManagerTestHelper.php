@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Framework\Test\Unit\Helper;
+namespace Magento\Framework\Filter\Test\Unit\Helper;
 
 use Magento\Framework\Filter\FilterManager;
 
@@ -78,29 +78,5 @@ class FilterManagerTestHelper extends FilterManager
         $this->data['sprintf'] = $value;
         return $this;
     }
-
-    /**
-     * Generic data setter for flexible testing
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return self
-     */
-    public function setTestData(string $key, $value): self
-    {
-        $this->data[$key] = $value;
-        return $this;
-    }
-
-    /**
-     * Generic data getter for flexible testing
-     *
-     * @param string $key
-     * @param mixed $default
-     * @return mixed
-     */
-    public function getTestData(string $key, $default = null)
-    {
-        return $this->data[$key] ?? $default;
-    }
 }
+

@@ -10,7 +10,7 @@ namespace Magento\ConfigurableProduct\Test\Unit\Plugin\Catalog\Model\Product\Att
 use Magento\Catalog\Model\Product\Type;
 use Magento\Catalog\Api\Data\ProductAttributeInterface;
 use Magento\Catalog\Api\ProductAttributeRepositoryInterface;
-use Magento\Framework\Test\Unit\Helper\AttributeTestHelper;
+use Magento\Eav\Test\Unit\Helper\AttributeTestHelper;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Attribute\Backend\TierPrice\UpdateHandler;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;

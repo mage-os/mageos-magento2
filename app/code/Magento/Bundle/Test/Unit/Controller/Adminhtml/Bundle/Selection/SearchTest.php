@@ -8,7 +8,6 @@ declare(strict_types=1);
 namespace Magento\Bundle\Test\Unit\Controller\Adminhtml\Bundle\Selection;
 
 use Magento\Backend\App\Action\Context;
-use Magento\Bundle\Block\Adminhtml\Catalog\Product\Edit\Tab\Bundle\Option\Search as SearchBlock;
 use Magento\Bundle\Controller\Adminhtml\Bundle\Selection\Search;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ResponseInterface;
@@ -54,10 +53,10 @@ class SearchTest extends TestCase
 
         $this->context = $this->createMock(Context::class);
         $this->request = $this->createMock(RequestInterface::class);
-        
+
         /** @var ResponseInterface $response */
         $this->response = new ResponseInterfaceTestHelper();
-        
+
         $this->view = $this->createMock(ViewInterface::class);
 
         $this->context->method('getRequest')->willReturn($this->request);
@@ -75,17 +74,17 @@ class SearchTest extends TestCase
     public function testExecute()
     {
         $layout = $this->createMock(LayoutInterface::class);
-        
+
         /** @var SearchTestHelper $block */
         $block = new SearchTestHelper();
 
-        $this->response->setBody(''); // Use setter instead of expects
+        $this->response->setBody('');
         $this->request->expects($this->once())->method('getParam')->with('index')->willReturn('index');
         $this->view->expects($this->once())->method('getLayout')->willReturn($layout);
         $layout->expects($this->once())->method('createBlock')->willReturn($block);
-        $block->setIndex('index'); // Use setter instead of expects
-        $block->setFirstShow(true); // Use setter instead of expects
-        $block->setHtmlResult(''); // Use setter instead of expects
+        $block->setIndex('index');
+        $block->setFirstShow(true);
+        $block->setHtmlResult('');
 
         $this->assertEquals($this->response, $this->controller->execute());
     }

@@ -53,7 +53,7 @@ class RelationPersisterTest extends TestCase
 
         $this->relationProcessor = $this->createMock(Relation::class);
 
-        $this->link = new \Magento\Catalog\Test\Unit\Helper\ProductResourceLinkTestHelper();
+        $this->link = new \Magento\Catalog\Test\Unit\Helper\ProductLinkTestHelper();
 
         $this->linkFactory->method('create')->willReturn($this->link);
 

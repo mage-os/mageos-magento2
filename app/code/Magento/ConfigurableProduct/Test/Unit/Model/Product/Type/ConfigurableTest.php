@@ -257,7 +257,7 @@ class ConfigurableTest extends TestCase
         $product->setData('_cache_instance_used_product_attribute_ids', 1);
         $product->setData('link', 1);
 
-        $attribute = new \Magento\Framework\Test\Unit\Helper\AttributeTestHelper();
+        $attribute = new \Magento\Eav\Test\Unit\Helper\AttributeTestHelper();
         $expectedAttributeData = $this->attributeData[1];
         unset($expectedAttributeData['id']);
         // Configure AttributeTestHelper - addData, setStoreId, setProductId, save methods return $this
@@ -367,7 +367,7 @@ class ConfigurableTest extends TestCase
         $eavAttribute->expects($this->once())->method('getSource')->willReturn($attributeSource);
         $eavAttribute->expects($this->atLeastOnce())->method('getStoreLabel')->willReturn('Store Label');
 
-        $attribute = new \Magento\Framework\Test\Unit\Helper\AttributeTestHelper();
+        $attribute = new \Magento\Eav\Test\Unit\Helper\AttributeTestHelper();
         $attribute->setProductAttribute($eavAttribute);
 
         $product = $this->createPartialMock(Product::class, ['getStoreId', 'getData', 'hasData', '__sleep']);
@@ -587,7 +587,7 @@ class ConfigurableTest extends TestCase
 
         $productMock = $this->createMock(Product::class);
         $optionMock = $this->createMock(OptionInterface::class);
-        $usedAttributeMock = new \Magento\Framework\Test\Unit\Helper\AttributeTestHelper();
+        $usedAttributeMock = new \Magento\Eav\Test\Unit\Helper\AttributeTestHelper();
         $attributeMock = $this->createMock(\Magento\Catalog\Model\ResourceModel\Eav\Attribute::class);
 
         $optionMock->expects($this->once())->method('getValue')->willReturn(json_encode($this->attributeData));

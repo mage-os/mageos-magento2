@@ -73,19 +73,19 @@ class IsAllowedGuestCheckoutObserverTest extends TestCase
         $this->scopeConfigMock = $this->createPartialMock(Config::class, ['isSetFlag', 'getValue']);
 
         $this->resultMock = $this->createPartialMock(
-            \Magento\Framework\Test\Unit\Helper\DataObjectTestHelper::class,
+            \Magento\Framework\DataObject\Test\Unit\Helper\DataObjectTestHelper::class,
             ['setIsAllowed']
         );
 
         $this->eventMock = $this->createPartialMock(
-            \Magento\Downloadable\Test\Unit\Helper\EventTestHelper::class,
+            \Magento\Framework\Event\Test\Unit\Helper\EventTestHelper::class,
             ['getStore', 'getResult', 'getQuote', 'getOrder']
         );
 
         $this->observerMock = $this->createPartialMock(Observer::class, ['getEvent']);
 
         $this->storeMock = $this->createPartialMock(
-            \Magento\Framework\Test\Unit\Helper\DataObjectTestHelper::class,
+            \Magento\Framework\DataObject\Test\Unit\Helper\DataObjectTestHelper::class,
             ['getId']
         );
 

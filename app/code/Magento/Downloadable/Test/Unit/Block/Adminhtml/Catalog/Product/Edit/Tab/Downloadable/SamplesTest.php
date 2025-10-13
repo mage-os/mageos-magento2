@@ -20,6 +20,7 @@ use Magento\Framework\DataObject;
 use Magento\Framework\Escaper;
 use Magento\Framework\Registry;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -69,6 +70,9 @@ class SamplesTest extends TestCase
      */
     protected $urlBuilder;
 
+    /**
+     * @throws Exception
+     */
     protected function setUp(): void
     {
         $objectManagerHelper = new ObjectManager($this);
@@ -86,7 +90,7 @@ class SamplesTest extends TestCase
             'getTypeInstance',
             'getStoreId'
         ]);
-        $this->downloadableProductModel = new TypeTestHelper();
+        $this->downloadableProductModel = $this->createPartialMock(Type::class, []);
         $this->downloadableSampleModel = new SampleTestHelper();
         $this->coreRegistry = $this->createPartialMock(Registry::class, ['registry']);
         $this->escaper = $this->createPartialMock(Escaper::class, ['escapeHtml']);

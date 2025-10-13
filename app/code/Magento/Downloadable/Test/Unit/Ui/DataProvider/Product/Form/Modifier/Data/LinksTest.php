@@ -292,7 +292,7 @@ class LinksTest extends TestCase
         string $useDefaultTitle
     ): MockObject {
         $linkMock = $this->createPartialMock(
-            \Magento\Downloadable\Test\Unit\Helper\LinkInterfaceTestHelper::class,
+            \Magento\Downloadable\Test\Unit\Helper\LinkTestHelper::class,
             [
                 'getId', 'getTitle', 'getPrice', 'getNumberOfDownloads', 'getIsShareable', 'getSortOrder',
                 'getLinkType', 'getLinkUrl', 'getSampleType', 'getSampleUrl', 'getWebsitePrice', 'getStoreTitle'

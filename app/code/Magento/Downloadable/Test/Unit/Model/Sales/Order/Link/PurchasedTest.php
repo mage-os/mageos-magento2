@@ -13,6 +13,7 @@ use Magento\Downloadable\Model\ResourceModel\Link\Purchased\Item\Collection;
 use Magento\Downloadable\Model\Sales\Order\Link\Purchased;
 use Magento\Framework\DataObject;
 use Magento\Sales\Model\Order\Item;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Downloadable\Model\Link\PurchasedFactory;
@@ -62,6 +63,7 @@ class PurchasedTest extends TestCase
      * @param int $expectedItemId
      * @param array $itemData
      * @param array $childItemData
+     * @throws Exception
      */
     #[DataProvider('getLinkDataProvider')]
     public function testGetLink(
@@ -71,10 +73,10 @@ class PurchasedTest extends TestCase
         array $childItemData = []
     ): void {
         /** @var Item $orderItem */
-        $orderItem = new \Magento\Sales\Test\Unit\Helper\ItemTestHelper();
+        $orderItem = $this->createPartialMock(Item::class,[]);
         $orderItem->addData($itemData);
         /** @var Item $childOrderItem */
-        $childOrderItem = new \Magento\Sales\Test\Unit\Helper\ItemTestHelper();
+        $childOrderItem = $this->createPartialMock(Item::class,[]);
         $childOrderItem->addData($childItemData);
         if ($hasChildItem) {
             $orderItem->addChildItem($childOrderItem);

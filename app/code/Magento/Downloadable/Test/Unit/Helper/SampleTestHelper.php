@@ -10,75 +10,102 @@ namespace Magento\Downloadable\Test\Unit\Helper;
 use Magento\Downloadable\Model\Sample;
 
 /**
- * Test helper for Downloadable Sample Model
+ * Test helper for Downloadable Sample
+ *
  */
 class SampleTestHelper extends Sample
 {
     /**
-     * @var array
+     * @var array Internal data storage for custom methods
      */
     private $data = [];
 
     /**
-     * Constructor
+     * Skip parent constructor to avoid dependencies
      */
     public function __construct()
     {
-        // Skip parent constructor to avoid dependencies
+        // Skip parent constructor to avoid dependency injection issues
     }
 
     /**
-     * Get ID
+     * Get product ID (magic method in parent - making it real for mocking)
      *
      * @return int|null
      */
-    public function getId()
+    public function getProductId()
     {
-        return $this->data['id'] ?? null;
+        return $this->data['product_id'] ?? null;
     }
 
     /**
-     * Set ID
+     * Get store title (custom method not in parent)
      *
-     * @param int $id
-     * @return $this
+     * @return string|null
      */
-    public function setId($id)
+    public function getStoreTitle()
     {
-        $this->data['id'] = $id;
+        return $this->data['store_title'] ?? null;
+    }
+
+    /**
+     * Set product ID (custom method not in parent)
+     *
+     * @param int $productId
+     * @return self
+     */
+    public function setProductId($productId): self
+    {
+        $this->data['product_id'] = $productId;
         return $this;
     }
 
     /**
-     * Get title
+     * Set store ID (custom method not in parent)
      *
-     * @return string|null
+     * @param int $storeId
+     * @return self
      */
-    public function getTitle()
+    public function setStoreId($storeId): self
     {
-        return $this->data['title'] ?? null;
-    }
-
-    /**
-     * Set title
-     *
-     * @param string $title
-     * @return $this
-     */
-    public function setTitle($title)
-    {
-        $this->data['title'] = $title;
+        $this->data['store_id'] = $storeId;
         return $this;
     }
 
     /**
-     * Get sample URL
+     * Set product website IDs (custom method not in parent)
      *
-     * @return string|null
+     * @param array $websiteIds
+     * @return self
      */
-    public function getSampleUrl()
+    public function setProductWebsiteIds($websiteIds): self
     {
-        return $this->data['sample_url'] ?? null;
+        $this->data['product_website_ids'] = $websiteIds;
+        return $this;
+    }
+
+    /**
+     * Set number of downloads (custom method not in parent)
+     *
+     * @param int $downloads
+     * @return self
+     */
+    public function setNumberOfDownloads($downloads): self
+    {
+        $this->data['number_of_downloads'] = $downloads;
+        return $this;
+    }
+
+    /**
+     * Set link file (custom method not in parent)
+     *
+     * @param string $file
+     * @return self
+     */
+    public function setLinkFile($file): self
+    {
+        $this->data['link_file'] = $file;
+        return $this;
     }
 
     /**
@@ -138,16 +165,6 @@ class SampleTestHelper extends Sample
     }
 
     /**
-     * Get sort order
-     *
-     * @return int|null
-     */
-    public function getSortOrder()
-    {
-        return $this->data['sort_order'] ?? null;
-    }
-
-    /**
      * Set sort order
      *
      * @param int $sortOrder
@@ -156,50 +173,6 @@ class SampleTestHelper extends Sample
     public function setSortOrder($sortOrder)
     {
         $this->data['sort_order'] = $sortOrder;
-        return $this;
-    }
-
-    /**
-     * Get store title
-     *
-     * @return string|null
-     */
-    public function getStoreTitle()
-    {
-        return $this->data['store_title'] ?? 'Test Store Title';
-    }
-
-    /**
-     * Set store title
-     *
-     * @param string $storeTitle
-     * @return $this
-     */
-    public function setStoreTitle($storeTitle)
-    {
-        $this->data['store_title'] = $storeTitle;
-        return $this;
-    }
-
-    /**
-     * Get base path
-     *
-     * @return string|null
-     */
-    public function getBasePath()
-    {
-        return $this->data['base_path'] ?? null;
-    }
-
-    /**
-     * Set base path
-     *
-     * @param string $basePath
-     * @return $this
-     */
-    public function setBasePath($basePath)
-    {
-        $this->data['base_path'] = $basePath;
         return $this;
     }
 
@@ -213,15 +186,4 @@ class SampleTestHelper extends Sample
         return $this->data['base_sample_path'] ?? null;
     }
 
-    /**
-     * Set base sample path
-     *
-     * @param string $baseSamplePath
-     * @return $this
-     */
-    public function setBaseSamplePath($baseSamplePath)
-    {
-        $this->data['base_sample_path'] = $baseSamplePath;
-        return $this;
-    }
 }

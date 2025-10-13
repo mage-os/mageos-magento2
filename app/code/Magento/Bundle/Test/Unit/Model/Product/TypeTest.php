@@ -8,8 +8,8 @@ declare(strict_types=1);
 namespace Magento\Bundle\Test\Unit\Model\Product;
 
 use Magento\Bundle\Test\Unit\Helper\BundleOptionTestHelper;
-use Magento\Bundle\Test\Unit\Helper\OptionCollectionTestHelper;
-use Magento\Bundle\Test\Unit\Helper\OptionTestHelper;
+use Magento\Bundle\Test\Unit\Helper\CollectionTestHelper;
+use Magento\Catalog\Test\Unit\Helper\OptionTestHelper;
 use Magento\Bundle\Test\Unit\Helper\SelectionTestHelper;
 use Magento\Bundle\Test\Unit\Helper\TypeTestHelper;
 use Magento\Catalog\Test\Unit\Helper\DefaultTypeTestHelper;
@@ -1736,7 +1736,7 @@ class TypeTest extends TestCase
         $storeId = 2;
         $productMock = $this->createMock(Product::class);
         $usedOptionsMock = $this->createPartialMock(
-            OptionCollectionTestHelper::class,
+            CollectionTestHelper::class,
             ['getResourceCollection']
         );
         $dbResourceMock = $this->createPartialMock(

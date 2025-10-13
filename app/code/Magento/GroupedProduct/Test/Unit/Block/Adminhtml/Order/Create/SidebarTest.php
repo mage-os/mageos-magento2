@@ -44,7 +44,7 @@ class SidebarTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->itemMock = new \Magento\Framework\Test\Unit\Helper\DataObjectTestHelper();
+        $this->itemMock = new \Magento\Framework\DataObject\Test\Unit\Helper\DataObjectTestHelper();
         $this->productMock = $this->createMock(Product::class);
         $this->subjectMock = $this->createMock(
             AbstractSidebar::class

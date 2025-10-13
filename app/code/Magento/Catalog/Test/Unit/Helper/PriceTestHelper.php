@@ -43,18 +43,6 @@ class PriceTestHelper extends Price
     }
 
     /**
-     * Set selection final total price return value for testing
-     *
-     * @param mixed $value
-     * @return self
-     */
-    public function setSelectionFinalTotalPriceReturn($value): self
-    {
-        $this->data['selection_final_total_price'] = $value;
-        return $this;
-    }
-
-    /**
      * Get total prices for testing
      *
      * @param mixed $product

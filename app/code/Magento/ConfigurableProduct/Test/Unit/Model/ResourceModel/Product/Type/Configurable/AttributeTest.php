@@ -93,7 +93,7 @@ class AttributeTest extends TestCase
                 'value' => 'test',
             ]
         );
-        $attributeMock = new \Magento\Framework\Test\Unit\Helper\AttributeTestHelper();
+        $attributeMock = new \Magento\Eav\Test\Unit\Helper\AttributeTestHelper();
         $attributeMock->setId($attributeId);
         $attributeMock->setUseDefault(0);
         $attributeMock->setLabel('test');
@@ -129,7 +129,7 @@ class AttributeTest extends TestCase
                 'value' => 'test'
             ]
         );
-        $attributeMock = new \Magento\Framework\Test\Unit\Helper\AttributeTestHelper();
+        $attributeMock = new \Magento\Eav\Test\Unit\Helper\AttributeTestHelper();
         $attributeMock->setId($attributeId);
         $attributeMock->setStoreId(1);
         $attributeMock->setUseDefault(0);

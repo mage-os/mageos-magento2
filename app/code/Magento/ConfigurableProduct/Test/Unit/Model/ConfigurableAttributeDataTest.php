@@ -86,7 +86,7 @@ class ConfigurableAttributeDataTest extends TestCase
             $attributeId => ['option_id_1' => 'option_products_1', 'option_id_2' => 'option_products_2'],
         ];
 
-        $productAttributeMock = new \Magento\Framework\Test\Unit\Helper\AttributeTestHelper();
+        $productAttributeMock = new \Magento\Eav\Test\Unit\Helper\AttributeTestHelper();
         // Configure AttributeTestHelper with expected values
         $productAttributeMock->setId($attributeId);
         $productAttributeMock->setAttributeCode($expected['attributes'][$attributeId]['code']);

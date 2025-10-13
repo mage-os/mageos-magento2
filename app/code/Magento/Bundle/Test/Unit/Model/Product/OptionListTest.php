@@ -10,7 +10,6 @@ namespace Magento\Bundle\Test\Unit\Model\Product;
 use Magento\Bundle\Api\Data\LinkInterface;
 use Magento\Bundle\Api\Data\OptionInterface;
 use Magento\Bundle\Api\Data\OptionInterfaceFactory;
-use Magento\Bundle\Model\Option;
 use Magento\Bundle\Model\Product\LinksList;
 use Magento\Bundle\Model\Product\OptionList;
 use Magento\Bundle\Model\Product\Type;
@@ -21,7 +20,7 @@ use Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Bundle\Test\Unit\Helper\OptionTestHelper;
+use Magento\Catalog\Test\Unit\Helper\OptionTestHelper;
 use Magento\Bundle\Test\Unit\Helper\OptionInterfaceTestHelper;
 
 /**

@@ -10,7 +10,7 @@ namespace Magento\BundleImportExport\Test\Unit\Model\Import\Product\Type;
 use Magento\BundleImportExport\Model\Import\Product\Type\Bundle\RelationsDataSaver;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\BundleImportExport\Model\Import\Product\Type\Bundle;
-use Magento\Framework\Test\Unit\Helper\MysqlTestHelper;
+use Magento\Framework\Db\Test\Unit\Helper\MysqlTestHelper;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection as ProductAttributeCollection;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory as ProductAttributeCollectionFactory;

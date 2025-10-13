@@ -176,7 +176,7 @@ class PriceTest extends TestCase
 
     protected function getMockForOptionsClass()
     {
-        $optionMock = new \Magento\Catalog\Test\Unit\Helper\ItemOptionTestHelper();
+        $optionMock = $this->createMock(Option::class);
         /* quantity of options */
         $optionMock->setValue(5);
         return $optionMock;

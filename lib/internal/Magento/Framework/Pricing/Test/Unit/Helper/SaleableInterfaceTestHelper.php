@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\GroupedProduct\Test\Unit\Helper;
+namespace Magento\Framework\Pricing\Test\Unit\Helper;
 
 use Magento\Framework\Pricing\SaleableInterface;
 
@@ -56,18 +56,6 @@ class SaleableInterfaceTestHelper implements SaleableInterface
     }
 
     /**
-     * Set type ID
-     *
-     * @param string $typeId
-     * @return $this
-     */
-    public function setTypeId(string $typeId): self
-    {
-        $this->data['type_id'] = $typeId;
-        return $this;
-    }
-
-    /**
      * @inheritdoc
      */
     public function getId()
@@ -76,35 +64,11 @@ class SaleableInterfaceTestHelper implements SaleableInterface
     }
 
     /**
-     * Set ID
-     *
-     * @param int $id
-     * @return $this
-     */
-    public function setId(int $id): self
-    {
-        $this->data['id'] = $id;
-        return $this;
-    }
-
-    /**
      * @inheritdoc
      */
     public function getQty()
     {
         return $this->data['qty'] ?? 1;
-    }
-
-    /**
-     * Set quantity
-     *
-     * @param float $qty
-     * @return $this
-     */
-    public function setQty(float $qty): self
-    {
-        $this->data['qty'] = $qty;
-        return $this;
     }
 
     /**
@@ -174,26 +138,7 @@ class SaleableInterfaceTestHelper implements SaleableInterface
         $this->data['custom_options'][$code] = $option;
         return $this;
     }
-
-    /**
-     * Has final price (custom method for testing)
-     *
-     * @return bool
-     */
-    public function hasFinalPrice(): bool
-    {
-        return $this->data['has_final_price'] ?? false;
-    }
-
-    /**
-     * Set has final price
-     *
-     * @param bool $hasFinalPrice
-     * @return $this
-     */
-    public function setHasFinalPrice(bool $hasFinalPrice): self
-    {
-        $this->data['has_final_price'] = $hasFinalPrice;
-        return $this;
-    }
 }
+
+
+

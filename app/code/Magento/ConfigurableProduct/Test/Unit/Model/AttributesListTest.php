@@ -45,7 +45,7 @@ class AttributesListTest extends TestCase
         );
         $collectionFactoryMock->expects($this->once())->method('create')->willReturn($this->collectionMock);
 
-        $this->attributeMock = new \Magento\Framework\Test\Unit\Helper\AttributeTestHelper();
+        $this->attributeMock = new \Magento\Eav\Test\Unit\Helper\AttributeTestHelper();
         $this->collectionMock
             ->expects($this->once())
             ->method('getItems')

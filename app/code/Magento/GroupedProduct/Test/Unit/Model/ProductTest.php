@@ -226,7 +226,7 @@ class ProductTest extends TestCase
         $contextMock->method('getCacheManager')->willReturn($cacheInterfaceMock);
         $contextMock->method('getActionValidator')->willReturn($actionValidatorMock);
 
-        $this->optionInstanceMock = new \Magento\Catalog\Test\Unit\Helper\ProductOptionTestHelper();
+        $this->optionInstanceMock = new \Magento\Catalog\Test\Unit\Helper\OptionTestHelper();
 
         $this->resource = $this->createMock(ProductResourceModel::class);
 

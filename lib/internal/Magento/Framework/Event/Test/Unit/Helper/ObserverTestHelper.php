@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Framework\Test\Unit\Helper;
+namespace Magento\Framework\Event\Test\Unit\Helper;
 
 use Magento\Framework\Event\Observer;
 
@@ -18,6 +18,11 @@ class ObserverTestHelper extends Observer
      * @var mixed
      */
     private $block;
+
+    /**
+     * @var mixed
+     */
+    private $form;
 
     public function __construct()
     {
@@ -45,11 +50,6 @@ class ObserverTestHelper extends Observer
         $this->block = $block;
         return $this;
     }
-
-    /**
-     * @var mixed
-     */
-    private $form;
 
     /**
      * Get form (custom method for testing)

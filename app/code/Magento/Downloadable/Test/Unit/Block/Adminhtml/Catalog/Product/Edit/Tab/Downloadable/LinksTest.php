@@ -14,7 +14,7 @@ use Magento\Downloadable\Block\Adminhtml\Catalog\Product\Edit\Tab\Downloadable\L
 use Magento\Downloadable\Helper\File;
 use Magento\Downloadable\Model\Link;
 use Magento\Downloadable\Model\Product\Type;
-use Magento\Downloadable\Test\Unit\Helper\LinkModelTestHelper;
+use Magento\Downloadable\Test\Unit\Helper\LinkTestHelper;
 use Magento\Downloadable\Test\Unit\Helper\TypeTestHelper;
 use Magento\Eav\Model\Entity\AttributeFactory;
 use Magento\Framework\DataObject;
@@ -108,8 +108,8 @@ class LinksTest extends TestCase
      */
     private function setupDownloadableProductModel(): void
     {
-        $this->downloadableProductModel = new TypeTestHelper();
-        $this->downloadableLinkModel = new LinkModelTestHelper();
+        $this->downloadableProductModel = $this->createPartialMock(Type::class,[]);
+        $this->downloadableLinkModel = new LinkTestHelper();
         // Set up the test data
         $this->downloadableLinkModel->setId(1)
             ->setTitle('Test Title')

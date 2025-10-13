@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Bundle\Test\Unit\Helper;
+namespace Magento\Catalog\Test\Unit\Helper;
 
 use Magento\Catalog\Model\Product\Option;
 
@@ -41,9 +41,9 @@ class OptionTestHelper extends Option
      * @param mixed $index
      * @return mixed
      */
-        /**
-         * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-         */
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function getData($key = null, $index = null)
     {
         if ($key === null) {
@@ -63,72 +63,6 @@ class OptionTestHelper extends Option
     public function setTestData(string $key, $value): self
     {
         $this->testData[$key] = $value;
-        return $this;
-    }
-
-    /**
-     * Get option ID for testing
-     *
-     * @return mixed
-     */
-    public function getOptionId()
-    {
-        return $this->data['option_id'] ?? null;
-    }
-
-    /**
-     * Set option ID for testing
-     *
-     * @param mixed $optionId
-     * @return self
-     */
-    public function setOptionId($optionId): self
-    {
-        $this->data['option_id'] = $optionId;
-        return $this;
-    }
-
-    /**
-     * Get title for testing
-     *
-     * @return mixed
-     */
-    public function getTitle()
-    {
-        return $this->data['title'] ?? null;
-    }
-
-    /**
-     * Set title for testing
-     *
-     * @param mixed $title
-     * @return self
-     */
-    public function setTitle($title): self
-    {
-        $this->data['title'] = $title;
-        return $this;
-    }
-
-    /**
-     * Get default title for testing
-     *
-     * @return mixed
-     */
-    public function getDefaultTitle()
-    {
-        return $this->data['default_title'] ?? null;
-    }
-
-    /**
-     * Set default title for testing
-     *
-     * @param mixed $defaultTitle
-     * @return self
-     */
-    public function setDefaultTitle($defaultTitle): self
-    {
-        $this->data['default_title'] = $defaultTitle;
         return $this;
     }
 
@@ -165,18 +99,6 @@ class OptionTestHelper extends Option
     }
 
     /**
-     * Set multi selection for testing
-     *
-     * @param mixed $isMultiSelection
-     * @return self
-     */
-    public function setIsMultiSelection($isMultiSelection): self
-    {
-        $this->data['is_multi_selection'] = $isMultiSelection;
-        return $this;
-    }
-
-    /**
      * Get value for testing
      *
      * @return mixed
@@ -196,16 +118,6 @@ class OptionTestHelper extends Option
     {
         $this->data['value'] = $value;
         return $this;
-    }
-
-    /**
-     * Get selections for testing
-     *
-     * @return array
-     */
-    public function getSelections(): array
-    {
-        return $this->data['selections'] ?? [];
     }
 
     /**

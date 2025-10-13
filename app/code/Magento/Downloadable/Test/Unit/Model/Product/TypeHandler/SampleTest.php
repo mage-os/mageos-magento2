@@ -194,7 +194,7 @@ class SampleTest extends TestCase
     private function createSampleModel($product, array $modelData)
     {
         $sample = $this->createPartialMock(
-            \Magento\Downloadable\Test\Unit\Helper\SampleModelTestHelper::class,
+            \Magento\Downloadable\Test\Unit\Helper\SampleTestHelper::class,
             [
                 'setProductId',
                 'setStoreId',

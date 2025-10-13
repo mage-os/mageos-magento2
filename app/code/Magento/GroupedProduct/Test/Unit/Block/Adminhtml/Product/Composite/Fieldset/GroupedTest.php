@@ -151,7 +151,7 @@ class GroupedTest extends TestCase
     {
         $storeId = 2;
 
-        $objectMock = new \Magento\Framework\Test\Unit\Helper\DataObjectTestHelper();
+        $objectMock = new \Magento\Framework\DataObject\Test\Unit\Helper\DataObjectTestHelper();
         $objectMock->setSuperGroup([]);
         $instanceMock = $this->createMock(\Magento\GroupedProduct\Model\Product\Type\Grouped::class);
 

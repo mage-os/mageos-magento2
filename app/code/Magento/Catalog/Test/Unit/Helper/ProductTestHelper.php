@@ -80,6 +80,28 @@ class ProductTestHelper extends Product
     }
 
     /**
+     * Override getEntityId to work without constructor
+     *
+     * @return mixed
+     */
+    public function getEntityId()
+    {
+        return $this->data['entity_id'];
+    }
+
+    /**
+     * Set entity ID for testing
+     *
+     * @param mixed $value
+     * @return self
+     */
+    public function setEntityId($value): self
+    {
+        $this->data['entity_id'] = $value;
+        return $this;
+    }
+
+    /**
      * Custom getPriceType method for testing (used in Bundle products)
      *
      * @return mixed
@@ -240,6 +262,18 @@ class ProductTestHelper extends Product
     public function getOptionsCollection($product = null)
     {
         return $this->data['options_collection'] ?? null;
+    }
+
+    /**
+     * Set options collection for testing
+     *
+     * @param mixed $optionsCollection
+     * @return self
+     */
+    public function setOptionsCollection($optionsCollection): self
+    {
+        $this->data['options_collection'] = $optionsCollection;
+        return $this;
     }
 
     /**
@@ -539,9 +573,9 @@ class ProductTestHelper extends Product
     /**
      * Custom getShipmentType method for Bundle testing
      *
-     * @return string|null
+     * @return mixed
      */
-    public function getShipmentType(): ?string
+    public function getShipmentType()
     {
         return $this->data['shipment_type'] ?? null;
     }
@@ -549,12 +583,100 @@ class ProductTestHelper extends Product
     /**
      * Set shipment type for testing
      *
-     * @param string|null $shipmentType
+     * @param mixed $shipmentType
      * @return self
      */
-    public function setShipmentType(?string $shipmentType): self
+    public function setShipmentType($shipmentType): self
     {
         $this->data['shipment_type'] = $shipmentType;
+        return $this;
+    }
+
+    /**
+     * Custom getSkuType method for Bundle testing
+     *
+     * @return mixed
+     */
+    public function getSkuType()
+    {
+        return $this->data['sku_type'] ?? null;
+    }
+
+    /**
+     * Set SKU type for testing
+     *
+     * @param mixed $skuType
+     * @return self
+     */
+    public function setSkuType($skuType): self
+    {
+        $this->data['sku_type'] = $skuType;
+        return $this;
+    }
+
+    /**
+     * Custom getPriceView method for Bundle testing
+     *
+     * @return mixed
+     */
+    public function getPriceView()
+    {
+        return $this->data['price_view'] ?? null;
+    }
+
+    /**
+     * Set price view for testing
+     *
+     * @param mixed $priceView
+     * @return self
+     */
+    public function setPriceView($priceView): self
+    {
+        $this->data['price_view'] = $priceView;
+        return $this;
+    }
+
+    /**
+     * Custom getWeightType method for Bundle testing
+     *
+     * @return mixed
+     */
+    public function getWeightType()
+    {
+        return $this->data['weight_type'] ?? null;
+    }
+
+    /**
+     * Set weight type for testing
+     *
+     * @param mixed $weightType
+     * @return self
+     */
+    public function setWeightType($weightType): self
+    {
+        $this->data['weight_type'] = $weightType;
+        return $this;
+    }
+
+    /**
+     * Custom getSelectionsCollection method for Bundle testing
+     *
+     * @return mixed
+     */
+    public function getSelectionsCollection()
+    {
+        return $this->data['selections_collection'] ?? null;
+    }
+
+    /**
+     * Set selections collection for testing
+     *
+     * @param mixed $collection
+     * @return self
+     */
+    public function setSelectionsCollection($collection): self
+    {
+        $this->data['selections_collection'] = $collection;
         return $this;
     }
 
@@ -672,9 +794,9 @@ class ProductTestHelper extends Product
     /**
      * Custom getSku method for testing
      *
-     * @return string|null
+     * @return mixed
      */
-    public function getSku(): ?string
+    public function getSku()
     {
         return $this->data['sku'] ?? null;
     }
@@ -1517,6 +1639,28 @@ class ProductTestHelper extends Product
     }
 
     /**
+     * Get store IDs for testing
+     *
+     * @return array
+     */
+    public function getStoreIds()
+    {
+        return $this->data['store_ids'] ?? [];
+    }
+
+    /**
+     * Set store IDs for testing
+     *
+     * @param array $storeIds
+     * @return self
+     */
+    public function setStoreIds(array $storeIds): self
+    {
+        $this->data['store_ids'] = $storeIds;
+        return $this;
+    }
+
+    /**
      * Custom method for ConfigurableProduct tests
      *
      * @return bool
@@ -2057,6 +2201,41 @@ class ProductTestHelper extends Product
     public function setResource($resource): self
     {
         $this->data['resource'] = $resource;
+        return $this;
+    }
+
+    /**
+     * Get attribute for testing (custom method for SalesRule tests)
+     *
+     * @param string $attributeCode
+     * @return mixed
+     */
+    public function getAttribute($attributeCode)
+    {
+        return $this->data['attributes'][$attributeCode] ?? null;
+    }
+
+    /**
+     * Set quote item qty for testing (custom method for SalesRule tests)
+     *
+     * @param mixed $qty
+     * @return self
+     */
+    public function setQuoteItemQty($qty): self
+    {
+        $this->data['quote_item_qty'] = $qty;
+        return $this;
+    }
+
+    /**
+     * Set quote item price for testing (custom method for SalesRule tests)
+     *
+     * @param mixed $price
+     * @return self
+     */
+    public function setQuoteItemPrice($price): self
+    {
+        $this->data['quote_item_price'] = $price;
         return $this;
     }
 }

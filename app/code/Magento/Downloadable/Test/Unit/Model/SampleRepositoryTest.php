@@ -262,7 +262,7 @@ class SampleRepositoryTest extends TestCase
             ->willReturn($this->productMock);
         $this->productMock->method('getData')->willReturn($productId);
         $existingSampleMock = $this->createPartialMock(
-            \Magento\Downloadable\Test\Unit\Helper\SampleModelTestHelper::class,
+            \Magento\Downloadable\Test\Unit\Helper\SampleTestHelper::class,
             ['getProductId', '__wakeup', 'getId', 'load']
         );
         $this->sampleFactoryMock->expects($this->once())->method('create')
@@ -312,7 +312,7 @@ class SampleRepositoryTest extends TestCase
             ->willReturn($this->productMock);
         $this->productMock->method('getData')->willReturn($productId);
         $existingSampleMock = $this->createPartialMock(
-            \Magento\Downloadable\Test\Unit\Helper\SampleModelTestHelper::class,
+            \Magento\Downloadable\Test\Unit\Helper\SampleTestHelper::class,
             ['getProductId', '__wakeup', 'getId', 'load']
         );
         $this->sampleFactoryMock->expects($this->once())->method('create')
@@ -373,7 +373,7 @@ class SampleRepositoryTest extends TestCase
             ->willReturn($this->productMock);
         $this->productMock->method('getData')->willReturn($productId);
         $existingSampleMock = $this->createPartialMock(
-            \Magento\Downloadable\Test\Unit\Helper\SampleModelTestHelper::class,
+            \Magento\Downloadable\Test\Unit\Helper\SampleTestHelper::class,
             ['getProductId', '__wakeup', 'getId', 'load', 'save']
         );
         $existingSampleMock->method('getId')->willReturn($sampleId);
@@ -433,7 +433,7 @@ class SampleRepositoryTest extends TestCase
         ];
 
         $sampleMock = $this->createPartialMock(
-            \Magento\Downloadable\Test\Unit\Helper\SampleModelTestHelper::class,
+            \Magento\Downloadable\Test\Unit\Helper\SampleTestHelper::class,
             [
                 'getStoreTitle',
                 'getId',

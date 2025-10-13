@@ -10,7 +10,7 @@ namespace Magento\Downloadable\Test\Unit\Helper;
 /**
  * Test helper class for Modifier with custom methods
  */
-class ModifierTestHelper
+class ModifierTestHelper extends \stdClass
 {
     /**
      * Custom modifyData method for testing
@@ -34,3 +34,6 @@ class ModifierTestHelper
         return $meta;
     }
 }
+
+
+

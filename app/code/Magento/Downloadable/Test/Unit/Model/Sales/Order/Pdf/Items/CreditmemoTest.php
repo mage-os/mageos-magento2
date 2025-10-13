@@ -53,7 +53,7 @@ class CreditmemoTest extends TestCase
         );
 
         $filterManager = $this->createPartialMock(
-            \Magento\Framework\Test\Unit\Helper\FilterManagerTestHelper::class,
+            \Magento\Framework\Filter\Test\Unit\Helper\FilterManagerTestHelper::class,
             ['stripTags']
         );
         $filterManager->expects($this->any())->method('stripTags')->willReturnArgument(0);

@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Framework\Test\Unit\Helper;
+namespace Magento\Framework\DB\Test\Unit\Helper;
 
 use Magento\Framework\DB\Adapter\Pdo\Mysql;
 use Magento\Framework\DB\Select;
@@ -22,10 +22,6 @@ class MysqlTestHelper extends Mysql
      * @var array
      */
     private $data = [];
-    /**
-     * @var callable|null
-     */
-    private $quoteIdentifierCallback;
 
     /**
      * Skip parent constructor to avoid dependencies
@@ -33,48 +29,6 @@ class MysqlTestHelper extends Mysql
     public function __construct()
     {
         // Skip parent constructor
-    }
-
-    /**
-     * Set callback for quoteIdentifier method
-     *
-     * @param callable $callback
-     * @return $this
-     */
-    public function setQuoteIdentifierCallback($callback)
-    {
-        $this->quoteIdentifierCallback = $callback;
-        return $this;
-    }
-
-    /**
-     * Mock quoteIdentifier method
-     *
-     * @param string|array $ident
-     * @param bool $auto
-     * @return string|array
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function quoteIdentifier($ident, $auto = false)
-    {
-        if ($this->quoteIdentifierCallback) {
-            return call_user_func($this->quoteIdentifierCallback, $ident);
-        }
-        return $this->data['quote_identifier'] ?? $ident;
-    }
-
-    /**
-     * Custom joinLeft method for testing
-     *
-     * @param mixed $name
-     * @param mixed $cond
-     * @param mixed $cols
-     * @return $this
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function joinLeft($name, $cond, $cols = '*')
-    {
-        return $this;
     }
 
     /**
@@ -118,20 +72,6 @@ class MysqlTestHelper extends Mysql
     public function fetchPairs($sql, $bind = [])
     {
         return $this->data['fetch_pairs'] ?? [];
-    }
-
-    /**
-     * Mock insertOnDuplicate method
-     *
-     * @param mixed $table
-     * @param mixed $data
-     * @param mixed $fields
-     * @return $this
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function insertOnDuplicate($table, $data, $fields = [])
-    {
-        return $this;
     }
 
     /**
@@ -188,15 +128,4 @@ class MysqlTestHelper extends Mysql
         return $this;
     }
 
-    /**
-     * Get test data
-     *
-     * @param string $key
-     * @param mixed $default
-     * @return mixed
-     */
-    public function getTestData(string $key, $default = null)
-    {
-        return $this->data[$key] ?? $default;
-    }
 }

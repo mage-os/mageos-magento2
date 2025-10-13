@@ -261,7 +261,7 @@ class ContentValidatorTest extends TestCase
     protected function getLinkMock(array $linkData)
     {
         $linkMock = $this->createPartialMock(
-            \Magento\Downloadable\Test\Unit\Helper\LinkInterfaceTestHelper::class,
+            \Magento\Downloadable\Test\Unit\Helper\LinkTestHelper::class,
             [
                 'isShareable',
                 'getTitle',

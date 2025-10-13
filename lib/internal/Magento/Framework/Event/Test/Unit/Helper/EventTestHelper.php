@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Framework\Test\Unit\Helper;
+namespace Magento\Framework\Event\Test\Unit\Helper;
 
 use Magento\Framework\Event;
 
@@ -18,17 +18,17 @@ class EventTestHelper extends Event
      * @var mixed
      */
     private $product;
-    
+
     /**
      * @var mixed
      */
     private $collection;
-    
+
     /**
      * @var mixed
      */
     private $limit;
-    
+
     /**
      * @var mixed
      */
@@ -126,4 +126,44 @@ class EventTestHelper extends Event
         $this->items = $items;
         return $this;
     }
+
+    /**
+     * Get store (custom method for testing)
+     *
+     * @return mixed
+     */
+    public function getStore()
+    {
+        return $this->store;
+    }
+
+    /**
+     * Get result (custom method for testing)
+     *
+     * @return mixed
+     */
+    public function getResult()
+    {
+        return $this->result;
+    }
+    /**
+     * Get quote (custom method for testing)
+     *
+     * @return mixed
+     */
+    public function getQuote()
+    {
+        return $this->quote;
+    }
+
+    /**
+     * Get order (custom method for testing)
+     *
+     * @return mixed
+     */
+    public function getOrder()
+    {
+        return $this->order;
+    }
+
 }

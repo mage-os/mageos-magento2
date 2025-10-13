@@ -16,7 +16,6 @@ use Magento\Catalog\Helper\Product\Configuration;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Configuration\Item\ItemInterface;
 use Magento\Catalog\Model\Product\Configuration\Item\Option\OptionInterface;
-use Magento\Catalog\Model\Product\Option;
 use Magento\Framework\Escaper;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Pricing\Helper\Data;
@@ -24,7 +23,7 @@ use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Catalog\Test\Unit\Helper\ItemInterfaceTestHelper;
 use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
-use Magento\Bundle\Test\Unit\Helper\OptionTestHelper;
+use Magento\Catalog\Test\Unit\Helper\OptionTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

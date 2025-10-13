@@ -98,28 +98,5 @@ class ButtonTestHelper extends Button
         $this->data['html'] = $html;
         return $this;
     }
-
-    /**
-     * Set test data for flexible state management
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return self
-     */
-    public function setTestData(string $key, $value): self
-    {
-        $this->data[$key] = $value;
-        return $this;
-    }
-
-    /**
-     * Get test data
-     *
-     * @param string $key
-     * @return mixed
-     */
-    public function getTestData(string $key)
-    {
-        return $this->data[$key] ?? null;
-    }
 }
+

@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Framework\Test\Unit\Helper;
+namespace Magento\Framework\Pricing\Test\Unit\Helper;
 
 use Magento\Framework\Pricing\Amount\Base;
 
@@ -14,6 +14,7 @@ use Magento\Framework\Pricing\Amount\Base;
  */
 class AmountTestHelper extends Base
 {
+    private $data = [];
     /**
      * @var array
      */
@@ -77,6 +78,18 @@ class AmountTestHelper extends Base
     public function setValue($value): self
     {
         $this->value = $value;
+        return $this;
+    }
+
+    /**
+     * Set base amount for testing
+     *
+     * @param float $baseAmount
+     * @return self
+     */
+    public function setBaseAmount(float $baseAmount): self
+    {
+        $this->data['base_amount'] = $baseAmount;
         return $this;
     }
 }

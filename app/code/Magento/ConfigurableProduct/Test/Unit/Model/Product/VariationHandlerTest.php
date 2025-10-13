@@ -104,7 +104,7 @@ class VariationHandlerTest extends TestCase
     public function testPrepareAttributeSet()
     {
         $productMock = new \Magento\Catalog\Test\Unit\Helper\ProductTestHelper();
-        $attributeMock = new \Magento\Framework\Test\Unit\Helper\AttributeTestHelper();
+        $attributeMock = new \Magento\Eav\Test\Unit\Helper\AttributeTestHelper();
         $attributeSetMock = $this->createPartialMock(Set::class, ['load', 'addSetInfo', 'getDefaultGroupId']);
         $eavEntityMock = $this->createPartialMock(Entity::class, ['setType', 'getTypeId']);
 
@@ -164,7 +164,7 @@ class VariationHandlerTest extends TestCase
 
         $parentProductMock = new \Magento\Catalog\Test\Unit\Helper\ProductTestHelper();
         $newSimpleProductMock = new \Magento\Catalog\Test\Unit\Helper\ProductTestHelper();
-        $editableAttributeMock = new \Magento\Framework\Test\Unit\Helper\AttributeTestHelper();
+        $editableAttributeMock = new \Magento\Eav\Test\Unit\Helper\AttributeTestHelper();
         $frontendAttributeMock = new class implements FrontendInterface {
             public function getInputType()
             {

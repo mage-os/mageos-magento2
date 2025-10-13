@@ -7,13 +7,12 @@ declare(strict_types=1);
 
 namespace Magento\ConfigurableProduct\Test\Unit\Model;
 
-use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Catalog\Model\ResourceModel\Helper;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection;
 use Magento\ConfigurableProduct\Model\ConfigurableAttributeHandler;
 use Magento\ConfigurableProduct\Model\SuggestedAttributeList;
 use Magento\Eav\Model\Entity\Attribute\Source\AbstractSource;
-use Magento\Framework\Test\Unit\Helper\AttributeTestHelper;
+use Magento\Eav\Test\Unit\Helper\AttributeTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

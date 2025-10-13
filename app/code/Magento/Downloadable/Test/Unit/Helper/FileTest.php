@@ -65,7 +65,7 @@ class FileTest extends TestCase
             ->willReturn($this->mediaDirectory);
 
         $this->coreFileStorageDatabase = $this->createPartialMock(
-            \Magento\Downloadable\Test\Unit\Helper\DatabaseTestHelper::class,
+            \Magento\MediaStorage\Test\Unit\Helper\DatabaseTestHelper::class,
             ['create']
         );
         $this->appContext = $this->createPartialMock(

@@ -10,176 +10,68 @@ namespace Magento\Downloadable\Test\Unit\Helper;
 use Magento\Downloadable\Model\Link;
 
 /**
- * Test helper class for Downloadable Link with custom methods
+ * Test helper for Downloadable Link
  *
- * This helper extends Link and adds custom methods that can be mocked
- * using PHPUnit's createPartialMock() for behavior verification.
+ * Extends Link class and uses internal $data array for storage since parent
+ * constructor is skipped. Parent has real methods (getTitle, setPrice, etc.)
+ * which call getData/setData, so we override those to use our $data array.
+ *
+ * This allows parent methods to work: parent's getTitle() calls $this->getData('title')
+ * which now reads from our $data array.
+ *
+ * Additionally provides custom methods that don't exist in parent (getStoreTitle,
+ * setProductId, etc.) following the pattern: $this->data['key'] ?? null.
+ *
+ * Usage Example:
+ * ```php
+ * // Direct usage with data
+ * $link = new LinkTestHelper(['id' => 1, 'title' => 'Link Title']);
+ * $link->getTitle(); // Works! Calls parent's getTitle() → getData('title')
+ *
+ * // Or with mocking
+ * $link = $this->createPartialMock(LinkTestHelper::class, ['getTitle']);
+ * $link->method('getTitle')->willReturn('Mocked Title');
+ * ```
  */
 class LinkTestHelper extends Link
 {
     /**
-     * Skip parent constructor to avoid dependencies
+     * @var array Internal data storage
      */
-    public function __construct()
+    private $data = [];
+
+    /**
+     * Skip parent constructor to avoid dependencies
+     *
+     * Parent constructor requires Context, Registry, ExtensionFactory,
+     * AttributeValueFactory, Resource, and Collection dependencies.
+     *
+     * @param array $data Optional initial data
+     */
+    public function __construct(array $data = [])
     {
-        // Skip parent constructor
+        $this->data = $data;
     }
 
     /**
-     * Override load method
+     * Override setData to use internal array (parent's $_data not initialized)
      *
-     * @param mixed $id
-     * @param string|null $field
+     * @param string|array $key
+     * @param mixed $value
      * @return self
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function load($id, $field = null): self
+    public function setData($key, $value = null): self
     {
+        if (is_array($key)) {
+            $this->data = $key;
+        } else {
+            $this->data[$key] = $value;
+        }
         return $this;
     }
 
     /**
-     * Override getId method
-     *
-     * @return mixed
-     */
-    public function getId()
-    {
-        return 1;
-    }
-
-    /**
-     * Override getLinkType method
-     *
-     * @return string
-     */
-    public function getLinkType(): string
-    {
-        return 'url';
-    }
-
-    /**
-     * Override getLinkUrl method
-     *
-     * @return string
-     */
-    public function getLinkUrl(): string
-    {
-        return 'http://example.com/link';
-    }
-
-    /**
-     * Override getSampleUrl method
-     *
-     * @return string|null
-     */
-    public function getSampleUrl()
-    {
-        return null;
-    }
-
-    /**
-     * Override getSampleType method
-     *
-     * @return string
-     */
-    public function getSampleType(): string
-    {
-        return 'url';
-    }
-
-    /**
-     * Override getBasePath method
-     *
-     * @return string
-     */
-    public function getBasePath(): string
-    {
-        return '/base/path';
-    }
-
-    /**
-     * Override getBaseSamplePath method
-     *
-     * @return string
-     */
-    public function getBaseSamplePath(): string
-    {
-        return '/base/sample/path';
-    }
-
-    /**
-     * Override getLinkFile method
-     *
-     * @return string|null
-     */
-    public function getLinkFile()
-    {
-        return null;
-    }
-
-    /**
-     * Override getSampleFile method
-     *
-     * @return string
-     */
-    public function getSampleFile(): string
-    {
-        return 'sample.pdf';
-    }
-
-    /**
-     * Custom getProduct method for testing
-     *
-     * @return mixed
-     */
-    public function getProduct()
-    {
-        return null;
-    }
-
-    /**
-     * Override getPrice method
-     *
-     * @return float|null
-     */
-    public function getPrice()
-    {
-        return null;
-    }
-
-    /**
-     * Override __wakeup method
-     *
-     * @return void
-     */
-    public function __wakeup(): void
-    {
-        // Do nothing
-    }
-
-    /**
-     * Custom getProductId method for testing
-     *
-     * @return int|null
-     */
-    public function getProductId()
-    {
-        return null;
-    }
-
-    /**
-     * Custom getStoreTitle method for testing
-     *
-     * @return string|null
-     */
-    public function getStoreTitle()
-    {
-        return null;
-    }
-
-    /**
-     * Override getData method
+     * Override getData to use internal array (parent's $_data not initialized)
      *
      * @param string $key
      * @param mixed $index
@@ -188,88 +80,137 @@ class LinkTestHelper extends Link
      */
     public function getData($key = '', $index = null)
     {
-        return null;
+        if ($key === '') {
+            return $this->data;
+        }
+        return $this->data[$key] ?? null;
     }
 
     /**
-     * Override save method
+     * Get ID - override to use our $data array
      *
-     * @return self
+     * @return int|null
      */
-    public function save(): self
+    public function getId()
     {
-        return $this;
+        return $this->data['id'] ?? null;
     }
 
     /**
-     * Custom setProductId method for testing
+     * Get product ID
      *
-     * @param int $productId
-     * @return self
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @return int|null
      */
-    public function setProductId($productId): self
+    public function getProductId()
     {
-        return $this;
+        return $this->data['product_id'] ?? null;
     }
 
     /**
-     * Custom setStoreId method for testing
+     * Get store title
      *
-     * @param int $storeId
-     * @return self
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @return string|null
      */
-    public function setStoreId($storeId): self
+    public function getStoreTitle()
     {
-        return $this;
+        return $this->data['store_title'] ?? null;
     }
 
     /**
-     * Custom setWebsiteId method for testing
+     * Get website price
      *
-     * @param int $websiteId
-     * @return self
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @return float|null
      */
-    public function setWebsiteId($websiteId): self
+    public function getWebsitePrice()
     {
-        return $this;
+        return $this->data['website_price'] ?? null;
     }
 
     /**
-     * Custom setProductWebsiteIds method for testing
-     *
-     * @param array $websiteIds
-     * @return self
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function setProductWebsiteIds($websiteIds): self
-    {
-        return $this;
-    }
-
-    /**
-     * Custom getIsUnlimited method for testing
+     * Check if has sample type
      *
      * @return bool
-     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     */
+    public function hasSampleType()
+    {
+        return (bool)($this->data['sample_type'] ?? false);
+    }
+
+    /**
+     * Check if shareable
+     *
+     * @return bool
+     */
+    public function isShareable()
+    {
+        return (bool)($this->data['is_shareable'] ?? false);
+    }
+
+    /**
+     * Get is unlimited
+     *
+     * @return bool|null
      */
     public function getIsUnlimited()
     {
-        return false;
+        return $this->data['is_unlimited'] ?? null;
     }
 
     /**
-     * Override setData method
+     * Get product
      *
-     * @param mixed $key
-     * @param mixed $value
-     * @return self
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @return mixed
      */
-    public function setData($key, $value = null): self
+    public function getProduct()
     {
+        return $this->data['product'] ?? null;
+    }
+
+    /**
+     * Set product ID
+     *
+     * @param int $value Product ID
+     * @return self
+     */
+    public function setProductId($value): self
+    {
+        $this->data['product_id'] = $value;
+        return $this;
+    }
+
+    /**
+     * Set store ID
+     *
+     * @param int $storeId Store ID
+     * @return self
+     */
+    public function setStoreId($storeId): self
+    {
+        $this->data['store_id'] = $storeId;
+        return $this;
+    }
+
+    /**
+     * Set website ID
+     *
+     * @param int $websiteId Website ID
+     * @return self
+     */
+    public function setWebsiteId($websiteId): self
+    {
+        $this->data['website_id'] = $websiteId;
+        return $this;
+    }
+
+    /**
+     * Set product website IDs
+     *
+     * @param array $websiteIds Website IDs
+     * @return self
+     */
+    public function setProductWebsiteIds($websiteIds): self
+    {
+        $this->data['product_website_ids'] = $websiteIds;
         return $this;
     }
 }

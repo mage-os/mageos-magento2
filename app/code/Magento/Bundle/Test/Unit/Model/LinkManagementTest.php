@@ -16,7 +16,7 @@ use Magento\Bundle\Model\Product\Type as BundleProductType;
 use Magento\Bundle\Model\ResourceModel\Bundle;
 use Magento\Bundle\Model\ResourceModel\BundleFactory;
 use Magento\Bundle\Test\Unit\Helper\BundleOptionTestHelper;
-use Magento\Bundle\Test\Unit\Helper\LinkInterfaceTestHelper;
+use Magento\Bundle\Test\Unit\Helper\LinkTestHelper;
 use Magento\Bundle\Test\Unit\Helper\SelectionTestHelper;
 use Magento\Bundle\Model\ResourceModel\Option\Collection as OptionCollection;
 use Magento\Bundle\Model\ResourceModel\Option\CollectionFactory as OptionCollectionFactory;
@@ -438,7 +438,7 @@ class LinkManagementTest extends TestCase
     {
         $this->expectException(CouldNotSaveException::class);
 
-        $productLink = new LinkInterfaceTestHelper();
+        $productLink = new LinkTestHelper();
         $productLink->setSku('linked_product_sku');
         $productLink->setOptionId(1);
         $productLink->setSelectionId(1);
@@ -505,7 +505,7 @@ class LinkManagementTest extends TestCase
     {
         $this->expectException(CouldNotSaveException::class);
 
-        $productLink = new LinkInterfaceTestHelper();
+        $productLink = new LinkTestHelper();
         $productLink->setSku('linked_product_sku');
         $productLink->setOptionId(1);
         $productLink->setSelectionId(1);
@@ -579,7 +579,7 @@ class LinkManagementTest extends TestCase
      */
     public function testAddChild(): void
     {
-        $productLink = new LinkInterfaceTestHelper();
+        $productLink = new LinkTestHelper();
         $productLink->setSku('linked_product_sku');
         $productLink->setOptionId(1);
         $productLink->setSelectionId(1);
@@ -654,7 +654,7 @@ class LinkManagementTest extends TestCase
         $parentProductId = 32;
         $bundleProductSku = 'bundleProductSku';
 
-        $productLink = new LinkInterfaceTestHelper();
+        $productLink = new LinkTestHelper();
         $productLink->setSku('linked_product_sku');
         $productLink->setId($id);
         $productLink->setOptionId($optionId);
@@ -708,7 +708,7 @@ class LinkManagementTest extends TestCase
         $linkProductId = 45;
         $parentProductId = 32;
 
-        $productLink = new LinkInterfaceTestHelper();
+        $productLink = new LinkTestHelper();
         $productLink->setSku('linked_product_sku');
         $productLink->setId($id);
         $productLink->setSelectionId(1);

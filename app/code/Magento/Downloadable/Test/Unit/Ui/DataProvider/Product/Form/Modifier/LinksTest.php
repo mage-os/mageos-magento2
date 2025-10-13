@@ -184,7 +184,7 @@ class LinksTest extends TestCase
         $currencyMock->expects($this->once())
             ->method('getCurrencySymbol');
         $storeMock = $this->createPartialMock(
-            \Magento\Downloadable\Test\Unit\Helper\StoreTestHelper::class,
+            \Magento\Store\Test\Unit\Helper\StoreTestHelper::class,
             ['getBaseCurrency']
         );
         $storeMock->expects($this->once())

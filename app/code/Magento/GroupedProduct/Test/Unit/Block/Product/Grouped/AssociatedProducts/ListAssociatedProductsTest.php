@@ -159,7 +159,7 @@ class ListAssociatedProductsTest extends TestCase
     protected function generateAssociatedProduct($productKey = 0)
     {
         $associatedProduct = $this->createPartialMock(
-            \Magento\Framework\Test\Unit\Helper\DataObjectTestHelper::class,
+            \Magento\Framework\DataObject\Test\Unit\Helper\DataObjectTestHelper::class,
             ['getQty', 'getPosition', 'getId', 'getSku', 'getName', 'getPrice']
         );
 

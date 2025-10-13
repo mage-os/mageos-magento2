@@ -40,38 +40,4 @@ class LinkTestHelper extends Link
         $this->data['selection_id'] = $selectionId;
         return $this;
     }
-
-    /**
-     * Custom getSelectionId method for testing
-     *
-     * @return mixed
-     */
-    public function getSelectionId()
-    {
-        return $this->data['selection_id'] ?? null;
-    }
-
-    /**
-     * Set test data for flexible state management
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return self
-     */
-    public function setTestData(string $key, $value): self
-    {
-        $this->data[$key] = $value;
-        return $this;
-    }
-
-    /**
-     * Get test data
-     *
-     * @param string $key
-     * @return mixed
-     */
-    public function getTestData(string $key)
-    {
-        return $this->data[$key] ?? null;
-    }
 }

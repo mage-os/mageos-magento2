@@ -15,65 +15,48 @@ use Magento\Downloadable\Model\Link\Purchased;
 class PurchasedTestHelper extends Purchased
 {
     /**
+     * @var array Internal data storage
+     */
+    private $data = [];
+
+    /**
      * Skip parent constructor to avoid dependencies
      */
     public function __construct()
     {
-        // Skip parent constructor
+        // Skip parent constructor to avoid dependency injection issues
     }
 
     /**
-     * Custom setLinkSectionTitle method for testing
-     *
-     * @param string $title
-     * @return self
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function setLinkSectionTitle($title): self
-    {
-        return $this;
-    }
-
-    /**
-     * Override load method
-     *
-     * @param mixed $id
-     * @param mixed $field
-     * @return self
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function load($id, $field = null): self
-    {
-        return $this;
-    }
-
-    /**
-     * Override save method
-     *
-     * @return self
-     */
-    public function save(): self
-    {
-        return $this;
-    }
-
-    /**
-     * Override getId method
-     *
-     * @return int|null
-     */
-    public function getId()
-    {
-        return null;
-    }
-
-    /**
-     * Get customer ID for testing
+     * Get customer ID
      *
      * @return int|null
      */
     public function getCustomerId()
     {
-        return null;
+        return $this->data['customer_id'] ?? null;
     }
+
+    /**
+     * Get link section title
+     *
+     * @return string|null
+     */
+    public function getLinkSectionTitle()
+    {
+        return $this->data['link_section_title'] ?? null;
+    }
+
+    /**
+     * Set link section title
+     *
+     * @param string $value Link section title (e.g., "Download Links")
+     * @return self
+     */
+    public function setLinkSectionTitle($value): self
+    {
+        $this->data['link_section_title'] = $value;
+        return $this;
+    }
+
 }

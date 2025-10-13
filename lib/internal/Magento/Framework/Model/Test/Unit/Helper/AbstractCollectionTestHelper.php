@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Framework\Test\Unit\Helper;
+namespace Magento\Framework\Model\Test\Unit\Helper;
 
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 
@@ -73,28 +73,6 @@ class AbstractCollectionTestHelper extends AbstractCollection
     public function setIdFilter($ids): self
     {
         $this->data['id_filter'] = $ids;
-        return $this;
-    }
-
-    /**
-     * Get items for testing
-     *
-     * @return array
-     */
-    public function getItems()
-    {
-        return $this->data['items'] ?? [];
-    }
-
-    /**
-     * Set items for testing
-     *
-     * @param array $items
-     * @return self
-     */
-    public function setItems(array $items): self
-    {
-        $this->data['items'] = $items;
         return $this;
     }
 }

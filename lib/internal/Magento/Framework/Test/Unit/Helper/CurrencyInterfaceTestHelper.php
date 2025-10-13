@@ -62,16 +62,4 @@ class CurrencyInterfaceTestHelper implements CurrencyInterface
     {
         return $this->data['default_currency'] ?? 'USD';
     }
-
-    /**
-     * Set default currency
-     *
-     * @param string $currency
-     * @return $this
-     */
-    public function setDefaultCurrency(string $currency): self
-    {
-        $this->data['default_currency'] = $currency;
-        return $this;
-    }
 }

@@ -83,7 +83,7 @@ class SetLinkStatusObserverTest extends TestCase
             ->getMock();
 
         $this->resultMock = $this->createPartialMock(
-            \Magento\Framework\Test\Unit\Helper\DataObjectTestHelper::class,
+            \Magento\Framework\DataObject\Test\Unit\Helper\DataObjectTestHelper::class,
             ['setIsAllowed']
         );
 
@@ -92,7 +92,7 @@ class SetLinkStatusObserverTest extends TestCase
             ->getMock();
 
         $this->eventMock = $this->createPartialMock(
-            \Magento\Downloadable\Test\Unit\Helper\EventTestHelper::class,
+            \Magento\Framework\Event\Test\Unit\Helper\EventTestHelper::class,
             ['getStore', 'getResult', 'getQuote', 'getOrder']
         );
 

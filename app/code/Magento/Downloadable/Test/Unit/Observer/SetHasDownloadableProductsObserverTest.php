@@ -53,7 +53,7 @@ class SetHasDownloadableProductsObserverTest extends TestCase
         $this->orderMock = $this->createPartialMock(Order::class, ['getAllItems']);
 
         $this->checkoutSessionMock = $this->createPartialMock(
-            \Magento\Downloadable\Test\Unit\Helper\CheckoutSessionTestHelper::class,
+            \Magento\Checkout\Test\Unit\Helper\CheckoutSessionTestHelper::class,
             ['getHasDownloadableProducts', 'setHasDownloadableProducts']
         );
 
