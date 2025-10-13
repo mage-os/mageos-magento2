@@ -10,7 +10,7 @@ namespace Magento\Bundle\Test\Unit\Block\Catalog\Product\View\Type;
 use Magento\Bundle\Test\Unit\Helper\BundleOptionTestHelper;
 use Magento\Catalog\Test\Unit\Helper\BasePriceTestHelper;
 use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
-use Magento\Framework\Test\Unit\Helper\AmountInterfaceTestHelper;
+use Magento\Framework\Pricing\Test\Unit\Helper\AmountTestHelper;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Bundle\Block\Catalog\Product\View\Type\Bundle as BundleBlock;
 use Magento\Bundle\Block\Catalog\Product\View\Type\Bundle\Option\Checkbox;
@@ -393,7 +393,7 @@ class BundleTest extends TestCase
                 // Check if this selection has specific amounts configured
                 foreach ($selectionAmounts as $selectionAmount) {
                     if ($selection === $selectionAmount['item']) {
-                        $amount = new AmountInterfaceTestHelper();
+                        $amount = new AmountTestHelper();
                         $amount->setValue($selectionAmount['value']);
                         $amount->setBaseAmount($selectionAmount['base_amount']);
                         return $amount;
@@ -401,7 +401,7 @@ class BundleTest extends TestCase
                 }
 
                 // Default amount for other selections
-                $amount = new AmountInterfaceTestHelper();
+                $amount = new AmountTestHelper();
                 $amount->setValue($value);
                 $amount->setBaseAmount($baseAmount);
                 return $amount;

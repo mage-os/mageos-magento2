@@ -15,7 +15,7 @@ use Magento\Downloadable\Test\Unit\Helper\LinkTestHelper;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\ObjectManager\ObjectManager;
-use Magento\Framework\Test\Unit\Helper\ResponseInterfaceTestHelper;
+use Magento\Framework\App\Test\Unit\Helper\ResponseTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -69,7 +69,7 @@ class LinkTest extends TestCase
 
         $this->request = $this->createMock(Http::class);
         $this->response = $this->createPartialMock(
-            ResponseInterfaceTestHelper::class,
+            ResponseTestHelper::class,
             [
                 'setHttpResponseCode',
                 'clearBody',

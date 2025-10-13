@@ -34,6 +34,23 @@ class EventTestHelper extends Event
      */
     private $items;
 
+    /**
+     * @var
+     */
+    private $store;
+    /**
+     * @var
+     */
+    private $result;
+    /**
+     * @var
+     */
+    private $quote;
+    /**
+     * @var
+     */
+    private $order;
+
     public function __construct()
     {
         // Skip parent constructor to avoid dependencies
@@ -165,5 +182,4 @@ class EventTestHelper extends Event
     {
         return $this->order;
     }
-
 }

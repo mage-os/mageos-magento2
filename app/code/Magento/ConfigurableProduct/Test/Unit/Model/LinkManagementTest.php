@@ -17,7 +17,7 @@ use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Catalog\Model\ResourceModel\Eav\AttributeFactory;
 use Magento\ConfigurableProduct\Api\Data\OptionInterface;
 use Magento\ConfigurableProduct\Helper\Product\Options\Factory;
-use Magento\ConfigurableProduct\Test\Unit\Helper\ConfigurableAttributeTestHelper;
+use Magento\ConfigurableProduct\Test\Unit\Helper\AttributeTestHelper;
 use Magento\ConfigurableProduct\Model\LinkManagement;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable\Attribute\Collection;
@@ -170,7 +170,7 @@ class LinkManagementTest extends TestCase
         $simple = $this->createPartialMock(Product::class, ['getId', 'getData']);
         $extensionAttributesMock = new \Magento\Catalog\Test\Unit\Helper\ProductExtensionInterfaceTestHelper();
         $productAttributeMock = $this->createPartialMock(AbstractAttribute::class, ['getAttributeCode']);
-        $optionMock = new ConfigurableAttributeTestHelper($productAttributeMock);
+        $optionMock = new AttributeTestHelper($productAttributeMock);
         $optionsFactoryMock = $this->createPartialMock(Factory::class, ['create']);
         $reflectionClass = new \ReflectionClass(LinkManagement::class);
         $optionsFactoryReflectionProperty = $reflectionClass->getProperty('optionsFactory');

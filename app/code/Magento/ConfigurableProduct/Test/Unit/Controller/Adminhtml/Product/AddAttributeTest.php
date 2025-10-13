@@ -14,7 +14,7 @@ use Magento\ConfigurableProduct\Controller\Adminhtml\Product\AddAttribute;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\App\ViewInterface;
-use Magento\Framework\Test\Unit\Helper\ResponseInterfaceTestHelper;
+use Magento\Framework\App\Test\Unit\Helper\ResponseTestHelper;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Framework\View\Result\Layout;
@@ -64,7 +64,7 @@ class AddAttributeTest extends TestCase
         $this->context = $this->createMock(Context::class);
         $this->request = $this->createMock(RequestInterface::class);
         $this->resultFactory = $this->createMock(ResultFactory::class);
-        $this->response = new ResponseInterfaceTestHelper();
+        $this->response = new ResponseTestHelper();
         $this->productBuilder = $this->createPartialMock(Builder::class, ['build']);
         $this->view = $this->createMock(ViewInterface::class);
 

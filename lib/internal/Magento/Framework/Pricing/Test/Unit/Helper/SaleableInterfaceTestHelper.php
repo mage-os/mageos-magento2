@@ -139,6 +139,3 @@ class SaleableInterfaceTestHelper implements SaleableInterface
         return $this;
     }
 }
-
-
-

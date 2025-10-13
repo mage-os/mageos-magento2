@@ -18,7 +18,7 @@ use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\App\ViewInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Framework\View\Test\Unit\Helper\AbstractBlockTestHelper;
-use Magento\Framework\Test\Unit\Helper\ResponseInterfaceTestHelper;
+use Magento\Framework\App\Test\Unit\Helper\ResponseTestHelper;
 use Magento\Framework\View\LayoutInterface;
 use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -73,7 +73,7 @@ class FormTest extends TestCase
         $this->request = $this->createMock(RequestInterface::class);
 
         /** @var ResponseInterface $response */
-        $this->response = new ResponseInterfaceTestHelper();
+        $this->response = new ResponseTestHelper();
 
         $this->productBuilder = $this->createPartialMock(Builder::class, ['build']);
         $this->initializationHelper = $this->createPartialMock(

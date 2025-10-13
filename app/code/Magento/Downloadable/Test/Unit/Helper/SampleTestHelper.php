@@ -185,5 +185,4 @@ class SampleTestHelper extends Sample
     {
         return $this->data['base_sample_path'] ?? null;
     }
-
 }

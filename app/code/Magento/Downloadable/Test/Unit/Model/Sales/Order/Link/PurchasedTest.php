@@ -73,10 +73,10 @@ class PurchasedTest extends TestCase
         array $childItemData = []
     ): void {
         /** @var Item $orderItem */
-        $orderItem = $this->createPartialMock(Item::class,[]);
+        $orderItem = $this->createPartialMock(Item::class, []);
         $orderItem->addData($itemData);
         /** @var Item $childOrderItem */
-        $childOrderItem = $this->createPartialMock(Item::class,[]);
+        $childOrderItem = $this->createPartialMock(Item::class, []);
         $childOrderItem->addData($childItemData);
         if ($hasChildItem) {
             $orderItem->addChildItem($childOrderItem);

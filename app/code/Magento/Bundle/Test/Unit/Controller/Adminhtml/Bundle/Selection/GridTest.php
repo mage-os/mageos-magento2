@@ -15,7 +15,7 @@ use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\App\ViewInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Framework\View\Test\Unit\Helper\AbstractBlockTestHelper;
-use Magento\Framework\Test\Unit\Helper\ResponseInterfaceTestHelper;
+use Magento\Framework\App\Test\Unit\Helper\ResponseTestHelper;
 use Magento\Framework\View\LayoutInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -56,7 +56,7 @@ class GridTest extends TestCase
         $this->request = $this->createMock(RequestInterface::class);
 
         /** @var ResponseInterface $response */
-        $this->response = new ResponseInterfaceTestHelper();
+        $this->response = new ResponseTestHelper();
 
         $this->view = $this->createMock(ViewInterface::class);
 

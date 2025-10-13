@@ -116,6 +116,20 @@ class MysqlTestHelper extends Mysql
     }
 
     /**
+     * Mock insertOnDuplicate method
+     *
+     * @param string $table
+     * @param array $data
+     * @param array $fields
+     * @return int
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function insertOnDuplicate($table, array $data, array $fields = [])
+    {
+        return $this->data['insert_on_duplicate'] ?? 0;
+    }
+
+    /**
      * Set test data
      *
      * @param string $key
@@ -127,5 +141,4 @@ class MysqlTestHelper extends Mysql
         $this->data[$key] = $value;
         return $this;
     }
-
 }

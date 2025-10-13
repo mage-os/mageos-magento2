@@ -22,7 +22,7 @@ use Magento\Framework\App\Response\RedirectInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\HTTP\Mime;
 use Magento\Framework\Message\ManagerInterface;
-use Magento\Framework\Test\Unit\Helper\ResponseInterfaceTestHelper;
+use Magento\Framework\App\Test\Unit\Helper\ResponseTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Framework\UrlInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -113,7 +113,7 @@ class LinkTest extends TestCase
 
         $this->request = $this->createMock(Http::class);
         $this->response = $this->createPartialMock(
-            ResponseInterfaceTestHelper::class,
+            ResponseTestHelper::class,
             [
                 'setHttpResponseCode',
                 'clearBody',

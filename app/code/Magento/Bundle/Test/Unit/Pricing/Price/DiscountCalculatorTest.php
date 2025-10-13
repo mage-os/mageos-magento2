@@ -63,7 +63,7 @@ class DiscountCalculatorTest extends TestCase
         $this->finalPriceMock = $this->createMock(FinalPrice::class);
         $this->priceMock = $this->createMock(DiscountProviderInterface::class);
         $this->priceCurrencyMock = $this->createPartialMock(
-            \Magento\Framework\Test\Unit\Helper\PriceCurrencyInterfaceTestHelper::class,
+            \Magento\Directory\Model\PriceCurrency::class,
             ['roundPrice']
         );
         $this->calculator = new DiscountCalculator($this->priceCurrencyMock);

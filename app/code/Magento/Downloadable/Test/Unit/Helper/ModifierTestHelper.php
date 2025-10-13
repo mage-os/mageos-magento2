@@ -34,6 +34,3 @@ class ModifierTestHelper extends \stdClass
         return $meta;
     }
 }
-
-
-

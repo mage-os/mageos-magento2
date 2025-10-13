@@ -5,14 +5,14 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Framework\Test\Unit\Helper;
+namespace Magento\Framework\Locale\Test\Unit\Helper;
 
-use Magento\Framework\Locale\CurrencyInterface;
+use Magento\Framework\Locale\Currency;
 
 /**
  * Test helper for CurrencyInterface
  */
-class CurrencyInterfaceTestHelper implements CurrencyInterface
+class CurrencyTestHelper extends Currency
 {
     /**
      * @var array
@@ -53,13 +53,5 @@ class CurrencyInterfaceTestHelper implements CurrencyInterface
     public function toCurrency($value, $options = [])
     {
         return '$' . number_format((float)$value, 2);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getDefaultCurrency()
-    {
-        return $this->data['default_currency'] ?? 'USD';
     }
 }

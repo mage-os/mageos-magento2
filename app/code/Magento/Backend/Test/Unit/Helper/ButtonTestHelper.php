@@ -99,4 +99,3 @@ class ButtonTestHelper extends Button
         return $this;
     }
 }
-

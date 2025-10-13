@@ -79,4 +79,3 @@ class FilterManagerTestHelper extends FilterManager
         return $this;
     }
 }
-

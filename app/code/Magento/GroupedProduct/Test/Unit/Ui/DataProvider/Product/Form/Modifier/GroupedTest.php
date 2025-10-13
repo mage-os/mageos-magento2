@@ -137,7 +137,7 @@ class GroupedTest extends AbstractModifierTestCase
      */
     protected function createModel()
     {
-        $this->currencyMock = new \Magento\Framework\Test\Unit\Helper\CurrencyInterfaceTestHelper();
+        $this->currencyMock = new \Magento\Framework\Locale\Test\Unit\Helper\CurrencyTestHelper();
         $this->imageHelperMock = $this->createPartialMock(ImageHelper::class, ['init', 'getUrl']);
 
         $this->groupedProductsMock = $this->createPartialMock(GroupedProducts::class, ['getLinkedProducts']);

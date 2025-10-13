@@ -15,10 +15,6 @@ use Magento\Framework\Pricing\Amount\Base;
 class AmountTestHelper extends Base
 {
     private $data = [];
-    /**
-     * @var array
-     */
-    protected $adjustmentAmounts;
 
     /**
      * @var float
@@ -28,6 +24,7 @@ class AmountTestHelper extends Base
     public function __construct()
     {
         // Skip parent constructor to avoid dependencies
+        // Properties are initialized with defaults above
     }
 
     public function __wakeup()

@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\DownloadableImportExport\Test\Unit\Model\Import\Product\Type;
 
+use Magento\Framework\DB\Test\Unit\Helper\MysqlTestHelper;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection as ProductAttributeCollection;
@@ -121,7 +122,7 @@ class DownloadableTest extends AbstractImportTestCase
         parent::setUp();
 
         //connection and sql query results
-        $this->connectionMock = new \Magento\Framework\Db\Test\Unit\Helper\MysqlTestHelper();
+        $this->connectionMock = new MysqlTestHelper();
         $this->select = $this->createMock(Select::class);
         $this->select->expects($this->any())->method('from')->willReturnSelf();
         $this->select->expects($this->any())->method('where')->willReturnSelf();

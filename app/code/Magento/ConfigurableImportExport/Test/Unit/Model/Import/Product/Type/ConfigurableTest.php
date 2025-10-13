@@ -193,7 +193,7 @@ class ConfigurableTest extends AbstractImportTestCase
             ]
         );
 
-        $this->_connection = new \Magento\Framework\Db\Test\Unit\Helper\MysqlTestHelper();
+        $this->_connection = new \Magento\Framework\DB\Test\Unit\Helper\MysqlTestHelper();
         $this->_connection->setTestData('select', $this->select);
         $this->select->expects($this->any())->method('from')->willReturnSelf();
         $this->select->expects($this->any())->method('where')->willReturnSelf();

@@ -58,5 +58,4 @@ class PurchasedTestHelper extends Purchased
         $this->data['link_section_title'] = $value;
         return $this;
     }
-
 }

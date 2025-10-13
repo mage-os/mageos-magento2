@@ -106,7 +106,7 @@ class BundleSelectionPriceTest extends TestCase
             ->willReturn($this->priceInfoMock);
 
         $this->priceCurrencyMock = $this->createPartialMock(
-            \Magento\Framework\Test\Unit\Helper\PriceCurrencyInterfaceTestHelper::class,
+            \Magento\Directory\Model\PriceCurrency::class,
             ['roundPrice', 'convert']
         );
 
