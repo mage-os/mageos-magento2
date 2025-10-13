@@ -191,7 +191,7 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
         $this->verifyCreditMemoGridDisplaysRecords($creditmemo, $order);
 
         // Step 5: Verify store name rendering in grid context (UI validation proves DB layer works)
-        $this->verifyStoreNameRenderingInGrid($creditmemo, $order, $store);
+        $this->verifyStoreNameRenderingInGrid($creditmemo, $store);
     }
 
     /**
