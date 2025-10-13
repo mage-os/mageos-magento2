@@ -29,10 +29,6 @@ class OptionCodeDouble extends Option
         return $this;
     }
 
-    public function getItem()
-    {
-        return parent::getItem();
-    }
 
     public function getCode()
     {
@@ -44,5 +40,3 @@ class OptionCodeDouble extends Option
         return $this->setData('code', $code);
     }
 }
-
-

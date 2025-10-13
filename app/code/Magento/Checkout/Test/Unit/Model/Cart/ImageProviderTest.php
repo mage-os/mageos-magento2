@@ -57,7 +57,9 @@ class ImageProviderTest extends TestCase
         $this->imageHelper = $this->getMockBuilder(\Magento\Catalog\Helper\Image::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->itemResolver = $this->createMock(\Magento\Catalog\Model\Product\Configuration\Item\ItemResolverInterface::class);
+        $this->itemResolver = $this->createMock(
+            \Magento\Catalog\Model\Product\Configuration\Item\ItemResolverInterface::class
+        );
         $this->model = new ImageProvider(
             $this->itemRepositoryMock,
             $this->itemPoolMock,

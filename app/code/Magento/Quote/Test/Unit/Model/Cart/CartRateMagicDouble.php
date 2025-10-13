@@ -12,10 +12,25 @@ use Magento\Quote\Model\Quote\Address\Rate;
 
 class CartRateMagicDouble extends Rate
 {
+    /**
+     * @var float|int|null
+     */
     private $price;
+    /**
+     * @var string|null
+     */
     private $carrier;
+    /**
+     * @var string|null
+     */
     private $method;
+    /**
+     * @var string|null
+     */
     private $carrierTitle;
+    /**
+     * @var string|null
+     */
     private $methodTitle;
 
     public function __construct()
@@ -53,6 +68,3 @@ class CartRateMagicDouble extends Rate
         $this->$name = $value;
     }
 }
-
-
-

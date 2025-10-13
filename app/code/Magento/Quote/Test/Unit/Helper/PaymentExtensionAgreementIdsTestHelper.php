@@ -33,5 +33,3 @@ class PaymentExtensionAgreementIdsTestHelper
         return $this;
     }
 }
-
-

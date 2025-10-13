@@ -116,5 +116,3 @@ class QuoteTestHelper extends Quote
         return $this->testData['quote_currency_code'] ?? null;
     }
 }
-
-

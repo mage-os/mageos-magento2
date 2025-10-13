@@ -27,5 +27,3 @@ class QuoteCouponDouble extends Quote
         return $this->getData('coupon_code');
     }
 }
-
-

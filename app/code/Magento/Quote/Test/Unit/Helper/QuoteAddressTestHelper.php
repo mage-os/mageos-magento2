@@ -96,5 +96,3 @@ class QuoteAddressTestHelper extends Address
         return $this;
     }
 }
-
-

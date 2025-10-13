@@ -72,11 +72,16 @@ class QuoteSetupTest extends TestCase
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         // Prepare ObjectManager mappings for optional EAV dependencies used inside EavSetup constructor
         $this->objectManagerHelper->prepareObjectManager([
-            [\Magento\Eav\Setup\AddOptionToAttribute::class, $this->createMock(\Magento\Eav\Setup\AddOptionToAttribute::class)],
-            [\Magento\Eav\Model\Validator\Attribute\Code::class, $this->createMock(\Magento\Eav\Model\Validator\Attribute\Code::class)],
-            [\Magento\Eav\Model\ReservedAttributeCheckerInterface::class, $this->createMock(\Magento\Eav\Model\ReservedAttributeCheckerInterface::class)],
-            [\Magento\Eav\Model\AttributeFactory::class, $this->createMock(\Magento\Eav\Model\AttributeFactory::class)],
-            [\Magento\Eav\Model\Config::class, $this->createMock(\Magento\Eav\Model\Config::class)],
+            [\Magento\Eav\Setup\AddOptionToAttribute::class,
+                $this->createMock(\Magento\Eav\Setup\AddOptionToAttribute::class)],
+            [\Magento\Eav\Model\Validator\Attribute\Code::class,
+                $this->createMock(\Magento\Eav\Model\Validator\Attribute\Code::class)],
+            [\Magento\Eav\Model\ReservedAttributeCheckerInterface::class,
+                $this->createMock(\Magento\Eav\Model\ReservedAttributeCheckerInterface::class)],
+            [\Magento\Eav\Model\AttributeFactory::class,
+                $this->createMock(\Magento\Eav\Model\AttributeFactory::class)],
+            [\Magento\Eav\Model\Config::class,
+                $this->createMock(\Magento\Eav\Model\Config::class)],
         ]);
         $this->model = $this->objectManagerHelper->getObject(
             QuoteSetup::class,

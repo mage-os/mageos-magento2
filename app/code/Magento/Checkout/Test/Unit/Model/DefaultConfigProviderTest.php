@@ -106,13 +106,7 @@ class DefaultConfigProviderTest extends TestCase
         $httpContext = $this->createMock(HttpContext::class);
         $quoteRepository = $this->createMock(CartRepositoryInterface::class);
         $quoteItemRepository = $this->createMock(QuoteItemRepository::class);
-        $this->shippingMethodManager = new class implements \Magento\Quote\Api\ShippingMethodManagementInterface, \Magento\Quote\Model\ShippingMethodManagementInterface {
-            public function estimateByAddress($cartId, \Magento\Quote\Api\Data\EstimateAddressInterface $address) { return []; }
-            public function estimateByAddressId($cartId, $addressId) { return []; }
-            public function getList($cartId) { return []; }
-            public function set($cartId, $carrierCode, $methodCode) { return true; }
-            public function get($cartId) { return null; }
-        };
+        $this->shippingMethodManager = new \Magento\Checkout\Test\Unit\Helper\ShippingMethodManagementDouble();
         $configurationPool = $this->createMock(ConfigurationPool::class);
         $quoteIdMaskFactory = $this->createMock(QuoteIdMaskFactory::class);
         $localeFormat = $this->createMock(LocaleFormat::class);

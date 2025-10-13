@@ -33,5 +33,3 @@ class StoreWebsiteIdTestHelper extends Store
         return $this->id;
     }
 }
-
-

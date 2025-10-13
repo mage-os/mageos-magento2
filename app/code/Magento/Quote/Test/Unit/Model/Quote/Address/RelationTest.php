@@ -31,7 +31,12 @@ class RelationTest extends TestCase
     {
         $objectManager = new ObjectManager($this);
         $this->modelMock = $this->getMockBuilder(AddressRelationModelTestHelper::class)
-            ->onlyMethods(['getItemsCollection', 'getShippingRatesCollection', 'itemsCollectionWasSet', 'shippingRatesCollectionWasSet'])
+            ->onlyMethods([
+                'getItemsCollection',
+                'getShippingRatesCollection',
+                'itemsCollectionWasSet',
+                'shippingRatesCollectionWasSet'
+            ])
             ->getMock();
         $this->relation = $objectManager->getObject(Relation::class, []);
     }

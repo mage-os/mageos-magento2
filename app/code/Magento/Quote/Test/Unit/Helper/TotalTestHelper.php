@@ -44,5 +44,3 @@ class TotalTestHelper extends Total
         return $this->baseGrandTotal;
     }
 }
-
-

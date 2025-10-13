@@ -34,9 +34,3 @@ class ShippingMethodDataTestHelper
         return 'PriceInclTax';
     }
 }
-
-
-
-
-
-

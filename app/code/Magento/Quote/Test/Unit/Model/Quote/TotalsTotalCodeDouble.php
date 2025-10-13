@@ -12,6 +12,9 @@ use Magento\Quote\Model\Quote\Address\Total;
 
 class TotalsTotalCodeDouble extends Total
 {
+    /**
+     * @var string|null
+     */
     private $code;
 
     public function __construct()
@@ -30,6 +33,3 @@ class TotalsTotalCodeDouble extends Total
         return $this->code ?? (string)$this->getData('code');
     }
 }
-
-
-

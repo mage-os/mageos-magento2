@@ -92,5 +92,3 @@ class QuoteFixtureTestHelper extends Quote
         return false;
     }
 }
-
-

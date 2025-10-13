@@ -40,5 +40,3 @@ class CustomerInterfaceFactoryTestHelper extends CustomerInterfaceFactory
         return $customer;
     }
 }
-
-

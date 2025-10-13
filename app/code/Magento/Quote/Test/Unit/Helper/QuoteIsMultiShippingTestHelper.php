@@ -36,5 +36,3 @@ class QuoteIsMultiShippingTestHelper extends Quote
         return $this->storeId;
     }
 }
-
-

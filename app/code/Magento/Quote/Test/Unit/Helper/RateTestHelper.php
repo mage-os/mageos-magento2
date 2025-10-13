@@ -154,4 +154,3 @@ class RateTestHelper extends Rate
         return $this;
     }
 }
-

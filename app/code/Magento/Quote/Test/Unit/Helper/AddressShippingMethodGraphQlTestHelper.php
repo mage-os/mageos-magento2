@@ -11,9 +11,21 @@ use Magento\Quote\Model\Quote\Address;
 
 class AddressShippingMethodGraphQlTestHelper extends Address
 {
+    /**
+     * @var float|int|string|null
+     */
     private $amount;
+    /**
+     * @var string|null
+     */
     private $method;
+    /**
+     * @var mixed
+     */
     private $quote;
+    /**
+     * @var array
+     */
     private $rates = [];
 
     public function __construct($amount = null, $method = null)
@@ -71,9 +83,3 @@ class AddressShippingMethodGraphQlTestHelper extends Address
         return [];
     }
 }
-
-
-
-
-
-

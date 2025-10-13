@@ -11,12 +11,33 @@ use Magento\Quote\Model\Quote\Item;
 
 class CartItemForShippingTestHelper extends Item
 {
+    /**
+     * @var bool
+     */
     private $freeShipping = false;
+    /**
+     * @var Item|null
+     */
     private $parentItem = null;
+    /**
+     * @var bool
+     */
     private $hasChildren = false;
+    /**
+     * @var bool
+     */
     private $isVirtual = false;
+    /**
+     * @var float|int
+     */
     private $weight = 0;
+    /**
+     * @var int|float
+     */
     private $qty = 0;
+    /**
+     * @var mixed
+     */
     private $product = null;
 
     public function __construct()
@@ -121,5 +142,3 @@ class CartItemForShippingTestHelper extends Item
         return $this->product;
     }
 }
-
-

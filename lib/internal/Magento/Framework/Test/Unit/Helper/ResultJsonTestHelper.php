@@ -82,5 +82,3 @@ class ResultJsonTestHelper implements ResultInterface
         return $this;
     }
 }
-
-

@@ -40,5 +40,3 @@ class QuoteIdMaskLoadByMaskedIdTestHelper extends QuoteIdMask
         return $this;
     }
 }
-
-

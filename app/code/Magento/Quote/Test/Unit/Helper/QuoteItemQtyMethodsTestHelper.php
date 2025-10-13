@@ -28,9 +28,3 @@ class QuoteItemQtyMethodsTestHelper extends Item
         return null;
     }
 }
-
-
-
-
-
-

@@ -11,6 +11,9 @@ use Magento\Quote\Model\Quote;
 
 class QuoteCurrencyCodeTestHelper extends Quote
 {
+    /**
+     * @var string
+     */
     private $code = 'USD';
 
     public function __construct(string $code = 'USD')
@@ -23,9 +26,3 @@ class QuoteCurrencyCodeTestHelper extends Quote
         return $this->code;
     }
 }
-
-
-
-
-
-

@@ -11,7 +11,13 @@ use Magento\Quote\Model\QuoteIdMask;
 
 class GuestCartQuoteIdMaskDouble extends QuoteIdMask
 {
+    /**
+     * @var int|string|null
+     */
     private $quoteIdValue = null;
+    /**
+     * @var string|null
+     */
     private $maskedIdValue = null;
 
     public function __construct()
@@ -55,6 +61,3 @@ class GuestCartQuoteIdMaskDouble extends QuoteIdMask
         return $this;
     }
 }
-
-
-

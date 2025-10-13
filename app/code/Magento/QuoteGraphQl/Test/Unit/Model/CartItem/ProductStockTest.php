@@ -26,16 +26,59 @@ use Magento\Quote\Test\Unit\Helper\QuoteItemQtyMethodsTestHelper;
  */
 class ProductStockTest extends TestCase
 {
+    /**
+     * @var ProductStock
+     */
     private $productStock;
+
+    /**
+     * @var ProductRepositoryInterface|MockObject
+     */
     private $productRepositoryMock;
+
+    /**
+     * @var StockState|MockObject
+     */
     private $stockStateMock;
+
+    /**
+     * @var ScopeConfigInterface|MockObject
+     */
     private $scopeConfigMock;
+
+    /**
+     * @var StockRegistryInterface|MockObject
+     */
     private $stockRegistryMock;
+
+    /**
+     * @var QuoteItemQtyMethodsTestHelper|MockObject
+     */
     private $cartItemMock;
+
+    /**
+     * @var Product|MockObject
+     */
     private $productMock;
+
+    /**
+     * @var StoreInterface|MockObject
+     */
     private $storeMock;
+
+    /**
+     * @var StockStatusInterface|MockObject
+     */
     private $stockStatusMock;
+
+    /**
+     * @var Product|MockObject
+     */
     private $optionProductMock;
+
+    /**
+     * @var Option|MockObject
+     */
     private $qtyOptionMock;
 
     /**

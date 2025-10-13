@@ -33,5 +33,3 @@ class QuoteItemIsVirtualTestHelper extends Item
         return true;
     }
 }
-
-

@@ -66,5 +66,3 @@ class QuoteIdMaskTestHelper extends QuoteIdMask
         return $this;
     }
 }
-
-

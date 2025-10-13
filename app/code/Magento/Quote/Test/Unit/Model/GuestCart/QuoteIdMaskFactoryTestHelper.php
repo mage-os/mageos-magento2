@@ -32,6 +32,3 @@ class QuoteIdMaskFactoryTestHelper extends QuoteIdMaskFactory
         return $this->instance;
     }
 }
-
-
-

@@ -54,5 +54,3 @@ class RateCollectorForAddressTestHelper implements RateCollectorInterface
         return $this->result;
     }
 }
-
-

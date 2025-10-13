@@ -9,6 +9,7 @@ namespace Magento\Quote\Test\Unit\Helper;
 
 class ProductExtensionForSubtotalTestHelper
 {
+    /** @var mixed */
     private $stockItem;
 
     public function __construct($stockItem = null)
@@ -33,5 +34,3 @@ class ProductExtensionForSubtotalTestHelper
         return null;
     }
 }
-
-

@@ -144,8 +144,6 @@ class UpdateItemQtyTest extends TestCase
             ->method('prepareQuantity')
             ->with(2)
             ->willReturn(2);
-
-
         $this->assertEquals('json represented', $this->updateItemQty->execute());
     }
 
@@ -188,7 +186,6 @@ class UpdateItemQtyTest extends TestCase
                 ]
             )
             ->willReturn('json encoded');
-
 
         $this->assertEquals('json represented', $this->updateItemQty->execute());
     }
@@ -239,7 +236,6 @@ class UpdateItemQtyTest extends TestCase
             )
             ->willReturn('json encoded');
 
-
         $this->assertEquals('json represented', $this->updateItemQty->execute());
     }
 
@@ -272,7 +268,6 @@ class UpdateItemQtyTest extends TestCase
             ->method('jsonEncode')
             ->with($error)
             ->willReturn($jsonResult);
-
 
         $this->assertEquals($jsonResult, $this->updateItemQty->execute());
     }

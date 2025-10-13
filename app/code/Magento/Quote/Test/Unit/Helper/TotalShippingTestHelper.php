@@ -39,5 +39,3 @@ class TotalShippingTestHelper extends Total
         return $this->getData('shipping_description');
     }
 }
-
-

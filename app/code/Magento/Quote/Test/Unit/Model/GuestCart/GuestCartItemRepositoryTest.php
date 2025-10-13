@@ -71,8 +71,6 @@ class GuestCartItemRepositoryTest extends TestCase
                 $this->cartId
             );
 
-        
-
         $this->quoteItemMock = $this->createMock(Item::class);
         $this->quoteItemMock->method('getItemId')->willReturn($this->maskedCartId);
         $this->quoteItemMock->method('getQuoteId')->willReturn($this->maskedCartId);

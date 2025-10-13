@@ -74,9 +74,3 @@ class TotalPriceFieldsTestHelper extends Total
         return [];
     }
 }
-
-
-
-
-
-

@@ -191,5 +191,3 @@ class AddressShippingInfoTestHelper extends Address
         return $this;
     }
 }
-
-

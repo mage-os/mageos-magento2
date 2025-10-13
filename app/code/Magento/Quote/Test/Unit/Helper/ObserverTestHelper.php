@@ -65,5 +65,3 @@ class ObserverTestHelper extends Observer
         return $this;
     }
 }
-
-

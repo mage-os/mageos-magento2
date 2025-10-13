@@ -14,7 +14,13 @@ use Magento\Quote\Model\Quote;
  */
 class CartQuoteMagicDouble extends Quote
 {
+    /**
+     * @var string
+     */
     private $baseCurrencyCode = '';
+    /**
+     * @var string
+     */
     private $quoteCurrencyCode = '';
 
     public function __construct()
@@ -44,6 +50,3 @@ class CartQuoteMagicDouble extends Quote
         return $this;
     }
 }
-
-
-

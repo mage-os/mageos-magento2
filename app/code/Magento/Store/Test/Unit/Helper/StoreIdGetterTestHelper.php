@@ -33,5 +33,3 @@ class StoreIdGetterTestHelper
         return $this->storeId;
     }
 }
-
-

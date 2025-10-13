@@ -377,7 +377,8 @@ class QuoteTest extends TestCase
         $this->quote->setCustomerGroupId($customerGroupId);
 
         /** SUT execution */
-        $this->assertEquals($customerGroupId, $this->quote->getCustomerGroupId(), "Customer group ID is invalid");
+        $this->assertEquals($customerGroupId, $this->quote->getCustomerGroupId(),
+            "Customer group ID is invalid");
     }
 
     /**
@@ -387,11 +388,13 @@ class QuoteTest extends TestCase
     {
         return [
             [
-                [static fn (self $testCase) => $testCase->getAddressMock(Address::TYPE_SHIPPING), static fn (self $testCase) => $testCase->getAddressMock(Address::TYPE_SHIPPING)],
+                [static fn (self $testCase) => $testCase->getAddressMock(Address::TYPE_SHIPPING),
+                    static fn (self $testCase) => $testCase->getAddressMock(Address::TYPE_SHIPPING)],
                 true,
             ],
             [
-                [static fn (self $testCase) => $testCase->getAddressMock(Address::TYPE_SHIPPING), static fn (self $testCase) => $testCase->getAddressMock(Address::TYPE_BILLING)],
+                [static fn (self $testCase) => $testCase->getAddressMock(Address::TYPE_SHIPPING),
+                    static fn (self $testCase) => $testCase->getAddressMock(Address::TYPE_BILLING)],
                 false
             ]
         ];

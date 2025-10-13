@@ -114,5 +114,3 @@ class EventTestHelper extends Event
         return $this;
     }
 }
-
-

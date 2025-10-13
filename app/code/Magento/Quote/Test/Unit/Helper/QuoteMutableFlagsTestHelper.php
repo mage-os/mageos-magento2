@@ -104,5 +104,3 @@ class QuoteMutableFlagsTestHelper extends Quote
         return $this;
     }
 }
-
-

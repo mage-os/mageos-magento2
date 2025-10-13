@@ -33,5 +33,3 @@ class HttpResponseJsonRepresentTestHelper extends Http
         return $jsonResult;
     }
 }
-
-

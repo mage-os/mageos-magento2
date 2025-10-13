@@ -44,5 +44,3 @@ class AddressRelationModelTestHelper extends AbstractModel
         return null;
     }
 }
-
-

@@ -77,5 +77,3 @@ class QuoteItemTestHelper extends Item
         return $this->options[$code] ?? null;
     }
 }
-
-

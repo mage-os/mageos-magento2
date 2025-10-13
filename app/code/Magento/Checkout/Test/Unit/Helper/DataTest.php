@@ -19,6 +19,9 @@ use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Checkout\Test\Unit\Helper\StoreFormatPriceTestHelper;
+use Magento\Checkout\Test\Unit\Helper\QtyOneDataObjectTestHelper;
+use Magento\Checkout\Test\Unit\Helper\QtyFalseQtyOrderedDataObjectTestHelper;
+use Magento\Checkout\Test\Unit\Helper\BaseAmountsDataObjectTestHelper;
 use Magento\Checkout\Test\Unit\Helper\ItemPriceInclTaxFixedTestHelper;
 use Magento\Checkout\Test\Unit\Helper\ItemPriceInclTaxContextTestHelper;
 use Magento\Checkout\Test\Unit\Helper\RowTotalInclTaxFixedTestHelper;
@@ -172,7 +175,7 @@ class DataTest extends TestCase
     {
         $price = 5.5;
         $quoteMock = $this->createMock(Quote::class);
-        $storeMock = new class extends Store { public function __construct() {} public function formatPrice($price, $includeContainer = true, $precision = 2, $scope = null, $currency = null) { return (string)$price; } };
+        $storeMock = new StoreFormatPriceTestHelper();
         $this->checkoutSession->expects($this->once())->method('getQuote')->willReturn($quoteMock);
         $quoteMock->expects($this->once())->method('getStore')->willReturn($storeMock);
         $this->priceCurrency->expects($this->once())->method('format')->willReturn('5.5');
@@ -277,7 +280,7 @@ class DataTest extends TestCase
                 'priceCurrency' => $this->priceCurrency,
             ]
         );
-        $itemMock = new class extends DataObject { public function __construct() {} public function getQty() { return 1; } };
+        $itemMock = new QtyOneDataObjectTestHelper();
         $this->priceCurrency->expects($this->once())->method('round');
         $helper->getPriceInclTax($itemMock);
     }
@@ -293,14 +296,14 @@ class DataTest extends TestCase
                 'priceCurrency' => $this->priceCurrency,
             ]
         );
-        $itemMock = new class extends DataObject { public function __construct() {} public function getQty() { return false; } public function getQtyOrdered() { return 5.5; } };
+        $itemMock = new QtyFalseQtyOrderedDataObjectTestHelper();
         $this->priceCurrency->expects($this->once())->method('round');
         $helper->getBasePriceInclTax($itemMock);
     }
 
     public function testGetBaseSubtotalInclTax()
     {
-        $itemMock = new class extends DataObject { public function __construct() {} public function getBaseTaxAmount() { return 0; } public function getBaseDiscountTaxCompensation() { return 0; } public function getBaseRowTotal() { return 0; } };
+        $itemMock = new BaseAmountsDataObjectTestHelper();
         $this->helper->getBaseSubtotalInclTax($itemMock);
     }
 

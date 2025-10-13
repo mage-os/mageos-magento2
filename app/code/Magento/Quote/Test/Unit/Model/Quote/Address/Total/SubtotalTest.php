@@ -166,7 +166,12 @@ class SubtotalTest extends TestCase
         $shippingAssignmentMock->expects($this->exactly(2))->method('getShipping')->willReturn($shipping);
         $shippingAssignmentMock->expects($this->once())->method('getItems')->willReturn([$quoteItem]);
 
-        $total = new class extends Total { public function __construct() {} };
+        $total = new class extends Total
+        {
+            public function __construct()
+            {
+            }
+        };
 
         $this->subtotalModel->collect($quote, $shippingAssignmentMock, $total);
 
@@ -190,9 +195,6 @@ class SubtotalTest extends TestCase
         $quoteMock = $this->createMock(Quote::class);
         $totalMock = new TotalTestHelper();
         $totalMock->setSubtotal(100);
-
-
-
         $this->assertEquals($expectedResult, $this->subtotalModel->fetch($quoteMock, $totalMock));
     }
 
