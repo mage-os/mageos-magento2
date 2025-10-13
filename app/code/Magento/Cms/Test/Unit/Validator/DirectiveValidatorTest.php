@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Vendor\CmsValidate\Test\Unit\Model\Validator;
+namespace Magento\Cms\Test\Unit\Model\Validator;
 
 use Magento\Cms\Model\Validator\DirectiveValidator;
 use PHPUnit\Framework\TestCase;
