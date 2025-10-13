@@ -11,7 +11,7 @@ use Magento\Quote\Api\Data\CartExtensionInterface;
 
 /**
  * Test helper that implements CartExtensionInterface
- * 
+ *
  * Provides stub implementations for all extension attribute methods
  */
 class CartExtensionTestHelper implements CartExtensionInterface

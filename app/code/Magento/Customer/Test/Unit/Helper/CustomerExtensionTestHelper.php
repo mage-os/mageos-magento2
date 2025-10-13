@@ -11,7 +11,7 @@ use Magento\Customer\Api\Data\CustomerExtensionInterface;
 
 /**
  * Test helper that implements CustomerExtensionInterface
- * 
+ *
  * Provides stub implementations for all extension attribute methods
  */
 class CustomerExtensionTestHelper implements CustomerExtensionInterface
