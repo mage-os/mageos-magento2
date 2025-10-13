@@ -56,21 +56,6 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
     private $storeManager;
 
     /**
-     * @var WebsiteResource
-     */
-    private $websiteResource;
-
-    /**
-     * @var GroupResource
-     */
-    private $groupResource;
-
-    /**
-     * @var StoreResource
-     */
-    private $storeResource;
-
-    /**
      * @var OrderRepositoryInterface
      */
     private $orderRepository;
@@ -79,11 +64,6 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
      * @var CreditmemoRepositoryInterface
      */
     private $creditmemoRepository;
-
-    /**
-     * @var InvoiceManagementInterface
-     */
-    private $invoiceService;
 
     /**
      * @var CreditmemoFactory
@@ -99,36 +79,6 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
      * @var ProductRepositoryInterface
      */
     private $productRepository;
-
-    /**
-     * @var WebsiteInterfaceFactory
-     */
-    private $websiteFactory;
-
-    /**
-     * @var GroupInterfaceFactory
-     */
-    private $groupFactory;
-
-    /**
-     * @var StoreInterfaceFactory
-     */
-    private $storeFactory;
-
-    /**
-     * @var AddressFactory
-     */
-    private $addressFactory;
-
-    /**
-     * @var OrderPaymentInterfaceFactory
-     */
-    private $paymentFactory;
-
-    /**
-     * @var OrderItemInterfaceFactory
-     */
-    private $orderItemFactory;
 
     /**
      * Test data constants
@@ -149,25 +99,14 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
      */
     protected function setUp(): void
     {
+        parent::setUp();
         $this->objectManager = Bootstrap::getObjectManager();
         $this->storeManager = $this->objectManager->get(StoreManagerInterface::class);
-        $this->websiteResource = $this->objectManager->get(WebsiteResource::class);
-        $this->groupResource = $this->objectManager->get(GroupResource::class);
-        $this->storeResource = $this->objectManager->get(StoreResource::class);
         $this->orderRepository = $this->objectManager->get(OrderRepositoryInterface::class);
         $this->creditmemoRepository = $this->objectManager->get(CreditmemoRepositoryInterface::class);
-        $this->invoiceService = $this->objectManager->get(InvoiceManagementInterface::class);
         $this->creditmemoFactory = $this->objectManager->get(CreditmemoFactory::class);
         $this->searchCriteriaBuilder = $this->objectManager->get(SearchCriteriaBuilder::class);
         $this->productRepository = $this->objectManager->get(ProductRepositoryInterface::class);
-
-        // Cache factories for better performance
-        $this->websiteFactory = $this->objectManager->get(WebsiteInterfaceFactory::class);
-        $this->groupFactory = $this->objectManager->get(GroupInterfaceFactory::class);
-        $this->storeFactory = $this->objectManager->get(StoreInterfaceFactory::class);
-        $this->addressFactory = $this->objectManager->get(AddressFactory::class);
-        $this->paymentFactory = $this->objectManager->get(OrderPaymentInterfaceFactory::class);
-        $this->orderItemFactory = $this->objectManager->get(OrderItemInterfaceFactory::class);
     }
 
     /**
@@ -202,41 +141,41 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
     private function createStoreConfigurationWithNumericNames(): StoreInterface
     {
         // Create website with numeric name
-        $website = $this->websiteFactory->create()
+        $website = $this->objectManager->get(WebsiteInterfaceFactory::class)->create()
             ->setCode(self::WEBSITE_CODE)
             ->setName(self::WEBSITE_NAME);
-        $this->websiteResource->save($website);
+        $this->objectManager->get(WebsiteResource::class)->save($website);
         $this->assertEntityCreated($website, self::WEBSITE_CODE, self::WEBSITE_NAME);
 
         // Create store group with numeric name
-        $storeGroup = $this->groupFactory->create()
+        $storeGroup = $this->objectManager->get(GroupInterfaceFactory::class)->create()
             ->setCode(self::STORE_GROUP_CODE)
             ->setName(self::STORE_GROUP_NAME)
             ->setWebsiteId($website->getId())
             ->setRootCategoryId(self::DEFAULT_ROOT_CATEGORY_ID);
-        $this->groupResource->save($storeGroup);
+        $this->objectManager->get(GroupResource::class)->save($storeGroup);
         $this->assertEntityCreated($storeGroup, self::STORE_GROUP_CODE, self::STORE_GROUP_NAME);
 
         // Link website to store group
         $website->setDefaultGroupId($storeGroup->getId());
-        $this->websiteResource->save($website);
+        $this->objectManager->get(WebsiteResource::class)->save($website);
         $this->storeManager->reinitStores();
 
         // Create store view with numeric name
-        $store = $this->storeFactory->create()
+        $store = $this->objectManager->get(StoreInterfaceFactory::class)->create()
             ->setCode(self::STORE_CODE)
             ->setWebsiteId($website->getId())
             ->setGroupId($storeGroup->getId())
             ->setName(self::STORE_NAME)
             ->setSortOrder(self::STORE_SORT_ORDER)
             ->setIsActive(1);
-        $this->storeResource->save($store);
+        $this->objectManager->get(StoreResource::class)->save($store);
         $this->assertEntityCreated($store, self::STORE_CODE, self::STORE_NAME);
         $this->assertEquals(1, $store->getIsActive());
 
         // Link store group to store
         $storeGroup->setDefaultStoreId($store->getId());
-        $this->groupResource->save($storeGroup);
+        $this->objectManager->get(GroupResource::class)->save($storeGroup);
 
         // Final verification
         $this->storeManager->reinitStores();
@@ -281,7 +220,7 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
         $addresses = $this->createOrderAddresses();
 
         // Create payment using cached factory
-        $payment = $this->paymentFactory->create()
+        $payment = $this->objectManager->get(OrderPaymentInterfaceFactory::class)->create()
             ->setMethod(Checkmo::PAYMENT_METHOD_CHECKMO_CODE)
             ->setAdditionalInformation('last_trans_id', '11122')
             ->setAdditionalInformation('metadata', ['type' => 'free', 'fraudulent' => false]);
@@ -334,7 +273,7 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
      */
     private function createOrderAddresses(): array
     {
-        $billingAddress = $this->addressFactory->create()->setData([
+        $billingAddress = $this->objectManager->get(AddressFactory::class)->create()->setData([
             'region' => 'CA',
             'region_id' => '12',
             'postcode' => '11111',
@@ -367,7 +306,7 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
      */
     private function createOrderItem($product, float $productPrice, float $orderTotal)
     {
-        return $this->orderItemFactory->create()
+        return $this->objectManager->get(OrderItemInterfaceFactory::class)->create()
             ->setProductId($product->getId())
             ->setQtyOrdered(self::ORDER_QTY)
             ->setBasePrice($productPrice)
@@ -388,7 +327,7 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
      */
     private function createAndSaveInvoice(OrderInterface $order): void
     {
-        $invoice = $this->invoiceService->prepareInvoice($order);
+        $invoice = $this->objectManager->get(InvoiceManagementInterface::class)->prepareInvoice($order);
         $invoice->register();
         $invoice->setIncrementId($order->getIncrementId());
         $order = $invoice->getOrder();
