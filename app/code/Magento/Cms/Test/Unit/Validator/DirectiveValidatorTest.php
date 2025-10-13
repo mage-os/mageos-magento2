@@ -12,6 +12,9 @@ use PHPUnit\Framework\TestCase;
 
 class DirectiveValidatorTest extends TestCase
 {
+    /**
+     * @var DirectiveValidator
+     */
     private DirectiveValidator $validator;
 
     protected function setUp(): void
@@ -21,7 +24,8 @@ class DirectiveValidatorTest extends TestCase
 
     public function testAllowsCleanBlockDirective(): void
     {
-        $html = '{{block class="Magento\\Customer\\Block\\Form\\Register" name="home.form.customattributes" template="Magento_Customer::form/register.phtml"}}';
+        $html = '{{block class="Magento\\Customer\\Block\\Form\\Register"
+        name="home.form.customattributes" template="Magento_Customer::form/register.phtml"}}';
         $this->assertTrue($this->validator->isValid($html));
     }
 
