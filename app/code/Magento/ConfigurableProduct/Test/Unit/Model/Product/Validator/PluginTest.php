@@ -17,6 +17,7 @@ use Magento\Framework\DataObject;
 use Magento\Framework\Event\Manager;
 use Magento\Framework\DataObject\Test\Unit\Helper\DataObjectTestHelper;
 use Magento\Framework\Json\Helper\Data;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -346,13 +347,23 @@ class PluginTest extends TestCase
      */
     private function createPluginMock(): Plugin
     {
-        return $this->getMockBuilder(Plugin::class)
-            ->onlyMethods(['_validateProductVariations'])
-            ->setConstructorArgs([
-                $this->eventManagerMock,
-                $this->productFactoryMock,
-                $this->jsonHelperMock
-            ])
-            ->getMock();
+        $plugin = $this->createPartialMock(Plugin::class, ['_validateProductVariations']);
+        
+        // Use reflection to inject dependencies
+        $reflection = new \ReflectionClass($plugin);
+        
+        $eventManagerProperty = $reflection->getProperty('eventManager');
+        $eventManagerProperty->setAccessible(true);
+        $eventManagerProperty->setValue($plugin, $this->eventManagerMock);
+        
+        $productFactoryProperty = $reflection->getProperty('productFactory');
+        $productFactoryProperty->setAccessible(true);
+        $productFactoryProperty->setValue($plugin, $this->productFactoryMock);
+        
+        $jsonHelperProperty = $reflection->getProperty('jsonHelper');
+        $jsonHelperProperty->setAccessible(true);
+        $jsonHelperProperty->setValue($plugin, $this->jsonHelperMock);
+        
+        return $plugin;
     }
 }

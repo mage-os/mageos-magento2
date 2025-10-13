@@ -53,8 +53,7 @@ class UpdateHandlerTest extends TestCase
     protected function setUp(): void
     {
         $this->linkRepositoryMock = $this->createMock(LinkRepositoryInterface::class);
-        $this->linkMock = $this->getMockBuilder(LinkInterface::class)
-            ->getMock();
+        $this->linkMock = $this->createMock(LinkInterface::class);
         $this->productExtensionMock = $this->getProductExtensionMock();
         $this->productExtensionMock->expects($this->once())
             ->method('getDownloadableProductLinks')
@@ -85,8 +84,7 @@ class UpdateHandlerTest extends TestCase
             ->willReturn(1);
 
         /** @var LinkInterface|MockObject $linkToDeleteMock */
-        $linkToDeleteMock = $this->getMockBuilder(LinkInterface::class)
-            ->getMock();
+        $linkToDeleteMock = $this->createMock(LinkInterface::class);
         $linkToDeleteMock->expects($this->exactly(2))
             ->method('getId')
             ->willReturn($linkToDeleteId);

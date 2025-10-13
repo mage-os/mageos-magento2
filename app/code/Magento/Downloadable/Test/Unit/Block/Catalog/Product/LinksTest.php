@@ -19,6 +19,7 @@ use Magento\Framework\Pricing\Amount\AmountInterface;
 use Magento\Framework\Pricing\PriceInfo\Base;
 use Magento\Framework\Pricing\Render;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Catalog\Test\Unit\Helper\SimpleTypeTestHelper;
 use Magento\Framework\View\Layout;
 use Magento\Framework\View\LayoutInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -140,22 +141,8 @@ class LinksTest extends TestCase
             ->willReturn($linkPrice);
 
         $linkMock = $this->getLinkMock($linkPrice, $linkId);
-        $typeInstanceMock = new class($linkMock) extends Simple {
-            /**
-             * @var mixed
-             */
-            private $linkMock;
-            
-            public function __construct($linkMock)
-            {
-                $this->linkMock = $linkMock;
-                // Skip parent constructor to avoid dependencies
-            }
-            public function getLinks()
-            {
-                return [$this->linkMock];
-            }
-        };
+        $typeInstanceMock = new SimpleTypeTestHelper();
+        $typeInstanceMock->setLinks([$linkMock]);
         $this->productMock->expects($this->once())
             ->method('getTypeInstance')
             ->willReturn($typeInstanceMock);

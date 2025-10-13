@@ -55,22 +55,11 @@ class SampleTest extends TestCase
     protected function setUp(): void
     {
         $objectManagerHelper = new ObjectManagerHelper($this);
-        $this->sampleFactory = $this->getMockBuilder(SampleFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-        $this->sampleResource = $this->getMockBuilder(\Magento\Downloadable\Model\ResourceModel\Sample::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['deleteItems'])
-            ->getMock();
-        $sampleResourceFactory = $this->getMockBuilder(\Magento\Downloadable\Model\ResourceModel\SampleFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->sampleFactory = $this->createPartialMock(SampleFactory::class, ['create']);
+        $this->sampleResource = $this->createPartialMock(\Magento\Downloadable\Model\ResourceModel\Sample::class, ['deleteItems']);
+        $sampleResourceFactory = $this->createPartialMock(\Magento\Downloadable\Model\ResourceModel\SampleFactory::class, ['create']);
         $sampleResourceFactory->method('create')->willReturn($this->sampleResource);
-        $this->metadataPoolMock = $this->getMockBuilder(MetadataPool::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->metadataPoolMock = $this->createMock(MetadataPool::class);
         $this->metadataMock = $this->createMock(EntityMetadata::class);
         $this->metadataPoolMock->method('getMetadata')->willReturn($this->metadataMock);
         $this->target = $objectManagerHelper->getObject(
@@ -235,17 +224,11 @@ class SampleTest extends TestCase
      */
     protected function createProductMock($id, $storeId, $storeWebsiteId, array $websiteIds)
     {
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getId', 'getStoreId', 'getStore', 'getWebsiteIds', 'getData'])
-            ->getMock();
+        $product = $this->createPartialMock(Product::class, ['getId', 'getStoreId', 'getStore', 'getWebsiteIds', 'getData']);
         $product->method('getId')->willReturn($id);
         $product->method('getStoreId')->willReturn($storeId);
         $product->method('getWebsiteIds')->willReturn($websiteIds);
-        $store = $this->getMockBuilder(Store::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getWebsiteId'])
-            ->getMock();
+        $store = $this->createPartialMock(Store::class, ['getWebsiteId']);
         $store->method('getWebsiteId')->willReturn($storeWebsiteId);
         $product->method('getStore')->willReturn($store);
         $product->expects($this->any())

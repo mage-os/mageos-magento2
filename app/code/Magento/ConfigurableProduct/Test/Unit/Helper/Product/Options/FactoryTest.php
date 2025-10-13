@@ -63,20 +63,11 @@ class FactoryTest extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
 
-        $this->configurable = $this->getMockBuilder(Configurable::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['canUseAttribute'])
-            ->getMock();
+        $this->configurable = $this->createPartialMock(Configurable::class, ['canUseAttribute']);
 
-        $this->attributeFactory = $this->getMockBuilder(AttributeFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->attributeFactory = $this->createPartialMock(AttributeFactory::class, ['create']);
 
-        $this->optionValueFactory = $this->getMockBuilder(OptionValueInterfaceFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->optionValueFactory = $this->createPartialMock(OptionValueInterfaceFactory::class, ['create']);
 
         $this->productAttributeRepository = $this->createMock(ProductAttributeRepositoryInterface::class);
 
@@ -99,18 +90,13 @@ class FactoryTest extends TestCase
             ]]
         ];
 
-        $attribute = $this->getMockBuilder(Attribute::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['setValues', 'getData'])
-            ->getMock();
+        $attribute = $this->createPartialMock(Attribute::class, ['setValues', 'getData']);
 
         $this->attributeFactory->expects(static::once())
             ->method('create')
             ->willReturn($attribute);
 
-        $eavAttribute = $this->getMockBuilder(EavAttribute::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $eavAttribute = $this->createMock(EavAttribute::class);
         $this->productAttributeRepository->expects(static::once())
             ->method('get')
             ->with($attributeId)
@@ -131,18 +117,13 @@ class FactoryTest extends TestCase
         $item = ['attribute_id' => $attributeId, 'values' => [['value_index' => $valueIndex]]];
         $data = [$item];
 
-        $attribute = $this->getMockBuilder(Attribute::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['setValues', 'setData'])
-            ->getMock();
+        $attribute = $this->createPartialMock(Attribute::class, ['setValues', 'setData']);
 
         $this->attributeFactory->expects(static::once())
             ->method('create')
             ->willReturn($attribute);
 
-        $eavAttribute = $this->getMockBuilder(EavAttribute::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $eavAttribute = $this->createMock(EavAttribute::class);
         $this->productAttributeRepository->expects(static::once())
             ->method('get')
             ->with($attributeId)

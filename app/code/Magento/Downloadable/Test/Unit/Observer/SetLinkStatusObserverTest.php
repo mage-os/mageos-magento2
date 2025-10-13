@@ -70,41 +70,25 @@ class SetLinkStatusObserverTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->scopeConfig = $this->getMockBuilder(Config::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['isSetFlag', 'getValue'])
-            ->getMock();
+        $this->scopeConfig = $this->createPartialMock(Config::class, ['isSetFlag', 'getValue']);
 
-        $this->itemsFactory = $this->getMockBuilder(
-            CollectionFactory::class
-        )
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->itemsFactory = $this->createPartialMock(CollectionFactory::class, ['create']);
 
         $this->resultMock = $this->createPartialMock(
             \Magento\Framework\DataObject\Test\Unit\Helper\DataObjectTestHelper::class,
             ['setIsAllowed']
         );
 
-        $this->storeMock = $this->getMockBuilder(DataObject::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->storeMock = $this->createMock(DataObject::class);
 
         $this->eventMock = $this->createPartialMock(
             \Magento\Framework\Event\Test\Unit\Helper\EventTestHelper::class,
             ['getStore', 'getResult', 'getQuote', 'getOrder']
         );
 
-        $this->orderMock = $this->getMockBuilder(Order::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getId', 'getStoreId', 'getState', 'isCanceled', 'getAllItems'])
-            ->getMock();
+        $this->orderMock = $this->createPartialMock(Order::class, ['getId', 'getStoreId', 'getState', 'isCanceled', 'getAllItems']);
 
-        $this->observerMock = $this->getMockBuilder(Observer::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getEvent'])
-            ->getMock();
+        $this->observerMock = $this->createPartialMock(Observer::class, ['getEvent']);
 
         $this->setLinkStatusObserver = (new ObjectManagerHelper($this))->getObject(
             SetLinkStatusObserver::class,
@@ -417,15 +401,13 @@ class SetLinkStatusObserverTest extends TestCase
         $productType = DownloadableProductType::TYPE_DOWNLOADABLE,
         $realProductType = DownloadableProductType::TYPE_DOWNLOADABLE
     ) {
-        $item = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([
+        $item = $this->createPartialMock(Item::class, [
                 'getId',
                 'getQtyOrdered',
                 'getQtyRefunded',
                 'getProductType',
                 'getRealProductType'
-            ])->getMock();
+            ]);
         $item->method('getId')->willReturn($id);
         $item->method('getQtyOrdered')->willReturn($qtyOrdered);
         $item->method('getQtyRefunded')->willReturn($qtyRefunded);
@@ -442,12 +424,10 @@ class SetLinkStatusObserverTest extends TestCase
      */
     private function createLinkItemToExpireCollection(array $expectedOrderItemIds, array $items)
     {
-        $linkItemCollection = $this->getMockBuilder(
-            LinkItemCollection::class
-        )
-            ->disableOriginalConstructor()
-            ->onlyMethods(['addFieldToFilter'])
-            ->getMock();
+        $linkItemCollection = $this->createPartialMock(
+            LinkItemCollection::class,
+            ['addFieldToFilter']
+        );
         $linkItemCollection->expects($this->any())
             ->method('addFieldToFilter')
             ->with('order_item_id', ['in' => $expectedOrderItemIds])
@@ -469,10 +449,7 @@ class SetLinkStatusObserverTest extends TestCase
         $productType = DownloadableProductType::TYPE_DOWNLOADABLE,
         $realProductType = DownloadableProductType::TYPE_DOWNLOADABLE
     ) {
-        $item = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getId', 'getProductType', 'getRealProductType', 'getStatusId', 'getQtyOrdered'])
-            ->getMock();
+        $item = $this->createPartialMock(Item::class, ['getId', 'getProductType', 'getRealProductType', 'getStatusId', 'getQtyOrdered']);
         $item->method('getId')->willReturn($id);
         $item->method('getProductType')->willReturn($productType);
         $item->method('getRealProductType')->willReturn($realProductType);
@@ -489,12 +466,10 @@ class SetLinkStatusObserverTest extends TestCase
      */
     private function createLinkItemCollection(array $expectedOrderItemIds, array $items)
     {
-        $linkItemCollection = $this->getMockBuilder(
-            LinkItemCollection::class
-        )
-            ->disableOriginalConstructor()
-            ->onlyMethods(['addFieldToFilter'])
-            ->getMock();
+        $linkItemCollection = $this->createPartialMock(
+            LinkItemCollection::class,
+            ['addFieldToFilter']
+        );
         $linkItemCollection->expects($this->any())
             ->method('addFieldToFilter')
             ->with('order_item_id', ['in' => $expectedOrderItemIds])

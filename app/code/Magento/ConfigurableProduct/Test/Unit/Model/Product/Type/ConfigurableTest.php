@@ -27,6 +27,7 @@ use Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable\Pr
 use Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable\Product\CollectionFactory
     as ProductCollectionFactory;
 use Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\ConfigurableFactory;
+use Magento\ConfigurableProduct\Test\Unit\Helper\ConfigurableFactoryTestHelper;
 use Magento\Customer\Model\Session;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Eav\Model\Entity\Attribute\Frontend\AbstractFrontend;
@@ -163,20 +164,7 @@ class ConfigurableTest extends TestCase
         $filesystem = $this->createMock(Filesystem::class);
         $coreRegistry = $this->createMock(Registry::class);
         $logger = $this->createMock(LoggerInterface::class);
-        $this->typeConfigurableFactory = new class extends ConfigurableFactory {
-            public function __construct()
-            {
- /* Skip parent constructor */
-            }
-            public function create(array $data = [])
-            {
-                return $this;
-            }
-            public function saveProducts()
-            {
-                return $this;
-            }
-        };
+        $this->typeConfigurableFactory = new ConfigurableFactoryTestHelper();
         $this->configurableAttributeFactoryMock = $this->createPartialMock(AttributeFactory::class, ['create']);
         $this->productCollectionFactory = $this->createPartialMock(ProductCollectionFactory::class, ['create']);
         $this->attributeCollectionFactory = $this->createPartialMock(CollectionFactory::class, ['create']);

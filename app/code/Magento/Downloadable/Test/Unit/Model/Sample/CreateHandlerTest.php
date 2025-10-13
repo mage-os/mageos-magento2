@@ -39,8 +39,7 @@ class CreateHandlerTest extends TestCase
         $entityStoreId = 0;
 
         /** @var SampleInterface|MockObject $sampleMock */
-        $sampleMock = $this->getMockBuilder(SampleInterface::class)
-            ->getMock();
+        $sampleMock = $this->createMock(SampleInterface::class);
         $sampleMock->expects($this->once())
             ->method('setId')
             ->with(null);

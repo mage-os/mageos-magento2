@@ -53,8 +53,7 @@ class UpdateHandlerTest extends TestCase
     protected function setUp(): void
     {
         $this->sampleRepositoryMock = $this->createMock(SampleRepositoryInterface::class);
-        $this->sampleMock = $this->getMockBuilder(SampleInterface::class)
-            ->getMock();
+        $this->sampleMock = $this->createMock(SampleInterface::class);
         $this->productExtensionMock = $this->getProductExtensionMock();
         $this->productExtensionMock//->expects($this->once())
             ->method('getDownloadableProductSamples')
@@ -85,8 +84,7 @@ class UpdateHandlerTest extends TestCase
             ->willReturn(1);
 
         /** @var SampleInterface|MockObject $sampleToDeleteMock */
-        $sampleToDeleteMock = $this->getMockBuilder(SampleInterface::class)
-            ->getMock();
+        $sampleToDeleteMock = $this->createMock(SampleInterface::class);
         $sampleToDeleteMock->expects($this->exactly(2))
             ->method('getId')
             ->willReturn($sampleToDeleteId);

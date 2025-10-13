@@ -95,11 +95,7 @@ class OptionRepositoryTest extends TestCase
         $this->objectManager = new ObjectManager($this);
         $this->productRepositoryMock = $this->createMock(ProductRepositoryInterface::class);
         $this->typeMock = $this->createMock(Type::class);
-        $this->optionFactoryMock = $this->getMockBuilder(OptionInterfaceFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->optionFactoryMock = $this->createPartialMock(OptionInterfaceFactory::class, ['create']);
         $this->dataObjectHelperMock = $this->createMock(DataObjectHelper::class);
         $this->optionResourceMock = $this->createPartialMock(Option::class, ['delete', 'save',
             'removeOptionSelections']);

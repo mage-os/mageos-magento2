@@ -39,8 +39,7 @@ class CreateHandlerTest extends TestCase
         $entityStoreId = 0;
 
         /** @var LinkInterface|MockObject $linkMock */
-        $linkMock = $this->getMockBuilder(LinkInterface::class)
-            ->getMock();
+        $linkMock = $this->createMock(LinkInterface::class);
         $linkMock->expects($this->once())
             ->method('setId')
             ->with(null);

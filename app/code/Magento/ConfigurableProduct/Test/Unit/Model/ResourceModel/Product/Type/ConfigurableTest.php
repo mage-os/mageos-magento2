@@ -85,18 +85,7 @@ class ConfigurableTest extends TestCase
         $this->optionProvider = $this->createMock(OptionProvider::class);
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
-        // Note: getMockBuilder required for setConstructorArgs with ObjectManagerHelper
-        $context = $this->getMockBuilder(Context::class)
-            ->onlyMethods(['getResources'])
-            ->setConstructorArgs(
-                $this->objectManagerHelper->getConstructArguments(
-                    Context::class,
-                    [
-                        'resources' => $this->resource
-                    ]
-                )
-            )
-            ->getMock();
+        $context = $this->createPartialMock(Context::class, ['getResources']);
         $context->expects($this->once())->method('getResources')->willReturn($this->resource);
 
         $this->configurable = $this->objectManagerHelper->getObject(

@@ -40,9 +40,7 @@ class CreditmemoTest extends TestCase
     protected function setUp(): void
     {
         $objectManager = new ObjectManager($this);
-        $this->order = $this->getMockBuilder(Order::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->order = $this->createMock(Order::class);
         $this->order->expects($this->any())
             ->method('formatPriceTxt')
             ->willReturnCallback([$this, 'formatPrice']);
@@ -63,10 +61,17 @@ class CreditmemoTest extends TestCase
             ['string' => new StringUtils(), 'filterManager' => $filterManager]
         );
 
-        $this->model = $this->getMockBuilder(Creditmemo::class)
-            ->onlyMethods(['getLinks', 'getLinksTitle'])
-            ->setConstructorArgs($modelConstructorArgs)
-            ->getMock();
+        $this->model = $this->createPartialMock(Creditmemo::class, ['getLinks', 'getLinksTitle']);
+        
+        // Use reflection to inject dependencies
+        $reflection = new \ReflectionClass($this->model);
+        $stringProperty = $reflection->getProperty('string');
+        $stringProperty->setAccessible(true);
+        $stringProperty->setValue($this->model, new StringUtils());
+        
+        $filterManagerProperty = $reflection->getProperty('filterManager');
+        $filterManagerProperty->setAccessible(true);
+        $filterManagerProperty->setValue($this->model, $filterManager);
 
         $this->model->setOrder($this->order);
         $this->model->setPdf($this->pdf);

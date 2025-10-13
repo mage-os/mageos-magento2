@@ -43,14 +43,8 @@ class PurchasedTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->linkPurchasedFactory = $this->getMockBuilder(PurchasedFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-        $this->linkPurchasedItemCollectionFactory = $this->getMockBuilder(CollectionFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->linkPurchasedFactory = $this->createPartialMock(PurchasedFactory::class, ['create']);
+        $this->linkPurchasedItemCollectionFactory = $this->createPartialMock(CollectionFactory::class, ['create']);
 
         $this->model = new Purchased(
             $this->linkPurchasedFactory,
@@ -81,14 +75,8 @@ class PurchasedTest extends TestCase
         if ($hasChildItem) {
             $orderItem->addChildItem($childOrderItem);
         }
-        $linkPurchased = $this->getMockBuilder(PurchasedEntity::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['load'])
-            ->getMock();
-        $itemCollection = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['addFieldToFilter'])
-            ->getMock();
+        $linkPurchased = $this->createPartialMock(PurchasedEntity::class, ['load']);
+        $itemCollection = $this->createPartialMock(Collection::class, ['addFieldToFilter']);
         $this->linkPurchasedFactory->method('create')
             ->willReturn($linkPurchased);
         $linkPurchased->method('load')

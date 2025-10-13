@@ -107,14 +107,11 @@ class SampleRepositoryTest extends TestCase
             SampleFactory::class,
             ['create']
         );
-        $this->productTypeMock = $this->getMockBuilder(Type::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->sampleDataObjectFactory = $this->getMockBuilder(
-            SampleInterfaceFactory::class
-        )->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productTypeMock = $this->createMock(Type::class);
+        $this->sampleDataObjectFactory = $this->createPartialMock(
+            SampleInterfaceFactory::class,
+            ['create']
+        );
 
         $this->service = new SampleRepository(
             $this->repositoryMock,
@@ -129,20 +126,14 @@ class SampleRepositoryTest extends TestCase
         $this->entityMetadataMock = $this->createMock(EntityMetadataInterface::class);
         $linkRepository = new \ReflectionClass(get_class($this->service));
         $metadataPoolProperty = $linkRepository->getProperty('metadataPool');
-        $this->metadataPoolMock = $this->getMockBuilder(
-            MetadataPool::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $this->metadataPoolMock = $this->createMock(MetadataPool::class);
         $metadataPoolProperty->setAccessible(true);
         $metadataPoolProperty->setValue(
             $this->service,
             $this->metadataPoolMock
         );
         $saveHandlerProperty = $linkRepository->getProperty('sampleTypeHandler');
-        $this->sampleHandlerMock = $this->getMockBuilder(
-            Sample::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $this->sampleHandlerMock = $this->createMock(Sample::class);
         $saveHandlerProperty->setAccessible(true);
         $saveHandlerProperty->setValue(
             $this->service,

@@ -94,14 +94,7 @@ class LinkRepositoryTest extends TestCase
     {
         $this->repositoryMock = $this->createMock(ProductRepository::class);
         $this->productTypeMock = $this->createMock(Type::class);
-        $this->linkDataObjectFactory = $this->getMockBuilder(LinkInterfaceFactory::class)
-            ->onlyMethods(
-                [
-                    'create',
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->linkDataObjectFactory = $this->createPartialMock(LinkInterfaceFactory::class, ['create']);
         $this->contentValidatorMock = $this->createMock(ContentValidator::class);
         $this->contentUploaderMock = $this->createMock(
             ContentUploaderInterface::class
@@ -137,20 +130,14 @@ class LinkRepositoryTest extends TestCase
         $this->entityMetadataMock = $this->createMock(EntityMetadataInterface::class);
         $linkRepository = new \ReflectionClass(get_class($this->service));
         $metadataPoolProperty = $linkRepository->getProperty('metadataPool');
-        $this->metadataPoolMock = $this->getMockBuilder(
-            MetadataPool::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $this->metadataPoolMock = $this->createMock(MetadataPool::class);
         $metadataPoolProperty->setAccessible(true);
         $metadataPoolProperty->setValue(
             $this->service,
             $this->metadataPoolMock
         );
         $saveHandlerProperty = $linkRepository->getProperty('linkTypeHandler');
-        $this->linkHandlerMock = $this->getMockBuilder(
-            Link::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $this->linkHandlerMock = $this->createMock(Link::class);
         $saveHandlerProperty->setAccessible(true);
         $saveHandlerProperty->setValue(
             $this->service,

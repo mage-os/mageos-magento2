@@ -44,20 +44,11 @@ class LoaderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->optionValueFactory = $this->getMockBuilder(OptionValueInterfaceFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->optionValueFactory = $this->createPartialMock(OptionValueInterfaceFactory::class, ['create']);
 
-        $this->product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getTypeInstance'])
-            ->getMock();
+        $this->product = $this->createPartialMock(Product::class, ['getTypeInstance']);
 
-        $this->configurable = $this->getMockBuilder(Configurable::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getConfigurableAttributeCollection'])
-            ->getMock();
+        $this->configurable = $this->createPartialMock(Configurable::class, ['getConfigurableAttributeCollection']);
 
         $extensionAttributesJoinProcessor = $this->createMock(JoinProcessorInterface::class);
 
@@ -74,16 +65,11 @@ class LoaderTest extends TestCase
             ->method('getTypeInstance')
             ->willReturn($this->configurable);
 
-        $attribute = $this->getMockBuilder(Attribute::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getOptions', 'setValues'])
-            ->getMock();
+        $attribute = $this->createPartialMock(Attribute::class, ['getOptions', 'setValues']);
 
         $attributes = [$attribute];
 
-        $iterator = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $iterator = $this->createMock(Collection::class);
         $iterator->expects($this->once())->method('getIterator')
             ->willReturn(new \ArrayIterator($attributes));
 

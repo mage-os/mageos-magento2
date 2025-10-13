@@ -93,60 +93,33 @@ class SaveDownloadableOrderItemObserverTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->scopeConfig = $this->getMockBuilder(Config::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['isSetFlag', 'getValue'])
-            ->getMock();
+        $this->scopeConfig = $this->createPartialMock(Config::class, ['isSetFlag', 'getValue']);
 
-        $this->purchasedFactory = $this->getMockBuilder(PurchasedFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->purchasedFactory = $this->createPartialMock(PurchasedFactory::class, ['create']);
 
-        $this->productFactory = $this->getMockBuilder(ProductFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productFactory = $this->createPartialMock(ProductFactory::class, ['create']);
 
-        $this->itemFactory = $this->getMockBuilder(ItemFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->itemFactory = $this->createPartialMock(ItemFactory::class, ['create']);
 
-        $this->itemsFactory = $this->getMockBuilder(
-            CollectionFactory::class
-        )
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->itemsFactory = $this->createPartialMock(CollectionFactory::class, ['create']);
 
-        $this->objectCopyService = $this->getMockBuilder(Copy::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->objectCopyService = $this->createMock(Copy::class);
 
         $this->resultMock = $this->createPartialMock(
             \Magento\Framework\DataObject\Test\Unit\Helper\DataObjectTestHelper::class,
             ['setIsAllowed']
         );
 
-        $this->storeMock = $this->getMockBuilder(DataObject::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->storeMock = $this->createMock(DataObject::class);
 
         $this->eventMock = $this->createPartialMock(
             \Magento\Framework\Event\Test\Unit\Helper\EventTestHelper::class,
             ['getStore', 'getResult', 'getQuote', 'getOrder']
         );
 
-        $this->orderMock = $this->getMockBuilder(Order::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getId', 'getStoreId', 'getState', 'isCanceled', 'getAllItems'])
-            ->getMock();
+        $this->orderMock = $this->createPartialMock(Order::class, ['getId', 'getStoreId', 'getState', 'isCanceled', 'getAllItems']);
 
-        $this->observerMock = $this->getMockBuilder(Observer::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getEvent'])
-            ->getMock();
+        $this->observerMock = $this->createPartialMock(Observer::class, ['getEvent']);
 
         $this->saveDownloadableOrderItemObserver = (new ObjectManagerHelper($this))->getObject(
             SaveDownloadableOrderItemObserver::class,
@@ -164,9 +137,7 @@ class SaveDownloadableOrderItemObserverTest extends TestCase
     public function testSaveDownloadableOrderItem()
     {
         $itemId = 100;
-        $itemMock = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $itemMock = $this->createMock(Item::class);
         $itemMock->expects($this->atLeastOnce())
             ->method('getOrder')
             ->willReturn($this->orderMock);
@@ -177,15 +148,11 @@ class SaveDownloadableOrderItemObserverTest extends TestCase
         $this->orderMock->method('getStoreId')
             ->willReturn(10500);
 
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $product = $this->createMock(Product::class);
         $product->expects($this->once())
             ->method('getTypeId')
             ->willReturn(DownloadableProductType::TYPE_DOWNLOADABLE);
-        $productType = $this->getMockBuilder(DownloadableProductType::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productType = $this->createMock(DownloadableProductType::class);
         $product->expects($this->once())
             ->method('getTypeInstance')
             ->willReturn($productType);
@@ -247,9 +214,7 @@ class SaveDownloadableOrderItemObserverTest extends TestCase
     public function testSaveDownloadableOrderItemNotDownloadableItem()
     {
         $itemId = 100;
-        $itemMock = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $itemMock = $this->createMock(Item::class);
         $itemMock->method('getId')->willReturn($itemId);
         $itemMock->method('getProductType')->willReturn('simple');
         $itemMock->expects($this->never())
@@ -269,9 +234,7 @@ class SaveDownloadableOrderItemObserverTest extends TestCase
 
     public function testSaveDownloadableOrderItemNotSavedOrderItem()
     {
-        $itemMock = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $itemMock = $this->createMock(Item::class);
         $itemMock->method('getId')->willReturn(null);
         $event = new DataObject(
             [
@@ -290,9 +253,7 @@ class SaveDownloadableOrderItemObserverTest extends TestCase
     public function testSaveDownloadableOrderItemSavedPurchasedLink()
     {
         $itemId = 100;
-        $itemMock = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $itemMock = $this->createMock(Item::class);
         $itemMock->method('getId')->willReturn($itemId);
         $itemMock->method('getProductType')->willReturn(DownloadableProductType::TYPE_DOWNLOADABLE);
         $itemMock->method('getRealProductType')->willReturn(DownloadableProductType::TYPE_DOWNLOADABLE);

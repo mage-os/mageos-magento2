@@ -74,13 +74,8 @@ class TypeTest extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
         $eventManager = $this->createMock(ManagerInterface::class);
-        $fileStorageDb = $this->getMockBuilder(
-            Database::class
-        )->disableOriginalConstructor()
-            ->getMock();
-        $filesystem = $this->getMockBuilder(Filesystem::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $fileStorageDb = $this->createMock(Database::class);
+        $filesystem = $this->createMock(Filesystem::class);
         $coreRegistry = $this->createMock(Registry::class);
         $logger = $this->createMock(LoggerInterface::class);
         $productFactoryMock = $this->createMock(ProductFactory::class);
@@ -101,10 +96,7 @@ class TypeTest extends TestCase
         );
         $resourceProductMock->method('getEntityType')->willReturn($entityTypeMock);
 
-        $this->serializerMock = $this->getMockBuilder(Json::class)
-            ->setConstructorArgs(['serialize', 'unserialize'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->serializerMock = $this->createMock(Json::class);
 
         $this->serializerMock->expects($this->any())
             ->method('serialize')
@@ -153,10 +145,7 @@ class TypeTest extends TestCase
             ->with($entityTypeMock, $this->product)
             ->willReturn([]);
 
-        $this->typeHandler = $this->getMockBuilder(TypeHandler::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['save'])
-            ->getMock();
+        $this->typeHandler = $this->createPartialMock(TypeHandler::class, ['save']);
 
         $this->target = $this->objectManager->getObject(
             Type::class,
@@ -202,10 +191,7 @@ class TypeTest extends TestCase
 
     public function testCheckProductBuyState()
     {
-        $optionMock = $this->getMockBuilder(Option::class)
-            ->onlyMethods(['getValue'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $optionMock = $this->createPartialMock(Option::class, ['getValue']);
 
         $optionMock->method('getValue')->willReturn('{}');
 

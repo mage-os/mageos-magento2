@@ -13,6 +13,11 @@ namespace Magento\Downloadable\Test\Unit\Helper;
 class ModifierTestHelper extends \stdClass
 {
     /**
+     * @var array
+     */
+    private $data = [];
+
+    /**
      * Custom modifyData method for testing
      *
      * @param array $data
@@ -20,7 +25,19 @@ class ModifierTestHelper extends \stdClass
      */
     public function modifyData($data)
     {
-        return $data;
+        return $this->data['modify_data'] ?? $data;
+    }
+
+    /**
+     * Set modify data for testing
+     *
+     * @param array $data
+     * @return self
+     */
+    public function setModifyData($data): self
+    {
+        $this->data['modify_data'] = $data;
+        return $this;
     }
 
     /**
@@ -31,6 +48,18 @@ class ModifierTestHelper extends \stdClass
      */
     public function modifyMeta($meta)
     {
-        return $meta;
+        return $this->data['modify_meta'] ?? $meta;
+    }
+
+    /**
+     * Set modify meta for testing
+     *
+     * @param array $meta
+     * @return self
+     */
+    public function setModifyMeta($meta): self
+    {
+        $this->data['modify_meta'] = $meta;
+        return $this;
     }
 }

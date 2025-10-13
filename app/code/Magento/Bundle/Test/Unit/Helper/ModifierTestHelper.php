@@ -17,6 +17,11 @@ use Exception;
 class ModifierTestHelper extends Exception
 {
     /**
+     * @var array
+     */
+    private $data = [];
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -25,6 +30,7 @@ class ModifierTestHelper extends Exception
     }
 
     /**
+     * Modify meta for testing
      *
      * @param array $meta
      * @return array
@@ -32,6 +38,18 @@ class ModifierTestHelper extends Exception
      */
     public function modifyMeta($meta)
     {
-        return $meta;
+        return $this->data['meta'] ?? $meta;
+    }
+
+    /**
+     * Set meta for testing
+     *
+     * @param array $meta
+     * @return self
+     */
+    public function setMeta($meta): self
+    {
+        $this->data['meta'] = $meta;
+        return $this;
     }
 }

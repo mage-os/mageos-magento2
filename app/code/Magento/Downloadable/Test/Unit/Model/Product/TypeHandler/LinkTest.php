@@ -53,17 +53,9 @@ class LinkTest extends TestCase
     protected function setUp(): void
     {
         $objectManagerHelper = new ObjectManagerHelper($this);
-        $this->linkFactory = $this->getMockBuilder(LinkFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-        $this->linkResource = $this->getMockBuilder(\Magento\Downloadable\Model\ResourceModel\Link::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['deleteItems'])
-            ->getMock();
-        $this->metadataPoolMock = $this->getMockBuilder(MetadataPool::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->linkFactory = $this->createPartialMock(LinkFactory::class, ['create']);
+        $this->linkResource = $this->createPartialMock(\Magento\Downloadable\Model\ResourceModel\Link::class, ['deleteItems']);
+        $this->metadataPoolMock = $this->createMock(MetadataPool::class);
         $this->metadataMock = $this->createMock(EntityMetadata::class);
         $this->metadataMock->method('getLinkField')->willReturn('id');
         $this->metadataPoolMock->method('getMetadata')->willReturn($this->metadataMock);
@@ -301,10 +293,7 @@ class LinkTest extends TestCase
         $product->method('getId')->willReturn($id);
         $product->method('getStoreId')->willReturn($storeId);
         $product->method('getWebsiteIds')->willReturn($websiteIds);
-        $store = $this->getMockBuilder(Store::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getWebsiteId'])
-            ->getMock();
+        $store = $this->createPartialMock(Store::class, ['getWebsiteId']);
         $store->method('getWebsiteId')->willReturn($storeWebsiteId);
         $product->method('getStore')->willReturn($store);
         $product->method('getLinksPurchasedSeparately')->willReturn(true);

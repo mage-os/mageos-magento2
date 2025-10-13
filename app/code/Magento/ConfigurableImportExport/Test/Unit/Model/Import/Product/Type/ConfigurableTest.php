@@ -19,6 +19,7 @@ use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\Collection;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DataObject;
+use Magento\Framework\DataObject\Test\Unit\Helper\DataObjectTestHelper;
 use Magento\Framework\DB\Adapter\Pdo\Mysql;
 use Magento\Framework\DB\Select;
 use Magento\Framework\EntityManager\EntityMetadata;
@@ -239,17 +240,9 @@ class ConfigurableTest extends AbstractImportTestCase
             ['id' => 20, 'attribute_set_id' => 4, 'testattr2'=> 1, 'testattr3'=> 1]
         ];
         foreach ($testProducts as $product) {
-            $item = new class extends DataObject {
-                public function __construct()
-                {
-                    // Skip parent constructor to avoid dependencies
-                }
-                public function getAttributeSetId()
-                {
-                    return 4;
-                }
-            };
+            $item = new DataObjectTestHelper();
             $item->setData($product);
+            $item->setAttributeSetId(4);
 
             $products[] = $item;
         }

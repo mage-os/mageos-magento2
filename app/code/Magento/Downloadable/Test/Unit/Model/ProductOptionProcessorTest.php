@@ -58,24 +58,17 @@ class ProductOptionProcessorTest extends TestCase
             ['getLinks', 'addData']
         );
 
-        $this->dataObjectFactory = $this->getMockBuilder(DataObjectFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->dataObjectFactory = $this->createPartialMock(DataObjectFactory::class, ['create']);
         $this->dataObjectFactory->method('create')->willReturn($this->dataObject);
 
-        $this->dataObjectHelper = $this->getMockBuilder(DataObjectHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->dataObjectHelper = $this->createMock(DataObjectHelper::class);
 
         $this->downloadableOption = $this->createMock(DownloadableOptionInterface::class);
 
-        $this->downloadableOptionFactory = $this->getMockBuilder(
-            DownloadableOptionFactory::class
-        )
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->downloadableOptionFactory = $this->createPartialMock(
+            DownloadableOptionFactory::class,
+            ['create']
+        );
         $this->downloadableOptionFactory->method('create')->willReturn($this->downloadableOption);
 
         $this->processor = new ProductOptionProcessor(

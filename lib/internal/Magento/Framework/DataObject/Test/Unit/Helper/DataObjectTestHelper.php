@@ -211,6 +211,18 @@ class DataObjectTestHelper extends DataObject
     }
 
     /**
+     * Set ID for testing
+     *
+     * @param mixed $id
+     * @return self
+     */
+    public function setId($id): self
+    {
+        $this->data['id'] = $id;
+        return $this;
+    }
+
+    /**
      * Get SKU for testing
      *
      * @return mixed
