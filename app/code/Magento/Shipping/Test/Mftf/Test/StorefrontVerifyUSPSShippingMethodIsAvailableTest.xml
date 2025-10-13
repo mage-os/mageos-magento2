@@ -21,15 +21,14 @@
             <group value="pr_exclude"/>
         </annotations>
         <before>
-            <!-- Create product -->
+            <!-- Create Product and customer data -->
             <createData entity="SimpleProduct" stepKey="createProduct"/>
             <createData entity="Simple_Customer_Without_Address" stepKey="createCustomer"/>
         </before>
         <after>
             <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="customerLogoutStorefront"/>
-            <!--delete product-->
+            <!--Delete product and customer data-->
             <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
-            <!--delete customer-->
             <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
         </after>
         <!-- Step 1:Navigate to storefront -->
@@ -50,7 +49,7 @@
             <argument name="address" value="Canada_Address"/>
         </actionGroup>
         <!-- Step 4:Select First-Class Package International Service  USPS Shipping method  -->
-        <actionGroup ref="StorefrontSetShippingMethodActionGroup" stepKey="verifyFirstClassPackageInternationalServiceShippingMethodIsAvailableAndSelect">
+        <actionGroup ref="StorefrontSetShippingMethodActionGroup" stepKey="setUSPSShippingMethodOnCheckout">
             <argument name="shippingMethodName" value="{{USPSFirstClassInternationalShippingMethodData.value}}"/>
         </actionGroup>
         <!-- Step 5:Place order  -->
