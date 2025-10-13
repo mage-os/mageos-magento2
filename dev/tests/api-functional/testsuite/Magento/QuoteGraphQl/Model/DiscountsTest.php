@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\QuoteGraphQl\Model;
 
+use Exception;
 use Magento\Catalog\Test\Fixture\Product as ProductFixture;
 use Magento\Catalog\Test\Fixture\Virtual as VirtualProductFixture;
 use Magento\Customer\Test\Fixture\Customer;
@@ -28,6 +29,8 @@ class DiscountsTest extends GraphQlAbstract
 {
     /** @var CustomerTokenServiceInterface */
     private CustomerTokenServiceInterface $customerTokenService;
+
+    protected ?Rule $createdRule = null;
 
     /** @inheritdoc */
     protected function setUp(): void
@@ -95,44 +98,12 @@ class DiscountsTest extends GraphQlAbstract
     ]
     /**
      * Test discounts resolver for a virtual quote with conditional discount on specific SKU
+     *
+     * @throws Exception
      */
     public function testDiscountsVirtualQuote()
     {
-        // Using SalesRule DataFixture is not working for this case
-        $objectManager = Bootstrap::getObjectManager();
-        /** @var Rule $rule */
-        $rule = $objectManager->create(Rule::class);
-        $rule->setName('10% off for virtual222')
-            ->setIsActive(1)
-            ->setSimpleAction('by_percent');
-        $rule->loadPost([
-            'name' => '10% off for virtual222',
-            'is_active' => 1,
-            'simple_action' => 'by_percent',
-            'discount_amount' => 10,
-            'website_ids' => [1],
-            'customer_group_ids' => [0, 1, 2, 3],
-            'actions' => [
-                1 => [
-                    'type' => Combine::class,
-                    'attribute' => null,
-                    'operator' => null,
-                    'value' => '1',
-                    'is_value_processed' => null,
-                    'aggregator' => 'all',
-                    'actions' => [
-                        1 => [
-                            'type' => Product::class,
-                            'attribute' => 'sku',
-                            'operator' => '==',
-                            'value' => 'virtual222',
-                            'is_value_processed' => false,
-                        ]
-                    ]
-                ]
-            ],
-        ]);
-        $rule->save();
+        $this->createSalesRuleForSku("virtual222");
         $quoteIdMask = DataFixtureStorageManager::getStorage()->get('quoteIdMask');
         $maskedQuoteId = $quoteIdMask->getMaskedId();
         $query = $this->getCartDiscountsQueryWithItems($maskedQuoteId);
@@ -283,5 +254,61 @@ class DiscountsTest extends GraphQlAbstract
     {
         $customerToken = $this->customerTokenService->createCustomerAccessToken($username, $password);
         return ['Authorization' => 'Bearer ' . $customerToken];
+    }
+
+    /**
+     * Create SalesRule with specific sku condition
+     *
+     * @param string $sku
+     * @param int $discountPercent
+     * @return Rule
+     * @throws Exception
+     */
+    protected function createSalesRuleForSku(string $sku, int $discountPercent = 10): Rule
+    {
+        $objectManager = Bootstrap::getObjectManager();
+        /** @var Rule $rule */
+        $rule = $objectManager->create(Rule::class);
+        $rule->setName("{$discountPercent}% off for {$sku}")
+            ->setIsActive(1)
+            ->setSimpleAction('by_percent');
+        $rule->loadPost([
+            'name' => "{$discountPercent}% " . "off for virtual222",
+            'is_active' => 1,
+            'simple_action' => 'by_percent',
+            'discount_amount' => $discountPercent,
+            'website_ids' => [1],
+            'customer_group_ids' => [0, 1, 2, 3],
+            'actions' => [
+                1 => [
+                    'type' => Combine::class,
+                    'attribute' => null,
+                    'operator' => null,
+                    'value' => '1',
+                    'is_value_processed' => null,
+                    'aggregator' => 'all',
+                    'actions' => [
+                        1 => [
+                            'type' => Product::class,
+                            'attribute' => 'sku',
+                            'operator' => '==',
+                            'value' => 'virtual222',
+                            'is_value_processed' => false,
+                        ]
+                    ]
+                ]
+            ],
+        ]);
+        $rule->save();
+        $this->createdRule = $rule;
+        return $rule;
+    }
+
+    protected function tearDown(): void
+    {
+        if ($this->createdRule && $this->createdRule->getId()) {
+            $this->createdRule->delete();
+        }
+        parent::tearDown();
     }
 }

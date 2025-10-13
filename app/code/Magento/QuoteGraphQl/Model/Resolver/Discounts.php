@@ -40,11 +40,8 @@ class Discounts implements ResolverInterface
         }
         /** @var Quote $quote */
         $quote = $value['model'];
-        if ($quote->getIsVirtual()) {
-            $discounts = $quote->getBillingAddress()->getExtensionAttributes()->getDiscounts();
-        } else {
-            $discounts = $quote->getShippingAddress()->getExtensionAttributes()->getDiscounts();
-        }
+        $address = $quote->getIsVirtual() ? $quote->getBillingAddress() : $quote->getShippingAddress();
+        $discounts = $address->getExtensionAttributes()?->getDiscounts() ?? [];
         return $this->getDiscounts->execute(
             $quote,
             $discounts
