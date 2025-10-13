@@ -21,9 +21,11 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
+use Magento\Framework\DataObject\Test\Unit\Helper\DataObjectTestHelper;
 
 /**
  * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class DataTest extends TestCase
 {
@@ -148,49 +150,12 @@ class DataTest extends TestCase
         $attributesCount = 3;
         $attributes = [];
         for ($i = 1; $i < $attributesCount; $i++) {
-            $productAttribute = new class extends DataObject {
-                /** @var int */
-                private $id;
-                /** @var string */
-                private $attributeCode;
-                public function __construct()
-                {
- /* Skip parent constructor */
-                }
-                public function getId()
-                {
-                    return $this->id;
-                }
-                public function setId($id)
-                {
-                    $this->id = $id;
-                    return $this;
-                }
-                public function getAttributeCode()
-                {
-                    return $this->attributeCode;
-                }
-                public function setAttributeCode($code)
-                {
-                    $this->attributeCode = $code;
-                    return $this;
-                }
-            };
+            $productAttribute = new DataObjectTestHelper();
             $productAttribute->setId('attribute_id_' . $i);
             $productAttribute->setAttributeCode('attribute_code_' . $i);
 
-            $attribute = new class($productAttribute) extends DataObject {
-                /** @var DataObject */
-                private $productAttribute;
-                public function __construct($productAttribute)
-                {
-                    $this->productAttribute = $productAttribute;
-                }
-                public function getProductAttribute()
-                {
-                    return $this->productAttribute;
-                }
-            };
+            $attribute = new DataObjectTestHelper();
+            $attribute->setProductAttribute($productAttribute);
             $attributes[] = $attribute;
         }
         $typeInstanceMock = $this->createMock(Configurable::class);

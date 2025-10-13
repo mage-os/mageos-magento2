@@ -12,6 +12,7 @@ use Magento\ConfigurableProduct\Model\Entity\Product\Attribute\Group\AttributeMa
 use Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable\AttributeFactory;
 use Magento\Eav\Model\Entity\Attribute;
 use Magento\Framework\DataObject;
+use Magento\Framework\DataObject\Test\Unit\Helper\DataObjectTestHelper;
 use Magento\Framework\Registry;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -63,24 +64,7 @@ class PluginTest extends TestCase
             ['getUsedAttributes']
         );
 
-        $this->magentoObject = new class extends DataObject {
-            /** @var int|null */
-            private $id;
-            public function __construct()
-            {
- /* Skip parent constructor */
-            }
-            public function getId()
-            {
-                return $this->id;
-            }
-            public function setId($id)
-            {
-                $this->id = $id;
-                return $this;
-            }
-        };
-
+        $this->magentoObject = new DataObjectTestHelper();
         $this->model = $helper->getObject(
             Plugin::class,
             ['registry' => $this->registry, 'attributeFactory' => $this->attributeFactory]

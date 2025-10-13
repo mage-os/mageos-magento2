@@ -23,6 +23,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class PluginTest extends TestCase
 {
@@ -78,7 +79,10 @@ class PluginTest extends TestCase
             Configurable::class
         );
         $this->requestMock = $this->createMock(Http::class);
-        $this->productMock = new ProductTestHelper();
+        $this->productMock = $this->createPartialMock(
+            ProductTestHelper::class,
+            ['setTypeId', 'getAttributes', 'addData', 'setWebsiteIds']
+        );
         $this->attributeMock = $this->createPartialMock(
             Attribute::class,
             [
@@ -89,7 +93,10 @@ class PluginTest extends TestCase
                 'getIsUnique',
             ]
         );
-        $this->configurableMock = new ConfigurableTestHelper();
+        $this->configurableMock = $this->createPartialMock(
+            ConfigurableTestHelper::class,
+            ['setStoreId', 'load', 'setTypeId', 'getTypeInstance', 'getSetAttributes', 'getIdFieldName', 'getData', 'getWebsiteIds']
+        );
         $this->frontendAttrMock = $this->createMock(
             Frontend::class
         );
@@ -116,9 +123,21 @@ class PluginTest extends TestCase
             ['type', null, 'store_type'],
         ];
         $this->requestMock->expects($this->any())->method('getParam')->willReturnMap($valueMap);
-        $this->productMock->setTypeId(Configurable::TYPE_CODE);
-        $this->productMock->setAttributes([$this->attributeMock]);
-        $this->attributeMock->expects($this->once())->method('getId')->willReturn('1');
+        $this->productMock->expects(
+            $this->once()
+        )->method(
+            'setTypeId'
+        )->with(
+            Configurable::TYPE_CODE
+        )->willReturnSelf();
+        $this->productMock->expects(
+            $this->once()
+        )->method(
+            'getAttributes'
+        )->willReturn(
+            [$this->attributeMock]
+        );
+        $this->attributeMock->expects($this->once())->method('getId')->willReturn(1);
         $this->attributeMock->expects($this->once())->method('setIsRequired')->with(1)->willReturnSelf();
         $this->productFactoryMock->expects(
             $this->once()
@@ -127,48 +146,32 @@ class PluginTest extends TestCase
         )->willReturn(
             $this->configurableMock
         );
-        $this->configurableMock->setStoreId(0);
-        $this->configurableMock->load('product');
-        $this->configurableMock->setTypeId('store_type');
-        // Configure the type instance to return the attribute mock
-        $typeInstance = new class {
-            /**
-             * @var mixed
-             */
-            private $attributeMock;
-
-            /**
-             * Constructor
-             */
-            public function __construct()
-            {
-            }
-
-            /**
-             * Set attribute mock
-             *
-             * @param mixed $mock
-             * @return void
-             * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-             */
-            public function setAttributeMock($mock): void
-            {
-                $this->attributeMock = $mock;
-            }
-
-            /**
-             * Get set attributes
-             *
-             * @param mixed $product
-             * @return array
-             */
-            public function getSetAttributes($product)
-            {
-                return [$this->attributeMock];
-            }
-        };
-        $typeInstance->setAttributeMock($this->attributeMock);
-        $this->configurableMock->setTypeInstance($typeInstance);
+        $this->configurableMock->expects($this->once())->method('setStoreId')->with(0)->willReturnSelf();
+        $this->configurableMock->expects($this->once())->method('load')->with('product')->willReturnSelf();
+        $this->configurableMock->expects(
+            $this->once()
+        )->method(
+            'setTypeId'
+        )->with(
+            'store_type'
+        )->willReturnSelf();
+        $this->configurableMock->expects($this->once())->method('getTypeInstance')->willReturnSelf();
+        $this->configurableMock->expects(
+            $this->once()
+        )->method(
+            'getSetAttributes'
+        )->with(
+            $this->configurableMock
+        )->willReturn(
+            [$this->attributeMock]
+        );
+        $this->configurableMock->expects(
+            $this->once()
+        )->method(
+            'getIdFieldName'
+        )->willReturn(
+            'fieldName'
+        );
         $this->attributeMock->expects($this->once())->method('getIsUnique')->willReturn(false);
         $this->attributeMock->expects(
             $this->once()
@@ -179,12 +182,43 @@ class PluginTest extends TestCase
         );
         $this->frontendAttrMock->expects($this->once())->method('getInputType');
         $attributeCode = 'attribute_code';
-        $this->attributeMock->method('getAttributeCode')->willReturn(
+        $this->attributeMock->expects(
+            $this->any()
+        )->method(
+            'getAttributeCode'
+        )->willReturn(
             $attributeCode
         );
-        // ConfigurableTestHelper getData returns null by default
-        $this->productMock->addData([$attributeCode => 'attribute_data']);
-        $this->productMock->setWebsiteIds(['website_id']);
+        $this->configurableMock->expects(
+            $this->once()
+        )->method(
+            'getData'
+        )->with(
+            $attributeCode
+        )->willReturn(
+            'attribute_data'
+        );
+        $this->productMock->expects(
+            $this->once()
+        )->method(
+            'addData'
+        )->with(
+            [$attributeCode => 'attribute_data']
+        )->willReturnSelf();
+        $this->productMock->expects(
+            $this->once()
+        )->method(
+            'setWebsiteIds'
+        )->with(
+            'website_id'
+        )->willReturnSelf();
+        $this->configurableMock->expects(
+            $this->once()
+        )->method(
+            'getWebsiteIds'
+        )->willReturn(
+            'website_id'
+        );
 
         $this->assertEquals(
             $this->productMock,

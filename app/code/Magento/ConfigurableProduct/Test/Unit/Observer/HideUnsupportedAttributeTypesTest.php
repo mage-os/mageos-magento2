@@ -15,6 +15,7 @@ use Magento\Framework\Data\Form\Element\Select;
 use Magento\Framework\Event\Observer as EventObserver;
 use Magento\Framework\Event\Test\Unit\Helper\ObserverTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\Data\Form\Element\Test\Unit\Helper\SelectTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -163,30 +164,9 @@ class HideUnsupportedAttributeTypesTest extends TestCase
     private function createForm(array $originalValues = [], array $expectedValues = [])
     {
         $form = $this->createPartialMock(Form::class, ['getElement']);
-        $frontendInput = new class($originalValues, $expectedValues) extends Select {
-            /** @var array */
-            private $originalValues;
-            /** @var array */
-            private $expectedValues;
-
-            public function __construct($originalValues, $expectedValues)
-            {
-                $this->originalValues = $originalValues;
-                $this->expectedValues = $expectedValues;
-                /* Skip parent constructor */
-            }
-
-            public function getValues()
-            {
-                return $this->originalValues;
-            }
-
-            public function setValues($values)
-            {
-                // The test logic expects this method to be called with expectedValues
-                return $this;
-            }
-        };
+        $frontendInput = new SelectTestHelper();
+        $frontendInput->setOriginalValues($originalValues);
+        $frontendInput->setExpectedValues($expectedValues);
         $form->expects($this->once())
             ->method('getElement')
             ->with('frontend_input')

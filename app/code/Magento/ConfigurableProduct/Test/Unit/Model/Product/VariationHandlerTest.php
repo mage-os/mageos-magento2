@@ -23,6 +23,7 @@ use Magento\Eav\Model\EntityFactory;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Eav\Test\Unit\Helper\FrontendTestHelper;
 
 /**
  * @SuppressWarnings(PHPMD.LongVariable)
@@ -165,28 +166,7 @@ class VariationHandlerTest extends TestCase
         $parentProductMock = new \Magento\Catalog\Test\Unit\Helper\ProductTestHelper();
         $newSimpleProductMock = new \Magento\Catalog\Test\Unit\Helper\ProductTestHelper();
         $editableAttributeMock = new \Magento\Eav\Test\Unit\Helper\AttributeTestHelper();
-        $frontendAttributeMock = new class implements FrontendInterface {
-            public function getInputType()
-            {
-                return 'input_type';
-            }
-            public function getAttribute()
-            {
-                return null;
-            }
-            public function getLabel()
-            {
-                return null;
-            }
-            public function getClass()
-            {
-                return null;
-            }
-            public function getValue($object)
-            {
-                return null;
-            }
-        };
+        $frontendAttributeMock = new FrontendTestHelper();
 
         // Helper classes provide default return values
         $this->productFactoryMock->expects($this->once())->method('create')->willReturn($newSimpleProductMock);

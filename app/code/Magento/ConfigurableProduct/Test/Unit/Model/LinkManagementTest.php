@@ -18,6 +18,7 @@ use Magento\Catalog\Model\ResourceModel\Eav\AttributeFactory;
 use Magento\ConfigurableProduct\Api\Data\OptionInterface;
 use Magento\ConfigurableProduct\Helper\Product\Options\Factory;
 use Magento\ConfigurableProduct\Test\Unit\Helper\AttributeTestHelper;
+use Magento\Catalog\Test\Unit\Helper\ProductExtensionInterfaceTestHelper;
 use Magento\ConfigurableProduct\Model\LinkManagement;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable\Attribute\Collection;
@@ -285,12 +286,7 @@ class LinkManagementTest extends TestCase
         $productType->expects($this->once())->method('getUsedProducts')
             ->willReturn([$option]);
 
-        $extensionAttributesMock = new class implements ExtensionAttributesInterface {
-            public function setConfigurableProductLinks($links)
-            {
-                return $this;
-            }
-        };
+        $extensionAttributesMock = new ProductExtensionInterfaceTestHelper();
 
         $product->expects($this->once())->method('getExtensionAttributes')->willReturn($extensionAttributesMock);
         $this->productRepository->expects($this->once())->method('save');

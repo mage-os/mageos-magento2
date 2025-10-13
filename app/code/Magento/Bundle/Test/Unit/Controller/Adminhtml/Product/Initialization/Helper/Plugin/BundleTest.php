@@ -166,16 +166,7 @@ class BundleTest extends TestCase
         $this->productMock->setPriceType(2);
         $this->productMock->setOptionsReadonly(true);
 
-        $extensionAttribute = new class {
-            public function setBundleProductOptions($options)
-            {
-                return $this;
-            }
-            public function getBundleProductOptions()
-            {
-                return [];
-            }
-        };
+        $extensionAttribute = new ProductExtensionInterfaceTestHelper();
         $extensionAttribute->setBundleProductOptions([]);
         $this->productMock->setExtensionAttributes($extensionAttribute);
 
@@ -204,16 +195,7 @@ class BundleTest extends TestCase
         // Set up the anonymous class properties using setters
         $this->productMock->setCompositeReadonly(false);
 
-        $extensionAttribute = new class {
-            public function setBundleProductOptions($options)
-            {
-                return $this;
-            }
-            public function getBundleProductOptions()
-            {
-                return [];
-            }
-        };
+        $extensionAttribute = new ProductExtensionInterfaceTestHelper();
         $extensionAttribute->setBundleProductOptions([]);
         $this->productMock->setExtensionAttributes($extensionAttribute);
 

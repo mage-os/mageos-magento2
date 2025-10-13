@@ -22,6 +22,7 @@ use Magento\Quote\Api\Data\ProductOptionInterface;
 use Magento\Quote\Model\Quote\Item;
 use Magento\Quote\Model\Quote\ProductOptionFactory;
 use Magento\Quote\Test\Unit\Helper\ProductOptionExtensionInterfaceTestHelper;
+use Magento\Quote\Test\Unit\Helper\ProductOptionTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -124,27 +125,7 @@ class CartItemProcessorTest extends TestCase
         $productOptionMock = $this->createMock(ProductOptionInterface::class);
         $cartItemMock = $this->createMock(CartItemInterface::class);
         $cartItemMock->expects($this->exactly(3))->method('getProductOption')->willReturn($productOptionMock);
-        $extAttributesMock = new class implements ProductOptionInterface {
-            /** @var array */
-            private $options = [];
-            public function getConfigurableItemOptions()
-            {
-                return $this->options;
-            }
-            public function setConfigurableItemOptions($options)
-            {
-                $this->options = $options;
-                return $this;
-            }
-            public function getExtensionAttributes()
-            {
-                return null;
-            }
-            public function setExtensionAttributes($extensionAttributes)
-            {
-                return $this;
-            }
-        };
+        $extAttributesMock = new ProductOptionTestHelper();
         $productOptionMock
             ->expects($this->exactly(2))
             ->method('getExtensionAttributes')

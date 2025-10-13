@@ -19,6 +19,7 @@ use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\Model\Test\Unit\Helper\AbstractModelTestHelper;
 
 class LockValidatorTest extends TestCase
 {
@@ -124,20 +125,9 @@ class LockValidatorTest extends TestCase
 
         $bind = ['attribute_id' => $attributeId, 'attribute_set_id' => $attributeSet];
 
-        /** @var AbstractModel $object */
-        $object = new class($attributeId) extends AbstractModel {
-            /** @var int */
-            private $attributeId;
-            public function __construct($attributeId)
-            {
-                $this->attributeId = $attributeId;
-                /* Skip parent constructor */
-            }
-            public function getAttributeId()
-            {
-                return $this->attributeId;
-            }
-        };
+        /** @var AbstractModelTestHelper $object */
+        $object = new AbstractModelTestHelper();
+        $object->setAttributeId($attributeId);
 
         $this->resource->expects($this->once())->method('getConnection')
             ->willReturn($this->connectionMock);

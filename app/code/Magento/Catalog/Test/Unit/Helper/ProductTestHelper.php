@@ -1463,7 +1463,7 @@ class ProductTestHelper extends Product
      * @param array $websiteIds
      * @return self
      */
-    public function setWebsiteIds(array $websiteIds): self
+    public function setWebsiteIds($websiteIds): self
     {
         $this->data['website_ids'] = $websiteIds;
         return $this;

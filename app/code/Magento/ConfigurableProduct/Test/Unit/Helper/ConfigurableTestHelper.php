@@ -80,7 +80,7 @@ class ConfigurableTestHelper extends Configurable
      */
     public function getIdFieldName()
     {
-        return 'entity_id';
+        return $this->data['id_field_name'] ?? 'entity_id';
     }
 
     /**
@@ -142,6 +142,60 @@ class ConfigurableTestHelper extends Configurable
     public function setTypeInstance($typeInstance)
     {
         $this->data['type_instance'] = $typeInstance;
+        return $this;
+    }
+
+    /**
+     * Set set attributes for testing
+     *
+     * @param array $attributes
+     * @return $this
+     */
+    public function setSetAttributes($attributes)
+    {
+        $this->data['set_attributes'] = $attributes;
+        return $this;
+    }
+
+    /**
+     * Set ID field name for testing
+     *
+     * @param string $fieldName
+     * @return $this
+     */
+    public function setIdFieldName($fieldName)
+    {
+        $this->data['id_field_name'] = $fieldName;
+        return $this;
+    }
+
+
+    /**
+     * Set website IDs for testing
+     *
+     * @param array $websiteIds
+     * @return $this
+     */
+    public function setWebsiteIds($websiteIds)
+    {
+        $this->data['website_ids'] = $websiteIds;
+        return $this;
+    }
+
+    /**
+     * Set data for testing
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return $this
+     */
+    public function setData($key, $value = null)
+    {
+        if (is_array($key)) {
+            $this->data = array_merge($this->data, $key);
+        } else {
+            $this->data[$key] = $value;
+        }
         return $this;
     }
 }
