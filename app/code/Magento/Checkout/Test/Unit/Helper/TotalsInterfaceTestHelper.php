@@ -623,9 +623,4 @@ class TotalsInterfaceTestHelper extends QuoteCartTotals
         $this->data['extension_attributes'] = $extensionAttributes;
         return $this;
     }
-
-    
 }
-
-
-

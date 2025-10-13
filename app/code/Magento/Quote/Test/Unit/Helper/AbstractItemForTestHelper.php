@@ -121,5 +121,3 @@ class AbstractItemForTestHelper extends AbstractItem
         return null;
     }
 }
-
-

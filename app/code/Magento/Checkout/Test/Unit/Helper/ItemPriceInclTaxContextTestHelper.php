@@ -88,5 +88,3 @@ class ItemPriceInclTaxContextTestHelper extends DataObject
         return $this->row;
     }
 }
-
-

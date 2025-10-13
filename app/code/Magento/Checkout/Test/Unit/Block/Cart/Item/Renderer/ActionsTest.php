@@ -58,9 +58,7 @@ class ActionsTest extends TestCase
         /**
          * @var Item|MockObject $itemMock
          */
-        $itemMock = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $itemMock = $this->createMock(Item::class);
 
         $this->assertEquals($this->model, $this->model->setItem($itemMock));
         $this->assertEquals($itemMock, $this->model->getItem());
@@ -80,9 +78,7 @@ class ActionsTest extends TestCase
         /**
          * @var Item|MockObject $itemMock
          */
-        $itemMock = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $itemMock = $this->createMock(Item::class);
         $this->model->setItem($itemMock);
 
         $this->layoutMock->expects($this->once())
@@ -91,9 +87,7 @@ class ActionsTest extends TestCase
             ->willReturn($childNames);
 
         /** @var Generic|MockObject $childMockOne */
-        $childMockOne = $this->getMockBuilder(Generic::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $childMockOne = $this->createMock(Generic::class);
         $childMockOne->expects($this->once())
             ->method('setItem')
             ->with($itemMock);

@@ -62,7 +62,7 @@ class ProductTestHelper extends Product
         return $this->urlDataObject;
     }
 
-       /**
+    /**
      * @return bool
      */
     public function isVisibleInSiteVisibility()
@@ -77,7 +77,6 @@ class ProductTestHelper extends Product
     {
         return $this->id;
     }
-
 
     /**
      * @param DataObject $data

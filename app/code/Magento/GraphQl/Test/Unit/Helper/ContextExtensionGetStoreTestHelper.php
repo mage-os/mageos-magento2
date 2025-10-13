@@ -12,8 +12,19 @@ use Magento\Store\Api\Data\StoreInterface;
 
 class ContextExtensionGetStoreTestHelper implements ContextExtensionInterface
 {
+    /**
+     * @var StoreInterface|null
+     */
     private $store;
+
+    /**
+     * @var bool|null
+     */
     private $isCustomer;
+
+    /**
+     * @var int|null
+     */
     private $customerGroupId;
 
     /**
@@ -33,42 +44,4 @@ class ContextExtensionGetStoreTestHelper implements ContextExtensionInterface
         $this->store = $store;
         return $this;
     }
-
-    /**
-     * @return bool|null
-     */
-    public function getIsCustomer()
-    {
-        return $this->isCustomer;
-    }
-
-    /**
-     * @param bool|null $isCustomer
-     * @return $this
-     */
-    public function setIsCustomer($isCustomer)
-    {
-        $this->isCustomer = $isCustomer;
-        return $this;
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getCustomerGroupId()
-    {
-        return $this->customerGroupId;
-    }
-
-    /**
-     * @param int|null $groupId
-     * @return $this
-     */
-    public function setCustomerGroupId($groupId)
-    {
-        $this->customerGroupId = $groupId;
-        return $this;
-    }
 }
-
-

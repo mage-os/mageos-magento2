@@ -63,5 +63,3 @@ class SessionQuoteLastAddedProductTestHelper extends Session
         return $this->lastAddedProductId;
     }
 }
-
- 

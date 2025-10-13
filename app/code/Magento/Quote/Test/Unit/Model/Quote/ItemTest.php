@@ -236,10 +236,7 @@ class ItemTest extends TestCase
         $existingQuantity = 2;
         $quantityToAdd = 3;
 
-        $parentItemMock = $this->getMockBuilder(Item::class)
-            ->onlyMethods(['addChild', '__wakeup'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $parentItemMock = $this->createPartialMock(Item::class, ['addChild', '__wakeup']);
 
         $this->model->setParentItem($parentItemMock);
         $this->model->setId(1);
@@ -540,10 +537,7 @@ class ItemTest extends TestCase
             self::PRODUCT_COST
         );
 
-        $parentItemMock = $this->getMockBuilder(Item::class)
-            ->onlyMethods(['addChild', '__wakeup'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $parentItemMock = $this->createPartialMock(Item::class, ['addChild', '__wakeup']);
 
         $this->model->setProduct($productMock);
         $this->model->setParentItem($parentItemMock);
@@ -978,13 +972,7 @@ class ItemTest extends TestCase
             self::PRODUCT_COST
         );
 
-        $typeInstanceMock = $this->createMock(AbstractType::class,
-            [],
-            '',
-            false,
-            false,
-            true,
-            ['updateQtyOption']);
+        $typeInstanceMock = $this->createMock(AbstractType::class);
         $productMock->expects($this->once())
             ->method('getTypeInstance')
             ->willReturn($typeInstanceMock);

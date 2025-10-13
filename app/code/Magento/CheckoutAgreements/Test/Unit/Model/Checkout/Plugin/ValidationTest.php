@@ -110,7 +110,6 @@ class ValidationTest extends TestCase
         );
         $this->storeEmulationMock = $this->createMock(Emulation::class);
 
-        $storeId = 1;
         $this->quoteRepositoryMock->expects($this->once())
             ->method('get')
             ->willReturn($this->quoteMock);
@@ -127,7 +126,6 @@ class ValidationTest extends TestCase
 
     public function testBeforeSavePaymentInformationAndPlaceOrder()
     {
-        $storeId = 1;
         $cartId = 100;
         $agreements = [1, 2, 3];
         $this->scopeConfigMock

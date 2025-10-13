@@ -53,16 +53,12 @@ class RendererTest extends TestCase
 
         $this->layout = $this->createMock(LayoutInterface::class);
 
-        $context = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $context = $this->createMock(Context::class);
         $context->expects($this->once())
             ->method('getLayout')
             ->willReturn($this->layout);
 
-        $this->imageBuilder = $this->getMockBuilder(ImageBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->imageBuilder = $this->createMock(ImageBuilder::class);
 
         $this->itemResolver = $this->createMock(
             ItemResolverInterface::class
@@ -135,13 +131,9 @@ class RendererTest extends TestCase
     public function testGetProductPriceHtml()
     {
         $priceHtml = 'some price html';
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $product = $this->createMock(Product::class);
 
-        $priceRender = $this->getMockBuilder(Render::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $priceRender = $this->createMock(Render::class);
 
         $this->layout->expects($this->atLeastOnce())
             ->method('getBlock')
@@ -171,9 +163,7 @@ class RendererTest extends TestCase
         /**
          * @var Actions|MockObject $blockMock
          */
-        $blockMock = $this->getMockBuilder(Actions::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $blockMock = $this->createMock(Actions::class);
 
         $this->layout->expects($this->once())
             ->method('getChildName')
@@ -187,9 +177,7 @@ class RendererTest extends TestCase
         /**
          * @var Item|MockObject $itemMock
          */
-        $itemMock = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $itemMock = $this->createMock(Item::class);
 
         $blockMock->expects($this->once())
             ->method('setItem')

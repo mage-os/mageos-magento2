@@ -11,6 +11,8 @@ use Magento\Quote\Model\Quote\Item;
 
 /**
  * Test helper that exposes a virtual quote item implementation for unit tests.
+ *
+ * @SuppressWarnings(PHPMD.BooleanGetMethodName)
  */
 class QuoteItemIsVirtualTestHelper extends Item
 {

@@ -38,5 +38,3 @@ class AgreementModelSetStoresTestHelper extends AgreementModel
         return $this;
     }
 }
-
-

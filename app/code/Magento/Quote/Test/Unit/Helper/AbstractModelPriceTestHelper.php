@@ -44,5 +44,3 @@ class AbstractModelPriceTestHelper extends AbstractModel
         return $this;
     }
 }
-
-

@@ -33,5 +33,3 @@ class RowTotalInclTaxFixedTestHelper extends DataObject
         return $this->row;
     }
 }
-
-

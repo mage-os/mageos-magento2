@@ -38,5 +38,3 @@ class ExtensionAttributesTestHelper
         return $this;
     }
 }
-
- 

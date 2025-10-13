@@ -77,5 +77,3 @@ class AddressForShippingTestHelper extends Address
         return (int)$this->getData('total_qty');
     }
 }
-
-

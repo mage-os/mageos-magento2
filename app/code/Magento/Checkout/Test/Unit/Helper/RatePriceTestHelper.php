@@ -33,5 +33,3 @@ class RatePriceTestHelper extends Rate
         return $this->price;
     }
 }
-
- 

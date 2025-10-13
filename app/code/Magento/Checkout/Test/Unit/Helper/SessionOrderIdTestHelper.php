@@ -42,5 +42,3 @@ class SessionOrderIdTestHelper extends Session
         return $this->lastOrderId;
     }
 }
-
- 

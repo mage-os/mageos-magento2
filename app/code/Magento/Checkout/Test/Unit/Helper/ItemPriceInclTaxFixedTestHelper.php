@@ -33,5 +33,3 @@ class ItemPriceInclTaxFixedTestHelper extends DataObject
         return $this->value;
     }
 }
-
-
