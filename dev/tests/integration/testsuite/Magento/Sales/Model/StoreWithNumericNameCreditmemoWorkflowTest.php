@@ -50,7 +50,6 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
      */
     private $creditmemoFactory;
 
-
     /**
      * @var ProductRepositoryInterface
      */
