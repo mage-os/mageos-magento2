@@ -24,7 +24,6 @@
             <!-- Create product -->
             <createData entity="SimpleProduct" stepKey="createProduct"/>
             <createData entity="Simple_Customer_Without_Address" stepKey="createCustomer"/>
-
         </before>
         <after>
             <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="customerLogoutStorefront"/>
@@ -34,7 +33,7 @@
             <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
         </after>
         <!-- Step 1:Navigate to storefront -->
-        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginCustomerToStorefront">
             <argument name="Customer" value="$createCustomer$" />
         </actionGroup>
         <!-- Step 2:Add product to cart -->
@@ -51,13 +50,13 @@
             <argument name="address" value="Canada_Address"/>
         </actionGroup>
         <!-- Step 4:Select First-Class Package International Service  USPS Shipping method  -->
-        <actionGroup ref="StorefrontSetShippingMethodActionGroup" stepKey="setShippingMethodUSPS">
-            <argument name="shippingMethodName" value="{{USPSShippingTypeUSPSConfigData.value}}"/>
+        <actionGroup ref="StorefrontSetShippingMethodActionGroup" stepKey="verifyFirstClassPackageInternationalServiceShippingMethodIsAvailableAndSelect">
+            <argument name="shippingMethodName" value="{{USPSFirstClassInternationalShippingMethodData.value}}"/>
         </actionGroup>
         <!-- Step 5:Place order  -->
         <actionGroup ref="StorefrontCheckoutClickNextButtonActionGroup" stepKey="goToPaymentStep"/>
         <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="selectPaymentMethod"/>
         <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="clickPlaceOrder"/>
-        <waitForElement selector="{{CheckoutSuccessMainSection.orderLink}}" stepKey="waitForOrderNumber"/>
+        <waitForElementVisible selector="{{CheckoutSuccessMainSection.orderLink}}" stepKey="waitForOrderNumber"/>
     </test>
 </tests>
