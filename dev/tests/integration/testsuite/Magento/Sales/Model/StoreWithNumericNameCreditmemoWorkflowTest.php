@@ -492,11 +492,10 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
      * Tests how store names with numeric prefixes are displayed
      *
      * @param CreditmemoInterface $creditmemo
-     * @param OrderInterface $order
      * @param StoreInterface $store
      * @return void
      */
-    private function verifyStoreNameRenderingInGrid(CreditmemoInterface $creditmemo, OrderInterface $order, StoreInterface $store): void
+    private function verifyStoreNameRenderingInGrid(CreditmemoInterface $creditmemo, StoreInterface $store): void
     {
         // Test store name rendering using the store renderer that would be used in grids
         $storeRenderer = $this->objectManager->create(StoreRenderer::class);
