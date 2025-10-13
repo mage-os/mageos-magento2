@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Tax\Block\Item\Price;
 
@@ -209,11 +209,7 @@ class Renderer extends \Magento\Framework\View\Element\Template
     public function getItemDisplayPriceExclTax()
     {
         $item = $this->getItem();
-        if ($item instanceof QuoteItem) {
-            return $item->getCalculationPrice();
-        } else {
-            return $item->getPrice();
-        }
+        return $item->getPrice();
     }
 
     /**
