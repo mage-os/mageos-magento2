@@ -37,6 +37,11 @@ class CartExtensionTestHelper implements CartExtensionInterface
     private $companyId;
 
     /**
+     * @var mixed
+     */
+    private $quoteTestAttribute;
+
+    /**
      * Constructor
      *
      * @param mixed $negotiableQuote
@@ -131,6 +136,28 @@ class CartExtensionTestHelper implements CartExtensionInterface
     public function setCompanyId($companyId)
     {
         $this->companyId = $companyId;
+        return $this;
+    }
+
+    /**
+     * Get quote test attribute
+     *
+     * @return mixed
+     */
+    public function getQuoteTestAttribute()
+    {
+        return $this->quoteTestAttribute;
+    }
+
+    /**
+     * Set quote test attribute
+     *
+     * @param mixed $quoteTestAttribute
+     * @return $this
+     */
+    public function setQuoteTestAttribute($quoteTestAttribute)
+    {
+        $this->quoteTestAttribute = $quoteTestAttribute;
         return $this;
     }
 }
