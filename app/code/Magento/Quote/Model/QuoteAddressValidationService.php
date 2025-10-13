@@ -8,11 +8,10 @@ declare(strict_types=1);
 namespace Magento\Quote\Model;
 
 use Magento\Framework\Exception\InputException;
-use Magento\Quote\Model\Quote;
+use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Model\Address\Validator\AddressAttributeValidatorInterface;
 use Magento\Quote\Api\Data\AddressInterface;
 use Magento\Checkout\Model\AddressComparatorInterface;
-use Magento\Quote\Model\Quote\Address;
 
 /**
  * Centralized address validation service for quotes.
@@ -44,12 +43,14 @@ class QuoteAddressValidationService
     /**
      * Validate addresses using validation rules
      *
+     * @param CartInterface $quote
      * @param AddressInterface|null $shippingAddress
      * @param AddressInterface|null $billingAddress
      * @return void
      * @throws InputException
      */
     public function validateAddressesWithRules(
+        CartInterface $quote,
         ?AddressInterface $shippingAddress = null,
         ?AddressInterface $billingAddress = null
     ): void {
@@ -57,15 +58,35 @@ class QuoteAddressValidationService
             return;
         }
 
+        // Get current addresses from quote for comparison
+        $quoteShippingAddress = $quote->getShippingAddress();
+        $quoteBillingAddress = $quote->getBillingAddress();
+
+        // If shipping and billing addresses from request are the same, validate only once
         $addressesAreSame = $this->areAddressesEqual($shippingAddress, $billingAddress);
-
-        $shippingValidated = $this->validateSingleAddress($shippingAddress, 'shipping');
-
-        if ($addressesAreSame && $shippingValidated) {
+        if ($addressesAreSame) {
+            // Only validate if different from quote shipping address
+            if (!$this->areAddressesEqual($shippingAddress, $quoteShippingAddress)) {
+                $this->validateSingleAddress($shippingAddress, 'shipping');
+            }
             return;
         }
 
-        $this->validateSingleAddress($billingAddress, 'billing');
+        // Validate shipping address only if it's different from quote shipping address
+        $shouldValidateShipping = $shippingAddress
+            && !$this->areAddressesEqual($shippingAddress, $quoteShippingAddress);
+
+        if ($shouldValidateShipping) {
+            $this->validateSingleAddress($shippingAddress, 'shipping');
+        }
+
+        // Validate billing address only if it's different from quote billing address
+        $shouldValidateBilling = $billingAddress
+            && !$this->areAddressesEqual($billingAddress, $quoteBillingAddress);
+
+        if ($shouldValidateBilling) {
+            $this->validateSingleAddress($billingAddress, 'billing');
+        }
     }
 
     /**

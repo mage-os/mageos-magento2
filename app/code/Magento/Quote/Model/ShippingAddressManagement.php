@@ -108,6 +108,12 @@ class ShippingAddressManagement implements \Magento\Quote\Model\ShippingAddressM
         }
 
         $this->addressValidator->validateForCart($quote, $address);
+
+        $this->quoteAddressValidationService->validateAddressesWithRules(
+            $quote,
+            $address
+        );
+
         $quote->setShippingAddress($address);
         $address = $quote->getShippingAddress();
 
@@ -124,8 +130,6 @@ class ShippingAddressManagement implements \Magento\Quote\Model\ShippingAddressM
         $address->setSameAsBilling($sameAsBilling);
         $address->setSaveInAddressBook($saveInAddressBook);
         $address->setCollectShippingRates(true);
-
-        $this->quoteAddressValidationService->validateAddressesWithRules($address, null);
 
         try {
             $address->save();

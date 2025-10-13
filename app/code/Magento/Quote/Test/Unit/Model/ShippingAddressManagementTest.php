@@ -160,7 +160,11 @@ class ShippingAddressManagementTest extends TestCase
         $this->quoteAddressValidationServiceMock
             ->expects($this->once())
             ->method('validateAddressesWithRules')
-            ->with($addressMock, null);
+            ->with(
+                $this->isInstanceOf(Quote::class),
+                $addressMock,
+                null
+            );
         $this->model->assign($cartId, $addressMock);
     }
 

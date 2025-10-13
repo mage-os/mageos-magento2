@@ -196,6 +196,11 @@ class ShippingInformationManagement implements ShippingInformationManagementInte
 
         try {
             $billingAddress = $addressInformation->getBillingAddress();
+            $this->quoteAddressValidationService->validateAddressesWithRules(
+                $quote,
+                $address,
+                $billingAddress
+            );
             if ($billingAddress) {
                 $this->updateCustomerBillingAddressId($quote, $billingAddress);
                 if (!$billingAddress->getCustomerAddressId()) {
@@ -212,8 +217,6 @@ class ShippingInformationManagement implements ShippingInformationManagementInte
             $quote = $this->prepareShippingAssignment($quote, $address, $carrierCode . '_' . $methodCode);
 
             $quote->setIsMultiShipping(false);
-
-            $this->quoteAddressValidationService->validateAddressesWithRules($address, $billingAddress);
 
             $this->quoteRepository->save($quote);
         } catch (LocalizedException $e) {
