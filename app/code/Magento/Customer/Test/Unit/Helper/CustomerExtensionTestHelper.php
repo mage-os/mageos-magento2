@@ -44,7 +44,7 @@ class CustomerExtensionTestHelper implements CustomerExtensionInterface
     /**
      * @var mixed
      */
-    private $customerConsent;
+    private $testGroup;
 
     /**
      * Constructor
@@ -167,24 +167,24 @@ class CustomerExtensionTestHelper implements CustomerExtensionInterface
     }
 
     /**
-     * Get customer consent
+     * Get test group
      *
      * @return mixed
      */
-    public function getCustomerConsent()
+    public function getTestGroup()
     {
-        return $this->customerConsent;
+        return $this->testGroup;
     }
 
     /**
-     * Set customer consent
+     * Set test group
      *
-     * @param mixed $customerConsent
+     * @param mixed $testGroup
      * @return $this
      */
-    public function setCustomerConsent($customerConsent)
+    public function setTestGroup($testGroup)
     {
-        $this->customerConsent = $customerConsent;
+        $this->testGroup = $testGroup;
         return $this;
     }
 }
