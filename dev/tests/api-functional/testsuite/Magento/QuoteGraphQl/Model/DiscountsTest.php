@@ -30,6 +30,7 @@ class DiscountsTest extends GraphQlAbstract
     /** @var CustomerTokenServiceInterface */
     private CustomerTokenServiceInterface $customerTokenService;
 
+    /** @var Rule|null */
     protected ?Rule $createdRule = null;
 
     /** @inheritdoc */
