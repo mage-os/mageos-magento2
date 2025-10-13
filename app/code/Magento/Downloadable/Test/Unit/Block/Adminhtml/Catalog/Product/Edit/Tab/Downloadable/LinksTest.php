@@ -108,7 +108,7 @@ class LinksTest extends TestCase
      */
     private function setupDownloadableProductModel(): void
     {
-        $this->downloadableProductModel = $this->createPartialMock(Type::class, []);
+        $this->downloadableProductModel = new TypeTestHelper();
         $this->downloadableLinkModel = new LinkTestHelper();
         // Set up the test data
         $this->downloadableLinkModel->setId(1)

@@ -78,10 +78,3 @@ class TypeTestHelper extends Type
         return $this->data['selection_id'] ?? null;
     }
 }
-
-
-
-
-
-
-

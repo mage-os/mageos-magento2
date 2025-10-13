@@ -38,5 +38,4 @@ class FrontendTestHelper extends DefaultFrontend
     {
         return $this->data['input_type'] ?? 'input_type';
     }
-
 }

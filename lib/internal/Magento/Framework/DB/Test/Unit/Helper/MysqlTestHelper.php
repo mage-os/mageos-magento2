@@ -19,6 +19,11 @@ use Magento\Framework\DB\Select;
 class MysqlTestHelper extends Mysql
 {
     /**
+     * @var callable|null
+     */
+    private $quoteIdentifierCallback;
+
+    /**
      * @var array
      */
     private $data = [];
@@ -140,5 +145,33 @@ class MysqlTestHelper extends Mysql
     {
         $this->data[$key] = $value;
         return $this;
+    }
+
+    /**
+     * Set callback for quoteIdentifier method
+     *
+     * @param callable $callback
+     * @return $this
+     */
+    public function setQuoteIdentifierCallback($callback)
+    {
+        $this->quoteIdentifierCallback = $callback;
+        return $this;
+    }
+
+    /**
+     * Mock quoteIdentifier method
+     *
+     * @param string|array $ident
+     * @param bool $auto
+     * @return string|array
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function quoteIdentifier($ident, $auto = false)
+    {
+        if ($this->quoteIdentifierCallback) {
+            return call_user_func($this->quoteIdentifierCallback, $ident);
+        }
+        return $this->data['quote_identifier'] ?? $ident;
     }
 }

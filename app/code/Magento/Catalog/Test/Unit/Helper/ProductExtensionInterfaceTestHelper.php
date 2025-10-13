@@ -214,9 +214,9 @@ class ProductExtensionInterfaceTestHelper implements ProductExtensionInterface
     /**
      * @return mixed|null
      */
-    public function getGiftcardAmounts()
+    public function getGiftAmounts()
     {
-        return $this->data['giftcard_amounts'] ?? null;
+        return $this->data['gift_amounts'] ?? null;
     }
 
     /**

@@ -11,27 +11,6 @@ use Magento\Downloadable\Model\Link;
 
 /**
  * Test helper for Downloadable Link
- *
- * Extends Link class and uses internal $data array for storage since parent
- * constructor is skipped. Parent has real methods (getTitle, setPrice, etc.)
- * which call getData/setData, so we override those to use our $data array.
- *
- * This allows parent methods to work: parent's getTitle() calls $this->getData('title')
- * which now reads from our $data array.
- *
- * Additionally provides custom methods that don't exist in parent (getStoreTitle,
- * setProductId, etc.) following the pattern: $this->data['key'] ?? null.
- *
- * Usage Example:
- * ```php
- * // Direct usage with data
- * $link = new LinkTestHelper(['id' => 1, 'title' => 'Link Title']);
- * $link->getTitle(); // Works! Calls parent's getTitle() → getData('title')
- *
- * // Or with mocking
- * $link = $this->createPartialMock(LinkTestHelper::class, ['getTitle']);
- * $link->method('getTitle')->willReturn('Mocked Title');
- * ```
  */
 class LinkTestHelper extends Link
 {
@@ -42,9 +21,6 @@ class LinkTestHelper extends Link
 
     /**
      * Skip parent constructor to avoid dependencies
-     *
-     * Parent constructor requires Context, Registry, ExtensionFactory,
-     * AttributeValueFactory, Resource, and Collection dependencies.
      *
      * @param array $data Optional initial data
      */

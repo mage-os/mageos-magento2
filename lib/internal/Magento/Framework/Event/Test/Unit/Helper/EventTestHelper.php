@@ -35,19 +35,22 @@ class EventTestHelper extends Event
     private $items;
 
     /**
-     * @var
+     * @var mixed
      */
     private $store;
+    
     /**
-     * @var
+     * @var mixed
      */
     private $result;
+    
     /**
-     * @var
+     * @var mixed
      */
     private $quote;
+    
     /**
-     * @var
+     * @var mixed
      */
     private $order;
 

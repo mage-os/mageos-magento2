@@ -14,6 +14,9 @@ use Magento\Framework\Pricing\Amount\Base;
  */
 class AmountTestHelper extends Base
 {
+    /**
+     * @var array
+     */
     private $data = [];
 
     /**

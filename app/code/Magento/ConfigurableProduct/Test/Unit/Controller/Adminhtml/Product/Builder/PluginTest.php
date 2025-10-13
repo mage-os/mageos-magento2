@@ -95,7 +95,10 @@ class PluginTest extends TestCase
         );
         $this->configurableMock = $this->createPartialMock(
             ConfigurableTestHelper::class,
-            ['setStoreId', 'load', 'setTypeId', 'getTypeInstance', 'getSetAttributes', 'getIdFieldName', 'getData', 'getWebsiteIds']
+            [
+                'setStoreId', 'load', 'setTypeId', 'getTypeInstance',
+                'getSetAttributes', 'getIdFieldName', 'getData', 'getWebsiteIds'
+            ]
         );
         $this->frontendAttrMock = $this->createMock(
             Frontend::class

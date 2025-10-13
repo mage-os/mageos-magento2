@@ -141,7 +141,6 @@ class ProductTestHelper extends Product
         return $this;
     }
 
-
     /**
      * Override getTypeInstance for testing
      *
@@ -207,8 +206,6 @@ class ProductTestHelper extends Product
         $this->data['store_filter'] = $storeFilter;
         return $this;
     }
-
-
 
     /**
      * Override getPriceInfo for testing
@@ -307,7 +304,6 @@ class ProductTestHelper extends Product
         $this->data['preconfigured_values'] = $values;
         return $this;
     }
-
 
     /**
      * Custom getSelectionId method for Bundle testing
@@ -1918,7 +1914,6 @@ class ProductTestHelper extends Product
         $this->data['required_options'] = $required;
         return $this;
     }
-
 
     /**
      * Set type has options flag

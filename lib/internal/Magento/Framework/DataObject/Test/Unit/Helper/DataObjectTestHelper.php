@@ -293,4 +293,48 @@ class DataObjectTestHelper extends DataObject
     {
         return $this->data['links'];
     }
+
+    /**
+     * Get position method for testing
+     *
+     * @return mixed
+     */
+    public function getPosition()
+    {
+        return $this->data['position'] ?? null;
+    }
+
+    /**
+     * Set position method for testing
+     *
+     * @param mixed $position
+     * @return self
+     */
+    public function setPosition($position): self
+    {
+        $this->data['position'] = $position;
+        return $this;
+    }
+
+    /**
+     * Get product attribute for testing
+     *
+     * @return mixed
+     */
+    public function getProductAttribute()
+    {
+        return $this->data['product_attribute'] ?? null;
+    }
+
+    /**
+     * Set product attribute for testing
+     *
+     * @param mixed $productAttribute
+     * @return self
+     */
+    public function setProductAttribute($productAttribute): self
+    {
+        $this->data['product_attribute'] = $productAttribute;
+        return $this;
+    }
 }

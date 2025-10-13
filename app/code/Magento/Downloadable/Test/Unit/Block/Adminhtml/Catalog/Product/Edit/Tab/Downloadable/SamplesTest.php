@@ -90,7 +90,7 @@ class SamplesTest extends TestCase
             'getTypeInstance',
             'getStoreId'
         ]);
-        $this->downloadableProductModel = $this->createPartialMock(Type::class, []);
+        $this->downloadableProductModel = new TypeTestHelper();
         $this->downloadableSampleModel = new SampleTestHelper();
         $this->coreRegistry = $this->createPartialMock(Registry::class, ['registry']);
         $this->escaper = $this->createPartialMock(Escaper::class, ['escapeHtml']);

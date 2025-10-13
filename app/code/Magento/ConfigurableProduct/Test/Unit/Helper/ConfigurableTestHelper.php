@@ -169,7 +169,6 @@ class ConfigurableTestHelper extends Configurable
         return $this;
     }
 
-
     /**
      * Set website IDs for testing
      *
