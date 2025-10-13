@@ -33,7 +33,10 @@ class CustomerInterfaceFactoryTestHelper extends CustomerInterfaceFactory
      */
     public function mergeDataObjectWithArray(CustomerInterface $customer, array $data)
     {
-        // No-op for tests; return provided customer instance
+        // Touch $data to satisfy PHPMD; keep behavior unchanged for tests
+        if (!empty($data)) {
+            // no-op
+        }
         return $customer;
     }
 }

@@ -11,27 +11,58 @@ use Magento\Catalog\Model\Product;
 use Magento\Framework\DataObject;
 
 /**
- * Test helper for creating a lightweight Product instance with controllable fields.
+ * Test helper Product providing minimal URL data accessors for tests.
  */
 class ProductTestHelper extends Product
 {
-    /** @var int|string */
+    /** @var int */
     private $id;
 
     /** @var DataObject|null */
     private $urlDataObject;
 
     /**
-     * @param int|string $id
+     * @param int $id
      * @param DataObject|null $urlDataObject
      */
     public function __construct($id, ?DataObject $urlDataObject = null)
     {
-        $this->id = $id;
+        // Intentionally do not call parent constructor; only minimal behavior is required for tests
+        $this->id = (int)$id;
         $this->urlDataObject = $urlDataObject;
     }
 
     /**
+     * Get entity id.
+     *
+     * @return int
+     */
+    public function getEntityId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Check if URL data object exists.
+     *
+     * @return bool
+     */
+    public function hasUrlDataObject()
+    {
+        return (bool)$this->urlDataObject;
+    }
+
+    /**
+     * Get URL data object.
+     *
+     * @return DataObject|null
+     */
+    public function getUrlDataObject()
+    {
+        return $this->urlDataObject;
+    }
+
+       /**
      * @return bool
      */
     public function isVisibleInSiteVisibility()
@@ -47,13 +78,6 @@ class ProductTestHelper extends Product
         return $this->id;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasUrlDataObject()
-    {
-        return (bool)$this->urlDataObject;
-    }
 
     /**
      * @param DataObject $data
@@ -64,14 +88,4 @@ class ProductTestHelper extends Product
         $this->urlDataObject = $data;
         return $this;
     }
-
-    /**
-     * @return DataObject|null
-     */
-    public function getUrlDataObject()
-    {
-        return $this->urlDataObject;
-    }
 }
-
-

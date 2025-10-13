@@ -92,27 +92,9 @@ class CustomerManagementTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->customerRepositoryMock = $this->createMock(CustomerRepositoryInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['getById']);
-        $this->customerAddressRepositoryMock = $this->createMock(AddressRepositoryInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['getById']);
-        $this->accountManagementMock = $this->createMock(AccountManagementInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            []);
+        $this->customerRepositoryMock = $this->createMock(CustomerRepositoryInterface::class);
+        $this->customerAddressRepositoryMock = $this->createMock(AddressRepositoryInterface::class);
+        $this->accountManagementMock = $this->createMock(AccountManagementInterface::class);
         $this->quoteMock = $this->getMockBuilder(Quote::class)
             ->addMethods(['getPasswordHash'])
             ->onlyMethods(['getId', 'getCustomer', 'getBillingAddress', 'getShippingAddress', 'setCustomer',
@@ -120,20 +102,8 @@ class CustomerManagementTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->quoteAddressMock = $this->createMock(Address::class);
-        $this->customerMock = $this->createMock(CustomerInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['getId', 'getDefaultBilling']);
-        $this->customerAddressMock = $this->createMock(AddressInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            []);
+        $this->customerMock = $this->createMock(CustomerInterface::class);
+        $this->customerAddressMock = $this->createMock(AddressInterface::class);
         $this->addressFactoryMock = $this->getMockBuilder(AddressFactory::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
@@ -141,13 +111,7 @@ class CustomerManagementTest extends TestCase
         $this->validatorFactoryMock = $this->getMockBuilder(Factory::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->customerAddressFactoryMock = $this->createMock(AddressInterfaceFactory::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['create']);
+        $this->customerAddressFactoryMock = $this->createMock(AddressInterfaceFactory::class);
         $this->regionFactoryMock = $this->getMockBuilder(RegionInterfaceFactory::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])

@@ -58,6 +58,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Model\Store;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Store\Test\Unit\Helper\StoreIdGetterTestHelper;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -372,11 +373,8 @@ class QuoteManagementTest extends TestCase
         $this->quoteRepositoryMock->expects($this->once())->method('save')->with($quoteMock);
         $quoteMock->expects($this->once())->method('getId')->willReturn($quoteId);
 
-        $storeObj = new class($storeId) {
-            private $id; public function __construct($id){ $this->id = $id; }
-            public function getStoreId(){ return $this->id; }
-        };
-        $this->storeManagerMock->expects($this->once())->method('getStore')->willReturn($storeObj);
+        $this->storeManagerMock->expects($this->once())->method('getStore')
+            ->willReturn(new StoreIdGetterTestHelper($storeId));
 
         $this->assertEquals($quoteId, $this->model->createEmptyCart());
     }
@@ -414,11 +412,8 @@ class QuoteManagementTest extends TestCase
         $this->customerRepositoryMock->expects($this->atLeastOnce())->method('getById')->willReturn($customer);
         $customer->expects($this->atLeastOnce())->method('getDefaultBilling')->willReturn(0);
 
-        $storeObj = new class($storeId) {
-            private $id; public function __construct($id){ $this->id = $id; }
-            public function getStoreId(){ return $this->id; }
-        };
-        $this->storeManagerMock->expects($this->once())->method('getStore')->willReturn($storeObj);
+        $this->storeManagerMock->expects($this->once())->method('getStore')
+            ->willReturn(new StoreIdGetterTestHelper($storeId));
 
         $this->assertEquals($quoteId, $this->model->createEmptyCartForCustomer($userId));
     }
@@ -451,11 +446,8 @@ class QuoteManagementTest extends TestCase
         $this->quoteFactoryMock->expects($this->never())->method('create')->willReturn($quoteMock);
         $this->quoteRepositoryMock->expects($this->once())->method('save')->with($quoteMock);
 
-        $storeObj = new class($storeId) {
-            private $id; public function __construct($id){ $this->id = $id; }
-            public function getStoreId(){ return $this->id; }
-        };
-        $this->storeManagerMock->expects($this->once())->method('getStore')->willReturn($storeObj);
+        $this->storeManagerMock->expects($this->once())->method('getStore')
+            ->willReturn(new StoreIdGetterTestHelper($storeId));
 
         $this->model->createEmptyCartForCustomer($userId);
     }
@@ -1414,26 +1406,6 @@ class QuoteManagementTest extends TestCase
         $this->lockManagerMock->method('lock')->willReturn(true);
         $this->quoteRepositoryMock->expects($this->once())->method('save')->with($quote);
         $this->assertEquals($order, $this->model->submit($quote, $orderData));
-    }
-
-    /**
-     * Get mock for abstract class with methods.
-     *
-     * @param string $className
-     * @param array $methods
-     *
-     * @return MockObject
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     */
-    private function createPartialMockForAbstractClass(string $className, array $methods = []): MockObject
-    {
-        return $this->createMock($className,
-            [],
-            '',
-            true,
-            true,
-            true,
-            $methods);
     }
 
     /**

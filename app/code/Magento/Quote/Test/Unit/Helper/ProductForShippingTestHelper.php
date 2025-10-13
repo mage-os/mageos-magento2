@@ -15,6 +15,12 @@ class ProductForShippingTestHelper
     /** @var int */
     private $id = 1;
 
+    /** @var float|int|null */
+    private $finalPrice = null;
+
+    /** @var array|null */
+    private $customOptions = null;
+
     /**
      * No-op setter used by quote item flow.
      *
@@ -23,6 +29,8 @@ class ProductForShippingTestHelper
      */
     public function setFinalPrice($price)
     {
+        // Record provided price to satisfy PHPMD and allow optional assertions
+        $this->finalPrice = $price;
         return $this;
     }
 
@@ -54,6 +62,8 @@ class ProductForShippingTestHelper
      */
     public function setCustomOptions($options)
     {
+        // Store options for completeness and PHPMD usage
+        $this->customOptions = $options;
         return $this;
     }
 
@@ -153,6 +163,9 @@ class ProductForShippingTestHelperStockItem
      * Whether qty is decimal.
      *
      * @return bool
+     */
+    /**
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getIsQtyDecimal()
     {

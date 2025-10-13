@@ -10,6 +10,7 @@ namespace Magento\Checkout\Test\Unit\Helper;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Product;
 use Magento\Checkout\Helper\Cart;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\App\Request\Http;
@@ -18,7 +19,6 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Url\EncoderInterface;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Item;
-
 use Magento\Store\Model\ScopeInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -148,14 +148,10 @@ class CartTest extends TestCase
         $productEntityId = 1;
         $storeId = 1;
         $isRequestSecure = false;
-        $productMock = new class($productEntityId, new DataObject(['store_id' => $storeId])) extends Product {
-            private $id;
-            private $urlDataObject;
-            public function __construct($id, $urlDataObject) { $this->id = $id; $this->urlDataObject = $urlDataObject; }
-            public function getEntityId() { return $this->id; }
-            public function hasUrlDataObject() { return (bool)$this->urlDataObject; }
-            public function getUrlDataObject() { return $this->urlDataObject; }
-        };
+        $productMock = new ProductTestHelper(
+            $productEntityId,
+            new DataObject(['store_id' => $storeId])
+        );
 
         $this->requestMock->method('getRouteName')->willReturn('checkout');
         $this->requestMock->method('getControllerName')->willReturn('cart');
@@ -198,14 +194,10 @@ class CartTest extends TestCase
         $productEntityId = 1;
         $storeId = 1;
         $isRequestSecure = false;
-        $productMock = new class($productEntityId, new DataObject(['store_id' => $storeId])) extends Product {
-            private $id;
-            private $urlDataObject;
-            public function __construct($id, $urlDataObject) { $this->id = $id; $this->urlDataObject = $urlDataObject; }
-            public function getEntityId() { return $this->id; }
-            public function hasUrlDataObject() { return (bool)$this->urlDataObject; }
-            public function getUrlDataObject() { return $this->urlDataObject; }
-        };
+        $productMock = new ProductTestHelper(
+            $productEntityId,
+            new DataObject(['store_id' => $storeId])
+        );
 
         $currentUrl = 'http://www.example.com/';
         $this->urlBuilderMock->method('getCurrentUrl')->willReturn($currentUrl);

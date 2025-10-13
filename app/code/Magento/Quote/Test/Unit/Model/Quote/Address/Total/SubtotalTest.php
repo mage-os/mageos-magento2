@@ -25,6 +25,8 @@ use Magento\Quote\Model\Quote\Item;
 use Magento\Store\Model\Store;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Quote\Test\Unit\Helper\TotalTestHelper;
+use Magento\Quote\Test\Unit\Helper\ProductExtensionForSubtotalTestHelper;
 
 /**
  * Test address total collector model.
@@ -138,7 +140,7 @@ class SubtotalTest extends TestCase
         $store->method('getWebsiteId')->willReturn(10);
         $product->method('getStore')->willReturn($store);
         $product->expects($this->any())->method('isVisibleInCatalog')->willReturn(true);
-        $extensionAttribute = new \Magento\Quote\Test\Unit\Helper\ProductExtensionForSubtotalTestHelper($this->stockItemMock);
+        $extensionAttribute = new ProductExtensionForSubtotalTestHelper($this->stockItemMock);
         $product->expects($this->atLeastOnce())->method('getExtensionAttributes')->willReturn($extensionAttribute);
         $quote->expects($this->any())->method('getStore')->willReturn($store);
         $quoteItem->setProduct($product)->setQuote($quote);
@@ -186,13 +188,10 @@ class SubtotalTest extends TestCase
         ];
 
         $quoteMock = $this->createMock(Quote::class);
-        $totalMock = new class extends Total {
-            public function __construct() {}
-            public function setSubtotal($val) { $this->setData('subtotal', $val); return $this; }
-            public function getSubtotal() { return (int)$this->getData('subtotal'); }
-        };
-
+        $totalMock = new TotalTestHelper();
         $totalMock->setSubtotal(100);
+
+
 
         $this->assertEquals($expectedResult, $this->subtotalModel->fetch($quoteMock, $totalMock));
     }

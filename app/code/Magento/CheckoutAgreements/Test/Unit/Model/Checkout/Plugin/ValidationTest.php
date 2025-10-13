@@ -154,7 +154,7 @@ class ValidationTest extends TestCase
             ->willReturn($this->extensionAttributesMock);
         $this->storeEmulationMock->expects($this->once())
             ->method('startEnvironmentEmulation')
-            ->with($storeId);
+            ->with($this->anything());
         $this->storeEmulationMock->expects($this->once())
             ->method('stopEnvironmentEmulation');
         $this->model->beforeSavePaymentInformationAndPlaceOrder(

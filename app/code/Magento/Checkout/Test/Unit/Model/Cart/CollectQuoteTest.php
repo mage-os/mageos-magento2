@@ -88,13 +88,7 @@ class CollectQuoteTest extends TestCase
     protected function setUp(): void
     {
         $this->customerSessionMock = $this->createMock(CustomerSession::class);
-        $this->customerRepositoryMock = $this->createMock(CustomerRepositoryInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['getById']);
+        $this->customerRepositoryMock = $this->createMock(CustomerRepositoryInterface::class);
         $this->addressRepositoryMock = $this->createMock(AddressRepositoryInterface::class);
         $this->estimateAddressMock = $this->createMock(EstimateAddressInterface::class);
         $this->estimateAddressFactoryMock =

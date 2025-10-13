@@ -135,14 +135,8 @@ class OnepageTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->addressRepositoryMock = $this->createMock(AddressRepositoryInterface::class,
-            ['get'],
-            '',
-            false);
-        $this->accountManagementMock = $this->createMock(AccountManagementInterface::class,
-            [],
-            '',
-            false);
+        $this->addressRepositoryMock = $this->createMock(AddressRepositoryInterface::class);
+        $this->accountManagementMock = $this->createMock(AccountManagementInterface::class);
         $this->eventManagerMock = $this->createMock(ManagerInterface::class);
         $this->checkoutHelperMock = $this->createMock(Data::class);
         $this->customerUrlMock = $this->createMock(Url::class);
@@ -174,10 +168,7 @@ class OnepageTest extends TestCase
         $this->randomMock = $this->createMock(Random::class);
         $this->encryptorMock = $this->createMock(EncryptorInterface::class);
 
-        $this->customerRepositoryMock = $this->createMock(CustomerRepositoryInterface::class,
-            [],
-            '',
-            false);
+        $this->customerRepositoryMock = $this->createMock(CustomerRepositoryInterface::class);
 
         $orderSenderMock = $this->createMock(OrderSender::class);
 
@@ -243,10 +234,7 @@ class OnepageTest extends TestCase
     #[DataProvider('initCheckoutDataProvider')]
     public function testInitCheckout($stepData, $isLoggedIn, $isSetStepDataCalled)
     {
-        $customer = $this->createMock(CustomerInterface::class,
-            [],
-            '',
-            false);
+        $customer = $this->createMock(CustomerInterface::class);
         /** @var Quote|MockObject $quoteMock */
         $quoteMock = $this->createMock(Quote::class);
         $quoteMock->expects($this->once())->method('isMultipleShippingAddresses')->willReturn(true);

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2023 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -25,6 +25,7 @@ use Magento\Quote\Test\Unit\Helper\RateTestHelper;
 
 /**
  * @see SelectedShippingMethod
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class SelectedShippingMethodTest extends TestCase
 {
@@ -86,7 +87,10 @@ class SelectedShippingMethodTest extends TestCase
         $this->resolveInfoMock = $this->createMock(ResolveInfo::class);
         $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
         $this->addressMock = new AddressShippingMethodGraphQlTestHelper();
-        $this->rateMock = new RateTestHelper('shipping_method', 'shipping_carrier', 'shipping_carrier');
+        $this->rateMock = (new RateTestHelper())
+            ->setMethod('shipping_method')
+            ->setCarrier('shipping_carrier')
+            ->setCode('shipping_carrier');
         $this->quoteMock = new QuoteCurrencyCodeTestHelper('USD');
         $this->selectedShippingMethod = new SelectedShippingMethod(
             $this->shippingMethodConverterMock

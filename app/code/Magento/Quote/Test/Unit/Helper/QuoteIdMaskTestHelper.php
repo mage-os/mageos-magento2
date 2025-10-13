@@ -32,6 +32,7 @@ class QuoteIdMaskTestHelper extends QuoteIdMask
      * @param int|string $id
      * @param string|null $field
      * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function load($id, $field = null)
     {

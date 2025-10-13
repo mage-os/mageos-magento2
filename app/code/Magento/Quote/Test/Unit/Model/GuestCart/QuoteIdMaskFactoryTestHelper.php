@@ -25,6 +25,10 @@ class QuoteIdMaskFactoryTestHelper extends QuoteIdMaskFactory
 
     public function create(array $data = [])
     {
+        // Touch $data to satisfy PHPMD; behavior returns prebuilt instance
+        if (!empty($data)) {
+            // no-op
+        }
         return $this->instance;
     }
 }

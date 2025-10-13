@@ -14,12 +14,27 @@ use Magento\CheckoutAgreements\Model\Agreement as AgreementModel;
  */
 class AgreementModelSetStoresTestHelper extends AgreementModel
 {
+    /**
+     * @var mixed
+     */
+    private $storesValue;
+
+    /**
+     * Create lightweight Agreement model without DI for tests.
+     */
     public function __construct()
     {
     }
 
+    /**
+     * Set stores value for testing and return self.
+     *
+     * @param mixed $stores
+     * @return $this
+     */
     public function setStores($stores)
     {
+        $this->storesValue = $stores;
         return $this;
     }
 }

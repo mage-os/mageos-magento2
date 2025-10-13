@@ -23,6 +23,9 @@ class AbstractItemForTestHelper extends AbstractItem
     /** @var float|int */
     private $discountAmount = 0;
 
+    /** @var string|null */
+    private $lastOptionCode = null;
+
     /**
      * Create a test item without calling parent constructor.
      */
@@ -113,6 +116,8 @@ class AbstractItemForTestHelper extends AbstractItem
      */
     public function getOptionByCode($code)
     {
+        // Record the last requested option code for PHPMD and potential assertions
+        $this->lastOptionCode = (string)$code;
         return null;
     }
 }

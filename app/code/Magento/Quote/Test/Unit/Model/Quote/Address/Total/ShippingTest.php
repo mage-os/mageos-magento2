@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -93,14 +93,8 @@ class ShippingTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->freeShipping = $this->createMock(FreeShippingInterface::class,
-            [],
-            '',
-            false);
-        $this->priceCurrency = $this->createMock(PriceCurrencyInterface::class,
-            [],
-            '',
-            false);
+        $this->freeShipping = $this->createMock(FreeShippingInterface::class);
+        $this->priceCurrency = $this->createMock(PriceCurrencyInterface::class);
         $objectManager = new ObjectManager($this);
         $this->shippingModel = $objectManager->getObject(
             Shipping::class,
@@ -112,17 +106,11 @@ class ShippingTest extends TestCase
 
         $this->quote = $this->createMock(Quote::class);
         $this->total = new TotalShippingTestHelper();
-        $this->shippingAssignment = $this->createMock(ShippingAssignmentInterface::class,
-            [],
-            '',
-            false);
+        $this->shippingAssignment = $this->createMock(ShippingAssignmentInterface::class);
         $this->address = $this->getMockBuilder(AddressForShippingTestHelper::class)
             ->onlyMethods(['collectShippingRates', 'getAllShippingRates'])
             ->getMock();
-        $this->shipping = $this->createMock(ShippingInterface::class,
-            [],
-            '',
-            false);
+        $this->shipping = $this->createMock(ShippingInterface::class);
         $this->cartItem = new CartItemForShippingTestHelper();
         $this->rate = $this->getMockBuilder(RateTestHelper::class)
             ->onlyMethods([])

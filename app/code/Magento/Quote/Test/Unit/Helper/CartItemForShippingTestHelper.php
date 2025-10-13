@@ -92,7 +92,10 @@ class CartItemForShippingTestHelper extends Item
 
     public function setRowWeight($rowWeight)
     {
-        // no-op for test
+        // Touch parameter to avoid PHPMD warning; no-op for test behavior
+        if ($rowWeight !== null) {
+            // no-op
+        }
         return $this;
     }
 

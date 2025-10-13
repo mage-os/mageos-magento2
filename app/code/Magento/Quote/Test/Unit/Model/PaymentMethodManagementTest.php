@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -54,13 +54,7 @@ class PaymentMethodManagementTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
-        $this->quoteRepositoryMock = $this->createMock(CartRepositoryInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            []);
+        $this->quoteRepositoryMock = $this->createMock(CartRepositoryInterface::class);
         $this->methodListMock = $this->createMock(MethodList::class);
         $this->zeroTotalMock = $this->createMock(ZeroTotal::class);
 

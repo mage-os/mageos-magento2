@@ -31,6 +31,9 @@ class QuoteIdMaskTestHelper extends QuoteIdMask
      * @param string $maskedId
      * @return $this
      */
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function load($modelId, $field = null)
     {
         $this->maskedId = $modelId;

@@ -25,10 +25,9 @@ use PHPUnit\Framework\TestCase;
 use Magento\GraphQl\Test\Unit\Helper\ContextExtensionGetStoreTestHelper;
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-/**
  * Unit tests for PlaceOrder resolver exception processing.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class PlaceOrderExceptionProcessingTest extends TestCase
 {

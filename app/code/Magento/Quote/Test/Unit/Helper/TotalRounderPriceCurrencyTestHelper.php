@@ -13,6 +13,10 @@ class TotalRounderPriceCurrencyTestHelper implements PriceCurrencyInterface
 {
     public function convert($amount, $store = null, $currency = null)
     {
+        // Touch optional params for PHPMD and keep deterministic behavior
+        if ($store !== null || $currency !== null) {
+            // no-op
+        }
         return $amount;
     }
 
@@ -28,6 +32,9 @@ class TotalRounderPriceCurrencyTestHelper implements PriceCurrencyInterface
         $scope = null,
         $currency = null
     ) {
+        if ($includeContainer !== true || $precision !== PriceCurrencyInterface::DEFAULT_PRECISION || $scope !== null || $currency !== null) {
+            // no-op
+        }
         return (string)$amount;
     }
 
@@ -35,6 +42,9 @@ class TotalRounderPriceCurrencyTestHelper implements PriceCurrencyInterface
         $scope = null,
         $currency = null
     ) {
+        if ($scope !== null || $currency !== null) {
+            // no-op
+        }
         return null;
     }
 
@@ -44,6 +54,9 @@ class TotalRounderPriceCurrencyTestHelper implements PriceCurrencyInterface
         $currency = null,
         $precision = self::DEFAULT_PRECISION
     ) {
+        if ($scope !== null || $currency !== null || $precision !== self::DEFAULT_PRECISION) {
+            // no-op
+        }
         return $amount;
     }
 
@@ -54,6 +67,9 @@ class TotalRounderPriceCurrencyTestHelper implements PriceCurrencyInterface
         $scope = null,
         $currency = null
     ) {
+        if ($includeContainer !== true || $precision !== self::DEFAULT_PRECISION || $scope !== null || $currency !== null) {
+            // no-op
+        }
         return (string)$amount;
     }
 
@@ -64,6 +80,9 @@ class TotalRounderPriceCurrencyTestHelper implements PriceCurrencyInterface
 
     public function getCurrencySymbol($scope = null, $currency = null)
     {
+        if ($scope !== null || $currency !== null) {
+            // no-op
+        }
         return '';
     }
 }

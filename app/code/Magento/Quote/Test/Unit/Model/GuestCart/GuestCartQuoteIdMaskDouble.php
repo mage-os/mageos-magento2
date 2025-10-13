@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Quote\Test\Unit\Model\GuestCart;
@@ -29,6 +29,9 @@ class GuestCartQuoteIdMaskDouble extends QuoteIdMask
         return $this->quoteIdValue;
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function load($id, $field = null)
     {
         $this->maskedIdValue = is_scalar($id) ? (string)$id : $this->maskedIdValue;

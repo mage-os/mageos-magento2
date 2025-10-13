@@ -1,6 +1,7 @@
 <?php
 /**
- * Test double for Quote to expose magic coupon methods in PHPUnit 12.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 

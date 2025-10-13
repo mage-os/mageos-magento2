@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -224,13 +224,7 @@ class QuoteTest extends TestCase
             ExtensibleDataObjectConverter::class,
             ['toFlatArray']
         );
-        $this->customerRepositoryMock = $this->createMock(CustomerRepositoryInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['getById', 'save']);
+        $this->customerRepositoryMock = $this->createMock(CustomerRepositoryInterface::class);
         $this->objectCopyServiceMock = $this->createPartialMock(
             Copy::class,
             ['copyFieldsetToTarget']
@@ -277,10 +271,7 @@ class QuoteTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->addressRepositoryMock = $this->createMock(AddressRepositoryInterface::class,
-            [],
-            '',
-            false);
+        $this->addressRepositoryMock = $this->createMock(AddressRepositoryInterface::class);
 
         $this->criteriaBuilderMock = $this->getMockBuilder(SearchCriteriaBuilder::class)
             ->disableOriginalConstructor()
@@ -590,25 +581,13 @@ class QuoteTest extends TestCase
     public function testSetCustomerAddressData(): void
     {
         $customerId = 1;
-        $addressMock = $this->createMock(AddressInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['getId']);
+        $addressMock = $this->createMock(AddressInterface::class);
         $addressMock->method('getId')->willReturn(null);
 
         $addresses = [$addressMock];
 
-        $customerMock = $this->createMock(CustomerInterface::class,
-            [],
-            '',
-            false);
-        $customerResultMock = $this->createMock(CustomerInterface::class,
-            [],
-            '',
-            false);
+        $customerMock = $this->createMock(CustomerInterface::class);
+        $customerResultMock = $this->createMock(CustomerInterface::class);
         $requestMock = $this->createMock(
             DataObject::class
         );
@@ -637,7 +616,7 @@ class QuoteTest extends TestCase
     {
         $groupId = 1;
         $taxClassId = 1;
-        $groupMock = $this->createMock(GroupInterface::class, [], '', false);
+        $groupMock = $this->createMock(GroupInterface::class);
         $groupMock->expects($this->once())
             ->method('getTaxClassId')
             ->willReturn($taxClassId);
@@ -663,12 +642,9 @@ class QuoteTest extends TestCase
         $nonExistentGroupId = 100;
         $groupId = 1;
         $taxClassId = 1;
-        $groupMock = $this->createMock(GroupInterface::class, [], '', false);
+        $groupMock = $this->createMock(GroupInterface::class);
 
-        $customerMock = $this->createMock(CustomerInterface::class,
-            [],
-            '',
-            false);
+        $customerMock = $this->createMock(CustomerInterface::class);
         $customerMock->expects($this->once())
             ->method('getGroupId')
             ->willReturn($groupId);

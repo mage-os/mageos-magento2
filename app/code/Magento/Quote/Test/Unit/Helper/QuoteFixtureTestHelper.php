@@ -84,6 +84,9 @@ class QuoteFixtureTestHelper extends Quote
     /**
      * @return bool
      */
+    /**
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     */
     public function getHasError()
     {
         return false;
