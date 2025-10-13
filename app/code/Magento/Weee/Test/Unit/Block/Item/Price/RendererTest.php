@@ -80,7 +80,7 @@ class RendererTest extends TestCase
                 'getBasePriceInclTax',
                 'getQtyOrdered'
             ])
-            ->onlyMethods(['getCalculationPrice'])
+            ->onlyMethods(['getPrice'])
             ->getMock();
 
         $this->item->expects($this->any())
@@ -291,7 +291,7 @@ class RendererTest extends TestCase
             ->willReturn($weeeTax);
 
         $this->item->expects($this->once())
-            ->method('getCalculationPrice')
+            ->method('getPrice')
             ->willReturn($price);
 
         $this->weeeHelper->expects($this->any())
@@ -601,7 +601,7 @@ class RendererTest extends TestCase
             ->willReturn($weeeTax);
 
         $this->item->expects($this->once())
-            ->method('getCalculationPrice')
+            ->method('getPrice')
             ->willReturn($rowTotal);
 
         $this->assertEquals($expectedValue, $this->renderer->getFinalUnitDisplayPriceExclTax());
