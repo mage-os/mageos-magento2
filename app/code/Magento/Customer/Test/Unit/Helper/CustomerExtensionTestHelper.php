@@ -32,6 +32,21 @@ class CustomerExtensionTestHelper implements CustomerExtensionInterface
     private $isSubscribed;
 
     /**
+     * @var mixed
+     */
+    private $allCompanyAttributes;
+
+    /**
+     * @var mixed
+     */
+    private $testGroupCode;
+
+    /**
+     * @var mixed
+     */
+    private $customerConsent;
+
+    /**
      * Constructor
      *
      * @param mixed $companyAttributes
@@ -104,6 +119,72 @@ class CustomerExtensionTestHelper implements CustomerExtensionInterface
     public function setIsSubscribed($isSubscribed)
     {
         $this->isSubscribed = $isSubscribed;
+        return $this;
+    }
+
+    /**
+     * Get all company attributes
+     *
+     * @return mixed
+     */
+    public function getAllCompanyAttributes()
+    {
+        return $this->allCompanyAttributes;
+    }
+
+    /**
+     * Set all company attributes
+     *
+     * @param mixed $allCompanyAttributes
+     * @return $this
+     */
+    public function setAllCompanyAttributes($allCompanyAttributes)
+    {
+        $this->allCompanyAttributes = $allCompanyAttributes;
+        return $this;
+    }
+
+    /**
+     * Get test group code
+     *
+     * @return mixed
+     */
+    public function getTestGroupCode()
+    {
+        return $this->testGroupCode;
+    }
+
+    /**
+     * Set test group code
+     *
+     * @param mixed $testGroupCode
+     * @return $this
+     */
+    public function setTestGroupCode($testGroupCode)
+    {
+        $this->testGroupCode = $testGroupCode;
+        return $this;
+    }
+
+    /**
+     * Get customer consent
+     *
+     * @return mixed
+     */
+    public function getCustomerConsent()
+    {
+        return $this->customerConsent;
+    }
+
+    /**
+     * Set customer consent
+     *
+     * @param mixed $customerConsent
+     * @return $this
+     */
+    public function setCustomerConsent($customerConsent)
+    {
+        $this->customerConsent = $customerConsent;
         return $this;
     }
 }
