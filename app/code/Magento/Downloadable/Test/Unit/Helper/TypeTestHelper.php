@@ -52,4 +52,26 @@ class TypeTestHelper extends Type
         $this->data['links'] = $links;
         return $this;
     }
+
+    /**
+     * Override getSamples to return test data instead of using factory
+     *
+     * @param \Magento\Catalog\Model\Product $product
+     * @return array
+     */
+    public function getSamples($product)
+    {
+        return $this->data['samples'] ?? [];
+    }
+
+    /**
+     * Override getLinks to return test data instead of using factory
+     *
+     * @param \Magento\Catalog\Model\Product $product
+     * @return array
+     */
+    public function getLinks($product)
+    {
+        return $this->data['links'] ?? [];
+    }
 }
