@@ -14,6 +14,8 @@ class DirectiveValidator
      *
      * @param string $html
      * @return bool
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function isValid(string $html): bool
     {
