@@ -579,6 +579,9 @@ class RowCustomizer implements RowCustomizerInterface
             $optionCollection = $product->getTypeInstance()
                 ->getOptionsCollection($product)
                 ->setOrder('position', Collection::SORT_ORDER_ASC);
+            // Ensure children products are not filtered by website.
+            // We need to export all children products regardless of the website they are assigned to.
+            $product->getTypeInstance()->setStoreFilter(Store::DEFAULT_STORE_ID, $product);
             $selectionCollection = $product->getTypeInstance()
                 ->getSelectionsCollection(
                     $product->getTypeInstance()->getOptionsIds($product),
