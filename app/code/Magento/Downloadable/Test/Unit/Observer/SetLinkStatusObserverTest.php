@@ -86,7 +86,10 @@ class SetLinkStatusObserverTest extends TestCase
             ['getStore', 'getResult', 'getQuote', 'getOrder']
         );
 
-        $this->orderMock = $this->createPartialMock(Order::class, ['getId', 'getStoreId', 'getState', 'isCanceled', 'getAllItems']);
+        $this->orderMock = $this->createPartialMock(
+            Order::class,
+            ['getId', 'getStoreId', 'getState', 'isCanceled', 'getAllItems']
+        );
 
         $this->observerMock = $this->createPartialMock(Observer::class, ['getEvent']);
 
@@ -178,10 +181,30 @@ class SetLinkStatusObserverTest extends TestCase
             $this->createLinkItemCollection(
                 [1, 2, 3, 5],
                 [
-                        $this->createLinkItem('available', 1, true, $orderStateMapping[$orderState]),
-                        $this->createLinkItem('pending_payment', 2, true, $orderStateMapping[$orderState]),
-                        $this->createLinkItem('pending_review', 3, true, $orderStateMapping[$orderState]),
-                        $this->createLinkItem('pending', 5, true, $orderStateMapping[$orderState]),
+                        $this->createLinkItem(
+                            'available',
+                            1,
+                            true,
+                            $orderStateMapping[$orderState]
+                        ),
+                        $this->createLinkItem(
+                            'pending_payment',
+                            2,
+                            true,
+                            $orderStateMapping[$orderState]
+                        ),
+                        $this->createLinkItem(
+                            'pending_review',
+                            3,
+                            true,
+                            $orderStateMapping[$orderState]
+                        ),
+                        $this->createLinkItem(
+                            'pending',
+                            5,
+                            true,
+                            $orderStateMapping[$orderState]
+                        ),
                     ]
             )
         );
@@ -231,8 +254,18 @@ class SetLinkStatusObserverTest extends TestCase
                 [1, 2, 3, 5],
                 [
                         $this->createLinkItem('available', 1, true, 'available'),
-                        $this->createLinkItem('pending_payment', 2, true, 'available'),
-                        $this->createLinkItem('pending_review', 3, true, 'expired'),
+                        $this->createLinkItem(
+                            'pending_payment',
+                            2,
+                            true,
+                            'available'
+                        ),
+                        $this->createLinkItem(
+                            'pending_review',
+                            3,
+                            true,
+                            'expired'
+                        ),
                         $this->createLinkItem('pending', 5, true, 'expired'),
                     ]
             )
@@ -293,10 +326,30 @@ class SetLinkStatusObserverTest extends TestCase
             $this->createLinkItemCollection(
                 [1, 2, 3, 5, 7],
                 [
-                        $this->createLinkItem('available', 1, true, 'available'),
-                        $this->createLinkItem('pending_payment', 2, true, 'available'),
-                        $this->createLinkItem('pending_review', 3, true, 'available'),
-                        $this->createLinkItem('pending_review', 5, true, 'available'),
+                        $this->createLinkItem(
+                            'available',
+                            1,
+                            true,
+                            'available'
+                        ),
+                        $this->createLinkItem(
+                            'pending_payment',
+                            2,
+                            true,
+                            'available'
+                        ),
+                        $this->createLinkItem(
+                            'pending_review',
+                            3,
+                            true,
+                            'available'
+                        ),
+                        $this->createLinkItem(
+                            'pending_review',
+                            5,
+                            true,
+                            'available'
+                        ),
                     ]
             )
         );
@@ -449,7 +502,10 @@ class SetLinkStatusObserverTest extends TestCase
         $productType = DownloadableProductType::TYPE_DOWNLOADABLE,
         $realProductType = DownloadableProductType::TYPE_DOWNLOADABLE
     ) {
-        $item = $this->createPartialMock(Item::class, ['getId', 'getProductType', 'getRealProductType', 'getStatusId', 'getQtyOrdered']);
+        $item = $this->createPartialMock(
+            Item::class,
+            ['getId', 'getProductType', 'getRealProductType', 'getStatusId', 'getQtyOrdered']
+        );
         $item->method('getId')->willReturn($id);
         $item->method('getProductType')->willReturn($productType);
         $item->method('getRealProductType')->willReturn($realProductType);

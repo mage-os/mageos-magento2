@@ -117,7 +117,10 @@ class SaveDownloadableOrderItemObserverTest extends TestCase
             ['getStore', 'getResult', 'getQuote', 'getOrder']
         );
 
-        $this->orderMock = $this->createPartialMock(Order::class, ['getId', 'getStoreId', 'getState', 'isCanceled', 'getAllItems']);
+        $this->orderMock = $this->createPartialMock(
+            Order::class,
+            ['getId', 'getStoreId', 'getState', 'isCanceled', 'getAllItems']
+        );
 
         $this->observerMock = $this->createPartialMock(Observer::class, ['getEvent']);
 

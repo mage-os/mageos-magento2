@@ -17,8 +17,11 @@ use Magento\Framework\EntityManager\EntityMetadata;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Store\Model\Store;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Downloadable\Model\ResourceModel\SampleFactory as ResourceSampleFactory;
+use Magento\Downloadable\Model\ResourceModel\Sample as ResourceSample;
 
 /**
  * Test for \Magento\Downloadable\Model\Product\TypeHandler\Sample
@@ -56,8 +59,8 @@ class SampleTest extends TestCase
     {
         $objectManagerHelper = new ObjectManagerHelper($this);
         $this->sampleFactory = $this->createPartialMock(SampleFactory::class, ['create']);
-        $this->sampleResource = $this->createPartialMock(\Magento\Downloadable\Model\ResourceModel\Sample::class, ['deleteItems']);
-        $sampleResourceFactory = $this->createPartialMock(\Magento\Downloadable\Model\ResourceModel\SampleFactory::class, ['create']);
+        $this->sampleResource = $this->createPartialMock(ResourceSample::class, ['deleteItems']);
+        $sampleResourceFactory = $this->createPartialMock(ResourceSampleFactory::class, ['create']);
         $sampleResourceFactory->method('create')->willReturn($this->sampleResource);
         $this->metadataPoolMock = $this->createMock(MetadataPool::class);
         $this->metadataMock = $this->createMock(EntityMetadata::class);
@@ -100,7 +103,8 @@ class SampleTest extends TestCase
     {
         return [
             [
-                'product' => static fn (self $testCase) => $testCase->createProductMock(100500, 1, 10, [10]),
+                'product' => static fn (self $testCase) => $testCase
+                    ->createProductMock(100500, 1, 10, [10]),
                 'data' => [
                     'sample' => [
                         [
@@ -145,7 +149,8 @@ class SampleTest extends TestCase
     {
         return [
             [
-                'product' =>  static fn (self $testCase) => $testCase->createProductMock(1, 1, 1, [1]),
+                'product' =>  static fn (self $testCase) => $testCase
+                    ->createProductMock(1, 1, 1, [1]),
                 'data' => [
                     'sample' => [
                         [
@@ -220,11 +225,15 @@ class SampleTest extends TestCase
      * @param int $storeWebsiteId
      * @param array $websiteIds
      * @return Product|MockObject
+     * @throws Exception
      * @internal param bool $isUnlimited
      */
     protected function createProductMock($id, $storeId, $storeWebsiteId, array $websiteIds)
     {
-        $product = $this->createPartialMock(Product::class, ['getId', 'getStoreId', 'getStore', 'getWebsiteIds', 'getData']);
+        $product = $this->createPartialMock(
+            Product::class,
+            ['getId', 'getStoreId', 'getStore', 'getWebsiteIds', 'getData']
+        );
         $product->method('getId')->willReturn($id);
         $product->method('getStoreId')->willReturn($storeId);
         $product->method('getWebsiteIds')->willReturn($websiteIds);

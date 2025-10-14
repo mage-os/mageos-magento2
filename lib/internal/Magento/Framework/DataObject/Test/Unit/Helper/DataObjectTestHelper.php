@@ -233,6 +233,18 @@ class DataObjectTestHelper extends DataObject
     }
 
     /**
+     * Set SKU for testing
+     *
+     * @param mixed $sku
+     * @return self
+     */
+    public function setSku($sku): self
+    {
+        $this->data['sku'] = $sku;
+        return $this;
+    }
+
+    /**
      * Get entity ID for testing
      *
      * @return mixed

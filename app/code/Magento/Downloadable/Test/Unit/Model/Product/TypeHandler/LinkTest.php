@@ -18,6 +18,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 use Magento\Store\Model\Store;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Downloadable\Model\ResourceModel\Link as LinkResource;
 
 /**
  * Test for \Magento\Downloadable\Model\Product\TypeHandler\Link
@@ -54,7 +55,7 @@ class LinkTest extends TestCase
     {
         $objectManagerHelper = new ObjectManagerHelper($this);
         $this->linkFactory = $this->createPartialMock(LinkFactory::class, ['create']);
-        $this->linkResource = $this->createPartialMock(\Magento\Downloadable\Model\ResourceModel\Link::class, ['deleteItems']);
+        $this->linkResource = $this->createPartialMock(LinkResource::class, ['deleteItems']);
         $this->metadataPoolMock = $this->createMock(MetadataPool::class);
         $this->metadataMock = $this->createMock(EntityMetadata::class);
         $this->metadataMock->method('getLinkField')->willReturn('id');
@@ -97,7 +98,8 @@ class LinkTest extends TestCase
     {
         return [
             [
-                'product' => static fn (self $testCase) => $testCase->createProductMock(100500, 1, 10, [10]),
+                'product' => static fn (self $testCase) => $testCase
+                    ->createProductMock(100500, 1, 10, [10]),
                 'data' => [
                     'link' => [
                         [
@@ -184,7 +186,8 @@ class LinkTest extends TestCase
     {
         return [
             [
-                'product' => static fn (self $testCase) => $testCase->createProductMock(1, 1, 1, [1]),
+                'product' => static fn (self $testCase) => $testCase
+                    ->createProductMock(1, 1, 1, [1]),
                 'data' => [
                     'link' => [
                         [

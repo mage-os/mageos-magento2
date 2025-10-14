@@ -160,7 +160,7 @@ class ListAssociatedProductsTest extends TestCase
     {
         $associatedProduct = new \Magento\Framework\DataObject\Test\Unit\Helper\DataObjectTestHelper();
         $associatedProduct->setId('id' . $productKey);
-        $associatedProduct->setData('sku', 'sku' . $productKey);
+        $associatedProduct->setSku('sku' . $productKey);
         $associatedProduct->setName('name' . $productKey);
         $associatedProduct->setQty($productKey);
         $associatedProduct->setPosition($productKey);
