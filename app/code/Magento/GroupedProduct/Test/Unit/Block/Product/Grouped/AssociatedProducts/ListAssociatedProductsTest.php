@@ -154,21 +154,17 @@ class ListAssociatedProductsTest extends TestCase
      * Generate associated product mock
      *
      * @param int $productKey
-     * @return MockObject
+     * @return \Magento\Framework\DataObject\Test\Unit\Helper\DataObjectTestHelper
      */
     protected function generateAssociatedProduct($productKey = 0)
     {
-        $associatedProduct = $this->createPartialMock(
-            \Magento\Framework\DataObject\Test\Unit\Helper\DataObjectTestHelper::class,
-            ['getQty', 'getPosition', 'getId', 'getSku', 'getName', 'getPrice']
-        );
-
-        $associatedProduct->expects($this->once())->method('getId')->willReturn('id' . $productKey);
-        $associatedProduct->expects($this->once())->method('getSku')->willReturn('sku' . $productKey);
-        $associatedProduct->expects($this->once())->method('getName')->willReturn('name' . $productKey);
-        $associatedProduct->expects($this->once())->method('getQty')->willReturn($productKey);
-        $associatedProduct->expects($this->once())->method('getPosition')->willReturn($productKey);
-        $associatedProduct->expects($this->once())->method('getPrice')->willReturn('1.00');
+        $associatedProduct = new \Magento\Framework\DataObject\Test\Unit\Helper\DataObjectTestHelper();
+        $associatedProduct->setId('id' . $productKey);
+        $associatedProduct->setData('sku', 'sku' . $productKey);
+        $associatedProduct->setName('name' . $productKey);
+        $associatedProduct->setQty($productKey);
+        $associatedProduct->setPosition($productKey);
+        $associatedProduct->setPrice('1.00');
 
         return $associatedProduct;
     }
