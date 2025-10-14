@@ -11,10 +11,8 @@ use Magento\Catalog\Model\Product\Type\Simple;
 
 /**
  * Test helper for Magento\Catalog\Model\Product\Type\Simple
- *
- * Extends the concrete Simple class to add custom methods for testing
  */
-class SimpleTypeTestHelper extends Simple
+class ProductTypeSimpleTestHelper extends Simple
 {
     /**
      * @var array
@@ -22,11 +20,35 @@ class SimpleTypeTestHelper extends Simple
     private $data = [];
 
     /**
-     * Constructor - skip parent constructor to avoid dependencies
+     * Constructor
      */
     public function __construct()
     {
-        // Skip parent constructor to avoid dependency injection issues
+        // Skip parent constructor to avoid dependencies
+    }
+
+    /**
+     * Get SKU for testing
+     *
+     * @param $product
+     * @return string
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function getSku($product)
+    {
+        return $this->data['sku'] ?? 'Simple Product 1';
+    }
+
+    /**
+     * Set SKU for testing
+     *
+     * @param string $sku
+     * @return $this
+     */
+    public function setSku(string $sku): self
+    {
+        $this->data['sku'] = $sku;
+        return $this;
     }
 
     /**

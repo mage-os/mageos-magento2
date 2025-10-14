@@ -363,7 +363,7 @@ class ProductTest extends TestCase
             });
 
         $expectedOutput = [$outputRelatedLink, $outputGroupLink];
-        $typeInstanceMock = new \Magento\Catalog\Test\Unit\Helper\SimpleProductTypeTestHelper();
+        $typeInstanceMock = new \Magento\Catalog\Test\Unit\Helper\ProductTypeSimpleTestHelper();
         $this->model->setTypeInstance($typeInstanceMock);
 
         $productLink1 = $this->objectManagerHelper->getObject(Link::class);
