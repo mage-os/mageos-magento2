@@ -18,7 +18,7 @@ use Magento\Quote\Api\Data\ProductOptionExtensionInterface;
 use Magento\Quote\Api\Data\ProductOptionInterfaceFactory;
 use Magento\Quote\Model\Quote\Item;
 use Magento\Quote\Model\Quote\ProductOption;
-use Magento\Quote\Test\Unit\Helper\ProductOptionExtensionInterfaceTestHelper;
+use Magento\Quote\Test\Unit\Helper\ProductOptionExtensionTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -80,7 +80,7 @@ class CartItemProcessorTest extends TestCase
         $cartItemMock = $this->createMock(Item::class);
         $productOptionMock = $this->createMock(ProductOption::class);
         $dataObjectMock = $this->createMock(DataObject::class);
-        $optionExtensionMock = new ProductOptionExtensionInterfaceTestHelper();
+        $optionExtensionMock = new ProductOptionExtensionTestHelper();
         $requestDataMock = [
             'bundle_option' => [$optionId => $optionSelections],
             'bundle_option_qty' => [$optionId => $optionQty]
@@ -122,7 +122,7 @@ class CartItemProcessorTest extends TestCase
         $cartItemMock = $this->createMock(Item::class);
         $bundleOptionMock = $this->createMock(BundleOption::class);
         $productOptionMock = $this->createMock(ProductOption::class);
-        $optionExtensionMock = new ProductOptionExtensionInterfaceTestHelper();
+        $optionExtensionMock = new ProductOptionExtensionTestHelper();
 
         $cartItemMock->expects($this->once())->method('getProductType')->willReturn(Type::TYPE_BUNDLE);
         $cartItemMock->expects($this->atLeastOnce())->method('getBuyRequest')->willReturn($buyRequestMock);

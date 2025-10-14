@@ -105,7 +105,7 @@ class CartItemProcessorTest extends TestCase
         $cartItemMock->method('getProductOption')->willReturn($productOptionMock);
         $cartItemMock->method('getQty')->willReturn($itemQty);
         $extAttributesMock = $this->createPartialMock(
-            \Magento\Quote\Test\Unit\Helper\ProductOptionExtensionInterfaceTestHelper::class,
+            \Magento\Quote\Test\Unit\Helper\ProductOptionExtensionTestHelper::class,
             ['getDownloadableOption']
         );
         $productOptionMock->method('getExtensionAttributes')->willReturn($extAttributesMock);
@@ -238,7 +238,7 @@ class CartItemProcessorTest extends TestCase
     private function getProductOptionExtensionMock(): MockObject
     {
         return $this->createPartialMock(
-            \Magento\Quote\Test\Unit\Helper\ProductOptionExtensionInterfaceTestHelper::class,
+            \Magento\Quote\Test\Unit\Helper\ProductOptionExtensionTestHelper::class,
             ['setDownloadableOption']
         );
     }

@@ -24,7 +24,7 @@ use Magento\Framework\Indexer\ActionInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Catalog\Test\Unit\Helper\ProductExtensionInterfaceTestHelper;
+use Magento\Catalog\Test\Unit\Helper\ProductExtensionTestHelper;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -114,7 +114,7 @@ class ProductTest extends TestCase
             ConfigurableAttribute::class,
             ['getAttributeId']
         );
-        $extensionAttributes = new ProductExtensionInterfaceTestHelper();
+        $extensionAttributes = new ProductExtensionTestHelper();
         $extensionAttributes->setConfigurableProductOptions([$option]);
         $object->expects($this->once())
             ->method('getExtensionAttributes')

@@ -90,7 +90,7 @@ class ProductOptionProcessorTest extends TestCase
         $productOptionMock = $this->createMock(ProductOptionInterface::class);
 
         $productOptionExtensionMock = $this->createPartialMock(
-            \Magento\Quote\Test\Unit\Helper\ProductOptionExtensionInterfaceTestHelper::class,
+            \Magento\Quote\Test\Unit\Helper\ProductOptionExtensionTestHelper::class,
             ['getDownloadableOption']
         );
 

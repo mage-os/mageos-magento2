@@ -18,7 +18,7 @@ use Magento\Framework\DataObject;
 use Magento\Framework\DataObject\Factory as DataObjectFactory;
 use Magento\Framework\DataObject\Test\Unit\Helper\DataObjectTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Quote\Test\Unit\Helper\ProductOptionExtensionInterfaceTestHelper;
+use Magento\Quote\Test\Unit\Helper\ProductOptionExtensionTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -84,7 +84,7 @@ class ProductOptionProcessorTest extends TestCase
         }
         $productOptionMock = $this->createMock(ProductOptionInterface::class);
 
-        $productOptionExtensionMock = new ProductOptionExtensionInterfaceTestHelper();
+        $productOptionExtensionMock = new ProductOptionExtensionTestHelper();
         $productOptionExtensionMock->setBundleOptions($options);
 
         $productOptionMock->method('getExtensionAttributes')->willReturn($productOptionExtensionMock);

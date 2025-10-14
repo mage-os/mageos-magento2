@@ -98,7 +98,7 @@ class SaveHandlerTest extends TestCase
             ->method('getSku')
             ->willReturn($sku);
 
-        $extensionAttributes = new \Magento\Catalog\Test\Unit\Helper\ProductExtensionInterfaceTestHelper();
+        $extensionAttributes = new \Magento\Catalog\Test\Unit\Helper\ProductExtensionTestHelper();
 
         $product->expects(static::atLeastOnce())
             ->method('getExtensionAttributes')
@@ -138,7 +138,7 @@ class SaveHandlerTest extends TestCase
             ->method('getSku')
             ->willReturn($sku);
 
-        $extensionAttributes = new \Magento\Catalog\Test\Unit\Helper\ProductExtensionInterfaceTestHelper();
+        $extensionAttributes = new \Magento\Catalog\Test\Unit\Helper\ProductExtensionTestHelper();
 
         $product->expects(static::atLeastOnce())
             ->method('getExtensionAttributes')

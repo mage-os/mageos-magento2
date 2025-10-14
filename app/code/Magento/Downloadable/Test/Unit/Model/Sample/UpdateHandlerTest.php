@@ -152,7 +152,7 @@ class UpdateHandlerTest extends TestCase
     private function getProductExtensionMock(): MockObject
     {
         return $this->createPartialMock(
-            \Magento\Catalog\Test\Unit\Helper\ProductExtensionInterfaceTestHelper::class,
+            \Magento\Catalog\Test\Unit\Helper\ProductExtensionTestHelper::class,
             ['getDownloadableProductSamples']
         );
     }

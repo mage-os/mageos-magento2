@@ -10,7 +10,7 @@ namespace Magento\Bundle\Test\Unit\Controller\Adminhtml\Product\Initialization\H
 use Magento\Bundle\Controller\Adminhtml\Product\Initialization\Helper\Plugin\Bundle;
 use Magento\Catalog\Controller\Adminhtml\Product\Initialization\Helper;
 use Magento\Catalog\Model\Product;
-use Magento\Catalog\Test\Unit\Helper\ProductExtensionInterfaceTestHelper;
+use Magento\Catalog\Test\Unit\Helper\ProductExtensionTestHelper;
 use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\App\Request\Http;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -124,7 +124,7 @@ class BundleTest extends TestCase
         $this->productMock->setProductOptions($productOptionsBefore);
         $this->productMock->setBundleOptionsDataResult(['option_1' => ['delete' => 1]]);
 
-        $extensionAttribute = new ProductExtensionInterfaceTestHelper();
+        $extensionAttribute = new ProductExtensionTestHelper();
         $extensionAttribute->setBundleProductOptions([]);
         $this->productMock->setExtensionAttributes($extensionAttribute);
 
@@ -166,7 +166,7 @@ class BundleTest extends TestCase
         $this->productMock->setPriceType(2);
         $this->productMock->setOptionsReadonly(true);
 
-        $extensionAttribute = new ProductExtensionInterfaceTestHelper();
+        $extensionAttribute = new ProductExtensionTestHelper();
         $extensionAttribute->setBundleProductOptions([]);
         $this->productMock->setExtensionAttributes($extensionAttribute);
 
@@ -195,7 +195,7 @@ class BundleTest extends TestCase
         // Set up the anonymous class properties using setters
         $this->productMock->setCompositeReadonly(false);
 
-        $extensionAttribute = new ProductExtensionInterfaceTestHelper();
+        $extensionAttribute = new ProductExtensionTestHelper();
         $extensionAttribute->setBundleProductOptions([]);
         $this->productMock->setExtensionAttributes($extensionAttribute);
 

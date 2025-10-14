@@ -21,7 +21,7 @@ use Magento\Quote\Api\Data\ProductOptionExtensionFactory;
 use Magento\Quote\Api\Data\ProductOptionInterface;
 use Magento\Quote\Model\Quote\Item;
 use Magento\Quote\Model\Quote\ProductOptionFactory;
-use Magento\Quote\Test\Unit\Helper\ProductOptionExtensionInterfaceTestHelper;
+use Magento\Quote\Test\Unit\Helper\ProductOptionExtensionTestHelper;
 use Magento\Quote\Test\Unit\Helper\ProductOptionTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -81,7 +81,7 @@ class CartItemProcessorTest extends TestCase
             ['create']
         );
 
-        $this->productOptionExtensionAttributes = new ProductOptionExtensionInterfaceTestHelper();
+        $this->productOptionExtensionAttributes = new ProductOptionExtensionTestHelper();
 
         $this->serializer = $this->createMock(Json::class);
 

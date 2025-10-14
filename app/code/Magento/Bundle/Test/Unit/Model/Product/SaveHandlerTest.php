@@ -23,7 +23,7 @@ use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
-use Magento\Catalog\Test\Unit\Helper\ProductExtensionInterfaceTestHelper;
+use Magento\Catalog\Test\Unit\Helper\ProductExtensionTestHelper;
 
 /**
  * Test class for \Magento\Bundle\Model\Product\SaveHandler
@@ -106,7 +106,7 @@ class SaveHandlerTest extends TestCase
         $option->method('getOptionId')->willReturn(1);
         $bundleOptions = [$option];
 
-        $extensionAttributes = new ProductExtensionInterfaceTestHelper();
+        $extensionAttributes = new ProductExtensionTestHelper();
         $extensionAttributes->setBundleProductOptions($bundleOptions);
         $this->entity->setExtensionAttributes($extensionAttributes);
         $metadata = $this->createMock(EntityMetadataInterface::class);

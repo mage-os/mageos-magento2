@@ -7,14 +7,14 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Helper;
 
-use Magento\Catalog\Api\Data\ProductExtensionInterface;
+use Magento\Catalog\Api\Data\ProductExtension;
 
 /**
  * Test helper for Magento\Catalog\Api\Data\ProductExtensionInterface
  *
  * Implements the ProductExtensionInterface to add custom methods for testing
  */
-class ProductExtensionInterfaceTestHelper implements ProductExtensionInterface
+class ProductExtensionTestHelper extends ProductExtension
 {
     /**
      * @var array
@@ -214,40 +214,6 @@ class ProductExtensionInterfaceTestHelper implements ProductExtensionInterface
     /**
      * @return mixed|null
      */
-    public function getGiftAmounts()
-    {
-        return $this->data['gift_amounts'] ?? null;
-    }
-
-    /**
-     * @param $amounts
-     * @return $this
-     */
-    public function setGiftcardAmounts($amounts)
-    {
-        $this->data['giftcard_amounts'] = $amounts;
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getData(): array
-    {
-        return $this->data;
-    }
-
-    /**
-     * @param array $data
-     */
-    public function setData(array $data): void
-    {
-        $this->data = $data;
-    }
-
-    /**
-     * @return mixed|null
-     */
     public function getTestStockItem()
     {
         return $this->data['test_stock_item'] ?? null;
@@ -261,27 +227,6 @@ class ProductExtensionInterfaceTestHelper implements ProductExtensionInterface
     public function setTestStockItem($testStockItem)
     {
         $this->data['test_stock_item'] = $testStockItem;
-        return $this;
-    }
-
-    /**
-     * @return mixed|null
-     */
-
-    public function getTestStockItemQty()
-    {
-        return $this->data['test_stock_item_qty'] ?? null;
-    }
-
-    /**
-     * @param $qty
-     * @return $this
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-
-    public function setTestStockItemQty($qty)
-    {
-        $this->data['test_stock_item_qty'] = $qty;
         return $this;
     }
 }

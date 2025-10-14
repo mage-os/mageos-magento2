@@ -14,7 +14,7 @@ use Magento\ConfigurableProduct\Controller\Adminhtml\Product\Initialization\Help
 use Magento\ConfigurableProduct\Helper\Product\Options\Factory;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable as ConfigurableProduct;
 use Magento\ConfigurableProduct\Model\Product\VariationHandler;
-use Magento\Catalog\Test\Unit\Helper\ProductExtensionInterfaceTestHelper;
+use Magento\Catalog\Test\Unit\Helper\ProductExtensionTestHelper;
 use Magento\Framework\App\Request\Http;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -153,7 +153,7 @@ class ConfigurableTest extends TestCase
             ->method('getParam')
             ->willReturnMap($paramValueMap);
 
-        $extensionAttributes = new ProductExtensionInterfaceTestHelper();
+        $extensionAttributes = new ProductExtensionTestHelper();
         $this->product->expects(static::once())
             ->method('getExtensionAttributes')
             ->willReturn($extensionAttributes);
@@ -208,7 +208,7 @@ class ConfigurableTest extends TestCase
             ->method('getParam')
             ->willReturnMap($paramValueMap);
 
-        $extensionAttributes = new ProductExtensionInterfaceTestHelper();
+        $extensionAttributes = new ProductExtensionTestHelper();
         $this->product->expects(static::once())
             ->method('getExtensionAttributes')
             ->willReturn($extensionAttributes);

@@ -9,7 +9,7 @@ namespace Magento\ConfigurableProductGraphQl\Test\Unit\Model\Cart\BuyRequest;
 
 use Magento\Framework\DataObject;
 use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
-use Magento\Catalog\Test\Unit\Helper\ProductExtensionInterfaceTestHelper;
+use Magento\Catalog\Test\Unit\Helper\ProductExtensionTestHelper;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\Product;
@@ -146,7 +146,7 @@ class SuperAttributeDataProviderTest extends TestCase
         $productMock->setData('entity_id', 1);
 
         // Use existing helper for extension attributes
-        $extensionAttributes = new ProductExtensionInterfaceTestHelper();
+        $extensionAttributes = new ProductExtensionTestHelper();
         $extensionAttributes->setConfigurableProductLinks([1]);
         $productMock->setExtensionAttributes($extensionAttributes);
 

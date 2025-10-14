@@ -18,7 +18,7 @@ use Magento\Catalog\Model\ResourceModel\Eav\AttributeFactory;
 use Magento\ConfigurableProduct\Api\Data\OptionInterface;
 use Magento\ConfigurableProduct\Helper\Product\Options\Factory;
 use Magento\ConfigurableProduct\Test\Unit\Helper\AttributeTestHelper;
-use Magento\Catalog\Test\Unit\Helper\ProductExtensionInterfaceTestHelper;
+use Magento\Catalog\Test\Unit\Helper\ProductExtensionTestHelper;
 use Magento\ConfigurableProduct\Model\LinkManagement;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable\Attribute\Collection;
@@ -169,7 +169,7 @@ class LinkManagementTest extends TestCase
 
         $configurable = $this->createPartialMock(Product::class, ['getId', 'getExtensionAttributes']);
         $simple = $this->createPartialMock(Product::class, ['getId', 'getData']);
-        $extensionAttributesMock = new \Magento\Catalog\Test\Unit\Helper\ProductExtensionInterfaceTestHelper();
+        $extensionAttributesMock = new \Magento\Catalog\Test\Unit\Helper\ProductExtensionTestHelper();
         $productAttributeMock = $this->createPartialMock(AbstractAttribute::class, ['getAttributeCode']);
         $optionMock = new AttributeTestHelper($productAttributeMock);
         $optionsFactoryMock = $this->createPartialMock(Factory::class, ['create']);
@@ -286,7 +286,7 @@ class LinkManagementTest extends TestCase
         $productType->expects($this->once())->method('getUsedProducts')
             ->willReturn([$option]);
 
-        $extensionAttributesMock = new ProductExtensionInterfaceTestHelper();
+        $extensionAttributesMock = new ProductExtensionTestHelper();
 
         $product->expects($this->once())->method('getExtensionAttributes')->willReturn($extensionAttributesMock);
         $this->productRepository->expects($this->once())->method('save');

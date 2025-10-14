@@ -15,7 +15,7 @@ use Magento\Bundle\Test\Unit\Helper\LinkTestHelper;
 use Magento\Catalog\Api\Data\ProductExtensionInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Type;
-use Magento\Catalog\Test\Unit\Helper\ProductExtensionInterfaceTestHelper;
+use Magento\Catalog\Test\Unit\Helper\ProductExtensionTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -60,7 +60,7 @@ class BundleTest extends TestCase
     {
         /** @var Product|MockObject $product */
         $product = $this->createMock(Product::class);
-        $extensionAttributesProduct = new ProductExtensionInterfaceTestHelper();
+        $extensionAttributesProduct = new ProductExtensionTestHelper();
 
         $product->expects($this->once())
             ->method('getTypeId')
@@ -86,7 +86,7 @@ class BundleTest extends TestCase
 
         /** @var Product|MockObject $duplicate */
         $duplicate = $this->createMock(Product::class);
-        $extensionAttributesDuplicate = new ProductExtensionInterfaceTestHelper();
+        $extensionAttributesDuplicate = new ProductExtensionTestHelper();
 
         $duplicate->expects($this->once())
             ->method('getExtensionAttributes')
@@ -102,7 +102,7 @@ class BundleTest extends TestCase
     public function testBuildWithoutOptions()
     {
         $product = $this->createMock(Product::class);
-        $extensionAttributesProduct = new ProductExtensionInterfaceTestHelper();
+        $extensionAttributesProduct = new ProductExtensionTestHelper();
 
         $product->expects($this->once())
             ->method('getTypeId')
@@ -115,7 +115,7 @@ class BundleTest extends TestCase
         $extensionAttributesProduct->setBundleProductOptions(null);
 
         $duplicate = $this->createMock(Product::class);
-        $extensionAttributesDuplicate = new ProductExtensionInterfaceTestHelper();
+        $extensionAttributesDuplicate = new ProductExtensionTestHelper();
 
         $duplicate->expects($this->once())
             ->method('getExtensionAttributes')

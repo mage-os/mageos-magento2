@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\ConfigurableProduct\Test\Unit\Model;
 
-use Magento\Quote\Test\Unit\Helper\ProductOptionExtensionInterfaceTestHelper;
+use Magento\Quote\Test\Unit\Helper\ProductOptionExtensionTestHelper;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Api\Data\ProductOptionExtensionInterface;
 use Magento\Catalog\Api\Data\ProductOptionInterface;
