@@ -377,8 +377,11 @@ class QuoteTest extends TestCase
         $this->quote->setCustomerGroupId($customerGroupId);
 
         /** SUT execution */
-        $this->assertEquals($customerGroupId, $this->quote->getCustomerGroupId(),
-            "Customer group ID is invalid");
+        $this->assertEquals(
+            $customerGroupId,
+            $this->quote->getCustomerGroupId(),
+            "Customer group ID is invalid"
+        );
     }
 
     /**

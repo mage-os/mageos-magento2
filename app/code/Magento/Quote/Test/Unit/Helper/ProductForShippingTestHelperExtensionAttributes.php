@@ -22,5 +22,3 @@ class ProductForShippingTestHelperExtensionAttributes
         return new ProductForShippingTestHelperStockItem();
     }
 }
-
-

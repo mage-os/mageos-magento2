@@ -11,14 +11,17 @@ use Magento\Checkout\Api\Exception\PaymentProcessingRateLimitExceededException;
 use Magento\Checkout\Api\PaymentProcessingRateLimiterInterface;
 use Magento\Checkout\Api\PaymentSavingRateLimiterInterface;
 use Magento\Checkout\Model\PaymentInformationManagement;
+use Magento\Checkout\Model\PaymentDetailsFactory;
+use Magento\Checkout\Model\AddressComparatorInterface;
 use Magento\Customer\Api\Data\AddressInterface as CustomerAddressInterface;
 use Magento\Customer\Api\Data\CustomerInterface;
+use Magento\Customer\Api\AddressRepositoryInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Phrase;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Quote\Api\BillingAddressManagementInterface;
 use Magento\Quote\Api\CartManagementInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
+use Magento\Quote\Api\CartTotalRepositoryInterface;
 use Magento\Quote\Api\Data\AddressInterface;
 use Magento\Quote\Api\Data\PaymentInterface;
 use Magento\Quote\Api\PaymentMethodManagementInterface;
@@ -79,9 +82,13 @@ class PaymentInformationManagementTest extends TestCase
      */
     private $quoteShippingAddress;
 
+    /**
+     * @var AddressRepositoryInterface|MockObject
+     */
+    private $addressRepositoryMock;
+
     protected function setUp(): void
     {
-        $objectManager = new ObjectManager($this);
         $this->billingAddressManagementMock = $this->createMock(
             BillingAddressManagementInterface::class
         );
@@ -94,17 +101,22 @@ class PaymentInformationManagementTest extends TestCase
         $this->cartRepositoryMock = $this->createMock(CartRepositoryInterface::class);
         $this->rateLimiterMock = $this->createMock(PaymentProcessingRateLimiterInterface::class);
         $this->saveLimiterMock = $this->createMock(PaymentSavingRateLimiterInterface::class);
-        $this->model = $objectManager->getObject(
-            PaymentInformationManagement::class,
-            [
-                'billingAddressManagement' => $this->billingAddressManagementMock,
-                'paymentMethodManagement' => $this->paymentMethodManagementMock,
-                'cartManagement' => $this->cartManagementMock,
-                'paymentRateLimiter' => $this->rateLimiterMock,
-                'saveRateLimiter' => $this->saveLimiterMock,
-                'cartRepository' => $this->cartRepositoryMock,
-                'logger' => $this->loggerMock
-            ]
+        $this->addressRepositoryMock = $this->createMock(AddressRepositoryInterface::class);
+        $paymentDetailsFactoryMock = $this->createMock(PaymentDetailsFactory::class);
+        $cartTotalsRepositoryMock = $this->createMock(CartTotalRepositoryInterface::class);
+        $addressComparatorMock = $this->createMock(AddressComparatorInterface::class);
+        $this->model = new PaymentInformationManagement(
+            $this->billingAddressManagementMock,
+            $this->paymentMethodManagementMock,
+            $this->cartManagementMock,
+            $paymentDetailsFactoryMock,
+            $cartTotalsRepositoryMock,
+            $this->rateLimiterMock,
+            $this->saveLimiterMock,
+            $this->cartRepositoryMock,
+            $this->addressRepositoryMock,
+            $addressComparatorMock,
+            $this->loggerMock
         );
 
         $this->quoteShippingAddress = $this->createMock(Address::class);

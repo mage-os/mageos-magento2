@@ -14,7 +14,9 @@ use Magento\Quote\Model\ShippingMethodManagementInterface as ModelShippingMethod
 /**
  * Simple shipping method management double for unit tests.
  */
-class ShippingMethodManagementDouble implements ApiShippingMethodManagementInterface, ModelShippingMethodManagementInterface
+class ShippingMethodManagementDouble implements
+    ApiShippingMethodManagementInterface,
+    ModelShippingMethodManagementInterface
 {
     /**
      * @inheritDoc

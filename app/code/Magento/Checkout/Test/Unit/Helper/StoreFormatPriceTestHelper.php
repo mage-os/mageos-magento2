@@ -30,9 +30,15 @@ class StoreFormatPriceTestHelper extends Store
      * @param mixed $scope
      * @param mixed $currency
      * @return string
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function formatPrice($price, $includeContainer = true, $precision = 2, $scope = null, $currency = null)
-    {
+    public function formatPrice(
+        $price,
+        $includeContainer = true,
+        $precision = 2,
+        $scope = null,
+        $currency = null
+    ) {
         return (string)$price;
     }
 }

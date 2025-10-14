@@ -11,11 +11,12 @@ use Magento\Checkout\Api\Data\PaymentDetailsInterface;
 use Magento\Checkout\Api\Data\ShippingInformationInterface;
 use Magento\Checkout\Model\PaymentDetailsFactory;
 use Magento\Checkout\Model\ShippingInformationManagement;
+use Magento\Checkout\Model\AddressComparatorInterface;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Exception\StateException;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\CartTotalRepositoryInterface;
 use Magento\Quote\Api\Data\AddressInterface;
@@ -32,9 +33,13 @@ use Magento\Quote\Model\Shipping;
 use Magento\Quote\Model\ShippingAssignment;
 use Magento\Quote\Model\ShippingAssignmentFactory;
 use Magento\Quote\Model\ShippingFactory;
+use Magento\Customer\Api\AddressRepositoryInterface;
+use Magento\Quote\Model\Quote\TotalsCollector;
+use Psr\Log\LoggerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\RuntimeException;
 use PHPUnit\Framework\TestCase;
+use Magento\Quote\Test\Unit\Helper\CartExtensionShippingAssignmentsTestHelper;
 
 /**
  * Test for \Magento\Checkout\Model\ShippingInformationManagement.
@@ -58,11 +63,6 @@ class ShippingInformationManagementTest extends TestCase
      * @var ShippingInformationManagement
      */
     private $model;
-
-    /**
-     * @var ObjectManager
-     */
-    private $objectManager;
 
     /**
      * @var PaymentMethodManagementInterface|MockObject
@@ -125,16 +125,37 @@ class ShippingInformationManagementTest extends TestCase
     private $addressValidatorMock;
 
     /**
+     * @var LoggerInterface|MockObject
+     */
+    private $loggerMock;
+
+    /**
+     * @var AddressRepositoryInterface|MockObject
+     */
+    private $addressRepositoryMock;
+
+    /**
+     * @var ScopeConfigInterface|MockObject
+     */
+    private $scopeConfigMock;
+
+    /**
+     * @var TotalsCollector|MockObject
+     */
+    private $totalsCollectorMock;
+
+    /**
+     * @var AddressComparatorInterface|MockObject
+     */
+    private $addressComparatorMock;
+
+    /**
      * @inheritdoc
      */
     protected function setUp(): void
     {
-        $this->objectManager = new ObjectManager($this);
         $this->paymentMethodManagementMock = $this->createMock(PaymentMethodManagementInterface::class);
-        $this->paymentDetailsFactoryMock = $this->createPartialMock(
-            PaymentDetailsFactory::class,
-            ['create']
-        );
+        $this->paymentDetailsFactoryMock = $this->createMock(PaymentDetailsFactory::class);
         $this->cartTotalsRepositoryMock = $this->createMock(CartTotalRepositoryInterface::class);
         $this->quoteRepositoryMock = $this->createMock(CartRepositoryInterface::class);
         $this->shippingAddressMock = new AddressShippingInfoTestHelper();
@@ -146,18 +167,25 @@ class ShippingInformationManagementTest extends TestCase
         $this->shippingFactoryMock = $this->createMock(ShippingFactory::class);
         $this->addressValidatorMock = $this->createMock(QuoteAddressValidator::class);
 
-        $this->model = $this->objectManager->getObject(
-            ShippingInformationManagement::class,
-            [
-                'paymentMethodManagement' => $this->paymentMethodManagementMock,
-                'paymentDetailsFactory' => $this->paymentDetailsFactoryMock,
-                'cartTotalsRepository' => $this->cartTotalsRepositoryMock,
-                'quoteRepository' => $this->quoteRepositoryMock,
-                'shippingAssignmentFactory' => $this->shippingAssignmentFactoryMock,
-                'cartExtensionFactory' => $this->cartExtensionFactoryMock,
-                'shippingFactory' => $this->shippingFactoryMock,
-                'addressValidator' => $this->addressValidatorMock
-            ]
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
+        $this->addressRepositoryMock = $this->createMock(AddressRepositoryInterface::class);
+        $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
+        $this->totalsCollectorMock = $this->createMock(TotalsCollector::class);
+        $this->addressComparatorMock = $this->createMock(AddressComparatorInterface::class);
+        $this->model = new ShippingInformationManagement(
+            $this->paymentMethodManagementMock,
+            $this->paymentDetailsFactoryMock,
+            $this->cartTotalsRepositoryMock,
+            $this->quoteRepositoryMock,
+            $this->addressValidatorMock,
+            $this->loggerMock,
+            $this->addressRepositoryMock,
+            $this->scopeConfigMock,
+            $this->totalsCollectorMock,
+            $this->cartExtensionFactoryMock,
+            $this->shippingAssignmentFactoryMock,
+            $this->shippingFactoryMock,
+            $this->addressComparatorMock
         );
     }
 
@@ -197,7 +225,7 @@ class ShippingInformationManagementTest extends TestCase
     private function setShippingAssignmentsMocks($shippingMethod): void
     {
         $this->quoteMock->method('getExtensionAttributes')->willReturn(null);
-        $this->cartExtensionMock = $this->getCartExtensionMock();
+        $this->cartExtensionMock = new CartExtensionShippingAssignmentsTestHelper();
         $this->cartExtensionFactoryMock->method('create')->willReturn($this->cartExtensionMock);
 
         $this->shippingAssignmentMock = $this->createMock(ShippingAssignment::class);
@@ -560,15 +588,5 @@ class ShippingInformationManagementTest extends TestCase
         );
     }
 
-    /**
-     * Build cart extension mock.
-     *
-     * @return MockObject
-     */
-    private function getCartExtensionMock(): MockObject
-    {
-        $mockBuilder = $this->getMockBuilder(CartExtension::class)
-            ->onlyMethods(['getShippingAssignments', 'setShippingAssignments']);
-        return $mockBuilder->getMock();
-    }
+    // Removed unused getCartExtensionMock()
 }

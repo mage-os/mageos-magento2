@@ -61,7 +61,8 @@ class GuestCartManagementTest extends TestCase
 
         $this->quoteManagementMock = $this->createMock(CartManagementInterface::class);
         $this->quoteIdMaskFactoryMock = $this->createPartialMock(
-            QuoteIdMaskFactory::class, ['create']
+            QuoteIdMaskFactory::class,
+            ['create']
         );
         $this->quoteIdMaskMock = $this->createMock(
             \Magento\Quote\Test\Unit\Model\GuestCart\QuoteIdMaskTestHelper::class

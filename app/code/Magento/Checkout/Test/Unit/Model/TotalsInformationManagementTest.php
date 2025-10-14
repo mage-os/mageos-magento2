@@ -9,7 +9,7 @@ namespace Magento\Checkout\Test\Unit\Model;
 
 use Magento\Checkout\Api\Data\TotalsInformationInterface;
 use Magento\Checkout\Model\TotalsInformationManagement;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Checkout\Model\TotalsInformationManagement as TotalsInformationManagementModel;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\CartTotalRepositoryInterface;
 use Magento\Quote\Model\Quote;
@@ -19,11 +19,6 @@ use PHPUnit\Framework\Attributes\DataProvider;
 
 class TotalsInformationManagementTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ObjectManager
-     */
-    private $objectManager;
-
     /**
      * @var CartRepositoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
@@ -41,20 +36,15 @@ class TotalsInformationManagementTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->objectManager = new ObjectManager($this);
         $this->cartRepositoryMock = $this->createMock(
             CartRepositoryInterface::class
         );
         $this->cartTotalRepositoryMock = $this->createMock(
             CartTotalRepositoryInterface::class
         );
-
-        $this->totalsInformationManagement = $this->objectManager->getObject(
-            TotalsInformationManagement::class,
-            [
-                'cartRepository' => $this->cartRepositoryMock,
-                'cartTotalRepository' => $this->cartTotalRepositoryMock,
-            ]
+        $this->totalsInformationManagement = new TotalsInformationManagementModel(
+            $this->cartRepositoryMock,
+            $this->cartTotalRepositoryMock
         );
     }
 

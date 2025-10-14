@@ -25,6 +25,8 @@ class QtyFalseQtyOrderedDataObjectTestHelper extends DataObject
      * Returns false to emulate absence of quantity.
      *
      * @return bool
+     * @phpcsSuppress Magento2.NamingConventions.ValidFunctionName.BooleanGetMethodName
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getQty()
     {

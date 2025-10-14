@@ -89,10 +89,7 @@ class RendererTest extends TestCase
     protected function _initProduct()
     {
         /** @var Product|MockObject $product */
-        $product = $this->createPartialMock(
-            Product::class,
-            ['getName', 'getIdentities']
-        );
+        $product = $this->createMock(Product::class);
         $product->method('getName')->willReturn('Parent Product');
 
         /** @var Item|MockObject $item */

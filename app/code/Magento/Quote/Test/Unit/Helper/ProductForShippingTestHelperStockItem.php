@@ -33,5 +33,3 @@ class ProductForShippingTestHelperStockItem
         return 1;
     }
 }
-
-

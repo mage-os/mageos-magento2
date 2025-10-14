@@ -29,7 +29,6 @@ class OptionCodeDouble extends Option
         return $this;
     }
 
-
     public function getCode()
     {
         return (string)$this->getData('code');

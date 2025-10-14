@@ -18,16 +18,6 @@ class ContextExtensionGetStoreTestHelper implements ContextExtensionInterface
     private $store;
 
     /**
-     * @var bool|null
-     */
-    private $isCustomer;
-
-    /**
-     * @var int|null
-     */
-    private $customerGroupId;
-
-    /**
      * @return StoreInterface|null
      */
     public function getStore()
