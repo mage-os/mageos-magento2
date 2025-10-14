@@ -1,5 +1,4 @@
 parameters:
-    level: 1
     checkExplicitMixedMissingReturn: true
     checkPhpDocMissingReturn: true
     reportUnmatchedIgnoredErrors: false
@@ -37,10 +36,6 @@ parameters:
         - '#Constant TESTS_MODULES_PATH not found.#'
         - '#Constant TESTS_INSTALLATION_DB_CONFIG_FILE not found.#'
         - '#Constant T_[A-Z_]+ not found.#'
-        # Ignore missing ContextExtensionInterface in GraphQl modules
-        - '#Anonymous class implements unknown interface Magento\\GraphQl\\Model\\Query\\ContextExtensionInterface#'
-        # Ignore anonymous class implements unknown interface errors across all modules
-        - '#Anonymous class implements unknown interface.*Interface#'
 
 services:
     -
