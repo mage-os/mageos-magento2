@@ -7,10 +7,10 @@ declare(strict_types=1);
 
 namespace Magento\GraphQl\Test\Unit\Helper;
 
-use Magento\GraphQl\Model\Query\ContextExtensionInterface;
+use Magento\GraphQl\Model\Query\ContextExtension;
 use Magento\Store\Api\Data\StoreInterface;
 
-class ContextExtensionGetStoreTestHelper implements ContextExtensionInterface
+class ContextExtensionGetStoreTestHelper extends ContextExtension
 {
     /**
      * @var StoreInterface|null

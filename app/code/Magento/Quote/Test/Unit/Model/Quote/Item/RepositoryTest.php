@@ -18,6 +18,8 @@ use Magento\Quote\Model\Quote\Address;
 use Magento\Quote\Model\Quote\Item;
 use Magento\Quote\Model\Quote\Item\CartItemOptionsProcessor;
 use Magento\Quote\Model\Quote\Item\Repository;
+use Magento\Quote\Model\Quote\Item\CartItemValidatorInterface;
+use Magento\Quote\Model\Quote\Item\CartItemValidatorResultInterface;
 use Magento\Quote\Model\QuoteMutexInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -83,6 +85,11 @@ class RepositoryTest extends TestCase
     private $optionsProcessorMock;
 
     /**
+     * @var CartItemValidatorInterface|MockObject
+     */
+    private $cartItemValidatorMock;
+
+    /**
      * @return void
      */
     protected function setUp(): void
@@ -106,13 +113,19 @@ class RepositoryTest extends TestCase
             ->getMock();
         $this->optionsProcessorMock = $this->createMock(CartItemOptionsProcessor::class);
 
+        $this->cartItemValidatorMock = $this->createMock(CartItemValidatorInterface::class);
+        $validatorResult = $this->createMock(CartItemValidatorResultInterface::class);
+        $validatorResult->method('getErrors')->willReturn([]);
+        $this->cartItemValidatorMock->method('validate')->willReturn($validatorResult);
+
         $this->repository = new Repository(
             $this->quoteRepositoryMock,
             $this->productRepositoryMock,
             $this->itemDataFactoryMock,
             $this->optionsProcessorMock,
             ['custom_options' => $this->customOptionProcessor],
-            $this->createMock(QuoteMutexInterface::class)
+            $this->createMock(QuoteMutexInterface::class),
+            $this->cartItemValidatorMock
         );
     }
 
