@@ -568,6 +568,38 @@ return [
         Magento\Framework\Session\SaveHandler\Redis\Config::class => null,
         Magento\Framework\Session\SaveHandler\Redis\Logger::class => null,
     ],
-    '' => [
+    // Skip both AMQP and STOMP message queue objects for placeOrder operations
+    // This allows the test to work regardless of which message queue system is active
+    'placeOrder' => [
+        // AMQP message queue objects
+        \Magento\Framework\Amqp\ConfigPool::class => null,
+        \Magento\Framework\Amqp\Config::class => null,
+        \Magento\Framework\Amqp\Exchange::class => null,
+        \Magento\Framework\MessageQueue\Publisher::class => null,
+        PhpAmqpLib\Connection\AMQPStreamConnection::class => null,
+        PhpAmqpLib\Connection\AMQPSSLConnection::class => null,
+        // STOMP message queue objects
+        \Magento\Framework\Stomp\ConfigPool::class => null,
+        \Magento\Framework\Stomp\Config::class => null,
+        \Magento\Framework\Stomp\Queue::class => null,
+        \Magento\Framework\Stomp\StompClient::class => null,
+        \Magento\Framework\MessageQueue\QueueRepository::class => null,
+        Stomp\StatefulStomp::class => null,
+    ],
+    'placeOrder-fromConstructed' => [
+        // AMQP message queue objects
+        \Magento\Framework\Amqp\ConfigPool::class => null,
+        \Magento\Framework\Amqp\Config::class => null,
+        \Magento\Framework\Amqp\Exchange::class => null,
+        \Magento\Framework\MessageQueue\Publisher::class => null,
+        PhpAmqpLib\Connection\AMQPStreamConnection::class => null,
+        PhpAmqpLib\Connection\AMQPSSLConnection::class => null,
+        // STOMP message queue objects
+        \Magento\Framework\Stomp\ConfigPool::class => null,
+        \Magento\Framework\Stomp\Config::class => null,
+        \Magento\Framework\Stomp\Queue::class => null,
+        \Magento\Framework\Stomp\StompClient::class => null,
+        \Magento\Framework\MessageQueue\QueueRepository::class => null,
+        \Stomp\StatefulStomp::class => null,
     ],
 ];
