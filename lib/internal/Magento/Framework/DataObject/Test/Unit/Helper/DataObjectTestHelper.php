@@ -337,4 +337,48 @@ class DataObjectTestHelper extends DataObject
         $this->data['product_attribute'] = $productAttribute;
         return $this;
     }
+
+    /**
+     * Get name for testing
+     *
+     * @return mixed
+     */
+    public function getName()
+    {
+        return $this->data['name'] ?? null;
+    }
+
+    /**
+     * Set name for testing
+     *
+     * @param mixed $name
+     * @return self
+     */
+    public function setName($name): self
+    {
+        $this->data['name'] = $name;
+        return $this;
+    }
+
+    /**
+     * Get price for testing
+     *
+     * @return mixed
+     */
+    public function getPrice()
+    {
+        return $this->data['price'] ?? null;
+    }
+
+    /**
+     * Set price for testing
+     *
+     * @param mixed $price
+     * @return self
+     */
+    public function setPrice($price): self
+    {
+        $this->data['price'] = $price;
+        return $this;
+    }
 }

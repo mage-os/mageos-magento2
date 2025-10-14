@@ -58,6 +58,7 @@ class TypeTestHelper extends Type
      *
      * @param \Magento\Catalog\Model\Product $product
      * @return array
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getSamples($product)
     {
@@ -69,6 +70,7 @@ class TypeTestHelper extends Type
      *
      * @param \Magento\Catalog\Model\Product $product
      * @return array
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getLinks($product)
     {

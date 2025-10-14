@@ -39,7 +39,6 @@ class CreditmemoTest extends TestCase
 
     protected function setUp(): void
     {
-        $objectManager = new ObjectManager($this);
         $this->order = $this->createMock(Order::class);
         $this->order->expects($this->any())
             ->method('formatPriceTxt')
@@ -56,19 +55,14 @@ class CreditmemoTest extends TestCase
         );
         $filterManager->expects($this->any())->method('stripTags')->willReturnArgument(0);
 
-        $modelConstructorArgs = $objectManager->getConstructArguments(
-            Creditmemo::class,
-            ['string' => new StringUtils(), 'filterManager' => $filterManager]
-        );
-
         $this->model = $this->createPartialMock(Creditmemo::class, ['getLinks', 'getLinksTitle']);
-        
+
         // Use reflection to inject dependencies
         $reflection = new \ReflectionClass($this->model);
         $stringProperty = $reflection->getProperty('string');
         $stringProperty->setAccessible(true);
         $stringProperty->setValue($this->model, new StringUtils());
-        
+
         $filterManagerProperty = $reflection->getProperty('filterManager');
         $filterManagerProperty->setAccessible(true);
         $filterManagerProperty->setValue($this->model, $filterManager);
