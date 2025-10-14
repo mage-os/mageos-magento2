@@ -9,12 +9,24 @@ namespace Magento\Sales\Model;
 
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\ObjectManagerInterface;
-use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Sales\Api\CreditmemoRepositoryInterface;
-use Magento\Sales\Api\OrderRepositoryInterface;
-use Magento\Sales\Model\Order\CreditmemoFactory;
-use Magento\Store\Model\StoreManagerInterface;
 use Magento\TestFramework\Helper\Bootstrap;
+use Magento\Catalog\Test\Fixture\Product as ProductFixture;
+use Magento\Store\Test\Fixture\Website as WebsiteFixture;
+use Magento\Store\Test\Fixture\Group as StoreGroupFixture;
+use Magento\Store\Test\Fixture\Store as StoreFixture;
+use Magento\Customer\Test\Fixture\Customer as CustomerFixture;
+use Magento\Quote\Test\Fixture\CustomerCart as CustomerCartFixture;
+use Magento\Checkout\Test\Fixture\SetBillingAddress as SetBillingAddressFixture;
+use Magento\Checkout\Test\Fixture\SetShippingAddress as SetShippingAddressFixture;
+use Magento\Checkout\Test\Fixture\SetDeliveryMethod as SetDeliveryMethodFixture;
+use Magento\Checkout\Test\Fixture\SetPaymentMethod as SetPaymentMethodFixture;
+use Magento\Checkout\Test\Fixture\PlaceOrder as PlaceOrderFixture;
+use Magento\Sales\Test\Fixture\Invoice as InvoiceFixture;
+use Magento\Sales\Test\Fixture\Creditmemo as CreditmemoFixture;
+use Magento\Quote\Test\Fixture\AddProductToCart as AddProductToCartFixture;
+use Magento\TestFramework\Fixture\DataFixture;
+use Magento\TestFramework\Fixture\DataFixtureStorageManager;
 
 /**
  * Integration test for complete workflow:
@@ -22,6 +34,11 @@ use Magento\TestFramework\Helper\Bootstrap;
  *
  * @magentoDbIsolation enabled
  * @magentoAppIsolation enabled
+ * @magentoConfigFixture default/general/country/allow US
+ * @magentoConfigFixture default/general/country/default US
+ * @magentoConfigFixture default_store carriers/flatrate/active 1
+ * @magentoConfigFixture default_store carriers/flatrate/price 5.00
+ * @magentoConfigFixture default_store payment/free/active 1
  */
 class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
 {
@@ -31,48 +48,16 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
     private $objectManager;
 
     /**
-     * @var StoreManagerInterface
-     */
-    private $storeManager;
-
-    /**
-     * @var OrderRepositoryInterface
-     */
-    private $orderRepository;
-
-    /**
      * @var CreditmemoRepositoryInterface
      */
     private $creditmemoRepository;
 
     /**
-     * @var CreditmemoFactory
-     */
-    private $creditmemoFactory;
-
-    /**
-     * @var ProductRepositoryInterface
-     */
-    private $productRepository;
-
-    /**
      * Test data constants
      */
-    private const WEBSITE_CODE = 'test_website';
     private const WEBSITE_NAME = '123test Website';
-    private const STORE_GROUP_CODE = 'test_group';
     private const STORE_GROUP_NAME = '123test Store Group';
-    private const STORE_CODE = 'test_store';
     private const STORE_NAME = '123test Store View';
-    private const ORDER_INCREMENT_ID = '123TEST000001';
-    private const DEFAULT_ROOT_CATEGORY_ID = 2;
-    private const ORDER_QTY = 2;
-    private const STORE_SORT_ORDER = 10;
-
-    // String constants to reduce coupling
-    private const PAYMENT_METHOD = 'checkmo';
-    private const ORDER_STATE = 'processing';
-    private const CREDITMEMO_STATE = 1;
 
     /**
      * @inheritdoc
@@ -81,267 +66,70 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
     {
         parent::setUp();
         $this->objectManager = Bootstrap::getObjectManager();
-        $this->storeManager = $this->objectManager->get(StoreManagerInterface::class);
-        $this->orderRepository = $this->objectManager->get(OrderRepositoryInterface::class);
         $this->creditmemoRepository = $this->objectManager->get(CreditmemoRepositoryInterface::class);
-        $this->creditmemoFactory = $this->objectManager->get(CreditmemoFactory::class);
-        $this->productRepository = $this->objectManager->get(ProductRepositoryInterface::class);
     }
 
     /**
      * Test complete workflow: Create store with numeric name -> Place order -> Create credit memo -> Verify grid
      *
-     * @magentoDataFixture Magento/Catalog/_files/product_simple.php
      * @return void
      */
+    #[
+        DataFixture(WebsiteFixture::class, ['code' => 'test_website', 'name' => '123test Website'], 'test_website'),
+        DataFixture(
+            StoreGroupFixture::class,
+            ['code' => 'test_group', 'name' => '123test Store Group', 'website_id' => '$test_website.id$'],
+            'test_group'
+        ),
+        DataFixture(
+            StoreFixture::class,
+            [
+                'code' => 'test_store',
+                'name' => '123test Store View',
+                'website_id' => '$test_website.id$',
+                'group_id' => '$test_group.id$'
+            ],
+            'test_store'
+        ),
+        DataFixture(ProductFixture::class, ['sku' => 'simple', 'price' => 10], 'product'),
+        DataFixture(CustomerFixture::class, ['email' => 'customer@123test.com'], 'customer'),
+        DataFixture(
+            CustomerCartFixture::class,
+            ['customer_id' => '$customer.id$', 'store_id' => '$test_store.id$'],
+            'cart'
+        ),
+        DataFixture(SetBillingAddressFixture::class, ['cart_id' => '$cart.id$']),
+        DataFixture(SetShippingAddressFixture::class, ['cart_id' => '$cart.id$']),
+        DataFixture(
+            AddProductToCartFixture::class,
+            ['cart_id' => '$cart.id$', 'product_id' => '$product.id$', 'qty' => 2]
+        ),
+        DataFixture(
+            SetDeliveryMethodFixture::class,
+            ['cart_id' => '$cart.id$']
+        ),
+        DataFixture(SetPaymentMethodFixture::class, ['cart_id' => '$cart.id$']),
+        DataFixture(PlaceOrderFixture::class, ['cart_id' => '$cart.id$'], 'order'),
+        DataFixture(InvoiceFixture::class, ['order_id' => '$order.id$'], 'invoice'),
+        DataFixture(
+            CreditmemoFixture::class,
+            ['order_id' => '$order.id$', 'items' => [['qty' => 1, 'product_id' => '$product.id$']]],
+            'creditmemo'
+        )
+    ]
     public function testCompleteWorkflowWithNumericStoreNames(): void
     {
-        // Step 1: Create store configuration with numeric names
-        $store = $this->createStoreConfigurationWithNumericNames();
+        // Step 1: Get fixtures
+        $fixtures = DataFixtureStorageManager::getStorage();
+        $store = $fixtures->get('test_store');
+        $order = $fixtures->get('order');
+        $creditmemo = $fixtures->get('creditmemo');
 
-        // Step 2: Create order on the numeric store
-        $order = $this->createOrderOnNumericStore($store);
-
-        // Step 3: Create credit memo for the order
-        $creditmemo = $this->createCreditmemoForOrder($order);
-
-        // Step 4: Verify credit memo grid displays records
+        // Step 2: Verify credit memo grid displays records
         $this->verifyCreditMemoGridDisplaysRecords($creditmemo, $order);
 
-        // Step 5: Verify store name rendering in grid context (UI validation proves DB layer works)
+        // Step 3: Verify store name rendering in grid context (UI validation proves DB layer works)
         $this->verifyStoreNameRenderingInGrid($creditmemo, $store);
-    }
-
-    /**
-     * Create store configuration with numeric names programmatically
-     *
-     * @return \Magento\Store\Api\Data\StoreInterface
-     */
-    private function createStoreConfigurationWithNumericNames()
-    {
-        // Create website with numeric name
-        $website = $this->objectManager->get('Magento\Store\Api\Data\WebsiteInterfaceFactory')->create()
-            ->setCode(self::WEBSITE_CODE)
-            ->setName(self::WEBSITE_NAME);
-        $this->objectManager->get('Magento\Store\Model\ResourceModel\Website')->save($website);
-        $this->assertEntityCreated($website, self::WEBSITE_CODE, self::WEBSITE_NAME);
-
-        // Create store group with numeric name
-        $storeGroup = $this->objectManager->get('Magento\Store\Api\Data\GroupInterfaceFactory')->create()
-            ->setCode(self::STORE_GROUP_CODE)
-            ->setName(self::STORE_GROUP_NAME)
-            ->setWebsiteId($website->getId())
-            ->setRootCategoryId(self::DEFAULT_ROOT_CATEGORY_ID);
-        $this->objectManager->get('Magento\Store\Model\ResourceModel\Group')->save($storeGroup);
-        $this->assertEntityCreated($storeGroup, self::STORE_GROUP_CODE, self::STORE_GROUP_NAME);
-
-        // Link website to store group
-        $website->setDefaultGroupId($storeGroup->getId());
-        $this->objectManager->get('Magento\Store\Model\ResourceModel\Website')->save($website);
-        $this->storeManager->reinitStores();
-
-        // Create store view with numeric name
-        $store = $this->objectManager->get('Magento\Store\Api\Data\StoreInterfaceFactory')->create()
-            ->setCode(self::STORE_CODE)
-            ->setWebsiteId($website->getId())
-            ->setGroupId($storeGroup->getId())
-            ->setName(self::STORE_NAME)
-            ->setSortOrder(self::STORE_SORT_ORDER)
-            ->setIsActive(1);
-        $this->objectManager->get('Magento\Store\Model\ResourceModel\Store')->save($store);
-        $this->assertEntityCreated($store, self::STORE_CODE, self::STORE_NAME);
-        $this->assertEquals(1, $store->getIsActive());
-
-        // Link store group to store
-        $storeGroup->setDefaultStoreId($store->getId());
-        $this->objectManager->get('Magento\Store\Model\ResourceModel\Group')->save($storeGroup);
-
-        // Final verification
-        $this->storeManager->reinitStores();
-        $loadedStore = $this->storeManager->getStore(self::STORE_CODE);
-        $this->assertEquals(self::STORE_NAME, $loadedStore->getName());
-
-        return $store;
-    }
-
-    /**
-     * Helper method to assert entity creation and basic properties
-     *
-     * @param $entity
-     * @param string $expectedCode
-     * @param string $expectedName
-     * @return void
-     */
-    private function assertEntityCreated($entity, string $expectedCode, string $expectedName): void
-    {
-        $this->assertNotNull($entity->getId());
-        $this->assertEquals($expectedCode, $entity->getCode());
-        $this->assertEquals($expectedName, $entity->getName());
-    }
-
-    /**
-     * Create order on the numeric store using existing product fixture
-     *
-     * @param \Magento\Store\Api\Data\StoreInterface $store
-     * @return \Magento\Sales\Api\Data\OrderInterface
-     */
-    private function createOrderOnNumericStore($store)
-    {
-        $product = $this->productRepository->get('simple');
-        $this->assertNotNull($product->getId());
-
-        // Cache commonly used values
-        $productPrice = (float) $product->getPrice();
-        $orderTotal = $productPrice * self::ORDER_QTY;
-        $storeId = (int) $store->getId();
-
-        // Create addresses using cached factory
-        $addresses = $this->createOrderAddresses();
-
-        // Create payment using cached factory
-        $payment = $this->objectManager->get('Magento\Sales\Api\Data\OrderPaymentInterfaceFactory')->create()
-            ->setMethod(self::PAYMENT_METHOD)
-            ->setAdditionalInformation('last_trans_id', '11122')
-            ->setAdditionalInformation('metadata', ['type' => 'free', 'fraudulent' => false]);
-
-        // Create order item using cached factory
-        $orderItem = $this->createOrderItem($product, $productPrice, $orderTotal);
-
-        // Create and configure order
-        $order = $this->objectManager->create('Magento\Sales\Model\Order');
-        $order->setIncrementId(self::ORDER_INCREMENT_ID)
-            ->setState(self::ORDER_STATE)
-            ->setStatus($order->getConfig()->getStateDefaultStatus(self::ORDER_STATE))
-            ->setSubtotal($orderTotal)
-            ->setBaseSubtotal($orderTotal)
-            ->setGrandTotal($orderTotal)
-            ->setBaseGrandTotal($orderTotal)
-            ->setOrderCurrencyCode('USD')
-            ->setBaseCurrencyCode('USD')
-            ->setCustomerIsGuest(true)
-            ->setCustomerEmail('customer@123test.com')
-            ->setBillingAddress($addresses['billing'])
-            ->setShippingAddress($addresses['shipping'])
-            ->addItem($orderItem)
-            ->setPayment($payment);
-
-        // Set store ID using the data setter method for better compatibility
-        $order->setData('store_id', $storeId);
-
-        $this->orderRepository->save($order);
-        //Asset order is creted
-        $this->assertNotNull($order->getId());
-        $this->assertEquals(self::ORDER_INCREMENT_ID, $order->getIncrementId());
-        // Note: In some test environments, order store ID may not persist correctly
-        // For the purpose of this test, we'll focus on the core functionality
-        if ($order->getStoreId()) {
-            $this->assertEquals($storeId, (int)$order->getStoreId());
-        }
-
-        // Create and save invoice
-        $this->createAndSaveInvoice($order);
-        $this->assertTrue($order->canCreditmemo());
-
-        return $order;
-    }
-
-    /**
-     * Create billing and shipping addresses for order
-     *
-     * @return array
-     */
-    private function createOrderAddresses(): array
-    {
-        $billingAddress = $this->objectManager->get('Magento\Sales\Model\Order\AddressFactory')
-            ->create()->setData([
-            'region' => 'CA',
-            'region_id' => '12',
-            'postcode' => '11111',
-            'lastname' => 'lastname',
-            'firstname' => 'firstname',
-            'street' => 'street',
-            'city' => 'Los Angeles',
-            'email' => 'admin@example.com',
-            'telephone' => '11111111',
-            'country_id' => 'US',
-            'address_type' => 'billing'
-        ]);
-
-        $shippingAddress = clone $billingAddress;
-        $shippingAddress->setId(null)->setAddressType('shipping');
-
-        return [
-            'billing' => $billingAddress,
-            'shipping' => $shippingAddress
-        ];
-    }
-
-    /**
-     * Create order item for product
-     *
-     * @param \Magento\Catalog\Api\Data\ProductInterface $product
-     * @param float $productPrice
-     * @param float $orderTotal
-     * @return \Magento\Sales\Api\Data\OrderItemInterface
-     */
-    private function createOrderItem($product, float $productPrice, float $orderTotal)
-    {
-        return $this->objectManager->get('Magento\Sales\Api\Data\OrderItemInterfaceFactory')->create()
-            ->setProductId($product->getId())
-            ->setQtyOrdered(self::ORDER_QTY)
-            ->setBasePrice($productPrice)
-            ->setPrice($productPrice)
-            ->setRowTotal($orderTotal)
-            ->setBaseRowTotal($orderTotal)
-            ->setProductType('simple')
-            ->setName($product->getName())
-            ->setSku($product->getSku());
-    }
-
-    /**
-     * Create and save invoice for order
-     *
-     * @param OrderInterface $order
-     * @return void
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
-    private function createAndSaveInvoice($order): void
-    {
-        $invoice = $this->objectManager->get('Magento\Sales\Api\InvoiceManagementInterface')
-            ->prepareInvoice($order);
-        $invoice->register();
-        $invoice->setIncrementId($order->getIncrementId());
-        $order = $invoice->getOrder();
-        $order->setIsInProcess(true);
-
-        $transactionSave = $this->objectManager->create('Magento\Framework\DB\Transaction');
-        $transactionSave->addObject($invoice)->addObject($order)->save();
-    }
-
-    /**
-     * Create credit memo for the given order
-     *
-     * @param OrderInterface $order
-     * @return CreditmemoInterface
-     */
-    private function createCreditmemoForOrder($order)
-    {
-        $this->assertNotNull($order->getId());
-        $this->assertTrue($order->canCreditmemo());
-
-        $creditmemo = $this->creditmemoFactory->createByOrder($order, $order->getData());
-        $creditmemo->setOrder($order);
-        $creditmemo->setState(self::CREDITMEMO_STATE);
-        $creditmemo->setIncrementId($order->getIncrementId() . '-CM');
-
-        $this->creditmemoRepository->save($creditmemo);
-
-        $this->assertNotNull($creditmemo->getId());
-        $this->assertEquals($order->getId(), $creditmemo->getOrderId());
-        $this->assertEquals(self::CREDITMEMO_STATE, $creditmemo->getState());
-        $this->assertGreaterThan(0, $creditmemo->getGrandTotal());
-
-        return $creditmemo;
     }
 
     /**
@@ -364,14 +152,13 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
         $this->assertEquals($order->getId(), $foundCreditmemo->getOrderId());
         $this->assertEquals($order->getStoreId(), $foundCreditmemo->getStoreId());
 
-        // Test credit memo retrieval by store ID
-        $creditmemosByStore = $this->getCreditmemosByFilter('store_id', $order->getStoreId());
-        $this->assertGreaterThan(0, count($creditmemosByStore));
+        // Test credit memo retrieval by creditmemo ID (more efficient than filtering by store_id and looping)
+        $creditmemoById = $this->getCreditmemosByFilter('entity_id', $creditmemo->getId());
+        $this->assertCount(1, $creditmemoById, 'Credit memo should be found when filtering by ID');
 
-        $this->assertTrue(
-            $this->findCreditmemoInList($creditmemo, $creditmemosByStore),
-            'Credit memo should be found when filtering by store ID'
-        );
+        $foundCreditmemoById = reset($creditmemoById);
+        $this->assertEquals($creditmemo->getId(), $foundCreditmemoById->getId());
+        $this->assertEquals($order->getStoreId(), $foundCreditmemoById->getStoreId());
     }
 
     /**
@@ -391,24 +178,7 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
     }
 
     /**
-     * Find credit memo in list by ID
-     *
-     * @param CreditmemoInterface $targetCreditmemo
-     * @param array $creditmemoList
-     * @return bool
-     */
-    private function findCreditmemoInList($targetCreditmemo, array $creditmemoList): bool
-    {
-        foreach ($creditmemoList as $creditmemo) {
-            if ($creditmemo->getId() === $targetCreditmemo->getId()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Verify store name rendering in grid context
+     * Verify store name rendering for credit memo
      * Tests how store names with numeric prefixes are displayed
      *
      * @param CreditmemoInterface $creditmemo
