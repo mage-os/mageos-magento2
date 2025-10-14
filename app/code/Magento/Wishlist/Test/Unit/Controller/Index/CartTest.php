@@ -41,8 +41,7 @@ use Magento\Wishlist\Model\ResourceModel\Item\Option\Collection;
 use Magento\Wishlist\Model\Wishlist;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Checkout\Test\Unit\Helper\CheckoutCartTestHelper;
-use Magento\Framework\Test\Unit\Helper\RequestInterfaceTestHelper;
+use Magento\Framework\App\Test\Unit\Helper\RequestInterfaceTestHelper;
 use Magento\Wishlist\Test\Unit\Helper\ItemTestHelper;
 
 /**
@@ -174,7 +173,22 @@ class CartTest extends TestCase
 
         $this->itemFactoryMock = $this->createPartialMock(ItemFactory::class, ['create']);
 
-        $this->checkoutCartMock = new CheckoutCartTestHelper();
+        // Use createMock and configure save() to return self for method chaining
+        // For getQuote() and setQuote(), we need to store and retrieve the quote
+        $cartQuote = null;
+        $this->checkoutCartMock = $this->createMock(CheckoutCart::class);
+        $this->checkoutCartMock->method('save')->willReturnSelf();
+        $this->checkoutCartMock->method('setQuote')->willReturnCallback(
+            function ($quote) use (&$cartQuote) {
+                $cartQuote = $quote;
+                return $this->checkoutCartMock;
+            }
+        );
+        $this->checkoutCartMock->method('getQuote')->willReturnCallback(
+            function () use (&$cartQuote) {
+                return $cartQuote;
+            }
+        );
 
         $this->optionFactoryMock = $this->createPartialMock(OptionFactory::class, ['create']);
 
@@ -320,6 +334,7 @@ class CartTest extends TestCase
             ->willReturn(true);
 
         $itemMock = new ItemTestHelper();
+        $itemMock->setId($itemId); // Set the item ID so getId() returns it
 
         $this->requestMock->params['item'] = $itemId;
         $this->requestMock->params['qty'] = null;
@@ -420,6 +435,7 @@ class CartTest extends TestCase
         $refererUrl = 'referer_url';
 
         $itemMock = new ItemTestHelper();
+        $itemMock->setId($itemId); // Set the item ID so getId() returns it
 
         $this->itemFactoryMock->method('create')->willReturn($itemMock);
 
@@ -541,6 +557,7 @@ class CartTest extends TestCase
             ->willReturn(true);
 
         $itemMock = new ItemTestHelper();
+        $itemMock->setId($itemId); // Set the item ID so getId() returns it
 
         $this->itemFactoryMock->method('create')->willReturn($itemMock);
 
@@ -656,6 +673,7 @@ class CartTest extends TestCase
             ->willReturn(true);
 
         $itemMock = new ItemTestHelper();
+        $itemMock->setId($itemId); // Set the item ID so getId() returns it
         $itemMock->throwLocalizedException = true;
         $itemMock->setProductId($productId);
 
@@ -769,6 +787,7 @@ class CartTest extends TestCase
             ->willReturn(true);
 
         $itemMock = new ItemTestHelper();
+        $itemMock->setId($itemId); // Set the item ID so getId() returns it
         $itemMock->throwLocalizedException = true;
         $itemMock->setProductId($productId);
 

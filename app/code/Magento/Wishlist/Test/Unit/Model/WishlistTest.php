@@ -36,7 +36,6 @@ use Magento\Wishlist\Model\ResourceModel\Wishlist as WishlistResource;
 use Magento\Wishlist\Model\ResourceModel\Wishlist\Collection as WishlistCollection;
 use Magento\Wishlist\Model\Wishlist;
 use Magento\Wishlist\Test\Unit\Helper\ItemTestHelper;
-use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -412,11 +411,11 @@ class WishlistTest extends TestCase
 
     private function createProductMockForAddNewItem($productId, $storeId, $instanceType, $getIsSalable)
     {
-        $product = new ProductTestHelper();
-        $product->setId($productId);
-        $product->setStoreId($storeId);
-        $product->setTypeInstance($instanceType);
-        $product->setIsSalable($getIsSalable);
+        $product = $this->createPartialMock(Product::class, ['getId', 'getStoreId', 'getTypeInstance', 'getIsSalable']);
+        $product->method('getId')->willReturn($productId);
+        $product->method('getStoreId')->willReturn($storeId);
+        $product->method('getTypeInstance')->willReturn($instanceType);
+        $product->method('getIsSalable')->willReturn($getIsSalable);
         return $product;
     }
 }

@@ -8,7 +8,6 @@ declare(strict_types=1);
 namespace Magento\Weee\Test\Unit\App\Action;
 
 use Magento\Customer\Model\Session as CustomerSession;
-use Magento\Customer\Test\Unit\Helper\SessionTestHelper;
 use Magento\Framework\App\Config;
 use Magento\Framework\App\Http\Context as HttpContext;
 use Magento\Framework\App\Test\Unit\Action\Stub\ActionStub;
@@ -103,39 +102,23 @@ class ContextPluginTest extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
 
-        $this->taxHelperMock = $this->getMockBuilder(TaxHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->taxHelperMock = $this->createMock(TaxHelper::class);
 
-        $this->weeeHelperMock = $this->getMockBuilder(WeeeHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->weeeHelperMock = $this->createMock(WeeeHelper::class);
 
-        $this->weeeTaxMock = $this->getMockBuilder(Tax::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->weeeTaxMock = $this->createMock(Tax::class);
 
-        $this->httpContextMock = $this->getMockBuilder(HttpContext::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->httpContextMock = $this->createMock(HttpContext::class);
 
         $this->customerSessionMock = $this->createCustomerSessionMock();
 
-        $this->moduleManagerMock = $this->getMockBuilder(ModuleManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->moduleManagerMock = $this->createMock(ModuleManager::class);
 
-        $this->cacheConfigMock = $this->getMockBuilder(PageCacheConfig::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->cacheConfigMock = $this->createMock(PageCacheConfig::class);
 
-        $this->storeManagerMock = $this->getMockBuilder(StoreManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->storeManagerMock = $this->createMock(StoreManager::class);
 
-        $this->scopeConfigMock = $this->getMockBuilder(Config::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->scopeConfigMock = $this->createMock(Config::class);
 
         $this->contextPlugin = $this->objectManager->getObject(
             ContextPlugin::class,
@@ -160,7 +143,17 @@ class ContextPluginTest extends TestCase
      */
     private function createCustomerSessionMock(): CustomerSession
     {
-        return new SessionTestHelper();
+        $session = $this->createPartialMock(CustomerSession::class, ['isLoggedIn']);
+        
+        // Initialize storage for magic __call methods
+        $reflection = new \ReflectionClass($session);
+        $property = $reflection->getProperty('storage');
+        $property->setValue($session, new \Magento\Framework\Session\Storage());
+        
+        // Mock isLoggedIn method
+        $session->method('isLoggedIn')->willReturn(true);
+        
+        return $session;
     }
 
     /**
@@ -168,7 +161,7 @@ class ContextPluginTest extends TestCase
      */
     public function testBeforeExecuteBasedOnDefault(): void
     {
-        $this->customerSessionMock->setIsLoggedIn(true);
+        // isLoggedIn is already mocked in createCustomerSessionMock()
 
         $this->moduleManagerMock->expects($this->once())
             ->method('isEnabled')
@@ -187,9 +180,7 @@ class ContextPluginTest extends TestCase
             ->method('getTaxBasedOn')
             ->willReturn('billing');
 
-        $storeMock = $this->getMockBuilder(Store::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $storeMock = $this->createMock(Store::class);
 
         $storeMock->expects($this->once())
             ->method('getWebsiteId')
@@ -240,7 +231,7 @@ class ContextPluginTest extends TestCase
      */
     public function testBeforeExecuteBasedOnOrigin(): void
     {
-        $this->customerSessionMock->setIsLoggedIn(true);
+        // isLoggedIn is already mocked in createCustomerSessionMock()
 
         $this->moduleManagerMock->expects($this->once())
             ->method('isEnabled')
@@ -270,7 +261,7 @@ class ContextPluginTest extends TestCase
      */
     public function testBeforeExecuteBasedOnBilling(): void
     {
-        $this->customerSessionMock->setIsLoggedIn(true);
+        // isLoggedIn is already mocked in createCustomerSessionMock()
 
         $this->moduleManagerMock->expects($this->once())
             ->method('isEnabled')
@@ -289,9 +280,7 @@ class ContextPluginTest extends TestCase
             ->method('getTaxBasedOn')
             ->willReturn('billing');
 
-        $storeMock = $this->getMockBuilder(Store::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $storeMock = $this->createMock(Store::class);
 
         $storeMock->expects($this->once())
             ->method('getWebsiteId')
@@ -322,7 +311,8 @@ class ContextPluginTest extends TestCase
                 return $args === $expectedArgs[$index - 1] ? $returnValue[$index - 1] : null;
             });
 
-        $this->customerSessionMock->setDefaultTaxBillingAddress(['country_id' => 'US', 'region_id' => 1]);
+        // Use magic __call method via storage
+        $this->customerSessionMock->setData('default_tax_billing_address', ['country_id' => 'US', 'region_id' => 1]);
 
         $this->weeeTaxMock->expects($this->once())
             ->method('isWeeeInLocation')
@@ -344,7 +334,7 @@ class ContextPluginTest extends TestCase
      */
     public function testBeforeExecuterBasedOnShipping(): void
     {
-        $this->customerSessionMock->setIsLoggedIn(true);
+        // isLoggedIn is already mocked in createCustomerSessionMock()
 
         $this->moduleManagerMock->expects($this->once())
             ->method('isEnabled')
@@ -363,9 +353,7 @@ class ContextPluginTest extends TestCase
             ->method('getTaxBasedOn')
             ->willReturn('shipping');
 
-        $storeMock = $this->getMockBuilder(Store::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $storeMock = $this->createMock(Store::class);
 
         $storeMock->expects($this->once())
             ->method('getWebsiteId')
@@ -396,7 +384,8 @@ class ContextPluginTest extends TestCase
                 return $args === $expectedArgs[$index - 1] ? $returnValue[$index - 1] : null;
             });
 
-        $this->customerSessionMock->setDefaultTaxShippingAddress(['country_id' => 'US', 'region_id' => 1]);
+        // Use magic __call method via storage
+        $this->customerSessionMock->setData('default_tax_shipping_address', ['country_id' => 'US', 'region_id' => 1]);
 
         $this->weeeTaxMock->expects($this->once())
             ->method('isWeeeInLocation')

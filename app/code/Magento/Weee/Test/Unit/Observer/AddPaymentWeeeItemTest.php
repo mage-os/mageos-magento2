@@ -9,7 +9,6 @@ namespace Magento\Weee\Test\Unit\Observer;
 
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
-use Magento\Framework\Test\Unit\Helper\EventTestHelper;
 use Magento\Payment\Model\Cart;
 use Magento\Payment\Model\Cart\SalesModel\SalesModelInterface;
 use Magento\Quote\Model\Quote\Item;
@@ -80,7 +79,10 @@ class AddPaymentWeeeItemTest extends TestCase
         $itemMock = new QuoteItemTestHelper();
         $originalItemMock = $this->createPartialMock(Item::class, ['getParentItem']);
         $parentItemMock = $this->createMock(Item::class);
-        $eventMock = new EventTestHelper();
+        $eventMock = $this->createPartialMock(Event::class, []);
+        $reflection = new \ReflectionClass($eventMock);
+        $property = $reflection->getProperty('_data');
+        $property->setValue($eventMock, []);
 
         $asCustomItem = $this->prepareShouldBeAddedAsCustomItem($isEnabled, $includeInSubtotal);
         $toBeCalled = 1;

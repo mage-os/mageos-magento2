@@ -28,7 +28,6 @@ use Magento\Wishlist\Model\Item\Option;
 use Magento\Wishlist\Model\Item\OptionFactory;
 use Magento\Wishlist\Model\ResourceModel\Item\Collection;
 use Magento\Wishlist\Model\ResourceModel\Item\Option\CollectionFactory;
-use Magento\Wishlist\Test\Unit\Helper\OptionTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -118,7 +117,10 @@ class ItemTest extends TestCase
             $option = $option($this);
         }
 
-        $optionMock = new OptionTestHelper();
+        $optionMock = $this->createPartialMock(Option::class, []);
+        $reflection = new \ReflectionClass($optionMock);
+        $property = $reflection->getProperty('_data');
+        $property->setValue($optionMock, []);
         $optionMock->setCode($code);
         $this->mocks['optionFactory']->method('create')->willReturn($optionMock);
         $this->model->addOption($option);
@@ -129,14 +131,20 @@ class ItemTest extends TestCase
 
     protected function getMockForOptionClass()
     {
-        $optionMock = new OptionTestHelper();
+        $optionMock = $this->createPartialMock(Option::class, []);
+        $reflection = new \ReflectionClass($optionMock);
+        $property = $reflection->getProperty('_data');
+        $property->setValue($optionMock, []);
         $optionMock->setCode('second_key');
         return $optionMock;
     }
 
     protected function getMockForProductClass()
     {
-        $optionMock = new OptionTestHelper();
+        $optionMock = $this->createPartialMock(Option::class, []);
+        $reflection = new \ReflectionClass($optionMock);
+        $property = $reflection->getProperty('_data');
+        $property->setValue($optionMock, []);
         $optionMock->setCode('third_key');
         return $optionMock;
     }
@@ -161,11 +169,17 @@ class ItemTest extends TestCase
         $code = 'someOption';
         $optionValue = 100;
 
-        $optionsOneMock = new OptionTestHelper();
+        $optionsOneMock = $this->createPartialMock(Option::class, []);
+        $reflection = new \ReflectionClass($optionsOneMock);
+        $property = $reflection->getProperty('_data');
+        $property->setValue($optionsOneMock, []);
         $optionsOneMock->setCode($code);
         $optionsOneMock->setValue($optionValue);
 
-        $optionsTwoMock = new OptionTestHelper();
+        $optionsTwoMock = $this->createPartialMock(Option::class, []);
+        $reflection = new \ReflectionClass($optionsTwoMock);
+        $property = $reflection->getProperty('_data');
+        $property->setValue($optionsTwoMock, []);
         $optionsTwoMock->setCode($code);
         $optionsTwoMock->setValue($optionValue);
 
@@ -183,11 +197,17 @@ class ItemTest extends TestCase
         $optionOneValue = 100;
         $optionTwoValue = 200;
 
-        $optionsOneMock = new OptionTestHelper();
+        $optionsOneMock = $this->createPartialMock(Option::class, []);
+        $reflection = new \ReflectionClass($optionsOneMock);
+        $property = $reflection->getProperty('_data');
+        $property->setValue($optionsOneMock, []);
         $optionsOneMock->setCode($code);
         $optionsOneMock->setValue($optionOneValue);
 
-        $optionsTwoMock = new OptionTestHelper();
+        $optionsTwoMock = $this->createPartialMock(Option::class, []);
+        $reflection = new \ReflectionClass($optionsTwoMock);
+        $property = $reflection->getProperty('_data');
+        $property->setValue($optionsTwoMock, []);
         $optionsTwoMock->setCode($code);
         $optionsTwoMock->setValue($optionTwoValue);
 
@@ -203,10 +223,16 @@ class ItemTest extends TestCase
     {
         $code = 'someOption';
 
-        $optionsOneMock = new OptionTestHelper();
+        $optionsOneMock = $this->createPartialMock(Option::class, []);
+        $reflection = new \ReflectionClass($optionsOneMock);
+        $property = $reflection->getProperty('_data');
+        $property->setValue($optionsOneMock, []);
         $optionsOneMock->setCode($code);
 
-        $optionsTwoMock = new OptionTestHelper();
+        $optionsTwoMock = $this->createPartialMock(Option::class, []);
+        $reflection = new \ReflectionClass($optionsTwoMock);
+        $property = $reflection->getProperty('_data');
+        $property->setValue($optionsTwoMock, []);
 
         $result = $this->model->compareOptions(
             [$optionsOneMock],
@@ -226,8 +252,6 @@ class ItemTest extends TestCase
         $this->assertNull($this->model->isOptionsSaved());
         $this->model->saveItemOptions();
         $this->assertTrue($this->model->isOptionsSaved());
-        $this->assertEquals(1, $firstOptionMock->getDeleteCount());
-        $this->assertEquals(1, $secondOptionMock->getSaveCount());
     }
 
     public function testGetProductWithException()
@@ -265,17 +289,25 @@ class ItemTest extends TestCase
 
     private function createFirstOptionMock($code, $deleted)
     {
-        $option = new OptionTestHelper();
+        $option = $this->createPartialMock(Option::class, ['delete', 'isDeleted']);
+        $reflection = new \ReflectionClass($option);
+        $property = $reflection->getProperty('_data');
+        $property->setValue($option, []);
         $option->setCode($code);
-        $option->setDeleted($deleted);
+        $option->method('isDeleted')->willReturn($deleted);
+        $option->expects($this->once())->method('delete')->willReturnSelf();
         return $option;
     }
 
     private function createSecondOptionMock($code, $deleted)
     {
-        $option = new OptionTestHelper();
+        $option = $this->createPartialMock(Option::class, ['save', 'isDeleted']);
+        $reflection = new \ReflectionClass($option);
+        $property = $reflection->getProperty('_data');
+        $property->setValue($option, []);
         $option->setCode($code);
-        $option->setDeleted($deleted);
+        $option->method('isDeleted')->willReturn($deleted);
+        $option->expects($this->once())->method('save')->willReturnSelf();
         return $option;
     }
 }

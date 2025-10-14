@@ -15,6 +15,7 @@ use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\GraphQl\Model\Query\ContextExtensionInterface;
 use Magento\GraphQl\Test\Unit\Helper\ContextExtensionInterfaceTestHelper;
+use Magento\Store\Api\Data\StoreInterface;
 use Magento\Tax\Helper\Data as TaxHelper;
 use Magento\Weee\Helper\Data as WeeeHelper;
 use Magento\WeeeGraphQl\Model\Resolver\FixedProductTax;
@@ -99,7 +100,9 @@ class FixedProductTaxTest extends TestCase
     public function testNotGettingAttributesWhenWeeeDisabledForStore(): void
     {
         // Given
-        $this->extensionAttributesMock->setStore(self::STUB_STORE_ID);
+        $storeMock = $this->createMock(StoreInterface::class);
+        $storeMock->method('getId')->willReturn(self::STUB_STORE_ID);
+        $this->extensionAttributesMock->setStore($storeMock);
 
         // When
         $this->weeeHelperMock->method('isEnabled')

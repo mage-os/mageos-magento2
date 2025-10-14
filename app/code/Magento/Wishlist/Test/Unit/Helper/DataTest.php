@@ -88,22 +88,16 @@ class DataTest extends TestCase
     {
         $this->store = $this->createMock(Store::class);
 
-        $this->storeManager = $this->getMockBuilder(StoreManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->storeManager = $this->createMock(StoreManagerInterface::class);
         $this->storeManager->expects($this->any())
             ->method('getStore')
             ->willReturn($this->store);
 
-        $this->urlEncoderMock = $this->getMockBuilder(EncoderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->urlEncoderMock = $this->createMock(EncoderInterface::class);
 
         $this->requestMock = $this->createMock(\Magento\Framework\HTTP\PhpEnvironment\Request::class);
 
-        $this->urlBuilder = $this->getMockBuilder(UrlInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->urlBuilder = $this->createMock(UrlInterface::class);
 
         $this->context = $this->createMock(Context::class);
         $this->context->expects($this->once())
@@ -116,9 +110,7 @@ class DataTest extends TestCase
             ->method('getRequest')
             ->willReturn($this->requestMock);
 
-        $this->wishlistProvider = $this->getMockBuilder(WishlistProviderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->wishlistProvider = $this->createMock(WishlistProviderInterface::class);
 
         $this->coreRegistry = $this->createMock(Registry::class);
 
@@ -128,8 +120,8 @@ class DataTest extends TestCase
         $this->wishlistItem->setId(1);
         $this->wishlistItem->setWishlistItemId(1);
         $this->wishlistItem->setProductId(null);
-        $this->wishlistItem->setQty(null);
-        $this->wishlistItem->setProduct($this->product);
+        $this->wishlistItem->setQty(0);
+        $this->wishlistItem->setData('product', $this->product);
 
         $this->wishlist = $this->createMock(Wishlist::class);
 
@@ -212,8 +204,7 @@ class DataTest extends TestCase
 
         // Configure the test item for this specific test
         $this->wishlistItem->setId($wishlistItemId);
-        $this->wishlistItem->setWishlistItemId($wishlistItemId);
-        $this->wishlistItem->setProduct($this->product);
+        $this->wishlistItem->setData('product', $this->product);
 
         $this->product->expects($this->once())
             ->method('isVisibleInSiteVisibility')
@@ -253,8 +244,7 @@ class DataTest extends TestCase
 
         // Configure the test item for this specific test
         $this->wishlistItem->setId($wishlistItemId);
-        $this->wishlistItem->setWishlistItemId($wishlistItemId);
-        $this->wishlistItem->setProduct($this->product);
+        $this->wishlistItem->setData('product', $this->product);
 
         $this->product->expects($this->once())
             ->method('isVisibleInSiteVisibility')
@@ -358,8 +348,7 @@ class DataTest extends TestCase
 
         // Configure the test item for this specific test
         $this->wishlistItem->setId($wishlistItemId);
-        $this->wishlistItem->setWishlistItemId($wishlistItemId);
-        $this->wishlistItem->setProduct($this->product);
+        $this->wishlistItem->setData('product', $this->product);
 
         $this->product->expects($this->once())
             ->method('isVisibleInSiteVisibility')

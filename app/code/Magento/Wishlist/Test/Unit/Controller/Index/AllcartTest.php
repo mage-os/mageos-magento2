@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2024 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -84,15 +84,9 @@ class AllcartTest extends TestCase
         $this->formKeyValidator = $this->createMock(Validator::class);
         $this->request = $this->createMock(Http::class);
         $this->response = $this->createMock(\Magento\Framework\App\Response\Http::class);
-        $this->resultFactoryMock = $this->getMockBuilder(ResultFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->resultRedirectMock = $this->getMockBuilder(Redirect::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->resultForwardMock = $this->getMockBuilder(Forward::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->resultFactoryMock = $this->createMock(ResultFactory::class);
+        $this->resultRedirectMock = $this->createMock(Redirect::class);
+        $this->resultForwardMock = $this->createMock(Forward::class);
 
         $this->resultFactoryMock->expects($this->any())
             ->method('create')

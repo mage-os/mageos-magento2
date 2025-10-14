@@ -8,8 +8,8 @@ declare(strict_types = 1);
 namespace Magento\Review\Test\Unit\Observer;
 
 use Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection;
+use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
-use Magento\Framework\Test\Unit\Helper\EventTestHelper;
 use Magento\Review\Model\ResourceModel\Review\Summary;
 use Magento\Review\Model\ResourceModel\Review\SummaryFactory;
 use Magento\Review\Observer\CatalogProductListCollectionAppendSummaryFieldsObserver;
@@ -75,13 +75,14 @@ class CatalogProductListCollectionAppendSummaryFieldsObserverTest extends TestCa
      */
     protected function setUp(): void
     {
-        $this->eventMock = new EventTestHelper();
+        $this->eventMock = $this->createPartialMock(Event::class, []);
+        $reflection = new \ReflectionClass($this->eventMock);
+        $property = $reflection->getProperty('_data');
+        $property->setValue($this->eventMock, []);
 
         $this->observerMock = $this->createMock(Observer::class);
 
-        $this->productCollectionMock = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productCollectionMock = $this->createMock(Collection::class);
 
         $this->storeManagerMock = $this->createPartialMock(\Magento\Store\Model\StoreManager::class, ['getStore']);
 
@@ -92,10 +93,7 @@ class CatalogProductListCollectionAppendSummaryFieldsObserverTest extends TestCa
             ['appendSummaryFieldsToCollection']
         );
 
-        $this->sumResourceFactoryMock = $this->getMockBuilder(SummaryFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->sumResourceFactoryMock = $this->createPartialMock(SummaryFactory::class, ['create']);
 
         $this->observer = new CatalogProductListCollectionAppendSummaryFieldsObserver(
             $this->sumResourceFactoryMock,

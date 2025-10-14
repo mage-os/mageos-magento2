@@ -28,7 +28,7 @@ use Magento\Wishlist\Controller\Index\Plugin;
 use Magento\Wishlist\Model\AuthenticationState;
 use Magento\Wishlist\Model\AuthenticationStateInterface;
 use Magento\Wishlist\Model\DataSerializer;
-use Magento\Customer\Test\Unit\Helper\SessionTestHelper;
+use Magento\Customer\Model\Session as CustomerSession;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -161,8 +161,9 @@ class PluginTest extends TestCase
             ->method('getActionName')
             ->willReturn('add');
             
-        $this->customerSession->beforeWishlistUrl = false;
-        $this->customerSession->beforeWishlistRequest = $params;
+        // Use magic __call methods via storage
+        $this->customerSession->setData('before_wishlist_url', false);
+        $this->customerSession->setData('before_wishlist_request', $params);
 
         $this->config
             ->expects($this->once())
@@ -178,35 +179,39 @@ class PluginTest extends TestCase
      */
     private function createCustomerSessionMock()
     {
-        $sessionHelper = new SessionTestHelper();
+        $session = $this->createPartialMock(CustomerSession::class, []);
         
-        // Create mock URL factory
+        // Initialize storage for magic __call methods
+        $reflection = new \ReflectionClass($session);
+        $storageProperty = $reflection->getProperty('storage');
+        $storageProperty->setValue($session, new \Magento\Framework\Session\Storage());
+        
+        // Create and set mock URL factory
         $urlFactoryMock = $this->createMock(\Magento\Framework\UrlFactory::class);
         $urlMock = $this->createMock(\Magento\Framework\Url::class);
         $urlFactoryMock->method('create')->willReturn($urlMock);
-        $sessionHelper->_urlFactory = $urlFactoryMock;
+        $urlFactoryProperty = $reflection->getProperty('_urlFactory');
+        $urlFactoryProperty->setValue($session, $urlFactoryMock);
         
-        // Create mock customer factory
+        // Create and set mock customer factory
         $customerFactoryMock = $this->createMock(\Magento\Customer\Model\CustomerFactory::class);
         $customerMock = $this->createMock(\Magento\Customer\Model\Customer::class);
         $customerFactoryMock->method('create')->willReturn($customerMock);
-        $sessionHelper->_customerFactory = $customerFactoryMock;
+        $customerFactoryProperty = $reflection->getProperty('_customerFactory');
+        $customerFactoryProperty->setValue($session, $customerFactoryMock);
         
-        // Create mock storage
-        $storageMock = $this->createMock(\Magento\Framework\Session\Storage::class);
-        $storageMock->method('setData')->willReturnSelf();
-        $sessionHelper->storage = $storageMock;
-        
-        // Create mock customer URL
+        // Create and set mock customer URL
         $customerUrlMock = $this->createMock(\Magento\Customer\Model\Url::class);
         $customerUrlMock->method('getLoginUrlParams')->willReturn([]);
-        $sessionHelper->_customerUrl = $customerUrlMock;
+        $customerUrlProperty = $reflection->getProperty('_customerUrl');
+        $customerUrlProperty->setValue($session, $customerUrlMock);
         
-        // Create mock response
+        // Create and set mock response
         $responseMock = $this->createMock(\Magento\Framework\App\Response\Http::class);
         $responseMock->method('setRedirect')->willReturnSelf();
-        $sessionHelper->response = $responseMock;
+        $responseProperty = $reflection->getProperty('response');
+        $responseProperty->setValue($session, $responseMock);
         
-        return $sessionHelper;
+        return $session;
     }
 }

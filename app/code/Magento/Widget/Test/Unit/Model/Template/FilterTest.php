@@ -12,9 +12,9 @@ use Magento\Framework\Translate\Inline\StateInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\View\LayoutInterface;
 use Magento\Store\Model\Information as StoreInformation;
+use Magento\Framework\View\Element\BlockInterface as ViewBlockInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
-use Magento\Framework\Test\Unit\Helper\BlockInterfaceTestHelper;
 use Magento\Widget\Block\BlockInterface;
 use Magento\Widget\Model\ResourceModel\Widget;
 use Magento\Widget\Model\Template\Filter;
@@ -213,11 +213,11 @@ class FilterTest extends TestCase
     }
 
     /**
-     * @param  string              $type
-     * @param  int                 $preConfigId
-     * @param  array               $preconfigure
-     * @param  string              $widgetXml
-     * @param  BlockInterface|null $widgetBlock
+     * @param  string                   $type
+     * @param  int                      $preConfigId
+     * @param  array                    $preconfigure
+     * @param  string                   $widgetXml
+     * @param  ViewBlockInterface|null  $widgetBlock
      * @return void
      */
     #[DataProvider('generateWidgetDataProvider')]
@@ -243,11 +243,13 @@ class FilterTest extends TestCase
 
     /**
      * @param  string $returnedResult
-     * @return BlockInterface|MockObject
+     * @return BlockInterface
      */
     protected function getBlockMock($returnedResult = '')
     {
-        return (new BlockInterfaceTestHelper())->setReturnedResult($returnedResult);
+        $block = new \Magento\Widget\Test\Unit\Helper\WidgetBlockTestHelper();
+        $block->setResult($returnedResult);
+        return $block;
     }
 
     /**

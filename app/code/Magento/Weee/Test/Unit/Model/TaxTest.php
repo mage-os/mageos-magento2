@@ -27,9 +27,6 @@ use Magento\Tax\Model\CalculationFactory;
 use Magento\Weee\Model\Config;
 use Magento\Weee\Model\ResourceModel\Tax as ResourceModelTax;
 use Magento\Weee\Model\Tax;
-use Magento\Customer\Test\Unit\Helper\SessionTestHelper;
-use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
-use Magento\Framework\Test\Unit\Helper\DataObjectTestHelper;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -127,9 +124,10 @@ class TaxTest extends TestCase
 
         $this->customerSession = $this->createCustomerSessionMock();
         $this->customerSession->setCustomerId(null);
-        $this->customerSession->setDefaultTaxShippingAddress(null);
-        $this->customerSession->setDefaultTaxBillingAddress(null);
-        $this->customerSession->setCustomerTaxClassId(null);
+        // Use magic __call methods via storage
+        $this->customerSession->setData('default_tax_shipping_address', null);
+        $this->customerSession->setData('default_tax_billing_address', null);
+        $this->customerSession->setData('customer_tax_class_id', null);
 
         $className = AccountManagementInterface::class;
         $this->accountManagement = $this->createMock($className);
@@ -172,7 +170,14 @@ class TaxTest extends TestCase
      */
     private function createCustomerSessionMock(): Session
     {
-        return new SessionTestHelper();
+        $session = $this->createPartialMock(Session::class, []);
+        
+        // Initialize storage for magic __call methods
+        $reflection = new \ReflectionClass($session);
+        $property = $reflection->getProperty('storage');
+        $property->setValue($session, new \Magento\Framework\Session\Storage());
+        
+        return $session;
     }
 
     /**
@@ -294,12 +299,15 @@ class TaxTest extends TestCase
     #[DataProvider('getWeeeAmountExclTaxDataProvider')]
     public function testGetWeeeAmountExclTax($productTypeId, $productPriceType): void
     {
-        $product = new ProductTestHelper();
-        $product->setTypeId($productTypeId);
-        $product->setPriceType($productPriceType);
-        $weeeDataHelper = new DataObjectTestHelper();
-        $weeeDataHelper->setAmountExclTax(10);
-        $weeeDataHelper->setAmountExclTax(30);
+        $product = $this->createPartialMock(Product::class, []);
+        $reflection = new \ReflectionClass($product);
+        $dataProperty = $reflection->getProperty('_data');
+        $dataProperty->setValue($product, [
+            'type_id' => $productTypeId,
+            'price_type' => $productPriceType
+        ]);
+        $weeeDataHelper = new \Magento\Weee\Test\Unit\Helper\WeeeDataTestHelper();
+        $weeeDataHelper->setAmounts([10, 30]);
         $tax = $this->getMockBuilder(Tax::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getProductWeeeAttributes'])
@@ -316,9 +324,13 @@ class TaxTest extends TestCase
      */
     public function testGetWeeeAmountExclTaxForDynamicBundleProduct(): void
     {
-        $product = new ProductTestHelper();
-        $product->setTypeId('bundle');
-        $product->setPriceType(0);
+        $product = $this->createPartialMock(Product::class, []);
+        $reflection = new \ReflectionClass($product);
+        $dataProperty = $reflection->getProperty('_data');
+        $dataProperty->setValue($product, [
+            'type_id' => 'bundle',
+            'price_type' => 0
+        ]);
         $weeeDataHelper = $this->getMockBuilder(DataObject::class)
             ->disableOriginalConstructor()
             ->getMock();

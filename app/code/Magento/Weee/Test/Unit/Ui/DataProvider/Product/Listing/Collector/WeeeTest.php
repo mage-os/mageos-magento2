@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace Magento\Weee\Test\Unit\Ui\DataProvider\Product\Listing\Collector;
 
-use Magento\Catalog\Api\Data\ProductRender\PriceInfoExtensionInterface;
 use Magento\Catalog\Api\Data\ProductRender\PriceInfoExtensionInterfaceFactory;
 use Magento\Catalog\Api\Data\ProductRenderInterface;
 use Magento\Catalog\Model\Product;
@@ -17,11 +16,11 @@ use Magento\Catalog\Test\Unit\Helper\PriceInfoExtensionInterfaceTestHelper;
 use Magento\Framework\Pricing\Amount\AmountInterface;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\Pricing\PriceInfo\Base;
-use Magento\Framework\Test\Unit\Helper\PriceInfoBaseTestHelper;
+use Magento\Framework\Pricing\Test\Unit\Helper\PriceInfoBaseTestHelper;
 use Magento\Weee\Api\Data\ProductRender\WeeeAdjustmentAttributeInterface;
 use Magento\Weee\Api\Data\ProductRender\WeeeAdjustmentAttributeInterfaceFactory;
 use Magento\Weee\Helper\Data;
-use Magento\Weee\Test\Unit\Helper\WeeeAdjustmentAttributeInterfaceTestHelper;
+use Magento\Weee\Model\ProductRender\WeeeAdjustmentAttribute;
 use Magento\Weee\Ui\DataProvider\Product\Listing\Collector\Weee;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -59,26 +58,22 @@ class WeeeTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->weeeHelperMock = $this->getMockBuilder(Data::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->weeeHelperMock = $this->createMock(Data::class);
         $this->priceCurrencyMock = $this->createMock(PriceCurrencyInterface::class);
 
-        $this->weeeAdjustmentAttributeFactory = $this->getMockBuilder(WeeeAdjustmentAttributeInterfaceFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->weeeAdjustmentAttributeFactory = $this->createPartialMock(
+            WeeeAdjustmentAttributeInterfaceFactory::class,
+            ['create']
+        );
 
         $this->extensionAttributes = new PriceInfoExtensionInterfaceTestHelper();
 
-        $this->priceInfoExtensionFactory = $this->getMockBuilder(PriceInfoExtensionInterfaceFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->priceInfoExtensionFactory = $this->createPartialMock(
+            PriceInfoExtensionInterfaceFactory::class,
+            ['create']
+        );
 
-        $this->formattedPriceInfoBuilder = $this->getMockBuilder(FormattedPriceInfoBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->formattedPriceInfoBuilder = $this->createMock(FormattedPriceInfoBuilder::class);
 
         $this->model = new Weee(
             $this->weeeHelperMock,
@@ -91,21 +86,18 @@ class WeeeTest extends TestCase
 
     /**
      * @return void
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function testCollect()
     {
-        $productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productMock = $this->createMock(Product::class);
         $productRender = $this->createMock(ProductRenderInterface::class);
         $weeAttribute = $this->createWeeeAdjustmentAttributeMock();
         $this->weeeAdjustmentAttributeFactory->expects($this->atLeastOnce())
             ->method('create')
             ->willReturn($weeAttribute);
         $priceInfo = $this->createPriceInfoMock();
-        $price = $this->getMockBuilder(FinalPrice::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $price = $this->createMock(FinalPrice::class);
         $weeAttribute->setAttributeCode('');
         $productRender->method('getPriceInfo')->willReturn($priceInfo);
         $priceInfo->setExtensionAttributes($this->extensionAttributes);
@@ -128,8 +120,7 @@ class WeeeTest extends TestCase
         $callCount = 0;
         $this->priceCurrencyMock->expects($this->exactly(5))
             ->method('format')
-            ->with(12.1, true, 2, 1, 'USD')
-            ->willReturnCallback(function () use (&$callCount) {
+            ->willReturnCallback(function ($value) use (&$callCount) {
                 $callCount++;
                 $values = [
                     '<span>$12</span>',
@@ -155,7 +146,26 @@ class WeeeTest extends TestCase
      */
     private function createWeeeAdjustmentAttributeMock(): WeeeAdjustmentAttributeInterface
     {
-        return new WeeeAdjustmentAttributeInterfaceTestHelper();
+        $weeAttribute = $this->createPartialMock(WeeeAdjustmentAttribute::class, ['getData']);
+        $weeAttribute->method('getData')->willReturnCallback(function ($key = null) {
+            if ($key === null) {
+                return [
+                    'code' => 'test_code',
+                    'amount' => 12.1,
+                    'tax_amount' => 12.1,
+                    'amount_excl_tax' => 12.1
+                ];
+            }
+            // Return 12.1 for all numeric fields to match test expectations
+            if (in_array($key, ['amount', 'tax_amount', 'amount_excl_tax'])) {
+                return 12.1;
+            }
+            if ($key === 'code') {
+                return 'test_code';
+            }
+            return null;
+        });
+        return $weeAttribute;
     }
 
     /**

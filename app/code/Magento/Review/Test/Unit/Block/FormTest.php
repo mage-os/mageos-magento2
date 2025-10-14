@@ -274,10 +274,7 @@ class FormTest extends TestCase
     {
         $expectedUrl = 'https://example.com/customer/account/create/';
 
-        $customerUrl = $this->getMockBuilder(Url::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getRegisterUrl'])
-            ->getMock();
+        $customerUrl = $this->createPartialMock(Url::class, ['getRegisterUrl']);
 
         $customerUrl->expects($this->once())
             ->method('getRegisterUrl')
@@ -329,10 +326,7 @@ class FormTest extends TestCase
         $reviewData = $this->createMock(\Magento\Review\Helper\Data::class);
         $reviewData->method('getIsGuestAllowToWrite')->willReturn(false);
 
-        $formBlock = $this->getMockBuilder(Form::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([])
-            ->getMock();
+        $formBlock = $this->createPartialMock(Form::class, []);
 
         $this->setProtectedProperty($formBlock, '_urlBuilder', $urlBuilder);
         $this->setProtectedProperty($formBlock, 'urlEncoder', $urlEncoder);
@@ -352,10 +346,7 @@ class FormTest extends TestCase
         StoreManagerInterface $storeManager,
         RatingFactory $ratingFactory
     ): Form {
-        $formBlock = $this->getMockBuilder(Form::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([])
-            ->getMock();
+        $formBlock = $this->createPartialMock(Form::class, []);
 
         // Inject protected properties via reflection to avoid full framework context construction
         $this->setProtectedProperty($formBlock, '_storeManager', $storeManager);

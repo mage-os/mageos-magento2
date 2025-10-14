@@ -16,10 +16,12 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Layout;
 use Magento\Widget\Block\Adminhtml\Widget\Catalog\Category\Chooser;
 use Magento\Widget\Controller\Adminhtml\Widget\Instance\Categories;
-use Magento\Widget\Test\Unit\Helper\CategoryChooserTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class CategoriesTest extends TestCase
 {
     /**
@@ -71,7 +73,14 @@ class CategoriesTest extends TestCase
     {
         $this->request = $this->createMock(RequestInterface::class);
         $this->mathRandom = $this->createMock(Random::class);
-        $this->chooser = new CategoryChooserTestHelper();
+        $this->chooser = $this->createPartialMock(Chooser::class, ['toHtml', 'setSelectedCategories']);
+        
+        $reflection = new \ReflectionClass($this->chooser);
+        $dataProperty = $reflection->getProperty('_data');
+        $dataProperty->setValue($this->chooser, []);
+        
+        $this->chooser->method('setSelectedCategories')->willReturnSelf();
+        $this->chooser->method('toHtml')->willReturn('block_content');
         $this->layout = $this->createMock(Layout::class);
         $this->resultRaw = $this->createMock(Raw::class);
         $this->resultFactory = $this->createMock(ResultFactory::class);

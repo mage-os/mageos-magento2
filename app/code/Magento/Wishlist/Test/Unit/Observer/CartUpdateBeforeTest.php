@@ -23,9 +23,7 @@ use Magento\Wishlist\Helper\Data;
 use Magento\Wishlist\Model\Wishlist;
 use Magento\Wishlist\Model\WishlistFactory;
 use Magento\Wishlist\Observer\CartUpdateBefore as Observer;
-use Magento\Framework\Test\Unit\Helper\EventTestHelper;
 use Magento\Wishlist\Test\Unit\Helper\ItemTestHelper;
-use Magento\Framework\Test\Unit\Helper\DataObjectTestHelper;
 use Magento\Quote\Test\Unit\Helper\QuoteTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -72,16 +70,9 @@ class CartUpdateBeforeTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->helper = $this->getMockBuilder(Data::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->wishlistFactory = $this->getMockBuilder(WishlistFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-        $this->wishlist = $this->getMockBuilder(Wishlist::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->helper = $this->createMock(Data::class);
+        $this->wishlistFactory = $this->createPartialMock(WishlistFactory::class, ['create']);
+        $this->wishlist = $this->createMock(Wishlist::class);
         $this->wishlistFactory->expects($this->any())
             ->method('create')
             ->willReturn($this->wishlist);
@@ -103,11 +94,12 @@ class CartUpdateBeforeTest extends TestCase
         $itemQty = 123;
         $productId = 321;
 
-        $eventObserver = $this->getMockBuilder(\Magento\Framework\Event\Observer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $eventObserver = $this->createMock(\Magento\Framework\Event\Observer::class);
 
-        $event = new EventTestHelper();
+        $event = $this->createPartialMock(Event::class, []);
+        $reflection = new \ReflectionClass($event);
+        $property = $reflection->getProperty('_data');
+        $property->setValue($event, []);
 
         $eventObserver->expects($this->exactly(2))
             ->method('getEvent')
@@ -115,24 +107,22 @@ class CartUpdateBeforeTest extends TestCase
 
         $quoteItem = new ItemTestHelper();
 
-        $buyRequest = new DataObjectTestHelper();
+        $buyRequest = $this->createPartialMock(DataObject::class, []);
+        $reflection = new \ReflectionClass($buyRequest);
+        $property = $reflection->getProperty('_data');
+        $property->setValue($buyRequest, []);
 
-        $infoData = $this->getMockBuilder(DataObject::class)
-            ->onlyMethods(['toArray'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $infoData = $this->createPartialMock(DataObject::class, ['toArray']);
 
         $infoData->expects($this->once())
             ->method('toArray')
             ->willReturn([$itemId => ['qty' => $itemQty, 'wishlist' => true]]);
 
-        $cart = $this->getMockBuilder(Cart::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $cart = $this->createMock(Cart::class);
         $quote = new QuoteTestHelper();
 
-        $event->cart = $cart;
-        $event->info = $infoData;
+        $event->setCart($cart);
+        $event->setInfo($infoData);
 
         $cart->expects($this->any())
             ->method('getQuote')

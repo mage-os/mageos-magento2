@@ -20,7 +20,6 @@ use Magento\Tax\Helper\Data;
 use Magento\Tax\Model\Calculation;
 use Magento\Tax\Model\Sales\Total\Quote\CommonTaxCollector as CTC;
 use Magento\Weee\Model\Total\Quote\WeeeTax;
-use Magento\Framework\Test\Unit\Helper\QuoteAddressTotalTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -125,7 +124,11 @@ class WeeeTaxTest extends TestCase
      */
     private function createTotalMock(): Total
     {
-        return new QuoteAddressTotalTestHelper();
+        $totalMock = $this->createPartialMock(Total::class, []);
+        $reflection = new \ReflectionClass($totalMock);
+        $property = $reflection->getProperty('_data');
+        $property->setValue($totalMock, []);
+        return $totalMock;
     }
 
     /**
@@ -240,8 +243,7 @@ class WeeeTaxTest extends TestCase
 
     public function testFetch()
     {
-        $serializerMock = $this->getMockBuilder(Json::class)
-            ->getMock();
+        $serializerMock = $this->createMock(Json::class);
         $weeeTotal = 17;
         $totalMock = new Total(
             [],
@@ -265,8 +267,7 @@ class WeeeTaxTest extends TestCase
 
     public function testFetchWithZeroAmounts()
     {
-        $serializerMock = $this->getMockBuilder(Json::class)
-            ->getMock();
+        $serializerMock = $this->createMock(Json::class);
         $totalMock = new Total(
             [],
             $serializerMock

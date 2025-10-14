@@ -18,15 +18,14 @@ use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Data\Form\FormKey\Validator;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Registry;
-use Magento\Framework\Test\Unit\Helper\GenericTestHelper;
+use Magento\Framework\Session\Generic;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Review\Controller\Product\Post;
 use Magento\Review\Model\Rating;
 use Magento\Review\Model\RatingFactory;
 use Magento\Review\Model\Review;
 use Magento\Review\Model\ReviewFactory;
-use Magento\Review\Test\Unit\Helper\RatingTestHelper;
-use Magento\Review\Test\Unit\Helper\ReviewTestHelper;
+use Magento\Review\Model\ResourceModel\Review as ReviewResourceModel;
 use Magento\Review\Model\Review\Config;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
@@ -60,7 +59,7 @@ class PostTest extends TestCase
     protected $formKeyValidator;
 
     /**
-     * @var MockObject
+     * @var MockObject&Generic
      */
     protected $reviewSession;
 
@@ -151,15 +150,45 @@ class PostTest extends TestCase
             Config::class,
             ['isEnabled']
         );
-        $this->reviewSession = new GenericTestHelper();
+        $this->reviewSession = $this->createPartialMock(Generic::class, []);
+        $sessionReflection = new \ReflectionClass($this->reviewSession);
+        $storageProperty = $sessionReflection->getProperty('storage');
+        $storage = new \Magento\Framework\Session\Storage();
+        $storageProperty->setValue($this->reviewSession, $storage);
         $this->eventManager = $this->createMock(ManagerInterface::class);
         $this->productRepository = $this->createMock(ProductRepositoryInterface::class);
         $this->coreRegistry = $this->createMock(Registry::class);
-        $this->review = new ReviewTestHelper();
+        $this->review = $this->createPartialMock(Review::class, []);
+        $reviewReflection = new \ReflectionClass($this->review);
+        $reviewDataProperty = $reviewReflection->getProperty('_data');
+        $reviewDataProperty->setValue($this->review, []);
+        
+        $reviewResource = $this->createMock(ReviewResourceModel::class);
+        $reviewResource->method('getEntityIdByCode')->willReturn(1);
+        $reviewResource->method('aggregate')->willReturnSelf();
+        
+        $reviewResourceProperty = $reviewReflection->getProperty('_resource');
+        $reviewResourceProperty->setValue($this->review, $reviewResource);
+        
         $reviewFactory = $this->createPartialMock(ReviewFactory::class, ['create']);
         $reviewFactory->expects($this->once())->method('create')->willReturn($this->review);
         $this->customerSession = $this->createPartialMock(Session::class, ['getCustomerId']);
-        $this->rating = new RatingTestHelper();
+        $this->rating = $this->createPartialMock(Rating::class, []);
+        $ratingReflection = new \ReflectionClass($this->rating);
+        $ratingDataProperty = $ratingReflection->getProperty('_data');
+        $ratingDataProperty->setValue($this->rating, []);
+        
+        $ratingOption = $this->createPartialMock(\Magento\Review\Model\Rating\Option::class, ['addVote']);
+        $optionReflection = new \ReflectionClass($ratingOption);
+        $optionDataProperty = $optionReflection->getProperty('_data');
+        $optionDataProperty->setValue($ratingOption, []);
+        $ratingOption->method('addVote')->willReturnSelf();
+        
+        $optionFactory = $this->createMock(\Magento\Review\Model\Rating\OptionFactory::class);
+        $optionFactory->method('create')->willReturn($ratingOption);
+        
+        $ratingFactoryProperty = $ratingReflection->getProperty('_ratingOptionFactory');
+        $ratingFactoryProperty->setValue($this->rating, $optionFactory);
         $ratingFactory = $this->createPartialMock(RatingFactory::class, ['create']);
         $ratingFactory->expects($this->once())->method('create')->willReturn($this->rating);
         $this->messageManager = $this->createMock(\Magento\Framework\Message\ManagerInterface::class);
@@ -222,7 +251,10 @@ class PostTest extends TestCase
     {
         $reviewData = [
             'ratings' => [1 => 1],
-            'review_id' => 2
+            'review_id' => 2,
+            'title' => 'Test Review Title',
+            'nickname' => 'Test Nickname',
+            'detail' => 'Test review detail content'
         ];
         $productId = 1;
         $customerId = 1;

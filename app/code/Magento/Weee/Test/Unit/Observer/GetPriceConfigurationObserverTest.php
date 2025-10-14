@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace Magento\Weee\Test\Unit\Observer;
 
 use Magento\Bundle\Model\Product\Type;
-use Magento\Bundle\Test\Unit\Helper\ProductTypeTestHelper;
+use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Type\Simple;
 use Magento\Framework\DataObject;
 use Magento\Framework\Event\Observer;
@@ -72,9 +72,7 @@ class GetPriceConfigurationObserverTest extends TestCase
         $productInstance=$this->createMock(Simple::class);
 
         $product = $this->createProductMock();
-        $product->setTypeInstance($productInstance);
-        $product->setTypeId('simple');
-        $product->setStoreId(null);
+        $product->method('getTypeInstance')->willReturn($productInstance);
 
         $registry=$this->createMock(Registry::class);
         $registry->expects($this->any())
@@ -242,12 +240,15 @@ class GetPriceConfigurationObserverTest extends TestCase
     }
 
     /**
-     * Create a mock for Product Type
+     * Create a mock for Product
      *
-     * @return Type
+     * @return Product
      */
-    private function createProductMock(): Type
+    private function createProductMock(): Product
     {
-        return new ProductTypeTestHelper();
+        $product = $this->createPartialMock(Product::class, ['getStoreId', 'getTypeId', 'getTypeInstance']);
+        $product->method('getStoreId')->willReturn(null);
+        $product->method('getTypeId')->willReturn('simple');
+        return $product;
     }
 }

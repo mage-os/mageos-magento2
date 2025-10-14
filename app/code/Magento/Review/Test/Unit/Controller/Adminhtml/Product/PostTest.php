@@ -18,7 +18,7 @@ use Magento\Review\Model\Rating;
 use Magento\Review\Model\RatingFactory;
 use Magento\Review\Model\Review;
 use Magento\Review\Model\ReviewFactory;
-use Magento\Review\Test\Unit\Helper\RatingTestHelper;
+use Magento\Review\Model\Rating\OptionFactory;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -118,9 +118,7 @@ class PostTest extends TestCase
      */
     protected function _prepareMockObjects()
     {
-        $this->requestMock = $this->getMockBuilder(Http::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->requestMock = $this->createMock(Http::class);
         $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
         $this->storeModelMock = $this->createPartialMock(Store::class, ['__wakeup', 'getId']);
@@ -129,14 +127,27 @@ class PostTest extends TestCase
             ['save', 'getId', 'aggregate', 'getEntityIdByCode']
         );
         $this->reviewFactoryMock = $this->createPartialMock(ReviewFactory::class, ['create']);
-        $this->ratingMock = new RatingTestHelper();
+        $this->ratingMock = $this->createPartialMock(Rating::class, []);
+        $reflection = new \ReflectionClass($this->ratingMock);
+        $dataProperty = $reflection->getProperty('_data');
+        $dataProperty->setValue($this->ratingMock, []);
+        
+        $ratingOption = $this->createPartialMock(\Magento\Review\Model\Rating\Option::class, ['addVote']);
+        $optionReflection = new \ReflectionClass($ratingOption);
+        $optionDataProperty = $optionReflection->getProperty('_data');
+        $optionDataProperty->setValue($ratingOption, []);
+        $ratingOption->method('addVote')->willReturnSelf();
+        
+        $optionFactory = $this->createMock(OptionFactory::class);
+        $optionFactory->method('create')->willReturn($ratingOption);
+        
+        $factoryProperty = $reflection->getProperty('_ratingOptionFactory');
+        $factoryProperty->setValue($this->ratingMock, $optionFactory);
+        
         $this->ratingFactoryMock = $this->createPartialMock(RatingFactory::class, ['create']);
-        $this->resultFactoryMock = $this->getMockBuilder(ResultFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->resultRedirectMock = $this->getMockBuilder(Redirect::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->ratingFactoryMock->expects($this->any())->method('create')->willReturn($this->ratingMock);
+        $this->resultFactoryMock = $this->createMock(ResultFactory::class);
+        $this->resultRedirectMock = $this->createMock(Redirect::class);
 
         $this->resultFactoryMock->expects($this->any())
             ->method('create')

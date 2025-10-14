@@ -8,12 +8,11 @@ declare(strict_types=1);
 namespace Magento\Weee\Test\Unit\Observer;
 
 use Magento\Bundle\Model\Product\Type;
-use Magento\Bundle\Test\Unit\Helper\ProductTypeTestHelper;
+use Magento\Catalog\Model\Product;
 use Magento\Framework\DataObject;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Registry;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Framework\Test\Unit\Helper\EventObserverTestHelper;
 use Magento\Tax\Model\Config as TaxConfig;
 use Magento\Weee\Helper\Data;
 use Magento\Weee\Model\Tax as WeeeDisplayConfig;
@@ -86,9 +85,9 @@ class UpdateProductOptionsObserverTest extends TestCase
             ->method('getEvent')
             ->willReturn($responseObject);
 
-        $product = new ProductTypeTestHelper();
-        $product->setStoreId(1);
-        $product->setTypeId('bundle');
+        $product = $this->createPartialMock(Product::class, ['getStoreId', 'getTypeId']);
+        $product->method('getStoreId')->willReturn(1);
+        $product->method('getTypeId')->willReturn('bundle');
 
         $registry=$this->createMock(Registry::class);
         $registry->expects($this->any())
@@ -224,6 +223,10 @@ class UpdateProductOptionsObserverTest extends TestCase
      */
     private function createResponseObjectMock(): Observer
     {
-        return new EventObserverTestHelper();
+        $observer = $this->createPartialMock(Observer::class, []);
+        $reflection = new \ReflectionClass($observer);
+        $property = $reflection->getProperty('_data');
+        $property->setValue($observer, []);
+        return $observer;
     }
 }

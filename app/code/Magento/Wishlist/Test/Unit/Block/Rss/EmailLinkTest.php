@@ -19,7 +19,6 @@ use Magento\Framework\Url\EncoderInterface;
 use Magento\Wishlist\Block\Rss\EmailLink;
 use Magento\Wishlist\Helper\Data;
 use Magento\Wishlist\Model\Wishlist;
-use Magento\Wishlist\Test\Unit\Helper\WishlistTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -44,8 +43,12 @@ class EmailLinkTest extends TestCase
 
     protected function setUp(): void
     {
-        $wishlist = new WishlistTestHelper();
+        $wishlist = $this->createPartialMock(Wishlist::class, ['loadByCustomerId']);
+        $reflection = new \ReflectionClass($wishlist);
+        $property = $reflection->getProperty('_data');
+        $property->setValue($wishlist, []);
         $wishlist->setId(5);
+        $wishlist->setSharingCode('somesharingcode');
         $customer = $this->createMock(CustomerInterface::class);
         $customer->method('getId')->willReturn(8);
         $customer->method('getEmail')->willReturn('test@example.com');

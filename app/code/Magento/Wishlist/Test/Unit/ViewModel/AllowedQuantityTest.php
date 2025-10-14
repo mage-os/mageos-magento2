@@ -54,12 +54,8 @@ class AllowedQuantityTest extends TestCase
     {
         $this->stockRegistryMock = $this->createMock(StockRegistry::class);
         $this->itemMock = $this->createMock(ItemInterface::class);
-        $this->productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->storeMock = $this->getMockBuilder(Store::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productMock = $this->createMock(Product::class);
+        $this->storeMock = $this->createMock(Store::class);
 
         $this->sut = new AllowedQuantity(
             $this->stockRegistryMock

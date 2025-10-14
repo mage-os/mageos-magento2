@@ -12,7 +12,6 @@ use Magento\Customer\Model\Data\Customer;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Module\Manager;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Framework\Test\Unit\Helper\EventObserverTestHelper;
 use Magento\PageCache\Model\Config;
 use Magento\Tax\Api\TaxAddressManagerInterface;
 use Magento\Weee\Helper\Data;
@@ -65,19 +64,16 @@ class CustomerLoggedInTest extends TestCase
     protected function setUp(): void
     {
         $objectManager = new ObjectManager($this);
-        $this->observerMock = new EventObserverTestHelper();
+        $this->observerMock = $this->createPartialMock(Observer::class, []);
+        $reflection = new \ReflectionClass($this->observerMock);
+        $property = $reflection->getProperty('_data');
+        $property->setValue($this->observerMock, []);
 
-        $this->moduleManagerMock = $this->getMockBuilder(Manager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->moduleManagerMock = $this->createMock(Manager::class);
 
-        $this->cacheConfigMock = $this->getMockBuilder(Config::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->cacheConfigMock = $this->createMock(Config::class);
 
-        $this->weeeHelperMock = $this->getMockBuilder(Data::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->weeeHelperMock = $this->createMock(Data::class);
 
         $this->addressManagerMock = $this->createPartialMock(
             TaxAddressManagerInterface::class,
@@ -113,9 +109,7 @@ class CustomerLoggedInTest extends TestCase
             ->method('isEnabled')
             ->willReturn(true);
 
-        $customerMock = $this->getMockBuilder(Customer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $customerMock = $this->createMock(Customer::class);
 
         /** @var \Magento\Customer\Api\Data\AddressInterface|MockObject $address */
         $address = $this->createMock(AddressInterface::class);

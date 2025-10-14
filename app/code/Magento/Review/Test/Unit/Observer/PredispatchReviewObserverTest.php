@@ -10,7 +10,7 @@ namespace Magento\Review\Test\Unit\Observer;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Response\RedirectInterface;
 use Magento\Framework\App\ResponseInterface;
-use Magento\Framework\Test\Unit\Helper\EventObserverTestHelper;
+use Magento\Framework\Event\Observer;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\UrlInterface;
 use Magento\Review\Observer\PredispatchReviewObserver;
@@ -61,8 +61,7 @@ class PredispatchReviewObserverTest extends TestCase
         $this->configMock = $this->createMock(ScopeConfigInterface::class);
         $this->urlMock = $this->createMock(UrlInterface::class);
         $this->responseMock = $this->createPartialMock(\Magento\Framework\App\Response\Http::class, ['setRedirect']);
-        $this->redirectMock = $this->getMockBuilder(RedirectInterface::class)
-            ->getMock();
+        $this->redirectMock = $this->createMock(RedirectInterface::class);
         $this->objectManager = new ObjectManager($this);
         $this->mockObject = $this->objectManager->getObject(
             PredispatchReviewObserver::class,
@@ -80,12 +79,14 @@ class PredispatchReviewObserverTest extends TestCase
      */
     public function testReviewEnabled() : void
     {
-        $observerMock = new EventObserverTestHelper();
+        $observerMock = $this->createPartialMock(Observer::class, []);
+        $reflection = new \ReflectionClass($observerMock);
+        $property = $reflection->getProperty('_data');
+        $property->setValue($observerMock, []);
 
         $this->configMock->method('getValue')
             ->with(PredispatchReviewObserver::XML_PATH_REVIEW_ACTIVE, ScopeInterface::SCOPE_STORE)
             ->willReturn(true);
-        // Observer mock methods provided by anonymous class
 
         $this->assertNull($this->mockObject->execute($observerMock));
     }
@@ -100,7 +101,10 @@ class PredispatchReviewObserverTest extends TestCase
      */
     public function testReviewDisabled() : void
     {
-        $observerMock = new EventObserverTestHelper();
+        $observerMock = $this->createPartialMock(Observer::class, []);
+        $reflection = new \ReflectionClass($observerMock);
+        $property = $reflection->getProperty('_data');
+        $property->setValue($observerMock, []);
 
         $expectedRedirectUrl = 'https://test.com/index';
 

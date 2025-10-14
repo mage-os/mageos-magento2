@@ -14,17 +14,14 @@ use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\ReadInterface;
 use Magento\Framework\Registry;
 use Magento\Framework\Session\Generic;
-use Magento\Framework\Test\Unit\Helper\ElementTestHelper;
-use Magento\Framework\Test\Unit\Helper\FieldsetTestHelper;
-use Magento\Framework\Test\Unit\Helper\FormTestHelper;
-use Magento\Framework\Test\Unit\Helper\GenericTestHelper;
-use Magento\Framework\Test\Unit\Helper\TextTestHelper;
+use Magento\Framework\Data\Test\Unit\Helper\ElementTestHelper;
+use Magento\Framework\Data\Test\Unit\Helper\FieldsetTestHelper;
+use Magento\Framework\Data\Test\Unit\Helper\FormTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Framework\View\FileSystem as FilesystemView;
 use Magento\Review\Model\Rating;
 use Magento\Review\Model\Rating\Option;
 use Magento\Review\Model\Rating\OptionFactory;
-use Magento\Review\Test\Unit\Helper\RatingTestHelper;
 use Magento\Review\Model\ResourceModel\Rating\Option\Collection;
 use Magento\Store\Model\Store;
 use PHPUnit\Framework\TestCase;
@@ -125,9 +122,19 @@ class FormTest extends TestCase
         $this->ratingOptionCollection = $this->createMock(
             Collection::class
         );
-        $this->element = new TextTestHelper();
-        $this->session = new GenericTestHelper();
-        $this->rating = new RatingTestHelper();
+        $this->element = $this->createPartialMock(Text::class, []);
+        $elementReflection = new \ReflectionClass($this->element);
+        $elementDataProperty = $elementReflection->getProperty('_data');
+        $elementDataProperty->setValue($this->element, []);
+        $this->session = $this->createPartialMock(Generic::class, []);
+        $sessionReflection = new \ReflectionClass($this->session);
+        $storageProperty = $sessionReflection->getProperty('storage');
+        $storage = new \Magento\Framework\Session\Storage();
+        $storageProperty->setValue($this->session, $storage);
+        $this->rating = $this->createPartialMock(Rating::class, []);
+        $reflection = new \ReflectionClass($this->rating);
+        $dataProperty = $reflection->getProperty('_data');
+        $dataProperty->setValue($this->rating, []);
         $this->optionRating = $this->createMock(Option::class);
         $this->store = $this->createMock(Store::class);
         $this->form = new FormTestHelper();
@@ -139,7 +146,6 @@ class FormTest extends TestCase
         $this->viewFileSystem = $this->createMock(FilesystemView::class);
         $this->fileSystem = $this->createPartialMock(Filesystem::class, ['getDirectoryRead']);
 
-        // Rating mock methods provided by anonymous class
         $this->ratingOptionCollection->expects($this->any())->method('addRatingFilter')->willReturnSelf();
         $this->ratingOptionCollection->expects($this->any())->method('load')->willReturnSelf();
         $this->ratingOptionCollection->expects($this->any())->method('getItems')
@@ -160,7 +166,6 @@ class FormTest extends TestCase
 
         $objectManagerHelper = new ObjectManagerHelper($this);
         
-        // Fix ObjectManager initialization issue using existing helper method
         $objects = [
             [
                 \Magento\Backend\Block\Template\Context::class,
@@ -192,9 +197,7 @@ class FormTest extends TestCase
     public function testToHtmlSessionRatingData(): void
     {
         $this->registry->expects($this->any())->method('registry')->willReturn($this->rating);
-        // Form mock methods provided by anonymous class
         $ratingCodes = ['rating_codes' => ['0' => 'rating_code']];
-        // Session mock methods provided by anonymous class
         $this->block->toHtml();
     }
 
@@ -204,8 +207,6 @@ class FormTest extends TestCase
     public function testToHtmlCoreRegistryRatingData(): void
     {
         $this->registry->expects($this->any())->method('registry')->willReturn($this->rating);
-        // Form mock methods provided by anonymous class
-        // Session and rating mock methods provided by anonymous classes
         $this->block->toHtml();
     }
 

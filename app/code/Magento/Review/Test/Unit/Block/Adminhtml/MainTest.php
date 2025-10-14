@@ -80,9 +80,7 @@ class MainTest extends TestCase
                     return false;
                 }
             });
-        $productCollection = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productCollection = $this->createMock(Collection::class);
         $this->collectionFactory->expects($this->once())
             ->method('create')
             ->willReturn($productCollection);

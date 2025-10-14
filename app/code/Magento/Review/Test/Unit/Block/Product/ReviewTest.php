@@ -17,10 +17,8 @@ use Magento\Review\Block\Product\Review as ReviewBlock;
 use Magento\Review\Model\ResourceModel\Review\Collection;
 use Magento\Review\Model\ResourceModel\Review\CollectionFactory;
 use Magento\Review\Model\Review;
-use Magento\Review\Test\Unit\Helper\CollectionFactoryTestHelper;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManager;
-use Magento\Store\Test\Unit\Helper\StoreManagerTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -134,9 +132,8 @@ class ReviewTest extends TestCase
             ->method('addEntityFilter')
             ->willReturnSelf();
 
-        $this->collectionFactory = new CollectionFactoryTestHelper();
-
-        $this->collectionFactory->setCollection($this->collection);
+        $this->collectionFactory = $this->createMock(CollectionFactory::class);
+        $this->collectionFactory->method('create')->willReturn($this->collection);
     }
 
     /**
@@ -171,9 +168,9 @@ class ReviewTest extends TestCase
     {
         $this->store = $this->createPartialMock(Store::class, ['getId', '__wakeup']);
 
-        $this->storeManager = new StoreManagerTestHelper();
+        $this->storeManager = $this->createPartialMock(StoreManager::class, ['getStore']);
+        $this->storeManager->method('getStore')->willReturn($this->store);
 
-        $this->storeManager->setStore($this->store);
         $this->urlBuilder = $this->createMock(UrlInterface::class);
         $this->requestMock = $this->createMock(RequestInterface::class);
         $this->context = $this->createMock(Context::class);

@@ -21,6 +21,7 @@ use Magento\Framework\Pricing\PriceInfoInterface;
 use Magento\Framework\Pricing\SaleableInterface;
 use Magento\Wishlist\Model\Item\Option;
 use Magento\Wishlist\Pricing\ConfiguredPrice\Downloadable;
+use Magento\Catalog\Model\Product;
 use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

@@ -200,9 +200,7 @@ class RssTest extends TestCase
             ->method('getCustomerId')
             ->willReturn(0);
 
-        $customer = $this->getMockBuilder(CustomerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $customer = $this->createMock(CustomerInterface::class);
         $this->customerFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($customer);
@@ -243,9 +241,7 @@ class RssTest extends TestCase
             ->method('getCustomerId')
             ->willReturn($customerId);
 
-        $customer = $this->getMockBuilder(CustomerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $customer = $this->createMock(CustomerInterface::class);
 
         $this->customerRepositoryMock->expects($this->once())
             ->method('getById')

@@ -15,7 +15,6 @@ use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Pricing\Amount\Base;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\Pricing\Render\Amount;
-use Magento\Framework\Test\Unit\Helper\ViewElementTemplateContextTestHelper;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Weee\Helper\Data;
 use Magento\Weee\Model\Tax;
@@ -59,17 +58,17 @@ class AdjustmentTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->contextMock = new ViewElementTemplateContextTestHelper();
+        $this->contextMock = $this->createPartialMock(Context::class, []);
+        $contextReflection = new \ReflectionClass($this->contextMock);
+        $eventManagerProperty = $contextReflection->getProperty('_eventManager');
+        $eventManagerProperty->setValue($this->contextMock, $this->createMock(ManagerInterface::class));
+        $scopeConfigProperty = $contextReflection->getProperty('_scopeConfig');
+        $scopeConfigProperty->setValue($this->contextMock, $this->createMock(ScopeConfigInterface::class));
+        
         $this->priceCurrencyMock = $this->createMock(
             PriceCurrencyInterface::class
         );
         $this->weeeHelperMock = $this->createMock(Data::class);
-        $eventManagerMock = $this->createMock(ManagerInterface::class);
-
-        $scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
-
-        $this->contextMock->setEventManager($eventManagerMock);
-        $this->contextMock->setScopeConfig($scopeConfigMock);
 
         $this->model = new Adjustment(
             $this->contextMock,
@@ -100,19 +99,16 @@ class AdjustmentTest extends TestCase
         $expectedValue = "$10.00";
         $typeOfDisplay = 1; //Just to set it to not false
         /** @var Amount $amountRender */
-        $amountRender = $this->getMockBuilder(Amount::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getSaleableItem', 'getDisplayValue', 'getAmount'])
-            ->getMock();
+        $amountRender = $this->createPartialMock(
+            Amount::class,
+            ['getSaleableItem', 'getDisplayValue', 'getAmount']
+        );
         $amountRender->expects($this->any())
             ->method('getDisplayValue')
             ->willReturn($displayValue);
         $this->weeeHelperMock->expects($this->any())->method('typeOfDisplay')->willReturn($typeOfDisplay);
         /** @var Base $baseAmount */
-        $baseAmount = $this->getMockBuilder(Base::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getValue'])
-            ->getMock();
+        $baseAmount = $this->createPartialMock(Base::class, ['getValue']);
         $amountRender->expects($this->any())
             ->method('getAmount')
             ->willReturn($baseAmount);
@@ -130,19 +126,14 @@ class AdjustmentTest extends TestCase
     public function testShowInclDescr($typeOfDisplay, $amount, $expectedResult)
     {
         /** @var Amount $amountRender */
-        $amountRender = $this->getMockBuilder(Amount::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getSaleableItem', 'getDisplayValue', 'getAmount'])
-            ->getMock();
+        $amountRender = $this->createPartialMock(
+            Amount::class,
+            ['getSaleableItem', 'getDisplayValue', 'getAmount']
+        );
         /** @var Product $saleable */
-        $saleable = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $saleable = $this->createMock(Product::class);
         /** @var Base $baseAmount */
-        $baseAmount = $this->getMockBuilder(Base::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getValue'])
-            ->getMock();
+        $baseAmount = $this->createPartialMock(Base::class, ['getValue']);
 
         $baseAmount->expects($this->any())
             ->method('getValue')
@@ -202,20 +193,14 @@ class AdjustmentTest extends TestCase
     public function testShowExclDescrIncl($typeOfDisplay, $amount, $expectedResult)
     {
         /** @var Amount $amountRender */
-        $amountRender = $this->getMockBuilder(Amount::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getSaleableItem', 'getDisplayValue', 'getAmount'])
-            ->getMock();
+        $amountRender = $this->createPartialMock(
+            Amount::class,
+            ['getSaleableItem', 'getDisplayValue', 'getAmount']
+        );
         /** @var Product $saleable */
-        $saleable = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['__wakeup'])
-            ->getMock();
+        $saleable = $this->createPartialMock(Product::class, ['__wakeup']);
         /** @var Base $baseAmount */
-        $baseAmount = $this->getMockBuilder(Base::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getValue'])
-            ->getMock();
+        $baseAmount = $this->createPartialMock(Base::class, ['getValue']);
         $baseAmount->expects($this->any())
             ->method('getValue')
             ->willReturn($amount);
@@ -273,19 +258,14 @@ class AdjustmentTest extends TestCase
     public function testGetWeeeTaxAttributes($typeOfDisplay, $attributes, $expectedResult)
     {
         /** @var Amount $amountRender */
-        $amountRender = $this->getMockBuilder(Amount::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getSaleableItem', 'getDisplayValue', 'getAmount'])
-            ->getMock();
+        $amountRender = $this->createPartialMock(
+            Amount::class,
+            ['getSaleableItem', 'getDisplayValue', 'getAmount']
+        );
         /** @var Product $saleable */
-        $saleable = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $saleable = $this->createMock(Product::class);
         /** @var Base $baseAmount */
-        $baseAmount = $this->getMockBuilder(Base::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getValue'])
-            ->getMock();
+        $baseAmount = $this->createPartialMock(Base::class, ['getValue']);
         $amountRender->expects($this->any())
             ->method('getAmount')
             ->willReturn($baseAmount);

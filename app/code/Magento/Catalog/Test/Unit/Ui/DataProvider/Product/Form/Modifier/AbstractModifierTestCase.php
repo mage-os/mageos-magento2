@@ -54,30 +54,10 @@ abstract class AbstractModifierTestCase extends TestCase
     protected function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
-        $this->locatorMock = $this->getMockBuilder(LocatorInterface::class)
-            ->getMockForAbstractClass();
-        $this->productMock = $this->getMockBuilder(ProductInterface::class)
-            ->addMethods([
-                'getStoreId',
-                'getResource',
-                'getData',
-                'getAttributes',
-                'getStore',
-                'getAttributeDefaultValue',
-                'getExistsStoreValueFlag',
-                'isLockedAttribute'
-            ])
-            ->onlyMethods([
-                'getId',
-                'getTypeId'
-            ])->getMockForAbstractClass();
-        $this->storeMock = $this->getMockBuilder(StoreInterface::class)
-            ->addMethods(['load', 'getConfig'])
-            ->onlyMethods(['getId'])
-            ->getMockForAbstractClass();
-        $this->arrayManagerMock = $this->getMockBuilder(ArrayManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->locatorMock = $this->createMock(LocatorInterface::class);
+        $this->productMock = $this->createMock(ProductInterface::class);
+        $this->storeMock = $this->createMock(StoreInterface::class);
+        $this->arrayManagerMock = $this->createMock(ArrayManager::class);
 
         $this->arrayManagerMock->expects($this->any())
             ->method('replace')

@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Review\Test\Unit\Helper\Action;
 
-use Magento\Backend\Test\Unit\Helper\SessionTestHelper;
+use Magento\Backend\Model\Session;
 use Magento\Framework\App\Helper\Context;
 use Magento\Review\Helper\Action\Pager;
 use PHPUnit\Framework\TestCase;
@@ -25,8 +25,17 @@ class PagerTest extends TestCase
      */
     protected function setUp(): void
     {
-        $sessionMock = new SessionTestHelper();
-        // Session mock methods provided by anonymous class
+        // Create a Session mock and set up its storage using reflection
+        $sessionMock = $this->createPartialMock(Session::class, []);
+        
+        // Use reflection to set up the storage property
+        $reflection = new \ReflectionClass($sessionMock);
+        $storageProperty = $reflection->getProperty('storage');
+        $storageProperty->setAccessible(true);
+        $storage = new \Magento\Framework\DataObject();
+        $storageProperty->setValue($sessionMock, $storage);
+        
+        $sessionMock->setData('search_result_idsreviews', [3, 2, 6, 5]);
 
         $contextMock = $this->createPartialMock(
             Context::class,

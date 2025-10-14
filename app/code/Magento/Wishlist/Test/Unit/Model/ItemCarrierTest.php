@@ -28,9 +28,6 @@ use Magento\Wishlist\Model\ItemCarrier;
 use Magento\Wishlist\Model\LocaleQuantityProcessor;
 use Magento\Wishlist\Model\ResourceModel\Item\Collection;
 use Magento\Wishlist\Model\Wishlist;
-use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
-use Magento\Wishlist\Test\Unit\Helper\ItemCarrierTestHelper;
-use Magento\Wishlist\Test\Unit\Helper\WishlistCarrierTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -104,31 +101,49 @@ class ItemCarrierTest extends TestCase
         $sharingCode = 'sharingcode';
 
         /** @var Product|MockObject $productOneMock */
-        $productOneMock = new ProductTestHelper();
-        $productOneMock->setName($productOneName);
-        $productOneMock->setDisableAddToCart(true);
+        $productOneMock = $this->createPartialMock(Product::class, []);
+        $reflection = new \ReflectionClass($productOneMock);
+        $dataProperty = $reflection->getProperty('_data');
+        $dataProperty->setValue($productOneMock, [
+            'name' => $productOneName,
+            'disable_add_to_cart' => true
+        ]);
 
         /** @var Product|MockObject $productTwoMock */
-        $productTwoMock = new ProductTestHelper();
-        $productTwoMock->setName($productTwoName);
-        $productTwoMock->setDisableAddToCart(false);
+        $productTwoMock = $this->createPartialMock(Product::class, []);
+        $reflection = new \ReflectionClass($productTwoMock);
+        $dataProperty = $reflection->getProperty('_data');
+        $dataProperty->setValue($productTwoMock, [
+            'name' => $productTwoName,
+            'disable_add_to_cart' => false
+        ]);
 
         /** @var Item|MockObject $itemOneMock */
-        $itemOneMock = new ItemCarrierTestHelper();
-        $itemOneMock->setId($itemOneId);
-        $itemOneMock->setProduct($productOneMock);
+        $itemOneMock = $this->createPartialMock(Item::class, ['addToCart', 'getProduct', 'setQty', 'delete', 'getId']);
+        $itemOneMock->method('getId')->willReturn($itemOneId);
+        $itemOneMock->method('getProduct')->willReturn($productOneMock);
+        $itemOneMock->method('addToCart')->willReturn(false);
+        $itemOneMock->method('setQty')->willReturnSelf();
+        $itemOneMock->method('delete')->willReturnSelf();
+        
         /** @var Item|MockObject $itemTwoMock */
-        $itemTwoMock = new ItemCarrierTestHelper();
-        $itemTwoMock->setId($itemTwoId);
-        $itemTwoMock->setProduct($productTwoMock);
+        $itemTwoMock = $this->createPartialMock(Item::class, ['addToCart', 'getProduct', 'setQty', 'delete', 'getId']);
+        $itemTwoMock->method('getId')->willReturn($itemTwoId);
+        $itemTwoMock->method('getProduct')->willReturn($productTwoMock);
+        $itemTwoMock->method('addToCart')->willReturn(true);
+        $itemTwoMock->method('setQty')->willReturnSelf();
+        $itemTwoMock->method('delete')->willReturnSelf();
 
         $collection = [$itemOneMock, $itemTwoMock];
 
         /** @var Wishlist|MockObject $wishlistMock */
-        $wishlistMock = new WishlistCarrierTestHelper();
+        $wishlistMock = $this->createPartialMock(Wishlist::class, ['isOwner', 'getItemCollection', 'save']);
+        $reflection = new \ReflectionClass($wishlistMock);
+        $property = $reflection->getProperty('_data');
+        $property->setValue($wishlistMock, []);
         $wishlistMock->setSharingCode($sharingCode);
-        $wishlistMock->setIsOwner($isOwner);
         $wishlistMock->setId($wishlistId);
+        $wishlistMock->method('isOwner')->with($sessionCustomerId)->willReturn($isOwner);
 
         $this->mocks['session']->expects($this->once())
             ->method('getCustomerId')
@@ -137,7 +152,7 @@ class ItemCarrierTest extends TestCase
         /** @var Collection|MockObject $collectionMock */
         $collectionMock = $this->createMock(Collection::class);
 
-        $wishlistMock->setItemCollection($collectionMock);
+        $wishlistMock->method('getItemCollection')->willReturn($collectionMock);
 
         $collectionMock->expects($this->once())
             ->method('setVisibilityFilter')
@@ -232,10 +247,13 @@ class ItemCarrierTest extends TestCase
         $collection = [$itemOneMock, $itemTwoMock];
 
         /** @var Wishlist|MockObject $wishlistMock */
-        $wishlistMock = new WishlistCarrierTestHelper();
+        $wishlistMock = $this->createPartialMock(Wishlist::class, ['isOwner', 'getItemCollection', 'save']);
+        $reflection = new \ReflectionClass($wishlistMock);
+        $property = $reflection->getProperty('_data');
+        $property->setValue($wishlistMock, []);
         $wishlistMock->setSharingCode($sharingCode);
-        $wishlistMock->setIsOwner($isOwner);
         $wishlistMock->setId($wishlistId);
+        $wishlistMock->method('isOwner')->with($sessionCustomerId)->willReturn($isOwner);
 
         $this->mocks['session']->expects($this->once())
             ->method('getCustomerId')
@@ -244,7 +262,7 @@ class ItemCarrierTest extends TestCase
         /** @var Collection|MockObject $collectionMock */
         $collectionMock = $this->createMock(Collection::class);
 
-        $wishlistMock->setItemCollection($collectionMock);
+        $wishlistMock->method('getItemCollection')->willReturn($collectionMock);
 
         $collectionMock->expects($this->once())
             ->method('setVisibilityFilter')
@@ -285,18 +303,14 @@ class ItemCarrierTest extends TestCase
             ->willThrowException(new LocalizedException(__('Localized Exception.')));
 
         /** @var Quote|MockObject $collectionMock */
-        $quoteMock = $this->getMockBuilder(Quote::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $quoteMock = $this->createMock(Quote::class);
 
         $this->mocks['cart']->expects($this->exactly(4))
             ->method('getQuote')
             ->willReturn($quoteMock);
 
         /** @var Quote\Item|MockObject $collectionMock */
-        $itemMock = $this->getMockBuilder(Quote\Item::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $itemMock = $this->createMock(Quote\Item::class);
 
         $quoteMock->expects($this->exactly(2))
             ->method('getItemByProduct')
@@ -363,29 +377,35 @@ class ItemCarrierTest extends TestCase
         $isOwner = true;
         $indexUrl = 'index_url';
 
-        $itemOneMock = new ItemCarrierTestHelper();
-        $itemOneMock->setId($itemOneId);
+        $productOneMock = $this->createPartialMock(Product::class, []);
+        $reflection = new \ReflectionClass($productOneMock);
+        $dataProperty = $reflection->getProperty('_data');
+        $dataProperty->setValue($productOneMock, ['name' => $productOneName]);
 
-        $itemTwoMock = new ItemCarrierTestHelper();
-        $itemTwoMock->setId($itemTwoId);
+        $productTwoMock = $this->createPartialMock(Product::class, []);
+        $reflection = new \ReflectionClass($productTwoMock);
+        $dataProperty = $reflection->getProperty('_data');
+        $dataProperty->setValue($productTwoMock, ['name' => $productTwoName]);
 
-        $productOneMock = new ProductTestHelper();
-        $productOneMock->setName($productOneName);
+        $itemOneMock = $this->createPartialMock(Item::class, ['addToCart', 'getProduct', 'setQty', 'delete', 'getId']);
+        $itemOneMock->method('getId')->willReturn($itemOneId);
+        $itemOneMock->method('getProduct')->willReturn($productOneMock);
+        $itemOneMock->method('addToCart')->willReturn(true);
+        $itemOneMock->method('setQty')->willReturnSelf();
+        $itemOneMock->method('delete')->willReturnSelf();
 
-        $productTwoMock = new ProductTestHelper();
-        $productTwoMock->setName($productTwoName);
-
-        $itemOneMock->setProduct($productOneMock);
-        $itemOneMock->setOriginalProduct($productOneMock);
-        $itemTwoMock->setProduct($productTwoMock);
-        $itemTwoMock->setOriginalProduct($productTwoMock);
+        $exception = new Exception('Exception.');
+        $itemTwoMock = $this->createPartialMock(Item::class, ['addToCart', 'getProduct', 'setQty', 'delete', 'getId']);
+        $itemTwoMock->method('getId')->willReturn($itemTwoId);
+        $itemTwoMock->method('getProduct')->willReturn($productTwoMock);
+        $itemTwoMock->method('addToCart')->willThrowException($exception);
+        $itemTwoMock->method('setQty')->willReturnSelf();
+        $itemTwoMock->method('delete')->willReturnSelf();
 
         $collection = [$itemOneMock, $itemTwoMock];
 
         /** @var Wishlist|MockObject $wishlistMock */
-        $wishlistMock = $this->getMockBuilder(Wishlist::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $wishlistMock = $this->createMock(Wishlist::class);
 
         $this->mocks['session']->expects($this->once())
             ->method('getCustomerId')
@@ -400,9 +420,7 @@ class ItemCarrierTest extends TestCase
             ->willReturn($wishlistId);
 
         /** @var Collection|MockObject $collectionMock */
-        $collectionMock = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $collectionMock = $this->createMock(Collection::class);
 
         $wishlistMock->expects($this->once())
             ->method('getItemCollection')
@@ -412,22 +430,11 @@ class ItemCarrierTest extends TestCase
             ->method('setVisibilityFilter')
             ->with(true)
             ->willReturn($collection);
-        $itemOneMock->setId($itemOneId);
-        $itemTwoMock->setId($itemTwoId);
-        $itemOneMock->setProduct($productOneMock);
-        $itemOneMock->setOriginalProduct($productOneMock);
-        $itemTwoMock->setProduct($productTwoMock);
-        $itemTwoMock->setOriginalProduct($productTwoMock);
 
         $this->mocks['quantityProcessor']->expects($this->once())
             ->method('process')
             ->with($qtys[$itemOneId])
             ->willReturnArgument(0);
-        $itemOneMock->setQty($qtys[$itemOneId]);
-
-        $exception = new Exception('Exception.');
-        $itemTwoMock->shouldThrowException = true;
-        $itemTwoMock->exception = $exception;
 
         $this->mocks['logger']->expects($this->once())
             ->method('critical')
@@ -473,9 +480,7 @@ class ItemCarrierTest extends TestCase
             ->willReturnSelf();
 
         /** @var Quote|MockObject $collectionMock */
-        $quoteMock = $this->getMockBuilder(Quote::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $quoteMock = $this->createMock(Quote::class);
 
         $this->mocks['cart']->expects($this->once())
             ->method('getQuote')

@@ -41,9 +41,8 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Captcha\Observer\CaptchaStringResolver;
 use Magento\Framework\Escaper;
-use Magento\Framework\Test\Unit\Helper\RequestInterfaceTestHelper;
-use Magento\Customer\Test\Unit\Helper\CustomerTestHelper;
-use Magento\Customer\Test\Unit\Helper\SessionTestHelper;
+use Magento\Framework\App\Test\Unit\Helper\RequestInterfaceTestHelper;
+use Magento\Customer\Model\Session as CustomerSession;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -219,10 +218,25 @@ class SendTest extends TestCase
 
         $this->formKeyValidator = $this->createMock(FormKeyValidator::class);
 
-        $customerMock = new CustomerTestHelper();
+        $customerMock = $this->createPartialMock(Customer::class, []);
+        // Initialize _data array for magic __call methods
+        $reflection = new \ReflectionClass($customerMock);
+        $property = $reflection->getProperty('_data');
+        $property->setValue($customerMock, [
+            'id' => 1,
+            'email' => 'example@mail.com',
+            'name' => 'Test Customer'
+        ]);
 
-        $this->customerSession = new SessionTestHelper();
-        $this->customerSession->setCustomer($customerMock);
+        $this->customerSession = $this->createPartialMock(CustomerSession::class, []);
+        // Initialize storage for magic __call methods
+        $sessionReflection = new \ReflectionClass($this->customerSession);
+        $sessionProperty = $sessionReflection->getProperty('storage');
+        $sessionProperty->setValue($this->customerSession, new \Magento\Framework\Session\Storage());
+        
+        // Set _customerModel property to avoid loading from repository
+        $customerModelProperty = $sessionReflection->getProperty('_customerModel');
+        $customerModelProperty->setValue($this->customerSession, $customerMock);
 
         $this->wishlistProvider = $this->createMock(WishlistProviderInterface::class);
 

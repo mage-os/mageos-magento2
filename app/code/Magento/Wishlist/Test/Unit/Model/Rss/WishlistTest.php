@@ -26,8 +26,6 @@ use Magento\Store\Model\ScopeInterface;
 use Magento\Wishlist\Block\Customer\Wishlist;
 use Magento\Wishlist\Helper\Rss;
 use Magento\Wishlist\Model\Item;
-use Magento\Wishlist\Test\Unit\Helper\WishlistTestHelper;
-use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -186,7 +184,7 @@ class WishlistTest extends TestCase
 
         $wishlistItem->method('getProduct')->willReturn($productMock);
 
-        $wishlistModelMock->setItemCollection($itemsCollection);
+        $wishlistModelMock->method('getItemCollection')->willReturn($itemsCollection);
 
         $description = $this->processWishlistItemDescription($wishlistModelMock, $staticArgs);
 
@@ -291,7 +289,11 @@ class WishlistTest extends TestCase
 
     public function testIsAuthRequired()
     {
-        $wishlist = new WishlistTestHelper();
+        $wishlist = $this->createPartialMock(\Magento\Wishlist\Model\Wishlist::class, ['loadByCustomerId']);
+        $reflection = new \ReflectionClass($wishlist);
+        $property = $reflection->getProperty('_data');
+        $property->setValue($wishlist, []);
+        $wishlist->setSharingCode('somesharingcode');
         $this->wishlistHelperMock->method('getWishlist')->willReturn($wishlist);
         $this->assertFalse($this->model->isAuthRequired());
     }
@@ -354,15 +356,28 @@ class WishlistTest extends TestCase
 
     private function createWishlistModelMock($wishlistId)
     {
-        $wishlist = new WishlistTestHelper();
+        $wishlist = $this->createPartialMock(
+            \Magento\Wishlist\Model\Wishlist::class,
+            ['getItemCollection', 'loadByCustomerId', 'getCustomerId']
+        );
+        $reflection = new \ReflectionClass($wishlist);
+        $property = $reflection->getProperty('_data');
+        $property->setValue($wishlist, []);
         $wishlist->setId($wishlistId);
+        $wishlist->method('getCustomerId')->willReturn(1);
         return $wishlist;
     }
 
     private function createProductMock($productName)
     {
-        $product = new ProductTestHelper();
-        $product->setName($productName);
+        $product = $this->createPartialMock(Product::class, []);
+        $reflection = new \ReflectionClass($product);
+        $dataProperty = $reflection->getProperty('_data');
+        $dataProperty->setValue($product, [
+            'name' => $productName,
+            'short_description' => 'Product short description',
+            'description' => 'Product description'
+        ]);
         return $product;
     }
 }

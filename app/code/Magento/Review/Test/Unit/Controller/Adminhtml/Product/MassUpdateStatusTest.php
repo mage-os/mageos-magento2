@@ -18,7 +18,6 @@ use Magento\Review\Model\Review;
 use Magento\Review\Model\ResourceModel\Review\Collection as ReviewCollection;
 use Magento\Review\Model\ResourceModel\Review\CollectionFactory;
 use Magento\Review\Model\ReviewFactory;
-use Magento\Review\Test\Unit\Helper\ReviewTestHelper;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Backend\Model\View\Result\Redirect;
@@ -129,8 +128,15 @@ class MassUpdateStatusTest extends TestCase
             ->method('addFieldToFilter')
             ->with('main_table.id', [1, 2])
             ->willReturnSelf();
-        $modelMock = new ReviewTestHelper();
-        $modelMock->setResource($this->createMock(ReviewResourceModel::class));
+        $modelMock = $this->createPartialMock(Review::class, []);
+        $reviewReflection = new \ReflectionClass($modelMock);
+        $reviewDataProperty = $reviewReflection->getProperty('_data');
+        $reviewDataProperty->setValue($modelMock, []);
+        
+        $reviewResource = $this->createMock(ReviewResourceModel::class);
+        $reviewResourceProperty = $reviewReflection->getProperty('_resource');
+        $reviewResourceProperty->setValue($modelMock, $reviewResource);
+        
         $this->collectionMock->expects($this->once())->method('getIterator')
             ->willReturn(new \ArrayIterator([$modelMock]));
         $this->messageManagerMock->expects($this->once())

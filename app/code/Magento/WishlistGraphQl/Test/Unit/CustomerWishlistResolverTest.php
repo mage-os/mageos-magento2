@@ -17,7 +17,6 @@ use Magento\Wishlist\Model\Wishlist\Config;
 use Magento\Wishlist\Model\WishlistFactory;
 use Magento\WishlistGraphQl\Model\Resolver\CustomerWishlistResolver;
 use Magento\GraphQl\Test\Unit\Helper\ContextExtensionInterfaceTestHelper;
-use Magento\Wishlist\Test\Unit\Helper\WishlistTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -66,7 +65,11 @@ class CustomerWishlistResolverTest extends TestCase
         $this->contextMock->method('getUserType')->willReturn(null);
         $this->contextMock->method('getExtensionAttributes')->willReturn($this->extensionAttributesMock);
         $this->wishlistFactoryMock = $this->createPartialMock(WishlistFactory::class, ['create']);
-        $this->wishlistMock = new WishlistTestHelper();
+        $this->wishlistMock = $this->createPartialMock(Wishlist::class, ['loadByCustomerId', 'getItemsCount']);
+        $reflection = new \ReflectionClass($this->wishlistMock);
+        $property = $reflection->getProperty('_data');
+        $property->setValue($this->wishlistMock, []);
+        $this->wishlistMock->method('getItemsCount')->willReturn(0);
         $this->wishlistConfigMock = $this->createMock(Config::class);
 
         $this->resolver = new CustomerWishlistResolver(

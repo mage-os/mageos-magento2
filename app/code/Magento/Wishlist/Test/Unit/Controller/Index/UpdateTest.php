@@ -26,7 +26,6 @@ use Magento\Wishlist\Helper\Data;
 use Magento\Wishlist\Model\Item;
 use Magento\Wishlist\Model\LocaleQuantityProcessor;
 use Magento\Wishlist\Model\Wishlist;
-use Magento\Wishlist\Test\Unit\Helper\ItemUpdateTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -108,7 +107,7 @@ class UpdateTest extends TestCase
         );
         $this->messageManagerMock = $this->createPartialMock(
             \Magento\Framework\Message\Manager::class,
-            ['addSuccessMessage']
+            ['addSuccessMessage', 'addErrorMessage']
         );
         $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         $this->requestMock = $this->createPartialMock(
@@ -272,8 +271,26 @@ class UpdateTest extends TestCase
 
     private function createItemMock($id)
     {
-        $item = new ItemUpdateTestHelper();
+        // Create Item mock with specific methods
+        $item = $this->createPartialMock(Item::class, ['_getResource', 'save']);
+        
+        // Use reflection to set up the data storage
+        $reflection = new \ReflectionClass($item);
+        $dataProperty = $reflection->getProperty('_data');
+        $dataProperty->setAccessible(true);
+        $dataProperty->setValue($item, []);
+        
+        // Set up resource mock
+        $resourceMock = $this->createMock(\Magento\Wishlist\Model\ResourceModel\Item::class);
+        $item->method('_getResource')->willReturn($resourceMock);
+        $item->method('save')->willReturn($item);
+        
         $item->setId($id);
+        // Set up data so that getQty() and getDescription() return different values
+        // This will trigger the save operation in the controller
+        $item->setData('qty', 1); // Different from test qty (21)
+        $item->setData('description', 'old_description'); // Different from test description
+        $item->setData('wishlist_id', 1); // Set wishlist ID to match the test
         return $item;
     }
 }

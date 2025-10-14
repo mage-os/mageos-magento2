@@ -13,9 +13,9 @@ use Magento\Catalog\Model\ResourceModel\Category\Collection;
 use Magento\Catalog\Model\ResourceModel\Category\Tree;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Data\Tree\Node;
+use Magento\Framework\Data\Tree\Node\Collection as NodeCollection;
 use Magento\Framework\Escaper;
 use Magento\Framework\Event\ManagerInterface;
-use Magento\Framework\Test\Unit\Helper\NodeTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
@@ -112,16 +112,23 @@ class ChooserTest extends TestCase
 
         $this->collection = $this->createMock(Collection::class);
 
-        $this->childNode = new NodeTestHelper();
-        $this->childNode->setHasChildren(false)
-                        ->setIdField('id')
-                        ->setLevel(3);
+        $this->childNode = $this->createPartialMock(Node::class, []);
+        $childReflection = new \ReflectionClass($this->childNode);
+        $childNodesProperty = $childReflection->getProperty('_childNodes');
+        $childNodesProperty->setValue($this->childNode, new NodeCollection($this->childNode));
+        $idFieldProperty = $childReflection->getProperty('_idField');
+        $idFieldProperty->setValue($this->childNode, 'id');
+        $this->childNode->setLevel(3);
 
-        $this->rootNode = new NodeTestHelper();
-        $this->rootNode->setHasChildren(true)
-                       ->setIdField('id')
-                       ->setLevel(1)
-                       ->setChildren([$this->childNode]);
+        $this->rootNode = $this->createPartialMock(Node::class, []);
+        $rootReflection = new \ReflectionClass($this->rootNode);
+        $rootNodesProperty = $rootReflection->getProperty('_childNodes');
+        $rootNodesCollection = new NodeCollection($this->rootNode);
+        $rootNodesCollection[0] = $this->childNode;
+        $rootNodesProperty->setValue($this->rootNode, $rootNodesCollection);
+        $rootIdFieldProperty = $rootReflection->getProperty('_idField');
+        $rootIdFieldProperty->setValue($this->rootNode, 'id');
+        $this->rootNode->setLevel(1);
         $this->categoryTree = $this->createMock(Tree::class);
         $this->store = $this->createMock(Store::class);
         $this->storeManager = $this->createMock(StoreManagerInterface::class);

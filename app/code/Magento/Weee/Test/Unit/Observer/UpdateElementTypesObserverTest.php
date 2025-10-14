@@ -11,9 +11,7 @@ namespace Magento\Weee\Test\Unit\Observer;
 use Magento\Framework\DataObject;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Framework\Test\Unit\Helper\DataObjectTestHelper;
 use Magento\Reports\Model\Event;
-use Magento\Reports\Test\Unit\Helper\EventTestHelper;
 use Magento\Weee\Block\Element\Weee\Tax;
 use Magento\Weee\Observer\UpdateElementTypesObserver;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -67,9 +65,15 @@ class UpdateElementTypesObserverTest extends TestCase
         $this->objectManager = new ObjectManager($this);
         $this->observerMock = $this->createMock(Observer::class);
 
-        $this->eventMock = new EventTestHelper();
+        $this->eventMock = $this->createPartialMock(Event::class, []);
+        $reflection = new \ReflectionClass($this->eventMock);
+        $property = $reflection->getProperty('_data');
+        $property->setValue($this->eventMock, []);
 
-        $this->responseMock = new DataObjectTestHelper();
+        $this->responseMock = $this->createPartialMock(DataObject::class, []);
+        $reflection = new \ReflectionClass($this->responseMock);
+        $property = $reflection->getProperty('_data');
+        $property->setValue($this->responseMock, []);
 
         $this->observer = $this->objectManager->getObject(UpdateElementTypesObserver::class);
     }

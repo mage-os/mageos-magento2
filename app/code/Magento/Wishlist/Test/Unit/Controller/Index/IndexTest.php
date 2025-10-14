@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2024 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -75,15 +75,9 @@ class IndexTest extends TestCase
         $this->response = $this->createMock(\Magento\Framework\App\Response\Http::class);
         $this->wishlistProvider = $this->createMock(WishlistProvider::class);
         $this->redirect = $this->createMock(Redirect::class);
-        $this->resultFactoryMock = $this->getMockBuilder(ResultFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->resultPageMock = $this->getMockBuilder(Page::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->layoutMock = $this->getMockBuilder(Layout::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->resultFactoryMock = $this->createMock(ResultFactory::class);
+        $this->resultPageMock = $this->createMock(Page::class);
+        $this->layoutMock = $this->createMock(Layout::class);
 
         $this->resultFactoryMock->expects($this->any())
             ->method('create')
