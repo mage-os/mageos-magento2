@@ -88,7 +88,7 @@ class ProductOptionProcessorTest extends TestCase
         }
         $productOptionMock = $this->createMock(ProductOptionInterface::class);
 
-        $productOptionExtensionMock = new ProductOptionExtensionInterfaceTestHelper();
+        $productOptionExtensionMock = new ProductOptionExtensionTestHelper();
         $productOptionMock->method('getExtensionAttributes')->willReturn($productOptionExtensionMock);
 
         $productOptionExtensionMock->setConfigurableItemOptions($options);

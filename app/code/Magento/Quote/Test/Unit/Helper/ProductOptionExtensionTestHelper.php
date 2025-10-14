@@ -74,4 +74,38 @@ class ProductOptionExtensionTestHelper extends ProductOptionExtension
     {
         return $this->data['configurable_item_options'] ?? null;
     }
+
+    /**
+     * Set configurable item options for testing
+     *
+     * @param array|null $options
+     * @return self
+     */
+    public function setConfigurableItemOptions($options): self
+    {
+        $this->data['configurable_item_options'] = $options;
+        return $this;
+    }
+
+    /**
+     * Custom getGroupedOptions method for testing
+     *
+     * @return array|null
+     */
+    public function getGroupedOptions(): ?array
+    {
+        return $this->data['grouped_options'] ?? null;
+    }
+
+    /**
+     * Set grouped options for testing
+     *
+     * @param array|null $options
+     * @return self
+     */
+    public function setGroupedOptions($options): self
+    {
+        $this->data['grouped_options'] = $options;
+        return $this;
+    }
 }
