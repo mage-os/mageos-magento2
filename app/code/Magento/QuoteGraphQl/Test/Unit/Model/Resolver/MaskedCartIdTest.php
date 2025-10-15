@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2022 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 declare(strict_types=1);
 
@@ -21,9 +21,6 @@ use Magento\QuoteGraphQl\Model\Resolver\MaskedCartId;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Unit tests for MaskedCartId resolver
- */
 class MaskedCartIdTest extends TestCase
 {
     /**
@@ -76,33 +73,36 @@ class MaskedCartIdTest extends TestCase
      */
     private array $valueMock = [];
 
-    /**
-     * Set up test dependencies.
-     *
-     * @return void
-     */
     protected function setUp(): void
     {
         $this->fieldMock = $this->createMock(Field::class);
         $this->resolveInfoMock = $this->createMock(ResolveInfo::class);
         $this->contextMock = $this->createMock(Context::class);
-        $this->quoteIdToMaskedQuoteId = $this->createMock(QuoteIdToMaskedQuoteIdInterface::class);
-        $this->quoteIdMaskFactory = $this->createMock(QuoteIdMaskFactory::class);
-        $this->quoteIdMaskResourceModelMock = $this->createMock(QuoteIdMaskResourceModel::class);
+        $this->quoteIdToMaskedQuoteId = $this->createPartialMock(
+            QuoteIdToMaskedQuoteIdInterface::class,
+            ['execute']
+        );
+        $this->quoteIdMaskFactory = $this->createPartialMock(
+            QuoteIdMaskFactory::class,
+            ['create']
+        );
+        $this->quoteIdMaskResourceModelMock = $this->createPartialMock(
+            QuoteIdMaskResourceModel::class,
+            ['save']
+        );
         $this->maskedCartId = new MaskedCartId(
             $this->quoteIdToMaskedQuoteId,
             $this->quoteIdMaskFactory,
             $this->quoteIdMaskResourceModelMock
         );
-        $this->quoteMock = $this->createMock(Quote::class);
-        $this->quoteIdMask = $this->createMock(QuoteIdMask::class);
+        $this->quoteMock = $this->getMockBuilder(Quote::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->quoteIdMask = $this->getMockBuilder(QuoteIdMask::class)
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
-    /**
-     * Ensure exception thrown when required model is missing from value.
-     *
-     * @return void
-     */
     public function testResolveWithoutModelInValueParameter(): void
     {
         $this->expectException(LocalizedException::class);
@@ -110,11 +110,6 @@ class MaskedCartIdTest extends TestCase
         $this->maskedCartId->resolve($this->fieldMock, $this->contextMock, $this->resolveInfoMock, $this->valueMock);
     }
 
-    /**
-     * Ensure resolver sets quote id on created quoteIdMask entity.
-     *
-     * @return void
-     */
     public function testResolve(): void
     {
         $this->valueMock = ['model' => $this->quoteMock];
@@ -123,18 +118,19 @@ class MaskedCartIdTest extends TestCase
             ->expects($this->once())
             ->method('getId')
             ->willReturn($cartId);
-        $this->quoteIdMaskFactory->expects($this->once())->method('create')->willReturn($this->quoteIdMask);
+        $this->quoteIdMaskFactory
+            ->expects($this->once())
+            ->method('create')
+            ->willReturn($this->quoteIdMask);
         $this->quoteIdMask->setQuoteId($cartId);
+        $this->quoteIdMaskResourceModelMock
+            ->expects($this->once())
+            ->method('save')
+            ->with($this->quoteIdMask);
         $this->maskedCartId->resolve($this->fieldMock, $this->contextMock, $this->resolveInfoMock, $this->valueMock);
     }
 
     /**
-     * @return void
-     * @throws \Exception
-     */
-    /**
-     * Ensure resolver rethrows proper message when quote not found.
-     *
      * @return void
      * @throws \Exception
      */

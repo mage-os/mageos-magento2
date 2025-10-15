@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\QuoteGraphQl\Test\Unit\Model;
 
-use PHPUnit\Framework\Attributes\DataProvider as DataProviderAttribute;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\QuoteGraphQl\Model\ErrorMapper;
 use PHPUnit\Framework\TestCase;
 
@@ -32,7 +32,7 @@ class ErrorMapperTest extends TestCase
      * @param $expectedId
      * @return void
      */
-    #[DataProviderAttribute('dataProviderForTestGetErrorMessageId')]
+    #[DataProvider('dataProviderForTestGetErrorMessageId')]
     public function testGetErrorMessageId($message, $expectedId): void
     {
         $this->assertEquals($expectedId, $this->errorMapper->getErrorMessageId($message));

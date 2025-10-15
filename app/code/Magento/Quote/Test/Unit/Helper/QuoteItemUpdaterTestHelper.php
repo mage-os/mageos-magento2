@@ -80,4 +80,24 @@ class QuoteItemUpdaterTestHelper extends Item
     {
         return $this->getData('parent_item_id') ?? false;
     }
+
+    /**
+     * Get quantity to add for tests.
+     *
+     * @return float|int|null
+     */
+    public function getQtyToAdd()
+    {
+        return $this->getData('qty_to_add');
+    }
+
+    /**
+     * Get previous quantity for tests.
+     *
+     * @return float|int|null
+     */
+    public function getPreviousQty()
+    {
+        return $this->getData('previous_qty');
+    }
 }

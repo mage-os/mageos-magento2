@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2023 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 declare(strict_types=1);
 
@@ -17,11 +17,8 @@ use Magento\QuoteGraphQl\Model\Resolver\ShippingAddress\SelectedShippingMethod;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Magento\Quote\Model\Cart\ShippingMethodConverter;
+use Magento\Quote\Model\Quote\Address;
 use Magento\Quote\Model\Quote\Address\Rate;
-use Magento\Quote\Test\Unit\Helper\AddressShippingMethodGraphQlTestHelper;
-use Magento\Quote\Test\Unit\Helper\ShippingMethodDataTestHelper;
-use Magento\Quote\Test\Unit\Helper\QuoteCurrencyCodeTestHelper;
-use Magento\Quote\Test\Unit\Helper\RateTestHelper;
 
 /**
  * @see SelectedShippingMethod
@@ -83,15 +80,25 @@ class SelectedShippingMethodTest extends TestCase
     {
         $this->shippingMethodConverterMock = $this->createMock(ShippingMethodConverter::class);
         $this->contextMock = $this->createMock(Context::class);
-        $this->fieldMock = $this->createMock(Field::class);
-        $this->resolveInfoMock = $this->createMock(ResolveInfo::class);
+        $this->fieldMock = $this->getMockBuilder(Field::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->resolveInfoMock = $this->getMockBuilder(ResolveInfo::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
-        $this->addressMock = new AddressShippingMethodGraphQlTestHelper();
-        $this->rateMock = (new RateTestHelper())
-            ->setMethod('shipping_method')
-            ->setCarrier('shipping_carrier')
-            ->setCode('shipping_carrier');
-        $this->quoteMock = new QuoteCurrencyCodeTestHelper('USD');
+        $this->addressMock = $this->createPartialMock(
+            \Magento\Quote\Test\Unit\Helper\QuoteAddressTestHelper::class,
+            ['getShippingMethod', 'getAllShippingRates', 'getQuote', 'getShippingAmount', 'getMethod']
+        );
+        $this->rateMock = $this->createPartialMock(
+            \Magento\Quote\Test\Unit\Helper\RateTestHelper::class,
+            ['getCode', 'getCarrier', 'getMethod']
+        );
+        $this->quoteMock = $this->createPartialMock(
+            \Magento\Quote\Test\Unit\Helper\QuoteTestHelper::class,
+            ['getQuoteCurrencyCode', 'getMethodTitle', 'getCarrierTitle', 'getPriceExclTax', 'getPriceInclTax']
+        );
         $this->selectedShippingMethod = new SelectedShippingMethod(
             $this->shippingMethodConverterMock
         );
@@ -112,13 +119,50 @@ class SelectedShippingMethodTest extends TestCase
     public function testResolve(): void
     {
         $this->valueMock = ['model' => $this->addressMock];
+        $this->quoteMock
+            ->method('getQuoteCurrencyCode')
+            ->willReturn('USD');
+        $this->quoteMock
+            ->method('getMethodTitle')
+            ->willReturn('method_title');
+        $this->quoteMock
+            ->method('getCarrierTitle')
+            ->willReturn('carrier_title');
+        $this->quoteMock
+            ->expects($this->once())
+            ->method('getPriceExclTax')
+            ->willReturn('PriceExclTax');
+        $this->quoteMock
+            ->expects($this->once())
+            ->method('getPriceInclTax')
+            ->willReturn('PriceInclTax');
+        $this->rateMock
+            ->expects($this->once())
+            ->method('getCode')
+            ->willReturn('shipping_method');
+        $this->rateMock
+            ->expects($this->once())
+            ->method('getCarrier')
+            ->willReturn('shipping_carrier');
+        $this->rateMock
+            ->expects($this->once())
+            ->method('getMethod')
+            ->willReturn('shipping_carrier');
         $this->addressMock
-            ->setShippingAmountValue('shipping_amount')
-            ->setMethodValue('shipping_method')
-            ->setQuote($this->quoteMock)
-            ->setAllShippingRates([$this->rateMock]);
+            ->method('getAllShippingRates')
+            ->willReturn([$this->rateMock]);
+        $this->addressMock
+            ->method('getShippingMethod')
+            ->willReturn('shipping_method');
+        $this->addressMock
+            ->method('getShippingAmount')
+            ->willReturn('shipping_amount');
+        $this->addressMock
+            ->expects($this->once())
+            ->method('getQuote')
+            ->willReturn($this->quoteMock);
         $this->shippingMethodConverterMock->method('modelToDataObject')
-            ->willReturn(new ShippingMethodDataTestHelper());
+            ->willReturn($this->quoteMock);
         $this->selectedShippingMethod->resolve(
             $this->fieldMock,
             $this->contextMock,

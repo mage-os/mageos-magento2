@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2020 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 
 declare(strict_types=1);
@@ -11,6 +11,7 @@ namespace Magento\QuoteGraphQl\Test\Unit\Model\Cart;
 use Magento\Checkout\Api\Exception\PaymentProcessingRateLimitExceededException;
 use Magento\Checkout\Api\PaymentSavingRateLimiterInterface;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Quote\Model\Quote;
 use Magento\QuoteGraphQl\Model\Cart\SetPaymentMethodOnCart;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -35,12 +36,11 @@ class SetPaymentMethodOnCartTest extends TestCase
     {
         parent::setUp();
 
+        $objectManager = new ObjectManager($this);
         $this->rateLimiterMock = $this->createMock(PaymentSavingRateLimiterInterface::class);
-        $this->model = new SetPaymentMethodOnCart(
-            $this->createMock(\Magento\Quote\Api\PaymentMethodManagementInterface::class),
-            $this->createMock(\Magento\QuoteGraphQl\Model\Cart\Payment\PaymentMethodBuilder::class),
-            null,
-            $this->rateLimiterMock
+        $this->model = $objectManager->getObject(
+            SetPaymentMethodOnCart::class,
+            ['savingRateLimiter' => $this->rateLimiterMock]
         );
     }
 

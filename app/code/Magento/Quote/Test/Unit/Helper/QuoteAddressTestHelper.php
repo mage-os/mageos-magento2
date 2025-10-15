@@ -253,6 +253,26 @@ class QuoteAddressTestHelper extends Address
     }
 
     /**
+     * Get shipping amount for tests.
+     *
+     * @return float|int|string|null
+     */
+    public function getShippingAmount()
+    {
+        return $this->getData('shipping_amount');
+    }
+
+    /**
+     * Get method for tests.
+     *
+     * @return string|null
+     */
+    public function getMethod()
+    {
+        return $this->getData('method');
+    }
+
+    /**
      * Get related order id for tests.
      *
      * @return int|null

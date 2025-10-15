@@ -76,6 +76,66 @@ class TotalTestHelper extends Total
     }
     
     /**
+     * Get subtotal for tests.
+     *
+     * @return float|int|null
+     */
+    public function getSubtotal()
+    {
+        return $this->getData('subtotal');
+    }
+
+    /**
+     * Get subtotal including tax for tests.
+     *
+     * @return float|int|null
+     */
+    public function getSubtotalInclTax()
+    {
+        return $this->getData('subtotal_incl_tax');
+    }
+
+    /**
+     * Get discount tax compensation amount for tests.
+     *
+     * @return float|int|null
+     */
+    public function getDiscountTaxCompensationAmount()
+    {
+        return $this->getData('discount_tax_compensation_amount');
+    }
+
+    /**
+     * Get discount amount for tests.
+     *
+     * @return float|int|null
+     */
+    public function getDiscountAmount()
+    {
+        return $this->getData('discount_amount');
+    }
+
+    /**
+     * Get discount description for tests.
+     *
+     * @return string|null
+     */
+    public function getDiscountDescription()
+    {
+        return $this->getData('discount_description');
+    }
+
+    /**
+     * Get applied taxes for tests.
+     *
+     * @return array|null
+     */
+    public function getAppliedTaxes()
+    {
+        return $this->getData('applied_taxes');
+    }
+
+    /**
      * Explicit getter for total code used by tests.
      *
      * @return string|null

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2021 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 declare(strict_types=1);
 
@@ -18,7 +18,7 @@ use Magento\QuoteGraphQl\Model\Cart\TotalsCollector;
 use Magento\QuoteGraphQl\Model\Resolver\CartPrices;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Quote\Test\Unit\Helper\QuoteCurrencyCodeTestHelper;
+use Magento\Quote\Test\Unit\Helper\QuoteTestHelper;
 use Magento\Quote\Test\Unit\Helper\TotalTestHelper;
 
 /**
@@ -78,8 +78,19 @@ class CartPricesTest extends TestCase
         $this->fieldMock = $this->createMock(Field::class);
         $this->resolveInfoMock = $this->createMock(ResolveInfo::class);
         $this->contextMock = $this->createMock(Context::class);
-        $this->quoteMock = new QuoteCurrencyCodeTestHelper('USD');
-        $this->totalMock = new TotalTestHelper();
+        $this->quoteMock = $this->createPartialMock(QuoteTestHelper::class, ['getQuoteCurrencyCode']);
+        $this->totalMock = $this->createPartialMock(
+            TotalTestHelper::class,
+            [
+                'getSubtotal',
+                'getSubtotalInclTax',
+                'getGrandTotal',
+                'getDiscountTaxCompensationAmount',
+                'getDiscountAmount',
+                'getDiscountDescription',
+                'getAppliedTaxes'
+            ]
+        );
         $this->cartPrices = new CartPrices(
             $this->totalsCollectorMock,
             $this->scopeConfigMock
@@ -96,14 +107,35 @@ class CartPricesTest extends TestCase
     public function testResolve(): void
     {
         $this->valueMock = ['model' => $this->quoteMock];
-        // Values are provided by TotalTestHelper getters
-        $this->totalMock->setDiscountDescription('Discount Description');
+        $this->quoteMock
+            ->expects($this->once())
+            ->method('getQuoteCurrencyCode')
+            ->willReturn('USD');
+        $this->totalMock
+            ->expects($this->once())
+            ->method('getGrandTotal');
+        $this->totalMock
+            ->expects($this->exactly(2))
+            ->method('getSubtotal');
+        $this->totalMock
+            ->expects($this->once())
+            ->method('getSubtotalInclTax');
+        $this->totalMock
+            ->method('getDiscountDescription')
+            ->willReturn('Discount Description');
+        $this->totalMock
+            ->expects($this->once())
+            ->method('getAppliedTaxes');
         $this->scopeConfigMock
             ->expects($this->once())
             ->method('getValue')
             ->willReturn(1);
-        $this->totalMock->setDiscountAmount(0.0);
-        $this->totalMock->setDiscountTaxCompensationAmount(0.0);
+        $this->totalMock
+            ->expects($this->atLeast(2))
+            ->method('getDiscountAmount');
+        $this->totalMock
+            ->expects($this->once())
+            ->method('getDiscountTaxCompensationAmount');
         $this->totalsCollectorMock
             ->method('collectQuoteTotals')
             ->willReturn($this->totalMock);

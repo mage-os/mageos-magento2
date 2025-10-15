@@ -14,6 +14,8 @@ use Magento\Checkout\Model\Session;
  */
 class CheckoutSessionTestHelper extends Session
 {
+    /** @var array */
+    private array $testData = [];
     /**
      * Constructor intentionally empty to skip parent dependencies.
      */
@@ -27,7 +29,7 @@ class CheckoutSessionTestHelper extends Session
      */
     public function setLastQuoteId($id)
     {
-        $this->setData('last_quote_id', $id);
+        $this->testData['last_quote_id'] = $id;
         return $this;
     }
 
@@ -37,7 +39,7 @@ class CheckoutSessionTestHelper extends Session
      */
     public function setLastSuccessQuoteId($id)
     {
-        $this->setData('last_success_quote_id', $id);
+        $this->testData['last_success_quote_id'] = $id;
         return $this;
     }
 
@@ -47,7 +49,7 @@ class CheckoutSessionTestHelper extends Session
      */
     public function setLastOrderId($id)
     {
-        $this->setData('last_order_id', $id);
+        $this->testData['last_order_id'] = $id;
         return $this;
     }
 
@@ -57,7 +59,7 @@ class CheckoutSessionTestHelper extends Session
      */
     public function setLastRealOrderId($id)
     {
-        $this->setData('last_real_order_id', $id);
+        $this->testData['last_real_order_id'] = $id;
         return $this;
     }
 
@@ -67,7 +69,7 @@ class CheckoutSessionTestHelper extends Session
      */
     public function setLastOrderStatus($status)
     {
-        $this->setData('last_order_status', $status);
+        $this->testData['last_order_status'] = $status;
         return $this;
     }
 }

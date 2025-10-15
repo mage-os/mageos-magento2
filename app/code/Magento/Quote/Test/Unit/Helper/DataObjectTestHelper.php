@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Quote\Test\Unit\Helper;
 
 use Magento\Framework\DataObject;
+use Magento\GraphQl\Model\Query\ContextExtensionInterface;
 
 /**
  * Helper that extends DataObject for tests that need a product accessor.
@@ -124,5 +125,15 @@ class DataObjectTestHelper extends DataObject
     {
         $this->setData('id', $value);
         return $this;
+    }
+
+    /**
+     * Get store for tests (GraphQL context extension usage).
+     *
+     * @return mixed
+     */
+    public function getStore()
+    {
+        return $this->getData('store');
     }
 }

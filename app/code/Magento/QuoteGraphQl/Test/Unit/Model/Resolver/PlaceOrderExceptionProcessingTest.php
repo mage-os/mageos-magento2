@@ -11,6 +11,7 @@ use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\GraphQl\Model\Query\Context;
+use Magento\GraphQl\Model\Query\ContextExtensionInterface;
 use Magento\Quote\Model\Quote;
 use Magento\QuoteGraphQl\Model\Cart\GetCartForCheckout;
 use Magento\QuoteGraphQl\Model\Cart\PlaceOrder as PlaceOrderModel;
@@ -22,11 +23,8 @@ use Magento\SalesGraphQl\Model\Formatter\Order as OrderFormatter;
 use Magento\Store\Api\Data\StoreInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\GraphQl\Test\Unit\Helper\ContextExtensionGetStoreTestHelper;
 
 /**
- * Unit tests for PlaceOrder resolver exception processing.
- *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class PlaceOrderExceptionProcessingTest extends TestCase
@@ -51,11 +49,6 @@ class PlaceOrderExceptionProcessingTest extends TestCase
      */
     private $placeOrderResolver;
 
-    /**
-     * Set up test dependencies.
-     *
-     * @return void
-     */
     protected function setUp(): void
     {
         $this->getCartForCheckoutMock = $this->createMock(GetCartForCheckout::class);
@@ -74,11 +67,6 @@ class PlaceOrderExceptionProcessingTest extends TestCase
     /**
      * Test that OrderErrorProcessor::execute method is being triggered on thrown LocalizedException
      */
-    /**
-     * Ensure OrderErrorProcessor::execute is triggered and its exception bubbles up.
-     *
-     * @return void
-     */
     public function testExceptionProcessing(): void
     {
         $exception = $this->createMock(GraphQlInputException::class);
@@ -86,9 +74,9 @@ class PlaceOrderExceptionProcessingTest extends TestCase
         $this->placeOrderModelMock->method('execute')->willThrowException($exception);
 
         $contextMock = $this->createMock(Context::class);
-        $extensionAttributesMock = new ContextExtensionGetStoreTestHelper();
-        $extensionAttributesMock->setStore($this->createMock(StoreInterface::class));
-        $contextMock->method('getExtensionAttributes')->willReturn($extensionAttributesMock);
+        $extAttrs = $this->createStub(ContextExtensionInterface::class);
+        $extAttrs->method('getStore')->willReturn($this->createMock(StoreInterface::class));
+        $contextMock->method('getExtensionAttributes')->willReturn($extAttrs);
 
         $field = $this->createMock(Field::class);
         $info = $this->createMock(ResolveInfo::class);

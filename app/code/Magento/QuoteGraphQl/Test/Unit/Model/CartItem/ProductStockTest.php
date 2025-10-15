@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\QuoteGraphQl\Test\Unit\Model\CartItem;
 
-use Magento\Catalog\Model\Product;
+use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\CatalogInventory\Api\Data\StockStatusInterface;
 use Magento\CatalogInventory\Api\StockRegistryInterface;
@@ -19,7 +19,6 @@ use Magento\QuoteGraphQl\Model\CartItem\ProductStock;
 use Magento\Store\Api\Data\StoreInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Quote\Test\Unit\Helper\QuoteItemQtyMethodsTestHelper;
 
 /**
  * Unit test for ProductStock::isProductAvailable()
@@ -52,12 +51,12 @@ class ProductStockTest extends TestCase
     private $stockRegistryMock;
 
     /**
-     * @var QuoteItemQtyMethodsTestHelper|MockObject
+     * @var Item|MockObject
      */
     private $cartItemMock;
 
     /**
-     * @var Product|MockObject
+     * @var ProductInterface|MockObject
      */
     private $productMock;
 
@@ -72,7 +71,7 @@ class ProductStockTest extends TestCase
     private $stockStatusMock;
 
     /**
-     * @var Product|MockObject
+     * @var ProductInterface|MockObject
      */
     private $optionProductMock;
 
@@ -82,9 +81,7 @@ class ProductStockTest extends TestCase
     private $qtyOptionMock;
 
     /**
-     * Set up test dependencies.
-     *
-     * @return void
+     * Set up mocks and initialize the ProductStock class
      */
     protected function setUp(): void
     {
@@ -99,17 +96,32 @@ class ProductStockTest extends TestCase
             $this->stockRegistryMock
         );
         $this->stockStatusMock = $this->createMock(StockStatusInterface::class);
-        $this->cartItemMock = $this->createMock(QuoteItemQtyMethodsTestHelper::class);
-        $this->productMock = $this->createMock(Product::class);
-        $this->optionProductMock = $this->createMock(Product::class);
+        $this->cartItemMock = $this->createPartialMock(
+            \Magento\Quote\Test\Unit\Helper\QuoteItemUpdaterTestHelper::class,
+            [
+                'getStore',
+                'getProductType',
+                'getProduct',
+                'getChildren',
+                'getQtyOptions',
+                'getQtyToAdd',
+                'getPreviousQty'
+            ]
+        );
+        $this->productMock = $this->createPartialMock(
+            \Magento\Catalog\Test\Unit\Helper\ProductTestHelper::class,
+            ['getId', 'getStore']
+        );
+        $this->optionProductMock = $this->createPartialMock(
+            \Magento\Catalog\Test\Unit\Helper\ProductTestHelper::class,
+            ['getId', 'getStore']
+        );
         $this->storeMock = $this->createMock(StoreInterface::class);
         $this->qtyOptionMock = $this->createMock(Option::class);
     }
 
     /**
-     * Ensure simple product with sufficient stock is available.
-     *
-     * @return void
+     * Test isProductAvailable() for a simple product with sufficient stock
      */
     public function testIsProductAvailableForSimpleProductWithStock(): void
     {
@@ -156,9 +168,7 @@ class ProductStockTest extends TestCase
     }
 
     /**
-     * Ensure simple product without stock is not available.
-     *
-     * @return void
+     * Test isProductAvailable() for a simple product with insufficient stock
      */
     public function testIsProductAvailableForSimpleProductWithoutStock()
     {
@@ -202,9 +212,7 @@ class ProductStockTest extends TestCase
     }
 
     /**
-     * Ensure bundle option stock availability returns true when stock is sufficient.
-     *
-     * @return void
+     * Test isStockAvailableBundle when stock is available
      */
     public function testIsStockAvailableBundleStockAvailable()
     {
@@ -247,9 +255,7 @@ class ProductStockTest extends TestCase
     }
 
     /**
-     * Ensure bundle option stock availability returns false when stock is insufficient.
-     *
-     * @return void
+     * Test isStockAvailableBundle when stock is not available
      */
     public function testIsStockAvailableBundleStockNotAvailable()
     {

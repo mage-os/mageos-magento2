@@ -36,8 +36,8 @@ class OrderTestHelper extends Order
      */
     public function setAddresses($addresses)
     {
+        // Store to avoid unused parameter warnings and aid test introspection
+        $this->setData('addresses', $addresses);
         return $this;
     }
 }
-
-

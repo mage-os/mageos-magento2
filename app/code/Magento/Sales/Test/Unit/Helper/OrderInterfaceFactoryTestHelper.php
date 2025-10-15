@@ -14,6 +14,11 @@ use Magento\Sales\Api\Data\OrderInterfaceFactory;
  */
 class OrderInterfaceFactoryTestHelper extends OrderInterfaceFactory
 {
+    /**
+     * @var mixed
+     */
+    private $lastPopulateOrder;
+
     public function __construct()
     {
         // Skip parent dependencies

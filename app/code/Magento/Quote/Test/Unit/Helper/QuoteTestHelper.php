@@ -336,4 +336,44 @@ class QuoteTestHelper extends Quote
         $this->testData['messages'] = $messages;
         return $this;
     }
+
+    /**
+     * Get shipping method title for tests.
+     *
+     * @return string|null
+     */
+    public function getMethodTitle()
+    {
+        return $this->testData['method_title'] ?? null;
+    }
+
+    /**
+     * Get carrier title for tests.
+     *
+     * @return string|null
+     */
+    public function getCarrierTitle()
+    {
+        return $this->testData['carrier_title'] ?? null;
+    }
+
+    /**
+     * Get price excluding tax for tests.
+     *
+     * @return mixed
+     */
+    public function getPriceExclTax()
+    {
+        return $this->testData['price_excl_tax'] ?? null;
+    }
+
+    /**
+     * Get price including tax for tests.
+     *
+     * @return mixed
+     */
+    public function getPriceInclTax()
+    {
+        return $this->testData['price_incl_tax'] ?? null;
+    }
 }
