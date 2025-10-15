@@ -18,13 +18,15 @@ use Magento\Framework\Api\SearchCriteria;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\AddressInterface;
+use Magento\Quote\Api\Data\PaymentExtensionInterface;
 use Magento\Quote\Api\Data\PaymentInterface;
+use Magento\Quote\Model\Quote;
 use Magento\Store\Model\App\Emulation;
 use Magento\Store\Model\ScopeInterface;
+use Magento\Quote\Test\Unit\Helper\PaymentExtensionTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\RuntimeException;
 use PHPUnit\Framework\TestCase;
-use Magento\Quote\Test\Unit\Helper\PaymentExtensionAgreementIdsTestHelper;
-use Magento\Quote\Test\Unit\Helper\QuoteIsMultiShippingTestHelper;
 
 /**
  * Class ValidationTest validates the agreement based on the payment method
@@ -58,7 +60,7 @@ class ValidationTest extends TestCase
     protected $addressMock;
 
     /**
-     * @var object
+     * @var MockObject
      */
     protected $extensionAttributesMock;
 
@@ -78,7 +80,7 @@ class ValidationTest extends TestCase
     private $agreementsFilterMock;
 
     /**
-     * @var QuoteIsMultiShippingTestHelper
+     * @var MockObject
      */
     private $quoteMock;
 
@@ -98,7 +100,10 @@ class ValidationTest extends TestCase
         $this->subjectMock = $this->createMock(PaymentInformationManagementInterface::class);
         $this->paymentMock = $this->createMock(PaymentInterface::class);
         $this->addressMock = $this->createMock(AddressInterface::class);
-        $this->quoteMock = new QuoteIsMultiShippingTestHelper(1, false);
+        $this->quoteMock = $this->createPartialMock(
+            \Magento\Quote\Test\Unit\Helper\QuoteTestHelper::class,
+            ['getIsMultiShipping', 'getStoreId']
+        );
         $this->quoteRepositoryMock = $this->createMock(CartRepositoryInterface::class);
         $this->extensionAttributesMock = $this->getPaymentExtension();
         $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
@@ -110,6 +115,10 @@ class ValidationTest extends TestCase
         );
         $this->storeEmulationMock = $this->createMock(Emulation::class);
 
+        $storeId = 1;
+        $this->quoteMock->expects($this->once())
+            ->method('getStoreId')
+            ->willReturn($storeId);
         $this->quoteRepositoryMock->expects($this->once())
             ->method('get')
             ->willReturn($this->quoteMock);
@@ -126,6 +135,7 @@ class ValidationTest extends TestCase
 
     public function testBeforeSavePaymentInformationAndPlaceOrder()
     {
+        $storeId = 1;
         $cartId = 100;
         $agreements = [1, 2, 3];
         $this->scopeConfigMock
@@ -134,6 +144,9 @@ class ValidationTest extends TestCase
             ->with(AgreementsProvider::PATH_ENABLED, ScopeInterface::SCOPE_STORE)
             ->willReturn(true);
         $searchCriteriaMock = $this->createMock(SearchCriteria::class);
+        $this->quoteMock
+            ->method('getIsMultiShipping')
+            ->willReturn(false);
         $this->quoteRepositoryMock
             ->method('getActive')
             ->with($cartId)
@@ -145,14 +158,14 @@ class ValidationTest extends TestCase
             ->method('getList')
             ->with($searchCriteriaMock)
             ->willReturn([1]);
-        $this->extensionAttributesMock->setAgreementIds($agreements);
+        $this->extensionAttributesMock->method('getAgreementIds')->willReturn($agreements);
         $this->agreementsValidatorMock->expects($this->once())->method('isValid')->with($agreements)->willReturn(true);
         $this->paymentMock->expects(static::atLeastOnce())
             ->method('getExtensionAttributes')
             ->willReturn($this->extensionAttributesMock);
         $this->storeEmulationMock->expects($this->once())
             ->method('startEnvironmentEmulation')
-            ->with($this->anything());
+            ->with($storeId);
         $this->storeEmulationMock->expects($this->once())
             ->method('stopEnvironmentEmulation');
         $this->model->beforeSavePaymentInformationAndPlaceOrder(
@@ -175,6 +188,9 @@ class ValidationTest extends TestCase
             ->with(AgreementsProvider::PATH_ENABLED, ScopeInterface::SCOPE_STORE)
             ->willReturn(true);
         $searchCriteriaMock = $this->createMock(SearchCriteria::class);
+        $this->quoteMock
+            ->method('getIsMultiShipping')
+            ->willReturn(false);
         $this->quoteRepositoryMock
             ->method('getActive')
             ->with($cartId)
@@ -186,7 +202,7 @@ class ValidationTest extends TestCase
             ->method('getList')
             ->with($searchCriteriaMock)
             ->willReturn([1]);
-        $this->extensionAttributesMock->setAgreementIds($agreements);
+        $this->extensionAttributesMock->method('getAgreementIds')->willReturn($agreements);
         $this->agreementsValidatorMock->expects($this->once())->method('isValid')->with($agreements)->willReturn(false);
         $this->paymentMock->expects(static::atLeastOnce())
             ->method('getExtensionAttributes')
@@ -208,10 +224,15 @@ class ValidationTest extends TestCase
     }
 
     /**
-     * Build payment extension attributes stub.
+     * Build payment extension mock.
+     *
+     * @return MockObject
      */
-    private function getPaymentExtension(): object
+    private function getPaymentExtension(): PaymentExtensionInterface
     {
-        return new PaymentExtensionAgreementIdsTestHelper();
+        return $this->createPartialMock(
+            PaymentExtensionTestHelper::class,
+            ['getAgreementIds', 'setAgreementIds']
+        );
     }
 }

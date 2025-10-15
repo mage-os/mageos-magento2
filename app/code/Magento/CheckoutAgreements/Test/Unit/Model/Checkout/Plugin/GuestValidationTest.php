@@ -17,15 +17,17 @@ use Magento\Framework\Api\SearchCriteria;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\AddressInterface;
+use Magento\Quote\Api\Data\PaymentExtensionInterface;
 use Magento\Quote\Api\Data\PaymentInterface;
 use Magento\Quote\Api\GuestCartRepositoryInterface;
 use Magento\Quote\Model\MaskedQuoteIdToQuoteId;
 use Magento\Quote\Model\Quote;
 use Magento\Store\Model\App\Emulation;
 use Magento\Store\Model\ScopeInterface;
+use Magento\Quote\Test\Unit\Helper\PaymentExtensionTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\RuntimeException;
 use PHPUnit\Framework\TestCase;
-use Magento\Quote\Test\Unit\Helper\PaymentExtensionAgreementIdsTestHelper;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -58,7 +60,7 @@ class GuestValidationTest extends TestCase
     private $addressMock;
 
     /**
-     * @var object
+     * @var MockObject
      */
     private $extensionAttributesMock;
 
@@ -154,9 +156,7 @@ class GuestValidationTest extends TestCase
             ->method('getList')
             ->with($searchCriteriaMock)
             ->willReturn([1]);
-        if (method_exists($this->extensionAttributesMock, 'setAgreementIds')) {
-            $this->extensionAttributesMock->setAgreementIds($agreements);
-        }
+        $this->extensionAttributesMock->method('getAgreementIds')->willReturn($agreements);
         $this->agreementsValidatorMock->expects($this->once())->method('isValid')->with($agreements)->willReturn(true);
         $this->paymentMock->expects(static::atLeastOnce())
             ->method('getExtensionAttributes')
@@ -195,9 +195,7 @@ class GuestValidationTest extends TestCase
             ->method('getList')
             ->with($searchCriteriaMock)
             ->willReturn([1]);
-        if (method_exists($this->extensionAttributesMock, 'setAgreementIds')) {
-            $this->extensionAttributesMock->setAgreementIds($agreements);
-        }
+        $this->extensionAttributesMock->method('getAgreementIds')->willReturn($agreements);
         $this->agreementsValidatorMock->expects($this->once())->method('isValid')->with($agreements)->willReturn(false);
         $this->paymentMock->expects(static::atLeastOnce())
             ->method('getExtensionAttributes')
@@ -221,10 +219,15 @@ class GuestValidationTest extends TestCase
     }
 
     /**
-     * Build payment extension attributes stub.
+     * Build payment extension mock.
+     *
+     * @return MockObject
      */
-    private function getPaymentExtension(): object
+    private function getPaymentExtension(): PaymentExtensionInterface
     {
-        return new PaymentExtensionAgreementIdsTestHelper();
+        return $this->createPartialMock(
+            PaymentExtensionTestHelper::class,
+            ['getAgreementIds', 'setAgreementIds']
+        );
     }
 }

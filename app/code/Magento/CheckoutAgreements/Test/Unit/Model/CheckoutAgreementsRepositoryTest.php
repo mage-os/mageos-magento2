@@ -8,6 +8,8 @@ declare(strict_types=1);
 namespace Magento\CheckoutAgreements\Test\Unit\Model;
 
 use Magento\CheckoutAgreements\Api\CheckoutAgreementsListInterface;
+use Magento\CheckoutAgreements\Model\Agreement as AgreementModel;
+use Magento\CheckoutAgreements\Test\Unit\Helper\AgreementModelTestHelper;
 use Magento\CheckoutAgreements\Model\AgreementFactory;
 use Magento\CheckoutAgreements\Model\Api\SearchCriteria\ActiveStoreAgreementsFilter;
 use Magento\CheckoutAgreements\Model\CheckoutAgreementsRepository;
@@ -22,7 +24,6 @@ use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\CheckoutAgreements\Test\Unit\Helper\AgreementModelSetStoresTestHelper;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -104,10 +105,10 @@ class CheckoutAgreementsRepositoryTest extends TestCase
             AgreementFactory::class,
             ['create']
         );
-        $this->agreementMock = $this->getMockBuilder(AgreementModelSetStoresTestHelper::class)
-            ->onlyMethods(['addData', 'getData', 'getAgreementId', 'getId', 'setStores'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->agreementMock = $this->createPartialMock(
+            AgreementModelTestHelper::class,
+            ['setStores', 'addData', 'getData', 'getAgreementId', 'getId']
+        );
         $this->storeMock = $this->createMock(Store::class);
         $this->extensionAttributesJoinProcessorMock = $this->createPartialMock(
             JoinProcessor::class,

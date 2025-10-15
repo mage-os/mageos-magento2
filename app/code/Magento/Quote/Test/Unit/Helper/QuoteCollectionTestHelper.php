@@ -14,8 +14,6 @@ use Magento\Quote\Model\ResourceModel\Quote\Collection;
  */
 class QuoteCollectionTestHelper extends Collection
 {
-    /** @var mixed */
-    private $quoteRef;
     /**
      * Set quote reference for tests.
      *
@@ -24,7 +22,7 @@ class QuoteCollectionTestHelper extends Collection
      */
     public function setQuote($quote)
     {
-        $this->quoteRef = $quote;
+        $this->setData('quote', $quote);
         return $this;
     }
 }

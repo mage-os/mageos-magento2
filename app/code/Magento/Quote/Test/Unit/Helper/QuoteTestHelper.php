@@ -376,4 +376,14 @@ class QuoteTestHelper extends Quote
     {
         return $this->testData['price_incl_tax'] ?? null;
     }
+
+    /**
+     * Get is multi shipping flag for tests.
+     *
+     * @return bool
+     */
+    public function getIsMultiShipping()
+    {
+        return (bool)($this->testData['is_multi_shipping'] ?? false);
+    }
 }

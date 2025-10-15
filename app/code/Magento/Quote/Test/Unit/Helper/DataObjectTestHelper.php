@@ -9,11 +9,12 @@ namespace Magento\Quote\Test\Unit\Helper;
 
 use Magento\Framework\DataObject;
 use Magento\GraphQl\Model\Query\ContextExtensionInterface;
+use Magento\Store\Api\Data\StoreInterface;
 
 /**
  * Helper that extends DataObject for tests that need a product accessor.
  */
-class DataObjectTestHelper extends DataObject
+class DataObjectTestHelper extends DataObject implements ContextExtensionInterface
 {
     /**
      * Get product from internal data storage for tests.
@@ -135,5 +136,68 @@ class DataObjectTestHelper extends DataObject
     public function getStore()
     {
         return $this->getData('store');
+    }
+
+    /**
+     * Set store for tests.
+     *
+     * @param StoreInterface $store
+     * @return $this
+     */
+    public function setStore($store)
+    {
+        $this->setData('store', $store);
+        return $this;
+    }
+
+    /**
+     * Get is customer flag for tests.
+     */
+    public function getIsCustomer()
+    {
+        return (bool)$this->getData('is_customer');
+    }
+
+    /**
+     * Set is customer flag for tests.
+     */
+    public function setIsCustomer($flag)
+    {
+        $this->setData('is_customer', $flag);
+        return $this;
+    }
+
+    /**
+     * Get sales channel for tests.
+     */
+    public function getSalesChannel()
+    {
+        return $this->getData('sales_channel');
+    }
+
+    /**
+     * Set sales channel for tests.
+     */
+    public function setSalesChannel($salesChannel)
+    {
+        $this->setData('sales_channel', $salesChannel);
+        return $this;
+    }
+
+    /**
+     * Get customer group id for tests.
+     */
+    public function getCustomerGroupId()
+    {
+        return $this->getData('customer_group_id');
+    }
+
+    /**
+     * Set customer group id for tests.
+     */
+    public function setCustomerGroupId($id)
+    {
+        $this->setData('customer_group_id', $id);
+        return $this;
     }
 }
