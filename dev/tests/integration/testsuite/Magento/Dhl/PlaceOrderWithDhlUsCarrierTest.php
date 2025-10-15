@@ -58,12 +58,7 @@ class PlaceOrderWithDhlUsCarrierTest extends TestCase
      * @var CartManagementInterface
      */
     private CartManagementInterface $cartManagement;
-
-    /**
-     * @var AddressInterface
-     */
-    private AddressInterface $address;
-
+    
     /**
      * @var OrderRepositoryInterface
      */
@@ -85,7 +80,6 @@ class PlaceOrderWithDhlUsCarrierTest extends TestCase
         $this->fixtures = $this->objectManager->get(DataFixtureStorageManager::class)->getStorage();
         $this->quoteRepository = $this->objectManager->get(CartRepositoryInterface::class);
         $this->cartManagement = $this->objectManager->get(CartManagementInterface::class);
-        $this->address = $this->objectManager->get(AddressInterface::class);
         $this->orderRepository = $this->objectManager->get(OrderRepositoryInterface::class);
     }
 
@@ -161,17 +155,15 @@ class PlaceOrderWithDhlUsCarrierTest extends TestCase
                 'selections' => [['$product1.id$'], ['$product2.id$']]
             ]
         ),
-
     ]
-
     /**
      * Verifies successful order placement using DHL-US shipping carrier
      */
     public function testPlaceOrderWithAllProductTypes()
     {
-        $cart = $this->fixtures->get('cart');
-        $this->setShippingAndBillingAddressForQuote((int) $cart->getId());
-        $orderId = $this->selectDhlAndCheckmoAndPlaceOrder((int) $cart->getId());
+        $cartId = (int)$this->fixtures->get('cart')->getId();
+        $this->setShippingAndBillingAddressForQuote($cartId);
+        $orderId = $this->selectDhlAndCheckmoAndPlaceOrder($cartId);
         $order = $this->orderRepository->get($orderId);
         $this->assertNotEmpty($order->getIncrementId());
         $this->assertSame('dhl_P', $order->getShippingMethod());
@@ -219,6 +211,6 @@ class PlaceOrderWithDhlUsCarrierTest extends TestCase
         $quote->collectTotals();
         $quote->getPayment()->setMethod('checkmo');
         $this->quoteRepository->save($quote);
-        return (int) $this->cartManagement->placeOrder($quote->getId());
+        return (int)$this->cartManagement->placeOrder($quote->getId());
     }
 }
