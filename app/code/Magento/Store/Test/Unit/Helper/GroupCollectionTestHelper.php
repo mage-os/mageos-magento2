@@ -25,6 +25,34 @@ class GroupCollectionTestHelper extends Collection
     public function __construct()
     {
         // Skip parent constructor to avoid dependency injection issues
+        // Initialize required properties to prevent null pointer errors in interceptors
+        $this->_conn = null;
+        $this->_resource = null;
+    }
+
+    /**
+     * Override setConnection to handle null values in test environment
+     *
+     * @param \Magento\Framework\DB\Adapter\AdapterInterface|null $conn
+     * @return self
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function setConnection($conn): self
+    {
+        // In unit test environment, we don't need an actual connection
+        // Just return self to maintain fluent interface
+        return $this;
+    }
+
+    /**
+     * Override _resetState to prevent issues with null connection
+     *
+     * @return void
+     */
+    public function _resetState(): void
+    {
+        // Skip parent _resetState which calls setConnection with potentially null _conn
+        // In unit tests, we don't need to reset database-related state
     }
 
     /**
