@@ -10,12 +10,15 @@ namespace Magento\Quote\Test\Unit\Model\Quote\Item;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Product;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\DataObject;
+use Magento\Quote\Test\Unit\Helper\DataObjectTestHelper;
 use Magento\Framework\Locale\Format;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Quote\Model\Quote\Item;
 use Magento\Quote\Model\Quote\Item\Updater;
+use Magento\Quote\Test\Unit\Helper\QuoteItemUpdaterTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -57,11 +60,10 @@ class UpdaterTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->productMock = $this->getMockBuilder(Product::class)
-            ->addMethods(['getStockItem', 'setIsSuperMode', 'unsSkipCheckRequiredOption'])
-            ->onlyMethods(['__wakeup'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productMock = $this->createPartialMock(
+            ProductTestHelper::class,
+            ['__wakeup', 'getStockItem', 'setIsSuperMode', 'unsSkipCheckRequiredOption']
+        );
 
         $this->localeFormat = $this->createPartialMock(
             Format::class,
@@ -71,23 +73,23 @@ class UpdaterTest extends TestCase
             ]
         );
 
-        $this->itemMock = $this->getMockBuilder(Item::class)
-            ->addMethods(['updateItem', 'setNoDiscount', 'setOriginalCustomPrice', 'setIsQtyDecimal'])
-            ->onlyMethods(
-                [
-                    'getProduct',
-                    'setQty',
-                    'checkData',
-                    '__wakeup',
-                    'getBuyRequest',
-                    'addOption',
-                    'setCustomPrice',
-                    'setData',
-                    'hasData'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->itemMock = $this->createPartialMock(
+            QuoteItemUpdaterTestHelper::class,
+            [
+                'setNoDiscount',
+                'setIsQtyDecimal',
+                'setOriginalCustomPrice',
+                'getProduct',
+                'setQty',
+                'checkData',
+                '__wakeup',
+                'getBuyRequest',
+                'addOption',
+                'setCustomPrice',
+                'setData',
+                'hasData'
+            ]
+        );
 
         $this->stockItemMock = $this->createPartialMock(
             \Magento\CatalogInventory\Model\Stock\Item::class,
@@ -215,11 +217,10 @@ class UpdaterTest extends TestCase
     {
         $customPrice = 9.99;
         $qty = 3;
-        $buyRequestMock = $this->getMockBuilder(DataObject::class)
-            ->addMethods(['setCustomPrice', 'setValue', 'setCode', 'setProduct'])
-            ->onlyMethods(['getData'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $buyRequestMock = $this->createPartialMock(
+            DataObjectTestHelper::class,
+            ['getData', 'setCustomPrice', 'setValue', 'setCode', 'setProduct']
+        );
         $buyRequestMock->expects($this->any())
             ->method('setCustomPrice')
             ->with($customPrice);
@@ -262,11 +263,10 @@ class UpdaterTest extends TestCase
     public function testUpdateUnsetCustomPrice()
     {
         $qty = 3;
-        $buyRequestMock = $this->getMockBuilder(DataObject::class)
-            ->addMethods(['setCustomPrice', 'setValue', 'setCode', 'setProduct'])
-            ->onlyMethods(['getData', 'unsetData', 'hasData'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $buyRequestMock = $this->createPartialMock(
+            DataObjectTestHelper::class,
+            ['getData', 'unsetData', 'hasData', 'setCustomPrice', 'setValue', 'setCode', 'setProduct']
+        );
         $buyRequestMock->expects($this->never())->method('setCustomPrice');
         $buyRequestMock->expects($this->once())->method('getData')->willReturn([]);
         $serializer = $this->createMock(Json::class);

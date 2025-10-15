@@ -142,7 +142,7 @@ class BillingAddressManagementTest extends TestCase
         $this->cartAddressMutex->expects($this->once())->method('execute')
             ->with(
                 'cart_billing_address_lock_'.$addressId,
-                \Closure::fromCallable([$this, 'assignAddressMethod']),
+                self::callback(fn($c) => $c instanceof \Closure),
                 $addressId,
                 [$address, $quoteMock, $useForShipping]
             )

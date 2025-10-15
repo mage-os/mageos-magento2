@@ -10,6 +10,7 @@ namespace Magento\Quote\Test\Unit\Model\QuoteRepository\Plugin;
 use Magento\Authorization\Model\UserContextInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Model\Quote;
+use Magento\Quote\Test\Unit\Helper\QuoteTestHelper;
 use Magento\Quote\Model\QuoteRepository\Plugin\Authorization;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -37,10 +38,7 @@ class AuthorizationTest extends TestCase
         $this->expectException('Magento\Framework\Exception\NoSuchEntityException');
         $this->expectExceptionMessage('No such entity');
         // Quote without customer ID
-        $quoteMock = $this->getMockBuilder(Quote::class)
-            ->addMethods(['getCustomerId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $quoteMock = $this->createPartialMock(QuoteTestHelper::class, ['getCustomerId']);
         $quoteRepositoryMock = $this->createMock(CartRepositoryInterface::class);
         $this->userContextMock->method('getUserType')->willReturn(UserContextInterface::USER_TYPE_CUSTOMER);
         $this->userContextMock->method('getUserId')->willReturn(1);
@@ -50,7 +48,7 @@ class AuthorizationTest extends TestCase
 
     public function testAfterGetActiveReturnsQuoteIfQuoteIsAllowedForCurrentUserContext()
     {
-        $quoteMock = $this->createMock(Quote::class);
+        $quoteMock = $this->createPartialMock(QuoteTestHelper::class, ['getCustomerId']);
         $quoteRepositoryMock = $this->createMock(CartRepositoryInterface::class);
         $this->userContextMock->method('getUserType')->willReturn(UserContextInterface::USER_TYPE_GUEST);
         $this->assertEquals($quoteMock, $this->authorization->afterGetActive($quoteRepositoryMock, $quoteMock));
@@ -61,10 +59,7 @@ class AuthorizationTest extends TestCase
         $this->expectException('Magento\Framework\Exception\NoSuchEntityException');
         $this->expectExceptionMessage('No such entity');
         // Quote without customer ID
-        $quoteMock = $this->getMockBuilder(Quote::class)
-            ->addMethods(['getCustomerId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $quoteMock = $this->createPartialMock(QuoteTestHelper::class, ['getCustomerId']);
         $quoteRepositoryMock = $this->createMock(CartRepositoryInterface::class);
         $this->userContextMock->method('getUserType')->willReturn(
             UserContextInterface::USER_TYPE_CUSTOMER

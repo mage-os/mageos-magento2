@@ -32,10 +32,10 @@ class AbstractCartTest extends TestCase
     }
 
     /**
-     * @dataProvider getItemRendererDataProvider
      * @param string|null $type
      * @param string $expectedType
      */
+    #[DataProvider('getItemRendererDataProvider')]
     public function testGetItemRenderer($type, $expectedType)
     {
         $renderer = $this->createMock(RendererList::class);

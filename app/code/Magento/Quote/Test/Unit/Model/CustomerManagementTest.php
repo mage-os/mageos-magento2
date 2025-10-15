@@ -24,6 +24,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Customer\Api\Data\RegionInterfaceFactory;
 use Magento\Customer\Api\Data\RegionInterface;
+use Magento\Quote\Test\Unit\Helper\QuoteTestHelper;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -95,12 +96,19 @@ class CustomerManagementTest extends TestCase
         $this->customerRepositoryMock = $this->createMock(CustomerRepositoryInterface::class);
         $this->customerAddressRepositoryMock = $this->createMock(AddressRepositoryInterface::class);
         $this->accountManagementMock = $this->createMock(AccountManagementInterface::class);
-        $this->quoteMock = $this->getMockBuilder(Quote::class)
-            ->addMethods(['getPasswordHash'])
-            ->onlyMethods(['getId', 'getCustomer', 'getBillingAddress', 'getShippingAddress', 'setCustomer',
-                'getCustomerIsGuest'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->quoteMock = $this->createPartialMock(
+            QuoteTestHelper::class,
+            [
+                'getId',
+                'getCustomer',
+                'getBillingAddress',
+                'getShippingAddress',
+                'setCustomer',
+                'getCustomerIsGuest',
+                'getPasswordHash',
+                '__wakeup'
+            ]
+        );
         $this->quoteAddressMock = $this->createMock(Address::class);
         $this->customerMock = $this->createMock(CustomerInterface::class);
         $this->customerAddressMock = $this->createMock(AddressInterface::class);

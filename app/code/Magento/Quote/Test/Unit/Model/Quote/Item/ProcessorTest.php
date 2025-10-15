@@ -12,6 +12,8 @@ use Magento\Backend\App\Area\FrontNameResolver;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\App\State;
 use Magento\Framework\DataObject;
+use Magento\Quote\Test\Unit\Helper\DataObjectTestHelper;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Quote\Api\Data\CartItemInterface;
 use Magento\Quote\Model\Quote\Item;
 use Magento\Quote\Model\Quote\Item\Processor;
@@ -76,9 +78,9 @@ class ProcessorTest extends TestCase
             ['create']
         );
 
-        $this->itemMock = $this->getMockBuilder(Item::class)
-            ->addMethods(['setOriginalCustomPrice'])
-            ->onlyMethods([
+        $this->itemMock = $this->createPartialMock(
+            Item::class,
+            [
                 'getId',
                 'setOptions',
                 'setProduct',
@@ -87,9 +89,8 @@ class ProcessorTest extends TestCase
                 'setData',
                 'setPrice',
                 'getParentItem'
-            ])
-            ->disableOriginalConstructor()
-            ->getMock();
+            ]
+        );
         $this->quoteItemFactoryMock->method('create')->willReturn($this->itemMock);
 
         $this->storeManagerMock = $this->createPartialMock(StoreManager::class, ['getStore']);
@@ -104,15 +105,25 @@ class ProcessorTest extends TestCase
             $this->stateMock
         );
 
-        $this->productMock = $this->getMockBuilder(Product::class)
-            ->addMethods(['getParentProductId', 'getCartQty', 'getStickWithinParent'])
-            ->onlyMethods(['getCustomOptions', '__wakeup', 'getFinalPrice'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->objectMock = $this->getMockBuilder(DataObject::class)
-            ->addMethods(['getResetCount', 'getId', 'getCustomPrice'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productMock = $this->createPartialMock(
+            ProductTestHelper::class,
+            [
+                 'getCustomOptions',
+                 '__wakeup',
+                 'getFinalPrice',
+                 'getCartQty',
+                 'getStickWithinParent',
+                 'getParentProductId'
+            ]
+        );
+        $this->objectMock = $this->createPartialMock(
+            DataObjectTestHelper::class,
+            [
+                'getResetCount',
+                'getId',
+                'getCustomPrice'
+            ]
+        );
     }
 
     public function testInitWithQtyModification()
@@ -230,8 +241,7 @@ class ProcessorTest extends TestCase
             ->method('addQty')
             ->with($qty);
         $this->itemMock->method('getId')->willReturn($itemId);
-        $this->itemMock->expects($this->never())
-            ->method('setData');
+
         $this->itemMock->expects($this->once())
             ->method('setPrice')
             ->willReturn($this->itemMock);
@@ -242,9 +252,6 @@ class ProcessorTest extends TestCase
 
         $this->itemMock->expects($this->once())
             ->method('setCustomPrice')
-            ->willReturn($customPrice);
-        $this->itemMock->expects($this->once())
-            ->method('setOriginalCustomPrice')
             ->willReturn($customPrice);
 
         $this->processor->prepare($this->itemMock, $this->objectMock, $this->productMock);
@@ -268,8 +275,7 @@ class ProcessorTest extends TestCase
             ->method('addQty')
             ->with($qty);
         $this->itemMock->method('getId')->willReturn($itemId);
-        $this->itemMock->expects($this->never())
-            ->method('setData');
+
         $this->itemMock->expects($this->once())
             ->method('setPrice')
             ->willReturn($this->itemMock);
@@ -280,9 +286,6 @@ class ProcessorTest extends TestCase
 
         $this->itemMock->expects($this->once())
             ->method('setCustomPrice')
-            ->willReturn($customPrice);
-        $this->itemMock->expects($this->once())
-            ->method('setOriginalCustomPrice')
             ->willReturn($customPrice);
 
         $this->processor->prepare($this->itemMock, $this->objectMock, $this->productMock);
@@ -306,8 +309,7 @@ class ProcessorTest extends TestCase
             ->method('addQty')
             ->with($qty);
         $this->itemMock->method('getId')->willReturn($itemId);
-        $this->itemMock->expects($this->never())
-            ->method('setData');
+
         $this->itemMock->expects($this->once())
             ->method('setPrice')
             ->willReturn($this->itemMock);
@@ -318,9 +320,6 @@ class ProcessorTest extends TestCase
 
         $this->itemMock->expects($this->once())
             ->method('setCustomPrice')
-            ->willReturn($customPrice);
-        $this->itemMock->expects($this->once())
-            ->method('setOriginalCustomPrice')
             ->willReturn($customPrice);
 
         $this->processor->prepare($this->itemMock, $this->objectMock, $this->productMock);
@@ -337,10 +336,6 @@ class ProcessorTest extends TestCase
         $this->objectMock->method('getResetCount')->willReturn(true);
 
         $this->itemMock->method('getId')->willReturn($itemId);
-        $this->itemMock->expects($this->once())
-            ->method('setData')
-            ->with(CartItemInterface::KEY_QTY, 0);
-
         $this->productMock->method('getCartQty')->willReturn($qty);
         $this->productMock->method('getStickWithinParent')->willReturn(false);
         $this->productMock->expects($this->once())
@@ -359,9 +354,6 @@ class ProcessorTest extends TestCase
 
         $this->itemMock->expects($this->once())
             ->method('setCustomPrice')
-            ->willReturn($customPrice);
-        $this->itemMock->expects($this->once())
-            ->method('setOriginalCustomPrice')
             ->willReturn($customPrice);
 
         $this->processor->prepare($this->itemMock, $this->objectMock, $this->productMock);

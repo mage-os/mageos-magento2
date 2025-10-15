@@ -20,6 +20,8 @@ class QuoteAddressTestHelper extends Address
     private $vatData = [];
     /** @var string|null */
     private $addressType;
+    /** @var bool|null */
+    private $collectShippingRates;
 
     /**
      * Constructor intentionally empty to skip parent dependencies.
@@ -85,6 +87,20 @@ class QuoteAddressTestHelper extends Address
     }
 
     /**
+     * Explicit getter for delete immediately flag used by tests.
+     *
+     * @return bool
+     */
+    /**
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     */
+    // phpcs:ignore Magento2.NamingConvention.PublicMethodName
+    public function getDeleteImmediately()
+    {
+        return (bool)($this->getData('delete_immediately') ?? false);
+    }
+
+    /**
      * Address type setter for tests.
      *
      * @param string|null $type
@@ -94,5 +110,165 @@ class QuoteAddressTestHelper extends Address
     {
         $this->addressType = $type;
         return $this;
+    }
+
+    /**
+     * Emulate setting payment method on address for tests.
+     *
+     * @param string $method
+     * @return $this
+     */
+    public function setPaymentMethod($method)
+    {
+        $this->setData('payment_method', $method);
+        return $this;
+    }
+
+    /**
+     * Emulate setting collect shipping rates flag used by tests.
+     *
+     * @param bool $flag
+     * @return $this
+     */
+    public function setCollectShippingRates($flag)
+    {
+        $this->collectShippingRates = (bool)$flag;
+        return $this;
+    }
+
+    /**
+     * Explicit getter for quote id used by tests.
+     *
+     * @return int|null
+     */
+    public function getQuoteId()
+    {
+        return $this->getData('quote_id');
+    }
+
+    /**
+     * Get customer address object for tests.
+     *
+     * @return mixed
+     */
+    public function getCustomerAddress()
+    {
+        return $this->getData('customer_address');
+    }
+
+    /**
+     * No-op save method for tests.
+     *
+     * @return $this
+     */
+    public function save()
+    {
+        return $this;
+    }
+
+    /**
+     * Import customer address data for tests.
+     *
+     * @param mixed $address
+     * @return $this
+     */
+    public function importCustomerAddressData($address)
+    {
+        $this->setData('customer_address', $address);
+        return $this;
+    }
+
+    /**
+     * Get save in address book flag for tests.
+     *
+     * @return bool
+     */
+    /**
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     */
+    // phpcs:ignore Magento2.NamingConvention.PublicMethodName
+    public function getSaveInAddressBook()
+    {
+        return (bool)($this->getData('save_in_address_book') ?? false);
+    }
+
+    /**
+     * Get same as billing flag for tests.
+     *
+     * @return bool
+     */
+    /**
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     */
+    // phpcs:ignore Magento2.NamingConvention.PublicMethodName
+    public function getSameAsBilling()
+    {
+        return (bool)($this->getData('same_as_billing') ?? false);
+    }
+
+    /**
+     * Get customer address id for tests.
+     *
+     * @return int|null
+     */
+    public function getCustomerAddressId()
+    {
+        return $this->getData('customer_address_id');
+    }
+
+    /**
+     * Set company for tests.
+     *
+     * @param mixed $company
+     * @return $this
+     */
+    public function setCompany($company)
+    {
+        $this->setData('company', $company);
+        return $this;
+    }
+
+    /**
+     * Set same as billing flag for tests.
+     *
+     * @param mixed $flag
+     * @return $this
+     */
+    public function setSameAsBilling($flag)
+    {
+        $this->setData('same_as_billing', (bool)$flag);
+        return $this;
+    }
+
+    /**
+     * Set save in address book flag for tests.
+     *
+     * @param mixed $flag
+     * @return $this
+     */
+    public function setSaveInAddressBook($flag)
+    {
+        $this->setData('save_in_address_book', (bool)$flag);
+        return $this;
+    }
+
+    /**
+     * Get related order id for tests.
+     *
+     * @return int|null
+     */
+    public function getOrderId()
+    {
+        return $this->getData('order_id');
+    }
+
+    /**
+     * Get related order object for tests.
+     *
+     * @return mixed
+     */
+    public function getOrder()
+    {
+        return $this->getData('order');
     }
 }

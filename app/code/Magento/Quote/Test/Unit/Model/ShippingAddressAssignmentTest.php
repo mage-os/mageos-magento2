@@ -10,6 +10,7 @@ namespace Magento\Quote\Test\Unit\Model;
 use Magento\Quote\Api\Data\AddressInterface;
 use Magento\Quote\Api\Data\CartExtension;
 use Magento\Quote\Api\Data\CartExtensionFactory;
+use Magento\Quote\Test\Unit\Helper\CartExtensionTestHelper;
 use Magento\Quote\Api\Data\ShippingAssignmentInterface;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address;
@@ -129,13 +130,9 @@ class ShippingAddressAssignmentTest extends TestCase
      */
     private function getCartExtensionMock(): MockObject
     {
-        $mockBuilder = $this->getMockBuilder(CartExtension::class);
-        try {
-            $mockBuilder->addMethods(['setShippingAssignments']);
-        } catch (RuntimeException $e) {
-            // CartExtension already generated.
-        }
-
-        return $mockBuilder->getMock();
+        return $this->createPartialMock(
+            CartExtensionTestHelper::class,
+            ['setShippingAssignments']
+        );
     }
 }

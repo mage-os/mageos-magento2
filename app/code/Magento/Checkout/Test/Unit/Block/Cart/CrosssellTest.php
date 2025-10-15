@@ -25,6 +25,8 @@ use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Checkout\Test\Unit\Helper\SessionQuoteLastAddedProductTestHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -105,12 +107,12 @@ class CrosssellTest extends TestCase
     }
 
     /**
-     * @dataProvider getItemsDataProvider
      * @param array $productLinks
      * @param array $cartProductIds
      * @param int|null $lastAddedProductId
      * @param array $expected
      */
+    #[DataProvider('getItemsDataProvider')]
     public function testGetItems(
         array $productLinks,
         array $cartProductIds,
@@ -332,7 +334,7 @@ class CrosssellTest extends TestCase
      */
     private function createProductCollection(): MockObject
     {
-        $productCollection = $this->createMock(\Magento\Catalog\Model\ResourceModel\Product\Collection::class);
+        $productCollection = $this->createMock(ProductCollection::class);
         $entityMetadataInterface =$this->createMock(EntityMetadataInterface::class);
         $entityMetadataInterface->method('getLinkField')
             ->willReturn('entity_id');

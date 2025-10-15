@@ -61,11 +61,10 @@ class QuoteAddressTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->addressMock = $this->getMockBuilder(QuoteAddressModel::class)
-            ->addMethods(['getOrderId', 'getOrder'])
-            ->onlyMethods(['__wakeup', 'hasDataChanges', 'beforeSave', 'afterSave', 'validateBeforeSave'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->addressMock = $this->createPartialMock(
+            \Magento\Quote\Test\Unit\Helper\QuoteAddressTestHelper::class,
+            ['__wakeup', 'hasDataChanges', 'beforeSave', 'afterSave', 'validateBeforeSave', 'getOrderId', 'getOrder']
+        );
         $this->quoteMock = $this->createPartialMock(Quote::class, ['__wakeup', 'getId']);
         $this->appResourceMock = $this->createMock(ResourceConnection::class);
         $this->connectionMock = $this->createMock(Mysql::class);

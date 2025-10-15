@@ -14,7 +14,9 @@ use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\CartItemInterfaceFactory;
 use Magento\Quote\Model\Quote;
+use Magento\Quote\Test\Unit\Helper\QuoteTestHelper;
 use Magento\Quote\Model\Quote\Address;
+use Magento\Quote\Test\Unit\Helper\QuoteAddressTestHelper;
 use Magento\Quote\Model\Quote\Item;
 use Magento\Quote\Model\Quote\Item\CartItemOptionsProcessor;
 use Magento\Quote\Model\Quote\Item\Repository;
@@ -100,17 +102,12 @@ class RepositoryTest extends TestCase
         $this->itemMock = $this->createMock(Item::class);
         $this->quoteMock = $this->createMock(Quote::class);
         $this->productMock = $this->createMock(Product::class);
-        $this->quoteItemMock =
-            $this->getMockBuilder(Item::class)
-                ->addMethods(['addProduct'])
-                ->onlyMethods(['getId', 'getSku', 'getQty', 'setData', '__wakeUp', 'getProduct'])
-                ->disableOriginalConstructor()
-                ->getMock();
+        $this->quoteItemMock = $this->createMock(Item::class);
         $this->customOptionProcessor = $this->createMock(CustomOptionProcessor::class);
-        $this->shippingAddressMock = $this->getMockBuilder(Address::class)
-            ->addMethods(['setCollectShippingRates'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->shippingAddressMock = $this->createPartialMock(
+            QuoteAddressTestHelper::class,
+            ['setCollectShippingRates']
+        );
         $this->optionsProcessorMock = $this->createMock(CartItemOptionsProcessor::class);
 
         $this->cartItemValidatorMock = $this->createMock(CartItemValidatorInterface::class);
@@ -137,11 +134,10 @@ class RepositoryTest extends TestCase
         $cartId = 13;
         $itemId = 20;
 
-        $quoteMock = $this->getMockBuilder(Quote::class)
-            ->addMethods(['getLastAddedItem'])
-            ->onlyMethods(['getItems', 'setItems', 'collectTotals'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $quoteMock = $this->createPartialMock(
+            QuoteTestHelper::class,
+            ['getLastAddedItem', 'getItems', 'setItems', 'collectTotals']
+        );
 
         $this->itemMock->expects($this->once())->method('getQuoteId')->willReturn($cartId);
         $this->quoteRepositoryMock->expects($this->once())

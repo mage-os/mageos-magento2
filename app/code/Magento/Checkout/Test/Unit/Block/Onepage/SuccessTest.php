@@ -22,6 +22,7 @@ use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -118,11 +119,10 @@ class SuccessTest extends TestCase
     }
 
     /**
-     * @dataProvider invisibleStatusesProvider
-     *
      * @param array $invisibleStatuses
      * @param bool $expectedResult
      */
+    #[DataProvider('invisibleStatusesProvider')]
     public function testToHtmlOrderVisibleOnFront(array $invisibleStatuses, $expectedResult)
     {
         $orderId = 5;

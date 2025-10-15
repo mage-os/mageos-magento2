@@ -53,6 +53,9 @@ use Magento\Store\Model\StoreManager;
 use Magento\Store\Model\Website;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Quote\Test\Unit\Helper\QuoteAddressTestHelper;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
+use Magento\Quote\Model\ResourceModel\Quote\Item\Collection as QuoteItemCollection;
 
 /**
  * Test class for \Magento\Quote\Model
@@ -203,20 +206,19 @@ class QuoteTest extends TestCase
             AddressFactory::class,
             ['create']
         );
-        $this->quoteAddressMock = $this->getMockBuilder(Address::class)
-            ->addMethods(['getAddressType', 'getDeleteImmediately'])
-            ->onlyMethods(
-                [
-                    'isDeleted',
-                    'getCollection',
-                    'getId',
-                    'getCustomerAddressId',
-                    'validateMinimumAmount',
-                    'setData'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->quoteAddressMock = $this->createPartialMock(
+            QuoteAddressTestHelper::class,
+            [
+                'getAddressType',
+                'getDeleteImmediately',
+                'isDeleted',
+                'getCollection',
+                'getId',
+                'getCustomerAddressId',
+                'validateMinimumAmount',
+                'setData'
+            ]
+        );
         $this->quoteAddressCollectionMock = $this->createMock(
             Collection::class
         );
@@ -410,11 +412,10 @@ class QuoteTest extends TestCase
      */
     protected function getAddressMock($type): MockObject
     {
-        $shippingAddressMock = $this->getMockBuilder(Address::class)
-            ->addMethods(['getAddressType'])
-            ->onlyMethods(['__wakeup', 'isDeleted'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $shippingAddressMock = $this->createPartialMock(
+            QuoteAddressTestHelper::class,
+            ['getAddressType', '__wakeup', 'isDeleted']
+        );
 
         $shippingAddressMock->method('getAddressType')->willReturn($type);
         $shippingAddressMock->method('isDeleted')->willReturn(false);
@@ -960,13 +961,12 @@ class QuoteTest extends TestCase
             ]
         );
 
-        $productMock = $this->getMockBuilder(Product::class)
-            ->addMethods(['getParentProductId', 'setStickWithinParent'])
-            ->onlyMethods(['__wakeup', 'getId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productMock = $this->createPartialMock(
+            ProductTestHelper::class,
+            ['getParentProductId', 'setStickWithinParent', '__wakeup', 'getId']
+        );
 
-        $collectionMock = $this->createMock(\Magento\Quote\Model\ResourceModel\Quote\Item\Collection::class);
+        $collectionMock = $this->createMock(QuoteItemCollection::class);
 
         $itemMock->method('representProduct')->willReturn(true);
         $itemMock->method('getProduct')->willReturn($this->productMock);
@@ -1009,11 +1009,10 @@ class QuoteTest extends TestCase
     #[DataProvider('dataProviderForTestAddProductItem')]
     public function testAddProductItemNew($request, $hasError): void
     {
-        $itemMock = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getHasError'])
-            ->onlyMethods(['representProduct', 'setProduct', 'setOptions', 'setQuote', 'getProduct'])
-            ->getMock();
+        $itemMock = $this->createPartialMock(
+            \Magento\Quote\Test\Unit\Helper\QuoteItemUpdaterTestHelper::class,
+            ['getHasError', 'representProduct', 'setProduct', 'setOptions', 'setQuote', 'getProduct']
+        );
         $itemMock->expects($this->once())->method('getHasError')->willReturn($hasError);
         $product = $this->createMock(Product::class);
         $itemMock->method('getProduct')->willReturn($product);
@@ -1034,13 +1033,12 @@ class QuoteTest extends TestCase
             ]
         );
 
-        $productMock = $this->getMockBuilder(Product::class)
-            ->addMethods(['getParentProductId', 'setStickWithinParent'])
-            ->onlyMethods(['__wakeup', 'getId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productMock = $this->createPartialMock(
+            ProductTestHelper::class,
+            ['getId']
+        );
 
-        $collectionMock = $this->createMock(\Magento\Quote\Model\ResourceModel\Quote\Item\Collection::class);
+        $collectionMock = $this->createMock(QuoteItemCollection::class);
 
         $itemMock->method('representProduct')->willReturn(false);
 
@@ -1244,13 +1242,10 @@ class QuoteTest extends TestCase
         $item->expects($this->once())
             ->method('getId')
             ->willReturn(false);
-        $itemsMock = $this->getMockBuilder(AbstractCollection::class)
-            ->addMethods(['setQuote'])
-            ->onlyMethods(['addItem'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $itemsMock->expects($this->once())
-            ->method('setQuote');
+        $itemsMock = $this->createPartialMock(
+            QuoteItemCollection::class,
+            ['setQuote', 'addItem']
+        );
         $itemsMock->expects($this->once())
             ->method('addItem')
             ->with($item);
@@ -1294,17 +1289,16 @@ class QuoteTest extends TestCase
             ->willReturn($storeMock);
         $this->quote->setStoreId($storeId);
 
-        $collectionMock = $this->createMock(\Magento\Quote\Model\ResourceModel\Quote\Item\Collection::class);
+        $collectionMock = $this->createMock(QuoteItemCollection::class);
         $items = [];
         foreach ($productTypes as $type) {
             $productMock = $this->createMock(Product::class);
             $productMock->method('getIsVirtual')->willReturn($type);
 
-            $itemMock = $this->getMockBuilder(Item::class)
-                ->addMethods(['getParentItemId'])
-                ->onlyMethods(['isDeleted', 'getProduct'])
-                ->disableOriginalConstructor()
-                ->getMock();
+            $itemMock = $this->createPartialMock(
+                \Magento\Quote\Test\Unit\Helper\QuoteItemUpdaterTestHelper::class,
+                ['getParentItemId', 'isDeleted', 'getProduct']
+            );
             $itemMock->method('isDeleted')->willReturn(false);
             $itemMock->method('getParentItemId')->willReturn(false);
             $itemMock->method('getProduct')->willReturn($productMock);
@@ -1340,10 +1334,10 @@ class QuoteTest extends TestCase
      */
     public function testGetItemsCollection(): void
     {
-        $itemCollectionMock = $this->getMockBuilder(\Magento\Quote\Model\ResourceModel\Quote\Collection::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setQuote'])
-            ->getMock();
+        $itemCollectionMock = $this->createPartialMock(
+            \Magento\Quote\Test\Unit\Helper\QuoteCollectionTestHelper::class,
+            ['setQuote']
+        );
         $this->quoteItemCollectionFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($itemCollectionMock);
@@ -1363,10 +1357,10 @@ class QuoteTest extends TestCase
      */
     public function testGetAllItems(): void
     {
-        $itemOneMock = $this->getMockBuilder(\Magento\Quote\Model\ResourceModel\Quote\Item::class)
-            ->addMethods(['isDeleted', 'getProduct'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $itemOneMock = $this->createPartialMock(
+            Item::class,
+            ['isDeleted', 'getProduct']
+        );
         $itemOneMock->expects($this->once())
             ->method('isDeleted')
             ->willReturn(false);
@@ -1374,10 +1368,10 @@ class QuoteTest extends TestCase
             ->method('getProduct')
             ->willReturn($this->productMock);
 
-        $itemTwoMock = $this->getMockBuilder(\Magento\Quote\Model\ResourceModel\Quote\Item::class)
-            ->addMethods(['isDeleted', 'getProduct'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $itemTwoMock = $this->createPartialMock(
+            Item::class,
+            ['isDeleted', 'getProduct']
+        );
         $itemTwoMock->expects($this->once())
             ->method('isDeleted')
             ->willReturn(true);

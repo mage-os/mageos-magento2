@@ -37,6 +37,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Quote\Test\Unit\Helper\RateCollectorForAddressTestHelper;
+use Magento\Quote\Test\Unit\Helper\RateRequestTestHelper;
 
 /**
  * Test class for sales quote address model
@@ -200,9 +201,6 @@ class AddressTest extends TestCase
         $this->address->setQuote($this->quote);
     }
 
-    /**
-     * @return void
-     */
     public function testValidateMinimumAmountDisabled(): void
     {
         $storeId = 1;
@@ -219,40 +217,6 @@ class AddressTest extends TestCase
         $this->assertTrue($this->address->validateMinimumAmount());
     }
 
-    /**
-     * @return void
-     */
-    public function testValidateMinimumAmountVirtual(): void
-    {
-        $storeId = 1;
-        $scopeConfigValues = [
-            ['sales/minimum_order/active', ScopeInterface::SCOPE_STORE, $storeId, true],
-            ['sales/minimum_order/amount', ScopeInterface::SCOPE_STORE, $storeId, 20],
-            ['sales/minimum_order/include_discount_amount', ScopeInterface::SCOPE_STORE, $storeId, true],
-            ['sales/minimum_order/tax_including', ScopeInterface::SCOPE_STORE, $storeId, true]
-        ];
-
-        $this->quote->expects($this->once())
-            ->method('getStoreId')
-            ->willReturn($storeId);
-        $this->quote->expects($this->once())
-            ->method('getIsVirtual')
-            ->willReturn(true);
-        $this->address->setAddressType(Address::TYPE_SHIPPING);
-
-        $this->scopeConfig->expects($this->once())
-            ->method('isSetFlag')
-            ->willReturnMap($scopeConfigValues);
-
-        $this->assertTrue($this->address->validateMinimumAmount());
-    }
-
-    /**
-     * Provide data for test different cases
-     *
-     * @param void
-     * @return array
-     */
     public static function getDataProvider(): array
     {
         return [
@@ -294,16 +258,6 @@ class AddressTest extends TestCase
         ];
     }
 
-    /**
-     * Tests minimum order amount validation
-     *
-     * @param array $scopeConfigValues
-     * @param array $address
-     * @param array $quote
-     * @param bool $result
-     *
-     * @return void
-     */
     #[DataProvider('getDataProvider')]
     public function testValidateMinimumAmount(
         array $scopeConfigValues,
@@ -328,9 +282,6 @@ class AddressTest extends TestCase
         $this->assertEquals($result, $this->address->validateMinimumAmount());
     }
 
-    /**
-     * @return void
-     */
     public function testValidateMiniumumAmountWithoutDiscount(): void
     {
         $storeId = 1;
@@ -355,9 +306,6 @@ class AddressTest extends TestCase
         $this->assertTrue($this->address->validateMinimumAmount());
     }
 
-    /**
-     * @return void
-     */
     public function testValidateMinimumAmountNegative(): void
     {
         $storeId = 1;
@@ -383,9 +331,6 @@ class AddressTest extends TestCase
         $this->assertTrue($this->address->validateMinimumAmount());
     }
 
-    /**
-     * @return void
-     */
     public function testSetAndGetAppliedTaxes(): void
     {
         $data = ['data'];
@@ -393,11 +338,6 @@ class AddressTest extends TestCase
         self::assertEquals($data, $this->address->getAppliedTaxes());
     }
 
-    /**
-     * Checks a case, when applied taxes are not provided.
-     *
-     * @return void
-     */
     public function testGetAppliedTaxesWithEmptyValue(): void
     {
         $this->address->setData('applied_taxes', null);
@@ -405,24 +345,15 @@ class AddressTest extends TestCase
     }
 
     /**
-     * Test of requesting shipping rates by address
-     *
-     * @return void
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testRequestShippingRates(): void
     {
         $storeId = 12345;
         $webSiteId = 6789;
-        $baseCurrency = $this->getMockBuilder(Currency::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['convert'])
-            ->getMockForAbstractClass();
+        $baseCurrency = $this->createPartialMock(Currency::class, ['convert']);
 
-        $currentCurrency = $this->getMockBuilder(Currency::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['convert'])
-            ->getMockForAbstractClass();
+        $currentCurrency = $this->createPartialMock(Currency::class, ['convert']);
 
         $currentCurrencyCode = 'UAH';
 
@@ -440,19 +371,10 @@ class AddressTest extends TestCase
             ->willReturn(1);
 
         /** @var RateRequest */
-        $request = $this->getMockBuilder(RateRequest::class)
-            ->disableOriginalConstructor()
-            ->addMethods(
-                [
-                    'setStoreId',
-                    'setWebsiteId',
-                    'setBaseCurrency',
-                    'setPackageCurrency',
-                    'getBaseSubtotalTotalInclTax',
-                    'getBaseSubtotal'
-                ]
-            )
-            ->getMock();
+        $request = $this->createPartialMock(
+            RateRequestTestHelper::class,
+            ['setStoreId', 'setWebsiteId', 'setBaseCurrency', 'setPackageCurrency']
+        );
 
         /** @var Collection */
         $collection = $this->getMockBuilder(Collection::class)

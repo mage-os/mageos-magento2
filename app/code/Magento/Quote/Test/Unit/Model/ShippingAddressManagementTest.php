@@ -20,6 +20,7 @@ use Magento\Quote\Model\QuoteAddressValidator;
 use Magento\Quote\Model\ShippingAddressManagement;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Magento\Quote\Test\Unit\Helper\QuoteAddressTestHelper;
 
 class ShippingAddressManagementTest extends TestCase
 {
@@ -93,10 +94,20 @@ class ShippingAddressManagementTest extends TestCase
     public function testAssign(bool $saveInAddressBook, bool $showCompany): void
     {
         $cartId = $customerId = 123;
-        $addressMock = $this->getMockBuilder(AddressInterface::class)
-            ->addMethods(['setCollectShippingRates', 'save', 'importCustomerAddressData'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $addressMock = $this->createPartialMock(
+            QuoteAddressTestHelper::class,
+            [
+                'importCustomerAddressData',
+                'getSaveInAddressBook',
+                'getSameAsBilling',
+                'getCustomerAddressId',
+                'setCompany',
+                'setSameAsBilling',
+                'setSaveInAddressBook',
+                'setCollectShippingRates',
+                'save'
+            ]
+        );
         $this->quoteMock
             ->expects($this->once())
             ->method('isVirtual')
@@ -123,7 +134,6 @@ class ShippingAddressManagementTest extends TestCase
             ->method('setCompany')
             ->with(null);
         $addressMock
-            ->expects($this->once())
             ->method('importCustomerAddressData')
             ->willReturn($addressMock);
         $addressMock

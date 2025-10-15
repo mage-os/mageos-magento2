@@ -14,6 +14,7 @@ use Magento\Quote\Model\Quote\Address;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Checkout\Test\Unit\Helper\ExtensionAttributesTestHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Class ResetQuoteAddressesTest
@@ -90,11 +91,10 @@ class ResetQuoteAddressesTest extends TestCase
     /**
      * Test clearing the addresses from an empty quote with addresses
      *
-     * @dataProvider quoteAddressesDataProvider
-     *
      * @param bool $isVirtualQuote
      * @param array $extensionAttributes
      */
+    #[DataProvider('quoteAddressesDataProvider')]
     public function testClearingAddressesSuccessfullyFromEmptyQuoteWithAddress(
         bool $isVirtualQuote,
         array $extensionAttributes
@@ -134,11 +134,10 @@ class ResetQuoteAddressesTest extends TestCase
     /**
      * Test clearing the addresses from an empty quote
      *
-     * @dataProvider quoteNoAddressesDataProvider
-     *
      * @param bool $isVirtualQuote
      * @param array $extensionAttributes
      */
+    #[DataProvider('quoteNoAddressesDataProvider')]
     public function testClearingTheAddressesFromEmptyQuote(
         bool $isVirtualQuote,
         array $extensionAttributes

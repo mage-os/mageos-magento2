@@ -115,4 +115,225 @@ class QuoteTestHelper extends Quote
     {
         return $this->testData['quote_currency_code'] ?? null;
     }
+
+    /**
+     * Set coupon code for tests.
+     *
+     * @param string $code
+     * @return $this
+     */
+    public function setCouponCode($code)
+    {
+        $this->testData['coupon_code'] = $code;
+        return $this;
+    }
+
+    /**
+     * Get coupon code for tests.
+     *
+     * @return string|null
+     */
+    public function getCouponCode()
+    {
+        return $this->testData['coupon_code'] ?? null;
+    }
+
+    /**
+     * Get password hash for tests.
+     *
+     * @return string|null
+     */
+    public function getPasswordHash()
+    {
+        return $this->testData['password_hash'] ?? null;
+    }
+
+    /**
+     * Set totals collected flag for tests.
+     *
+     * @param bool $flag
+     * @return $this
+     */
+    public function setTotalsCollectedFlag($flag)
+    {
+        $this->testData['totals_collected'] = (bool)$flag;
+        return $this;
+    }
+
+    /**
+     * Get customer email for tests.
+     *
+     * @return string|null
+     */
+    public function getCustomerEmail()
+    {
+        return $this->testData['customer_email'] ?? null;
+    }
+
+    /**
+     * Set customer email for tests.
+     *
+     * @param string|null $email
+     * @return $this
+     */
+    public function setCustomerEmail($email)
+    {
+        $this->testData['customer_email'] = $email;
+        return $this;
+    }
+
+    /**
+     * Set remote IP for tests.
+     *
+     * @param string $ip
+     * @return $this
+     */
+    public function setRemoteIp($ip)
+    {
+        $this->testData['remote_ip'] = $ip;
+        return $this;
+    }
+
+    /**
+     * Set X-Forwarded-For header value for tests.
+     *
+     * @param string $forwarded
+     * @return $this
+     */
+    public function setXForwardedFor($forwarded)
+    {
+        $this->testData['x_forwarded_for'] = $forwarded;
+        return $this;
+    }
+
+    /**
+     * Get customer first name for tests.
+     *
+     * @return string|null
+     */
+    public function getCustomerFirstname()
+    {
+        return $this->testData['customer_firstname'] ?? null;
+    }
+
+    /**
+     * Get customer last name for tests.
+     *
+     * @return string|null
+     */
+    public function getCustomerLastname()
+    {
+        return $this->testData['customer_lastname'] ?? null;
+    }
+
+    /**
+     * Get customer middle name for tests.
+     *
+     * @return string|null
+     */
+    public function getCustomerMiddlename()
+    {
+        return $this->testData['customer_middlename'] ?? null;
+    }
+
+    /**
+     * Set customer first name for tests.
+     *
+     * @param string|null $firstname
+     * @return $this
+     */
+    public function setCustomerFirstname($firstname)
+    {
+        $this->testData['customer_firstname'] = $firstname;
+        return $this;
+    }
+
+    /**
+     * Set customer last name for tests.
+     *
+     * @param string|null $lastname
+     * @return $this
+     */
+    public function setCustomerLastname($lastname)
+    {
+        $this->testData['customer_lastname'] = $lastname;
+        return $this;
+    }
+
+    /**
+     * Set customer middle name for tests.
+     *
+     * @param string|null $middlename
+     * @return $this
+     */
+    public function setCustomerMiddlename($middlename)
+    {
+        $this->testData['customer_middlename'] = $middlename;
+        return $this;
+    }
+
+    /**
+     * Get last added item id for tests.
+     *
+     * @return int|string|null
+     */
+    public function getLastAddedItem()
+    {
+        return $this->testData['last_added_item'] ?? null;
+    }
+
+    /**
+     * Set last added item for tests.
+     *
+     * @param mixed $item
+     * @return $this
+     */
+    public function setLastAddedItem($item)
+    {
+        $this->testData['last_added_item'] = $item;
+        return $this;
+    }
+
+    /**
+     * Get has error flag for tests.
+     *
+     * @return bool
+     */
+    /**
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     */
+    // phpcs:ignore Magento2.NamingConvention.PublicMethodName
+    public function getHasError(): bool
+    {
+        return (bool)($this->testData['has_error'] ?? false);
+    }
+
+    /**
+     * Set has error flag for tests.
+     *
+     * @param bool $flag
+     * @return $this
+     */
+    public function setHasError($flag)
+    {
+        $this->testData['has_error'] = (bool)$flag;
+        return $this;
+    }
+
+    /**
+     * Add message for tests.
+     *
+     * @param mixed $message
+     * @return $this
+     */
+    public function addMessage($message, $index = 'error')
+    {
+        $messages = $this->testData['messages'] ?? [];
+        if (isset($messages[$index])) {
+            return $this;
+        }
+        $messages[$index] = (string)$message;
+        $this->testData['messages'] = $messages;
+        return $this;
+    }
 }
