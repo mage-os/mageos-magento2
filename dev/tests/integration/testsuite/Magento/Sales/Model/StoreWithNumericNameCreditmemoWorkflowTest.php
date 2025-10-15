@@ -57,7 +57,11 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
      * @return void
      */
     #[
-        DataFixture('Magento\Store\Test\Fixture\Website', ['code' => 'test_website', 'name' => '123test Website'], 'test_website'),
+        DataFixture(
+            'Magento\Store\Test\Fixture\Website',
+            ['code' => 'test_website', 'name' => '123test Website'],
+            'test_website'
+        ),
         DataFixture(
             'Magento\Store\Test\Fixture\Group',
             ['code' => 'test_group', 'name' => '123test Store Group', 'website_id' => '$test_website.id$'],
