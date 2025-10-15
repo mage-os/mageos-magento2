@@ -18,6 +18,8 @@
         <click selector="{{AdminReviewGridSection.submit}}" stepKey="clickSubmit"/>
         <waitForElementVisible selector="{{AdminReviewGridSection.acceptModal}}" stepKey="waitForModalPopUp"/>
         <click selector="{{AdminReviewGridSection.acceptModal}}" stepKey="confirmProductDelete"/>
+        <scrollToTopOfPage stepKey="scrollToTopOfPage"/>
+        <waitForElementVisible selector="{{AdminMessagesSection.success}}" stepKey="waitForSuccessMessageVisible"/>
         <see selector="{{AdminMessagesSection.success}}" userInput="record(s) have been deleted." stepKey="seeSuccessMessage"/>
     </actionGroup>
 </actionGroups>
