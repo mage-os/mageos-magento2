@@ -19,10 +19,6 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "git@github.com:magento-gl/composer.git"
-        },
-        {
-            "type": "vcs",
             "url": "git@github.com:magento-gl/magento2-functional-testing-framework.git"
         }
     ],
@@ -76,7 +72,7 @@
         "laminas/laminas-view": "^2.36",
         "league/flysystem": "^3.0",
         "league/flysystem-aws-s3-v3": "^3.0",
-        "magento/composer": "dev-AC-15170",
+        "magento/composer": "dev-develop",
         "magento/composer-dependency-version-audit-plugin": "^0.1",
         "magento/magento-composer-installer": ">=0.4.0",
         "magento/zend-cache": "^1.16",

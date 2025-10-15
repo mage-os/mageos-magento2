@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a369371c3af7ff9e2c0c674e59f485ce",
+    "content-hash": "6c5db64088da0e7686e2f27556993739",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -4052,16 +4052,16 @@
         },
         {
             "name": "magento/composer",
-            "version": "dev-AC-15170",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
-                "url": "git@github.com:magento-gl/composer.git",
-                "reference": "b364d7f884424d7f7607ff09c9e201ac8266e418"
+                "url": "https://github.com/magento/composer.git",
+                "reference": "7253722695dd29505ee01ecf3cdd2111ebf97507"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento-gl/composer/zipball/b364d7f884424d7f7607ff09c9e201ac8266e418",
-                "reference": "b364d7f884424d7f7607ff09c9e201ac8266e418",
+                "url": "https://api.github.com/repos/magento/composer/zipball/7253722695dd29505ee01ecf3cdd2111ebf97507",
+                "reference": "7253722695dd29505ee01ecf3cdd2111ebf97507",
                 "shasum": ""
             },
             "require": {
@@ -4072,27 +4072,24 @@
             "require-dev": {
                 "phpunit/phpunit": "^9.5.10 || ^10"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
                     "Magento\\Composer\\": "src"
                 }
             },
-            "archive": {
-                "exclude": [
-                    ".github",
-                    ".gitignore"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "OSL-3.0",
                 "AFL-3.0"
             ],
             "description": "Magento composer library helps to instantiate Composer application and run composer commands.",
             "support": {
-                "source": "https://github.com/magento-gl/composer/tree/AC-15170"
+                "issues": "https://github.com/magento/composer/issues",
+                "source": "https://github.com/magento/composer/tree/develop"
             },
-            "time": "2025-07-18T04:39:18+00:00"
+            "time": "2025-10-15T06:15:55+00:00"
         },
         {
             "name": "magento/composer-dependency-version-audit-plugin",
