@@ -15,7 +15,8 @@
           id="form-validate"
           data-mage-init='{"Magento_Checkout/js/action/update-shopping-cart":
               {"validationURL" : "<?= $block->escapeUrl($block->getUrl('checkout/cart/updateItemQty')) ?>",
-              "updateCartActionContainer": "#update_cart_action_container"}
+              "updateCartActionContainer": "#update_cart_action_container"},
+              "Magento_Checkout/js/cart/ensure-subtotal-sync": {}
           }'
           class="form form-cart">
     <?= $block->getBlockHtml('formkey') ?>
