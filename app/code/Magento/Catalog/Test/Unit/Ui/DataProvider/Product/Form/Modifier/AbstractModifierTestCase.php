@@ -7,12 +7,10 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Ui\DataProvider\Product\Form\Modifier;
 
-use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\Locator\LocatorInterface;
 use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\Stdlib\ArrayManager;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Test\Unit\Helper\StoreTestHelper;
 use Magento\Ui\DataProvider\Modifier\ModifierInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -71,15 +69,9 @@ abstract class AbstractModifierTestCase extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
         $this->locatorMock = $this->createMock(LocatorInterface::class);
-
-        // Use ProductTestHelper instead of anonymous class
         $this->productMock = new ProductTestHelper();
-
-        // Use StoreTestHelper instead of anonymous class
         $this->storeMock = new StoreTestHelper();
-
         $this->arrayManagerMock = $this->createMock(ArrayManager::class);
-
         $this->arrayManagerMock->expects($this->any())
             ->method('replace')
             ->willReturnArgument(1);

@@ -284,6 +284,18 @@ class ProductTestHelper extends Product
     }
 
     /**
+     * Set store for testing
+     *
+     * @param mixed $store
+     * @return self
+     */
+    public function setStore($store)
+    {
+        $this->data['store'] = $store;
+        return $this;
+    }
+
+    /**
      * Override getPreconfiguredValues for testing
      *
      * @return mixed
@@ -1947,5 +1959,106 @@ class ProductTestHelper extends Product
     public function getDownloadableLinks()
     {
         return $this->data['downloadable_links'] ?? [];
+    }
+
+    /**
+     * Get resource instance
+     *
+     * Override to return mock resource set via setResource()
+     *
+     * @return \Magento\Catalog\Model\ResourceModel\Product|mixed|null
+     */
+    public function getResource()
+    {
+        return $this->data['_resource'] ?? null;
+    }
+
+    /**
+     * Set resource instance for testing
+     *
+     * @param mixed $resource
+     * @return $this
+     */
+    public function setResource($resource)
+    {
+        $this->data['_resource'] = $resource;
+        return $this;
+    }
+
+    /**
+     * Check if attribute is locked for testing
+     *
+     * @param string $attributeCode
+     * @return bool
+     */
+    public function isLockedAttribute($attributeCode)
+    {
+        return $this->data['locked_attributes'][$attributeCode] ?? false;
+    }
+
+    /**
+     * Set locked attribute for testing
+     *
+     * @param string $attributeCode
+     * @param bool $locked
+     * @return $this
+     */
+    public function setLockedAttribute($attributeCode, $locked = true)
+    {
+        if (!isset($this->data['locked_attributes'])) {
+            $this->data['locked_attributes'] = [];
+        }
+        $this->data['locked_attributes'][$attributeCode] = $locked;
+        return $this;
+    }
+
+    /**
+     * Get attribute set id for testing
+     *
+     * @return int|null
+     */
+    public function getAttributeSetId()
+    {
+        return $this->getData('attribute_set_id');
+    }
+
+    /**
+     * Set attribute set id for testing
+     *
+     * @param int $attributeSetId
+     * @return $this
+     */
+    public function setAttributeSetId($attributeSetId)
+    {
+        return $this->setData('attribute_set_id', $attributeSetId);
+    }
+
+    /**
+     * @var array
+     */
+    private $customAttributes = [];
+
+    /**
+     * Get custom attribute for testing
+     *
+     * @param string $attributeCode
+     * @return mixed
+     */
+    public function getCustomAttribute($attributeCode)
+    {
+        return $this->customAttributes[$attributeCode] ?? null;
+    }
+
+    /**
+     * Set custom attribute for testing (override to simplify for testing)
+     *
+     * @param string $attributeCode
+     * @param mixed $attributeValue
+     * @return $this
+     */
+    public function setCustomAttribute($attributeCode, $attributeValue)
+    {
+        $this->customAttributes[$attributeCode] = $attributeValue;
+        return $this;
     }
 }

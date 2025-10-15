@@ -120,4 +120,48 @@ class StoreTestHelper extends Store
         $this->data['base_currency'] = $currency;
         return $this;
     }
+
+    /**
+     * Get store ID
+     *
+     * @return int|null
+     */
+    public function getId()
+    {
+        return $this->data['store_id'] ?? parent::getId();
+    }
+
+    /**
+     * Set store ID
+     *
+     * @param int $id
+     * @return self
+     */
+    public function setId($id)
+    {
+        $this->data['store_id'] = $id;
+        return $this;
+    }
+
+    /**
+     * Get website ID
+     *
+     * @return int|null
+     */
+    public function getWebsiteId()
+    {
+        return $this->data['website_id'] ?? parent::getWebsiteId();
+    }
+
+    /**
+     * Set website ID
+     *
+     * @param int $id
+     * @return self
+     */
+    public function setWebsiteId($id)
+    {
+        $this->data['website_id'] = $id;
+        return $this;
+    }
 }
