@@ -228,4 +228,3 @@ class AttributeTestHelper extends Attribute
         return $this;
     }
 }
-
