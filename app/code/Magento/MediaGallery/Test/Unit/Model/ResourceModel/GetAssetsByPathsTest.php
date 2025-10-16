@@ -50,7 +50,7 @@ class GetAssetsByPathsTest extends TestCase
     {
         $logger = $this->createMock(LoggerInterface::class);
         $resourceConnection = $this->createMock(ResourceConnection::class);
-        $this->assetInterfaceFactory = $this->createMock(AssetInterfaceFactory::class); // @phpstan-ignore-line
+        $this->assetInterfaceFactory = $this->createMock(AssetInterfaceFactory::class);
 
         $this->getAssetsByPaths = new GetAssetsByPaths(
             $resourceConnection,

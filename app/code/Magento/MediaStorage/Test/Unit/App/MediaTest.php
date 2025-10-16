@@ -94,7 +94,7 @@ class MediaTest extends TestCase
     {
         $this->configMock = $this->createMock(Config::class);
         $this->sync = $this->createMock(Synchronization::class);
-        $this->configFactoryMock = $this->createPartialMock(ConfigFactory::class, ['create']); // @phpstan-ignore-line
+        $this->configFactoryMock = $this->createPartialMock(ConfigFactory::class, ['create']);
         $this->responseMock = $this->createMock(Response::class);
         $this->syncFactoryMock = $this->createPartialMock(SynchronizationFactory::class, ['create']);
         $this->filesystemMock = $this->createMock(Filesystem::class);
@@ -271,7 +271,7 @@ class MediaTest extends TestCase
         $driverFile->method('getRealPath')->willReturn('');
         $placeholder = $this->createMock(Placeholder::class);
         $placeholder->method('getRelativePath')->willReturn(self::RELATIVE_FILE_PATH);
-        $placeholderFactory = $this->createMock(PlaceholderFactory::class); // @phpstan-ignore-line
+        $placeholderFactory = $this->createMock(PlaceholderFactory::class);
         $placeholderFactory->method('create')
             ->willReturn($placeholder);
 

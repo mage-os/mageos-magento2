@@ -52,7 +52,7 @@ class DatabaseTest extends TestCase
     protected function setUp(): void
     {
         $this->dbStorageFactoryMock = $this->createPartialMock(
-            DatabaseFactory::class, // @phpstan-ignore-line
+            DatabaseFactory::class,
             ['create']
         );
         $this->objectManager = new ObjectManager($this);
