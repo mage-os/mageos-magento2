@@ -1,37 +1,41 @@
 {
-    "name": "magento/module-catalog-url-rewrite",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/framework-bulk": "*",
-        "magento/module-backend": "*",
-        "magento/module-catalog": "*",
-        "magento/module-catalog-import-export": "*",
-        "magento/module-eav": "*",
-        "magento/module-import-export": "*",
-        "magento/module-store": "*",
-        "magento/module-ui": "*",
-        "magento/module-asynchronous-operations": "*",
-        "magento/module-url-rewrite": "*"
-    },
-    "suggest": {
-        "magento/module-webapi": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-catalog-url-rewrite",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "2.0.0",
+    "mage-os/framework-bulk": "2.0.0",
+    "mage-os/module-backend": "2.0.0",
+    "mage-os/module-catalog": "2.0.0",
+    "mage-os/module-catalog-import-export": "2.0.0",
+    "mage-os/module-eav": "2.0.0",
+    "mage-os/module-import-export": "2.0.0",
+    "mage-os/module-store": "2.0.0",
+    "mage-os/module-ui": "2.0.0",
+    "mage-os/module-asynchronous-operations": "2.0.0",
+    "mage-os/module-url-rewrite": "2.0.0"
+  },
+  "suggest": {
+    "mage-os/module-webapi": "2.0.0"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\CatalogUrlRewrite\\": ""
-        }
+    "psr-4": {
+      "Magento\\CatalogUrlRewrite\\": ""
     }
+  },
+  "version": "2.0.0",
+  "replace": {
+    "magento/module-catalog-url-rewrite": "100.4.8"
+  }
 }

@@ -1,27 +1,31 @@
 {
-    "name": "magento/module-stomp",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "magento/framework": "*",
-        "magento/framework-stomp": "*",
-        "magento/framework-message-queue": "*",
-        "magento/module-asynchronous-operations": "*",
-        "php": "~8.2.0||~8.3.0||~8.4.0"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-stomp",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "mage-os/framework": "2.0.0",
+    "mage-os/framework-stomp": "2.0.0",
+    "mage-os/framework-message-queue": "2.0.0",
+    "mage-os/module-asynchronous-operations": "2.0.0",
+    "php": "~8.2.0||~8.3.0||~8.4.0"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\Stomp\\": ""
-        }
+    "psr-4": {
+      "Magento\\Stomp\\": ""
     }
+  },
+  "version": "2.0.0",
+  "replace": {
+    "magento/module-stomp": "100.4.0-p3"
+  }
 }

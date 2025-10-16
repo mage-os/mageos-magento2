@@ -1,32 +1,36 @@
 {
-    "name": "magento/module-media-gallery-ui",
-    "description": "Magento module responsible for the media gallery UI implementation",
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-backend": "*",
-        "magento/module-ui": "*",
-        "magento/module-store": "*",
-        "magento/module-media-gallery-ui-api": "*",
-        "magento/module-media-gallery-api": "*",
-        "magento/module-media-gallery-metadata-api": "*",
-        "magento/module-media-gallery-synchronization-api": "*",
-        "magento/module-media-content-api": "*",
-        "magento/module-cms": "*",
-        "magento/module-directory": "*",
-        "magento/module-authorization": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-media-gallery-ui",
+  "description": "Magento module responsible for the media gallery UI implementation",
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "2.0.0",
+    "mage-os/module-backend": "2.0.0",
+    "mage-os/module-ui": "2.0.0",
+    "mage-os/module-store": "2.0.0",
+    "mage-os/module-media-gallery-ui-api": "2.0.0",
+    "mage-os/module-media-gallery-api": "2.0.0",
+    "mage-os/module-media-gallery-metadata-api": "2.0.0",
+    "mage-os/module-media-gallery-synchronization-api": "2.0.0",
+    "mage-os/module-media-content-api": "2.0.0",
+    "mage-os/module-cms": "2.0.0",
+    "mage-os/module-directory": "2.0.0",
+    "mage-os/module-authorization": "2.0.0"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\MediaGalleryUi\\": ""
-        }
+    "psr-4": {
+      "Magento\\MediaGalleryUi\\": ""
     }
+  },
+  "version": "2.0.0",
+  "replace": {
+    "magento/module-media-gallery-ui": "100.4.7"
+  }
 }
