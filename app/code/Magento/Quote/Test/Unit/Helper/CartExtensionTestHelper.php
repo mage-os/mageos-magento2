@@ -14,6 +14,9 @@ use Magento\Quote\Api\Data\CartExtension;
  */
 class CartExtensionTestHelper extends CartExtension
 {
+    /** @var array */
+    private array $testData = [];
+
     /**
      * Set shipping assignments for tests.
      *
@@ -22,7 +25,7 @@ class CartExtensionTestHelper extends CartExtension
      */
     public function setShippingAssignments($shippingAssignments)
     {
-        $this->setData('shipping_assignments', $shippingAssignments);
+        $this->testData['shipping_assignments'] = $shippingAssignments;
         return $this;
     }
 
@@ -33,6 +36,6 @@ class CartExtensionTestHelper extends CartExtension
      */
     public function getShippingAssignments()
     {
-        return $this->getData('shipping_assignments');
+        return $this->testData['shipping_assignments'] ?? null;
     }
 }

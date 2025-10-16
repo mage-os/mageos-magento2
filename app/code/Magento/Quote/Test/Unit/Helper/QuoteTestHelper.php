@@ -382,6 +382,10 @@ class QuoteTestHelper extends Quote
      *
      * @return bool
      */
+    /**
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     */
+    // phpcs:ignore Magento2.NamingConvention.PublicMethodName
     public function getIsMultiShipping()
     {
         return (bool)($this->testData['is_multi_shipping'] ?? false);
