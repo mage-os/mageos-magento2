@@ -70,7 +70,7 @@ class GetByIdExceptionOnGetDataTest extends TestCase
     protected function setUp(): void
     {
         $resourceConnection = $this->createMock(ResourceConnection::class);
-        $assetFactory = $this->createMock(AssetInterfaceFactory::class); // @phpstan-ignore-line
+        $assetFactory = $this->createMock(AssetInterfaceFactory::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->getMediaAssetById = (new ObjectManager($this))->getObject(

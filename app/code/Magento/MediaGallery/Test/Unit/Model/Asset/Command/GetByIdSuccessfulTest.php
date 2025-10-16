@@ -71,7 +71,7 @@ class GetByIdSuccessfulTest extends TestCase
     protected function setUp(): void
     {
         $resourceConnection = $this->createMock(ResourceConnection::class);
-        $this->assetFactory = $this->createMock(AssetInterfaceFactory::class); // @phpstan-ignore-line
+        $this->assetFactory = $this->createMock(AssetInterfaceFactory::class);
         $logger = $this->createMock(LoggerInterface::class);
 
         $this->getMediaAssetById = (new ObjectManager($this))->getObject(

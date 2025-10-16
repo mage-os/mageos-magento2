@@ -44,7 +44,7 @@ class GetAssetKeywordsTest extends TestCase
     protected function setUp(): void
     {
         $this->resourceConnectionStub = $this->createMock(ResourceConnection::class);
-        $this->assetKeywordFactoryStub = $this->createMock(KeywordInterfaceFactory::class); // @phpstan-ignore-line
+        $this->assetKeywordFactoryStub = $this->createMock(KeywordInterfaceFactory::class);
         $this->loggerMock = $this->createMock(LoggerInterface::class);
 
         $this->sut = new GetAssetKeywords(

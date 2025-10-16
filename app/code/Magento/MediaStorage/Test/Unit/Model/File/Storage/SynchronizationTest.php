@@ -13,18 +13,27 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\MediaStorage\Model\File\Storage\Database;
 use Magento\MediaStorage\Model\File\Storage\DatabaseFactory;
 use Magento\MediaStorage\Model\File\Storage\Synchronization;
-use Magento\MediaStorage\Test\Unit\Helper\DatabaseTestHelper;
 use PHPUnit\Framework\TestCase;
 
 class SynchronizationTest extends TestCase
 {
-    public function testSynchronize()
+    public function testSynchronize(): void
     {
         $content = 'content';
         $relativeFileName = 'config.xml';
 
-        $storageFactoryMock = $this->createPartialMock(DatabaseFactory::class, ['create']); // @phpstan-ignore-line
-        $storageMock = new DatabaseTestHelper();
+        $storageFactoryMock = $this->createPartialMock(DatabaseFactory::class, ['create']);
+        
+        $storageMock = $this->createPartialMock(Database::class, ['loadByFilename']);
+        $reflection = new \ReflectionClass($storageMock);
+        $dataProperty = $reflection->getProperty('_data');
+        $dataProperty->setAccessible(true);
+        $dataProperty->setValue($storageMock, [
+            'id' => true,
+            'content' => $content
+        ]);
+        $storageMock->method('loadByFilename')->willReturnSelf();
+        
         $storageFactoryMock->expects($this->once())->method('create')->willReturn($storageMock);
 
         $file = $this->createPartialMock(

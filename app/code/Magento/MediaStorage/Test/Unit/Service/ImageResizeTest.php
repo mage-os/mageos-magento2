@@ -151,7 +151,7 @@ class ImageResizeTest extends TestCase
         $this->viewMock = $this->createMock(View::class);
         $this->viewConfigMock = $this->createMock(ViewConfig::class);
         $this->assetImageMock = $this->createMock(AssetImage::class);
-        $this->assetImageFactoryMock = $this->createMock(AssetImageFactory::class); // @phpstan-ignore-line
+        $this->assetImageFactoryMock = $this->createMock(AssetImageFactory::class);
         $this->themeCustomizationConfigMock = $this->createMock(ThemeCustomizationConfig::class);
         $this->themeCollectionMock = $this->createMock(Collection::class);
         $this->filesystemMock = $this->createMock(Filesystem::class);
