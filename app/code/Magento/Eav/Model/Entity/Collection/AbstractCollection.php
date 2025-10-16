@@ -1253,7 +1253,7 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
                 }
 
                 if ($data) {
-                    $this->_setItemAttributeValue($data);
+                    $this->_setItemAttributeValues($data);
                 }
             }
         }
@@ -1322,7 +1322,10 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
     /**
      * Initialize entity object property value
      *
-     * Parameter $valueInfo is [product_id => [attribute_code => value]]
+     * Parameter $valueInfo is _getLoadAttributesSelect fetch result row
+     *
+     * @deprecated Batch process of attribute values is introduced to reduce time complexity.
+     * @see _setItemAttributeValues($entityAttributeMap) uses array union (+) to acheive O(n) complexity.
      *
      * @param array $valueInfo
      * @return $this
@@ -1330,18 +1333,53 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
      */
     protected function _setItemAttributeValue($valueInfo)
     {
-        foreach ($valueInfo as $entityId => $value) {
+        $entityIdField = $this->getEntity()->getEntityIdField();
+        $entityId = $valueInfo[$entityIdField];
+        if (!isset($this->_itemsById[$entityId])) {
+            throw new LocalizedException(
+                __('A header row is missing for an attribute. Verify the header row and try again.')
+            );
+        }
+        $attributeCode = array_search($valueInfo['attribute_id'], $this->_selectAttributes);
+        if (!$attributeCode) {
+            $attribute = $this->_eavConfig->getAttribute(
+                $this->getEntity()->getType(),
+                $valueInfo['attribute_id']
+            );
+            $attributeCode = $attribute->getAttributeCode();
+        }
+
+        foreach ($this->_itemsById[$entityId] as $object) {
+            $object->setData($attributeCode, $valueInfo['value']);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Initialize entity object property value
+     *
+     * Parameter $entityAttributeMap is [entity_id => [attribute_code => value, ...]]
+     *
+     * @param array $entityAttributeMap
+     * @return $this
+     * @throws LocalizedException
+     */
+    protected function _setItemAttributeValues(array $entityAttributeMap)
+    {
+        foreach ($entityAttributeMap as $entityId => $attributeValues) {
             if (!isset($this->_itemsById[$entityId])) {
                 throw new LocalizedException(
                     __('A header row is missing for an attribute. Verify the header row and try again.')
                 );
             }
-            // Run only once
+            // _itemsById[$entityId] is always an array (typically with one element)
+            // foreach handles edge cases where multiple objects share the same entity ID
             foreach ($this->_itemsById[$entityId] as $object) {
-                $object->setData($object->getData()+$value);
+                $object->setData($object->getData()+$attributeValues);
             }
-        }
 
+        }
         return $this;
     }
 
