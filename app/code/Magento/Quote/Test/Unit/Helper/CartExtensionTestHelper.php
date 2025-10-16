@@ -95,4 +95,3 @@ class CartExtensionTestHelper implements CartExtensionInterface
         return $this;
     }
 }
-

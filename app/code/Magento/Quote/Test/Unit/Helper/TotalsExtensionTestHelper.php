@@ -41,4 +41,3 @@ class TotalsExtensionTestHelper implements TotalsExtensionInterface
         return $this;
     }
 }
-

@@ -41,4 +41,3 @@ class CustomerExtensionTestHelper implements CustomerExtensionInterface
         return $this;
     }
 }
-

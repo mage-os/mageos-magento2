@@ -41,4 +41,3 @@ class CartItemExtensionTestHelper implements CartItemExtensionInterface
         return $this;
     }
 }
-
