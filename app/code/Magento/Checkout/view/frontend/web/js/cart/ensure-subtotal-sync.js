@@ -39,6 +39,7 @@ define([
             $root.find('#shopping-cart-table .col.subtotal .cart-price').each(function () {
                 const text = $(this).text();
                 const val = parsePrice(text);
+
                 if (!isNaN(val)) {
                     sum += val;
                 }
@@ -56,8 +57,7 @@ define([
             if (clicked) {
                 return;
             }
-            const central = getCentralSubtotal();
-            const summary = getSummarySubtotal();
+            const central = getCentralSubtotal(), summary = getSummarySubtotal();
             if (!isNaN(central) && !isNaN(summary) && central !== summary) {
                 const $updateBtn = $root.find('.cart.main.actions button.action.update');
                 if ($updateBtn.length) {
