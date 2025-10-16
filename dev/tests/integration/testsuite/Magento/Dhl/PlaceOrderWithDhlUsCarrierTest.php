@@ -197,7 +197,7 @@ class PlaceOrderWithDhlUsCarrierTest extends TestCase
      * Set dhl any international shipping method for quote and place order
      *
      * @param int $cartId
-     * @return int $cartId
+     * @return int $order
      */
     private function selectDhlAndCheckmoAndPlaceOrder(int $cartId): int
     {
