@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Sales\Model;
 
+use Magento\TestFramework\Fixture\Config;
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Sales\Api\CreditmemoRepositoryInterface;
@@ -16,6 +17,21 @@ use Magento\TestFramework\Helper\Bootstrap;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\TestFramework\Fixture\DataFixture;
 use Magento\TestFramework\Fixture\DataFixtureStorageManager;
+use Magento\Quote\Api\CartManagementInterface;
+use Magento\Quote\Api\CartRepositoryInterface;
+use Magento\Checkout\Test\Fixture\SetBillingAddress;
+use Magento\Checkout\Test\Fixture\SetShippingAddress;
+use Magento\Checkout\Test\Fixture\SetDeliveryMethod;
+use Magento\Checkout\Test\Fixture\SetPaymentMethod;
+use Magento\Checkout\Test\Fixture\PlaceOrder;
+use Magento\Sales\Test\Fixture\Invoice;
+use Magento\Sales\Test\Fixture\Creditmemo;
+use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Store\Test\Fixture\Website;
+use Magento\Store\Test\Fixture\Group;
+use Magento\Store\Test\Fixture\Store;
+use Magento\Catalog\Test\Fixture\Product;
+use Magento\Customer\Test\Fixture\Customer;
 
 /**
  * Integration test for complete workflow:
@@ -23,11 +39,7 @@ use Magento\TestFramework\Fixture\DataFixtureStorageManager;
  *
  * @magentoDbIsolation disabled
  * @magentoAppIsolation enabled
- * @magentoConfigFixture default/general/country/allow US
- * @magentoConfigFixture default/general/country/default US
- * @magentoConfigFixture default_store carriers/flatrate/active 1
- * @magentoConfigFixture default_store carriers/flatrate/price 5.00
- * @magentoConfigFixture default_store payment/free/active 1
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
 {
@@ -57,18 +69,19 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
      * @return void
      */
     #[
+        Config('general/country/allow', 'US', 'default'),
+        Config('general/country/default', 'US', 'default'),
+        Config('carriers/flatrate/active', '1', 'store', 'default'),
+        Config('carriers/flatrate/price', '5.00', 'store', 'default'),
+        Config('payment/checkmo/active', '1', 'store', 'default'),
+        DataFixture(Website::class, ['code' => 'test_website', 'name' => '123test Website'], 'test_website'),
         DataFixture(
-            'Magento\Store\Test\Fixture\Website',
-            ['code' => 'test_website', 'name' => '123test Website'],
-            'test_website'
-        ),
-        DataFixture(
-            'Magento\Store\Test\Fixture\Group',
+            Group::class,
             ['code' => 'test_group', 'name' => '123test Store Group', 'website_id' => '$test_website.id$'],
             'test_group'
         ),
         DataFixture(
-            'Magento\Store\Test\Fixture\Store',
+            Store::class,
             [
                 'code' => 'test_store',
                 'name' => '123test Store View',
@@ -78,12 +91,12 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
             'test_store'
         ),
         DataFixture(
-            'Magento\Catalog\Test\Fixture\Product',
+            Product::class,
             ['sku' => 'simple', 'price' => 10, 'website_ids' => [1, '$test_website.id$']],
             'product'
         ),
         DataFixture(
-            'Magento\Customer\Test\Fixture\Customer',
+            Customer::class,
             ['email' => 'customer@123test.com', 'website_id' => '$test_website.id$'],
             'customer'
         ),
@@ -98,8 +111,8 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
         $product = $fixtures->get('product');
 
         // Step 2: Create cart manually with correct store ID (CustomerCartFixture doesn't support store_id)
-        $cartManagement = $this->objectManager->get('Magento\Quote\Api\CartManagementInterface');
-        $cartRepository = $this->objectManager->get('Magento\Quote\Api\CartRepositoryInterface');
+        $cartManagement = $this->objectManager->get(CartManagementInterface::class);
+        $cartRepository = $this->objectManager->get(CartRepositoryInterface::class);
 
         $cartId = $cartManagement->createEmptyCartForCustomer($customer->getId());
         $cart = $cartRepository->get($cartId);
@@ -111,27 +124,27 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
         $cartRepository->save($cart);
 
         // Step 3: Use fixtures for checkout process
-        $billingAddressFixture = $this->objectManager->create('Magento\Checkout\Test\Fixture\SetBillingAddress');
+        $billingAddressFixture = $this->objectManager->create(SetBillingAddress::class);
         $billingAddressFixture->apply(['cart_id' => $cart->getId()]);
 
-        $shippingAddressFixture = $this->objectManager->create('Magento\Checkout\Test\Fixture\SetShippingAddress');
+        $shippingAddressFixture = $this->objectManager->create(SetShippingAddress::class);
         $shippingAddressFixture->apply(['cart_id' => $cart->getId()]);
 
-        $deliveryMethodFixture = $this->objectManager->create('Magento\Checkout\Test\Fixture\SetDeliveryMethod');
+        $deliveryMethodFixture = $this->objectManager->create(SetDeliveryMethod::class);
         $deliveryMethodFixture->apply(
             ['cart_id' => $cart->getId(), 'carrier_code' => 'flatrate', 'method_code' => 'flatrate']
         );
 
-        $paymentMethodFixture = $this->objectManager->create('Magento\Checkout\Test\Fixture\SetPaymentMethod');
+        $paymentMethodFixture = $this->objectManager->create(SetPaymentMethod::class);
         $paymentMethodFixture->apply(['cart_id' => $cart->getId()]);
 
-        $placeOrderFixture = $this->objectManager->create('Magento\Checkout\Test\Fixture\PlaceOrder');
+        $placeOrderFixture = $this->objectManager->create(PlaceOrder::class);
         $order = $placeOrderFixture->apply(['cart_id' => $cart->getId()]);
 
-        $invoiceFixture = $this->objectManager->create('Magento\Sales\Test\Fixture\Invoice');
+        $invoiceFixture = $this->objectManager->create(Invoice::class);
         $invoiceFixture->apply(['order_id' => $order->getId()]);
 
-        $creditmemoFixture = $this->objectManager->create('Magento\Sales\Test\Fixture\Creditmemo');
+        $creditmemoFixture = $this->objectManager->create(Creditmemo::class);
         $creditmemo = $creditmemoFixture->apply([
             'order_id' => $order->getId(),
             'items' => [['qty' => 1, 'product_id' => $product->getId()]]
@@ -218,7 +231,7 @@ class StoreWithNumericNameCreditmemoWorkflowTest extends TestCase
      */
     private function getCreditmemosByFilter(string $field, mixed $value): array
     {
-        $searchCriteria = $this->objectManager->get('Magento\Framework\Api\SearchCriteriaBuilder')
+        $searchCriteria = $this->objectManager->get(SearchCriteriaBuilder::class)
             ->addFilter($field, $value)
             ->create();
 
