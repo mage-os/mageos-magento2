@@ -12,10 +12,9 @@ use Magento\Catalog\Test\Fixture\Product as ProductFixture;
 use Magento\ConfigurableProduct\Test\Fixture\Attribute as AttributeFixture;
 use Magento\ConfigurableProduct\Test\Fixture\Product as ConfigurableProductFixture;
 use Magento\Customer\Test\Fixture\Customer as CustomerFixture;
-use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Test\Fixture\AddProductToCart as AddProductToCartFixture;
 use Magento\Quote\Test\Fixture\CustomerCart as CustomerCartFixture;
-use Magento\TestFramework\Fixture\Config as Config;
+use Magento\TestFramework\Fixture\Config;
 use Magento\TestFramework\Fixture\DataFixture;
 use Magento\TestFramework\Fixture\DataFixtureStorageManager;
 use Magento\TestFramework\Fixture\DataFixtureStorage;
@@ -40,7 +39,6 @@ use Magento\Framework\Exception\LocalizedException;
  * @magentoDbIsolation disabled
  * @magentoAppIsolation enabled
  * @magentoAppArea frontend
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class PlaceOrderWithDhlUsCarrierTest extends TestCase
 {
@@ -58,7 +56,7 @@ class PlaceOrderWithDhlUsCarrierTest extends TestCase
      * @var CartManagementInterface
      */
     private CartManagementInterface $cartManagement;
-    
+
     /**
      * @var OrderRepositoryInterface
      */
@@ -158,13 +156,14 @@ class PlaceOrderWithDhlUsCarrierTest extends TestCase
     ]
     /**
      * Verifies successful order placement using DHL-US shipping carrier
+     *
+     * @return void
      */
-    public function testPlaceOrderWithAllProductTypes()
+    public function testPlaceOrderWithDhlUsCarrierTest(): void
     {
         $cartId = (int)$this->fixtures->get('cart')->getId();
         $this->setShippingAndBillingAddressForQuote($cartId);
-        $orderId = $this->selectDhlAndCheckmoAndPlaceOrder($cartId);
-        $order = $this->orderRepository->get($orderId);
+        $order = $this->orderRepository->get($this->selectDhlAndCheckmoAndPlaceOrder($cartId));
         $this->assertNotEmpty($order->getIncrementId());
         $this->assertSame('dhl_P', $order->getShippingMethod());
     }
@@ -174,7 +173,6 @@ class PlaceOrderWithDhlUsCarrierTest extends TestCase
      *
      * @param int $cartId
      * @return void
-     * @throws NoSuchEntityException
      */
     private function setShippingAndBillingAddressForQuote(int $cartId): void
     {
@@ -200,9 +198,6 @@ class PlaceOrderWithDhlUsCarrierTest extends TestCase
      *
      * @param int $cartId
      * @return int $cartId
-     * @throws CouldNotSaveException
-     * @throws InputException
-     * @throws NoSuchEntityException
      */
     private function selectDhlAndCheckmoAndPlaceOrder(int $cartId): int
     {
