@@ -229,7 +229,7 @@ class ProductCustomAttributesTest extends TestCase
     public function testResolveWithMultiDimensionalArrayAttribute(): void
     {
         $productId = 1;
-        $attributeCode = 'giftcard_amounts';
+        $attributeCode = 'gift_card_amounts';
         
         $attributeMock = $this->getMockForAbstractClass(AttributeInterface::class);
         $attributeMock->method('getAttributeCode')->willReturn($attributeCode);
