@@ -22,6 +22,7 @@ define([
             }
             // Remove non-numeric except . , - then normalize
             let cleaned = ('' + text).replace(/[^0-9,.-]/g, '');
+            
             // If both , and . exist, assume , is thousands
             if (cleaned.indexOf(',') > -1 && cleaned.indexOf('.') > -1) {
                 cleaned = cleaned.replace(/,/g, '');
@@ -30,6 +31,7 @@ define([
                 cleaned = cleaned.replace(/,/g, '.');
             }
             const n = parseFloat(cleaned);
+
             return isNaN(n) ? NaN : Math.round(n * 100) / 100;
         }
 
@@ -60,7 +62,6 @@ define([
             const central = getCentralSubtotal(), summary = getSummarySubtotal();
             if (!isNaN(central) && !isNaN(summary) && central !== summary) {
                 const $updateBtn = $root.find('.cart.main.actions button.action.update');
-                
                 if ($updateBtn.length) {
                     clicked = true;
                     $updateBtn.trigger('click');
