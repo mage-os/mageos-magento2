@@ -87,7 +87,7 @@ class SimpleProductWithCustomOptionToWishlistTest extends GraphQlAbstract
      *
      * @return void
      */
-    public function testAddSimpleProductWithFieldAndAreaOptions(): void
+    public function testAddSimpleProductWithCustomOptionsToWishlistTest(): void
     {
         $sku = 'simple_co';
         $uids = $this->getEnteredOptionUids($sku, [
