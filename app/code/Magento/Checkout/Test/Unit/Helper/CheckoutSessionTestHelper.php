@@ -16,6 +16,7 @@ class CheckoutSessionTestHelper extends Session
 {
     /** @var array */
     private array $testData = [];
+
     /**
      * Constructor intentionally empty to skip parent dependencies.
      */

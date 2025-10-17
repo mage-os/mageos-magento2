@@ -37,9 +37,7 @@ use Magento\Sales\Model\OrderFactory;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-
 use Psr\Log\LoggerInterface;
-use Magento\Checkout\Test\Unit\Helper\SessionLastOrderIdGetterTestHelper;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyFields)
@@ -321,7 +319,14 @@ class OnepageTest extends TestCase
     {
         $orderIncrementId = 100001;
         $orderId = 1;
-        $sessionStub = new SessionLastOrderIdGetterTestHelper($orderId);
+        $sessionReflection = new \ReflectionClass(Session::class);
+        $sessionStub = $sessionReflection->newInstanceWithoutConstructor();
+        $storage = new \Magento\Framework\DataObject();
+        $storage->setData('last_order_id', $orderId);
+        $parentReflection = new \ReflectionClass(\Magento\Framework\Session\SessionManager::class);
+        $storageProperty = $parentReflection->getProperty('storage');
+        $storageProperty->setAccessible(true);
+        $storageProperty->setValue($sessionStub, $storage);
         $orderMock = $this->createPartialMock(
             Order::class,
             ['load', 'getIncrementId']

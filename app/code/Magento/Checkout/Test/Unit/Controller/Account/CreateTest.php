@@ -8,11 +8,8 @@ declare(strict_types=1);
 namespace Magento\Checkout\Test\Unit\Controller\Account;
 
 use Magento\Checkout\Controller\Account\Create;
-use Magento\Checkout\Model\Session;
-use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\ResultFactory;
-use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Test\Unit\Helper\ResultJsonTestHelper;
@@ -20,6 +17,7 @@ use Magento\Sales\Api\OrderCustomerManagementInterface;
 use Magento\Checkout\Test\Unit\Helper\SessionOrderIdTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Customer\Model\Session as CustomerSession;
 
 /**
  * Shopping cart edit tests
@@ -57,7 +55,7 @@ class CreateTest extends TestCase
     private $resultFactory;
 
     /**
-     * @var ResultInterface|MockObject
+     * @var ResultJsonTestHelper
      */
     private $resultPage;
 
@@ -65,7 +63,7 @@ class CreateTest extends TestCase
     {
         $objectManagerHelper = new ObjectManager($this);
         $this->checkoutSession = new SessionOrderIdTestHelper();
-        $this->customerSession = $this->createMock(\Magento\Customer\Model\Session::class);
+        $this->customerSession = $this->createMock(CustomerSession::class);
         $this->orderCustomerService = $this->createMock(OrderCustomerManagementInterface::class);
         $this->messageManager = $this->createMock(ManagerInterface::class);
 
@@ -111,11 +109,10 @@ class CreateTest extends TestCase
     {
         $this->customerSession->expects($this->once())->method('isLoggedIn')->willReturn(false);
         $this->checkoutSession->setLastOrderId(100);
-        $customer = $this->createMock(CustomerInterface::class);
         $this->orderCustomerService->expects($this->once())
             ->method('create')
             ->with(100)
-            ->willReturn($customer);
+            ->willReturn(new \stdClass());
 
         $resultJson = '{"errors":"false", "message":"A letter with further instructions will be sent to your email."}';
         $this->resultFactory->expects($this->once())

@@ -15,7 +15,6 @@ use Magento\Quote\Model\Quote\Address\Rate;
 use Magento\Store\Model\Store;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Checkout\Test\Unit\Helper\RatePriceTestHelper;
 
 class PriceTest extends TestCase
 {
@@ -58,7 +57,9 @@ class PriceTest extends TestCase
         $shippingPrice = 5;
         $convertedPrice = "$5";
 
-        $shippingRateMock = new RatePriceTestHelper($shippingPrice);
+        $rateReflection = new \ReflectionClass(Rate::class);
+        $shippingRateMock = $rateReflection->newInstanceWithoutConstructor();
+        $shippingRateMock->setData('price', $shippingPrice);
 
         $this->priceCurrency->expects($this->once())
             ->method('convertAndFormat')

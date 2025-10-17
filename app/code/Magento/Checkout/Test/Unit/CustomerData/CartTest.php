@@ -22,7 +22,6 @@ use Magento\Quote\Model\Quote\Item\Option;
 use Magento\Store\Model\System\Store;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Checkout\Test\Unit\Helper\SubtotalValueObjectTestHelper;
 use Magento\Quote\Test\Unit\Helper\QuoteFixtureTestHelper;
 use Magento\Quote\Test\Unit\Helper\QuoteItemTestHelper;
 use Magento\Store\Test\Unit\Helper\StoreWebsiteIdTestHelper;
@@ -111,7 +110,7 @@ class CartTest extends TestCase
         $shortcutButtonsHtml = '<span>Buttons</span>';
         $websiteId = 100;
 
-        $subtotalMock = new SubtotalValueObjectTestHelper($subtotalValue);
+        $subtotalMock = new DataObject(['value' => $subtotalValue]);
         $totals = ['subtotal' => $subtotalMock];
 
         $quoteMock = new QuoteFixtureTestHelper();
@@ -186,7 +185,7 @@ class CartTest extends TestCase
         $productRewrite = [$productId => ['rewrite' => 'product']];
         $itemData = ['item' => 'data'];
         $shortcutButtonsHtml = '<span>Buttons</span>';
-        $subtotalMock = new SubtotalValueObjectTestHelper($subtotalValue);
+        $subtotalMock = new DataObject(['value' => $subtotalValue]);
         $totals = ['subtotal' => $subtotalMock];
 
         $quoteMock = new QuoteFixtureTestHelper();

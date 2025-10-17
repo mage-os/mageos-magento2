@@ -8,12 +8,11 @@ declare(strict_types=1);
 namespace Magento\Checkout\Test\Unit\Plugin;
 
 use Magento\Checkout\Plugin\Model\Quote\ResetQuoteAddresses;
-use Magento\Quote\Api\Data\CartExtensionInterface;
+use Magento\Checkout\Test\Unit\Helper\ExtensionAttributesTestHelper;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Checkout\Test\Unit\Helper\ExtensionAttributesTestHelper;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
@@ -54,7 +53,7 @@ class ResetQuoteAddressesTest extends TestCase
     private $quoteMock;
 
     /**
-     * @var CartExtensionInterface|MockObject
+     * @var ExtensionAttributesTestHelper
      */
     private $extensionAttributesMock;
 

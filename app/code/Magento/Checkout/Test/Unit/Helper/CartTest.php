@@ -10,7 +10,6 @@ namespace Magento\Checkout\Test\Unit\Helper;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Product;
 use Magento\Checkout\Helper\Cart;
-use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\App\Request\Http;
@@ -148,10 +147,10 @@ class CartTest extends TestCase
         $productEntityId = 1;
         $storeId = 1;
         $isRequestSecure = false;
-        $productMock = new ProductTestHelper(
-            $productEntityId,
-            new DataObject(['store_id' => $storeId])
-        );
+        $product = new DataObject([
+            'entity_id' => $productEntityId,
+            'url_data_object' => new DataObject(['store_id' => $storeId])
+        ]);
 
         $this->requestMock->method('getRouteName')->willReturn('checkout');
         $this->requestMock->method('getControllerName')->willReturn('cart');
@@ -168,7 +167,7 @@ class CartTest extends TestCase
         ];
 
         $this->urlBuilderMock->expects($this->once())->method('getUrl')->with('checkout/cart/add', $params);
-        $this->helper->getAddUrl($productMock, ['custom_param' => 'value', 'useUencPlaceholder' => 1]);
+        $this->helper->getAddUrl($product, ['custom_param' => 'value', 'useUencPlaceholder' => 1]);
     }
 
     public function testGetIsVirtualQuote()
@@ -194,10 +193,10 @@ class CartTest extends TestCase
         $productEntityId = 1;
         $storeId = 1;
         $isRequestSecure = false;
-        $productMock = new ProductTestHelper(
-            $productEntityId,
-            new DataObject(['store_id' => $storeId])
-        );
+        $product = new DataObject([
+            'entity_id' => $productEntityId,
+            'url_data_object' => new DataObject(['store_id' => $storeId])
+        ]);
 
         $currentUrl = 'http://www.example.com/';
         $this->urlBuilderMock->method('getCurrentUrl')->willReturn($currentUrl);
@@ -217,7 +216,7 @@ class CartTest extends TestCase
         ];
 
         $this->urlBuilderMock->expects($this->once())->method('getUrl')->with('checkout/cart/add', $params);
-        $this->helper->getAddUrl($productMock, ['custom_param' => 'value']);
+        $this->helper->getAddUrl($product, ['custom_param' => 'value']);
     }
 
     /**
