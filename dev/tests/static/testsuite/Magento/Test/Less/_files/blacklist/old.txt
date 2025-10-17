@@ -69,3 +69,5 @@ app/design/frontend/Magento/luma/Magento_Checkout/web/css/source/module/checkout
 app/design/frontend/Magento/luma/Magento_Checkout/web/css/source/module/checkout/fields/_file-uploader.less
 app/design/frontend/Magento/luma/Magento_Rma/web/css/source/_module.less
 app/design/frontend/Magento/luma/Magento_Sales/web/css/source/_module.less
+app/design/adminhtml/Magento/backend/Magento_GiftRegistry/web/css/source/_module-old.less
+app/design/frontend/Magento/luma/Magento_Rma/web/css/source/_module.less
