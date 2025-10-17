@@ -37,8 +37,7 @@ define([
             // Sum of row totals on the table
             let sum = 0;
             $root.find('#shopping-cart-table .col.subtotal .cart-price').each(function () {
-                const text = $(this).text();
-                const val = parsePrice(text);
+                const text = $(this).text(), val = parsePrice(text);
 
                 if (!isNaN(val)) {
                     sum += val;
@@ -50,6 +49,7 @@ define([
         function getSummarySubtotal() {
             // Summary subtotal in cart totals knockout template
             const text = $('#cart-totals .totals.sub .amount .price').first().text();
+
             return parsePrice(text);
         }
 
