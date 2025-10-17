@@ -94,7 +94,7 @@ QUERY;
     /**
      * Test that custom_attributesV2 gracefully handles multi-dimensional array attributes
      *
-     * This test verifies that attributes with complex nested array structures (like giftcard_amounts)
+     * This test verifies that attributes with complex nested array structures
      * are skipped without causing errors, while other simple attributes are still returned.
      *
      * @return void
