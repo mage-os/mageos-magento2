@@ -101,6 +101,7 @@ class ProductCustomAttributesTest extends TestCase
      * Test resolve with simple scalar attributes
      *
      * @return void
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function testResolveWithScalarAttributes(): void
     {
@@ -223,6 +224,7 @@ class ProductCustomAttributesTest extends TestCase
      * Test resolve with multi-dimensional array attribute (should be flattened and imploded)
      *
      * @return void
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function testResolveWithMultiDimensionalArrayAttribute(): void
     {
