@@ -20,10 +20,10 @@ use Magento\Quote\Model\Quote\Address\Rate;
 use Magento\Quote\Test\Unit\Helper\RateTestHelper;
 use Magento\Quote\Model\Quote\Address\Total;
 use Magento\Quote\Model\Quote\Address\Total\Shipping;
+use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Quote\Model\Quote\Item as QuoteItem;
 use Magento\Store\Model\Store;
-use Magento\Quote\Test\Unit\Helper\TotalShippingTestHelper;
-use Magento\Quote\Test\Unit\Helper\AddressForShippingTestHelper;
+use Magento\Quote\Test\Unit\Helper\AddressShippingInfoTestHelper;
 use Magento\Quote\Test\Unit\Helper\CartItemForShippingTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -105,9 +105,9 @@ class ShippingTest extends TestCase
         );
 
         $this->quote = $this->createMock(Quote::class);
-        $this->total = new TotalShippingTestHelper();
+        $this->total = new Total([], new Json());
         $this->shippingAssignment = $this->createMock(ShippingAssignmentInterface::class);
-        $this->address = $this->getMockBuilder(AddressForShippingTestHelper::class)
+        $this->address = $this->getMockBuilder(AddressShippingInfoTestHelper::class)
             ->onlyMethods(['collectShippingRates', 'getAllShippingRates'])
             ->getMock();
         $this->shipping = $this->createMock(ShippingInterface::class);
@@ -132,7 +132,7 @@ class ShippingTest extends TestCase
         ];
 
         $quoteMock = $this->createMock(Quote::class);
-        $totalMock = new TotalShippingTestHelper();
+        $totalMock = new Total([], new Json());
         $totalMock->setShippingAmount($shippingAmount);
         $totalMock->setShippingDescription($shippingDescription);
 

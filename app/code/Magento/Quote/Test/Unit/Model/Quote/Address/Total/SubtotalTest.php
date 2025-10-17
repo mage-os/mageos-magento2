@@ -123,7 +123,7 @@ class SubtotalTest extends TestCase
             ]
         );
         /** @var Address|MockObject $address */
-        $address = $this->getMockBuilder(\Magento\Quote\Test\Unit\Helper\AddressForShippingTestHelper::class)
+        $address = $this->getMockBuilder(\Magento\Quote\Test\Unit\Helper\AddressShippingInfoTestHelper::class)
             ->onlyMethods(['removeItem', 'getQuote'])
             ->getMock();
 

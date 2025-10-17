@@ -13,7 +13,6 @@ use Magento\Quote\Api\Data\ShippingAssignmentInterface;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address\Total;
 use Magento\Quote\Model\Quote\Address\Total\Grand;
-use Magento\Quote\Test\Unit\Helper\TotalRounderPriceCurrencyTestHelper;
 use Magento\Quote\Test\Unit\Helper\TotalTestHelper;
 use PHPUnit\Framework\MockObject\MockObject as ObjectMock;
 use PHPUnit\Framework\TestCase;
@@ -38,9 +37,7 @@ class GrandTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->priceRounder = $this->getMockBuilder(TotalRounderPriceCurrencyTestHelper::class)
-            ->onlyMethods(['roundPrice'])
-            ->getMock();
+        $this->priceRounder = $this->createPartialMock(\Magento\Directory\Model\PriceCurrency::class, ['roundPrice']);
 
         $helper = new ObjectManager($this);
         $this->model = $helper->getObject(

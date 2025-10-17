@@ -37,9 +37,8 @@ use Magento\Customer\Api\AddressRepositoryInterface;
 use Magento\Quote\Model\Quote\TotalsCollector;
 use Psr\Log\LoggerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\MockObject\RuntimeException;
 use PHPUnit\Framework\TestCase;
-use Magento\Quote\Test\Unit\Helper\CartExtensionShippingAssignmentsTestHelper;
+use Magento\Quote\Test\Unit\Helper\CartExtensionTestHelper;
 
 /**
  * Test for \Magento\Checkout\Model\ShippingInformationManagement.
@@ -225,7 +224,7 @@ class ShippingInformationManagementTest extends TestCase
     private function setShippingAssignmentsMocks($shippingMethod): void
     {
         $this->quoteMock->method('getExtensionAttributes')->willReturn(null);
-        $this->cartExtensionMock = new CartExtensionShippingAssignmentsTestHelper();
+        $this->cartExtensionMock = new CartExtensionTestHelper();
         $this->cartExtensionFactoryMock->method('create')->willReturn($this->cartExtensionMock);
 
         $this->shippingAssignmentMock = $this->createMock(ShippingAssignment::class);
