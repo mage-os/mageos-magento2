@@ -17,7 +17,7 @@ use Magento\Customer\Api\Data\CustomerExtensionInterface;
 class CustomerExtensionTestHelper implements CustomerExtensionInterface
 {
     /**
-     * @var mixed
+     * @var \Magento\Company\Api\Data\CompanyCustomerInterface|null
      */
     private $companyAttributes;
 
@@ -59,7 +59,7 @@ class CustomerExtensionTestHelper implements CustomerExtensionInterface
     /**
      * Get company attributes
      *
-     * @return mixed
+     * @return \Magento\Company\Api\Data\CompanyCustomerInterface|null
      */
     public function getCompanyAttributes()
     {
@@ -69,7 +69,7 @@ class CustomerExtensionTestHelper implements CustomerExtensionInterface
     /**
      * Set company attributes
      *
-     * @param mixed $companyAttributes
+     * @param \Magento\Company\Api\Data\CompanyCustomerInterface|null $companyAttributes
      * @return $this
      */
     public function setCompanyAttributes($companyAttributes)

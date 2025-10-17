@@ -17,14 +17,9 @@ use Magento\Quote\Api\Data\CartExtensionInterface;
 class CartExtensionTestHelper implements CartExtensionInterface
 {
     /**
-     * @var mixed
+     * @var \Magento\NegotiableQuote\Api\Data\NegotiableQuoteInterface|null
      */
     private $negotiableQuote;
-
-    /**
-     * @var mixed
-     */
-    private $shippingAssignments;
 
     /**
      * @var mixed
@@ -32,7 +27,12 @@ class CartExtensionTestHelper implements CartExtensionInterface
     private $couponCodes;
 
     /**
-     * @var mixed
+     * @var array
+     */
+    private $shippingAssignments = [];
+
+    /**
+     * @var int|null
      */
     private $companyId;
 
@@ -54,7 +54,7 @@ class CartExtensionTestHelper implements CartExtensionInterface
     /**
      * Get negotiable quote
      *
-     * @return mixed
+     * @return \Magento\NegotiableQuote\Api\Data\NegotiableQuoteInterface|null
      */
     public function getNegotiableQuote()
     {
@@ -64,7 +64,7 @@ class CartExtensionTestHelper implements CartExtensionInterface
     /**
      * Set negotiable quote
      *
-     * @param mixed $negotiableQuote
+     * @param \Magento\NegotiableQuote\Api\Data\NegotiableQuoteInterface|null $negotiableQuote
      * @return $this
      */
     public function setNegotiableQuote($negotiableQuote)
@@ -76,7 +76,7 @@ class CartExtensionTestHelper implements CartExtensionInterface
     /**
      * Get shipping assignments
      *
-     * @return mixed
+     * @return \Magento\Quote\Api\Data\ShippingAssignmentInterface[]|null
      */
     public function getShippingAssignments()
     {
@@ -86,7 +86,7 @@ class CartExtensionTestHelper implements CartExtensionInterface
     /**
      * Set shipping assignments
      *
-     * @param mixed $shippingAssignments
+     * @param \Magento\Quote\Api\Data\ShippingAssignmentInterface[] $shippingAssignments
      * @return $this
      */
     public function setShippingAssignments($shippingAssignments)
@@ -120,7 +120,7 @@ class CartExtensionTestHelper implements CartExtensionInterface
     /**
      * Get company ID
      *
-     * @return mixed
+     * @return int|null
      */
     public function getCompanyId()
     {
@@ -130,7 +130,7 @@ class CartExtensionTestHelper implements CartExtensionInterface
     /**
      * Set company ID
      *
-     * @param mixed $companyId
+     * @param int|null $companyId
      * @return $this
      */
     public function setCompanyId($companyId)
