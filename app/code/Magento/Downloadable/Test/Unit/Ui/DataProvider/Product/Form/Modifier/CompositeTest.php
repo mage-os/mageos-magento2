@@ -161,10 +161,8 @@ class CompositeTest extends TestCase
      */
     protected function initModifiers()
     {
-        $this->modifierMock = $this->createPartialMock(
-            \Magento\Downloadable\Test\Unit\Helper\ModifierTestHelper::class,
-            ['modifyData', 'modifyMeta']
-        );
+        // Use ModifierInterface directly - no need for helper class
+        $this->modifierMock = $this->createMock(ModifierInterface::class);
         $this->modifierFactoryMock->expects($this->once())
             ->method('create')
             ->with('namespase\SomeClass')

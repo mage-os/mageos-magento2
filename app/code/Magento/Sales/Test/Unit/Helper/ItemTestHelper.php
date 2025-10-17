@@ -12,9 +12,6 @@ use Magento\Sales\Model\Order\Item;
 /**
  * Test helper class for Order Item with custom methods
  *
- * This helper is placed in Magento_Sales module as it's the core module
- * that contains the Order\Item class and is used by many other modules
- * including Bundle, Weee, Tax, SalesGraphQl, etc.
  */
 class ItemTestHelper extends Item
 {

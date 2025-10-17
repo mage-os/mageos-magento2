@@ -13,10 +13,10 @@ use Magento\Catalog\Pricing\Price\BasePrice;
 use Magento\Framework\Pricing\Adjustment\CalculatorInterface;
 use Magento\Framework\Pricing\Price\PriceInterface;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\Pricing\PriceInfo\Base;
 use Magento\Framework\Pricing\PriceInfoInterface;
 use Magento\Framework\Pricing\SaleableInterface;
-use Magento\Framework\Pricing\Test\Unit\Helper\SaleableInterfaceTestHelper;
 use Magento\GroupedProduct\Model\Product\Type\Grouped;
 use Magento\GroupedProduct\Pricing\Price\ConfiguredPrice;
 use Magento\GroupedProduct\Pricing\Price\FinalPrice;
@@ -66,7 +66,7 @@ class ConfiguredPriceTest extends TestCase
 
         $this->priceInfo = $this->createMock(PriceInfoInterface::class);
 
-        $this->saleableItem = new SaleableInterfaceTestHelper();
+        $this->saleableItem = new ProductTestHelper();
         $this->saleableItem->setPriceInfo($this->priceInfo);
 
         $this->calculator = $this->createMock(CalculatorInterface::class);

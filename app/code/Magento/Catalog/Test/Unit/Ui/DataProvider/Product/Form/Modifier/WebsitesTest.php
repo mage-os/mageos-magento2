@@ -17,7 +17,6 @@ use Magento\Store\Model\ResourceModel\Group\Collection;
 use Magento\Store\Model\Store as StoreView;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Model\Website;
-use Magento\Store\Test\Unit\Helper\GroupCollectionTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
@@ -108,9 +107,9 @@ class WebsitesTest extends AbstractModifierTestCase
         $this->storeManagerMock->expects($this->any())
             ->method('isSingleStoreMode')
             ->willReturn(false);
-        $this->groupMock = new GroupCollectionTestHelper();
-        $this->groupMock->setWebsiteId(self::WEBSITE_ID);
-        $this->groupMock->setId(self::GROUP_ID);
+        $this->groupMock = $this->createMock(Group::class);
+        $this->groupMock->method('getWebsiteId')->willReturn(self::WEBSITE_ID);
+        $this->groupMock->method('getId')->willReturn(self::GROUP_ID);
         $this->groupRepositoryMock->expects($this->any())
             ->method('getList')
             ->willReturn([$this->groupMock]);

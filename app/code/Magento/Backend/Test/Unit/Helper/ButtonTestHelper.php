@@ -33,13 +33,10 @@ class ButtonTestHelper extends Button
      *
      * @param string|null $resource
      * @return bool
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function isAllowed($resource = null): bool
     {
-        // Store resource for testing validation if provided
-        if ($resource !== null) {
-            $this->data['last_resource'] = $resource;
-        }
         return $this->data['is_allowed'] ?? true;
     }
 

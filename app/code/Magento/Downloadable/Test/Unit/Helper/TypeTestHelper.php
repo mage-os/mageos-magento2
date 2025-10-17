@@ -54,8 +54,6 @@ class TypeTestHelper extends Type
     }
 
     /**
-     * Override getSamples to return test data instead of using factory
-     *
      * @param \Magento\Catalog\Model\Product $product
      * @return array
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
@@ -66,8 +64,6 @@ class TypeTestHelper extends Type
     }
 
     /**
-     * Override getLinks to return test data instead of using factory
-     *
      * @param \Magento\Catalog\Model\Product $product
      * @return array
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)

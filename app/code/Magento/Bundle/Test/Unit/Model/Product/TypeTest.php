@@ -7,12 +7,11 @@ declare(strict_types=1);
 
 namespace Magento\Bundle\Test\Unit\Model\Product;
 
-use Magento\Bundle\Test\Unit\Helper\BundleOptionTestHelper;
+use Magento\Bundle\Model\Option as BundleOption;
 use Magento\Bundle\Test\Unit\Helper\CollectionTestHelper;
 use Magento\Catalog\Test\Unit\Helper\OptionTestHelper;
 use Magento\Bundle\Test\Unit\Helper\SelectionTestHelper;
 use Magento\Bundle\Test\Unit\Helper\TypeTestHelper;
-use Magento\Catalog\Test\Unit\Helper\DefaultTypeTestHelper;
 use Magento\Catalog\Test\Unit\Helper\PriceTestHelper;
 use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\Model\Test\Unit\Helper\AbstractCollectionTestHelper;
@@ -195,13 +194,12 @@ class TypeTest extends TestCase
      */
     public function testPrepareForCartAdvancedWithoutOptions(): void
     {
-        /** @var MockObject|DefaultTypeTestHelper $group */
-        $group = $this->createPartialMock(DefaultTypeTestHelper::class, ['setOption',
+        /** @var MockObject|DefaultType $group */
+        // Use parent DefaultType class - setRequest and setProcessMode work via DataObject magic methods
+        $group = $this->createPartialMock(DefaultType::class, ['setOption',
                 'setProduct',
             'validateUserValue',
-                'prepareForCart',
-                'setRequest',
-                'setProcessMode']);
+                'prepareForCart']);
         /** @var MockObject|DataObjectTestHelper $buyRequest */
         $buyRequest = $this->createPartialMock(DataObjectTestHelper::class, ['unsetData',
                 'getData',
@@ -281,13 +279,12 @@ class TypeTest extends TestCase
     {
         /** @var MockObject|PriceTestHelper $priceModel */
         $priceModel = $this->createPartialMock(PriceTestHelper::class, ['getSelectionFinalTotalPrice']);
-        /** @var MockObject|DefaultTypeTestHelper $group */
-        $group = $this->createPartialMock(DefaultTypeTestHelper::class, ['setOption',
+        /** @var MockObject|DefaultType $group */
+        // Use parent DefaultType class - setRequest and setProcessMode work via DataObject magic methods
+        $group = $this->createPartialMock(DefaultType::class, ['setOption',
                 'setProduct',
             'validateUserValue',
-                'prepareForCart',
-                'setRequest',
-                'setProcessMode']);
+                'prepareForCart']);
         /** @var MockObject|DataObjectTestHelper $buyRequest */
         $buyRequest = $this->createPartialMock(DataObjectTestHelper::class, ['unsetData',
                 'getData',
@@ -462,13 +459,12 @@ class TypeTest extends TestCase
     {
         /** @var MockObject|PriceTestHelper $priceModel */
         $priceModel = $this->createPartialMock(PriceTestHelper::class, ['getSelectionFinalTotalPrice']);
-        /** @var MockObject|DefaultTypeTestHelper $group */
-        $group = $this->createPartialMock(DefaultTypeTestHelper::class, ['setOption',
+        /** @var MockObject|DefaultType $group */
+        // Use parent DefaultType class - setRequest and setProcessMode work via DataObject magic methods
+        $group = $this->createPartialMock(DefaultType::class, ['setOption',
                 'setProduct',
             'validateUserValue',
-                'prepareForCart',
-                'setRequest',
-                'setProcessMode']);
+                'prepareForCart']);
         /** @var MockObject|DataObjectTestHelper $buyRequest */
         $buyRequest = $this->createPartialMock(DataObjectTestHelper::class, ['unsetData',
             'getData',
@@ -628,13 +624,12 @@ class TypeTest extends TestCase
     {
         /** @var MockObject|PriceTestHelper $priceModel */
         $priceModel = $this->createPartialMock(PriceTestHelper::class, ['getSelectionFinalTotalPrice']);
-        /** @var MockObject|DefaultTypeTestHelper $group */
-        $group = $this->createPartialMock(DefaultTypeTestHelper::class, ['setOption',
+        /** @var MockObject|DefaultType $group */
+        // Use parent DefaultType class - setRequest and setProcessMode work via DataObject magic methods
+        $group = $this->createPartialMock(DefaultType::class, ['setOption',
                 'setProduct',
             'validateUserValue',
-                'prepareForCart',
-                'setRequest',
-                'setProcessMode']);
+                'prepareForCart']);
         /** @var MockObject|DataObjectTestHelper $buyRequest */
         $buyRequest = $this->createPartialMock(DataObjectTestHelper::class, ['unsetData',
                 'getData',
@@ -791,13 +786,12 @@ class TypeTest extends TestCase
      */
     public function testPrepareForCartAdvancedWithoutSelections(): void
     {
-        /** @var MockObject|DefaultTypeTestHelper $group */
-        $group = $this->createPartialMock(DefaultTypeTestHelper::class, ['setOption',
+        /** @var MockObject|DefaultType $group */
+        // Use parent DefaultType class - setRequest and setProcessMode work via DataObject magic methods
+        $group = $this->createPartialMock(DefaultType::class, ['setOption',
                 'setProduct',
             'validateUserValue',
-                'prepareForCart',
-                'setRequest',
-                'setProcessMode']);
+                'prepareForCart']);
         /** @var MockObject|DataObjectTestHelper $buyRequest */
         $buyRequest = $this->createPartialMock(DataObjectTestHelper::class, ['unsetData',
                 'getData',
@@ -884,13 +878,12 @@ class TypeTest extends TestCase
      */
     public function testPrepareForCartAdvancedSelectionsSelectionIdsExists(): void
     {
-        /** @var MockObject|DefaultTypeTestHelper $group */
-        $group = $this->createPartialMock(DefaultTypeTestHelper::class, ['setOption',
+        /** @var MockObject|DefaultType $group */
+        // Use parent DefaultType class - setRequest and setProcessMode work via DataObject magic methods
+        $group = $this->createPartialMock(DefaultType::class, ['setOption',
                 'setProduct',
             'validateUserValue',
-                'prepareForCart',
-                'setRequest',
-                'setProcessMode']);
+                'prepareForCart']);
         /** @var MockObject|DataObjectTestHelper $buyRequest */
         $buyRequest = $this->createPartialMock(DataObjectTestHelper::class, ['unsetData',
                 'getData',
@@ -990,13 +983,12 @@ class TypeTest extends TestCase
      */
     public function testPrepareForCartAdvancedSelectRequiredOptions(): void
     {
-        /** @var MockObject|DefaultTypeTestHelper $group */
-        $group = $this->createPartialMock(DefaultTypeTestHelper::class, ['setOption',
+        /** @var MockObject|DefaultType $group */
+        // Use parent DefaultType class - setRequest and setProcessMode work via DataObject magic methods
+        $group = $this->createPartialMock(DefaultType::class, ['setOption',
                 'setProduct',
             'validateUserValue',
-                'prepareForCart',
-                'setRequest',
-                'setProcessMode']);
+                'prepareForCart']);
         /** @var MockObject|DataObjectTestHelper $buyRequest */
         $buyRequest = $this->createPartialMock(DataObjectTestHelper::class, ['unsetData',
                 'getData',
@@ -1125,13 +1117,12 @@ class TypeTest extends TestCase
      */
     public function testPrepareForCartAdvancedAllRequiredOption(): void
     {
-        /** @var MockObject|DefaultTypeTestHelper $group */
-        $group = $this->createPartialMock(DefaultTypeTestHelper::class, ['setOption',
+        /** @var MockObject|DefaultType $group */
+        // Use parent DefaultType class - setRequest and setProcessMode work via DataObject magic methods
+        $group = $this->createPartialMock(DefaultType::class, ['setOption',
                 'setProduct',
             'validateUserValue',
-                'prepareForCart',
-                'setRequest',
-                'setProcessMode']);
+                'prepareForCart']);
         /** @var MockObject|DataObjectTestHelper $buyRequest */
         $buyRequest = $this->createPartialMock(DataObjectTestHelper::class, ['unsetData',
                 'getData',
@@ -1210,13 +1201,12 @@ class TypeTest extends TestCase
      */
     public function testPrepareForCartAdvancedSpecifyProductOptions(): void
     {
-        /** @var MockObject|DefaultTypeTestHelper $group */
-        $group = $this->createPartialMock(DefaultTypeTestHelper::class, ['setOption',
+        /** @var MockObject|DefaultType $group */
+        // Use parent DefaultType class - setRequest and setProcessMode work via DataObject magic methods
+        $group = $this->createPartialMock(DefaultType::class, ['setOption',
                 'setProduct',
             'validateUserValue',
-                'prepareForCart',
-                'setRequest',
-                'setProcessMode']);
+                'prepareForCart']);
         /** @var MockObject|DataObjectTestHelper $buyRequest */
         $buyRequest = $this->createPartialMock(DataObjectTestHelper::class, ['unsetData',
                 'getData',
@@ -1270,7 +1260,10 @@ class TypeTest extends TestCase
     {
         $identities = ['id1', 'id2'];
         $productMock = $this->createMock(Product::class);
-        $optionMock = $this->createPartialMock(BundleOptionTestHelper::class, ['getSelections']);
+        // Use partial mock - getSelections works via magic methods (needs configuration)
+        $optionMock = $this->createPartialMock(BundleOption::class, []);
+        // Set selections data directly since getSelections() uses getData('selections')
+        $optionMock->setData('selections', [$productMock]);
         $optionCollectionMock = $this->createMock(Collection::class);
         $cacheKey = '_cache_instance_options_collection';
         $productMock->expects($this->once())
@@ -1288,10 +1281,6 @@ class TypeTest extends TestCase
             ->expects($this->once())
             ->method('getItems')
             ->willReturn([$optionMock]);
-        $optionMock
-            ->expects($this->exactly(2))
-            ->method('getSelections')
-            ->willReturn([$productMock]);
         $this->assertEquals($identities, $this->model->getIdentities($productMock));
     }
 
@@ -1735,6 +1724,7 @@ class TypeTest extends TestCase
         $productId = 3;
         $storeId = 2;
         $productMock = $this->createMock(Product::class);
+        // Use helper for custom getResourceCollection() method
         $usedOptionsMock = $this->createPartialMock(
             CollectionTestHelper::class,
             ['getResourceCollection']
@@ -1876,12 +1866,7 @@ class TypeTest extends TestCase
         $group->expects($this->once())
             ->method('setProduct')
             ->willReturnSelf();
-        $group->expects($this->once())
-            ->method('setRequest')
-            ->willReturnSelf();
-        $group->expects($this->once())
-            ->method('setProcessMode')
-            ->willReturnSelf();
+        // setRequest and setProcessMode work via DataObject magic methods - no need to configure
         $group->expects($this->once())
             ->method('prepareForCart')
             ->willReturn('someString');

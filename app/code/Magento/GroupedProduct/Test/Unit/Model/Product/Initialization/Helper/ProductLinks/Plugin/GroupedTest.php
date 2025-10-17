@@ -107,7 +107,7 @@ class GroupedTest extends TestCase
             ProductTestHelper::class,
             ['__wakeup', 'getTypeId', 'getSku', 'getProductLinks', 'setProductLinks', 'getGroupedReadonly']
         );
-        $extensionAttributes = new \Magento\Catalog\Test\Unit\Helper\ProductLinkExtensionInterfaceTestHelper();
+        $extensionAttributes = new \Magento\Catalog\Api\Data\ProductLinkExtension();
         $linkedProduct->expects($this->once())->method('getTypeId')->willReturn(Grouped::TYPE_CODE);
         $linkedProduct->expects($this->once())->method('getSku')->willReturn('sku');
         $productLink = $this->createMock(ProductLinkInterface::class);

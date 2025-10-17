@@ -111,7 +111,7 @@ class GroupedTest extends AbstractModifierTestCase
         $this->linkedProductMock->method('getName')->willReturn(self::LINKED_PRODUCT_NAME);
         $this->linkedProductMock->method('getPrice')->willReturn(self::LINKED_PRODUCT_PRICE);
         $this->linkMock = $this->createMock(ProductLinkInterface::class);
-        $this->linkExtensionMock = new \Magento\Catalog\Test\Unit\Helper\ProductLinkExtensionInterfaceTestHelper();
+        $this->linkExtensionMock = new \Magento\Catalog\Api\Data\ProductLinkExtension();
         $this->linkExtensionMock->setQty(self::LINKED_PRODUCT_QTY);
         $this->linkMock->method('getExtensionAttributes')->willReturn($this->linkExtensionMock);
         $this->linkMock->method('getPosition')->willReturn(self::LINKED_PRODUCT_POSITION);

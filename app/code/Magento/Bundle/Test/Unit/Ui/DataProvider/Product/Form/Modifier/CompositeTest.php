@@ -9,7 +9,6 @@ namespace Magento\Bundle\Test\Unit\Ui\DataProvider\Product\Form\Modifier;
 
 use Exception;
 use Magento\Bundle\Model\Product\Type;
-use Magento\Bundle\Test\Unit\Helper\ModifierTestHelper;
 use Magento\Bundle\Ui\DataProvider\Product\Form\Modifier\Composite;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\Locator\LocatorInterface;
@@ -163,7 +162,8 @@ class CompositeTest extends TestCase
             'Type "SomeClass" is not an instance of Magento\\Ui\\DataProvider\\Modifier\\ModifierInterface'
         );
 
-        $modifierMock = new ModifierTestHelper();
+        // Use stdClass - not an instance of ModifierInterface, will trigger exception
+        $modifierMock = new \stdClass();
 
         $this->productMock->expects($this->once())
             ->method('getTypeId')

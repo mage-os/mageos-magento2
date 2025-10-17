@@ -10,7 +10,6 @@ namespace Magento\Catalog\Test\Unit\Ui\DataProvider\Product\Form\Modifier;
 use Magento\Authorization\Model\Role;
 use Magento\Backend\Model\Auth\Session;
 use Magento\Catalog\Model\ResourceModel\Category\Collection as CategoryCollection;
-use Magento\Catalog\Test\Unit\Helper\SessionTestHelper;
 use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory as CategoryCollectionFactory;
 use Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\Categories;
 use Magento\Framework\App\CacheInterface;
@@ -58,7 +57,7 @@ class CategoriesTest extends AbstractModifierTestCase
     private $authorizationMock;
 
     /**
-     * @var SessionTestHelper
+     * @var Session
      */
     private $sessionMock;
 
@@ -74,7 +73,11 @@ class CategoriesTest extends AbstractModifierTestCase
         $this->storeMock = $this->createMock(Store::class);
         $this->categoryCollectionMock = $this->createMock(CategoryCollection::class);
         $this->authorizationMock = $this->createMock(AuthorizationInterface::class);
-        $this->sessionMock = new SessionTestHelper();
+        $this->sessionMock = $this->createPartialMock(Session::class, []);
+        $reflection = new \ReflectionClass($this->sessionMock);
+        $storageProperty = $reflection->getProperty('storage');
+        $storageProperty->setAccessible(true);
+        $storageProperty->setValue($this->sessionMock, new \Magento\Framework\DataObject());
         $this->categoryCollectionFactoryMock->expects($this->any())
             ->method('create')
             ->willReturn($this->categoryCollectionMock);
@@ -234,7 +237,11 @@ class CategoriesTest extends AbstractModifierTestCase
             ->method('getRole')
             ->willReturn($roleAclUser);
 
-        $this->sessionMock = new SessionTestHelper();
+        $this->sessionMock = $this->createPartialMock(Session::class, []);
+        $reflection = new \ReflectionClass($this->sessionMock);
+        $storageProperty = $reflection->getProperty('storage');
+        $storageProperty->setAccessible(true);
+        $storageProperty->setValue($this->sessionMock, new \Magento\Framework\DataObject());
 
         $this->sessionMock->setUser($userAclUser);
 

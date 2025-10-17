@@ -67,7 +67,7 @@ class BundlePriceTest extends TestCase
         $productRender = $this->createMock(ProductRenderInterface::class);
         $amount = $this->createMock(AmountInterface::class);
         $minAmount = $this->createMock(AmountInterface::class);
-        // Use PriceInfoTestHelper for testability
+        // Use PriceInfoTestHelper - required for getPrice() method that doesn't exist in parent
         $priceInfo = new PriceInfoTestHelper();
 
         $productMock->expects($this->once())

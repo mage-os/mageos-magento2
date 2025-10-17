@@ -12,7 +12,6 @@ use Magento\Framework\Model\AbstractModel;
 /**
  * Test helper for Magento\Framework\Model\AbstractModel
  *
- * Extends the AbstractModel class to add custom methods for testing
  */
 class AbstractModelTestHelper extends AbstractModel
 {
@@ -48,28 +47,6 @@ class AbstractModelTestHelper extends AbstractModel
     public function setAttributeId($attributeId): self
     {
         $this->data['attribute_id'] = $attributeId;
-        return $this;
-    }
-
-    /**
-     * Override getId to work without constructor
-     *
-     * @return mixed
-     */
-    public function getId()
-    {
-        return $this->data['id'] ?? null;
-    }
-
-    /**
-     * Set ID for testing
-     *
-     * @param mixed $id
-     * @return self
-     */
-    public function setId($id): self
-    {
-        $this->data['id'] = $id;
         return $this;
     }
 }

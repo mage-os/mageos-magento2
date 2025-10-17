@@ -13,11 +13,11 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\App\ViewInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
-use Magento\Bundle\Test\Unit\Helper\SearchTestHelper;
 use Magento\Framework\App\Test\Unit\Helper\ResponseTestHelper;
 use Magento\Framework\View\LayoutInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Bundle\Block\Adminhtml\Catalog\Product\Edit\Tab\Bundle\Option\Search as SearchBlock;
 
 class SearchTest extends TestCase
 {
@@ -75,16 +75,17 @@ class SearchTest extends TestCase
     {
         $layout = $this->createMock(LayoutInterface::class);
 
-        /** @var SearchTestHelper $block */
-        $block = new SearchTestHelper();
+        // Use partial mock - only mock toHtml(), all setters work via magic methods (DataObject)
+        $block = $this->createPartialMock(SearchBlock::class, ['toHtml']);
+        $block->method('toHtml')->willReturn('');
 
         $this->response->setBody('');
         $this->request->expects($this->once())->method('getParam')->with('index')->willReturn('index');
         $this->view->expects($this->once())->method('getLayout')->willReturn($layout);
         $layout->expects($this->once())->method('createBlock')->willReturn($block);
+        // These setters work via DataObject's __call magic method
         $block->setIndex('index');
         $block->setFirstShow(true);
-        $block->setHtmlResult('');
 
         $this->assertEquals($this->response, $this->controller->execute());
     }

@@ -13,13 +13,10 @@ use Magento\Catalog\Api\ProductAttributeRepositoryInterface;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute as EavAttribute;
 use Magento\Catalog\Model\ResourceModel\Eav\AttributeFactory as EavAttributeFactory;
-use Magento\Catalog\Test\Unit\Helper\AttributeTestHelper;
 use Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\Eav;
 use Magento\Eav\Api\Data\AttributeGroupInterface;
 use Magento\Eav\Model\Config;
 use Magento\Eav\Model\Entity\Attribute\Group;
-use Magento\Eav\Test\Unit\Helper\AttributeGroupTestHelper;
-use Magento\Eav\Test\Unit\Helper\GroupTestHelper;
 use Magento\Eav\Model\Entity\Attribute\Source\SourceInterface;
 use Magento\Eav\Model\Entity\Type as EntityType;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection as AttributeCollection;
@@ -30,7 +27,6 @@ use Magento\Framework\Api\AbstractSimpleObject;
 use Magento\Framework\Api\AttributeInterface;
 use Magento\Framework\Api\SearchCriteria;
 use Magento\Framework\Api\SearchCriteriaBuilder;
-use Magento\Framework\Api\Test\Unit\Helper\SearchCriteriaTestHelper;
 use Magento\Framework\Api\SearchResultsInterface;
 use Magento\Framework\Api\SortOrderBuilder;
 use Magento\Framework\App\RequestInterface;
@@ -81,7 +77,7 @@ class EavTest extends AbstractModifierTestCase
     private $groupCollectionMock;
 
     /**
-     * @var GroupTestHelper
+     * @var Group|MockObject
      */
     private $groupMock;
 
@@ -131,9 +127,14 @@ class EavTest extends AbstractModifierTestCase
     private $attributeGroupRepositoryMock;
 
     /**
-     * @var SearchCriteriaTestHelper
+     * @var SearchCriteria|MockObject
      */
     private $searchCriteriaMock;
+    
+    /**
+     * @var SearchResultsInterface|MockObject
+     */
+    private $attributeGroupSearchResultsMock;
 
     /**
      * @var SortOrderBuilder|MockObject
@@ -146,7 +147,7 @@ class EavTest extends AbstractModifierTestCase
     private $attributeRepositoryMock;
 
     /**
-     * @var AttributeGroupTestHelper
+     * @var Group|MockObject
      */
     private $attributeGroupMock;
 
@@ -156,7 +157,7 @@ class EavTest extends AbstractModifierTestCase
     private $searchResultsMock;
 
     /**
-     * @var AttributeTestHelper
+     * @var Attribute
      */
     private $eavAttributeMock;
 
@@ -176,7 +177,7 @@ class EavTest extends AbstractModifierTestCase
     protected $currencyLocaleMock;
 
     /**
-     * @var AttributeTestHelper
+     * @var Attribute
      */
     protected $productAttributeMock;
 
@@ -221,7 +222,7 @@ class EavTest extends AbstractModifierTestCase
         );
         $this->groupCollectionMock = $this->createMock(GroupCollection::class);
         $this->attributeMock = $this->createMock(EavAttribute::class);
-        $this->groupMock = new GroupTestHelper();
+        $this->groupMock = $this->createMock(Group::class);
         $this->entityTypeMock = $this->createMock(EntityType::class);
         $this->attributeCollectionFactoryMock = $this->createPartialMock(
             AttributeCollectionFactory::class,
@@ -233,13 +234,15 @@ class EavTest extends AbstractModifierTestCase
         $this->metaPropertiesMapperMock = $this->createMock(MetaPropertiesMapper::class);
         $this->searchCriteriaBuilderMock = $this->createMock(SearchCriteriaBuilder::class);
         $this->attributeGroupRepositoryMock = $this->createMock(ProductAttributeGroupRepositoryInterface::class);
-        $this->attributeGroupMock = new AttributeGroupTestHelper();
+        $this->attributeGroupMock = $this->createMock(Group::class);
         $this->attributeRepositoryMock = $this->createMock(ProductAttributeRepositoryInterface::class);
-        $this->searchCriteriaMock = new SearchCriteriaTestHelper();
+        $this->searchCriteriaMock = $this->createMock(SearchCriteria::class);
+        $this->attributeGroupSearchResultsMock = $this->createMock(SearchResultsInterface::class);
         $this->sortOrderBuilderMock = $this->createMock(SortOrderBuilder::class);
         $this->searchResultsMock = $this->createMock(SearchResultsInterface::class);
-        $this->eavAttributeMock = new AttributeTestHelper();
-        $this->productAttributeMock = new AttributeTestHelper();
+        // Use parent Attribute class - all setters work via magic methods (DataObject)
+        $this->eavAttributeMock = $this->createPartialMock(Attribute::class, []);
+        $this->productAttributeMock = $this->createPartialMock(Attribute::class, []);
         $this->arrayManagerMock = $this->createMock(ArrayManager::class);
         $this->eavAttributeFactoryMock = $this->createPartialMock(
             EavAttributeFactory::class,
@@ -340,9 +343,10 @@ class EavTest extends AbstractModifierTestCase
             ->willReturnSelf();
         $this->searchCriteriaBuilderMock->expects($this->any())->method('create')
             ->willReturn($this->searchCriteriaMock);
+        $this->attributeGroupSearchResultsMock->method('getItems')
+            ->willReturn([$this->attributeGroupMock]);
         $this->attributeGroupRepositoryMock->expects($this->any())->method('getList')
-            ->willReturn($this->searchCriteriaMock);
-        $this->searchCriteriaMock->setItems([$this->attributeGroupMock]);
+            ->willReturn($this->attributeGroupSearchResultsMock);
         $this->sortOrderBuilderMock->expects($this->once())->method('setField')
             ->willReturnSelf();
         $this->sortOrderBuilderMock->expects($this->once())->method('setAscendingDirection')

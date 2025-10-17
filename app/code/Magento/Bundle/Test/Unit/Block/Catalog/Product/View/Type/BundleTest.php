@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace Magento\Bundle\Test\Unit\Block\Catalog\Product\View\Type;
 
-use Magento\Bundle\Test\Unit\Helper\BundleOptionTestHelper;
 use Magento\Catalog\Test\Unit\Helper\BasePriceTestHelper;
 use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\Pricing\Test\Unit\Helper\AmountTestHelper;
@@ -428,7 +427,8 @@ class BundleTest extends TestCase
         $type = 'checkbox',
         $isRequired = false
     ) {
-        $option = new BundleOptionTestHelper();
+        // Use partial mock - all setters work via magic methods
+        $option = $this->createPartialMock(Option::class, []);
         $option->setId($id);
         $option->setTitle($title);
         $option->setSelections($selections);

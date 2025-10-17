@@ -13,11 +13,9 @@ use Magento\Bundle\Api\Data\LinkInterfaceFactory;
 use Magento\Bundle\Model\LinkManagement;
 use Magento\Bundle\Model\Option;
 use Magento\Bundle\Model\Product\Type as BundleProductType;
+use Magento\Bundle\Model\Link;
 use Magento\Bundle\Model\ResourceModel\Bundle;
 use Magento\Bundle\Model\ResourceModel\BundleFactory;
-use Magento\Bundle\Test\Unit\Helper\BundleOptionTestHelper;
-use Magento\Bundle\Test\Unit\Helper\LinkTestHelper;
-use Magento\Bundle\Test\Unit\Helper\SelectionTestHelper;
 use Magento\Bundle\Model\ResourceModel\Option\Collection as OptionCollection;
 use Magento\Bundle\Model\ResourceModel\Option\CollectionFactory as OptionCollectionFactory;
 use Magento\Bundle\Model\ResourceModel\Selection\Collection as SelectionCollection;
@@ -155,7 +153,7 @@ class LinkManagementTest extends TestCase
                 'setStoreFilter',
                 'getSelectionsCollection',
                 'getOptionsIds']);
-        $this->option = new BundleOptionTestHelper();
+        $this->option = $this->createPartialMock(Option::class, []);
         $this->optionCollection = $this->createPartialMock(OptionCollection::class, ['appendSelections']);
         $this->selectionCollection = $this->createMock(SelectionCollection::class);
         $this->product = new ProductTestHelper();
@@ -438,7 +436,7 @@ class LinkManagementTest extends TestCase
     {
         $this->expectException(CouldNotSaveException::class);
 
-        $productLink = new LinkTestHelper();
+        $productLink = $this->createPartialMock(Link::class, []);
         $productLink->setSku('linked_product_sku');
         $productLink->setOptionId(1);
         $productLink->setSelectionId(1);
@@ -505,7 +503,7 @@ class LinkManagementTest extends TestCase
     {
         $this->expectException(CouldNotSaveException::class);
 
-        $productLink = new LinkTestHelper();
+        $productLink = $this->createPartialMock(Link::class, []);
         $productLink->setSku('linked_product_sku');
         $productLink->setOptionId(1);
         $productLink->setSelectionId(1);
@@ -579,7 +577,7 @@ class LinkManagementTest extends TestCase
      */
     public function testAddChild(): void
     {
-        $productLink = new LinkTestHelper();
+        $productLink = $this->createPartialMock(Link::class, []);
         $productLink->setSku('linked_product_sku');
         $productLink->setOptionId(1);
         $productLink->setSelectionId(1);
@@ -654,7 +652,7 @@ class LinkManagementTest extends TestCase
         $parentProductId = 32;
         $bundleProductSku = 'bundleProductSku';
 
-        $productLink = new LinkTestHelper();
+        $productLink = $this->createPartialMock(Link::class, []);
         $productLink->setSku('linked_product_sku');
         $productLink->setId($id);
         $productLink->setOptionId($optionId);
@@ -708,7 +706,7 @@ class LinkManagementTest extends TestCase
         $linkProductId = 45;
         $parentProductId = 32;
 
-        $productLink = new LinkTestHelper();
+        $productLink = $this->createPartialMock(Link::class, []);
         $productLink->setSku('linked_product_sku');
         $productLink->setId($id);
         $productLink->setSelectionId(1);
@@ -921,7 +919,7 @@ class LinkManagementTest extends TestCase
 
         $this->getRemoveOptions();
 
-        $selection = new SelectionTestHelper();
+        $selection = $this->createPartialMock(Selection::class, []);
         $selection->setSku($childSku);
         $selection->setOptionId($optionId);
         $selection->setSelectionId(55);
@@ -968,7 +966,7 @@ class LinkManagementTest extends TestCase
 
         $this->getRemoveOptions();
 
-        $selection = new SelectionTestHelper();
+        $selection = $this->createPartialMock(Selection::class, []);
         $selection->setSku($childSku);
         $selection->setOptionId($optionId + 1);
         $selection->setSelectionId(55);
@@ -994,7 +992,7 @@ class LinkManagementTest extends TestCase
 
         $this->getRemoveOptions();
 
-        $selection = new SelectionTestHelper();
+        $selection = $this->createPartialMock(Selection::class, []);
         $selection->setSku($childSku . '_invalid');
         $selection->setOptionId($optionId);
         $selection->setSelectionId(55);

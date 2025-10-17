@@ -16,6 +16,7 @@ use Magento\ConfigurableProduct\Helper\Product\Options\Loader;
 use Magento\ConfigurableProduct\Model\OptionRepository;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable\Attribute;
+use Magento\ConfigurableProduct\Model\Product\Type\Configurable\OptionValue;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -347,9 +348,10 @@ class OptionRepositoryTest extends TestCase
     {
         $this->expectException(InputException::class);
         $this->expectExceptionMessage($msg);
-        $optionValueMock = new \Magento\ConfigurableProduct\Test\Unit\Helper\OptionValueTestHelper();
+        $optionValueMock = $this->createPartialMock(OptionValue::class, []);
         $optionValuesMock = [];
         if (!empty($optionValues)) {
+            // These methods work via parent's __call() magic methods
             $optionValueMock->setValueIndex($optionValues['v']);
             $optionValueMock->setPricingValue($optionValues['p']);
             $optionValueMock->setIsPercent($optionValues['r']);

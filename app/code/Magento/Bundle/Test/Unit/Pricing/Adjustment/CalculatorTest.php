@@ -10,7 +10,6 @@ namespace Magento\Bundle\Test\Unit\Pricing\Adjustment;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Bundle\Model\Option;
 use Magento\Bundle\Model\Product\Price as ProductPrice;
-use Magento\Bundle\Test\Unit\Helper\BundleOptionTestHelper;
 use Magento\Bundle\Pricing\Adjustment\Calculator;
 use Magento\Bundle\Pricing\Adjustment\SelectionPriceListProviderInterface;
 use Magento\Bundle\Pricing\Price;
@@ -132,7 +131,8 @@ class CalculatorTest extends TestCase
 
     public function testEmptySelectionPriceList()
     {
-        $option = new BundleOptionTestHelper();
+        // Use partial mock - setSelections works via magic methods
+        $option = $this->createPartialMock(Option::class, []);
         $option->setSelections([]);
         $bundleProduct = $this->createMock(Product::class);
         $this->assertSame([], $this->model->createSelectionPriceList($option, $bundleProduct));

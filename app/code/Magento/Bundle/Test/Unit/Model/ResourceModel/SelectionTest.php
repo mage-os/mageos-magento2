@@ -47,7 +47,8 @@ class SelectionTest extends TestCase
 
     public function testSaveSelectionPrice()
     {
-        $item = new \Magento\Bundle\Test\Unit\Helper\SelectionTestHelper();
+        // Use parent Selection class - all setters work via magic methods (DataObject)
+        $item = $this->createPartialMock(\Magento\Bundle\Model\Selection::class, []);
         $values = [
             'selection_id' => 1,
             'website_id' => 1,

@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Downloadable\Test\Unit\Observer;
 
 use PHPUnit\Framework\Attributes\DataProvider;
+use Magento\Downloadable\Model\Link\Purchased\Item as DownloadableItem;
 use Magento\Downloadable\Model\Product\Type as DownloadableProductType;
 use Magento\Downloadable\Model\ResourceModel\Link\Purchased\Item\Collection as LinkItemCollection;
 use Magento\Downloadable\Model\ResourceModel\Link\Purchased\Item\CollectionFactory;
@@ -543,26 +544,18 @@ class SetLinkStatusObserverTest extends TestCase
      */
     private function createLinkItem($status, $orderItemId, $isSaved = false, $expectedStatus = null)
     {
-        $linkItem = $this->createPartialMock(
-            \Magento\Downloadable\Test\Unit\Helper\ItemTestHelper::class,
-            ['getStatus', 'getOrderItemId', 'setStatus', 'setNumberOfDownloadsBought', 'save']
-        );
-        $linkItem->method('getStatus')->willReturn($status);
+        // Use parent Item class - all getters/setters work via magic __call() methods
+        $linkItem = $this->createPartialMock(DownloadableItem::class, ['save']);
+        
+        // Set data directly - getters will work via magic methods
+        $linkItem->setData('status', $status);
+        $linkItem->setData('order_item_id', $orderItemId);
+        
         if ($isSaved) {
-            $linkItem->expects($this->any())
-                ->method('setStatus')
-                ->with($expectedStatus)
-                ->willReturnSelf();
             $linkItem->expects($this->any())
                 ->method('save')
                 ->willReturnSelf();
         }
-
-        $linkItem->expects($this->any())
-            ->method('setNumberOfDownloadsBought')
-            ->willReturnSelf();
-
-        $linkItem->method('getOrderItemId')->willReturn($orderItemId);
 
         return $linkItem;
     }

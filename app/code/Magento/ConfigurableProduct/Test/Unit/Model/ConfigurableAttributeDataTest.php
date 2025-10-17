@@ -10,7 +10,7 @@ namespace Magento\ConfigurableProduct\Test\Unit\Model;
 use Magento\Catalog\Model\Product;
 use Magento\ConfigurableProduct\Model\ConfigurableAttributeData;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
-use Magento\ConfigurableProduct\Test\Unit\Helper\AttributeTestHelper;
+use Magento\ConfigurableProduct\Model\Product\Type\Configurable\Attribute as ConfigurableAttribute;
 use Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable\Attribute;
 use Magento\Framework\DataObject;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -87,12 +87,11 @@ class ConfigurableAttributeDataTest extends TestCase
         ];
 
         $productAttributeMock = new \Magento\Eav\Test\Unit\Helper\AttributeTestHelper();
-        // Configure AttributeTestHelper with expected values
         $productAttributeMock->setId($attributeId);
         $productAttributeMock->setAttributeCode($expected['attributes'][$attributeId]['code']);
 
-        $attributeMock = new AttributeTestHelper($productAttributeMock);
-        // Configure helper with expected values
+        $attributeMock = $this->createPartialMock(ConfigurableAttribute::class, []);
+        $attributeMock->setProductAttribute($productAttributeMock);
         $attributeMock->setPosition($position);
         $attributeMock->setAttributeId($attributeId);
         $attributeMock->setOptions($attributeOptions);

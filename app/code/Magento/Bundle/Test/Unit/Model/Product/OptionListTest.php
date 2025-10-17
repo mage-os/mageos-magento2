@@ -21,7 +21,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Catalog\Test\Unit\Helper\OptionTestHelper;
-use Magento\Bundle\Test\Unit\Helper\OptionInterfaceTestHelper;
+use Magento\Bundle\Test\Unit\Helper\OptionTestHelper as BundleOptionTestHelper;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -123,7 +123,7 @@ class OptionListTest extends TestCase
             ->method('getItems')
             ->with($productMock, $optionId)
             ->willReturn([$linkMock]);
-        $newOptionMock = new OptionInterfaceTestHelper();
+        $newOptionMock = new BundleOptionTestHelper();
         $this->dataObjectHelperMock->expects($this->once())
             ->method('populateWithArray')
             ->with($newOptionMock, $optionData, OptionInterface::class)

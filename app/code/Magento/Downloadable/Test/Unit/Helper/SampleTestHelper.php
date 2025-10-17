@@ -16,7 +16,7 @@ use Magento\Downloadable\Model\Sample;
 class SampleTestHelper extends Sample
 {
     /**
-     * @var array Internal data storage for custom methods
+     * @var array Internal data storage
      */
     private $data = [];
 
@@ -29,7 +29,7 @@ class SampleTestHelper extends Sample
     }
 
     /**
-     * Get product ID (magic method in parent - making it real for mocking)
+     * Get product ID
      *
      * @return int|null
      */
@@ -39,7 +39,7 @@ class SampleTestHelper extends Sample
     }
 
     /**
-     * Get store title (custom method not in parent)
+     * Get store title
      *
      * @return string|null
      */
@@ -49,7 +49,7 @@ class SampleTestHelper extends Sample
     }
 
     /**
-     * Set product ID (custom method not in parent)
+     * Set product ID
      *
      * @param int $productId
      * @return self
@@ -61,7 +61,7 @@ class SampleTestHelper extends Sample
     }
 
     /**
-     * Set store ID (custom method not in parent)
+     * Set store ID
      *
      * @param int $storeId
      * @return self
@@ -73,7 +73,7 @@ class SampleTestHelper extends Sample
     }
 
     /**
-     * Set product website IDs (custom method not in parent)
+     * Set product website IDs
      *
      * @param array $websiteIds
      * @return self
@@ -85,7 +85,7 @@ class SampleTestHelper extends Sample
     }
 
     /**
-     * Set number of downloads (custom method not in parent)
+     * Set number of downloads
      *
      * @param int $downloads
      * @return self
@@ -97,7 +97,7 @@ class SampleTestHelper extends Sample
     }
 
     /**
-     * Set link file (custom method not in parent)
+     * Set link file
      *
      * @param string $file
      * @return self

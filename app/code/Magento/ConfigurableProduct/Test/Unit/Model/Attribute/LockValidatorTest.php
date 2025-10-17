@@ -15,11 +15,10 @@ use Magento\Framework\DB\Select;
 use Magento\Framework\EntityManager\EntityMetadata;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Model\AbstractModel;
+use Magento\Framework\Model\Test\Unit\Helper\AbstractModelTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Framework\Model\Test\Unit\Helper\AbstractModelTestHelper;
 
 class LockValidatorTest extends TestCase
 {

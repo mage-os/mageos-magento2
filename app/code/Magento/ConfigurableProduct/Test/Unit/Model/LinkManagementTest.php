@@ -17,10 +17,10 @@ use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Catalog\Model\ResourceModel\Eav\AttributeFactory;
 use Magento\ConfigurableProduct\Api\Data\OptionInterface;
 use Magento\ConfigurableProduct\Helper\Product\Options\Factory;
-use Magento\ConfigurableProduct\Test\Unit\Helper\AttributeTestHelper;
 use Magento\Catalog\Test\Unit\Helper\ProductExtensionTestHelper;
 use Magento\ConfigurableProduct\Model\LinkManagement;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
+use Magento\ConfigurableProduct\Model\Product\Type\Configurable\Attribute as ConfigurableAttribute;
 use Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable\Attribute\Collection;
 use Magento\Eav\Api\Data\AttributeInterface;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
@@ -171,7 +171,10 @@ class LinkManagementTest extends TestCase
         $simple = $this->createPartialMock(Product::class, ['getId', 'getData']);
         $extensionAttributesMock = new \Magento\Catalog\Test\Unit\Helper\ProductExtensionTestHelper();
         $productAttributeMock = $this->createPartialMock(AbstractAttribute::class, ['getAttributeCode']);
-        $optionMock = new AttributeTestHelper($productAttributeMock);
+        $optionMock = $this->createPartialMock(ConfigurableAttribute::class, []);
+        $optionMock->setProductAttribute($productAttributeMock);
+        $optionMock->setAttributeId(1);
+        $optionMock->setPosition(1);
         $optionsFactoryMock = $this->createPartialMock(Factory::class, ['create']);
         $reflectionClass = new \ReflectionClass(LinkManagement::class);
         $optionsFactoryReflectionProperty = $reflectionClass->getProperty('optionsFactory');
@@ -207,10 +210,8 @@ class LinkManagementTest extends TestCase
 
         $configurable->method('getExtensionAttributes')->willReturn($extensionAttributesMock);
         $extensionAttributesMock->setConfigurableProductOptions([$optionMock]);
-        // Anonymous class already returns null for getProductAttribute()
         $productAttributeMock->method('getAttributeCode')->willReturn('color');
         $simple->method('getData')->willReturn('color');
-        // Anonymous class already returns 10 for getAttributeId() and 1 for getPosition()
 
         $optionsFactoryMock->method('create')->willReturn([$optionMock]);
         $attributeFactoryMock->method('create')->willReturn($attributeMock);

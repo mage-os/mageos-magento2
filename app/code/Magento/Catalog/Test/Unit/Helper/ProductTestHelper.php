@@ -451,116 +451,6 @@ class ProductTestHelper extends Product
     }
 
     /**
-     * Custom getShipmentType method for Bundle testing
-     *
-     * @return mixed
-     */
-    public function getShipmentType()
-    {
-        return $this->data['shipment_type'] ?? null;
-    }
-
-    /**
-     * Set shipment type for testing
-     *
-     * @param mixed $shipmentType
-     * @return self
-     */
-    public function setShipmentType($shipmentType): self
-    {
-        $this->data['shipment_type'] = $shipmentType;
-        return $this;
-    }
-
-    /**
-     * Custom getSkuType method for Bundle testing
-     *
-     * @return mixed
-     */
-    public function getSkuType()
-    {
-        return $this->data['sku_type'] ?? null;
-    }
-
-    /**
-     * Set SKU type for testing
-     *
-     * @param mixed $skuType
-     * @return self
-     */
-    public function setSkuType($skuType): self
-    {
-        $this->data['sku_type'] = $skuType;
-        return $this;
-    }
-
-    /**
-     * Custom getPriceView method for Bundle testing
-     *
-     * @return mixed
-     */
-    public function getPriceView()
-    {
-        return $this->data['price_view'] ?? null;
-    }
-
-    /**
-     * Set price view for testing
-     *
-     * @param mixed $priceView
-     * @return self
-     */
-    public function setPriceView($priceView): self
-    {
-        $this->data['price_view'] = $priceView;
-        return $this;
-    }
-
-    /**
-     * Custom getWeightType method for Bundle testing
-     *
-     * @return mixed
-     */
-    public function getWeightType()
-    {
-        return $this->data['weight_type'] ?? null;
-    }
-
-    /**
-     * Set weight type for testing
-     *
-     * @param mixed $weightType
-     * @return self
-     */
-    public function setWeightType($weightType): self
-    {
-        $this->data['weight_type'] = $weightType;
-        return $this;
-    }
-
-    /**
-     * Custom getSelectionsCollection method for Bundle testing
-     *
-     * @return mixed
-     */
-    public function getSelectionsCollection()
-    {
-        return $this->data['selections_collection'] ?? null;
-    }
-
-    /**
-     * Set selections collection for testing
-     *
-     * @param mixed $collection
-     * @return self
-     */
-    public function setSelectionsCollection($collection): self
-    {
-        $this->data['selections_collection'] = $collection;
-        return $this;
-    }
-
-    /**
      * Custom getOptionId method for Bundle testing
      *
      * @return mixed
@@ -579,29 +469,6 @@ class ProductTestHelper extends Product
     public function setOptionId(?int $optionId): self
     {
         $this->data['option_id'] = $optionId;
-        return $this;
-    }
-
-    /**
-     * Custom getCopyFromView method for Bundle testing
-     *
-     * @return bool
-     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
-     */
-    public function getCopyFromView()
-    {
-        return $this->data['copy_from_view'] ?? false;
-    }
-
-    /**
-     * Set copy from view for testing
-     *
-     * @param bool $copyFromView
-     * @return self
-     */
-    public function setCopyFromView(bool $copyFromView): self
-    {
-        $this->data['copy_from_view'] = $copyFromView;
         return $this;
     }
 
@@ -873,45 +740,6 @@ class ProductTestHelper extends Product
     }
 
     /**
-     * Get options for testing
-     *
-     * @return array
-     */
-    public function getOptions(): array
-    {
-        return $this->data['options'] ?? [];
-    }
-
-    /**
-     * Custom prepareCustomOptions method for testing
-     *
-     * @return self
-     */
-    public function prepareCustomOptions(): self
-    {
-        // Mock implementation - just return self
-        return $this;
-    }
-
-    /**
-     * Custom addCustomOption method for testing
-     *
-     * @param mixed $code
-     * @param mixed $value
-     * @param mixed $product
-     * @return self
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function addCustomOption($code, $value, $product = null): self
-    {
-        if (!isset($this->data['custom_options'])) {
-            $this->data['custom_options'] = [];
-        }
-        $this->data['custom_options'][$code] = $value;
-        return $this;
-    }
-
-    /**
      * Custom getCustomOption method for testing
      *
      * @param mixed $code
@@ -931,18 +759,6 @@ class ProductTestHelper extends Product
     }
 
     /**
-     * Custom setQty method for testing
-     *
-     * @param mixed $qty
-     * @return self
-     */
-    public function setQty($qty): self
-    {
-        $this->data['qty'] = $qty;
-        return $this;
-    }
-
-    /**
      * Custom getHasOptions method for testing
      *
      * @return mixed
@@ -950,18 +766,6 @@ class ProductTestHelper extends Product
     public function getHasOptions()
     {
         return $this->data['has_options'] ?? false;
-    }
-
-    /**
-     * Set has options for testing
-     *
-     * @param mixed $hasOptions
-     * @return self
-     */
-    public function setHasOptions($hasOptions): self
-    {
-        $this->data['has_options'] = $hasOptions;
-        return $this;
     }
 
     /**
@@ -977,16 +781,6 @@ class ProductTestHelper extends Product
     }
 
     /**
-     * Custom getCartQty method for testing
-     *
-     * @return mixed
-     */
-    public function getCartQty()
-    {
-        return $this->data['cart_qty'] ?? null;
-    }
-
-    /**
      * Custom getSkipCheckRequiredOption method for testing
      *
      * @return mixed
@@ -996,17 +790,6 @@ class ProductTestHelper extends Product
         return $this->data['skip_check_required_option'] ?? false;
     }
 
-    /**
-     * Set skip check required option for testing
-     *
-     * @param mixed $skip
-     * @return self
-     */
-    public function setSkipCheckRequiredOption($skip): self
-    {
-        $this->data['skip_check_required_option'] = $skip;
-        return $this;
-    }
 
     /**
      * Custom hasData method for testing
@@ -1020,29 +803,6 @@ class ProductTestHelper extends Product
         return $this->data['has_data'] ?? true;
     }
 
-    /**
-     * Set hasData return value for testing
-     *
-     * @param mixed $value
-     * @return self
-     */
-    public function setHasData($value): self
-    {
-        $this->data['has_data'] = $value;
-        return $this;
-    }
-
-    /**
-     * Set getData callback for testing
-     *
-     * @param callable $callback
-     * @return self
-     */
-    public function setGetDataCallback(callable $callback): self
-    {
-        $this->data['get_data_callback'] = $callback;
-        return $this;
-    }
 
     /**
      * Set custom option for testing
@@ -1061,18 +821,6 @@ class ProductTestHelper extends Product
             // Single option (backward compatibility)
             $this->data['custom_option'] = $optionOrKey;
         }
-        return $this;
-    }
-
-    /**
-     * Set getOptions callback for testing
-     *
-     * @param callable $callback
-     * @return self
-     */
-    public function setGetOptionsCallback(callable $callback): self
-    {
-        $this->data['get_options_callback'] = $callback;
         return $this;
     }
 
@@ -1099,72 +847,6 @@ class ProductTestHelper extends Product
     }
 
     /**
-     * Custom getQuantity method for Bundle selection testing
-     *
-     * @return mixed
-     */
-    public function getQuantity()
-    {
-        return $this->data['quantity'] ?? null;
-    }
-
-    /**
-     * Set quantity for testing
-     *
-     * @param mixed $quantity
-     * @return self
-     */
-    public function setQuantity($quantity): self
-    {
-        $this->data['quantity'] = $quantity;
-        return $this;
-    }
-
-    /**
-     * Custom getAmount method for Bundle selection testing
-     *
-     * @return mixed
-     */
-    public function getAmount()
-    {
-        return $this->data['amount'] ?? null;
-    }
-
-    /**
-     * Set amount for testing
-     *
-     * @param mixed $amount
-     * @return self
-     */
-    public function setAmount($amount): self
-    {
-        $this->data['amount'] = $amount;
-        return $this;
-    }
-
-    /**
-     * Custom getProduct method for Bundle selection testing
-     *
-     * @return mixed
-     */
-    public function getProduct()
-    {
-        return $this->data['product'] ?? null;
-    }
-
-    /**
-     * Set product for testing
-     *
-     * @param mixed $product
-     * @return self
-     */
-    public function setProduct($product): self
-    {
-        $this->data['product'] = $product;
-        return $this;
-    }
-
-    /**
      * Get option for testing
      *
      * @return mixed
@@ -1184,16 +866,6 @@ class ProductTestHelper extends Product
     {
         $this->data['option'] = $option;
         return $this;
-    }
-
-    /**
-     * Get image for testing
-     *
-     * @return mixed
-     */
-    public function getImage()
-    {
-        return $this->data['image'] ?? null;
     }
 
     /**
@@ -1218,27 +890,6 @@ class ProductTestHelper extends Product
         return $this;
     }
 
-    /**
-     * Get composite readonly for testing
-     *
-     * @return mixed
-     */
-    public function getCompositeReadonly()
-    {
-        return $this->data['composite_readonly'] ?? false;
-    }
-
-    /**
-     * Set composite readonly for testing
-     *
-     * @param mixed $value
-     * @return self
-     */
-    public function setCompositeReadonly($value): self
-    {
-        $this->data['composite_readonly'] = $value;
-        return $this;
-    }
 
     /**
      * Set bundle options data with call tracking
@@ -1293,50 +944,6 @@ class ProductTestHelper extends Product
         $this->data['can_save_bundle_selections'] = $value;
         $this->setCanSaveBundleSelectionsCalled = true;
         $this->setCanSaveBundleSelectionsParams = $value;
-        return $this;
-    }
-
-    /**
-     * Get options readonly for testing
-     *
-     * @return mixed
-     */
-    public function getOptionsReadonly()
-    {
-        return $this->data['options_readonly'] ?? false;
-    }
-
-    /**
-     * Set options readonly for testing
-     *
-     * @param mixed $value
-     * @return self
-     */
-    public function setOptionsReadonly($value): self
-    {
-        $this->data['options_readonly'] = $value;
-        return $this;
-    }
-
-    /**
-     * Get bundle options data for testing
-     *
-     * @return mixed
-     */
-    public function getBundleOptionsData()
-    {
-        return $this->data['bundle_options_data_result'] ?? [];
-    }
-
-    /**
-     * Set bundle options data result for testing
-     *
-     * @param mixed $data
-     * @return self
-     */
-    public function setBundleOptionsDataResult($data): self
-    {
-        $this->data['bundle_options_data_result'] = $data;
         return $this;
     }
 
@@ -1432,18 +1039,6 @@ class ProductTestHelper extends Product
     }
 
     /**
-     * Custom method for ConfigurableProduct tests
-     *
-     * @param array $mediaGallery
-     * @return self
-     */
-    public function setMediaGallery(array $mediaGallery): self
-    {
-        $this->data['media_gallery'] = $mediaGallery;
-        return $this;
-    }
-
-    /**
      * Custom method for ConfigurableProduct variation tests
      *
      * @return mixed
@@ -1489,26 +1084,6 @@ class ProductTestHelper extends Product
     }
 
     /**
-     * Override getStockData to work with our data array
-     *
-     * @return array
-     */
-    public function getStockData()
-    {
-        return $this->data['stock_data'] ?? [];
-    }
-
-    /**
-     * Override getQuantityAndStockStatus to work with our data array
-     *
-     * @return array
-     */
-    public function getQuantityAndStockStatus()
-    {
-        return $this->data['quantity_and_stock_status'] ?? [];
-    }
-
-    /**
      * Override getWebsiteIds to work with our data array
      *
      * @return array|string
@@ -1516,51 +1091,6 @@ class ProductTestHelper extends Product
     public function getWebsiteIds()
     {
         return $this->data['website_ids'] ?? [];
-    }
-
-    /**
-     * Get store IDs for testing
-     *
-     * @return array
-     */
-    public function getStoreIds()
-    {
-        return $this->data['store_ids'] ?? [];
-    }
-
-    /**
-     * Set store IDs for testing
-     *
-     * @param array $storeIds
-     * @return self
-     */
-    public function setStoreIds(array $storeIds): self
-    {
-        $this->data['store_ids'] = $storeIds;
-        return $this;
-    }
-
-    /**
-     * Custom method for ConfigurableProduct tests
-     *
-     * @return bool
-     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
-     */
-    public function getIsDuplicate()
-    {
-        return $this->data['is_duplicate'] ?? false;
-    }
-
-    /**
-     * Custom method for ConfigurableProduct tests
-     *
-     * @param bool $isDuplicate
-     * @return self
-     */
-    public function setIsDuplicate(bool $isDuplicate): self
-    {
-        $this->data['is_duplicate'] = $isDuplicate;
-        return $this;
     }
 
     /**
@@ -1588,16 +1118,6 @@ class ProductTestHelper extends Product
     /**
      * Custom method for ConfigurableProduct tests
      *
-     * @return array
-     */
-    public function getAssociatedProductIds()
-    {
-        return $this->data['associated_product_ids'] ?? [];
-    }
-
-    /**
-     * Custom method for ConfigurableProduct tests
-     *
      * @param array $ids
      * @return self
      */
@@ -1607,75 +1127,6 @@ class ProductTestHelper extends Product
         return $this;
     }
 
-    /**
-     * Custom method for ConfigurableProduct tests
-     *
-     * @return string
-     */
-    public function getAttributeCode()
-    {
-        return $this->data['attribute_code'] ?? 'test_attribute';
-    }
-
-    /**
-     * Custom method for ConfigurableProduct tests
-     *
-     * @param string $code
-     * @return self
-     */
-    public function setAttributeCode(string $code): self
-    {
-        $this->data['attribute_code'] = $code;
-        return $this;
-    }
-
-    /**
-     * Custom method for ConfigurableProduct tests
-     *
-     * @param string $image
-     * @return self
-     */
-    public function setImage(string $image): self
-    {
-        $this->data['image'] = $image;
-        return $this;
-    }
-
-    /**
-     * Mock method for testing data changes
-     *
-     * @param string $field
-     * @return bool
-     */
-    public function dataHasChangedFor($field)
-    {
-        return $this->data['data_has_changed_for'][$field] ?? false;
-    }
-
-    /**
-     * Set data changed status for testing
-     *
-     * @param string $field
-     * @param bool $hasChanged
-     * @return self
-     */
-    public function setDataHasChangedFor(string $field, bool $hasChanged): self
-    {
-        $this->data['data_has_changed_for'][$field] = $hasChanged;
-        return $this;
-    }
-
-    /**
-     * Custom method for ConfigurableAttributeData tests
-     *
-     * @param mixed $parentId
-     * @return self
-     */
-    public function setParentId($parentId): self
-    {
-        $this->data['parent_id'] = $parentId;
-        return $this;
-    }
 
     /**
      * Override getTierPrice to prevent null errors
@@ -1688,18 +1139,6 @@ class ProductTestHelper extends Product
     public function getTierPrice($qty = null, $customerGroupId = null)
     {
         return $this->data['tier_price'] ?? 0;
-    }
-
-    /**
-     * Set tier price for testing
-     *
-     * @param mixed $tierPrice
-     * @return self
-     */
-    public function setTierPrice($tierPrice)
-    {
-        $this->data['tier_price'] = $tierPrice;
-        return $this;
     }
 
     /**
@@ -1721,18 +1160,6 @@ class ProductTestHelper extends Product
     public function setMediaGalleryImages($images): self
     {
         $this->data['media_gallery_images'] = $images;
-        return $this;
-    }
-
-    /**
-     * Set configurable product links
-     *
-     * @param array $links
-     * @return self
-     */
-    public function setConfigurableProductLinks(array $links): self
-    {
-        $this->data['configurable_product_links'] = $links;
         return $this;
     }
 
@@ -1766,18 +1193,6 @@ class ProductTestHelper extends Product
     public function getGroupedReadonly()
     {
         return $this->data['grouped_readonly'] ?? null;
-    }
-
-    /**
-     * Set grouped readonly for testing
-     *
-     * @param mixed $groupedReadonly
-     * @return self
-     */
-    public function setGroupedReadonly($groupedReadonly): self
-    {
-        $this->data['grouped_readonly'] = $groupedReadonly;
-        return $this;
     }
 
     /**
@@ -1837,18 +1252,6 @@ class ProductTestHelper extends Product
     }
 
     /**
-     * Set links title for downloadable products
-     *
-     * @param string|null $title
-     * @return self
-     */
-    public function setLinksTitle($title): self
-    {
-        $this->data['links_title'] = $title;
-        return $this;
-    }
-
-    /**
      * Get samples title for downloadable products
      *
      * @return string|null
@@ -1856,18 +1259,6 @@ class ProductTestHelper extends Product
     public function getSamplesTitle()
     {
         return $this->data['samples_title'] ?? null;
-    }
-
-    /**
-     * Set samples title for downloadable products
-     *
-     * @param string|null $title
-     * @return self
-     */
-    public function setSamplesTitle($title): self
-    {
-        $this->data['samples_title'] = $title;
-        return $this;
     }
 
     /**
@@ -1959,106 +1350,5 @@ class ProductTestHelper extends Product
     public function getDownloadableLinks()
     {
         return $this->data['downloadable_links'] ?? [];
-    }
-
-    /**
-     * Get resource instance
-     *
-     * Override to return mock resource set via setResource()
-     *
-     * @return \Magento\Catalog\Model\ResourceModel\Product|mixed|null
-     */
-    public function getResource()
-    {
-        return $this->data['_resource'] ?? null;
-    }
-
-    /**
-     * Set resource instance for testing
-     *
-     * @param mixed $resource
-     * @return $this
-     */
-    public function setResource($resource)
-    {
-        $this->data['_resource'] = $resource;
-        return $this;
-    }
-
-    /**
-     * Check if attribute is locked for testing
-     *
-     * @param string $attributeCode
-     * @return bool
-     */
-    public function isLockedAttribute($attributeCode)
-    {
-        return $this->data['locked_attributes'][$attributeCode] ?? false;
-    }
-
-    /**
-     * Set locked attribute for testing
-     *
-     * @param string $attributeCode
-     * @param bool $locked
-     * @return $this
-     */
-    public function setLockedAttribute($attributeCode, $locked = true)
-    {
-        if (!isset($this->data['locked_attributes'])) {
-            $this->data['locked_attributes'] = [];
-        }
-        $this->data['locked_attributes'][$attributeCode] = $locked;
-        return $this;
-    }
-
-    /**
-     * Get attribute set id for testing
-     *
-     * @return int|null
-     */
-    public function getAttributeSetId()
-    {
-        return $this->getData('attribute_set_id');
-    }
-
-    /**
-     * Set attribute set id for testing
-     *
-     * @param int $attributeSetId
-     * @return $this
-     */
-    public function setAttributeSetId($attributeSetId)
-    {
-        return $this->setData('attribute_set_id', $attributeSetId);
-    }
-
-    /**
-     * @var array
-     */
-    private $customAttributes = [];
-
-    /**
-     * Get custom attribute for testing
-     *
-     * @param string $attributeCode
-     * @return mixed
-     */
-    public function getCustomAttribute($attributeCode)
-    {
-        return $this->customAttributes[$attributeCode] ?? null;
-    }
-
-    /**
-     * Set custom attribute for testing (override to simplify for testing)
-     *
-     * @param string $attributeCode
-     * @param mixed $attributeValue
-     * @return $this
-     */
-    public function setCustomAttribute($attributeCode, $attributeValue)
-    {
-        $this->customAttributes[$attributeCode] = $attributeValue;
-        return $this;
     }
 }

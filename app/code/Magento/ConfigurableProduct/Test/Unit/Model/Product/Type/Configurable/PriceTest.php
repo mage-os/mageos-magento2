@@ -9,7 +9,6 @@ namespace Magento\ConfigurableProduct\Test\Unit\Model\Product\Type\Configurable;
 
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Configuration\Item\Option;
-use Magento\Catalog\Test\Unit\Helper\ItemOptionTestHelper;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable\Price as ConfigurablePrice;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Pricing\Amount\AmountInterface;
@@ -91,7 +90,8 @@ class PriceTest extends TestCase
         /** @var Product|MockObject $configurableProduct */
         $configurableProduct = new \Magento\Catalog\Test\Unit\Helper\ProductTestHelper();
         /** @var Option|MockObject $customOption */
-        $customOption = new ItemOptionTestHelper();
+        // Use parent Option class - setProduct and getProduct work via DataObject magic methods
+        $customOption = $this->createPartialMock(Option::class, []);
         /** @var Product|MockObject $simpleProduct */
         $simpleProduct = new \Magento\Catalog\Test\Unit\Helper\ProductTestHelper();
 

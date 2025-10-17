@@ -23,7 +23,7 @@ use Magento\Eav\Model\EntityFactory;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Eav\Test\Unit\Helper\FrontendTestHelper;
+use Magento\Eav\Model\Entity\Attribute\Frontend\DefaultFrontend;
 
 /**
  * @SuppressWarnings(PHPMD.LongVariable)
@@ -166,7 +166,10 @@ class VariationHandlerTest extends TestCase
         $parentProductMock = new \Magento\Catalog\Test\Unit\Helper\ProductTestHelper();
         $newSimpleProductMock = new \Magento\Catalog\Test\Unit\Helper\ProductTestHelper();
         $editableAttributeMock = new \Magento\Eav\Test\Unit\Helper\AttributeTestHelper();
-        $frontendAttributeMock = new FrontendTestHelper();
+        
+        // Create mock for frontend attribute
+        $frontendAttributeMock = $this->createMock(DefaultFrontend::class);
+        $frontendAttributeMock->method('getInputType')->willReturn('input_type');
 
         // Helper classes provide default return values
         $this->productFactoryMock->expects($this->once())->method('create')->willReturn($newSimpleProductMock);
@@ -174,7 +177,7 @@ class VariationHandlerTest extends TestCase
         // Anonymous class returns empty array by default for getSetAttributes
         // Configure AttributeTestHelper with expected values
         $editableAttributeMock->setData('frontend', $frontendAttributeMock);
-        // Anonymous class returns 'input_type' for getInputType()
+        // Frontend mock returns 'input_type' for getInputType()
         // Configure helper objects with expected values
         $parentProductMock->setData('stock_data', $stockData);
         $parentProductMock->setData('quantity_and_stock_status', ['is_in_stock' => 1]);
