@@ -127,7 +127,7 @@ class ReportSystemCacheFlushToNewRelicTest extends TestCase
             ->willReturn($this->deploymentsModel);
         $this->deploymentsModel->expects($this->once())
             ->method('setDeployment')
-            ->willReturnSelf();
+            ->willReturn(true);
 
         $this->model->execute($eventObserver);
     }
