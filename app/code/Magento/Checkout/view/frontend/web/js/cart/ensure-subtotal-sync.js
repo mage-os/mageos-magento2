@@ -60,6 +60,7 @@ define([
             const central = getCentralSubtotal(), summary = getSummarySubtotal();
             if (!isNaN(central) && !isNaN(summary) && central !== summary) {
                 const $updateBtn = $root.find('.cart.main.actions button.action.update');
+                
                 if ($updateBtn.length) {
                     clicked = true;
                     $updateBtn.trigger('click');
