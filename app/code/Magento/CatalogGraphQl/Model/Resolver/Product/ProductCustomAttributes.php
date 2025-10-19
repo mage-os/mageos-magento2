@@ -108,10 +108,9 @@ class ProductCustomAttributes implements ResolverInterface
             }
             $attributeValue = $productData[$attributeCode] ?? "";
             if (is_array($attributeValue)) {
-                $attributeValue = implode(
-                    ',',
-                    $this->getFlatArrayIfArrayIsMultiDimentional($attributeValue)
-                );
+                $attributeValue = (count($attributeValue) != count($attributeValue, COUNT_RECURSIVE))
+                    ? json_encode($attributeValue)
+                    : implode(',', $attributeValue);
             }
             $customAttributes[] = [
                 'attribute_code' => $attributeCode,
@@ -132,25 +131,5 @@ class ProductCustomAttributes implements ResolverInterface
             ),
             'errors' => $productCustomAttributes['errors']
         ];
-    }
-
-    /**
-     * Returns flat array if the array passed is multidimentional
-     *
-     * @param array $array
-     * @return array
-     */
-    private function getFlatArrayIfArrayIsMultiDimentional(array $array): array
-    {
-        // Check if it's a multi-dimensional array
-        $isMultiDimensional = (count($array) != count($array, COUNT_RECURSIVE));
-        if ($isMultiDimensional) {
-            $flatArray = [];
-            array_walk_recursive($array, function ($item) use (&$flatArray) {
-                $flatArray[] = $item;
-            });
-            $array = $flatArray;
-        }
-        return $array;
     }
 }
