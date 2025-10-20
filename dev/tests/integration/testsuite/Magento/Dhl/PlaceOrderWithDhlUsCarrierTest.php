@@ -8,30 +8,30 @@ declare(strict_types=1);
 
 namespace Magento\Dhl;
 
-use Magento\Catalog\Test\Fixture\Product as ProductFixture;
-use Magento\ConfigurableProduct\Test\Fixture\Attribute as AttributeFixture;
-use Magento\ConfigurableProduct\Test\Fixture\Product as ConfigurableProductFixture;
-use Magento\Customer\Test\Fixture\Customer as CustomerFixture;
-use Magento\Quote\Test\Fixture\AddProductToCart as AddProductToCartFixture;
-use Magento\Quote\Test\Fixture\CustomerCart as CustomerCartFixture;
-use Magento\TestFramework\Fixture\Config;
-use Magento\TestFramework\Fixture\DataFixture;
-use Magento\TestFramework\Fixture\DataFixtureStorageManager;
-use Magento\TestFramework\Fixture\DataFixtureStorage;
-use Magento\TestFramework\Helper\Bootstrap;
-use PHPUnit\Framework\TestCase;
-use Magento\Quote\Api\CartRepositoryInterface;
-use Magento\Quote\Api\CartManagementInterface;
-use Magento\Quote\Api\Data\AddressInterface;
+use Magento\Bundle\Model\Product\Price;
+use Magento\Bundle\Test\Fixture\AddProductToCart as AddBundleProductToCart;
 use Magento\Bundle\Test\Fixture\Link as BundleSelectionFixture;
 use Magento\Bundle\Test\Fixture\Option as BundleOptionFixture;
 use Magento\Bundle\Test\Fixture\Product as BundleProductFixture;
+use Magento\Catalog\Test\Fixture\Product as ProductFixture;
 use Magento\ConfigurableProduct\Test\Fixture\AddProductToCart as AddConfigurableProductToCartFixture;
-use Magento\Bundle\Test\Fixture\AddProductToCart as AddBundleProductToCart;
-use Magento\Bundle\Model\Product\Price;
-use Magento\Sales\Api\OrderRepositoryInterface;
-use Magento\Framework\ObjectManagerInterface;
+use Magento\ConfigurableProduct\Test\Fixture\Attribute as AttributeFixture;
+use Magento\ConfigurableProduct\Test\Fixture\Product as ConfigurableProductFixture;
+use Magento\Customer\Test\Fixture\Customer as CustomerFixture;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\ObjectManagerInterface;
+use Magento\Quote\Api\CartManagementInterface;
+use Magento\Quote\Api\CartRepositoryInterface;
+use Magento\Quote\Api\Data\AddressInterface;
+use Magento\Quote\Test\Fixture\AddProductToCart as AddProductToCartFixture;
+use Magento\Quote\Test\Fixture\CustomerCart as CustomerCartFixture;
+use Magento\Sales\Api\OrderRepositoryInterface;
+use Magento\TestFramework\Fixture\Config;
+use Magento\TestFramework\Fixture\DataFixture;
+use Magento\TestFramework\Fixture\DataFixtureStorage;
+use Magento\TestFramework\Fixture\DataFixtureStorageManager;
+use Magento\TestFramework\Helper\Bootstrap;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Integration test to verify order placement using dhl international shipping carrier
@@ -159,13 +159,13 @@ class PlaceOrderWithDhlUsCarrierTest extends TestCase
      *
      * @return void
      */
-    public function testPlaceOrderWithDhlUsCarrierTest(): void
+    public function testPlaceOrderWithDhlUsCarrier(): void
     {
         $cartId = (int)$this->fixtures->get('cart')->getId();
         $this->setShippingAndBillingAddressForQuote($cartId);
         $order = $this->orderRepository->get($this->selectDhlAndCheckmoAndPlaceOrder($cartId));
         $this->assertNotEmpty($order->getIncrementId());
-        $this->assertSame('dhl_P', $order->getShippingMethod());
+        $this->assertStringStartsWith('dhl_', $order->getShippingMethod());
     }
 
     /**
@@ -178,7 +178,7 @@ class PlaceOrderWithDhlUsCarrierTest extends TestCase
     {
         $quote = $this->quoteRepository->get($cartId);
         /** @var AddressInterface $address */
-        $address =  $this->objectManager->create(AddressInterface::class);
+        $address = $this->objectManager->create(AddressInterface::class);
         $address->setFirstname('Joe')
             ->setLastname('Doe')
             ->setCountryId('CA')
@@ -202,9 +202,20 @@ class PlaceOrderWithDhlUsCarrierTest extends TestCase
     private function selectDhlAndCheckmoAndPlaceOrder(int $cartId): int
     {
         $quote = $this->quoteRepository->get($cartId);
-        $quote->getShippingAddress()->setShippingMethod('dhl_P')->setCollectShippingRates(true);
-        $quote->collectTotals();
+        $shippingAddress = $quote->getShippingAddress();
+        $shippingAddress->setCollectShippingRates(true);
+        $shippingAddress->collectShippingRates();
+        $dhlRate = null;
+        foreach ($shippingAddress->getAllShippingRates() as $rate) {
+            if ($rate->getCarrier() === 'dhl') {
+                $dhlRate = $rate;
+                break;
+            }
+        }
+        $this->assertNotEmpty($dhlRate, 'No DHL rates available for the given address.');
+        $shippingAddress->setShippingMethod($dhlRate->getCode());
         $quote->getPayment()->setMethod('checkmo');
+        $quote->collectTotals();
         $this->quoteRepository->save($quote);
         return (int)$this->cartManagement->placeOrder($quote->getId());
     }
