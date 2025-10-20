@@ -541,16 +541,17 @@ class SetLinkStatusObserverTest extends TestCase
      * @param bool $isSaved
      * @param null|string $expectedStatus
      * @return \Magento\Downloadable\Model\Link\Purchased\Item|MockObject
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     private function createLinkItem($status, $orderItemId, $isSaved = false, $expectedStatus = null)
     {
         // Use parent Item class - all getters/setters work via magic __call() methods
         $linkItem = $this->createPartialMock(DownloadableItem::class, ['save']);
-        
+
         // Set data directly - getters will work via magic methods
         $linkItem->setData('status', $status);
         $linkItem->setData('order_item_id', $orderItemId);
-        
+
         if ($isSaved) {
             $linkItem->expects($this->any())
                 ->method('save')

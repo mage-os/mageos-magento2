@@ -50,7 +50,72 @@ class ProductTestHelper extends Product
      */
     public function __construct()
     {
-        // Skip parent constructor
+        // Initialize $_data to prevent "The resource isn't set" errors
+        $this->_data = [];
+    }
+
+    /**
+     * Set resource model for testing
+     *
+     * @param \Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource
+     * @return self
+     */
+    public function setResource($resource): self
+    {
+        $this->_resource = $resource;
+        return $this;
+    }
+
+    /**
+     * Set locked attribute for testing
+     *
+     * @param string $attributeCode
+     * @param bool $locked
+     * @return $this
+     */
+    public function setLockedAttribute($attributeCode, $locked = true)
+    {
+        if (!is_array($this->_lockedAttributes)) {
+            $this->_lockedAttributes = [];
+        }
+        if ($locked) {
+            $this->_lockedAttributes[$attributeCode] = true;
+        } else {
+            unset($this->_lockedAttributes[$attributeCode]);
+        }
+        return $this;
+    }
+
+    /**
+     * Get attribute set id for testing
+     *
+     * @return int|null
+     */
+    public function getAttributeSetId()
+    {
+        return $this->getData('attribute_set_id');
+    }
+
+    /**
+     * Set attribute set id for testing
+     *
+     * @param int $attributeSetId
+     * @return $this
+     */
+    public function setAttributeSetId($attributeSetId)
+    {
+        return $this->setData('attribute_set_id', $attributeSetId);
+    }
+
+    /**
+     * Override getCustomAttributesCodes to avoid null pointer on filterCustomAttribute
+     *
+     * @return array
+     */
+    protected function getCustomAttributesCodes()
+    {
+        // Return empty array to avoid dependency on filterCustomAttribute
+        return [];
     }
 
     /**
@@ -790,7 +855,6 @@ class ProductTestHelper extends Product
         return $this->data['skip_check_required_option'] ?? false;
     }
 
-
     /**
      * Custom hasData method for testing
      *
@@ -802,7 +866,6 @@ class ProductTestHelper extends Product
     {
         return $this->data['has_data'] ?? true;
     }
-
 
     /**
      * Set custom option for testing
@@ -889,7 +952,6 @@ class ProductTestHelper extends Product
         $this->data['position'] = $position;
         return $this;
     }
-
 
     /**
      * Set bundle options data with call tracking
@@ -1126,8 +1188,7 @@ class ProductTestHelper extends Product
         $this->data['associated_product_ids'] = $ids;
         return $this;
     }
-
-
+    
     /**
      * Override getTierPrice to prevent null errors
      *
