@@ -74,6 +74,7 @@ class CreditmemoAsyncEmailTest extends TestCase
         // Capture sent emails
         $this->transportBuilder->setOnMessageSentCallback(
             function (EmailMessageInterface $message) {
+                var_dump('sandesh');
                 $this->sentEmails[] = $message;
             }
         );
@@ -111,6 +112,8 @@ class CreditmemoAsyncEmailTest extends TestCase
         $creditmemo = $this->creditmemoFactory->createByOrder($order);
         $creditmemoRepository = Bootstrap::getObjectManager()->get(CreditmemoRepositoryInterface::class);
         $creditmemoRepository->save($creditmemo);
+        $creditmemo->setSendEmail(true);
+        $creditmemoRepository->save($creditmemo);
         $this->assertCount(
             0,
             $this->sentEmails,
@@ -120,9 +123,8 @@ class CreditmemoAsyncEmailTest extends TestCase
             $creditmemo->getEmailSent(),
             'EmailSent should be empty until async process sends it'
         );
-        $result = $this->creditmemoSender->send($creditmemo, true);
-        $this->assertTrue($result, 'Email should be sent after async processing');
-        $this->assertNotEmpty($creditmemo->getEmailSent(), 'EmailSent flag should be set');
+        $creditmemoEmailCron = Bootstrap::getObjectManager()->get('SalesCreditmemoSendEmailsCron');
+        $creditmemoEmailCron->execute();
         $this->assertCount(1, $this->sentEmails, 'One refund email should be sent');
         $email = $this->sentEmails[0];
         $this->assertInstanceOf(EmailMessageInterface::class, $email);
