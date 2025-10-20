@@ -12,6 +12,8 @@ use Magento\Catalog\Api\ProductCustomOptionRepositoryInterface;
 use Magento\Catalog\Test\Fixture\Product as ProductFixture;
 use Magento\Customer\Test\Fixture\Customer as CustomerFixture;
 use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\Exception\AuthenticationException;
+use Magento\Framework\Exception\EmailNotConfirmedException;
 use Magento\Integration\Api\CustomerTokenServiceInterface;
 use Magento\TestFramework\Fixture\Config;
 use Magento\TestFramework\Fixture\DataFixture;
@@ -87,7 +89,7 @@ class SimpleProductWithCustomOptionToWishlistTest extends GraphQlAbstract
      *
      * @return void
      */
-    public function testAddSimpleProductWithCustomOptionsToWishlistTest(): void
+    public function testAddSimpleProductWithCustomOptionsToWishlist(): void
     {
         $sku = 'simple_co';
         $uids = $this->getEnteredOptionUids($sku, [
@@ -197,8 +199,8 @@ MUTATION;
      * Get customer token for authentication
      *
      * @return string[]
-     * @throws \Magento\Framework\Exception\AuthenticationException
-     * @throws \Magento\Framework\Exception\EmailNotConfirmedException
+     * @throws AuthenticationException
+     * @throws EmailNotConfirmedException
      */
     private function getHeadersMap(): array
     {
