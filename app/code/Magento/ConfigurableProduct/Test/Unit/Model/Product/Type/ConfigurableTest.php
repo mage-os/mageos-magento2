@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2017 Adobe
+ * Copyright 2015 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -733,7 +733,6 @@ class ConfigurableTest extends TestCase
         $productMock->setData('_cache_instance_products', [$childProductMock]);
 
         $childProductMock->expects($this->any())->method('getData')->with('image')->willReturn('image_data');
-        // ProductTestHelper setImage method returns $this by default
 
         $this->model->setImageFromChildProduct($productMock);
     }

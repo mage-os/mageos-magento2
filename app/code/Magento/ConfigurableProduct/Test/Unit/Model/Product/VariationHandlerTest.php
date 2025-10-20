@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2017 Adobe
+ * Copyright 2015 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -166,7 +166,7 @@ class VariationHandlerTest extends TestCase
         $parentProductMock = new \Magento\Catalog\Test\Unit\Helper\ProductTestHelper();
         $newSimpleProductMock = new \Magento\Catalog\Test\Unit\Helper\ProductTestHelper();
         $editableAttributeMock = new \Magento\Eav\Test\Unit\Helper\AttributeTestHelper();
-        
+
         // Create mock for frontend attribute
         $frontendAttributeMock = $this->createMock(DefaultFrontend::class);
         $frontendAttributeMock->method('getInputType')->willReturn('input_type');

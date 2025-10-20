@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2017 Adobe
+ * Copyright 2015 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -348,22 +348,22 @@ class PluginTest extends TestCase
     private function createPluginMock(): Plugin
     {
         $plugin = $this->createPartialMock(Plugin::class, ['_validateProductVariations']);
-        
+
         // Use reflection to inject dependencies
         $reflection = new \ReflectionClass($plugin);
-        
+
         $eventManagerProperty = $reflection->getProperty('eventManager');
         $eventManagerProperty->setAccessible(true);
         $eventManagerProperty->setValue($plugin, $this->eventManagerMock);
-        
+
         $productFactoryProperty = $reflection->getProperty('productFactory');
         $productFactoryProperty->setAccessible(true);
         $productFactoryProperty->setValue($plugin, $this->productFactoryMock);
-        
+
         $jsonHelperProperty = $reflection->getProperty('jsonHelper');
         $jsonHelperProperty->setAccessible(true);
         $jsonHelperProperty->setValue($plugin, $this->jsonHelperMock);
-        
+
         return $plugin;
     }
 }
