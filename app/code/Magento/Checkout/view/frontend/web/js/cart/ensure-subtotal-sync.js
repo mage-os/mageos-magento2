@@ -22,7 +22,7 @@ define([
             }
             // Remove non-numeric except . , - then normalize
             let cleaned = ('' + text).replace(/[^0-9,.-]/g, '');
-            
+
             // If both , and . exist, assume , is thousands
             if (cleaned.indexOf(',') > -1 && cleaned.indexOf('.') > -1) {
                 cleaned = cleaned.replace(/,/g, '');
@@ -38,6 +38,7 @@ define([
         function getCentralSubtotal() {
             // Sum of row totals on the table
             let sum = 0;
+
             $root.find('#shopping-cart-table .col.subtotal .cart-price').each(function () {
                 const text = $(this).text(), val = parsePrice(text);
 
