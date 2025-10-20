@@ -77,7 +77,8 @@ define([
             // Observe changes in totals area to re-check once
             const totals = document.getElementById('cart-totals');
             if (totals && typeof MutationObserver !== 'undefined') {
-                const obs = new MutationObserver(function () {
+                const obs = new MutationObserver(
+                    function () {
                     trySync();
                     if (clicked) {
                         obs.disconnect();
