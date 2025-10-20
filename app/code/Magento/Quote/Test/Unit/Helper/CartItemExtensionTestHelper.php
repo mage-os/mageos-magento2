@@ -20,6 +20,16 @@ class CartItemExtensionTestHelper implements CartItemExtensionInterface
     private $negotiableQuoteItem;
 
     /**
+     * @var \Magento\SalesRule\Api\Data\RuleDiscountInterface[]|null
+     */
+    private $discounts;
+
+    /**
+     * @var \Magento\User\Api\Data\UserInterface|null
+     */
+    private $quoteItemTestAttribute;
+
+    /**
      * Get negotiable quote item
      *
      * @return \Magento\NegotiableQuote\Api\Data\NegotiableQuoteItemInterface|null
@@ -38,6 +48,50 @@ class CartItemExtensionTestHelper implements CartItemExtensionInterface
     public function setNegotiableQuoteItem($negotiableQuoteItem)
     {
         $this->negotiableQuoteItem = $negotiableQuoteItem;
+        return $this;
+    }
+
+    /**
+     * Get discounts
+     *
+     * @return \Magento\SalesRule\Api\Data\RuleDiscountInterface[]|null
+     */
+    public function getDiscounts()
+    {
+        return $this->discounts;
+    }
+
+    /**
+     * Set discounts
+     *
+     * @param \Magento\SalesRule\Api\Data\RuleDiscountInterface[]|null $discounts
+     * @return $this
+     */
+    public function setDiscounts($discounts)
+    {
+        $this->discounts = $discounts;
+        return $this;
+    }
+
+    /**
+     * Get quote item test attribute
+     *
+     * @return \Magento\User\Api\Data\UserInterface|null
+     */
+    public function getQuoteItemTestAttribute()
+    {
+        return $this->quoteItemTestAttribute;
+    }
+
+    /**
+     * Set quote item test attribute
+     *
+     * @param \Magento\User\Api\Data\UserInterface|null $quoteItemTestAttribute
+     * @return $this
+     */
+    public function setQuoteItemTestAttribute($quoteItemTestAttribute)
+    {
+        $this->quoteItemTestAttribute = $quoteItemTestAttribute;
         return $this;
     }
 }
