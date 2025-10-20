@@ -37,7 +37,7 @@ class ProductTestHelper extends Product
 
     public function __construct()
     {
-        // Skip parent constructor to avoid dependencies
+        $this->_data = [];
     }
 
     /**
@@ -127,5 +127,15 @@ class ProductTestHelper extends Product
     public function getIsRecurring()
     {
         return $this->isRecurring();
+    }
+
+    /**
+     * Check if product has options.
+     *
+     * @return bool
+     */
+    public function hasOptions(): bool
+    {
+        return isset($this->_data['has_options']) && $this->_data['has_options'];
     }
 }
