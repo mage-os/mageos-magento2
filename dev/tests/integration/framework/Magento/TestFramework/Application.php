@@ -3,6 +3,7 @@
  * Copyright 2018 Adobe
  * All Rights Reserved.
  */
+
 namespace Magento\TestFramework;
 
 use Magento\Framework\App\DeploymentConfig;
@@ -366,7 +367,7 @@ class Application
                             'filePath' => $this->installDir
                         ]
                     ),
-                    'debug'  => $objectManager->create(
+                    'debug' => $objectManager->create(
                         \Magento\Framework\Logger\Handler\Debug::class,
                         ['filePath' => $this->installDir]
                     ),
@@ -578,9 +579,12 @@ class Application
             PHP_BINARY . ' -f %s cache:disable -vvv --bootstrap=%s',
             [BP . '/bin/magento', $initParamsQuery]
         );
+
+        $enabledCaches = $this->getEnabledCaches();
+
         $this->_shell->execute(
-            PHP_BINARY . ' -f %s cache:enable -vvv %s --bootstrap=%s',
-            [BP . '/bin/magento', implode(' ', $this->getEnabledCaches()), $initParamsQuery, ]
+            PHP_BINARY . ' -f %s cache:enable -vvv ' . str_repeat('%s ', count($enabledCaches)) . ' --bootstrap=%s',
+            [BP . '/bin/magento', ...$enabledCaches, $initParamsQuery]
         );
 
         // right after a clean installation, store DB dump for future reuse in tests or running the test suite again
@@ -590,7 +594,7 @@ class Application
     }
 
     /**
-     * Returns caches that should be enabled during the Integration Tests execution
+     * Caches that should be enabled during the Integration Tests execution
      *
      * @return array<string>
      */
