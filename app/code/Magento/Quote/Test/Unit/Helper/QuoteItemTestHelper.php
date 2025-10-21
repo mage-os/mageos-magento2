@@ -15,6 +15,7 @@ use Magento\Quote\Model\Quote\Item;
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class QuoteItemTestHelper extends Item
 {
@@ -76,6 +77,32 @@ class QuoteItemTestHelper extends Item
     private $productId = null;
     /** @var mixed */
     private $buyRequest = null;
+    /** @var bool|null */
+    private $isQtyDecimal = null;
+    /** @var bool|null */
+    private $useOldQty = null;
+    /** @var int|null */
+    private $backorders = null;
+    /** @var mixed */
+    private $stockStateResult = null;
+    /** @var int|null */
+    private $id = null;
+    /** @var int|null */
+    private $quoteId = null;
+    /** @var string|null */
+    private $message = null;
+    /** @var bool */
+    private $hasError = false;
+    /** @var mixed */
+    private $quote = null;
+    /** @var float|null */
+    private $qty = null;
+    /** @var mixed */
+    private $qtyOptions = null;
+    /** @var int|null */
+    private $itemId = null;
+    /** @var array */
+    private $errorInfos = [];
 
     public function __construct()
     {
@@ -217,7 +244,7 @@ class QuoteItemTestHelper extends Item
     public function getData($key = '', $index = null)
     {
         if ($key === '' || $key === null) {
-            return [
+            return array_merge($this->_data, [
                 'weee_tax_applied_amount' => $this->weeeTaxAppliedAmount,
                 'weee_tax_applied_row_amount' => $this->weeeTaxAppliedRowAmount,
                 'base_weee_tax_applied_row_amnt' => $this->baseWeeeTaxAppliedRowAmnt,
@@ -234,9 +261,10 @@ class QuoteItemTestHelper extends Item
                 'total_qty' => $this->totalQty,
                 'parent_item' => $this->parentItem,
                 'is_children_calculated' => $this->isChildrenCalculated,
-            ];
+                'qty' => $this->qty,
+            ]);
         }
-        
+
         switch ($key) {
             case 'weee_tax_applied_amount':
                 return $this->weeeTaxAppliedAmount;
@@ -270,8 +298,14 @@ class QuoteItemTestHelper extends Item
                 return $this->parentItem;
             case 'is_children_calculated':
                 return $this->isChildrenCalculated;
+            case 'qty':
+                return $this->qty ?? $this->_data['qty'] ?? null;
+            case 'qty_to_add':
+                return $this->_data['qty_to_add'] ?? null;
+            case 'store':
+                return $this->_data['store'] ?? null;
             default:
-                return null;
+                return $this->_data[$key] ?? null;
         }
     }
 
@@ -398,6 +432,11 @@ class QuoteItemTestHelper extends Item
 
     public function setData($key, $value = null): self
     {
+        if (is_array($key)) {
+            $this->_data = array_merge($this->_data, $key);
+            return $this;
+        }
+
         switch ($key) {
             case 'weee_tax_applied_amount':
                 $this->weeeTaxAppliedAmount = $value;
@@ -447,6 +486,13 @@ class QuoteItemTestHelper extends Item
             case 'is_children_calculated':
                 $this->isChildrenCalculated = $value;
                 break;
+            case 'qty':
+                $this->qty = $value;
+                $this->_data['qty'] = $value;
+                break;
+            default:
+                $this->_data[$key] = $value;
+                break;
         }
         return $this;
     }
@@ -471,5 +517,161 @@ class QuoteItemTestHelper extends Item
     public function getBuyRequest()
     {
         return $this->buyRequest;
+    }
+
+    public function setIsQtyDecimal($isQtyDecimal)
+    {
+        $this->isQtyDecimal = $isQtyDecimal;
+        return $this;
+    }
+
+    public function setUseOldQty($useOldQty)
+    {
+        $this->useOldQty = $useOldQty;
+        return $this;
+    }
+
+    public function setBackorders($backorders)
+    {
+        $this->backorders = $backorders;
+        return $this;
+    }
+
+    public function setStockStateResult($stockStateResult)
+    {
+        $this->stockStateResult = $stockStateResult;
+        return $this;
+    }
+
+    public function getStockStateResult()
+    {
+        return $this->stockStateResult;
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    public function getQuoteId()
+    {
+        return $this->quoteId;
+    }
+
+    public function setQuoteId($quoteId)
+    {
+        $this->quoteId = $quoteId;
+        return $this;
+    }
+
+    public function getMessage($string = true)
+    {
+        return $this->message;
+    }
+
+    public function setMessage($message)
+    {
+        $this->message = $message;
+        return $this;
+    }
+
+    public function getQtyToAdd()
+    {
+        return $this->_data['qty_to_add'] ?? null;
+    }
+
+    public function setQtyToAdd($qtyToAdd)
+    {
+        $this->_data['qty_to_add'] = $qtyToAdd;
+        return $this;
+    }
+
+    public function setQty($qty)
+    {
+        $this->qty = $qty;
+        $this->_data['qty'] = $qty;
+        return $this;
+    }
+
+    public function getQty()
+    {
+        return $this->qty ?? $this->_data['qty'] ?? null;
+    }
+
+    public function updateQtyOption($option, $qty)
+    {
+        return $this;
+    }
+
+    public function getStore()
+    {
+        return $this->_data['store'] ?? null;
+    }
+
+    public function setStore($store)
+    {
+        $this->_data['store'] = $store;
+        return $this;
+    }
+
+    public function getHasError()
+    {
+        return $this->hasError;
+    }
+
+    public function setHasError($hasError)
+    {
+        $this->hasError = $hasError;
+        return $this;
+    }
+
+    public function getQuote()
+    {
+        return $this->quote;
+    }
+
+    public function setQuote($quote)
+    {
+        $this->quote = $quote;
+        return $this;
+    }
+
+    public function addErrorInfo($origin = null, $code = null, $message = null, $additionalData = null)
+    {
+        $this->errorInfos[] = [
+            'origin' => $origin,
+            'code' => $code,
+            'message' => $message,
+            'additionalData' => $additionalData
+        ];
+        return $this;
+    }
+
+    public function getQtyOptions()
+    {
+        return $this->qtyOptions;
+    }
+
+    public function setQtyOptions($options)
+    {
+        $this->qtyOptions = $options;
+        return $this;
+    }
+
+    public function getItemId()
+    {
+        return $this->itemId;
+    }
+
+    public function setItemId($itemId)
+    {
+        $this->itemId = $itemId;
+        return $this;
     }
 }
