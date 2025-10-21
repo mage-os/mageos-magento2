@@ -359,11 +359,11 @@ class RendererTest extends TestCase
         /** @var \Magento\Quote\Model\Quote\Item|MockObject $quoteItemMock */
         $quoteItemMock = $this->getMockBuilder(\Magento\Quote\Model\Quote\Item::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getPrice', '__wakeup'])
+            ->onlyMethods(['getCalculationPrice', '__wakeup'])
             ->getMock();
 
         $quoteItemMock->expects($this->once())
-            ->method('getPrice')
+            ->method('getCalculationPrice')
             ->willReturn($price);
 
         $this->renderer->setItem($quoteItemMock);
