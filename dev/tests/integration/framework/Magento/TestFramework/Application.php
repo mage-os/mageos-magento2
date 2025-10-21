@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\TestFramework;
 
@@ -579,21 +579,30 @@ class Application
             [BP . '/bin/magento', $initParamsQuery]
         );
         $this->_shell->execute(
-            PHP_BINARY . ' -f %s cache:enable -vvv %s %s %s %s --bootstrap=%s',
-            [
-                BP . '/bin/magento',
-                \Magento\Framework\App\Cache\Type\Config::TYPE_IDENTIFIER,
-                \Magento\Framework\App\Cache\Type\Layout::TYPE_IDENTIFIER,
-                \Magento\Framework\App\Cache\Type\Translate::TYPE_IDENTIFIER,
-                \Magento\Eav\Model\Cache\Type::TYPE_IDENTIFIER,
-                $initParamsQuery,
-            ]
+            PHP_BINARY . ' -f %s cache:enable -vvv %s --bootstrap=%s',
+            [BP . '/bin/magento', implode(' ', $this->getEnabledCaches()), $initParamsQuery, ]
         );
 
         // right after a clean installation, store DB dump for future reuse in tests or running the test suite again
         if (!$db->isDbDumpExists() && $this->dumpDb) {
             $this->getDbInstance()->storeDbDump();
         }
+    }
+
+    /**
+     * Returns caches that should be enabled during the Integration Tests execution
+     *
+     * @return array<string>
+     */
+    private function getEnabledCaches(): array
+    {
+        return [
+            \Magento\Framework\App\Cache\Type\Config::TYPE_IDENTIFIER,
+            \Magento\Framework\App\Cache\Type\Layout::TYPE_IDENTIFIER,
+            \Magento\Framework\App\Cache\Type\Translate::TYPE_IDENTIFIER,
+            \Magento\Framework\App\Interception\Cache\CompiledConfig::TYPE_IDENTIFIER,
+            \Magento\Eav\Model\Cache\Type::TYPE_IDENTIFIER,
+        ];
     }
 
     /**
