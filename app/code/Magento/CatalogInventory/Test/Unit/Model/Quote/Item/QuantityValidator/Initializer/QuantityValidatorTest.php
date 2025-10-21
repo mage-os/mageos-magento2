@@ -28,14 +28,11 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Item;
 use Magento\Quote\Model\Quote\Item\Option as OptionItem;
-use Magento\Quote\Test\Unit\Helper\QuoteTestHelperExtended;
+use Magento\Quote\Test\Unit\Helper\QuoteTestHelper;
 use Magento\Quote\Test\Unit\Helper\QuoteItemTestHelper;
 use Magento\Quote\Test\Unit\Helper\OptionItemTestHelper;
-use Magento\Quote\Test\Unit\Helper\QuoteTestHelperForValidator;
-use Magento\Quote\Test\Unit\Helper\QuoteItemTestHelperForValidator;
-use Magento\CatalogInventory\Test\Unit\Helper\StockItemTestHelperForValidator;
-use Magento\Framework\Test\Unit\Helper\DataObjectTestHelperForValidator;
 use Magento\CatalogInventory\Test\Unit\Helper\StockItemInterfaceTestHelper;
+use Magento\Framework\Test\Unit\Helper\DataObjectTestHelperForValidator;
 use Magento\Framework\Test\Unit\Helper\EventTestHelper;
 use Magento\Framework\Test\Unit\Helper\DataObjectTestHelper;
 use Magento\Store\Model\Store;
@@ -161,16 +158,14 @@ class QuantityValidatorTest extends TestCase
         $this->observerMock = $this->createMock(Observer::class);
         // Use EventTestHelper extending Event with dynamic methods
         $this->eventMock = new EventTestHelper();
-        // Use QuoteTestHelperForValidator extending Quote with dynamic methods
-        $this->quoteMock = new QuoteTestHelperForValidator();
+        $this->quoteMock = new QuoteTestHelper();
         $this->storeMock = $this->createMock(Store::class);
-        // Use QuoteItemTestHelperForValidator extending Item with dynamic methods
-        $this->quoteItemMock = new QuoteItemTestHelperForValidator();
+        $this->quoteItemMock = new QuoteItemTestHelper();
         $this->parentItemMock = $this->createPartialMock(Item::class, ['getProduct', 'getId', 'getStore']);
         $this->productMock = $this->createMock(Product::class);
         $this->stockItemMock = $this->createMock(StockMock::class);
-        // Use StockItemTestHelperForValidator extending StockMock with dynamic methods
-        $this->parentStockItemMock = new StockItemTestHelperForValidator();
+        // Use StockItemInterfaceTestHelper extending Stock\Item with dynamic methods
+        $this->parentStockItemMock = new StockItemInterfaceTestHelper();
 
         $this->typeInstanceMock = $this->createMock(Type::class);
 
@@ -230,9 +225,6 @@ class QuantityValidatorTest extends TestCase
             ->method('getStockStatus')
             ->willReturn(1);
 
-        // Note: addErrorInfo is now a direct method call on anonymous class, no expects() needed
-        // Note: addErrorInfo is now a direct method call on anonymous class, no expects() needed
-        // The method will be called during validation
         $this->quantityValidator->validate($this->observerMock);
     }
 
@@ -381,8 +373,6 @@ class QuantityValidatorTest extends TestCase
             });
         $this->quoteItemMock->setParentItem($this->parentItemMock);
         $this->stockStatusMock->method('getStockStatus')->willReturn(1);
-        // Note: addErrorInfo is now a direct method call on anonymous class, no expects() needed
-        // Note: addErrorInfo is now a direct method call on anonymous class, no expects() needed
         $this->quantityValidator->validate($this->observerMock);
     }
 
@@ -425,9 +415,7 @@ class QuantityValidatorTest extends TestCase
         $this->stockStatusMock->expects($this->atLeastOnce())
             ->method('getStockStatus')
             ->willReturn(1);
-        // Note: addErrorInfo is now a direct method call on anonymous class, no expects() needed
-        // Note: addErrorInfo is now a direct method call on anonymous class, no expects() needed
-        // The method will be called during validation
+
         $this->quantityValidator->validate($this->observerMock);
     }
 
@@ -470,8 +458,6 @@ class QuantityValidatorTest extends TestCase
         $this->storeMock->method('getWebsiteId')->willReturn(1);
         $this->quoteItemMock->setQuote($this->quoteMock);
         $this->quoteMock->setQuote($this->quoteMock);
-        // Note: addErrorInfo is now a direct method call on anonymous class, no expects() needed
-        // Note: addErrorInfo is now a direct method call on anonymous class, no expects() needed
         $this->setUpStubForQuantity(0, false);
         $this->stockItemInitializer->method('initialize')->willReturn($this->resultMock);
     }

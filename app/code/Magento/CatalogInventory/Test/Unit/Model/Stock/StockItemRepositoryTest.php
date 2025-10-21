@@ -23,7 +23,7 @@ use Magento\CatalogInventory\Model\Spi\StockStateProviderInterface;
 use Magento\CatalogInventory\Model\Stock\Item;
 use Magento\CatalogInventory\Model\Stock\StockItemRepository;
 use Magento\CatalogInventory\Model\StockRegistryStorage;
-use Magento\CatalogInventory\Test\Unit\Helper\ItemTestHelper;
+use Magento\CatalogInventory\Test\Unit\Helper\StockItemInterfaceTestHelper;
 use Magento\Framework\DB\MapperFactory;
 use Magento\Framework\DB\QueryBuilder;
 use Magento\Framework\DB\QueryBuilderFactory;
@@ -127,8 +127,8 @@ class StockItemRepositoryTest extends TestCase
      */
     protected function setUp(): void
     {
-        // Create ItemTestHelper that extends Item and implements all required methods
-        $this->stockItemMock = new ItemTestHelper();
+        // Create StockItemInterfaceTestHelper that extends Item and implements all required methods
+        $this->stockItemMock = new StockItemInterfaceTestHelper();
             
         $this->stockConfigurationMock = $this->getMockBuilder(
             StockConfigurationInterface::class

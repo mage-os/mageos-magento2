@@ -12,7 +12,6 @@ use Magento\CatalogRule\Observer\AddDirtyRulesNotice;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\CatalogRule\Test\Unit\Helper\FlagTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -53,11 +52,9 @@ class AddDirtyRulesNoticeTest extends TestCase
     public function testExecute(): void
     {
         $message = "test";
-        $flagMock = new FlagTestHelper();
-        $eventObserverMock = $this->getMockBuilder(Observer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $flagMock = $this->createPartialMock(Flag::class, []);
         $flagMock->setState(1);
+        $eventObserverMock = $this->createMock(Observer::class);
         $eventObserverMock
             ->method('getData')
             ->willReturnCallback(fn($param) => match ([$param]) {

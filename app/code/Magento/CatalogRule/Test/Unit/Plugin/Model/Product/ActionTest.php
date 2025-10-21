@@ -24,21 +24,17 @@ class ActionTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->productRuleProcessor = $this->getMockBuilder(
-            ProductRuleProcessor::class
-        )->disableOriginalConstructor()
-            ->onlyMethods(['reindexList'])
-            ->getMock();
+        $this->productRuleProcessor = $this->createPartialMock(
+            ProductRuleProcessor::class,
+            ['reindexList']
+        );
 
         $this->action = new Action($this->productRuleProcessor);
     }
 
     public function testAfterUpdateAttributes()
     {
-        $subject = $this->getMockBuilder(\Magento\Catalog\Model\Product\Action::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([])
-            ->getMock();
+        $subject = $this->createMock(\Magento\Catalog\Model\Product\Action::class);
 
         $result = new ProductActionTestHelper();
 
@@ -53,10 +49,7 @@ class ActionTest extends TestCase
     public function testAfterUpdateAttributesWithPrice()
     {
         $productIds = [1, 2, 3];
-        $subject = $this->getMockBuilder(\Magento\Catalog\Model\Product\Action::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([])
-            ->getMock();
+        $subject = $this->createMock(\Magento\Catalog\Model\Product\Action::class);
 
         $result = new ProductActionTestHelper();
 

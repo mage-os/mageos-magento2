@@ -40,10 +40,10 @@ class MappableConditionProcessorTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->eavConfigMock = $this->getMockBuilder(EavConfig::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getAttribute'])
-            ->getMock();
+        $this->eavConfigMock = $this->createPartialMock(
+            EavConfig::class,
+            ['getAttribute']
+        );
 
         $this->customConditionProcessorBuilderMock = $this->createMock(CustomConditionProviderInterface::class);
 
@@ -994,10 +994,7 @@ class MappableConditionProcessorTest extends TestCase
      */
     protected function getMockForCombinedCondition($subConditions, $aggregator)
     {
-        $mock = $this->getMockBuilder(CombinedCondition::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([])
-            ->getMock();
+        $mock = $this->createPartialMock(CombinedCondition::class, []);
 
         $mock->setConditions($subConditions);
         $mock->setAggregator($aggregator);
@@ -1012,10 +1009,7 @@ class MappableConditionProcessorTest extends TestCase
      */
     protected function getMockForSimpleCondition($attribute)
     {
-        $mock = $this->getMockBuilder(SimpleCondition::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([])
-            ->getMock();
+        $mock = $this->createPartialMock(SimpleCondition::class, []);
 
         $mock->setAttribute($attribute);
         $mock->setType(SimpleCondition::class);

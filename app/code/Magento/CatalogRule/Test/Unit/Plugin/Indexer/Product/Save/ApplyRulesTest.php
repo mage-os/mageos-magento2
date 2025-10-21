@@ -40,14 +40,9 @@ class ApplyRulesTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->productRuleProcessor = $this
-            ->getMockBuilder(ProductRuleProcessor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productRuleProcessor = $this->createMock(ProductRuleProcessor::class);
 
-        $this->subject = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->subject = $this->createMock(Product::class);
 
         $this->model = new AbstractModelTestHelper();
 

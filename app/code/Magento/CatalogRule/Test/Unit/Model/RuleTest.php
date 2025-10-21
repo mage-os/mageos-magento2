@@ -168,9 +168,10 @@ class RuleTest extends TestCase
      */
     private function getSerializerMock(): MockObject
     {
-        $serializerMock = $this->getMockBuilder(Json::class)->disableOriginalConstructor()
-            ->onlyMethods(['serialize', 'unserialize'])
-            ->getMock();
+        $serializerMock = $this->createPartialMock(
+            Json::class,
+            ['serialize', 'unserialize']
+        );
 
         $serializerMock->expects($this->any())
             ->method('serialize')

@@ -68,10 +68,10 @@ class MassDeleteTest extends TestCase
 
         $this->messageManagerMock = $this->createMock(ManagerInterface::class);
 
-        $this->resultRedirectMock = $this->getMockBuilder(Redirect::class)
-            ->onlyMethods(['setPath'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->resultRedirectMock = $this->createPartialMock(
+            Redirect::class,
+            ['setPath']
+        );
 
         $this->resultFactory = $this->createMock(ResultFactory::class);
         $this->resultFactory->method('create')->willReturn($this->resultRedirectMock);

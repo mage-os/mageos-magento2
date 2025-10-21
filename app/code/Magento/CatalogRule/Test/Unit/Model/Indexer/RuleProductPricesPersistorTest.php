@@ -48,15 +48,9 @@ class RuleProductPricesPersistorTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->dateTimeMock = $this->getMockBuilder(DateTime::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->resourceMock = $this->getMockBuilder(ResourceConnection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->activeTableSwitcherMock = $this->getMockBuilder(ActiveTableSwitcher::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->dateTimeMock = $this->createMock(DateTime::class);
+        $this->resourceMock = $this->createMock(ResourceConnection::class);
+        $this->activeTableSwitcherMock = $this->createMock(ActiveTableSwitcher::class);
         $this->tableSwapperMock = $this->createMock(IndexerTableSwapperInterface::class);
         $this->model = new RuleProductPricesPersistor(
             $this->dateTimeMock,

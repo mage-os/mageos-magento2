@@ -14,7 +14,7 @@ use Magento\CatalogRule\Model\Rule\Condition\Product;
 use Magento\Eav\Model\Config;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Catalog\Test\Unit\Helper\AttributeTestHelper;
-use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelperExtended;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -85,11 +85,9 @@ class ProductTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->productModel = new ProductTestHelper($this->productResource);
+        $this->productModel = new ProductTestHelperExtended($this->productResource);
 
         $this->eavAttributeResource = new AttributeTestHelper();
-
-
         $this->productResource->expects($this->any())->method('loadAllAttributes')->willReturnSelf();
         $this->productResource->method('getAttributesByCode')->willReturn([$this->eavAttributeResource]);
         $this->eavAttributeResource->setScopeGlobal(false);

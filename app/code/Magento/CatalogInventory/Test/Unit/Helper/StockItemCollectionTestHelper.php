@@ -11,7 +11,6 @@ use Magento\CatalogInventory\Model\ResourceModel\Stock\Item\Collection;
 
 /**
  * TestHelper for Stock Item Collection
- * Provides implementation for Stock Item Collection with additional test methods
  */
 class StockItemCollectionTestHelper extends Collection
 {
