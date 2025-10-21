@@ -65,6 +65,13 @@
         </after>
         <!-- Step-1: Set catalog price scope to  website -->
         <actionGroup ref="AdminSetCatalogPriceToWebsiteActionGroup" stepKey="setPriceScopeWebsite"/>
+        <!-- Step 2: Reindex and cache clear -->
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+            <argument name="indices" value=""/>
+        </actionGroup>
+        <actionGroup ref="CliCacheFlushActionGroup" stepKey="cleanCache">
+            <argument name="tags" value=""/>
+        </actionGroup>
         <!-- Step 3: Open created product and assign to website-->
         <actionGroup ref="AdminProductPageOpenByIdActionGroup" stepKey="openProductEdit">
             <argument name="productId" value="$createProduct.id$"/>
@@ -94,8 +101,7 @@
         <!--Save product-->
         <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProduct"/>
         <!--Step6: From admin login as customer to storefront  and verify website scope product price is displayed in catalog search results page and product details page -->
-        <actionGroup ref="AdminLoginAsCustomerLoginFromCustomerPageActionGroup"
-                     stepKey="loginAsCustomerFromCustomerPage">
+        <actionGroup ref="AdminLoginAsCustomerLoginFromCustomerPageActionGroup" stepKey="loginAsCustomerFromCustomerPage">
             <argument name="customerId" value="$$createCustomer.id$$"/>
         </actionGroup>
         <actionGroup ref="StorefrontCheckQuickSearchStringActionGroup" stepKey="quickSearchByProductName">
@@ -109,6 +115,13 @@
         <waitForText userInput="$200.00" selector="{{StorefrontProductInfoMainSection.price}}" stepKey="seeWebsiteScopeProductPrice"/>
         <!-- Step 7: Set catalog price scope to website -->
         <actionGroup ref="AdminSetDefaultCatalogPriceActionGroup" stepKey="setScopeGlobal"/>
+        <!-- Step 8: Reindex and cache clear -->
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindexing">
+            <argument name="indices" value=""/>
+        </actionGroup>
+        <actionGroup ref="CliCacheFlushActionGroup" stepKey="cacheClean">
+            <argument name="tags" value=""/>
+        </actionGroup>
         <!--Step 9: Login as customer to storefront and verify global scope product price is displayed in catalog search results page and product details page -->
         <actionGroup ref="StorefrontCheckQuickSearchStringActionGroup" stepKey="searchByProductName">
             <argument name="phrase" value="$createProduct.name$"/>
