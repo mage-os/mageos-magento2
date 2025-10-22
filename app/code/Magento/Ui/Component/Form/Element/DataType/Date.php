@@ -130,7 +130,7 @@ class Date extends AbstractDataType
         bool $useStoreTimeZone = true
     ): ?\DateTime {
         if (!$useStoreTimeZone) {
-            $this->convertDate($date, $hour, $minute, $second, $setUtcTimeZone);
+            return $this->convertDate($date, $hour, $minute, $second, $setUtcTimeZone);
         }
 
         try {

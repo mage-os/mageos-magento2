@@ -16,6 +16,7 @@ use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Ui\Component\Filters\FilterModifier;
 use Magento\Ui\Component\Filters\Type\Date;
 use Magento\Ui\Component\Form\Element\DataType\Date as FormDate;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -210,9 +211,10 @@ class DateTest extends TestCase
      * @param bool $showsTime
      * @param array $filterData
      * @param array $expectedCondition
-     * @param MockObject $uiComponent
+     * @param FormDate $uiComponent
      *
      * @return void
+     * @throws Exception
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function processFilters(
@@ -244,8 +246,8 @@ class DateTest extends TestCase
                 $uiComponent->method('convertDateWithTimezone')
                     ->willReturnMap(
                         [
-                            [$filterData[$name]['from'], 0, 0, 0, true, $from],
-                            [$filterData[$name]['to'], 23, 59, 59, true, $to],
+                            [$filterData[$name]['from'], 0, 0, 0, true, true, $from],
+                            [$filterData[$name]['to'], 23, 59, 59, true, true, $to],
                         ]
                     );
             }
