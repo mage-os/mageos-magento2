@@ -50,16 +50,6 @@ class TotalsExtensionTestHelper implements TotalsExtensionInterface
     private $couponsLabels;
 
     /**
-     * @var float|null
-     */
-    private $baseCustomerBalanceAmount;
-
-    /**
-     * @var float|null
-     */
-    private $customerBalanceAmount;
-
-    /**
      * Get negotiable quote totals
      *
      * @return \Magento\NegotiableQuote\Api\Data\NegotiableQuoteTotalsInterface|null
@@ -210,50 +200,6 @@ class TotalsExtensionTestHelper implements TotalsExtensionInterface
     public function setCouponsLabels($couponsLabels)
     {
         $this->couponsLabels = $couponsLabels;
-        return $this;
-    }
-
-    /**
-     * Get base customer balance amount
-     *
-     * @return float|null
-     */
-    public function getBaseCustomerBalanceAmount()
-    {
-        return $this->baseCustomerBalanceAmount;
-    }
-
-    /**
-     * Set base customer balance amount
-     *
-     * @param float|null $baseCustomerBalanceAmount
-     * @return $this
-     */
-    public function setBaseCustomerBalanceAmount($baseCustomerBalanceAmount)
-    {
-        $this->baseCustomerBalanceAmount = $baseCustomerBalanceAmount;
-        return $this;
-    }
-
-    /**
-     * Get customer balance amount
-     *
-     * @return float|null
-     */
-    public function getCustomerBalanceAmount()
-    {
-        return $this->customerBalanceAmount;
-    }
-
-    /**
-     * Set customer balance amount
-     *
-     * @param float|null $customerBalanceAmount
-     * @return $this
-     */
-    public function setCustomerBalanceAmount($customerBalanceAmount)
-    {
-        $this->customerBalanceAmount = $customerBalanceAmount;
         return $this;
     }
 }
