@@ -13,6 +13,7 @@ use Magento\CatalogWidget\Model\Rule;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Framework\Data\Form\Element\Fieldset;
+use Magento\Framework\Data\Form\Element\Test\Unit\Helper\AbstractElementTestHelper;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\ReadInterface;
@@ -86,9 +87,10 @@ class ConditionsTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->layoutMock = $this->createMock(LayoutInterface::class);
-        $this->blockMock = $this->getMockBuilder(BlockInterface::class)
-            ->addMethods(['getWidgetValues'])
-            ->getMockForAbstractClass();
+        $this->blockMock = $this->getMockBuilder(\Magento\Framework\View\Element\Test\Unit\Helper\BlockInterfaceTestHelper::class)
+            ->onlyMethods(['getWidgetValues'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->contextMock = $this->getMockBuilder(Context::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -204,13 +206,13 @@ class ConditionsTest extends TestCase
     public function testRender(): void
     {
         $data = ['area' => 'backend'];
-        $abstractElementMock = $this->getMockBuilder(AbstractElement::class)
-            ->addMethods(['getContainer'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
         $eventManagerMock = $this->createMock(ManagerInterface::class);
         $scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
         $fieldsetMock = $this->createMock(Fieldset::class);
+        $fieldsetMock->method('getHtmlId')->willReturn('fieldset_id');
+        
+        $abstractElementMock = new AbstractElementTestHelper();
+        $abstractElementMock->setContainer($fieldsetMock);
         $combineMock = $this->createMock(Combine::class);
         $resolverMock = $this->createMock(Resolver::class);
         $filesystemMock = $this->createPartialMock(Filesystem::class, ['getDirectoryRead']);
@@ -219,9 +221,6 @@ class ConditionsTest extends TestCase
         $templateEngineMock = $this->createMock(TemplateEngineInterface::class);
         $directoryReadMock = $this->createMock(ReadInterface::class);
 
-        $this->ruleMock->expects($this->once())->method('getConditions')->willReturn($combineMock);
-        $combineMock->expects($this->once())->method('setJsFormObject')->willReturnSelf();
-        $abstractElementMock->method('getContainer')->willReturn($fieldsetMock);
         $filesystemMock->expects($this->once())->method('getDirectoryRead')->willReturn($directoryReadMock);
         $validatorMock->expects($this->once())->method('isValid')->willReturn(true);
         $this->contextMock->expects($this->once())->method('getEnginePool')->willReturn($templateEnginePoolMock);
@@ -233,6 +232,7 @@ class ConditionsTest extends TestCase
         $storeManager = $this->createMock(StoreManagerInterface::class);
         $storeManager->expects($this->once())->method('getStore')->willReturn($storeMock);
         $this->contextMock->method('getStoreManager')->willReturn($storeManager);
+        $this->objectManagerHelper->prepareObjectManager();
         $this->widgetConditions = $this->objectManagerHelper->getObject(
             Conditions::class,
             [
@@ -248,6 +248,10 @@ class ConditionsTest extends TestCase
             ]
         );
 
-        $this->assertEquals($this->widgetConditions->render($abstractElementMock), 'html');
+        $this->ruleMock->expects($this->once())->method('getConditions')->willReturn($combineMock);
+        $combineMock->expects($this->once())->method('setJsFormObject')->with('fieldset_id')->willReturnSelf();
+
+        $result = $this->widgetConditions->render($abstractElementMock);
+        $this->assertEquals('html', $result);
     }
 }

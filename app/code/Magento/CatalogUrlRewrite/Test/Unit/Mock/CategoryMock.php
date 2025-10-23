@@ -46,6 +46,37 @@ class CategoryMock extends Category
     }
 
     /**
+     * Mock method for unsUrlPath (unset url_path)
+     *
+     * @return $this
+     */
+    public function unsUrlPath()
+    {
+        return $this->unsetData('url_path');
+    }
+
+    /**
+     * Mock method for getUrlKey
+     *
+     * @return string|null
+     */
+    public function getUrlKey()
+    {
+        return $this->getData('url_key');
+    }
+
+    /**
+     * Mock method for setUrlKey
+     *
+     * @param string $urlKey
+     * @return $this
+     */
+    public function setUrlKey($urlKey)
+    {
+        return $this->setData('url_key', $urlKey);
+    }
+
+    /**
      * Initialize resources
      *
      * @return void
