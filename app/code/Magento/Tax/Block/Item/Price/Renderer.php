@@ -202,14 +202,13 @@ class Renderer extends \Magento\Framework\View\Element\Template
     }
 
     /**
-     * Get item price in display currency or order currency depending on item type
+     * Get item price in display currency or order currency
      *
      * @return float
      */
     public function getItemDisplayPriceExclTax()
     {
-        $item = $this->getItem();
-        return $item->getPrice();
+        return $this->getItem()->getPrice();
     }
 
     /**
