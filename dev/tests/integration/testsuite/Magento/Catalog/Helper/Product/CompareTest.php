@@ -1,9 +1,8 @@
 <?php
 /**
- * Copyright 2013 Adobe
+ * Copyright 2011 Adobe
  * All Rights Reserved.
  */
-
 namespace Magento\Catalog\Helper\Product;
 
 use Magento\Catalog\Helper\Data;
@@ -142,7 +141,7 @@ class CompareTest extends \PHPUnit\Framework\TestCase
             $this->assertTrue($this->_helper->hasItems());
             $compareItems = $this->_helper->getItemCollection();
             $compareItems->clear();
-            $session->unsCatalogCompareItemsCountPerWebsite();
+            $session->unsCatalogCompareItemsCountPerStoreView();
             $this->assertFalse($this->_helper->hasItems());
             $this->assertEquals(0, $session->getCatalogCompareItemsCount());
             $this->storeManager->setCurrentStore(1);
