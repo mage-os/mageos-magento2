@@ -7,12 +7,9 @@ declare(strict_types=1);
 
 namespace Magento\Bundle\Test\Unit\Model\Product\CopyConstructor;
 
-use Magento\Bundle\Api\Data\BundleOptionInterface;
 use Magento\Bundle\Model\Link;
 use Magento\Bundle\Model\Option;
 use Magento\Bundle\Model\Product\CopyConstructor\Bundle;
-use Magento\Catalog\Api\Data\ProductExtension;
-use Magento\Catalog\Api\Data\ProductExtensionInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Type;
 use Magento\Catalog\Test\Unit\Helper\ProductExtensionTestHelper;

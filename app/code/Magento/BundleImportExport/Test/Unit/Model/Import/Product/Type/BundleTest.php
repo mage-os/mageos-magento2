@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2025 Adobe
+ * Copyright 2015 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -19,11 +19,10 @@ use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory as At
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\App\ScopeInterface;
 use Magento\Framework\App\ScopeResolverInterface;
-use Magento\Framework\DB\Adapter\AdapterInterface;
-use Magento\Framework\DB\Adapter\Pdo\Mysql;
 use Magento\Framework\DB\Select;
 use Magento\Framework\EntityManager\EntityMetadata;
 use Magento\Framework\EntityManager\MetadataPool;
+use Magento\Catalog\Helper\Data as CatalogData;
 use Magento\ImportExport\Model\Import;
 use Magento\ImportExport\Test\Unit\Model\Import\AbstractImportTestCase;
 use Magento\Store\Model\StoreManagerInterface;
@@ -173,6 +172,9 @@ class BundleTest extends AbstractImportTestCase
         ];
         $this->scopeResolver = $this->createMock(ScopeResolverInterface::class);
 
+        $catalogDataMock = $this->createMock(CatalogData::class);
+        $catalogDataMock->method('isPriceGlobal')->willReturn(true);
+
         $objects = [
             [
                 RelationsDataSaver::class,
@@ -181,9 +183,16 @@ class BundleTest extends AbstractImportTestCase
             [
                 StoreManagerInterface::class,
                 $this->createMock(StoreManagerInterface::class)
+            ],
+            [
+                CatalogData::class,
+                $catalogDataMock
             ]
         ];
         $this->objectManagerHelper->prepareObjectManager($objects);
+
+        $catalogDataMockArg = $this->createMock(CatalogData::class);
+        $catalogDataMockArg->method('isPriceGlobal')->willReturn(true);
 
         $this->bundle = $this->objectManagerHelper->getObject(
             Bundle::class,
@@ -192,7 +201,8 @@ class BundleTest extends AbstractImportTestCase
                 'prodAttrColFac' => $this->prodAttrColFac,
                 'resource' => $this->resource,
                 'params' => $this->params,
-                'scopeResolver' => $this->scopeResolver
+                'scopeResolver' => $this->scopeResolver,
+                'catalogData' => $catalogDataMockArg
             ]
         );
 

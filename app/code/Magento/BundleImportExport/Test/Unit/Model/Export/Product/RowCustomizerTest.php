@@ -15,6 +15,7 @@ use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\App\ScopeInterface;
 use Magento\Framework\App\ScopeResolverInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\BundleImportExport\Test\Unit\Helper\TypeInstanceTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -94,7 +95,7 @@ class RowCustomizerTest extends TestCase
         $this->product->setTypeInstance($this->product);
         $this->optionsCollection = $this->createPartialMock(
             \Magento\Bundle\Model\ResourceModel\Option\Collection::class,
-            ['setOrder', 'getItems']
+            ['setOrder', 'getItems', 'getItemById', 'appendSelections', 'getIterator']
         );
         $this->product->setOptionsCollection($this->optionsCollection);
         $this->optionsCollection->method('setOrder')->willReturnSelf();
@@ -107,24 +108,30 @@ class RowCustomizerTest extends TestCase
         $this->option->method('getTitle')->willReturn('title');
         $this->option->method('getType')->willReturn(1);
         $this->option->method('getRequired')->willReturn(1);
-        $this->optionsCollection->method('getItems')->willReturn(
-            new \ArrayIterator([$this->option])
-        );
+        $this->optionsCollection->method('getItems')->willReturn([$this->option]);
+        $this->optionsCollection->method('getItemById')->willReturn($this->option);
+        $this->optionsCollection->method('appendSelections')->willReturn([$this->option]);
+        $this->optionsCollection->method('getIterator')->willReturn(new \ArrayIterator([$this->option]));
         $this->selection = new ProductTestHelper();
         $this->selection->setSku(1);
         $this->selection->setSelectionPriceValue(1);
         $this->selection->setSelectionQty(1);
         $this->selection->setSelectionPriceType(1);
         $this->selection->setSelectionCanChangeQty(1);
+        $this->selection->setOptionId(1);
         $this->selectionsCollection = $this->createPartialMock(
             \Magento\Bundle\Model\ResourceModel\Selection\Collection::class,
-            ['getIterator', 'addAttributeToSort']
+            ['getIterator', 'addAttributeToSort', 'getItems']
         );
         $this->selectionsCollection->method('getIterator')->willReturn(
             new \ArrayIterator([$this->selection])
         );
         $this->selectionsCollection->method('addAttributeToSort')->willReturnSelf();
+        $this->selectionsCollection->method('getItems')->willReturn([$this->selection]);
+        $this->option->setData('selections', [$this->selection]);
         $this->product->setSelectionsCollection($this->selectionsCollection);
+        $typeInstance = new TypeInstanceTestHelper($this->optionsCollection, $this->selectionsCollection, [1]);
+        $this->product->setTypeInstance($typeInstance);
         $this->product->setSku(1);
         $this->productResourceCollection->method('addAttributeToFilter')->willReturnSelf();
         $this->productResourceCollection->method('getIterator')->willReturn(
