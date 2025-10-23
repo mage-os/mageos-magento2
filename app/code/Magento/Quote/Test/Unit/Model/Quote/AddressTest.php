@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2014 Adobe
+ * Copyright 2015 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -201,6 +201,9 @@ class AddressTest extends TestCase
         $this->address->setQuote($this->quote);
     }
 
+    /**
+     * @return void
+     */
     public function testValidateMinimumAmountDisabled(): void
     {
         $storeId = 1;
@@ -217,6 +220,12 @@ class AddressTest extends TestCase
         $this->assertTrue($this->address->validateMinimumAmount());
     }
 
+    /**
+     * Provide data for test different cases
+     *
+     * @param void
+     * @return array
+     */
     public static function getDataProvider(): array
     {
         return [
@@ -282,6 +291,9 @@ class AddressTest extends TestCase
         $this->assertEquals($result, $this->address->validateMinimumAmount());
     }
 
+    /**
+     * @return void
+     */
     public function testValidateMiniumumAmountWithoutDiscount(): void
     {
         $storeId = 1;
@@ -306,6 +318,9 @@ class AddressTest extends TestCase
         $this->assertTrue($this->address->validateMinimumAmount());
     }
 
+    /**
+     * @return void
+     */
     public function testValidateMinimumAmountNegative(): void
     {
         $storeId = 1;
@@ -331,6 +346,9 @@ class AddressTest extends TestCase
         $this->assertTrue($this->address->validateMinimumAmount());
     }
 
+    /**
+     * @return void
+     */
     public function testSetAndGetAppliedTaxes(): void
     {
         $data = ['data'];
@@ -338,6 +356,11 @@ class AddressTest extends TestCase
         self::assertEquals($data, $this->address->getAppliedTaxes());
     }
 
+    /**
+     * Checks a case, when applied taxes are not provided.
+     *
+     * @return void
+     */
     public function testGetAppliedTaxesWithEmptyValue(): void
     {
         $this->address->setData('applied_taxes', null);
@@ -345,6 +368,9 @@ class AddressTest extends TestCase
     }
 
     /**
+     * Test of requesting shipping rates by address
+     *
+     * @return void
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testRequestShippingRates(): void
