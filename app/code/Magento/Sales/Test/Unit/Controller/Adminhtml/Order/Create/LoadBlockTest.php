@@ -354,8 +354,6 @@ class LoadBlockTest extends TestCase
     public function testExecuteWithJsonAndAsJsVarnameReturnsDirectly(): void
     {
         $renderedContent = '{"sidebar":"test content"}';
-        // Use concatenation to avoid Health Index false positive for inline JS detection
-        $jsVarName = 'i' . 'Frame' . 'Response';
 
         // Setup request parameters: json=true, as_js_varname=true
         $this->request->expects($this->any())
@@ -364,7 +362,7 @@ class LoadBlockTest extends TestCase
                 ['store_id', null, '1'],
                 ['json', null, true],
                 ['block', null, 'sidebar'],
-                ['as_js_varname', null, $jsVarName]
+                ['as_js_varname', null, 'true']
             ]);
 
         // Setup page factory and layout
@@ -422,8 +420,6 @@ class LoadBlockTest extends TestCase
     public function testExecuteWithPlainAndAsJsVarnameStoresInSessionAndRedirects(): void
     {
         $renderedContent = '<div>test content</div>';
-        // Use concatenation to avoid Health Index false positive for inline JS detection
-        $jsVarName = 'i' . 'Frame' . 'Response';
 
         // Setup request parameters: json=false, as_js_varname=true
         $this->request->expects($this->any())
@@ -432,7 +428,7 @@ class LoadBlockTest extends TestCase
                 ['store_id', null, '1'],
                 ['json', null, false],
                 ['block', null, 'sidebar'],
-                ['as_js_varname', null, $jsVarName]
+                ['as_js_varname', null, 'true']
             ]);
 
         // Setup page factory and layout
