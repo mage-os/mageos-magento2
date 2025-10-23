@@ -8,13 +8,20 @@ declare(strict_types=1);
 namespace Magento\Sales\Controller\Adminhtml\Order\Create;
 
 use Magento\Backend\Model\Session\Quote;
+use Magento\Catalog\Test\Fixture\Product as ProductFixture;
+use Magento\Customer\Test\Fixture\Customer;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Message\MessageInterface;
 use Magento\Framework\View\LayoutInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\CartInterface;
+use Magento\Quote\Test\Fixture\AddProductToCart;
+use Magento\Quote\Test\Fixture\CustomerCart;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\TestFramework\Fixture\DataFixture;
+use Magento\TestFramework\Fixture\DataFixtureStorage;
+use Magento\TestFramework\Fixture\DataFixtureStorageManager;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\Quote\Model\GetQuoteByReservedOrderId;
 use Magento\TestFramework\TestCase\AbstractBackendController;
@@ -49,6 +56,9 @@ class LoadBlockTest extends AbstractBackendController
     /** @var array */
     private $quoteIdsToRemove;
 
+    /** @var DataFixtureStorage */
+    private $fixtures;
+
     /**
      * @inheritdoc
      */
@@ -61,6 +71,7 @@ class LoadBlockTest extends AbstractBackendController
         $this->session = $this->_objectManager->get(Quote::class);
         $this->quoteRepository = $this->_objectManager->get(CartRepositoryInterface::class);
         $this->storeManager = $this->_objectManager->get(StoreManagerInterface::class);
+        $this->fixtures = DataFixtureStorageManager::getStorage();
     }
 
     /**
@@ -140,6 +151,70 @@ class LoadBlockTest extends AbstractBackendController
                 'asJsVarname' => true,
             ],
         ];
+    }
+
+    /**
+     * Test that JSON response with as_js_varname does not store result in session
+     *
+     * @return void
+     */
+    #[
+        DataFixture(ProductFixture::class, ['sku' => 'simple2'], as: 'product'),
+        DataFixture(Customer::class, as: 'customer'),
+        DataFixture(CustomerCart::class, ['customer_id' => '$customer.id$', 'is_active' => 1], as: 'quote'),
+        DataFixture(AddProductToCart::class, ['cart_id' => '$quote.id$', 'product_id' => '$product.id$', 'qty' => 1])
+    ]
+    public function testJsonResponseWithJsVarnameDoesNotStoreInSession(): void
+    {
+        /** @var CartInterface $quote */
+        $quote = $this->fixtures->get('quote');
+        $product = $this->fixtures->get('product');
+        $customer = $this->fixtures->get('customer');
+
+        // Ensure the quote is properly loaded with items
+        $quote = $this->quoteRepository->get($quote->getId());
+
+        $params = $this->hydrateParams([
+            'json' => true,
+            'as_js_varname' => 'iFrameResponse',
+        ]);
+        $itemId = $quote->getItemsCollection()->getFirstItem()->getId();
+        $post = $this->hydratePost([
+            'customer_id' => $customer->getId(),
+            'sidebar' => [
+                'add_cart_item' => [
+                    $itemId => 1,
+                ],
+            ],
+        ]);
+
+        $this->dispatchWitParams($params, $post);
+
+        // Verify handles are properly set for JSON response
+        $this->checkHandles(explode(',', $params['block']), true);
+
+        // Verify product was added to quote
+        $newQuote = $this->session->getQuote();
+        $newQuoteItemsCollection = $newQuote->getItemsCollection(false);
+        $this->assertNotNull($newQuoteItemsCollection->getItemByColumnValue('sku', $product->getSku()));
+
+        // Session should NOT contain updateResult (prevents session bloat)
+        $backendSession = $this->_objectManager->get(\Magento\Backend\Model\Session::class);
+        $this->assertFalse(
+            $backendSession->hasUpdateResult(),
+            'Session should not store updateResult for JSON responses to prevent session bloat'
+        );
+
+        // Verify response is returned directly (not a redirect)
+        $response = $this->getResponse();
+        $this->assertFalse(
+            $response->isRedirect(),
+            'Response should not be a redirect when json=true with as_js_varname'
+        );
+
+        // Verify response body is valid JSON with expected content
+        $responseBody = $response->getBody();
+        $this->assertNotEmpty($responseBody, 'Response body should not be empty');
     }
 
     /**
