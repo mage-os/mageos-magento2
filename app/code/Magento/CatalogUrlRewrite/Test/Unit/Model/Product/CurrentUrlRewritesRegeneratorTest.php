@@ -292,7 +292,16 @@ class CurrentUrlRewritesRegeneratorTest extends TestCase
             ]));
         $this->productUrlPathGenerator->method('getUrlPathWithSuffix')->willReturn($targetPath);
         $this->product->method('getEntityId')->willReturn($productId);
-        $this->prepareUrlRewriteTestHelper($storeId, $productId, $requestPath, $targetPath, 0, 'code', [], $description);
+        $this->prepareUrlRewriteTestHelper(
+            $storeId,
+            $productId,
+            $requestPath,
+            $targetPath,
+            0,
+            'code',
+            [],
+            $description
+        );
 
         $this->assertEquals(
             [$this->urlRewrite],

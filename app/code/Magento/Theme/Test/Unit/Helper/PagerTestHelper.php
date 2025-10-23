@@ -55,4 +55,3 @@ class PagerTestHelper extends Pager
         return $this->setData('total_limit', $limit);
     }
 }
-

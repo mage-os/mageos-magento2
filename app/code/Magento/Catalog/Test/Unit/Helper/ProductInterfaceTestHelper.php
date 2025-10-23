@@ -14,6 +14,8 @@ use Magento\Catalog\Model\Product;
  *
  * This helper extends the concrete Product class to provide
  * test-specific functionality without dependency injection issues.
+ * 
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class ProductInterfaceTestHelper extends Product
 {

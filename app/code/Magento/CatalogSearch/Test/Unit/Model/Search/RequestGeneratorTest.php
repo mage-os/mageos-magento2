@@ -136,12 +136,12 @@ class RequestGeneratorTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $collection->method('getIterator')->willReturn(
-                new \ArrayIterator(
-                    [
+            new \ArrayIterator(
+                [
                         $this->createAttributeTestHelper($attributeOptions),
                     ]
-                )
-            );
+            )
+        );
         $collection->expects($this->any())
             ->method('addFieldToFilter')
             ->with(

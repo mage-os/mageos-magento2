@@ -29,6 +29,7 @@ class ProductCollectionTestHelper extends Collection
      * @param int|null $limit
      * @param int|null $offset
      * @return mixed
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getAllIds($limit = null, $offset = null)
     {
@@ -45,6 +46,7 @@ class ProductCollectionTestHelper extends Collection
      *
      * @param array $sequence
      * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setAllIdsSequence(array $sequence)
     {

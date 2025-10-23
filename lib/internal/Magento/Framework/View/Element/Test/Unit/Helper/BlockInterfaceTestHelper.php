@@ -43,4 +43,3 @@ class BlockInterfaceTestHelper extends AbstractBlock
         return $this->setData('widget_values', $values);
     }
 }
-

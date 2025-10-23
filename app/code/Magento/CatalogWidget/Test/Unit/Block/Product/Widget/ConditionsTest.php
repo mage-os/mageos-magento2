@@ -87,8 +87,9 @@ class ConditionsTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->layoutMock = $this->createMock(LayoutInterface::class);
-        $this->blockMock = $this->getMockBuilder(\Magento\Framework\View\Element\Test\Unit\Helper\BlockInterfaceTestHelper::class)
-            ->onlyMethods(['getWidgetValues'])
+        $this->blockMock = $this->getMockBuilder(
+            \Magento\Framework\View\Element\Test\Unit\Helper\BlockInterfaceTestHelper::class
+        )->onlyMethods(['getWidgetValues'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->contextMock = $this->getMockBuilder(Context::class)

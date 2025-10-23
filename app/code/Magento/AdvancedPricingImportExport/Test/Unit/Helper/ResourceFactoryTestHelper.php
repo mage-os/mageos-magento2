@@ -14,6 +14,8 @@ use Magento\CatalogImportExport\Model\Import\Proxy\Product\ResourceModelFactory;
  *
  * This helper extends the concrete ResourceFactory class to provide
  * test-specific functionality without dependency injection issues.
+ * 
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class ResourceFactoryTestHelper extends ResourceModelFactory
 {

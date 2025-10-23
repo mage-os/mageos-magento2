@@ -15,6 +15,8 @@ use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * Mock class for StoreManagerInterface with all required methods
+ * 
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class StoreManagerInterfaceTestHelper implements StoreManagerInterface
 {
@@ -23,7 +25,7 @@ class StoreManagerInterfaceTestHelper implements StoreManagerInterface
      *
      * @param bool $value
      * @return void
-     */
+    */
     public function setIsSingleStoreModeAllowed($value): void
     {
         // Mock implementation
@@ -33,7 +35,7 @@ class StoreManagerInterfaceTestHelper implements StoreManagerInterface
      * Mock method for hasSingleStore
      *
      * @return bool
-     */
+    */
     public function hasSingleStore(): bool
     {
         return false;
@@ -43,7 +45,7 @@ class StoreManagerInterfaceTestHelper implements StoreManagerInterface
      * Mock method for isSingleStoreMode
      *
      * @return bool
-     */
+    */
     public function isSingleStoreMode(): bool
     {
         return false;
@@ -55,7 +57,7 @@ class StoreManagerInterfaceTestHelper implements StoreManagerInterface
      * @param null|string|bool|int|StoreInterface $storeId
      * @return StoreInterface
      * @throws NoSuchEntityException
-     */
+    */
     public function getStore($storeId = null): StoreInterface
     {
         // Return a mock store - this would need to be properly mocked in tests
@@ -68,7 +70,7 @@ class StoreManagerInterfaceTestHelper implements StoreManagerInterface
      * @param bool $withDefault
      * @param bool $codeKey
      * @return StoreInterface[]
-     */
+    */
     public function getStores($withDefault = false, $codeKey = false): array
     {
         return [];
@@ -80,7 +82,7 @@ class StoreManagerInterfaceTestHelper implements StoreManagerInterface
      * @param null|bool|int|string|WebsiteInterface $websiteId
      * @return WebsiteInterface
      * @throws \Magento\Framework\Exception\LocalizedException
-     */
+    */
     public function getWebsite($websiteId = null): WebsiteInterface
     {
         // Return a mock website - this would need to be properly mocked in tests
@@ -93,7 +95,7 @@ class StoreManagerInterfaceTestHelper implements StoreManagerInterface
      * @param bool $withDefault
      * @param bool $codeKey
      * @return WebsiteInterface[]
-     */
+    */
     public function getWebsites($withDefault = false, $codeKey = false): array
     {
         return [];
@@ -103,7 +105,7 @@ class StoreManagerInterfaceTestHelper implements StoreManagerInterface
      * Mock method for reinitStores
      *
      * @return void
-     */
+    */
     public function reinitStores(): void
     {
         // Mock implementation
@@ -113,7 +115,7 @@ class StoreManagerInterfaceTestHelper implements StoreManagerInterface
      * Mock method for getDefaultStoreView
      *
      * @return StoreInterface|null
-     */
+    */
     public function getDefaultStoreView(): ?StoreInterface
     {
         return null;
@@ -124,6 +126,7 @@ class StoreManagerInterfaceTestHelper implements StoreManagerInterface
      *
      * @param null|GroupInterface|string $groupId
      * @return GroupInterface
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getGroup($groupId = null): GroupInterface
     {
@@ -136,6 +139,7 @@ class StoreManagerInterfaceTestHelper implements StoreManagerInterface
      *
      * @param bool $withDefault
      * @return GroupInterface[]
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getGroups($withDefault = false): array
     {
@@ -147,6 +151,7 @@ class StoreManagerInterfaceTestHelper implements StoreManagerInterface
      *
      * @param string|int|StoreInterface $store
      * @return void
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setCurrentStore($store): void
     {

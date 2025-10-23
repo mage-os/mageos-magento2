@@ -19,6 +19,7 @@ class CollectionTestHelper extends Collection
      *
      * @param mixed $ids
      * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function addIdFilter($ids)
     {

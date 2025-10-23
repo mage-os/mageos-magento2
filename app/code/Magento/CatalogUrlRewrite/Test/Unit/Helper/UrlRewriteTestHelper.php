@@ -28,6 +28,8 @@ class UrlRewriteTestHelper extends UrlRewrite
      *
      * @param mixed $metadata
      * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     public function setMetadata($metadata)
     {
@@ -44,6 +46,7 @@ class UrlRewriteTestHelper extends UrlRewrite
      *
      * @param array $sequence
      * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setMetadataSequence(array $sequence)
     {

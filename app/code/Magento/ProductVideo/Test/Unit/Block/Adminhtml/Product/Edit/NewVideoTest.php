@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -22,6 +22,9 @@ use Magento\ProductVideo\Helper\Media;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class NewVideoTest extends TestCase
 {
     /**
@@ -75,8 +78,9 @@ class NewVideoTest extends TestCase
     protected $directoryHelperMock;
 
     /**
-     * @var ObjectManager
      * |\Magento\ProductVideo\Block\Adminhtml\Product\Edit\NewVideo
+     *
+     * @var ObjectManager
      */
     protected $block;
 
@@ -111,7 +115,8 @@ class NewVideoTest extends TestCase
 
     public function testGetWidgetOptions()
     {
-        $expectedOptions = '{"saveVideoUrl":"test_url","saveRemoteVideoUrl":"test_remote_url","htmlId":"test_id","youTubeApiKey":null,"videoSelector":"#media_gallery_content"}';
+        $expectedOptions = '{"saveVideoUrl":"test_url","saveRemoteVideoUrl":"test_remote_url","htmlId":"test_id",'
+            . '"youTubeApiKey":null,"videoSelector":"#media_gallery_content"}';
         $this->block->expects($this->once())->method('getWidgetOptions')->willReturn($expectedOptions);
         $result = $this->block->getWidgetOptions();
         $this->assertEquals($expectedOptions, $result);

@@ -18,7 +18,7 @@ class ProductTestHelper extends Product
      * Mock method for getUrlKey
      *
      * @return string|null
-     */
+    */
     public function getUrlKey()
     {
         return $this->getData('url_key');
@@ -29,6 +29,7 @@ class ProductTestHelper extends Product
      *
      * @param string $str
      * @return string
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function formatUrlKey($str)
     {
@@ -40,6 +41,7 @@ class ProductTestHelper extends Product
      *
      * @param int $storeId
      * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setStoreId($storeId)
     {
@@ -52,6 +54,7 @@ class ProductTestHelper extends Product
      * @param int $modelId
      * @param string|null $field
      * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function load($modelId, $field = null)
     {
@@ -63,6 +66,7 @@ class ProductTestHelper extends Product
      *
      * @param string $urlKey
      * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setUrlKey($urlKey)
     {

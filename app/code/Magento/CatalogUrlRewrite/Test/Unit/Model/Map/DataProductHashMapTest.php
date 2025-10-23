@@ -77,7 +77,7 @@ class DataProductHashMapTest extends TestCase
         $callCount = 0;
         $this->productCollectionMock->expects($this->exactly(3))
             ->method('getAllIds')
-            ->willReturnCallback(function() use (&$callCount, $productIds, $productIdsOther) {
+            ->willReturnCallback(function () use (&$callCount, $productIds, $productIdsOther) {
                 $callCount++;
                 if ($callCount === 1) {
                     return $productIds;

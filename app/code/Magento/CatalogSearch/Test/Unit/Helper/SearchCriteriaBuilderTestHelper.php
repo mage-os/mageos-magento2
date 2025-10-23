@@ -24,7 +24,7 @@ class SearchCriteriaBuilderTestHelper extends SearchCriteriaBuilder
      *
      * @param string $requestName
      * @return $this
-     */
+    */
     public function setRequestName($requestName)
     {
         $this->requestName = $requestName;
@@ -35,7 +35,7 @@ class SearchCriteriaBuilderTestHelper extends SearchCriteriaBuilder
      * Get the request name
      *
      * @return string|null
-     */
+    */
     public function getRequestName()
     {
         return $this->requestName;
@@ -48,6 +48,7 @@ class SearchCriteriaBuilderTestHelper extends SearchCriteriaBuilder
      * @param mixed $value
      * @param string $conditionType
      * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function addFilter($fieldOrFilter, $value = null, $conditionType = 'eq')
     {

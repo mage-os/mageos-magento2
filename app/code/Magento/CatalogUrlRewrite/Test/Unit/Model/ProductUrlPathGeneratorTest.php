@@ -55,7 +55,9 @@ class ProductUrlPathGeneratorTest extends TestCase
     {
         $this->category = $this->createMock(Category::class);
         $this->product = $this->getMockBuilder(ProductTestHelper::class)
-            ->onlyMethods(['__wakeup', 'getData', 'getName', 'formatUrlKey', 'getId', 'load', 'setStoreId', 'getUrlKey'])
+            ->onlyMethods(
+                ['__wakeup', 'getData', 'getName', 'formatUrlKey', 'getId', 'load', 'setStoreId', 'getUrlKey']
+            )
             ->disableOriginalConstructor()
             ->getMock();
         $this->storeManager = $this->createMock(StoreManagerInterface::class);

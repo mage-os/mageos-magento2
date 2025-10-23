@@ -63,8 +63,8 @@ class StockTest extends TestCase
             Registry::class
         )->disableOriginalConstructor()
             ->onlyMethods(
-            ['registry']
-        )->getMock();
+                ['registry']
+            )->getMock();
         $this->_block = $objectManager->getObject(
             Stock::class,
             ['helper' => $this->_helper, 'registry' => $this->_registry]

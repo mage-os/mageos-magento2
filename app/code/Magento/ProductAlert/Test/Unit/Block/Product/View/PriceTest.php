@@ -64,8 +64,8 @@ class PriceTest extends TestCase
             Registry::class
         )->disableOriginalConstructor()
             ->onlyMethods(
-            ['registry']
-        )->getMock();
+                ['registry']
+            )->getMock();
         $this->_block = $objectManager->getObject(
             Price::class,
             ['helper' => $this->_helper, 'registry' => $this->_registry]

@@ -20,6 +20,7 @@ class UrlFinderInterfaceTestHelper implements UrlFinderInterface
      *
      * @param array $data
      * @return UrlRewrite|null
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function findOneByData(array $data): ?UrlRewrite
     {
@@ -31,6 +32,7 @@ class UrlFinderInterfaceTestHelper implements UrlFinderInterface
      *
      * @param array $data
      * @return UrlRewrite[]
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function findAllByData(array $data): array
     {

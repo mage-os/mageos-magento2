@@ -18,6 +18,7 @@ class ProductTestHelper extends Product
      * Mock method for getCanShowPrice
      *
      * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getCanShowPrice()
     {

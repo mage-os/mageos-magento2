@@ -41,4 +41,3 @@ class ContextExtensionTestHelper implements ContextExtensionInterface
         return $this;
     }
 }
-

@@ -12,6 +12,8 @@ use Magento\Framework\Api\CustomAttributesDataInterface;
 
 /**
  * Mock class for CategoryInterface with additional methods
+ * 
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class CategoryInterfaceTestHelper implements CategoryInterface, CustomAttributesDataInterface
 {
@@ -24,7 +26,7 @@ class CategoryInterfaceTestHelper implements CategoryInterface, CustomAttributes
      * Mock method for getResource
      *
      * @return mixed
-     */
+    */
     public function getResource()
     {
         return $this->resource;

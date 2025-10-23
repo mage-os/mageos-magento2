@@ -14,6 +14,8 @@ use Magento\Framework\View\Element\AbstractBlock;
  *
  * This helper extends the concrete AbstractBlock class to provide
  * test-specific functionality without dependency injection issues.
+ * 
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class AbstractBlockTestHelper extends AbstractBlock
 {

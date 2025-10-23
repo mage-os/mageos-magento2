@@ -11,6 +11,8 @@ use Magento\Catalog\Api\Data\CategoryInterface;
 
 /**
  * Mock class for CategoryInterface with additional methods
+ * 
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class CategoryInterfaceTestHelper implements CategoryInterface
 {
@@ -23,7 +25,7 @@ class CategoryInterfaceTestHelper implements CategoryInterface
      * Mock method for getIsAnchor
      *
      * @return bool|null
-     */
+    */
     public function getIsAnchor()
     {
         return $this->isAnchor;
@@ -46,6 +48,8 @@ class CategoryInterfaceTestHelper implements CategoryInterface
     {
         return null;
     }
+    
+    
     public function setId($id)
     {
         return $this;
@@ -54,6 +58,8 @@ class CategoryInterfaceTestHelper implements CategoryInterface
     {
         return null;
     }
+    
+
     public function setParentId($parentId)
     {
         return $this;
@@ -62,6 +68,9 @@ class CategoryInterfaceTestHelper implements CategoryInterface
     {
         return null;
     }
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function setName($name)
     {
         return $this;
@@ -70,6 +79,9 @@ class CategoryInterfaceTestHelper implements CategoryInterface
     {
         return null;
     }
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function setIsActive($isActive)
     {
         return $this;
@@ -78,6 +90,9 @@ class CategoryInterfaceTestHelper implements CategoryInterface
     {
         return null;
     }
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function setPosition($position)
     {
         return $this;
@@ -86,6 +101,9 @@ class CategoryInterfaceTestHelper implements CategoryInterface
     {
         return null;
     }
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function setLevel($level)
     {
         return $this;
@@ -94,6 +112,9 @@ class CategoryInterfaceTestHelper implements CategoryInterface
     {
         return null;
     }
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function setPath($path)
     {
         return $this;
@@ -102,6 +123,9 @@ class CategoryInterfaceTestHelper implements CategoryInterface
     {
         return null;
     }
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function setAvailableSortBy($availableSortBy)
     {
         return $this;
@@ -110,6 +134,9 @@ class CategoryInterfaceTestHelper implements CategoryInterface
     {
         return null;
     }
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function setIncludeInMenu($includeInMenu)
     {
         return $this;
@@ -118,6 +145,9 @@ class CategoryInterfaceTestHelper implements CategoryInterface
     {
         return null;
     }
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function setChildren($children)
     {
         return $this;
@@ -126,6 +156,9 @@ class CategoryInterfaceTestHelper implements CategoryInterface
     {
         return null;
     }
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function setCreatedAt($createdAt)
     {
         return $this;
@@ -134,6 +167,9 @@ class CategoryInterfaceTestHelper implements CategoryInterface
     {
         return null;
     }
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function setUpdatedAt($updatedAt)
     {
         return $this;
@@ -142,16 +178,25 @@ class CategoryInterfaceTestHelper implements CategoryInterface
     {
         return null;
     }
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function setExtensionAttributes($extensionAttributes)
     {
         return $this;
     }
 
     // Required methods from CustomAttributesDataInterface
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function getCustomAttribute($attributeCode)
     {
         return null;
     }
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function setCustomAttribute($attributeCode, $attributeValue)
     {
         return $this;
@@ -160,6 +205,9 @@ class CategoryInterfaceTestHelper implements CategoryInterface
     {
         return null;
     }
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function setCustomAttributes($attributes)
     {
         return $this;
