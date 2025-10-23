@@ -63,21 +63,7 @@ class CategoryUrlSuffixTest extends TestCase
     {
         $this->contextMock = $this->createMock(ContextInterface::class);
         
-        // Create anonymous class that implements ContextExtensionInterface
-        $this->contextExtensionMock = new class implements ContextExtensionInterface {
-            private $store = null;
-            
-            public function __construct() {}
-            
-            public function getStore() {
-                return $this->store;
-            }
-            
-            public function setStore($store) {
-                $this->store = $store;
-                return $this;
-            }
-        };
+        $this->contextExtensionMock = new \Magento\GraphQl\Test\Unit\Helper\ContextExtensionTestHelper();
 
         $this->storeMock = $this->createMock(StoreInterface::class);
 
@@ -111,10 +97,7 @@ class CategoryUrlSuffixTest extends TestCase
             ->method('getExtensionAttributes')
             ->willReturn($this->contextExtensionMock);
 
-        $this->contextExtensionMock
-            ->expects($this->once())
-            ->method('getStore')
-            ->willReturn($this->storeMock);
+        $this->contextExtensionMock->setStore($this->storeMock);
 
         $this->storeMock
             ->expects($this->once())
@@ -146,10 +129,7 @@ class CategoryUrlSuffixTest extends TestCase
             ->method('getExtensionAttributes')
             ->willReturn($this->contextExtensionMock);
 
-        $this->contextExtensionMock
-            ->expects($this->once())
-            ->method('getStore')
-            ->willReturn($this->storeMock);
+        $this->contextExtensionMock->setStore($this->storeMock);
 
         $this->storeMock
             ->expects($this->once())

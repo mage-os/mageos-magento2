@@ -31,6 +31,8 @@ use Magento\ImportExport\Model\Import;
 use Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregatorInterface;
 use Magento\ImportExport\Model\ResourceModel\Helper;
 use Magento\ImportExport\Test\Unit\Model\Import\AbstractImportTestCase;
+use Magento\AdvancedPricingImportExport\Test\Unit\Helper\ResourceFactoryTestHelper;
+use Magento\AdvancedPricingImportExport\Test\Unit\Helper\DateTimeTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
@@ -165,30 +167,7 @@ class AdvancedPricingTest extends AbstractImportTestCase
         $this->dataSourceModel = $this->createMock(\Magento\ImportExport\Model\ResourceModel\Import\Data::class);
         $entityType = $this->createMock(Type::class);
         $entityType->method('getEntityTypeId')->willReturn('');
-        $this->resourceFactory = new class extends ResourceFactory {
-            private $tableName = 'tableName';
-            private $linkField = 'linkField';
-            
-            public function __construct()
-            {
-            }
-            
-            public function getTable($tableName)
-            {
-                return $this->tableName;
-            }
-            
-            public function setTableName($tableName)
-            {
-                $this->tableName = $tableName;
-                return $this;
-            }
-            
-            public function create(array $data = [])
-            {
-                return $this;
-            }
-        };
+        $this->resourceFactory = new ResourceFactoryTestHelper();
         $this->resourceFactory->setTableName(self::TABLE_NAME);
         $this->catalogData = $this->createMock(\Magento\Catalog\Helper\Data::class);
         $this->storeResolver = $this->createMock(
@@ -207,29 +186,7 @@ class AdvancedPricingTest extends AbstractImportTestCase
             TierPrice::class
         );
         $this->errorAggregator = $this->getErrorAggregatorObject();
-        $this->dateTime = new class extends DateTime {
-            private $formattedDate;
-            
-            public function __construct()
-            {
-            }
-            
-            public function format($format)
-            {
-                return $this->formattedDate;
-            }
-            
-            public function setFormattedDate($date)
-            {
-                $this->formattedDate = $date;
-                return $this;
-            }
-            
-            public function date($format = null, $input = null, $timezone = null)
-            {
-                return $this;
-            }
-        };
+        $this->dateTime = new DateTimeTestHelper();
 
         $this->advancedPricing = $this->getAdvancedPricingMock(
             [

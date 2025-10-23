@@ -27,7 +27,6 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 use Magento\Framework\View\Design\ThemeInterface;
 use Magento\Framework\View\DesignInterface;
 use Magento\Framework\View\LayoutInterface;
-use Magento\Rule\Model\Condition\Combine;
 use Magento\Rule\Model\Condition\Sql\Builder;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
@@ -252,14 +251,16 @@ class ProductsListTest extends TestCase
         $this->productsList->setData('products_per_page', 2);
         $this->productsList->setData('product_collection', $collection);
 
-        $pagerBlock = $this->getMockBuilder(Pager::class)
-            ->addMethods(['setUseContainer', 'setShowAmounts', 'setTotalLimit'])
+        $pagerBlock = $this->getMockBuilder(\Magento\Theme\Test\Unit\Helper\PagerTestHelper::class)
             ->onlyMethods([
                 'toHtml',
                 'setShowPerPage',
                 'setPageVarName',
                 'setLimit',
                 'setCollection',
+                'setUseContainer',
+                'setShowAmounts',
+                'setTotalLimit'
             ])->disableOriginalConstructor()
             ->getMock();
 
@@ -407,8 +408,8 @@ class ProductsListTest extends TestCase
      */
     private function getConditionsForCollection($collection)
     {
-        $conditions = $this->getMockBuilder(Combine::class)
-            ->addMethods(['collectValidatedAttributes'])
+        $conditions = $this->getMockBuilder(\Magento\CatalogWidget\Model\Rule\Condition\Combine::class)
+            ->onlyMethods(['collectValidatedAttributes'])
             ->disableOriginalConstructor()
             ->getMock();
         $conditions->expects($this->once())->method('collectValidatedAttributes')

@@ -61,30 +61,11 @@ class ProductUrlSuffixTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->contextMock = $this->getMockBuilder(ContextInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(
-                [
-                    'getExtensionAttributes'
-                ]
-            )
-            ->getMock();
+        $this->contextMock = $this->createMock(ContextInterface::class);
 
-        $this->contextExtensionMock = $this->getMockBuilder(ContextExtensionInterface::class)
-            ->addMethods(
-                [
-                    'getStore'
-                ]
-            )
-            ->getMock();
+        $this->contextExtensionMock = new \Magento\GraphQl\Test\Unit\Helper\ContextExtensionTestHelper();
 
-        $this->storeMock = $this->getMockBuilder(StoreInterface::class)
-            ->onlyMethods(
-                [
-                    'getId'
-                ]
-            )
-            ->getMock();
+        $this->storeMock = $this->createMock(StoreInterface::class);
 
         $this->fieldMock = $this->getMockBuilder(Field::class)
             ->disableOriginalConstructor()
@@ -94,8 +75,7 @@ class ProductUrlSuffixTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->scopeConfigMock = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->getMock();
+        $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
 
         $this->resolver = new ProductUrlSuffix(
             $this->scopeConfigMock
@@ -116,10 +96,7 @@ class ProductUrlSuffixTest extends TestCase
             ->method('getExtensionAttributes')
             ->willReturn($this->contextExtensionMock);
 
-        $this->contextExtensionMock
-            ->expects($this->once())
-            ->method('getStore')
-            ->willReturn($this->storeMock);
+        $this->contextExtensionMock->setStore($this->storeMock);
 
         $this->storeMock
             ->expects($this->once())
@@ -151,10 +128,7 @@ class ProductUrlSuffixTest extends TestCase
             ->method('getExtensionAttributes')
             ->willReturn($this->contextExtensionMock);
 
-        $this->contextExtensionMock
-            ->expects($this->once())
-            ->method('getStore')
-            ->willReturn($this->storeMock);
+        $this->contextExtensionMock->setStore($this->storeMock);
 
         $this->storeMock
             ->expects($this->once())

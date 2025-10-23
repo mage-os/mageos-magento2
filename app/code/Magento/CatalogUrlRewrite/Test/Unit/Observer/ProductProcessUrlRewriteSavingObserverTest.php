@@ -24,6 +24,7 @@ use Magento\Store\Model\StoreResolver\GetStoresListByWebsiteIds;
 use Magento\UrlRewrite\Model\Exception\UrlAlreadyExistsException;
 use Magento\UrlRewrite\Model\UrlPersistInterface;
 use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -93,23 +94,13 @@ class ProductProcessUrlRewriteSavingObserverTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->urlPersist = $this->getMockForAbstractClass(UrlPersistInterface::class);
-        $this->product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getStoreIds'])
-            ->getMockForAbstractClass();
-        $this->event = $this->getMockBuilder(Event::class)
-            ->addMethods(['getProduct'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->event->expects($this->any())->method('getProduct')->willReturn($this->product);
+        $this->urlPersist = $this->createMock(UrlPersistInterface::class);
+        $this->product = $this->createPartialMock(Product::class, ['getStoreIds']);
+        $this->event = new Event(['product' => $this->product]);
         $this->observer = $this->createPartialMock(Observer::class, ['getEvent']);
         $this->observer->expects($this->any())->method('getEvent')->willReturn($this->event);
 
-        $this->scopeConfig = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->onlyMethods(['isSetFlag'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
 
         $this->appendRewrites = $this->getMockBuilder(AppendUrlRewritesToProducts::class)
             ->onlyMethods(['execute'])
@@ -332,8 +323,8 @@ class ProductProcessUrlRewriteSavingObserverTest extends TestCase
      * @param array $doesEntityHaveOverriddenVisibilityForStore
      * @param array $expectedStoresToRemove
      * @throws UrlAlreadyExistsException
-     * @dataProvider urlKeyDataProvider
      */
+    #[DataProvider('urlKeyDataProvider')]
     public function testExecuteUrlKey(
         array $origData,
         array $newData,
