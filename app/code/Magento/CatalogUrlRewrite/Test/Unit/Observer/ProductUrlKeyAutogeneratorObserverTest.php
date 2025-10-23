@@ -10,8 +10,8 @@ namespace Magento\CatalogUrlRewrite\Test\Unit\Observer;
 use Magento\Catalog\Model\Product;
 use Magento\CatalogUrlRewrite\Model\ProductUrlPathGenerator;
 use Magento\CatalogUrlRewrite\Observer\ProductUrlKeyAutogeneratorObserver;
-use Magento\CatalogUrlRewrite\Test\Unit\Helper\EventMock;
-use Magento\CatalogUrlRewrite\Test\Unit\Helper\ProductMock;
+use Magento\CatalogUrlRewrite\Test\Unit\Helper\EventTestHelper;
+use Magento\CatalogUrlRewrite\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
@@ -68,12 +68,12 @@ class ProductUrlKeyAutogeneratorObserverTest extends TestCase
     {
         $urlKey = 'product_url_key';
 
-        $product = $this->getMockBuilder(ProductMock::class)
+        $product = $this->getMockBuilder(ProductTestHelper::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['setUrlKey'])
             ->getMock();
         $product->expects($this->atLeastOnce())->method('setUrlKey')->with($urlKey);
-        $event = $this->getMockBuilder(EventMock::class)
+        $event = $this->getMockBuilder(EventTestHelper::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getProduct'])
             ->getMock();
@@ -97,12 +97,12 @@ class ProductUrlKeyAutogeneratorObserverTest extends TestCase
      */
     public function testExecuteWithEmptyUrlKey(): void
     {
-        $product = $this->getMockBuilder(ProductMock::class)
+        $product = $this->getMockBuilder(ProductTestHelper::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['setUrlKey'])
             ->getMock();
         $product->expects($this->never())->method('setUrlKey');
-        $event = $this->getMockBuilder(EventMock::class)
+        $event = $this->getMockBuilder(EventTestHelper::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getProduct'])
             ->getMock();

@@ -12,7 +12,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Model\Category;
 use Magento\CatalogUrlRewrite\Model\CategoryUrlPathGenerator;
-use Magento\CatalogUrlRewrite\Test\Unit\Helper\CategoryMock;
+use Magento\CatalogUrlRewrite\Test\Unit\Helper\CategoryTestHelper;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\ScopeInterface;
@@ -40,7 +40,7 @@ class CategoryUrlPathGeneratorTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->category = $this->getMockBuilder(CategoryMock::class)
+        $this->category = $this->getMockBuilder(CategoryTestHelper::class)
             ->onlyMethods(
                 [
                     '__wakeup',
@@ -159,7 +159,7 @@ class CategoryUrlPathGeneratorTest extends TestCase
         $this->category->method('isObjectNew')->willReturn($isCategoryNew);
         $this->category->method('getStoreId')->willReturn(Store::DEFAULT_STORE_ID);
 
-        $parentCategory = $this->getMockBuilder(CategoryMock::class)
+        $parentCategory = $this->getMockBuilder(CategoryTestHelper::class)
             ->onlyMethods(
                 [
                     '__wakeup',

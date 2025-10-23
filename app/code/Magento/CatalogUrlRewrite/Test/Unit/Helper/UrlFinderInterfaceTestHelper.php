@@ -13,7 +13,7 @@ use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
 /**
  * Mock class for UrlFinderInterface with all required methods
  */
-class UrlFinderInterfaceMock implements UrlFinderInterface
+class UrlFinderInterfaceTestHelper implements UrlFinderInterface
 {
     /**
      * Mock method for findOneByData

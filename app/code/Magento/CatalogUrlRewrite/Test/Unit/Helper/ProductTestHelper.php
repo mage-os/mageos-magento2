@@ -12,7 +12,7 @@ use Magento\Catalog\Model\Product;
 /**
  * Mock class for Product with URL key methods
  */
-class ProductMock extends Product
+class ProductTestHelper extends Product
 {
     /**
      * Mock method for getUrlKey

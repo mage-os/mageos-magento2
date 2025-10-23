@@ -12,8 +12,11 @@ use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 /**
  * Mock class for AttributeResourceModel with additional methods
  */
-class AttributeResourceModelMock extends Attribute
+class AttributeResourceModelTestHelper extends Attribute
 {
+    /**
+     * @var mixed
+     */
     private $searchWeight = null;
 
     /**

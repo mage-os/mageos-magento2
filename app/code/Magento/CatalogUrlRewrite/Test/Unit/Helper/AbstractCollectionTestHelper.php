@@ -12,8 +12,11 @@ use Magento\Catalog\Model\ResourceModel\Collection\AbstractCollection;
 /**
  * Mock class for AbstractCollection with additional methods
  */
-class AbstractCollectionMock extends AbstractCollection
+class AbstractCollectionTestHelper extends AbstractCollection
 {
+    /**
+     * @var mixed
+     */
     private $idFilter = null;
 
     /**

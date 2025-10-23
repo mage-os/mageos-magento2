@@ -12,7 +12,7 @@ use Magento\Catalog\Model\CategoryRepository;
 use Magento\Catalog\Model\ResourceModel\Category;
 use Magento\Catalog\Model\ResourceModel\CategoryFactory;
 use Magento\CatalogUrlRewrite\Model\Map\DataCategoryHashMap;
-use Magento\CatalogUrlRewrite\Test\Unit\Helper\CategoryInterfaceMock;
+use Magento\CatalogUrlRewrite\Test\Unit\Helper\CategoryInterfaceTestHelper;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -58,7 +58,7 @@ class DataCategoryHashMapTest extends TestCase
         $categoryIds = ['1' => [1, 2, 3], '2' => [2, 3], '3' => 3];
         $categoryIdsOther = ['2' => [2, 3, 4]];
 
-        $categoryMock = $this->getMockBuilder(CategoryInterfaceMock::class)
+        $categoryMock = $this->getMockBuilder(CategoryInterfaceTestHelper::class)
             ->onlyMethods(['getResource'])
             ->getMock();
         $connectionAdapterMock = $this->createMock(AdapterInterface::class);

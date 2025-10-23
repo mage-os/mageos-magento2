@@ -10,9 +10,9 @@ namespace Magento\ProductVideo\Test\Unit\Helper;
 use Magento\Framework\Event\Observer;
 
 /**
- * Mock class for Observer with getBlock method
+ * Test helper for Observer with getBlock method
  */
-class ObserverMock extends Observer
+class ObserverTestHelper extends Observer
 {
     /**
      * Mock method for getBlock

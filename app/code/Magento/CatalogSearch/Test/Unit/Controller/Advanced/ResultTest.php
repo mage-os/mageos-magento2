@@ -27,8 +27,8 @@ use Magento\Framework\View\Model\Layout\Merge;
 use Magento\Framework\View\Result\Layout;
 use Magento\Framework\View\Result\Page;
 use Magento\Framework\Webapi\Response;
-use Magento\CatalogSearch\Test\Unit\Helper\LayoutMock;
-use Magento\CatalogSearch\Test\Unit\Helper\RequestMock;
+use Magento\CatalogSearch\Test\Unit\Helper\LayoutTestHelper;
+use Magento\CatalogSearch\Test\Unit\Helper\RequestTestHelper;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -52,7 +52,7 @@ class ResultTest extends TestCase
         );
         $update = $this->createPartialMock(Merge::class, ['getHandles']);
         $update->expects($this->once())->method('getHandles')->willReturn([]);
-        $layout = $this->getMockBuilder(LayoutMock::class)
+        $layout = $this->getMockBuilder(LayoutTestHelper::class)
             ->onlyMethods(['getUpdate'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -66,7 +66,7 @@ class ResultTest extends TestCase
             }
         );
 
-        $request = $this->getMockBuilder(RequestMock::class)
+        $request = $this->getMockBuilder(RequestTestHelper::class)
             ->onlyMethods(['getQueryValue'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -186,7 +186,7 @@ class ResultTest extends TestCase
         $update = $this->createPartialMock(Merge::class, ['getHandles']);
         $update->expects($this->once())->method('getHandles')->willReturn([]);
 
-        $layout = $this->getMockBuilder(LayoutMock::class)
+        $layout = $this->getMockBuilder(LayoutTestHelper::class)
             ->onlyMethods(['getUpdate'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -205,7 +205,7 @@ class ResultTest extends TestCase
         $view->expects($this->once())->method('getPage')->willReturn($page);
         $view->expects($this->once())->method('getLayout')->willReturn($layout);
 
-        $request = $this->getMockBuilder(RequestMock::class)
+        $request = $this->getMockBuilder(RequestTestHelper::class)
             ->onlyMethods(['getQueryValue'])
             ->disableOriginalConstructor()
             ->getMock();

@@ -22,9 +22,9 @@ use Magento\CatalogUrlRewrite\Model\ProductUrlPathGenerator;
 use Magento\CatalogUrlRewrite\Model\ProductUrlRewriteGenerator;
 use Magento\CatalogUrlRewrite\Observer\AfterImportDataObserver;
 use Magento\CatalogUrlRewrite\Service\V1\StoreViewService;
-use Magento\CatalogUrlRewrite\Test\Unit\Helper\EventMock;
-use Magento\CatalogUrlRewrite\Test\Unit\Helper\StoreManagerInterfaceMock;
-use Magento\CatalogUrlRewrite\Test\Unit\Helper\UrlFinderInterfaceMock;
+use Magento\CatalogUrlRewrite\Test\Unit\Helper\EventTestHelper;
+use Magento\CatalogUrlRewrite\Test\Unit\Helper\StoreManagerInterfaceTestHelper;
+use Magento\CatalogUrlRewrite\Test\Unit\Helper\UrlFinderInterfaceTestHelper;
 use Magento\Framework\Event;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Event\Observer;
@@ -213,7 +213,7 @@ class AfterImportDataObserverTest extends TestCase
         );
         $this->storeManager = $this
             ->getMockBuilder(
-                StoreManagerInterfaceMock::class
+                StoreManagerInterfaceTestHelper::class
             )
             ->disableOriginalConstructor()
             ->onlyMethods(
@@ -222,7 +222,7 @@ class AfterImportDataObserverTest extends TestCase
                 ]
             )
             ->getMock();
-        $this->event = $this->getMockBuilder(EventMock::class)
+        $this->event = $this->getMockBuilder(EventTestHelper::class)
             ->onlyMethods(['getAdapter', 'getBunch'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -249,7 +249,7 @@ class AfterImportDataObserverTest extends TestCase
             ]
         );
         $this->urlFinder = $this
-            ->getMockBuilder(UrlFinderInterfaceMock::class)
+            ->getMockBuilder(UrlFinderInterfaceTestHelper::class)
             ->onlyMethods(
                 [
                     'findAllByData',
@@ -447,7 +447,7 @@ class AfterImportDataObserverTest extends TestCase
      * @param mixed $metadata
      * @param mixed $description
      */
-    protected function currentUrlRewritesRegeneratorPrepareUrlRewriteMock(
+    protected function currentUrlRewritesRegeneratorPrepareUrlRewriteTestHelper(
         $storeId,
         $productId,
         $requestPath,

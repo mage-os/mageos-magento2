@@ -13,7 +13,7 @@ use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Product;
 use Magento\CatalogUrlRewrite\Model\CategoryUrlPathGenerator;
 use Magento\CatalogUrlRewrite\Model\ProductUrlPathGenerator;
-use Magento\CatalogUrlRewrite\Test\Unit\Helper\ProductMock;
+use Magento\CatalogUrlRewrite\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\ScopeInterface;
@@ -54,7 +54,7 @@ class ProductUrlPathGeneratorTest extends TestCase
     protected function setUp(): void
     {
         $this->category = $this->createMock(Category::class);
-        $this->product = $this->getMockBuilder(ProductMock::class)
+        $this->product = $this->getMockBuilder(ProductTestHelper::class)
             ->onlyMethods(['__wakeup', 'getData', 'getName', 'formatUrlKey', 'getId', 'load', 'setStoreId', 'getUrlKey'])
             ->disableOriginalConstructor()
             ->getMock();

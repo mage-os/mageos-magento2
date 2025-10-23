@@ -12,11 +12,23 @@ use Magento\Catalog\Model\Layer\Filter\Item;
 /**
  * Mock class for Filter Item with additional methods
  */
-class FilterItemMock extends Item
+class FilterItemTestHelper extends Item
 {
+    /**
+     * @var mixed
+     */
     private $filter = null;
+    /**
+     * @var mixed
+     */
     private $label = null;
+    /**
+     * @var mixed
+     */
     private $value = null;
+    /**
+     * @var mixed
+     */
     private $count = null;
 
     /**

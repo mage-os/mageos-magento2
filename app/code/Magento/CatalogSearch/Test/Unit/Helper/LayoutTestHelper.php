@@ -12,7 +12,7 @@ use Magento\Framework\View\Result\Layout;
 /**
  * Mock class for Layout with additional methods
  */
-class LayoutMock extends Layout
+class LayoutTestHelper extends Layout
 {
     /**
      * Mock method for getUpdate

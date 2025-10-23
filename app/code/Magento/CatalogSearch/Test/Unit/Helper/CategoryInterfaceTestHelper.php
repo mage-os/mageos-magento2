@@ -12,8 +12,11 @@ use Magento\Catalog\Api\Data\CategoryInterface;
 /**
  * Mock class for CategoryInterface with additional methods
  */
-class CategoryInterfaceMock implements CategoryInterface
+class CategoryInterfaceTestHelper implements CategoryInterface
 {
+    /**
+     * @var mixed
+     */
     private $isAnchor = null;
 
     /**

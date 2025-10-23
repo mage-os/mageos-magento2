@@ -10,8 +10,8 @@ namespace Magento\CatalogSearch\Test\Unit\Model\Adapter\Aggregation\Checker\Quer
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\CatalogSearch\Model\Adapter\Aggregation\Checker\Query\CatalogView;
-use Magento\CatalogSearch\Test\Unit\Helper\CategoryInterfaceMock;
-use Magento\CatalogSearch\Test\Unit\Helper\QueryInterfaceMock;
+use Magento\CatalogSearch\Test\Unit\Helper\CategoryInterfaceTestHelper;
+use Magento\CatalogSearch\Test\Unit\Helper\QueryInterfaceTestHelper;
 use Magento\Framework\Search\Request\Filter\Term;
 use Magento\Framework\Search\Request\Query\Filter;
 use Magento\Framework\Search\Request\QueryInterface;
@@ -81,11 +81,11 @@ class CatalogViewTest extends TestCase
         $this->queryFilterMock = $this->createMock(Filter::class);
         $this->termFilterMock = $this->createMock(Term::class);
         $this->storeMock = $this->createMock(StoreInterface::class);
-        $this->categoryMock = $this->getMockBuilder(CategoryInterfaceMock::class)
+        $this->categoryMock = $this->getMockBuilder(CategoryInterfaceTestHelper::class)
             ->onlyMethods(['getIsAnchor'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->queryMock = $this->getMockBuilder(QueryInterfaceMock::class)
+        $this->queryMock = $this->getMockBuilder(QueryInterfaceTestHelper::class)
             ->onlyMethods(['getMust', 'getShould', 'getType'])
             ->disableOriginalConstructor()
             ->getMock();

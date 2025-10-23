@@ -12,8 +12,11 @@ use Magento\CatalogSearch\Model\ResourceModel\EngineInterface;
 /**
  * Mock class for EngineInterface with additional methods
  */
-class EngineInterfaceMock implements EngineInterface
+class EngineInterfaceTestHelper implements EngineInterface
 {
+    /**
+     * @var mixed
+     */
     private $isAvailable = null;
 
     /**

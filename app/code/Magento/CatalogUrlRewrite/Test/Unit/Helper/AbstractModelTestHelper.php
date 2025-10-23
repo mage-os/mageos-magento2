@@ -12,9 +12,15 @@ use Magento\Framework\Model\AbstractModel;
 /**
  * Mock class for AbstractModel with additional methods
  */
-class AbstractModelMock extends AbstractModel
+class AbstractModelTestHelper extends AbstractModel
 {
+    /**
+     * @var mixed
+     */
     private $storeIds = null;
+    /**
+     * @var mixed
+     */
     private $websiteId = null;
 
     /**

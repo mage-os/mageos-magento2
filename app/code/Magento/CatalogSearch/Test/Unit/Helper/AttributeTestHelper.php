@@ -12,9 +12,15 @@ use Magento\Eav\Model\Entity\Attribute;
 /**
  * Mock class for EAV Attribute with additional methods
  */
-class AttributeMock extends Attribute
+class AttributeTestHelper extends Attribute
 {
+    /**
+     * @var mixed
+     */
     private $isFilterable = null;
+    /**
+     * @var mixed
+     */
     private $searchWeight = null;
 
     /**

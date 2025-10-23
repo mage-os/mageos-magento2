@@ -12,7 +12,7 @@ use Magento\Framework\Event;
 /**
  * Mock class for Event with adapter and bunch methods
  */
-class EventMock extends Event
+class EventTestHelper extends Event
 {
     /**
      * Mock method for getAdapter

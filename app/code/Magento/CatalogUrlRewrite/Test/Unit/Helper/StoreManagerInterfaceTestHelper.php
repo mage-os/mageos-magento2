@@ -16,7 +16,7 @@ use Magento\Store\Model\StoreManagerInterface;
 /**
  * Mock class for StoreManagerInterface with all required methods
  */
-class StoreManagerInterfaceMock implements StoreManagerInterface
+class StoreManagerInterfaceTestHelper implements StoreManagerInterface
 {
     /**
      * Mock method for setIsSingleStoreModeAllowed

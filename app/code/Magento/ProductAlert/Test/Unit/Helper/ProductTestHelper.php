@@ -10,9 +10,9 @@ namespace Magento\ProductAlert\Test\Unit\Helper;
 use Magento\Catalog\Model\Product;
 
 /**
- * Mock class for Product with getCanShowPrice method
+ * Test helper for Product with getCanShowPrice method
  */
-class ProductMock extends Product
+class ProductTestHelper extends Product
 {
     /**
      * Mock method for getCanShowPrice

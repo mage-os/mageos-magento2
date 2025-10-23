@@ -12,7 +12,7 @@ use Magento\Framework\App\Console\Request;
 /**
  * Mock class for Request with additional methods
  */
-class RequestMock extends Request
+class RequestTestHelper extends Request
 {
     /**
      * Mock method for getQueryValue

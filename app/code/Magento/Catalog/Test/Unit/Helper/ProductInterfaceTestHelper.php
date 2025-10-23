@@ -15,7 +15,7 @@ use Magento\Catalog\Model\Product;
  * This helper extends the concrete Product class to provide
  * test-specific functionality without dependency injection issues.
  */
-class ProductInterfaceMock extends Product
+class ProductInterfaceTestHelper extends Product
 {
     /**
      * Constructor that skips parent initialization

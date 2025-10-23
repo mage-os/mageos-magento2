@@ -16,8 +16,8 @@ use Magento\CatalogUrlRewrite\Model\CategoryUrlPathGenerator;
 use Magento\CatalogUrlRewrite\Model\ResourceModel\Category\GetDefaultUrlKey;
 use Magento\CatalogUrlRewrite\Observer\CategoryUrlPathAutogeneratorObserver;
 use Magento\CatalogUrlRewrite\Service\V1\StoreViewService;
-use Magento\CatalogUrlRewrite\Test\Unit\Helper\CategoryMock;
-use Magento\CatalogUrlRewrite\Test\Unit\Helper\ObserverMock;
+use Magento\CatalogUrlRewrite\Test\Unit\Helper\CategoryTestHelper;
+use Magento\CatalogUrlRewrite\Test\Unit\Helper\ObserverTestHelper;
 use Magento\Framework\EntityManager\EntityMetadataInterface;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\Event\Observer;
@@ -95,12 +95,12 @@ class CategoryUrlPathAutogeneratorObserverTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->observer = $this->getMockBuilder(ObserverMock::class)
+        $this->observer = $this->getMockBuilder(ObserverTestHelper::class)
             ->onlyMethods(['getEvent', 'getCategory'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->categoryResource = $this->createMock(CategoryResource::class);
-        $this->category = $this->getMockBuilder(CategoryMock::class)
+        $this->category = $this->getMockBuilder(CategoryTestHelper::class)
             ->onlyMethods(
                 [
                     'dataHasChangedFor',
@@ -295,7 +295,7 @@ class CategoryUrlPathAutogeneratorObserverTest extends TestCase
             ->with('url_path')
             ->willReturn(true);
 
-        $childCategory = $this->getMockBuilder(CategoryMock::class)
+        $childCategory = $this->getMockBuilder(CategoryTestHelper::class)
             ->onlyMethods(
                 [
                     'getResource',
@@ -407,7 +407,7 @@ class CategoryUrlPathAutogeneratorObserverTest extends TestCase
         $childCategoryResource = $this->getMockBuilder(CategoryResource::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $childCategory = $this->getMockBuilder(CategoryMock::class)
+        $childCategory = $this->getMockBuilder(CategoryTestHelper::class)
             ->onlyMethods(
                 [
                     'getResource',

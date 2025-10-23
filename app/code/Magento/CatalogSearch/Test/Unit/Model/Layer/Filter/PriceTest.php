@@ -19,8 +19,8 @@ use Magento\Catalog\Model\Layer\Filter\Item\DataBuilder;
 use Magento\Catalog\Model\Layer\Filter\ItemFactory;
 use Magento\Catalog\Model\Layer\State;
 use Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection;
-use Magento\CatalogSearch\Test\Unit\Helper\AttributeMock;
-use Magento\CatalogSearch\Test\Unit\Helper\PriceDataProviderMock;
+use Magento\CatalogSearch\Test\Unit\Helper\AttributeTestHelper;
+use Magento\CatalogSearch\Test\Unit\Helper\PriceDataProviderTestHelper;
 use Magento\Eav\Model\Entity\Attribute;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Escaper;
@@ -91,7 +91,7 @@ class PriceTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])->getMock();
 
-        $this->dataProvider = $this->getMockBuilder(PriceDataProviderMock::class)
+        $this->dataProvider = $this->getMockBuilder(PriceDataProviderTestHelper::class)
             ->onlyMethods(['setPriceId', 'getPrice'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -152,7 +152,7 @@ class PriceTest extends TestCase
             ->method('escapeHtml')
             ->willReturnArgument(0);
 
-        $this->attribute = $this->getMockBuilder(AttributeMock::class)
+        $this->attribute = $this->getMockBuilder(AttributeTestHelper::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getAttributeCode', 'getFrontend', 'getIsFilterable'])
             ->getMock();

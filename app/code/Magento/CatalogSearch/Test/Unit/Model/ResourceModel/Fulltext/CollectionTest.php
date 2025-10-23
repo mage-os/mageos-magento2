@@ -26,7 +26,7 @@ use Magento\Eav\Model\Entity\AbstractEntity;
 use Magento\Framework\Api\Filter;
 use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\Api\Search\SearchCriteriaBuilder;
-use Magento\CatalogSearch\Test\Unit\Helper\SearchCriteriaBuilderMock;
+use Magento\CatalogSearch\Test\Unit\Helper\SearchCriteriaBuilderTestHelper;
 use Magento\Framework\Api\Search\SearchResultInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DB\Adapter\Pdo\Mysql;
@@ -262,7 +262,7 @@ class CollectionTest extends TestCase
      */
     protected function getCriteriaBuilder(): MockObject
     {
-        $criteriaBuilder = $this->getMockBuilder(SearchCriteriaBuilderMock::class)
+        $criteriaBuilder = $this->getMockBuilder(SearchCriteriaBuilderTestHelper::class)
             ->onlyMethods(['setRequestName', 'addFilter', 'create'])
             ->disableOriginalConstructor()
             ->getMock();

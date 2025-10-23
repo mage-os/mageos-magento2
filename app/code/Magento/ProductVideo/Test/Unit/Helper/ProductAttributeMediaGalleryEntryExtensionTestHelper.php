@@ -11,9 +11,10 @@ use Magento\Catalog\Api\Data\ProductAttributeMediaGalleryEntryExtensionInterface
 use Magento\Framework\Api\Data\VideoContentInterface;
 
 /**
- * Mock class for ProductAttributeMediaGalleryEntryExtension with video methods
+ * Test helper for ProductAttributeMediaGalleryEntryExtension with video methods
  */
-class ProductAttributeMediaGalleryEntryExtensionMock implements ProductAttributeMediaGalleryEntryExtensionInterface
+class ProductAttributeMediaGalleryEntryExtensionTestHelper implements
+    ProductAttributeMediaGalleryEntryExtensionInterface
 {
     /**
      * @var array

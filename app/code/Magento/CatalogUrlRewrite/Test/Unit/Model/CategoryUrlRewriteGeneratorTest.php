@@ -14,7 +14,7 @@ use Magento\CatalogUrlRewrite\Model\Category\ChildrenUrlRewriteGenerator;
 use Magento\CatalogUrlRewrite\Model\Category\CurrentUrlRewritesRegenerator;
 use Magento\CatalogUrlRewrite\Model\CategoryUrlRewriteGenerator;
 use Magento\CatalogUrlRewrite\Service\V1\StoreViewService;
-use Magento\CatalogUrlRewrite\Test\Unit\Helper\CategoryMock;
+use Magento\CatalogUrlRewrite\Test\Unit\Helper\CategoryTestHelper;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\UrlRewrite\Model\MergeDataProvider;
@@ -142,7 +142,7 @@ class CategoryUrlRewriteGeneratorTest extends TestCase
         $this->currentUrlRewritesRegenerator->expects($this->any())->method('generate')
             ->with(1, $this->category, $categoryId)
             ->willReturn(['category-3' => $current]);
-        $categoryForSpecificStore = $this->getMockBuilder(CategoryMock::class)
+        $categoryForSpecificStore = $this->getMockBuilder(CategoryTestHelper::class)
             ->onlyMethods(['getUrlPath', 'getUrlKey'])
             ->disableOriginalConstructor()
             ->getMock();

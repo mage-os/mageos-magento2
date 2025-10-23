@@ -12,9 +12,15 @@ use Magento\Framework\Indexer\IndexerInterface;
 /**
  * Mock class for IndexerInterface with additional methods
  */
-class IndexerInterfaceMock implements IndexerInterface
+class IndexerInterfaceTestHelper implements IndexerInterface
 {
+    /**
+     * @var mixed
+     */
     private $id = null;
+    /**
+     * @var mixed
+     */
     private $state = null;
 
     /**

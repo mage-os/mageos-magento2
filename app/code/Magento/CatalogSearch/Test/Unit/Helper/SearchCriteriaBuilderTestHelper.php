@@ -12,8 +12,11 @@ use Magento\Framework\Api\Search\SearchCriteriaBuilder;
 /**
  * Mock class for SearchCriteriaBuilder with additional methods
  */
-class SearchCriteriaBuilderMock extends SearchCriteriaBuilder
+class SearchCriteriaBuilderTestHelper extends SearchCriteriaBuilder
 {
+    /**
+     * @var mixed
+     */
     private $requestName = null;
 
     /**

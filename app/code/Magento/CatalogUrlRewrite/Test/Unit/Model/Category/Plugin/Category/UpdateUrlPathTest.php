@@ -13,7 +13,7 @@ use Magento\CatalogUrlRewrite\Model\Category\Plugin\Category\UpdateUrlPath;
 use Magento\CatalogUrlRewrite\Model\CategoryUrlPathGenerator;
 use Magento\CatalogUrlRewrite\Model\CategoryUrlRewriteGenerator;
 use Magento\CatalogUrlRewrite\Service\V1\StoreViewService;
-use Magento\CatalogUrlRewrite\Test\Unit\Helper\CategoryMock;
+use Magento\CatalogUrlRewrite\Test\Unit\Helper\CategoryTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\UrlRewrite\Model\UrlPersistInterface;
 use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
@@ -83,7 +83,7 @@ class UpdateUrlPathTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['saveAttribute'])
             ->getMock();
-        $this->category = $this->getMockBuilder(CategoryMock::class)
+        $this->category = $this->getMockBuilder(CategoryTestHelper::class)
             ->disableOriginalConstructor()
             ->onlyMethods(
                 [

@@ -154,7 +154,7 @@ class CurrentUrlRewritesRegeneratorTest extends TestCase
         $this->productUrlPathGenerator->expects($this->once())->method('getUrlPathWithSuffix')
             ->willReturn($targetPath);
 
-        $this->prepareUrlRewriteMock(
+        $this->prepareUrlRewriteTestHelper(
             $storeId,
             $productId,
             $requestPath,
@@ -197,7 +197,7 @@ class CurrentUrlRewritesRegeneratorTest extends TestCase
         $this->productUrlPathGenerator->expects($this->once())->method('getUrlPathWithSuffix')
             ->willReturn($targetPath);
         $this->objectRegistry->expects($this->once())->method('get')->willReturn($this->category);
-        $this->prepareUrlRewriteMock(
+        $this->prepareUrlRewriteTestHelper(
             $storeId,
             $productId,
             $requestPath,
@@ -254,7 +254,7 @@ class CurrentUrlRewritesRegeneratorTest extends TestCase
             ]));
         $this->productUrlPathGenerator->expects($this->never())->method('getUrlPathWithSuffix');
         $this->product->method('getEntityId')->willReturn($productId);
-        $this->prepareUrlRewriteMock(
+        $this->prepareUrlRewriteTestHelper(
             $storeId,
             $productId,
             $requestPath,
@@ -292,7 +292,7 @@ class CurrentUrlRewritesRegeneratorTest extends TestCase
             ]));
         $this->productUrlPathGenerator->method('getUrlPathWithSuffix')->willReturn($targetPath);
         $this->product->method('getEntityId')->willReturn($productId);
-        $this->prepareUrlRewriteMock($storeId, $productId, $requestPath, $targetPath, 0, 'code', [], $description);
+        $this->prepareUrlRewriteTestHelper($storeId, $productId, $requestPath, $targetPath, 0, 'code', [], $description);
 
         $this->assertEquals(
             [$this->urlRewrite],
@@ -332,7 +332,7 @@ class CurrentUrlRewritesRegeneratorTest extends TestCase
      * @param mixed $metadata
      * @param mixed $description
      */
-    protected function prepareUrlRewriteMock(
+    protected function prepareUrlRewriteTestHelper(
         $storeId,
         $productId,
         $requestPath,

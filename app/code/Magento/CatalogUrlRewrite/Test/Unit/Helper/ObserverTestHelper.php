@@ -12,7 +12,7 @@ use Magento\Framework\Event\Observer;
 /**
  * Mock class for Observer with category methods
  */
-class ObserverMock extends Observer
+class ObserverTestHelper extends Observer
 {
     /**
      * Mock method for getCategory

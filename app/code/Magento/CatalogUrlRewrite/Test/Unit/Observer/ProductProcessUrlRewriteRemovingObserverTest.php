@@ -11,7 +11,7 @@ namespace Magento\CatalogUrlRewrite\Test\Unit\Observer;
 use Magento\Catalog\Model\Product;
 use Magento\CatalogUrlRewrite\Model\ProductUrlRewriteGenerator;
 use Magento\CatalogUrlRewrite\Observer\ProductProcessUrlRewriteRemovingObserver;
-use Magento\CatalogUrlRewrite\Test\Unit\Helper\EventMock;
+use Magento\CatalogUrlRewrite\Test\Unit\Helper\EventTestHelper;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -70,7 +70,7 @@ class ProductProcessUrlRewriteRemovingObserverTest extends TestCase
         $this->objectManager = new ObjectManager($this);
         $this->observerMock = $this->createMock(Observer::class);
 
-        $this->eventMock = $this->getMockBuilder(EventMock::class)
+        $this->eventMock = $this->getMockBuilder(EventTestHelper::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getProduct'])
             ->getMock();

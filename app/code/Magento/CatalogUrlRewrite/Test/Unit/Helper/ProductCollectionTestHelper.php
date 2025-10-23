@@ -12,9 +12,15 @@ use Magento\Catalog\Model\ResourceModel\Product\Collection;
 /**
  * Mock class for ProductCollection with consecutive calls support
  */
-class ProductCollectionMock extends Collection
+class ProductCollectionTestHelper extends Collection
 {
+    /**
+     * @var mixed
+     */
     private $allIdsSequence = [];
+    /**
+     * @var mixed
+     */
     private $allIdsCallCount = 0;
 
     /**

@@ -12,7 +12,7 @@ use Magento\Framework\Data\Collection;
 /**
  * Mock class for Collection with additional methods
  */
-class CollectionMock extends Collection
+class CollectionTestHelper extends Collection
 {
     /**
      * Mock method for addIdFilter

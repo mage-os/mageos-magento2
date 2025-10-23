@@ -12,7 +12,7 @@ use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\CatalogUrlRewrite\Model\Map\DataCategoryHashMap;
 use Magento\CatalogUrlRewrite\Model\Map\DataProductHashMap;
 use Magento\CatalogUrlRewrite\Model\Map\HashMapPool;
-use Magento\CatalogUrlRewrite\Test\Unit\Helper\ProductCollectionMock;
+use Magento\CatalogUrlRewrite\Test\Unit\Helper\ProductCollectionTestHelper;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -45,7 +45,7 @@ class DataProductHashMapTest extends TestCase
         $this->hashMapPoolMock = $this->createMock(HashMapPool::class);
         $this->dataCategoryMapMock = $this->createMock(DataCategoryHashMap::class);
         $this->collectionFactoryMock = $this->createPartialMock(CollectionFactory::class, ['create']);
-        $this->productCollectionMock = $this->getMockBuilder(ProductCollectionMock::class)
+        $this->productCollectionMock = $this->getMockBuilder(ProductCollectionTestHelper::class)
             ->onlyMethods(['getSelect', 'getConnection', 'getAllIds'])
             ->disableOriginalConstructor()
             ->getMock();

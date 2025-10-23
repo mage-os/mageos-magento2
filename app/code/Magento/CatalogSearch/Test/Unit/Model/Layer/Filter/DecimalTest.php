@@ -17,8 +17,8 @@ use Magento\Catalog\Model\Layer\State;
 use Magento\Catalog\Model\ResourceModel\Layer\Filter\DecimalFactory;
 use Magento\CatalogSearch\Model\Layer\Filter\Decimal;
 use Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection;
-use Magento\CatalogSearch\Test\Unit\Helper\AttributeMock;
-use Magento\CatalogSearch\Test\Unit\Helper\FilterItemMock;
+use Magento\CatalogSearch\Test\Unit\Helper\AttributeTestHelper;
+use Magento\CatalogSearch\Test\Unit\Helper\FilterItemTestHelper;
 use Magento\Eav\Model\Entity\Attribute;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
@@ -89,7 +89,7 @@ class DecimalTest extends TestCase
             ->onlyMethods(['create'])
             ->getMock();
 
-        $this->filterItem = $this->getMockBuilder(FilterItemMock::class)
+        $this->filterItem = $this->getMockBuilder(FilterItemTestHelper::class)
             ->onlyMethods(['setFilter', 'setLabel', 'setValue', 'setCount'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -127,7 +127,7 @@ class DecimalTest extends TestCase
             ->method('create')
             ->willReturn($resource);
 
-        $this->attribute = $this->getMockBuilder(AttributeMock::class)
+        $this->attribute = $this->getMockBuilder(AttributeTestHelper::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getAttributeCode', 'getFrontend', 'getIsFilterable'])
             ->getMock();

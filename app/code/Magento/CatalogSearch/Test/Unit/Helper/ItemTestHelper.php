@@ -12,10 +12,19 @@ use Magento\Search\Model\Autocomplete\Item;
 /**
  * Mock class for Item with additional methods
  */
-class ItemMock extends Item
+class ItemTestHelper extends Item
 {
+    /**
+     * @var mixed
+     */
     private $title = null;
+    /**
+     * @var mixed
+     */
     private $titleSequence = [];
+    /**
+     * @var mixed
+     */
     private $currentIndex = 0;
 
     /**

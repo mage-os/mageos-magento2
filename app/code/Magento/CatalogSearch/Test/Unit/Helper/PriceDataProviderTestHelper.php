@@ -12,9 +12,15 @@ use Magento\Catalog\Model\Layer\Filter\DataProvider\Price;
 /**
  * Mock class for Price DataProvider with additional methods
  */
-class PriceDataProviderMock extends Price
+class PriceDataProviderTestHelper extends Price
 {
+    /**
+     * @var mixed
+     */
     private $priceId = null;
+    /**
+     * @var mixed
+     */
     private $price = null;
 
     /**

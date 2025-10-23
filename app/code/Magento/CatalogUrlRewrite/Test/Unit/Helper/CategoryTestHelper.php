@@ -12,7 +12,7 @@ use Magento\Catalog\Model\Category;
 /**
  * Mock class for Category with URL and product change methods
  */
-class CategoryMock extends Category
+class CategoryTestHelper extends Category
 {
     /**
      * Mock method for getChangedProductIds

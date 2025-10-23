@@ -12,9 +12,15 @@ use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
 /**
  * Mock class for UrlRewrite with consecutive calls support
  */
-class UrlRewriteMock extends UrlRewrite
+class UrlRewriteTestHelper extends UrlRewrite
 {
+    /**
+     * @var mixed
+     */
     private $setMetadataSequence = [];
+    /**
+     * @var mixed
+     */
     private $setMetadataCallCount = 0;
 
     /**

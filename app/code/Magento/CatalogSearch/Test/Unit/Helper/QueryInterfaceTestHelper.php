@@ -12,9 +12,15 @@ use Magento\Framework\Search\Request\QueryInterface;
 /**
  * Mock class for QueryInterface with additional methods
  */
-class QueryInterfaceMock implements QueryInterface
+class QueryInterfaceTestHelper implements QueryInterface
 {
+    /**
+     * @var mixed
+     */
     private $must = [];
+    /**
+     * @var mixed
+     */
     private $should = [];
 
     /**

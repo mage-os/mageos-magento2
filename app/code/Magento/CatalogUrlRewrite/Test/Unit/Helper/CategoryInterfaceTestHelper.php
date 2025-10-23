@@ -13,8 +13,11 @@ use Magento\Framework\Api\CustomAttributesDataInterface;
 /**
  * Mock class for CategoryInterface with additional methods
  */
-class CategoryInterfaceMock implements CategoryInterface, CustomAttributesDataInterface
+class CategoryInterfaceTestHelper implements CategoryInterface, CustomAttributesDataInterface
 {
+    /**
+     * @var mixed
+     */
     private $resource = null;
 
     /**
@@ -140,8 +143,9 @@ class CategoryInterfaceMock implements CategoryInterface, CustomAttributesDataIn
     {
         return null;
     }
-    public function setExtensionAttributes(\Magento\Catalog\Api\Data\CategoryExtensionInterface $extensionAttributes): CategoryInterface
-    {
+    public function setExtensionAttributes(
+        \Magento\Catalog\Api\Data\CategoryExtensionInterface $extensionAttributes
+    ): CategoryInterface {
         return $this;
     }
 

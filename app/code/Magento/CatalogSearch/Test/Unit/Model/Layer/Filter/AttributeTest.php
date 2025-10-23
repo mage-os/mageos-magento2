@@ -18,7 +18,7 @@ use Magento\Catalog\Model\ResourceModel\Eav\Attribute as EavAttribute;
 use Magento\Catalog\Model\ResourceModel\Layer\Filter\AttributeFactory;
 use Magento\CatalogSearch\Model\Layer\Filter\Attribute;
 use Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection;
-use Magento\CatalogSearch\Test\Unit\Helper\FilterItemMock;
+use Magento\CatalogSearch\Test\Unit\Helper\FilterItemTestHelper;
 use Magento\Eav\Model\Entity\Attribute\Frontend\AbstractFrontend;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Filter\StripTags;
@@ -528,7 +528,7 @@ class AttributeTest extends TestCase
      */
     private function createFilterItem($label, $value, $count): MockObject
     {
-        $filterItem = $this->getMockBuilder(FilterItemMock::class)
+        $filterItem = $this->getMockBuilder(FilterItemTestHelper::class)
             ->onlyMethods(['setFilter', 'setLabel', 'setValue', 'setCount'])
             ->disableOriginalConstructor()
             ->getMock();

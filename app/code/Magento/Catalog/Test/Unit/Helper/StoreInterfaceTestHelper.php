@@ -15,7 +15,7 @@ use Magento\Store\Model\Store;
  * This helper extends the concrete Store class to provide
  * test-specific functionality without dependency injection issues.
  */
-class StoreInterfaceMock extends Store
+class StoreInterfaceTestHelper extends Store
 {
     /**
      * Constructor that skips parent initialization

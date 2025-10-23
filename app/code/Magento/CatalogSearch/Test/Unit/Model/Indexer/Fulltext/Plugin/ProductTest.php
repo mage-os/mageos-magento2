@@ -11,7 +11,7 @@ use Magento\Catalog\Model\Product as ProductModel;
 use Magento\Catalog\Model\ResourceModel\Product as ProductResourceModel;
 use Magento\CatalogSearch\Model\Indexer\Fulltext;
 use Magento\CatalogSearch\Model\Indexer\Fulltext\Plugin\Product;
-use Magento\CatalogSearch\Test\Unit\Helper\IndexerInterfaceMock;
+use Magento\CatalogSearch\Test\Unit\Helper\IndexerInterfaceTestHelper;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Indexer\IndexerInterface;
 use Magento\Framework\Indexer\IndexerRegistry;
@@ -62,7 +62,7 @@ class ProductTest extends TestCase
         $connection = $this->createMock(AdapterInterface::class);
         $this->subjectMock->method('getConnection')->willReturn($connection);
 
-        $this->indexerMock = $this->getMockBuilder(IndexerInterfaceMock::class)
+        $this->indexerMock = $this->getMockBuilder(IndexerInterfaceTestHelper::class)
             ->onlyMethods(['getId', 'getState', '__wakeup'])
             ->disableOriginalConstructor()
             ->getMock();
