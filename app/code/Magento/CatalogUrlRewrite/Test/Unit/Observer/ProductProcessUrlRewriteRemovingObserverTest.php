@@ -11,7 +11,7 @@ namespace Magento\CatalogUrlRewrite\Test\Unit\Observer;
 use Magento\Catalog\Model\Product;
 use Magento\CatalogUrlRewrite\Model\ProductUrlRewriteGenerator;
 use Magento\CatalogUrlRewrite\Observer\ProductProcessUrlRewriteRemovingObserver;
-use Magento\CatalogUrlRewrite\Test\Unit\Mock\EventMock;
+use Magento\CatalogUrlRewrite\Test\Unit\Helper\EventMock;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;

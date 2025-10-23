@@ -11,7 +11,7 @@ use Magento\Catalog\Model\Category as CategoryModel;
 use Magento\Catalog\Model\ResourceModel\Category as CategoryResourceModel;
 use Magento\CatalogSearch\Model\Indexer\Fulltext;
 use Magento\CatalogSearch\Model\Indexer\Fulltext\Plugin\Category as CategoryPlugin;
-use Magento\CatalogSearch\Test\Unit\Mock\IndexerInterfaceMock;
+use Magento\CatalogSearch\Test\Unit\Helper\IndexerInterfaceMock;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Indexer\IndexerInterface;
 use Magento\Framework\Indexer\IndexerRegistry;

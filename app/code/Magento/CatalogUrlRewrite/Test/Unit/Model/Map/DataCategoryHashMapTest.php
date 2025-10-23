@@ -12,7 +12,7 @@ use Magento\Catalog\Model\CategoryRepository;
 use Magento\Catalog\Model\ResourceModel\Category;
 use Magento\Catalog\Model\ResourceModel\CategoryFactory;
 use Magento\CatalogUrlRewrite\Model\Map\DataCategoryHashMap;
-use Magento\CatalogUrlRewrite\Test\Unit\Mock\CategoryInterfaceMock;
+use Magento\CatalogUrlRewrite\Test\Unit\Helper\CategoryInterfaceMock;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;

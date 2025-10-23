@@ -23,7 +23,7 @@ use Magento\Eav\Model\Entity\AbstractEntity;
 use Magento\Framework\Api\Filter;
 use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\Api\Search\SearchCriteriaBuilder;
-use Magento\CatalogSearch\Test\Unit\Mock\SearchCriteriaBuilderMock;
+use Magento\CatalogSearch\Test\Unit\Helper\SearchCriteriaBuilderMock;
 use Magento\Framework\Api\Search\SearchResultInterface;
 use Magento\Framework\DB\Adapter\Pdo\Mysql;
 use Magento\Framework\DB\Select;

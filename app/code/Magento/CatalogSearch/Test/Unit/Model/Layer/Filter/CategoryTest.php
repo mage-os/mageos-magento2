@@ -15,7 +15,7 @@ use Magento\Catalog\Model\Layer\Filter\Item;
 use Magento\Catalog\Model\Layer\Filter\Item\DataBuilder;
 use Magento\Catalog\Model\Layer\Filter\ItemFactory;
 use Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection;
-use Magento\CatalogSearch\Test\Unit\Mock\FilterItemMock;
+use Magento\CatalogSearch\Test\Unit\Helper\FilterItemMock;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Escaper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;

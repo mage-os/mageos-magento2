@@ -18,7 +18,7 @@ use Magento\Catalog\Model\ResourceModel\Eav\Attribute as EavAttribute;
 use Magento\Catalog\Model\ResourceModel\Layer\Filter\AttributeFactory;
 use Magento\CatalogSearch\Model\Layer\Filter\Attribute;
 use Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection;
-use Magento\CatalogSearch\Test\Unit\Mock\FilterItemMock;
+use Magento\CatalogSearch\Test\Unit\Helper\FilterItemMock;
 use Magento\Eav\Model\Entity\Attribute\Frontend\AbstractFrontend;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Filter\StripTags;

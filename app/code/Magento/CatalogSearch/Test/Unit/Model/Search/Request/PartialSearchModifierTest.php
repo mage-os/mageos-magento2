@@ -12,7 +12,7 @@ use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory;
 use Magento\CatalogSearch\Model\Search\Request\PartialSearchModifier;
-use Magento\CatalogSearch\Test\Unit\Mock\AttributeMock;
+use Magento\CatalogSearch\Test\Unit\Helper\AttributeMock;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

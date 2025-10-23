@@ -14,7 +14,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Layout;
 use Magento\ProductAlert\Block\Product\View\Price;
 use Magento\ProductAlert\Helper\Data;
-use Magento\ProductAlert\Test\Unit\Block\Product\View\Mock\ProductMock;
+use Magento\ProductAlert\Test\Unit\Helper\ProductMock;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

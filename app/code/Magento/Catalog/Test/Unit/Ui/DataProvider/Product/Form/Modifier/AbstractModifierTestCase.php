@@ -9,8 +9,8 @@ namespace Magento\Catalog\Test\Unit\Ui\DataProvider\Product\Form\Modifier;
 
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\Locator\LocatorInterface;
-use Magento\Catalog\Test\Unit\Ui\DataProvider\Product\Form\Modifier\Mock\ProductInterfaceMock;
-use Magento\Catalog\Test\Unit\Ui\DataProvider\Product\Form\Modifier\Mock\StoreInterfaceMock;
+use Magento\Catalog\Test\Unit\Helper\ProductInterfaceMock;
+use Magento\Catalog\Test\Unit\Helper\StoreInterfaceMock;
 use Magento\Framework\Stdlib\ArrayManager;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Api\Data\StoreInterface;

@@ -18,7 +18,7 @@ use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\ProductVideo\Model\Product\Attribute\Media\ExternalVideoEntryConverter;
 use Magento\ProductVideo\Model\Product\Attribute\Media\VideoEntry;
-use Magento\ProductVideo\Test\Unit\Model\Product\Attribute\Media\Mock\ProductAttributeMediaGalleryEntryExtensionMock;
+use Magento\ProductVideo\Test\Unit\Helper\ProductAttributeMediaGalleryEntryExtensionMock;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\RuntimeException;
 use PHPUnit\Framework\TestCase;

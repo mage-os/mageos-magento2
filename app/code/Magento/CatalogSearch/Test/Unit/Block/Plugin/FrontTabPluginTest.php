@@ -15,7 +15,7 @@ use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Framework\Data\Form\Element\Fieldset;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Framework\View\Element\AbstractBlock;
-use Magento\CatalogSearch\Test\Unit\Mock\AbstractBlockMock;
+use Magento\CatalogSearch\Test\Unit\Helper\AbstractBlockMock;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

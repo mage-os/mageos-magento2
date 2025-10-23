@@ -11,7 +11,7 @@ use Magento\Framework\Event\Observer;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\ProductVideo\Block\Adminhtml\Product\Edit\NewVideo;
 use Magento\ProductVideo\Observer\ChangeTemplateObserver;
-use Magento\ProductVideo\Test\Unit\Observer\Mock\ObserverMock;
+use Magento\ProductVideo\Test\Unit\Helper\ObserverMock;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

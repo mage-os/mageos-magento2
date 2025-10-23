@@ -10,8 +10,8 @@ namespace Magento\CatalogSearch\Test\Unit\Model\Adapter\Aggregation\Checker\Quer
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\CatalogSearch\Model\Adapter\Aggregation\Checker\Query\CatalogView;
-use Magento\CatalogSearch\Test\Unit\Mock\CategoryInterfaceMock;
-use Magento\CatalogSearch\Test\Unit\Mock\QueryInterfaceMock;
+use Magento\CatalogSearch\Test\Unit\Helper\CategoryInterfaceMock;
+use Magento\CatalogSearch\Test\Unit\Helper\QueryInterfaceMock;
 use Magento\Framework\Search\Request\Filter\Term;
 use Magento\Framework\Search\Request\Query\Filter;
 use Magento\Framework\Search\Request\QueryInterface;
