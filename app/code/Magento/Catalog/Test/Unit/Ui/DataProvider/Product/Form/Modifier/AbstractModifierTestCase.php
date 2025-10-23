@@ -9,8 +9,8 @@ namespace Magento\Catalog\Test\Unit\Ui\DataProvider\Product\Form\Modifier;
 
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\Locator\LocatorInterface;
-use Magento\Catalog\Test\Unit\Helper\ProductInterfaceMock;
-use Magento\Catalog\Test\Unit\Helper\StoreInterfaceMock;
+use Magento\Catalog\Test\Unit\Helper\ProductInterfaceTestHelper;
+use Magento\Catalog\Test\Unit\Helper\StoreInterfaceTestHelper;
 use Magento\Framework\Stdlib\ArrayManager;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Api\Data\StoreInterface;
@@ -57,7 +57,7 @@ abstract class AbstractModifierTestCase extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
         $this->locatorMock = $this->createMock(LocatorInterface::class);
-        $this->productMock = $this->getMockBuilder(ProductInterfaceMock::class)
+        $this->productMock = $this->getMockBuilder(ProductInterfaceTestHelper::class)
             ->onlyMethods([
                 'getId',
                 'getTypeId',
@@ -71,7 +71,7 @@ abstract class AbstractModifierTestCase extends TestCase
                 'isLockedAttribute'
             ])
             ->getMock();
-        $this->storeMock = $this->getMockBuilder(StoreInterfaceMock::class)
+        $this->storeMock = $this->getMockBuilder(StoreInterfaceTestHelper::class)
             ->onlyMethods(['getId', 'load', 'getConfig'])
             ->getMock();
         $this->arrayManagerMock = $this->getMockBuilder(ArrayManager::class)
