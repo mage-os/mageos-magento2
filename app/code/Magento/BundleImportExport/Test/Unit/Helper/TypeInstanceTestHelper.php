@@ -42,7 +42,11 @@ class TypeInstanceTestHelper
      * @param SelectionCollection $selectionCollection
      * @param array $optionIds
      */
-    public function __construct(OptionCollection $optionCollection, SelectionCollection $selectionCollection, array $optionIds)
+    public function __construct(
+        OptionCollection $optionCollection,
+        SelectionCollection $selectionCollection,
+        array $optionIds
+    )
     {
         $this->optionCollection = $optionCollection;
         $this->selectionCollection = $selectionCollection;
@@ -54,6 +58,7 @@ class TypeInstanceTestHelper
      *
      * @param mixed $product
      * @return OptionCollection
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getOptionsCollection($product)
     {
@@ -66,6 +71,7 @@ class TypeInstanceTestHelper
      * @param int $storeId
      * @param mixed $product
      * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setStoreFilter($storeId, $product)
     {
@@ -78,6 +84,7 @@ class TypeInstanceTestHelper
      * @param array $optionIds
      * @param mixed $product
      * @return SelectionCollection
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getSelectionsCollection($optionIds, $product)
     {
@@ -89,6 +96,7 @@ class TypeInstanceTestHelper
      *
      * @param mixed $product
      * @return array
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getOptionsIds($product)
     {
