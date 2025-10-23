@@ -74,7 +74,6 @@ class CreditmemoAsyncEmailTest extends TestCase
         // Capture sent emails
         $this->transportBuilder->setOnMessageSentCallback(
             function (EmailMessageInterface $message) {
-                var_dump('sandesh');
                 $this->sentEmails[] = $message;
             }
         );
