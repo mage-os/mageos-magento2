@@ -128,7 +128,7 @@ class LoadBlock extends CreateAction implements HttpPostActionInterface, HttpGet
         }
 
         $result = $resultPage->getLayout()->renderElement('content');
-        if ($request->getParam('as_js_varname')) {
+        if ($request->getParam('as_js_varname') && !$asJson) {
             $this->_objectManager->get(\Magento\Backend\Model\Session::class)->setUpdateResult($result);
             return $this->resultRedirectFactory->create()->setPath('sales/*/showUpdateResult');
         }
