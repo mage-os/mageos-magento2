@@ -16,8 +16,6 @@ use Magento\CatalogInventory\Api\StockStateInterface;
 use Magento\CatalogInventory\Model\Quote\Item\QuantityValidator\Initializer\Option;
 use Magento\CatalogInventory\Model\Quote\Item\QuantityValidator\QuoteItemQtyList;
 use Magento\Framework\DataObject;
-use Magento\Framework\Test\Unit\Helper\DataObjectTestHelper;
-use Magento\Framework\Test\Unit\Helper\DataObjectTestHelperExtended;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Quote\Model\Quote\Item;
 use Magento\Quote\Test\Unit\Helper\OptionItemTestHelper;
@@ -123,7 +121,7 @@ class OptionTest extends TestCase
             QuoteItemQtyList::class
         );
 
-        $this->resultMock = new DataObjectTestHelperExtended();
+        $this->resultMock = new DataObject();
 
         $this->stockRegistry = $this->createMock(StockRegistryInterface::class);
 

@@ -17,7 +17,7 @@ use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Store\Model\ScopeInterface;
-use Magento\Framework\Test\Unit\Helper\ExtensionAttributesInterfaceTestHelper;
+use Magento\Framework\Api\Test\Unit\Helper\ExtensionAttributesInterfaceTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

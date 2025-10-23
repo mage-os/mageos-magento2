@@ -12,7 +12,6 @@ use Magento\CatalogRule\Model\Indexer\Product\ProductRuleProcessor;
 use Magento\CatalogRule\Plugin\Indexer\Product\Save\ApplyRules;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Framework\Test\Unit\Helper\AbstractModelTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -44,7 +43,7 @@ class ApplyRulesTest extends TestCase
 
         $this->subject = $this->createMock(Product::class);
 
-        $this->model = new AbstractModelTestHelper();
+        $this->model = $this->createPartialMock(AbstractModel::class, []);
 
         $this->plugin = (new ObjectManager($this))->getObject(
             ApplyRules::class,

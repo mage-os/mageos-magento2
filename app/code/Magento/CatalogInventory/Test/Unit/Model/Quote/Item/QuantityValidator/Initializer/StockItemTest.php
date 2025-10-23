@@ -18,7 +18,6 @@ use Magento\CatalogInventory\Model\Quote\Item\QuantityValidator\QuoteItemQtyList
 use Magento\CatalogInventory\Model\Stock\Item;
 use Magento\CatalogInventory\Model\StockStateProvider;
 use Magento\Framework\DataObject;
-use Magento\Framework\Test\Unit\Helper\DataObjectTestHelper;
 use Magento\Quote\Test\Unit\Helper\QuoteItemTestHelper;
 
 use Magento\Store\Model\Store;
@@ -125,8 +124,7 @@ class StockItemTest extends TestCase
         )
             ->disableOriginalConstructor()
             ->getMock();
-        // Create DataObjectTestHelper for DataObject with required methods
-        $result = new DataObjectTestHelper();
+        $result = new DataObject();
 
         // Use setters for anonymous classes instead of expects
         $quoteItem->setParentItem($parentItem);
@@ -212,8 +210,7 @@ class StockItemTest extends TestCase
         )
             ->disableOriginalConstructor()
             ->getMock();
-        // Create DataObjectTestHelper for DataObject with required methods (second test)
-        $result = new DataObjectTestHelper();
+        $result = new DataObject();
         $product->method('getStore')->willReturn($storeMock);
         $product->method('getId')->willReturn($productId);
         // Use setters for anonymous classes instead of expects

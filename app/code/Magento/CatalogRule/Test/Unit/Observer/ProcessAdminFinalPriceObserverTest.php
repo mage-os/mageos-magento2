@@ -20,8 +20,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use Magento\Ui\Component\Form\Element\DataType\Date;
 use Magento\CatalogRule\Test\Unit\Helper\RulePricesStorageTestHelper;
 use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
-use Magento\Framework\Test\Unit\Helper\DateTestHelperForCatalogRule;
-use Magento\Framework\Test\Unit\Helper\EventTestHelper;
+use Magento\Framework\Stdlib\Test\Unit\Helper\DateTimeTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -77,7 +76,7 @@ class ProcessAdminFinalPriceObserverTest extends TestCase
             ->getMockBuilder(Observer::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->eventMock = new EventTestHelper();
+        $this->eventMock = new Event();
         $this->rulePricesStorageMock = new RulePricesStorageTestHelper();
         $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
         $this->resourceRuleFactoryMock = $this->getMockBuilder(RuleFactory::class)
@@ -114,7 +113,7 @@ class ProcessAdminFinalPriceObserverTest extends TestCase
             ->willReturn($this->eventMock);
 
         $productMock = new ProductTestHelper();
-        $dateMock = new DateTestHelperForCatalogRule();
+        $dateMock = new DateTimeTestHelper();
 
         $this->localeDateMock->expects($this->once())
             ->method('scopeDate')

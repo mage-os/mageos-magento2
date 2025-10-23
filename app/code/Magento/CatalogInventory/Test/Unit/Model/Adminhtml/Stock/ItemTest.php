@@ -11,7 +11,7 @@ use Magento\CatalogInventory\Model\Adminhtml\Stock\Item;
 use Magento\Customer\Api\Data\GroupInterface;
 use Magento\Customer\Api\GroupManagementInterface;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
-use Magento\Framework\Test\Unit\Helper\AbstractResourceTestHelper;
+use Magento\Framework\Model\Test\Unit\Helper\AbstractResourceTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

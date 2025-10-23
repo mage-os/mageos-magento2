@@ -12,7 +12,6 @@ use Magento\CatalogInventory\Observer\ReindexQuoteInventoryObserver;
 use Magento\CatalogInventory\Observer\SubtractQuoteInventoryObserver;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
-use Magento\Framework\Test\Unit\Helper\EventTestHelper;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Test\Unit\Helper\QuoteTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -59,8 +58,8 @@ class CheckoutAllSubmitAfterObserverTest extends TestCase
             ReindexQuoteInventoryObserver::class
         );
 
-        // Create EventTestHelper for Event with all required methods
-        $this->event = new EventTestHelper();
+        // Create Event with all required methods via __call
+        $this->event = new Event();
 
         $this->eventObserver = $this->createMock(Observer::class);
 

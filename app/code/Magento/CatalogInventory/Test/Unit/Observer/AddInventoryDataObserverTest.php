@@ -12,7 +12,6 @@ use Magento\CatalogInventory\Helper\Stock;
 use Magento\CatalogInventory\Observer\AddInventoryDataObserver;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
-use Magento\Framework\Test\Unit\Helper\EventTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -50,8 +49,8 @@ class AddInventoryDataObserverTest extends TestCase
         
         $this->stockHelper = $this->createMock(Stock::class);
 
-        // Create EventTestHelper for Event that extends Event and implements getProduct
-        $this->event = new EventTestHelper();
+        // Create Event with getProduct method via __call
+        $this->event = new Event();
 
         $this->eventObserver = $this->createMock(Observer::class);
         $this->eventObserver->expects($this->atLeastOnce())

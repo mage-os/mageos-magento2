@@ -13,7 +13,7 @@ use Magento\Framework\Data\Form\Element\CollectionFactory;
 use Magento\Framework\Data\Form\Element\Factory;
 use Magento\Framework\Data\Form\Element\Text;
 use Magento\Framework\Data\Form\Element\TextFactory;
-use Magento\Framework\Test\Unit\Helper\TextTestHelper;
+use Magento\Framework\Data\Test\Unit\Helper\TextTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -75,6 +75,7 @@ class StockTest extends TestCase
             $this->_collectionFactoryMock,
             $escaperMock
         );
+        
         $this->_factoryTextMock = $this->createMock(TextFactory::class);
 
         $coreRegistryMock = $this->createMock(\Magento\Framework\Registry::class);

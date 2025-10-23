@@ -19,7 +19,7 @@ use Magento\Framework\DB\Select;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Indexer\CacheContext;
-use Magento\Framework\Test\Unit\Helper\MetadataPoolTestHelper;
+use Magento\Framework\EntityManager\Test\Unit\Helper\MetadataPoolTestHelper;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

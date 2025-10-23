@@ -16,7 +16,7 @@ use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
 use Magento\Framework\Registry;
-use Magento\Framework\Test\Unit\Helper\AbstractResourceTestHelper;
+use Magento\Framework\Model\Test\Unit\Helper\AbstractResourceTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

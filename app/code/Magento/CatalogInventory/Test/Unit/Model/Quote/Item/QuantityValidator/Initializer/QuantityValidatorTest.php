@@ -32,9 +32,6 @@ use Magento\Quote\Test\Unit\Helper\QuoteTestHelper;
 use Magento\Quote\Test\Unit\Helper\QuoteItemTestHelper;
 use Magento\Quote\Test\Unit\Helper\OptionItemTestHelper;
 use Magento\CatalogInventory\Test\Unit\Helper\StockItemInterfaceTestHelper;
-use Magento\Framework\Test\Unit\Helper\DataObjectTestHelperForValidator;
-use Magento\Framework\Test\Unit\Helper\EventTestHelper;
-use Magento\Framework\Test\Unit\Helper\DataObjectTestHelper;
 use Magento\Store\Model\Store;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -156,8 +153,8 @@ class QuantityValidatorTest extends TestCase
             ]
         );
         $this->observerMock = $this->createMock(Observer::class);
-        // Use EventTestHelper extending Event with dynamic methods
-        $this->eventMock = new EventTestHelper();
+        // Use Event with dynamic methods via __call magic method
+        $this->eventMock = new Event();
         $this->quoteMock = new QuoteTestHelper();
         $this->storeMock = $this->createMock(Store::class);
         $this->quoteItemMock = new QuoteItemTestHelper();
@@ -169,8 +166,7 @@ class QuantityValidatorTest extends TestCase
 
         $this->typeInstanceMock = $this->createMock(Type::class);
 
-        // Use DataObjectTestHelperForValidator extending DataObject with dynamic methods
-        $this->resultMock = new DataObjectTestHelperForValidator();
+        $this->resultMock = new DataObject();
     }
 
     /**
@@ -401,8 +397,7 @@ class QuantityValidatorTest extends TestCase
     public function testValidateOutStockWithAlreadyErrorInQuoteItem(): void
     {
         $this->createInitialStub(1);
-        // Use DataObjectTestHelperForValidator extending DataObject with dynamic methods
-        $resultMock = new DataObjectTestHelperForValidator();
+        $resultMock = new DataObject();
         $resultMock->setHasError(true);
         $this->stockRegistryMock->method('getStockItem')
             ->willReturn($this->stockItemMock);
