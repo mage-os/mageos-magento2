@@ -10,10 +10,10 @@ namespace Magento\Framework\Stdlib\Test\Unit\Helper;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 
 /**
- * TestHelper for Date with dynamic methods
+ * TestHelper for DateTime with custom format override
  * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
-class DateTestHelperForCatalogRule extends DateTime
+class DateTimeTestHelper extends DateTime
 {
     /** @var string|null */
     private $formatValue = null;
@@ -34,3 +34,4 @@ class DateTestHelperForCatalogRule extends DateTime
         return $this;
     }
 }
+
