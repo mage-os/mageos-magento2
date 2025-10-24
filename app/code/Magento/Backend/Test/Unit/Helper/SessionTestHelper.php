@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Backend\Test\Unit\Helper;
 
-use Magento\Backend\Model\Auth\Session;
+use Magento\Backend\Model\Session;
 use Magento\Framework\DataObject;
 use Magento\Framework\Session\Test\Unit\Helper\StorageTestHelper;
 use Magento\User\Model\User;
@@ -163,6 +163,17 @@ class SessionTestHelper extends Session
     public function setIsLoggedIn($value)
     {
         $this->isLoggedIn = $value;
+        return $this;
+    }
+
+    /**
+     * Set URL notice flag
+     *
+     * @param bool $flag
+     * @return $this
+     */
+    public function setIsUrlNotice($flag)
+    {
         return $this;
     }
 }

@@ -7,17 +7,19 @@ declare(strict_types=1);
 
 namespace Magento\Quote\Test\Unit\Helper;
 
-use Magento\Quote\Api\Data\CartExtensionInterface;
+use Magento\Quote\Api\Data\CartExtension;
+use Magento\NegotiableQuote\Api\Data\NegotiableQuoteInterface;
 
 /**
- * Test helper that implements CartExtensionInterface
+ * Test helper for CartExtension
  *
- * Provides stub implementations for all extension attribute methods
+ * This helper extends the concrete CartExtension class to provide
+ * test-specific functionality without dependency injection issues.
  */
-class CartExtensionTestHelper implements CartExtensionInterface
+class CartExtensionTestHelper extends CartExtension
 {
     /**
-     * @var \Magento\NegotiableQuote\Api\Data\NegotiableQuoteInterface|null
+     * @var NegotiableQuoteInterface
      */
     private $negotiableQuote;
 
@@ -25,16 +27,6 @@ class CartExtensionTestHelper implements CartExtensionInterface
      * @var mixed
      */
     private $couponCodes;
-
-    /**
-     * @var array
-     */
-    private $shippingAssignments = [];
-
-    /**
-     * @var int|null
-     */
-    private $companyId;
 
     /**
      * @var mixed
@@ -54,7 +46,7 @@ class CartExtensionTestHelper implements CartExtensionInterface
     /**
      * Get negotiable quote
      *
-     * @return \Magento\NegotiableQuote\Api\Data\NegotiableQuoteInterface|null
+     * @return NegotiableQuoteInterface|null
      */
     public function getNegotiableQuote()
     {
@@ -64,7 +56,7 @@ class CartExtensionTestHelper implements CartExtensionInterface
     /**
      * Set negotiable quote
      *
-     * @param \Magento\NegotiableQuote\Api\Data\NegotiableQuoteInterface|null $negotiableQuote
+     * @param NegotiableQuoteInterface $negotiableQuote
      * @return $this
      */
     public function setNegotiableQuote($negotiableQuote)
