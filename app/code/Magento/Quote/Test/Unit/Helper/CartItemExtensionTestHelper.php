@@ -10,17 +10,20 @@ namespace Magento\Quote\Test\Unit\Helper;
 use Magento\Quote\Api\Data\CartItemExtensionInterface;
 
 /**
- * Test helper for CartItemExtension to support dynamic getNegotiableQuoteItem/setNegotiableQuoteItem methods
+ * Test helper for CartItemExtension
+ *
+ * This helper implements CartItemExtensionInterface to provide
+ * test-specific functionality for cart item extension attributes.
  */
 class CartItemExtensionTestHelper implements CartItemExtensionInterface
 {
     /**
-     * @var \Magento\NegotiableQuote\Api\Data\NegotiableQuoteItemInterface|null
+     * @var mixed
      */
     private $negotiableQuoteItem;
 
     /**
-     * @var \Magento\SalesRule\Api\Data\RuleDiscountInterface[]|null
+     * @var mixed
      */
     private $discounts;
 
@@ -32,7 +35,7 @@ class CartItemExtensionTestHelper implements CartItemExtensionInterface
     /**
      * Get negotiable quote item
      *
-     * @return \Magento\NegotiableQuote\Api\Data\NegotiableQuoteItemInterface|null
+     * @return mixed
      */
     public function getNegotiableQuoteItem()
     {
@@ -42,7 +45,7 @@ class CartItemExtensionTestHelper implements CartItemExtensionInterface
     /**
      * Set negotiable quote item
      *
-     * @param \Magento\NegotiableQuote\Api\Data\NegotiableQuoteItemInterface|null $negotiableQuoteItem
+     * @param mixed $negotiableQuoteItem
      * @return $this
      */
     public function setNegotiableQuoteItem($negotiableQuoteItem)
@@ -54,7 +57,7 @@ class CartItemExtensionTestHelper implements CartItemExtensionInterface
     /**
      * Get discounts
      *
-     * @return \Magento\SalesRule\Api\Data\RuleDiscountInterface[]|null
+     * @return mixed
      */
     public function getDiscounts()
     {
@@ -64,7 +67,7 @@ class CartItemExtensionTestHelper implements CartItemExtensionInterface
     /**
      * Set discounts
      *
-     * @param \Magento\SalesRule\Api\Data\RuleDiscountInterface[]|null $discounts
+     * @param mixed $discounts
      * @return $this
      */
     public function setDiscounts($discounts)

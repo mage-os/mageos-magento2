@@ -35,9 +35,20 @@ class ProductTestHelper extends Product
      */
     private $isObjectNewCallCount = 0;
 
-    public function __construct()
+    /**
+     * @var float
+     */
+    private $cost;
+
+    /**
+     * Constructor that accepts cost
+     *
+     * @param float $cost
+     */
+    public function __construct($cost)
     {
-        $this->_data = [];
+        $this->cost = $cost;
+        // Skip parent constructor to avoid dependency injection issues
     }
 
     /**
@@ -137,5 +148,15 @@ class ProductTestHelper extends Product
     public function hasOptions(): bool
     {
         return isset($this->_data['has_options']) && $this->_data['has_options'];
+    }
+
+    /**
+     * Get cost
+     *
+     * @return float
+     */
+    public function getCost()
+    {
+        return $this->cost;
     }
 }

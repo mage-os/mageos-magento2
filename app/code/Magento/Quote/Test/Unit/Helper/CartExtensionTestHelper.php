@@ -26,7 +26,22 @@ class CartExtensionTestHelper extends CartExtension
     /**
      * @var mixed
      */
+    private $shippingAssignments;
+
+    /**
+     * @var mixed
+     */
+    private $companyId;
+
+    /**
+     * @var mixed
+     */
     private $couponCodes;
+
+    /**
+     * @var mixed
+     */
+    private $negotiableQuoteItem;
 
     /**
      * @var mixed
@@ -68,7 +83,7 @@ class CartExtensionTestHelper extends CartExtension
     /**
      * Get shipping assignments
      *
-     * @return \Magento\Quote\Api\Data\ShippingAssignmentInterface[]|null
+     * @return mixed
      */
     public function getShippingAssignments()
     {
@@ -78,12 +93,34 @@ class CartExtensionTestHelper extends CartExtension
     /**
      * Set shipping assignments
      *
-     * @param \Magento\Quote\Api\Data\ShippingAssignmentInterface[] $shippingAssignments
+     * @param mixed $shippingAssignments
      * @return $this
      */
     public function setShippingAssignments($shippingAssignments)
     {
         $this->shippingAssignments = $shippingAssignments;
+        return $this;
+    }
+
+    /**
+     * Get company ID
+     *
+     * @return mixed
+     */
+    public function getCompanyId()
+    {
+        return $this->companyId;
+    }
+
+    /**
+     * Set company ID
+     *
+     * @param mixed $companyId
+     * @return $this
+     */
+    public function setCompanyId($companyId)
+    {
+        $this->companyId = $companyId;
         return $this;
     }
 
@@ -110,28 +147,6 @@ class CartExtensionTestHelper extends CartExtension
     }
 
     /**
-     * Get company ID
-     *
-     * @return int|null
-     */
-    public function getCompanyId()
-    {
-        return $this->companyId;
-    }
-
-    /**
-     * Set company ID
-     *
-     * @param int|null $companyId
-     * @return $this
-     */
-    public function setCompanyId($companyId)
-    {
-        $this->companyId = $companyId;
-        return $this;
-    }
-
-    /**
      * Get quote test attribute
      *
      * @return mixed
@@ -150,6 +165,28 @@ class CartExtensionTestHelper extends CartExtension
     public function setQuoteTestAttribute($quoteTestAttribute)
     {
         $this->quoteTestAttribute = $quoteTestAttribute;
+        return $this;
+    }
+
+    /**
+     * Get negotiable quote item
+     *
+     * @return mixed
+     */
+    public function getNegotiableQuoteItem()
+    {
+        return $this->negotiableQuoteItem;
+    }
+
+    /**
+     * Set negotiable quote item
+     *
+     * @param mixed $negotiableQuoteItem
+     * @return $this
+     */
+    public function setNegotiableQuoteItem($negotiableQuoteItem)
+    {
+        $this->negotiableQuoteItem = $negotiableQuoteItem;
         return $this;
     }
 }
