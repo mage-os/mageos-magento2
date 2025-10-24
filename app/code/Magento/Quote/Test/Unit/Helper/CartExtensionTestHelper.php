@@ -1,38 +1,40 @@
 <?php
 /**
- * Copyright 2025 Adobe
+ * Copyright 2016 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
 
 namespace Magento\Quote\Test\Unit\Helper;
 
-use Magento\Quote\Api\Data\CartExtensionInterface;
+use Magento\Quote\Api\Data\CartExtension;
+use Magento\NegotiableQuote\Api\Data\NegotiableQuoteInterface;
 
 /**
- * Test helper for CartExtension to support dynamic getNegotiableQuote/setNegotiableQuote methods
+ * Test helper for CartExtension
+ *
+ * This helper extends the concrete CartExtension class to provide
+ * test-specific functionality without dependency injection issues.
  */
-class CartExtensionTestHelper implements CartExtensionInterface
+class CartExtensionTestHelper extends CartExtension
 {
     /**
-     * @var \Magento\NegotiableQuote\Api\Data\NegotiableQuoteInterface|null
+     * @var NegotiableQuoteInterface
      */
     private $negotiableQuote;
 
     /**
-     * @var array
+     * Constructor that skips parent initialization
      */
-    private $shippingAssignments = [];
-
-    /**
-     * @var int|null
-     */
-    private $companyId;
+    public function __construct()
+    {
+        // Skip parent constructor to avoid dependency injection issues
+    }
 
     /**
      * Get negotiable quote
      *
-     * @return \Magento\NegotiableQuote\Api\Data\NegotiableQuoteInterface|null
+     * @return NegotiableQuoteInterface|null
      */
     public function getNegotiableQuote()
     {
@@ -42,56 +44,12 @@ class CartExtensionTestHelper implements CartExtensionInterface
     /**
      * Set negotiable quote
      *
-     * @param \Magento\NegotiableQuote\Api\Data\NegotiableQuoteInterface|null $negotiableQuote
+     * @param NegotiableQuoteInterface $negotiableQuote
      * @return $this
      */
     public function setNegotiableQuote($negotiableQuote)
     {
         $this->negotiableQuote = $negotiableQuote;
-        return $this;
-    }
-
-    /**
-     * Get shipping assignments
-     *
-     * @return \Magento\Quote\Api\Data\ShippingAssignmentInterface[]|null
-     */
-    public function getShippingAssignments()
-    {
-        return $this->shippingAssignments;
-    }
-
-    /**
-     * Set shipping assignments
-     *
-     * @param \Magento\Quote\Api\Data\ShippingAssignmentInterface[] $shippingAssignments
-     * @return $this
-     */
-    public function setShippingAssignments($shippingAssignments)
-    {
-        $this->shippingAssignments = $shippingAssignments;
-        return $this;
-    }
-
-    /**
-     * Get company ID
-     *
-     * @return int|null
-     */
-    public function getCompanyId()
-    {
-        return $this->companyId;
-    }
-
-    /**
-     * Set company ID
-     *
-     * @param int|null $companyId
-     * @return $this
-     */
-    public function setCompanyId($companyId)
-    {
-        $this->companyId = $companyId;
         return $this;
     }
 }
