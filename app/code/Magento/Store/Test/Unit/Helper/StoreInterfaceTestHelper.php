@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Catalog\Test\Unit\Helper;
+namespace Magento\Store\Test\Unit\Helper;
 
 use Magento\Store\Model\Store;
 
@@ -35,3 +35,4 @@ class StoreInterfaceTestHelper extends Store
         // Mock implementation - no actual resource initialization needed
     }
 }
+

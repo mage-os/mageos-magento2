@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\AdvancedPricingImportExport\Test\Unit\Helper;
+namespace Magento\Framework\Test\Unit\Helper;
 
 use Magento\Framework\Stdlib\DateTime\DateTime;
 
@@ -68,3 +68,4 @@ class DateTimeTestHelper extends DateTime
         return $this;
     }
 }
+

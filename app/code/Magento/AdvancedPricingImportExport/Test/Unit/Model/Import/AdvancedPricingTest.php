@@ -31,8 +31,8 @@ use Magento\ImportExport\Model\Import;
 use Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregatorInterface;
 use Magento\ImportExport\Model\ResourceModel\Helper;
 use Magento\ImportExport\Test\Unit\Model\Import\AbstractImportTestCase;
-use Magento\AdvancedPricingImportExport\Test\Unit\Helper\ResourceFactoryTestHelper;
-use Magento\AdvancedPricingImportExport\Test\Unit\Helper\DateTimeTestHelper;
+use Magento\CatalogImportExport\Test\Unit\Helper\ResourceFactoryTestHelper;
+use Magento\Framework\Test\Unit\Helper\DateTimeTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**

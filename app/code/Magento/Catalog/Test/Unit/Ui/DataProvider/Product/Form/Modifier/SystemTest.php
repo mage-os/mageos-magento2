@@ -25,9 +25,7 @@ class SystemTest extends AbstractModifierTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->urlBuilderMock = $this->getMockBuilder(UrlInterface::class)
-            ->onlyMethods(['getUrl'])
-            ->getMockForAbstractClass();
+        $this->urlBuilderMock = $this->createMock(UrlInterface::class);
     }
 
     /**

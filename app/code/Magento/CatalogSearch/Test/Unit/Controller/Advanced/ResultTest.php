@@ -27,7 +27,7 @@ use Magento\Framework\View\Model\Layout\Merge;
 use Magento\Framework\View\Result\Layout;
 use Magento\Framework\View\Result\Page;
 use Magento\Framework\Webapi\Response;
-use Magento\CatalogSearch\Test\Unit\Helper\LayoutTestHelper;
+use Magento\Framework\Test\Unit\Helper\LayoutTestHelper;
 use Magento\CatalogSearch\Test\Unit\Helper\RequestTestHelper;
 use PHPUnit\Framework\TestCase;
 

@@ -11,7 +11,7 @@ use Magento\Catalog\Model\Product as ProductModel;
 use Magento\Catalog\Model\ResourceModel\Product as ProductResourceModel;
 use Magento\CatalogSearch\Model\Indexer\Fulltext;
 use Magento\CatalogSearch\Model\Indexer\Fulltext\Plugin\Product;
-use Magento\CatalogSearch\Test\Unit\Helper\IndexerInterfaceTestHelper;
+use Magento\Framework\Test\Unit\Helper\IndexerInterfaceTestHelper;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Indexer\IndexerInterface;
 use Magento\Framework\Indexer\IndexerRegistry;

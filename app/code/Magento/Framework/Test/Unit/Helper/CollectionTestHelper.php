@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\CatalogSearch\Test\Unit\Helper;
+namespace Magento\Framework\Test\Unit\Helper;
 
 use Magento\Framework\Data\Collection;
 
@@ -34,3 +34,4 @@ class CollectionTestHelper extends Collection
         // Mock implementation
     }
 }
+

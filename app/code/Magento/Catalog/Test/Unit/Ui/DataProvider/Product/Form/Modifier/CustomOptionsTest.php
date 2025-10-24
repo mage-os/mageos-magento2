@@ -10,6 +10,7 @@ namespace Magento\Catalog\Test\Unit\Ui\DataProvider\Product\Form\Modifier;
 use Magento\Catalog\Model\Config\Source\Product\Options\Price as ProductOptionsPrice;
 use Magento\Catalog\Model\Product\Option as ProductOption;
 use Magento\Catalog\Model\ProductOptions\ConfigInterface;
+use Magento\Store\Test\Unit\Helper\StoreInterfaceTestHelper;
 use Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\CustomOptions;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Store\Api\Data\StoreInterface;
@@ -46,19 +47,13 @@ class CustomOptionsTest extends AbstractModifierTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->productOptionsConfigMock = $this->getMockBuilder(ConfigInterface::class)
-            ->getMockForAbstractClass();
-        $this->productOptionsPriceMock = $this->getMockBuilder(ProductOptionsPrice::class)
-            ->disableOriginalConstructor()
+        $this->productOptionsConfigMock = $this->createMock(ConfigInterface::class);
+        $this->productOptionsPriceMock = $this->createMock(ProductOptionsPrice::class);
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
+        $this->storeMock = $this->getMockBuilder(StoreInterfaceTestHelper::class)
+            ->onlyMethods(['getBaseCurrency'])
             ->getMock();
-        $this->storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
-            ->getMockForAbstractClass();
-        $this->storeMock = $this->getMockBuilder(StoreInterface::class)
-            ->addMethods(['getBaseCurrency'])
-            ->getMockForAbstractClass();
-        $this->priceCurrency = $this->getMockBuilder(PriceCurrencyInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->priceCurrency = $this->createMock(PriceCurrencyInterface::class);
 
         $this->storeManagerMock->expects($this->any())
             ->method('getStore')

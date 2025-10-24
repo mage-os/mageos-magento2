@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\AdvancedPricingImportExport\Test\Unit\Helper;
+namespace Magento\CatalogImportExport\Test\Unit\Helper;
 
 use Magento\CatalogImportExport\Model\Import\Proxy\Product\ResourceModelFactory;
 
@@ -66,3 +66,4 @@ class ResourceFactoryTestHelper extends ResourceModelFactory
         return $this;
     }
 }
+

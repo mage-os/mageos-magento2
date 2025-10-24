@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\CatalogSearch\Test\Unit\Helper;
+namespace Magento\Catalog\Test\Unit\Helper;
 
 use Magento\Catalog\Model\Layer\Filter\Item;
 
@@ -87,3 +87,4 @@ class FilterItemTestHelper extends Item
         // Mock implementation
     }
 }
+

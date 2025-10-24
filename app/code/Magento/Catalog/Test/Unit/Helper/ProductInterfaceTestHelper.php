@@ -20,11 +20,41 @@ use Magento\Catalog\Model\Product;
 class ProductInterfaceTestHelper extends Product
 {
     /**
+     * @var array
+     */
+    private $customAttributes = [];
+
+    /**
      * Constructor that skips parent initialization
      */
     public function __construct()
     {
         // Skip parent constructor to avoid dependency injection issues
+    }
+
+    /**
+     * Get custom attribute value
+     *
+     * @param string $attributeCode
+     * @return mixed
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function getCustomAttribute($attributeCode)
+    {
+        return $this->customAttributes[$attributeCode] ?? null;
+    }
+
+    /**
+     * Set custom attribute for testing
+     *
+     * @param string $attributeCode
+     * @param mixed $attribute
+     * @return $this
+     */
+    public function setCustomAttributeForTest($attributeCode, $attribute)
+    {
+        $this->customAttributes[$attributeCode] = $attribute;
+        return $this;
     }
 
     /**

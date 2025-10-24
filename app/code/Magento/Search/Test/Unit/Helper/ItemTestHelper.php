@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\CatalogSearch\Test\Unit\Helper;
+namespace Magento\Search\Test\Unit\Helper;
 
 use Magento\Search\Model\Autocomplete\Item;
 
@@ -75,3 +75,4 @@ class ItemTestHelper extends Item
         // Mock implementation
     }
 }
+

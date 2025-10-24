@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\CatalogSearch\Test\Unit\Helper;
+namespace Magento\Eav\Test\Unit\Helper;
 
 use Magento\Eav\Model\Entity\Attribute;
 
@@ -75,3 +75,4 @@ class AttributeTestHelper extends Attribute
         // Mock implementation
     }
 }
+

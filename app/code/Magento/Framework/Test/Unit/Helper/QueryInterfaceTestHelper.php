@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\CatalogSearch\Test\Unit\Helper;
+namespace Magento\Framework\Test\Unit\Helper;
 
 use Magento\Framework\Search\Request\QueryInterface;
 
@@ -91,3 +91,4 @@ class QueryInterfaceTestHelper implements QueryInterface
         return $this;
     }
 }
+
