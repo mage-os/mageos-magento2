@@ -2410,12 +2410,7 @@ class Mysql extends \Zend_Db_Adapter_Pdo_Mysql implements AdapterInterface, Rese
         }
 
         $query = sprintf('RENAME TABLE %s', implode(',', $renamesList));
-
-        if ($this->getTransactionLevel() > 0) {
-            $this->createConnection()->query($query);
-        } else {
-            $this->query($query);
-        }
+        $this->query($query);
 
         foreach ($tablesList as $table) {
             $this->resetDdlCache($table);

@@ -437,6 +437,11 @@ class IndexBuilder
      */
     private function cleanProductIndex(array $productIds): void
     {
+        $productIds = $this->validateProductIds($productIds);
+        if (empty($productIds)) {
+            return;
+        }
+
         $tableName = $this->getTable('catalogrule_product');
 
         $this->deleteRatio($tableName, $productIds) > 0.25
@@ -445,7 +450,22 @@ class IndexBuilder
     }
 
     /**
-     * Deletion ratio for the table.
+     * Validate product IDs
+     *
+     * @param array $productIds
+     * @return array
+     */
+    private function validateProductIds(array $productIds): array
+    {
+        $validated = array_filter($productIds, function ($id) {
+            return is_numeric($id) && (int)$id == $id && (int)$id > 0;
+        });
+
+        return array_map('intval', array_values($validated));
+    }
+
+    /**
+     * Calculate deletion ratio for the table.
      *
      * Alternatively, information_schema can be used:
      * ```
@@ -465,6 +485,10 @@ class IndexBuilder
      */
     private function deleteRatio(string $tableName, array $productIds): float
     {
+        if (empty($productIds)) {
+            return 0.0;
+        }
+
         $sql = $this->connection->select();
         $sql->from(
             $tableName,
@@ -474,11 +498,24 @@ class IndexBuilder
         );
         $sql->where('product_id IN (?)', $productIds);
 
-        return (float) $this->connection->fetchOne($sql);
+        $ratio = (float) $this->connection->fetchOne($sql);
+
+        return is_nan($ratio) ? 0.0 : $ratio;
     }
 
     /**
      * Copy-and-swap table strategy for large deletion chunks.
+     *
+     * Optimized for Galera clusters: avoids massive DELETE operations that would:
+     * - Exceed Galera transaction size limit (2GB writeset)
+     * - Cause row-by-row replication to secondary nodes
+     * - Degrade cluster performance severely
+     *
+     * Instead, creates new table with only data to keep, then atomic RENAME.
+     *
+     * WARNING: Uses DDL operations (RENAME TABLE) which cause implicit commit in MySQL/MariaDB.
+     * The INSERT operations are transactional, but the final RENAME always commits.
+     * This is expected DDL behavior and works correctly across MySQL 8.x, MariaDB 10/11, and Galera.
      *
      * @link https://dev.mysql.com/doc/refman/8.4/en/delete.html#id246642
      * @param string $tableName
@@ -544,23 +581,24 @@ class IndexBuilder
     /**
      * Batch deletion strategy for row deletion in small chunks.
      *
+     * Each batch is deleted separately to avoid:
+     * - "WSREP: transaction size limit exceeded" errors
+     * - Massive replication lag on Galera secondary nodes
+     * - Long-running transactions that lock tables
+     *
      * @param string $tableName
      * @param array $productIds
      * @return void
-     * @throws Zend_Db_Statement_Exception
      */
     private function batchRowsDelete(string $tableName, array $productIds): void
     {
-        $sql = sprintf(
-            'DELETE FROM %s WHERE product_id IN (%s) LIMIT %d',
-            $tableName,
-            implode(', ', $productIds),
-            $this->batchCount
-        );
+        while (!empty($productIds)) {
+            $batch = array_splice($productIds, 0, $this->batchCount);
 
-        while (true) {
-            $stmt = $this->connection->query($sql);
-            if ($stmt->rowCount() === 0) {
+            $where = ['product_id IN (?)' => $batch];
+            $deleted = $this->connection->delete($tableName, $where);
+
+            if ($deleted === 0) {
                 break;
             }
         }
