@@ -64,7 +64,10 @@ class GetListCustomerGroupExcludedWebsite
                     $customerGroupId = (int)$customerGroup->getId();
                     if (array_key_exists($customerGroupId, $allExcludedWebsites)) {
                         $excludedWebsites = $allExcludedWebsites[$customerGroupId];
-                        $customerGroupExtensionAttributes = $this->groupExtensionInterfaceFactory->create();
+                        $customerGroupExtensionAttributes = $customerGroup->getExtensionAttributes();
+                        if ($customerGroupExtensionAttributes === null) {
+                            $customerGroupExtensionAttributes = $this->groupExtensionInterfaceFactory->create();
+                        }
                         $customerGroupExtensionAttributes->setExcludeWebsiteIds($excludedWebsites);
                         $customerGroup->setExtensionAttributes($customerGroupExtensionAttributes);
                     }
