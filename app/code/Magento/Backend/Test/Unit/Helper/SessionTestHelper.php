@@ -7,17 +7,17 @@ declare(strict_types=1);
 
 namespace Magento\Backend\Test\Unit\Helper;
 
-use Magento\Backend\Model\Session;
+use Magento\Backend\Model\Auth\Session;
 use Magento\Framework\DataObject;
 use Magento\Framework\Session\Test\Unit\Helper\StorageTestHelper;
 use Magento\User\Model\User;
 
 /**
- * Test helper for creating Session mocks with various methods
+ * Test helper for creating Auth Session mocks with various methods
  *
- * This helper extends the concrete Session class directly, providing a clean
+ * This helper extends the concrete Auth\Session class directly, providing a clean
  * way to add test-specific methods without using anonymous classes.
- * Supports both Auth\Session and regular Session functionality.
+ * Extends Auth\Session to be compatible with type hints requiring that specific class.
  */
 class SessionTestHelper extends Session
 {
@@ -171,6 +171,7 @@ class SessionTestHelper extends Session
      *
      * @param bool $flag
      * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setIsUrlNotice($flag)
     {

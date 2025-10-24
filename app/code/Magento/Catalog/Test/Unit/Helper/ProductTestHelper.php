@@ -41,11 +41,11 @@ class ProductTestHelper extends Product
     private $cost;
 
     /**
-     * Constructor that accepts cost
+     * Constructor that accepts optional cost parameter
      *
      * @param float $cost
      */
-    public function __construct($cost)
+    public function __construct($cost = 0.0)
     {
         $this->cost = $cost;
         // Skip parent constructor to avoid dependency injection issues
