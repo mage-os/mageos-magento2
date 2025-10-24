@@ -18,7 +18,10 @@ use Magento\ConfigurableProduct\Test\Fixture\AddProductToCart as AddConfigurable
 use Magento\ConfigurableProduct\Test\Fixture\Attribute as AttributeFixture;
 use Magento\ConfigurableProduct\Test\Fixture\Product as ConfigurableProductFixture;
 use Magento\Customer\Test\Fixture\Customer as CustomerFixture;
+use Magento\Dhl\Model\Carrier;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\HTTP\AsyncClient\Response;
+use Magento\Framework\HTTP\AsyncClientInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Quote\Api\CartManagementInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
@@ -68,6 +71,16 @@ class PlaceOrderWithDhlUsCarrierTest extends TestCase
     private ObjectManagerInterface $objectManager;
 
     /**
+     * @var AsyncClientInterface
+     */
+    private AsyncClientInterface $httpClient;
+
+    /**
+     * @var string|null
+     */
+    private ?string $selectedShippingMethod = null;
+
+    /**
      * @return void
      * @throws LocalizedException
      */
@@ -79,6 +92,7 @@ class PlaceOrderWithDhlUsCarrierTest extends TestCase
         $this->quoteRepository = $this->objectManager->get(CartRepositoryInterface::class);
         $this->cartManagement = $this->objectManager->get(CartManagementInterface::class);
         $this->orderRepository = $this->objectManager->get(OrderRepositoryInterface::class);
+        $this->httpClient = $this->objectManager->get(AsyncClientInterface::class);
     }
 
     #[
@@ -89,14 +103,15 @@ class PlaceOrderWithDhlUsCarrierTest extends TestCase
         Config('shipping/origin/postcode', '90034', 'store', 'default'),
         Config('shipping/origin/city', 'los angeles', 'store', 'default'),
         Config('shipping/origin/street_line1', '123 Warehouse Ave', 'store', 'default'),
-        // DHL carrier configuration (US)
+        // DHL carrier configuration (US) with fake credentials and REST gateway
         Config('carriers/dhl/active', '1', 'store', 'default'),
         Config('carriers/dhl/type', 'DHL_REST', 'store', 'default'),
-        Config('carriers/dhl/id', 'EvgeniyUSA', 'store', 'default'),
-        Config('carriers/dhl/api_key', 'apO9vB7nJ4mE3j', 'store', 'default'),
-        Config('carriers/dhl/password', 'okG43dHy7', 'store', 'default'),
-        Config('carriers/dhl/api_secret', 'W#6aP!4hB@6iE@7i', 'store', 'default'),
-        Config('carriers/dhl/account', '965269748', 'store', 'default'),
+        Config('carriers/dhl/gateway_rest_url', 'https://express.api.dhl.com/mydhlapi', 'store', 'default'),
+        Config('carriers/dhl/id', 'some ID', 'store', 'default'),
+        Config('carriers/dhl/password', 'some password', 'store', 'default'),
+        Config('carriers/dhl/api_key', 'some KEY', 'store', 'default'),
+        Config('carriers/dhl/api_secret', 'some secret', 'store', 'default'),
+        Config('carriers/dhl/account', '998765432', 'store', 'default'),
         Config('carriers/dhl/sandbox_mode', '1', 'store', 'default'),
         // Store information matching shipping origin
         Config('general/store_information/name', 'store', 'store', 'default'),
@@ -163,9 +178,12 @@ class PlaceOrderWithDhlUsCarrierTest extends TestCase
     {
         $cartId = (int)$this->fixtures->get('cart')->getId();
         $this->setShippingAndBillingAddressForQuote($cartId);
+        $content = file_get_contents(__DIR__ . '/_files/dhl_quote_response.json');
+        $response = new Response(200, [], $content);
+        $this->httpClient->nextResponses(array_fill(0, Carrier::UNAVAILABLE_DATE_LOOK_FORWARD + 1, $response));
         $order = $this->orderRepository->get($this->selectDhlAndCheckmoAndPlaceOrder($cartId));
         $this->assertNotEmpty($order->getIncrementId());
-        $this->assertStringStartsWith('dhl_', $order->getShippingMethod());
+        $this->assertSame($this->selectedShippingMethod, $order->getShippingMethod());
     }
 
     /**
@@ -197,25 +215,26 @@ class PlaceOrderWithDhlUsCarrierTest extends TestCase
      * Set dhl any international shipping method for quote and place order
      *
      * @param int $cartId
-     * @return int $order
+     * @return int
      */
     private function selectDhlAndCheckmoAndPlaceOrder(int $cartId): int
     {
         $quote = $this->quoteRepository->get($cartId);
         $shippingAddress = $quote->getShippingAddress();
         $shippingAddress->setCollectShippingRates(true);
-        $shippingAddress->collectShippingRates();
-        $dhlRate = null;
+        $quote->collectTotals();
         foreach ($shippingAddress->getAllShippingRates() as $rate) {
             if ($rate->getCarrier() === 'dhl') {
-                $dhlRate = $rate;
+                $methodCode = (string)$rate->getMethod();
+                $this->selectedShippingMethod = 'dhl_' . $methodCode;
                 break;
             }
         }
-        $this->assertNotEmpty($dhlRate, 'No DHL rates available for the given address.');
-        $shippingAddress->setShippingMethod($dhlRate->getCode());
+        if ($this->selectedShippingMethod === null) {
+            $this->fail('No DHL shipping rates available to select.');
+        }
+        $shippingAddress->setShippingMethod($this->selectedShippingMethod)->setCollectShippingRates(false);
         $quote->getPayment()->setMethod('checkmo');
-        $quote->collectTotals();
         $this->quoteRepository->save($quote);
         return (int)$this->cartManagement->placeOrder($quote->getId());
     }
