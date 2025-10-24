@@ -17,6 +17,7 @@ use Magento\Checkout\Test\Fixture\SetShippingAddress as SetShippingAddressFixtur
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Test\Fixture\AddProductToCart as AddProductToCartFixture;
 use Magento\Quote\Test\Fixture\GuestCart as GuestCartFixture;
 use Magento\Sales\Api\CreditmemoRepositoryInterface;
@@ -95,6 +96,7 @@ class GridAsyncInsertCronTest extends TestCase
      * Set up test dependencies
      *
      * @return void
+     * @throws LocalizedException
      */
     protected function setUp(): void
     {
@@ -127,10 +129,14 @@ class GridAsyncInsertCronTest extends TestCase
         DataFixture(ProductFixture::class, as: 'product'),
         DataFixture(GuestCartFixture::class, as: 'cart'),
         DataFixture(SetGuestEmailFixture::class, ['cart_id' => '$cart.id$', 'email' => 'guest@example.com']),
-        DataFixture(AddProductToCartFixture::class, ['cart_id' => '$cart.id$', 'product_id' => '$product.id$', 'qty' => 1]),
+        DataFixture(AddProductToCartFixture::class, [
+            'cart_id' => '$cart.id$', 'product_id' => '$product.id$', 'qty' => 1
+        ]),
         DataFixture(SetBillingAddressFixture::class, ['cart_id' => '$cart.id$']),
         DataFixture(SetShippingAddressFixture::class, ['cart_id' => '$cart.id$']),
-        DataFixture(SetDeliveryMethodFixture::class, ['cart_id' => '$cart.id$', 'carrier_code' => 'flatrate', 'method_code' => 'flatrate']),
+        DataFixture(SetDeliveryMethodFixture::class, [
+            'cart_id' => '$cart.id$', 'carrier_code' => 'flatrate', 'method_code' => 'flatrate'
+        ]),
         DataFixture(SetPaymentMethodFixture::class, ['cart_id' => '$cart.id$', 'method' => 'checkmo']),
         DataFixture(PlaceOrderFixture::class, ['cart_id' => '$cart.id$'], 'order'),
     ]
@@ -140,7 +146,12 @@ class GridAsyncInsertCronTest extends TestCase
         $orderId = (int)$order->getEntityId();
 
         // Verify order exists in main table but NOT in grid
-        $this->assertEntityInMainTableButNotInGrid('sales_order', 'sales_order_grid', $orderId, 'Order');
+        $this->assertEntityInMainTableButNotInGrid(
+            'sales_order',
+            'sales_order_grid',
+            $orderId,
+            'Order'
+        );
 
         // Execute async grid insert directly
         $this->executeAsyncGridInsert('SalesOrderIndexGridAsyncInsert');
@@ -173,10 +184,14 @@ class GridAsyncInsertCronTest extends TestCase
         DataFixture(ProductFixture::class, as: 'product'),
         DataFixture(GuestCartFixture::class, as: 'cart'),
         DataFixture(SetGuestEmailFixture::class, ['cart_id' => '$cart.id$', 'email' => 'guest@example.com']),
-        DataFixture(AddProductToCartFixture::class, ['cart_id' => '$cart.id$', 'product_id' => '$product.id$', 'qty' => 1]),
+        DataFixture(AddProductToCartFixture::class, [
+            'cart_id' => '$cart.id$', 'product_id' => '$product.id$', 'qty' => 1
+        ]),
         DataFixture(SetBillingAddressFixture::class, ['cart_id' => '$cart.id$']),
         DataFixture(SetShippingAddressFixture::class, ['cart_id' => '$cart.id$']),
-        DataFixture(SetDeliveryMethodFixture::class, ['cart_id' => '$cart.id$', 'carrier_code' => 'flatrate', 'method_code' => 'flatrate']),
+        DataFixture(SetDeliveryMethodFixture::class, [
+            'cart_id' => '$cart.id$', 'carrier_code' => 'flatrate', 'method_code' => 'flatrate'
+        ]),
         DataFixture(SetPaymentMethodFixture::class, ['cart_id' => '$cart.id$', 'method' => 'checkmo']),
         DataFixture(PlaceOrderFixture::class, ['cart_id' => '$cart.id$'], 'order'),
         DataFixture(InvoiceFixture::class, ['order_id' => '$order.id$'], 'invoice'),
@@ -187,7 +202,12 @@ class GridAsyncInsertCronTest extends TestCase
         $invoiceId = (int)$invoice->getEntityId();
 
         // Verify invoice exists in main table but NOT in grid
-        $this->assertEntityInMainTableButNotInGrid('sales_invoice', 'sales_invoice_grid', $invoiceId, 'Invoice');
+        $this->assertEntityInMainTableButNotInGrid(
+            'sales_invoice',
+            'sales_invoice_grid',
+            $invoiceId,
+            'Invoice'
+        );
 
         // Execute async grid insert directly
         $this->executeAsyncGridInsert('SalesInvoiceIndexGridAsyncInsert');
@@ -220,10 +240,14 @@ class GridAsyncInsertCronTest extends TestCase
         DataFixture(ProductFixture::class, as: 'product'),
         DataFixture(GuestCartFixture::class, as: 'cart'),
         DataFixture(SetGuestEmailFixture::class, ['cart_id' => '$cart.id$', 'email' => 'guest@example.com']),
-        DataFixture(AddProductToCartFixture::class, ['cart_id' => '$cart.id$', 'product_id' => '$product.id$', 'qty' => 1]),
+        DataFixture(AddProductToCartFixture::class, [
+            'cart_id' => '$cart.id$', 'product_id' => '$product.id$', 'qty' => 1
+        ]),
         DataFixture(SetBillingAddressFixture::class, ['cart_id' => '$cart.id$']),
         DataFixture(SetShippingAddressFixture::class, ['cart_id' => '$cart.id$']),
-        DataFixture(SetDeliveryMethodFixture::class, ['cart_id' => '$cart.id$', 'carrier_code' => 'flatrate', 'method_code' => 'flatrate']),
+        DataFixture(SetDeliveryMethodFixture::class, [
+            'cart_id' => '$cart.id$', 'carrier_code' => 'flatrate', 'method_code' => 'flatrate'
+        ]),
         DataFixture(SetPaymentMethodFixture::class, ['cart_id' => '$cart.id$', 'method' => 'checkmo']),
         DataFixture(PlaceOrderFixture::class, ['cart_id' => '$cart.id$'], 'order'),
         DataFixture(ShipmentFixture::class, ['order_id' => '$order.id$'], 'shipment'),
@@ -234,7 +258,12 @@ class GridAsyncInsertCronTest extends TestCase
         $shipmentId = (int)$shipment->getEntityId();
 
         // Verify shipment exists in main table but NOT in grid
-        $this->assertEntityInMainTableButNotInGrid('sales_shipment', 'sales_shipment_grid', $shipmentId, 'Shipment');
+        $this->assertEntityInMainTableButNotInGrid(
+            'sales_shipment',
+            'sales_shipment_grid',
+            $shipmentId,
+            'Shipment'
+        );
 
         // Execute async grid insert directly
         $this->executeAsyncGridInsert('SalesShipmentIndexGridAsyncInsert');
@@ -267,10 +296,14 @@ class GridAsyncInsertCronTest extends TestCase
         DataFixture(ProductFixture::class, as: 'product'),
         DataFixture(GuestCartFixture::class, as: 'cart'),
         DataFixture(SetGuestEmailFixture::class, ['cart_id' => '$cart.id$', 'email' => 'guest@example.com']),
-        DataFixture(AddProductToCartFixture::class, ['cart_id' => '$cart.id$', 'product_id' => '$product.id$', 'qty' => 1]),
+        DataFixture(AddProductToCartFixture::class, [
+            'cart_id' => '$cart.id$', 'product_id' => '$product.id$', 'qty' => 1
+        ]),
         DataFixture(SetBillingAddressFixture::class, ['cart_id' => '$cart.id$']),
         DataFixture(SetShippingAddressFixture::class, ['cart_id' => '$cart.id$']),
-        DataFixture(SetDeliveryMethodFixture::class, ['cart_id' => '$cart.id$', 'carrier_code' => 'flatrate', 'method_code' => 'flatrate']),
+        DataFixture(SetDeliveryMethodFixture::class, [
+            'cart_id' => '$cart.id$', 'carrier_code' => 'flatrate', 'method_code' => 'flatrate'
+        ]),
         DataFixture(SetPaymentMethodFixture::class, ['cart_id' => '$cart.id$', 'method' => 'checkmo']),
         DataFixture(PlaceOrderFixture::class, ['cart_id' => '$cart.id$'], 'order'),
         DataFixture(InvoiceFixture::class, ['order_id' => '$order.id$'], 'invoice'),
@@ -282,7 +315,12 @@ class GridAsyncInsertCronTest extends TestCase
         $creditmemoId = (int)$creditmemo->getEntityId();
 
         // Verify creditmemo exists in main table but NOT in grid
-        $this->assertEntityInMainTableButNotInGrid('sales_creditmemo', 'sales_creditmemo_grid', $creditmemoId, 'Creditmemo');
+        $this->assertEntityInMainTableButNotInGrid(
+            'sales_creditmemo',
+            'sales_creditmemo_grid',
+            $creditmemoId,
+            'Creditmemo'
+        );
 
         // Execute async grid insert directly
         $this->executeAsyncGridInsert('SalesCreditmemoIndexGridAsyncInsert');
@@ -327,7 +365,7 @@ class GridAsyncInsertCronTest extends TestCase
     private function assertEntityInMainTableButNotInGrid(
         string $mainTable,
         string $gridTable,
-        int $entityId,
+        int    $entityId,
         string $entityType
     ): void {
         $entityInMainTable = $this->getEntityFromTable($mainTable, $entityId);
@@ -358,8 +396,8 @@ class GridAsyncInsertCronTest extends TestCase
     private function assertEntityInBothMainTableAndGrid(
         string $mainTable,
         string $gridTable,
-        int $entityId,
-        array $fieldsToCompare,
+        int    $entityId,
+        array  $fieldsToCompare,
         string $entityType
     ): void {
         $entityInMainTable = $this->getEntityFromTable($mainTable, $entityId);
