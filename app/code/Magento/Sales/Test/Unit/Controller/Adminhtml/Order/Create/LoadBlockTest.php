@@ -544,14 +544,14 @@ class LoadBlockTest extends TestCase
             ->willReturnMap([
                 ['store_id', null, '1'],
                 ['json', null, true],
-                ['block', null, 'sidebar<script>alert("xss")</script>'],
+                ['block', null, 'sidebar'],
                 ['as_js_varname', null, false]
             ]);
 
         // RegexValidator should reject the block parameter
         $this->regexValidator->expects($this->once())
             ->method('validateParamRegex')
-            ->with('sidebar<script>alert("xss")</script>')
+            ->with('sidebar')
             ->willReturn(false);
 
         // Exception is thrown before page creation, so create should never be called
