@@ -8,9 +8,9 @@ declare(strict_types=1);
 namespace Magento\GroupedProduct\Test\Unit\Model\Product\Initialization\Helper\ProductLinks\Plugin;
 
 use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
+use Magento\Catalog\Test\Unit\Helper\ProductLinkExtensionInterfaceTestHelper;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Api\Data\ProductLinkExtensionFactory;
-use Magento\Catalog\Api\Data\ProductLinkExtensionInterface;
 use Magento\Catalog\Api\Data\ProductLinkInterface;
 use Magento\Catalog\Api\Data\ProductLinkInterfaceFactory;
 use Magento\Catalog\Api\ProductRepositoryInterface;
@@ -107,7 +107,7 @@ class GroupedTest extends TestCase
             ProductTestHelper::class,
             ['__wakeup', 'getTypeId', 'getSku', 'getProductLinks', 'setProductLinks', 'getGroupedReadonly']
         );
-        $extensionAttributes = new \Magento\Catalog\Api\Data\ProductLinkExtension();
+        $extensionAttributes = new ProductLinkExtensionInterfaceTestHelper();
         $linkedProduct->expects($this->once())->method('getTypeId')->willReturn(Grouped::TYPE_CODE);
         $linkedProduct->expects($this->once())->method('getSku')->willReturn('sku');
         $productLink = $this->createMock(ProductLinkInterface::class);

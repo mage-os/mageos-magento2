@@ -46,8 +46,7 @@ class TypeInstanceTestHelper
         OptionCollection $optionCollection,
         SelectionCollection $selectionCollection,
         array $optionIds
-    )
-    {
+    ) {
         $this->optionCollection = $optionCollection;
         $this->selectionCollection = $selectionCollection;
         $this->optionIds = $optionIds;
