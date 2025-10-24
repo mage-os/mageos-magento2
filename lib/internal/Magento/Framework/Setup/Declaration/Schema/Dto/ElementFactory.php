@@ -22,6 +22,8 @@ class ElementFactory
      *
      * Where @key - is xsi:type of the object
      * Where @value - is instance class name
+     *
+     * @var array
      */
     private $typeFactories = [];
 
@@ -73,7 +75,8 @@ class ElementFactory
     /**
      * Remove empty comments from the schema declaration
      *
-     * Empty comments are never persisted in the database, they always end up being read back as null by
+     * Empty comments are never persisted in the database, they always end up being read back as null
+     * 
      * @see \Magento\Framework\Setup\Declaration\Schema\Db\MySQL\DbSchemaReader::readColumns
      *
      * @param array $elementStructuralData
