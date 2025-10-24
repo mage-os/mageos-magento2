@@ -799,9 +799,24 @@ class ProductTestHelper extends Product
     public function setOptions(?array $options = null): self
     {
         $this->data['options'] = $options;
+        if (!isset($this->data['product_data'])) {
+            $this->data['product_data'] = [];
+        }
+        $this->data['product_data']['options'] = $options;
         $this->setOptionsCalled = true;
         $this->setOptionsParams = $options;
         return $this;
+    }
+
+    /**
+     * Get options for testing
+     *
+     * @return array
+     */
+    public function getOptions()
+    {
+        $options = $this->data['options'] ?? ($this->data['product_data']['options'] ?? []);
+        return is_array($options) ? $options : [];
     }
 
     /**
