@@ -7,9 +7,10 @@ declare(strict_types=1);
 
 namespace Magento\ConfigurableProduct\Api;
 
+use Magento\Authorization\Test\Fixture\Role;
 use Magento\Catalog\Test\Fixture\Attribute as AttributeFixture;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\Module\Manager;
+use Magento\Integration\Api\AdminTokenServiceInterface;
 use Magento\TestFramework\TestCase\WebapiAbstract;
 use Magento\Framework\Webapi\Rest\Request;
 use Magento\TestFramework\Helper\Bootstrap;
@@ -17,6 +18,7 @@ use Magento\TestFramework\Fixture\Config;
 use Magento\TestFramework\Fixture\DataFixture;
 use Magento\TestFramework\Fixture\DataFixtureStorage;
 use Magento\TestFramework\Fixture\DataFixtureStorageManager;
+use Magento\User\Test\Fixture\User;
 
 /**
  * Complete workflow test for configurable product creation via REST API
@@ -37,6 +39,11 @@ class CompleteConfigurableProductWorkflowTest extends WebapiAbstract
      */
     private DataFixtureStorage $fixtures;
 
+    /**
+     * @var AdminTokenServiceInterface
+     */
+    private AdminTokenServiceInterface $adminTokens;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -44,10 +51,7 @@ class CompleteConfigurableProductWorkflowTest extends WebapiAbstract
         $this->fixtures = Bootstrap::getObjectManager()
             ->get(DataFixtureStorageManager::class)
             ->getStorage();
-        $this->moduleManager = Bootstrap::getObjectManager()->get(Manager::class);
-        if ($this->moduleManager->isEnabled('Magento_TwoFactorAuth')) {
-            $this->markTestSkipped('Skipped, because this token obtaining logic is rewritten in TwoFactorAuth.');
-        }
+        $this->adminTokens = Bootstrap::getObjectManager()->get(AdminTokenServiceInterface::class);
     }
 
     /**
@@ -63,6 +67,23 @@ class CompleteConfigurableProductWorkflowTest extends WebapiAbstract
      * @throws NoSuchEntityException
      */
     #[
+        DataFixture(
+            Role::class,
+            ['role_name' => 'Test Admin Role', 'resources' => ['Magento_Backend::all']],
+            'admin_role'
+        ),
+        DataFixture(
+            User::class,
+            [
+                'username' => 'test_admin_user',
+                'firstname' => 'Test',
+                'lastname' => 'Admin',
+                'email' => 'testadmin@example.com',
+                'password' => \Magento\TestFramework\Bootstrap::ADMIN_PASSWORD,
+                'role_id' => '$admin_role.role_id$'
+            ],
+            'admin_user'
+        ),
         DataFixture(
             AttributeFixture::class,
             [
@@ -162,6 +183,28 @@ class CompleteConfigurableProductWorkflowTest extends WebapiAbstract
      *
      * @return void
      */
+    #[
+        DataFixture(
+            Role::class,
+            [
+                'role_name' => 'Test Admin Role',
+                'resources' => ['Magento_Backend::all']
+            ],
+            'admin_role'
+        ),
+        DataFixture(
+            User::class,
+            [
+                'username' => 'test_admin_user',
+                'firstname' => 'Test',
+                'lastname' => 'Admin',
+                'email' => 'testadmin@example.com',
+                'password' => \Magento\TestFramework\Bootstrap::ADMIN_PASSWORD,
+                'role_id' => '$admin_role.role_id$'
+            ],
+            'admin_user'
+        )
+    ]
     public function testLinkNonExistentChild(): void
     {
         $this->adminToken = $this->getAdminAccessToken();
@@ -179,25 +222,17 @@ class CompleteConfigurableProductWorkflowTest extends WebapiAbstract
     }
 
     /**
-     * Get admin access token
+     * Get admin access token using fixture-created user
      *
      * @return string
      */
     private function getAdminAccessToken(): string
     {
-        $serviceInfo = [
-            'rest' => [
-                'resourcePath' => '/V1/integration/admin/token',
-                'httpMethod' => Request::HTTP_METHOD_POST,
-            ],
-        ];
+        $adminUser = $this->fixtures->get('admin_user');
 
-        return $this->_webApiCall(
-            $serviceInfo,
-            [
-                'username' => \Magento\TestFramework\Bootstrap::ADMIN_NAME,
-                'password' => \Magento\TestFramework\Bootstrap::ADMIN_PASSWORD
-            ]
+        return $this->adminTokens->createAdminAccessToken(
+            $adminUser->getUsername(),
+            \Magento\TestFramework\Bootstrap::ADMIN_PASSWORD
         );
     }
 
