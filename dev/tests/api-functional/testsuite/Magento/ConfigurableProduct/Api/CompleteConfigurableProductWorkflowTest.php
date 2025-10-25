@@ -9,6 +9,7 @@ namespace Magento\ConfigurableProduct\Api;
 
 use Magento\Catalog\Test\Fixture\Attribute as AttributeFixture;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Module\Manager;
 use Magento\TestFramework\TestCase\WebapiAbstract;
 use Magento\Framework\Webapi\Rest\Request;
 use Magento\TestFramework\Helper\Bootstrap;
@@ -43,6 +44,11 @@ class CompleteConfigurableProductWorkflowTest extends WebapiAbstract
         $this->fixtures = Bootstrap::getObjectManager()
             ->get(DataFixtureStorageManager::class)
             ->getStorage();
+        $this->objectManager = Bootstrap::getObjectManager();
+        $this->moduleManager = $this->objectManager->get(Manager::class);
+        if ($this->moduleManager->isEnabled('Magento_TwoFactorAuth')) {
+            $this->markTestSkipped('Skipped, because this token obtaining logic is rewritten in TwoFactorAuth.');
+        }
     }
 
     /**
