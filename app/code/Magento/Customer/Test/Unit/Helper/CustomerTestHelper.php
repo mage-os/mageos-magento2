@@ -14,10 +14,10 @@ use Magento\Customer\Model\Customer;
  *
  * This helper provides custom logic that cannot be achieved with standard PHPUnit mocks:
  * 1. getStoreId() with call counter - returns different values on consecutive calls
- *    (1 on first call, 2 on second call)
- * 2. load() - custom implementation that sets ID without requiring a resource
+ *    (1 on first call, 2 on second call) - used by ModelsTest::testCustomerLoadAfter()
+ * 2. load() - custom implementation that sets ID via parent's setId() without requiring a resource
  *
- * All other methods are inherited from the parent Customer class or work via magic methods.
+ * All other methods are inherited from the parent Customer class.
  */
 class CustomerTestHelper extends Customer
 {
@@ -25,11 +25,6 @@ class CustomerTestHelper extends Customer
      * @var int
      */
     private $callCount = 0;
-
-    /**
-     * @var mixed
-     */
-    private $id = null;
 
     public function __construct()
     {
@@ -52,34 +47,9 @@ class CustomerTestHelper extends Customer
     }
 
     /**
-     * Get call count
-     *
-     * Custom logic: Returns the number of times getStoreId() was called
-     *
-     * @return int
-     */
-    public function getCallCount()
-    {
-        return $this->callCount;
-    }
-
-    /**
-     * Reset call count
-     *
-     * Custom logic: Resets the call counter
-     *
-     * @return $this
-     */
-    public function resetCallCount()
-    {
-        $this->callCount = 0;
-        return $this;
-    }
-
-    /**
      * Load customer
      *
-     * Custom logic: Sets ID without requiring a resource (for testing)
+     * Custom logic: Sets ID via parent's setId() without requiring a resource (for testing)
      * Parent AbstractModel::load() requires a resource to be set
      *
      * @param mixed $id
@@ -89,32 +59,7 @@ class CustomerTestHelper extends Customer
      */
     public function load($id, $field = null)
     {
-        $this->id = $id;
+        parent::setId($id);
         return $this;
     }
-
-    /**
-     * Get ID
-     *
-     * @return mixed
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Set ID
-     *
-     * @param mixed $id
-     * @return $this
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-        return $this;
-    }
-
-    // Other methods are inherited from parent Customer class:
-    // - getWebsiteId(), setWebsiteId() - magic methods via @method
 }

@@ -13,8 +13,16 @@ use Magento\NegotiableQuote\Api\Data\NegotiableQuoteInterface;
 /**
  * Test helper for CartExtension
  *
- * This helper extends the concrete CartExtension class to provide
- * test-specific functionality without dependency injection issues.
+ * This helper extends the concrete CartExtension class to provide test-specific functionality.
+ * Used across 77 test files to set extension attributes without complex dependency injection.
+ *
+ * Provides:
+ * - negotiableQuote (used in 74 files) - NegotiableQuote object
+ * - shippingAssignments (used in 7 files) - Shipping assignments data
+ * - companyId (used in 17 files) - Company ID for B2B functionality
+ * - negotiableQuoteItem (used in 10 files) - NegotiableQuoteItem data
+ *
+ * All other CartExtension methods are inherited from the parent class.
  */
 class CartExtensionTestHelper extends CartExtension
 {
@@ -36,17 +44,7 @@ class CartExtensionTestHelper extends CartExtension
     /**
      * @var mixed
      */
-    private $couponCodes;
-
-    /**
-     * @var mixed
-     */
     private $negotiableQuoteItem;
-
-    /**
-     * @var mixed
-     */
-    private $quoteTestAttribute;
 
     /**
      * Constructor
@@ -121,50 +119,6 @@ class CartExtensionTestHelper extends CartExtension
     public function setCompanyId($companyId)
     {
         $this->companyId = $companyId;
-        return $this;
-    }
-
-    /**
-     * Get coupon codes
-     *
-     * @return mixed
-     */
-    public function getCouponCodes()
-    {
-        return $this->couponCodes;
-    }
-
-    /**
-     * Set coupon codes
-     *
-     * @param mixed $couponCodes
-     * @return $this
-     */
-    public function setCouponCodes($couponCodes)
-    {
-        $this->couponCodes = $couponCodes;
-        return $this;
-    }
-
-    /**
-     * Get quote test attribute
-     *
-     * @return mixed
-     */
-    public function getQuoteTestAttribute()
-    {
-        return $this->quoteTestAttribute;
-    }
-
-    /**
-     * Set quote test attribute
-     *
-     * @param mixed $quoteTestAttribute
-     * @return $this
-     */
-    public function setQuoteTestAttribute($quoteTestAttribute)
-    {
-        $this->quoteTestAttribute = $quoteTestAttribute;
         return $this;
     }
 

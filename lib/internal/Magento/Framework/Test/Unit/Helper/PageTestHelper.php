@@ -67,4 +67,3 @@ class PageTestHelper extends Page
         return $this->config;
     }
 }
-

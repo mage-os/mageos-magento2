@@ -12,8 +12,16 @@ use Magento\Framework\DataObject;
 /**
  * Test helper for BuyRequest DataObject
  *
- * This helper extends the DataObject class to provide
- * test-specific functionality for buy requests.
+ * This helper extends the DataObject class to provide test-specific functionality
+ * for buy requests with custom data storage behavior.
+ *
+ * Key Features:
+ * - Custom getData() that returns from isolated $data array (not parent's $_data)
+ * - Conditional setData() behavior based on $useCustomSetData flag
+ * - Custom unsetData() that operates on isolated $data array
+ * - setCustomPrice() for direct custom_price manipulation
+ *
+ * Used by tests that need precise control over data storage and retrieval.
  */
 class BuyRequestDataObjectTestHelper extends DataObject
 {
@@ -94,6 +102,9 @@ class BuyRequestDataObjectTestHelper extends DataObject
     /**
      * Set custom price
      *
+     * Custom method to set custom_price directly in the custom data array.
+     * This is called directly by tests and cannot use the generic setData().
+     *
      * @param float $price
      * @return $this
      */
@@ -102,41 +113,4 @@ class BuyRequestDataObjectTestHelper extends DataObject
         $this->data['custom_price'] = $price;
         return $this;
     }
-
-    /**
-     * Set value
-     *
-     * @param mixed $value
-     * @return $this
-     */
-    public function setValue($value)
-    {
-        $this->data['value'] = $value;
-        return $this;
-    }
-
-    /**
-     * Set code
-     *
-     * @param string $code
-     * @return $this
-     */
-    public function setCode($code)
-    {
-        $this->data['code'] = $code;
-        return $this;
-    }
-
-    /**
-     * Set product
-     *
-     * @param mixed $product
-     * @return $this
-     */
-    public function setProduct($product)
-    {
-        $this->data['product'] = $product;
-        return $this;
-    }
 }
-

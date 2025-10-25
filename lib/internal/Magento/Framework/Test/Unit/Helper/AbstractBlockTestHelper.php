@@ -12,8 +12,16 @@ use Magento\Framework\View\Element\AbstractBlock;
 /**
  * Test helper for AbstractBlock
  *
- * This helper extends the concrete AbstractBlock class to provide
- * test-specific functionality without dependency injection issues.
+ * This helper extends the concrete AbstractBlock class to provide a minimal
+ * block implementation for testing without dependency injection issues.
+ *
+ * Custom Methods:
+ * - toHtml() - Required override of abstract parent method, returns test HTML
+ *
+ * Inherited Methods (from AbstractBlock):
+ * - All standard block methods are available via inheritance
+ *
+ * Used by tests that need a simple block instance without complex initialization.
  */
 class AbstractBlockTestHelper extends AbstractBlock
 {
@@ -26,28 +34,10 @@ class AbstractBlockTestHelper extends AbstractBlock
     }
 
     /**
-     * Set additional message
-     *
-     * @param string $message
-     * @return $this
-     */
-    public function setAdditionalMessage($message)
-    {
-        return $this;
-    }
-
-    /**
-     * Set is recalculated
-     *
-     * @return $this
-     */
-    public function setIsRecalculated()
-    {
-        return $this;
-    }
-
-    /**
      * Convert to HTML
+     *
+     * Overrides abstract parent method to provide simple test output.
+     * Parent implementation requires layout, event manager, and scope config.
      *
      * @return string
      */
@@ -56,4 +46,3 @@ class AbstractBlockTestHelper extends AbstractBlock
         return '<span>test Message</span>';
     }
 }
-

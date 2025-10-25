@@ -8,7 +8,6 @@ declare(strict_types=1);
 namespace Magento\Backend\Test\Unit\Helper;
 
 use Magento\Backend\Model\Auth\Session;
-use Magento\Framework\DataObject;
 use Magento\Framework\Session\Test\Unit\Helper\StorageTestHelper;
 use Magento\User\Model\User;
 
@@ -18,6 +17,11 @@ use Magento\User\Model\User;
  * This helper extends the concrete Auth\Session class directly, providing a clean
  * way to add test-specific methods without using anonymous classes.
  * Extends Auth\Session to be compatible with type hints requiring that specific class.
+ *
+ * METHODS PROVIDED:
+ * - setUser() / getUser() - User management
+ * - setIsLoggedIn() / isLoggedIn() - Login state management
+ * - setSkipLoggingAction() - Logging control
  */
 class SessionTestHelper extends Session
 {
@@ -31,27 +35,11 @@ class SessionTestHelper extends Session
      */
     private $isLoggedIn = false;
     
-    /**
-     * @var DataObject|null
-     */
-    private $sessionData = null;
-    
-    /**
-     * @var mixed
-     */
-    private $skipLoggingAction = null;
-    
-    /**
-     * @var callable|null
-     */
-    private $isLoggedInCallback = null;
-    
-    public function __construct(?DataObject $sessionData = null)
+    public function __construct()
     {
         // Skip parent constructor for testing
         // Initialize storage with the StorageTestHelper
         $this->storage = new StorageTestHelper();
-        $this->sessionData = $sessionData;
     }
     
     /**
@@ -78,46 +66,6 @@ class SessionTestHelper extends Session
     }
     
     /**
-     * Set data
-     *
-     * @param string|array $key
-     * @param mixed $value
-     * @return $this
-     */
-    public function setData($key, $value = null)
-    {
-        if ($this->sessionData) {
-            $this->sessionData->setData($key, $value);
-        }
-        return $this;
-    }
-    
-    /**
-     * Get data
-     *
-     * @param string $key
-     * @param mixed $index
-     * @return mixed
-     */
-    public function getData($key = '', $index = null)
-    {
-        if ($this->sessionData) {
-            return $this->sessionData->getData($key, $index);
-        }
-        return null;
-    }
-    
-    /**
-     * Get skip logging action
-     *
-     * @return mixed
-     */
-    public function getSkipLoggingAction()
-    {
-        return $this->skipLoggingAction;
-    }
-    
-    /**
      * Set skip logging action
      *
      * @param mixed $value
@@ -125,32 +73,20 @@ class SessionTestHelper extends Session
      */
     public function setSkipLoggingAction($value)
     {
-        $this->skipLoggingAction = $value;
+        // Store in parent's storage using magic method (via StorageTestHelper::__call)
+        // phpcs:ignore Magento2.Functions.StaticFunction
+        /** @phpstan-ignore-next-line - StorageTestHelper::__call handles dynamic methods */
+        $this->storage->setSkipLoggingAction($value);
         return $this;
     }
     
     /**
-     * Set is logged in callback
-     *
-     * @param callable $callback
-     * @return $this
-     */
-    public function setIsLoggedInCallback($callback)
-    {
-        $this->isLoggedInCallback = $callback;
-        return $this;
-    }
-    
-    /**
-     * Override isLoggedIn to use callback if set
+     * Check if user is logged in
      *
      * @return bool
      */
     public function isLoggedIn()
     {
-        if ($this->isLoggedInCallback) {
-            return call_user_func($this->isLoggedInCallback);
-        }
         return $this->isLoggedIn;
     }
     
@@ -163,18 +99,6 @@ class SessionTestHelper extends Session
     public function setIsLoggedIn($value)
     {
         $this->isLoggedIn = $value;
-        return $this;
-    }
-
-    /**
-     * Set URL notice flag
-     *
-     * @param bool $flag
-     * @return $this
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function setIsUrlNotice($flag)
-    {
         return $this;
     }
 }

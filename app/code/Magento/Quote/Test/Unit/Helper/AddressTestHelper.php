@@ -12,15 +12,28 @@ use Magento\Quote\Model\Quote\Address;
 /**
  * Test helper for Address
  *
- * This helper extends the concrete Address class to provide
- * test-specific functionality without dependency injection issues.
+ * This helper extends the concrete Address class to provide custom test-specific functionality.
+ * Most methods (setTaxAmount, setShippingAmount, setCountryId, etc.) are inherited from the parent
+ * Address class via magic methods or concrete implementations.
+ *
+ * This helper ONLY implements custom methods that don't exist in the parent class:
+ * - setDefaultShippingRate() - Sets a default shipping rate for testing
+ * - getShippingRateByCode() - Overrides parent to support default rate fallback
+ * - setShippingRateByCode() - Sets shipping rate for a specific code
+ *
+ * All other methods are inherited from Magento\Quote\Model\Quote\Address.
  */
 class AddressTestHelper extends Address
 {
     /**
-     * @var array
+     * @var array<string, mixed>
      */
-    private $data = [];
+    private $shippingRates = [];
+
+    /**
+     * @var mixed
+     */
+    private $defaultShippingRate = null;
 
     /**
      * Constructor that skips parent initialization
@@ -30,160 +43,65 @@ class AddressTestHelper extends Address
         // Skip parent constructor to avoid dependency injection issues
     }
 
-    public function getBaseTaxAmount()
-    {
-        return $this->data['baseTaxAmount'] ?? 0;
-    }
-
-    public function setBaseTaxAmount($value)
-    {
-        $this->data['baseTaxAmount'] = $value;
-        return $this;
-    }
-
-    public function getTaxAmount()
-    {
-        return $this->data['taxAmount'] ?? 0;
-    }
-
-    public function setTaxAmount($value)
-    {
-        $this->data['taxAmount'] = $value;
-        return $this;
-    }
-
-    public function getShippingTaxAmount()
-    {
-        return $this->data['shippingTaxAmount'] ?? 0;
-    }
-
-    public function setShippingTaxAmount($value)
-    {
-        $this->data['shippingTaxAmount'] = $value;
-        return $this;
-    }
-
-    public function getBaseShippingTaxAmount()
-    {
-        return $this->data['baseShippingTaxAmount'] ?? 0;
-    }
-
-    public function setBaseShippingTaxAmount($value)
-    {
-        $this->data['baseShippingTaxAmount'] = $value;
-        return $this;
-    }
-
-    public function getShippingAmount()
-    {
-        return $this->data['shippingAmount'] ?? 0;
-    }
-
-    public function setShippingAmount($value, $alreadyExclTax = false)
-    {
-        $this->data['shippingAmount'] = $value;
-        return $this;
-    }
-
-    public function getBaseShippingAmount()
-    {
-        return $this->data['baseShippingAmount'] ?? 0;
-    }
-
-    public function setBaseShippingAmount($value, $alreadyExclTax = false)
-    {
-        $this->data['baseShippingAmount'] = $value;
-        return $this;
-    }
-
-    public function getShippingMethod()
-    {
-        return $this->data['shippingMethod'] ?? null;
-    }
-
-    public function setShippingMethod($method)
-    {
-        $this->data['shippingMethod'] = $method;
-        return $this;
-    }
-
-    public function setShippingDescription($description)
-    {
-        $this->data['shippingDescription'] = $description;
-        return $this;
-    }
-
-    public function getCustomerAddressId()
-    {
-        return $this->data['customerAddressId'] ?? null;
-    }
-
-    public function setCustomerAddressId($customerAddressId)
-    {
-        $this->data['customerAddressId'] = $customerAddressId;
-        return $this;
-    }
-
-    public function getData($key = '', $index = null)
-    {
-        if ($key === '') {
-            return $this->data;
-        }
-        return $this->data[$key] ?? null;
-    }
-
-    public function setData($key, $value = null)
-    {
-        if (is_array($key)) {
-            $this->data = array_merge($this->data, $key);
-        } else {
-            $this->data[$key] = $value;
-        }
-        return $this;
-    }
-
-    public function getCountryId()
-    {
-        return $this->data['countryId'] ?? null;
-    }
-
-    public function setCountryId($countryId)
-    {
-        $this->data['countryId'] = $countryId;
-        return $this;
-    }
-
+    /**
+     * Get shipping rate by code with default fallback
+     *
+     * Overrides parent method to support defaultShippingRate fallback for testing.
+     * Parent implementation searches through collection; this returns default if code not found.
+     *
+     * @param string $code
+     * @return mixed
+     */
     public function getShippingRateByCode($code)
     {
         // If a specific code is set, return it; otherwise return the default rate
-        if (isset($this->data['shippingRates'][$code])) {
-            return $this->data['shippingRates'][$code];
+        if (isset($this->shippingRates[$code])) {
+            return $this->shippingRates[$code];
         }
         // Return the default rate for any code
-        return $this->data['defaultShippingRate'] ?? null;
+        return $this->defaultShippingRate;
     }
 
+    /**
+     * Set shipping rate for specific code
+     *
+     * @param string $code
+     * @param mixed $rate
+     * @return $this
+     */
     public function setShippingRateByCode($code, $rate)
     {
-        $this->data['shippingRates'][$code] = $rate;
+        $this->shippingRates[$code] = $rate;
         return $this;
     }
 
+    /**
+     * Set default shipping rate
+     *
+     * This is a custom method for testing that doesn't exist in the parent class.
+     * Used to set a fallback rate when getShippingRateByCode() doesn't find a specific code.
+     *
+     * @param mixed $rate
+     * @return $this
+     */
     public function setDefaultShippingRate($rate)
     {
-        $this->data['defaultShippingRate'] = $rate;
+        $this->defaultShippingRate = $rate;
         return $this;
     }
 
-    public function setCollectShippingRates($value)
-    {
-        $this->data['collectShippingRates'] = $value;
-        return $this;
-    }
-
+    /**
+     * Collect shipping rates
+     *
+     * Overrides parent method to avoid dependency injection issues in tests.
+     * Parent implementation requires _rateCollectionFactory which is not initialized
+     * when constructor is bypassed.
+     *
+     * @return $this
+     */
     public function collectShippingRates()
     {
+        // Do nothing in tests - just return $this
         return $this;
     }
 }
-

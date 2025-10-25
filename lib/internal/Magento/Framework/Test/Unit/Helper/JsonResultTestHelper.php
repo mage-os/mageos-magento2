@@ -13,36 +13,25 @@ use Magento\Framework\Controller\ResultInterface;
 /**
  * Test helper for JSON Result
  *
- * This helper implements ResultInterface to provide
- * test-specific functionality for JSON responses.
+ * This helper implements ResultInterface to provide test-specific functionality
+ * for JSON responses in controller tests.
+ *
+ * The production code calls setJsonData() for fluent interface, but doesn't use
+ * the stored data, so we don't need to store it.
  */
 class JsonResultTestHelper implements ResultInterface
 {
     /**
-     * @var array
-     */
-    private $jsonData;
-
-    /**
-     * Set JSON data
+     * Set JSON data (fluent interface only - data not stored)
      *
      * @param array $data
      * @return $this
      */
     public function setJsonData($data)
     {
-        $this->jsonData = $data;
+        // Production code calls this for fluent interface
+        // No need to store data as it's never retrieved
         return $this;
-    }
-
-    /**
-     * Get JSON data
-     *
-     * @return array
-     */
-    public function getJsonData()
-    {
-        return $this->jsonData;
     }
 
     /**
@@ -80,4 +69,3 @@ class JsonResultTestHelper implements ResultInterface
         return $response;
     }
 }
-

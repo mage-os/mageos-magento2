@@ -14,24 +14,29 @@ use Magento\Framework\View\LayoutInterface;
 /**
  * Test helper for Page Result
  *
- * This helper implements ResultInterface to provide
- * test-specific functionality for page responses with layout.
+ * This helper implements ResultInterface to provide test-specific functionality
+ * for page responses with layout support.
+ *
+ * Production code calls: addHandle()->getLayout()->getBlock()
+ * All three methods are required for the fluent interface chain.
  */
 class PageResultTestHelper implements ResultInterface
 {
     /**
-     * @var LayoutInterface
+     * @var LayoutInterface|null
      */
     private $layout;
 
     /**
-     * Add handle
+     * Add handle (fluent interface stub)
      *
      * @param string $handle
      * @return $this
      */
     public function addHandle($handle)
     {
+        // Production code calls this in fluent chain
+        // Handle is not stored as it's not used
         return $this;
     }
 
@@ -92,4 +97,3 @@ class PageResultTestHelper implements ResultInterface
         return $response;
     }
 }
-

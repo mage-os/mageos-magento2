@@ -47,4 +47,3 @@ class EmailDataObjectTestHelper extends DataObject
         return 1;
     }
 }
-
