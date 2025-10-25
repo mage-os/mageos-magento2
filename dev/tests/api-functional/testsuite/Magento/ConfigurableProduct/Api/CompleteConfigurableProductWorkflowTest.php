@@ -44,8 +44,7 @@ class CompleteConfigurableProductWorkflowTest extends WebapiAbstract
         $this->fixtures = Bootstrap::getObjectManager()
             ->get(DataFixtureStorageManager::class)
             ->getStorage();
-        $this->objectManager = Bootstrap::getObjectManager();
-        $this->moduleManager = $this->objectManager->get(Manager::class);
+        $this->moduleManager = Bootstrap::getObjectManager()->get(Manager::class);
         if ($this->moduleManager->isEnabled('Magento_TwoFactorAuth')) {
             $this->markTestSkipped('Skipped, because this token obtaining logic is rewritten in TwoFactorAuth.');
         }
