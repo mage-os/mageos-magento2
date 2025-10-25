@@ -35,4 +35,3 @@ class SessionQuoteTestHelper extends Quote
         return 1;
     }
 }
-

@@ -19,6 +19,8 @@ use Magento\Framework\View\LayoutInterface;
  *
  * Production code calls: addHandle()->getLayout()->getBlock()
  * All three methods are required for the fluent interface chain.
+ * 
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class PageResultTestHelper implements ResultInterface
 {

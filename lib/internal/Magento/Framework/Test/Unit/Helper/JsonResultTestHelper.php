@@ -18,6 +18,8 @@ use Magento\Framework\Controller\ResultInterface;
  *
  * The production code calls setJsonData() for fluent interface, but doesn't use
  * the stored data, so we don't need to store it.
+ * 
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class JsonResultTestHelper implements ResultInterface
 {

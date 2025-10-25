@@ -15,6 +15,8 @@ use Magento\Framework\View\Page\Config;
  *
  * This helper extends the concrete Page class to provide
  * test-specific functionality without dependency injection issues.
+ * 
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class PageTestHelper extends Page
 {

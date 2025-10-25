@@ -48,4 +48,46 @@ class CartItemExtensionTestHelper implements CartItemExtensionInterface
         $this->negotiableQuoteItem = $negotiableQuoteItem;
         return $this;
     }
+
+    /**
+     * Get discounts
+     *
+     * @return mixed
+     */
+    public function getDiscounts()
+    {
+        return null;
+    }
+
+    /**
+     * Set discounts
+     *
+     * @param mixed $discounts
+     * @return $this
+     */
+    public function setDiscounts($discounts)
+    {
+        return $this;
+    }
+
+    /**
+     * Get quote item test attribute
+     *
+     * @return mixed
+     */
+    public function getQuoteItemTestAttribute()
+    {
+        return null;
+    }
+
+    /**
+     * Set quote item test attribute
+     *
+     * @param mixed $quoteItemTestAttribute
+     * @return $this
+     */
+    public function setQuoteItemTestAttribute($quoteItemTestAttribute)
+    {
+        return $this;
+    }
 }

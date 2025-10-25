@@ -18,6 +18,9 @@ use Magento\Framework\DataObject;
  *
  * This helper extends the concrete Item class to provide
  * test-specific functionality without dependency injection issues.
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+ * @SuppressWarnings(PHPMD.BooleanGetMethodName)
  */
 class CartItemTestHelper extends Item
 {
