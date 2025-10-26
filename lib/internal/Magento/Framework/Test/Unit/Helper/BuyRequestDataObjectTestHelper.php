@@ -22,7 +22,7 @@ use Magento\Framework\DataObject;
  * - setCustomPrice() for direct custom_price manipulation
  *
  * Used by tests that need precise control over data storage and retrieval.
- * 
+ *
  * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class BuyRequestDataObjectTestHelper extends DataObject

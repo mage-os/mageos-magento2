@@ -14,7 +14,7 @@ use Magento\Framework\App\RequestInterface;
  *
  * This helper implements RequestInterface to provide
  * test-specific functionality without dependency injection issues.
- * 
+ *
  * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class RequestInterfaceTestHelper implements RequestInterface
