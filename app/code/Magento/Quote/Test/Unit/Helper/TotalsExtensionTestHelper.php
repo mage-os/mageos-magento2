@@ -306,4 +306,89 @@ class TotalsExtensionTestHelper implements TotalsExtensionInterface
     {
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getCouponCodes()
+    {
+        return null;
+    }
+
+    /**
+     * @param mixed $couponCodes
+     * @return $this
+     */
+    public function setCouponCodes($couponCodes)
+    {
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCouponsLabels()
+    {
+        return null;
+    }
+
+    /**
+     * @param mixed $couponsLabels
+     * @return $this
+     */
+    public function setCouponsLabels($couponsLabels)
+    {
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRewardPointsBalance()
+    {
+        return null;
+    }
+
+    /**
+     * @param mixed $rewardPointsBalance
+     * @return $this
+     */
+    public function setRewardPointsBalance($rewardPointsBalance)
+    {
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRewardCurrencyAmount()
+    {
+        return null;
+    }
+
+    /**
+     * @param mixed $rewardCurrencyAmount
+     * @return $this
+     */
+    public function setRewardCurrencyAmount($rewardCurrencyAmount)
+    {
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBaseRewardCurrencyAmount()
+    {
+        return null;
+    }
+
+    /**
+     * @param mixed $baseRewardCurrencyAmount
+     * @return $this
+     */
+    public function setBaseRewardCurrencyAmount($baseRewardCurrencyAmount)
+    {
+        return $this;
+    }
 }

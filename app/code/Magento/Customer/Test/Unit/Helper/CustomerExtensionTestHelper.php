@@ -14,6 +14,8 @@ use Magento\Customer\Api\Data\CustomerExtensionInterface;
  *
  * Provides stub implementation for customer extension attributes.
  * Only implements companyAttributes which is actively used by tests (106 occurrences).
+ *
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class CustomerExtensionTestHelper implements CustomerExtensionInterface
 {
@@ -51,6 +53,74 @@ class CustomerExtensionTestHelper implements CustomerExtensionInterface
     public function setCompanyAttributes($companyAttributes)
     {
         $this->companyAttributes = $companyAttributes;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIsSubscribed()
+    {
+        return null;
+    }
+
+    /**
+     * @param mixed $isSubscribed
+     * @return $this
+     */
+    public function setIsSubscribed($isSubscribed)
+    {
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAssistanceAllowed()
+    {
+        return null;
+    }
+
+    /**
+     * @param mixed $assistanceAllowed
+     * @return $this
+     */
+    public function setAssistanceAllowed($assistanceAllowed)
+    {
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAmazonId()
+    {
+        return null;
+    }
+
+    /**
+     * @param mixed $amazonId
+     * @return $this
+     */
+    public function setAmazonId($amazonId)
+    {
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getVertexCustomerCode()
+    {
+        return null;
+    }
+
+    /**
+     * @param mixed $vertexCustomerCode
+     * @return $this
+     */
+    public function setVertexCustomerCode($vertexCustomerCode)
+    {
         return $this;
     }
 }
