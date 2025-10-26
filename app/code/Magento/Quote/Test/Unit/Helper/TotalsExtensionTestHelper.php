@@ -19,6 +19,9 @@ use Magento\Quote\Api\Data\TotalsExtensionInterface;
  * - negotiableQuoteTotals - NegotiableQuoteTotals object for B2B quotes
  *
  * All other TotalsExtensionInterface methods return null by default.
+ *
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class TotalsExtensionTestHelper implements TotalsExtensionInterface
 {
@@ -46,6 +49,261 @@ class TotalsExtensionTestHelper implements TotalsExtensionInterface
     public function setNegotiableQuoteTotals($totals)
     {
         $this->negotiableQuoteTotals = $totals;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCouponLabel()
+    {
+        return null;
+    }
+
+    /**
+     * @param mixed $couponLabel
+     * @return $this
+     */
+    public function setCouponLabel($couponLabel)
+    {
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBaseCustomerBalanceAmount()
+    {
+        return null;
+    }
+
+    /**
+     * @param mixed $amount
+     * @return $this
+     */
+    public function setBaseCustomerBalanceAmount($amount)
+    {
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCustomerBalanceAmount()
+    {
+        return null;
+    }
+
+    /**
+     * @param mixed $amount
+     * @return $this
+     */
+    public function setCustomerBalanceAmount($amount)
+    {
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBaseGiftCardsAmount()
+    {
+        return null;
+    }
+
+    /**
+     * @param mixed $amount
+     * @return $this
+     */
+    public function setBaseGiftCardsAmount($amount)
+    {
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGiftCardsAmount()
+    {
+        return null;
+    }
+
+    /**
+     * @param mixed $amount
+     * @return $this
+     */
+    public function setGiftCardsAmount($amount)
+    {
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGwItemsBasePrice()
+    {
+        return null;
+    }
+
+    /**
+     * @param mixed $price
+     * @return $this
+     */
+    public function setGwItemsBasePrice($price)
+    {
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGwItemsPrice()
+    {
+        return null;
+    }
+
+    /**
+     * @param mixed $price
+     * @return $this
+     */
+    public function setGwItemsPrice($price)
+    {
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGwCardBasePrice()
+    {
+        return null;
+    }
+
+    /**
+     * @param mixed $price
+     * @return $this
+     */
+    public function setGwCardBasePrice($price)
+    {
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGwCardPrice()
+    {
+        return null;
+    }
+
+    /**
+     * @param mixed $price
+     * @return $this
+     */
+    public function setGwCardPrice($price)
+    {
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGwBaseTaxAmount()
+    {
+        return null;
+    }
+
+    /**
+     * @param mixed $amount
+     * @return $this
+     */
+    public function setGwBaseTaxAmount($amount)
+    {
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGwTaxAmount()
+    {
+        return null;
+    }
+
+    /**
+     * @param mixed $amount
+     * @return $this
+     */
+    public function setGwTaxAmount($amount)
+    {
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGwItemsBaseTaxAmount()
+    {
+        return null;
+    }
+
+    /**
+     * @param mixed $amount
+     * @return $this
+     */
+    public function setGwItemsBaseTaxAmount($amount)
+    {
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGwItemsTaxAmount()
+    {
+        return null;
+    }
+
+    /**
+     * @param mixed $amount
+     * @return $this
+     */
+    public function setGwItemsTaxAmount($amount)
+    {
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGwCardBaseTaxAmount()
+    {
+        return null;
+    }
+
+    /**
+     * @param mixed $amount
+     * @return $this
+     */
+    public function setGwCardBaseTaxAmount($amount)
+    {
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGwCardTaxAmount()
+    {
+        return null;
+    }
+
+    /**
+     * @param mixed $amount
+     * @return $this
+     */
+    public function setGwCardTaxAmount($amount)
+    {
         return $this;
     }
 }

@@ -19,6 +19,8 @@ use Magento\Quote\Api\Data\CartItemExtensionInterface;
  * - negotiableQuoteItem (used in 10 files) - NegotiableQuoteItem data for B2B quotes
  *
  * All other CartItemExtensionInterface methods return null by default.
+ *
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class CartItemExtensionTestHelper implements CartItemExtensionInterface
 {
@@ -64,6 +66,7 @@ class CartItemExtensionTestHelper implements CartItemExtensionInterface
      *
      * @param mixed $discounts
      * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setDiscounts($discounts)
     {
@@ -85,6 +88,7 @@ class CartItemExtensionTestHelper implements CartItemExtensionInterface
      *
      * @param mixed $quoteItemTestAttribute
      * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setQuoteItemTestAttribute($quoteItemTestAttribute)
     {
