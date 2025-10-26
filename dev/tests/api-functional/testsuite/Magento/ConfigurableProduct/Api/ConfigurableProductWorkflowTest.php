@@ -23,7 +23,7 @@ use Magento\User\Test\Fixture\User;
 /**
  * Complete workflow test for configurable product creation via REST API
  */
-class CompleteConfigurableProductWorkflowTest extends WebapiAbstract
+class ConfigurableProductWorkflowTest extends WebapiAbstract
 {
     private const PRODUCTS_RESOURCE_PATH = '/V1/products';
     private const CONFIGURABLE_PRODUCT_SKU = 'CONFIGURABLE_BY_API';
