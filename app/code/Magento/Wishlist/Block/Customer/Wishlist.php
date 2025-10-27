@@ -6,6 +6,16 @@
 
 namespace Magento\Wishlist\Block\Customer;
 
+use Magento\Catalog\Api\Data\ProductInterface;
+use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Catalog\Block\Product\Context;
+use Magento\Catalog\Helper\Product\ConfigurationPool;
+use Magento\Catalog\Model\Product\Pricing\Renderer\SalableResolver;
+use Magento\Customer\Helper\Session\CurrentCustomer;
+use Magento\Framework\Data\Helper\PostHelper;
+use Magento\Wishlist\Model\ResourceModel\Item\Collection;
+
 /**
  * Wishlist block customer items.
  *
@@ -15,6 +25,21 @@ namespace Magento\Wishlist\Block\Customer;
 class Wishlist extends \Magento\Wishlist\Block\AbstractBlock
 {
     /**
+     * @var ProductRepositoryInterface
+     */
+    private ProductRepositoryInterface $productRepository;
+
+    /**
+     * @var SalableResolver
+     */
+    private SalableResolver $salableResolver;
+
+    /**
+     * @var SearchCriteriaBuilder
+     */
+    private SearchCriteriaBuilder $searchCriteriaBuilder;
+
+    /**
      * List of product options rendering configurations by product type
      *
      * @var array
@@ -22,40 +47,46 @@ class Wishlist extends \Magento\Wishlist\Block\AbstractBlock
     protected $_optionsCfg = [];
 
     /**
-     * @var \Magento\Catalog\Helper\Product\ConfigurationPool
+     * @var ConfigurationPool
      */
     protected $_helperPool;
 
     /**
-     * @var  \Magento\Wishlist\Model\ResourceModel\Item\Collection
+     * @var  Collection
      * @since 101.1.1
      */
     protected $_collection;
 
     /**
-     * @var \Magento\Customer\Helper\Session\CurrentCustomer
+     * @var CurrentCustomer
      */
     protected $currentCustomer;
 
     /**
-     * @var \Magento\Framework\Data\Helper\PostHelper
+     * @var PostHelper
      */
     protected $postDataHelper;
 
     /**
-     * @param \Magento\Catalog\Block\Product\Context $context
+     * @param Context $context
      * @param \Magento\Framework\App\Http\Context $httpContext
-     * @param \Magento\Catalog\Helper\Product\ConfigurationPool $helperPool
-     * @param \Magento\Customer\Helper\Session\CurrentCustomer $currentCustomer
-     * @param \Magento\Framework\Data\Helper\PostHelper $postDataHelper
+     * @param ConfigurationPool $helperPool
+     * @param CurrentCustomer $currentCustomer
+     * @param PostHelper $postDataHelper
+     * @param ProductRepositoryInterface $productRepository
+     * @param SalableResolver $salableResolver
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @param array $data
      */
     public function __construct(
-        \Magento\Catalog\Block\Product\Context $context,
+        Context $context,
         \Magento\Framework\App\Http\Context $httpContext,
-        \Magento\Catalog\Helper\Product\ConfigurationPool $helperPool,
-        \Magento\Customer\Helper\Session\CurrentCustomer $currentCustomer,
-        \Magento\Framework\Data\Helper\PostHelper $postDataHelper,
+        ConfigurationPool $helperPool,
+        CurrentCustomer $currentCustomer,
+        PostHelper $postDataHelper,
+        ProductRepositoryInterface $productRepository,
+        SalableResolver $salableResolver,
+        SearchCriteriaBuilder $searchCriteriaBuilder,
         array $data = []
     ) {
         parent::__construct(
@@ -66,17 +97,47 @@ class Wishlist extends \Magento\Wishlist\Block\AbstractBlock
         $this->_helperPool = $helperPool;
         $this->currentCustomer = $currentCustomer;
         $this->postDataHelper = $postDataHelper;
+        $this->productRepository = $productRepository;
+        $this->salableResolver = $salableResolver;
+        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
     }
 
     /**
      * Add wishlist conditions to collection
      *
-     * @param  \Magento\Wishlist\Model\ResourceModel\Item\Collection $collection
+     * @param Collection $collection
      * @return $this
+     * @throws \Exception
      */
     protected function _prepareCollection($collection)
     {
-        $collection->setInStockFilter(true)->setOrder('added_at', 'ASC');
+        $collection->setInStockFilter()->setOrder('added_at', 'ASC');
+        $items = $collection->getItems();
+        $productIds = array_map(static fn($item) => $item->getProductId(), $items);
+        $searchCriteria = $this->searchCriteriaBuilder
+            ->addFilter('entity_id', $productIds, 'in')
+            ->create();
+        $productCollection = $this->productRepository->getList($searchCriteria);
+        $products = array_combine(
+            array_map(fn($p) => $p->getId(), $productCollection->getItems()),
+            $productCollection->getItems()
+        );
+
+        $validItems = [];
+        $collection->removeAllItems();
+        foreach ($items as $item) {
+            if (!isset($products[$item->getProductId()]) ||
+                !$this->salableResolver->isSalable($products[$item->getProductId()])
+            ) {
+                continue;
+            }
+            $validItems[] = $item->getProductId();
+            $collection->addItem($item);
+        }
+        if (!empty($validItems)) {
+            $collection->addFieldToFilter('main_table.product_id', ['in' => $validItems]);
+        }
+
         return $this;
     }
 
@@ -98,7 +159,7 @@ class Wishlist extends \Magento\Wishlist\Block\AbstractBlock
     /**
      * Retrieve Wishlist Product Items collection
      *
-     * @return \Magento\Wishlist\Model\ResourceModel\Item\Collection
+     * @return Collection
      * @since 101.1.1
      */
     public function getWishlistItems()
