@@ -7,16 +7,21 @@ declare(strict_types=1);
 
 namespace Magento\Quote\Test\Unit\Helper;
 
-use Magento\Quote\Model\Quote\Address\RateCollectorInterface;
+use Magento\Shipping\Model\Shipping;
 use Magento\Quote\Model\Quote\Address\RateRequest;
 
 /**
  * Minimal rate collector for Address tests providing collectRates() and getResult().
  */
-class RateCollectorForAddressTestHelper implements RateCollectorInterface
+class RateCollectorForAddressTestHelper extends Shipping
 {
     /** @var mixed */
     private $result;
+
+    public function __construct()
+    {
+        // Skip parent constructor and dependencies
+    }
 
     /**
      * No-op collect that returns self for chaining.

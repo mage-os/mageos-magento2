@@ -33,10 +33,8 @@ use Magento\Framework\UrlInterface;
 use Magento\Quote\Api\CartItemRepositoryInterface as QuoteItemRepository;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\CartTotalRepositoryInterface;
-use Magento\Quote\Api\Data\TotalsInterface;
 use Magento\Quote\Api\PaymentMethodManagementInterface;
 use Magento\Quote\Api\ShippingMethodManagementInterface as ShippingMethodManager;
-use Magento\Quote\Model\ShippingMethodManagementInterface as ModelShippingMethodManager;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Quote\Model\QuoteIdMaskFactory;
@@ -46,6 +44,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\Escaper;
+use Magento\Checkout\Test\Unit\Helper\ShippingMethodManagementTestHelper;
 use Magento\Checkout\Test\Unit\Helper\TotalsInterfaceTestHelper;
 
 /**
@@ -107,7 +106,7 @@ class DefaultConfigProviderTest extends TestCase
         $httpContext = $this->createMock(HttpContext::class);
         $quoteRepository = $this->createMock(CartRepositoryInterface::class);
         $quoteItemRepository = $this->createMock(QuoteItemRepository::class);
-        $this->shippingMethodManager = new \Magento\Checkout\Test\Unit\Helper\ShippingMethodManagementDouble();
+        $this->shippingMethodManager = new ShippingMethodManagementTestHelper();
         $configurationPool = $this->createMock(ConfigurationPool::class);
         $quoteIdMaskFactory = $this->createMock(QuoteIdMaskFactory::class);
         $localeFormat = $this->createMock(LocaleFormat::class);

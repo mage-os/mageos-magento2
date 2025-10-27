@@ -8,16 +8,20 @@ declare(strict_types=1);
 namespace Magento\Checkout\Test\Unit\Helper;
 
 use Magento\Quote\Api\Data\EstimateAddressInterface;
-use Magento\Quote\Api\ShippingMethodManagementInterface as ApiShippingMethodManagementInterface;
-use Magento\Quote\Model\ShippingMethodManagementInterface as ModelShippingMethodManagementInterface;
+use Magento\Quote\Model\ShippingMethodManagement;
 
 /**
- * Simple shipping method management double for unit tests.
+ * Test helper for shipping method management used in unit tests.
+ *
+ * Extends the concrete ShippingMethodManagement while bypassing
+ * the parent constructor and stubbing public methods used by tests.
  */
-class ShippingMethodManagementDouble implements
-    ApiShippingMethodManagementInterface,
-    ModelShippingMethodManagementInterface
+class ShippingMethodManagementTestHelper extends ShippingMethodManagement
 {
+    public function __construct()
+    {
+        // Skip parent constructor to avoid dependency graph
+    }
     /**
      * @inheritDoc
      */
