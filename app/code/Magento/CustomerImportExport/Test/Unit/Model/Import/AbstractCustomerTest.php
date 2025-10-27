@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2015 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 declare(strict_types=1);
 
@@ -11,11 +11,13 @@ declare(strict_types=1);
 namespace Magento\CustomerImportExport\Test\Unit\Model\Import;
 
 use Magento\CustomerImportExport\Model\Import\AbstractCustomer;
+use Magento\CustomerImportExport\Test\Unit\Helper\AbstractCustomerTestHelper;
 use Magento\Framework\Data\Collection;
 use Magento\Framework\Data\Collection\EntityFactory;
 use Magento\Framework\DataObject;
 use Magento\ImportExport\Model\Import;
 use Magento\ImportExport\Test\Unit\Model\Import\AbstractImportTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 
 class AbstractCustomerTest extends AbstractImportTestCase
@@ -82,17 +84,18 @@ class AbstractCustomerTest extends AbstractImportTestCase
             $customerCollection->addItem(new DataObject($customer));
         }
 
-        $modelMock = $this->getMockBuilder(AbstractCustomer::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['_getCustomerCollection'])
-            ->onlyMethods(
-                [
-                    'getErrorAggregator',
-                    '_validateRowForUpdate',
-                    '_validateRowForDelete'
-                ]
-            )->getMockForAbstractClass();
+        $modelMock = $this->createPartialMock(
+            AbstractCustomerTestHelper::class,
+            [
+                'getErrorAggregator',
+                '_validateRowForUpdate',
+                '_validateRowForDelete'
+            ]
+        );
         $modelMock->method('getErrorAggregator')->willReturn($this->getErrorAggregatorObject());
+        
+        // Set customer collection using the helper's setter
+        $modelMock->setCustomerCollection($customerCollection);
 
         $property = new \ReflectionProperty($modelMock, '_websiteCodeToId');
         $property->setAccessible(true);
@@ -101,10 +104,6 @@ class AbstractCustomerTest extends AbstractImportTestCase
         $property = new \ReflectionProperty($modelMock, '_availableBehaviors');
         $property->setAccessible(true);
         $property->setValue($modelMock, $this->_availableBehaviors);
-
-        $modelMock->expects($this->any())
-            ->method('_getCustomerCollection')
-            ->willReturn($customerCollection);
 
         return $modelMock;
     }
@@ -174,13 +173,12 @@ class AbstractCustomerTest extends AbstractImportTestCase
     }
 
     /**
-     * @dataProvider checkUniqueKeyDataProvider
-     *
      * @param array $rowData
      * @param array $errors
      * @param boolean $isValid
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
+    #[DataProvider('checkUniqueKeyDataProvider')]
     public function testCheckUniqueKey(array $rowData, array $errors, $isValid = false)
     {
         $checkUniqueKey = new \ReflectionMethod(

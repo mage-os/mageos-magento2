@@ -1,8 +1,8 @@
 <?php
 /**
- * Copyright 2015 Adobe
- * All Rights Reserved.
- */
+* Copyright 2015 Adobe
+* All Rights Reserved.
+*/
 declare(strict_types=1);
 
 /**
@@ -19,7 +19,9 @@ use Magento\Framework\DB\Statement\Pdo\Mysql;
 use Magento\Framework\Json\DecoderInterface;
 use Magento\Framework\Json\Helper\Data;
 use Magento\Framework\Model\ResourceModel\Db\Context;
+use Magento\Framework\Test\Unit\Helper\PdoMysqlAdapterTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -62,13 +64,9 @@ class DataTest extends TestCase
         $selectMock->expects($this->any())->method('order')->willReturnSelf();
 
         /** @var AdapterInterface $connectionMock */
-        $connectionMock = $this->getMockBuilder(\Magento\Framework\DB\Adapter\Pdo\Mysql::class)
-            ->addMethods(['from', 'order'])
-            ->onlyMethods(['select', 'query'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $connectionMock->expects($this->any())->method('select')->willReturn($selectMock);
-        $connectionMock->expects($this->any())->method('query')->willReturn($statementMock);
+        $connectionMock = new PdoMysqlAdapterTestHelper();
+        $connectionMock->setSelectMock($selectMock);
+        $connectionMock->setQueryResult($statementMock);
 
         /** @var $resourceModelMock \Magento\Framework\App\ResourceConnection */
         $resourceModelMock = $this->createMock(ResourceConnection::class);
@@ -88,20 +86,18 @@ class DataTest extends TestCase
      * @covers \Magento\CustomerImportExport\Model\ResourceModel\Import\CustomerComposite\Data::_prepareRow
      * @covers \Magento\CustomerImportExport\Model\ResourceModel\Import\CustomerComposite\Data::_prepareAddressRowData
      *
-     * @dataProvider getNextBunchDataProvider
      * @param string $entityType
      * @param string $bunchData
      * @param array $expectedData
      */
+    #[DataProvider('getNextBunchDataProvider')]
     public function testGetNextBunch($entityType, $bunchData, $expectedData)
     {
         $dependencies = $this->_getDependencies($entityType, [[$bunchData]]);
 
         $resource = $dependencies['resource'];
         $helper = new ObjectManager($this);
-        $jsonDecoderMock = $this->getMockBuilder(DecoderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $jsonDecoderMock = $this->createMock(DecoderInterface::class);
         $jsonDecoderMock->expects($this->once())
             ->method('decode')
             ->willReturn(json_decode($bunchData, true));

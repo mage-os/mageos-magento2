@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2015 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 declare(strict_types=1);
 
@@ -11,7 +11,10 @@ use Magento\Customer\Model\ResourceModel\Customer\Collection as CustomerCollecti
 use Magento\Customer\Model\ResourceModel\Customer\CollectionFactory;
 use Magento\CustomerImportExport\Model\Export\Address;
 use Magento\CustomerImportExport\Model\Export\CustomerFactory;
+use Magento\CustomerImportExport\Test\Unit\Helper\CustomerEntityTestHelper;
 use Magento\Eav\Model\Config;
+use Magento\Framework\Test\Unit\Helper\AbstractModelTestHelper;
+use Magento\Framework\Test\Unit\Helper\CollectionTestHelper;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Eav\Model\Entity\TypeFactory;
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -112,11 +115,11 @@ class AddressTest extends TestCase
 
         $this->_objectManager = new ObjectManager($this);
         $this->_model = new Address(
-            $this->getMockForAbstractClass(ScopeConfigInterface::class),
+            $this->createMock(ScopeConfigInterface::class),
             $storeManager,
             $this->createMock(Factory::class),
             $this->createMock(CollectionByPagesIteratorFactory::class),
-            $this->getMockForAbstractClass(TimezoneInterface::class),
+            $this->createMock(TimezoneInterface::class),
             $this->createMock(Config::class),
             $this->createMock(CollectionFactory::class),
             $this->createMock(CustomerFactory::class),
@@ -144,39 +147,24 @@ class AddressTest extends TestCase
         $pageSize = 1;
 
         $translator = $this->createMock(\stdClass::class);
-        $entityFactory = $this->createMock(EntityFactory::class);
 
         /** @var Collection|TestCase $attributeCollection */
-        $attributeCollection = $this->getMockBuilder(Collection::class)
-            ->addMethods(['getEntityTypeCode'])
-            ->setConstructorArgs([$entityFactory])
-            ->getMock();
-
-        $attributeCollection->expects(
-            $this->once()
-        )->method(
-            'getEntityTypeCode'
-        )->willReturn(
-            'customer_address'
-        );
+        $attributeCollection = new CollectionTestHelper();
+        $attributeCollection->setEntityTypeCode('customer_address');
         foreach ($this->_attributes as $attributeData) {
-            $arguments = $this->_objectManager->getConstructArguments(
+            $attribute = $this->createPartialMock(
                 AbstractAttribute::class,
-                ['eavTypeFactory' => $this->createMock(TypeFactory::class)]
-            );
-            $arguments['data'] = $attributeData;
-            $attribute = $this->getMockForAbstractClass(
-                AbstractAttribute::class,
-                $arguments,
-                '',
-                true,
-                true,
-                true,
-                ['_construct', 'getSource']
+                ['_construct', 'getSource', 'getAttributeCode', 'getAttributeId', 'getFrontendInput']
             );
 
             $attributeSource = $this->createMock(\Magento\Eav\Model\Entity\Attribute\Source\AbstractSource::class);
             $attribute->expects($this->once())->method('getSource')->willReturn($attributeSource);
+            
+            // Configure attribute methods to return the test data
+            $attribute->method('getAttributeCode')->willReturn($attributeData['attribute_code']);
+            $attribute->method('getAttributeId')->willReturn($attributeData['attribute_id']);
+            $attribute->method('getFrontendInput')->willReturn($attributeData['frontend_input']);
+            
             $attributeCollection->addItem($attribute);
         }
 
@@ -198,12 +186,7 @@ class AddressTest extends TestCase
         $connection->method('select')->willReturn($customerSelect);
         $connection->method('fetchAssoc')->with($customerSelect)->willReturn([1 => $this->_customerData]);
 
-        $customerEntity = $this->getMockBuilder(\stdClass::class)
-            ->addMethods(['filterEntityCollection', 'setParameters'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $customerEntity->method('filterEntityCollection')->willReturnArgument(0);
-        $customerEntity->method('setParameters')->willReturnSelf();
+        $customerEntity = new CustomerEntityTestHelper();
 
         $data = [
             'translator' => $translator,
@@ -249,13 +232,8 @@ class AddressTest extends TestCase
      */
     public function testExportItem()
     {
-        $writer = $this->getMockForAbstractClass(
+        $writer = $this->createPartialMock(
             AbstractAdapter::class,
-            [],
-            '',
-            false,
-            false,
-            true,
             ['writeRow']
         );
 
@@ -270,9 +248,9 @@ class AddressTest extends TestCase
         $this->_model->setWriter($writer);
         $this->_model->setParameters([]);
 
-        $arguments = $this->_objectManager->getConstructArguments(AbstractModel::class);
-        $arguments['data'] = $this->_addressData;
-        $item = $this->getMockForAbstractClass(AbstractModel::class, $arguments);
+        $item = new AbstractModelTestHelper();
+        $item->initializeWithData($this->_addressData);
+        
         $this->_model->exportItem($item);
     }
 
