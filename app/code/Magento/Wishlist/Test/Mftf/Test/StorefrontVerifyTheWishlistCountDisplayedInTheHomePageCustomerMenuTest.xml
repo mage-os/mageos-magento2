@@ -18,9 +18,8 @@
             <group value="wishlist"/>
         </annotations>
         <before>
-            <!-- Pre-condition 1: Create product-->
+            <!-- Pre-condition 1,2: Create product, customer -->
             <createData entity="SimpleProduct" stepKey="createProduct"/>
-            <!-- Pre-condition 2: Create customer-->
             <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
         </before>
         <after>
@@ -30,7 +29,7 @@
             <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
             <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
         </after>
-        <!-- Step 1:Log in as a customer on storefront. -->
+        <!-- Step 1: Log in as a customer on storefront. -->
         <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginToStorefrontAccount">
             <argument name="Customer" value="$createCustomer$"/>
         </actionGroup>
@@ -42,12 +41,6 @@
         <actionGroup ref="StorefrontCustomerAddProductToWishlistActionGroup" stepKey="addToWishlistProduct">
             <argument name="productVar" value="$createProduct$"/>
         </actionGroup>
-        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
-            <argument name="indices" value=""/>
-        </actionGroup>
-        <actionGroup ref="CliCacheFlushActionGroup" stepKey="cleanCache">
-            <argument name="tags" value=""/>
-        </actionGroup>
         <!-- Step 3: Navigate to Store front home page-->
         <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToHomePage"/>
         <waitForPageLoad stepKey="waitToLoadHomePage"/>
@@ -55,7 +48,7 @@
         <waitForElementClickable selector="{{LoggedInCustomerHeaderLinksSection.customerDropdownMenu}}" stepKey="waitToOpenCustomerDropdownMenu"/>
         <click selector="{{LoggedInCustomerHeaderLinksSection.customerDropdownMenu}}" stepKey="openCustomerDropdownMenu"/>
         <waitForPageLoad stepKey="waitToLoadCustomerDropdownMenu"/>
-        <!-- Step 4 assertion:The wishlist item count should display-->
+        <!-- Step 4 assertion: The wishlist item count should display-->
         <waitForElementVisible selector="{{StorefrontCustomerWishlistProductSection.wishListLink}}" stepKey="wishListLink"/>
         <waitForText userInput="1 item" selector="{{StorefrontCustomerWishlistProductSection.wishListCount}}" stepKey="seeWishListCount"/>
     </test>
