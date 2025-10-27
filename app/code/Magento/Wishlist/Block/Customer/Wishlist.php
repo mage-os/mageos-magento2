@@ -6,9 +6,14 @@
 
 namespace Magento\Wishlist\Block\Customer;
 
+use Magento\Catalog\Block\Product\Context;
+use Magento\Catalog\Helper\Product\ConfigurationPool;
+use Magento\Customer\Helper\Session\CurrentCustomer;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\Product\Pricing\Renderer\SalableResolver;
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Data\Helper\PostHelper;
 
 /**
  * Wishlist block customer items.
@@ -62,14 +67,14 @@ class Wishlist extends \Magento\Wishlist\Block\AbstractBlock
     protected $postDataHelper;
 
     /**
-     * @param \Magento\Catalog\Block\Product\Context $context
+     * @param Context $context
      * @param \Magento\Framework\App\Http\Context $httpContext
-     * @param \Magento\Catalog\Helper\Product\ConfigurationPool $helperPool
-     * @param \Magento\Customer\Helper\Session\CurrentCustomer $currentCustomer
-     * @param \Magento\Framework\Data\Helper\PostHelper $postDataHelper
-     * @param ProductRepositoryInterface $productRepository
-     * @param SalableResolver $salableResolver
-     * @param SearchCriteriaBuilder $searchCriteriaBuilder
+     * @param ConfigurationPool $helperPool
+     * @param CurrentCustomer $currentCustomer
+     * @param PostHelper $postDataHelper
+     * @param ProductRepositoryInterface|null $productRepository
+     * @param SalableResolver|null $salableResolver
+     * @param SearchCriteriaBuilder|null $searchCriteriaBuilder
      * @param array $data
      */
     public function __construct(
@@ -78,9 +83,9 @@ class Wishlist extends \Magento\Wishlist\Block\AbstractBlock
         \Magento\Catalog\Helper\Product\ConfigurationPool $helperPool,
         \Magento\Customer\Helper\Session\CurrentCustomer $currentCustomer,
         \Magento\Framework\Data\Helper\PostHelper $postDataHelper,
-        ProductRepositoryInterface $productRepository,
-        SalableResolver $salableResolver,
-        SearchCriteriaBuilder $searchCriteriaBuilder,
+        ?ProductRepositoryInterface $productRepository = null,
+        ?SalableResolver $salableResolver = null,
+        ?SearchCriteriaBuilder $searchCriteriaBuilder = null,
         array $data = []
     ) {
         parent::__construct(
@@ -91,9 +96,12 @@ class Wishlist extends \Magento\Wishlist\Block\AbstractBlock
         $this->_helperPool = $helperPool;
         $this->currentCustomer = $currentCustomer;
         $this->postDataHelper = $postDataHelper;
-        $this->productRepository = $productRepository;
-        $this->salableResolver = $salableResolver;
-        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
+        $this->productRepository = $productRepository ?? ObjectManager::getInstance()
+            ->get(ProductRepositoryInterface::class);
+        $this->salableResolver = $salableResolver ?? ObjectManager::getInstance()
+            ->get(SalableResolver::class);
+        $this->searchCriteriaBuilder = $searchCriteriaBuilder ?? ObjectManager::getInstance()
+            ->get(SearchCriteriaBuilder::class);
     }
 
     /**
