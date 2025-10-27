@@ -252,11 +252,10 @@ class LinkManagement implements ProductLinkManagementInterface, ProductLinkManag
             throw new CouldNotSaveException(__('Could not save child: "%1"', $e->getMessage()), $e);
         }
 
-        $selectionId = (int)$selectionModel->getId();
-        $linkedProduct->setId($selectionId);
-        $linkedProduct->setSelectionId($selectionId);
+        $linkedProduct->setId($selectionModel->getId());
+        $linkedProduct->setSelectionId($selectionModel->getId());
         $linkedProduct->setOptionId($optionId);
-        return $selectionId;
+        return (int)$selectionModel->getId();
     }
 
     /**

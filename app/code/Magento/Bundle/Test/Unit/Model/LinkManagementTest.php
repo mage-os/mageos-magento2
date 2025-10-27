@@ -629,7 +629,7 @@ class LinkManagementTest extends TestCase
 
         $selection = $this->createPartialMock(Selection::class, ['save', 'getId', 'load']);
         $selection->expects($this->once())->method('save');
-        $selection->expects($this->once())->method('getId')->willReturn(42);
+        $selection->method('getId')->willReturn(42);
         $this->bundleSelectionMock->expects($this->once())->method('create')->willReturn($selection);
         $result = $this->model->addChild($productMock, 1, $productLink);
         $this->assertEquals(42, $result);
