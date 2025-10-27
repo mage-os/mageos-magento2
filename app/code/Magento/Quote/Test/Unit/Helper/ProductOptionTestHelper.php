@@ -75,4 +75,3 @@ class ProductOptionTestHelper extends ProductOption
         return $this;
     }
 }
-
