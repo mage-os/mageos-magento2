@@ -6,15 +6,9 @@
 
 namespace Magento\Wishlist\Block\Customer;
 
-use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Catalog\Api\ProductRepositoryInterface;
-use Magento\Catalog\Block\Product\Context;
-use Magento\Catalog\Helper\Product\ConfigurationPool;
 use Magento\Catalog\Model\Product\Pricing\Renderer\SalableResolver;
-use Magento\Customer\Helper\Session\CurrentCustomer;
-use Magento\Framework\Data\Helper\PostHelper;
-use Magento\Wishlist\Model\ResourceModel\Item\Collection;
 
 /**
  * Wishlist block customer items.
@@ -47,43 +41,43 @@ class Wishlist extends \Magento\Wishlist\Block\AbstractBlock
     protected $_optionsCfg = [];
 
     /**
-     * @var ConfigurationPool
+     * @var \Magento\Catalog\Helper\Product\ConfigurationPool
      */
     protected $_helperPool;
 
     /**
-     * @var  Collection
+     * @var  \Magento\Wishlist\Model\ResourceModel\Item\Collection
      * @since 101.1.1
      */
     protected $_collection;
 
     /**
-     * @var CurrentCustomer
+     * @var \Magento\Customer\Helper\Session\CurrentCustomer
      */
     protected $currentCustomer;
 
     /**
-     * @var PostHelper
+     * @var \Magento\Framework\Data\Helper\PostHelper
      */
     protected $postDataHelper;
 
     /**
-     * @param Context $context
+     * @param \Magento\Catalog\Block\Product\Context $context
      * @param \Magento\Framework\App\Http\Context $httpContext
-     * @param ConfigurationPool $helperPool
-     * @param CurrentCustomer $currentCustomer
-     * @param PostHelper $postDataHelper
+     * @param \Magento\Catalog\Helper\Product\ConfigurationPool $helperPool
+     * @param \Magento\Customer\Helper\Session\CurrentCustomer $currentCustomer
+     * @param \Magento\Framework\Data\Helper\PostHelper $postDataHelper
      * @param ProductRepositoryInterface $productRepository
      * @param SalableResolver $salableResolver
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @param array $data
      */
     public function __construct(
-        Context $context,
+        \Magento\Catalog\Block\Product\Context $context,
         \Magento\Framework\App\Http\Context $httpContext,
-        ConfigurationPool $helperPool,
-        CurrentCustomer $currentCustomer,
-        PostHelper $postDataHelper,
+        \Magento\Catalog\Helper\Product\ConfigurationPool $helperPool,
+        \Magento\Customer\Helper\Session\CurrentCustomer $currentCustomer,
+        \Magento\Framework\Data\Helper\PostHelper $postDataHelper,
         ProductRepositoryInterface $productRepository,
         SalableResolver $salableResolver,
         SearchCriteriaBuilder $searchCriteriaBuilder,
@@ -105,7 +99,7 @@ class Wishlist extends \Magento\Wishlist\Block\AbstractBlock
     /**
      * Add wishlist conditions to collection
      *
-     * @param Collection $collection
+     * @param  \Magento\Wishlist\Model\ResourceModel\Item\Collection $collection
      * @return $this
      * @throws \Exception
      */
@@ -159,7 +153,7 @@ class Wishlist extends \Magento\Wishlist\Block\AbstractBlock
     /**
      * Retrieve Wishlist Product Items collection
      *
-     * @return Collection
+     * @return \Magento\Wishlist\Model\ResourceModel\Item\Collection
      * @since 101.1.1
      */
     public function getWishlistItems()
