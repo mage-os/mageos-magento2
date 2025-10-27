@@ -22,6 +22,7 @@ define([
             if (!text) {
                 return NaN;
             }
+
             // Remove non-numeric except . , - then normalize
             let cleaned = ('' + text).replace(/[^0-9,.-]/g, '');
 
@@ -32,6 +33,7 @@ define([
                 // European format: swap , to .
                 cleaned = cleaned.replace(/,/g, '.');
             }
+
             const n = parseFloat(cleaned);
 
             return isNaN(n) ? NaN : Math.round(n * 100) / 100;
@@ -49,6 +51,7 @@ define([
                     sum += val;
                 }
             });
+
             return Math.round(sum * 100) / 100;
         }
 
@@ -65,10 +68,12 @@ define([
             if (clicked) {
                 return;
             }
+
             const central = getCentralSubtotal(), summary = getSummarySubtotal();
-            
+
             if (!isNaN(central) && !isNaN(summary) && central !== summary) {
                 const $updateBtn = $root.find('.cart.main.actions button.action.update');
+
                 if ($updateBtn.length) {
                     clicked = true;
                     $updateBtn.trigger('click');
