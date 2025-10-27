@@ -123,4 +123,72 @@ class CustomerExtensionTestHelper implements CustomerExtensionInterface
     {
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getAllCompanyAttributes()
+    {
+        return null;
+    }
+
+    /**
+     * @param mixed $allCompanyAttributes
+     * @return $this
+     */
+    public function setAllCompanyAttributes($allCompanyAttributes)
+    {
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTestGroupCode()
+    {
+        return null;
+    }
+
+    /**
+     * @param mixed $testGroupCode
+     * @return $this
+     */
+    public function setTestGroupCode($testGroupCode)
+    {
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSalesRepresentativeId()
+    {
+        return null;
+    }
+
+    /**
+     * @param mixed $salesRepresentativeId
+     * @return $this
+     */
+    public function setSalesRepresentativeId($salesRepresentativeId)
+    {
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTestGroup()
+    {
+        return null;
+    }
+
+    /**
+     * @param mixed $testGroup
+     * @return $this
+     */
+    public function setTestGroup($testGroup)
+    {
+        return $this;
+    }
 }
