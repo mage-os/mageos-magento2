@@ -12,11 +12,13 @@ define([
     /**
      * Compare central cart subtotal with summary subtotal and click Update once if mismatched.
      */
-    return function initEnsureSubtotalSync(config, element) {
+    return function initEnsureSubtotalSync(config, element)
+    {
         const $root = $(element || document);
         let clicked = false;
 
-        function parsePrice(text) {
+        function parsePrice(text)
+        {
             if (!text) {
                 return NaN;
             }
@@ -35,7 +37,8 @@ define([
             return isNaN(n) ? NaN : Math.round(n * 100) / 100;
         }
 
-        function getCentralSubtotal() {
+        function getCentralSubtotal()
+        {
             // Sum of row totals on the table
             let sum = 0;
 
@@ -49,14 +52,16 @@ define([
             return Math.round(sum * 100) / 100;
         }
 
-        function getSummarySubtotal() {
+        function getSummarySubtotal()
+        {
             // Summary subtotal in cart totals knockout template
             const text = $('#cart-totals .totals.sub .amount .price').first().text();
 
             return parsePrice(text);
         }
 
-        function trySync() {
+        function trySync()
+        {
             if (clicked) {
                 return;
             }
