@@ -15,7 +15,6 @@ use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\App\ScopeInterface;
 use Magento\Framework\App\ScopeResolverInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
-use Magento\BundleImportExport\Test\Unit\Helper\TypeInstanceTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -130,7 +129,15 @@ class RowCustomizerTest extends TestCase
         $this->selectionsCollection->method('getItems')->willReturn([$this->selection]);
         $this->option->setData('selections', [$this->selection]);
         $this->product->setSelectionsCollection($this->selectionsCollection);
-        $typeInstance = new TypeInstanceTestHelper($this->optionsCollection, $this->selectionsCollection, [1]);
+        // Use createPartialMock instead of TypeInstanceTestHelper
+        $typeInstance = $this->createPartialMock(
+            \Magento\Bundle\Model\Product\Type::class,
+            ['getOptionsCollection', 'getSelectionsCollection', 'getOptionsIds', 'setStoreFilter']
+        );
+        $typeInstance->method('getOptionsCollection')->willReturn($this->optionsCollection);
+        $typeInstance->method('getSelectionsCollection')->willReturn($this->selectionsCollection);
+        $typeInstance->method('getOptionsIds')->willReturn([1]);
+        $typeInstance->method('setStoreFilter')->willReturnSelf();
         $this->product->setTypeInstance($typeInstance);
         $this->product->setSku(1);
         $this->productResourceCollection->method('addAttributeToFilter')->willReturnSelf();

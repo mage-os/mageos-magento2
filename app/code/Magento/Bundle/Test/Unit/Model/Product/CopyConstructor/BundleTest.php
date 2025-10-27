@@ -65,20 +65,39 @@ class BundleTest extends TestCase
         $product->expects($this->once())
             ->method('getExtensionAttributes')
             ->willReturn($extensionAttributesProduct);
-
-        // Use parent Link class - all setters work via setData()
-        $productLink = $this->createPartialMock(Link::class, []);
-        // Create options using partial mock - setProductLinks works via magic methods
-        $firstOption = $this->createPartialMock(Option::class, []);
-        $firstOption->setProductLinks([$productLink]);
-        // setOptionId will be called by the code under test
-        $secondOption = $this->createPartialMock(Option::class, []);
-        $secondOption->setProductLinks([$productLink]);
-        // setOptionId will be called by the code under test
-        $bundleOptions = [
-            $firstOption,
-            $secondOption
+        $bundleOptionsData = [
+            [
+                'option_id' => 1,
+                'title' => 'Option 1',
+                'product_links' => [
+                    [
+                        'option_id' => 1,
+                        'id' => 1,
+                        'selection_id' => 1,
+                        'sku' => 'sku-1'
+                    ],
+                ]
+            ],
+            [
+                'option_id' => 2,
+                'title' => 'Option 2',
+                'product_links' => [
+                    [
+                        'option_id' => 2,
+                        'id' => 2,
+                        'selection_id' => 2,
+                        'sku' => 'sku-2'
+                    ]
+                ]
+            ]
         ];
+        $bundleOptions = array_map(
+            fn ($optionData) => $this->createOptionMock(
+                [...$optionData, 'product_links' => array_map($this->createLinkMock(...), $optionData['product_links'])]
+            ),
+            $bundleOptionsData
+        );
+
         // Configure test helper with setter method
         $extensionAttributesProduct->setBundleProductOptions($bundleOptions);
 
@@ -90,8 +109,65 @@ class BundleTest extends TestCase
             ->method('getExtensionAttributes')
             ->willReturn($extensionAttributesDuplicate);
         // Test helper doesn't need mock expectations - setBundleProductOptions will be called by code under test
-
         $this->model->build($product, $duplicate);
+
+        // Capture the cloned options after the build method runs
+        $bundleOptionsClone = $extensionAttributesDuplicate->getBundleProductOptions();
+        $this->assertNotEmpty($bundleOptionsClone, 'Bundle options should be set on duplicate product');
+
+        foreach ($bundleOptionsData as $key => $optionData) {
+            $bundleOption = $bundleOptions[$key];
+            $bundleOptionClone = $bundleOptionsClone[$key];
+
+            $this->assertEquals($optionData['option_id'], $bundleOption->getOptionId());
+            $this->assertEquals($optionData['title'], $bundleOption->getTitle());
+
+            $this->assertNotEquals($bundleOption, $bundleOptionClone);
+
+            $this->assertNull($bundleOptionClone->getOptionId());
+            $this->assertEquals($optionData['title'], $bundleOptionClone->getTitle());
+
+            foreach ($optionData['product_links'] as $productLinkKey => $productLinkData) {
+                $productLink = $bundleOption->getProductLinks()[$productLinkKey];
+                $productLinkClone = $bundleOptionClone->getProductLinks()[$productLinkKey];
+
+                $this->assertEquals($productLinkData['option_id'], $productLink->getOptionId());
+                $this->assertEquals($productLinkData['id'], $productLink->getId());
+                $this->assertEquals($productLinkData['selection_id'], $productLink->getSelectionId());
+                $this->assertEquals($productLinkData['sku'], $productLink->getSku());
+
+                $this->assertNotEquals($productLink, $productLinkClone);
+
+                $this->assertNull($productLinkClone->getId());
+                $this->assertNull($productLinkClone->getOptionId());
+                $this->assertNull($productLinkClone->getSelectionId());
+                $this->assertEquals($productLinkData['sku'], $productLinkClone->getSku());
+            }
+        }
+    }
+
+    /**
+     * @param array $data
+     * @return Option
+     * @throws \PHPUnit\Framework\MockObject\Exception
+     */
+    private function createOptionMock(array $data): Option
+    {
+        $option = $this->createPartialMock(Option::class, []);
+        $option->addData($data);
+        return $option;
+    }
+
+    /**
+     * @param array $data
+     * @return Link
+     * @throws \PHPUnit\Framework\MockObject\Exception
+     */
+    private function createLinkMock(array $data): Link
+    {
+        $productLink = $this->createPartialMock(Link::class, []);
+        $productLink->addData($data);
+        return $productLink;
     }
 
     /**

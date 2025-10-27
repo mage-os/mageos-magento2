@@ -21,7 +21,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Pricing\Helper\Data;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Catalog\Test\Unit\Helper\ItemTestHelper;
+use Magento\Wishlist\Test\Unit\Helper\ItemTestHelper;
 use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Catalog\Test\Unit\Helper\OptionTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
