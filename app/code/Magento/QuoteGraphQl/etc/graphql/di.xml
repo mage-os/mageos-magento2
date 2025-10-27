@@ -117,4 +117,10 @@
             </argument>
         </arguments>
     </type>
+    <type name="Magento\Quote\Model\ValidationRules\ShippingMethodValidationRule">
+        <plugin name="shipping_method_validation_plugin"
+                type="Magento\QuoteGraphQl\Plugin\ShippingMethodValidationRulePlugin"
+                sortOrder="10"
+                disabled="false"/>
+    </type>
 </config>
