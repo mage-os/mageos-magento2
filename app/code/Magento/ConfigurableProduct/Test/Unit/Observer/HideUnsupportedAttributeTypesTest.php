@@ -13,7 +13,6 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Data\Form;
 use Magento\Framework\Data\Form\Element\Select;
 use Magento\Framework\Event\Observer as EventObserver;
-use Magento\Framework\Event\Test\Unit\Helper\ObserverTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Data\Form\Element\Test\Unit\Helper\SelectTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -94,7 +93,7 @@ class HideUnsupportedAttributeTypesTest extends TestCase
      */
     private function createEventMock(?MockObject $form = null)
     {
-        $event = new ObserverTestHelper();
+        $event = new EventObserver();
         $event->setForm($form);
         return $event;
     }

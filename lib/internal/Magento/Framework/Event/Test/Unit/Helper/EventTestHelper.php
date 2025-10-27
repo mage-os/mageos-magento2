@@ -15,44 +15,9 @@ use Magento\Framework\Event;
 class EventTestHelper extends Event
 {
     /**
-     * @var mixed
+     * @var array
      */
-    private $product;
-
-    /**
-     * @var mixed
-     */
-    private $collection;
-
-    /**
-     * @var mixed
-     */
-    private $limit;
-
-    /**
-     * @var mixed
-     */
-    private $items;
-
-    /**
-     * @var mixed
-     */
-    private $store;
-    
-    /**
-     * @var mixed
-     */
-    private $result;
-    
-    /**
-     * @var mixed
-     */
-    private $quote;
-    
-    /**
-     * @var mixed
-     */
-    private $order;
+    private $data = [];
 
     public function __construct()
     {
@@ -66,7 +31,7 @@ class EventTestHelper extends Event
      */
     public function getProduct()
     {
-        return $this->product;
+        return $this->data['product'] ?? null;
     }
 
     /**
@@ -77,7 +42,7 @@ class EventTestHelper extends Event
      */
     public function setProduct($product): self
     {
-        $this->product = $product;
+        $this->data['product'] = $product;
         return $this;
     }
 
@@ -88,7 +53,7 @@ class EventTestHelper extends Event
      */
     public function getCollection()
     {
-        return $this->collection;
+        return $this->data['collection'] ?? null;
     }
 
     /**
@@ -99,7 +64,7 @@ class EventTestHelper extends Event
      */
     public function setCollection($collection): self
     {
-        $this->collection = $collection;
+        $this->data['collection'] = $collection;
         return $this;
     }
 
@@ -110,7 +75,7 @@ class EventTestHelper extends Event
      */
     public function getLimit()
     {
-        return $this->limit;
+        return $this->data['limit'] ?? null;
     }
 
     /**
@@ -121,7 +86,7 @@ class EventTestHelper extends Event
      */
     public function setLimit($limit): self
     {
-        $this->limit = $limit;
+        $this->data['limit'] = $limit;
         return $this;
     }
 
@@ -132,7 +97,7 @@ class EventTestHelper extends Event
      */
     public function getItems()
     {
-        return $this->items;
+        return $this->data['items'] ?? null;
     }
 
     /**
@@ -143,7 +108,7 @@ class EventTestHelper extends Event
      */
     public function setItems($items): self
     {
-        $this->items = $items;
+        $this->data['items'] = $items;
         return $this;
     }
 
@@ -154,7 +119,7 @@ class EventTestHelper extends Event
      */
     public function getStore()
     {
-        return $this->store;
+        return $this->data['store'] ?? null;
     }
 
     /**
@@ -164,8 +129,9 @@ class EventTestHelper extends Event
      */
     public function getResult()
     {
-        return $this->result;
+        return $this->data['result'] ?? null;
     }
+
     /**
      * Get quote (custom method for testing)
      *
@@ -173,7 +139,7 @@ class EventTestHelper extends Event
      */
     public function getQuote()
     {
-        return $this->quote;
+        return $this->data['quote'] ?? null;
     }
 
     /**
@@ -183,6 +149,6 @@ class EventTestHelper extends Event
      */
     public function getOrder()
     {
-        return $this->order;
+        return $this->data['order'] ?? null;
     }
 }

@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace Magento\Bundle\Test\Unit\Observer;
 
 use Magento\Bundle\Observer\InitOptionRendererObserver;
-use Magento\Framework\Event\Test\Unit\Helper\ObserverTestHelper;
+use Magento\Framework\Event\Observer;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Wishlist\Block\Customer\Wishlist\Item\Options;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -39,7 +39,7 @@ class InitOptionRendererObserverTest extends TestCase
     private $observer;
 
     /**
-     * @var ObserverTestHelper
+     * @var Observer
      */
     private $observerMock;
 
@@ -50,7 +50,7 @@ class InitOptionRendererObserverTest extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
 
-        $this->observerMock = new ObserverTestHelper();
+        $this->observerMock = new Observer();
 
         $this->blockMock = $this->createPartialMock(Options::class, ['addOptionsRenderCfg']);
 
