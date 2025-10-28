@@ -82,7 +82,7 @@
         <!-- Step 10: Go to checkout -->
         <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutAfterSecondProduct"/>
         <!-- Step 11: Login as current user on checkout page -->
-        <actionGroup ref="StorefrontFillCustomerLoginFormActionGroup" stepKey="fillLoginFormSecondAttempt">
+        <actionGroup ref="StorefrontFillCustomerLoginFormActionGroup" stepKey="loginAsCustomerOnCheckout">
             <argument name="customer" value="Simple_US_Customer_NY" />
         </actionGroup>
         <actionGroup ref="StorefrontClickSignOnCustomerLoginFormActionGroup" stepKey="clickSignInAccountButton" />
