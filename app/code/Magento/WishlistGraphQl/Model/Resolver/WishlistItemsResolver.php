@@ -17,6 +17,7 @@ use Magento\Wishlist\Model\ResourceModel\Item\Collection as WishlistItemCollecti
 use Magento\Wishlist\Model\ResourceModel\Item\CollectionFactory as WishlistItemCollectionFactory;
 use Magento\Wishlist\Model\Item;
 use Magento\Wishlist\Model\Wishlist;
+use Magento\Wishlist\Model\WishlistItemSellableCollectionProcessor;
 
 /**
  * Fetches the Wishlist Items data according to the GraphQL schema
@@ -26,23 +27,31 @@ class WishlistItemsResolver implements ResolverInterface
     /**
      * @var WishlistItemCollectionFactory
      */
-    private $wishlistItemCollectionFactory;
+    private WishlistItemCollectionFactory $wishlistItemCollectionFactory;
 
     /**
      * @var StoreManagerInterface
      */
-    private $storeManager;
+    private StoreManagerInterface $storeManager;
+
+    /**
+     * @var WishlistItemSellableCollectionProcessor
+     */
+    private WishlistItemSellableCollectionProcessor $sellableCollectionProcessor;
 
     /**
      * @param WishlistItemCollectionFactory $wishlistItemCollectionFactory
      * @param StoreManagerInterface $storeManager
+     * @param WishlistItemSellableCollectionProcessor $sellableCollectionProcessor
      */
     public function __construct(
         WishlistItemCollectionFactory $wishlistItemCollectionFactory,
-        StoreManagerInterface $storeManager
+        StoreManagerInterface $storeManager,
+        WishlistItemSellableCollectionProcessor $sellableCollectionProcessor
     ) {
         $this->wishlistItemCollectionFactory = $wishlistItemCollectionFactory;
         $this->storeManager = $storeManager;
+        $this->sellableCollectionProcessor = $sellableCollectionProcessor;
     }
 
     /**
@@ -92,6 +101,7 @@ class WishlistItemsResolver implements ResolverInterface
                 return $store->getId();
             }, $this->storeManager->getStores()))
             ->setVisibilityFilter();
+        $this->sellableCollectionProcessor->execute($wishlistItemCollection);
         return $wishlistItemCollection->getItems();
     }
 }

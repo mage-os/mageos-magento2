@@ -16,6 +16,7 @@ use Magento\Wishlist\Model\Wishlist;
 use Magento\Wishlist\Model\Wishlist\Config as WishlistConfig;
 use Magento\Wishlist\Model\WishlistFactory;
 use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
+use Magento\Wishlist\Model\WishlistItemSellableCollectionProcessor;
 
 /**
  * Fetches the Wishlist data according to the GraphQL schema
@@ -38,18 +39,26 @@ class WishlistResolver implements ResolverInterface
     private $wishlistConfig;
 
     /**
+     * @var WishlistItemSellableCollectionProcessor
+     */
+    private WishlistItemSellableCollectionProcessor $sellableCollectionProcessor;
+
+    /**
      * @param WishlistResourceModel $wishlistResource
      * @param WishlistFactory $wishlistFactory
      * @param WishlistConfig $wishlistConfig
+     * @param WishlistItemSellableCollectionProcessor $sellableCollectionProcessor
      */
     public function __construct(
         WishlistResourceModel $wishlistResource,
         WishlistFactory $wishlistFactory,
-        WishlistConfig $wishlistConfig
+        WishlistConfig $wishlistConfig,
+        WishlistItemSellableCollectionProcessor $sellableCollectionProcessor
     ) {
         $this->wishlistResource = $wishlistResource;
         $this->wishlistFactory = $wishlistFactory;
         $this->wishlistConfig = $wishlistConfig;
+        $this->sellableCollectionProcessor = $sellableCollectionProcessor;
     }
 
     /**
@@ -79,6 +88,7 @@ class WishlistResolver implements ResolverInterface
         if (null === $wishlist->getId()) {
             return [];
         }
+        $this->sellableCollectionProcessor->execute($wishlist->getItemCollection());
 
         return [
             'sharing_code' => $wishlist->getSharingCode(),
