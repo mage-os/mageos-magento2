@@ -1518,7 +1518,6 @@ class ProductTestHelper extends Product
         return $this;
     }
 
-
     /**
      * Unset skip check required option flag for tests (no-op).
      *
