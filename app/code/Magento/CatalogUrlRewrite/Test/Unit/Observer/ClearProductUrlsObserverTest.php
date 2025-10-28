@@ -10,7 +10,7 @@ namespace Magento\CatalogUrlRewrite\Test\Unit\Observer;
 use Magento\CatalogImportExport\Model\Import\Product;
 use Magento\CatalogImportExport\Model\Import\Product\SkuStorage;
 use Magento\CatalogUrlRewrite\Observer\ClearProductUrlsObserver;
-use Magento\CatalogUrlRewrite\Test\Unit\Helper\EventTestHelper;
+use Magento\Framework\Event\Test\Unit\Helper\EventTestHelper;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;

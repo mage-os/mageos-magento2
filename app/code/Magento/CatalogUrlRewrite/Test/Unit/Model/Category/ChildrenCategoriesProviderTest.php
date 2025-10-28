@@ -10,7 +10,7 @@ namespace Magento\CatalogUrlRewrite\Test\Unit\Model\Category;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\ResourceModel\Collection\AbstractCollection;
 use Magento\CatalogUrlRewrite\Model\Category\ChildrenCategoriesProvider;
-use Magento\CatalogUrlRewrite\Test\Unit\Helper\AbstractCollectionTestHelper;
+use Magento\Catalog\Test\Unit\Helper\AbstractCollectionTestHelper;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;

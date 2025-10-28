@@ -13,7 +13,7 @@ use Magento\CatalogUrlRewrite\Model\Category\Plugin\Category\UpdateUrlPath;
 use Magento\CatalogUrlRewrite\Model\CategoryUrlPathGenerator;
 use Magento\CatalogUrlRewrite\Model\CategoryUrlRewriteGenerator;
 use Magento\CatalogUrlRewrite\Service\V1\StoreViewService;
-use Magento\CatalogUrlRewrite\Test\Unit\Helper\CategoryTestHelper;
+use Magento\Catalog\Test\Unit\Helper\CategoryTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\UrlRewrite\Model\UrlPersistInterface;
 use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;

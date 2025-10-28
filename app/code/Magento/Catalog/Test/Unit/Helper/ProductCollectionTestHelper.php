@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\CatalogUrlRewrite\Test\Unit\Helper;
+namespace Magento\Catalog\Test\Unit\Helper;
 
 use Magento\Catalog\Model\ResourceModel\Product\Collection;
 
@@ -63,3 +63,4 @@ class ProductCollectionTestHelper extends Collection
         // Mock implementation
     }
 }
+

@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\CatalogUrlRewrite\Test\Unit\Helper;
+namespace Magento\Store\Test\Unit\Helper;
 
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Store\Api\Data\GroupInterface;
@@ -158,3 +158,4 @@ class StoreManagerInterfaceTestHelper implements StoreManagerInterface
         // Mock implementation
     }
 }
+

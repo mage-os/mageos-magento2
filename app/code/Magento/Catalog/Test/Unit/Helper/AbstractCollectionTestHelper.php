@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\CatalogUrlRewrite\Test\Unit\Helper;
+namespace Magento\Catalog\Test\Unit\Helper;
 
 use Magento\Catalog\Model\ResourceModel\Collection\AbstractCollection;
 
@@ -49,3 +49,4 @@ class AbstractCollectionTestHelper extends AbstractCollection
         // Mock implementation
     }
 }
+

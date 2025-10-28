@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\CatalogUrlRewrite\Test\Unit\Helper;
+namespace Magento\Framework\Event\Test\Unit\Helper;
 
 use Magento\Framework\Event\Observer;
 
@@ -24,3 +24,4 @@ class ObserverTestHelper extends Observer
         return $this->getData('category');
     }
 }
+

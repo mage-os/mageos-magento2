@@ -1,41 +1,58 @@
 <?php
 /**
- * Copyright 2017 Adobe
+ * Copyright 2015 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Helper;
 
-use Magento\Catalog\Model\Category;
+use Magento\Catalog\Api\Data\CategoryInterface;
+use Magento\Framework\Api\CustomAttributesDataInterface;
 
 /**
- * Test helper for CategoryInterface
- *
- * This helper extends the concrete Category class to provide
- * test-specific functionality without dependency injection issues.
+ * Mock class for CategoryInterface with additional methods
  * 
  * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
-class CategoryInterfaceTestHelper extends Category
+class CategoryInterfaceTestHelper implements CategoryInterface, CustomAttributesDataInterface
 {
+    /**
+     * @var mixed
+     */
+    private $resource = null;
+
     /**
      * @var mixed
      */
     private $isAnchor = null;
 
     /**
-     * Constructor that skips parent initialization
-     */
-    public function __construct()
+     * Mock method for getResource
+     *
+     * @return mixed
+    */
+    public function getResource()
     {
-        // Skip parent constructor to avoid dependency injection issues
+        return $this->resource;
+    }
+
+    /**
+     * Set the resource
+     *
+     * @param mixed $resource
+     * @return $this
+     */
+    public function setResource($resource)
+    {
+        $this->resource = $resource;
+        return $this;
     }
 
     /**
      * Mock method for getIsAnchor
      *
-     * @return bool|null
+     * @return mixed
     */
     public function getIsAnchor()
     {
@@ -43,23 +60,139 @@ class CategoryInterfaceTestHelper extends Category
     }
 
     /**
-     * Set the isAnchor value
+     * Set is anchor
      *
-     * @param bool|null $value
+     * @param mixed $isAnchor
      * @return $this
      */
-    public function setIsAnchor($value)
+    public function setIsAnchor($isAnchor)
     {
-        $this->isAnchor = $value;
+        $this->isAnchor = $isAnchor;
         return $this;
     }
 
-    /**
-     * Required method from Category
-     */
-    protected function _construct(): void
+    // Required methods from CategoryInterface
+    public function getId(): ?int
     {
-        // Mock implementation
+        return null;
+    }
+    public function setId($id): CategoryInterface
+    {
+        return $this;
+    }
+    public function getParentId(): ?int
+    {
+        return null;
+    }
+    public function setParentId($parentId): CategoryInterface
+    {
+        return $this;
+    }
+    public function getName(): ?string
+    {
+        return null;
+    }
+    public function setName($name): CategoryInterface
+    {
+        return $this;
+    }
+    public function getIsActive(): ?int
+    {
+        return null;
+    }
+    public function setIsActive($isActive): CategoryInterface
+    {
+        return $this;
+    }
+    public function getPosition(): ?int
+    {
+        return null;
+    }
+    public function setPosition($position): CategoryInterface
+    {
+        return $this;
+    }
+    public function getLevel(): ?int
+    {
+        return null;
+    }
+    public function setLevel($level): CategoryInterface
+    {
+        return $this;
+    }
+    public function getPath(): ?string
+    {
+        return null;
+    }
+    public function setPath($path): CategoryInterface
+    {
+        return $this;
+    }
+    public function getAvailableSortBy(): ?array
+    {
+        return null;
+    }
+    public function setAvailableSortBy($availableSortBy): CategoryInterface
+    {
+        return $this;
+    }
+    public function getIncludeInMenu(): ?int
+    {
+        return null;
+    }
+    public function setIncludeInMenu($includeInMenu): CategoryInterface
+    {
+        return $this;
+    }
+    public function getChildren(): ?string
+    {
+        return null;
+    }
+    public function setChildren($children): CategoryInterface
+    {
+        return $this;
+    }
+    public function getCreatedAt(): ?string
+    {
+        return null;
+    }
+    public function setCreatedAt($createdAt): CategoryInterface
+    {
+        return $this;
+    }
+    public function getUpdatedAt(): ?string
+    {
+        return null;
+    }
+    public function setUpdatedAt($updatedAt): CategoryInterface
+    {
+        return $this;
+    }
+    public function getExtensionAttributes(): ?\Magento\Catalog\Api\Data\CategoryExtensionInterface
+    {
+        return null;
+    }
+    public function setExtensionAttributes(
+        \Magento\Catalog\Api\Data\CategoryExtensionInterface $extensionAttributes
+    ): CategoryInterface {
+        return $this;
+    }
+
+    // Required methods from CustomAttributesDataInterface
+    public function getCustomAttributes(): ?array
+    {
+        return null;
+    }
+    public function setCustomAttributes(array $customAttributes): CustomAttributesDataInterface
+    {
+        return $this;
+    }
+    public function getCustomAttribute($attributeCode): ?\Magento\Framework\Api\AttributeInterface
+    {
+        return null;
+    }
+    public function setCustomAttribute($attributeCode, $attributeValue): CustomAttributesDataInterface
+    {
+        return $this;
     }
 }
-

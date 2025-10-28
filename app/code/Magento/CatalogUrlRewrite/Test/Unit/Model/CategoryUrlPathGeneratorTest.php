@@ -12,7 +12,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Model\Category;
 use Magento\CatalogUrlRewrite\Model\CategoryUrlPathGenerator;
-use Magento\CatalogUrlRewrite\Test\Unit\Helper\CategoryTestHelper;
+use Magento\Catalog\Test\Unit\Helper\CategoryTestHelper;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\ScopeInterface;

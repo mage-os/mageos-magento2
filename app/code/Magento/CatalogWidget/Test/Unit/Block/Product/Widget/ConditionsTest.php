@@ -13,7 +13,7 @@ use Magento\CatalogWidget\Model\Rule;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Framework\Data\Form\Element\Fieldset;
-use Magento\Framework\Data\Form\Element\Test\Unit\Helper\AbstractElementTestHelper;
+use Magento\Framework\Test\Unit\Helper\AbstractElementTestHelper;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\ReadInterface;

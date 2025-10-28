@@ -13,7 +13,7 @@ use Magento\CatalogUrlRewrite\Model\Map\DatabaseMapPool;
 use Magento\CatalogUrlRewrite\Model\UrlRewriteBunchReplacer;
 use Magento\CatalogUrlRewrite\Observer\CategoryProcessUrlRewriteSavingObserver;
 use Magento\CatalogUrlRewrite\Observer\UrlRewriteHandler;
-use Magento\CatalogUrlRewrite\Test\Unit\Helper\CategoryTestHelper;
+use Magento\Catalog\Test\Unit\Helper\CategoryTestHelper;
 use Magento\Framework\App\Config\ScopeConfigInterface as ScopeConfigInterfaceAlias;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;

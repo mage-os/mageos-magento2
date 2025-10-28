@@ -10,31 +10,79 @@ namespace Magento\Catalog\Test\Unit\Helper;
 use Magento\Catalog\Model\Category;
 
 /**
- * TestHelper for Category with dynamic methods
+ * Mock class for Category with URL and product change methods
  */
 class CategoryTestHelper extends Category
 {
-    /** @var array */
-    private $changedProductIds = [];
-
-    public function __construct()
-    {
-        // Skip parent constructor to avoid complex dependencies
-    }
-
+    /**
+     * Mock method for getChangedProductIds
+     *
+     * @return array
+     */
     public function getChangedProductIds()
     {
-        return $this->changedProductIds;
+        return $this->getData('changed_product_ids') ?: [];
     }
 
-    public function setChangedProductIds($value)
+    /**
+     * Mock method for getUrlPath
+     *
+     * @return string|null
+     */
+    public function getUrlPath()
     {
-        $this->changedProductIds = $value;
-        return $this;
+        return $this->getData('url_path');
     }
 
-    public function __wakeUp()
+    /**
+     * Mock method for setUrlPath
+     *
+     * @param string $urlPath
+     * @return $this
+     */
+    public function setUrlPath($urlPath)
     {
-        // Implementation for __wakeUp method
+        return $this->setData('url_path', $urlPath);
+    }
+
+    /**
+     * Mock method for unsUrlPath (unset url_path)
+     *
+     * @return $this
+     */
+    public function unsUrlPath()
+    {
+        return $this->unsetData('url_path');
+    }
+
+    /**
+     * Mock method for getUrlKey
+     *
+     * @return string|null
+     */
+    public function getUrlKey()
+    {
+        return $this->getData('url_key');
+    }
+
+    /**
+     * Mock method for setUrlKey
+     *
+     * @param string $urlKey
+     * @return $this
+     */
+    public function setUrlKey($urlKey)
+    {
+        return $this->setData('url_key', $urlKey);
+    }
+
+    /**
+     * Initialize resources
+     *
+     * @return void
+     */
+    protected function _construct()
+    {
+        // Mock implementation - no actual resource initialization needed
     }
 }

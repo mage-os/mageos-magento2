@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\CatalogUrlRewrite\Test\Unit\Helper;
+namespace Magento\Framework\Event\Test\Unit\Helper;
 
 use Magento\Framework\Event;
 
@@ -54,3 +54,4 @@ class EventTestHelper extends Event
         return $this->getData('product');
     }
 }
+

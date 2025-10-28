@@ -12,7 +12,7 @@ use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\CatalogUrlRewrite\Model\Map\DataCategoryHashMap;
 use Magento\CatalogUrlRewrite\Model\Map\DataProductHashMap;
 use Magento\CatalogUrlRewrite\Model\Map\HashMapPool;
-use Magento\CatalogUrlRewrite\Test\Unit\Helper\ProductCollectionTestHelper;
+use Magento\Catalog\Test\Unit\Helper\ProductCollectionTestHelper;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;

@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\CatalogUrlRewrite\Test\Unit\Helper;
+namespace Magento\UrlRewrite\Test\Unit\Helper;
 
 use Magento\UrlRewrite\Model\UrlFinderInterface;
 use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
@@ -39,3 +39,4 @@ class UrlFinderInterfaceTestHelper implements UrlFinderInterface
         return [];
     }
 }
+

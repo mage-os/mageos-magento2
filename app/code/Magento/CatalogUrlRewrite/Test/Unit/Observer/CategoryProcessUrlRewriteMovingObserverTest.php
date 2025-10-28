@@ -17,7 +17,7 @@ use Magento\CatalogUrlRewrite\Model\Map\DataProductUrlRewriteDatabaseMap;
 use Magento\CatalogUrlRewrite\Model\UrlRewriteBunchReplacer;
 use Magento\CatalogUrlRewrite\Observer\CategoryProcessUrlRewriteMovingObserver;
 use Magento\CatalogUrlRewrite\Observer\UrlRewriteHandler;
-use Magento\CatalogUrlRewrite\Test\Unit\Helper\EventTestHelper;
+use Magento\Framework\Event\Test\Unit\Helper\EventTestHelper;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;

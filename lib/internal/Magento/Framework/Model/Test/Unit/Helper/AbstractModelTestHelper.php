@@ -21,6 +21,16 @@ class AbstractModelTestHelper extends AbstractModel
     private $fileMock;
 
     /**
+     * @var mixed
+     */
+    private $storeIds = null;
+
+    /**
+     * @var mixed
+     */
+    private $websiteId = null;
+
+    /**
      * Constructor - skip parent constructor to avoid dependencies
      */
     public function __construct()
@@ -60,5 +70,49 @@ class AbstractModelTestHelper extends AbstractModel
     public function getFileMock()
     {
         return $this->fileMock;
+    }
+
+    /**
+     * Mock method for getStoreIds
+     *
+     * @return mixed
+     */
+    public function getStoreIds()
+    {
+        return $this->storeIds;
+    }
+
+    /**
+     * Set the store IDs
+     *
+     * @param mixed $storeIds
+     * @return $this
+     */
+    public function setStoreIds($storeIds)
+    {
+        $this->storeIds = $storeIds;
+        return $this;
+    }
+
+    /**
+     * Mock method for getWebsiteId
+     *
+     * @return mixed
+     */
+    public function getWebsiteId()
+    {
+        return $this->websiteId;
+    }
+
+    /**
+     * Set the website ID
+     *
+     * @param mixed $websiteId
+     * @return $this
+     */
+    public function setWebsiteId($websiteId)
+    {
+        $this->websiteId = $websiteId;
+        return $this;
     }
 }

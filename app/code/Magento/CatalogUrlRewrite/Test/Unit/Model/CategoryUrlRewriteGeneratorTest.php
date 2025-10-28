@@ -14,7 +14,7 @@ use Magento\CatalogUrlRewrite\Model\Category\ChildrenUrlRewriteGenerator;
 use Magento\CatalogUrlRewrite\Model\Category\CurrentUrlRewritesRegenerator;
 use Magento\CatalogUrlRewrite\Model\CategoryUrlRewriteGenerator;
 use Magento\CatalogUrlRewrite\Service\V1\StoreViewService;
-use Magento\CatalogUrlRewrite\Test\Unit\Helper\CategoryTestHelper;
+use Magento\Catalog\Test\Unit\Helper\CategoryTestHelper;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\UrlRewrite\Model\MergeDataProvider;
