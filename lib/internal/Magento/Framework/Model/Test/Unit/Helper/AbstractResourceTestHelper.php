@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Framework\Model\Test\Unit\Helper;
 
+use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
 
 /**
@@ -59,10 +60,10 @@ class AbstractResourceTestHelper extends AbstractResource
     /**
      * Save method
      *
-     * @param \Magento\Framework\Model\AbstractModel $object
+     * @param AbstractModel $object
      * @return $this
      */
-    public function save(\Magento\Framework\Model\AbstractModel $object)
+    public function save(AbstractModel $object)
     {
         return $this;
     }
@@ -70,10 +71,10 @@ class AbstractResourceTestHelper extends AbstractResource
     /**
      * Delete method
      *
-     * @param \Magento\Framework\Model\AbstractModel $object
+     * @param AbstractModel $object
      * @return $this
      */
-    public function delete(\Magento\Framework\Model\AbstractModel $object)
+    public function delete(AbstractModel $object)
     {
         return $this;
     }
@@ -81,12 +82,12 @@ class AbstractResourceTestHelper extends AbstractResource
     /**
      * Load method
      *
-     * @param \Magento\Framework\Model\AbstractModel $object
+     * @param AbstractModel $object
      * @param mixed $value
      * @param string|null $field
      * @return $this
      */
-    public function load(\Magento\Framework\Model\AbstractModel $object, $value, $field = null)
+    public function load(AbstractModel $object, $value, $field = null)
     {
         return $this;
     }

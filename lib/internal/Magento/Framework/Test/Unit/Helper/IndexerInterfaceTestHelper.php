@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Framework\Test\Unit\Helper;
 
 use Magento\Framework\Indexer\IndexerInterface;
+use Magento\Framework\Indexer\StateInterface;
 
 /**
  * Mock class for IndexerInterface with additional methods
@@ -60,7 +61,7 @@ class IndexerInterfaceTestHelper implements IndexerInterface
     /**
      * Mock method for getState
      *
-     * @return \Magento\Framework\Indexer\StateInterface|null
+     * @return StateInterface|null
     */
     public function getState()
     {
@@ -70,7 +71,7 @@ class IndexerInterfaceTestHelper implements IndexerInterface
     /**
      * Set the state value
      *
-     * @param \Magento\Framework\Indexer\StateInterface|null $value
+     * @param StateInterface|null $value
      * @return $this
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */

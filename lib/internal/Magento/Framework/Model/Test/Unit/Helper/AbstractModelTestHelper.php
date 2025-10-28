@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Framework\Model\Test\Unit\Helper;
 
 use Magento\Framework\Model\AbstractModel;
+use Magento\MediaStorage\Model\File\Storage\Database;
 
 /**
  * Test helper for AbstractModel class
@@ -15,7 +16,7 @@ use Magento\Framework\Model\AbstractModel;
 class AbstractModelTestHelper extends AbstractModel
 {
     /**
-     * @var \Magento\MediaStorage\Model\File\Storage\Database
+     * @var Database
      */
     private $fileMock;
 
@@ -31,7 +32,7 @@ class AbstractModelTestHelper extends AbstractModel
      * Load by filename
      *
      * @param string $filename
-     * @return \Magento\MediaStorage\Model\File\Storage\Database
+     * @return Database
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function loadByFileName($filename)
@@ -42,7 +43,7 @@ class AbstractModelTestHelper extends AbstractModel
     /**
      * Set file mock
      *
-     * @param \Magento\MediaStorage\Model\File\Storage\Database $fileMock
+     * @param Database $fileMock
      * @return $this
      */
     public function setFileMock($fileMock)
@@ -54,7 +55,7 @@ class AbstractModelTestHelper extends AbstractModel
     /**
      * Get file mock
      *
-     * @return \Magento\MediaStorage\Model\File\Storage\Database
+     * @return Database
      */
     public function getFileMock()
     {

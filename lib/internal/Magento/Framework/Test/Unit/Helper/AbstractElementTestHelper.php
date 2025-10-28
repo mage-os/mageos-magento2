@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Framework\Test\Unit\Helper;
 
 use Magento\Framework\Data\Form\Element\AbstractElement;
+use Magento\Framework\Data\Form\Element\Fieldset;
 
 /**
  * Test helper for AbstractElement that provides getContainer() functionality
@@ -15,7 +16,7 @@ use Magento\Framework\Data\Form\Element\AbstractElement;
 class AbstractElementTestHelper extends AbstractElement
 {
     /**
-     * @var \Magento\Framework\Data\Form\Element\Fieldset|null
+     * @var Fieldset|null
      */
     private $container;
 
@@ -30,7 +31,7 @@ class AbstractElementTestHelper extends AbstractElement
     /**
      * Get container element
      *
-     * @return \Magento\Framework\Data\Form\Element\Fieldset|null
+     * @return Fieldset|null
      */
     public function getContainer()
     {
@@ -40,7 +41,7 @@ class AbstractElementTestHelper extends AbstractElement
     /**
      * Set container element
      *
-     * @param \Magento\Framework\Data\Form\Element\Fieldset $container
+     * @param Fieldset $container
      * @return $this
      */
     public function setContainer($container)

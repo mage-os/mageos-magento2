@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Framework\Test\Unit\Helper;
 
+use Magento\Framework\View\Model\Layout\Merge;
 use Magento\Framework\View\Result\Layout;
 
 /**
@@ -17,7 +18,7 @@ class LayoutTestHelper extends Layout
     /**
      * Mock method for getUpdate
      *
-     * @return \Magento\Framework\View\Model\Layout\Merge
+     * @return Merge
      */
     public function getUpdate()
     {
@@ -27,7 +28,7 @@ class LayoutTestHelper extends Layout
     /**
      * Set the update object
      *
-     * @param \Magento\Framework\View\Model\Layout\Merge $update
+     * @param Merge $update
      * @return $this
      */
     public function setUpdate($update)
