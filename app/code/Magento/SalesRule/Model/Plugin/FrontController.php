@@ -20,7 +20,7 @@ class FrontController
      *
      * @param \Magento\Framework\App\FrontControllerInterface $subject
      * @param \Magento\Framework\App\RequestInterface $request
-     * @return $request
+     * @return void
      */
     public function beforeDispatch(
         \Magento\Framework\App\FrontControllerInterface $subject,
@@ -31,7 +31,5 @@ class FrontController
 
         // Set flag in TotalCollectionState
         $this->requestTypeRegistry->setIsGetRequestOrQuery($isReadOnly);
-
-        return $request;
     }
 }
