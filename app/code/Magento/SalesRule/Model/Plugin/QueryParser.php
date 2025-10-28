@@ -3,6 +3,8 @@
  * Copyright 2025 Adobe
  * All Rights Reserved.
  */
+declare(strict_types=1);
+
 namespace Magento\SalesRule\Model\Plugin;
 
 class QueryParser
@@ -17,7 +19,7 @@ class QueryParser
     }
 
     /**
-     * Set QueryType to CartItemDataForSaleRule
+     * Set QueryType to RequestTypeRegistry
      *
      * @param \Magento\Framework\GraphQl\Query\QueryParser $subject
      * @param \GraphQL\Language\AST\DocumentNode $documentNode

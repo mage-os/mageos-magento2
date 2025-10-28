@@ -3,6 +3,8 @@
  * Copyright 2025 Adobe
  * All Rights Reserved.
  */
+declare(strict_types=1);
+
 namespace Magento\SalesRule\Model\Plugin;
 
 class FrontController
@@ -21,6 +23,7 @@ class FrontController
      * @param \Magento\Framework\App\FrontControllerInterface $subject
      * @param \Magento\Framework\App\RequestInterface $request
      * @return void
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function beforeDispatch(
         \Magento\Framework\App\FrontControllerInterface $subject,
@@ -29,7 +32,6 @@ class FrontController
         $method = strtoupper($request->getMethod());
         $isReadOnly = ($method === 'GET');
 
-        // Set flag in TotalCollectionState
         $this->requestTypeRegistry->setIsGetRequestOrQuery($isReadOnly);
     }
 }
