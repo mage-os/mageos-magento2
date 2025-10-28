@@ -639,7 +639,7 @@ class CreateTest extends TestCase
             ]
         ];
     }
-    
+
     public function testGetQuoteAssignsCustomerWhenCustomerIdPresent(): void
     {
         $quote = $this->getMockBuilder(Quote::class)
