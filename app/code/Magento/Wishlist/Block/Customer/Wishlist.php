@@ -10,9 +10,7 @@ namespace Magento\Wishlist\Block\Customer;
 use Magento\Catalog\Block\Product\Context;
 use Magento\Catalog\Helper\Product\ConfigurationPool;
 use Magento\Customer\Helper\Session\CurrentCustomer;
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Data\Helper\PostHelper;
-use Magento\Wishlist\Model\WishlistItemSellableCollectionProcessor;
 
 /**
  * Wishlist block customer items.
@@ -51,27 +49,20 @@ class Wishlist extends \Magento\Wishlist\Block\AbstractBlock
     protected $postDataHelper;
 
     /**
-     * @var WishlistItemSellableCollectionProcessor
-     */
-    private WishlistItemSellableCollectionProcessor $sellableCollectionProcessor;
-
-    /**
      * @param Context $context
      * @param \Magento\Framework\App\Http\Context $httpContext
      * @param ConfigurationPool $helperPool
      * @param CurrentCustomer $currentCustomer
      * @param PostHelper $postDataHelper
-     * @param WishlistItemSellableCollectionProcessor|null $sellableCollectionProcessor
      * @param array $data
      */
     public function __construct(
-        \Magento\Catalog\Block\Product\Context $context,
-        \Magento\Framework\App\Http\Context $httpContext,
+        \Magento\Catalog\Block\Product\Context            $context,
+        \Magento\Framework\App\Http\Context               $httpContext,
         \Magento\Catalog\Helper\Product\ConfigurationPool $helperPool,
-        \Magento\Customer\Helper\Session\CurrentCustomer $currentCustomer,
-        \Magento\Framework\Data\Helper\PostHelper $postDataHelper,
-        ?WishlistItemSellableCollectionProcessor $sellableCollectionProcessor = null,
-        array $data = []
+        \Magento\Customer\Helper\Session\CurrentCustomer  $currentCustomer,
+        \Magento\Framework\Data\Helper\PostHelper         $postDataHelper,
+        array                                             $data = []
     ) {
         parent::__construct(
             $context,
@@ -81,8 +72,6 @@ class Wishlist extends \Magento\Wishlist\Block\AbstractBlock
         $this->_helperPool = $helperPool;
         $this->currentCustomer = $currentCustomer;
         $this->postDataHelper = $postDataHelper;
-        $this->sellableCollectionProcessor = $sellableCollectionProcessor ??
-            ObjectManager::getInstance()->get(WishlistItemSellableCollectionProcessor::class);
     }
 
     /**
@@ -95,7 +84,6 @@ class Wishlist extends \Magento\Wishlist\Block\AbstractBlock
     protected function _prepareCollection($collection)
     {
         $collection->setInStockFilter()->setOrder('added_at', 'ASC');
-        $this->sellableCollectionProcessor->execute($collection);
 
         return $this;
     }

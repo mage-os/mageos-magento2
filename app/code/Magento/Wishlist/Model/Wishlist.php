@@ -150,6 +150,11 @@ class Wishlist extends AbstractModel implements IdentityInterface
     private $stockConfiguration;
 
     /**
+     * @var WishlistItemPermissionsCollectionProcessor
+     */
+    private WishlistItemPermissionsCollectionProcessor $permissionCollectionProcessor;
+
+    /**
      * Constructor
      *
      * @param Context $context
@@ -172,6 +177,7 @@ class Wishlist extends AbstractModel implements IdentityInterface
      * @param StockRegistryInterface|null $stockRegistry
      * @param ScopeConfigInterface|null $scopeConfig
      * @param StockConfigurationInterface|null $stockConfiguration
+     * @param WishlistItemPermissionsCollectionProcessor|null $permissionCollectionProcessor
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
@@ -195,7 +201,8 @@ class Wishlist extends AbstractModel implements IdentityInterface
         ?Json $serializer = null,
         ?StockRegistryInterface $stockRegistry = null,
         ?ScopeConfigInterface $scopeConfig = null,
-        ?StockConfigurationInterface $stockConfiguration = null
+        ?StockConfigurationInterface $stockConfiguration = null,
+        ?WishlistItemPermissionsCollectionProcessor $permissionCollectionProcessor = null
     ) {
         $this->_useCurrentWebsite = $useCurrentWebsite;
         $this->_catalogProduct = $catalogProduct;
@@ -212,6 +219,8 @@ class Wishlist extends AbstractModel implements IdentityInterface
         $this->productRepository = $productRepository;
         $this->stockConfiguration = $stockConfiguration
             ?: ObjectManager::getInstance()->get(StockConfigurationInterface::class);
+        $this->permissionCollectionProcessor = $permissionCollectionProcessor ?:
+            ObjectManager::getInstance()->get(WishlistItemPermissionsCollectionProcessor::class);
     }
 
     /**
@@ -369,7 +378,7 @@ class Wishlist extends AbstractModel implements IdentityInterface
      *
      * @return \Magento\Wishlist\Model\ResourceModel\Item\Collection
      *
-     * @throws NoSuchEntityException
+     * @throws NoSuchEntityException|Exception
      */
     public function getItemCollection()
     {
@@ -379,6 +388,7 @@ class Wishlist extends AbstractModel implements IdentityInterface
             )->addStoreFilter(
                 $this->getSharedStoreIds()
             )->setVisibilityFilter($this->_useCurrentWebsite);
+            $this->permissionCollectionProcessor->execute($this->_itemCollection);
         }
 
         return $this->_itemCollection;

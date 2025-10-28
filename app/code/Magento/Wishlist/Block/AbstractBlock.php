@@ -8,8 +8,10 @@ namespace Magento\Wishlist\Block;
 
 use Magento\Catalog\Helper\Image;
 use Magento\Catalog\Model\Product\Image\UrlBuilder;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\View\ConfigInterface;
 use Magento\Framework\App\ObjectManager;
+use Magento\Wishlist\Model\WishlistItemPermissionsCollectionProcessor;
 
 /**
  * Wishlist Product Items abstract Block
@@ -46,6 +48,11 @@ abstract class AbstractBlock extends \Magento\Catalog\Block\Product\AbstractProd
     private $imageUrlBuilder;
 
     /**
+     * @var WishlistItemPermissionsCollectionProcessor
+     */
+    private WishlistItemPermissionsCollectionProcessor $permissionCollectionProcessor;
+
+    /**
      * @param \Magento\Catalog\Block\Product\Context $context
      * @param \Magento\Framework\App\Http\Context $httpContext
      * @param array $data
@@ -57,7 +64,8 @@ abstract class AbstractBlock extends \Magento\Catalog\Block\Product\AbstractProd
         \Magento\Framework\App\Http\Context $httpContext,
         array $data = [],
         ?ConfigInterface $config = null,
-        ?UrlBuilder $urlBuilder = null
+        ?UrlBuilder $urlBuilder = null,
+        ?WishlistItemPermissionsCollectionProcessor $permissionCollectionProcessor = null
     ) {
         $this->httpContext = $httpContext;
         parent::__construct(
@@ -66,6 +74,8 @@ abstract class AbstractBlock extends \Magento\Catalog\Block\Product\AbstractProd
         );
         $this->viewConfig = $config ?? ObjectManager::getInstance()->get(ConfigInterface::class);
         $this->imageUrlBuilder = $urlBuilder ?? ObjectManager::getInstance()->get(UrlBuilder::class);
+        $this->permissionCollectionProcessor = $permissionCollectionProcessor ??
+            ObjectManager::getInstance()->get(WishlistItemPermissionsCollectionProcessor::class);
     }
 
     /**
@@ -104,10 +114,12 @@ abstract class AbstractBlock extends \Magento\Catalog\Block\Product\AbstractProd
      * Create wishlist item collection
      *
      * @return \Magento\Wishlist\Model\ResourceModel\Item\Collection
+     * @throws NoSuchEntityException
      */
     protected function _createWishlistItemCollection()
     {
-        return $this->_getWishlist()->getItemCollection();
+        $itemCollection = $this->_getWishlist()->getItemCollection();
+        return $this->permissionCollectionProcessor->execute($itemCollection);
     }
 
     /**

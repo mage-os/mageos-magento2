@@ -8,21 +8,21 @@ declare(strict_types=1);
 namespace Magento\Wishlist\Model;
 
 use Magento\Catalog\Api\ProductRepositoryInterface;
-use Magento\Catalog\Model\Product\Pricing\Renderer\SalableResolver;
+use Magento\CatalogPermissions\Observer\ApplyPermissionsOnProduct;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Wishlist\Model\ResourceModel\Item\Collection;
 
-class WishlistItemSellableCollectionProcessor
+class WishlistItemPermissionsCollectionProcessor
 {
     /**
      * @param ProductRepositoryInterface $productRepository
-     * @param SalableResolver $salableResolver
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
+     * @param ApplyPermissionsOnProduct $permissionApplier
      */
     public function __construct(
         private readonly ProductRepositoryInterface $productRepository,
-        private readonly SalableResolver $salableResolver,
-        private readonly SearchCriteriaBuilder $searchCriteriaBuilder
+        private readonly SearchCriteriaBuilder $searchCriteriaBuilder,
+        private readonly ApplyPermissionsOnProduct $permissionApplier
     ) {
     }
 
@@ -47,9 +47,7 @@ class WishlistItemSellableCollectionProcessor
         $validItems = [];
         $collection->removeAllItems();
         foreach ($items as $item) {
-            if (!isset($products[$item->getProductId()]) ||
-                !$this->salableResolver->isSalable($products[$item->getProductId()])
-            ) {
+            if (!isset($products[$item->getProductId()]) || $products[$item->getProductId()]->getIsHidden()) {
                 continue;
             }
             $validItems[] = $item->getProductId();

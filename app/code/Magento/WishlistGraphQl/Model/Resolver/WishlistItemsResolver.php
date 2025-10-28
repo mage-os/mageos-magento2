@@ -17,7 +17,7 @@ use Magento\Wishlist\Model\ResourceModel\Item\Collection as WishlistItemCollecti
 use Magento\Wishlist\Model\ResourceModel\Item\CollectionFactory as WishlistItemCollectionFactory;
 use Magento\Wishlist\Model\Item;
 use Magento\Wishlist\Model\Wishlist;
-use Magento\Wishlist\Model\WishlistItemSellableCollectionProcessor;
+use Magento\Wishlist\Model\WishlistItemPermissionsCollectionProcessor;
 
 /**
  * Fetches the Wishlist Items data according to the GraphQL schema
@@ -35,23 +35,23 @@ class WishlistItemsResolver implements ResolverInterface
     private StoreManagerInterface $storeManager;
 
     /**
-     * @var WishlistItemSellableCollectionProcessor
+     * @var WishlistItemPermissionsCollectionProcessor
      */
-    private WishlistItemSellableCollectionProcessor $sellableCollectionProcessor;
+    private WishlistItemPermissionsCollectionProcessor $permissionCollectionProcessor;
 
     /**
      * @param WishlistItemCollectionFactory $wishlistItemCollectionFactory
      * @param StoreManagerInterface $storeManager
-     * @param WishlistItemSellableCollectionProcessor $sellableCollectionProcessor
+     * @param WishlistItemPermissionsCollectionProcessor $permissionCollectionProcessor
      */
     public function __construct(
         WishlistItemCollectionFactory $wishlistItemCollectionFactory,
         StoreManagerInterface $storeManager,
-        WishlistItemSellableCollectionProcessor $sellableCollectionProcessor
+        WishlistItemPermissionsCollectionProcessor $permissionCollectionProcessor
     ) {
         $this->wishlistItemCollectionFactory = $wishlistItemCollectionFactory;
         $this->storeManager = $storeManager;
-        $this->sellableCollectionProcessor = $sellableCollectionProcessor;
+        $this->permissionCollectionProcessor = $permissionCollectionProcessor;
     }
 
     /**
@@ -90,6 +90,7 @@ class WishlistItemsResolver implements ResolverInterface
      *
      * @param Wishlist $wishlist
      * @return Item[]
+     * @throws \Exception
      */
     private function getWishListItems(Wishlist $wishlist): array
     {
@@ -101,7 +102,7 @@ class WishlistItemsResolver implements ResolverInterface
                 return $store->getId();
             }, $this->storeManager->getStores()))
             ->setVisibilityFilter();
-        $this->sellableCollectionProcessor->execute($wishlistItemCollection);
+        $this->permissionCollectionProcessor->execute($wishlistItemCollection);
         return $wishlistItemCollection->getItems();
     }
 }
