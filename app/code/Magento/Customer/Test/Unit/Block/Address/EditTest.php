@@ -14,6 +14,7 @@ use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Customer\Block\Address\Edit;
 use Magento\Customer\Helper\Session\CurrentCustomer;
 use Magento\Customer\Model\Session;
+use Magento\Customer\Test\Unit\Helper\SessionTestHelper;
 use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Exception\LocalizedException;
@@ -82,34 +83,22 @@ class EditTest extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
 
-        $this->requestMock = $this->getMockBuilder(RequestInterface::class)
-            ->getMock();
+        $this->requestMock = $this->createMock(RequestInterface::class);
 
-        $this->addressRepositoryMock = $this->getMockBuilder(AddressRepositoryInterface::class)
-            ->getMock();
+        $this->addressRepositoryMock = $this->createMock(AddressRepositoryInterface::class);
 
-        $this->customerSessionMock = $this->getMockBuilder(Session::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getCustomerId'])
-            ->addMethods(['getAddressFormData'])
-            ->getMock();
+        $this->customerSessionMock = new SessionTestHelper();
 
-        $this->pageConfigMock = $this->getMockBuilder(Config::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->pageConfigMock = $this->createMock(Config::class);
 
-        $this->dataObjectHelperMock = $this->getMockBuilder(DataObjectHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->dataObjectHelperMock = $this->createMock(DataObjectHelper::class);
 
-        $this->addressDataFactoryMock = $this->getMockBuilder(AddressInterfaceFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->addressDataFactoryMock = $this->createPartialMock(
+            AddressInterfaceFactory::class,
+            ['create']
+        );
 
-        $this->currentCustomerMock = $this->getMockBuilder(CurrentCustomer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->currentCustomerMock = $this->createMock(CurrentCustomer::class);
 
         $this->model = $this->objectManager->getObject(
             Edit::class,
@@ -163,9 +152,7 @@ class EditTest extends TestCase
             ->method('getId')
             ->willReturn($addressId);
 
-        $pageTitleMock = $this->getMockBuilder(Title::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $pageTitleMock = $this->createMock(Title::class);
         $this->pageConfigMock->expects($this->once())
             ->method('getTitle')
             ->willReturn($pageTitleMock);
@@ -175,13 +162,8 @@ class EditTest extends TestCase
             ->with($title)
             ->willReturnSelf();
 
-        $this->customerSessionMock
-            ->method('getCustomerId')
-            ->willReturn($customerId);
-        $this->customerSessionMock
-            ->method('getAddressFormData')
-            ->with(true)
-            ->willReturn($postedData);
+        $this->customerSessionMock->setCustomerId($customerId);
+        $this->customerSessionMock->setAddressFormData($postedData);
 
         $this->dataObjectHelperMock->expects($this->once())
             ->method('populateWithArray')
@@ -211,16 +193,14 @@ class EditTest extends TestCase
         $customerSuffix = 'suffix';
         $title = __('Add New Address');
 
-        $layoutMock = $this->getMockBuilder(LayoutInterface::class)
-            ->getMock();
+        $layoutMock = $this->createMock(LayoutInterface::class);
 
         $this->requestMock->expects($this->once())
             ->method('getParam')
             ->with('id', null)
             ->willReturn($addressId);
 
-        $addressMock = $this->getMockBuilder(AddressInterface::class)
-            ->getMock();
+        $addressMock = $this->createMock(AddressInterface::class);
         $this->addressRepositoryMock->expects($this->once())
             ->method('getById')
             ->with($addressId)
@@ -230,18 +210,14 @@ class EditTest extends TestCase
             ->method('getCustomerId')
             ->willReturn($customerId);
 
-        $this->customerSessionMock
-            ->method('getCustomerId')
-            ->willReturn($customerId + 1);
+        $this->customerSessionMock->setCustomerId($customerId + 1);
 
-        $newAddressMock = $this->getMockBuilder(AddressInterface::class)
-            ->getMock();
+        $newAddressMock = $this->createMock(AddressInterface::class);
         $this->addressDataFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($newAddressMock);
 
-        $customerMock = $this->getMockBuilder(CustomerInterface::class)
-            ->getMock();
+        $customerMock = $this->createMock(CustomerInterface::class);
         $this->currentCustomerMock->expects($this->once())
             ->method('getCustomer')
             ->willReturn($customerMock);
@@ -287,9 +263,7 @@ class EditTest extends TestCase
             ->method('getId')
             ->willReturn(null);
 
-        $pageTitleMock = $this->getMockBuilder(Title::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $pageTitleMock = $this->createMock(Title::class);
         $this->pageConfigMock->expects($this->once())
             ->method('getTitle')
             ->willReturn($pageTitleMock);
@@ -315,22 +289,19 @@ class EditTest extends TestCase
         $customerSuffix = 'suffix';
         $title = 'title';
 
-        $layoutMock = $this->getMockBuilder(LayoutInterface::class)
-            ->getMock();
+        $layoutMock = $this->createMock(LayoutInterface::class);
 
         $this->requestMock->expects($this->once())
             ->method('getParam')
             ->with('id', null)
             ->willReturn('');
 
-        $newAddressMock = $this->getMockBuilder(AddressInterface::class)
-            ->getMock();
+        $newAddressMock = $this->createMock(AddressInterface::class);
         $this->addressDataFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($newAddressMock);
 
-        $customerMock = $this->getMockBuilder(CustomerInterface::class)
-            ->getMock();
+        $customerMock = $this->createMock(CustomerInterface::class);
         $this->currentCustomerMock->expects($this->once())
             ->method('getCustomer')
             ->willReturn($customerMock);
@@ -403,8 +374,7 @@ class EditTest extends TestCase
         $customerSuffix = 'suffix';
         $title = 'title';
 
-        $layoutMock = $this->getMockBuilder(LayoutInterface::class)
-            ->getMock();
+        $layoutMock = $this->createMock(LayoutInterface::class);
 
         $this->requestMock->expects($this->once())
             ->method('getParam')
@@ -418,14 +388,12 @@ class EditTest extends TestCase
                 NoSuchEntityException::singleField('addressId', $addressId)
             );
 
-        $newAddressMock = $this->getMockBuilder(AddressInterface::class)
-            ->getMock();
+        $newAddressMock = $this->createMock(AddressInterface::class);
         $this->addressDataFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($newAddressMock);
 
-        $customerMock = $this->getMockBuilder(CustomerInterface::class)
-            ->getMock();
+        $customerMock = $this->createMock(CustomerInterface::class);
         $this->currentCustomerMock->expects($this->once())
             ->method('getCustomer')
             ->willReturn($customerMock);

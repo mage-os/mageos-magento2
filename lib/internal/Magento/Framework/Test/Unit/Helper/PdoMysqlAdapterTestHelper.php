@@ -101,4 +101,3 @@ class PdoMysqlAdapterTestHelper extends Mysql
         return $this;
     }
 }
-

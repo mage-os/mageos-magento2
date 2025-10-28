@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Customer\Test\Unit\Block\Adminhtml\Edit\Tab\View;
 
 use Magento\Backend\Model\Session;
+use Magento\Backend\Test\Unit\Helper\SessionTestHelper;
 use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Customer\Api\Data\CustomerInterfaceFactory;
 use Magento\Customer\Block\Adminhtml\Edit\Tab\View\PersonalInfo;
@@ -15,14 +16,17 @@ use Magento\Customer\Model\Customer;
 use Magento\Customer\Model\CustomerRegistry;
 use Magento\Customer\Model\Log;
 use Magento\Customer\Model\Logger;
+use Magento\Customer\Test\Unit\Helper\LogTestHelper;
 use Magento\Framework\App\Config;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Phrase;
 use Magento\Framework\Stdlib\DateTime;
 use Magento\Framework\Stdlib\DateTime\Timezone;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
+use Magento\Framework\Test\Unit\Helper\DateTimeTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\ScopeInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -79,7 +83,7 @@ class PersonalInfoTest extends TestCase
      */
     protected function setUp(): void
     {
-        $customer = $this->getMockForAbstractClass(CustomerInterface::class);
+        $customer = $this->createMock(CustomerInterface::class);
         $customer->expects($this->any())->method('getId')->willReturn(1);
         $customer->expects($this->any())->method('getStoreId')->willReturn(1);
 
@@ -89,27 +93,16 @@ class PersonalInfoTest extends TestCase
         );
         $customerDataFactory->expects($this->any())->method('create')->willReturn($customer);
 
-        $backendSession = $this->getMockBuilder(Session::class)
-            ->addMethods(['getCustomerData'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $backendSession->expects($this->any())->method('getCustomerData')->willReturn(['account' => []]);
+        $backendSession = new SessionTestHelper();
+        $backendSession->setCustomerData(['account' => []]);
 
-        $this->customerLog = $this->getMockBuilder(Log::class)
-            ->addMethods(['loadByCustomer'])
-            ->onlyMethods(['getLastLoginAt', 'getLastVisitAt', 'getLastLogoutAt'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->customerLog->expects($this->any())->method('loadByCustomer')->willReturnSelf();
+        $this->customerLog = new LogTestHelper();
 
         $customerLogger = $this->createPartialMock(Logger::class, ['get']);
         $customerLogger->expects($this->any())->method('get')->willReturn($this->customerLog);
 
-        $dateTime = $this->getMockBuilder(DateTime::class)
-            ->addMethods(['now'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $dateTime->expects($this->any())->method('now')->willReturn('2015-03-04 12:00:00');
+        $dateTime = new DateTimeTestHelper();
+        $dateTime->setNow('2015-03-04 12:00:00');
 
         $this->localeDate = $this->createPartialMock(
             Timezone::class,
@@ -128,6 +121,7 @@ class PersonalInfoTest extends TestCase
         $this->customerModel = $this->createPartialMock(Customer::class, ['isCustomerLocked']);
 
         $objectManagerHelper = new ObjectManager($this);
+        $objectManagerHelper->prepareObjectManager();
 
         $this->block = $objectManagerHelper->getObject(
             PersonalInfo::class,
@@ -166,8 +160,8 @@ class PersonalInfoTest extends TestCase
      * @param string|null $lastVisitAt
      * @param string|null $lastLogoutAt
      * @return void
-     * @dataProvider getCurrentStatusDataProvider
      */
+    #[DataProvider('getCurrentStatusDataProvider')]
     public function testGetCurrentStatus($status, $lastLoginAt, $lastVisitAt, $lastLogoutAt)
     {
         $this->scopeConfig->expects($this->any())
@@ -178,9 +172,9 @@ class PersonalInfoTest extends TestCase
             )
             ->willReturn(240); //TODO: it's value mocked because unit tests run data providers before all testsuite
 
-        $this->customerLog->expects($this->any())->method('getLastLoginAt')->willReturn($lastLoginAt);
-        $this->customerLog->expects($this->any())->method('getLastVisitAt')->willReturn($lastVisitAt);
-        $this->customerLog->expects($this->any())->method('getLastLogoutAt')->willReturn($lastLogoutAt);
+        $this->customerLog->setLastLoginAt($lastLoginAt);
+        $this->customerLog->setLastVisitAt($lastVisitAt);
+        $this->customerLog->setLastLogoutAt($lastLogoutAt);
 
         $this->assertEquals($status, (string) $this->block->getCurrentStatus());
     }
@@ -201,12 +195,12 @@ class PersonalInfoTest extends TestCase
     /**
      * @param string $result
      * @param string|null $lastLoginAt
-     * @dataProvider getLastLoginDateDataProvider
      * @return void
      */
+    #[DataProvider('getLastLoginDateDataProvider')]
     public function testGetLastLoginDate($result, $lastLoginAt)
     {
-        $this->customerLog->expects($this->once())->method('getLastLoginAt')->willReturn($lastLoginAt);
+        $this->customerLog->setLastLoginAt($lastLoginAt);
         $this->localeDate->expects($this->any())->method('formatDateTime')->willReturn($lastLoginAt);
 
         $this->assertEquals($result, $this->block->getLastLoginDate());
@@ -226,12 +220,12 @@ class PersonalInfoTest extends TestCase
     /**
      * @param string $result
      * @param string|null $lastLoginAt
-     * @dataProvider getStoreLastLoginDateDataProvider
      * @return void
      */
+    #[DataProvider('getStoreLastLoginDateDataProvider')]
     public function testGetStoreLastLoginDate($result, $lastLoginAt)
     {
-        $this->customerLog->expects($this->once())->method('getLastLoginAt')->willReturn($lastLoginAt);
+        $this->customerLog->setLastLoginAt($lastLoginAt);
 
         $this->localeDate->expects($this->any())->method('scopeDate')->willReturn($lastLoginAt);
         $this->localeDate->expects($this->any())->method('formatDateTime')->willReturn($lastLoginAt);
@@ -253,9 +247,9 @@ class PersonalInfoTest extends TestCase
     /**
      * @param string $expectedResult
      * @param bool $value
-     * @dataProvider getAccountLockDataProvider
      * @return void
      */
+    #[DataProvider('getAccountLockDataProvider')]
     public function testGetAccountLock($expectedResult, $value)
     {
         $this->customerRegistry->expects($this->once())->method('retrieve')->willReturn($this->customerModel);

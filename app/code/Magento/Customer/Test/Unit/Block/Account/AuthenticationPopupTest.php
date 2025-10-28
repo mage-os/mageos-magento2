@@ -16,7 +16,9 @@ use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\ScopeInterface;
+use Magento\Store\Test\Unit\Helper\StoreTestHelper;
 use Magento\Store\Model\StoreManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -43,16 +45,11 @@ class AuthenticationPopupTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->contextMock = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->contextMock = $this->createMock(Context::class);
 
-        $this->storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
-            ->getMock();
-        $this->scopeConfigMock = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->getMock();
-        $this->urlBuilderMock = $this->getMockBuilder(UrlInterface::class)
-            ->getMock();
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
+        $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
+        $this->urlBuilderMock = $this->createMock(UrlInterface::class);
 
         $this->contextMock->expects($this->once())
             ->method('getStoreManager')
@@ -63,9 +60,7 @@ class AuthenticationPopupTest extends TestCase
         $this->contextMock->expects($this->once())
             ->method('getUrlBuilder')
             ->willReturn($this->urlBuilderMock);
-        $escaperMock = $this->getMockBuilder(Escaper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $escaperMock = $this->createMock(Escaper::class);
         $escaperMock->method('escapeHtml')
             ->willReturnCallback(
                 function ($string) {
@@ -82,8 +77,7 @@ class AuthenticationPopupTest extends TestCase
             ->method('getEscaper')
             ->willReturn($escaperMock);
 
-        $this->serializerMock = $this->getMockBuilder(Json::class)
-            ->getMock();
+        $this->serializerMock = $this->createMock(Json::class);
 
         $this->model = new AuthenticationPopup(
             $this->contextMock,
@@ -99,9 +93,8 @@ class AuthenticationPopupTest extends TestCase
      * @param string $forgotUrl
      * @param array $result
      * @throws Exception
-     *
-     * @dataProvider dataProviderGetConfig
      */
+    #[DataProvider('dataProviderGetConfig')]
     public function testGetConfig($isAutocomplete, $baseUrl, $registerUrl, $forgotUrl, $loginUrl, array $result)
     {
         $this->scopeConfigMock->expects($this->any())
@@ -110,18 +103,13 @@ class AuthenticationPopupTest extends TestCase
             ->willReturn($isAutocomplete);
 
         /** @var StoreInterface||\PHPUnit\Framework\MockObject\MockObject $storeMock */
-        $storeMock = $this->getMockBuilder(StoreInterface::class)
-            ->addMethods(['getBaseUrl'])
-            ->getMockForAbstractClass();
+        $storeMock = new StoreTestHelper();
+        $storeMock->setBaseUrl($baseUrl);
 
         $this->storeManagerMock->expects($this->any())
             ->method('getStore')
             ->with(null)
             ->willReturn($storeMock);
-
-        $storeMock->expects($this->any())
-            ->method('getBaseUrl')
-            ->willReturn($baseUrl);
 
         $this->urlBuilderMock->expects($this->any())
             ->method('getUrl')
@@ -208,9 +196,8 @@ class AuthenticationPopupTest extends TestCase
      * @param string $forgotUrl
      * @param array $result
      * @throws Exception
-     *
-     * @dataProvider dataProviderGetConfig
      */
+    #[DataProvider('dataProviderGetConfig')]
     public function testGetSerializedConfig(
         $isAutocomplete,
         $baseUrl,
@@ -225,18 +212,13 @@ class AuthenticationPopupTest extends TestCase
             ->willReturn($isAutocomplete);
 
         /** @var StoreInterface||\PHPUnit\Framework\MockObject\MockObject $storeMock */
-        $storeMock = $this->getMockBuilder(StoreInterface::class)
-            ->addMethods(['getBaseUrl'])
-            ->getMockForAbstractClass();
+        $storeMock = new StoreTestHelper();
+        $storeMock->setBaseUrl($baseUrl);
 
         $this->storeManagerMock->expects($this->any())
             ->method('getStore')
             ->with(null)
             ->willReturn($storeMock);
-
-        $storeMock->expects($this->any())
-            ->method('getBaseUrl')
-            ->willReturn($baseUrl);
 
         $this->urlBuilderMock->expects($this->any())
             ->method('getUrl')

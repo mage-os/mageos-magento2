@@ -9,6 +9,7 @@ namespace Magento\Customer\Test\Unit\Block\Adminhtml\Edit\Tab;
 
 use Magento\Backend\Block\Template\Context;
 use Magento\Backend\Model\Session;
+use Magento\Backend\Test\Unit\Helper\SessionTestHelper;
 use Magento\Customer\Api\AccountManagementInterface;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Api\Data\CustomerInterface;
@@ -19,6 +20,9 @@ use Magento\Framework\Data\Form;
 use Magento\Framework\Data\Form\Element\Checkbox;
 use Magento\Framework\Data\Form\Element\Fieldset;
 use Magento\Framework\Data\Form\Element\Select;
+use Magento\Framework\Test\Unit\Helper\CheckboxTestHelper;
+use Magento\Framework\Test\Unit\Helper\FormTestHelper;
+use Magento\Framework\Test\Unit\Helper\SelectTestHelper;
 use Magento\Framework\Data\FormFactory;
 use Magento\Framework\Registry;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
@@ -26,6 +30,8 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\UrlInterface;
 use Magento\Newsletter\Model\Subscriber;
 use Magento\Newsletter\Model\SubscriberFactory;
+use Magento\Newsletter\Test\Unit\Helper\SubscriberTestHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Model\System\Store as SystemStore;
@@ -109,10 +115,7 @@ class NewsletterTest extends TestCase
     protected function setUp(): void
     {
         $this->contextMock = $this->createMock(Context::class);
-        $this->localeDateMock = $this->getMockBuilder(TimezoneInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['formatDateTime'])
-            ->getMockForAbstractClass();
+        $this->localeDateMock = $this->createMock(TimezoneInterface::class);
         $this->contextMock->expects($this->any())->method('getLocaleDate')->willReturn($this->localeDateMock);
         $this->registryMock = $this->createMock(Registry::class);
         $this->formFactoryMock = $this->createMock(FormFactory::class);
@@ -120,13 +123,10 @@ class NewsletterTest extends TestCase
             SubscriberFactory::class,
             ['create']
         );
-        $this->accountManagementMock = $this->getMockForAbstractClass(AccountManagementInterface::class);
-        $this->urlBuilderMock = $this->getMockForAbstractClass(UrlInterface::class);
-        $this->storeManager = $this->getMockForAbstractClass(StoreManagerInterface::class);
-        $this->backendSessionMock = $this->getMockBuilder(Session::class)
-            ->addMethods(['getCustomerFormData'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->accountManagementMock = $this->createMock(AccountManagementInterface::class);
+        $this->urlBuilderMock = $this->createMock(UrlInterface::class);
+        $this->storeManager = $this->createMock(StoreManagerInterface::class);
+        $this->backendSessionMock = new SessionTestHelper();
         $this->contextMock->expects($this->once())
             ->method('getUrlBuilder')
             ->willReturn($this->urlBuilderMock);
@@ -136,7 +136,7 @@ class NewsletterTest extends TestCase
         $this->contextMock->method('getStoreManager')
             ->willReturn($this->storeManager);
         $this->systemStore = $this->createMock(SystemStore::class);
-        $this->customerRepository = $this->getMockForAbstractClass(CustomerRepositoryInterface::class);
+        $this->customerRepository = $this->createMock(CustomerRepositoryInterface::class);
         $this->shareConfig = $this->createMock(Share::class);
 
         $objectManager = new ObjectManager($this);
@@ -171,9 +171,8 @@ class NewsletterTest extends TestCase
 
     /**
      * Test getSubscriberStatusChangedDate
-     *
-     * @dataProvider getChangeStatusAtDataProvider
      */
+    #[DataProvider('getChangeStatusAtDataProvider')]
     public function testGetSubscriberStatusChangedDate($statusDate, $dateExpected)
     {
         $customerId = 999;
@@ -184,24 +183,19 @@ class NewsletterTest extends TestCase
         $this->registryMock->method('registry')->with(RegistryConstants::CURRENT_CUSTOMER_ID)
             ->willReturn($customerId);
 
-        $customer = $this->getMockForAbstractClass(CustomerInterface::class);
+        $customer = $this->createMock(CustomerInterface::class);
         $customer->method('getWebsiteId')->willReturn($websiteId);
         $customer->method('getStoreId')->willReturn($storeId);
         $customer->method('getId')->willReturn($customerId);
         $this->customerRepository->method('getById')->with($customerId)->willReturn($customer);
 
-        $subscriberMock = $this->getMockBuilder(Subscriber::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getChangeStatusAt'])
-            ->onlyMethods(['loadByCustomer', 'isSubscribed', 'getData'])
-            ->getMock();
+        $subscriberMock = new SubscriberTestHelper();
         $statusDate = new \DateTime($statusDate);
         $this->localeDateMock->method('formatDateTime')->with($statusDate)->willReturn($dateExpected);
 
-        $subscriberMock->method('loadByCustomer')->with($customerId, $websiteId)->willReturnSelf();
-        $subscriberMock->method('getChangeStatusAt')->willReturn($statusDate);
-        $subscriberMock->method('isSubscribed')->willReturn($isSubscribed);
-        $subscriberMock->method('getData')->willReturn([]);
+        $subscriberMock->setChangeStatusAt($statusDate);
+        $subscriberMock->setSubscribed($isSubscribed);
+        $subscriberMock->setTestData([]);
         $this->subscriberFactoryMock->expects($this->any())->method('create')->willReturn($subscriberMock);
         $this->assertEquals($dateExpected, $this->model->getStatusChangedDate());
     }
@@ -234,15 +228,14 @@ class NewsletterTest extends TestCase
         $this->registryMock->method('registry')->with(RegistryConstants::CURRENT_CUSTOMER_ID)
             ->willReturn($customerId);
 
-        $customer = $this->getMockForAbstractClass(CustomerInterface::class);
+        $customer = $this->createMock(CustomerInterface::class);
         $customer->method('getWebsiteId')->willReturn($websiteId);
         $customer->method('getStoreId')->willReturn($storeId);
         $customer->method('getId')->willReturn($customerId);
         $this->customerRepository->method('getById')->with($customerId)->willReturn($customer);
-        $subscriberMock = $this->createMock(Subscriber::class);
-        $subscriberMock->method('loadByCustomer')->with($customerId, $websiteId)->willReturnSelf();
-        $subscriberMock->method('isSubscribed')->willReturn($isSubscribed);
-        $subscriberMock->method('getData')->willReturn([]);
+        $subscriberMock = new SubscriberTestHelper();
+        $subscriberMock->setSubscribed($isSubscribed);
+        $subscriberMock->setTestData([]);
         $this->subscriberFactoryMock->expects($this->once())->method('create')->willReturn($subscriberMock);
 
         $website = $this->createMock(Website::class);
@@ -276,21 +269,14 @@ class NewsletterTest extends TestCase
             )
             ->willReturn($statusElementMock);
         $fieldsetMock->expects($this->once())->method('setReadonly')->with(true, true);
-        $formMock = $this->getMockBuilder(Form::class)
-            ->addMethods(['setHtmlIdPrefix', 'setForm', 'setParent', 'setBaseUrl'])
-            ->onlyMethods(['addFieldset', 'setValues', 'getElement'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $formMock->expects($this->once())->method('setHtmlIdPrefix')->with('_newsletter');
-        $formMock->expects($this->once())->method('addFieldset')->willReturn($fieldsetMock);
+        $formMock = new FormTestHelper();
+        $formMock->setFieldset($fieldsetMock);
         $this->formFactoryMock->expects($this->once())->method('create')->willReturn($formMock);
         $this->accountManagementMock->expects($this->once())
             ->method('isReadOnly')
             ->with($customerId)
             ->willReturn(true);
-        $this->backendSessionMock->expects($this->once())
-            ->method('getCustomerFormData')
-            ->willReturn(null);
+        $this->backendSessionMock->setCustomerFormData(null);
 
         $this->assertSame($this->model, $this->model->initForm());
     }
@@ -309,15 +295,14 @@ class NewsletterTest extends TestCase
 
         $this->registryMock->method('registry')->with(RegistryConstants::CURRENT_CUSTOMER_ID)
             ->willReturn($customerId);
-        $customer = $this->getMockForAbstractClass(CustomerInterface::class);
+        $customer = $this->createMock(CustomerInterface::class);
         $customer->method('getWebsiteId')->willReturn($websiteId);
         $customer->method('getStoreId')->willReturn($storeId);
         $customer->method('getId')->willReturn($customerId);
         $this->customerRepository->method('getById')->with($customerId)->willReturn($customer);
-        $subscriberMock = $this->createMock(Subscriber::class);
-        $subscriberMock->method('loadByCustomer')->with($customerId, $websiteId)->willReturnSelf();
-        $subscriberMock->method('isSubscribed')->willReturn($isSubscribed);
-        $subscriberMock->method('getData')->willReturn([]);
+        $subscriberMock = new SubscriberTestHelper();
+        $subscriberMock->setSubscribed($isSubscribed);
+        $subscriberMock->setTestData([]);
         $this->subscriberFactoryMock->expects($this->once())->method('create')->willReturn($subscriberMock);
         $website = $this->createMock(Website::class);
         $website->method('getStoresCount')->willReturn(1);
@@ -349,47 +334,26 @@ class NewsletterTest extends TestCase
             )
             ->willReturn($statusElementMock);
         $fieldsetMock->expects($this->once())->method('setReadonly')->with(true, true);
-        $statusElementForm = $this->getMockBuilder(Checkbox::class)
-            ->addMethods(['setChecked', 'setValue'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $statusElementForm->method('setValue')
-            ->with($isSubscribedCustomerSession);
-        $statusElementForm->method('setChecked')
-            ->with($isSubscribedCustomerSession);
-        $storeElementForm = $this->getMockBuilder(Select::class)
-            ->addMethods(['setValue'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $storeElementForm->method('setValue')
-            ->with(Store::DEFAULT_STORE_ID);
-        $formMock = $this->getMockBuilder(Form::class)
-            ->addMethods(['setHtmlIdPrefix', 'setForm', 'setParent', 'setBaseUrl'])
-            ->onlyMethods(['addFieldset', 'setValues', 'getElement'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $formMock->expects($this->once())->method('setHtmlIdPrefix')->with('_newsletter');
-        $formMock->expects($this->once())->method('addFieldset')->willReturn($fieldsetMock);
-        $formMock->method('getElement')
-            ->willReturnMap(
-                [
-                    ['subscription_status_' . $websiteId, $statusElementForm],
-                    ['subscription_store_' . $websiteId, $storeElementForm],
-                ]
-            );
+        $statusElementForm = new CheckboxTestHelper();
+        $statusElementForm->setValue($isSubscribedCustomerSession);
+        $statusElementForm->setChecked($isSubscribedCustomerSession);
+        $storeElementForm = new SelectTestHelper();
+        $storeElementForm->setValue(Store::DEFAULT_STORE_ID);
+        $formMock = new FormTestHelper();
+        $formMock->setFieldset($fieldsetMock);
+        $formMock->setElement('subscription_status_' . $websiteId, $statusElementForm);
+        $formMock->setElement('subscription_store_' . $websiteId, $storeElementForm);
         $this->formFactoryMock->expects($this->once())->method('create')->willReturn($formMock);
         $this->accountManagementMock->expects($this->once())
             ->method('isReadOnly')
             ->with($customerId)
             ->willReturn(true);
-        $this->backendSessionMock->expects($this->once())
-            ->method('getCustomerFormData')
-            ->willReturn(
-                [
-                    'customer' => ['entity_id' => $customerId],
-                    'subscription_status' => [$websiteId => $isSubscribedCustomerSession]
-                ]
-            );
+        $this->backendSessionMock->setCustomerFormData(
+            [
+                'customer' => ['entity_id' => $customerId],
+                'subscription_status' => [$websiteId => $isSubscribedCustomerSession]
+            ]
+        );
 
         $this->assertSame($this->model, $this->model->initForm());
     }

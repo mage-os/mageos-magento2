@@ -64,22 +64,22 @@ class GridTest extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
 
-        $this->currentCustomer = $this->getMockBuilder(CurrentCustomer::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getCustomer'])
-            ->getMock();
+        $this->currentCustomer = $this->createPartialMock(
+            CurrentCustomer::class,
+            ['getCustomer']
+        );
 
-        $this->addressCollectionFactory = $this->getMockBuilder(CollectionFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->addressCollectionFactory = $this->createPartialMock(
+            CollectionFactory::class,
+            ['create']
+        );
 
-        $this->countryFactory = $this->getMockBuilder(CountryFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->countryFactory = $this->createPartialMock(
+            CountryFactory::class,
+            ['create']
+        );
 
-        $this->urlBuilder = $this->getMockForAbstractClass(UrlInterface::class);
+        $this->urlBuilder = $this->createMock(UrlInterface::class);
 
         $this->gridBlock = $this->objectManager->getObject(
             Grid::class,
@@ -99,19 +99,20 @@ class GridTest extends TestCase
     {
         $customerId = 1;
         $outputString = 'OutputString';
-        /** @var BlockInterface|MockObject $block */
-        $block = $this->getMockBuilder(BlockInterface::class)
-            ->addMethods(['setCollection'])
-            ->getMockForAbstractClass();
+        /** @var Pager|MockObject $block */
+        $block = $this->createPartialMock(
+            Pager::class,
+            ['setCollection']
+        );
         /** @var LayoutInterface|MockObject $layout */
-        $layout = $this->getMockForAbstractClass(LayoutInterface::class);
+        $layout = $this->createMock(LayoutInterface::class);
         /** @var CustomerInterface|MockObject $customer */
-        $customer = $this->getMockForAbstractClass(CustomerInterface::class);
+        $customer = $this->createMock(CustomerInterface::class);
         /** @var MockObject */
-        $addressCollection = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['setOrder', 'setCustomerFilter', 'load','addFieldToFilter'])
-            ->getMock();
+        $addressCollection = $this->createPartialMock(
+            Collection::class,
+            ['setOrder', 'setCustomerFilter', 'load', 'addFieldToFilter']
+        );
 
         $layout->expects($this->atLeastOnce())->method('getChildName')->with('NameInLayout', 'pager')
             ->willReturn('ChildName');
@@ -151,17 +152,17 @@ class GridTest extends TestCase
     {
         $customerId = 1;
         /** @var CustomerInterface|MockObject $customer */
-        $customer = $this->getMockForAbstractClass(CustomerInterface::class);
+        $customer = $this->createMock(CustomerInterface::class);
         /** @var MockObject */
-        $addressCollection = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['setOrder', 'setCustomerFilter', 'load', 'getIterator','addFieldToFilter'])
-            ->getMock();
-        $addressDataModel = $this->getMockForAbstractClass(AddressInterface::class);
-        $address = $this->getMockBuilder(Address::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getId', 'getDataModel'])
-            ->getMock();
+        $addressCollection = $this->createPartialMock(
+            Collection::class,
+            ['setOrder', 'setCustomerFilter', 'load', 'getIterator', 'addFieldToFilter']
+        );
+        $addressDataModel = $this->createMock(AddressInterface::class);
+        $address = $this->createPartialMock(
+            Address::class,
+            ['getId', 'getDataModel']
+        );
         $collection = [$address, $address, $address];
         $address->expects($this->exactly(3))->method('getId')
             ->willReturnOnConsecutiveCalls(1, 2, 3);
@@ -191,7 +192,7 @@ class GridTest extends TestCase
     {
         $street = ['Line 1', 'Line 2'];
         $expectedAddress = 'Line 1, Line 2';
-        $address = $this->getMockForAbstractClass(AddressInterface::class);
+        $address = $this->createMock(AddressInterface::class);
         $address->expects($this->atLeastOnce())->method('getStreet')->willReturn($street);
         $this->assertEquals($expectedAddress, $this->gridBlock->getStreetAddress($address));
     }
@@ -203,10 +204,10 @@ class GridTest extends TestCase
     {
         $countryId = 'US';
         $countryName = 'United States';
-        $country = $this->getMockBuilder(Country::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['loadByCode', 'getName'])
-            ->getMock();
+        $country = $this->createPartialMock(
+            Country::class,
+            ['loadByCode', 'getName']
+        );
         $this->countryFactory->expects($this->atLeastOnce())->method('create')->willReturn($country);
         $country->expects($this->atLeastOnce())->method('loadByCode')->with($countryId)->willReturnSelf();
         $country->expects($this->atLeastOnce())->method('getName')->willReturn($countryName);
