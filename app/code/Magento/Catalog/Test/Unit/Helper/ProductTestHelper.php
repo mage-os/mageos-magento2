@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Catalog\Test\Unit\Helper;
 
 use Magento\Catalog\Model\Product;
+use Magento\Framework\DataObject;
 
 /**
  * Test helper class for Catalog Product with custom methods
@@ -21,6 +22,12 @@ class ProductTestHelper extends Product
      * @var array
      */
     private $data = [];
+
+    /** @var int */
+    private $id;
+
+    /** @var DataObject|null */
+    private $urlDataObject;
 
     /**
      * @var bool
@@ -48,9 +55,12 @@ class ProductTestHelper extends Product
     /**
      * Skip parent constructor to avoid dependencies
      */
-    public function __construct()
-    {
-        // Initialize $_data to prevent "The resource isn't set" errors
+    public function __construct(
+        $id = 0,
+        ?DataObject $urlDataObject = null
+    ) {
+        $this->id = (int)$id;
+        $this->urlDataObject = $urlDataObject;
         $this->_data = [];
     }
 
@@ -125,7 +135,7 @@ class ProductTestHelper extends Product
      */
     public function getId()
     {
-        return $this->data['id'] ?? null;
+        return $this->id ?? null;
     }
 
     /**
@@ -1203,7 +1213,7 @@ class ProductTestHelper extends Product
         $this->data['associated_product_ids'] = $ids;
         return $this;
     }
-    
+
     /**
      * Override getTierPrice to prevent null errors
      *
@@ -1246,7 +1256,11 @@ class ProductTestHelper extends Product
      */
     public function getTaxClassId()
     {
-        return $this->data['tax_class_id'] ?? null;
+        if (isset($this->data['tax_class_id'])) {
+            return $this->data['tax_class_id'];
+        }
+        $productData = $this->data['product_data'] ?? [];
+        return $productData['tax_class_id'] ?? null;
     }
 
     /**
@@ -1426,5 +1440,131 @@ class ProductTestHelper extends Product
     public function getDownloadableLinks()
     {
         return $this->data['downloadable_links'] ?? [];
+    }
+
+    /**
+     * Get cart qty for tests.
+     *
+     * @return mixed
+     */
+    public function getCartQty()
+    {
+        return $this->getData('cart_qty');
+    }
+
+    /**
+     * Return stick within parent flag from internal data.
+     *
+     * @return mixed
+     */
+    public function getStickWithinParent()
+    {
+        return $this->getData('stick_within_parent');
+    }
+
+    /**
+     * Set stick within parent flag for tests.
+     *
+     * @param mixed $flag
+     * @return $this
+     */
+    public function setStickWithinParent($flag)
+    {
+        $this->setData('stick_within_parent', $flag);
+        return $this;
+    }
+
+    /**
+     * Get parent product id for tests.
+     *
+     * @return mixed
+     */
+    public function getParentProductId()
+    {
+        return $this->getData('parent_product_id');
+    }
+
+    /**
+     * Set parent product id for tests.
+     *
+     * @param mixed $id
+     * @return $this
+     */
+    public function setParentProductId($id)
+    {
+        $this->setData('parent_product_id', $id);
+        return $this;
+    }
+
+    /**
+     * Get stock item for tests.
+     *
+     * @return mixed
+     */
+    public function getStockItem()
+    {
+        return $this->getData('stock_item');
+    }
+
+    /**
+     * Enable/disable super mode flag for tests.
+     *
+     * @param bool $flag
+     * @return $this
+     */
+    public function setIsSuperMode($flag)
+    {
+        $this->setData('is_super_mode', (bool)$flag);
+        return $this;
+    }
+
+
+    /**
+     * Unset skip check required option flag for tests (no-op).
+     *
+     * @return $this
+     */
+    public function unsSkipCheckRequiredOption()
+    {
+        // No-op for unit tests, callable method required for mocks
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isVisibleInSiteVisibility()
+    {
+        return false;
+    }
+
+    /**
+     * @param DataObject $data
+     * @return $this
+     */
+    public function setUrlDataObject($data)
+    {
+        $this->urlDataObject = $data;
+        return $this;
+    }
+
+    /**
+     * Get URL data object.
+     *
+     * @return DataObject|null
+     */
+    public function getUrlDataObject()
+    {
+        return $this->urlDataObject;
+    }
+
+    /**
+     * Check if URL data object exists.
+     *
+     * @return bool
+     */
+    public function hasUrlDataObject()
+    {
+        return (bool)$this->urlDataObject;
     }
 }
