@@ -5,6 +5,7 @@
   * All Rights Reserved.
   */
 -->
+
 <tests
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
     <test name="StorefrontVerifyTheWishlistCountDisplayedInTheHomePageCustomerMenuTest">
@@ -12,14 +13,15 @@
             <features value="Wishlist"/>
             <stories value="Wishlist count"/>
             <title value="Wishlist count in menu"/>
-            <description value="Verify wishlist count displayed on homepage customer menu."/>
+            <description value="Validate wishlist count on homepage matches actual wishlist items."/>
             <severity value="MAJOR"/>
             <testCaseId value="AC-15274"/>
             <group value="wishlist"/>
         </annotations>
         <before>
-            <!-- Pre-condition 1,2: Create product, customer -->
+            <!-- Pre-condition 1,2: Create products, customer -->
             <createData entity="SimpleProduct" stepKey="createProduct"/>
+            <createData entity="_defaultProduct" stepKey="createSimpleProduct"/>
             <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
         </before>
         <after>
@@ -41,15 +43,22 @@
         <actionGroup ref="StorefrontCustomerAddProductToWishlistActionGroup" stepKey="addToWishlistProduct">
             <argument name="productVar" value="$createProduct$"/>
         </actionGroup>
+        <!-- Open second product page -->
+        <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openTheProductPage">
+            <argument name="productUrl" value="$$createSimpleProduct.custom_attributes[url_key]$$"/>
+        </actionGroup>
+        <!-- Step 2: Add second product to wishlist -->
+        <actionGroup ref="StorefrontCustomerAddProductToWishlistActionGroup" stepKey="addToTheWishlistProduct">
+            <argument name="productVar" value="$createSimpleProduct$"/>
+        </actionGroup>
         <!-- Step 3: Navigate to Store front home page-->
         <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToHomePage"/>
-        <waitForPageLoad stepKey="waitToLoadHomePage"/>
         <!-- Step 4: Click on customer menu-->
         <waitForElementClickable selector="{{LoggedInCustomerHeaderLinksSection.customerDropdownMenu}}" stepKey="waitToOpenCustomerDropdownMenu"/>
         <click selector="{{LoggedInCustomerHeaderLinksSection.customerDropdownMenu}}" stepKey="openCustomerDropdownMenu"/>
         <waitForPageLoad stepKey="waitToLoadCustomerDropdownMenu"/>
         <!-- Step 4 assertion: The wishlist item count should display-->
         <waitForElementVisible selector="{{StorefrontCustomerWishlistProductSection.wishListLink}}" stepKey="wishListLink"/>
-        <waitForText userInput="1 item" selector="{{StorefrontCustomerWishlistProductSection.wishListCount}}" stepKey="seeWishListCount"/>
+        <waitForText userInput="{{NumberOfItems.item}}" selector="{{StorefrontCustomerWishlistProductSection.wishListCount}}" stepKey="seeWishListCount"/>
     </test>
 </tests>
