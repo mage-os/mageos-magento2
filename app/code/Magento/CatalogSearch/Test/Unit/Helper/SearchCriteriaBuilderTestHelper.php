@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\CatalogSearch\Test\Unit\Helper;
 
+use Magento\Framework\Api\Search\SearchCriteria;
 use Magento\Framework\Api\Search\SearchCriteriaBuilder;
 
 /**
@@ -58,11 +59,11 @@ class SearchCriteriaBuilderTestHelper extends SearchCriteriaBuilder
     /**
      * Mock method for create
      *
-     * @return \Magento\Framework\Api\Search\SearchCriteria
+     * @return SearchCriteria
      */
     public function create()
     {
-        return new \Magento\Framework\Api\Search\SearchCriteria();
+        return new SearchCriteria();
     }
 
     /**

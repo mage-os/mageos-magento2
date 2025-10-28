@@ -10,6 +10,7 @@ namespace Magento\Catalog\Test\Unit\Helper;
 use Magento\Catalog\Helper\Image;
 use Magento\Catalog\Model\Config\CatalogMediaConfig;
 use Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\Product\Image as ProductImage;
 use Magento\Catalog\Model\Product\ImageFactory as ProductImageFactory;
 use Magento\Catalog\Model\View\Asset\PlaceholderFactory;
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -128,7 +129,7 @@ class ImageTest extends TestCase
             ->onlyMethods(['create'])
             ->getMock();
 
-        $this->image = $this->getMockBuilder(\Magento\Catalog\Model\Product\Image::class)
+        $this->image = $this->getMockBuilder(ProductImage::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->imageFactory->expects($this->any())

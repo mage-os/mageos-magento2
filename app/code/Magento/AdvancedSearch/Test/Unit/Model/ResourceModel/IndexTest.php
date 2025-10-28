@@ -27,7 +27,7 @@ use Traversable;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-#[CoversClass(\Magento\AdvancedSearch\Model\ResourceModel\Index::class)]
+#[CoversClass(Index::class)]
 class IndexTest extends TestCase
 {
     /**

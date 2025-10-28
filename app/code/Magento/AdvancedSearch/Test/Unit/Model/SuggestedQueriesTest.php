@@ -19,7 +19,7 @@ use Magento\Search\Model\QueryInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(\Magento\AdvancedSearch\Model\SuggestedQueries::class)]
+#[CoversClass(SuggestedQueries::class)]
 class SuggestedQueriesTest extends TestCase
 {
     /**

@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Catalog\Test\Unit\Helper;
 
 use Magento\Catalog\Model\Product;
+use ReflectionClass;
 
 /**
  * Test helper for Product class
@@ -100,7 +101,7 @@ class ProductTestHelper extends Product
      */
     public function setPriceInfo($priceInfo)
     {
-        $reflection = new \ReflectionClass($this);
+        $reflection = new ReflectionClass($this);
         $property = $reflection->getProperty('_priceInfo');
         $property->setValue($this, $priceInfo);
         return $this;
@@ -129,7 +130,7 @@ class ProductTestHelper extends Product
      */
     public function setUrlModel($urlModel)
     {
-        $reflection = new \ReflectionClass($this);
+        $reflection = new ReflectionClass($this);
         $property = $reflection->getProperty('_urlModel');
         $property->setValue($this, $urlModel);
         return $this;

@@ -45,7 +45,7 @@ use PHPUnit\Framework\TestCase;
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-#[CoversClass(\Magento\CatalogUrlRewrite\Observer\AfterImportDataObserver::class)]
+#[CoversClass(AfterImportDataObserver::class)]
 class AfterImportDataObserverTest extends TestCase
 {
     /**

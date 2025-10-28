@@ -20,7 +20,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(\Magento\CatalogSearch\Model\ResourceModel\Fulltext::class)]
+#[CoversClass(Fulltext::class)]
 class FulltextTest extends TestCase
 {
     /**

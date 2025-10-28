@@ -19,7 +19,7 @@ use Magento\Framework\Indexer\IndexerRegistry;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 
-#[CoversClass(\Magento\AdvancedSearch\Model\Indexer\Fulltext\Plugin\CustomerGroup::class)]
+#[CoversClass(CustomerGroupPlugin::class)]
 class CustomerGroupTest extends TestCase
 {
     /**

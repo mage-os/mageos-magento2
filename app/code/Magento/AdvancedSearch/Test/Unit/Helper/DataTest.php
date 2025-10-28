@@ -15,7 +15,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\Search\EngineResolverInterface;
 
-#[CoversClass(\Magento\AdvancedSearch\Helper\Data::class)]
+#[CoversClass(Data::class)]
 class DataTest extends TestCase
 {
 

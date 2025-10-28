@@ -7,14 +7,15 @@
 namespace Magento\CatalogUrlRewriteGraphQl\Test\Unit\Model\Resolver;
 
 use Magento\CatalogUrlRewriteGraphQl\Model\Resolver\ProductUrlSuffix;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\GraphQl\Model\Query\ContextExtensionInterface;
 use Magento\GraphQl\Model\Query\ContextInterface;
+use Magento\GraphQl\Test\Unit\Helper\ContextExtensionTestHelper;
 use Magento\Store\Api\Data\StoreInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Framework\App\Config\ScopeConfigInterface;
 
 /**
  * Test for \Magento\CatalogUrlRewriteGraphQl\Model\Resolver\ProductUrlSuffix.
@@ -63,7 +64,7 @@ class ProductUrlSuffixTest extends TestCase
     {
         $this->contextMock = $this->createMock(ContextInterface::class);
 
-        $this->contextExtensionMock = new \Magento\GraphQl\Test\Unit\Helper\ContextExtensionTestHelper();
+        $this->contextExtensionMock = new ContextExtensionTestHelper();
 
         $this->storeMock = $this->createMock(StoreInterface::class);
 

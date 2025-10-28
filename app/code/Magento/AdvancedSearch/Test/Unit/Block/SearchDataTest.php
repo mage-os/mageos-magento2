@@ -15,8 +15,9 @@ use Magento\Search\Model\QueryFactoryInterface;
 use Magento\Search\Model\QueryInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\AdvancedSearch\Block\SearchData;
 
-#[CoversClass(\Magento\AdvancedSearch\Block\SearchData::class)]
+#[CoversClass(SearchData::class)]
 class SearchDataTest extends TestCase
 {
     /**

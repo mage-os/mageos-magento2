@@ -24,7 +24,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-#[CoversClass(\Magento\AdvancedSearch\Controller\Adminhtml\Search\System\Config\TestConnection::class)]
+#[CoversClass(TestConnection::class)]
 class TestConnectionTest extends TestCase
 {
     /**

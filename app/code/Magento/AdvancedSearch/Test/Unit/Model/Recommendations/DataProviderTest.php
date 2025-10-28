@@ -26,7 +26,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-#[CoversClass(\Magento\AdvancedSearch\Model\Recommendations\DataProvider::class)]
+#[CoversClass(DataProvider::class)]
 class DataProviderTest extends TestCase
 {
     /**

@@ -19,7 +19,7 @@ use Magento\Framework\Search\EngineResolverInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(\Magento\AdvancedSearch\Model\Client\ClientResolver::class)]
+#[CoversClass(ClientResolver::class)]
 class ClientResolverTest extends TestCase
 {
     /**

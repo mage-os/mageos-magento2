@@ -22,9 +22,12 @@ use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Json\Helper\Data;
 use Magento\Framework\Stdlib\StringUtils;
+use Magento\ImportExport\Helper\Data as ImportExportHelperData;
 use Magento\ImportExport\Model\ResourceModel\Helper;
+use Magento\ImportExport\Model\ResourceModel\Import\Data as ResourceImportData;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 /**
  * @SuppressWarnings(PHPMD)
@@ -147,8 +150,8 @@ class TierPriceTest extends TestCase
             ->setConstructorArgs(
                 [
                     Data::class,
-                    \Magento\ImportExport\Helper\Data::class,
-                    \Magento\ImportExport\Model\ResourceModel\Import\Data::class,
+                    ImportExportHelperData::class,
+                    ResourceImportData::class,
                     Config::class,
                     ResourceConnection::class,
                     Helper::class,
@@ -353,7 +356,7 @@ class TierPriceTest extends TestCase
      */
     protected function getPropertyValue($object, $property)
     {
-        $reflection = new \ReflectionClass(get_class($object));
+        $reflection = new ReflectionClass(get_class($object));
         $reflectionProperty = $reflection->getProperty($property);
         $reflectionProperty->setAccessible(true);
 
@@ -371,7 +374,7 @@ class TierPriceTest extends TestCase
      */
     protected function setPropertyValue(&$object, $property, $value)
     {
-        $reflection = new \ReflectionClass(get_class($object));
+        $reflection = new ReflectionClass(get_class($object));
         $reflectionProperty = $reflection->getProperty($property);
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($object, $value);

@@ -34,7 +34,11 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Magento\Catalog\Model\ResourceModel\Collection\AbstractCollection as MagentoAbstractCollection;
+use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
 use Magento\Eav\Model\Entity\Collection\AbstractCollection;
+use Magento\ImportExport\Model\Export\Config as ExportConfig;
+use ReflectionClass;
+use stdClass;
 
 /**
  * @SuppressWarnings(PHPMD)
@@ -67,7 +71,7 @@ class AdvancedPricingTest extends TestCase
     protected $logger;
 
     /**
-     * @var \Magento\Catalog\Model\ResourceModel\Product\Collection|MockObject
+     * @var ProductCollection|MockObject
      */
     protected $collection;
 
@@ -161,7 +165,7 @@ class AdvancedPricingTest extends TestCase
         $this->resource = $this->createMock(ResourceConnection::class);
         $this->storeManager = $this->createMock(StoreManager::class);
         $this->logger = $this->createMock(Monolog::class);
-        $this->collection = $this->createMock(\Magento\Catalog\Model\ResourceModel\Product\Collection::class);
+        $this->collection = $this->createMock(ProductCollection::class);
         $this->abstractCollection = $this->createPartialMock(MagentoAbstractCollection::class, [
             'count',
             // 'setOrder',
@@ -169,14 +173,14 @@ class AdvancedPricingTest extends TestCase
             'getCurPage',
             'getLastPageNumber',
         ]);
-        $this->exportConfig = $this->createMock(\Magento\ImportExport\Model\Export\Config::class);
-        $this->productFactory = $this->createMock(\stdClass::class);
+        $this->exportConfig = $this->createMock(ExportConfig::class);
+        $this->productFactory = $this->createMock(stdClass::class);
         
-        $this->attrSetColFactory = $this->createMock(\stdClass::class);
-        $this->categoryColFactory = $this->createMock(\stdClass::class);
-        $this->itemFactory = $this->createMock(\stdClass::class);
-        $this->optionColFactory = $this->createMock(\stdClass::class);
-        $this->attributeColFactory = $this->createMock(\stdClass::class);
+        $this->attrSetColFactory = $this->createMock(stdClass::class);
+        $this->categoryColFactory = $this->createMock(stdClass::class);
+        $this->itemFactory = $this->createMock(stdClass::class);
+        $this->optionColFactory = $this->createMock(stdClass::class);
+        $this->attributeColFactory = $this->createMock(stdClass::class);
         $this->typeFactory = $this->createMock(Factory::class);
         $this->linkTypeProvider = $this->createMock(LinkTypeProvider::class);
         $this->rowCustomizer = $this->createMock(
@@ -315,7 +319,7 @@ class AdvancedPricingTest extends TestCase
      */
     protected function getPropertyValue($object, $property)
     {
-        $reflection = new \ReflectionClass(get_class($object));
+        $reflection = new ReflectionClass(get_class($object));
         $reflectionProperty = $reflection->getProperty($property);
         $reflectionProperty->setAccessible(true);
         return $reflectionProperty->getValue($object);
@@ -332,7 +336,7 @@ class AdvancedPricingTest extends TestCase
      */
     protected function setPropertyValue(&$object, $property, $value)
     {
-        $reflection = new \ReflectionClass(get_class($object));
+        $reflection = new ReflectionClass(get_class($object));
         $reflectionProperty = $reflection->getProperty($property);
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($object, $value);
