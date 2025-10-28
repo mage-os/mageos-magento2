@@ -23,9 +23,6 @@ class ProductTestHelper extends Product
      */
     private $data = [];
 
-    /** @var int */
-    private $id;
-
     /** @var DataObject|null */
     private $urlDataObject;
 
@@ -56,10 +53,8 @@ class ProductTestHelper extends Product
      * Skip parent constructor to avoid dependencies
      */
     public function __construct(
-        $id = 0,
         ?DataObject $urlDataObject = null
     ) {
-        $this->id = (int)$id;
         $this->urlDataObject = $urlDataObject;
         $this->_data = [];
     }
@@ -135,7 +130,7 @@ class ProductTestHelper extends Product
      */
     public function getId()
     {
-        return $this->id ?? null;
+        return $this->data['id'] ?? null;
     }
 
     /**

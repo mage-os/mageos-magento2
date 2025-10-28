@@ -130,7 +130,8 @@ class CartTest extends TestCase
         $storeMock = new StoreWebsiteIdTestHelper($websiteId);
         $quoteMock->setFixtureStore($storeMock);
 
-        $productMock = new ProductTestHelper($productId);
+        $productMock = new ProductTestHelper();
+        $productMock->setId($productId);
         $quoteItemMock->setProduct($productMock);
 
         $this->catalogUrlMock->expects($this->once())
@@ -206,7 +207,8 @@ class CartTest extends TestCase
 
         $quoteMock->setFixtureItems([$quoteItemMock]);
 
-        $productMock = new ProductTestHelper($productId);
+        $productMock = new ProductTestHelper();
+        $productMock->setId($productId);
 
         $optionsMock = $this->createMock(Option::class);
         $optionsMock->expects($this->once())->method('getProduct')->willReturn($productMock);
