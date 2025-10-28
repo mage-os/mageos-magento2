@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- Main plugin to extract operation info from QueryParser -->
+    <type name="Magento\Framework\GraphQl\Query\QueryParser">
+        <plugin name="set_flag_if_query_type_query"
+                type="Magento\SalesRule\Model\Plugin\QueryParser"
+                sortOrder="10" />
+    </type>
+</config>

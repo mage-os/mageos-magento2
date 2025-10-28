@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Webapi\Controller\Rest">
+        <plugin name="set_flag_if_rest_request_type_is_get"
+                type="Magento\SalesRule\Model\Plugin\FrontController"
+                sortOrder="1" />
+    </type>
+</config>

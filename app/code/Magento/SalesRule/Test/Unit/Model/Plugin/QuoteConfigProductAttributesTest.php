@@ -7,9 +7,11 @@ declare(strict_types=1);
 
 namespace Magento\SalesRule\Test\Unit\Model\Plugin;
 
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\App\CacheInterface;
+use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Quote\Model\Quote\Config;
 use Magento\SalesRule\Model\Plugin\QuoteConfigProductAttributes;
+use Magento\SalesRule\Model\Plugin\RequestTypeRegistry;
 use Magento\SalesRule\Model\ResourceModel\Rule;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -26,24 +28,82 @@ class QuoteConfigProductAttributesTest extends TestCase
      */
     protected $ruleResource;
 
+    /**
+     * @var RequestTypeRegistry|MockObject
+     */
+    protected $requestTypeRegistry;
+
+    /**
+     * @var CacheInterface|MockObject
+     */
+    protected $cache;
+
+    /**
+     * @var SerializerInterface|MockObject
+     */
+    protected $serializer;
+
+    /**
+     * @var Config|MockObject
+     */
+    protected $subject;
+
     protected function setUp(): void
     {
-        $objectManager = new ObjectManager($this);
         $this->ruleResource = $this->createMock(Rule::class);
+        $this->requestTypeRegistry = $this->createMock(RequestTypeRegistry::class);
+        $this->cache = $this->createMock(CacheInterface::class);
+        $this->serializer = $this->createMock(SerializerInterface::class);
+        $this->subject = $this->createMock(Config::class);
 
-        $this->plugin = $objectManager->getObject(
-            QuoteConfigProductAttributes::class,
-            [
-                'ruleResource' => $this->ruleResource
-            ]
+        $this->plugin = new QuoteConfigProductAttributes(
+            $this->ruleResource,
+            $this->requestTypeRegistry,
+            $this->cache,
+            $this->serializer
         );
     }
 
-    public function testAfterGetProductAttributes()
+    public function testAfterGetProductAttributesWithCache()
     {
-        $subject = $this->createMock(Config::class);
         $attributeCode = 'code of the attribute';
         $expected = [0 => $attributeCode];
+        $serializedData = '["' . $attributeCode . '"]';
+
+        $this->requestTypeRegistry->expects($this->once())
+            ->method('isGetRequestOrQuery')
+            ->willReturn(false);
+
+        $this->cache->expects($this->once())
+            ->method('load')
+            ->with('salesrule_active_product_attributes')
+            ->willReturn($serializedData);
+
+        $this->serializer->expects($this->once())
+            ->method('unserialize')
+            ->with($serializedData)
+            ->willReturn([$attributeCode]);
+
+        $this->ruleResource->expects($this->never())
+            ->method('getActiveAttributes');
+
+        $this->assertEquals($expected, $this->plugin->afterGetProductAttributes($this->subject, []));
+    }
+
+    public function testAfterGetProductAttributesWithoutCache()
+    {
+        $attributeCode = 'code of the attribute';
+        $expected = [0 => $attributeCode];
+        $serializedData = '["' . $attributeCode . '"]';
+
+        $this->requestTypeRegistry->expects($this->once())
+            ->method('isGetRequestOrQuery')
+            ->willReturn(false);
+
+        $this->cache->expects($this->once())
+            ->method('load')
+            ->with('salesrule_active_product_attributes')
+            ->willReturn(false);
 
         $this->ruleResource->expects($this->once())
             ->method('getActiveAttributes')
@@ -53,6 +113,24 @@ class QuoteConfigProductAttributesTest extends TestCase
                 ]
             );
 
-        $this->assertEquals($expected, $this->plugin->afterGetProductAttributes($subject, []));
+        $this->serializer->expects($this->once())
+            ->method('serialize')
+            ->with([$attributeCode])
+            ->willReturn($serializedData);
+
+        $this->cache->expects($this->once())
+            ->method('save')
+            ->with($serializedData, 'salesrule_active_product_attributes', ['salesrule']);
+
+        $this->assertEquals($expected, $this->plugin->afterGetProductAttributes($this->subject, []));
+    }
+
+    public function testAfterGetProductAttributesRequestTypePostOrMutation()
+    {
+        $this->requestTypeRegistry->expects($this->once())
+            ->method('isGetRequestOrQuery')
+            ->willReturn(true);
+
+        $this->assertEquals([], $this->plugin->afterGetProductAttributes($this->subject, []));
     }
 }

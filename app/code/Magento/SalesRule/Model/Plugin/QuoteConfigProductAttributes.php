@@ -6,6 +6,8 @@
 
 namespace Magento\SalesRule\Model\Plugin;
 
+use Magento\Framework\App\CacheInterface;
+use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Quote\Model\Quote\Config;
 use Magento\SalesRule\Model\ResourceModel\Rule as RuleResource;
 
@@ -22,10 +24,27 @@ class QuoteConfigProductAttributes
     private $activeAttributeCodes;
 
     /**
-     * @param RuleResource $ruleResource
+     * Cache key for active salesrule attributes
      */
-    public function __construct(RuleResource $ruleResource)
-    {
+    private const CACHE_KEY = 'salesrule_active_product_attributes';
+
+    /**
+     * Cache tag for salesrule attributes
+     */
+    private const CACHE_TAG = 'salesrule';
+
+    /**
+     * @param RuleResource $ruleResource
+     * @param RequestTypeRegistry $requestTypeRegistry
+     * @param CacheInterface $cache
+     * @param SerializerInterface $serializer
+     */
+    public function __construct(
+        RuleResource $ruleResource,
+        private RequestTypeRegistry $requestTypeRegistry,
+        private CacheInterface $cache,
+        private SerializerInterface $serializer
+    ) {
         $this->ruleResource = $ruleResource;
     }
 
@@ -40,8 +59,24 @@ class QuoteConfigProductAttributes
      */
     public function afterGetProductAttributes(Config $subject, array $attributeKeys): array
     {
-        if ($this->activeAttributeCodes === null) {
-            $this->activeAttributeCodes = array_column($this->ruleResource->getActiveAttributes(), 'attribute_code');
+        if ($this->requestTypeRegistry->isGetRequestOrQuery()) {
+            return $attributeKeys;
+        }
+
+        $cachedData = $this->cache->load(self::CACHE_KEY);
+
+        if ($cachedData !== false) {
+            $this->activeAttributeCodes = $this->serializer->unserialize($cachedData);
+        } else {
+            $this->activeAttributeCodes = array_column(
+                $this->ruleResource->getActiveAttributes(),
+                'attribute_code'
+            );
+            $this->cache->save(
+                $this->serializer->serialize($this->activeAttributeCodes),
+                self::CACHE_KEY,
+                [self::CACHE_TAG]
+            );
         }
 
         return array_merge($attributeKeys, $this->activeAttributeCodes);
