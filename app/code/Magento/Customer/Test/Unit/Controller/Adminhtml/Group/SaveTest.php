@@ -17,6 +17,7 @@ use Magento\Customer\Api\Data\GroupInterface;
 use Magento\Customer\Api\Data\GroupInterfaceFactory;
 use Magento\Customer\Api\GroupRepositoryInterface;
 use Magento\Customer\Controller\Adminhtml\Group\Save;
+use Magento\Customer\Test\Unit\Helper\GroupExtensionTestHelper;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Controller\Result\RedirectFactory;
@@ -89,54 +90,34 @@ class SaveTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->contextMock = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->registryMock = $this->getMockBuilder(Registry::class)
-            ->getMockForAbstractClass();
-        $this->groupRepositoryMock = $this->getMockBuilder(GroupRepositoryInterface::class)
-            ->getMockForAbstractClass();
-        $this->groupInterfaceFactoryMock = $this->getMockBuilder(GroupInterfaceFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->forwardFactoryMock = $this->getMockBuilder(ForwardFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-        $this->pageFactoryMock = $this->getMockBuilder(PageFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->dataObjectProcessorMock = $this->getMockBuilder(DataObjectProcessor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->requestMock = $this->getMockBuilder(RequestInterface::class)
-            ->getMockForAbstractClass();
-        $this->resultRedirectFactoryMock = $this->getMockBuilder(RedirectFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->resultRedirectMock = $this->getMockBuilder(Redirect::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->messageManagerMock = $this->getMockBuilder(ManagerInterface::class)
-            ->getMockForAbstractClass();
-        $this->resultForwardMock = $this->getMockBuilder(Forward::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->groupMock = $this->getMockBuilder(GroupInterface::class)
-            ->onlyMethods(['setExtensionAttributes'])
-            ->getMockForAbstractClass();
-        $this->sessionMock = $this->getMockBuilder(Session::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setCustomerGroupData'])
-            ->getMock();
-        $this->groupExtensionFactoryMock = $this->getMockBuilder(GroupExtensionInterfaceFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->groupExtensionMock = $this->getMockBuilder(GroupExtension::class)
-            ->addMethods(['setExcludeWebsiteIds'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->contextMock = $this->createMock(Context::class);
+        $this->registryMock = $this->createMock(Registry::class);
+        $this->groupRepositoryMock = $this->createMock(GroupRepositoryInterface::class);
+        $this->groupInterfaceFactoryMock = $this->createMock(GroupInterfaceFactory::class);
+        $this->forwardFactoryMock = $this->createPartialMock(
+            ForwardFactory::class,
+            ['create']
+        );
+        $this->pageFactoryMock = $this->createMock(PageFactory::class);
+        $this->dataObjectProcessorMock = $this->createMock(DataObjectProcessor::class);
+        $this->requestMock = $this->createMock(RequestInterface::class);
+        $this->resultRedirectFactoryMock = $this->createMock(RedirectFactory::class);
+        $this->resultRedirectMock = $this->createMock(Redirect::class);
+        $this->messageManagerMock = $this->createMock(ManagerInterface::class);
+        $this->resultForwardMock = $this->createMock(Forward::class);
+        $this->groupMock = $this->createMock(GroupInterface::class);
+        $this->sessionMock = $this->createPartialMock(
+            \Magento\Backend\Test\Unit\Helper\SessionTestHelper::class,
+            ['setCustomerGroupData']
+        );
+        $this->groupExtensionFactoryMock = $this->createPartialMock(
+            GroupExtensionInterfaceFactory::class,
+            ['create']
+        );
+        $this->groupExtensionMock = $this->createPartialMock(
+            GroupExtensionTestHelper::class,
+            ['setExcludeWebsiteIds']
+        );
 
         $this->contextMock->expects(self::once())
             ->method('getMessageManager')

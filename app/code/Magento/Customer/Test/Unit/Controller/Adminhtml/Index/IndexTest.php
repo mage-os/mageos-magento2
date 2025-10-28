@@ -16,6 +16,7 @@ use Magento\Framework\App\Request\Http;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Page\Config;
 use Magento\Framework\View\Page\Title;
+use Magento\Framework\Test\Unit\Helper\PageTestHelper;
 use Magento\Framework\View\Result\Page;
 use Magento\Framework\View\Result\PageFactory;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -78,36 +79,23 @@ class IndexTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->requestMock = $this->getMockBuilder(Http::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->resultForwardFactoryMock = $this->getMockBuilder(
-            ForwardFactory::class
-        )
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-        $this->resultForwardMock = $this->getMockBuilder(Forward::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->resultPageFactoryMock = $this->getMockBuilder(PageFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->resultPageMock = $this->getMockBuilder(Page::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setActiveMenu', 'addBreadcrumb'])
-            ->onlyMethods(['getConfig'])
-            ->getMock();
-        $this->pageConfigMock = $this->getMockBuilder(Config::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->pageTitleMock = $this->getMockBuilder(Title::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->sessionMock = $this->getMockBuilder(Session::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['unsCustomerData', 'unsCustomerFormData'])
-            ->getMock();
+        $this->requestMock = $this->createMock(Http::class);
+        $this->resultForwardFactoryMock = $this->createPartialMock(
+            ForwardFactory::class,
+            ['create']
+        );
+        $this->resultForwardMock = $this->createMock(Forward::class);
+        $this->resultPageFactoryMock = $this->createMock(PageFactory::class);
+        $this->resultPageMock = $this->createPartialMock(
+            PageTestHelper::class,
+            ['getConfig', 'setActiveMenu', 'addBreadcrumb']
+        );
+        $this->pageConfigMock = $this->createMock(Config::class);
+        $this->pageTitleMock = $this->createMock(Title::class);
+        $this->sessionMock = $this->createPartialMock(
+            \Magento\Backend\Test\Unit\Helper\SessionTestHelper::class,
+            ['unsCustomerData', 'unsCustomerFormData']
+        );
 
         $objectManager = new ObjectManager($this);
         $this->context = $objectManager->getObject(
@@ -151,15 +139,7 @@ class IndexTest extends TestCase
             ->with('Customers');
         $this->resultPageMock->expects($this->atLeastOnce())
             ->method('addBreadcrumb')
-            ->willReturnCallback(
-                function ($arg1, $arg2) {
-                    if ($arg1 == 'Customers' && $arg2 == 'Customers') {
-                        return null;
-                    } elseif ($arg1 == 'Manage Customers' && $arg2 == 'Manage Customers') {
-                        return null;
-                    }
-                }
-            );
+            ->willReturnSelf();
         $this->sessionMock->expects($this->once())
             ->method('unsCustomerData');
         $this->sessionMock->expects($this->once())

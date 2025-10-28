@@ -197,95 +197,58 @@ class SaveTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->requestMock = $this->getMockBuilder(Http::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->resultForwardFactoryMock = $this->getMockBuilder(
-            ForwardFactory::class
-        )->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-        $this->resultForwardMock = $this->getMockBuilder(Forward::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->resultPageFactoryMock = $this->getMockBuilder(PageFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->resultPageMock = $this->getMockBuilder(Page::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setActiveMenu', 'addBreadcrumb'])
-            ->onlyMethods(['getConfig'])
-            ->getMock();
-        $this->pageConfigMock = $this->getMockBuilder(Config::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->pageTitleMock = $this->getMockBuilder(Title::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->sessionMock = $this->getMockBuilder(Session::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['unsCustomerFormData', 'setCustomerFormData'])
-            ->getMock();
-        $this->formFactoryMock = $this->getMockBuilder(FormFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->objectFactoryMock = $this->getMockBuilder(DataObjectFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-        $this->customerDataFactoryMock = $this->getMockBuilder(
-            CustomerInterfaceFactory::class
-        )->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-        $this->customerRepositoryMock = $this->getMockBuilder(CustomerRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->customerAddressRepositoryMock = $this->getMockBuilder(
-            AddressRepositoryInterface::class
-        )->disableOriginalConstructor()
-            ->getMock();
-        $this->customerMapperMock = $this->getMockBuilder(
-            \Magento\Customer\Model\Customer\Mapper::class
-        )->disableOriginalConstructor()
-            ->getMock();
-        $this->customerAddressMapperMock = $this->getMockBuilder(
-            Mapper::class
-        )->disableOriginalConstructor()
-            ->getMock();
-        $this->dataHelperMock = $this->getMockBuilder(
-            DataObjectHelper::class
-        )->disableOriginalConstructor()
-            ->getMock();
-        $this->authorizationMock = $this->getMockBuilder(AuthorizationInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->subscriberFactoryMock = $this->getMockBuilder(SubscriberFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-        $this->subscriptionManager = $this->getMockForAbstractClass(SubscriptionManagerInterface::class);
-        $this->registryMock = $this->getMockBuilder(Registry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->messageManagerMock = $this->getMockBuilder(ManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->redirectFactoryMock = $this->getMockBuilder(RedirectFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-        $this->managementMock = $this->getMockBuilder(AccountManagement::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['createAccount', 'validateCustomerStoreIdByWebsiteId'])
-            ->getMock();
-        $this->addressDataFactoryMock = $this->getMockBuilder(AddressInterfaceFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-        $this->emailNotificationMock = $this->getMockBuilder(EmailNotificationInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->requestMock = $this->createMock(Http::class);
+        $this->resultForwardFactoryMock = $this->createPartialMock(
+            ForwardFactory::class,
+            ['create']
+        );
+        $this->resultForwardMock = $this->createMock(Forward::class);
+        $this->resultPageFactoryMock = $this->createMock(PageFactory::class);
+        $this->resultPageMock = $this->createPartialMock(
+            \Magento\Framework\Test\Unit\Helper\PageTestHelper::class,
+            ['getConfig', 'setActiveMenu', 'addBreadcrumb']
+        );
+        $this->pageConfigMock = $this->createMock(Config::class);
+        $this->pageTitleMock = $this->createMock(Title::class);
+        $this->sessionMock = $this->createPartialMock(
+            \Magento\Backend\Test\Unit\Helper\SessionTestHelper::class,
+            ['unsCustomerFormData', 'setCustomerFormData']
+        );
+        $this->formFactoryMock = $this->createMock(FormFactory::class);
+        $this->objectFactoryMock = $this->createPartialMock(
+            DataObjectFactory::class,
+            ['create']
+        );
+        $this->customerDataFactoryMock = $this->createPartialMock(
+            CustomerInterfaceFactory::class,
+            ['create']
+        );
+        $this->customerRepositoryMock = $this->createMock(CustomerRepositoryInterface::class);
+        $this->customerAddressRepositoryMock = $this->createMock(AddressRepositoryInterface::class);
+        $this->customerMapperMock = $this->createMock(\Magento\Customer\Model\Customer\Mapper::class);
+        $this->customerAddressMapperMock = $this->createMock(Mapper::class);
+        $this->dataHelperMock = $this->createMock(DataObjectHelper::class);
+        $this->authorizationMock = $this->createMock(AuthorizationInterface::class);
+        $this->subscriberFactoryMock = $this->createPartialMock(
+            SubscriberFactory::class,
+            ['create']
+        );
+        $this->subscriptionManager = $this->createMock(SubscriptionManagerInterface::class);
+        $this->registryMock = $this->createMock(Registry::class);
+        $this->messageManagerMock = $this->createMock(ManagerInterface::class);
+        $this->redirectFactoryMock = $this->createPartialMock(
+            RedirectFactory::class,
+            ['create']
+        );
+        $this->managementMock = $this->createPartialMock(
+            AccountManagement::class,
+            ['createAccount', 'validateCustomerStoreIdByWebsiteId']
+        );
+        $this->addressDataFactoryMock = $this->createPartialMock(
+            AddressInterfaceFactory::class,
+            ['create']
+        );
+        $this->emailNotificationMock = $this->createMock(EmailNotificationInterface::class);
 
         $customerStoreMock = $this->createMock(SetCustomerStore::class);
         $customerStoreMock->expects($this->once())->method('setStore');
@@ -380,10 +343,7 @@ class SaveTest extends TestCase
         ];
 
         /** @var AttributeMetadataInterface|MockObject $customerFormMock */
-        $attributeMock = $this->getMockBuilder(
-            AttributeMetadataInterface::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $attributeMock = $this->createMock(AttributeMetadataInterface::class);
         $attributeMock->expects($this->atLeastOnce())
             ->method('getAttributeCode')
             ->willReturn('coolness');
@@ -415,9 +375,7 @@ class SaveTest extends TestCase
             );
 
         /** @var DataObject|MockObject $objectMock */
-        $objectMock = $this->getMockBuilder(DataObject::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $objectMock = $this->createMock(DataObject::class);
         $objectMock->expects($this->atLeastOnce())
             ->method('getData')
             ->willReturnMap(
@@ -431,10 +389,7 @@ class SaveTest extends TestCase
             ->with(['data' => $postValue])
             ->willReturn($objectMock);
 
-        $customerFormMock = $this->getMockBuilder(
-            Form::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $customerFormMock = $this->createMock(Form::class);
         $customerFormMock->expects($this->once())
             ->method('extractData')
             ->with($this->requestMock, 'customer')
@@ -463,7 +418,7 @@ class SaveTest extends TestCase
             );
 
         /** @var CustomerInterface|MockObject $customerMock */
-        $customerMock = $this->getMockForAbstractClass(CustomerInterface::class);
+        $customerMock = $this->createMock(CustomerInterface::class);
         $customerMock->method('getId')->willReturn($customerId);
         $this->customerDataFactoryMock->expects($this->once())
             ->method('create')
@@ -517,9 +472,7 @@ class SaveTest extends TestCase
             ->willReturnSelf();
 
         /** @var Redirect|MockObject $redirectMock */
-        $redirectMock = $this->getMockBuilder(Redirect::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $redirectMock = $this->createMock(Redirect::class);
 
         $this->redirectFactoryMock->expects($this->once())
             ->method('create')
@@ -567,10 +520,7 @@ class SaveTest extends TestCase
             'confirmation' => false,
         ];
         /** @var AttributeMetadataInterface|MockObject $customerFormMock */
-        $attributeMock = $this->getMockBuilder(
-            AttributeMetadataInterface::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $attributeMock = $this->createMock(AttributeMetadataInterface::class);
         $attributeMock->expects($this->atLeastOnce())
             ->method('getAttributeCode')
             ->willReturn('coolness');
@@ -602,9 +552,7 @@ class SaveTest extends TestCase
             );
 
         /** @var DataObject|MockObject $objectMock */
-        $objectMock = $this->getMockBuilder(DataObject::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $objectMock = $this->createMock(DataObject::class);
         $objectMock->expects($this->atLeastOnce())
             ->method('getData')
             ->willReturnMap(
@@ -618,10 +566,7 @@ class SaveTest extends TestCase
             ->with(['data' => $postValue])
             ->willReturn($objectMock);
 
-        $customerFormMock = $this->getMockBuilder(
-            Form::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $customerFormMock = $this->createMock(Form::class);
         $customerFormMock->expects($this->once())
             ->method('extractData')
             ->with($this->requestMock, 'customer')
@@ -651,7 +596,7 @@ class SaveTest extends TestCase
             );
 
         /** @var CustomerInterface|MockObject $customerMock */
-        $customerMock = $this->getMockForAbstractClass(CustomerInterface::class);
+        $customerMock = $this->createMock(CustomerInterface::class);
         $customerMock->method('getId')->willReturn($customerId);
         $this->customerDataFactoryMock->expects($this->once())
             ->method('create')
@@ -686,9 +631,7 @@ class SaveTest extends TestCase
             ->willReturnSelf();
 
         /** @var Redirect|MockObject $redirectMock */
-        $redirectMock = $this->getMockBuilder(Redirect::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $redirectMock = $this->createMock(Redirect::class);
 
         $this->redirectFactoryMock->expects($this->once())
             ->method('create')
@@ -724,10 +667,7 @@ class SaveTest extends TestCase
         ];
 
         /** @var AttributeMetadataInterface|MockObject $customerFormMock */
-        $attributeMock = $this->getMockBuilder(
-            AttributeMetadataInterface::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $attributeMock = $this->createMock(AttributeMetadataInterface::class);
         $attributeMock->expects($this->once())
             ->method('getAttributeCode')
             ->willReturn('coolness');
@@ -753,9 +693,7 @@ class SaveTest extends TestCase
             );
 
         /** @var DataObject|MockObject $objectMock */
-        $objectMock = $this->getMockBuilder(DataObject::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $objectMock = $this->createMock(DataObject::class);
         $objectMock->expects($this->once())
             ->method('getData')
             ->with('customer')
@@ -766,10 +704,7 @@ class SaveTest extends TestCase
             ->with(['data' => $postValue])
             ->willReturn($objectMock);
 
-        $customerFormMock = $this->getMockBuilder(
-            Form::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $customerFormMock = $this->createMock(Form::class);
         $customerFormMock->expects($this->once())
             ->method('extractData')
             ->with($this->requestMock, 'customer')
@@ -793,10 +728,7 @@ class SaveTest extends TestCase
             )->willReturn($customerFormMock);
 
         /** @var CustomerInterface|MockObject $customerMock */
-        $customerMock = $this->getMockBuilder(
-            CustomerInterface::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $customerMock = $this->createMock(CustomerInterface::class);
 
         $this->customerDataFactoryMock->expects($this->once())
             ->method('create')
@@ -842,9 +774,7 @@ class SaveTest extends TestCase
             );
 
         /** @var Redirect|MockObject $redirectMock */
-        $redirectMock = $this->getMockBuilder(Redirect::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $redirectMock = $this->createMock(Redirect::class);
 
         $this->redirectFactoryMock->expects($this->once())
             ->method('create')
@@ -881,10 +811,7 @@ class SaveTest extends TestCase
         ];
 
         /** @var AttributeMetadataInterface|MockObject $customerFormMock */
-        $attributeMock = $this->getMockBuilder(
-            AttributeMetadataInterface::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $attributeMock = $this->createMock(AttributeMetadataInterface::class);
         $attributeMock->expects($this->once())
             ->method('getAttributeCode')
             ->willReturn('coolness');
@@ -910,9 +837,7 @@ class SaveTest extends TestCase
             );
 
         /** @var DataObject|MockObject $objectMock */
-        $objectMock = $this->getMockBuilder(DataObject::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $objectMock = $this->createMock(DataObject::class);
         $objectMock->expects($this->once())
             ->method('getData')
             ->with('customer')
@@ -924,10 +849,7 @@ class SaveTest extends TestCase
             ->willReturn($objectMock);
 
         /** @var Form|MockObject $formMock */
-        $customerFormMock = $this->getMockBuilder(
-            Form::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $customerFormMock = $this->createMock(Form::class);
         $customerFormMock->expects($this->once())
             ->method('extractData')
             ->with($this->requestMock, 'customer')
@@ -950,10 +872,7 @@ class SaveTest extends TestCase
                 Form::DONT_IGNORE_INVISIBLE
             )->willReturn($customerFormMock);
 
-        $customerMock = $this->getMockBuilder(
-            CustomerInterface::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $customerMock = $this->createMock(CustomerInterface::class);
 
         $this->customerDataFactoryMock->expects($this->once())
             ->method('create')
@@ -1001,9 +920,7 @@ class SaveTest extends TestCase
             );
 
         /** @var Redirect|MockObject $redirectMock */
-        $redirectMock = $this->getMockBuilder(Redirect::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $redirectMock = $this->createMock(Redirect::class);
 
         $this->redirectFactoryMock->expects($this->once())
             ->method('create')
@@ -1040,10 +957,7 @@ class SaveTest extends TestCase
         ];
 
         /** @var AttributeMetadataInterface|MockObject $customerFormMock */
-        $attributeMock = $this->getMockBuilder(
-            AttributeMetadataInterface::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $attributeMock = $this->createMock(AttributeMetadataInterface::class);
         $attributeMock->expects($this->once())
             ->method('getAttributeCode')
             ->willReturn('coolness');
@@ -1069,9 +983,7 @@ class SaveTest extends TestCase
             );
 
         /** @var DataObject|MockObject $objectMock */
-        $objectMock = $this->getMockBuilder(DataObject::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $objectMock = $this->createMock(DataObject::class);
         $objectMock->expects($this->once())
             ->method('getData')
             ->with('customer')
@@ -1082,10 +994,7 @@ class SaveTest extends TestCase
             ->with(['data' => $postValue])
             ->willReturn($objectMock);
 
-        $customerFormMock = $this->getMockBuilder(
-            Form::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $customerFormMock = $this->createMock(Form::class);
         $customerFormMock->expects($this->once())
             ->method('extractData')
             ->with($this->requestMock, 'customer')
@@ -1109,10 +1018,7 @@ class SaveTest extends TestCase
             )->willReturn($customerFormMock);
 
         /** @var CustomerInterface|MockObject $customerMock */
-        $customerMock = $this->getMockBuilder(
-            CustomerInterface::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $customerMock = $this->createMock(CustomerInterface::class);
 
         $this->customerDataFactoryMock->expects($this->once())
             ->method('create')
@@ -1161,9 +1067,7 @@ class SaveTest extends TestCase
             );
 
         /** @var Redirect|MockObject $redirectMock */
-        $redirectMock = $this->getMockBuilder(Redirect::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $redirectMock = $this->createMock(Redirect::class);
 
         $this->redirectFactoryMock->expects($this->once())
             ->method('create')

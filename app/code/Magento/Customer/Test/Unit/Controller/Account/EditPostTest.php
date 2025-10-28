@@ -30,6 +30,7 @@ use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Data\Form\FormKey\Validator;
 use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
 use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
+use Magento\Framework\Test\Unit\Helper\RequestInterfaceTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -124,70 +125,42 @@ class EditPostTest extends TestCase
             ]
         ];
         $objectManager->prepareObjectManager($objects);
-        $this->context = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->customerSession = $this->getMockBuilder(Session::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->accountManagement = $this->getMockBuilder(AccountManagementInterface::class)
-            ->getMockForAbstractClass();
-        $this->customerRepository = $this->getMockBuilder(CustomerRepositoryInterface::class)
-            ->getMockForAbstractClass();
-        $this->formKeyValidator = $this->getMockBuilder(Validator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->customerExtractor = $this->getMockBuilder(CustomerExtractor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->escaper = $this->getMockBuilder(Escaper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->addressRegistry = $this->getMockBuilder(AddressRegistry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->filesystem = $this->getMockBuilder(Filesystem::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->sessionCleaner = $this->getMockBuilder(SessionCleanerInterface::class)
-            ->getMockForAbstractClass();
-        $this->accountConfirmation = $this->getMockBuilder(AccountConfirmation::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->customerUrl = $this->getMockBuilder(Url::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->customerMapper = $this->getMockBuilder(Mapper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->context = $this->createMock(Context::class);
+        $this->customerSession = $this->createMock(Session::class);
+        $this->accountManagement = $this->createMock(AccountManagementInterface::class);
+        $this->customerRepository = $this->createMock(CustomerRepositoryInterface::class);
+        $this->formKeyValidator = $this->createMock(Validator::class);
+        $this->customerExtractor = $this->createMock(CustomerExtractor::class);
+        $this->escaper = $this->createMock(Escaper::class);
+        $this->addressRegistry = $this->createMock(AddressRegistry::class);
+        $this->filesystem = $this->createMock(Filesystem::class);
+        $this->sessionCleaner = $this->createMock(SessionCleanerInterface::class);
+        $this->accountConfirmation = $this->createMock(AccountConfirmation::class);
+        $this->customerUrl = $this->createMock(Url::class);
+        $this->customerMapper = $this->createMock(Mapper::class);
 
-        $this->request = $this->getMockBuilder(RequestInterface::class)
-            ->addMethods(['isPost', 'getPostValue'])
-            ->getMockForAbstractClass();
+        $this->request = $this->createPartialMock(
+            RequestInterfaceTestHelper::class,
+            ['getParam']
+        );
         $this->context->expects($this->any())
             ->method('getRequest')
             ->willReturn($this->request);
-        $resultRedirectFactory = $this->getMockBuilder(RedirectFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resultRedirectFactory = $this->createMock(RedirectFactory::class);
         $this->context->expects($this->any())
             ->method('getResultRedirectFactory')
             ->willReturn($resultRedirectFactory);
-        $redirect = $this->getMockBuilder(Redirect::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $redirect = $this->createMock(Redirect::class);
         $resultRedirectFactory->expects($this->any())
             ->method('create')
             ->willReturn($redirect);
 
-        $eventManager = $this->getMockBuilder(EventManagerInterface::class)
-            ->getMockForAbstractClass();
+        $eventManager = $this->createMock(EventManagerInterface::class);
         $this->context->expects($this->any())
             ->method('getEventManager')
             ->willReturn($eventManager);
 
-        $messageManager = $this->getMockBuilder(MessageManagerInterface::class)
-            ->getMockForAbstractClass();
+        $messageManager = $this->createMock(MessageManagerInterface::class);
         $this->context->expects($this->any())
             ->method('getMessageManager')
             ->willReturn($messageManager);
@@ -219,12 +192,9 @@ class EditPostTest extends TestCase
             ->method('validate')
             ->with($this->request)
             ->willReturn(true);
-        $this->request->expects($this->once())
-            ->method('isPost')
-            ->willReturn(true);
+        $this->request->setIsPost(true);
 
-        $customer = $this->getMockBuilder(CustomerInterface::class)
-            ->getMockForAbstractClass();
+        $customer = $this->createMock(CustomerInterface::class);
         $customer->expects($this->any())
             ->method('getAddresses')
             ->willReturn([]);

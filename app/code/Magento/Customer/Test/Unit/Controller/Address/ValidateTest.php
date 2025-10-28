@@ -17,6 +17,7 @@ use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\DataObject;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Test\Unit\Helper\DataObjectTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -57,7 +58,7 @@ class ValidateTest extends TestCase
     protected function setUp(): void
     {
         $this->formFactoryMock = $this->createMock(FormFactory::class);
-        $this->requestMock = $this->getMockForAbstractClass(RequestInterface::class);
+        $this->requestMock = $this->createMock(RequestInterface::class);
         $this->resultJsonFactoryMock = $this->createMock(JsonFactory::class);
         $this->resultRedirectFactoryMock = $this->createMock(RedirectFactory::class);
 
@@ -116,10 +117,10 @@ class ValidateTest extends TestCase
         $this->resultJsonFactoryMock->method('create')
             ->willReturn($resultJson);
 
-        $validateResponseMock = $this->getMockBuilder(DataObject::class)
-            ->addMethods(['getError', 'setMessages'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $validateResponseMock = $this->createPartialMock(
+            DataObjectTestHelper::class,
+            ['setMessages', 'getError']
+        );
         $validateResponseMock->method('setMessages')->willReturnSelf();
         $validateResponseMock->method('getError')->willReturn(1);
 

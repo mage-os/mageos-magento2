@@ -13,6 +13,7 @@ use Magento\Backend\Model\View\Result\RedirectFactory;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Customer\Controller\Adminhtml\Index\MassAssignGroup;
+use Magento\Customer\Test\Unit\Helper\CustomerInterfaceTestHelper;
 use Magento\Customer\Model\ResourceModel\Customer\Collection;
 use Magento\Customer\Model\ResourceModel\Customer\CollectionFactory;
 use Magento\Framework\App\Action\Context;
@@ -97,38 +98,26 @@ class MassAssignGroupTest extends TestCase
         $resultRedirectFactory = $this->createMock(
             RedirectFactory::class
         );
-        $this->responseMock = $this->getMockForAbstractClass(ResponseInterface::class);
-        $this->requestMock = $this->getMockBuilder(Http::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->responseMock = $this->createMock(ResponseInterface::class);
+        $this->requestMock = $this->createMock(Http::class);
         $this->objectManagerMock = $this->createPartialMock(
             \Magento\Framework\ObjectManager\ObjectManager::class,
             ['create']
         );
         $this->messageManagerMock = $this->createMock(Manager::class);
-        $this->customerCollectionMock =
-            $this->getMockBuilder(Collection::class)
-                ->disableOriginalConstructor()
-                ->getMock();
-        $this->customerCollectionFactoryMock =
-            $this->getMockBuilder(CollectionFactory::class)
-                ->disableOriginalConstructor()
-                ->onlyMethods(['create'])
-                ->getMock();
-        $redirectMock = $this->getMockBuilder(Redirect::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $resultFactoryMock = $this->getMockBuilder(ResultFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->customerCollectionMock = $this->createMock(Collection::class);
+        $this->customerCollectionFactoryMock = $this->createPartialMock(
+            CollectionFactory::class,
+            ['create']
+        );
+        $redirectMock = $this->createMock(Redirect::class);
+        $resultFactoryMock = $this->createMock(ResultFactory::class);
         $resultFactoryMock->expects($this->any())
             ->method('create')
             ->with(ResultFactory::TYPE_REDIRECT)
             ->willReturn($redirectMock);
 
-        $this->resultRedirectMock = $this->getMockBuilder(Redirect::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->resultRedirectMock = $this->createMock(Redirect::class);
 
         $resultRedirectFactory->expects($this->any())->method('create')->willReturn($this->resultRedirectMock);
 
@@ -151,9 +140,7 @@ class MassAssignGroupTest extends TestCase
         $this->customerCollectionFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($this->customerCollectionMock);
-        $this->customerRepositoryMock = $this
-            ->getMockBuilder(CustomerRepositoryInterface::class)
-            ->getMockForAbstractClass();
+        $this->customerRepositoryMock = $this->createMock(CustomerRepositoryInterface::class);
         $this->massAction = $objectManagerHelper->getObject(
             MassAssignGroup::class,
             [
@@ -173,10 +160,7 @@ class MassAssignGroupTest extends TestCase
     public function testExecute()
     {
         $customersIds = [10, 11, 12];
-        $customerMock = $this->getMockBuilder(CustomerInterface::class)
-            ->addMethods(['setData'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $customerMock = new CustomerInterfaceTestHelper();
         $this->customerCollectionMock->expects($this->any())
             ->method('getAllIds')
             ->willReturn($customersIds);

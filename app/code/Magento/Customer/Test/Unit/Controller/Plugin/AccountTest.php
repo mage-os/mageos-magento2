@@ -15,6 +15,7 @@ use Magento\Framework\App\ActionFlag;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\App\Request\Http as HttpRequest;
 use Magento\Framework\Controller\ResultInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -57,46 +58,36 @@ class AccountTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->sessionMock = $this->getMockBuilder(Session::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setNoReferer', 'unsNoReferer'])
-            ->onlyMethods(['authenticate'])
-            ->getMock();
+        $this->sessionMock = $this->createPartialMock(
+            \Magento\Customer\Test\Unit\Helper\CustomerSessionTestHelper::class,
+            ['authenticate', 'setNoReferer', 'unsNoReferer']
+        );
 
-        $this->actionMock = $this->getMockBuilder(AccountInterface::class)
-            ->addMethods(['getActionFlag'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->actionMock = new \Magento\Customer\Test\Unit\Helper\AccountInterfaceTestHelper();
 
-        $this->requestMock = $this->getMockBuilder(HttpRequest::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getActionName'])
-            ->getMock();
+        $this->requestMock = $this->createPartialMock(
+            HttpRequest::class,
+            ['getActionName']
+        );
 
-        $this->resultMock = $this->getMockBuilder(ResultInterface::class)
-            ->getMockForAbstractClass();
+        $this->resultMock = $this->createMock(ResultInterface::class);
 
-        $this->actionFlagMock = $this->getMockBuilder(ActionFlag::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->actionFlagMock = $this->createMock(ActionFlag::class);
     }
 
     /**
      * @param string $action
      * @param array $allowedActions
      * @param boolean $isAllowed
-     *
-     * @dataProvider beforeExecuteDataProvider
      */
+    #[DataProvider('beforeExecuteDataProvider')]
     public function testAroundExecuteInterruptsOriginalCallWhenNotAllowed(
         string $action,
         array $allowedActions,
         bool $isAllowed
     ) {
         /** @var callable|MockObject $proceedMock */
-        $proceedMock = $this->getMockBuilder(\stdClass::class)
-            ->addMethods(['__invoke'])
-            ->getMock();
+        $proceedMock = new \Magento\Framework\Test\Unit\Helper\CallableTestHelper();
 
         $closureMock = Closure::fromCallable($proceedMock);
 
@@ -105,9 +96,10 @@ class AccountTest extends TestCase
             ->willReturn($action);
 
         if ($isAllowed) {
-            $proceedMock->expects($this->once())->method('__invoke')->willReturn($this->resultMock);
+            $proceedMock->setReturnValue($this->resultMock);
+            $proceedMock->setExpectedCallCount(1);
         } else {
-            $proceedMock->expects($this->never())->method('__invoke');
+            $proceedMock->setExpectedCallCount(0);
         }
 
         $plugin = new Account($this->requestMock, $this->sessionMock, $allowedActions);
@@ -115,8 +107,10 @@ class AccountTest extends TestCase
 
         if ($isAllowed) {
             $this->assertSame($this->resultMock, $result);
+            $this->assertTrue($proceedMock->verifyCallCount());
         } else {
             $this->assertNull($result);
+            $this->assertTrue($proceedMock->verifyCallCount());
         }
     }
 

@@ -19,6 +19,7 @@ use Magento\Quote\Model\Quote\Item\Option;
 use Magento\Quote\Model\QuoteFactory;
 use Magento\Quote\Model\ResourceModel\Quote\Item\Option\Collection;
 use Magento\Quote\Model\ResourceModel\QuoteItemRetriever;
+use Magento\Quote\Test\Unit\Helper\QuoteTestHelper;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -74,9 +75,7 @@ class ConfigureTest extends TestCase
         $customerId = 10;
         $this->quoteItemId = 20;
         $this->websiteId = 1;
-        $request = $this->getMockBuilder(Http::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $request = $this->createMock(Http::class);
 
         $request->expects($this->exactly(3))
             ->method('getParam')
@@ -86,18 +85,10 @@ class ConfigureTest extends TestCase
                 ['website_id'] => $this->websiteId
             });
 
-        $this->storeManager = $this->getMockBuilder(StoreManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->option = $this->getMockBuilder(Option::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->composite = $this->getMockBuilder(Composite::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $objectManager = $this->getMockBuilder(ObjectManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->storeManager = $this->createMock(StoreManagerInterface::class);
+        $this->option = $this->createMock(Option::class);
+        $this->composite = $this->createMock(Composite::class);
+        $objectManager = $this->createMock(ObjectManagerInterface::class);
         $objectManager->expects($this->any())
             ->method('get')
             ->willReturnOnConsecutiveCalls($this->storeManager, $this->composite);
@@ -106,10 +97,10 @@ class ConfigureTest extends TestCase
             ->method('create')
             ->willReturn($this->option);
 
-        $context = $this->getMockBuilder(Context::class)
-            ->onlyMethods(['getRequest', 'getObjectManager'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $context = $this->createPartialMock(
+            Context::class,
+            ['getRequest', 'getObjectManager']
+        );
         $context->expects($this->any())
             ->method('getRequest')
             ->willReturn($request);
@@ -117,18 +108,14 @@ class ConfigureTest extends TestCase
             ->method('getObjectManager')
             ->willReturn($objectManager);
 
-        $this->cartRepository = $this->getMockBuilder(CartRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->cartRepository = $this->createMock(CartRepositoryInterface::class);
 
-        $quoteFactory = $this->getMockBuilder(QuoteFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $quoteFactory = $this->createMock(QuoteFactory::class);
 
-        $this->quoteItemRetriever = $this->getMockBuilder(QuoteItemRetriever::class)
-            ->onlyMethods(['getById'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->quoteItemRetriever = $this->createPartialMock(
+            QuoteItemRetriever::class,
+            ['getById']
+        );
 
         $objectManagerHelper = new ObjectManagerHelper($this);
         $this->subject = $objectManagerHelper->getObject(
@@ -147,15 +134,12 @@ class ConfigureTest extends TestCase
      */
     public function testExecute()
     {
-        $quoteItem = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $quoteItem = $this->createMock(Item::class);
 
-        $quote = $this->getMockBuilder(Quote::class)
-            ->onlyMethods(['getItemById'])
-            ->addMethods(['setWebsite'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $quote = $this->createPartialMock(
+            QuoteTestHelper::class,
+            ['getItemById', 'setWebsite']
+        );
         $quote->expects($this->once())
             ->method('setWebsite')
             ->willReturnSelf();
@@ -177,9 +161,7 @@ class ConfigureTest extends TestCase
             ->with($this->quoteItemId)
             ->willReturn($quoteItem);
 
-        $collection = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $collection = $this->createMock(Collection::class);
         $collection->expects($this->once())
             ->method('addItemFilter')
             ->willReturnSelf();

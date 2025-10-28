@@ -86,13 +86,12 @@ class CurrentCustomerTest extends TestCase
     {
         $this->customerSessionMock = $this->createMock(Session::class);
         $this->layoutMock = $this->createMock(Layout::class);
-        $this->customerInterfaceFactoryMock = $this->getMockBuilder(CustomerInterfaceFactory::class)
-            ->addMethods(['setGroupId'])
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->customerDataMock = $this->getMockForAbstractClass(CustomerInterface::class);
-        $this->customerRepositoryMock = $this->getMockForAbstractClass(CustomerRepositoryInterface::class);
+        $this->customerInterfaceFactoryMock = $this->createPartialMock(
+            CustomerInterfaceFactory::class,
+            ['create']
+        );
+        $this->customerDataMock = new \Magento\Customer\Test\Unit\Helper\CustomerInterfaceTestHelper();
+        $this->customerRepositoryMock = $this->createMock(CustomerRepositoryInterface::class);
         $this->requestMock = $this->createMock(Http::class);
         $this->moduleManagerMock = $this->createMock(Manager::class);
         $this->viewMock = $this->createMock(View::class);
@@ -126,11 +125,10 @@ class CurrentCustomerTest extends TestCase
         $this->customerInterfaceFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($this->customerDataMock);
-        $this->customerDataMock->expects($this->once())
-            ->method('setGroupId')
-            ->with($this->customerGroupId)
-            ->willReturnSelf();
-        $this->assertEquals($this->customerDataMock, $this->currentCustomer->getCustomer());
+        
+        $result = $this->currentCustomer->getCustomer();
+        $this->assertInstanceOf(\Magento\Customer\Api\Data\CustomerInterface::class, $result);
+        $this->assertEquals($this->customerGroupId, $result->getGroupId());
     }
 
     /**
