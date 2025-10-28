@@ -14,7 +14,7 @@ use Magento\Catalog\Model\Product;
  *
  * This helper extends the concrete Product class to provide
  * test-specific functionality without dependency injection issues.
- * 
+ *
  * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class ProductInterfaceTestHelper extends Product
@@ -55,6 +55,26 @@ class ProductInterfaceTestHelper extends Product
     {
         $this->customAttributes[$attributeCode] = $attribute;
         return $this;
+    }
+
+    /**
+     * Get product options
+     *
+     * @return array|null
+     */
+    public function getOptions()
+    {
+        return $this->getData('options');
+    }
+
+    /**
+     * Get attribute set ID
+     *
+     * @return int|null
+     */
+    public function getAttributeSetId()
+    {
+        return $this->getData('attribute_set_id');
     }
 
     /**

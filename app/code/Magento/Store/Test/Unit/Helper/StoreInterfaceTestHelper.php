@@ -26,6 +26,16 @@ class StoreInterfaceTestHelper extends Store
     }
 
     /**
+     * Get store code
+     *
+     * @return string|null
+     */
+    public function getCode()
+    {
+        return $this->getData('code');
+    }
+
+    /**
      * Initialize resources
      *
      * @return void

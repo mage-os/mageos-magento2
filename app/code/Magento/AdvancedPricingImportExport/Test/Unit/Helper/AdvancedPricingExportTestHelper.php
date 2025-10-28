@@ -14,7 +14,7 @@ use Magento\AdvancedPricingImportExport\Model\Export\AdvancedPricing;
  *
  * This helper extends the concrete AdvancedPricing class to provide
  * test-specific functionality without dependency injection issues.
- * 
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */

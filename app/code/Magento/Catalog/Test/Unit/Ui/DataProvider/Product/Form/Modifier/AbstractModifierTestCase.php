@@ -57,8 +57,9 @@ abstract class AbstractModifierTestCase extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
         $this->locatorMock = $this->createMock(LocatorInterface::class);
-        $this->productMock = $this->getMockBuilder(ProductInterfaceTestHelper::class)
-            ->onlyMethods([
+        $this->productMock = $this->createPartialMock(
+            ProductInterfaceTestHelper::class,
+            [
                 'getId',
                 'getTypeId',
                 'getStoreId',
@@ -72,14 +73,13 @@ abstract class AbstractModifierTestCase extends TestCase
                 'getOptions',
                 'getAttributeSetId',
                 'getCustomAttribute'
-            ])
-            ->getMock();
-        $this->storeMock = $this->getMockBuilder(StoreInterfaceTestHelper::class)
-            ->onlyMethods(['getId', 'load', 'getConfig', 'getCode'])
-            ->getMock();
-        $this->arrayManagerMock = $this->getMockBuilder(ArrayManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+            ]
+        );
+        $this->storeMock = $this->createPartialMock(
+            StoreInterfaceTestHelper::class,
+            ['getId', 'load', 'getConfig', 'getCode']
+        );
+        $this->arrayManagerMock = $this->createMock(ArrayManager::class);
 
         $this->arrayManagerMock->expects($this->any())
             ->method('replace')

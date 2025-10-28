@@ -192,10 +192,7 @@ class CustomOptionsTest extends AbstractModifierTestCase
     protected function getProductOptionMock(array $data, array $values = [])
     {
         /** @var ProductOption|MockObject $productOptionMock */
-        $productOptionMock = $this->getMockBuilder(ProductOption::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getValues'])
-            ->getMock();
+        $productOptionMock = $this->createPartialMock(ProductOption::class, ['getValues']);
 
         $productOptionMock->setData($data);
         $productOptionMock->expects($this->any())

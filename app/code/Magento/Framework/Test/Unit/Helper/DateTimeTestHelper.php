@@ -14,7 +14,7 @@ use Magento\Framework\Stdlib\DateTime\DateTime;
  *
  * This helper extends the concrete DateTime class to provide
  * test-specific functionality without dependency injection issues.
- * 
+ *
  * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class DateTimeTestHelper extends DateTime
@@ -68,4 +68,3 @@ class DateTimeTestHelper extends DateTime
         return $this;
     }
 }
-
