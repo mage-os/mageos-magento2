@@ -82,10 +82,12 @@
         <!-- Step 10: Go to checkout -->
         <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutAfterSecondProduct"/>
         <!-- Step 11: Login as current user on checkout page -->
-        <actionGroup ref="LoginAsCustomerOnCheckoutPageActionGroup" stepKey="loginAsCustomerOnCheckout">
-            <argument name="customer" value="Simple_US_Customer_NY"/>
+        <actionGroup ref="StorefrontFillCustomerLoginFormActionGroup" stepKey="fillLoginFormSecondAttempt">
+            <argument name="customer" value="Simple_US_Customer_NY" />
         </actionGroup>
+        <actionGroup ref="StorefrontClickSignOnCustomerLoginFormActionGroup" stepKey="clickSignInAccountButton" />
         <!-- Step 12: Place order -->
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckout"/>
         <actionGroup ref="StorefrontCheckoutClickNextButtonActionGroup" stepKey="proceedToPaymentForSecondOrder"/>
         <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="selectCheckMoneyOrderPaymentForSecondOrder"/>
         <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="placeSecondOrder"/>
