@@ -71,15 +71,7 @@ class AttributeTest extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
         $this->subjectMock = $this->createMock(\Magento\Catalog\Model\ResourceModel\Attribute::class);
-        $this->indexerMock = $this->createMock(
-            IndexerInterface::class,
-            [],
-            '',
-            false,
-            false,
-            true,
-            ['getId', 'getState', '__wakeup']
-        );
+        $this->indexerMock = $this->createMock(IndexerInterface::class);
         $this->indexerRegistryMock = $this->createPartialMock(
             IndexerRegistry::class,
             ['get']

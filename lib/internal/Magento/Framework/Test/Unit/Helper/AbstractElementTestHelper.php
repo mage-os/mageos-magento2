@@ -50,4 +50,3 @@ class AbstractElementTestHelper extends AbstractElement
         return $this;
     }
 }
-

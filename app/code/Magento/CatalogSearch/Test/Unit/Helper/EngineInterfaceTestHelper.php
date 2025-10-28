@@ -11,7 +11,7 @@ use Magento\CatalogSearch\Model\ResourceModel\EngineInterface;
 
 /**
  * Mock class for EngineInterface with additional methods
- * 
+ *
  * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class EngineInterfaceTestHelper implements EngineInterface

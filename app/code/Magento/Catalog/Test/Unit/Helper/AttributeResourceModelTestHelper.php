@@ -49,4 +49,3 @@ class AttributeResourceModelTestHelper extends Attribute
         // Mock implementation
     }
 }
-

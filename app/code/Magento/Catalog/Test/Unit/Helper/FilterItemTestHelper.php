@@ -87,4 +87,3 @@ class FilterItemTestHelper extends Item
         // Mock implementation
     }
 }
-

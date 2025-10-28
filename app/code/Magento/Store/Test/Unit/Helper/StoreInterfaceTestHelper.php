@@ -45,4 +45,3 @@ class StoreInterfaceTestHelper extends Store
         // Mock implementation - no actual resource initialization needed
     }
 }
-

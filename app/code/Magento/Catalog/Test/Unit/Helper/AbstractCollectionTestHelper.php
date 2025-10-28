@@ -49,4 +49,3 @@ class AbstractCollectionTestHelper extends AbstractCollection
         // Mock implementation
     }
 }
-

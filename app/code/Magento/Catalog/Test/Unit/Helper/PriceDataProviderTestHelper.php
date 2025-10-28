@@ -65,4 +65,3 @@ class PriceDataProviderTestHelper extends Price
         // Mock implementation
     }
 }
-

@@ -15,6 +15,11 @@ use Magento\Framework\App\Console\Request;
 class RequestTestHelper extends Request
 {
     /**
+     * @var mixed
+     */
+    private $queryValue;
+
+    /**
      * Mock method for getQueryValue
      *
      * @return mixed

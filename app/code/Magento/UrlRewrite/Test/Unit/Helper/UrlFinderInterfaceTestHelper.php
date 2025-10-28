@@ -39,4 +39,3 @@ class UrlFinderInterfaceTestHelper implements UrlFinderInterface
         return [];
     }
 }
-

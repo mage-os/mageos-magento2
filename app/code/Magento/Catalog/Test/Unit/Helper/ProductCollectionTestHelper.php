@@ -63,4 +63,3 @@ class ProductCollectionTestHelper extends Collection
         // Mock implementation
     }
 }
-

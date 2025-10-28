@@ -34,4 +34,3 @@ class DateTimeTestHelper extends DateTime
         return $this;
     }
 }
-

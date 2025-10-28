@@ -162,12 +162,7 @@ class AdvancedPricingTest extends AbstractImportTestCase
         $this->importExportData = $this->createMock(ImportExportHelperData::class);
         $this->resourceHelper = $this->createMock(Helper::class);
         $this->resource = $this->createPartialMock(ResourceConnection::class, ['getConnection']);
-        $this->connection = $this->createMock(
-            AdapterInterface::class,
-            [],
-            '',
-            false
-        );
+        $this->connection = $this->createMock(AdapterInterface::class);
         $this->resource->method('getConnection')->willReturn($this->connection);
         $this->dataSourceModel = $this->createMock(ResourceImportData::class);
         $entityType = $this->createMock(Type::class);

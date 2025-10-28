@@ -32,12 +32,7 @@ class ValidatorTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->validatorTest = $this->createMock(
-            RowValidatorInterface::class,
-            [],
-            '',
-            false
-        );
+        $this->validatorTest = $this->createMock(RowValidatorInterface::class);
         $messages = ['messages'];
         $this->validatorTest->method('getMessages')->willReturn($messages);
         $this->validators = [$this->validatorTest];

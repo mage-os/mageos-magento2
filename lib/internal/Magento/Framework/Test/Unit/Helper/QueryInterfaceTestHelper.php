@@ -11,7 +11,7 @@ use Magento\Framework\Search\Request\QueryInterface;
 
 /**
  * Mock class for QueryInterface with additional methods
- * 
+ *
  * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class QueryInterfaceTestHelper implements QueryInterface
@@ -29,7 +29,7 @@ class QueryInterfaceTestHelper implements QueryInterface
      * Mock method for getMust
      *
      * @return array
-    */
+     */
     public function getMust()
     {
         return $this->must;
@@ -40,7 +40,7 @@ class QueryInterfaceTestHelper implements QueryInterface
      *
      * @param array $value
      * @return $this
-    */
+     */
     public function setMust($value)
     {
         $this->must = $value;
@@ -51,7 +51,7 @@ class QueryInterfaceTestHelper implements QueryInterface
      * Mock method for getShould
      *
      * @return array
-    */
+     */
     public function getShould()
     {
         return $this->should;
@@ -91,4 +91,3 @@ class QueryInterfaceTestHelper implements QueryInterface
         return $this;
     }
 }
-

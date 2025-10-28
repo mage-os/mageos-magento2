@@ -55,15 +55,7 @@ class CustomerGroupTest extends TestCase
         $this->customerOptionsMock = $this->createMock(
             ClientOptionsInterface::class
         );
-        $this->indexerMock = $this->createMock(
-            IndexerInterface::class,
-            [],
-            '',
-            false,
-            false,
-            true,
-            ['getId', 'getState', '__wakeup']
-        );
+        $this->indexerMock = $this->createMock(IndexerInterface::class);
         $this->indexerRegistryMock = $this->createPartialMock(
             IndexerRegistry::class,
             ['get']

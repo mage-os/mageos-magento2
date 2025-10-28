@@ -13,6 +13,8 @@ use Magento\Framework\Model\ResourceModel\AbstractResource;
 /**
  * TestHelper for AbstractResource
  * Provides implementation for AbstractResource with additional test methods
+ *
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class AbstractResourceTestHelper extends AbstractResource
 {

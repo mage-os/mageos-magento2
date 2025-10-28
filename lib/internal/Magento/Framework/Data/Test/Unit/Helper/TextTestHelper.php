@@ -108,4 +108,3 @@ class TextTestHelper extends Text
         return $this->form;
     }
 }
-

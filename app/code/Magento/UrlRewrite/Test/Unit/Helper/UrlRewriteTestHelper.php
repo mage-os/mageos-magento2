@@ -63,4 +63,3 @@ class UrlRewriteTestHelper extends UrlRewrite
         // Mock implementation
     }
 }
-

@@ -25,7 +25,7 @@ class SearchCriteriaBuilderTestHelper extends SearchCriteriaBuilder
      *
      * @param string $requestName
      * @return $this
-    */
+     */
     public function setRequestName($requestName)
     {
         $this->requestName = $requestName;
@@ -36,7 +36,7 @@ class SearchCriteriaBuilderTestHelper extends SearchCriteriaBuilder
      * Get the request name
      *
      * @return string|null
-    */
+     */
     public function getRequestName()
     {
         return $this->requestName;

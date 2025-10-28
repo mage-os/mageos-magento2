@@ -54,4 +54,3 @@ class EventTestHelper extends Event
         return $this->getData('product');
     }
 }
-

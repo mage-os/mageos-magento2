@@ -18,7 +18,7 @@ class ProductTestHelper extends Product
      * Mock method for getUrlKey
      *
      * @return string|null
-    */
+     */
     public function getUrlKey()
     {
         return $this->getData('url_key');

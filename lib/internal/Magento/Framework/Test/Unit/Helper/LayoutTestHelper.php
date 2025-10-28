@@ -16,6 +16,11 @@ use Magento\Framework\View\Result\Layout;
 class LayoutTestHelper extends Layout
 {
     /**
+     * @var Merge
+     */
+    private $update;
+
+    /**
      * Mock method for getUpdate
      *
      * @return Merge
@@ -45,4 +50,3 @@ class LayoutTestHelper extends Layout
         // Mock implementation
     }
 }
-

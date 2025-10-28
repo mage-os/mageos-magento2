@@ -24,4 +24,3 @@ class ObserverTestHelper extends Observer
         return $this->getData('category');
     }
 }
-

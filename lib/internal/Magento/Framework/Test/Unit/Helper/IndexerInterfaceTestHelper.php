@@ -12,7 +12,7 @@ use Magento\Framework\Indexer\StateInterface;
 
 /**
  * Mock class for IndexerInterface with additional methods
- * 
+ *
  * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class IndexerInterfaceTestHelper implements IndexerInterface
@@ -30,7 +30,7 @@ class IndexerInterfaceTestHelper implements IndexerInterface
      * Mock method for __wakeup
      *
      * @return void
-    */
+     */
     public function __wakeup()
     {
         // Mock implementation
@@ -40,7 +40,7 @@ class IndexerInterfaceTestHelper implements IndexerInterface
      * Mock method for getId
      *
      * @return string|null
-    */
+     */
     public function getId()
     {
         return $this->id;
@@ -51,7 +51,7 @@ class IndexerInterfaceTestHelper implements IndexerInterface
      *
      * @param string|null $value
      * @return $this
-    */
+     */
     public function setId($value)
     {
         $this->id = $value;
@@ -62,7 +62,7 @@ class IndexerInterfaceTestHelper implements IndexerInterface
      * Mock method for getState
      *
      * @return StateInterface|null
-    */
+     */
     public function getState()
     {
         return $this->state;
@@ -195,4 +195,3 @@ class IndexerInterfaceTestHelper implements IndexerInterface
         return null;
     }
 }
-

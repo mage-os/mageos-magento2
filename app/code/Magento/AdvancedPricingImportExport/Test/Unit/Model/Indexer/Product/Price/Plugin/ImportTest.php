@@ -39,12 +39,7 @@ class ImportTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->indexer = $this->createMock(
-            IndexerInterface::class,
-            [],
-            '',
-            false
-        );
+        $this->indexer = $this->createMock(IndexerInterface::class);
         $this->indexerRegistry = $this->createMock(
             IndexerRegistry::class
         );

@@ -75,12 +75,7 @@ class TierPriceTest extends TestCase
     {
         $searchCriteria = $this->createMock(SearchCriteria::class);
         $this->searchCriteriaBuilder->method('create')->willReturn($searchCriteria);
-        $groupSearchResult = $this->createMock(
-            GroupSearchResultsInterface::class,
-            [],
-            '',
-            false
-        );
+        $groupSearchResult = $this->createMock(GroupSearchResultsInterface::class);
         $this->groupRepository
             ->method('getList')
             ->with($searchCriteria)
@@ -99,12 +94,7 @@ class TierPriceTest extends TestCase
     {
         $searchCriteria = $this->createMock(SearchCriteria::class);
         $this->searchCriteriaBuilder->method('create')->willReturn($searchCriteria);
-        $groupSearchResult = $this->createMock(
-            GroupSearchResultsInterface::class,
-            [],
-            '',
-            false
-        );
+        $groupSearchResult = $this->createMock(GroupSearchResultsInterface::class);
         $this->groupRepository
             ->method('getList')
             ->with($searchCriteria)
@@ -166,12 +156,7 @@ class TierPriceTest extends TestCase
 
         $searchCriteria = $this->createMock(SearchCriteria::class);
         $this->searchCriteriaBuilder->method('create')->willReturn($searchCriteria);
-        $groupSearchResult = $this->createMock(
-            GroupSearchResultsInterface::class,
-            [],
-            '',
-            false
-        );
+        $groupSearchResult = $this->createMock(GroupSearchResultsInterface::class);
         $this->groupRepository
             ->method('getList')
             ->with($searchCriteria)

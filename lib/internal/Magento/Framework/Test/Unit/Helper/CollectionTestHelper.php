@@ -34,4 +34,3 @@ class CollectionTestHelper extends Collection
         // Mock implementation
     }
 }
-
