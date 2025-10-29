@@ -548,7 +548,7 @@ class Create extends \Magento\Framework\DataObject implements \Magento\Checkout\
             $customerId = (int) $this->_quote->getCustomerId();
             if ($customerId > 0) {
                 $customerData = $this->customerRepository->getById($customerId);
-                $this->_quote->assignCustomer($customerData);
+                $this->_quote->updateCustomerData($customerData);
             }
         }
 

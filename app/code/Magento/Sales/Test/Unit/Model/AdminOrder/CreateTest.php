@@ -644,7 +644,7 @@ class CreateTest extends TestCase
     {
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['assignCustomer'])
+            ->onlyMethods(['updateCustomerData'])
             ->addMethods(['getCustomerId'])
             ->getMock();
 
@@ -663,7 +663,7 @@ class CreateTest extends TestCase
             ->willReturn($customerData);
 
         $quote->expects($this->once())
-            ->method('assignCustomer')
+            ->method('updateCustomerData')
             ->with($customerData);
 
         $this->sessionQuote->expects($this->once())
@@ -681,7 +681,7 @@ class CreateTest extends TestCase
     {
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['assignCustomer'])
+            ->onlyMethods(['updateCustomerData'])
             ->addMethods(['getCustomerId'])
             ->getMock();
 
@@ -690,7 +690,7 @@ class CreateTest extends TestCase
             ->willReturn(0);
 
         $quote->expects($this->never())
-            ->method('assignCustomer');
+            ->method('updateCustomerData');
 
         $customerRepository = $this->getMockBuilder(CustomerRepositoryInterface::class)
             ->getMockForAbstractClass();
