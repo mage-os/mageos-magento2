@@ -3,6 +3,7 @@
  * Copyright 2025 Adobe
  * All Rights Reserved.
  */
+declare(strict_types=1);
 
 namespace Magento\Catalog\Plugin\Model;
 
@@ -11,8 +12,7 @@ use Magento\Catalog\Model\Product;
 use Magento\Eav\Model\Config as EavConfig;
 
 /**
- * Plugin to ensure special_price attribute is always loaded in product listings
- * even when used_in_product_listing = 0
+ * Plugin to ensure special_price attribute is always loaded in product listings even when used_in_product_listing = 0
  */
 class ConfigPlugin
 {
