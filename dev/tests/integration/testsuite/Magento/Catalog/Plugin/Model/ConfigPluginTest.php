@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace integration\testsuite\Magento\Catalog\Plugin\Model;
+namespace Magento\Catalog\Plugin\Model;
 
 use Magento\Catalog\Api\ProductAttributeRepositoryInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;

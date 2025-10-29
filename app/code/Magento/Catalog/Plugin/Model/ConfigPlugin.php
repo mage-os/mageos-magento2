@@ -28,11 +28,11 @@ class ConfigPlugin
 
     /**
      * Add special_price attribute to the list of attributes used in product listing
-     * regardless of its used_in_product_listing setting
      *
      * @param Subject $subject
      * @param array $result
      * @return array
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function afterGetAttributesUsedInProductListing(Subject $subject, array $result): array
     {
