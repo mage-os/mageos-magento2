@@ -40,14 +40,14 @@ class RequestTypeRegistryTest extends TestCase
         $this->assertFalse($this->state->isGetRequestOrQuery());
     }
 
-    public function testMultipleToggle()
+    public function testResetAndMultipleToggle()
     {
         $this->assertFalse($this->state->isGetRequestOrQuery());
 
         $this->state->setIsGetRequestOrQuery(true);
         $this->assertTrue($this->state->isGetRequestOrQuery());
 
-        $this->state->setIsGetRequestOrQuery(false);
+        $this->state->reset();
         $this->assertFalse($this->state->isGetRequestOrQuery());
 
         $this->state->setIsGetRequestOrQuery(true);

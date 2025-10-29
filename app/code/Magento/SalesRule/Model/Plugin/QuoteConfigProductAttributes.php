@@ -38,14 +38,12 @@ class QuoteConfigProductAttributes
     /**
      * @param RuleResource $ruleResource
      * @param RequestTypeRegistry $requestTypeRegistry
-     * @param TriggerRecollectState $triggerRecollectState
      * @param CacheInterface $cache
      * @param SerializerInterface $serializer
      */
     public function __construct(
         RuleResource $ruleResource,
         private RequestTypeRegistry $requestTypeRegistry,
-        private TriggerRecollectState $triggerRecollectState,
         private CacheInterface $cache,
         private SerializerInterface $serializer
     ) {
@@ -63,9 +61,7 @@ class QuoteConfigProductAttributes
      */
     public function afterGetProductAttributes(Config $subject, array $attributeKeys): array
     {
-        if ($this->requestTypeRegistry->isGetRequestOrQuery() &&
-            !$this->triggerRecollectState->canRecollect()
-        ) {
+        if ($this->requestTypeRegistry->isGetRequestOrQuery()) {
             return $attributeKeys;
         }
 

@@ -12,7 +12,6 @@ use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Quote\Model\Quote\Config;
 use Magento\SalesRule\Model\Plugin\QuoteConfigProductAttributes;
 use Magento\SalesRule\Model\Plugin\RequestTypeRegistry;
-use Magento\SalesRule\Model\Plugin\TriggerRecollectState;
 use Magento\SalesRule\Model\ResourceModel\Rule;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -49,16 +48,10 @@ class QuoteConfigProductAttributesTest extends TestCase
      */
     protected $subject;
 
-    /**
-     * @var TriggerRecollectState|MockObject
-     */
-    protected $triggerRecollectState;
-
     protected function setUp(): void
     {
         $this->ruleResource = $this->createMock(Rule::class);
         $this->requestTypeRegistry = $this->createMock(RequestTypeRegistry::class);
-        $this->triggerRecollectState = $this->createMock(TriggerRecollectState::class);
         $this->cache = $this->createMock(CacheInterface::class);
         $this->serializer = $this->createMock(SerializerInterface::class);
         $this->subject = $this->createMock(Config::class);
@@ -81,10 +74,6 @@ class QuoteConfigProductAttributesTest extends TestCase
         $this->requestTypeRegistry->expects($this->once())
             ->method('isGetRequestOrQuery')
             ->willReturn(false);
-
-        $this->triggerRecollectState->expects($this->once())
-            ->method('canRecollect')
-            ->willReturn(0);
 
         $this->cache->expects($this->once())
             ->method('load')
@@ -111,10 +100,6 @@ class QuoteConfigProductAttributesTest extends TestCase
         $this->requestTypeRegistry->expects($this->once())
             ->method('isGetRequestOrQuery')
             ->willReturn(false);
-
-        $this->triggerRecollectState->expects($this->once())
-            ->method('canRecollect')
-            ->willReturn(0);
 
         $this->cache->expects($this->once())
             ->method('load')
@@ -146,10 +131,6 @@ class QuoteConfigProductAttributesTest extends TestCase
         $this->requestTypeRegistry->expects($this->once())
             ->method('isGetRequestOrQuery')
             ->willReturn(true);
-
-        $this->triggerRecollectState->expects($this->once())
-            ->method('canRecollect')
-            ->willReturn(0);
 
         $this->assertEquals([], $this->plugin->afterGetProductAttributes($this->subject, []));
     }

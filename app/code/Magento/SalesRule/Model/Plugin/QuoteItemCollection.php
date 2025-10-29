@@ -11,11 +11,9 @@ class QuoteItemCollection
 {
     /**
      * @param RequestTypeRegistry     $requestTypeRegistry
-     * @param TriggerRecollectState   $triggerRecollectState
      */
     public function __construct(
-        private RequestTypeRegistry $requestTypeRegistry,
-        private TriggerRecollectState $triggerRecollectState
+        private RequestTypeRegistry $requestTypeRegistry
     ) {
     }
 
@@ -32,7 +30,7 @@ class QuoteItemCollection
         \Magento\Quote\Model\Quote $quote
     ) {
         if ($quote->getTriggerRecollect() == 1 && $this->requestTypeRegistry->isGetRequestOrQuery()) {
-            $this->triggerRecollectState->setTriggerRecollect(1);
+            $this->requestTypeRegistry->setIsGetRequestOrQuery(false);
         }
     }
 }

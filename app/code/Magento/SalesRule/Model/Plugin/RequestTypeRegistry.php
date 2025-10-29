@@ -40,4 +40,14 @@ class RequestTypeRegistry
     {
         return $this->isGetRequestOrQuery;
     }
+
+    /**
+     * Resets the state of the object by setting the isGetRequestOrQuery property to false.
+     *
+     * @return void
+     */
+    public function reset(): void
+    {
+        $this->isGetRequestOrQuery = false;
+    }
 }

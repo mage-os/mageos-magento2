@@ -13,4 +13,9 @@
                 type="Magento\SalesRule\Model\Plugin\QueryParser"
                 sortOrder="10" />
     </type>
+    <type name="\Magento\GraphQl\Controller\GraphQl">
+        <plugin name="reset_flag_post_dispatch"
+                type="Magento\SalesRule\Model\Plugin\FrontController"
+                sortOrder="10" />
+    </type>
 </config>
