@@ -27,8 +27,9 @@
         <after>
             <!-- Logout from storefront-->
             <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutCustomer"/>
-            <!-- Delete product, customer -->
+            <!-- Delete products, customer -->
             <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteTheProduct"/>
             <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
         </after>
         <!-- Step 1: Log in as a customer on storefront. -->
