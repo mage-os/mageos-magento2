@@ -232,7 +232,7 @@ class IndexBuilder
         DateTime $dateFormat,
         DateTime\DateTime $dateTime,
         ProductFactory $productFactory,
-        $batchCount = 1000,
+        $batchCount = 2000,
         ?ProductPriceCalculator $productPriceCalculator = null,
         ?ReindexRuleProduct $reindexRuleProduct = null,
         ?ReindexRuleGroupWebsite $reindexRuleGroupWebsite = null,
@@ -246,7 +246,7 @@ class IndexBuilder
         ?ProductCollectionFactory $productCollectionFactory = null,
         ?IndexerRegistry $indexerRegistry = null,
         ?ReindexRuleProductsPrice $reindexRuleProductsPrice = null,
-        int $productBatchSize = 1000
+        int $productBatchSize = 2000
     ) {
         $this->resource = $resource;
         $this->connection = $resource->getConnection();
@@ -437,7 +437,6 @@ class IndexBuilder
      */
     private function cleanProductIndex(array $productIds): void
     {
-        $productIds = $this->validateProductIds($productIds);
         if (empty($productIds)) {
             return;
         }
@@ -447,21 +446,6 @@ class IndexBuilder
         $this->deleteRatio($tableName, $productIds) > 0.25
             ? $this->copyAndSwapTable($tableName, $productIds)
             : $this->batchRowsDelete($tableName, $productIds);
-    }
-
-    /**
-     * Validate product IDs
-     *
-     * @param array $productIds
-     * @return array
-     */
-    private function validateProductIds(array $productIds): array
-    {
-        $validated = array_filter($productIds, function ($id) {
-            return is_numeric($id) && (int)$id == $id && (int)$id > 0;
-        });
-
-        return array_map('intval', array_values($validated));
     }
 
     /**
