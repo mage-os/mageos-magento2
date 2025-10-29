@@ -24,6 +24,8 @@ class WishlistItemPermissionsCollectionProcessor
     }
 
     /**
+     * Remove wishlist items from collection if category permissions in effect
+     *
      * @param Collection $collection
      * @return Collection
      * @throws \Exception

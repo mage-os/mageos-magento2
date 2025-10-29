@@ -6,6 +6,7 @@
 
 namespace Magento\Wishlist\Block;
 
+use Magento\Catalog\Block\Product\Context;
 use Magento\Catalog\Helper\Image;
 use Magento\Catalog\Model\Product\Image\UrlBuilder;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -15,6 +16,7 @@ use Magento\Wishlist\Model\WishlistItemPermissionsCollectionProcessor;
 
 /**
  * Wishlist Product Items abstract Block
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 abstract class AbstractBlock extends \Magento\Catalog\Block\Product\AbstractProduct
 {
@@ -53,11 +55,12 @@ abstract class AbstractBlock extends \Magento\Catalog\Block\Product\AbstractProd
     private WishlistItemPermissionsCollectionProcessor $permissionCollectionProcessor;
 
     /**
-     * @param \Magento\Catalog\Block\Product\Context $context
+     * @param Context $context
      * @param \Magento\Framework\App\Http\Context $httpContext
      * @param array $data
      * @param ConfigInterface|null $config
      * @param UrlBuilder|null $urlBuilder
+     * @param WishlistItemPermissionsCollectionProcessor|null $permissionCollectionProcessor
      */
     public function __construct(
         \Magento\Catalog\Block\Product\Context $context,
@@ -244,6 +247,7 @@ abstract class AbstractBlock extends \Magento\Catalog\Block\Product\AbstractProd
      *
      * @param string $date
      * @deprecated 101.1.1
+     * @see getFormattedDate
      * @return string
      */
     public function getFormatedDate($date)
