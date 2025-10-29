@@ -5,14 +5,13 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Sales\Test\Integration\Model\AdminOrder;
+namespace Magento\Sales\Model\AdminOrder;
 
 use Magento\Backend\Model\Session\Quote as AdminQuoteSession;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Test\Fixture\Customer as CustomerFixture;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Model\QuoteFactory;
-use Magento\Sales\Model\AdminOrder\Create;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\TestFramework\Fixture\DataFixtureStorage;
 use Magento\TestFramework\Helper\Bootstrap;
