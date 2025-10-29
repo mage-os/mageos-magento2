@@ -17,12 +17,17 @@ class RequestInterfaceTestHelper extends Http
     /**
      * @var bool
      */
-    private $isPost = false;
+    protected $isPost = false;
 
     /**
      * @var mixed
      */
-    private $postValue = null;
+    protected $postValue = null;
+
+    /**
+     * @var bool
+     */
+    protected $isGet = false;
 
     /**
      * Constructor that skips parent dependencies
@@ -88,6 +93,41 @@ class RequestInterfaceTestHelper extends Http
     public function setTestPostValue($value): self
     {
         $this->postValue = $value;
+        return $this;
+    }
+
+    /**
+     * Check if request is GET (custom method for tests)
+     *
+     * @return bool
+     */
+    public function isGet(): bool
+    {
+        return $this->isGet;
+    }
+
+    /**
+     * Set is GET flag
+     *
+     * @param bool $isGet
+     * @return $this
+     */
+    public function setIsGet(bool $isGet): self
+    {
+        $this->isGet = $isGet;
+        return $this;
+    }
+
+    /**
+     * Set parameter value (override parent method for testing)
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return $this
+     */
+    public function setParam($key, $value)
+    {
+        $this->params[$key] = $value;
         return $this;
     }
 }

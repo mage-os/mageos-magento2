@@ -11,6 +11,7 @@ use Magento\Customer\Model\ResourceModel\Visitor as VisitorResourceModel;
 use Magento\Customer\Model\Session;
 use Magento\Customer\Model\Visitor;
 use Magento\Customer\Model\Visitor as VisitorModel;
+use Magento\Customer\Test\Unit\Helper\CustomerSessionTestHelper;
 use Magento\Framework\App\Request\Http as HttpRequest;
 use Magento\Framework\DataObject;
 use Magento\Framework\Registry;
@@ -57,17 +58,17 @@ class VisitorTest extends TestCase
     protected function setUp(): void
     {
         $this->registryMock = $this->createMock(Registry::class);
-        $this->sessionMock = $this->getMockBuilder(Session::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getVisitorData', 'setVisitorData'])
-            ->onlyMethods(['getSessionId'])
-            ->getMock();
+        $this->sessionMock = $this->createPartialMock(
+            CustomerSessionTestHelper::class,
+            ['getVisitorData', 'setVisitorData', 'getSessionId']
+        );
         $this->httpRequestMock = $this->createMock(HttpRequest::class);
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
 
-        $this->visitorResourceModelMock = $this->getMockBuilder(VisitorResourceModel::class)
-            ->onlyMethods([
+        $this->visitorResourceModelMock = $this->createPartialMock(
+            VisitorResourceModel::class,
+            [
                 'beginTransaction',
                 '__sleep',
                 '__wakeup',
@@ -77,8 +78,8 @@ class VisitorTest extends TestCase
                 'commit',
                 'clean',
                 'load',
-            ])->disableOriginalConstructor()
-            ->getMock();
+            ]
+        );
         $this->visitorResourceModelMock->expects($this->any())->method('getIdFieldName')->willReturn('visitor_id');
         $this->visitorResourceModelMock->expects($this->any())->method('addCommitCallback')->willReturnSelf();
 

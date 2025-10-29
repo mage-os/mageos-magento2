@@ -9,10 +9,12 @@ namespace Magento\Customer\Test\Unit\Model;
 
 use Magento\Customer\Model\Attribute;
 use Magento\Customer\Model\AttributeMetadataResolver;
+use Magento\Customer\Model\AttributeWebsiteRequired;
 use Magento\Customer\Model\Config\Share as ShareConfig;
 use Magento\Customer\Model\FileUploaderDataResolver;
 use Magento\Customer\Model\GroupManagement;
 use Magento\Customer\Model\ResourceModel\Address\Attribute\Source\CountryWithWebsites;
+use Magento\Customer\Test\Unit\Helper\GroupManagementTestHelper;
 use Magento\Eav\Model\Entity\Type;
 use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Ui\DataProvider\EavValidationRules;
@@ -66,46 +68,45 @@ class AttributeMetadataResolverTest extends TestCase
     private $attribute;
 
     /**
+     * @var AttributeWebsiteRequired|MockObject
+     */
+    private $attributeWebsiteRequired;
+
+    /**
      * @inheritDoc
      */
     protected function setUp(): void
     {
-        $this->countryWithWebsiteSource = $this->getMockBuilder(CountryWithWebsites::class)
-            ->onlyMethods(['getAllOptions'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->eavValidationRules = $this->getMockBuilder(EavValidationRules::class)
-            ->onlyMethods(['build'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->fileUploaderDataResolver = $this->getMockBuilder(FileUploaderDataResolver::class)
-            ->onlyMethods(['overrideFileUploaderMetadata'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->context =  $this->getMockBuilder(ContextInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->shareConfig =  $this->getMockBuilder(ShareConfig::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->groupManagement =  $this->getMockBuilder(GroupManagement::class)
-            ->onlyMethods(['getDefaultGroup'])
-            ->addMethods(['getId'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->attribute = $this->getMockBuilder(Attribute::class)
-            ->onlyMethods(
-                [
-                    'usesSource',
-                    'getDataUsingMethod',
-                    'getAttributeCode',
-                    'getFrontendInput',
-                    'getSource',
-                    'setDataUsingMethod'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->countryWithWebsiteSource = $this->createPartialMock(
+            CountryWithWebsites::class,
+            ['getAllOptions']
+        );
+        $this->eavValidationRules = $this->createPartialMock(
+            EavValidationRules::class,
+            ['build']
+        );
+        $this->fileUploaderDataResolver = $this->createPartialMock(
+            FileUploaderDataResolver::class,
+            ['overrideFileUploaderMetadata']
+        );
+        $this->context = $this->createMock(ContextInterface::class);
+        $this->shareConfig = $this->createMock(ShareConfig::class);
+        $this->groupManagement = $this->createPartialMock(
+            GroupManagementTestHelper::class,
+            ['getDefaultGroup', 'getId']
+        );
+        $this->attribute = $this->createPartialMock(
+            Attribute::class,
+            [
+                'usesSource',
+                'getDataUsingMethod',
+                'getAttributeCode',
+                'getFrontendInput',
+                'getSource',
+                'setDataUsingMethod'
+            ]
+        );
+        $this->attributeWebsiteRequired = $this->createMock(AttributeWebsiteRequired::class);
 
         $this->model = new AttributeMetadataResolver(
             $this->countryWithWebsiteSource,
@@ -113,7 +114,8 @@ class AttributeMetadataResolverTest extends TestCase
             $this->fileUploaderDataResolver,
             $this->context,
             $this->shareConfig,
-            $this->groupManagement
+            $this->groupManagement,
+            $this->attributeWebsiteRequired
         );
     }
 
@@ -130,9 +132,7 @@ class AttributeMetadataResolverTest extends TestCase
         $defaultGroupId = '3';
         $allowToShowHiddenAttributes = false;
         $usesSource = false;
-        $entityType = $this->getMockBuilder(Type::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $entityType = $this->createMock(Type::class);
         $this->attribute->expects($this->once())
             ->method('usesSource')
             ->willReturn($usesSource);

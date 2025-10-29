@@ -20,6 +20,16 @@ class CustomerTestHelper extends Customer
     private $storeId = null;
 
     /**
+     * @var string|null
+     */
+    private $email = null;
+
+    /**
+     * @var int|null
+     */
+    private $websiteId = null;
+
+    /**
      * Constructor that skips parent dependencies
      */
     public function __construct()
@@ -46,6 +56,62 @@ class CustomerTestHelper extends Customer
     public function setTestStoreId(?int $storeId): self
     {
         $this->storeId = $storeId;
+        return $this;
+    }
+
+    /**
+     * Get email (custom method for tests)
+     *
+     * @return string|null
+     */
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    /**
+     * Set email (custom method for tests)
+     *
+     * @param string|null $email
+     * @return $this
+     */
+    public function setEmail(?string $email): self
+    {
+        $this->email = $email;
+        return $this;
+    }
+
+    /**
+     * Get website ID (custom method for tests)
+     *
+     * @return int|null
+     */
+    public function getWebsiteId(): ?int
+    {
+        return $this->websiteId;
+    }
+
+    /**
+     * Set website ID (custom method for tests)
+     *
+     * @param int|null $websiteId
+     * @return $this
+     */
+    public function setWebsiteId(?int $websiteId): self
+    {
+        $this->websiteId = $websiteId;
+        return $this;
+    }
+
+    /**
+     * Load by email (stub for tests)
+     *
+     * @param string $customerEmail
+     * @return $this
+     */
+    public function loadByEmail($customerEmail)
+    {
+        // Stub implementation for tests
         return $this;
     }
 }

@@ -9,12 +9,14 @@ namespace Magento\Customer\Test\Unit\Model\Address\Validator;
 
 use Magento\Customer\Model\Address\AbstractAddress;
 use Magento\Customer\Model\Address\Validator\Country;
+use Magento\Customer\Test\Unit\Helper\AbstractAddressTestHelper;
 use Magento\Directory\Helper\Data;
 use Magento\Directory\Model\AllowedCountries;
 use Magento\Directory\Model\ResourceModel\Region\Collection;
 use Magento\Framework\Escaper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\ScopeInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -66,22 +68,19 @@ class CountryTest extends TestCase
      * @param array $allowedRegions
      * @param array $expected
      * @return void
-     *
-     * @dataProvider validateDataProvider
      */
+    #[DataProvider('validateDataProvider')]
     public function testValidate(array $data, array $countryIds, array $allowedRegions, array $expected)
     {
-        $addressMock = $this
-            ->getMockBuilder(AbstractAddress::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getCountryId'])
-            ->onlyMethods(
-                [
-                    'getRegion',
-                    'getRegionId',
-                    'getCountryModel',
-                ]
-            )->getMock();
+        $addressMock = $this->createPartialMock(
+            AbstractAddressTestHelper::class,
+            [
+                'getCountryId',
+                'getRegion',
+                'getRegionId',
+                'getCountryModel',
+            ]
+        );
 
         $this->directoryDataMock->expects($this->any())
             ->method('isRegionRequired')
@@ -94,17 +93,17 @@ class CountryTest extends TestCase
 
         $addressMock->method('getCountryId')->willReturn($data['country_id']);
 
-        $countryModelMock = $this->getMockBuilder(\Magento\Directory\Model\Country::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getRegionCollection'])
-            ->getMock();
+        $countryModelMock = $this->createPartialMock(
+            \Magento\Directory\Model\Country::class,
+            ['getRegionCollection']
+        );
 
         $addressMock->method('getCountryModel')->willReturn($countryModelMock);
 
-        $regionCollectionMock = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getAllIds'])
-            ->getMock();
+        $regionCollectionMock = $this->createPartialMock(
+            Collection::class,
+            ['getAllIds']
+        );
         $countryModelMock
             ->expects($this->any())
             ->method('getRegionCollection')

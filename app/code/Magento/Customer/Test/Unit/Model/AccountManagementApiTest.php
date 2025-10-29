@@ -14,6 +14,8 @@ use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Customer\Api\Data\ValidationResultsInterfaceFactory;
 use Magento\Customer\Api\SessionCleanerInterface;
 use Magento\Customer\Helper\View;
+use Magento\Customer\Test\Unit\Helper\CustomerInterfaceTestHelper;
+use Magento\Customer\Test\Unit\Helper\CustomerSecureTestHelper;
 use Magento\Customer\Model\AccountConfirmation;
 use Magento\Customer\Model\AccountManagement;
 use Magento\Customer\Model\AccountManagement\Authenticate;
@@ -55,6 +57,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 use Magento\Framework\Validator\Factory as ValidatorFactory;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -259,25 +262,23 @@ class AccountManagementApiTest extends TestCase
     protected function setUp(): void
     {
         $this->customerFactory = $this->createPartialMock(CustomerFactory::class, ['create']);
-        $this->manager = $this->getMockForAbstractClass(ManagerInterface::class);
-        $this->storeManager = $this->getMockForAbstractClass(StoreManagerInterface::class);
+        $this->manager = $this->createMock(ManagerInterface::class);
+        $this->storeManager = $this->createMock(StoreManagerInterface::class);
         $this->random = $this->createMock(Random::class);
         $this->validator = $this->createMock(Validator::class);
         $this->validationResultsInterfaceFactory = $this->createMock(
             ValidationResultsInterfaceFactory::class
         );
-        $this->addressRepository = $this->getMockForAbstractClass(AddressRepositoryInterface::class);
-        $this->customerMetadata = $this->getMockForAbstractClass(CustomerMetadataInterface::class);
+        $this->addressRepository = $this->createMock(AddressRepositoryInterface::class);
+        $this->customerMetadata = $this->createMock(CustomerMetadataInterface::class);
         $this->customerRegistry = $this->createMock(CustomerRegistry::class);
 
-        $this->logger = $this->getMockForAbstractClass(LoggerInterface::class);
-        $this->encryptor = $this->getMockForAbstractClass(EncryptorInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->encryptor = $this->createMock(EncryptorInterface::class);
         $this->share = $this->createMock(Share::class);
         $this->string = $this->createMock(StringUtils::class);
-        $this->customerRepository = $this->getMockForAbstractClass(CustomerRepositoryInterface::class);
-        $this->scopeConfig = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->customerRepository = $this->createMock(CustomerRepositoryInterface::class);
+        $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
         $this->transportBuilder = $this->createMock(TransportBuilder::class);
         $this->dataObjectProcessor = $this->createMock(DataObjectProcessor::class);
         $this->registry = $this->createMock(Registry::class);
@@ -290,25 +291,17 @@ class AccountManagementApiTest extends TestCase
             ExtensibleDataObjectConverter::class
         );
         $this->allowedCountriesReader = $this->createMock(AllowedCountries::class);
-        $this->customerSecure = $this->getMockBuilder(CustomerSecure::class)
-            ->onlyMethods(['addData', 'setData'])
-            ->addMethods(['setRpToken', 'setRpTokenCreatedAt'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->customerSecure = new CustomerSecureTestHelper();
         $this->dateTimeFactory = $this->createMock(DateTimeFactory::class);
         $this->accountConfirmation = $this->createMock(AccountConfirmation::class);
         $this->searchCriteriaBuilderMock = $this->createMock(SearchCriteriaBuilder::class);
 
-        $this->visitorCollectionFactory = $this->getMockBuilder(CollectionFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-        $this->sessionManager = $this->getMockBuilder(SessionManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->saveHandler = $this->getMockBuilder(SaveHandlerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->visitorCollectionFactory = $this->createPartialMock(
+            CollectionFactory::class,
+            ['create']
+        );
+        $this->sessionManager = $this->createMock(SessionManagerInterface::class);
+        $this->saveHandler = $this->createMock(SaveHandlerInterface::class);
         $this->authorizationMock = $this->createMock(Authorization::class);
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $objects = [
@@ -417,10 +410,7 @@ class AccountManagementApiTest extends TestCase
         );
         $this->accountManagementMock = $this->createMock(AccountManagement::class);
 
-        $this->storeMock = $this->getMockBuilder(
-            StoreInterface::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $this->storeMock = $this->createMock(StoreInterface::class);
     }
 
     /**
@@ -433,8 +423,8 @@ class AccountManagementApiTest extends TestCase
      * @return void
      * @throws AuthorizationException
      * @throws LocalizedException
-     * @dataProvider customerDataProvider
      */
+    #[DataProvider('customerDataProvider')]
     public function testBeforeCreateAccount(
         int $groupId,
         int $customerId,
@@ -450,15 +440,12 @@ class AccountManagementApiTest extends TestCase
             ->with('Magento_Customer::manage')
             ->willReturn($isAllowed);
 
-        $customer =  $this->getMockBuilder(CustomerInterface::class)
-            ->addMethods(['setData'])
-            ->getMockForAbstractClass();
-        $customer->method('getGroupId')->willReturn($groupId);
-        $customer->method('getId')->willReturn($customerId);
-        $customer->method('getWebsiteId')->willReturn(2);
-        $customer->method('getStoreId')->willReturn(1);
-        $customer->method('setData')->willReturn(1);
-        $customer->method('getEmail')->willReturn('email@email.com');
+        $customer = new CustomerInterfaceTestHelper();
+        $customer->setId($customerId);
+        $customer->setGroupId($groupId);
+        $customer->setWebsiteId(2);
+        $customer->setStoreId(1);
+        $customer->setEmail('email@email.com');
 
         $this->customerRepository->method('get')->willReturn($customer);
         $this->customerRepository->method('getById')->with($customerId)->willReturn($customer);
@@ -468,9 +455,7 @@ class AccountManagementApiTest extends TestCase
             $this->accountManagementMock->method('createAccountWithPasswordHash')->willReturn($customer);
             $this->storeMock->expects($this->any())->method('getId')->willReturnOnConsecutiveCalls(2, 1);
             $this->random->method('getUniqueHash')->willReturn('testabc');
-            $date = $this->getMockBuilder(\DateTime::class)
-                ->disableOriginalConstructor()
-                ->getMock();
+            $date = $this->createMock(\DateTime::class);
             $this->dateTimeFactory->expects(static::once())
                 ->method('create')
                 ->willReturn($date);

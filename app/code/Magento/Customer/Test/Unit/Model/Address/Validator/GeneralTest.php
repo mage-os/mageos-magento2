@@ -9,10 +9,12 @@ namespace Magento\Customer\Test\Unit\Model\Address\Validator;
 
 use Magento\Customer\Model\Address\AbstractAddress;
 use Magento\Customer\Model\Address\Validator\General;
+use Magento\Customer\Test\Unit\Helper\AbstractAddressTestHelper;
 use Magento\Directory\Helper\Data;
 use Magento\Eav\Model\Config;
 use Magento\Eav\Model\Entity\Attribute;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -51,30 +53,24 @@ class GeneralTest extends TestCase
      * @param array $data
      * @param array $expected
      * @return void
-     *
-     * @dataProvider validateDataProvider
      */
+    #[DataProvider('validateDataProvider')]
     public function testValidate(array $data, array $expected)
     {
-        $addressMock = $this
-            ->getMockBuilder(AbstractAddress::class)
-            ->disableOriginalConstructor()
-            ->addMethods(
-                [
-                    'getFirstname',
-                    'getLastname',
-                    'getCity',
-                    'getTelephone',
-                    'getFax',
-                    'getCompany',
-                    'getPostcode',
-                    'getCountryId',
-                ]
-            )->onlyMethods(
-                [
-                    'getStreetLine'
-                ]
-            )->getMock();
+        $addressMock = $this->createPartialMock(
+            AbstractAddressTestHelper::class,
+            [
+                'getFirstname',
+                'getLastname',
+                'getCity',
+                'getTelephone',
+                'getFax',
+                'getCompany',
+                'getPostcode',
+                'getCountryId',
+                'getStreetLine'
+            ]
+        );
 
         $attributeMock = $this->createMock(Attribute::class);
         $attributeMock->expects($this->any())

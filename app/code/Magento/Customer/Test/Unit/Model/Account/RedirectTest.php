@@ -21,11 +21,14 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Url\DecoderInterface;
 use Magento\Framework\Url\HostChecker;
 use Magento\Framework\UrlInterface;
+use Magento\Customer\Test\Unit\Helper\CustomerSessionTestHelper;
+use Magento\Customer\Test\Unit\Helper\CustomerUrlTestHelper;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use PHPUnit\FrameworkMockObject\MockObject;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -107,48 +110,40 @@ class RedirectTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->request = $this->getMockForAbstractClass(RequestInterface::class);
-        $this->customerSession = $this->getMockBuilder(Session::class)
-            ->disableOriginalConstructor()
-            ->addMethods(
-                [
-                    'getLastCustomerId',
-                    'setLastCustomerId',
-                    'unsBeforeAuthUrl',
-                    'getBeforeAuthUrl',
-                    'getBeforeRequestParams',
-                    'getAfterAuthUrl',
-                    'getBeforeModuleName',
-                    'getBeforeControllerName',
-                    'getBeforeAction',
-                ]
-            )
-            ->onlyMethods(
-                [
-                    'isLoggedIn',
-                    'getId',
-                    'setBeforeAuthUrl',
-                    'setAfterAuthUrl'
-                ]
-            )
-            ->getMock();
+        $this->request = $this->createMock(RequestInterface::class);
+        $this->customerSession = $this->createPartialMock(
+            CustomerSessionTestHelper::class,
+            [
+                'getLastCustomerId',
+                'setLastCustomerId',
+                'unsBeforeAuthUrl',
+                'getBeforeAuthUrl',
+                'getBeforeRequestParams',
+                'getAfterAuthUrl',
+                'getBeforeModuleName',
+                'getBeforeControllerName',
+                'getBeforeAction',
+                'isLoggedIn',
+                'getId',
+                'setBeforeAuthUrl',
+                'setAfterAuthUrl'
+            ]
+        );
 
-        $this->scopeConfig = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
         $this->store = $this->createMock(Store::class);
-        $this->storeManager = $this->getMockForAbstractClass(StoreManagerInterface::class);
-        $this->url = $this->getMockForAbstractClass(UrlInterface::class);
-        $this->urlDecoder = $this->getMockForAbstractClass(DecoderInterface::class);
-        $this->customerUrl = $this->getMockBuilder(\Magento\Customer\Model\Url::class)
-            ->addMethods(['DashboardUrl'])
-            ->onlyMethods(
-                [
-                    'getAccountUrl',
-                    'getLoginUrl',
-                    'getLogoutUrl',
-                    'getDashboardUrl'
-                ]
-            )->disableOriginalConstructor()
-            ->getMock();
+        $this->storeManager = $this->createMock(StoreManagerInterface::class);
+        $this->url = $this->createMock(UrlInterface::class);
+        $this->urlDecoder = $this->createMock(DecoderInterface::class);
+        $this->customerUrl = $this->createPartialMock(
+            CustomerUrlTestHelper::class,
+            [
+                'getAccountUrl',
+                'getLoginUrl',
+                'getLogoutUrl',
+                'getDashboardUrl'
+            ]
+        );
 
         $this->resultRedirect = $this->createMock(\Magento\Framework\Controller\Result\Redirect::class);
         $this->resultForward = $this->createMock(Forward::class);
@@ -188,9 +183,9 @@ class RedirectTest extends TestCase
      * @param string $dashboardUrl
      * @param bool $customerLoggedIn
      * @param bool $redirectToDashboard
-     * @dataProvider getRedirectDataProvider
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
+    #[DataProvider('getRedirectDataProvider')]
     public function testGetRedirect(
         $customerId,
         $lastCustomerId,
@@ -374,7 +369,7 @@ class RedirectTest extends TestCase
      */
     public function testSetRedirectCookie(): void
     {
-        $coockieManagerMock = $this->getMockForAbstractClass(CookieManagerInterface::class);
+        $coockieManagerMock = $this->createMock(CookieManagerInterface::class);
         $publicMetadataMock = $this->createMock(PublicCookieMetadata::class);
         $routeMock = 'route';
 
@@ -422,7 +417,7 @@ class RedirectTest extends TestCase
      */
     public function testClearRedirectCookie(): void
     {
-        $coockieManagerMock = $this->getMockForAbstractClass(CookieManagerInterface::class);
+        $coockieManagerMock = $this->createMock(CookieManagerInterface::class);
         $publicMetadataMock = $this->createMock(PublicCookieMetadata::class);
 
         $this->model->setCookieManager($coockieManagerMock);

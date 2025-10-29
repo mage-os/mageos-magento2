@@ -10,6 +10,7 @@ namespace Magento\Customer\Test\Unit\Model\Address;
 use Magento\Customer\Api\Data\AddressInterface;
 use Magento\Customer\Api\Data\RegionInterface;
 use Magento\Customer\Model\Address\Mapper;
+use Magento\Customer\Test\Unit\Helper\AddressInterfaceTestHelper;
 use Magento\Framework\Api\ExtensibleDataObjectConverter;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -30,10 +31,7 @@ class MapperTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->extensibleObjectConverter = $this->getMockBuilder(
-            ExtensibleDataObjectConverter::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $this->extensibleObjectConverter = $this->createMock(ExtensibleDataObjectConverter::class);
         $this->_objectManager = new ObjectManager($this);
         $this->addressMapper = $this->_objectManager->getObject(
             Mapper::class,
@@ -77,24 +75,24 @@ class MapperTest extends TestCase
     protected function createAddressMock()
     {
         /** @var RegionInterface|MockObject $regionMock */
-        $regionMock = $this->getMockForAbstractClass(RegionInterface::class, [], '', false);
+        $regionMock = $this->createMock(RegionInterface::class);
         $regionMock->expects($this->any())->method('getRegion')->willReturn('Texas');
         $regionMock->expects($this->any())->method('getRegionId')->willReturn(1);
         $regionMock->expects($this->any())->method('getRegionCode')->willReturn('TX');
-        $addressMock = $this->getMockBuilder(AddressInterface::class)
-            ->addMethods(['getDefaultBilling', 'getDefaultShipping'])
-            ->onlyMethods(
-                [
-                    'getId',
-                    'getCity',
-                    'getFirstname',
-                    'getLastname',
-                    'getCountryId',
-                    'getRegion',
-                    'getStreet'
-                ]
-            )
-            ->getMockForAbstractClass();
+        $addressMock = $this->createPartialMock(
+            AddressInterfaceTestHelper::class,
+            [
+                'getDefaultBilling',
+                'getDefaultShipping',
+                'getId',
+                'getCity',
+                'getFirstname',
+                'getLastname',
+                'getCountryId',
+                'getRegion',
+                'getStreet'
+            ]
+        );
         $addressMock->expects($this->any())->method('getId')->willReturn('1');
         $addressMock->expects($this->any())->method('getDefaultBilling')->willReturn(true);
         $addressMock->expects($this->any())->method('getDefaultShipping')->willReturn(false);

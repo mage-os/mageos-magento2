@@ -26,6 +26,21 @@ class CustomerInterfaceTestHelper extends DataObject implements CustomerInterfac
     private $groupId = null;
 
     /**
+     * @var string|null
+     */
+    private $email = null;
+
+    /**
+     * @var int|null
+     */
+    private $websiteId = null;
+
+    /**
+     * @var int|null
+     */
+    private $storeId = null;
+
+    /**
      * Constructor that skips parent dependencies
      */
     public function __construct()
@@ -33,45 +48,45 @@ class CustomerInterfaceTestHelper extends DataObject implements CustomerInterfac
         parent::__construct([]);
     }
 
-    // Implement CustomerInterface methods as stubs
+    // Implement CustomerInterface methods with proper state management
     public function getId() { return $this->testData['id'] ?? null; }
     public function setId($id) { $this->testData['id'] = $id; return $this; }
     public function getGroupId() { return $this->groupId; }
     public function setGroupId($groupId) { $this->groupId = $groupId; return $this; }
-    public function getDefaultBilling() { return null; }
-    public function setDefaultBilling($defaultBilling) { return $this; }
-    public function getDefaultShipping() { return null; }
-    public function setDefaultShipping($defaultShipping) { return $this; }
-    public function getConfirmation() { return null; }
-    public function setConfirmation($confirmation) { return $this; }
-    public function getCreatedAt() { return null; }
-    public function setCreatedAt($createdAt) { return $this; }
-    public function getUpdatedAt() { return null; }
-    public function setUpdatedAt($updatedAt) { return $this; }
-    public function getCreatedIn() { return null; }
-    public function setCreatedIn($createdIn) { return $this; }
-    public function getDob() { return null; }
-    public function setDob($dob) { return $this; }
-    public function getEmail() { return null; }
-    public function setEmail($email) { return $this; }
-    public function getFirstname() { return null; }
-    public function setFirstname($firstname) { return $this; }
-    public function getLastname() { return null; }
-    public function setLastname($lastname) { return $this; }
-    public function getMiddlename() { return null; }
-    public function setMiddlename($middlename) { return $this; }
-    public function getPrefix() { return null; }
-    public function setPrefix($prefix) { return $this; }
-    public function getSuffix() { return null; }
-    public function setSuffix($suffix) { return $this; }
-    public function getGender() { return null; }
-    public function setGender($gender) { return $this; }
-    public function getStoreId() { return null; }
-    public function setStoreId($storeId) { return $this; }
-    public function getTaxvat() { return null; }
-    public function setTaxvat($taxvat) { return $this; }
-    public function getWebsiteId() { return null; }
-    public function setWebsiteId($websiteId) { return $this; }
+    public function getDefaultBilling() { return $this->testData['default_billing'] ?? null; }
+    public function setDefaultBilling($defaultBilling) { $this->testData['default_billing'] = $defaultBilling; return $this; }
+    public function getDefaultShipping() { return $this->testData['default_shipping'] ?? null; }
+    public function setDefaultShipping($defaultShipping) { $this->testData['default_shipping'] = $defaultShipping; return $this; }
+    public function getConfirmation() { return $this->testData['confirmation'] ?? null; }
+    public function setConfirmation($confirmation) { $this->testData['confirmation'] = $confirmation; return $this; }
+    public function getCreatedAt() { return $this->testData['created_at'] ?? null; }
+    public function setCreatedAt($createdAt) { $this->testData['created_at'] = $createdAt; return $this; }
+    public function getUpdatedAt() { return $this->testData['updated_at'] ?? null; }
+    public function setUpdatedAt($updatedAt) { $this->testData['updated_at'] = $updatedAt; return $this; }
+    public function getCreatedIn() { return $this->testData['created_in'] ?? null; }
+    public function setCreatedIn($createdIn) { $this->testData['created_in'] = $createdIn; return $this; }
+    public function getDob() { return $this->testData['dob'] ?? null; }
+    public function setDob($dob) { $this->testData['dob'] = $dob; return $this; }
+    public function getEmail() { return $this->email; }
+    public function setEmail($email) { $this->email = $email; return $this; }
+    public function getFirstname() { return $this->testData['firstname'] ?? null; }
+    public function setFirstname($firstname) { $this->testData['firstname'] = $firstname; return $this; }
+    public function getLastname() { return $this->testData['lastname'] ?? null; }
+    public function setLastname($lastname) { $this->testData['lastname'] = $lastname; return $this; }
+    public function getMiddlename() { return $this->testData['middlename'] ?? null; }
+    public function setMiddlename($middlename) { $this->testData['middlename'] = $middlename; return $this; }
+    public function getPrefix() { return $this->testData['prefix'] ?? null; }
+    public function setPrefix($prefix) { $this->testData['prefix'] = $prefix; return $this; }
+    public function getSuffix() { return $this->testData['suffix'] ?? null; }
+    public function setSuffix($suffix) { $this->testData['suffix'] = $suffix; return $this; }
+    public function getGender() { return $this->testData['gender'] ?? null; }
+    public function setGender($gender) { $this->testData['gender'] = $gender; return $this; }
+    public function getStoreId() { return $this->storeId; }
+    public function setStoreId($storeId) { $this->storeId = $storeId; return $this; }
+    public function getTaxvat() { return $this->testData['taxvat'] ?? null; }
+    public function setTaxvat($taxvat) { $this->testData['taxvat'] = $taxvat; return $this; }
+    public function getWebsiteId() { return $this->websiteId; }
+    public function setWebsiteId($websiteId) { $this->websiteId = $websiteId; return $this; }
     public function getAddresses() { return []; }
     public function setAddresses(array $addresses = null) { return $this; }
     public function getDisableAutoGroupChange() { return null; }

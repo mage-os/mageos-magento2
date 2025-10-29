@@ -11,6 +11,8 @@ use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Customer\Model\SetCustomerStore;
 use Magento\Store\Api\Data\WebsiteInterface;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Store\Test\Unit\Helper\WebsiteInterfaceTestHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -31,9 +33,7 @@ class SetCustomerStoreTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
 
         $this->model = new SetCustomerStore(
             $this->storeManagerMock
@@ -44,18 +44,18 @@ class SetCustomerStoreTest extends TestCase
      * Test for setting up the customer's current store.
      *
      * @param $requestData
-     * @dataProvider requestParamsDataProvider
      */
+    #[DataProvider('requestParamsDataProvider')]
     public function testSetStore($requestData)
     {
         $storeId = $requestData[CustomerInterface::STORE_ID] ?? null;
         $websiteId = $requestData[CustomerInterface::WEBSITE_ID] ?? null;
         if (!$storeId && $websiteId) {
             $storeId = 200;
-            $websiteMock = $this->getMockBuilder(WebsiteInterface::class)
-                ->disableOriginalConstructor()
-                ->addMethods(['getStoreIds'])
-                ->getMockForAbstractClass();
+            $websiteMock = $this->createPartialMock(
+                WebsiteInterfaceTestHelper::class,
+                ['getStoreIds']
+            );
             $websiteMock->expects($this->once())
                 ->method('getStoreIds')
                 ->willReturn([$storeId]);
