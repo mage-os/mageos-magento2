@@ -22,6 +22,7 @@ use Magento\User\Test\Fixture\User;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\Catalog\Model\Product\Visibility;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
+
 /**
  * Complete workflow test for configurable product creation via REST API
  */
