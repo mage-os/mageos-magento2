@@ -10,7 +10,7 @@ namespace Magento\SalesRule\Test\Unit\Model\Plugin;
 use Magento\SalesRule\Model\Plugin\TriggerRecollectState;
 use PHPUnit\Framework\TestCase;
 
-class TriggerRecollectStateTest
+class TriggerRecollectStateTest extends TestCase
 {
     /**
      * @var TriggerRecollectState

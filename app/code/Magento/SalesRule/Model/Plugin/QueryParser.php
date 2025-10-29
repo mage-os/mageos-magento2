@@ -24,6 +24,7 @@ class QueryParser
      * @param \Magento\Framework\GraphQl\Query\QueryParser $subject
      * @param \GraphQL\Language\AST\DocumentNode $documentNode
      * @return \GraphQL\Language\AST\DocumentNode $documentNode
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function afterParse(\Magento\Framework\GraphQl\Query\QueryParser $subject, $documentNode)
     {
