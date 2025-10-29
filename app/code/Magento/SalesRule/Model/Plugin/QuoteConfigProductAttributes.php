@@ -10,6 +10,7 @@ namespace Magento\SalesRule\Model\Plugin;
 use Magento\Framework\App\CacheInterface;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Quote\Model\Quote\Config;
+use Magento\Quote\Model\Quote;
 use Magento\SalesRule\Model\ResourceModel\Rule as RuleResource;
 
 class QuoteConfigProductAttributes
@@ -37,12 +38,14 @@ class QuoteConfigProductAttributes
     /**
      * @param RuleResource $ruleResource
      * @param RequestTypeRegistry $requestTypeRegistry
+     * @param TriggerRecollectState $triggerRecollectState
      * @param CacheInterface $cache
      * @param SerializerInterface $serializer
      */
     public function __construct(
         RuleResource $ruleResource,
         private RequestTypeRegistry $requestTypeRegistry,
+        private TriggerRecollectState $triggerRecollectState,
         private CacheInterface $cache,
         private SerializerInterface $serializer
     ) {
@@ -60,7 +63,9 @@ class QuoteConfigProductAttributes
      */
     public function afterGetProductAttributes(Config $subject, array $attributeKeys): array
     {
-        if ($this->requestTypeRegistry->isGetRequestOrQuery()) {
+        if ($this->requestTypeRegistry->isGetRequestOrQuery() &&
+            !$this->triggerRecollectState->canRecollect()
+        ) {
             return $attributeKeys;
         }
 

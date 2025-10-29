@@ -10,10 +10,12 @@ namespace Magento\SalesRule\Model\Plugin;
 class QuoteItemCollection
 {
     /**
-     * @param RequestTypeRegistry   $requestTypeRegistry
+     * @param RequestTypeRegistry     $requestTypeRegistry
+     * @param TriggerRecollectState   $triggerRecollectState
      */
     public function __construct(
-        private RequestTypeRegistry $requestTypeRegistry
+        private RequestTypeRegistry $requestTypeRegistry,
+        private TriggerRecollectState $triggerRecollectState
     ) {
     }
 
@@ -23,13 +25,14 @@ class QuoteItemCollection
      * @param \Magento\Quote\Model\ResourceModel\Quote\Item\Collection $subject The collection instance.
      * @param \Magento\Quote\Model\Quote $quote The quote to be processed.
      * @return void
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function beforeSetQuote(
         \Magento\Quote\Model\ResourceModel\Quote\Item\Collection $subject,
         \Magento\Quote\Model\Quote $quote
     ) {
-        if ($quote->getTriggerRecollect() && $this->requestTypeRegistry->isGetRequestOrQuery()) {
-            $this->requestTypeRegistry->setIsGetRequestOrQuery(false);
+        if ($quote->getTriggerRecollect() == 1 && $this->requestTypeRegistry->isGetRequestOrQuery()) {
+            $this->triggerRecollectState->setTriggerRecollect(1);
         }
     }
 }
