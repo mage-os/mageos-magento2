@@ -13,6 +13,7 @@ use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Customer\Plugin\ValidateDobOnSave;
 use Magento\Eav\Model\Config as EavConfig;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
+use Magento\Eav\Test\Unit\Helper\AbstractAttributeTestHelper;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -208,10 +209,10 @@ class ValidateDobOnSaveTest extends TestCase
      */
     private function createAttributeMockForGetData(string $key, $value)
     {
-        $attribute = $this->getMockBuilder(AbstractAttribute::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getData'])
-            ->getMockForAbstractClass();
+        $attribute = $this->createPartialMock(
+            AbstractAttributeTestHelper::class,
+            ['getData']
+        );
 
         $attribute->method('getData')->with($key)->willReturn($value);
         return $attribute;
@@ -282,11 +283,10 @@ class ValidateDobOnSaveTest extends TestCase
      */
     private function mockAttributeRulesViaGetValidateRules(array $rules): void
     {
-        $attribute = $this->getMockBuilder(\Magento\Eav\Model\Entity\Attribute\AbstractAttribute::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getData'])
-            ->addMethods(['getValidateRules'])
-            ->getMockForAbstractClass();
+        $attribute = $this->createPartialMock(
+            AbstractAttributeTestHelper::class,
+            ['getData', 'getValidateRules']
+        );
 
         // Force non-array rules to trigger the fallback
         $attribute->method('getData')->with('validate_rules')->willReturn(null);

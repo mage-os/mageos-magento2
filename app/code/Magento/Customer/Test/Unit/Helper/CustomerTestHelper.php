@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2024 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -9,28 +9,15 @@ namespace Magento\Customer\Test\Unit\Helper;
 
 use Magento\Customer\Model\Customer;
 
-/**
- * Test helper for Customer model with custom methods
- */
 class CustomerTestHelper extends Customer
 {
     /**
-     * @var int|null
+     * @var array<string, mixed>
      */
-    private $storeId = null;
+    private $data = [];
 
     /**
-     * @var string|null
-     */
-    private $email = null;
-
-    /**
-     * @var int|null
-     */
-    private $websiteId = null;
-
-    /**
-     * Constructor that skips parent dependencies
+     * Constructor - skip parent constructor
      */
     public function __construct()
     {
@@ -38,81 +25,134 @@ class CustomerTestHelper extends Customer
     }
 
     /**
-     * Get store ID (custom method for tests)
-     *
-     * @return int|null
-     */
-    public function getStoreId(): ?int
-    {
-        return $this->storeId;
-    }
-
-    /**
-     * Set store ID
-     *
-     * @param int|null $storeId
-     * @return $this
-     */
-    public function setTestStoreId(?int $storeId): self
-    {
-        $this->storeId = $storeId;
-        return $this;
-    }
-
-    /**
-     * Get email (custom method for tests)
+     * Get telephone
      *
      * @return string|null
      */
-    public function getEmail(): ?string
+    public function getTelephone()
     {
-        return $this->email;
+        return $this->data['telephone'] ?? null;
     }
 
     /**
-     * Set email (custom method for tests)
+     * Set telephone
      *
-     * @param string|null $email
+     * @param string $telephone
      * @return $this
      */
-    public function setEmail(?string $email): self
+    public function setTelephone(string $telephone)
     {
-        $this->email = $email;
+        $this->data['telephone'] = $telephone;
         return $this;
     }
 
     /**
-     * Get website ID (custom method for tests)
+     * Get street
      *
-     * @return int|null
+     * @return array<int, string>|null
      */
-    public function getWebsiteId(): ?int
+    public function getStreet()
     {
-        return $this->websiteId;
+        return $this->data['street'] ?? null;
     }
 
     /**
-     * Set website ID (custom method for tests)
+     * Set street
      *
-     * @param int|null $websiteId
+     * @param array<int, string> $street
      * @return $this
      */
-    public function setWebsiteId(?int $websiteId): self
+    public function setStreet(array $street)
     {
-        $this->websiteId = $websiteId;
+        $this->data['street'] = $street;
         return $this;
     }
 
     /**
-     * Load by email (stub for tests)
+     * Get firstname
      *
-     * @param string $customerEmail
+     * @return string|null
+     */
+    public function getFirstname()
+    {
+        return $this->data['firstname'] ?? null;
+    }
+
+    /**
+     * Set firstname
+     *
+     * @param string $firstname
      * @return $this
      */
-    public function loadByEmail($customerEmail)
+    public function setFirstname(string $firstname)
     {
-        // Stub implementation for tests
+        $this->data['firstname'] = $firstname;
+        return $this;
+    }
+
+    /**
+     * Get lastname
+     *
+     * @return string|null
+     */
+    public function getLastname()
+    {
+        return $this->data['lastname'] ?? null;
+    }
+
+    /**
+     * Set lastname
+     *
+     * @param string $lastname
+     * @return $this
+     */
+    public function setLastname(string $lastname)
+    {
+        $this->data['lastname'] = $lastname;
+        return $this;
+    }
+
+    /**
+     * Get middlename
+     *
+     * @return string|null
+     */
+    public function getMiddlename()
+    {
+        return $this->data['middlename'] ?? null;
+    }
+
+    /**
+     * Set middlename
+     *
+     * @param string $middlename
+     * @return $this
+     */
+    public function setMiddlename(string $middlename)
+    {
+        $this->data['middlename'] = $middlename;
+        return $this;
+    }
+
+    /**
+     * Get city
+     *
+     * @return string|null
+     */
+    public function getCity()
+    {
+        return $this->data['city'] ?? null;
+    }
+
+    /**
+     * Set city
+     *
+     * @param string $city
+     * @return $this
+     */
+    public function setCity(string $city)
+    {
+        $this->data['city'] = $city;
         return $this;
     }
 }
-

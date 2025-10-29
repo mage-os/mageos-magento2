@@ -41,5 +41,25 @@ class AbstractAttributeTestHelper extends AbstractAttribute
     {
         return null;
     }
+
+    /**
+     * Get store label (custom method for tests)
+     *
+     * @return string|null
+     */
+    public function getStoreLabel(): ?string
+    {
+        return null;
+    }
+
+    /**
+     * Get validate rules (custom method for tests)
+     *
+     * @return array|null
+     */
+    public function getValidateRules(): ?array
+    {
+        return null;
+    }
 }
 

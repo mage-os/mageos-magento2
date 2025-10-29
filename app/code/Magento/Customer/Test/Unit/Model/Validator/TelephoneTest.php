@@ -9,6 +9,8 @@ namespace Magento\Customer\Test\Unit\Model\Validator;
 
 use Magento\Customer\Model\Validator\Telephone;
 use Magento\Customer\Model\Customer;
+use Magento\Customer\Test\Unit\Helper\CustomerTestHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -23,21 +25,17 @@ class TelephoneTest extends TestCase
     private Telephone $nameValidator;
 
     /**
-     * @var Customer|MockObject
+     * @var CustomerTestHelper
      */
-    private MockObject $customerMock;
+    private CustomerTestHelper $customerMock;
 
     /**
      * @return void
      */
     protected function setUp(): void
     {
-        $this->nameValidator = new Telephone;
-        $this->customerMock = $this
-            ->getMockBuilder(Customer::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getTelephone'])
-            ->getMock();
+        $this->nameValidator = new Telephone();
+        $this->customerMock = new CustomerTestHelper();
     }
 
     /**
@@ -46,20 +44,20 @@ class TelephoneTest extends TestCase
      * @param string $telephone
      * @param string $message
      * @return void
-     * @dataProvider expectedPunctuationInNamesDataProvider
      */
+    #[DataProvider('expectedPunctuationInNamesDataProvider')]
     public function testValidateCorrectPunctuationInNames(
         string $telephone,
         string $message
-    ) {
-        $this->customerMock->expects($this->once())->method('getTelephone')->willReturn($telephone);
+    ): void {
+        $this->customerMock->setTelephone($telephone);
 
         $isValid = $this->nameValidator->isValid($this->customerMock);
         $this->assertTrue($isValid, $message);
     }
 
     /**
-     * @return array
+     * @return array<int, array<string, string>>
      */
     public static function expectedPunctuationInNamesDataProvider(): array
     {

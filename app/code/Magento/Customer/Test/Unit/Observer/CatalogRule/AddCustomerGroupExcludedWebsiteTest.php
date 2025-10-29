@@ -10,6 +10,7 @@ namespace Magento\Customer\Test\Unit\Observer\CatalogRule;
 use Magento\CatalogRule\Api\Data\RuleExtension;
 use Magento\CatalogRule\Model\ResourceModel\Rule\Collection;
 use Magento\CatalogRule\Model\Rule;
+use Magento\CatalogRule\Test\Unit\Helper\RuleExtensionTestHelper;
 use Magento\Customer\Api\GroupExcludedWebsiteRepositoryInterface;
 use Magento\Customer\Observer\CatalogRule\AddCustomerGroupExcludedWebsite;
 use Magento\Framework\Event\Observer;
@@ -38,21 +39,16 @@ class AddCustomerGroupExcludedWebsiteTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->groupExcludedWebsiteRepositoryMock = $this->getMockBuilder(GroupExcludedWebsiteRepositoryInterface::class)
-            ->getMockForAbstractClass();
-        $this->observerMock = $this->getMockBuilder(Observer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->ruleCollectionMock = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->ruleMock = $this->getMockBuilder(Rule::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->ruleExtensionMock = $this->getMockBuilder(RuleExtension::class)
-            ->addMethods(['setExcludeWebsiteIds'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->groupExcludedWebsiteRepositoryMock = $this->createMock(
+            GroupExcludedWebsiteRepositoryInterface::class
+        );
+        $this->observerMock = $this->createMock(Observer::class);
+        $this->ruleCollectionMock = $this->createMock(Collection::class);
+        $this->ruleMock = $this->createMock(Rule::class);
+        $this->ruleExtensionMock = $this->createPartialMock(
+            RuleExtensionTestHelper::class,
+            ['setExcludeWebsiteIds']
+        );
         $this->observerMock->expects(self::atLeastOnce())
             ->method('getData')
             ->willReturn($this->ruleCollectionMock);

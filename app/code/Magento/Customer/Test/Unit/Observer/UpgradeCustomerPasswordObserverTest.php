@@ -13,6 +13,8 @@ use Magento\Customer\Model\Customer;
 use Magento\Customer\Model\CustomerRegistry;
 use Magento\Customer\Model\Data\CustomerSecure;
 use Magento\Customer\Observer\UpgradeCustomerPasswordObserver;
+use Magento\Customer\Test\Unit\Helper\CustomerInterfaceTestHelper;
+use Magento\Customer\Test\Unit\Helper\CustomerSecureTestHelper;
 use Magento\Framework\DataObject;
 use Magento\Framework\Encryption\Encryptor;
 use Magento\Framework\Event\Observer;
@@ -48,15 +50,9 @@ class UpgradeCustomerPasswordObserverTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->customerRepository = $this
-            ->getMockBuilder(CustomerRepositoryInterface::class)
-            ->getMockForAbstractClass();
-        $this->customerRegistry = $this->getMockBuilder(CustomerRegistry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->encryptorMock = $this->getMockBuilder(Encryptor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->customerRepository = $this->createMock(CustomerRepositoryInterface::class);
+        $this->customerRegistry = $this->createMock(CustomerRegistry::class);
+        $this->encryptorMock = $this->createMock(Encryptor::class);
 
         $this->model = new UpgradeCustomerPasswordObserver(
             $this->encryptorMock,
@@ -73,18 +69,15 @@ class UpgradeCustomerPasswordObserverTest extends TestCase
         $customerId = '1';
         $password = 'password';
         $passwordHash = 'hash:salt:999';
-        $model = $this->getMockBuilder(Customer::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getId'])
-            ->getMock();
-        $customer = $this->getMockBuilder(CustomerInterface::class)
-            ->addMethods(['setData'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $customerSecure = $this->getMockBuilder(CustomerSecure::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getPasswordHash', 'setPasswordHash'])
-            ->getMock();
+        $model = $this->createPartialMock(Customer::class, ['getId']);
+        $customer = $this->createPartialMock(
+            CustomerInterfaceTestHelper::class,
+            ['setData']
+        );
+        $customerSecure = $this->createPartialMock(
+            CustomerSecureTestHelper::class,
+            ['getPasswordHash', 'setPasswordHash']
+        );
         $model->expects($this->exactly(2))
             ->method('getId')
             ->willReturn($customerId);

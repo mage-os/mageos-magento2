@@ -10,8 +10,10 @@ namespace Magento\Customer\Test\Unit\Model\Attribute\Data;
 use Magento\Customer\Model\Attribute\Data\Postcode;
 use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
+use Magento\Eav\Test\Unit\Helper\AbstractAttributeTestHelper;
 use Magento\Framework\Locale\ResolverInterface;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -45,19 +47,14 @@ class PostcodeTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->localeMock = $this->getMockBuilder(TimezoneInterface::class)
-            ->getMock();
-        $this->localeResolverMock = $this->getMockBuilder(ResolverInterface::class)
-            ->getMock();
-        $this->loggerMock = $this->getMockBuilder(LoggerInterface::class)
-            ->getMock();
-        $this->directoryHelperMock = $this->getMockBuilder(\Magento\Directory\Helper\Data::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->attributeMock = $this->getMockBuilder(AbstractAttribute::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getStoreLabel'])
-            ->getMock();
+        $this->localeMock = $this->createMock(TimezoneInterface::class);
+        $this->localeResolverMock = $this->createMock(ResolverInterface::class);
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
+        $this->directoryHelperMock = $this->createMock(DirectoryHelper::class);
+        $this->attributeMock = $this->createPartialMock(
+            AbstractAttributeTestHelper::class,
+            ['getStoreLabel']
+        );
     }
 
     /**
@@ -65,9 +62,8 @@ class PostcodeTest extends TestCase
      * @param bool $expected text output
      * @param string $countryId
      * @param bool $isOptional
-     *
-     * @dataProvider validateValueDataProvider
      */
+    #[DataProvider('validateValueDataProvider')]
     public function testValidateValue($value, $expected, $countryId, $isOptional)
     {
         $storeLabel = 'Zip/Postal Code';

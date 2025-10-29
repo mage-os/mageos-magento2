@@ -11,8 +11,10 @@ use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Customer\Observer\UpgradeQuoteCustomerEmailObserver;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
+use Magento\Framework\Test\Unit\Helper\EventTestHelper;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Model\Quote;
+use Magento\Quote\Test\Unit\Helper\QuoteTestHelper;
 use PHPUnit\Framework\TestCase;
 
 /** for testing upgrade quote customer email
@@ -44,20 +46,16 @@ class UpgradeQuoteCustomerEmailObserverTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->observerMock = $this->getMockBuilder(Observer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->observerMock = $this->createMock(Observer::class);
 
-        $this->eventMock = $this->getMockBuilder(Event::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getCustomerDataObject', 'getOrigCustomerDataObject'])
-            ->getMock();
+        $this->eventMock = $this->createPartialMock(
+            EventTestHelper::class,
+            ['getCustomerDataObject', 'getOrigCustomerDataObject']
+        );
 
         $this->observerMock->expects($this->any())->method('getEvent')->willReturn($this->eventMock);
 
-        $this->quoteRepositoryMock = $this
-            ->getMockBuilder(CartRepositoryInterface::class)
-            ->getMockForAbstractClass();
+        $this->quoteRepositoryMock = $this->createMock(CartRepositoryInterface::class);
         $this->model = new UpgradeQuoteCustomerEmailObserver($this->quoteRepositoryMock);
     }
 
@@ -69,17 +67,13 @@ class UpgradeQuoteCustomerEmailObserverTest extends TestCase
         $email = "test@test.com";
         $origEmail = "origtest@test.com";
 
-        $customer = $this->getMockBuilder(CustomerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $customerOrig = $this->getMockBuilder(CustomerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $customer = $this->createMock(CustomerInterface::class);
+        $customerOrig = $this->createMock(CustomerInterface::class);
 
-        $quoteMock = $this->getMockBuilder(Quote::class)
-            ->addMethods(['setCustomerEmail'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $quoteMock = $this->createPartialMock(
+            QuoteTestHelper::class,
+            ['setCustomerEmail']
+        );
 
         $this->eventMock->expects($this->any())
             ->method('getCustomerDataObject')
@@ -90,11 +84,11 @@ class UpgradeQuoteCustomerEmailObserverTest extends TestCase
 
         $customerOrig->expects($this->any())
             ->method('getEmail')
-            ->willReturn($this->returnValue($origEmail));
+            ->willReturn($origEmail);
 
         $customer->expects($this->any())
             ->method('getEmail')
-            ->willReturn($this->returnValue($email));
+            ->willReturn($email);
 
         $this->quoteRepositoryMock->expects($this->once())
             ->method('getForCustomer')

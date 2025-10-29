@@ -48,5 +48,16 @@ class QuoteTestHelper extends Quote
     {
         return $this->website;
     }
+
+    /**
+     * Set customer email (custom method for tests)
+     *
+     * @param string $email
+     * @return $this
+     */
+    public function setCustomerEmail($email): self
+    {
+        return $this;
+    }
 }
 
