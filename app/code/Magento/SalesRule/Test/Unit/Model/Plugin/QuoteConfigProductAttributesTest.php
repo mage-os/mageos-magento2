@@ -49,6 +49,11 @@ class QuoteConfigProductAttributesTest extends TestCase
      */
     protected $subject;
 
+    /**
+     * @var TriggerRecollectState|MockObject
+     */
+    protected $triggerRecollectState;
+
     protected function setUp(): void
     {
         $this->ruleResource = $this->createMock(Rule::class);
