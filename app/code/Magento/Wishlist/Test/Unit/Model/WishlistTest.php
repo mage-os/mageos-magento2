@@ -35,6 +35,7 @@ use Magento\Wishlist\Model\ResourceModel\Item\CollectionFactory;
 use Magento\Wishlist\Model\ResourceModel\Wishlist as WishlistResource;
 use Magento\Wishlist\Model\ResourceModel\Wishlist\Collection as WishlistCollection;
 use Magento\Wishlist\Model\Wishlist;
+use Magento\Wishlist\Model\WishlistItemPermissionsCollectionProcessor;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -138,6 +139,11 @@ class WishlistTest extends TestCase
      */
     private $stockConfiguration;
 
+    /**
+     * @var WishlistItemPermissionsCollectionProcessor|MockObject
+     */
+    private WishlistItemPermissionsCollectionProcessor $permissionCollectionProcessor;
+
     protected function setUp(): void
     {
         $context = $this->getMockBuilder(Context::class)
@@ -200,6 +206,7 @@ class WishlistTest extends TestCase
             ->willReturn($this->eventDispatcher);
 
         $this->stockConfiguration = $this->createMock(StockConfigurationInterface::class);
+        $this->permissionCollectionProcessor = $this->createMock(WishlistItemPermissionsCollectionProcessor::class);
 
         $this->wishlist = new Wishlist(
             $context,
@@ -221,7 +228,8 @@ class WishlistTest extends TestCase
             $this->serializer,
             $this->stockRegistry,
             $this->scopeConfig,
-            $this->stockConfiguration
+            $this->stockConfiguration,
+            $this->permissionCollectionProcessor
         );
     }
 
