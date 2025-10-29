@@ -20,11 +20,7 @@
         </annotations>
         <before>
             <!-- Step 2: Enable Persistence shopping cart and set enable persistence to yes -->
-            <createData entity="PersistentConfigSettings" stepKey="enablePersistentConfigSettings"/>
-            <!-- Allow login during checkout-->
-            <actionGroup ref="AdminEnableDisableLoginOnCheckoutActionGroup" stepKey="enableLoginInGuestCheckout">
-                <argument name="enableDisableValue" value="1"/>
-            </actionGroup>
+            <magentoCLI stepKey="enablePersistentConfigSettings" command="config:set persistent/options/enabled 1"/>
             <!-- Step4: Create two simple products -->
             <createData entity="_defaultProduct" stepKey="createSimpleProductOne"></createData>
             <createData entity="_defaultProduct" stepKey="createSimpleProductTwo"></createData>
@@ -44,6 +40,7 @@
             <actionGroup ref="AdminDeleteCustomerActionGroup" stepKey="deleteRegisteredCustomer">
                 <argument name="customerEmail" value="Simple_US_Customer_NY.email"/>
             </actionGroup>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearFilter"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogoutForCleanup"/>
         </after>
         <!-- Step 5: Go to storefront and register new customer -->
