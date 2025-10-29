@@ -7,9 +7,6 @@ declare(strict_types=1);
 
 namespace Magento\Framework\Data\Test\Unit\Helper;
 
-use Magento\Framework\Data\Form\Element\Factory;
-use Magento\Framework\Data\Form\Element\CollectionFactory;
-use Magento\Framework\Escaper;
 use Magento\Framework\Data\Form\Element\Text;
 
 /**
@@ -24,23 +21,6 @@ class TextTestHelper extends Text
     private $name = null;
     /** @var mixed */
     private $form = null;
-
-    /**
-     * Constructor
-     *
-     * @param Factory $factoryElement
-     * @param CollectionFactory $collectionFactory
-     * @param Escaper $escaper
-     * @param array $data
-     */
-    public function __construct(
-        Factory $factoryElement,
-        CollectionFactory $collectionFactory,
-        Escaper $escaper,
-        array $data = []
-    ) {
-        parent::__construct($factoryElement, $collectionFactory, $escaper, $data);
-    }
 
     /**
      * Set value

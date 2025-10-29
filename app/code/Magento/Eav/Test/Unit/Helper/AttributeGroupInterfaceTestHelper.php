@@ -1,6 +1,7 @@
 <?php
 /**
- * Copyright © Adobe, Inc. All rights reserved.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -13,6 +14,9 @@ use Magento\Eav\Model\Entity\Attribute\Group;
  */
 class AttributeGroupInterfaceTestHelper extends Group
 {
+    /**
+     * @var string
+     */
     private string $attributeGroupCode = '';
 
     public function __construct()
@@ -31,4 +35,3 @@ class AttributeGroupInterfaceTestHelper extends Group
         return $this;
     }
 }
-
