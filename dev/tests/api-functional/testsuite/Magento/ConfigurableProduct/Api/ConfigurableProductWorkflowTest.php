@@ -19,7 +19,9 @@ use Magento\TestFramework\Fixture\DataFixture;
 use Magento\TestFramework\Fixture\DataFixtureStorage;
 use Magento\TestFramework\Fixture\DataFixtureStorageManager;
 use Magento\User\Test\Fixture\User;
-
+use Magento\Catalog\Model\Product\Attribute\Source\Status;
+use Magento\Catalog\Model\Product\Visibility;
+use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 /**
  * Complete workflow test for configurable product creation via REST API
  */
@@ -87,35 +89,13 @@ class ConfigurableProductWorkflowTest extends WebapiAbstract
         DataFixture(
             AttributeFixture::class,
             [
-                'entity_type_id' => 4,
                 'attribute_code' => 'test_configurable',
                 'frontend_input' => 'select',
                 'frontend_label' => 'Test Configurable',
-                'is_required' => false,
-                'is_user_defined' => true,
-                'is_unique' => false,
-                'is_global' => 1,
-                'is_visible' => true,
-                'is_searchable' => false,
-                'is_comparable' => false,
-                'is_visible_on_front' => false,
-                'is_html_allowed_on_front' => false,
-                'is_used_for_price_rules' => false,
-                'is_filterable' => false,
-                'is_filterable_in_search' => false,
-                'used_in_product_listing' => false,
-                'used_for_sort_by' => false,
-                'is_visible_in_advanced_search' => false,
-                'is_wysiwyg_enabled' => false,
-                'is_used_for_promo_rules' => false,
-                'is_required_in_admin_store' => false,
-                'is_used_in_grid' => false,
-                'is_visible_in_grid' => false,
-                'is_filterable_in_grid' => false,
                 'is_configurable' => true,
                 'options' => [
-                    ['label' => 'Option 1', 'sort_order' => 10, 'is_default' => false],
-                    ['label' => 'Option 2', 'sort_order' => 20, 'is_default' => false],
+                    ['label' => 'Option 1', 'sort_order' => 10],
+                    ['label' => 'Option 2', 'sort_order' => 20],
                 ],
             ],
             'configurable_attribute'
@@ -140,9 +120,9 @@ class ConfigurableProductWorkflowTest extends WebapiAbstract
         // Create configurable product
         $configurableProductData = $this->createConfigurableProduct();
         $this->assertEquals(self::CONFIGURABLE_PRODUCT_SKU, $configurableProductData['sku']);
-        $this->assertEquals('configurable', $configurableProductData['type_id']);
-        $this->assertEquals(1, $configurableProductData['status']); // Enabled
-        $this->assertEquals(4, $configurableProductData['visibility']); // Catalog, Search
+        $this->assertEquals('configurable', Configurable::TYPE_CODE);
+        $this->assertEquals(1,  Status::STATUS_ENABLED);
+        $this->assertEquals(4,Visibility::VISIBILITY_BOTH);
 
         // Add color attribute options to configurable product
         $optionResult = $this->addConfigurableProductOption(
@@ -256,10 +236,10 @@ class ConfigurableProductWorkflowTest extends WebapiAbstract
                 'sku' => self::CONFIGURABLE_PRODUCT_SKU,
                 'name' => 'Configurable Product Created by API',
                 'attribute_set_id' => 4, // Default attribute set
-                'type_id' => 'configurable',
+                'type_id' => Configurable::TYPE_CODE,
                 'price' => 99.00,
-                'status' => 1, // Enabled
-                'visibility' => 4, // Catalog, Search
+                'status' => Status::STATUS_ENABLED,
+                'visibility' => Visibility::VISIBILITY_BOTH,
                 'weight' => 1.0,
                 'custom_attributes' => [
                     [
