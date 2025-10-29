@@ -7,6 +7,9 @@ declare(strict_types=1);
 
 namespace Magento\SalesRule\Model\Plugin;
 
+use Magento\Framework\App\ResponseInterface;
+use Magento\Framework\App\FrontControllerInterface;
+
 class GraphQlController
 {
     /**
@@ -20,15 +23,15 @@ class GraphQlController
     /**
      * Reset request type registry after dispatching GraphQL controller
      *
-     * @param \Magento\Framework\App\FrontControllerInterface $subject
-     * @param \Magento\Framework\App\ResponseInterface $result
-     * @return \Magento\Framework\App\ResponseInterface $result
+     * @param FrontControllerInterface $subject
+     * @param ResponseInterface $result
+     * @return ResponseInterface $result
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function afterDispatch(
-        \Magento\Framework\App\FrontControllerInterface $subject,
-        \Magento\Framework\App\ResponseInterface $result
-    ) {
+        FrontControllerInterface $subject,
+        ResponseInterface $result
+    ) : ResponseInterface {
         $this->requestTypeRegistry->reset();
         return $result;
     }

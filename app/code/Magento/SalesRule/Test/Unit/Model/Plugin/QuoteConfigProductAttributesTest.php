@@ -59,7 +59,6 @@ class QuoteConfigProductAttributesTest extends TestCase
         $this->plugin = new QuoteConfigProductAttributes(
             $this->ruleResource,
             $this->requestTypeRegistry,
-            $this->triggerRecollectState,
             $this->cache,
             $this->serializer
         );
