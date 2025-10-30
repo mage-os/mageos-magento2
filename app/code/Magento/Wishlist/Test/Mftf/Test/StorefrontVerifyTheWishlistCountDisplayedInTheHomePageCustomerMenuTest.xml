@@ -41,7 +41,7 @@
             <argument name="productUrl" value="$$createProduct.custom_attributes[url_key]$$"/>
         </actionGroup>
         <!-- Step 2: Add product to wishlist -->
-        <actionGroup ref="StorefrontCustomerAddProductToWishlistActionGroup" stepKey="addToWishlistProduct">
+        <actionGroup ref="StorefrontCustomerAddProductToWishlistActionGroup" stepKey="addFirstProductToWishlist">
             <argument name="productVar" value="$createProduct$"/>
         </actionGroup>
         <!-- Open second product page -->
@@ -49,7 +49,7 @@
             <argument name="productUrl" value="$$createSimpleProduct.custom_attributes[url_key]$$"/>
         </actionGroup>
         <!-- Step 2: Add second product to wishlist -->
-        <actionGroup ref="StorefrontCustomerAddProductToWishlistActionGroup" stepKey="addToTheWishlistProduct">
+        <actionGroup ref="StorefrontCustomerAddProductToWishlistActionGroup" stepKey="addSecondProductToWishlist">
             <argument name="productVar" value="$createSimpleProduct$"/>
         </actionGroup>
         <!-- Step 3: Navigate to Store front home page-->
@@ -60,6 +60,6 @@
         <waitForPageLoad stepKey="waitToLoadCustomerDropdownMenu"/>
         <!-- Step 4 assertion: The wishlist item count should display-->
         <waitForElementVisible selector="{{StorefrontCustomerWishlistProductSection.wishListLink}}" stepKey="wishListLink"/>
-        <waitForText userInput="{{NumberOfItems.item}}" selector="{{StorefrontCustomerWishlistProductSection.wishListCount}}" stepKey="seeWishListCount"/>
+        <waitForText userInput="{{NumberOfItemsInWishlist.item}}" selector="{{StorefrontCustomerWishlistProductSection.wishListCount}}" stepKey="seeWishListCount"/>
     </test>
 </tests>

@@ -61,7 +61,7 @@
         <data key="path">rss/wishlist/active</data>
         <data key="value">1</data>
     </entity>
-    <entity name="NumberOfItems">
+    <entity name="NumberOfItemsInWishlist">
         <data key="item">2 items</data>
     </entity>
 </entities>
