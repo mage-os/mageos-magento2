@@ -9,10 +9,12 @@ namespace Magento\Customer\Test\Unit\Model\Plugin;
 
 use Magento\Customer\Model\Plugin\CustomerFlushFormKey;
 use Magento\Customer\Model\Session;
+use Magento\Customer\Test\Unit\Helper\SessionTestHelper;
 use Magento\Framework\App\PageCache\FormKey as CookieFormKey;
 use Magento\Framework\Data\Form\FormKey as DataFormKey;
 use Magento\Framework\Event\Observer;
 use Magento\PageCache\Observer\FlushFormKey;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -35,31 +37,21 @@ class CustomerFlushFormKeyTest extends TestCase
 
     protected function setUp(): void
     {
-
-        /** @var CookieFormKey | MockObject */
-        $this->cookieFormKey = $this->getMockBuilder(CookieFormKey::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        /** @var DataFormKey | MockObject */
-        $this->dataFormKey = $this->getMockBuilder(DataFormKey::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        /** @var Session | MockObject */
-        $this->customerSession = $this->getMockBuilder(Session::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getBeforeRequestParams', 'setBeforeRequestParams'])
-            ->getMock();
+        $this->cookieFormKey = $this->createMock(CookieFormKey::class);
+        $this->dataFormKey = $this->createMock(DataFormKey::class);
+        $this->customerSession = $this->createPartialMock(
+            SessionTestHelper::class,
+            ['getBeforeRequestParams', 'setBeforeRequestParams']
+        );
     }
 
     /**
-     * @dataProvider aroundFlushFormKeyProvider
      * @param $beforeFormKey
      * @param $currentFormKey
      * @param $getFormKeyTimes
      * @param $setBeforeParamsTimes
      */
+    #[DataProvider('aroundFlushFormKeyProvider')]
     public function testAroundFlushFormKey(
         $beforeFormKey,
         $currentFormKey,
@@ -85,7 +77,7 @@ class CustomerFlushFormKeyTest extends TestCase
             ->with($beforeParams);
 
         $proceed = function ($observerDto) use ($observer) {
-            return $observer->execute($observerDto);
+            $observer->execute($observerDto);
         };
 
         $plugin->aroundExecute($observer, $proceed, $observerDto);

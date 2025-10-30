@@ -9,6 +9,7 @@ namespace Magento\Customer\Test\Unit\Model\ResourceModel;
 
 use Magento\Customer\Model\Address;
 use Magento\Customer\Model\CustomerFactory;
+use Magento\Customer\Test\Unit\Helper\AddressTestHelper;
 use Magento\Eav\Model\Config;
 use Magento\Eav\Model\Entity\AbstractEntity;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
@@ -23,6 +24,7 @@ use Magento\Framework\Model\ResourceModel\Db\VersionControl\Snapshot;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Framework\Validator;
 use Magento\Framework\Validator\Factory;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -73,28 +75,26 @@ class AddressTest extends TestCase
      * @param $addressId
      * @param $isDefaultBilling
      * @param $isDefaultShipping
-     *
-     * @dataProvider getSaveDataProvider
      */
+    #[DataProvider('getSaveDataProvider')]
     public function testSave($addressId, $isDefaultBilling, $isDefaultShipping)
     {
-        /** @var $address \Magento\Customer\Model\Address|\PHPUnit\Framework\MockObject\MockObject */
-        $address = $this->getMockBuilder(Address::class)
-            ->addMethods(['getIsDefaultBilling', 'getIsDefaultShipping'])
-            ->onlyMethods(
-                [
-                    '__wakeup',
-                    'getId',
-                    'getEntityTypeId',
-                    'hasDataChanges',
-                    'validateBeforeSave',
-                    'beforeSave',
-                    'afterSave',
-                    'isSaveAllowed'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
+        /** @var \Magento\Customer\Model\Address|\PHPUnit\Framework\MockObject\MockObject $address */
+        $address = $this->createPartialMock(
+            AddressTestHelper::class,
+            [
+                '__wakeup',
+                'getId',
+                'getEntityTypeId',
+                'hasDataChanges',
+                'validateBeforeSave',
+                'beforeSave',
+                'afterSave',
+                'isSaveAllowed',
+                'getIsDefaultBilling',
+                'getIsDefaultShipping'
+            ]
+        );
         $this->entitySnapshotMock->expects($this->once())->method('isModified')->willReturn(true);
         $this->entityRelationCompositeMock->expects($this->once())->method('processRelations');
         $address->expects($this->once())->method('isSaveAllowed')->willReturn(true);
@@ -107,9 +107,7 @@ class AddressTest extends TestCase
         $address->expects($this->any())->method('getIsDefaultBilling')->willReturn($isDefaultBilling);
         $this->addressResource->setType('customer_address');
 
-        $attributeLoaderMock = $this->getMockBuilder(AttributeLoaderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $attributeLoaderMock = $this->createMock(AttributeLoaderInterface::class);
 
         $this->addressResource->setAttributeLoader($attributeLoaderMock);
         $this->addressResource->save($address);
@@ -142,9 +140,7 @@ class AddressTest extends TestCase
         $dbSelect->expects($this->any())->method('from')->willReturnSelf();
         $dbSelect->expects($this->any())->method('where')->willReturnSelf();
 
-        $dbAdapter = $this->getMockBuilder(Mysql::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $dbAdapter = $this->createMock(Mysql::class);
 
         $dbAdapter->expects($this->any())
             ->method('describeTable')
@@ -163,9 +159,7 @@ class AddressTest extends TestCase
         $dbAdapter->expects($this->any())->method('lastInsertId');
         $dbAdapter->expects($this->any())->method('select')->willReturn($dbSelect);
 
-        $resource = $this->getMockBuilder(ResourceConnection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resource = $this->createMock(ResourceConnection::class);
 
         $resource->expects($this->any())->method('getConnection')->willReturn($dbAdapter);
         $resource->expects($this->any())->method('getTableName')->willReturn('customer_address_entity');
@@ -283,6 +277,39 @@ class AddressTest extends TestCase
 class SubResourceModelAddress extends \Magento\Customer\Model\ResourceModel\Address
 {
     protected $attributeLoader;
+    protected $customerFactory;
+
+    /**
+     * Constructor - manually initializes to avoid ObjectManager dependency
+     *
+     * @param ResourceConnection $resource
+     * @param Snapshot $entitySnapshot
+     * @param RelationComposite $entityRelationComposite
+     * @param Config $eavConfig
+     * @param Factory $validatorFactory
+     * @param CustomerFactory $customerFactory
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function __construct(
+        ResourceConnection $resource,
+        Snapshot $entitySnapshot,
+        RelationComposite $entityRelationComposite,
+        Config $eavConfig,
+        Factory $validatorFactory,
+        CustomerFactory $customerFactory
+    ) {
+        // Manually set required properties to avoid calling parent constructor
+        // which would require ObjectManager initialization
+        $this->_resource = $resource;
+        $this->_eavConfig = $eavConfig;
+        $this->_validatorFactory = $validatorFactory;
+        $this->customerFactory = $customerFactory;
+        $this->entitySnapshot = $entitySnapshot;
+        $this->entityRelationComposite = $entityRelationComposite;
+        
+        // Create a stub for objectRelationProcessor to avoid null reference errors
+        $this->objectRelationProcessor = new ObjectRelationProcessorStub();
+    }
 
     /**
      * @param null $object
@@ -307,6 +334,36 @@ class SubResourceModelAddress extends \Magento\Customer\Model\ResourceModel\Addr
     protected function getAttributeLoader()
     {
         return $this->attributeLoader;
+    }
+}
+
+/**
+ * Stub for ObjectRelationProcessor
+ */
+class ObjectRelationProcessorStub extends \Magento\Framework\Model\ResourceModel\Db\ObjectRelationProcessor
+{
+    /**
+     * Constructor without parent call to avoid dependencies
+     */
+    public function __construct()
+    {
+        // Skip parent constructor
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function validateDataIntegrity($tableName, array $data)
+    {
+        // Stub implementation - do nothing
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function processEntityRelation($entity, array $data)
+    {
+        // Stub implementation - do nothing
     }
 }
 // @codingStandardsIgnoreEnd

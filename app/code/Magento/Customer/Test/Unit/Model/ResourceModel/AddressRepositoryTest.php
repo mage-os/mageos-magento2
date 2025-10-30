@@ -12,6 +12,7 @@ use Magento\Customer\Api\Data\AddressSearchResultsInterface;
 use Magento\Customer\Api\Data\AddressSearchResultsInterfaceFactory;
 use Magento\Customer\Model\AddressFactory;
 use Magento\Customer\Model\AddressRegistry;
+use Magento\Customer\Test\Unit\Helper\AddressTestHelper;
 use Magento\Customer\Model\Config\Share;
 use Magento\Customer\Model\Customer;
 use Magento\Customer\Model\CustomerRegistry;
@@ -112,18 +113,25 @@ class AddressRepositoryTest extends TestCase
             CollectionFactory::class,
             ['create']
         );
-        $this->extensionAttributesJoinProcessor = $this->getMockForAbstractClass(
-            JoinProcessorInterface::class,
-            [],
-            '',
-            false
-        );
+        $this->extensionAttributesJoinProcessor = $this->createMock(JoinProcessorInterface::class);
         $this->customer = $this->createPartialMock(
             Customer::class,
             ['getSharingConfig','getAddressesCollection']
         );
-        $this->address = $this->getMockBuilder(\Magento\Customer\Model\Address::class)->addMethods(
+        $this->address = $this->createPartialMock(
+            AddressTestHelper::class,
             [
+                'getId',
+                'getStreetLine',
+                'getRegionId',
+                'getRegion',
+                'updateData',
+                'setCustomer',
+                'getCountryModel',
+                'validate',
+                'save',
+                'getDataModel',
+                'getCustomerId',
                 'getCountryId',
                 'getFirstname',
                 'getLastname',
@@ -132,27 +140,9 @@ class AddressRepositoryTest extends TestCase
                 'getShouldIgnoreValidation',
                 'setStoreId'
             ]
-        )
-            ->onlyMethods(
-                [
-                    'getId',
-                    'getStreetLine',
-                    'getRegionId',
-                    'getRegion',
-                    'updateData',
-                    'setCustomer',
-                    'getCountryModel',
-                    'validate',
-                    'save',
-                    'getDataModel',
-                    'getCustomerId'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
+        );
 
-        $this->collectionProcessor = $this->getMockBuilder(CollectionProcessorInterface::class)
-            ->getMockForAbstractClass();
+        $this->collectionProcessor = $this->createMock(CollectionProcessorInterface::class);
 
         $this->repository = new AddressRepository(
             $this->addressFactory,
@@ -165,23 +155,14 @@ class AddressRepositoryTest extends TestCase
             $this->extensionAttributesJoinProcessor,
             $this->collectionProcessor
         );
-        $this->configShare = $this->getMockBuilder(Share::class)->onlyMethods(
-            ['isWebsiteScope']
-        )
-        ->disableOriginalConstructor()
-        ->getMock();
+        $this->configShare = $this->createPartialMock(Share::class, ['isWebsiteScope']);
     }
 
     public function testSave()
     {
         $customerId = 34;
         $addressId = 53;
-        $customerAddress = $this->getMockForAbstractClass(
-            AddressInterface::class,
-            [],
-            '',
-            false
-        );
+        $customerAddress = $this->createMock(AddressInterface::class);
         $addressCollection =
             $this->createMock(Collection::class);
         $customerAddress->expects($this->atLeastOnce())
@@ -238,12 +219,7 @@ class AddressRepositoryTest extends TestCase
     {
         $customerId = 34;
         $addressId = 53;
-        $customerAddress = $this->getMockForAbstractClass(
-            AddressInterface::class,
-            [],
-            '',
-            false
-        );
+        $customerAddress = $this->createMock(AddressInterface::class);
         $addressCollection =
             $this->createMock(Collection::class);
         $customerAddress->expects($this->atLeastOnce())
@@ -308,12 +284,7 @@ class AddressRepositoryTest extends TestCase
     {
         $customerId = 34;
         $addressId = 53;
-        $customerAddress = $this->getMockForAbstractClass(
-            AddressInterface::class,
-            [],
-            '',
-            false
-        );
+        $customerAddress = $this->createMock(AddressInterface::class);
         $addressCollection =
             $this->createMock(Collection::class);
         $customerAddress->expects($this->atLeastOnce())
@@ -381,12 +352,7 @@ class AddressRepositoryTest extends TestCase
         $customerId = 34;
         $addressId = 53;
         $errors[] = __('Please enter the state/province.');
-        $customerAddress = $this->getMockForAbstractClass(
-            AddressInterface::class,
-            [],
-            '',
-            false
-        );
+        $customerAddress = $this->createMock(AddressInterface::class);
         $customerAddress->expects($this->atLeastOnce())
             ->method('getCustomerId')
             ->willReturn($customerId);
@@ -419,12 +385,7 @@ class AddressRepositoryTest extends TestCase
         $customerId = 34;
         $addressId = 53;
         $errors[] = __('region is a required field.');
-        $customerAddress = $this->getMockForAbstractClass(
-            AddressInterface::class,
-            [],
-            '',
-            false
-        );
+        $customerAddress = $this->createMock(AddressInterface::class);
         $customerAddress->expects($this->atLeastOnce())
             ->method('getCustomerId')
             ->willReturn($customerId);
@@ -461,12 +422,7 @@ class AddressRepositoryTest extends TestCase
         $customerId = 34;
         $addressId = 53;
         $errors[] = __('"regionId" is required. Enter and try again.');
-        $customerAddress = $this->getMockForAbstractClass(
-            AddressInterface::class,
-            [],
-            '',
-            false
-        );
+        $customerAddress = $this->createMock(AddressInterface::class);
         $customerAddress->expects($this->atLeastOnce())
             ->method('getCustomerId')
             ->willReturn($customerId);
@@ -496,12 +452,7 @@ class AddressRepositoryTest extends TestCase
 
     public function testGetById()
     {
-        $customerAddress = $this->getMockForAbstractClass(
-            AddressInterface::class,
-            [],
-            '',
-            false
-        );
+        $customerAddress = $this->createMock(AddressInterface::class);
         $this->addressRegistry->expects($this->once())
             ->method('retrieve')
             ->with(12)
@@ -516,18 +467,8 @@ class AddressRepositoryTest extends TestCase
     public function testGetList()
     {
         $collection = $this->createMock(Collection::class);
-        $searchResults = $this->getMockForAbstractClass(
-            AddressSearchResultsInterface::class,
-            [],
-            '',
-            false
-        );
-        $searchCriteria = $this->getMockForAbstractClass(
-            SearchCriteriaInterface::class,
-            [],
-            '',
-            false
-        );
+        $searchResults = $this->createMock(AddressSearchResultsInterface::class);
+        $searchCriteria = $this->createMock(SearchCriteriaInterface::class);
         $this->addressSearchResultsFactory->expects($this->once())->method('create')->willReturn($searchResults);
         $this->addressCollectionFactory->expects($this->once())->method('create')->willReturn($collection);
         $this->extensionAttributesJoinProcessor->expects($this->once())
@@ -549,12 +490,7 @@ class AddressRepositoryTest extends TestCase
         $this->address->expects($this->once())
             ->method('getId')
             ->willReturn(12);
-        $customerAddress = $this->getMockForAbstractClass(
-            AddressInterface::class,
-            [],
-            '',
-            false
-        );
+        $customerAddress = $this->createMock(AddressInterface::class);
         $this->addressRegistry->expects($this->once())
             ->method('retrieve')
             ->with(12)
@@ -578,12 +514,7 @@ class AddressRepositoryTest extends TestCase
         $customerId = 43;
 
         $addressCollection = $this->createMock(Collection::class);
-        $customerAddress = $this->getMockForAbstractClass(
-            AddressInterface::class,
-            [],
-            '',
-            false
-        );
+        $customerAddress = $this->createMock(AddressInterface::class);
         $customerAddress->expects($this->once())
             ->method('getId')
             ->willReturn($addressId);

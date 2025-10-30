@@ -8,6 +8,8 @@ declare(strict_types=1);
 namespace Magento\Customer\Test\Unit\Model\ResourceModel\Address\Attribute\Backend;
 
 use Magento\Customer\Model\ResourceModel\Address\Attribute\Backend\Region;
+use Magento\Customer\Test\Unit\Helper\DataObjectTestHelper;
+use Magento\Customer\Test\Unit\Helper\RegionTestHelper;
 use Magento\Directory\Model\RegionFactory;
 use Magento\Framework\DataObject;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -30,16 +32,15 @@ class RegionTest extends TestCase
     protected function setUp(): void
     {
         $this->regionFactory = $this->createPartialMock(RegionFactory::class, ['create']);
-        $this->region = $this->getMockBuilder(\Magento\Directory\Model\Region::class)->addMethods(['getCountryId'])
-            ->onlyMethods(['load', 'getId', 'getName'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->region = $this->createPartialMock(
+            RegionTestHelper::class,
+            ['load', 'getId', 'getName', 'getCountryId']
+        );
         $this->model = new Region($this->regionFactory);
-        $this->object = $this->getMockBuilder(DataObject::class)
-            ->addMethods(['getCountryId', 'setRegionId', 'setRegion'])
-            ->onlyMethods(['getData'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->object = $this->createPartialMock(
+            DataObjectTestHelper::class,
+            ['getData', 'getCountryId', 'setRegionId', 'setRegion']
+        );
     }
 
     public function testBeforeSave()

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2017 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -15,17 +15,12 @@ use Magento\Customer\Model\Session;
 class SessionTestHelper extends Session
 {
     /**
-     * @var array|null
+     * @var array<string, mixed>
      */
-    private $addressFormData = null;
+    private array $testData = [];
 
     /**
-     * @var int|null
-     */
-    private $customerId = null;
-
-    /**
-     * Constructor that skips parent dependencies
+     * Constructor that skips parent to avoid dependency injection
      */
     public function __construct()
     {
@@ -33,47 +28,24 @@ class SessionTestHelper extends Session
     }
 
     /**
-     * Get address form data (custom method for tests)
+     * Get before request params
      *
-     * @param bool $remove
      * @return array|null
      */
-    public function getAddressFormData($remove = false)
+    public function getBeforeRequestParams()
     {
-        return $this->addressFormData;
+        return $this->testData['before_request_params'] ?? null;
     }
 
     /**
-     * Set address form data
+     * Set before request params
      *
-     * @param array|null $data
+     * @param array $params
      * @return $this
      */
-    public function setAddressFormData($data): self
+    public function setBeforeRequestParams(array $params)
     {
-        $this->addressFormData = $data;
-        return $this;
-    }
-
-    /**
-     * Get customer ID
-     *
-     * @return int|null
-     */
-    public function getCustomerId()
-    {
-        return $this->customerId;
-    }
-
-    /**
-     * Set customer ID
-     *
-     * @param int|null $id
-     * @return $this
-     */
-    public function setCustomerId($id): self
-    {
-        $this->customerId = $id;
+        $this->testData['before_request_params'] = $params;
         return $this;
     }
 }

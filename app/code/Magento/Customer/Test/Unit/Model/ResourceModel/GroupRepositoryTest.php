@@ -18,6 +18,7 @@ use Magento\Customer\Model\GroupFactory;
 use Magento\Customer\Model\GroupRegistry;
 use Magento\Customer\Model\ResourceModel\Group\Collection;
 use Magento\Customer\Model\ResourceModel\GroupRepository;
+use Magento\Customer\Test\Unit\Helper\GroupTestHelper;
 use Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface;
 use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
 use Magento\Framework\Api\SearchCriteriaInterface;
@@ -113,26 +114,10 @@ class GroupRepositoryTest extends TestCase
             GroupSearchResultsInterfaceFactory::class,
             ['create']
         );
-        $this->searchResults = $this->getMockForAbstractClass(
-            GroupSearchResultsInterface::class,
-            [],
-            '',
-            false
-        );
-        $this->taxClassRepository = $this->getMockForAbstractClass(
-            TaxClassRepositoryInterface::class,
-            [],
-            '',
-            false
-        );
-        $this->extensionAttributesJoinProcessor = $this->getMockForAbstractClass(
-            JoinProcessorInterface::class,
-            [],
-            '',
-            false
-        );
-        $this->collectionProcessorMock = $this->getMockBuilder(CollectionProcessorInterface::class)
-            ->getMock();
+        $this->searchResults = $this->createMock(GroupSearchResultsInterface::class);
+        $this->taxClassRepository = $this->createMock(TaxClassRepositoryInterface::class);
+        $this->extensionAttributesJoinProcessor = $this->createMock(JoinProcessorInterface::class);
+        $this->collectionProcessorMock = $this->createMock(CollectionProcessorInterface::class);
 
         $this->model = new GroupRepository(
             $this->groupRegistry,
@@ -151,39 +136,28 @@ class GroupRepositoryTest extends TestCase
     {
         $this->groupRegistry = $this->createMock(GroupRegistry::class);
         $this->groupFactory = $this->createPartialMock(GroupFactory::class, ['create']);
-        $this->groupModel = $this->getMockBuilder(Group::class)
-            ->addMethods(['getTaxClassId', 'setTaxClassId'])
-            ->onlyMethods(
-                [
-                    'getTaxClassName',
-                    'getId',
-                    'getCode',
-                    'setDataUsingMethod',
-                    'setCode',
-                    'usesAsDefault',
-                    'delete',
-                    'getCollection',
-                    'getData',
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->groupModel = $this->createPartialMock(
+            GroupTestHelper::class,
+            [
+                'getTaxClassName',
+                'getId',
+                'getCode',
+                'setDataUsingMethod',
+                'setCode',
+                'usesAsDefault',
+                'delete',
+                'getCollection',
+                'getData',
+                'getTaxClassId',
+                'setTaxClassId'
+            ]
+        );
         $this->groupDataFactory = $this->createPartialMock(
             GroupInterfaceFactory::class,
             ['create']
         );
-        $this->group = $this->getMockForAbstractClass(
-            GroupInterface::class,
-            [],
-            '',
-            false
-        );
-        $this->factoryCreatedGroup = $this->getMockForAbstractClass(
-            GroupInterface::class,
-            [],
-            '',
-            false
-        );
+        $this->group = $this->createMock(GroupInterface::class);
+        $this->factoryCreatedGroup = $this->createMock(GroupInterface::class);
 
         $this->groupResourceModel = $this->createMock(\Magento\Customer\Model\ResourceModel\Group::class);
     }
@@ -192,10 +166,8 @@ class GroupRepositoryTest extends TestCase
     {
         $groupId = 0;
 
-        $taxClass = $this->getMockForAbstractClass(TaxClassInterface::class, [], '', false);
-        $extensionAttributes = $this->getMockForAbstractClass(
-            GroupExtensionInterface::class
-        );
+        $taxClass = $this->createMock(TaxClassInterface::class);
+        $extensionAttributes = $this->createMock(GroupExtensionInterface::class);
 
         $this->group->expects($this->atLeastOnce())
             ->method('getCode')
@@ -289,7 +261,7 @@ class GroupRepositoryTest extends TestCase
     {
         $this->expectException(InvalidTransitionException::class);
 
-        $taxClass = $this->getMockForAbstractClass(TaxClassInterface::class, [], '', false);
+        $taxClass = $this->createMock(TaxClassInterface::class);
 
         $this->groupFactory->expects($this->once())
             ->method('create')
@@ -386,20 +358,10 @@ class GroupRepositoryTest extends TestCase
     {
         $groupId = 86;
 
-        $groupExtension = $this->getMockForAbstractClass(GroupExtensionInterface::class);
+        $groupExtension = $this->createMock(GroupExtensionInterface::class);
         $collection = $this->createMock(Collection::class);
-        $searchCriteria = $this->getMockForAbstractClass(
-            SearchCriteriaInterface::class,
-            [],
-            '',
-            false
-        );
-        $searchResults = $this->getMockForAbstractClass(
-            AddressSearchResultsInterface::class,
-            [],
-            '',
-            false
-        );
+        $searchCriteria = $this->createMock(SearchCriteriaInterface::class);
+        $searchResults = $this->createMock(AddressSearchResultsInterface::class);
         $this->searchResultsFactory->expects($this->once())
             ->method('create')
             ->willReturn($searchResults);

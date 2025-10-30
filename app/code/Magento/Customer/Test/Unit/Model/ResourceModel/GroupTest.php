@@ -13,8 +13,10 @@ use Magento\Customer\Model\ResourceModel\Customer\Collection;
 use Magento\Customer\Model\ResourceModel\Customer\CollectionFactory;
 use Magento\Customer\Model\ResourceModel\Group;
 use Magento\Customer\Model\Vat;
+use Magento\Customer\Test\Unit\Helper\CustomerTestHelper;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
+use Magento\Framework\DB\Adapter\Pdo\Mysql;
 use Magento\Framework\DB\Select;
 use Magento\Framework\Model\ResourceModel\Db\Context;
 use Magento\Framework\Model\ResourceModel\Db\ObjectRelationProcessor;
@@ -68,11 +70,7 @@ class GroupTest extends TestCase
             CollectionFactory::class,
             ['create']
         );
-        $this->groupManagement = $this->getMockBuilder(GroupManagementInterface::class)
-            ->onlyMethods(
-                ['isReadOnly', 'getDefaultGroup', 'getNotLoggedInGroup', 'getLoggedInGroups', 'getAllCustomersGroup']
-            )
-            ->getMockForAbstractClass();
+        $this->groupManagement = $this->createMock(GroupManagementInterface::class);
 
         $this->groupModel = $this->createMock(\Magento\Customer\Model\Group::class);
 
@@ -92,7 +90,7 @@ class GroupTest extends TestCase
         );
         $transactionManagerMock->expects($this->any())
             ->method('start')
-            ->willReturn($this->getMockForAbstractClass(AdapterInterface::class));
+            ->willReturn($this->createStub(AdapterInterface::class));
         $contextMock->expects($this->once())
             ->method('getTransactionManager')
             ->willReturn($transactionManagerMock);
@@ -134,23 +132,11 @@ class GroupTest extends TestCase
         $this->groupModel->expects($this->once())->method('getCode')
             ->willReturn('customer_group_code');
 
-        $dbAdapter = $this->getMockBuilder(AdapterInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['lastInsertId'])
-            ->onlyMethods(
-                [
-                    'describeTable',
-                    'update',
-                    'select'
-                ]
-            )
-            ->getMockForAbstractClass();
+        $dbAdapter = $this->createMock(Mysql::class);
         $dbAdapter->expects($this->any())->method('describeTable')->willReturn(['customer_group_id' => []]);
         $dbAdapter->expects($this->any())->method('update')->willReturnSelf();
         $dbAdapter->expects($this->once())->method('lastInsertId')->willReturn($expectedId);
-        $selectMock = $this->getMockBuilder(Select::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $selectMock = $this->createMock(Select::class);
         $dbAdapter->expects($this->any())->method('select')->willReturn($selectMock);
         $selectMock->expects($this->any())->method('from')->willReturnSelf();
         $this->resource->expects($this->any())->method('getConnection')->willReturn($dbAdapter);
@@ -165,14 +151,13 @@ class GroupTest extends TestCase
      */
     public function testDelete()
     {
-        $dbAdapter = $this->getMockForAbstractClass(AdapterInterface::class);
+        $dbAdapter = $this->createStub(AdapterInterface::class);
         $this->resource->expects($this->any())->method('getConnection')->willReturn($dbAdapter);
 
-        $customer = $this->getMockBuilder(Customer::class)
-            ->addMethods(['getStoreId', 'setGroupId'])
-            ->onlyMethods(['__wakeup', 'load', 'getId', 'save'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $customer = $this->createPartialMock(
+            CustomerTestHelper::class,
+            ['__wakeup', 'load', 'getId', 'save', 'getStoreId', 'setGroupId']
+        );
         $customerId = 1;
         $customer->expects($this->once())->method('getId')->willReturn($customerId);
         $customer->expects($this->once())->method('load')->with($customerId)->willReturnSelf();

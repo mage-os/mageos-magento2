@@ -12,6 +12,7 @@ use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Customer\Model\Customer\NotificationStorage;
 use Magento\Customer\Model\Plugin\CustomerNotification;
 use Magento\Customer\Model\Session;
+use Magento\Customer\Test\Unit\Helper\StorageInterfaceTestHelper;
 use Magento\Framework\App\ActionInterface;
 use Magento\Framework\App\Area;
 use Magento\Framework\App\RequestInterface;
@@ -82,12 +83,12 @@ class CustomerNotificationTest extends TestCase
         $this->sessionMock = $this->createMock(Session::class);
         $this->sessionMock->method('getCustomerId')->willReturn(self::STUB_CUSTOMER_ID);
 
-        $this->customerRepositoryMock = $this->getMockForAbstractClass(CustomerRepositoryInterface::class);
-        $this->actionMock = $this->getMockForAbstractClass(ActionInterface::class);
+        $this->customerRepositoryMock = $this->createMock(CustomerRepositoryInterface::class);
+        $this->actionMock = $this->createMock(ActionInterface::class);
         $this->requestMock = $this->createMock(RequestHttp::class);
         $this->requestMock->method('isPost')->willReturn(true);
 
-        $this->loggerMock = $this->getMockForAbstractClass(LoggerInterface::class);
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
 
         $this->appStateMock = $this->createMock(State::class);
         $this->appStateMock->method('getAreaCode')->willReturn(Area::AREA_FRONTEND);
@@ -98,11 +99,10 @@ class CustomerNotificationTest extends TestCase
             ->with(NotificationStorage::UPDATE_CUSTOMER_SESSION, self::STUB_CUSTOMER_ID)
             ->willReturn(true);
 
-        $this->storage = $this
-            ->getMockBuilder(StorageInterface::class)
-            ->addMethods(['getData', 'setData'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->storage = $this->createPartialMock(
+            StorageInterfaceTestHelper::class,
+            ['getData', 'setData']
+        );
 
         $this->plugin = new CustomerNotification(
             $this->sessionMock,
@@ -120,7 +120,7 @@ class CustomerNotificationTest extends TestCase
         $customerGroupId = 1;
         $testSessionId = [uniqid()];
 
-        $customerMock = $this->getMockForAbstractClass(CustomerInterface::class);
+        $customerMock = $this->createMock(CustomerInterface::class);
         $customerMock->method('getGroupId')->willReturn($customerGroupId);
         $customerMock->method('getId')->willReturn(self::STUB_CUSTOMER_ID);
 

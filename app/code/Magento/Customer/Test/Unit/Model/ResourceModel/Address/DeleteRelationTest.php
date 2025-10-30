@@ -10,10 +10,13 @@ namespace Magento\Customer\Test\Unit\Model\ResourceModel\Address;
 use Magento\Customer\Model\Customer;
 use Magento\Customer\Model\CustomerFactory;
 use Magento\Customer\Model\ResourceModel\Address\DeleteRelation;
+use Magento\Customer\Test\Unit\Helper\AbstractModelTestHelper;
+use Magento\Customer\Test\Unit\Helper\CustomerTestHelper;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -36,41 +39,26 @@ class DeleteRelationTest extends TestCase
      * @param $addressId
      * @param $isDefaultBilling
      * @param $isDefaultShipping
-     * @dataProvider getRelationDataProvider
      */
+    #[DataProvider('getRelationDataProvider')]
     public function testDeleteRelation($addressId, $isDefaultBilling, $isDefaultShipping)
     {
         /** @var AbstractModel|MockObject $addressModel  */
-        $addressModel = $this->getMockBuilder(AbstractModel::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getIsCustomerSaveTransaction'])
-            ->onlyMethods(['getId', 'getResource'])
-            ->getMock();
+        $addressModel = $this->createPartialMock(
+            AbstractModelTestHelper::class,
+            ['getIsCustomerSaveTransaction', 'getId', 'getResource']
+        );
         /** @var Customer|MockObject $customerModel */
-        $customerModel = $this->getMockBuilder(Customer::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getDefaultBilling', 'getDefaultShipping'])
-            ->onlyMethods(['getId'])
-            ->getMock();
+        $customerModel = $this->createPartialMock(
+            CustomerTestHelper::class,
+            ['getDefaultBilling', 'getDefaultShipping', 'getId']
+        );
 
-        $addressResource = $this->getMockForAbstractClass(
+        $addressResource = $this->createPartialMock(
             AbstractDb::class,
-            [],
-            '',
-            false,
-            false,
-            true,
-            ['getConnection', 'getTable']
+            ['getConnection', 'getTable', '_construct']
         );
-        $connectionMock = $this->getMockForAbstractClass(
-            AdapterInterface::class,
-            [],
-            '',
-            false,
-            false,
-            true,
-            ['update', 'quoteInto']
-        );
+        $connectionMock = $this->createMock(AdapterInterface::class);
         $addressModel->expects($this->any())->method('getResource')->willReturn($addressResource);
         $addressModel->expects($this->any())->method('getId')->willReturn($addressId);
         $addressModel->expects($this->any())->method('getIsCustomerSaveTransaction')->willReturn(false);

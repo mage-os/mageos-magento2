@@ -11,6 +11,7 @@ use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Customer\Model\ForgotPasswordToken\ConfirmCustomerByToken;
 use Magento\Customer\Model\ForgotPasswordToken\GetCustomerByToken;
+use Magento\Customer\Test\Unit\Helper\CustomerInterfaceTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -41,10 +42,10 @@ class ConfirmCustomerByTokenTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->customerMock = $this->getMockBuilder(CustomerInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setData'])
-            ->getMockForAbstractClass();
+        $this->customerMock = $this->createPartialMock(
+            CustomerInterfaceTestHelper::class,
+            ['getConfirmation', 'setConfirmation', 'setData']
+        );
 
         $this->customerRepositoryMock = $this->createMock(CustomerRepositoryInterface::class);
 

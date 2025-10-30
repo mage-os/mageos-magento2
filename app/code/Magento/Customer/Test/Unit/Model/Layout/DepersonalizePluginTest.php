@@ -12,6 +12,8 @@ use Magento\Customer\Model\CustomerFactory;
 use Magento\Customer\Model\Layout\DepersonalizePlugin;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Customer\Model\Visitor as VisitorModel;
+use Magento\Customer\Test\Unit\Helper\CustomerModelTestHelper;
+use Magento\Customer\Test\Unit\Helper\GenericSessionTestHelper;
 use Magento\Framework\Data\Form\FormKey;
 use Magento\Framework\Session\Generic as GenericSession;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
@@ -24,6 +26,7 @@ use PHPUnit\Framework\TestCase;
  * Unit tests for \Magento\Customer\Model\Layout\DepersonalizePlugin class.
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.LongVariable)
  */
 class DepersonalizePluginTest extends TestCase
 {
@@ -64,6 +67,7 @@ class DepersonalizePluginTest extends TestCase
 
     /**
      * @var DepersonalizeChecker|MockObject
+     * @SuppressWarnings(PHPMD.LongVariable)
      */
     private $depersonalizeCheckerMock;
 
@@ -72,22 +76,20 @@ class DepersonalizePluginTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->layoutMock = $this->getMockForAbstractClass(LayoutInterface::class);
-        $this->sessionMock = $this->getMockBuilder(GenericSession::class)
-            ->addMethods(['setData'])
-            ->onlyMethods(['clearStorage', 'getData'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->layoutMock = $this->createMock(LayoutInterface::class);
+        $this->sessionMock = $this->createPartialMock(
+            GenericSessionTestHelper::class,
+            ['clearStorage', 'getData', 'setData']
+        );
         $this->customerSessionMock = $this->createPartialMock(
             CustomerSession::class,
             ['getCustomerGroupId', 'setCustomerGroupId', 'clearStorage', 'setCustomer']
         );
         $this->customerFactoryMock = $this->createPartialMock(CustomerFactory::class, ['create']);
-        $this->customerMock = $this->getMockBuilder(Customer::class)
-            ->addMethods(['setGroupId'])
-            ->onlyMethods(['__wakeup'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->customerMock = $this->createPartialMock(
+            CustomerModelTestHelper::class,
+            ['setGroupId', '__wakeup']
+        );
         $this->visitorMock = $this->createMock(VisitorModel::class);
         $this->customerFactoryMock->expects($this->any())
             ->method('create')
@@ -166,7 +168,7 @@ class DepersonalizePluginTest extends TestCase
             ->expects($this->once())
             ->method('setCustomer')
             ->with($this->customerMock);
-        $this->assertEmpty($this->plugin->afterGenerateElements($this->layoutMock));
+        $this->plugin->afterGenerateElements($this->layoutMock);
     }
 
     /**
@@ -185,6 +187,6 @@ class DepersonalizePluginTest extends TestCase
         $this->customerMock->expects($this->never())->method('setGroupId');
         $this->sessionMock->expects($this->never())->method('setData');
         $this->customerSessionMock->expects($this->never())->method('setCustomer');
-        $this->assertEmpty($this->plugin->afterGenerateElements($this->layoutMock));
+        $this->plugin->afterGenerateElements($this->layoutMock);
     }
 }

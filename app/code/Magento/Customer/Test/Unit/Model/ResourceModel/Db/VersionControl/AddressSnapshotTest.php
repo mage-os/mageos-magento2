@@ -8,10 +8,12 @@ declare(strict_types=1);
 namespace Magento\Customer\Test\Unit\Model\ResourceModel\Db\VersionControl;
 
 use Magento\Customer\Model\ResourceModel\Db\VersionControl\AddressSnapshot;
+use Magento\Customer\Test\Unit\Helper\DataObjectTestHelper;
 use Magento\Framework\DataObject;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Model\ResourceModel\Db\VersionControl\Metadata;
 use Magento\Framework\Serialize\SerializerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -52,23 +54,24 @@ class AddressSnapshotTest extends TestCase
      * @param int $isDefaultBilling
      * @param int $isDefaultShipping
      * @param bool $expected
-     * @dataProvider dataProviderIsModified
      * @throws LocalizedException
      */
+    #[DataProvider('dataProviderIsModified')]
     public function testIsModified($isCustomerSaveTransaction, $isDefaultBilling, $isDefaultShipping, $expected): void
     {
         $entityId = 1;
 
-        $dataObjectMock = $this->getMockBuilder(DataObject::class)
-            ->disableOriginalConstructor()
-            ->addMethods([
+        $dataObjectMock = $this->createPartialMock(
+            DataObjectTestHelper::class,
+            [
+                'getData',
+                'getDataByKey',
                 'getId',
                 'getIsDefaultBilling',
                 'getIsDefaultShipping',
-                'getIsCustomerSaveTransaction',
-            ])
-            ->onlyMethods(['getData', 'getDataByKey'])
-            ->getMock();
+                'getIsCustomerSaveTransaction'
+            ]
+        );
 
         $dataObjectMock->expects($this->any())
             ->method('getId')
@@ -119,11 +122,10 @@ class AddressSnapshotTest extends TestCase
      */
     public function testIsModifiedBypass(): void
     {
-        $dataObjectMock = $this->getMockBuilder(DataObject::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getId'])
-            ->onlyMethods(['getData'])
-            ->getMock();
+        $dataObjectMock = $this->createPartialMock(
+            DataObjectTestHelper::class,
+            ['getData', 'getId']
+        );
 
         $dataObjectMock->expects($this->any())
             ->method('getId')

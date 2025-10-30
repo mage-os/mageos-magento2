@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2024 Adobe
+ * Copyright 2015 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -9,15 +9,18 @@ namespace Magento\Customer\Test\Unit\Helper;
 
 use Magento\Customer\Model\Customer;
 
+/**
+ * Test helper for Customer with custom methods
+ */
 class CustomerTestHelper extends Customer
 {
     /**
      * @var array<string, mixed>
      */
-    private $data = [];
+    private array $testData = [];
 
     /**
-     * Constructor - skip parent constructor
+     * Constructor that skips parent to avoid dependency injection
      */
     public function __construct()
     {
@@ -25,134 +28,153 @@ class CustomerTestHelper extends Customer
     }
 
     /**
-     * Get telephone
+     * Set default billing
      *
-     * @return string|null
-     */
-    public function getTelephone()
-    {
-        return $this->data['telephone'] ?? null;
-    }
-
-    /**
-     * Set telephone
-     *
-     * @param string $telephone
+     * @param int|string|null $value
      * @return $this
      */
-    public function setTelephone(string $telephone)
+    public function setDefaultBilling($value): self
     {
-        $this->data['telephone'] = $telephone;
+        $this->testData['default_billing'] = $value;
         return $this;
     }
 
     /**
-     * Get street
+     * Set default shipping
      *
-     * @return array<int, string>|null
-     */
-    public function getStreet()
-    {
-        return $this->data['street'] ?? null;
-    }
-
-    /**
-     * Set street
-     *
-     * @param array<int, string> $street
+     * @param int|string|null $value
      * @return $this
      */
-    public function setStreet(array $street)
+    public function setDefaultShipping($value): self
     {
-        $this->data['street'] = $street;
+        $this->testData['default_shipping'] = $value;
         return $this;
     }
 
     /**
-     * Get firstname
+     * Mock __wakeup method
      *
-     * @return string|null
+     * @return void
      */
-    public function getFirstname()
+    public function __wakeup()
     {
-        return $this->data['firstname'] ?? null;
+        // Mock implementation
     }
 
     /**
-     * Set firstname
+     * Save customer
      *
-     * @param string $firstname
      * @return $this
      */
-    public function setFirstname(string $firstname)
+    public function save()
     {
-        $this->data['firstname'] = $firstname;
         return $this;
     }
 
     /**
-     * Get lastname
+     * Load customer
      *
-     * @return string|null
-     */
-    public function getLastname()
-    {
-        return $this->data['lastname'] ?? null;
-    }
-
-    /**
-     * Set lastname
-     *
-     * @param string $lastname
+     * @param int|string $modelId
+     * @param string|null $field
      * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function setLastname(string $lastname)
+    public function load($modelId, $field = null)
     {
-        $this->data['lastname'] = $lastname;
         return $this;
     }
 
     /**
-     * Get middlename
+     * Get resource
      *
-     * @return string|null
+     * @return mixed
      */
-    public function getMiddlename()
+    public function getResource()
     {
-        return $this->data['middlename'] ?? null;
+        return $this->testData['resource'] ?? null;
     }
 
     /**
-     * Set middlename
+     * Get ID
      *
-     * @param string $middlename
+     * @return int|null
+     */
+    public function getId()
+    {
+        return $this->testData['id'] ?? null;
+    }
+
+    /**
+     * Get default shipping address
+     *
+     * @return mixed
+     */
+    public function getDefaultShippingAddress()
+    {
+        return $this->testData['default_shipping_address'] ?? null;
+    }
+
+    /**
+     * Get default billing address
+     *
+     * @return mixed
+     */
+    public function getDefaultBillingAddress()
+    {
+        return $this->testData['default_billing_address'] ?? null;
+    }
+
+    /**
+     * Get default billing
+     *
+     * @return int|string|null
+     */
+    public function getDefaultBilling()
+    {
+        return $this->testData['default_billing'] ?? null;
+    }
+
+    /**
+     * Get default shipping
+     *
+     * @return int|string|null
+     */
+    public function getDefaultShipping()
+    {
+        return $this->testData['default_shipping'] ?? null;
+    }
+
+    /**
+     * Get store ID
+     *
+     * @return int|null
+     */
+    public function getStoreId()
+    {
+        return $this->testData['store_id'] ?? null;
+    }
+
+    /**
+     * Set store ID
+     *
+     * @param int $storeId
      * @return $this
      */
-    public function setMiddlename(string $middlename)
+    public function setStoreId(int $storeId): self
     {
-        $this->data['middlename'] = $middlename;
+        $this->testData['store_id'] = $storeId;
         return $this;
     }
 
     /**
-     * Get city
+     * Set group ID
      *
-     * @return string|null
-     */
-    public function getCity()
-    {
-        return $this->data['city'] ?? null;
-    }
-
-    /**
-     * Set city
-     *
-     * @param string $city
+     * @param int $groupId
      * @return $this
      */
-    public function setCity(string $city)
+    public function setGroupId(int $groupId): self
     {
-        $this->data['city'] = $city;
+        $this->testData['group_id'] = $groupId;
         return $this;
     }
 }
