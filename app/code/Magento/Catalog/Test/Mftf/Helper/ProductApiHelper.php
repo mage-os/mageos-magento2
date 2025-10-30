@@ -65,7 +65,7 @@ class ProductApiHelper extends Helper
                     'quantity' => $quantity  // Override the default quantity (100) with our value
                 ];
 
-                // THIS IS YOUR VISION: Use actual entity object as dependent object!
+                // Use actual entity object as dependent object!
                 $dependentObjects = [];
                 $categoryEntityObject = $this->getCategoryEntity($categoryStepKey);
                 if ($categoryEntityObject !== null) {
@@ -89,9 +89,7 @@ class ProductApiHelper extends Helper
                 } else {
                     $createdSkus[] = $uniqueSku; // Fallback to our generated SKU
                 }
-
                 usleep(100000);
-
             } catch (\Exception $e) {
                 // Log error and continue with fallback SKU
                 error_log("Product creation failed : " . $e->getMessage());
