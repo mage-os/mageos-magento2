@@ -121,9 +121,9 @@ class ConfigurableProductWorkflowTest extends WebapiAbstract
         // Create configurable product
         $configurableProductData = $this->createConfigurableProduct();
         $this->assertEquals(self::CONFIGURABLE_PRODUCT_SKU, $configurableProductData['sku']);
-        $this->assertEquals('configurable', Configurable::TYPE_CODE);
-        $this->assertEquals(1, Status::STATUS_ENABLED);
-        $this->assertEquals(4, Visibility::VISIBILITY_BOTH);
+        $this->assertEquals(Configurable::TYPE_CODE, $configurableProductData['type_id']);
+        $this->assertEquals(Status::STATUS_ENABLED, $configurableProductData['status']);
+        $this->assertEquals(Visibility::VISIBILITY_BOTH, $configurableProductData['visibility']);
 
         // Add color attribute options to configurable product
         $optionResult = $this->addConfigurableProductOption(
