@@ -36,6 +36,12 @@ class ProductExtensionInterfaceTestHelper implements ProductExtensionInterface
     private $downloadableProductSamples = null;
     /** @var mixed */
     private $websiteIds = null;
+    /** @var mixed */
+    private $giftcardAmounts = null;
+    /** @var mixed */
+    private $testStockItem = null;
+    /** @var mixed */
+    private $testStockItemQty = null;
 
     public function __construct()
     {
@@ -137,6 +143,39 @@ class ProductExtensionInterfaceTestHelper implements ProductExtensionInterface
     public function setWebsiteIds($websiteIds)
     {
         $this->websiteIds = $websiteIds;
+        return $this;
+    }
+
+    public function getGiftcardAmounts()
+    {
+        return $this->giftcardAmounts;
+    }
+
+    public function setGiftcardAmounts($giftcardAmounts)
+    {
+        $this->giftcardAmounts = $giftcardAmounts;
+        return $this;
+    }
+
+    public function getTestStockItem()
+    {
+        return $this->testStockItem;
+    }
+
+    public function setTestStockItem($testStockItem)
+    {
+        $this->testStockItem = $testStockItem;
+        return $this;
+    }
+
+    public function getTestStockItemQty()
+    {
+        return $this->testStockItemQty;
+    }
+
+    public function setTestStockItemQty($testStockItemQty)
+    {
+        $this->testStockItemQty = $testStockItemQty;
         return $this;
     }
 }

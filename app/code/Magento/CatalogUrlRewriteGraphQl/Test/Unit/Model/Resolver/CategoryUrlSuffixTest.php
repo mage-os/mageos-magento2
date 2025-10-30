@@ -12,7 +12,7 @@ use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\GraphQl\Model\Query\ContextExtensionInterface;
 use Magento\GraphQl\Model\Query\ContextInterface;
-use Magento\GraphQl\Test\Unit\Helper\ContextExtensionTestHelper;
+use Magento\GraphQl\Test\Unit\Helper\ContextExtensionInterfaceTestHelper;
 use Magento\Store\Api\Data\StoreInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -64,7 +64,7 @@ class CategoryUrlSuffixTest extends TestCase
     {
         $this->contextMock = $this->createMock(ContextInterface::class);
 
-        $this->contextExtensionMock = new ContextExtensionTestHelper();
+        $this->contextExtensionMock = new ContextExtensionInterfaceTestHelper();
 
         $this->storeMock = $this->createMock(StoreInterface::class);
 
