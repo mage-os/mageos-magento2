@@ -82,6 +82,9 @@ class ResetAfterRequestTest extends \PHPUnit\Framework\TestCase
             if (str_contains($type, "_files")) {
                 continue; // We have to skip the fixture files that collectModuleClasses returns;
             }
+            if (str_contains($type, "\\Test\\Unit\\Helper\\")) {
+                continue; // Skip unit test helper classes - they have mock constructors
+            }
             try {
                 if (!class_exists($type)) {
                     continue;
