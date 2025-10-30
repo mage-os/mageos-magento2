@@ -6,9 +6,12 @@
 declare(strict_types=1);
 
 namespace Magento\SalesRule\Test\Unit\Model\Plugin;
+
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\SalesRule\Model\Plugin\QuoteItemCollection;
+use Magento\Quote\Model\ResourceModel\Quote\Item\Collection;
+use Magento\SalesRule\Model\Plugin\RequestTypeRegistry;
 use Magento\Quote\Model\Quote;
 
 /**
@@ -43,8 +46,13 @@ class QuoteItemCollectionTest extends TestCase
     {
         $this->requestTypeRegistry = $this->createMock(RequestTypeRegistry::class);
         $this->plugin = new QuoteItemCollection($this->requestTypeRegistry);
-        $this->quoteItemCollection = $this->createMock(QuoteItemCollection::class);
-        $this->quote = $this->createMock(Quote::class);
+        $this->quoteItemCollection = $this->getMockBuilder(Collection::class)
+                                    ->disableOriginalConstructor()
+                                    ->getMock();
+        $this->quote = $this->getMockBuilder(Quote::class)
+                            ->disableOriginalConstructor()
+                            ->addMethods(['getTriggerRecollect'])
+                            ->getMock();
     }
 
     /**

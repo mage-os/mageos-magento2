@@ -22,51 +22,60 @@ class FrontControllerTest extends TestCase
     /** @var FrontController */
     private $plugin;
 
+    /**
+     * @var RequestInterface|MockObject
+     */
+    private RequestInterface $request;
+
+    /**
+     * @var FrontControllerInterface|MockObject
+     */
+    private FrontControllerInterface $subject;
+
     protected function setUp(): void
     {
         $this->requestTypeRegistry = $this->createMock(RequestTypeRegistry::class);
         $this->plugin = new FrontController($this->requestTypeRegistry);
+        $this->request = $this->getMockBuilder(RequestInterface::class)
+            ->addMethods(['getMethod'])
+            ->getMockForAbstractClass();
+        $this->subject = $this->createMock(FrontControllerInterface::class);
     }
 
     public function testBeforeDispatchSetsTrueForGetRequests(): void
     {
-        $subject = $this->createMock(FrontControllerInterface::class);
-        $request = $this->createMock(RequestInterface::class);
-        $request->method('getMethod')->willReturn('GET');
+        $this->request->method('getMethod')->willReturn('GET');
 
         $this->requestTypeRegistry
             ->expects($this->once())
             ->method('setIsGetRequestOrQuery')
             ->with(true);
 
-        $this->plugin->beforeDispatch($subject, $request);
+        $this->plugin->beforeDispatch($this->subject, $this->request);
     }
 
     public function testBeforeDispatchSetsFalseForPostRequests(): void
     {
-        $subject = $this->createMock(FrontControllerInterface::class);
-        $request = $this->createMock(RequestInterface::class);
-        $request->method('getMethod')->willReturn('POST');
+        $this->request->method('getMethod')->willReturn('POST');
 
         $this->requestTypeRegistry
             ->expects($this->once())
             ->method('setIsGetRequestOrQuery')
             ->with(false);
 
-        $this->plugin->beforeDispatch($subject, $request);
+        $this->plugin->beforeDispatch($this->subject, $this->request);
     }
 
     public function testBeforeDispatchIsCaseInsensitive(): void
     {
-        $subject = $this->createMock(FrontControllerInterface::class);
-        $request = $this->createMock(RequestInterface::class);
-        $request->method('getMethod')->willReturn('get'); // lowercase
+
+        $this->request->method('getMethod')->willReturn('get'); // lowercase
 
         $this->requestTypeRegistry
             ->expects($this->once())
             ->method('setIsGetRequestOrQuery')
             ->with(true);
 
-        $this->plugin->beforeDispatch($subject, $request);
+        $this->plugin->beforeDispatch($this->subject, $this->request);
     }
 }
