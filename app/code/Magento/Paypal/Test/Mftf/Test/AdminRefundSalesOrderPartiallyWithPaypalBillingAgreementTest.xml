@@ -53,7 +53,7 @@
             <click selector="{{CheckoutPaymentSection.PayPalPaymentRadio}}" stepKey="selectPaypalPayment"/>
             <actionGroup ref="SwitchToPayPalGroupBtnActionGroup" stepKey="clickPayPalBtn"/>
             <!-- Login to Paypal in-context-->
-            <actionGroup ref="DummyDataActionGroup" stepKey="loginToPayPal"/>
+            <actionGroup ref="StorefrontLoginToPayPalPaymentAccountTwoStepActionGroup" stepKey="loginToPayPal"/>
             <!-- Click PayPal button and go back to Magento site -->
             <actionGroup ref="StorefrontPaypalSwitchBackToMagentoFromCheckoutPageActionGroup" stepKey="confirmPaymentAndGoBackToMagento"/>
         </before>
