@@ -142,8 +142,7 @@ class GridAsyncInsertCronTest extends TestCase
     ]
     public function testOrderAsyncGridInsert(): void
     {
-        $order = $this->fixtures->get('order');
-        $orderId = (int)$order->getEntityId();
+        $orderId = (int)$this->fixtures->get('order')->getEntityId();
 
         // Verify order exists in main table but NOT in grid
         $this->assertEntityInMainTableButNotInGrid(
@@ -198,8 +197,7 @@ class GridAsyncInsertCronTest extends TestCase
     ]
     public function testInvoiceAsyncGridInsert(): void
     {
-        $invoice = $this->fixtures->get('invoice');
-        $invoiceId = (int)$invoice->getEntityId();
+        $invoiceId = (int)$this->fixtures->get('invoice')->getEntityId();
 
         // Verify invoice exists in main table but NOT in grid
         $this->assertEntityInMainTableButNotInGrid(
@@ -254,8 +252,7 @@ class GridAsyncInsertCronTest extends TestCase
     ]
     public function testShipmentAsyncGridInsert(): void
     {
-        $shipment = $this->fixtures->get('shipment');
-        $shipmentId = (int)$shipment->getEntityId();
+        $shipmentId = (int)$this->fixtures->get('shipment')->getEntityId();
 
         // Verify shipment exists in main table but NOT in grid
         $this->assertEntityInMainTableButNotInGrid(
@@ -311,8 +308,7 @@ class GridAsyncInsertCronTest extends TestCase
     ]
     public function testCreditmemoAsyncGridInsert(): void
     {
-        $creditmemo = $this->fixtures->get('creditmemo');
-        $creditmemoId = (int)$creditmemo->getEntityId();
+        $creditmemoId = (int)$this->fixtures->get('creditmemo')->getEntityId();
 
         // Verify creditmemo exists in main table but NOT in grid
         $this->assertEntityInMainTableButNotInGrid(
@@ -346,9 +342,7 @@ class GridAsyncInsertCronTest extends TestCase
      */
     private function executeAsyncGridInsert(string $virtualTypeName): void
     {
-        /** @var GridAsyncInsert $gridAsyncInsert */
-        $gridAsyncInsert = $this->objectManager->get($virtualTypeName);
-        $gridAsyncInsert->asyncInsert();
+        $this->objectManager->get($virtualTypeName)->asyncInsert();
     }
 
     /**
@@ -368,15 +362,13 @@ class GridAsyncInsertCronTest extends TestCase
         int    $entityId,
         string $entityType
     ): void {
-        $entityInMainTable = $this->getEntityFromTable($mainTable, $entityId);
         $this->assertNotEmpty(
-            $entityInMainTable,
+            $this->getEntityFromTable($mainTable, $entityId),
             "{$entityType} {$entityId} should exist in {$mainTable} table"
         );
 
-        $entityInGrid = $this->getEntityFromTable($gridTable, $entityId);
         $this->assertEmpty(
-            $entityInGrid,
+            $this->getEntityFromTable($gridTable, $entityId),
             "{$entityType} {$entityId} should NOT be in {$gridTable} yet (before async insert)"
         );
     }
