@@ -83,119 +83,17 @@ class StateTest extends TestCase
 
         $order->method('getState')->willReturn(Order::STATE_PROCESSING);
         $order->method('getIsInProcess')->willReturn(false);
-
-        // Avoid early return
         $order->method('isCanceled')->willReturn(false);
         $order->method('canUnhold')->willReturn(false);
         $order->method('canInvoice')->willReturn(false);
         $order->method('getInvoiceCollection')->willReturn($this->createInvoiceCollection([]));
         $order->method('getTotalDue')->willReturn(0);
-
-        // Closed state preconditions (first branch)
         $order->method('canCreditmemo')->willReturn(false);
         $order->method('getIsNotVirtual')->willReturn(true);
         $order->method('canShip')->willReturn(true);
 
-        // Build a parent bundle item with shipment together and fully fulfilled
-        $bundleProduct = new class {
-            public function getShipmentType()
-            {
-                return AbstractType::SHIPMENT_TOGETHER;
-            }
-        };
-
-        $parentItem = new class($bundleProduct) {
-            /** @var object */
-            private $bundleProduct;
-            public function __construct($bundleProduct)
-            {
-                $this->bundleProduct = $bundleProduct;
-            }
-            public function getIsVirtual()
-            {
-                return false;
-            }
-            public function getLockedDoShip()
-            {
-                return false;
-            }
-            public function getParentItem()
-            {
-                return null;
-            }
-            public function getProductType()
-            {
-                return Type::TYPE_BUNDLE;
-            }
-            public function getProduct()
-            {
-                return $this->bundleProduct;
-            }
-            public function getQtyOrdered()
-            {
-                return 1;
-            }
-            public function getQtyCanceled()
-            {
-                return 0;
-            }
-            public function getQtyShipped()
-            {
-                return 1;
-            }
-            public function getQtyRefunded()
-            {
-                return 0;
-            }
-        };
-
-        // Child item should be skipped due to parent bundle shipped together
-        $childItem = new class($parentItem) {
-            /** @var object */
-            private $parentItem;
-            public function __construct($parentItem)
-            {
-                $this->parentItem = $parentItem;
-            }
-            public function getIsVirtual()
-            {
-                return false;
-            }
-            public function getLockedDoShip()
-            {
-                return false;
-            }
-            public function getParentItem()
-            {
-                return $this->parentItem;
-            }
-            public function getProductType()
-            {
-                return 'simple';
-            }
-            public function getProduct()
-            {
-                return null;
-            }
-            public function getQtyOrdered()
-            {
-                return 1;
-            }
-            public function getQtyCanceled()
-            {
-                return 0;
-            }
-            public function getQtyShipped()
-            {
-                return 0;
-            } // would be open if not skipped
-            public function getQtyRefunded()
-            {
-                return 0;
-            }
-        };
-
-        // Ensure the loop hits the child first to exercise the continue branch
+        $parentItem = $this->createBundleParentShippedTogetherFulfilled();
+        $childItem = $this->createChildItemForParent($parentItem, 0);
         $order->method('getAllItems')->willReturn([$childItem, $parentItem]);
 
         $order->expects($this->once())
@@ -423,8 +321,137 @@ class StateTest extends TestCase
         $order->method('getIsNotVirtual')->willReturn(true);
         $order->method('canShip')->willReturn(true);
 
-        // Parent whose methods return different values across calls
-        $parentWithSwitchingBehavior = new class {
+        $parentWithSwitchingBehavior = $this->createSwitchingParentForBundleSelection();
+        $childItem = $this->createChildItemForParent($parentWithSwitchingBehavior, 0);
+        $order->method('getAllItems')->willReturn([$childItem]);
+
+        $order->expects($this->once())
+            ->method('setState')
+            ->with(Order::STATE_CLOSED)
+            ->willReturnSelf();
+
+        $config->expects($this->once())
+            ->method('getStateDefaultStatus')
+            ->with(Order::STATE_CLOSED)
+            ->willReturn('closed');
+
+        $order->expects($this->once())
+            ->method('setStatus')
+            ->with('closed')
+            ->willReturnSelf();
+
+        $order->method('getConfig')->willReturn($config);
+
+        $this->subject->check($order);
+    }
+
+    private function createBundleParentShippedTogetherFulfilled(): object
+    {
+        $bundleProduct = new class {
+            public function getShipmentType()
+            {
+                return AbstractType::SHIPMENT_TOGETHER;
+            }
+        };
+
+        return new class($bundleProduct) {
+            /** @var object */
+            private $bundleProduct;
+            public function __construct($bundleProduct)
+            {
+                $this->bundleProduct = $bundleProduct;
+            }
+            public function getIsVirtual()
+            {
+                return false;
+            }
+            public function getLockedDoShip()
+            {
+                return false;
+            }
+            public function getParentItem()
+            {
+                return null;
+            }
+            public function getProductType()
+            {
+                return Type::TYPE_BUNDLE;
+            }
+            public function getProduct()
+            {
+                return $this->bundleProduct;
+            }
+            public function getQtyOrdered()
+            {
+                return 1;
+            }
+            public function getQtyCanceled()
+            {
+                return 0;
+            }
+            public function getQtyShipped()
+            {
+                return 1;
+            }
+            public function getQtyRefunded()
+            {
+                return 0;
+            }
+        };
+    }
+
+    private function createChildItemForParent(object $parent, int $shipped): object
+    {
+        $child = new class {
+            /** @var object */
+            public $parent;
+            /** @var int */
+            public $shipped = 0;
+            public function getIsVirtual()
+            {
+                return false;
+            }
+            public function getLockedDoShip()
+            {
+                return false;
+            }
+            public function getParentItem()
+            {
+                return $this->parent;
+            }
+            public function getProductType()
+            {
+                return 'simple';
+            }
+            public function getProduct()
+            {
+                return null;
+            }
+            public function getQtyOrdered()
+            {
+                return 1;
+            }
+            public function getQtyCanceled()
+            {
+                return 0;
+            }
+            public function getQtyShipped()
+            {
+                return $this->shipped;
+            }
+            public function getQtyRefunded()
+            {
+                return 0;
+            }
+        };
+        $child->parent = $parent;
+        $child->shipped = $shipped;
+        return $child;
+    }
+
+    private function createSwitchingParentForBundleSelection(): object
+    {
+        return new class {
             /** @var int */
             private $typeCall = 0;
             /** @var int */
@@ -482,73 +509,6 @@ class StateTest extends TestCase
                 return 0;
             }
         };
-
-        // Child referencing the parent; child has open qty but should use parent as subject
-        $childItem = new class($parentWithSwitchingBehavior) {
-            /** @var object */
-            private $parent;
-            public function __construct($parent)
-            {
-                $this->parent = $parent;
-            }
-            public function getIsVirtual()
-            {
-                return false;
-            }
-            public function getLockedDoShip()
-            {
-                return false;
-            }
-            public function getParentItem()
-            {
-                return $this->parent;
-            }
-            public function getProductType()
-            {
-                return 'simple';
-            }
-            public function getProduct()
-            {
-                return null;
-            }
-            public function getQtyOrdered()
-            {
-                return 1;
-            }
-            public function getQtyCanceled()
-            {
-                return 0;
-            }
-            public function getQtyShipped()
-            {
-                return 0;
-            }
-            public function getQtyRefunded()
-            {
-                return 0;
-            }
-        };
-
-        $order->method('getAllItems')->willReturn([$childItem]);
-
-        $order->expects($this->once())
-            ->method('setState')
-            ->with(Order::STATE_CLOSED)
-            ->willReturnSelf();
-
-        $config->expects($this->once())
-            ->method('getStateDefaultStatus')
-            ->with(Order::STATE_CLOSED)
-            ->willReturn('closed');
-
-        $order->expects($this->once())
-            ->method('setStatus')
-            ->with('closed')
-            ->willReturnSelf();
-
-        $order->method('getConfig')->willReturn($config);
-
-        $this->subject->check($order);
     }
 
     public function testEarlyReturnWhenOpenInvoiceAndTotalDue(): void

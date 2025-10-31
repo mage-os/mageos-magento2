@@ -118,6 +118,7 @@ class State
      *
      * @param Order $order
      * @return bool
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function areAllItemsFulfilled(Order $order): bool
     {
