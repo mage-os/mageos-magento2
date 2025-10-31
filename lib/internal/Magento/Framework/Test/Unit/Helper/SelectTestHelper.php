@@ -27,6 +27,7 @@ class SelectTestHelper extends Select
      *
      * @param mixed $value
      * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setValue($value)
     {

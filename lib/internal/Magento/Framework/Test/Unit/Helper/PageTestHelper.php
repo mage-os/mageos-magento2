@@ -77,4 +77,3 @@ class PageTestHelper extends Page
         return $this->breadcrumbs;
     }
 }
-

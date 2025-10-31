@@ -68,4 +68,3 @@ class DataObjectTestHelper extends DataObject
         return $this->messages;
     }
 }
-

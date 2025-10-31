@@ -11,6 +11,8 @@ use Magento\Framework\Data\Form;
 
 /**
  * Test helper for Form with custom methods
+ * 
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class FormTestHelper extends Form
 {

@@ -62,4 +62,3 @@ class CustomerUrlTestHelper extends CustomerUrl
         return '';
     }
 }
-

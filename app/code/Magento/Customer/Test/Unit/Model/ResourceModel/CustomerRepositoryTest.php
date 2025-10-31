@@ -12,11 +12,13 @@ use Magento\Customer\Api\Data\AddressSearchResultsInterface;
 use Magento\Customer\Api\Data\AttributeMetadataInterface;
 use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Customer\Api\Data\CustomerSearchResultsInterfaceFactory;
+use Magento\Customer\Api\GroupRepositoryInterface;
 use Magento\Customer\Model\Customer\NotificationStorage;
 use Magento\Customer\Model\CustomerFactory;
 use Magento\Customer\Model\CustomerRegistry;
 use Magento\Customer\Model\Data\CustomerSecure;
 use Magento\Customer\Model\Data\CustomerSecureFactory;
+use Magento\Customer\Model\Delegation\Storage as DelegatedStorage;
 use Magento\Customer\Model\ResourceModel\AddressRepository;
 use Magento\Customer\Model\ResourceModel\Customer;
 use Magento\Customer\Model\ResourceModel\Customer\Collection;
@@ -30,6 +32,10 @@ use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
 use Magento\Framework\Api\SearchCriteriaInterface;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Customer\Test\Unit\Helper\CustomerInterfaceTestHelper;
+use Magento\Customer\Test\Unit\Helper\CustomerSecureTestHelper;
+use Magento\Customer\Test\Unit\Helper\CustomerTestHelper;
+use Magento\Customer\Test\Unit\Helper\CustomAttributesDataInterfaceTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -120,6 +126,16 @@ class CustomerRepositoryTest extends TestCase
     private $notificationStorage;
 
     /**
+     * @var DelegatedStorage|MockObject
+     */
+    private $delegatedStorage;
+
+    /**
+     * @var GroupRepositoryInterface|MockObject
+     */
+    private $groupRepository;
+
+    /**
      * @var CustomerRepository
      */
     private $model;
@@ -140,59 +156,26 @@ class CustomerRepositoryTest extends TestCase
             ['create']
         );
         $this->addressRepository = $this->createMock(AddressRepository::class);
-        $this->customerMetadata = $this->getMockForAbstractClass(
-            CustomerMetadataInterface::class,
-            [],
-            '',
-            false
-        );
+        $this->customerMetadata = $this->createMock(CustomerMetadataInterface::class);
         $this->searchResultsFactory = $this->createPartialMock(
             CustomerSearchResultsInterfaceFactory::class,
             ['create']
         );
-        $this->eventManager = $this->getMockForAbstractClass(
-            ManagerInterface::class,
-            [],
-            '',
-            false
-        );
-        $this->storeManager = $this->getMockForAbstractClass(
-            StoreManagerInterface::class,
-            [],
-            '',
-            false
-        );
+        $this->eventManager = $this->createMock(ManagerInterface::class);
+        $this->storeManager = $this->createMock(StoreManagerInterface::class);
         $this->extensibleDataObjectConverter = $this->createMock(
             ExtensibleDataObjectConverter::class
         );
-        $this->imageProcessor = $this->getMockForAbstractClass(
-            ImageProcessorInterface::class,
-            [],
-            '',
-            false
+        $this->imageProcessor = $this->createMock(ImageProcessorInterface::class);
+        $this->extensionAttributesJoinProcessor = $this->createMock(JoinProcessorInterface::class);
+        $this->customer = $this->createPartialMock(
+            CustomerInterfaceTestHelper::class,
+            ['__toArray', 'getId']
         );
-        $this->extensionAttributesJoinProcessor = $this->getMockForAbstractClass(
-            JoinProcessorInterface::class,
-            [],
-            '',
-            false
-        );
-        $this->customer = $this->getMockForAbstractClass(
-            CustomerInterface::class,
-            [],
-            '',
-            true,
-            true,
-            true,
-            [
-                '__toArray'
-            ]
-        );
-        $this->collectionProcessorMock = $this->getMockBuilder(CollectionProcessorInterface::class)
-            ->getMock();
-        $this->notificationStorage = $this->getMockBuilder(NotificationStorage::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->collectionProcessorMock = $this->createMock(CollectionProcessorInterface::class);
+        $this->notificationStorage = $this->createMock(NotificationStorage::class);
+        $this->delegatedStorage = $this->createMock(DelegatedStorage::class);
+        $this->groupRepository = $this->createMock(GroupRepositoryInterface::class);
 
         $this->model = new CustomerRepository(
             $this->customerFactory,
@@ -209,7 +192,9 @@ class CustomerRepositoryTest extends TestCase
             $this->imageProcessor,
             $this->extensionAttributesJoinProcessor,
             $this->collectionProcessorMock,
-            $this->notificationStorage
+            $this->notificationStorage,
+            $this->delegatedStorage,
+            $this->groupRepository
         );
     }
 
@@ -221,7 +206,8 @@ class CustomerRepositoryTest extends TestCase
     {
         $customerId = 1;
 
-        $customerModel = $this->getMockBuilder(\Magento\Customer\Model\Customer::class)->addMethods(
+        $customerModel = $this->createPartialMock(
+            CustomerTestHelper::class,
             [
                 'setStoreId',
                 'getStoreId',
@@ -233,21 +219,19 @@ class CustomerRepositoryTest extends TestCase
                 'setFirstFailure',
                 'setLockExpires',
                 'setGroupId',
+                'getId',
+                'setId',
+                'getAttributeSetId',
+                'getDataModel',
+                'save',
+                'setOrigData'
             ]
-        )
-            ->onlyMethods(['getId', 'setId', 'getAttributeSetId', 'getDataModel', 'save', 'setOrigData'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        );
 
         $origCustomer = $this->customer;
 
-        $customerAttributesMetaData = $this->getMockForAbstractClass(
-            CustomAttributesDataInterface::class,
-            [],
-            '',
-            false,
-            false,
-            true,
+        $customerAttributesMetaData = $this->createPartialMock(
+            CustomAttributesDataInterfaceTestHelper::class,
             [
                 'getId',
                 'getEmail',
@@ -257,19 +241,17 @@ class CustomerRepositoryTest extends TestCase
                 'getGroupId'
             ]
         );
-        $customerSecureData = $this->getMockBuilder(CustomerSecure::class)
-            ->addMethods(
-                [
-                    'getRpToken',
-                    'getRpTokenCreatedAt',
-                    'getPasswordHash',
-                    'getFailuresNum',
-                    'getFirstFailure',
-                    'getLockExpires'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $customerSecureData = $this->createPartialMock(
+            CustomerSecureTestHelper::class,
+            [
+                'getRpToken',
+                'getRpTokenCreatedAt',
+                'getPasswordHash',
+                'getFailuresNum',
+                'getFirstFailure',
+                'getLockExpires'
+            ]
+        );
         $this->customer->expects($this->atLeastOnce())
             ->method('getId')
             ->willReturn($customerId);
@@ -278,12 +260,13 @@ class CustomerRepositoryTest extends TestCase
             ->willReturnOnConsecutiveCalls(['firstname' => 'firstname', 'group_id' => 1], []);
         $customerModel->expects($this->exactly(2))
             ->method('setOrigData')
-            ->willReturnCallback(function ($arg1, $arg2) {
+            ->willReturnCallback(function ($arg1, $arg2) use ($customerModel) {
                 if ($arg1 == 'firstname' && $arg2 == 'firstname') {
-                    return null;
+                    return $customerModel;
                 } elseif ($arg1 == 'group_id' && $arg2 == 1) {
-                    return null;
+                    return $customerModel;
                 }
+                return $customerModel;
             });
         $this->customerRegistry->expects($this->atLeastOnce())
             ->method('retrieve')
@@ -409,34 +392,37 @@ class CustomerRepositoryTest extends TestCase
         $customerId = 1;
         $passwordHash = 'ukfa4sdfa56s5df02asdf4rt';
 
-        $customerSecureData = $this->getMockBuilder(CustomerSecure::class)
-            ->addMethods(
-                [
-                    'getRpToken',
-                    'getRpTokenCreatedAt',
-                    'getPasswordHash',
-                    'getFailuresNum',
-                    'getFirstFailure',
-                    'getLockExpires'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $customerSecureData = $this->createPartialMock(
+            CustomerSecureTestHelper::class,
+            [
+                'getRpToken',
+                'getRpTokenCreatedAt',
+                'getPasswordHash',
+                'getFailuresNum',
+                'getFirstFailure',
+                'getLockExpires'
+            ]
+        );
         $origCustomer = $this->customer;
 
-        $customerModel = $this->getMockBuilder(\Magento\Customer\Model\Customer::class)->addMethods(
-            ['setStoreId', 'getStoreId', 'setAttributeSetId', 'setRpToken', 'setRpTokenCreatedAt', 'setPasswordHash']
-        )
-            ->onlyMethods(['getId', 'setId', 'getAttributeSetId', 'getDataModel', 'save'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $customerAttributesMetaData = $this->getMockForAbstractClass(
-            CustomAttributesDataInterface::class,
-            [],
-            '',
-            false,
-            false,
-            true,
+        $customerModel = $this->createPartialMock(
+            CustomerTestHelper::class,
+            [
+                'setStoreId',
+                'getStoreId',
+                'setAttributeSetId',
+                'setRpToken',
+                'setRpTokenCreatedAt',
+                'setPasswordHash',
+                'getId',
+                'setId',
+                'getAttributeSetId',
+                'getDataModel',
+                'save'
+            ]
+        );
+        $customerAttributesMetaData = $this->createPartialMock(
+            CustomAttributesDataInterfaceTestHelper::class,
             [
                 'getId',
                 'getEmail',
@@ -553,47 +539,25 @@ class CustomerRepositoryTest extends TestCase
     public function testGetList(): void
     {
         $collection = $this->createMock(Collection::class);
-        $searchResults = $this->getMockForAbstractClass(
-            AddressSearchResultsInterface::class,
-            [],
-            '',
-            false
+        $searchResults = $this->createMock(AddressSearchResultsInterface::class);
+        $searchCriteria = $this->createMock(SearchCriteriaInterface::class);
+        $customerModel = $this->createPartialMock(
+            CustomerTestHelper::class,
+            [
+                'getId',
+                'setId',
+                'getAttributeSetId',
+                'getDataModel',
+                'getCollection',
+                'setStoreId',
+                'getStoreId',
+                'setAttributeSetId',
+                'setRpToken',
+                'setRpTokenCreatedAt',
+                'setPasswordHash'
+            ]
         );
-        $searchCriteria = $this->getMockForAbstractClass(
-            SearchCriteriaInterface::class,
-            [],
-            '',
-            false
-        );
-        $customerModel = $this->getMockBuilder(\Magento\Customer\Model\Customer::class)
-            ->onlyMethods(
-                [
-                    'getId',
-                    'setId',
-                    'getAttributeSetId',
-                    'getDataModel',
-                    'getCollection'
-                ]
-            )
-            ->addMethods(
-                [
-                    'setStoreId',
-                    'getStoreId',
-                    'setAttributeSetId',
-                    'setRpToken',
-                    'setRpTokenCreatedAt',
-                    'setPasswordHash'
-                ]
-            )
-            ->setMockClassName('customerModel')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $metadata = $this->getMockForAbstractClass(
-            AttributeMetadataInterface::class,
-            [],
-            '',
-            false
-        );
+        $metadata = $this->createMock(AttributeMetadataInterface::class);
 
         $this->searchResultsFactory->expects($this->once())
             ->method('create')

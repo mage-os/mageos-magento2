@@ -10,12 +10,14 @@ namespace Magento\Customer\Test\Unit\Model\Address;
 use Magento\Customer\Model\Address\AbstractAddress;
 use Magento\Customer\Model\Address\CompositeValidator;
 use Magento\Customer\Model\ResourceModel\Customer;
+use Magento\Customer\Test\Unit\Helper\RegionTestHelper;
 use Magento\Directory\Helper\Data;
 use Magento\Directory\Model\Country;
 use Magento\Directory\Model\CountryFactory;
 use Magento\Directory\Model\Region;
 use Magento\Directory\Model\RegionFactory;
 use Magento\Directory\Model\ResourceModel\Region\Collection;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Eav\Model\Config;
 use Magento\Framework\Api\AttributeInterface;
 use Magento\Framework\Api\AttributeValue;
@@ -95,9 +97,7 @@ class AbstractAddressTest extends TestCase
             ->willReturn($countryMock);
 
         $this->resourceMock = $this->createMock(Customer::class);
-        $this->resourceCollectionMock = $this->getMockBuilder(AbstractDb::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->resourceCollectionMock = $this->createMock(AbstractDb::class);
         $this->objectManager = new ObjectManager($this);
         $this->compositeValidatorMock = $this->createMock(CompositeValidator::class);
         $this->model = $this->objectManager->getObject(
@@ -179,11 +179,10 @@ class AbstractAddressTest extends TestCase
         $this->model->setData('region_id', 0);
         $this->model->setData('region', '');
         $this->model->setData('country_id', 'GB');
-        $region = $this->getMockBuilder(Region::class)
-            ->addMethods(['getCountryId', 'getCode'])
-            ->onlyMethods(['__wakeup', 'load', 'loadByCode','getId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $region = $this->createPartialMock(
+            RegionTestHelper::class,
+            ['getCountryId', 'getCode', '__wakeup', 'load', 'loadByCode', 'getId']
+        );
         $region->method('loadByCode')
             ->willReturnSelf();
         $this->regionFactoryMock->method('create')
@@ -223,11 +222,10 @@ class AbstractAddressTest extends TestCase
      */
     protected function prepareGetRegion($countryId, $regionName = 'RegionName')
     {
-        $region = $this->getMockBuilder(Region::class)
-            ->addMethods(['getCountryId'])
-            ->onlyMethods(['getName', '__wakeup', 'load'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $region = $this->createPartialMock(
+            RegionTestHelper::class,
+            ['getCountryId', 'getName', '__wakeup', 'load']
+        );
         $region->expects($this->once())
             ->method('getName')
             ->willReturn($regionName);
@@ -244,11 +242,10 @@ class AbstractAddressTest extends TestCase
      */
     protected function prepareGetRegionCode($countryId, $regionCode = 'UK')
     {
-        $region = $this->getMockBuilder(Region::class)
-            ->addMethods(['getCountryId', 'getCode'])
-            ->onlyMethods(['__wakeup', 'load', 'loadByCode'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $region = $this->createPartialMock(
+            RegionTestHelper::class,
+            ['getCountryId', 'getCode', '__wakeup', 'load', 'loadByCode']
+        );
         $region->method('loadByCode')
             ->willReturnSelf();
         $region->expects($this->once())
@@ -337,9 +334,8 @@ class AbstractAddressTest extends TestCase
      * @param array $data
      * @param array|bool $expected
      * @return void
-     *
-     * @dataProvider validateDataProvider
      */
+    #[DataProvider('validateDataProvider')]
     public function testValidate(array $data, $expected)
     {
         $this->compositeValidatorMock->method('validate')->with($this->model)->willReturn($expected);
@@ -407,18 +403,14 @@ class AbstractAddressTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider getStreetFullDataProvider
-     */
+    #[DataProvider('getStreetFullDataProvider')]
     public function testGetStreetFullAlwaysReturnsString($expectedResult, $street)
     {
         $this->model->setData('street', $street);
         $this->assertEquals($expectedResult, $this->model->getStreetFull());
     }
 
-    /**
-     * @dataProvider getStreetFullDataProvider
-     */
+    #[DataProvider('getStreetFullDataProvider')]
     public function testSetDataStreetAlwaysConvertedToString($expectedResult, $street)
     {
         $this->model->setData('street', $street);
@@ -445,10 +437,10 @@ class AbstractAddressTest extends TestCase
      */
     public function testSetCustomerAttributes(): void
     {
-        $model = $this->getMockBuilder(AbstractAddress::class)
-            ->onlyMethods(['getCustomAttributesCodes'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $model = $this->createPartialMock(
+            AbstractAddress::class,
+            ['getCustomAttributesCodes']
+        );
         $customAttributeFactory = $this->createMock(\Magento\Customer\Model\AttributeFactory::class);
         $customAttributeFactory->method('create')
             ->willReturnCallback(

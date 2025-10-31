@@ -366,8 +366,7 @@ class AddressTest extends TestCase
      */
     public function testGetFormatTypeRenderer($code, $result)
     {
-        if(is_callable($result))
-        {
+        if (is_callable($result)) {
             $result = $result($this);
         }
         $this->addressConfig->expects($this->once())

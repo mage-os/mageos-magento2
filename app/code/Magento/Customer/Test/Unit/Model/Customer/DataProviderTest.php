@@ -13,6 +13,8 @@ use Magento\Customer\Model\Address;
 use Magento\Customer\Model\Config\Share;
 use Magento\Customer\Model\Customer;
 use Magento\Customer\Model\Customer\DataProvider as CustomerDataProvider;
+use Magento\Customer\Test\Unit\Helper\AbstractAttributeTestHelper;
+use Magento\Customer\Test\Unit\Helper\SessionManagerTestHelper;
 use Magento\Customer\Model\FileProcessor;
 use Magento\Customer\Model\FileUploaderDataResolver;
 use Magento\Customer\Model\ResourceModel\Address\Attribute\Source\CountryWithWebsites;
@@ -28,6 +30,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Ui\Component\Form\Field;
 use Magento\Ui\DataProvider\EavValidationRules;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -76,25 +79,18 @@ class DataProviderTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->eavConfigMock = $this->getMockBuilder(Config::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->eavConfigMock = $this->createMock(Config::class);
         $this->customerCollectionFactoryMock = $this->createPartialMock(CollectionFactory::class, ['create']);
-        $this->eavValidationRulesMock = $this
-            ->getMockBuilder(EavValidationRules::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->sessionMock = $this->getMockBuilder(SessionManagerInterface::class)
-            ->addMethods(['getCustomerFormData', 'unsCustomerFormData'])
-            ->getMockForAbstractClass();
-
-        $this->fileProcessor = $this->getMockBuilder(FileProcessor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->fileUploaderDataResolver = $this->getMockBuilder(FileUploaderDataResolver::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['overrideFileUploaderMetadata', 'overrideFileUploaderData'])
-            ->getMock();
+        $this->eavValidationRulesMock = $this->createMock(EavValidationRules::class);
+        $this->sessionMock = $this->createPartialMock(
+            SessionManagerTestHelper::class,
+            ['getCustomerFormData', 'unsCustomerFormData']
+        );
+        $this->fileProcessor = $this->createMock(FileProcessor::class);
+        $this->fileUploaderDataResolver = $this->createPartialMock(
+            FileUploaderDataResolver::class,
+            ['overrideFileUploaderMetadata', 'overrideFileUploaderData']
+        );
     }
 
     /**
@@ -102,9 +98,8 @@ class DataProviderTest extends TestCase
      *
      * @param array $expected
      * @return void
-     *
-     * @dataProvider getAttributesMetaDataProvider
      */
+    #[DataProvider('getAttributesMetaDataProvider')]
     public function testGetAttributesMetaWithOptions(array $expected): void
     {
         $helper = new ObjectManager($this);
@@ -264,9 +259,7 @@ class DataProviderTest extends TestCase
      */
     protected function getCustomerCollectionFactoryMock(): CollectionFactory
     {
-        $collectionMock = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $collectionMock = $this->createMock(Collection::class);
 
         $collectionMock->expects($this->once())
             ->method('addAttributeToSelect')
@@ -301,9 +294,7 @@ class DataProviderTest extends TestCase
      */
     protected function getTypeCustomerMock(array $customerAttributes = []): Type
     {
-        $typeCustomerMock = $this->getMockBuilder(Type::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $typeCustomerMock = $this->createMock(Type::class);
         $attributesCollection = !empty($customerAttributes) ? $customerAttributes : $this->getAttributeMock();
         $typeCustomerMock->expects($this->any())
             ->method('getEntityTypeCode')
@@ -326,9 +317,7 @@ class DataProviderTest extends TestCase
      */
     protected function getTypeAddressMock(): Type
     {
-        $typeAddressMock = $this->getMockBuilder(Type::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $typeAddressMock = $this->createMock(Type::class);
 
         $typeAddressMock->expects($this->once())
             ->method('getAttributeCollection')
@@ -393,24 +382,21 @@ class DataProviderTest extends TestCase
      */
     protected function getAttributeMock(string $type = 'customer', array $options = []): array
     {
-        $attributeMock = $this->getMockBuilder(AbstractAttribute::class)
-            ->onlyMethods(
-                [
-                    'getAttributeCode',
-                    'getDataUsingMethod',
-                    'usesSource',
-                    'getFrontendInput',
-                    'getSource',
-                    'getIsUserDefined',
-                    'getEntityType'
-                ]
-            )
-            ->addMethods(['getIsVisible', 'getUsedInForms'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $sourceMock = $this->getMockBuilder(AbstractSource::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $attributeMock = $this->createPartialMock(
+            AbstractAttributeTestHelper::class,
+            [
+                'getAttributeCode',
+                'getDataUsingMethod',
+                'usesSource',
+                'getFrontendInput',
+                'getSource',
+                'getIsUserDefined',
+                'getEntityType',
+                'getIsVisible',
+                'getUsedInForms'
+            ]
+        );
+        $sourceMock = $this->createMock(AbstractSource::class);
 
         $attributeCode = self::ATTRIBUTE_CODE;
         if (isset($options[self::ATTRIBUTE_CODE]['specific_code_prefix'])) {
@@ -436,21 +422,20 @@ class DataProviderTest extends TestCase
             ->method('getSource')
             ->willReturn($sourceMock);
 
-        $attributeBooleanMock = $this->getMockBuilder(AbstractAttribute::class)
-            ->onlyMethods(
-                [
-                    'getAttributeCode',
-                    'getDataUsingMethod',
-                    'usesSource',
-                    'getFrontendInput',
-                    'getIsUserDefined',
-                    'getSource',
-                    'getEntityType'
-                ]
-            )
-            ->addMethods(['getIsVisible', 'getUsedInForms'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $attributeBooleanMock = $this->createPartialMock(
+            AbstractAttributeTestHelper::class,
+            [
+                'getAttributeCode',
+                'getDataUsingMethod',
+                'usesSource',
+                'getFrontendInput',
+                'getIsUserDefined',
+                'getSource',
+                'getEntityType',
+                'getIsVisible',
+                'getUsedInForms'
+            ]
+        );
 
         $attributeBooleanMock->expects($this->any())
             ->method('getFrontendInput')
@@ -505,16 +490,12 @@ class DataProviderTest extends TestCase
      */
     private function getCountryAttrMock(): MockObject
     {
-        $countryByWebsiteMock = $this->getMockBuilder(CountryWithWebsites::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $countryByWebsiteMock = $this->createMock(CountryWithWebsites::class);
         $countryByWebsiteMock->expects($this->any())
             ->method('getAllOptions')
             ->willReturn('test-options');
-        $shareMock = $this->getMockBuilder(Share::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $objectManagerMock = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        $shareMock = $this->createMock(Share::class);
+        $objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         $objectManagerMock->expects($this->any())
             ->method('get')
             ->willReturnMap(
@@ -524,11 +505,10 @@ class DataProviderTest extends TestCase
                 ]
             );
         \Magento\Framework\App\ObjectManager::setInstance($objectManagerMock);
-        $countryAttrMock = $this->getMockBuilder(AbstractAttribute::class)
-            ->onlyMethods(['getAttributeCode', 'getDataUsingMethod', 'usesSource', 'getSource'])
-            ->addMethods(['getLabel'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $countryAttrMock = $this->createPartialMock(
+            AbstractAttributeTestHelper::class,
+            ['getAttributeCode', 'getDataUsingMethod', 'usesSource', 'getSource', 'getLabel']
+        );
 
         $countryAttrMock->expects($this->exactly(2))
             ->method('getAttributeCode')
@@ -574,15 +554,9 @@ class DataProviderTest extends TestCase
             'street' => "street\nstreet"
         ];
 
-        $customer = $this->getMockBuilder(Customer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $address = $this->getMockBuilder(Address::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $collectionMock = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $customer = $this->createMock(Customer::class);
+        $address = $this->createMock(Address::class);
+        $collectionMock = $this->createMock(Collection::class);
 
         $collectionMock->expects($this->once())
             ->method('addAttributeToSelect')
@@ -687,15 +661,9 @@ class DataProviderTest extends TestCase
             ]
         ];
 
-        $customer = $this->getMockBuilder(Customer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $address = $this->getMockBuilder(Address::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $collectionMock = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $customer = $this->createMock(Customer::class);
+        $address = $this->createMock(Address::class);
+        $collectionMock = $this->createMock(Collection::class);
 
         $collectionMock->expects($this->once())
             ->method('addAttributeToSelect')
@@ -778,9 +746,7 @@ class DataProviderTest extends TestCase
 
         $filename = '/filename.ext1';
 
-        $customerMock = $this->getMockBuilder(Customer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $customerMock = $this->createMock(Customer::class);
         $customerMock->expects($this->once())
             ->method('getData')
             ->willReturn(
@@ -795,9 +761,7 @@ class DataProviderTest extends TestCase
         $customerMock->expects($this->once())
             ->method('getId')
             ->willReturn($customerId);
-        $collectionMock = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $collectionMock = $this->createMock(Collection::class);
         $collectionMock->expects($this->once())
             ->method('getItems')
             ->willReturn([$customerMock]);
@@ -852,9 +816,7 @@ class DataProviderTest extends TestCase
 
         $attributeCode = 'img1';
 
-        $collectionMock = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $collectionMock = $this->createMock(Collection::class);
         $collectionMock->expects($this->once())
             ->method('addAttributeToSelect')
             ->with('*');
@@ -863,10 +825,10 @@ class DataProviderTest extends TestCase
             ->method('create')
             ->willReturn($collectionMock);
 
-        $attributeMock = $this->getMockBuilder(AbstractAttribute::class)
-            ->onlyMethods(['getAttributeCode', 'getFrontendInput', 'getDataUsingMethod'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $attributeMock = $this->createPartialMock(
+            AbstractAttributeTestHelper::class,
+            ['getAttributeCode', 'getFrontendInput', 'getDataUsingMethod', 'getId', 'getIsVisible']
+        );
         $attributeMock->expects($this->any())
             ->method('getAttributeCode')
             ->willReturn($attributeCode);
@@ -880,10 +842,14 @@ class DataProviderTest extends TestCase
                     return $origName;
                 }
             );
+        $attributeMock->expects($this->any())
+            ->method('getId')
+            ->willReturn(null);
+        $attributeMock->expects($this->any())
+            ->method('getIsVisible')
+            ->willReturn(null);
 
-        $typeCustomerMock = $this->getMockBuilder(Type::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $typeCustomerMock = $this->createMock(Type::class);
         $typeCustomerMock->expects($this->once())
             ->method('getAttributeCollection')
             ->willReturn([$attributeMock]);
@@ -891,9 +857,7 @@ class DataProviderTest extends TestCase
             ->method('getEntityTypeCode')
             ->willReturn(CustomerMetadataInterface::ENTITY_TYPE_CUSTOMER);
 
-        $typeAddressMock = $this->getMockBuilder(Type::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $typeAddressMock = $this->createMock(Type::class);
         $typeAddressMock->expects($this->once())
             ->method('getAttributeCollection')
             ->willReturn([]);
@@ -928,10 +892,35 @@ class DataProviderTest extends TestCase
             );
 
         $objectManager = new ObjectManager($this);
-        $this->fileUploaderDataResolver = $this->getMockBuilder(FileUploaderDataResolver::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([])
-            ->getMock();
+        $this->fileUploaderDataResolver = $this->createPartialMock(
+            FileUploaderDataResolver::class,
+            ['overrideFileUploaderMetadata', 'overrideFileUploaderData']
+        );
+        
+        // Set up the fileUploaderDataResolver to actually modify the meta for image attributes
+        $this->fileUploaderDataResolver->expects($this->any())
+            ->method('overrideFileUploaderMetadata')
+            ->willReturnCallback(
+                function ($entityType, $attribute, &$config) use ($maxFileSize, $allowedExtension) {
+                    // Call getEntityTypeCode to satisfy mock expectations
+                    $entityType->getEntityTypeCode();
+                    
+                    if ($attribute->getFrontendInput() === 'image') {
+                        $config['formElement'] = 'fileUploader';
+                        $config['componentType'] = 'fileUploader';
+                        $config['maxFileSize'] = $maxFileSize;
+                        $config['allowedExtensions'] = $allowedExtension;
+                        $config['uploaderConfig'] = [
+                            'url' => 'customer/file/customer_upload'
+                        ];
+                        $config['visible'] = null;
+                        $config['attributeId'] = $attribute->getId();
+                        // Remove properties that shouldn't be in file uploader config
+                        unset($config['notice'], $config['default'], $config['size']);
+                    }
+                }
+            );
+        
         $dataProvider = $objectManager->getObject(
             CustomerDataProvider::class,
             [
@@ -1088,9 +1077,7 @@ class DataProviderTest extends TestCase
         );
 
         $helper = new ObjectManager($this);
-        $context = $this->getMockBuilder(ContextInterface::class)
-            ->onlyMethods(['getRequestParam'])
-            ->getMockForAbstractClass();
+        $context = $this->createMock(ContextInterface::class);
         $context->expects($this->any())
             ->method('getRequestParam')
             ->with('request-field-name')

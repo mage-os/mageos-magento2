@@ -81,4 +81,3 @@ class AttributeMetadataTestHelper extends AttributeMetadata
         return $this;
     }
 }
-

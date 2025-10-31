@@ -43,4 +43,3 @@ class CollectionTestHelper extends Collection
         return $this;
     }
 }
-

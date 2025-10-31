@@ -52,4 +52,3 @@ class EventTestHelper extends Event
         return null;
     }
 }
-

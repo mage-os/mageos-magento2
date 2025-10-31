@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2020 Adobe
+ * Copyright 2024 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -10,40 +10,28 @@ namespace Magento\Customer\Test\Unit\Helper;
 use Magento\Customer\Api\Data\CustomerInterface;
 
 /**
- * Test helper for CustomerInterface with custom methods
+ * Test helper for CustomerInterface to support custom methods like __toArray
+ *
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class CustomerInterfaceTestHelper implements CustomerInterface
 {
     /**
-     * @var array<string, mixed>
+     * @var array
      */
-    private array $testData = [];
+    private array $data = [];
 
     /**
-     * Set data
+     * Convert to array
      *
-     * @param string $key
-     * @param mixed $value
-     * @return $this
+     * @return array
      */
-    public function setData($key, $value = null)
+    public function __toArray(): array
     {
-        $this->testData[$key] = $value;
-        return $this;
-    }
-
-    /**
-     * Get data
-     *
-     * @param string $key
-     * @return mixed
-     */
-    public function getData($key = null)
-    {
-        if ($key === null) {
-            return $this->testData;
-        }
-        return $this->testData[$key] ?? null;
+        return $this->data['__toArray'] ?? [];
     }
 
     /**
@@ -51,7 +39,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function getId()
     {
-        return $this->testData['id'] ?? null;
+        return $this->data['id'] ?? null;
     }
 
     /**
@@ -59,7 +47,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function setId($id)
     {
-        $this->testData['id'] = $id;
+        $this->data['id'] = $id;
         return $this;
     }
 
@@ -68,7 +56,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function getGroupId()
     {
-        return $this->testData['group_id'] ?? null;
+        return $this->data['group_id'] ?? null;
     }
 
     /**
@@ -76,7 +64,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function setGroupId($groupId)
     {
-        $this->testData['group_id'] = $groupId;
+        $this->data['group_id'] = $groupId;
         return $this;
     }
 
@@ -85,7 +73,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function getDefaultBilling()
     {
-        return $this->testData['default_billing'] ?? null;
+        return $this->data['default_billing'] ?? null;
     }
 
     /**
@@ -93,7 +81,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function setDefaultBilling($defaultBilling)
     {
-        $this->testData['default_billing'] = $defaultBilling;
+        $this->data['default_billing'] = $defaultBilling;
         return $this;
     }
 
@@ -102,7 +90,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function getDefaultShipping()
     {
-        return $this->testData['default_shipping'] ?? null;
+        return $this->data['default_shipping'] ?? null;
     }
 
     /**
@@ -110,7 +98,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function setDefaultShipping($defaultShipping)
     {
-        $this->testData['default_shipping'] = $defaultShipping;
+        $this->data['default_shipping'] = $defaultShipping;
         return $this;
     }
 
@@ -119,7 +107,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function getConfirmation()
     {
-        return $this->testData['confirmation'] ?? null;
+        return $this->data['confirmation'] ?? null;
     }
 
     /**
@@ -127,7 +115,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function setConfirmation($confirmation)
     {
-        $this->testData['confirmation'] = $confirmation;
+        $this->data['confirmation'] = $confirmation;
         return $this;
     }
 
@@ -136,7 +124,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function getCreatedAt()
     {
-        return $this->testData['created_at'] ?? null;
+        return $this->data['created_at'] ?? null;
     }
 
     /**
@@ -144,7 +132,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function setCreatedAt($createdAt)
     {
-        $this->testData['created_at'] = $createdAt;
+        $this->data['created_at'] = $createdAt;
         return $this;
     }
 
@@ -153,7 +141,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function getUpdatedAt()
     {
-        return $this->testData['updated_at'] ?? null;
+        return $this->data['updated_at'] ?? null;
     }
 
     /**
@@ -161,7 +149,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function setUpdatedAt($updatedAt)
     {
-        $this->testData['updated_at'] = $updatedAt;
+        $this->data['updated_at'] = $updatedAt;
         return $this;
     }
 
@@ -170,7 +158,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function getCreatedIn()
     {
-        return $this->testData['created_in'] ?? null;
+        return $this->data['created_in'] ?? null;
     }
 
     /**
@@ -178,7 +166,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function setCreatedIn($createdIn)
     {
-        $this->testData['created_in'] = $createdIn;
+        $this->data['created_in'] = $createdIn;
         return $this;
     }
 
@@ -187,7 +175,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function getDob()
     {
-        return $this->testData['dob'] ?? null;
+        return $this->data['dob'] ?? null;
     }
 
     /**
@@ -195,7 +183,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function setDob($dob)
     {
-        $this->testData['dob'] = $dob;
+        $this->data['dob'] = $dob;
         return $this;
     }
 
@@ -204,7 +192,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function getEmail()
     {
-        return $this->testData['email'] ?? null;
+        return $this->data['email'] ?? null;
     }
 
     /**
@@ -212,7 +200,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function setEmail($email)
     {
-        $this->testData['email'] = $email;
+        $this->data['email'] = $email;
         return $this;
     }
 
@@ -221,7 +209,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function getFirstname()
     {
-        return $this->testData['firstname'] ?? null;
+        return $this->data['firstname'] ?? null;
     }
 
     /**
@@ -229,7 +217,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function setFirstname($firstname)
     {
-        $this->testData['firstname'] = $firstname;
+        $this->data['firstname'] = $firstname;
         return $this;
     }
 
@@ -238,7 +226,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function getLastname()
     {
-        return $this->testData['lastname'] ?? null;
+        return $this->data['lastname'] ?? null;
     }
 
     /**
@@ -246,7 +234,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function setLastname($lastname)
     {
-        $this->testData['lastname'] = $lastname;
+        $this->data['lastname'] = $lastname;
         return $this;
     }
 
@@ -255,7 +243,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function getMiddlename()
     {
-        return $this->testData['middlename'] ?? null;
+        return $this->data['middlename'] ?? null;
     }
 
     /**
@@ -263,7 +251,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function setMiddlename($middlename)
     {
-        $this->testData['middlename'] = $middlename;
+        $this->data['middlename'] = $middlename;
         return $this;
     }
 
@@ -272,7 +260,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function getPrefix()
     {
-        return $this->testData['prefix'] ?? null;
+        return $this->data['prefix'] ?? null;
     }
 
     /**
@@ -280,7 +268,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function setPrefix($prefix)
     {
-        $this->testData['prefix'] = $prefix;
+        $this->data['prefix'] = $prefix;
         return $this;
     }
 
@@ -289,7 +277,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function getSuffix()
     {
-        return $this->testData['suffix'] ?? null;
+        return $this->data['suffix'] ?? null;
     }
 
     /**
@@ -297,7 +285,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function setSuffix($suffix)
     {
-        $this->testData['suffix'] = $suffix;
+        $this->data['suffix'] = $suffix;
         return $this;
     }
 
@@ -306,7 +294,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function getGender()
     {
-        return $this->testData['gender'] ?? null;
+        return $this->data['gender'] ?? null;
     }
 
     /**
@@ -314,7 +302,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function setGender($gender)
     {
-        $this->testData['gender'] = $gender;
+        $this->data['gender'] = $gender;
         return $this;
     }
 
@@ -323,7 +311,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function getStoreId()
     {
-        return $this->testData['store_id'] ?? null;
+        return $this->data['store_id'] ?? null;
     }
 
     /**
@@ -331,7 +319,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function setStoreId($storeId)
     {
-        $this->testData['store_id'] = $storeId;
+        $this->data['store_id'] = $storeId;
         return $this;
     }
 
@@ -340,7 +328,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function getTaxvat()
     {
-        return $this->testData['taxvat'] ?? null;
+        return $this->data['taxvat'] ?? null;
     }
 
     /**
@@ -348,7 +336,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function setTaxvat($taxvat)
     {
-        $this->testData['taxvat'] = $taxvat;
+        $this->data['taxvat'] = $taxvat;
         return $this;
     }
 
@@ -357,7 +345,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function getWebsiteId()
     {
-        return $this->testData['website_id'] ?? null;
+        return $this->data['website_id'] ?? null;
     }
 
     /**
@@ -365,7 +353,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function setWebsiteId($websiteId)
     {
-        $this->testData['website_id'] = $websiteId;
+        $this->data['website_id'] = $websiteId;
         return $this;
     }
 
@@ -374,7 +362,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function getAddresses()
     {
-        return $this->testData['addresses'] ?? [];
+        return $this->data['addresses'] ?? null;
     }
 
     /**
@@ -382,7 +370,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function setAddresses(array $addresses = null)
     {
-        $this->testData['addresses'] = $addresses;
+        $this->data['addresses'] = $addresses;
         return $this;
     }
 
@@ -391,7 +379,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function getDisableAutoGroupChange()
     {
-        return $this->testData['disable_auto_group_change'] ?? null;
+        return $this->data['disable_auto_group_change'] ?? null;
     }
 
     /**
@@ -399,7 +387,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function setDisableAutoGroupChange($disableAutoGroupChange)
     {
-        $this->testData['disable_auto_group_change'] = $disableAutoGroupChange;
+        $this->data['disable_auto_group_change'] = $disableAutoGroupChange;
         return $this;
     }
 
@@ -408,16 +396,15 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function getExtensionAttributes()
     {
-        return $this->testData['extension_attributes'] ?? null;
+        return $this->data['extension_attributes'] ?? null;
     }
 
     /**
      * @inheritdoc
      */
-    public function setExtensionAttributes(
-        \Magento\Customer\Api\Data\CustomerExtensionInterface $extensionAttributes
-    ) {
-        $this->testData['extension_attributes'] = $extensionAttributes;
+    public function setExtensionAttributes(\Magento\Customer\Api\Data\CustomerExtensionInterface $extensionAttributes)
+    {
+        $this->data['extension_attributes'] = $extensionAttributes;
         return $this;
     }
 
@@ -426,7 +413,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function getCustomAttributes()
     {
-        return $this->testData['custom_attributes'] ?? [];
+        return $this->data['custom_attributes'] ?? [];
     }
 
     /**
@@ -434,7 +421,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function setCustomAttributes(array $attributes)
     {
-        $this->testData['custom_attributes'] = $attributes;
+        $this->data['custom_attributes'] = $attributes;
         return $this;
     }
 
@@ -443,7 +430,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function getCustomAttribute($attributeCode)
     {
-        return $this->testData['custom_attributes'][$attributeCode] ?? null;
+        return $this->data['custom_attributes'][$attributeCode] ?? null;
     }
 
     /**
@@ -451,7 +438,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
      */
     public function setCustomAttribute($attributeCode, $attributeValue)
     {
-        $this->testData['custom_attributes'][$attributeCode] = $attributeValue;
+        $this->data['custom_attributes'][$attributeCode] = $attributeValue;
         return $this;
     }
 }

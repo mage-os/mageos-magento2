@@ -11,6 +11,9 @@ use Magento\Customer\Model\Session;
 
 /**
  * Test helper for Customer Session with custom methods
+ * 
+ * @SuppressWarnings(PHPMD.UnusedPrivateField)
+ * @SuppressWarnings(PHPMD.ShortVariable)
  */
 class CustomerSessionTestHelper extends Session
 {
@@ -208,6 +211,7 @@ class CustomerSessionTestHelper extends Session
      * Get no referer (custom method for tests)
      *
      * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getNoReferer(): bool
     {

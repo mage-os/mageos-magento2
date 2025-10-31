@@ -11,6 +11,8 @@ use Magento\Framework\App\Request\Http;
 
 /**
  * Test helper for RequestInterface with custom methods
+ * 
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class RequestInterfaceTestHelper extends Http
 {

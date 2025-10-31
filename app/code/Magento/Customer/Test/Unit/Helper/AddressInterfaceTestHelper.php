@@ -11,6 +11,11 @@ use Magento\Customer\Api\Data\AddressInterface;
 
 /**
  * Test helper for AddressInterface with custom methods
+ * 
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class AddressInterfaceTestHelper implements AddressInterface
 {
@@ -18,6 +23,7 @@ class AddressInterfaceTestHelper implements AddressInterface
      * Get default billing flag (custom method for tests)
      *
      * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getDefaultBilling(): bool
     {
@@ -28,6 +34,7 @@ class AddressInterfaceTestHelper implements AddressInterface
      * Get default shipping flag (custom method for tests)
      *
      * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getDefaultShipping(): bool
     {
@@ -255,4 +262,3 @@ class AddressInterfaceTestHelper implements AddressInterface
         return $this;
     }
 }
-

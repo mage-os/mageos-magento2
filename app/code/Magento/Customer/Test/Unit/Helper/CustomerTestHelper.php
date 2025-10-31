@@ -105,6 +105,63 @@ class CustomerTestHelper extends Customer
     }
 
     /**
+     * Set ID
+     *
+     * @param int|null $id
+     * @return $this
+     */
+    public function setId($id): self
+    {
+        $this->testData['id'] = $id;
+        return $this;
+    }
+
+    /**
+     * Get confirmation
+     *
+     * @return string|null
+     */
+    public function getConfirmation()
+    {
+        return $this->testData['confirmation'] ?? null;
+    }
+
+    /**
+     * Set confirmation
+     *
+     * @param string|null $confirmation
+     * @return $this
+     */
+    public function setConfirmation($confirmation): self
+    {
+        $this->testData['confirmation'] = $confirmation;
+        return $this;
+    }
+
+    /**
+     * Update data
+     *
+     * @param mixed $customer
+     * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function updateData($customer): self
+    {
+        // Mock implementation
+        return $this;
+    }
+
+    /**
+     * Get group ID
+     *
+     * @return int|null
+     */
+    public function getGroupId()
+    {
+        return $this->testData['group_id'] ?? null;
+    }
+
+    /**
      * Get default shipping address
      *
      * @return mixed
@@ -157,10 +214,10 @@ class CustomerTestHelper extends Customer
     /**
      * Set store ID
      *
-     * @param int $storeId
+     * @param int|null $storeId
      * @return $this
      */
-    public function setStoreId(int $storeId): self
+    public function setStoreId($storeId): self
     {
         $this->testData['store_id'] = $storeId;
         return $this;
@@ -169,12 +226,165 @@ class CustomerTestHelper extends Customer
     /**
      * Set group ID
      *
-     * @param int $groupId
+     * @param int|null $groupId
      * @return $this
      */
-    public function setGroupId(int $groupId): self
+    public function setGroupId($groupId): self
     {
         $this->testData['group_id'] = $groupId;
+        return $this;
+    }
+
+    /**
+     * Set attribute set ID
+     *
+     * @param int|null $attributeSetId
+     * @return $this
+     */
+    public function setAttributeSetId($attributeSetId): self
+    {
+        $this->testData['attribute_set_id'] = $attributeSetId;
+        return $this;
+    }
+
+    /**
+     * Get attribute set ID
+     *
+     * @return int|null
+     */
+    public function getAttributeSetId()
+    {
+        return $this->testData['attribute_set_id'] ?? null;
+    }
+
+    /**
+     * Set password reset token
+     *
+     * @param string|null $token
+     * @return $this
+     */
+    public function setRpToken($token): self
+    {
+        $this->testData['rp_token'] = $token;
+        return $this;
+    }
+
+    /**
+     * Set password reset token created at
+     *
+     * @param string|null $createdAt
+     * @return $this
+     */
+    public function setRpTokenCreatedAt($createdAt): self
+    {
+        $this->testData['rp_token_created_at'] = $createdAt;
+        return $this;
+    }
+
+    /**
+     * Set password hash
+     *
+     * @param string|null $hash
+     * @return $this
+     */
+    public function setPasswordHash($hash): self
+    {
+        $this->testData['password_hash'] = $hash;
+        return $this;
+    }
+
+    /**
+     * Set failures number
+     *
+     * @param int $num
+     * @return $this
+     */
+    public function setFailuresNum($num): self
+    {
+        $this->testData['failures_num'] = $num;
+        return $this;
+    }
+
+    /**
+     * Set first failure
+     *
+     * @param string|null $failure
+     * @return $this
+     */
+    public function setFirstFailure($failure): self
+    {
+        $this->testData['first_failure'] = $failure;
+        return $this;
+    }
+
+    /**
+     * Set lock expires
+     *
+     * @param string|null $expires
+     * @return $this
+     */
+    public function setLockExpires($expires): self
+    {
+        $this->testData['lock_expires'] = $expires;
+        return $this;
+    }
+
+    /**
+     * Get data model
+     *
+     * @return mixed
+     */
+    public function getDataModel()
+    {
+        return $this->testData['data_model'] ?? null;
+    }
+
+    /**
+     * Set original data
+     *
+     * @param string|null $key
+     * @param mixed $data
+     * @return $this
+     */
+    public function setOrigData($key = null, $data = null): self
+    {
+        if ($key === null) {
+            $this->testData['orig_data'] = $data;
+        } else {
+            $this->testData['orig_data'][$key] = $data;
+        }
+        return $this;
+    }
+
+    /**
+     * Get collection
+     *
+     * @return mixed
+     */
+    public function getCollection()
+    {
+        return $this->testData['collection'] ?? null;
+    }
+
+    /**
+     * Get disable auto group change
+     *
+     * @return bool|null
+     */
+    public function getDisableAutoGroupChange()
+    {
+        return $this->testData['disable_auto_group_change'] ?? null;
+    }
+
+    /**
+     * Set disable auto group change
+     *
+     * @param bool $value
+     * @return $this
+     */
+    public function setDisableAutoGroupChange(bool $value): self
+    {
+        $this->testData['disable_auto_group_change'] = $value;
         return $this;
     }
 }

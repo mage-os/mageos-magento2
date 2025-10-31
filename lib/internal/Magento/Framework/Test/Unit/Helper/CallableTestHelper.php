@@ -85,4 +85,3 @@ class CallableTestHelper
         return $this->callCount === $this->expectedCallCount;
     }
 }
-

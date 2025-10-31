@@ -12,6 +12,8 @@ use Magento\Framework\DB\Select;
 
 /**
  * Test helper for Pdo Mysql adapter
+ * 
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class PdoMysqlAdapterTestHelper extends Mysql
 {

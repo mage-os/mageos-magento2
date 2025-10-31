@@ -41,4 +41,3 @@ class GroupExtensionTestHelper extends GroupExtension
         return $this->excludeWebsiteIds;
     }
 }
-

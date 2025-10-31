@@ -79,4 +79,3 @@ class StorageInterfaceTestHelper implements StorageInterface
         return 'test_namespace';
     }
 }
-

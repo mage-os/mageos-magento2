@@ -11,6 +11,9 @@ use Magento\Store\Api\Data\WebsiteInterface;
 
 /**
  * Test helper for WebsiteInterface with custom methods
+ * 
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+ * @SuppressWarnings(PHPMD.ShortVariable)
  */
 class WebsiteInterfaceTestHelper implements WebsiteInterface
 {
@@ -92,4 +95,3 @@ class WebsiteInterfaceTestHelper implements WebsiteInterface
         return $this;
     }
 }
-

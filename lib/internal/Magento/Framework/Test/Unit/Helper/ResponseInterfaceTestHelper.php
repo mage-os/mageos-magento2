@@ -11,6 +11,8 @@ use Magento\Framework\App\Response\Http;
 
 /**
  * Test helper for ResponseInterface with custom methods
+ * 
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class ResponseInterfaceTestHelper extends Http
 {
@@ -56,4 +58,3 @@ class ResponseInterfaceTestHelper extends Http
         return $this;
     }
 }
-

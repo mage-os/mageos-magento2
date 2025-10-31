@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2015 Adobe
+ * Copyright 2024 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -9,19 +9,22 @@ namespace Magento\Customer\Test\Unit\Helper;
 
 use Magento\Framework\Event\Observer;
 
+/**
+ * Test helper for Observer to support custom methods
+ */
 class ObserverTestHelper extends Observer
 {
     /**
-     * @var mixed
+     * @var array
      */
-    private $customerAddress;
+    private array $data = [];
 
     /**
-     * Constructor - skip parent constructor
+     * Constructor - skip parent
      */
     public function __construct()
     {
-        // Skip parent constructor to avoid dependency injection issues
+        // Skip parent constructor
     }
 
     /**
@@ -31,19 +34,18 @@ class ObserverTestHelper extends Observer
      */
     public function getCustomerAddress()
     {
-        return $this->customerAddress;
+        return $this->data['customer_address'] ?? null;
     }
 
     /**
      * Set customer address
      *
-     * @param mixed $customerAddress
+     * @param mixed $address
      * @return $this
      */
-    public function setCustomerAddress($customerAddress)
+    public function setCustomerAddress($address): self
     {
-        $this->customerAddress = $customerAddress;
+        $this->data['customer_address'] = $address;
         return $this;
     }
 }
-

@@ -26,6 +26,7 @@ class AbstractAttributeTestHelper extends AbstractAttribute
      * Get is visible (custom method for tests)
      *
      * @return bool|null
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getIsVisible(): ?bool
     {
@@ -62,4 +63,3 @@ class AbstractAttributeTestHelper extends AbstractAttribute
         return null;
     }
 }
-

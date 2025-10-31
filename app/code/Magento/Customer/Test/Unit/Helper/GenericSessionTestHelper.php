@@ -73,4 +73,3 @@ class GenericSessionTestHelper extends GenericSession
         return $this;
     }
 }
-

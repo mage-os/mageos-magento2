@@ -11,6 +11,8 @@ use Magento\Framework\Data\Form\Element\Checkbox;
 
 /**
  * Test helper for Checkbox with custom methods
+ * 
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class CheckboxTestHelper extends Checkbox
 {

@@ -102,4 +102,3 @@ class AbstractAddressTestHelper extends AbstractAddress
         return null;
     }
 }
-

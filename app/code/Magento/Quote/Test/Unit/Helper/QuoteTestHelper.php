@@ -54,10 +54,10 @@ class QuoteTestHelper extends Quote
      *
      * @param string $email
      * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setCustomerEmail($email): self
     {
         return $this;
     }
 }
-

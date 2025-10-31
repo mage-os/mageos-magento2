@@ -32,6 +32,7 @@ class LayoutTestHelper extends Layout
      *
      * @param string $name
      * @return mixed
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function helper($name)
     {

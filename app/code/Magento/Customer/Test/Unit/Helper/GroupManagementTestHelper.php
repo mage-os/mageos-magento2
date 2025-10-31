@@ -49,4 +49,3 @@ class GroupManagementTestHelper extends GroupManagement
         return $this;
     }
 }
-

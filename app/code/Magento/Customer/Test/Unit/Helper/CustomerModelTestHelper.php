@@ -61,4 +61,3 @@ class CustomerModelTestHelper extends Customer
         return $this->testData['group_id'] ?? null;
     }
 }
-

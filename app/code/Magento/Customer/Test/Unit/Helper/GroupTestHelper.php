@@ -174,4 +174,3 @@ class GroupTestHelper extends Group
         return $this->testData['data'][$key] ?? null;
     }
 }
-

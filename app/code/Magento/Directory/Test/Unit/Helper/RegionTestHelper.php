@@ -76,4 +76,3 @@ class RegionTestHelper extends Region
         return $this;
     }
 }
-

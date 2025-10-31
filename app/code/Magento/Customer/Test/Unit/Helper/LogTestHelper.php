@@ -42,6 +42,7 @@ class LogTestHelper extends Log
      *
      * @param int $customerId
      * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function loadByCustomer($customerId)
     {

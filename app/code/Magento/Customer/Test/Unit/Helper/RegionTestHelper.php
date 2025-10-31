@@ -94,4 +94,52 @@ class RegionTestHelper extends Region
         $this->testData['name'] = $name;
         return $this;
     }
+
+    /**
+     * Get code
+     *
+     * @return string|null
+     */
+    public function getCode()
+    {
+        return $this->testData['code'] ?? null;
+    }
+
+    /**
+     * Set code
+     *
+     * @param string $code
+     * @return $this
+     */
+    public function setCode(string $code): self
+    {
+        $this->testData['code'] = $code;
+        return $this;
+    }
+
+    /**
+     * Load by code
+     *
+     * @param string $code
+     * @param string|null $countryId
+     * @return $this
+     */
+    public function loadByCode($code, $countryId = null)
+    {
+        $this->testData['code'] = $code;
+        if ($countryId !== null) {
+            $this->testData['country_id'] = $countryId;
+        }
+        return $this;
+    }
+
+    /**
+     * Mock __wakeup method
+     *
+     * @return void
+     */
+    public function __wakeup()
+    {
+        // Mock implementation
+    }
 }

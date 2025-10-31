@@ -25,6 +25,7 @@ class CustomerEntityTestHelper
      *
      * @param array $parameters
      * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setParameters(array $parameters): self
     {

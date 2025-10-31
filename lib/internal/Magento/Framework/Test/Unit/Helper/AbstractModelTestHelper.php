@@ -31,4 +31,3 @@ class AbstractModelTestHelper extends AbstractModel
         $this->_data = $data;
     }
 }
-

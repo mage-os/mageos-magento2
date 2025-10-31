@@ -54,6 +54,7 @@ class CustomerStorageTestHelper
      *
      * @param mixed $customer
      * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function addCustomer($customer): self
     {

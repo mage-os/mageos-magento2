@@ -40,7 +40,7 @@ class CustomerSecureTestHelper extends CustomerSecure
     private $isCustomerLocked = false;
 
     /**
-     * @var int
+     * @var int|string
      */
     private $failuresNum = 0;
 
@@ -65,10 +65,10 @@ class CustomerSecureTestHelper extends CustomerSecure
     /**
      * Set password reset token
      *
-     * @param string $token
+     * @param string|null $token
      * @return $this
      */
-    public function setRpToken(string $token): self
+    public function setRpToken($token): self
     {
         $this->rpToken = $token;
         return $this;
@@ -87,10 +87,10 @@ class CustomerSecureTestHelper extends CustomerSecure
     /**
      * Set password reset token created at timestamp
      *
-     * @param string $createdAt
+     * @param string|null $createdAt
      * @return $this
      */
-    public function setRpTokenCreatedAt(string $createdAt): self
+    public function setRpTokenCreatedAt($createdAt): self
     {
         $this->rpTokenCreatedAt = $createdAt;
         return $this;
@@ -155,10 +155,10 @@ class CustomerSecureTestHelper extends CustomerSecure
     /**
      * Set password hash
      *
-     * @param string $hash
+     * @param string|null $hash
      * @return $this
      */
-    public function setPasswordHash(string $hash): self
+    public function setPasswordHash($hash): self
     {
         $this->passwordHash = $hash;
         return $this;
@@ -189,9 +189,9 @@ class CustomerSecureTestHelper extends CustomerSecure
     /**
      * Get failures number
      *
-     * @return int
+     * @return int|string
      */
-    public function getFailuresNum(): int
+    public function getFailuresNum()
     {
         return $this->failuresNum;
     }
@@ -199,10 +199,10 @@ class CustomerSecureTestHelper extends CustomerSecure
     /**
      * Set failures number
      *
-     * @param int $num
+     * @param int|string $num
      * @return $this
      */
-    public function setFailuresNum(int $num): self
+    public function setFailuresNum($num): self
     {
         $this->failuresNum = $num;
         return $this;
@@ -252,4 +252,3 @@ class CustomerSecureTestHelper extends CustomerSecure
         return $this;
     }
 }
-

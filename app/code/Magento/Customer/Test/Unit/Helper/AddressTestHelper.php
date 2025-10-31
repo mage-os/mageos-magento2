@@ -248,10 +248,23 @@ class AddressTestHelper extends Address
      * Get should ignore validation
      *
      * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getShouldIgnoreValidation()
     {
         return $this->data['should_ignore_validation'] ?? false;
+    }
+
+    /**
+     * Set should ignore validation
+     *
+     * @param bool $value
+     * @return $this
+     */
+    public function setShouldIgnoreValidation($value)
+    {
+        $this->data['should_ignore_validation'] = $value;
+        return $this;
     }
 
     /**
@@ -372,5 +385,57 @@ class AddressTestHelper extends Address
     public function getCustomerId()
     {
         return $this->data['customer_id'] ?? null;
+    }
+
+    /**
+     * Get is primary billing
+     *
+     * @return mixed
+     */
+    public function getIsPrimaryBilling()
+    {
+        return $this->data['is_primary_billing'] ?? null;
+    }
+
+    /**
+     * Get is primary shipping
+     *
+     * @return mixed
+     */
+    public function getIsPrimaryShipping()
+    {
+        return $this->data['is_primary_shipping'] ?? null;
+    }
+
+    /**
+     * Get force process
+     *
+     * @return mixed
+     */
+    public function getForceProcess()
+    {
+        return $this->data['force_process'] ?? null;
+    }
+
+    /**
+     * Get VAT ID
+     *
+     * @return mixed
+     */
+    public function getVatId()
+    {
+        return $this->data['vat_id'] ?? null;
+    }
+
+    /**
+     * Set VAT validation result
+     *
+     * @param mixed $result
+     * @return $this
+     */
+    public function setVatValidationResult($result): self
+    {
+        $this->data['vat_validation_result'] = $result;
+        return $this;
     }
 }

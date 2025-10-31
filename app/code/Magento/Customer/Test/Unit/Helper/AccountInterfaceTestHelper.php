@@ -12,6 +12,9 @@ use Magento\Framework\App\ActionFlag;
 
 /**
  * Test helper for AccountInterface with custom methods
+ * This is a test helper and doesn't need HTTP method restriction
+ * 
+ * @SuppressWarnings(PHPMD.AllPurposeAction)
  */
 class AccountInterfaceTestHelper implements AccountInterface
 {
@@ -52,4 +55,3 @@ class AccountInterfaceTestHelper implements AccountInterface
         return $this;
     }
 }
-

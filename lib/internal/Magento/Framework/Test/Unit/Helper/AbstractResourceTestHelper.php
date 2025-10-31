@@ -24,7 +24,7 @@ class AbstractResourceTestHelper extends AbstractResource
 
     /**
      * Resource initialization
-     * 
+     *
      * @return void
      */
     protected function _construct()
@@ -47,6 +47,7 @@ class AbstractResourceTestHelper extends AbstractResource
      *
      * @param mixed $object
      * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function saveInSetIncluding($object): self
     {
@@ -63,4 +64,3 @@ class AbstractResourceTestHelper extends AbstractResource
         return null;
     }
 }
-

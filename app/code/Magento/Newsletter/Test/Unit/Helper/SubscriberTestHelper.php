@@ -43,6 +43,7 @@ class SubscriberTestHelper extends Subscriber
      * @param int $customerId
      * @param int $websiteId
      * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function loadByCustomer(int $customerId, int $websiteId): \Magento\Newsletter\Model\Subscriber
     {
@@ -99,6 +100,7 @@ class SubscriberTestHelper extends Subscriber
      * @param string|null $key
      * @param mixed $index
      * @return mixed
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getData($key = '', $index = null)
     {

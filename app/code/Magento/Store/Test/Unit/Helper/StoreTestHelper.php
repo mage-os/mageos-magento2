@@ -33,6 +33,7 @@ class StoreTestHelper extends Store
      * @param string $type
      * @param bool|null $secure
      * @return string
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getBaseUrl($type = \Magento\Framework\UrlInterface::URL_TYPE_LINK, $secure = null): string
     {
@@ -51,4 +52,3 @@ class StoreTestHelper extends Store
         return $this;
     }
 }
-
