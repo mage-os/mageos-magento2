@@ -37,6 +37,8 @@ class WishlistItemPermissionsCollectionProcessor
      */
     public function execute(Collection $collection): Collection
     {
+        $initialCollection = clone $collection;
+
         $items = $collection->getItems();
         if (empty($items)) {
             return $collection;
@@ -64,12 +66,12 @@ class WishlistItemPermissionsCollectionProcessor
         }
 
         if (!empty($this->validProductIds[$cacheKey])) {
-            $collection->addFilter(
+            $initialCollection->addFieldToFilter(
                 'main_table.product_id',
-                'main_table.product_id IN(' . implode(",", $this->validProductIds[$cacheKey]) . ')',
-                'string'
+                ['in' => $this->validProductIds[$cacheKey]]
             );
-            $collection->clear();
+
+            $collection = $initialCollection;
         }
 
         return $collection;

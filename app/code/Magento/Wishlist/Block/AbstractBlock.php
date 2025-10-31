@@ -6,17 +6,13 @@
 
 namespace Magento\Wishlist\Block;
 
-use Magento\Catalog\Block\Product\Context;
 use Magento\Catalog\Helper\Image;
 use Magento\Catalog\Model\Product\Image\UrlBuilder;
-use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\View\ConfigInterface;
 use Magento\Framework\App\ObjectManager;
-use Magento\Wishlist\Model\WishlistItemPermissionsCollectionProcessor;
 
 /**
  * Wishlist Product Items abstract Block
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 abstract class AbstractBlock extends \Magento\Catalog\Block\Product\AbstractProduct
 {
@@ -50,25 +46,18 @@ abstract class AbstractBlock extends \Magento\Catalog\Block\Product\AbstractProd
     private $imageUrlBuilder;
 
     /**
-     * @var WishlistItemPermissionsCollectionProcessor
-     */
-    private $permissionCollectionProcessor;
-
-    /**
-     * @param Context $context
+     * @param \Magento\Catalog\Block\Product\Context $context
      * @param \Magento\Framework\App\Http\Context $httpContext
      * @param array $data
      * @param ConfigInterface|null $config
      * @param UrlBuilder|null $urlBuilder
-     * @param WishlistItemPermissionsCollectionProcessor|null $permissionCollectionProcessor
      */
     public function __construct(
         \Magento\Catalog\Block\Product\Context $context,
         \Magento\Framework\App\Http\Context $httpContext,
         array $data = [],
         ?ConfigInterface $config = null,
-        ?UrlBuilder $urlBuilder = null,
-        ?WishlistItemPermissionsCollectionProcessor $permissionCollectionProcessor = null
+        ?UrlBuilder $urlBuilder = null
     ) {
         $this->httpContext = $httpContext;
         parent::__construct(
@@ -77,8 +66,6 @@ abstract class AbstractBlock extends \Magento\Catalog\Block\Product\AbstractProd
         );
         $this->viewConfig = $config ?? ObjectManager::getInstance()->get(ConfigInterface::class);
         $this->imageUrlBuilder = $urlBuilder ?? ObjectManager::getInstance()->get(UrlBuilder::class);
-        $this->permissionCollectionProcessor = $permissionCollectionProcessor ??
-            ObjectManager::getInstance()->get(WishlistItemPermissionsCollectionProcessor::class);
     }
 
     /**
@@ -117,12 +104,10 @@ abstract class AbstractBlock extends \Magento\Catalog\Block\Product\AbstractProd
      * Create wishlist item collection
      *
      * @return \Magento\Wishlist\Model\ResourceModel\Item\Collection
-     * @throws NoSuchEntityException
      */
     protected function _createWishlistItemCollection()
     {
-        $itemCollection = $this->_getWishlist()->getItemCollection();
-        return $this->permissionCollectionProcessor->execute($itemCollection);
+        return $this->_getWishlist()->getItemCollection();
     }
 
     /**
@@ -247,7 +232,6 @@ abstract class AbstractBlock extends \Magento\Catalog\Block\Product\AbstractProd
      *
      * @param string $date
      * @deprecated 101.1.1
-     * @see getFormattedDate
      * @return string
      */
     public function getFormatedDate($date)
