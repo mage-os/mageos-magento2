@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2015 Adobe
+ * Copyright 2011 Adobe
  * All Rights Reserved.
  */
 namespace Magento\Framework\Model\ResourceModel;
@@ -208,6 +208,11 @@ abstract class AbstractResource
                 $value
             );
         }
+
+        if (is_array($value)) {
+            $value = $this->getSerializer()->serialize($value);
+        }
+
         return $value;
     }
 
