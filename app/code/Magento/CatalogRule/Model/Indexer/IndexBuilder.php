@@ -580,11 +580,7 @@ class IndexBuilder
             $batch = array_splice($productIds, 0, $this->batchCount);
 
             $where = ['product_id IN (?)' => $batch];
-            $deleted = $this->connection->delete($tableName, $where);
-
-            if ($deleted === 0) {
-                break;
-            }
+            $this->connection->delete($tableName, $where);
         }
     }
 
