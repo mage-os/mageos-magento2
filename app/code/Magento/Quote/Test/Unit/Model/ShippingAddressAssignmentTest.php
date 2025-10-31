@@ -8,15 +8,14 @@ declare(strict_types=1);
 namespace Magento\Quote\Test\Unit\Model;
 
 use Magento\Quote\Api\Data\AddressInterface;
-use Magento\Quote\Api\Data\CartExtension;
 use Magento\Quote\Api\Data\CartExtensionFactory;
+use Magento\Quote\Test\Unit\Helper\CartExtensionTestHelper;
 use Magento\Quote\Api\Data\ShippingAssignmentInterface;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Quote\Model\Quote\ShippingAssignment\ShippingAssignmentProcessor;
 use Magento\Quote\Model\ShippingAddressAssignment;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\MockObject\RuntimeException;
 use PHPUnit\Framework\TestCase;
 
 class ShippingAddressAssignmentTest extends TestCase
