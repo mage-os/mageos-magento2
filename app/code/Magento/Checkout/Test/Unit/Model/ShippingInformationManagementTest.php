@@ -332,6 +332,10 @@ class ShippingInformationManagementTest extends TestCase
             ->method('getItemsCount')
             ->willReturn(self::STUB_ITEMS_COUNT);
         $this->quoteMock->expects($this->once())
+            ->method('setIsMultiShipping')
+            ->with(false)
+            ->willReturnSelf();
+        $this->quoteMock->expects($this->once())
             ->method('setBillingAddress')
             ->with($billingAddress)
             ->willReturnSelf();
@@ -397,6 +401,9 @@ class ShippingInformationManagementTest extends TestCase
         $this->quoteMock->expects($this->once())
             ->method('getItemsCount')
             ->willReturn(self::STUB_ITEMS_COUNT);
+        $this->quoteMock->expects($this->once())
+            ->method('setIsMultiShipping')
+            ->with(false)->willReturnSelf();
         $this->quoteMock->expects($this->once())
             ->method('setBillingAddress')
             ->with($billingAddress)
@@ -500,6 +507,7 @@ class ShippingInformationManagementTest extends TestCase
      * Save address info test.
      *
      * @return void
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testSaveAddressInformation(): void
     {
@@ -586,6 +594,4 @@ class ShippingInformationManagementTest extends TestCase
             $this->model->saveAddressInformation($cartId, $addressInformationMock)
         );
     }
-
-    // Removed unused getCartExtensionMock()
 }

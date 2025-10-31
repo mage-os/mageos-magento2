@@ -20,17 +20,30 @@ use Magento\Quote\Test\Unit\Helper\QuoteIdMaskLoadByMaskedIdTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class GuestShippingInformationManagementTest extends TestCase
 {
     /**
-     * @var MockObject
+     * @var ShippingInformationManagementInterface|MockObject
      */
     protected $shippingInformationManagementMock;
 
     /**
-     * @var MockObject
+     * @var QuoteIdMaskFactory|MockObject
      */
     protected $quoteIdMaskFactoryMock;
+
+    /**
+     * @var ValidatorFactory|MockObject
+     */
+    protected $validatorFactoryMock;
+
+    /**
+     * @var AddressFactory|MockObject
+     */
+    protected $addressFactoryMock;
 
     /**
      * @var GuestShippingInformationManagement
