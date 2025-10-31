@@ -26,6 +26,7 @@ use Magento\Framework\Model\Context;
 use Magento\Framework\Registry;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\Stdlib\DateTime;
+use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Wishlist\Helper\Data;
 use Magento\Wishlist\Model\Item;
@@ -233,7 +234,31 @@ class WishlistTest extends TestCase
         );
     }
 
-    public function testLoadByCustomerId()
+    /**
+     * @return void
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws \PHPUnit\Framework\MockObject\Exception
+     */
+    public function testGetItemCollection(): void
+    {
+        $wishlistItemCollection = $this->createMock(Collection::class);
+        $wishlistItemCollection->expects($this->once())->method('addWishlistFilter')->willReturnSelf();
+        $wishlistItemCollection->expects($this->once())->method('addStoreFilter')->willReturnSelf();
+        $wishlistItemCollection->expects($this->once())->method('setVisibilityFilter')->willReturnSelf();
+        $this->permissionCollectionProcessor->expects($this->once())
+            ->method('execute')
+            ->with($wishlistItemCollection);
+        $this->itemsFactory->expects($this->once())->method('create')->willReturn($wishlistItemCollection);
+        $store = $this->createMock(StoreInterface::class);
+        $this->storeManager->expects($this->any())->method('getStores')->willReturn([$store]);
+        $this->wishlist->getItemCollection();
+    }
+
+    /**
+     * @return void
+     * @throws LocalizedException
+     */
+    public function testLoadByCustomerId(): void
     {
         $customerId = 1;
         $customerIdFieldName = 'customer_id';
@@ -350,6 +375,7 @@ class WishlistTest extends TestCase
         $this->itemsFactory->expects($this->any())
             ->method('create')
             ->willReturn($items);
+        $this->permissionCollectionProcessor->expects($this->once())->method('execute')->willReturn($items);
 
         $this->productRepository->expects($this->once())
             ->method('getById')

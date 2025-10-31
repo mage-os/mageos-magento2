@@ -56,6 +56,7 @@ class WishlistItemPermissionsCollectionProcessor
             );
 
             $validItems = [];
+            /** @var Item $item */
             foreach ($items as $item) {
                 if (!isset($products[$item->getProductId()]) || $products[$item->getProductId()]->getIsHidden()) {
                     continue;

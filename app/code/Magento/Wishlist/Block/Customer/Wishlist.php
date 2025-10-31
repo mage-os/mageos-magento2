@@ -3,14 +3,8 @@
  * Copyright 2013 Adobe
  * All Rights Reserved.
  */
-declare(strict_types=1);
 
 namespace Magento\Wishlist\Block\Customer;
-
-use Magento\Catalog\Block\Product\Context;
-use Magento\Catalog\Helper\Product\ConfigurationPool;
-use Magento\Customer\Helper\Session\CurrentCustomer;
-use Magento\Framework\Data\Helper\PostHelper;
 
 /**
  * Wishlist block customer items.
@@ -49,20 +43,20 @@ class Wishlist extends \Magento\Wishlist\Block\AbstractBlock
     protected $postDataHelper;
 
     /**
-     * @param Context $context
+     * @param \Magento\Catalog\Block\Product\Context $context
      * @param \Magento\Framework\App\Http\Context $httpContext
-     * @param ConfigurationPool $helperPool
-     * @param CurrentCustomer $currentCustomer
-     * @param PostHelper $postDataHelper
+     * @param \Magento\Catalog\Helper\Product\ConfigurationPool $helperPool
+     * @param \Magento\Customer\Helper\Session\CurrentCustomer $currentCustomer
+     * @param \Magento\Framework\Data\Helper\PostHelper $postDataHelper
      * @param array $data
      */
     public function __construct(
-        \Magento\Catalog\Block\Product\Context            $context,
-        \Magento\Framework\App\Http\Context               $httpContext,
+        \Magento\Catalog\Block\Product\Context $context,
+        \Magento\Framework\App\Http\Context $httpContext,
         \Magento\Catalog\Helper\Product\ConfigurationPool $helperPool,
-        \Magento\Customer\Helper\Session\CurrentCustomer  $currentCustomer,
-        \Magento\Framework\Data\Helper\PostHelper         $postDataHelper,
-        array                                             $data = []
+        \Magento\Customer\Helper\Session\CurrentCustomer $currentCustomer,
+        \Magento\Framework\Data\Helper\PostHelper $postDataHelper,
+        array $data = []
     ) {
         parent::__construct(
             $context,
@@ -79,12 +73,10 @@ class Wishlist extends \Magento\Wishlist\Block\AbstractBlock
      *
      * @param  \Magento\Wishlist\Model\ResourceModel\Item\Collection $collection
      * @return $this
-     * @throws \Exception
      */
     protected function _prepareCollection($collection)
     {
-        $collection->setInStockFilter()->setOrder('added_at', 'ASC');
-
+        $collection->setInStockFilter(true)->setOrder('added_at', 'ASC');
         return $this;
     }
 
