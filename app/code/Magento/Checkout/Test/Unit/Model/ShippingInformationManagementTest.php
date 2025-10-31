@@ -39,6 +39,7 @@ use Psr\Log\LoggerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Quote\Test\Unit\Helper\CartExtensionTestHelper;
+use Magento\Quote\Model\QuoteAddressValidationService;
 
 /**
  * Test for \Magento\Checkout\Model\ShippingInformationManagement.
@@ -171,6 +172,8 @@ class ShippingInformationManagementTest extends TestCase
         $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
         $this->totalsCollectorMock = $this->createMock(TotalsCollector::class);
         $this->addressComparatorMock = $this->createMock(AddressComparatorInterface::class);
+        $quoteAddressValidationServiceMock = $this->createMock(QuoteAddressValidationService::class);
+
         $this->model = new ShippingInformationManagement(
             $this->paymentMethodManagementMock,
             $this->paymentDetailsFactoryMock,
@@ -184,7 +187,8 @@ class ShippingInformationManagementTest extends TestCase
             $this->cartExtensionFactoryMock,
             $this->shippingAssignmentFactoryMock,
             $this->shippingFactoryMock,
-            $this->addressComparatorMock
+            $this->addressComparatorMock,
+            $quoteAddressValidationServiceMock
         );
     }
 
@@ -332,10 +336,6 @@ class ShippingInformationManagementTest extends TestCase
             ->method('getItemsCount')
             ->willReturn(self::STUB_ITEMS_COUNT);
         $this->quoteMock->expects($this->once())
-            ->method('setIsMultiShipping')
-            ->with(false)
-            ->willReturnSelf();
-        $this->quoteMock->expects($this->once())
             ->method('setBillingAddress')
             ->with($billingAddress)
             ->willReturnSelf();
@@ -401,9 +401,6 @@ class ShippingInformationManagementTest extends TestCase
         $this->quoteMock->expects($this->once())
             ->method('getItemsCount')
             ->willReturn(self::STUB_ITEMS_COUNT);
-        $this->quoteMock->expects($this->once())
-            ->method('setIsMultiShipping')
-            ->with(false)->willReturnSelf();
         $this->quoteMock->expects($this->once())
             ->method('setBillingAddress')
             ->with($billingAddress)

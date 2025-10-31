@@ -29,6 +29,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Magento\Quote\Test\Unit\Helper\QuoteIdMaskTestHelper;
+use Magento\Quote\Model\QuoteAddressValidationService;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -107,6 +108,8 @@ class GuestPaymentInformationManagementTest extends TestCase
         $this->saveLimiterMock = $this->createMock(PaymentSavingRateLimiterInterface::class);
         $this->paymentInformationManagementMock = $this->createMock(PaymentInformationManagementInterface::class);
         $this->addressComparatorMock = $this->createMock(AddressComparatorInterface::class);
+        $quoteAddressValidationServiceMock = $this->createMock(QuoteAddressValidationService::class);
+
         $this->model = new GuestPaymentInformationManagement(
             $this->billingAddressManagementMock,
             $this->paymentMethodManagementMock,
@@ -117,7 +120,8 @@ class GuestPaymentInformationManagementTest extends TestCase
             $this->loggerMock,
             $this->limiterMock,
             $this->saveLimiterMock,
-            $this->addressComparatorMock
+            $this->addressComparatorMock,
+            $quoteAddressValidationServiceMock
         );
     }
 
