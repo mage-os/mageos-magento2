@@ -167,4 +167,14 @@
     <type name="Magento\Catalog\Model\Indexer\Product\Price">
         <plugin name="recollect_quote_after_rule_change" type="Magento\CatalogRule\Plugin\Model\Indexer\RecollectQuoteAfterRuleChange"/>
     </type>
+    <virtualType name="Magento\CatalogRule\Model\ResourceModel\Product\OptimizedCollectionFactory" type="Magento\Catalog\Model\ResourceModel\Product\CollectionFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">Magento\CatalogRule\Model\ResourceModel\Product\Collection</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\CatalogRule\Model\Rule">
+        <arguments>
+            <argument name="productCollectionFactory" xsi:type="object">Magento\CatalogRule\Model\ResourceModel\Product\OptimizedCollectionFactory</argument>
+        </arguments>
+    </type>
 </config>
