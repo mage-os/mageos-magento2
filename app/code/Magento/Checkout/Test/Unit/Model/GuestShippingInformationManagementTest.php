@@ -11,10 +11,6 @@ use Magento\Checkout\Api\Data\PaymentDetailsInterface;
 use Magento\Checkout\Api\Data\ShippingInformationInterface;
 use Magento\Checkout\Api\ShippingInformationManagementInterface;
 use Magento\Checkout\Model\GuestShippingInformationManagement;
-use Magento\Customer\Model\AddressFactory;
-use Magento\Framework\Exception\InputException;
-use Magento\Framework\Validator\Factory as ValidatorFactory;
-use Magento\Quote\Model\QuoteIdMask;
 use Magento\Quote\Model\QuoteIdMaskFactory;
 use Magento\Quote\Test\Unit\Helper\QuoteIdMaskLoadByMaskedIdTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -36,16 +32,6 @@ class GuestShippingInformationManagementTest extends TestCase
     protected $quoteIdMaskFactoryMock;
 
     /**
-     * @var ValidatorFactory|MockObject
-     */
-    protected $validatorFactoryMock;
-
-    /**
-     * @var AddressFactory|MockObject
-     */
-    protected $addressFactoryMock;
-
-    /**
      * @var GuestShippingInformationManagement
      */
     protected $model;
@@ -56,13 +42,9 @@ class GuestShippingInformationManagementTest extends TestCase
         $this->shippingInformationManagementMock = $this->createMock(
             ShippingInformationManagementInterface::class
         );
-        $validatorFactory = $this->createMock(ValidatorFactory::class);
-        $addressFactory = $this->createMock(AddressFactory::class);
         $this->model = new GuestShippingInformationManagement(
             $this->quoteIdMaskFactoryMock,
-            $this->shippingInformationManagementMock,
-            $validatorFactory,
-            $addressFactory
+            $this->shippingInformationManagementMock
         );
     }
 
