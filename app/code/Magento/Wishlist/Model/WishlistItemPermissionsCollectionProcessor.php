@@ -14,6 +14,11 @@ use Magento\Wishlist\Model\ResourceModel\Item\Collection;
 class WishlistItemPermissionsCollectionProcessor
 {
     /**
+     * @var array
+     */
+    private array $validProductIds = [];
+
+    /**
      * @param ProductRepositoryInterface $productRepository
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
      */
@@ -33,27 +38,38 @@ class WishlistItemPermissionsCollectionProcessor
     public function execute(Collection $collection): Collection
     {
         $items = $collection->getItems();
-        $productIds = array_map(static fn ($item) => $item->getProductId(), $items);
-        $searchCriteria = $this->searchCriteriaBuilder
-            ->addFilter('entity_id', $productIds, 'in')
-            ->create();
-        $productCollection = $this->productRepository->getList($searchCriteria);
-        $products = array_combine(
-            array_map(fn ($p) => $p->getId(), $productCollection->getItems()),
-            $productCollection->getItems()
-        );
-
-        $validItems = [];
-        $collection->removeAllItems();
-        foreach ($items as $item) {
-            if (!isset($products[$item->getProductId()]) || $products[$item->getProductId()]->getIsHidden()) {
-                continue;
-            }
-            $validItems[] = $item->getProductId();
-            $collection->addItem($item);
+        if (empty($items)) {
+            return $collection;
         }
-        if (!empty($validItems)) {
-            $collection->addFieldToFilter('main_table.product_id', ['in' => $validItems]);
+        $productIds = $collection->getColumnValues('product_id');
+        $cacheKey = sha1(implode("-", $productIds));
+        if (!isset($this->validProductIds[$cacheKey])) {
+            $searchCriteria = $this->searchCriteriaBuilder
+                ->addFilter('entity_id', $productIds, 'in')
+                ->create();
+            $productCollection = $this->productRepository->getList($searchCriteria);
+            $products = array_combine(
+                array_map(fn ($p) => $p->getId(), $productCollection->getItems()),
+                $productCollection->getItems()
+            );
+
+            $validItems = [];
+            foreach ($items as $item) {
+                if (!isset($products[$item->getProductId()]) || $products[$item->getProductId()]->getIsHidden()) {
+                    continue;
+                }
+                $validItems[] = (int)$item->getProductId();
+            }
+            $this->validProductIds[$cacheKey] = $validItems;
+        }
+
+        if (!empty($this->validProductIds[$cacheKey])) {
+            $collection->addFilter(
+                'main_table.product_id',
+                'main_table.product_id IN(' . implode(",", $this->validProductIds[$cacheKey]) . ')',
+                'string'
+            );
+            $collection->clear();
         }
 
         return $collection;

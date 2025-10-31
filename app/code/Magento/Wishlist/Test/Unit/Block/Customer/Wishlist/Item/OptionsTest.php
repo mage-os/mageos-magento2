@@ -20,8 +20,8 @@ use PHPUnit\Framework\TestCase;
 
 class OptionsTest extends TestCase
 {
-    const TEST_PRODUCT_TYPE = 'testProductType';
-    const TEST_HELPER_CLASS_NAME = 'testHelperClass';
+    public const TEST_PRODUCT_TYPE = 'testProductType';
+    public const TEST_HELPER_CLASS_NAME = 'testHelperClass';
 
     /**
      * @var Escaper|MockObject

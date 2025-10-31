@@ -388,7 +388,8 @@ class WishlistTest extends TestCase
         return $newItem;
     }
 
-    protected function getMockForDataObject() {
+    protected function getMockForDataObject()
+    {
         $dataObjectMock = $this->createMock(DataObject::class);
         $dataObjectMock->expects($this->once())
             ->method('setData')

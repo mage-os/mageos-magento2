@@ -52,7 +52,7 @@ abstract class AbstractBlock extends \Magento\Catalog\Block\Product\AbstractProd
     /**
      * @var WishlistItemPermissionsCollectionProcessor
      */
-    private WishlistItemPermissionsCollectionProcessor $permissionCollectionProcessor;
+    private $permissionCollectionProcessor;
 
     /**
      * @param Context $context
