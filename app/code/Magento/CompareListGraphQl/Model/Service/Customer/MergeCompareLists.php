@@ -12,6 +12,7 @@ use Magento\Catalog\Model\CompareListFactory;
 use Magento\Catalog\Model\ResourceModel\Product\Compare\CompareList as ResourceCompareList;
 use Magento\Catalog\Model\ResourceModel\Product\Compare\Item\CollectionFactory as CompareItemsCollectionFactory;
 use Magento\CompareListGraphQl\Model\Service\AddToCompareList;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 
 /**
@@ -64,18 +65,33 @@ class MergeCompareLists
      * @param int $customerListId
      * @param ContextInterface $context
      * @return CompareList
+     * @throws LocalizedException
      * @throws \Exception
      */
     public function execute(int $guestListId, int $customerListId, ContextInterface $context): CompareList
     {
-        $items = $this->itemCollectionFactory->create();
-        $products = $items->getProductsByListId($guestListId);
+        if ($guestListId === $customerListId) {
+            throw new LocalizedException(__('Cannot merge a list with itself.'));
+        }
 
-        $this->addProductToCompareList->execute($customerListId, $products, $context);
+        $connection = $this->resourceCompareList->getConnection();
+        $connection->beginTransaction();
 
-        $guestList = $this->compareListFactory->create();
-        $this->resourceCompareList->load($guestList, $guestListId, 'list_id');
-        $this->resourceCompareList->delete($guestList);
+        try {
+            $items = $this->itemCollectionFactory->create();
+            $products = $items->getProductsByListId($guestListId);
+
+            $this->addProductToCompareList->execute($customerListId, $products, $context);
+
+            $guestList = $this->compareListFactory->create();
+            $this->resourceCompareList->load($guestList, $guestListId, 'list_id');
+            $this->resourceCompareList->delete($guestList);
+
+            $connection->commit();
+        } catch (\Exception $e) {
+            $connection->rollBack();
+            throw $e;
+        }
 
         $customerList = $this->compareListFactory->create();
         $this->resourceCompareList->load($customerList, $customerListId, 'list_id');
