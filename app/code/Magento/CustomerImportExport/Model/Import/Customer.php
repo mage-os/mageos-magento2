@@ -588,7 +588,7 @@ class Customer extends AbstractCustomer
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
-    protected function _validateRowForUpdate(array $rowData, $rowNumber)
+    protected function _validateRowForUpdate(array $rowData, int $rowNumber): void
     {
         if ($this->_checkUniqueKey($rowData, $rowNumber)) {
             $email = strtolower($rowData[self::COLUMN_EMAIL]);
@@ -657,7 +657,7 @@ class Customer extends AbstractCustomer
      * @param int $rowNumber
      * @return void
      */
-    protected function _validateRowForDelete(array $rowData, $rowNumber)
+    protected function _validateRowForDelete(array $rowData, int $rowNumber): void
     {
         if ($this->_checkUniqueKey($rowData, $rowNumber)) {
             if (!$this->_getCustomerId($rowData[self::COLUMN_EMAIL], $rowData[self::COLUMN_WEBSITE])) {

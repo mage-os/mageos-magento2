@@ -24,6 +24,7 @@ use Magento\ImportExport\Model\Export\Factory;
 use Magento\ImportExport\Model\ResourceModel\CollectionByPagesIteratorFactory;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManager;
+use Magento\CustomerImportExport\Test\Unit\Helper\AbstractModelTestHelper;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -94,11 +95,11 @@ class CustomerTest extends TestCase
         );
 
         $this->_model = new Customer(
-            $this->getMockForAbstractClass(ScopeConfigInterface::class),
+            $this->createMock(ScopeConfigInterface::class),
             $storeManager,
             $this->createMock(Factory::class),
             $this->createMock(CollectionByPagesIteratorFactory::class),
-            $this->getMockForAbstractClass(TimezoneInterface::class),
+            $this->createMock(TimezoneInterface::class),
             $this->createMock(Config::class),
             $this->createMock(CollectionFactory::class),
             $this->_getModelDependencies()
@@ -124,20 +125,12 @@ class CustomerTest extends TestCase
             $this->createMock(EntityFactory::class)
         );
         foreach ($this->_attributes as $attributeData) {
-            $arguments = $objectManagerHelper->getConstructArguments(
-                AbstractAttribute::class,
-                ['eavTypeFactory' => $this->createMock(TypeFactory::class)]
+            $attribute = $this->createPartialMock(
+                AbstractAttribute::class, 
+                ['_construct', 'getAttributeCode', 'getId']
             );
-            $arguments['data'] = $attributeData;
-            $attribute = $this->getMockForAbstractClass(
-                AbstractAttribute::class,
-                $arguments,
-                '',
-                true,
-                true,
-                true,
-                ['_construct']
-            );
+            $attribute->method('getAttributeCode')->willReturn($attributeData['attribute_code']);
+            $attribute->method('getId')->willReturn($attributeData['attribute_id']);
             $attributeCollection->addItem($attribute);
         }
 
@@ -207,15 +200,7 @@ class CustomerTest extends TestCase
     public function testExportItem()
     {
         /** @var AbstractAdapter $writer */
-        $writer = $this->getMockForAbstractClass(
-            AbstractAdapter::class,
-            [],
-            '',
-            false,
-            false,
-            true,
-            ['writeRow']
-        );
+        $writer = $this->createPartialMock(AbstractAdapter::class, ['writeRow']);
 
         $writer->expects(
             $this->once()
@@ -227,10 +212,8 @@ class CustomerTest extends TestCase
 
         $this->_model->setWriter($writer);
 
-        $objectManagerHelper = new ObjectManager($this);
-        $arguments = $objectManagerHelper->getConstructArguments(AbstractModel::class);
-        $arguments['data'] = $this->_customerData;
-        $item = $this->getMockForAbstractClass(AbstractModel::class, $arguments);
+        // Use AbstractModelTestHelper to support AbstractModel type requirement
+        $item = new AbstractModelTestHelper($this->_customerData);
 
         $this->_model->exportItem($item);
     }
