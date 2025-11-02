@@ -19,6 +19,7 @@ use Magento\Framework\Escaper;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Element\Template\Context;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -111,10 +112,8 @@ class NameTest extends TestCase
 
         $this->_options = $this->createMock(Options::class);
 
-        $this->attribute = $this->getMockBuilder(AttributeMetadataInterface::class)
-            ->getMockForAbstractClass();
-        $this->customerMetadata = $this->getMockBuilder(CustomerMetadataInterface::class)
-            ->getMockForAbstractClass();
+        $this->attribute = $this->createMock(AttributeMetadataInterface::class);
+        $this->customerMetadata = $this->createMock(CustomerMetadataInterface::class);
         $this->customerMetadata->expects($this->any())
             ->method('getAttributeMetadata')
             ->willReturn($this->attribute);
@@ -123,8 +122,7 @@ class NameTest extends TestCase
             ->method('getCustomAttributesMetadata')
             ->willReturn([]);
 
-        $this->addressMetadata = $this->getMockBuilder(AddressMetadataInterface::class)
-            ->getMockForAbstractClass();
+        $this->addressMetadata = $this->createMock(AddressMetadataInterface::class);
         $this->addressMetadata->expects($this->any())
             ->method('getAttributeMetadata')
             ->willReturn($this->attribute);
@@ -176,8 +174,8 @@ class NameTest extends TestCase
      * @param $method
      *
      * @return void
-     * @dataProvider methodDataProvider
      */
+    #[DataProvider('methodDataProvider')]
     public function testMethodWithNoSuchEntityException($method): void
     {
         $this->customerMetadata->expects(
@@ -265,9 +263,7 @@ class NameTest extends TestCase
          * Added some padding so that the trim() call on Customer::getPrefix() will remove it. Also added
          * special characters so that the escapeHtml() method returns a htmlspecialchars translated value.
          */
-        $customer = $this->getMockBuilder(
-            CustomerInterface::class
-        )->getMockForAbstractClass();
+        $customer = $this->createMock(CustomerInterface::class);
         $customer->expects($this->once())->method('getPrefix')->willReturn('  <' . self::PREFIX . '>  ');
 
         $this->_block->setObject($customer);
@@ -295,9 +291,7 @@ class NameTest extends TestCase
      */
     public function testGetPrefixOptionsEmpty(): void
     {
-        $customer = $this->getMockBuilder(
-            CustomerInterface::class
-        )->getMockForAbstractClass();
+        $customer = $this->createMock(CustomerInterface::class);
         $this->_block->setObject($customer);
 
         $this->_options->expects(
@@ -320,9 +314,7 @@ class NameTest extends TestCase
          * Added padding and special characters to show that trim() works on Customer::getSuffix() and that
          * a properly htmlspecialchars translated value is returned.
          */
-        $customer = $this->getMockBuilder(
-            CustomerInterface::class
-        )->getMockForAbstractClass();
+        $customer = $this->createMock(CustomerInterface::class);
         $customer->expects($this->once())->method('getSuffix')->willReturn('  <' . self::SUFFIX . '>  ');
         $this->_block->setObject($customer);
 
@@ -349,9 +341,7 @@ class NameTest extends TestCase
      */
     public function testGetSuffixOptionsEmpty(): void
     {
-        $customer = $this->getMockBuilder(
-            CustomerInterface::class
-        )->getMockForAbstractClass();
+        $customer = $this->createMock(CustomerInterface::class);
         $this->_block->setObject($customer);
 
         $this->_options->expects(
@@ -385,8 +375,8 @@ class NameTest extends TestCase
      * @param string $expectedValue The expected value of Name::getContainerClassName()
      *
      * @return void
-     * @dataProvider getContainerClassNameProvider
      */
+    #[DataProvider('getContainerClassNameProvider')]
     public function testGetContainerClassName(
         $isPrefixVisible,
         $isMiddlenameVisible,
@@ -431,8 +421,8 @@ class NameTest extends TestCase
      * @param string $expectedValue The expected value of Name::getStoreLabel()
      *
      * @return void
-     * @dataProvider getStoreLabelProvider
      */
+    #[DataProvider('getStoreLabelProvider')]
     public function testGetStoreLabel($attributeCode, $storeLabel, $expectedValue): void
     {
         $this->attribute->expects($this->atLeastOnce())->method('getStoreLabel')->willReturn($storeLabel);
@@ -484,8 +474,7 @@ class NameTest extends TestCase
      */
     private function _setUpShowAttribute(array $data): void
     {
-        $customer = $this->getMockBuilder(CustomerInterface::class)
-            ->getMockForAbstractClass();
+        $customer = $this->createMock(CustomerInterface::class);
 
         /**
          * These settings cause the first code path in Name::_getAttribute() to be executed, which

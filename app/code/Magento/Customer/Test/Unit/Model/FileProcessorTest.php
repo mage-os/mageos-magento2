@@ -22,6 +22,7 @@ use Magento\Framework\Url\EncoderInterface;
 use Magento\Framework\UrlInterface;
 use Magento\MediaStorage\Model\File\Uploader;
 use Magento\MediaStorage\Model\File\UploaderFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -65,31 +66,24 @@ class FileProcessorTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->mediaDirectory = $this->getMockBuilder(WriteInterface::class)
-            ->getMockForAbstractClass();
+        $this->mediaDirectory = $this->createMock(WriteInterface::class);
 
-        $this->filesystem = $this->getMockBuilder(Filesystem::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->filesystem = $this->createMock(Filesystem::class);
         $this->filesystem->expects($this->any())
             ->method('getDirectoryWrite')
             ->with(DirectoryList::MEDIA)
             ->willReturn($this->mediaDirectory);
 
-        $this->uploaderFactory = $this->getMockBuilder(UploaderFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->uploaderFactory = $this->createPartialMock(
+            UploaderFactory::class,
+            ['create']
+        );
 
-        $this->urlBuilder = $this->getMockBuilder(UrlInterface::class)
-            ->getMockForAbstractClass();
+        $this->urlBuilder = $this->createMock(UrlInterface::class);
 
-        $this->urlEncoder = $this->getMockBuilder(EncoderInterface::class)
-            ->getMockForAbstractClass();
+        $this->urlEncoder = $this->createMock(EncoderInterface::class);
 
-        $this->mime = $this->getMockBuilder(Mime::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->mime = $this->createMock(Mime::class);
     }
 
     /**
@@ -157,13 +151,15 @@ class FileProcessorTest extends TestCase
     }
 
     /**
+     * Test get view URL
+     *
      * @param array $params
      * @param string $filePath
      * @param string $expectedUrl
      *
      * @return void
-     * @dataProvider getViewUrlDataProvider
      */
+    #[DataProvider('getViewUrlDataProvider')]
     public function testGetViewUrlTest(
         array $params,
         string $filePath,
@@ -277,9 +273,7 @@ class FileProcessorTest extends TestCase
             'path' => 'filepath'
         ];
 
-        $uploaderMock = $this->getMockBuilder(Uploader::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $uploaderMock = $this->createMock(Uploader::class);
         $uploaderMock->expects($this->once())
             ->method('setFilesDispersion')
             ->with(false)
@@ -334,9 +328,7 @@ class FileProcessorTest extends TestCase
 
         $absolutePath = '/absolute/filepath';
 
-        $uploaderMock = $this->getMockBuilder(Uploader::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $uploaderMock = $this->createMock(Uploader::class);
         $uploaderMock->expects($this->once())
             ->method('setFilesDispersion')
             ->with(false)
@@ -434,7 +426,7 @@ class FileProcessorTest extends TestCase
         $path = CustomerMetadataInterface::ENTITY_TYPE_CUSTOMER . '/' . FileProcessor::TMP_DIR . $filePath;
         $newPath = $destinationPath . $filePath;
 
-        $objectManagerMock = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        $objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         $mockFileSystem = $this->createMock(Filesystem::class);
         $mockRead = $this->createMock(ReadInterface::class);
         $objectManagerMock->method('get')->willReturn($mockFileSystem);
@@ -472,7 +464,7 @@ class FileProcessorTest extends TestCase
 
         $path = CustomerMetadataInterface::ENTITY_TYPE_CUSTOMER . '/' . FileProcessor::TMP_DIR . $filePath;
 
-        $objectManagerMock = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        $objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         $mockFileSystem = $this->createMock(Filesystem::class);
         $mockRead = $this->createMock(ReadInterface::class);
         $objectManagerMock->method('get')->willReturn($mockFileSystem);
@@ -502,7 +494,7 @@ class FileProcessorTest extends TestCase
      */
     public function testMoveTemporaryFileWithException(): void
     {
-        $objectManagerMock = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        $objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         $mockFileSystem = $this->createMock(Filesystem::class);
         $mockRead = $this->createMock(ReadInterface::class);
         $objectManagerMock->method($this->logicalOr('get', 'create'))->willReturn($mockFileSystem);

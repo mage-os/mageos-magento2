@@ -91,7 +91,7 @@ class ValidateTest extends TestCase
         if (!function_exists('libxml_set_external_entity_loader')) {
             $this->markTestSkipped('Skipped on HHVM. Will be fixed in MAGETWO-45033');
         }
-        $this->customer = $this->getMockForAbstractClass(
+        $this->customer = $this->createMock(
             CustomerInterface::class,
             [],
             '',
@@ -106,7 +106,7 @@ class ValidateTest extends TestCase
         );
         $this->customerDataFactory->expects($this->once())->method('create')->willReturn($this->customer);
         $this->form = $this->createMock(Form::class);
-        $this->request = $this->getMockForAbstractClass(
+        $this->request = $this->createMock(
             RequestInterface::class,
             [],
             '',
@@ -115,7 +115,7 @@ class ValidateTest extends TestCase
             true,
             ['getPost', 'getParam']
         );
-        $this->response = $this->getMockForAbstractClass(
+        $this->response = $this->createMock(
             ResponseInterface::class,
             [],
             '',
@@ -128,7 +128,7 @@ class ValidateTest extends TestCase
         );
         $this->dataObjectHelper = $this->createMock(DataObjectHelper::class);
         $this->dataObjectHelper->expects($this->once())->method('populateWithArray');
-        $this->customerAccountManagement = $this->getMockForAbstractClass(
+        $this->customerAccountManagement = $this->createMock(
             AccountManagementInterface::class,
             [],
             '',
@@ -182,7 +182,7 @@ class ValidateTest extends TestCase
         $this->form->expects($this->once())->method('setInvisibleIgnored');
         $this->form->expects($this->atLeastOnce())->method('extractData')->willReturn([]);
 
-        $validationResult = $this->getMockForAbstractClass(
+        $validationResult = $this->createMock(
             ValidationResultsInterface::class,
             [],
             '',
@@ -214,7 +214,7 @@ class ValidateTest extends TestCase
             ->method('validateData')
             ->willReturn([$error]);
 
-        $validationResult = $this->getMockForAbstractClass(
+        $validationResult = $this->createMock(
             ValidationResultsInterface::class,
             [],
             '',
@@ -244,7 +244,7 @@ class ValidateTest extends TestCase
         $this->form->expects($this->never())
             ->method('validateData');
 
-        $validationResult = $this->getMockForAbstractClass(
+        $validationResult = $this->createMock(
             ValidationResultsInterface::class,
             [],
             '',
@@ -285,7 +285,7 @@ class ValidateTest extends TestCase
         $this->form->expects($this->once())->method('setInvisibleIgnored');
         $this->form->expects($this->atLeastOnce())->method('extractData')->willReturn([]);
 
-        $validationResult = $this->getMockForAbstractClass(
+        $validationResult = $this->createMock(
             ValidationResultsInterface::class,
             [],
             '',

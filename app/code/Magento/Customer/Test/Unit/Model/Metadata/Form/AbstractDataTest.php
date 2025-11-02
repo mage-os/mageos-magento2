@@ -21,6 +21,7 @@ use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Framework\Validator\Alnum;
 use Magento\Framework\Validator\EmailAddress;
 use Magento\Framework\Validator\Hostname;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -87,7 +88,7 @@ class AbstractDataTest extends TestCase
             ->getMock();
         $this->loggerMock = $this->getMockBuilder(LoggerInterface::class)
             ->getMock();
-        $this->attributeMock = $this->getMockForAbstractClass(AttributeMetadataInterface::class);
+        $this->attributeMock = $this->createMock(AttributeMetadataInterface::class);
         $this->value = 'VALUE';
         $this->entityTypeCode = 'ENTITY_TYPE_CODE';
         $this->isAjax = false;
@@ -136,7 +137,9 @@ class AbstractDataTest extends TestCase
      * @param bool $bool
      *
      * @return void
-     * @dataProvider trueFalseDataProvider
+     */
+    #[DataProvider('trueFalseDataProvider')]
+    /**
      */
     public function testSetRequestScopeOnly($bool): void
     {
@@ -170,7 +173,9 @@ class AbstractDataTest extends TestCase
      * @param bool|string $filter
      *
      * @return void
-     * @dataProvider applyInputFilterProvider
+     */
+    #[DataProvider('applyInputFilterProvider')]
+    /**
      */
     public function testApplyInputFilter($input, $output, $filter): void
     {
@@ -199,7 +204,9 @@ class AbstractDataTest extends TestCase
      * @param string           $output
      *
      * @return void
-     * @dataProvider dateFilterFormatProvider
+     */
+    #[DataProvider('dateFilterFormatProvider')]
+    /**
      */
     public function testDateFilterFormat($format, $output): void
     {
@@ -237,7 +244,9 @@ class AbstractDataTest extends TestCase
      * @param bool|string $filter
      *
      * @return void
-     * @dataProvider applyOutputFilterDataProvider
+     */
+    #[DataProvider('applyOutputFilterDataProvider')]
+    /**
      */
     public function testApplyOutputFilter($input, $output, $filter): void
     {
@@ -272,13 +281,13 @@ class AbstractDataTest extends TestCase
      * @param bool|array  $expectedOutput
      *
      * @return void
-     * @dataProvider validateInputRuleDataProvider
+     */
+    #[DataProvider('validateInputRuleDataProvider')]
+    /**
      */
     public function testValidateInputRule($value, $label, $inputValidation, $expectedOutput): void
     {
-        $validationRule = $this->getMockBuilder(ValidationRuleInterface::class)->disableOriginalConstructor()
-            ->onlyMethods(['getName', 'getValue'])
-            ->getMockForAbstractClass();
+        $validationRule = $this->createMock(ValidationRuleInterface::class);
 
         $validationRule->method('getName')
             ->willReturn('input_validation');
@@ -360,7 +369,9 @@ class AbstractDataTest extends TestCase
      * @param bool $ajaxRequest
      *
      * @return void
-     * @dataProvider trueFalseDataProvider
+     */
+    #[DataProvider('trueFalseDataProvider')]
+    /**
      */
     public function testGetIsAjaxRequest($ajaxRequest): void
     {
@@ -384,7 +395,9 @@ class AbstractDataTest extends TestCase
      * @param string                        $expectedValue
      *
      * @return void
-     * @dataProvider getRequestValueDataProvider
+     */
+    #[DataProvider('getRequestValueDataProvider')]
+    /**
      */
     public function testGetRequestValue(
         $request,

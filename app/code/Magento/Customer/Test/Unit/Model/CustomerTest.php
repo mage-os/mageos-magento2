@@ -34,6 +34,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManager;
 use Magento\Store\Model\Website;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -121,9 +122,9 @@ class CustomerTest extends TestCase
         $this->_config = $this->createMock(Config::class);
         $this->_attribute = $this->createMock(Attribute::class);
         $this->_storeManager = $this->createMock(StoreManager::class);
-        $this->_scopeConfigMock = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $this->_scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
         $this->_transportBuilderMock = $this->createMock(TransportBuilder::class);
-        $this->_transportMock = $this->getMockForAbstractClass(TransportInterface::class);
+        $this->_transportMock = $this->createMock(TransportInterface::class);
         $this->attributeFactoryMock = $this->createPartialMock(
             \Magento\Customer\Model\AttributeFactory::class,
             ['create']
@@ -143,7 +144,7 @@ class CustomerTest extends TestCase
             ->method('getIdFieldName')
             ->willReturn('id');
         $this->registryMock = $this->createPartialMock(Registry::class, ['registry']);
-        $this->_encryptor = $this->getMockForAbstractClass(EncryptorInterface::class);
+        $this->_encryptor = $this->createMock(EncryptorInterface::class);
         $helper = new ObjectManager($this);
         $this->accountConfirmation = $this->createMock(AccountConfirmation::class);
         $this->addressesFactory = $this->getMockBuilder(AddressCollectionFactory::class)
@@ -240,7 +241,7 @@ class CustomerTest extends TestCase
                 ->method($method)
                 ->willReturnSelf();
         }
-        $transportMock = $this->getMockForAbstractClass(TransportInterface::class);
+        $transportMock = $this->createMock(TransportInterface::class);
         $transportMock->expects($this->once())
             ->method('sendMessage')
             ->willReturnSelf();
@@ -263,10 +264,12 @@ class CustomerTest extends TestCase
     }
 
     /**
-     * @param $lockExpires
-     * @param $expectedResult
-     * @dataProvider isCustomerLockedDataProvider
+     * Test if customer is locked
+     *
+     * @param string|null $lockExpires
+     * @param bool $expectedResult
      */
+    #[DataProvider('isCustomerLockedDataProvider')]
     public function testIsCustomerLocked($lockExpires, $expectedResult)
     {
         $this->_model->setLockExpires($lockExpires);
@@ -285,12 +288,14 @@ class CustomerTest extends TestCase
     }
 
     /**
+     * Test if confirmation is required
+     *
      * @param int $customerId
      * @param int $websiteId
      * @param bool $isConfirmationRequired
      * @param bool $expected
-     * @dataProvider dataProviderIsConfirmationRequired
      */
+    #[DataProvider('dataProviderIsConfirmationRequired')]
     public function testIsConfirmationRequired(
         $customerId,
         $websiteId,
@@ -388,7 +393,7 @@ class CustomerTest extends TestCase
         $customerId = 1;
         $this->_model->setEntityId($customerId);
         $this->_model->setId($customerId);
-        $addressDataModel = $this->getMockForAbstractClass(AddressInterface::class);
+        $addressDataModel = $this->createMock(AddressInterface::class);
         $addressDataModel->expects($this->exactly(4))->method('isDefaultShipping')->willReturn(true);
         $address = $this->getMockBuilder(AddressModel::class)
             ->disableOriginalConstructor()
@@ -407,7 +412,7 @@ class CustomerTest extends TestCase
         $addressCollection->expects($this->atLeastOnce())->method('getItems')
             ->willReturn($addresses);
         $this->addressesFactory->expects($this->atLeastOnce())->method('create')->willReturn($addressCollection);
-        $customerDataObject = $this->getMockForAbstractClass(CustomerInterface::class);
+        $customerDataObject = $this->createMock(CustomerInterface::class);
         $this->customerDataFactory->expects($this->atLeastOnce())->method('create')->willReturn($customerDataObject);
         $this->dataObjectHelper->expects($this->atLeastOnce())->method('populateWithArray')
             ->with($customerDataObject, $this->_model->getData(), CustomerInterface::class)

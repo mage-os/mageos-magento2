@@ -44,7 +44,7 @@ class NavigationTest extends TestCase
     protected function setUp(): void
     {
         $this->contextMock = $this->createMock(Context::class);
-        $this->layoutMock = $this->getMockForAbstractClass(LayoutInterface::class);
+        $this->layoutMock = $this->createMock(LayoutInterface::class);
         $this->contextMock->expects($this->any())
             ->method('getLayout')
             ->willReturn($this->layoutMock);
@@ -61,18 +61,19 @@ class NavigationTest extends TestCase
      * Test get links with block customer account link and wish list link
      *
      * @return void
+     * @SuppressWarnings(PHPMD.LongVariable)
      */
     public function testGetLinksWithCustomerAndWishList()
     {
-        $wishListLinkMock = $this->getMockBuilder(WishListLink::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getSortOrder'])
-            ->getMock();
+        $wishListLinkMock = $this->createPartialMock(
+            WishListLink::class,
+            ['getSortOrder']
+        );
 
-        $customerAccountLinkMock = $this->getMockBuilder(CustomerAccountLink::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getSortOrder'])
-            ->getMock();
+        $customerAccountLinkMock = $this->createPartialMock(
+            CustomerAccountLink::class,
+            ['getSortOrder']
+        );
 
         $wishListLinkMock->expects($this->any())
             ->method('getSortOrder')

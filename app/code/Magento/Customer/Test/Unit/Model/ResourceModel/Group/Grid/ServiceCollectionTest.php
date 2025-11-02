@@ -19,6 +19,7 @@ use Magento\Framework\Api\SortOrder;
 use Magento\Framework\Api\SortOrderBuilder;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -64,7 +65,7 @@ class ServiceCollectionTest extends TestCase
         $this->groupRepositoryMock = $this->getMockBuilder(GroupRepositoryInterface::class)
             ->getMock();
 
-        $this->searchResults = $this->getMockForAbstractClass(SearchResultsInterface::class);
+        $this->searchResults = $this->createMock(SearchResultsInterface::class);
 
         $this->searchResults
             ->expects($this->any())
@@ -72,7 +73,7 @@ class ServiceCollectionTest extends TestCase
         $this->searchResults
             ->expects($this->any())
             ->method('getItems')
-            ->willReturn($this->returnValue([]));
+            ->willReturn([]);
 
         $this->serviceCollection = $this->objectManager
             ->getObject(
@@ -226,7 +227,9 @@ class ServiceCollectionTest extends TestCase
      * @param string[] $fields
      * @param array $conditions
      *
-     * @dataProvider addFieldToFilterInconsistentArraysDataProvider
+     */
+    #[DataProvider('addFieldToFilterInconsistentArraysDataProvider')]
+    /**
      */
     public function testAddFieldToFilterInconsistentArrays($fields, $conditions)
     {
@@ -256,7 +259,7 @@ class ServiceCollectionTest extends TestCase
     }
 
     /**
-     * @dataProvider addFieldToFilterInconsistentArraysDataProvider
+     * Test adding field to filter with empty arrays
      */
     public function testAddFieldToFilterEmptyArrays()
     {

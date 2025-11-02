@@ -441,4 +441,21 @@ class CustomerInterfaceTestHelper implements CustomerInterface
         $this->data['custom_attributes'][$attributeCode] = $attributeValue;
         return $this;
     }
+
+    /**
+     * Set data array
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return $this
+     */
+    public function setData($key, $value = null)
+    {
+        if ($value === null && is_array($key)) {
+            $this->data = $key;
+        } else {
+            $this->data[$key] = $value;
+        }
+        return $this;
+    }
 }

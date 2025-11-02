@@ -10,6 +10,7 @@ namespace Magento\Customer\Test\Unit\Block\Account;
 use Magento\Customer\Block\Account\Customer;
 use Magento\Framework\App\Http\Context;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -23,9 +24,7 @@ class CustomerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->httpContext = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->httpContext = $this->createMock(Context::class);
 
         $this->block = (new ObjectManager($this))
             ->getObject(Customer::class, ['httpContext' => $this->httpContext]);
@@ -45,8 +44,8 @@ class CustomerTest extends TestCase
     /**
      * @param $isLoggedIn
      * @param $result
-     * @dataProvider customerLoggedInDataProvider
      */
+    #[DataProvider('customerLoggedInDataProvider')]
     public function testCustomerLoggedIn($isLoggedIn, $result)
     {
         $this->httpContext->expects($this->once())->method('getValue')

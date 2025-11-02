@@ -57,19 +57,11 @@ class DeleteButtonTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->addressFactory = $this->getMockBuilder(AddressFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->urlBuilder = $this->getMockForAbstractClass(UrlInterface::class);
-        $this->addressResourceModel = $this->getMockBuilder(Address::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->request = $this->getMockForAbstractClass(RequestInterface::class);
-        $this->addressRepository = $this->getMockBuilder(
-            AddressRepository::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->addressFactory = $this->createMock(AddressFactory::class);
+        $this->urlBuilder = $this->createMock(UrlInterface::class);
+        $this->addressResourceModel = $this->createMock(Address::class);
+        $this->request = $this->createMock(RequestInterface::class);
+        $this->addressRepository = $this->createMock(AddressRepository::class);
         $objectManagerHelper = new ObjectManagerHelper($this);
 
         $this->deleteButton = $objectManagerHelper->getObject(
@@ -93,9 +85,7 @@ class DeleteButtonTest extends TestCase
         $customerId = 2;
 
         /** @var \Magento\Customer\Model\Address|MockObject $address */
-        $address = $this->getMockBuilder(\Magento\Customer\Model\Address::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $address = $this->createMock(\Magento\Customer\Model\Address::class);
         $address->expects($this->atLeastOnce())->method('getEntityId')->willReturn($addressId);
         $address->expects($this->atLeastOnce())->method('getCustomerId')->willReturn($customerId);
         $this->addressFactory->expects($this->atLeastOnce())->method('create')->willReturn($address);

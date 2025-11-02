@@ -10,6 +10,7 @@ use Magento\Customer\Api\Data\ValidationRuleInterface;
 use Magento\Customer\Model\Metadata\Form\Text;
 use Magento\Framework\Phrase;
 use Magento\Framework\Stdlib\StringUtils;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class TextTest extends AbstractFormTestCase
 {
@@ -48,7 +49,9 @@ class TextTest extends AbstractFormTestCase
     /**
      * @param string|int|bool $value to assign to boolean
      * @param bool $expected text output
-     * @dataProvider validateValueDataProvider
+     */
+    #[DataProvider('validateValueDataProvider')]
+    /**
      */
     public function testValidateValue($value, $expected)
     {
@@ -76,7 +79,9 @@ class TextTest extends AbstractFormTestCase
     /**
      * @param string|int|bool|null $value to assign to boolean
      * @param string|bool|null $expected text output
-     * @dataProvider validateValueRequiredDataProvider
+     */
+    #[DataProvider('validateValueRequiredDataProvider')]
+    /**
      */
     public function testValidateValueRequired($value, $expected)
     {
@@ -120,14 +125,13 @@ class TextTest extends AbstractFormTestCase
     /**
      * @param string|int|bool|null $value to assign to boolean
      * @param string|bool $expected text output
-     * @dataProvider validateValueLengthDataProvider
+     */
+    #[DataProvider('validateValueLengthDataProvider')]
+    /**
      */
     public function testValidateValueLength($value, $expected)
     {
-        $minTextLengthRule = $this->getMockBuilder(ValidationRuleInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getName', 'getValue'])
-            ->getMockForAbstractClass();
+        $minTextLengthRule = $this->createMock(ValidationRuleInterface::class);
         $minTextLengthRule->expects($this->any())
             ->method('getName')
             ->willReturn('min_text_length');
@@ -135,10 +139,7 @@ class TextTest extends AbstractFormTestCase
             ->method('getValue')
             ->willReturn(4);
 
-        $maxTextLengthRule = $this->getMockBuilder(ValidationRuleInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getName', 'getValue'])
-            ->getMockForAbstractClass();
+        $maxTextLengthRule = $this->createMock(ValidationRuleInterface::class);
         $maxTextLengthRule->expects($this->any())
             ->method('getName')
             ->willReturn('max_text_length');
@@ -146,10 +147,7 @@ class TextTest extends AbstractFormTestCase
             ->method('getValue')
             ->willReturn(8);
 
-        $inputValidationRule = $this->getMockBuilder(ValidationRuleInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getName', 'getValue'])
-            ->getMockForAbstractClass();
+        $inputValidationRule = $this->createMock(ValidationRuleInterface::class);
         $inputValidationRule->expects($this->any())
             ->method('getName')
             ->willReturn('input_validation');

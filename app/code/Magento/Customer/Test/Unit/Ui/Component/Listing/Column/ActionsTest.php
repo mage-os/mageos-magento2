@@ -32,21 +32,13 @@ class ActionsTest extends TestCase
     /** @var UrlInterface|MockObject */
     protected $urlBuilder;
 
-    protected function setup(): void
+    protected function setUp(): void
     {
-        $this->context = $this->getMockBuilder(ContextInterface::class)
-            ->getMockForAbstractClass();
-        $processor = $this->getMockBuilder(Processor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->context = $this->createMock(ContextInterface::class);
+        $processor = $this->createMock(Processor::class);
         $this->context->expects($this->never())->method('getProcessor')->willReturn($processor);
         $this->uiComponentFactory = $this->createMock(UiComponentFactory::class);
-        $this->urlBuilder = $this->getMockForAbstractClass(
-            UrlInterface::class,
-            [],
-            '',
-            false
-        );
+        $this->urlBuilder = $this->createMock(UrlInterface::class);
         $this->component = new Actions(
             $this->context,
             $this->uiComponentFactory,

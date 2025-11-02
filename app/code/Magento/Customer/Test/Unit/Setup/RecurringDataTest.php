@@ -15,6 +15,7 @@ use Magento\Framework\Indexer\StateInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -64,28 +65,21 @@ class RecurringDataTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManagerHelper = new ObjectManagerHelper($this);
-        $this->state = $this->getMockBuilder(StateInterface::class)
-            ->onlyMethods(['getStatus'])
-            ->getMockForAbstractClass();
-        $this->indexer = $this->getMockBuilder(IndexerInterface::class)
-            ->onlyMethods(['getState', 'reindexAll'])
-            ->getMockForAbstractClass();
+        $this->state = $this->createMock(StateInterface::class);
+        $this->indexer = $this->createMock(IndexerInterface::class);
         $this->indexer->expects($this->any())
             ->method('getState')
             ->willReturn($this->state);
-        $this->indexerRegistry = $this->getMockBuilder(IndexerRegistry::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['get'])
-            ->getMock();
+        $this->indexerRegistry = $this->createPartialMock(
+            IndexerRegistry::class,
+            ['get']
+        );
         $this->indexerRegistry->expects($this->any())
             ->method('get')
             ->with(Customer::CUSTOMER_GRID_INDEXER_ID)
             ->willReturn($this->indexer);
-        $this->setup = $this->getMockBuilder(ModuleDataSetupInterface::class)
-            ->onlyMethods(['tableExists'])
-            ->getMockForAbstractClass();
-        $this->context = $this->getMockBuilder(ModuleContextInterface::class)
-            ->getMockForAbstractClass();
+        $this->setup = $this->createMock(ModuleDataSetupInterface::class);
+        $this->context = $this->createMock(ModuleContextInterface::class);
 
         $this->recurringData = $this->objectManagerHelper->getObject(
             RecurringData::class,
@@ -100,8 +94,8 @@ class RecurringDataTest extends TestCase
      * @param string $indexerState
      * @param int $countReindex
      * @return void
-     * @dataProvider installDataProvider
      */
+    #[DataProvider('installDataProvider')]
     public function testInstall(bool $isTableExists, string $indexerState, int $countReindex)
     {
         $this->setup->expects($this->any())

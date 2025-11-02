@@ -153,24 +153,9 @@ class InlineEditTest extends TestCase
     {
         $objectManager = new ObjectManager($this);
         $this->escaper = new Escaper();
-        $this->request = $this->getMockForAbstractClass(
-            RequestInterface::class,
-            [],
-            '',
-            false
-        );
-        $this->messageManager = $this->getMockForAbstractClass(
-            ManagerInterface::class,
-            [],
-            '',
-            false
-        );
-        $this->customerData = $this->getMockForAbstractClass(
-            CustomerInterface::class,
-            [],
-            '',
-            false
-        );
+        $this->request = $this->createMock(RequestInterface::class);
+        $this->messageManager = $this->createMock(ManagerInterface::class);
+        $this->customerData = $this->createMock(CustomerInterface::class);
 
         $this->address = $this->getMock(AddressInterface::class, 'address');
 
@@ -181,39 +166,17 @@ class InlineEditTest extends TestCase
             ['create']
         );
         $this->resultJson = $this->createMock(Json::class);
-        $this->customerRepository = $this->getMockForAbstractClass(
-            CustomerRepositoryInterface::class,
-            [],
-            '',
-            false
-        );
+        $this->customerRepository = $this->createMock(CustomerRepositoryInterface::class);
         $this->dataObjectHelper = $this->createMock(DataObjectHelper::class);
         $this->addressDataFactory = $this->createPartialMock(
             AddressInterfaceFactory::class,
             ['create']
         );
-        $this->addressRepository = $this->getMockForAbstractClass(
-            AddressRepositoryInterface::class,
-            [],
-            '',
-            false
-        );
+        $this->addressRepository = $this->createMock(AddressRepositoryInterface::class);
         $this->messageCollection = $this->createMock(Collection::class);
-        $this->message = $this->getMockForAbstractClass(
-            MessageInterface::class,
-            [],
-            '',
-            false
-        );
-        $this->logger = $this->getMockForAbstractClass(
-            LoggerInterface::class,
-            [],
-            '',
-            false
-        );
-        $this->emailNotification = $this->getMockBuilder(EmailNotificationInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->message = $this->createMock(MessageInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->emailNotification = $this->createMock(EmailNotificationInterface::class);
 
         $this->context = $objectManager->getObject(
             Context::class,
@@ -263,9 +226,7 @@ class InlineEditTest extends TestCase
             return new $mockClassName();
         }
 
-        $mockBuilder = $this->getMockBuilder($class);
-        $mockBuilder->setMockClassName($mockClassName);
-        return $mockBuilder->getMockForAbstractClass();
+        return $this->createMock($class);
     }
 
     /**

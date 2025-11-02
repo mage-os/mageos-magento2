@@ -14,6 +14,7 @@ use Magento\Customer\Model\Url;
 use Magento\Framework\Math\Random;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Helper\SecureHtmlRenderer;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -46,26 +47,27 @@ class RegisterLinkTest extends TestCase
      * @param bool $isAuthenticated
      * @param bool $isRegistrationAllowed
      * @param bool $result
-     * @dataProvider dataProviderToHtml
      * @return void
+     * @SuppressWarnings(PHPMD.LongVariable)
      */
+    #[DataProvider('dataProviderToHtml')]
     public function testToHtml($isAuthenticated, $isRegistrationAllowed, $result)
     {
         $context = $this->_objectManager->getObject(\Magento\Framework\View\Element\Template\Context::class);
 
-        $httpContext = $this->getMockBuilder(\Magento\Framework\App\Http\Context::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getValue'])
-            ->getMock();
+        $httpContext = $this->createPartialMock(
+            \Magento\Framework\App\Http\Context::class,
+            ['getValue']
+        );
         $httpContext->expects($this->any())
             ->method('getValue')
             ->with(Context::CONTEXT_AUTH)
             ->willReturn($isAuthenticated);
 
-        $registrationMock = $this->getMockBuilder(Registration::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['isAllowed'])
-            ->getMock();
+        $registrationMock = $this->createPartialMock(
+            Registration::class,
+            ['isAllowed']
+        );
         $registrationMock->expects($this->any())
             ->method('isAllowed')
             ->willReturn($isRegistrationAllowed);
@@ -99,12 +101,10 @@ class RegisterLinkTest extends TestCase
     public function testGetHref()
     {
         $this->_objectManager = new ObjectManager($this);
-        $helper = $this->getMockBuilder(
-            Url::class
-        )->disableOriginalConstructor()
-            ->onlyMethods(
-                ['getRegisterUrl']
-            )->getMock();
+        $helper = $this->createPartialMock(
+            Url::class,
+            ['getRegisterUrl']
+        );
 
         $helper->expects($this->any())->method('getRegisterUrl')->willReturn('register url');
 

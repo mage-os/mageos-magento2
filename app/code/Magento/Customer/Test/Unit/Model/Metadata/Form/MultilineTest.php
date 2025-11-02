@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Customer\Test\Unit\Model\Metadata\Form;
 
 use Magento\Customer\Model\Metadata\Form\Multiline;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /** Test Magento\Customer\Model\Metadata\Form\Multiline */
 class MultilineTest extends TextTest
@@ -35,7 +36,9 @@ class MultilineTest extends TextTest
     /**
      * @param string|int|bool|null $value to assign to boolean
      * @param string|bool|null $expected text output
-     * @dataProvider validateValueRequiredDataProvider
+     */
+    #[DataProvider('validateValueRequiredDataProvider')]
+    /**
      */
     public function testValidateValueRequired($value, $expected)
     {
@@ -62,7 +65,9 @@ class MultilineTest extends TextTest
     /**
      * @param string|int|bool|null $value to assign to boolean
      * @param string|bool $expected text output
-     * @dataProvider validateValueLengthDataProvider
+     */
+    #[DataProvider('validateValueLengthDataProvider')]
+    /**
      */
     public function testValidateValueLength($value, $expected)
     {
@@ -99,7 +104,9 @@ class MultilineTest extends TextTest
      * @param array $value value to pass to compactValue()
      * @param string $expected expected output
      *
-     * @dataProvider compactValueDataProvider
+     */
+    #[DataProvider('compactValueDataProvider')]
+    /**
      */
     public function testCompactValue($value, $expected)
     {

@@ -105,7 +105,7 @@ class ImageTest extends AbstractFormTestCase
 
         $this->urlEncode = $this->getMockBuilder(EncoderInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->fileValidatorMock = $this->getMockBuilder(NotProtectedExtension::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -137,8 +137,7 @@ class ImageTest extends AbstractFormTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->readDirectoryMock = $this->getMockBuilder(ReadInterface::class)
-            ->getMockForAbstractClass();
+        $this->readDirectoryMock = $this->createMock(ReadInterface::class);
         $this->fileSystemMock->expects($this->once())
             ->method('getDirectoryReadByPath')
             ->willReturn($this->readDirectoryMock);
@@ -279,9 +278,9 @@ class ImageTest extends AbstractFormTestCase
 
         $maxFileSize = 1;
 
-        $validationRuleMock = $this->getMockBuilder(
+        $validationRuleMock = $this->createMock(
             ValidationRuleInterface::class
-        )->getMockForAbstractClass();
+        );
         $validationRuleMock->expects($this->any())
             ->method('getName')
             ->willReturn('max_file_size');
@@ -333,9 +332,9 @@ class ImageTest extends AbstractFormTestCase
 
         $maxImageWidth = 1;
 
-        $validationRuleMock = $this->getMockBuilder(
+        $validationRuleMock = $this->createMock(
             ValidationRuleInterface::class
-        )->getMockForAbstractClass();
+        );
         $validationRuleMock->expects($this->any())
             ->method('getName')
             ->willReturn('max_image_width');
@@ -379,9 +378,9 @@ class ImageTest extends AbstractFormTestCase
 
         $maxImageHeight = 1;
 
-        $validationRuleMock = $this->getMockBuilder(
+        $validationRuleMock = $this->createMock(
             ValidationRuleInterface::class
-        )->getMockForAbstractClass();
+        );
         $validationRuleMock->expects($this->any())
             ->method('getName')
             ->willReturn('max_image_height');
@@ -501,7 +500,7 @@ class ImageTest extends AbstractFormTestCase
 
         $imageContentMock = $this->getMockBuilder(
             ImageContentInterface::class
-        )->getMockForAbstractClass();
+        )->getMock();
         $imageContentMock->expects($this->once())
             ->method('setName')
             ->with($value['name'])

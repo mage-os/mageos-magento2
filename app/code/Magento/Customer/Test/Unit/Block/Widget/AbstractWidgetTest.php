@@ -11,6 +11,7 @@ use Magento\Customer\Api\CustomerMetadataInterface;
 use Magento\Customer\Block\Widget\AbstractWidget;
 use Magento\Customer\Helper\Address;
 use Magento\Framework\View\Element\Template\Context;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -38,17 +39,15 @@ class AbstractWidgetTest extends TestCase
         $this->_block = new AbstractWidget(
             $this->createMock(Context::class),
             $this->_addressHelper,
-            $this->getMockBuilder(CustomerMetadataInterface::class)
-                ->getMockForAbstractClass()
+            $this->createMock(CustomerMetadataInterface::class)
         );
     }
 
     /**
      * @param string $key
      * @param string|null $expectedValue
-     *
-     * @dataProvider getConfigDataProvider
      */
+    #[DataProvider('getConfigDataProvider')]
     public function testGetConfig($key, $expectedValue)
     {
         $this->_addressHelper->expects(
@@ -115,9 +114,8 @@ class AbstractWidgetTest extends TestCase
      * @param string $fieldId Field id
      * @param string $expectedValue The value we expect from AbstractWidget::getFieldId()
      * @param string $method The method to invoke on the result from getFieldId() should return true
-     *
-     * @dataProvider getFieldIdDataProvider
      */
+    #[DataProvider('getFieldIdDataProvider')]
     public function testGetFieldId($format, $fieldId, $expectedValue, $method)
     {
         $this->_block->setData(self::KEY_FIELD_ID_FORMAT, $format);
@@ -145,9 +143,8 @@ class AbstractWidgetTest extends TestCase
      * @param string $fieldName The field name
      * @param string $expectedValue The value we expect from AbstractWidget::getFieldName
      * @param string $method The method to invoke on the result from getFieldName() should return true
-     *
-     * @dataProvider getFieldNameDataProvider
      */
+    #[DataProvider('getFieldNameDataProvider')]
     public function testGetFieldName($format, $fieldName, $expectedValue, $method)
     {
         $this->_block->setData(self::KEY_FIELD_NAME_FORMAT, $format);

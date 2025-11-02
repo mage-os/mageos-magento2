@@ -70,11 +70,9 @@ class UploadTest extends TestCase
             ->onlyMethods(['create'])
             ->getMock();
 
-        $this->addressMetadataService = $this->getMockBuilder(AddressMetadataInterface::class)
-            ->getMockForAbstractClass();
+        $this->addressMetadataService = $this->createMock(AddressMetadataInterface::class);
 
-        $this->logger = $this->getMockBuilder(LoggerInterface::class)
-            ->getMockForAbstractClass();
+        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->controller = new Upload(
             $this->context,
@@ -139,8 +137,7 @@ class UploadTest extends TestCase
             'url' => $resultFileUrl,
         ];
 
-        $attributeMetadataMock = $this->getMockBuilder(AttributeMetadataInterface::class)
-            ->getMockForAbstractClass();
+        $attributeMetadataMock = $this->createMock(AttributeMetadataInterface::class);
 
         $this->addressMetadataService->expects($this->once())
             ->method('getAttributeMetadata')
@@ -202,8 +199,7 @@ class UploadTest extends TestCase
             'error2',
         ];
 
-        $attributeMetadataMock = $this->getMockBuilder(AttributeMetadataInterface::class)
-            ->getMockForAbstractClass();
+        $attributeMetadataMock = $this->createMock(AttributeMetadataInterface::class);
 
         $this->addressMetadataService->expects($this->once())
             ->method('getAttributeMetadata')

@@ -48,4 +48,59 @@ class SessionTestHelper extends Session
         $this->testData['before_request_params'] = $params;
         return $this;
     }
+
+    /**
+     * Set customer ID
+     *
+     * @param int|null $customerId
+     * @return $this
+     */
+    public function setCustomerId($customerId)
+    {
+        $this->testData['customer_id'] = $customerId;
+        return $this;
+    }
+
+    /**
+     * Get customer ID
+     *
+     * @return int|null
+     */
+    public function getCustomerId()
+    {
+        return $this->testData['customer_id'] ?? null;
+    }
+
+    /**
+     * Set address form data
+     *
+     * @param array|null $data
+     * @return $this
+     */
+    public function setAddressFormData($data)
+    {
+        $this->testData['address_form_data'] = $data;
+        return $this;
+    }
+
+    /**
+     * Get address form data
+     *
+     * @return array|null
+     */
+    public function getAddressFormData()
+    {
+        return $this->testData['address_form_data'] ?? null;
+    }
+
+    /**
+     * Unset address form data
+     *
+     * @return $this
+     */
+    public function unsAddressFormData()
+    {
+        unset($this->testData['address_form_data']);
+        return $this;
+    }
 }

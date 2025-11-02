@@ -36,8 +36,7 @@ class CustomerMetadataManagementTest extends TestCase
     public function testCanBeSearchableInGrid()
     {
         /** @var AttributeMetadataInterface|MockObject $attributeMock */
-        $attributeMock = $this->getMockBuilder(AttributeMetadataInterface::class)
-            ->getMockForAbstractClass();
+        $attributeMock = $this->createMock(AttributeMetadataInterface::class);
 
         /** @var Attribute|MockObject $modelMock */
         $modelMock = $this->getMockBuilder(Attribute::class)
@@ -59,8 +58,7 @@ class CustomerMetadataManagementTest extends TestCase
     public function testCanBeFilterableInGrid()
     {
         /** @var AttributeMetadataInterface|MockObject $attributeMock */
-        $attributeMock = $this->getMockBuilder(AttributeMetadataInterface::class)
-            ->getMockForAbstractClass();
+        $attributeMock = $this->createMock(AttributeMetadataInterface::class);
 
         /** @var Attribute|MockObject $modelMock */
         $modelMock = $this->getMockBuilder(Attribute::class)

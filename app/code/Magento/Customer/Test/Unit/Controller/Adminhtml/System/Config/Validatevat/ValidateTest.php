@@ -54,8 +54,7 @@ class ValidateTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->objectManager = $this->getMockBuilder(ObjectManagerInterface::class)
-            ->getMockForAbstractClass();
+        $this->objectManager = $this->createMock(ObjectManagerInterface::class);
 
         $objectManager = new ObjectManager($this);
         $this->context = $objectManager->getObject(

@@ -11,6 +11,7 @@ namespace Magento\Customer\Test\Unit\Model\Metadata\Form;
 use Magento\Customer\Api\Data\OptionInterface;
 use Magento\Customer\Model\Metadata\Form\Select;
 use Magento\Framework\Phrase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * test Magento\Customer\Model\Metadata\Form\Select
@@ -38,7 +39,9 @@ class SelectTest extends AbstractFormTestCase
     /**
      * @param string|int|bool|null $value to assign to Select
      * @param bool $expected text output
-     * @dataProvider validateValueDataProvider
+     */
+    #[DataProvider('validateValueDataProvider')]
+    /**
      */
     public function testValidateValue($value, $expected)
     {
@@ -66,7 +69,9 @@ class SelectTest extends AbstractFormTestCase
     /**
      * @param string|int|bool|null $value to assign to boolean
      * @param string|bool $expected text output
-     * @dataProvider validateValueRequiredDataProvider
+     */
+    #[DataProvider('validateValueRequiredDataProvider')]
+    /**
      */
     public function testValidateValueRequired($value, $expected)
     {
@@ -110,14 +115,13 @@ class SelectTest extends AbstractFormTestCase
     /**
      * @param string|int|bool|null $value
      * @param string|int $expected
-     * @dataProvider outputValueDataProvider
+     */
+    #[DataProvider('outputValueDataProvider')]
+    /**
      */
     public function testOutputValue($value, $expected)
     {
-        $option1 = $this->getMockBuilder(OptionInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getLabel', 'getValue'])
-            ->getMockForAbstractClass();
+        $option1 = $this->createMock(OptionInterface::class);
         $option1->expects($this->any())
             ->method('getLabel')
             ->willReturn('fourteen');
@@ -125,10 +129,7 @@ class SelectTest extends AbstractFormTestCase
             ->method('getValue')
             ->willReturn('14');
 
-        $option2 = $this->getMockBuilder(OptionInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getLabel', 'getValue'])
-            ->getMockForAbstractClass();
+        $option2 = $this->createMock(OptionInterface::class);
         $option2->expects($this->any())
             ->method('getLabel')
             ->willReturn('some string');
@@ -136,10 +137,7 @@ class SelectTest extends AbstractFormTestCase
             ->method('getValue')
             ->willReturn('some key');
 
-        $option3 = $this->getMockBuilder(OptionInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getLabel', 'getValue'])
-            ->getMockForAbstractClass();
+        $option3 = $this->createMock(OptionInterface::class);
         $option3->expects($this->any())
             ->method('getLabel')
             ->willReturn('True');

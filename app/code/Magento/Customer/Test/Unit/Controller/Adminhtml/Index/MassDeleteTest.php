@@ -90,7 +90,7 @@ class MassDeleteTest extends TestCase
 
         $this->contextMock = $this->createMock(BackendContext::class);
         $resultRedirectFactory = $this->createMock(RedirectFactory::class);
-        $this->responseMock = $this->getMockForAbstractClass(ResponseInterface::class);
+        $this->responseMock = $this->createMock(ResponseInterface::class);
         $this->requestMock = $this->getMockBuilder(Http::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -144,8 +144,7 @@ class MassDeleteTest extends TestCase
         $this->customerCollectionFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($this->customerCollectionMock);
-        $this->customerRepositoryMock = $this->getMockBuilder(CustomerRepositoryInterface::class)
-            ->getMockForAbstractClass();
+        $this->customerRepositoryMock = $this->createMock(CustomerRepositoryInterface::class);
         $this->massAction = $objectManagerHelper->getObject(
             MassDelete::class,
             [

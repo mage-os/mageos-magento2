@@ -12,6 +12,7 @@ use Magento\Customer\Api\Data\OptionInterface;
 use Magento\Customer\Model\Metadata\ElementFactory;
 use Magento\Customer\Model\Metadata\Form\Multiselect;
 use Magento\Framework\App\RequestInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 
 class MultiselectTest extends AbstractFormTestCase
@@ -42,7 +43,9 @@ class MultiselectTest extends AbstractFormTestCase
      * @param bool $expected text output
      *
      * @return void
-     * @dataProvider extractValueDataProvider
+     */
+    #[DataProvider('extractValueDataProvider')]
+    /**
      */
     public function testExtractValue($value, $expected)
     {
@@ -83,7 +86,9 @@ class MultiselectTest extends AbstractFormTestCase
      * @param bool $expected text output
      *
      * @return void
-     * @dataProvider compactValueDataProvider
+     */
+    #[DataProvider('compactValueDataProvider')]
+    /**
      */
     public function testCompactValue($value, $expected)
     {
@@ -114,7 +119,9 @@ class MultiselectTest extends AbstractFormTestCase
      * @param string $expected
      *
      * @return void
-     * @dataProvider outputValueTextDataProvider
+     */
+    #[DataProvider('outputValueTextDataProvider')]
+    /**
      */
     public function testOutputValueText($value, $expected)
     {
@@ -128,7 +135,9 @@ class MultiselectTest extends AbstractFormTestCase
      * @param string $expected
      *
      * @return void
-     * @dataProvider outputValueTextDataProvider
+     */
+    #[DataProvider('outputValueTextDataProvider')]
+    /**
      */
     public function testOutputValueHtml($value, $expected)
     {
@@ -159,7 +168,9 @@ class MultiselectTest extends AbstractFormTestCase
      * @param string[] $expected
      *
      * @return void
-     * @dataProvider outputValueJsonDataProvider
+     */
+    #[DataProvider('outputValueJsonDataProvider')]
+    /**
      */
     public function testOutputValueJson($value, $expected)
     {
@@ -192,19 +203,13 @@ class MultiselectTest extends AbstractFormTestCase
      */
     protected function runOutputValueTest($value, $expected, $format)
     {
-        $option1 = $this->getMockBuilder(OptionInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getLabel', 'getValue'])
-            ->getMockForAbstractClass();
+        $option1 = $this->createMock(OptionInterface::class);
         $option1->method('getLabel')
             ->willReturn('fourteen');
         $option1->method('getValue')
             ->willReturn('14');
 
-        $option2 = $this->getMockBuilder(OptionInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getLabel', 'getValue'])
-            ->getMockForAbstractClass();
+        $option2 = $this->createMock(OptionInterface::class);
         $option2->method('getLabel')
             ->willReturn('some string');
         $option2->method('getValue')

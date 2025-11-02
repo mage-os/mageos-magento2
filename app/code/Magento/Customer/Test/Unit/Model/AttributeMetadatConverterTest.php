@@ -19,6 +19,7 @@ use Magento\Customer\Model\Data\Option;
 use Magento\Eav\Model\Entity\Attribute\Frontend\AbstractFrontend;
 use Magento\Eav\Model\Entity\Attribute\Source\AbstractSource;
 use Magento\Framework\Api\DataObjectHelper;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -47,6 +48,11 @@ class AttributeMetadatConverterTest extends TestCase
      */
     private $dataObjectHelper;
 
+    /**
+     * @var ScopeConfigInterface|MockObject
+     */
+    private $scopeConfig;
+
     /** @var  AttributeMetadataConverter */
     private $model;
 
@@ -55,30 +61,28 @@ class AttributeMetadatConverterTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->optionFactory = $this->getMockBuilder(OptionInterfaceFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->validationRuleFactory = $this->getMockBuilder(ValidationRuleInterfaceFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->attributeMetadataFactory = $this->getMockBuilder(AttributeMetadataInterfaceFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->dataObjectHelper =  $this->getMockBuilder(DataObjectHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->attribute = $this->getMockBuilder(Attribute::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->optionFactory = $this->createPartialMock(
+            OptionInterfaceFactory::class,
+            ['create']
+        );
+        $this->validationRuleFactory = $this->createPartialMock(
+            ValidationRuleInterfaceFactory::class,
+            ['create']
+        );
+        $this->attributeMetadataFactory = $this->createPartialMock(
+            AttributeMetadataInterfaceFactory::class,
+            ['create']
+        );
+        $this->dataObjectHelper = $this->createMock(DataObjectHelper::class);
+        $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
+        $this->attribute = $this->createMock(Attribute::class);
 
         $this->model = new AttributeMetadataConverter(
             $this->optionFactory,
             $this->validationRuleFactory,
             $this->attributeMetadataFactory,
-            $this->dataObjectHelper
+            $this->dataObjectHelper,
+            $this->scopeConfig
         );
     }
 
@@ -120,27 +124,19 @@ class AttributeMetadatConverterTest extends TestCase
     {
         $validatedRules = $this->prepareValidateRules();
         $options = $this->prepareOptions();
-        $optionDataObjectForSimpleValue1 = $this->getMockBuilder(Option::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $optionDataObjectForSimpleValue2 = $this->getMockBuilder(Option::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $optionObject1 = $this->getMockForAbstractClass(OptionInterface::class);
-        $optionObject2 = $this->getMockForAbstractClass(OptionInterface::class);
+        $optionDataObjectForSimpleValue1 = $this->createMock(Option::class);
+        $optionDataObjectForSimpleValue2 = $this->createMock(Option::class);
+        $optionObject1 = $this->createMock(OptionInterface::class);
+        $optionObject2 = $this->createMock(OptionInterface::class);
         $this->optionFactory->expects($this->exactly(4))
             ->method('create')
-            ->will(
-                $this->onConsecutiveCalls(
-                    $optionDataObjectForSimpleValue2,
-                    $optionObject1,
-                    $optionObject2,
-                    $optionDataObjectForSimpleValue1
-                )
+            ->willReturnOnConsecutiveCalls(
+                $optionDataObjectForSimpleValue2,
+                $optionObject1,
+                $optionObject2,
+                $optionDataObjectForSimpleValue1
             );
-        $source = $this->getMockBuilder(AbstractSource::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $source = $this->createMock(AbstractSource::class);
         $source->expects($this->once())
             ->method('getAllOptions')
             ->willReturn($options);
@@ -170,11 +166,11 @@ class AttributeMetadatConverterTest extends TestCase
                     }
                 }
             );
-        $validationRule1 = $this->getMockForAbstractClass(ValidationRuleInterface::class);
-        $validationRule2 = $this->getMockForAbstractClass(ValidationRuleInterface::class);
+        $validationRule1 = $this->createMock(ValidationRuleInterface::class);
+        $validationRule2 = $this->createMock(ValidationRuleInterface::class);
         $this->validationRuleFactory->expects($this->exactly(2))
             ->method('create')
-            ->will($this->onConsecutiveCalls($validationRule1, $validationRule2));
+            ->willReturnOnConsecutiveCalls($validationRule1, $validationRule2);
         $validationRule1->expects($this->once())
             ->method('setValue')
             ->with('numeric');
@@ -191,10 +187,10 @@ class AttributeMetadatConverterTest extends TestCase
             ->willReturnSelf();
 
         $mockMethods = ['setAttributeCode', 'setFrontendInput'];
-        $attributeMetaData = $this->getMockBuilder(AttributeMetadata::class)
-            ->onlyMethods($mockMethods)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $attributeMetaData = $this->createPartialMock(
+            AttributeMetadata::class,
+            $mockMethods
+        );
         foreach ($mockMethods as $method) {
             $attributeMetaData->expects($this->once())->method($method)->willReturnSelf();
         }
@@ -205,9 +201,7 @@ class AttributeMetadatConverterTest extends TestCase
         $this->attributeMetadataFactory->expects($this->once())
             ->method('create')
             ->willReturn($attributeMetaData);
-        $frontend = $this->getMockBuilder(AbstractFrontend::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $frontend = $this->createMock(AbstractFrontend::class);
         $this->attribute->expects($this->once())
             ->method('getFrontend')
             ->willReturn($frontend);

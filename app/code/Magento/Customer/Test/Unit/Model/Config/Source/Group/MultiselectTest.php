@@ -38,7 +38,7 @@ class MultiselectTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->groupServiceMock = $this->getMockForAbstractClass(GroupManagementInterface::class);
+        $this->groupServiceMock = $this->createMock(GroupManagementInterface::class);
         $this->converterMock = $this->createMock(DataObject::class);
         $this->groupSourceLoggedInOnly = $this->getMockBuilder(GroupSourceLoggedInOnlyInterface::class)
             ->getMock();

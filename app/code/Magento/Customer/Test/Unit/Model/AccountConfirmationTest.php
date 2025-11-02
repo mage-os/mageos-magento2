@@ -11,6 +11,7 @@ use Magento\Customer\Model\AccountConfirmation;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Registry;
 use Magento\Store\Model\ScopeInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -36,7 +37,7 @@ class AccountConfirmationTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->scopeConfig = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
         $this->registry = $this->createMock(Registry::class);
 
         $this->accountConfirmation = new AccountConfirmation(
@@ -46,13 +47,15 @@ class AccountConfirmationTest extends TestCase
     }
 
     /**
-     * @param $customerId
-     * @param $customerEmail
-     * @param $skipConfirmationIfEmail
-     * @param $isConfirmationEnabled
-     * @param $expected
-     * @dataProvider dataProviderIsConfirmationRequired
+     * Test if confirmation is required
+     *
+     * @param int|null $customerId
+     * @param string $customerEmail
+     * @param string|null $skipConfirmationIfEmail
+     * @param bool $isConfirmationEnabled
+     * @param bool $expected
      */
+    #[DataProvider('dataProviderIsConfirmationRequired')]
     public function testIsConfirmationRequired(
         $customerId,
         $customerEmail,

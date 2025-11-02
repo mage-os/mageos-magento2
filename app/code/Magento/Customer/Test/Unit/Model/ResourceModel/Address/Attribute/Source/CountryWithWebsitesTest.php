@@ -9,6 +9,7 @@ namespace Magento\Customer\Test\Unit\Model\ResourceModel\Address\Attribute\Sourc
 
 use Magento\Customer\Model\Config\Share;
 use Magento\Customer\Model\ResourceModel\Address\Attribute\Source\CountryWithWebsites;
+use Magento\Customer\Test\Unit\Helper\CountryWithWebsitesTestHelper;
 use Magento\Directory\Model\AllowedCountries;
 use Magento\Directory\Model\ResourceModel\Country\CollectionFactory;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\OptionFactory;
@@ -47,40 +48,38 @@ class CountryWithWebsitesTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->countriesFactoryMock =
-            $this->getMockBuilder(CollectionFactory::class)
-                ->onlyMethods(['create'])
-                ->disableOriginalConstructor()
-                ->getMock();
-        $this->allowedCountriesMock = $this->getMockBuilder(AllowedCountries::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $eavCollectionFactoryMock =
-            $this->getMockBuilder(\Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\CollectionFactory::class)
-                ->disableOriginalConstructor()
-                ->getMock();
-        $optionsFactoryMock =
-            $this->getMockBuilder(OptionFactory::class)
-                ->disableOriginalConstructor()
-                ->getMock();
-        $this->storeManagerMock = $this->getMockForAbstractClass(StoreManagerInterface::class);
-        $this->shareConfigMock = $this->getMockBuilder(Share::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->countryByWebsite = new CountryWithWebsites(
+        $this->countriesFactoryMock = $this->createPartialMock(
+            CollectionFactory::class,
+            ['create']
+        );
+        $this->allowedCountriesMock = $this->createMock(AllowedCountries::class);
+        $eavCollectionFactoryMock = $this->createMock(
+            \Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\CollectionFactory::class
+        );
+        $optionsFactoryMock = $this->createMock(OptionFactory::class);
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
+        $this->shareConfigMock = $this->createMock(Share::class);
+        $requestMock = $this->createMock(\Magento\Framework\App\Request\Http::class);
+        $customerRepositoryMock = $this->createMock(\Magento\Customer\Api\CustomerRepositoryInterface::class);
+        $parentStoreManagerMock = $this->createMock(StoreManagerInterface::class);
+        
+        $this->countryByWebsite = new CountryWithWebsitesTestHelper(
             $eavCollectionFactoryMock,
             $optionsFactoryMock,
             $this->countriesFactoryMock,
             $this->allowedCountriesMock,
             $this->storeManagerMock,
-            $this->shareConfigMock
+            $this->shareConfigMock,
+            $requestMock,
+            $customerRepositoryMock,
+            $parentStoreManagerMock
         );
     }
 
     public function testGetAllOptions()
     {
-        $website1 = $this->getMockForAbstractClass(WebsiteInterface::class);
-        $website2 = $this->getMockForAbstractClass(WebsiteInterface::class);
+        $website1 = $this->createMock(WebsiteInterface::class);
+        $website2 = $this->createMock(WebsiteInterface::class);
 
         $website1->expects($this->atLeastOnce())
             ->method('getId')
@@ -91,9 +90,7 @@ class CountryWithWebsitesTest extends TestCase
         $this->storeManagerMock->expects($this->once())
             ->method('getWebsites')
             ->willReturn([$website1, $website2]);
-        $collectionMock = $this->getMockBuilder(AbstractDb::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $collectionMock = $this->createMock(AbstractDb::class);
 
         $this->allowedCountriesMock->expects($this->exactly(2))
             ->method('getAllowedCountries')

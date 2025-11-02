@@ -79,8 +79,7 @@ class ForgotPasswordPostTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->accountManagement = $this->getMockBuilder(AccountManagementInterface::class)
-            ->getMockForAbstractClass();
+        $this->accountManagement = $this->createMock(AccountManagementInterface::class);
 
         $this->escaper = $this->getMockBuilder(Escaper::class)
             ->disableOriginalConstructor()
@@ -239,8 +238,7 @@ class ForgotPasswordPostTest extends TestCase
             ])
             ->getMock();
 
-        $this->messageManager = $this->getMockBuilder(ManagerInterface::class)
-            ->getMockForAbstractClass();
+        $this->messageManager = $this->createMock(ManagerInterface::class);
 
         $this->resultRedirectFactory->expects($this->any())
             ->method('create')

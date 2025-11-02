@@ -48,23 +48,18 @@ class FileUploaderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->customerMetadataService = $this->getMockBuilder(CustomerMetadataInterface::class)
-            ->getMockForAbstractClass();
+        $this->customerMetadataService = $this->createMock(CustomerMetadataInterface::class);
 
-        $this->addressMetadataService = $this->getMockBuilder(AddressMetadataInterface::class)
-            ->getMockForAbstractClass();
+        $this->addressMetadataService = $this->createMock(AddressMetadataInterface::class);
 
-        $this->elementFactory = $this->getMockBuilder(ElementFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->elementFactory = $this->createMock(ElementFactory::class);
 
-        $this->fileProcessorFactory = $this->getMockBuilder(FileProcessorFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->fileProcessorFactory = $this->createPartialMock(
+            FileProcessorFactory::class,
+            ['create']
+        );
 
-        $this->attributeMetadata = $this->getMockBuilder(AttributeMetadataInterface::class)
-            ->getMockForAbstractClass();
+        $this->attributeMetadata = $this->createMock(AttributeMetadataInterface::class);
     }
 
     protected function tearDown(): void
@@ -178,8 +173,7 @@ class FileUploaderTest extends TestCase
             ])
             ->willReturn($fileProcessor);
 
-        $validationRuleMock = $this->getMockBuilder(ValidationRuleInterface::class)
-            ->getMockForAbstractClass();
+        $validationRuleMock = $this->createMock(ValidationRuleInterface::class);
         $validationRuleMock->expects($this->once())
             ->method('getName')
             ->willReturn('file_extensions');

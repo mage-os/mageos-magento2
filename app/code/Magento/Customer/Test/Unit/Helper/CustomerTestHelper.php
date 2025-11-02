@@ -139,6 +139,50 @@ class CustomerTestHelper extends Customer
     }
 
     /**
+     * Get email
+     *
+     * @return string|null
+     */
+    public function getEmail()
+    {
+        return $this->testData['email'] ?? null;
+    }
+
+    /**
+     * Set email
+     *
+     * @param string|null $email
+     * @return $this
+     */
+    public function setEmail($email): self
+    {
+        $this->testData['email'] = $email;
+        return $this;
+    }
+
+    /**
+     * Get website ID
+     *
+     * @return int|null
+     */
+    public function getWebsiteId()
+    {
+        return $this->testData['website_id'] ?? null;
+    }
+
+    /**
+     * Set website ID
+     *
+     * @param int|null $websiteId
+     * @return $this
+     */
+    public function setWebsiteId($websiteId): self
+    {
+        $this->testData['website_id'] = $websiteId;
+        return $this;
+    }
+
+    /**
      * Update data
      *
      * @param mixed $customer

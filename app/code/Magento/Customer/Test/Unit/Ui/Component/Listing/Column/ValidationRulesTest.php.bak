@@ -10,7 +10,6 @@ namespace Magento\Customer\Test\Unit\Ui\Component\Listing\Column;
 use Magento\Customer\Api\Data\ValidationRuleInterface;
 use Magento\Customer\Ui\Component\Listing\Column\ValidationRules;
 use Magento\Framework\DataObject;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -24,7 +23,9 @@ class ValidationRulesTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->validationRule = $this->createMock(ValidationRuleInterface::class);
+        $this->validationRule = $this->getMockBuilder(ValidationRuleInterface::class)
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
 
         $this->validationRules = new ValidationRules();
     }
@@ -34,8 +35,8 @@ class ValidationRulesTest extends TestCase
      *
      * @param String $validationRule - provided input validation rules
      * @param String $validationClass - expected input validation class
+     * @dataProvider validationRulesDataProvider
      */
-    #[DataProvider('validationRulesDataProvider')]
     public function testGetValidationRules(String $validationRule, String $validationClass): void
     {
         $expectsRules = [

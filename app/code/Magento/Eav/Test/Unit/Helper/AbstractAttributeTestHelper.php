@@ -1,7 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright © Adobe, Inc. All rights reserved.
  */
 declare(strict_types=1);
 
@@ -10,56 +9,154 @@ namespace Magento\Eav\Test\Unit\Helper;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 
 /**
- * Test helper for AbstractAttribute with custom methods
+ * Helper class for testing AbstractAttribute with custom methods
+ *
+ * @SuppressWarnings(PHPMD.BooleanGetMethodName)
  */
 class AbstractAttributeTestHelper extends AbstractAttribute
 {
     /**
-     * Constructor that skips parent dependencies
+     * @var int|null
+     */
+    private $gridFilterConditionType;
+
+    /**
+     * @var bool
+     */
+    private $isVisible = false;
+
+    /**
+     * @var string|null
+     */
+    private $storeLabel;
+
+    /**
+     * @var string|array|null
+     */
+    private $validateRules;
+
+    /**
+     * @var array
+     */
+    private $usedInForms = [];
+
+    /**
+     * Constructor
+     *
+     * Skip parent constructor to avoid dependencies
      */
     public function __construct()
     {
-        // Skip parent constructor to avoid dependency injection issues
+        // Skip parent constructor
     }
 
     /**
-     * Get is visible (custom method for tests)
+     * Get grid filter condition type
      *
-     * @return bool|null
-     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     * @return int|null
      */
-    public function getIsVisible(): ?bool
+    public function getGridFilterConditionType(): ?int
     {
-        return null;
+        return $this->gridFilterConditionType;
     }
 
     /**
-     * Get used in forms (custom method for tests)
+     * Set grid filter condition type
      *
-     * @return array|null
+     * @param int|null $gridFilterConditionType
+     * @return $this
      */
-    public function getUsedInForms(): ?array
+    public function setGridFilterConditionType(?int $gridFilterConditionType): self
     {
-        return null;
+        $this->gridFilterConditionType = $gridFilterConditionType;
+        return $this;
     }
 
     /**
-     * Get store label (custom method for tests)
+     * Get is visible
+     *
+     * @return bool
+     */
+    public function getIsVisible(): bool
+    {
+        return $this->isVisible;
+    }
+
+    /**
+     * Set is visible
+     *
+     * @param bool $isVisible
+     * @return $this
+     */
+    public function setIsVisible(bool $isVisible): self
+    {
+        $this->isVisible = $isVisible;
+        return $this;
+    }
+
+    /**
+     * Get store label
      *
      * @return string|null
      */
     public function getStoreLabel(): ?string
     {
-        return null;
+        return $this->storeLabel;
     }
 
     /**
-     * Get validate rules (custom method for tests)
+     * Set store label
      *
-     * @return array|null
+     * @param string|null $storeLabel
+     * @return $this
      */
-    public function getValidateRules(): ?array
+    public function setStoreLabel(?string $storeLabel): self
     {
-        return null;
+        $this->storeLabel = $storeLabel;
+        return $this;
+    }
+
+    /**
+     * Get validate rules
+     *
+     * @return string|array|null
+     */
+    public function getValidateRules()
+    {
+        return $this->validateRules;
+    }
+
+    /**
+     * Set validate rules
+     *
+     * @param string|array|null $validateRules
+     * @return $this
+     */
+    public function setValidateRules($validateRules): self
+    {
+        $this->validateRules = $validateRules;
+        return $this;
+    }
+
+    /**
+     * Get used in forms
+     *
+     * @return array
+     */
+    public function getUsedInForms(): array
+    {
+        return $this->usedInForms;
+    }
+
+    /**
+     * Set used in forms
+     *
+     * @param array $usedInForms
+     * @return $this
+     */
+    public function setUsedInForms(array $usedInForms): self
+    {
+        $this->usedInForms = $usedInForms;
+        return $this;
     }
 }

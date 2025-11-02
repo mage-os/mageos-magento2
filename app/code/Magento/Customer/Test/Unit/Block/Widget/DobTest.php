@@ -25,6 +25,7 @@ use Magento\Framework\Stdlib\DateTime\Timezone;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Element\Html\Date;
 use Magento\Framework\View\Element\Template\Context;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Zend_Cache_Backend_BlackHole;
@@ -110,18 +111,13 @@ class DobTest extends TestCase
         $zendCacheCore = new Zend_Cache_Core();
         $zendCacheCore->setBackend(new Zend_Cache_Backend_BlackHole());
 
-        $frontendCache = $this->getMockForAbstractClass(
-            FrontendInterface::class,
-            [],
-            '',
-            false
-        );
+        $frontendCache = $this->createMock(FrontendInterface::class);
         $frontendCache->expects($this->any())->method('getLowLevelFrontend')->willReturn($zendCacheCore);
-        $cache = $this->getMockForAbstractClass(CacheInterface::class);
+        $cache = $this->createMock(CacheInterface::class);
         $cache->expects($this->any())->method('getFrontend')->willReturn($frontendCache);
 
         $objectManager = new ObjectManager($this);
-        $this->localeResolver = $this->getMockForAbstractClass(ResolverInterface::class);
+        $this->localeResolver = $this->createMock(ResolverInterface::class);
         $this->localeResolver->expects($this->any())
             ->method('getLocale')
             ->willReturnCallback(
@@ -138,20 +134,18 @@ class DobTest extends TestCase
         $this->_locale = Resolver::DEFAULT_LOCALE;
         $this->context = $this->createMock(Context::class);
         $this->context->expects($this->any())->method('getLocaleDate')->willReturn($timezone);
-        $this->escaper = $this->getMockBuilder(Escaper::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['escapeHtml'])
-            ->getMock();
+        $this->escaper = $this->createPartialMock(
+            Escaper::class,
+            ['escapeHtml']
+        );
         $this->context->expects($this->any())->method('getEscaper')->willReturn($this->escaper);
 
-        $this->attribute = $this->getMockBuilder(AttributeMetadataInterface::class)
-            ->getMockForAbstractClass();
+        $this->attribute = $this->createMock(AttributeMetadataInterface::class);
         $this->attribute
             ->expects($this->any())
             ->method('getInputFilter')
             ->willReturn('date');
-        $this->customerMetadata = $this->getMockBuilder(CustomerMetadataInterface::class)
-            ->getMockForAbstractClass();
+        $this->customerMetadata = $this->createMock(CustomerMetadataInterface::class);
         $this->customerMetadata->expects($this->any())
             ->method('getAttributeMetadata')
             ->willReturn($this->attribute);
@@ -169,7 +163,7 @@ class DobTest extends TestCase
                 }
             );
 
-        $this->encoder = $this->getMockForAbstractClass(EncoderInterface::class);
+        $this->encoder = $this->createMock(EncoderInterface::class);
 
         $this->_block = new Dob(
             $this->context,
@@ -186,9 +180,8 @@ class DobTest extends TestCase
     /**
      * @param bool $isVisible Determines whether the 'dob' attribute is visible or enabled
      * @param bool $expectedValue The value we expect from Dob::isEnabled()
-     *
-     * @dataProvider isEnabledDataProvider
      */
+    #[DataProvider('isEnabledDataProvider')]
     public function testIsEnabled($isVisible, $expectedValue)
     {
         $this->attribute->expects($this->once())->method('isVisible')->willReturn($isVisible);
@@ -224,9 +217,8 @@ class DobTest extends TestCase
     /**
      * @param bool $isRequired Determines whether the 'dob' attribute is required
      * @param bool $expectedValue The value we expect from Dob::isRequired()
-     *
-     * @dataProvider isRequiredDataProvider
      */
+    #[DataProvider('isRequiredDataProvider')]
     public function testIsRequired($isRequired, $expectedValue)
     {
         $this->attribute->expects($this->once())->method('isRequired')->willReturn($isRequired);
@@ -261,8 +253,8 @@ class DobTest extends TestCase
      * @param int|bool $expectedTime The value we expect from Dob::getTime()
      * @param string|bool $expectedDate The value we expect from Dob::getData('date')
      * @param string $locale
-     * @dataProvider setDateDataProvider
      */
+    #[DataProvider('setDateDataProvider')]
     public function testSetDate($date, $expectedTime, $expectedDate, $locale = Resolver::DEFAULT_LOCALE)
     {
         $this->_locale = $locale;
@@ -294,9 +286,8 @@ class DobTest extends TestCase
     /**
      * @param string|bool $date The date (e.g. '01/01/2020' or false for no date)
      * @param string $expectedDay The value we expect from Dob::getDay()
-     *
-     * @dataProvider getDayDataProvider
      */
+    #[DataProvider('getDayDataProvider')]
     public function testGetDay($date, $expectedDay)
     {
         $this->_block->setDate($date);
@@ -314,9 +305,8 @@ class DobTest extends TestCase
     /**
      * @param string|bool $date The date (e.g. '01/01/2020' or false for no date)
      * @param string $expectedMonth The value we expect from Dob::getMonth()
-     *
-     * @dataProvider getMonthDataProvider
      */
+    #[DataProvider('getMonthDataProvider')]
     public function testGetMonth($date, $expectedMonth)
     {
         $this->_block->setDate($date);
@@ -334,9 +324,8 @@ class DobTest extends TestCase
     /**
      * @param string|bool $date The date (e.g. '01/01/2020' or false for no date)
      * @param string $expectedYear The value we expect from Dob::getYear()
-     *
-     * @dataProvider getYearDataProvider
      */
+    #[DataProvider('getYearDataProvider')]
     public function testGetYear($date, $expectedYear)
     {
         $this->_block->setDate($date);
@@ -356,8 +345,8 @@ class DobTest extends TestCase
      *
      * @param string $locale
      * @param string $expectedFormat
-     * @dataProvider getDateFormatDataProvider
      */
+    #[DataProvider('getDateFormatDataProvider')]
     public function testGetDateFormat(string $locale, string $expectedFormat)
     {
         $this->_locale = $locale;
@@ -420,9 +409,8 @@ class DobTest extends TestCase
     /**
      * @param array $validationRules The date Min/Max validation rules
      * @param int $expectedValue The value we expect from Dob::getMinDateRange()
-     *
-     * @dataProvider getMinDateRangeDataProvider
      */
+    #[DataProvider('getMinDateRangeDataProvider')]
     public function testGetMinDateRange($validationRules, $expectedValue)
     {
         if (!empty($validationRules[0]) && is_callable($validationRules[0])) {
@@ -436,10 +424,7 @@ class DobTest extends TestCase
 
     protected function getValidationRuleClass($type)
     {
-        $validationRule = $this->getMockBuilder(ValidationRuleInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getName', 'getValue'])
-            ->getMockForAbstractClass();
+        $validationRule = $this->createMock(ValidationRuleInterface::class);
         if ($type=="MIN") {
             $validationRule->expects($this->any())
                 ->method('getName')
@@ -463,10 +448,7 @@ class DobTest extends TestCase
 
     protected function getEmptyValidationRuleClass()
     {
-        $emptyValidationRule = $this->getMockBuilder(ValidationRuleInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getName', 'getValue'])
-            ->getMockForAbstractClass();
+        $emptyValidationRule = $this->createMock(ValidationRuleInterface::class);
 
         return $emptyValidationRule;
     }
@@ -517,9 +499,8 @@ class DobTest extends TestCase
     /**
      * @param array $validationRules The date Min/Max validation rules
      * @param int $expectedValue The value we expect from Dob::getMaxDateRange()
-     *
-     * @dataProvider getMaxDateRangeDataProvider
      */
+    #[DataProvider('getMaxDateRangeDataProvider')]
     public function testGetMaxDateRange($validationRules, $expectedValue)
     {
         if (!empty($validationRules[0]) && is_callable($validationRules[0])) {
@@ -646,9 +627,9 @@ class DobTest extends TestCase
      * @param string $locale
      * @param array $expectedArray
      * @param string $expectedJson
-     * @dataProvider getTranslatedCalendarConfigJsonDataProvider
      * @return void
      */
+    #[DataProvider('getTranslatedCalendarConfigJsonDataProvider')]
     public function testGetTranslatedCalendarConfigJson(
         string $locale,
         array $expectedArray,
