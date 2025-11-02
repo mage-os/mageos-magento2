@@ -55,6 +55,7 @@ class StoreTestHelper extends Store
     public function setBaseUrl(string $baseUrl): self
     {
         $this->baseUrl = $baseUrl;
+        return $this;
     }
     
 

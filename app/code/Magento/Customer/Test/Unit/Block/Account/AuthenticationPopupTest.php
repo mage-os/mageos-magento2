@@ -91,11 +91,12 @@ class AuthenticationPopupTest extends TestCase
      * @param string $baseUrl
      * @param string $registerUrl
      * @param string $forgotUrl
+     * @param string $loginUrl
      * @param array $result
      * @throws Exception
      */
     #[DataProvider('dataProviderGetConfig')]
-    public function testGetConfig($isAutocomplete, $baseUrl, $registerUrl, $forgotUrl, $loginUrl, array $result)
+    public function testGetConfig($isAutocomplete, string $baseUrl, string $registerUrl, string $forgotUrl, string $loginUrl, array $result): void
     {
         $this->scopeConfigMock->expects($this->any())
             ->method('getValue')
@@ -127,7 +128,7 @@ class AuthenticationPopupTest extends TestCase
     /**
      * @return array
      */
-    public static function dataProviderGetConfig()
+    public static function dataProviderGetConfig(): array
     {
         return [
             [
@@ -194,18 +195,19 @@ class AuthenticationPopupTest extends TestCase
      * @param string $baseUrl
      * @param string $registerUrl
      * @param string $forgotUrl
+     * @param string $loginUrl
      * @param array $result
      * @throws Exception
      */
     #[DataProvider('dataProviderGetConfig')]
     public function testGetSerializedConfig(
         $isAutocomplete,
-        $baseUrl,
-        $registerUrl,
-        $forgotUrl,
-        $loginUrl,
+        string $baseUrl,
+        string $registerUrl,
+        string $forgotUrl,
+        string $loginUrl,
         array $result
-    ) {
+    ): void {
         $this->scopeConfigMock->expects($this->any())
             ->method('getValue')
             ->with(Form::XML_PATH_ENABLE_AUTOCOMPLETE, ScopeInterface::SCOPE_STORE, null)

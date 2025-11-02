@@ -52,12 +52,12 @@ class AbstractCustomerTestHelper extends AbstractCustomer
      *
      * @param array $rowData
      * @param int $rowNumber
-     * @return bool
+     * @return void
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    protected function _validateRowForUpdate(array $rowData, $rowNumber): bool
+    protected function _validateRowForUpdate(array $rowData, int $rowNumber): void
     {
-        return true;
+        // Stub implementation - no validation needed in tests
     }
 
     /**
@@ -65,12 +65,12 @@ class AbstractCustomerTestHelper extends AbstractCustomer
      *
      * @param array $rowData
      * @param int $rowNumber
-     * @return bool
+     * @return void
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    protected function _validateRowForDelete(array $rowData, $rowNumber): bool
+    protected function _validateRowForDelete(array $rowData, int $rowNumber): void
     {
-        return true;
+        // Stub implementation - no validation needed in tests
     }
 
     /**

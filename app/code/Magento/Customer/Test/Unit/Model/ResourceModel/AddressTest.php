@@ -10,31 +10,33 @@ namespace Magento\Customer\Test\Unit\Model\ResourceModel;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Model\Address;
 use Magento\Customer\Model\CustomerFactory;
-use Magento\Customer\Test\Unit\Helper\AddressTestHelper;
 use Magento\Customer\Model\CustomerRegistry;
 use Magento\Customer\Model\ResourceModel\Address\DeleteRelation;
+use Magento\Customer\Test\Unit\Helper\AddressResourceTestHelper;
+use Magento\Customer\Test\Unit\Helper\AddressTestHelper;
 use Magento\Eav\Model\Config;
+use Magento\Eav\Model\Entity\Context;
+use Magento\Eav\Model\ResourceModel\OrphanedMultiselectCleaner;
 use Magento\Eav\Model\Entity\AbstractEntity;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Eav\Model\Entity\Attribute\Backend\AbstractBackend;
-use Magento\Eav\Model\Entity\Attribute\UniqueValidationInterface;
+use Magento\Eav\Model\Entity\Attribute\Set;
 use Magento\Eav\Model\Entity\AttributeLoaderInterface;
-use Magento\Eav\Model\Entity\Context;
 use Magento\Eav\Model\Entity\Type;
 use Magento\Eav\Model\ResourceModel\Helper;
-use Magento\Eav\Model\ResourceModel\OrphanedMultiselectCleaner;
-use Magento\Framework\App\ResourceConnection;
-use Magento\Framework\DB\Adapter\Pdo\Mysql;
-use Magento\Framework\DB\Select;
 use Magento\Framework\Locale\FormatInterface;
 use Magento\Framework\Model\ResourceModel\Db\ObjectRelationProcessor;
 use Magento\Framework\Model\ResourceModel\Db\TransactionManagerInterface;
+use Magento\Framework\Validator\UniversalFactory;
+use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\DB\Adapter\Pdo\Mysql;
+use Magento\Framework\DB\Select;
 use Magento\Framework\Model\ResourceModel\Db\VersionControl\RelationComposite;
 use Magento\Framework\Model\ResourceModel\Db\VersionControl\Snapshot;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Framework\Validator;
 use Magento\Framework\Validator\Factory;
 use PHPUnit\Framework\Attributes\DataProvider;
-use Magento\Framework\Validator\UniversalFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -43,11 +45,8 @@ use PHPUnit\Framework\TestCase;
  */
 class AddressTest extends TestCase
 {
-    /** @var SubResourceModelAddress */
+    /** @var AddressResourceTestHelper */
     protected $addressResource;
-
-    /** @var CustomerFactory|MockObject */
-    protected $customerFactory;
 
     /** @var Type */
     protected $eavConfigType;
@@ -58,79 +57,63 @@ class AddressTest extends TestCase
     /** @var  RelationComposite|MockObject */
     protected $entityRelationCompositeMock;
 
-    /** @var OrphanedMultiselectCleaner|MockObject */
-    protected $orphanedMultiselectCleanerMock;
-
-    /** @var DeleteRelation|MockObject */
-    protected $deleteRelationMock;
-
-    /** @var CustomerRegistry|MockObject */
-    protected $customerRegistryMock;
-
     protected function setUp(): void
     {
-        $this->entitySnapshotMock = $this->createMock(
-            Snapshot::class
-        );
+        $this->entitySnapshotMock = $this->createMock(Snapshot::class);
+        $this->entityRelationCompositeMock = $this->createMock(RelationComposite::class);
 
-        $this->entityRelationCompositeMock = $this->createMock(
-            RelationComposite::class
-        );
+        // Prepare dependencies
+        $resourceConnection = $this->prepareResource();
+        $eavConfig = $this->prepareEavConfig();
+        $validatorFactory = $this->prepareValidatorFactory();
+        
+        // Create mocks for Context dependencies
+        $objectRelationProcessor = $this->createMock(ObjectRelationProcessor::class);
+        $transactionManager = $this->createMock(TransactionManagerInterface::class);
+        
+        // Create mocks for optional dependencies
+        $orphanedMultiselectCleanerMock = $this->createMock(OrphanedMultiselectCleaner::class);
+        $deleteRelationMock = $this->createMock(DeleteRelation::class);
+        $customerRegistryMock = $this->createMock(CustomerRegistry::class);
+        $customerRepositoryMock = $this->createMock(CustomerRepositoryInterface::class);
 
-        $this->orphanedMultiselectCleanerMock = $this->createMock(
-            OrphanedMultiselectCleaner::class
-        );
-
-        $this->deleteRelationMock = $this->createMock(
-            DeleteRelation::class
-        );
-
-        $this->customerRegistryMock = $this->createMock(
-            CustomerRegistry::class
-        );
-
-        $contextMock = $this->prepareContext();
-
-        $uniqueValidatorMock = $this->createMock(UniqueValidationInterface::class);
-        $attributeLoaderMock = $this->createMock(AttributeLoaderInterface::class);
-
-        $this->addressResource = new SubResourceModelAddress(
-            $contextMock,
-            $this->entitySnapshotMock,
-            $this->entityRelationCompositeMock,
-            $this->prepareValidatorFactory(),
-            $this->prepareCustomerRepository(),
-            [],
-            $this->orphanedMultiselectCleanerMock,
-            $this->deleteRelationMock,
-            $this->customerRegistryMock,
-            $uniqueValidatorMock,
-            $attributeLoaderMock
-        );
+        // Create address resource using helper that bypasses parent constructor
+        $this->addressResource = new AddressResourceTestHelper([
+            '_resource' => $resourceConnection,
+            'entitySnapshot' => $this->entitySnapshotMock,
+            'entityRelationComposite' => $this->entityRelationCompositeMock,
+            '_eavConfig' => $eavConfig,
+            '_validatorFactory' => $validatorFactory,
+            'customerRepository' => $customerRepositoryMock,
+            'orphanedMultiselectCleaner' => $orphanedMultiselectCleanerMock,
+            'deleteRelation' => $deleteRelationMock,
+            'customerRegistry' => $customerRegistryMock,
+            'objectRelationProcessor' => $objectRelationProcessor,
+            'transactionManager' => $transactionManager
+        ]);
     }
 
     /**
-     * @param $addressId
-     * @param $isDefaultBilling
-     * @param $isDefaultShipping
+     * @param int|null $addressId
+     * @param bool $isDefaultBilling
+     * @param bool $isDefaultShipping
      */
     #[DataProvider('getSaveDataProvider')]
-    public function testSave($addressId, $isDefaultBilling, $isDefaultShipping)
+    public function testSave(?int $addressId, bool $isDefaultBilling, bool $isDefaultShipping): void
     {
-        /** @var \Magento\Customer\Model\Address|\PHPUnit\Framework\MockObject\MockObject $address */
+        /** @var $address AddressTestHelper|\PHPUnit\Framework\MockObject\MockObject */
         $address = $this->createPartialMock(
             AddressTestHelper::class,
             [
-                '__wakeup',
+                'getIsDefaultBilling',
+                'getIsDefaultShipping',
                 'getId',
                 'getEntityTypeId',
                 'hasDataChanges',
                 'validateBeforeSave',
                 'beforeSave',
                 'afterSave',
-                'isSaveAllowed',
-                'getIsDefaultBilling',
-                'getIsDefaultShipping'
+                'isSaveAllowed'
             ]
         );
         $this->entitySnapshotMock->expects($this->once())->method('isModified')->willReturn(true);
@@ -156,7 +139,7 @@ class AddressTest extends TestCase
      *
      * @return array
      */
-    public static function getSaveDataProvider()
+    public static function getSaveDataProvider(): array
     {
         return [
             [null, true, true],
@@ -168,57 +151,11 @@ class AddressTest extends TestCase
     }
 
     /**
-     * Prepare context mock object
-     *
-     * @return Context|MockObject
-     */
-    protected function prepareContext()
-    {
-        $contextMock = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $contextMock->expects($this->any())
-            ->method('getEavConfig')
-            ->willReturn($this->prepareEavConfig());
-
-        $contextMock->expects($this->any())
-            ->method('getResource')
-            ->willReturn($this->prepareResource());
-
-        $contextMock->expects($this->any())
-            ->method('getAttributeSetEntity')
-            ->willReturn(null);
-
-        $contextMock->expects($this->any())
-            ->method('getLocaleFormat')
-            ->willReturn($this->createMock(FormatInterface::class));
-
-        $contextMock->expects($this->any())
-            ->method('getResourceHelper')
-            ->willReturn($this->createMock(Helper::class));
-
-        $contextMock->expects($this->any())
-            ->method('getUniversalFactory')
-            ->willReturn($this->createMock(UniversalFactory::class));
-
-        $contextMock->expects($this->any())
-            ->method('getTransactionManager')
-            ->willReturn($this->createMock(TransactionManagerInterface::class));
-
-        $contextMock->expects($this->any())
-            ->method('getObjectRelationProcessor')
-            ->willReturn($this->createMock(ObjectRelationProcessor::class));
-
-        return $contextMock;
-    }
-
-    /**
      * Prepare resource mock object
      *
      * @return ResourceConnection|MockObject
      */
-    protected function prepareResource()
+    protected function prepareResource(): ResourceConnection|MockObject
     {
         $dbSelect = $this->createMock(Select::class);
         $dbSelect->expects($this->any())->method('from')->willReturnSelf();
@@ -256,7 +193,7 @@ class AddressTest extends TestCase
      *
      * @return Config|MockObject
      */
-    protected function prepareEavConfig()
+    protected function prepareEavConfig(): Config|MockObject
     {
         $attributeMock = $this->createPartialMock(
             AbstractAttribute::class,
@@ -323,7 +260,7 @@ class AddressTest extends TestCase
      *
      * @return Factory|MockObject
      */
-    protected function prepareValidatorFactory()
+    protected function prepareValidatorFactory(): Factory|MockObject
     {
         $validatorMock = $this->createPartialMock(Validator::class, ['isValid']);
         $validatorMock->expects($this->any())
@@ -339,234 +276,8 @@ class AddressTest extends TestCase
         return $validatorFactory;
     }
 
-    /**
-     * @return CustomerFactory|MockObject
-     */
-    protected function prepareCustomerFactory()
-    {
-        $this->customerFactory = $this->createPartialMock(CustomerFactory::class, ['create']);
-        return $this->customerFactory;
-    }
-
-    /**
-     * @return CustomerRepositoryInterface|MockObject
-     */
-    protected function prepareCustomerRepository()
-    {
-        $customerRepositoryMock = $this->getMockBuilder(CustomerRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        return $customerRepositoryMock;
-    }
-
-    public function testGetType()
+    public function testGetType(): void
     {
         $this->assertSame($this->eavConfigType, $this->addressResource->getEntityType());
     }
 }
-
-/**
- * Mock method getAttributeLoader
- * @codingStandardsIgnoreStart
- */
-class SubResourceModelAddress extends \Magento\Customer\Model\ResourceModel\Address
-{
-    protected $attributeLoader;
-    protected $customerFactory;
-
-    /**
-     * Constructor - manually initializes to avoid ObjectManager dependency
-     *
-     * @param ResourceConnection $resource
-     * @param Snapshot $entitySnapshot
-     * @param RelationComposite $entityRelationComposite
-     * @param Config $eavConfig
-     * @param Factory $validatorFactory
-     * @param CustomerFactory $customerFactory
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function __construct(
-        ResourceConnection $resource,
-        Snapshot $entitySnapshot,
-        RelationComposite $entityRelationComposite,
-        Config $eavConfig,
-        Factory $validatorFactory,
-        CustomerFactory $customerFactory
-    ) {
-        // Manually set required properties to avoid calling parent constructor
-        // which would require ObjectManager initialization
-        $this->_resource = $resource;
-        $this->_eavConfig = $eavConfig;
-        $this->_validatorFactory = $validatorFactory;
-        $this->customerFactory = $customerFactory;
-        $this->entitySnapshot = $entitySnapshot;
-        $this->entityRelationComposite = $entityRelationComposite;
-        
-        // Create a stub for objectRelationProcessor to avoid null reference errors
-        $this->objectRelationProcessor = new ObjectRelationProcessorStub();
-    }
-
-    /**
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function __construct(
-        Context                     $context,
-        Snapshot                    $entitySnapshot,
-        RelationComposite           $entityRelationComposite,
-        Factory                     $validatorFactory,
-        CustomerRepositoryInterface $customerRepository,
-                                    $data = [],
-        ?OrphanedMultiselectCleaner $orphanedMultiselectCleaner = null,
-        ?DeleteRelation             $deleteRelation = null,
-        ?CustomerRegistry           $customerRegistry = null,
-        ?UniqueValidationInterface  $uniqueValidator = null,
-        ?AttributeLoaderInterface   $attributeLoader = null
-    ) {
-        $this->attributeLoader = $attributeLoader;
-
-        $this->initializeParentProperties(
-            $context,
-            $entitySnapshot,
-            $entityRelationComposite,
-            $validatorFactory,
-            $customerRepository,
-            $orphanedMultiselectCleaner,
-            $deleteRelation,
-            $customerRegistry,
-            $uniqueValidator,
-            $attributeLoader
-        );
-    }
-
-    /**
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
-     */
-    private function initializeParentProperties(
-        $context,
-        $entitySnapshot,
-        $entityRelationComposite,
-        $validatorFactory,
-        $customerRepository,
-        $orphanedMultiselectCleaner,
-        $deleteRelation,
-        $customerRegistry,
-        $uniqueValidator,
-        $attributeLoader
-    ) {
-        $reflection = new \ReflectionClass(\Magento\Customer\Model\ResourceModel\Address::class);
-
-        $prop = $reflection->getProperty('customerRepository');
-        $prop->setValue($this, $customerRepository);
-
-        $prop = $reflection->getProperty('_validatorFactory');
-        $prop->setValue($this, $validatorFactory);
-
-        $prop = $reflection->getProperty('orphanedMultiselectCleaner');
-        $prop->setValue($this, $orphanedMultiselectCleaner);
-
-        $prop = $reflection->getProperty('deleteRelation');
-        $prop->setValue($this, $deleteRelation);
-
-        $prop = $reflection->getProperty('customerRegistry');
-        $prop->setValue($this, $customerRegistry);
-
-        $reflection = new \ReflectionClass(\Magento\Eav\Model\Entity\VersionControl\AbstractEntity::class);
-
-        $prop = $reflection->getProperty('entitySnapshot');
-        $prop->setValue($this, $entitySnapshot);
-
-        $prop = $reflection->getProperty('entityRelationComposite');
-        $prop->setValue($this, $entityRelationComposite);
-
-        $reflection = new \ReflectionClass(AbstractEntity::class);
-
-        $prop = $reflection->getProperty('_eavConfig');
-        $prop->setValue($this, $context->getEavConfig());
-
-        $prop = $reflection->getProperty('_resource');
-        $prop->setValue($this, $context->getResource());
-
-        $prop = $reflection->getProperty('_localeFormat');
-        $prop->setValue($this, $context->getLocaleFormat());
-
-        $prop = $reflection->getProperty('_resourceHelper');
-        $prop->setValue($this, $context->getResourceHelper());
-
-        $prop = $reflection->getProperty('_universalFactory');
-        $prop->setValue($this, $context->getUniversalFactory());
-
-        $prop = $reflection->getProperty('transactionManager');
-        $prop->setValue($this, $context->getTransactionManager());
-
-        $prop = $reflection->getProperty('objectRelationProcessor');
-        $prop->setValue($this, $context->getObjectRelationProcessor());
-
-        $prop = $reflection->getProperty('uniqueValidator');
-        $prop->setValue($this, $uniqueValidator);
-
-        $prop = $reflection->getProperty('attributeLoader');
-        $prop->setValue($this, $attributeLoader);
-
-        $prop = $reflection->getProperty('_type');
-        $prop->setValue($this, null);
-
-        $this->connectionName = 'customer';
-    }
-
-    /**
-     * @param null $object
-     * @return AbstractEntity
-     */
-    public function loadAllAttributes($object = null)
-    {
-        return $this->getAttributeLoader()->loadAllAttributes($this, $object);
-    }
-
-    /**
-     * @param $attributeLoader
-     */
-    public function setAttributeLoader($attributeLoader)
-    {
-        $this->attributeLoader = $attributeLoader;
-    }
-
-    /**
-     * @return AttributeLoaderInterface
-     */
-    protected function getAttributeLoader()
-    {
-        return $this->attributeLoader;
-    }
-}
-
-/**
- * Stub for ObjectRelationProcessor
- */
-class ObjectRelationProcessorStub extends \Magento\Framework\Model\ResourceModel\Db\ObjectRelationProcessor
-{
-    /**
-     * Constructor without parent call to avoid dependencies
-     */
-    public function __construct()
-    {
-        // Skip parent constructor
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function validateDataIntegrity($tableName, array $data)
-    {
-        // Stub implementation - do nothing
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function processEntityRelation($entity, array $data)
-    {
-        // Stub implementation - do nothing
-    }
-}
-// @codingStandardsIgnoreEnd

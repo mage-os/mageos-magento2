@@ -175,11 +175,11 @@ class AbstractCustomerTest extends AbstractImportTestCase
     /**
      * @param array $rowData
      * @param array $errors
-     * @param boolean $isValid
+     * @param bool $isValid
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     #[DataProvider('checkUniqueKeyDataProvider')]
-    public function testCheckUniqueKey(array $rowData, array $errors, $isValid = false)
+    public function testCheckUniqueKey(array $rowData, array $errors, bool $isValid = false): void
     {
         $checkUniqueKey = new \ReflectionMethod(
             AbstractCustomer::class,
@@ -194,7 +194,7 @@ class AbstractCustomerTest extends AbstractImportTestCase
         }
     }
 
-    public function testValidateRowForUpdate()
+    public function testValidateRowForUpdate(): void
     {
         // _validateRowForUpdate should be called only once
         $this->_model->expects($this->once())->method('_validateRowForUpdate');
@@ -210,7 +210,7 @@ class AbstractCustomerTest extends AbstractImportTestCase
         $this->assertTrue($this->_model->validateRow([], 1));
     }
 
-    public function testValidateRowForDelete()
+    public function testValidateRowForDelete(): void
     {
         // _validateRowForDelete should be called only once
         $this->_model->expects($this->once())->method('_validateRowForDelete');
@@ -225,9 +225,11 @@ class AbstractCustomerTest extends AbstractImportTestCase
     }
 
     /**
+     * Clear validated rows and reset counter
+     *
      * @return void
      */
-    protected function _clearValidatedRows()
+    protected function _clearValidatedRows(): void
     {
         // clear array
         $validatedRows = new \ReflectionProperty(

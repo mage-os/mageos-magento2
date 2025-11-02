@@ -41,6 +41,8 @@ class QuoteTestHelper extends Quote
     public function setWebsite($website): self
     {
         $this->website = $website;
+        $this->testData['website'] = $website;
+        return $this;
     }
   
 
@@ -97,8 +99,11 @@ class QuoteTestHelper extends Quote
      */
     public function setCustomerEmail($email): self
     {
+        $this->testData['customer_email'] = $email;
         return $this;
     }
+
+    /**
      * Set customer group id for the quote instance in tests.
      *
      * @param mixed $groupId
@@ -118,18 +123,6 @@ class QuoteTestHelper extends Quote
     public function getCustomerGroupId()
     {
         return $this->testData['customer_group_id'] ?? null;
-    }
-
-    /**
-     * Set website for the quote in tests.
-     *
-     * @param mixed $website
-     * @return $this
-     */
-    public function setWebsite($website)
-    {
-        $this->testData['website'] = $website;
-        return $this;
     }
 
     /**
@@ -204,18 +197,6 @@ class QuoteTestHelper extends Quote
     public function getCustomerEmail()
     {
         return $this->testData['customer_email'] ?? null;
-    }
-
-    /**
-     * Set customer email for tests.
-     *
-     * @param string|null $email
-     * @return $this
-     */
-    public function setCustomerEmail($email)
-    {
-        $this->testData['customer_email'] = $email;
-        return $this;
     }
 
     /**

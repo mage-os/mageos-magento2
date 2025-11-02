@@ -57,20 +57,21 @@ class PostcodeTest extends TestCase
         $this->localeResolverMock = $this->createMock(ResolverInterface::class);
         $this->loggerMock = $this->createMock(LoggerInterface::class);
         $this->directoryHelperMock = $this->createMock(DirectoryHelper::class);
+        $this->stringHelperMock = $this->createMock(StringUtils::class);
         $this->attributeMock = $this->createPartialMock(
             AbstractAttributeTestHelper::class,
-            ['getStoreLabel']
+            ['getStoreLabel', 'getValidateRules']
         );
     }
 
     /**
      * @param string $value to assign to boolean
-     * @param bool $expected text output
+     * @param bool|array $expected text output
      * @param string $countryId
      * @param bool $isOptional
      */
     #[DataProvider('validateValueDataProvider')]
-    public function testValidateValue($value, $expected, $countryId, $isOptional)
+    public function testValidateValue(string $value, bool|array $expected, string $countryId, bool $isOptional): void
     {
         $storeLabel = 'Zip/Postal Code';
         $this->attributeMock->expects($this->any())
@@ -100,7 +101,7 @@ class PostcodeTest extends TestCase
     /**
      * @return array
      */
-    public static function validateValueDataProvider()
+    public static function validateValueDataProvider(): array
     {
         return [
             ['', ['"Zip/Postal Code" is a required value.'], 'US', false],
@@ -118,16 +119,15 @@ class PostcodeTest extends TestCase
      * @param array $validateRules
      * @param string $countryId
      * @param bool $isOptional
-     *
-     * @dataProvider validateValueWithRulesDataProvider
      */
+    #[DataProvider('validateValueWithRulesDataProvider')]
     public function testValidateValueWithRules(
         string $value,
         bool|array $expected,
         array $validateRules,
         string $countryId,
         bool $isOptional
-    ) {
+    ): void {
         $storeLabel = 'Zip/Postal Code';
         $this->attributeMock->expects($this->any())
             ->method('getStoreLabel')
@@ -182,7 +182,7 @@ class PostcodeTest extends TestCase
     /**
      * @return array
      */
-    public static function validateValueWithRulesDataProvider()
+    public static function validateValueWithRulesDataProvider(): array
     {
         return [
             // Test min length validation
