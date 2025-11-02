@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2015 Adobe
+ * Copyright 2025 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -429,6 +429,5 @@ class CustomerTestHelper extends Customer
     public function setDisableAutoGroupChange(bool $value): self
     {
         $this->testData['disable_auto_group_change'] = $value;
-        return $this;
     }
 }
