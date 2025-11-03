@@ -31,6 +31,31 @@ class AbstractModelTestHelper extends AbstractModel
     private $websiteId = null;
 
     /**
+     * @var mixed
+     */
+    private $id = null;
+
+    /**
+     * @var mixed
+     */
+    private $dataHasChangedForResult = null;
+
+    /**
+     * @var mixed
+     */
+    private $isActive = null;
+
+    /**
+     * @var mixed
+     */
+    private $entityAttributeId = null;
+
+    /**
+     * @var mixed
+     */
+    private $entityTypeId = null;
+
+    /**
      * Constructor - skip parent constructor to avoid dependencies
      */
     public function __construct()
@@ -113,6 +138,98 @@ class AbstractModelTestHelper extends AbstractModel
     public function setWebsiteId($websiteId)
     {
         $this->websiteId = $websiteId;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param mixed $id
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    /**
+     * @param string $field
+     * @return mixed
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function dataHasChangedFor($field)
+    {
+        return $this->dataHasChangedForResult;
+    }
+
+    /**
+     * @param mixed $result
+     * @return $this
+     */
+    public function setDataHasChangedForResult($result)
+    {
+        $this->dataHasChangedForResult = $result;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIsActive()
+    {
+        return $this->isActive;
+    }
+
+    /**
+     * @param mixed $isActive
+     * @return $this
+     */
+    public function setIsActive($isActive)
+    {
+        $this->isActive = $isActive;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEntityAttributeId()
+    {
+        return $this->entityAttributeId;
+    }
+
+    /**
+     * @param mixed $entityAttributeId
+     * @return $this
+     */
+    public function setEntityAttributeId($entityAttributeId)
+    {
+        $this->entityAttributeId = $entityAttributeId;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEntityTypeId()
+    {
+        return $this->entityTypeId;
+    }
+
+    /**
+     * @param mixed $entityTypeId
+     * @return $this
+     */
+    public function setEntityTypeId($entityTypeId)
+    {
+        $this->entityTypeId = $entityTypeId;
         return $this;
     }
 }

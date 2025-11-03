@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2018 Adobe
+ * Copyright 2025 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -16,6 +16,7 @@ use Magento\Catalog\Model\Product;
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class ProductTestHelper extends Product
 {
@@ -85,6 +86,116 @@ class ProductTestHelper extends Product
     private $customAttributes = [];
 
     /**
+     * @var mixed
+     */
+    private $inventoryReadonly = null;
+
+    /**
+     * @var array
+     */
+    private $testData = [];
+
+    /**
+     * @var array
+     */
+    private $origData = [];
+
+    /**
+     * @var int
+     */
+    private $storeId = 0;
+
+    /**
+     * @var mixed
+     */
+    private $crossSellLinkData = null;
+
+    /**
+     * @var mixed
+     */
+    private $relatedLinkData = null;
+
+    /**
+     * @var mixed
+     */
+    private $upSellLinkData = null;
+
+    /**
+     * @var mixed
+     */
+    private $hasOptions = null;
+
+    /**
+     * @var mixed
+     */
+    private $status = null;
+
+    /**
+     * @var bool
+     */
+    private $relatedReadonly = false;
+
+    /**
+     * @var bool
+     */
+    private $upsellReadonly = false;
+
+    /**
+     * @var bool
+     */
+    private $crosssellReadonly = false;
+
+    /**
+     * @var mixed
+     */
+    private $priceType = null;
+
+    /**
+     * @var mixed
+     */
+    private $id = null;
+
+    /**
+     * @var bool
+     */
+    private $canShowPrice = true;
+
+    /**
+     * @var mixed
+     */
+    private $priceInfo = null;
+
+    /**
+     * @var bool
+     */
+    private $hasCustomerGroupId = false;
+
+    /**
+     * @var bool
+     */
+    private $allowedInRss = false;
+
+    /**
+     * @var bool
+     */
+    private $allowedPriceInRss = false;
+
+    /**
+     * @var string
+     */
+    private $description = 'Product Description';
+
+    /**
+     * @var string
+     */
+    private $name = 'Product Name';
+
+    /**
+     * @var string
+     */
+    private $productUrl = 'http://magento.com/product-name.html';
+
+    /**
      * Initialize resources
      *
      * @return void
@@ -103,6 +214,23 @@ class ProductTestHelper extends Product
     {
         $this->resource = $resource;
         $this->_data = [];
+        $this->testData = [];
+    }
+
+    public function __sleep()
+    {
+        return [];
+    }
+
+    public function setInventoryReadonly($value)
+    {
+        $this->inventoryReadonly = $value;
+        return $this;
+    }
+
+    public function getInventoryReadonly()
+    {
+        return $this->inventoryReadonly;
     }
 
     /**
@@ -115,10 +243,21 @@ class ProductTestHelper extends Product
      */
     public function setPriceInfo($priceInfo)
     {
+        $this->priceInfo = $priceInfo;
         $reflection = new \ReflectionClass($this);
-        $property = $reflection->getProperty('_priceInfo');
-        $property->setValue($this, $priceInfo);
+        if ($reflection->hasProperty('_priceInfo')) {
+            $property = $reflection->getProperty('_priceInfo');
+            $property->setValue($this, $priceInfo);
+        }
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPriceInfo()
+    {
+        return $this->priceInfo;
     }
 
     /**
@@ -328,6 +467,14 @@ class ProductTestHelper extends Product
     }
 
     /**
+     * @return bool
+     */
+    public function isSalable()
+    {
+        return $this->isSalable ?? true;
+    }
+
+    /**
      * Set is salable
      *
      * @param bool|null $isSalable
@@ -358,6 +505,24 @@ class ProductTestHelper extends Product
     public function setWebsiteId($value)
     {
         $this->websiteId = $value;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasCustomerGroupId()
+    {
+        return $this->hasCustomerGroupId;
+    }
+
+    /**
+     * @param bool $value
+     * @return $this
+     */
+    public function setHasCustomerGroupId($value)
+    {
+        $this->hasCustomerGroupId = $value;
         return $this;
     }
 
@@ -450,7 +615,6 @@ class ProductTestHelper extends Product
         if ($this->dataValues && $this->dataCallCount < count($this->dataValues)) {
             $result = $this->dataValues[$this->dataCallCount];
             $this->dataCallCount++;
-            //echo "[getAllAttributeValues] returned: " . json_encode($result) . "\n";
             return $result;
         }
         return null;
@@ -505,9 +669,9 @@ class ProductTestHelper extends Product
             return true;
         }
         if ($key === null) {
-            return !empty($this->_data);
+            return !empty($this->_data) || !empty($this->testData);
         }
-        return isset($this->_data[$key]) || isset($this->attributesByCode[$key]);
+        return isset($this->_data[$key]) || isset($this->attributesByCode[$key]) || isset($this->testData[$key]);
     }
 
     /**
@@ -522,7 +686,10 @@ class ProductTestHelper extends Product
     public function getData($keyword = '', $index = null)
     {
         if ($keyword === '') {
-            return $this->dataValues ? $this->dataValues : $this->_data;
+            if ($this->dataValues) {
+                return $this->dataValues;
+            }
+            return !empty($this->testData) ? $this->testData : $this->_data;
         }
 
         if (isset($this->attributesByCode[$keyword])) {
@@ -535,7 +702,12 @@ class ProductTestHelper extends Product
             return $result;
         }
 
-        $value = $this->_data[$keyword] ?? null;
+        if (isset($this->testData[$keyword])) {
+            $value = $this->testData[$keyword];
+        } else {
+            $value = $this->_data[$keyword] ?? null;
+        }
+
         if ($index !== null && is_array($value) && isset($value[$index])) {
             return $value[$index];
         }
@@ -555,12 +727,14 @@ class ProductTestHelper extends Product
             if ($this->dataValues) {
                 $this->attributesByCode = $key;
             } else {
+                $this->testData = array_merge($this->testData, $key);
                 $this->_data = array_merge($this->_data, $key);
             }
         } else {
             if ($this->dataValues) {
                 $this->attributesByCode[$key] = $value;
             } else {
+                $this->testData[$key] = $value;
                 $this->_data[$key] = $value;
             }
         }
@@ -584,9 +758,40 @@ class ProductTestHelper extends Product
         } else {
             if ($key === null) {
                 $this->_data = [];
+                $this->testData = [];
             } else {
                 unset($this->_data[$key]);
+                unset($this->testData[$key]);
             }
+        }
+        return $this;
+    }
+
+    /**
+     * @param string|null $key
+     * @return mixed
+     */
+    public function getOrigData($key = null)
+    {
+        if ($key === null) {
+            return $this->origData;
+        }
+        return $this->origData[$key] ?? null;
+    }
+
+    /**
+     * @param string|array|null $key
+     * @param mixed $data
+     * @return $this
+     */
+    public function setOrigData($key = null, $data = null)
+    {
+        if ($key === null) {
+            $this->origData = $this->testData;
+        } elseif (is_array($key)) {
+            $this->origData = array_merge($this->origData, $key);
+        } else {
+            $this->origData[$key] = $data;
         }
         return $this;
     }
@@ -599,6 +804,16 @@ class ProductTestHelper extends Product
     public function getResource()
     {
         return $this->resource;
+    }
+
+    /**
+     * @param mixed $value
+     * @return $this
+     */
+    public function setResource($value)
+    {
+        $this->resource = $value;
+        return $this;
     }
 
     /**
@@ -664,7 +879,6 @@ class ProductTestHelper extends Product
      *
      * @param string $urlKey
      * @return $this
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setUrlKey($urlKey)
     {
@@ -734,5 +948,348 @@ class ProductTestHelper extends Product
     public function getAttributeSetId()
     {
         return $this->getData('attribute_set_id');
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getSku()
+    {
+        return $this->getData('sku');
+    }
+
+    /**
+     * @param string $sku
+     * @return $this
+     */
+    public function setSku($sku)
+    {
+        return $this->setData('sku', $sku);
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getTypeId()
+    {
+        return $this->getData('type_id');
+    }
+
+    /**
+     * @param string $typeId
+     * @return $this
+     */
+    public function setTypeId($typeId)
+    {
+        return $this->setData('type_id', $typeId);
+    }
+
+    /**
+     * @param mixed $data
+     * @return $this
+     */
+    public function setCrossSellLinkData($data)
+    {
+        $this->crossSellLinkData = $data;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCrossSellLinkData()
+    {
+        return $this->crossSellLinkData;
+    }
+
+    /**
+     * @param mixed $data
+     * @return $this
+     */
+    public function setRelatedLinkData($data)
+    {
+        $this->relatedLinkData = $data;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRelatedLinkData()
+    {
+        return $this->relatedLinkData;
+    }
+
+    /**
+     * @param mixed $data
+     * @return $this
+     */
+    public function setUpSellLinkData($data)
+    {
+        $this->upSellLinkData = $data;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUpSellLinkData()
+    {
+        return $this->upSellLinkData;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getHasOptions()
+    {
+        return $this->hasOptions;
+    }
+
+    /**
+     * @param mixed $value
+     * @return $this
+     */
+    public function setHasOptions($value)
+    {
+        $this->hasOptions = $value;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param mixed $value
+     * @return $this
+     */
+    public function setStatus($value)
+    {
+        $this->status = $value;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     */
+    public function getRelatedReadonly()
+    {
+        return $this->relatedReadonly;
+    }
+
+    /**
+     * @param bool $value
+     * @return $this
+     */
+    public function setRelatedReadonly($value)
+    {
+        $this->relatedReadonly = $value;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     */
+    public function getUpsellReadonly()
+    {
+        return $this->upsellReadonly;
+    }
+
+    /**
+     * @param bool $value
+     * @return $this
+     */
+    public function setUpsellReadonly($value)
+    {
+        $this->upsellReadonly = $value;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     */
+    public function getCrosssellReadonly()
+    {
+        return $this->crosssellReadonly;
+    }
+
+    /**
+     * @param bool $value
+     * @return $this
+     */
+    public function setCrosssellReadonly($value)
+    {
+        $this->crosssellReadonly = $value;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPriceType()
+    {
+        return $this->priceType;
+    }
+
+    /**
+     * @param mixed $priceType
+     * @return $this
+     */
+    public function setPriceType($priceType)
+    {
+        $this->priceType = $priceType;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getCanShowPrice()
+    {
+        return $this->canShowPrice;
+    }
+
+    /**
+     * @param bool $value
+     * @return $this
+     */
+    public function setCanShowPrice($value)
+    {
+        $this->canShowPrice = $value;
+        return $this;
+    }
+
+    /**
+     * @param bool $allowed
+     * @return $this
+     */
+    public function setAllowedInRss($allowed)
+    {
+        $this->allowedInRss = $allowed;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getAllowedInRss()
+    {
+        return $this->allowedInRss;
+    }
+
+    /**
+     * @param bool $allowed
+     * @return $this
+     */
+    public function setAllowedPriceInRss($allowed)
+    {
+        $this->allowedPriceInRss = $allowed;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getAllowedPriceInRss()
+    {
+        return $this->allowedPriceInRss;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     * @return $this
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     * @return $this
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    /**
+     * @param mixed $useSid
+     * @return string
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function getProductUrl($useSid = null)
+    {
+        return $this->productUrl;
+    }
+
+    /**
+     * @param string $url
+     * @return $this
+     */
+    public function setProductUrl($url)
+    {
+        $this->productUrl = $url;
+        return $this;
+    }
+
+    /**
+     * @return string|false|null
+     */
+    public function getRequestPath()
+    {
+        return $this->getData('request_path');
+    }
+
+    /**
+     * @param string|false $path
+     * @return $this
+     */
+    public function setRequestPath($path)
+    {
+        return $this->setData('request_path', $path);
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getCategoryId()
+    {
+        return $this->getData('category_id');
+    }
+
+    /**
+     * @param int $id
+     * @return $this
+     */
+    public function setCategoryId($id)
+    {
+        return $this->setData('category_id', $id);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2016 Adobe
+ * Copyright 2025 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -8,7 +8,6 @@ declare(strict_types=1);
 namespace Magento\Framework\EntityManager\Test\Unit\Helper;
 
 use Magento\Framework\EntityManager\MetadataPool;
-use Magento\Framework\EntityManager\Sequence\SequenceFactory;
 
 /**
  * TestHelper for MetadataPool
@@ -26,14 +25,11 @@ class MetadataPoolTestHelper extends MetadataPool
     private $data = [];
 
     /**
-     * Constructor
-     *
-     * @param mixed $objectManager
-     * @param SequenceFactory $sequenceFactory
+     * Constructor - skip parent to avoid dependencies
      */
-    public function __construct($objectManager, $sequenceFactory)
+    public function __construct()
     {
-        parent::__construct($objectManager, $sequenceFactory, []);
+        // Don't call parent constructor to avoid dependencies
     }
 
     /**
