@@ -42,13 +42,11 @@ class CartExtensionTestHelper extends CartExtension
      * Set shipping assignments for tests.
      *
      * @param array $shippingAssignments
-     * @param mixed $negotiableQuote
      * @return $this
      */
-    public function setShippingAssignments($shippingAssignments, $negotiableQuote = null)
+    public function setShippingAssignments($shippingAssignments)
     {
         $this->testData['shipping_assignments'] = $shippingAssignments;
-        $this->negotiableQuote = $negotiableQuote;
         return $this;
     }
 
