@@ -29,7 +29,7 @@ class ProductRenderExtensionInterfaceTestHelper implements ProductRenderExtensio
         return $this->wishlistButton;
     }
 
-    public function setWishlistButton(\Magento\Catalog\Api\Data\ProductRender\ButtonInterface $wishlistButton)
+    public function setWishlistButton(ButtonInterface $wishlistButton)
     {
         $this->wishlistButton = $wishlistButton;
         return $this;

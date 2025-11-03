@@ -13,6 +13,8 @@ use Magento\Framework\EntityManager\Sequence\SequenceFactory;
 /**
  * TestHelper for MetadataPool
  * Provides implementation for MetadataPool with additional test methods
+ *
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class MetadataPoolTestHelper extends MetadataPool
 {

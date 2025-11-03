@@ -80,6 +80,21 @@ class ProductTestHelper extends Product
     private $dataCallCount = 0;
 
     /**
+     * @var array
+     */
+    private $customAttributes = [];
+
+    /**
+     * Initialize resources
+     *
+     * @return void
+     */
+    protected function _construct()
+    {
+        // Mock implementation - no actual resource initialization needed
+    }
+
+    /**
      * Constructor
      *
      * @param mixed $resource Optional resource parameter
@@ -607,5 +622,117 @@ class ProductTestHelper extends Product
     public function getFinalPrice($qty = null)
     {
         return $this->finalPrice;
+    }
+
+    /**
+     * Mock method for getUrlKey
+     *
+     * @return string|null
+     */
+    public function getUrlKey()
+    {
+        return $this->getData('url_key');
+    }
+
+    /**
+     * Mock method for formatUrlKey
+     *
+     * @param string $str
+     * @return string
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function formatUrlKey($str)
+    {
+        return $str;
+    }
+
+    /**
+     * Mock method for load
+     *
+     * @param int $modelId
+     * @param string|null $field
+     * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function load($modelId, $field = null)
+    {
+        return $this;
+    }
+
+    /**
+     * Mock method for setUrlKey
+     *
+     * @param string $urlKey
+     * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function setUrlKey($urlKey)
+    {
+        return $this->setData('url_key', $urlKey);
+    }
+
+    /**
+     * Mock method for getIsChangedCategories
+     *
+     * @return bool|null
+     */
+    public function getIsChangedCategories()
+    {
+        return $this->getData('is_changed_categories');
+    }
+
+    /**
+     * Mock method for getWebsiteIds
+     *
+     * @return array
+     */
+    public function getWebsiteIds()
+    {
+        return $this->getData('website_ids') ?: [];
+    }
+
+    /**
+     * Get custom attribute value
+     *
+     * @param string $attributeCode
+     * @return mixed
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function getCustomAttribute($attributeCode)
+    {
+        return $this->customAttributes[$attributeCode] ?? null;
+    }
+
+    /**
+     * Set custom attribute for testing
+     *
+     * @param string $attributeCode
+     * @param mixed $attribute
+     * @return $this
+     */
+    public function setCustomAttributeForTest($attributeCode, $attribute)
+    {
+        $this->customAttributes[$attributeCode] = $attribute;
+        return $this;
+    }
+
+    /**
+     * Get product options
+     *
+     * @return array|null
+     */
+    public function getOptions()
+    {
+        return $this->getData('options');
+    }
+
+    /**
+     * Get attribute set ID
+     *
+     * @return int|null
+     */
+    public function getAttributeSetId()
+    {
+        return $this->getData('attribute_set_id');
     }
 }
