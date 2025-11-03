@@ -80,8 +80,6 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     protected $_isProductNameJoined = false;
 
     /**
-     * Adminhtml sales
-     *
      * @var \Magento\Sales\Helper\Admin
      */
     protected $_adminhtmlSales = null;
@@ -319,7 +317,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      * @return $this
      */
     protected function _assignProducts()
-    {//here
+    {
         \Magento\Framework\Profiler::start(
             'WISHLIST:' . __METHOD__,
             ['group' => 'WISHLIST', 'method' => __METHOD__]

@@ -150,11 +150,6 @@ class Wishlist extends AbstractModel implements IdentityInterface
     private $stockConfiguration;
 
     /**
-     * @var WishlistItemPermissionsCollectionProcessor
-     */
-    private WishlistItemPermissionsCollectionProcessor $permissionCollectionProcessor;
-
-    /**
      * Constructor
      *
      * @param Context $context
@@ -177,7 +172,6 @@ class Wishlist extends AbstractModel implements IdentityInterface
      * @param StockRegistryInterface|null $stockRegistry
      * @param ScopeConfigInterface|null $scopeConfig
      * @param StockConfigurationInterface|null $stockConfiguration
-     * @param WishlistItemPermissionsCollectionProcessor|null $permissionCollectionProcessor
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
@@ -201,8 +195,7 @@ class Wishlist extends AbstractModel implements IdentityInterface
         ?Json $serializer = null,
         ?StockRegistryInterface $stockRegistry = null,
         ?ScopeConfigInterface $scopeConfig = null,
-        ?StockConfigurationInterface $stockConfiguration = null,
-        ?WishlistItemPermissionsCollectionProcessor $permissionCollectionProcessor = null
+        ?StockConfigurationInterface $stockConfiguration = null
     ) {
         $this->_useCurrentWebsite = $useCurrentWebsite;
         $this->_catalogProduct = $catalogProduct;
@@ -219,8 +212,6 @@ class Wishlist extends AbstractModel implements IdentityInterface
         $this->productRepository = $productRepository;
         $this->stockConfiguration = $stockConfiguration
             ?: ObjectManager::getInstance()->get(StockConfigurationInterface::class);
-        $this->permissionCollectionProcessor = $permissionCollectionProcessor ?:
-            ObjectManager::getInstance()->get(WishlistItemPermissionsCollectionProcessor::class);
     }
 
     /**
