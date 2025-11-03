@@ -112,7 +112,7 @@ class SessionManagerTestHelper implements SessionManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function destroy(array $options = null)
+    public function destroy(?array $options = null):bool
     {
         $this->testData = [];
         return true;

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2024 Adobe
+ * Copyright 2025 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -368,7 +368,7 @@ class CustomerInterfaceTestHelper implements CustomerInterface
     /**
      * @inheritdoc
      */
-    public function setAddresses(array $addresses = null)
+    public function setAddresses(?array $addresses = null): self
     {
         $this->data['addresses'] = $addresses;
         return $this;
