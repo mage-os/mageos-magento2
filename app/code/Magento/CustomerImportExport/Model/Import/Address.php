@@ -866,7 +866,7 @@ class Address extends AbstractCustomer
      * @return void
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    protected function _validateRowForUpdate(array $rowData, int $rowNumber): void
+    protected function _validateRowForUpdate(array $rowData, $rowNumber): void
     {
         $multiSeparator = $this->getMultipleValueSeparator();
         if ($this->_checkUniqueKey($rowData, $rowNumber)) {
@@ -938,7 +938,7 @@ class Address extends AbstractCustomer
      * @param int $rowNumber
      * @return void
      */
-    protected function _validateRowForDelete(array $rowData, int $rowNumber): void
+    protected function _validateRowForDelete(array $rowData, $rowNumber): void
     {
         if ($this->_checkUniqueKey($rowData, $rowNumber)) {
             $email = strtolower($rowData[self::COLUMN_EMAIL]);
