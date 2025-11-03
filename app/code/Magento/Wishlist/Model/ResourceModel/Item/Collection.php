@@ -80,6 +80,8 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     protected $_isProductNameJoined = false;
 
     /**
+     * Adminhtml sales
+     *
      * @var \Magento\Sales\Helper\Admin
      */
     protected $_adminhtmlSales = null;
@@ -349,7 +351,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
         /** @var \Magento\Wishlist\Model\Item $item */
         foreach ($this as $item) {
             $product = $productCollection->getItemById($item->getProductId());
-            if ($product && !$product->getIsHidden()) {
+            if ($product) {
                 if ($checkInStock && !$product->isInStock()) {
                     $this->removeItemByKey($item->getId());
                 } else {
