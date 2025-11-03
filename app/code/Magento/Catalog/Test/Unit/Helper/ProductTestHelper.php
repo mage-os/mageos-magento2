@@ -80,6 +80,21 @@ class ProductTestHelper extends Product
     private $dataCallCount = 0;
 
     /**
+     * @var array
+     */
+    private $customAttributes = [];
+
+    /**
+     * Initialize resources
+     *
+     * @return void
+     */
+    protected function _construct()
+    {
+        // Mock implementation - no actual resource initialization needed
+    }
+
+    /**
      * Constructor
      *
      * @param mixed $resource Optional resource parameter
@@ -674,5 +689,50 @@ class ProductTestHelper extends Product
     public function getWebsiteIds()
     {
         return $this->getData('website_ids') ?: [];
+    }
+
+    /**
+     * Get custom attribute value
+     *
+     * @param string $attributeCode
+     * @return mixed
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function getCustomAttribute($attributeCode)
+    {
+        return $this->customAttributes[$attributeCode] ?? null;
+    }
+
+    /**
+     * Set custom attribute for testing
+     *
+     * @param string $attributeCode
+     * @param mixed $attribute
+     * @return $this
+     */
+    public function setCustomAttributeForTest($attributeCode, $attribute)
+    {
+        $this->customAttributes[$attributeCode] = $attribute;
+        return $this;
+    }
+
+    /**
+     * Get product options
+     *
+     * @return array|null
+     */
+    public function getOptions()
+    {
+        return $this->getData('options');
+    }
+
+    /**
+     * Get attribute set ID
+     *
+     * @return int|null
+     */
+    public function getAttributeSetId()
+    {
+        return $this->getData('attribute_set_id');
     }
 }

@@ -9,7 +9,7 @@ namespace Magento\Catalog\Test\Unit\Ui\DataProvider\Product\Form\Modifier;
 
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\Locator\LocatorInterface;
-use Magento\Catalog\Test\Unit\Helper\ProductInterfaceTestHelper;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Store\Test\Unit\Helper\StoreInterfaceTestHelper;
 use Magento\Framework\Stdlib\ArrayManager;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -58,7 +58,7 @@ abstract class AbstractModifierTestCase extends TestCase
         $this->objectManager = new ObjectManager($this);
         $this->locatorMock = $this->createMock(LocatorInterface::class);
         $this->productMock = $this->createPartialMock(
-            ProductInterfaceTestHelper::class,
+            ProductTestHelper::class,
             [
                 'getId',
                 'getTypeId',
