@@ -15,6 +15,11 @@ use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
  */
 class AttributeTestHelper extends Attribute
 {
+    /**
+     * @var mixed
+     */
+    private $searchWeight = null;
+
     /** @var array */
     private $attributesByCode = [];
     /** @var array */
@@ -125,6 +130,28 @@ class AttributeTestHelper extends Attribute
     public function setScopeGlobal($value)
     {
         $this->setData('is_global', $value ? 1 : 0);
+        return $this;
+    }
+
+    /**
+     * Mock method for getSearchWeight
+     *
+     * @return mixed
+     */
+    public function getSearchWeight()
+    {
+        return $this->searchWeight;
+    }
+
+    /**
+     * Set the searchWeight value
+     *
+     * @param mixed $value
+     * @return $this
+     */
+    public function setSearchWeight($value)
+    {
+        $this->searchWeight = $value;
         return $this;
     }
 }
