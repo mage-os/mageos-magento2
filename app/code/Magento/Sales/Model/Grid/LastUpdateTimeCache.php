@@ -37,7 +37,7 @@ class LastUpdateTimeCache
         ?FlagManager $flagManager = null
     ) {
         $this->cache = $cache;
-        $this->flagManager = $flagManager ?: \Magento\Framework\App\ObjectManager::getInstance()
+        $this->flagManager = $flagManager ?? \Magento\Framework\App\ObjectManager::getInstance()
             ->get(FlagManager::class);
     }
 
