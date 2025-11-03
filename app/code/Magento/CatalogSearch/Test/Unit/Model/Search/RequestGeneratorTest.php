@@ -14,7 +14,7 @@ use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory;
 use Magento\CatalogSearch\Model\Search\RequestGenerator;
 use Magento\CatalogSearch\Model\Search\RequestGenerator\GeneratorInterface;
 use Magento\CatalogSearch\Model\Search\RequestGenerator\GeneratorResolver;
-use Magento\Catalog\Test\Unit\Helper\AttributeResourceModelTestHelper;
+use Magento\Catalog\Test\Unit\Helper\AttributeTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -193,7 +193,7 @@ class RequestGeneratorTest extends TestCase
     private function createAttributeTestHelper($attributeOptions)
     {
         /** @var \Magento\Catalog\Model\Entity\Attribute|MockObject $attribute */
-        $attribute = $this->getMockBuilder(AttributeResourceModelTestHelper::class)
+        $attribute = $this->getMockBuilder(AttributeTestHelper::class)
             ->disableOriginalConstructor()
             ->onlyMethods(
                 [
