@@ -22,12 +22,12 @@ use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Json\Helper\Data;
 use Magento\Framework\Stdlib\StringUtils;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\ImportExport\Helper\Data as ImportExportHelperData;
 use Magento\ImportExport\Model\ResourceModel\Helper;
 use Magento\ImportExport\Model\ResourceModel\Import\Data as ResourceImportData;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
 
 /**
  * @SuppressWarnings(PHPMD)
@@ -54,8 +54,14 @@ class TierPriceTest extends TestCase
      */
     protected $tierPrice;
 
+    /**
+     * @var ObjectManager
+     */
+    protected $objectManager;
+
     protected function setUp(): void
     {
+        $this->objectManager = new ObjectManager($this);
         $this->groupRepository = $this->createMock(GroupRepositoryInterface::class);
 
         $this->searchCriteriaBuilder = $this->createMock(SearchCriteriaBuilder::class);
@@ -114,13 +120,16 @@ class TierPriceTest extends TestCase
 
         $this->tierPrice->init(null);
 
-        $this->assertEquals($expectedCustomerGroups, $this->getPropertyValue($this->tierPrice, 'customerGroups'));
+        $reflection = new \ReflectionClass($this->tierPrice);
+        $property = $reflection->getProperty('customerGroups');
+        $property->setAccessible(true);
+        $this->assertEquals($expectedCustomerGroups, $property->getValue($this->tierPrice));
     }
 
     public function testIsValidResultTrue()
     {
         $this->tierPrice->expects($this->once())->method('isValidValueAndLength')->willReturn(false);
-        $this->setPropertyValue($this->tierPrice, 'customerGroups', true);
+        $this->objectManager->setBackwardCompatibleProperty($this->tierPrice, 'customerGroups', true);
 
         $result = $this->tierPrice->isValid([]);
         $this->assertTrue($result);
@@ -152,7 +161,7 @@ class TierPriceTest extends TestCase
 
         $this->tierPrice->expects($this->once())->method('isValidValueAndLength')->willReturn(true);
         $this->tierPrice->method('hasEmptyColumns')->willReturn($hasEmptyColumns);
-        $this->setPropertyValue($this->tierPrice, 'customerGroups', $customerGroups);
+        $this->objectManager->setBackwardCompatibleProperty($this->tierPrice, 'customerGroups', $customerGroups);
 
         $searchCriteria = $this->createMock(SearchCriteria::class);
         $this->searchCriteriaBuilder->method('create')->willReturn($searchCriteria);
@@ -329,41 +338,5 @@ class TierPriceTest extends TestCase
                 'expectedMessages' => [Validator::ERROR_INVALID_TIER_PRICE_QTY],
             ],
         ];
-    }
-
-    /**
-     * Get any object property value.
-     *
-     * @param object $object
-     * @param string $property
-     * @return mixed
-     * @throws \ReflectionException
-     */
-    protected function getPropertyValue($object, $property)
-    {
-        $reflection = new ReflectionClass(get_class($object));
-        $reflectionProperty = $reflection->getProperty($property);
-        $reflectionProperty->setAccessible(true);
-
-        return $reflectionProperty->getValue($object);
-    }
-
-    /**
-     * Set object property value.
-     *
-     * @param object $object
-     * @param string $property
-     * @param mixed $value
-     * @return object
-     * @throws \ReflectionException
-     */
-    protected function setPropertyValue(&$object, $property, $value)
-    {
-        $reflection = new ReflectionClass(get_class($object));
-        $reflectionProperty = $reflection->getProperty($property);
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($object, $value);
-
-        return $object;
     }
 }

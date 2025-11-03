@@ -27,6 +27,7 @@ use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\Json\Helper\Data;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Catalog\Helper\Data as CatalogHelperData;
 use Magento\Catalog\Model\Product as CatalogProduct;
 use Magento\ImportExport\Helper\Data as ImportExportHelperData;
@@ -152,11 +153,18 @@ class AdvancedPricingTest extends AbstractImportTestCase
     private $currencyResolver;
 
     /**
+     * @var ObjectManager
+     */
+    protected $objectManager;
+
+    /**
      * @inheritDoc
      */
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->objectManager = new ObjectManager($this);
 
         $this->jsonHelper = $this->createMock(Data::class);
         $this->importExportData = $this->createMock(ImportExportHelperData::class);
@@ -302,7 +310,7 @@ class AdvancedPricingTest extends AbstractImportTestCase
                 'getWebSiteId'
             ]
         );
-        $this->setPropertyValue($advancedPricingMock, '_validatedRows', []);
+        $this->objectManager->setBackwardCompatibleProperty($advancedPricingMock, '_validatedRows', []);
         $this->validator->expects($this->once())->method('isValid')->willReturn(false);
         $messages = ['value'];
         $this->validator->expects($this->once())->method('getMessages')->willReturn($messages);
@@ -624,14 +632,17 @@ class AdvancedPricingTest extends AbstractImportTestCase
      */
     public function testDeleteAdvancedPricingResetCachedSkuToDelete(): void
     {
-        $this->setPropertyValue($this->advancedPricing, '_cachedSkuToDelete', 'some value');
+        $this->objectManager->setBackwardCompatibleProperty($this->advancedPricing, '_cachedSkuToDelete', 'some value');
         $this->dataSourceModel
             ->method('getNextBunch')
             ->willReturnOnConsecutiveCalls([]);
 
         $this->advancedPricing->deleteAdvancedPricing();
 
-        $cachedSkuToDelete = $this->getPropertyValue($this->advancedPricing, '_cachedSkuToDelete');
+        $reflection = new \ReflectionClass($this->advancedPricing);
+        $property = $reflection->getProperty('_cachedSkuToDelete');
+        $property->setAccessible(true);
+        $cachedSkuToDelete = $property->getValue($this->advancedPricing);
         $this->assertNull($cachedSkuToDelete);
     }
 
@@ -1047,44 +1058,6 @@ class AdvancedPricingTest extends AbstractImportTestCase
                 [['price1'], [self::LINK_FIELD => 'product1']]
             ]
         ];
-    }
-
-    /**
-     * Get any object property value.
-     *
-     * @param $object
-     * @param $property
-     *
-     * @return mixed
-     * @throws \ReflectionException
-     */
-    protected function getPropertyValue($object, $property)
-    {
-        $reflection = new ReflectionClass(get_class($object));
-        $reflectionProperty = $reflection->getProperty($property);
-        $reflectionProperty->setAccessible(true);
-
-        return $reflectionProperty->getValue($object);
-    }
-
-    /**
-     * Set object property value.
-     *
-     * @param $object
-     * @param $property
-     * @param $value
-     *
-     * @return mixed
-     * @throws \ReflectionException
-     */
-    protected function setPropertyValue(&$object, $property, $value)
-    {
-        $reflection = new ReflectionClass(get_class($object));
-        $reflectionProperty = $reflection->getProperty($property);
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($object, $value);
-
-        return $object;
     }
 
     /**

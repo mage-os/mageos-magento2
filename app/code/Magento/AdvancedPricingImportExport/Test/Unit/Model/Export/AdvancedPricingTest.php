@@ -37,7 +37,7 @@ use Magento\Catalog\Model\ResourceModel\Collection\AbstractCollection as Magento
 use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
 use Magento\Eav\Model\Entity\Collection\AbstractCollection;
 use Magento\ImportExport\Model\Export\Config as ExportConfig;
-use ReflectionClass;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use stdClass;
 
 /**
@@ -224,12 +224,15 @@ class AdvancedPricingTest extends TestCase
             'correctExportData'
         ]);
         
-        $this->advancedPricing = new AdvancedPricingExportTestHelper();
-        
-        // Manually set the required properties that would normally be set by the parent constructor
-        $this->setPropertyValue($this->advancedPricing, '_storeResolver', $this->storeResolver);
-        $this->setPropertyValue($this->advancedPricing, '_groupRepository', $this->groupRepository);
-        $this->setPropertyValue($this->advancedPricing, '_resource', $this->resource);
+        $objectManager = new ObjectManager($this);
+        $this->advancedPricing = $objectManager->getObject(
+            AdvancedPricingExportTestHelper::class,
+            [
+                '_storeResolver' => $this->storeResolver,
+                '_groupRepository' => $this->groupRepository,
+                '_resource' => $this->resource
+            ]
+        );
     }
 
     /**
@@ -307,39 +310,5 @@ class AdvancedPricingTest extends TestCase
     protected function tearDown(): void
     {
         unset($this->object);
-    }
-
-    /**
-     * Get any object property value.
-     *
-     * @param $object
-     * @param $property
-     * @return mixed
-     * @throws \ReflectionException
-     */
-    protected function getPropertyValue($object, $property)
-    {
-        $reflection = new ReflectionClass(get_class($object));
-        $reflectionProperty = $reflection->getProperty($property);
-        $reflectionProperty->setAccessible(true);
-        return $reflectionProperty->getValue($object);
-    }
-
-    /**
-     * Set object property value.
-     *
-     * @param $object
-     * @param $property
-     * @param $value
-     * @return mixed
-     * @throws \ReflectionException
-     */
-    protected function setPropertyValue(&$object, $property, $value)
-    {
-        $reflection = new ReflectionClass(get_class($object));
-        $reflectionProperty = $reflection->getProperty($property);
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($object, $value);
-        return $object;
     }
 }

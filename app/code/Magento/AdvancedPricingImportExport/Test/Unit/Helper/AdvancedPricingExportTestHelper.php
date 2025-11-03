@@ -8,6 +8,8 @@ declare(strict_types=1);
 namespace Magento\AdvancedPricingImportExport\Test\Unit\Helper;
 
 use Magento\AdvancedPricingImportExport\Model\Export\AdvancedPricing;
+use Magento\Eav\Model\Entity\Collection\AbstractCollection;
+use Magento\Store\Model\Store;
 
 /**
  * Test helper for AdvancedPricing Export
@@ -164,14 +166,14 @@ class AdvancedPricingExportTestHelper extends AdvancedPricing
     /**
      * Prepare entity collection
      *
-     * @param \Magento\Eav\Model\Entity\Collection\AbstractCollection $collection
+     * @param AbstractCollection $collection
      * @return $this
      */
-    public function _prepareEntityCollection(\Magento\Eav\Model\Entity\Collection\AbstractCollection $collection)
+    public function _prepareEntityCollection(AbstractCollection $collection)
     {
         $this->entityCollection = $collection;
         // Call setStoreId on the collection to satisfy the test expectation
-        $collection->setStoreId(\Magento\Store\Model\Store::DEFAULT_STORE_ID);
+        $collection->setStoreId(Store::DEFAULT_STORE_ID);
         return $this;
     }
 
