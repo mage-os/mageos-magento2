@@ -26,7 +26,6 @@ use Magento\Framework\Model\Context;
 use Magento\Framework\Registry;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\Stdlib\DateTime;
-use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Wishlist\Helper\Data;
 use Magento\Wishlist\Model\Item;
@@ -36,7 +35,6 @@ use Magento\Wishlist\Model\ResourceModel\Item\CollectionFactory;
 use Magento\Wishlist\Model\ResourceModel\Wishlist as WishlistResource;
 use Magento\Wishlist\Model\ResourceModel\Wishlist\Collection as WishlistCollection;
 use Magento\Wishlist\Model\Wishlist;
-use Magento\Wishlist\Model\WishlistItemPermissionsCollectionProcessor;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -140,11 +138,6 @@ class WishlistTest extends TestCase
      */
     private $stockConfiguration;
 
-    /**
-     * @var WishlistItemPermissionsCollectionProcessor|MockObject
-     */
-    private WishlistItemPermissionsCollectionProcessor $permissionCollectionProcessor;
-
     protected function setUp(): void
     {
         $context = $this->getMockBuilder(Context::class)
@@ -207,7 +200,6 @@ class WishlistTest extends TestCase
             ->willReturn($this->eventDispatcher);
 
         $this->stockConfiguration = $this->createMock(StockConfigurationInterface::class);
-        $this->permissionCollectionProcessor = $this->createMock(WishlistItemPermissionsCollectionProcessor::class);
 
         $this->wishlist = new Wishlist(
             $context,
@@ -229,36 +221,11 @@ class WishlistTest extends TestCase
             $this->serializer,
             $this->stockRegistry,
             $this->scopeConfig,
-            $this->stockConfiguration,
-            $this->permissionCollectionProcessor
+            $this->stockConfiguration
         );
     }
 
-    /**
-     * @return void
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
-     * @throws \PHPUnit\Framework\MockObject\Exception
-     */
-    public function testGetItemCollection(): void
-    {
-        $wishlistItemCollection = $this->createMock(Collection::class);
-        $wishlistItemCollection->expects($this->once())->method('addWishlistFilter')->willReturnSelf();
-        $wishlistItemCollection->expects($this->once())->method('addStoreFilter')->willReturnSelf();
-        $wishlistItemCollection->expects($this->once())->method('setVisibilityFilter')->willReturnSelf();
-        $this->permissionCollectionProcessor->expects($this->once())
-            ->method('execute')
-            ->with($wishlistItemCollection);
-        $this->itemsFactory->expects($this->once())->method('create')->willReturn($wishlistItemCollection);
-        $store = $this->createMock(StoreInterface::class);
-        $this->storeManager->expects($this->any())->method('getStores')->willReturn([$store]);
-        $this->wishlist->getItemCollection();
-    }
-
-    /**
-     * @return void
-     * @throws LocalizedException
-     */
-    public function testLoadByCustomerId(): void
+    public function testLoadByCustomerId()
     {
         $customerId = 1;
         $customerIdFieldName = 'customer_id';
@@ -375,7 +342,6 @@ class WishlistTest extends TestCase
         $this->itemsFactory->expects($this->any())
             ->method('create')
             ->willReturn($items);
-        $this->permissionCollectionProcessor->expects($this->once())->method('execute')->willReturn($items);
 
         $this->productRepository->expects($this->once())
             ->method('getById')
@@ -414,8 +380,7 @@ class WishlistTest extends TestCase
         return $newItem;
     }
 
-    protected function getMockForDataObject()
-    {
+    protected function getMockForDataObject() {
         $dataObjectMock = $this->createMock(DataObject::class);
         $dataObjectMock->expects($this->once())
             ->method('setData')

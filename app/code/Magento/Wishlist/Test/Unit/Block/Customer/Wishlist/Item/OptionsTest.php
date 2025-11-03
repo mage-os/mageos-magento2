@@ -13,6 +13,7 @@ use Magento\Catalog\Model\Product;
 use Magento\Framework\App\Http\Context;
 use Magento\Framework\Escaper;
 use Magento\Framework\Event\ManagerInterface;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Wishlist\Block\Customer\Wishlist\Item\Options;
 use Magento\Wishlist\Model\Item;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -20,8 +21,8 @@ use PHPUnit\Framework\TestCase;
 
 class OptionsTest extends TestCase
 {
-    public const TEST_PRODUCT_TYPE = 'testProductType';
-    public const TEST_HELPER_CLASS_NAME = 'testHelperClass';
+    const TEST_PRODUCT_TYPE = 'testProductType';
+    const TEST_HELPER_CLASS_NAME = 'testHelperClass';
 
     /**
      * @var Escaper|MockObject
@@ -76,7 +77,15 @@ class OptionsTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->block = new Options($productContextMock, $this->httpContextMock, $this->helperPoolMock);
+        $objectManager = new ObjectManager($this);
+        $this->block = $objectManager->getObject(
+            Options::class,
+            [
+                'context' => $productContextMock,
+                'httpContext' => $this->httpContextMock,
+                'helperPool' => $this->helperPoolMock,
+            ]
+        );
         $this->block->setItem($this->itemMock);
         $this->block->addOptionsRenderCfg(self::TEST_PRODUCT_TYPE, self::TEST_HELPER_CLASS_NAME);
     }

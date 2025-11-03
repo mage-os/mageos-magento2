@@ -17,7 +17,6 @@ use Magento\Wishlist\Model\ResourceModel\Item\Collection as WishlistItemCollecti
 use Magento\Wishlist\Model\ResourceModel\Item\CollectionFactory as WishlistItemCollectionFactory;
 use Magento\Wishlist\Model\Item;
 use Magento\Wishlist\Model\Wishlist;
-use Magento\Wishlist\Model\WishlistItemPermissionsCollectionProcessor;
 
 /**
  * Fetches the Wishlist Items data according to the GraphQL schema
@@ -27,31 +26,23 @@ class WishlistItemsResolver implements ResolverInterface
     /**
      * @var WishlistItemCollectionFactory
      */
-    private WishlistItemCollectionFactory $wishlistItemCollectionFactory;
+    private $wishlistItemCollectionFactory;
 
     /**
      * @var StoreManagerInterface
      */
-    private StoreManagerInterface $storeManager;
-
-    /**
-     * @var WishlistItemPermissionsCollectionProcessor
-     */
-    private WishlistItemPermissionsCollectionProcessor $permissionCollectionProcessor;
+    private $storeManager;
 
     /**
      * @param WishlistItemCollectionFactory $wishlistItemCollectionFactory
      * @param StoreManagerInterface $storeManager
-     * @param WishlistItemPermissionsCollectionProcessor $permissionCollectionProcessor
      */
     public function __construct(
         WishlistItemCollectionFactory $wishlistItemCollectionFactory,
-        StoreManagerInterface $storeManager,
-        WishlistItemPermissionsCollectionProcessor $permissionCollectionProcessor
+        StoreManagerInterface $storeManager
     ) {
         $this->wishlistItemCollectionFactory = $wishlistItemCollectionFactory;
         $this->storeManager = $storeManager;
-        $this->permissionCollectionProcessor = $permissionCollectionProcessor;
     }
 
     /**
@@ -90,7 +81,6 @@ class WishlistItemsResolver implements ResolverInterface
      *
      * @param Wishlist $wishlist
      * @return Item[]
-     * @throws \Exception
      */
     private function getWishListItems(Wishlist $wishlist): array
     {
@@ -102,7 +92,6 @@ class WishlistItemsResolver implements ResolverInterface
                 return $store->getId();
             }, $this->storeManager->getStores()))
             ->setVisibilityFilter();
-        $this->permissionCollectionProcessor->execute($wishlistItemCollection);
         return $wishlistItemCollection->getItems();
     }
 }
