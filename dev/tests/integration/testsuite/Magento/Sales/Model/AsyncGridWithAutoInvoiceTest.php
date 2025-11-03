@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2015 Adobe
+ * Copyright 2025 Adobe
  * All Rights Reserved.
  */
 
@@ -115,6 +115,11 @@ class AsyncGridWithAutoInvoiceTest extends TestCase
         $this->assertNotNull($order->getEntityId(), 'Order should be created successfully');
         $this->assertEquals(0.00, (float) $order->getGrandTotal(), 'Order grand total should be 0.00');
         $this->assertEquals('free', $order->getPayment()->getMethod(), 'Payment method should be "free"');
+        $this->assertEquals(
+            'freeshipping_freeshipping',
+            $order->getShippingMethod(),
+            'Shipping method should be "freeshipping_freeshipping"'
+        );
 
         $this->assertEquals(
             Order::STATE_PROCESSING,
